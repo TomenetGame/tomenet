@@ -872,8 +872,8 @@ void teleport_player_level(int Ind)
 		/* update the players new wilderness location */
 		
 		/* update the players wilderness map */
-//		p_ptr->wild_map[(wild_idx(new_depth))/8] |= (1<<((wild_idx(new_depth))%8));
-		p_ptr->wild_map[(new_depth.wx + new_depth.wy*MAX_WILD_X)/8] |= (1<<((new_depth.wx + new_depth.wy*MAX_WILD_X)%8));
+		if(!p_ptr->ghost)
+			p_ptr->wild_map[(new_depth.wx + new_depth.wy*MAX_WILD_X)/8] |= (1<<((new_depth.wx + new_depth.wy*MAX_WILD_X)%8));
 	}
 	else{
 		msg_print(Ind, "The scroll seemed to fail");

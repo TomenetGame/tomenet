@@ -2713,7 +2713,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			p_ptr->wpos.wy = nwpos.wy;
 		
 			/* update the wilderness map */
-			p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
+			if(!p_ptr->ghost)
+				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
 			
 			new_players_on_depth(wpos,1,TRUE);
 			p_ptr->new_level_flag = TRUE;
@@ -3116,22 +3117,24 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Handle resurrection */
-//		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP_HEAD + 3)
 		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP &&
 			(cs_ptr=GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3)
 
 		{
-			/* Resurrect him */
-			resurrect_player(Ind);
+			if(p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] & (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8))){
+				/* Resurrect him */
+				resurrect_player(Ind);
 
-			/* Give him some gold to restart */
-			if (p_ptr->lev > 1 && !p_ptr->admin_dm)
-			{
-				/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
-				int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
-				msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
-				p_ptr->au += i;
+				/* Give him some gold to restart */
+				if (p_ptr->lev > 1 && !p_ptr->admin_dm)
+				{
+					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
+					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
+					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
+					p_ptr->au += i;
+				}
 			}
+			else msg_print(Ind, "\377rThe temple priest turns you away!");
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
