@@ -2690,7 +2690,7 @@ void check_experience(int Ind)
 
 		/* Message */
 		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
-		sprintf(str, "{G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		msg_broadcast(Ind, str);
 
 		/* Update some stuff */
