@@ -841,6 +841,9 @@ Change list for PernMangband
 - Bug fix in the look command where dungeon master could be seen.
 - Reflection bug should be fixed.
 
+23/03/2002 (evileye)
+- Simple monster quests added.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

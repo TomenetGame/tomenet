@@ -33,12 +33,12 @@
 
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   4
-#define VERSION_PATCH   2
+#define VERSION_PATCH   3
 
 /*
  * Current version number of TomeNET:
  */
-#define TOMANG_VERSION_LONG_DATE "TomeNET 3.4.1 beta (compiled "
+#define TOMANG_VERSION_LONG_DATE "TomeNET 3.4.3 beta (compiled "
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.

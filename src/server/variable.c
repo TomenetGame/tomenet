@@ -168,6 +168,8 @@ player_type **Players;
 party_type parties[MAX_PARTIES];
 struct guild_type guilds[MAX_GUILDS];
 
+struct quest_type quests[20];	/* server quest data */
+
 /* The information about houses */
 house_type *houses;
 u32b num_houses = 0;

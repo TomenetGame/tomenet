@@ -1139,15 +1139,23 @@ void do_cmd_steal(int Ind, int dir)
 		/* Purge this traitor */
 		if (player_in_party(q_ptr->party, Ind))
 		{
+			int party=p_ptr->party;
+#if 0
 			/* Lose a member */
 			parties[q_ptr->party].num--;
 
 			/* Set his party number back to "neutral" */
 			p_ptr->party = 0;
+#endif
+			/* Temporary leave for the message */
+			p_ptr->party = 0;
 
 			/* Messages */
 			msg_print(Ind, "You have been purged from your party.");
 			party_msg_format(q_ptr->party, "%s has betrayed your party!", p_ptr->name);
+
+			p_ptr->party=party;
+			party_leave(Ind);
 
 		}
 

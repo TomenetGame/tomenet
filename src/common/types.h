@@ -1047,6 +1047,12 @@ struct quest
 	int max_num;	/* Number required (unused) */
 };
 
+/* evileye - same as above, but multiplayerized. */
+struct quest_type{
+	s16b active;		/* quest is active? */
+	s16b id;		/* quest id */
+	s16b type;		/* Monster race */
+};
 
 /* Adding this structure so we can have different creatures generated
    in different types of wilderness... this will probably be completly
@@ -1914,7 +1920,6 @@ struct player_type
 		bool admin_dm;		/* or Dungeon Master? */
 
 	s16b quest_id;		/* Quest number */
-	s16b quest_type;	/* Monster type */
 	s16b quest_num;		/* Number of kills needed */
 
         s16b xtra_crit;         /* % of increased crits */

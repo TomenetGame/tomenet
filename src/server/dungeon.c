@@ -2885,7 +2885,7 @@ void dungeon(void)
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
-	if(cfg.runlevel<6 && time(NULL)-cfg.closetime>120)
+	if(cfg.runlevel<6 && time(NULL)-cfg.closetime>60)
 		set_runlevel(cfg.runlevel-1);
 
 	if(cfg.runlevel<5){
@@ -3367,6 +3367,7 @@ void set_runlevel(int val)
 			shutdown_server();
 		case 1:
 			/* Logout all remaining players except admins */
+			msg_broadcast(0, "\377rServer shutdown imminent!");
 			break;
 		case 2:
 			/* Force recalling of all players to town if
@@ -3385,10 +3386,10 @@ void set_runlevel(int val)
 			break;
 		case 5:
 			/* Shutdown warning mode, automatic timer */
-			msg_broadcast(0, "\377yWarning. Server shutdown will take place in ten minutes.");
+			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
 			break;
 		case 6:
-		defalut:
+		default:
 			/* Cancelled shutdown */
 			msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);

@@ -947,6 +947,15 @@ static void wr_store(store_type *st_ptr)
 	}
 }
 
+static void wr_quests(){
+	int i;
+	for(i=0; i<20; i++){
+		wr_s16b(quests[i].active);
+		wr_s16b(quests[i].id);
+		wr_s16b(quests[i].type);
+	}
+}
+
 static void wr_guilds(){
 	int i;
 	u16b tmp16u;
@@ -1644,6 +1653,10 @@ static bool wr_savefile_new(int Ind)
 	}
 	wr_byte(p_ptr->guild);
 
+	wr_byte(p_ptr->quest_id);
+	wr_byte(p_ptr->quest_type);
+	wr_byte(p_ptr->quest_num);
+
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
 
@@ -2239,6 +2252,7 @@ static bool wr_server_savefile(void)
 	wr_u32b(seed_town);
 
 	wr_guilds();
+	wr_quests();
 
 	wr_s32b(player_id);
 	wr_s32b(turn);

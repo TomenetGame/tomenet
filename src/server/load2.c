@@ -888,6 +888,15 @@ static errr rd_store(store_type *st_ptr)
 	return (0);
 }
 
+static void rd_quests(){
+	int i;
+	for(i=0; i<20; i++){
+		rd_s16b(&quests[i].active);
+		rd_s16b(&quests[i].id);
+		rd_s16b(&quests[i].type);
+	}
+}
+
 static void rd_guilds(){
 	int i;
 	u16b tmp16u;
@@ -1854,6 +1863,11 @@ static errr rd_savefile_new_aux(int Ind)
 	if(!older_than(3,4,1)){
 		rd_byte(&p_ptr->guild);
 	}
+	if(!older_than(3,4,3)){
+		rd_s16b(&p_ptr->quest_id);
+		rd_s16b(&p_ptr->quest_type);
+		rd_s16b(&p_ptr->quest_num);
+	}
 
 #ifdef VERIFY_CHECKSUMS
 
@@ -2190,6 +2204,10 @@ errr rd_server_savefile()
 
 	if(!older_than(3,4,1)){
 		rd_guilds();
+	}
+
+	if(!older_than(3,4,3)){
+		rd_quests();
 	}
 
 	if (!older_than(0,4,1))

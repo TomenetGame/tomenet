@@ -1496,6 +1496,13 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
+		if(p_ptr->quest_id){
+			int i;
+			for(i=0; i<20; i++){
+				if(quests[i].active && quests[i].id==p_ptr->quest_id) break;
+			}
+			if(i==20) p_ptr->quest_id=0;
+		}
 		return TRUE;            
 	}
 
