@@ -3255,7 +3255,7 @@ void calc_bonuses(int Ind)
 			p_ptr->ac = (p_ptr->ac * 3) / 4;
 			p_ptr->to_a = ((p_ptr->to_a * 3) + (toac * 1)) / 4;
 			p_ptr->dis_ac = (p_ptr->dis_ac * 3) / 4;
-			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 2) + (toac * 1)) / 3;
+			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 3) + (toac * 1)) / 4;
 		} else {
 			p_ptr->ac = (p_ptr->ac * 1) / 2;
 			p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
