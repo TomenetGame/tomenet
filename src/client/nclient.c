@@ -2429,12 +2429,12 @@ int Receive_store(void)
 int Receive_store_info(void)
 {
 	int	n, max_cost;
-	char	ch, owner_name[80]/* , store_name[40] */;
+	char	ch, owner_name[80] , store_name[80];
 //	s16b	owner_num, num_items;
 	s16b	owner_num, num_items;
 
 //	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd", &ch, &store_num, &owner_num, &num_items)) <= 0)
-	if ((n = Packet_scanf(&rbuf, "%c%hd%s%hd%d", &ch, &store_num, owner_name, &num_items, &max_cost)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)
 	{
 		return n;
 	}
@@ -2442,6 +2442,7 @@ int Receive_store_info(void)
 	store.stock_num = num_items;
 	c_store.max_cost = max_cost;
 	strncpy(c_store.owner_name, owner_name, 40);
+	strncpy(c_store.store_name, store_name, 40);
 //	store_owner = owners[store_num][owner_num];
 
 	/* Only enter "display_store" if we're not already shopping */

@@ -3189,6 +3189,9 @@ void cheeze(object_type *o_ptr){
  * rid of some town junk. Artifacts should probably resist
  * this clearing.
  */
+/*
+ * TODO: this function should handle items in 'traditional' houses too
+ */
 void scan_objs(){
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
@@ -3231,6 +3234,12 @@ void scan_objs(){
 }
 
 
+/* NOTE: this can cause short freeze if many stores exist,
+ * so it isn't called from process_various any more.
+ * the store changes their stocks when a player enters a store.
+ *
+ * (However, this function can be called by admin characters)
+ */
 void store_turnover()
 {
 	int i, n;
@@ -3238,7 +3247,8 @@ void store_turnover()
 	for(i=0;i<numtowns;i++)
 	{
 		/* Maintain each shop (except home and auction house) */
-		for (n = 0; n < MAX_STORES - 2; n++)
+//		for (n = 0; n < MAX_STORES - 2; n++)
+		for (n = 0; n < max_st_idx; n++)
 		{
 			/* Maintain */
 			store_maint(&town[i].townstore[n]);
@@ -3248,7 +3258,8 @@ void store_turnover()
 		if (rand_int(STORE_SHUFFLE) == 0)
 		{
 			/* Shuffle a random shop (except home and auction house) */
-			store_shuffle(&town[i].townstore[rand_int(MAX_STORES - 2)]);
+//			store_shuffle(&town[i].townstore[rand_int(MAX_STORES - 2)]);
+			store_shuffle(&town[i].townstore[rand_int(max_st_idx)]);
 		}
 	}
 }
@@ -3475,11 +3486,13 @@ static void process_various(void)
 	}
 #endif /* if 0 */
 
+#if 0	// no longer
 	/* Update the stores */
 	if (!(turn % (10L * cfg.store_turns)))
 	{
 		store_turnover();
 	}
+#endif	// 0
 
 #if 0
 	/* Hack -- Daybreak/Nightfall outside the dungeon */

@@ -27,8 +27,9 @@
 
 
 18/08/2002 (Jir)
-[G]- ow_info.txt backported. (st_info and ba_info will come next;
-     till then it'll be somewhat silly)
+[G]- ow_info.txt and st_info.txt backported.
+     (st_info.txt will come; other fixes needed)
+[m]- testing max_*_idx (to replace MAX_*_IDX)
 
 17/08/2002 (Jir)
 # remove savedata (character is ok) and make clean pls

@@ -1121,6 +1121,46 @@ static struct
 	{NULL, 0}
 };
 
+/*
+ * Stores flags
+ */
+static cptr st_info_flags1[] =
+{
+	"DEPEND_LEVEL",
+	"SHALLOW_LEVEL",
+	"MEDIUM_LEVEL",
+	"DEEP_LEVEL",
+	"RARE",
+	"VERY_RARE",
+	"COMMON",
+	"ALL_ITEM",
+	"RANDOM",
+	"FORCE_LEVEL",
+	"MUSEUM",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1",
+	"XXX1"
+};
+
 /*** Initialize from ascii template files ***/
 
 
@@ -2409,6 +2449,8 @@ errr init_k_info_txt(FILE *fp, char *buf)
 	/* Debug -- print total no. */
 	s_printf("k_info total: %d\n", idx);
 #endif	// DEBUG_LEVEL
+
+	max_k_idx = idx;
 
 	/* Success */
 	return (0);
@@ -5274,6 +5316,513 @@ static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what)
 }
 
 /*
+ * Grab one store flag from a textual string
+ */
+static errr grab_one_store_flag(store_info_type *st_ptr, cptr what)
+{
+	int i;
+
+	/* Scan store flags */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, st_info_flags1[i]))
+		{
+			st_ptr->flags1 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Oops */
+	s_printf("Unknown store flag '%s'.\n", what);
+
+	/* Failure */
+	return (1);
+}
+
+/*
+ * Initialize the "st_info" array, by parsing an ascii "template" file
+ */
+errr init_st_info_txt(FILE *fp, char *buf)
+{
+	int i = 0, item_idx = 0/*, cnt = 0*/;
+
+	char *s, *t;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	store_info_type *st_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Start the "fake" stuff */
+	st_head->name_size = 0;
+	st_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+#ifdef VERIFY_VERSION_STAMP
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			    (v1 != st_head->v_major) ||
+			    (v2 != st_head->v_minor) ||
+			    (v3 != st_head->v_patch))
+			{
+				return (2);
+			}
+
+#else /* VERIFY_VERSION_STAMP */
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+
+#endif /* VERIFY_VERSION_STAMP */
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+//			++cnt;
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+
+			/* Verify information */
+			if (i >= st_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			st_ptr = &st_info[i];
+
+			/* Hack -- Verify space */
+			if (st_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!st_ptr->name) st_ptr->name = ++st_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(st_name + st_head->name_size, s);
+
+			/* Advance the index */
+			st_head->name_size += strlen(s);
+
+			/* We are ready for a new set of objects */
+			item_idx = 0;
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current st_ptr */
+		if (!st_ptr) return (3);
+
+		/* Process 'I' for "Items" (multiple lines) */
+		if (buf[0] == 'I')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			st_ptr->table[item_idx][1] = atoi(buf+2);
+
+			/* Append chars to the name */
+			st_ptr->table[item_idx++][0] = test_item_name(s);
+
+			st_ptr->table_num = item_idx;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'T' for "Tval/sval" */
+		if (buf[0] == 'T')
+		{
+			int tv1, sv1, rar1;
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%d:%d",
+				&rar1, &tv1, &sv1)) return (1);
+
+			/* Get the index */
+			st_ptr->table[item_idx][1] = rar1;
+			/* Hack -- 256 as a sval means all possible items */
+			st_ptr->table[item_idx++][0] = (sv1 < 256)?lookup_kind(tv1, sv1):tv1 + 10000;
+
+			st_ptr->table_num = item_idx;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'G' for "Graphics" one line only) */
+		if (buf[0] == 'G')
+		{
+			char c, a;
+			int attr;
+
+			/* Scan for the values */
+			if (2 != sscanf(buf+2, "%c:%c",
+				&c, &a)) return (1);
+
+			/* Extract the color */
+			attr = color_char_to_attr(a);
+
+			/* Paranoia */
+			if (attr < 0) return (1);
+
+			/* Save the values */
+			st_ptr->d_char = c;
+			st_ptr->d_attr = attr;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'A' for "Actions" (one line only) */
+		if (buf[0] == 'A')
+		{
+			int a1, a2, a3, a4, a5, a6;
+
+			/* Scan for the values */
+			if (6 != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
+
+			/* Save the values */
+			st_ptr->actions[0] = a1;
+			st_ptr->actions[1] = a2;
+			st_ptr->actions[2] = a3;
+			st_ptr->actions[3] = a4;
+			st_ptr->actions[4] = a5;
+			st_ptr->actions[5] = a6;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'F' for "store Flags" (multiple lines) */
+		if (buf[0] == 'F')
+		{
+			/* Parse every entry */
+			for (s = buf + 2; *s; )
+			{
+				/* Find the end of this entry */
+				for (t = s; *t && (*t != ' ') && (*t != '|'); ++t) /* loop */;
+
+				/* Nuke and skip any dividers */
+				if (*t)
+				{
+					*t++ = '\0';
+					while (*t == ' ' || *t == '|') t++;
+				}
+
+				/* Parse this entry */
+				if (0 != grab_one_store_flag(st_ptr, s)) return (5);
+
+				/* Start the next entry */
+				s = t;
+			}
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'O' for "Owners" (one line only) */
+		if (buf[0] == 'O')
+		{
+			int a1, a2, a3, a4;
+
+			/* Scan for the values */
+			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
+				&a1, &a2, &a3, &a4)) return (1);
+
+			/* Save the values */
+			st_ptr->owners[0] = a1;
+			st_ptr->owners[1] = a2;
+			st_ptr->owners[2] = a3;
+			st_ptr->owners[3] = a4;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'W' for "Extra info" (one line only) */
+		if (buf[0] == 'W')
+		{
+			int max_obj;
+
+			/* Scan for the values */
+			if (1 != sscanf(buf+2, "%d",
+				&max_obj)) return (1);
+
+			/* Save the values */
+			if (max_obj > STORE_INVEN_MAX) max_obj = STORE_INVEN_MAX;
+			st_ptr->max_obj = max_obj;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++st_head->name_size;
+	++st_head->text_size;
+
+	/* No version yet */
+	if (!okay) return (2);
+
+	/* Hack -- acquire total number */
+	max_st_idx = ++error_idx;
+
+#if DEBUG_LEVEL > 1
+	/* Debug -- print total no. */
+	s_printf("st_info total: %d\n", max_st_idx);
+#endif	// DEBUG_LEVEL
+
+	/* Success */
+	return (0);
+}
+
+/*
+ * Initialize the "ba_info" array, by parsing an ascii "template" file
+ */
+errr init_ba_info_txt(FILE *fp, char *buf)
+{
+	int i = 0;
+
+	char *s;
+
+	/* Not ready yet */
+	bool okay = FALSE;
+
+	/* Current entry */
+	store_action_type *ba_ptr = NULL;
+
+
+	/* Just before the first record */
+	error_idx = -1;
+
+	/* Just before the first line */
+	error_line = -1;
+
+
+	/* Start the "fake" stuff */
+	ba_head->name_size = 0;
+	ba_head->text_size = 0;
+
+	/* Parse */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Advance the line number */
+		error_line++;
+
+		/* Skip comments and blank lines */
+		if (!buf[0] || (buf[0] == '#')) continue;
+
+		/* Verify correct "colon" format */
+		if (buf[1] != ':') return (1);
+
+
+		/* Hack -- Process 'V' for "Version" */
+		if (buf[0] == 'V')
+		{
+			int v1, v2, v3;
+
+#ifdef VERIFY_VERSION_STAMP
+
+			/* Scan for the values */
+			if ((3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) ||
+			    (v1 != ba_head->v_major) ||
+			    (v2 != ba_head->v_minor) ||
+			    (v3 != ba_head->v_patch))
+			{
+				return (2);
+			}
+
+#else /* VERIFY_VERSION_STAMP */
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d.%d.%d", &v1, &v2, &v3)) return (2);
+
+#endif /* VERIFY_VERSION_STAMP */
+
+			/* Okay to proceed */
+			okay = TRUE;
+
+			/* Continue */
+			continue;
+		}
+
+		/* No version yet */
+		if (!okay) return (2);
+
+
+		/* Process 'N' for "New/Number/Name" */
+		if (buf[0] == 'N')
+		{
+			/* Find the colon before the name */
+			s = strchr(buf+2, ':');
+
+			/* Verify that colon */
+			if (!s) return (1);
+
+			/* Nuke the colon, advance to the name */
+			*s++ = '\0';
+
+			/* Paranoia -- require a name */
+			if (!*s) return (1);
+
+			/* Get the index */
+			i = atoi(buf+2);
+
+			/* Verify information */
+			if (i < error_idx) return (4);
+
+			/* Verify information */
+			if (i >= ba_head->info_num) return (2);
+
+			/* Save the index */
+			error_idx = i;
+
+			/* Point at the "info" */
+			ba_ptr = &ba_info[i];
+
+			/* Hack -- Verify space */
+			if (ba_head->name_size + strlen(s) + 8 > fake_name_size) return (7);
+
+			/* Advance and Save the name index */
+			if (!ba_ptr->name) ba_ptr->name = ++ba_head->name_size;
+
+			/* Append chars to the name */
+			strcpy(ba_name + ba_head->name_size, s);
+
+			/* Advance the index */
+			ba_head->name_size += strlen(s);
+
+			/* Next... */
+			continue;
+		}
+
+		/* There better be a current ba_ptr */
+		if (!ba_ptr) return (3);
+
+		/* Process 'C' for "Costs" (one line only) */
+		if (buf[0] == 'C')
+		{
+			int ch, cn, cl;
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%d:%d",
+				&ch, &cn, &cl)) return (1);
+
+			/* Save the values */
+			ba_ptr->costs[STORE_HATED] = ch;
+			ba_ptr->costs[STORE_NORMAL] = cn;
+			ba_ptr->costs[STORE_LIKED] = cl;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Process 'I' for "Infos" (one line only) */
+		if (buf[0] == 'I')
+		{
+			int act, act_res;
+			char letter;
+
+			/* Scan for the values */
+			if (3 != sscanf(buf+2, "%d:%d:%c",
+				&act, &act_res, &letter)) return (1);
+
+			/* Save the values */
+			ba_ptr->action = act;
+			ba_ptr->action_restr = act_res;
+			ba_ptr->letter = letter;
+
+			/* Next... */
+			continue;
+		}
+
+		/* Oops */
+		return (6);
+	}
+
+
+	/* Complete the "name" and "text" sizes */
+	++ba_head->name_size;
+	++ba_head->text_size;
+
+	/* No version yet */
+	if (!okay) return (2);
+
+	/* Success */
+	return (0);
+}
+
+/*
  * Initialize the "ow_info" array, by parsing an ascii "template" file
  */
 errr init_ow_info_txt(FILE *fp, char *buf)
@@ -6054,11 +6603,11 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 						/* MEGAHACK till st_info is implemented */
 						int y1, x1;
 						int store = letter[idx].special;
-						if (store > 8) store = 8;
+//						if (store > 8) store = 8;
 
 						cs_ptr->sc.omni = store;
 
-#if 0	// not seems to work anyway
+#if 0	// not here
 						for (y1 = y - 1; y1 <= y + 1; y1++)
 						{
 							for (x1 = x - 1; x1 <= x + 1; x1++)

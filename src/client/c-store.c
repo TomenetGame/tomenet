@@ -404,7 +404,7 @@ static void store_process_command(void)
 void display_store(void)
 {
 	char buf[1024];
-	cptr feature = "feature variable";
+//	cptr feature = "feature variable";
 
 	/* The screen is "icky" */
 	screen_icky = TRUE;
@@ -418,6 +418,7 @@ void display_store(void)
 	store_top = 0;
 
 	/* Find the "store name" */
+#if 0
 	switch (store_num)	/* This will change.. */
 	{
 		case 0: feature = "General store"; break;
@@ -429,6 +430,7 @@ void display_store(void)
 		case 6: feature = "Black Market"; break;
 		case 7: feature = "Your home"; break;
 	}
+#endif	// 0
 	
 	/* The "Home" is special */
 	if (store_num == 7)
@@ -450,33 +452,34 @@ void display_store(void)
 	/* Normal stores */
 	else
 	{
-                /* Put the owner name and race */
-//                sprintf(buf, "%s (%s)", store_owner.owner_name, race_info[store_owner.owner_race].title);
-                sprintf(buf, "%s", c_store.owner_name);
-                put_str(buf, 3, 10);
+		/* Put the owner name and race */
+		//sprintf(buf, "%s (%s)", store_owner.owner_name, race_info[store_owner.owner_race].title);
+		sprintf(buf, "%s", c_store.owner_name);
+		put_str(buf, 3, 10);
 
-                /* Show the max price in the store (above prices) */
-//                sprintf(buf, "%s (%ld)", feature, (long)(store_owner.max_cost));
-                sprintf(buf, "%s (%ld)", feature, (long)(c_store.max_cost));
-                prt(buf, 3, 50);
+		/* Show the max price in the store (above prices) */
+		//sprintf(buf, "%s (%ld)", feature, (long)(store_owner.max_cost));
+		//sprintf(buf, "%s (%ld)", feature, (long)(c_store.max_cost));
+		sprintf(buf, "%s (%ld)", c_store.store_name, (long)(c_store.max_cost));
+		prt(buf, 3, 50);
 
-                /* Label the item descriptions */
-                put_str("Item Description", 5, 3);
+		/* Label the item descriptions */
+		put_str("Item Description", 5, 3);
 
-                /* If showing weights, show label */
-                if (c_cfg.show_weights)
-                {
-                        put_str("Weight", 5, 60);
-                }
+		/* If showing weights, show label */
+		if (c_cfg.show_weights)
+		{
+			put_str("Weight", 5, 60);
+		}
 
-                /* Label the asking price (in stores) */
-                put_str("Price", 5, 72);
+		/* Label the asking price (in stores) */
+		put_str("Price", 5, 72);
 
-                /* Display the players remaining gold */
-                prt("Gold Remaining: ", 19, 53);
+		/* Display the players remaining gold */
+		prt("Gold Remaining: ", 19, 53);
 
-                sprintf(buf, "%9ld", (long) p_ptr->au);
-                prt(buf, 19, 68);
+		sprintf(buf, "%9ld", (long) p_ptr->au);
+		prt(buf, 19, 68);
 
 	}
 

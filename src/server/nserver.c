@@ -4136,7 +4136,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
  * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -
  */
 //int Send_store_info(int ind, int num, int owner, int items)
-int Send_store_info(int ind, int num, cptr owner, int items, int purse)
+int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -4163,11 +4163,11 @@ int Send_store_info(int ind, int num, cptr owner, int items, int purse)
 			connp2 = &Conn[p_ptr2->conn];
 
 //			Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
-			Packet_printf(&connp2->c, "%c%hd%s%hd%d", PKT_STORE_INFO, num, owner, items, purse);
+			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 		}
 	}
 
-	return Packet_printf(&connp->c, "%c%hd%s%hd%d", PKT_STORE_INFO, num, owner, items, purse);
+	return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 //	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
 }
 

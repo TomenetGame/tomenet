@@ -1325,6 +1325,230 @@ static errr init_v_info(void)
 
 
 /*
+ * Initialize the "st_info" array
+ *
+ * Note that we let each entry have a unique "name" and "short name" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_st_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(st_head, header);
+
+	/* Save the "version" */
+	st_head->v_major = VERSION_MAJOR;
+	st_head->v_minor = VERSION_MINOR;
+	st_head->v_patch = VERSION_PATCH;
+	st_head->v_extra = 0;
+
+	/* Save the "record" information */
+	st_head->info_num = MAX_ST_IDX;
+	st_head->info_len = sizeof(store_info_type);
+
+	/* Save the size of "st_head" and "st_info" */
+	st_head->head_size = sizeof(header);
+	st_head->info_size = st_head->info_num * st_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "st_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "st_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_st_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'st_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "st_name" and "st_text" */
+//	fake_name_size = FAKE_NAME_SIZE;
+	fake_name_size = 20 * 1024L;
+
+	/* Allocate the "st_info" array */
+	C_MAKE(st_info, st_head->info_num, store_info_type);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(st_name, fake_name_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "st_info.txt");
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'st_info.txt' file.");
+
+	/* Parse the file */
+	err = init_st_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'st_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'st_info.txt' file.");
+	}
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "st_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(st_head), st_head->head_size);
+
+		/* Dump the "r_info" array */
+		fd_write(fd, (char*)(st_info), st_head->info_size);
+
+		/* Dump the "r_name" array */
+		fd_write(fd, (char*)(st_name), st_head->name_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "st_info" array */
+	C_KILL(st_info, st_head->info_num, store_info_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(st_name, fake_name_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "st_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'st_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_st_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'st_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+
+
+/*
  * Initialize the "ow_info" array
  *
  * Note that we let each entry have a unique "name" and "short name" string,
@@ -1550,6 +1774,231 @@ static errr init_ow_info(void)
 	/* Success */
 	return (0);
 }
+
+#if 1
+/*
+ * Initialize the "ba_info" array
+ *
+ * Note that we let each entry have a unique "name" and "short name" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_ba_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(ba_head, header);
+
+	/* Save the "version" */
+	ba_head->v_major = VERSION_MAJOR;
+	ba_head->v_minor = VERSION_MINOR;
+	ba_head->v_patch = VERSION_PATCH;
+	ba_head->v_extra = 0;
+
+	/* Save the "record" information */
+	ba_head->info_num = MAX_BA_IDX;
+	ba_head->info_len = sizeof(store_action_type);
+
+	/* Save the size of "head" and "ba_info" */
+	ba_head->head_size = sizeof(header);
+	ba_head->info_size = ba_head->info_num * ba_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ba_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+		err = check_modification_date(fd, "ba_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_ba_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'ba_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+
+	/*** Make the fake arrays ***/
+
+	/* Assume the size of "ba_name" and "ba_text" */
+//	fake_name_size = FAKE_NAME_SIZE;
+	fake_name_size = 20 * 1024L;
+
+	/* Allocate the "ba_info" array */
+	C_MAKE(ba_info, ba_head->info_num, store_action_type);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(ba_name, fake_name_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "ba_info.txt");
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'ba_info.txt' file.");
+
+	/* Parse the file */
+	err = init_ba_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d df 'ba_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
+
+		/* Quit */
+		quit("Error in 'ba_info.txt' file.");
+	}
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ba_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Kill the old file */
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(ba_head), ba_head->head_size);
+
+		/* Dump the "r_info" array */
+		fd_write(fd, (char*)(ba_info), ba_head->info_size);
+
+		/* Dump the "r_name" array */
+		fd_write(fd, (char*)(ba_name), ba_head->name_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "ba_info" array */
+	C_KILL(ba_info, ba_head->info_num, store_action_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(ba_name, fake_name_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+
+
+#ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "ba_info.raw");
+
+	/* Grab permission */
+	safe_setuid_grab();
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Drop permission */
+	safe_setuid_drop();
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'ba_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_ba_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'ba_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+#endif	// 0
 
 
 
@@ -2499,9 +2948,9 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (traps)]\n");
 	if (init_t_info()) quit("Cannot initialize traps");
 
-#if 0
+#if 1
 	/* Initialize actions type info */
-	note("[Initializing arrays... (action types)]");
+	s_printf("[Initializing arrays... (action types)]\n");
 	if (init_ba_info()) quit("Cannot initialize action types");
 #endif	// 0
 
@@ -2509,9 +2958,9 @@ void init_some_arrays(void)
 	s_printf("[Initializing arrays... (owners types)]\n");
 	if (init_ow_info()) quit("Cannot initialize owners types");
 
-#if 0
+#if 1
 	/* Initialize stores type info */
-	note("[Initializing arrays... (stores types)]");
+	s_printf("[Initializing arrays... (stores types)]\n");
 	if (init_st_info()) quit("Cannot initialize stores types");
 #endif	// 0
 

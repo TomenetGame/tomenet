@@ -1088,6 +1088,7 @@ struct option_type
  */
 typedef struct store_type store_type;
 
+#if 0
 struct store_type
 {
 	byte num;			/* store type */
@@ -1110,6 +1111,28 @@ struct store_type
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
 };
+#else	// 0
+struct store_type
+{
+	u16b st_idx;
+
+	u16b owner;                     /* Owner index */
+
+	s16b insult_cur;		/* Insult counter */
+
+	s16b good_buy;			/* Number of "good" buys */
+	s16b bad_buy;			/* Number of "bad" buys */
+
+	s32b store_open;		/* Closed until this turn */
+
+	s32b last_visit;		/* Last visited on this turn */
+
+	byte stock_num;			/* Stock -- Number of entries */
+	s16b stock_size;		/* Stock -- Total Size of Array */
+	object_type *stock;		/* Stock -- Actual stock items */
+};
+#endif	// 0
+
 
 
 /*
@@ -1293,11 +1316,53 @@ struct owner_type
 
 	s32b races[2][2];                  /* Liked/hated races */
 	s32b classes[2][2];                /* Liked/hated classes */
-	s32b realms[2][2];                 /* Liked/hated realms */
+	s32b realms[2][2];	/* Liked/hated realms */ /* unused */
 
 	s16b costs[3];                  /* Costs for liked people */
 };
 #endif	// 0
+
+/*
+ * A store/building type
+ */
+/* I'd prefer 'store_kind'.. but just let's not change it */
+typedef struct store_info_type store_info_type;
+
+struct store_info_type
+{
+	u32b name;                      /* Name (offset) */
+
+	s16b table[STORE_CHOICES][2];   /* Table -- Legal item kinds */
+	byte table_num;                 /* Number of items */
+	s16b max_obj;                   /* Number of items this store can hold */
+
+	u16b owners[4];                 /* List of owners(refers to ow_info) */
+
+	u16b actions[6];                /* Actions(refers to ba_info) */
+
+	byte d_attr;			/* Default building attribute */
+	char d_char;			/* Default building character */
+
+	byte x_attr;			/* Desired building attribute */
+	char x_char;			/* Desired building character */
+
+	u32b flags1;                    /* Flags */
+};
+
+/*
+ * Stores/buildings actions
+ */
+typedef struct store_action_type store_action_type;
+
+struct store_action_type
+{
+	u32b name;                      /* Name (offset) */
+
+	s16b costs[3];                  /* Costs for liked people */
+	char letter;                    /* Action letter */
+	s16b action;                    /* Action code */
+	s16b action_restr;              /* Action restriction */
+};
 
 
 /*

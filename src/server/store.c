@@ -34,6 +34,7 @@ static void display_trad_house(int Ind);
 /*
  * Hack -- Objects sold in the stores -- by tval/sval pair.
  */
+#if 0	// obsolete
 static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 {
 	{
@@ -286,6 +287,7 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_SORCERY_BOOK, 3 },
 	}
 };
+#endif	// 0
 
 
 #define MAX_COMMENT_1	6
@@ -645,27 +647,36 @@ static byte rgold_adj[MAX_RACES][MAX_RACES] =
 #endif	// 0
 
 
-void alloc_stores(int townval){
+void alloc_stores(int townval)
+{
 	int i, k;
 
-        /* Allocate the stores */
-	C_MAKE(town[townval].townstore, MAX_STORES, store_type);
+	/* Allocate the stores */
+	/* XXX of course, it's inefficient;
+	 * we should check which town has what stores
+	 */
+	//	C_MAKE(town[townval].townstore, MAX_STORES, store_type);
+	C_MAKE(town[townval].townstore, max_st_idx, store_type);
 
 	/* Fill in each store */
-	for (i = 0; i < MAX_STORES; i++)
+//	for (i = 0; i < MAX_STORES; i++)
+	for (i = 0; i < max_st_idx; i++)
 	{       
 		/* Access the store */
 		store_type *st_ptr = &town[townval].townstore[i];
+		store_info_type *sti_ptr = &st_info[i];
 
 		/* sett store type */
-		st_ptr->num = i;
+		st_ptr->st_idx = i;
 
 		/* Assume full stock */
-		st_ptr->stock_size = STORE_INVEN_MAX;
+//		st_ptr->stock_size = STORE_INVEN_MAX;
+		st_ptr->stock_size = sti_ptr->max_obj;
 
 		/* Allocate the stock */
 		C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
 
+#if 0
 		/* No table for the black market or home */
 		if ((i == 6) || (i == 7) || (i == 8) ) continue;
 
@@ -701,6 +712,7 @@ void alloc_stores(int townval){
 
 			st_ptr->table[st_ptr->table_num++] = k_idx;
 		}
+#endif	// 0
 	}
 }
 
@@ -835,7 +847,8 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
-		if (p_ptr->store_num == 6) price = price / 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = price / 4;
+//		if (p_ptr->store_num == 6) price = price / 4;
 
 		/* To prevent cheezing */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
@@ -854,7 +867,8 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		if (adjust < 100 + STORE_BENEFIT) adjust = 100 + STORE_BENEFIT;
 
 		/* Mega-Hack -- Black market sucks */
-		if (p_ptr->store_num == 6) price = price * 4;
+//		if (p_ptr->store_num == 6) price = price * 4;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) price = price * 4;
 	}
 
 	/* Compute the final price (with rounding) */
@@ -1084,7 +1098,7 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 
 #if 0
 	/* The "home" acts like the player */
-	if (st_ptr->num == 7)
+	if (st_ptr->st_idx == 7)
 	{
 		/* Check all the items */
 		for (i = 0; i < st_ptr->stock_num; i++)
@@ -1127,6 +1141,13 @@ static bool store_check_num(store_type *st_ptr, object_type *o_ptr)
 static bool store_will_buy(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
+
+	/* Hack -- The Home is simple */
+#if 0
+	if (p_ptr->store_num == 7) return (TRUE);
+
+	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return TRUE;
+#endif	// 0
 
 	/* Switch on the store */
 	switch (p_ptr->store_num)
@@ -1258,6 +1279,45 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				return (FALSE);
 			}
 			break;
+		}
+		/* Bookstore Shop */
+		case 8:
+		{
+			/* Analyze the type */
+			switch (o_ptr->tval)
+			{
+				case TV_BOOK:
+#if 0
+				case TV_SYMBIOTIC_BOOK:
+				case TV_MUSIC_BOOK:
+				case TV_DAEMON_BOOK:
+				case TV_DRUID_BOOK:
+#endif	// 0
+				case TV_PSI_BOOK:
+				case TV_MAGIC_BOOK:
+				case TV_SORCERY_BOOK:
+				case TV_SHADOW_BOOK:
+				case TV_HUNT_BOOK:
+				case TV_FIGHT_BOOK:
+				case TV_PRAYER_BOOK:
+					break;
+				default:
+					return (FALSE);
+			}
+			break;
+			/* Pet Shop */
+			case 9:
+			{
+				/* Analyze the type */
+				switch (o_ptr->tval)
+				{
+					case TV_EGG:
+						break;
+					default:
+						return (FALSE);
+				}
+				break;
+			}
 		}
 	}
 
@@ -1537,7 +1597,7 @@ static bool black_market_crap(object_type *o_ptr)
 	for(k = 0; k < numtowns; k++){
 		st_ptr=town[k].townstore;
 		/* Check the other "normal" stores */
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < max_st_idx; i++)
 		{
 			/* Check every item in the store */
 			for (j = 0; j < st_ptr[i].stock_num; j++)
@@ -1605,6 +1665,55 @@ static void store_delete(store_type *st_ptr)
 	store_item_optimize(st_ptr, what);
 }
 
+
+/* Analyze store flags and return a level */
+//int return_level()
+int return_level(store_type *st_ptr)
+{
+	store_info_type *sti_ptr = &st_info[st_ptr->st_idx];
+	int level;
+
+	if (sti_ptr->flags1 & SF1_RANDOM) level = 0;
+	else level = rand_range(1, STORE_OBJ_LEVEL);
+
+//	if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += dun_level;
+
+	if (sti_ptr->flags1 & SF1_SHALLOW_LEVEL) level += 5 + rand_int(5);
+	if (sti_ptr->flags1 & SF1_MEDIUM_LEVEL) level += 25 + rand_int(25);
+	if (sti_ptr->flags1 & SF1_DEEP_LEVEL) level += 45 + rand_int(45);
+
+//	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
+
+	return (level);
+}
+
+/* Is it an ok object ? */ /* I don't like this kinda hack.. */
+static int store_tval = 0, store_level = 0;
+
+/*
+ * Hack -- determine if a template is "good"
+ */
+static bool kind_is_storeok(int k_idx)
+{
+	object_kind *k_ptr = &k_info[k_idx];
+
+#if 0
+	if (k_info[k_idx].flags3 & TR3_NORM_ART)
+		return( FALSE );
+#endif	// 0
+
+	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
+		return( FALSE );
+
+	if (!kind_is_legal(k_idx)) return FALSE;
+
+	if (k_ptr->tval != store_tval) return (FALSE);
+	if (k_ptr->level < (store_level / 2)) return (FALSE);
+
+	return (TRUE);
+}
+
+
 static int black_market_potion;
 
 
@@ -1619,6 +1728,7 @@ static int black_market_potion;
  *
  * Should we check for "permission" to have the given item?
  */
+#if 0
 static void store_create(store_type *st_ptr)
 {
 	int			i, tries, level;
@@ -1635,7 +1745,7 @@ static void store_create(store_type *st_ptr)
 	for (tries = 0; tries < 4; tries++)
 	{
 		/* Black Market */
-		if (st_ptr->num == 6)
+		if (st_ptr->st_idx == 6)
 		{
 			/* Pick a level for object/magic */
 			level = 60 + rand_int(25);
@@ -1727,7 +1837,7 @@ static void store_create(store_type *st_ptr)
 		if (o_ptr->tval == TV_CHEST) continue;
 
 		/* Prune the black market */
-		if (st_ptr->num == 6)
+		if (st_ptr->st_idx == 6)
 		{
 			/* Hack -- No "crappy" items */
 			if (black_market_crap(o_ptr)) continue;
@@ -1757,7 +1867,7 @@ static void store_create(store_type *st_ptr)
 				continue;
 
 			/* Hack -- General store shouldn't sell too much aman cloaks etc */
-			if (st_ptr->num == 0 && object_value(0, o_ptr) > 1000 &&
+			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
 					magik(33)) continue;
 		}
 
@@ -1774,6 +1884,219 @@ static void store_create(store_type *st_ptr)
 		break;
 	}
 }
+#else
+static void store_create(store_type *st_ptr)
+{
+	int i, tries, level, chance, item;
+
+	object_type		tmp_obj;
+	object_type		*o_ptr = &tmp_obj;
+	int force_num = 0;
+
+
+	/* Paranoia -- no room left */
+	if (st_ptr->stock_num >= st_ptr->stock_size) return;
+
+
+	/* Hack -- consider up to four items */
+	for (tries = 0; tries < 4; tries++)
+	{
+		/* Black Market */
+//		if (st_ptr->st_idx == 6)
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+		{
+			/* Pick a level for object/magic */
+			level = 60 + rand_int(25);	/* for now let's use this */
+//			level = return_level(st_ptr);
+
+			/* Random item (usually of given level) */
+			i = get_obj_num(level);
+			
+			/* MEGA HACK */ /* XXX This will be removed */
+			if (black_market_potion == 1)
+			{
+				i = lookup_kind(TV_POTION, SV_POTION_SPEED);
+				black_market_potion--;
+				force_num = rand_range(10, 20);
+			}
+			if (black_market_potion == 2)
+			{
+				i = lookup_kind(TV_POTION, SV_POTION_HEALING);
+				black_market_potion--;
+				force_num = rand_range(3, 9);
+			}
+			if (black_market_potion == 3)
+			{
+				i = lookup_kind(TV_POTION, SV_POTION_RESTORE_MANA);
+				black_market_potion--;
+				force_num = rand_range(3, 9);
+			}
+			if (black_market_potion == 4)
+			  {
+			    i = lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT);
+			    black_market_potion--;
+			    force_num = rand_range(2, 4);
+			  }
+			if (black_market_potion == 5)
+			  {
+			    i = lookup_kind(TV_SCROLL, SV_SCROLL_BLOOD_BOND);
+			    black_market_potion--;
+			    force_num = rand_range(2, 4);
+			  }
+#if 0
+			if (black_market_potion == 6)
+			  {
+			    i = lookup_kind(TV_FOOD, SV_FOOD_UNMAGIC);
+			    black_market_potion--;
+			    force_num = rand_range(2, 4);
+			  }
+#endif
+
+			/* Handle failure */
+			if (!i) continue;
+		}
+
+		/* Normal Store */
+		else
+		{
+#if 0	// former code
+			/* Hack -- Pick an item to sell */
+			i = st_ptr->table[rand_int(st_ptr->table_num)];
+
+			/* Hack -- fake level for apply_magic() */
+			level = rand_range(1, STORE_OBJ_LEVEL);
+#endif	// 0
+
+			/* Hack -- Pick an item to sell */
+			item = rand_int(st_info[st_ptr->st_idx].table_num);
+			i = st_info[st_ptr->st_idx].table[item][0];
+			chance = st_info[st_ptr->st_idx].table[item][1];
+
+#if 0
+			/* Don't allow k_info artifacts */
+			if ((i <= 10000) && (k_info[i].flags3 & TR3_NORM_ART))
+				continue;
+#endif	// 0
+
+			/* Does it passes the rarity check ? */
+			if (!magik(chance)) continue;
+
+			/* Hack -- fake level for apply_magic() */
+			level = return_level(st_ptr);
+
+			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
+			/* NOTE: no store uses this */
+			if (i > 10000)
+			{
+				obj_theme theme;
+
+				/* No themes */
+				theme.treasure = 100;
+				theme.combat = 100;
+				theme.magic = 100;
+				theme.tools = 100;
+				init_match_theme(theme);
+
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_storeok;
+				store_tval = i - 10000;
+
+				/* Do we forbid too shallow items ? */
+				if (st_info[st_ptr->st_idx].flags1 & SF1_FORCE_LEVEL) store_level = level;
+				else store_level = 0;
+
+				/* Prepare allocation table */
+				get_obj_num_prep();
+
+				/* Get it ! */
+				i = get_obj_num(level);
+
+				/* Invalidate the cached allocation table */
+//				alloc_kind_table_valid = FALSE;
+			}
+
+			if (!i) continue;
+		}
+
+
+		/* Create a new object of the chosen kind */
+		invcopy(o_ptr, i);
+
+		/* Apply some "low-level" magic (no artifacts) */
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, FALSE, FALSE);
+
+		/* Hack -- Charge lite uniformly */
+		if (o_ptr->tval == TV_LITE)
+		{
+			u32b f1, f2, f3, f4, f5, esp;
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			/* Only fuelable ones! */
+			if (f4 & TR4_FUEL_LITE)
+			{
+				if (o_ptr->sval == SV_LITE_TORCH) o_ptr->timeout = FUEL_TORCH / 2;
+				if (o_ptr->sval == SV_LITE_LANTERN) o_ptr->timeout = FUEL_LAMP / 2;
+			}
+		}
+
+
+		/* The item is "known" */
+		object_known(o_ptr);
+
+		/* Mega-Hack -- no chests in stores */
+//		if (o_ptr->tval == TV_CHEST || o_ptr->tval==8) continue;
+		if (o_ptr->tval == TV_CHEST) continue;
+
+		/* Prune the black market */
+//		if (st_ptr->st_idx == 6)
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+		{
+			/* Hack -- No "crappy" items */
+			if (black_market_crap(o_ptr)) continue;
+
+			/* Hack -- No "cheap" items */
+			if (object_value(0, o_ptr) < 10) continue;
+
+			/* No "worthless" items */
+			/* if (object_value(o_ptr) <= 0) continue; */
+
+			/* Hack -- No POTION2 items */
+			if (o_ptr->tval == TV_POTION2) continue;
+
+			/* Hack -- less athelas */
+			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
+				magik(80)) continue;
+		}
+
+		/* Prune normal stores */
+		else
+		{
+			/* No "worthless" items */
+			if (object_value(0, o_ptr) <= 0) continue;
+
+			/* ego rarity control for normal stores */
+			if ((o_ptr->name2 || o_ptr->name2b) && !magik(STORE_EGO_CHANCE))
+				continue;
+
+			/* Hack -- General store shouldn't sell too much aman cloaks etc */
+			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
+					magik(33)) continue;
+		}
+
+
+		/* Mass produce and/or Apply discount */
+		mass_produce(o_ptr);
+		
+		if (force_num) o_ptr->number = force_num;
+
+		/* Attempt to carry the (known) item */
+		(void)store_carry(st_ptr, o_ptr);
+
+		/* Definitely done */
+		break;
+	}
+}
+#endif	// 0
 
 /*
  * Update the bargain info
@@ -1937,7 +2260,7 @@ static void display_inventory(int Ind)
 	for (k = 0; k < STORE_INVEN_MAX; k++)
 	{
 		/* Do not display "dead" items */
-		if (k && k >= st_ptr->stock_num) break;
+		if (k >= st_ptr->stock_num) break;
 
 		/* Display that line */
 		display_entry(Ind, k);
@@ -1964,6 +2287,7 @@ static void display_store(int Ind)
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
 	owner_type *ot_ptr;
+	cptr store_name;
 	int i;
 
 	i=gettown(Ind);
@@ -1971,6 +2295,7 @@ static void display_store(int Ind)
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
+	store_name = (st_name + st_info[st_ptr->st_idx].name);
 
 	/* Display the current gold */
 	store_prt_gold(Ind);
@@ -1983,7 +2308,7 @@ static void display_store(int Ind)
 	{
 		/* Send the store info */
 //		Send_store_info(Ind, p_ptr->store_num, 0, st_ptr->stock_num);
-		Send_store_info(Ind, p_ptr->store_num, "", st_ptr->stock_num, st_ptr->stock_size);
+		Send_store_info(Ind, p_ptr->store_num, "Your House", "", st_ptr->stock_num, st_ptr->stock_size);
 	}
 
 	/* Normal stores */
@@ -1991,7 +2316,7 @@ static void display_store(int Ind)
 	{
 		/* Send the store info */
 //		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
-		Send_store_info(Ind, p_ptr->store_num, ow_name + ot_ptr->name, st_ptr->stock_num, ot_ptr->max_cost);
+		Send_store_info(Ind, p_ptr->store_num, store_name, ow_name + ot_ptr->name, st_ptr->stock_num, ot_ptr->max_cost);
 	}
 
 }
@@ -2751,8 +3076,10 @@ static bool leave_store = FALSE;
 void do_cmd_store(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	store_type *st_ptr;
 	int			which;
 	int i;
+	int maintain_num;
 
 	cave_type		*c_ptr;
 	struct c_special *cs_ptr;
@@ -2777,7 +3104,6 @@ void do_cmd_store(int Ind)
 
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
-//	which = rand_int(7);	/* lol... FIXME */
 
 	if(cs_ptr=GetCS(c_ptr, CS_SHOP))
 	{
@@ -2803,11 +3129,13 @@ void do_cmd_store(int Ind)
 		/* msg_print(Ind, "The doors are locked."); */
 		return;
 	}
+#if 0	// it have changed
 	else if (which > 7)	/* XXX It'll change */
 	{
 		msg_print(Ind, "A placard reads: Closed for inventory.");
 		return;
 	}
+#endif	// 0
 
 	/* No command argument */
 	/*command_arg = 0;*/
@@ -2823,6 +3151,27 @@ void do_cmd_store(int Ind)
 
 	/* Set the timer */
 	p_ptr->tim_store = STORE_TURNOUT;
+
+	st_ptr = &town[i].townstore[p_ptr->store_num];
+
+	/* Calculate the number of store maintainances since the last visit */
+//	maintain_num = (turn - town_info[p_ptr->town_num].store[which].last_visit) / (10L * STORE_TURNS);
+	maintain_num = (turn - st_ptr->last_visit) / (10L * STORE_TURNS);
+
+	/* Maintain the store max. 10 times */
+	if (maintain_num > 10) maintain_num = 10;
+
+	if (maintain_num)
+	{
+		/* Maintain the store */
+		for (i = 0; i < maintain_num; i++)
+//			store_maint(p_ptr->town_num, which);
+			store_maint(st_ptr);
+
+		/* Save the visit */
+//		town_info[p_ptr->town_num].store[which].last_visit = turn;
+		st_ptr->last_visit = turn;
+	}
 
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
@@ -2865,12 +3214,13 @@ void store_shuffle(store_type *st_ptr)
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; )
 	{	  
-		st_ptr->owner = rand_int(MAX_OWNERS);
+//		st_ptr->owner = rand_int(MAX_OWNERS);
+		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(4)];
 		if ((!(--tries))) break;
 	}
 
 	/* Activate the new owner */
-//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 
@@ -2921,6 +3271,7 @@ void store_maint(store_type *st_ptr)
 #endif
 
 	/* Make sure no one is in the store */
+#if 0 /* not used (cf.st_ptr->last_visit) */
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		/* Check this player */
@@ -2935,9 +3286,10 @@ void store_maint(store_type *st_ptr)
 			}
 		}
 	}
+#endif	// 0
 
 	/* Activate the owner */
-//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 
@@ -2946,7 +3298,8 @@ void store_maint(store_type *st_ptr)
 
 
 	/* Mega-Hack -- prune the black market */
-	if (st_ptr->num == 6)
+//	if (st_ptr->st_idx == 6)
+	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
 	{
 		/* Destroy crappy black market items */
 		for (j = st_ptr->stock_num - 1; j >= 0; j--)
@@ -3021,11 +3374,10 @@ void store_init(store_type *st_ptr)
 
 	/* Pick an owner */
 //	st_ptr->owner = rand_int(MAX_OWNERS);
-	/* XXX XXX makeshift till st_info backport!! XXX XXX */
-	st_ptr->owner = rand_int(MAX_OW_IDX);
+	st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(4)];
 
 	/* Activate the new owner */
-//	ot_ptr = &owners[st_ptr->num][st_ptr->owner];
+//	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 
@@ -3037,6 +3389,13 @@ void store_init(store_type *st_ptr)
 
 	/* Nothing in stock */
 	st_ptr->stock_num = 0;
+
+	/*
+	 * MEGA-HACK - Last visit to store is
+	 * BEFORE player birth to enable store restocking
+	 */
+	/* so let's not employ it :) */
+//	st_ptr->last_visit = -100L * STORE_TURNS;
 
 	/* Clear any old items */
 	for (k = 0; k < st_ptr->stock_size; k++)
@@ -3760,7 +4119,7 @@ static void display_trad_house(int Ind)
 
 	/* Send the store info */
 	//Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);
-	Send_store_info(Ind, p_ptr->store_num, "", h_ptr->stock_num, h_ptr->stock_size);
+	Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size);
 }
 
 /* Enter a house, and interact with it.	- Jir - */

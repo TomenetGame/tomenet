@@ -170,7 +170,7 @@ extern header *s_head;
 extern skill_type *s_info;
 extern char *s_name;
 extern char *s_text;
-#if 0
+#if 1
 extern header *st_head;
 extern store_info_type *st_info;
 extern char *st_name;
@@ -329,6 +329,30 @@ extern bool (*master_move_hook)(int Ind, char * parms);
 
 extern int artifact_bias;
 extern char summon_kin_type;
+
+extern u16b old_max_s_idx;
+extern u16b max_s_idx;
+extern u16b max_r_idx;
+extern u16b max_re_idx;
+extern u16b max_k_idx;
+extern u16b max_v_idx;
+extern u16b max_f_idx;
+extern u16b max_a_idx;
+extern u16b max_e_idx;
+extern u16b max_ra_idx;
+extern u16b max_d_idx;
+extern u16b max_o_idx;
+extern u16b max_m_idx;
+extern u16b max_t_idx;
+extern u16b max_rp_idx;
+extern u16b max_c_idx;
+extern u16b max_mc_idx;
+extern u16b max_rmp_idx;
+extern u16b max_st_idx;
+extern u16b max_ba_idx;
+extern u16b max_ow_idx;
+extern u16b max_wf_idx;
+extern s16b max_set_idx;
 
 /*
  * The spell list of schools
@@ -722,7 +746,7 @@ extern int Send_mini_map(int Ind, int y);
 //extern int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval);
 //extern int Send_store_info(int Ind, int num, int owner, int items);
-extern int Send_store_info(int ind, int num, cptr owner, int items, int purse);
+extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse);
 extern int Send_store_sell(int Ind, int price);
 extern int Send_store_kick(int Ind);
 extern int Send_target_info(int ind, int x, int y, cptr buf);

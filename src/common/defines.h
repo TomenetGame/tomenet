@@ -226,7 +226,9 @@
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256 /* Max size for "t_info[]" */
-#define MAX_OW_IDX	128 /* Max size for "ow_info[]" */
+#define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
+#define MAX_ST_IDX	64 /* Max size for "ow_info[]" */
+#define MAX_BA_IDX	64 /* Max size for "ow_info[]" */
 
 
 
@@ -440,13 +442,14 @@
  * Store constants
  */
 #define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven */
-#define STORE_CHOICES	34		/* Number of items to choose stock from */
+#define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER	9		/* Normal shop turnover, per day */
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
+#define STORE_TURNS	(cfg.store_turns)	/* Number of turns between turnovers */
 
 #if 0
 #define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
@@ -4908,4 +4911,35 @@ extern int PlayerUID;
 #define STORE_HATED     0
 #define STORE_LIKED     1
 #define STORE_NORMAL    2
+
+/*
+ * Store flags
+ */
+#define SF1_DEPEND_LEVEL        0x00000001L
+#define SF1_SHALLOW_LEVEL       0x00000002L
+#define SF1_MEDIUM_LEVEL        0x00000004L
+#define SF1_DEEP_LEVEL          0x00000008L
+#define SF1_RARE                0x00000010L
+#define SF1_VERY_RARE           0x00000020L
+#define SF1_COMMON              0x00000040L
+#define SF1_ALL_ITEM            0x00000080L     /* Works as the BM */
+#define SF1_RANDOM              0x00000100L
+#define SF1_FORCE_LEVEL         0x00000200L
+#define SF1_MUSEUM              0x00000400L
+
+/*
+ * Total number of stores (see "store.c", etc)
+ */
+/* This seems to be bad, but backported once anyway;
+ * consider removing them later */
+#define STORE_GENERAL   0
+#define STORE_ARMOURY   1
+#define STORE_WEAPON    2
+#define STORE_TEMPLE    3
+#define STORE_ALCHEMIST 4
+#define STORE_MAGIC     5
+#define STORE_BLACK     6
+#define STORE_HOME      7
+#define STORE_BOOK      8
+#define STORE_PET       9
 

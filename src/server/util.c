@@ -3193,7 +3193,8 @@ static void do_slash_cmd(int Ind, char *message)
 				{
 					for(i=0;i<numtowns;i++)
 					{
-						for (k = 0; k < MAX_STORES - 2; k++)
+//						for (k = 0; k < MAX_STORES - 2; k++)
+						for (k = 0; k < max_st_idx; k++)
 						{
 							/* Shuffle a random shop (except home and auction house) */
 							store_shuffle(&town[i].townstore[k]);
@@ -3751,8 +3752,30 @@ bool show_floor_feeling(int Ind)
 	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : FALSE);
 }
 
+/*
+ * Given item name as string, return the index in k_info array. Name
+ * must exactly match (look out for commas and the like!), or else 0 is 
+ * returned. Case doesn't matter. -DG-
+ */
+
+int test_item_name(cptr name)
+{
+       int i;
+
+       /* Scan the items */
+       for (i = 1; i < MAX_K_IDX; i++)
+       {
+		object_kind *k_ptr = &k_info[i];
+		cptr obj_name = k_name + k_ptr->name;
+
+		/* If name matches, give us the number */
+		if (stricmp(name, obj_name) == 0) return (i);
+       }
+       return (0);
+}
+
 /* 
- * Middle-Earth calendar code from ToME
+ * Middle-Earth (Imladris) calendar code from ToME
  */
 /*
  * Break scalar time

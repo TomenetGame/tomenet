@@ -1353,12 +1353,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					TERM_GREEN, TERM_BLUE, TERM_RED, TERM_L_DARK,
 					TERM_YELLOW, TERM_L_BLUE};
 
+#if 0
 				a = st_attr[cs_ptr->sc.omni];
 				(*cp) = st_char[cs_ptr->sc.omni];
-
-#if 0
-				c = st_info[c_ptr->special].x_char;
-				a = st_info[c_ptr->special].x_attr;
+#else	// 0
+				(*cp) = st_info[cs_ptr->sc.omni].d_char;
+				a = st_info[cs_ptr->sc.omni].d_attr;
 #endif	// 0
 			}
 
