@@ -2827,6 +2827,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 bool interfere(int Ind, int chance)
 {
 	player_type *p_ptr = Players[Ind];
+	monster_race *r_ptr;
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 
 	/* Check if monsters around him/her hinder the action */
@@ -2842,7 +2843,9 @@ bool interfere(int Ind, int chance)
 		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
 		if (i > 0)
 		{
-			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+			r_ptr = race_inf(&m_list[i]);
+//			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
+			if (r_ptr->flags1 & RF1_NEVER_MOVE)
 				continue;
 		}
 		else

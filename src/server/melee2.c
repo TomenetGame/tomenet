@@ -3557,7 +3557,7 @@ static void process_monster(int Ind, int m_idx)
 			    (p_ptr->disturb_move ||
 			     (p_ptr->mon_los[m_idx] &&
 			      p_ptr->disturb_near)) &&
-				r_ptr->d_char != 't')
+				r_ptr->level != 0)
 			{
 				/* Disturb */
                                 if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);

@@ -2818,7 +2818,7 @@ static bool run_test(int Ind)
 			/* Visible monster */
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
 					!(m_list[c_ptr->m_idx].special) &&
-					r_info[m_list[c_ptr->m_idx].r_idx].d_char != 't')
+					r_info[m_list[c_ptr->m_idx].r_idx].level != 0)
 					return (TRUE);
 		}
 
