@@ -6513,7 +6513,11 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
 PROBLEM 11: The main window doesn't display the floor dots in certain
             dungeons, like the Training Tower and Angband. Further, fields
             are sometimes not redrawn correctly, resulting in fake 'trails'.
-SOLUTION:   None so far :/ Seems to happen on Windows XP machines sometimes.
+SOLUTION:   Seems to happen on Windows XP machines sometimes.
+            Workaround (will slightly change the game's look):
+            Edit /lib/user/font-win.prf and comment out the lines which end on
+            the string '\31' (should be 2 lines at the beginning of the file,
+            those labelled 'Floors' and 'Invis Traps').
 
 PROBLEM 12: Every time I connect to the server it will automatically download
             LUA script files. However, they will have a size of 0 Bytes.
