@@ -14,7 +14,7 @@ Admin Commands: art cfg clv cp en eq geno id kick lua purge shutdown sta
 
 /extra
     Along with ordinary sanity alart, it displays *exact* sanity value and
-    numbers of monsters/objects/traps.
+    numbers of monsters/objects.
     If the result is excessive (like 2000+), consider using /purge.
 
 /help
@@ -135,6 +135,15 @@ Note: {worldpos} is interpreted in the following ways.
 
 /unc
     Uncurse items in your inventory.
+
+/unique (unseen | nonkill) {shorthand: /uni}
+    It is aimed to cure the ugliness of unique list when using admin-chars.
+    (The uniques already killed by somebody will appear on the list again
+     when the killer logs on for the next time anyway.)
+        unseen : Set all the uniques to 'unseen' status (ie. r_sights = 0).
+        nonkill: Set all the uniques to 'not killed' status (r_tkills = 0).
+    ex) /uni unseen nonkill
+
 
 /wish * 
     Creates specified items and put them in your inventory.

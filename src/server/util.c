@@ -3002,8 +3002,44 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				else
 				{
-					msg_print(Ind, "Usage: /artifact No.");
+					msg_print(Ind, "Usage: /artifact (No. | (show | fix | reset! | ban!)");
 				}
+				return;
+			}
+			else if (prefix(message, "/unique") ||
+					prefix(message, "/uni"))
+			{
+				bool done = FALSE;
+				monster_race *r_ptr;
+				for (k = 1; k <= tk; k++)
+				{
+					if (prefix(token[k], "unseen"))
+					{
+						for (i = 0; i < MAX_R_IDX - 1 ; i++)
+						{
+							r_ptr = &r_info[i];
+							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+
+							r_ptr->r_sights = 0;
+						}
+						msg_print(Ind, "All the uniques are set as '\377onot seen\377'.");
+						done = TRUE;
+					}
+					else if (prefix(token[k], "nonkill"))
+					{
+						monster_race *r_ptr;
+						for (i = 0; i < MAX_R_IDX - 1 ; i++)
+						{
+							r_ptr = &r_info[i];
+							if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+
+							r_ptr->r_tkills = r_ptr->r_pkills = 0;
+						}
+						msg_print(Ind, "All the uniques are set as '\377onever killed\377'.");
+						done = TRUE;
+					}
+				}
+				if (!done) msg_print(Ind, "Usage: /unique (unseen | nonkill)");
 				return;
 			}
 			else if (prefix(message, "/reload-config") ||

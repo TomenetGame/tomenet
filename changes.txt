@@ -1053,7 +1053,8 @@ TODO: the newest should appear the first!
 - you can no longer drop items on stairs/store-entrances.
 - monster drops stack on the floor too.
 - extra info in unique/arts list available for admin-chars.
-- /arts [show,fix,ban!,reset!]
+- /arts [show,fix,ban!,reset!], /unique [unseen,nonkill]
+- unique r_sight mending code. (maybe we'll need whole savedata checker..)
 [H] you can go into a store with '>' key.
 [B] TV_POTION2 didn't shatter when thrown.
 [B] you couldn't fire missiles, doh!
@@ -1339,6 +1340,7 @@ memo and questions:
 - really intelligent auto-retaliator/borg
 - documentations
 - grec-mythology monsters (GRECANGBAND)
+- allow players to run always, by allowing it to the monsters too?
 
 [sober (intrinsic) ones]
 - savedata editor

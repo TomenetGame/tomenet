@@ -53,7 +53,7 @@ Note:
 
 /extra {alias: /examine shorthand: /ex} 
     Displays extra informations about your character.
-    Currently, this displays how sane you are.
+    Currently, this displays how sane you are, and how deep you can recall.
 
 /feeling {shorthand: /fe}
 	Displays the feeling of the floor you are on.

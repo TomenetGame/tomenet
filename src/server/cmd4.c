@@ -314,7 +314,8 @@ void do_cmd_check_uniques(int Ind, int line)
 					/* Output color byte */
 //					fprintf(fff, "%c", 'y');
 
-					fprintf(fff, " Nobody.");
+					if (r_ptr->r_tkills) fprintf(fff, " Somebody.");
+					else fprintf(fff, " Nobody.");
 				}
 				/* Terminate line */
 				/*                              fprintf(fff, "\n");*/

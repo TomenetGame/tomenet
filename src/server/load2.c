@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: load2.c */
 
 /* Purpose: support for loading savefiles -BEN- */
@@ -5,6 +6,14 @@
 #define SERVER
 
 #include "angband.h"
+
+/*
+ * Set this to 0 when converting from 'MAIN' trunk of CVS
+ * Never forget to take a backup...		- Jir -
+ *
+ * Duplicated version: 3.4.2
+ */
+#define	BRANCH_COMPATIBILITY_CLUDGE 1
 
 static void new_rd_wild();
 static void new_rd_dungeons();
@@ -160,23 +169,23 @@ static byte sf_get(void)
 	return (v);
 }
 
-static void rd_byte(byte *ip)
+void rd_byte(byte *ip)
 {
 	*ip = sf_get();
 }
 
-static void rd_u16b(u16b *ip)
+void rd_u16b(u16b *ip)
 {
 	(*ip) = sf_get();
 	(*ip) |= ((u16b)(sf_get()) << 8);
 }
 
-static void rd_s16b(s16b *ip)
+void rd_s16b(s16b *ip)
 {
 	rd_u16b((u16b*)ip);
 }
 
-static void rd_u32b(u32b *ip)
+void rd_u32b(u32b *ip)
 {
 	(*ip) = sf_get();
 	(*ip) |= ((u32b)(sf_get()) << 8);
@@ -184,7 +193,7 @@ static void rd_u32b(u32b *ip)
 	(*ip) |= ((u32b)(sf_get()) << 24);
 }
 
-static void rd_s32b(s32b *ip)
+void rd_s32b(s32b *ip)
 {
 	rd_u32b((u32b*)ip);
 }
@@ -193,7 +202,7 @@ static void rd_s32b(s32b *ip)
 /*
  * Hack -- read a string
  */
-static void rd_string(char *str, int max)
+void rd_string(char *str, int max)
 {
 	int i;
 
@@ -541,6 +550,17 @@ static void rd_item(object_type *o_ptr)
 	/* Save the inscription */
 	if (note[0]) o_ptr->note = quark_add(note);
 
+	if(!older_than(3,5,4))
+	{
+		rd_u16b(&o_ptr->next_o_idx);
+		rd_u16b(&o_ptr->held_m_idx);
+	}
+	else
+	{
+		o_ptr->next_o_idx = 0;
+		o_ptr->held_m_idx = 0;
+	}
+
 
 #if 0
 	/* Mega-Hack -- handle "dungeon objects" later */
@@ -674,6 +694,7 @@ static void rd_item(object_type *o_ptr)
 	}
 }
 
+#if 0
 static void rd_trap(trap_type *t_ptr)
 {
 	/* Hack -- wipe */
@@ -688,6 +709,22 @@ static void rd_trap(trap_type *t_ptr)
 	rd_byte(&t_ptr->ix);
 	rd_byte((byte*)&t_ptr->found);
 }
+#else	// obsolete - dummy for savefile compatibility
+static void rd_trap()
+{
+	s16b i;
+	byte j;
+
+	rd_s16b(&i);
+	rd_s16b(&i);
+	rd_s16b(&i);
+
+	rd_byte(&j);
+	rd_byte(&j);
+	rd_byte(&j);
+	rd_byte(&j);
+}
+#endif // 0
 
 
 /*
@@ -778,6 +815,18 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
+
+	if(!older_than(3,5,4))
+	{
+		rd_u16b(&m_ptr->hold_o_idx);
+		rd_u16b(&m_ptr->clone);
+	}
+	else
+	{
+		m_ptr->hold_o_idx = 0;
+		m_ptr->clone = 0;
+	}
+
 	rd_s16b(&m_ptr->mind);
 	if (m_ptr->special)
 	{
@@ -802,8 +851,11 @@ static void rd_lore(int r_idx)
 	/* Count sights/deaths/kills */
 	rd_s16b(&r_ptr->r_sights);
 	rd_s16b(&r_ptr->r_deaths);
-	rd_s16b(&r_ptr->r_pkills);
+	rd_s16b(&r_ptr->r_pkills);	// for now, r_pkills is always equal to r_tkills
 	rd_s16b(&r_ptr->r_tkills);
+
+	/* Hack -- if killed, it's been seen */
+	if (r_ptr->r_tkills > r_ptr->r_sights) r_ptr->r_sights = r_ptr->r_tkills;
 
 	/* Count wakes and ignores */
 	rd_byte(&r_ptr->r_wake);
@@ -988,11 +1040,29 @@ static void rd_house(int n)
 	rd_s16b(&house_ptr->wpos.wy);
 	rd_s16b(&house_ptr->wpos.wz);
 
+#if 0
 	if((zcave=getcave(&house_ptr->wpos)) && !(house_ptr->flags&HF_STOCK)){
 		/* add dna to static levels */
 		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
-		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.ptr=house_ptr->dna;
+		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
 	}
+#else	// 0
+	if(zcave=getcave(&house_ptr->wpos))
+	{
+		if (house_ptr->flags&HF_STOCK)
+		{
+			/* add dna to static levels even though town-generated */
+			zcave[house_ptr->dy][house_ptr->dx].special.type=DNA_DOOR;
+			zcave[house_ptr->dy][house_ptr->dx].special.sc.ptr=house_ptr->dna;
+		}
+		else
+		{
+			/* add dna to static levels */
+			zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
+			zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
+		}
+	}
+#endif	// 0
 	if(house_ptr->flags&HF_RECT){
 		rd_byte(&house_ptr->coords.rect.width);
 		rd_byte(&house_ptr->coords.rect.height);
@@ -1086,15 +1156,16 @@ static bool rd_extra(int Ind)
 	char pass[80];
 
 	int i;
+	monster_race *r_ptr;
 
-        byte tmp8u;
-        u16b tmp16b;
+	byte tmp8u;
+	u16b tmp16b;
 
 	rd_string(p_ptr->name, 32);
 
 	rd_string(pass, 80);
 
-	if (strcmp(pass, p_ptr->pass))
+	if (strcmp(pass, p_ptr->pass) && strcmp("Guest", p_ptr->name))
 		return TRUE;
 
 	rd_string(p_ptr->died_from, 80);
@@ -1136,20 +1207,28 @@ static bool rd_extra(int Ind)
 	for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
 
         /* Read the skills */
-        rd_s16b(&tmp16b);
-        if (tmp16b > MAX_SKILLS)
-        {
-                quit("Too many skills!");
-        }
-        for (i = 0; i < tmp16b; ++i)
-        {
-                rd_s32b(&p_ptr->s_info[i].value);
-                rd_u16b(&p_ptr->s_info[i].mod);
-                rd_byte(&p_ptr->s_info[i].dev);
-                rd_byte(&p_ptr->s_info[i].hidden);
-        }
-	rd_s16b(&p_ptr->skill_points);
-	rd_s16b(&p_ptr->skill_last_level);
+	if(!older_than(3,5,5))
+	{
+		rd_s16b(&tmp16b);
+		if (tmp16b > MAX_SKILLS)
+		{
+			quit("Too many skills!");
+		}
+		for (i = 0; i < tmp16b; ++i)
+		{
+			rd_s32b(&p_ptr->s_info[i].value);
+			rd_u16b(&p_ptr->s_info[i].mod);
+			rd_byte(&p_ptr->s_info[i].dev);
+			rd_byte(&p_ptr->s_info[i].hidden);
+		}
+		rd_s16b(&p_ptr->skill_points);
+		rd_s16b(&p_ptr->skill_last_level);
+	}
+	else
+	{
+		/* Set up the skills */
+		/* Do it after basic setups */
+	}
 
 	rd_s32b(&p_ptr->id);
 
@@ -1275,40 +1354,32 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->tim_mimic);
 	rd_s16b(&p_ptr->tim_mimic_what);
 
-	/* Read the unique list info */
-	if (!older_than(3, 0, 3))
-	{
-		int i;
-		u16b tmp16u;
+	/* Monster Memory */
+	rd_u16b(&tmp16b);
 
-		/* Monster Memory */
-		rd_u16b(&tmp16u);
-
-		/* Incompatible save files */
-		if (tmp16u > MAX_R_IDX)
-		{
-			s_printf("Too many (%u) monster races!", tmp16u);
-			return (22);
-		}
-#if 0
-		if (older_than(3, 0, 5))
-		{
-			for (i = 0; i < tmp16u; i++) rd_byte(&p_ptr->r_killed[i]);
-		}
-		else
-		{
-			for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
-		}
-#endif
-			for (i = 0; i < tmp16u; i++) rd_s16b(&p_ptr->r_killed[i]);
-	}
-#if 0
-	else
+	/* Incompatible save files */
+	if (tmp16b > MAX_R_IDX)
 	{
-		int i;
-		for (i = 0; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = FALSE;
+		s_printf("Too many (%u) monster races!", tmp16b);
+		return (22);
 	}
+	for (i = 0; i < tmp16b; i++)
+	{
+		rd_s16b(&p_ptr->r_killed[i]);
+
+		/* Hack -- try to fix the unique list */
+		r_ptr = &r_info[i];
+
+#if 0	// obsolete maybe
+		if (p_ptr->r_killed[i] && !r_ptr->r_sights)
+			r_ptr->r_sights = 1;
 #endif	// 0
+
+		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
+				(r_ptr->flags1 & RF1_UNIQUE))
+			r_ptr->r_tkills = r_ptr->r_pkills = r_ptr->r_sights = 1;
+	}
+
 
 	/* Future use */
 	for (i = 0; i < 44; i++) rd_byte(&tmp8u);
@@ -1408,6 +1479,8 @@ static errr rd_inventory(int Ind)
 			/* Only if this isn't a "death" restore */
 			if (!a_info[forge.name1].cur_num && !p_ptr->death)
 				a_info[forge.name1].cur_num = 1;
+			if (!a_info[forge.name1].known && (forge.ident & ID_KNOWN))
+				a_info[forge.name1].known = TRUE;
 		}
 
 		/* Wield equipment */
@@ -1541,8 +1614,11 @@ static errr rd_dungeon(void)
 	cave_type **zcave;
 	u16b max_y, max_x;
 
-	int i, y, x;
+//	int i, y, x;
+	int i;
+	byte k, y, x;
 	cave_type *c_ptr;
+	dun_level *l_ptr;
 
 	unsigned char runlength, feature;
 	u16b flags;
@@ -1562,13 +1638,12 @@ static errr rd_dungeon(void)
 	/* Alloc before doing NPOD() */
 	alloc_dungeon_level(&wpos);
 	zcave=getcave(&wpos);
+	l_ptr = getfloor(&wpos);
 
 	/* players on this depth */
 	rd_s16b(&tmp16b);
 	new_players_on_depth(&wpos,tmp16b,FALSE);
 #if DEBUG_LEVEL > 1
-//	s_printf("%d players on %d,%d,%d.\n", tmp16b, wpos.wx, wpos.wy, wpos.wz);
-//	s_printf("%d players on %d,%d,%d.\n", players_on_depth(&wpos), wpos.wx, wpos.wy, wpos.wz);
 	s_printf("%d players on %s.\n", players_on_depth(&wpos), wpos_format(&wpos));
 #endif
 
@@ -1585,7 +1660,29 @@ static errr rd_dungeon(void)
 	rd_byte(&tmp);
 	new_level_rand_x(&wpos, tmp);
 
+	if (l_ptr)
+	{
+		time_t now;
+		now=time(&now);
+		l_ptr->lastused=now;
+
+		if(!older_than(3,4,2) && BRANCH_COMPATIBILITY_CLUDGE)
+		{
+			rd_u32b(&l_ptr->flags1);
+			rd_byte(&l_ptr->hgt);
+			rd_byte(&l_ptr->wid);
+		}
+		else
+		{
+			l_ptr->flags1 = 0;
+			l_ptr->hgt = MAX_HGT;
+			l_ptr->wid = MAX_WID;
+		}
+	}
+
 	/*** Run length decoding ***/
+
+	/* where do all these features go, long time ago... ? */
 
 	/* Load the dungeon data */
 	for (x = y = 0; y < max_y; )
@@ -1609,7 +1706,7 @@ static errr rd_dungeon(void)
 			/* set flags */
 			c_ptr->info = flags;
 
-			/* incrament our position */
+			/* increment our position */
 			x++;
 			if (x >= max_x)
 			{
@@ -1619,6 +1716,34 @@ static errr rd_dungeon(void)
 			}
 		}
 	}
+
+	/*** another run for c_special ***/
+	if(!older_than(3,5,3))
+		while (1)
+		{
+			rd_byte(&x);
+			rd_byte(&y);
+			rd_byte(&k);
+
+			/* terminated? */
+			if (x == 255 && y == 255 && k == 255) break;
+
+			c_ptr = &zcave[y][x];
+			c_ptr->special.type = k;
+			
+			/* csfunc will take care of it :) */
+			csfunc[k].load(sc_is_pointer(k) ?
+					c_ptr->special.sc.ptr : &c_ptr->special, c_ptr);
+		}
+
+	/*
+	 * TeraHack -- was central town loaded?
+	 * w/o this check, bad bad things will happen...	FIXME
+	 */
+#if 0
+	if (wpos.wx == cfg.town_x && wpos.wy == cfg.town_y && wpos.wz == 0)
+		central_town_loaded = TRUE;
+#endif
 
 	/* Success */
 	return (0);
@@ -1958,6 +2083,37 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->ignore = NULL;
 	p_ptr->afk = FALSE;
 
+	if(older_than(3,5,5))
+	{
+		/* Set up the skills */
+		p_ptr->skill_points = 0;
+		p_ptr->skill_last_level = 1;
+		for (i = 1; i < MAX_SKILLS; i++)
+			p_ptr->s_info[i].dev = FALSE;
+		for (i = 1; i < MAX_SKILLS; i++)
+		{
+			s32b value = 0, mod = 0;
+
+			compute_skills(p_ptr, &value, &mod, i);
+
+			init_skill(p_ptr, value, mod, i);
+
+			/* Develop only revelant branches */
+			if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod)
+			{
+				int z = s_info[i].father;
+
+				while (z != -1)
+				{
+					p_ptr->s_info[z].dev = TRUE;
+					z = s_info[z].father;
+					if (z == 0)
+						break;
+				}
+			}
+		}
+	}
+
 	(void)confirm_admin(Ind, p_ptr->name, p_ptr->pass);
 
 	/* Success */
@@ -2002,7 +2158,7 @@ errr rd_server_savefile()
 
 	errr err = 0;
 
-	char savefile[1024];
+	char savefile[MAX_PATH_LENGTH];
 
 	byte tmp8u;
 	u16b tmp16u;
@@ -2010,7 +2166,7 @@ errr rd_server_savefile()
 	s32b tmp32s;
 
 	/* Savefile name */
-	path_build(savefile, 1024, ANGBAND_DIR_SAVE, "server");
+	path_build(savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server");
 
 	/* The server savefile is a binary file */
 	fff = my_fopen(savefile, "rb");
@@ -2151,13 +2307,14 @@ errr rd_server_savefile()
 		o_max = tmp16u;
 	}
 
-	/* Read trap info if new enough */
-	if (!older_than(3,2,2))	// does this even make sense?
+	/* Read trap info if old enough, lol */
+	if(older_than(3,5,3))
 	{
 		rd_u16b(&tmp16u);
 
 		/* Incompatible save files */
-		if (tmp16u > MAX_TR_IDX)
+		//if (tmp16u > MAX_TR_IDX)
+		if (tmp16u > 32768)
 		{
 			s_printf(format("Too many (%u) traps!", tmp16u));
 			return (26);
@@ -2166,11 +2323,12 @@ errr rd_server_savefile()
 		/* Read the available records */
 		for (i = 0; i < tmp16u; i++)
 		{		
-			rd_trap(&t_list[i]);
+			//rd_trap(&t_list[i]);
+			rd_trap();
 		}
 
 		/* Set the maximum object number */
-		t_max = tmp16u;
+		//t_max = tmp16u;
 	}
 
 	/* Read house info if new enough */
@@ -2209,7 +2367,7 @@ errr rd_server_savefile()
 						x=houses[j].dx;
 						y=houses[j].dy;
 						cave[i][y][x].special.type=DNA_DOOR;
-						cave[i][y][x].special.ptr=houses[j].dna;
+						cave[i][y][x].special.sc.ptr=houses[j].dna;
 					}
 				}
 			}
@@ -2292,7 +2450,8 @@ errr rd_server_savefile()
 	return (err);
 }
 
-void new_rd_wild(){
+void new_rd_wild()
+{
 	int x,y,i;
 	wilderness_type *wptr;
 	struct dungeon_type *d_ptr;
@@ -2337,11 +2496,13 @@ void new_rd_wild(){
 	}
 }
 
-void new_rd_dungeons(){
+void new_rd_dungeons()
+{
 	while(!rd_dungeon());
 }
 
-void rd_towns(){
+void rd_towns()
+{
 	int i, j;
 	struct worldpos twpos;
 	twpos.wz=0;
