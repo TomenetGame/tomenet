@@ -149,7 +149,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 	if (p_ptr->prace == RACE_ENT && !p_ptr->body_monster)
 	{
-		msg_print(Ind, "You cannot eat foods.");
+		msg_print(Ind, "You cannot eat food.");
 		return;
 	}
 
@@ -347,7 +347,7 @@ void do_cmd_eat_food(int Ind, int item)
 				msg_print(Ind, "That tastes good.");
 				if (p_ptr->blind || no_lite(Ind))
 				{
-					msg_print(Ind, "You feel a paper in it - what a pity you cannot see!");
+					msg_print(Ind, "You feel some paper in it - what a pity you cannot see!");
 				}
 				else
 				{
@@ -2027,8 +2027,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				 * w/o my fix, this scroll causes crash when finishing house
 				 * creation.  Pfft
 				 */
-#if 0
-				//			unsigned char *ins=quark_str(o_ptr->note);
+				//unsigned char *ins=quark_str(o_ptr->note);
 				cptr ins=quark_str(o_ptr->note);
 				bool floor=TRUE;
 				bool jail=FALSE;
@@ -2049,12 +2048,8 @@ void do_cmd_read_scroll(int Ind, int item)
 					}
 				}
 				house_creation(Ind, floor, jail);
-#else	// 0
-				msg_print(Ind, "This is a broken house creation scroll.");
 				ident = TRUE;
-				keep = TRUE;
 				break;
-#endif	// 0
 			}
 
 			case SV_SCROLL_GOLEM:
@@ -7060,7 +7055,7 @@ void do_cmd_fletchery(int Ind)
 
 	if (get_skill(p_ptr, SKILL_ARCHERY) < 10)	/* 20 */
 	{
-		msg_print(Ind, "You don't know how to create ammos well.");
+		msg_print(Ind, "You don't know how to create ammo well.");
 		return;
 	}
 

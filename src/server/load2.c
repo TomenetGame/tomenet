@@ -2000,26 +2000,8 @@ errr rd_server_savefile()
 	{
 		rd_house(i);
 		if(!(houses[i].flags&HF_STOCK))
-			wild_add_uhouses(&houses[i].wpos);
+			wild_add_uhouse(&houses[i].wpos);
 	}
-	/* insert houses into wild space if needed */
-#if 0 /* for now */
-	for (i=-MAX_WILD;i<0;i++){
-		if(cave[i]){
-			int j;
-			for(j=0;j<num_houses;j++){
-				if(inarea(wpos, &houses[j].wpos)){
-					int x,y;
-					/* add the house dna */	
-					x=houses[j].dx;
-					y=houses[j].dy;
-					cave[i][y][x].special.type=CS_DNADOOR;
-					cave[i][y][x].special.sc.ptr=houses[j].dna;
-				}
-			}
-		}
-	}
-#endif /*if 0 evileye */
 
 	/* Read the player name database if new enough */
 	{

@@ -409,34 +409,34 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		    {
 		    case BOW_BRAND_ELEC:
                     case BOW_BRAND_BALL_ELEC:
-		      msg_print(Ind, "\377oYour ammos sparkle with lightnings !");
+		      msg_print(Ind, "\377oYour ammo sparkles with lightnings !");
 		      break;
                     case BOW_BRAND_BALL_COLD:
 		    case BOW_BRAND_COLD:
-		      msg_print(Ind, "\377oYour ammos freeze !");
+		      msg_print(Ind, "\377oYour ammo freezes !");
 		      break;
                     case BOW_BRAND_BALL_FIRE:
 		    case BOW_BRAND_FIRE:
-		      msg_print(Ind, "\377oYour ammos burn !");
+		      msg_print(Ind, "\377oYour ammo burns !");
 		      break;
                     case BOW_BRAND_BALL_ACID:
 		    case BOW_BRAND_ACID:
-		      msg_print(Ind, "\377oYour ammos look acidic !");
+		      msg_print(Ind, "\377oYour ammo looks acidic !");
 		      break;
 		    case BOW_BRAND_POIS:
-		      msg_print(Ind, "\377oYour ammos are covered with venom !");
+		      msg_print(Ind, "\377oYour ammo is covered with venom !");
 		      break;
 		    case BOW_BRAND_MANA:
-		      msg_print(Ind, "\377oYour ammos glow with power !");
+		      msg_print(Ind, "\377oYour ammo glows with power !");
 		      break;
 		    case BOW_BRAND_CONF:
-		      msg_print(Ind, "\377oYour ammos glow many colors !");
+		      msg_print(Ind, "\377oYour ammo glows many colors !");
 		      break;
 		    case BOW_BRAND_SHARP:
-		      msg_print(Ind, "\377oYour ammos sharpen !");
+		      msg_print(Ind, "\377oYour ammo sharpens !");
 		      break;
                     case BOW_BRAND_BALL_SOUND:
-                      msg_print(Ind, "\377oYour ammos vibrate !");
+                      msg_print(Ind, "\377oYour ammo vibrates !");
 		      break;
 		    }
 		  notice = TRUE;
@@ -448,7 +448,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	{
 		if (p_ptr->bow_brand)
 		{
-			msg_print(Ind, "\377oYour ammos seem normal again.");
+			msg_print(Ind, "\377oYour ammo seems normal again.");
 			notice = TRUE;
 			t = 0;
 			p = 0;
@@ -6309,7 +6309,7 @@ void telekinesis_aux(int Ind, int item)
 		/* Window stuff */
 		p2_ptr->window |= (PW_INVEN | PW_EQUIP);
 
-		msg_format(Ind2, "You are hit by a powerfull magic wave from %s.", p_ptr->name);
+		msg_format(Ind2, "You are hit by a powerful magic wave from %s.", p_ptr->name);
 	}
 
 	/* Wipe it */

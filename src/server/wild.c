@@ -2431,12 +2431,15 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
 						if(((struct guildsave*)data)->mode){
 							fputc(c_ptr->feat, gfp);
-							if(c_ptr->feat==FEAT_HOME){
+							if(c_ptr->feat==FEAT_HOME || c_ptr->feat==FEAT_HOME_OPEN){
 								id=0;
-								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr))
+								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && (key=cs_ptr->sc.ptr)){
+									fseek(gfp, -1, SEEK_CUR);
+									fputc(FEAT_HOME_HEAD, gfp);
 									id=key->id;
-								fputc((id>>8), gfp);
-								fputc(id&0xff, gfp);
+									fputc((id>>8), gfp);
+									fputc(id&0xff, gfp);
+								}
 								
 							}
 						}
@@ -2567,8 +2570,6 @@ void wild_add_uhouse(house_type *h_ptr)
 			return;
 		}
 	}
-//	cs_ptr->type=CS_DNADOOR;
-
 	c_ptr->feat=FEAT_HOME;
 
 	cs_ptr->sc.ptr=h_ptr->dna;

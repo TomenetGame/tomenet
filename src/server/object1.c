@@ -3961,7 +3961,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f5 & (TR5_WOUNDING))
 	{
-		fprintf(fff, "It is very sharp and make your foes bleed.\n");
+		fprintf(fff, "It is very sharp and makes your foes bleed.\n");
 	}
 
 	if (f1 & (TR1_KILL_DRAGON))

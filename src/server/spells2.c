@@ -5454,13 +5454,13 @@ bool poly_build(int Ind, char *args)
 		/* CS_DNADOOR seems to be added twice (wild_add_uhouse)..
 		 * please correct it, Evileye?	- Jir -
 		 */
+#if 0
 		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))){
-//			curr->cs->type=CS_DNADOOR;
 			curr->cs->sc.ptr=curr->dna;
 		}
+#endif
 		builders=curr;
 		return TRUE;
-
 	}
 
 	if(args){

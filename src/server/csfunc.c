@@ -83,7 +83,7 @@ void defsave(c_special *cs_ptr){
 }
 void defsee(void *ptr, int Ind){
 }
-int defhit(void *ptr, int Ind){
+int defhit(void *ptr, int y, int x, int Ind){
 	return(1);
 }
 
@@ -92,7 +92,7 @@ void dnaload(c_special *cs_ptr){
 }
 void dnasave(c_special *cs_ptr){
 }
-int dnahit(void *ptr, int Ind){
+int dnahit(void *ptr, int y, int x, int Ind){
 	/* we have to know from where we are called! */
 	if(access_door(Ind, (struct dna_type *)ptr)){
 		printf("Access to door!\n");
@@ -104,11 +104,40 @@ int dnahit(void *ptr, int Ind){
 
 /*void keyload(void *ptr, cave_type *c_ptr){ */
 void keyload(c_special *cs_ptr){
+	struct key_type *key;
+	MAKE(key, struct key_type);
+	rd_u16b(&key->id);
+	cs_ptr->sc.ptr=key;
 }
 void keysave(c_special *cs_ptr){
+	struct key_type *key;
+	key=cs_ptr->sc.ptr;
+	wr_u16b(key->id);
 }
-int keyhit(void *ptr, int Ind){
-	printf("keyhit: %d\n", Ind);
+int keyhit(void *ptr, int y, int x, int Ind){
+	struct player_type *p_ptr;
+	int j;
+	struct cave_type **zcave, *c_ptr;
+	struct key_type *key=ptr;
+
+	p_ptr=Players[Ind];
+	if (!(cfg.door_bump_open && p_ptr->easy_open)) return(FALSE);
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	c_ptr=&zcave[y][x];
+
+	if(p_ptr==(struct player_type*)NULL) return(FALSE);
+	for(j=0; j<INVEN_PACK; j++){
+		object_type *o_ptr=&p_ptr->inventory[j];
+		if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
+			c_ptr->feat=FEAT_HOME_OPEN;
+			p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
+			note_spot_depth(&p_ptr->wpos, y, x);
+			everyone_lite_spot(&p_ptr->wpos, y, x);
+			p_ptr->update |= (PU_VIEW | PU_LITE);
+			msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+			return(TRUE);
+		}
+	}
 	return(0);
 }
 
@@ -140,7 +169,7 @@ void tsave(c_special *cs_ptr)
 void tsee(void *ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
-int thit(void *ptr, int Ind){
+int thit(void *ptr, int y, int x, int Ind){
 	printf("thit: %d\n", Ind);
 	return(0);
 }
@@ -159,7 +188,7 @@ void insc_save(c_special *cs_ptr){
 	wr_u16b(insc->found);
 }
 
-int insc_hit(void *ptr, int Ind){
+int insc_hit(void *ptr, int y, int x, int Ind){
 	printf("hit inscr\n");
 	return(0);
 }
@@ -191,7 +220,7 @@ void betweensave(c_special *cs_ptr)
 void betweensee(void *ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
-int betweenhit(void *ptr, int Ind){
+int betweenhit(void *ptr, int y, int x, int Ind){
 	printf("bhit: %d\n", Ind);
 	return(0);
 }

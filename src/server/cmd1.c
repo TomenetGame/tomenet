@@ -2853,7 +2853,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* one activate is enough */
 		cs_ptr=c_ptr->special;
 		while(cs_ptr){
-			csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
+			csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, y, x, Ind);
 			cs_ptr=cs_ptr->next;
 		}
 
