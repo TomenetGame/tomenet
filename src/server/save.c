@@ -356,19 +356,23 @@ static errr wr_savefile(void)
 	}
 
 
-	/* Write spell data */
-	wr_u32b(spell_learned1);
-	wr_u32b(spell_learned2);
-	wr_u32b(spell_worked1);
-	wr_u32b(spell_worked2);
-	wr_u32b(spell_forgotten1);
-	wr_u32b(spell_forgotten2);
+        /* Write spell data */
+	wr_u16b(MAX_REALM);
+        for (j = 0; j < MAX_REALM; j++)
+        {
+                wr_u32b(spell_learned1[j]);
+                wr_u32b(spell_learned2[j]);
+                wr_u32b(spell_worked1[j]);
+                wr_u32b(spell_worked2[j]);
+                wr_u32b(spell_forgotten1[j]);
+                wr_u32b(spell_forgotten2[j]);
 
-	/* Dump the ordered spells */
-	for (i = 0; i < 64; i++)
-	{
-		wr_byte(spell_order[i]);
-	}
+                /* Dump the ordered spells */
+                for (i = 0; i < 64; i++)
+                {
+                        wr_byte(spell_order[j][i]);
+                }
+        }
 
 
 	/* Write the inventory */
@@ -1521,7 +1525,7 @@ static bool wr_savefile_new(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int        i;
+	int        i,j ;
 
 	u32b              now, tmp32u;
 
@@ -1649,18 +1653,22 @@ static bool wr_savefile_new(int Ind)
 
 
 	/* Write spell data */
-	wr_u32b(p_ptr->spell_learned1);
-	wr_u32b(p_ptr->spell_learned2);
-	wr_u32b(p_ptr->spell_worked1);
-	wr_u32b(p_ptr->spell_worked2);
-	wr_u32b(p_ptr->spell_forgotten1);
-	wr_u32b(p_ptr->spell_forgotten2);
+	wr_u16b(MAX_REALM);
+        for (j = 0; j < MAX_REALM; j++)
+        {
+                wr_u32b(p_ptr->spell_learned1[j]);
+                wr_u32b(p_ptr->spell_learned2[j]);
+                wr_u32b(p_ptr->spell_worked1[j]);
+                wr_u32b(p_ptr->spell_worked2[j]);
+                wr_u32b(p_ptr->spell_forgotten1[j]);
+                wr_u32b(p_ptr->spell_forgotten2[j]);
 
-	/* Dump the ordered spells */
-	for (i = 0; i < 64; i++)
-	{
-		wr_byte(p_ptr->spell_order[i]);
-	}
+                /* Dump the ordered spells */
+                for (i = 0; i < 64; i++)
+                {
+                        wr_byte(p_ptr->spell_order[j][i]);
+                }
+        }
 
 
 	/* Write the inventory */

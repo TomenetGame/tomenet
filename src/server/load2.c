@@ -1808,7 +1808,7 @@ static errr rd_savefile_new_aux(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, j;
 
 	u16b tmp16u;
 	u32b tmp32u;
@@ -1965,18 +1965,31 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->mp_ptr = &magic_info[p_ptr->pclass];
 
 
-	/* Read spell info */
-	rd_u32b(&p_ptr->spell_learned1);
-	rd_u32b(&p_ptr->spell_learned2);
-	rd_u32b(&p_ptr->spell_worked1);
-	rd_u32b(&p_ptr->spell_worked2);
-	rd_u32b(&p_ptr->spell_forgotten1);
-	rd_u32b(&p_ptr->spell_forgotten2);
+        /* Read the spell infos array */
+	rd_u16b(&tmp16u);
 
-	for (i = 0; i < 64; i++)
+	/* Incompatible save files */
+	if (tmp16u > MAX_REALM)
 	{
-		rd_byte(&p_ptr->spell_order[i]);
+		s_printf(format("Too many (%u) spell entries!", tmp16u));
+		return (25);
 	}
+
+        /* Read spell info */
+        for (j = 0; j < tmp16u; j++)
+        {
+                rd_u32b(&p_ptr->spell_learned1[j]);
+                rd_u32b(&p_ptr->spell_learned2[j]);
+                rd_u32b(&p_ptr->spell_worked1[j]);
+                rd_u32b(&p_ptr->spell_worked2[j]);
+                rd_u32b(&p_ptr->spell_forgotten1[j]);
+                rd_u32b(&p_ptr->spell_forgotten2[j]);
+
+                for (i = 0; i < 64; i++)
+                {
+                        rd_byte(&p_ptr->spell_order[j][i]);
+                }
+        }
 
 	/* 
 	   quick hack to fix messed up my spells...

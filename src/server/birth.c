@@ -820,7 +820,7 @@ static void player_wipe(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *old_inven;
-	int i;
+	int i, j;
 
 
 	/* Hack -- save the inventory pointer */
@@ -856,11 +856,14 @@ static void player_wipe(int Ind)
 	p_ptr->food = PY_FOOD_FULL - 1;
 
 
-	/* Wipe the spells */
-	p_ptr->spell_learned1 = p_ptr->spell_learned2 = 0L;
-	p_ptr->spell_worked1 = p_ptr->spell_worked2 = 0L;
-	p_ptr->spell_forgotten1 = p_ptr->spell_forgotten2 = 0L;
-	for (i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
+        /* Wipe the spells */
+        for (j = 0; j < MAX_REALM; j++)
+        {
+                p_ptr->spell_learned1[j] = p_ptr->spell_learned2[j] = 0L;
+                p_ptr->spell_worked1[j] = p_ptr->spell_worked2[j] = 0L;
+                p_ptr->spell_forgotten1[j] = p_ptr->spell_forgotten2[j] = 0L;
+                for (i = 0; i < 64; i++) p_ptr->spell_order[j][i] = 99;
+        }
 
 	/* Assume no winning game */
 	p_ptr->total_winner = FALSE;

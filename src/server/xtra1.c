@@ -821,19 +821,12 @@ static void calc_spells(int Ind)
 
 	magic_type		*s_ptr;
 
-	cptr p = ((p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK) ? "prayer" : "spell");
+	cptr p = "spell";
 
-	if (p_ptr->pclass == CLASS_WARRIOR)
-	{
-		p = "technique";
- 	}
-	
-	/* Hack -- must be literate */
-	if (!p_ptr->mp_ptr->spell_book) return;
-
+#if 0 // DGDGDGDG
 
 	/* Determine the number of spells allowed */
-	levels = p_ptr->lev - p_ptr->mp_ptr->spell_first + 1;
+	levels = p_ptr->lev;
 
 	/* Hack -- no negative spells */
 	if (levels < 0) levels = 0;
@@ -846,7 +839,7 @@ static void calc_spells(int Ind)
 	num_known = 0;
 
 	/* Count the number of spells we know */
-	for (j = 0; j < 64; j++)
+        for (j = 0; j < 64; j++)
 	{
 		/* Count known spells */
 		if ((j < 32) ?
@@ -1067,6 +1060,7 @@ static void calc_spells(int Ind)
 
 	/* Save the new_spells value */
 	p_ptr->old_spells = p_ptr->new_spells;
+#endif
 }
 
 
@@ -1149,7 +1143,7 @@ static void calc_mana(int Ind)
 #endif
 
 	/* Extract "effective" player level */
-	levels = (p_ptr->lev - p_ptr->mp_ptr->spell_first) + 1;
+	levels = p_ptr->lev;
 
 	/* Hack -- no negative mana */
 	if (levels < 0) levels = 0;

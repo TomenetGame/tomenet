@@ -81,22 +81,22 @@ static s16b spell_chance(int Ind, magic_type *s_ptr)
  * The spell must be legible, not forgotten, and also, to cast,
  * it must be known, and to study, it must not be known.
  */
-bool spell_okay(int Ind, int j, bool known)
+bool spell_okay(int Ind, int realm, int j, bool known)
 {
 	player_type *p_ptr = Players[Ind];
 
 	magic_type *s_ptr;
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[realm].info[j];
 
 	/* Spell is illegal */
 	if (s_ptr->slevel > p_ptr->lev) return (FALSE);
 
 	/* Spell is forgotten */
 	if ((j < 32) ?
-	    (p_ptr->spell_forgotten1 & (1L << j)) :
-	    (p_ptr->spell_forgotten2 & (1L << (j - 32))))
+	    (p_ptr->spell_forgotten1[realm] & (1L << j)) :
+	    (p_ptr->spell_forgotten2[realm] & (1L << (j - 32))))
 	{
 		/* Never okay */
 		return (FALSE);
@@ -104,8 +104,8 @@ bool spell_okay(int Ind, int j, bool known)
 
 	/* Spell is learned */
 	if ((j < 32) ?
-	    (p_ptr->spell_learned1 & (1L << j)) :
-	    (p_ptr->spell_learned2 & (1L << (j - 32))))
+	    (p_ptr->spell_learned1[realm] & (1L << j)) :
+	    (p_ptr->spell_learned2[realm] & (1L << (j - 32))))
 	{
 		/* Okay to cast, not to study */
 		return (known);
@@ -125,7 +125,7 @@ bool spell_okay(int Ind, int j, bool known)
  * The strings in this function were extracted from the code in the
  * functions "do_cmd_cast()" and "do_cmd_pray()" and may be dated.
  */
-static void spell_info(int Ind, char *p, int j)
+static void spell_info(int Ind, char *p, int book, int j)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -135,7 +135,7 @@ static void spell_info(int Ind, char *p, int j)
 #ifdef DRS_SHOW_SPELL_INFO
 
 	/* Mage spells */
-	if (p_ptr->mp_ptr->spell_book == TV_MAGIC_BOOK)
+	if (book == TV_MAGIC_BOOK)
 	{
 		int plev = p_ptr->lev;
 
@@ -180,7 +180,7 @@ static void spell_info(int Ind, char *p, int j)
 	}
 
 	/* Priest spells */
-	if (p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK)
+	if (book == TV_PRAYER_BOOK)
 	{
 		int plev = p_ptr->lev;
 
@@ -218,9 +218,9 @@ static void spell_info(int Ind, char *p, int j)
 	}
 
 	/* Sorcery spells */
-	if (p_ptr->mp_ptr->spell_book == TV_SORCERY_BOOK)
+	if (book == TV_SORCERY_BOOK)
 	{
-		int plev = p_ptr->lev;
+		int plev = get_skill(p_ptr, SKILL_SORCERY);
 
 		/* Analyze the spell */
 		switch (j)
@@ -257,9 +257,9 @@ static void spell_info(int Ind, char *p, int j)
 	}
 	
 	/* Rogue spells */
-	if (p_ptr->mp_ptr->spell_book == TV_SHADOW_BOOK)
+	if (book == TV_SHADOW_BOOK)
 	{
-		int plev = p_ptr->lev;
+		int plev = get_skill(p_ptr, SKILL_SHADOW);
 
 		/* Analyze the spell */
 		switch (j)
@@ -267,17 +267,17 @@ static void spell_info(int Ind, char *p, int j)
 			case 0: strcpy(p, " range 10"); break;
                         case 1: sprintf(p, " dam %d", 8 + (plev / 2)); break;
                         case 9: sprintf(p, " power %d", 30 + (plev * 3)); break;
-                        case 13: sprintf(p, " dur %d+d20", 20 + plev); break;
-                        case 18: sprintf(p, " dur %d+d20", 20 + plev); break;
+                        case 13: sprintf(p, " dur %d+d20", 20 + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150)); break;
+                        case 18: sprintf(p, " dur %d+d20", 20 + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150)); break;
                         case 33: sprintf(p, " range %d", 10 + (plev / 5)); break;
-                        case 40: sprintf(p, " dur %d+d20", 20 + plev); break;
-                        case 43: sprintf(p, " dur %d+d20", 30 + plev); break;
+                        case 40: sprintf(p, " dur %d+d20", 20 + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150)); break;
+                        case 43: sprintf(p, " dur %d+d20", 30 + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150)); break;
 		}
 	}
 
 	
 	/* Archer spells */
-	if (p_ptr->mp_ptr->spell_book == TV_HUNT_BOOK)
+	if (book == TV_HUNT_BOOK)
 	{
 		/* Analyze the spell */
 		switch (j)
@@ -299,35 +299,58 @@ static void spell_info(int Ind, char *p, int j)
 	}
 
 	
-	/* Archer spells */
-	if (p_ptr->mp_ptr->spell_book == TV_PSI_BOOK)
-	{
-	  int plev = p_ptr->lev;
-	  
-	  /* Analyze the spell */
-	  switch (j)
-	    {
-	    case 1: sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 5), 4 + (plev / 5)); break;
-	    case 10: sprintf(p, " dur %d+d20", p_ptr->lev); break;
-	    case 13: sprintf(p, " dur %d+d20", p_ptr->lev); break;
-	    case 14: sprintf(p, " dam 10d%d", p_ptr->lev); break;
-	    case 18: sprintf(p, " dur 30+d20"); break;
-	    case 19: sprintf(p, " dur 30+d20"); break;
-	    case 20: sprintf(p, " dam 100+d%d", plev * 2); break;
-	    case 21: sprintf(p, " dam %d", 150 + (plev * 3)); break;
-	    case 23: sprintf(p, " dam %d", 200 + (plev * 2)); break;
-	    case 33: sprintf(p, " dur %d+d10", p_ptr->lev); break;
-	    case 40: sprintf(p, " heal %dd6", plev / 2); break;
-	    case 43: sprintf(p, " dur %d+d10", p_ptr->lev / 2); break;
-	    case 44: sprintf(p, " dur d%d", p_ptr->lev + 10); break;
-	    case 45: sprintf(p, " heal 5000"); break;
-	    }
-	}
-	
+	/* Telepathy powers */
+	if (book == TV_PSI_BOOK)
+        {
+                int plev = p_ptr->lev;
+
+                /* Analyze the spell */
+                switch (j)
+                {
+                case 1: sprintf(p, " dam %dd%d", 3 + ((plev - 1) / 5), 4 + (plev / 5)); break;
+                case 10: sprintf(p, " dur %d+d20", p_ptr->lev); break;
+                case 13: sprintf(p, " dur %d+d20", p_ptr->lev); break;
+                case 14: sprintf(p, " dam 10d%d", p_ptr->lev); break;
+                case 18: sprintf(p, " dur 30+d20"); break;
+                case 19: sprintf(p, " dur 30+d20"); break;
+                case 20: sprintf(p, " dam 100+d%d", plev * 2); break;
+                case 21: sprintf(p, " dam %d", 150 + (plev * 3)); break;
+                case 23: sprintf(p, " dam %d", 200 + (plev * 2)); break;
+                case 33: sprintf(p, " dur %d+d10", p_ptr->lev); break;
+                case 40: sprintf(p, " heal %dd6", plev / 2); break;
+                case 43: sprintf(p, " dur %d+d10", p_ptr->lev / 2); break;
+                case 44: sprintf(p, " dur d%d", p_ptr->lev + 10); break;
+                case 45: sprintf(p, " heal 5000"); break;
+                }
+        }
+
 #endif
 
 }
 
+
+/* Find the realm, given a book(tval) */
+int find_realm(int book)
+{
+        switch (book)
+        {
+        case TV_MAGIC_BOOK:
+                return REALM_MAGERY;
+        case TV_PRAYER_BOOK:
+                return REALM_PRAYER;
+        case TV_SORCERY_BOOK:
+                return REALM_SORCERY;
+        case TV_FIGHT_BOOK:
+                return REALM_FIGHTING;
+        case TV_SHADOW_BOOK:
+                return REALM_SHADOW;
+        case TV_PSI_BOOK:
+                return REALM_PSI;
+        case TV_HUNT_BOOK:
+                return REALM_HUNT;
+        };
+        return -1;
+}
 
 /*
  * Print a list of spells (for browsing or casting)
@@ -344,7 +367,9 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 
 	char		info[80];
 
-	char		out_val[160];
+        char		out_val[160];
+
+        int realm = find_realm(book);
 
 
 	/* Dump the spells */
@@ -354,7 +379,7 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 		j = spell[i];
 
 		/* Access the spell */
-		s_ptr = &p_ptr->mp_ptr->info[j];
+		s_ptr = &magic_info[realm].info[j];
 
 		/* Skip illegible spells */
 		if (s_ptr->slevel >= 99)
@@ -367,34 +392,34 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 		/* XXX XXX Could label spells above the players level */
 
 		/* Get extra info */
-		spell_info(Ind, info, j);
+		spell_info(Ind, info, book, j);
 
 		/* Use that info */
 		comment = info;
 
 		/* Analyze the spell */
 		if ((j < 32) ?
-		    ((p_ptr->spell_forgotten1 & (1L << j))) :
-		    ((p_ptr->spell_forgotten2 & (1L << (j - 32)))))
+		    ((p_ptr->spell_forgotten1[realm] & (1L << j))) :
+		    ((p_ptr->spell_forgotten2[realm] & (1L << (j - 32)))))
 		{
 			comment = " forgotten";
 		}
 		else if (!((j < 32) ?
-		           (p_ptr->spell_learned1 & (1L << j)) :
-		           (p_ptr->spell_learned2 & (1L << (j - 32)))))
+		           (p_ptr->spell_learned1[realm] & (1L << j)) :
+		           (p_ptr->spell_learned2[realm] & (1L << (j - 32)))))
 		{
 			comment = " unknown";
 		}
 		else if (!((j < 32) ?
-		           (p_ptr->spell_worked1 & (1L << j)) :
-		           (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		           (p_ptr->spell_worked1[realm] & (1L << j)) :
+		           (p_ptr->spell_worked2[realm] & (1L << (j - 32)))))
 		{
 			comment = " untried";
 		}
 
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
-		        I2A(i), spell_names[p_ptr->mp_ptr->spell_type][j],
+		        I2A(i), spell_names[realm][j],
 		        s_ptr->slevel, s_ptr->smana, spell_chance(Ind, s_ptr), comment);
 		Send_spell_info(Ind, book, i, out_val);
 	}
@@ -415,6 +440,7 @@ void do_cmd_browse(int Ind, int book)
 
 	object_type		*o_ptr;
 
+        int realm;
 
 	/* Warriors are illiterate */
 	if (!p_ptr->mp_ptr->spell_book)
@@ -466,15 +492,15 @@ void do_cmd_browse(int Ind, int book)
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;
-
+        realm = find_realm(o_ptr->tval);
 
 	/* Extract spells */
 	for (i = 0; i < 64; i++)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-		    (spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-		    (spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+		    (spell_flags[realm][sval][0] & (1L << i)) :
+		    (spell_flags[realm][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spell[num++] = i;
@@ -500,24 +526,14 @@ void do_cmd_study(int Ind, int book, int spell)
 
 	int			j = -1;
 
-	cptr p = ((p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK) ? "prayer" : "spell");
+	cptr                    p = "spell";
 
-	object_type		*o_ptr;
+        object_type		*o_ptr;
+
+        int realm;
 
 	byte spells[64], num = 0;
 	
-	if (p_ptr->pclass == CLASS_WARRIOR)
-	{
-		p = "technique";
-	}
-
-
-	if (!p_ptr->mp_ptr->spell_book)
-	{
-		msg_print(Ind, "You cannot read books!");
-		return;
-	}
-
 	if (p_ptr->blind || no_lite(Ind))
 	{
 		msg_print(Ind, "You cannot see!");
@@ -537,7 +553,7 @@ void do_cmd_study(int Ind, int book, int spell)
 	}
 
 	/* Restrict choices to "useful" books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
+// DGDGDGDG	item_tester_tval = p_ptr->mp_ptr->spell_book;
 
 	/* Get the item (in the pack) */
 	if (book >= 0)
@@ -550,13 +566,13 @@ void do_cmd_study(int Ind, int book, int spell)
 	{
 		o_ptr = &o_list[0 - book];
 	}
-
+/*
 	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
 	{
 		msg_print(Ind, "SERVER ERROR: Trying to gain a spell from a bad book!");
 		return;
 	}
-
+*/
         if (!can_use(Ind, o_ptr))
         {
                 msg_print(Ind, "You are not high level enough.");
@@ -566,16 +582,17 @@ void do_cmd_study(int Ind, int book, int spell)
 	/* Access the item's sval */
 	sval = o_ptr->sval;
 
+        realm = find_realm(o_ptr->tval);
 
 	/* Mage -- Learn a selected spell */
-	if ((p_ptr->mp_ptr->spell_book == TV_MAGIC_BOOK) || (p_ptr->mp_ptr->spell_book == TV_HUNT_BOOK) || (p_ptr->mp_ptr->spell_book == TV_PSI_BOOK))
+	if ((o_ptr->tval == TV_SORCERY_BOOK) || (o_ptr->tval == TV_MAGIC_BOOK) || (o_ptr->tval == TV_HUNT_BOOK) || (o_ptr->tval == TV_PSI_BOOK) || (o_ptr->tval == TV_SHADOW_BOOK) || (o_ptr->tval == TV_FIGHT_BOOK))
 	{
 		for (i = 0; i < 64; i++)
 		{
 			/* Check for this spell */
 			if ((i < 32) ?
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+				(spell_flags[realm][sval][0] & (1L << i)) :
+				(spell_flags[realm][sval][1] & (1L << (i - 32))))
 			{
 				/* Collect this spell */
 				spells[num++] = i;
@@ -585,87 +602,13 @@ void do_cmd_study(int Ind, int book, int spell)
 		/* Set the spell number */
 		j = spells[spell];
 
-		if (!spell_okay(Ind, j, FALSE))
+		if (!spell_okay(Ind, realm, j, FALSE))
 		{
 			msg_print(Ind, "You cannot gain that spell!");
 			return;
 		}
 	}
 
-	/* Sorcery -- Learn a selected spell */
-	if (p_ptr->mp_ptr->spell_book == TV_SORCERY_BOOK)
-	{
-		for (i = 0; i < 64; i++)
-		{
-			/* Check for this spell */
-			if ((i < 32) ?
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
-			{
-				/* Collect this spell */
-				spells[num++] = i;
-			}
-		}
-
-		/* Set the spell number */
-		j = spells[spell];
-
-		if (!spell_okay(Ind, j, FALSE))
-		{
-			msg_print(Ind, "You cannot gain that spell!");
-			return;
-		}
-	}
-
-	/* Shadow -- Learn a selected spell */
-	if (p_ptr->mp_ptr->spell_book == TV_SHADOW_BOOK)
-	{
-		for (i = 0; i < 64; i++)
-		{
-			/* Check for this spell */
-			if ((i < 32) ?
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
-			{
-				/* Collect this spell */
-				spells[num++] = i;
-			}
-		}
-
-		/* Set the spell number */
-		j = spells[spell];
-
-		if (!spell_okay(Ind, j, FALSE))
-		{
-			msg_print(Ind, "You cannot gain that spell!");
-			return;
-		}
-	}
-
-	/* Fighting -- Learn a selected technique */
-	if (p_ptr->mp_ptr->spell_book == TV_FIGHT_BOOK)
-	{
-		for (i = 0; i < 64; i++)
-		{
-			/* Check for this spell */
-			if ((i < 32) ?
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-				(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
-			{
-				/* Collect this spell */
-				spells[num++] = i;
-			}
-		}
-
-		/* Set the spell number */
-		j = spells[spell];
-
-		if (!spell_okay(Ind, j, FALSE))
-		{
-			msg_print(Ind, "You cannot gain that technique!");
-			return;
-		}
-	}
 
 	/* Priest -- Learn a random prayer */
 	if (p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK)
@@ -677,11 +620,11 @@ void do_cmd_study(int Ind, int book, int spell)
 		{
 			/* Check spells in the book */
 			if ((i < 32) ?
-			    (spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			    (spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			    (spell_flags[realm][sval][0] & (1L << i)) :
+			    (spell_flags[realm][sval][1] & (1L << (i - 32))))
 			{
 				/* Skip non "okay" prayers */
-				if (!spell_okay(Ind, i, FALSE)) continue;
+				if (!spell_okay(Ind, realm, i, FALSE)) continue;
 
 				/* Hack -- Prepare the randomizer */
 				k++;
@@ -709,26 +652,26 @@ void do_cmd_study(int Ind, int book, int spell)
 	/* Learn the spell */
 	if (j < 32)
 	{
-		p_ptr->spell_learned1 |= (1L << j);
+		p_ptr->spell_learned1[realm] |= (1L << j);
 	}
 	else
 	{
-		p_ptr->spell_learned2 |= (1L << (j - 32));
+		p_ptr->spell_learned2[realm] |= (1L << (j - 32));
 	}
 
 	/* Find the next open entry in "spell_order[]" */
 	for (i = 0; i < 64; i++)
 	{
 		/* Stop at the first empty space */
-		if (p_ptr->spell_order[i] == 99) break;
+		if (p_ptr->spell_order[realm][i] == 99) break;
 	}
 
 	/* Add the spell to the known list */
-	p_ptr->spell_order[i++] = j;
+	p_ptr->spell_order[realm][i++] = j;
 
 	/* Mention the result */
 	msg_format(Ind, "You have learned the %s of %s.",
-	           p, spell_names[p_ptr->mp_ptr->spell_type][j]);
+	           p, spell_names[realm][j]);
 
 	/* One less spell available */
 	p_ptr->new_spells--;
@@ -1009,7 +952,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Require spell ability */
-	if (p_ptr->mp_ptr->spell_book != TV_MAGIC_BOOK)
+	if (!get_skill(p_ptr, SKILL_MAGERY))
 	{
 		msg_print(Ind, "You cannot cast spells!");
 		return;
@@ -1030,9 +973,6 @@ void do_cmd_cast(int Ind, int book, int spell)
 	}
 
 
-	/* Restrict choices to spell books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -1045,7 +985,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - book];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_MAGIC_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
 		return;
@@ -1063,8 +1003,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_MAGERY][sval][0] & (1L << i)) :
+			(spell_flags[REALM_MAGERY][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -1077,14 +1017,14 @@ void do_cmd_cast(int Ind, int book, int spell)
         /* cast mage spells on others */
         else j = spells[spell-64];
 	
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, REALM_MAGERY, j, 1))
 	{
 		msg_print(Ind, "You cannot cast that spell.");
 		return;
 	}
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_MAGERY].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -1657,19 +1597,19 @@ void do_cmd_cast(int Ind, int book, int spell)
 		}
 		/* A spell was cast */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_MAGERY] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_MAGERY] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_MAGERY] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_MAGERY] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -1736,7 +1676,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 	int plev = p_ptr->lev;
 	int beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 
-	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
+	magic_type *s_ptr = &magic_info[REALM_MAGERY].info[p_ptr->current_spell];
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -2030,18 +1970,18 @@ void do_cmd_cast_aux(int Ind, int dir)
 	}	
 		
 	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
+		(p_ptr->spell_worked1[REALM_MAGERY] & (1L << p_ptr->current_spell)) :
+		(p_ptr->spell_worked2[REALM_MAGERY] & (1L << (p_ptr->current_spell - 32)))))
 	{
 		int e = s_ptr->sexp;
 
 		if (p_ptr->current_spell < 32)
 		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_spell);
+			p_ptr->spell_worked1[REALM_MAGERY] |= (1L << p_ptr->current_spell);
 		}
 		else
 		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_spell - 32));
+			p_ptr->spell_worked2[REALM_MAGERY] |= (1L << (p_ptr->current_spell - 32));
 		}
 
 		gain_exp(Ind, e * s_ptr->slevel);
@@ -2114,7 +2054,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	int			plev = p_ptr->lev;
+	int			plev = get_skill(p_ptr, SKILL_SORCERY);
 	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type		*o_ptr;
@@ -2129,13 +2069,12 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
-	
-	/* Require spell ability */
-	if (p_ptr->mp_ptr->spell_book != TV_SORCERY_BOOK)
-	{
-		msg_print(Ind, "You cannot cast spells!");
-		return;
-	}
+
+        if (!get_skill(p_ptr, SKILL_SORCERY))
+        {
+                msg_print(Ind, "you cannot cast sorcery spells.");
+                return;
+        }
 
 	/* Require lite */
 	if (p_ptr->blind || no_lite(Ind))
@@ -2151,10 +2090,6 @@ void do_cmd_sorc(int Ind, int book, int spell)
 		return;
 	}
 
-
-	/* Restrict choices to spell books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -2167,7 +2102,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - book];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_SORCERY_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
 		return;
@@ -2185,8 +2120,8 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_SORCERY][sval][0] & (1L << i)) :
+			(spell_flags[REALM_SORCERY][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -2198,14 +2133,14 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	/* Affecting other spells */
 	else j = spells[spell-64];
 
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, REALM_SORCERY, j, 1))
 	{
 		msg_print(Ind, "You cannot cast that spell.");
 		return;
 	}
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_SORCERY].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -2637,19 +2572,19 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 		/* A spell was cast */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_SORCERY] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_SORCERY] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_SORCERY] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_SORCERY] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -2713,10 +2648,10 @@ void do_cmd_sorc_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = p_ptr->lev;
-	int beam = ((p_ptr->pclass == CLASS_SORCERER) ? plev : (plev / 2));
+	int plev = get_skill(p_ptr, SKILL_SORCERY);
+	int beam = ((get_skill(p_ptr, SKILL_SORCERY) >= 20) ? plev : (plev / 2));
 
-	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
+	magic_type *s_ptr = &magic_info[REALM_SORCERY].info[p_ptr->current_spell];
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -2846,18 +2781,18 @@ void do_cmd_sorc_aux(int Ind, int dir)
 	}	
 
 	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
+		(p_ptr->spell_worked1[REALM_SORCERY] & (1L << p_ptr->current_spell)) :
+		(p_ptr->spell_worked2[REALM_SORCERY] & (1L << (p_ptr->current_spell - 32)))))
 	{
 		int e = s_ptr->sexp;
 
 		if (p_ptr->current_spell < 32)
 		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_spell);
+			p_ptr->spell_worked1[REALM_SORCERY] |= (1L << p_ptr->current_spell);
 		}
 		else
 		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_spell - 32));
+			p_ptr->spell_worked2[REALM_SORCERY] |= (1L << (p_ptr->current_spell - 32));
 		}
 
 		gain_exp(Ind, e * s_ptr->slevel);
@@ -2991,7 +2926,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Must use prayer books */
-	if (p_ptr->mp_ptr->spell_book != TV_PRAYER_BOOK)
+	if (!get_skill(p_ptr, SKILL_PRAY))
 	{
 		msg_print(Ind, "Pray hard enough and your prayers may be answered.");
 		return;
@@ -3012,9 +2947,6 @@ void do_cmd_pray(int Ind, int book, int spell)
 	}
 
 
-	/* Restrict choices */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	item = book;
 
 	/* Get the item (in the pack) */
@@ -3029,7 +2961,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - item];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_PRAYER_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to pray prayer from bad book!");
 		return;
@@ -3046,8 +2978,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_PRAYER][sval][0] & (1L << i)) :
+			(spell_flags[REALM_PRAYER][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -3064,14 +2996,14 @@ void do_cmd_pray(int Ind, int book, int spell)
 	/* heal other prayers */
 	else j = spells[spell-64];
 	
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, o_ptr->tval, j, 1))
 	{
 		msg_print(Ind, "You cannot pray that prayer.");
 		return;
 	}
 	
 	/* get the spell info */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_PRAYER].info[j];
 	
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -3098,7 +3030,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	{
 		/* Check interference */
 //		if (interfere(Ind, p_ptr->pclass == CLASS_PRIEST ? 2 : 3)) return;
-		if (interfere(Ind, cfg.spell_interfere * (p_ptr->pclass == CLASS_PRIEST ? 2 : 3) / 3)) return;
+		if (interfere(Ind, cfg.spell_interfere)) return;
 
 		if (spell >= 64) j += 64;
 		switch (j)
@@ -3661,19 +3593,19 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 		/* A prayer was prayed */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_PRAYER] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_PRAYER] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_PRAYER] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_PRAYER] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -3735,7 +3667,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 
 	int plev = p_ptr->lev;
 	
-	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
+	magic_type *s_ptr = &magic_info[REALM_PRAYER].info[p_ptr->current_spell];
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -3923,18 +3855,18 @@ void do_cmd_pray_aux(int Ind, int dir)
 	}
 
 	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
+		(p_ptr->spell_worked1[REALM_PRAYER] & (1L << p_ptr->current_spell)) :
+		(p_ptr->spell_worked2[REALM_PRAYER] & (1L << (p_ptr->current_spell - 32)))))
 	{
 		int e = s_ptr->sexp;
 
 		if (p_ptr->current_spell < 32)
 		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_spell);
+			p_ptr->spell_worked1[REALM_PRAYER] |= (1L << p_ptr->current_spell);
 		}
 		else
 		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_spell - 32));
+			p_ptr->spell_worked2[REALM_PRAYER] |= (1L << (p_ptr->current_spell - 32));
 		}
 
 		gain_exp(Ind, e * s_ptr->slevel);
@@ -4223,7 +4155,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 	byte spells[64], num = 0;
 
 	/* Require spell ability */
-	if (p_ptr->mp_ptr->spell_book != TV_FIGHT_BOOK)
+	if (!get_skill(p_ptr, SKILL_MASTERY))
 	{
 		msg_print(Ind, "You cannot use fighting techniques!");
 		return;
@@ -4244,9 +4176,6 @@ void do_cmd_fight(int Ind, int book, int spell)
 	}
 
 
-	/* Restrict choices to spell books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -4259,7 +4188,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - book];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_FIGHT_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to use technique from bad book!");
 		return;
@@ -4277,8 +4206,8 @@ void do_cmd_fight(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_FIGHTING][sval][0] & (1L << i)) :
+			(spell_flags[REALM_FIGHTING][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -4288,14 +4217,14 @@ void do_cmd_fight(int Ind, int book, int spell)
 	/* Set the spell number */
 	j = spells[spell];
 
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, REALM_FIGHTING, j, 1))
 	{
 		msg_print(Ind, "You cannot use that technique.");
 		return;
 	}
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_FIGHTING].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -4406,19 +4335,19 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 		/* A spell was cast */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_FIGHTING] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_FIGHTING] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_FIGHTING] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_FIGHTING] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -4499,7 +4428,7 @@ void do_cmd_fight_aux(int Ind, int dir)
 
 	int plev = p_ptr->lev;
 
-	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
+	magic_type *s_ptr = &magic_info[REALM_FIGHTING].info[p_ptr->current_spell];
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -4574,18 +4503,18 @@ void do_cmd_fight_aux(int Ind, int dir)
 	}	
 
 	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
+		(p_ptr->spell_worked1[REALM_FIGHTING] & (1L << p_ptr->current_spell)) :
+		(p_ptr->spell_worked2[REALM_FIGHTING] & (1L << (p_ptr->current_spell - 32)))))
 	{
 		int e = s_ptr->sexp;
 
 		if (p_ptr->current_spell < 32)
 		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_spell);
+			p_ptr->spell_worked1[REALM_FIGHTING] |= (1L << p_ptr->current_spell);
 		}
 		else
 		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_spell - 32));
+			p_ptr->spell_worked2[REALM_FIGHTING] |= (1L << (p_ptr->current_spell - 32));
 		}
 
 		gain_exp(Ind, e * s_ptr->slevel);
@@ -4649,9 +4578,8 @@ void do_cmd_shad(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	int			plev = p_ptr->lev;
-//	int			rad = 15 + p_ptr->lev / 3; /* rogue is good at this */
-	int			rad = DEFAULT_RADIUS_SPELL(p_ptr) * 3 / 2;	/* XXX use skill instead! */
+	int			plev = get_skill(p_ptr, SKILL_SHADOW);
+	int			rad = 15 + plev / 3;
 
 	object_type		*o_ptr;
 
@@ -4667,7 +4595,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Require spell ability */
-	if (p_ptr->mp_ptr->spell_book != TV_SHADOW_BOOK)
+	if (!get_skill(p_ptr, SKILL_SHADOW))
 	{
 		msg_print(Ind, "You cannot cast spells!");
 		return;
@@ -4688,9 +4616,6 @@ void do_cmd_shad(int Ind, int book, int spell)
 	}
 
 
-	/* Restrict choices to spell books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -4703,7 +4628,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - book];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_SHADOW_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
 		return;
@@ -4721,8 +4646,8 @@ void do_cmd_shad(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_SHADOW][sval][0] & (1L << i)) :
+			(spell_flags[REALM_SHADOW][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -4732,14 +4657,14 @@ void do_cmd_shad(int Ind, int book, int spell)
 	/* Set the spell number */
 	j = spells[spell];
 
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, REALM_SHADOW, j, 1))
 	{
 		msg_print(Ind, "You cannot cast that spell.");
 		return;
 	}
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_SHADOW].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -4824,7 +4749,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 9: /* recharge */
 			{
-				recharge(Ind, 30 + plev * 3);
+				recharge(Ind, get_skill(p_ptr, SKILL_SPELLLENGTH) + 30 + plev * 3);
 				break;
 			}
 			case 10: /* id */
@@ -4844,7 +4769,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 13: /* invis */
 			{
-				set_invis(Ind, p_ptr->tim_invisibility + 20 + randint(20) + plev, plev * 8 / 6);
+				set_invis(Ind, p_ptr->tim_invisibility + 20 + randint(20) + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150), plev * 8 / 6);
 				break;
 			}
 			case 14: /* create food */
@@ -4889,43 +4814,43 @@ void do_cmd_shad(int Ind, int book, int spell)
 				/* Arg nothing .. bah be a warrior */
 				if (!tries) what = CLASS_WARRIOR;
 			
-				set_mimic(Ind, p_ptr->tim_mimic + 20 + randint(20) + plev, what);
+				set_mimic(Ind, p_ptr->tim_mimic + 20 + randint(20) + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150), what);
 				break;
 			}
 			
-		case 19: /* trap craetion */
-		  {
-		    trap_creation(Ind, 7, 1);
-		  }
-			case 20: /* fear monsters */
-			{
-				(void)fear_monsters(Ind);
+                case 19: /* trap craetion */
+                        {
+                                trap_creation(Ind, 7, 1);
+                        }
+                case 20: /* fear monsters */
+                        {
+                                (void)fear_monsters(Ind);
+                                break;
+                        }
+                case 21: /* sleep monsters */
+                        {
+                                (void)sleep_monsters(Ind);
+                                break;
+                        }
+
+                case 22: /* stun monsters */
+                        {
+                                (void)stun_monsters(Ind);
 				break;
-			}
-			case 21: /* sleep monsters */
-			{
-				(void)sleep_monsters(Ind);
-				break;
-			}
-		
-			case 22: /* stun monsters */
-			{
-				(void)stun_monsters(Ind);
-				break;
-			}
-			
+                        }
+
 		case 23: /* Summon Foes */
-		  {
-		    int k;
+                        {
+                                int k;
 
-		    msg_format_near(Ind, "%s summons some monsters!", p_ptr->name);
+                                msg_format_near(Ind, "%s summons some monsters!", p_ptr->name);
 
-		    for (k = 0; k < (p_ptr->lev / 10); k++)
-		      {
-			summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0);
-		      }
-		  }
-			
+                                for (k = 0; k < (p_ptr->lev / 10); k++)
+                                {
+                                        summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0);
+                                }
+                        }
+
 			case 24: /* banish curses */
 			{
 				remove_curse(Ind);
@@ -4978,7 +4903,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 				if (!p_ptr->word_recall)
 				{
 					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(20) + 15;
+					p_ptr->word_recall = rand_int(20 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 19)) + 15;
 					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
@@ -4994,7 +4919,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 				if (!p_ptr->word_recall)
 				{
 					set_recall_depth(p_ptr, o_ptr);
-					p_ptr->word_recall = rand_int(5) + 1;
+					p_ptr->word_recall = rand_int(5 - get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 4)) + 1;
 					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
 				else
@@ -5007,12 +4932,12 @@ void do_cmd_shad(int Ind, int book, int spell)
 			
 			case 40: /* armor of night */
 			{
-				set_shield(Ind, p_ptr->shield + randint(20) + 20 + plev);
+				set_shield(Ind, p_ptr->shield + randint(20) + 20 + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150));
 				break;
 			}
 			case 41: /* day of misrule */
 			{
-				int i = randint(30) + 30;
+				int i = randint(30) + 30 + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150);
 				cptr p = ((!p_ptr->male) ? "Daughters" : "Sons");
 				msg_format(Ind, "%s of Night rejoice!  It's the Day of Misrule!", p);
 				(void)set_fast(Ind, i);
@@ -5026,26 +4951,26 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 			case 43: /* avoid traps */
 			{
-				set_tim_traps(Ind, p_ptr->tim_traps + 30 + randint(20) + plev);
+				set_tim_traps(Ind, p_ptr->tim_traps + 30 + randint(20) + plev + get_skill_scale(p_ptr, SKILL_SPELLLENGTH, 150));
 				break;
 			}
 		}
 
 		/* A spell was cast */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_SHADOW] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_SHADOW] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_SHADOW] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_SHADOW] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -5127,7 +5052,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	if (check_antimagic(Ind)) antifail = TRUE;
 
 	/* Require spell ability */
-	if (p_ptr->mp_ptr->spell_book != TV_HUNT_BOOK)
+	if (!get_skill(p_ptr, SKILL_ARCHERY))
 	{
 		msg_print(Ind, "You cannot cast spells!");
 		return;
@@ -5147,10 +5072,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 		return;
 	}
 
-
-	/* Restrict choices to spell books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -5163,7 +5084,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 		o_ptr = &o_list[0 - book];
 	}
 
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
+	if (o_ptr->tval != TV_HUNT_BOOK)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to cast spell from bad book!");
 		return;
@@ -5181,8 +5102,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	{
 		/* Check for this spell */
 		if ((i < 32) ?
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][0] & (1L << i)) :
-			(spell_flags[p_ptr->mp_ptr->spell_type][sval][1] & (1L << (i - 32))))
+			(spell_flags[REALM_HUNT][sval][0] & (1L << i)) :
+			(spell_flags[REALM_HUNT][sval][1] & (1L << (i - 32))))
 		{
 			/* Collect this spell */
 			spells[num++] = i;
@@ -5192,14 +5113,14 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	/* Set the spell number */
 	j = spells[spell];
 
-	if (!spell_okay(Ind, j, 1))
+	if (!spell_okay(Ind, REALM_HUNT, j, 1))
 	{
 		msg_print(Ind, "You cannot cast that spell.");
 		return;
 	}
 
 	/* Access the spell */
-	s_ptr = &p_ptr->mp_ptr->info[j];
+	s_ptr = &magic_info[REALM_HUNT].info[j];
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)
@@ -5393,19 +5314,19 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 		/* A spell was cast */
 		if (!((j < 32) ?
-		      (p_ptr->spell_worked1 & (1L << j)) :
-		      (p_ptr->spell_worked2 & (1L << (j - 32)))))
+		      (p_ptr->spell_worked1[REALM_HUNT] & (1L << j)) :
+		      (p_ptr->spell_worked2[REALM_HUNT] & (1L << (j - 32)))))
 		{
 			int e = s_ptr->sexp;
 
 			/* The spell worked */
 			if (j < 32)
 			{
-				p_ptr->spell_worked1 |= (1L << j);
+				p_ptr->spell_worked1[REALM_HUNT] |= (1L << j);
 			}
 			else
 			{
-				p_ptr->spell_worked2 |= (1L << (j - 32));
+				p_ptr->spell_worked2[REALM_HUNT] |= (1L << (j - 32));
 			}
 
 			/* Gain experience */
@@ -5471,7 +5392,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 
 	int plev = p_ptr->lev;
 
-	magic_type *s_ptr = &p_ptr->mp_ptr->info[p_ptr->current_spell];
+	magic_type *s_ptr = &magic_info[REALM_SHADOW].info[p_ptr->current_spell];
 
 	/* Only fire in direction 5 if we have a target */
 	if ((dir == 5) && !target_okay(Ind))
@@ -5527,18 +5448,18 @@ void do_cmd_shad_aux(int Ind, int dir)
 	}	
 
 	if (!((p_ptr->current_spell < 32) ?
-		(p_ptr->spell_worked1 & (1L << p_ptr->current_spell)) :
-		(p_ptr->spell_worked2 & (1L << (p_ptr->current_spell - 32)))))
+		(p_ptr->spell_worked1[REALM_SHADOW] & (1L << p_ptr->current_spell)) :
+		(p_ptr->spell_worked2[REALM_SHADOW] & (1L << (p_ptr->current_spell - 32)))))
 	{
 		int e = s_ptr->sexp;
 
 		if (p_ptr->current_spell < 32)
 		{
-			p_ptr->spell_worked1 |= (1L << p_ptr->current_spell);
+			p_ptr->spell_worked1[REALM_SHADOW] |= (1L << p_ptr->current_spell);
 		}
 		else
 		{
-			p_ptr->spell_worked2 |= (1L << (p_ptr->current_spell - 32));
+			p_ptr->spell_worked2[REALM_SHADOW] |= (1L << (p_ptr->current_spell - 32));
 		}
 
 		gain_exp(Ind, e * s_ptr->slevel);
@@ -6428,7 +6349,8 @@ void do_cmd_mimic(int Ind, int spell)
  */
 void do_cmd_psi(int Ind, int book, int spell)
 {
-	player_type *p_ptr = Players[Ind];
+#if 0 // DGDGDGDG no more for the time being
+        player_type *p_ptr = Players[Ind];
 
 	int			i, j, sval;
 	int			chance, beam;
@@ -7022,6 +6944,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 
 	/* Window stuff */
 	p_ptr2->window |= (PW_PLAYER);
+#endif
 }
 
 
@@ -7030,7 +6953,8 @@ void do_cmd_psi(int Ind, int book, int spell)
  */
 void do_cmd_psi_aux(int Ind, int dir)
 {
-	player_type *p_ptr = Players[Ind];
+#if 0
+        player_type *p_ptr = Players[Ind];
 
 	int plev = p_ptr->lev;
 	int Ind2;  /* Ind2 = Dominant(caster), Ind = Dominated */
@@ -7194,4 +7118,5 @@ void do_cmd_psi_aux(int Ind, int dir)
 
 	/* Window stuff */
 	p_ptr2->window |= (PW_PLAYER);
+#endif
 }

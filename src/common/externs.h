@@ -292,18 +292,6 @@ extern char tval_to_char[128];
 extern byte keymap_cmds[128];
 extern byte keymap_dirs[128];
 extern byte color_table[256][4];
-/*extern player_type *p_ptr;*/
-/*extern player_race *rp_ptr;
-extern player_class *cp_ptr;
-extern player_magic *mp_ptr;*/
-/*extern u32b spell_learned1;
-extern u32b spell_learned2;
-extern u32b spell_worked1;
-extern u32b spell_worked2;
-extern u32b spell_forgotten1;
-extern u32b spell_forgotten2;
-extern byte spell_order[64];
-extern s16b player_hp[PY_MAX_LEVEL];*/
 extern header *v_head;
 extern vault_type *v_info;
 extern char *v_name;
@@ -910,3 +898,4 @@ extern int stricmp(cptr a, cptr b);
 #endif
 
 extern char	*longVersion;
+extern char	*shortVersion;

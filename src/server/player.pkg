@@ -454,25 +454,6 @@ struct player_type
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
 
-	s16b new_spells;	/* Number of spells available */
-
-	s16b old_spells;
-
-	u32b spell_learned1;	/* bit mask of spells learned */
-	u32b spell_learned2;	/* bit mask of spells learned */
-	u32b spell_worked1;	/* bit mask of spells tried and worked */
-	u32b spell_worked2;	/* bit mask of spells tried and worked */
-	u32b spell_forgotten1;	/* bit mask of spells learned but forgotten */
-	u32b spell_forgotten2;	/* bit mask of spells learned but forgotten */
-	byte spell_order[64];	/* order spells learned/remembered/fogotten */
-
-	bool old_cumber_armor;
-	bool old_cumber_glove;
-	bool old_heavy_wield;
-	bool old_heavy_shoot;
-	bool old_icky_wield;
-	bool old_awkward_wield;	/* Icky weapon */
-
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
 

@@ -648,6 +648,18 @@
 #define CLASS_MONK		10
 #define CLASS_TELEPATH		11
 
+/*
+ * Define the realms
+ */
+#define REALM_MAGERY            0
+#define REALM_PRAYER            1
+#define REALM_SORCERY           2
+#define REALM_FIGHTING          3
+#define REALM_SHADOW            4
+#define REALM_HUNT              5
+#define REALM_PSI               6
+#define REALM_GHOST             7
+#define MAX_REALM               8
 
 
 /*** Screen Locations ***/
@@ -1417,25 +1429,6 @@ that keeps many algorithms happy.
 #define TV_RANDART      102     /* Random Artifacts */
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
-
-#if 0	/* we'll use TomeNET books :) */
-#define TV_VALARIN_BOOK 111
-#define TV_MAGERY_BOOK  112
-#define TV_SHADOW_BOOK  113
-#define TV_CHAOS_BOOK   114
-#define TV_NETHER_BOOK  115
-#define TV_CRUSADE_BOOK 116
-#define TV_SIGALDRY_BOOK 117
-#define TV_SYMBIOTIC_BOOK 118
-#define TV_MUSIC_BOOK   119
-#define TV_MAGIC_BOOK   120
-#define TV_PRAYER_BOOK  121
-#define TV_ILLUSION_BOOK 122
-#define TV_TRIBAL_BOOK  123
-#define TV_DRUID_BOOK   124
-#define TV_DAEMON_BOOK  125
-#define TV_SPIRIT_BOOK  126
-#endif	// 0
 
 /* pernM ones (resurrected) */
 #define TV_KEY		 51      /* Keys (';') */
@@ -4910,6 +4903,10 @@ extern int PlayerUID;
 #define MKEY_SORCERY            1
 #define MKEY_MAGERY             2
 #define MKEY_MIMICRY            3
+#define MKEY_SHADOW             4
+#define MKEY_FIGHTING           5
+#define MKEY_ARCHERING          6
+#define MKEY_PRAY               7
 
 /*
  * Skills
@@ -4936,6 +4933,9 @@ extern int PlayerUID;
 #define SKILL_MAGERY            15
 #define SKILL_MIMIC             16
 #define SKILL_DEVICE            17
+#define SKILL_SHADOW            18
+#define SKILL_PRAY              19
+#define SKILL_SPELLLENGTH       20
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

@@ -1273,15 +1273,10 @@ typedef struct player_magic player_magic;
 struct player_magic
 {
 	s16b spell_book;		/* Tval of spell books (if any) */
-	s16b spell_xtra;		/* Something for later */
 
 	s16b spell_stat;		/* Stat for spells (if any)  */
-	s16b spell_type;		/* Spell type (mage/priest) */
 
-	s16b spell_first;		/* Level of first spell */
-	s16b spell_weight;		/* Weight that hurts spells */
-
-	magic_type info[64];	/* The available spells */
+        magic_type info[64];	/* The available spells */
 };
 
 
@@ -1897,13 +1892,13 @@ struct player_type
 
 	s16b old_spells;
 
-	u32b spell_learned1;	/* bit mask of spells learned */
-	u32b spell_learned2;	/* bit mask of spells learned */
-	u32b spell_worked1;	/* bit mask of spells tried and worked */
-	u32b spell_worked2;	/* bit mask of spells tried and worked */
-	u32b spell_forgotten1;	/* bit mask of spells learned but forgotten */
-	u32b spell_forgotten2;	/* bit mask of spells learned but forgotten */
-	byte spell_order[64];	/* order spells learned/remembered/fogotten */
+	u32b spell_learned1[MAX_REALM];	/* bit mask of spells learned */
+	u32b spell_learned2[MAX_REALM];	/* bit mask of spells learned */
+	u32b spell_worked1[MAX_REALM];	/* bit mask of spells tried and worked */
+	u32b spell_worked2[MAX_REALM];	/* bit mask of spells tried and worked */
+	u32b spell_forgotten1[MAX_REALM];	/* bit mask of spells learned but forgotten */
+	u32b spell_forgotten2[MAX_REALM];	/* bit mask of spells learned but forgotten */
+	byte spell_order[MAX_REALM][64];	/* order spells learned/remembered/fogotten */
 
 	bool old_cumber_armor;
 	bool old_cumber_glove;
