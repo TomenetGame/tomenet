@@ -2337,11 +2337,7 @@ static void process_player_end(int Ind)
 
 				/* Determine the level */
 				/* recalling to surface */
-#ifdef NEW_DUNGEON
 				if(p_ptr->wpos.wz)
-#else
-				if (p_ptr->dun_depth > 0)
-#endif
 				{
 					/* Messages */
 					if(p_ptr->wpos.wz > 0)
@@ -2356,18 +2352,12 @@ static void process_player_end(int Ind)
 					}
 
 					/* New location */
-#ifdef NEW_DUNGEON
 					//					p_ptr->wpos.wz=0;
 					new_pos.wx = p_ptr->wpos.wx;
 					new_pos.wy = p_ptr->wpos.wy;
 					new_pos.wz = 0;
-#else
-					new_depth = 0;
-					new_world_x = p_ptr->world_x;
-					new_world_y = p_ptr->world_y;
-#endif
 					
-					p_ptr->new_level_method = LEVEL_RAND;
+					p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
 				}
 				/* beware! bugs inside! (jir) */
 				/* world travel */

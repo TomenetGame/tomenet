@@ -653,6 +653,7 @@ Change list for PernMangband
 - Fixed targetting bug in new code
 - Some compilation warnings fixed (cleanup)
 - Light bug fixed when changing wilderness area
+- Recalling up/down in wilderness fixed
 
 
 ** [B] stands for Bugfix.

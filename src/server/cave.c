@@ -4441,11 +4441,7 @@ bool projectable_wall(int Depth, int y1, int x1, int y2, int x2)
  *
  * But now the "m" parameter specifies whether "los" is necessary.
  */
-#ifdef NEW_DUNGEON
 void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
-#else
-void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m)
-#endif
 {
 	int nx, ny;
 
@@ -4457,31 +4453,20 @@ void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m)
 		nx = rand_spread(x, d);
 
 		/* Ignore illegal locations and outer walls */
-#ifdef NEW_DUNGEON
 		if (!in_bounds(ny, nx)) continue;
-#else
-		if (!in_bounds(Depth, ny, nx)) continue;
-#endif
 		
 
 		/* Ignore "excessively distant" locations */
 		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
 
 		/* Require "line of sight" */
-#ifdef NEW_DUNGEON
 		if (m || los(wpos, y, x, ny, nx)) break;
-#else
-		if (m || los(Depth, y, x, ny, nx)) break;
-#endif
 	}
 
 	/* Save the location */
 	(*yp) = ny;
 	(*xp) = nx;
 }
-
-
-
 
 /*
  * Track a new monster
