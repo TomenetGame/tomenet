@@ -2290,7 +2290,7 @@ N:173:of Amras
 I:19:12:1
 W:15:10:30:29000
 P:0:0d0:12:15:0
-F:INT | WIS | DEX | XTRA_SHOTS | XTRA_MIGHT | SPEED | 
+F:INT | WIS | DEX | XTRA_SHOTS | XTRA_MIGHT | SPEED | BRAND_ELEC |
 F:RES_FIRE | RES_ELEC | RES_COLD | SLOW_DIGEST
 F:REGEN_MANA
 D:This bow, and its twin, belonged to Feanor's last two twin sons, Amrod 
