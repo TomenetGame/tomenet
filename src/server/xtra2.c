@@ -57,6 +57,8 @@
  * Modifier of semi-promised artifact drops, in percent.
  * It can happen that the quickest player will gather most of those
  * artifact; this can be used to defuse it somewhat.
+ * C. Blue: Better leave this commented out, otherwise _granted_
+ * drops won't be granted anymore.
  */
 // #define SEMI_PROMISED_ARTS_MODIFIER	50
 
@@ -4289,7 +4291,7 @@ if(cfg.unikill_format){
 				object_wipe(qq_ptr);
 				/* Drop Potions Of Learning along with loot */
 				invcopy(qq_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
-				qq_ptr->number = (a_info[a_idx].cur_num == 0)?1:2;
+				qq_ptr->number = (a_info[203].cur_num == 0)?1:2;
 				qq_ptr->note = local_quark;
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 				/* Drop it in the dungeon */
