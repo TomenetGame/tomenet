@@ -4876,7 +4876,7 @@ bool master_level(int Ind, char * parms)
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return;
+	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
 
 	switch (parms[0])
 	{
@@ -4926,7 +4926,7 @@ bool master_build(int Ind, char * parms)
 	cave_type * c_ptr;
 	static unsigned char new_feat = FEAT_WALL_EXTRA;
 
-	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return;
+	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return FALSE;
 	
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms)
@@ -5081,9 +5081,10 @@ bool master_acquire(int Ind, char * parms)
 {
 	player_type * p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return;
+	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
 	
 	acquirement(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 1, TRUE);
+	return TRUE;
 }
 
 /* Monster summoning options. More documentation on this later. */
@@ -5100,7 +5101,7 @@ bool master_summon(int Ind, char * parms)
 	static u16b r_idx = 0; /* which monser to actually summon, from previous variables */
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
-	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return;
+	if (strcmp(p_ptr->name, cfg_dungeon_master) && (!player_is_king(Ind))) return FALSE;
 	
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms)
@@ -5214,7 +5215,7 @@ bool master_generate(int Ind, char * parms)
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
-	if (strcmp(p_ptr->name, cfg_dungeon_master)) return;
+	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
 
 	switch (parms[0])
 	{

@@ -20,7 +20,7 @@ extern long Id;
 extern int NumPlayers;
 extern int ConsoleSocket;
 extern void process_pending_commands(int Ind);
-extern bool player_is_kind(int Ind);
+extern bool player_is_king(int Ind);
 
 /* randart.c */
 extern artifact_type *randart_make(object_type *o_ptr);
@@ -426,7 +426,8 @@ extern void map_area(int Ind);
 extern void wiz_lite(int Ind);
 extern void wiz_dark(int Ind);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
-extern bool projectabe(int Depth, int y1, int x1, int y2, int x2);
+extern bool projectable(int Depth, int y1, int x1, int y2, int x2);
+extern bool projectable_wall(int Depth, int y1, int x1, int y2, int x2);
 extern void scatter(int Depth, int *yp, int *xp, int y, int x, int d, int m);
 extern void health_track(int Ind, int m_idx);
 extern void update_health(int m_idx);
@@ -521,6 +522,7 @@ extern void do_cmd_cast_aux(int Ind, int dir);
 extern void do_cmd_sorc(int Ind, int book, int spell);
 extern void do_cmd_sorc_aux(int Ind, int dir);
 extern void do_mimic_change(int Ind, int r_idx);
+extern void do_mimic_power_aux(int Ind, int dir);
 extern void do_cmd_mimic(int Ind, int r_idx, int spell);
 extern void do_cmd_pray(int Ind, int book, int spell);
 extern void do_cmd_pray_aux(int Ind, int dir);
@@ -590,6 +592,7 @@ extern errr get_rnd_line(cptr file_name, int entry, char *output);
 extern void alloc_dungeon_level(int Depth);
 extern void dealloc_dungeon_level(int Depth);
 extern void generate_cave(int Depth);
+extern void build_vault(int Depth, int yval, int xval, int ymax, int xmax, cptr data);
 
 /* wilderness.c */
 extern int world_index(int world_x, int world_y);
@@ -920,6 +923,8 @@ extern bool door_creation(int Ind);
 extern bool trap_creation(int Ind);
 extern bool destroy_doors_touch(int Ind);
 extern bool sleep_monsters_touch(int Ind);
+extern bool create_artifact(int Ind);
+extern bool create_artifact_aux(int Ind, int item);
 
 
 /* store.c */
@@ -1041,12 +1046,15 @@ extern bool target_able(int Ind, int m_idx);
 extern bool target_okay(int Ind);
 extern s16b target_pick(int Ind, int y1, int x1, int dy, int dx);
 extern bool target_set(int Ind, int dir);
-extern bool target_friendly(int Ind, int dir);
+extern bool target_set_friendly(int Ind, int dir);
 extern bool get_aim_dir(int Ind/*, int *dp*/);
 extern bool get_item(int Ind);
 extern bool do_scroll_life(int Ind);
 extern bool do_restoreXP_other(int Ind);
 extern int level_speed(int Ind);
+extern bool telekinesis(int Ind, object_type *o_ptr);
+extern void telekinesis_aux(int Ind, int item);
+extern bool set_bow_brand(int Ind, int v, int t, int p);
 
 extern bool master_level(int Ind, char * parms);
 extern bool master_build(int Ind, char * parms);

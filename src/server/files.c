@@ -14,6 +14,9 @@
 
 #include "angband.h"
 
+#ifdef HANDLE_SIGNALS
+#include <signal.h>
+#endif
 
 /*
  * You may or may not want to use the following "#undef".
@@ -2725,7 +2728,6 @@ void exit_game_panic(void)
 #ifdef HANDLE_SIGNALS
 
 
-#include <signal.h>
 
 
 /*

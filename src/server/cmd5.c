@@ -4877,7 +4877,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 	p_ptr->window |= (PW_PLAYER);
 }
 
-void do_mimic_power(int Ind, int power)
+static void do_mimic_power(int Ind, int power)
 {
   player_type *p_ptr = Players[Ind];
   monster_race *r_ptr = &r_info[p_ptr->body_monster];

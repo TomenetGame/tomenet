@@ -1876,11 +1876,11 @@ bool curse_spell_aux(int Ind, int item){
 
 
 	if(artifact_p(o_ptr)) return(FALSE);
-	if(item_tester_hook_weapon(item)){
+	if(item_tester_hook_weapon(o_ptr)){
 		o_ptr->to_h=0-randint(10);
 		o_ptr->to_d=0-randint(10);
 	}
-	else if(item_tester_hook_armour(item)){
+	else if(item_tester_hook_armour(o_ptr)){
 		o_ptr->to_a=0-randint(10);
 	}
 	else{

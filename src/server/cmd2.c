@@ -3118,7 +3118,7 @@ void do_cmd_own(int Ind)
 	}
 	wild_info[p_ptr->dun_depth].own = p_ptr->id;
 	
-	sprintf(buf, "%s %s now owns %d(%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->dun_depth, 50 * p_ptr->dun_depth);
+	sprintf(buf, "%s %s now owns %ld(%ld).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->dun_depth, 50 * p_ptr->dun_depth);
 	msg_broadcast(Ind, buf);
 	msg_print(Ind, buf);
 }

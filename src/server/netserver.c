@@ -3233,7 +3233,7 @@ int Send_direction(int ind)
 		errno = 0;
 		plog(format("Connection not ready for direction (%d.%d.%d)",
 			ind, connp->state, connp->id));
-		return 0;
+		return FALSE;
 	}
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
@@ -3259,7 +3259,7 @@ int Send_direction(int ind)
 		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION);
 	      }
 	  }
-	else return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
+	return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
 }
 
 static bool hack_message = FALSE;

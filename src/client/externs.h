@@ -335,6 +335,7 @@ extern void show_browse(int book);
 extern void do_study(int book);
 extern void do_cast(int book);
 extern void do_pray(int book);
+extern void do_fight(int book);
 extern void do_ghost(void);
 extern void do_mimic();
 

@@ -525,7 +525,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Hack -- always show extra info to dungeon master */
 		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)))
 		{
-			fprintf(fff, " at %d ft", q_ptr->dun_depth * 50);
+			fprintf(fff, " at %ld ft", q_ptr->dun_depth * 50);
 		}
 
 		/* Newline */

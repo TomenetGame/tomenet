@@ -1,5 +1,7 @@
 #include "angband.h"
 
+static void cmd_clear_buffer(void);
+
 /* Handle all commands */
 
 void process_command()
@@ -455,7 +457,7 @@ void process_command()
 
 
 
-void cmd_clear_buffer(void)
+static void cmd_clear_buffer(void)
 {
 	Send_clear_buffer();
 }
