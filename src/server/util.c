@@ -2080,6 +2080,19 @@ bool check_guard_inscription( s16b quark, char what ) {
     return FALSE;
 };  
 
+/*
+ * Litterally.	- Jir -
+ */
+
+char *find_inscription(s16b quark, char *what)
+{
+    const char  *ax = quark_str(quark);
+    if( ax == NULL || !what) { return FALSE; };
+	
+	return (strstr(ax, what));
+}  
+
+
 
 
 
@@ -2499,7 +2512,10 @@ void msg_format_near(int Ind, cptr fmt, ...)
 	msg_print_near(Ind, buf);
 }
 
-
+/*
+ * Allow to cast quickly when using '/cast'. (code by DEG)
+ */
+// #define FRIENDLY_SPELL_BOOST
 
 /*
  * A message prefixed by a player name is sent only to that player.
@@ -2507,10 +2523,10 @@ void msg_format_near(int Ind, cptr fmt, ...)
  */
 void player_talk_aux(int Ind, cptr message)
 {
-	int i, len, target = 0;
+ 	int i, len, target = 0;
 	char search[80], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	cptr colon, problem = "";
+ 	cptr colon, problem = "";
         bool me = FALSE;
 		char c = 'B';
 		int mycolor = 0;
@@ -2579,8 +2595,7 @@ void player_talk_aux(int Ind, cptr message)
 			me = TRUE;
 		}
 		/* Semi-auto item destroyer */
-		else if ((prefix(message, "/dispose")) ||
-				prefix(message, "/dis"))
+		else if ((prefix(message, "/dispose")) || prefix(message, "/dis"))
 		{
 			object_type		*o_ptr;
 			for(i = 0; i < INVEN_PACK; i++)
@@ -2646,6 +2661,202 @@ void player_talk_aux(int Ind, cptr message)
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+			return;
+		}
+		/* '/cast' code is written by Ascrep(DEG). thx! */
+		else if (prefix(message, "/cast"))
+		{
+			int book, whichplayer, whichspell;
+			char *castmessage[50];
+			bool ami = FALSE;
+
+			castmessage[0]=strtok(message," ");
+			if (castmessage[0]==NULL)
+			{
+				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
+				return;
+			}
+
+			for (i=1;i<50;i++)
+			{
+				castmessage[i]=strtok(NULL," ");
+				if (castmessage[i]==NULL)
+					break;
+			}
+
+			if (castmessage[1] != NULL)
+			{
+				if(*castmessage[1]>='1' && *castmessage[1]<='9')
+				{	
+					object_type *o_ptr;
+					char c[4] = "@";
+					bool found = FALSE;
+
+					c[1] = ((p_ptr->pclass == CLASS_PRIEST) ||
+							(p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
+					if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
+					c[2] = *castmessage[1];
+					c[3] = '\0';
+
+					for(i = 0; i < INVEN_PACK; i++)
+					{
+						o_ptr = &(p_ptr->inventory[i]);
+						if (!o_ptr->tval) break;
+
+						if (find_inscription(o_ptr->note, c))
+						{
+							book = i;
+							found = TRUE;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						msg_format(Ind, "\377oInscription {%s} not found.", c);
+						return;
+					}
+//					book = atoi(castmessage[1])-1;
+				}	
+				else
+				{	
+					*castmessage[1] &= ~(0x20);
+					if(*castmessage[1]>='A' && *castmessage[1]<='W')
+					{	
+						book = (int)(*castmessage[1]-'A');
+					}		
+					else 
+					{
+						msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
+						return;
+					}	
+				}
+			}
+			else
+			{
+				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
+				return;
+			}
+
+			if (castmessage[2] != NULL)
+			{
+				/* if number or Capital letter, it's for friends */
+				if(*castmessage[2]>='1' && *castmessage[2]<='9')
+				{	
+//					whichspell = atoi(castmessage[2]+'A'-1);
+					whichspell = atoi(castmessage[2]) - 1;
+					ami = TRUE;
+				}	
+				else if(*castmessage[2]>='a' && *castmessage[2]<='i')
+				{	
+					whichspell = (int)(*castmessage[2]-'a');
+				}		
+				else if(*castmessage[2]>='A' && *castmessage[2]<='I')
+				{
+					whichspell = (int)(*castmessage[2]-'A');
+//					*castmessage[2] &= 0xdf;
+//					whichspell = *castmessage[2]-1;
+					ami = TRUE;
+				}
+				else 
+				{
+
+					msg_print(Ind,"\377oSpell out of range [A-I].");
+					return;
+				}	
+			}
+			else 
+			{
+				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
+				return;
+			}
+
+			if (ami)
+			{
+				if (castmessage[3])
+				{
+					if (!(whichplayer = name_lookup_loose(Ind, castmessage[3], TRUE)))
+						return;
+
+					if (whichplayer == Ind)
+					{
+						msg_print(Ind,"You feel lonely.");
+					}
+					/* Ignore "unreasonable" players */
+					else if (!target_able(Ind, 0 - whichplayer))
+					{
+						msg_print(Ind,"\377oThat player is out of your sight.");
+						return;
+					}
+					else
+					{
+						//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,castmessage[3],whichplayer); 
+						target_set_friendly(Ind,5,whichplayer);
+						whichspell += 64;
+					}
+				}
+			}
+			else
+			{
+				target_set(Ind, 5);
+			}
+
+			switch (p_ptr->pclass)
+			{
+				case CLASS_SORCERER:
+				{
+					do_cmd_sorc(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+
+				case CLASS_TELEPATH:
+				{
+					do_cmd_psi(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+				case CLASS_ROGUE:
+				{
+					do_cmd_shad(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+				case CLASS_ARCHER:
+				{
+					do_cmd_hunt(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+				case CLASS_MAGE:
+				case CLASS_RANGER:
+				{
+					do_cmd_cast(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+				case CLASS_PRIEST:
+				case CLASS_PALADIN:
+				{
+					do_cmd_pray(Ind, book, whichspell);
+#ifdef FRIENDLY_SPELL_BOOST
+					p_ptr->energy += level_speed(p_ptr->dun_depth);
+#endif
+					break;
+				}
+			}
+
+			//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,castmessage[3],whichplayer); 
 			return;
 		}
 				
@@ -2885,14 +3096,14 @@ void player_talk_aux(int Ind, cptr message)
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk dis ignore me tag untag;");
+				msg_print(Ind, "Commands: afk cast dis ignore me tag untag;");
 				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst wish");
 				return;
 			}
 		}
 		else
 		{
-			msg_print(Ind, "Commands: afk dis ignore me tag untag");
+			msg_print(Ind, "Commands: afk cast dis ignore me tag untag");
 			msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 			return;
 		}

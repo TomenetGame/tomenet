@@ -4630,16 +4630,22 @@ bool target_set(int Ind, int dir)
 	return (TRUE);
 }
 
-/* targets the most wounded teammate. should be useful for stuff like heal other 
-and teleport macros. -ADA- */
+/* targets the most wounded teammate. should be useful for stuff like
+ * heal other and teleport macros. -ADA-
+ *
+ * Now this function can take 3rd arg which specifies which player to
+ * set the target.
+ * This part was written by Ascrep(DEG); thx for his courtesy!
+ * */
 
-bool target_set_friendly(int Ind, int dir)
+bool target_set_friendly(int Ind, int dir, ...)
 {
+	va_list ap;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
 	int Depth = p_ptr->dun_depth;
 
-	int		i, m, idx;
+	int		i, m, castplayer, idx;
 
 	int		y;
 	int		x;
@@ -4653,6 +4659,10 @@ bool target_set_friendly(int Ind, int dir)
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
+		va_start(ap,dir);
+		castplayer = va_arg(ap,int);
+		va_end(ap);
+		
 		x = p_ptr->px;
 		y = p_ptr->py;
 
@@ -4666,7 +4676,8 @@ bool target_set_friendly(int Ind, int dir)
 		/* Reset "target" array */
 		p_ptr->target_n = 0;
 
-
+		if (!((castplayer > 0) && (castplayer < 20)))
+		{
 		/* Collect "target-able" players */
 		for (i = 1; i <= NumPlayers; i++)
 		{
@@ -4694,7 +4705,26 @@ bool target_set_friendly(int Ind, int dir)
 			p_ptr->target_idx[p_ptr->target_n] = i;
 			p_ptr->target_n++;
 		}
+		}
+		else
+		{
+			/* Acquire pointer */
+			q_ptr = Players[castplayer];
 
+			/* Skip unconnected players */
+			if (q_ptr->conn == NOT_CONNECTED) return;
+
+			/* Ignore "unreasonable" players */
+			if (!target_able(Ind, 0 - castplayer)) return;
+
+			/* Save the player index */
+			p_ptr->target_x[p_ptr->target_n] = q_ptr->px;
+			p_ptr->target_y[p_ptr->target_n] = q_ptr->py;
+			p_ptr->target_idx[p_ptr->target_n] = castplayer;
+			p_ptr->target_n++;
+		}
+		
+			
 		/* Set the sort hooks */ 
 		ang_sort_comp = ang_sort_comp_distance;
 		ang_sort_swap = ang_sort_swap_distance;
@@ -4702,10 +4732,8 @@ bool target_set_friendly(int Ind, int dir)
 		/* Sort the positions */
 		wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
 
-		/* start at weakest */
-		
 		m = 0;
-	
+
 	/* too lazy to handle dirs right now */
 	
 	/* handle player target.... */	
