@@ -3013,18 +3013,17 @@ void player_talk_aux(int Ind, cptr message)
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
 	}
+	switch((i=censor(message))){
+		default:
+			imprison(Ind, i*20, "swearing");
+		case 1:	msg_print(Ind, "Please do not swear");
+		case 0:
+	}
 
 	/* Send to everyone */
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		if (check_ignore(i, Ind)) continue;
-		switch((i=censor(message))){
-			default:
-				imprison(Ind, i*20, "swearing");
-			case 1:	msg_print(Ind, "Please do not swear");
-			case 0:
-		}
-
 
 		/* Send message */
 		if (!me)
