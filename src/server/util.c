@@ -2495,6 +2495,17 @@ static void do_slash_cmd(int Ind, char *message)
 			if (tk) server_knowledge(Ind);
 			msg_print(Ind, longVersion);
 		}
+		else if(!admin && prefix(message, "/quest")){
+			int i;
+			s16b r;
+			get_mon_num_hook=dungeon_aux;
+			get_mon_num_prep();
+			i=2+randint(7);
+			do{
+				r=get_mon_num(p_ptr->lev);
+			} while(r_info[r].flags1 & RF1_UNIQUE);
+			add_quest(r, i, p_ptr->lev);
+		}
 
 		/*
 		 * Admin commands
