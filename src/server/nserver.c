@@ -111,6 +111,9 @@ int		MetaSocket = -1;
 #ifdef NEW_SERVER_CONSOLE
 int		ConsoleSocket = -1;
 #endif
+#ifdef SERVER_GWPORT
+int		SGWSocket = -1;
+#endif
 
 
 char *showtime(void)
@@ -477,6 +480,7 @@ int Setup_net_server(void)
 
 	s_printf("%s\n", longVersion);
 	s_printf("Server is running version %04x\n", MY_VERSION);
+	time(&cfg.runtime);
 
 	return 0;
 }
@@ -541,6 +545,17 @@ void setup_contact_socket(void)
 
 	/* Install the new console socket */
 	install_input(NewConsole, ConsoleSocket, 0);
+#endif
+#ifdef SERVER_GWPORT
+	/* evileye testing only */
+	if ((SGWSocket = CreateServerSocket(18400)) == -1)
+	{
+		s_printf("Couldn't create server gateway port\n");
+		return;
+	}
+
+	/* Install the new gateway socket */
+	install_input(SGWHit, SGWSocket, 0);
 #endif
 }
 

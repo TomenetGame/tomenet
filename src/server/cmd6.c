@@ -967,7 +967,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 						//				if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 						p_ptr->csp = p_ptr->msp;
 						p_ptr->csp_frac = 0;
-						msg_print(Ind, "Your feel your head clear.");
+						msg_print(Ind, "You feel your head clearing.");
 						p_ptr->redraw |= (PR_MANA);
 						p_ptr->window |= (PW_PLAYER);
 						ident = TRUE;
@@ -2923,7 +2923,7 @@ void do_cmd_use_staff(int Ind, int item)
 				p_ptr->csp = p_ptr->msp;
 				p_ptr->csp_frac = 0;
 				ident = TRUE;
-				msg_print(Ind, "Your feel your head clear.");
+				msg_print(Ind, "You feel your head clearing.");
 				p_ptr->redraw |= (PR_MANA);
 				p_ptr->window |= (PW_PLAYER);
 			}
@@ -6114,7 +6114,7 @@ void do_cmd_activate(int Ind, int item)
 				{
 					p_ptr->csp = p_ptr->msp;
 					p_ptr->csp_frac = 0;
-					msg_print(Ind, "Your feel your head clear.");
+					msg_print(Ind, "You feel your head clearing.");
 					p_ptr->redraw |= (PR_MANA);
 					p_ptr->window |= (PW_PLAYER);
 				}

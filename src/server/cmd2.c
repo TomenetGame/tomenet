@@ -551,67 +551,6 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 		msg_format(Ind, "You identified the trap as %s.",
 			   t_name + t_info[trap].name);
 	}
-# if 0	// bye-bye
-	/* Obtain the traps */
-	trap = chest_traps[o_ptr->pval];
-
-	/* Lose strength */
-	if (trap & CHEST_LOSE_STR)
-	{
-		msg_print(Ind, "A small needle has pricked you!");
-		take_hit(Ind, damroll(1, 4), "a poison needle");
-		(void)do_dec_stat(Ind, A_STR);
-	}
-
-	/* Lose constitution */
-	if (trap & CHEST_LOSE_CON)
-	{
-		msg_print(Ind, "A small needle has pricked you!");
-		take_hit(Ind, damroll(1, 4), "a poison needle");
-		(void)do_dec_stat(Ind, A_CON);
-	}
-
-	/* Poison */
-	if (trap & CHEST_POISON)
-	{
-		msg_print(Ind, "A puff of green gas surrounds you!");
-		if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-		{
-			(void)set_poisoned(Ind, p_ptr->poisoned + 10 + randint(20));
-		}
-	}
-
-	/* Paralyze */
-	if (trap & CHEST_PARALYZE)
-	{
-		msg_print(Ind, "A puff of yellow gas surrounds you!");
-		if (!p_ptr->free_act)
-		{
-			(void)set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(20));
-		}
-	}
-
-	/* Summon monsters */
-	if (trap & CHEST_SUMMON)
-	{
-		int i;
-		int num = 2 + randint(3);
-		msg_print(Ind, "You are enveloped in a cloud of smoke!");
-		for (i = 0; i < num; i++)
-		{
-			(void)summon_specific(&p_ptr->wpos, y, x, getlevel(&p_ptr->wpos), 0);
-		}
-	}
-
-	/* Explode */
-	if (trap & CHEST_EXPLODE)
-	{
-		msg_print(Ind, "There is a sudden explosion!");
-		msg_print(Ind, "Everything inside the chest is destroyed!");
-		o_ptr->pval = 0;
-		take_hit(Ind, damroll(5, 8), "an exploding chest");
-	}
-#endif	// 0
 }
 
 

@@ -1347,40 +1347,6 @@ static void player_setup(int Ind, bool new)
 	if (p_ptr->px >= MAX_WID) p_ptr->px = MAX_WID - 1;
 	if (p_ptr->py >= MAX_HGT) p_ptr->py = MAX_HGT - 1;
 
-#if 0	// nonsense
-	/* Re-Place the player correctly */
-	for (i = 0; i < 3000; i++)
-	{
-		d = (i + 4) / 10;
-
-		/* Pick a location */
-		/* Hack -- ghosts&wraithly Sorcerors do not scatter, as they may not be in a line of sight
-		   with a valid region */
-#if 0
-		//              if (!p_ptr->ghost && !p_ptr->wraith_in_wall)
-		//{
-			// Hack -- require line of sight if the level has not been unstaticed
-			// since the player was last on it.  If the player was on it, then
-			// don't require LOS since he might be stuck in rock and this will hang
-			// the game.
-		//scatter(Depth, &y, &x, p_ptr->py, p_ptr->px, d, unstaticed);
-
-		//if (!in_bounds(Depth, y, x) || !cave_empty_bold(Depth, y, x)) continue;
-		//}
-		//else
-#endif
-		{
-			/* ghosts can be on top of stuff */
-			x = p_ptr->px;
-			y = p_ptr->py;
-		}
-
-		break;
-	}
-	/* Set the player's location */
-	p_ptr->py = y;
-	p_ptr->px = x;
-#else
 	x = p_ptr->px;
 	y = p_ptr->py;
 
@@ -1402,7 +1368,6 @@ static void player_setup(int Ind, bool new)
 			break;
 		}
 	}
-#endif	// 0
 
 	/* Update the location's player index */
 	zcave[y][x].m_idx = 0 - Ind;

@@ -2944,7 +2944,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
 				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
-				msg_print(Ind, "Your feel your life fade away!");
+				msg_print(Ind, "You feel your life fade away!");
 				bypass_invuln = TRUE;
 				take_hit(Ind, dummy, m_name);
 				bypass_invuln = FALSE;

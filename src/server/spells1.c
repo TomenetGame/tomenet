@@ -4913,7 +4913,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif	// 0
 			{
 				int dummy = (((s32b) ((65 + randint(25)) * (m_ptr->hp))) / 100);
-//				msg_print(Ind, "Your feel your life fade away!");
+//				msg_print(Ind, "You feel your life fade away!");
 
 				if (m_ptr->hp - dummy < 1) dummy = m_ptr->hp - 1;
 
@@ -6394,7 +6394,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				int dummy = (((s32b) ((65 + randint(25)) * (p_ptr->chp))) / 100);
 				if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
-				msg_print(Ind, "Your feel your life fade away!");
+				msg_print(Ind, "You feel your life fade away!");
 				bypass_invuln = TRUE;
 				take_hit(Ind, dummy, Players[0-who]->name);
 				bypass_invuln = FALSE;

@@ -3627,7 +3627,7 @@ bool show_floor_feeling(int Ind)
 	if (l_ptr->flags1 & LF1_NO_GENO)
 		msg_print(Ind, "\377oYou have a feeling of peace...");
 	if (l_ptr->flags1 & LF1_NOMAP)
-		msg_print(Ind, "\377oYou feel yourself amnesiac...");
+		msg_print(Ind, "\377oYou lose all sense of direction...");
 	if (l_ptr->flags1 & LF1_NO_MAGIC_MAP)
 		msg_print(Ind, "\377oYou feel like a stranger...");
 	if (l_ptr->flags1 & LF1_NO_DESTROY)

@@ -2297,13 +2297,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 				if (!ident && magik(15))
 				{
-					msg_print(Ind, "You suddenly feel yourself nimble and light.");
+					msg_print(Ind, "You suddenly feel nimble and light.");
 					ident = TRUE;
 				}
 			}
 			if (!ident)
 			{
-				msg_print(Ind, "You feel yourself deracine.");
+				msg_print(Ind, "You feel displaced.");
 			}
 			break;
 		}
@@ -2402,7 +2402,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			k = glev / 5;
 			k = k < 1 ? 1 : k;
-			msg_print(Ind, "You feel yourself hitting a slump nowadays.");
+			msg_print(Ind, "You feel as though you have hit a slump.");
 			//		ident |= dec_stat(Ind, A_DEX, 25, TRUE);	// TRUE..!?
 			ident |= dec_stat(Ind, A_DEX, k, STAT_DEC_PERMANENT);
 			ident |= dec_stat(Ind, A_WIS, k, STAT_DEC_PERMANENT);
@@ -2831,7 +2831,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->au -= amt;
 				q_ptr->au += amt;
 
-				msg_print(k, "You feel your purse heavier.");
+				msg_print(k, "Your purse feels heavier.");
 				q_ptr->redraw |= PR_GOLD;
 
 				ident = TRUE;
@@ -2839,7 +2839,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			if (ident)
 			{
-				msg_print(Ind, "You feel yourself very generous!");
+				msg_print(Ind, "You feel very generous!");
 				p_ptr->redraw |= PR_GOLD;
 			}
 

@@ -194,32 +194,6 @@ extern header *ow_head;
 extern owner_type *ow_info;
 extern char *ow_name;
 
-#if 0
-extern bool cfg_report_to_meta;
-extern char * cfg_meta_address;
-extern char * cfg_bind_name;
-extern char * cfg_console_password;
-extern char * cfg_admin_wizard;
-extern char * cfg_dungeon_master;
-extern bool cfg_secret_dungeon_master;
-extern s16b cfg_fps;
-extern bool cfg_mage_hp_bonus;
-extern s16b cfg_newbies_cannot_drop;
-extern bool cfg_door_bump_open;
-extern s32b cfg_preserve_death_level;
-extern bool cfg_no_ghost;
-extern s32b cfg_unique_respawn_time;
-extern s32b cfg_unique_max_respawn_time;
-extern s32b cfg_level_unstatic_chance;
-extern s32b cfg_min_unstatic_level;
-extern s32b cfg_retire_timer;
-extern bool cfg_maximize;
-extern s32b cfg_game_port;
-extern s32b cfg_console_port;
-extern int cfg_spell_interfere;
-extern bool cfg_anti_arts_horde;
-#endif
-
 extern server_opts cfg;
 
 
@@ -569,6 +543,7 @@ extern void fortune(int Ind, bool broadcast);
 extern char random_colour();
 
 /* control.c */
+extern void SGWHit(int fd, int arg);
 extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
 

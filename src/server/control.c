@@ -6,6 +6,37 @@
 
 #include "angband.h"
 
+#ifdef SERVER_GWPORT
+/* Server gateway stuff */
+void SGWHit(int read_fd, int arg){
+	int newsock=0;
+	char *sdb;
+	int size=0;
+	time_t now;
+
+	/* read_fd always the main socket, because we
+	   never install_input on any others. */
+	/* Order: connection, s->send, s->shutdown socket */
+
+	if ((newsock = SocketAccept(read_fd)) != -1){
+		/* Send some crap here */
+		sdb=malloc(4096);
+		if(sdb!=(char*)NULL){
+			int i;
+			time(&now);
+			size+=sprintf(sdb,"runtime=%ld\n", now-cfg.runtime);
+			size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);
+			for(i=1; i<=NumPlayers; i++){
+				size+=sprintf(&sdb[size], "player=%s\n", Players[i]->name);
+			}
+			DgramWrite(newsock, sdb, size);
+			free(sdb);
+		}
+		shutdown(newsock, 2);
+	}
+}
+#endif
+
 #ifdef NEW_SERVER_CONSOLE
 
 static sockbuf_t console_buf;

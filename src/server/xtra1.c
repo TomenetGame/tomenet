@@ -1910,6 +1910,8 @@ static void calc_bonuses(int Ind)
 		p_ptr->hold_life = TRUE;
 		p_ptr->free_act = TRUE;
 		p_ptr->see_infra += 2;
+		p_ptr->resist_fear = TRUE;
+		p_ptr->resist_conf = TRUE;
 		p_ptr->resist_pois = TRUE;
 //		p_ptr->invis += 5; */ /* No. */
 	}

@@ -56,7 +56,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		chance, minfail, minminfail;
+	int		chance, minfail=5, minminfail;
 
 	/* Extract the base spell failure rate */
 	chance = s_ptr->sfail;
