@@ -7834,6 +7834,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		else
 		{
 			int doory = 0, doorx = 0, dy, dx;
+			struct c_special *cs_ptr;
 			if (magik(75)) doorx = rand_int((x2 - x1 - 1) / 2);
 			else doory = rand_int((y2 - y1 - 1) / 2);
 
@@ -7901,8 +7902,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 					/* Store door location information */
 					c_ptr->feat = FEAT_HOME_HEAD;
-					c_ptr->special.type=DNA_DOOR;
-					c_ptr->special.sc.ptr = houses[num_houses].dna;
+					if((cs_ptr=AddCS(c_ptr))){
+						cs_ptr->type=CS_DNADOOR;
+						cs_ptr->sc.ptr = houses[num_houses].dna;
+					}
 					houses[num_houses].dx=dx;
 					houses[num_houses].dy=dy;
 					houses[num_houses].dna->creator=0L;
@@ -7918,8 +7921,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				else{
 					KILL(houses[num_houses].dna, struct dna_type);
 					c_ptr->feat=FEAT_HOME_HEAD;
-					c_ptr->special.type=DNA_DOOR;
-					c_ptr->special.sc.ptr=houses[tmp].dna;
+					if((cs_ptr=AddCS(c_ptr))){
+						cs_ptr->type=CS_DNADOOR;
+						cs_ptr->sc.ptr=houses[tmp].dna;
+					}
 				}
 			}
 
@@ -7975,13 +7980,16 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	/* Some buildings get special doors */
 	if (n == 13 && !flat)
 	{
+		struct c_special *cs_ptr;
 		/* hack -- only create houses that aren't already loaded from disk */
 		if ((i=pick_house(wpos, y, x)) == -1)
 		{
 			/* Store door location information */
 			c_ptr->feat = FEAT_HOME_HEAD;
-			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.sc.ptr = houses[num_houses].dna;
+			if((cs_ptr=AddCS(c_ptr))){
+				cs_ptr->type=CS_DNADOOR;
+				cs_ptr->sc.ptr = houses[num_houses].dna;
+			}
 			houses[num_houses].dx=x;
 			houses[num_houses].dy=y;
 			houses[num_houses].dna->creator=0L;
@@ -7997,8 +8005,10 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		else{
 			KILL(houses[num_houses].dna, struct dna_type);
 			c_ptr->feat=FEAT_HOME_HEAD;
-			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.sc.ptr=houses[i].dna;
+			if((cs_ptr=AddCS(c_ptr))){
+				cs_ptr->type=CS_DNADOOR;
+				cs_ptr->sc.ptr=houses[i].dna;
+			}
 		}
 	}
 	else if (n == 14) // auctionhouse

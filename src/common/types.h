@@ -619,8 +619,8 @@ struct trap_type
 /* Cave special types */
 /* TODO: move those defines to defines.h */
 #define CS_NONE 0
-#define DNA_DOOR 1
-#define KEY_DOOR 2
+#define CS_DNADOOR 1
+#define CS_KEYDOOR 2
 #define CS_TRAPS 3 	/* CS stands for Cave Special */
 #define CS_INSCRIP 4	/* ok ;) i'll follow that from now */
 
@@ -651,6 +651,7 @@ struct c_special{
 		struct { u16b trap_kit; byte difficulty, feat; } montrap;
 //		struct { u16b trap_kit, trap_load; } montrap;
 	} sc;
+	struct c_special *next;
 };
 #endif	// 0
 
@@ -683,7 +684,7 @@ struct cave_type
 	byte when;		/* Hack -- when cost was computed */
 
 #endif
-	struct c_special special;	/* Special pointer to various struct */
+	struct c_special *special;	/* Special pointer to various struct */
 
 	/* I don't really love to enlarge cave_type ... but it'd suck if
 	 * trapped floor will be immune to Noxious Cloud */

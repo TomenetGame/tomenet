@@ -483,10 +483,7 @@ void client_init(char *argv1, bool skip)
 		quit("Network setup failed!\n");
 	}
 	
-	if ((status=Net_login())==-1){
-		Net_cleanup();
-		quit("Login failed!\n");
-	}
+	status=Net_login();
 
 	if (status == E_NEED_INFO)
 	{

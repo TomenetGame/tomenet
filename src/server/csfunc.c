@@ -110,8 +110,10 @@ void keyhit(void *ptr, int Ind){
 /* *ptr is not used, but is still needed. */
 void tload(void *ptr, cave_type *c_ptr)
 {
-	rd_byte(&c_ptr->special.sc.trap.t_idx);
-	rd_byte(&c_ptr->special.sc.trap.found);
+	struct c_special *cs_ptr;
+	cs_ptr=AddCS(c_ptr);
+	rd_byte(&cs_ptr->sc.trap.t_idx);
+	rd_byte(&cs_ptr->sc.trap.found);
 }
 void tsave(void *ptr)
 {
@@ -131,8 +133,10 @@ void thit(void *ptr, int Ind){
  */
 void betweenload(void *ptr, cave_type *c_ptr)
 {
-	rd_byte(&c_ptr->special.sc.between.fy);
-	rd_byte(&c_ptr->special.sc.between.fx);
+	struct c_special *cs_ptr;
+	cs_ptr=AddCS(c_ptr);
+	rd_byte(&cs_ptr->sc.between.fy);
+	rd_byte(&cs_ptr->sc.between.fx);
 }
 void betweensave(void *ptr)
 {
@@ -152,9 +156,11 @@ void betweenhit(void *ptr, int Ind){
  */
 void montrapload(void *ptr, cave_type *c_ptr)
 {
-	rd_u16b(&c_ptr->special.sc.montrap.trap_kit);
-	rd_byte(&c_ptr->special.sc.montrap.difficulty);
-	rd_byte(&c_ptr->special.sc.montrap.feat);
+	struct c_special *cs_ptr;
+	cs_ptr=AddCS(c_ptr);
+	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
+	rd_byte(&cs_ptr->sc.montrap.difficulty);
+	rd_byte(&cs_ptr->sc.montrap.feat);
 }
 void montrapsave(void *ptr)
 {
@@ -164,19 +170,26 @@ void montrapsave(void *ptr)
 	wr_byte(cs_ptr->sc.montrap.feat);
 }
 
-
-void cs_erase(cave_type *c_ptr)
+void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr)
 {
+	struct c_special *trav, *prev;
 	if (!c_ptr) return;
-	c_ptr->special.type = 0;
-	c_ptr->special.sc.ptr = NULL;
+
+	prev=trav=c_ptr->special;
+	while(trav){
+		if(trav==cs_ptr){
+			prev=trav->next;
+			KILL(trav, struct c_special);
+			return;
+		}
+	}
 }
 
 
 struct sfunc csfunc[]={
 	{ defload, defsave, defsee, defhit },	/* CS_NONE */
-	{ dnaload, dnasave, defsee, dnahit },	/* DNA_DOOR */
-	{ keyload, keysave, defsee, keyhit },	/* KEY_DOOR */
+	{ dnaload, dnasave, defsee, dnahit },	/* CS_DNADOOR */
+	{ keyload, keysave, defsee, keyhit },	/* CS_KEYDOOR */
 	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
 	{ defload, defsave, defsee, defhit },	/* CS_INSCRIP */
 	{ defload, defsave, defsee, defhit },	/* CS_FOUNTAIN */

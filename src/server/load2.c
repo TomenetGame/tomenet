@@ -1044,23 +1044,27 @@ static void rd_house(int n)
 #if 0
 	if((zcave=getcave(&house_ptr->wpos)) && !(house_ptr->flags&HF_STOCK)){
 		/* add dna to static levels */
-		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
+		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=CS_DNADOOR;
 		zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
 	}
 #else	// 0
 	if(zcave=getcave(&house_ptr->wpos))
 	{
+		struct c_special *cs_ptr;
 		if (house_ptr->flags&HF_STOCK)
 		{
 			/* add dna to static levels even though town-generated */
-			zcave[house_ptr->dy][house_ptr->dx].special.type=DNA_DOOR;
-			zcave[house_ptr->dy][house_ptr->dx].special.sc.ptr=house_ptr->dna;
+			cs_ptr=AddCS(&zcave[house_ptr->dy][house_ptr->dx]);
+
+			cs_ptr->type=CS_DNADOOR;
+			cs_ptr->sc.ptr=house_ptr->dna;
 		}
 		else
 		{
 			/* add dna to static levels */
-			zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.type=DNA_DOOR;
-			zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx].special.sc.ptr=house_ptr->dna;
+			cs_ptr=AddCS(&zcave[house_ptr->y+house_ptr->dy][house_ptr->x+house_ptr->dx]);
+			cs_ptr->type=CS_DNADOOR;
+			cs_ptr->sc.ptr=house_ptr->dna;
 		}
 	}
 #endif	// 0
@@ -1716,7 +1720,8 @@ static errr rd_dungeon(void)
 	}
 
 	/*** another run for c_special ***/
-	if(!older_than(3,5,3))
+	if(!older_than(3,5,3)){
+		struct c_special *cs_ptr;
 		while (1)
 		{
 			rd_byte(&x);
@@ -1727,12 +1732,14 @@ static errr rd_dungeon(void)
 			if (x == 255 && y == 255 && k == 255) break;
 
 			c_ptr = &zcave[y][x];
-			c_ptr->special.type = k;
+			cs_ptr=AddCS(c_ptr);
+			cs_ptr->type = k;
 			
 			/* csfunc will take care of it :) */
 			csfunc[k].load(sc_is_pointer(k) ?
-					c_ptr->special.sc.ptr : &c_ptr->special, c_ptr);
+					cs_ptr->sc.ptr : cs_ptr, c_ptr);
 		}
+	}
 
 	/*
 	 * TeraHack -- was central town loaded?
@@ -2372,7 +2379,7 @@ errr rd_server_savefile()
 						/* add the house dna */	
 						x=houses[j].dx;
 						y=houses[j].dy;
-						cave[i][y][x].special.type=DNA_DOOR;
+						cave[i][y][x].special.type=CS_DNADOOR;
 						cave[i][y][x].special.sc.ptr=houses[j].dna;
 					}
 				}

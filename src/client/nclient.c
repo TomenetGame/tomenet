@@ -562,9 +562,9 @@ int Net_fd(void)
 	return rbuf.sock;
 }
 
-int Net_login(){
+unsigned char Net_login(){
 	char *c_name;
-	char tc;
+	unsigned char tc;
 	Sockbuf_clear(&wbuf);
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "");
 	if (Sockbuf_flush(&wbuf) == -1)

@@ -2692,10 +2692,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy Traps (and Locks) */
 		case GF_KILL_TRAP:
 		{
+			struct c_special *cs_ptr;
 			/* Destroy invisible traps */
 //			if (c_ptr->feat == FEAT_INVIS)
-			if (c_ptr->special.type == CS_TRAPS)
-			{
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2705,7 +2705,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the trap */
 //				c_ptr->feat = FEAT_FLOOR;
-				cs_erase(c_ptr);
+				cs_erase(c_ptr, cs_ptr);
 
 				if (!quiet)
 				{
@@ -2773,10 +2773,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy Doors (and traps) */
 		case GF_KILL_DOOR:
 		{
+			struct c_special *cs_ptr;
 			/* Destroy invisible traps */
 //			if (c_ptr->feat == FEAT_INVIS)
-			if (c_ptr->special.type == CS_TRAPS)
-			{
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2786,7 +2786,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the feature */
 //				c_ptr->feat = FEAT_FLOOR;
-				cs_erase(c_ptr);
+				cs_erase(c_ptr, cs_ptr);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -5468,9 +5468,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		int t_idx = 0;
 
 		if((zcave=getcave(wpos))){
+			struct c_special *cs_ptr;
 			c_ptr=&zcave[p_ptr->py][p_ptr->px];
-			if(c_ptr->special.type==CS_TRAPS)
-				t_idx = c_ptr->special.sc.trap.t_idx;
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+				t_idx = cs_ptr->sc.trap.t_idx;
 
 			if(t_idx && t_idx==typ){
 				/* huh? */

@@ -2364,6 +2364,7 @@ bool detect_trap(int Ind, int rad)
 	cave_type  *c_ptr;
 	byte *w_ptr;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -2391,11 +2392,10 @@ bool detect_trap(int Ind, int rad)
 
 			/* Detect invisible traps */
 			//			if (c_ptr->feat == FEAT_INVIS)
-			if (c_ptr->special.type == CS_TRAPS)
-			{
-				t_idx = c_ptr->special.sc.trap.t_idx;
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+				t_idx = cs_ptr->sc.trap.t_idx;
 
-				if (!c_ptr->special.sc.trap.found)
+				if (!cs_ptr->sc.trap.found)
 				{
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
@@ -4043,17 +4043,17 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 //			if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
 			if (cave_valid_bold(zcave, y, x))
 			{
+				struct c_special *cs_ptr;
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x);
 
 				/* Wall (or floor) type */
 				t = rand_int(200);
 
-				if (c_ptr->special.type == CS_TRAPS)
-				{
+				if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
 					/* Destroy the trap */
-					if (t < 100) cs_erase(c_ptr);
-					else c_ptr->special.sc.trap.found = FALSE;
+					if (t < 100) cs_erase(c_ptr, cs_ptr);
+					else cs_ptr->sc.trap.found = FALSE;
 
 					/* Redraw */
 //					everyone_lite_spot(wpos, y, x);
@@ -5211,6 +5211,7 @@ struct builder{
 	bool jail;
 	struct dna_type *dna;
 	char *vert;
+	struct c_special *cs;
 	struct builder *next;
 };
 
@@ -5278,7 +5279,9 @@ bool poly_build(int Ind, char *args)
 #ifdef NEW_DUNGEON
 		wpcopy(&curr->wpos, &p_ptr->wpos);
 		if(zcave[curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
+#if 0	/* not necessary? - evileye */
 			zcave[curr->sy][curr->sx].special.sc.ptr=NULL;
+#endif
 #else
 		curr->depth=p_ptr->dun_depth;
 		if(cave[p_ptr->dun_depth][curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
@@ -5292,8 +5295,10 @@ bool poly_build(int Ind, char *args)
 			return FALSE;
 		}
 		zcave[curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
-		zcave[curr->sy][curr->sx].special.type=DNA_DOOR;
-		zcave[curr->sy][curr->sx].special.sc.ptr=curr->dna;
+		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx]))){
+			curr->cs->type=CS_DNADOOR;
+			curr->cs->sc.ptr=curr->dna;
+		}
 		builders=curr;
 		return TRUE;
 
@@ -5387,7 +5392,7 @@ bool poly_build(int Ind, char *args)
 		p_ptr->update|=PU_VIEW;
 	}
 	msg_print(Ind,"Your house building attempt has failed");
-	zcave[curr->sy][curr->sx].special.sc.ptr=NULL;
+	erase_cs(zcave[curr->sy][curr->sx], curr->cs);
 #else
 	if(curr->depth==p_ptr->dun_depth && !(cave[curr->depth][curr->dy][curr->dx].info&CAVE_ICKY && cave[curr->depth][curr->dy][curr->dx].feat==FEAT_WATER)){
 		cave[p_ptr->dun_depth][curr->dy][curr->dx].feat=FEAT_WALL_EXTRA;

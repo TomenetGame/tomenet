@@ -1964,6 +1964,7 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 
 	cave_type *c_ptr;
 	byte *w_ptr;
+	struct c_special *cs_ptr;
 
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -1994,15 +1995,13 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	}
 
 	/* Traps */
-	if (c_ptr->special.type == CS_TRAPS)
-	{
+	if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
 		/* Revealed trap */
-		if (c_ptr->special.sc.trap.found) return (TRUE);
+		if (cs_ptr->sc.trap.found) return (TRUE);
 	}
 
 	/* Monster Traps */
-	if (c_ptr->special.type == CS_MON_TRAP)
-	{
+	if(GetCS(c_ptr, CS_MON_TRAP)){
 		return (TRUE);
 	}
 
@@ -2230,14 +2229,14 @@ void do_cmd_look(int Ind, int dir)
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
 		cptr p1 = "A ", p2 = "";
+		struct c_special *cs_ptr;
 
 		if (is_a_vowel(name[0])) p1 = "An ";
 
 		/* Hack -- add trap description */
-		if (c_ptr->special.type == CS_TRAPS)
-		{
-			int t_idx = c_ptr->special.sc.trap.t_idx;
-			if (c_ptr->special.sc.trap.found)
+		if ((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+			int t_idx = cs_ptr->sc.trap.t_idx;
+			if (cs_ptr->sc.trap.found)
 			{
 				if (p_ptr->trap_ident[t_idx])
 					p1 = t_name + t_info[t_idx].name;

@@ -608,6 +608,7 @@ void search(int Ind)
 	object_type  *o_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Start with base search ability */
@@ -652,9 +653,8 @@ void search(int Ind)
 
 				/* Invisible trap */
 //				if (c_ptr->feat == FEAT_INVIS)
-				else if (c_ptr->special.type == CS_TRAPS)
-				{
-					if (!c_ptr->special.sc.trap.found)
+				if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+					if (!cs_ptr->sc.trap.found)
 					{
 						/* Pick a trap */
 						pick_trap(wpos, y, x);
@@ -1080,6 +1080,7 @@ static void hit_trap(int Ind)
 	int t_idx;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 
 	cave_type               *c_ptr;
 
@@ -1095,7 +1096,8 @@ static void hit_trap(int Ind)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	t_idx = c_ptr->special.sc.trap.t_idx;
+	if(!(cs_ptr=GetCS(c_ptr, CS_TRAPS))) return;
+	t_idx = cs_ptr->sc.trap.t_idx;
 
 	if (t_idx)
 	{
@@ -2633,13 +2635,19 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
-		csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
+		struct c_special *cs_ptr;
+		cs_ptr=c_ptr->special;
+		while(cs_ptr){
+			csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
+			cs_ptr=cs_ptr->next;
+		}
 		if (cfg.door_bump_open & BUMP_OPEN_HOUSE &&
 			c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
-			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
+			struct c_special *cs_ptr;
+			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
 			{
-				if(access_door(Ind, c_ptr->special.sc.ptr))
+				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
 					myhome = TRUE;
 					msg_print(Ind, "\377GYou walk through the door.");
@@ -2699,6 +2707,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Notice things */
 		else
 		{
+			struct c_special *cs_ptr;
 			/* Closed doors */
 			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
 				 (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL))
@@ -2708,8 +2717,8 @@ void move_player(int Ind, int dir, int do_pickup)
 
 			else if (c_ptr->feat == FEAT_SIGN)
 			{
-				if(c_ptr->special.type==CS_INSCRIP){
-					struct floor_insc *sptr=c_ptr->special.sc.ptr;
+				if((cs_ptr=GetCS(c_ptr, CS_INSCRIP))){
+					struct floor_insc *sptr=cs_ptr->sc.ptr;
 					msg_format(Ind, "A sign here reads: %s", sptr->text);
 				}
 				else msg_print(Ind, "A blank sign is here");
@@ -2737,9 +2746,12 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_print(Ind, "There is a wall blocking your way.");
 				}
 			}
-
 			/* It's bad place maybe? */
-			csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
+			cs_ptr=c_ptr->special;
+			while(cs_ptr){
+				csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
+				cs_ptr=cs_ptr->next;
+			}
 		}
 		return;
 		} /* 'if (!myhome)' ends here */
@@ -2749,8 +2761,9 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		if ((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL))
 		{
-			if(!c_ptr->special.type==DNA_DOOR ||
-					!access_door(Ind, c_ptr->special.sc.ptr))
+			struct c_special *cs_ptr;
+			if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
+					!access_door(Ind, cs_ptr->sc.ptr))
 			{
 				disturb(Ind, 0, 0);
 				return;
@@ -2802,6 +2815,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	else
 	{
 		int oy, ox;
+		struct c_special *cs_ptr;
 
 		/* Save old location */
 		oy = p_ptr->py;
@@ -2885,14 +2899,13 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Discover invisible traps */
 //		else if (c_ptr->feat == FEAT_INVIS)
-		else if (c_ptr->special.type == CS_TRAPS)
-		{
+		if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
 			bool hit = TRUE;
 
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
-			if (!c_ptr->special.sc.trap.found)
+			if (!cs_ptr->sc.trap.found)
 			{
 				/* Message */
 //				msg_print(Ind, "You found a trap!");
@@ -3336,6 +3349,7 @@ static bool run_test(int Ind)
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
@@ -3383,8 +3397,7 @@ static bool run_test(int Ind)
 		}
 
 		/* Visible traps abort running */
-		if (c_ptr->special.type == CS_TRAPS &&
-			c_ptr->special.sc.trap.found) return TRUE;
+		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
 
 		/* Hack -- basically stop in water */
 		if (c_ptr->feat == FEAT_WATER && !aqua)

@@ -21,7 +21,7 @@ extern int color_char_to_attr(char c);
 extern struct sfunc csfunc[];
 
 /* csfunc.c */
-extern void cs_erase(cave_type *c_ptr);
+extern void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr);
 
 /* netserver.c */
 /*extern long Id;*/
@@ -331,6 +331,8 @@ extern void server_birth(void);
 extern void admin_outfit(int Ind, int realm);
 
 /* cave.c */
+extern struct c_special *GetCS(cave_type *c_ptr, unsigned char type);
+extern struct c_special *AddCS(cave_type *c_ptr);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);

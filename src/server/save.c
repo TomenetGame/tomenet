@@ -1358,6 +1358,7 @@ static void wr_dungeon(struct worldpos *wpos)
 	byte prev_feature;
 	u16b prev_info;
 	unsigned char runlength;
+	struct c_special *cs_ptr;
 
 	cave_type *c_ptr;
 	cave_type **zcave;
@@ -1446,21 +1447,29 @@ static void wr_dungeon(struct worldpos *wpos)
 		for (x = 0; x < MAX_WID; x++)
 		{
 			c_ptr = &zcave[y][x];
-			i = c_ptr->special.type;
+			cs_ptr=c_ptr->special;
+		/* redesign needed - too much of hurry to sort now */
+#if 0
+			while(cs_ptr){
+				i = cs_ptr->type;
 
-			/* nothing special */
-			if (i == CS_NONE) continue;
+				/* nothing special */
+				if (i != CS_NONE){
 
-			/* TODO: implement DNA_DOOR and KEY_DOOR saving
-			 * currently, their x,y,i is saved in vain.	- Jir -
-			 */
-			wr_byte(x);
-			wr_byte(y);
-			wr_byte(i);
+					/* TODO: implement CS_DNADOOR and CS_KEYDOOR saving
+			 		* currently, their x,y,i is saved in vain.	- Jir -
+			 		*/
+					wr_byte(x);
+					wr_byte(y);
+					wr_byte(i);
 
-			/* csfunc will take care of it :) */
-			csfunc[i].save(sc_is_pointer(i) ?
-					c_ptr->special.sc.ptr : &c_ptr->special);
+					/* csfunc will take care of it :) */
+					csfunc[i].save(sc_is_pointer(i) ?
+						cs_ptr->sc.ptr : &c_ptr->special);
+				}
+				cs_ptr=cs_ptr->next;
+			}
+#endif
 		}
 	}
 

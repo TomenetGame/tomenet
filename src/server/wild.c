@@ -1335,11 +1335,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	
 	if (type == WILD_TOWN_HOME)
 	{
+		struct c_special *cs_ptr;
 		/* hack -- only add a house if it is not already in memory */
 		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
 		{
-			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.sc.ptr=houses[num_houses].dna;
+			cs_ptr=AddCS(c_ptr);
+			cs_ptr->type=CS_DNADOOR;
+			cs_ptr->sc.ptr=houses[num_houses].dna;
 			houses[num_houses].dx = door_x;
 			houses[num_houses].dy = door_y;
 			houses[num_houses].dna->creator=0L;
@@ -1351,6 +1353,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			}
 		}
 		else{
+			cs_ptr=AddCS(c_ptr);
 /* evileye temporary fix */
 #if 1
 			houses[tmp].coords.rect.width=houses[num_houses].coords.rect.width;
@@ -1359,8 +1362,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
-			c_ptr->special.type=DNA_DOOR;
-			c_ptr->special.sc.ptr=houses[tmp].dna;
+			cs_ptr->type=CS_DNADOOR;
+			cs_ptr->sc.ptr=houses[tmp].dna;
 		}
 	}
 		
@@ -2376,6 +2379,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					if(func==FILL_GUILD){
 						struct key_type *key;
 						cave_type *c_ptr;
+						struct c_special *cs_ptr;
 						u16b id;
 						FILE *gfp=((struct guildsave*)data)->fp;
 						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
@@ -2383,7 +2387,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 							fputc(c_ptr->feat, gfp);
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=0;
-								if((c_ptr->special.type==KEY_DOOR) && (key=c_ptr->special.sc.ptr))
+								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && key==cs_ptr->sc.ptr)
 									id=key->id;
 								fputc((id>>8), gfp);
 								fputc(id&0xff, gfp);
@@ -2397,11 +2401,12 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 							if(c_ptr->feat==FEAT_HOME_HEAD){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
-								if((c_ptr->special.type!=KEY_DOOR)){
-									MAKE(c_ptr->special.sc.ptr, struct key_type);
-									c_ptr->special.type=KEY_DOOR;
+								if(!(GetCS(c_ptr, CS_KEYDOOR))){
+									cs_ptr=AddCS(c_ptr);
+									MAKE(cs_ptr->sc.ptr, struct key_type);
+									cs_ptr->type=CS_KEYDOOR;
 								}
-								key=c_ptr->special.sc.ptr;
+								key=cs_ptr->sc.ptr;
 								key->id=id;
 							}
 						}
@@ -2467,6 +2472,7 @@ void wild_add_uhouse(house_type *h_ptr){
  	cave_type *c_ptr;
 	struct worldpos *wpos=&h_ptr->wpos;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 
 	if(h_ptr->flags&HF_DELETED) return; /* House destroyed. Ignore */
@@ -2499,8 +2505,9 @@ void wild_add_uhouse(house_type *h_ptr){
 	}
 	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
 	c_ptr->feat=FEAT_HOME_HEAD;
-	c_ptr->special.type=DNA_DOOR;
-	c_ptr->special.sc.ptr=h_ptr->dna;
+	cs_ptr=AddCS(c_ptr);
+	cs_ptr->type=CS_DNADOOR;
+	cs_ptr->sc.ptr=h_ptr->dna;
 }
 
 void wild_add_uhouses(struct worldpos *wpos){

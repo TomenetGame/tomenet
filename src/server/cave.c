@@ -994,6 +994,22 @@ static byte player_color(int Ind)
 	return p_ptr->cp_ptr->color;
 }
 
+/* Simple finder routine. Scan list of c_special, return match */
+/* NOTE only ONE of each type !!! */
+struct c_special *GetCS(cave_type *c_ptr, unsigned char type){
+	struct c_special *trav;
+	int i=0;
+
+	if(!c_ptr->special) return(NULL);
+	trav=c_ptr->special;
+	while(trav){
+		if(trav->type==type){
+			return(trav);
+		}
+		trav=trav->next;
+	}
+	return(NULL);				/* returns ** to the structs. always dealloc */
+}
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -1155,6 +1171,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		       (*w_ptr & CAVE_VIEW))) &&
 		     !p_ptr->blind)) || (p_ptr->admin_dm))
 		{
+			struct c_special *cs_ptr;
 			/* Access floor */
 			f_ptr = &f_info[FEAT_FLOOR];
 
@@ -1165,11 +1182,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			a = p_ptr->f_attr[feat];
 
 			/* Hack to display detected traps */
-			if ((c_ptr->special.type == CS_TRAPS) )
-				/* && ((c_ptr->special.sc.ptr)->found)) */
-			{
-				int t_idx = c_ptr->special.sc.trap.t_idx;
-				if (c_ptr->special.sc.trap.found)
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+				int t_idx = cs_ptr->sc.trap.t_idx;
+				if (cs_ptr->sc.trap.found)
 				{
 					/* Hack -- random hallucination */
 					if (p_ptr->image)
@@ -1274,6 +1289,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Hack -- everything is visible to dungeon masters */
 		if ((*w_ptr & CAVE_MARK) || (p_ptr->admin_dm))
 		{
+			struct c_special *cs_ptr;
 			/* Apply "mimic" field */
 			feat = f_info[feat].mimic;
 
@@ -1296,11 +1312,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			   if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.sc.ptr->found))
 			*/
 			/* Hack to display detected traps */
-			if ((c_ptr->special.type == CS_TRAPS) )
-				/*					&& ((c_ptr->special.sc.ptr)->found)) */
-			{
-				int t_idx = c_ptr->special.sc.trap.t_idx;
-				if (c_ptr->special.sc.trap.found)
+			if((cs_ptr=GetCS(c_ptr, CS_TRAPS))){
+				int t_idx = cs_ptr->sc.trap.t_idx;
+				if (cs_ptr->sc.trap.found)
 				{
 					/* Hack -- random hallucination */
 					if (p_ptr->image)
@@ -1328,15 +1342,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 			/* Hack -- gee it's great to be back home */
-			else if ((c_ptr->special.type == DNA_DOOR) )
-			{
-				if(access_door(Ind, c_ptr->special.sc.ptr))
+			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
+				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
 					a = TERM_L_GREEN;
 				}
 				else
 				{
-					struct dna_type *dna=c_ptr->special.sc.ptr;
+					struct dna_type *dna=cs_ptr->sc.ptr;
 					if (dna->owner && dna->owner_type)
 						a = TERM_L_DARK;
 				}
@@ -5464,11 +5477,7 @@ void disturb(int Ind, int stop_search, int unused_flag)
  * Hack -- Check if a level is a "quest" level
  */
 /* FIXME - use worldpos and dungeon array! */
-#ifdef NEW_DUNGEON
 bool is_quest(struct worldpos *wpos)
-#else
-bool is_quest(int level)
-#endif
 {
 	/* not implemented yet :p */
 	return (FALSE);

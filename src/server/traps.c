@@ -789,7 +789,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		if (item < 0)
 		{
-			trap = c_ptr->special.sc.trap.t_idx;
+			trap = GetCS(c_ptr, CS_TRAPS)->sc.trap.t_idx;
 		}
 	}
 
@@ -1051,7 +1051,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 					{
 						cave_type *c2_ptr=&zcave[y + l][x + k];
 						//                if(in_bounds(y + l, px + k) && !cave[y + l][px + k].t_idx)
-						if(in_bounds(y + l, x + k) && (zcave[y + l][x + k].special.type != CS_TRAPS))
+						if(in_bounds(y + l, x + k) && (!GetCS(&zcave[y + l][x + k], CS_TRAPS)))
 						{
 							place_trap(wpos, y + l, x + k, 0);
 						}
@@ -2799,6 +2799,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			s16b nx, ny;
 			cave_type *cc_ptr;
+			struct c_special *cs_ptr;
 			int rad = 8 + glev / 3;
 			for (nx=x-rad;nx<=x+rad;nx++)
 			{
@@ -2808,10 +2809,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 					cc_ptr = &zcave[ny][nx];
 
-					if (cc_ptr->special.type != CS_TRAPS) continue;
-					if (!cc_ptr->special.sc.trap.found) continue;
+					if (!(cs_ptr=GetCS(cc_ptr, CS_TRAPS))) continue;
+					if (!cs_ptr->sc.trap.found) continue;
 
-					cc_ptr->special.sc.trap.found = FALSE;
+					cs_ptr->sc.trap.found = FALSE;
 					ident = TRUE;
 
 					everyone_lite_spot(wpos, ny, nx);
@@ -2854,6 +2855,7 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 	cave_type *c_ptr;
 	bool ident = FALSE;
 	int t_idx = 0;
+	struct c_special *cs_ptr;
 
 	/* Paranoia */
 	cave_type **zcave;
@@ -2861,7 +2863,8 @@ void player_activate_door_trap(int Ind, s16b y, s16b x)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	c_ptr=&zcave[y][x];
-	t_idx = c_ptr->special.sc.trap.t_idx;
+	cs_ptr=GetCS(c_ptr, CS_TRAPS);
+	t_idx = cs_ptr->sc.trap.t_idx;
 
 	/* Return if trap or door not found */
 //	if ((c_ptr->t_idx == 0) ||
@@ -2908,6 +2911,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	u32b flags;
 	cave_type *c_ptr;
 	//	dungeon_info_type *d_ptr = &d_info[dungeon_type];
+	struct c_special *cs_ptr;
 
 	/* Paranoia -- verify location */
 	cave_type **zcave;
@@ -2917,7 +2921,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	c_ptr = &zcave[y][x];
 
 	/* No traps over traps/house doors etc */
-	if (c_ptr->special.type) return;
+	if (c_ptr->special) return;	/* its a pointer now */
 
 	/* Require empty, clean, floor grid */
 	/* Hack - '+1' for secret doors */
@@ -2970,10 +2974,10 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		{
 			//	 c_ptr->t_idx = trap;
 			more = FALSE;
-
-			c_ptr->special.type = CS_TRAPS;
-			c_ptr->special.sc.trap.t_idx = trap;
-			c_ptr->special.sc.trap.found = FALSE;
+			cs_ptr=AddCS(c_ptr);
+			cs_ptr->type = CS_TRAPS;
+			cs_ptr->sc.trap.t_idx = trap;
+			cs_ptr->sc.trap.found = FALSE;
 
 			//				c_ptr=&zcave[y][x];
 		}
@@ -3032,6 +3036,7 @@ void wiz_place_trap(int Ind, int trap)
 	worldpos *wpos = &p_ptr->wpos;
 	s16b           t_idx;
 	trap_kind	*t_ptr;
+	struct c_special *cs_ptr;
 
 	s16b           cnt        = 0;
 	u32b flags;
@@ -3056,7 +3061,7 @@ void wiz_place_trap(int Ind, int trap)
 	}
 
 	/* No traps over traps/house doors etc */
-	if (c_ptr->special.type)
+	if (c_ptr->special)
 	{
 		msg_print(Ind, "Cave-Special already exists!");
 		return;
@@ -3124,9 +3129,10 @@ void wiz_place_trap(int Ind, int trap)
 
 	//	 c_ptr->t_idx = trap;
 
-	c_ptr->special.type = CS_TRAPS;
-	c_ptr->special.sc.trap.t_idx = trap;
-	c_ptr->special.sc.trap.found = FALSE;
+	cs_ptr=AddCS(c_ptr);
+	cs_ptr->type = CS_TRAPS;
+	cs_ptr->sc.trap.t_idx = trap;
+	cs_ptr->sc.trap.found = FALSE;
 	//				c_ptr=&zcave[y][x];
 
 	return;
@@ -3465,13 +3471,15 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 	object_type *q_ptr;
 	cave_type               *c_ptr;
 	cave_type **zcave;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 
 	c_ptr = &zcave[y][x];
-	cave_set_feat(wpos, y, x, c_ptr->special.sc.montrap.feat);
+	cs_ptr=GetCS(c_ptr, CS_MON_TRAP);
+	cave_set_feat(wpos, y, x, cs_ptr->sc.montrap.feat);
 
 	/* Drop objects being carried */
-	for (this_o_idx = c_ptr->special.sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx)
+	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx)
 	{
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
@@ -3496,7 +3504,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x)
 	}
 
 //	cave[py][px].special = cave[py][px].special2 = 0;
-	cs_erase(c_ptr);
+	cs_erase(c_ptr, cs_ptr);
 }
 /* 
  * Monster hitting a rod trap -MWK-

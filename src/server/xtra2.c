@@ -6687,6 +6687,7 @@ bool master_build(int Ind, char * parms)
 {
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
+	struct c_special *cs_ptr;
 	static unsigned char new_feat = FEAT_WALL_EXTRA;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -6710,22 +6711,32 @@ bool master_build(int Ind, char * parms)
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 	
+	/* Never destroy real house doors! Work on this later */
+	if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
+		return(FALSE);
+	}
+
 	/* build a wall of type new_feat at the player's location */
+#if 0
 	if(c_ptr->special.type){
 		switch(c_ptr->special.type){
 			case CS_INSCRIP:
 				KILL(c_ptr->special.sc.ptr, struct floor_insc);
 				c_ptr->special.type=CS_NONE;
 				break;
-			case KEY_DOOR:
+			case CS_KEYDOOR:
 				KILL(c_ptr->special.sc.ptr, struct key_type);
 				c_ptr->special.type=CS_NONE;
 				break;
-			case DNA_DOOR:	/* even DM must not kill houses like this */
+			case CS_DNADOOR:	/* even DM must not kill houses like this */
 			default:
 				return FALSE;
 		}
 	}
+#endif
+
+	/* This part to be rewritten for stacked CS */
+#if 0
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
 		/* new special door creation (with keys) */
@@ -6738,7 +6749,7 @@ bool master_build(int Ind, char * parms)
 		invcopy(&newkey, lookup_kind(TV_KEY, 1));
 		newkey.pval=key->id;
 		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-		c_ptr->special.type=KEY_DOOR;
+		c_ptr->special.type=CS_KEYDOOR;
 		c_ptr->special.sc.ptr=key;
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
@@ -6750,6 +6761,7 @@ bool master_build(int Ind, char * parms)
 		c_ptr->special.sc.ptr=sign;
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
+#endif
 
 	return TRUE;
 }

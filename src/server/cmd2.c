@@ -862,7 +862,7 @@ void do_cmd_open(int Ind, int dir)
 				msg_print(Ind, "You have picked the lock.");
 
 				/* Set off trap */
-				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Experience */
 				gain_exp(Ind, 1);
@@ -894,9 +894,9 @@ void do_cmd_open(int Ind, int dir)
 		/* Home */
 		else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
-			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
-			{
-				if(access_door(Ind, c_ptr->special.sc.ptr))
+			struct c_special *cs_ptr;
+			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
+				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
@@ -914,7 +914,7 @@ void do_cmd_open(int Ind, int dir)
 				}
 				else
 				{
-					struct dna_type *dna=c_ptr->special.sc.ptr;
+					struct dna_type *dna=cs_ptr->sc.ptr;
 					if(dna->owner){
 						char string[80];
 //						char *name;
@@ -953,8 +953,8 @@ void do_cmd_open(int Ind, int dir)
 				}
 				return;
 			}
-			else if(c_ptr->special.type==KEY_DOOR){
-				struct key_type *key=c_ptr->special.sc.ptr;
+			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))){
+				struct key_type *key=cs_ptr->sc.ptr;
 				for(j=0; j<INVEN_PACK; j++){
 					object_type *o_ptr=&p_ptr->inventory[j];
 					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
@@ -975,7 +975,7 @@ void do_cmd_open(int Ind, int dir)
 		else
 		{
 			/* Set off trap */
-			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* Take half a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1098,7 +1098,7 @@ void do_cmd_close(int Ind, int dir)
 		else
 		{
 			/* Set off trap */
-			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1477,7 +1477,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				more = TRUE;
 
 				/* Set off trap */
-				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Hack -- Search */
 				search(Ind);
@@ -1531,6 +1531,7 @@ void do_cmd_disarm(int Ind, int dir)
 	/* Get a direction (or abort) */
 	if (dir)
 	{
+		struct c_special *cs_ptr;
 		/* Get location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -1543,8 +1544,8 @@ void do_cmd_disarm(int Ind, int dir)
 		o_ptr = &o_list[c_ptr->o_idx];
 
 		/* Access the trap */
-		if (c_ptr->special.type == CS_TRAPS) 
-			t_idx = c_ptr->special.sc.trap.t_idx;
+		if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
+			t_idx = cs_ptr->sc.trap.t_idx;
 
 		/* Nothing useful */
 #if 0
@@ -1554,9 +1555,15 @@ void do_cmd_disarm(int Ind, int dir)
 
 //			!(c_ptr->special.sc.ptr->found)) &&
 #endif	// 0
+
+#if 0 /* the old code here */
 		if ((!t_idx || !c_ptr->special.sc.trap.found) &&
 		    (o_ptr->tval != TV_CHEST) &&
 			(c_ptr->special.type != CS_MON_TRAP))
+#endif
+		if((!t_idx || !cs_ptr->sc.trap.found) &&
+			(o_ptr->tval!=TV_CHEST) &&
+			!(cs_ptr=GetCS(c_ptr, CS_MON_TRAP)))
 		{
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
@@ -1645,8 +1652,8 @@ void do_cmd_disarm(int Ind, int dir)
 			}
 		}
 		/* Disarm the trap */
-		else if (c_ptr->feat == FEAT_MON_TRAP)
-//		else if (c_ptr->special.type == CS_MON_TRAP) /* same thing.. */
+/*		else if (c_ptr->feat == FEAT_MON_TRAP) */
+		else if (cs_ptr->type == CS_MON_TRAP) /* same thing.. */
 		{
 			msg_print(Ind, "You disarm the monster trap.");
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
@@ -1698,7 +1705,7 @@ void do_cmd_disarm(int Ind, int dir)
 				gain_exp(Ind, power);
 
 				/* Remove the trap */
-				cs_erase(c_ptr);
+				cs_erase(c_ptr, cs_ptr);
 //				c_ptr->feat = FEAT_FLOOR;
 
 #if 1
@@ -1848,7 +1855,7 @@ void do_cmd_bash(int Ind, int dir)
 				msg_print(Ind, "The door crashes open!");
 
 				/* Set off trap */
-				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Break down the door */
 				if (rand_int(100) < 50)
@@ -2012,7 +2019,7 @@ void do_cmd_spike(int Ind, int dir)
 			msg_print(Ind, "You jam the door with a spike.");
 
 			/* Set off trap */
-			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* Convert "locked" to "stuck" XXX XXX XXX */
 			if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) c_ptr->feat += 0x08;
@@ -2062,14 +2069,15 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		/* Handle the cfg.door_bump_open option */
 		if (cfg.door_bump_open)
 		{
+			struct c_special *cs_ptr;
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
 					p_ptr->easy_disarm &&
-					c_ptr->special.type == CS_TRAPS &&
-				c_ptr->special.sc.trap.found &&
+					(cs_ptr=GetCS(c_ptr, CS_TRAPS)) &&
+				cs_ptr->sc.trap.found &&
 				!c_ptr->o_idx &&
 				!UNAWARENESS(p_ptr) &&
 				!no_lite(Ind) )
@@ -2092,9 +2100,9 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				(c_ptr->feat >= FEAT_HOME_HEAD) &&
 				(c_ptr->feat <= FEAT_HOME_TAIL)) 
 			{
-				if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
+				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 					if(!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
-						!access_door(Ind, c_ptr->special.sc.ptr))
+						!access_door(Ind, cs_ptr->sc.ptr))
 					{
 						do_cmd_open(Ind, dir);
 						return;
@@ -3795,8 +3803,9 @@ void house_admin(int Ind, int dir, char *args){
 		c_ptr = &zcave[y][x];
 		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
 		{
-			if(c_ptr->special.type==DNA_DOOR){
-				dna=c_ptr->special.sc.ptr;
+			struct c_special *cs_ptr;
+			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
+				dna=cs_ptr->sc.ptr;
 				if(access_door(Ind, dna)){
 					switch(args[0]){
 						case 'O':
@@ -3860,6 +3869,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	/* Be sure we have a direction */
 	if (dir)
 	{
+		struct c_special *cs_ptr;
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
@@ -3868,14 +3878,14 @@ void do_cmd_purchase_house(int Ind, int dir)
 		c_ptr = &zcave[y][x];
 
 		/* Check for a house */
-		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special.type==DNA_DOOR))
+		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
 		{
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy there.");
 			return;
 		}
 
-		dna=c_ptr->special.sc.ptr;
+		dna=cs_ptr->sc.ptr;
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 
@@ -3940,11 +3950,7 @@ void do_cmd_own(int Ind)
 		return;
 	}
 
-#ifdef NEW_DUNGEON
 	if (!p_ptr->own1.wx && !p_ptr->own2.wx && !p_ptr->own1.wy && !p_ptr->own2.wy && !p_ptr->own1.wz && !p_ptr->own2.wz)
-#else
-	if (p_ptr->own1 && p_ptr->own2)
-#endif
 	{
 		msg_format(Ind, "You can't own more than 2 terrains.");
 		return;

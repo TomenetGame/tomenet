@@ -484,9 +484,13 @@ void compact_objects(int size, bool purge)
 							c_ptr=&zcave[y][x];
 							if (c_ptr->feat == FEAT_MON_TRAP)
 							{
-								if (c_ptr->special.sc.montrap.trap_kit == o_max)
-								{
-									c_ptr->special.sc.montrap.trap_kit = i;
+								struct c_special *cs_ptr;
+								if((cs_ptr=GetCS(c_ptr, CS_MON_TRAP))){
+									if (cs_ptr->sc.montrap.trap_kit == o_max)
+									{
+										cs_ptr->sc.montrap.trap_kit = i;
+									}
+									
 								}
 							}
 							else
@@ -6104,6 +6108,7 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 
 	cave_type **zcave;
 	cave_type *c_ptr;
+	struct c_special *cs_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
@@ -6133,9 +6138,9 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 #endif	// 0
 
 	/* Paranoia */
-	if (c_ptr->special.type != CS_TRAPS) return;
+	if (!(cs_ptr=GetCS(c_ptr, CS_TRAPS))) return;
 
-	c_ptr->special.sc.trap.found = TRUE;
+	cs_ptr->sc.trap.found = TRUE;
 
 	/* Notice */
 	note_spot_depth(wpos, y, x);

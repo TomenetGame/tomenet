@@ -16,6 +16,7 @@
 #include "unistd.h"
 #endif	// HAVE_CRYPT
 
+static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
 static void del_guild(int id);
@@ -73,7 +74,7 @@ struct account *GetAccount(cptr name, char *pass){
 }
 
 /* our password encryptor */
-char *t_crypt(char *inbuf, char *salt){
+static char *t_crypt(char *inbuf, cptr salt){
 #ifdef HAVE_CRYPT
 	static char out[64];
 	char setting[9];
