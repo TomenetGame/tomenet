@@ -599,7 +599,7 @@ static int do_cmd_activate_skill_aux()
 			char buf[80];
 			int nb;
 
-			strcpy(buf, "Cast sorcery spell");
+			strcpy(buf, "Cast a spell");
 			if (!get_string("Skill action? ", buf, 79))
 				return FALSE;
 

@@ -5,6 +5,19 @@ function color_print(y, x, str)
 end
 
 MAX_LEN = 70
+
+function get_server_notes(x)
+        local notes = ""
+
+        for i = 1, getn(x) do
+                if x[i].label == "notes" then
+			notes = x[i][1]
+			return notes
+		end
+        end
+        return game, version
+end
+
 function get_game_version(x)
         local game, version = "unknown", "unknown"
 
@@ -60,6 +73,8 @@ function meta_display(xml_feed)
         	                if not sorted[game.." "..version] then
 	        	                sorted[game.." "..version] = {}
                         	end
+				local server_notes
+--				server_notes = get_server_notes(x[i])
 	                        local extra
         	                if get_players_count(x[i]) == 1 then
 	        	        	extra = "\255b"..get_players_count(x[i]).." player"
