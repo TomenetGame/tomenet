@@ -5030,6 +5030,7 @@ bool target_okay(int Ind)
 
 	/* Accept stationary targets */
 //	if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
+	if (p_ptr->target_who < 0 - MAX_PLAYERS) return (TRUE);
 
 	/* Check moving monsters */
 	if (p_ptr->target_who > 0)

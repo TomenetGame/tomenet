@@ -858,6 +858,12 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		}
 	}
 
+	/* Accept reasonable targets:
+	 * This prevents a player from getting stuck when facing a
+	 * monster inside a wall.
+	 */
+	if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+
 	/* Spell to cast */
 	if (inscription != NULL)
 	{

@@ -3144,10 +3144,13 @@ void player_talk_aux(int Ind, cptr message)
 
 				return;
 			}
-
+			/* Please add here anything you think is needed.  */
 			else if ((prefix(message, "/refresh")) ||
 					prefix(message, "/ref"))
 			{
+				/* Clear the target */
+				p_ptr->target_who = 0;
+
 				/* Recalculate bonuses */
 				p_ptr->update |= (PU_BONUS);
 
@@ -3166,8 +3169,39 @@ void player_talk_aux(int Ind, cptr message)
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER | PW_SPELL);
 
-				/* Anything more? :) */
+				return;
+			}
+			else if ((prefix(message, "/target")) ||
+					prefix(message, "/tar"))
+			{
+				int tx, ty;
 
+				/* Clear the target */
+				p_ptr->target_who = 0;
+
+				/* at least 2 arguments required */
+				if (tk < 2)
+				{
+					msg_print(Ind, "\377oUsage: /target (X) (Y) <from your position>");
+					return;
+				}
+
+				tx = p_ptr->px + k;
+				ty = p_ptr->py + atoi(token[2]);
+				
+				if (!in_bounds(ty,tx))
+				{
+					msg_print(Ind, "\377oIllegal position!");
+					return;
+				}
+
+				/* Set the target */
+				p_ptr->target_row = ty;
+				p_ptr->target_col = tx;
+
+				/* Set 'stationary' target */
+				p_ptr->target_who = 0 - MAX_PLAYERS - 2;
+				
 				return;
 			}
 
@@ -3487,14 +3521,14 @@ void player_talk_aux(int Ind, cptr message)
 				}
 				else
 				{
-					msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag untag;");
+					msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
 					msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta trap unst wish");
 					return;
 				}
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag untag;");
+				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me ref tag target untag;");
 				msg_print(Ind, "  /quaff is also available for old client users :)");
 				msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 				return;

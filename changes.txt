@@ -615,3 +615,5 @@ Change list for PernMangband
 
 5/1/2001 (Jir)
 - unique-list is slightly improved.
+- chatline command: /target  (Idea from Norcoth; thx)
+- auto-retaliator can handle a monster inside walls in a better way.
