@@ -1471,6 +1471,6 @@ void cast_school_spell(int Ind, int spell, int dir, int item)
 	/* Actualy cast the choice */
 	if (spell != -1)
         {
-                exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, item = %d})", Ind, spell, spell, dir, item));
+                exec_lua(Ind, format("cast_school_spell(%d, %d, spell(%d), nil, {dir = %d, book = %d})", Ind, spell, spell, dir, item));
 	}
 }

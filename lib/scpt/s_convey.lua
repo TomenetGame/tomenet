@@ -28,15 +28,13 @@ DISARM = add_spell
         ["mana_max"] = 	4,
         ["fail"] = 	10,
         ["spell"] = 	function()
-			destroy_doors_touch()
-        	        if get_level(Ind, DISARM, 50) >= 10 then destroy_traps_touch() end
+			destroy_doors_touch(Ind, 1 + get_level(Ind, DISARM, 6, 0))
 	end,
 	["info"] = 	function()
-                	return ""
+                	return "rad "..(1 + get_level(Ind, DISARM, 6, 0))
 	end,
         ["desc"] =	{
-        		"Destroys doors",
-        		"At level 10 it disarms traps",
+        		"Destroys doors and traps",
         }
 }
 
@@ -73,7 +71,7 @@ TELEAWAY = add_spell
         		if get_level(Ind, TELEAWAY, 50) >= 20 then
                                 project_los(Ind, GF_AWAY_ALL, 100)
                         elseif get_level(Ind, TELEAWAY, 50) >= 10 then
-                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(TELEAWAY, 4))
+                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4))
                         else
                                 teleport_monster(Ind, args.dir)
 			end
@@ -87,7 +85,7 @@ TELEAWAY = add_spell
                         "At level 20 it teleports all monsters in sight"
         }
 }
---[[
+
 RECALL = add_spell
 {
 	["name"] = 	"Recall",
@@ -96,31 +94,14 @@ RECALL = add_spell
         ["mana"] = 	25,
         ["mana_max"] = 	25,
         ["fail"] =      20,
-        ["spell"] = 	function()
-        		local ret, x, y, c_ptr
-                        ret, x, y = tgt_pt()
-                        if ret == FALSE then return end
-                        c_ptr = cave(y, x)
-                        if (y == py) and (x == px) then
-                        	recall_player(Ind, 21 - get_level(RECALL, 15), 15 - get_level(RECALL, 10))
-                        elseif c_ptr.m_idx > 0 then
-                        	swap_position(y, x)
-                        elseif c_ptr.o_idx > 0 then
-                        	set_target(y, x)
-                                if get_level(RECALL, 50) >= 15 then
-	                        	fetch(5, 10 + get_level(RECALL, 150), FALSE)
-                                else
-	                        	fetch(5, 10 + get_level(RECALL, 150), TRUE)
-                                end
-                        end
+        ["spell"] = 	function(args)
+                        if args.book < 0 then return end
+        		set_recall(Ind, randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10), player.inventory[1 + args.book])
 	end,
 	["info"] = 	function()
-			return "dur "..(15 - get_level(RECALL, 10)).."+d"..(21 - get_level(RECALL, 15)).." weight "..(1 + get_level(RECALL, 15)).."lb"
+			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))
 	end,
         ["desc"] =	{
         		"Cast on yourself it will recall you to the surface/dungeon.",
-        		"Cast at a monster you will swap positions with the monster.",
-                        "Cast at an object it will fetch the object to you."
         }
 }
-]]

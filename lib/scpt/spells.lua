@@ -26,7 +26,7 @@ pern_dofile(Ind, "s_convey.lua")
 -- Great book, eh? ;)
 school_book[50] = {
 --        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTER, SENSEHIDDEN,
-        DISARM, BLINK, TELEPORT, TELEAWAY,
+        DISARM, BLINK, TELEPORT, TELEAWAY, RECALL,
 }
 
 

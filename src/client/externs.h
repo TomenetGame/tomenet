@@ -318,6 +318,7 @@ extern void c_close_game(cptr reason);
 
 /* c-spell.c */
 //extern void show_browse(int book);
+s32b get_school_spell(cptr do_what, int *item_book);
 extern int get_spell(int *sn, cptr prompt, int book, bool known);
 extern void show_browse(object_type *o_ptr);
 extern void browse_school_spell(int book, int pval);

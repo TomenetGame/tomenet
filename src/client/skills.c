@@ -13,8 +13,6 @@
 
 #include "angband.h"
 
-extern s32b get_school_spell(cptr do_what);
-
 /*
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
@@ -1009,18 +1007,17 @@ void do_activate_skill(int x_idx, int item)
 		return;
 	}
 	else if (s_info[x_idx].action_mkey == MKEY_SCHOOL)
-	{
+        {
+                int item;
+
 		/* Ask for a spell, allow cancel */
-		if ((spell = get_school_spell("cast")) == -1) return;
+		if ((spell = get_school_spell("cast", &item)) == -1) return;
 
                 /* Ask for a direction? */
                 dir = -1;
                 if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)))
                         if (!get_dir(&dir))
                                 return;
-
-                /* Ask for an item */
-                item = 0;
 
 		/* Send it */
 		Send_activate_skill(MKEY_SCHOOL, item, spell, dir);

@@ -225,7 +225,7 @@ extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
 extern bool probing(int Ind);
-extern bool project_hack(int Ind, int typ, int dam);
+extern bool project_hack@project_los(int Ind, int typ, int dam);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
@@ -272,6 +272,9 @@ extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 
+extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
+extern bool set_recall_timer(int Ind, int v);
+extern bool set_recall(int Ind, int v, object_type * o_ptr);
 
 /*
  * The spell function must provide the desc

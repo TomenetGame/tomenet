@@ -614,7 +614,7 @@ bool get_item_hook_find_spell(int *item)
 /*
  * Get a spell from a book
  */
-s32b get_school_spell(cptr do_what)
+s32b get_school_spell(cptr do_what, int *item_book)
 {
 	int i, item;
 	u32b spell = -1;
@@ -810,7 +810,8 @@ s32b get_school_spell(cptr do_what)
 	if (!flag) return -1;
 
         tmp = spell;
-//        repeat_push(tmp);
+        //        repeat_push(tmp);
+        *item_book = item;
 	return(spell);
 }
 
