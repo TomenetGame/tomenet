@@ -802,7 +802,7 @@ D:You feel like having a shot.
 F:FLOOR | DOOR
 
 N:172:Garbage Trap
-I:3:30:5:5:15:0d0:w
+I:3:30:5:5:15:0d0:y
 D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
@@ -835,6 +835,21 @@ N:178:Amnesia Trap
 I:4:50:30:6:12:0d0:r
 D:You suddenly can't remember what you were doing here...
 F:FLOOR | CHEST | DOOR
+
+N:179:Silliness Trap
+I:4:50:30:6:20:0d0:r
+D:You seem to forget what little you've learnt..
+F:FLOOR | CHEST | DOOR
+
+N:180:Goodbye-Charlie Trap
+I:10:50:50:6:25:0d0:W
+D:You feel like a sucker.
+F:FLOOR | CHEST | DOOR
+
+N:181:Trap of Present Exchange
+I:5:30:5:5:18:0d0:y
+D:You exchanged your equipments with nifty presents.
+F:FLOOR | DOOR | CHEST
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color

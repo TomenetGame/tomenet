@@ -4401,6 +4401,9 @@ extern int PlayerUID;
 #define TRAP_OF_VERMIN		176
 #define TRAP_OF_RANDOM_EFFECT	177
 #define TRAP_OF_AMNESIA		178
+#define TRAP_OF_SILLINESS	179
+#define TRAP_OF_GOODBYE_CHARLIE	180
+#define TRAP_OF_PRESENT_EXCHANGE	181
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

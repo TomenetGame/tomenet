@@ -4987,13 +4987,13 @@ F:INSTA_ART
 
 # More miscellaneous stuff
 
-N:676:Egg
-G:,:W
-I:10:1:0
-W:5:0:30:100
-A:5/1:15/1:25/1:35/1
-P:0:1d1:0:0:0
-F:ACTIVATE
+#N:676:Egg
+#G:,:W
+#I:10:1:0
+#W:5:0:30:100
+#A:5/1:15/1:25/1:35/1
+#P:0:1d1:0:0:0
+#F:ACTIVATE
 
 N:677:Reset Recall
 G:?:d

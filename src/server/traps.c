@@ -485,6 +485,132 @@ static bool player_handle_trap_of_hostility(int Ind)
 
 }
 
+bool do_trap_of_silliness(int Ind, int power)
+{
+	player_type *p_ptr = Players[Ind];
+	int i, j;
+	bool aware = FALSE;
+
+	for (i = 0; i < power; i++)
+	{
+		j = rand_int(MAX_K_IDX);
+		if (p_ptr->obj_aware[j]) aware = TRUE;
+		p_ptr->obj_aware[j] = 0;
+
+		j = rand_int(MAX_T_IDX);
+		if (p_ptr->trap_ident[j]) aware = TRUE;
+		p_ptr->trap_ident[j] = 0;
+	}
+
+	return (aware);
+
+}
+
+bool do_player_drop_items(int Ind, int chance)
+{
+	player_type *p_ptr = Players[Ind];
+	s16b i;
+	bool message = FALSE, ident = FALSE;
+
+	for (i=0;i<INVEN_PACK;i++)
+	{
+		object_type tmp_obj;
+		if (!p_ptr->inventory[i].k_idx) continue;
+		if (randint(100)>chance) continue;
+		if (p_ptr->inventory[i].name1 == ART_POWER) continue;
+		if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
+		tmp_obj = p_ptr->inventory[i];
+		/* drop carefully */
+		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		inven_item_increase(Ind, i,-999);
+		inven_item_optimize(Ind, i);
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		if (!message)
+		{
+			msg_print(Ind, "You are startled by a sudden sound.");
+			message = TRUE;
+		}
+		ident = TRUE;
+	}
+	if (!ident)
+	{
+		msg_print(Ind, "You hear a sudden, strange sound.");
+	}
+
+	return (ident);
+}
+
+bool do_player_scatter_items(int Ind, int chance)
+{
+	player_type *p_ptr = Players[Ind];
+	s16b i,j;
+	bool message = FALSE;
+	cave_type **zcave;
+	zcave=getcave(&p_ptr->wpos);
+
+	for (i=0;i<INVEN_PACK;i++)
+	{
+		if (!p_ptr->inventory[i].k_idx) continue;
+		if (rand_int(100)>chance) continue;
+		for (j=0;j<10;j++)
+		{
+			object_type tmp_obj;
+			s16b cx = p_ptr->px+15-rand_int(30);
+			s16b cy = p_ptr->py+15-rand_int(30);
+			if (!in_bounds(cy,cx)) continue;
+			if (!cave_floor_bold(zcave, cy,cx)) continue;
+			tmp_obj = p_ptr->inventory[i];
+			if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) return(FALSE);
+			inven_item_increase(Ind, i,-999);
+			inven_item_optimize(Ind, i);
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+			//                  (void)floor_carry(cy, cx, &tmp_obj);
+			drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
+			if (!message)
+			{
+				msg_print(Ind, "You feel light-footed.");
+				message = TRUE;
+			}
+			if (player_has_los_bold(Ind, cy, cx))
+			{
+				char i_name[80];
+				object_desc(Ind, i_name, &tmp_obj, TRUE, 3);
+				note_spot(Ind, cy, cx);
+				lite_spot(Ind, cy, cx);
+				message=TRUE;
+				msg_format(Ind, "Suddenly %s appear%s!",i_name, (tmp_obj.number>1)?"":"s");
+			}
+			break;
+		}
+	}
+
+	return (message);
+}
+
+bool do_player_trap_garbage(int Ind, int times)
+{
+	player_type *p_ptr = Players[Ind];
+	int k, l, lv = getlevel(&p_ptr->wpos);
+	bool ident = FALSE;
+	object_type *o_ptr, forge;
+
+	for(k = 0; k < times; k++)
+	{
+		l = rand_int(MAX_K_IDX);
+
+		/* hack -- !ruin, !death cannot be generated */
+		if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30) continue;
+
+		o_ptr = &forge;
+		object_prep(o_ptr, l);
+
+		ident = TRUE;
+		if (inven_carry(Ind, o_ptr) < 0)
+			drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	}
+	return (ident);
+}
+
 bool do_player_trap_call_out(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1652,46 +1778,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
       /* Trap of Scatter Items */
       case TRAP_OF_SCATTER_ITEMS:
-         {
-             s16b i,j;
-            bool message = FALSE;
-            for (i=0;i<INVEN_PACK;i++)
-            {
-               if (!p_ptr->inventory[i].k_idx) continue;
-               if (rand_int(10)<3) continue;
-               for (j=0;j<10;j++)
-               {
-                  object_type tmp_obj;
-                  s16b cx = x+15-rand_int(30);
-                  s16b cy = y+15-rand_int(30);
-                  if (!in_bounds(cy,cx)) continue;
-                  if (!cave_floor_bold(zcave, cy,cx)) continue;
-                  tmp_obj = p_ptr->inventory[i];
-				  if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) return(FALSE);
-                  inven_item_increase(Ind, i,-999);
-                  inven_item_optimize(Ind, i);
-                  p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-//                  (void)floor_carry(cy, cx, &tmp_obj);
-                  drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
-                  if (!message)
-                  {
-                     msg_print(Ind, "You feel light-footed.");
-                     message = TRUE;
-                  }
-                  if (player_has_los_bold(Ind, cy, cx))
-                  {
-                     char i_name[80];
-                     object_desc(Ind, i_name, &tmp_obj, TRUE, 3);
-                     note_spot(Ind, cy, cx);
-                     lite_spot(Ind, cy, cx);
-                     ident=TRUE;
-                     msg_format(Ind, "Suddenly %s appear%s!",i_name, (tmp_obj.number>1)?"":"s");
-                  }
-                  break;
-               }
-               ident = message;
-            }
-         }
+				ident = do_player_scatter_items(Ind, 70);
          break;
       /* Trap of Decay */
       case TRAP_OF_DECAY:
@@ -1865,95 +1952,15 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_POISON_DAGGERS_II:
          ident = player_handle_missile_trap(Ind, 2+(getlevel(&p_ptr->wpos) / 15), TV_SWORD, SV_DAGGER, 10, 8, 20+randint(30), "Poison Dagger Trap"); break;
 
+		 /* it was '20,90,70'... */
       case TRAP_OF_DROP_ITEMS:
-         {
-            s16b i;
-            bool message = FALSE;
-            for (i=0;i<INVEN_PACK;i++)
-            {
-               object_type tmp_obj;
-               if (!p_ptr->inventory[i].k_idx) continue;
-               if (randint(100)<80) continue;
-               if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-			   if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
-               tmp_obj = p_ptr->inventory[i];
-               /* drop carefully */
-               drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, y, x);
-               inven_item_increase(Ind, i,-999);
-               inven_item_optimize(Ind, i);
-               p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-               if (!message)
-               {
-                  msg_print(Ind, "You are startled by a sudden sound.");
-                  message = TRUE;
-               }
-               ident = TRUE;
-            }
-            if (!ident)
-            {
-               msg_print(Ind, "You hear a sudden, strange sound.");
-            }
-         }
+		 ident = do_player_drop_items(Ind, 20);
          break;
       case TRAP_OF_DROP_ALL_ITEMS:
-         {
-            s16b i;
-            bool message = FALSE;
-            for (i=0;i<INVEN_PACK;i++)
-            {
-               object_type tmp_obj;
-               if (!p_ptr->inventory[i].k_idx) continue;
-               if (randint(100)<10) continue;
-               if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-			   if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
-               tmp_obj = p_ptr->inventory[i];
-               /* drop carefully */
-               drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, y, x);
-               inven_item_increase(Ind, i,-999);
-               inven_item_optimize(Ind, i);
-               p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-               if (!message)
-               {
-                  msg_print(Ind, "You are startled a lot by a sudden sound.");
-                  message = TRUE;
-               }
-               ident = TRUE;
-            }
-            if (!ident)
-            {
-               msg_print(Ind, "You hear a sudden, strange sound.");
-            }
-         }
+		 ident = do_player_drop_items(Ind, 70);
          break;
       case TRAP_OF_DROP_EVERYTHING:
-         {
-            s16b i;
-            bool message = FALSE;
-            for (i=0;i<INVEN_TOTAL;i++)
-            {
-               object_type tmp_obj;
-               if (!p_ptr->inventory[i].k_idx) continue;
-               if (randint(100)<30) continue;
-               if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-			   if (cfg_anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
-               tmp_obj = p_ptr->inventory[i];
-               /* drop carefully */
-               drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, y, x);
-               inven_item_increase(Ind, i,-999);
-               inven_item_optimize(Ind, i);
-               p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-               if (!message)
-               {
-                  msg_print(Ind, "You are completely startled by a sudden sound.");
-                  message = TRUE;
-               }
-               ident = TRUE;
-            }
-            if (!ident)
-            {
-               msg_print(Ind, "You hear a sudden, strange sound.");
-            }
-         }
+		 ident = do_player_drop_items(Ind, 90);
          break;
 
       /* Bolt Trap */
@@ -2209,25 +2216,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          break;
       /* Trap of Garbage */
       case TRAP_OF_GARBAGE:
-		 {
-			 int lv = getlevel(&p_ptr->wpos);
-			 object_type *o_ptr, forge;
-			 for(k = 0; k < 400; k++)
-			 {
-				l = rand_int(MAX_K_IDX);
-
-				/* hack -- !ruin, !death cannot be generated */
-				if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30) continue;
-
-				o_ptr = &forge;
-				object_prep(o_ptr, l);
-
-				ident = TRUE;
-				if (inven_carry(Ind, o_ptr) < 0)
-					drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-			 }
-			 break;
-		 }
+		 ident = do_player_trap_garbage(Ind, 300);
+		 break;
       /* Trap of discordance */
 	  case TRAP_OF_HOSTILITY:
 		 {
@@ -2289,6 +2279,43 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 }
 			 break;
 		 }
+	  case TRAP_OF_SILLINESS:
+		 {
+			 if (rand_int(100) < p_ptr->skill_sav)
+			 {
+				 msg_print(Ind, "You resist the effects!");
+			 }
+			 else if (do_trap_of_silliness(Ind, 50 + getlevel(&p_ptr->wpos)))
+			 {
+				 msg_print(Ind, "You feel somewhat silly.");
+//				 ident = TRUE;	// haha you forget this also :)
+			 }
+			 break;
+		 }
+      case TRAP_OF_GOODBYE_CHARLIE:
+         {
+             s16b i,j;
+            bool message = FALSE;
+
+			/* Send him/her back to home :) */
+			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+			p_ptr->recall_pos.wz = 0;
+
+			if (!p_ptr->word_recall)
+			{
+				p_ptr->word_recall = rand_int(20) + 15;
+				msg_print(Ind, "\377oThe air about you becomes charged...");
+				message = TRUE;
+			}
+			ident |= do_player_scatter_items(Ind, 50);
+
+         }
+         break;
+      case TRAP_OF_PRESENT_EXCHANGE:
+		 ident = do_player_drop_items(Ind, 50);
+		 ident |= do_player_trap_garbage(Ind, 300);
+		 break;
       default:
       {
          s_printf("Executing unknown trap %d", trap);
