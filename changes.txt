@@ -151,3 +151,9 @@ Change list for PernMangband
 11/08/2001 - evileye
 - Rectangular optimisation of houses complete.
 - House creation is now compatible with the dynamic houses array.
+
+13/08/2001 - evileye
+- Added courtyards - houses with no floor (inscribe FIRST scroll @F)
+- Houses were not killed on player suicide. Fixed
+- Made start on a delete_house function (For DM)
+- Houses may now be created within larger houses.

@@ -2017,7 +2017,8 @@ bool fill_house(house_type *h_ptr, int func){
 				}
 				else{
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
- 						c_ptr->feat=FEAT_FLOOR;
+ 						if(!(h_ptr->flags&HF_NOFLOOR))
+							c_ptr->feat=FEAT_FLOOR;
  						c_ptr->info|=CAVE_ICKY;
 					}
 				}
@@ -2096,7 +2097,8 @@ bool fill_house(house_type *h_ptr, int func){
 						delete_object(Depth, miny+(y-1), minx+(x-1));
 						break;
 					}
-					cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
+					if(!(h_ptr->flags&HF_NOFLOOR))
+						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
 					cave[Depth][miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
 					break;
 				case 1:

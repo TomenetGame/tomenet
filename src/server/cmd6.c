@@ -1146,9 +1146,23 @@ void do_cmd_read_scroll(int Ind, int item)
 	{
 		case SV_SCROLL_HOUSE:
 		{
+			unsigned char *ins=quark_str(o_ptr->note);
+			bool floor=TRUE;
                         msg_print(Ind, "This is a house creation scroll.");
 			ident = TRUE;
-                        house_creation(Ind);
+			if(ins){
+				while((*ins!='\0')){
+					if(*ins=='@'){
+						ins++;
+						if(*ins=='F'){
+							floor=FALSE;
+							break;
+						}
+					}
+					ins++;
+				}
+			}
+                        house_creation(Ind, floor);
 			break;
 		}
                 case SV_SCROLL_GOLEM:

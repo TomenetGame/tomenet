@@ -3261,6 +3261,9 @@ void player_death(int Ind)
 	/* Handle suicide */
 	if (!p_ptr->alive)
 	{
+		/* Delete his houses */
+		kill_houses(p_ptr->id, OT_PLAYER);
+
 		/* Remove him from his party */
 		if (p_ptr->party)
 		{

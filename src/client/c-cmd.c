@@ -1620,6 +1620,10 @@ void cmd_house_chmod(int dir){
 	Send_admin_house(dir,buf);
 }
 
+void cmd_house_kill(int dir){
+	Send_admin_house(dir,"K");
+}
+
 void cmd_purchase_house(void)
 {
 	char i=0;
@@ -1635,6 +1639,7 @@ void cmd_purchase_house(void)
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
+	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Delete house");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1651,6 +1656,10 @@ void cmd_purchase_house(void)
 				break;
 			case '3':
 				cmd_house_chmod(dir);
+				i=ESCAPE;
+				break;
+			case '4':
+				cmd_house_kill(dir);
 				i=ESCAPE;
 				break;
 			default:

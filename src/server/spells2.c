@@ -4013,6 +4013,7 @@ bool poly_build(int Ind, char *args){
 	static int moves;
 	static int cvert;
 	static int depth;
+	static bool nofloor;
 	static struct dna_type *dna;
 	player_type *p_ptr=Players[Ind];
 	int x,y;
@@ -4034,6 +4035,7 @@ bool poly_build(int Ind, char *args){
 		dna->price=5;	/* so work out */
 		odir=0;
 		cvert=0;
+		nofloor=(*args=='N');
 		sx=p_ptr->px;
 		sy=p_ptr->py;
 		minx=maxx=sx;
@@ -4103,6 +4105,7 @@ bool poly_build(int Ind, char *args){
 			houses[num_houses].y=sy;
 			houses[num_houses].coords.poly=vert;
 		}
+		if(nofloor) houses[num_houses].flags|=HF_NOFLOOR;
 		houses[num_houses].depth=p_ptr->dun_depth;
 		houses[num_houses].dna=dna;
 		if(fill_house(&houses[num_houses],2)){
@@ -4123,7 +4126,7 @@ bool poly_build(int Ind, char *args){
 		return TRUE;
 	}
 	/* no going off depth, and no spoiling moats */
-	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY)){
+	if(depth==p_ptr->dun_depth && !(cave[depth][dy][dx].info&CAVE_ICKY && cave[depth][dy][dx].feat==FEAT_WATER)){
 		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_WALL_EXTRA;
 		if(cvert<MAXCOORD && (--moves)>0) return TRUE;
 		p_ptr->update|=PU_VIEW;
@@ -4138,7 +4141,7 @@ bool poly_build(int Ind, char *args){
 	return FALSE;
 }
 
-void house_creation(int Ind){
+void house_creation(int Ind, bool floor){
 	player_type *p_ptr=Players[Ind];
 	cptr coords;
 	/* set master_move_hook : a bit like a setuid really ;) */
@@ -4149,8 +4152,7 @@ void house_creation(int Ind){
 		house_alloc+=512;
 	}
 	p_ptr->master_move_hook=poly_build;
-	poly_build(Ind,1);
-	/* ok no sense checking, building bad houses is easy */
+	poly_build(Ind, floor ? "Y" : "N");	/* Its a (char*) ;( */
 }
 
 

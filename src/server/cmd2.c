@@ -506,7 +506,6 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 	return FALSE;
 }
 
-/* basic DEMO access new house door function. */
 bool access_door(int Ind, struct dna_type *dna){
 	player_type *p_ptr=Players[Ind];
 	if(!(strcmp(p_ptr->name,cfg_dungeon_master)) || !(strcmp(p_ptr->name,cfg_admin_wizard)))
@@ -3132,7 +3131,10 @@ void do_cmd_throw(int Ind, int dir, int item)
 	drop_near(o_ptr, j, Depth, y, x);
 }
 
-/* DEMO house admin command */
+void destroy_house(int Ind, struct dna_type *dna){
+	msg_print(Ind,"Your attempts to destroy the house fail.");
+}
+
 void house_admin(int Ind, int dir, char *args){
 	player_type *p_ptr=Players[Ind];
 	int Depth=p_ptr->dun_depth;
@@ -3157,6 +3159,9 @@ void house_admin(int Ind, int dir, char *args){
 					case 'M':
 						success=chmod_door(Ind, dna, args);
 						break;
+					case 'K':
+						destroy_house(Ind, dna);
+						return;
 				}
 				if(success){
 					msg_format(Ind,"Door change successful");

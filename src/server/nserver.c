@@ -2433,7 +2433,8 @@ static int Receive_undefined(int ind)
 
 	errno = 0;
 	plog(format("Unknown packet type (%d,%02x)", connp->r.ptr[0], connp->state));
-	Destroy_connection(ind, "undefined packet");
+	/* Dont destroy connection. Ignore the invalid packet */
+	/*Destroy_connection(ind, "undefined packet");*/
 	return -1;	/* Crash if not (evil) */
 	/*return 0;*/
 }
