@@ -2210,6 +2210,11 @@ struct player_type
 	bool free_act;		/* Never paralyzed */
 	bool see_inv;		/* Can see invisible */
 	bool regenerate;	/* Regenerate hit pts */
+	bool resist_time;	/* Resist time */
+	bool resist_mana;	/* Resist mana */
+	bool immune_poison;	/* Poison immunity */
+	bool immune_water;	/* Makes immune to water */
+	bool resist_water;	/* Resist Water */
 	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
 //	bool telepathy;		/* Telepathy */

@@ -1779,6 +1779,7 @@ that keeps many algorithms happy.
 #define SV_ELVEN_CLOAK                   2
 #define SV_FUR_CLOAK                     3
 #define SV_SHADOW_CLOAK                  6
+#define SV_SBSILK_CLOAK			 8
 
 /* The "sval" codes for TV_GLOVES */
 #define SV_SET_OF_LEATHER_GLOVES         1
@@ -3003,6 +3004,11 @@ that keeps many algorithms happy.
 
 /* XXX */
 /*#define TR5_LIFE                0x04000000L */
+#define TR5_RES_TIME		0x00080000L
+#define TR5_RES_MANA		0x00100000L
+#define TR5_IM_POISON		0x00200000L
+#define TR5_IM_WATER		0x00400000L	/* Water immunity, should also let you breathe under water */
+#define TR5_RES_WATER		0x00800000L	/* Resist Water */
 #define TR5_REGEN_MANA			0x01000000L	/* Item induces regeneration */
 #define TR5_DISARM				0x02000000L
 #define TR5_NO_ENCHANT			0x04000000L
