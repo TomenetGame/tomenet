@@ -11,16 +11,16 @@ BLINK = add_spell
         ["spell"] = 	function()
                 	local dist = 10 + get_level(Ind, BLINK, 8)
 			teleport_player(Ind, dist)
-                        if player.spell_project > 0 then
-                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
-                        end
+--                        if player.spell_project > 0 then
+--                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
+--                        end
 	end,
 	["info"] = 	function()
                 	return "distance "..(10 + get_level(Ind, BLINK, 8))
 	end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
-                        "***Affected by the Meta spell: Project Spell***",
+--                        "***Affected by the Meta spell: Project Spell***",
         },
 }
 
@@ -54,16 +54,16 @@ TELEPORT = add_spell
         ["spell"] = 	function()
                         local dist = 100 + get_level(Ind, TELEPORT, 100)
 			teleport_player(Ind, dist)
-                        if player.spell_project > 0 then
-                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
-                        end
+--                        if player.spell_project > 0 then
+--                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
+--                        end
 	end,
 	["info"] = 	function()
         		return ""
 	end,
         ["desc"] =	{
         		"Teleports you around the level. The casting time decreases with level",
-                        "***Affected by the Meta spell: Project Spell***",
+--                        "***Affected by the Meta spell: Project Spell***",
         }
 }
 
