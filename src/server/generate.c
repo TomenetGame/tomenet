@@ -2225,6 +2225,24 @@ static bool vault_aux_orc(int r_idx)
 
 
 /*
+ * Helper function for "monster pit (orc and ogre)"
+ */
+static bool vault_aux_orc_ogre(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+
+	/* Hack -- Require "o" monsters */
+	if (!strchr("oO", r_ptr->d_char)) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
  * Helper function for "monster pit (troll)"
  */
 static bool vault_aux_troll(int r_idx)
@@ -2440,7 +2458,7 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 	/* Hack -- Choose a nest type */
 	tmp = randint(dun_level);
 
-	if ((tmp < 25) && (rand_int(2) != 0))
+	if ((tmp < 25) && (rand_int(5) != 0))	// rand_int(2)
 	{
 		while (1)
 		{
@@ -2735,11 +2753,22 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 	/* Orc pit */
 	else if (tmp < 15)	// 20
 	{
-		/* Message */
-		name = "orc";
+		if (dun_level > 30 && magik(50))
+		{
+			/* Message */
+			name = "orc and ogre";
 
-		/* Restrict monster selection */
-		get_mon_num_hook = vault_aux_orc;
+			/* Restrict monster selection */
+			get_mon_num_hook = vault_aux_orc_ogre;
+		}
+		else
+		{
+			/* Message */
+			name = "orc";
+
+			/* Restrict monster selection */
+			get_mon_num_hook = vault_aux_orc;
+		}
 	}
 
 	/* Troll pit */

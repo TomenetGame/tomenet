@@ -4115,6 +4115,95 @@ that keeps many algorithms happy.
 
 
 
+/*
+ * Spells that allow the caster to escape
+ */
+#define RF4_ESCAPE_MASK \
+	(0L)
+
+#define RF5_ESCAPE_MASK \
+	(0L)
+
+#define RF6_ESCAPE_MASK \
+	(RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+
+
+/*
+ * Spells that hurt the player directly
+ */
+#define RF4_ATTACK_MASK \
+	(RF4_ROCKET | RF4_ARROW_1 | RF4_ARROW_2 | \
+	 RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | \
+	 RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | \
+	 RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | \
+	 RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | \
+	 RF4_BA_NUKE | RF4_BR_NUKE | RF4_BA_CHAO | RF4_BR_DISI)
+
+#define RF5_ATTACK_MASK \
+	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
+	 RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
+	 RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
+	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | \
+	 RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
+	 RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
+
+#define RF6_ATTACK_MASK \
+	(RF6_HAND_DOOM)
+
+
+/*
+ * Spells that improve the caster's tactical position
+ */
+#define RF4_TACTIC_MASK \
+	(0L)
+
+#define RF5_TACTIC_MASK \
+	(0L)
+
+#define RF6_TACTIC_MASK \
+	(RF6_BLINK)
+
+
+/*
+ * Annoying spells
+ */
+#define RF4_ANNOY_MASK \
+	(RF4_SHRIEK)
+
+#define RF5_ANNOY_MASK \
+	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_UNMAGIC | \
+	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
+
+#define RF6_ANNOY_MASK \
+	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
+
+
+/*
+ * Spells that increase the caster's relative speed
+ */
+#define RF4_HASTE_MASK \
+	(0L)
+
+#define RF5_HASTE_MASK \
+	(RF5_SLOW | RF5_HOLD)
+
+#define RF6_HASTE_MASK \
+	(RF6_HASTE)
+
+
+/*
+ * Healing spells
+ */
+#define RF4_HEAL_MASK \
+	(0L)
+
+#define RF5_HEAL_MASK \
+	(0L)
+
+#define RF6_HEAL_MASK \
+	(RF6_HEAL)
+
+
 
 /*** Macro Definitions ***/
 
@@ -4548,8 +4637,9 @@ extern int PlayerUID;
 
 
 /* Diff mode */
-#define MODE_NORMAL 0
-#define MODE_HELL 1
+#define MODE_NORMAL		0x0000
+#define MODE_HELL		0x0001	/* Penalized */
+#define MODE_NO_GHOST	0x0002	/* traditional 'hellish' is 3 */
 
 /* Monk martial arts... */
 # define MAX_MA 17

@@ -387,7 +387,7 @@ static void prt_speed(int Ind)
 	int i = p_ptr->pspeed;
 
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	if (p_ptr->searching) i+=(p_ptr->mode==MODE_HELL ? 5 : 10);
+	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HELL ? 5 : 10);
 
 	Send_speed(Ind, i - 110);
 }
@@ -2072,7 +2072,7 @@ static void calc_bonuses(int Ind)
 	}
 
        	/* Apply the racial modifiers */
-	if (p_ptr->mode == MODE_HELL)
+	if (p_ptr->mode & MODE_HELL)
 	{
 		for (i = 0; i < 6; i++)
 		{
@@ -2731,7 +2731,7 @@ static void calc_bonuses(int Ind)
 		}
 	}
 
-	if (p_ptr->mode == MODE_HELL)
+	if (p_ptr->mode & MODE_HELL)
 	  {
 	    int speed = p_ptr->pspeed - 110;
 
@@ -2756,7 +2756,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
-	if (p_ptr->mode == MODE_HELL)
+	if (p_ptr->mode & MODE_HELL)
 	  {
 	    p_ptr->dis_to_a /= 2;
 	    p_ptr->to_a /= 2;
@@ -2997,7 +2997,7 @@ static void calc_bonuses(int Ind)
 #endif
 
 	/* Hell mode is HARD */
-	if ((p_ptr->mode == MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
+	if ((p_ptr->mode & MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
         /* Combat bonus to damage */
         if (get_skill(p_ptr, SKILL_COMBAT))

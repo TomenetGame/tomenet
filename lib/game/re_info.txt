@@ -1,3 +1,4 @@
+# $Id$
 # File: re_info.txt
 
 # This file is used to initialize the "lib/raw/re_info.raw" file, which is
@@ -8,7 +9,7 @@
 
 # Version stamp (required)
 
-V:3.4.0
+V:4.0.0
 # Most values can be used with the +, -, % and = operators, = will set the
 # monster value, + and - will modify it based on the normal monster
 # % will apply that percentage to the monster value
@@ -32,7 +33,7 @@ V:3.4.0
 # A few undeads, to be created by the ANIM_DEAD spell
 # (of course, no such spells for now :p)
 
-# Blow dice modifier is 'byte' type (0-255)!
+# XXX Blow dice modifier is 'byte' type (0-255)!
 
 
 N:1:Skeleton
@@ -414,10 +415,13 @@ W:+18:10:%120:%300:A
 F:R_CHAR_P | R_CHAR_O | R_CHAR_y | BASEANGBAND
 M:SMART | FORCE_MAXHP | FORCE_DEPTH | DROP_1D2 | DROP_GOOD |
 M:REGENERATE | RES_TELE
+# Hack -- ESP doesn't work against them
+M:EMPTY_MIND
 M:AI_ANNOY
 O:FRIENDS
 S:1_IN_2 | BRAIN_SMASH | MIND_BLAST | HEAL | HOLD | TPORT | BLINK
 S:TELE_AWAY | TELE_LEVEL | FORGET | SCARE | CONF
+
 N:32:Purified
 G:*:*
 I:+0:+0d+0:+0:+0:+0
@@ -546,6 +550,7 @@ M:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | NO_FEAR
 M:HAS_LITE
 T:MF_ALL
 
+# Joke megos for Joke monsters
 N:41:Serious
 G:*:*
 I:+0:+0d+0:+0:+0:+0

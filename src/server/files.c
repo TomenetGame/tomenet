@@ -882,10 +882,11 @@ long total_points(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	/* Maggot bonus.. beware, r_idx is hard-coded! */
-	int i = p_ptr->r_killed[8]? 1 : 2;
+	int i = p_ptr->r_killed[8]? 50 : 100;
+	if (p_ptr->mode & MODE_HELL) i = i * 5 / 4;
 
-	if (p_ptr->mode == MODE_HELL) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 3 / 2)*i);
-	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i);
+	if (p_ptr->mode & MODE_NO_GHOST) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
+	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
 }
 
 /*

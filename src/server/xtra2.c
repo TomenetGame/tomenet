@@ -3843,7 +3843,7 @@ void player_death(int Ind)
 	}
 
 
-	if(p_ptr->mode!=MODE_HELL){
+	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
 		struct dungeon_type *dungeon;
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);

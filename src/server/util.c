@@ -3708,7 +3708,8 @@ static void player_talk_aux(int Ind, char *message)
 	else if (mycolor) c = *(message + 1);
 	else
 	{
-		if (p_ptr->mode == MODE_HELL) c = 'D';
+		if (p_ptr->mode & MODE_HELL) c = 'W';
+		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
 	}

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: birth.c */
 
 /* Purpose: create a player character */
@@ -98,15 +99,18 @@ static void choose_sex(void)
 {
 	char        c='\0';		/* pfft redesign while(1) */
 	bool hazard = FALSE;
+	bool parity = magik(50);
 
-	put_str("m) Male", 20, 2);
-	put_str("f) Female", 20, 17);
-	put_str("M) Hell Male", 21, 2);
-	put_str("F) Hell Female", 21, 17);
+	put_str("m) Male", 20, parity ? 2 : 17);
+	put_str("f) Female", 20, parity ? 17 : 2);
+#if 0
+	put_str("M) Hell Male", 21, parity ? 2 : 17);
+	put_str("F) Hell Female", 21, parity ? 17 : 2);
+#endif	// 0
 
 	while (1)
 	{
-		put_str("Choose a sex (? for Help, * for random, Q to Quit): ", 19, 2);
+		put_str("Choose a sex (* for random, Q to Quit): ", 19, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == 'm')
@@ -115,16 +119,17 @@ static void choose_sex(void)
 			c_put_str(TERM_L_BLUE, "Male", 4, 15);
 			break;
 		}
-		if (c == 'M')
-		{
-			sex = 3;
-			c_put_str(TERM_L_BLUE, "Hell Male", 4, 15);
-			break;
-		}
 		else if (c == 'f')
 		{
 			sex = 0;
 			c_put_str(TERM_L_BLUE, "Female", 4, 15);
+			break;
+		}
+#if 0
+		else if (c == 'M')
+		{
+			sex = 3;
+			c_put_str(TERM_L_BLUE, "Hell Male", 4, 15);
 			break;
 		}
 		else if (c == 'F')
@@ -133,13 +138,14 @@ static void choose_sex(void)
 			c_put_str(TERM_L_BLUE, "Hell Female", 4, 15);
 			break;
 		}
+#endif	// 0
 		else if (c == '?')
 		{
 			/*do_cmd_help("help.hlp");*/
 		}
 		else if (c == '*')
 		{
-			switch (rand_int(4))
+			switch (rand_int(2))
 			{
 				case 0:
 					c = 'f';
@@ -147,12 +153,14 @@ static void choose_sex(void)
 				case 1:
 					c = 'm';
 					break;
+#if 0
 				case 2:
 					c = 'F';
 					break;
 				case 3:
 					c = 'M';
 					break;
+#endif	// 0
 			}
 			hazard = TRUE;
 		}
@@ -199,7 +207,7 @@ static void choose_race(void)
 
 	while (1)
 	{
-		put_str("Choose a race (? for Help, * for random, Q to Quit): ", n, 2);
+		put_str("Choose a race (* for random, Q to Quit): ", n, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 
@@ -379,6 +387,7 @@ void choose_stat_order(void)
 /*
  * Choose to be a batman or not       -Jir-
  */
+#if 0
 static void choose_bat(void)
 {
 	char        c;
@@ -393,7 +402,7 @@ static void choose_bat(void)
 		if (c == 'Q') quit(NULL);
 		if (c == 'y')
 		{
-			sex += 4;
+			sex += 512;
 			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
 			break;
 		}
@@ -414,6 +423,86 @@ static void choose_bat(void)
 
 	clear_from(20);
 }
+#else	// 0
+/* Quick hack!		- Jir -
+ * TODO: remove hard-coded things. */
+static void choose_bat(void)
+{
+	char        c='\0';
+	bool hazard = FALSE;
+
+	put_str("n) Normal", 20, 2);
+	put_str("f) Fruit bat", 20, 15 + 2);
+	put_str("g) no Ghost", 20, 30 + 2);
+	put_str("h) Hard", 20, 45 + 2);
+	put_str("H) Hellish", 20, 60 + 2);
+
+	while (1)
+	{
+		put_str("Choose a mode (* for random, Q to Quit): ", 19, 2);
+		if (!hazard) c = inkey();
+		if (c == 'Q') quit(NULL);
+		if (c == 'f')
+		{
+			sex += 512;
+			c_put_str(TERM_L_BLUE, "Fruit Bat", 15, 15);
+			break;
+		}
+		else if (c == 'n')
+		{
+			c_put_str(TERM_L_BLUE, "Normal", 15, 15);
+			break;
+		}
+		else if (c == 'g')
+		{
+			sex += MODE_NO_GHOST << 1;
+			c_put_str(TERM_L_BLUE, "No Ghost", 15, 15);
+			break;
+		}
+		else if (c == 'h')
+		{
+			sex += (MODE_HELL) << 1;
+			c_put_str(TERM_L_BLUE, "Hard", 15, 15);
+			break;
+		}
+		else if (c == 'H')
+		{
+			sex += (MODE_NO_GHOST + MODE_HELL) << 1;
+			c_put_str(TERM_L_BLUE, "Hellish", 15, 15);
+			break;
+		}
+		else if (c == '?')
+		{
+			/*do_cmd_help("help.hlp");*/
+		}
+		else if (c == '*')
+		{
+			switch (rand_int(4))
+			{
+				case 0:
+					c = 'n';
+					break;
+				case 1:
+					c = 'f';
+					break;
+				case 2:
+					c = 'g';
+					break;
+				case 3:
+					c = 'h';
+					break;
+			}
+			hazard = TRUE;
+		}
+		else
+		{
+			bell();
+		}
+	}
+
+	clear_from(20);
+}
+#endif	// 0
 
 #if 0
 /*
@@ -524,7 +613,7 @@ void get_char_info(void)
 	put_str("Race        :", 5, 1);
 	put_str("Class       :", 6, 1);
 	put_str("Stat order  :", 8, 1);
-	put_str("Form        :",15, 1);
+	put_str("Mode        :",15, 1);
 
 	/* Clear bottom of screen */
 	clear_from(20);

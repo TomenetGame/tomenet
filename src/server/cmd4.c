@@ -335,6 +335,42 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
+static void do_write_others_attributes(FILE *fff, player_type *q_ptr)
+{
+	/* Print a message */
+#if 0
+	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
+			q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
+			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
+			q_ptr->fruit_bat ? "Fruit bat, " : "",
+			q_ptr->lev, parties[q_ptr->party].name);
+#else	// 0
+	fprintf(fff, "  %s the ", q_ptr->name);
+	switch (q_ptr->mode)	// TODO: give better modifiers
+	{
+		case MODE_NORMAL:
+			break;
+		case MODE_HELL:
+			fprintf(fff, "purgatorial ");
+			break;
+		case MODE_NO_GHOST:
+//			fprintf(fff, "square ");
+			fprintf(fff, "unworldly ");
+			break;
+		case (MODE_HELL + MODE_NO_GHOST):
+			fprintf(fff, "hellish ");
+			break;
+	}
+
+	fprintf(fff, "%s %s (%s%sLv %d, %s)",
+			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
+			(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
+			q_ptr->fruit_bat ? "Batty, " : "",
+			q_ptr->lev, parties[q_ptr->party].name);
+#endif	// 0
+}
+
 /*
  * Check the status of "players"
  *
@@ -390,12 +426,7 @@ void do_cmd_check_players(int Ind, int line)
 		fprintf(fff, "%c", attr);
 
 		/* Print a message */
-		fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
-				q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
-				race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
-				(q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"",
-				q_ptr->fruit_bat ? "Fruit bat, " : "",
-				q_ptr->lev, parties[q_ptr->party].name);
+		do_write_others_attributes(fff, q_ptr);
 
 		/* AFK */
 		if(q_ptr->afk)
@@ -472,102 +503,89 @@ void do_cmd_check_player_equip(int Ind, int line)
 	fff = my_fopen(file_name, "w");
 
 	/* Scan the player races */
-		for (k = 1; k < NumPlayers + 1; k++)
+	for (k = 1; k < NumPlayers + 1; k++)
+	{
+		player_type *q_ptr = Players[k];
+		byte attr = 'w';
+
+		/* Only print connected players */
+		if (q_ptr->conn == NOT_CONNECTED)
+			continue;
+
+		/* don't display the dungeon master if the secret_dungeon_master
+		 * option is set
+		 */
+		if (q_ptr->admin_dm &&
+				(cfg.secret_dungeon_master)) continue;
+
+		/*** Determine color ***/
+
+		attr = 'G';
+
+		/* Skip myself */
+		if (Ind == k) continue;
+
+		/* Print party members in blue */
+		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+
+		/* Print hostile players in red */
+		else if (check_hostile(Ind, k)) attr = 'r';
+
+		/* Print newbies/lowbies in white */
+		else if (q_ptr->lev < 10) attr = 'w';
+
+		/* Party member & hostile players only */
+		/* else continue; */
+
+		/* Only party member or those on the same dungeon level */
+		//                              if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
+		if ((attr != 'B') && (attr != 'w') && !admin)
 		{
-			player_type *q_ptr = Players[k];
-			byte attr = 'w';
-
-			/* Only print connected players */
-			if (q_ptr->conn == NOT_CONNECTED)
-				continue;
-
-			/* don't display the dungeon master if the secret_dungeon_master
-			 * option is set
-			 */
-			if (q_ptr->admin_dm &&
-			   (cfg.secret_dungeon_master)) continue;
-
-			/*** Determine color ***/
-
-				attr = 'G';
-
-			/* Skip myself */
-			if (Ind == k) continue;
-
-			/* Print party members in blue */
-			else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
-
-			/* Print hostile players in red */
-			else if (check_hostile(Ind, k)) attr = 'r';
-
-				/* Print newbies/lowbies in white */
-				else if (q_ptr->lev < 10) attr = 'w';
-
-			/* Party member & hostile players only */
-			/* else continue; */
-
-				/* Only party member or those on the same dungeon level */
-//                              if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
-				if ((attr != 'B') && (attr != 'w') && !admin)
-				{
 			/* Make sure this player is at this depth */
 			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 			/* Can he see this player? */
 			if (!(p_ptr->cave_flag[q_ptr->py][q_ptr->px] & CAVE_VIEW)) continue;
-				}
+		}
 
-				/* Skip invisible players */
+		/* Skip invisible players */
 #if 0
-				if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)
-				{
-					if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
-						continue;
-				}
+		if ((!p_ptr->see_inv || ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) && q_ptr->invis)
+		{
+			if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
+				continue;
+		}
 #endif
 
-				if (q_ptr->invis && !admin &&
-					(!p_ptr->see_inv ||
-					 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
-					 ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) < (q_ptr->lev / 2))))
-					 continue;
+		if (q_ptr->invis && !admin &&
+				(!p_ptr->see_inv ||
+				 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
+				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) < (q_ptr->lev / 2))))
+			continue;
 
-			/* Output color byte */
-			fprintf(fff, "%c", attr);
+		/* Output color byte */
+		fprintf(fff, "%c", attr);
 
-			/* Print a message */
-				if(q_ptr->fruit_bat)
-				{
-					fprintf(fff, "  %s the %s%s %s (%sFruit bat, Lv %d, %s)",
-					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
-					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
-					parties[q_ptr->party].name);
-				}
-				else
-				{
-					fprintf(fff, "  %s the %s%s %s (%sLv %d, %s)",
-					q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"", race_info[ q_ptr->prace].title,
-					class_info[q_ptr->pclass].title, (q_ptr->total_winner)?((q_ptr->male)?"King, ":"Queen, "):"", q_ptr->lev,
-					parties[q_ptr->party].name);
-				}
+		/* Print a message */
+		do_write_others_attributes(fff, q_ptr);
 
-				fprintf(fff, "\n");
-	      
-				/* Print equipments */
-				for (i=admin?0:INVEN_WIELD; i<INVEN_TOTAL; i++)
-				{
-					object_type *o_ptr = &q_ptr->inventory[i];
-					char o_name[160];
-					if (o_ptr->tval) {
-						object_desc(Ind, o_name, o_ptr, TRUE, 3);
-						fprintf(fff, "%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
-					}
-				}
+		fprintf(fff, "\n");
 
-			/* Add blank line */
-			fprintf(fff, "%c\n", 'w');
-
+		/* Print equipments */
+		for (i=admin?0:INVEN_WIELD; i<INVEN_TOTAL; i++)
+		{
+			object_type *o_ptr = &q_ptr->inventory[i];
+			char o_name[160];
+			if (o_ptr->tval) {
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				fprintf(fff, "%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
+			}
 		}
+
+		/* Add blank line */
+		fprintf(fff, "%c\n", 'w');
+
+	}
 
        /* Close the file */
        my_fclose(fff);

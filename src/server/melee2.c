@@ -19,6 +19,7 @@
  * STUPID_MONSTERS flag is left for compatibility, but not recommended.
  * if you think the AI codes are slow (or hard), try the following:
  *
+ * (0. if not yet, try AUTO_PURGE in tomenet.cfg first!)
  * 1. reduce SAFETY_RADIUS.
  * 2. reduce INDIRECT_FREQ.
  * 3. define STUPID_MONSTER_SPELLS
@@ -32,7 +33,7 @@
  * - try not to shoot other monst. with bolts (STUPID_MONSTER_SPELLS) <medium>
  * - pack of animals tries to swarm the player (SAFETY_RADIUS) <medium>
  * - try to hide from players when running (SAFETY_RADIUS) <medium>
- * - choose the best spell available (STUPID_MONSTER_SPELLS) <slow>
+ * - choose the best spell available (STUPID_MONSTER_SPELLS) <medium>
  * - try to cast spells indirectly (INDIRECT_FREQ) <slow>
  * - pick up as many items on floor as possible (MONSTERS_GREEDY) <fast>
  */
@@ -72,6 +73,7 @@
 
 /* if defined, a monster will simply choose the spell by RNG and
  * never hesitate to shoot its friends.
+ * (Thanks to Vanilla Angband code, it's not so slow now)
  */
 //#define	STUPID_MONSTER_SPELLS
 
@@ -641,6 +643,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2)
 }
 
 
+#if 0	// obsolete
 /*
  * Return TRUE if a spell is good for hurting the player (directly).
  */
@@ -769,6 +772,15 @@ static bool spell_heal(byte spell)
 	/* No healing */
 	return (FALSE);
 }
+#endif	// 0
+
+
+/*
+ * Offsets for the spell indices
+ */
+#define RF4_OFFSET (32 * 3)
+#define RF5_OFFSET (32 * 4)
+#define RF6_OFFSET (32 * 5)
 
 
 /*
@@ -785,6 +797,7 @@ static bool spell_heal(byte spell)
  *
  * This function may well be an efficiency bottleneck.
  */
+#if 0
 static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 {
 	player_type *p_ptr = Players[Ind];
@@ -903,6 +916,181 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	/* Choose no spell */
 	return (0);
 }
+#else	// 0
+/*
+ * Faster and smarter code, borrowed from (Vanilla) Angband 3.0.0.
+ */
+static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int i, num = 0;
+	byte spells[96];
+
+#ifndef STUPID_MONSTER_SPELLS
+	u32b f4_mask = 0L;
+	u32b f5_mask = 0L;
+	u32b f6_mask = 0L;
+
+	int py = p_ptr->py, px = p_ptr->px;
+
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+
+	bool has_escape, has_attack, has_summon, has_tactic;
+	bool has_annoy, has_haste, has_heal;
+
+
+	/* Smart monsters restrict their spell choices. */
+	if (!(r_ptr->flags2 & (RF2_STUPID)))
+	{
+		/* What have we got? */
+		has_escape = ((f4 & (RF4_ESCAPE_MASK)) ||
+		              (f5 & (RF5_ESCAPE_MASK)) ||
+		              (f6 & (RF6_ESCAPE_MASK)));
+		has_attack = ((f4 & (RF4_ATTACK_MASK)) ||
+		              (f5 & (RF5_ATTACK_MASK)) ||
+		              (f6 & (RF6_ATTACK_MASK)));
+		has_summon = ((f4 & (RF4_SUMMON_MASK)) ||
+		              (f5 & (RF5_SUMMON_MASK)) ||
+		              (f6 & (RF6_SUMMON_MASK)));
+		has_tactic = ((f4 & (RF4_TACTIC_MASK)) ||
+		              (f5 & (RF5_TACTIC_MASK)) ||
+		              (f6 & (RF6_TACTIC_MASK)));
+		has_annoy = ((f4 & (RF4_ANNOY_MASK)) ||
+		             (f5 & (RF5_ANNOY_MASK)) ||
+		             (f6 & (RF6_ANNOY_MASK)));
+		has_haste = ((f4 & (RF4_HASTE_MASK)) ||
+		             (f5 & (RF5_HASTE_MASK)) ||
+		             (f6 & (RF6_HASTE_MASK)));
+		has_heal = ((f4 & (RF4_HEAL_MASK)) ||
+		            (f5 & (RF5_HEAL_MASK)) ||
+		            (f6 & (RF6_HEAL_MASK)));
+
+		/*** Try to pick an appropriate spell type ***/
+
+		/* Hurt badly or afraid, attempt to flee */
+		if (has_escape && ((m_ptr->hp < m_ptr->maxhp / 4) || m_ptr->monfear))
+		{
+			/* Choose escape spell */
+			f4_mask = (RF4_ESCAPE_MASK);
+			f5_mask = (RF5_ESCAPE_MASK);
+			f6_mask = (RF6_ESCAPE_MASK);
+		}
+
+		/* Still hurt badly, couldn't flee, attempt to heal */
+		else if (has_heal && m_ptr->hp < m_ptr->maxhp / 4 || m_ptr->stunned)
+		{
+			/* Choose heal spell */
+			f4_mask = (RF4_HEAL_MASK);
+			f5_mask = (RF5_HEAL_MASK);
+			f6_mask = (RF6_HEAL_MASK);
+		}
+
+		/* Player is close and we have attack spells, blink away */
+		else if (has_tactic && (distance(py, px, m_ptr->fy, m_ptr->fx) < 4) &&
+		         has_attack && (rand_int(100) < 75))
+		{
+			/* Choose tactical spell */
+			f4_mask = (RF4_TACTIC_MASK);
+			f5_mask = (RF5_TACTIC_MASK);
+			f6_mask = (RF6_TACTIC_MASK);
+		}
+
+		/* We're hurt (not badly), try to heal */
+		else if (has_heal && (m_ptr->hp < m_ptr->maxhp * 3 / 4) &&
+		         (rand_int(100) < 60))
+		{
+			/* Choose heal spell */
+			f4_mask = (RF4_HEAL_MASK);
+			f5_mask = (RF5_HEAL_MASK);
+			f6_mask = (RF6_HEAL_MASK);
+		}
+
+		/* Summon if possible (sometimes) */
+		else if (has_summon && (rand_int(100) < 50))
+		{
+			/* Choose summon spell */
+			f4_mask = (RF4_SUMMON_MASK);
+			f5_mask = (RF5_SUMMON_MASK);
+			f6_mask = (RF6_SUMMON_MASK);
+		}
+
+		/* Attack spell (most of the time) */
+		else if (has_attack && (rand_int(100) < 85))
+		{
+			/* Choose attack spell */
+			f4_mask = (RF4_ATTACK_MASK);
+			f5_mask = (RF5_ATTACK_MASK);
+			f6_mask = (RF6_ATTACK_MASK);
+		}
+
+		/* Try another tactical spell (sometimes) */
+		else if (has_tactic && (rand_int(100) < 50))
+		{
+			/* Choose tactic spell */
+			f4_mask = (RF4_TACTIC_MASK);
+			f5_mask = (RF5_TACTIC_MASK);
+			f6_mask = (RF6_TACTIC_MASK);
+		}
+
+		/* Haste self if we aren't already somewhat hasted (rarely) */
+		/* XXX check it */
+		else if (has_haste && (rand_int(100) < (20 + r_ptr->speed - m_ptr->mspeed)))
+		{
+			/* Choose haste spell */
+			f4_mask = (RF4_HASTE_MASK);
+			f5_mask = (RF5_HASTE_MASK);
+			f6_mask = (RF6_HASTE_MASK);
+		}
+
+		/* Annoy player (most of the time) */
+		else if (has_annoy && (rand_int(100) < 85))
+		{
+			/* Choose annoyance spell */
+			f4_mask = (RF4_ANNOY_MASK);
+			f5_mask = (RF5_ANNOY_MASK);
+			f6_mask = (RF6_ANNOY_MASK);
+		}
+
+		/* Else choose no spell (The masks default to this.) */
+
+		/* Keep only the interesting spells */
+		f4 &= f4_mask;
+		f5 &= f5_mask;
+		f6 &= f6_mask;
+
+		/* Anything left? */
+		if (!(f4 || f5 || f6)) return (0);
+	}
+
+#endif /* STUPID_MONSTER_SPELLS */
+
+	/* Extract the "innate" spells */
+	for (i = 0; i < 32; i++)
+	{
+		if (f4 & (1L << i)) spells[num++] = i + RF4_OFFSET;
+	}
+
+	/* Extract the "normal" spells */
+	for (i = 0; i < 32; i++)
+	{
+		if (f5 & (1L << i)) spells[num++] = i + RF5_OFFSET;
+	}
+
+	/* Extract the "bizarre" spells */
+	for (i = 0; i < 32; i++)
+	{
+		if (f6 & (1L << i)) spells[num++] = i + RF6_OFFSET;
+	}
+
+	/* Paranoia */
+	if (num == 0) return 0;
+
+	/* Pick at random */
+	return (spells[rand_int(num)]);
+}
+#endif	// 0
 
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
 bool monst_check_grab(int m_idx, int mod, cptr desc)
@@ -1270,7 +1458,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	int			k, chance, thrown_spell, rlev;	// , failrate;
 
-	byte		spell[96], num = 0;
+//	byte		spell[96], num = 0;
 
 	u32b		f4, f5, f6;
 
@@ -1485,6 +1673,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	if (!f4 && !f5 && !f6) return (FALSE);
 #endif	// STUPID_MONSTER_SPELLS
 
+#if 0
 	/* Extract the "inate" spells */
 	for (k = 0; k < 32; k++)
 	{
@@ -1493,7 +1682,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
 	}
 
-#if 0
 	/* Extract the "normal" spells */
 	for (k = 0; k < 32; k++)
 	{
@@ -1505,10 +1693,10 @@ bool make_attack_spell(int Ind, int m_idx)
 	{
 		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
 	}
-#endif	// 0
 
 	/* No spells left */
 	if (!num) return (FALSE);
+#endif	// 0
 
 
 	/* Stop if player is dead or gone */
@@ -1518,16 +1706,13 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Get the monster name (or "it") */
 	monster_desc(Ind, m_name, m_idx, 0x00);
 
-#ifdef STUPID_MONSTER_SPELLS
 	/* Choose a spell to cast */
-	thrown_spell = spell[rand_int(num)];
-#else
-	thrown_spell = stupid ? spell[rand_int(num)] :
-		choose_attack_spell(Ind, m_idx, spell, num);
+//	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
+	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6);
 
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
-#endif	// STUPID_MONSTER_SPELLS
+
 
 	if(thrown_spell < 128 && l_ptr && l_ptr->flags1 & LF1_NO_MAGIC)
 		return(FALSE);

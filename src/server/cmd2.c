@@ -20,6 +20,9 @@
  */
 #define STAIR_FAIL_IF_CONFUSED	50
 
+/* duration of GoI when climbing stairs.	[2] */
+#define STAIR_GOI_LENGTH	3
+
 
 /*
  * Go up one level                                      -RAK-
@@ -132,7 +135,7 @@ void do_cmd_go_up(int Ind)
 	p_ptr->new_level_flag = TRUE;
 
 	/* He'll be safe for 2 turns */
-	set_invuln_short(Ind, 2);
+	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
 	/* Create a way back */
 	create_down_stair = TRUE;
@@ -270,7 +273,7 @@ void do_cmd_go_down(int Ind)
 	p_ptr->new_level_flag = TRUE;
 
 	/* He'll be safe for 2 turns */
-	set_invuln_short(Ind, 2);
+	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
 	/* Create a way back */
 	create_up_stair = TRUE;

@@ -1450,7 +1450,7 @@ static void process_player_end(int Ind)
 		/* Unbelievers "resist" magic */
 //		int minus = (p_ptr->anti_magic)?3:1;
 		int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
-		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?2:0;
+		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?3:0;
 		
 		/* Anything done here cannot be reduced by GoI */
 		bypass_invuln = TRUE;
@@ -1681,7 +1681,8 @@ static void process_player_end(int Ind)
 		/* Regeneration ability */
 		if (p_ptr->regenerate)
 		{
-			regen_amount = regen_amount * 2;
+//			regen_amount = regen_amount * 2;
+			regen_amount = regen_amount * (recovery ? 3 : 2);
 		}
 
 		/* Poisoned or cut yields no healing */
@@ -1711,8 +1712,8 @@ static void process_player_end(int Ind)
 		{
 			if (p_ptr->stat_cnt[i] > 0)
 			{
-				p_ptr->stat_cnt[i]--;
-				if (p_ptr->stat_cnt[i] == 0)
+				p_ptr->stat_cnt[i] -= 1 - recovery;
+				if (p_ptr->stat_cnt[i] <= 0)
 				{
 					do_res_stat_temp(Ind, i);
 				}
@@ -1989,7 +1990,7 @@ static void process_player_end(int Ind)
 			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 			/* Apply some healing */
-			(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery);
+			(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
 		}
 
 		/* Stun */
@@ -1998,7 +1999,7 @@ static void process_player_end(int Ind)
 			int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 			/* Apply some healing */
-			(void)set_stun(Ind, p_ptr->stun - adjust - recovery);
+			(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
 		}
 
 		/* Cut */
@@ -2013,7 +2014,7 @@ static void process_player_end(int Ind)
 			if (p_ptr->biofeedback) adjust += adjust + 10;
 
 			/* Apply some healing */
-			(void)set_cut(Ind, p_ptr->cut - adjust - recovery);
+			(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
 		}
 
 		/*** Process Light ***/
@@ -2458,7 +2459,7 @@ static void process_player_end(int Ind)
 				p_ptr->new_level_flag = TRUE;
 
 				/* He'll be safe for 2 turns */
-				set_invuln_short(Ind, 2);
+				set_invuln_short(Ind, 5);	// It runs out if attacking anyway
 				}
 			}
 		}
@@ -3113,25 +3114,7 @@ void dungeon(void)
 
 		/* Check for death */
 		if (Players[i]->death)
-		{
-			player_type *p_ptr = Players[i];
-			if (p_ptr->mode == MODE_HELL)
-			{
-				/* Kill him */
-				player_death(i);
-			}
-			else
-			{
-				/* Kill him */
-				player_death(i);
-
-				/* Kill them again so that they Die! DEG */
-				if (cfg.no_ghost)
-				{
-					player_death(i);
-				}
-			}
-		}
+			player_death(i);
 	}
 
 	/* Check player's depth info */
@@ -3523,6 +3506,7 @@ void dungeon(void)
 		process_player_end(i);
 	}
 
+	/* paranoia - It's done twice */
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--)
 	{
@@ -3532,27 +3516,7 @@ void dungeon(void)
 
 		/* Check for death */
 		if (Players[i]->death)
-		{
-			player_type *p_ptr = Players[i];
-			if (p_ptr->mode == MODE_HELL)
-			{
-				/* Kill him */
-				player_death(i);
-			}
-			else
-			{
-				/* Kill him */
-				player_death(i);
-
-				/* Kill them again so that they Die! DEG */
-				if (cfg.no_ghost)
-				{
-					player_death(i);
-				}
-			}
-
-
-		}
+			player_death(i);
 	}
 
 

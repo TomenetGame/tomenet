@@ -1472,7 +1472,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
-	if (sex < 0 || sex > 7) sex = 0;
+//	if (sex < 0 || sex > 7) sex = 0;
 
 	/* Allocate memory for him */
 	MAKE(Players[Ind], player_type);
@@ -1541,23 +1541,28 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	if (!process_player_name(Ind, TRUE)) return FALSE;
 
 	/* Set info */
-	if (sex > 3)
-		{
-			sex -= 4;
-			p_ptr->fruit_bat = 1;
-		}
+	if (sex > 511)
+	{
+		sex -= 512;
+		p_ptr->fruit_bat = 1;
+	}
+#if 0
 	if (sex > 1)
-	  {
-	    sex -= 2;
-	    p_ptr->mode = MODE_HELL;
-	  }
+	{
+		sex -= 2;
+		p_ptr->mode = MODE_HELL;
+	}
 	else
-	  {
-	    p_ptr->mode = MODE_NORMAL;
-	  }
+	{
+		p_ptr->mode = MODE_NORMAL;
+	}
+#else	// 0
+	p_ptr->mode = sex >> 1;
+
+#endif	// 0
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
-	p_ptr->male = sex;
+	p_ptr->male = sex & 1;
         p_ptr->pclass = class;
 #if 0
         /* Mega hack but it's fun :) */

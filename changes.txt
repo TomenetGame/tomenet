@@ -1251,10 +1251,17 @@ To find the latest change quickly, search ==== :)
 - player can try to disarm already-found traps by stepping onto it.
 - DOOR_BUMP_OPEN is more detailed now. (better client option, of course)
 - garbled monster names when hallucinating.
+- 'No Ghost', 'Hard' game modes added.
 [P] yummy nests and pits (generate.c)
+[C] sexual parity
 [H] Potion of Infravision gives +50ft infravision in place of +10ft
 [H] cheapest items (like spike) won't be {on sale}. {10% off} added.
 [H] all-star dragon pit / mankind pit (experimental)
+
+08/07/2002 (Jir)
+- faster choose_attack_spell imported from Angband3.0.0.
+[H] 'Health' skill is a little more useful now (x1.5 regen)
+[H] GoI when changing floor is somewhat longer (due to the rule change of GoI)
 
 
 ** [B] stands for Bugfix.
@@ -1266,6 +1273,9 @@ To find the latest change quickly, search ==== :)
 things to do before 4.0.0
 
 - backport ToME spells!
+  + timed 'cave-affecting' spells
+  + spell flags transmitted to the client
+  + less packets
 - implement guest-account
 - rebalance skill-points
 - devise a nice way to control ego-item generation w/o luck
@@ -1299,9 +1309,6 @@ below this line are the unfixed bugs known:
 
 [B] House doors are still said to crash sometimes. (door even vanishes??)
 [B] wpos display hides wound states(eg.'Deep Gash')
-[B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
-    sometimes, monsters attack the player from nowhere.. prolly same root?
-	* this only happens when rebooting the server and caves lost.
 [B][C] chat-history contains lines with 'mindcrafter'.
     (do_cmd_messages_chatonly)
 [B] p_ptr->furry, lol
@@ -1316,12 +1323,17 @@ below this line are the unfixed bugs known:
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
 [B] 'No more Scroll of *Identify*'
-
+[B] Macro sticks sometimes
+[B] Window refreshing fails sometimes, requiring ^R.
+[B] ghost gets 'The weight of your armor emcumbers your movement' msg.
 
 *below are bugs repoorted but not confirmed*
-[B] Macro sticks sometimes
-[B] CURSE_x does 100+ dmg on 50ft? (not confirmed)
+(nothing so far)
+
 *below are bugs not shown recently(fixed??)*
+[B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
+    sometimes, monsters attack the player from nowhere.. prolly same root?
+	* this only happens when rebooting the server and caves lost.
 [B] ever-charging arts (eg.star)
 [B] cave can be erased prematurely after loading.
 [B] /rec won't work if to wilderness? (admin)
@@ -1336,8 +1348,6 @@ below this line are the unfixed bugs known:
 =============================================================================
 memo and questions:
 - player_is_king() is annuled?
-- where's the jail?
-- p_ptr->inventory[i].marked=3; /* LONG timeout */ <= how it's used?
 
 ==== below this line are 'implementations' and not 'bugs' ====
 (Don't 'fix' them!! ;)
@@ -1350,32 +1360,31 @@ memo and questions:
 ==== below this line are changes to be done in the future ====
 # probably after 4.0.0 :-/
 [minor ones]
-(3.5)
+(4.1)
 - implement NO_MAP fully please!
 - recall-depth array for each dungeons/towers
 - full colour-support in show_file
 - sort unique-list according to the level
-- tombstone screen
+- tombstone screen (maybe CONN_TOMB)
 - wilderness compacting (how about 'compacting' townies?)
 - display "non-scoring mode" in '@' screen
 - torch/lantern shouldn't be EASY_KNOWN.
 - Nazgul rings should have corresponding names
 - implement EGO_WOUNDING(ie. monster bleeding)
 - implement GF_* flags for exploding monsters(voir monster_death)
-- make boomerangs useful
 - flavor variator (eg. 'light' + 'red' => 'light red potion')
 - reimplement /cast.
 - implement monster mimics
+- better vaults
+  - between gates, patterns
 * Trap ideas
   - no return trap should steal books also?
   - telekinesis trap
   - house-door-opening trap
-[C] allow to send not-defined key for easy extension
-[C] '-s' option to specify rc-file name.
 [C] chat-line cursor editing
 
 [major ones]
-(3.6)
+(4.2)
 - new terrains and their effects (f_info.txt) (do this *FIRST*!)
   - hills, deserts, lavas, waters, underwaters, tundra, elemental planes
   - loophole(like wall, but missiles/breathes pass)
@@ -1395,15 +1404,15 @@ memo and questions:
 - item stacks/monster inventory
   * vault treasures should be held by guardians
 - item themes (mage drops magic items, etc)
-(3.7)
+(4.3)
 - quests (needing LUA-hooks) {hopefully DarkGod}
 - backbone scenario
   - token system (gather blabla to do blabla)
   - competitive events
-
-(4.0)
-- better vaults
-  - between gates, patterns
+- NPC/pet/golem/slave
+  + NPC should basically be a monster with a flag (like RF9_NPC),
+    and prolly with special array (npc_list[])?
+(4.4)
 - guild, or new party system (multi-player Omega :)
 - client updates necessary
 - total rebalancing for all of them
@@ -1443,6 +1452,7 @@ memo and questions:
   (they actually occupy 3 equipment slots!)
 - prolly Dolphiners are too strong? (filtered)
 - Mage Staves should only be available for Sorc?
+- NO_MAGIC can be off-balancing (wizard and spellcasting monster will suck)
 
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
@@ -1528,9 +1538,6 @@ memo and questions:
   + water should 'flow'
   
 [major ones]
-- NPC/pet/golem/slave
-  + NPC should basically be a monster with a flag (like RF9_NPC),
-    and prolly with special array (npc_list[])?
 - monsters' interactions
 - subclass system (thief, esper, erudit, tough, mighty etc)
 - karma/luck system (karma is like luck, but never gets positive value)
@@ -1562,6 +1569,7 @@ memo and questions:
 - documentations
 - grec-mythology monsters (GRECANGBAND)
 - allow players to run always, by allowing it to the monsters too?
+- screen wider than 66x22
 
 [sober (intrinsic) ones]
 - savedata editor
@@ -1590,6 +1598,7 @@ memo and questions:
   + auto_disarm_trap
   + scroll_mergin (x, y)
   + auto_destroy
+  + contents of sub-windows
 
 [lunatic ones]
 - 3-D gfx and full-audio support

@@ -3274,7 +3274,7 @@ static bool run_test(int Ind)
 				/* Water */
 				case FEAT_WATER:
 				{
-					if (!aqua) notice = FALSE;
+					if (aqua) notice = FALSE;
 
 					/* Done */
 					break;

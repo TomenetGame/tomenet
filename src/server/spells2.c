@@ -56,7 +56,7 @@ bool hp_player(int Ind, int num)
 	int new_num; 
 
 	/* Hell mode is .. hard */
-	if (p_ptr->mode == MODE_HELL)
+	if (p_ptr->mode & MODE_HELL)
 	  {
             num = num * 3 / 4;
 	  }
@@ -300,6 +300,7 @@ bool do_res_stat_temp(int Ind, int stat)
 			p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
 
 		p_ptr->stat_los[stat] = 0;
+		p_ptr->stat_cnt[stat] = 0;
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);

@@ -926,7 +926,7 @@ static void Delete_player(int Ind)
 		cptr title = "";
 		if (p_ptr->total_winner)
 		{
-			if (p_ptr->mode == MODE_HELL)
+			if (p_ptr->mode != MODE_NORMAL)
 			{
 				title = (p_ptr->male)?"God ":"Goddess ";
 			}
@@ -1780,7 +1780,7 @@ static int Handle_login(int ind)
 
 		if (p_ptr->total_winner)
 		  {
-		    if (p_ptr->mode == MODE_HELL)
+			if (p_ptr->mode != MODE_NORMAL)
 		      {
 			title = (p_ptr->male)?"God ":"Goddess ";
 		      }
