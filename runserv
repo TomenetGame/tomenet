@@ -7,4 +7,8 @@ while :; do
 	if [ -f core ] ; then
 		mv core cores/`/bin/date +"%Y%m%d%I%M%S"`
 	fi
+	if [ -f lib/data/mangband.log ] ; then
+		gzip lib/data/mangband.log
+		mv lib/data/mangband.log.gz lib/data/`/bin/date +"%Y%m%d%I%M.log.gz"`
+	fi
 done
