@@ -1,12 +1,12 @@
+/* $Id$ */
 /* Client-side spell stuff */
 
 #include "angband.h"
 
-#define EVIL_TEST /* evil test */
-
 static void print_spells(int book)
 {
-	int	i, col;
+        int	i, col;
+        object_type *o_ptr = &inventory[book];
 
 	/* Print column */
 	col = 20;
@@ -20,11 +20,11 @@ static void print_spells(int book)
 	for (i = 0; i < 9; i++)
 	{
 		/* Check for end of the book */
-		if (spell_info[book][i][0] == '\0')
+		if (spell_info[find_realm(o_ptr->tval)][o_ptr->xtra1][i][0] == '\0')
 			break;
 
 		/* Dump the info */
-		prt(spell_info[book][i], 2 + i, col);
+		prt(spell_info[find_realm(o_ptr->tval)][o_ptr->xtra1][i], 2 + i, col);
 	}
 
 	/* Clear the bottom line */
@@ -96,10 +96,10 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	char		out_val[160];
 	cptr p;
 	
-	p = ((class == CLASS_PRIEST || class == CLASS_PALADIN) ? "prayer" : "spell");
+        object_type *o_ptr = &inventory[book];
+        int realm = find_realm(o_ptr->tval);
 
-	if (p_ptr->pclass == CLASS_WARRIOR)
-		p = "technic";
+	p = "spell";
 
 	if (p_ptr->ghost)
 		p = "power";
@@ -114,7 +114,7 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	for (i = 0; i < 9; i++)
 	{
 		/* Look for "okay" spells */
-		if (spell_info[book][i][0]) 
+		if (spell_info[realm][book][i][0])
 		{
 			okay = TRUE;
 			num++;
@@ -150,11 +150,6 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Show list */
 				redraw = TRUE;
 
-#ifndef EVIL_TEST /* evil test */
-				/* The screen is icky */
-				screen_icky = TRUE;
-#endif
-
 				/* Save the screen */
 				Term_save();
 
@@ -171,11 +166,6 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Restore the screen */
 				Term_load();
 
-#ifndef EVIL_TEST /* evil test */
-				/* The screen is OK now */
-				screen_icky = FALSE;
-#endif
-
 				/* Flush any events */
 				Flush_queue();
 			}
@@ -186,29 +176,20 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 		
 		/* hack for CAPITAL prayers (heal other) */
 		/* hack once more for possible expansion */
-		if (1 || (class == CLASS_PRIEST) || (class == CLASS_PALADIN) || (class == CLASS_SORCERER))
-		{
-			/* lowercase */
-			if (islower(choice))
-			{
-				i = A2I(choice);
-				if (i >= num) i = -1;
-			}
-				
-			/* uppercase... hope this is portable. */
-			else if (isupper(choice)) 
-			{
-				i = (choice - 'A') + 64;
-				if (i-64 >= num) i = -1;
-			}	
-			else i = -1;			
-		}
-		else
-		{
-			/* extract request */
-			i = (islower(choice) ? A2I(choice) : -1);
-			if (i >= num) i = -1;
-		}
+                /* lowercase */
+                if (islower(choice))
+                {
+                        i = A2I(choice);
+                        if (i >= num) i = -1;
+                }
+
+                /* uppercase... hope this is portable. */
+                else if (isupper(choice))
+                {
+                        i = (choice - 'A') + 64;
+                        if (i-64 >= num) i = -1;
+                }
+                else i = -1;
 
 		/* Totally Illegal */
 		if (i < 0)
@@ -225,9 +206,6 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	if (redraw)
 	{
 		Term_load();
-#ifndef EVIL_TEST /* evil test */
-		screen_icky = FALSE;
-#endif
 
 		/* Flush any events */
 		Flush_queue();
@@ -252,11 +230,6 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
  */
 void show_browse(int book)
 {
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Save the screen */
 	Term_save();
 
@@ -274,11 +247,6 @@ void show_browse(int book)
 
 	/* Restore the screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is OK now */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -409,11 +377,6 @@ static int get_mimic_spell(int *sn)
 				/* Show list */
 				redraw = TRUE;
 
-#ifndef EVIL_TEST /* evil test */
-				/* The screen is icky */
-				screen_icky = TRUE;
-#endif
-
 				/* Save the screen */
 				Term_save();
 
@@ -429,11 +392,6 @@ static int get_mimic_spell(int *sn)
 
 				/* Restore the screen */
 				Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-				/* The screen is OK now */
-				screen_icky = FALSE;
-#endif
 
 				/* Flush any events */
 				Flush_queue();
@@ -462,9 +420,6 @@ static int get_mimic_spell(int *sn)
 	if (redraw)
 	{
 		Term_load();
-#ifndef EVIL_TEST /* evil test */
-		screen_icky = FALSE;
-#endif
 
 		/* Flush any events */
 		Flush_queue();

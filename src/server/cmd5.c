@@ -75,6 +75,31 @@ static s16b spell_chance(int Ind, magic_type *s_ptr)
 }
 
 
+/*
+ * Rerturn the skill associated with the realm
+ */
+int find_realm_skill(int realm)
+{
+        switch (realm)
+        {
+        case REALM_MAGERY:
+                return SKILL_MAGERY;
+        case REALM_PRAYER:
+                return SKILL_PRAY;
+        case REALM_SORCERY:
+                return SKILL_SORCERY;
+        case REALM_SHADOW:
+                return SKILL_SHADOW;
+        case REALM_HUNT:
+                return SKILL_ARCHERY;
+        case REALM_FIGHTING:
+                return SKILL_MASTERY;
+        case REALM_PSI:
+//                return SKILL_;
+        };
+        return 0;
+}
+
 
 /*
  * Determine if a spell is "okay" for the player to cast or study
@@ -91,8 +116,9 @@ bool spell_okay(int Ind, int realm, int j, bool known)
 	s_ptr = &magic_info[realm].info[j];
 
 	/* Spell is illegal */
-	if (s_ptr->slevel > p_ptr->lev) return (FALSE);
+	if (s_ptr->slevel > get_skill(p_ptr, find_realm_skill(realm))) return (FALSE);
 
+#if 0 // NO more .. maybe ?
 	/* Spell is forgotten */
 	if ((j < 32) ?
 	    (p_ptr->spell_forgotten1[realm] & (1L << j)) :
@@ -110,9 +136,9 @@ bool spell_okay(int Ind, int realm, int j, bool known)
 		/* Okay to cast, not to study */
 		return (known);
 	}
-
-	/* Okay to study, not to cast */
-	return (!known);
+#endif
+	/* Okay to cast */
+	return (TRUE);
 }
 
 
@@ -125,7 +151,7 @@ bool spell_okay(int Ind, int realm, int j, bool known)
  * The strings in this function were extracted from the code in the
  * functions "do_cmd_cast()" and "do_cmd_pray()" and may be dated.
  */
-static void spell_info(int Ind, char *p, int book, int j)
+static void spell_info(int Ind, char *p, int realm, int j)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -135,7 +161,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 #ifdef DRS_SHOW_SPELL_INFO
 
 	/* Mage spells */
-	if (book == TV_MAGIC_BOOK)
+	if (realm == REALM_MAGERY)
 	{
 		int plev = p_ptr->lev;
 
@@ -180,7 +206,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 	}
 
 	/* Priest spells */
-	if (book == TV_PRAYER_BOOK)
+	if (realm == REALM_PRAYER)
 	{
 		int plev = p_ptr->lev;
 
@@ -218,7 +244,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 	}
 
 	/* Sorcery spells */
-	if (book == TV_SORCERY_BOOK)
+	if (realm == REALM_SORCERY)
 	{
 		int plev = get_skill(p_ptr, SKILL_SORCERY);
 
@@ -257,7 +283,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 	}
 	
 	/* Rogue spells */
-	if (book == TV_SHADOW_BOOK)
+	if (realm == REALM_SHADOW)
 	{
 		int plev = get_skill(p_ptr, SKILL_SHADOW);
 
@@ -277,7 +303,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 
 	
 	/* Archer spells */
-	if (book == TV_HUNT_BOOK)
+	if (realm == REALM_HUNT)
 	{
 		/* Analyze the spell */
 		switch (j)
@@ -300,7 +326,7 @@ static void spell_info(int Ind, char *p, int book, int j)
 
 	
 	/* Telepathy powers */
-	if (book == TV_PSI_BOOK)
+	if (realm == REALM_PSI)
         {
                 int plev = p_ptr->lev;
 
@@ -329,33 +355,10 @@ static void spell_info(int Ind, char *p, int book, int j)
 }
 
 
-/* Find the realm, given a book(tval) */
-int find_realm(int book)
-{
-        switch (book)
-        {
-        case TV_MAGIC_BOOK:
-                return REALM_MAGERY;
-        case TV_PRAYER_BOOK:
-                return REALM_PRAYER;
-        case TV_SORCERY_BOOK:
-                return REALM_SORCERY;
-        case TV_FIGHT_BOOK:
-                return REALM_FIGHTING;
-        case TV_SHADOW_BOOK:
-                return REALM_SHADOW;
-        case TV_PSI_BOOK:
-                return REALM_PSI;
-        case TV_HUNT_BOOK:
-                return REALM_HUNT;
-        };
-        return -1;
-}
-
 /*
  * Print a list of spells (for browsing or casting)
  */
-static void print_spells(int Ind, int book, byte *spell, int num)
+static void print_spells(int Ind, int realm, int book, byte *spell, int num)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -368,9 +371,6 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 	char		info[80];
 
         char		out_val[160];
-
-        int realm = find_realm(book);
-
 
 	/* Dump the spells */
 	for (i = 0; i < num; i++)
@@ -385,18 +385,19 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 		if (s_ptr->slevel >= 99)
 		{
 			sprintf(out_val, "  %c) %-30s", I2A(i), "(illegible)");
-			Send_spell_info(Ind, book, i, out_val);
+			Send_spell_info(Ind, realm, book, i, out_val);
 			continue;
 		}
 
 		/* XXX XXX Could label spells above the players level */
 
 		/* Get extra info */
-		spell_info(Ind, info, book, j);
+		spell_info(Ind, info, realm, j);
 
 		/* Use that info */
 		comment = info;
 
+#if 0 // no more learning
 		/* Analyze the spell */
 		if ((j < 32) ?
 		    ((p_ptr->spell_forgotten1[realm] & (1L << j))) :
@@ -415,13 +416,18 @@ static void print_spells(int Ind, int book, byte *spell, int num)
 		           (p_ptr->spell_worked2[realm] & (1L << (j - 32)))))
 		{
 			comment = " untried";
+                }
+#else
+		if (!spell_okay(Ind, realm, j, TRUE))
+		{
+			comment = " unknown";
 		}
-
+#endif
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
 		        I2A(i), spell_names[realm][j],
 		        s_ptr->slevel, s_ptr->smana, spell_chance(Ind, s_ptr), comment);
-		Send_spell_info(Ind, book, i, out_val);
+		Send_spell_info(Ind, realm, book, i, out_val);
 	}
 }
 
@@ -430,26 +436,13 @@ static void print_spells(int Ind, int book, byte *spell, int num)
  *
  * Note that *all* spells in the book are listed
  */
-void do_cmd_browse(int Ind, int book)
+void do_cmd_browse(int Ind, object_type	*o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int			i, item, sval;
+	int			i, item, sval, realm;
 
 	byte		spell[64], num = 0;
-
-	object_type		*o_ptr;
-
-        int realm;
-
-	/* Warriors are illiterate */
-	if (!p_ptr->mp_ptr->spell_book)
-	{
-#if 0
-	  	msg_print(Ind, "You cannot read books!");
-#endif
-		return;
-	}
 
 	/* No lite */
 	if (p_ptr->blind || no_lite(Ind))
@@ -464,31 +457,6 @@ void do_cmd_browse(int Ind, int book)
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
-
-
-	/* Restrict choices to "useful" books */
-	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
-	item = book;
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
-
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
-	{
-		msg_print(Ind, "SERVER ERROR: Tried browsing a bad book!");
-		return;
-	}
-
 
 	/* Access the item's sval */
 	sval = o_ptr->sval;
@@ -509,7 +477,7 @@ void do_cmd_browse(int Ind, int book)
 
 
 	/* Display the spells */
-	print_spells(Ind, book, spell, num);
+	print_spells(Ind, realm, o_ptr->sval, spell, num);
 }
 
 
@@ -3945,7 +3913,7 @@ void show_ghost_spells(int Ind)
 		        I2A(j), spell_names[GHOST_SPELLS][i], s_ptr->slevel, s_ptr->smana, 0, comment);
 
 		/* Send it */
-		Send_spell_info(Ind, 0, j, out_val);
+		Send_spell_info(Ind, REALM_GHOST, 0, j, out_val);
 
 		/* Next spell */
 		j++;

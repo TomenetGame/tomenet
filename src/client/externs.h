@@ -55,7 +55,7 @@ extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][80];
 extern s16b store_num;
 
-extern char spell_info[9][9][80];
+extern char spell_info[MAX_REALM][9][9][80];
 
 extern char party_info[160];
 

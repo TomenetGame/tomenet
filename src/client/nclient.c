@@ -1205,18 +1205,20 @@ int Receive_inven(void)
 {
 	int	n;
 	char	ch;
-	char pos, attr, tval;
+	char pos, attr, tval, sval;
 	s16b wgt, amt;
 	char name[80];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, name)) <= 0)
 	{
 		return n;
 	}
 
-	/* Hack -- The color is stored in the sval, since we don't use it for anything else */
+        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
+        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 	inventory[pos - 'a'].sval = attr;
 	inventory[pos - 'a'].tval = tval;
+	inventory[pos - 'a'].xtra1 = sval;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
 
@@ -1232,18 +1234,19 @@ int Receive_equip(void)
 {
 	int	n;
 	char 	ch;
-	char pos, attr, tval;
+	char pos, attr, tval, sval;
 	s16b wgt, amt;
 	char name[80];
 
 //	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%c%s", &ch, &pos, &attr, &wgt, &tval, name)) <= 0)
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, name)) <= 0)
 	{
 		return n;
 	}
 
 	inventory[pos - 'a' + INVEN_WIELD].sval = attr;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
+	inventory[pos - 'a' + INVEN_WIELD].xtra1 = sval;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 
@@ -1905,17 +1908,17 @@ int Receive_spell_info(void)
 {
 	char	ch;
 	int	n;
-	u16b	book, line;
+	u16b	realm, book, line;
 	char	buf[80];
 	s32b    spells[3];
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &book, &line, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0)
 	{
 		return n;
 	}
 
 	/* Save the info */
-	strcpy(spell_info[book][line], buf);
+        strcpy(spell_info[realm][book][line], buf);
 	p_ptr->innate_spells[0] = spells[0];
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];

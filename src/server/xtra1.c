@@ -747,10 +747,6 @@ static void fix_spell(int Ind)
 		return;
 	}
 
-	/* Warriors don't need this */
-		if (!p_ptr->mp_ptr->spell_book)
-			return;
-
 	/* Check for blindness and no lite and confusion */
 	if (p_ptr->blind || no_lite(Ind) || p_ptr->confused)
 	{
@@ -760,9 +756,9 @@ static void fix_spell(int Ind)
 	/* Scan for appropriate books */
 	for (i = 0; i < INVEN_WIELD; i++)
 	{
-		if (p_ptr->inventory[i].tval == p_ptr->mp_ptr->spell_book)
+		if (is_book((&p_ptr->inventory[i])))
 		{
-			do_cmd_browse(Ind, i);
+			do_cmd_browse(Ind, &p_ptr->inventory[i]);
 		}
 	}
 }
@@ -1591,7 +1587,7 @@ void calc_body_bonus(int Ind)
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
 	p_ptr->innate_spells[1] = r_ptr->flags5 & RF5_PLAYER_SPELLS;
 	p_ptr->innate_spells[2] = r_ptr->flags6 & RF6_PLAYER_SPELLS;
-	Send_spell_info(Ind, 0, 0, "nothing");
+	Send_spell_info(Ind, 0, 0, 0, "nothing");
 }
 
 

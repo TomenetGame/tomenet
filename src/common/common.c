@@ -1,3 +1,4 @@
+/* $Id$ */
 /* common.c - common functions */
 
 #include "angband.h"
@@ -81,3 +82,51 @@ int color_char_to_attr(char c)
  * version strings
  */
 char	*longVersion = TOMANG_VERSION_LONG_DATE __DATE__ " " __TIME__ ")";
+char	*shortVersion = TOMANG_VERSION_SHORT;
+
+#if 0	// under working
+char * version_build(int mode)
+{
+	char temp[100];
+	/* Append the version number */
+
+	sprintf(temp, "%s %d.%d.%d ", mode?TOMANG_VERSION_LONG_DATE:TOMANG_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+
+	/* Append the additional version info */
+	if (VERSION_EXTRA == 1)
+		strcat(temp, "alpha");
+	else if (VERSION_EXTRA == 2)
+		strcat(temp, "beta");
+	else if (VERSION_EXTRA == 3)
+		strcat(temp, "development");
+	else if (VERSION_EXTRA)
+		strcat(temp, format("%d", VERSION_EXTRA));
+
+	if (mode) strcat(temp, format(" (Compiled %s %s)", __DATE__, __TIME__));
+
+	return (temp);
+}
+#endif	// 0
+
+/* Find the realm, given a book(tval) */
+int find_realm(int book)
+{
+        switch (book)
+        {
+        case TV_MAGIC_BOOK:
+                return REALM_MAGERY;
+        case TV_PRAYER_BOOK:
+                return REALM_PRAYER;
+        case TV_SORCERY_BOOK:
+                return REALM_SORCERY;
+        case TV_FIGHT_BOOK:
+                return REALM_FIGHTING;
+        case TV_SHADOW_BOOK:
+                return REALM_SHADOW;
+        case TV_PSI_BOOK:
+                return REALM_PSI;
+        case TV_HUNT_BOOK:
+                return REALM_HUNT;
+        };
+        return -1;
+}

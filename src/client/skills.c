@@ -732,13 +732,15 @@ void do_cmd_activate_skill()
 	switch (s_info[x_idx].action_mkey)
 	{
 		case MKEY_SORCERY:
-			cmd_cast();
-			break;
 		case MKEY_MAGERY:
+		case MKEY_SHADOW:
 			cmd_cast();
 			break;
 		case MKEY_MIMICRY:
 			cmd_mimic();
+			break;
+		case MKEY_FIGHTING:
+			cmd_fight();
 			break;
 		default:
 			break;

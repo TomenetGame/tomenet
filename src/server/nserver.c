@@ -2848,7 +2848,7 @@ int Send_history(int ind, int line, cptr hist)
 	return Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist);
 }
 
-int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name)
+int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2873,14 +2873,14 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr n
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, name);
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, name);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, name);
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, name);
 }
 
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
-int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name)
+int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2906,11 +2906,11 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr n
 		connp2 = &Conn[p_ptr2->conn];
 
 //		Packet_printf(&connp2->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
-		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, name);
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, name);
 	      }
 	  }
 //	return Packet_printf(&connp->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
-	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, name);
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, name);
 }
 
 int Send_title(int ind, cptr title)
@@ -3357,7 +3357,7 @@ int Send_char(int ind, int x, int y, byte a, char c)
 	return Packet_printf(&Conn[Players[ind]->conn].c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
 }
 
-int Send_spell_info(int ind, int book, int i, cptr out_val)
+int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -3369,7 +3369,7 @@ int Send_spell_info(int ind, int book, int i, cptr out_val)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%ld%ld%ld%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], book, i, out_val);
+	return Packet_printf(&connp->c, "%c%ld%ld%ld%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
 
 

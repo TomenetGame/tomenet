@@ -441,7 +441,7 @@ extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path);
 
 /* cmd5.c */
-extern void do_cmd_browse(int Ind, int book);
+extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
 extern void do_cmd_psi(int Ind, int book, int spell);
 extern void do_cmd_psi_aux(int Ind, int dir);
@@ -632,9 +632,8 @@ extern int Send_char_info(int Ind, int race, int class, int sex);
 extern int Send_various(int Ind, int height, int weight, int age, int sc);
 extern int Send_stat(int Ind, int stat, int max, int cur);
 extern int Send_history(int Ind, int line, cptr hist);
-extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name);
-//extern int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name);
-extern int Send_equip(int Ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name);
+extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name);
+extern int Send_equip(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, cptr name);
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/
 /*extern void Send_exp(int Ind, s32b max, s32b cur);*/
@@ -653,7 +652,7 @@ extern int Send_stun(int Ind, int stun);
 extern int Send_direction(int Ind);
 extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
-extern int Send_spell_info(int Ind, int book, int i, cptr out_val);
+extern int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val);
 extern int Send_item_request(int Ind);
 extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);

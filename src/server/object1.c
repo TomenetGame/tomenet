@@ -6122,7 +6122,7 @@ void display_inven(int Ind)
 		wgt = o_ptr->weight * o_ptr->number;
 
 		/* Send the info to the client */
-		Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_name);
+		Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_name);
 	}
 }
 
@@ -6175,7 +6175,7 @@ void display_equip(int Ind)
 
 		/* Send the info off */
 //		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->tval, o_name);
-		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_name);
+		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_name);
 	}
 }
 

@@ -415,11 +415,11 @@ void process_command()
 		case 'b':
 			cmd_browse();
 			break;
-
+#if 0 // DGDGDGDG -- no more I hope
 		case 'G':
 			cmd_study();
 			break;
-
+#endif
 		case 'm':
 			do_cmd_activate_skill();
 			break;
@@ -1508,7 +1508,8 @@ void cmd_throw(void)
 
 static bool item_tester_browsable(object_type *o_ptr)
 {
-	if (((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER)) &&
+#if 0 // Test: everybody can browse, doesnt mean everybody can use
+        if (((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER)) &&
 	    (o_ptr->tval == TV_MAGIC_BOOK))
 	{
 		return TRUE;
@@ -1543,8 +1544,10 @@ static bool item_tester_browsable(object_type *o_ptr)
 	{
 		return TRUE;
 	}
-	
-	return FALSE;
+        return FALSE;
+#else
+        return TRUE;
+#endif
 }
 
 void cmd_browse(void)
@@ -1588,12 +1591,6 @@ void cmd_study(void)
 void cmd_cast(void)
 {
 	int item;
-
-	if ((class != CLASS_MAGE) && (class != CLASS_ROGUE) && (class != CLASS_RANGER) && (class != CLASS_SORCERER) && (class != CLASS_ARCHER) && (class != CLASS_TELEPATH))
-	{
-		c_msg_print("You cannot cast spells!");
-		return;
-	}
 
 	item_tester_hook = item_tester_magicable;
 
