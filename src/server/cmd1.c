@@ -1188,7 +1188,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 	}
 	if(!(q_ptr->pkill & PKILL_KILLABLE)){
 		char string[30];
-		sprintf(string, "attacking %s\n", q_ptr->name);
+		sprintf(string, "attacking %s", q_ptr->name);
 		s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 		if(!imprison(Ind, 500, string)){
 			take_hit(Ind, p_ptr->lev*p_ptr->lev, "wrath of the Gods");
