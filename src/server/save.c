@@ -1126,6 +1126,8 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->age);
 	wr_s16b(p_ptr->ht);
 	wr_s16b(p_ptr->wt);
+	wr_u16b(p_ptr->align_good);
+	wr_u16b(p_ptr->align_law);
 
 	/* Dump the stats (maximum and current) */
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_max[i]);
@@ -1468,7 +1470,7 @@ static void wr_dungeon(struct worldpos *wpos)
 					csfunc[i].save(sc_is_pointer(i) ?
 //						cs_ptr->sc.ptr : &c_ptr->special);
 						cs_ptr->sc.ptr : cs_ptr);
-#endif	// 0
+#endif	/* 0 */
 					csfunc[i].save(cs_ptr);
 					cs_ptr=cs_ptr->next;
 				}
@@ -1733,8 +1735,6 @@ static bool wr_savefile_new(int Ind)
 
 	wr_s16b(p_ptr->quest_id);
 	wr_s16b(p_ptr->quest_num);
-
-	wr_u32b(p_ptr->align);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);

@@ -667,7 +667,7 @@ struct sfunc{		/* structure containing calls for specials */
 	void (*load)(c_special *cs_ptr);		/* load function */
 	void (*save)(c_special *cs_ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
-	void (*activate)(void *ptr, int Ind);	/* walk on/bump */
+	int (*activate)(void *ptr, int Ind);	/* walk on/bump */
 	//void (*kill)(void *ptr);		/* removal */
 };
 #endif
@@ -1706,7 +1706,8 @@ struct player_type
 	s16b wt;			/* Weight */
 	s16b sc;			/* Social Class */
 
-	u32b align;			/* alignment (msw - good, lsw - law) */
+	u16b align_law;			/* alignment */
+	u16b align_good;
 
 	player_race *rp_ptr;		/* Pointers to player tables */
 	player_class *cp_ptr;

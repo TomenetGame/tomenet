@@ -82,7 +82,7 @@ void defsave(c_special *cs_ptr){
 }
 void defsee(void *ptr, int Ind){
 }
-void defhit(void *ptr, int Ind){
+int defhit(void *ptr, int Ind){
 }
 
 //void dnaload(void *ptr, cave_type *c_ptr){
@@ -90,13 +90,14 @@ void dnaload(c_special *cs_ptr){
 }
 void dnasave(c_special *cs_ptr){
 }
-void dnahit(void *ptr, int Ind){
+int dnahit(void *ptr, int Ind){
 	/* we have to know from where we are called! */
 	if(access_door(Ind, (struct dna_type *)ptr)){
 		printf("Access to door!\n");
-		return;
+		return(1);
 	}
 	printf("no access!\n");
+	return(0);
 }
 
 //void keyload(void *ptr, cave_type *c_ptr){
@@ -104,8 +105,9 @@ void keyload(c_special *cs_ptr){
 }
 void keysave(c_special *cs_ptr){
 }
-void keyhit(void *ptr, int Ind){
+int keyhit(void *ptr, int Ind){
 	printf("keyhit: %d\n", Ind);
+	return(0);
 }
 
 /*
@@ -138,6 +140,26 @@ void tsee(void *ptr, int Ind){
 }
 void thit(void *ptr, int Ind){
 	printf("thit: %d\n", Ind);
+	return(0);
+}
+
+void insc_load(c_special *cs_ptr){
+	struct floor_insc *insc;
+	MAKE(insc, struct floor_insc);
+	cs_ptr->sc.ptr=insc;
+	rd_string(&insc->text, 80);
+	rd_u16b(&insc->found);
+}
+
+void insc_save(c_special *cs_ptr){
+	struct floor_insc *insc=cs_ptr->sc.ptr;
+	wr_string(insc->text);
+	wr_u16b(insc->found);
+}
+
+int insc_hit(void *ptr, int Ind){
+	printf("hit inscr\n");
+	return(0);
 }
 
 /*
@@ -167,8 +189,9 @@ void betweensave(c_special *cs_ptr)
 void betweensee(void *ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
-void betweenhit(void *ptr, int Ind){
-	printf("thit: %d\n", Ind);
+int betweenhit(void *ptr, int Ind){
+	printf("bhit: %d\n", Ind);
+	return(0);
 }
 
 /*
@@ -243,7 +266,7 @@ struct sfunc csfunc[]={
 	{ dnaload, dnasave, defsee, dnahit },	/* CS_DNADOOR */
 	{ keyload, keysave, defsee, keyhit },	/* CS_KEYDOOR */
 	{ tload, tsave, tsee, thit },			/* CS_TRAPS */
-	{ defload, defsave, defsee, defhit },	/* CS_INSCRIP */
+	{ insc_load, insc_save, defsee, insc_hit },	/* CS_INSCRIP */
 	{ defload, defsave, defsee, defhit },	/* CS_FOUNTAIN */
 	{ betweenload, betweensave, defsee, betweenhit },	/* CS_BETWEEN */
 	{ defload, defsave, defsee, defhit },	/* CS_BETWEEN2 */

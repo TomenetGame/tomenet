@@ -2636,11 +2636,13 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
 		struct c_special *cs_ptr;
+		/* one activate is enough */
 		cs_ptr=c_ptr->special;
 		while(cs_ptr){
 			csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
 			cs_ptr=cs_ptr->next;
 		}
+
 		if (cfg.door_bump_open & BUMP_OPEN_HOUSE &&
 			c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
@@ -2747,11 +2749,13 @@ void move_player(int Ind, int dir, int do_pickup)
 				}
 			}
 			/* It's bad place maybe? */
+#if 0
 			cs_ptr=c_ptr->special;
 			while(cs_ptr){
 				csfunc[cs_ptr->type].activate(cs_ptr->sc.ptr, Ind);
 				cs_ptr=cs_ptr->next;
 			}
+#endif
 		}
 		return;
 		} /* 'if (!myhome)' ends here */

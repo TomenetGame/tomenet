@@ -1325,6 +1325,7 @@ void do_cmd_steal(int Ind, int dir)
 	int success, notice;
 	bool caught = FALSE;
 	cave_type **zcave;
+	u16b dal;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
@@ -1343,7 +1344,7 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* May only steal from players */
 	if (c_ptr->m_idx >= 0)
-//	if (c_ptr->m_idx = 0)
+//	if (c_ptr->m_idx = 0)	/* single =/== bug there.. - evileye */
 	{
 		/* Message */
 		msg_print(Ind, "You see nothing there to steal from.");
@@ -1370,6 +1371,20 @@ void do_cmd_steal(int Ind, int dir)
 
 		return;
 	}
+
+	dal=(p_ptr->lev>q_ptr->lev ? p_ptr->lev-q_ptr->lev : 1);
+
+	/* affect alignment on attempt (after hostile check) */
+	/* evil thief! stealing from newbies */
+	if(q_ptr->lev+5 < p_ptr->lev){
+		if((p_ptr->align_good) < (0xffff-dal))
+			p_ptr->align_good+=dal;
+		else p_ptr->align_good=0xffff;	/* very evil */
+	}
+	/* non lawful action in town :) */
+	if(istown(&p_ptr->wpos) && (p_ptr->align_law) < (0xffff-dal))
+		p_ptr->align_law+=dal;
+	else p_ptr->align_law=0xffff;
 
 	/* Make sure we have enough room */
 	if (p_ptr->inven_cnt >= INVEN_PACK)

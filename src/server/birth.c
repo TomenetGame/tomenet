@@ -1622,6 +1622,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = sex & 1;
         p_ptr->pclass = class;
+	p_ptr->align_good = 0x7fff;	/* start neutral */
+	p_ptr->align_law = 0x7fff;
 #if 0
         /* Mega hack but it's fun :) */
         if (!strcmp(name, "Stitch"))

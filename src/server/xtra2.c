@@ -6402,7 +6402,7 @@ bool do_scroll_life(int Ind)
 {
 	int x,y;
 	
-	player_type * p_ptr = Players[Ind];
+	player_type * p_ptr = Players[Ind], *q_ptr;
 	cave_type * c_ptr;
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
@@ -6415,9 +6415,19 @@ bool do_scroll_life(int Ind)
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
 	  		if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)) && (!(c_ptr->info & CAVE_ICKY)))
 	   		{
-   				if (Players[0 - c_ptr->m_idx]->ghost)
+				q_ptr=Players[0 - c_ptr->m_idx];
+   				if (q_ptr->ghost)
    				{
     					resurrect_player(0 - c_ptr->m_idx);
+
+	/* if player is not in town and resurrected on *TRUE* death level
+	   then this is a GOOD action. Reward the player */
+					if(!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos)==q_ptr->died_from_depth){
+						u16b dal=1+((2*q_ptr->lev)/p_ptr->lev);
+						if(p_ptr->align_good>dal)
+							p_ptr->align_good-=dal;
+						else p_ptr->align_good=0;
+					}
    			        	return TRUE;
       				}
   			} 
@@ -6425,7 +6435,7 @@ bool do_scroll_life(int Ind)
   	}  	
   	/* we did nore ressurect anyone */
   	return FALSE; 
-  }
+}
 
 
 /* modified above function to instead restore XP... used in priest spell rememberence */
@@ -6692,9 +6702,11 @@ bool master_build(int Ind, char * parms)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
+	printf("admin build 1\n");
 
 	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind)) && (!guild_build(Ind))) return FALSE;
 	
+	printf("admin build 2\n");
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms)
 	{
@@ -6736,9 +6748,9 @@ bool master_build(int Ind, char * parms)
 #endif
 
 	/* This part to be rewritten for stacked CS */
-#if 0
 	c_ptr->feat = new_feat;
 	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
+		struct c_special *cs_ptr;
 		/* new special door creation (with keys) */
 		struct key_type *key;
 		object_type newkey;
@@ -6749,19 +6761,27 @@ bool master_build(int Ind, char * parms)
 		invcopy(&newkey, lookup_kind(TV_KEY, 1));
 		newkey.pval=key->id;
 		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-		c_ptr->special.type=CS_KEYDOOR;
-		c_ptr->special.sc.ptr=key;
+		cs_ptr=ReplaceCS(c_ptr, CS_KEYDOOR);
+		if(cs_ptr){
+			cs_ptr->sc.ptr=key;
+		}
+		else{
+			KILL(key, struct key_type);
+		}
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
 	if(c_ptr->feat==FEAT_SIGN){
+		struct c_special *cs_ptr;
 		struct floor_insc *sign;
 		MAKE(sign, struct floor_insc);
 		strcpy(sign->text, &parms[2]);
-		c_ptr->special.type=CS_INSCRIP;
-		c_ptr->special.sc.ptr=sign;
+		cs_ptr=ReplaceCS(c_ptr, CS_INSCRIP);
+		if(cs_ptr){
+			cs_ptr->sc.ptr=sign;
+		}
+		else KILL(sign, struct floor_insc);
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
-#endif
 
 	return TRUE;
 }

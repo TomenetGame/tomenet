@@ -1797,8 +1797,9 @@ void do_cmd_read_scroll(int Ind, int item)
 				}
 				}
 				*/
-				restore_level(Ind);
-				do_scroll_life(Ind);
+				/* only restore life levels if no resurrect */
+				if(!do_scroll_life(Ind))
+					restore_level(Ind);
 				break;
 
 			}

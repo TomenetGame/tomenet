@@ -1200,6 +1200,8 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->age);
 	rd_s16b(&p_ptr->ht);
 	rd_s16b(&p_ptr->wt);
+	rd_u16b(&p_ptr->align_good);	/* alignment */
+	rd_u16b(&p_ptr->align_law);
 
 	/* Read the stat info */
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
@@ -1739,16 +1741,16 @@ static errr rd_dungeon(void)
 			c_ptr = &zcave[y][x];
 			while(n--){
 				rd_byte(&k);
-				cs_ptr=AddCS(c_ptr, k);
-//				cs_ptr->type = k;
-			
+				cs_ptr=ReplaceCS(c_ptr, k);
+/*				cs_ptr->type = k;
+*/			
 				/* csfunc will take care of it :) */
 #if 0
 				csfunc[k].load(sc_is_pointer(k) ?
 					cs_ptr->sc.ptr : cs_ptr, cs_ptr);
-#else	// 0
+#else	/* 0 */
 				csfunc[k].load(cs_ptr);
-#endif	// 0
+#endif	/* 0 */
 			}
 		}
 	}
@@ -2065,9 +2067,6 @@ static errr rd_savefile_new_aux(int Ind)
 	if(!older_than(3,4,3)){
 		rd_s16b(&p_ptr->quest_id);
 		rd_s16b(&p_ptr->quest_num);
-	}
-	if(!older_than(3,5,0)){
-		rd_u32b(&p_ptr->align);
 	}
 
 #ifdef VERIFY_CHECKSUMS
