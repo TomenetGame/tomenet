@@ -125,7 +125,7 @@ SHAKE = add_spell
                         	x = px
                                 y = py
                         end
-			earthquake(y, x, 4 + get_level(SHAKE, 10));]]
+			earthquake(player.wpos, y, x, 4 + get_level(SHAKE, 10));]]
 	end,
 	["info"] = 	function()
 			return "rad "..(4 + get_level(Ind, SHAKE, 10))

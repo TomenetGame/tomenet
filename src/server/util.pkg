@@ -132,6 +132,8 @@ extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_admin(cptr msg);
 
+extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+
 void remote_update_lua(int Ind, cptr file);
 
 /* maintain hooks with LUA, not with server code */

@@ -88,6 +88,7 @@ pern_dofile(Ind, "s_water.lua")
 pern_dofile(Ind, "s_earth.lua")
 pern_dofile(Ind, "s_convey.lua")
 pern_dofile(Ind, "s_divin.lua")
+pern_dofile(Ind, "s_tempo.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -122,6 +123,11 @@ school_book[5] = {
 -- Create the book of Knowledge
 school_book[7] = {
         SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
+}
+
+-- Create the book of the Time
+school_book[8] = {
+        MAGELOCK, SLOWMONSTER, ESSENSESPEED, BANISHMENT,
 }
 
 -- Create the book of beginner's cantrip
