@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. Apr 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. Apr 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -66,7 +66,7 @@ Contents
     (5.4)   Slaying vs brands
     (5.5)   Weight of weapons and armour
     (5.6)   Resistances & caps, Immunities, Susceptibilities
-    (5.7)   Qualitative classification of items
+    (5.7)   Qualitative classification of items, identifying & selling items
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.10)  Destruction of items by elemental attacks
@@ -169,6 +169,7 @@ I       I       inspects an item, showing its special abilities in case it
                 "Greater Identify", some shops offer *ID* service, or you can
                 use a scroll of *identify*. If the item hasn't been
                 *identified* yet, you will only see basic information.
+                See (5.7) for more information about ID, *ID* and shops!
                 If you examine weapons, it always tells you the weapon class
                 (sword/hafted/axe/polearm) as well as if it's 1-, 2- or
                 1,5-handed.
@@ -1996,6 +1997,7 @@ The 1..9 are standard shops, namely..
         Casino.         Minas Anor has a casino.
         ID service      Will identify all items you currently carry for a fee.
         *ID* Service    Will *identify* an item for a fee.
+                        See (5.7) for more information about ID, *ID*, shops!
         Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
                         more information about Black Breath.)
         Enchant Services
@@ -2010,6 +2012,7 @@ different shop. Shops in different towns are run by different owners although
 they may use the same number '0'..'9' for their entrance symbol.
 If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
+See (5.7) for more information about ID, *ID* and shops!
 
 
 
@@ -2825,8 +2828,8 @@ Physical attacks in pvp are not influenced by susceptibilities.
 
 
 
-(5.7) Qualitative classification of items
------------------------------------------
+(5.7) Qualitative classification of items, identifying & selling items
+----------------------------------------------------------------------
 Items are classified by
 -a basic item type
 -a simple magical enchantment (to hit-chance, to damage, to armour class)
@@ -2859,14 +2862,50 @@ Gondolin weapons increase strength and constitution (here +3).
 
 Ego-items or excellent magical items often have varying abilities.
 For example a Gondolin-weapon _can_ have HOLD_LIFE, a high resistance,
-or increase your dex. It doesn't _have to_, however. To find out the
-complete powers of an item it can be neccessary to *identify* it.
+or increase your dex. It doesn't _have to_, however. Some Gondolin-Weapons
+have different abilities than others. To find out the complete powers of an
+item it can be neccessary to *identify* it.
 *Identify* (same as *Perception*) reveals the complete ability list.
 You can check the complete list of items in stores by pressing 'x' to
 'examine an item'. You can review the ability list of an item in your
 inventory or equipment using the 'I' key. Using 'I' requires that
 you already *identified* the item or bought it from a shop.
+Items that are bought from a shop are always automatically *identified*.
 Some shops offer an *identify* service but they are quite expensive.
+
+If you sell an item to a shop the offer you will receive depends on
+the following:
+Item is not identified at all -> the offered cash will equal the value of the
+                                 basic item type, eg 300 Au for a long sword
+                                 or 20 Au for an unknown potion.
+Item has been pseudo-identified -> shops won't buy items that have a bad
+                                   pseudo-identification. 'average' items will
+                                   sell for the value of the basic item type.
+                                   good/excellent/special items will sell for
+                                   basic value too so you better identify
+                                   them!
+Item has been identified -> the shop will pay you fully for all boni that are
+                            very obvious (like +STRength or Extra Attacks or
+                            Life/Mana) and also add a decent bonus for each
+                            of the up to two ego powers an item can have
+                            (prefix/suffix, eg 'Fiery' Dagger of 'Slaying').
+                            However, the shop won't offer money for 'hidden'
+                            abilities like resistances or ESP which aren't
+                            so obvious. To make the shop pay for these you'll
+                            need to fully identify the item, this is called
+                            *identifying* (note the asterisks).
+                            To do this, there are scrolls of *Identify*,
+                            staves of *Perception* as well as the spell
+                            'Greater Identify'.
+Item has been identified and is a true artifact -> the shop will pay a fixed
+                                                   price which is predefined
+                                                   for each true artifact.
+Item has been identified and is cursed -> the shops never buy cursed items,
+                                          that might change if you uncurse
+                                          it and if the item hasn't only bad
+                                          boni on it.
+Shop prices in general may slightly vary depending on the shop owner's race
+and your character's race.
 
 Sometimes an item turns out to be an artifact!
 Artifacts are unique. If an artifact is owned by a player, noone else
