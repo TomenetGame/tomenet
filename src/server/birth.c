@@ -1000,8 +1000,6 @@ static void player_outfit(int Ind)
 	int             i, tv, sv;
 
 	object_type     forge;
-	artifact_type   * a_ptr; /* APD XXX FOR WARRIOR */
-	int             k_idx;  /* APD XXX FOR WARRIOR */
 
 	object_type     *o_ptr = &forge;
 

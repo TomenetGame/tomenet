@@ -1538,22 +1538,13 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	monster_type    *m_ptr = &m_list[m_idx];
 
         monster_race    *r_ptr = race_inf(m_ptr);
-        monster_race    *tr_ptr = race_inf(tm_ptr);
 
 	int                     ap_cnt;
 
 	int                     i, j, k, tmp, ac, rlev;
 	int                     do_cut, do_stun;
 
-	s32b            gold;
-
 	bool dead = FALSE;
-
-	object_type             *o_ptr;
-
-	char            o_name[160];
-
-	char            m_name[80];
 
 	bool            blinked;
 
@@ -1573,7 +1564,6 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	/* Scan through all four blows */
 	for (ap_cnt = 0; ap_cnt < 4; ap_cnt++)
 	{
-		bool visible = FALSE;
 		bool obvious = FALSE;
 
 		int power = 0;

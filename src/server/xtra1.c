@@ -847,7 +847,7 @@ static void calc_spells(int Ind)
 
         if (p_ptr->pclass == CLASS_WARRIOR)
         {
-        	p = "technic";
+        	p = "technique";
  	}
 	
 	/* Hack -- must be literate */
@@ -1683,7 +1683,6 @@ static void calc_bonuses(int Ind)
 
 	object_type		*o_ptr;
 	object_kind		*k_ptr;
-	ego_item_type 		*e_ptr;
 
 	    u32b f1, f2, f3, f4, f5, esp;
 		s16b pval;
@@ -1974,7 +1973,6 @@ static void calc_bonuses(int Ind)
 	{
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
-//		e_ptr = &e_info[o_ptr->name2];
 		pval = o_ptr->pval;
 
 		/* Skip missing items */

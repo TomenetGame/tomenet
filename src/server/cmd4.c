@@ -246,7 +246,7 @@ void do_cmd_save_screen(void)
  */
 void do_cmd_check_artifacts(int Ind, int line)
 {
-	int i, j, k, z, Depth, y, x;
+	int i, j, k, z, y, x;
 
 	FILE *fff;
 
@@ -441,8 +441,6 @@ void do_cmd_check_uniques(int Ind, int line)
 	FILE *fff;
 
 	char file_name[1024];
-	cptr killer;
-
 
 	/* Temporary file */
 	if (path_temp(file_name, 1024)) return;

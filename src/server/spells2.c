@@ -2723,7 +2723,6 @@ bool turn_undead(int Ind)
  */
 bool turn_monsters(int Ind, int dam)
 {
-	player_type *p_ptr = Players[Ind];
 	return (project_hack(Ind, GF_TURN_ALL, dam));
 }
 
@@ -2771,7 +2770,6 @@ void aggravate_monsters(int Ind, int who)
 	for (i = 1; i < m_max; i++)
 	{
 		monster_type	*m_ptr = &m_list[i];
-                monster_race    *r_ptr = race_inf(m_ptr);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx) continue;
@@ -3614,7 +3612,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 /* Wipe everything */
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 {
-	int		i, t, y, x, yy, xx, dy, dx, oy, ox;
+	int		y, x, yy, xx, dy, dx;
 
 	cave_type	*c_ptr;
 
@@ -3630,7 +3628,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 	if (r > 12) r = 12;
 
 	/* Check around the epicenter */
-	for (dy = -r; dy <= r; dy++)
+	for (dy = -r; dy <= r; dy++){
 		for (dx = -r; dx <= r; dx++)
 		{
 			/* Extract the location */
@@ -3668,6 +3666,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 
 			everyone_lite_spot(wpos, yy, xx);
 		}
+	}
 }
 
 

@@ -4396,9 +4396,9 @@ static void town_gen_hack(struct worldpos *wpos)
  
 static void town_gen(struct worldpos *wpos)
 { 
-	int        i, y, x;
-	cave_type *c_ptr;
-	cave_type **zcave;
+	int		y, x;
+	cave_type	*c_ptr;
+	cave_type	**zcave;
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Perma-walls -- North/South*/
@@ -4462,26 +4462,8 @@ static void town_gen(struct worldpos *wpos)
 
 				 /* Perma-Lite */
 				c_ptr->info |= CAVE_GLOW;
-
-				 /* Memorize 
-				if (view_perma_grids) c_ptr->info |= CAVE_MARK;
-				*/
 			}
 		}
-
-		/* This has been disabled, since the old monsters will now be saved when
-		 * the server goes down. -APD
-		 */
-		/* Make some day-time residents 
-		for (i = 0; i < MIN_M_ALLOC_TD; i++) (void)alloc_monster(0, 3, TRUE);
-		*/
-	}
-	 /* Night Time */
-	else
-	{
-		 /* Make some night-time residents 
-		for (i = 0; i < MIN_M_ALLOC_TN; i++) (void)alloc_monster(0, 3, TRUE);
-		*/
 	}
 }
 

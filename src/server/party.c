@@ -864,6 +864,7 @@ bool remove_hostility(int Ind, cptr name)
 			}
 		}
 	}
+	return(FALSE);
 
 #if 0
 	/* Initialize lock-step */
@@ -1412,7 +1413,7 @@ int newid(){
 	return(0);	/* no user IDs available - not likely */
 }
 
-static void sf_delete(char *name){
+static void sf_delete(const char *name){
 	int i,k=0;
 	char temp[128],fname[128];
 	/* Extract "useful" letters */

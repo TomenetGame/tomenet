@@ -1099,7 +1099,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	   kinds. */
 	if ((ap > 0) && ((ap / 8) > a_ptr->rarity))
 		a_ptr->rarity = ap / 8;
-#endif 0
+#endif /* if 0 */
 
 	/*if (activates) a_ptr->flags3 |= TR3_ACTIVATE;*/
 	/*if (a_idx < ART_MIN_NORMAL) a_ptr->flags3 |= TR3_INSTA_ART;*/

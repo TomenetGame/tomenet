@@ -824,7 +824,9 @@ static void hit_trap(int Ind)
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
 
+#if 0
 	cptr            name = "a trap";
+#endif
 	bool ident=FALSE;
 
 	/* Ghosts ignore traps */

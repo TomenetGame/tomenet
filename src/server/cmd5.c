@@ -292,8 +292,6 @@ static void spell_info(int Ind, char *p, int j)
 	/* Archer spells */
 	if (p_ptr->mp_ptr->spell_book == TV_HUNT_BOOK)
 	{
-		int plev = p_ptr->lev;
-
 		/* Analyze the spell */
 		switch (j)
 		{
@@ -544,7 +542,7 @@ void do_cmd_study(int Ind, int book, int spell)
 	
 	if (p_ptr->pclass == CLASS_WARRIOR)
 	{
-		p = "technic";
+		p = "technique";
 	}
 
 
@@ -678,7 +676,7 @@ void do_cmd_study(int Ind, int book, int spell)
 		}
 	}
 
-	/* Fighting -- Learn a selected technic */
+	/* Fighting -- Learn a selected technique */
 	if (p_ptr->mp_ptr->spell_book == TV_FIGHT_BOOK)
 	{
 		for (i = 0; i < 64; i++)
@@ -698,7 +696,7 @@ void do_cmd_study(int Ind, int book, int spell)
 
 		if (!spell_okay(Ind, j, FALSE))
 		{
-			msg_print(Ind, "You cannot gain that technic!");
+			msg_print(Ind, "You cannot gain that technique!");
 			return;
 		}
 	}
@@ -875,13 +873,11 @@ bool check_antimagic(int Ind)
 	int i, x, y, x2 = p_ptr->px, y2 = p_ptr->py, m_idx;
 		int dis, antichance, antidis;
 
-	if (!(zcave=getcave(wpos))) return;
-
+	if (!(zcave=getcave(wpos))) return(FALSE);
 
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		player_type *q_ptr = Players[i];
-		object_type *o_ptr;
 
 		/* Skip disconnected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -3709,7 +3705,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 
 
 /*
- * Use a warrior fighting technic
+ * Use a warrior fighting technique
  */
 void do_cmd_fight(int Ind, int book, int spell)
 {
@@ -3728,7 +3724,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 	/* Require spell ability */
 	if (p_ptr->mp_ptr->spell_book != TV_FIGHT_BOOK)
 	{
-		msg_print(Ind, "You cannot use fighting technics!");
+		msg_print(Ind, "You cannot use fighting techniques!");
 		return;
 	}
 
@@ -3764,7 +3760,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to use technic from bad book!");
+		msg_print(Ind, "SERVER ERROR: Tried to use technique from bad book!");
 		return;
 	}
 
@@ -3793,7 +3789,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 	if (!spell_okay(Ind, j, 1))
 	{
-		msg_print(Ind, "You cannot use that technic.");
+		msg_print(Ind, "You cannot use that technique.");
 		return;
 	}
 
@@ -3817,7 +3813,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 	if (rand_int(100) < chance)
 	{
 		if (flush_failure) flush();
-		msg_print(Ind, "You failed to get the technic off!");
+		msg_print(Ind, "You failed to get the technique off!");
 	}
 
 	/* Process spell */
@@ -3995,7 +3991,7 @@ void do_spin(int Ind)
 }
 
 /*
- * Finish using a technic that required a direction --KLJ--
+ * Finish using a technique that required a direction --KLJ--
  */
 void do_cmd_fight_aux(int Ind, int dir)
 {
@@ -4015,7 +4011,7 @@ void do_cmd_fight_aux(int Ind, int dir)
 		return;
 	}
 
-	/* We assume that the technic can be used, and so forth */
+	/* We assume that the technique can be used, and so forth */
 	switch(p_ptr->current_spell)
 	{
                 case 2:
@@ -4069,9 +4065,9 @@ void do_cmd_fight_aux(int Ind, int dir)
                         project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 1, GF_KILL_WALL, PROJECT_BEAM | PROJECT_GRID);
 			break;
 		}
-		default:  /* For some reason we got called for a technic that */
+		default:  /* For some reason we got called for a technique that */
 		{         /* doesn't require a direction */
-			msg_print(Ind, "SERVER ERROR: do_cmd_fight_aux() called for non-directional technic!");
+			msg_print(Ind, "SERVER ERROR: do_cmd_fight_aux() called for non-directional technique!");
 			p_ptr->current_spell = -1;
 			return;
 		}

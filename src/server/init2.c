@@ -393,10 +393,6 @@ static cptr err_str[8] =
  */
 static errr init_f_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;
@@ -489,10 +485,6 @@ static errr init_f_info(void)
  */
 static errr init_k_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;
@@ -583,10 +575,6 @@ static errr init_k_info(void)
  */
 static errr init_a_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;
@@ -677,10 +665,6 @@ static errr init_a_info(void)
  */
 static errr init_e_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;
@@ -770,10 +754,6 @@ static errr init_e_info(void)
  */
 static errr init_r_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;
@@ -863,8 +843,6 @@ static errr init_r_info(void)
  */
 static errr init_re_info(void)
 {
-	int fd;
-
 	int mode = 0644;
 
 	errr err = 0;
@@ -1059,8 +1037,6 @@ static errr init_re_info(void)
  */
 static errr init_t_info(void)
 {
-	int fd;
-
 	int mode = 0644;
 
 	errr err = 0;
@@ -1265,10 +1241,6 @@ static errr init_t_info(void)
  */
 static errr init_v_info(void)
 {
-	int fd;
-
-	int mode = 0644;
-
 	errr err;
 
 	FILE *fp;

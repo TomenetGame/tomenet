@@ -2678,6 +2678,7 @@ void check_experience(int Ind)
                (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
                                (s64b)p_ptr->expfact / 100L))))
 	{
+		char str[160];
 		/* Gain a level */
 		p_ptr->lev++;
 
@@ -2689,6 +2690,8 @@ void check_experience(int Ind)
 
 		/* Message */
 		msg_format(Ind, "Welcome to level %d.", p_ptr->lev);
+		sprintf(str, "{G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		msg_broadcast(Ind, str);
 
 		/* Update some stuff */
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_SANITY);
@@ -4202,17 +4205,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 void monster_death_mon(int am_idx, int m_idx)
 {
-        monster_type *am_ptr = &m_list[am_idx];
-
 	int			i, j, y, x, ny, nx;
 
-	int			dump_item = 0;
-	int			dump_gold = 0;
-
 	int			number = 0;
-	int			total = 0;
-
-	char buf[160];
 
 	cave_type		*c_ptr;
 
@@ -4312,7 +4307,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note)
 
         monster_race    *r_ptr = race_inf(m_ptr);
 
-	s32b		new_exp, new_exp_frac;
+	s32b		new_exp;
 
 
 	/* Redraw (later) if needed */
@@ -5218,14 +5213,10 @@ bool target_set_friendly(int Ind, int dir, ...)
 	int		y;
 	int		x;
 
-	bool	flag = TRUE;
-
 	char	out_val[160];
 
 	cave_type		*c_ptr;
 
-	monster_type	*m_ptr;
-	monster_race	*r_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
 		va_start(ap,dir);
@@ -5511,18 +5502,18 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 				{
 					unsigned char * next;
 					inscription++;
-					p_ptr->recall_pos.wx = atoi(inscription) % MAX_WILD_X;
+					p_ptr->recall_pos.wx = atoi((char *)inscription) % MAX_WILD_X;
 					p_ptr->recall_pos.wz = 0;
-					next = strchr(inscription,',');
+					next = (unsigned char *)strchr((char *)inscription,',');
 					if (next)
 					{
-						if (++next) p_ptr->recall_pos.wy = atoi(next) % MAX_WILD_Y;
+						if (++next) p_ptr->recall_pos.wy = atoi((char*)next) % MAX_WILD_Y;
 					}
 				}
 				else if (*inscription == 'Y')
 				{
 					inscription++;
-					p_ptr->recall_pos.wy = atoi(inscription) % MAX_WILD_Y;
+					p_ptr->recall_pos.wy = atoi((char*)inscription) % MAX_WILD_Y;
 					p_ptr->recall_pos.wz = 0;
 				}
 #if 1
@@ -5538,7 +5529,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					if (*inscription == 'Z') inscription++;
 
 					/* convert the inscription into a level index */
-					p_ptr->recall_pos.wz = atoi(inscription) / 50;
+					p_ptr->recall_pos.wz = atoi((char*)inscription) / 50;
 				}
 			}
 		}
@@ -5664,7 +5655,6 @@ void telekinesis_aux(int Ind, int item)
 
 int get_player(int Ind, object_type *o_ptr)
 {
-        player_type *p_ptr = Players[Ind];
         bool ok = FALSE;
         int Ind2;
 
@@ -5692,7 +5682,7 @@ int get_player(int Ind, object_type *o_ptr)
 				inscription++;
 				
 //				Ind2 = find_player_name(inscription);
-				Ind2 = name_lookup_loose(Ind, inscription, FALSE);
+				Ind2 = name_lookup_loose(Ind, (cptr)inscription, FALSE);
 				if (Ind2) ok = TRUE;
 			}
 		}
@@ -5977,7 +5967,6 @@ bool master_level(int Ind, char * parms)
 /* static or unstatic a level (from chat-line command) */
 bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 {
-	int i;
 	/* get the player pointer */
 	player_type *p_ptr = Players[Ind];
 	
@@ -6224,7 +6213,6 @@ bool master_summon(int Ind, char * parms)
 {
 	int c;
 	player_type * p_ptr = Players[Ind];
-	cave_type * c_ptr;
 
 	static char monster_type = 0;  /* What type of monster we are -- specific, random orc, etc */
 	static char monster_parms[80];

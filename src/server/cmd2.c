@@ -375,7 +375,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &o_list[o_idx];
 
-	int  i, trap;
+	int  trap;
 	bool ident = FALSE;
 
 	/* Only analyze chests */
@@ -441,6 +441,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	/* Summon monsters */
 	if (trap & CHEST_SUMMON)
 	{
+		int i;
 		int num = 2 + randint(3);
 		msg_print(Ind, "You are enveloped in a cloud of smoke!");
 		for (i = 0; i < num; i++)

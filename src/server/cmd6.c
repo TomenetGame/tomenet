@@ -5352,7 +5352,7 @@ void do_cmd_activate(int Ind, int item)
 #if 1
                         case ART_ELESSAR:
 			{
-                                if (Ind, p_ptr->black_breath)
+                                if (p_ptr->black_breath)
                                 {
                                         msg_print(Ind, "The hold of the Black Breath on you is broken!");
                                 }
@@ -5748,7 +5748,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
-	int item, chance;
+	int item;
 
 	item = p_ptr->current_activation;
 

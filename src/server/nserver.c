@@ -2153,7 +2153,7 @@ int Send_leave(int ind, int id)
 // client informing it about the quit event.
 void do_quit(int ind, bool tellclient)
 {
-	int player, n, depth = 0;
+	int player;
 	player_type *p_ptr;
 	connection_t * connp = &Conn[ind];
 

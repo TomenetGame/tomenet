@@ -14,9 +14,6 @@
 
 #include "angband.h"
 
-
-
-
 /*
  * Helper function -- return a "nearby" race for polymorphing
  *
@@ -732,11 +729,6 @@ static byte spell_color(int type)
 	return (TERM_WHITE);
 }
 
-
-
-
-
-
 /*
  * Decreases players hit points and sets death flag if necessary
  *
@@ -901,8 +893,6 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	player_type *p_ptr = Players[Ind];
         int old_csane = p_ptr->csane;
 
-	char death_message[80];
-
         int warning = (p_ptr->msane * hitpoint_warn / 10);
 
 
@@ -925,8 +915,6 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	/* Dead player */
 	if (p_ptr->csane < 0)
 	{
-		int Ind2;
-
 		/* Sound */
 		sound(Ind, SOUND_DEATH);
 

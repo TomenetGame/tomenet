@@ -2078,7 +2078,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 	};  
     };  
     return FALSE;
-};  
+}  
 
 /*
  * Litterally.	- Jir -

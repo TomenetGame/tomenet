@@ -391,8 +391,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
 	int y, x;
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
-	
+	if(!(zcave=getcave(wpos))) return(FALSE);
 	
 	/* Start at the player's location, and check 2 grids in each dir */
 	for (y= y1-2; y<= y1+2; y++)
@@ -437,7 +436,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2)
 	int dist, y, x;
 	cave_type **zcave;
 
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return(FALSE);
 	
 	/* Start at the initial location */
 	y = y1, x = x1;
@@ -544,18 +543,19 @@ static bool spell_annoy(byte spell)
 static bool spell_summon(byte spell)
 {
 	/* All summon spells */
-//        if (spell >= 160 + 13) return (TRUE);
-        if (spell >= 160 + 15) return (TRUE);
-        if (spell = 160 + 3) return (TRUE);
-        if (spell = 160 + 7) return (TRUE);
-        if (spell = 160 + 11) return (TRUE);
-		/* summon animal */
-//        if (spell = 96 + 2) return (TRUE);
+//	if (spell >= 160 + 13) return (TRUE);
+	if (spell >= 160 + 15) return (TRUE);
+
+	/* My interpretation of what it should be - evileye */
+	if (spell == 160 + 3) return (TRUE);
+	if (spell == 160 + 7) return (TRUE);
+	if (spell == 160 + 11) return (TRUE);
+	/* summon animal */
+//	if (spell = 96 + 2) return (TRUE);
 	
 	/* Doesn't summon */
 	return (FALSE);
 }
-
 
 /*
  * Return TRUE if a spell is good in a tactical situation.
@@ -802,7 +802,6 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	char		ddesc[80];
 
-
 	/* Target location */
 	int x = p_ptr->px;
 	int y = p_ptr->py;
@@ -810,13 +809,11 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Summon count */
 	int count = 0;
 
-
 	/* Extract the blind-ness */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Extract the "see-able-ness" */
 	bool seen = (!blind && p_ptr->mon_vis[m_idx]);
-
 
 	/* Assume "normal" target */
 	bool normal = TRUE;
@@ -825,7 +822,6 @@ bool make_attack_spell(int Ind, int m_idx)
 	bool direct = TRUE;
 
 	int antichance = 0, antidis = 0;
-
 
 	/* Hack -- Extract the spell probability */
 	chance = (r_ptr->freq_inate + r_ptr->freq_spell) / 2;
@@ -956,7 +952,6 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* No spells left */
 	if (!f4 && !f5 && !f6) return (FALSE);
 #endif	// STUPID_MONSTERS	
-
 
 	/* Extract the "inate" spells */
 	for (k = 0; k < 32; k++)

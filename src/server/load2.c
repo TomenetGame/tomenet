@@ -688,8 +688,6 @@ static void rd_item(object_type *o_ptr)
 
 static void rd_trap(trap_type *t_ptr)
 {
-	u16b tmp16u;
-
 	/* Hack -- wipe */
 	WIPE(t_ptr, trap_type);
 
@@ -701,9 +699,6 @@ static void rd_trap(trap_type *t_ptr)
 	rd_byte(&t_ptr->iy);
 	rd_byte(&t_ptr->ix);
 	rd_byte(&t_ptr->found);
-
-
-//	strip_bytes(1);
 }
 
 
@@ -754,7 +749,7 @@ static void rd_monster_race(monster_race *r_ptr)
 
 static void rd_monster(monster_type *m_ptr)
 {
-	byte tmp8u, i;
+	byte i;
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
@@ -813,7 +808,6 @@ static void rd_monster(monster_type *m_ptr)
 static void rd_lore(int r_idx)
 {
 	byte tmp8u;
-	u16b tmp16u;
 
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -1673,7 +1667,6 @@ static void rd_messages(void)
 
 static errr rd_dungeon(void)
 {
-	s32b depth;
 	struct worldpos wpos;
 	s16b tmp16b;
 	byte tmp;
