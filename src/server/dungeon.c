@@ -2203,18 +2203,18 @@ static void process_player_end(int Ind)
 					/* Messages */
 					if(p_ptr->wpos.wz > 0)
 					{
-					msg_print(Ind, "You feel yourself yanked downwards!");
-					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+						msg_print(Ind, "You feel yourself yanked downwards!");
+						msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 					}
 					else
 					{
-					msg_print(Ind, "You feel yourself yanked upwards!");
-					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+						msg_print(Ind, "You feel yourself yanked upwards!");
+						msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 					}
-					
+
 					/* New location */
 #ifdef NEW_DUNGEON
-//					p_ptr->wpos.wz=0;
+					//					p_ptr->wpos.wz=0;
 					new_pos.wx = p_ptr->wpos.wx;
 					new_pos.wy = p_ptr->wpos.wy;
 					new_pos.wz = 0;
@@ -2240,8 +2240,8 @@ static void process_player_end(int Ind)
 						wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
 					{
 						/* lazy -- back to the centre of the world
-						 * this should land him/her back to the last town
-						 * (s)he visited.	*/
+						 * this should be changed so that it lands him/her
+						 * back to the last town (s)he visited.	*/
 						p_ptr->recall_pos.wx = MAX_WILD_X/2;
 						p_ptr->recall_pos.wy = MAX_WILD_Y/2;
 					}
@@ -2329,8 +2329,6 @@ static void process_player_end(int Ind)
 					p_ptr->recall_pos.wz = 0;
 					}
 					
-					if (p_ptr->recall_pos.wz == 0)
-						msg_print(Ind, "You feel yourself yanked toward yourself.");
 #ifdef NEW_DUNGEON
 //					p_ptr->wpos.wz=p_ptr->recall_depth;
 					new_pos.wx = p_ptr->wpos.wx;
@@ -2341,7 +2339,12 @@ static void process_player_end(int Ind)
 					new_world_x = p_ptr->world_x;
 					new_world_y = p_ptr->world_y;
 #endif
-					p_ptr->new_level_method = LEVEL_RAND;
+					if (p_ptr->recall_pos.wz == 0)
+					{
+						msg_print(Ind, "You feel yourself yanked toward nowhere...");
+						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					}
+					else p_ptr->new_level_method = LEVEL_RAND;
 				}
 				
 				/* One less person here */

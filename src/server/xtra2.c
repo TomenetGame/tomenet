@@ -5144,6 +5144,11 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
 #if 0
+	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+			WILD_F_DOWN) ? 0 - p_ptr->max_dlv :
+			((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP) ?
+			 p_ptr->max_dlv : 0);
+
 	goal.wx = p_ptr->wpos.wx;
 	goal.wy = p_ptr->wpos.wy;
 //	goal.wz = 0 - p_ptr->max_dlv;	// hack -- default to 'dungeon'
@@ -5185,7 +5190,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 					p_ptr->recall_pos.wz = 0;
 				}
 #if 1
-				/* @RT for inter-Town travels (not implemented yet) */
+				/* @RT for inter-Town travels (not fully implemented yet) */
 				else if (*inscription == 'T')
 				{
 					inscription++;

@@ -7,15 +7,15 @@
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
 
- - Client version 3.2.1.6 (or greater) is needed.
-   The latest client is available from the official site below.
+ - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
+ - Ego monsters added; monsters with special abilities can be generated.
  - (non-random) artifacts are no longer transferable.
    Dropping/throwing/selling(etc) will make them disappear, so be warned.
  - Save the game in town as far as possible, so as not to be buried alive.
- - Ego monsters added; monsters with special abilities can be generated.
  - Please don't abuse the system too much ('cheezing'),
    so that we don't have to remove your save data :)
- - Please keep in mind: Game server is a public space. Don't be too selfish.
+ - Client version 3.2.1.6 (or greater) is needed.
+   The latest client is available from the official site below.
  - To learn about new features/changes, please see the help screen('?').
 
         Official PernMangband site - http://www.pernmangband.org/
