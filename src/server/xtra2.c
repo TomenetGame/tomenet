@@ -5253,6 +5253,63 @@ bool master_level(int Ind, char * parms)
 	return TRUE;
 }
 
+/* static or unstatic a level (from chat-line command) */
+bool master_level_specific(int Ind, int depth, char * parms)
+{
+	int num_on_depth, i;
+	/* get the player pointer */
+	player_type *p_ptr = Players[Ind];
+	
+//	if (strcmp(p_ptr->name, cfg_dungeon_master)) return FALSE;
+//
+
+	switch (parms[0])
+	{
+		/* unstatic the level */
+		case 'u':
+		{
+//		  int depth = p_ptr->dun_depth;
+
+		  //	    		do_cmd_go_up(Ind);
+
+			/* hack -- figure out how many players are currently on the level */
+			num_on_depth = 0;
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (p_ptr->st_anchor){
+					p_ptr->st_anchor=0;
+					msg_print(GetInd[p_ptr->id],"Your space/time anchor breaks\n");
+				}
+			}
+			for (i = 1; i <= NumPlayers; i++){
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				if (Players[i]->dun_depth == depth){
+					teleport_player_level(i);
+				}
+			}
+			/* set the number of players on the level equal to the numer of 
+			 * currently connected players on the level.
+			 */
+			players_on_depth[depth] = 0;
+       			msg_format(Ind, "The level %dft has been unstaticed.", depth * 50);
+			break;
+		}
+
+		/* static the level */
+		case 's':
+		{
+			/* Increase the number of players on the dungeon 
+			 * masters level by one. */
+			players_on_depth[p_ptr->dun_depth]++;
+			msg_print(Ind, "The level has been staticed.");
+			break;
+		}
+		/* default -- do nothing. */
+		default: break;
+	}
+	return TRUE;
+}
 /* Build walls and such.  This should probably be improved, I am just hacking
  * it together right now for Halloween. -APD
  */

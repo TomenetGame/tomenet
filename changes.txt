@@ -339,3 +339,7 @@ Change list for PernMangband
 
 27/11/2001 (Jir)
 - Optimization in auto_retaliate (observable :)
+
+29/11/2001 (Jir)
+- Admin commands: /static-level, /unstatic-level (/sta, /unst)
+- Client suppresses repeated messages.

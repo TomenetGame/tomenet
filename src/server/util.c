@@ -2619,11 +2619,51 @@ void player_talk_aux(int Ind, cptr message)
 				k = k / 50;
 				if (!colon) k = p_ptr->dun_depth;
 
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /clv [depth in feet]");
+					return;
+				}
+
 				/* Wipe even if town/wilderness */
 				wipe_o_list_safely(k);
 				wipe_m_list(k);
 
-				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+				msg_format(Ind, "\377rItems and monsters on %dft are cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/unstatic-level") ||
+					prefix(message, "/unst"))
+			{
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /unst [depth in feet]");
+					return;
+				}
+
+				master_level_specific(Ind, k, "u");
+//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
+				return;
+			}
+			else if (prefix(message, "/static-level") ||
+					prefix(message, "/sta"))
+			{
+				/* depth in feet */
+				k = k / 50;
+				if (!colon) k = p_ptr->dun_depth;
+
+				if (-MAX_WILD >= k || k >= MAX_DEPTH)
+				{
+					msg_print(Ind, "\377oIlligal depth.  Usage: /sta [depth in feet]");
+					return;
+				}
+
+				master_level_specific(Ind, k, "s");
+//				msg_format(Ind, "\377rItems and monsters on %dft is cleared.", k * 50);
 				return;
 			}
 			else if (prefix(message, "/artifact") ||
@@ -2700,7 +2740,8 @@ void player_talk_aux(int Ind, cptr message)
 			}
 			else
 			{
-				msg_print(Ind, "Commands: afk ignore me; art cfg clv kick recall script shutdown");
+				msg_print(Ind, "Commands(player): afk ignore me;");
+				msg_print(Ind, "  art cfg clv kick recall script shutdown sta unst");
 				return;
 			}
 		}

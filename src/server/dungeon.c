@@ -1192,14 +1192,15 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 	/* 'Do nothing' inscription */
 	if (*inscription == 'x') return TRUE;
 
-#if 0
 	/* Fighter classes can use various items for this */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
 		(p_ptr->pclass == CLASS_UNBELIEVER) ||
 		(p_ptr->pclass == CLASS_MONK))
 	{
+#if 0
 		/* item with {@O-} is used only when in danger */
 		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
+#endif
 
 		switch (p_ptr->inventory[item].tval)
 		{
@@ -1238,7 +1239,6 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			}
 		}
 	}
-#endif
 
 	/* Spell to cast */
 	if (inscription != NULL)
