@@ -26,7 +26,6 @@ void do_cmd_messages(void)
 
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg, msg2;
-	//	char temp[80] = "";
 
 	/* Display messages in different colors -Zz */
 	char nameA[20];
@@ -45,38 +44,15 @@ void do_cmd_messages(void)
 	 * "Target Selected" messages are too much clutter for archers to remove 
 	 * from msg recall
 	 */
-	//	strcpy(msg, "`~!");		// dummy
 
 	j = 0;
 	msg = NULL;
 	for (i = 0; i < n; i++)
 	{
-		//		strcpy(msg2, msg);
-		//		msg2 = msg;
 		msg = message_str(i);
 
 		if (strstr(msg, nomsg_target) != NULL) 
 			continue;	
-#if 0
-		//		if (!strcmp(msg, msg2))
-		if (msg == msg2)
-		{
-			j++;
-			if (i < n - 1) continue;
-		}
-
-		if (j)
-		{
-			//			strcat(message_recall[nn - 1], format(" (%d times)", j + 1));
-			//			message_recall[nn] = format(" (%d times)", j + 1);
-			//			nn++;
-			strcpy(temp, message_recall[nn - 1]);
-			strcat(temp, format(" (%d times)", j + 1));
-			//			message_recall[nn - 1] = temp;
-			strcpy(message_recall[nn - 1], temp);
-			j = 0;
-		}
-#endif
 
 		message_recall[nn] = msg;	
 		nn++;
@@ -102,8 +78,8 @@ void do_cmd_messages(void)
 		Term_clear();
 
 		n = nn;  // new total # of messages in our new array
-		r = 0;
-		s = 0;
+		r = 0;	// how many times the message is Repeated
+		s = 0;	// how many lines Saved
 
 
 		/* Dump up to 20 lines of messages */
