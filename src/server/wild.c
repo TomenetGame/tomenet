@@ -1811,6 +1811,8 @@ void init_terrain(terrain_type *t_ptr, int radius)
 	switch (t_ptr->type)
 	{
 		/* wasteland */
+		case WILD_VOLCANO:
+		case WILD_MOUNTAIN:
 		case WILD_WASTELAND:
 		{
 			t_ptr->grass = rand_int(100);
@@ -1863,6 +1865,8 @@ void init_terrain(terrain_type *t_ptr, int radius)
 			break;
 		}
 		/* lake */
+		case WILD_RIVER:
+		case WILD_OCEAN:
 		case WILD_LAKE:
 		{
 			t_ptr->grass = rand_int(900);

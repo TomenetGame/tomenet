@@ -27,12 +27,8 @@ void delete_object_idx(int o_idx)
 
 	int y = o_ptr->iy;
 	int x = o_ptr->ix;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	struct worldpos *wpos=&o_ptr->wpos;
-#else
-	int Depth = o_ptr->dun_depth;
-#endif
 
 	cave_type *c_ptr;
 
@@ -87,11 +83,7 @@ void delete_object_idx(int o_idx)
 	}
 
 	/* Visual update */
-#ifdef NEW_DUNGEON
 	everyone_lite_spot(wpos, y, x);
-#else
-	everyone_lite_spot(Depth, y, x);
-#endif
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
 }
@@ -99,11 +91,7 @@ void delete_object_idx(int o_idx)
 /*
  * Deletes object from given location
  */
-#ifdef NEW_DUNGEON
 void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
-#else
-void delete_object(int Depth, int y, int x)
-#endif
 {
 	cave_type *c_ptr;
 
@@ -129,11 +117,7 @@ void delete_object(int Depth, int y, int x)
 		int i;
 		for(i=0;i<o_max;i++){
 			object_type *o_ptr = &o_list[i];
-#ifdef NEW_DUNGEON
 			if(o_ptr->k_idx && inarea(wpos, &o_ptr->wpos))
-#else
-			if(o_ptr->k_idx && Depth==o_ptr->dun_depth)
-#endif
 			{
 				if(y==o_ptr->iy && x==o_ptr->ix){
 					delete_object_idx(i);
@@ -267,21 +251,13 @@ void compact_objects(int size)
 		{
 			int ny = o_list[o_max].iy;
 			int nx = o_list[o_max].ix;
-#ifdef NEW_DUNGEON
 			wpos=&o_list[o_max].wpos;
-#else
-			int Depth = o_list[o_max].dun_depth;
-#endif
 			/* Update the cave */
 			/* Hack -- with wilderness objects, sometimes the cave is not allocated,
 			   so check that it is. */
-#ifdef NEW_DUNGEON
 			if ((zcave=getcave(wpos))){
 				zcave[ny][nx].o_idx = i;
 			}
-#else
-			if (cave[Depth]) cave[Depth][ny][nx].o_idx = i;
-#endif
 			/* Structure copy */
 			o_list[i] = o_list[o_max];
 
@@ -320,11 +296,7 @@ void compact_objects(int size)
  * Note -- we do NOT visually reflect these (irrelevant) changes
  */
  
-#ifdef NEW_DUNGEON
 void wipe_o_list(struct worldpos *wpos)
-#else
-void wipe_o_list(int Depth)
-#endif
 {
 	int i, x, y;
 
@@ -337,11 +309,7 @@ void wipe_o_list(int Depth)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects not on this depth */
-#ifdef NEW_DUNGEON
 		if (!inarea(&o_ptr->wpos, wpos))
-#else
-		if (o_ptr->dun_depth != Depth)
-#endif
 			continue;
 
 		/* Mega-Hack -- preserve artifacts */
@@ -397,17 +365,11 @@ void wipe_o_list(int Depth)
  * (cave[Depth][y][x].info & CAVE_ICKY)
  */
  
-#ifdef NEW_DUNGEON
 void wipe_o_list_safely(struct worldpos *wpos)
-#else
-void wipe_o_list_safely(int Depth)
-#endif
 {
 	int i, x, y;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -418,20 +380,12 @@ void wipe_o_list_safely(int Depth)
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects not on this depth */
-#ifdef NEW_DUNGEON
 		if(inarea(wpos, &o_ptr->wpos))
-#else
-		if (o_ptr->dun_depth != Depth)
-#endif
 			continue;
 
 		/* Skip objects inside a house(or something) */
-#ifdef NEW_DUNGEON
 		zcave=getcave(&o_ptr->wpos);
-		if(zcave && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
-#else
-		if (cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
-#endif
+		if(!zcave || zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
 			continue;
 
 		/* Mega-Hack -- preserve artifacts */
@@ -472,13 +426,9 @@ void wipe_o_list_safely(int Depth)
 #endif /* NEWHOUSES */
 
 		/* Wipe the object */
-#ifdef NEW_DUNGEON
 		if(zcave){
 			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
 		}
-#else
-		cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].o_idx = 0;
-#endif
 		WIPE(o_ptr, object_type);
 	}
 
@@ -4368,11 +4318,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  * "good" and "great" arguments are false.  As a total hack, if "great" is
  * true, then the item gets 3 extra "attempts" to become an artifact.
  */
-#ifdef NEW_DUNGEON
 void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great)
-#else
-void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great)
-#endif
 {
 	int i, rolls, f1, f2, power;
 
@@ -4434,11 +4380,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 	for (i = 0; i < rolls; i++)
 	{
 		/* Roll for an artifact */
-#ifdef NEW_DUNGEON
 		if (make_artifact(wpos, o_ptr)) break;
-#else
-		if (make_artifact(Depth, o_ptr)) break;
-#endif
 	}
 
 	/* virgin */
@@ -4756,11 +4698,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
  * determine level requirement.
  * based on C.Blue's idea.	- Jir -
  */
-#ifdef NEW_DUNGEON
 void determine_level_req(int level, object_type *o_ptr)
-#else
-void determine_level_req(int Depth, object_type *o_ptr)
-#endif
 {
 	int i, j, base = k_info[o_ptr->k_idx].level;
 
@@ -4811,11 +4749,7 @@ void determine_level_req(int Depth, object_type *o_ptr)
 
 	/* '17/72' == 0.2361... < 1/4 :) */
 	base >>= 1;
-#ifdef NEW_DUNGEON
 	i = level - base;
-#else
-	i = Depth - base;
-#endif
 	j = (i * (i > 0 ? 1 : 2) / 4  + base) * rand_range(95,105) / 100;
 	o_ptr->level = j < 100 ? (j > 1 ? j : 1) : 100;
 
@@ -4918,11 +4852,7 @@ static bool kind_is_good(int k_idx)
  *
  * This routine requires a clean floor grid destination.
  */
-#ifdef NEW_DUNGEON
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-#else
-void place_object(int Depth, int y, int x, bool good, bool great)
-#endif
 {
 	int			o_idx, prob, base;
 
@@ -4930,25 +4860,14 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 
 	object_type		forge;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Paranoia -- check bounds */
-#ifdef NEW_DUNGEON
 	if (!in_bounds(y, x)) return;
-#else
-	if (!in_bounds(Depth, y, x)) return;
-#endif
 
 	/* Require clean floor space */
-#ifdef NEW_DUNGEON
 	if (!cave_clean_bold(zcave, y, x)) return;
-#else
-	if (!cave_clean_bold(Depth, y, x)) return;
-#endif
-
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);
@@ -4961,11 +4880,7 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 	invwipe(&forge);
 
 	/* Generate a special object, or a normal object */
-#ifdef NEW_DUNGEON
 	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge))
-#else
-	if ((rand_int(prob) != 0) || !make_artifact_special(Depth, &forge))
-#endif
 	{
 		int k_idx;
 
@@ -5000,11 +4915,7 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 	}
 
 	/* Apply magic (allow artifacts) */
-#ifdef NEW_DUNGEON
 	apply_magic(wpos, &forge, object_level, TRUE, good, great);
-#else
-	apply_magic(Depth, &forge, object_level, TRUE, good, great);
-#endif
 
 	/* Hack -- generate multiple spikes/missiles */
 	switch (forge.tval)
@@ -5033,19 +4944,10 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 
 		o_ptr->iy = y;
 		o_ptr->ix = x;
-#ifdef NEW_DUNGEON
 		wpcopy(&o_ptr->wpos, wpos);
-#else
-		o_ptr->dun_depth = Depth;
-#endif
 
-#ifdef NEW_DUNGEON
 		c_ptr=&zcave[y][x];
 		c_ptr->o_idx = o_idx;
-#else
-		c_ptr = &cave[Depth][y][x];
-		c_ptr->o_idx = o_idx;
-#endif
 
 		/* Notice "okay" out-of-depth objects (unless already noticed) */
 #ifdef NEW_DUNGEON
@@ -5083,17 +4985,11 @@ void place_object(int Depth, int y, int x, bool good, bool great)
 /*
  * Scatter some "great" objects near the player
  */
-#ifdef NEW_DUNGEON
 void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great)
-#else
-void acquirement(int Depth, int y1, int x1, int num, bool great)
-#endif
 {
 	int        y, x, i, d;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Scatter some objects */
 	for (; num > 0; --num)
@@ -5105,14 +5001,9 @@ void acquirement(int Depth, int y1, int x1, int num, bool great)
 			d = (i + 4) / 5;
 
 			/* Pick a location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &y, &x, y1, x1, d, 0);
-#else
-			scatter(Depth, &y, &x, y1, x1, d, 0);
-#endif
 
 			/* Must have a clean grid */
-#ifdef NEW_DUNGEON
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
 			place_object(wpos, y, x, TRUE, great);
@@ -5121,18 +5012,6 @@ void acquirement(int Depth, int y1, int x1, int num, bool great)
 
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
-#else
-			if (!cave_clean_bold(Depth, y, x)) continue;
-			/* Place a good (or great) object */
-			place_object(Depth, y, x, TRUE, great);
-			/* Notice */
-			note_spot_depth(Depth, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(Depth, y, x);
-#endif
-
-
 
 			/* Under the player */
 			/*if ((y == py) && (x == px))
@@ -5161,34 +5040,19 @@ void acquirement(int Depth, int y1, int x1, int num, bool great)
  * obsoleted - please see traps.c	- Jir -
  */
 #if 0
-#ifdef NEW_DUNGEON
 void place_trap(struct worldpos *wpos, int y, int x)
-#else
-void place_trap(int Depth, int y, int x)
-#endif
 {
 	cave_type *c_ptr;
 
 	/* Paranoia -- verify location */
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	/* Require empty, clean, floor grid */
 	if (!cave_naked_bold(zcave, y, x)) return;
-#else
-	if (!in_bounds(Depth, y, x)) return;
-	/* Require empty, clean, floor grid */
-	if (!cave_naked_bold(Depth, y, x)) return;
-#endif
-
 
 	/* Access the grid */
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[y][x];
-#else
-	c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Place an invisible trap */
 	c_ptr->feat = FEAT_INVIS;
@@ -5208,11 +5072,7 @@ void place_trap(int Depth, int y, int x)
  * Places a treasure (Gold or Gems) at given location
  * The location must be a valid, empty, floor grid.
  */
-#ifdef NEW_DUNGEON
 void place_gold(struct worldpos *wpos, int y, int x)
-#else
-void place_gold(int Depth, int y, int x)
-#endif
 {
 	int		i, j, o_idx;
 
@@ -5221,24 +5081,14 @@ void place_gold(int Depth, int y, int x)
 	cave_type	*c_ptr;
 	object_type	*o_ptr;
 
-
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Paranoia -- check bounds */
 	if (!in_bounds(y, x)) return;
-#else
-	if (!in_bounds(Depth, y, x)) return;
-#endif
 
 	/* Require clean floor grid */
-#ifdef NEW_DUNGEON
 	if (!cave_clean_bold(zcave, y, x)) return;
-#else
-	if (!cave_clean_bold(Depth, y, x)) return;
-#endif
-
 
 	/* Hack -- Pick a Treasure variety */
 	i = ((randint(object_level + 2) + 2) / 2);
@@ -5270,14 +5120,11 @@ void place_gold(int Depth, int y, int x)
 		o_ptr->iy = y;
 		o_ptr->ix = x;
 
-#ifdef NEW_DUNGEON
 		wpcopy(&o_ptr->wpos, wpos);
 		zcave=getcave(wpos);
+		/* check zcave? NEW_DUNGEON */
 		c_ptr=&zcave[y][x];
-#else
-		o_ptr->dun_depth = Depth;
-		c_ptr = &cave[Depth][y][x];
-#endif
+
 		c_ptr->o_idx = o_idx;
 
 		/* Hack -- Base coin cost */
@@ -5324,11 +5171,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 	bool flag = FALSE;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(-1);
-#endif
-
 
 	/* Start at the drop point */
 	ny = y1 = y;  nx = x1 = x;
@@ -5345,18 +5189,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Distance distribution */
 			d = ((k + 14) / 15);
 
-
-#ifdef NEW_DUNGEON
 			/* Pick a "nearby" location */
 			scatter(wpos, &ny, &nx, y1, x1, d, 0);
 			/* Require clean floor space */
 			if (!cave_clean_bold(zcave, ny, nx)) continue;
-#else
-			/* Pick a "nearby" location */
-			scatter(Depth, &ny, &nx, y1, x1, d, 0);
-			/* Require clean floor space */
-			if (!cave_clean_bold(Depth, ny, nx)) continue;
-#endif
 
 			/* Here looks good */
 			flag = TRUE;
@@ -5374,29 +5210,17 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		{
 			d = 1;
 
-#ifdef NEW_DUNGEON
 			/* Pick a location */
 			scatter(wpos, &ny, &nx, y1, x1, d, 0);
 
 			/* Do not move through walls */
 			if (!cave_floor_bold(zcave, ny, nx)) continue;
-#else
-			/* Pick a location */
-			scatter(Depth, &ny, &nx, y1, x1, d, 0);
-
-			/* Do not move through walls */
-			if (!cave_floor_bold(Depth, ny, nx)) continue;
-#endif
 
 			/* Hack -- "bounce" to that location */
 			y1 = ny; x1 = nx;
 
 			/* Get the cave grid */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[ny][nx];
-#else
-			c_ptr = &cave[Depth][ny][nx];
-#endif
 
 			/* XXX XXX XXX */
 
@@ -5404,11 +5228,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			if (!(c_ptr->o_idx)) flag = TRUE;
 
 			/* After trying 99 places, crush any (normal) object */
-#ifdef NEW_DUNGEON
 			else if ((k>99) && cave_valid_bold(zcave, ny, nx)) flag = TRUE;
-#else
-			else if ((k>99) && cave_valid_bold(Depth, ny, nx)) flag = TRUE;
-#endif
 		}
 
 		/* Hack -- Artifacts will destroy ANYTHING to stay alive */
@@ -5439,11 +5259,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* XXX XXX XXX */
 
 		/* Crush anything under us (for artifacts) */
-#ifdef NEW_DUNGEON
 		delete_object(wpos, ny, nx);
-#else
-		delete_object(Depth, ny, nx);
-#endif
 
 		/* Make a new object */
 		o_idx = o_pop();
@@ -5460,18 +5276,10 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Locate */
 			o_ptr->iy = ny;
 			o_ptr->ix = nx;
-#ifdef NEW_DUNGEON
 			wpcopy(&o_ptr->wpos,wpos);
-#else
-			o_ptr->dun_depth = Depth;
-#endif
 
 			/* Place */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[ny][nx];
-#else
-			c_ptr = &cave[Depth][ny][nx];
-#endif
 			c_ptr->o_idx = o_idx;
 
 			/* Clear visibility flags */
@@ -5481,19 +5289,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 				Players[k]->obj_vis[o_idx] = FALSE;
 			}
 
-#ifdef NEW_DUNGEON
 			/* Note the spot */
 			note_spot_depth(wpos, ny, nx);
 
 			/* Draw the spot */
 			everyone_lite_spot(wpos, ny, nx);
-#else
-			/* Note the spot */
-			note_spot_depth(Depth, ny, nx);
-
-			/* Draw the spot */
-			everyone_lite_spot(Depth, ny, nx);
-#endif
 
 			/* Sound */
 			/*sound(SOUND_DROP);*/

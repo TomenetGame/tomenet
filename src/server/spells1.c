@@ -353,7 +353,6 @@ void teleport_player(int Ind, int dis)
 			/* Ignore illegal locations */
 			if (!in_bounds(y, x)) continue;
 
-#ifdef NEW_DUNGEON
 			/* Require floor space if not ghost */
 			if (!p_ptr->ghost && !cave_naked_bold(zcave, y, x)) continue;
 
@@ -362,16 +361,6 @@ void teleport_player(int Ind, int dis)
 
 			/* No teleporting into vaults and such */
 			if (zcave[y][x].info & CAVE_ICKY) continue;
-#else
-			/* Require floor space if not ghost */
-			if (!p_ptr->ghost && !cave_naked_bold(Depth, y, x)) continue;
-
-			/* Require empty space if a ghost */
-			if (p_ptr->ghost && cave[Depth][y][x].m_idx) continue;
-
-			/* No teleporting into vaults and such */
-			if (cave[Depth][y][x].info & CAVE_ICKY) continue;
-#endif
 
 			/* This grid looks good */
 			look = FALSE;
@@ -652,47 +641,24 @@ void teleport_player_level(int Ind)
 	msg_print(Ind, msg);
 
 	/* One less player here */
-#ifdef NEW_DUNGEON
 	new_players_on_depth(wpos,-1,TRUE);
 	/* Paranoia, required for merging old saves with new wilderness */
 	if (players_on_depth(wpos)< 0) new_players_on_depth(wpos,0,FALSE);
-#else
-	players_on_depth[Depth]--;
-	/* Paranoia, required for merging old saves with new wilderness */
-	if (players_on_depth[Depth] < 0) players_on_depth[Depth] = 0;
-#endif
-	
 
-#ifdef NEW_DUNGEON
 	/* Remove the player */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 
 	/* Show that he's left */
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-#else
-	/* Remove the player */
-	cave[Depth][p_ptr->py][p_ptr->px].m_idx = 0;
-
-	/* Show that he's left */
-	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
 
-#ifdef NEW_DUNGEON
 	wpcopy(wpos,&new_depth);
-#else
-	Depth = p_ptr->dun_depth = new_depth;
-#endif
 
 	/* One more player here */
-#ifdef NEW_DUNGEON
 	new_players_on_depth(wpos,1,TRUE);
-#else
-	players_on_depth[Depth]++;
-#endif
 
 	p_ptr->new_level_flag = TRUE;
 }
