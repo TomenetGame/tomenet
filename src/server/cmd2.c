@@ -2599,90 +2599,270 @@ void do_cmd_fire(int Ind, int dir)
 			/* Player here, hit him */
 			if (zcave[y][x].m_idx < 0)
 			{
-#ifdef PLAYER_INTERACTION
-				cave_type *c_ptr = &zcave[y][x];
+				if (cfg.use_pk_rules == PK_RULES_NEVER)
+				{
+					/* Stop looking */
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
+				}
+				else
+				{
 
-				q_ptr = Players[0 - c_ptr->m_idx];
+					cave_type *c_ptr = &zcave[y][x];
 
-				/* AD hack -- "pass over" players in same party */
-				if ((p_ptr->pkill & PKILL_KILLER || magik(NEUTRAL_FIRE_CHANCE)) &&
-					(p_ptr->party == 0 ||
-					 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
-					 magik(FRIEND_FIRE_CHANCE)) )
-				{ 
+					q_ptr = Players[0 - c_ptr->m_idx];
+
+					/* AD hack -- "pass over" players in same party */
+					if ((p_ptr->pkill & PKILL_KILLER || magik(NEUTRAL_FIRE_CHANCE)) &&
+							(p_ptr->party == 0 ||
+							 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
+							 magik(FRIEND_FIRE_CHANCE)) )
+					{ 
+
+						/* Check the visibility */
+						visible = p_ptr->play_vis[0 - c_ptr->m_idx];
+
+						/* Note the collision */
+						hit_body = TRUE;
+
+						if (cfg.use_pk_rules == PK_RULES_DECLARE)
+						{
+							if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
+								if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
+									p_ptr->target_who=0;
+									do_player_drop_items(Ind, 40, FALSE);
+									imprison(Ind, 100, "attempted murder");
+								}
+							}
+						}
+
+						/* Did we hit it (penalize range) */
+						if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
+						{
+							char p_name[80];
+
+							/* Get the name */
+							strcpy(p_name, q_ptr->name);
+
+							/* Handle unseen player */
+							if (!visible)
+							{
+								/* Invisible player */
+								msg_format(Ind, "The %s finds a mark.", o_name);
+								msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
+							}
+
+							/* Handle visible player */
+							else
+							{
+								/* Messages */
+								msg_format(Ind, "The %s hits %s.", o_name, p_name);
+								msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
+
+								/* Track this player's health */
+								health_track(Ind, c_ptr->m_idx);
+							}
+
+							/* If this was intentional, make target hostile */
+							if (check_hostile(Ind, 0 - c_ptr->m_idx))
+							{
+								/* Make target hostile if not already */
+								if (!check_hostile(0 - c_ptr->m_idx, Ind))
+								{
+									add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+								}
+							}
+
+							/* Apply special damage XXX XXX XXX */
+							tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+							tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+
+							/* No negative damage */
+							if (tdam < 0) tdam = 0;
+
+							/* XXX Reduce damage by 1/3 */
+							tdam = (tdam + 2) / 3;
+
+
+							if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
+							{
+								(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
+							}
+
+							/* Take damage */
+							take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+
+							/* Add a nice ball if needed */
+							if (p_ptr->bow_brand_t && !boomerang)
+							{
+								switch (p_ptr->bow_brand_t)
+								{
+									case BOW_BRAND_BALL_FIRE:
+										project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+										break;
+									case BOW_BRAND_BALL_COLD:
+										project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+										break;
+									case BOW_BRAND_BALL_ELEC:
+										project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+										break;
+									case BOW_BRAND_BALL_ACID:
+										project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+										break;
+									case BOW_BRAND_BALL_SOUND:
+										project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
+										break;
+								}
+							}
+							/* Exploding arrow ? */
+							else if (o_ptr->pval != 0 && !magic)
+							{
+								int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
+								int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
+								switch(o_ptr->sval)
+								{
+									case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+									case SV_AMMO_NORMAL: rad = 3; break;
+									case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+								}
+
+								project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
+							}
+
+
+							/* Stop looking */
+							if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
+						}
+
+					} /* end hack */
+				}
+
+				/* Monster here, Try to hit it */
+				if (zcave[y][x].m_idx > 0)
+				{
+					cave_type *c_ptr = &zcave[y][x];
+
+					monster_type *m_ptr = &m_list[c_ptr->m_idx];
+					monster_race *r_ptr = race_inf(m_ptr);
 
 					/* Check the visibility */
-					visible = p_ptr->play_vis[0 - c_ptr->m_idx];
+					visible = p_ptr->mon_vis[c_ptr->m_idx];
 
 					/* Note the collision */
 					hit_body = TRUE;
 
-					if (cfg.use_pk_rules)
-					{
-						if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-							if(visible && (!player_in_party(Players[0 - c_ptr->m_idx]->party, Ind))){
-								p_ptr->target_who=0;
-								do_player_drop_items(Ind, 40, FALSE);
-								imprison(Ind, 100, "attempted murder");
-							}
-						}
-					}
-
 					/* Did we hit it (penalize range) */
-					if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
+					if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
 					{
-						char p_name[80];
+						bool fear = FALSE;
 
-						/* Get the name */
-						strcpy(p_name, q_ptr->name);
+						/* Assume a default death */
+						cptr note_dies = " dies.";
 
-						/* Handle unseen player */
+						/* Some monsters get "destroyed" */
+						if ((r_ptr->flags3 & RF3_DEMON) ||
+								(r_ptr->flags3 & RF3_UNDEAD) ||
+								(r_ptr->flags2 & RF2_STUPID) ||
+								(strchr("Evg", r_ptr->d_char)))
+						{
+							/* Special note at death */
+							note_dies = " is destroyed.";
+						}
+
+
+						/* Handle unseen monster */
 						if (!visible)
 						{
-							/* Invisible player */
+							/* Invisible monster */
 							msg_format(Ind, "The %s finds a mark.", o_name);
-							msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
 						}
 
-						/* Handle visible player */
+						/* Handle visible monster */
 						else
 						{
-							/* Messages */
-							msg_format(Ind, "The %s hits %s.", o_name, p_name);
-							msg_format(0 - c_ptr->m_idx, "%^s hits you with a %s.", p_ptr->name, o_name);
+							char m_name[80];
 
-							/* Track this player's health */
-							health_track(Ind, c_ptr->m_idx);
-						}
+							/* Get "the monster" or "it" */
+							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
-						/* If this was intentional, make target hostile */
-						if (check_hostile(Ind, 0 - c_ptr->m_idx))
-						{
-							/* Make target hostile if not already */
-							if (!check_hostile(0 - c_ptr->m_idx, Ind))
-							{
-								add_hostility(0 - c_ptr->m_idx, p_ptr->name);
-							}
+							/* Message */
+							msg_format(Ind, "The %s hits %s.", o_name, m_name);
+
+							/* Hack -- Track this monster race */
+							if (visible) recent_track(m_ptr->r_idx);
+
+							/* Hack -- Track this monster */
+							if (visible) health_track(Ind, c_ptr->m_idx);
 						}
 
 						/* Apply special damage XXX XXX XXX */
-						tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
 						tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
 
 						/* No negative damage */
 						if (tdam < 0) tdam = 0;
 
-						/* XXX Reduce damage by 1/3 */
-						tdam = (tdam + 2) / 3;
-
-
-						if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
+						if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
+								!(r_ptr->flags3 & RF3_NO_CONF) &&
+								!(r_ptr->flags4 & RF4_BR_CONF) &&
+								!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
 						{
-							(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
+							int i;
+
+							/* Already partially confused */
+							if (m_ptr->confused)
+							{
+								i = m_ptr->confused + p_ptr->lev;
+							}
+
+							/* Was not confused */
+							else
+							{
+								i = p_ptr->lev;
+							}
+
+							/* Apply confusion */
+							m_ptr->confused = (i < 200) ? i : 200;
+
+							if (visible)
+							{
+								char m_name[80];
+
+								/* Get "the monster" or "it" */
+								monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+								/* Message */
+								msg_format(Ind, "%s appears confused.", m_name);
+							}
 						}
 
-						/* Take damage */
-						take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+
+						/* Hit the monster, check for death */
+						if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
+						{
+							/* Dead monster */
+						}
+
+						/* No death */
+						else
+						{
+							/* Message */
+							message_pain(Ind, c_ptr->m_idx, tdam);
+
+							/* Take note */
+							if (fear && visible)
+							{
+								char m_name[80];
+
+								/* Sound */
+								sound(Ind, SOUND_FLEE);
+
+								/* Get the monster name (or "it") */
+								monster_desc(Ind, m_name, c_ptr->m_idx, 0);
+
+								/* Message */
+								msg_format(Ind, "%^s flees in terror!", m_name);
+							}
+						}
 
 						/* Add a nice ball if needed */
 						if (p_ptr->bow_brand_t && !boomerang)
@@ -2721,186 +2901,9 @@ void do_cmd_fire(int Ind, int dir)
 							project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
 						}
 
-
 						/* Stop looking */
 						if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 					}
-
-				} /* end hack */
-#else
-
-				/* Stop looking */
-				if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
-#endif
-			}
-
-			/* Monster here, Try to hit it */
-			if (zcave[y][x].m_idx > 0)
-			{
-				cave_type *c_ptr = &zcave[y][x];
-
-				monster_type *m_ptr = &m_list[c_ptr->m_idx];
-				monster_race *r_ptr = race_inf(m_ptr);
-
-				/* Check the visibility */
-				visible = p_ptr->mon_vis[c_ptr->m_idx];
-
-				/* Note the collision */
-				hit_body = TRUE;
-
-				/* Did we hit it (penalize range) */
-				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible))
-				{
-					bool fear = FALSE;
-
-					/* Assume a default death */
-					cptr note_dies = " dies.";
-
-					/* Some monsters get "destroyed" */
-					if ((r_ptr->flags3 & RF3_DEMON) ||
-							(r_ptr->flags3 & RF3_UNDEAD) ||
-							(r_ptr->flags2 & RF2_STUPID) ||
-							(strchr("Evg", r_ptr->d_char)))
-					{
-						/* Special note at death */
-						note_dies = " is destroyed.";
-					}
-
-
-					/* Handle unseen monster */
-					if (!visible)
-					{
-						/* Invisible monster */
-						msg_format(Ind, "The %s finds a mark.", o_name);
-					}
-
-					/* Handle visible monster */
-					else
-					{
-						char m_name[80];
-
-						/* Get "the monster" or "it" */
-						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-						/* Message */
-						msg_format(Ind, "The %s hits %s.", o_name, m_name);
-
-						/* Hack -- Track this monster race */
-						if (visible) recent_track(m_ptr->r_idx);
-
-						/* Hack -- Track this monster */
-						if (visible) health_track(Ind, c_ptr->m_idx);
-					}
-
-					/* Apply special damage XXX XXX XXX */
-					tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-					/* No negative damage */
-					if (tdam < 0) tdam = 0;
-
-					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
-							!(r_ptr->flags3 & RF3_NO_CONF) &&
-							!(r_ptr->flags4 & RF4_BR_CONF) &&
-							!(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang)
-					{
-						int i;
-
-						/* Already partially confused */
-						if (m_ptr->confused)
-						{
-							i = m_ptr->confused + p_ptr->lev;
-						}
-
-						/* Was not confused */
-						else
-						{
-							i = p_ptr->lev;
-						}
-
-						/* Apply confusion */
-						m_ptr->confused = (i < 200) ? i : 200;
-
-						if (visible)
-						{
-							char m_name[80];
-
-							/* Get "the monster" or "it" */
-							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-							/* Message */
-							msg_format(Ind, "%s appears confused.", m_name);
-						}
-					}
-
-
-					/* Hit the monster, check for death */
-					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
-					{
-						/* Dead monster */
-					}
-
-					/* No death */
-					else
-					{
-						/* Message */
-						message_pain(Ind, c_ptr->m_idx, tdam);
-
-						/* Take note */
-						if (fear && visible)
-						{
-							char m_name[80];
-
-							/* Sound */
-							sound(Ind, SOUND_FLEE);
-
-							/* Get the monster name (or "it") */
-							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-							/* Message */
-							msg_format(Ind, "%^s flees in terror!", m_name);
-						}
-					}
-
-					/* Add a nice ball if needed */
-					if (p_ptr->bow_brand_t && !boomerang)
-					{
-						switch (p_ptr->bow_brand_t)
-						{
-							case BOW_BRAND_BALL_FIRE:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_COLD:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_ELEC:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_ACID:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-							case BOW_BRAND_BALL_SOUND:
-								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-								break;
-						}
-					}
-					/* Exploding arrow ? */
-					else if (o_ptr->pval != 0 && !magic)
-					{
-						int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2;
-						int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
-						switch(o_ptr->sval)
-						{
-							case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
-							case SV_AMMO_NORMAL: rad = 3; break;
-							case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
-						}
-
-						project(0 - Ind, rad, &p_ptr->wpos, y, x, dam, o_ptr->pval, flag);
-					}
-
-					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP) || boomerang) break;
 				}
 			}
 		}
@@ -3372,65 +3375,67 @@ void do_cmd_throw(int Ind, int dir, int item)
 		/* Player here, try to hit him */
 		if (zcave[y][x].m_idx < 0)
 		{
-#ifdef PLAYER_INTERACTION
-			cave_type *c_ptr = &zcave[y][x];
-
-			q_ptr = Players[0 - c_ptr->m_idx];
-
-			/* Check the visibility */
-			visible = p_ptr->play_vis[0 - c_ptr->m_idx];
-
-			/* Note the collision */
-			hit_body = TRUE;
-
-			/* Did we hit him (penalize range) */
-			if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
+			if (cfg.use_pk_rules == PK_RULES_NEVER)
 			{
-				char p_name[80];
-
-				/* Get his name */
-				strcpy(p_name, q_ptr->name);
-
-				/* Handle unseen player */
-				if (!visible)
-				{
-					/* Messages */
-					msg_format(Ind, "The %s finds a mark!", o_name);
-					msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
-				}
-				
-				/* Handle visible player */
-				else
-				{
-					/* Messages */
-					msg_format(Ind, "The %s hits %s.", o_name, p_name);
-					msg_format(0 - c_ptr->m_idx, "%s hits you with a %s!", p_ptr->name, o_name);
-
-					/* Track player's health */
-					health_track(Ind, c_ptr->m_idx);
-				}
-
-				/* Apply special damage XXX XXX XXX */
-				tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
-
-				/* No negative damage */
-				if (tdam < 0) tdam = 0;
-
-				/* XXX Reduce damage by 1/3 */
-				tdam = (tdam + 2) / 3;
-
-				/* Take damage */
-				take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
-
 				/* Stop looking */
 				break;
 			}
-#else
+			else
+			{
+				cave_type *c_ptr = &zcave[y][x];
 
-			/* Stop looking */
-			break;
-#endif
+				q_ptr = Players[0 - c_ptr->m_idx];
+
+				/* Check the visibility */
+				visible = p_ptr->play_vis[0 - c_ptr->m_idx];
+
+				/* Note the collision */
+				hit_body = TRUE;
+
+				/* Did we hit him (penalize range) */
+				if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
+				{
+					char p_name[80];
+
+					/* Get his name */
+					strcpy(p_name, q_ptr->name);
+
+					/* Handle unseen player */
+					if (!visible)
+					{
+						/* Messages */
+						msg_format(Ind, "The %s finds a mark!", o_name);
+						msg_format(0 - c_ptr->m_idx, "You are hit by a %s!", o_name);
+					}
+
+					/* Handle visible player */
+					else
+					{
+						/* Messages */
+						msg_format(Ind, "The %s hits %s.", o_name, p_name);
+						msg_format(0 - c_ptr->m_idx, "%s hits you with a %s!", p_ptr->name, o_name);
+
+						/* Track player's health */
+						health_track(Ind, c_ptr->m_idx);
+					}
+
+					/* Apply special damage XXX XXX XXX */
+					tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+
+					/* No negative damage */
+					if (tdam < 0) tdam = 0;
+
+					/* XXX Reduce damage by 1/3 */
+					tdam = (tdam + 2) / 3;
+
+					/* Take damage */
+					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
+
+					/* Stop looking */
+					break;
+				}
+			}
 		}
 
 		/* Monster here, Try to hit it */

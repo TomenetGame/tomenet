@@ -988,7 +988,7 @@ static int auto_retaliate(int Ind)
 				}
 			}
 		}
-		else
+		else if (cfg.use_pk_rules != PK_RULES_NEVER)
 		{
 			i = -i;
 			if (!(q_ptr = Players[i])) continue;
@@ -1230,6 +1230,9 @@ static int auto_retaliate(int Ind)
 	}
 #endif	// 0
 
+	/* Nothing to attack */
+	if (!p_target_ptr && !m_target_ptr) return 0;
+
 	/* Pick an item with {@O} inscription */
 //	for (i = 0; i < INVEN_PACK; i++)
 	for (i = 0; i < INVEN_TOTAL; i++)
@@ -1292,7 +1295,7 @@ static int auto_retaliate(int Ind)
 	}
 
 	/* The dungeon master does not fight his or her offspring */
-	if (p_ptr->admin_dm) return FALSE;
+	if (p_ptr->admin_dm) return 0;
 
 	/* If we have a target to attack, attack it! */
 	if (m_target_ptr)
@@ -1534,7 +1537,7 @@ static void process_player_end(int Ind)
 
 				if(randint(1000)<10)
 				{
-					msg_print(Ind,"\377rYou find it hard to move!");
+					msg_print(Ind,"\377rYou find it hard to stir!");
 //					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 				}
@@ -1767,7 +1770,7 @@ static void process_player_end(int Ind)
 		  {
 		    set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
 		  }
-		if (cfg.use_pk_rules)
+		if (cfg.use_pk_rules == PK_RULES_DECLARE)
 		{
 			if(p_ptr->tim_pkill){
 				p_ptr->tim_pkill--;

@@ -1005,7 +1005,7 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		/* Make hostile */
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 	}
-	if (cfg.use_pk_rules)
+	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
 		if(!(q_ptr->pkill & PKILL_KILLABLE)){
 			char string[30];
@@ -1903,7 +1903,7 @@ void py_attack(int Ind, int y, int x, bool old)
 		py_attack_mon(Ind, y, x, old);
 
 	/* Check for player */
-	else if (c_ptr->m_idx < 0)
+	else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER)
 		py_attack_player(Ind, y, x, old);
 }
 
@@ -2308,14 +2308,10 @@ void move_player(int Ind, int dir, int do_pickup)
 		player_type *q_ptr = Players[0 - c_ptr->m_idx];
 		int Ind2 = 0 - c_ptr->m_idx;
 
-#ifdef PLAYER_INTERACTION
 		/* Check for an attack */
-		if (check_hostile(Ind, Ind2))
+		if (cfg.use_pk_rules != PK_RULES_NEVER &&
+			check_hostile(Ind, Ind2))
 			py_attack(Ind, y, x, TRUE);
-#else
-		/* XXX */
-		if (0);
-#endif
 
 		/* If both want to switch, do it */
 #if 0

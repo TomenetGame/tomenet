@@ -4985,10 +4985,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Player cannot hurt himself */
 	if (0 - who == Ind) return (FALSE);
 
-#ifndef PLAYER_INTERACTION
 	/* Mega-Hack -- Players cannot hurt other players */
-	if (who <= 0 && who >= PROJECTOR_UNUSUAL) return (FALSE);
-#endif
+	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
+			who >= PROJECTOR_UNUSUAL) return (FALSE);
 
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
@@ -5215,7 +5214,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{			
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + 2) / 3;
-				if((cfg.use_pk_rules && !(p_ptr->pkill & PKILL_KILLER)) &&
+				if((cfg.use_pk_rules == PK_RULES_DECLARE &&
+							!(p_ptr->pkill & PKILL_KILLER)) &&
 						!magik(NEUTRAL_FIRE_CHANCE))
 					return FALSE;
 			}

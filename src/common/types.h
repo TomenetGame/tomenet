@@ -2173,6 +2173,7 @@ struct server_opts
 	s16b store_turns;
 	char resting_rate;
 	char party_xp_boost;
+	char use_pk_rules;
 	char zang_monsters;
 	char pern_monsters;
 	char cth_monsters;
@@ -2189,7 +2190,6 @@ struct server_opts
 	bool kings_etiquette;
 	bool public_rfe;
 	bool auto_purge;
-	bool use_pk_rules;
 };
 
 /* from spells1.c */

@@ -376,6 +376,10 @@
 /*
  * Pkill flags
  */
+#define PK_RULES_TRAD		0
+#define PK_RULES_DECLARE	1
+#define PK_RULES_NEVER		2
+
 #define PKILL_SET	1	/* On/off */
 #define PKILL_KILLABLE	2	/* Can be killed */
 #define PKILL_KILLER	4	/* Can kill */
@@ -5027,3 +5031,5 @@ extern int PlayerUID;
 
 /* Skill points per level */
 #define SKILL_NB_BASE           6
+
+

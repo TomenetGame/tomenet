@@ -137,6 +137,7 @@ server_opts cfg =
 
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
+	0,			// use_pk_rules
 
 	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
 	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters
@@ -147,7 +148,6 @@ server_opts cfg =
 	TRUE,FALSE,	// door_bump_open, no_ghost
 	TRUE,TRUE,	// maximize, kings_etiquette
 	FALSE,FALSE,	// public_rfe, auto_purge
-	FALSE	// use_pk_rules
 };
 
 struct ip_ban *banlist=NULL;

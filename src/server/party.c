@@ -919,12 +919,18 @@ bool add_hostility(int Ind, cptr name)
 		return FALSE;
 	}
 
-	if (cfg.use_pk_rules)
+	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
 		if(!(p_ptr->pkill & PKILL_KILLER)){
 			msg_print(Ind, "You may not be hostile to other players.");
 			return FALSE;
 		}
+	}
+
+	if (cfg.use_pk_rules == PK_RULES_NEVER)
+	{
+		msg_print(Ind, "You may not be hostile to other players.");
+		return FALSE;
 	}
 
 	if (i > 0)
@@ -2019,7 +2025,7 @@ bool set_pkill(int Ind, int delay)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	bool admin = is_admin(p_ptr);
 
-	if (!cfg.use_pk_rules)
+	if (cfg.use_pk_rules != PK_RULES_DECLARE)
 	{
 		msg_print(Ind, "\377o/pkill is not available on this server. Be pacifist.");
 		p_ptr->tim_pkill= 0;

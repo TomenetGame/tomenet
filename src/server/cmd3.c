@@ -1272,8 +1272,8 @@ void do_cmd_steal(int Ind, int dir)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
-	if ((p_ptr->ghost) ||
-		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules))
+	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER || 
+		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules == PK_RULES_DECLARE))
 	{
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
@@ -1505,7 +1505,8 @@ void do_cmd_steal(int Ind, int dir)
 
 		set_stun(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
-		if (cfg.use_pk_rules) p_ptr->pkill|=PKILL_KILLABLE;
+		if (cfg.use_pk_rules == PK_RULES_DECLARE)
+			p_ptr->pkill|=PKILL_KILLABLE;
 
 		/* Thief drops some items from the shock of blow */
 		if (cfg.newbies_cannot_drop <= p_ptr->lev)

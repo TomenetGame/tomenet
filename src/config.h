@@ -268,7 +268,8 @@
  * that people can hit each other to do damage, and spells will now
  * harm other players when they hit.
  */
-#define PLAYER_INTERACTION
+/* obsolete - set USE_PK_RULES in tomenet.cfg instead. */
+//#define PLAYER_INTERACTION
 
 /*
  * OPTION: Hack -- Compile in support for "Spoiler Generation"

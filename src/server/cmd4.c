@@ -402,7 +402,7 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			fprintf(fff, " AFK");
 		}
-		if (cfg.use_pk_rules)
+		if (cfg.use_pk_rules == PK_RULES_DECLARE)
 		{
 			if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
 			{
