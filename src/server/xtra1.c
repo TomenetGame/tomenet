@@ -1619,10 +1619,11 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags9 & RF9_RES_DARK) p_ptr->resist_dark = TRUE;
 	if(r_ptr->flags9 & RF9_RES_BLIND) p_ptr->resist_blind = TRUE;
 	if(r_ptr->flags9 & RF9_RES_SOUND) p_ptr->resist_sound = TRUE;
-	if(r_ptr->flags9 & RF9_RES_SHARDS) p_ptr->resist_shard = TRUE;
+	if(r_ptr->flags3 & RF3_RES_PLAS) p_ptr->resist_plasma = TRUE;
 	if(r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
 	if(r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
 	if(r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
+	if(r_ptr->flags9 & RF9_RES_SHARDS) p_ptr->resist_shard = TRUE;
 
 	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
 	if(r_ptr->flags3 & RF3_RES_PLAS)
@@ -1960,6 +1961,7 @@ void calc_bonuses(int Ind)
 	p_ptr->regenerate = FALSE;
 	p_ptr->resist_time = FALSE;
 	p_ptr->resist_mana = FALSE;
+	p_ptr->resist_plasma = FALSE;
 	p_ptr->immune_poison = FALSE;
 	p_ptr->immune_water = FALSE;
 	p_ptr->resist_water = FALSE;

@@ -4045,12 +4045,23 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_PLASMA:
 		{
 			if (seen) obvious = TRUE;
-			if (prefix(name, "Plasma") ||
+			if (r_ptr->flags3 & RF3_IM_FIRE)
+			{
+				note = " resists a lot.";
+				dam /= 5;
+			}
+			else if (prefix(name, "Plasma") ||
 			    (r_ptr->flags4 & RF4_BR_PLAS) ||
 			    (r_ptr->flags3 & RF3_RES_PLAS))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
+			}
+			else if (r_ptr->flags9 & RF9_RES_FIRE)
+			{
+				note = " resists somewhat.";
+				dam *= 3;
+			        dam /= 5;
 			}
 			break;
 		}
@@ -5827,7 +5838,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Plasma -- XXX Fire helps a bit */
 		case GF_PLASMA:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
-		if (p_ptr->resist_fire) {
+		if (p_ptr->immune_fire) {
+		    dam /= 5;
+		}
+		else if (p_ptr->resist_plasma) {
+		    dam *= 3; dam /= (randint(6)+6);
+		}
+		else if (p_ptr->resist_fire) {
 		    dam *= 3;
 		    dam /= 5;
 		}
