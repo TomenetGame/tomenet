@@ -2484,11 +2484,11 @@ void scan_objs(){
 	for(i=0;i<MAX_O_IDX;i++){
 		/* We leave non owned objects */
 		o_ptr=&o_list[i];
-		if(o_ptr->owner){
+		if(o_ptr->k_idx && o_ptr->owner && !o_ptr->name1){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* ick suggests a store, so leave) */
 				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-					if(++o_ptr->marked>=2){
+					if(++o_ptr->marked==2){
 						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
 						dcnt++;
 					}

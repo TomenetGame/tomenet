@@ -3855,6 +3855,7 @@ void player_death(int Ind)
 		}
 
 		if(p_ptr->max_plv >= cfg.newbies_cannot_drop){
+			p_ptr->inventory[i].marked=3; /* LONG timeout */
 			/* Drop this one */
 			drop_near(&p_ptr->inventory[i], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
