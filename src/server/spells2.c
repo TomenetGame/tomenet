@@ -4361,7 +4361,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			if (c_ptr->info & CAVE_ICKY) continue;
 
 			/* Special key doors are protected -C. Blue */
-			if(cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) continue;
+			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 
 			/* Lose room and vault */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
@@ -4556,7 +4556,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			if((!wpos->wz) && (c_ptr->info & CAVE_ICKY)) continue;
 
 			/* Special key doors are protected -C. Blue */
-			if(cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) continue;
+			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 			
 			/* Lose room and vault */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
@@ -5354,165 +5354,118 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, 
  * Player swaps position with whatever in (lty, ltx)
  * usually used for 'Void Jumpgate'		- Jir -
  */
-void swap_position(int Ind, int lty, int ltx)
-{
-	player_type *p_ptr = Players[Ind], *q_ptr;
-	worldpos *wpos = &p_ptr->wpos;
-	int tx = ltx, ty = lty;
-	cave_type * c_ptr;
-	monster_type * m_ptr;
-	//monster_race * r_ptr;
+/*
+ * Fixed monster swapping bug which caused many
+ * unfair deaths and weirdness.
+ * (evileye)
+ */
+void swap_position(int Ind, int lty, int ltx){
+	player_type *p_ptr;
+	worldpos *wpos;
+	int tx, ty;
+	cave_type *c_ptr;
 	cave_type **zcave;
+
+	p_ptr=Players[Ind];
+	if(!p_ptr) return;
+
+	wpos=&p_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
 
-//	if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
+	c_ptr=&zcave[lty][ltx];
 
-	c_ptr = &zcave[ty][tx];
+	/* Keep track of the old location */
+	tx=p_ptr->px;
+	ty=p_ptr->py;
 
-	if (!c_ptr->m_idx)
-	{
-		//sound(SOUND_TELEPORT);
+	/* Move the player */
+	p_ptr->px=ltx;
+	p_ptr->py=lty;
 
-		/* Keep trace of the old location */
-		tx = p_ptr->px;
-		ty = p_ptr->py;
-
-		/* Move the player */
-		p_ptr->px = ltx;
-		p_ptr->py = lty;
-
+	if(!c_ptr->m_idx){
+		/* Free space */
 		/* Update the old location */
-		c_ptr->m_idx = 0 - Ind;
-		zcave[ty][tx].m_idx = 0;
+		zcave[ty][tx].m_idx=0;
+		c_ptr->m_idx=0-Ind;
 
-		/* Redraw the old grid */
+		/* Redraw/remember old location */
+		note_spot_depth(wpos, ty, tx);
 		everyone_lite_spot(wpos, ty, tx);
 
-		/* Redraw the new grid */
-		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-
-		/* Check for new panel (redraw map) */
-		verify_panel(Ind);
-
-		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-
-		/* Handle stuff XXX XXX XXX */
-		if (!p_ptr->death) handle_stuff(Ind);
+		/* Redraw new grid */
+		everyone_lite_spot(wpos, lty, ltx);
 	}
-	else if (c_ptr->m_idx > 0)
-	{
-		m_ptr = &m_list[c_ptr->m_idx];
-//		r_ptr = race_inf(m_ptr);
-
-		//			sound(SOUND_TELEPORT);
-
-		zcave[p_ptr->py][p_ptr->px].m_idx = c_ptr->m_idx;
+	else if(c_ptr->m_idx > 0){
+		/* Monster */
+		monster_type *m_ptr=&m_list[c_ptr->m_idx];
+		zcave[ty][tx].m_idx=c_ptr->m_idx;
 
 		/* Move the monster */
-		m_ptr->fy = p_ptr->py;
-		m_ptr->fx = p_ptr->px;
+		m_ptr->fy=ty;
+		m_ptr->fx=tx;
+		
+		/* Update the new location */
+		c_ptr->m_idx=0-Ind;
 
-		/* Move the player */
-		p_ptr->px = tx;
-		p_ptr->py = ty;
-
-		tx = m_ptr->fx;
-		ty = m_ptr->fy;
-
-		/* Update the old location */
-		c_ptr->m_idx = 0 - Ind;
-		zcave[ty][tx].m_idx = c_ptr->m_idx;
-
-		/* Update the monster (new location) */
+		/* Update monster (new location) */
 		update_mon(zcave[ty][tx].m_idx, TRUE);
 
-		/* Redraw the old grid */
+		/* Redraw/remember old location */
+		note_spot_depth(wpos, ty, tx);
 		everyone_lite_spot(wpos, ty, tx);
 
-		/* Redraw the new grid */
-		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-
-		/* Check for new panel (redraw map) */
-		verify_panel(Ind);
-
-		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-
-		/* Handle stuff XXX XXX XXX */
-		if (!p_ptr->death) handle_stuff(Ind);
+		/* Redraw new grid */
+		everyone_lite_spot(wpos, lty, ltx);
 	}
-	else	/* enjoy :) */
-	{
+	else{
+		/* Other player */
 		int Ind2 = 0 - c_ptr->m_idx;
-		q_ptr = Players[Ind2];
+		player_type *q_ptr=Players[Ind2];
 
-		//sound(SOUND_TELEPORT);
+		/* Shift them if they are real */
+		if(q_ptr){
+			q_ptr->py=ty;
+			q_ptr->px=tx;
+		}
+		
+		p_ptr->px=ltx;
+		p_ptr->py=lty;
 
-		/* Move the monster */
-		q_ptr->py = p_ptr->py;
-		q_ptr->px = p_ptr->px;
+		/* Update old player location */
+		c_ptr->m_idx = 0-Ind;
+		zcave[ty][tx].m_idx = 0-Ind2;
 
-		/* Move the player */
-		p_ptr->px = tx;
-		p_ptr->py = ty;
-
-		tx = q_ptr->px;
-		ty = q_ptr->py;
-
-		/* Update the old location */
-		c_ptr->m_idx = 0 - Ind;
-		zcave[ty][tx].m_idx = 0 - Ind2;
-
-		/* Redraw the old grid */
+		/* Redraw/remember old location */
+		note_spot_depth(wpos, ty, tx);
 		everyone_lite_spot(wpos, ty, tx);
 
-		/* Redraw the new grid */
-		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+		/* Redraw new grid */
+		everyone_lite_spot(wpos, lty, ltx);
 
-		/* Check for new panel (redraw map) */
-		verify_panel(Ind);
-
-		/* Update stuff */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-
-		/* Handle stuff XXX XXX XXX */
-		if (!p_ptr->death) handle_stuff(Ind);
-
-		/* Update the partner too */
-		/* Check for new panel (redraw map) */
 		verify_panel(Ind2);
+		if(q_ptr){
+			/* Update stuff */
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
 
-		/* Update stuff */
-		q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+			/* Update Window */
+			p_ptr->window |= (PW_OVERHEAD);
 
-		/* Update the monsters */
-		q_ptr->update |= (PU_DISTANCE);
-
-		/* Window stuff */
-		q_ptr->window |= (PW_OVERHEAD);
-
-		/* Handle stuff XXX XXX XXX */
-		if (!q_ptr->death) handle_stuff(Ind2);
+			/* Handle stuff */
+			if(!p_ptr->death) handle_stuff(Ind);
+		}
 	}
+
+	/* Check for new panel (redraw map) */
+	verify_panel(Ind);
+
+	/* Update stuff */
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
+
+	/* Update Window */
+	p_ptr->window |= (PW_OVERHEAD);
+
+	/* Handle stuff */
+	if(!p_ptr->death) handle_stuff(Ind);
 }
 
 
