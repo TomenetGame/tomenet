@@ -4823,7 +4823,7 @@ static int Receive_ghost(int ind)
 
 	s16b ability;
 
-	if (connp->id != 1)
+	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
