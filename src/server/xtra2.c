@@ -3148,6 +3148,7 @@ void player_death(int Ind)
 
 		msg_broadcast(Ind, buf);
 		kill_houses(p_ptr->id, OT_PLAYER);
+		p_ptr->death=TRUE;
 		
 		/* Remove him from his party */
 		if (p_ptr->party)
