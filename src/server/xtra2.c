@@ -3629,7 +3629,7 @@ void player_death(int Ind)
 	bool hell=TRUE;
 
 	/* Hack -- amulet of life saving */
-	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)
+	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].k_idx && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)
 	{
 		msg_print(Ind, "\377oYour amulet shatters into the pieces!");
 
