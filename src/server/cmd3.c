@@ -23,6 +23,7 @@
  * Note that taking off an item when "full" will cause that item
  * to fall to the ground.
  */
+bool bypass_inscrption = FALSE;
 static void inven_takeoff(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
@@ -43,10 +44,11 @@ static void inven_takeoff(int Ind, int item, int amt)
 	/* Paranoia */
 	if (amt <= 0) return;
 
-        if( check_guard_inscription( o_ptr->note, 't' )) {
+        if((!bypass_inscrption) && check_guard_inscription( o_ptr->note, 't' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
                 return;
         };
+        bypass_inscrption = FALSE;
 
 
 	/* Verify */
@@ -168,6 +170,9 @@ static void inven_drop(int Ind, int item, int amt)
 	{
 		act = "Dropped";
 	}
+
+	/* Polymorph back */
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) do_mimic_change(Ind, 0);
 
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
@@ -361,6 +366,7 @@ void do_takeoff_impossible(int Ind)
       if ((p_ptr->inventory[k].k_idx) && (!item_tester_hook_wear(Ind, k)))
 	{
 	  /* Ahah TAKE IT OFF ! */
+          bypass_inscrption = TRUE;
 	  inven_takeoff(Ind, k, 255);
 	}
     }

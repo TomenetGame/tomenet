@@ -75,3 +75,5 @@ Change list for PernMangband
 - Blood bond should not crash now.
 - Added curse item spell for rogues (not fully implemented).
 - Furry, Dig, Spin warrior technics
+- Fixed DSM being dopepd without unpolying
+- Fixed morphing and not lmossing eq wit eq is inscribed !t
