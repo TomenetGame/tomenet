@@ -50,7 +50,7 @@ TELEPORT = add_spell
         ["fail"] = 	50,
         ["spell"] = 	function()
         		player.energy = player.energy - (25 - get_level(Ind, TELEPORT, 50))
-			teleport_player(Ind, 100 + get_level(TELEPORT, 100))
+			teleport_player(Ind, 100 + get_level(Ind, TELEPORT, 100))
 	end,
 	["info"] = 	function()
         		return ""
@@ -71,7 +71,7 @@ TELEAWAY = add_spell
         ["direction"] = function () if get_level(Ind, TELEAWAY) >= 20 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
         		if get_level(Ind, TELEAWAY, 50) >= 20 then
-                                project_los(GF_AWAY_ALL, 100)
+                                project_los(Ind, GF_AWAY_ALL, 100)
                         elseif get_level(Ind, TELEAWAY, 50) >= 10 then
                                 fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(TELEAWAY, 4))
                         else
@@ -102,7 +102,7 @@ RECALL = add_spell
                         if ret == FALSE then return end
                         c_ptr = cave(y, x)
                         if (y == py) and (x == px) then
-                        	recall_player(21 - get_level(RECALL, 15), 15 - get_level(RECALL, 10))
+                        	recall_player(Ind, 21 - get_level(RECALL, 15), 15 - get_level(RECALL, 10))
                         elseif c_ptr.m_idx > 0 then
                         	swap_position(y, x)
                         elseif c_ptr.o_idx > 0 then
