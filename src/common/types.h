@@ -1083,6 +1083,7 @@ struct quest_type{
 	u16b active;		/* quest is active? (num players) */
 	u16b id;		/* quest id */
 	s16b type;		/* Monster race or object type */
+	u16b flags;		/* Quest flags */
 };
 
 /* Adding this structure so we can have different creatures generated

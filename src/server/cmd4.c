@@ -410,8 +410,10 @@ void do_cmd_check_players(int Ind, int line)
 		/* Newline */
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
+#if 0
 		if (p_ptr->admin_dm || p_ptr->admin_wiz)
 			fprintf(fff, "   %c(%d)", (q_ptr->quest_id?'Q':' '), k);
+#endif
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
 
 		/* Print extra info if these people are in the same party */
@@ -421,6 +423,11 @@ void do_cmd_check_players(int Ind, int line)
 			/* maybe too kind? */
 			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
 
+		}
+		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || p_ptr->admin_dm || p_ptr->admin_wiz){
+			if(q_ptr->guild)
+				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
+			fprintf(fff, " %c", (q_ptr->quest_id?'Q':' '));
 		}
 		fprintf(fff, "\n");
 

@@ -955,6 +955,7 @@ static void wr_quests(){
 		wr_s16b(quests[i].active);
 		wr_s16b(quests[i].id);
 		wr_s16b(quests[i].type);
+		wr_u16b(quests[i].flags);
 	}
 }
 

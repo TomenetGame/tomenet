@@ -2518,6 +2518,24 @@ static void do_slash_cmd(int Ind, char *message)
 			int i;
 			s16b r;
 	
+			if(tk && !strcmp(token[1], "guild")){
+				int j;
+				if(!p_ptr->guild || guilds[p_ptr->guild].master != p_ptr->id){
+					msg_print(Ind, "\377rYou are not a guildmaster");
+					return;
+				}
+				if(tk==2){
+					if(j=name_lookup_loose(Ind, token[2], FALSE)){
+						if(Players[j]->quest_id) msg_format(Ind, "\377y%s has a quest already.", token[2]);
+						else{
+							guild_msg_format(p_ptr->guild, "\377oGuild quest for %s", token[2]);
+						}
+					}
+					else msg_format(Ind, "Player %s is not here", token[2]);
+				}
+				else msg_print(Ind, "Usage: /quest guild name");
+				return;
+			}
 			if(p_ptr->quest_id){
 				for(i=0; i<20; i++){
 					if(quests[i].id==p_ptr->quest_id){
@@ -3012,6 +3030,13 @@ static void player_talk_aux(int Ind, char *message)
 	/* Look for a recipient who matches the search string */
 	if (len)
 	{
+		if(!stricmp(search, "Guild")){
+			if(!p_ptr->guild){
+				msg_print(Ind, "You are not in a guild");
+			}
+			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
+			return;
+		}
 		target = name_lookup_loose(Ind, search, TRUE);
 
 		/* Move colon pointer forward to next word */
