@@ -111,12 +111,8 @@ s16b t_pop(void)
 void delete_trap_idx(trap_type *t_ptr)
 {
 	int x, y, Ind;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
-#else
-	int Depth;
-#endif
 //	monster_type *m_ptr = &m_list[i];
 
 //	trap_kind *tk_ptr = &t_info[t_ptr->t_idx];
@@ -124,17 +120,12 @@ void delete_trap_idx(trap_type *t_ptr)
 	/* Get location */
 	y = t_ptr->iy;
 	x = t_ptr->ix;
-#ifdef NEW_DUNGEON
 	wpos=&t_ptr->wpos;
-#else
-	Depth = t_ptr->dun_depth;
-#endif
 
 	/* Trap is gone */
 	/* Make sure the level is allocated, it won't be if we are
 	 * clearing an abandoned wilderness level of traps
 	 */
-#ifdef NEW_DUNGEON
 	if((zcave=getcave(wpos))){
 		zcave[y][x].special.type=0;
 		zcave[y][x].special.ptr = NULL;
@@ -150,13 +141,6 @@ void delete_trap_idx(trap_type *t_ptr)
 	/* Redisplay the grid */
 	everyone_lite_spot(wpos, y, x);
 
-#else	// pfft, this never works
-	if (cave[Depth])
-		cave[Depth][y][x].m_idx = 0;
-
-	/* Visual update */
-	everyone_lite_spot(Depth, y, x);
-#endif
 	/* Wipe the trap */
 //	FREE(tt_ptr, trap_kind);
 	WIPE(t_ptr, trap_type);
@@ -278,13 +262,9 @@ void compact_traps(int size)
 			/* Update the cave */
 			/* Hack -- with wilderness traps, sometimes the cave is not allocated,
 			   so check that it is. */
-#ifdef NEW_DUNGEON
 			if ((zcave=getcave(wpos))){
 				zcave[ny][nx].special.ptr = &t_list[i];
 			}
-#else
-			if (cave[Depth]) cave[Depth][ny][nx].t_idx = i;
-#endif
 #endif	// 0
 			/* Wipe the hole */
 			WIPE(&t_list[t_max], trap_type);
@@ -313,11 +293,7 @@ void compact_traps(int size)
  * Note -- we do NOT visually reflect these (irrelevant) changes
  */
  
-#ifdef NEW_DUNGEON
 void wipe_t_list(struct worldpos *wpos)
-#else
-void wipe_t_list(int Depth)
-#endif
 {
 	int i, x, y;
 
@@ -330,11 +306,7 @@ void wipe_t_list(int Depth)
 		if (!t_ptr->t_idx) continue;
 
 		/* Skip traps not on this depth */
-#ifdef NEW_DUNGEON
 		if (!inarea(&t_ptr->wpos, wpos))
-#else
-		if (t_ptr->dun_depth != Depth)
-#endif
 			continue;
 
 		/* Delete it */
@@ -355,9 +327,7 @@ void wipe_t_list(int Depth)
 void setup_traps(void)
 {
 	int i;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
-#endif
 
 	for (i = 0; i < t_max; i++)
 	{
@@ -367,19 +337,11 @@ void setup_traps(void)
 		if (!t_ptr->t_idx) continue;
 
 		/* Skip traps on depths that aren't allocated */
-#ifdef NEW_DUNGEON
 		if (!(zcave=getcave(&t_ptr->wpos))) continue;
-#else
-		if (!cave[t_ptr->dun_depth]) continue;
-#endif
 
 		/* Set the t_idx correctly */
-#ifdef NEW_DUNGEON
 		zcave[t_ptr->iy][t_ptr->ix].special.type = CS_TRAPS;
 		zcave[t_ptr->iy][t_ptr->ix].special.ptr = t_ptr;
-#else
-		cave[t_ptr->dun_depth][t_ptr->iy][t_ptr->ix].t_idx = i;
-#endif
 	}
 }
 
@@ -642,31 +604,15 @@ void do_player_trap_change_depth(int Ind, int dis)
 	p_ptr->new_level_method = LEVEL_RAND;
 
 	/* The player is gone */
-#ifdef NEW_DUNGEON
 	zcave[p_ptr->py][p_ptr->px].m_idx=0;
-#else
-	cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].m_idx = 0;
-#endif
 	/* Erase his light */
 	forget_lite(Ind);
 
 	/* Show everyone that he's left */
-#ifdef NEW_DUNGEON
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 	p_ptr->wpos.wz += dis;
 	new_players_on_depth(&p_ptr->wpos,1,TRUE);
-#else
-	everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-
-	/* Reduce the number of players on this depth */
-	players_on_depth[p_ptr->dun_depth]--;
-
-	p_ptr->dun_depth -= dis;
-
-	/* Increase the number of players on this next depth */
-	players_on_depth[p_ptr->dun_depth]++;
-#endif
 }
 
 bool do_player_trap_call_out(int Ind)
@@ -1423,17 +1369,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_SINKING:
 		 /* MEGAHACK: Ignore Wilderness trap doors. */
 		 vanish = 100;
-#ifndef NEW_DUNGEON
-		 if( p_ptr->dun_depth<0) {
-			 msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
-			 break;
-		 }
-#else
 		 if(!can_go_down(wpos)){
 			 msg_print(Ind, "\377GYou feel quite certain something really awful just happened..");
 			 break;
 		 }
-#endif
 		 ident = TRUE;
 		 vanish = 0;
 		 msg_print(Ind, "You fell through a trap door!");

@@ -794,10 +794,8 @@ bool set_tim_wraith(int Ind, int v)
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return FALSE;
-#endif
 
 	/* Hack -- Force good values */
 	v = (v > 10000) ? 10000 : (v < 0) ? 0 : v;
@@ -825,11 +823,7 @@ bool set_tim_wraith(int Ind, int v)
 			notice = TRUE;
 			
 			/* That will hopefully prevent game hinging when loading */
-#ifdef NEW_DUNGEON
 			if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
-#else
-			if (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
-#endif
 		}
 	}
 
@@ -2883,23 +2877,15 @@ void monster_death(int Ind, int m_idx)
 	int force_coin = get_coin_type(r_ptr);
 	object_type forge;
 	object_type *qq_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
-#else
-	int Depth;
-#endif
 
 
 	/* Get the location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-#ifdef NEW_DUNGEON
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	Depth = m_ptr->dun_depth;
-#endif
 
 	/* PernAngband additions */
 
@@ -3027,79 +3013,44 @@ void monster_death(int Ind, int m_idx)
 			int d = (i + 14) / 15;
 
 			/* Pick a "correct" location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &ny, &nx, y, x, d, 0);
 			/* Must be "clean" floor grid */
 			if (!cave_clean_bold(zcave, ny, nx)) continue;
 
 			/* Access the grid */
 			c_ptr = &zcave[ny][nx];
-#else
-			scatter(Depth, &ny, &nx, y, x, d, 0);
-			/* Must be "clean" floor grid */
-			if (!cave_clean_bold(Depth, ny, nx)) continue;
-
-			/* Access the grid */
-			c_ptr = &cave[Depth][ny][nx];
-#endif
-
 
 			/* Hack -- handle creeping coins */
 			coin_type = force_coin;
 
 			/* Average dungeon and monster levels */
-#ifdef NEW_DUNGEON
 			object_level = (getlevel(wpos) + r_ptr->level) / 2;
-#else
-			object_level = (Depth + r_ptr->level) / 2;
-#endif
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
 			{
-#ifdef NEW_DUNGEON
 				place_gold(wpos, ny, nx);
 				if (player_can_see_bold(Ind, ny, nx)) dump_gold++;
-#else
-				place_gold(Depth, ny, nx);
-				if (player_can_see_bold(Ind, ny, nx)) dump_gold++;
-#endif
 			}
 
 			/* Place Object */
 			else
 			{
-#ifdef NEW_DUNGEON
 				place_object(wpos, ny, nx, good, great);
 				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
-#else
-				place_object(Depth, ny, nx, good, great);
-				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
-#endif
 			}
 
 			/* Reset the object level */
-#ifdef NEW_DUNGEON
 			object_level = getlevel(wpos);
-#else
-			object_level = Depth;
-#endif
 
 			/* Reset "coin" type */
 			coin_type = 0;
 
 			/* Notice */
-#ifdef NEW_DUNGEON
 			note_spot_depth(wpos, ny, nx);
 
 			/* Display */
 			everyone_lite_spot(wpos, ny, nx);
-#else
-			note_spot_depth(Depth, ny, nx);
-
-			/* Display */
-			everyone_lite_spot(Depth, ny, nx);
-#endif
 
 			/* Under a player */
 			if (c_ptr->m_idx < 0)
@@ -3163,11 +3114,7 @@ void monster_death(int Ind, int m_idx)
 		{
 			for (i = 1; i <= NumPlayers; i++)
 			{
-#ifdef NEW_DUNGEON
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
-#else
-				if ( (Players[i]->party == p_ptr->party) && (Players[i]->dun_depth == p_ptr->dun_depth) && (i != Ind) && (p_ptr->dun_depth) )
-#endif
 				{
                                         sprintf(buf, "\377b%s was slain by %s.", r_name_get(m_ptr),parties[p_ptr->party].name);
 					break; 
@@ -3201,13 +3148,8 @@ void monster_death(int Ind, int m_idx)
 				 * same level greater than or equal to level 40 total
 				 * winners.
 				 */
-#ifdef NEW_DUNGEON
 				if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
 							(q_ptr == p_ptr) ) && q_ptr->lev >= 40 && inarea(&p_ptr->wpos,&q_ptr->wpos))
-#else
-					if ((((p_ptr->party) && (q_ptr->party == p_ptr->party)) ||
-								(q_ptr == p_ptr) ) && q_ptr->lev >= 40 && p_ptr->dun_depth == q_ptr->dun_depth)
-#endif
 					{
 						int Ind2 = 0;
 						player_type *p_ptr2;
@@ -3272,21 +3214,12 @@ void monster_death(int Ind, int m_idx)
 			prize.name1 = ART_GROND;
 
 			/* Mega-Hack -- Actually create "Grond" */
-#ifdef NEW_DUNGEON
 			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
-#else
-			apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
-#endif
 
 			prize.number = num;
 
 			/* Drop it in the dungeon */
-#ifdef NEW_DUNGEON
 			drop_near(&prize, -1, wpos, y, x);
-#else
-			drop_near(&prize, -1, Depth, y, x);
-#endif
-
 
 			/* Mega-Hack -- Prepare to make "Morgoth" */
 			invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
@@ -3295,20 +3228,12 @@ void monster_death(int Ind, int m_idx)
 			prize.name1 = ART_MORGOTH;
 
 			/* Mega-Hack -- Actually create "Morgoth" */
-#ifdef NEW_DUNGEON
 			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE);
-#else
-			apply_magic(Depth, &prize, -1, TRUE, TRUE, TRUE);
-#endif
 
 			prize.number = num;
 
 			/* Drop it in the dungeon */
-#ifdef NEW_DUNGEON
 			drop_near(&prize, -1, wpos, y, x);
-#else
-			drop_near(&prize, -1, Depth, y, x);
-#endif
 
 			/* Hack -- instantly retire any new winners if neccecary */
 			if (cfg.retire_timer == 0)
@@ -3600,58 +3525,34 @@ void monster_death(int Ind, int m_idx)
 	if (total)
 	{
 		/* Stagger around */
-#ifdef NEW_DUNGEON
 		while (!cave_valid_bold(zcave, y, x))
-#else
-		while (!cave_valid_bold(Depth, y, x))
-#endif
 		{
 			int d = 1;
 
 			/* Pick a location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &ny, &nx, y, x, d, 0);
-#else
-			scatter(Depth, &ny, &nx, y, x, d, 0);
-#endif
 
 			/* Stagger */
 			y = ny; x = nx;
 		}
 
 		/* Delete any old object XXX XXX XXX */
-#ifdef NEW_DUNGEON
 		delete_object(wpos, y, x);
-#else
-		delete_object(Depth, y, x);
-#endif
 
 		/* Explain the stairway */
 		msg_print(Ind, "A magical stairway appears...");
 
 		/* Access the grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		/* Create stairs down */
 		c_ptr->feat = FEAT_MORE;
 
-#ifdef NEW_DUNGEON
 		/* Note the spot */
 		note_spot_depth(wpos, y, x);
 
 		/* Draw the spot */
 		everyone_lite_spot(wpos, y, x);
-#else
-		/* Note the spot */
-		note_spot_depth(Depth, y, x);
-
-		/* Draw the spot */
-		everyone_lite_spot(Depth, y, x);
-#endif
 
 		/* Remember to update everything */
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -3661,11 +3562,7 @@ void monster_death(int Ind, int m_idx)
 }
 
 static void kill_house_contents(house_type *h_ptr){
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&h_ptr->wpos;
-#else
-	int depth=h_ptr->depth;
-#endif
 	if(h_ptr->flags&HF_RECT){
 		int sy,sx,ey,ex,x,y;
 		sy=h_ptr->y+1;
@@ -3674,11 +3571,7 @@ static void kill_house_contents(house_type *h_ptr){
 		ex=h_ptr->x+h_ptr->coords.rect.width-1;
 		for(y=sy;y<ey;y++){
 			for(x=sx;x<ex;x++){
-#ifdef NEW_DUNGEON
 				delete_object(wpos,y,x);	
-#else
-				delete_object(depth,y,x);	
-#endif
 			}
 		}
 	}
@@ -3785,11 +3678,7 @@ void player_death(int Ind)
 		strcpy(Players[Ind2]->died_from, p_ptr->died_from);
 		if (!Players[Ind2]->ghost)
 		{	strcpy(Players[Ind2]->died_from_list, p_ptr->died_from);
-#ifdef NEW_DUNGEON
 			Players[Ind2]->died_from_depth = getlevel(&Players[Ind2]->wpos);
-#else
-			Players[Ind2]->died_from_depth = Players[Ind2]->dun_depth;
-#endif
 		}
                 bypass_invuln = TRUE;
                 take_hit(Ind2, 32000, p_ptr->died_from);
@@ -3834,17 +3723,10 @@ void player_death(int Ind)
 
 		/* Ghosts dont static the lvl if under cfg_preserve_death_level ft. DEG */
 
-#ifdef NEW_DUNGEON
 		if (getlevel(&p_ptr->wpos) < cfg.preserve_death_level)
 		{
 			new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 		}
-#else
-		if ((p_ptr->dun_depth) < cfg.preserve_death_level)
-		{
-			players_on_depth[p_ptr->dun_depth]--;
-		}
-#endif
 
 		/* Remove him from the player name database */
 		delete_player_name(p_ptr->name);
@@ -3950,11 +3832,7 @@ void player_death(int Ind)
 
 		if(p_ptr->lev >= cfg.newbies_cannot_drop){
 			/* Drop this one */
-#ifdef NEW_DUNGEON
 			drop_near(&p_ptr->inventory[i], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-			drop_near(&p_ptr->inventory[i], 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 		}
 
 		/* No more item */
@@ -3983,11 +3861,7 @@ void player_death(int Ind)
 		p_ptr->death = TRUE;
 
 		/* One less player here */
-#ifdef NEW_DUNGEON
 		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-#else
-		players_on_depth[p_ptr->dun_depth]--;
-#endif
 
 		/* Remove him from the player name database */
 		delete_player_name(p_ptr->name);
@@ -4095,11 +3969,7 @@ void resurrect_player(int Ind)
 
 	/* Message */
 	msg_print(Ind, "You feel life return to your body.");
-#ifdef NEW_DUNGEON
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-	everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Redraw */
 	p_ptr->redraw |= (PR_BASIC);
@@ -4357,22 +4227,14 @@ void monster_death_mon(int am_idx, int m_idx)
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
 	int force_coin = get_coin_type(r_ptr);
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	cave_type **zcave;
-#else
-	int Depth;
-#endif
 
 	/* Get the location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-#ifdef NEW_DUNGEON
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	Depth = m_ptr->dun_depth;
-#endif
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
@@ -4391,78 +4253,43 @@ void monster_death_mon(int am_idx, int m_idx)
 			int d = (i + 14) / 15;
 
 			/* Pick a "correct" location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &ny, &nx, y, x, d, 0);
-#else
-			scatter(Depth, &ny, &nx, y, x, d, 0);
-#endif
 
 			/* Must be "clean" floor grid */
-#ifdef NEW_DUNGEON
 			if (!cave_clean_bold(zcave, ny, nx)) continue;
 
 			/* Access the grid */
 			c_ptr = &zcave[ny][nx];
-#else
-			if (!cave_clean_bold(Depth, ny, nx)) continue;
-
-			/* Access the grid */
-			c_ptr = &cave[Depth][ny][nx];
-#endif
 
 			/* Hack -- handle creeping coins */
 			coin_type = force_coin;
 
 			/* Average dungeon and monster levels */
-#ifdef NEW_DUNGEON
 			object_level = (getlevel(wpos) + r_ptr->level) / 2;
-#else
-			object_level = (Depth + r_ptr->level) / 2;
-#endif
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
 			{
-#ifdef NEW_DUNGEON
 				place_gold(wpos, ny, nx);
-#else
-				place_gold(Depth, ny, nx);
-#endif
 			}
 
 			/* Place Object */
 			else
 			{
-#ifdef NEW_DUNGEON
 				place_object(wpos, ny, nx, good, great);
-#else
-				place_object(Depth, ny, nx, good, great);
-#endif
 			}
 
 			/* Reset the object level */
-#ifdef NEW_DUNGEON
 			object_level = getlevel(wpos);
-#else
-			object_level = Depth;
-#endif
 
 			/* Reset "coin" type */
 			coin_type = 0;
 
-#ifdef NEW_DUNGEON
 			/* Notice */
 			note_spot_depth(wpos, ny, nx);
 
 			/* Display */
 			everyone_lite_spot(wpos, ny, nx);
-#else
-			/* Notice */
-			note_spot_depth(Depth, ny, nx);
-
-			/* Display */
-			everyone_lite_spot(Depth, ny, nx);
-#endif
 
 			/* Under a player */
 			if (c_ptr->m_idx < 0)
@@ -4961,11 +4788,7 @@ bool target_able(int Ind, int m_idx)
                 if (p_ptr->id == m_ptr->owner) return (FALSE);
 
 		/* Monster must be projectable */
-#ifdef NEW_DUNGEON
 		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) return (FALSE);
-#else
-		if (!projectable(p_ptr->dun_depth, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) return (FALSE);
-#endif
 
 		if(m_ptr->owner==p_ptr->id) return(FALSE);
 
@@ -4990,21 +4813,13 @@ bool target_able(int Ind, int m_idx)
 		if (!q_ptr) return (FALSE);
 
 		/* Players must be on same depth */
-#ifdef NEW_DUNGEON
-		if (inarea(&p_ptr->wpos, &q_ptr->wpos)) return (FALSE);
-#else
-		if (p_ptr->dun_depth != q_ptr->dun_depth) return (FALSE);
-#endif
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) return (FALSE);
 
 		/* Player must be visible */
 		if (!player_can_see_bold(Ind, q_ptr->py, q_ptr->px)) return (FALSE);
 
 		/* Player must be projectable */
-#ifdef NEW_DUNGEON
 		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) return (FALSE);
-#else
-		if (!projectable(p_ptr->dun_depth, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) return (FALSE);
-#endif
 
 		/* Hack -- no targetting hallucinations */
 		if (p_ptr->image) return (FALSE);
@@ -5148,11 +4963,7 @@ s16b target_pick(int Ind, int y1, int x1, int dy, int dx)
 bool target_set(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int		i, m, idx;
 
@@ -5168,10 +4979,8 @@ bool target_set(int Ind, int dir)
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 	if (!dir)
 	{
 		x = p_ptr->px;
@@ -5196,11 +5005,7 @@ bool target_set(int Ind, int dir)
 			if (!m_ptr->r_idx) continue;
 
 			/* Skip monsters not on this depth */
-#ifdef NEW_DUNGEON
 			if (!inarea(&m_ptr->wpos, wpos)) continue;
-#else
-			if (m_ptr->dun_depth != Depth) continue;
-#endif
 
 			/* Ignore "unreasonable" monsters */
 			if (!target_able(Ind, i)) continue;
@@ -5245,11 +5050,7 @@ bool target_set(int Ind, int dir)
 		/* Collect indices */
 		for (i = 0; i < p_ptr->target_n; i++)
 		{
-#ifdef NEW_DUNGEON
 			cave_type *c_ptr = &zcave[p_ptr->target_y[i]][p_ptr->target_x[i]];
-#else
-			cave_type *c_ptr = &cave[Depth][p_ptr->target_y[i]][p_ptr->target_x[i]];
-#endif
 
 			p_ptr->target_idx[i] = c_ptr->m_idx;
 		}
@@ -5325,11 +5126,7 @@ bool target_set(int Ind, int dir)
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
 
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		m_ptr = &m_list[idx];
                 r_ptr = race_inf(m_ptr);
@@ -5359,11 +5156,7 @@ bool target_set(int Ind, int dir)
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
 
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		q_ptr = Players[0 - idx];
 
@@ -5417,12 +5210,8 @@ bool target_set_friendly(int Ind, int dir, ...)
 	va_list ap;
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int		i, m, castplayer, idx;
 
@@ -5437,9 +5226,7 @@ bool target_set_friendly(int Ind, int dir, ...)
 
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
-#ifdef NEW_DUNGEON
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#endif
 
 		va_start(ap,dir);
 		castplayer = va_arg(ap,int);
@@ -5526,11 +5313,7 @@ bool target_set_friendly(int Ind, int dir, ...)
 		x = p_ptr->target_x[m];
 		idx = p_ptr->target_idx[m];
 
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		q_ptr = Players[idx];
 
@@ -6052,24 +5835,16 @@ bool do_scroll_life(int Ind)
 	
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	zcave=getcave(&p_ptr->wpos);
 	if(!zcave) return(FALSE);
-#endif
 	
 	for (y = -1; y <= 1; y++)
 	{
 		for (x = -1; x <= 1; x++)
 	 	{
-#ifdef NEW_DUNGEON
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
 	  		if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)) && (!(c_ptr->info & CAVE_ICKY)))
-#else
-	   		c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+y][p_ptr->px+x];
-	  		if ((c_ptr->m_idx < 0) && (cave_floor_bold(p_ptr->dun_depth, p_ptr->py+y, p_ptr->px+x)) && (!(c_ptr->info & CAVE_ICKY)))
-#endif
-	
 	   		{
    				if (Players[0 - c_ptr->m_idx]->ghost)
    				{
@@ -6091,20 +5866,14 @@ bool do_restoreXP_other(int Ind)
 	
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 	
 	for (y = -1; y <= 1; y++)
 	{
 		for (x = -1; x <= 1; x++)
 	 	{
-#ifdef NEW_DUNGEON
 	   		c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-#else
-	   		c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+y][p_ptr->px+x];
-#endif
 	
 	  		if (c_ptr->m_idx < 0)
 	   		{
@@ -6182,13 +5951,9 @@ bool master_level(int Ind, char * parms)
 		/* unstatic the level */
 		case 'u':
 		{
-#ifdef NEW_DUNGEON
 			struct worldpos twpos;
 			wpcopy(&twpos,&p_ptr->wpos);
 			unstatic_level(&twpos);
-#else
-			int depth = p_ptr->dun_depth;
-#endif
        			msg_print(Ind, "The level has been unstaticed.");
 			break;
 		}
@@ -6198,15 +5963,10 @@ bool master_level(int Ind, char * parms)
 		{
 			/* Increase the number of players on the dungeon 
 			 * masters level by one. */
-#ifdef NEW_DUNGEON
 			new_players_on_depth(&p_ptr->wpos,1,TRUE);
-#else
-			players_on_depth[p_ptr->dun_depth]++;
-#endif
 			msg_print(Ind, "The level has been staticed.");
 			break;
 		}
-#ifdef NEW_DUNGEON
 		/* add dungeon stairs here */
 		case 'D':
 		{
@@ -6264,7 +6024,6 @@ bool master_level(int Ind, char * parms)
 
 			break;
 		}
-#endif
 		/* default -- do nothing. */
 		default: break;
 	}
@@ -6272,11 +6031,7 @@ bool master_level(int Ind, char * parms)
 }
 
 /* static or unstatic a level (from chat-line command) */
-#ifdef NEW_DUNGEON
 bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
-#else
-bool master_level_specific(int Ind, int depth, char * parms)
-#endif
 {
 	int i;
 	/* get the player pointer */
@@ -6301,11 +6056,7 @@ bool master_level_specific(int Ind, int depth, char * parms)
 		{
 			/* Increase the number of players on the dungeon 
 			 * masters level by one. */
-#ifdef NEW_DUNGEON
 			new_players_on_depth(&p_ptr->wpos,1,TRUE);
-#else
-			players_on_depth[p_ptr->dun_depth]++;
-#endif
 			msg_print(Ind, "The level has been staticed.");
 			break;
 		}
@@ -6322,10 +6073,8 @@ bool master_build(int Ind, char * parms)
 	player_type * p_ptr = Players[Ind];
 	cave_type * c_ptr;
 	static unsigned char new_feat = FEAT_WALL_EXTRA;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 
 	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind))) return FALSE;
 	
@@ -6343,13 +6092,7 @@ bool master_build(int Ind, char * parms)
 		}
 	}
 
-	/* paranoia -- make sure the player is on a valid level */
-#ifndef NEW_DUNGEON
-	if (!cave[p_ptr->dun_depth]) return FALSE;
-	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
-#else
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-#endif
 	
 	/* build a wall of type new_feat at the player's location */
 	if(c_ptr->special.type){
@@ -6377,11 +6120,7 @@ bool master_build(int Ind, char * parms)
 		sscanf(&parms[2],"%d",&key->id);
 		invcopy(&newkey, lookup_kind(TV_KEY, 1));
 		newkey.pval=key->id;
-#ifdef NEW_DUNGEON
 		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-		drop_near(&newkey, -1, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 		c_ptr->special.type=KEY_DOOR;
 		c_ptr->special.ptr=key;
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
@@ -6532,11 +6271,7 @@ bool master_acquire(int Ind, char * parms)
 	player_type * p_ptr = Players[Ind];
 	
 	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return FALSE;
-#ifdef NEW_DUNGEON
 	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
-#else
-	acquirement(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 1, TRUE);
-#endif
 	return TRUE;
 }
 
@@ -6587,11 +6322,7 @@ bool master_summon(int Ind, char * parms)
 
 				/* summon the monster, if we have a valid one */
 				if (r_idx)
-#ifdef NEW_DUNGEON
 					summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, 1);
-#else
-					summon_specific_race(p_ptr->dun_depth, p_ptr->py, p_ptr->px, r_idx, 1);
-#endif
 			}
 			break;
 		}
@@ -6605,11 +6336,7 @@ bool master_summon(int Ind, char * parms)
 				r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 				/* summon the monster at a random location */
 				if (r_idx)
-#ifdef NEW_DUNGEON
 					summon_specific_race_somewhere(&p_ptr->wpos,r_idx, 1);
-#else
-					summon_specific_race_somewhere(p_ptr->dun_depth,r_idx, 1);
-#endif
 			}
 			break;
 		}
@@ -6622,11 +6349,7 @@ bool master_summon(int Ind, char * parms)
 			/* figure out who to summon */
 			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 			/* summon the group here */
-#ifdef NEW_DUNGEON
 			summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, r_idx, size);
-#else
-			summon_specific_race(p_ptr->dun_depth, p_ptr->py, p_ptr->px, r_idx, size);
-#endif
 			break;
 		}
 		/* summon group of random size at random location */
@@ -6637,11 +6360,7 @@ bool master_summon(int Ind, char * parms)
 			/* figure out who to summon */
 			r_idx = master_summon_aux_monster_type(monster_type, monster_parms);
 			/* someone the group at a random location */
-#ifdef NEW_DUNGEON
 			summon_specific_race_somewhere(&p_ptr->wpos, r_idx, size);
-#else
-			summon_specific_race_somewhere(p_ptr->dun_depth, r_idx, size);
-#endif
 			break;
 		}
 		/* summon mode on (use with discretion... lets not be TOO mean ;-) )*/
@@ -6715,11 +6434,7 @@ bool master_player(int Ind, char *parms){
 			if(Ind2)
 			{
 				player_type *p_ptr2 = Players[Ind2];
-#ifdef NEW_DUNGEON
 				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE);
-#else
-				acquirement(p_ptr2->dun_depth, p_ptr2->py, p_ptr2->px, 1, TRUE);
-#endif
 				msg_format(Ind, "%s is granted an item.", p_ptr2->name);
 				msg_format(Ind2, "You feel a divine favor!");
 				return(FALSE);
@@ -6807,11 +6522,7 @@ bool master_generate(int Ind, char * parms)
 			
 			if(!v_ptr || !v_ptr->wid) return FALSE;
 
-#ifdef NEW_DUNGEON
 			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
-#else
-			build_vault(p_ptr->dun_depth, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
-#endif
 
 			break;
 		}

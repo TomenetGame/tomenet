@@ -664,11 +664,7 @@ struct object_type
 	byte iy;			/* Y-position on map, or zero */
 	byte ix;			/* X-position on map, or zero */
 
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
-#else
-	s32b dun_depth;			/* Depth into the dungeon */
-#endif
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
@@ -755,11 +751,7 @@ struct monster_type
 	byte fy;			/* Y location on map */
 	byte fx;			/* X location on map */
 
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
-#else
-	s16b dun_depth;			/* Level of the dungeon */
-#endif
 
         s32b exp;                       /* Experience of the monster */
         s16b level;                     /* Level of the monster */
@@ -1106,16 +1098,9 @@ typedef struct wilderness_type wilderness_type;
 
 struct wilderness_type
 {
-#ifndef NEW_DUNGEON
-	int world_x; /* the world coordinates */
-	int world_y;
-#endif
 	int radius; /* the distance from the town */
 	int type;   /* what kind of terrain we are in */
 
-#ifndef NEW_DUNGEON
-	u16b flags; /* various */
-#else
 	u32b flags; /* various */
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
@@ -1124,7 +1109,6 @@ struct wilderness_type
 	byte up_x, up_y;
 	byte dn_x, dn_y;
 	byte rn_x, rn_y;
-#endif
 	s32b own;	/* King owning the wild */
 };
 
@@ -1359,11 +1343,7 @@ struct house_type{
 	byte dx,dy;		/* door coords */
 	struct dna_type *dna;	/* house dna door information */
 	u16b flags;		/* house flags - HF_xxxx */
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
-#else
-	s32b depth;		/* wilderness house depth */
-#endif
 	union{
 		struct{ byte width, height; }rect;
 		cptr poly;	/* coordinate array for non rect houses */

@@ -1633,19 +1633,6 @@ static errr init_other(void)
 	/* Allocate and Wipe the traps list */
 	C_MAKE(t_list, MAX_TR_IDX, trap_type);
 
-#ifndef NEW_DUNGEON
-	/* Allocate "permament" space for the town */
-	C_MAKE(cave[0], MAX_HGT, cave_type *);
-
-	/* Allocate and wipe each line of the town level */
-	for (i = 0; i < MAX_HGT; i++)
-	{
-		/* Allocate one row of the cave */
-		C_MAKE(cave[0][i], MAX_WID, cave_type);
-	}
-#endif
-
-
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
 
@@ -1832,32 +1819,17 @@ static errr init_alloc(void)
 
 	alloc_entry *table;
 
-#ifdef NEW_DUNGEON
 	s16b num[256];
 
 	s16b aux[256];
-#else
-	s16b num[MAX_DEPTH];
-
-	s16b aux[MAX_DEPTH];
-#endif
-
 
 	/*** Analyze object allocation info ***/
 
-#ifdef NEW_DUNGEON
 	/* Clear the "aux" array */
 	C_WIPE(&aux, 256, s16b);
 
 	/* Clear the "num" array */
 	C_WIPE(&num, 256, s16b);
-#else
-	/* Clear the "aux" array */
-	C_WIPE(&aux, MAX_DEPTH, s16b);
-
-	/* Clear the "num" array */
-	C_WIPE(&num, MAX_DEPTH, s16b);
-#endif
 
 	/* Size of "alloc_kind_table" */
 	alloc_kind_size = 0;
@@ -1883,19 +1855,11 @@ static errr init_alloc(void)
 	}
 
 	/* Collect the level indexes */
-#ifdef NEW_DUNGEON
 	for (i = 1; i < 256; i++)
 	{
 		/* Group by level */
 		num[i] += num[i-1];
 	}
-#else
-	for (i = 1; i < MAX_DEPTH; i++)
-	{
-		/* Group by level */
-		num[i] += num[i-1];
-	}
-#endif
 
 	/* Paranoia */
 	if (!num[0]) quit("No town objects!");
@@ -1950,19 +1914,11 @@ static errr init_alloc(void)
 
 	/*** Analyze monster allocation info ***/
 
-#ifdef NEW_DUNGEON
 	/* Clear the "aux" array */
 	C_WIPE(&aux, 256, s16b);
 
 	/* Clear the "num" array */
 	C_WIPE(&num, 256, s16b);
-#else
-	/* Clear the "aux" array */
-	C_WIPE(&aux, MAX_DEPTH, s16b);
-
-	/* Clear the "num" array */
-	C_WIPE(&num, MAX_DEPTH, s16b);
-#endif
 
 	/* Size of "alloc_race_table" */
 	alloc_race_size = 0;
@@ -1984,21 +1940,12 @@ static errr init_alloc(void)
 		}
 	}
 
-#ifdef NEW_DUNGEON
 	/* Collect the level indexes */
 	for (i = 1; i < 256; i++)
 	{
 		/* Group by level */
 		num[i] += num[i-1];
 	}
-#else
-	/* Collect the level indexes */
-	for (i = 1; i < MAX_DEPTH; i++)
-	{
-		/* Group by level */
-		num[i] += num[i-1];
-	}
-#endif
 
 	/* Paranoia */
 	if (!num[0]) quit("No town monsters!");

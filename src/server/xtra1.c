@@ -232,11 +232,7 @@ static void prt_depth(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-#ifdef NEW_DUNGEON
 	Send_depth(Ind, &p_ptr->wpos);
-#else
-	Send_depth(Ind, p_ptr->dun_depth);
-#endif
 }
 
 

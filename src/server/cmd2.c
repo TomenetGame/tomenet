@@ -23,24 +23,16 @@ void do_cmd_go_up(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON        
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
 
 	/* Player grid */
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-#else
-	c_ptr = &cave[Depth][p_ptr->py][p_ptr->px];
-#endif
 
 	/* Verify stairs if not a ghost, or admin wizard */
 	if (!p_ptr->ghost && !p_ptr->admin_wiz && c_ptr->feat != FEAT_LESS && !p_ptr->prob_travel)
@@ -48,16 +40,11 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind, "I see no up staircase here.");
 		return;
 	}
-#ifdef NEW_DUNGEON
 	if(wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP))
-#else
-	if (p_ptr->dun_depth <= 0)
-#endif                
 	{
 		msg_print(Ind, "There is nothing above you.");
 		return;
 	}
-#ifdef NEW_DUNGEON
 	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz){
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
@@ -66,28 +53,19 @@ void do_cmd_go_up(int Ind)
 		msg_print(Ind,"\377rThis is an ironman dungeon, you may not ascend.");
 		return;
 	}
-#endif
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
 
 	/* Show everyone that's he left */
-#ifdef NEW_DUNGEON        
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-#else        
-	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
 
 	/* Hack -- take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 	/* Success */
 	if (c_ptr->feat == FEAT_LESS)
 	{
@@ -101,18 +79,9 @@ void do_cmd_go_up(int Ind)
 	}
 
 	/* A player has left this depth */
-#ifdef NEW_DUNGEON
 	new_players_on_depth(wpos,-1,TRUE);
 	wpos->wz++;
 	new_players_on_depth(wpos,1,TRUE);
-#else
-	players_on_depth[p_ptr->dun_depth]--;
-	/* Go up the stairs */
-	p_ptr->dun_depth--;
-
-	/* And another player has entered this depth */
-	players_on_depth[p_ptr->dun_depth]++;
-#endif
 
 	p_ptr->new_level_flag = TRUE;
 
@@ -131,24 +100,16 @@ void do_cmd_go_down(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
 
 	/* Player grid */
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-#else
-	c_ptr = &cave[Depth][p_ptr->py][p_ptr->px];
-#endif
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
@@ -159,34 +120,21 @@ void do_cmd_go_down(int Ind)
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
-#ifdef NEW_DUNGEON
 		else if (p_ptr->max_dlv + 5 <= getlevel(&p_ptr->wpos))
-#else
-		else if (p_ptr->max_dlv + 5 <= p_ptr->dun_depth)
-#endif
 		{
 			/* anti Ghost-dive */
 			msg_print(Ind, "A mysterious force prevents you from going down.");
 			return;
 		}
 	}
-#ifdef NEW_DUNGEON
 	if (wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN))
-#else
-	/* Can't go down in the wilderness */
-	if (p_ptr->dun_depth < 0)
-#endif
 	{
 		msg_print(Ind, "There is nothing below you.");
 		return;
 	}
 	
 	/* Verify maximum depth */
-#ifdef NEW_DUNGEON
 	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz)
-#else
-	if (p_ptr->dun_depth >= MAX_DEPTH - 1)
-#endif
 	{
 		msg_print(Ind, "You are at the bottom of the dungeon.");
 		return;
@@ -201,22 +149,14 @@ void do_cmd_go_down(int Ind)
 	c_ptr->m_idx = 0;
 
 	/* Show everyone that's he left */
-#ifdef NEW_DUNGEON
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-#else
-	everyone_lite_spot(Depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Forget his lite and viewing area */
 	forget_lite(Ind);
 	forget_view(Ind);
 
 	/* Hack -- take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE)
@@ -231,18 +171,9 @@ void do_cmd_go_down(int Ind)
 	}
 
 	/* A player has left this depth */
-#ifdef NEW_DUNGEON
 	new_players_on_depth(wpos,-1,TRUE);
 	wpos->wz--;
 	new_players_on_depth(wpos,1,TRUE);
-#else
-	players_on_depth[p_ptr->dun_depth]--;
-	/* Go up the stairs */
-	p_ptr->dun_depth--;
-
-	/* And another player has entered this depth */
-	players_on_depth[p_ptr->dun_depth]++;
-#endif
 
 	p_ptr->new_level_flag = TRUE;
 
@@ -276,11 +207,7 @@ void do_cmd_search(int Ind)
 	}
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Search */
 	search(Ind);
@@ -337,19 +264,13 @@ void do_cmd_toggle_search(int Ind)
 static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int             i, d, ny, nx;
 	int             number, small;
 
-#ifdef NEW_DUNGEON
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Must be a chest */
 	if (o_ptr->tval != TV_CHEST) return;
@@ -373,15 +294,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				d = ((i + 15) / 15);
 
 				/* Pick a location */
-#ifdef NEW_DUNGEON
 				scatter(wpos, &ny, &nx, y, x, d, 0);
 				/* Must be a clean floor grid */
 				if (!cave_clean_bold(zcave, ny, nx)) continue;
-#else
-				scatter(Depth, &ny, &nx, y, x, d, 0);
-				/* Must be a clean floor grid */
-				if (!cave_clean_bold(Depth, ny, nx)) continue;
-#endif
 
 				/* Opening a chest */
 				opening_chest = TRUE;
@@ -392,29 +307,17 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Small chests often drop gold */
 				if (small && (rand_int(100) < 75))
 				{
-#ifdef NEW_DUNGEON
 					place_gold(wpos, ny, nx);
-#else
-					place_gold(Depth, ny, nx);
-#endif
 				}
 
 				/* Otherwise drop an item */
 				else
 				{
-#ifdef NEW_DUNGEON
 					place_object(wpos, ny, nx, FALSE, FALSE);
-#else
-					place_object(Depth, ny, nx, FALSE, FALSE);
-#endif
 				}
 
 				/* Reset the object level */
-#ifdef NEW_DUNGEON
 				object_level = getlevel(wpos);
-#else
-				object_level = Depth;
-#endif
 
 				/* No longer opening a chest */
 				opening_chest = FALSE;
@@ -423,11 +326,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				note_spot(Ind, ny, nx);
 
 				/* Display it */
-#ifdef NEW_DUNGEON
 				everyone_lite_spot(wpos, ny, nx);
-#else
-				everyone_lite_spot(Depth, ny, nx);
-#endif
 
 				/* Under the player */
 				if ((ny == p_ptr->py) && (nx == p_ptr->px))
@@ -531,11 +430,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 		msg_print(Ind, "You are enveloped in a cloud of smoke!");
 		for (i = 0; i < num; i++)
 		{
-#ifdef NEW_DUNGEON
 			(void)summon_specific(&p_ptr->wpos, y, x, getlevel(&p_ptr->wpos), 0);
-#else
-			(void)summon_specific(p_ptr->dun_depth, y, x, p_ptr->dun_depth, 0);
-#endif
 		}
 	}
 
@@ -554,11 +449,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 /*
  * Return the index of a house given an coordinate pair
  */
-#ifdef NEW_DUNGEON
 int pick_house(struct worldpos *wpos, int y, int x)
-#else
-int pick_house(int Depth, int y, int x)
-#endif
 {
 	int i;
 
@@ -567,11 +458,7 @@ int pick_house(int Depth, int y, int x)
 	{
 		/* Check this one */
 #ifdef NEWHOUSES
-#ifdef NEW_DUNGEON
 		if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, wpos))
-#else
-		if (houses[i].dx == x && houses[i].dy == y && houses[i].depth == Depth)
-#endif
 #else
 		if (houses[i].door_x == x && houses[i].door_y == y && houses[i].depth == Depth)
 #endif
@@ -704,12 +591,8 @@ bool access_door(int Ind, struct dna_type *dna){
 void do_cmd_open(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                             y, x, i, j;
 	int                             flag;
@@ -718,9 +601,7 @@ void do_cmd_open(int Ind, int dir)
 	object_type             *o_ptr;
 
 	bool more = FALSE;
-#ifdef NEW_DUNGEON
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 
 	/* Ghosts cannot open doors */
@@ -751,11 +632,7 @@ void do_cmd_open(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get requested grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		/* Get the object (if any) */
 		o_ptr = &o_list[c_ptr->o_idx];
@@ -775,11 +652,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -792,11 +665,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (o_ptr->tval == TV_CHEST)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Assume opened successfully */
 			flag = TRUE;
@@ -853,11 +722,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Stuck */
 			msg_print(Ind, "The door appears to be stuck.");
@@ -867,11 +732,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Disarm factor */
 			i = p_ptr->skill_dis;
@@ -904,19 +765,11 @@ void do_cmd_open(int Ind, int dir)
 				/* Open the door */
 				c_ptr->feat = FEAT_OPEN;
 
-#ifdef NEW_DUNGEON
 				/* Notice */
 				note_spot_depth(wpos, y, x);
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-#else
-				/* Notice */
-				note_spot_depth(Depth, y, x);
-
-				/* Redraw */
-				everyone_lite_spot(Depth, y, x);
-#endif
 
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -952,21 +805,12 @@ void do_cmd_open(int Ind, int dir)
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
 					/* Take half a turn */
-#ifdef NEW_DUNGEON
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
 					/* Redraw */
 					everyone_lite_spot(wpos, y, x);
-#else
-					p_ptr->energy -= level_speed(p_ptr->dun_depth)/2;
-					/* Notice */
-					note_spot_depth(Depth, y, x);
-
-					/* Redraw */
-					everyone_lite_spot(Depth, y, x);
-#endif
 					
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1016,15 +860,9 @@ void do_cmd_open(int Ind, int dir)
 					object_type *o_ptr=&p_ptr->inventory[j];
 					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
 						c_ptr->feat=FEAT_HOME_OPEN;
-#ifdef NEW_DUNGEON
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
-#else
-						p_ptr->energy-=level_speed(p_ptr->dun_depth)/2;
-						note_spot_depth(Depth, y, x);
-						everyone_lite_spot(Depth, y, x);
-#endif
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
 						return;
@@ -1046,11 +884,7 @@ void do_cmd_open(int Ind, int dir)
 					c_ptr->feat = FEAT_HOME_OPEN;
 
 					/* Take half a turn */
-#ifdef NEW_DUNGEON
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
-#else
-					p_ptr->energy -= level_speed(p_ptr->dun_depth)/2;
-#endif
 
 					/* Notice */
 					note_spot_depth(Depth, y, x);
@@ -1099,28 +933,16 @@ void do_cmd_open(int Ind, int dir)
 			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
 
 			/* Take half a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth)/2;
-#endif
 
 			/* Open the door */
 			c_ptr->feat = FEAT_OPEN;
 
-#ifdef NEW_DUNGEON
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
-#else
-			/* Notice */
-			note_spot_depth(Depth, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(Depth, y, x);
-#endif
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1138,20 +960,14 @@ void do_cmd_open(int Ind, int dir)
 void do_cmd_close(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                     y, x, i;
 	cave_type               *c_ptr;
 
 	bool more = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 
 	/* Ghosts cannot close */
@@ -1182,11 +998,7 @@ void do_cmd_close(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get grid and contents */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		/* Broken door */
 		if (c_ptr->feat == FEAT_BROKEN)
@@ -1206,11 +1018,7 @@ void do_cmd_close(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -1223,18 +1031,10 @@ void do_cmd_close(int Ind, int dir)
 		else if (c_ptr->feat == FEAT_HOME_OPEN)
 		{
 			/* Find this house */
-#ifdef NEW_DUNGEON
 			i = pick_house(wpos, y, x);
-#else
-			i = pick_house(Depth, y, x);
-#endif
 
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Close the door */
 #ifdef NEWHOUSES
@@ -1243,19 +1043,11 @@ void do_cmd_close(int Ind, int dir)
 			c_ptr->feat = FEAT_HOME_HEAD + houses[i].strength;
 #endif
 
-#ifdef NEW_DUNGEON
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
-#else
-			/* Notice */
-			note_spot_depth(Depth, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(Depth, y, x);
-#endif
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1268,28 +1060,16 @@ void do_cmd_close(int Ind, int dir)
 			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
 
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Close the door */
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
-#ifdef NEW_DUNGEON
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
-#else
-			/* Notice */
-			note_spot_depth(Depth, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(Depth, y, x);
-#endif
 
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1315,23 +1095,14 @@ static bool twall(int Ind, int y, int x)
 {
 	player_type *p_ptr = Players[Ind];
 	byte            *w_ptr = &p_ptr->cave_flag[y][x];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 	c_ptr=&zcave[y][x];
-#else
-	int Depth = p_ptr->dun_depth;
-	cave_type       *c_ptr = &cave[Depth][y][x];
-#endif
 
 	/* Paranoia -- Require a wall or door or some such */
-#ifdef NEW_DUNGEON
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
-#else
-	if (cave_floor_bold(Depth, y, x)) return (FALSE);
-#endif
 
 	/* Remove the feature */
 	c_ptr->feat = FEAT_FLOOR;
@@ -1339,19 +1110,11 @@ static bool twall(int Ind, int y, int x)
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
 
-#ifdef NEW_DUNGEON
 	/* Notice */
 	note_spot_depth(wpos, y, x);
 
 	/* Redisplay the grid */
 	everyone_lite_spot(wpos, y, x);
-#else
-	/* Notice */
-	note_spot_depth(Depth, y, x);
-
-	/* Redisplay the grid */
-	everyone_lite_spot(Depth, y, x);
-#endif
 
 	/* Update some things */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -1375,11 +1138,7 @@ static bool twall(int Ind, int y, int x)
 void do_cmd_tunnel(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                     y, x;
 
@@ -1388,11 +1147,8 @@ void do_cmd_tunnel(int Ind, int dir)
 	bool old_floor = FALSE;
 
 	bool more = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
-
 
 	/* Ghosts have no need to tunnel */
 	if ( (p_ptr->ghost))
@@ -1424,21 +1180,12 @@ void do_cmd_tunnel(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
 		/* Check the floor-hood */
 		old_floor = cave_floor_bold(zcave, y, x);
 
 		/* No tunnelling through emptiness */
 		if ( (cave_floor_bold(zcave, y, x)) || (c_ptr->feat == FEAT_PERM_CLEAR) )
-#else
-		c_ptr = &cave[Depth][y][x];
-		/* Check the floor-hood */
-		old_floor = cave_floor_bold(Depth, y, x);
-
-		/* No tunnelling through emptiness */
-		if ( (cave_floor_bold(Depth, y, x)) || (c_ptr->feat == FEAT_PERM_CLEAR) )
-#endif
 
 		{
 			/* Message */
@@ -1460,11 +1207,7 @@ void do_cmd_tunnel(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -1477,11 +1220,7 @@ void do_cmd_tunnel(int Ind, int dir)
 		else
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Titanium */
 			if (c_ptr->feat >= FEAT_PERM_EXTRA)
@@ -1538,7 +1277,6 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Found treasure */
 					if (gold)
 					{
-#ifdef NEW_DUNGEON
 						/* Place some gold */
 						place_gold(wpos, y, x);
 
@@ -1547,16 +1285,6 @@ void do_cmd_tunnel(int Ind, int dir)
 
 						/* Display it */
 						everyone_lite_spot(wpos, y, x);
-#else
-						/* Place some gold */
-						place_gold(Depth, y, x);
-
-						/* Notice it */
-						note_spot_depth(Depth, y, x);
-
-						/* Display it */
-						everyone_lite_spot(Depth, y, x);
-#endif
 
 						/* Message */
 						msg_print(Ind, "You have found something!");
@@ -1599,30 +1327,18 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Hack -- place an object */
 					if (rand_int(100) < 10)
 					{
-#ifdef NEW_DUNGEON
 						place_object(wpos, y, x, FALSE, FALSE);
-#else
-						place_object(Depth, y, x, FALSE, FALSE);
-#endif
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");
 						}
 					}
 
-#ifdef NEW_DUNGEON
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
 					/* Display */
 					everyone_lite_spot(wpos, y, x);
-#else
-					/* Notice */
-					note_spot_depth(Depth, y, x);
-
-					/* Display */
-					everyone_lite_spot(Depth, y, x);
-#endif
 				}
 
 				else
@@ -1641,19 +1357,11 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
 					
-#ifdef NEW_DUNGEON
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
 					/* Display */
 					everyone_lite_spot(wpos, y, x);
-#else
-					/* Notice */
-					note_spot_depth(Depth, y, x);
-
-					/* Display */
-					everyone_lite_spot(Depth, y, x);
-#endif
 				}
 				else
 				{
@@ -1671,19 +1379,11 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
 					
-#ifdef NEW_DUNGEON
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
 					/* Display */
 					everyone_lite_spot(wpos, y, x);
-#else
-					/* Notice */
-					note_spot_depth(Depth, y, x);
-
-					/* Display */
-					everyone_lite_spot(Depth, y, x);
-#endif
 				}
 				else
 				{
@@ -1709,11 +1409,7 @@ void do_cmd_tunnel(int Ind, int dir)
 		}
 
 		/* Notice "blockage" changes */
-#ifdef NEW_DUNGEON
 		if (old_floor != cave_floor_bold(zcave, y, x))
-#else
-		if (old_floor != cave_floor_bold(Depth, y, x))
-#endif
 		{
 			/* Update some things */
 			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
@@ -1731,11 +1427,7 @@ void do_cmd_tunnel(int Ind, int dir)
 void do_cmd_disarm(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                 y, x, i, j, power;
 	s16b o_idx;
@@ -1747,10 +1439,8 @@ void do_cmd_disarm(int Ind, int dir)
 	trap_type *tt_ptr;
 
 	bool            more = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 
 	/* Ghosts cannot disarm */
@@ -1783,11 +1473,7 @@ void do_cmd_disarm(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get grid and contents */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 		w_ptr = &p_ptr->cave_flag[y][x];
 
 		/* Access the item */
@@ -1817,11 +1503,7 @@ void do_cmd_disarm(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -1839,11 +1521,7 @@ void do_cmd_disarm(int Ind, int dir)
 //			more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
 
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Get the "disarm" factor */
 			i = p_ptr->skill_dis;
@@ -1917,11 +1595,7 @@ void do_cmd_disarm(int Ind, int dir)
 //			cptr name = (f_name + f_info[c_ptr->feat].name);
 
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Get the "disarm" factor */
 			i = p_ptr->skill_dis;
@@ -1956,7 +1630,6 @@ void do_cmd_disarm(int Ind, int dir)
 //				c_ptr->feat = FEAT_FLOOR;
 
 #if 0
-#ifdef NEW_DUNGEON
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
 
@@ -1965,16 +1638,6 @@ void do_cmd_disarm(int Ind, int dir)
 
 				/* Redisplay the grid */
 				everyone_lite_spot(wpos, y, x);
-#else
-				/* Forget the "field mark" */
-				everyone_forget_spot(Depth, y, x);
-
-				/* Notice */
-				note_spot_depth(Depth, y, x);
-
-				/* Redisplay the grid */
-				everyone_lite_spot(Depth, y, x);
-#endif
 #endif	// 0
 
 				/* move the player onto the trap grid */
@@ -2031,11 +1694,7 @@ void do_cmd_disarm(int Ind, int dir)
 void do_cmd_bash(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                 y, x;
 
@@ -2044,10 +1703,8 @@ void do_cmd_bash(int Ind, int dir)
 	cave_type               *c_ptr;
 
 	bool            more = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 
 	/* Ghosts cannot bash */
@@ -2080,11 +1737,7 @@ void do_cmd_bash(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		/* Nothing useful */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2098,11 +1751,7 @@ void do_cmd_bash(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -2115,11 +1764,7 @@ void do_cmd_bash(int Ind, int dir)
 		else
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "You smash into the door!");
@@ -2158,20 +1803,12 @@ void do_cmd_bash(int Ind, int dir)
 					c_ptr->feat = FEAT_OPEN;
 				}
 
-#ifdef NEW_DUNGEON
 				/* Notice */
 				note_spot_depth(wpos, y, x);
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-#else
-				/* Notice */
-				note_spot_depth(Depth, y, x);
-
-				/* Redraw */
-				everyone_lite_spot(Depth, y, x);
-
-#endif
+				
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE);
 
@@ -2250,20 +1887,13 @@ static bool get_spike(int Ind, int *ip)
 void do_cmd_spike(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                  y, x, item;
 
 	cave_type               *c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
-
 
 	/* Ghosts cannot spike */
 	if ( (p_ptr->ghost))
@@ -2282,11 +1912,7 @@ void do_cmd_spike(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get grid and contents */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 		/* Require closed door */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -2307,11 +1933,7 @@ void do_cmd_spike(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Message */
 			msg_print(Ind, "There is a monster in the way!");
@@ -2324,11 +1946,7 @@ void do_cmd_spike(int Ind, int dir)
 		else
 		{
 			/* Take a turn */
-#ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 			/* Successful jamming */
 			msg_print(Ind, "You jam the door with a spike.");
@@ -2358,10 +1976,8 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 	cave_type *c_ptr;
 
 	bool more = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-#endif
 
 
 	/* Make sure he hasn't just switched levels */
@@ -2397,11 +2013,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		if (cfg.door_bump_open)
 		{
 			/* Get requested grid */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#else
-			c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#endif
 
 			if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				(c_ptr->feat <= FEAT_DOOR_TAIL))
@@ -2432,11 +2044,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		move_player(Ind, dir, pickup);
 
 		/* Take a turn */
-#ifdef NEW_DUNGEON
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-		p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 		/* Allow more walking */
 		more = TRUE;
@@ -2461,10 +2069,8 @@ int do_cmd_run(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 
 	/* Get a "repeated" direction */
 	if (dir)
@@ -2476,11 +2082,7 @@ int do_cmd_run(int Ind, int dir)
 			if (cfg.door_bump_open)
 			{
 				/* Get requested grid */
-#ifdef NEW_DUNGEON
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#else
-				c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
-#endif
 
 				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
@@ -2488,11 +2090,7 @@ int do_cmd_run(int Ind, int dir)
 				      (c_ptr->feat <= FEAT_HOME_TAIL))) 
 				{
 					/* Check if we have enough energy to open the door */
-#ifdef NEW_DUNGEON
 					if (p_ptr->energy >= level_speed(&p_ptr->wpos))
-#else
-					if (p_ptr->energy >= level_speed(p_ptr->dun_depth))
-#endif
 					{
 						/* If so, open it. */
 						do_cmd_open(Ind, dir);
@@ -2511,11 +2109,7 @@ int do_cmd_run(int Ind, int dir)
 		}
 
 		/* Make sure we have enough energy to start running */
-#ifdef NEW_DUNGEON
 		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
-#else
-		if (p_ptr->energy >= (level_speed(p_ptr->dun_depth)*6)/5)
-#endif
 		{
 			/* Hack -- Set the run counter */
 			p_ptr->running = (command_arg ? command_arg : 1000);
@@ -2525,12 +2119,7 @@ int do_cmd_run(int Ind, int dir)
 
 			/* Reset the player's energy so he can't sprint several spaces
 			 * in the first round of running.  */
-#ifdef NEW_DUNGEON
-//			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			p_ptr->energy = level_speed(&p_ptr->wpos);
-#else
-			p_ptr->energy = level_speed(p_ptr->dun_depth);
-#endif
 			return 2;
 		}
 		/* If we don't have enough energy to run and monsters aren't around,
@@ -2550,25 +2139,14 @@ int do_cmd_run(int Ind, int dir)
 void do_cmd_stay(int Ind, int pickup)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 	
 	if (p_ptr->new_level_flag) return;
 
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-#else
-	c_ptr = &cave[Depth][p_ptr->py][p_ptr->px];
-#endif
-
 
 	/* Allow repeated command */
 	if (command_arg)
@@ -2587,12 +2165,7 @@ void do_cmd_stay(int Ind, int pickup)
 /* We don't want any of this */
 #if 0
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
-
 
 	/* Spontaneous Searching */
 	if ((p_ptr->skill_fos >= 50) || (0 == rand_int(50 - p_ptr->skill_fos)))
@@ -2674,11 +2247,7 @@ void do_cmd_rest(void)
 
 
 	/* Take a turn XXX XXX XXX (?) */
-#ifdef NEW_DUNGEON
 	energy -= level_speed(&p_ptr->wpos);
-#else
-	energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Save the rest code */
 	resting = command_arg;
@@ -2791,11 +2360,7 @@ static int breakage_chance(object_type *o_ptr)
 void do_cmd_fire(int Ind, int dir, int item)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
@@ -2815,11 +2380,8 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 	char            o_name[160];
 	bool magic = FALSE, boomerang = FALSE;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
-
 
 	/* Require proper missile */
 	item_tester_tval = p_ptr->tval_ammo;
@@ -2876,11 +2438,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	thits = boomerang? 1 : p_ptr->num_fire;
 
 	/* Take a (partial) turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
-#else
-	p_ptr->energy -= (level_speed(p_ptr->dun_depth) / thits);
-#endif
 
 	/* Check if monsters around him/her hinder this */
 	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
@@ -3069,11 +2627,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
 			/* Stopped by walls/doors */
-#ifdef NEW_DUNGEON
 			if (!cave_floor_bold(zcave, ny, nx)) break;
-#else
-			if (!cave_floor_bold(Depth, ny, nx)) break;
-#endif
 
 			/* Advance the distance */
 			cur_dis++;
@@ -3098,12 +2652,8 @@ void do_cmd_fire(int Ind, int dir, int item)
 					continue;
 
 				/* If he's not here, skip him */
-#ifdef NEW_DUNGEON
 				if(!inarea(&p_ptr->wpos, wpos))
-#else
-					if (p_ptr->dun_depth != Depth)
-#endif
-						continue;
+					continue;
 
 				/* The player can see the (on screen) missile */
 				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
@@ -3138,18 +2688,10 @@ void do_cmd_fire(int Ind, int dir, int item)
 			p_ptr = q_ptr;
 
 			/* Player here, hit him */
-#ifdef NEW_DUNGEON
 			if (zcave[y][x].m_idx < 0)
-#else
-			if (cave[Depth][y][x].m_idx < 0)
-#endif
 			{
 #ifdef PLAYER_INTERACTION
-#ifdef NEW_DUNGEON
 				cave_type *c_ptr = &zcave[y][x];
-#else
-				cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 				q_ptr = Players[0 - c_ptr->m_idx];
 
@@ -3225,39 +2767,19 @@ void do_cmd_fire(int Ind, int dir, int item)
 							switch (p_ptr->bow_brand_t)
 							{
 								case BOW_BRAND_BALL_FIRE:
-#ifdef NEW_DUNGEON
 									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 									break;
 								case BOW_BRAND_BALL_COLD:
-#ifdef NEW_DUNGEON
 									project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 									break;
 								case BOW_BRAND_BALL_ELEC:
-#ifdef NEW_DUNGEON
 									project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 									break;
 								case BOW_BRAND_BALL_ACID:
-#ifdef NEW_DUNGEON
 									project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 									break;
 								case BOW_BRAND_BALL_SOUND:
-#ifdef NEW_DUNGEON
 									project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-									project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 									break;
 							}
 						}
@@ -3290,17 +2812,9 @@ void do_cmd_fire(int Ind, int dir, int item)
 			}
 
 			/* Monster here, Try to hit it */
-#ifdef NEW_DUNGEON
 			if (zcave[y][x].m_idx > 0)
-#else
-			if (cave[Depth][y][x].m_idx > 0)
-#endif
 			{
-#ifdef NEW_DUNGEON
 				cave_type *c_ptr = &zcave[y][x];
-#else
-				cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
 				monster_race *r_ptr = race_inf(m_ptr);
@@ -3438,39 +2952,19 @@ void do_cmd_fire(int Ind, int dir, int item)
 						switch (p_ptr->bow_brand_t)
 						{
 							case BOW_BRAND_BALL_FIRE:
-#ifdef NEW_DUNGEON
 								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 								break;
 							case BOW_BRAND_BALL_COLD:
-#ifdef NEW_DUNGEON
 								project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 35, GF_COLD, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 								break;
 							case BOW_BRAND_BALL_ELEC:
-#ifdef NEW_DUNGEON
 								project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 40, GF_ELEC, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 								break;
 							case BOW_BRAND_BALL_ACID:
-#ifdef NEW_DUNGEON
 								project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 45, GF_ACID, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 								break;
 							case BOW_BRAND_BALL_SOUND:
-#ifdef NEW_DUNGEON
 								project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#else
-								project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_SOUND, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
-#endif
 								break;
 						}
 					}
@@ -3559,11 +3053,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
 			/* Stopped by walls/doors */
-#ifdef NEW_DUNGEON
 			if (!cave_floor_bold(zcave, ny, nx)) break;
-#else
-			if (!cave_floor_bold(Depth, ny, nx)) break;
-#endif
 
 			/* Advance the distance */
 			cur_dis++;
@@ -3585,12 +3075,8 @@ void do_cmd_fire(int Ind, int dir, int item)
 					continue;
 
 				/* If he's not here, skip him */
-#ifdef NEW_DUNGEON
 				if(!inarea(&p_ptr->wpos, wpos))
-#else
-					if (p_ptr->dun_depth != Depth)
-#endif
-						continue;
+					continue;
 
 				/* The player can see the (on screen) missile */
 				if (panel_contains(y, x) && player_can_see_bold(i, y, x))
@@ -3634,11 +3120,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	}
 
 	/* Drop (or break) near that location */
-#ifdef NEW_DUNGEON
 	if (!magic) drop_near(o_ptr, breakage, wpos, y, x);
-#else
-	if (!magic) drop_near(o_ptr, j, Depth, y, x);
-#endif
 }
 
 /*
@@ -3649,10 +3131,8 @@ bool interfere(int Ind, int chance)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 
 	/* Check if monsters around him/her hinder the action */
 	for (d = 1; d <= 9; d++)
@@ -3662,17 +3142,9 @@ bool interfere(int Ind, int chance)
 		tx = x + ddx[d];
 		ty = y + ddy[d];
 
-#ifdef NEW_DUNGEON
 		if (!in_bounds(ty, tx)) continue;
-#else
-		if (!in_bounds(p_ptr->dun_depth, ty, tx)) continue;
-#endif
 
-#ifdef NEW_DUNGEON
 		if (!(i = zcave[ty][tx].m_idx)) continue;
-#else
-		if (!(i = cave[p_ptr->dun_depth][ty][tx].m_idx)) continue;
-#endif
 		if (i > 0)
 		{
 			r_ptr = race_inf(&m_list[i]);
@@ -3760,11 +3232,7 @@ bool interfere(int Ind, int chance)
 void do_cmd_throw(int Ind, int dir, int item)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int                     i, j, y, x, ny, nx, ty, tx;
 	int                     chance, tdam, tdis;
@@ -3783,20 +3251,14 @@ void do_cmd_throw(int Ind, int dir, int item)
 	u32b f1, f2, f3, f4, f5, esp;
 
 	/*int                   msec = delay_factor * delay_factor * delay_factor;*/
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		msg_format(Ind, "Please don't litter the %s.",
-#ifdef NEW_DUNGEON
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));
-#else
-			Depth != 0 ? (Depth > 0 ? "dungeon" : "Nature") : "town";
-#endif
 		return;
 	}
 
@@ -3881,11 +3343,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 
 	/* Start at the player */
@@ -3920,11 +3378,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 
 		/* Stopped by walls/doors */
-#ifdef NEW_DUNGEON
 		if (!cave_floor_bold(zcave, ny, nx)) break;
-#else
-		if (!cave_floor_bold(Depth, ny, nx)) break;
-#endif
 
 		/* Advance the distance */
 		cur_dis++;
@@ -3950,11 +3404,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 				continue;
 
 			/* If he's not here, skip him */
-#ifdef NEW_DUNGEON
 			if(!inarea(wpos, &p_ptr->wpos))
-#else
-			if (p_ptr->dun_depth != Depth)
-#endif
 				continue;
 
 			/* The player can see the (on screen) missile */
@@ -3991,18 +3441,10 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 
 		/* Player here, try to hit him */
-#ifdef NEW_DUNGEON
 		if (zcave[y][x].m_idx < 0)
-#else
-		if (cave[Depth][y][x].m_idx < 0)
-#endif
 		{
 #ifdef PLAYER_INTERACTION
-#ifdef NEW_DUNGEON
 			cave_type *c_ptr = &zcave[y][x];
-#else
-			cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 			q_ptr = Players[0 - c_ptr->m_idx];
 
@@ -4063,15 +3505,9 @@ void do_cmd_throw(int Ind, int dir, int item)
 		}
 
 		/* Monster here, Try to hit it */
-#ifdef NEW_DUNGEON
 		if (zcave[y][x].m_idx > 0)
 		{
 			cave_type *c_ptr = &zcave[y][x];
-#else
-		if (cave[Depth][y][x].m_idx > 0)
-		{
-			cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
                         monster_race *r_ptr = race_inf(m_ptr);
@@ -4178,11 +3614,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	j = (hit_body ? breakage_chance(o_ptr) : 0);
 
 	/* Drop (or break) near that location */
-#ifdef NEW_DUNGEON
 	drop_near_severe(Ind, o_ptr, j, wpos, y, x);
-#else
-	drop_near_severe(Ind, o_ptr, j, Depth, y, x);
-#endif
 }
 
 void destroy_house(int Ind, struct dna_type *dna){
@@ -4210,30 +3642,20 @@ void destroy_house(int Ind, struct dna_type *dna){
 
 void house_admin(int Ind, int dir, char *args){
 	player_type *p_ptr=Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth=p_ptr->dun_depth;
-#endif
 	int x,y;
 	int success=0;
 	cave_type *c_ptr;
 	struct dna_type *dna;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;	//(FALSE);
-#endif
 
 	if(dir && args){
 		/* Get requested direction */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 		/* Get requested grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
 		{
 			if(c_ptr->special.type==DNA_DOOR){
@@ -4273,11 +3695,7 @@ void house_admin(int Ind, int dir, char *args){
 void do_cmd_purchase_house(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
-#else
-	int Depth = p_ptr->dun_depth;
-#endif
 
 	int y, x, i, j;
 	int factor;
@@ -4290,10 +3708,8 @@ void do_cmd_purchase_house(int Ind, int dir)
 #else
 	struct dna_type *dna;
 #endif
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* Ghosts cannot buy houses */
 	if ( (p_ptr->ghost))
@@ -4312,11 +3728,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		x = p_ptr->px + ddx[dir];
 
 		/* Get requested grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[y][x];
-#else
-		c_ptr = &cave[Depth][y][x];
-#endif
 
 #ifdef NEWHOUSES
 		if(!(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && c_ptr->special.type==DNA_DOOR))
@@ -4509,65 +3921,33 @@ void do_cmd_own(int Ind)
 		return;
 	}
 	
-#ifdef NEW_DUNGEON
 	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own)
-#else
-	if (wild_info[p_ptr->dun_depth].own)
-#endif
 	{
 		msg_format(Ind, "Sorry this land is owned by someone else.");
 		return;
 	}
-#ifdef NEW_DUNGEON
 	if(p_ptr->wpos.wz)
-#else
-	if (p_ptr->dun_depth > 0)
-#endif
 	{
 		msg_format(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
 	
-#ifdef NEW_DUNGEON
 	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
-#else
-	if (p_ptr->dun_depth > -13)
-#endif
 	{
-#ifdef NEW_DUNGEON
 		msg_format(Ind, "Sorry this land is owned by the town.");
-#else
-		msg_format(Ind, "Sorry this land(%d) is owned by the town.", p_ptr->dun_depth);
-#endif
 		return;
 	}
 	
 	/* Ok all check did lets appropriate */
-#ifdef NEW_DUNGEON
 	if(p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
-#else
-	if (p_ptr->own1)
-#endif
 	{
-#ifdef NEW_DUNGEON
 		wpcopy(&p_ptr->own2, &p_ptr->wpos);
-#else
-		p_ptr->own2 = p_ptr->dun_depth;
-#endif
 	}
 	else
 	{
-#ifdef NEW_DUNGEON
 		wpcopy(&p_ptr->own1, &p_ptr->wpos);
-#else
-		p_ptr->own1 = p_ptr->dun_depth;
-#endif
 	}
-#ifdef NEW_DUNGEON
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
-#else
-	wild_info[p_ptr->dun_depth].own = p_ptr->id;
-#endif
 	
 	sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	msg_broadcast(Ind, buf);

@@ -108,11 +108,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Identity not known yet */
 	ident = FALSE;
@@ -446,25 +442,13 @@ void do_cmd_eat_food(int Ind, int item)
 
 				/* In town it only runs out if you are not on a wall
 				 * To prevent breaking into houses */
-#ifdef NEW_DUNGEON
 				if (players_on_depth(&p_ptr->wpos)!= 0) {
 					cave_type **zcave;
 					zcave=getcave(&p_ptr->wpos);
-#else
-				if (players_on_depth[p_ptr->dun_depth] != 0) {
-#endif
-				/* important! check for illegal spaces */
-#ifdef NEW_DUNGEON
+					/* important! check for illegal spaces */
 					if (in_bounds(p_ptr->py, p_ptr->px))
-#else
-					if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px))
-#endif
 					{
-#ifdef NEW_DUNGEON
 						if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
-#else
-						if ((p_ptr->wpos.wz) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
-#endif
 						{
 							if (set_tim_wraith(Ind, 0)) ident = TRUE;
 						}
@@ -573,11 +557,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	}
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1458,11 +1438,7 @@ void do_cmd_read_scroll(int Ind, int item)
         }
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -1560,11 +1536,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-#ifdef NEW_DUNGEON
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
-#else
-				if (summon_specific(p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->dun_depth, 0))
-#endif
 				{
 					ident = TRUE;
 				}
@@ -1584,19 +1556,11 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				for (x = -1; x <= 1; x++)
 				{				
-#ifdef NEW_DUNGEON
 					cave_type **zcave;
 					zcave=getcave(&p_ptr->wpos);
 					c_ptr = &zcave[p_ptr->py+y][p_ptr->px+x];
-#else
-					c_ptr = &cave[p_ptr->dun_depth][p_ptr->py+y][p_ptr->px+x];
-#endif
 					
-#ifdef NEW_DUNGEON
 					if ((c_ptr->m_idx < 0) && (cave_floor_bold(zcave, p_ptr->py+y, p_ptr->px+x)))
-#else
-					if ((c_ptr->m_idx < 0) && (cave_floor_bold(p_ptr->dun_depth, p_ptr->py+y, p_ptr->px+x)))
-#endif
 					{
 						if (Players[0 - c_ptr->m_idx]->ghost)
 						{
@@ -1618,11 +1582,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		{
 			for (k = 0; k < randint(3); k++)
 			{
-#ifdef NEW_DUNGEON
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), SUMMON_UNDEAD))
-#else
-				if (summon_specific(p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->dun_depth, SUMMON_UNDEAD))
-#endif
 				{
 					ident = TRUE;
 				}
@@ -1863,11 +1823,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_STAR_DESTRUCTION:
 		{
-#ifdef NEW_DUNGEON
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
-#else
-			destroy_area(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 15, TRUE);
-#endif
 			ident = TRUE;
 			break;
 		}
@@ -1896,22 +1852,14 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		case SV_SCROLL_ACQUIREMENT:
 		{
-#ifdef NEW_DUNGEON
 			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
-#else
-			acquirement(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 1, TRUE);
-#endif
 			ident = TRUE;
 			break;
 		}
 
 		case SV_SCROLL_STAR_ACQUIREMENT:
 		{
-#ifdef NEW_DUNGEON
 			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
-#else
-			acquirement(p_ptr->dun_depth, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE);
-#endif
 			ident = TRUE;
 			break;
 		}
@@ -2084,11 +2032,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -2171,11 +2115,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			for (k = 0; k < randint(4); k++)
 			{
-#ifdef NEW_DUNGEON
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0))
-#else
-				if (summon_specific(p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->dun_depth, 0))
-#endif
 				{
 					ident = TRUE;
 				}
@@ -2378,11 +2318,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_EARTHQUAKES:
 		{
 			msg_format_near(Ind, "%s causes the ground to shake!", p_ptr->name);
-#ifdef NEW_DUNGEON
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
-#else
-			earthquake(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 10);
-#endif
 			ident = TRUE;
 			break;
 		}
@@ -2390,11 +2326,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_DESTRUCTION:
 		{
 			msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
-#ifdef NEW_DUNGEON
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
-#else
-			destroy_area(p_ptr->dun_depth, p_ptr->py, p_ptr->px, 15, TRUE);
-#endif
 			ident = TRUE;
 			break;
 		}
@@ -2554,11 +2486,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -3037,12 +2965,8 @@ void do_cmd_zap_rod(int Ind, int item)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
 	        ((f4 & TR4_FAST_CAST)?2:1);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -3342,13 +3266,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
 	        ((f4 & TR4_FAST_CAST)?2:1);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
-
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -3898,11 +3817,7 @@ void do_cmd_activate(int Ind, int item)
 	}
 
 	/* Take a turn */
-#ifdef NEW_DUNGEON
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-#else
-	p_ptr->energy -= level_speed(p_ptr->dun_depth);
-#endif
 
 	/* Extract the item level */
 	lev = k_info[o_ptr->k_idx].level;
@@ -6220,26 +6135,14 @@ bool unmagic(int Ind)
 
 	/* In town it only runs out if you are not on a wall
 	 * To prevent breaking into houses */
-#ifdef NEW_DUNGEON
 	if (players_on_depth(&p_ptr->wpos)!= 0)
-#else
-	if (players_on_depth[p_ptr->dun_depth] != 0)
-#endif
 	{
 			/* important! check for illegal spaces */
-#ifdef NEW_DUNGEON
 		cave_type **zcave;
 		zcave=getcave(&p_ptr->wpos);
 		if (in_bounds(p_ptr->py, p_ptr->px))
-#else
-		if (in_bounds(p_ptr->dun_depth, p_ptr->py, p_ptr->px))
-#endif
 		{
-#ifdef NEW_DUNGEON
 			if ((p_ptr->wpos.wz) || (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)))
-#else
-			if ((p_ptr->wpos.wz) || (cave_floor_bold(p_ptr->dun_depth, p_ptr->py, p_ptr->px)))
-#endif
 			{
 				if (set_tim_wraith(Ind, 0)) ident = TRUE;
 			}

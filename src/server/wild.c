@@ -69,11 +69,7 @@ int world_index(int world_x, int world_y)
 } 
 
 /* returns the neighbor index, valid or invalid. */
-#ifdef NEW_DUNGEON
 int neighbor_index(struct worldpos *wpos, char dir)
-#else
-int neighbor_index(int Depth, char dir)
-#endif
 {
 	int cur_x, cur_y, neigh_idx;
 	
@@ -197,7 +193,6 @@ void init_wild_info_aux(int x, int y)
    Note that this has to be initially called with 0,0 to work properly. 
 */
 
-#ifdef NEW_DUNGEON
 void addtown(int y, int x, int base, u16b flags)
 {
 	int n;
@@ -246,25 +241,13 @@ void init_wild_info()
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
 	init_wild_info_aux(0,0);
 }
-#else
-void init_wild_info()
-{
-	memset(&wild_info[-MAX_WILD],0,sizeof(wilderness_type)*MAX_WILD);
-	init_wild_info_aux(0,0);
-}
-#endif
-
 
 /* Called when the player goes onto a wilderness level, to 
    make sure the lighting information is up to date with
    the time of day.
 */ 
 
-#ifdef NEW_DUNGEON
 void wild_apply_day(struct worldpos *wpos)
-#else
-void wild_apply_day(int Depth)
-#endif
 {
 	int x,y;
 	cave_type *c_ptr;

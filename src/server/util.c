@@ -2511,15 +2511,9 @@ void msg_print_near(int Ind, cptr msg)
 {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos;
 	wpos=&p_ptr->wpos;
-#else
-	int Depth;
 
-	/* Extract player's location */
-	Depth = p_ptr->dun_depth;
-#endif
 	y = p_ptr->py;
 	x = p_ptr->px;
 
@@ -2536,11 +2530,7 @@ void msg_print_near(int Ind, cptr msg)
 		if (Ind == i) continue;
 
 		/* Make sure this player is at this depth */
-#ifdef NEW_DUNGEON
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
-#else
-		if (p_ptr->dun_depth != Depth) continue;
-#endif
 
 		/* Can he see this player? */
 		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)

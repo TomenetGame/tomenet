@@ -2542,13 +2542,9 @@ void do_cmd_store(int Ind)
 	cave_type		*c_ptr;
 
 	/* Access the player grid */
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-#else
-	c_ptr = &cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px];
-#endif
 	i=gettown(Ind);
 	if(i==-1) return;
 

@@ -109,20 +109,6 @@ s16b num_repro;                 /* Current reproducer count */
 s16b object_level;              /* Current object creation level */
 s16b monster_level;             /* Current monster creation level */
 
-#ifndef NEW_DUNGEON
-byte level_up_y[MAX_DEPTH];     /* Where do players start if coming up? */
-byte level_up_x[MAX_DEPTH];
-byte level_down_y[MAX_DEPTH];   /* Where do players start if going down? */
-byte level_down_x[MAX_DEPTH];
-byte level_rand_y[MAX_DEPTH];   /* Where do players start if they tele level? */
-byte level_rand_x[MAX_DEPTH];
-#endif
-
-#ifndef NEW_DUNGEON
-s16b players_on_world[MAX_DEPTH + MAX_WILD];
-s16b *players_on_depth=&(players_on_world[MAX_WILD]);  /* How many players are at each depth */
-#endif
-
 s32b turn;                      /* Current game turn */
 s32b old_turn;                  /* Turn when level began (feelings) */
 
@@ -567,7 +553,7 @@ s16b t_fast[MAX_TR_IDX];
    I currently have a huge number (4096?) of wilderness levels allocated.
    -APD-
 */ 
-#ifdef NEW_DUNGEON
+
 /* I have moved the cave_type stuff to the wilderness and dungeon
    level structures now. So, to reference the cave_type array for
    the level (x,y,z) you would first check z for being zero. If it
@@ -580,12 +566,6 @@ s16b t_fast[MAX_TR_IDX];
 wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];   /* seems my world may be a bit bigger */
 struct town_type *town=NULL;
 u16b numtowns=0;
-#else
-cave_type **world[MAX_DEPTH+MAX_WILD]; 
-cave_type ***cave = &world[MAX_WILD];
-wilderness_type world_info[MAX_WILD+1];
-wilderness_type *wild_info=&(world_info[MAX_WILD]);
-#endif
 
 /*
  * The array of dungeon items [MAX_O_IDX]

@@ -648,7 +648,9 @@ Change list for PernMangband
 - Players have view of suburbs now.
 - Fixed a number of similar town radius omission bugs.
 
-
+13/01/2002 (Evileye)
+- Cleaned up new dungeon code, removing old
+- Fixed targetting bug in new code
 
 
 ** [B] stands for Bugfix.
