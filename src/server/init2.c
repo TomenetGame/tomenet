@@ -1410,60 +1410,6 @@ static errr init_other(void)
 	/*** alloc for the houses ***/
 	C_MAKE(houses, 1024, house_type);
 	house_alloc=1024;
-	/*** Prepare the Stores ***/
-
-#if 0
-	/* Allocate the stores */
-	C_MAKE(store, MAX_STORES, store_type);
-
-	/* Fill in each store */
-	for (i = 0; i < MAX_STORES; i++)
-	{
-		/* Access the store */
-		store_type *st_ptr = &store[i];
-
-		/* Assume full stock */
-		st_ptr->stock_size = STORE_INVEN_MAX;
-
-		/* Allocate the stock */
-		C_MAKE(st_ptr->stock, st_ptr->stock_size, object_type);
-
-		/* No table for the black market or home */
-		if ((i == 6) || (i == 7) || (i == 8) ) continue;
-
-		/* Assume full table */
-		st_ptr->table_size = STORE_CHOICES;
-
-		/* Allocate the stock */
-		C_MAKE(st_ptr->table, st_ptr->table_size, s16b);
-
-		/* Scan the choices */
-		for (k = 0; k < STORE_CHOICES; k++)
-		{
-			int k_idx;
-
-			/* Extract the tval/sval codes */
-			int tv = store_table[i][k][0];
-			int sv = store_table[i][k][1];
-
-			/* Look for it */
-			for (k_idx = 1; k_idx < MAX_K_IDX; k_idx++)
-			{
-				object_kind *k_ptr = &k_info[k_idx];
-
-				/* Found a match */
-				if ((k_ptr->tval == tv) && (k_ptr->sval == sv)) break;
-			}
-
-			/* Catch errors */
-			if (k_idx == MAX_K_IDX) continue;
-
-			/* Add that item index to the table */
-			st_ptr->table[st_ptr->table_num++] = k_idx;
-		}
-	}
-#endif
-
 
 	/*** Pre-allocate the basic "auto-inscriptions" ***/
 

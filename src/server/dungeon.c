@@ -628,20 +628,6 @@ static void process_world(int Ind)
 }
 
 /*
- * Parse and execute the current command
- * Give "Warning" on illegal commands.
- *
- * XXX XXX XXX Make some "blocks"
- *
- * This all happens "automagically" by the Input() function in netserver.c
- */
-#if 0
-static void process_command(void)
-{
-}
-#endif
-
-/*
  * Handle items for auto-retaliation  - Jir -
  * use_old_target is *strongly* recommended to actually make use of it.
  */
