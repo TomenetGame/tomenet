@@ -399,7 +399,7 @@ static int remove_curse_aux(int Ind, int all)
 	/* Attempt to uncurse items being worn */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
-		u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
 		object_type *o_ptr = &p_ptr->inventory[i];
 
@@ -407,7 +407,7 @@ static int remove_curse_aux(int Ind, int all)
 		if (!cursed_p(o_ptr)) continue;
 
 		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		/* Heavily Cursed Items need a special spell */
 		if (!all && (f3 & TR3_HEAVY_CURSE)) continue;
@@ -504,7 +504,7 @@ void self_knowledge(int Ind)
 
 	int		i = 0, k;
 
-	u32b	f1 = 0L, f2 = 0L, f3 = 0L;
+	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, esp = 0L;
 
 	object_type	*o_ptr;
 
@@ -516,7 +516,7 @@ void self_knowledge(int Ind)
 	/* Acquire item flags from equipment */
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
 	{
-		u32b t1, t2, t3;
+		u32b t1, t2, t3, t4, t5, tesp;
 
 		o_ptr = &p_ptr->inventory[k];
 
@@ -524,12 +524,14 @@ void self_knowledge(int Ind)
 		if (!o_ptr->k_idx) continue;
 
 		/* Extract the flags */
-		object_flags(o_ptr, &t1, &t2, &t3);
+		object_flags(o_ptr, &t1, &t2, &t3, &t4, &t5, &tesp);
 
 		/* Extract flags */
 		f1 |= t1;
 		f2 |= t2;
 		f3 |= t3;
+		f4 |= t4;
+		f5 |= t5;
 	}
 
 
@@ -1859,11 +1861,10 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 
 	bool a = artifact_p(o_ptr);
 
-	u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
-
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
@@ -4520,9 +4521,10 @@ bool sleep_monsters_touch(int Ind)
 /* Scan magical powers for the golem */
 void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr)
 {
-        u32b f1, f2, f3;        
+	    u32b f1, f2, f3, f4, f5, esp;
 
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         if (f1 & TR1_LIFE) r_ptr->hdice += o_ptr->pval;
         if (f1 & TR1_SPEED) r_ptr->speed += o_ptr->pval * 2 / 3;

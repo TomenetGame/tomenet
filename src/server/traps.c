@@ -1759,18 +1759,20 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             s16b j, chance = 75;
             u32b f1, f2, f3, f4, f5, esp;
 
-            for (j=0;j<INVEN_TOTAL;j++)
+//            for (j=0;j<INVEN_TOTAL;j++)
+			/* From the foot ;D */
+            for (j = INVEN_TOTAL - 1; j >= 0 ; j--)
             {
                /* don't bother the overflow slot */
                if (j==INVEN_PACK) continue;
 
                if (!p_ptr->inventory[j].k_idx) continue;
                j_ptr = &p_ptr->inventory[j];
-//               object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-               object_flags(j_ptr, &f1, &f2, &f3);
+               object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+//               object_flags(j_ptr, &f1, &f2, &f3);
 
                /* is it a non-artifact speed item? */
-               if ((!j_ptr->name1) && (f1 & TR1_SPEED))
+               if ((!j_ptr->name1) && (f1 & TR1_SPEED) && (j_ptr->pval > 0))
                {
                   if (randint(100)<chance)
                   {

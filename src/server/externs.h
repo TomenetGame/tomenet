@@ -437,6 +437,7 @@ extern void (*ang_sort_swap)(int Ind, vptr u, vptr v, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
 extern bool (*get_obj_num_hook)(int k_idx);
 extern bool (*master_move_hook)(int Ind, char * parms);
+extern int artifact_bias;
 
 
 
@@ -844,7 +845,7 @@ extern void Handle_direction(int Ind, int dir);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern void flavor_init(void);
 extern void reset_visuals(void);
-extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3);
+extern void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp);
 extern void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mode);
 extern bool identify_fully_aux(int Ind, object_type *o_ptr);
@@ -911,6 +912,7 @@ extern cptr item_activation(object_type *o_ptr);
 extern void combine_pack(int Ind);
 extern void reorder_pack(int Ind);
 extern void setup_objects(void);
+extern s16b m_bonus(int max, int level);
 
 /* party.c */
 extern int party_lookup(cptr name);

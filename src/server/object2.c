@@ -880,7 +880,7 @@ static s32b object_value_real(object_type *o_ptr)
 {
 	s32b value;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -893,7 +893,7 @@ static s32b object_value_real(object_type *o_ptr)
 
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 
 	/* Artifact */
@@ -928,6 +928,19 @@ static s32b object_value_real(object_type *o_ptr)
 
 		/* Hack -- Reward the ego-item with a bonus */
 		value += e_ptr->cost;
+
+#if 0	// see you later :)
+                if (o_ptr->name2b)
+                {
+                        ego_item_type *e_ptr = &e_info[o_ptr->name2b];
+
+                        /* Hack -- "worthless" ego-items */
+                        if (!e_ptr->cost) return (0L);
+
+                        /* Hack -- Reward the ego-item with a bonus */
+                        value += e_ptr->cost;
+                }
+#endif	// 0
 	}
 
 
@@ -1306,7 +1319,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
-			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
+//			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
 
 			/* Hack -- Never stack recharging items */
 			if (o_ptr->timeout || j_ptr->timeout) return (FALSE);
@@ -1510,7 +1523,7 @@ void invcopy(object_type *o_ptr, int k_idx)
  * 120    0.03  0.11  0.31  0.46  1.31  2.48  4.60  7.78 11.67 25.53 45.72
  * 128    0.02  0.01  0.13  0.33  0.83  1.41  3.24  6.17  9.57 14.22 64.07
  */
-static s16b m_bonus(int max, int level)
+s16b m_bonus(int max, int level)
 {
 	int bonus, stand, extra, value;
 
@@ -1743,12 +1756,118 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr)
 
 
 /*
+ * Ported from PernAngband		- Jir -
+ *
+ * 'level' is not depth of dungeon but an index of item value.
+ *
+ * In PernMangband, ego-items use random-seed 'name3' just
+ * as same as randarts.
+ * (Be careful not to allow randarts ego!)
+ */
+/*
+ * Attempt to change an object into an ego
+ *
+ * This routine should only be called by "apply_magic()"
+ */
+static bool make_ego_item(int level, object_type *o_ptr, bool good)
+{
+	int i = 0, j;
+	int *ok_ego, ok_num = 0;
+	bool ret = FALSE;
+
+	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
+
+	C_MAKE(ok_ego, MAX_E_IDX, int);
+
+	/* Grab the ok ego */
+	for (i = 0; i < MAX_E_IDX; i++)
+	{
+		ego_item_type *e_ptr = &e_info[i];
+		bool ok = FALSE;
+
+		/* Skip "empty" items */
+		if (!e_ptr->name) continue;
+
+		/* Must have the correct fields */
+		for (j = 0; j < 6; j++)
+		{
+			if (e_ptr->tval[j] == o_ptr->tval)
+			{
+				if ((e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
+			}
+
+			if (ok) break;
+		}
+		if (!ok)
+		{
+			/* Doesnt count as a try*/
+			continue;
+		}
+
+		/* Good should be good, bad should be bad */
+		if (good && (!e_ptr->cost)) continue;
+		if ((!good) && e_ptr->cost) continue;
+
+		/* ok */
+		ok_ego[ok_num++] = i;
+	}
+
+	/* Now test them a few times */
+//	for (i = 0; i < ok_num * 10; i++)	// I wonder.. 
+	for (j = 0; j < ok_num * 10; j++)
+	{
+		ego_item_type *e_ptr;
+
+		i = ok_ego[rand_int(ok_num)];
+		e_ptr = &e_info[i];
+
+		/* XXX XXX Enforce minimum "depth" (loosely) */
+		if (e_ptr->level > level)
+		{
+			/* Acquire the "out-of-depth factor" */
+			int d = (e_ptr->level - level);
+
+			/* Roll for out-of-depth creation */
+			if (rand_int(d) != 0)
+			{
+				continue;
+			}
+		}
+
+		/* We must make the "rarity roll" */
+//		if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) < e_ptr->rarity)
+		if (rand_int(e_ptr->mrarity) < e_ptr->rarity)
+		{
+			continue;
+		}
+
+		/* Hack -- mark the item as an ego */
+		o_ptr->name2 = i;
+
+		/* Piece together a 32-bit random seed */
+		o_ptr->name3 = rand_int(0xFFFF) << 16;
+		o_ptr->name3 += rand_int(0xFFFF);
+
+		/* Success */
+		ret = TRUE;
+		break;
+	}
+
+	C_FREE(ok_ego, MAX_E_IDX, int);
+
+	/* Return */
+	return (ret);
+}
+
+
+/*
  * Charge a new wand.
  */
 static void charge_wand(object_type *o_ptr)
 {
 	switch (o_ptr->sval)
 	{
+#if 0 // oh, do I love thee.. the paresse!
 		case SV_WAND_HEAL_MONSTER:		o_ptr->pval = randint(20) + 8; break;
 		case SV_WAND_HASTE_MONSTER:		o_ptr->pval = randint(20) + 8; break;
 		case SV_WAND_CLONE_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
@@ -1778,6 +1897,40 @@ static void charge_wand(object_type *o_ptr)
 		case SV_WAND_DRAGON_FIRE:		o_ptr->pval = randint(3)  + 1; break;
 		case SV_WAND_DRAGON_COLD:		o_ptr->pval = randint(3)  + 1; break;
 		case SV_WAND_DRAGON_BREATH:		o_ptr->pval = randint(3)  + 1; break;
+#endif	// 0
+		case SV_WAND_HEAL_MONSTER:              o_ptr->pval = randint(20) + 8; break;
+		case SV_WAND_HASTE_MONSTER:             o_ptr->pval = randint(20) + 8; break;
+		case SV_WAND_CLONE_MONSTER:             o_ptr->pval = randint(5)  + 3; break;
+		case SV_WAND_TELEPORT_AWAY:             o_ptr->pval = randint(5)  + 6; break;
+		case SV_WAND_DISARMING:                 o_ptr->pval = randint(5)  + 4; break;
+		case SV_WAND_TRAP_DOOR_DEST:            o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_STONE_TO_MUD:              o_ptr->pval = randint(8)  + 3; break;
+		case SV_WAND_LITE:                      o_ptr->pval = randint(10) + 6; break;
+		case SV_WAND_SLEEP_MONSTER:             o_ptr->pval = randint(15) + 8; break;
+		case SV_WAND_SLOW_MONSTER:              o_ptr->pval = randint(10) + 6; break;
+		case SV_WAND_CONFUSE_MONSTER:           o_ptr->pval = randint(12) + 6; break;
+		case SV_WAND_FEAR_MONSTER:              o_ptr->pval = randint(5)  + 3; break;
+		case SV_WAND_DRAIN_LIFE:                o_ptr->pval = randint(3)  + 3; break;
+                case SV_WAND_WALL_CREATION:             o_ptr->pval = randint(4)  + 3; break;
+		case SV_WAND_POLYMORPH:                 o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_STINKING_CLOUD:            o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_MAGIC_MISSILE:             o_ptr->pval = randint(10) + 6; break;
+		case SV_WAND_ACID_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_CHARM_MONSTER:             o_ptr->pval = randint(6)  + 2; break;
+		case SV_WAND_FIRE_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_COLD_BOLT:                 o_ptr->pval = randint(5)  + 6; break;
+		case SV_WAND_ACID_BALL:                 o_ptr->pval = randint(5)  + 2; break;
+		case SV_WAND_ELEC_BALL:                 o_ptr->pval = randint(8)  + 4; break;
+		case SV_WAND_FIRE_BALL:                 o_ptr->pval = randint(4)  + 2; break;
+		case SV_WAND_COLD_BALL:                 o_ptr->pval = randint(6)  + 2; break;
+		case SV_WAND_WONDER:                    o_ptr->pval = randint(15) + 8; break;
+		case SV_WAND_ANNIHILATION:              o_ptr->pval = randint(2)  + 1; break;
+		case SV_WAND_DRAGON_FIRE:               o_ptr->pval = randint(3)  + 1; break;
+		case SV_WAND_DRAGON_COLD:               o_ptr->pval = randint(3)  + 1; break;
+		case SV_WAND_DRAGON_BREATH:             o_ptr->pval = randint(3)  + 1; break;
+		case SV_WAND_ROCKETS:                   o_ptr->pval = randint(2)  + 1; break;
+
+		case SV_WAND_ELEC_BOLT:			o_ptr->pval = randint(8)  + 6; break;
 	}
 }
 
@@ -1841,6 +1994,21 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 	int todam2 = m_bonus(10, level);
 	int tries;
 
+	artifact_bias = 0;
+
+        /* Very good */
+        if (power > 1)
+        {
+                /* Make ego item */
+//                if (!rand_int(RANDART_WEAPON) && (o_ptr->tval != TV_TRAPKIT)) create_artifact(o_ptr, FALSE, TRUE);	else
+                make_ego_item(level, o_ptr, TRUE);
+        }
+        else if (power < -1)
+        {
+                /* Make ego item */
+                make_ego_item(level, o_ptr, FALSE);
+        }
+
 	/* Good */
 	if (power > 0)
 	{
@@ -1877,6 +2045,78 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 	}
 
 
+        /* Some special cases */
+        switch (o_ptr->tval)
+        {
+#if 0
+		case TV_TRAPKIT:
+		{
+			/* Good */
+			if (power > 0) o_ptr->to_a += randint(5);
+			
+			/* Very good */
+			if (power > 1) o_ptr->to_a += randint(5);
+			
+			/* Bad */
+			if (power < 0) o_ptr->to_a -= randint(5);
+
+			/* Very bad */
+                        if (power < -1) o_ptr->to_a -= randint(5);
+									
+			break;
+		}
+                case TV_MSTAFF:
+                {
+                        if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
+                        {
+                                int gf[2], i;
+
+                                for (i = 0; i < 2; i++)
+                                {
+                                        int k = 0;
+
+                                        gf[i] = 0;
+                                        while (!k)
+                                        {                                                
+                                                k = lookup_kind(TV_RUNE1, (gf[i] = rand_int(MAX_GF)));
+                                        }
+                                }
+
+                                o_ptr->pval = gf[0] + (gf[1] << 16);
+                                o_ptr->pval3 = rand_int(RUNE_MOD_MAX) + (rand_int(RUNE_MOD_MAX) << 16);
+                                o_ptr->pval2 = randint(70) + (randint(70) << 8);
+                        }
+                        break;
+                }
+#endif	// 0
+		case TV_BOLT:
+		case TV_ARROW:
+		case TV_SHOT:
+		{
+                        if ((power == 1) && !o_ptr->name2)
+		        {
+                           if (randint(100) < 30)
+			   {
+			        /* Exploding missile */
+			        int power[25]={GF_ELEC, GF_POIS, GF_ACID,
+				     GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+				     GF_DARK, GF_SHARDS, GF_SOUND,
+				     GF_CONFUSION, GF_FORCE, GF_INERTIA,
+				     GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+			             GF_NETHER, GF_NEXUS, GF_TIME,
+				     GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+				     GF_TURN_ALL, GF_STUN};
+//				     GF_TURN_ALL, GF_NUKE, GF_STUN,
+//				     GF_DISINTEGRATE};
+			        
+//                                o_ptr->pval2 = power[rand_int(25)];
+                                o_ptr->pval = power[rand_int(25)];
+			   }
+			}
+			break;
+		}
+	}
+#if 0	// heheh
 	/* Analyze type */
 	switch (o_ptr->tval)
 	{
@@ -2157,6 +2397,7 @@ tries = 100;
 			break;
 		}
 	}
+#endif	// 0
 }
 
 
@@ -2171,6 +2412,21 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	int toac1 = randint(5) + m_bonus(5, level);
 
 	int toac2 = m_bonus(10, level);
+
+	artifact_bias = 0;
+
+        /* Very good */
+        if (power > 1)
+        {
+                /* Make ego item */
+//                if (!rand_int(RANDART_ARMOR)) create_artifact(o_ptr, FALSE, TRUE);	else
+                make_ego_item(level, o_ptr, TRUE);
+        }
+        else if (power < -1)
+        {
+                /* Make ego item */
+                make_ego_item(level, o_ptr, FALSE);
+        }
 
 
 	/* Good */
@@ -2203,8 +2459,43 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		/* Cursed (if "bad") */
 		if (o_ptr->to_a < 0) o_ptr->ident |= ID_CURSED;
 	}
+#if 0	// once..
+	/* Analyze type */
+	switch (o_ptr->tval)
+	{
+		case TV_CLOAK:
+		{
+			if (o_ptr->sval == SV_ELVEN_CLOAK)
+                                o_ptr->pval = randint(4);       /* No cursed elven cloaks...? */
+                        break;
+                }
+		case TV_DRAG_ARMOR:
+		{
+			/* Rating boost */
+			rating += 30;
 
+			/* Mention the item */
+                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
+			break;
+		}
+		case TV_SHIELD:
+		{
+			if (o_ptr->sval == SV_DRAGON_SHIELD)
+			{
+				/* Rating boost */
+				rating += 5;
+
+				/* Mention the item */
+                                if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
+				dragon_resist(o_ptr);
+			}
+			break;
+		}
+	}
+#endif	// 0
+
+#if 0	// former ones..heheh
 	/* Analyze type */
 	switch (o_ptr->tval)
 	{
@@ -2706,6 +2997,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 			break;
 		}
 	}
+#endif	// 0
 }
 
 
@@ -2722,6 +3014,23 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 {
   int tries;
 
+	artifact_bias = 0;
+
+        /* Very good */
+        if (power > 1)
+        {
+                /* Make ego item */
+//                if (!rand_int(RANDART_JEWEL)) create_artifact(o_ptr, FALSE, TRUE);	else
+                make_ego_item(level, o_ptr, TRUE);
+        }
+        else if (power < -1)
+        {
+                /* Make ego item */
+                make_ego_item(level, o_ptr, FALSE);
+        }
+
+
+		/* prolly something should be done..	- Jir - */
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
@@ -3044,6 +3353,7 @@ tries = 100;
 					break;
 				}
 
+#if 0	// those items should be handled in other ways(INSTA_EGO?)	- Jir -
          			/* Amulet of Terken -- never cursed */
                                 case SV_AMULET_TERKEN:
 				{
@@ -3099,6 +3409,7 @@ tries = 100;
 
 					break;
 				}
+#endif	// 0
 
 				/* Amulet of Doom -- always cursed */
 				case SV_AMULET_DOOM:
@@ -3130,6 +3441,21 @@ tries = 100;
  */
 static void a_m_aux_4(object_type *o_ptr, int level, int power)
 {
+        u32b f1, f2, f3, f4, f5, esp;
+
+        /* Very good */
+        if (power > 1)
+        {
+                /* Make ego item */
+//                if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE, TRUE);	else
+                make_ego_item(level, o_ptr, TRUE);
+        }
+        else if (power < -1)
+        {
+                /* Make ego item */
+                make_ego_item(level, o_ptr, FALSE);
+        }
+
 	/* Apply magic (good or bad) according to type */
 	switch (o_ptr->tval)
 	{
@@ -3415,15 +3741,43 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		}
 	}
 
-#if 0
-	/* Unowned yet */
-	o_ptr->owner = 0;
-//	o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-	if (lev > 0) o_ptr->level = ((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-	else o_ptr->level = -((lev * 2 / 4) > 100)?100:(lev * 2 / 4);
-	if (o_ptr->level < 1) o_ptr->level = 1;
-#endif
+#if 1	// tweaked pernA ego.. 
+	/* Hack -- analyze ego-items */
+//	else if (o_ptr->name2)
+	if (o_ptr->name2 && !o_ptr->name1)
+	{
+                ego_item_type *e_ptr;
+                int j;
+                bool limit_blows = FALSE;
+                u32b f1, f2, f3, f4, f5, esp;
+                s16b e_idx;
 
+	 	artifact_type *a_ptr;
+	 	
+			a_ptr =	ego_make(o_ptr);
+
+		/* Extract the other fields */
+//		o_ptr->pval += a_ptr->pval;
+		o_ptr->pval = a_ptr->pval;
+		o_ptr->ac += a_ptr->ac;
+		o_ptr->dd += a_ptr->dd;
+		o_ptr->ds += a_ptr->ds;
+		o_ptr->to_a += a_ptr->to_a;
+		o_ptr->to_h += a_ptr->to_h;
+		o_ptr->to_d += a_ptr->to_d;
+
+	/* Hack -- acquire "cursed" flag */
+	//                if (f3 & TR3_CURSED) o_ptr->ident |= (IDENT_CURSED);	// this should be done here!
+		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
+
+			rating += e_info[o_ptr->name2].rating;
+			//		+ e_info[o_ptr->name2b];
+
+
+	}
+#endif	// 0
+
+#if 0	// mangband ego...
 	/* Hack -- analyze ego-items */
 	if (o_ptr->name2)
 	{
@@ -3553,6 +3907,7 @@ void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, b
 		/* Done */
 		return;
 	}
+#endif	// 0
 
 
 	/* Examine real objects */
@@ -3621,6 +3976,8 @@ void determine_level_req(int Depth, object_type *o_ptr)
 	{
 //		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 		base += e_info[o_ptr->name2].rating;
+
+//		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
 	}
 
 	/* '17/72' == 0.2361... < 1/4 :) */
@@ -3634,6 +3991,7 @@ void determine_level_req(int Depth, object_type *o_ptr)
 	o_ptr->level = j < 100 ? (j > 1 ? j : 1) : 100;
 
 }
+
 
 
 /*
@@ -3706,10 +4064,12 @@ static bool kind_is_good(int k_idx)
 		/* Amulets -- Amulets of the Magi are good */
 		case TV_AMULET:
 		{
+#if 0
 			if (k_ptr->sval == SV_AMULET_THE_MAGI) return (TRUE);
 			if (k_ptr->sval == SV_AMULET_THE_MOON) return (TRUE);
 			if (k_ptr->sval == SV_AMULET_SPEED) return (TRUE);
 			if (k_ptr->sval == SV_AMULET_TERKEN) return (TRUE);
+#endif
 			return (FALSE);
 		}
 	}

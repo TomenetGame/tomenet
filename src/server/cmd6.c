@@ -3373,13 +3373,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
  */
 static bool item_tester_hook_activate(int Ind, object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+			  u32b f1, f2, f3, f4, f5, esp;
 
 	/* Not known */
 	if (!object_known_p(Ind, o_ptr)) return (FALSE);
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Check activation flag */
 	if (f3 & TR3_ACTIVATE) return (TRUE);
@@ -4234,6 +4234,7 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	}
 
+#if 0
 	/* Some ego items can be activated */
 	else if (o_ptr->name2)
 	{
@@ -4266,6 +4267,7 @@ void do_cmd_activate(int Ind, int item)
 		o_ptr->timeout = rand_int(100) + 100;
 		return;
 	}
+#endif	// 0
 
 
 	if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) && (p_ptr->pclass == CLASS_MIMIC))

@@ -474,7 +474,7 @@ static void rd_item(object_type *o_ptr)
 	byte old_dd;
 	byte old_ds;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	u16b tmp16u;
 
@@ -489,7 +489,7 @@ static void rd_item(object_type *o_ptr)
 	rd_s32b(&o_ptr->owner);
 	rd_s16b(&o_ptr->level);
 
-	/* Kind */
+	/* Kind (discarded though - Jir -) */
 	rd_s16b(&o_ptr->k_idx);
 
 	/* Location */
@@ -564,17 +564,20 @@ static void rd_item(object_type *o_ptr)
 	if (note[0]) o_ptr->note = quark_add(note);
 
 
+#if 0
 	/* Mega-Hack -- handle "dungeon objects" later */
 	if ((o_ptr->k_idx >= 445) && (o_ptr->k_idx <= 479)) return;
 
 
-	/* Obtain the "kind" template */
-	k_ptr = &k_info[o_ptr->k_idx];
-
 	/* Obtain tval/sval from k_info */
 	o_ptr->tval = k_ptr->tval;
 	o_ptr->sval = k_ptr->sval;
+#endif
+	/* Obtain k_idx from tval/sval instead :) */
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 
+	/* Obtain the "kind" template */
+	k_ptr = &k_info[o_ptr->k_idx];
 
 	/* Hack -- notice "broken" items */
 	if (k_ptr->cost <= 0) o_ptr->ident |= ID_BROKEN;
@@ -604,8 +607,8 @@ static void rd_item(object_type *o_ptr)
 	}
 
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Paranoia */
 	if (o_ptr->name2)
@@ -1634,7 +1637,8 @@ static errr rd_inventory(int Ind)
 		rd_item(&forge);
 
 		/* Hack -- verify item */
-		if (!forge.k_idx) return (53);
+//		if (!forge.k_idx) return (53);
+		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).");
 
 		/* Mega-Hack -- Handle artifacts that aren't yet "created" */
 		if (artifact_p(&forge))

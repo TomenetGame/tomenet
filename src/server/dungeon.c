@@ -2020,9 +2020,17 @@ static void process_player_end(int Ind)
 		/* Burn some fuel in the current lite */
 		if (o_ptr->tval == TV_LITE)
 		{
+        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 			/* Hack -- Use some fuel (sometimes) */
+#if 0
 			if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
 				&& !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name3))
+#endif	// 0
+                /* Extract the item flags */
+                object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+                /* Hack -- Use some fuel */
+                if ((f4 & TR4_FUEL_LITE) && (o_ptr->pval > 0))
 			{
 				/* Decrease life-span */
 				o_ptr->pval--;

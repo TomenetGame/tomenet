@@ -1,5 +1,5 @@
 N:*:Default
-516
+526
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -516,3 +516,13 @@ They say that you should be very careful when a trap seemed to do nothing.
 They say that traps of the same name can does various effect.
 They say that true sorcerors never run.
 They say that you should always cross the screen horizontally.
+They say that there's a certain chance of speed ring(+100)... 1 in 10^28.
+They say that werewolves are much more dangerous while the moon is full.
+They say that genuine artifacts may resist some of the effects of traps.
+They say that genuine artifacts are vulnerable to some kinds of traps.
+Check the broken bones before throwing them away - they can be wishbones!
+They say that touching bones of your race brings bad luck.
+They say that there's some secret slash-commands of great use.
+They say that speed boost beyond a line is not so helpful.
+They say that you should learn not to attack... in some situations.
+They say that elemental rings grants extra protection of corresponding kind.

@@ -1111,7 +1111,8 @@ static void calc_mana(int Ind)
 
 	object_type	*o_ptr;
 
-	u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
+
 	int Ind2 = 0;
 
 
@@ -1151,7 +1152,7 @@ static void calc_mana(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
 	/* Examine the gloves */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Only mages are affected */
 	if (p_ptr->mp_ptr->spell_book == TV_MAGIC_BOOK)
@@ -1347,7 +1348,7 @@ static void calc_hitpoints(int Ind)
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
 	object_type *o_ptr;
-	u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, mhp, Ind2 = 0;
 
@@ -1408,7 +1409,7 @@ static void calc_hitpoints(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_NECK];
 
 	/* Examine the gloves */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	if (f1 & TR1_LIFE)
 	  {
@@ -1451,7 +1452,7 @@ static void calc_torch(int Ind)
 
 	/* Base light radius */
 	p_ptr->cur_lite = p_ptr->lite;
-
+#if 0
 	/* Examine actual lites */
 	if (o_ptr->tval == TV_LITE)
 	{
@@ -1482,6 +1483,7 @@ static void calc_torch(int Ind)
 		/* Artifact Lites provide permanent, bright, lite */
 		if (artifact_p(o_ptr)) p_ptr->cur_lite += 3;
 	}
+#endif	// 0
 
 	/* Reduce lite when running if requested */
 	if (p_ptr->running && p_ptr->view_reduce_lite)
@@ -1644,7 +1646,7 @@ static void calc_bonuses(int Ind)
 	object_kind		*k_ptr;
 	ego_item_type 		*e_ptr;
 
-	u32b		f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
 
 	/* Save the old speed */
@@ -1925,7 +1927,7 @@ static void calc_bonuses(int Ind)
 		if (!o_ptr->k_idx) continue;
 
 		/* Extract the item flags */
-		object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
 		 * feature in MAngband 0.7.0 is that the magnitude of the
@@ -1973,17 +1975,21 @@ static void calc_bonuses(int Ind)
 			if (k_ptr->flags1 & TR1_BLOWS) extra_blows += o_ptr->bpval;
 
 			/* Affect spells */
-			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
+			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
+//			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 		}
 
 		/* Next, add our ego bonuses */
 		/* Hack -- clear out any pval bonuses that are in the base item
 		 * bonus but not the ego bonus so we don't add them twice.
 		*/
+		/* Huh? it's not done with bpval??	- Jir - */
+#if 0
 		if (o_ptr->name2)
 		{
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~e_ptr->flags1);
 		}
+#endif
 
 
 		/* Affect stats */
@@ -2016,13 +2022,15 @@ static void calc_bonuses(int Ind)
 		if (f1 & TR1_BLOWS) extra_blows += o_ptr->pval;
 
 		/* Affect spellss */
-		if (f1 & TR1_SPELL_SPEED) extra_spells += o_ptr->pval;
+//		if (f1 & TR1_SPELL_SPEED) extra_spells += o_ptr->pval;
+		if (f1 & TR1_SPELL) extra_spells += o_ptr->pval;
 
 		/* Hack -- cause earthquakes */
 		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
 
 		/* Boost shots */
-		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
+//		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
+		if (f4 & TR4_AUTO_ID) p_ptr->auto_id = TRUE;
 
 		/* Boost shots */
 		if (f3 & TR3_XTRA_SHOTS) extra_shots++;
@@ -2036,11 +2044,19 @@ static void calc_bonuses(int Ind)
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
 		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
-		if (f3 & TR3_LITE) p_ptr->lite += 1;
+//		if (f3 & TR3_LITE1) p_ptr->lite += 1;
 		if (f3 & TR3_SEE_INVIS) p_ptr->see_inv = TRUE;
 		if (f3 & TR3_FEATHER) p_ptr->feather_fall = TRUE;
 		if (f2 & TR2_FREE_ACT) p_ptr->free_act = TRUE;
 		if (f2 & TR2_HOLD_LIFE) p_ptr->hold_life = TRUE;
+
+		/* Light(consider doing it on calc_torch) */
+		if (((f4 & TR4_FUEL_LITE) && (o_ptr->pval > 0)) || (!(f4 & TR4_FUEL_LITE)))
+		{
+			if (f3 & TR3_LITE1) p_ptr->lite++;
+			if (f4 & TR4_LITE2) p_ptr->lite += 2;
+			if (f4 & TR4_LITE3) p_ptr->lite += 3;
+		}
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) p_ptr->immune_fire = TRUE;
@@ -2069,7 +2085,8 @@ static void calc_bonuses(int Ind)
 		if (f2 & TR2_RES_NEXUS) p_ptr->resist_nexus = TRUE;
 		if (f2 & TR2_RES_BLIND) p_ptr->resist_blind = TRUE;
 		if (f2 & TR2_RES_NETHER) p_ptr->resist_neth = TRUE;
-		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
+//		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
+		if (f3 & TR3_NO_MAGIC) p_ptr->anti_magic = TRUE;
 
 		/* Sustain flags */
 		if (f2 & TR2_SUST_STR) p_ptr->sustain_str = TRUE;

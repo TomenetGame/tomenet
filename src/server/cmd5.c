@@ -788,6 +788,7 @@ void do_cmd_study(int Ind, int book, int spell)
 	p_ptr->window |= (PW_SPELL);
 }
 
+/* let's hack this :)	- Jir - */
 bool check_antimagic(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -825,11 +826,13 @@ bool check_antimagic(int Ind)
 		o_ptr = &q_ptr->inventory[INVEN_WIELD];
 	        if (o_ptr->k_idx)
 		  {
-		    u32b f1, f2, f3;
+			  u32b f1, f2, f3, f4, f5, esp;
 
-		    object_flags(o_ptr, &f1, &f2, &f3);
-		    
-		    if (f2 & TR2_ANTI_MAGIC)
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+//		    if (f2 & TR2_ANTI_MAGIC)
+		    if (f3 & TR3_NO_MAGIC)
 		      {
 			int minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval;
 			/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */

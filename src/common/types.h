@@ -173,6 +173,7 @@ struct object_kind
 	byte sval;			/* Object sub type */
 
 	s16b pval;			/* Object extra info */
+//		s32b pval2;                     /* Object extra info */
 
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to damage */
@@ -189,6 +190,9 @@ struct object_kind
 	u32b flags1;		/* Flags, set 1 */
 	u32b flags2;		/* Flags, set 2 */
 	u32b flags3;		/* Flags, set 3 */
+        u32b flags4;            /* Flags, set 4 */
+        u32b flags5;            /* Flags, set 5 */
+
 
 	byte locale[4];		/* Allocation level(s) */
 	byte chance[4];		/* Allocation chance(s) */
@@ -217,6 +221,14 @@ struct object_kind
 /*	bool aware;	*/		/* The player is "aware" of the item's effects */
 
 /*	bool tried;	*/		/* The player has "tried" one of the items */
+
+        u32b esp;                       /* ESP flags */
+#if 0
+        byte btval;                     /* Become Object type */
+        byte bsval;                     /* Become Object sub type */
+
+        s16b power;                     /* Power granted(if any) */
+#endif
 };
 
 
@@ -256,12 +268,23 @@ struct artifact_type
 	u32b flags1;		/* Artifact Flags, set 1 */
 	u32b flags2;		/* Artifact Flags, set 2 */
 	u32b flags3;		/* Artifact Flags, set 3 */
+#if 1
+        u32b flags4;            /* Artifact Flags, set 4 */
+        u32b flags5;            /* Artifact Flags, set 5 */
+#endif	// 0
 
 	byte level;			/* Artifact level */
 	byte rarity;		/* Artifact rarity */
 
 	byte cur_num;		/* Number created (0 or 1) */
 	byte max_num;		/* Unused (should be "1") */
+        u32b esp;                       /* ESP flags */
+#if 0
+
+        s16b power;                     /* Power granted(if any) */
+
+        s16b set;               /* Does it belongs to a set ?*/
+#endif	// 0
 };
 
 
@@ -276,11 +299,18 @@ struct ego_item_type
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
 
-	byte slot;			/* Standard slot value */
+        bool before;                    /* Before or after the object name ? */
+
+        byte tval[6];
+        byte min_sval[6];
+        byte max_sval[6];
+
+//	byte slot;			/* Standard slot value */
 	byte rating;		/* Rating boost */
 
 	byte level;			/* Minimum level */
 	byte rarity;		/* Object rarity */
+        byte mrarity;           /* Object rarity */
 
 	char max_to_h;		/* Maximum to-hit bonus */
 	char max_to_d;		/* Maximum to-dam bonus */
@@ -290,9 +320,24 @@ struct ego_item_type
 
 	s32b cost;			/* Ego-item "cost" */
 
+#if 0
 	u32b flags1;		/* Ego-Item Flags, set 1 */
 	u32b flags2;		/* Ego-Item Flags, set 2 */
 	u32b flags3;		/* Ego-Item Flags, set 3 */
+#endif	// 0
+
+        byte rar[5];
+        u32b flags1[5];            /* Ego-Item Flags, set 1 */
+        u32b flags2[5];            /* Ego-Item Flags, set 2 */
+        u32b flags3[5];            /* Ego-Item Flags, set 3 */
+#if 1
+        u32b flags4[5];            /* Ego-Item Flags, set 4 */
+        u32b flags5[5];            /* Ego-Item Flags, set 5 */
+        u32b esp[5];                       /* ESP flags */
+        u32b fego[5];                       /* ego flags */
+
+//        s16b power;                     /* Power granted(if any) */
+#endif	// 0
 };
 
 
@@ -575,6 +620,10 @@ struct object_type
 {
         s32b owner;                     /* Player that found it */
         s16b level;                     /* Level req */
+			/* Hack -- ego-items use 'level' in a special way, and
+			 * altering this value will result in change of ego-item
+			 * powers themselves!	- Jir -
+			 */
 
 	s16b k_idx;			/* Kind index (zero if "dead") */
 
@@ -605,9 +654,15 @@ struct object_type
 
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
+#if 0
+        s16b name2;                     /* Ego-Item type, if any */
+        s16b name2b;                    /* Second Ego-Item type, if any */
+										/* 2nd ego is not used in PernA also? */
+#endif	// 0
 	s32b name3;			/* Randart seed, if any */
+						/* now it's common with ego-items -Jir-*/
 
-	byte xtra1;			/* Extra info type */
+	byte xtra1;			/* Extra info type (ego only? -Jir-) */
 	byte xtra2;			/* Extra info index */
 
 	s16b to_h;			/* Plusses to hit */
@@ -625,7 +680,19 @@ struct object_type
 	/*byte marked;	*/	/* Object is marked */
 
 	u16b note;			/* Inscription index */
-#if 0	
+
+#if 0	// from pernA.. but I hate this system, so rest in if0
+        u16b art_name;      /* Artifact name (random artifacts) */
+
+        u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
+        u32b art_flags2;        /* Flags, set 2  for the random artifacts of*/
+        u32b art_flags3;        /* Flags, set 3  Zangband */
+        u32b art_flags4;        /* Flags, set 4  PernAngband */
+        u32b art_flags5;        /* Flags, set 5  PernAngband */
+        u32b art_esp;           /* Flags, set esp  PernAngband */
+#endif	// 0
+	
+#if 0	// from pernA.. I love this system, coming soon :)
 	s16b next_o_idx;	/* Next object in stack (if any) */
 
 	s16b held_m_idx;	/* Monster holding us (if any) */

@@ -185,11 +185,11 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 
         monster_race *r_ptr = race_inf(m_ptr);
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4, f5, esp;
 	bool brand_pois = FALSE;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Hack -- extract temp branding */
 	if (p_ptr->bow_brand)
@@ -407,10 +407,10 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 {
 	int mult = 1;
 
-	u32b f1, f2, f3;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval)

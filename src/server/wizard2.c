@@ -261,13 +261,13 @@ static void wiz_display_item(object_type *o_ptr)
 {
 	int 	i, j = 13;
 
-	u32b	f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
 	char        buf[256];
 
 
 	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Clear the screen */
 	for (i = 1; i <= 23; i++) prt("", i, j - 2);

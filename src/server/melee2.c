@@ -499,11 +499,13 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	if (o_ptr->k_idx)
 	  {
-	    u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
-	    object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	    if (f2 & TR2_ANTI_MAGIC)
+//	    if (f2 & TR2_ANTI_MAGIC)
+	    if (f2 & TR3_NO_MAGIC)
 	      {
 		int minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval;
 		/* if ((minus < 0) && (p_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
@@ -3748,7 +3750,7 @@ static void process_monster(int Ind, int m_idx)
 			    ((r_ptr->flags2 & RF2_TAKE_ITEM) ||
 			     (r_ptr->flags2 & RF2_KILL_ITEM)))
 			{
-				u32b f1, f2, f3;
+				u32b f1, f2, f3, f4, f5, esp;
 
 				u32b flg3 = 0L;
 
@@ -3759,7 +3761,7 @@ static void process_monster(int Ind, int m_idx)
 				o_ptr = &o_list[c_ptr->o_idx];
 
 				/* Extract some flags */
-				object_flags(o_ptr, &f1, &f2, &f3);
+				object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 				/* Acquire the object name */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);

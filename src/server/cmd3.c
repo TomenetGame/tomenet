@@ -518,12 +518,13 @@ void do_cmd_wield(int Ind, int item)
 	o_ptr = &(p_ptr->inventory[slot]);
 
 	/*** Could make procedure "inven_wield()" ***/
-
+#if 1
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_LIFE) && (tmp_obj.tval == TV_AMULET) && (tmp_obj.sval == SV_AMULET_LIFE))
 	  {
 	    o_ptr->pval += tmp_obj.pval;
 	  }
 	else
+#endif	// 0
 	  {
 
 	/* Take off the "entire" item if one is there */

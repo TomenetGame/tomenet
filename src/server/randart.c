@@ -314,10 +314,10 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags2 & TR2_RES_DISEN) p += 12;
 
 	if (a_ptr->flags3 & TR3_FEATHER) p += 2;
-	if (a_ptr->flags3 & TR3_LITE) p += 2;
+	if (a_ptr->flags3 & TR3_LITE1) p += 2;
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
-        if (a_ptr->flags3 & TR3_KNOWLEDGE) p += 20;
+        if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPORT) p -= 20;
@@ -508,7 +508,7 @@ void add_ability (artifact_type *a_ptr)
 				if (r < 17) a_ptr->flags2 |= TR2_FREE_ACT;
 				else if (r < 37)
 				  {
-				    a_ptr->flags3 |= TR3_KNOWLEDGE;
+				    a_ptr->flags4 |= TR4_AUTO_ID;
 				  }
 				else if (r < 60)
 				{
@@ -537,7 +537,7 @@ void add_ability (artifact_type *a_ptr)
 				if (r < 20) a_ptr->flags2 |= TR2_RES_BLIND;
 				else if (r < 30)
 				  {
-				    a_ptr->flags3 |= TR3_KNOWLEDGE;
+				    a_ptr->flags4 |= TR4_AUTO_ID;
 				  }
 				else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
 				else if (r < 65) a_ptr->flags3 |= TR3_SEE_INVIS;
@@ -752,7 +752,7 @@ void add_ability (artifact_type *a_ptr)
 					a_ptr->flags2 |= TR2_RES_DISEN;
 				break;
 			case 37: a_ptr->flags3 |= TR3_FEATHER; break;
-			case 38: a_ptr->flags3 |= TR3_LITE; break;
+			case 38: a_ptr->flags3 |= TR3_LITE1; break;
 			case 39: a_ptr->flags3 |= TR3_SEE_INVIS; break;
 		        case 40:
 				if (rand_int (3) == 0)
@@ -1037,3 +1037,771 @@ void randart_name(object_type *o_ptr, char *buffer)
 	return;
 }
 	
+
+/*
+ * Here begins the code for new ego-items.		- Jir -
+ * Powers of ego-items are determined from random seed
+ * just like randarts, but is controled by ego-flags.
+ *
+ * This code is the mixture of PernAngband ego-item system
+ * and PernMangband randarts system(as you see above).
+ *
+ * Our system is more efficient in memory/file-size (all we
+ * need is a s32b seed), but *less* efficient in executing
+ * speed (we 'generate' egos each time they are used!)
+ * than that of PernA.
+ */
+
+/*
+ * Returns pointer to ego-item artifact_type structure.
+ *
+ * o_ptr should contain the seed (in name3) plus a tval
+ * and sval.
+ */
+artifact_type *ego_make(object_type *o_ptr)
+{
+	ego_item_type *e_ptr;
+	int j;
+	bool limit_blows = FALSE;
+	u32b f1, f2, f3, f4, f5, esp;
+	s16b e_idx;
+
+	/* Hack -- initialize bias */
+	artifact_bias = 0;
+
+	/* Get pointer to our artifact_type object */
+	a_ptr = &randart;
+
+	/* Get pointer to object kind */
+	k_ptr = &k_info[o_ptr->k_idx];
+
+	/* Set the RNG seed. */
+	Rand_value = o_ptr->name3;
+	Rand_quick = TRUE;
+
+	/* Wipe the artifact_type structure */
+	WIPE(&randart, artifact_type);
+
+	e_idx = o_ptr->name2;
+
+	/* Ok now, THAT is truly ugly */
+try_an_other_ego:
+	e_ptr = &e_info[e_idx];
+
+	/* Hack -- extra powers */
+	for (j = 0; j < 5; j++)
+	{
+		/* Rarity check */
+		if (magik(e_ptr->rar[j]))
+		{
+			a_ptr->flags1 |= e_ptr->flags1[j];
+			a_ptr->flags2 |= e_ptr->flags2[j];
+			a_ptr->flags3 |= e_ptr->flags3[j];
+			a_ptr->flags4 |= e_ptr->flags4[j];
+			a_ptr->flags5 |= e_ptr->flags5[j];
+			a_ptr->esp |= e_ptr->esp[j];
+
+			add_random_ego_flag(a_ptr, e_ptr->fego[j], &limit_blows, o_ptr->level);
+		}
+	}
+
+	/* No insane number of blows */  
+	if (limit_blows && (a_ptr->flags1 & TR1_BLOWS))
+	{
+		if (a_ptr->pval > 2)
+			a_ptr->pval -= randint(a_ptr->pval - 2);
+	}
+
+#if 0	// supposed to be gone forever :)
+	/* get flags */
+	object_flags(a_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Hack -- acquire "cursed" flag */
+	/* this should be done elsewhere */
+	if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
+#endif	// 0
+
+	/* Hack -- obtain bonuses */
+	if (e_ptr->max_to_h > 0) a_ptr->to_h += randint(e_ptr->max_to_h);
+	if (e_ptr->max_to_h < 0) a_ptr->to_h -= randint(-e_ptr->max_to_h);
+	if (e_ptr->max_to_d > 0) a_ptr->to_d += randint(e_ptr->max_to_d);
+	if (e_ptr->max_to_d < 0) a_ptr->to_d -= randint(-e_ptr->max_to_d);
+	if (e_ptr->max_to_a > 0) a_ptr->to_a += randint(e_ptr->max_to_a);
+	if (e_ptr->max_to_a < 0) a_ptr->to_a -= randint(-e_ptr->max_to_a);
+
+	/* Hack -- obtain pval */
+	if (e_ptr->max_pval > 0) a_ptr->pval += randint(e_ptr->max_pval);
+	if (e_ptr->max_pval < 0) a_ptr->pval -= randint(-e_ptr->max_pval);
+
+	/* Hack -- apply rating bonus(it's done in apply_magic) */
+	//		rating += e_ptr->rating;
+
+#if 0	// double-ego code.. future pleasure :)
+	if (a_ptr->name2b && (a_ptr->name2b != e_idx))
+	{
+		e_idx = a_ptr->name2b;
+		goto try_an_other_ego;
+	}
+#endif	// 0
+
+	/* Cheat -- describe the item */
+	//                if ((cheat_peek)||(p_ptr->precognition)) object_mention(a_ptr);
+
+
+	/* Restore RNG */
+	Rand_quick = FALSE;
+
+	/* Return a pointer to the artifact_type */	
+	return (a_ptr);
+}
+
+/* Add a random flag to the ego item */
+/*
+ * Hack -- 'dun_level' is needed to determine some values;
+ * I diverted lv-req of item for this purpose, thus changes in o_ptr->level
+ * will result in changes of ego-item powers themselves!!	- Jir -
+ */
+// void add_random_ego_flag(object_type *o_ptr, int fego, bool *limit_blows)
+void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level)
+{
+	if (fego & ETR4_SUSTAIN)
+	{
+		/* Make a random sustain */
+		switch(randint(6))
+		{
+			case 1: a_ptr->flags2 |= TR2_SUST_STR; break;
+			case 2: a_ptr->flags2 |= TR2_SUST_INT; break;
+			case 3: a_ptr->flags2 |= TR2_SUST_WIS; break;
+			case 4: a_ptr->flags2 |= TR2_SUST_DEX; break;
+			case 5: a_ptr->flags2 |= TR2_SUST_CON; break;
+			case 6: a_ptr->flags2 |= TR2_SUST_CHR; break;
+		}
+	}
+
+	if (fego & ETR4_OLD_RESIST)
+	{
+		/* Make a random resist, equal probabilities */ 
+		switch (randint(11))
+		{
+			case  1: a_ptr->flags2 |= (TR2_RES_BLIND);  break;
+			case  2: a_ptr->flags2 |= (TR2_RES_CONF);   break;
+			case  3: a_ptr->flags2 |= (TR2_RES_SOUND);  break;
+			case  4: a_ptr->flags2 |= (TR2_RES_SHARDS); break;
+			case  5: a_ptr->flags2 |= (TR2_RES_NETHER); break;
+			case  6: a_ptr->flags2 |= (TR2_RES_NEXUS);  break;
+			case  7: a_ptr->flags2 |= (TR2_RES_CHAOS);  break;
+			case  8: a_ptr->flags2 |= (TR2_RES_DISEN);  break;
+			case  9: a_ptr->flags2 |= (TR2_RES_POIS);   break;
+			case 10: a_ptr->flags2 |= (TR2_RES_DARK);   break;
+			case 11: a_ptr->flags2 |= (TR2_RES_LITE);   break;
+		}
+	}
+
+	if (fego & ETR4_ABILITY)
+	{
+		/* Choose an ability */
+		switch (randint(8))
+		{
+			case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
+			case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
+			case 3: a_ptr->flags3 |= (TR3_SEE_INVIS);   break;
+			case 4: a_ptr->esp |= (ESP_ALL);   break;
+			case 5: a_ptr->flags3 |= (TR3_SLOW_DIGEST); break;
+			case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
+			case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
+			case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
+		}
+	}
+
+	if (fego & ETR4_R_ELEM)
+	{
+		/* Make an acid/elec/fire/cold/poison resist */
+		random_resistance(a_ptr, FALSE, randint(14) + 4);                                        
+	}
+	if (fego & ETR4_R_LOW)
+	{
+		/* Make an acid/elec/fire/cold resist */
+		random_resistance(a_ptr, FALSE, randint(12) + 4);                                        
+	}
+
+	if (fego & ETR4_R_HIGH)
+	{
+		/* Make a high resist */
+		random_resistance(a_ptr, FALSE, randint(22) + 16);                                       
+	}
+	if (fego & ETR4_R_ANY)
+	{
+		/* Make any resist */
+		random_resistance(a_ptr, FALSE, randint(34) + 4);                                        
+	}
+
+	if (fego & ETR4_R_DRAGON)
+	{
+		/* Make "dragon resist" */
+		dragon_resist(a_ptr);
+	}
+
+	if (fego & ETR4_SLAY_WEAP)
+	{
+		/* Make a Weapon of Slaying */
+
+		if (randint(3) == 1) /* double damage */
+			a_ptr->dd *= 2;
+		else
+		{
+			do
+			{
+				a_ptr->dd++;
+			}
+			while (randint(a_ptr->dd) == 1);
+			do
+			{
+				a_ptr->ds++;
+			}
+			while (randint(a_ptr->ds) == 1);
+		}
+		if (randint(5) == 1)
+		{
+			a_ptr->flags1 |= TR1_BRAND_POIS;
+		}
+		if (a_ptr->tval == TV_SWORD && (randint(3) == 1))
+		{
+			a_ptr->flags1 |= TR1_VORPAL;
+		}
+	}
+
+	if (fego & ETR4_DAM_DIE)
+	{
+		/* Increase damage dice */
+		a_ptr->dd++;                             
+	}
+
+	if (fego & ETR4_DAM_SIZE)
+	{
+		/* Increase damage dice size */
+		a_ptr->ds++; 
+	}
+
+	if (fego & ETR4_LIMIT_BLOWS)
+	{
+		/* Swap this flag */
+		*limit_blows = !(*limit_blows);
+	}
+
+	if (fego & ETR4_PVAL_M1)
+	{
+		/* Increase pval */
+		a_ptr->pval++;
+	}
+
+	if (fego & ETR4_PVAL_M2)
+	{
+		/* Increase pval */
+		a_ptr->pval += m_bonus(2, dun_level);
+	}
+
+	if (fego & ETR4_PVAL_M3)
+	{
+		/* Increase pval */
+		a_ptr->pval += m_bonus(3, dun_level);
+	}
+
+	if (fego & ETR4_PVAL_M5)
+	{
+		/* Increase pval */
+		a_ptr->pval += m_bonus(5, dun_level);
+	}
+	if (fego & ETR4_AC_M1)
+	{
+		/* Increase ac */
+		a_ptr->to_a++;
+	}
+
+	if (fego & ETR4_AC_M2)
+	{
+		/* Increase ac */
+		a_ptr->to_a += m_bonus(2, dun_level);
+	}
+
+	if (fego & ETR4_AC_M3)
+	{
+		/* Increase ac */
+		a_ptr->to_a += m_bonus(3, dun_level);
+	}
+
+	if (fego & ETR4_AC_M5)
+	{
+		/* Increase ac */
+		a_ptr->to_a += m_bonus(5, dun_level);
+	}
+	if (fego & ETR4_TH_M1)
+	{
+		/* Increase to hit */
+		a_ptr->to_h++;
+	}
+
+	if (fego & ETR4_TH_M2)
+	{
+		/* Increase to hit */
+		a_ptr->to_h += m_bonus(2, dun_level);
+	}
+
+	if (fego & ETR4_TH_M3)
+	{
+		/* Increase to hit */
+		a_ptr->to_h += m_bonus(3, dun_level);
+	}
+
+	if (fego & ETR4_TH_M5)
+	{
+		/* Increase to hit */
+		a_ptr->to_h += m_bonus(5, dun_level);
+	}
+	if (fego & ETR4_TD_M1)
+	{
+		/* Increase to dam */
+		a_ptr->to_d++;
+	}
+
+	if (fego & ETR4_TD_M2)
+	{
+		/* Increase to dam */
+		a_ptr->to_d += m_bonus(2, dun_level);
+	}
+
+	if (fego & ETR4_TD_M3)
+	{
+		/* Increase to dam */
+		a_ptr->to_d += m_bonus(3, dun_level);
+	}
+
+	if (fego & ETR4_TD_M5)
+	{
+		/* Increase to dam */
+		a_ptr->to_d += m_bonus(5, dun_level);
+	}
+	if (fego & ETR4_R_P_ABILITY)
+	{
+		/* Add a random pval-affected ability */
+		/* This might cause boots with + to blows */
+		switch (randint(6))
+		{
+			case 1:a_ptr->flags1 |= TR1_STEALTH; break;
+			case 2:a_ptr->flags1 |= TR1_SEARCH; break;
+			case 3:a_ptr->flags1 |= TR1_INFRA; break;
+			case 4:a_ptr->flags1 |= TR1_TUNNEL; break;
+			case 5:a_ptr->flags1 |= TR1_SPEED; break;
+			case 6:a_ptr->flags1 |= TR1_BLOWS; break;                                            
+		}
+
+	}
+	if (fego & ETR4_R_STAT)
+	{
+		/* Add a random stat */
+		switch (randint(6))
+		{
+			case 1:a_ptr->flags1 |= TR1_STR; break;
+			case 2:a_ptr->flags1 |= TR1_INT; break;
+			case 3:a_ptr->flags1 |= TR1_WIS; break;
+			case 4:a_ptr->flags1 |= TR1_DEX; break;
+			case 5:a_ptr->flags1 |= TR1_CON; break;
+			case 6:a_ptr->flags1 |= TR1_CHR; break;                                              
+		}
+	}
+	if (fego & ETR4_R_STAT_SUST)
+	{
+		/* Add a random stat and sustain it */
+		switch (randint(6))
+		{
+			case 1:
+				{
+					a_ptr->flags1 |= TR1_STR;
+					a_ptr->flags2 |= TR2_SUST_STR;
+					break;
+				}
+
+			case 2:
+				{
+					a_ptr->flags1 |= TR1_INT;
+					a_ptr->flags2 |= TR2_SUST_INT;
+					break;
+				}
+
+			case 3:
+				{
+					a_ptr->flags1 |= TR1_WIS;
+					a_ptr->flags2 |= TR2_SUST_WIS;
+					break;
+				}
+
+			case 4:
+				{
+					a_ptr->flags1 |= TR1_DEX;
+					a_ptr->flags2 |= TR2_SUST_DEX;
+					break;
+				}
+
+			case 5:
+				{
+					a_ptr->flags1 |= TR1_CON;
+					a_ptr->flags2 |= TR2_SUST_CON;
+					break;
+				}
+			case 6:
+				{
+					a_ptr->flags1 |= TR1_CHR;
+					a_ptr->flags2 |= TR2_SUST_CHR;
+					break;
+				}                                                
+		}
+	}
+	if (fego & ETR4_R_IMMUNITY)
+	{
+		/* Give a random immunity */
+		switch (randint(4))
+		{
+			case 1:
+				{
+					a_ptr->flags2 |= TR2_IM_FIRE;
+					a_ptr->flags3 |= TR3_IGNORE_FIRE;
+					break;
+				}
+			case 2:
+				{
+					a_ptr->flags2 |= TR2_IM_ACID;
+					a_ptr->flags3 |= TR3_IGNORE_ACID;
+					break;
+				}
+			case 3:
+				{
+					a_ptr->flags2 |= TR2_IM_ELEC;
+					a_ptr->flags3 |= TR3_IGNORE_ELEC;
+					break;
+				}
+			case 4:
+				{
+					a_ptr->flags2 |= TR2_IM_COLD;
+					a_ptr->flags3 |= TR3_IGNORE_COLD;
+					break;
+				}
+		}
+	}
+}
+
+
+/*
+ * Borrowed from spells2.c of PernAngband.
+ * erm.. btw.. what's that 'is_scroll'?		- Jir -
+ */
+
+#define WEIRD_LUCK      12
+#define BIAS_LUCK       20
+/*
+ * Bias luck needs to be higher than weird luck,
+ * since it is usually tested several times...
+ */
+
+//void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
+void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific)
+{
+  if (!specific) /* To avoid a number of possible bugs */
+  {
+    if (artifact_bias == BIAS_ACID)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_ACID))
+	{
+	    a_ptr->flags2 |= TR2_RES_ACID;
+	    if (randint(2)==1) return;
+	}
+    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_ACID))
+	{
+	    a_ptr->flags2 |= TR2_IM_ACID;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_ELEC)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_ELEC))
+	{
+	    a_ptr->flags2 |= TR2_RES_ELEC;
+	    if (randint(2)==1) return;
+	}
+    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
+        ! (a_ptr->flags3 & TR3_SH_ELEC))
+        {
+            a_ptr->flags2 |= TR3_SH_ELEC;
+            if (randint(2)==1) return;
+        }
+    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_ELEC))
+	{
+	    a_ptr->flags2 |= TR2_IM_ELEC;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_FIRE)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_FIRE))
+	{
+	    a_ptr->flags2 |= TR2_RES_FIRE;
+	    if (randint(2)==1) return;
+	}
+    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
+        ! (a_ptr->flags3 & TR3_SH_FIRE))
+        {
+            a_ptr->flags2 |= TR3_SH_FIRE;
+            if (randint(2)==1) return;
+        }
+    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_FIRE))
+	{
+	    a_ptr->flags2 |= TR2_IM_FIRE;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_COLD)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_COLD))
+	{
+	    a_ptr->flags2 |= TR2_RES_COLD;
+	    if (randint(2)==1) return;
+	}
+    if (randint(BIAS_LUCK)==1 && !(a_ptr->flags2 & TR2_IM_COLD))
+	{
+	    a_ptr->flags2 |= TR2_IM_COLD;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_POIS)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_POIS))
+	{
+	    a_ptr->flags2 |= TR2_RES_POIS;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_WARRIOR)
+    {
+	if (randint(3)!=1 && (!(a_ptr->flags2 & TR2_RES_FEAR)))
+	{
+	    a_ptr->flags2 |= TR2_RES_FEAR;
+	    if (randint(2)==1) return;
+	}
+    if ((randint(3)==1) && (!(a_ptr->flags3 & TR3_NO_MAGIC)))
+    {
+        a_ptr->flags3 |= TR3_NO_MAGIC;
+        if (randint(2)==1) return;
+    }
+    }
+    else if (artifact_bias == BIAS_NECROMANTIC)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_NETHER))
+	{
+	    a_ptr->flags2 |= TR2_RES_NETHER;
+	    if (randint(2)==1) return;
+	}
+	if (!(a_ptr->flags2 & TR2_RES_POIS))
+	{
+	    a_ptr->flags2 |= TR2_RES_POIS;
+	    if (randint(2)==1) return;
+	}
+	if (!(a_ptr->flags2 & TR2_RES_DARK))
+	{
+	    a_ptr->flags2 |= TR2_RES_DARK;
+	    if (randint(2)==1) return;
+	}
+    }
+    else if (artifact_bias == BIAS_CHAOS)
+    {
+	if (!(a_ptr->flags2 & TR2_RES_CHAOS))
+	{
+	    a_ptr->flags2 |= TR2_RES_CHAOS;
+	    if (randint(2)==1) return;
+	}
+	if (!(a_ptr->flags2 & TR2_RES_CONF))
+	{
+	    a_ptr->flags2 |= TR2_RES_CONF;
+	    if (randint(2)==1) return;
+	}
+	if (!(a_ptr->flags2 & TR2_RES_DISEN))
+	{
+	    a_ptr->flags2 |= TR2_RES_DISEN;
+	    if (randint(2)==1) return;
+	}
+    }
+  }
+
+    switch (specific?specific:randint(41))
+    {
+    case 1:
+    if (randint(WEIRD_LUCK)!=1)
+        random_resistance(a_ptr, is_scroll, specific);
+	else
+	{
+	a_ptr->flags2 |= TR2_IM_ACID;
+/*  if (is_scroll) msg_print("It looks totally incorruptible."); */
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_ACID;
+	}
+	break;
+    case 2:
+    if (randint(WEIRD_LUCK)!=1)
+	    random_resistance(a_ptr, is_scroll, specific);
+	else
+	{
+	a_ptr->flags2 |= TR2_IM_ELEC;
+/*  if (is_scroll) msg_print("It looks completely grounded."); */
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_ELEC;
+	}
+	break;
+    case 3:
+    if (randint(WEIRD_LUCK)!=1)
+	    random_resistance(a_ptr, is_scroll, specific);
+	else
+	{
+	a_ptr->flags2 |= TR2_IM_COLD;
+/*  if (is_scroll) msg_print("It feels very warm."); */
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_COLD;
+	}
+	break;
+    case 4:
+    if (randint(WEIRD_LUCK)!=1)
+	    random_resistance(a_ptr, is_scroll, specific);
+	else
+	{
+	a_ptr->flags2 |= TR2_IM_FIRE;
+/*  if (is_scroll) msg_print("It feels very cool."); */
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_FIRE;
+	}
+	break;
+    case 5: case 6: case 13:
+	a_ptr->flags2 |= TR2_RES_ACID;
+/*  if (is_scroll) msg_print("It makes your stomach rumble."); */
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_ACID;
+	break;
+    case 7: case 8: case 14:
+	a_ptr->flags2 |= TR2_RES_ELEC;
+/*  if (is_scroll) msg_print("It makes you feel grounded."); */
+    if (!(artifact_bias))
+	    artifact_bias = BIAS_ELEC;
+	break;
+    case 9: case 10: case 15:
+	a_ptr->flags2 |= TR2_RES_FIRE;
+/*  if (is_scroll) msg_print("It makes you feel cool!");*/
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_FIRE;
+	break;
+    case 11: case 12: case 16:
+	a_ptr->flags2 |= TR2_RES_COLD;
+/*  if (is_scroll) msg_print("It makes you feel full of hot air!");*/
+	if (!(artifact_bias))
+	    artifact_bias = BIAS_COLD;
+	break;
+    case 17: case 18:
+	a_ptr->flags2 |= TR2_RES_POIS;
+/*  if (is_scroll) msg_print("It makes breathing easier for you."); */
+	if (!(artifact_bias) && randint(4)!=1)
+	    artifact_bias = BIAS_POIS;
+	else if (!(artifact_bias) && randint(2)==1)
+	    artifact_bias = BIAS_NECROMANTIC;
+	else if (!(artifact_bias) && randint(2)==1)
+	    artifact_bias = BIAS_ROGUE;
+	break;
+    case 19: case 20:
+	a_ptr->flags2 |= TR2_RES_FEAR;
+/*  if (is_scroll) msg_print("It makes you feel brave!"); */
+	if (!(artifact_bias) && randint(3)==1)
+	    artifact_bias = BIAS_WARRIOR;
+	break;
+    case 21:
+	a_ptr->flags2 |= TR2_RES_LITE;
+/*  if (is_scroll) msg_print("It makes everything look darker.");*/
+	break;
+    case 22:
+	a_ptr->flags2 |= TR2_RES_DARK;
+/*  if (is_scroll) msg_print("It makes everything look brigher.");*/
+	break;
+    case 23: case 24:
+	a_ptr->flags2 |= TR2_RES_BLIND;
+/*  if (is_scroll) msg_print("It makes you feel you are wearing glasses.");*/
+	break;
+    case 25: case 26:
+	a_ptr->flags2 |= TR2_RES_CONF;
+/*  if (is_scroll) msg_print("It makes you feel very determined.");*/
+	if (!(artifact_bias) && randint(6)==1)
+	    artifact_bias = BIAS_CHAOS;
+	break;
+    case 27: case 28:
+	a_ptr->flags2 |= TR2_RES_SOUND;
+/*  if (is_scroll) msg_print("It makes you feel deaf!");*/
+	break;
+    case 29: case 30:
+	a_ptr->flags2 |= TR2_RES_SHARDS;
+/*  if (is_scroll) msg_print("It makes your skin feel thicker.");*/
+	break;
+    case 31: case 32:
+	a_ptr->flags2 |= TR2_RES_NETHER;
+/*  if (is_scroll) msg_print("It makes you feel like visiting a graveyard!");*/
+	if (!(artifact_bias) && randint(3)==1)
+	    artifact_bias = BIAS_NECROMANTIC;
+	break;
+    case 33: case 34:
+	a_ptr->flags2 |= TR2_RES_NEXUS;
+/*  if (is_scroll) msg_print("It makes you feel normal.");*/
+	break;
+    case 35: case 36:
+	a_ptr->flags2 |= TR2_RES_CHAOS;
+/*  if (is_scroll) msg_print("It makes you feel very firm.");*/
+	if (!(artifact_bias) && randint(2)==1)
+	    artifact_bias = BIAS_CHAOS;
+	break;
+    case 37: case 38:
+	a_ptr->flags2 |= TR2_RES_DISEN;
+/*  if (is_scroll) msg_print("It is surrounded by a static feeling.");*/
+	break;
+    case 39:
+    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
+        a_ptr->flags3 |= TR3_SH_ELEC;
+    else
+	    random_resistance(a_ptr, is_scroll, specific);
+    if (!(artifact_bias))
+	    artifact_bias = BIAS_ELEC;
+    break;
+    case 40:
+    if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
+        a_ptr->flags3 |= TR3_SH_FIRE;
+    else
+	    random_resistance(a_ptr, is_scroll, specific);
+    if (!(artifact_bias))
+        artifact_bias = BIAS_FIRE;
+    break;
+    case 41:
+    if (a_ptr->tval == TV_SHIELD || a_ptr->tval == TV_CLOAK ||
+        a_ptr->tval == TV_HELM || a_ptr->tval == TV_HARD_ARMOR)
+        a_ptr->flags5 |= TR5_REFLECT;
+    else
+	    random_resistance(a_ptr, is_scroll, specific);
+    break;
+    }
+}
+
+/* Borrowed from object2.c of PernAngband w/o even knowing
+ * what it is :)		- Jir -
+ */
+
+static void dragon_resist(artifact_type * a_ptr)
+{
+	do
+	{
+		artifact_bias = 0;
+
+		if (randint(4)==1)
+			random_resistance(a_ptr, FALSE, ((randint(14))+4));
+		else
+			random_resistance(a_ptr, FALSE, ((randint(22))+16));
+	}
+	while (randint(2)==1);
+}
+

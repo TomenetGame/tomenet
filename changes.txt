@@ -499,3 +499,13 @@ Change list for PernMangband
 
 20/12/2001 (Evileye) pfft use GMT/UTC dates jir...
 - Bugfix in ghost powers.
+
+25/12/2001 (Jir)
+# Unstable, bug-filled, far-from-fully-implemented version!!
+# Bugfixes and implementations urgently needed.
+- New ego-item system, which is a mixture of PernA-ego and PernM-randarts.
+  (ego-items will use random-seeds[name3] just like randarts.)
+- Item flags are now compatible with PernA [tho many of them are not in yet.]
+- k_idx is automatically calculated from tval and sval.
+- bunch of new items/artifacts/ego-items ported from PernAngband.
+

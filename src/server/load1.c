@@ -519,7 +519,7 @@ static errr rd_item_old(object_type *o_ptr)
 
 	s32b old_cost;
 
-	u32b f1, f2, f3;
+			  u32b f1, f2, f3, f4, f5, esp;
 
 	object_kind *k_ptr;
 
@@ -1155,8 +1155,9 @@ static errr rd_item_old(object_type *o_ptr)
 
 	/*** Convert wearable items ***/
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 
 	/* Hack -- Rings/Amulets */
 	if ((o_ptr->tval == TV_RING) || (o_ptr->tval == TV_AMULET))

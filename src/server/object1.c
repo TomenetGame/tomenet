@@ -25,7 +25,7 @@
  */
 #define TERM_MULTI	TERM_VIOLET
 
-
+#if 0
 /*
  * Max sizes of the following arrays
  */
@@ -33,7 +33,7 @@
 #define MAX_AMULETS    16       /* Used with amulets (min 13) */
 #define MAX_WOODS      32       /* Used with staffs (min 30) */
 #define MAX_METALS     32       /* Used with wands/rods (min 29/28) */
-#define MAX_COLORS     61       /* Used with potions (min 60) */
+#define MAX_COLORS     63       /* Used with potions (min 60) */
 #define MAX_SHROOM     21       /* Used with mushrooms (min 20) */
 #define MAX_TITLES     50       /* Used with scrolls (min 48) */
 #define MAX_SYLLABLES 158       /* Used with scrolls (see below) */
@@ -246,6 +246,246 @@ static cptr syllables[MAX_SYLLABLES] =
 	"yerg", "yp", "zun", "tri", "blaa"
 };
 
+#endif	// 0
+
+/* Ones borrowed from PernAngband.	- Jir - */
+/*
+ * Max sizes of the following arrays
+ */
+#define MAX_ROCKS      62       /* Used with rings (min 58) */
+#define MAX_AMULETS    34       /* Used with amulets (min 30) */
+#define MAX_WOODS      35       /* Used with staffs (min 32) */
+#define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
+#define MAX_COLORS     66       /* Used with potions (min 62) */
+#define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
+#define MAX_TITLES     55       /* Used with scrolls (min 55) */
+#define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
+
+
+/*
+ * Rings (adjectives and colors)
+ */
+
+static cptr ring_adj[MAX_ROCKS] =
+{
+	"Alexandrite", "Amethyst", "Aquamarine", "Azurite", "Beryl",
+	"Bloodstone", "Calcite", "Carnelian", "Corundum", "Diamond",
+	"Emerald", "Fluorite", "Garnet", "Granite", "Jade",
+	"Jasper", "Lapis Lazuli", "Malachite", "Marble", "Moonstone",
+	"Onyx", "Opal", "Pearl", "Quartz", "Quartzite",
+	"Rhodonite", "Ruby", "Sapphire", "Tiger Eye", "Topaz",
+	"Turquoise", "Zircon", "Platinum", "Bronze", "Gold",
+	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
+	"Engagement", "Adamantite",
+	"Wire", "Dilithium", "Bone", "Wooden",
+	"Spikard", "Serpent", "Wedding", "Double",
+	"Plain", "Brass", "Scarab", "Shining",
+	"Rusty", "Transparent", "Copper", "Black Opal", "Nickel",
+        "Glass", "Fluorspar", "Agate",
+};
+
+static byte ring_col[MAX_ROCKS] =
+{
+	TERM_GREEN, TERM_VIOLET, TERM_L_BLUE, TERM_L_BLUE, TERM_L_GREEN,
+	TERM_RED, TERM_WHITE, TERM_RED, TERM_SLATE, TERM_WHITE,
+	TERM_GREEN, TERM_L_GREEN, TERM_RED, TERM_L_DARK, TERM_L_GREEN,
+	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_WHITE, TERM_L_WHITE,
+	TERM_L_RED, TERM_L_WHITE, TERM_WHITE, TERM_L_WHITE, TERM_L_WHITE,
+	TERM_L_RED, TERM_RED, TERM_BLUE, TERM_YELLOW, TERM_YELLOW,
+	TERM_L_BLUE, TERM_L_UMBER, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
+	TERM_L_DARK, TERM_L_WHITE, TERM_GREEN, TERM_L_BLUE, TERM_L_DARK,
+	TERM_YELLOW, TERM_VIOLET,
+	TERM_UMBER, TERM_L_WHITE, TERM_WHITE, TERM_UMBER,
+	TERM_BLUE, TERM_GREEN, TERM_YELLOW, TERM_ORANGE,
+	TERM_YELLOW, TERM_ORANGE, TERM_L_GREEN, TERM_YELLOW,
+	TERM_RED, TERM_WHITE, TERM_UMBER, TERM_L_DARK, TERM_L_WHITE,
+        TERM_WHITE, TERM_BLUE, TERM_L_WHITE
+};
+
+
+/*
+ * Amulets (adjectives and colors)
+ */
+
+static cptr amulet_adj[MAX_AMULETS] =
+{
+	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
+	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
+	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
+        "Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
+        "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
+        "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
+        "Malachite", "Adamantite", "Mother-of-pearl", "Runed"
+};
+
+static byte amulet_col[MAX_AMULETS] =
+{
+	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
+	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
+	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
+        TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
+        TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
+        TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
+        TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER
+};
+
+
+/*
+ * Staffs (adjectives and colors)
+ */
+
+static cptr staff_adj[MAX_WOODS] =
+{
+	"Aspen", "Balsa", "Banyan", "Birch", "Cedar",
+	"Cottonwood", "Cypress", "Dogwood", "Elm", "Eucalyptus",
+	"Hemlock", "Hickory", "Ironwood", "Locust", "Mahogany",
+	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
+	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
+	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
+	"Golden", "Ashen", "Gnarled", "Ivory", "Willow"
+};
+
+static byte staff_col[MAX_WOODS] =
+{
+	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
+	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
+	TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER, TERM_L_UMBER, TERM_UMBER,
+	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_RED,
+	TERM_RED, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER,
+	TERM_GREEN, TERM_L_UMBER, TERM_L_UMBER, TERM_L_WHITE, TERM_UMBER,
+	TERM_YELLOW, TERM_SLATE, TERM_UMBER, TERM_L_WHITE, TERM_L_UMBER
+};
+
+
+/*
+ * Wands (adjectives and colors)
+ */
+
+static cptr wand_adj[MAX_METALS] =
+{
+	"Aluminium", "Cast Iron", "Chromium", "Copper", "Gold",
+	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
+	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
+	"Zirconium", "Zinc", "Aluminium-Plated", "Copper-Plated", "Gold-Plated",
+	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
+	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
+	"Platinum", "Lead","Lead-Plated", "Ivory" , "Adamantite",
+	"Uridium", "Long", "Short", "Hexagonal"
+};
+
+static byte wand_col[MAX_METALS] =
+{
+	TERM_L_BLUE, TERM_L_DARK, TERM_WHITE, TERM_UMBER, TERM_YELLOW,
+	TERM_SLATE, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_RED,
+	TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_WHITE, TERM_WHITE,
+	TERM_L_WHITE, TERM_L_WHITE, TERM_L_BLUE, TERM_L_UMBER, TERM_YELLOW,
+	TERM_L_UMBER, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE,
+	TERM_L_BLUE, TERM_L_BLUE, TERM_UMBER, TERM_L_UMBER, TERM_L_UMBER,
+	TERM_WHITE, TERM_SLATE, TERM_SLATE, TERM_WHITE, TERM_VIOLET,
+	TERM_L_RED, TERM_L_BLUE, TERM_BLUE, TERM_RED
+};
+
+
+/*
+ * Rods (adjectives and colors).
+ * Efficiency -- copied from wand arrays
+ */
+
+static cptr rod_adj[MAX_METALS];
+
+static byte rod_col[MAX_METALS];
+
+
+/*
+ * Mushrooms (adjectives and colors)
+ */
+
+static cptr food_adj[MAX_SHROOM] =
+{
+	"Blue", "Black", "Black Spotted", "Brown", "Dark Blue",
+	"Dark Green", "Dark Red", "Yellow", "Furry", "Green",
+	"Grey", "Light Blue", "Light Green", "Violet", "Red",
+	"Slimy", "Tan", "White", "White Spotted", "Wrinkled",
+};
+
+static byte food_col[MAX_SHROOM] =
+{
+	TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER, TERM_BLUE,
+	TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE, TERM_GREEN,
+	TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET, TERM_RED,
+	TERM_SLATE, TERM_L_UMBER, TERM_WHITE, TERM_WHITE, TERM_UMBER
+};
+
+
+/*
+ * Color adjectives and colors, for potions.
+ * Hack -- The first four entries are hard-coded.
+ * (water, apple juice, slime mold juice, something)
+ */
+
+static cptr potion_adj[MAX_COLORS] =
+{
+        "Clear", "Light Brown", "Icky Green", "Strangely Phosphorescent",
+	"Azure", "Blue", "Blue Speckled", "Black", "Brown", "Brown Speckled",
+	"Bubbling", "Chartreuse", "Cloudy", "Copper Speckled", "Crimson", "Cyan",
+	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled", "Green",
+	"Green Speckled", "Grey", "Grey Speckled", "Hazy", "Indigo",
+	"Light Blue", "Light Green", "Magenta", "Metallic Blue", "Metallic Red",
+	"Metallic Green", "Metallic Purple", "Misty", "Orange", "Orange Speckled",
+	"Pink", "Pink Speckled", "Puce", "Purple", "Purple Speckled",
+	"Red", "Red Speckled", "Silver Speckled", "Smoky", "Tangerine",
+	"Violet", "Vermilion", "White", "Yellow", "Violet Speckled",
+	"Pungent", "Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
+	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
+	"Manly", "Stinking", "Oily Black", "Ichor", "Ivory White", "Sky Blue",
+};
+
+static byte potion_col[MAX_COLORS] =
+{
+        TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
+	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER, TERM_UMBER,
+	TERM_L_WHITE, TERM_L_GREEN, TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_GREEN,
+	TERM_GREEN, TERM_SLATE, TERM_SLATE, TERM_L_WHITE, TERM_VIOLET,
+	TERM_L_BLUE, TERM_L_GREEN, TERM_RED, TERM_BLUE, TERM_RED,
+	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
+	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, TERM_VIOLET,
+	TERM_RED, TERM_RED, TERM_L_WHITE, TERM_L_DARK, TERM_ORANGE,
+	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
+	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
+	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
+	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, TERM_WHITE, TERM_L_BLUE
+};
+
+
+/*
+ * Syllables for scrolls (must be 1-4 letters each)
+ */
+
+static cptr syllables[MAX_SYLLABLES] =
+{
+	"a", "ab", "ag", "aks", "ala", "an", "ankh", "app",
+	"arg", "arze", "ash", "aus", "ban", "bar", "bat", "bek",
+	"bie", "bin", "bit", "bjor", "blu", "bot", "bu",
+	"byt", "comp", "con", "cos", "cre", "dalf", "dan",
+	"den", "der", "doe", "dok", "eep", "el", "eng", "er", "ere", "erk",
+	"esh", "evs", "fa", "fid", "flit", "for", "fri", "fu", "gan",
+	"gar", "glen", "gop", "gre", "ha", "he", "hyd", "i",
+	"ing", "ion", "ip", "ish", "it", "ite", "iv", "jo",
+	"kho", "kli", "klis", "la", "lech", "man", "mar",
+	"me", "mi", "mic", "mik", "mon", "mung", "mur", "nag", "nej",
+	"nelg", "nep", "ner", "nes", "nis", "nih", "nin", "o",
+	"od", "ood", "org", "orn", "ox", "oxy", "pay", "pet",
+	"ple", "plu", "po", "pot", "prok", "re", "rea", "rhov",
+	"ri", "ro", "rog", "rok", "rol", "sa", "san", "sat",
+	"see", "sef", "seh", "shu", "ski", "sna", "sne", "snik",
+	"sno", "so", "sol", "sri", "sta", "sun", "ta", "tab",
+	"tem", "ther", "ti", "tox", "trol", "tue", "turs", "u",
+	"ulk", "um", "un", "uni", "ur", "val", "viv", "vly",
+	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "x",
+	"yerg", "yp", "zun", "tri", "blaa", "jah", "bul", "on",
+        "foo", "ju", "xuxu"
+};
 
 /*
  * Hold the titles of scrolls, 6 to 14 characters each
@@ -328,6 +568,10 @@ static bool object_easy_know(int i)
 		case TV_BOTTLE:
 		case TV_SKELETON:
 		case TV_SPIKE:
+                case TV_EGG:
+                case TV_FIRESTONE:
+                case TV_CORPSE:
+                case TV_HYPNOS:
 		{
 			return (TRUE);
 		}
@@ -337,6 +581,9 @@ static bool object_easy_know(int i)
 		case TV_POTION:
 		case TV_SCROLL:
 		case TV_ROD:
+				case TV_POTION2:
+                case TV_ROD_MAIN:
+                case TV_BATERIE:
 		{
 			return (TRUE);
 		}
@@ -774,6 +1021,8 @@ void flavor_init(void)
 
 		/* No flavor yields aware */
 		/*if (!k_ptr->has_flavor) k_ptr->aware = TRUE;*/
+//                if ((!k_ptr->flavor) && (k_ptr->tval != TV_ROD_MAIN)) k_ptr->aware = TRUE;
+
 
 		/* Check for "easily known" */
 		k_ptr->easy_know = object_easy_know(i);
@@ -898,7 +1147,8 @@ void reset_visuals(void)
 /*
  * Obtain the "flags" for an item
  */
-void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+//void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
+void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *esp)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -906,6 +1156,10 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 	(*f1) = k_ptr->flags1;
 	(*f2) = k_ptr->flags2;
 	(*f3) = k_ptr->flags3;
+        (*f4) = k_ptr->flags4;
+        (*f5) = k_ptr->flags5;
+        (*esp) = k_ptr->esp;
+
 
 	/* Artifact */
 	if (o_ptr->name1)
@@ -926,18 +1180,31 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 		(*f1) = a_ptr->flags1;
 		(*f2) = a_ptr->flags2;
 		(*f3) = a_ptr->flags3;
+                (*f4) = a_ptr->flags4;
+                (*f5) = a_ptr->flags5;
+                (*esp) = a_ptr->esp;
+#if 0
+                if ((!object_flags_no_set) && (a_ptr->set != -1))
+                        apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, esp);
+#endif	// 0
 	}
 
 	/* Ego-item */
 	if (o_ptr->name2)
 	{
-		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+//		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+	 	artifact_type *a_ptr;
+	 	
+			a_ptr =	ego_make(o_ptr);
 
-		(*f1) |= e_ptr->flags1;
-		(*f2) |= e_ptr->flags2;
-		(*f3) |= e_ptr->flags3;
+		(*f1) |= a_ptr->flags1;
+		(*f2) |= a_ptr->flags2;
+		(*f3) |= a_ptr->flags3;
+                (*f4) = a_ptr->flags4;
+                (*f5) = a_ptr->flags5;
+                (*esp) = a_ptr->esp;
 	}
-
+#if 0
 	/* Extra powers */
 	switch (o_ptr->xtra1)
 	{
@@ -994,10 +1261,8 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 			break;
 		}
 	}
+#endif	// 0
 }
-
-
-
 
 
 
@@ -1200,13 +1465,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 	char		tmp_val[160];
 
-	u32b		f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
 	object_kind		*k_ptr = &k_info[o_ptr->k_idx];
 
 
 	/* Extract some flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 
 	/* Assume aware and known if not a valid player */
@@ -1245,6 +1510,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_KEY:
 		case TV_FLASK:
 		case TV_CHEST:
+                case TV_FIRESTONE:
+                case TV_INSTRUMENT:
+                case TV_TOOL:
 		{
 			break;
 		}
@@ -1259,8 +1527,19 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
+                case TV_BOOMERANG:
+                case TV_AXE:
+                case TV_MSTAFF:
 		{
 			show_weapon = TRUE;
+			break;
+		}
+
+		/* Trapping Kits (not implemented yet) */
+		case TV_TRAPKIT:
+		{
+			modstr = basenm;
+			basenm = "& # Trap Set~";
 			break;
 		}
 
@@ -1351,6 +1630,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
+                case TV_ROD_MAIN:
+		{
+                        object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
+
+                        modstr = k_name + tip_ptr->name;
+			break;
+		}
+
+
 		case TV_SCROLL:
 		{
 			/* Color the object */
@@ -1361,6 +1649,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		case TV_POTION:
+		case TV_POTION2:
 		{
 			/* Color the object */
 			modstr = potion_adj[indexx];
@@ -1458,6 +1747,28 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* The object "expects" a "number" */
 	if (basenm[0] == '&')
 	{
+		cptr ego = NULL;
+
+		/* Grab any ego-item name */
+		//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+		if (known && (o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+		{
+			ego_item_type *e_ptr = &e_info[o_ptr->name2];
+			//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+
+			if (e_ptr->before)
+			{
+				ego = e_ptr->name + e_name;
+			}
+#if 0
+			else if (e2_ptr->before)
+			{
+				ego = e2_ptr->name + e_name;
+			}
+#endif	// 0
+
+		}
+
 		/* Skip the ampersand (and space) */
 		s = basenm + 2;
 
@@ -1496,6 +1807,18 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		else if ((*s == '#') && (is_a_vowel(modstr[0])))
 		{
 			t = object_desc_str(t, "an ");
+		}
+
+		else if (ego != NULL)
+		{
+			if (is_a_vowel(ego[0]))
+			{
+				t = object_desc_str(t, "an ");
+			}
+			else
+			{
+				t = object_desc_str(t, "a ");
+			}
 		}
 
 		/* A single one, with a vowel */
@@ -1549,6 +1872,27 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 	}
 
+	/* Grab any ego-item name */
+	//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+	if (known && (o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+	{
+		ego_item_type *e_ptr = &e_info[o_ptr->name2];
+		//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+
+		if (e_ptr->before)
+		{
+			t = object_desc_str(t, (e_name + e_ptr->name));
+			t = object_desc_chr(t, ' ');
+		}
+#if 0
+		if (e2_ptr->before)
+		{
+			t = object_desc_str(t, (e_name + e2_ptr->name));
+			t = object_desc_chr(t, ' ');
+		}
+#endif	// 0
+	}
+
 	/* Paranoia -- skip illegal tildes */
 	/* while (*s == '~') s++; */
 
@@ -1576,6 +1920,19 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Modifier */
 		else if (*s == '#')
 		{
+                        /* Grab any ego-item name */
+                        if (o_ptr->tval == TV_ROD_MAIN)
+                        {
+                                t = object_desc_chr(t, ' ');
+
+                                if (known && o_ptr->name2)
+                                {
+                                        ego_item_type *e_ptr = &e_info[o_ptr->name2];
+
+                                        t = object_desc_str(t, (e_name + e_ptr->name));
+                                }
+                        }
+
 			/* Insert the modifier */
 			for (u = modstr; *u; u++) *t++ = *u;
 		}
@@ -1636,7 +1993,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, ' ');
 			t = object_desc_str(t, (a_name + a_ptr->name));
 		}
-
+#if 0
 		/* Grab any ego-item name */
 		else if (o_ptr->name2)
 		{
@@ -1645,6 +2002,28 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, ' ');
 			t = object_desc_str(t, (e_name + e_ptr->name));
 		}
+#endif	// 0
+
+		/* Grab any ego-item name */
+//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
+		if ((o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+		{
+			ego_item_type *e_ptr = &e_info[o_ptr->name2];
+//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+
+                        if (!e_ptr->before)
+                        {
+                                t = object_desc_chr(t, ' ');
+                                t = object_desc_str(t, (e_name + e_ptr->name));
+                        }
+#if 0
+                        else if (!e2_ptr->before)
+                        {
+                                ego = e2_ptr->name + e_name;
+						}
+#endif	// 0
+		}
+
 	}
 
 	/* Print level and owning */
@@ -1807,6 +2186,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_ARROW:
+			/* Exploding arrow? */
+			if (o_ptr->pval != 0)
+				t = object_desc_str(t, " (exploding)");
+			/* No break, we want to continue the description */
+
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
@@ -1951,9 +2335,36 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Hack -- Dump " (charging)" if relevant */
 		if (o_ptr->pval) t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
 	}
+#if 0
+        /*
+         * Hack -- Rods have a "charging" indicator.
+	 */
+        else if (known && (o_ptr->tval == TV_ROD_MAIN))
+	{
+                /* Display prettily. */
+                t = object_desc_str(t, " (");
+                t = object_desc_num(t, o_ptr->timeout);
+                t = object_desc_chr(t, '/');
+                t = object_desc_num(t, o_ptr->pval2);
+                t = object_desc_chr(t, ')');
+	}
+
+        /*
+         * Hack -- Rods have a "charging" indicator.
+	 */
+        else if (known && (o_ptr->tval == TV_ROD))
+	{
+                /* Display prettily. */
+                t = object_desc_str(t, " (");
+                t = object_desc_num(t, o_ptr->pval);
+                t = object_desc_str(t, " Mana to cast");
+                t = object_desc_chr(t, ')');
+	}
+#endif	// 0
 
 	/* Hack -- Process Lanterns/Torches */
-	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
+//	else if ((o_ptr->tval == TV_LITE) && (o_ptr->sval < SV_LITE_DWARVEN) && (!o_ptr->name3))
+        else if ((o_ptr->tval == TV_LITE) && (f4 & TR4_FUEL_LITE))
 	{
 		/* Hack -- Turns of light for normal lites */
 		t = object_desc_str(t, mode < 8 ? " (with " : "(");
@@ -2204,10 +2615,10 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
  */
 cptr item_activation(object_type *o_ptr)
 {
-	u32b f1, f2, f3;
+	    u32b f1, f2, f3, f4, f5, esp;
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3);
+			  /* Extract the flags */
+			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Require activation ability */
 	if (!(f3 & TR3_ACTIVATE)) return (NULL);
@@ -2493,6 +2904,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 	}
 
+#if 0	// requires some substitution..
 	/* Some ego items can be activated */
 	switch (o_ptr->name2)
 	{
@@ -2505,6 +2917,7 @@ cptr item_activation(object_type *o_ptr)
 	/* The amulet of the moon can be activated for sleep */
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_THE_MOON))
 		return "sleep monsters every 100+d100 turns";
+#endif	// 0
 
 
 	/* Oops */
@@ -2515,6 +2928,7 @@ cptr item_activation(object_type *o_ptr)
 /*
  * Describe a "fully identified" item
  */
+#if 0
 bool identify_fully_aux(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2905,6 +3319,891 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Gave knowledge */
 	return (TRUE);
 }
+#endif	// 0
+
+/*
+ * Describe a "fully identified" item
+ */
+//bool identify_fully_aux(object_type *o_ptr, FILE *fff)
+bool identify_fully_aux(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+	cptr		*info = p_ptr->info;
+
+	int                     i = 0, j, k;
+
+        u32b f1, f2, f3, f4, f5, esp;
+
+//        cptr            info[400];
+//        byte            color[400];
+
+	/* Let the player scroll through this info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Extract the flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+#if 0
+        /* All white */
+        for (j = 0; j < 400; j++)
+                color[j] = TERM_WHITE;
+
+        /* No need to dump that */
+        if (fff == NULL)
+        {
+                i = grab_tval_desc(o_ptr->tval, info, 0);
+                if ((fff == NULL) && i) info[i++] = "";
+                for (j = 0; j < i; j++)
+                        color[j] = TERM_L_BLUE;
+        }
+
+        if (o_ptr->k_idx)
+	{
+	
+                char buff2[400], *s, *t;
+                int n, oi = i;
+                object_kind *k_ptr = &k_info[o_ptr->k_idx];
+			   
+                strcpy (buff2, k_text + k_ptr->text);
+
+		s = buff2;
+		
+                /* Collect the history */
+                while (TRUE)
+                {
+
+                        /* Extract remaining length */
+                        n = strlen(s);
+
+                        /* All done */
+                        if (n < 60)
+                        {
+                                /* Save one line of history */
+                                color[i] = TERM_ORANGE;
+                                info[i++] = s;
+
+                                /* All done */
+                                break;
+                        }
+
+                        /* Find a reasonable break-point */
+                        for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+                        /* Save next location */
+                        t = s + n;
+
+                        /* Wipe trailing spaces */
+                        while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+                        /* Save one line of history */
+                        color[i] = TERM_ORANGE;
+                        info[i++] = s;
+
+                        s = t;
+                }
+
+                /* Add a blank line */
+                if ((fff == NULL) && (oi < i)) info[i++] = "";
+	}
+
+	if (o_ptr->name1)
+	{
+	
+                char buff2[400], *s, *t;
+                int n, oi = i;
+                artifact_type *a_ptr = &a_info[o_ptr->name1];
+			   
+		strcpy (buff2, a_text + a_ptr->text);
+
+		s = buff2;
+		
+                /* Collect the history */
+                while (TRUE)
+                {
+
+                        /* Extract remaining length */
+                        n = strlen(s);
+
+                        /* All done */
+                        if (n < 60)
+                        {
+                                /* Save one line of history */
+                                color[i] = TERM_YELLOW;
+                                info[i++] = s;
+
+                                /* All done */
+                                break;
+                        }
+
+                        /* Find a reasonable break-point */
+                        for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+                        /* Save next location */
+                        t = s + n;
+
+                        /* Wipe trailing spaces */
+                        while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+                        /* Save one line of history */
+                        color[i] = TERM_YELLOW;
+                        info[i++] = s;
+
+                        s = t;
+                }
+
+                /* Add a blank line */
+                if ((fff == NULL) && (oi < i)) info[i++] = "";
+
+                if (a_ptr->set != -1)
+                {
+                        char buff2[400], *s, *t;
+                        int n;
+                        set_type *set_ptr = &set_info[a_ptr->set];
+
+                        strcpy (buff2, set_text + set_ptr->desc);
+
+                        s = buff2;
+
+                        /* Collect the history */
+                        while (TRUE)
+                        {
+
+                                /* Extract remaining length */
+                                n = strlen(s);
+
+                                /* All done */
+                                if (n < 60)
+                                {
+                                        /* Save one line of history */
+                                        color[i] = TERM_GREEN;
+                                        info[i++] = s;
+
+                                        /* All done */
+                                        break;
+                                }
+
+                                /* Find a reasonable break-point */
+                                for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+                                /* Save next location */
+                                t = s + n;
+
+                                /* Wipe trailing spaces */
+                                while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+                                /* Save one line of history */
+                                color[i] = TERM_GREEN;
+                                info[i++] = s;
+
+                                s = t;
+                        }
+
+                        /* Add a blank line */
+                        info[i++] = "";
+                }
+        }
+
+        if (f4 & TR4_LEVELS)
+        {
+                int j = 0;
+
+                color[i] = TERM_VIOLET;
+                if (count_bits(o_ptr->pval3) == 0) info[i++] = "It is sentient.";
+                else if (count_bits(o_ptr->pval3) > 1) info[i++] = "It is sentient and can have access to the realms of:";
+                else  info[i++] = "It is sentient and can have access to the realm of:";
+
+                for (j = 0; j < MAX_FLAG_GROUP; j++)
+                {
+                        if (BIT(j) & o_ptr->pval3)
+                        {
+                                color[i] = flags_groups[j].color;
+                                info[i++] = flags_groups[j].name;
+                        }
+                }
+
+                /* Add a blank line */
+                info[i++] = "";
+        }
+
+        if (f4 & TR4_COULD2H) info[i++] = "It can be wielded two-handed.";
+        if (f4 & TR4_MUST2H) info[i++] = "It must be wielded two-handed.";
+#endif
+
+	/* Mega-Hack -- describe activation */
+	if (f3 & TR3_ACTIVATE)
+	{
+		info[i++] = "It can be activated for...";
+		info[i++] = item_activation(o_ptr);
+		info[i++] = "...if it is being worn.";
+	}
+
+#if 0
+	/* Mega-Hack -- describe activation */
+	if (f3 & (TR3_ACTIVATE))
+	{
+		info[i++] = "It can be activated for...";
+                if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
+                {
+                        info[i++] = item_activation(o_ptr, 1);
+                        info[i++] = "And...";
+                }
+                info[i++] = item_activation(o_ptr, 0);
+
+		/* Mega-hack -- get rid of useless line for randarts */
+                if (o_ptr->tval != TV_RANDART){
+                        info[i++] = "...if it is being worn.";
+                }
+	}
+
+        /* Granted power */
+        if (object_power(o_ptr) != -1)
+        {
+                info[i++] = "It grants you the power of...";
+                info[i++] = powers_type[object_power(o_ptr)].name;
+                info[i++] = "...if it is being worn.";
+        }
+#endif	// 0
+
+
+	/* Hack -- describe lite's */
+	if (o_ptr->tval == TV_LITE)
+	{
+                int radius = 0;
+
+                if (f3 & TR3_LITE1) radius++;
+                if (f4 & TR4_LITE2) radius += 2;
+                if (f4 & TR4_LITE3) radius += 3;
+
+                if (f4 & TR4_FUEL_LITE)
+		{
+                        info[i++] = format("It provides light (radius %d) when fueled.", radius);
+		}
+                else
+		{
+                        info[i++] = format("It provides light (radius %d) forever.", radius);
+		}
+	}
+
+        /* Mega Hack^3 -- describe the Anchor of Space-time */
+        if (o_ptr->name1 == ART_ANCHOR)
+        {
+                info[i++] = "It prevents the space-time continuum from being disrupted.";
+        }
+
+        if ((f4 & (TR4_ANTIMAGIC_50)) || (f4 & (TR4_ANTIMAGIC_30)) || (f4 & (TR4_ANTIMAGIC_20)) || (f4 & (TR4_ANTIMAGIC_10)))
+        {
+                info[i++] = "It generates an antimagic field.";
+        }
+
+	/* And then describe it fully */
+
+	if (f1 & (TR1_STR))
+	{
+		info[i++] = "It affects your strength.";
+	}
+	if (f1 & (TR1_INT))
+	{
+		info[i++] = "It affects your intelligence.";
+	}
+	if (f1 & (TR1_WIS))
+	{
+		info[i++] = "It affects your wisdom.";
+	}
+	if (f1 & (TR1_DEX))
+	{
+		info[i++] = "It affects your dexterity.";
+	}
+	if (f1 & (TR1_CON))
+	{
+		info[i++] = "It affects your constitution.";
+	}
+	if (f1 & (TR1_CHR))
+	{
+		info[i++] = "It affects your charisma.";
+	}
+
+	if (f1 & (TR1_STEALTH))
+	{
+			info[i++] = "It affects your stealth.";
+#if 0
+		if (o_ptr->tval != TV_TRAPKIT)
+			info[i++] = "It affects your stealth.";
+		else
+			info[i++] = "It is well-hidden.";
+#endif	// 0
+	}
+	if (f1 & (TR1_SEARCH))
+	{
+		info[i++] = "It affects your searching.";
+	}
+	if (f1 & (TR1_INFRA))
+	{
+		info[i++] = "It affects your infravision.";
+	}
+	if (f1 & (TR1_TUNNEL))
+	{
+		info[i++] = "It affects your ability to tunnel.";
+	}
+	if (f1 & (TR1_SPEED))
+	{
+		info[i++] = "It affects your speed.";
+	}
+	if (f1 & (TR1_BLOWS))
+	{
+		info[i++] = "It affects your attack speed.";
+	}
+        if (f5 & (TR5_CRIT))
+	{
+                info[i++] = "It affects your ability to score critical hits.";
+	}
+        if (f5 & (TR5_LUCK))
+	{
+                info[i++] = "It affects your luck.";
+	}
+
+	if (f1 & (TR1_BRAND_ACID))
+	{
+		info[i++] = "It does extra damage from acid.";
+	}
+	if (f1 & (TR1_BRAND_ELEC))
+	{
+		info[i++] = "It does extra damage from electricity.";
+	}
+	if (f1 & (TR1_BRAND_FIRE))
+	{
+		info[i++] = "It does extra damage from fire.";
+	}
+	if (f1 & (TR1_BRAND_COLD))
+	{
+		info[i++] = "It does extra damage from frost.";
+	}
+
+	if (f1 & (TR1_BRAND_POIS))
+	{
+		info[i++] = "It poisons your foes.";
+	}
+
+	if (f5 & (TR5_CHAOTIC))
+	{
+		info[i++] = "It produces chaotic effects.";
+	}
+
+	if (f1 & (TR1_VAMPIRIC))
+	{
+		info[i++] = "It drains life from your foes.";
+	}
+
+	if (f1 & (TR1_IMPACT))
+	{
+		info[i++] = "It can cause earthquakes.";
+	}
+
+	if (f1 & (TR1_VORPAL))
+	{
+		info[i++] = "It is very sharp and can cut your foes.";
+	}
+
+        if (f5 & (TR5_WOUNDING))
+	{
+                info[i++] = "It is very sharp and make your foes bleed.";
+	}
+
+	if (f1 & (TR1_KILL_DRAGON))
+	{
+		info[i++] = "It is a great bane of dragons.";
+	}
+	else if (f1 & (TR1_SLAY_DRAGON))
+	{
+		info[i++] = "It is especially deadly against dragons.";
+	}
+	if (f1 & (TR1_SLAY_ORC))
+	{
+		info[i++] = "It is especially deadly against orcs.";
+	}
+	if (f1 & (TR1_SLAY_TROLL))
+	{
+		info[i++] = "It is especially deadly against trolls.";
+	}
+	if (f1 & (TR1_SLAY_GIANT))
+	{
+		info[i++] = "It is especially deadly against giants.";
+	}
+        if (f5 & (TR5_KILL_DEMON))
+	{
+                info[i++] = "It is a great bane of demons.";
+	}
+        else if (f1 & (TR1_SLAY_DEMON))
+	{
+		info[i++] = "It strikes at demons with holy wrath.";
+	}
+        if (f5 & (TR5_KILL_UNDEAD))
+	{
+                info[i++] = "It is a great bane of undead.";
+	}
+        else if (f1 & (TR1_SLAY_UNDEAD))
+	{
+		info[i++] = "It strikes at undead with holy wrath.";
+	}
+	if (f1 & (TR1_SLAY_EVIL))
+	{
+		info[i++] = "It fights against evil with holy fury.";
+	}
+	if (f1 & (TR1_SLAY_ANIMAL))
+	{
+		info[i++] = "It is especially deadly against natural creatures.";
+	}
+        if (f1 & (TR1_MANA))
+	{
+                info[i++] = "It affects your mana capacity.";
+	}
+        if (f1 & (TR1_SPELL))
+	{
+                info[i++] = "It affects your spell power.";
+	}
+
+        if (f5 & (TR5_INVIS))
+	{
+                info[i++] = "It makes you invisible.";
+	}
+        if (f5 & (TR5_LIFE))
+	{
+                info[i++] = "It affects your hit points.";
+	}
+//        if (o_ptr->tval != TV_TRAPKIT)
+//        {
+                if (f2 & (TR2_SUST_STR))
+                {
+                        info[i++] = "It sustains your strength.";
+                }
+                if (f2 & (TR2_SUST_INT))
+                {
+                        info[i++] = "It sustains your intelligence.";
+                }
+                if (f2 & (TR2_SUST_WIS))
+                {
+                        info[i++] = "It sustains your wisdom.";
+                }
+                if (f2 & (TR2_SUST_DEX))
+                {
+                        info[i++] = "It sustains your dexterity.";
+                }
+                if (f2 & (TR2_SUST_CON))
+                {
+                        info[i++] = "It sustains your constitution.";
+                }
+                if (f2 & (TR2_SUST_CHR))
+                {
+                        info[i++] = "It sustains your charisma.";
+                }
+                if (f2 & (TR2_IM_ACID))
+                {
+                        info[i++] = "It provides immunity to acid.";
+                }
+                if (f2 & (TR2_IM_ELEC))
+                {
+                        info[i++] = "It provides immunity to electricity.";
+                }
+                if (f2 & (TR2_IM_FIRE))
+                {
+                        info[i++] = "It provides immunity to fire.";
+                }
+//        }
+#if 0
+		else
+		{
+			if (f2 & (TRAP2_AUTOMATIC_5))
+			{
+				info[i++] = "It can rearm itself.";
+			}
+			if (f2 & (TRAP2_AUTOMATIC_99))
+			{
+				info[i++] = "It rearms itself.";
+			}               
+			if (f2 & (TRAP2_KILL_GHOST))
+			{
+				info[i++] = "It is effective against Ghosts.";
+			}
+			if (f2 & (TRAP2_TELEPORT_TO))
+			{
+				info[i++] = "It can teleport monsters to you.";
+			}
+			if (f2 & (TRAP2_ONLY_DRAGON))
+			{
+				info[i++] = "It can only be set off by dragons.";
+			}
+			if (f2 & (TRAP2_ONLY_DEMON))
+			{
+				info[i++] = "It can only be set off by demons.";
+			}
+			if (f2 & (TRAP2_ONLY_UNDEAD))
+			{
+				info[i++] = "It can only be set off by undead.";
+			}
+			if (f2 & (TRAP2_ONLY_ANIMAL))
+			{
+				info[i++] = "It can only be set off by animals.";
+			}
+			if (f2 & (TRAP2_ONLY_EVIL))
+			{
+				info[i++] = "It can only be set off by evil creatures.";
+			}
+		}
+#endif
+
+	if (f2 & (TR2_IM_COLD))
+	{
+		info[i++] = "It provides immunity to cold.";
+	}
+
+	if (f2 & (TR2_FREE_ACT))
+	{
+		info[i++] = "It provides immunity to paralysis.";
+	}
+	if (f2 & (TR2_HOLD_LIFE))
+	{
+		info[i++] = "It provides resistance to life draining.";
+	}
+	if (f2 & (TR2_RES_FEAR))
+	{
+		info[i++] = "It makes you completely fearless.";
+	}
+	if (f2 & (TR2_RES_ACID))
+	{
+		info[i++] = "It provides resistance to acid.";
+	}
+	if (f2 & (TR2_RES_ELEC))
+	{
+		info[i++] = "It provides resistance to electricity.";
+	}
+	if (f2 & (TR2_RES_FIRE))
+	{
+		info[i++] = "It provides resistance to fire.";
+	}
+	if (f2 & (TR2_RES_COLD))
+	{
+		info[i++] = "It provides resistance to cold.";
+	}
+	if (f2 & (TR2_RES_POIS))
+	{
+		info[i++] = "It provides resistance to poison.";
+	}
+
+	if (f2 & (TR2_RES_LITE))
+	{
+		info[i++] = "It provides resistance to light.";
+	}
+	if (f2 & (TR2_RES_DARK))
+	{
+		info[i++] = "It provides resistance to dark.";
+	}
+
+	if (f2 & (TR2_RES_BLIND))
+	{
+		info[i++] = "It provides resistance to blindness.";
+	}
+	if (f2 & (TR2_RES_CONF))
+	{
+		info[i++] = "It provides resistance to confusion.";
+	}
+	if (f2 & (TR2_RES_SOUND))
+	{
+		info[i++] = "It provides resistance to sound.";
+	}
+	if (f2 & (TR2_RES_SHARDS))
+	{
+		info[i++] = "It provides resistance to shards.";
+	}
+
+        if (f4 & (TR4_IM_NETHER))
+	{
+                info[i++] = "It provides immunity to nether.";
+	}
+	if (f2 & (TR2_RES_NETHER))
+	{
+		info[i++] = "It provides resistance to nether.";
+	}
+	if (f2 & (TR2_RES_NEXUS))
+	{
+		info[i++] = "It provides resistance to nexus.";
+	}
+	if (f2 & (TR2_RES_CHAOS))
+	{
+		info[i++] = "It provides resistance to chaos.";
+	}
+	if (f2 & (TR2_RES_DISEN))
+	{
+		info[i++] = "It provides resistance to disenchantment.";
+	}
+
+	if (f3 & (TR3_WRAITH))
+	{
+		info[i++] = "It renders you incorporeal.";
+	}
+	if (f3 & (TR3_FEATHER))
+	{
+		info[i++] = "It allows you to levitate.";
+	}
+        if (f4 & (TR4_FLY))
+	{
+                info[i++] = "It allows you to fly.";
+	}
+        if (f4 & (TR4_CLIMB))
+	{
+                info[i++] = "It allows you to climb high mountains.";
+	}
+        if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))
+	{
+                info[i++] = "It provides light.";
+	}
+	if (f3 & (TR3_SEE_INVIS))
+	{
+		info[i++] = "It allows you to see invisible monsters.";
+	}
+        if (esp)
+	{
+                if (esp & ESP_ALL) info[i++] = "It gives telepathic powers.";
+                else
+                {
+                        if (esp & ESP_ORC) info[i++] = "It allows you to sense the presence of orcs.";
+                        if (esp & ESP_TROLL) info[i++] = "It allows you to sense the presence of trolls.";
+                        if (esp & ESP_DRAGON) info[i++] = "It allows you to sense the presence of dragons.";
+                        if (esp & ESP_SPIDER) info[i++] = "It allows you to sense the presence of spiders.";
+                        if (esp & ESP_GIANT) info[i++] = "It allows you to sense the presence of giants.";
+                        if (esp & ESP_DEMON) info[i++] = "It allows you to sense the presence of demons.";
+                        if (esp & ESP_UNDEAD) info[i++] = "It allows you to sense presence of undead.";
+                        if (esp & ESP_EVIL) info[i++] = "It allows you to sense the presence of evil beings.";
+                        if (esp & ESP_ANIMAL) info[i++] = "It allows you to sense the presence of animals.";
+                        if (esp & ESP_DRAGONRIDER) info[i++] = "It allows you to sense the presence of dragonriders.";
+                        if (esp & ESP_GOOD) info[i++] = "It allows you to sense the presence of good beings.";
+                        if (esp & ESP_NONLIVING) info[i++] = "It allows you to sense the presence of non-living things.";
+                        if (esp & ESP_UNIQUE) info[i++] = "It allows you to sense the presence of unique beings.";
+                }
+	}
+	if (f3 & (TR3_SLOW_DIGEST))
+	{
+		info[i++] = "It slows your metabolism.";
+	}
+	if (f3 & (TR3_REGEN))
+	{
+		info[i++] = "It speeds your regenerative powers.";
+	}
+	if (f5 & (TR5_REFLECT))
+	{
+		info[i++] = "It reflects bolts and arrows.";
+	}
+	if (f3 & (TR3_SH_FIRE))
+	{
+		info[i++] = "It produces a fiery sheath.";
+	}
+	if (f3 & (TR3_SH_ELEC))
+	{
+		info[i++] = "It produces an electric sheath.";
+	}
+	if (f3 & (TR3_NO_MAGIC))
+	{
+		info[i++] = "It produces an anti-magic shell.";
+	}
+	if (f3 & (TR3_NO_TELE))
+	{
+		info[i++] = "It prevents teleportation.";
+	}
+	if (f3 & (TR3_XTRA_MIGHT))
+	{
+		info[i++] = "It fires missiles with extra might.";
+	}
+	if (f3 & (TR3_XTRA_SHOTS))
+	{
+		info[i++] = "It fires missiles excessively fast.";
+	}
+
+        if (f5 & (TR5_DRAIN_MANA))
+	{
+                info[i++] = "It drains mana.";
+	}
+
+        if (f5 & (TR5_DRAIN_HP))
+	{
+                info[i++] = "It drains life.";
+	}
+
+	if (f3 & (TR3_DRAIN_EXP))
+	{
+		info[i++] = "It drains experience.";
+	}
+	if (f3 & (TR3_TELEPORT))
+	{
+		info[i++] = "It induces random teleportation.";
+	}
+	if (f3 & (TR3_AGGRAVATE))
+	{
+		info[i++] = "It aggravates nearby creatures.";
+	}
+
+	if (f3 & (TR3_BLESSED))
+	{
+		info[i++] = "It has been blessed by the gods.";
+	}
+
+        if (f4 & (TR4_AUTO_ID))
+	{
+                info[i++] = "It identifies all items for you.";
+	}
+
+        if (f4 & (TR4_NEVER_BLOW))
+	{
+                info[i++] = "It can't attack.";
+	}
+
+        if (f4 & (TR4_BLACK_BREATH))
+        {
+                info[i++] = "It fills you with the Black Breath.";
+        }
+
+	if (cursed_p(o_ptr))
+	{
+		if (f3 & (TR3_PERMA_CURSE))
+		{
+			info[i++] = "It is permanently cursed.";
+		}
+		else if (f3 & (TR3_HEAVY_CURSE))
+		{
+			info[i++] = "It is heavily cursed.";
+		}
+		else
+		{
+			info[i++] = "It is cursed.";
+		}
+	}
+
+	if (f3 & (TR3_TY_CURSE))
+	{
+		info[i++] = "It carries an ancient foul curse.";
+	}
+
+        if (f4 & (TR4_DG_CURSE))
+	{
+                info[i++] = "It carries an ancient morgothian curse.";
+	}
+        if (f4 & (TR4_CLONE))
+	{
+                info[i++] = "It can clone monsters.";
+	}
+        if (f4 & (TR4_CURSE_NO_DROP))
+	{
+                info[i++] = "It cannot be droped while cursed.";
+	}
+        if (f3 & (TR3_AUTO_CURSE))
+	{
+                info[i++] = "It can re-curse itself.";
+	}
+        if (f4 & (TR4_CAPACITY))
+	{
+                info[i++] = "It can hold more mana.";
+	}
+        if (f4 & (TR4_CHEAPNESS))
+	{
+                info[i++] = "It can cast spells for a lesser mana cost.";
+	}
+        if (f4 & (TR4_FAST_CAST))
+	{
+                info[i++] = "It can cast spells faster.";
+	}
+        if (f4 & (TR4_CHARGING))
+	{
+                info[i++] = "It regenerates its mana faster.";
+	}
+
+        if ((f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
+        {
+                info[i++] = "It cannot be harmed by acid, cold, lightning or fire.";
+        }
+        else
+        {
+                if (f3 & (TR3_IGNORE_ACID))
+                {
+                        info[i++] = "It cannot be harmed by acid.";
+                }
+                if (f3 & (TR3_IGNORE_ELEC))
+                {
+                        info[i++] = "It cannot be harmed by electricity.";
+                }
+                if (f3 & (TR3_IGNORE_FIRE))
+                {
+                        info[i++] = "It cannot be harmed by fire.";
+                }
+                if (f3 & (TR3_IGNORE_COLD))
+                {
+                        info[i++] = "It cannot be harmed by cold.";
+                }
+        }
+
+
+	info[i]=NULL;
+
+	/* No special effects */
+	if (!i) return (FALSE);
+
+	/* Let the client know it's about to get some info */
+	Send_special_other(Ind);
+
+	/* Gave knowledge */
+	return (TRUE);
+
+#if 0
+	/* No special effects */
+	if (!i) return (FALSE);
+
+        if (fff != NULL)
+        {
+                /* We will print on top of the map (column 13) */
+                for (j = 0; j < i; j++)
+                {
+                        /* Show the info */
+                        fprintf(fff, "   %s\n", info[j]);
+                }
+        }
+        else
+        {
+                /* Save the screen */
+                character_icky = TRUE;
+                Term_save();
+
+                /* Erase the screen */
+                Term_clear();
+
+                /* Label the information */
+                prt("Item Attributes:", 1, 31);
+
+                /* We will print on top of the map (column 13) */
+                for (k = 2, j = 0; j < i; j++)
+                {
+                        /* Show the info */
+                        c_prt(color[j], info[j], k++, 10);
+
+                        /* Every 20 entries (lines 2 to 21), start over */
+                        if ((k == 22) && (j+1 < i))
+                        {
+                                prt("-- more --", k, 15);
+                                inkey();
+                                for (; k > 2; k--) prt("", k, 0);
+                        }
+                }
+
+                /* Wait for it */
+                prt("[Press any key to continue]", k, 26);
+                inkey();
+
+                /* Restore the screen */
+                Term_load();
+                character_icky = FALSE;
+        }
+
+	/* Gave knowledge */
+	return (TRUE);
+#endif	// 0
+}
+
 
 
 

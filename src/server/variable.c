@@ -862,3 +862,6 @@ bool (*get_obj_num_hook)(int k_idx);
  */
 //bool (*master_move_hook)(int Ind, char * args) = master_acquire;
 //bool (*master_move_hook)(int Ind, char * args) = NULL; /*evileye - multi DMs! */
+
+
+int artifact_bias;
