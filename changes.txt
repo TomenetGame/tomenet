@@ -86,3 +86,7 @@ Change list for PernMangband
 - Bug in netserver which could result in bus fault fixed.
 - Added Player menu to wizard commands (framework mainly)
 - Added wizard level genocide
+
+27/07/2001 (evileye)
+- Fixed double experience bug on priests and sorcerors.
+

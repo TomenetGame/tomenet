@@ -5229,12 +5229,13 @@ bool master_player(int Ind, char *parms){
 				strcpy(q_ptr->died_from,"divine wrath");
 				//q_ptr->alive=FALSE;
 				player_death(Ind2);
+				return(TRUE);
 			}
-			else
-				msg_print(Ind, "That player is not in the game.");
+			msg_print(Ind, "That player is not in the game.");
 
 			break;
 	}
+	return(FALSE);
 }
 
 vault_type *get_vault(char *name)

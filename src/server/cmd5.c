@@ -2237,7 +2237,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			}
 
 			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
+			if(!(j>=64)) gain_exp(Ind, e * s_ptr->slevel);
 
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
@@ -3138,7 +3138,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 			}
 
 			/* Gain experience */
-			gain_exp(Ind, e * s_ptr->slevel);
+			if(!(j>=64)) gain_exp(Ind, e * s_ptr->slevel);
 
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
