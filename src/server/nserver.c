@@ -1541,19 +1541,19 @@ static bool validstrings(char *nick, char *real, char *host){
 	int rval=1;
 
 	for(i=0; nick[i]; i++){
-		if(nick[i]<'0' || nick[i]>'z'){
+		if(nick[i]<32 || nick[i]>'z'){
 			nick[i]='\0';
 			rval=0;
 		}
 	}
 	for(i=0; real[i]; i++){
-		if(real[i]<33 || real[i]>'z'){
+		if(real[i]<32 || real[i]>'z'){
 			real[i]='\0';
 			rval=0;
 		}
 	}
 	for(i=0; host[i]; i++){
-		if(host[i]<33 || host[i]>'z'){
+		if(host[i]<32 || host[i]>'z'){
 			host[i]='\0';
 			rval=0;
 		}
