@@ -691,7 +691,7 @@ struct player_type
 
 	u16b team;
 	int ret_dam;			/* Drained life from a monster */
-	char attacker[80];		/* Attacking player string, contains name and attack */
+	char *attacker[80];		/* Attacking player string, contains name and attack */
 };
 
 extern bool imprison(int Ind, int time, char *reason);

@@ -5205,7 +5205,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	sprintf(pattacker, "%s%s", p_ptr->name, attacker);
-	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, &pattacker));
 }
 
 /*
@@ -5423,7 +5423,7 @@ void swap_position(int Ind, int lty, int ltx)
 /*
  * Hack -- apply a "projection()" in a direction (or at the target)
  */
-bool project_hook(int Ind, int typ, int dir, int dam, int flg, char attacker[80])
+bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -5458,7 +5458,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL;
 	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
-	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+	return (project_hook(Ind, typ, dir, dam, flg, &pattacker));
 }
 
 /*
@@ -5471,7 +5471,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
         char pattacker[80];
 	int flg = PROJECT_BEAM | PROJECT_KILL;
         sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
-	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+	return (project_hook(Ind, typ, dir, dam, flg, &pattacker));
 }
 
 /*

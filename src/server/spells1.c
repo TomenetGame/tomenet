@@ -5644,7 +5644,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
  * reducing purpose, I don't know why.
  */
 //static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
-static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad, int flg, char attacker[80])
+static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad, int flg, char *attacker)
 {
 	player_type *p_ptr;
 	monster_race *r_ptr;
@@ -7269,7 +7269,7 @@ static char bolt_char(int y, int x, int ny, int nx)
  *
  * Hack -- we assume that every "projection" is "self-illuminating".
  */
-bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char attacker[80])
+bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker)
 {
 	int			i, j, t;
 	int                 y1, x1, y2, x2;
