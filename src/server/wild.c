@@ -270,7 +270,7 @@ static bool wild_monst_aux_town(int r_idx)
 	monster_race *r_ptr = &r_info[r_idx];
 
 	/* Maggot is allowed :) */
-//	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
+	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
 
 	/* no special monsters allowed */
 	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return FALSE;
