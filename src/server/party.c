@@ -99,8 +99,8 @@ static u32b new_accid(){
 	if(fp==(FILE*)NULL) return(0L);
 	t_map=malloc(MAX_ACCOUNTS/8);
 	while(!feof(fp)){
-		fread(&t_acc, sizeof(struct account), 1, fp);
-		t_map[t_acc.id/8]|=(1<<(t_acc.id%8));
+		if(fread(&t_acc, sizeof(struct account), 1, fp))
+			t_map[t_acc.id/8]|=(1<<(t_acc.id%8));
 	}
 	fclose(fp);
 	for(id=account_id; id<MAX_ACCOUNTS; id++){
@@ -110,9 +110,9 @@ static u32b new_accid(){
 		for(id=1; id<account_id; id++){
 			if(!(t_map[id/8]&(1<<(id%8)))) break;
 		}
+		if(id==account_id) id=0;
 	}
 	free(t_map);
-	if(id==account_id) return(0);
 	account_id=id+1;
 
 	return(id);	/* temporary */
