@@ -3011,6 +3011,8 @@ static void player_talk_aux(int Ind, char *message)
 		}
 	}
 
+	process_hooks(HOOK_CHAT, "d", Ind);
+
 	if(++p_ptr->talk>10){
 		imprison(Ind, 30, "talking too much.");
 		return;
