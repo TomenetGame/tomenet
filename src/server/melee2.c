@@ -5653,7 +5653,8 @@ static void process_monster(int Ind, int m_idx)
 		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
 		//else if ((c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
 		else if ((c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREES ||
-			c_ptr->feat==FEAT_SMALL_TREES) && (r_ptr->flags8 & RF8_WILD_WOOD))
+			c_ptr->feat==FEAT_SMALL_TREES) &&
+			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL)))
 		{
 			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
