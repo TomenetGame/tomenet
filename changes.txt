@@ -128,3 +128,7 @@ Change list for PernMangband
 - New houses ready for testing prior to potential server reset
 - Extended dungeon. After level 100(5000') it loops to pseudo level 1
   but with all monsters gaining +100 level
+
+05/08/2001
+- 90 day player timeout added.
+

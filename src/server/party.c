@@ -722,6 +722,7 @@ struct hash_entry
 {
 	int id;				/* The ID */
 	cptr name;			/* Player name */
+	time_t laston;			/* Last on time */
 	struct hash_entry *next;	/* Next entry in the chain */
 };
 
@@ -736,6 +737,35 @@ static int hash_slot(int id)
 {
 	/* Be very efficient */
 	return (id & (NUM_HASH_ENTRIES - 1));
+}
+
+/*
+ * Lookup a player name by ID.  Will return NULL if the name doesn't exist.
+ */
+time_t lookup_player_laston(int id)
+{
+	int slot;
+	hash_entry *ptr;
+
+	/* Get the slot */
+	slot = hash_slot(id);
+
+	/* Acquire the pointer to the first element in the chain */
+	ptr = hash_table[slot];
+
+	/* Search the chain, looking for the correct ID */
+	while (ptr)
+	{
+		/* Check this entry */
+		if (ptr->id == id)
+			return ptr->laston;
+
+		/* Next entry in chain */
+		ptr = ptr->next;
+	}
+
+	/* Not found */
+	return 0L;			/* i return 0, olo returns -1 */
 }
 
 /*
@@ -797,13 +827,94 @@ int lookup_player_id(cptr name)
 	return 0;
 }
 
+/* Timestamp an existing player */
+void clockin(int Ind){
+	int slot;
+	hash_entry *ptr;
+	player_type *p_ptr=Players[Ind];
+	slot = hash_slot(p_ptr->id);
+	ptr = hash_table[slot];
+	while (ptr){
+		if (ptr->id == p_ptr->id){
+			ptr->laston=time(&ptr->laston);
+		}
+		ptr=ptr->next;
+	}
+}
+
+/* dish out a valid new player ID */
+int newid(){
+	int id;
+	int slot;
+	hash_entry *ptr;
+
+/* there should be no need to do player_id > MAX_ID check
+   as it should cycle just fine */
+
+	for(id=player_id;id<=MAX_ID;id++){
+		slot = hash_slot(id);
+		ptr = hash_table[slot];
+
+		while (ptr){
+			if (ptr->id == id) break;
+			ptr=ptr->next;
+		}
+		if(ptr) continue;	/* its on a valid one */
+		player_id=id+1;	/* new cycle counter */
+		return(id);
+	}
+	for(id=1;id<player_id;id++){
+		slot = hash_slot(id);
+		ptr = hash_table[slot];
+
+		while (ptr){
+			if (ptr->id == id) break;
+			ptr=ptr->next;
+		}
+		if(ptr) continue;	/* its on a valid one */
+		player_id=id+1;	/* new cycle counter */
+		return(id);
+	}
+	return(0);	/* no user IDs available - not likely */
+}
+
+sf_delete(char *name){
+	int i,k;
+	char temp[128],fname[128];
+	/* Extract "useful" letters */
+	for (i = 0; name[i]; i++)
+	{
+		char c = name[i];
+
+		/* Accept some letters */
+		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+
+		/* Convert space, dot, and underscore to underscore */
+		else if (strchr(". _", c)) temp[k++] = '_';
+	}
+	temp[k] = '\0';
+	path_build(fname, 1024, ANGBAND_DIR_SAVE, temp);
+	unlink(fname);
+}
+
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id)
+void add_player_name(cptr name, int id, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
+	time_t now;
+	
+	now=time(&now);
+	if(now>laston){				/* it should be! */
+		if(now-laston>7776000){		/* 90 days in seconds */
+			sf_delete(name);	/* a sad day ;( */
+			return;
+		}
+	}
+
+	/* Set the entry's id */
 
 	/* Get the destination slot */
 	slot = hash_slot(id);
@@ -813,8 +924,7 @@ void add_player_name(cptr name, int id)
 
 	/* Make a copy of the player name in the entry */
 	ptr->name = strdup(name);
-
-	/* Set the entry's id */
+	ptr->laston = laston;
 	ptr->id = id;
 
 	/* Add the rest of the chain to this entry */

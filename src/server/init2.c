@@ -1266,6 +1266,8 @@ static errr init_other(void)
 	/*C_MAKE(inventory, INVEN_TOTAL, object_type);*/
 
 
+	/*** alloc for the houses ***/
+	C_MAKE(houses, 1024, house_type);
 	/*** Prepare the Stores ***/
 
 	/* Allocate the stores */

@@ -1260,8 +1260,9 @@ static void player_setup(int Ind)
 	/* Add him to the player name database, if he is not already there */
 	if (!lookup_player_name(p_ptr->id))
 	{
+		time_t ttime;
 		/* Add */
-		add_player_name(p_ptr->name, p_ptr->id);
+		add_player_name(p_ptr->name, p_ptr->id, time(&ttime));
 	}
 
 	/* Set his "current activities" variables */
@@ -1369,6 +1370,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	{
 		/* Loading succeeded */		
 		player_setup(Ind);
+		clockin(Ind);
 		return TRUE;		
 	}
 
@@ -1410,7 +1412,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	p_ptr->mp_ptr = &magic_info[class];
 
 	/* Set his ID */
-	p_ptr->id = player_id++;
+	p_ptr->id = newid();
 
 	/* Actually Generate */
 	p_ptr->maximize = TRUE;

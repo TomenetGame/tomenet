@@ -368,8 +368,8 @@ player_type **Players;
 party_type parties[MAX_PARTIES];
 
 /* The information about houses */
-house_type houses[MAX_HOUSES];
-int num_houses;
+house_type *houses;
+u32b num_houses;
 
 /* An array to access a Player's ID */
 long GetInd[MAX_ID];

@@ -1640,6 +1640,8 @@ static int Handle_login(int ind)
 
 	num_logins++;
 
+	save_server_info();
+
 	/* Handle the cfg_secret_dungeon_master option */
 	if ((!strcmp(p_ptr->name,cfg_dungeon_master)) && (cfg_secret_dungeon_master)) return 0;
 

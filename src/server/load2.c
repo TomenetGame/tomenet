@@ -764,6 +764,7 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->monfear);
         if (m_ptr->special)
         {
+		printf("reading special monster\n");
                 MAKE(m_ptr->r_ptr, monster_race);
                 rd_monster_race(m_ptr->r_ptr);
         }
@@ -1270,7 +1271,7 @@ static bool rd_extra(int Ind)
 
 	/* If he was created in the pre-ID days, give him one */
 	if (!p_ptr->id)
-		p_ptr->id = player_id++;
+		p_ptr->id = newid();
 
 	strip_bytes(20);	/* oops */
 
@@ -2385,21 +2386,20 @@ errr rd_server_savefile()
 	/* Read house info if new enough */
 	if (!older_than(0,4,0))
 	{
-		rd_u16b(&tmp16u);
+		rd_u32b(&num_houses);
 
 		/* Incompatible save files */
-		if (tmp16u > MAX_HOUSES)
+		if (num_houses > MAX_HOUSES)
 		{
-			note(format("Too many (%u) houses!", tmp16u));
+			note(format("Too many (%u) houses!", num_houses));
 			return (27);
 		}
 
 		/* Read the available records */
-		for (i = 0; i < tmp16u; i++)
+		for (i = 0; i < num_houses; i++)
 		{
 			rd_house(i);
 		}
-		num_houses = tmp16u;
 		/* insert houses into wild space if needed */
 		for (i=-MAX_WILD;i<0;i++){
 			if(cave[i]){
@@ -2445,14 +2445,17 @@ errr rd_server_savefile()
 		/* Read the available records */
 		for (i = 0; i < tmp32u; i++)
 		{
+			time_t laston;
+
 			/* Read the ID */
 			rd_s32b(&tmp32s);
+			rd_s32b(&laston);
 
 			/* Read the player name */
 			rd_string(name, 80);
 
 			/* Store the player name */
-			add_player_name(name, tmp32s);
+			add_player_name(name, tmp32s, laston);
 		}
 	}
 

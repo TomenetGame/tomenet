@@ -809,6 +809,7 @@ static void wr_monster(monster_type *m_ptr)
 
         if (m_ptr->special)
         {
+		printf("writing special monster\n");
                 wr_monster_race(m_ptr->r_ptr);
         }
 }
@@ -1339,19 +1340,22 @@ static void wr_hostilities(int Ind)
  */
 static void wr_player_names(void)
 {
-	int i, num, *id_list;
+	/*int i, num, *id_list;*/
+	int i,  *id_list;
+	u32b num;
 
 	/* Get the list of player ID's */
 	num = player_id_list(&id_list);
 
 	/* Store the number of entries */
-	wr_s32b(num);
+	wr_u32b(num);
 
 	/* Store each entry */
 	for (i = 0; i < num; i++)
 	{
 		/* Store the ID */
 		wr_s32b(id_list[i]);
+		wr_s32b(lookup_player_laston(id_list[i]));
 
 		/* Store the player name */
 		wr_string(lookup_player_name(id_list[i]));
@@ -2305,11 +2309,10 @@ static bool wr_server_savefile(void)
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
 	/* Note the number of houses */
-	tmp16u = num_houses;
-	wr_u16b(tmp16u);
+	wr_u32b(num_houses);
 
 	/* Dump the houses */
-	for (i = 0; i < tmp16u; i++)
+	for (i = 0; i < num_houses; i++)
 		wr_house(&houses[i]); 
 
 	/* Note the size of the wilderness 

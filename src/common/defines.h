@@ -166,7 +166,7 @@
 /*
  * Maximum number of houses available.
  */
-#define MAX_HOUSES	1024
+#define MAX_HOUSES	65536	/* temp value... */
 #define HOUSE_KEY	0
 #define HOUSE_PASS	1
 
