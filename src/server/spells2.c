@@ -1863,7 +1863,7 @@ bool create_artifact_aux(int Ind, int item)
 bool curse_spell(int Ind){	// could be void
 	player_type *p_ptr=Players[Ind];
 	get_item(Ind);
-	p_ptr->current_curse=1;	/* This is awful. I intend to change it */
+	p_ptr->current_curse=TRUE;	/* This is awful. I intend to change it */
 	return(TRUE);
 }
 
@@ -1872,10 +1872,14 @@ bool curse_spell_aux(int Ind, int item){
 	object_type *o_ptr=&p_ptr->inventory[item];
 	char		o_name[80];
 
+	p_ptr->current_curse=FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
-	if(artifact_p(o_ptr)) return(FALSE);
+	if(artifact_p(o_ptr)){
+		msg_format(Ind,"The artifact resists your attempts.");
+		return(FALSE);
+	}
 	if(item_tester_hook_weapon(o_ptr)){
 		o_ptr->to_h=0-randint(10);
 		o_ptr->to_d=0-randint(10);
@@ -1888,12 +1892,12 @@ bool curse_spell_aux(int Ind, int item){
 		return(FALSE);
 	}
 
-	msg_format(Ind,"A terrible black aura surrounds your %s\n",o_name,o_ptr->number>1 ? "" : "s");
+	msg_format(Ind,"A terrible black aura surrounds your %s",o_name,o_ptr->number>1 ? "" : "s");
 	/* except it doesnt actually get cursed properly yet. */
 	o_ptr->name1=0;
 	o_ptr->name3=0;
-	o_ptr->ident|=ID_CURSED|ID_SENSE;	/* not allowing sense may be cruel */
-	o_ptr->ident&=~ID_KNOWN;		/* without this, the spell is pointless */
+	o_ptr->ident|=ID_CURSED;
+	o_ptr->ident&=~ID_KNOWN|ID_SENSE;	/* without this, the spell is pointless */
 	return(TRUE);
 }
 
