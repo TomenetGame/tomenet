@@ -4245,6 +4245,7 @@ void process_monsters(void)
 	{
 		player_type *p_ptr;
 		int closest = -1, dis_to_closest = 9999, lowhp = 9999;
+               	bool blos=FALSE, new_los; 
 
 		/* Access the index */
 		i = m_fast[k];
@@ -4276,47 +4277,58 @@ void process_monsters(void)
 		if (m_ptr->energy < level_speed(m_ptr->dun_depth)) continue;
 
 		/* Find the closest player */
-		for (pl = 1; pl < NumPlayers + 1; pl++)
-		{
-			int j;
+                for (pl = 1; pl < NumPlayers + 1; pl++) 
+               { 
+                        int j; 
+                        p_ptr = Players[pl]; 
 
-			p_ptr = Players[pl];
+                        /* Only check him if he is playing */ 
+                        if (p_ptr->conn == NOT_CONNECTED) 
+                                continue; 
 
-			/* Only check him if he is playing */
-		     	if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+                        /* Make sure he's on the same dungeon level */ 
+                        if (p_ptr->dun_depth != m_ptr->dun_depth) 
+                                continue; 
 
-			/* Make sure he's on the same dungeon level */
-			if (p_ptr->dun_depth != m_ptr->dun_depth)
-				continue;
+                        /* Hack -- Skip him if he's shopping */ 
+                        if (p_ptr->store_num != -1) 
+                                continue; 
 
-			/* Hack -- Skip him if he's shopping */
-			if (p_ptr->store_num != -1)
-				continue;
+                        /* Hack -- make the dungeon master invisible to monsters */ 
+                        if (!strcmp(p_ptr->name,cfg_dungeon_master)) continue; 
 
-			/* Hack -- make the dungeon master invisible to monsters */
-			if (!strcmp(p_ptr->name,cfg_dungeon_master)) continue;
+                        /* Monsters serve a king on his land they dont attack him */ 
+                        if (player_is_king(pl)) continue; 
 
-			/* Monsters serve a king on his land they dont attack him */
-			if (player_is_king(pl)) continue;
+                        /* Compute distance */ 
+                        j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
 
-			/* Compute distance */
-			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
+                        /* Glaur. Check if monster has LOS to the player */ 
+                        new_los=los(p_ptr->dun_depth, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
 
-			/* Skip if further than closest */
-			if (j > dis_to_closest) continue;
+		/*	if (p_ptr->ghost)
+			if (!new_los)
+		        j += 100; */
 
-			/* Skip if same distance and stronger */
-			if (j == dis_to_closest && p_ptr->chp > lowhp) continue;
-			
-			/* Skip if the monster can't see the player */
-			if (player_invis(pl, m_ptr)) continue;
+                        /* Glaur. Check that the closest VISIBLE target gets selected, 
+                        if no visible one available just take the closest*/ 
+                        if ((blos >= new_los) && (j > dis_to_closest) || (blos > new_los)) 
+			continue; 
 
-			/* Remember this player */
-			dis_to_closest = j;
-			closest = pl;
-			lowhp = p_ptr->chp;
-		}
+                        /* Glaur. Skip if same distance and stronger and same visibility*/ 
+                        if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) 
+			continue; 
+
+                        /* Skip if the monster can't see the player */ 
+                        if (player_invis(pl, m_ptr)) continue; 
+
+                        /* Remember this player */ 
+		        blos = new_los; 
+                        dis_to_closest = j; 
+                        closest = pl; 
+                        lowhp = p_ptr->chp; 
+                } 
+
 
 		/* Paranoia -- Make sure we found a closest player */
 		if (closest == -1)
