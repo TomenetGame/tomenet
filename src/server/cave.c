@@ -1098,7 +1098,10 @@ static byte player_color(int Ind)
 	if (p_ptr->body_monster) return (r_ptr->d_attr);
 
 	/* Bats are orange */
-	if (p_ptr->fruit_bat) return TERM_ORANGE;
+	/* taking this out since bat parties
+	become hard to oversee. Mimicked bats stay orange,
+	that should be fine. (C. Blue)
+	if (p_ptr->fruit_bat) return TERM_ORANGE; */
 	
 	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
