@@ -855,6 +855,8 @@ bool set_tim_wraith(int Ind, int v)
 				p_ptr->wraith_in_wall = TRUE;
 			}
 		}
+		else if(!p_ptr->wpos.wz && cave_floor_bold(wpos, p_ptr->py, p_ptr->px))
+			return(FALSE);
 	}
 
 	/* Shut */
