@@ -6423,6 +6423,28 @@ bool master_summon(int Ind, char * parms)
 	return TRUE;
 }
 
+void imprison(int Ind, char *reason){
+	int id, i;
+	struct dna_type *dna;
+	player_type *p_ptr=Players[Ind];
+	char string[160];
+
+	if(!p_ptr || !(id=lookup_player_id("Jailer"))) return;
+
+	for(i=0; i<num_houses; i++){
+		if(!houses[i].flags&HF_JAIL) continue;
+		dna=houses[i].dna;
+		if(dna->owner==id && dna->owner_type==OT_PLAYER){
+#if 0
+			sprintf(string, "%s was jailed for %s", p_ptr->name, reason);
+			msg_broadcast(Ind, string);
+			msg_format(Ind, "You have been jailed for %s", reason);
+#endif
+			return;
+		}
+	}
+}
+
 void player_edit(char *name){
 	
 }

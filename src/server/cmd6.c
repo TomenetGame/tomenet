@@ -1164,7 +1164,7 @@ bool curse_armor(int Ind)
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 50))
+	if (artifact_p(o_ptr) && (rand_int(100) < 30))
 	{
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
@@ -1237,7 +1237,7 @@ bool curse_weapon(int Ind)
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if (artifact_p(o_ptr) && (rand_int(100) < 50))
+	if (artifact_p(o_ptr) && (rand_int(100) < 30))
 	{
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
@@ -1458,6 +1458,7 @@ void do_cmd_read_scroll(int Ind, int item)
 //			unsigned char *ins=quark_str(o_ptr->note);
 			cptr ins=quark_str(o_ptr->note);
 			bool floor=TRUE;
+			bool jail=FALSE;
 			msg_print(Ind, "This is a house creation scroll.");
 			ident = TRUE;
 			if(ins){
@@ -1466,13 +1467,15 @@ void do_cmd_read_scroll(int Ind, int item)
 						ins++;
 						if(*ins=='F'){
 							floor=FALSE;
-							break;
+						}
+						if(*ins=='J'){
+							jail=TRUE;
 						}
 					}
 					ins++;
 				}
 			}
-			house_creation(Ind, floor);
+			house_creation(Ind, floor, jail);
 			break;
 		}
 

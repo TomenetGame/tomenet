@@ -881,7 +881,7 @@ extern bool create_artifact(int Ind);
 extern bool create_artifact_aux(int Ind, int item);
 extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
-extern void house_creation(int Ind, bool floor);
+extern void house_creation(int Ind, bool floor, bool jail);
 
 
 /* store.c */

@@ -4057,7 +4057,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr->feat = FEAT_FLOOR;
 
 				/* Declare this to be a room */
-				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+				c_ptr->info |= (CAVE_ROOM | CAVE_GLOW | CAVE_NOPK);
 			}
 		}
 
@@ -4338,6 +4338,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	{
 		/* Clear previous contents, add a store door */
 		c_ptr->feat = FEAT_SHOP_HEAD + n;
+		c_ptr->info |= CAVE_NOPK;
 
 		for (y1 = y - 1; y1 <= y + 1; y1++)
 		{

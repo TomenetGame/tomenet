@@ -1511,7 +1511,8 @@ static errr rd_dungeon(void)
 	int i, y, x;
 	cave_type *c_ptr;
 
-	unsigned char runlength, feature, flags;
+	unsigned char runlength, feature;
+	u16b flags;
 
 
 	/*** Depth info ***/
@@ -1559,7 +1560,9 @@ static errr rd_dungeon(void)
 		/* Grab RLE info */
 		rd_byte(&runlength);
 		rd_byte(&feature);
-		rd_byte(&flags);
+		if(!older_than(3,4,4))
+			rd_u16b(&flags);
+		else rd_byte(&flags);
 
 		/* Apply the RLE info */
 		for (i = 0; i < runlength; i++)

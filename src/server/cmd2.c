@@ -2504,6 +2504,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 					/* Note the collision */
 					hit_body = TRUE;
 
+					if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK || zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK){
+						p_ptr->target_who=0;
+						imprison(Ind, "attempted murder");
+					}
+
 					/* Did we hit it (penalize range) */
 					if (test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible))
 					{

@@ -2195,6 +2195,9 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
  						if(!(h_ptr->flags&HF_NOFLOOR))
 							c_ptr->feat=FEAT_FLOOR;
+						if(h_ptr->flags & HF_JAIL){
+							c_ptr->info|=CAVE_STCK;
+						}
  						c_ptr->info|=CAVE_ICKY;
 					}
 				}
@@ -2281,13 +2284,11 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						break;
 					}
 					if(!(h_ptr->flags&HF_NOFLOOR))
-#ifdef NEW_DUNGEON
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
 					zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
-#else
-						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
-					cave[Depth][miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
-#endif
+					if(h_ptr->flags&HF_JAIL){
+						zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
+					}
 					break;
 				case 1:
 					if(func==1) break;
@@ -2298,15 +2299,9 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						break;
 					}
 					if(func==2)
-#ifdef NEW_DUNGEON
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
 					else
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
-#else
-						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
-					else
-						cave[Depth][miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
-#endif
 					break;
 			}
 		}

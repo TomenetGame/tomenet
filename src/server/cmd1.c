@@ -1326,7 +1326,17 @@ void py_attack_player(int Ind, int y, int x, bool old)
 			k = (k + 2) / 3;
 
 			/* Damage */
-			take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK ||
+			   zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
+				if(k>q_ptr->chp) k-=q_ptr->chp;
+				take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
+				if(q_ptr->chp<5){
+					msg_format(Ind, "You have beaten %s", q_ptr->name);
+					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
+					teleport_player(0 - c_ptr->m_idx, 400);
+				}
+			}
+			else take_hit(0 - c_ptr->m_idx, k, p_ptr->name);
 
 			if(!c_ptr->m_idx) break;
 

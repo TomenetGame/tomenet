@@ -2133,15 +2133,19 @@ bool curse_spell_aux(int Ind, int item){
 		return(FALSE);
 	}
 	if(item_tester_hook_weapon(o_ptr)){
-		o_ptr->to_h=0-randint(10);
-		o_ptr->to_d=0-randint(10);
+		o_ptr->to_h=0-(randint(10)+1);
+		o_ptr->to_d=0-(randint(10)+1);
 	}
 	else if(item_tester_hook_armour(o_ptr)){
-		o_ptr->to_a=0-randint(10);
+		o_ptr->to_a=0-(randint(10)+1);
 	}
 	else{
-		msg_format(Ind,"You cannot curse that item!");
-		return(FALSE);
+		switch(o_ptr->tval){
+			case TV_RING:
+			default:
+				msg_format(Ind,"You cannot curse that item!");
+				return(FALSE);
+		}
 	}
 
 	msg_format(Ind,"A terrible black aura surrounds your %s",o_name,o_ptr->number>1 ? "" : "s");
@@ -2151,8 +2155,9 @@ bool curse_spell_aux(int Ind, int item){
 	o_ptr->ident|=ID_CURSED;
 	o_ptr->ident&=~ID_KNOWN|ID_SENSE;	/* without this, the spell is pointless */
 
-	if(o_ptr->name2)
-		o_ptr->pval=0-randint(10);	/* nasty */
+	if(o_ptr->name2){
+		o_ptr->pval=0-(randint(10)+1);	/* nasty */
+	}
 
 	/* Recalculate the bonuses - if stupid enough to curse worn item ;) */
 	p_ptr->update |= (PU_BONUS);
@@ -4341,6 +4346,7 @@ struct builder{
 	int cvert;
 	struct worldpos wpos;
 	bool nofloor;
+	bool jail;
 	struct dna_type *dna;
 	char *vert;
 	struct builder *next;
@@ -4397,7 +4403,8 @@ bool poly_build(int Ind, char *args){
 		curr->dna->price=5;	/* so work out */
 		curr->odir=0;
 		curr->cvert=0;
-		curr->nofloor=(*args=='N');
+		curr->nofloor=(args[0]=='N');
+		curr->jail=(args[1]=='Y');
 		curr->sx=p_ptr->px;
 		curr->sy=p_ptr->py;
 		curr->minx=curr->maxx=curr->sx;
@@ -4484,6 +4491,7 @@ bool poly_build(int Ind, char *args){
 			houses[num_houses].coords.poly=curr->vert;
 		}
 		if(curr->nofloor) houses[num_houses].flags|=HF_NOFLOOR;
+		if(curr->jail) houses[num_houses].flags|=HF_JAIL;
 /* Moat testing */
 #if 0
 		houses[num_houses].flags|=HF_MOAT;
@@ -4533,20 +4541,28 @@ bool poly_build(int Ind, char *args){
 	return FALSE;
 }
 
-void house_creation(int Ind, bool floor){
+void house_creation(int Ind, bool floor, bool jail){
 	player_type *p_ptr=Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
+	char buildargs[3];
 
 	/* set master_move_hook : a bit like a setuid really ;) */
+	printf("floor: %d jail: %d\n",floor,jail);
 
 	/* No building in town */
 	if(wpos->wz || istown(wpos) || wild_info[wpos->wy][wpos->wx].radius<3)
+		return;
 	if((house_alloc-num_houses)<32){
 		GROW(houses, house_alloc, house_alloc+512, house_type);
 		house_alloc+=512;
 	}
 	p_ptr->master_move_hook=poly_build;
-	poly_build(Ind, floor ? "Y" : "N");	/* Its a (char*) ;( */
+
+	buildargs[0]=(floor ? 'Y' : 'N');
+	buildargs[1]=(jail ? 'Y' : 'N');
+	buildargs[2]='\0';
+
+	poly_build(Ind, &buildargs);	/* Its a (char*) ;( */
 }
 
 

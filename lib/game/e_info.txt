@@ -144,7 +144,7 @@ C:0:0:0:-6
 R:100
 F:CON | STR | R_STAT | CURSED | CURSE_NO_DROP
 
-# Mithirl & Adamantite mails & PDSM
+# Mithril & Adamantite mails & PDSM
 N:13:of Immunity
 T:37:25:25
 T:37:30:30

@@ -1357,7 +1357,8 @@ static void wr_player_names(void)
 static void wr_dungeon(struct worldpos *wpos)
 {
 	int y, x;
-	byte prev_feature, prev_info;
+	byte prev_feature;
+	u16b prev_info;
 	unsigned char runlength;
 
 	cave_type *c_ptr;
@@ -1413,7 +1414,7 @@ static void wr_dungeon(struct worldpos *wpos)
 					/* if we just finished a run, write it */
 					wr_byte(runlength);
 					wr_byte(prev_feature);
-					wr_byte(prev_info);
+					wr_u16b(prev_info);
 				}
 
 				/* start a new run */
@@ -1427,7 +1428,7 @@ static void wr_dungeon(struct worldpos *wpos)
 		/* hack -- write the final run of this row */
 		wr_byte(runlength);
 		wr_byte(prev_feature);
-		wr_byte(prev_info);
+		wr_u16b(prev_info);
 	}
 }
 

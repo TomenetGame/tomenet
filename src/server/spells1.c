@@ -320,6 +320,7 @@ void teleport_player(int Ind, int dis)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	if (check_st_anchor(wpos)) return;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	/* Verify max distance once here */
 	if (dis > 150) dis = 150;
@@ -469,6 +470,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	int tries = 200;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
@@ -560,6 +562,7 @@ void teleport_player_level(int Ind)
 	char *msg;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	/* Space/Time Anchor */
 	if (check_st_anchor(&p_ptr->wpos)) return;
@@ -823,15 +826,11 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		/* Sound */
 		sound(Ind, SOUND_DEATH);
 
-		/* Hack -- Note death */
-		msg_print(Ind, "\377RYou die.");
-		msg_print(Ind, NULL);
-
 		/* Hack -- Blond bond */
 		Ind2 = find_player(p_ptr->blood_bond);
 
 		if (Ind2 && !strcmp(Players[Ind2]->name, hit_from))
-		  {
+		{
 		    p_ptr->chp = p_ptr->mhp;
 		    Players[Ind2]->chp = Players[Ind2]->mhp;
 		    p_ptr->redraw |= (PR_HP);
@@ -849,7 +848,12 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		    teleport_player(Ind, 400);
 
 		    return;
-		  }
+		}
+		else{
+			/* Only mention death if not BB! */
+			msg_print(Ind, "\377RYou die.");
+			msg_print(Ind, NULL);
+		}
 
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause
