@@ -66,3 +66,11 @@ Change list for PernMangband
   arg p_ptr).
 - uncommented 744/745 of server/xtra1.c
 - made king code multi-king friendly (made movement hook for each player)
+
+25/07/2001 (evileye)
+- Fixed up target_set_friendly so that it works with non party players
+  and respects hostilities.
+- Fixed "the (nothing) you are wearing is cursed" problem which annoys
+  recently deceased players.
+- Blood bond should not crash now.
+- Added curse item spell for rogues (not fully implemented).
