@@ -181,3 +181,12 @@ Change list for PernMangband
 28/09/2001
 - Client bug fixed (peruse file overlay) Usually caused by lag.
   Common symptom, the player list appears on game screen.
+
+28/09/2001 - Client changes (Zz)
+- Now you can specify an argument in Windows and client will connect 
+  directly bypassing meta server (previously this only worked for Unix clients)
+- Multiple colors for different types of messages in recall window 
+  (death, kill, private messages, etc.)
+- CTRL-O works like CTRL-P except only shows important messages - good 
+  for review after a long fight or long AFK
+
