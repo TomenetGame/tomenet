@@ -343,3 +343,4 @@ Change list for PernMangband
 29/11/2001 (Jir)
 - Admin commands: /static-level, /unstatic-level (/sta, /unst)
 - Client suppresses repeated messages.
+- 12 more vaults borrowed from ZAngband (thx, the creators!)
