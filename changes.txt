@@ -350,3 +350,4 @@ Change list for PernMangband
 30/11/2001 (Jir)
 - lv-req can handle {0} stuffs from stores.
 - 4 'Pattern vaults' are commented out. 5 more original vaults.
+- Bug in new auto-retaliator code is fixed(thx Moltor for report).

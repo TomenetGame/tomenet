@@ -1327,9 +1327,14 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		/* Hack -- divided turn for auto-retaliator */
 		if (!old)
 		{
-			p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
 			break;
 		}
+	}
+
+	/* Hack -- divided turn for auto-retaliator */
+	if (!old)
+	{
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
@@ -1720,11 +1725,15 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Hack -- divided turn for auto-retaliator */
 		if (!old)
 		{
-			p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
 			break;
 		}
 	}
 
+	/* Hack -- divided turn for auto-retaliator */
+	if (!old)
+	{
+		p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_blow;
+	}
 
 	/* Hack -- delay fear messages */
 	if (fear && p_ptr->mon_vis[c_ptr->m_idx])
