@@ -3429,7 +3429,17 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	initialized = TRUE;
 
 	/* Do network initialization, etc. */
-	client_init(NULL);
+	/* Add ability to specify cmdline to windows  -Zz*/
+	if (*lpCmdLine != NULL)
+	{
+		/* Initialize with given server name */
+		client_init(lpCmdLine);
+	}
+	else
+	{
+		/* Initialize and query metaserver */
+		client_init(NULL);
+	}
 
 	/* Process messages forever */
 	while (GetMessage(&msg, NULL, 0, 0))

@@ -1007,6 +1007,36 @@ void fix_message(void)
         int w, h;
         int x, y;
 
+	/* Display messages in different colors -Zz */
+	char nameA[20];
+	char nameB[20];
+	cptr msg_slainA = "You have slain";
+	cptr msg_slainB = "You have destroyed";
+	cptr msg_slainC = " dies.";
+	cptr msg_slainD = " shrivels away in the light!";
+	cptr msg_slainE = " is destroyed.";
+	cptr msg_slainF = " dissolves!";
+	cptr msg_slainG = " collapses, a mindless husk.";
+	cptr msg_deadA = "You have been killed";
+	cptr msg_deadB = "You die";
+	cptr msg_unique = "was slain by";
+	cptr msg_killed = "was killed by";
+	cptr msg_destroyed = "ghost was destroyed by";
+	cptr msg_suicide = "committed suicide.";
+	cptr msg_feel = "You feel";
+	cptr msg_telepath = "mind";
+	cptr msg_antimagic = "fails to cast a spell.";
+	cptr msg_arrows = "Your ammos";
+	cptr msg_stun = "stunned";
+	cptr msg_recall = "The air about you";
+	cptr msg_slow = "limping slower.";
+
+	cptr nomsg_target = "Target Selected.";
+
+	strcpy(nameA, "[");  strcat(nameA, nick);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, nick);  strcat(nameB, "]");
+
+
         /* Scan windows */
         for (j = 0; j < 8; j++)
         {
@@ -1027,14 +1057,33 @@ void fix_message(void)
                 /* Dump messages */
                 for (i = 0; i < h; i++)
                 {
-			byte a;
+			byte a = TERM_WHITE;
 			cptr msg;
 
 			msg = message_str(i);
 
-			if (msg[0] == '[')
+			/* Display messages in different colors -Zz */
+			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL))
+				a = TERM_GREEN;
+			else if (msg[0] == '[')
 				a = TERM_L_BLUE;
-			else a = TERM_WHITE;
+			else if (strstr(msg, msg_feel) != NULL)
+				a = TERM_L_GREEN;
+			else if ((strstr(msg, msg_slainA) != NULL) || (strstr(msg, msg_slainB) != NULL) || \
+				 (strstr(msg, msg_slainC) != NULL) || (strstr(msg, msg_slainD) != NULL) || \
+				 (strstr(msg, msg_slainE) != NULL) || (strstr(msg, msg_slainF) != NULL) || \
+				 (strstr(msg, msg_slainG) != NULL))
+				a = TERM_YELLOW;
+			else if ((strstr(msg, msg_antimagic) != NULL) || (strstr(msg, msg_arrows) != NULL) || (strstr(msg, msg_stun) != NULL) || (strstr(msg, msg_slow) != NULL) || (strstr(msg, msg_recall) != NULL))
+				a = TERM_ORANGE;
+			else if ((strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_destroyed) != NULL) || (strstr(msg, msg_suicide) != NULL))
+				a = TERM_RED;
+			else if (strstr(msg, msg_unique) != NULL)
+				a = TERM_BLUE;
+			else if ((strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || (strstr(msg, msg_telepath) != NULL))
+				a = TERM_L_RED;
+			else 
+				a = TERM_WHITE;
 
                         /* Dump the message on the appropriate line */
                         Term_putstr(0, (h - 1) - i, -1, a, msg);
@@ -1044,6 +1093,7 @@ void fix_message(void)
 
                         /* Clear to end of line */
                         Term_erase(x, y, 255);
+			
                 }
 
                 /* Fresh */

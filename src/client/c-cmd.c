@@ -398,6 +398,13 @@ void process_command()
 			break;
 		}
 
+		/* Add separate buffer for chat only review (good for afk) -Zz */
+                case KTRL('O'):
+                {
+                        do_cmd_messages_chatonly();
+                        break;
+                }
+
                 case KTRL('P'):
                 {
                         do_cmd_messages();
@@ -1623,7 +1630,6 @@ void cmd_house_chmod(int dir){
 void cmd_house_kill(int dir){
 	Send_admin_house(dir,"K");
 }
-
 void cmd_purchase_house(void)
 {
 	char i=0;
