@@ -2604,7 +2604,7 @@ void player_talk_aux(int Ind, cptr message)
 				i--;
 
 				/* Hack - Don't take a turn here */
-				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+				p_ptr->energy += level_speed(p_ptr->dun_depth);
 			}
 			/* Take total of one turn */
 			p_ptr->energy -= level_speed(p_ptr->dun_depth);
