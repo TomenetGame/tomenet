@@ -76,3 +76,4 @@ int Receive_pause(void);
 int Receive_monster_health(void);
 int Receive_sanity(void);
 int Receive_chardump(void);
+int Receive_beep(void);

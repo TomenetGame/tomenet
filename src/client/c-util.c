@@ -2092,6 +2092,8 @@ void c_msg_print(cptr msg)
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
+	cptr msg_afk1 = "seems to be AFK now";
+	cptr msg_afk2 = "has returned from AFK";
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
@@ -2149,6 +2151,7 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
 	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[')) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		c_message_add_chat(msg);

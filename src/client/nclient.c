@@ -129,6 +129,8 @@ static void Receive_init(void)
 	receive_tbl[PKT_STORE_LEAVE] 	= Receive_store_kick;
 	receive_tbl[PKT_CHARDUMP] 	= Receive_chardump;
 	receive_tbl[PKT_BACT]		= Receive_store_action;
+
+	receive_tbl[PKT_BEEP]		= Receive_beep;
 }
 
 /* Head of file transfer system receive */
@@ -2590,6 +2592,21 @@ int Receive_chardump(void)
 	strnfmt(tmp, 160, "%s-death.txt", cname);
 	file_character(tmp, FALSE);
 
+
+	return 1;
+}
+
+/* Some simple paging, especially useful to notify ghosts
+   who are afk while being rescued :) - C. Blue */
+int Receive_beep(void)
+{
+	char	ch;
+	int	n;
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
+
+//	beep();
+	fprintf(stderr, "\007");
+	fflush(stderr);
 
 	return 1;
 }
