@@ -7045,25 +7045,6 @@ void Handle_direction(int Ind, int dir)
 
 
 	if (p_ptr->current_spell != -1)
-#if 0
-	{
-		if (p_ptr->ghost)
-			do_cmd_ghost_power_aux(Ind, dir);
-		else if (p_ptr->mp_ptr->spell_book == TV_MAGIC_BOOK)
-			do_cmd_cast_aux(Ind, dir);
-		else if (p_ptr->mp_ptr->spell_book == TV_SORCERY_BOOK)
-			do_cmd_sorc_aux(Ind, dir);
-		else if (p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK)
-			do_cmd_pray_aux(Ind, dir);
-		else if (p_ptr->mp_ptr->spell_book == TV_FIGHT_BOOK)
-			do_cmd_fight_aux(Ind, dir);
-		else if (p_ptr->pclass == CLASS_ROGUE)
-			do_cmd_shad_aux(Ind, dir);
-		else if (p_ptr->pclass == CLASS_MIMIC)
-			do_mimic_power_aux(Ind, dir);
-		else p_ptr->current_spell = -1;
-	}
-#else	// 0
 	{
 //		if (p_ptr->current_realm == REALM_GHOST)
 		if (p_ptr->ghost)
@@ -7082,7 +7063,6 @@ void Handle_direction(int Ind, int dir)
 			do_mimic_power_aux(Ind, dir);
 		else p_ptr->current_spell = -1;
 	}
-#endif	// 0
 	else if (p_ptr->current_mind != -1)
 	  do_cmd_psi_aux(Ind, dir);
 	else if (p_ptr->current_rod != -1)

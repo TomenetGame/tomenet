@@ -23,59 +23,6 @@
 #define ENCHANT_DISCOUNT_CHANCE	40
 
 /*
- * Returns spell chance of failure for spell		-RAK-
- */
-static s16b spell_chance(int Ind, magic_type *s_ptr)
-{
-	player_type *p_ptr = Players[Ind];
-
-	int		chance, minfail;
-
-	/* Extract the base spell failure rate */
-	chance = s_ptr->sfail;
-
-	/* Reduce failure rate by "effective" level adjustment */
-	chance -= 3 * (p_ptr->lev - s_ptr->slevel);
-
-	/* Reduce failure rate by INT/WIS adjustment */
-	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[p_ptr->mp_ptr->spell_stat]] - 1);
-
-	/* Not enough mana to cast */
-	if (s_ptr->smana > p_ptr->csp)
-	{
-		/* Hack -- Since at the moment casting spells without enough mana*/
-		/* is impossible, I'm taking this out, as it confuses people. */
-		/* chance += 5 * (s_ptr->smana - p_ptr->csp); */
-	}
-
-	/* Extract the minimum failure rate */
-	minfail = adj_mag_fail[p_ptr->stat_ind[p_ptr->mp_ptr->spell_stat]];
-
-	/* Non mage/sorceror/priest characters never get too good */
-	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST) && (p_ptr->pclass != CLASS_SORCERER))
-	{
-		if (minfail < 5) minfail = 5;
-	}
-
-	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
-	if ((p_ptr->pclass == 2) && (p_ptr->icky_wield)) chance += 25;
-
-	/* Minimum failure rate */
-	if (chance < minfail) chance = minfail;
-
-	/* Stunning makes spells harder */
-	if (p_ptr->stun > 50) chance += 25;
-	else if (p_ptr->stun) chance += 15;
-
-	/* Always a 5 percent chance of working */
-	if (chance > 95) chance = 95;
-
-	/* Return the chance */
-	return (chance);
-}
-
-
-/*
  * Rerturn the skill associated with the realm
  */
 int find_realm_skill(int realm)
@@ -98,6 +45,59 @@ int find_realm_skill(int realm)
 //                return SKILL_;
         };
         return 0;
+}
+
+/*
+ * Returns spell chance of failure for spell		-RAK-
+ */
+static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		chance, minfail;
+
+	/* Extract the base spell failure rate */
+	chance = s_ptr->sfail;
+
+	/* Reduce failure rate by "effective" level adjustment */
+	chance -= 3 * (get_skill(p_ptr, find_realm_skill(realm)) - s_ptr->slevel);
+
+	/* Reduce failure rate by INT/WIS adjustment */
+	chance -= 3 * (adj_mag_stat[p_ptr->stat_ind[magic_info[realm].spell_stat]] - 1);
+
+	/* Not enough mana to cast */
+	if (s_ptr->smana > p_ptr->csp)
+	{
+		/* Hack -- Since at the moment casting spells without enough mana*/
+		/* is impossible, I'm taking this out, as it confuses people. */
+		/* chance += 5 * (s_ptr->smana - p_ptr->csp); */
+	}
+
+	/* Extract the minimum failure rate */
+	minfail = adj_mag_fail[p_ptr->stat_ind[magic_info[realm].spell_stat]];
+
+#if 0 // NEED to find a good way to do that without class
+	/* Non mage/sorceror/priest characters never get too good */
+	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST) && (p_ptr->pclass != CLASS_SORCERER))
+	{
+		if (minfail < 5) minfail = 5;
+	}
+#endif
+	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
+	if ((realm == REALM_PRAYER) && (p_ptr->icky_wield)) chance += 25;
+
+	/* Minimum failure rate */
+	if (chance < minfail) chance = minfail;
+
+	/* Stunning makes spells harder */
+	if (p_ptr->stun > 50) chance += 25;
+	else if (p_ptr->stun) chance += 15;
+
+	/* Always a 5 percent chance of working */
+	if (chance > 95) chance = 95;
+
+	/* Return the chance */
+	return (chance);
 }
 
 
@@ -163,7 +163,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	/* Mage spells */
 	if (realm == REALM_MAGERY)
 	{
-		int plev = p_ptr->lev;
+		int plev = ;
 
 		/* Analyze the spell */
 		switch (j)
@@ -208,7 +208,7 @@ static void spell_info(int Ind, char *p, int realm, int j)
 	/* Priest spells */
 	if (realm == REALM_PRAYER)
 	{
-		int plev = p_ptr->lev;
+		int plev = get_skill(p_ptr, SKILL_PRAYER);
 
 		/* See below */
 		int orb = (plev / ((p_ptr->pclass == 2) ? 2 : 4));
@@ -426,7 +426,7 @@ void print_spells(int Ind, int realm, int book, byte *spell, int num)
 		/* Dump the spell --(-- */
 		sprintf(out_val, "  %c) %-30s%2d %4d %3d%%%s",
 		        I2A(i), spell_names[realm][j],
-		        s_ptr->slevel, s_ptr->smana, spell_chance(Ind, s_ptr), comment);
+		        s_ptr->slevel, s_ptr->smana, spell_chance(Ind, realm, s_ptr), comment);
 		Send_spell_info(Ind, realm, book, i, out_val);
 	}
 }
@@ -530,9 +530,6 @@ void do_cmd_study(int Ind, int book, int spell)
 		return;
 	}
 
-	/* Restrict choices to "useful" books */
-// DGDGDGDG	item_tester_tval = p_ptr->mp_ptr->spell_book;
-
 	/* Get the item (in the pack) */
 	if (book >= 0)
 	{
@@ -544,13 +541,7 @@ void do_cmd_study(int Ind, int book, int spell)
 	{
 		o_ptr = &o_list[0 - book];
 	}
-/*
-	if (o_ptr->tval != p_ptr->mp_ptr->spell_book)
-	{
-		msg_print(Ind, "SERVER ERROR: Trying to gain a spell from a bad book!");
-		return;
-	}
-*/
+
         if (!can_use(Ind, o_ptr))
         {
                 msg_print(Ind, "You are not high level enough.");
@@ -589,7 +580,7 @@ void do_cmd_study(int Ind, int book, int spell)
 
 
 	/* Priest -- Learn a random prayer */
-	if (p_ptr->mp_ptr->spell_book == TV_PRAYER_BOOK)
+	if (o_ptr->tval == TV_PRAYER_BOOK)
 	{
 		int k = 0;
 
@@ -913,7 +904,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	int			plev = p_ptr->lev;
+	int			plev = get_skill(p_ptr, SKILL_MAGERY);
 	int			rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type		*o_ptr;
@@ -1015,7 +1006,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
 
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail ||
@@ -1579,7 +1570,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 				break;
 			}
 		}
-		/* A spell was cast */
+#if 0 // Dont learn, dont gain xp
+                /* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_MAGERY] & (1L << j)) :
 		      (p_ptr->spell_worked2[REALM_MAGERY] & (1L << (j - 32)))))
@@ -1602,7 +1594,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
 		}
-	}
+#endif
+        }
 
 	/* Take a turn */
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
@@ -1657,7 +1650,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = p_ptr->lev;
+	int plev = get_skill(p_ptr, SKILL_MAGERY);
 	int beam = ((p_ptr->pclass == 1) ? plev : (plev / 2));
 
 	magic_type *s_ptr = &magic_info[REALM_MAGERY].info[p_ptr->current_spell];
@@ -1953,6 +1946,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 		}
 	}	
 		
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1[REALM_MAGERY] & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2[REALM_MAGERY] & (1L << (p_ptr->current_spell - 32)))))
@@ -1973,7 +1967,7 @@ void do_cmd_cast_aux(int Ind, int dir)
 		/* Fix the spell info */
 		p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -2140,7 +2134,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) * (100 - get_skill_scale(p_ptr, SKILL_CASTSPEED, 60)) / 100) / p_ptr->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_SORCERY, s_ptr);
 
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail ||
@@ -2560,7 +2554,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			get_aim_dir(Ind);
 			return;
 		}
-
+#if 0 // Dont learn, dont gain xp
 		/* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_SORCERY] & (1L << j)) :
@@ -2584,7 +2578,8 @@ void do_cmd_sorc(int Ind, int book, int spell)
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
 		}
-	}
+#endif
+        }
 
 	/* Take a turn */
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
@@ -2771,6 +2766,7 @@ void do_cmd_sorc_aux(int Ind, int dir)
 		}
 	}	
 
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1[REALM_SORCERY] & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2[REALM_SORCERY] & (1L << (p_ptr->current_spell - 32)))))
@@ -2791,7 +2787,7 @@ void do_cmd_sorc_aux(int Ind, int dir)
 		/* Fix the spell info */
 		p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -2900,7 +2896,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	player_type *p_ptr = Players[Ind];
 
 	int item, sval, j, chance, i;
-	int plev = p_ptr->lev;
+	int plev = get_skill(p_ptr, SKILL_PRAYER);
 	int	rad = DEFAULT_RADIUS_SPELL(p_ptr);	/* XXX use skill instead! */
 
 	object_type	*o_ptr;
@@ -3007,7 +3003,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_PRAYER, s_ptr);
 
 	/* Check for failure */
 	if ((rand_int(100) < chance) || antifail ||
@@ -3224,7 +3220,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 19:
 			{
-				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + 3 * p_ptr->lev);
+				(void)set_protevil(Ind, p_ptr->protevil + randint(25) + 3 * get_skill(p_ptr, SKILL_PRAYER));
 				break;
 			}
 
@@ -3588,6 +3584,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 			}
 		}
 
+#if 0 // Dont learn, dont gain xp
 		/* A prayer was prayed */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_PRAYER] & (1L << j)) :
@@ -3610,7 +3607,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
-		}
+                }
+#endif
 	}
 
 	/* Take a turn */
@@ -3662,7 +3660,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = p_ptr->lev;
+	int plev = get_skill(p_ptr, SKILL_PRAYER);
 	
 	magic_type *s_ptr = &magic_info[REALM_PRAYER].info[p_ptr->current_spell];
 
@@ -3851,6 +3849,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 		}
 	}
 
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1[REALM_PRAYER] & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2[REALM_PRAYER] & (1L << (p_ptr->current_spell - 32)))))
@@ -3871,7 +3870,7 @@ void do_cmd_pray_aux(int Ind, int dir)
 		/* Fix the spell info */
 		p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -4143,7 +4142,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance;
-	int			plev = p_ptr->lev;
+	int			plev = get_skill(p_ptr, SKILL_MASTERY);
 
 	object_type		*o_ptr;
 
@@ -4234,7 +4233,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_FIGHTING, s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -4333,6 +4332,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 			}
 		}
 
+#if 0 // Dont learn, dont gain xp
 		/* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_FIGHTING] & (1L << j)) :
@@ -4355,7 +4355,8 @@ void do_cmd_fight(int Ind, int book, int spell)
 
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
-		}
+                }
+#endif
 	}
 
 	/* Sufficient mana */
@@ -4426,7 +4427,7 @@ void do_cmd_fight_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = p_ptr->lev;
+	int plev = get_skill(p_ptr, SKILL_MASTERY);
 
 	magic_type *s_ptr = &magic_info[REALM_FIGHTING].info[p_ptr->current_spell];
 
@@ -4502,6 +4503,7 @@ void do_cmd_fight_aux(int Ind, int dir)
 		}
 	}	
 
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1[REALM_FIGHTING] & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2[REALM_FIGHTING] & (1L << (p_ptr->current_spell - 32)))))
@@ -4520,9 +4522,9 @@ void do_cmd_fight_aux(int Ind, int dir)
 		gain_exp(Ind, e * s_ptr->slevel);
 
 		/* Fix the spell info */
-		p_ptr->window |= PW_SPELL;
+                p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -4677,7 +4679,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_SHADOW, s_ptr);
 
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail ||
@@ -4852,7 +4854,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 
                                 msg_format_near(Ind, "%s summons some monsters!", p_ptr->name);
 
-                                for (k = 0; k < (p_ptr->lev / 10); k++)
+                                for (k = 0; k < (get_skill(p_ptr, SKILL_SHADOW) / 10); k++)
                                 {
                                         summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0);
                                 }
@@ -4963,6 +4965,7 @@ void do_cmd_shad(int Ind, int book, int spell)
 			}
 		}
 
+#if 0 // Dont learn, dont gain xp
 		/* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_SHADOW] & (1L << j)) :
@@ -4986,7 +4989,8 @@ void do_cmd_shad(int Ind, int book, int spell)
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
 		}
-	}
+#endif
+        }
 
 	/* Take a turn */
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
@@ -5043,7 +5047,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 	int			i, j, sval;
 	int			chance, beam;
-	int			plev = p_ptr->lev;
+	int			plev = get_skill(p_ptr, SKILL_ARCHERY);
 
 	object_type		*o_ptr;
 
@@ -5140,7 +5144,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	chance = spell_chance(Ind, REALM_HUNT, s_ptr);
 
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail ||
@@ -5327,6 +5331,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 			}
 		}
 
+#if 0 // Dont learn, dont gain xp
 		/* A spell was cast */
 		if (!((j < 32) ?
 		      (p_ptr->spell_worked1[REALM_HUNT] & (1L << j)) :
@@ -5349,7 +5354,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 			/* Fix the spell info */
 			p_ptr->window |= PW_SPELL;
-		}
+                }
+#endif
 	}
 
 	/* Take a turn */
@@ -5405,7 +5411,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int plev = p_ptr->lev;
+	int plev = get_skill(p_ptr, SKILL_ARCHERY);
 
 	magic_type *s_ptr = &magic_info[REALM_SHADOW].info[p_ptr->current_spell];
 
@@ -5462,6 +5468,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 		}
 	}	
 
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr->current_spell < 32) ?
 		(p_ptr->spell_worked1[REALM_SHADOW] & (1L << p_ptr->current_spell)) :
 		(p_ptr->spell_worked2[REALM_SHADOW] & (1L << (p_ptr->current_spell - 32)))))
@@ -5482,7 +5489,7 @@ void do_cmd_shad_aux(int Ind, int dir)
 		/* Fix the spell info */
 		p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr->num_spell;
 
 	if (s_ptr->smana <= p_ptr->csp)
@@ -5546,8 +5553,8 @@ static void do_mimic_power(int Ind, int power)
 		return;
 	}
 
-	/* Spell failure chance */
-	chance = spell_chance(Ind, s_ptr);
+	/* Spell failure chance -- Hack, use the same stats as magery*/
+	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -6485,7 +6492,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr2->num_spell;
 
 	/* Spell failure chance */
-	chance = spell_chance(Ind2, s_ptr);
+	chance = spell_chance(Ind2, REALM_PSI, s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -6904,6 +6911,7 @@ void do_cmd_psi(int Ind, int book, int spell)
 	    }
 	
 	
+#if 0 // Dont learn, dont gain xp
 	  /* A spell was cast */
 	  if (!((j < 32) ?
 		(p_ptr->spell_worked1 & (1L << j)) :
@@ -6926,7 +6934,8 @@ void do_cmd_psi(int Ind, int book, int spell)
 	      
 	      /* Fix the spell info */
 	      p_ptr->window |= PW_SPELL;
-	    }
+            }
+#endif
 	}
 	
 	/* Take a turn */
@@ -7081,6 +7090,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 		}
 	}	
 
+#if 0 // Dont learn, dont gain xp
 	if (!((p_ptr2->current_mind < 32) ?
 		(p_ptr->spell_worked1 & (1L << p_ptr->current_mind)) :
 		(p_ptr->spell_worked2 & (1L << (p_ptr->current_mind - 32)))))
@@ -7101,7 +7111,7 @@ void do_cmd_psi_aux(int Ind, int dir)
 		/* Fix the spell info */
 		p_ptr->window |= PW_SPELL;
 	}
-
+#endif
 //	p_ptr->energy -= level_speed(p_ptr->dun_depth) / p_ptr2->num_spell;
 
 	if (s_ptr->smana <= p_ptr2->csp)

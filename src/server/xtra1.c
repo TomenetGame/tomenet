@@ -227,9 +227,7 @@ static void prt_sp(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* Do not show mana unless it matters */
-	if (!p_ptr->mp_ptr->spell_book && !p_ptr->esp_link) Send_sp(Ind, 0, 0);
-
-	else Send_sp(Ind, p_ptr->msp, p_ptr->csp);
+	Send_sp(Ind, p_ptr->msp, p_ptr->csp);
 }
 
 
@@ -848,7 +846,7 @@ static void calc_spells(int Ind)
 
 	cptr p = "spell";
 
-#if 0 // DGDGDGDG
+#if 0 // DGDGDGDG -- no more spell learning
 
 	/* Determine the number of spells allowed */
 	levels = p_ptr->lev;
@@ -1157,15 +1155,6 @@ static void calc_mana(int Ind)
 			p_ptr2 = Players[Ind2];
 		}
 	}
-
-#if 0 /* DG -- no with skills everybody can have mana  */
-	/* Hack -- Must be literate */
-	if ((!p_ptr->mp_ptr->spell_book) && (!get_skill(p_ptr, SKILL_MIMIC)) && (!Ind2))
-	{
-		p_ptr->msp = p_ptr->csp = 0;
-		return;
-	}
-#endif
 
 	/* Extract "effective" player level */
 	levels = p_ptr->lev;
@@ -2445,20 +2434,13 @@ static void calc_bonuses(int Ind)
 			/* Change in INT may affect Mana/Spells */
 			else if (i == A_INT)
 			{
-				if (p_ptr->mp_ptr->spell_stat == A_INT)
-				{
-					p_ptr->update |= (PU_MANA | PU_SPELLS);
-				}
+                                p_ptr->update |= (PU_MANA | PU_SPELLS);
 			}
 
 			/* Change in WIS may affect Mana/Spells */
 			else if (i == A_WIS)
 			{
-				if (p_ptr->mp_ptr->spell_stat == A_WIS)
-				{
-					p_ptr->update |= (PU_MANA | PU_SPELLS);
-			//	 | PU_SANITY
-				}
+                                p_ptr->update |= (PU_MANA | PU_SPELLS);
 			}
 
 			/* Window stuff */

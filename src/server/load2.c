@@ -1961,9 +1961,6 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->rp_ptr = &race_info[p_ptr->prace];
 	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 
-	/* Important -- Choose the magic info */
-	p_ptr->mp_ptr = &magic_info[p_ptr->pclass];
-
 
         /* Read the spell infos array */
 	rd_u16b(&tmp16u);

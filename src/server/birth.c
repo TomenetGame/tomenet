@@ -1137,7 +1137,6 @@ void admin_outfit(int Ind, int realm)
 
 	/* gimme books :) */
 	//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
-//	if (p_ptr->mp_ptr->spell_book)
 	if (0 <= realm && realm < MAX_REALM)
 	{
 #if 0
@@ -1148,7 +1147,6 @@ void admin_outfit(int Ind, int realm)
 #endif	// 0
 		for (i = 0; i < 9; i++)
 		{
-			//			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
 			int k = lookup_kind(magic_info[realm].spell_book, i);
 			u32b f1, f2, f3, f4, f5, esp;
 			if (!k) continue;
@@ -1593,7 +1591,6 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 	/* Set pointers */
 	p_ptr->rp_ptr = &race_info[race];
 	p_ptr->cp_ptr = &class_info[class];
-	p_ptr->mp_ptr = &magic_info[class];
 
 	/* Set his ID */
 	p_ptr->id = newid();

@@ -1627,7 +1627,6 @@ struct player_type
 
 	player_race *rp_ptr;		/* Pointers to player tables */
 	player_class *cp_ptr;
-	player_magic *mp_ptr;
 
 	s32b au;			/* Current Gold */
 

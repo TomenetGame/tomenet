@@ -69,6 +69,69 @@ static cptr value_check_aux1(object_type *o_ptr)
 	return "average";
 }
 
+static cptr value_check_aux1_magic(object_type *o_ptr)
+{
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+
+	switch (o_ptr->tval)
+	{
+		/* Scrolls, Potions, Wands, Staves and Rods */
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_WAND:
+		case TV_STAFF:
+		case TV_ROD:
+		case TV_ROD_MAIN:
+		{
+			/* "Cursed" scrolls/potions have a cost of 0 */
+			if (k_ptr->cost == 0) return "terrible";
+
+			/* Artifacts */
+			if (artifact_p(o_ptr)) return "special";
+
+			/* Scroll of Nothing, Apple Juice, etc. */
+			if (k_ptr->cost < 3) return "worthless";
+
+			/*
+			 * Identify, Phase Door, Cure Light Wounds, etc. are
+			 * just average
+			 */
+			if (k_ptr->cost < 100) return "average";
+
+			/* Enchant Armor, *Identify*, Restore Stat, etc. */
+			if (k_ptr->cost < 10000) return "good";
+
+			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
+			if (k_ptr->cost >= 10000) return "excelent";
+
+			break;
+		}
+
+		/* Food */
+		case TV_FOOD:
+		{
+			/* "Cursed" food */
+			if (k_ptr->cost == 0) return "terrible";
+
+			/* Artifacts */
+			if (artifact_p(o_ptr)) return "special";
+
+			/* Normal food (no magical properties) */
+			if (k_ptr->cost <= 10) return "average";
+
+			/* Everything else is good */
+			if (k_ptr->cost > 10) return "good";
+
+			break;
+		}
+	}
+
+	/* No feeling */
+	return "";
+}
+
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
@@ -97,18 +160,72 @@ static cptr value_check_aux2(object_type *o_ptr)
 	return (NULL);
 }
 
+static cptr value_check_aux2_magic(object_type *o_ptr)
+{
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+
+	switch (o_ptr->tval)
+	{
+		/* Scrolls, Potions, Wands, Staves and Rods */
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_WAND:
+		case TV_STAFF:
+		case TV_ROD:
+		{
+			/* "Cursed" scrolls/potions have a cost of 0 */
+			if (k_ptr->cost == 0) return "cursed";
+
+			/* Artifacts */
+			if (artifact_p(o_ptr)) return "good";
+
+			/* Scroll of Nothing, Apple Juice, etc. */
+			if (k_ptr->cost < 3) return "average";
+
+			/*
+			 * Identify, Phase Door, Cure Light Wounds, etc. are
+			 * just average
+			 */
+			if (k_ptr->cost < 100) return "average";
+
+			/* Enchant Armor, *Identify*, Restore Stat, etc. */
+			if (k_ptr->cost < 10000) return "good";
+
+			/* Acquirement, Deincarnation, Strength, Blood of Life, ... */
+			if (k_ptr->cost >= 10000) return "good";
+
+			break;
+		}
+
+		/* Food */
+		case TV_FOOD:
+		{
+			/* "Cursed" food */
+			if (k_ptr->cost == 0) return "cursed";
+
+			/* Artifacts */
+			if (artifact_p(o_ptr)) return "good";
+
+			/* Normal food (no magical properties) */
+			if (k_ptr->cost <= 10) return "average";
+
+			/* Everything else is good */
+			if (k_ptr->cost > 10) return "good";
+
+			break;
+		}
+	}
+
+	/* No feeling */
+	return "";
+}
 
 
 
 /*
  * Sense the inventory
- *
- *   Class 0 = Warrior --> fast and heavy
- *   Class 1 = Mage    --> slow and light
- *   Class 2 = Priest  --> fast but light
- *   Class 3 = Rogue   --> okay and heavy
- *   Class 4 = Ranger  --> okay and heavy
- *   Class 5 = Paladin --> slow but heavy
  */
 static void sense_inventory(int Ind)
 {
@@ -116,9 +233,8 @@ static void sense_inventory(int Ind)
 
 	int		i;
 
-	int		plev = p_ptr->lev;
-
-	bool	heavy = FALSE;
+        bool heavy = FALSE, heavy_magic = FALSE;
+        bool ok_combat = FALSE, ok_magic = FALSE;
 
 	cptr	feel;
 
@@ -132,102 +248,11 @@ static void sense_inventory(int Ind)
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-	/* Analyze the class */
-	switch (p_ptr->pclass)
-	{
-		case CLASS_UNBELIEVER:
-		{
-			/* Good sensing */
-			if (0 != rand_int(8000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-		
-		case CLASS_WARRIOR:
-		case CLASS_ARCHER:
-		{
-			/* Good sensing */
-			if (0 != rand_int(9000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_MAGE:
-		case CLASS_SORCERER:
-		{
-			/* Very bad (light) sensing */
-			if (0 != rand_int(240000L / (plev + 5))) return;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PRIEST:
-		{
-			/* Good (light) sensing */
-			if (0 != rand_int(10000L / (plev * plev + 40))) return;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_ROGUE:
-		case CLASS_MIMIC:
-		{
-			/* Okay sensing */
-			if (0 != rand_int(20000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_RANGER:
-		{
-			if (0 != rand_int(20000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_PALADIN:
-		{
-			/* Bad sensing */
-			if (0 != rand_int(80000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-
-		case CLASS_TELEPATH:
-		case CLASS_MONK:
-		{
-			/* Okay sensing */
-			if (0 != rand_int(20000L / (plev * plev + 40))) return;
-
-			/* Heavy sensing */
-			heavy = TRUE;
-
-			/* Done */
-			break;
-		}
-	}
+	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
+        if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+        if ((!ok_combat) && (!ok_magic)) return;
+	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
+        heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
 
 
 	/*** Sense everything ***/
@@ -235,7 +260,7 @@ static void sense_inventory(int Ind)
 	/* Check everything */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		bool okay = FALSE;
+		byte okay = 0;
 
 		o_ptr = &p_ptr->inventory[i];
 
@@ -266,7 +291,19 @@ static void sense_inventory(int Ind)
 			case TV_BOOMERANG:
 			case TV_AXE:
 			{
-				okay = TRUE;
+				if (ok_combat) okay = 1;
+				break;
+			}
+
+			case TV_POTION:
+			case TV_POTION2:
+			case TV_SCROLL:
+			case TV_WAND:
+			case TV_STAFF:
+			case TV_ROD:
+			case TV_FOOD:
+			{
+				if (ok_magic) okay = 2;
 				break;
 			}
 		}
@@ -284,7 +321,15 @@ static void sense_inventory(int Ind)
 		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
 
 		/* Check for a feeling */
-		feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+		/* Check for a feeling */
+		if (okay == 1)
+		{
+			feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
+		}
+		else
+		{
+			feel = (heavy_magic ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
+		}
 
 		/* Skip non-feelings */
 		if (!feel) continue;

@@ -6399,13 +6399,13 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 
 			/* Use empty slots */
 			if (!j_ptr->k_idx) break;
-
+#if 0 // can read all
 			/* Hack -- readable books always come first */
 			if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) &&
 			    (j_ptr->tval != p_ptr->mp_ptr->spell_book)) break;
 			if ((j_ptr->tval == p_ptr->mp_ptr->spell_book) &&
 			    (o_ptr->tval != p_ptr->mp_ptr->spell_book)) continue;
-
+#endif
 			/* Objects sort by decreasing type */
 			if (o_ptr->tval > j_ptr->tval) break;
 			if (o_ptr->tval < j_ptr->tval) continue;
@@ -6454,7 +6454,8 @@ s16b inven_carry(int Ind, object_type *o_ptr)
         }
 #endif
 
-	/* Auto-inscriber */
+        /* Auto-inscriber */
+#if 0 // DGDGDGDG -- na, dont let tehm be lazy
 #if 0	// not working well with the new skill system
 	if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
 	{
@@ -6474,7 +6475,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		o_ptr->note = quark_add(c);
 	}
 #endif	// 0
-
+#endif
 	if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
 	{
 		if ((o_ptr->tval == TV_SCROLL &&
@@ -6659,13 +6660,13 @@ void reorder_pack(int Ind)
 
 			/* Use empty slots */
 			if (!j_ptr->k_idx) break;
-
+#if 0 // all can read all
 			/* Hack -- readable books always come first */
 			if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) &&
 			    (j_ptr->tval != p_ptr->mp_ptr->spell_book)) break;
 			if ((j_ptr->tval == p_ptr->mp_ptr->spell_book) &&
 			    (o_ptr->tval != p_ptr->mp_ptr->spell_book)) continue;
-
+#endif
 			/* Objects sort by decreasing type */
 			if (o_ptr->tval > j_ptr->tval) break;
 			if (o_ptr->tval < j_ptr->tval) continue;
