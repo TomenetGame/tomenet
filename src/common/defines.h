@@ -3340,6 +3340,7 @@ that keeps many algorithms happy.
 
 /* XXX */
 //#define TR5_LIFE                0x04000000L
+#define TR5_REGEN_MANA			0x01000000L	/* Item induces regeneration */
 #define TR5_DISARM				0x02000000L
 #define TR5_NO_ENCHANT			0x04000000L
 #define TR5_CHAOTIC             0x08000000L

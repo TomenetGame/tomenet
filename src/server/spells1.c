@@ -976,46 +976,45 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	disturb(Ind, 1, 0);
 
 	/* Mega-Hack -- Apply "invulnerability" */
-        if (p_ptr->invuln && (!bypass_invuln))
+	if (p_ptr->invuln && (!bypass_invuln))
 	{
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40))
 		{
 			msg_print(Ind, "The attack is fully deflected by the shield.");
 			return;
-	  	}
-	  	
+		}
+
 		/* Otherwise damage is reduced by the shield */
 		damage = damage / 2;
-  	}
+	}
 
-/* Re allowed by evileye for power */
+	/* Re allowed by evileye for power */
 #if 1
-        /* if (p_ptr->tim_manashield && (!bypass_invuln)) */
+	//        if (p_ptr->tim_manashield)
+	if (p_ptr->tim_manashield && (!bypass_invuln))
+	{
+		if (p_ptr->csp > 0)
+		{
+			int taken = (damage);
 
-        if (p_ptr->tim_manashield)
-	  {
-	     if (p_ptr->csp > 0)
-	       {
-		 int taken = (damage);
+			if (p_ptr->csp < taken)
+			{
+				damage -= taken - p_ptr->csp;
+				p_ptr->csp = 0;
+			}
+			else
+			{
+				damage = 0;
+				p_ptr->csp -= taken;
+			}
 
-		 if (p_ptr->csp < taken)
-		   {
-		     damage -= taken - p_ptr->csp;
-		     p_ptr->csp = 0;
-		   }
-		 else
-		   {
-		     damage = 0;
-		     p_ptr->csp -= taken;
-		   }
-		 
-		 /* Display the spellpoints */
-		 p_ptr->redraw |= (PR_MANA);
-	       }
-	  }
+			/* Display the spellpoints */
+			p_ptr->redraw |= (PR_MANA);
+		}
+	}
 #endif
-		
+
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 
@@ -1039,7 +1038,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 	/* Dead player */
 	if (p_ptr->chp < 0)
 	{
-        	int Ind2;
+		int Ind2;
 
 		/* Sound */
 		sound(Ind, SOUND_DEATH);
@@ -1049,23 +1048,23 @@ void take_hit(int Ind, int damage, cptr hit_from)
 
 		if (Ind2 && !strcmp(Players[Ind2]->name, hit_from))
 		{
-		    p_ptr->chp = p_ptr->mhp;
-		    Players[Ind2]->chp = Players[Ind2]->mhp;
-		    p_ptr->redraw |= (PR_HP);
-		    Players[Ind2]->redraw |= (PR_HP);
+			p_ptr->chp = p_ptr->mhp;
+			Players[Ind2]->chp = Players[Ind2]->mhp;
+			p_ptr->redraw |= (PR_HP);
+			Players[Ind2]->redraw |= (PR_HP);
 
-		    msg_broadcast(Ind, format("%s won the blood bond against %s.", Players[Ind2]->name, p_ptr->name));
-		    
-		    p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
-		    remove_hostility(Ind, Players[Ind2]->name);
-		    remove_hostility(Ind2, p_ptr->name);
+			msg_broadcast(Ind, format("%s won the blood bond against %s.", Players[Ind2]->name, p_ptr->name));
 
-		    target_set(Ind, 0);
-		    target_set(Ind2, 0);
+			p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
+			remove_hostility(Ind, Players[Ind2]->name);
+			remove_hostility(Ind2, p_ptr->name);
 
-		    teleport_player(Ind, 400);
+			target_set(Ind, 0);
+			target_set(Ind2, 0);
 
-		    return;
+			teleport_player(Ind, 400);
+
+			return;
 		}
 		else{
 			/* Only mention death if not BB! */
@@ -1077,7 +1076,7 @@ void take_hit(int Ind, int damage, cptr hit_from)
 		/* To preserve the players original (pre-ghost) cause
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
-		
+
 		(void)strcpy(p_ptr->died_from, hit_from);
 		if (!p_ptr->ghost) 
 		{	strcpy(p_ptr->died_from_list, hit_from);

@@ -1449,6 +1449,9 @@ static void process_player_end(int Ind)
 		int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
 		int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?2:0;
 		
+		/* Anything done here cannot be reduced by GoI */
+		bypass_invuln = TRUE;
+
 		/*** Damage over Time ***/
 
 		/* Take damage from poison */
@@ -1657,12 +1660,6 @@ static void process_player_end(int Ind)
 			}
 		}
 
-		/* Regeneration ability */
-		if (p_ptr->regenerate)
-		{
-			regen_amount = regen_amount * 2;
-		}
-
 		/* Resting */
 		if (p_ptr->resting && !p_ptr->searching)
 		{
@@ -1673,7 +1670,13 @@ static void process_player_end(int Ind)
 		/* Hack -- regenerate mana 5/3 times faster */
 		if (p_ptr->csp < p_ptr->msp)
 		{
-			regenmana(Ind, (regen_amount * 5) / 3 );
+			regenmana(Ind, (regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1) / 3);
+		}
+
+		/* Regeneration ability */
+		if (p_ptr->regenerate)
+		{
+			regen_amount = regen_amount * 2;
 		}
 
 		/* Poisoned or cut yields no healing */
@@ -2427,6 +2430,8 @@ static void process_player_end(int Ind)
 				}
 			}
 		}
+
+		bypass_invuln = FALSE;
 	}
 
 

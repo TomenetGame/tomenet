@@ -132,6 +132,7 @@ W:50:25:2:75000
 F:STR | INT | WIS | DEX | CON | CHR | STEALTH | HIDE_TYPE | 
 F:RES_POIS | RES_DARK | ACTIVATE | SEE_INVIS | SEARCH |
 F:INSTA_ART
+F:REGEN_MANA
 D:A ring shaped into twinned serpents with eyes of emerald meeting beneath 
 D:a crown of flowers, an ancient treasure of Isildur's house.
 
@@ -158,6 +159,7 @@ F:ACTIVATE | FREE_ACT | SEE_INVIS |
 F:SUST_STR | SUST_CON | SUST_WIS | SUST_CHR | SPECIAL_GENE |
 F:IM_FIRE | RES_NETHER | RES_FEAR | REGEN | 
 F:INSTA_ART
+F:REGEN_MANA
 D:The Ring of Fire, set with a ruby that glows like flame.  Narya is one 
 D:of the three Rings of Power created by the Elves and hidden by them from 
 D:Morgoth.
@@ -191,6 +193,7 @@ F:FEATHER | SLOW_DIGEST | REGEN |
 F:SUST_STR | SUST_DEX | SUST_CON | 
 F:IM_ELEC | RES_POIS | RES_DISEN | 
 F:INSTA_ART
+F:REGEN_MANA
 D:The Ring of Sapphire, with clear blue gems that shine like stars, 
 D:glittering untouchable despite all that Morgoth ever wrought.  Vilya is 
 D:one of the three Rings of Power created by the Elves and hidden by them 
@@ -213,6 +216,7 @@ F:RES_BLIND | RES_POIS | RES_DISEN | RES_NETHER | ESP_ALL |
 F:DRAIN_MANA | DRAIN_HP | DRAIN_EXP | 
 F:INVIS
 F:INSTA_ART
+F:REGEN_MANA
 Z:change the world
 D:"Ash nazg durbatuluk, ash nazg gimbatul, ash nazg thrakatuluk agh 
 D:burzum-ishi krimpatul". Unadorned, made of massive gold, 
@@ -276,6 +280,7 @@ F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | ULTIMATE |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 F:ACTIVATE
+F:REGEN_MANA
 D:A suit of adamant, set with scales of every color, surrounded in a nimbus  
 D:of perfectly untramelled yet inextricably intermingled and utterly mastered 
 D:powers elemental and ethereal.
@@ -400,6 +405,7 @@ F:FREE_ACT | RES_BLIND | RES_CONF | RES_FEAR | DRAIN_MANA |
 F:REFLECT | RES_NEXUS | SH_FIRE | SUST_INT | SUST_CON | SUST_CHR |
 F:STEALTH | ESP_DRAGONRIDER | CON | CHR | INT | ACTIVATE |
 F:RES_ACID | RES_ELEC | IM_COLD | RES_COLD | AGGRAVATE | HEAVY_CURSE
+F:REGEN_MANA
 D:The flying suit of Mardra, very powerful armour that protects 
 D:the wearer from cold.  Wonderful as this mighty 
 D:armour is, beware wearing it, for it has been cursed by a 
@@ -535,6 +541,7 @@ W:20:2:15:50000
 P:2:0d0:0:0:10
 F:INT | WIS | HIDE_TYPE | 
 F:RES_BLIND | ESP_ORC | ESP_EVIL | ESP_TROLL
+F:REGEN_MANA
 D:The hunting cap of King Thranduil, to whose ears come all the secrets of 
 D:his forest domain.
 
@@ -585,6 +592,7 @@ W:20:5:75:100000
 P:5:1d3:0:0:10
 F:INT | WIS | SEARCH | HIDE_TYPE | 
 F:RES_BLIND | SEE_INVIS | ACTIVATE
+F:REGEN_MANA
 D:A famous helm of forged iron granting extraordinary powers of mind and 
 D:awareness.
 
@@ -600,6 +608,7 @@ F:SEE_INVIS | NO_MAGIC | HEAVY_CURSE | TY_CURSE |
 F:RES_DISEN | RES_FEAR | FREE_ACT | RES_ACID | RES_FIRE | RES_POIS |
 F:IM_COLD | ACTIVATE | DRAIN_HP | 
 F:TELEPORT
+F:REGEN_MANA
 D:A headpiece, gaudy and barbaric, that betrayed a warrior when he most 
 D:needed succor.
 
@@ -613,6 +622,7 @@ P:0:1d1:0:0:15
 F:STR | WIS | CON | HIDE_TYPE | SPEED | RES_CONF | RES_SOUND | 
 F:RES_COLD | RES_FIRE | RES_LITE | RES_BLIND | RES_ELEC | RES_CHAOS |
 F:LITE1 | SEE_INVIS | REGEN | ACTIVATE
+F:REGEN_MANA
 D:The shining winged circlet brought by Elendil from dying Numenor, emblem of 
 D:Gondor though an age of the world.
 
@@ -628,6 +638,7 @@ F:INT | DEX | CHR | SEARCH | SPEED | HIDE_TYPE |
 F:SEE_INVIS | FREE_ACT | RES_DARK | RES_BLIND | 
 F:RES_SHARDS | RES_SOUND | RES_LITE | RES_COLD | 
 F:LITE1 | ACTIVATE | DRAIN_MANA
+F:REGEN_MANA
 D:A crown of massive gold, set with wondrous jewels of thought and warding, 
 D:worn by the kings of ancient Numenor.  Its wearer may go into battle 
 D:always knowing what he faces - unless his own folly blinds him to the 
@@ -653,6 +664,7 @@ W:5:25:10:13000
 P:1:0d0:0:0:4
 F:INT | WIS | SPEED | STEALTH | HIDE_TYPE | 
 F:RES_ACID | ACTIVATE
+F:REGEN_MANA
 D:This elven-grey mantle possesses great powers of tranquility and of 
 D:concealment, and grants the wearer the knowledge and understanding of 
 D:the Sindar.
@@ -703,6 +715,7 @@ W:40:40:5:55000
 P:6:0d0:0:0:20
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
 F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
+F:REGEN_MANA
 D:The opaque midnight folds, inset with a multitude of tiny diamonds, of 
 D:this cloak swirl around you and you feel a hint, a fragment of the 
 D:knowledge and power to restore that lay in Luthien, the most beautiful 
@@ -1691,6 +1704,7 @@ F:HEAVY_CURSE | CURSED | AGGRAVATE |
 F:BRAND_FIRE | SLAY_ANIMAL | SLAY_DEMON | RES_FIRE | ESP_SPIDER
 F:VORPAL | RES_LITE | LITE1 | REGEN | ESP_DEMON | WOUNDING |
 F:SHOW_MODS
+F:REGEN_MANA
 D:With this unbearably bright whip of flame, the Balrog Gothmog has become 
 D:known for never having lost in combat.
 
@@ -1743,6 +1757,7 @@ F:INT | CHR | WIS | MANA | SPELL | ACTIVATE |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | LUCK |
 F:SEE_INVIS | ESP_EVIL | ESP_DEMON | NEVER_BLOW | INFRA
 F:PRECOGNITION | IM_FIRE | ULTIMATE
+F:REGEN_MANA
 D:A simple, wooden wizard's staff. Unremarkable in all aspects... 
 D:except that it pulses with overwhelming power.
 
@@ -1782,6 +1797,7 @@ P:2:0d0:0:0:20
 F:INT | WIS | SEARCH | HIDE_TYPE | 
 F:SUST_INT | SUST_WIS | FREE_ACT | SEE_INVIS | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
+F:REGEN_MANA
 Z:weigh magic
 D:Gandalf's long, flowing robe.  It provides insight and allows the
 D:wearer to see things not seen by all.  
@@ -2182,6 +2198,7 @@ F:RES_NEXUS | RES_CHAOS | AGGRAVATE | REGEN |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 F:ACTIVATE
+F:REGEN_MANA
 D:A mighty suit of dragon armour, set with the scales of dragons of both 
 D:Law and Chaos, and with power over both.
 
@@ -2230,6 +2247,7 @@ P:3:1d1:0:0:18
 F:INT | DEX | CHR | SPELL | SEARCH | 
 F:RES_FIRE | RES_ACID | RES_DISEN | RES_SHARDS | 
 F:ACTIVATE
+F:REGEN_MANA
 D:This once belonged to Celebrimbor, maker of the Rings of Power.  One who 
 D:knows both fire and acid, from the business of forging and engraving, will 
 D:fear neither: nor have his enchantments ever faded. Celebrimbor was even 
@@ -2274,6 +2292,7 @@ W:25:10:30:9000
 P:0:0d0:12:15:0
 F:INT | WIS | DEX | XTRA_SHOTS | XTRA_MIGHT | SPEED | 
 F:RES_FIRE | RES_ELEC | RES_COLD | SLOW_DIGEST
+F:REGEN_MANA
 D:This bow, and its twin, belonged to Feanor's last two twin sons, Amrod 
 D:and Amras, who both hunted with the Green-elves for a time. Like the 
 D:twins, the bows are similar, for both protect their wielders from the 
@@ -2348,6 +2367,7 @@ W:55:35:25:40000
 P:3:1d1:0:0:15
 F:INT | MANA | FREE_ACT | FEATHER | RES_ELEC | RES_DARK | RES_POIS | ACTIVATE
 F:LUCK
+F:REGEN_MANA
 D:The iron-shod gauntlets of the Dark Elven smith Eol, tingling with magics 
 D:that he could channel in battle.
 
@@ -2443,6 +2463,7 @@ F:SUST_INT | SUST_WIS | LITE1 | REGEN
 F:SLOW_DIGEST | AUTO_CURSE | HEAVY_CURSE
 F:ESP_GOOD | ESP_EVIL | HOLD_LIFE
 F:INSTA_ART | SPECIAL_GENE
+F:REGEN_MANA
 D:A blue stone, with an incredible number of incredibly small runes of power 
 D:on it. It carries many secrets.
 
@@ -2483,6 +2504,7 @@ W:50:50:3:35000
 F:HOLD_LIFE | SUST_CON | SUST_WIS | SUST_INT | LITE1 | LIFE | CON | 
 F:RES_DARK | RES_COLD | RES_NETHER | REGEN | INSTA_ART | 
 F:ACTIVATE
+F:REGEN_MANA
 D:A pure white jewel, the last gift of Queen Arwen Undomiel to Frodo 
 D:Baggins, intended to be worn around his neck on the chain that had 
 D:once borne the One Ring.

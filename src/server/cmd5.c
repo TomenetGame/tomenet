@@ -56,7 +56,7 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		chance, minfail;
+	int		chance, minfail, minminfail;
 
 	/* Extract the base spell failure rate */
 	chance = s_ptr->sfail;
@@ -78,12 +78,18 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 	/* Extract the minimum failure rate */
 	minfail = adj_mag_fail[p_ptr->stat_ind[magic_info[realm].spell_stat]];
 
-#if 0 // NEED to find a good way to do that without class
 	/* Non mage/sorceror/priest characters never get too good */
+#if 0 // NEED to find a good way to do that without class
 	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST) && (p_ptr->pclass != CLASS_SORCERER))
 	{
 		if (minfail < 5) minfail = 5;
 	}
+#else
+	minminfail = 5 - get_skill_scale(p_ptr, find_realm_skill(realm), 3)
+		- get_skill_scale(p_ptr, SKILL_MAGIC, 2);
+
+	if (minfail < minminfail) minfail = minminfail;
+
 #endif
 	/* Hack -- Priest prayer penalty for "edged" weapons  -DGK */
 	if ((realm == REALM_PRAYER) && (p_ptr->icky_wield)) chance += 25;

@@ -748,6 +748,10 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You regenerate quickly.\n");
 	}
+	if (p_ptr->regen_mana)
+	{
+		fprintf(fff, "You accumulate mana quickly.\n");
+	}
 	if (p_ptr->slow_digest)
 	{
 		fprintf(fff, "Your appetite is small.\n");

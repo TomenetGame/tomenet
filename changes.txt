@@ -1159,6 +1159,8 @@ To find the latest change quickly, search ==== :)
 26/06/2002 (Jir)
 - skill-requirements for spells revised.
 - 'Master Unbeliever'(GoI-killer) and 'Monk' mego.
+- GoI can no longer prevents damages from cut, poison etc.
+- mana-regeneration is separated from HP-regeneration.
 [B] choose_race/choose_class still used MAX_* (and not Setup.max_*)
 [B] '%' skill modifications by race weren't reflected.
 [B] p_ptr->u_attr[] was broken (Something should be wrong in Net_setup!)
@@ -1179,7 +1181,6 @@ things to do before 4.0.0
 - make NO_TELE radius-based
 - implement guest-account
 - rebalance skill-points
-- adjust depth for ball-type trap
 - fix gfx
 - refine pk code
 - source-code cleanup

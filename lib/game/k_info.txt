@@ -6675,7 +6675,8 @@ I:31:4:0
 W:1:0:40:4000
 A:20/16
 P:1:0d0:0:0:0
-F:REGEN
+#F:REGEN
+F:REGEN | REGEN_MANA
 
 N:887:Speed
 G:":d
@@ -6868,6 +6869,13 @@ I:72:20:0
 W:101:0:4:25000
 A:101/3
 P:0:1d1:0:0:0
+
+N:469:Mana-charging
+G:":d
+I:40:36:0
+W:30:0:3:600
+A:30/3
+F:REGEN_MANA | EASY_KNOW
 
 # Always ego!
 

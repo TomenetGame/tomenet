@@ -357,6 +357,7 @@ s32b artifact_power (artifact_type *a_ptr)
         if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
+	if (a_ptr->flags5 & TR5_REGEN_MANA) p += 8;
 	if (a_ptr->flags3 & TR3_TELEPORT) p -= 20;
 	if (a_ptr->flags3 & TR3_DRAIN_EXP) p -= 16;
 	if (a_ptr->flags3 & TR3_AGGRAVATE) p -= 8;
@@ -909,6 +910,7 @@ void add_ability (artifact_type *a_ptr)
 			case 41: a_ptr->flags3 |= TR3_SLOW_DIGEST; break;
 
 			case 42:
+				a_ptr->flags5 |= TR5_REGEN_MANA; break;
 			case 43:
 				a_ptr->flags3 |= TR3_REGEN; break;
 			case 44:
@@ -1365,7 +1367,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_ABILITY)
 	{
 		/* Choose an ability */
-		switch (randint(9))
+		switch (randint(10))
 		{
 			case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
 			case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
@@ -1381,6 +1383,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
 			case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
 			case 9: a_ptr->flags4 |= (TR4_ANTIMAGIC_10);   break;
+			case 10: a_ptr->flags5 |= (TR5_REGEN_MANA);   break;
 		}
 	}
 

@@ -25,7 +25,7 @@
  * This one is more moderate; kick, punch, crush etc. still stuns, but
  * normal 'hit' doesn't.
  */
-#define NORMAL_HIT_NO_STUN
+//#define NORMAL_HIT_NO_STUN
 
 
 /*

@@ -1169,6 +1169,7 @@ s32b flag_cost(object_type * o_ptr, int plusses)
         if (esp & ESP_ALL) total += 100000;
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
+	if (f5 & TR5_REGEN_MANA) total += 2500;
 	if (f3 & TR3_XTRA_MIGHT) total += 2250;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
 	if (f3 & TR3_IGNORE_ACID) total += 100;

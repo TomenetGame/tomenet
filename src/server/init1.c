@@ -784,7 +784,7 @@ static cptr k_info_flags5[] =
 	"XXX8X21",
 	"XXX8X22",
 	"XXX8X23",
-	"XXX8X24",
+	"REGEN_MANA",	// "XXX8X24",
 	"DISARM",	// "XXX8X25",
 	"NO_ENCHANT",	// "XXX8X25",
 //	"LIFE",		//"XXX8X27",

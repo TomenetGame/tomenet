@@ -2003,6 +2003,7 @@ struct player_type
 	bool free_act;		/* Never paralyzed */
 	bool see_inv;		/* Can see invisible */
 	bool regenerate;	/* Regenerate hit pts */
+	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
 //	bool telepathy;		/* Telepathy */
 	u32b telepathy;		/* Telepathy */

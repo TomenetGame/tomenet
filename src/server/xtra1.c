@@ -1795,6 +1795,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->free_act = FALSE;
 	p_ptr->slow_digest = FALSE;
 	p_ptr->regenerate = FALSE;
+	p_ptr->regen_mana = FALSE;
 	p_ptr->feather_fall = FALSE;
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = 0;
@@ -2279,6 +2280,7 @@ static void calc_bonuses(int Ind)
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
 		if (f3 & TR3_REGEN) p_ptr->regenerate = TRUE;
+		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
                 if (esp) p_ptr->telepathy |= esp;
 //		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
 //		if (f3 & TR3_LITE1) p_ptr->lite += 1;
