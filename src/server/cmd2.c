@@ -488,9 +488,13 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 			break;
 	}
 	if(newowner!=-1){
-		dna->creator=0L;
-		dna->owner=newowner;
-		return(TRUE);
+		for(i=1;i<=NumPlayers;i++){	/* in game? maybe long winded */
+			if(Players[i]->id==newowner){
+				dna->creator=Players[i]->dna;
+				dna->owner=newowner;
+				return(TRUE);
+			}
+		}
 	}
 	return FALSE;
 }
