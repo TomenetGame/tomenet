@@ -498,6 +498,7 @@ void client_init(char *argv1, bool skip)
 		if (skip) prt(format("Name        : %s", nick), 2, 1);
 
 		/* Get sex/race/class */
+		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
 	}
 

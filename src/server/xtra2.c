@@ -41,7 +41,8 @@
  * If defined, a player cannot gain more than 1 level at once.
  * It prevents so-called 'high-books cheeze'.
  */
-#define LEVEL_GAINING_LIMIT
+/* Prolly no longer needed, since a player cannot gain exp from books now */
+//#define LEVEL_GAINING_LIMIT
 
 
 /*
@@ -4227,7 +4228,7 @@ void rem_quest(u16b id){
 
 void kill_quest(int Ind){
 	int i;
-	u16b id, pos=-1;
+	u16b id, pos=9999;
 	player_type *p_ptr=Players[Ind], *q_ptr;
 	char temp[160];
 
@@ -4238,7 +4239,8 @@ void kill_quest(int Ind){
 			break;
 		}
 	}
-	if(pos==-1) return;
+//	if(pos==-1) return;	/* it's UNsigned :) */
+	if(pos==9999) return;
 	
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
@@ -6932,7 +6934,7 @@ bool master_generate(int Ind, char * parms)
 			if(!v_ptr || !v_ptr->wid) return FALSE;
 
 //			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
-			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, &v_ptr);
+			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr);
 
 			break;
 		}

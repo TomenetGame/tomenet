@@ -4450,7 +4450,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Prayer",
-                "Ability to pray to your god(or use your own goddly power if you are a god)",
+                "Ability to pray to your god(or use your own godly power if you are a god)",
 
                 /* Mkey desc/mkey */
                 "Recite a prayer",

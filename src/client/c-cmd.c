@@ -1629,7 +1629,7 @@ void cmd_fight(void)
 {
 	int item;
 
-	if (get_skill(SKILL_TECHNIC))
+	if (!get_skill(SKILL_TECHNIC))
 	{
 		c_msg_print("You are not strong enough.");
 		return;

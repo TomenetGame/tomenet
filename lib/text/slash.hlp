@@ -24,6 +24,10 @@ Note:
     AFK players don't comsume food(if not hugry already).
     AFK mode is automatically turned off when the player move.
 
+/autotag [any strings] {shorthand: /at}
+    Automatically inscribe your books like {@m1}.
+    If any argument is given, it will overwrite existing inscriptions.
+
 /bed {alias: /naked} 
     Take everything off from the equipment slots.
     Items with {!t} tag or those cursed cannot be taken off this way.

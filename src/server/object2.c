@@ -21,8 +21,8 @@
  * TODO: make it a client option.
  */
 // DGDGDGDG -- na, dont let tehm be lazy
-// Alas, I'm too lazy	- Jir -
-#define AUTO_INSCRIBER
+// Alas, I'm too lazy.. see '/at'	- Jir -
+//#define AUTO_INSCRIBER
 
 
 /*

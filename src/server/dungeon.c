@@ -249,10 +249,10 @@ static void sense_inventory(int Ind)
 	if (p_ptr->confused) return;
 
 	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
-        if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
-        if ((!ok_combat) && (!ok_magic)) return;
+	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if ((!ok_combat) && (!ok_magic)) return;
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
-        heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
+	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
 
 
 	/*** Sense everything ***/
@@ -320,7 +320,6 @@ static void sense_inventory(int Ind)
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
 
-		/* Check for a feeling */
 		/* Check for a feeling */
 		if (okay == 1)
 		{

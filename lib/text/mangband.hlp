@@ -20,9 +20,12 @@ For further (and easy-to-read) documentation, please visit:
 Official Site   - http://T-o-M-E.net/pernmangband/
 Newbie Tutorial - http://www.mangband.org/documentation/mang/
 
-Latest changes for version 3.5.5a (digest):
+Latest changes for version 4.0.0a (digest):
 - development version toward 4.0.0!
-- skill system is being implemented. (try 'X' or '\X')
+- skill system is being implemented. (try 'G')
+  this implies *MAJOR* changes in the gameplay!
+- some of unpopular classes are removed:
+  Unbeliever, Warlock, Sorceror, Ranger, Paladin, Monk and Telepath.
 - items can stack on the floor now. (but not inside a house!)
 - potions can cause some effects when shattering; handle them with care.
 - quiver/tool slots are available. (client update needed!)
@@ -31,7 +34,6 @@ Latest changes for version 3.5.5a (digest):
 - chat-line editing (^P, ^N, ^U, ^W)
 - /help, /shout, /feeling, /monster, /quest, /news
 - '/ver 1' to see server settings.
-- Monks can disturb adjacent monsters' attempt to teleport. (grabbing)
 - Vaults are varied somewhat.
 - Smaller floors can be generated.
 - Restricted floors can be generated; you gain level quickly there.
@@ -45,9 +47,13 @@ Latest changes for version 3.5.5a (digest):
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
 
 [Brief instruction for new commands]
+- 'G' : interact with skills.
+  '2''8' or 'j''k' to move around. <CR> to open/close a fold.
+  '6' or 'l' to use 1 skill point to the skill under the cursor. (no cancel!)
+- 'm' : activate a skill (eg. cast a spell). '/' is also available.
 - 'I' : examine an item (item should be *ID*ed first).
 - "'" : check other players' equipments under certain conditions.
-- Control-S : Spike doors (client update needed).
+- Control-S : Spike doors.
 - '/' : do many things (eg. a,A,e,E,F,i,m,n,p,q,r,t,w,z,Z)
 - Chat-line commands; enter '/help' in chat-line for help.
   + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.

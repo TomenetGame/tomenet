@@ -1958,8 +1958,8 @@ static void do_slash_brief_help(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 
-	msg_print(Ind, "Commands: afk bed bug cast dis dress ex feel help ignore less me monster news");	// pet ?
-	msg_print(Ind, "  pk quest rec ref rfe shout tag target untag ver;");
+	msg_print(Ind, "Commands: afk at bed bug cast dis dress ex feel help ignore less me monster");	// pet ?
+	msg_print(Ind, "  news pk quest rec ref rfe shout tag target untag ver;");
 
 	if (is_admin(p_ptr))
 	{
@@ -2836,6 +2836,35 @@ static void do_slash_cmd(int Ind, char *message)
 
 			/* TODO: show monster description */
 			
+			return;
+		}
+		/* add inscription to books */
+		else if (prefix(message, "/autotag") ||
+				prefix(message, "/at"))
+		{
+			object_type		*o_ptr;
+			char c[] = "@m ";
+			for(i = 0; i < INVEN_PACK; i++)
+			{
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				if (!is_book(o_ptr)) continue;
+
+				/* skip inscribed items */
+				if (!tk && o_ptr->note &&
+						strcmp(quark_str(o_ptr->note), "on sale"))
+					continue;
+
+				/* XXX though it's ok with 'm' for everything.. */
+				c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
+				if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
+				c[2] = o_ptr->sval +1 +48;
+				o_ptr->note = quark_add(c);
+			}
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
 			return;
 		}
 
@@ -3724,7 +3753,7 @@ bool show_floor_feeling(int Ind)
 	if (l_ptr->flags1 & LF1_NO_TELEPORT)
 		msg_print(Ind, "\377oYou feel the air is very stable...");
 	if (l_ptr->flags1 & LF1_NO_MAGIC)
-		msg_print(Ind, "\377oYou feel an suppressive air...");
+		msg_print(Ind, "\377oYou feel a suppressive air...");
 	if (l_ptr->flags1 & LF1_NO_GENO)
 		msg_print(Ind, "\377oYou have a feeling of peace...");
 	if (l_ptr->flags1 & LF1_NOMAP)

@@ -262,7 +262,7 @@ void do_cmd_skill()
 	char c;
 	int table[MAX_SKILLS][2];
 	int i;
-        int wid,hgt;
+	int wid,hgt;
 
 #ifndef EVIL_TEST /* evil test */
 	/* Screen is icky */
@@ -282,67 +282,67 @@ void do_cmd_skill()
 	{
 		Term_get_size(&wid, &hgt);
 
-                /* Display list of skills */
-                print_skills(table, max, sel, start);
+		/* Display list of skills */
+		print_skills(table, max, sel, start);
 
-                /* Wait for user input */
-                if (!hack_do_cmd_skill_wait)
-                        c = inkey();
-                else
-                {
-                        int net_fd;
+		/* Wait for user input */
+		if (!hack_do_cmd_skill_wait)
+			c = inkey();
+		else
+		{
+			int net_fd;
 
-                        /* Acquire and save maximum file descriptor */
-                        net_fd = Net_fd();
+			/* Acquire and save maximum file descriptor */
+			net_fd = Net_fd();
 
-                        /* If no network yet, just wait for a keypress */
-                        if (net_fd == -1)
-                        {
-                                /* Look for a keypress */
-                                quit("No network in do_cmd_skill() !");
-                        }
-                        else
-                        {
-                                /* Wait for keypress, while also checking for net input */
-                                do
-                                {
-                                        int result;
+			/* If no network yet, just wait for a keypress */
+			if (net_fd == -1)
+			{
+				/* Look for a keypress */
+				quit("No network in do_cmd_skill() !");
+			}
+			else
+			{
+				/* Wait for keypress, while also checking for net input */
+				do
+				{
+					int result;
 
-                                        /* Update our timer and if neccecary send a keepalive packet
-                                         */
-                                        update_ticks();
-                                        do_keepalive();
+					/* Update our timer and if neccecary send a keepalive packet
+					*/
+					update_ticks();
+					do_keepalive();
 
-                                        /* Flush the network output buffer */
-                                        Net_flush();
+					/* Flush the network output buffer */
+					Net_flush();
 
-                                        /* Wait for .001 sec, or until there is net input */
-                                        SetTimeout(0, 1000);
+					/* Wait for .001 sec, or until there is net input */
+					SetTimeout(0, 1000);
 
-                                        /* Parse net input if we got any */
-                                        if (SocketReadable(net_fd))
-                                        {
-                                                if ((result = Net_input()) == -1)
-                                                {
-                                                        quit(NULL);
-                                                }
+					/* Parse net input if we got any */
+					if (SocketReadable(net_fd))
+					{
+						if ((result = Net_input()) == -1)
+						{
+							quit(NULL);
+						}
 
-                                                /* Update the screen */
-                                                Term_fresh();
+						/* Update the screen */
+						Term_fresh();
 
-                                                /* Redraw windows if necessary */
-                                                if (p_ptr->window)
-                                                {
-                                                        window_stuff();
-                                                }
-                                        }
-                                } while (hack_do_cmd_skill_wait);
-                        }
-                        c = 0;
-                }
+						/* Redraw windows if necessary */
+						if (p_ptr->window)
+						{
+							window_stuff();
+						}
+					}
+				} while (hack_do_cmd_skill_wait);
+			}
+			c = 0;
+		}
 
-                /* Leave the skill screen */
-		if (c == ESCAPE) break;
+		/* Leave the skill screen */
+		if (c == ESCAPE || c == KTRL('X')) break;
 
 		/* Expand / collapse list of skills */
 		else if (c == '\r')
@@ -351,19 +351,39 @@ void do_cmd_skill()
 			else p_ptr->s_info[table[sel][0]].dev = TRUE;
 			init_table(table, &max, FALSE);
 		}
+		else if (c == 'c')
+		{
+			for (i = 0; i < max; i++)
+				p_ptr->s_info[table[i][0]].dev = FALSE;
+
+			init_table(table, &max, FALSE);
+			start = sel = 0;
+		}
+		else if (c == 'o')
+		{
+			for (i = 0; i < max; i++)
+				p_ptr->s_info[table[i][0]].dev = TRUE;
+
+			init_table(table, &max, FALSE);
+		}
+
 
 		/* Next page */
-		else if (c == 'n')
+		else if (c == 'n' || c == ' ')
 		{
 			sel += (hgt - 4);
+			start += (hgt - 4);
 			if (sel >= max) sel = max - 1;
+			if (start >= max) start = max - 1;
 		}
 
 		/* Previous page */
-		else if (c == 'p')
+		else if (c == 'p' || c == 'b')
 		{
 			sel -= (hgt - 4);
+			start -= (hgt - 4);
 			if (sel < 0) sel = 0;
+			if (start < 0) start = 0;
 		}
 
 		/* Select / increase a skill */
@@ -378,28 +398,28 @@ void do_cmd_skill()
 			if (dir == '8' || dir == 'k') sel--;
 
 			/* Miscellaneous skills cannot be increased/decreased as a group */
-//			if (table[sel][0] == SKILL_MISC) continue;
+			//			if (table[sel][0] == SKILL_MISC) continue;
 
 			/* Increase the current skill */
-                        if (dir == '6' || dir == 'l')
-                        {
-                                /* Send a packet */
-                                Send_skill_mod(table[sel][0]);
+			if (dir == '6' || dir == 'l')
+			{
+				/* Send a packet */
+				Send_skill_mod(table[sel][0]);
 
-                                /* Now we wait the answer */
-                                hack_do_cmd_skill_wait = TRUE;
-                        }
+				/* Now we wait the answer */
+				hack_do_cmd_skill_wait = TRUE;
+			}
 
 			/* Decrease the current skill */
-//      		if (dir == '4' || dir == 'h') decrease_skill(table[sel][0], skill_invest);
+			//      		if (dir == '4' || dir == 'h') decrease_skill(table[sel][0], skill_invest);
 
 			/* XXX XXX XXX Wizard mode commands outside of wizard2.c */
 
 			/* Increase the skill */
-//			if (wizard && (c == '+')) skill_bonus[table[sel][0]] += SKILL_STEP;
+			//			if (wizard && (c == '+')) skill_bonus[table[sel][0]] += SKILL_STEP;
 
 			/* Decrease the skill */
-//			if (wizard && (c == '-')) skill_bonus[table[sel][0]] -= SKILL_STEP;
+			//			if (wizard && (c == '-')) skill_bonus[table[sel][0]] -= SKILL_STEP;
 
 			/* Handle boundaries and scrolling */
 			if (sel < 0) sel = max - 1;

@@ -1383,9 +1383,10 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (artifact_p(o_ptr) && magik(50)) break;
 
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-					if (!p_ptr->heavy_wield && (
+					if (!p_ptr->heavy_wield && !shield && (
+								magik(50) ||
 								((f4 & TR4_MUST2H) && magik(90)) ||
-								((f4 & TR4_COULD2H) && !shield && magik(80)) ))
+								((f4 & TR4_COULD2H) && magik(80)) ))
 						break;
 					
 					/* riposte */

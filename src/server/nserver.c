@@ -2284,10 +2284,10 @@ static int Receive_play(int ind)
 	}
 	if (ch != PKT_PLAY)
 	{
-		/* Yeah it's noisy, but let's keep it for now */
 	  //		errno = 0;
 #if DEBUG_LEVEL > 1
-	  plog("Packet is not of play type");
+		if (ch != PKT_KEEPALIVE)
+			plog(format("Packet is not of play type (%d)", ch));
 #endif	// DEBUG_LEVEL
 	  //Destroy_connection(ind, "not play");
 	  //return -1;
@@ -6645,7 +6645,7 @@ static int Receive_redraw(int ind)
 
 	if (player)
 	{
-		p_ptr->store_num = -1;
+//		p_ptr->store_num = -1;
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 	       	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL | PW_PLAYER);
 	       	p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);

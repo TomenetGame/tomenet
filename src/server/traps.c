@@ -2323,7 +2323,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_GOODBYE_CHARLIE:
          {
              s16b i,j;
+			 int chance = 10 + glev / 2;
             bool message = FALSE;
+
+			if (chance > 50) chance = 50;
 
 			/* Send him/her back to home :) */
 			p_ptr->recall_pos.wx = wpos->wx;
@@ -2332,11 +2335,15 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			if (!p_ptr->word_recall)
 			{
-				p_ptr->word_recall = rand_int(20) + 15;
+				int delay = 120 - glev / 2;
+				if (delay < 1) delay = 1;
+
+//				p_ptr->word_recall = rand_int(20) + 15;
+				p_ptr->word_recall = rand_int(delay) + 40;	/* pfft, too long */
 				msg_print(Ind, "\377oThe air about you becomes charged...");
 				ident = TRUE;
 			}
-			ident &= do_player_scatter_items(Ind, 50, 15);
+			ident &= do_player_scatter_items(Ind, chance, 15);
          }
          break;
       case TRAP_OF_PRESENT_EXCHANGE:

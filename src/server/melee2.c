@@ -5183,7 +5183,10 @@ static void process_monster(int Ind, int m_idx)
 		/* Hack -- player hinders its movement */
 		if (do_move && monst_check_grab(m_idx, "run"))
 		{
-				do_move = FALSE;
+			/* Take a turn */
+			do_turn = TRUE;
+
+			do_move = FALSE;
 		}
 
 
