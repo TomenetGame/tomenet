@@ -801,7 +801,7 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You have a firm hold on your life force.\n");
 	}
-#if 0	// 'lite' indicates radius and nothing else
+#if 1	// somewhat hacky
 	if (p_ptr->lite)
 	{
 		fprintf(fff, "You are carrying a permanent light.\n");

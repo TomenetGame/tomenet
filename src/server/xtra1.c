@@ -1466,9 +1466,10 @@ static void calc_torch(int Ind)
 	
 	object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 
+#if 0
 	/* Base light radius */
 	p_ptr->cur_lite = p_ptr->lite;
-#if 0
+
 	/* Examine actual lites */
 	if (o_ptr->tval == TV_LITE)
 	{
@@ -1794,6 +1795,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->hold_life = FALSE;
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
+			p_ptr->cur_lite = 0;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
 	p_ptr->sustain_wis = FALSE;
@@ -2297,9 +2299,13 @@ static void calc_bonuses(int Ind)
 		/* Light(consider doing it on calc_torch) */
 //		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
 		{
-			if (f3 & TR3_LITE1) p_ptr->lite++;
-			if (f4 & TR4_LITE2) p_ptr->lite += 2;
-			if (f4 & TR4_LITE3) p_ptr->lite += 3;
+			j = 0;
+			if (f3 & TR3_LITE1) j++;
+			if (f4 & TR4_LITE2) j += 2;
+			if (f4 & TR4_LITE3) j += 3;
+
+			p_ptr->cur_lite += j;
+			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
 		}
 
 		/* Immunity flags */

@@ -1209,6 +1209,7 @@ To find the latest change quickly, search ==== :)
 30/06/2002 (Jir)
 - Flint.
 - USE_PK_RULES
+- light code optimized somewhat.
 [B] reversing curse worked for normal 'remove curse' scroll.
 
 

@@ -2066,7 +2066,11 @@ static void process_player_end(int Ind)
 					}
 
 					if (!refilled)
+					{
 						msg_print(Ind, "Your light has gone out!");
+						/* Calculate torch radius */
+						p_ptr->update |= (PU_TORCH|PU_BONUS);
+					}
 
 					/* Torch disappears */
 					if (o_ptr->sval == SV_LITE_TORCH && !o_ptr->timeout)
@@ -2088,7 +2092,7 @@ static void process_player_end(int Ind)
 		}
 
 		/* Calculate torch radius */
-		p_ptr->update |= (PU_TORCH|PU_BONUS);
+//		p_ptr->update |= (PU_TORCH|PU_BONUS);
 
 		/*** Process Inventory ***/
 
