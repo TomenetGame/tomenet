@@ -950,8 +950,10 @@ void peruse_file(void)
 	/* Initialize */
 	cur_line = 0;
 
+#if 0 /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Save the old screen */
 	Term_save();
@@ -1023,8 +1025,10 @@ void peruse_file(void)
 	/* Reload the old screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* The screen isn't icky anymore */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any events that came in */
 	Flush_queue();

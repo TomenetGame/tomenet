@@ -605,8 +605,10 @@ void cmd_map(void)
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky) return;
 
+#if 0 /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
@@ -631,8 +633,10 @@ void cmd_map(void)
 	/* Reload the screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any queued events */
 	Flush_queue();
@@ -757,8 +761,10 @@ void cmd_disarm(void)
 
 void cmd_inven(void)
 {
+#if 0 /* evil test */
 	/* The whole screen is "icky" */
 	screen_icky = TRUE;
+#endif
 
 	/* First, erase our current location */
 
@@ -775,8 +781,10 @@ void cmd_inven(void)
 	Term_load();
 	/* print our new location */
 
+#if 0 /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -784,8 +792,10 @@ void cmd_inven(void)
 
 void cmd_equip(void)
 {
+#if 0 /* evil test */
 	/* The whole screen is "icky" */
 	screen_icky = TRUE;
+#endif
 
 	Term_save();
 
@@ -803,8 +813,10 @@ void cmd_equip(void)
 
 	Term_load();
 
+#if 0 /* evil test */
 	/* The screen is OK now */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -1231,8 +1243,10 @@ void cmd_character(void)
 	char ch = 0;
 	int hist = 0, done = 0;
 
+#if 0 /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Save screen */
 	Term_save();
@@ -1266,8 +1280,10 @@ void cmd_character(void)
 	/* Reload screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -1340,8 +1356,10 @@ void cmd_party(void)
 	char i;
 	char buf[80];
 
+#if 0 /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* We are now in party mode */
 	party_mode = TRUE;
@@ -1368,6 +1386,7 @@ void cmd_party(void)
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Leave your current party");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Specify player to attack");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Make peace");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create a new guild");
 
 		/* Show current party status */
 		Term_putstr(0, 13, -1, TERM_WHITE, party_info);
@@ -1427,6 +1446,11 @@ void cmd_party(void)
 			if (get_string("Make peace with: ", buf, 79))
 				Send_party(PARTY_PEACE, buf);
 		}
+		else if (i == '7'){
+			/* Get new guild name */
+			if (get_string("Guild name: ", buf, 79))
+				Send_guild(GUILD_CREATE, buf);
+		}
 
 		/* Oops */
 		else
@@ -1442,8 +1466,10 @@ void cmd_party(void)
 	/* Reload screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
+#endif
 
 	/* No longer in party mode */
 	party_mode = FALSE;
@@ -1685,6 +1711,7 @@ void cmd_house_chown(int dir)
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Party");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Class");
 	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Race");
+	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Guild");
 	while(i!=ESCAPE){
 		i=inkey();
 		switch(i){
@@ -1692,6 +1719,7 @@ void cmd_house_chown(int dir)
 			case '2':
 			case '3':
 			case '4':
+			case '5':
 				buf[0]='O';
 				buf[1]=i;
 				buf[2]=0;
@@ -1732,7 +1760,9 @@ void cmd_purchase_house(void)
 
 	if (!get_dir(&dir)) return;
 
+#if 0 /* evil test */
 	screen_icky=TRUE;
+#endif
 
 	Term_save();
 	Term_clear();
@@ -1769,7 +1799,9 @@ void cmd_purchase_house(void)
 		c_msg_print(NULL);
 	}
 	Term_load();
+#if 0 /* evil test */
 	screen_icky=FALSE;
+#endif
 }
 
 void cmd_suicide(void)
@@ -2564,14 +2596,15 @@ void cmd_master_aux_player()
 void cmd_master_aux_system()
 {
 	char i=0;
-	Term_clear();
-	Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
-	Term_putstr(5, 4, -1, TERM_WHITE, "(1) View mangband.log");
-	Term_putstr(5, 5, -1, TERM_WHITE, "(2) View mangband.rfe");
-	
-	Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
 
 	while(i!=ESCAPE){
+		Term_clear();
+		Term_putstr(0, 2, -1, TERM_BLUE, "System commands");
+		Term_putstr(5, 4, -1, TERM_WHITE, "(1) View mangband.log");
+		Term_putstr(5, 5, -1, TERM_WHITE, "(2) View mangband.rfe");
+	
+		Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
+
 		/* Get a key */
 		i = inkey();
 		switch(i){
@@ -2582,8 +2615,10 @@ void cmd_master_aux_system()
 				/* Call the file perusal */
 				peruse_file();
 
+#if 0 /* evil test */
 				/* Hack -- still icky */
 				screen_icky = TRUE;
+#endif
 
 				break;
 			case '2':
@@ -2593,8 +2628,10 @@ void cmd_master_aux_system()
 				/* Call the file perusal */
 				peruse_file();
 
+#if 0 /* evil test */
 				/* Hack -- still icky */
 				screen_icky = TRUE;
+#endif
 
 				break;
 			case ESCAPE:
@@ -2659,8 +2696,10 @@ void cmd_master(void)
 	char i=0;
 	char buf[80];
 
+#if 0 /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	party_mode = TRUE;
 
@@ -2733,8 +2772,10 @@ void cmd_master(void)
 	/* Reload screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
+#endif
 
 	/* No longer in party mode */
 	party_mode = FALSE;

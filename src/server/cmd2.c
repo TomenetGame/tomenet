@@ -519,7 +519,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 	if (!p_ptr->admin_wiz && !p_ptr->admin_dm)
 	{
 		if(dna->creator!=p_ptr->dna) return(FALSE);
-		if(args[1]>='3') return(FALSE);
+		if(args[1]>='3' && args[1]<'5') return(FALSE);
 		/* maybe make party leader only chown party */
 	}
 	switch(args[1]){
@@ -541,6 +541,9 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 				if(!strcmp(&args[2],race_info[i].title))
 					newowner=i;
 			}
+			break;
+		case '5':
+			newowner=guild_lookup(&args[2]);
 			break;
 	}
 	if(newowner!=-1){
@@ -592,11 +595,9 @@ bool access_door(int Ind, struct dna_type *dna){
 		case OT_RACE:
 			if(p_ptr->prace==dna->owner) return(TRUE);
 			break;
-#if 0
 		case OT_GUILD:
 			if(p_ptr->guild==dna->owner) return(TRUE);
 			break;
-#endif
 	}
 	return(FALSE);
 }
@@ -3412,8 +3413,9 @@ void house_admin(int Ind, int dir, char *args){
 					if(success){
 						msg_format(Ind,"\377gDoor change successful");
 					}
+					else msg_format(Ind,"\377yDoor change failed");
 				}
-				else msg_format(Ind,"\377oDoor change failed");
+				else msg_format(Ind,"\377oDoor change not permitted.");
 			}
 			else msg_print(Ind,"\377rYou cant modify that door");
 		}

@@ -233,6 +233,7 @@ static void Init_receive(void)
 	playing_receive[PKT_CLEAR_BUFFER]	= Receive_clear_buffer;
 
 	playing_receive[PKT_SPIKE]		= Receive_spike;
+	playing_receive[PKT_GUILD]		= Receive_guild;
 }
 
 static int Init_setup(void)
@@ -6700,6 +6701,53 @@ static int Receive_party(int ind)
 	return 1;
 }
 
+static int Receive_guild(int ind){
+	connection_t *connp = &Conn[ind];
+	int player, n;
+	char ch, buf[160];
+	s16b command;
+
+	if (connp->id != -1) player = GetInd[connp->id];
+		else player = 0;
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &command, buf)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player)
+	{
+		switch(command){
+			case GUILD_CREATE:
+			{
+				guild_create(player, buf);
+				break;
+			}
+
+			case GUILD_ADD:
+			{
+				guild_add(player, buf);
+				break;
+			}
+
+			case GUILD_DELETE:
+			{
+				guild_remove(player, buf);
+				break;
+			}
+
+			case GUILD_REMOVE_ME:
+			{
+				guild_leave(player);
+				break;
+			}
+		}
+	}
+	return 1;
+}
+
 void Handle_direction(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
@@ -6817,13 +6865,14 @@ static int Receive_master(int ind)
 		else player = 0;
 
 	/* Make sure this came from the dungeon master.  Note that it may be
-	 * possobile to spoof this, so probably in the future more advanced
+	 * possible to spoof this, so probably in the future more advanced
 	 * authentication schemes will be neccecary. -APD
 	 */
 
+	/* Is this necessary here? Maybe (evileye) */
 	if (!Players[player]->admin_dm &&
 		!Players[player]->admin_wiz &&
-		!player_is_king(player))
+		!player_is_king(player) && !guild_build(player))
 	{
 		/* Hack -- clear the receive and queue buffers since we won't be
 		 * reading in the dungeon master parameters that were sent.

@@ -2249,14 +2249,18 @@ int Receive_pause(void)
 	/* Flush any pending keystrokes */
 	Term_flush();
 
+#if 0 /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Wait */
 	inkey();
 
+#if 0 /* evil test */
 	/* Screen isn't icky any more */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush queue */
 	Flush_queue();
@@ -2962,6 +2966,17 @@ int Send_party(s16b command, cptr buf)
 	int	n;
 
 	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_PARTY, command, buf)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+int Send_guild(s16b command, cptr buf){
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%s", PKT_GUILD, command, buf)) <= 0)
 	{
 		return n;
 	}

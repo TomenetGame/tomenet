@@ -2838,6 +2838,7 @@ static bool wraith_access(int Ind){
 	return(FALSE);
 }
 
+
 void black_breath_infection(int Ind, int Ind2)
 {
 	player_type *p_ptr = Players[Ind];

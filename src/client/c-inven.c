@@ -252,7 +252,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Hack -- start out in "display" mode */
 	if (command_see) 
 	{
+#if 0 /* evil test */
 		screen_icky = TRUE;
+#endif
 		Term_save();
 	}
 
@@ -359,7 +361,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				/* Show/hide the list */
 				if (!command_see)
 				{
+#if 0 /* evil test */
 					screen_icky = TRUE;
+#endif
 
 					Term_save();
 					command_see = TRUE;
@@ -369,7 +373,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 					Term_load();
 					command_see = FALSE;
 
+#if 0 /* evil test */
 					screen_icky = FALSE;
+#endif
 
 					/* Flush any events */
 					Flush_queue();
@@ -535,7 +541,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	if (command_see) 
 	{
 		Term_load();
+#if 0 /* evil test */
 		screen_icky = FALSE;
+#endif
 	}
 
 	/* Fix the top line */

@@ -8,6 +8,8 @@
 
 #include "../common/angband.h"
 
+/* evil test */
+extern bool screen_icky;
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -2141,6 +2143,10 @@ errr Term_save(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
+/* evileye - design upgrade test */
+	screen_icky++;
+	if(screen_icky>1) return(0);
+
 	/* Grab */
 	term_win_copy(Term->mem, Term->scr, w, h);
 
@@ -2160,6 +2166,11 @@ errr Term_load(void)
 
 	int w = Term->wid;
 	int h = Term->hgt;
+
+/* evileye - design upgrade test */
+	if(!screen_icky) return(0);	/* should really be a value */
+	screen_icky--;
+	if(screen_icky) return(0);
 
 	/* Load */
 	term_win_copy(Term->scr, Term->mem, w, h);

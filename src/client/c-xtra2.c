@@ -65,8 +65,10 @@ void do_cmd_messages(void)
 	/* Start at leftmost edge */
 	q = 0;
 
+#if 0 /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = topline_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
@@ -259,8 +261,10 @@ void do_cmd_messages(void)
 	/* Restore the screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = topline_icky = FALSE;
+#endif
 
 	/* Flush any queued events */
 	Flush_queue();
@@ -324,8 +328,10 @@ void do_cmd_messages_chatonly(void)
 	q = 0;
 
 
+#if 0 /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = topline_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
@@ -490,8 +496,10 @@ void do_cmd_messages_chatonly(void)
 	/* Restore the screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = topline_icky = FALSE;
+#endif
 
 	/* Flush any queued events */
 	Flush_queue();

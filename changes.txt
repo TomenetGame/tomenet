@@ -780,6 +780,11 @@ Change list for PernMangband
 - exported cfg to LUA (eg. '/ cfg.store_turns=10')
 - low-sanity alart and 'flushback' hallucination
 - fixed watery levels (see generate.c)
+
+06/03/2002 (Evileye)
+- Added guild system framework. Needs more work before it will be
+  useful.
+
 [B] lantern refilling 
 [B] watery respawning crashed
 [B] a trap caused buggy screen like ^^^^^^^^^^^^^^^^^^^^^^^

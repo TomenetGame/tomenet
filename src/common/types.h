@@ -1514,6 +1514,7 @@ struct player_type
 	byte new_level_method;	/* Climb up stairs, down, or teleport level? */
 
 	byte party;		/* The party he belongs to (or 0 if neutral) */
+	byte guild;		/* The guild he belongs to (0 if neutral)*/
 
 	s16b target_who;
 	s16b target_col;	/* What position is targetted */

@@ -2037,8 +2037,10 @@ void interact_macros(void)
 
 	char tmp[160], buf[1024];
 
+#if 0 /* evil test */
 	/* Screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Save screen */
 	Term_save();
@@ -2229,8 +2231,10 @@ void interact_macros(void)
 	/* Reload screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Screen is no longer icky */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush the queue */
 	Flush_queue();
@@ -2552,8 +2556,10 @@ void do_cmd_options(void)
 	int k;
 
 
+#if 0 /* evil test */
 	/* Enter "icky" mode */
 	screen_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
@@ -2633,8 +2639,10 @@ void do_cmd_options(void)
 	/* Restore the screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Leave "icky" mode */
 	screen_icky = FALSE;
+#endif
 	Flush_queue();
 
 

@@ -32,12 +32,12 @@
  */
 
 /*
- * Current version number of PernMAngband:
+ * Current version number of TomeNET:
  */
  
 #define VERSION_MAJOR	3
-#define VERSION_MINOR   3
-#define VERSION_PATCH   6
+#define VERSION_MINOR   4
+#define VERSION_PATCH   0
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.
@@ -120,7 +120,7 @@
  */
 #define MAX_WID		198
 
-/* Used only in object3.c / trap effects (PernA) */
+/* Used only in object3.c / trap effects (ToME) */
 #if ((MAX_HGT / SCREEN_HGT) < (MAX_WID / SCREEN_WID))
  #define RATIO (MAX_WID / SCREEN_WID)
 #else
@@ -303,6 +303,14 @@
 #define PARTY_REMOVE_ME	4
 #define PARTY_HOSTILE	5
 #define PARTY_PEACE	6
+
+/*
+ * Guild commands
+ */
+#define GUILD_CREATE	1
+#define GUILD_ADD	2
+#define GUILD_DELETE	3
+#define GUILD_REMOVE_ME	4
 
 /* 
  * Dungeon master commands
@@ -1379,7 +1387,7 @@ that keeps many algorithms happy.
 #define TV_MAX		100
 #endif	// 0
 
-/* PernAngband ones */
+/* ToME ones */
 #define TV_SKELETON      1      /* Skeletons ('s') */
 #define TV_BOTTLE        2      /* Empty bottles ('!') */
 #define TV_FIRESTONE     3      /* For DragonRiders */
@@ -1432,7 +1440,7 @@ that keeps many algorithms happy.
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
 
-#if 0	/* we'll use PernM books :) */
+#if 0	/* we'll use TomeNET books :) */
 #define TV_VALARIN_BOOK 111
 #define TV_MAGERY_BOOK  112
 #define TV_SHADOW_BOOK  113
@@ -2029,7 +2037,7 @@ that keeps many algorithms happy.
 #define SV_GOLD_MAX			18
 
 
-/* from PernAngband */
+/* from ToMe */
 
 /* The "sval" codes for TV_TOOL */
 #define SV_TOOL_CLIMB 0
@@ -2886,7 +2894,7 @@ that keeps many algorithms happy.
 #define SUMMON_HI_DRAGON	22
 #define SUMMON_WRAITH		31
 #define SUMMON_UNIQUE		32
-/* additions from PernA */
+/* additions from ToME */
 #define SUMMON_BIZARRE1             33
 #define SUMMON_BIZARRE2             34
 #define SUMMON_BIZARRE3             35
@@ -2914,7 +2922,7 @@ that keeps many algorithms happy.
 #define SUMMON_QUYLTHULG            57
 #define SUMMON_LUA                  58
 
-/* Again, PernMangband one(s)	- Jir - */
+/* Again, TomeNET one(s)	- Jir - */
 #define SUMMON_VERMIN		59
 
 
@@ -3239,7 +3247,7 @@ that keeps many algorithms happy.
 #define TR3_HEAVY_CURSE		0x40000000L	/* Item is Heavily Cursed */
 #define TR3_PERMA_CURSE		0x80000000L	/* Item is Perma Cursed */
 
-/* Flags from PernAngband	- Jir - */
+/* Flags from ToME - Jir - */
 
 #define TR3_SH_FIRE             0x00000001L     /* Immolation (Fire) */
 #define TR3_SH_ELEC             0x00000002L     /* Electric Sheath */
@@ -3745,7 +3753,7 @@ that keeps many algorithms happy.
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HEAL | RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
 
 /*
- * New monster race bit flags from PernAngband.		- Jir -
+ * New monster race bit flags from ToME.		- Jir -
  */
 #define RF7_AQUATIC             0x00000001  /* Aquatic monster */
 #define RF7_CAN_SWIM            0x00000002  /* Monster can swim */
@@ -4120,7 +4128,7 @@ that keeps many algorithms happy.
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_MUD) && \
      (!ZCAVE[Y][X].o_idx))
-//     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \
+/*     (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \   */
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid

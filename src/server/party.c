@@ -7,6 +7,26 @@
 static void del_party(int id);
 
 /*
+ * Lookup a guild number by name.
+ */
+int guild_lookup(cptr name)
+{
+	int i;
+
+	/* Check each guild */
+	for (i = 0; i < MAX_GUILDS; i++)
+	{
+		/* Check name */
+		if (streq(guilds[i].name, name)){
+			return i;
+		}
+	}
+
+	/* No match */
+	return -1;
+}
+
+/*
  * Lookup a party number by name.
  */
 int party_lookup(cptr name)
@@ -40,6 +60,65 @@ bool player_in_party(int party_id, int Ind)
 	return FALSE;
 }
 	
+/*
+ * Create a new guild.
+ */
+int guild_create(int Ind, cptr name){
+	player_type *p_ptr=Players[Ind];
+	int index = 0, i;
+
+	if(p_ptr->lev<40){
+		msg_print(Ind, "You are not high enough level to start a guild.");
+		return FALSE;
+	}
+	/* This could probably be improved. */
+	if(p_ptr->au<4000000){
+		msg_print(Ind, "You need more cash to start a guild.");
+		return FALSE;
+	}
+
+	/* Check for already existing guild by that name */
+	if (guild_lookup(name) != -1)
+	{
+		msg_print(Ind, "A guild by that name already exists.");
+		return FALSE;
+	}
+	/* Make sure this guy isn't in some other guild already */
+	if (p_ptr->guild != 0)
+	{
+		msg_print(Ind, "You already belong to a guild!");
+		return FALSE;
+	}
+	/* Find the "best" party index */
+	for (i = 1; i < MAX_GUILDS; i++)
+	{
+		if (guilds[i].num == 0)
+		{
+			index = i;
+			break;
+		}
+	}
+	/* Make sure we found an empty slot */
+	if (index == 0)
+	{
+		/* Error */
+		msg_print(Ind, "There aren't enough guild slots!");
+		return FALSE;
+	}
+	p_ptr->au-=4000000;
+	p_ptr->redraw|=PR_GOLD;
+
+	/* Set party name */
+	strcpy(guilds[index].name, name);
+
+	/* Set guildmaster */
+	guilds[index].master=p_ptr->id;
+
+	/* Add the owner as a member */
+	p_ptr->guild = index;
+	guilds[index].num++;
+}
+
 /*
  * Create a new party, owned by "Ind", and called
  * "name".
@@ -113,6 +192,9 @@ int party_create(int Ind, cptr name)
 
 	/* Success */
 	return TRUE;
+}
+
+int guild_add(int adder, cptr name){
 }
 
 /*
@@ -243,6 +325,9 @@ static void del_party(int id){
 	strcpy(parties[id].name, "");
 }
 
+int guild_remove(int remover, cptr name){
+}
+
 /*
  * Remove a person from a party.
  *
@@ -333,6 +418,8 @@ int party_remove(int remover, cptr name)
 	return TRUE;
 }
 
+void guild_leave(int Ind){
+}
 
 /*
  * A player wants to leave a party.

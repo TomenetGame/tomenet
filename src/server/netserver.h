@@ -151,6 +151,7 @@ static int Receive_autophase(int ind);
 static int Receive_clear_buffer(int ind);
 
 static int Receive_spike(int ind);
+static int Receive_guild(int ind);
 
 static void Handle_item(int Ind, int item);
 

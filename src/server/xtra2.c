@@ -5933,6 +5933,39 @@ bool master_level_specific(int Ind, struct worldpos *wpos, char * parms)
 	}
 	return TRUE;
 }
+
+
+/*
+ *
+ * Guild build access 
+ * Must be owner inside guild hall
+ *
+ */
+//static bool guild_build(int Ind){
+bool guild_build(int Ind){
+	player_type *p_ptr=Players[Ind];
+	int i;
+
+	for(i=0;i<num_houses;i++){
+		if(inarea(&houses[i].wpos, &p_ptr->wpos))
+		{
+			if(fill_house(&houses[i], 3, p_ptr)){
+				if(access_door(Ind, houses[i].dna)){
+					if(houses[i].dna->owner_type==OT_GUILD && p_ptr->guild==houses[i].dna->owner && guilds[p_ptr->guild].master==p_ptr->id){
+						if(p_ptr->au>5000){
+							p_ptr->au-=5000;
+							p_ptr->redraw|=PR_GOLD;
+							return(TRUE);
+						}
+					}
+				}
+				break;
+			}
+		}
+	}
+	return(FALSE);
+}
+
 /* Build walls and such.  This should probably be improved, I am just hacking
  * it together right now for Halloween. -APD
  */
@@ -5944,7 +5977,8 @@ bool master_build(int Ind, char * parms)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind))) return FALSE;
+
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz && (!player_is_king(Ind)) && (!guild_build(Ind))) return FALSE;
 	
 	/* extract arguments, otherwise build a wall of type new_feat */
 	if (parms)

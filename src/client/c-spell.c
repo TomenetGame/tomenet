@@ -148,8 +148,10 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Show list */
 				redraw = TRUE;
 
+#if 0 /* evil test */
 				/* The screen is icky */
 				screen_icky = TRUE;
+#endif
 
 				/* Save the screen */
 				Term_save();
@@ -167,8 +169,10 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 				/* Restore the screen */
 				Term_load();
 
+#if 0 /* evil test */
 				/* The screen is OK now */
 				screen_icky = FALSE;
+#endif
 
 				/* Flush any events */
 				Flush_queue();
@@ -219,7 +223,9 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
 	if (redraw)
 	{
 		Term_load();
+#if 0 /* evil test */
 		screen_icky = FALSE;
+#endif
 
 		/* Flush any events */
 		Flush_queue();
@@ -244,8 +250,10 @@ static int get_spell(int *sn, cptr prompt, int book, bool known)
  */
 void show_browse(int book)
 {
+#if 0 /* evil test */
 	/* The screen is icky */
 	screen_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
@@ -265,8 +273,10 @@ void show_browse(int book)
 	/* Restore the screen */
 	Term_load();
 
+#if 0 /* evil test */
 	/* Screen is OK now */
 	screen_icky = FALSE;
+#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -397,8 +407,10 @@ static int get_mimic_spell(int *sn)
 				/* Show list */
 				redraw = TRUE;
 
+#if 0 /* evil test */
 				/* The screen is icky */
 				screen_icky = TRUE;
+#endif
 
 				/* Save the screen */
 				Term_save();
@@ -416,8 +428,10 @@ static int get_mimic_spell(int *sn)
 				/* Restore the screen */
 				Term_load();
 
+#if 0 /* evil test */
 				/* The screen is OK now */
 				screen_icky = FALSE;
+#endif
 
 				/* Flush any events */
 				Flush_queue();
@@ -446,7 +460,9 @@ static int get_mimic_spell(int *sn)
 	if (redraw)
 	{
 		Term_load();
+#if 0 /* evil test */
 		screen_icky = FALSE;
+#endif
 
 		/* Flush any events */
 		Flush_queue();

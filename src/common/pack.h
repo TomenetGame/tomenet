@@ -143,6 +143,8 @@
 #define PKT_FLUSH		150
 #define PKT_OBSERVE		151
 #define PKT_SPIKE		152
+#define PKT_GUILD		153
+
 
 
 /*
