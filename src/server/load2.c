@@ -907,6 +907,8 @@ static void rd_quests(){
 		rd_s16b(&quests[i].type);
 		if(!older_than(3,5,1))
 			rd_u16b(&quests[i].flags);
+		if(!older_than(3,5,2))
+			rd_s32b(&quests[i].creator);
 	}
 }
 

@@ -2514,32 +2514,62 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 			}
 		}
-		else if(!admin && prefix(message, "/quest")){
-			int i;
+		else if(prefix(message, "/quest")){
+			int i, j=Ind, k=0;
 			s16b r;
+			int lev;
+			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
 	
+			if(tk && !strcmp(token[1], "reset")){
+				int qn;
+				if(!admin) return;
+				for(qn=0;qn<20;qn++){
+					quests[qn].active=0;
+					quests[qn].type=0;
+					quests[qn].id=0;
+				}
+				msg_broadcast(0, "\377yQuests are reset");
+				for(i=1; i<=NumPlayers; i++){
+					if(Players[i]->conn==NOT_CONNECTED) continue;
+					Players[i]->quest_id=0;
+				}
+				return;
+			}
 			if(tk && !strcmp(token[1], "guild")){
-				int j;
 				if(!p_ptr->guild || guilds[p_ptr->guild].master != p_ptr->id){
 					msg_print(Ind, "\377rYou are not a guildmaster");
 					return;
 				}
 				if(tk==2){
 					if(j=name_lookup_loose(Ind, token[2], FALSE)){
-						if(Players[j]->quest_id) msg_format(Ind, "\377y%s has a quest already.", token[2]);
-						else{
-							guild_msg_format(p_ptr->guild, "\377oGuild quest for %s", token[2]);
+						if(Players[j]->quest_id){
+							msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
+							return;
 						}
 					}
-					else msg_format(Ind, "Player %s is not here", token[2]);
+					else{
+						msg_format(Ind, "Player %s is not here", token[2]);
+						return;
+					}
 				}
-				else msg_print(Ind, "Usage: /quest guild name");
-				return;
+				else{
+					msg_print(Ind, "Usage: /quest guild name");
+					return;
+				}
+				flags|=QUEST_GUILD;
 			}
-			if(p_ptr->quest_id){
+			else if(admin && tk && (j=name_lookup_loose(Ind, token[1], FALSE))){
+				if(Players[j]->quest_id){
+					msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
+					return;
+				}
+			}
+			else flags|=QUEST_RACE;
+			if(Players[j]->quest_id){
 				for(i=0; i<20; i++){
-					if(quests[i].id==p_ptr->quest_id){
-						msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.", p_ptr->quest_num, r_name+r_info[quests[i].type].name);
+					if(quests[i].id==Players[j]->quest_id){
+						if(j==Ind)
+							msg_format(Ind, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.%s", p_ptr->quest_num, r_name+r_info[quests[i].type].name, quests[i].flags&QUEST_GUILD?" (guild)":"");
 						return;
 					}
 				}
@@ -2547,10 +2577,13 @@ static void do_slash_cmd(int Ind, char *message)
 			get_mon_num_hook=dungeon_aux;
 			get_mon_num_prep();
 			i=2+randint(7);
+			lev=Players[j]->lev;
 			do{
-				r=get_mon_num(p_ptr->lev+5);
-			} while(((p_ptr->lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
-			add_quest(r, i, p_ptr->lev);
+				r=get_mon_num(lev);
+				k++;
+				if(k>100) lev--;
+			} while(((lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
+			add_quest(Ind, j, r, i, flags);
 		}
 
 		/*
@@ -2620,33 +2653,6 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 
 				msg_print(Ind, "\377oUsage: /kick [Player name]");
-				return;
-			}
-			else if (prefix(message, "/quest")){
-				if(tk==1){
-					int qn;
-					if(!strcmp(token[1],"reset")){
-						for(qn=0;qn<20;qn++){
-							quests[qn].active=0;
-							quests[qn].type=0;
-							quests[qn].id=0;
-						}
-						msg_print(Ind, "\377yQuests are reset");
-						for(i=1; i<NumPlayers; i++){
-							if(Players[i]->conn==NOT_CONNECTED) continue;
-							Players[i]->quest_id=0;
-						}
-						return;
-					}
-				}
-				if(tk==3){
-					if(add_quest(atoi(token[1]), atoi(token[2]), atoi(token[3])))
-						msg_print(Ind, "\377yQuest added successfully!");
-					else
-						msg_print(Ind, "\377rQuest addition failed!");
-					return;
-				}
-				msg_print(Ind, "\377oUsage: /quest type num level");
 				return;
 			}
 			/* erase items and monsters */

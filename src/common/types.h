@@ -1060,15 +1060,6 @@ struct quest
 #define QPRIZE_EXC 3
 #define QPRIZE_ART 4	/* Must be rare, hard, and only ever by DM */
 
-/* Quest types */
-#define QUEST_RANDOM 1	/* Random quest, not set by the DM */
-#define QUEST_MONSTER 2 /* Kill some normal monsters. */
-#define QUEST_UNIQUE 4  /* Kill unique monster (unkilled by players) */
-#define QUEST_OBJECT 8	/* Find some object. Must not be owned, or found
-			   in the town. */
-#define QUEST_RACE 16	/* Race quest - ie, not personal */
-#define QUEST_GUILD 32	/* Guildmaster's quest (no prize) */
-
 struct quest_type{
 	s16b id;		/* Quest ID. Value of 0 means inactive */
 	byte type;		/* Quest type */
@@ -1078,12 +1069,22 @@ struct quest_type{
 
 #endif
 
+/* Quest types */
+#define QUEST_RANDOM 1	/* Random quest, not set by the DM */
+#define QUEST_MONSTER 2 /* Kill some normal monsters. */
+#define QUEST_UNIQUE 4  /* Kill unique monster (unkilled by players) */
+#define QUEST_OBJECT 8	/* Find some object. Must not be owned, or found
+			   in the town. */
+#define QUEST_RACE 16	/* Race quest - ie, not personal */
+#define QUEST_GUILD 32	/* Guildmaster's quest (no prize) */
+
 /* evileye - same as above, but multiplayerized. */
 struct quest_type{
 	u16b active;		/* quest is active? (num players) */
 	u16b id;		/* quest id */
 	s16b type;		/* Monster race or object type */
 	u16b flags;		/* Quest flags */
+	s32b creator;		/* Player ID or 0L (DM, guildmaster only) */
 };
 
 /* Adding this structure so we can have different creatures generated

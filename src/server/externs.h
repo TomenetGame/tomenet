@@ -958,7 +958,7 @@ extern void handle_stuff(int Ind);
 /* xtra2.c */
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
-extern bool add_quest(u16b type, u16b num, int midlevel);
+extern bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);

@@ -13,6 +13,7 @@
 #define SERVER
 
 #include "angband.h"
+#include "party.h"
 
 /*
  * Adjustment in exp-penulty when resurrecting.		- Jir -
@@ -4082,14 +4083,33 @@ void kill_quest(int Ind){
 	if(pos==-1) return;
 
 	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
-	msg_broadcast(Ind, temp);
-	msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
-	s_printf("%s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
-	/*
-	   Temporary prize ... Too good perhaps...
-	   it will do for now though
-	*/
-	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+	if(quests[i].flags&QUEST_RACE)
+		msg_broadcast(Ind, temp);
+	if(quests[i].flags&QUEST_GUILD){
+		hash_entry *temphash;
+		if((temphash=lookup_player(quests[i].creator)) && temphash->guild){
+			guild_msg_format(temphash->guild ,temp);
+			if(!p_ptr->guild){
+				guild_msg_format(temphash->guild, "%s is now a guild member!", p_ptr->name);
+				guilds[temphash->guild].num++;
+				msg_format(Ind, "You've been added to '%s'.", guilds[temphash->guild].name);
+				p_ptr->guild=temphash->guild;
+				clockin(Ind, 3);	/* set in db */
+			}
+			else if(p_ptr->guild==temphash->guild){
+				guild_msg_format(temphash->guild, "%s has completed the quest!", p_ptr->name);
+			}
+		}
+	}
+	else{
+		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
+		s_printf("%s won the %s quest\n", p_ptr->name, r_name+r_info[quests[pos].type].name);
+		/*
+		   Temporary prize ... Too good perhaps...
+		   it will do for now though
+		*/
+		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE);
+	}
 	for(i=1; i<=NumPlayers; i++){
 		q_ptr=Players[i];
 		if(q_ptr && q_ptr->quest_id==id){
@@ -4102,16 +4122,21 @@ void kill_quest(int Ind){
 
 s16b questid=1;
 
-bool add_quest(u16b type, u16b num, int midlevel){
+bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags){
 	int i, j;
 	bool added=FALSE;
-	player_type *q_ptr;
+	int midlevel;
+	player_type *p_ptr=Players[target], *q_ptr;
+	if(!p_ptr) return(FALSE);
+
+	midlevel=p_ptr->lev;
 
 	for(i=0; i<20; i++){
 		if(!quests[i].active){
 			quests[i].active=0;
 			quests[i].id=questid;
 			quests[i].type=type;
+			quests[i].flags=flags;
 			added=TRUE;
 			break;
 		}
@@ -4121,16 +4146,18 @@ bool add_quest(u16b type, u16b num, int midlevel){
 	added=0;
 
 	for(j=1; j<=NumPlayers; j++){
+		if(flags&QUEST_GUILD) j=target;
 		q_ptr=Players[j];
 		if(q_ptr && !q_ptr->quest_id){
 			if(ABS(q_ptr->lev-midlevel)>5) continue;
 			q_ptr->quest_id=questid;
 			q_ptr->quest_num=num;
 			clockin(j, 4);	/* register that player */
-			msg_print(j, "\377oYou have been given a quest\377y!");
-			msg_format(j, "\377oFind and kill \377y%d \377g%s \377obefore any other player\377y!", num, r_name+r_info[type].name);
+			msg_format(j, "\377oYou have been given a %squest\377y!", flags&QUEST_GUILD?"guild ":"");
+			msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
 			quests[i].active++;
 		}
+		if(flags&QUEST_GUILD) break;	/* i know it is lazy */
 	}
 	if(!quests[i].active){
 		del_quest(questid);
@@ -4139,6 +4166,13 @@ bool add_quest(u16b type, u16b num, int midlevel){
 	s_printf("Added quest id %d (players %d)\n", quests[i].id, quests[i].active);
 	questid++;
 	if(questid==0) questid=1;
+	if(target!=Ind){
+		if(flags&QUEST_GUILD){
+			guild_msg_format(Players[Ind]->guild, "%s has been given a quest!", p_ptr->name);
+		}
+		else msg_format(Ind, "Quest given to %s", p_ptr->name);
+		quests[i].creator=Players[Ind]->id;
+	}
 	return(TRUE);
 }
 
