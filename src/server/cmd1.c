@@ -2358,7 +2358,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			i = randint(9);
 			y = p_ptr->py + ddy[i];
 			x = p_ptr->px + ddx[i];
-		} while (i != 5);
+		} while (i == 5);
 	}
 	else
 	{
