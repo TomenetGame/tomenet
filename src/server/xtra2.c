@@ -3349,7 +3349,7 @@ void monster_death(int Ind, int m_idx)
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
-	else if (strstr((r_name + r_ptr->name),"ink horror"))
+	else if (strstr((r_name + r_ptr->name),"Pink horror"))
 	{
 		for (i = 0; i < 2; i++)
 		{
