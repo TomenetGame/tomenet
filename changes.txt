@@ -1251,8 +1251,10 @@ To find the latest change quickly, search ==== :)
 - player can try to disarm already-found traps by stepping onto it.
 - DOOR_BUMP_OPEN is more detailed now. (better client option, of course)
 - garbled monster names when hallucinating.
+[P] yummy nests and pits (generate.c)
 [H] Potion of Infravision gives +50ft infravision in place of +10ft
 [H] cheapest items (like spike) won't be {on sale}. {10% off} added.
+[H] all-star dragon pit / mankind pit (experimental)
 
 
 ** [B] stands for Bugfix.
@@ -1583,6 +1585,11 @@ memo and questions:
   - another solution is to put those things in a file like plug-ins.
 - resurrect 'targetting cursor'
 - write gaming options changed by '=' to the local pref files.
+- following things should be client-side options:
+  + door_bump_open
+  + auto_disarm_trap
+  + scroll_mergin (x, y)
+  + auto_destroy
 
 [lunatic ones]
 - 3-D gfx and full-audio support

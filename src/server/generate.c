@@ -2044,6 +2044,11 @@ static void build_type4(struct worldpos *wpos, int yval, int xval)
  * Note the use of Angband 2.7.9 monster race pictures in various places.
  */
 
+/* Some new types of nests/pits are borrowed from ToME.		- Jir - */
+
+/* Hack -- for clone pits */
+static int template_race;
+
 /*
  * Dungeon monster filter - not null
  */
@@ -2121,6 +2126,87 @@ static bool vault_aux_undead(int r_idx)
 
 
 /*
+ * Helper function for "monster nest (chapel)"
+ */
+static bool vault_aux_chapel(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Require "priest" or Angel */
+	if (!((r_ptr->d_char == 'A') ||
+		strstr((r_name + r_ptr->name),"riest")))
+	{
+		return (FALSE);
+	}
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for "monster nest (kennel)"
+ */
+static bool vault_aux_kennel(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Require a Zephyr Hound or a dog */
+	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
+
+}
+
+
+/*
+ * Helper function for "monster nest (treasure)"
+ */
+static bool vault_aux_treasure(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Require "priest" or Angel */
+	if (!((r_ptr->d_char == '!') || (r_ptr->d_char == '|') ||
+		(r_ptr->d_char == '$') || (r_ptr->d_char == '?') ||
+		(r_ptr->d_char == '=')))
+	{
+		return (FALSE);
+	}
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for "monster nest (clone)"
+ */
+static bool vault_aux_clone(int r_idx)
+{
+	return (r_idx == template_race);
+}
+
+
+/*
+ * Helper function for "monster nest (symbol clone)"
+ */
+static bool vault_aux_symbol(int r_idx)
+{
+	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
+		&& !(r_info[r_idx].flags1 & RF1_UNIQUE));
+}
+
+
+
+/*
  * Helper function for "monster pit (orc)"
  */
 static bool vault_aux_orc(int r_idx)
@@ -2150,6 +2236,24 @@ static bool vault_aux_troll(int r_idx)
 
 	/* Hack -- Require "T" monsters */
 	if (!strchr("T", r_ptr->d_char)) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+
+
+/*
+ * Helper function for "monster pit (mankind)"
+ */
+static bool vault_aux_man(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+
+	/* Hack -- Require "p" or "h" monsters */
+	if (!strchr("ph", r_ptr->d_char)) return (FALSE);
 
 	/* Okay */
 	return (TRUE);
@@ -2192,6 +2296,9 @@ static bool vault_aux_dragon(int r_idx)
 
 	/* Hack -- Require "d" or "D" monsters */
 	if (!strchr("Dd", r_ptr->d_char)) return (FALSE);
+
+	/* Hack -- Allow 'all stars' type */
+	if (!vault_aux_dragon_mask4) return (TRUE);
 
 	/* Hack -- Require correct "breath attack" */
 	if (r_ptr->flags4 != vault_aux_dragon_mask4) return (FALSE);
@@ -2248,7 +2355,7 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 {
 	int			y, x, y1, x1, y2, x2;
 
-	int			tmp, i;
+	int			tmp, i, dun_level;
 
 	s16b		what[64];
 
@@ -2259,6 +2366,8 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 	bool		empty = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	dun_level = getlevel(wpos);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -2329,7 +2438,89 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 
 
 	/* Hack -- Choose a nest type */
-	tmp = randint(getlevel(wpos));
+	tmp = randint(dun_level);
+
+	if ((tmp < 25) && (rand_int(2) != 0))
+	{
+		while (1)
+		{
+			template_race = randint(MAX_R_IDX - 2);
+
+			/* Reject uniques */
+			if (r_info[template_race].flags1 & RF1_UNIQUE) continue;
+
+			/* Reject OoD monsters in a loose fashion */
+		    if (((r_info[template_race].level) + randint(5)) >
+			    (dun_level + randint(5))) continue;
+
+			/* Don't like 'break's like this, but this cannot be made better */
+			break;
+		}
+
+		if ((dun_level >= (25 + randint(15))) && (rand_int(2) != 0))
+		{
+			name = "symbol clone";
+			get_mon_num_hook = vault_aux_symbol;
+		}
+		else
+		{
+			name = "clone";
+			get_mon_num_hook = vault_aux_clone;
+		}
+	}
+	else if (tmp < 25)
+		/* Monster nest (jelly) */
+	{
+		/* Describe */
+		name = "jelly";
+
+		/* Restrict to jelly */
+		get_mon_num_hook = vault_aux_jelly;
+	}
+
+	else if (tmp < 50)
+	{
+		name = "treasure";
+		get_mon_num_hook = vault_aux_treasure;
+	}
+
+	/* Monster nest (animal) */
+	else if (tmp < 65)
+	{
+		if (rand_int(3) == 0)
+		{
+			name = "kennel";
+			get_mon_num_hook = vault_aux_kennel;
+		}
+		else
+		{
+			/* Describe */
+			name = "animal";
+
+			/* Restrict to animal */
+			get_mon_num_hook = vault_aux_animal;
+		}
+	}
+
+	/* Monster nest (undead) */
+	else
+	{
+		if (rand_int(3) == 0)
+		{
+			name = "chapel";
+			get_mon_num_hook = vault_aux_chapel;
+		}
+		else
+		{
+			/* Describe */
+			name = "undead";
+
+			/* Restrict to undead */
+			get_mon_num_hook = vault_aux_undead;
+		}
+	}
+
+#if 0
 	/* Monster nest (jelly) */
 	if (tmp < 30)
 	{
@@ -2359,6 +2550,7 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 		/* Restrict to undead */
 		get_mon_num_hook = vault_aux_undead;
 	}
+#endif	// 0
 
 	/* Prepare allocation table */
 	get_mon_num_prep();
@@ -2447,7 +2639,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 {
 	int			tmp, what[16];
 
-	int			i, j, y, x, y1, x1, y2, x2;
+	int			i, j, y, x, y1, x1, y2, x2, dun_level;
 
 	bool		empty = FALSE, aqua = magik(dun->watery? 50 : 10);
 
@@ -2456,6 +2648,8 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 	cptr		name;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	dun_level = getlevel(wpos);
 
 	/* Large room */
 	y1 = yval - 4;
@@ -2526,7 +2720,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 
 
 	/* Choose a pit type */
-	tmp = randint(getlevel(wpos));
+	tmp = randint(dun_level);
 
 	/* Watery pit */
 	if (aqua)
@@ -2539,7 +2733,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 	}
 
 	/* Orc pit */
-	else if (tmp < 20)
+	else if (tmp < 15)	// 20
 	{
 		/* Message */
 		name = "orc";
@@ -2549,7 +2743,7 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 	}
 
 	/* Troll pit */
-	else if (tmp < 40)
+	else if (tmp < 30)	// 40
 	{
 		/* Message */
 		name = "troll";
@@ -2558,8 +2752,18 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 		get_mon_num_hook = vault_aux_troll;
 	}
 
+	/* Man pit */
+	else if (tmp < 40)
+	{
+		/* Message */
+		name = "mankind";
+
+		/* Restrict monster selection */
+		get_mon_num_hook = vault_aux_man;
+	}
+
 	/* Giant pit */
-	else if (tmp < 60)
+	else if (tmp < 55)
 	{
 		/* Message */
 		name = "giant";
@@ -2568,11 +2772,35 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 		get_mon_num_hook = vault_aux_giant;
 	}
 
+	else if (tmp < 70)
+	{
+		if (randint(4)!=1)
+		{
+			/* Message */
+			name = "ordered clones";
+
+			do { template_race = randint(MAX_R_IDX - 2); }
+			while ((r_info[template_race].flags1 & RF1_UNIQUE)
+			       || (((r_info[template_race].level) + randint(5)) >
+				   (dun_level + randint(5))));
+
+			/* Restrict selection */
+			get_mon_num_hook = vault_aux_symbol;
+		}
+		else
+		{
+
+			name = "ordered chapel";
+			get_mon_num_hook = vault_aux_chapel;
+		}
+
+	}
+
 	/* Dragon pit */
 	else if (tmp < 80)
 	{
 		/* Pick dragon type */
-		switch (rand_int(6))
+		switch (rand_int(7))
 		{
 			/* Black */
 			case 0:
@@ -2634,6 +2862,19 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 
 				/* Restrict dragon breath type */
 				vault_aux_dragon_mask4 = RF4_BR_POIS;
+
+				/* Done */
+				break;
+			}
+
+			/* All stars */
+			case 5:
+			{
+				/* Message */
+				name = "dragon";
+
+				/* Restrict dragon breath type */
+				vault_aux_dragon_mask4 = NULL;
 
 				/* Done */
 				break;

@@ -621,7 +621,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 		j++;
 	}
 	if (mode) prt("", 2 + j, 20);
-	prt(format("Select a skill (a-%c), @ to select by name, +/- to scroll:", I2A(j - 1)), 0, 0);
+	prt(format("Select a skill (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)), 0, 0);
 }
 
 int do_cmd_activate_skill_aux()

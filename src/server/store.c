@@ -879,7 +879,7 @@ static void mass_produce(object_type *o_ptr)
 	{
 		discount = 0;
 	}
-	else if (rand_int(25) == 0)
+	else if (rand_int(25) == 0 && cost > 9)
 	{
 		discount = 10;
 	}
