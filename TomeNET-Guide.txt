@@ -1142,8 +1142,11 @@ name and add a '.prf' at the end, it will be automatically loaded as you
 join a game with your character, which is very helpful!
 Example: If your character is named 'Kinkan', dump the macros to Kinkan.prf
 to have them loaded automatically.
-Note: If you're using a Linux version, make sure you don't use capital letters
-in the filename. So just 'kinkan.prf'.
+Note: If you're using a Linux version, remember that the file system is
+case-sensitive, so don't save your macros to 'kinkan.prf' if your character
+actually starts with a capital 'K' or the file won't be loaded. Make sure
+the filename and character-, class- or race-name are exactly the same
+('Dwarf.prf', 'High-Elf.prf', 'Ranger.prf'..).
 Another option is to dump the macros to a file that is named like your account
 it will be automatically loaded on all chars of that account.
 You can also save macros to <racename>.prf or to <classname>.prf, like

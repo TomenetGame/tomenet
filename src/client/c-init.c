@@ -157,7 +157,7 @@ void initialize_player_pref_files(void){
 	if (race < Setup.max_race)
 	{
 		sprintf(buf, "%s.prf", race_info[race].title);
-		buf[0] = tolower(buf[0]);
+//		buf[0] = tolower(buf[0]);
 
 		/* Process that file */
 		process_pref_file(buf);
@@ -167,7 +167,7 @@ void initialize_player_pref_files(void){
 	if (class < Setup.max_class)
 	{
 		sprintf(buf, "%s.prf", class_info[class].title);
-		buf[0] = tolower(buf[0]);
+//		buf[0] = tolower(buf[0]);
 
 		/* Process that file */
 		process_pref_file(buf);
@@ -175,14 +175,14 @@ void initialize_player_pref_files(void){
 
 	/* Access the "account" pref file */
 	sprintf(buf, "%s.prf", nick);
-	buf[0] = tolower(buf[0]);
+//	buf[0] = tolower(buf[0]);
 
 	/* Process that file */
 	process_pref_file(buf);
 
 	/* Access the "character" pref file */
 	sprintf(buf, "%s.prf", cname);
-	buf[0] = tolower(buf[0]);
+//	buf[0] = tolower(buf[0]);
 
 	/* Process that file */
 	process_pref_file(buf);
