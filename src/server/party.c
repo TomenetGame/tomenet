@@ -149,7 +149,8 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	c_acc->id=new_accid();
 	if(c_acc->id!=0L){
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
-		strcpy(c_acc->name, name);
+		strncpy(c_acc->name, name, 29);
+		c_acc->name[29]='\0';
 		strcpy(c_acc->pass, t_crypt(pass, name));
 		if(!(WriteAccount(c_acc, TRUE))){
 			KILL(c_acc, struct account);
