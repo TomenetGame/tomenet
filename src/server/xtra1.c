@@ -1768,8 +1768,8 @@ static void calc_bonuses(int Ind)
 	p_ptr->dis_ac = p_ptr->ac = 0;
 
 	/* Clear the Displayed/Real Bonuses */
-	p_ptr->dis_to_h = p_ptr->to_h = 0;
-	p_ptr->dis_to_d = p_ptr->to_d = 0;
+	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = 0;
+	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = 0;
 	p_ptr->dis_to_a = p_ptr->to_a = 0;
 
 
@@ -1856,10 +1856,6 @@ static void calc_bonuses(int Ind)
 
 	/* Reset the "ammo" tval */
 	p_ptr->tval_ammo = 0;
-
-	/* Reset skill bonuses */
-	p_ptr->to_h_melee = 0;
-	p_ptr->to_d_melee = 0;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;

@@ -4730,7 +4730,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Miscellaneous",
-				"Not a real skill, it is only used to regroup some skills.",
+                "Not a real skill, it is only used to regroup some skills.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4750,7 +4750,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Agility",
-				"General ability to move on quickly.",
+                "General ability to move on quickly.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4770,7 +4770,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Calmness",
-				"Ability to stay calm when surrounded by enemies.",
+                "Ability to stay calm when surrounded by enemies.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4790,7 +4790,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Swimming",
-				"Ability to cross water area without drowning.",
+                "Ability to cross water area without drowning.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4810,7 +4810,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Martial Arts",
-				"Ability to combat bare-handed.",
+                "Ability to combat bare-handed.",
 
                 /* Mkey desc/mkey */
                 NULL,
@@ -4830,7 +4830,7 @@ skill_type s_info[MAX_SKILLS] =
         },
         {
                 "Ricochet",
-				"Ability to harm more than one opponents using ricochets.",
+                "Ability to harm more than one opponents using ricochets.",
 
                 /* Mkey desc/mkey */
                 NULL,
