@@ -76,7 +76,7 @@ HRESISTS = add_spell
 		end
 
         	if get_level(Ind, HRESISTS, 50) > 9 then
-			set_oppose_cold(Ind, dur))
+			set_oppose_cold(Ind, dur)
 			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
 		end
 
