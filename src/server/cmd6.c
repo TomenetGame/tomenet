@@ -745,7 +745,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 		}
 		case SV_POTION_INVIS:
 		{
-			p_ptr->tim_invisibility = 30+randint(60);
+			p_ptr->tim_invisibility = 30+randint(40);
 			p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
 		}
 
@@ -1037,15 +1037,6 @@ void do_cmd_quaff_potion(int Ind, int item)
 				if (ee > 100000L) ee = 100000L;
 				msg_print(Ind, "\377GYou feel more experienced.");
 				gain_exp(Ind, ee);
-				ident = TRUE;
-			}
-			break;
-		}
-
-		case SV_POTION_INVIS:
-		{
-			if (set_invis(Ind, p_ptr->tim_invisibility + randint(20) + 20, p_ptr->tim_invis_power))
-			{
 				ident = TRUE;
 			}
 			break;
