@@ -4090,7 +4090,7 @@ void player_death(int Ind)
 		Send_store_kick(Ind);
 	}
 
-	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
+	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH) && !p_ptr->ghost) secure = TRUE;
 
 	/* Hack -- amulet of life saving */
 	if (p_ptr->alive && p_ptr->fruit_bat != -1 && (secure ||

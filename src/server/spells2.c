@@ -465,7 +465,6 @@ static int enchant_table[16] =
  */
 /*
  * 0x01 - all
- * 0x02 - reverse
  */
 static int remove_curse_aux(int Ind, int all)
 {
@@ -506,23 +505,6 @@ static int remove_curse_aux(int Ind, int all)
 		/* Take note */
 		o_ptr->note = quark_add("uncursed");
 
-		/* Reverse the curse effect */
-		/* jk - scrolls of *remove curse* have a 1 in (55-level chance to */
-		/* reverse the curse effects - a ring of damage(-15) {cursed} then */
-		/* becomes a ring of damage (+15) */
-		/* this does not go for artifacts - a Sword of Mormegil +40,+60 would */
-		/* be somewhat unbalancing */
-		/* due to the nature of this procedure, it only works on cursed items */
-		/* ie you get only one chance! */
-		if ((all & 0x02) && ((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr) && !(f5 & TR5_NO_ENCHANT));
-	
-		{
-			if (o_ptr->to_a<0) o_ptr->to_a=-o_ptr->to_a;
-			if (o_ptr->to_h<0) o_ptr->to_h=-o_ptr->to_h;
-			if (o_ptr->to_d<0) o_ptr->to_d=-o_ptr->to_d;
-			if (o_ptr->pval<0) o_ptr->pval=-o_ptr->pval;
-		}
-
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -557,16 +539,6 @@ bool remove_all_curse(int Ind)
 {
 	return (remove_curse_aux(Ind, 1));
 }
-
-/*
- * Remove all curses
- */
-bool remove_all_curse_reverse(int Ind)
-{
-	return (remove_curse_aux(Ind, 3));
-}
-
-
 
 /*
  * Restores any drained experience

@@ -1372,7 +1372,6 @@ void calc_body_bonus(int Ind)
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
 	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
 	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 1;
-	if(r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
 	if(r_ptr->flags2 & RF2_INVISIBLE){
 		//		p_ptr->tim_invisibility = 100;
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;

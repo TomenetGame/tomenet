@@ -7358,42 +7358,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				monster_type *m_ptr = &m_list[zcave[y][x].m_idx];
 				monster_race *ref_ptr = race_inf(m_ptr);
 //				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
-
-				if ((ref_ptr->flags2 & (RF2_REFLECTING)) && (randint(10)!=1)
-						&& (dist_hack > 1))
-				{
-					int t_y, t_x;
-					int max_attempts = 10;
-
-					/* Choose 'new' target */
-					do
-					{
-						t_y = y_saver - 1 + randint(3);
-						t_x = x_saver - 1 + randint(3);
-						max_attempts--;
-					}
-
-					while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
-							!(los(wpos, y, x, t_y, t_x)));
-
-					if (max_attempts < 1)
-					{
-						t_y = y_saver;
-						t_x = x_saver;
-					}
-#if 0	// pfft, for now no msg
-//					if (m_list[cave[y][x].m_idx].ml)
-					if (p_ptr->mon_vis[zcave[y][x].m_idx])
-					{
-						msg_print(Ind, "The attack bounces!");
-						ref_ptr->r_flags2 |= RF2_REFLECTING;
-					}
-#endif	// 0
-
-					project(zcave[y][x].m_idx, 0, wpos, t_y, t_x,  dam, typ, flg);
-					continue;
-				}
-
 			}
 
 			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;

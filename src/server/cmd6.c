@@ -2242,7 +2242,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_REMOVE_CURSE:
 			{
-				remove_all_curse_reverse(Ind);
+				remove_all_curse(Ind);
 				ident = TRUE;
 				break;
 			}
