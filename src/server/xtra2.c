@@ -3457,15 +3457,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* Death by Missile/Spell attack */
 		if (note)
 		{
-			msg_format_near(Ind, "%^s%s", m_name, note);
-			msg_format(Ind, "%^s%s", m_name, note);
+			msg_format_near(Ind, "\377y%^s%s", m_name, note);
+			msg_format(Ind, "\377y%^s%s", m_name, note);
 		}
 
 		/* Death by physical attack -- invisible monster */
 		else if (!p_ptr->mon_vis[m_idx])
 		{
-			msg_format_near(Ind, "%s has killed %s.", p_ptr->name, m_name);
-			msg_format(Ind, "You have killed %s.", m_name);
+			msg_format_near(Ind, "\377y%s has killed %s.", p_ptr->name, m_name);
+			msg_format(Ind, "\377yYou have killed %s.", m_name);
 		}
 
 		/* Death by Physical attack -- non-living monster */
