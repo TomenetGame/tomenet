@@ -2171,7 +2171,8 @@ int Receive_special_line(void)
 	max_line = max;
 
 	/* Print out the info */
-	c_put_str(attr, buf, line + 2, 0);
+	if(special_line_type)	/* If we have quit already, dont */
+		c_put_str(attr, buf, line + 2, 0);
 
 	return 1;
 }

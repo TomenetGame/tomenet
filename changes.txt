@@ -171,3 +171,13 @@ Change list for PernMangband
 10/09/2001
 - When someone dies stuff only gets dropped if he/she was >= lvl5.
   Thats to prevent cheezing
+
+27/09/2001
+- Server bugfix, object description string was too small [80] for including
+  the fake artifact inscriptions. I made every instance [160]. This will
+  never be necessary, certainly not in all cases, but efficiency may be
+  worked upon later.
+
+28/09/2001
+- Client bug fixed (peruse file overlay) Usually caused by lag.
+  Common symptom, the player list appears on game screen.
