@@ -2305,11 +2305,11 @@ static void calc_bonuses(int Ind)
 	{
 		p_ptr->to_h += 10;
 		p_ptr->dis_to_h += 10;
-		p_ptr->to_a += 10;
-		p_ptr->dis_to_a += 10;
+                p_ptr->to_d += 10;
+                p_ptr->dis_to_d += 10;
 		p_ptr->pspeed += 10;
-		p_ptr->to_a -= 25;
-		p_ptr->dis_to_a -= 25;
+                p_ptr->to_a -= 50;
+                p_ptr->dis_to_a -= 50;
 	}
 
 	/* Temporary "fast" */

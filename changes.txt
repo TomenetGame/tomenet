@@ -137,6 +137,10 @@ Change list for PernMangband
 
 05/08/2001 - PernMangband 3.2.0
 
+10/08/2001
+- Golems works
+- Fixed Fury warrior technic
+
 11/08/2001 - evileye
 - New polygonal houses work ok now. Checks for moving off depth
   work. Player disconnect is handled ok.
