@@ -2796,12 +2796,12 @@ void calc_bonuses(int Ind)
 			{
 				if (p_ptr->cumber_weight)
 				{
-					msg_print(Ind, "You can't move freely due to your backpack weight.");
+					msg_print(Ind, "\377RYou can't move freely due to your backpack weight.");
 
 				}
 				else
 				{
-					msg_print(Ind, "Your backpack is very comfortable to wear.");
+					msg_print(Ind, "\377gYour backpack is very comfortable to wear.");
 				}
 				p_ptr->old_cumber_weight = p_ptr->cumber_weight;
 			}

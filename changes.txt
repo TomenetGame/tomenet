@@ -25,6 +25,7 @@
 08/01/2003
 [O]- Adjusted Black Market (less pots). Improved x / I display. Especially
      allows you to read very long item names in stores to see all boni.
+     Tweaked overburdened-message for FA from MA.
 
 07/01/2003
 [P]- First entry 2003, ahaha.. Sorry, Rangers & Paladins brought back.
