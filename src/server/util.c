@@ -3244,7 +3244,7 @@ static void player_talk_aux(int Ind, char *message)
 	bool me = FALSE;
 	char c = 'B';
 	int mycolor = 0;
-	bool admin = is_admin(p_ptr);
+	bool admin;
 	bool broadcast = FALSE;
 
 #ifdef TOMENET_WORLDS
@@ -3256,6 +3256,7 @@ static void player_talk_aux(int Ind, char *message)
 	{
 		/* Get player name */
 		strcpy(sender, p_ptr->name);
+		admin = is_admin(p_ptr);
 	}
 	else
 	{
