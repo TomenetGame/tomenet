@@ -3594,7 +3594,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	calc_bonuses(Ind);
 
 	fprintf(fff, "\n");
-
+#if 0 //double -> obsolete (already within the only calling function)
         switch(o_ptr->tval){
         case TV_HAFTED:
                 fprintf(fff, "It's a hafted weapon.\n"); break;
@@ -3608,6 +3608,9 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
                 break;
         }
 
+        if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
+	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
+#endif
 	fprintf(fff, "Using it you would have %d blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, 2, 0, "animals", NULL);

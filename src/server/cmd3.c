@@ -1098,7 +1098,8 @@ void do_cmd_observe(int Ind, int item)
 
 	char		o_name[160];
 
-
+        u32b f1, f2, f3, f4, f5, esp;
+						      
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
@@ -1113,6 +1114,9 @@ void do_cmd_observe(int Ind, int item)
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+        /* Extract some flags */
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL))
@@ -1134,6 +1138,10 @@ void do_cmd_observe(int Ind, int item)
 			if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
 			break;
 		}
+
+    		if (f4 & TR4_COULD2H) msg_print(Ind, "It can be wielded two-handed.");
+	        if (f4 & TR4_MUST2H) msg_print(Ind, "It must be wielded two-handed.");
+
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows(Ind, o_ptr);
