@@ -1467,8 +1467,6 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 {
 	player_type *p_ptr;
 	int i;
-	s32b value = 0, mod = 0;
-
 
 	/* Do some consistency checks */
 	if (race < 0 || race >= MAX_RACES) race = 0;
@@ -1601,7 +1599,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 		p_ptr->s_info[i].dev = FALSE;
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		compute_skills(p_ptr, &value, &mod, i);
+                s32b value = 0, mod = 0;
+
+                compute_skills(p_ptr, &value, &mod, i);
 
 		init_skill(p_ptr, value, mod, i);
 
@@ -1618,8 +1618,9 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 					break;
 			}
 		}
-	}
-	
+        }
+
+#if 0 // NO ! do it preperly wqith arrays in rp_ptr !
 	/* Hack */
 	switch (race)
 	{
@@ -1630,7 +1631,7 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 			compute_skills(p_ptr, &value, &mod, SKILL_DIG);
 			init_skill(p_ptr, value + 1000, mod + 300, SKILL_DIG);
 	}
-
+#endif
 
 	/* Success */
 	return TRUE;
