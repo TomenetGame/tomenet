@@ -943,7 +943,14 @@ static bool rd_extra(int Ind)
 
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
-	rd_byte(&p_ptr->pclass);
+        rd_byte(&p_ptr->pclass);
+
+        /* No bards ! */
+        if ((older_than(4, 0, 1)) && (p_ptr->pclass == CLASS_BARD))
+        {
+                p_ptr->pclass = CLASS_ADVENTURER;
+        }
+
 	rd_byte(&p_ptr->male);
 	rd_byte(&p_ptr->party);
 	rd_byte(&p_ptr->mode);
