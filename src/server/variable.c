@@ -719,3 +719,7 @@ u16b max_t_idx;
  */
 u16b max_wf_idx;
 
+
+/* EVILEYE GAMES */
+int teamscore[2];
+int gametype;

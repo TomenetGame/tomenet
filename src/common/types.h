@@ -2361,6 +2361,9 @@ struct player_type
         /* Special powers */
         s16b powers[MAX_POWERS];        /* What powers do we possess? */
         s16b power_num;                 /* How many */
+
+	/* evileye games */
+	s16b team;			/* what team */
 };
 
 /* For Monk martial arts */
