@@ -4672,7 +4672,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		/* DEG modified spell damage messages. */
 		if (note)
 		{
-			msg_format_near(Ind, "\377y%^s%s from\377g%d \377wdamage.", m_name, note, dam);
+			msg_format_near(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
 			msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
 		}
 
