@@ -4187,7 +4187,7 @@ void player_death(int Ind)
 	}
 
 	/* Get rid of him if he's a ghost */
-	if (p_ptr->ghost || (hell && p_ptr->alive))
+	if ((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1)
 	{
 		/* Tell players */
 		if (p_ptr->ghost) sprintf(buf, "\377r%s's ghost was destroyed by %s.",
