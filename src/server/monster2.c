@@ -580,6 +580,24 @@ errr get_mon_num_prep(void)
 	return (0);
 }
 
+bool mon_allowed(monster_race *r_ptr){
+	/* Zangbandish monsters allowed ? or not ? */
+	if(!cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) return(FALSE);
+
+	/* Pernian monsters allowed ? or not ? */
+	if(!cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) return(FALSE);
+
+	/* Lovercraftian monsters allowed ? or not ? */
+	if(!cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
+
+	/* Joke monsters allowed ? or not ? */
+	if(!cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
+
+	/* Base monsters allowed ? or not ? */
+	if(!cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);
+
+	return(TRUE);
+}
 
 
 /*
@@ -717,20 +735,7 @@ s16b get_mon_num(int level)
 			continue;
 		}
 
-		/* Zangbandish monsters allowed ? or not ? */
-		if(!cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) continue;
-
-		/* Pernian monsters allowed ? or not ? */
-		if(!cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) continue;
-
-		/* Lovercraftian monsters allowed ? or not ? */
-		if(!cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) continue;
-
-		/* Joke monsters allowed ? or not ? */
-		if(!cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) continue;
-
-		/* Base monsters allowed ? or not ? */
-		if(!cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) continue;
+		if(!mon_allowed(r_ptr)) continue;
 
 		/* Some dungeon types restrict the possible monsters */
 //		if(!summon_hack && !restrict_monster_to_dungeon(r_idx) && dun_level) continue;

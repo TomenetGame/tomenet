@@ -5825,18 +5825,34 @@ void do_mimic_change(int Ind, int r_idx)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
-void do_cmd_mimic(int Ind, int r_idx, int spell)
+void do_cmd_mimic(int Ind, int spell)
 {
 	player_type *p_ptr = Players[Ind];
-	
+	int j;
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
+	if (spell == 0){
+		j = p_ptr->body_monster;
+		while (TRUE){
+			/*j = j++;*/
+			j++;
 
-	if (!spell) {
-		do_mimic_change(Ind, r_idx);
+			if (j >= MAX_R_IDX - 1) j = 0;
+
+			if (r_info[j].level > p_ptr->lev * 2) continue;
+			if (r_info[j].flags1 & RF1_UNIQUE) continue;
+			if (p_ptr->r_killed[j] < r_info[j].level) continue;
+			if (strlen(r_info[j].name + r_name) <= 1) continue;
+			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
+
+			/* Ok we found */
+			break;
+		}
+		do_mimic_change(Ind, j);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	}
 	else {

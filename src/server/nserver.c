@@ -4520,7 +4520,7 @@ static int Receive_mimic(int ind)
 	char ch;
 
 	int n, player;
-	s16b j=0, spell;
+	s16b spell;
 
 	if (connp->id != -1)
 	{
@@ -4537,34 +4537,7 @@ static int Receive_mimic(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-		/* Find a good monster */
-		int tries = MAX_R_IDX;
-
-		if (spell == 0){
-			j = p_ptr->body_monster;
-			while (TRUE){
-				/*j = j++;*/
-				j++;
-
-				if (j >= MAX_R_IDX - 1) j = 0;
-
-				if (r_info[j].level > p_ptr->lev * 2) continue;
-				if (r_info[j].flags1 & RF1_UNIQUE) continue;
-				if (p_ptr->r_killed[j] < r_info[j].level) continue;
-				if (strlen(r_info[j].name + r_name) <= 1) continue;
-
-				/* Ok we found */
-				break;
-			}
-		}
-	  
-		if (!tries)
-		{
-			msg_print(player, "You failed to polymorph.");
-			return 2;
-		}
-
-		do_cmd_mimic(player, j, spell);
+		do_cmd_mimic(player, spell);
 		return 2;
 	}
 	else if (player){

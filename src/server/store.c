@@ -899,13 +899,6 @@ static void mass_produce(object_type *o_ptr)
 	o_ptr->number = size - (size * discount / 100);
 }
 
-
-
-
-
-
-
-
 /*
  * Determine if a store item can "absorb" another item
  *
@@ -1296,13 +1289,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	s32b	value, j_value;
 	object_type	*j_ptr;
 
-
 	/* Evaluate the object */
 	value = object_value(0, o_ptr);
 
 	/* Cursed/Worthless items "disappear" when sold */
 	if (value <= 0) return (-1);
-
 
 	/* Erase the inscription */
 	o_ptr->note = 0;
@@ -2372,6 +2363,11 @@ void store_confirm(int Ind)
 	/* Abort if we shouldn't be getting called */
 	if (p_ptr->current_selling == -1)
 		return;
+
+	if (p_ptr->store_num==-1){
+		msg_print(Ind,"You left the shop!");
+		return;
+	}
 
 	/* Restore the variables */
 	item = p_ptr->current_selling;

@@ -426,7 +426,7 @@ extern void do_cmd_sorc(int Ind, int book, int spell);
 extern void do_cmd_sorc_aux(int Ind, int dir);
 extern void do_mimic_change(int Ind, int r_idx);
 extern void do_mimic_power_aux(int Ind, int dir);
-extern void do_cmd_mimic(int Ind, int r_idx, int spell);
+extern void do_cmd_mimic(int Ind, int spell);
 extern void do_cmd_pray(int Ind, int book, int spell);
 extern void do_cmd_pray_aux(int Ind, int dir);
 extern void do_cmd_shad(int Ind, int book, int spell);
@@ -547,6 +547,7 @@ extern void curse_equipment(int Ind, int chance, int heavy_chance);
 
 /* monster.c */
 /* monster1.c monster2.c */
+extern bool mon_allowed(monster_race *r_ptr);
 extern void heal_m_list(struct worldpos *wpos);
 extern cptr r_name_get(monster_type *m_ptr);
 extern monster_race* r_info_get(monster_type *m_ptr);
