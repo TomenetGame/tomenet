@@ -839,7 +839,10 @@ struct quest
 
 #if 1 /* Evileye - work in progress */
 
-#define DUNGEON_RANDOM 1
+#define DUNGEON_RANDOM 1 /* random dungeon - not preloaded */
+#define DUNGEON_IRON 2	/* one way dungeon - return portal at max level */
+#define DUNGEON_HELL 4	/* hellish dungeon - forces hellish mode on all */
+#define DUNGEON_NOMAP 8	/* player never gains level knowledge */
 
 struct dun_level{
 	int ondepth;
@@ -852,7 +855,7 @@ struct dun_level{
 struct dungeon_type{
 	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
-	u16b flags;		/* dungeon flags */
+	u32b flags;		/* dungeon flags */
 	byte maxdepth;		/* max height/depth */
 	struct dun_level *level;	/* array of dungeon levels */
 };
@@ -1226,6 +1229,9 @@ struct player_type
 #ifdef NEWHOUSES
 	u32b dna;		/* DNA - psuedo unique to each player life */
 #endif
+	time_t msg;		/* anti spamming protection */
+	byte msgcnt;
+	byte spam;
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 

@@ -1545,7 +1545,7 @@ int wild_clone_closed_loop_total(int cur_depth)
 	{
 		/* seed the number generator */
 #ifdef NEW_DUNGEON
-		Rand_value = seed_town + (curr.wx+curr.wy*MAX_WILD_Y) * 600;
+		Rand_value = seed_town + (curr.wx+curr.wy*MAX_WILD_X) * 600;
 #else
 		Rand_value = seed_town + cur_depth * 600;
 #endif
@@ -1574,7 +1574,7 @@ int wild_clone_closed_loop_total(int cur_depth)
  		wpcopy(&curr, &neigh);
 
  		/* increase our loop total depth */
-		total_depth += (curr.wx+curr.wy*MAX_WILD_Y);
+		total_depth += (curr.wx+curr.wy*MAX_WILD_X);
 		iter++;
 	} while (!inarea(&curr, &start) && iter<50);
 #else
@@ -1634,7 +1634,7 @@ int determine_wilderness_type(int Depth)
 
 	/* Hack -- Induce consistant wilderness */
 #ifdef NEW_DUNGEON
-	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_Y) * 600;
+	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
 		
 	/* check if the town */
 	if (istown(wpos)) return WILD_TOWN;		
@@ -2760,7 +2760,7 @@ static void wilderness_gen_hack(int Depth)
 
 	/* Hack -- Induce consistant wilderness */
 #ifdef NEW_DUNGEON
-	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_Y) * 600;
+	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
 
 	/* if not already set, determine the type of terrain */
 	if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(wpos);
@@ -2804,7 +2804,7 @@ static void wilderness_gen_hack(int Depth)
 	/* hack -- reseed, just to make sure everything stays consistent. */
 
 #ifdef NEW_DUNGEON
-	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_Y) * 287 + 490836;
+	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 287 + 490836;
 #else
 	Rand_value = seed_town + Depth * 287 + 490836;
 #endif

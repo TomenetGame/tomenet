@@ -403,3 +403,5 @@ Change list for PernMangband
 - Multiple towns possible.
 - Multiple dungeons / Add dungeon in dm level menu.
 
+11/12/2001 (evileye)
+- Anti spamming code added

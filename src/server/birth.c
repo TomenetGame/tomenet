@@ -1192,6 +1192,11 @@ static void player_setup(int Ind)
 	int Depth=p_ptr->dun_depth;
 #endif
 
+	/* anti spammer code */
+	p_ptr->msgcnt=0;
+	p_ptr->msg=0;
+	p_ptr->spam=0;
+
 #ifdef NEW_DUNGEON
 	/* Default location if just starting */
 	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){

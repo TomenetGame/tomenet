@@ -2540,6 +2540,33 @@ void player_talk_aux(int Ind, cptr message)
 	bool admin = (!strcmp(p_ptr->name,cfg_admin_wizard) ||
 				!strcmp(p_ptr->name,cfg_dungeon_master)) ? TRUE : FALSE;
 
+	p_ptr->msgcnt++;
+	if(p_ptr->msgcnt>12){
+		time_t last=p_ptr->msg;
+		time(&p_ptr->msg);
+		if(p_ptr->msg-last < 6){
+			p_ptr->spam++;
+			switch(p_ptr->spam){
+				case 1:
+					msg_print(Ind, "\377yPlease don't spam the server");
+					break;
+				case 3:
+				case 4:
+					msg_print(Ind, "\377rWarning! this behaviour is unacceptable!");
+					break;
+				case 5:
+					p_ptr->chp=-3;
+					strcpy(p_ptr->died_from, "not breathing");
+					player_death(Ind);
+					p_ptr->spam=1;
+					return FALSE;
+			}
+		}
+		if(p_ptr->msg-last > 240) p_ptr->spam--;
+		p_ptr->msgcnt=0;
+	}
+	if(p_ptr->spam > 1) return FALSE;
+
 	/* Get sender's name */
 	if (Ind)
 	{

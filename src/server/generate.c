@@ -5445,7 +5445,7 @@ static void town_gen_hack(void)
 
 	/* Hack -- Induce consistant town layout */
 #ifdef NEW_DUNGEON
-	Rand_value = seed_town+(wpos->wx+wpos->wy*MAX_WILD_Y);
+	Rand_value = seed_town+(wpos->wx+wpos->wy*MAX_WILD_X);
 #else
 	Rand_value = seed_town;
 #endif
