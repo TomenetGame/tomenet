@@ -2418,7 +2418,7 @@ that keeps many algorithms happy.
 #define PU_SANITY       0x00000008L     /* Calculate csane and msane */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
 #define PU_MANA		0x00000020L	/* Calculate csp and msp */
-#define PU_SPELLS	0x00000040L	/* Calculate spells */
+/* xxx */
 #define PU_SKILL_MOD    0x00000080L	/* Update client skill values/... */
 /* xxx (many) */
 /* xxx (many) */

@@ -856,18 +856,6 @@ static void player_wipe(int Ind)
 	/* Hack -- Well fed player */
 	p_ptr->food = PY_FOOD_FULL - 1;
 
-
-#if 0
-        /* Wipe the spells */
-        for (j = 0; j < MAX_REALM; j++)
-        {
-                p_ptr->spell_learned1[j] = p_ptr->spell_learned2[j] = 0L;
-                p_ptr->spell_worked1[j] = p_ptr->spell_worked2[j] = 0L;
-                p_ptr->spell_forgotten1[j] = p_ptr->spell_forgotten2[j] = 0L;
-                for (i = 0; i < 64; i++) p_ptr->spell_order[j][i] = 99;
-        }
-#endif
-
 	/* Assume no winning game */
 	p_ptr->total_winner = FALSE;
 
@@ -1532,7 +1520,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->redraw |= PR_PLUSSES;
 
 	/* Update his view, light, bonuses, and torch radius */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);
 
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);

@@ -1774,7 +1774,7 @@ static void do_cmd_refresh(int Ind)
 
 	/* Update his view, light, bonuses, and torch radius */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH |
-			PU_DISTANCE | PU_SPELLS | PU_SKILL_MOD);
+			PU_DISTANCE | PU_SKILL_MOD);
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);

@@ -127,25 +127,6 @@ bool spell_okay(int Ind, int realm, int j, bool known)
 	/* Spell is illegal */
 	if (s_ptr->slevel > get_skill(p_ptr, find_realm_skill(realm))) return (FALSE);
 
-#if 0 // NO more .. maybe ?
-	/* Spell is forgotten */
-	if ((j < 32) ?
-	    (p_ptr->spell_forgotten1[realm] & (1L << j)) :
-	    (p_ptr->spell_forgotten2[realm] & (1L << (j - 32))))
-	{
-		/* Never okay */
-		return (FALSE);
-	}
-
-	/* Spell is learned */
-	if ((j < 32) ?
-	    (p_ptr->spell_learned1[realm] & (1L << j)) :
-	    (p_ptr->spell_learned2[realm] & (1L << (j - 32))))
-	{
-		/* Okay to cast, not to study */
-		return (known);
-	}
-#endif
 	/* Okay to cast */
 	return (TRUE);
 }

@@ -2777,7 +2777,7 @@ void check_experience(int Ind)
 		p_ptr->lev--;
 
 		/* Update some stuff */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_SANITY);
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 
 		/* Redraw some stuff */
 		p_ptr->redraw |= (PR_LEV | PR_TITLE);
@@ -2818,7 +2818,7 @@ void check_experience(int Ind)
 		sound(Ind, SOUND_LEVEL);
 
 		/* Update some stuff */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_SANITY);
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 
 		/* Redraw some stuff */
 		p_ptr->redraw |= (PR_LEV | PR_TITLE);

@@ -1684,54 +1684,6 @@ static errr rd_savefile_new_aux(int Ind)
 	p_ptr->rp_ptr = &race_info[p_ptr->prace];
 	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 
-
-#if 0
-        /* Read the spell infos array */
-	rd_u16b(&tmp16u);
-
-	/* Incompatible save files */
-	if (tmp16u > MAX_REALM)
-	{
-		s_printf(format("Too many (%u) spell entries!", tmp16u));
-		return (25);
-	}
-
-        /* Read spell info */
-        for (j = 0; j < tmp16u; j++)
-        {
-                rd_u32b(&p_ptr->spell_learned1[j]);
-                rd_u32b(&p_ptr->spell_learned2[j]);
-                rd_u32b(&p_ptr->spell_worked1[j]);
-                rd_u32b(&p_ptr->spell_worked2[j]);
-                rd_u32b(&p_ptr->spell_forgotten1[j]);
-                rd_u32b(&p_ptr->spell_forgotten2[j]);
-
-                for (i = 0; i < 64; i++)
-                {
-                        rd_byte(&p_ptr->spell_order[j][i]);
-                }
-        }
-
-	/* 
-	   quick hack to fix messed up my spells...
-	   added after the "chaos storm"	
-	   -APD-
-
-
-	   if (!(strcmp(p_ptr->name,"Tarik")))
-	   {	
-	   p_ptr->spell_learned1 = 0;
-	   p_ptr->spell_learned2 = 0;
-	   p_ptr->spell_worked1 = 0;
-	   p_ptr->spell_worked2 = 0;
-	   p_ptr->spell_forgotten1 = 0;
-	   p_ptr->spell_forgotten2 = 0;
-	   p_ptr->update |= PU_SPELLS;
-	   }
-
-*/	
-#endif
-
 	/* Read the inventory */
 	if (rd_inventory(Ind))
 	{

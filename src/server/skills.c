@@ -232,10 +232,9 @@ void increase_skill(int Ind, int i)
 	/* Update his view, light, bonuses, and torch radius */
 #ifdef ORIG_SKILL_EVIL	/* not to be defined */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
-		| PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
+		| PU_SKILL_INFO | PU_SKILL_MOD);
 #else
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE
-		| PU_SPELLS);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE);
 #endif
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
@@ -518,7 +517,7 @@ void recalc_skills(bool init)
                 }
 
 		/* Update stuffs */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS |
+		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA |
 			PU_POWERS | PU_SANITY | PU_BODY);
 
 		/* Redraw various info */
