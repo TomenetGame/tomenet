@@ -296,7 +296,7 @@ F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE |
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | 
 F:ONLY_ITEM | DROP_90 | DROP_GOOD | NEVER_MOVE
 F:OPEN_DOOR | BASH_DOOR | SPECIAL_GENE
-F:NO_CONF | NO_SLEEP | NEUTRAL | NO_DEATH
+F:NO_CONF | NO_SLEEP | NEUTRAL
 F:MORTAL | BASEANGBAND | HAS_LITE
 D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy 
 D:hobbit! 
@@ -18498,22 +18498,6 @@ S:1_IN_2 |
 S:UNMAGIC
 D:True master of unbelievers, genuine master of weaponry with his Dark Sword,
 D:no one dare utter a so-called 'mystic' word in front of him.
-
-N:1051:Jan, the Minimite
-G:u:B
-I:140:10d20:40:10:0
-W:10:2:50:40
-E:0:0:0:0:0:0
-O:0:0:0:0
-F:UNIQUE | NEVER_BLOW | FORCE_MAXHP | MALE | DROP_CORPSE
-F:OPEN_DOOR | RES_TELE | CAN_FLY |
-F:NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
-F:NO_DEATH | CAN_SPEAK
-F:DISBELIEVE | AI_ANNOY
-S:1_IN_5
-S:UNMAGIC
-D:Small winged jolly annoying chatterbox, actually he is a descendant
-D:of dispersed minimite race.
 
 # N: serial number : monster name
 # G: symbol : color
