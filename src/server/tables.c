@@ -3232,7 +3232,7 @@ cptr spell_names[8][64] =
                 "Summon Food",
                 "Meditation",
                 "Gravitic Distortion",
-                "Collapse Cieling",
+                "Collapse Ceiling",
                 "Firestorm",
                 "Force Shield",
                 "Sunfire",
@@ -3367,7 +3367,7 @@ cptr spell_names[8][64] =
 	{
 	  /* Hunting and Tracking */
 	  "Lightning Shots",
-	  "Sence Monsters",
+	  "Sense Monsters",
 	  "Cold Shots",
 	  "Create Light",
 	  "Fire Shots",
@@ -3378,7 +3378,7 @@ cptr spell_names[8][64] =
 	  /* Killing from Afar */
 	  "Acid Shots",
           "Fire Explosion Shot",
-	  "Confustion Shots",
+	  "Confusion Shots",
 	  "Poison Shots",
 	  "Piercing Shots",
 	  "",
@@ -3413,7 +3413,7 @@ cptr spell_names[8][64] =
 	  "Teleporation",
 	  "Probability Travel",
 	  "Recall",
-	  "Anihilate",            /* Teleport monster into the Sun, no xp, no obj, no saving */
+	  "Annihilate",            /* Teleport monster into the Sun, no xp, no obj, no saving */
 	  "Space/Time Anchor",
 	  "Time Bolt",
 	  "",
@@ -3426,7 +3426,7 @@ cptr spell_names[8][64] =
 	  "Force Ray",
 	  "Sonic Boom",
 	  "",
-	  "Ineria Wave",
+	  "Inertia Wave",
 
 	  /* Clairsentience */
 	  "Detect Monsters",

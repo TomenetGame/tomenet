@@ -1667,7 +1667,7 @@ static int Handle_login(int ind)
 		  {
 		    if (p_ptr->mode == MODE_HELL)
 		      {
-			title = (p_ptr->male)?"God ":"Godness ";
+			title = (p_ptr->male)?"God ":"Goddess ";
 		      }
 		    else
 		      {
