@@ -61,7 +61,7 @@ HEXORCISM = add_spell
 	["name"] = 	"Exorcism",
         ["school"] = 	{SCHOOL_HOFFENSE},
         ["level"] = 	10,
-        ["mana"] = 	5,
+        ["mana"] = 	15,
         ["mana_max"] = 	100,
         ["fail"] = 	30,
 	["stat"] =      A_WIS,
@@ -69,7 +69,7 @@ HEXORCISM = add_spell
                 local type
 		if get_level(Ind, HEXORCISM, 50) < 20 then
 		    dispel_undead(Ind, 10 + get_level(Ind, HEXORCISM, 200))
-		elseif get_level(Ind, HEXORCISM, 50) < 35 then
+		elseif get_level(Ind, HEXORCISM, 50) < 30 then
 		    dispel_evil(Ind, 10 + get_level(Ind, HEXORCISM, 200))
 		else
 		    dispel_monsters(Ind, 10 + get_level(Ind, HEXORCISM, 200))
@@ -81,7 +81,7 @@ HEXORCISM = add_spell
         ["desc"] =	{
         		"Dispels nearby undead",
 			"At level 20 it dispels all evil",
-			"At level 35 it dispels all monsters",
+			"At level 30 it dispels all monsters",
         }
 }
 
@@ -113,8 +113,8 @@ HRELSOULS = add_spell
 	["name"] = 	"Release Souls",
 	["school"] =	{SCHOOL_HOFFENSE},
 	["level"] =	10,
-	["mana"] = 	5,
-	["max_mana"] =	100,
+	["mana"] = 	10,
+	["mana_max"] =	150,
 	["fail"] =	25,
 	["stat"] =      A_WIS,
 	["spell"] =	function(args)

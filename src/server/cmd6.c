@@ -1948,8 +1948,8 @@ static void do_lottery(int Ind, object_type *o_ptr)
 	/* 30 * 10^7 = 300,000,000 */
 	for (j = 0; j < LOTTERY_MAX_PRIZE; j++)
 	{
-		if (!magik(10)) break;
-		if (k) i *= 10;
+		if (!magik(5)) break;
+		if (k) i *= 5;
 		k++;
 	}
 
@@ -4700,7 +4700,7 @@ void do_cmd_activate(int Ind, int item)
         u32b f1, f2, f3, f4, f5, esp;
 	player_type *p_ptr = Players[Ind];
 
-	int         i, k, lev, chance, slot;
+	int         i, k, lev, chance;
 
 	object_type *o_ptr;
 
@@ -4735,14 +4735,10 @@ void do_cmd_activate(int Ind, int item)
 	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
-	slot = wield_slot(Ind, o_ptr);
-	if (item_tester_hook_wear(Ind, slot))
+	if ((item < INVEN_WIELD) && wearable_p(o_ptr))
 	{
-		if (item != slot)
-		{
-			msg_print(Ind, "You must be using this item to activate it.");
-			return;
-		}
+		msg_print(Ind, "You must be using this item to activate it.");
+		return;
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'A' ))
@@ -6520,12 +6516,22 @@ void do_cmd_activate(int Ind, int item)
 					msg_print(Ind, "Your gloves glow golden...");
 					p_ptr->blessed_power = 30;
 	        			set_blessed(Ind, p_ptr->blessed + randint(48) + 24);
-					o_ptr->timeout = 100 + randint(200);
+					o_ptr->timeout = 150 + randint(200);
 				} else {
 					msg_print(Ind, "Your gloves shimmer..");
 		    		}
 				break;
 	                }
+			case ART_AMUGROM:
+			{
+				msg_print(Ind, "The amulet sparkles in scintillating colours...");
+				o_ptr->timeout = 250 + randint(200);
+				(void)set_oppose_acid(Ind, p_ptr->oppose_acid + randint(30) + 40);
+				(void)set_oppose_elec(Ind, p_ptr->oppose_elec + randint(30) + 40);
+				(void)set_oppose_fire(Ind, p_ptr->oppose_fire + randint(30) + 40);
+				(void)set_oppose_cold(Ind, p_ptr->oppose_cold + randint(30) + 40);
+				(void)set_oppose_pois(Ind, p_ptr->oppose_pois + randint(30) + 40);
+			}
 		}
 
 		/* Window stuff */
@@ -6809,7 +6815,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 
-	int item, slot;
+	int item;
 
 	item = p_ptr->current_activation;
 
@@ -6826,14 +6832,10 @@ void do_cmd_activate_dir(int Ind, int dir)
 	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
-	slot = wield_slot(Ind, o_ptr);
-	if (item_tester_hook_wear(Ind, slot))
+	if ((item < INVEN_WIELD) && wearable_p(o_ptr))
 	{
-		if (item != slot)
-		{
-			msg_print(Ind, "You must be using this item to activate it.");
-			return;
-		}
+		msg_print(Ind, "You must be using this item to activate it.");
+		return;
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'A' )) {

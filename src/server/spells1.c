@@ -2687,7 +2687,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_SOUND:
 		case GF_MANA:
 		case GF_HOLY_ORB:
-		case GF_HOLY_FIRE:
 		{
 			break;
 		}
@@ -2713,6 +2712,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Burn trees and grass */
 		case GF_FIRE:
+		case GF_HOLY_FIRE:
 
 		case GF_METEOR:
 		case GF_PLASMA:
@@ -4173,6 +4173,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HOLY_ORB:
 		{
 			if (seen) obvious = TRUE;
+			if (r_ptr->flags3 & (RF3_GOOD))
+			{
+				dam = 0;
+				note = " is immune.";
+				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+			}
 			if (r_ptr->flags3 & RF3_EVIL)
 			{
 				note = " is hit hard.";

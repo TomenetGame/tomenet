@@ -703,6 +703,7 @@ extern void load_guildhalls(struct worldpos *wpos);
 extern void save_guildhalls(struct worldpos *wpos);
 extern errr rd_savefile_new(int Ind);
 extern errr rd_server_savefile(void);
+extern bool wearable_p(object_type *o_ptr);
 
 /* melee1.c */
 /* melee2.c */

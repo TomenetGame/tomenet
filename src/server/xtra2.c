@@ -3219,6 +3219,9 @@ void gain_exp(int Ind, s32b amount)
 	/* You cant gain xp on your land */
         if (player_is_king(Ind)) return;
 
+//        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
+	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
+
 #if 0
         /* You must defeat morgoth before beong allowed level > 50 */
         if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
@@ -3228,12 +3231,10 @@ void gain_exp(int Ind, s32b amount)
 	/* You must defeat morgoth before being allowed to gain more
 	than 21,240,000 exp which is level 50 for Thunderlord Ranger */
 	if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= 21240000)) {
-	    if (p_ptr->exp >= 21240000) return;
-	    amount = 21240000 - p_ptr->exp;
+		if (p_ptr->exp >= 21240000) return;
+		amount = 21240000 - p_ptr->exp;
 	}
 #endif
-//        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
-	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	{
@@ -3249,6 +3250,7 @@ void gain_exp(int Ind, s32b amount)
 
 	if (Ind2)
 	{
+/* exp cap isn't implemented for this Ind2 part yet, don't forget it */
 		/* Gain some experience */
 		p_ptr->exp += amount / 2;
 
@@ -3256,7 +3258,7 @@ void gain_exp(int Ind, s32b amount)
 		if (p_ptr->exp < p_ptr->max_exp)
 		{
 			/* Gain max experience (10%) */
-			p_ptr->max_exp += amount / 20;
+			p_ptr->max_exp += amount / 10;
 		}
 	    
 		/* Check Experience */
@@ -3283,6 +3285,10 @@ void gain_exp(int Ind, s32b amount)
 		/* Slowly recover from experience drainage */
 		if (p_ptr->exp < p_ptr->max_exp)
 		{
+			if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) >= 21240000)) {
+				if (p_ptr->max_exp >= 21240000) return;
+				amount = (21240000 - p_ptr->exp) * 10;
+			}
 			/* Gain max experience (10%) */
 			p_ptr->max_exp += amount / 10;
 		}
@@ -4047,7 +4053,6 @@ void monster_death(int Ind, int m_idx)
 		}
 	}
 
-
 	/* Hack - the Dragonriders give some firestone */
 	else if (r_ptr->flags3 & RF3_DRAGONRIDER)
 	{
@@ -4062,22 +4067,63 @@ void monster_death(int Ind, int m_idx)
 		drop_near(qq_ptr, -1, wpos, y, x);
 	}
 
-	/* Hack - the protected monsters must be advanged */
-	else if (r_ptr->flags9 & RF9_WYRM_PROTECT)
+	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: */
+	else if (r_ptr->flags3 & RF3_DRAGON && 0) //disabled
 	{
-		int xx = x,yy = y;
-		int attempts = 100;
-
-		msg_print(Ind, "\377vThis monster was under the protection of a great wyrm of power!");
-
-		do
-		{
-			scatter(wpos, &yy, &xx, y, x, 6, 0);
+		bool pfft = TRUE;
+		int I_kind = 0;
+		artifact_type *a_ptr = &a_info[ART_AMUGROM];
+#if 0
+		/* don't allow duplicates */
+		if (a_ptr->cur_num) pfft = FALSE;
+		/* only powerful wyrms may have a chance of dropping it */
+		if (m_ptr->maxhp < 4000) pfft = FALSE;/* Dracolisk/Dracolich have 3500 */
+		else if ((m_ptr->maxhp < 6000) && rand_int(100)) pfft = FALSE;
+		else if ((m_ptr->maxhp < 10000) && rand_int(65)) pfft = FALSE;
+		else if (!rand_int(40)) pfft = FALSE;
+#endif
+		if (pfft) {
+			/* Get local object */
+			qq_ptr = &forge;
+			/* Wipe the object */
+			object_wipe(qq_ptr);
+#if 0
+			/* Acquire the "kind" index */
+			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+			/* Create the artifact */
+			invcopy(qq_ptr, I_kind);
+    			/* Save the name */
+			qq_ptr->name1 = ART_AMUGROM;
+			/* Extract the fields */
+			qq_ptr->pval = a_ptr->pval;
+			qq_ptr->ac = a_ptr->ac;
+			qq_ptr->dd = a_ptr->dd;
+			qq_ptr->ds = a_ptr->ds;
+			qq_ptr->to_a = a_ptr->to_a;
+			qq_ptr->to_h = a_ptr->to_h;
+			qq_ptr->to_d = a_ptr->to_d;
+			qq_ptr->weight = a_ptr->weight;
+			/* determine level-requirement */
+			//determine_level_req(lev, o_ptr);
+			qq_ptr->level = a_ptr->level;
+			qq_ptr->note = 0;
+			qq_ptr->number = 1;
+			qq_ptr->timeout = 0;
+			if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
+			/* Drop the artifact from heaven */
+			a_ptr->cur_num = 1;
+			drop_near(qq_ptr, -1, wpos, y, x);
+#else
+			invcopy(&forge, lookup_kind(40, 38));
+			forge.name1 = ART_AMUGROM;
+			apply_magic(wpos, &forge, -1, TRUE, TRUE, TRUE);
+			forge.number = 1;
+			/* Drop it in the dungeon */
+			drop_near(&forge, -1, wpos, y, x);
+#endif
 		}
-		while (!(in_bounds(yy, xx) && cave_floor_bold(zcave, yy, xx)) && --attempts);
-
-		place_monster_aux(wpos, yy, xx, race_index("Great Wyrm of Power"), FALSE, FALSE, m_ptr->clone);
 	}
+
 
 //        if((!force_coin)&&(randint(100)<50)) place_corpse(m_ptr);
 

@@ -1318,6 +1318,7 @@ that keeps many algorithms happy.
 
 /* C. Blue (arts > 216) */
 #define ART_SOULCURE		232
+#define ART_AMUGROM		233
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
 

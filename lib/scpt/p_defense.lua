@@ -74,30 +74,35 @@ HRESISTS = add_spell
 		if player.spell_project > 0 then
 			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, "")
 		end
-
         	if get_level(Ind, HRESISTS, 50) > 9 then
 			set_oppose_cold(Ind, dur)
 			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
 		end
-
-                if get_level(Ind, HRESISTS, 50) > 19 then
+                if get_level(Ind, HRESISTS, 50) > 14 then
 			set_oppose_elec(Ind, dur)
 			fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
 		end
+                if get_level(Ind, HRESISTS, 50) > 14 then
+			set_oppose_acid(Ind, dur)
+			fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, player.spell_project, "")
+		end
 	end,
 	["info"] = 	function()
-        	if get_level(Ind, HRESISTS, 50) < 10 then
-			return "Res heat, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
-                elseif get_level(Ind, HRESISTS, 50) < 20 then
-			return "Res heat & cold, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+        	if get_level(Ind, HRESISTS, 50) < 5 then
+			return "Res heat dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+                elseif get_level(Ind, HRESISTS, 50) < 10 then
+			return "Res heat/cold, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+		elseif get_level(Ind, HRESISTS, 50) < 15 then
+			return "Res heat/cold/elec, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
 		else
-			return "Res heat/cold/lightning, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
+			return "Base resistance, dur "..(get_level(Ind, HRESISTS, 50)+15)..".."..(get_level(Ind, HRESISTS, 50)+25)
                 end
 	end,
         ["desc"] =	{
         		"Lets you resist heat.",
-        		"At level 10 you also resist cold.",
-        		"At level 20 you resist lightning too.",
+        		"At level 5 you also resist cold.",
+        		"At level 10 you resist lightning too.",
+        		"At level 15 it gives acid resistance as well.",
 			"***Affected by the Meta spell: Project Spell***",
         }
 }
@@ -126,7 +131,7 @@ HRUNEPROT = add_spell
 {
 	["name"] =	"Glyph Of Warding",
 	["school"] = 	{SCHOOL_HDEFENSE},
-	["level"] =	45,
+	["level"] =	40,
 	["mana"]=	50,
 	["mana_max"] =	50,
 	["fail"] = 	10,

@@ -2834,10 +2834,22 @@ D:could possibly bear.
 
 N:232:'Soul Cure'
 I:31:1:4
-W:10:6:5:50000
+W:40:30:5:50000
 P:1:0d0:0:0:19
 F:WIS | HIDE_TYPE | KILL_UNDEAD | SHOW_MODS | REGEN | ACTIVATE
 D:Sacred gloves of an arch priest whose name is not remembered.
+
+
+# The Amulet of Grom, the Wyrm Hunter
+
+N:233:of Grom, the Wyrm Hunter
+I:40:38:0
+W:60:30:3:125000
+F:HIDE_TYPE | INSTA_ART | ACTIVATE | SPECIAL_GENE |
+F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS | 
+F:ESP_DRAGON | SLAY_DRAGON
+D:The amulet of Grom, the Wyrm Hunter. It's not known what happened
+D:to him.
 
 
 #N:(No.):(name)

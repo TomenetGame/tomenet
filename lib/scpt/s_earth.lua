@@ -6,7 +6,7 @@ STONESKIN = add_spell
         ["school"] = 	SCHOOL_EARTH,
         ["level"] = 	1,
         ["mana"] = 	1,
-        ["mana_max"] = 	50,
+        ["mana_max"] = 	100,
         ["fail"] = 	10,
         ["spell"] = 	function()
         		local type
@@ -19,7 +19,7 @@ STONESKIN = add_spell
 	end,
 	["info"] = 	function()
         		if get_level(Ind, STONESKIN, 50) >= 25 then
-                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(10 + get_level(Ind, STONESKIN, 590))
+                                return "dam "..(2 + get_level(Ind, STONESKIN, 5)).."d"..(3 + get_level(Ind, STONESKIN, 5)).." dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(10 + get_level(Ind, STONESKIN, 50))
                         else
                                 return "dur "..(10 + get_level(Ind, STONESKIN, 100)).."+d10 AC "..(10 + get_level(Ind, STONESKIN, 50))
                         end
@@ -55,8 +55,8 @@ STONEPRISON = add_spell
 	["name"] = 	"Stone Prison",
         ["school"] = 	SCHOOL_EARTH,
         ["level"] = 	25,
-        ["mana"] = 	30,
-        ["mana_max"] = 	50,
+        ["mana"] = 	40,
+        ["mana_max"] = 	70,
         ["fail"] = 	10,
         ["spell"] = 	function()
 			local ret, x, y

@@ -6156,6 +6156,15 @@ W:120:0:2000:0
 A:200/200
 P:0:1d1:0:0:0
 
+# The Amulet of Grom, the Wyrm Hunter -- see artifact list
+
+N:927:& Amulet~
+G:":m
+I:40:38:0
+W:60:0:3:100000
+F:INSTA_ART
+
+
 
 #N:(No.):(name)
 #G:(appearence):(colour)

@@ -76,7 +76,7 @@ HCURING = add_spell
 
 HSANITY = add_spell
 {
-	["name"] =      "Holy Sanity",
+	["name"] =      "Mind Focus",
 	["school"] =    {SCHOOL_HCURING},
 	["level"] =     20,
 	["mana"] =      50,
