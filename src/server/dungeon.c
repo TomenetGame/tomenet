@@ -875,6 +875,8 @@ static int auto_retaliate(int Ind)
 				{
 					prev_p_target_ptr = p_target_ptr;
 					p_target_ptr = q_ptr;
+					prev_target = target;
+					target = -i;
 				}
 				/* Otherwise attack this player if he is more proportionatly
 				 * wounded than our old target.
@@ -883,6 +885,8 @@ static int auto_retaliate(int Ind)
 				{
 					prev_p_target_ptr = p_target_ptr;
 					p_target_ptr = q_ptr;
+					prev_target = target;
+					target = -i;
 				}
 				/* If it is a tie attack the higher level player */
 				else if (q_ptr->chp * p_target_ptr->mhp == p_target_ptr->chp * q_ptr->mhp)
@@ -891,6 +895,8 @@ static int auto_retaliate(int Ind)
 					{
 						prev_p_target_ptr = p_target_ptr;
 						p_target_ptr = q_ptr;
+						prev_target = target;
+						target = -i;
 					}
 					/* If it is a tie attack the player with less hit points */
 					else if (q_ptr->lev == p_target_ptr->lev)
@@ -899,6 +905,8 @@ static int auto_retaliate(int Ind)
 						{
 							prev_p_target_ptr = p_target_ptr;
 							p_target_ptr = q_ptr;
+							prev_target = target;
+							target = -i;
 						}
 					}
 				}
@@ -907,6 +915,8 @@ static int auto_retaliate(int Ind)
 			{
 				prev_p_target_ptr = p_target_ptr;
 				p_target_ptr = q_ptr;
+				prev_target = target;
+				target = -i;
 			}
 		}
 	}
@@ -946,7 +956,7 @@ static int auto_retaliate(int Ind)
 	if (p_target_ptr)
 	{
 		/* set the target */
-		p_ptr->target_who = 0 - p_target_ptr->id;
+		p_ptr->target_who = target;
 
 		/* Attack him */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
