@@ -3551,7 +3551,8 @@ void calc_bonuses(int Ind)
 		/* Quarter the damage and cap against 150 (unreachable though)
 		- even The Destroyer form would reach just 138 ;) */
 		d /= 4;
-		d = (15000 / ((10000 / d) + 100)) + 1;
+		/* Cap the to-dam if it's too great */
+		if (d > 0) d = (15000 / ((10000 / d) + 100)) + 1;
 
 		if (d < (p_ptr->to_d + p_ptr->to_d_melee)) {
 			p_ptr->to_d = ((p_ptr->to_d * 3) + (d * 1)) / 4;
