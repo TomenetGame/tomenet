@@ -1051,6 +1051,7 @@ TODO: the newest should appear the first!
 16/06/2002 (Jir)
 - /news, displays news.txt
 - you can no longer drop items on stairs/store-entrances.
+- monster drops stack on the floor too.
 [H] you can go into a store with '>' key.
 [B] TV_POTION2 didn't shatter when thrown.
 [B] you couldn't fire missiles, doh!

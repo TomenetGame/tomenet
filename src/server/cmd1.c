@@ -646,6 +646,40 @@ void search(int Ind)
 }
 
 
+/* Hack -- tell player of the next object on the pile */
+static void whats_under_your_feet(int Ind)
+{
+	object_type *o_ptr;
+
+	char    o_name[160];
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos=&p_ptr->wpos;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+	c_ptr=&zcave[p_ptr->py][p_ptr->px];
+
+	if (!c_ptr->o_idx) return;
+
+	/* Get the object */
+	o_ptr = &o_list[c_ptr->o_idx];
+
+	/* Auto id ? */
+	if (p_ptr->auto_id)
+	{
+		object_aware(Ind, o_ptr);
+		object_known(o_ptr);
+	}
+
+	/* Describe the object */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	if (p_ptr->blind || no_lite(Ind))
+		msg_format(Ind, "You feel %s%s here.", o_name, 
+				o_ptr->next_o_idx ? " on a pile" : "");
+	else msg_format(Ind, "You see %s%s.", o_name,
+			o_ptr->next_o_idx ? " on a pile" : "");
+}
 
 
 /*
@@ -706,6 +740,9 @@ void carry(int Ind, int pickup, int confirm)
 		/* Delete gold */
 //		delete_object(wpos, p_ptr->py, p_ptr->px);
 		delete_object_idx(c_ptr->o_idx);
+
+		/* Hack -- tell the player of the next object on the pile */
+		whats_under_your_feet(Ind);
 	}
 
 	/* Pick it up */
@@ -752,6 +789,9 @@ void carry(int Ind, int pickup, int confirm)
 			/* Delete original */
 //			delete_object(wpos, p_ptr->py, p_ptr->px);
 			delete_object_idx(c_ptr->o_idx);
+
+			/* Hack -- tell the player of the next object on the pile */
+			whats_under_your_feet(Ind);
 
 			/* Tell the client */
 			Send_floor(Ind, 0);
@@ -829,27 +869,7 @@ void carry(int Ind, int pickup, int confirm)
 				delete_object_idx(c_ptr->o_idx);
 
 				/* Hack -- tell the player of the next object on the pile */
-				if (c_ptr->o_idx)
-				{
-					/* Get the object */
-					o_ptr = &o_list[c_ptr->o_idx];
-
-					/* Auto id ? */
-					if (p_ptr->auto_id)
-					{
-						object_aware(Ind, o_ptr);
-						object_known(o_ptr);
-					}
-
-					/* Describe the object */
-					object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-					if (p_ptr->blind || no_lite(Ind))
-						msg_format(Ind, "You feel %s%s here.", o_name, 
-								o_ptr->next_o_idx ? " on a pile" : "");
-					else msg_format(Ind, "You see %s%s.", o_name,
-							o_ptr->next_o_idx ? " on a pile" : "");
-				}
+				whats_under_your_feet(Ind);
 
 				/* Tell the client */
 				Send_floor(Ind, 0);

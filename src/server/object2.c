@@ -5042,7 +5042,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 	if (!in_bounds(y, x)) return;
 
 	/* Require clean floor space */
-	if (!cave_clean_bold(zcave, y, x)) return;
+//	if (!cave_clean_bold(zcave, y, x)) return;
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);
@@ -5117,6 +5117,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 
 		(*o_ptr) = (forge);
 
+		drop_near(o_ptr, -1, wpos, y, x);
+#if 0
 		o_ptr->iy = y;
 		o_ptr->ix = x;
 		wpcopy(&o_ptr->wpos, wpos);
@@ -5138,6 +5140,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 			/* He can't see it */
 			Players[i]->obj_vis[o_idx] = FALSE;
 		}
+#endif	// 0
 	}
 }
 
@@ -5249,7 +5252,7 @@ void place_gold(struct worldpos *wpos, int y, int x)
 	if (!in_bounds(y, x)) return;
 
 	/* Require clean floor grid */
-	if (!cave_clean_bold(zcave, y, x)) return;
+//	if (!cave_clean_bold(zcave, y, x)) return;
 
 	/* Hack -- Pick a Treasure variety */
 	i = ((randint(object_level + 2) + 2) / 2);
@@ -5278,6 +5281,7 @@ void place_gold(struct worldpos *wpos, int y, int x)
 //		invcopy(o_ptr, OBJ_GOLD_LIST + i);
 		invcopy(o_ptr, lookup_kind(TV_GOLD, i));
 
+#if 0
 		o_ptr->iy = y;
 		o_ptr->ix = x;
 
@@ -5291,6 +5295,7 @@ void place_gold(struct worldpos *wpos, int y, int x)
 
 		/* Place the object */
 		c_ptr->o_idx = o_idx;
+#endif	// 0
 
 		/* Hack -- Base coin cost */
 //		base = k_info[OBJ_GOLD_LIST+i].cost;
@@ -5307,6 +5312,9 @@ void place_gold(struct worldpos *wpos, int y, int x)
 			/* This player can't see it */
 			Players[j]->obj_vis[o_idx] = FALSE;
 		}
+
+		/* Drop it */
+		drop_near(o_ptr, -1, wpos, y, x);
 	}
 }
 
@@ -5636,6 +5644,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			{
 				msg_print("You feel something roll beneath your feet.");
 			}*/
+
+			if (chance && c_ptr->m_idx < 0)
+			{
+				msg_print(0 - c_ptr->m_idx, "You feel something roll beneath your feet.");
+			}
 
 			/* Success */
 //			flag = TRUE;
