@@ -1557,7 +1557,10 @@ void calc_body_bonus(int Ind)
 //        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
         if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
         if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 1;
-        if(r_ptr->flags2 & RF2_INVISIBLE) p_ptr->tim_invisibility = 100;
+        if(r_ptr->flags2 & RF2_INVISIBLE){
+		p_ptr->tim_invisibility = 100;
+		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
+	}
         if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
         if(r_ptr->flags2 & RF2_PASS_WALL) p_ptr->tim_wraith = 100;
         if(r_ptr->flags2 & RF2_KILL_WALL) p_ptr->auto_tunnel = 100;
