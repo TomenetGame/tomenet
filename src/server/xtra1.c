@@ -3001,7 +3001,7 @@ static void calc_bonuses(int Ind)
 	p_ptr->skill_dis += adj_int_dis[p_ptr->stat_ind[A_INT]];
 
 	/* Affect Skill -- magic devices (INT) */
-	p_ptr->skill_dev += adj_int_dev[p_ptr->stat_ind[A_INT]];
+	p_ptr->skill_dev += get_skill_scale(p_ptr, SKILL_DEVICE, 20);
 
 	/* Affect Skill -- saving throw (WIS) */
 	p_ptr->skill_sav += adj_wis_sav[p_ptr->stat_ind[A_WIS]];
@@ -3009,12 +3009,11 @@ static void calc_bonuses(int Ind)
 	/* Affect Skill -- digging (STR) */
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
 
-
 	/* Affect Skill -- disarming (Level, by Class) */
 	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * p_ptr->lev / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
-	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * p_ptr->lev / 10);
+	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * get_skill(p_ptr, SKILL_DEVICE) / 10);
 
 	/* Affect Skill -- saving throw (Level, by Class) */
 	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev / 10);

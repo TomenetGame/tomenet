@@ -2146,7 +2146,7 @@ void do_cmd_use_staff(int Ind, int item)
 	if (p_ptr->confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -2191,14 +2191,14 @@ void do_cmd_use_staff(int Ind, int item)
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
 			if (!p_ptr->resist_blind)
 			{
-				if (set_blind(Ind, p_ptr->blind + 3 + randint(5))) ident = TRUE;
+				if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
 			}
 			break;
 		}
 
 		case SV_STAFF_SLOWNESS:
 		{
-			if (set_slow(Ind, p_ptr->slow + randint(30) + 15)) ident = TRUE;
+			if (set_slow(Ind, p_ptr->slow + randint(30) + 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 15))) ident = TRUE;
 			break;
 		}
 
@@ -2223,7 +2223,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_TELEPORTATION:
 		{
 			msg_format_near(Ind, "%s teleports away!", p_ptr->name);
-			teleport_player(Ind, 100);
+			teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
 			ident = TRUE;
 			break;
 		}
@@ -2262,7 +2262,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_LITE:
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
-			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+			if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
 			break;
 		}
 
@@ -2311,7 +2311,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_CURE_LIGHT:
 		{
-			if (hp_player(Ind, randint(8))) ident = TRUE;
+			if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
 			break;
 		}
 
@@ -2327,7 +2327,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_HEALING:
 		{
-			if (hp_player(Ind, 300)) ident = TRUE;
+			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
 			break;
@@ -2364,7 +2364,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (!p_ptr->fast)
 			{
-				if (set_fast(Ind, randint(30) + 15)) ident = TRUE;
+				if (set_fast(Ind, randint(30) + 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 10))) ident = TRUE;
 			}
 			else
 			{
@@ -2382,20 +2382,20 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_DISPEL_EVIL:
 		{
-			if (dispel_evil(Ind, 60)) ident = TRUE;
+			if (dispel_evil(Ind, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 70))) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_POWER:
 		{
-			if (dispel_monsters(Ind, 120)) ident = TRUE;
+			if (dispel_monsters(Ind, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 120))) ident = TRUE;
 			break;
 		}
 
 		case SV_STAFF_HOLINESS:
 		{
-			if (dispel_evil(Ind, 120)) ident = TRUE;
-			k = 3 * p_ptr->lev;
+			if (dispel_evil(Ind, 120 + get_skill_scale(p_ptr, SKILL_DEVICE, 120))) ident = TRUE;
+			k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			if (set_protevil(Ind, p_ptr->protevil + randint(25) + k)) ident = TRUE;
 			if (set_poisoned(Ind, 0)) ident = TRUE;
 			if (set_afraid(Ind, 0)) ident = TRUE;
@@ -2606,7 +2606,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	if (p_ptr->confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Extract object flags */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -2717,19 +2717,19 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_CONFUSE_MONSTER:
 		{
-			if (confuse_monster(Ind, dir, 10)) ident = TRUE;
+			if (confuse_monster(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_FEAR_MONSTER:
 		{
-			if (fear_monster(Ind, dir, 10)) ident = TRUE;
+			if (fear_monster(Ind, dir, 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			break;
 		}
 
 		case SV_WAND_DRAIN_LIFE:
 		{
-			if (drain_life(Ind, dir, 75)) ident = TRUE;
+			if (drain_life(Ind, dir, 75 + get_skill_scale(p_ptr, SKILL_DEVICE, 75))) ident = TRUE;
 			break;
 		}
 
@@ -2742,7 +2742,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_STINKING_CLOUD:
 		{
 			msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
-			fire_ball(Ind, GF_POIS, dir, 12, 2);
+			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2750,7 +2750,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_MAGIC_MISSILE:
 		{
 			msg_format_near(Ind, "%s fires a magic missile.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2, 6));
+			fire_bolt_or_beam(Ind, 20, GF_MISSILE, dir, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 6));
 			ident = TRUE;
 			break;
 		}
@@ -2758,7 +2758,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ACID_BOLT:
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5, 8));
+			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
 			ident = TRUE;
 			break;
 		}
@@ -2766,7 +2766,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ELEC_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(3, 8));
+			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
 			ident = TRUE;
 			break;
 		}
@@ -2774,7 +2774,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_FIRE_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(6, 8));
+			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
 			ident = TRUE;
 			break;
 		}
@@ -2782,7 +2782,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_COLD_BOLT:
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
-			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(3, 8));
+			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(3 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8));
 			ident = TRUE;
 			break;
 		}
@@ -2790,7 +2790,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ACID_BALL:
 		{
 			msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
-			fire_ball(Ind, GF_ACID, dir, 60, 2);
+			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2798,7 +2798,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ELEC_BALL:
 		{
 			msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
-			fire_ball(Ind, GF_ELEC, dir, 32, 2);
+			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2806,7 +2806,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_FIRE_BALL:
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 72, 2);
+			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2814,7 +2814,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_COLD_BALL:
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 48, 2);
+			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2);
 			ident = TRUE;
 			break;
 		}
@@ -2828,7 +2828,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_DRAGON_FIRE:
 		{
 			msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-			fire_ball(Ind, GF_FIRE, dir, 100, 3);
+			fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 			ident = TRUE;
 			break;
 		}
@@ -2836,7 +2836,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_DRAGON_COLD:
 		{
 			msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-			fire_ball(Ind, GF_COLD, dir, 80, 3);
+			fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 80), 3);
 			ident = TRUE;
 			break;
 		}
@@ -2848,35 +2848,35 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 				case 1:
 				{
 					msg_format_near(Ind, "%s shoots dragon acid!", p_ptr->name);
-					fire_ball(Ind, GF_ACID, dir, 100, 3);
+					fire_ball(Ind, GF_ACID, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 					break;
 				}
 
 				case 2:
 				{
 					msg_format_near(Ind, "%s shoots dragon lightning!", p_ptr->name);
-					fire_ball(Ind, GF_ELEC, dir, 80, 3);
+					fire_ball(Ind, GF_ELEC, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 					break;
 				}
 
 				case 3:
 				{
 					msg_format_near(Ind, "%s shoots dragon fire!", p_ptr->name);
-					fire_ball(Ind, GF_FIRE, dir, 100, 3);
+					fire_ball(Ind, GF_FIRE, dir, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 					break;
 				}
 
 				case 4:
 				{
 					msg_format_near(Ind, "%s shoots dragon frost!", p_ptr->name);
-					fire_ball(Ind, GF_COLD, dir, 80, 3);
+					fire_ball(Ind, GF_COLD, dir, 80 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 					break;
 				}
 
 				default:
 				{
 					msg_format_near(Ind, "%s shoots dragon poison!", p_ptr->name);
-					fire_ball(Ind, GF_POIS, dir, 60, 3);
+					fire_ball(Ind, GF_POIS, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), 3);
 					break;
 				}
 			}
@@ -2887,7 +2887,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 		case SV_WAND_ANNIHILATION:
 		{
-			if (drain_life(Ind, dir, 125)) ident = TRUE;
+			if (drain_life(Ind, dir, 125 + get_skill_scale(p_ptr, SKILL_DEVICE, 125))) ident = TRUE;
 			break;
 		}
 
@@ -2895,7 +2895,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		case SV_WAND_ROCKETS:
 		{
 			msg_print(Ind, "You launch a rocket!");
-			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50)), 2);
+			fire_ball(Ind, GF_ROCKET, dir, 75 + (randint(50) + get_skill_scale(p_ptr, SKILL_DEVICE, 100)), 2);
 			ident = TRUE;
 			break;
 		}
@@ -3084,7 +3084,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	if (p_ptr->confused) chance = chance / 2;
 
 	/* Hight level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
+	chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)

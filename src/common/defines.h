@@ -4933,6 +4933,7 @@ extern int PlayerUID;
 #define SKILL_SORCERY           14
 #define SKILL_MAGERY            15
 #define SKILL_MIMIC             16
+#define SKILL_DEVICE            17
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

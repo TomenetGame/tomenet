@@ -14,27 +14,15 @@ void cmd_player_equip(void)
 
 static bool item_tester_magicable(object_type *o_ptr)
 {
-#if 0	// temporally hack for skill system		- Jir -
-	if (((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER)) && (o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
+	if (get_skill(SKILL_MAGERY) && (o_ptr->tval == TV_MAGIC_BOOK)) return TRUE;
 
-	if ((p_ptr->pclass == CLASS_SORCERER) && (o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
-
-	if ((p_ptr->pclass == CLASS_ROGUE) && (o_ptr->tval == TV_SHADOW_BOOK)) return TRUE;
-
-	if ((p_ptr->pclass == CLASS_ARCHER) && (o_ptr->tval == TV_HUNT_BOOK)) return TRUE;
-
-	if ((p_ptr->pclass == CLASS_TELEPATH) && (o_ptr->tval ==TV_PSI_BOOK)) return TRUE;
-#else
-	if (o_ptr->tval == TV_MAGIC_BOOK) return TRUE;
-
-	if (o_ptr->tval == TV_SORCERY_BOOK) return TRUE;
+	if (get_skill(SKILL_SORCERY) && (o_ptr->tval == TV_SORCERY_BOOK)) return TRUE;
 
 	if (o_ptr->tval == TV_SHADOW_BOOK) return TRUE;
 
 	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
 
 	if (o_ptr->tval ==TV_PSI_BOOK) return TRUE;
-#endif	// 0
 
 	return FALSE;
 }

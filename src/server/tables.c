@@ -4526,6 +4526,26 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Magic-device",
+                "Ability to use magic devices(wands, rods, staves, artifacts).\nAlso increases their power",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                 /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4543,6 +4563,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_COMBAT, SKILL_ARCHERY },
         { SKILL_COMBAT, SKILL_BACKSTAB },
         { -1, SKILL_MAGIC },
+        { SKILL_MAGIC, SKILL_DEVICE },
         { SKILL_MAGIC, SKILL_SORCERY },
         { SKILL_SORCERY, SKILL_CASTSPEED },
         { SKILL_MAGIC, SKILL_MAGERY },
