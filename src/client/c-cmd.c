@@ -1386,16 +1386,12 @@ void cmd_message(void)
 
 	buf[0] = '\0';
 
-	inkey_msg_flag = TRUE;
-
 	if (get_string("Message: ", buf, 59)){
 		for(i=0;i<60;i++){
 			if(buf[i]=='{') buf[i]='\377';
 		}
 		Send_msg(buf);
 	}
-
-	inkey_msg_flag = FALSE;
 }
 
 void cmd_party(void)

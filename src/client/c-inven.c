@@ -196,6 +196,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Paranoia */
 	if (!inven && !equip) return (FALSE);
 
+	/* Command macros work */
+	inkey_get_item = TRUE;
+
 	/* Full inventory */
 	i1 = 0;
 	i2 = INVEN_PACK - 1;
@@ -561,6 +564,9 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 	/* Clear the prompt line */
 	prt("", 0, 0);
+
+	/* Cease command macro exception */
+	inkey_get_item = FALSE;
 
 	/* Return TRUE if something was picked */
 	return (item);

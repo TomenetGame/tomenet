@@ -126,9 +126,9 @@ extern int special_line_type;
 
 extern bool inkey_base;
 extern bool inkey_scan;
-extern bool inkey_flag;
-extern bool inkey_msg_flag;
-extern bool inkey_interact_macros;
+extern bool inkey_flag; /* On reading keyboard input, command macros don't act */
+extern bool inkey_interact_macros; /* In macro menu, no macros may act */
+extern bool inkey_get_item;/* On reading keyboard input for choosing an item, all macros may act */
 
 extern s16b macro__num;
 extern cptr *macro__pat;

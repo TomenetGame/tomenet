@@ -67,7 +67,7 @@ static int macro_maybe(cptr buf, int n)
 	for (i = n; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if ((macro__cmd[i] && inkey_msg_flag) || inkey_interact_macros) continue;
+		if (macro__cmd[i] && !inkey_flag && !inkey_get_item) continue;
 
 		/* Check for "prefix" */
 		if (prefix(macro__pat[i], buf))
@@ -93,7 +93,7 @@ static int macro_ready(cptr buf)
 	for (i = 0; i < macro__num; i++)
 	{
 		/* Skip inactive macros */
-		if ((macro__cmd[i] && inkey_msg_flag) || inkey_interact_macros) continue;
+		if (macro__cmd[i] && !inkey_flag && !inkey_get_item) continue;
 
 		/* Check for "prefix" */
 		if (!prefix(buf, macro__pat[i])) continue;
@@ -290,7 +290,7 @@ static char inkey_aux(void)
 	if (!macro__use[(byte)(ch)]) return (ch);
 
 	/* Efficiency -- Ignore inactive macros */
-	if ((inkey_msg_flag && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
+	if ((inkey_flag && (macro__use[(byte)(ch)] == MACRO_USE_CMD) && !inkey_get_item) || inkey_interact_macros) return (ch);
 
 
 	/* Save the first key, advance */
