@@ -486,6 +486,10 @@ Change list for PernMangband
 
 20/12/2001 (Jir)
 - '/dis' can destroy items with pseudo-id tags ({good} or below).
-- 3 more traps(Voluminous cuisine/Unmagic/Vermin).
+- 4 more traps(Voluminous cuisine/Unmagic/Vermin/Random).
 - small bugfix on msg of set_biofeedback.
 - Bugfix on Morgoth summoning.
+
+21/12/2001 (Jir)
+- Still bugfixes on traps.
+- Some traps have chance of disappearence.

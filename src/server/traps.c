@@ -917,11 +917,15 @@ static void trap_hit(int Ind, s16b trap)
  * this function activates one trap type, and returns
  * a bool indicating if this trap is now identified
  */
+/*
+ * 'never_id' and 'vanish' flags should be handled in tr_info.txt
+ * in the future.		- Jir -
+ */
 //bool player_activate_trap_type(s16b y, s16b x, object_type *i_ptr, s16b item)
 bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item)
 {
 	player_type *p_ptr = Players[Ind];
-	bool ident = FALSE;
+	bool ident = FALSE, never_id = FALSE, vanish = FALSE;
 	s16b trap;
 	//   dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
@@ -952,6 +956,18 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	}
 	else
 		trap=i_ptr->pval;
+
+	if (trap == TRAP_OF_RANDOM_EFFECT)
+	{
+		never_id = TRUE;
+		trap = TRAP_OF_ALE;
+		for (l = 0; l < 99 ; l++)
+		{
+			k = rand_int(MAX_T_IDX);
+			if (!t_info[k].name || t_info[k].minlevel > getlevel(&p_ptr->wpos) || k == TRAP_OF_ACQUIREMENT) continue;
+			trap = k;
+		}
+	}
 
    switch(trap)
    {
@@ -1009,6 +1025,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             msg_print(Ind, "A spell hangs in the air.");
 //            for (k = 0; k < randint(3); k++) ident |= summon_specific(y, x, max_dlv[dungeon_type], SUMMON_UNDEAD);	// max?
             for (k = 0; k < randint(3); k++) ident |= summon_specific(&p_ptr->wpos, y, x, getlevel(&p_ptr->wpos), 0);
+			if (rand_int(100)<50) vanish = TRUE;
             break;
          }
       /* Summon Undead Trap */
@@ -1016,6 +1033,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             msg_print(Ind, "A mighty spell hangs in the air.");
             for (k = 0; k < randint(3); k++) ident |= summon_specific(&p_ptr->wpos, y, x, getlevel(&p_ptr->wpos), SUMMON_UNDEAD);
+			if (rand_int(100)<50) vanish = TRUE;
             break;
          }
       /* Summon Greater Undead Trap */
@@ -1023,6 +1041,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          {
             msg_print(Ind, "An old and evil spell hangs in the air.");
             for (k = 0; k < randint(3); k++) ident |= summon_specific(&p_ptr->wpos, y, x, getlevel(&p_ptr->wpos), SUMMON_HI_UNDEAD);
+			if (rand_int(100)<50) vanish = TRUE;
             break;
          }
       /* Teleport Trap */
@@ -1581,6 +1600,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
             /* if we're on a floor or on a door, place a new trap */
             if ((item == -1) || (item == -2))
             {
+				delete_trap_idx(tt_ptr);
 				place_trap(&p_ptr->wpos, y , x);
                   if (player_has_los_bold(Ind, y, x))
                   {
@@ -2258,7 +2278,16 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
          s_printf("Executing unknown trap %d", trap);
       }
    }
-   return ident;
+
+   /* some traps vanish */
+   if (vanish)
+   {
+	   if (item < 0) delete_trap_idx(tt_ptr);
+	   else i_ptr->pval = 0;
+   }
+
+   if (never_id) return (FALSE);
+   else return ident;
 }
 
 /*
@@ -2341,10 +2370,12 @@ void place_trap(struct worldpos *wpos, int y, int x)
 		((c_ptr->feat < FEAT_DOOR_HEAD) ||
 		(c_ptr->feat > FEAT_DOOR_TAIL))) return;
 
+	/* No traps over traps/house doors etc */
+	if (c_ptr->special.type) return;
+
 //	if (!cave_naked_bold(zcave, y, x)) return;
 //	if (!cave_floor_bold(zcave, y, x)) return;
 
-	/* NEVER FORGET TO EXCLUDE HOUSE-DOORS! */
 
 	/* no traps in town or on first level */
 	//   if (dun_level<=1) return;

@@ -3196,6 +3196,7 @@ extern int PlayerUID;
 #define TRAP_OF_CUISINE		174
 #define TRAP_OF_UNMAGIC		175
 #define TRAP_OF_VERMIN		176
+#define TRAP_OF_RANDOM_EFFECT	177
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

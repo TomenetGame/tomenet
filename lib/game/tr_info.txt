@@ -788,7 +788,8 @@ F:FLOOR | CHEST | DOOR | LEVEL3
 # Useful traps
 
 N:170:Acquirement Trap
-I:1:40:5:5:18:0d0:v
+#I:1:40:5:5:18:0d0:v
+I:1:4:5:5:18:0d0:v
 D:Woh !
 F:FLOOR | DOOR | CHANGE
 
@@ -820,10 +821,15 @@ I:5:90:20:1:20:0d0:r
 D:This device disbelieves your feeble spells!
 F:FLOOR | CHEST | DOOR
 
-N:176:Vermine Trap
+N:176:Vermin Trap
 I:3:80:20:1:10:0d0:v
 D:Awwww! You feel itchy!
 F:FLOOR | CHEST | DOOR
+
+N:177:Multi-Flavor Trap
+I:1:60:5:5:10:0d0:v
+D:You feel uneasy.
+F:FLOOR | DOOR | CHANGE
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
