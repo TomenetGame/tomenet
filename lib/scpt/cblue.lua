@@ -84,7 +84,7 @@ function allunis(name)
 end
 
 -- Set all uniques/monsters to '0 times killed' for a player.
-function nounis(name)
+function nomons(name)
     local p, i
     p = ind(name)
     for i = 1, MAX_R_IDX do
@@ -98,5 +98,15 @@ function allmons(name)
     p = ind(name)
     for i = 1, MAX_R_IDX do
 	players(p).r_killed[i] = 1
+    end
+end
+
+-- Copy unique mask of another player to calling player (idea from evileye).
+function unicpy(name)
+    local p, i, c
+    p = ind(name)
+    for i = 1, MAX_R_IDX do
+        c = players(p).r_killed[i]
+	players(Ind).r_killed[i] = c
     end
 end
