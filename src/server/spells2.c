@@ -4041,7 +4041,7 @@ bool poly_build(int Ind, char *args){
 		dx=lx=sx;
 		dy=ly=sy;
 		moves=30;
-		depth=p_ptr->depth;
+		depth=p_ptr->dun_depth;
 		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
 		cave[p_ptr->dun_depth][sy][sx].special=dna;
 		return TRUE;
