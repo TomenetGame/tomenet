@@ -947,6 +947,23 @@ static void wr_store(store_type *st_ptr)
 	}
 }
 
+static void wr_guilds(){
+	int i;
+	u16b tmp16u;
+
+	tmp16u = MAX_GUILDS;
+	wr_u16b(tmp16u);
+
+	/* Dump the guilds */
+	for (i = 0; i < tmp16u; i++){
+		wr_string(guilds[i].name);
+		wr_s32b(guilds[i].master);
+		wr_s32b(guilds[i].num);
+		wr_u32b(guilds[i].flags);
+		wr_s16b(guilds[i].minlev);
+	}
+}
+
 static void wr_party(party_type *party_ptr)
 {
 	/* Save the party name */
@@ -1449,7 +1466,7 @@ void wr_cave_memory(Ind)
 
 
 /*
- * Actually write a save-file
+ * Actually write a player save-file
  */
 static bool wr_savefile_new(int Ind)
 {
@@ -1622,28 +1639,7 @@ static bool wr_savefile_new(int Ind)
 	{
 		wr_byte(p_ptr->wild_map[i]);
 	}
-
-
-#if 0
-	/* Note the stores */
-	tmp16u = MAX_STORES;
-	wr_u16b(tmp16u);
-
-	/* Dump the stores */
-	for (i = 0; i < tmp16u; i++) wr_store(&store[i]);
-
-
-	/* Player is not dead, write the dungeon */
-	if (!p_ptr->death)
-	{
-		/* Dump the dungeon */
-		wr_dungeon();
-
-		/* Dump the ghost */
-		wr_ghost();
-	}
-#endif
-
+	wr_byte(p_ptr->guild);
 
 	/* Write the "value check-sum" */
 	wr_u32b(v_stamp);
@@ -2238,6 +2234,8 @@ static bool wr_server_savefile(void)
 
 	wr_u32b(seed_flavor);
 	wr_u32b(seed_town);
+
+	wr_guilds();
 
 	wr_s32b(player_id);
 	wr_s32b(turn);

@@ -815,6 +815,9 @@ Change list for PernMangband
 - Added more of the guild system functions - still incomplete, but
   nearly done. Save/load to be done last (must remain compat.)
 
+08/03/2002 (evileye)
+- Guild system load/save implemented. Converts old savefiles safely.
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)

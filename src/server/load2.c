@@ -888,6 +888,22 @@ static errr rd_store(store_type *st_ptr)
 	return (0);
 }
 
+static void rd_guilds(){
+	int i;
+	u16b tmp16u;
+	rd_u16b(&tmp16u);
+	if(tmp16u > MAX_GUILDS){
+		s_printf("Too many guilds (%d)\n", tmp16u);
+		return;
+	}
+	for(i=0; i<tmp16u; i++){
+		rd_string(&guilds[i].name, 80);
+		rd_s32b(&guilds[i].master);
+		rd_s32b(&guilds[i].num);
+		rd_u32b(&guilds[i].flags);
+		rd_s16b(&guilds[i].minlev);
+	}
+}
 
 /*
  * Read some party info
@@ -1834,33 +1850,10 @@ static errr rd_savefile_new_aux(int Ind)
 			rd_byte(&p_ptr->wild_map[i]);
 		}
 	}
-
-
-#if 0
-	/* Read the stores */
-	rd_u16b(&tmp16u);
-	for (i = 0; i < tmp16u; i++)
-	{
-		if (rd_store(i)) return (22);
+	/* read player guild membership */
+	if(!older_than(3,4,1)){
+		rd_byte(&p_ptr->guild);
 	}
-
-
-	/* I'm not dead yet... */
-	if (!death)
-	{
-		/* Dead players have no dungeon */
-		s_printf("Restoring Dungeon...");
-		if (rd_dungeon())
-		{
-			s_printf("Error reading dungeon data");
-			return (34);
-		}
-
-		/* Read the ghost info */
-		rd_ghost();
-	}
-
-#endif
 
 #ifdef VERIFY_CHECKSUMS
 
@@ -2035,15 +2028,6 @@ errr rd_server_savefile()
 		rd_byte(&tmp8u);
 	}
 
-#if 0
-	/* Read the stores */
-	rd_u16b(&tmp16u);
-	for (i = 0; i < tmp16u; i++)
-	{
-		if (rd_store(i)) return (22);
-	}
-#endif
-
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
@@ -2194,6 +2178,10 @@ errr rd_server_savefile()
 
 	rd_u32b(&seed_flavor);
 	rd_u32b(&seed_town);
+
+	if(!older_than(3,4,1)){
+		rd_guilds();
+	}
 
 	if (!older_than(0,4,1))
 	{

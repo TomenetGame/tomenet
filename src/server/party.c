@@ -132,7 +132,7 @@ int guild_create(int Ind, cptr name){
 
 	/* Add the owner as a member */
 	p_ptr->guild = index;
-	guilds[index].num++;
+	guilds[index].num=1;
 }
 
 /*
@@ -366,7 +366,7 @@ static void del_guild(int id){
 	kill_houses(id, OT_GUILD);
 
 	/* Tell everyone */
-	sprintf(temp, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.");
+	sprintf(temp, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
 	msg_broadcast(0, temp);
 	/* Clear the basic info */
 	guilds[id].num=0;	/* it should be zero anyway */
