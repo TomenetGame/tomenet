@@ -2761,7 +2761,7 @@ int name_lookup_loose(int Ind, cptr name, bool party)
 					if (len == strlen(parties[i].name))
 					{
 						/* Never a problem */
-						target = i;
+						target = 0 - i;
 						problem = "";
 
 						/* Finished looking */
