@@ -6166,7 +6166,7 @@ bool target_set(int Ind, int dir)
  *
  * Now this function can take 3rd arg which specifies which player to
  * set the target.
- * This part was written by Ascrep(DEG); thx for his courtesy!
+ * This part was written by Asclep(DEG); thx for his courtesy!
  * */
 
 bool target_set_friendly(int Ind, int dir, ...)

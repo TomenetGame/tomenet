@@ -1854,7 +1854,7 @@ static void do_slash_cmd(int Ind, char *message)
 
 	else
 	{
-		/* cut tokens off (thx Ascrep(DEG)) */
+		/* cut tokens off (thx Asclep(DEG)) */
 		if ((token[0]=strtok(message," ")))
 		{
 //			s_printf("%d : %s", tk, token[0]);
@@ -2013,7 +2013,7 @@ static void do_slash_cmd(int Ind, char *message)
 
 			return;
 		}
-		/* '/cast' code is written by Ascrep(DEG). thx! */
+		/* '/cast' code is written by Asclep(DEG). thx! */
 		else if (prefix(message, "/cast"))
 		{
 			msg_print(Ind, "\377oSorry, /cast is not available for the time being.");
