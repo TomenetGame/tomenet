@@ -691,6 +691,9 @@ bool mon_allowed(monster_race *r_ptr)
 	if(i > cfg.pet_monsters && (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)))
 				return(FALSE);
 
+	/* C. Blue's monsters allowed ? or not ? */
+	if(i > cfg.cblue_monsters && (r_ptr->flags8 & RF8_BLUEBAND)) return(FALSE);
+
 	/* Joke monsters allowed ? or not ? */
 	if(i > cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
 
@@ -717,6 +720,9 @@ bool mon_allowed_view(monster_race *r_ptr)
 	/* Pet/neutral monsters allowed? */
 	if(i > cfg.pet_monsters && (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)))
 				return(FALSE);
+
+	/* C. Blue's monsters allowed ? or not ? */
+	if(i > cfg.cblue_monsters && (r_ptr->flags8 & RF8_BLUEBAND)) return(FALSE);
 
 	/* Joke monsters allowed ? or not ? */
 	if(i > cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);

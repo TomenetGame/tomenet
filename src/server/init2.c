@@ -3046,6 +3046,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.joke_monsters = atoi(value);
 	}
+	else if (!strcmp(option,"CBLUE_MONSTERS"))
+	{
+		cfg.cblue_monsters = atoi(value);
+	}
 	else if (!strcmp(option,"VANILLA_MONSTERS"))
 	{
 		cfg.vanilla_monsters = atoi(value);

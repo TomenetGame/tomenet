@@ -989,6 +989,8 @@ void do_cmd_check_server_settings(int Ind)
 			fprintf(fff, "  Thunderlord additions (%d%%)\n", cfg.pern_monsters);
 		if (cfg.cth_monsters)
 			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
+		if (cfg.cblue_monsters)
+			fprintf(fff, "  C. Blue-monsters (%d%%)\n", cfg.cblue_monsters);
 		if (cfg.joke_monsters)
 			fprintf(fff, "  Joke-monsters (%d%%)\n", cfg.joke_monsters);
 		if (cfg.pet_monsters)
@@ -1005,6 +1007,8 @@ void do_cmd_check_server_settings(int Ind)
 			fprintf(fff, "  Thunderlord additions\n");
 		if (cfg.cth_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Lovecraft additions\n");
+		if (cfg.cblue_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  C. Blue-monsters\n");
 		if (cfg.joke_monsters > TELL_MONSTER_ABOVE)
 			fprintf(fff, "  Joke-monsters\n");
 	}

@@ -461,7 +461,7 @@ static cptr r_info_flags8[] =
         "ZANGBAND",
         "JOKEANGBAND",
         "BASEANGBAND",
-	"XXX8X17",
+	"BLUEBAND",
 	"XXX8X18",
 	"XXX8X19",
 	"XXX8X20",

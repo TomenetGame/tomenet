@@ -1678,7 +1678,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_SANITY:
 				{
 					obvious = TRUE;
-					msg_print(Ind, "You shiver with abomination..");
+					msg_print(Ind, "You shiver in madness..");
 
 					take_sanity_hit(Ind, damage, ddesc);
 					break;

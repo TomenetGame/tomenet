@@ -113,7 +113,7 @@ HSENSE = add_spell
 		"Lets you see nearby creatures, as well as invisible ones.",
 		"At level 15 it also maps the dungeon around you.",
 		"At level 30 it grants you clairvoyance and lets you",
-		"detect creatures for a while.",
+		"sense the presence creatures for a while.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }
@@ -128,6 +128,7 @@ HSENSEMON = add_spell
 	["fail"] =      15,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
+		set_tim_invis(Ind, 10 + get_level(Ind, HSENSE, 50))
 		detect_creatures(Ind)
 		if player.spell_project > 0 then
 			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
@@ -140,8 +141,8 @@ HSENSEMON = add_spell
 		return ""
 	end,
 	["desc"] =      {
-		"Lets you see nearby creatures.",
-		"At level 30 it lets you detect creatures for a while.",
+		"Lets you see nearby creatures and allows you to see invisible.",
+		"At level 30 it lets you sense the presence creatures for a while.",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

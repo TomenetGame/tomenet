@@ -3382,7 +3382,21 @@ static void player_talk_aux(int Ind, char *message)
 		strcpy(sender, "Server Admin");
 	}
 
-	if(cfg.log_u) s_printf("[%s] %s\n", sender, message);
+	/* Default to no search string */
+	strcpy(search, "");
+
+	/* Look for a player's name followed by a colon */
+	colon = strchr(message, ':');
+
+	/* Ignore "smileys" or URL */
+	if (colon && strchr(")(-/:", *(colon + 1)))
+	{
+		/* Pretend colon wasn't there */
+		colon = NULL;
+	}
+
+	/* no big brother */
+	if(cfg.log_u && !colon) s_printf("[%s] %s\n", sender, message);
 
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
@@ -3429,7 +3443,6 @@ static void player_talk_aux(int Ind, char *message)
 	}
 	if(p_ptr->spam > 1) return;
 
-
 	process_hooks(HOOK_CHAT, "d", Ind);
 
 	if(++p_ptr->talk>10){
@@ -3440,19 +3453,6 @@ static void player_talk_aux(int Ind, char *message)
 	for(i=1; i<=NumPlayers; i++){
 		if(Players[i]->conn==NOT_CONNECTED) continue;
 		Players[i]->talk=0;
-	}
-
-	/* Default to no search string */
-	strcpy(search, "");
-
-	/* Look for a player's name followed by a colon */
-	colon = strchr(message, ':');
-
-	/* Ignore "smileys" or URL */
-	if (colon && strchr(")(-/:", *(colon + 1)))
-	{
-		/* Pretend colon wasn't there */
-		colon = NULL;
 	}
 
 	/* Form a search string if we found a colon */

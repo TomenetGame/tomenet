@@ -150,9 +150,9 @@ server_opts cfg =
 	3, 2,		// resting_rate, party_xp_boost
 
 	0, 1,		// use_pk_rules, quit_ban_mode
-	10, 100, 100,	// zang_monsters, pern_monsters, cth_monsters
+	33, 67, 33,	// zang_monsters, pern_monsters, cth_monsters
 
-	1, 100, 0,		// joke_monsters, vanilla_monsters, pet_monsters
+	0, 67, 100, 0,		// joke_monsters, cblue_monsters, vanilla_monsters, pet_monsters
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
 

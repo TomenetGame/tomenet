@@ -3559,7 +3559,8 @@ that keeps many algorithms happy.
 #define RF8_ZANGBAND            0x00004000
 #define RF8_JOKEANGBAND         0x00008000
 #define RF8_ANGBAND             0x00010000
-#define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
+#define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
+#define RF8_WILD_SWAMP		0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO            0x80000000
 
 #define RF8_WILD_TOO_MASK \

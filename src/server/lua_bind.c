@@ -449,6 +449,9 @@ static bool lua_mon_hook_bounty(int r_idx)
         /* Forbid joke monsters */
         if (r_ptr->flags8 & RF8_JOKEANGBAND) return (FALSE);
 
+        /* Forbid C. Blue's monsters */
+        if (r_ptr->flags8 & RF8_BLUEBAND) return (FALSE);
+
         /* Accept only monsters that are not good */
         if (r_ptr->flags3 & RF3_GOOD) return (FALSE);
 
