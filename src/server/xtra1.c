@@ -1334,6 +1334,9 @@ static void calc_body_bonus(int Ind)
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	
+	Rand_value = p_ptr->mimic_seed;
+	Rand_quick = TRUE;
+	
 	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
 	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
 	immrand[1] = 0; immrand[2] = 0;
@@ -1761,6 +1764,9 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	p_ptr->innate_spells[1] = r_ptr->flags5 & RF5_PLAYER_SPELLS;
 	p_ptr->innate_spells[2] = r_ptr->flags6 & RF6_PLAYER_SPELLS;
 	Send_spell_info(Ind, 0, 0, 0, "nothing");
+
+	/* restore RNG */
+	Rand_quick = FALSE;
 }
 
 #if 0	// moved to defines.h

@@ -1990,6 +1990,8 @@ struct player_type
 				/* What he should be seeing */
 	cave_view_type scr_info[SCREEN_HGT + 20][SCREEN_WID + 24];
 	
+	u32b mimic_seed;	/* seed for random mimic immunities etc. */
+	
 	char died_from[80];	/* What off-ed him */
 	char died_from_list[80]; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */

@@ -1287,7 +1287,7 @@ static void wr_extra(int Ind)
 	/* Write the "object seeds" */
 	/*wr_u32b(seed_flavor);*/
 	/*wr_u32b(seed_town);*/
-
+	wr_u32b(p_ptr->mimic_seed);
 
 	/* Special stuff */
 	wr_u16b(panic_save);

@@ -1456,10 +1456,14 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	p_ptr->body_changed = TRUE;
 	
 	msg_format(Ind, "You polymorph into a %s !", r_info[r_idx].name + r_name);
-	msg_format_near(Ind, "%s polymorphs a % !", p_ptr->name, r_info[r_idx].name + r_name);
+	msg_format_near(Ind, "%s polymorphs into a % !", p_ptr->name, r_info[r_idx].name + r_name);
 
 	note_spot(Ind, p_ptr->py, p_ptr->px);
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	/* Piece together a 32-bit random seed */
+	p_ptr->mimic_seed = rand_int(0xFFFF) << 16;
+	p_ptr->mimic_seed += rand_int(0xFFFF);
 
 	/* Recalculate mana */
 	p_ptr->update |= (PU_MANA | PU_HP | PU_BONUS | PU_VIEW);
