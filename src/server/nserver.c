@@ -117,7 +117,7 @@ static long		Id;
 int			NumPlayers;
 
 
-pid_t		metapid;
+pid_t		metapid=0;
 int		MetaSocket = -1;
 
 #ifdef NEW_SERVER_CONSOLE
@@ -505,7 +505,9 @@ bool Report_to_meta(int flag)
 	}
 #ifdef EVIL_METACLIENT
 	/* kill it or update it */
-	kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
+	if(metapid){
+		kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
+	}
 #else
         allow_timer();
 #endif
