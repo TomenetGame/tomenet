@@ -326,7 +326,7 @@ TOLUA = server/tolua
 # below.
 #
 
-install: mangclient mangconsole mangband
+install: date mangclient mangconsole mangband
 	-mv ../mangclient ../mangclient.old
 	-mv ../mangband ../mangband.old
 	-mv ../mangconsole ../mangconsole.old
@@ -335,6 +335,9 @@ install: mangclient mangconsole mangband
 	cp mangband ..
 
 mini_install: install
+
+date:
+	touch common/common.c
 
 #
 # Build the "MAngband" server

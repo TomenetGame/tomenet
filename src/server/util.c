@@ -1603,7 +1603,7 @@ static void server_knowledge(int Ind)
 
 	if ((k=cfg.retire_timer) > 0)
 		msg_print(Ind, format("The winner will automatically retire after %d minutes.", k));
-	else if (k = 0)
+	else if (k == 0)
 		msg_print(Ind, format("The game ends the moment you beat the final foe, Morgoth.", k));
 
 	if (k !=0)
@@ -1774,11 +1774,28 @@ static void server_knowledge(int Ind)
 }
 #endif	// 0
 
+/* Takes a trap name and returns an index, or 0 if no such trap
+ * was found.
+ */
+#if 0
+static int trap_index(char * name)
+{
+	int i;
+
+	/* for each monster race */
+	for (i = 1; i <= MAX_T_IDX; i++)
+	{
+		if (!strcmp(&t_name[t_info[i].name],name)) return i;
+	}
+	return 0;
+}
+#endif	// 0
+
 /*
  * Slash commands - huge hack function for command expansion.
  */
 
-void do_slash_cmd(int Ind, cptr message)
+static void do_slash_cmd(int Ind, cptr message)
 {
 	int i;
 	int k = 0, tk = 0;
@@ -1786,7 +1803,7 @@ void do_slash_cmd(int Ind, cptr message)
  	cptr colon;
 	char *token[9];
 	worldpos wp;
-	bool admin = p_ptr->admin_wiz || p_ptr->admin_dm;
+	bool admin = is_admin(p_ptr);
 
 	wpcopy(&wp, &p_ptr->wpos);
 
@@ -1811,7 +1828,8 @@ void do_slash_cmd(int Ind, cptr message)
 		return;
 	}
 	else if ((prefix(message, "/rfe")) ||
-			prefix(message, "/bug"))
+			prefix(message, "/bug") ||
+			prefix(message, "/cookie"))
 	{
 		if (colon)
 		{
@@ -2482,7 +2500,7 @@ void do_slash_cmd(int Ind, cptr message)
 			if (prefix(message, "/shutdown") ||
 					prefix(message, "/quit"))
 			{
-				set_runlevel((cfg.runlevel<6 ? 6 : 5));
+				set_runlevel(tk ? k : (cfg.runlevel<6 ? 6 : 5));
 				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
 				time(&cfg.closetime);
 			}
@@ -2658,7 +2676,15 @@ void do_slash_cmd(int Ind, cptr message)
 				{
 					wiz_place_trap(Ind, k);
 				}
-				else 
+#if 0
+				else if (tk)
+				{
+					i = trap_index(token[1]);
+					if (i) wiz_place_trap(Ind, i);
+					else msg_print(Ind, "\377oNo such traps.");
+				}
+#endif	// 0
+				else
 				{
 					wiz_place_trap(Ind, TRAP_OF_FILLING);
 				}

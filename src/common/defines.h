@@ -197,7 +197,7 @@
 #define MAX_R_IDX	1152	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
-#define MAX_T_IDX	256 /* Max size for "re_info[]" */
+#define MAX_T_IDX	256 /* Max size for "t_info[]" */
 
 
 

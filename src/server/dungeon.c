@@ -3288,9 +3288,11 @@ void dungeon(void)
 	Net_output();
 }
 
-void set_runlevel(int val){
+void set_runlevel(int val)
+{
 	static bool meta=TRUE;
-	switch(val){
+	switch(val)
+	{
 		case 0:
 			shutdown_server();
 		case 1:
@@ -3316,6 +3318,7 @@ void set_runlevel(int val){
 			msg_broadcast(0, "\377yWarning. Server shutdown will take place in ten minutes.");
 			break;
 		case 6:
+		defalut:
 			/* Cancelled shutdown */
 			msg_broadcast(0, "\377GServer shutdown cancelled.");
 			Report_to_meta(META_START);

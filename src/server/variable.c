@@ -109,7 +109,8 @@ s32b m_top = 0;                 /* Monster top size */
 
 server_opts cfg =
 {
-	6, 0,		// runlevel, closetime
+	6, 0,		// runlevel, closetime (NOT config options)
+
 	"mangband.org",		// meta_address
 	"",		// bind_name
 	"changeme",		// console_password

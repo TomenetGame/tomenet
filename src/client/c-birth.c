@@ -686,7 +686,7 @@ bool get_server_name(void)
 	prt(longVersion , lines + 1, 1);
 
 	/* Prompt */
-	prt("Choose a server to connect to (Q for manual entry): ", lines + 2, 1);
+	prt("-- Choose a server to connect to (Q for manual entry): ", lines + 2, 1);
 
 	/* Ask until happy */
 	while (1)

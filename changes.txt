@@ -808,6 +808,7 @@ Change list for PernMangband
 - climbling up/down can fail when confused. (STAIR_FAIL_IF_CONFUSED)
 - version strings(code is from Vim6.1a).
 - client is very un*x/vi-user friendly now.
+[B] 'Stone to Mud' dug 2 blocks.
 
 07/03/2002 (Evileye)
 - Added more of the guild system functions - still incomplete, but
@@ -820,22 +821,22 @@ Change list for PernMangband
 ==== below this line are the unfixed bugs known ====
 [B] rebooting server always make floors disappear;
     monsters are preserved; only cave disappears.
-[B] Self-reproducing black trap
+[B] Self-reproducing black trap (doesn't appear recently.. fixed??)
 [B] Panic save often enters into infinite loop.
 [B] House doors still seem to crash sometimes.
 [B] wpos display hides wound states(eg.'Deep Gash')
 [B] ever-charging arts (eg.star)
-[B] CURSE_x does 100+ dmg on 50ft?
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
 [B] /rec won't work if to wilderness? (admin)
 [B] some monsters become 'immune' to spell attacks.
 [B][C] chat-history contains lines with 'mindcrafter'. 
-[B] log-file viewer(&6) leaves messy screen when done.
 [B] [Bashing for beginners] contains 'Darkness Storm' etc.
 [B] /dr cannot handle rings well.
 [B] Macro stick sometimes
+[B] CURSE_x does 100+ dmg on 50ft?
 
 [B] 'I' or 'e' messes the screen inside stores (/* evil test */ stuff)
+[B] log-file viewer(&6) leaves messy screen when done.
 
 ==== below this line are 'implementations' and not 'bugs' ====
 (Don't 'fix' them!! ;)

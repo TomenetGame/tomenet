@@ -244,14 +244,14 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || k == KTRL('U'))
+		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || k == KTRL('U'))
 		{
 			/* Go older if legal */
 			if (i + 20 < n) i += 20;
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k=='b')
+		if ((k == 'n') || (k == KTRL('N')) || k==' ')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;
@@ -509,7 +509,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 20 older messages */
-		if ((k == 'p') || (k == KTRL('P')) || (k == ' ') || (k == KTRL('O')) ||
+		if ((k == 'p') || (k == KTRL('P')) || (k == 'b') || (k == KTRL('O')) ||
 				k == KTRL('U'))
 		{
 			/* Go older if legal */
@@ -517,7 +517,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 20 newer messages */
-		if ((k == 'n') || (k == KTRL('N')) || k=='b')
+		if ((k == 'n') || (k == KTRL('N')) || k==' ')
 		{
 			/* Go newer (if able) */
 			i = (i >= 20) ? (i - 20) : 0;

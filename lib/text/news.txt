@@ -8,7 +8,7 @@
                                 "Lord of The Rings", J.R.R.Tolkien
 
  - Monster AI significantly improved; use your head, too!
- - Underground rivers and lakes, and their habitants.
+ - Underground rivers, lakes and their habitants.
  - Unnumbered new items/monsters/traps are added.
  - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
  - Sanity system is added; going insane is no good of you.

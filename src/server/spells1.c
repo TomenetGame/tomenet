@@ -5742,17 +5742,21 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	if (dist <= MAX_RANGE)
 	{
 		/* Mega-Hack -- remove the final "beam" grid */
-		/* if ((flg & PROJECT_BEAM) && (grids > 0)) grids--; */
+//		if ((flg & PROJECT_BEAM) && (grids > 0)) grids--;
+
 		dist = 0;
 
 		for (i = 0; i <= tdi[rad]; i++)
 		{
-			y = y2 + tdy[i];
-			x = x2 + tdx[i];
-
 			/* Encode some more "radius" info */
 			if (i == tdi[dist])
+			{
 				gm[++dist] = grids; 
+				if (dist >= rad) break;
+			}
+
+			y = y2 + tdy[i];
+			x = x2 + tdx[i];
 
 			/* Ignore "illegal" locations */
 			if (!in_bounds2(wpos, y, x)) continue;
