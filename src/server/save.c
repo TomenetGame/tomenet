@@ -1906,6 +1906,7 @@ bool load_player(int Ind)
 	{
 		/* Give a message */
 		s_printf("Savefile does not exist for player %s.\n", p_ptr->name);
+		s_printf("(%s) %d\n", p_ptr->savefile, errno);
 
 		/* Allow this */
 		return (TRUE);

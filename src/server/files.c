@@ -558,78 +558,78 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 
 
 	/* Display the file */
-		/* Restart when necessary */
-		if (line >= size) line = 0;
+	/* Restart when necessary */
+	if (line >= size) line = 0;
 
 
-		/* Re-open the file if needed */
-		if (next > line)
-		{
-			/* Close it */
-			my_fclose(fff);
+	/* Re-open the file if needed */
+	if (next > line)
+	{
+		/* Close it */
+		my_fclose(fff);
 
-			/* Hack -- Re-Open the file */
-			fff = my_fopen(path, "r");
+		/* Hack -- Re-Open the file */
+		fff = my_fopen(path, "r");
 
-			/* Oops */
-			if (!fff) return (FALSE);
+		/* Oops */
+		if (!fff) return (FALSE);
 
-			/* File has been restarted */
-			next = 0;
-		}
+		/* File has been restarted */
+		next = 0;
+	}
 
-		/* Skip lines if needed */
-		for (; next < line; next++)
-		{
-			/* Skip a line */
-			if (my_fgets(fff, buf, 1024)) break;
-		}
+	/* Skip lines if needed */
+	for (; next < line; next++)
+	{
+		/* Skip a line */
+		if (my_fgets(fff, buf, 1024)) break;
+	}
 
 
-		/* Dump the next 20 lines of the file */
-		for (i = 0; i < 20; )
-		{
-			byte attr = TERM_WHITE;
+	/* Dump the next 20 lines of the file */
+	for (i = 0; i < 20; )
+	{
+		byte attr = TERM_WHITE;
 
-			/* Hack -- track the "first" line */
-			if (!i) line = next;
+		/* Hack -- track the "first" line */
+		if (!i) line = next;
 
-			/* Get a line of the file or stop */
-			if (my_fgets(fff, buf, 1024)) break;
+		/* Get a line of the file or stop */
+		if (my_fgets(fff, buf, 1024)) break;
 
-			/* Hack -- skip "special" lines */
-			if (prefix(buf, "***** ")) continue;
+		/* Hack -- skip "special" lines */
+		if (prefix(buf, "***** ")) continue;
 
-			/* Count the "real" lines */
-			next++;
+		/* Count the "real" lines */
+		next++;
 
-			/* Hack -- keep searching */
-			if (find && !i && !strstr(buf, find)) continue;
+		/* Hack -- keep searching */
+		if (find && !i && !strstr(buf, find)) continue;
 
-			/* Hack -- stop searching */
-			find = NULL;
+		/* Hack -- stop searching */
+		find = NULL;
 
-			/* Extract color */
-			if (color) attr = color_char_to_attr(buf[0]);
+		/* Extract color */
+		if (color) attr = color_char_to_attr(buf[0]);
 
-			/* Hack -- show matches */
-			if (shower[0] && strstr(buf, shower)) attr = TERM_YELLOW;
+		/* Hack -- show matches */
+		if (shower[0] && strstr(buf, shower)) attr = TERM_YELLOW;
 
-			/* Dump the line */
-			Send_special_line(Ind, size, i, attr, &buf[color]);
+		/* Dump the line */
+		Send_special_line(Ind, size, i, attr, &buf[color]);
 
-			/* Count the printed lines */
-			i++;
-		}
+		/* Count the printed lines */
+		i++;
+	}
 
-		/* Hack -- failed search */
-		if (find)
-		{
-			bell();
-			line = back;
-			find = NULL;
-			return (TRUE);
-		}
+	/* Hack -- failed search */
+	if (find)
+	{
+		bell();
+		line = back;
+		find = NULL;
+		return (TRUE);
+	}
 
 	/* Close the file */
 	my_fclose(fff);
@@ -1074,7 +1074,10 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 
 	/* Seek to the beginning */
-	if (highscore_seek(0)) return;
+	if (highscore_seek(0)){
+		my_fclose(fff);
+		return;
+	}
 
 	/* Hack -- Count the high scores */
 	for (i = 0; i < MAX_HISCORES; i++)

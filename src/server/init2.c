@@ -1453,7 +1453,7 @@ void init_swearing(){
 	if(fp==(FILE*)NULL) return;
 	do{
 		fscanf(fp, "%s%d\n", swear[i].word, &swear[i].level);
-		printf("%d %s %d\n", i, swear[i].word, swear[i].level);
+		//printf("%d %s %d\n", i, swear[i].word, swear[i].level);
 		i++;
 	}while(!feof(fp));
 	swear[i].word[0]='\0';
