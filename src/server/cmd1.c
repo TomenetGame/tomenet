@@ -2322,7 +2322,6 @@ bool wraith_access(int Ind){
 	for(i=0;i<num_houses;i++){
 		if(houses[i].depth==p_ptr->dun_depth){
 			if(fill_house(&houses[i], 3, p_ptr)){
-				printf("Got the house!\n");
 				if(access_door(Ind, houses[i].dna))
 					return(TRUE);
 				break;
