@@ -134,7 +134,7 @@ bool cfg_anti_arts_horde = 1;
 
 server_opts cfg =
 {
-	0, 0,
+	6, 0,
 	"mangband.org",
 	"",
 	"changeme",
