@@ -10,6 +10,7 @@
 
 #include "angband.h"
 
+client_opts c_cfg;
 
 int main(int argc, char **argv)
 {
