@@ -144,9 +144,10 @@ end
 -- Displays status information about a player, for example to
 -- calculate the possible difficulty level of admin quests :).
 function status(name)
-    local p
+    local p, r, k
     p = ind(name)
-    msg_print(Ind, "\255UStatus for "..name.." (Index "..p..")")
+    r = players(p).body_monster
+    msg_print(Ind, "\255UStatus for "..name.." (Index "..p..", id "..players(p).id..")")
     msg_print(Ind, "HP :  "..players(p).chp.." / "..players(p).mhp.."    SP :  "..players(p).csp.." / "..players(p).msp.."    San:  "..players(p).csane.." / "..players(p).msane)
     msg_print(Ind, "AC :  "..players(p).ac.."  +AC: "..players(p).to_a.."  Total AC: "..(players(p).ac+players(p).to_a))
     msg_print(Ind, "Spd:  "..players(p).pspeed.."  MDLev: "..players(p).max_dlv)
@@ -155,12 +156,13 @@ function status(name)
     msg_print(Ind, "BpR:  "..players(p).num_blow.."   SpR:  "..players(p).num_fire.."   CpR:  "..players(p).num_spell)
     msg_print(Ind, "Au :  "..players(p).au.."   Bank:  "..players(p).balance)
     msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev] / 100 * players(p).expfact))
-    if players(p).body_monster > 0 then
---	msg_print(Ind, "Body: "..players(p).body_monster.." ("..r_info[players(p).body_monster].name..")")
-	msg_print(Ind, "Body: "..players(p).body_monster.."  -  Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
+    if r > 0 then
+	k = players(p).r_killed[r + 1]
+	msg_print(Ind, "Body: "..r.." ("..lua_get_mon_name(r)..", level "..lua_get_mon_lev(r)..", killed: "..k..")")
     else
-	msg_print(Ind, "Normal Body".."  -  Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
+	msg_print(Ind, "Body: Normal form")
     end
+    msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
     msg_print(Ind, " ".." ")
 end
 
@@ -233,4 +235,40 @@ function det_lev_req(name, i)
     local p
     p = ind(name)
     lua_determine_level_req(p, i)
+end
+
+-- Establish VNC mind link
+function vnc(name)
+    local p, id
+    p = ind(name)
+    id = players(Ind).id
+    players(p).esp_link = id
+    players(p).esp_link_type = 1
+    players(p).esp_link_end = 0
+    players(p).esp_link_flags = 1 + 128
+    msg_print(Ind, "Mind link established.")
+end
+
+-- Break VNC mind link
+function vncoff(name)
+    local p
+    p = ind(name)
+    players(p).esp_link = 0
+    players(p).esp_link_type = 0
+    players(p).esp_link_end = 0
+    players(p).esp_link_flags = 0
+    msg_print(Ind, "Mind link broken.")
+end
+
+-- Show a player's kill count (bodycount) for his current form
+function bcnt(name)
+    local p, r
+    p = ind(name)
+    r = players(p).body_monster
+    if r > 0 then
+	k = players(p).r_killed[r + 1]
+	msg_print(Ind, "Currently in form "..r.." ("..lua_get_mon_name(r)..", level: "..lua_get_mon_lev(r)..", killed: "..k..").")
+    else
+	msg_print(Ind, "Currently in @ form.")
+    end
 end

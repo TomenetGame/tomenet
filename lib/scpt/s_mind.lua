@@ -37,7 +37,7 @@ CONFUSE = add_spell
         ["mana"] = 	5,
         ["mana_max"] = 	30,
         ["fail"] = 	10,
-        ["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
+        ["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
                         if get_level(Ind, CONFUSE, 50) >= 35 then
                                 project_los(Ind, GF_OLD_CONF, 10 + get_level(Ind, CONFUSE, 150))

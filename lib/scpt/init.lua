@@ -39,7 +39,11 @@ pern_dofile(Ind, "jir.lua")
 
 -- Custom scripts that are run automatically - C. Blue
 -- 1) on server starting up: server_startup(string time)
--- 2) on player joining: player_has_joined(int num, int id, string name, string time)
+-- 2) on 1st player joining since server_startup, additionally execute:
+--    first_player_has_joined(int num, int id, string name, string time)
+-- 3) on player joining an empty server, additionally execute:
+--    player_has_joined_empty_server(int num, int id, string name, string time)
+-- 4) on player joining: player_has_joined(int num, int id, string name, string time)
 pern_dofile(Ind, "custom.lua")
 
 
