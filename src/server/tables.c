@@ -1697,6 +1697,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
                                 SKILL_RICOCHET,
                                 '+', 0,
                                 '+', 300,
@@ -1828,6 +1833,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1000,
                         },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
+                        },
 
                 }
 	},
@@ -1876,6 +1886,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
                                 '+', 600,
@@ -1915,6 +1930,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SWIM,
                                 '+', 1000,
                                 '+', 2000,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -1980,6 +2000,11 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SWIM,
                                 '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
                                 '+', 1000,
                         },
                 }
@@ -2048,6 +2073,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SWIM,
                                 '+', 1000,
                                 '+', 1500,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -2145,6 +2175,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1500,
                         },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
+                        },
                 }
         },
 
@@ -2196,6 +2231,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 700,
                         },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
+                        },
                 }
 	},
 
@@ -2238,6 +2278,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
                                 SKILL_HUNTING,
                                 '+', 1000,
                                 '+', 900,
@@ -2266,6 +2311,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_SWIM,
                                 '+', 1000,
                                 '+', 1500,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 3000,
+                                '+', 1000,
                         },
                 }
 	},
@@ -4778,6 +4828,46 @@ skill_type s_info[MAX_SKILLS] =
                 /* Flags */
                 0,
         },
+        {
+                "Boomerag-mastery",
+                "Ability to use (and not to destroy) boomerang.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Training",
+                "Ability to train yourself and overcome weak points.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+        },
 };
 
 /*
@@ -4798,8 +4888,10 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_ARCHERY, SKILL_SLING },
         { SKILL_ARCHERY, SKILL_BOW },
         { SKILL_ARCHERY, SKILL_XBOW },
+        { SKILL_ARCHERY, SKILL_BOOMERANG },
         { SKILL_ARCHERY, SKILL_HUNTING },
-        { SKILL_COMBAT, SKILL_MARTIAL_ARTS},
+        { SKILL_ARCHERY, SKILL_RICOCHET },
+        { SKILL_COMBAT, SKILL_MARTIAL_ARTS },
 
         { -1, SKILL_MAGIC },
         { SKILL_MAGIC, SKILL_DEVICE },
@@ -4807,7 +4899,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_SORCERY, SKILL_CASTSPEED },
         { SKILL_MAGIC, SKILL_MAGERY },
         { SKILL_MAGIC, SKILL_SHADOW },
-        { SKILL_SHADOW, SKILL_SPELLLENGTH},
+        { SKILL_SHADOW, SKILL_SPELLLENGTH },
         { SKILL_MAGIC, SKILL_MIMIC },
         { SKILL_MAGIC, SKILL_PRAY },
 
@@ -4826,6 +4918,7 @@ int skill_tree_init[MAX_SKILLS][2] =
 
         { -1, SKILL_MISC },
         { SKILL_MISC, SKILL_AGILITY },
-        { SKILL_MISC, SKILL_CALMNESS},
-        { SKILL_MISC, SKILL_SWIM},
+        { SKILL_MISC, SKILL_CALMNESS },
+        { SKILL_MISC, SKILL_SWIM },
+        { SKILL_MISC, SKILL_TRAINING },
 };

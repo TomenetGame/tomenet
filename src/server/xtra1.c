@@ -1670,8 +1670,8 @@ int get_archery_skill(player_type *p_ptr)
 
         o_ptr = &p_ptr->inventory[INVEN_BOW];
 
-		/* No Boomerang skill? */
-		if (o_ptr->tval == TV_BOOMERANG) return -1;
+		/* Hack -- Boomerang skill */
+		if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
 
         switch (o_ptr->sval / 10)
         {
@@ -2753,6 +2753,8 @@ static void calc_bonuses(int Ind)
 	{
 		int archery = get_archery_skill(p_ptr);
 
+		p_ptr->tval_ammo = 0;
+
 		/* Take note of required "tval" for missiles */
 		switch (o_ptr->sval)
 		{
@@ -2792,6 +2794,9 @@ static void calc_bonuses(int Ind)
 					break;
 				case SKILL_XBOW:
 					if (p_ptr->tval_ammo == TV_BOLT) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					break;
+				case SKILL_BOOMERANG:
+					if (!p_ptr->tval_ammo) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
 					break;
 			}
 		}

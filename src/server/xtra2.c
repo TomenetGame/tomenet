@@ -2660,7 +2660,35 @@ bool set_food(int Ind, int v)
 
 
 
+/* 
+ * Try to raise stats, esp. if low.		- Jir -
+ */
+void check_training(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int train = get_skill_scale(p_ptr, SKILL_TRAINING, 50);
+	int i, chance, value, value2;
 
+	if (train < 1) return;
+
+	for (i = 0; i < 6; i++)
+	{
+		value = p_ptr->stat_cur[i];
+		value2 = p_ptr->stat_ind[i];
+		chance = train;
+		if (value > 12) chance /= 2;
+		if (value > 17) chance /= 4;
+
+		/* Hack -- High stats, low chance */
+		if (magik(adj_str_hold[value2]) || !magik(chance)) continue;
+
+		/* Hack -- if restored, not increase */
+		if (!res_stat(Ind, i)) do_inc_stat(Ind, i);
+	}
+
+	/* Also, it can give an extra skill point */
+	if (magik(train)) p_ptr->skill_points++;
+}
 
 /*
  * Advance experience levels and print experience
@@ -2752,7 +2780,8 @@ void check_experience(int Ind)
 
 			newlv = TRUE;
 
-			/* TODO: give some stats */
+			/* give some stats, using Training skill */
+			check_training(Ind);
 		}
 
 		/* Sound */

@@ -2227,6 +2227,7 @@ void do_cmd_fire(int Ind, int dir)
 	int                     cur_dis, visible;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
 	int item = INVEN_AMMO;
+	int archery = get_archery_skill(p_ptr);
 
 	object_type         throw_obj;
 	object_type             *o_ptr;
@@ -2899,6 +2900,8 @@ void do_cmd_fire(int Ind, int dir)
 
 		/* Chance of breakage (during attacks) */
 		j = (hit_body ? breakage_chance(o_ptr) : 0);
+		j *= (100 - get_skill_scale(p_ptr, archery,
+					(archery == SKILL_BOOMERANG ? 95 : 80))) / 100;
 
 		/* Break ? */
 		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(100) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))

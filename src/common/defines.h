@@ -4976,11 +4976,11 @@ extern int PlayerUID;
 #define SKILL_SWIM				36
 #define SKILL_MARTIAL_ARTS		37
 #define SKILL_RICOCHET			38
+#define SKILL_BOOMERANG			39
+#define SKILL_TRAINING			40
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB
-#define SKILL_TRAINING
-#define SKILL_BOOMERANG
 #endif	// 0
 
 #define MAX_SKILLS              70
