@@ -27,11 +27,12 @@ static u32b new_accid(void);
 static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 /* admin only - account edit function */
-bool ChangeAccount(cptr name, long flags){
+bool WriteAccount(struct account *r_acc, bool new){
 	int fd;
 	FILE *fp;
 	short found=0;
 	struct account c_acc;
+	long delpos=-1L;
 
 #ifdef NETBSD
 	fd=open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK);
@@ -46,12 +47,19 @@ bool ChangeAccount(cptr name, long flags){
 	if(fp!=(FILE*)NULL){
 		while(!feof(fp) && !found){
 			fread(&c_acc, sizeof(struct account), 1, fp);
-			if(c_acc.flags & ACC_DELD) continue;
-			if(!strcmp(c_acc.name, name)) found=1;
+			if(c_acc.flags & ACC_DELD){
+				if(delpos==-1L) delpos=(ftell(fp)-sizeof(struct account));
+				if(new) break;
+				continue;
+			}
+			if(!strcmp(c_acc.name, r_acc->name)) found=1;
 		}
 		if(found){
-			/* Do the write according to new flags */
+			fseek(fp, -sizeof(struct account), SEEK_CUR);
 		}
+		if(new && delpos!=-1L)
+			fseek(fp, delpos, SEEK_SET);
+		fwrite(r_acc, sizeof(struct account), 1, fp);
 		fclose(fp);
 	}
 #ifndef NETBSD
@@ -72,11 +80,10 @@ bool ChangeAccount(cptr name, long flags){
 struct account *GetAccount(cptr name, char *pass){
 	FILE *fp;
 	struct account *c_acc;
-	long delpos=0;
 
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r+");
+	fp=fopen("tomenet.acc", "r");
 	if(fp==(FILE*)NULL){
 		if(errno==ENOENT){	/* ONLY if non-existent */
 			fp=fopen("tomenet.acc", "w+");
@@ -87,11 +94,7 @@ struct account *GetAccount(cptr name, char *pass){
 	}
 	while(!feof(fp)){
 		fread(c_acc, sizeof(struct account), 1, fp);
-		if(c_acc->flags & ACC_DELD){
-			if(!delpos)
-				delpos=ftell(fp)-sizeof(struct account);
-			continue;
-		}
+		if(c_acc->flags & ACC_DELD) continue;
 		if(!strcmp(c_acc->name, name)){
 			int val;
 			if(pass==NULL)		/* direct name lookup */
@@ -111,12 +114,10 @@ struct account *GetAccount(cptr name, char *pass){
 	/* No account found. Create trial account */ 
 	c_acc->id=new_accid();
 	if(c_acc->id!=0L){
-		if(delpos)
-			fseek(fp, delpos, SEEK_SET);
 		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
 		strcpy(c_acc->name, name);
 		strcpy(c_acc->pass, t_crypt(pass, name));
-		fwrite(c_acc, sizeof(struct account), 1, fp);
+		WriteAccount(c_acc, TRUE);
 	}
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
@@ -171,7 +172,7 @@ struct account *GetAccountID(u32b id){
 	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r+");
+	fp=fopen("tomenet.acc", "r");
 	if(fp==(FILE*)NULL) return(NULL);	/* failed */
 	while(!feof(fp)){
 		fread(c_acc, sizeof(struct account), 1, fp);

@@ -4214,6 +4214,7 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 
 		/* Copy the object */
 		object_copy(q_ptr, o_ptr);
+		q_ptr->next_o_idx=0;
 
 		/* Delete the object */
 		delete_object_idx(this_o_idx);
