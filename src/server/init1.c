@@ -506,6 +506,45 @@ static cptr r_info_flags9[] =
 
 
 /*
+ * Trap flags (PernAngband)
+ */
+static cptr t_info_flags[] =
+{
+   "CHEST",
+   "DOOR",
+   "FLOOR",
+   "CHANGE",	// "XXX4",
+   "XXX5",
+   "XXX6",
+   "XXX7",
+   "XXX8",
+   "XXX9",
+   "XXX10",
+   "XXX11",
+   "XXX12",
+   "XXX13",
+   "XXX14",
+   "XXX15",
+   "XXX16",
+   "LEVEL1",
+   "LEVEL2",
+   "LEVEL3",
+   "LEVEL4",
+   "XXX21",
+   "XXX22",
+   "XXX23",
+   "XXX24",
+   "XXX25",
+   "XXX26",
+   "XXX27",
+   "XXX28",
+   "XXX29",
+   "XXX30",
+   "XXX31",
+   "XXX32"
+};
+
+/*
  * Object flags
  */
 static cptr k_info_flags1[] =
@@ -622,46 +661,47 @@ static cptr k_info_flags3[] =
 	"PERMA_CURSE"
 };
 
+#if 0	// under construction
+
 /*
- * Trap flags (PernAngband)
+ * Trap flags
  */
-static cptr t_info_flags[] =
+cptr k_info_flags2_trap[] =
 {
-   "CHEST",
-   "DOOR",
-   "FLOOR",
-   "CHANGE",	// "XXX4",
-   "XXX5",
-   "XXX6",
-   "XXX7",
-   "XXX8",
-   "XXX9",
-   "XXX10",
-   "XXX11",
-   "XXX12",
-   "XXX13",
-   "XXX14",
-   "XXX15",
-   "XXX16",
-   "LEVEL1",
-   "LEVEL2",
-   "LEVEL3",
-   "LEVEL4",
-   "XXX21",
-   "XXX22",
-   "XXX23",
-   "XXX24",
-   "XXX25",
-   "XXX26",
-   "XXX27",
-   "XXX28",
-   "XXX29",
-   "XXX30",
-   "XXX31",
-   "XXX32"
+        "AUTOMATIC_5",
+        "AUTOMATIC_99",
+        "KILL_GHOST",
+        "TELEPORT_TO",
+        "ONLY_DRAGON",
+        "ONLY_DEMON",
+        "XXX3",
+        "XXX3",
+        "ONLY_ANIMAL",
+        "ONLY_UNDEAD",
+        "ONLY_EVIL",
+        "XXX3",
+	"XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
+        "XXX3",
 };
 
-#if 0	// under construction
 /*
  * Object flags
  */
@@ -1565,7 +1605,7 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 	}
 #if 0
 
-        /* Check flags2 -- traps*/
+        /* Check flags2 -- traps (huh? - Jir -) */
 	for (i = 0; i < 32; i++)
 	{
                 if (streq(what, k_info_flags2_trap[i]))

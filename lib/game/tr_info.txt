@@ -820,6 +820,11 @@ I:5:90:20:1:20:0d0:r
 D:This device disbelieves your feeble spells!
 F:FLOOR | CHEST | DOOR
 
+N:176:Vermine Trap
+I:3:80:20:1:10:0d0:v
+D:Awwww! You feel itchy!
+F:FLOOR | CHEST | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color

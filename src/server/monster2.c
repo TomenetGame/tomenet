@@ -2465,7 +2465,9 @@ static bool summon_specific_okay(int r_idx)
 			break;
 		}
 
-		/* PernA-addition */
+		/* PernA-addition
+		 * many of them are unused for now.	- Jir -
+		 * */
 		case SUMMON_BIZARRE1:
 		{
 			okay = ((r_ptr->d_char == 'm') &&
@@ -2642,6 +2644,13 @@ static bool summon_specific_okay(int r_idx)
 				!(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
+
+		case SUMMON_VERMIN:
+		{
+			okay = (r_ptr->flags2 & RF2_MULTIPLY)?TRUE:FALSE;
+			break;
+		}
+
 #ifdef USE_LUA
 #if 0	// let's leave it to DG :)
 		case SUMMON_LUA:
@@ -2745,7 +2754,8 @@ bool summon_specific(int Depth, int y1, int x1, int lev, int type)
 	 * This fix presumes Morgie and Morgie only has level 100 */
 //      r_idx = get_mon_num((Depth + lev) / 2 + 5);
 #ifdef NEW_DUNGEON
-	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;
+//	r_idx = (lev != 100)?get_mon_num((getlevel(wpos) + lev) / 2 + 5) : 100;
+	r_idx = get_mon_num((lev != 100)?(getlevel(wpos) + lev) / 2 + 5 : 100);
 #else
 	r_idx = (lev != 100)?get_mon_num((Depth + lev) / 2 + 5) : 100;
 #endif

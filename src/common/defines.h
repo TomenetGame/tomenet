@@ -1847,6 +1847,8 @@ that keeps many algorithms happy.
 #define SUMMON_QUYLTHULG            57
 #define SUMMON_LUA                  58
 
+/* Again, PernMangband one(s)	- Jir - */
+#define SUMMON_VERMIN		59
 
 
 /*
@@ -3193,6 +3195,7 @@ extern int PlayerUID;
 #define TRAP_OF_HOSTILITY	173
 #define TRAP_OF_CUISINE		174
 #define TRAP_OF_UNMAGIC		175
+#define TRAP_OF_VERMIN		176
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

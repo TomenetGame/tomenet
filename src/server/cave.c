@@ -986,7 +986,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 //						tmp = dun_level + dungeon_type + c_ptr->feat;
 						tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
 
-						a = tmp % 16;
+//						a = tmp % 16;
+						/* mega-hack: use trap-like colours only */
+						a = tmp % 6 + 1;
 					}
 				}
 			}
@@ -3898,7 +3900,7 @@ void map_area(int Ind)
 	cave_type **zcave;
 	wpos=&p_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
-	if(d_ptr->flags & DUNGEON_NOMAP) return;
+	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
 #else
 	int Depth = p_ptr->dun_depth;
 #endif
@@ -3996,7 +3998,7 @@ void wiz_lite(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	if(d_ptr->flags & DUNGEON_NOMAP) return;
+	if(d_ptr && d_ptr->flags & DUNGEON_NOMAP) return;
 #else
 	int Depth = p_ptr->dun_depth;
 #endif

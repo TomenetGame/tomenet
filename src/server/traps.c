@@ -2190,7 +2190,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 {
 			 int lv = getlevel(&p_ptr->wpos);
 			 object_type *o_ptr, forge;
-			 for(k = 0; k < 200; k++)
+			 for(k = 0; k < 400; k++)
 			 {
 				l = rand_int(MAX_K_IDX);
 
@@ -2215,7 +2215,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       /* Voluminous cuisine Trap */
       case TRAP_OF_CUISINE:
          msg_print(Ind, "You are treated to a marvelous elven cuisine!");
-         (void)set_food(Ind, PY_FOOD_MAX + getlevel(&p_ptr->wpos) + 100 + rand_int(100));
+		 /* 1turn = 100 food value when satiated */
+         (void)set_food(Ind, PY_FOOD_MAX + getlevel(&p_ptr->wpos)*10 + 1000 + rand_int(1000));
          ident=TRUE;
          break;
       /* Trap of unmagic */
@@ -2224,6 +2225,34 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 ident = unmagic(Ind);
 			 break;
 		 }
+      /* Vermin Trap */
+      case TRAP_OF_VERMIN:
+		 l = randint(50 + getlevel(&p_ptr->wpos)) + 100;
+         for (k = 0; k < l; k++)
+         {
+			 s16b cx = x+20-rand_int(40);
+			 s16b cy = y+20-rand_int(40);
+
+			 if (!in_bounds(cy,cx)) 
+			 {
+				 cx = x;
+				 cy = y;
+			 }
+
+			 /* paranoia */
+			 if (!cave_floor_bold(zcave, cy, cx))
+			 {
+				 cx = x;
+				 cy = y;
+			 }
+
+			 ident |= summon_specific(&p_ptr->wpos, cy, cx, getlevel(&p_ptr->wpos), SUMMON_VERMIN);
+         }
+         if (ident)
+         {
+            msg_print(Ind, "You suddenly feel itchy.");
+         }
+         break;
       default:
       {
          s_printf("Executing unknown trap %d", trap);
