@@ -143,6 +143,24 @@ typedef unsigned int u32b;
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
 
+/*
+ * The spell function must provide the desc
+ */
+struct spell_type
+{
+        cptr name;                      /* Name */
+        byte skill_level;               /* Required level (to learn) */
+	byte mana;			/* Required mana at lvl 1 */
+	byte mana_max;			/* Required mana at max lvl */
+	byte fail;			/* Minimum chance of failure */
+        s16b level;                     /* Spell level(0 = not learnt) */
+};
+
+struct school_type
+{
+        cptr name;                      /* Name */
+        s16b skill;                     /* Skill used for that school */
+};
 
 extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
