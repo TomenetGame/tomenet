@@ -2327,12 +2327,14 @@ static bool wr_server_savefile(void)
 	}
 
 
+#if 0
 	/* Note the stores */
 	tmp16u = MAX_STORES;
 	wr_u16b(tmp16u);
 
 	/* Dump the stores */
 	for (i = 0; i < tmp16u; i++) wr_store(&store[i]);
+#endif
 
 	/* Note the parties */
 	tmp16u = MAX_PARTIES;
@@ -2709,12 +2711,20 @@ bool save_server_info(void)
 }
 
 void wr_towns(){
-	int i;
+	int i, j;
 	wr_u16b(numtowns);
 	for(i=0;i<numtowns;i++){
+		printf("writing town %d\n",i);
 		wr_u16b(town[i].x);
 		wr_u16b(town[i].y);
 		wr_u16b(town[i].baselevel);
 		wr_u16b(town[i].flags);
+		wr_u16b(town[i].num_stores);
+
+		/* Dump the stores */
+		for (j = 0; j < town[i].num_stores; j++){
+			printf("writing store %d\n",j);
+			wr_store(&town[i].townstore[j]);
+		}
 	}
 }

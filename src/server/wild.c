@@ -199,6 +199,7 @@ void init_wild_info_aux(int x, int y)
 
 #ifdef NEW_DUNGEON
 void addtown(int y, int x, int base, u16b flags){
+	int n;
 	if(numtowns)
 		GROW(town, numtowns, numtowns+1, struct town_type);
 	else
@@ -207,8 +208,24 @@ void addtown(int y, int x, int base, u16b flags){
 	town[numtowns].y=y;
 	town[numtowns].baselevel=base;
 	town[numtowns].flags=flags;
+	town[numtowns].num_stores=MAX_STORES;
 	wild_info[y][x].type=WILD_TOWN;
 	wild_info[y][x].radius=base;
+	alloc_stores(numtowns);
+	/* Initialize the stores */
+	for (n = 0; n < MAX_STORES; n++)
+	{
+		int i;
+		printf("initing shop %d\n",n);
+		/* Initialize */
+		store_init(&town[numtowns].townstore[n]);
+
+		/* Ignore home and auction house */
+		if ((n == MAX_STORES - 2) || (n == MAX_STORES - 1)) continue;
+
+		/* Maintain the shop */
+		for (i = 0; i < 10; i++) store_maint(&town[numtowns].townstore[n]);
+	}
 	numtowns++;
 }
 

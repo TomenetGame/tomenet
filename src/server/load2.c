@@ -876,10 +876,8 @@ static void rd_lore(int r_idx)
 /*
  * Read a store
  */
-static errr rd_store(int n)
+static errr rd_store(store_type *st_ptr)
 {
-	store_type *st_ptr = &store[n];
-
 	int j;
 
 	byte own, num;
@@ -2431,12 +2429,14 @@ errr rd_server_savefile()
 		rd_byte(&tmp8u);
 	}
 
+#if 0
 	/* Read the stores */
 	rd_u16b(&tmp16u);
 	for (i = 0; i < tmp16u; i++)
 	{
 		if (rd_store(i)) return (22);
 	}
+#endif
 
 	/* Read party info if savefile is new enough */
 	if (older_than(0,3,0))
@@ -2674,20 +2674,28 @@ void new_rd_dungeons(){
 }
 
 void rd_towns(){
-	int i;
+	int i, j;
 	struct worldpos twpos;
 	twpos.wz=0;
 	C_KILL(town, numtowns, struct town_type); /* first is alloced */
 	rd_u16b(&numtowns);
 	C_MAKE(town, numtowns, struct town_type);
 	for(i=0; i<numtowns; i++){
+		printf("Read town %d\n",i);
 		rd_u16b(&town[i].x);
 		rd_u16b(&town[i].y);
 		rd_u16b(&town[i].baselevel);
 		rd_u16b(&town[i].flags);
+		rd_u16b(&town[i].num_stores);
 		wild_info[town[i].y][town[i].x].type=WILD_TOWN;
+		wild_info[town[i].y][town[i].x].radius=town[i].baselevel;
 		twpos.wx=town[i].x;
 		twpos.wy=town[i].y;
+		alloc_stores(i);
+		for(j=0;j<town[i].num_stores;j++){
+			printf("read store %d\n",j);
+			rd_store(&town[i].townstore[j]);
+		}
 	}
 }
 #endif

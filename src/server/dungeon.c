@@ -2844,18 +2844,20 @@ static void process_various(void)
 	{
 		int n;
 
-		/* Maintain each shop (except home and auction house) */
-		for (n = 0; n < MAX_STORES - 2; n++)
-		{
-			/* Maintain */
-			store_maint(n);
-		}
+		for(i=0;i<numtowns;i++){
+			/* Maintain each shop (except home and auction house) */
+			for (n = 0; n < MAX_STORES - 2; n++)
+			{
+				/* Maintain */
+				store_maint(&town[i].townstore[n]);
+			}
 
-		/* Sometimes, shuffle the shopkeepers */
-		if (rand_int(STORE_SHUFFLE) == 0)
-		{
-			/* Shuffle a random shop (except home and auction house) */
-			store_shuffle(rand_int(MAX_STORES - 2));
+			/* Sometimes, shuffle the shopkeepers */
+			if (rand_int(STORE_SHUFFLE) == 0)
+			{
+				/* Shuffle a random shop (except home and auction house) */
+				store_shuffle(&town[i].townstore[rand_int(MAX_STORES - 2)]);
+			}
 		}
 	}
 
@@ -3746,6 +3748,7 @@ void play_game(bool new_game)
 		/* Hack -- enter the world */
 		turn = 1;
 
+#if 0
 		/* Initialize the stores */
 		for (n = 0; n < MAX_STORES; n++)
 		{
@@ -3758,6 +3761,7 @@ void play_game(bool new_game)
 			/* Maintain the shop */
 			for (i = 0; i < 10; i++) store_maint(n);
 		}
+#endif
 	}
 
 

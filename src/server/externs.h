@@ -363,7 +363,6 @@ extern wilderness_type *wild_info;
 extern object_type *o_list;
 extern monster_type *m_list;
 extern quest q_list[MAX_Q_IDX];
-extern store_type *store;
 /*extern object_type *inventory;*/
 extern s16b alloc_kind_size;
 extern alloc_entry *alloc_kind_table;
@@ -452,6 +451,7 @@ extern bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(struct worldpos *wpos, int y, int x);
 extern void everyone_lite_spot(struct worldpos *wpos, int y, int x);
 extern void everyone_forget_spot(struct worldpos *wpos, int y, int x);
+extern cave_type **getcave(struct worldpos *wpos);
 #else
 extern bool los(int Depth, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(int Depth, int y, int x);
@@ -1062,9 +1062,9 @@ extern void store_purchase(int Ind, int item, int amt);
 extern void store_sell(int Ind, int item, int amt);
 extern void store_confirm(int Ind);
 extern void do_cmd_store(int Ind);
-extern void store_shuffle(int which);
-extern void store_maint(int which);
-extern void store_init(int which);
+extern void store_shuffle(store_type *st_ptr);
+extern void store_maint(store_type *st_ptr);
+extern void store_init(store_type *st_ptr);
 
 /* util.c */
 extern errr path_parse(char *buf, int max, cptr file);

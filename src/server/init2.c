@@ -1150,7 +1150,7 @@ static errr init_v_info(void)
 /*** Initialize others ***/
 
 
-
+#if 0
 /*
  * Hack -- Objects sold in the stores -- by tval/sval pair.
  */
@@ -1403,6 +1403,7 @@ static byte store_table[MAX_STORES-3][STORE_CHOICES][2] =
 		{ TV_SORCERY_BOOK, 3 },
 	}
 };
+#endif
 
 
 
@@ -1473,6 +1474,7 @@ static errr init_other(void)
 	house_alloc=1024;
 	/*** Prepare the Stores ***/
 
+#if 0
 	/* Allocate the stores */
 	C_MAKE(store, MAX_STORES, store_type);
 
@@ -1522,6 +1524,7 @@ static errr init_other(void)
 			st_ptr->table[st_ptr->table_num++] = k_idx;
 		}
 	}
+#endif
 
 
 	/*** Pre-allocate the basic "auto-inscriptions" ***/

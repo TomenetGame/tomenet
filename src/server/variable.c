@@ -576,12 +576,6 @@ monster_type *m_list;
  */
 quest q_list[MAX_Q_IDX];
 
-
-/*
- * The stores [MAX_STORES]
- */
-store_type *store;
-
 /*
  * The player's inventory [INVEN_TOTAL]
  *

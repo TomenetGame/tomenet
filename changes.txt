@@ -439,3 +439,6 @@ Change list for PernMangband
 - Baselevel for new towns is set correctly for getlevel()
 - Fixed bug which prevented towers having new_level_up_* set
   if they were maxdepth 1. (Caused endless loop in scatter)
+
+16/12/2001 (Evileye)
+- Added multiple store code, so towns have their own stores.
