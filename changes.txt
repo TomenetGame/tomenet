@@ -22,6 +22,9 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+17/12/2002
+[m]- New metaserver scheme, using xml feeds for ease of parsing
+
 12/12/2002
 [M]- S_LOWEXP and S_NOEXP flags added to prevent summon certain farming.
 
