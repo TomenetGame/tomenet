@@ -122,7 +122,7 @@ school_book[3] = {
 
 -- The book of the everrunning wave
 school_book[4] = {
-        ENTPOTION, TIDALWAVE, ICESTORM,
+        VAPOR, ENTPOTION, TIDALWAVE, ICESTORM,
 }
 
 -- Create the book of translocation
