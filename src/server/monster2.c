@@ -3881,8 +3881,10 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
 
                 j = modify_aux(nr_ptr->blow[i].d_dice, re_ptr->blow[i].d_dice, re_ptr->blowm[i][0]);
                 if (j < 0) j = 0;
+                if (j > 255) j = 255;
                 k = modify_aux(nr_ptr->blow[i].d_side, re_ptr->blow[i].d_side, re_ptr->blowm[i][1]);
                 if (k < 0) k = 0;
+                if (k > 255) k = 255;
 
                 nr_ptr->blow[i].d_dice = j;
                 nr_ptr->blow[i].d_side = k;

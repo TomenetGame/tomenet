@@ -634,13 +634,20 @@ Change list for PernMangband
 - STARTING_STAT_LIMIT compile option, which force the max to 18/40.
 - MULTI_HUED_PROPER compile option, which makes some monsters shimmer nicely.
 - uniques and ego monsters 'sometimes' glitter. (better if bold..)
-- compact_* functions are ameliorated. (hopefully it fixes black-trap too?)
+- compact_* functions are ameliorated.
   This seems to lessen the load and memory consumption in a great way :)
 - adjusted teleport_player a little more.
+[H] larger tavern / shop lighting
+[B] some of holy animals didn't do any damage.
 
+
+
+** [B] stands for Bugfix.
+** [C] stands for Client changes.
+** [H] stands for Hack :)
 
 ---- below this line are the unfixed bugs known ----
-[B] Self-reproducing black trap (.. fixed?)
+[B] Self-reproducing black trap
 [B] Wilderness map('M') is not available.
 [B] Panic save often enters into infinite loop.
 [B] Player forgets the memory of suburb areas (not a bug?)
@@ -648,7 +655,10 @@ Change list for PernMangband
 [B] Restarting server erases all the floor.
 [B] 
 ---- below this line are changes to be done in the future ----
+[small ones]
 - recall-depth array for each dungeons/towers
+- full colour-support in show_file
+[big ones]
 - add more dungeon flags
 - new wilderness generator
 - f_info.txt reform
@@ -661,7 +671,9 @@ Change list for PernMangband
 - guild, or new party system
 - backbone scenario (like token system)
 - new classes/races(/subclasses)
+- interractive spell system (like in C3)
 - total rebalancing for all of them
 - client updates necessary
 - item stacks/monster inventory
 - better vaults
+- fix gfx again

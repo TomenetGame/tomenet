@@ -4967,6 +4967,15 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		x2 = x0 + 5;
 	}
 
+	/* Hack -- make building 8's larger */
+	if (n == 7)
+	{
+		y1 = y0 - 1 - randint(2);
+		y2 = y0 + 1 + randint(2);
+		x1 = x0 - 3 - randint(2);
+		x2 = x0 + 3 + randint(2);
+	}
+
 	/* Build an invulnerable rectangular building */
 	for (y = y1; y <= y2; y++)
 	{
@@ -5365,6 +5374,22 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	{
 		/* Clear previous contents, add a store door */
 		c_ptr->feat = FEAT_SHOP_HEAD + n;
+
+		for (y1 = y - 1; y1 <= y + 1; y1++)
+		{
+			for (x1 = x - 1; x1 <= x + 1; x1++)
+			{
+				/* Get the grid */
+#ifdef NEW_DUNGEON
+				c_ptr = &zcave[y1][x1];
+#else
+				c_ptr = &cave[0][y1][x1];
+#endif
+
+				/* Illuminate the store */
+				c_ptr->info |= CAVE_GLOW;
+			}
+		}
 	}
 }
 

@@ -32,8 +32,11 @@ V:3.3.0
 # A few undeads, to be created by the ANIM_DEAD spell
 # (of course, no such spells for now :p)
 
+# Blow dice modifier is 'byte' type (0-255)!
+
 # Undead egos are of hack, until PernA monster system is
 # fully ported.		- Jir -
+# (now it's implemented so... DELETEME)
 
 #(kopT)
 #N:1:Skeleton
@@ -522,9 +525,9 @@ N:25:Holy
 G:*:v
 I:+50:%400d%400:+20:+50:=0
 W:+30:8:+0:%4000:B
-B:*:*:%300d%300
-B:*:*:%300d%300
-B:*:*:%300d%300
+B:*:*:%255d%255
+B:*:*:%255d%255
+B:*:*:%255d%255
 B:GAZE:TERRIFY:+8d+8
 F:ANIMAL
 H:WEIRD_MIND | EMPTY_MIND | EVIL | R_CHAR_Z | R_CHAR_r
@@ -610,12 +613,12 @@ W:+18:10:%120:%300:A
 # hack - no Titan / Ogre mage Mage
 #H:SMART | DROP_1D2
 F:R_CHAR_P | R_CHAR_O | R_CHAR_y | BASEANGBAND
-M:SMART | FORCE_MAXHP | FORCE_DEPTH | DROP_1D2 | DROP_GOOD | REGENERATE
+M:SMART | FORCE_MAXHP | FORCE_DEPTH | DROP_1D2 | DROP_GOOD |
+M:REGENERATE | RES_TELE
 M:AI_ANNOY
 O:FRIENDS
 S:1_IN_2 | BRAIN_SMASH | MIND_BLAST | HEAL | HOLD | TPORT | BLINK
-S:TELE_AWAY | TELE_LEVEL | FORGET | SCARE | CONF | RES_TELE
-
+S:TELE_AWAY | TELE_LEVEL | FORGET | SCARE | CONF
 N:32:Purified
 G:*:*
 I:+0:+0d+0:+0:+0:+0

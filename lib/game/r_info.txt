@@ -18550,7 +18550,7 @@ D:no one dare utter a so-called 'mystic' word in front of him.
 N:1051:Jan, the Minimite
 G:,:B
 I:140:10d20:40:10:0
-W:10:2:50:10
+W:10:2:50:40
 E:0:0:0:0:0:0
 O:0:0:0:0
 F:UNIQUE | NEVER_BLOW | FORCE_MAXHP | MALE | DROP_CORPSE
