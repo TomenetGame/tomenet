@@ -409,7 +409,7 @@ D:1:You tunnel into the quartz vein.
 # 0x38 --> granite wall -- basic
 
 N:56:granite wall
-G:#:w
+G:#:s
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 F:TUNNELABLE
@@ -418,7 +418,7 @@ D:1:You tunnel into the granite wall.
 # 0x39 --> granite wall -- inner
 
 N:57:granite wall
-G:#:w
+G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
@@ -428,7 +428,7 @@ D:1:You tunnel into the granite wall.
 # 0x3A --> granite wall -- outer
 
 N:58:granite wall
-G:#:w
+G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
@@ -438,7 +438,7 @@ D:1:You tunnel into the granite wall.
 # 0x3B --> granite wall -- solid
 
 N:59:granite wall
-G:#:w
+G:#:s
 M:56
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
