@@ -683,6 +683,28 @@ static void rd_item(object_type *o_ptr)
 	}
 }
 
+static void rd_trap(trap_type *t_ptr)
+{
+	u16b tmp16u;
+
+	/* Hack -- wipe */
+	WIPE(t_ptr, trap_type);
+
+#ifdef NEW_DUNGEON
+	rd_s16b(&t_ptr->wpos.wx);
+	rd_s16b(&t_ptr->wpos.wy);
+	rd_s16b(&t_ptr->wpos.wz);
+#else
+	rd_s32b(&t_ptr->dun_depth);
+#endif
+	rd_s16b(&t_ptr->t_idx);
+	rd_byte(&t_ptr->iy);
+	rd_byte(&t_ptr->ix);
+	rd_byte(&t_ptr->found);
+
+
+//	strip_bytes(1);
+}
 
 
 /*
@@ -2055,6 +2077,25 @@ static errr rd_savefile_new_aux(int Ind)
 	}
 	/*if (arg_fiddle) note("Loaded Object Memory");*/
 
+	/* Trap Memory */
+	rd_u16b(&tmp16u);
+
+	/* Incompatible save files */
+	if (tmp16u > MAX_T_IDX)
+	{
+		note(format("Too many (%u) trap kinds!", tmp16u));
+		return (22);
+	}
+
+	/* Read the object memory */
+	for (i = 0; i < tmp16u; i++)
+	{
+		byte tmp8u;
+
+		rd_byte(&tmp8u);
+
+		Players[Ind]->trap_ident[i] = (tmp8u & 0x01) ? TRUE : FALSE;
+	}
 #if 0
 
 	/* Load the Quests */
@@ -2514,6 +2555,28 @@ errr rd_server_savefile()
 
 		/* Set the maximum object number */
 		o_max = tmp16u;
+	}
+
+	/* Read trap info if new enough */
+	if (!older_than(3,2,2))	// does this even make sense?
+	{
+		rd_u16b(&tmp16u);
+
+		/* Incompatible save files */
+		if (tmp16u > MAX_T_IDX)
+		{
+			note(format("Too many (%u) traps!", tmp16u));
+			return (26);
+		}
+
+		/* Read the available records */
+		for (i = 0; i < tmp16u; i++)
+		{		
+			rd_trap(&t_list[i]);
+		}
+
+		/* Set the maximum object number */
+		t_max = tmp16u;
 	}
 
 	/* Read house info if new enough */

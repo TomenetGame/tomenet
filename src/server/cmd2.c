@@ -455,12 +455,14 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int Ind, int y, int x, object_type *o_ptr)
+// static void chest_trap(int Ind, int y, int x, object_type *o_ptr)
+static void chest_trap(int Ind, int y, int x, s16b o_idx)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &o_list[o_idx];
 
 	int  i, trap;
-
+	bool ident = FALSE;
 
 	/* Only analyze chests */
 	if (o_ptr->tval != TV_CHEST) return;
@@ -468,6 +470,21 @@ static void chest_trap(int Ind, int y, int x, object_type *o_ptr)
 	/* Ignore disarmed chests */
 	if (o_ptr->pval <= 0) return;
 
+	/* Obtain the trap */
+	trap = o_ptr->pval;
+	
+	/* Message */
+	msg_print(Ind, "You found a trap!");
+	
+	/* Set off trap */
+	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
+	if (ident)
+	{
+		p_ptr->trap_ident[o_ptr->pval] = TRUE;
+		msg_format(Ind, "You identified the trap as %s.",
+			   t_name + t_info[trap].name);
+	}
+# if 0	// bye-bye
 	/* Obtain the traps */
 	trap = chest_traps[o_ptr->pval];
 
@@ -530,6 +547,7 @@ static void chest_trap(int Ind, int y, int x, object_type *o_ptr)
 		o_ptr->pval = 0;
 		take_hit(Ind, damroll(5, 8), "an exploding chest");
 	}
+#endif	// 0
 }
 
 
@@ -823,7 +841,7 @@ void do_cmd_open(int Ind, int dir)
 			if (flag)
 			{
 				/* Apply chest traps, if any */
-				chest_trap(Ind, y, x, o_ptr);
+				chest_trap(Ind, y, x, c_ptr->o_idx);
 
 				/* Let the Chest drop items */
 				chest_death(Ind, y, x, o_ptr);
@@ -1703,10 +1721,13 @@ void do_cmd_disarm(int Ind, int dir)
 #endif
 
 	int                 y, x, i, j, power;
+	s16b o_idx;
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
 	object_type             *o_ptr;
+	trap_kind *t_ptr;
+	trap_type *tt_ptr;
 
 	bool            more = FALSE;
 #ifdef NEW_DUNGEON
@@ -1755,9 +1776,20 @@ void do_cmd_disarm(int Ind, int dir)
 		/* Access the item */
 		o_ptr = &o_list[c_ptr->o_idx];
 
+		/* Access the trap */
+		if (c_ptr->special.type == CS_TRAPS) 
+			tt_ptr = c_ptr->special.ptr;
+
 		/* Nothing useful */
+#if 0
 		if (!((c_ptr->feat >= FEAT_TRAP_HEAD) &&
 		      (c_ptr->feat <= FEAT_TRAP_TAIL)) &&
+		    (o_ptr->tval != TV_CHEST))
+
+//			!(c_ptr->special.ptr->found)) &&
+#endif	// 0
+		if (((c_ptr->special.type != CS_TRAPS) ||
+			!(tt_ptr->found)) &&
 		    (o_ptr->tval != TV_CHEST))
 		{
 			/* Message */
@@ -1784,6 +1816,11 @@ void do_cmd_disarm(int Ind, int dir)
 		/* Normal disarm */
 		else if (o_ptr->tval == TV_CHEST)
 		{
+			t_ptr = &t_info[o_ptr->pval];
+
+			/* Disarm the chest */
+//			more = do_cmd_disarm_chest(y, x, c_ptr->o_idx);
+
 			/* Take a turn */
 #ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1799,7 +1836,8 @@ void do_cmd_disarm(int Ind, int dir)
 			if (p_ptr->confused || p_ptr->image) i = i / 10;
 
 			/* Extract the difficulty */
-			j = i - o_ptr->pval;
+			j = i - t_ptr->difficulty * 3;
+//			j = i - o_ptr->pval;
 
 			/* Always have a small chance of success */
 			if (j < 2) j = 2;
@@ -1826,7 +1864,8 @@ void do_cmd_disarm(int Ind, int dir)
 			else if (rand_int(100) < j)
 			{
 				msg_print(Ind, "You have disarmed the chest.");
-				gain_exp(Ind, o_ptr->pval);
+				gain_exp(Ind, t_ptr->difficulty * 3);
+//				gain_exp(Ind, o_ptr->pval);
 				o_ptr->pval = (0 - o_ptr->pval);
 			}
 
@@ -1843,14 +1882,22 @@ void do_cmd_disarm(int Ind, int dir)
 			else
 			{
 				msg_print(Ind, "You set off a trap!");
-				chest_trap(Ind, y, x, o_ptr);
+				chest_trap(Ind, y, x, c_ptr->o_idx);
 			}
 		}
 
 		/* Disarm a trap */
 		else
 		{
-			cptr name = (f_name + f_info[c_ptr->feat].name);
+			cptr name;
+
+			/* Access trap name */
+			if (p_ptr->trap_ident[tt_ptr->t_idx])
+				name = (t_name + t_info[tt_ptr->t_idx].name);
+			else
+				name = "unknown trap";
+
+//			cptr name = (f_name + f_info[c_ptr->feat].name);
 
 			/* Take a turn */
 #ifdef NEW_DUNGEON
@@ -1869,7 +1916,8 @@ void do_cmd_disarm(int Ind, int dir)
 			/* XXX XXX XXX Variable power? */
 
 			/* Extract trap "power" */
-			power = 5;
+			power = t_info[tt_ptr->t_idx].difficulty;
+//			power = 5;
 
 			/* Extract the difficulty */
 			j = i - power;
@@ -1887,8 +1935,10 @@ void do_cmd_disarm(int Ind, int dir)
 				gain_exp(Ind, power);
 
 				/* Remove the trap */
-				c_ptr->feat = FEAT_FLOOR;
+				delete_trap_idx(c_ptr->special.ptr);
+//				c_ptr->feat = FEAT_FLOOR;
 
+#if 0
 #ifdef NEW_DUNGEON
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
@@ -1908,6 +1958,7 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Redisplay the grid */
 				everyone_lite_spot(Depth, y, x);
 #endif
+#endif	// 0
 
 				/* move the player onto the trap grid */
 				move_player(Ind, dir, FALSE);

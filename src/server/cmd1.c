@@ -503,6 +503,7 @@ void search(int Ind)
 
 	cave_type    *c_ptr;
 	object_type  *o_ptr;
+	trap_type    *t_ptr;
 #ifdef NEW_DUNGEON                  
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
@@ -538,20 +539,25 @@ void search(int Ind)
 				o_ptr = &o_list[c_ptr->o_idx];
 
 				/* Invisible trap */
-				if (c_ptr->feat == FEAT_INVIS)
+//				if (c_ptr->feat == FEAT_INVIS)
+				if (c_ptr->special.type == CS_TRAPS)
 				{
-					/* Pick a trap */
+					t_ptr = c_ptr->special.ptr;
+					if (!t_ptr->found)
+					{
+						/* Pick a trap */
 #ifdef NEW_DUNGEON
-					pick_trap(wpos, y, x);
+						pick_trap(wpos, y, x);
 #else
-					pick_trap(Depth, y, x);
+						pick_trap(Depth, y, x);
 #endif
 
-					/* Message */
-					msg_print(Ind, "You have found a trap.");
+						/* Message */
+						msg_print(Ind, "You have found a trap.");
 
-					/* Disturb */
-					disturb(Ind, 0, 0);
+						/* Disturb */
+						disturb(Ind, 0, 0);
+					}
 				}
 
 				/* Secret door */
@@ -583,7 +589,8 @@ void search(int Ind)
 				else if (o_ptr->tval == TV_CHEST)
 				{
 					/* Examine chests for traps */
-					if (!object_known_p(Ind, o_ptr) && (chest_traps[o_ptr->pval]))
+//					if (!object_known_p(Ind, o_ptr) && (t_info[o_ptr->pval]))
+					if (!object_known_p(Ind, o_ptr) && (o_ptr->pval))
 					{
 						/* Message */
 						msg_print(Ind, "You have discovered a trap on the chest!");
@@ -797,18 +804,20 @@ static int check_hit(int Ind, int power)
 static void hit_trap(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	trap_type *t_ptr;
 #ifdef NEW_DUNGEON
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 #else
 	int Depth = p_ptr->dun_depth;
 #endif
-	int                     i, num, dam;
+//	int                     i, num, dam;
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
 
 	cptr            name = "a trap";
+	bool ident=FALSE;
 
 	/* Ghosts ignore traps */
 	if ((p_ptr->ghost) || (p_ptr->tim_traps)) return;
@@ -824,7 +833,19 @@ static void hit_trap(int Ind)
 	c_ptr = &cave[Depth][p_ptr->py][p_ptr->px];
 #endif        
 	w_ptr = &p_ptr->cave_flag[p_ptr->py][p_ptr->px];
+	t_ptr = c_ptr->special.ptr;
 
+	if (t_ptr->t_idx != 0)
+	{
+		ident = player_activate_trap_type(Ind, p_ptr->py, p_ptr->px, NULL, -1);
+		if (ident && !p_ptr->trap_ident[t_ptr->t_idx])
+		{
+			p_ptr->trap_ident[t_ptr->t_idx] = TRUE;
+			msg_format(Ind, "You identified the trap as %s.",
+				   t_name + t_info[t_ptr->t_idx].name);
+		}
+	}
+#if 0	// Au revoir!
 	/* Analyze XXX XXX XXX */
 	switch (c_ptr->feat)
 	{
@@ -1122,6 +1143,7 @@ static void hit_trap(int Ind)
 			break;
 		}
 	}
+#endif	// 0
 }
 
 
@@ -2038,6 +2060,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	monster_type    *m_ptr;
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	trap_type *t_ptr;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -2642,32 +2665,39 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Discover invisible traps */
-		else if (c_ptr->feat == FEAT_INVIS)
+//		else if (c_ptr->feat == FEAT_INVIS)
+		else if (c_ptr->special.type == CS_TRAPS)
 		{
+			t_ptr = c_ptr->special.ptr;
+
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
-			/* Message */
-			msg_print(Ind, "You found a trap!");
+			if (!t_ptr->found)
+			{
+				/* Message */
+				msg_print(Ind, "You found a trap!");
 
-			/* Pick a trap */
+				/* Pick a trap */
 #ifdef NEW_DUNGEON
-			pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+				pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 #else
-			pick_trap(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+				pick_trap(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
 #endif
+			}
+#if 0
+			/* Set off an visible trap */
+			//		else if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
+			//			 (c_ptr->feat <= FEAT_TRAP_TAIL))
+			else
+			{
+				/* Disturb */
+				disturb(Ind, 0, 0);
 
-			/* Hit the trap */
-			hit_trap(Ind);
-		}
-
-		/* Set off an visible trap */
-		else if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			 (c_ptr->feat <= FEAT_TRAP_TAIL))
-		{
-			/* Disturb */
-			disturb(Ind, 0, 0);
-
+				/* Hit the trap */
+				hit_trap(Ind);
+			}
+#endif	// 0
 			/* Hit the trap */
 			hit_trap(Ind);
 		}
@@ -3209,7 +3239,7 @@ static bool run_test(int Ind)
 				case FEAT_FLOOR:
 
 				/* Invis traps */
-				case FEAT_INVIS:
+//				case FEAT_INVIS:
 
 				/* Secret doors */
 				case FEAT_SECRET:

@@ -102,6 +102,19 @@ struct header
 };
 
 
+/* worldpos - replaces depth/dun_depth ulong with x,y,z
+ * coordinates of world positioning.
+ * it may seem cumbersome, but better than having
+ * extra variables in each struct. (its standard).
+ */
+typedef struct worldpos worldpos;
+
+struct worldpos{
+	s16b wx;	/* west to east */
+	s16b wy;	/* south to north */
+	s16b wz;	/* deep to sky */
+};
+
 
 /*
  * Information about terrain "features"
@@ -113,6 +126,12 @@ struct feature_type
 {
 	u16b name;			/* Name (offset) */
 	u16b text;			/* Text (offset) */
+#if 0
+        u32b tunnel;            /* Text for tunneling */
+        u32b block;             /* Text for blocking */
+
+        u32b flags1;            /* First set of flags */
+#endif
 
 	byte mimic;			/* Feature to mimic */
 
@@ -125,6 +144,15 @@ struct feature_type
 
 	byte z_attr;		/* The desired attr for this feature */
 	char z_char;		/* The desired char for this feature */
+
+#if 0
+        byte shimmer[7];        /* Shimmer colors */
+
+        int d_dice[4];                  /* Number of dices */
+        int d_side[4];                  /* Number of sides */
+        int d_frequency[4];             /* Frequency of damage (1 is the minimum) */
+        int d_type[4];                  /* Type of damage */
+#endif
 };
 
 
@@ -330,6 +358,7 @@ struct monster_race
 
 	s32b mexp;				/* Exp value for kill */
 
+//	s32b weight;		/* Weight of the monster */
 	s16b extra;				/* Unused (for now) */
 
 	byte freq_inate;		/* Inate spell frequency */
@@ -341,9 +370,15 @@ struct monster_race
 	u32b flags4;			/* Flags 4 (inate/breath) */
 	u32b flags5;			/* Flags 5 (normal spells) */
 	u32b flags6;			/* Flags 6 (special spells) */
+#if 0
+	u32b flags7;			/* Flags 7 (movement related abilities) */
+	u32b flags8;			/* Flags 8 (wilderness info) */
+	u32b flags9;			/* Flags 9 (drops info) */
+#endif
 
 	monster_blow blow[4];	/* Up to four blows per round */
 
+//	byte body_parts[BODY_MAX];	/* To help to decide what to use when body changing */
 
 	s16b level;				/* Level of creature */
 	byte rarity;			/* Rarity of creature */
@@ -392,6 +427,13 @@ struct monster_race
 	u32b r_flags4;			/* Observed racial flags */
 	u32b r_flags5;			/* Observed racial flags */
 	u32b r_flags6;			/* Observed racial flags */
+#if 0
+	u32b r_flags7;			/* Observed racial flags */
+	u32b r_flags8;			/* Observed racial flags */
+	u32b r_flags9;			/* Observed racial flags */
+
+	obj_theme drops;		/* The drops type */
+#endif
 };
 
 
@@ -416,6 +458,38 @@ struct vault_type
 };
 
 
+/* jk */
+/* name and description are in some other arrays */
+typedef struct trap_kind trap_kind;
+struct trap_kind{
+  s16b probability; /* probability of existence */
+  s16b another;     /* does this trap easily combine */
+  s16b p1valinc;     /* how much does this trap attribute to p1val */
+  byte difficulty;  /* how difficult to disarm */
+  byte minlevel;    /* what is the minimum level on which the traps should be */
+  byte color;       /* what is the color on screen */
+  u32b flags;       /* where can these traps go - and perhaps other flags */
+#if 0	// Handled in player_type
+  bool ident;       /* do we know the name */
+  s16b known;       /* how well is this trap known */
+#endif
+  s16b name;        /* normal name like weakness */
+  s16b dd, ds;      /* base damage */
+  s16b text;        /* longer description once you've met this trap */
+};
+
+typedef struct trap_type trap_type;
+struct trap_type
+{
+	struct worldpos wpos;		/* position on world map */
+	byte iy;			/* Y-position on map, or zero */
+	byte ix;			/* X-position on map, or zero */
+	
+	byte t_idx;			/* Kind index (zero if non-trapped) */
+						/* is 255 enough? */
+
+	bool found;			/* Is this trap revealed? */
+};
 
 
 
@@ -442,6 +516,7 @@ struct vault_type
 /* Cave special types */
 #define DNA_DOOR 1
 #define KEY_DOOR 2
+#define CS_TRAPS 3 	// CS stands for Cave Special
 
 struct c_special{
 	unsigned char type;
@@ -469,19 +544,6 @@ struct cave_type
 
 #endif
 	struct c_special special;	/* Special pointer to various struct */
-};
-
-/* worldpos - replaces depth/dun_depth ulong with x,y,z
- * coordinates of world positioning.
- * it may seem cumbersome, but better than having
- * extra variables in each struct. (its standard).
- */
-typedef struct worldpos worldpos;
-
-struct worldpos{
-	s16b wx;	/* west to east */
-	s16b wy;	/* south to north */
-	s16b wz;	/* deep to sky */
 };
 
 /*
@@ -521,6 +583,10 @@ struct object_type
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter */
+#if 0
+	s16b pval2;			/* Item extra-parameter for some special items*/
+	s32b pval3;			/* Item extra-parameter for some special items*/
+#endif
 
 	byte discount;		/* Discount (if any) */
 
@@ -550,6 +616,11 @@ struct object_type
 	/*byte marked;	*/	/* Object is marked */
 
 	u16b note;			/* Inscription index */
+#if 0	
+	s16b next_o_idx;	/* Next object in stack (if any) */
+
+	s16b held_m_idx;	/* Monster holding us (if any) */
+#endif
 };
 
 
@@ -599,6 +670,13 @@ struct monster_type
 	byte confused;		/* Monster is confused */
 	byte monfear;		/* Monster is afraid */
 
+#if 0
+	s16b bleeding;          /* Monster is bleeding */
+	s16b poisoned;          /* Monster is poisoned */
+
+	s16b hold_o_idx;	/* Object being held (if any) */
+#endif
+
 	byte cdis;			/* Current dis from player */
 
 /*	bool los;*/			/* Monster is "in sight" */
@@ -629,6 +707,13 @@ struct monster_type
 #ifdef RANDUNIS
 	u16b ego;                       /* Ego monster type */
 	s32b name3;			/* Randuni seed, if any */
+#endif
+#if 0
+	s16b status;		/* Status(friendly, pet, companion, ..) */
+
+	s16b target;		/* Monster target */
+
+	s16b possessor;		/* Is it under the control of a possessor ? */
 #endif
 };
 
@@ -816,7 +901,6 @@ struct store_type
 	s16b bad_buy;			/* Number of "bad" buys */
 
 	s32b store_open;		/* Closed until this turn */
-
 	s32b store_wrap;		/* Unused for now */
 
 	s16b table_num;			/* Table -- Number of entries */
@@ -964,7 +1048,31 @@ struct owner_type
  * A store, with an owner, various state flags, a current stock
  * of items, and a table of items that are often purchased.
  */
+#if 0
+typedef struct store_type store_type;
+struct store_type
+{
+	byte owner;				/* Owner index */
+	byte extra;				/* Unused for now */
 
+	s16b insult_cur;		/* Insult counter */
+
+	s16b good_buy;			/* Number of "good" buys */
+	s16b bad_buy;			/* Number of "bad" buys */
+
+	s32b store_open;		/* Closed until this turn */
+
+	s32b store_wrap;		/* Unused for now */
+
+	s16b table_num;			/* Table -- Number of entries */
+	s16b table_size;		/* Table -- Total Size of Array */
+	s16b *table;			/* Table -- Legal item kinds */
+
+	s16b stock_num;			/* Stock -- Number of entries */
+	s16b stock_size;		/* Stock -- Total Size of Array */
+	object_type *stock;		/* Stock -- Actual stock items */
+};
+#endif	// 0
 
 
 
@@ -1222,6 +1330,10 @@ struct hostile_type
  * whenever anything important changes.
  */
 
+/*
+ * high time to economize memory by bandling bool arrays into
+ * char one or something, like in wild_map[MAX_WILD_8] ?	- Jir -
+ */
 
 typedef struct player_type player_type;
 
@@ -1377,6 +1489,9 @@ struct player_type
 
 	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
 	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
+
+	bool trap_ident[MAX_T_IDX];       /* do we know the name */
+//	s16b trap_known[MAX_T_IDX];       /* how well is this trap known */
 
 	bool options[64];	/* Player's options */
 	byte d_attr[MAX_K_IDX];
@@ -1579,6 +1694,10 @@ struct player_type
 
 	s16b stat_add[6];	/* Modifiers to stat values */
 	s16b stat_ind[6];	/* Indexes into stat tables */
+#if 0
+	s16b stat_cnt[6];	/* Counter for temporary drains */
+	s16b stat_los[6];	/* Amount of temporary drains */
+#endif	// 0
 
 	bool immune_acid;	/* Immunity to acid */
 	bool immune_elec;	/* Immunity to lightning */

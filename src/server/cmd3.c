@@ -1624,6 +1624,14 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		if (p_ptr->obj_vis[c_ptr->o_idx]) return (TRUE);
 	}
 
+	/* Traps */
+	if (c_ptr->special.type == CS_TRAPS)
+	{
+		trap_type *t_ptr = c_ptr->special.ptr;
+		/* Revealed traps */
+		if (t_ptr->found) return (TRUE);
+	}
+
 	/* Interesting memorized features */
 	if (*w_ptr & CAVE_MARK)
 	{
@@ -1641,10 +1649,11 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 		/* Notice shops */
 		if ((c_ptr->feat >= FEAT_SHOP_HEAD) &&
 		    (c_ptr->feat <= FEAT_SHOP_TAIL)) return (TRUE);
-
+#if 0
 		/* Notice traps */
 		if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
 		    (c_ptr->feat <= FEAT_TRAP_TAIL)) return (TRUE);
+#endif
 
 		/* Notice doors */
 		if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
@@ -1856,9 +1865,23 @@ void do_cmd_look(int Ind, int dir)
 	{
 		int feat = f_info[c_ptr->feat].mimic;
 		cptr name = f_name + f_info[feat].name;
-		cptr p1 = "A ";
+		cptr p1 = "A ", p2 = "";
 
 		if (is_a_vowel(name[0])) p1 = "An ";
+
+		/* Hack -- add trap description */
+		if (c_ptr->special.type == CS_TRAPS)
+		{
+			trap_type *t_ptr = c_ptr->special.ptr;
+			if (t_ptr->found)
+			{
+				if (p_ptr->trap_ident[t_ptr->t_idx])
+					p1 = t_name + t_info[t_ptr->t_idx].name;
+				else
+					p1 = "A trap";
+			}
+			p2 = " on ";
+		}
 
 		/* Hack -- special description for store doors */
 		if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
@@ -1867,7 +1890,7 @@ void do_cmd_look(int Ind, int dir)
 		}
 
 		/* Message */
-		sprintf(out_val, "%s%s", p1, name);
+		sprintf(out_val, "%s%s%s", p1, p2, name);
 	}
 
 	/* Append a little info */

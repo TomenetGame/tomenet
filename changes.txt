@@ -447,3 +447,7 @@ Change list for PernMangband
 - Fixed compilation problem with control.c
 - Houses added to 24 hour maintenance cycle
 - Logging added to maintenance (keep logs???)
+
+16/12/2001 (Jir)
+- PernA traps (about 160 kinds) and trap system ported.
+- Fixed a bug where vault didn't contain monsters.

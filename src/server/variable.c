@@ -531,6 +531,11 @@ s16b o_fast[MAX_O_IDX];
  */
 s16b m_fast[MAX_M_IDX];
 
+/*
+ * The array of indexes of "live" traps
+ */
+s16b t_fast[MAX_T_IDX];
+
 
 /*
  * The array of "cave grids" [MAX_WID][MAX_HGT].
@@ -572,9 +577,20 @@ object_type *o_list;
 monster_type *m_list;
 
 /*
+ * The array of dungeon traps [MAX_T_IDX]
+ * (elsewhere)
+ */
+// trap_type *t_list;
+
+/*
  * Hack -- Quest array
  */
 quest q_list[MAX_Q_IDX];
+
+/*
+ * The stores [MAX_STORES]
+ */
+store_type *store;
 
 /*
  * The player's inventory [INVEN_TOTAL]
@@ -705,6 +721,17 @@ header *e_head;
 ego_item_type *e_info;
 char *e_name;
 char *e_text;
+
+/* jk / Jir */
+/* the trap-arrays/variables */
+header *t_head;
+trap_type *t_list;
+trap_kind *t_info;
+char *t_name;
+char *t_text;
+s32b t_nxt = 1;
+s32b t_max = 1;
+s32b t_top = 0;
 
 
 /*

@@ -198,7 +198,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_WEAKNESS:
 		{
 			take_hit(Ind, damroll(6, 6), "poisonous food.");
-			(void)do_dec_stat(Ind, A_STR);
+			(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -206,7 +206,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_SICKNESS:
 		{
 			take_hit(Ind, damroll(6, 6), "poisonous food.");
-			(void)do_dec_stat(Ind, A_CON);
+			(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -214,7 +214,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_STUPIDITY:
 		{
 			take_hit(Ind, damroll(8, 8), "poisonous food.");
-			(void)do_dec_stat(Ind, A_INT);
+			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -222,7 +222,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_NAIVETY:
 		{
 			take_hit(Ind, damroll(8, 8), "poisonous food.");
-			(void)do_dec_stat(Ind, A_WIS);
+			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -230,7 +230,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_UNHEALTH:
 		{
 			take_hit(Ind, damroll(10, 10), "poisonous food.");
-			(void)do_dec_stat(Ind, A_CON);
+			(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -238,7 +238,7 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_DISEASE:
 		{
 			take_hit(Ind, damroll(10, 10), "poisonous food.");
-			(void)do_dec_stat(Ind, A_STR);
+			(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
@@ -617,49 +617,49 @@ void do_cmd_quaff_potion(int Ind, int item)
 		{
 			msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
 			take_hit(Ind, damroll(10, 10), "a potion of Ruination");
-			(void)dec_stat(Ind, A_DEX, 25, TRUE);
-			(void)dec_stat(Ind, A_WIS, 25, TRUE);
-			(void)dec_stat(Ind, A_CON, 25, TRUE);
-			(void)dec_stat(Ind, A_STR, 25, TRUE);
-			(void)dec_stat(Ind, A_CHR, 25, TRUE);
-			(void)dec_stat(Ind, A_INT, 25, TRUE);
+			(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_STR, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_INT, 25, STAT_DEC_NORMAL);
 			ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_STR:
 		{
-			if (do_dec_stat(Ind, A_STR)) ident = TRUE;
+			if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_INT:
 		{
-			if (do_dec_stat(Ind, A_INT)) ident = TRUE;
+			if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_WIS:
 		{
-			if (do_dec_stat(Ind, A_WIS)) ident = TRUE;
+			if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_DEX:
 		{
-			if (do_dec_stat(Ind, A_DEX)) ident = TRUE;
+			if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_CON:
 		{
-			if (do_dec_stat(Ind, A_CON)) ident = TRUE;
+			if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
 		case SV_POTION_DEC_CHR:
 		{
-			if (do_dec_stat(Ind, A_CHR)) ident = TRUE;
+			if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) ident = TRUE;
 			break;
 		}
 
@@ -1041,7 +1041,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 /*
  * Curse the players armor
  */
-static bool curse_armor(int Ind)
+bool curse_armor(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1108,7 +1108,7 @@ static bool curse_armor(int Ind)
 /*
  * Curse the players weapon
  */
-static bool curse_weapon(int Ind)
+bool curse_weapon(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -3398,12 +3398,12 @@ static void ring_of_power(int Ind, int dir)
 			msg_print(Ind, "You are surrounded by a malignant aura.");
 
 			/* Decrease all stats (permanently) */
-			(void)dec_stat(Ind, A_STR, 50, TRUE);
-			(void)dec_stat(Ind, A_INT, 50, TRUE);
-			(void)dec_stat(Ind, A_WIS, 50, TRUE);
-			(void)dec_stat(Ind, A_DEX, 50, TRUE);
-			(void)dec_stat(Ind, A_CON, 50, TRUE);
-			(void)dec_stat(Ind, A_CHR, 50, TRUE);
+			(void)dec_stat(Ind, A_STR, 50, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_INT, 50, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_WIS, 50, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_DEX, 50, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CON, 50, STAT_DEC_NORMAL);
+			(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
 
 			/* Lose some experience (permanently) */
 			p_ptr->exp -= (p_ptr->exp / 4);

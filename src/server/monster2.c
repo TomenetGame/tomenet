@@ -1603,7 +1603,7 @@ static bool place_monster_one(int Depth, int y, int x, int r_idx, int ego, int r
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
 	if(istown(wpos) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
-	if(wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
+	if(wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY && !wpos->wz) return(FALSE);
 
 #if 0
 	/* should be sorted - look above */
@@ -2452,6 +2452,194 @@ static bool summon_specific_okay(int r_idx)
 			okay = (r_ptr->flags1 & RF1_UNIQUE);
 			break;
 		}
+
+		/* PernA-addition */
+		case SUMMON_BIZARRE1:
+		{
+			okay = ((r_ptr->d_char == 'm') &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+		case SUMMON_BIZARRE2:
+		{
+			okay = ((r_ptr->d_char == 'b') &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+		case SUMMON_BIZARRE3:
+		{
+			okay = ((r_ptr->d_char == 'Q') &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_BIZARRE4:
+		{
+			okay = ((r_ptr->d_char == 'v') &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_BIZARRE5:
+		{
+			okay = ((r_ptr->d_char == '$') &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_BIZARRE6:
+		{
+			okay = (((r_ptr->d_char == '!') ||
+			         (r_ptr->d_char == '?') ||
+			         (r_ptr->d_char == '=') ||
+			         (r_ptr->d_char == '$') ||
+			         (r_ptr->d_char == '|')) &&
+			        !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+                case SUMMON_HI_DEMON:
+		{
+			okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
+                                (r_ptr->d_char == 'U') &&
+			       !(r_ptr->flags1 & RF1_UNIQUE));
+			break;
+		}
+
+#if 0
+		case SUMMON_KIN:
+		{
+			okay = ((r_ptr->d_char == summon_kin_type) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+#endif	// 0
+
+		case SUMMON_DAWN:
+		{
+			okay = ((strstr((r_name + r_ptr->name),"the Dawn")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_ANIMAL:
+		{
+			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_ANIMAL_RANGER:
+		{
+			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
+			       (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
+			       !(r_ptr->flags3 & (RF3_DRAGON))&&
+			       !(r_ptr->flags3 & (RF3_EVIL)) &&
+			       !(r_ptr->flags3 & (RF3_UNDEAD))&&
+			       !(r_ptr->flags3 & (RF3_DEMON)) &&
+			       !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_HI_UNDEAD_NO_UNIQUES:
+		{
+			okay = (((r_ptr->d_char == 'L') ||
+			         (r_ptr->d_char == 'V') ||
+			         (r_ptr->d_char == 'W')) &&
+			        !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_HI_DRAGON_NO_UNIQUES:
+		{
+			okay = ((r_ptr->d_char == 'D') &&
+			       !(r_ptr->flags1 &(RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_NO_UNIQUES:
+		{
+			okay = (!(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_PHANTOM:
+		{
+			okay = ((strstr((r_name + r_ptr->name),"Phantom")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_ELEMENTAL:
+		{
+			okay = ((strstr((r_name + r_ptr->name),"lemental")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+#if 0	// :p
+                case SUMMON_DRAGONRIDER:
+		{
+                        okay = (r_ptr->flags3 & RF3_DRAGONRIDER)?TRUE:FALSE;
+			break;
+		}
+#endif
+		case SUMMON_BLUE_HORROR:
+		{
+			okay = ((strstr((r_name + r_ptr->name),"lue horror")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+                case SUMMON_BUG:
+		{
+                        okay = ((strstr((r_name + r_ptr->name),"Software bug")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+                case SUMMON_RNG:
+		{
+                        okay = ((strstr((r_name + r_ptr->name),"Random Number Generator")) &&
+			       !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+                case SUMMON_MINE:
+		{
+                        okay = (r_ptr->flags1 & RF1_NEVER_MOVE)?TRUE:FALSE;
+			break;
+		}
+
+                case SUMMON_HUMAN:
+		{
+                        okay = ((r_ptr->d_char == 'p') &&
+			        !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_SHADOWS:
+		{
+			okay = ((r_ptr->d_char == 'G') &&
+			        !(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+
+		case SUMMON_QUYLTHULG:
+		{
+			okay = ((r_ptr->d_char == 'Q') &&
+				!(r_ptr->flags1 & (RF1_UNIQUE)));
+			break;
+		}
+#ifdef USE_LUA
+#if 0	// let's leave it to DG :)
+		case SUMMON_LUA:
+		{
+			okay = summon_lua_okay(r_idx);
+			break;
+		}
+#endif
+#endif
+
 	}
 
 	/* Result */

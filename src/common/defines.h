@@ -120,6 +120,13 @@
  */
 #define MAX_WID		198
 
+/* Used only in object3.c / trap effects (PernA) */
+#if ((MAX_HGT / SCREEN_HGT) < (MAX_WID / SCREEN_WID))
+ #define RATIO (MAX_WID / SCREEN_WID)
+#else
+ #define RATIO (MAX_HGT / SCREEN_HGT)
+#endif
+
 /*
  * Hack -- This is used to make sure that every player that has a structure
  * dedicated to them is actually connected
@@ -188,6 +195,7 @@
 #define MAX_R_IDX	563 /* Max size for "r_info[]"  551 + 12 (Tanix fix) */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
+#define MAX_T_IDX	256 /* Max size for "re_info[]" */
 
 
 
@@ -196,6 +204,7 @@
  */
 #define MAX_O_IDX	32768	/* Max size for "o_list[]" */
 #define MAX_M_IDX 	32768	/* Max size for "m_list[]" */
+#define MAX_TR_IDX 	32768	/* Max size for "tr_list[]" */
 
 
 /*
@@ -383,7 +392,7 @@
 /*
  * Misc constants
  */
-#define SERVER_SAVE	100		/* How often to save the server state */
+#define SERVER_SAVE	500		/* How often to save the server state (100) */
 #define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
 #define BREAK_GLYPH		550		/* Rune of protection resistance */
@@ -659,6 +668,7 @@
 
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
+/* Reform scheduled!! */
 
 /* Nothing */
 #define FEAT_NONE		0x00
@@ -1615,15 +1625,21 @@ that keeps many algorithms happy.
 /*
  * Special cave grid flags
  */
-#define CAVE_MARK	0x01 	/* memorized feature */
-#define CAVE_GLOW	0x02 	/* self-illuminating */
-#define CAVE_ICKY	0x04 	/* part of a vault */
-#define CAVE_ROOM	0x08 	/* part of a room */
-#define CAVE_LITE	0x10 	/* lite flag  */
-#define CAVE_VIEW	0x20 	/* view flag */
-#define CAVE_TEMP	0x40 	/* temp flag */
-#define CAVE_XTRA	0x80 	/* misc flag */
+#define CAVE_MARK	0x0001 	/* memorized feature */
+#define CAVE_GLOW	0x0002 	/* self-illuminating */
+#define CAVE_ICKY	0x0004 	/* part of a vault */
+#define CAVE_ROOM	0x0008 	/* part of a room */
+#define CAVE_LITE	0x0010 	/* lite flag  */
+#define CAVE_VIEW	0x0020 	/* view flag */
+#define CAVE_TEMP	0x0040 	/* temp flag */
+#define CAVE_XTRA	0x0080 	/* misc flag */
 
+#if 0	// for future expansion..
+#define CAVE_TRDT	0x0100    /* trap detected */
+#define CAVE_IDNT	0x0200    /* grid identified (fountains) */
+#define CAVE_SPEC	0x0400    /* special mark(quests) */
+#define CAVE_FREE	0x0800    /* no random generation on it */
+#endif
 
 
 /*
@@ -1801,6 +1817,34 @@ that keeps many algorithms happy.
 #define SUMMON_HI_DRAGON	22
 #define SUMMON_WRAITH		31
 #define SUMMON_UNIQUE		32
+/* additions from PernA */
+#define SUMMON_BIZARRE1             33
+#define SUMMON_BIZARRE2             34
+#define SUMMON_BIZARRE3             35
+#define SUMMON_BIZARRE4             36
+#define SUMMON_BIZARRE5             37
+#define SUMMON_BIZARRE6             38
+#define SUMMON_HI_DEMON             39
+#define SUMMON_KIN                  40
+#define SUMMON_DAWN                 41
+#define SUMMON_ANIMAL               42
+#define SUMMON_ANIMAL_RANGER        43
+#define SUMMON_HI_UNDEAD_NO_UNIQUES 44
+#define SUMMON_HI_DRAGON_NO_UNIQUES 45
+#define SUMMON_NO_UNIQUES           46
+#define SUMMON_PHANTOM              47
+#define SUMMON_ELEMENTAL            48
+#define SUMMON_DRAGONRIDER          49
+#define SUMMON_BLUE_HORROR          50
+#define SUMMON_BUG                  51
+#define SUMMON_RNG                  52
+#define SUMMON_MINE                 53
+#define SUMMON_HUMAN                54
+#define SUMMON_SHADOWS              55
+#define SUMMON_GHOST                56
+#define SUMMON_QUYLTHULG            57
+#define SUMMON_LUA                  58
+
 
 
 /*
@@ -2923,7 +2967,7 @@ extern int PlayerUID;
  */
 #define BITS(x)  (1 << (x))
 
-/* Ego monsters defines */
+/* Ego monsters defines from PernA	- Jir - */
 #define MEGO_CHAR_ANY           127
 #define MEGO_ADD                0
 #define MEGO_SUB                1
@@ -2940,3 +2984,208 @@ extern int PlayerUID;
 /* wpos to old-fashioned wilderness 'height' */
 /* #define wild_idx(p_ptr) (p_ptr->wpos.wx+p_ptr->wpos.wy*MAX_WILD_X); */
 /* #define wild_idx(wpos) ((wpos).wx + (wpos).wy * MAX_WILD_X); */
+
+/*
+ * traps ported from PernAngband...
+ * Hats off to the precedent coders!	- Jir -
+ */
+/* jk */
+#define FTRAP_CHEST      0x000000001 /* may appear on chests */
+#define FTRAP_DOOR       0x000000002 /* may appear on doors/floors */
+#define FTRAP_FLOOR      0x000000004 /* may appear on floor */
+#define FTRAP_CHANGE     0x000000008 /* Color changing */
+#define FTRAP_XXX5       0x000000010
+#define FTRAP_XXX6       0x000000020
+#define FTRAP_XXX7       0x000000040
+#define FTRAP_XXX8       0x000000080
+#define FTRAP_XXX9       0x000000100
+#define FTRAP_XXX10      0x000000200
+#define FTRAP_XXX11      0x000000400
+#define FTRAP_XXX12      0x000000800
+#define FTRAP_XXX13      0x000001000
+#define FTRAP_XXX14      0x000002000
+#define FTRAP_XXX15      0x000004000
+#define FTRAP_XXX16      0x000008000
+#define FTRAP_LEVEL1     0x000010000 /* low level ball/bolt trap */
+#define FTRAP_LEVEL2     0x000020000 /* medium level ball/bolt trap */
+#define FTRAP_LEVEL3     0x000040000 /* high level ball/bolt trap */
+#define FTRAP_LEVEL4     0x000080000 /* oops level ball/bolt trap */
+#define FTRAP_XXX21      0x000100000
+#define FTRAP_XXX22      0x000200000
+#define FTRAP_XXX23      0x000400000
+#define FTRAP_XXX24      0x000800000
+#define FTRAP_XXX25      0x001000000
+#define FTRAP_XXX26      0x002000000
+#define FTRAP_XXX27      0x004000000
+#define FTRAP_XXX28      0x008000000
+#define FTRAP_XXX29      0x010000000
+#define FTRAP_XXX30      0x020000000
+#define FTRAP_XXX31      0x040000000
+#define FTRAP_XXX32      0x080000000
+
+/* jk */
+#define STAT_DEC_TEMPORARY 1
+#define STAT_DEC_NORMAL 2
+#define STAT_DEC_PERMANENT 3
+
+/* jk - which trap is which number */
+#define TRAP_OF_WEAKNESS_I                  1
+#define TRAP_OF_WEAKNESS_II                 2
+#define TRAP_OF_WEAKNESS_III                3
+#define TRAP_OF_INTELLIGENCE_I              4
+#define TRAP_OF_INTELLIGENCE_II             5
+#define TRAP_OF_INTELLIGENCE_III            6
+#define TRAP_OF_WISDOM_I                    7
+#define TRAP_OF_WISDOM_II                   8
+#define TRAP_OF_WISDOM_III                  9
+#define TRAP_OF_FUMBLING_I                 10
+#define TRAP_OF_FUMBLING_II                11
+#define TRAP_OF_FUMBLING_III               12
+#define TRAP_OF_WASTING_I                  13
+#define TRAP_OF_WASTING_II                 14
+#define TRAP_OF_WASTING_III                15
+#define TRAP_OF_BEAUTY_I                   16
+#define TRAP_OF_BEAUTY_II                  17
+#define TRAP_OF_BEAUTY_III                 18
+
+#define TRAP_OF_CURSE_WEAPON               20
+#define TRAP_OF_CURSE_ARMOR                21
+#define TRAP_OF_EARTHQUAKE                 22
+#define TRAP_OF_POISON_NEEDLE              23
+#define TRAP_OF_SUMMON_MONSTER             24
+#define TRAP_OF_SUMMON_UNDEAD              25
+#define TRAP_OF_SUMMON_GREATER_UNDEAD      26
+#define TRAP_OF_TELEPORT                   27
+#define TRAP_OF_PARALYZING                 28
+#define TRAP_OF_EXPLOSIVE_DEVICE           29
+#define TRAP_OF_TELEPORT_AWAY              30
+#define TRAP_OF_LOSE_MEMORY                31
+#define TRAP_OF_BITTER_REGRET              32
+#define TRAP_OF_BOWEL_CRAMPS               33
+#define TRAP_OF_BLINDNESS_CONFUSION        34
+#define TRAP_OF_AGGRAVATION                35
+#define TRAP_OF_MULTIPLICATION             36
+#define TRAP_OF_STEAL_ITEM                 37
+#define TRAP_OF_SUMMON_FAST_QUYLTHULGS     38
+#define TRAP_OF_SINKING                    39
+#define TRAP_OF_MANA_DRAIN                 40
+#define TRAP_OF_MISSING_MONEY              41
+#define TRAP_OF_NO_RETURN                  42
+#define TRAP_OF_SILENT_SWITCHING           43
+#define TRAP_OF_WALLS                      44
+#define TRAP_OF_CALLING_OUT                45
+#define TRAP_OF_SLIDING                    46
+#define TRAP_OF_CHARGES_DRAIN              47
+#define TRAP_OF_STAIR_MOVEMENT             48
+#define TRAP_OF_NEW                        49
+#define TRAP_OF_SCATTER_ITEMS              50
+#define TRAP_OF_DECAY                      51
+#define TRAP_OF_WASTING_WANDS              52
+#define TRAP_OF_FILLING                    53
+#define TRAP_OF_DRAIN_SPEED                54
+
+#define TRAP_OF_ELEC_BOLT                  60
+#define TRAP_OF_POIS_BOLT                  61
+#define TRAP_OF_ACID_BOLT                  62
+#define TRAP_OF_COLD_BOLT                  63
+#define TRAP_OF_FIRE_BOLT                  64
+#define TRAP_OF_PLASMA_BOLT                65
+#define TRAP_OF_WATER_BOLT                 66
+#define TRAP_OF_LITE_BOLT                  67
+#define TRAP_OF_DARK_BOLT                  68
+#define TRAP_OF_SHARDS_BOLT                69
+#define TRAP_OF_SOUND_BOLT                 70
+#define TRAP_OF_CONFUSION_BOLT             71
+#define TRAP_OF_FORCE_BOLT                 72
+#define TRAP_OF_INERTIA_BOLT               73
+#define TRAP_OF_MANA_BOLT                  74
+#define TRAP_OF_ICE_BOLT                   75
+#define TRAP_OF_CHAOS_BOLT                 76
+#define TRAP_OF_NETHER_BOLT                77
+#define TRAP_OF_DISENCHANT_BOLT            78
+#define TRAP_OF_NEXUS_BOLT                 79
+#define TRAP_OF_TIME_BOLT                  80
+#define TRAP_OF_GRAVITY_BOLT               81
+
+#define TRAP_OF_ELEC_BALL                  82
+#define TRAP_OF_POIS_BALL                  83
+#define TRAP_OF_ACID_BALL                  84
+#define TRAP_OF_COLD_BALL                  85
+#define TRAP_OF_FIRE_BALL                  86
+#define TRAP_OF_PLASMA_BALL                87
+#define TRAP_OF_WATER_BALL                 88
+#define TRAP_OF_LITE_BALL                  89
+#define TRAP_OF_DARK_BALL                  90
+#define TRAP_OF_SHARDS_BALL                91
+#define TRAP_OF_SOUND_BALL                 92
+#define TRAP_OF_CONFUSION_BALL             93
+#define TRAP_OF_FORCE_BALL                 94
+#define TRAP_OF_INERTIA_BALL               95
+#define TRAP_OF_MANA_BALL                  96
+#define TRAP_OF_ICE_BALL                   97
+#define TRAP_OF_CHAOS_BALL                 98
+#define TRAP_OF_NETHER_BALL                99
+#define TRAP_OF_DISENCHANT_BALL           100
+#define TRAP_OF_NEXUS_BALL                101
+#define TRAP_OF_TIME_BALL                 102
+#define TRAP_OF_GRAVITY_BALL              103
+
+#define TRAP_OF_ARROW_I                   110
+#define TRAP_OF_ARROW_II                  111
+#define TRAP_OF_ARROW_III                 112
+#define TRAP_OF_ARROW_IV                  113
+#define TRAP_OF_POISON_ARROW_I            114
+#define TRAP_OF_POISON_ARROW_II           115
+#define TRAP_OF_POISON_ARROW_III          116
+#define TRAP_OF_POISON_ARROW_IV           117
+#define TRAP_OF_DAGGER_I                  118
+#define TRAP_OF_DAGGER_II                 119
+#define TRAP_OF_POISON_DAGGER_I           120
+#define TRAP_OF_POISON_DAGGER_II          121
+#define TRAP_OF_ARROWS_I                  122
+#define TRAP_OF_ARROWS_II                 123
+#define TRAP_OF_ARROWS_III                124
+#define TRAP_OF_ARROWS_IV                 125
+#define TRAP_OF_POISON_ARROWS_I           126
+#define TRAP_OF_POISON_ARROWS_II          127
+#define TRAP_OF_POISON_ARROWS_III         128
+#define TRAP_OF_POISON_ARROWS_IV          129
+#define TRAP_OF_DAGGERS_I                 130
+#define TRAP_OF_DAGGERS_II                131
+#define TRAP_OF_POISON_DAGGERS_I          132
+#define TRAP_OF_POISON_DAGGERS_II         133
+
+#define TRAP_OF_DROP_ITEMS                140
+#define TRAP_OF_DROP_ALL_ITEMS            141
+#define TRAP_OF_DROP_EVERYTHING           142
+
+/* -SC- */
+#define TRAP_OF_FEMINITY                  150
+#define TRAP_OF_MASCULINITY               151
+#define TRAP_OF_NEUTRALITY                152
+#define TRAP_OF_AGING                     153
+#define TRAP_OF_GROWING                   154
+#define TRAP_OF_SHRINKING                 155
+#define TRAP_OF_ELDRITCH_HORROR           156
+#define TRAP_OF_TANKER_DRAIN              157
+#define TRAP_OF_DIVINE_ANGER              158
+#define TRAP_OF_DIVINE_WRATH              159
+#define TRAP_OF_HALLUCINATION             160
+
+#define TRAP_OF_ROCKET                    161
+#define TRAP_OF_NUKE_BOLT                 162
+#define TRAP_OF_DEATH_RAY                 163
+#define TRAP_OF_HOLY_FIRE                 164
+#define TRAP_OF_HELL_FIRE                 165
+#define TRAP_OF_PSI_BOLT                  166
+#define TRAP_OF_PSI_DRAIN                 167
+#define TRAP_OF_NUKE_BALL                 168
+#define TRAP_OF_PSI_BALL                  169
+
+/* DG */
+#define TRAP_OF_ACQUIREMENT               170
+
+/* Jir */
+#define TR_LIST(c_ptr) (c_ptr->special.ptr)
+
+#define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))

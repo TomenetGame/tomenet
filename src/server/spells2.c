@@ -211,7 +211,7 @@ static cptr desc_stat_neg[] =
 /*
  * Lose a "point"
  */
-bool do_dec_stat(int Ind, int stat)
+bool do_dec_stat(int Ind, int stat, int mode)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -240,7 +240,7 @@ bool do_dec_stat(int Ind, int stat)
 	}
 
 	/* Attempt to reduce the stat */
-	if (dec_stat(Ind, stat, 10, FALSE))
+	if (dec_stat(Ind, stat, 10, mode))
 	{
 		/* Message */
 		msg_format(Ind, "You feel very %s.", desc_stat_neg[stat]);
@@ -1523,6 +1523,7 @@ bool detect_trap(int Ind)
 
 	cave_type  *c_ptr;
 	byte *w_ptr;
+	trap_type	*t_ptr;
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
@@ -1544,39 +1545,46 @@ bool detect_trap(int Ind)
 			w_ptr = &p_ptr->cave_flag[i][j];
 
 			/* Detect invisible traps */
-			if (c_ptr->feat == FEAT_INVIS)
+			//			if (c_ptr->feat == FEAT_INVIS)
+			if (c_ptr->special.type == CS_TRAPS)
 			{
-				/* Hack -- check for failure */
-				if (rand_int(100) > chance) continue;
+				t_ptr = c_ptr->special.ptr;
 
-				/* Pick a trap */
+				if (!t_ptr->found)
+				{
+					/* Hack -- check for failure */
+					if (rand_int(100) > chance) continue;
+
+					/* Pick a trap */
 #ifdef NEW_DUNGEON
-				pick_trap(wpos, i, j);
+					pick_trap(wpos, i, j);
 #else
-				pick_trap(Depth, i, j);
+					pick_trap(Depth, i, j);
 #endif
+				}
 
-				/* Hack -- memorize it */
-				*w_ptr |= CAVE_MARK;
+					/* Hack -- memorize it */
+					*w_ptr |= CAVE_MARK;
 
-				/* Redraw */
-				lite_spot(Ind, i, j);
+					/* Redraw */
+					lite_spot(Ind, i, j);
 
-				/* Obvious */
-				detect = TRUE;
-			}
+					/* Obvious */
+					detect = TRUE;
+#if 0
+				/* Already seen traps */
+				else if (c_ptr->feat >= FEAT_TRAP_HEAD && c_ptr->feat <= FEAT_TRAP_TAIL)
+				{
+					/* Memorize it */
+					*w_ptr |= CAVE_MARK;
 
-			/* Already seen traps */
-			else if (c_ptr->feat >= FEAT_TRAP_HEAD && c_ptr->feat <= FEAT_TRAP_TAIL)
-			{
-				/* Memorize it */
-				*w_ptr |= CAVE_MARK;
+					/* Redraw */
+					lite_spot(Ind, i, j);
 
-				/* Redraw */
-				lite_spot(Ind, i, j);
-
-				/* Obvious */
-				detect = TRUE;
+					/* Obvious */
+					detect = TRUE;
+				}
+#endif	// 0
 			}
 		}
 	}

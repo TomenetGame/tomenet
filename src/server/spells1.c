@@ -1516,7 +1516,7 @@ bool inc_stat(int Ind, int stat)
  * if your stat is already drained, the "max" value will not drop all
  * the way down to the "cur" value.
  */
-bool dec_stat(int Ind, int stat, int amount, int permanent)
+bool dec_stat(int Ind, int stat, int amount, int mode)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1574,7 +1574,7 @@ bool dec_stat(int Ind, int stat, int amount, int permanent)
 	}
 
 	/* Damage "max" value */
-	if (permanent && (max > 3))
+	if ((mode==STAT_DEC_PERMANENT) && (max > 3))
 	{
 		/* Handle "low" values */
 		if (max <= 18)
@@ -1615,6 +1615,30 @@ bool dec_stat(int Ind, int stat, int amount, int permanent)
 		/* Actually set the stat to its new value. */
 		p_ptr->stat_cur[stat] = cur;
 		p_ptr->stat_max[stat] = max;
+#if 0	// someday..
+		if (mode==STAT_DEC_TEMPORARY)
+		{
+			u16b dectime;
+
+			/* a little crude, perhaps */
+			dectime = rand_int(max_dlv[dungeon_type]*50) + 50;
+			
+			/* prevent overflow, stat_cnt = u16b */
+			/* or add another temporary drain... */
+			if ( ((p_ptr->stat_cnt[stat]+dectime)<p_ptr->stat_cnt[stat]) ||
+			    (p_ptr->stat_los[stat]>0) )
+
+			{
+				p_ptr->stat_cnt[stat] += dectime;
+				p_ptr->stat_los[stat] += loss;
+			}
+			else
+			{
+				p_ptr->stat_cnt[stat] = dectime;
+				p_ptr->stat_los[stat] = loss;
+			}
+		}
+#endif	// 0
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -2041,8 +2065,11 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_KILL_TRAP:
 		{
 			/* Destroy invisible traps */
-			if (c_ptr->feat == FEAT_INVIS)
+//			if (c_ptr->feat == FEAT_INVIS)
+			if (c_ptr->special.type == CS_TRAPS)
 			{
+				trap_type *t_ptr = c_ptr->special.ptr;
+
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2051,7 +2078,8 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				}
 
 				/* Destroy the trap */
-				c_ptr->feat = FEAT_FLOOR;
+//				c_ptr->feat = FEAT_FLOOR;
+				delete_trap_idx(t_ptr);
 
 				if (!quiet)
 				{
@@ -2067,7 +2095,7 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 #endif
 				}
 			}
-
+#if 0
 			/* Destroy visible traps */
 			if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
 			    (c_ptr->feat <= FEAT_TRAP_TAIL))
@@ -2096,6 +2124,7 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 #endif
 				}
 			}
+#endif	// 0
 
 			/* Secret / Locked doors are found and unlocked */
 			else if ((c_ptr->feat == FEAT_SECRET) ||
@@ -2134,8 +2163,10 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		case GF_KILL_DOOR:
 		{
 			/* Destroy invisible traps */
-			if (c_ptr->feat == FEAT_INVIS)
+//			if (c_ptr->feat == FEAT_INVIS)
+			if (c_ptr->special.type == CS_TRAPS)
 			{
+				trap_type *t_ptr = c_ptr->special.ptr;
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
 				{
@@ -2144,7 +2175,8 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 				}
 
 				/* Destroy the feature */
-				c_ptr->feat = FEAT_FLOOR;
+//				c_ptr->feat = FEAT_FLOOR;
+				delete_trap_idx(t_ptr);
 
 #ifdef NEW_DUNGEON
 				/* Forget the wall */
@@ -4266,6 +4298,9 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
  * We return "TRUE" if any "obvious" effects were observed.  XXX XXX Actually,
  * we just assume that the effects were obvious, for historical reasons.
  */
+/*
+ * Megahack -- who == -999 means 'by trap'.		- Jir -
+ */
 #ifdef NEW_DUNGEON
 static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
 #else
@@ -4321,7 +4356,7 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 #ifndef PLAYER_INTERACTION
 	/* Mega-Hack -- Players cannot hurt other players */
-	if (who <= 0) return (FALSE);
+	if (who <= 0 && who != -999) return (FALSE);
 #endif
 
 	/* Extract radius */
@@ -4341,6 +4376,8 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	/* If the player is blind, be more descriptive */
 	if (blind) fuzzy = TRUE;
 
+	/* If the player is hit by a trap, be more descritive */
+	if (who == -999) fuzzy = TRUE;
 
 	if (who > 0)
 	{
@@ -4352,6 +4389,16 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 		/* Get the monster's real name */
 		monster_desc(Ind, killer, who, 0x88);
+	}
+	/* hack -- by trap */
+	else if (who == -999)
+	{
+		cave_type **zcave;
+		trap_type *t_ptr;
+		if((zcave=getcave(wpos))){
+			t_ptr = &zcave[p_ptr->py][p_ptr->px].special.ptr;
+			sprintf(killer, t_name + t_info[t_ptr->t_idx].name);
+		}
 	}
 	else if (who < 0)
 	{
@@ -5170,6 +5217,9 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 	{
 		x1 = x;
 		y1 = y;
+
+		/* Clear the flag (well, needed?) */
+//		flg &= ~(PROJECT_JUMP);
 	}
 
 	/* Hack -- Start at a player */
@@ -5185,7 +5235,14 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 		x1 = m_list[who].fx;
 		y1 = m_list[who].fy;
 	}
-
+#if 0
+	/* Oops */
+	else
+	{
+		x1 = x;
+		y1 = y;
+	}
+#endif	// 0
 
 	/* Default "destination" */
 	y2 = y; x2 = x;
@@ -5602,6 +5659,7 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 
 
 	/* Check monsters */
+	/* eww, hope traps won't kill the server here..	- Jir - */
 	if (flg & PROJECT_KILL)
 	{
 		/* Start with "dist" of zero */
@@ -5638,7 +5696,7 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 		}
 
 		/* Mega-Hack */
-		if ((who < 0) && (project_m_n == 1))
+		if ((who < 0) && (project_m_n == 1) && (who != -999))
 		{
 			/* Location */
 			x = project_m_x;

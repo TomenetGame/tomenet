@@ -903,7 +903,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_STR)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -914,7 +914,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_INT)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -925,7 +925,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_WIS)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -936,7 +936,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_DEX)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -947,7 +947,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_CON)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -958,7 +958,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stat) */
-					if (do_dec_stat(Ind, A_CHR)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}
@@ -969,12 +969,12 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 
 					/* Damage (stats) */
-					if (do_dec_stat(Ind, A_STR)) obvious = TRUE;
-					if (do_dec_stat(Ind, A_DEX)) obvious = TRUE;
-					if (do_dec_stat(Ind, A_CON)) obvious = TRUE;
-					if (do_dec_stat(Ind, A_INT)) obvious = TRUE;
-					if (do_dec_stat(Ind, A_WIS)) obvious = TRUE;
-					if (do_dec_stat(Ind, A_CHR)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) obvious = TRUE;
+					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
 
 					break;
 				}

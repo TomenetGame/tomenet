@@ -6007,6 +6007,7 @@ void generate_cave(int Depth)
 #ifdef NEW_DUNGEON
 			town_gen(wpos);
 			setup_objects();
+//			setup_traps();	// no traps on town.. 
 			setup_monsters();
 #else
 			town_gen();
@@ -6138,6 +6139,9 @@ void generate_cave(int Depth)
 
 		/* Wipe the monsters */
 		wipe_m_list(wpos);
+
+		/* Wipe the traps */
+		wipe_t_list(wpos);
 #else
 		/* Wipe the objects */
 		wipe_o_list(Depth);

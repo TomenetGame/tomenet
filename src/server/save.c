@@ -740,6 +740,26 @@ static void wr_item(object_type *o_ptr)
 	}
 }
 
+
+/*
+ * Write a "trap" record
+ */
+static void wr_trap(trap_type *t_ptr)
+{
+
+#ifdef NEW_DUNGEON
+	wr_s16b(t_ptr->wpos.wx);
+	wr_s16b(t_ptr->wpos.wy);
+	wr_s16b(t_ptr->wpos.wz);
+#else
+	wr_s32b(t_ptr->dun_depth);
+#endif
+	wr_s16b(t_ptr->t_idx);
+	wr_byte(t_ptr->iy);
+	wr_byte(t_ptr->ix);
+	wr_byte(t_ptr->found);
+}
+
 /*
  * Write a "monster" record
  */
@@ -895,6 +915,21 @@ static void wr_xtra(int Ind, int k_idx)
 
 	if (p_ptr->obj_aware[k_idx]) tmp8u |= 0x01;
 	if (p_ptr->obj_tried[k_idx]) tmp8u |= 0x02;
+
+	wr_byte(tmp8u);
+}
+
+/*
+ * Write a "trap memory" record
+ *
+ * Of course, we should be able to compress this into 1/8..	- Jir -
+ */
+static void wr_trap_memory(int Ind, int t_idx)
+{
+	player_type *p_ptr = Players[Ind];
+	byte tmp8u = 0;
+
+	if (p_ptr->trap_ident[t_idx]) tmp8u |= 0x01;
 
 	wr_byte(tmp8u);
 }
@@ -1671,6 +1706,11 @@ static bool wr_savefile_new(int Ind)
 	wr_u16b(tmp16u);
 	for (i = 0; i < tmp16u; i++) wr_xtra(Ind, i);
 
+	/* Dump the trap memory (unefficient!) */
+	tmp16u = MAX_T_IDX;
+	wr_u16b(tmp16u);
+	for (i = 0; i < tmp16u; i++) wr_trap_memory(Ind, i);
+
 #if 0
 
 	/* Hack -- Dump the quests */
@@ -2388,6 +2428,14 @@ static bool wr_server_savefile(void)
 	wr_u16b(tmp16u);
 	/* Dump the objects */
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
+
+	/* Prepare to write the traps */
+	compact_traps(0);
+	/* Note the number of traps */
+	tmp16u = t_max;
+	wr_u16b(tmp16u);
+	/* Dump the traps */
+	for (i = 0; i < tmp16u; i++) wr_trap(&t_list[i]);
 
 	tmp32u=0L;
 	for(i=0;i<num_houses;i++){

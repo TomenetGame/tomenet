@@ -965,6 +965,32 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Normal attr */
 			a = p_ptr->f_attr[c_ptr->feat];
 
+			/* Hack to display detected traps */
+			if ((c_ptr->special.type == CS_TRAPS) )
+//					&& ((c_ptr->special.ptr)->found))
+			{
+				trap_type *t_ptr = c_ptr->special.ptr;
+				if (t_ptr->found)
+				{
+					/* If trap isn't on door display it */
+//					if (!(f_ptr->flags1 & FF1_DOOR)) c = '^';
+					(*cp) = '^';
+
+					/* Add attr */
+					a = t_info[t_ptr->t_idx].color;
+					/* Get a new color with a strange formula :) */
+					if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+					{
+						s32b tmp;
+
+//						tmp = dun_level + dungeon_type + c_ptr->feat;
+						tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+
+						a = tmp % 16;
+					}
+				}
+			}
+
 			/* Special lighting effects */
 			if (p_ptr->view_special_lite && (a == TERM_WHITE))
 			{
@@ -1046,8 +1072,41 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* a = f_ptr->f_attr; */
 			a = p_ptr->f_attr[feat];
 
+			/* Add trap color - Illusory wall masks everythink */
+			/* Hack to display detected traps */
+			//		if ((c_ptr->t_idx != 0) && (c_ptr->info & CAVE_TRDT) &&
+			//				(c_ptr->feat != FEAT_ILLUS_WALL))
+			//		if ((c_ptr->special.type == CS_TRAPS) && (c_ptr->special.ptr->found))
+			/* Hack to display detected traps */
+			if ((c_ptr->special.type == CS_TRAPS) )
+				//					&& ((c_ptr->special.ptr)->found))
+			{
+				trap_type *t_ptr = c_ptr->special.ptr;
+				if (t_ptr->found)
+				{
+					/* Add attr */
+					a = t_info[t_ptr->t_idx].color;
+					//			a = t_info[TR_LIST(c_ptr)->t_idx].color;
+					/* Get a new color with a strange formula :) */
+					if (t_info[t_ptr->t_idx].flags & FTRAP_CHANGE)
+					{
+						s32b tmp;
+
+						tmp = p_ptr->wpos.wx + p_ptr->wpos.wy + p_ptr->wpos.wz + c_ptr->feat;
+//						tmp = dun_level + dungeon_type + c_ptr->feat;
+
+						a = tmp % 16;
+					}
+				}
+			}
+
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite && (a == TERM_WHITE) && (feat >= FEAT_SECRET))
+#if 0	// Was ist das??
+				if (view_granite_lite && (!p_ptr->wild_mode) &&
+						(((a == TERM_WHITE) && !graf_new) ||
+						 (graf_new && feat_supports_lighting(c_ptr->feat) && (!(c_ptr->t_idx && (c_ptr->info & CAVE_TRDT))))))
+#endif	// 0
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -1615,7 +1674,7 @@ void prt_map(int Ind)
 /*
  * Display highest priority object in the RATIO by RATIO area
  */
-#define RATIO 3
+//#define RATIO 3
 
 /*
  * Display the entire map

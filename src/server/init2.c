@@ -1051,6 +1051,211 @@ static errr init_re_info(void)
 }
 
 
+/*
+ * Initialize the "t_info" array
+ *
+ * Note that we let each entry have a unique "name" and "text" string,
+ * even if the string happens to be empty (everyone has a unique '\0').
+ */
+static errr init_t_info(void)
+{
+	int fd;
+
+	int mode = 0644;
+
+	errr err = 0;
+
+	FILE *fp;
+
+	/* General buffer */
+	char buf[1024];
+
+
+	/*** Make the header ***/
+
+	/* Allocate the "header" */
+	MAKE(t_head, header);
+
+	/* Save the "version" */
+	t_head->v_major = VERSION_MAJOR;
+	t_head->v_minor = VERSION_MINOR;
+	t_head->v_patch = VERSION_PATCH;
+	t_head->v_extra = 0;
+
+	/* Save the "record" information */
+	t_head->info_num = MAX_T_IDX;
+	t_head->info_len = sizeof(trap_type);
+
+	/* Save the size of "t_head" and "t_info" */
+	t_head->head_size = sizeof(header);
+	t_head->info_size = t_head->info_num * t_head->info_len;
+
+
+#ifdef ALLOW_TEMPLATES
+#ifdef USE_RAW_FILES
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd >= 0)
+	{
+#ifdef CHECK_MODIFICATION_TIME
+
+                err = check_modification_date(fd, "tr_info.txt");
+
+#endif /* CHECK_MODIFICATION_TIME */
+
+		/* Attempt to parse the "raw" file */
+		if (!err)
+			err = init_t_info_raw(fd);
+
+		/* Close it */
+		(void)fd_close(fd);
+
+		/* Success */
+		if (!err) return (0);
+
+		/* Information */
+		msg_print("Ignoring obsolete/defective 'tr_info.raw' file.");
+		msg_print(NULL);
+	}
+#endif	// USE_RAW_FILES
+
+	/*** Make the fake arrays ***/
+
+	/* Fake the size of "t_name" and "t_text" */
+	fake_name_size = 20 * 1024L;
+	fake_text_size = 60 * 1024L;
+//	fake_name_size = FAKE_NAME_SIZE;
+//	fake_text_size = FAKE_TEXT_SIZE;
+
+	/* Allocate the "t_info" array */
+	C_MAKE(t_info, t_head->info_num, trap_kind);
+
+	/* Hack -- make "fake" arrays */
+	C_MAKE(t_name, fake_name_size, char);
+	C_MAKE(t_text, fake_text_size, char);
+
+
+	/*** Load the ascii template file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "tr_info.txt");
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Parse it */
+	if (!fp) quit("Cannot open 'tr_info.txt' file.");
+
+	/* Parse the file */
+	err = init_t_info_txt(fp, buf);
+
+	/* Close it */
+	my_fclose(fp);
+
+	/* Errors */
+	if (err)
+	{
+		cptr oops;
+
+		/* Error string */
+		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
+
+		/* Oops */
+		s_printf("Error %d at line %d of 'tr_info.txt'.", err, error_line);
+		s_printf("Record %d contains a '%s' error.", error_idx, oops);
+		s_printf("Parsing '%s'.", buf);
+//		msg_print(NULL);
+
+		/* Quit */
+		quit("Error in 'tr_info.txt' file.");
+	}
+
+#ifdef USE_RAW_FILES
+	/*** Dump the binary image file ***/
+
+	/* File type is "DATA" */
+	FILE_TYPE(FILE_TYPE_DATA);
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
+
+	/* Kill the old file */
+	safe_setuid_grab();
+	(void)fd_kill(buf);
+
+	/* Attempt to create the raw file */
+	fd = fd_make(buf, mode);
+	safe_setuid_drop();
+
+	/* Dump to the file */
+	if (fd >= 0)
+	{
+		/* Dump it */
+		fd_write(fd, (char*)(t_head), t_head->head_size);
+
+		/* Dump the "f_info" array */
+		fd_write(fd, (char*)(t_info), t_head->info_size);
+
+		/* Dump the "f_name" array */
+		fd_write(fd, (char*)(t_name), t_head->name_size);
+
+		/* Dump the "f_text" array */
+		fd_write(fd, (char*)(t_text), t_head->text_size);
+
+		/* Close */
+		(void)fd_close(fd);
+	}
+
+
+	/*** Kill the fake arrays ***/
+
+	/* Free the "h_info" array */
+	C_KILL(t_info, t_head->info_num, trap_type);
+
+	/* Hack -- Free the "fake" arrays */
+	C_KILL(t_name, fake_name_size, char);
+	C_KILL(t_text, fake_text_size, char);
+
+	/* Forget the array sizes */
+	fake_name_size = 0;
+	fake_text_size = 0;
+#endif	// USE_RAW_FILES
+#endif	/* ALLOW_TEMPLATES */
+#ifdef USE_RAW_FILES
+
+	/*** Load the binary image file ***/
+
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tr_info.raw");
+
+	/* Attempt to open the "raw" file */
+	fd = fd_open(buf, O_RDONLY);
+
+	/* Process existing "raw" file */
+	if (fd < 0) quit("Cannot load 'tr_info.raw' file.");
+
+	/* Attempt to parse the "raw" file */
+	err = init_t_info_raw(fd);
+
+	/* Close it */
+	(void)fd_close(fd);
+
+	/* Error */
+	if (err) quit("Cannot parse 'tr_info.raw' file.");
+#endif	// USE_RAW_FILES
+
+	/* Success */
+	return (0);
+}
+
+
 
 /*
  * Initialize the "v_info" array
@@ -1424,6 +1629,8 @@ static errr init_other(void)
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
+	/* Allocate and Wipe the monster list */
+	C_MAKE(t_list, MAX_T_IDX, trap_type);
 
 #ifndef NEW_DUNGEON
 	/* Allocate "permament" space for the town */
@@ -2079,12 +2286,16 @@ void init_some_arrays(void)
 	if (init_r_info()) quit("Cannot initialize monsters");
 
 	/* Initialize ego monster info */
-	s_printf("[Initializing arrays... (ego monsters)]\n");
+	s_printf("[Initializing arrays... (ego-monsters)]\n");
 	if (init_re_info()) quit("Cannot initialize ego monsters");
 
 	/* Initialize feature info */
 	s_printf("[Initializing arrays... (vaults)]\n");
 	if (init_v_info()) quit("Cannot initialize vaults");
+
+	/* Initialize trap info */
+	s_printf("[Initializing arrays... (traps)]\n");
+	if (init_t_info()) quit("Cannot initialize traps");
 
 	/* Initialize some other arrays */
 	s_printf("[Initializing arrays... (other)]\n");

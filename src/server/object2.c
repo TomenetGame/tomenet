@@ -3171,11 +3171,15 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 		/* Hack -- skip ruined chests */
 		if (k_info[o_ptr->k_idx].level <= 0) break;
 
+		/* Pick a trap */
+		place_trap_object(o_ptr);
+#if 0					
 		/* Hack -- pick a "difficulty" */
 		o_ptr->pval = randint(k_info[o_ptr->k_idx].level);
 
 		/* Never exceed "difficulty" of 55 to 59 */
 		if (o_ptr->pval > 55) o_ptr->pval = 55 + rand_int(5);
+#endif	// 0
 
 		break;
 
@@ -3965,6 +3969,10 @@ void acquirement(int Depth, int y1, int x1, int num, bool great)
  * when they are "discovered" (by detecting them or setting them off),
  * the trap is "instantiated" as a visible, "typed", trap.
  */
+/*
+ * obsoleted - please see traps.c	- Jir -
+ */
+#if 0
 #ifdef NEW_DUNGEON
 void place_trap(struct worldpos *wpos, int y, int x)
 #else
@@ -3997,6 +4005,7 @@ void place_trap(int Depth, int y, int x)
 	/* Place an invisible trap */
 	c_ptr->feat = FEAT_INVIS;
 }
+#endif	// 0
 
 
 /*
@@ -4116,7 +4125,7 @@ void place_gold(int Depth, int y, int x)
  * XXX XXX XXX Consider allowing objects to combine on the ground.
  */
 #ifdef NEW_DUNGEON
-void drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
+s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x)
 #else
 void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
 #endif
@@ -4324,6 +4333,9 @@ void drop_near(object_type *o_ptr, int chance, int Depth, int y, int x)
 		/*msg_format("The %s disappear%s.",
 		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
 	}
+
+	/* Result */
+	return (o_idx);
 }
 /* This function make the artifact disapper at once (cept randarts),
  * and call the normal dropping function otherwise.
@@ -4364,18 +4376,20 @@ void pick_trap(struct worldpos *wpos, int y, int x)
 void pick_trap(int Depth, int y, int x)
 #endif
 {
-	int feat;
-	int tries = 100;
+//	int feat;
+//	int tries = 100;
 
 #ifdef NEW_DUNGEON
 	cave_type **zcave;
 	cave_type *c_ptr;
+	trap_type *t_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 #else
 	cave_type *c_ptr = &cave[Depth][y][x];
 #endif
 
+#if 0
 	/* Paranoia */
 	if (c_ptr->feat != FEAT_INVIS) return;
 
@@ -4406,6 +4420,14 @@ void pick_trap(int Depth, int y, int x)
 
 	/* Activate the trap */
 	c_ptr->feat = feat;
+#endif	// 0
+
+	/* Paranoia */
+	if (c_ptr->special.type != CS_TRAPS) return;
+
+	t_ptr = c_ptr->special.ptr;
+	
+	t_ptr->found = TRUE;
 
 #ifdef NEW_DUNGEON
 	/* Notice */
@@ -5164,5 +5186,76 @@ void setup_objects(void)
 		cave[o_ptr->dun_depth][o_ptr->iy][o_ptr->ix].o_idx = i;
 #endif
 	}
+}
+
+/*
+ * Prepare an object based on an object kind.
+ */
+void object_prep(object_type *o_ptr, int k_idx)
+{
+	object_kind *k_ptr = &k_info[k_idx];
+
+	/* Clear the record */
+        o_ptr = WIPE(o_ptr, object_type);
+
+	/* Save the kind index */
+	o_ptr->k_idx = k_idx;
+
+	/* Efficiency -- tval/sval */
+	o_ptr->tval = k_ptr->tval;
+	o_ptr->sval = k_ptr->sval;
+
+	/* Default "pval" */
+	o_ptr->pval = k_ptr->pval;
+
+	/* Default number */
+	o_ptr->number = 1;
+
+	/* Default weight */
+	o_ptr->weight = k_ptr->weight;
+
+	/* Default magic */
+	o_ptr->to_h = k_ptr->to_h;
+	o_ptr->to_d = k_ptr->to_d;
+	o_ptr->to_a = k_ptr->to_a;
+
+	/* Default power */
+	o_ptr->ac = k_ptr->ac;
+	o_ptr->dd = k_ptr->dd;
+	o_ptr->ds = k_ptr->ds;
+
+	/* Hack -- cursed items are always "cursed" */
+	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
+//	if (k_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (IDENT_CURSED);
+#if 0
+        /* Hack give a basic exp/exp level to an object that needs it */
+        if(k_ptr->flags4 & TR4_LEVELS)
+        {
+                o_ptr->elevel = (k_ptr->level / 10) + 1;
+                o_ptr->exp = player_exp[o_ptr->elevel - 1];
+                o_ptr->pval2 = 1;       /* Start with one point */
+                o_ptr->pval3 = 0;       /* No flags groups */
+        }
+#endif
+}
+
+
+/*
+ * Wipe an object clean.
+ */
+void object_wipe(object_type *o_ptr)
+{
+	/* Wipe the structure */
+	o_ptr=WIPE(o_ptr, object_type);
+}
+
+
+/*
+ * Prepare an object based on an existing object
+ */
+void object_copy(object_type *o_ptr, object_type *j_ptr)
+{
+	/* Copy the structure */
+	COPY(o_ptr, j_ptr, object_type);
 }
 

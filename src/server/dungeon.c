@@ -3525,6 +3525,9 @@ void dungeon(void)
 	/* Hack -- Compact the monster list occasionally */
 	if (m_top + 32 > MAX_M_IDX) compact_monsters(64);
 
+	/* Hack -- Compact the trap list occasionally */
+	if (t_top + 16 > MAX_TR_IDX) compact_traps(32);
+
 
 	// Note -- this is the END of the last turn
 
@@ -3866,6 +3869,9 @@ void play_game(bool new_game)
 
 	/* Finish initializing dungeon objects */
 	setup_objects();
+
+	/* Finish initializing dungeon objects */
+	setup_traps();
 
 	/* Server initialization is now "complete" */
 	server_generated = TRUE;

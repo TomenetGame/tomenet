@@ -1717,6 +1717,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* May be "disarmed" */
 		else if (o_ptr->pval < 0)
 		{
+			t = object_desc_str(t, " (disarmed)");
+#if 0
 			if (chest_traps[o_ptr->pval])
 			{
 				t = object_desc_str(t, " (disarmed)");
@@ -1725,11 +1727,20 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			{
 				t = object_desc_str(t, " (unlocked)");
 			}
+#endif	// 0
 		}
 
 		/* Describe the traps, if any */
 		else
 		{
+			/* Describe the traps */
+			t = object_desc_str(t, " (");
+			if (p_ptr->trap_ident[o_ptr->pval])
+				t = object_desc_str(t, t_name + t_info[o_ptr->pval].name);
+			else
+				t = object_desc_str(t, "trapped");
+			t = object_desc_str(t, ")");
+#if 0
 			/* Describe the traps */
 			switch (chest_traps[o_ptr->pval])
 			{
@@ -1774,6 +1785,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 					break;
 				}
 			}
+#endif	// 0
 		}
 	}
 

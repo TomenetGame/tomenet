@@ -185,6 +185,9 @@ extern s32b o_max;
 extern s32b m_max;
 extern s32b o_top;
 extern s32b m_top;
+extern s32b t_nxt;
+extern s32b t_max;
+extern s32b t_top;
 extern header *re_head; 
 extern monster_ego *re_info;
 extern char *re_name;
@@ -352,6 +355,7 @@ extern u32b window_mask[8];
 /*extern term *ang_term[8];*/
 extern s16b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
+extern s16b t_fast[MAX_T_IDX];
 extern cave_type ***cave;
 #ifdef NEW_DUNGEON
 extern wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];
@@ -362,6 +366,7 @@ extern wilderness_type *wild_info;
 #endif
 extern object_type *o_list;
 extern monster_type *m_list;
+extern trap_type *t_list;
 extern quest q_list[MAX_Q_IDX];
 /*extern object_type *inventory;*/
 extern s16b alloc_kind_size;
@@ -397,6 +402,10 @@ extern header *k_head;
 extern object_kind *k_info;
 extern char *k_name;
 extern char *k_text;
+extern header *t_head;
+extern trap_kind *t_info;
+extern char *t_name;
+extern char *t_text;
 extern header *a_head;
 extern artifact_type *a_info;
 extern char *a_name;
@@ -861,7 +870,7 @@ extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool gr
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great);
 extern void place_trap(struct worldpos *wpos, int y, int x);
 extern void place_gold(struct worldpos *wpos, int y, int x);
-extern void drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
 #else
 extern void delete_object(int Depth, int y, int x);
@@ -956,7 +965,7 @@ extern void elec_dam(int Ind, int dam, cptr kb_str);
 extern void fire_dam(int Ind, int dam, cptr kb_str);
 extern void cold_dam(int Ind, int dam, cptr kb_str);
 extern bool inc_stat(int Ind, int stat);
-extern bool dec_stat(int Ind, int stat, int amount, int permanent);
+extern bool dec_stat(int Ind, int stat, int amount, int mode);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
 extern bool project_hook(int Ind, int typ, int dir, int dam, int flg);
@@ -971,7 +980,7 @@ extern void golem_creation(int Ind, int max);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
 extern void warding_glyph(int Ind);
-extern bool do_dec_stat(int Ind, int stat);
+extern bool do_dec_stat(int Ind, int stat, int mode);
 extern bool do_res_stat(int Ind, int stat);
 extern bool do_inc_stat(int Ind, int stat);
 extern void identify_pack(int Ind);
@@ -1250,3 +1259,20 @@ extern void master_script_end();
 extern void master_script_line(char *buf);
 extern void master_script_exec(int Ind, char *name);
 extern void cat_script(int Ind, char *name);
+
+/* traps.c */
+extern s16b t_pop(void);
+extern void delete_trap_idx(trap_type *t_ptr);
+extern void compact_traps(int size);
+extern void wipe_t_list(struct worldpos *wpos);
+extern void setup_traps(void);
+extern bool do_player_trap_call_out(int Ind);
+//extern static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x);
+//extern static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, s16b dd, s16b ds, s16b pdam, cptr name);
+//extern static bool player_handle_breath_trap(int Ind, s16b rad, s16b type, u16b trap);
+//extern static void trap_hit(int Ind, s16b trap);
+extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item);
+extern void player_activate_door_trap(int Ind, s16b y, s16b x);
+extern void place_trap(struct worldpos *wpos, int y, int x);
+extern void place_trap_object(object_type *o_ptr);
+// extern void wiz_place_trap(int y, int x, int idx);

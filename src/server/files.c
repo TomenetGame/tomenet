@@ -2739,7 +2739,7 @@ void exit_game_panic(void)
 			wpos.wy=j;
 			for(k=0;k<255;k++){
 				wpos.wz=k;
-				if(!players_on_depth(wpos)) wipe_o_list(&wpos);
+				if(!players_on_depth(&wpos)) wipe_o_list(&wpos);
 			}
 		}
 	}
