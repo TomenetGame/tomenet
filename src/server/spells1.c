@@ -3913,7 +3913,7 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	}
 	else if (who < 0)
 	{
-		strcpy(killer, Players[0 - who]->name);
+		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 
 		/* Do not become hostile if it was a healing or teleport spell */
 		
