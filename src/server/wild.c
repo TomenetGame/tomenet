@@ -371,6 +371,9 @@ void wild_apply_day(struct worldpos *wpos)
 	int x,y;
 	cave_type *c_ptr;
 	cave_type **zcave;
+
+	night_surface=0;
+
 	if(!(zcave=getcave(wpos))) return;
 	
 	/* scan the level */
@@ -390,6 +393,9 @@ void wild_apply_night(struct worldpos *wpos)
 	byte sx[255], sy[255];
 	cave_type *c_ptr;
 	cave_type **zcave;
+
+	night_surface=1;
+
 	if(!(zcave=getcave(wpos))) return;
 
 	/* scan the level */
@@ -1943,9 +1949,9 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 	t_ptr->monst_lev *= 1;
 }	
 
-static char terrain_spot(terrain_type * terrain)
+static unsigned char terrain_spot(terrain_type * terrain)
 {
-	char feat;
+	unsigned char feat;
 	
 	feat = FEAT_DIRT;
 
@@ -1956,7 +1962,7 @@ static char terrain_spot(terrain_type * terrain)
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
 	if (rand_int(1000) < terrain->lava) feat = magik(30)?FEAT_DEEP_LAVA:FEAT_SHAL_LAVA;
-	return feat;
+	return(feat);
 }
 
 
