@@ -913,7 +913,7 @@ static byte player_init[MAX_CLASS][3][2] =
 	{
 		/* Mage */
 		{ TV_SWORD, SV_DAGGER },
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 		{ TV_BOOK, 50 },
 	},
 
@@ -921,9 +921,10 @@ static byte player_init[MAX_CLASS][3][2] =
 		/* Priest */
 		{ TV_HAFTED, SV_MACE },
 		{ TV_POTION, SV_POTION_HEALING },
+		{ TV_SCROLL, SV_SCROLL_BLESSING },
 		/* XXX Some kind of prayer book should be here */
 		// { TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
-		{ TV_BOOK, 50 },
+		//{ TV_BOOK, 50 },
 	},
 
 	{
@@ -935,7 +936,7 @@ static byte player_init[MAX_CLASS][3][2] =
 
 	{
 		/* Mimic */
-		{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
+		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
 		{ TV_SWORD, SV_LONG_SWORD },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
 	},
@@ -951,7 +952,7 @@ static byte player_init[MAX_CLASS][3][2] =
 		/* Paladin */
 		{ TV_HAFTED, SV_LUCERN_HAMMER },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
-		{ TV_BOOK, 50 },
+		//{ TV_BOOK, 50 },
 	},
 
 	{
