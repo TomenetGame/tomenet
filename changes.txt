@@ -30,6 +30,7 @@
      Cap is exactly sufficient for the worst choice in terms of penalty
      to become level 50, the Thunderlord Ranger :)
      Adjusted critical strikes.
+[M]- Some dragons and all nazguls couldn't fly.
 
 12/02/2003
 [O]- Admins can destroy/unequip anything
