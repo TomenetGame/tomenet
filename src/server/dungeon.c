@@ -627,127 +627,6 @@ static void process_world(int Ind)
 #endif	// 0
 }
 
-
-
-/*
- * Verify use of "wizard" mode
- */
-#if 0
-static bool enter_wizard_mode(void)
-{
-#ifdef ALLOW_WIZARD
-	/* No permission */
-	if (!can_be_wizard) return (FALSE);
-
-	/* Ask first time */
-	if (!(noscore & 0x0002))
-	{
-		/* Mention effects */
-		msg_print("Wizard mode is for debugging and experimenting.");
-		msg_print("The game will not be scored if you enter wizard mode.");
-		msg_print(NULL);
-
-		/* Verify request */
-		if (!get_check("Are you sure you want to enter wizard mode? "))
-		{
-			return (FALSE);
-		}
-
-		/* Mark savefile */
-		noscore |= 0x0002;
-	}
-
-	/* Success */
-	return (TRUE);
-#endif /* ALLOW_WIZARD */
-
-	/* XXX XXX XXX Return FALSE if wizard mode is compiled out --KLJ-- */
-	return (FALSE);
-}
-#endif
-
-
-#ifdef ALLOW_WIZARD
-
-/*
- * Verify use of "debug" commands
- */
-static bool enter_debug_mode(void)
-{
-	/* No permission */
-	if (!can_be_wizard) return (FALSE);
-
-	/* Ask first time */
-	if (!(noscore & 0x0008))
-	{
-		/* Mention effects */
-		msg_print("The debug commands are for debugging and experimenting.");
-		msg_print("The game will not be scored if you use debug commands.");
-		msg_print(NULL);
-
-		/* Verify request */
-		if (!get_check("Are you sure you want to use debug commands? "))
-		{
-			return (FALSE);
-		}
-
-		/* Mark savefile */
-		noscore |= 0x0008;
-	}
-
-	/* Success */
-	return (TRUE);
-}
-
-/*
- * Hack -- Declare the Wizard Routines
- */
-extern int do_cmd_wizard(void);
-
-#endif
-
-
-#ifdef ALLOW_BORG
-
-/*
- * Verify use of "borg" commands
- */
-static bool enter_borg_mode(void)
-{
-	/* No permission */
-	if (!can_be_wizard) return (FALSE);
-
-	/* Ask first time */
-	if (!(noscore & 0x0010))
-	{
-		/* Mention effects */
-		msg_print("The borg commands are for debugging and experimenting.");
-		msg_print("The game will not be scored if you use borg commands.");
-		msg_print(NULL);
-
-		/* Verify request */
-		if (!get_check("Are you sure you want to use borg commands? "))
-		{
-			return (FALSE);
-		}
-
-		/* Mark savefile */
-		noscore |= 0x0010;
-	}
-
-	/* Success */
-	return (TRUE);
-}
-
-/*
- * Hack -- Declare the Ben Borg
- */
-extern void do_cmd_borg(void);
-
-#endif
-
-
-
 /*
  * Parse and execute the current command
  * Give "Warning" on illegal commands.
@@ -2219,7 +2098,7 @@ static void process_player_end(int Ind)
 		       /* MEGA HACK: no recall if icky, or in a shop */
 			if( ! p_ptr->word_recall ) 
 			{
-				if(character_icky || (p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos))
+				if((p_ptr->store_num > 0) || check_st_anchor(&p_ptr->wpos))
 				{
 				    p_ptr->word_recall++;
 				}
@@ -3498,31 +3377,6 @@ void dungeon(void)
 	Net_output();
 }
 
-		
-/*
- * Load the various "user pref files"
- */
-static void load_all_pref_files(void)
-{
-	char buf[1024];
-
-
-	/* Access the "basic" pref file */
-	strcpy(buf, "pref.prf");
-
-	/* Process that file */
-	process_pref_file(buf);
-
-	/* Access the "user" pref file */
-	sprintf(buf, "user.prf");
-
-	/* Process that file */
-	process_pref_file(buf);
-
-
-
-}
-
 /*
  * Actually play a game
  *
@@ -3589,31 +3443,6 @@ void play_game(bool new_game)
 		Rand_state_init(seed);
 	}
 
-	/* Extract the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (option_flag[os] & (1L << ob))
-			{
-				/* Set */
-				(*option_info[i].o_var) = TRUE;
-			}
-			
-			/* Clear */
-			else
-			{
-				/* Clear */
-				(*option_info[i].o_var) = FALSE;
-			}
-		}
-	}
-
 	/* Roll new town */
 	if (new_game)
 	{
@@ -3658,9 +3487,6 @@ void play_game(bool new_game)
 	/* Flash a message */
 	s_printf("Please wait...\n");
 
-	/* Hack -- Enter wizard mode */
-	/*if (arg_wizard && enter_wizard_mode()) wizard = TRUE;*/
-
 	/* Flavor the objects */
 	flavor_init();
 
@@ -3668,9 +3494,6 @@ void play_game(bool new_game)
 
 	/* Reset the visual mappings */
 	reset_visuals();
-
-	/* Load the "pref" files */
-	load_all_pref_files();
 
 	/* Set or clear "rogue_like_commands" if requested */
 	/*if (arg_force_original) rogue_like_commands = FALSE;

@@ -112,9 +112,6 @@ extern s16b resting;
 /*extern s16b cur_hgt;
 extern s16b cur_wid;*/
 /*extern s16b dun_level;*/
-#ifndef NEW_DUNGEON
-extern s16b players_on_depth[MAX_DEPTH];
-#endif
 extern s16b num_repro;
 extern s16b object_level;
 extern s16b monster_level;
@@ -281,9 +278,6 @@ extern u32b window_mask[8];
 /*extern term *ang_term[8];*/
 extern s16b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
-#ifndef NEW_DUNGEON
-extern cave_type **cave[MAX_DEPTH];
-#endif
 extern object_type *o_list;
 extern monster_type *m_list;
 extern quest q_list[MAX_Q_IDX];

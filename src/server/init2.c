@@ -1688,59 +1688,8 @@ static errr init_other(void)
 	(void)quark_add("uncursed");
 	(void)quark_add("on sale");
 
-
-	/*** Prepare the options ***/
-
-	/* Scan the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Set the "default" options */
-		if (option_info[i].o_var)
-		{
-			/* Accept */
-			option_mask[os] |= (1L << ob);
-			
-			/* Set */
-			if (option_info[i].o_norm)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-			
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
-	}
-
 	/* Turn on color */
 	use_color = TRUE;
-	view_bright_lite = TRUE;
-	view_granite_lite = TRUE;
-	view_special_lite = TRUE;
-	view_perma_grids = TRUE;
-
-	/* Analyze the windows */
-	for (n = 0; n < 8; n++)
-	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
-		{
-			/* Accept */
-			if (window_flag_desc[i])
-			{
-				/* Accept */
-				window_mask[n] |= (1L << i);
-			}
-		}
-	}
-
 
 	/*** Pre-allocate space for the "format()" buffer ***/
 

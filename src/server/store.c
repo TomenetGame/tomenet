@@ -1648,35 +1648,6 @@ static void store_create(store_type *st_ptr)
 	}
 }
 
-
-
-/*
- * Eliminate need to bargain if player has haggled well in the past
- */
-static bool noneedtobargain(s32b minprice)
-{
-	/* Hack -- We never haggle anyway --KLJ-- */
-	return (TRUE);
-
-#if 0
-	s32b good = st_ptr->good_buy;
-	s32b bad = st_ptr->bad_buy;
-
-	/* Cheap items are "boring" */
-	if (minprice < 10L) return (TRUE);
-
-	/* Perfect haggling */
-	if (good == MAX_SHORT) return (TRUE);
-
-	/* Reward good haggles, punish bad haggles, notice price */
-	if (good > ((3 * bad) + (5 + (minprice/50)))) return (TRUE);
-
-	/* Return the flag */
-	return (FALSE);
-#endif
-}
-
-
 /*
  * Update the bargain info
  */
@@ -1909,7 +1880,6 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 
 	s32b               purse, cur_ask, final_ask;
 
-	int			noneed;
 	int			final = FALSE;
 
 	cptr		pmt = "Offer";
@@ -1928,54 +1898,34 @@ static bool sell_haggle(int Ind, object_type *o_ptr, s32b *price)
 	cur_ask = price_item(Ind, o_ptr, ot_ptr->max_inflate, TRUE);
 	final_ask = price_item(Ind, o_ptr, ot_ptr->min_inflate, TRUE);
 
-	/* Determine if haggling is necessary */
-	noneed = noneedtobargain(final_ask);
-
 	/* Get the owner's payout limit */
 	purse = (s32b)(ot_ptr->max_cost);
 
-	/* No need to haggle */
-	if (noneed || auto_haggle || (final_ask >= purse))
+	/* No reason to haggle */
+	if (final_ask >= purse)
 	{
-		/* No reason to haggle */
-		if (final_ask >= purse)
-		{
-			/* Message */
-			msg_print(Ind, "You instantly agree upon the price.");
-			/*msg_print(NULL);*/
+		/* Message */
+		msg_print(Ind, "You instantly agree upon the price.");
+		/*msg_print(NULL);*/
 
-			/* Offer full purse */
-			final_ask = purse;
-		}
-
-		/* No need to haggle */
-		else if (noneed)
-		{
-			/* Message */
-			msg_print(Ind, "You eventually agree upon the price.");
-			/*msg_print(NULL);*/
-		}
-
-#if 0
-		/* No haggle option */
-		else
-		{
-			/* Message summary */
-			msg_print("You quickly agree upon the price.");
-			msg_print(NULL);
-
-			/* Apply Sales Tax */
-			final_ask -= final_ask / 10;
-		}
-#endif
-
-		/* Final price */
-		cur_ask = final_ask;
-
-		/* Final offer */
-		final = TRUE;
-		pmt = "Final Offer";
+		/* Offer full purse */
+		final_ask = purse;
 	}
+
+	/* No need to haggle */
+	else
+	{
+		/* Message */
+		msg_print(Ind, "You eventually agree upon the price.");
+		/*msg_print(NULL);*/
+	}
+
+	/* Final price */
+	cur_ask = final_ask;
+
+	/* Final offer */
+	final = TRUE;
+	pmt = "Final Offer";
 
 	/* Hack -- Return immediately */
 	*price = final_ask * o_ptr->number;
@@ -2570,10 +2520,6 @@ void do_cmd_store(int Ind)
 		return;
 	}
 
-	/* Hack -- Character is in "icky" mode */
-	/*character_icky = TRUE;*/
-
-
 	/* No command argument */
 	/*command_arg = 0;*/
 
@@ -2669,7 +2615,6 @@ void store_maint(store_type *st_ptr)
 {
 	int         i, j;
 
-	int		old_rating = rating;
 	owner_type *ot_ptr;
 
 	int tries = 200;
@@ -2760,9 +2705,6 @@ void store_maint(store_type *st_ptr)
        	    tries--;
 	      if (!tries) break;
 	  }
-
-	/* Hack -- Restore the rating */
-	rating = old_rating;
 }
 
 

@@ -201,102 +201,6 @@ static void inven_drop(int Ind, int item, int amt)
 	inven_item_optimize(Ind, item);
 }
 
-
-
-
-
-/*
- * Display inventory
- *
- * This is handled by the client now --KLJ--
- */
-void do_cmd_inven(void)
-{
-	/*char out_val[160];*/
-
-
-	/* Note that we are in "inventory" mode */
-	/*command_wrk = FALSE;*/
-
-	/* Hack -- show empty slots */
-	/*item_tester_full = TRUE;*/
-
-	/* Display the inventory */
-	/*show_inven();*/
-
-	/* Hack -- hide empty slots */
-	/*item_tester_full = FALSE;*/
-
-	/* Build a prompt */
-	/*sprintf(out_val, "Inventory (carrying %d.%d pounds). Command: ",
-	        total_weight / 10, total_weight % 10);*/
-
-	/* Get a command */
-	/*prt(out_val, 0, 0);*/
-
-	/* Process "Escape" */
-	/*if (command_new == ESCAPE)
-	{*/
-		/* Reset stuff */
-		/*command_new = 0;
-		command_gap = 50;
-	}*/
-
-	/* Process normal keys */
-	/*else
-	{*/
-		/* Hack -- Use "display" mode */
-		/*command_see = TRUE;
-	}*/
-}
-
-
-/*
- * Display equipment
- *
- * This is handled be the client --KLJ--
- */
-void do_cmd_equip(void)
-{
-	/*char out_val[160];*/
-
-
-	/* Note that we are in "equipment" mode */
-	/*command_wrk = TRUE;*/
-
-	/* Hack -- show empty slots */
-	/*item_tester_full = TRUE;*/
-
-	/* Display the equipment */
-	/*show_equip();*/
-
-	/* Hack -- undo the hack above */
-	/*item_tester_full = FALSE;*/
-
-	/* Build a prompt */
-	/*sprintf(out_val, "Equipment (carrying %d.%d pounds). Command: ",
-	        total_weight / 10, total_weight % 10);*/
-
-	/* Get a command */
-	/*prt(out_val, 0, 0);*/
-
-	/* Process "Escape" */
-	/*if (command_new == ESCAPE)
-	{*/
-		/* Reset stuff */
-		/*command_new = 0;
-		command_gap = 50;
-	}*/
-
-	/* Process normal keys */
-	/*else
-	{*/
-		/* Enter "display" mode */
-		/*command_see = TRUE;
-	}*/
-}
-
-
 /*
  * The "wearable" tester
  */
@@ -785,10 +689,6 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	char		o_name[160];
 
 	u32b f1, f2, f3, f4, f5, esp;
-
-	/* Hack -- force destruction */
-	if (command_arg > 0) force = TRUE;
-
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -1691,7 +1591,7 @@ void do_cmd_look(int Ind, int dir)
 			for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 			{
 				/* Require line of sight, unless "look" is "expanded" */
-				if (!expand_look && !player_has_los_bold(Ind, y, x)) continue;
+				if (!player_has_los_bold(Ind, y, x)) continue;
 	
 				/* Require interesting contents */
 				if (!do_cmd_look_accept(Ind, y, x)) continue;

@@ -1215,69 +1215,6 @@ static char original_commands(char command)
 	return (command);
 }
 
-
-/*
- * React to new value of "rogue_like_commands".
- *
- * Initialize the "keymap" arrays based on the current value of
- * "rogue_like_commands".  Note that all "undefined" keypresses
- * by default map to themselves with no direction.  This allows
- * "standard" commands to use the same keys in both keysets.
- *
- * To reset the keymap, simply set "rogue_like_commands" to -1,
- * call this function, restore its value, call this function.
- *
- * The keymap arrays map keys to "command_cmd" and "command_dir".
- *
- * It is illegal for keymap_cmds[N] to be zero, except for
- * keymaps_cmds[0], which is unused.
- *
- * You can map a key to "tab" to make it "non-functional".
- */
-void keymap_init(void)
-{
-	int i, k;
-
-	/* Notice changes in the "rogue_like_commands" flag */
-	static bool old_rogue_like = -1;
-
-	/* Hack -- notice changes in "rogue_like_commands" */
-	if (old_rogue_like == rogue_like_commands) return;
-
-	/* Initialize every entry */
-	for (i = 0; i < 128; i++)
-	{
-		/* Default to "no direction" */
-		hack_dir = 0;
-
-		/* Attempt to translate */
-		if (rogue_like_commands)
-		{
-			k = roguelike_commands(i);
-		}
-		else
-		{
-			k = original_commands(i);
-		}
-
-		/* Save the keypress */
-		keymap_cmds[i] = k;
-
-		/* Save the direction */
-		keymap_dirs[i] = hack_dir;
-	}
-
-	/* Save the "rogue_like_commands" setting */
-	old_rogue_like = rogue_like_commands;
-}
-
-
-
-
-
-
-
-
 /*
  * Legal bit-flags for macro__use[X]
  */
@@ -1348,12 +1285,6 @@ void macro_add(cptr pat, cptr act, bool cmd_flag)
 }
 
 /*
- * Local "need flush" variable
- */
-static bool flush_later = FALSE;
-
-
-/*
  * Local variable -- we just finished a macro action
  */
 /*static bool after_macro = FALSE;*/
@@ -1377,22 +1308,6 @@ static bool flush_later = FALSE;
  * Local variable -- we are stripping symbols for a while
  */
 /*static bool strip_chars = FALSE;*/
-
-
-
-/*
- * Flush all input chars.  Actually, remember the flush,
- * and do a "special flush" before the next "inkey()".
- *
- * This is not only more efficient, but also necessary to make sure
- * that various "inkey()" codes are not "lost" along the way.
- */
-void flush(void)
-{
-	/* Do it later */
-	flush_later = TRUE;
-}
-
 
 /*
  * Flush the screen, make a noise

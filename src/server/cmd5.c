@@ -1058,7 +1058,6 @@ void do_cmd_cast(int Ind, int book, int spell)
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the spell off!");
 	}
 
@@ -1933,7 +1932,6 @@ void do_cmd_sorc(int Ind, int book, int spell)
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the spell off!");
 	}
 
@@ -2663,7 +2661,6 @@ static void brand_weapon(int Ind)
 
 	else
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "The Branding failed.");
 	}
 }
@@ -2791,7 +2788,6 @@ void do_cmd_pray(int Ind, int book, int spell)
 	/* Check for failure */
 	if ((rand_int(100) < chance) || antifail)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to concentrate hard enough!");
 	}
 
@@ -3789,7 +3785,6 @@ void do_cmd_fight(int Ind, int book, int spell)
 	/* Failed spell */
 	if (rand_int(100) < chance)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the technique off!");
 	}
 
@@ -4230,7 +4225,6 @@ void do_cmd_shad(int Ind, int book, int spell)
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the spell off!");
 	}
 
@@ -4688,7 +4682,6 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	/* Failed spell */
 	if ((rand_int(100) < chance) || antifail)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the spell off!");
 	}
 
@@ -5087,7 +5080,6 @@ static void do_mimic_power(int Ind, int power)
 	/* Failed spell */
 	if (rand_int(100) < chance)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to use the power!");
 	}
 	else
@@ -6003,7 +5995,6 @@ void do_cmd_psi(int Ind, int book, int spell)
 	/* Failed spell */
 	if (rand_int(100) < chance)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to get the spell off!");
 	}
 

@@ -2213,9 +2213,6 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac)
 	/* Failure */
 	if (!okay)
 	{
-		/* Flush */
-		/*if (flush_failure) flush();*/
-
 		/* Message */
 		msg_print(Ind, "The enchantment failed.");
 	}
@@ -2828,8 +2825,6 @@ bool genocide(int Ind)
 
 	bool	result = FALSE;
 
-	/* int		msec = delay_factor * delay_factor * delay_factor; */
-
 	int d = 999, tmp;
 
 	/* Search all monsters and find the closest */
@@ -2925,9 +2920,6 @@ bool mass_genocide(int Ind)
 	int		i;
 
 	bool	result = FALSE;
-
-	/*int		msec = delay_factor * delay_factor * delay_factor;*/
-
 
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++)

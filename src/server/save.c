@@ -1010,97 +1010,6 @@ static errr wr_randomizer(void)
 }
 #endif
 
-
-/*
- * Write the "options"
- */
-#if 0
-static void wr_options(void)
-{
-	int i;
-
-	u16b c;
-
-
-	/*** Oops ***/
-
-	/* Oops */
-	for (i = 0; i < 4; i++) wr_u32b(0L);
-
-
-	/*** Special Options ***/
-
-	/* Write "delay_factor" */
-	wr_byte(delay_factor);
-
-	/* Write "hitpoint_warn" */
-	wr_byte(hitpoint_warn);
-
-
-	/*** Cheating options ***/
-
-	c = 0;
-
-	if (wizard) c |= 0x0002;
-
-	if (cheat_peek) c |= 0x0100;
-	if (cheat_hear) c |= 0x0200;
-	if (cheat_room) c |= 0x0400;
-	if (cheat_xtra) c |= 0x0800;
-	if (cheat_know) c |= 0x1000;
-	if (cheat_live) c |= 0x2000;
-
-	wr_u16b(c);
-
-
-	/*** Extract options ***/
-
-	/* Analyze the options */
-	for (i = 0; option_info[i].o_desc; i++)
-	{
-		int os = option_info[i].o_set;
-		int ob = option_info[i].o_bit;
-
-		/* Process real entries */
-		if (option_info[i].o_var)
-		{
-			/* Set */
-			if (*option_info[i].o_var)
-			{
-				/* Set */
-				option_flag[os] |= (1L << ob);
-			}
-
-			/* Clear */
-			else
-			{
-				/* Clear */
-				option_flag[os] &= ~(1L << ob);
-			}
-		}
-	}
-
-
-	/*** Normal options ***/
-
-	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(option_flag[i]);
-
-	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(option_mask[i]);
-
-
-	/*** Window options ***/
-
-	/* Dump the flags */
-	for (i = 0; i < 8; i++) wr_u32b(window_flag[i]);
-
-	/* Dump the masks */
-	for (i = 0; i < 8; i++) wr_u32b(window_mask[i]);
-}
-#endif
-
-
 /*
  * Hack -- Write the "ghost" info
  */
@@ -1342,15 +1251,6 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->msane);
 	wr_s16b(p_ptr->csane);
 	wr_u16b(p_ptr->csane_frac);
-
-	/* Write feeling */
-	/*wr_byte(feeling);*/
-
-	/* Turn of last "feeling" */
-	/*wr_s32b(old_turn);*/
-
-	/* Current turn */
-	/*wr_s32b(turn);*/
 }
 
 /*
@@ -2133,7 +2033,7 @@ bool load_player(int Ind)
 
 #ifdef VERIFY_TIMESTAMP
 	/* Verify timestamp */
-	if (!err && !arg_wizard)
+	if (!err)
 	{
 		/* Hack -- Verify the timestamp */
 		if (sf_when > (statbuf.st_ctime + 100) ||
@@ -2167,18 +2067,6 @@ bool load_player(int Ind)
 		{
 			/* Player is no longer "dead" */
 			p_ptr->death = FALSE;
-
-#if 0
-			/* Cheat death */
-			if (arg_wizard)
-			{
-				/* A character was loaded */
-				character_loaded = TRUE;
-
-				/* Done */
-				return (TRUE);
-			}
-#endif
 
 			/* Count lives */
 			sf_lives++;

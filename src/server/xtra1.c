@@ -2855,9 +2855,6 @@ static void calc_bonuses(int Ind)
 
 	if ((p_ptr->anti_magic) && (p_ptr->skill_sav < 95)) p_ptr->skill_sav = 95;
 
-	/* Hack -- handle "xtra" mode */
-	/*if (character_xtra) return;*/
-
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot)
 	{
@@ -3007,10 +3004,6 @@ void update_stuff(int Ind)
 	/* Character is not ready yet, no screen updates */
 	/*if (!character_generated) return;*/
 
-
-	/* Character is in "icky" mode, no screen updates */
-	/*if (character_icky) return;*/
-
 	/* Character has changed depth very recently, no screen updates */
 	if (p_ptr->new_level_flag) return;
 
@@ -3077,12 +3070,6 @@ void redraw_stuff(int Ind)
 
 	/* Character is not ready yet, no screen updates */
 	/*if (!character_generated) return;*/
-
-
-	/* Character is in "icky" mode, no screen updates */
-	/*if (character_icky) return;*/
-
-
 
 	/* Hack -- clear the screen */
 	if (p_ptr->redraw & PR_WIPE)

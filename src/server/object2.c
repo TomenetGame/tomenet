@@ -2663,7 +2663,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 			if(o_ptr->sval == SV_KOLLA)
 			{
 				o_ptr->bpval = randint(2);
-				rating += 20;
 			}
 #endif	// 0
 
@@ -2671,9 +2670,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
                 }
 		case TV_DRAG_ARMOR:
 		{
-			/* Rating boost */
-			rating += 30;
-
 			/* Mention the item */
 //                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
@@ -2683,9 +2679,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_DRAGON_SHIELD)
 			{
-				/* Rating boost */
-				rating += 5;
-
 				/* Mention the item */
 //                                if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
@@ -2727,12 +2720,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 	{
 		case TV_DRAG_ARMOR:
 		{
-			/* Rating boost */
-			rating += 30;
-
-			/* Mention the item */
-			/*if (cheat_peek) object_mention(o_ptr);*/
-
 			break;
 		}
 
@@ -3165,7 +3152,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
                         if(o_ptr->sval == SV_KOLLA)
                         {
                                 o_ptr->bpval = randint(2);
-                                rating += 20;
                         }
 
 			/* Very good */
@@ -3376,9 +3362,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 						break;
 					}
 
-					/* Rating boost */
-					rating += 25;
-
 					/* Mention the item */
 //                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
@@ -3397,7 +3380,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 					/* Bonus to armor class */
 					o_ptr->to_a = 10 + randint(5) + m_bonus(10, level);
-					rating += 5;
 				}
 				break;
 
@@ -3532,9 +3514,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					//o_ptr->to_h = randint(5);
 					//o_ptr->to_d = randint(5);
 
-					/* Boost the rating */
-					rating += 15;
-
 					/* Sorry.. */
 //					o_ptr->xtra1 = EGO_XTRA_ABILITY;
 //					o_ptr->xtra2 = randint(256);
@@ -3551,9 +3530,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					o_ptr->pval = randint(5) + m_bonus(5, level);
 					o_ptr->to_h = randint(5);
 					o_ptr->to_d = randint(5);
-
-					/* Boost the rating */
-					rating += 15;
 
 					// o_ptr->xtra1 = EGO_XTRA_ABILITY;
 					//o_ptr->xtra2 = randint(256);
@@ -3670,9 +3646,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 
 //					if (randint(3)==1) o_ptr->art_flags3 |= TR3_SLOW_DIGEST;
 
-					/* Boost the rating */
-					rating += 25;
-
 					/* Mention the item */
 //                                        if ((cheat_peek)||(p_ptr->precognition)) object_mention(o_ptr);
 
@@ -3779,9 +3752,6 @@ tries = 100;
 
 						break;
 					}
-
-					/* Rating boost */
-					rating += 25;
 
 					/* Mention the item */
 					/*if (cheat_peek) object_mention(o_ptr);*/
@@ -4026,9 +3996,6 @@ tries = 100;
                                         //o_ptr->to_h = randint(5);
                                         //o_ptr->to_d = randint(5);
 
-					/* Boost the rating */
-					rating += 15;
-
                                         o_ptr->xtra1 = EGO_XTRA_ABILITY;
                                         o_ptr->xtra2 = randint(256);
 
@@ -4045,9 +4012,6 @@ tries = 100;
                                         o_ptr->to_h = randint(5);
                                         o_ptr->to_d = randint(5);
 
-					/* Boost the rating */
-					rating += 15;
-
                                        // o_ptr->xtra1 = EGO_XTRA_ABILITY;
                                         //o_ptr->xtra2 = randint(256);
 
@@ -4062,9 +4026,6 @@ tries = 100;
 				{
 					o_ptr->pval = randint(5) + m_bonus(5, level);
 					o_ptr->to_a = randint(5) + m_bonus(5, level);
-
-					/* Boost the rating */
-					rating += 25;
 
                  			o_ptr->xtra1 = EGO_XTRA_POWER;
                                         o_ptr->xtra2 = randint(256);
@@ -4353,15 +4314,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Hack -- extract the "cursed" flag */
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 
-		/* Mega-Hack -- increase the rating */
-		rating += 10;
-
-		/* Mega-Hack -- increase the rating again */
-		if (a_ptr->cost > 50000L) rating += 10;
-
-		/* Set the good item flag */
-		good_item_flag = TRUE;
-
 		/* Cheat -- peek at the item */
 		/* if (cheat_peek) object_mention(o_ptr); */
 
@@ -4450,11 +4402,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* Hack -- acquire "cursed" flag */
 	//                if (f3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);	// this should be done here!
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= (ID_CURSED);
-
-			rating += e_info[o_ptr->name2].rating;
-			//		+ e_info[o_ptr->name2b];
-
-
 	}
 #endif	// 0
 
@@ -4578,9 +4525,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			if (e_ptr->max_pval > 0) o_ptr->pval += randint(e_ptr->max_pval);
 			else if (e_ptr->max_pval < 0) o_ptr->pval -= randint(-e_ptr->max_pval);
 		}
-
-		/* Hack -- apply rating bonus */
-		rating += e_ptr->rating;
 
 		/* Cheat -- describe the item */
 		/*if (cheat_peek) object_mention(o_ptr);*/
@@ -4782,8 +4726,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 {
 	int			o_idx, prob, base;
 
-	int			old = rating;
-
 	object_type		forge;
 
 	cave_type **zcave;
@@ -4874,25 +4816,6 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 
 		c_ptr=&zcave[y][x];
 		c_ptr->o_idx = o_idx;
-
-		/* Notice "okay" out-of-depth objects (unless already noticed) */
-#ifdef NEW_DUNGEON
-		if (!cursed_p(o_ptr) && !broken_p(o_ptr) &&
-		    (rating == old) && (k_info[o_ptr->k_idx].level > getlevel(wpos)))
-		{
-			/* Rating increase */
-			rating += (k_info[o_ptr->k_idx].level - getlevel(wpos));
-#else
-		if (!cursed_p(o_ptr) && !broken_p(o_ptr) &&
-		    (rating == old) && (k_info[o_ptr->k_idx].level > Depth))
-		{
-			/* Rating increase */
-			rating += (k_info[o_ptr->k_idx].level - Depth);
-#endif
-
-			/* Cheat -- peek at items */
-			/*if (cheat_peek) object_mention(o_ptr);*/
-		}
 
 		/* Make sure no one sees it at first */
 		for (i = 1; i < NumPlayers + 1; i++)

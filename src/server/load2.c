@@ -1015,147 +1015,6 @@ static void rd_randomizer(void)
 }
 #endif
 
-
-
-/*
- * Read options (ignore pre-2.8.0 options)
- *
- * Note that the normal options are now stored as a set of 256 bit flags,
- * plus a set of 256 bit masks to indicate which bit flags were defined
- * at the time the savefile was created.  This will allow new options
- * to be added, and old options to be removed, at any time, without
- * hurting old savefiles.
- *
- * The window options are stored in the same way, but note that each
- * window gets 32 options, and their order is fixed by certain defines.
- */
-#if 0
-static void rd_options(void)
-{
-	int i, n;
-
-	byte b;
-
-	u16b c;
-
-	u32b flag[8];
-	u32b mask[8];
-
-
-	/*** Oops ***/
-
-	/* Oops */
-	strip_bytes(16);
-
-
-	/*** Special info */
-
-	/* Read "delay_factor" */
-	rd_byte(&b);
-	delay_factor = b;
-
-	/* Read "hitpoint_warn" */
-	rd_byte(&b);
-	hitpoint_warn = b;
-
-
-	/*** Cheating options ***/
-
-	rd_u16b(&c);
-
-	if (c & 0x0002) wizard = TRUE;
-
-	cheat_peek = (c & 0x0100) ? TRUE : FALSE;
-	cheat_hear = (c & 0x0200) ? TRUE : FALSE;
-	cheat_room = (c & 0x0400) ? TRUE : FALSE;
-	cheat_xtra = (c & 0x0800) ? TRUE : FALSE;
-	cheat_know = (c & 0x1000) ? TRUE : FALSE;
-	cheat_live = (c & 0x2000) ? TRUE : FALSE;
-
-
-	/*** Normal Options ***/
-
-	/* Read the option flags */
-	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
-
-	/* Read the option masks */
-	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
-
-	/* Analyze the options */
-	for (n = 0; n < 8; n++)
-	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
-		{
-			/* Process valid flags */
-			if (mask[n] & (1L << i))
-			{
-				/* Process valid flags */
-				if (option_mask[n] & (1L << i))
-				{
-					/* Set */
-					if (flag[n] & (1L << i))
-					{
-						/* Set */
-						option_flag[n] |= (1L << i);
-					}
-
-					/* Clear */
-					else
-					{
-						/* Clear */
-						option_flag[n] &= ~(1L << i);
-					}
-				}				
-			}
-		}
-	}
-
-
-	/*** Window Options ***/
-
-	/* Read the window flags */
-	for (n = 0; n < 8; n++) rd_u32b(&flag[n]);
-
-	/* Read the window masks */
-	for (n = 0; n < 8; n++) rd_u32b(&mask[n]);
-
-	/* Analyze the options */
-	for (n = 0; n < 8; n++)
-	{
-		/* Analyze the options */
-		for (i = 0; i < 32; i++)
-		{
-			/* Process valid flags */
-			if (mask[n] & (1L << i))
-			{
-				/* Process valid flags */
-				if (window_mask[n] & (1L << i))
-				{
-					/* Set */
-					if (flag[n] & (1L << i))
-					{
-						/* Set */
-						window_flag[n] |= (1L << i);
-					}
-
-					/* Clear */
-					else
-					{
-						/* Clear */
-						window_flag[n] &= ~(1L << i);
-					}
-				}				
-			}
-		}
-	}
-}
-#endif
-
-
-
-
-
 /*
  * Hack -- strip the "ghost" info
  *
@@ -1417,16 +1276,6 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->msane);
 	rd_s16b(&p_ptr->csane);
 	rd_u16b(&p_ptr->csane_frac);
-
-	/* Read "feeling" */
-	/*rd_byte(&tmp8u);
-	  feeling = tmp8u;*/
-
-	/* Turn of last "feeling" */
-	/*rd_s32b(&old_turn);*/
-
-	/* Current turn */
-	/*rd_s32b(&turn);*/
 
 	/* Success */
 	return FALSE;
@@ -1888,8 +1737,6 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}
-	if (arg_fiddle) s_printf("Loaded Quests");
-
 
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
@@ -1910,7 +1757,6 @@ static errr rd_savefile_new_aux(int Ind)
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}
-	if (arg_fiddle) s_printf("Loaded Artifacts");
 #endif
 
 

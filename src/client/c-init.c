@@ -328,29 +328,6 @@ void client_init(char *argv1)
 //		quit("Can't make socket non-blocking\n");
 //	}
 
-
-#if 0
-	// UDP code
-	/* Create net socket */
-	if ((Socket = CreateDgramSocket(0)) == -1)
-	{
-		quit("Could not create Dgram socket\n");
-	}
-
-	/* Make it non-blocking */
-	if (SetSocketNonBlocking(Socket, 1) == -1)
-	{	
-		quit("Can't make socket non-blocking\n");
-	}
-
-	/* Create a socket buffer */
-	if (Sockbuf_init(&ibuf, Socket, CLIENT_SEND_SIZE,
-		SOCKBUF_READ | SOCKBUF_WRITE | SOCKBUF_DGRAM) == -1)
-	{
-		quit("No memory for socket buffer\n");
-	}
-#endif
-
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
 	

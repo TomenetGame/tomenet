@@ -20,57 +20,6 @@
  * all the others use this file for their "main()" function.
  */
 
-#ifdef SET_UID
-
-/*
- * Check "wizard permissions"
- */
-static bool is_wizard(int uid)
-{
-	FILE	*fp;
-
-	bool	allow = FALSE;
-
-	char	buf[1024];
-
-
-	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_TEXT, "wizards.txt");
-
-	/* Open the wizard file */
-	fp = my_fopen(buf, "r");
-
-	/* No file, allow everyone */
-	if (!fp) return (TRUE);
-
-	/* Scan the wizard file */
-	while (0 == my_fgets(fp, buf, 1024))
-	{
-		int test;
-
-		/* Skip comments and blank lines */
-		if (!buf[0] || (buf[0] == '#')) continue;
-
-		/* Look for valid entries */
-		if (sscanf(buf, "%d", &test) != 1) continue;
-
-		/* Look for matching entries */
-		if (test == uid) allow = TRUE;
-
-		/* Done */
-		if (allow) break;
-	}
-
-	/* Close the file */
-	my_fclose(fp);
-
-	/* Result */
-	return (allow);
-}
-
-#endif
-
-
 /*
  * A hook for "quit()".
  *
@@ -259,13 +208,7 @@ int main(int argc, char *argv[])
 #endif
 
 
-	/* Assume "Wizard" permission */
-	can_be_wizard = TRUE;
-
 #ifdef SET_UID
-
-	/* Check for "Wizard" permission */
-	can_be_wizard = is_wizard(player_uid);
 
 	/* Initialize the "time" checker */
 	if (check_time_init() || check_time())
@@ -319,29 +262,6 @@ int main(int argc, char *argv[])
 			new_game = TRUE;
 			break;
 
-			case 'F':
-			case 'f':
-			arg_fiddle = TRUE;
-			break;
-
-#ifdef SET_UID
-#if 0
-			case 'P':
-			case 'p':
-			if (can_be_wizard)
-			{
-				player_uid = atoi(&argv[0][2]);
-				user_name(player_name, player_uid);
-			}
-			break;
-#endif
-#endif
-
-			case 'W':
-			case 'w':
-			if (can_be_wizard) arg_wizard = TRUE;
-			break;
-
 			case 'Z':
 			case 'z':
 			catch_signals = FALSE;
@@ -367,8 +287,6 @@ int main(int argc, char *argv[])
 			/* Note -- the Term is NOT initialized */
 			puts("Usage: mangband [options]");
 			puts("  -r	 Reset the server");
-			puts("  -f       Activate 'fiddle' mode");
-			puts("  -w       Activate 'wizard' mode");
 			puts("  -z       Don't catch signals");
 			puts("  -p<uid>  Play with the <uid> userid");
 			puts("  -c<path> Look for pref files in the directory <path>");

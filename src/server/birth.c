@@ -857,15 +857,6 @@ static void player_wipe(int Ind)
 	p_ptr->spell_forgotten1 = p_ptr->spell_forgotten2 = 0L;
 	for (i = 0; i < 64; i++) p_ptr->spell_order[i] = 99;
 
-
-	/* Clear "cheat" options */
-	cheat_peek = FALSE;
-	cheat_hear = FALSE;
-	cheat_room = FALSE;
-	cheat_xtra = FALSE;
-	cheat_know = FALSE;
-	cheat_live = FALSE;
-
 	/* Assume no winning game */
 	p_ptr->total_winner = FALSE;
 

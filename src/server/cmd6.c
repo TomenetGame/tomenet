@@ -2067,7 +2067,6 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to use the staff properly.");
 		return;
 	}
@@ -2075,7 +2074,6 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Notice empty staffs */
 	if (o_ptr->pval <= 0)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "The staff has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
 		
@@ -2521,7 +2519,6 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to use the wand properly.");
 		return;
 	}
@@ -2529,7 +2526,6 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* The wand is already empty! */
 	if (o_ptr->pval <= 0)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "The wand has no charges left.");
 		o_ptr->ident |= ID_EMPTY;
 
@@ -2998,7 +2994,6 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to use the rod properly.");
 		return;
 	}
@@ -3006,7 +3001,6 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Still charging */
 	if (o_ptr->pval)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "The rod is still charging.");
 		return;
 	}
@@ -3299,7 +3293,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to use the rod properly.");
 		return;
 	}
@@ -3307,7 +3300,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Still charging */
 	if (o_ptr->pval)
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "The rod is still charging.");
 		return;
 	}
@@ -3754,9 +3746,6 @@ static bool brand_bolts(int Ind)
 		return (TRUE);
 	}
 
-	/* Flush */
-	if (flush_failure) flush();
-
 	/* Fail */
 	msg_print(Ind, "The fiery enchantment failed.");
 
@@ -3852,7 +3841,6 @@ void do_cmd_activate(int Ind, int item)
 	/* Roll for usage */
 	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
 	{
-		if (flush_failure) flush();
 		msg_print(Ind, "You failed to activate it properly.");
 		return;
 	}

@@ -1791,12 +1791,6 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* No negative damage */
 			if (k < 0) k = 0;
 
-			/* Complex message */
-			if (wizard)
-			{
-				msg_format(Ind, "You do %d (out of %d) damage.", k, m_ptr->hp);
-			}
-
 			/* Damage, check for fear and death */
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) break;
 
@@ -1812,11 +1806,6 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				if (drain_result > 0) /* Did we really hurt it? */
 				{
 					drain_heal = damroll(4,(drain_result / 6));
-
-					if (cheat_xtra)
-					{
-						msg_format(Ind, "Draining left: %d", drain_left);
-					}
 
 					if (drain_left)
 					{

@@ -328,26 +328,6 @@ int Net_verify(char *real, char *nick, char *pass, int sex, int race, int class)
 		}
 		//if (rbuf.len <= 0)
 		//	continue;
-	#if 0
-		// UDP reliable receive stuff
-		if (rbuf.ptr[0] != PKT_RELIABLE)
-		{
-			if (rbuf.ptr[0] == PKT_QUIT)
-			{
-				errno = 0;
-				plog("Server closed connection");	
-				plog(&rbuf.ptr[1]);
-				return -1;
-			}
-			else
-			{
-				errno = 0;
-				plog(format("Bad packet type when verifying (%d)",
-					rbuf.ptr[0]));
-				return -1;
-			}
-		}
-	#endif
 		if (Receive_reliable() == -1)
 			return -1;
 		if (Sockbuf_flush(&wbuf) == -1)
@@ -406,20 +386,6 @@ int Net_init(char *server, int fd)
 
 	sock = fd;
 
-#if 0
-	//UDP stuff
-	if ((sock = CreateDgramSocket(0)) == -1)
-	{
-		plog("Can't create datagram socket");
-		return -1;
-	}
-	if (DgramConnect(sock, server, port) == -1)
-	{
-		plog(format("Can't connect to server %s on port %d", server, port));
-		DgramClose(sock);
-		return -1;
-	}
-#endif
 	wbuf.sock = sock;
 	//if (SetSocketNonBlocking(sock, 1) == -1)
 	//{
@@ -453,23 +419,6 @@ int Net_init(char *server, int fd)
 		return -1;
 	}
 
-#if 0
-	/* read buffer */
-	if (Sockbuf_init(&rbuf, sock, CLIENT_RECV_SIZE,
-		SOCKBUF_READ | SOCKBUF_DGRAM) == -1)
-	{
-		plog(format("No memory for read buffer (%u)", CLIENT_RECV_SIZE));
-		return -1;
-	}
-
-	/* write buffer */
-	if (Sockbuf_init(&wbuf, sock, CLIENT_SEND_SIZE,
-		SOCKBUF_WRITE | SOCKBUF_DGRAM) == -1)
-	{
-		plog(format("No memory for write buffer (%u)", CLIENT_SEND_SIZE));
-		return -1;
-	}
-#endif
 	/* read buffer */
 	if (Sockbuf_init(&rbuf, sock, CLIENT_RECV_SIZE,
 		SOCKBUF_READ | SOCKBUF_WRITE) == -1)

@@ -262,16 +262,6 @@
 #define PLAYER_INTERACTION
 
 /*
- * OPTION: Hack -- Compile in support for "Cyborg" mode
- */
-/* #define ALLOW_BORG */
-
-/*
- * OPTION: Hack -- Compile in support for "Wizard Commands"
- */
-/* #define ALLOW_WIZARD */
-
-/*
  * OPTION: Hack -- Compile in support for "Spoiler Generation"
  */
 /* #define ALLOW_SPOILERS */
@@ -366,24 +356,6 @@
  * OPTION: Handle signals
  */
 #define HANDLE_SIGNALS
-
-
-/*
- * Allow "Wizards" to yield "high scores"
- */
-/* #define SCORE_WIZARDS */
-
-/*
- * Allow "Borgs" to yield "high scores"
- */
-/* #define SCORE_BORGS */
-
-/*
- * Allow "Cheaters" to yield "high scores"
- */
-/* #define SCORE_CHEATERS */
-
-
 
 
 /*

@@ -1488,7 +1488,6 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Hack -- Wizards have "perfect telepathy" */
-			/* if (p_ptr->wizard) flag = TRUE; */
 			if (p_ptr->admin_dm) flag = TRUE;
 		}
 
@@ -1955,9 +1954,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		{
 			/* Message for cheaters */
 			/*if (cheat_hear) msg_format("Deep Unique (%s).", name);*/
-
-			/* Boost rating by twice delta-depth */
-			rating += (r_ptr->level - getlevel(wpos)) * 2;
 		}
 
 		/* Normal monsters */
@@ -1965,9 +1961,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		{
 			/* Message for cheaters */
 			/*if (cheat_hear) msg_format("Deep Monster (%s).", name);*/
-
-			/* Boost rating by delta-depth */
-			rating += (r_ptr->level - getlevel(wpos));
 		}
 	}
 #if 0
@@ -2182,10 +2175,6 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 	/* Maximum size */
 	if (total > GROUP_MAX) total = GROUP_MAX;
 
-
-	/* Save the rating */
-	old = rating;
-
 	/* Start on the monster */
 	hack_n = 1;
 	hack_x[0] = x;
@@ -2217,10 +2206,6 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 			}
 		}
 	}
-
-	/* Hack -- restore the rating */
-	rating = old;
-
 
 	/* Success */
 	return (TRUE);
@@ -2316,7 +2301,6 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 
 			/* Set the escort index */
 			place_monster_idx = r_idx;
-
 
 			/* Set the escort hook */
 			get_mon_num_hook = place_monster_okay;

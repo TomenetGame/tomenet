@@ -209,19 +209,6 @@ void do_cmd_search(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -613,19 +600,6 @@ void do_cmd_open(int Ind, int dir)
 		return;
 	}
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
 	/* Get a "repeated" direction */
 	if (dir)
 	{
@@ -704,7 +678,6 @@ void do_cmd_open(int Ind, int dir)
 				{
 					/* We may continue repeating */
 					more = TRUE;
-					if (flush_failure) flush();
 					msg_print(Ind, "You failed to pick the lock.");
 				}
 			}
@@ -780,9 +753,6 @@ void do_cmd_open(int Ind, int dir)
 			/* Failure */
 			else
 			{
-				/* Failure */
-				if (flush_failure) flush();
-
 				/* Message */
 				msg_print(Ind, "You failed to pick the lock.");
 
@@ -917,19 +887,6 @@ void do_cmd_close(int Ind, int dir)
 	{
 		msg_print(Ind, "You cannot close things!");
 		return;
-	}
-
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
 	}
 
 	/* Get a "repeated" direction */
@@ -1095,19 +1052,6 @@ void do_cmd_tunnel(int Ind, int dir)
 		msg_print(Ind, "You cannot tunnel.");
 
 		return;
-	}
-
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
 	}
 
 	/* Get a direction to tunnel, or Abort */
@@ -1388,19 +1332,6 @@ void do_cmd_disarm(int Ind, int dir)
 		return;
 	}
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
 	/* Get a direction (or abort) */
 	if (dir)
 	{
@@ -1505,7 +1436,6 @@ void do_cmd_disarm(int Ind, int dir)
 			{
 				/* We may keep trying */
 				more = TRUE;
-				if (flush_failure) flush();
 				msg_print(Ind, "You failed to disarm the chest.");
 			}
 
@@ -1583,9 +1513,6 @@ void do_cmd_disarm(int Ind, int dir)
 			/* Failure -- Keep trying */
 			else if ((i > 5) && (randint(i) > 5))
 			{
-				/* Failure */
-				if (flush_failure) flush();
-
 				/* Message */
 				msg_format(Ind, "You failed to disarm the %s.", name);
 
@@ -1650,19 +1577,6 @@ void do_cmd_bash(int Ind, int dir)
 		msg_print(Ind, "You cannot bash things!");
 
 		return;
-	}
-
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
 	}
 
 	/* Get a "repeated" direction */
@@ -1919,19 +1833,6 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 	/* Make sure he hasn't just switched levels */
 	if (p_ptr->new_level_flag) return;
 
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
 	/* Get a "repeated" direction */
 	if (dir)
 	{
@@ -2042,7 +1943,7 @@ int do_cmd_run(int Ind, int dir)
 		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
 		{
 			/* Hack -- Set the run counter */
-			p_ptr->running = (command_arg ? command_arg : 1000);
+			p_ptr->running = 1000;
 
 			/* First step */
 			run_step(Ind, dir);
@@ -2077,20 +1978,6 @@ void do_cmd_stay(int Ind, int pickup)
 	if (p_ptr->new_level_flag) return;
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
-	/* Allow repeated command */
-	if (command_arg)
-	{
-		/* Set repeat count */
-		/*command_rep = command_arg - 1;*/
-
-		/* Redraw the state */
-		p_ptr->redraw |= (PR_STATE);
-
-		/* Cancel the arg */
-		command_arg = 0;
-	}
-
 
 /* We don't want any of this */
 #if 0
@@ -2722,13 +2609,6 @@ void do_cmd_fire(int Ind, int dir, int item)
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
 
-					/* Complex message */
-					if (wizard)
-					{
-						msg_format(Ind, "You do %d (out of %d) damage.",
-								tdam, m_ptr->hp);
-					}
-
 					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BOW_BRAND_CONF)) &&
 							!(r_ptr->flags3 & RF3_NO_CONF) &&
 							!(r_ptr->flags4 & RF4_BR_CONF) &&
@@ -3089,7 +2969,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 	char            o_name[160];
 	u32b f1, f2, f3, f4, f5, esp;
 
-	/*int                   msec = delay_factor * delay_factor * delay_factor;*/
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3400,13 +3279,6 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;
-
-				/* Complex message */
-				if (wizard)
-				{
-					msg_format(Ind, "You do %d (out of %d) damage.",
-						   tdam, m_ptr->hp);
-				}
 
 				/* Hit the monster, check for death */
 				if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))

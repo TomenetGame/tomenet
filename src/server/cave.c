@@ -1216,11 +1216,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Special lighting effects */
 			if (p_ptr->view_granite_lite && (a == TERM_WHITE) && (feat >= FEAT_SECRET))
-#if 0	// Was ist das??
-				if (view_granite_lite && (!p_ptr->wild_mode) &&
-						(((a == TERM_WHITE) && !graf_new) ||
-						 (graf_new && feat_supports_lighting(c_ptr->feat) && (!(c_ptr->t_idx && (c_ptr->info & CAVE_TRDT))))))
-#endif	// 0
 			{
 				/* Handle "blind" */
 				if (p_ptr->blind)
@@ -4432,9 +4427,6 @@ void disturb(int Ind, int stop_search, int unused_flag)
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
 	}
-
-	/* Flush the input if requested */
-	if (flush_disturb) flush();
 }
 
 

@@ -5388,8 +5388,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int dist_hack = 0;
 	int			who_can_see[26], num_can_see = 0;
 
-	/*int			msec = delay_factor * delay_factor * delay_factor;*/
-
 	/* Affected location(s) */
 	cave_type *c_ptr;
 

@@ -772,9 +772,6 @@ static void destroy_level(struct worldpos *wpos)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
-	/* Note destroyed levels */
-	/*if (cheat_room) msg_print("Destroyed Level");*/
-
 	/* Drop a few epi-centers (usually about two) */
 	for (n = 0; n < randint(5); n++)
 	{
@@ -2130,25 +2127,6 @@ static void build_type5(struct worldpos *wpos, int yval, int xval)
 	/* Oops */
 	if (empty) return;
 
-
-	/* Describe */
-	if (cheat_room)
-	{
-		/* Room type */
-		/*msg_format("Monster nest (%s)", name);*/
-	}
-
-
-	/* Increase the level rating */
-	rating += 10;
-
-	/* (Sometimes) Cause a "special feeling" (for "Monster Nests") */
-	if ((getlevel(wpos) <= 40) && (randint(getlevel(wpos)*getlevel(wpos) + 1) < 300))
-	{
-		good_item_flag = TRUE;
-	}
-
-
 	/* Place some monsters */
 	for (y = yval - 2; y <= yval + 2; y++)
 	{
@@ -2480,34 +2458,6 @@ static void build_type6(struct worldpos *wpos, int yval, int xval)
 		what[i] = what[i * 2];
 	}
 
-
-#if 0
-	/* Message */
-	if (cheat_room)
-	{
-		/* Room type */
-		msg_format("Monster pit (%s)", name);
-
-		/* Contents */
-		for (i = 0; i < 8; i++)
-		{
-			/* Message */
-			msg_print(r_name + r_info[what[i]].name);
-		}
-	}
-#endif
-
-
-	/* Increase the level rating */
-	rating += 10;
-
-	/* (Sometimes) Cause a "special feeling" (for "Monster Pits") */
-	if ((getlevel(wpos) <= 40) && (randint(getlevel(wpos)*getlevel(wpos)+ 1) < 300))
-	{
-		good_item_flag = TRUE;
-	}
-
-
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++)
 	{
@@ -2830,19 +2780,6 @@ static void build_type7(struct worldpos *wpos, int yval, int xval)
 		if (v_ptr->typ == 7) break;
 	}
 
-	/* Message */
-	/*if (cheat_room) msg_print("Lesser Vault");*/
-
-	/* Boost the rating */
-	rating += v_ptr->rat;
-
-	/* (Sometimes) Cause a special feeling */
-	if ((getlevel(wpos) <= 50) ||
-	    (randint((getlevel(wpos)-40) * (getlevel(wpos)-40) + 1) < 400))
-	{
-		good_item_flag = TRUE;
-	}
-
 	/* Hack -- Build the vault */
 	build_vault(wpos, yval, xval, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
 }
@@ -2866,19 +2803,6 @@ static void build_type8(struct worldpos *wpos, int yval, int xval)
 
 		/* Accept the first greater vault */
 		if (v_ptr->typ == 8) break;
-	}
-
-	/* Message */
-	/*if (cheat_room) msg_print("Greater Vault");*/
-
-	/* Boost the rating */
-	rating += v_ptr->rat;
-
-	/* (Sometimes) Cause a special feeling */
-	if (( getlevel(wpos)<= 50) ||
-	    (randint((getlevel(wpos)-40) * (getlevel(wpos)-40) + 1) < 400))
-	{
-		good_item_flag = TRUE;
 	}
 
 	/* Hack -- Build the vault */
@@ -4664,13 +4588,6 @@ void generate_cave(struct worldpos *wpos)
 		/* Reset the object generation level */
 		object_level = getlevel(wpos);
 
-		/* Nothing special here yet */
-		good_item_flag = FALSE;
-
-		/* Nothing good here yet */
-		rating = 0;
-
-
 		/* Build the town */
 		if (istown(wpos))
 		{
@@ -4722,28 +4639,6 @@ void generate_cave(struct worldpos *wpos)
 			cave_gen(wpos);
 		}
 
-
-		/* Extract the feeling */
-		if (rating > 100) feeling = 2;
-		else if (rating > 80) feeling = 3;
-		else if (rating > 60) feeling = 4;
-		else if (rating > 40) feeling = 5;
-		else if (rating > 30) feeling = 6;
-		else if (rating > 20) feeling = 7;
-		else if (rating > 10) feeling = 8;
-		else if (rating > 0) feeling = 9;
-		else feeling = 10;
-
-		/* Hack -- Have a special feeling sometimes */
-		if (good_item_flag) feeling = 1;
-
-		/* It takes 1000 game turns for "feelings" to recharge */
-		if ((turn - old_turn) < 1000) feeling = 0;
-
-		/* Hack -- no feeling in the town */
-		if(istown(wpos)) feeling=0;
-
-
 		/* Prevent object over-flow */
 		if (o_max >= MAX_O_IDX)
 		{
@@ -4762,29 +4657,6 @@ void generate_cave(struct worldpos *wpos)
 
 			/* Message */
 			okay = FALSE;
-		}
-
-		/* Mega-Hack -- "auto-scum" */
-		if (auto_scum && (num < 100))
-		{
-			/* Require "goodness" */
-			if ((feeling > 9) ||
-			    ((getlevel(wpos) >= 5) && (feeling > 8)) ||
-			    ((getlevel(wpos) >= 10) && (feeling > 7)) ||
-			    ((getlevel(wpos) >= 20) && (feeling > 6)) ||
-			    ((getlevel(wpos) >= 40) && (feeling > 5)))
-			{
-				/* Give message to cheaters */
-				if (cheat_room || cheat_hear ||
-				    cheat_peek || cheat_xtra)
-				{
-					/* Message */
-					why = "boring level";
-				}
-
-				/* Try again */
-				okay = FALSE;
-			}
 		}
 
 		/* Accept */

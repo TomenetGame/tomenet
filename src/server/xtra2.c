@@ -100,7 +100,7 @@ bool set_adrenaline(int Ind, int v)
 	p_ptr->update |= (PU_BONUS | PU_HP);
 	
 	/* Disturb */
-	if (disturb_state) disturb(Ind, 0, 0);
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -174,7 +174,7 @@ bool set_biofeedback(int Ind, int v)
 	p_ptr->update |= (PU_BONUS | PU_HP);
 	
 	/* Disturb */
-	if (disturb_state) disturb(Ind, 0, 0);
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -5358,10 +5358,6 @@ bool get_aim_dir(int Ind)
 	int		dir;
 	player_type *p_ptr = Players[Ind];
 
-
-	/* Global direction */
-	dir = command_dir;
-
 	/* Hack -- auto-target if requested */
 	if (p_ptr->use_old_target && target_okay(Ind)) 
 	{
@@ -5384,69 +5380,6 @@ bool get_item(int Ind)
 
 	return (TRUE);
 }
-
-
-/*
- * Request a "movement" direction (1,2,3,4,6,7,8,9) from the user,
- * and place it into "command_dir", unless we already have one.
- *
- * This function should be used for all "repeatable" commands, such as
- * run, walk, open, close, bash, disarm, spike, tunnel, etc.
- *
- * This function tracks and uses the "global direction", and uses
- * that as the "desired direction", to which "confusion" is applied.
- */
-#if 0
-bool get_rep_dir(int *dp)
-{
-	int dir;
-
-
-	/* Global direction */
-	dir = command_dir;
-
-	/* Get a direction */
-	while (!dir)
-	{
-		char ch;
-
-		/* Get a command (or Cancel) */
-		if (!get_com("Direction (Escape to cancel)? ", &ch)) break;
-
-		/* Look up the direction */
-		dir = keymap_dirs[ch & 0x7F];
-
-		/* Oops */
-		if (!dir) bell();
-	}
-
-	/* Keep the given direction */
-	*dp = dir;
-
-	/* Aborted */
-	if (!dir) return (FALSE);
-
-	/* Save the direction */
-	command_dir = dir;
-
-	/* Apply "confusion" */
-	if (p_ptr->confused)
-	{
-		/* Warn the user XXX XXX XXX */
-		/* msg_print("You are confused."); */
-
-		/* Standard confusion */
-		if (rand_int(100) < 75)
-		{
-			/* Random direction */
-			*dp = ddd[rand_int(8)];
-		}
-	}
-
-	/* A "valid" direction was entered */
-	return (TRUE);
-}
-#endif
 
 /*
  * Allows to travel both vertical/horizontal using Recall;

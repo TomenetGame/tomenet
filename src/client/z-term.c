@@ -1845,14 +1845,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	int i, j;
 
 	char *c_ptr;
-#if 0
-		/* Pat */
-	if((do_movies == 1) && IN_MAINWINDOW)
-		{
-		if(!same_second() ){fprintf(movfile,"W:1:\n");}
-		}
-		/* Endpat */
-#endif
+
 	/* Bounds checking */
 	if (y2 >= Term->hgt) y2 = Term->hgt - 1;
 	if (x2 >= Term->wid) x2 = Term->wid - 1;

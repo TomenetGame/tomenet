@@ -228,19 +228,10 @@
  * involving object and monster creation.  It must be at least 100.
  * Setting it below 128 may prevent the creation of some objects.
  */
-#ifdef NEW_DUNGEON
 #define MAX_WILD_X	64
 #define MAX_WILD_Y	64
 #define MAX_WILD	(MAX_WILD_X*MAX_WILD_Y)
 #define MAX_WILD_8	((MAX_WILD_X*MAX_WILD_Y)/8)
-#else
-#define MAX_DEPTH       201
-
-/* The number of wilderness levels we have allocated.
-*/
-#define MAX_WILD        4096
-#define MAX_WILD_8      (MAX_WILD/8)
-#endif
 #define MAX_DEPTH_OBJ   128
 
 
@@ -4064,14 +4055,8 @@ that keeps many algorithms happy.
  * (This should be replaced with the one using
  * p_ptr->max_hgt/wid?	- Jir -)
  */
-#ifdef NEW_DUNGEON
 #define in_bounds(Y,X) \
    (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1))
-#else
-#define in_bounds(DEPTH,Y,X) \
-   ((DEPTH ? (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1)) \
-      : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1))))
-#endif
 
 
 /*
@@ -4106,13 +4091,8 @@ that keeps many algorithms happy.
  * into those features which block line of sight and those that
  * do not, allowing an extremely fast single bit check below.
  */
-#ifdef NEW_DUNGEON	/* Forced to define and check zcave */
 #define cave_floor_bold(ZCAVE,Y,X) \
     (!(ZCAVE[Y][X].feat & 0x20))
-#else
-#define cave_floor_bold(DEPTH,Y,X) \
-    (!(cave[DEPTH][Y][X].feat & 0x20))
-#endif
 
 /*
  * Determine if a "legal" grid is a "clean" floor grid
@@ -4120,17 +4100,10 @@ that keeps many algorithms happy.
  * Line 1 -- forbid non-floors
  * Line 2 -- forbid normal objects
  */
-#ifdef NEW_DUNGEON
 #define cave_clean_bold(ZCAVE,Y,X) \
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_LOOSE_DIRT) && \
      (!ZCAVE[Y][X].o_idx))
-#else
-#define cave_clean_bold(DEPTH,Y,X) \
-    ((cave[DEPTH][Y][X].feat >= FEAT_FLOOR) && \
-     (cave[DEPTH][Y][X].feat <= FEAT_LOOSE_DIRT) && \
-     (!cave[DEPTH][Y][X].o_idx))
-#endif
 
 /*
  * Determine if a "legal" grid is an "empty" floor grid
@@ -4139,15 +4112,9 @@ that keeps many algorithms happy.
  * Line 2 -- forbid normal monsters
  * Line 3 -- forbid any player
  */
-#ifdef NEW_DUNGEON
 #define cave_empty_bold(ZCAVE,Y,X) \
     (cave_floor_bold(ZCAVE,Y,X) && \
      !(ZCAVE[Y][X].m_idx))
-#else
-#define cave_empty_bold(DEPTH,Y,X) \
-    (cave_floor_bold(DEPTH,Y,X) && \
-     !(cave[DEPTH][Y][X].m_idx))
-#endif
 
 /*
  * Determine if a "legal" grid is an "naked" floor grid
@@ -4157,19 +4124,11 @@ that keeps many algorithms happy.
  * Line 3 -- forbid normal monsters
  * Line 4 -- forbid any player
  */
-#ifdef NEW_DUNGEON
 #define cave_naked_bold(ZCAVE,Y,X) \
     ((ZCAVE[Y][X].feat >= FEAT_FLOOR) && \
      (ZCAVE[Y][X].feat <= FEAT_DIRT) && \
      !(ZCAVE[Y][X].o_idx) && \
      !(ZCAVE[Y][X].m_idx))
-#else
-#define cave_naked_bold(DEPTH,Y,X) \
-    ((cave[DEPTH][Y][X].feat >= FEAT_FLOOR) && \
-     (cave[DEPTH][Y][X].feat <= FEAT_DIRT) && \
-     !(cave[DEPTH][Y][X].o_idx) && \
-     !(cave[DEPTH][Y][X].m_idx))
-#endif
 
 
 /*
@@ -4180,7 +4139,6 @@ that keeps many algorithms happy.
  * Line 4-5 -- shop doors
  * Lines 5-6 -- home doors
  */
-#ifdef NEW_DUNGEON
 #define cave_perma_bold(ZCAVE,Y,X) \
     ((ZCAVE[Y][X].feat >= FEAT_PERM_EXTRA) || \
      ((ZCAVE[Y][X].feat == FEAT_LESS) || \
@@ -4189,16 +4147,6 @@ that keeps many algorithms happy.
       (ZCAVE[Y][X].feat <= FEAT_SHOP_TAIL)) || \
      ((ZCAVE[Y][X].feat >= FEAT_HOME_HEAD) && \
       (ZCAVE[Y][X].feat <= FEAT_HOME_TAIL))) 
-#else
-#define cave_perma_bold(DEPTH,Y,X) \
-    ((cave[DEPTH][Y][X].feat >= FEAT_PERM_EXTRA) || \
-     ((cave[DEPTH][Y][X].feat == FEAT_LESS) || \
-      (cave[DEPTH][Y][X].feat == FEAT_MORE)) || \
-     ((cave[DEPTH][Y][X].feat >= FEAT_SHOP_HEAD) && \
-      (cave[DEPTH][Y][X].feat <= FEAT_SHOP_TAIL)) || \
-     ((cave[DEPTH][Y][X].feat >= FEAT_HOME_HEAD) && \
-      (cave[DEPTH][Y][X].feat <= FEAT_HOME_TAIL))) 
-#endif
 
 /*
  * Is a given location "valid" for placing things?
@@ -4214,19 +4162,10 @@ that keeps many algorithms happy.
  * Line 2-3 -- forbid grids containing artifacts
  * Line 4 -- forbit house doors
  */
-#ifdef NEW_DUNGEON
 #define cave_valid_bold(ZCAVE,Y,X) \
     (!cave_perma_bold(ZCAVE,Y,X) && \
      (!ZCAVE[Y][X].o_idx || \
       !artifact_p(&o_list[ZCAVE[Y][X].o_idx])))
-#else
-#define cave_valid_bold(DEPTH,Y,X) \
-    (!cave_perma_bold(DEPTH,Y,X) && \
-     (!cave[DEPTH][Y][X].o_idx || \
-      !artifact_p(&o_list[cave[DEPTH][Y][X].o_idx])))
-#endif
-
-
 
 /*
  * Grid based version of "cave_floor_bold()"
