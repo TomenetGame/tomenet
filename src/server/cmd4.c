@@ -439,7 +439,7 @@ void do_cmd_check_uniques(int Ind, int line)
 				}
 
 				/* Terminate line */
-				//				fprintf(fff, "\n");
+				/*				fprintf(fff, "\n");*/
 			}
 		}
 	}
@@ -529,7 +529,7 @@ void do_cmd_check_players(int Ind, int line)
 		}
 
 		/* Newline */
-		// -AD- will this work?
+		/* -AD- will this work? */
 		fprintf(fff, "\n");
 		fprintf(fff, "         %s@%s\n", q_ptr->realname, q_ptr->hostname);
 

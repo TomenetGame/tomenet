@@ -810,7 +810,6 @@ static void wr_monster(monster_type *m_ptr)
 
         if (m_ptr->special)
         {
-		printf("writing special monster\n");
                 wr_monster_race(m_ptr->r_ptr);
         }
 }

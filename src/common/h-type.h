@@ -125,8 +125,8 @@ typedef signed long s32b;
 typedef unsigned long u32b;
 #endif
 
-typedef signed long long s64b;
-typedef unsigned long long u64b;
+typedef int64_t s64b;
+typedef u_int64_t u64b;
 
 
 /*** Pointers to all the basic types defined above ***/

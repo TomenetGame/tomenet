@@ -1281,7 +1281,7 @@ static int mon_check_hit(int m_idx, int power, int level)
 /*
  * Attack a monster via physical attacks.
  */
-bool monster_attack_normal(int m_idx, int tm_idx)
+bool monster_attack_normal(int tm_idx, int m_idx)
 {
         /* Targer */
         monster_type    *tm_ptr = &m_list[tm_idx];
@@ -1339,13 +1339,11 @@ bool monster_attack_normal(int m_idx, int tm_idx)
                 int d_dice = m_ptr->blow[ap_cnt].d_dice;
                 int d_side = m_ptr->blow[ap_cnt].d_side;
 
-
 		/* Hack -- no more attacks */
 		if (!method) break;
 
                 /* Stop if monster is dead or gone */
                 if (dead) break;
-
 
 		/* Extract the attack "power" */
 		switch (effect)
@@ -1399,7 +1397,6 @@ bool monster_attack_normal(int m_idx, int tm_idx)
 
 					/* Hack -- Player armor reduces total damage */
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
-
 					/* Take damage */
                                         dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);
 

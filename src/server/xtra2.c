@@ -4181,6 +4181,8 @@ bool target_able(int Ind, int m_idx)
 		/* Monster must be projectable */
 		if (!projectable(p_ptr->dun_depth, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) return (FALSE);
 
+		if(m_ptr->owner==p_ptr->id) return(FALSE);
+
 		/* Hack -- no targeting hallucinations */
 		if (p_ptr->image) return (FALSE);
 

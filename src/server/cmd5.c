@@ -454,7 +454,9 @@ void do_cmd_browse(int Ind, int book)
 	/* Warriors are illiterate */
 	if (!p_ptr->mp_ptr->spell_book)
 	{
-	  //		msg_print(Ind, "You cannot read books!");
+#if 0
+	  	msg_print(Ind, "You cannot read books!");
+#endif
 		return;
 	}
 
@@ -1961,10 +1963,14 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         break;
                 }
                 case 25: /* Meditation */
-		  //                	if (!p_ptr->tim_meditation)
+#if 0
+				if (!p_ptr->tim_meditation)
+#endif
                         	set_tim_meditation(Ind, p_ptr->tim_meditation + 20 + randint(20));
-				//     else
-                        	//set_tim_meditation(Ind, p_ptr->tim_meditation + 5);
+#if 0
+				else
+					set_tim_meditation(Ind, p_ptr->tim_meditation + 5);
+#endif
                         break;
                 case 26: /* Gravitic Distortion */
                         fire_ball(Ind, GF_GRAVITY, 0, 10, 2);
@@ -3116,8 +3122,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 			case 57:
 			{
-				// Temporily disabled until I have time to fix this.
-				// -APD
+				/* Temporily disabled until I have time to fix this. */
+				/* -APD */
 				/*
 				msg_print(Ind, "The world changes!");
 				p_ptr->new_level_flag = TRUE;

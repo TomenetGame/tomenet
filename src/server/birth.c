@@ -764,9 +764,11 @@ static void get_money(int Ind)
                 p_ptr->exp = 999999999;
 		p_ptr->noscore = 1;
 		/* permanent invulnerability */
+#if 0
 		//p_ptr->invuln = -1;
 		
 		// This is a KING(or QUEEN :)
+#endif
 		p_ptr->total_winner = TRUE;
 
 		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
@@ -972,8 +974,8 @@ static void player_outfit(int Ind)
 	int		i, tv, sv;
 
 	object_type	forge;
-	artifact_type	* a_ptr; // APD XXX FOR WARRIOR 
-	int		k_idx;	// APD XXX FOR WARRIOR
+	artifact_type	* a_ptr; /* APD XXX FOR WARRIOR */
+	int		k_idx;	/* APD XXX FOR WARRIOR */
 
 	object_type	*o_ptr = &forge;
 
@@ -1224,6 +1226,7 @@ static void player_setup(int Ind)
 		/* Pick a location */
 		/* Hack -- ghosts&wraithly Sorcerors do not scatter, as they may not be in a line of sight
 		   with a valid region */
+#if 0
 		//		if (!p_ptr->ghost && !p_ptr->wraith_in_wall)
 		//{
 			// Hack -- require line of sight if the level has not been unstaticed
@@ -1235,6 +1238,7 @@ static void player_setup(int Ind)
 		//if (!in_bounds(Depth, y, x) || !cave_empty_bold(Depth, y, x)) continue;
 		//}
 		//else
+#endif
 		{
 			/* ghosts can be on top of stuff */
 			x = p_ptr->px;

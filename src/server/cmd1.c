@@ -3041,7 +3041,7 @@ void run_step(int Ind, int dir)
 	/* Start running */
 	if (dir)
 	{
-		// Running into walls and doors is now checked in do_cmd_run.
+		/* Running into walls and doors is now checked in do_cmd_run.*/
 		#if 0
 		/* Hack -- do not start silly run */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
