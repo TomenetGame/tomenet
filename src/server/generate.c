@@ -237,21 +237,11 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
  * Those flags are mainly for vaults, quests and non-Angband dungeons...
  * but none of them implemented, qu'a faire?
  */
-#if 0	// for testing
-#define NO_TELEPORT_CHANCE	50
-#define NO_MAGIC_CHANCE		10
-#define NO_GENO_CHANCE		50
-#define NO_MAP_CHANCE		30
-#define NO_MAGIC_MAP_CHANCE	50
-#define NO_DESTROY_CHANCE	50
-#else	// normal (14% chance in total.)
-#define NO_TELEPORT_CHANCE	3
 #define NO_MAGIC_CHANCE		1
 #define NO_GENO_CHANCE		3
 #define NO_MAP_CHANCE		2
 #define NO_MAGIC_MAP_CHANCE	3
 #define NO_DESTROY_CHANCE	3
-#endif	// 0
 
 /*
  * Chances of a vault creating some special effects on the level, in %.
@@ -4008,8 +3998,6 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 
 	/* Check for flags */
 	if (v_ptr->flags1 & VF1_FORCE_FLAGS) force = TRUE;
-	if (v_ptr->flags1 & VF1_NO_TELEPORT && (magik(VAULT_FLAG_CHANCE) || force))
-		l_ptr->flags1 |= LF1_NO_TELEPORT;
 	if (v_ptr->flags1 & VF1_NO_GENO && (magik(VAULT_FLAG_CHANCE) || force))
 		l_ptr->flags1 |= LF1_NO_GENO;
 	if (v_ptr->flags1 & VF1_NOMAP && (magik(VAULT_FLAG_CHANCE) || force))
@@ -4056,6 +4044,8 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr)
 
 			/* Part of a vault */
 			c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);
+			if(v_ptr->flags1 & VF1_NO_TELEPORT)
+				c_ptr->info |= CAVE_STCK;
 
 			/* Analyze the grid */
 			switch (*t)
@@ -8279,7 +8269,6 @@ static void cave_gen(struct worldpos *wpos)
 	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 
 	dun->l_ptr->flags1 = 0;
-	if (magik(NO_TELEPORT_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_TELEPORT;
 	if (dun_level < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
 	if (magik(NO_GENO_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_GENO;
 	if (magik(NO_MAP_CHANCE)) dun->l_ptr->flags1 |= LF1_NOMAP;

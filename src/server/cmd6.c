@@ -5905,17 +5905,7 @@ void do_cmd_activate(int Ind, int item)
 #if 0
 			case ART_FLAR:
 			{
-				if (dungeon_flags1 & LF1_NO_TELEPORT)
-				{
-					msg_print(Ind, "No teleport on special levels...");
-					break;
-				}
-
-				if (dungeon_flags1 & LF1_NO_TELEPORT)
-				{
-					msg_print(Ind, "Not on special levels!");
-					break;
-				}
+				/* Check for CAVE_STCK */
 
 				msg_print(Ind, "You open a between gate. Choose a destination.");
 				if (!tgt_pt(&ii,&ij)) return;

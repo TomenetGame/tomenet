@@ -4861,7 +4861,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		if (l_ptr)
 		{
 			int factor = 100;
-			if (l_ptr->flags1 & LF1_NO_TELEPORT)  factor += 15;
 			if (l_ptr->flags1 & LF1_NOMAP)        factor += 20;
 			if (l_ptr->flags1 & LF1_NO_MAGIC)     factor += 10;
 			if (l_ptr->flags1 & LF1_NO_MAGIC_MAP) factor += 5;

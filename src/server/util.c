@@ -3741,8 +3741,6 @@ bool show_floor_feeling(int Ind)
 	if (!l_ptr) return(felt);
 
 	/* Hack^2 -- display the 'feeling' */
-	if (l_ptr->flags1 & LF1_NO_TELEPORT)
-		msg_print(Ind, "\377oYou feel the air is very stable...");
 	if (l_ptr->flags1 & LF1_NO_MAGIC)
 		msg_print(Ind, "\377oYou feel a suppressive air...");
 	if (l_ptr->flags1 & LF1_NO_GENO)

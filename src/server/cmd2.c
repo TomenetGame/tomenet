@@ -121,6 +121,10 @@ void do_cmd_go_up(int Ind)
 			return;
 		}
 	}
+	if(p_ptr->inval && p_ptr->wpos.wz>=10){
+		msg_print(Ind, "\377You may go no higher without a valid account.");
+		return;
+	}
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -328,6 +332,10 @@ void do_cmd_go_down(int Ind)
 			set_afraid(Ind, 10+(d_ptr->baselevel-p_ptr->max_dlv));
 			return;
 		}
+	}
+	if(p_ptr->inval && p_ptr->wpos.wz<=-10){
+		msg_print(Ind, "\377You may go no lower without a valid account.");
+		return;
 	}
 
 	/* Remove the player from the old location */

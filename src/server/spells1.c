@@ -272,7 +272,6 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
 	int i;
 
 	dun_level		*l_ptr = getfloor(wpos);
-	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return TRUE;
 
 	for (i = 1; i <= NumPlayers; i++)
 	  {
@@ -442,7 +441,6 @@ void teleport_to_player(int Ind, int m_idx)
 //	if (randint(100) > m_ptr->level) return;	/* not here */
 
 	if(!(zcave=getcave(wpos))) return;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) return;
 
 	/* Save the old location */
 	oy = m_ptr->fy;
@@ -4213,7 +4211,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			bool resist_tele = FALSE;
 			dun_level		*l_ptr = getfloor(wpos);
-			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			if (seen) obvious = TRUE;
 			
@@ -4654,7 +4651,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			bool resists_tele = FALSE;
 			dun_level		*l_ptr = getfloor(wpos);
-			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
 				(r_ptr->flags3 & (RF3_RES_TELE)))
@@ -4900,7 +4896,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			bool resists_tele = FALSE;
 			dun_level		*l_ptr = getfloor(wpos);
-			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			/* Teleport to nowhere..? */
 			if (quiet) break;
@@ -6490,7 +6485,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			bool resists_tele = FALSE;
 			dun_level		*l_ptr = getfloor(wpos);
-			if(l_ptr && l_ptr->flags1 & LF1_NO_TELEPORT) break;
 
 			/* Teleport to nowhere..? */
 			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
