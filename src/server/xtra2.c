@@ -4838,8 +4838,10 @@ bool target_able(int Ind, int m_idx)
 		/* Acquire pointer */
 		q_ptr = Players[0 - m_idx];
 
+		if((0 - m_idx) > NumPlayers) q_ptr=NULL;
+
 		/* Paranoia check -- require a valid player */
-		if ((0 - m_idx) > NumPlayers || !q_ptr || q_ptr->conn==NOT_CONNECTED){
+		if (!q_ptr || q_ptr->conn==NOT_CONNECTED){
 			p_ptr->target_who=0;
 			return (FALSE);
 		}
