@@ -689,6 +689,7 @@ Change list for PernMangband
 - removed old house code.
 - fixed bug in check_antimagic()
 - fixed client bug with store size
+- Burning trees is drawn now.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

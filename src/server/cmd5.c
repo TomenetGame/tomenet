@@ -922,15 +922,16 @@ bool check_antimagic(int Ind)
 			/* Ignore "illegal" locations */
 			if (!in_bounds2(wpos, y, x)) continue;
 
-			if (!(m_idx = zcave[y][x].m_idx)) continue;
+			if ((m_idx = zcave[y][x].m_idx)<=0) continue;
 
 			/* Enforce a "circular" explosion */
 			if ((dis = distance(y2, x2, y, x)) > MONSTER_ANTIDIS) continue;
 
+			m_ptr = &m_list[m_idx];	// pfft, bad design
+
 			/* dont use removed monsters */
 			if(!m_ptr->r_idx) continue;
 
-			m_ptr = &m_list[m_idx];	// pfft, bad design
 			r_ptr = race_inf(m_ptr);
 
 			if (!(r_ptr->flags7 & RF7_DISBELIEVE)) continue;
@@ -940,7 +941,6 @@ bool check_antimagic(int Ind)
 
 			if (dis > antidis) continue;
 			if (antichance > 95) antichance = 95;
-
 
 			/* Got disrupted ? */
 			if (magik(antichance))

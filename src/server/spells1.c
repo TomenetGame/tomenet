@@ -2097,6 +2097,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the tree */
 				c_ptr->feat = FEAT_DIRT;
+
+				/* Notice */
+				note_spot(Ind, y, x);
+
+				/* Redraw */
+				everyone_lite_spot(wpos, y, x);
 			}
 
 			/* Burn grass */
