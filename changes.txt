@@ -25,6 +25,10 @@
 13/02/2003
 [P]- Mimic AC & to-dam now averaged from player & form (similar to HP)
      I hope this will balance mimics well compared to the other classes.
+[G]- Class-specific exp penalty is now applied correctly.
+     Level cap changed to exp cap so weaker classes make sense again.
+     Cap is exactly sufficient for the worst choice in terms of penalty
+     to become level 50, the Thunderlord Ranger :)
 
 12/02/2003
 [O]- Admins can destroy/unequip anything

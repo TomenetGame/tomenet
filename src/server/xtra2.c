@@ -3179,11 +3179,19 @@ void gain_exp(int Ind, s32b amount)
 	/* You cant gain xp on your land */
         if (player_is_king(Ind)) return;
 
+#if 0
         /* You must defeat morgoth before beong allowed level > 50 */
         if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= ((s64b)((s64b)player_exp[50 - 1] *
                                            (s64b)p_ptr->expfact / 100L))))
             return;
-
+#else
+	/* You must defeat morgoth before being allowed to gain more
+	than 21,240,000 exp which is level 50 for Thunderlord Ranger */
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount >= 21240000)) {
+	    if (p_ptr->exp >= 21240000) return;
+	    amount = 21240000 - p_ptr->exp;
+	}
+#endif
 //        if (p_ptr->ghost) amount/=1.5;	/* allow own kills to be gained */
 	if (p_ptr->ghost) amount = (amount * 2) / 3;	/* 1.5 = 1, none? :) */
 

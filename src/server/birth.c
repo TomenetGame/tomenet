@@ -495,7 +495,7 @@ static void get_extra(int Ind)
 	p_ptr->lev = 1;
 
 	/* Experience factor */
-	p_ptr->expfact = p_ptr->rp_ptr->r_exp + p_ptr->cp_ptr->c_exp;
+	p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
 
 	/* Hitdice */
 	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
@@ -1058,9 +1058,9 @@ void admin_outfit(int Ind, int realm)
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
-	o_ptr->number = 30;
-	o_ptr->pval = 10;
-	o_ptr->note = note;
+	o_ptr->number = 20;
+	o_ptr->pval = 1;
+	//o_ptr->note = note;
 	do_admin_outfit();
 #if 0
 	invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
