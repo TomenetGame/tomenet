@@ -1844,6 +1844,7 @@ static void do_slash_cmd(int Ind, char *message)
 		{
 			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
 		}
+		msg_format(Ind, "\377BYou shout:%s", colon);
 		return;
 	}
 
