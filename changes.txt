@@ -371,3 +371,4 @@ Change list for PernMangband
 
 05/12/2001 (Jir)
 - Coloured cookie.
+- Allow URL on chat (eg. http://www.pernmangband.net/)

@@ -2856,8 +2856,8 @@ void player_talk_aux(int Ind, cptr message)
 	/* Look for a player's name followed by a colon */
 	colon = strchr(message, ':');
 
-	/* Ignore "smileys" */
-	if (colon && strchr(")(-", *(colon + 1)))
+	/* Ignore "smileys" or URL */
+	if (colon && strchr(")(-/", *(colon + 1)))
 	{
 		/* Pretend colon wasn't there */
 		colon = NULL;
