@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. November 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. November 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2b, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -1809,9 +1809,12 @@ feature was introduced to let you quickly cross empty areas, while it will
 cease to work as long as you fight monsters. To run, press SHIFT+<direction>
 or type '.' followed by a direction. Running using SHIFT+<direction> will
 currently only work if NUMLOCK is turned off unfortunately.
+
 If you want to pick up an item from the floor, step on that field and press
-'g' (or press '5' on the numpad, while NUMLOCK must be on).
+'g' (or press '5' on the numpad, while NUMLOCK must be on). For more
+information about finding, identifying and selling items, see (5.7).
 However, note that the keys can vary depending on your system configuration.
+
 You attack a monster with your equipped melee weapon by simply moving on
 the monster's field. Alternatively you can just stay still and let the
 monster approach you, if you stand still and an enemy is on an adjacent
@@ -1846,6 +1849,7 @@ The '{?}' indicates that this item has not yet been 'identified'.
 That means we don't know yet if it has certain magic abilities or if it's
 even cursed. We just know what we can see with our very eyes, that it is
 undoubtful some Long Sword, and all Long Swords do a base damage of 2d5.
+For more information about finding, identifying and selling items, see (5.7).
 If you pick it up it will be displayed in your inventory like this:
 
 e) a Long Sword {+,?} (2d5)
@@ -5647,8 +5651,7 @@ Very high characters (36 and above)
 + A fighter should have at least 90 AC. He might also have already 130 AC at
   level 36 if he is lucky.
 + Get as many high resistances as you can.. You will want Nether, Nexus,
-  Disenchantment, Chaos for example. Unfortunately there is no resistance
-  against Time, Inertia, Water and Mana (pure magical damage) attacks.. yet.
+  Disenchantment, Chaos for example.
   Note that "Feather Falling", also known as "Levitation" provides resistance
   to gravity.
 + Get "See Invisible".
@@ -5658,7 +5661,7 @@ Very high characters (36 and above)
   You will have to fight ring wraiths. Normal weapons, even those from
   Gondolin or the most powerful *Defenders* will quickly shatter if they come
   in contact with those unbelievably corrupted creatures of terror and hate.
-  (I remember one day I lost 4 Gondolins that way, pure fun.. ;) Your only way
+  (I remember one day I lost 4 Gondolins that way, pure fun..) Your only way
   to fight them is to equip an artifact since these resist ring wraiths
   greatly.
 + You will want items that permanently increase your speed!
