@@ -3075,41 +3075,86 @@ D:%X.@.@.@.@.@.@.@.@.@.@.@.@.@.X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+# Since between gates are not implemented yet,
+# I replaced them with normal passage.
+# Hopefully someday we can enjoy them :)	- Jir -
+
 # Between vaults from weisiger
+#N:137:The Between Vault
+#X:8:15:6:25
+#D:XXXXXXXXXXXXXXXXXXXXXXXXX
+#D:#,,,,,X&...@X..**&X....9X
+#D:#...&1X.,,,2X..**&X3...9X
+#D:#...&.X1,,,.X2.**3X....9X
+#D:#,,,,,X&...@X..**&X....9X
+#D:XXXXXXXXXXXXXXXXXXXXXXXXX
+#
+#N:138:Greater Vault (Mix&Match)
+#X:8:35:28:73
+#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#D:%.......................................................................%
+#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.X1.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X7X8#X8#X8#X8#X8#X8#X8#.7X.%
+#D:%.X..^^^*,XX@&@&@&@&X.X...X...X..#X&..X&..X@.#XXX#8XX8XX8XX8XX8XX8XXXXX.%
+#D:%.X^^^^*,XXXX.......X6.X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
+#D:%.X^^^*,XX&&XX.....XXXXXXXX.X...X#..X&.#X&..X@.XX#9#9#9#9X88XX^^XX#8XXX.%
+#D:%.X^^*,X#^^^^XX^XXX.X***&@XXXX...X...X&#.X@..X@X8X9X9X9X9X8#X^^XX8#X#8X.%
+#D:%.X^*,XX^^^^^^XX^XX5X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
+#D:%.X*,XX........XX^XXX***&@,,,,XXX..X..#X&..X@..X8X8X8X8X8XX^^XX88XXXXXX.%
+#D:%.X&XX..........XX^XX***@&,,,,#.XXX.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
+#D:%.XXX************XX6X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
+#D:%.XX&,&,&,&,&,&,&,XXXX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
+#D:%.XX#************XX.^#X,,,,,,,#.......XXXXXXXXXX8X8X8XXXXX@&#,,,,,,XX#X.%
+#D:%.X^XX..........XXX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
+#D:%.X.XXX........XX3X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
+#D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,X1X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
+#D:%.X^XXXXX....XXXX.^.XXXXXXXXXXXXXX*X^X+XXXXX.X.X,,,,#&&XXX##9,,,,#^X.#X.%
+#D:%.X.X^^.XX@@XXXXXXXXX9@&,,,,,,,,,X*X.X^^&,,X.X.X#####XXX#9@##@,,,#^X#.X.%
+#D:%.X.X^X.XXXXX^^^XXXXXXXXXXXXXXXX,X*X.X^^^,,X.X.X&&&XXX@8##&@##@,,#^X#.X.%
+#D:%.X^X.X2XXXX3^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX5.@89##9@##&,#^#.#X.%
+#D:%.X.X^XXXXXXXXX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.X^XXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.X.X^^.^..^..X^^^X.^..^..^.4X^X,X*X.X2.&^^+.+.X.^.^.^.^.^.^.^.^.^.^.4X.%
+#D:%.X^XXXXXXXXX^X^^^XXXXXXXXXXXX#X#X#X^XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.X..^..^..^..X^^^#................X..^..^..^..^..^..^..^..^..^..^..^.+.%
+#D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
+#D:%.......................................................................%
+#D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 N:137:The Between Vault
 X:8:15:6:25
 D:XXXXXXXXXXXXXXXXXXXXXXXXX
-D:#,,,,,X&...@X..**&X....9X
-D:#...&1X.,,,2X..**&X3...9X
-D:#...&.X1,,,.X2.**3X....9X
-D:#,,,,,X&...@X..**&X....9X
+D:#,,,,,#&...@X..**&#....9X
+D:#...&.X.,,,.#..**&X....9X
+D:#...&.X.,,,.#..**&X....9X
+D:#,,,,,#&...@X..**&#....9X
 D:XXXXXXXXXXXXXXXXXXXXXXXXX
+
 
 N:138:Greater Vault (Mix&Match)
 X:8:35:28:73
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 D:%.......................................................................%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
-D:%.X1.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X7X8#X8#X8#X8#X8#X8#X8#.7X.%
-D:%.X..^^^*,XX@&@&@&@&X.X...X...X..#X&..X&..X@.#XXX#8XX8XX8XX8XX8XX8XXXXX.%
-D:%.X^^^^*,XXXX.......X6.X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
+D:%.X8.^^^^*&XX,,,9,,,XX...X...X...X&..X@..X@.8X8X8#X8#X8#X8#X8#X8#X8#.8X.%
+D:%.X..^^^*,X#@&@&@&@&X.X...X...X..#X&..X&..X@.#X#X#8XX8XX8XX8XX8XX8XXXXX.%
+D:%.X^^^^*,XXXX.......X..X...X...X.#.X&..X@..X@.8X8XXXXXXXXXXXXXXXXXX88XX.%
 D:%.X^^^*,XX&&XX.....XXXXXXXX.X...X#..X&.#X&..X@.XX#9#9#9#9X88XX^^XX#8XXX.%
 D:%.X^^*,X#^^^^XX^XXX.X***&@XXXX...X...X&#.X@..X@X8X9X9X9X9X8#X^^XX8#X#8X.%
-D:%.X^*,XX^^^^^^XX^XX5X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
+D:%.X^*,XX^^^^^^XX^XX,X***@&,,XXX...X...X#..X&..XX#X#X#X#X#XXX^^XX##XX88X.%
 D:%.X*,XX........XX^XXX***&@,,,,XXX..X..#X&..X@..X8X8X8X8X8XX^^XX88XXXXXX.%
-D:%.X&XX..........XX^XX***@&,,,,#.XXX.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
-D:%.XXX************XX6X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
-D:%.XX&,&,&,&,&,&,&,XXXX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
+D:%.X&XX..........XX^XX***@&,,,,#.XX#.X.#.X&..X&.X#X#X#X#X#X^^X#8XXXX,#.X.%
+D:%.XXX************XX9X@&@&@,,,,#...XXXX#..X&.#X@X8X8X8X8X8#XXXXXX,,,,#.X.%
+D:%.XX&,&,&,&,&,&,&,X#XX@&@&,,,,#.....XXX...X&#.XX8X8X8X8X8XXXX,,,,,,,#.X.%
 D:%.XX#************XX.^#X,,,,,,,#.......XXXXXXXXXX8X8X8XXXXX@&#,,,,,,XX#X.%
-D:%.X^XX..........XXX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
-D:%.X.XXX........XX3X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
-D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,X1X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
+D:%.X^XX..........#XX.XXXX,,,,,,#................X8XXXXX&&#&@&#,,XXXXX#.X.%
+D:%.X.XXX........XX&X^X99XXXXXXXXXXXXXXX#XXXXXXX.XXXX,#&&&#&@&XXXX,#^X#.X.%
+D:%.X.XXXX......XXX.X.X@@,,,,,,,,,,,,#.X.......X.X,,,,#&&&#XXXX,,,,#^X.#X.%
 D:%.X^XXXXX....XXXX.^.XXXXXXXXXXXXXX*X^X+XXXXX.X.X,,,,#&&XXX##9,,,,#^X.#X.%
 D:%.X.X^^.XX@@XXXXXXXXX9@&,,,,,,,,,X*X.X^^&,,X.X.X#####XXX#9@##@,,,#^X#.X.%
 D:%.X.X^X.XXXXX^^^XXXXXXXXXXXXXXXX,X*X.X^^^,,X.X.X&&&XXX@8##&@##@,,#^X#.X.%
-D:%.X^X.X2XXXX3^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX5.@89##9@##&,#^#.#X.%
-D:%.X.X^XXXXXXXXX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.X^XXXXXXXXXXXXXXXXXXXXXX.%
-D:%.X.X^^.^..^..X^^^X.^..^..^.4X^X,X*X.X2.&^^+.+.X.^.^.^.^.^.^.^.^.^.^.4X.%
+D:%.X^X.X2XXXX^^^^XXX.^..^..^..^.X,X*X^X&^^^&X.X.X##XX..@89##9@##&,#^#.#X.%
+D:%.X.X^XXXXXX#XX^^XX.XXXXXXXXXX.X,X*X.X..^^^X.X.#^XXXXXXXXXXXXXXXXXXX#XX.%
+D:%.X.X^^.^..^..X^^^X.^..^..^.8X^X,X*X.X..&^^+.+.X.^.^.^.^.^.^.^.^.^.^.^X.%
 D:%.X^XXXXXXXXX^X^^^XXXXXXXXXXXX#X#X#X^XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
 D:%.X..^..^..^..X^^^#................X..^..^..^..^..^..^..^..^..^..^..^.+.%
 D:%.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.%
@@ -3473,7 +3518,7 @@ D:%%%%%%%%%%%%%%%
 
 # Jir
 #
-N:152:X
+N:152:eks
 X:8:20:17:44
 
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
