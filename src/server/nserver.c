@@ -2062,7 +2062,7 @@ void Handle_input(int fd, int arg)
 
 	
 	/* Mega-Hack */
-	if (connp->id != -1 && Players[GetInd[connp->id]]->new_level_flag) return;
+	if (connp->id != -1 && Players[GetInd[connp->id]] && Players[GetInd[connp->id]]->new_level_flag) return;
 
 	// Reset the buffer we are reading into
 	Sockbuf_clear(&connp->r);
