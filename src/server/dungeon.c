@@ -3844,10 +3844,12 @@ static void scan_objs(){
 	cave_type **zcave;
 	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
 	for(i=0; i<o_max; i++){
-		/* We leave non owned objects */
 		o_ptr=&o_list[i];
 		if(o_ptr->k_idx){
 			bool sj=FALSE;
+			/* not dropped on player death or generated on the floor? (or special stuff) */
+			if (o_ptr->marked2 == ITEM_REMOVAL_NEVER) continue;
+
 			/* check items on the world's surface */
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos)) && cfg.surface_item_removal) {
 				/* XXX noisy warning, eh? */
@@ -3865,13 +3867,15 @@ static void scan_objs(){
 						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
-/*						if(++o_ptr->marked==((artifact_p(o_ptr) ||
+#if 1
+						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.surface_item_removal * 6 : cfg.surface_item_removal))
-*/						if((++o_ptr->marked==((artifact_p(o_ptr) ||
+						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
+#else
+						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    o_ptr->note)?
 						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
-						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER)) /* and not dropped by dead player or generated on the floor? */
+#endif
 						{
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
@@ -3903,17 +3907,14 @@ static void scan_objs(){
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
 #if 1
-						if((++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.surface_item_removal*6 : cfg.surface_item_removal))
+						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
 #else
-						if((++o_ptr->marked==((artifact_p(o_ptr) ||
+						if(++o_ptr->marked==((artifact_p(o_ptr) ||
 						    o_ptr->note)?
 						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
 #endif
-						/* and not dropped by dead player or generated on the floor,
-						   (new!:) and not dropped by the dungeon master */
-						    && (o_ptr->marked2 != ITEM_REMOVAL_NEVER))
 						{
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
