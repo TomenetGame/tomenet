@@ -951,12 +951,26 @@ void do_cmd_save_game(int Ind)
 long total_points(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	
+	/* kill maggot for 100% bonus on total score? -> no
+	   why a little bonus for HELL mode? the honour for the player
+	   who chooses hell mode on his own is far greater without it. -> no
+	   add cash to exp? what if the player collected cool gear instead?
+	   make cash allow the player to skip lots of levels on the ladder?  -> no
+	   max_dlv? just enter the staircase in lothlorien and back up. -> no
+	   For now let's calc it basing on pure progress in gameplay!: */
+	//exp counts mainly, level factors in
+	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
+	//level counts mainly, exp factors in at higher levels
+	//return (p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
+#if 0
 	/* Maggot bonus.. beware, r_idx is hard-coded! */
 	int i = p_ptr->r_killed[8]? 50 : 100;
 	if (p_ptr->mode & MODE_HELL) i = i * 5 / 4;
 
 	if (p_ptr->mode & MODE_NO_GHOST) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
 	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
+#endif //0
 }
 
 /*
