@@ -3,6 +3,10 @@
 #ifndef INCLUDED_H_DEFINE_H
 #define INCLUDED_H_DEFINE_H
 
+#ifdef SET_UID
+#include <sys/param.h>
+#endif
+
 /*
  * Define some simple constants
  */
