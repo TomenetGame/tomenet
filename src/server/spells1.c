@@ -6473,7 +6473,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!strcmp(attacker,"") || !strcmp(m_name,"")) fuzzy = TRUE;
 
     /* Ghost-check */
-    if (p_ptr->ghost && ((typ == GF_HEAL_PLAYER) || /*(typ == GF_AWAY_ALL) ||*/
+    if (!(p_ptr->ghost && ((typ == GF_HEAL_PLAYER) || /*(typ == GF_AWAY_ALL) ||*/
 	(typ == GF_WRAITH_PLAYER) || (typ == GF_SPEED_PLAYER) ||
 	/*(typ == GF_SHIELD_PLAYER) || (typ == GF_RECALL_PLAYER) ||*/
 	(typ == GF_BLESS_PLAYER) || (typ == GF_REMFEAR_PLAYER) ||
@@ -6491,7 +6491,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
         (typ == GF_CURE_PLAYER) || /*(typ == GF_RESURRECT_PLAYER) ||
         (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
-	(typ == GF_OLD_POLY)))
+	(typ == GF_OLD_POLY))))
     { /* No effect on ghosts */
 
 	/* Analyze the damage */
