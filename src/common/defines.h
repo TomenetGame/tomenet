@@ -3188,6 +3188,10 @@ extern int PlayerUID;
 #define TRAP_OF_ACQUIREMENT               170
 
 /* Jir */
+#define TRAP_OF_ALE			171
+#define TRAP_OF_GARBAGE		172
+#define TRAP_OF_HOSTILITY	173
+
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))

@@ -142,10 +142,10 @@ void delete_trap_idx(trap_type *t_ptr)
 	}
 
 	/* Forget the "field mark" */
-	everyone_forget_spot(wpos, y, x);
+//	everyone_forget_spot(wpos, y, x);
 
 	/* Notice */
-	note_spot_depth(wpos, y, x);
+//	note_spot_depth(wpos, y, x);
 
 	/* Redisplay the grid */
 	everyone_lite_spot(wpos, y, x);
@@ -157,7 +157,7 @@ void delete_trap_idx(trap_type *t_ptr)
 	/* Visual update */
 	everyone_lite_spot(Depth, y, x);
 #endif
-	/* Wipe the */
+	/* Wipe the trap */
 //	FREE(tt_ptr, trap_kind);
 	WIPE(t_ptr, trap_type);
 }
@@ -200,10 +200,10 @@ void compact_traps(int size)
 	for (num = 0, cnt = 1; num < size; cnt++)
 	{
 		/* Get more vicious each iteration */
-		cur_lev = 5 * cnt;
+//		cur_lev = 5 * cnt;
 
 		/* Destroy more valuable items each iteration */
-		cur_val = 500 * (cnt - 1);
+//		cur_val = 500 * (cnt - 1);
 
 		/* Get closer each iteration */
 		cur_dis = 5 * (20 - cnt);
@@ -249,7 +249,7 @@ void compact_traps(int size)
 	for (i = t_max - 1; i >= 1; i--)
 	{
 		/* Get the i'th trap */
-		trap_type *t_ptr = &o_list[i];
+		trap_type *t_ptr = &t_list[i];
 
 		/* Skip real traps */
 		if (t_ptr->t_idx) continue;
@@ -380,6 +380,107 @@ void setup_traps(void)
 	}
 }
 
+/*
+ * This function can be *much* shorter if we use functions in
+ * party.c; it's written in this way so that all this will be
+ * done w/o anyone noticing it.		- Jir -
+ */
+static bool player_handle_trap_of_hostility(int Ind)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	int i, id = p_ptr->party;
+	hostile_type *h_ptr;
+	bool ident = FALSE;
+
+	if (id != 0)
+	{
+		ident = TRUE;
+		/* If (s)he's party owner, disband it */
+		if (streq(parties[id].owner, p_ptr->name))
+		{
+			//	del_party(party_id);	// check it!!
+			/* Remove the party altogether */
+			/* (probably it's too severe?) */
+			kill_houses(id, OT_PARTY);
+
+			/* Set the number of people in this party to zero */
+			parties[id].num = 0;
+
+			/* Remove everyone else */
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				/* Check if they are in here */
+				if (player_in_party(id, i))
+				{
+					Players[i]->party = 0;
+					//					msg_print(i, "Your party has been disbanded.");
+					Send_party(i);
+				}
+			}
+
+			/* Set the creation time to "disbanded time" */
+			parties[id].created = turn;
+
+			/* Empty the name */
+			strcpy(parties[id].name, "");
+		}
+		/* otherwise, leave it */
+		else
+		{
+			/* Lose a member */
+			parties[id].num--;
+
+			/* Set his party number back to "neutral" */
+			p_ptr->party = 0;
+
+			/* Resend info */
+			Send_party(Ind);
+		}
+	}
+
+	/* this player is hoe of everyone now */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		if (i == Ind) continue;
+
+		q_ptr = Players[i];
+
+		if (!check_hostile(Ind, i))
+		{
+			ident = TRUE;
+
+			/* Create a new hostility node */
+			MAKE(h_ptr, hostile_type);
+
+			/* Set ID in node */
+			h_ptr->id = q_ptr->id;
+
+			/* Put this node at the beginning of the list */
+			h_ptr->next = p_ptr->hostile;
+			p_ptr->hostile = h_ptr;
+		}
+
+		if (!check_hostile(i, Ind))
+		{
+			ident = TRUE;
+
+			/* Create a new hostility node */
+			MAKE(h_ptr, hostile_type);
+
+			/* Set ID in node */
+			h_ptr->id = p_ptr->id;
+
+			/* Put this node at the beginning of the list */
+			h_ptr->next = q_ptr->hostile;
+			q_ptr->hostile = h_ptr;
+		}
+	}
+
+
+}
 
 bool do_player_trap_call_out(int Ind)
 {
@@ -1882,21 +1983,23 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_FEMINITY:
       {
          msg_print(Ind, "Gas sprouts out... you feel you transmute.");
+	 trap_hit(Ind, trap);
+	 if (!p_ptr->male) break;
 //	 p_ptr->psex = SEX_FEMALE;
 //	 sp_ptr = &sex_info[p_ptr->psex];
 	 p_ptr->male = FALSE;
 	 ident = TRUE;
-	 trap_hit(Ind, trap);
 	 break;
       }
       case TRAP_OF_MASCULINITY:
       {
          msg_print(Ind, "Gas sprouts out... you feel you transmute.");
+	 trap_hit(Ind, trap);
+	 if (p_ptr->male) break;
 //	 p_ptr->psex = SEX_MALE;
 //	 sp_ptr = &sex_info[p_ptr->psex];
 	 p_ptr->male = FALSE;
 	 ident = TRUE;
-	 trap_hit(Ind, trap);
 	 break;
       }
       case TRAP_OF_NEUTRALITY:
@@ -2042,6 +2145,68 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       case TRAP_OF_NUKE_BALL: ident=player_handle_breath_trap(3, GF_NUKE, TRAP_OF_NUKE_BALL); break;
       case TRAP_OF_PSI_BALL: ident=player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
 #endif
+
+	/* PernMangband additions */
+      /* Trap? of Ale vendor */
+      case TRAP_OF_ALE:
+         {
+            u32b price = getlevel(&p_ptr->wpos), amt;
+
+			price *= price;
+			if (price < 5) price = 5;
+			amt = (p_ptr->au / price);
+
+			if (amt < 1)
+			{
+				msg_print(Ind, "You feel as if it's the day before the payday.");
+			}
+			else
+			{
+				object_type *o_ptr, forge;
+				o_ptr = &forge;
+				object_prep(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
+
+            if (amt > 10) amt = 10;
+			amt = randint(amt);
+
+            p_ptr->au -= amt * price;
+			o_ptr->number = amt;
+			drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+			msg_print(Ind, "You feel like having a shot.");
+			ident=TRUE;
+
+            p_ptr->redraw |= (PR_GOLD);
+			}
+         }
+         break;
+      /* Trap of Garbage */
+      case TRAP_OF_GARBAGE:
+		 {
+			 int lv = getlevel(&p_ptr->wpos);
+			 object_type *o_ptr, forge;
+			 for(k = 0; k < 200; k++)
+			 {
+				l = rand_int(MAX_K_IDX);
+
+				/* hack -- !ruin, !death cannot be generated */
+				if (!k_info[l].tval || k_info[l].cost || k_info[l].level > lv || k_info[l].level > 30) continue;
+
+				o_ptr = &forge;
+				object_prep(o_ptr, l);
+
+				ident = TRUE;
+				if (inven_carry(Ind, o_ptr) < 0)
+					drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+			 }
+			 break;
+		 }
+      /* Trap of discordance */
+	  case TRAP_OF_HOSTILITY:
+		 {
+			 ident = player_handle_trap_of_hostility(Ind);
+			 ident = FALSE;		// never known
+		 }
       default:
       {
          s_printf("Executing unknown trap %d", trap);

@@ -791,3 +791,25 @@ N:170:Acquirement Trap
 I:1:40:5:5:18:0d0:v
 D:Woh !
 F:FLOOR | DOOR | CHANGE
+
+# PernMangband traps	- Jir -
+
+N:171:Ale Vendor
+I:1:20:5:5:0:0d0:y
+D:You feel like having a shot.
+F:FLOOR | DOOR
+
+N:172:Garbage Trap
+I:3:30:5:5:10:0d0:w
+D:You feel like a dustbinman!
+F:FLOOR | DOOR | CHEST
+
+N:173:Discordance Trap
+I:6:15:5:5:10:0d0:r
+D:You're in a very bad mood!
+F:FLOOR | DOOR | CHEST
+
+# N:type:name
+# I:diff:prob:another:pval:minlevel:damage:color
+# I:diff:prob:            :minlevel:      :color
+# D:description
