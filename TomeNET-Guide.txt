@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. July 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 31. July 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -159,7 +159,7 @@ t       T       take off items.
 q       q       quaff a potion.
 r       r       read a scroll.
 E       E       eat. (Thunderlords, also known as Dragonriders, can eat
-                firestones to gain temporary special abilities.)
+                firestones to gain temporary special abilities, see (5.9) .)
 F       F       fuel your light source.
 f       t       fire.
 v       v       throw.
@@ -1124,7 +1124,7 @@ F9  quaff a potion of resistance                    \e)q4           @q4
     (an important thing later in the game)
 F10 zap some rod (dunno yet which one)              \e)z1           @z1
     (magic device must be high enough or you keep failing)
-F11 eat a firestone (Thunderlords only)             \e)E1           @E1
+F11 eat a firestone (Thunderlords only, (5.9))      \e)E1           @E1
 F12 use a wand on the closest target                \e)a1*t         @a1
     (magic device must be high enough or you keep failing)
 
@@ -2051,8 +2051,8 @@ Sound           Sound attacks do less damage but can stun your or even knock
                 Resistance will cut damage to 5/7..5/12.
                 Damage is be reduced by further 50% if bio-feedback is active.
                 (Bio-feedback is activated if a Thunderlord -also known as
-                Dragonrider- eats a firestone
-                and gets the 'adrenaline' message.)
+                Dragonrider- eats a firestone and gets the 'adrenaline'
+                message. See (5.9) for firestone details.)
                 Sound resistance will protect you from stunning effects.
                 Breath damage is monster HP/6. Sound breath caps at 400.
 Shards          Shard attacks can cause nasty cuts that makes you bleed
@@ -2060,8 +2060,8 @@ Shards          Shard attacks can cause nasty cuts that makes you bleed
                 Resistance will cut damage to 6/7..6/12.
                 Damage is be reduced by further 50% if bio-feedback is active.
                 (Bio-feedback is activated if a Thunderlord -also known as
-                Dragonrider- eats a firestone
-                and gets the 'adrenaline' message.)
+                Dragonrider- eats a firestone and gets the 'adrenaline'
+                message. See (5.9) for firestone details.)
                 Shard resistance will protect you from cuts.
                 Breath damage is monster HP/6. Shard breath caps at 400.
 Nexus           Nexus attacks can have extremely nasty side-effects if you
@@ -2552,6 +2552,28 @@ Havoc           Fires balls or beams of chaos, the exact outcome is hard to
 
 Misc
 --
+(Small) Firestones  These can be eaten by Thunderlords and have various
+                    random effects (small firestones have reduced duration):
+                    - If the player is currently in dragon form he will just
+                      get some mana refilled.
+                    - If he is in non-dragon form, these temporary effects
+                      can apply:
+                        - Adrenaline:   Consume way more food.
+                                        Get STR/CON/DEX bonus.
+                                        Get to-hit/to-dam bonus.
+                                        Sometimes get EA.
+                                        Get AC malus.
+                        - Biofeedback:  Consume more food.
+                                        Regenerate HP / heal cuts faster.
+                                        Reduce damage from arrows/missiles,
+                                        shards, sound and ice shards.
+                        - ESP:          You can see telepathically.
+                        - Physical Instability:     Probability Travel.
+                        - Fury:         40 more HP, speed bonus,
+                                        to-dam bonus, to-hit/to-ac malus.
+                        - Speed-up:     Speed bonus.
+                        - Heroism:      10 more HP, to-hit bonus, resist fear.
+                        - Temp res:     Temporary base and poison resistance.
 Mattock/Pick/Shovel Improves your digging capabilities.
 Tarpaulin           Prevents your inventory from taking water damage on
                     crossing water fields.
@@ -2560,6 +2582,7 @@ Sprig of Athelas    Eat this one to cure Black Breath,
                     also cures poison/stun/cuts.
 Firestones          Eath them only if you are a Thunderlord (Dragonrider).
                     They will randomly boost your powers for a short time.
+                    See (5.9) for firestone details.
 Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions.
@@ -2569,6 +2592,7 @@ Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it.
 Amulet of Anti-Magic    See '5.7 NO_MAGIC'
+
 Mushrooms with bad effects are also often poisonous.
 
 
@@ -3112,7 +3136,7 @@ Thunderlord (also known as Dragonrider)
     fire at 10, cold at 15, acid at 20 and electricity at 25. At level 30
     they learn how to fly. Thunderlords are not very wise, and need a very
     long time to gain experience. They need to eat often. Thunderlords have
-    feather falling from birth.
+    feather falling from birth. See (5.9) for firestone details.
 
 
 Here is a table showing boni/mali of the different races:
@@ -3360,10 +3384,11 @@ I: speed : hit points : vision : armor class : alertness
   hit points:
     The monster's hit dice xdy are multiplied. Now, if the mimic's HP
     are less then the result, the mimic's HP will become approx.
-    ((x*y) + mimic_HP) / 2. This value is capped against ~2600, so gain
-    might decrease in higher regions. So 1/2 monster HP, 1/2 player HP.
-    If the mimic's HP are more than x*y, the resulting HP will be
-    ((x*y * 2) + (mimic_HP * 3)) / 5. So 2/5 monster HP, 3/5 player HP.
+    ((x*y) + mimic_HP) / 2. This value is capped against ~2700, so gain
+    might decrease in higher regions. (1/2 monster HP, 1/2 player HP.)
+    If the mimic's HP in player form (0) are greater than x*y, the
+    resulting HP will be ((x*y * 2) + (mimic_HP * 3)) / 5.
+    (2/5 monster HP, 3/5 player HP.)
   armour class:
     Mimicking a monster is already a very difficult task. By changing
     shape, the usual armour class of the monster will magically influence
@@ -3767,6 +3792,8 @@ Holy Support
                     Lv20: Gives +3 EA.                              (project)
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
+                    Zeal also gives a slight speed bonus (+10 at 50 skill) to
+                    the caster.
 
 
 
