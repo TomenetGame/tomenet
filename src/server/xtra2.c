@@ -38,6 +38,13 @@
 // #define SEMI_PROMISED_ARTS_MODIFIER	50
 
 /*
+ * If defined, a player cannot gain more than 1 level at once.
+ * It prevents so-called 'high-books cheeze'.
+ */
+#define LEVEL_GAINING_LIMIT
+
+
+/*
  * Set "p_ptr->adrenaline", notice observable changes
  * Note the interaction with biofeedback
  */
@@ -2662,16 +2669,24 @@ void check_experience(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		i;
+	bool newlv = FALSE;
+
+	int limit = (s64b)((s64b)player_exp[p_ptr->max_plv] *
+                               (s64b)p_ptr->expfact / 100L) - 1;
 
 	/* Note current level */
-	i = p_ptr->lev;
+//	i = p_ptr->lev;
 
 	/* Hack -- lower limit */
 	if (p_ptr->exp < 0) p_ptr->exp = 0;
 
 	/* Hack -- lower limit */
 	if (p_ptr->max_exp < 0) p_ptr->max_exp = 0;
+
+#ifdef LEVEL_GAINING_LIMIT
+	/* Hack -- upper limit */
+	if (p_ptr->exp > limit) p_ptr->exp = limit;
+#endif	// LEVEL_GAINING_LIMIT
 
 	/* Hack -- upper limit */
 	if (p_ptr->exp > PY_MAX_EXP) p_ptr->exp = PY_MAX_EXP;
@@ -2710,20 +2725,25 @@ void check_experience(int Ind)
 	}
 
 	/* Gain levels while possible */
-        while ((p_ptr->lev < PY_MAX_LEVEL) &&
-               (p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
-                               (s64b)p_ptr->expfact / 100L))))
+	while ((p_ptr->lev < PY_MAX_LEVEL) &&
+			(p_ptr->exp >= ((s64b)((s64b)player_exp[p_ptr->lev-1] *
+								   (s64b)p_ptr->expfact / 100L))))
 	{
-                process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
+		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
 
 		/* Gain a level */
-                p_ptr->lev++;
-
-                /* gain skill points */
-                p_ptr->skill_points += SKILL_NB_BASE;
+		p_ptr->lev++;
 
 		/* Save the highest level */
-		if (p_ptr->lev > p_ptr->max_plv) p_ptr->max_plv = p_ptr->lev;
+		if (p_ptr->lev > p_ptr->max_plv)
+		{
+			p_ptr->max_plv = p_ptr->lev;
+
+			/* gain skill points */
+			p_ptr->skill_points += SKILL_NB_BASE;
+
+			newlv = TRUE;
+		}
 
 		/* Sound */
 		sound(Ind, SOUND_LEVEL);
@@ -2740,19 +2760,21 @@ void check_experience(int Ind)
 		/* Handle stuff */
 		handle_stuff(Ind);
 	}
-        if (i < p_ptr->lev)
-        {
+
+//	if (i < p_ptr->lev)
+	if (newlv)
+	{
 		char str[160];
 		/* Message */
-                msg_format(Ind, "Welcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+		msg_format(Ind, "Welcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
 		msg_broadcast(Ind, str);
 
-                /* Update the skill points info on the client */
-                Send_skill_info(Ind, 0);
-        }
+		/* Update the skill points info on the client */
+		Send_skill_info(Ind, 0);
+	}
 }
 
 

@@ -5605,7 +5605,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_DETECTDOOR_PLAYER:
 		{
-                        (void)detect_sdoor(Ind);
+                        (void)detect_sdoor(Ind, DEFAULT_RADIUS);
 			break;
 		}
 

@@ -2046,7 +2046,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_BOLT:
 		case TV_ARROW:
 			/* Exploding arrow? */
-			if (o_ptr->pval != 0)
+			if (o_ptr->pval != 0 && known)
 				t = object_desc_str(t, " (exploding)");
 			/* No break, we want to continue the description */
 

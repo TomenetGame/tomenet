@@ -1,3 +1,4 @@
+# $Id$
 # File: a_info.txt
 
 
@@ -226,6 +227,8 @@ I:39:105:0
 W:30:12:15:50000
 P:0:1d1:0:0:0
 F:INSTA_ART | SPECIAL_GENE | LITE1
+# This should be st_anchor, but for now..
+F:NO_TELE
 D:A powerful stone that provides a strong light for any who 
 D:wields it. It is rumored that it may even protect the wearer from 
 D:the passing of the time.
@@ -2567,6 +2570,15 @@ F:CHR | SEARCH | HIDE_TYPE |
 F:XTRA_SHOTS | SHOW_MODS
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_SOUND
 F:ESP_ANIMAL | ANTIMAGIC_20
+
+# The Picklock of Bilbo Baggins
+
+N:214:of Bilbo Baggins
+I:12:2:3
+W:25:40:2:30000
+P:0:1d1:0:0:0
+F:DEX | SUST_DEX | SEE_INVIS | STEALTH | DISARM | SEARCH
+F:ACTIVATE
 
 #N:(No.):(name)
 #G:(appearence):(colour)

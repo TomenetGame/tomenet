@@ -3036,7 +3036,15 @@ static void calc_bonuses(int Ind)
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
 	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));
 
-        if (!p_ptr->aggravate)
+	if (p_ptr->aggravate)
+	{
+		p_ptr->invis = 0;
+		p_ptr->tim_invisibility = 0;
+		p_ptr->tim_invis_power = 0;
+		if (magik(1))	/* don't be too noisy */
+			msg_print(Ind, "You somewhat feel your presence is known.");
+	}
+	else
 	{
 		if (p_ptr->pclass == CLASS_MONK) 
 		{

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: randart.c */
 
 /* 
@@ -177,10 +178,18 @@ s32b artifact_power (artifact_type *a_ptr)
 			break;
 		}
 		case TV_DIGGING:
+			p += 40;
+		case TV_BOOMERANG:
+			if (a_ptr->flags3 & TR3_XTRA_SHOTS)
+			{
+				if (a_ptr->pval > 3)
+					p += 20000;	/* inhibit */
+				else if (a_ptr->pval > 0)
+					p *= (2 * a_ptr->pval);
+			}
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
-		case TV_BOOMERANG:
 		case TV_AXE:
 		case TV_MSTAFF:
 		{
@@ -242,6 +251,8 @@ s32b artifact_power (artifact_type *a_ptr)
 		case TV_AMULET:
 		{
 			p += 20;
+			/* hack -- Nazgul rings */
+			if (a_ptr->sval == SV_RING_SPECIAL) p += 20;
 			break;
 		}
 	}
@@ -354,6 +365,7 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_HEAVY_CURSE) p -= 20;
 /*	if (a_ptr->flags3 & TR3_PERMA_CURSE) p -= 40; */
 	if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8;
+	if (a_ptr->flags5 & TR5_INVIS) p += 20;
 
 	return p;
 }
@@ -362,7 +374,11 @@ s32b artifact_power (artifact_type *a_ptr)
 
 void remove_contradictory (artifact_type *a_ptr)
 {
-	if (a_ptr->flags3 & TR3_AGGRAVATE) a_ptr->flags1 &= ~(TR1_STEALTH);
+	if (a_ptr->flags3 & TR3_AGGRAVATE)
+	{
+		a_ptr->flags1 &= ~(TR1_STEALTH);
+		a_ptr->flags5 &= ~(TR5_INVIS);
+	}
 	if (a_ptr->flags2 & TR2_IM_ACID) a_ptr->flags2 &= ~(TR2_RES_ACID);
 	if (a_ptr->flags2 & TR2_IM_ELEC) a_ptr->flags2 &= ~(TR2_RES_ELEC);
 	if (a_ptr->flags2 & TR2_IM_FIRE) a_ptr->flags2 &= ~(TR2_RES_FIRE);
@@ -548,7 +564,9 @@ void add_ability (artifact_type *a_ptr)
 				else if (r < 72) a_ptr->flags3 |= TR3_SEE_INVIS;
 				else if (r < 76)
 				{
-					a_ptr->flags1 |= TR1_BLOWS;
+					if (a_ptr->tval == TV_BOOMERANG)
+						a_ptr->flags3 |= TR3_XTRA_SHOTS;
+					else a_ptr->flags1 |= TR1_BLOWS;
 					do_pval (a_ptr);
 					if (a_ptr->pval > 2) a_ptr->pval = 2;
 				}
@@ -561,10 +579,10 @@ void add_ability (artifact_type *a_ptr)
 				else if (r < 98)
 					a_ptr->weight = (a_ptr->weight * 9) / 10;
 				else
-					if (a_ptr->tval != TV_DIGGING)
+					if (a_ptr->tval != TV_DIGGING && a_ptr->tval != TV_BOOMERANG)
 					{
 						a_ptr->flags1 |= TR1_TUNNEL;
-					do_pval (a_ptr);
+						do_pval (a_ptr);
 					}
 
 				break;
@@ -933,7 +951,7 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Screen for disallowed TVALS */
 	if ((k_ptr->tval!=TV_BOW) &&
-	    (k_ptr->tval!=TV_DIGGING) &&
+//	    (k_ptr->tval!=TV_DIGGING) &&	/* better ban it? */
 	    (k_ptr->tval!=TV_HAFTED) &&
 	    (k_ptr->tval!=TV_POLEARM) &&
 	    (k_ptr->tval!=TV_SWORD) &&
@@ -1304,12 +1322,12 @@ static void add_random_esp(artifact_type *a_ptr, int all)
 
 /* Add a random flag to the ego item */
 /*
- * Hack -- 'dun_level' is needed to determine some values;
+ * Hack -- 'dlev' is needed to determine some values;
  * I diverted lv-req of item for this purpose, thus changes in o_ptr->level
  * will result in changes of ego-item powers themselves!!	- Jir -
  */
 // void add_random_ego_flag(object_type *o_ptr, int fego, bool *limit_blows)
-void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level)
+void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dlev)
 {
 	if (fego & ETR4_SUSTAIN)
 	{
@@ -1450,19 +1468,19 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_PVAL_M2)
 	{
 		/* Increase pval */
-		a_ptr->pval += m_bonus(2, dun_level);
+		a_ptr->pval += m_bonus(2, dlev);
 	}
 
 	if (fego & ETR4_PVAL_M3)
 	{
 		/* Increase pval */
-		a_ptr->pval += m_bonus(3, dun_level);
+		a_ptr->pval += m_bonus(3, dlev);
 	}
 
 	if (fego & ETR4_PVAL_M5)
 	{
 		/* Increase pval */
-		a_ptr->pval += m_bonus(5, dun_level);
+		a_ptr->pval += m_bonus(5, dlev);
 	}
 	if (fego & ETR4_AC_M1)
 	{
@@ -1473,19 +1491,19 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_AC_M2)
 	{
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(2, dun_level);
+		a_ptr->to_a += m_bonus(2, dlev);
 	}
 
 	if (fego & ETR4_AC_M3)
 	{
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(3, dun_level);
+		a_ptr->to_a += m_bonus(3, dlev);
 	}
 
 	if (fego & ETR4_AC_M5)
 	{
 		/* Increase ac */
-		a_ptr->to_a += m_bonus(5, dun_level);
+		a_ptr->to_a += m_bonus(5, dlev);
 	}
 	if (fego & ETR4_TH_M1)
 	{
@@ -1496,19 +1514,19 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_TH_M2)
 	{
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(2, dun_level);
+		a_ptr->to_h += m_bonus(2, dlev);
 	}
 
 	if (fego & ETR4_TH_M3)
 	{
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(3, dun_level);
+		a_ptr->to_h += m_bonus(3, dlev);
 	}
 
 	if (fego & ETR4_TH_M5)
 	{
 		/* Increase to hit */
-		a_ptr->to_h += m_bonus(5, dun_level);
+		a_ptr->to_h += m_bonus(5, dlev);
 	}
 #if 0
 	if (fego & ETR4_TD_M1)
@@ -1526,19 +1544,19 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_TD_M2)
 	{
 		/* Increase to dam */
-		a_ptr->to_d += m_bonus(2, dun_level);
+		a_ptr->to_d += m_bonus(2, dlev);
 	}
 
 	if (fego & ETR4_TD_M3)
 	{
 		/* Increase to dam */
-		a_ptr->to_d += m_bonus(3, dun_level);
+		a_ptr->to_d += m_bonus(3, dlev);
 	}
 
 	if (fego & ETR4_TD_M5)
 	{
 		/* Increase to dam */
-		a_ptr->to_d += m_bonus(5, dun_level);
+		a_ptr->to_d += m_bonus(5, dlev);
 	}
 	if (fego & ETR4_R_P_ABILITY)
 	{

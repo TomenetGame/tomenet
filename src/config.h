@@ -702,7 +702,8 @@
 #define DEFAULT_RADIUS			18
 #define DEFAULT_RADIUS_SPELL(p_ptr)	(DEFAULT_RADIUS - 5 + p_ptr->lev / 5)
 #define DEFAULT_RADIUS_DEV(p_ptr)	(DEFAULT_RADIUS - 5 + p_ptr->skill_dev / 8)
-/* get_skill_scale(p_ptr, SKILL_DEVICE, 100) */
+/* NOTE: skill_dev is already affected by SKILL_DEVICE
+ * get_skill_scale(p_ptr, SKILL_DEVICE, 100) */
 
 
 /*

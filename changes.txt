@@ -1090,7 +1090,11 @@ To find the latest change quickly, search ==== :)
 [B] a lv1 sorc could cast 30 magic missles each turn
 
 20/06/2002 (Jir)
+- trap_creation() is radius-based now.
+- player cannot gain more than 1 level at a time.
 [P] detection magics are radius-based now. (affected by skill and level)
+[B] player could infinitely gain skill points by losing and gaining levels.
+[B] invisibility and aggravation caused spamming.
 
 
 
@@ -1264,7 +1268,6 @@ memo and questions:
 ==== below this line are RFEs collected so far (good or bad) ====
 [minor ones]
 - more equipment slots in general (like Bracer)
-- player shouldn't gain more than 1 levels at once (esp.from books)
 - enhanced help system (imo we cannot beat web browsers anyway..)
   + at least, jump and colour tags are needed.
 - some measures to 'cheezy' admins (at least some warnings)
@@ -1325,6 +1328,7 @@ memo and questions:
   + more tools
 - anticheeze:
   + items enchanted with spells of enchant armor/weapon should get discount.
+  + player shouldn't gain more than 1 levels at once (esp.from books)
 - players:
   + thirst?
   + Asclep's '/spell' should be applicable to wands/rods?

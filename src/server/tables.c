@@ -1287,7 +1287,7 @@ byte level_speeds[501] =
 /*
  * Base experience levels, may be adjusted up for race and/or class
  */
-s32b player_exp[PY_MAX_LEVEL] =
+s32b player_exp[PY_MAX_LEVEL + 1] =
 {
 	10,
 	25,
@@ -1398,7 +1398,9 @@ s32b player_exp[PY_MAX_LEVEL] =
       400000000L,
       420000000L,
       440000000L,
-      460000000L
+      460000000L,
+
+      999999999L	// dummy
 };
 
 
