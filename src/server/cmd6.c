@@ -4295,7 +4295,7 @@ void do_cmd_activate(int Ind, int item)
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
-	if (o_ptr->tval == TV_DRAG_ARMOR)
+	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY)
 	{
 		switch (o_ptr->sval)
 		{
