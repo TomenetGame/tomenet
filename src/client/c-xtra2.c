@@ -705,11 +705,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 			fprintf(fff, " (x%d)", r + 1);
 			r = 0;
 		}
-#ifndef WINDOWS
 		fprintf(fff, "\n");
-#else
-		fprintf(fff, "\r\n");
-#endif	
 		if (k) break;
 
 		q=0;
@@ -726,17 +722,11 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 				continue;
 			}
 			if(msg[t]=='\n'){
-#ifdef WINDOWS
-                                buf[q++]='\r';
-#endif
 				buf[q++]='\n';
 				continue;
 			}
 			if(msg[t]=='\r'){
-				buf[q++]='\r';
-#ifdef WINDOWS
                                 buf[q++]='\n';
-#endif
 				continue;
 			}
 			buf[q++]=msg[t];
@@ -747,11 +737,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		//fprintf(fff, buf);
 		fputs(buf, fff);
 	}
-#ifndef WINDOWS
 	fprintf(fff, "\n\n");
-#else
-	fprintf(fff, "\r\n\r\n");
-#endif
 }
 
 errr dump_messages(cptr name, int lines, int mode)

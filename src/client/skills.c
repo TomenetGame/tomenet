@@ -144,11 +144,7 @@ void dump_skills(FILE *fff)
 
 	Term_clear();
 
-#ifndef WINDOWS
 	fprintf(fff, "\nSkills (points left: %d)", p_ptr->skill_points);
-#else
-	fprintf(fff, "\r\nSkills (points left: %d)", p_ptr->skill_points);
-#endif
 
 	for (j = 0; j < max; j++)
 	{
@@ -166,11 +162,7 @@ void dump_skills(FILE *fff)
 		}
 
 /*		sprintf(buf, "\n");		*/
-#ifndef WINDOWS
 		fprintf(fff, "\n");
-#else
-		fprintf(fff, "\r\n");
-#endif
 
 /*		sprintf(buf, "");		*/
 		buf[0]='\0';
@@ -190,11 +182,7 @@ void dump_skills(FILE *fff)
 		        buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
 		        p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
 	}
-#ifndef WINDOWS
 	fprintf(fff, "\n");
-#else
-	fprintf(fff, "\r\n");
-#endif
 }
 
 /*

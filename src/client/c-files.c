@@ -1150,13 +1150,8 @@ errr file_character(cptr name, bool full)
 
 
 	/* Begin dump */
-#ifndef WINDOWS
 	fprintf(fff, "  [TomeNET %d.%d.%d @ %s Character Dump]\n\n",
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name);
-#else
-	fprintf(fff, "  [TomeNET %d.%d.%d @ %s Character Dump]\r\n\r\n",
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name);
-#endif
 
 	/* Display player */
 	display_player(0);
@@ -1178,11 +1173,7 @@ errr file_character(cptr name, bool full)
 		buf[x] = '\0';
 
 		/* End the row */
-#ifndef WINDOWS
 		fprintf(fff, "%s\n", buf);
-#else
-		fprintf(fff, "%s\r\n", buf);
-#endif
 	}
 
 	/* Display history */
@@ -1205,24 +1196,9 @@ errr file_character(cptr name, bool full)
 		buf[x] = '\0';
 
 		/* End the row */
-#ifndef WINDOWS
 		fprintf(fff, "%s\n", buf);
-#else
-		fprintf(fff, "%s\r\n", buf);
-#endif
 	}
 
-#if 0 // DGDGDGDG -- make me work
-	/* body_monster is shown in Character screen instead.	- Jir - */
-
-	{
-		char desc[80];
-		monster_race_desc(desc, p_ptr->body_monster, 0);
-		fprintf(fff, "\n Your body was %s.", desc);
-
-		if (p_ptr->tim_mimic) fprintf(fff, "\n Your were disguised into a %s.", p_ptr->mimic_name);
-	}
-#endif
 	/* Dump skills */
 	dump_skills(fff);
 
@@ -1267,68 +1243,32 @@ errr file_character(cptr name, bool full)
 #endif
 
 	/* Skip some lines */
-#ifndef WINDOWS
 	fprintf(fff, "\n\n");
-#else
-	fprintf(fff, "\r\n\r\n");
-#endif
 
 	/* Dump the equipment */
-#ifndef WINDOWS
 	fprintf(fff, "  [Character Equipment]\n\n");
-#else
-	fprintf(fff, "  [Character Equipment]\r\n\r\n");
-#endif
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
 	{
-#ifndef WINDOWS
 		fprintf(fff, "%c%s %s\n",
-#else
-		fprintf(fff, "%c%s %s\r\n",
-#endif
 				index_to_label(i), paren, inventory_name[i]);
 	}
-#ifndef WINDOWS
 	fprintf(fff, "\r\n\r\n");
-#else
-	fprintf(fff, "\r\n\r\n");
-#endif
 
 	/* Dump the inventory */
-#ifndef WINDOWS
 	fprintf(fff, "  [Character Inventory]\n\n");
-#else
-	fprintf(fff, "  [Character Inventory]\r\n\r\n");
-#endif
 	for (i = 0; i < INVEN_PACK; i++)
 	{
 		if (!strncmp(inventory_name[i], "(nothing)", 9)) continue;
 //		if (!strlen(inventory_name[i])) continue;
 
-#ifndef WINDOWS
 		fprintf(fff, "%c%s %s\n",
-#else
-		fprintf(fff, "%c%s %s\r\n",
-#endif
 				index_to_label(i), paren, inventory_name[i]);
 	}
-#ifndef WINDOWS
 	fprintf(fff, "\n\n");
-#else
-	fprintf(fff, "\r\n\r\n");
-#endif
 	/* Dump the last messages */
-#ifndef WINDOWS
 	fprintf(fff, "  [Last Messages]\n\n");
-#else
-	fprintf(fff, "  [Last Messages]\r\n\r\n");
-#endif
 	dump_messages_aux(fff, 50, 0, TRUE);
-#ifndef WINDOWS
 	fprintf(fff, "\n\n");
-#else
-	fprintf(fff, "\r\n\r\n");
-#endif
 	/* Close it */
 	my_fclose(fff);
 

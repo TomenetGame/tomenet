@@ -22,6 +22,9 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+30/01/2003
+[I]- Fixed character dumps on windows
+
 08/01/2003
 [O]- Adjusted Black Market (less pots). Improved x / I display. Especially
      allows you to read very long item names in stores to see all boni.
