@@ -217,6 +217,16 @@
 #define	META_ADDRESS "www.mangband.org"
 #define	META_ADDRESS_2 "64.53.71.113"  
 
+/*
+ * Server gateway: Provide raw data for applications
+ */
+#define SERVER_GWPORT
+
+#if 0	/* Sorry Jir, but this IS used sometimes. */
+#define BIND_NAME "TomeNET.net"
+#define	BIND_IP "64.53.71.115"
+#endif
+
 #if 0	/* not used for good, most likely. DELETEME */
 /*
  * OPTION: Set a vhost bind address.  This is only used if you have
@@ -226,10 +236,6 @@
  * machine as well.
  * Probably almost never used.
 */
-#if 0
-#define BIND_NAME "TomeNET.net"
-#define	BIND_IP "64.53.71.115"
-#endif
 
 /* Define the password for the server console, used if NEW_SERVER_CONSOLE
  * is defined below.  Provides authentication for the mangconsole program.
