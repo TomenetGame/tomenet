@@ -3087,7 +3087,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			if (p_ptr->word_recall == 0)
 			{
-				set_recall_depth(p_ptr,o_ptr);
+				set_recall_depth(p_ptr, o_ptr);
 				msg_print(Ind, "\377oThe air about you becomes charged...");
 				p_ptr->word_recall = 15 + randint(20);
 			}
@@ -3511,7 +3511,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			if (p_ptr->word_recall == 0)
 			{
-				set_recall_depth(p_ptr,o_ptr);
+				set_recall_depth(p_ptr, o_ptr);
 				msg_print(Ind, "\377oThe air about you becomes charged...");
 				p_ptr->word_recall = 15 + randint(20);
 			}
@@ -4199,7 +4199,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (p_ptr->word_recall == 0)
 				{
-					set_recall_depth(p_ptr,o_ptr);
+					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = randint(20) + 15;
 					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}
@@ -4684,7 +4684,7 @@ void do_cmd_activate(int Ind, int item)
 			{
 				if (p_ptr->word_recall == 0)
 				{
-					set_recall_depth(p_ptr,o_ptr);
+					set_recall_depth(p_ptr, o_ptr);
 					p_ptr->word_recall = randint(20) + 15;
 					msg_print(Ind, "\377oThe air about you becomes charged...");
 				}

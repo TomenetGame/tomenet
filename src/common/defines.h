@@ -191,7 +191,7 @@
  */
  
 #define MAX_F_IDX	128	/* Max size for "f_info[]" */
-#define MAX_K_IDX	768 /* Max size for "k_info[]" */
+#define MAX_K_IDX	1024 /* Max size for "k_info[]" */
 #define MAX_A_IDX	256	/* Max size for "a_info[]" */
 #define MAX_E_IDX	256 /* Max size for "e_info[]" */
 #define MAX_R_IDX	1152	/* Max size for "r_info[]" */
@@ -383,7 +383,7 @@
  * Store constants
  */
 #define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven */
-#define STORE_CHOICES	32		/* Number of items to choose stock from */
+#define STORE_CHOICES	34		/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER	9		/* Normal shop turnover, per day */
 #define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
