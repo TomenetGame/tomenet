@@ -10,13 +10,22 @@
 
 #include "../world/world.h"
 
+/* pfft. i'll use generic lists when i get around to it */
+struct svlist{
+	struct svlist *next;
+	unsigned short sid;
+	char name[30];
+};
+
 struct rplist *rpmlist=NULL;
+struct svlist *svlist=NULL;
 
 struct wpacket spk;
 
 unsigned long chk(unsigned char *s1, unsigned char *s2);
-void rem_players(short id);
+void rem_server(short id);
 void add_rplayer(struct wpacket *wpk);
+void add_server(struct sinfo *sinfo);
 bool world_check_ignore(int Ind, unsigned long id, short server);
 void world_update_players(void);
 int world_find_server(char *pname);
@@ -70,6 +79,10 @@ void world_comm(int fd, int arg){
 	while(blen>=sizeof(struct wpacket)){
 		wpk=(struct wpacket*)(buffer+bpos);
 		switch(wpk->type){
+			case WP_SINFO:
+				/* Server login information */
+				add_server(&wpk->d.sinfo);
+				break;
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
 				for(i=1; i<=NumPlayers; i++){
@@ -109,7 +122,7 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_SQUIT:
 				/* Remove players */
-				rem_players(wpk->d.sid);
+				rem_server(wpk->d.sid);
 				break;
 			case WP_RESTART:
 				set_runlevel(0);
@@ -160,18 +173,46 @@ struct rplist *world_find_player(char *pname, short server){
 /* proper data will come with merge */
 void world_remote_players(FILE *fff){
 	struct rplist *c_pl;
+	struct svlist *c_sv;
+	char servername[30];
 	c_pl=rpmlist;
 	if(c_pl){
 		fprintf(fff, "y  Remote players\nr\n");
 	}
 	while(c_pl){
-		fprintf(fff, "%c   %s@%d\n", c_pl->server ? 'o' : 's', c_pl->name, c_pl->server);
+		c_sv=svlist;
+		sprintf(servername, "%d", c_pl->server);
+		while(c_sv){
+			if(c_sv->sid==c_pl->server){
+				strncpy(servername, c_sv->name, 30);
+				break;
+			}
+			c_sv=c_sv->next;
+		}
+		
+		fprintf(fff, "%c   %s@%s\n", c_pl->server ? 'o' : 's', c_pl->name, servername);
 		c_pl=c_pl->next;
 	}
 }
 
-void rem_players(short id){
+/* When a server logs in, we get information about it */
+void add_server(struct sinfo *sinfo){
+	struct svlist *c_sr;
+	c_sr=malloc(sizeof(struct svlist));
+	if(c_sr){
+		/* Insert it at the start */
+		c_sr->next=svlist;
+		strncpy(c_sr->name, sinfo->name, 30);
+		c_sr->sid=sinfo->sid;
+	}
+}
+
+/* This is called when a remote server disconnects */
+void rem_server(short id){
 	struct rplist *c_pl, *p_pl, *d_pl;
+	struct svlist *c_sr, *p_sr, *d_sr;
+
+	/* delete the server info */
 	c_pl=rpmlist;
 	p_pl=c_pl;
 	while(c_pl){
@@ -186,6 +227,23 @@ void rem_players(short id){
 		p_pl=c_pl;
 		c_pl=c_pl->next;
 		if(d_pl) free(d_pl);
+	}
+
+	/* Delete the server info */
+	c_sr=svlist;
+	p_sr=c_sr;
+	while(c_sr){
+		d_sr=NULL;
+		if(c_sr->sid==id){
+			if(c_sr==svlist)
+				svlist=c_sr->next;
+			else
+				p_sr->next=c_sr->next;
+			d_sr=c_sr;
+		}
+		p_sr=c_sr;
+		c_sr=c_sr->next;
+		if(d_sr) free(d_sr);
 	}
 }
 
