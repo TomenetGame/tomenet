@@ -2736,6 +2736,12 @@ void store_confirm(int Ind)
 		if (!p_ptr->inventory[item].k_idx) return;
 #endif
 	}
+	
+	/* Add '!s' inscription, w00t - C. Blue */
+	if (check_guard_inscription(p_ptr->inventory[item].note, 's')) {
+    	    msg_print(Ind, "The item's inscription prevents it");
+	    return;
+	}
 
 	/* Trash the saved variables */
 	p_ptr->current_selling = -1;
