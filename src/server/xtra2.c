@@ -4604,7 +4604,7 @@ void player_death(int Ind)
 	
 	/* Get rid of him if he's a ghost */
 	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1) ||
-	    (streq(p_ptr->died_from, "Insanity")) || ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive))
+	    (streq(p_ptr->died_from, "Insanity")) || ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive && !(p_ptr->mode && MODE_IMMORTAL)))
 	{
 		/* Tell players */
 		if (streq(p_ptr->died_from, "Insanity")) {

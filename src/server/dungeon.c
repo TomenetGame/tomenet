@@ -40,6 +40,8 @@
  */
 static cptr value_check_aux1(object_type *o_ptr)
 {
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
 	/* Artifacts */
 	if (artifact_p(o_ptr))
 	{
@@ -72,10 +74,10 @@ static cptr value_check_aux1(object_type *o_ptr)
 	if (broken_p(o_ptr)) return "broken";
 
 	/* Good "armor" bonus */
-	if (o_ptr->to_a > 0) return "good";
+	if (o_ptr->to_a > k_ptr->to_a) return "good";
 
 	/* Good "weapon" bonus */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+	if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
 
 	/* Default to "average" */
 	return "average";
@@ -151,6 +153,8 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
  */
 static cptr value_check_aux2(object_type *o_ptr)
 {
+	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
 	/* Cursed items (all of them) */
 	if (cursed_p(o_ptr)) return "cursed";
 
@@ -164,10 +168,10 @@ static cptr value_check_aux2(object_type *o_ptr)
 	if (ego_item_p(o_ptr)) return "good";
 
 	/* Good armor bonus */
-	if (o_ptr->to_a > 0) return "good";
+	if (o_ptr->to_a > k_ptr->to_a) return "good";
 
 	/* Good weapon bonuses */
-	if (o_ptr->to_h + o_ptr->to_d > 0) return "good";
+	if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
 
 	/* No feeling */
 	return (NULL);
