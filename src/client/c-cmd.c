@@ -1,6 +1,5 @@
+/* $Id$ */
 #include "angband.h"
-
-#define EVIL_TEST /* evil test */
 
 static void cmd_clear_buffer(void);
 
@@ -107,10 +106,14 @@ void cmd_all_in_one(void)
 		case TV_BOLT:
 		case TV_BOOMERANG:
 		{
+#if 0
 			if (!get_dir(&dir))
 				return;
 
 			Send_fire(item, dir);
+#else	// 0
+			Send_wield(item);
+#endif	// 0
 			break;
 		}
 
@@ -190,6 +193,8 @@ void cmd_all_in_one(void)
 		case TV_DRAG_ARMOR:
 		case TV_AMULET:
 		case TV_RING:
+		case TV_TOOL:
+		case TV_INSTRUMENT:
 		{
 			Send_wield(item);
 			break;
@@ -247,6 +252,10 @@ void process_command()
 			/*** Running, Staying, Resting ***/
 		case '.':
 			cmd_run();
+			break;
+
+                case 'X':
+			do_cmd_skill();
 			break;
 
 		case ',':
@@ -606,11 +615,6 @@ void cmd_map(void)
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky) return;
 
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Save the screen */
 	Term_save();
 
@@ -633,11 +637,6 @@ void cmd_map(void)
 
 	/* Reload the screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is OK now */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush any queued events */
 	Flush_queue();
@@ -762,11 +761,6 @@ void cmd_disarm(void)
 
 void cmd_inven(void)
 {
-#ifndef EVIL_TEST /* evil test */	/* bad test; messing the screen :( jir */
-	/* The whole screen is "icky" */
-	screen_icky = TRUE;
-#endif
-
 	/* First, erase our current location */
 
 	/* Then, save the screen */
@@ -782,22 +776,12 @@ void cmd_inven(void)
 	Term_load();
 	/* print our new location */
 
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is OK now */
-	screen_icky = FALSE;
-#endif
-
 	/* Flush any events */
 	Flush_queue();
 }
 
 void cmd_equip(void)
 {
-#ifndef EVIL_TEST /* evil test */
-	/* The whole screen is "icky" */
-	screen_icky = TRUE;
-#endif
-
 	Term_save();
 
 	command_gap = 50;
@@ -813,11 +797,6 @@ void cmd_equip(void)
 	(void)inkey();
 
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is OK now */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -913,7 +892,8 @@ void cmd_destroy(void)
 	else amt = 1;
 
 	/* Sanity check */
-	if (inventory[item].number == amt)
+	if (!amt) return;
+	else if (inventory[item].number == amt)
 		sprintf(out_val, "Really destroy %s? ", inventory_name[item]);
 	else
 		sprintf(out_val, "Really destroy %d of your %s? ", amt, inventory_name[item]);
@@ -1244,11 +1224,6 @@ void cmd_character(void)
 	char ch = 0;
 	int hist = 0, done = 0;
 
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Save screen */
 	Term_save();
 
@@ -1280,11 +1255,6 @@ void cmd_character(void)
 
 	/* Reload screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is no longer icky */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush any events */
 	Flush_queue();
@@ -1357,11 +1327,6 @@ void cmd_party(void)
 	char i;
 	char buf[80];
 
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* We are now in party mode */
 	party_mode = TRUE;
 
@@ -1381,6 +1346,7 @@ void cmd_party(void)
 		Term_putstr(0, 2, -1, TERM_WHITE, "Party commands");
 
 		/* Selections */
+		/* See also: Receive_party() */
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Create a party");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Add a player to party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Delete a player from party");
@@ -1484,11 +1450,6 @@ void cmd_party(void)
 	/* Reload screen */
 	Term_load();
 
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is no longer icky */
-	screen_icky = FALSE;
-#endif
-
 	/* No longer in party mode */
 	party_mode = FALSE;
 
@@ -1501,16 +1462,19 @@ void cmd_fire(void)
 {
 	int item, dir;
 
+#if 0
 	if (!c_get_item(&item, "Fire which ammo? ", FALSE, TRUE, FALSE))
 	{
 		return;
 	}
+#endif	// 0
 
 	if (!get_dir(&dir))
 		return;
 	
 	/* Send it */
-	Send_fire(item, dir);
+//	Send_fire(item, dir);
+	Send_fire(dir);
 }
 
 void cmd_throw(void)
@@ -1777,10 +1741,6 @@ void cmd_purchase_house(void)
 
 	if (!get_dir(&dir)) return;
 
-#ifndef EVIL_TEST /* evil test */
-	screen_icky=TRUE;
-#endif
-
 	Term_save();
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "House commands");
@@ -1816,9 +1776,6 @@ void cmd_purchase_house(void)
 		c_msg_print(NULL);
 	}
 	Term_load();
-#ifndef EVIL_TEST /* evil test */
-	screen_icky=FALSE;
-#endif
 }
 
 void cmd_suicide(void)
@@ -2643,11 +2600,6 @@ void cmd_master_aux_system()
 				/* Call the file perusal */
 				peruse_file();
 
-#ifndef EVIL_TEST /* evil test */
-				/* Hack -- still icky */
-				screen_icky = TRUE;
-#endif
-
 				break;
 			case '2':
 				/* Set the hook */
@@ -2655,11 +2607,6 @@ void cmd_master_aux_system()
 
 				/* Call the file perusal */
 				peruse_file();
-
-#ifndef EVIL_TEST /* evil test */
-				/* Hack -- still icky */
-				screen_icky = TRUE;
-#endif
 
 				break;
 			case ESCAPE:
@@ -2723,11 +2670,6 @@ void cmd_master(void)
 {
 	char i=0;
 	char buf[80];
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is icky */
-	screen_icky = TRUE;
-#endif
 
 	party_mode = TRUE;
 
@@ -2799,11 +2741,6 @@ void cmd_master(void)
 
 	/* Reload screen */
 	Term_load();
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is no longer icky */
-	screen_icky = FALSE;
-#endif
 
 	/* No longer in party mode */
 	party_mode = FALSE;

@@ -612,9 +612,11 @@ extern void setup_contact_socket(void);
 extern bool Report_to_meta(int flag);
 extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
-extern int Send_plusses(int Ind, int tohit, int todam);
+extern int Send_plusses(int Ind, int tohit, int todam, int tohit_r, int todam_r, int tohit_m, int todam_m);
 extern int Send_ac(int Ind, int base, int plus);
 extern int Send_experience(int Ind, int lev, s32b max_exp, s32b cur_exp, s32b adv_exp);
+extern int Send_skill_init(int ind, int type, int i);
+extern int Send_skill_info(int ind, int i);
 extern int Send_gold(int Ind, s32b gold);
 extern int Send_hp(int Ind, int mhp, int chp);
 extern int Send_sp(int Ind, int msp, int csp);
@@ -1134,6 +1136,7 @@ extern char	*shortVersion;
 
 
 /* skills.c */
+extern void increase_skill(int Ind, int i);
 extern void init_skill(player_type *p_ptr, u32b value, s16b mod, int i);
 extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: birth.c */
 
 /* Purpose: create a player character */
@@ -982,7 +983,7 @@ static byte player_init[MAX_CLASS][3][2] =
 
 
 /*
- * Init admin characters with some belongings
+ * Give the cfg_admin_wizard some interesting stuff.
  */
 void admin_outfit(int Ind)
 {
@@ -990,149 +991,148 @@ void admin_outfit(int Ind)
 	int             i, tv, sv;
 
 	object_type     forge;
-
 	object_type     *o_ptr = &forge;
 
-	/*
-	 * Give the cfg_admin_wizard some interesting stuff.
-	 */
-	 if (p_ptr->admin_wiz || p_ptr->admin_dm)
-	 {
-		int note = quark_add("!k");
+	int note = quark_add("!k");
 
-		/* Hack -- assume the player has an initial knowledge of the area close to town */
-		for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
-		o_ptr->number = 99;
-		o_ptr->discount = 100;
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		o_ptr->note = quark_add("@r8");
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		(void)inven_carry(Ind, o_ptr);
+	if (!is_admin(p_ptr)) return;
+
+
+	/* Hack -- assume the player has an initial knowledge of the area close to town */
+	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
+
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
+	o_ptr->number = 99;
+	o_ptr->discount = 100;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	o_ptr->note = quark_add("@r8");
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	(void)inven_carry(Ind, o_ptr);
 #if 1
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_EXPERIENCE));
-		o_ptr->number = 99;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_EXPERIENCE));
+	o_ptr->number = 99;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 #endif
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-		o_ptr->number = 99;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		o_ptr->note = note;
-		(void)inven_carry(Ind, o_ptr);
-#if 1
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
-		o_ptr->number = 98;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-//		o_ptr->note = quark_add("@R-3000");
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+	o_ptr->number = 99;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	o_ptr->note = note;
+	(void)inven_carry(Ind, o_ptr);
+#if 0
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
+	o_ptr->number = 98;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	//		o_ptr->note = quark_add("@R-3000");
+	(void)inven_carry(Ind, o_ptr);
 #endif
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
-		o_ptr->number = 99;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
+	o_ptr->number = 99;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
-		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
-		o_ptr->number = 30;
-		o_ptr->discount = 0;
-		o_ptr->pval = 10;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		o_ptr->note = note;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
+	o_ptr->number = 30;
+	o_ptr->discount = 0;
+	o_ptr->pval = 10;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	o_ptr->note = note;
+	(void)inven_carry(Ind, o_ptr);
+#if 0
+	invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
+	o_ptr->number = 1;
+	o_ptr->pval = 30000;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
-		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
+	invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_FORTUNE_COOKIE));
+	o_ptr->number = 99;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
+#endif	// 0
 
-                o_ptr->number = 1;
-                o_ptr->pval = 30000;
-		o_ptr->discount = 0;
-		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
-
-		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_FORTUNE_COOKIE));
-                o_ptr->number = 99;
-		o_ptr->discount = 0;
-		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
-
-		invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
-		o_ptr->note = quark_add("@f1");
-		apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
-                o_ptr->number = 98;
-		o_ptr->discount = 0;
-		object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
+	o_ptr->note = quark_add("@f1");
+	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE);
+	o_ptr->number = 98;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
 #if 0
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
-		o_ptr->number = 9;
-		o_ptr->discount = 100;
-		object_known(o_ptr);
-		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_INVIS));
+	o_ptr->number = 9;
+	o_ptr->discount = 100;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
-		/* Ifrit bug report */
+	/* Ifrit bug report */
 	invcopy(o_ptr, lookup_kind(TV_SWORD, SV_BROAD_SWORD));
-		o_ptr->name1 = ART_GLAMDRING;
-		apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
-        o_ptr->number = 1;
-        o_ptr->discount = 0;
-        object_known(o_ptr);
-                o_ptr->owner = p_ptr->id;
-                o_ptr->level = 1;
-        (void)inven_carry(Ind, o_ptr);
-
-	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
-		o_ptr->name1 = ART_FINGOLFIN;
-		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+	o_ptr->name1 = ART_GLAMDRING;
+	apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
 	o_ptr->discount = 0;
 	object_known(o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
+
+	invcopy(o_ptr, lookup_kind(TV_GLOVES, SV_SET_OF_CESTI));
+	o_ptr->name1 = ART_FINGOLFIN;
+	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+	o_ptr->number = 1;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
 #endif
 
-		invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
-		o_ptr->name1 = ART_GROND;
-		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
-		o_ptr->number = 1;
-		o_ptr->discount = 0;
-		object_known(o_ptr);
-		o_ptr->owner = p_ptr->id;
-		o_ptr->level = 1;
-		(void)inven_carry(Ind, o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+	o_ptr->name1 = ART_GROND;
+	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
+	o_ptr->number = 1;
+	o_ptr->discount = 0;
+	object_known(o_ptr);
+	o_ptr->owner = p_ptr->id;
+	o_ptr->level = 1;
+	(void)inven_carry(Ind, o_ptr);
 
-		/* gimme books :) */
-//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
+	/* gimme books :) */
+	//		for (i = p_ptr->pclass == CLASS_WARRIOR?0:1; i < 9; i++)
+	if (p_ptr->mp_ptr->spell_book)
 		for (i = 0; i < 9; i++)
 		{
 			int k = lookup_kind(p_ptr->mp_ptr->spell_book, i);
@@ -1150,7 +1150,6 @@ void admin_outfit(int Ind)
 			o_ptr->level = 1;
 			(void)inven_carry(Ind, o_ptr);
 		}
-	}
 }
 
 
@@ -1201,7 +1200,7 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 	}
 
-	admin_outfit(Ind);
+	//admin_outfit(Ind);
 
 	/* Hack -- Give the player three useful objects */
 	for (i = 0; i < 3; i++)
@@ -1216,6 +1215,24 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 	}
 	
+}
+
+void player_create_tmpfile(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	FILE *fff;
+
+	char file_name[MAX_PATH_LENGTH];
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH))
+	{
+		s_printf("failed to generate tmpfile for %s!", p_ptr->name);
+		return;
+	}
+
+	strcpy(p_ptr->infofile, file_name);
 }
 
 static void player_setup(int Ind)
@@ -1280,7 +1297,7 @@ static void player_setup(int Ind)
 		unstaticed = 1;
 	}
 
-	/* Rebuild the level if neccecary */
+	/* Rebuild the level if necessary */
 	if(!(zcave=getcave(wpos))){
 		if(p_ptr->wpos.wz){
 			alloc_dungeon_level(wpos);
@@ -1422,7 +1439,7 @@ static void player_setup(int Ind)
 	p_ptr->redraw |= PR_PLUSSES;
 
 	/* Update his view, light, bonuses, and torch radius */
-	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SPELLS);
+	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SPELLS | PU_SKILL_INFO | PU_SKILL_MOD);
 
 	/* Update his inventory, equipment, and spell info */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_SPELL);
@@ -1432,6 +1449,8 @@ static void player_setup(int Ind)
 
 	/* This guy is alive now */
 	p_ptr->alive = TRUE;
+
+	player_create_tmpfile(Ind);
 }
 
 

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* Handle the printing of info to the screen */
 
 
@@ -208,7 +209,9 @@ void prt_sp(int max, int cur)
 /*
  * Prints the player's current sanity.
  */
-void prt_sane(void) {
+void prt_sane(void)
+{
+#ifdef SHOW_SANITY	// NO SANITY DISPLAY!!!
   char tmp[32];
   byte color;
   int perc;
@@ -232,6 +235,7 @@ void prt_sane(void) {
   } */
 
   c_put_str(color, tmp, ROW_SANITY, COL_SANITY+8);
+#endif	// 0
 }
 
 /*
@@ -708,7 +712,7 @@ static void display_equip(void)
 void show_inven(void)
 {
 	int	i, j, k, l, z = 0;
-	int	col, len, lim, wgt;
+	int	col, len, lim, wgt, totalwgt = 0;
 
 	object_type *o_ptr;
 
@@ -805,7 +809,15 @@ void show_inven(void)
 			wgt = o_ptr->weight;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, j + 1, 71);
+			totalwgt += wgt;
 		}
+	}
+
+	/* Display the weight if needed */
+	if (show_weights && totalwgt)
+	{
+		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
+		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
@@ -822,7 +834,7 @@ void show_inven(void)
 void show_equip(void)
 {
 	int	i, j, k, l;
-	int	col, len, lim, wgt;
+	int	col, len, lim, wgt, totalwgt = 0;
 
 	object_type *o_ptr;
 
@@ -910,7 +922,15 @@ void show_equip(void)
 			wgt = o_ptr->weight * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, j + 1, 71);
+			totalwgt += wgt;
 		}
+	}
+
+	/* Display the weight if needed */
+	if (show_weights && totalwgt)
+	{
+		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
+		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
 	/* Make a "shadow" below the list (only if needed) */
@@ -1307,14 +1327,16 @@ void display_player(int hist)
 	}
 
         /* Dump the bonuses to hit/dam */
-        prt_num("+ To Hit    ", p_ptr->dis_to_h, 9, 1, TERM_L_BLUE);
-        prt_num("+ To Damage ", p_ptr->dis_to_d, 10, 1, TERM_L_BLUE);
+        prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
+        prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
+        prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
+        prt_num("+To RDamage ", p_ptr->dis_to_d + p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
 
         /* Dump the armor class bonus */
-        prt_num("+ To AC     ", p_ptr->dis_to_a, 11, 1, TERM_L_BLUE);
+        prt_num("+ To AC     ", p_ptr->dis_to_a, 13, 1, TERM_L_BLUE);
 
         /* Dump the total armor class */
-        prt_num("  Base AC   ", p_ptr->dis_ac, 12, 1, TERM_L_BLUE);
+        prt_num("  Base AC   ", p_ptr->dis_ac, 14, 1, TERM_L_BLUE);
 
         prt_num("Level      ", (int)p_ptr->lev, 9, 28, TERM_L_GREEN);
 
@@ -1370,12 +1392,17 @@ void display_player(int hist)
         {
                 prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
         }
-	if((100*p_ptr->csane)/p_ptr->msane>99)
-		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
-	else if((100*p_ptr->csane)/p_ptr->msane>30)
-		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
-	else
-		prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
+#ifdef SHOW_SANITY
+		if (p_ptr->msane)
+		{
+			if((100*p_ptr->csane)/p_ptr->msane>99)
+				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_L_GREEN);
+			else if((100*p_ptr->csane)/p_ptr->msane>30)
+				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_YELLOW);
+			else
+				prt_num("Cur Sanity %   ", (100*p_ptr->csane)/p_ptr->msane, 13, 52, TERM_RED);
+		}
+#endif
 }
 
 /*

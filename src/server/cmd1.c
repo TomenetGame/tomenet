@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: cmd1.c */
 
 /* Purpose: Movement commands (part 1) */
@@ -90,7 +91,8 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 	int i, k;
 
 	/* Extract "shot" power */
-	i = (weight + ((p_ptr->to_h + plus) * 4) + (p_ptr->lev * 2));
+	i = (weight + ((p_ptr->to_h + plus) * 4) +
+		 get_skill_scale(p_ptr, SKILL_ARCHERY, 100));
         i += 50 * p_ptr->xtra_crit;
 
 	/* Critical hit */
@@ -230,6 +232,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
+		case TV_BOOMERANG:
 		{
 			/* Slay Animal */
 			if ((f1 & TR1_SLAY_ANIMAL) &&
@@ -466,6 +469,7 @@ s16b tot_dam_aux_player(object_type *o_ptr, int tdam, player_type *p_ptr)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
+		case TV_BOOMERANG:
 		{
 			/* Brand (Acid) */
 			if (f1 & TR1_BRAND_ACID)
@@ -558,7 +562,6 @@ void search(int Ind)
 
 	cave_type    *c_ptr;
 	object_type  *o_ptr;
-	trap_type    *t_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -607,8 +610,7 @@ void search(int Ind)
 //				if (c_ptr->feat == FEAT_INVIS)
 				else if (c_ptr->special.type == CS_TRAPS)
 				{
-					t_ptr = c_ptr->special.ptr;
-					if (!t_ptr->found)
+					if (!c_ptr->special.sc.trap.found)
 					{
 						/* Pick a trap */
 						pick_trap(wpos, y, x);
@@ -702,7 +704,8 @@ void carry(int Ind, int pickup, int confirm)
 		p_ptr->window |= (PW_PLAYER);
 
 		/* Delete gold */
-		delete_object(wpos, p_ptr->py, p_ptr->px);
+//		delete_object(wpos, p_ptr->py, p_ptr->px);
+		delete_object_idx(c_ptr->o_idx);
 	}
 
 	/* Pick it up */
@@ -714,10 +717,49 @@ void carry(int Ind, int pickup, int confirm)
 		/* Describe the object */
 		if ((!pickup) && (!check_guard_inscription( o_ptr->note, '=' )))
 		{
-			msg_format(Ind, "You see %s.", o_name);
+			if (p_ptr->blind || no_lite(Ind))
+				msg_format(Ind, "You feel %s%s here.", o_name, 
+						o_ptr->next_o_idx ? " on a pile" : "");
+			else msg_format(Ind, "You see %s%s.", o_name,
+						o_ptr->next_o_idx ? " on a pile" : "");
 			Send_floor(Ind, o_ptr->tval);
 		}
+#if 1
+		/* Try to add to the quiver */
+		else if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO]))
+		{
+			int slot = INVEN_AMMO, num = o_ptr->number;
 
+			msg_print(Ind, "You add the ammo to your quiver.");
+
+			/* Own it */
+			if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+			can_use(Ind, o_ptr);
+
+			/* Get the item again */
+			o_ptr = &(p_ptr->inventory[slot]);
+
+			o_ptr->number += num;
+			p_ptr->total_weight += num * o_ptr->weight;
+
+			/* Describe the object */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			o_ptr->marked=0;
+
+			/* Message */
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+
+			/* Delete original */
+//			delete_object(wpos, p_ptr->py, p_ptr->px);
+			delete_object_idx(c_ptr->o_idx);
+
+			/* Tell the client */
+			Send_floor(Ind, 0);
+
+			/* Refresh */
+			p_ptr->window |= PW_EQUIP;
+		}
+#endif	// 0
 		/* Note that the pack is too full */
 		else if (!inven_carry_okay(Ind, o_ptr))
 		{
@@ -730,6 +772,7 @@ void carry(int Ind, int pickup, int confirm)
 		{
 			int okay = TRUE;
 
+#if 0
 			/* Hack -- query every item */
 			if (p_ptr->carry_query_flag && !confirm)
 			{
@@ -738,6 +781,7 @@ void carry(int Ind, int pickup, int confirm)
 				Send_pickup_check(Ind, out_val);
 				return;
 			}
+#endif	// 0
 
 			/* Attempt to pick up an object. */
 			if (okay)
@@ -781,7 +825,31 @@ void carry(int Ind, int pickup, int confirm)
 				}
 
 				/* Delete original */
-				delete_object(wpos, p_ptr->py, p_ptr->px);
+//				delete_object(wpos, p_ptr->py, p_ptr->px);
+				delete_object_idx(c_ptr->o_idx);
+
+				/* Hack -- tell the player of the next object on the pile */
+				if (c_ptr->o_idx)
+				{
+					/* Get the object */
+					o_ptr = &o_list[c_ptr->o_idx];
+
+					/* Auto id ? */
+					if (p_ptr->auto_id)
+					{
+						object_aware(Ind, o_ptr);
+						object_known(o_ptr);
+					}
+
+					/* Describe the object */
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+					if (p_ptr->blind || no_lite(Ind))
+						msg_format(Ind, "You feel %s%s here.", o_name, 
+								o_ptr->next_o_idx ? " on a pile" : "");
+					else msg_format(Ind, "You see %s%s.", o_name,
+							o_ptr->next_o_idx ? " on a pile" : "");
+				}
 
 				/* Tell the client */
 				Send_floor(Ind, 0);
@@ -828,7 +896,7 @@ static int check_hit(int Ind, int power)
 static void hit_trap(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	trap_type *t_ptr;
+	int t_idx;
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 
@@ -851,16 +919,17 @@ static void hit_trap(int Ind)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 //	w_ptr = &p_ptr->cave_flag[p_ptr->py][p_ptr->px];
-	t_ptr = c_ptr->special.ptr;
 
-	if (t_ptr->t_idx != 0)
+	t_idx = c_ptr->special.sc.trap.t_idx;
+
+	if (t_idx)
 	{
 		ident = player_activate_trap_type(Ind, p_ptr->py, p_ptr->px, NULL, -1);
-		if (ident && !p_ptr->trap_ident[t_ptr->t_idx])
+		if (ident && !p_ptr->trap_ident[t_idx])
 		{
-			p_ptr->trap_ident[t_ptr->t_idx] = TRUE;
+			p_ptr->trap_ident[t_idx] = TRUE;
 			msg_format(Ind, "You identified the trap as %s.",
-				   t_name + t_info[t_ptr->t_idx].name);
+				   t_name + t_info[t_idx].name);
 		}
 	}
 #if 0	// Au revoir!
@@ -1192,7 +1261,12 @@ void py_attack_player(int Ind, int y, int x, bool old)
 		sprintf(string, "attacking %s", q_ptr->name);
 		s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 		if(!imprison(Ind, 500, string)){
-			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
+			/* This wrath can be too much */
+//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods");
+			/* It's prison here :) */
+			msg_print(Ind, "{yYou feel yourself bound hand and foot!");
+			set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
+			return;
 		}
 		else return;
 	}
@@ -1820,6 +1894,10 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 			/* (should this also cancelled by nazgul?(for now not)) */
 			k += p_ptr->to_d;
 
+			/* Penalty for could-2H when having a shield */
+			if ((f4 & TR4_COULD2H) &&
+					p_ptr->inventory[INVEN_ARM].k_idx) k /= 2;
+
 			/* No negative damage */
 			if (k < 0) k = 0;
 
@@ -1891,9 +1969,11 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 
 			else if (chaos_effect == 4)
 			{
-				msg_format(Ind, "%^s disappears!", m_name);
-				teleport_away(c_ptr->m_idx, 50);
-				num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
+				if (teleport_away(c_ptr->m_idx, 50))
+				{
+					msg_format(Ind, "%^s disappears!", m_name);
+					num = p_ptr->num_blow + 1; /* Can't hit it anymore! */
+				}
 //				no_extra = TRUE;
 			}
 
@@ -2339,7 +2419,6 @@ void move_player(int Ind, int dir, int do_pickup)
 	monster_type    *m_ptr;
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
-	trap_type *t_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -2477,10 +2556,22 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif
 
 		/* If both want to switch, do it */
+#if 0
+		/* TODO: always swap when in party
+		 * this can allow one to pass through walls... :(
+		 */
+		else if ( (!p_ptr->ghost && !q_ptr->ghost &&
+				((ddy[q_ptr->last_dir] == -(ddy[dir]) &&
+				ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
+				(player_in_party(p_ptr->party, Ind2) &&
+				 !q_ptr->store_num) )||
+				(q_ptr->admin_dm) )
+#else
 		else if ((!p_ptr->ghost && !q_ptr->ghost &&
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 			 (ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
 			(q_ptr->admin_dm))
+#endif	// 0
 		{
 		  if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))
 		    {
@@ -2591,12 +2682,12 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
-		csfunc[c_ptr->special.type].activate(c_ptr->special.ptr, Ind);
+		csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
 		if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
 			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
 			{
-				if(access_door(Ind, c_ptr->special.ptr))
+				if(access_door(Ind, c_ptr->special.sc.ptr))
 				{
 					myhome = TRUE;
 					msg_print(Ind, "\377GYou walk through the door.");
@@ -2672,7 +2763,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			else if (c_ptr->feat == FEAT_SIGN)
 			{
 				if(c_ptr->special.type==CS_INSCRIP){
-					struct floor_insc *sptr=c_ptr->special.ptr;
+					struct floor_insc *sptr=c_ptr->special.sc.ptr;
 					msg_format(Ind, "A sign here reads: %s", sptr->text);
 				}
 				else msg_print(Ind, "A blank sign is here");
@@ -2683,7 +2774,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			{
 				msg_print(Ind, "There is a wall blocking your way.");
 			}
-			csfunc[c_ptr->special.type].activate(c_ptr->special.ptr, Ind);
+			csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
 		}
 		return;
 		} /* 'if (!myhome)' ends here */
@@ -2811,32 +2902,18 @@ void move_player(int Ind, int dir, int do_pickup)
 //		else if (c_ptr->feat == FEAT_INVIS)
 		else if (c_ptr->special.type == CS_TRAPS)
 		{
-			t_ptr = c_ptr->special.ptr;
-
 			/* Disturb */
 			disturb(Ind, 0, 0);
 
-			if (!t_ptr->found)
+			if (!c_ptr->special.sc.trap.found)
 			{
 				/* Message */
-				msg_print(Ind, "You found a trap!");
+//				msg_print(Ind, "You found a trap!");
+				msg_print(Ind, "You triggered a trap!");
 
 				/* Pick a trap */
 				pick_trap(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 			}
-#if 0
-			/* Set off an visible trap */
-			//		else if ((c_ptr->feat >= FEAT_TRAP_HEAD) &&
-			//			 (c_ptr->feat <= FEAT_TRAP_TAIL))
-			else
-			{
-				/* Disturb */
-				disturb(Ind, 0, 0);
-
-				/* Hit the trap */
-				hit_trap(Ind);
-			}
-#endif	// 0
 			/* Hit the trap */
 			hit_trap(Ind);
 		}
@@ -3245,6 +3322,7 @@ static void run_init(int Ind, int dir)
  *
  * Return TRUE if the running should be stopped
  */
+/* TODO: aquatics should stop when next to non-water */
 static bool run_test(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3255,10 +3333,13 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
+	bool	aqua = p_ptr->fly ||
+					((p_ptr->pclass==CLASS_MIMIC) && (
+					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) ||
+					(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ));
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;
-	trap_type	*t_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
@@ -3307,14 +3388,12 @@ static bool run_test(int Ind)
 		}
 
 		/* Visible traps abort running */
-		if (c_ptr->special.type == CS_TRAPS)
-		{
-			t_ptr = c_ptr->special.ptr;
-			if (t_ptr->found) return TRUE;
-		}
+		if (c_ptr->special.type == CS_TRAPS &&
+			c_ptr->special.sc.trap.found) return TRUE;
 
-		/* Hack -- always stop in water */
-		if (c_ptr->feat == FEAT_WATER && !p_ptr->fly) return TRUE;
+		/* Hack -- basically stop in water */
+		if (c_ptr->feat == FEAT_WATER && !aqua)
+			return TRUE;
 
 		/* Assume unknown */
 		inv = TRUE;
@@ -3384,6 +3463,15 @@ static bool run_test(int Ind)
 				{
 					/* Option -- ignore */
 					if (p_ptr->find_ignore_stairs) notice = FALSE;
+
+					/* Done */
+					break;
+				}
+
+				/* Water */
+				case FEAT_WATER:
+				{
+					if (!aqua) notice = FALSE;
 
 					/* Done */
 					break;

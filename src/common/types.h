@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: types.h */
 
 /* Purpose: global type declarations */
@@ -109,7 +110,8 @@ struct header
  */
 typedef struct worldpos worldpos;
 
-struct worldpos{
+struct worldpos
+{
 	s16b wx;	/* west to east */
 	s16b wy;	/* south to north */
 	s16b wz;	/* deep to sky */
@@ -518,6 +520,16 @@ struct vault_type
 
 	byte hgt;			/* Vault height */
 	byte wid;			/* Vault width */
+
+	u32b flags1;			/* VF1 flags */
+
+#if 0
+	s16b lvl;                       /* level of special (if any) */
+	byte dun_type;                  /* Dungeon type where the level will show up */
+
+	s16b mon[10];                   /* special monster */
+	int item[3];                   /* number of item (usually artifact) */
+#endif	// 0
 };
 
 struct swear{
@@ -535,6 +547,7 @@ struct trap_kind{
   byte difficulty;  /* how difficult to disarm */
   byte minlevel;    /* what is the minimum level on which the traps should be */
   byte color;       /* what is the color on screen */
+  byte vanish;       /* probability of disappearence */
   u32b flags;       /* where can these traps go - and perhaps other flags */
 #if 0	// Handled in player_type
   bool ident;       /* do we know the name */
@@ -545,6 +558,7 @@ struct trap_kind{
   s16b text;        /* longer description once you've met this trap */
 };
 
+#if 0	// time to retire :)
 /*
  * Probably this struct can be used for non-trap 'cave-special's
  * in the same way? If so, we can use t_list for omnipurpose :)
@@ -562,6 +576,7 @@ struct trap_type
 
 	bool found;			/* Is this trap revealed? */
 };
+#endif	// 0
 
 
 
@@ -586,38 +601,51 @@ struct trap_type
 #if 1 /* Evileye - work in progress */
 
 /* Cave special types */
+/* TODO: move those defines to defines.h */
 #define CS_NONE 0
 #define DNA_DOOR 1
 #define KEY_DOOR 2
-#define CS_TRAPS 3 	// CS stands for Cave Special
+#define CS_TRAPS 3 	/* CS stands for Cave Special */
 #define CS_INSCRIP 4	/* ok ;) i'll follow that from now */
 
+#define CS_FOUNTAIN 5
+#define CS_BETWEEN	6	/* petit jump type */
+#define CS_BETWEEN2	7	/* world traveller type */
+
+/* heheh it's kludge.. */
+#define sc_is_pointer(type)	(type < 3 || type == 4 || 7 < type)
+
+#if 0
 struct c_special{
 	unsigned char type;
 	void *ptr;		/* lazy */
 };
-
-#if 0 /* Jir - work still in progress (thx Yakina for advice) */
+#else /* Jir - work still in progress (thx Yakina for advice) */
 struct c_special{
 	unsigned char type;
-	union
+	union	/* 32bits */
 	{
-		void *ptr;		/* lazy */
-		s32b omni;		/* so that we don't need other arrays */
+		void *ptr;		/* lazy - refer to other arrays or sth */
+		s32b omni;		/* needless of other arrays? k, add here! */
+		struct { byte t_idx; bool found; } trap;
+		struct { byte fy, fx; } between;
+		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
+		struct { byte type, rest; bool known; } fountain;
 	} sc;
 };
-#endif
+#endif	// 0
+
+typedef struct cave_type cave_type;
 
 struct sfunc{		/* structure containing calls for specials */
-	void (*load)(void *ptr);		/* load function */
+//	void (*load)(void *ptr);		/* load function */
+	void (*load)(void *ptr, cave_type *c_ptr);		/* load function */
 	void (*save)(void *ptr);		/* save function */
 	void (*see)(void *ptr, int Ind);	/* sets player view */
 	void (*activate)(void *ptr, int Ind);	/* walk on/bump */
 	//void (*kill)(void *ptr);		/* removal */
 };
 #endif
-
-typedef struct cave_type cave_type;
 
 struct cave_type
 {
@@ -716,7 +744,7 @@ struct object_type
 
 	u16b note;			/* Inscription index */
 
-#if 0	// from pernA.. but I hate this system, so rest in if0
+#if 0	// from pernA.. consumes memory, but quick. shall we?
         u16b art_name;      /* Artifact name (random artifacts) */
 
         u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
@@ -727,10 +755,10 @@ struct object_type
         u32b art_esp;           /* Flags, set esp  PernAngband */
 #endif	// 0
 	
-#if 0	// from pernA.. I love this system, coming soon :)
-	s16b next_o_idx;	/* Next object in stack (if any) */
+#if 1	// from pernA.. I love this system, coming soon :)
+	u16b next_o_idx;	/* Next object in stack (if any) */
 
-	s16b held_m_idx;	/* Monster holding us (if any) */
+	u16b held_m_idx;	/* Monster holding us (if any) */
 #endif
 };
 
@@ -780,9 +808,9 @@ struct monster_type
 #if 0
 	s16b bleeding;          /* Monster is bleeding */
 	s16b poisoned;          /* Monster is poisoned */
-
-	s16b hold_o_idx;	/* Object being held (if any) */
 #endif
+
+	u16b hold_o_idx;	/* Object being held (if any) */
 
 	byte cdis;			/* Current dis from player */
 
@@ -1095,20 +1123,33 @@ struct quest_type{
 
 #if 1 /* Evileye - work in progress */
 
-#define DUNGEON_RANDOM 1 /* random dungeon - not preloaded */
-#define DUNGEON_IRON 2	/* one way dungeon - return portal at max level */
-#define DUNGEON_HELL 4	/* hellish dungeon - forces hellish mode on all */
-#define DUNGEON_NOMAP 8	/* player never gains level knowledge */
-#define DUNGEON_DELETED 16 /* Deleted, but not yet removed */
+/*
+ * struct for individual levels.
+ */
+/* dungeon flags for dungeon_type (DF2?) */
+#define DUNGEON_RANDOM		0x00000001L /* random dungeon - not preloaded */
+#define DUNGEON_IRON		0x00000002L	/* one way dungeon - return portal at max level */
+#define DUNGEON_HELL		0x00000004L	/* hellish dungeon - forces hellish mode on all */
+#define DUNGEON_NOMAP		0x00000008L	/* player never gains level knowledge */
+#define DUNGEON_NO_MAGIC_MAP	0x00000010L
+#define DUNGEON_DELETED		0x80000000L /* Deleted, but not yet removed */
 
 typedef struct dun_level dun_level;
-struct dun_level{
+struct dun_level
+{
 	int ondepth;
 	time_t lastused;
 	byte up_x,up_y;
 	byte dn_x,dn_y;
 	byte rn_x,rn_y;
-	cave_type **cave;
+
+	u32b flags1;		/* LF1 flags */
+//	u32b flags2;		/* LF2 flags */
+	byte hgt;			/* Vault height */
+	byte wid;			/* Vault width */
+//	char feeling[80]	/* feeling description */
+
+	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
 };
 
 /* dungeon_type structure
@@ -1117,17 +1158,20 @@ struct dun_level{
  *
  */
 typedef struct dungeon_type dungeon_type;
-struct dungeon_type{
+struct dungeon_type
+{
 	u16b id;		/* dungeon id */
 	u16b baselevel;		/* base level (1 - 50ft etc). */
 	u32b flags;		/* dungeon flags */
+//	u32b flags2;		/* DF2 flags */
 	byte maxdepth;		/* max height/depth */
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
 	struct dun_level *level;	/* array of dungeon levels */
 };
 
-struct town_type{
+struct town_type
+{
 	u16b x,y;		/* town wilderness location */
 	u16b baselevel;		/* Normally 0 for the basic town */
 	u16b flags;		/* town flags */
@@ -1533,7 +1577,7 @@ struct player_type
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 
-	char savefile[1024];	/* Name of the savefile */
+	char savefile[MAX_PATH_LENGTH];	/* Name of the savefile */
 
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
@@ -1643,7 +1687,9 @@ struct player_type
 	byte target_x[TEMP_MAX];
 	s16b target_idx[TEMP_MAX];
 
-	cptr info[128];		/* Temp storage of *ID* and Self Knowledge info */
+//	cptr info[128];		/* Temp storage of *ID* and Self Knowledge info */
+	char infofile[MAX_PATH_LENGTH];		/* Temp storage of *ID* and Self Knowledge info */
+	char cur_file[MAX_PATH_LENGTH];		/* Filename this player's viewing */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
 
 	byte cave_flag[MAX_HGT][MAX_WID]; /* Can the player see this grid? */
@@ -1842,6 +1888,7 @@ struct player_type
 	bool old_heavy_wield;
 	bool old_heavy_shoot;
 	bool old_icky_wield;
+	bool old_awkward_wield;
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
@@ -1854,6 +1901,7 @@ struct player_type
 	bool heavy_wield;	/* Heavy weapon */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
+	bool awkward_wield;	/* shield and COULD_2H weapon */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 
@@ -1934,6 +1982,10 @@ struct player_type
 
 	s16b dis_ac;		/* Known base ac */
 
+	s16b to_h_ranged;			/* Bonus to hit */
+	s16b to_d_ranged;			/* Bonus to dam */
+	s16b to_h_melee;			/* Bonus to hit */
+	s16b to_d_melee;			/* Bonus to dam */
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
@@ -1982,6 +2034,8 @@ struct player_type
 
 	/* some new borrowed flags (saved) */
         bool black_breath;      /* The Tolkien's Black Breath */
+        bool black_breath_tmp;	/* (NOT saved) BB induced by an item */
+//        u32b malady;      /* TODO: Flags for malady */
 
         s16b msane;                   /* Max sanity */
         s16b csane;                   /* Cur sanity */
@@ -2012,6 +2066,7 @@ struct player_type
 							/* in PernM, it's same as st_anchor */
 		bool admin_wiz;		/* Is this char Wizard? */
 		bool admin_dm;		/* or Dungeon Master? */
+		bool stormbringer;	/* Attack friends? */
 
 	u16b quest_id;		/* Quest number */
 	s16b quest_num;		/* Number of kills needed */
@@ -2066,11 +2121,19 @@ struct server_opts
 	s16b running_speed;
 	s16b anti_scum;
 	s16b dun_unusual;
-	s16b town_x, town_y;
+	s16b town_x;
+	s16b town_y;
 	s16b town_base;
 	s16b dun_base;
 	s16b dun_max;
 	s16b store_turns;
+	char resting_rate;
+	char party_xp_boost;
+	char zang_monsters;
+	char pern_monsters;
+	char cth_monsters;
+	char joke_monsters;
+	char vanilla_monsters;
 	bool report_to_meta;
 	bool secret_dungeon_master;
 	bool anti_arts_horde;
@@ -2080,11 +2143,7 @@ struct server_opts
 	bool maximize;
 	bool kings_etiquette;
 	bool public_rfe;
-	bool zang_monsters;
-	bool pern_monsters;
-	bool cth_monsters;
-	bool joke_monsters;
-	bool vanilla_monsters;
+	bool auto_purge;
 };
 
 /* from spells1.c */

@@ -1,13 +1,22 @@
+/* $Id$ */
 #include "angband.h"
 
 /* Client global variables */
 
-char nick[80];
-char pass[80];
+char nick[80]="";
+char pass[80]="";
+char svname[80]="";
+//char path[1024]="";
+char path[1024]=DEFAULT_PATH;
 
-char real_name[80];
+char real_name[80]="";
 
-char server_name[80];
+char server_name[80]="";
+
+char message_history[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
+//byte hist_start = 0;
+byte hist_end = 0;
+bool hist_looped = FALSE;
 
 object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
 char inventory_name[INVEN_TOTAL][80];	/* The client-side copy of the inventory names */
@@ -190,3 +199,5 @@ bool view_granite_lite;
 bool view_special_lite;
 
 u32b cfg_game_port = 18348; 
+
+skill_type s_info[MAX_SKILLS];

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: externs.h */
 
 /* Purpose: extern declarations (variables and functions) */
@@ -33,10 +34,17 @@ extern cptr monster_spells6[32];
 /* variable.c */
 extern char nick[80];
 extern char pass[80];
+extern char svname[80];
+extern char path[1024];
 
 extern char real_name[80];
 
 extern char server_name[80];
+
+extern char message_history[MSG_HISTORY_MAX][80];
+//extern byte hist_start;
+extern byte hist_end;
+extern bool hist_looped;
 
 extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][80];
@@ -207,6 +215,8 @@ extern bool view_special_lite;
 
 extern u32b cfg_game_port;
 
+extern skill_type s_info[MAX_SKILLS];
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -219,6 +229,7 @@ extern bool get_server_name(void);
 
 /* c-cmd.c */
 extern void process_command(void);
+extern void do_cmd_skill();
 extern void cmd_tunnel(void);
 extern void cmd_walk(void);
 extern void cmd_king(void);
@@ -298,7 +309,7 @@ extern errr my_fgets(FILE *fff, char *buf, huge n);
 
 /* c-init.c */
 extern void initialize_all_pref_files(void);
-extern void client_init(char *argv1);
+extern void client_init(char *argv1, bool skip);
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
@@ -437,7 +448,8 @@ extern int Send_target(int dir);
 extern int Send_target_friendly(int dir);
 extern int Send_look(int dir);
 extern int Send_msg(cptr message);
-extern int Send_fire(int item, int dir);
+//extern int Send_fire(int item, int dir);
+extern int Send_fire(int dir);
 extern int Send_throw(int item, int dir);
 extern int Send_item(int item);
 extern int Send_gain(int book, int spell);
@@ -463,8 +475,11 @@ extern int Send_clear_buffer(void);
 extern int Send_King(byte type);
 extern int Send_admin_house(int dir, cptr buf);
 extern int Send_spike(int dir);
+extern int Send_skill_mod(int i);
 
 
+/* skills.c */
+extern bool hack_do_cmd_skill_wait;
 
 
 /*
@@ -497,3 +512,4 @@ extern int stricmp(cptr a, cptr b);
 #endif
 
 extern char	*longVersion;
+extern char	*shortVersion;

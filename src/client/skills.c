@@ -13,122 +13,29 @@
 #include "angband.h"
 
 
-/*
- * Initialize a skill with given values
- */
-void init_skill(player_type *p_ptr, u32b value, s16b mod, int i)
-{
-        p_ptr->s_info[i].value = value;
-        p_ptr->s_info[i].mod = mod;
-        if (s_info[i].flags1 & SKF1_HIDDEN)
-                p_ptr->s_info[i].hidden = TRUE;
-        else
-                p_ptr->s_info[i].hidden = FALSE;
-}
-
-/*
- *
- */
-s16b get_skill(player_type *p_ptr, int skill)
-{
-	return (p_ptr->s_info[skill].value / SKILL_STEP);
-}
-
-
-/*
- *
- */
-s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
-{
-	/* XXX XXX XXX */
-	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
-	         (SKILL_MAX / 10)) /
-	        (SKILL_STEP / 10));
-}
-
-/* Will add, sub, .. */
-s32b modify_aux(s32b a, s32b b, char mod)
-{
-	switch (mod)
-	{
-		case '+':
-			return (a + b);
-			break;
-		case '-':
-			return (a - b);
-			break;
-		case '=':
-			return (b);
-			break;
-		case '%':
-			return (a * b / 100);
-			break;
-		default:
-			return (0);
-	}
-}
-
-
-/*
- * Gets the base value of a skill, given a race/class/...
- */
-void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
-{
-	s32b value, mod, j;
-
-        /***** class skills *****/
-
-        /* find the skill mods for that class */
-        for (j = 0; j < MAX_SKILLS; j++)
-        {
-                if (p_ptr->cp_ptr->skills[j].skill == i)
-                {
-                        value = p_ptr->cp_ptr->skills[j].value;
-                        mod = p_ptr->cp_ptr->skills[j].mod;
-
-                        *v = modify_aux(*v,
-                                        value, p_ptr->cp_ptr->skills[j].vmod);
-                        *m = modify_aux(*m,
-                                        mod, p_ptr->cp_ptr->skills[j].mmod);
-                }
-        }
-}
-
-
+#if 0
 /*
  * Advance the skill point of the skill specified by i and
  * modify related skills
- * note that we *MUST* send back a skill_info packet
  */
-void increase_skill(int Ind, int i)
+void increase_skill(int i, s16b *invest)
 {
-        player_type *p_ptr = Players[Ind];
-
 	/* No skill points to be allocated */
-        if (p_ptr->skill_points <= 0)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	if (!p_ptr->skill_points) return;
 
 	/* The skill cannot be increased */
-	if (p_ptr->s_info[i].mod <= 0)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+	if (!s_info[i].mod) return;
 
 	/* The skill is already maxed */
-        if (p_ptr->s_info[i].value >= SKILL_MAX)
-        {
-                Send_skill_info(Ind, i);
-                return;
-        }
+        if (s_info[i].value >= SKILL_MAX) return;
 
         /* Cannot allocate more than player level * 3 / 2 + 4 levels */
-        if ((p_ptr->s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
+        if ((s_info[i].value / SKILL_STEP) >= ((p_ptr->lev * 3 / 2) + 4))
         {
-                Send_skill_info(Ind, i);
+                int hgt, wid;
+
+		Term_get_size(&wid, &hgt);
+                msg_box("Cannot raise a skill value above 4 + player level * 3/2.", (int)(hgt / 2), (int)(wid / 2));
                 return;
         }
 
@@ -136,15 +43,9 @@ void increase_skill(int Ind, int i)
 	p_ptr->skill_points--;
 
 	/* Increase the skill */
-        p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
-        if (p_ptr->s_info[i].value >= SKILL_MAX) p_ptr->s_info[i].value = SKILL_MAX;
-
-        /* Update the client */
-        Send_skill_info(Ind, i);
+        s_info[i].value += s_info[i].mod;
+        invest[i]++;
 }
-
-
-#if 0
 
 
 /*
@@ -180,7 +81,7 @@ s16b find_skill(cptr name)
 	u16b i;
 
 	/* Scan skill list */
-	for (i = 1; i < max_s_idx; i++)
+	for (i = 1; i < MAX_SKILLS; i++)
 	{
 		/* The name matches */
 		if (streq(s_info[i].name + s_name, name)) return (i);
@@ -190,27 +91,7 @@ s16b find_skill(cptr name)
 	return (-1);
 }
 
-
-/*
- *
- */
-s16b get_skill(int skill)
-{
-	return (s_info[skill].value / SKILL_STEP);
-}
-
-
-/*
- *
- */
-s16b get_skill_scale(int skill, u32b scale)
-{
-	/* XXX XXX XXX */
-	return (((s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
-	         (SKILL_MAX / 10)) /
-	        (SKILL_STEP / 10));
-}
-
+#endif
 
 /*
  *
@@ -219,11 +100,12 @@ int get_idx(int i)
 {
 	int j;
 
-	for (j = 1; j < max_s_idx; j++)
+/*	for (j = 1; j < MAX_SKILLS; j++)
 	{
 		if (s_info[j].order == i)
 			return (j);
-	}
+                        }*/
+        return i;
 	return (0);
 }
 
@@ -236,17 +118,17 @@ void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
 {
 	int j, i;
 
-	for (j = 1; j < max_s_idx; j++)
+	for (j = 1; j < MAX_SKILLS; j++)
 	{
 		i = get_idx(j);
 
 		if (s_info[i].father != father) continue;
-		if (s_info[i].hidden) continue;
+		if (p_ptr->s_info[i].hidden) continue;
 
 		table[*idx][0] = i;
 		table[*idx][1] = lev;
 		(*idx)++;
-		if (s_info[i].dev || full) init_table_aux(table, idx, i, lev + 1, full);
+		if (p_ptr->s_info[i].dev || full) init_table_aux(table, idx, i, lev + 1, full);
 	}
 }
 
@@ -262,7 +144,7 @@ bool has_child(int sel)
 {
 	int i;
 
-	for (i = 1; i < max_s_idx; i++)
+	for (i = 1; i < MAX_SKILLS; i++)
 	{
 		if (s_info[i].father == sel)
 			return (TRUE);
@@ -270,54 +152,24 @@ bool has_child(int sel)
 	return (FALSE);
 }
 
-
-/*
- * Dump the skill tree
- */
-void dump_skills(FILE *fff)
+void print_desc_aux(cptr txt, int y, int xx)
 {
-	int i, j, max = 0;
-	int table[MAX_SKILLS][2];
-	char buf[80];
+	int i = -1, x = xx;
 
-	init_table(table, &max, TRUE);
 
-	Term_clear();
-
-	fprintf(fff, "\nSkills (points left: %d)", p_ptr->skill_points);
-
-	for (j = 1; j < max; j++)
+	while (txt[++i] != 0)
 	{
-		int z;
-
-		i = table[j][0];
-
-		if ((s_info[i].value == 0) && (i != SKILL_MISC))
+		if (txt[i] == '\n')
 		{
-			if (s_info[i].mod == 0) continue;
-		}
-
-		sprintf(buf, "\n");
-
-		for (z = 0; z < table[j][1]; z++) strcat(buf, "	 ");
-
-		if (!has_child(i))
-		{
-			strcat(buf, format(" . %s", s_info[i].name + s_name));
+			x = xx;
+			y++;
 		}
 		else
 		{
-			strcat(buf, format(" - %s", s_info[i].name + s_name));
+			Term_putch(x++, y, TERM_YELLOW, txt[i]);
 		}
-
-		fprintf(fff, "%-50s%02ld.%03ld [%01d.%03d]",
-		        buf, s_info[i].value / SKILL_STEP, s_info[i].value % SKILL_STEP,
-		        s_info[i].mod / 1000, s_info[i].mod % 1000);
 	}
-
-	fprintf(fff, "\n");
 }
-
 
 /*
  * Draw the skill tree
@@ -330,10 +182,10 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 	Term_clear();
 	Term_get_size(&wid, &hgt);
 
-	c_prt(TERM_WHITE, "ToME Skills Screen", 0, 28);
+	c_prt(TERM_WHITE, "TomeNET Skills Screen", 0, 28);
 	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
 	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
-	print_desc_aux(s_info[table[sel][0]].desc + s_text, 2, 0);
+	print_desc_aux(s_info[table[sel][0]].desc, 2, 0);
 
 	for (j = start; j < start + (hgt - 4); j++)
 	{
@@ -344,13 +196,13 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 
 		i = table[j][0];
 
-		if ((s_info[i].value == 0) && (i != SKILL_MISC))
+		if ((p_ptr->s_info[i].value == 0))
 		{
-			if (s_info[i].mod == 0) color = TERM_L_DARK;
+			if (p_ptr->s_info[i].mod == 0) color = TERM_L_DARK;
 			else color = TERM_ORANGE;
 		}
-		else if (s_info[i].value == SKILL_MAX) color = TERM_L_BLUE;
-		if (s_info[i].hidden) color = TERM_L_RED;
+		else if (p_ptr->s_info[i].value == SKILL_MAX) color = TERM_L_BLUE;
+		if (p_ptr->s_info[i].hidden) color = TERM_L_RED;
 		if (j == sel)
 		{
 			color = TERM_L_GREEN;
@@ -359,162 +211,46 @@ void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 		}
 		if (!has_child(i))
 		{
-			c_prt(color, format("%c.%c%s", deb, end, s_info[i].name + s_name),
+			c_prt(color, format("%c.%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
-		else if (s_info[i].dev)
+		else if (p_ptr->s_info[i].dev)
 		{
-			c_prt(color, format("%c-%c%s", deb, end, s_info[i].name + s_name),
+			c_prt(color, format("%c-%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
 		else
 		{
-			c_prt(color, format("%c+%c%s", deb, end, s_info[i].name + s_name),
+			c_prt(color, format("%c+%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
 		c_prt(color,
 		      format("%02ld.%03ld [%01d.%03d]",
-			         s_info[i].value / SKILL_STEP, s_info[i].value % SKILL_STEP,
-			         s_info[i].mod / 1000, s_info[i].mod % 1000),
+			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
+			         p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000),
 			  j + 4 - start, 60);
 	}
 }
 
 /*
- * Checks various stuff to do when skills change, like new spells, ...
- */
-void recalc_skills(bool init)
-{
-        static int thaum_level = 0;
-
-        if (init)
-        {
-                thaum_level = get_skill_scale(SKILL_THAUMATURGY, 100);
-        }
-        else
-        {
-                int thaum_gain = 0;
-
-                /* Gain thaum spells */
-                while (thaum_level < get_skill_scale(SKILL_THAUMATURGY, 100))
-                {
-                        if (spell_num == MAX_SPELLS) break;
-                        generate_spell(thaum_level);
-                        thaum_level++;
-                        thaum_gain++;
-                }
-                if (thaum_gain)
-                {
-                        if (thaum_gain == 1)
-                                msg_print("You have gained one new thaumaturgy spell.");
-                        else
-                                msg_format("You have gained %d new thaumaturgy spells.", thaum_gain);
-                }
-
-		/* Update stuffs */
-		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SPELLS | PU_POWERS |
-	                      PU_SANITY | PU_BODY);
-
-		/* Redraw various info */
-		p_ptr->redraw |= (PR_WIPE | PR_BASIC | PR_EXTRA | PR_MAP);
-        }
-}
-
-/*
- * Recalc the skill value
- */
-void recalc_skills_theory(s16b *invest, s32b *base_val, u16b *base_mod, s32b *bonus)
-{
-        int i, j;
-
-        for (i = 0; i < max_s_idx; i++)
-        {
-                /* Calc the base */
-                s_info[i].value = base_val[i] + (base_mod[i] * invest[i]) + bonus[i];
-
-                /* It cannot exceed SKILL_MAX */
-                if (s_info[i].value > SKILL_MAX) s_info[i].value = SKILL_MAX;
-
-                /* It cannot go below 0 */
-                if (s_info[i].value < 0) s_info[i].value = 0;
-
-                /* Modify related skills */
-                for (j = 1; j < max_s_idx; j++)
-                {
-                        /* Ignore self */
-                        if (j == i) continue;
-
-                        /* Exclusive skills */
-                        if ((s_info[i].action[j] == SKILl_EXCLUSIVE) && s_info[i].value && invest[i])
-                        {
-                                /* Turn it off */
-                                s_info[j].value = 0;
-                        }
-
-                        /* Non-exclusive skills */
-                        else
-                        {
-                                /* Increase / decrease with a % */
-                                s32b val = s_info[j].value + (invest[i] * s_info[j].mod * s_info[i].action[j] / 100);
-
-                                /* Skill value cannot be negative */
-                                if (val < 0) val = 0;
-
-                                /* It cannot exceed SKILL_MAX */
-                                if (val > SKILL_MAX) val = SKILL_MAX;
-
-                                /* Save the modified value */
-                                s_info[j].value = val;
-                        }
-                }
-        }
-}
-
-/*
  * Interreact with skills
  */
+bool hack_do_cmd_skill_wait = FALSE;
 void do_cmd_skill()
 {
 	int sel = 0, start = 0, max;
 	char c;
 	int table[MAX_SKILLS][2];
 	int i;
-	int wid,hgt;
-	s16b skill_points_save;
-	s32b *skill_values_save;
-	u16b *skill_mods_save;
-	s16b *skill_rates_save;
-	s16b *skill_invest;
-	s32b *skill_bonus;
+        int wid,hgt;
 
-	recalc_skills(TRUE);
-
-	/* Enter "icky" mode */
-	character_icky = TRUE;
+#ifndef EVIL_TEST /* evil test */
+	/* Screen is icky */
+	screen_icky = TRUE;
+#endif
 
 	/* Save the screen */
 	Term_save();
-
-	/* Allocate arrays to save skill values */
-	C_MAKE(skill_values_save, MAX_SKILLS, s32b);
-	C_MAKE(skill_mods_save, MAX_SKILLS, u16b);
-	C_MAKE(skill_rates_save, MAX_SKILLS, s16b);
-	C_MAKE(skill_invest, MAX_SKILLS, s16b);
-	C_MAKE(skill_bonus, MAX_SKILLS, s32b);
-
-	/* Save skill points */
-	skill_points_save = p_ptr->skill_points;
-
-	/* Save skill values */
-	for (i = 0; i < max_s_idx; i++)
-	{
-		skill_type *s_ptr = &s_info[i];
-
-		skill_values_save[i] = s_ptr->value;
-		skill_mods_save[i] = s_ptr->mod;
-		skill_rates_save[i] = s_ptr->rate;
-		skill_invest[i] = 0;
-	}
 
 	/* Clear the screen */
 	Term_clear();
@@ -527,20 +263,72 @@ void do_cmd_skill()
 		Term_get_size(&wid, &hgt);
 
                 /* Display list of skills */
-                recalc_skills_theory(skill_invest, skill_values_save, skill_mods_save, skill_bonus);
                 print_skills(table, max, sel, start);
 
-		/* Wait for user input */
-		c = inkey();
+                /* Wait for user input */
+                if (!hack_do_cmd_skill_wait)
+                        c = inkey();
+                else
+                {
+                        int net_fd;
 
-		/* Leave the skill screen */
+                        /* Acquire and save maximum file descriptor */
+                        net_fd = Net_fd();
+
+                        /* If no network yet, just wait for a keypress */
+                        if (net_fd == -1)
+                        {
+                                /* Look for a keypress */
+                                quit("No network in do_cmd_skill() !");
+                        }
+                        else
+                        {
+                                /* Wait for keypress, while also checking for net input */
+                                do
+                                {
+                                        int result;
+
+                                        /* Update our timer and if neccecary send a keepalive packet
+                                         */
+                                        update_ticks();
+                                        do_keepalive();
+
+                                        /* Flush the network output buffer */
+                                        Net_flush();
+
+                                        /* Wait for .001 sec, or until there is net input */
+                                        SetTimeout(0, 1000);
+
+                                        /* Parse net input if we got any */
+                                        if (SocketReadable(net_fd))
+                                        {
+                                                if ((result = Net_input()) == -1)
+                                                {
+                                                        quit(NULL);
+                                                }
+
+                                                /* Update the screen */
+                                                Term_fresh();
+
+                                                /* Redraw windows if necessary */
+                                                if (p_ptr->window)
+                                                {
+                                                        window_stuff();
+                                                }
+                                        }
+                                } while (hack_do_cmd_skill_wait);
+                        }
+                        c = 0;
+                }
+
+                /* Leave the skill screen */
 		if (c == ESCAPE) break;
 
 		/* Expand / collapse list of skills */
 		else if (c == '\r')
 		{
-			if (s_info[table[sel][0]].dev) s_info[table[sel][0]].dev = FALSE;
-			else s_info[table[sel][0]].dev = TRUE;
+			if (p_ptr->s_info[table[sel][0]].dev) p_ptr->s_info[table[sel][0]].dev = FALSE;
+			else p_ptr->s_info[table[sel][0]].dev = TRUE;
 			init_table(table, &max, FALSE);
 		}
 
@@ -561,33 +349,37 @@ void do_cmd_skill()
 		/* Select / increase a skill */
 		else
 		{
-			int dir;
-
-			/* Allow use of numpad / arrow keys / roguelike keys */
-			dir = get_keymap_dir(c);
+			int dir = c;
 
 			/* Move cursor down */
-			if (dir == 2) sel++;
+			if (dir == '2') sel++;
 
 			/* Move cursor up */
-			if (dir == 8) sel--;
+			if (dir == '8') sel--;
 
 			/* Miscellaneous skills cannot be increased/decreased as a group */
-			if (table[sel][0] == SKILL_MISC) continue;
+//			if (table[sel][0] == SKILL_MISC) continue;
 
 			/* Increase the current skill */
-			if (dir == 6) increase_skill(table[sel][0], skill_invest);
+                        if (dir == '6')
+                        {
+                                /* Send a packet */
+                                Send_skill_mod(table[sel][0]);
+
+                                /* Now we wait the answer */
+                                hack_do_cmd_skill_wait = TRUE;
+                        }
 
 			/* Decrease the current skill */
-			if (dir == 4) decrease_skill(table[sel][0], skill_invest);
+//      		if (dir == '4') decrease_skill(table[sel][0], skill_invest);
 
 			/* XXX XXX XXX Wizard mode commands outside of wizard2.c */
 
 			/* Increase the skill */
-			if (wizard && (c == '+')) skill_bonus[table[sel][0]] += SKILL_STEP;
+//			if (wizard && (c == '+')) skill_bonus[table[sel][0]] += SKILL_STEP;
 
 			/* Decrease the skill */
-			if (wizard && (c == '-')) skill_bonus[table[sel][0]] -= SKILL_STEP;
+//			if (wizard && (c == '-')) skill_bonus[table[sel][0]] -= SKILL_STEP;
 
 			/* Handle boundaries and scrolling */
 			if (sel < 0) sel = max - 1;
@@ -597,52 +389,17 @@ void do_cmd_skill()
 		}
 	}
 
-
-	/* Some skill points are spent */
-	if (p_ptr->skill_points != skill_points_save)
-	{
-		/* Flush input as we ask an important and irreversible question */
-		flush();
-
-		/* Ask we can commit the change */
-		if (msg_box("Save and use these skill values? (y/n)", (int)(hgt / 2), (int)(wid / 2)) != 'y')
-		{
-			/* User declines -- restore the skill values before exiting */
-
-			/* Restore skill points */
-			p_ptr->skill_points = skill_points_save;
-
-			/* Restore skill values */
-			for (i = 0; i < max_s_idx; i++)
-			{
-				skill_type *s_ptr = &s_info[i];
-
-				s_ptr->value = skill_values_save[i];
-				s_ptr->mod = skill_mods_save[i];
-				s_ptr->rate = skill_rates_save[i];
-			}
-		}
-	}
-
-
-	/* Free arrays to save skill values */
-	C_FREE(skill_values_save, MAX_SKILLS, s32b);
-	C_FREE(skill_mods_save, MAX_SKILLS, u16b);
-	C_FREE(skill_rates_save, MAX_SKILLS, s16b);
-	C_FREE(skill_invest, MAX_SKILLS, s16b);
-	C_FREE(skill_bonus, MAX_SKILLS, s32b);
-
 	/* Load the screen */
 	Term_load();
 
-	/* Leave "icky" mode */
-	character_icky = FALSE;
-
-        recalc_skills(FALSE);
+#ifndef EVIL_TEST /* evil test */
+	/* Screen is not icky */
+	screen_icky = FALSE;
+#endif
 }
 
 
-
+#if 0
 /*
  * List of melee skills
  */
@@ -785,7 +542,7 @@ int do_cmd_activate_skill_aux()
 	bool mode = FALSE;
 	int *p;
 
-	C_MAKE(p, max_s_idx, int);
+	C_MAKE(p, MAX_SKILLS, int);
 
 	/* Count the max */
 
@@ -795,7 +552,7 @@ int do_cmd_activate_skill_aux()
 		p[max++] = 0;
 	}
 
-	for (i = 1; i < max_s_idx; i++)
+	for (i = 1; i < MAX_SKILLS; i++)
 	{
 		if (s_info[i].action_mkey && s_info[i].value)
 		{
@@ -868,12 +625,12 @@ int do_cmd_activate_skill_aux()
                                 return FALSE;
 
                         /* Find the skill it is related to */
-                        for (i = 1; i < max_s_idx; i++)
+                        for (i = 1; i < MAX_SKILLS; i++)
                         {
                                 if (!strcmp(buf, s_info[i].action_desc + s_text) && get_skill(i))
                                         break;
                         }
-                        if ((i < max_s_idx))
+                        if ((i < MAX_SKILLS))
                         {
                                 ret = i;
                                 break;
@@ -901,7 +658,7 @@ int do_cmd_activate_skill_aux()
 	Term_load();
 	character_icky = FALSE;
 
-	C_FREE(p, max_s_idx, int);
+	C_FREE(p, MAX_SKILLS, int);
 
 	return ret;
 }
@@ -915,14 +672,14 @@ void do_cmd_activate_skill()
 	/* Get the skill, if available */
 	if (repeat_pull(&x_idx))
 	{
-		if ((x_idx < 0) || (x_idx >= max_s_idx)) return;
+		if ((x_idx < 0) || (x_idx >= MAX_SKILLS)) return;
 		push = FALSE;
 	}
 	else if (!command_arg) x_idx = do_cmd_activate_skill_aux();
 	else
 	{
 		x_idx = command_arg - 1;
-		if ((x_idx < 0) || (x_idx >= max_s_idx)) return;
+		if ((x_idx < 0) || (x_idx >= MAX_SKILLS)) return;
                 if ((!s_info[x_idx].value) || (!s_info[x_idx].action_mkey))
                 {
                         msg_print("You cannot use this skill.");

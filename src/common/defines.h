@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
@@ -31,14 +32,19 @@
  * You have been warned.
  */
 
-#define VERSION_MAJOR   4
-#define VERSION_MINOR   0
-#define VERSION_PATCH   0
+#define VERSION_MAJOR   3
+#define VERSION_MINOR   5
+#define VERSION_PATCH   5
 
 /*
  * Current version number of TomeNET:
  */
-#define TOMANG_VERSION_LONG_DATE "TomeNET 4.0.0 (compiled "
+/* MAJOR/MINOR/PATCH version should be 0-15. 
+ * TODO: reflect versions automatically to TOMANG_VERSION_SHORT
+ */
+#define TOMANG_VERSION_SHORT		"TomeNET 3.5.5a"
+#define TOMANG_VERSION_LONG_DATE TOMANG_VERSION_SHORT "  (compiled "
+
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.
@@ -48,7 +54,8 @@
  * 2 - "beta"
  * 3 - "development"
  */
-#define VERSION_EXTRA	2
+#define VERSION_EXTRA	1
+
 
 
 /*
@@ -75,6 +82,11 @@
  * Maximum message length
  */
 #define MSG_LEN 256
+
+/*
+ * Define the maximum size of temporary file-name length.
+ */
+#define MAX_TMP_PATH_LEN	256
 
 
 /*
@@ -211,9 +223,13 @@
 /*
  * Maximum array bounds for entity list arrays
  */
+/*
+ * 32768 is way too large; 4096 monsters/objs are enough to weigh
+ * your latest comp down(even w/o AI code)!
+ */
 #define MAX_O_IDX	32768	/* Max size for "o_list[]" */
 #define MAX_M_IDX 	32768	/* Max size for "m_list[]" */
-#define MAX_TR_IDX 	32768	/* Max size for "tr_list[]" */
+//#define MAX_TR_IDX 	32768	/* Max size for "tr_list[]" */
 
 
 /*
@@ -301,6 +317,10 @@
  */
 #define MAX_SHORT	32767
 
+/*
+ * Maximum path length
+ */
+#define MAX_PATH_LENGTH	128
 
 /*
  * Party commands
@@ -366,7 +386,7 @@
 #define SPECIAL_FILE_UNIQUE	1
 #define SPECIAL_FILE_ARTIFACT	2
 #define SPECIAL_FILE_PLAYER	3
-#define SPECIAL_FILE_OTHER	4
+#define SPECIAL_FILE_OTHER	4	/* actually, this can handle everything */
 #define SPECIAL_FILE_SCORES	5
 #define SPECIAL_FILE_HELP	6
 #define SPECIAL_FILE_PLAYER_EQUIP	7
@@ -549,10 +569,32 @@
 #define INVEN_HANDS	34
 #define INVEN_FEET	35
 
+#define INVEN_AMMO      36 /* 1 quiver -- TORSO */
+#define INVEN_TOOL      37 /* 1 tool -- ARMS */
+
+#if 0	// ToME ones - later, later :)
+#define INVEN_WIELD     24 /* 3 weapons -- WEAPONS */
+#define INVEN_BOW       27 /* 1 bow -- WEAPON */
+#define INVEN_RING      28 /* 6 rings -- FINGER */
+#define INVEN_NECK      34 /* 2 amulets -- HEAD */
+#define INVEN_LITE      36 /* 1 lite -- TORSO */
+#define INVEN_BODY      37 /* 1 body -- TORSO */
+#define INVEN_OUTER     38 /* 1 cloak -- TORSO */
+#define INVEN_ARM       39 /* 3 arms -- ARMS */
+#define INVEN_HEAD      42 /* 2 heads -- HEAD */
+#define INVEN_HANDS     44 /* 3 hands -- ARMS */
+#define INVEN_FEET      47 /* 2 feets -- LEGS */
+#define INVEN_CARRY     49 /* 1 carried monster -- TORSO */
+#define INVEN_AMMO      50 /* 1 quiver -- TORSO */
+#define INVEN_TOOL      51 /* 1 tool -- ARMS */
+#endif	// 0
+
+
 /*
  * Total number of inventory slots (hard-coded).
  */
-#define INVEN_TOTAL	36
+#define INVEN_TOTAL	38
+#define INVEN_EQ        (INVEN_TOTAL - INVEN_WIELD)
 
 
 /*
@@ -1130,6 +1172,9 @@ that keeps many algorithms happy.
 #define ART_NIGHT               157
 #define ART_NATUREBANE          158
 
+/* ToME-NET additions */
+#define ART_BILBO				214
+
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
 
@@ -1254,6 +1299,7 @@ that keeps many algorithms happy.
 /* megahack */
 #define EGO_CLOAK_LORDLY_RES	180 
 #define EGO_NUMENOR             183
+#define EGO_STORMBRINGER		187
 
 /*** Object "tval" and "sval" codes ***/
 
@@ -1920,9 +1966,11 @@ that keeps many algorithms happy.
 #define SV_SCROLL_GOLEM                         55
 #define SV_SCROLL_LIFE				56	
 #define SV_SCROLL_HOUSE				57
-#define SV_SCROLL_BLOOD_BOND			58
+#define SV_SCROLL_BLOOD_BOND		58
 
-#define SV_SCROLL_LOTTERY				59
+#define SV_SCROLL_LOTTERY			59
+#define SV_SCROLL_ID_ALL			60
+#define SV_SCROLL_VERMIN_CONTROL	61
 
 #define SV_WAND_ELEC_BOLT		33
 
@@ -1972,8 +2020,12 @@ that keeps many algorithms happy.
 /* from ToMe */
 
 /* The "sval" codes for TV_TOOL */
-#define SV_TOOL_CLIMB 0
-#define SV_PORTABLE_HOLE 1
+#define SV_TOOL_CLIMB		0
+#define SV_PORTABLE_HOLE	1
+#define SV_TOOL_PICKLOCK	2
+#define SV_TOOL_MONEY_BELT	3
+#define SV_TOOL_THEFT_PREVENTION	4
+#define SV_TOOL_TARPAULIN	5
 
 /* The "sval" codes for TV_MSTAFF */
 #define SV_MSTAFF 1
@@ -2326,6 +2378,7 @@ that keeps many algorithms happy.
 #define SV_STAFF_NOTHING                30
 #define SV_STAFF_WISHING                31
 #define SV_STAFF_GANDALF                32	/* sorta hack? (tval=6) */
+#define SV_STAFF_STAR_IDENTIFY			33
 
 /* jk - the first valuable staff */
 #define SV_STAFF_NASTY_STAFF              4
@@ -2564,7 +2617,9 @@ that keeps many algorithms happy.
 #define SV_POTION2_CURE_SANITY           17
 #define SV_POTION2_CURE_WATER            18
 
-#define SV_POTION2_LAST                  18
+#define SV_POTION2_CHAUVE_SOURIS		19
+
+#define SV_POTION2_LAST                  19
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON                   0
@@ -2733,11 +2788,12 @@ that keeps many algorithms happy.
  */
 #define PU_BONUS	0x00000001L	/* Calculate bonuses */
 #define PU_TORCH	0x00000002L	/* Calculate torch radius */
-/* xxx (many) */
+#define PU_SKILL_INFO   0x00000004L	/* Update client skill info */
 #define PU_SANITY       0x00000008L     /* Calculate csane and msane */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
 #define PU_MANA		0x00000020L	/* Calculate csp and msp */
 #define PU_SPELLS	0x00000040L	/* Calculate spells */
+#define PU_SKILL_MOD    0x00000080L	/* Update client skill values/... */
 /* xxx (many) */
 /* xxx (many) */
 #define PU_UN_VIEW	0x00010000L	/* Forget view */
@@ -2957,7 +3013,7 @@ that keeps many algorithms happy.
 #define GF_HERO_PLAYER  132
 #define GF_SHERO_PLAYER  133
 
-#if 0
+#if 0	// Let's implement one by one..
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
 #define GF_DISP_LIVING  71
 #define GF_NUKE         73	// *
@@ -3265,7 +3321,9 @@ that keeps many algorithms happy.
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
 
 /* XXX */
-#define TR5_LIFE                0x04000000L
+//#define TR5_LIFE                0x04000000L
+#define TR5_DISARM				0x02000000L
+#define TR5_NO_ENCHANT			0x04000000L
 #define TR5_CHAOTIC             0x08000000L
 #define TR5_INVIS               0x10000000L
 #define TR5_SENS_FIRE           0x20000000L
@@ -3314,7 +3372,7 @@ that keeps many algorithms happy.
 #endif	// 0
 
 #define TR5_PVAL_MASK   \
-        (TR5_CRIT | TR5_LUCK)
+        (TR5_CRIT | TR5_LUCK | TR5_DISARM)
 
 
 /*** Ego flags ***/
@@ -3448,6 +3506,8 @@ that keeps many algorithms happy.
 #define RBE_HALLU       32
 #define RBE_PARASITE    33
 
+#define RBE_DISARM		34
+//#define RBE_SEDUCE		35
 
 /*** Monster flag values (hard-coded) ***/
 
@@ -3754,7 +3814,7 @@ that keeps many algorithms happy.
 #define RF8_ZANGBAND            0x00004000
 #define RF8_JOKEANGBAND         0x00008000
 #define RF8_ANGBAND             0x00010000
-
+#define RF8_WILD_SWAMP			0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO            0x80000000
 
 
@@ -3846,6 +3906,118 @@ that keeps many algorithms happy.
 #define WILD_F_LOCKDOWN		64
 
 
+#if 0
+/*** Features flags -- DG ***/
+#define FF1_NO_WALK             0x00000001L
+#define FF1_NO_VISION           0x00000002L
+#define FF1_CAN_LEVITATE        0x00000004L
+#define FF1_CAN_PASS            0x00000008L
+#define FF1_FLOOR               0x00000010L
+#define FF1_WALL                0x00000020L
+#define FF1_PERMANENT           0x00000040L
+#define FF1_CAN_FLY             0x00000080L
+#define FF1_REMEMBER            0x00000100L
+#define FF1_NOTICE              0x00000200L
+#define FF1_DONT_NOTICE_RUNNING 0x00000400L
+#define FF1_CAN_RUN             0x00000800L
+#define FF1_DOOR                0x00001000L
+#define FF1_SUPPORT_LIGHT       0x00002000L
+#define FF1_CAN_CLIMB           0x00004000L
+#define FF1_TUNNELABLE          0x00008000L
+#define FF1_WEB                 0x00010000L
+#define FF1_ATTR_MULTI          0x00020000L
+
+/*** Dungeon type flags -- DG ***/
+#define DF1_PRINCIPAL           0x00000001L
+#define DF1_MAZE                0x00000002L
+#define DF1_SMALLEST            0x00000004L
+#define DF1_SMALL               0x00000008L
+#define DF1_BIG                 0x00000010L
+#define DF1_NO_DOORS            0x00000020L
+#define DF1_WATER_RIVER         0x00000040L
+#define DF1_LAVA_RIVER          0x00000080L
+#define DF1_WATER_RIVERS        0x00000100L
+#define DF1_LAVA_RIVERS         0x00000200L
+#define DF1_CAVE                0x00000400L
+#define DF1_CAVERN              0x00000800L
+#define DF1_NO_UP               0x00001000L
+#define DF1_HOT                 0x00002000L
+#define DF1_COLD                0x00004000L
+#define DF1_FORCE_DOWN          0x00008000L
+#define DF1_FORGET              0x00010000L	// DUNGEON_NOMAP
+#define DF1_NO_DESTROY          0x00020000L
+#define DF1_SAND_VEIN           0x00040000L
+#define DF1_CIRCULAR_ROOMS      0x00080000L
+#define DF1_EMPTY               0x00100000L
+#define DF1_DAMAGE_FEAT         0x00200000L
+#define DF1_FLAT                0x00400000L
+#define DF1_TOWER               0x00800000L
+#define DF1_RANDOM_TOWNS        0x01000000L
+#define DF1_DOUBLE              0x02000000L
+#define DF1_LIFE_LEVEL          0x04000000L
+#define DF1_EVOLVE              0x08000000L
+#define DF1_ADJUST_LEVEL_1      0x10000000L
+#define DF1_ADJUST_LEVEL_2      0x20000000L
+#define DF1_NO_RECALL           0x40000000L
+#define DF1_NO_STREAMERS        0x80000000L
+
+#define DF2_ADJUST_LEVEL_1_2    0x00000001L
+
+/* Level flags */
+#define LF1_NO_TELEPORT         0x00000001L
+#define LF1_ASK_LEAVE           0x00000002L
+#define LF1_NO_STAIR            0x00000004L
+#define LF1_SPECIAL             0x00000008L
+#define LF1_NO_NEW_MONSTER      0x00000010L
+#define LF1_DESC                0x00000020L
+#define LF1_NO_GENO             0x00000040L
+
+#endif	// 0
+
+/* level flags for dun_level */
+#define LF1_NO_TELEPORT         0x00000001L
+#define LF1_ASK_LEAVE           0x00000002L /* XXX */
+#define LF1_NO_STAIR            0x00000004L /* XXX */
+#define LF1_SPECIAL             0x00000008L /* XXX */
+#define LF1_NO_NEW_MONSTER      0x00000010L /* XXX */
+#define LF1_DESC                0x00000020L /* XXX */
+#define LF1_NO_GENO             0x00000040L
+#define LF1_NOMAP				0x00000080L	/* player never gains level knowledge */
+#define LF1_NO_MAGIC_MAP		0x00000100L	/* player never does magic mapping */
+#define LF1_NO_DESTROY          0x00000200L
+#define LF1_NO_MAGIC			0x00000400L /* very nasty */
+
+#define LF1_NO_MULTIPLY			0x80000000L /* for scrolls of vermin control */
+
+#define LF1_FEELING_MASK \
+	(LF1_NO_TELEPORT | LF1_NO_GENO | LF1_NOMAP | LF1_NO_MAGIC_MAP | \
+	 LF1_NO_DESTROY | LF1_NO_MAGIC)
+
+
+/* vault flags for v_info */
+#define VF1_FORCE_FLAGS			0x00000001L
+#define VF1_NO_TELEPORT         0x00000002L
+#define VF1_NO_GENO             0x00000004L
+#define VF1_NOMAP				0x00000008L	/* player never gains level knowledge */
+#define VF1_NO_MAGIC_MAP		0x00000010L	/* player never does magic mapping */
+#define VF1_NO_DESTROY          0x00000020L
+#define VF1_NO_MAGIC			0x00000040L /* very nasty */
+
+#define VF1_NO_PENETR			0x10000000L /* for scrolls of vermin control */
+#define VF1_HIVES				0x20000000L /* for scrolls of vermin control */
+#define VF1_NO_MIRROR			0x40000000L /* for scrolls of vermin control */
+#define VF1_NO_ROTATE			0x80000000L /* for scrolls of vermin control */
+
+/*
+ * Possible flags for the future:
+ *
+ * (generation:)
+ * LF1_ALL_PERMAWALL
+ * LF1_WATERY
+ * LF1_LAVA
+ *
+ * (gameplay:)
+ */
 
 /*
  * Hack -- choose "intelligent" spells when desperate
@@ -4039,9 +4211,6 @@ that keeps many algorithms happy.
 
 /*
  * Determines if a map location is fully inside the outer walls
- *
- * (This should be replaced with the one using
- * p_ptr->max_hgt/wid?	- Jir -)
  */
 #define in_bounds(Y,X) \
    (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT-1) && ((X) < MAX_WID-1))
@@ -4059,6 +4228,24 @@ that keeps many algorithms happy.
    ((DEPTH ? (((Y) >= 0) && ((X) >= 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID)) \
       : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
 #endif
+
+/*
+ * replacement of in_bound2 -
+ * Determines if a map location is on or inside the outer walls,
+ * using current hgt/wid	- Jir -)
+ */
+#define in_bounds3(WPOS,l_ptr,Y,X) \
+	(istown(WPOS) ? in_bounds2(WPOS,Y,X) : in_bounds4(l_ptr,Y,X))
+//   (istown(WPOS) ? (((Y) >= 0) && ((X) >= 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
+//           : (((Y) > 0) && ((X) > 0) && ((Y) < MAX_HGT) && ((X) < MAX_WID))))
+
+/* replacement of in_bound. */
+#define in_bounds4(l_ptr,Y,X) \
+   (l_ptr ? \
+	(((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) \
+	: in_bounds(Y,X))
+
+//   (((Y) > 0) && ((X) > 0) && ((Y) < (l_ptr)->hgt) && ((X) < (l_ptr)->wid)) 
 
 /*
  * Determines if a map location is currently "on screen" -RAK-
@@ -4373,7 +4560,6 @@ extern int PlayerUID;
 #define MEGO_FIX                2
 #define MEGO_PRC                3
 
-#define MEGO_CHANCE             18      /* % chances of getting ego monsters */
 
 /* pfft */
 /* #define race_inf(m_ptr) (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3))
@@ -4420,7 +4606,7 @@ extern int PlayerUID;
 #define FTRAP_XXX29      0x010000000
 #define FTRAP_XXX30      0x020000000
 #define FTRAP_XXX31      0x040000000
-#define FTRAP_XXX32      0x080000000
+#define FTRAP_NO_ID      0x080000000	// nominally implemented (but not used)
 
 /* jk */
 #define STAT_DEC_TEMPORARY 1
@@ -4609,9 +4795,18 @@ extern int PlayerUID;
 #define TRAP_OF_WRONG_TARGET	192
 #define TRAP_OF_CLEANING	193
 #define TRAP_OF_PREPARE		194
+#define TRAP_OF_MOAT_I		195
+#define TRAP_OF_MOAT_II		196
+#define TRAP_OF_DISINTEGRATION_I	197
+#define TRAP_OF_DISINTEGRATION_II	198
+#define TRAP_OF_BATTLE_FIELD	199
 
+/* special 'projector' types, used in project(). */
+#define PROJECTOR_UNUSUAL	-1000
+#define PROJECTOR_TRAP		-1001
+#define PROJECTOR_POTION	-1002
+#define PROJECTOR_TERRAIN	-1003
 
-#define TR_LIST(c_ptr) (c_ptr->special.ptr)
 
 #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
 #define PRICE_BOOST(value, base, step) \
@@ -4623,6 +4818,35 @@ extern int PlayerUID;
 	 (p_ptr->pclass == CLASS_MONK))
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
+
+#define TOOL_EQUIPPED(p_ptr) (p_ptr->inventory[INVEN_TOOL].k_idx && \
+		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
+		p_ptr->inventory[INVEN_TOOL].sval : -1)
+
+/* replacement of helper functions in cave.c */
+/* prolly compilers will do this job anyway..? */
+#define level_speed(wpos) \
+	((wpos)->wz ? level_speeds[getlevel(wpos)] * 5 : level_speeds[0] * 5)
+
+#define inarea(apos, bpos) \
+	((apos)->wx==(bpos)->wx && (apos)->wy==(bpos)->wy && (apos)->wz==(bpos)->wz)
+
+#define wild_idx(wpos) \
+	((wpos)->wx + (wpos)->wy * MAX_WILD_X)
+
+#define istown(wpos) \
+	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type==WILD_TOWN)
+
+
+/* paralysis should be handled by other means! */
+#define UNAWARENESS(p_ptr) ( \
+	(p_ptr->stun > 50 ? 10 : 0) + \
+	(p_ptr->stun ? 15 : 0) + \
+	(p_ptr->confused ? 25 : 0) + \
+	(p_ptr->image ? 10 : 0) + \
+	(p_ptr->blind ? 20 : 0) + \
+	(p_ptr->paralyzed ? 10000 : 0) )
+
 /*
 #define inarea(apos, bpos) \
 	(apos->wx==bpos->wx && apos->wy==bpos->wy && apos->wz==bpos->wz)
@@ -4691,6 +4915,10 @@ extern int PlayerUID;
 #define SKILL_SWORD             3
 #define SKILL_POLEARM           4
 #define SKILL_HAFTED            5
+#define SKILL_ARCHERY           6
+#define SKILL_SLING             7
+#define SKILL_BOW               8
+#define SKILL_XBOW              9
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

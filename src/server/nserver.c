@@ -1,3 +1,4 @@
+/* $Id$ */
 /* The server side of the network stuff */
 
 /* The following is a direct excerpt from the netserver.c
@@ -247,6 +248,8 @@ static void Init_receive(void)
 
 	playing_receive[PKT_SPIKE]		= Receive_spike;
 	playing_receive[PKT_GUILD]		= Receive_guild;
+
+        playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
 }
 
 static int Init_setup(void)
@@ -441,8 +444,8 @@ int Setup_net_server(void)
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);
 
-	s_printf("Server is running version %04x\n", MY_VERSION);
 	s_printf("%s\n", longVersion);
+	s_printf("Server is running version %04x\n", MY_VERSION);
 
 	return 0;
 }
@@ -523,6 +526,31 @@ static int Reply(char *host_addr, int fd)
 	return result;
 }
 
+
+/* invite only */
+bool player_allowed(char *name){
+	FILE *sfp;
+	char buffer[80];
+	bool success=FALSE;
+	/* Hack -- allow 'guest' account */
+	if (!strcmp("Guest", name)) return TRUE;
+
+	sfp=fopen("allowlist","r");
+	if(sfp==(FILE*)NULL)
+		return TRUE;
+	else{
+		while(fgets(buffer, 80, sfp)){
+			/* allow for \n */
+			if((strlen(name)+1)!=strlen(buffer)) continue;
+			if(!strncmp(buffer,name, strlen(name))){
+				success=TRUE;
+				break;
+			}
+		}
+		fclose(sfp);
+	}
+	return(success);
+}
 
 static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr)
 {
@@ -735,6 +763,12 @@ static void Contact(int fd, int arg)
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
 				version, port, &login_port, fd);
 
+#if DEBUG_LEVEL > 0
+	if (status && status != E_NEED_INFO)
+		s_printf("%s: Connection refused(%d).. %s=%s@%s (%s/%d)\n", showtime(),
+				status, nick_name, real_name, host_name, host_addr, port);
+#endif	// DEBUG_LEVEL
+
 	Sockbuf_clear(&ibuf);
 
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
@@ -760,10 +794,13 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return status;
 	}
 
-        if (version < ((3 << 12) | (2 << 8) | (0 << 4) | 0))
-	{
+	if (version < ((3 << 12) | (2 << 8) | (0 << 4) | 0))
 		return E_VERSION;
-	}
+
+	if(!player_allowed(nick))
+		return E_INVITE;
+
+	if(in_banlist(addr)) return(E_BANNED);
 
 	*login_port = Setup_connection(real, nick, addr, host, version, fd);
 
@@ -1185,28 +1222,6 @@ static int Handle_setup(int ind)
 	return 0;
 }
 
-/* invite only */
-bool player_allowed(char *name){
-	FILE *sfp;
-	char buffer[80];
-	bool success=FALSE;
-	sfp=fopen("allowlist","r");
-	if(sfp==(FILE*)NULL)
-		return TRUE;
-	else{
-		while(fgets(buffer, 80, sfp)){
-			/* allow for \n */
-			if((strlen(name)+1)!=strlen(buffer)) continue;
-			if(!strncmp(buffer,name, strlen(name))){
-				success=TRUE;
-				break;
-			}
-		}
-		fclose(sfp);
-	}
-	return(success);
-}
-
 /*
  * Handle a connection that is in the listening state.
  */
@@ -1253,6 +1268,7 @@ static int Handle_listening(int ind)
 	connp->his_port = DgramLastport(connp->r.sock);
 
 	/* Do a sanity check and read in the some basic player information. */
+	/* XXX reason messages here are not transmitted to the client!	- Jir - */
 	if (connp->r.ptr[0] != PKT_VERIFY)
 	{
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
@@ -1267,6 +1283,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify broken");
 		return -1;
 	}
+#if 0	// moved to Enter_player
 	if(!player_allowed(nick)){
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
@@ -1279,6 +1296,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "You are temporarily banned.");
 		return(-1);
 	}
+#endif	// 0
 
 
 	/* After the client sends the basic player information, it sends us a
@@ -2480,7 +2498,7 @@ static int Receive_undefined(int ind)
 	/*return 0;*/
 }
 
-int Send_plusses(int ind, int tohit, int todam)
+int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2506,11 +2524,11 @@ int Send_plusses(int ind, int tohit, int todam)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hd%hd", PKT_PLUSSES, tohit, todam);
+		Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 	      }
 	  }
 
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_PLUSSES, tohit, todam);
+        return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 }
 
 
@@ -2560,6 +2578,35 @@ int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 			max, cur, adv);
 }
 
+int Send_skill_init(int ind, int type, int i)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for skill init (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+        return Packet_printf(&connp->c, "%c%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, (type == PKT_SKILL_INIT_NAME) ? s_info[i].name : s_info[i].desc);
+}
+
+int Send_skill_info(int ind, int i)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for skill mod (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+        return Packet_printf(&connp->c, "%c%d%d%ld%d%d%d", PKT_SKILL_MOD, p_ptr->skill_points, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+}
+
 int Send_gold(int ind, s32b au)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
@@ -2593,9 +2640,11 @@ int Send_gold(int ind, s32b au)
 
 int Send_sanity(int ind, int msane, int csane)
 {
+#ifdef SHOW_SANITY
 	connection_t *connp = &Conn[Players[ind]->conn];
 
 	player_type *p_ptr = Players[ind];
+//	printf("sanity send!\n");
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -2621,6 +2670,7 @@ int Send_sanity(int ind, int msane, int csane)
 	      }
 	  }
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SANITY, msane, csane);
+#endif	// 0
 }
 
 int Send_hp(int ind, int mhp, int chp)
@@ -2792,7 +2842,8 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr n
 	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%s", PKT_INVEN, pos, attr, wgt, amt, tval, name);
 }
 
-int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
+//int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
+int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, cptr name)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
@@ -2817,10 +2868,12 @@ int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
+//		Packet_printf(&connp2->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, name);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
+//	return Packet_printf(&connp->c, "%c%c%c%hu%c%s", PKT_EQUIP, pos, attr, wgt, tval, name);
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%s", PKT_EQUIP, pos, attr, wgt, amt, tval, name);
 }
 
 int Send_title(int ind, cptr title)
@@ -3779,12 +3832,12 @@ int Send_skills(int ind)
 
 	/* Fighting skill */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	tmp = p_ptr->to_h + o_ptr->to_h;
+	tmp = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
 	/* Shooting skill */
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
-	tmp = p_ptr->to_h + o_ptr->to_h;
+	tmp = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_ranged;
 	skills[1] = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
 
 	/* Basic abilities */
@@ -4012,7 +4065,8 @@ static int Receive_run(int ind)
 		for (i = 0; i < m_max; i++)
 		{
 			/* Check this monster */
-			if ((p_ptr->mon_los[i] && !m_list[i].csleep && !m_list[i].special) || (p_ptr->confused))
+			if ((p_ptr->mon_los[i] && !m_list[i].csleep &&
+				m_list[i].level && !m_list[i].special) || (p_ptr->confused))
 			{
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk
@@ -4239,7 +4293,8 @@ static int Receive_fire(int ind)
 		  }
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
+//	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -4256,12 +4311,14 @@ static int Receive_fire(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)/p_ptr->num_fire)
 	{
-		do_cmd_fire(player, dir, item);
+//		do_cmd_fire(player, dir, item);
+		do_cmd_fire(player, dir);
 		return 2;
 	}
 	else if (player)
 	{
-		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
+//		Packet_printf(&connp->q, "%c%c%hd", ch, dir, item);
+		Packet_printf(&connp->q, "%c%c", ch, dir);
 		return 0;
 	}
 
@@ -5842,6 +5899,36 @@ static int Receive_gain(int ind)
 	return 1;
 }
 
+static int Receive_skill_mod(int ind)
+{
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr;
+
+	char ch;
+
+	s16b i;
+
+	int n, player;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &i)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (connp->id != -1)
+		increase_skill(player, i);
+
+	return 1;
+}
+
 static int Receive_go_up(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -6627,6 +6714,10 @@ static int Receive_special_line(int ind)
 		{
 			case SPECIAL_FILE_NONE:
 				Players[player]->special_file_type = FALSE;
+				/* Remove the file */
+/*				if (!strcmp(Players[player]->infofile,
+							Players[player]->cur_file))	*/
+					fd_kill(Players[player]->infofile);
 				break;
 			case SPECIAL_FILE_UNIQUE:
 				do_cmd_check_uniques(player, line);

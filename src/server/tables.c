@@ -4048,7 +4048,7 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                SKILL_COMBAT,
 
                 /* Order, unused .. I hope */
                 0,
@@ -4068,7 +4068,7 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                SKILL_MASTERY,
 
                 /* Order, unused .. I hope */
                 0,
@@ -4088,7 +4088,7 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                SKILL_MASTERY,
 
                 /* Order, unused .. I hope */
                 0,
@@ -4108,7 +4108,87 @@ skill_type s_info[MAX_SKILLS] =
                 {},
 
                 /* Father skills */
-                -1,
+                SKILL_MASTERY,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Archery",
+                "General ability to use ranged weapons",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_COMBAT,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Sling-mastery",
+                "Ability to use slings",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_ARCHERY,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Bow-mastery",
+                "Ability to use bows",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_ARCHERY,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Crossbow-mastery",
+                "Ability to use crossbows",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_ARCHERY,
 
                 /* Order, unused .. I hope */
                 0,

@@ -366,7 +366,7 @@ static void display_player_middle(int Ind)
 	if (object_known_p(Ind, o_ptr)) show_todam += o_ptr->to_d;
 
 	/* Dump the bonuses to hit/dam */
-	Send_plusses(Ind, show_tohit, show_todam);
+	Send_plusses(Ind, show_tohit, show_todam, p_ptr->to_h_ranged, p_ptr->to_d_ranged, p_ptr->to_h_melee, p_ptr->to_d_melee);
 
 	/* Dump the armor class bonus */
 	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
@@ -459,7 +459,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	char    caption[128];
 
 	/* Path buffer */
-	char    path[1024];
+	char    path[MAX_PATH_LENGTH];
 
 	/* General buffer */
 	char    buf[1024];
@@ -501,7 +501,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 		sprintf(caption, "Help file '%s'", name);
 
 		/* Build the filename */
-		path_build(path, 1024, ANGBAND_DIR_TEXT, name);
+		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
 
 		/* Open the file */
 		fff = my_fopen(path, "r");
@@ -779,7 +779,7 @@ bool process_player_name(int Ind, bool sf)
 #endif /* VM */
 
 		/* Build the filename */
-		path_build(p_ptr->savefile, 1024, ANGBAND_DIR_SAVE, temp);
+		path_build(p_ptr->savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
 	}
 
 	/* Success */
@@ -1056,13 +1056,13 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 	char    out_val[256];
 
 	FILE *fff;
-	char file_name[1024];
+	char file_name[MAX_PATH_LENGTH];
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return;
 	
 	/* Temporary file */
-	if (path_temp(file_name, 1024)) return;
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
 	/* Open the temp file */
 	fff = my_fopen(file_name, "w");

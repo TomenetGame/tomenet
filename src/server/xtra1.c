@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: misc.c */
 
 /* Purpose: misc code */
@@ -200,9 +201,12 @@ static void prt_ac(int Ind)
 	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
 }
 
-static void prt_sanity(int Ind){
+static void prt_sanity(int Ind)
+{
+#ifdef SHOW_SANITY	// No.
 	player_type *p_ptr=Players[Ind];
 	Send_sanity(Ind, p_ptr->msane, p_ptr->csane);
+#endif	// 0
 }
 
 /*
@@ -450,7 +454,7 @@ static void prt_plusses(int Ind)
 	if (object_known_p(Ind, o_ptr)) show_tohit += o_ptr->to_h;
 	if (object_known_p(Ind, o_ptr)) show_todam += o_ptr->to_d;
 
-	Send_plusses(Ind, show_tohit, show_todam);
+	Send_plusses(Ind, show_tohit, show_todam, p_ptr->to_h_ranged, p_ptr->to_d_ranged, p_ptr->to_h_melee, p_ptr->to_d_melee);
 }
 
 static void prt_skills(int Ind)
@@ -660,7 +664,9 @@ static void prt_frame_basic(int Ind)
 	prt_hp(Ind);
 
 	/* Sanity */
+#ifdef SHOW_SANITY
 	prt_sanity(Ind);
+#endif
 
 	/* Spellpoints */
 	prt_sp(Ind);
@@ -1656,6 +1662,34 @@ int get_weaponmastery_skill(player_type *p_ptr)
 	return skill;
 }
 
+/* Are all the ranged weapons wielded of the right type ? */
+int get_archery_skill(player_type *p_ptr)
+{
+	int i, skill = 0;
+	object_type *o_ptr;
+
+        o_ptr = &p_ptr->inventory[INVEN_BOW];
+
+        switch (o_ptr->sval / 10)
+        {
+        case 0:
+                if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
+                else skill = -1;
+                break;
+        case 1:
+                if ((!skill) || (skill == SKILL_BOW)) skill = SKILL_BOW;
+                else skill = -1;
+                break;
+        case 2:
+                if ((!skill) || (skill == SKILL_XBOW)) skill = SKILL_XBOW;
+                else skill = -1;
+                break;
+        }
+
+	/* Everything is ok */
+	return skill;
+}
+
 
 /*
  * Calculate the players current "state", taking into account
@@ -1791,6 +1825,8 @@ static void calc_bonuses(int Ind)
 //		p_ptr->to_s = 0;
 		p_ptr->to_m = 0;
 		p_ptr->to_l = 0;
+		p_ptr->black_breath_tmp = FALSE;
+		p_ptr->stormbringer = FALSE;
 
 	/* Invisibility */
 	p_ptr->invis = 0;
@@ -1800,6 +1836,8 @@ static void calc_bonuses(int Ind)
 	p_ptr->antimagic = 0;
 	p_ptr->antimagic_dis = 0;
 	p_ptr->xtra_crit = 0;
+
+	p_ptr->sensible_fire = FALSE;
 
 	/* Start with a single blow per turn */
 	p_ptr->num_blow = 1;
@@ -1912,6 +1950,7 @@ static void calc_bonuses(int Ind)
 		{
 			p_ptr->slow_digest = TRUE;
 			p_ptr->pspeed -= 2;
+			p_ptr->sensible_fire = TRUE;
 
 			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
 			if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
@@ -1940,7 +1979,21 @@ static void calc_bonuses(int Ind)
 			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
 				p_ptr->free_act = TRUE;
 			break;
+
+			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
+			 * this may be out of place, but.... */
+	
+		case CLASS_ROGUE:
+			p_ptr->pspeed += p_ptr->lev / 6;
+			break;
+
+		case CLASS_UNBELIEVER:
+			p_ptr->anti_magic = TRUE;
+			p_ptr->antimagic = p_ptr->lev;
+			p_ptr->antimagic_dis = 1 + (p_ptr->lev / 11);
 	}
+
+
 	/* Take off what is no more usable */
 	do_takeoff_impossible(Ind);
 
@@ -1979,21 +2032,6 @@ static void calc_bonuses(int Ind)
 		}
 	}
 	
-
-	/* -APD- Hack -- rogues +1 speed at 5,20,35,50. this may be out of place, but.... */
-	
-	if (p_ptr->pclass == CLASS_ROGUE) 
-	{
-		p_ptr->pspeed += p_ptr->lev / 6;
-	}
-
-	if (p_ptr->pclass == CLASS_UNBELIEVER)
-	  {
-	    p_ptr->anti_magic = TRUE;
-	    p_ptr->antimagic = p_ptr->lev;
-		p_ptr->antimagic_dis = 1 + (p_ptr->lev / 11);
-	  }
-
 
 	/* Hack -- the dungeon master gets +50 speed. */
 	if (p_ptr->admin_dm) 
@@ -2063,7 +2101,6 @@ static void calc_bonuses(int Ind)
 
 			/* Affect blows */
 			if (k_ptr->flags1 & TR1_BLOWS) extra_blows += o_ptr->bpval;
-                if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->bpval;
 
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
@@ -2075,7 +2112,13 @@ static void calc_bonuses(int Ind)
                 /* Affect life capacity */
                 if (f1 & (TR1_LIFE)) p_ptr->to_l += o_ptr->bpval;
 
-//                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
+		}
+
+		if (k_ptr->flags5 & TR5_PVAL_MASK)
+		{
+			if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->bpval;
+			if (f5 & (TR5_DISARM)) p_ptr->skill_dis += (o_ptr->bpval) * 10;
+//			if (f5 & (TR5_LUCK)) p_ptr->luck_cur += o_ptr->bpval;
 		}
 
 		/* Next, add our ego bonuses */
@@ -2091,6 +2134,15 @@ static void calc_bonuses(int Ind)
 			a_ptr =	ego_make(o_ptr);
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+
+			/* Hack: Stormbringer! */
+			if (o_ptr->name2 == EGO_STORMBRINGER)
+			{
+				p_ptr->stormbringer = TRUE;
+				p_ptr->pkill|=PKILL_KILLABLE;
+				if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill  & PKILL_SET))
+					set_pkill(Ind, 50);
+			}
 		}
 
 		if (o_ptr->name1 == ART_RANDART)
@@ -2149,6 +2201,12 @@ static void calc_bonuses(int Ind)
 		/* Affect spellss */
 //		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
 		if (f1 & TR1_SPELL) extra_spells += pval;
+
+		/* Affect disarming (factor of 20) */
+		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 10;
+
+		/* Hack -- Sensible fire */
+		if (f5 & (TR5_SENS_FIRE)) p_ptr->sensible_fire = TRUE;
 
 		/* Hack -- cause earthquakes */
 		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
@@ -2277,7 +2335,7 @@ static void calc_bonuses(int Ind)
 			p_ptr->antimagic_dis += 1 - (minus / 15);
 		}
 
-		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath = TRUE;
+		if (f4 & (TR4_BLACK_BREATH)) p_ptr->black_breath_tmp = TRUE;
 
 //		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 
@@ -2685,45 +2743,25 @@ static void calc_bonuses(int Ind)
 	/* Compute "extra shots" if needed */
 	if (o_ptr->k_idx && !p_ptr->heavy_shoot)
 	{
-		/* Take note of required "tval" for missiles */
-		switch (o_ptr->sval)
+                int archery = get_archery_skill(p_ptr);
+
+		if (archery != -1)
 		{
-			case SV_SLING:
+			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
+			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
+			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 25);
+			switch (archery)
 			{
-				p_ptr->tval_ammo = TV_SHOT;
-				break;
+				case SKILL_SLING:
+					if (p_ptr->tval_ammo == TV_SHOT) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					break;
+				case SKILL_BOW:
+					if (p_ptr->tval_ammo == TV_ARROW) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					break;
+				case SKILL_XBOW:
+					if (p_ptr->tval_ammo == TV_BOLT) p_ptr->xtra_might += get_skill(p_ptr, archery) / 30;
+					break;
 			}
-
-			case SV_SHORT_BOW:
-			case SV_LONG_BOW:
-			{
-				p_ptr->tval_ammo = TV_ARROW;
-				break;
-			}
-
-			case SV_LIGHT_XBOW:
-			case SV_HEAVY_XBOW:
-			{
-				p_ptr->tval_ammo = TV_BOLT;
-				break;
-			}
-		}
-
-		/* Hack -- Reward High Level Rangers using Bows */
-		if ((p_ptr->pclass == CLASS_RANGER) && (p_ptr->tval_ammo == TV_ARROW))	
-		{
-			/* Extra shot at level 20 */
-			if (p_ptr->lev >= 20) p_ptr->num_fire++;
-
-			/* Extra shot at level 40 */
-			if (p_ptr->lev >= 40) p_ptr->num_fire++;
-		}
-
-		/* Hack -- Archers are powerfull with a bow */
-		if ((p_ptr->pclass == CLASS_ARCHER) && (p_ptr->tval_ammo == TV_ARROW))	
-		{
-		  /* Add in the "bonus shots" */
-		  p_ptr->num_fire += p_ptr->lev / 10;
 		}
 
 		/* Add in the "bonus shots" */
@@ -2736,9 +2774,17 @@ static void calc_bonuses(int Ind)
 	/* Add in the "bonus spells" */
 	p_ptr->num_spell += extra_spells;
 
+
+	/* Examine the "tool" */
+	o_ptr = &p_ptr->inventory[INVEN_TOOL];
+
+	/* Boost digging skill by tool weight */
+	if(o_ptr->k_idx && o_ptr->tval == TV_DIGGING)
+		p_ptr->skill_dig += (o_ptr->weight / 10);
+
+
 	/* Examine the "main weapon" */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-
 
 	/* Assume not heavy */
 	p_ptr->heavy_wield = FALSE;
@@ -2830,17 +2876,15 @@ static void calc_bonuses(int Ind)
 		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
 
 		/* Boost digging skill by weapon weight */
-		p_ptr->skill_dig += (o_ptr->weight / 10);
+//		p_ptr->skill_dig += (o_ptr->weight / 10);
 
                 /* Boost blows with masteries */
                 if (get_weaponmastery_skill(p_ptr) != -1)
                 {
                         int lev = get_skill(p_ptr, get_weaponmastery_skill(p_ptr));
 
-                        p_ptr->to_h += lev;
-                        p_ptr->to_d += lev / 2;
-                        p_ptr->dis_to_h += lev;
-                        p_ptr->dis_to_d += lev / 2;
+                        p_ptr->to_h_melee += lev;
+                        p_ptr->to_d_melee += lev / 2;
                         p_ptr->num_blow += get_skill_scale(p_ptr, get_weaponmastery_skill(p_ptr), 2);
                 }
         }
@@ -2887,6 +2931,28 @@ static void calc_bonuses(int Ind)
 
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
+	p_ptr->awkward_wield = FALSE;
+
+	/* 2handed weapon and shield = less damage */
+//	if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx)
+	{
+		/* Extract the item flags */
+		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+
+		if (f4 & TR4_COULD2H)
+		{                
+			/* Reduce the real bonuses */
+			p_ptr->to_h = (3 * p_ptr->to_h) / 4;
+			p_ptr->to_d = (3 * p_ptr->to_d) / 4;
+
+			/* Reduce the mental bonuses */
+			p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 4;
+			p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 4;
+
+			p_ptr->awkward_wield = TRUE;
+		}
+	}
 
 	/* Priest weapon penalty for non-blessed edged weapons */
 	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
@@ -2950,10 +3016,10 @@ static void calc_bonuses(int Ind)
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((7 * get_skill(p_ptr, SKILL_MASTERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
-	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * p_ptr->lev / 10);
+	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((7 * get_skill(p_ptr, SKILL_ARCHERY)) + (3 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * p_ptr->lev / 10);
+	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));
 
         if (!p_ptr->aggravate)
 	{
@@ -3042,6 +3108,31 @@ static void calc_bonuses(int Ind)
 		p_ptr->old_icky_wield = p_ptr->icky_wield;
 	}
 
+	/* Take note when "illegal weapon" changes */
+	if (p_ptr->old_awkward_wield != p_ptr->awkward_wield)
+	{
+		/* Message */
+		if (p_ptr->awkward_wield)
+		{
+			msg_print(Ind, "You find it hard to fight with your weapon and shield.");
+		}
+		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
+		{
+			msg_print(Ind, "You feel comfortable with your weapon.");
+		}
+		else if (!p_ptr->inventory[INVEN_ARM].k_idx)
+		{
+			msg_print(Ind, "You feel more dexterous after removing your shield.");
+		}
+
+		/* Save it */
+		p_ptr->old_awkward_wield = p_ptr->awkward_wield;
+	}
+
+	/* resistance to fire cancel sensibility to fire */
+	if(p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
+		p_ptr->sensible_fire=FALSE;
+
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);
 }
@@ -3085,6 +3176,35 @@ void update_stuff(int Ind)
 	/* Update stuff */
 	if (!p_ptr->update) return;
 
+
+	if (p_ptr->update & PU_SKILL_INFO)
+        {
+                int i;
+
+		p_ptr->update &= ~(PU_SKILL_INFO);
+                for (i = 1; i < MAX_SKILLS; i++)
+                {
+                        if (s_info[i].name)
+                        {
+                                Send_skill_init(Ind, PKT_SKILL_INIT_NAME, i);
+                                Send_skill_init(Ind, PKT_SKILL_INIT_DESC, i);
+                        }
+                }
+	}
+
+	if (p_ptr->update & PU_SKILL_MOD)
+        {
+                int i;
+
+		p_ptr->update &= ~(PU_SKILL_MOD);
+                for (i = 1; i < MAX_SKILLS; i++)
+                {
+                        if (s_info[i].name)
+                        {
+                                Send_skill_info(Ind, i);
+                        }
+                }
+	}
 
 	if (p_ptr->update & PU_BONUS)
 	{
@@ -3265,9 +3385,12 @@ void redraw_stuff(int Ind)
 		prt_hp(Ind);
 	}
 
-	if(p_ptr->redraw & PR_SANITY){
+	if(p_ptr->redraw & PR_SANITY)
+	{
 		p_ptr->redraw &= ~(PR_SANITY);
+#ifdef SHOW_SANITY
 		prt_sanity(Ind);
+#endif
 	}
 
 	if (p_ptr->redraw & PR_MANA)

@@ -1,3 +1,4 @@
+/* $Id$ */
 /*
  * Packet types
  */
@@ -65,12 +66,13 @@
 #define PKT_MONSTER_HEALTH	59
 
 
-/* Packet types 60-64 are sent from either the client or server */
+/* Packet types 60-65 are sent from either the client or server */
 #define PKT_DIRECTION		60
 #define PKT_ITEM		61
 #define PKT_SELL		62
 #define PKT_PARTY		63
 #define PKT_SPECIAL_LINE	64
+#define PKT_SKILL_MOD   	65
 
 
 /* Packet types 67-116 are sent from the client */
@@ -146,6 +148,10 @@
 #define PKT_OBSERVE		151
 #define PKT_SPIKE		152
 #define PKT_GUILD		153
+#define PKT_SKILL_INIT		154
+/* HACK -- used for SKILL_INIT */
+#define PKT_SKILL_INIT_NAME     0
+#define PKT_SKILL_INIT_DESC     1
 
 
 
@@ -160,6 +166,8 @@
 #define E_IN_USE	0x08
 #define E_SOCKET	0x09
 #define E_INVAL		0x0A
+#define E_INVITE	0x0B
+#define E_BANNED	0x0C
 
 
 /*

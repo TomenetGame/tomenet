@@ -95,6 +95,7 @@ static int Receive_look(int ind);
 static int Receive_spell(int ind);
 static int Receive_fight(int ind);
 
+static int Receive_skill_mod(int ind);
 static int Receive_open(int ind);
 static int Receive_pray(int ind);
 static int Receive_ghost(int ind);

@@ -1,3 +1,4 @@
+/* $Id$ */
 /* The client side of the networking stuff */
 
 /* The file is very messy, and probably has a lot of stuff
@@ -30,8 +31,6 @@
 #if 1
 #include <sys/stat.h>
 #endif
-
-#define EVIL_TEST /* evil test */
 
 int			ticks = 0; // Keeps track of time in 100ms "ticks"
 static bool		request_redraw;
@@ -122,6 +121,8 @@ static void Receive_init(void)
 	receive_tbl[PKT_PAUSE]		= Receive_pause;
 	receive_tbl[PKT_MONSTER_HEALTH]	= Receive_monster_health;
 	receive_tbl[PKT_SANITY]		= Receive_sanity;
+	receive_tbl[PKT_SKILL_INIT]	= Receive_skill_init;
+	receive_tbl[PKT_SKILL_MOD] 	= Receive_skill_info;
 }
 
 // I haven't really figured out this function yet.  It looks to me like
@@ -1043,7 +1044,9 @@ int Receive_quit(void)
 	return -1;
 }
 
-int Receive_sanity(void){
+int Receive_sanity(void)
+{
+#ifdef SHOW_SANITY
 	int n;
 	char ch;
 	s16b max, cur;
@@ -1065,6 +1068,7 @@ int Receive_sanity(void){
 	p_ptr->window |= (PW_PLAYER);
 
 	return 1;
+#endif
 }
 
 int Receive_stat(void)
@@ -1185,10 +1189,11 @@ int Receive_equip(void)
 	int	n;
 	char 	ch;
 	char pos, attr, tval;
-	s16b wgt;
+	s16b wgt, amt;
 	char name[80];
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%c%s", &ch, &pos, &attr, &wgt, &tval, name)) <= 0)
+//	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%c%s", &ch, &pos, &attr, &wgt, &tval, name)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, name)) <= 0)
 	{
 		return n;
 	}
@@ -1196,7 +1201,7 @@ int Receive_equip(void)
 	inventory[pos - 'a' + INVEN_WIELD].sval = attr;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
-	inventory[pos - 'a' + INVEN_WIELD].number = 1;
+	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 
 
 	strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, 79);
@@ -1278,14 +1283,20 @@ int Receive_plusses(void)
 	int	n;
 	char	ch;
 	s16b	dam, hit;
+	s16b	dam_r, hit_r;
+	s16b	dam_m, hit_m;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &hit, &dam)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd", &ch, &hit, &dam, &hit_r, &dam_r, &hit_m, &dam_m)) <= 0)
 	{
 		return n;
 	}
 
 	p_ptr->dis_to_h = hit;
 	p_ptr->dis_to_d = dam;
+	p_ptr->to_h_ranged = hit_r;
+	p_ptr->to_d_ranged = dam_r;
+	p_ptr->to_h_melee = hit_m;
+	p_ptr->to_d_melee = dam_m;
 
 	/*printf("Received plusses: +%d tohit +%d todam\n", hit, dam);*/
 
@@ -1323,6 +1334,51 @@ int Receive_experience(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
+	return 1;
+}
+
+int Receive_skill_init(void)
+{
+	int	n;
+	char	ch;
+	int	i, type, father;
+	char    buf[300];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%s", &ch, &type, &i, &father, buf)) <= 0)
+	{
+		return n;
+	}
+
+        if (type == PKT_SKILL_INIT_NAME)
+                s_info[i].name = string_make(buf);
+        else
+                s_info[i].desc = string_make(buf);
+        s_info[i].father = father;
+
+	return 1;
+}
+
+int Receive_skill_info(void)
+{
+	int	n;
+        char	ch;
+        s32b    val;
+	int	i, mod, dev, hidden, pt;
+	char    buf[300];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%ld%d%d%d", &ch, &pt, &i, &val, &mod, &dev, &hidden)) <= 0)
+	{
+		return n;
+	}
+
+        p_ptr->skill_points = pt;
+        p_ptr->s_info[i].value = val;
+        p_ptr->s_info[i].mod = mod;
+        p_ptr->s_info[i].dev = dev;
+        p_ptr->s_info[i].hidden = hidden;
+
+        /* Tell the skill screen we got the info we needed */
+        hack_do_cmd_skill_wait = FALSE;
 	return 1;
 }
 
@@ -2169,9 +2225,9 @@ int Receive_party(void)
 	/* Re-show party info */
 	if (party_mode)
 	{
-		Term_erase(0, 13, 255);
-		Term_putstr(0, 13, -1, TERM_WHITE, party_info);
-		Term_putstr(0, 11, -1, TERM_WHITE, "Command: ");
+		Term_erase(0, 16, 255);
+		Term_putstr(0, 16, -1, TERM_WHITE, party_info);
+		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
 	}
 
 	return 1;
@@ -2233,18 +2289,8 @@ int Receive_pause(void)
 	/* Flush any pending keystrokes */
 	Term_flush();
 
-#ifndef EVIL_TEST /* evil test */
-	/* The screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Wait */
 	inkey();
-
-#ifndef EVIL_TEST /* evil test */
-	/* Screen isn't icky any more */
-	screen_icky = FALSE;
-#endif
 
 	/* Flush queue */
 	Flush_queue();
@@ -2714,11 +2760,13 @@ int Send_msg(cptr message)
 	return 1;
 }
 
-int Send_fire(int item, int dir)
+//int Send_fire(int item, int dir)
+int Send_fire(int dir)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_FIRE, dir, item)) <= 0)
+//	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_FIRE, dir, item)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%c", PKT_FIRE, dir)) <= 0)
 	{
 		return n;
 	}
@@ -2938,6 +2986,18 @@ int Send_special_line(int type, int line)
 	int	n;
 
 	if ((n = Packet_printf(&wbuf, "%c%c%hd", PKT_SPECIAL_LINE, type, line)) <= 0)
+	{
+		return n;
+	}
+
+	return 1;
+}
+
+int Send_skill_mod(int i)
+{
+	int	n;
+
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_SKILL_MOD, i)) <= 0)
 	{
 		return n;
 	}
