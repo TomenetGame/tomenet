@@ -355,7 +355,7 @@ extern u32b window_mask[8];
 /*extern term *ang_term[8];*/
 extern s16b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
-extern s16b t_fast[MAX_T_IDX];
+extern s16b t_fast[MAX_TR_IDX];
 extern cave_type ***cave;
 #ifdef NEW_DUNGEON
 extern wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];

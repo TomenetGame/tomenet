@@ -1630,7 +1630,7 @@ static errr init_other(void)
 	/* Allocate and Wipe the monster list */
 	C_MAKE(m_list, MAX_M_IDX, monster_type);
 
-	/* Allocate and Wipe the monster list */
+	/* Allocate and Wipe the traps list */
 	C_MAKE(t_list, MAX_TR_IDX, trap_type);
 
 #ifndef NEW_DUNGEON

@@ -3693,7 +3693,6 @@ static void build_type7(int Depth, int yval, int xval)
 		if (v_ptr->typ == 7) break;
 	}
 
-	printf("Type 7: %lx %lx %lx\n", v_ptr, v_text, v_ptr->text);
 	/* Message */
 	/*if (cheat_room) msg_print("Lesser Vault");*/
 
@@ -3747,7 +3746,6 @@ static void build_type8(int Depth, int yval, int xval)
 		if (v_ptr->typ == 8) break;
 	}
 
-	printf("Type 8: %lx %lx %lx\n", v_ptr, v_text, v_ptr->text);
 	/* Message */
 	/*if (cheat_room) msg_print("Greater Vault");*/
 

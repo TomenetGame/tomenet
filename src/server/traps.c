@@ -48,7 +48,6 @@ s16b t_pop(void)
 		return (i);
 	}
 
-
 	/* Check for some space */
 	for (n = 1; n < MAX_TR_IDX; n++)
 	{

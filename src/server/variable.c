@@ -534,7 +534,7 @@ s16b m_fast[MAX_M_IDX];
 /*
  * The array of indexes of "live" traps
  */
-s16b t_fast[MAX_T_IDX];
+s16b t_fast[MAX_TR_IDX];
 
 
 /*
