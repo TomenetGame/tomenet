@@ -930,6 +930,7 @@ void teleport_player_level(int Ind)
 /*
  * Get a legal "multi-hued" color for drawing "spells"
  */
+#if 0
 static byte mh_attr(void)
 {
 	switch (randint(9))
@@ -947,6 +948,32 @@ static byte mh_attr(void)
 
 	return (TERM_WHITE);
 }
+#else
+static byte mh_attr(int max)
+{
+	switch (randint(max))
+	{
+		case  1: return (TERM_RED);
+		case  2: return (TERM_GREEN);
+		case  3: return (TERM_BLUE);
+		case  4: return (TERM_YELLOW);
+		case  5: return (TERM_ORANGE);
+		case  6: return (TERM_VIOLET);
+		case  7: return (TERM_L_RED);
+		case  8: return (TERM_L_GREEN);
+		case  9: return (TERM_L_BLUE);
+		case 10: return (TERM_UMBER);
+		case 11: return (TERM_L_UMBER);
+		case 12: return (TERM_SLATE);
+		case 13: return (TERM_WHITE);
+		case 14: return (TERM_L_WHITE);
+		case 15: return (TERM_L_DARK);
+	}
+
+	return (TERM_WHITE);
+}
+#endif	// 0
+
 
 
 /*
@@ -958,6 +985,7 @@ static byte spell_color(int type)
 	if (!use_color) return (TERM_WHITE);
 
 	/* Analyze */
+#if 0
 	switch (type)
 	{
 		case GF_MISSILE:	return (mh_attr());
@@ -993,6 +1021,59 @@ static byte spell_color(int type)
 			case GF_NUKE:           return (mh_attr());
 			case GF_DISINTEGRATE:   return (0x05);
 	}
+#else	// 0
+	switch (type)	/* colourful ToME ones :) */
+	{
+		case GF_MISSILE:        return (TERM_SLATE);
+		case GF_ACID:           return (randint(5)<3?TERM_YELLOW:TERM_L_GREEN);
+		case GF_ELEC:           return (randint(7)<6?TERM_WHITE:(randint(4)==1?TERM_BLUE:TERM_L_BLUE));
+		case GF_FIRE:           return (randint(6)<4?TERM_YELLOW:(randint(4)==1?TERM_RED:TERM_L_RED));
+		case GF_COLD:           return (randint(6)<4?TERM_WHITE:TERM_L_WHITE);
+		case GF_POIS:           return (randint(5)<3?TERM_L_GREEN:TERM_GREEN);
+//		case GF_UNBREATH:       return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+//		case GF_HOLY_ORB:	return (TERM_L_DARK);
+		case GF_HOLY_ORB:		 return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_HOLY_FIRE:      return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
+//		case GF_HELL_FIRE:      return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_MANA:           return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case GF_ARROW:          return (TERM_L_UMBER);
+		case GF_WATER:          return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+//		case GF_WAVE:           return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_NETHER:         return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_CHAOS:          return (mh_attr(15));
+		case GF_DISENCHANT:     return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
+		case GF_NEXUS:          return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case GF_CONFUSION:      return (mh_attr(4));
+		case GF_SOUND:          return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
+		case GF_SHARDS:         return (randint(5)<3?TERM_UMBER:TERM_SLATE);
+		case GF_FORCE:          return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+		case GF_INERTIA:        return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+		case GF_GRAVITY:        return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+		case GF_TIME:           return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
+		case GF_LITE_WEAK:      return (randint(3)==1?TERM_ORANGE:TERM_YELLOW);
+		case GF_LITE:           return (randint(4)==1?TERM_ORANGE:TERM_YELLOW);
+		case GF_DARK_WEAK:      return (randint(3)==1?TERM_DARK:TERM_L_DARK);
+		case GF_DARK:           return (randint(4)==1?TERM_DARK:TERM_L_DARK);
+		case GF_PLASMA:         return (randint(5)==1?TERM_RED:TERM_L_RED);
+		case GF_METEOR:         return (randint(3)==1?TERM_RED:TERM_UMBER);
+		case GF_ICE:            return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_ROCKET:         return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+#if 0
+		case GF_DEATH:
+		case GF_DEATH_RAY:
+								return (TERM_L_DARK);
+#endif	// 0
+		case GF_NUKE:           return (mh_attr(2));
+		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
+		case GF_PSI:
+#if 0
+		case GF_PSI_DRAIN:
+		case GF_TELEKINESIS:
+		case GF_DOMINATION:
+#endif	// 0
+								return (randint(3)!=1?TERM_L_BLUE:TERM_WHITE);
+	}
+#endif	// 0
 
 	/* Standard "color" */
 	return (TERM_WHITE);

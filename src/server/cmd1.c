@@ -2738,22 +2738,41 @@ void move_player(int Ind, int dir, int do_pickup)
 		return;
 		} /* 'if (!myhome)' ends here */
 	}
+	/* XXX quick fix */
+	else if (p_ptr->tim_wraith)
+	{
+		if ((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL))
+		{
+			if(!c_ptr->special.type==DNA_DOOR ||
+					!access_door(Ind, c_ptr->special.sc.ptr))
+			{
+				disturb(Ind, 0, 0);
+				return;
+			}
 
+			msg_print(Ind, "\377GYou pass through the door.");
+		}
+	}
+
+#if 0
 	/* Wraiths trying to walk into a house */
 	if (p_ptr->tim_wraith){
 		//if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;
 		/*else*/{
 			if ((((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
-		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && !wraith_access(Ind))
+		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind)))
+//		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && (!wraith_access(Ind) || istown(wpos)))
 			{
 				disturb(Ind, 0, 0);
 				return;
 			}
 		}
 	}
+#endif	// 0
 
 	/* Wraiths can't enter vaults so easily :) trying to walk into a permanent wall */
-	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA)
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");

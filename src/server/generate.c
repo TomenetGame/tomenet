@@ -7564,6 +7564,9 @@ static void cave_gen(struct worldpos *wpos)
  * and from 7-17, 21-31, 35-45, 49-59.  Note that there are thus
  * always at least 2 open grids between any disconnected walls.
  */
+/*
+ * XXX hrm apartment allows wraithes to intrude..
+ */
 static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 {
 	int                 i, y, x, y0, x0, y1, x1, y2, x2, tmp;
@@ -7845,7 +7848,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		/* Hack -- apartment house */
 		else
 		{
-			int doory = 0, doorx = 0;
+			int doory = 0, doorx = 0, dy, dx;
 			if (magik(75)) doorx = rand_int((x2 - x1 - 1) / 2);
 			else doory = rand_int((y2 - y1 - 1) / 2);
 
@@ -7877,8 +7880,12 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			for (i = 0; i < 4; i++)
 			{
-				x = (i < 2 ? x1 : x2);
-				y = ((i % 2) ? y2 : y1);
+#if 1
+				dx = (i < 2 ? x1 : x2);
+				dy = ((i % 2) ? y2 : y1);
+#endif	// 0
+				x = ( i < 2  ? x1 : x1 + (x2 - x1) / 2);
+				y = ((i % 2) ? y1 + (y2 - y1) / 2 : y1);
 				c_ptr = &zcave[y][x];
 
 				/* Remember price */
@@ -7887,8 +7894,8 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				houses[num_houses].x = x;
 				houses[num_houses].y = y;
 				houses[num_houses].flags=HF_RECT|HF_STOCK;
-				houses[num_houses].coords.rect.width=(x2-x1+1) / 2;
-				houses[num_houses].coords.rect.height=(y2-y1+1) / 2;
+				houses[num_houses].coords.rect.width=(x2-x1) / 2 - 0;
+				houses[num_houses].coords.rect.height=(y2-y1) / 2 - 0;
 #ifdef NEW_DUNGEON
 				wpcopy(&houses[num_houses].wpos, wpos);
 #else
@@ -7897,20 +7904,22 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* MEGAHACK -- add doors here and return */
 
+#if 0	/* savedata sometimes forget about it and crashes.. */
 				x += (i < 2 ? doorx : 0 - doorx);
 				y += ((i % 2) ? 0 - doory : doory);
+#endif	// 0
 
 				/* hack -- only create houses that aren't already loaded from disk */
 				if ((tmp=pick_house(wpos, y, x)) == -1)
 				{
-					c_ptr = &zcave[y][x];
+					c_ptr = &zcave[dy][dx];
 
 					/* Store door location information */
 					c_ptr->feat = FEAT_HOME_HEAD;
 					c_ptr->special.type=DNA_DOOR;
 					c_ptr->special.sc.ptr = houses[num_houses].dna;
-					houses[num_houses].dx=x;
-					houses[num_houses].dy=y;
+					houses[num_houses].dx=dx;
+					houses[num_houses].dy=dy;
 					houses[num_houses].dna->creator=0L;
 					houses[num_houses].dna->owner=0L;
 

@@ -1571,6 +1571,11 @@ player_race race_info[MAX_RACES] =
                 95,
                 {
                         {
+                                SKILL_AXE,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
                                 SKILL_DIG,
                                 '+', 1000,
                                 '+', 500,
@@ -1891,6 +1896,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 450,
                         },
                         {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 SKILL_HAFTED,
                                 '+', 0,
                                 '+', 500,
@@ -2128,6 +2138,11 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_SWORD,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_AXE,
                                 '+', 0,
                                 '+', 700,
                         },
@@ -5636,6 +5651,29 @@ skill_type s_info[MAX_SKILLS] =
 				/* Tval */
 				TV_TRAPKIT,	/* Though it's hardcoded anyway.. */
         },
+        {
+                "Axe-mastery",
+                "Ability to use Axes",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                { 0 },
+
+                /* Father skills */
+                0,
+
+                /* Order */
+                0,
+
+                /* Flags */
+                0,
+
+				/* Tval */
+				0,
+        },
 };
 
 /*
@@ -5649,6 +5687,7 @@ int skill_tree_init[MAX_SKILLS][2] =
         { SKILL_COMBAT, SKILL_MASTERY },
         { SKILL_MASTERY, SKILL_SWORD },
         { SKILL_SWORD, SKILL_CRITS },
+        { SKILL_MASTERY, SKILL_AXE },
         { SKILL_MASTERY, SKILL_POLEARM },
         { SKILL_MASTERY, SKILL_HAFTED },
         { SKILL_COMBAT, SKILL_ARCHERY },

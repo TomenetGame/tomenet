@@ -2604,7 +2604,7 @@ void do_cmd_fire(int Ind, int dir)
 		if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 
 		/* Actually "fire" the object */
-		bonus = (p_ptr->to_h + o_ptr->to_h + j_ptr->to_h);
+		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
 		/* Assume a base multiplier */
@@ -2655,7 +2655,7 @@ void do_cmd_fire(int Ind, int dir)
 		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d;
 
 		/* Actually "fire" the object */
-		bonus = (p_ptr->to_h + o_ptr->to_h);
+		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
 		/* Assume a base multiplier */
@@ -2869,7 +2869,7 @@ void do_cmd_fire(int Ind, int dir)
 
 								/* Apply special damage XXX XXX XXX */
 								tdam = tot_dam_aux_player(o_ptr, tdam, q_ptr);
-								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 								/* No negative damage */
 								if (tdam < 0) tdam = 0;
@@ -2964,7 +2964,7 @@ void do_cmd_fire(int Ind, int dir)
 
 					/* Apply special damage XXX XXX XXX */
 					tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr);
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;

@@ -338,7 +338,8 @@ extern void show_equip(void);
 extern void fix_message(void);
 extern void display_player(int hist);
 extern void window_stuff(void);
-extern void prt_sane(void);
+//extern void prt_sane(void);
+extern void prt_sane(byte attr, cptr buf);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

@@ -4566,6 +4566,7 @@ extern int PlayerUID;
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
 #define SKILL_TRAPPING          46
+#define SKILL_AXE				47	/* hrm, bad order */
 
 #if 0	// skills to come	- Jir -
 #define SKILL_CLIMB

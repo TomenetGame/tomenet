@@ -2113,30 +2113,42 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_LOTTERY:
 			{
-				int i = k_info[o_ptr->k_idx].cost, j = rand_int(10000);
+				int i = k_info[o_ptr->k_idx].cost, j, k = 0;
 
 				i -= i * o_ptr->discount / 100;
 
-				if (j)
+				/* 30 * 10^7 = 300,000,000 */
+				for (j = 0; j < 7; j++)
+				{
+					if (!magik(10)) break;
+					if (k) i *= 10;
+					k++;
+				}
+
+				if (!j)
 				{
 					msg_print(Ind, "\377WYou draw a blank :-P");
 				}
 				else
 				{
-					if (p_ptr->au < i * 10000 / 5)
+					cptr p = "th";
+
+					k = 8 - k;
+
+					if ((k % 10) == 1) p = "st";
+					else if ((k % 10) == 2) p = "nd";
+					else if ((k % 10) == 3) p = "rd";
+
+					if (k < 4 && (p_ptr->au < i / 5))
 					{
 						msg_broadcast_format(Ind, "\377B%s seems to hit the big time!", p_ptr->name);
-#if 0
-						char temp[80];
-						sprintf(temp, "\377B%s seems to hit the big time!", p_ptr->name);
-						msg_broadcast(Ind, temp);
-#endif	// 0
 						set_confused(Ind, p_ptr->confused + rand_int(10) + 10);
 						set_image(Ind, p_ptr->image + rand_int(10) + 10);
+						msg_format(Ind, "\377oYou won the %d%s prize!", k, p);
 					}
+					else msg_format(Ind, "\377BYou won the %d%s prize.", k, p);
 
-					msg_print(Ind, "\377BYou won the first prize!");
-					p_ptr->au += i * 10000;
+					p_ptr->au += i;
 
 					/* Redraw gold */
 					p_ptr->redraw |= (PR_GOLD);

@@ -1451,10 +1451,11 @@ static void process_player_begin(int Ind)
 
 /*
  * Handle misc. 'timed' things on the player.
+ * returns FALSE if player no longer exists.
  *
  * TODO: find a better way for timed spells(set_*).
  */
-static void process_player_end_aux(int Ind)
+static bool process_player_end_aux(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	cave_type		*c_ptr;
@@ -1468,7 +1469,7 @@ static void process_player_end_aux(int Ind)
 	int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?3:0;
 
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -1584,6 +1585,7 @@ static void process_player_end_aux(int Ind)
 		{
 			/* Do nothing */
 		}
+		else if (c_ptr->feat == FEAT_HOME_HEAD){/* rien */}
 		//		else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
 		else if (!p_ptr->tim_wraith)
 		{
@@ -1673,7 +1675,7 @@ static void process_player_end_aux(int Ind)
 				 * due to starvation 
 				 */
 
-				if (NumPlayers != NumPlayers_old) return;
+				if (NumPlayers != NumPlayers_old) return (FALSE);
 			}
 		}
 
@@ -2559,6 +2561,8 @@ static void process_player_end_aux(int Ind)
 
 	/* Evileye, please tell me if it's right */
 	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
+
+	return (TRUE);
 }
 
 
@@ -2622,7 +2626,9 @@ static void process_player_end(int Ind)
 	 * 1750 feet.
 	 */
 	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
-		process_player_end_aux(Ind);
+	{
+		if (!process_player_end_aux(Ind)) return;
+	}
 
 
 	/* HACK -- redraw stuff a lot, this should reduce perceived latency. */

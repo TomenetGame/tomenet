@@ -203,6 +203,7 @@ void prt_sp(int max, int cur)
 /*
  * Prints the player's current sanity.
  */
+#if 0
 void prt_sane(void)
 {
 #ifdef SHOW_SANITY	// NO SANITY DISPLAY!!!
@@ -229,8 +230,19 @@ void prt_sane(void)
   } */
 
   c_put_str(color, tmp, ROW_SANITY, COL_SANITY+8);
-#endif	// 0
+#endif	// SHOW_SANITY
 }
+#else	// 0
+void prt_sane(byte attr, cptr buf)
+{
+#ifdef SHOW_SANITY	// NO SANITY DISPLAY!!!
+
+  put_str("SN:         ", ROW_SANITY, COL_SANITY);
+
+  c_put_str(attr, buf, ROW_SANITY, COL_SANITY+3);
+#endif	// SHOW_SANITY
+}
+#endif	// 0
 
 /*
  * Prints depth into the dungeon

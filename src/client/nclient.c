@@ -1126,6 +1126,7 @@ int Receive_quit(void)
 int Receive_sanity(void)
 {
 #ifdef SHOW_SANITY
+#if 0
 	int n;
 	char ch;
 	s16b max, cur;
@@ -1143,11 +1144,31 @@ int Receive_sanity(void)
 		{
 			return n;
 		}
+#else	// 0
+	int n;
+	char ch, buf[10];
+	byte attr;
+	s16b max, cur;
+	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, buf)) <= 0)
+	{
+		return n;
+	}
+	p_ptr->msane=max;
+	p_ptr->csane=cur;
+	if (!screen_icky && !shopping){
+		prt_sane(attr, &buf);
+	}
+	else
+		if ((n = Packet_printf(&qbuf, "%c%c%s", ch, attr, buf)) <= 0)
+		{
+			return n;
+		}
+#endif	// 0
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
 
 	return 1;
-#endif
+#endif	// SHOW_SANITY
 }
 
 int Receive_stat(void)

@@ -6,6 +6,7 @@ typedef struct hash_entry hash_entry;
 struct hash_entry
 {
 	int id;				/* The ID */
+	u32b account;		/* account id */	/* right? (Jir) */
 	cptr name;			/* Player name */
 
 	/* new in 3.4.2 */

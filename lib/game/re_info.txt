@@ -582,6 +582,15 @@ M:POWERFUL
 F:R_CHAR_d | R_CHAR_Z
 M:FORCE_MAXHP
 
+N:45:Shadowed
+G:*:*
+I:+5:%110d%110:%120:+10:+0
+W:+8:25:+0:%120:B
+F:R_CHAR_p | R_CHAR_h
+H:INVISIBLE
+M:INVISIBLE
+M:CHAR_CLEAR | ATTR_CLEAR | RAND_25
+
 
 # N:x:ego name
 # G:x:y                 x is the char, y the attribute, * means the normal one

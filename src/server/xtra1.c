@@ -210,8 +210,68 @@ static void prt_sanity(int Ind)
 {
 #ifdef SHOW_SANITY	// No.
 	player_type *p_ptr=Players[Ind];
+#if 0
 	Send_sanity(Ind, p_ptr->msane, p_ptr->csane);
+#else	// 0
+	char buf[20];
+	byte attr = TERM_L_GREEN;
+	int skill = get_skill(p_ptr, SKILL_HEALTH);
+	int ratio;
+	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
+
+	/* Vague */
+	if (ratio < 10)
+	{
+		attr = TERM_RED;
+		strcpy(buf, "      Mad");
+	}
+	else if (ratio < 25)
+	{
+		attr = TERM_ORANGE;
+		strcpy(buf, "   Insane");
+	}
+	else if (ratio < 50)
+	{
+		attr = TERM_YELLOW;
+		strcpy(buf, "    Weird");
+	}
+	else if (ratio < 75)
+	{
+		attr = TERM_GREEN;
+		strcpy(buf, "     Sane");
+	}
+	else
+	{
+		attr = TERM_L_GREEN;
+		strcpy(buf, "    Sound");
+	}
+
+	/* Full */
+	if (skill >= 40)
+	{
+		sprintf(buf, "%4d/%4d", p_ptr->csane, p_ptr->msane);
+	}
+	/* Percentile */
+	else if (skill >= 15)
+	{
+		sprintf(buf, "     %3d%%", ratio);
+	}
+	/* Sanity Bar */
+	else if (skill >= 5)
+	{
+		int tmp = ratio / 11;
+		strcpy(buf, "---------");
+		if (tmp > 0) strncpy(buf, "*********", tmp);
+	}
+
+	/* Terminate */
+	buf[9] = '\0';
+
+	/* Send it */
+	Send_sanity(Ind, attr, &buf);
+
 #endif	// 0
+#endif	// SHOW_SANITY
 }
 
 /*
@@ -1743,11 +1803,16 @@ int get_weaponmastery_skill(player_type *p_ptr)
                 if ((!skill) || (skill == SKILL_SWORD)) skill = SKILL_SWORD;
                 else skill = -1;
                 break;
+		case TV_AXE:
+				if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
+				else skill = -1;
+				break;
         case TV_HAFTED:
                 if ((!skill) || (skill == SKILL_HAFTED)) skill = SKILL_HAFTED;
                 else skill = -1;
                 break;
-        case SKILL_POLEARM:
+//        case SKILL_POLEARM:
+        case TV_POLEARM:
                 if ((!skill) || (skill == SKILL_POLEARM)) skill = SKILL_POLEARM;
                 else skill = -1;
                 break;
@@ -2988,7 +3053,7 @@ static void calc_bonuses(int Ind)
 		{
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
 			/* Isn't 4 shots/turn too small? */
-			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
+			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16)
 				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
 			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 25);
 #if 0	// not so meaningful (25,30,50)

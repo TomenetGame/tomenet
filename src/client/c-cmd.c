@@ -1220,6 +1220,12 @@ int cmd_target(void)
 		Send_target(128 + 5);
 	else Send_target(5);
 
+	/* Print the message */
+	if (!c_cfg.taciturn_messages)
+	{
+		prt("Target Selected.", 0, 0);
+	}
+
 	return TRUE;
 }
 
