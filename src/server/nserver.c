@@ -567,7 +567,7 @@ bool player_allowed(char *name){
 	char buffer[80];
 	bool success=FALSE;
 	/* Hack -- allow 'guest' account */
-	if (!strcmp("Guest", name)) return TRUE;
+	/* if (!strcmp("Guest", name)) return TRUE; */
 
 	sfp=fopen("allowlist","r");
 	if(sfp==(FILE*)NULL)
