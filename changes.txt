@@ -566,3 +566,8 @@ Change list for PernMangband
 - Config options (cfg_blabla) are bundled in one structure (cfg.blabla).
 - New config option SPELL_STACK_LIMIT.
 - Wraith-Form is harder to stack(just like Haste-Self).
+- Reflection. Some traps.
+
+31/12/2001 (Jir)
+- Boomerang/Axe/MageStaff randarts.
+- New monster spells are implemented(flags4-6).

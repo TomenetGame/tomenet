@@ -1212,6 +1212,76 @@ bool curse_weapon(int Ind)
 }
 
 
+
+/*
+ * Curse the players equipment in general	- Jir -
+ */
+#if 0	// let's use this for Hand-o-Doom :)
+bool curse_an_item(int Ind, int slot)
+{
+	player_type *p_ptr = Players[Ind];
+
+	object_type *o_ptr;
+
+	char o_name[160];
+
+
+	/* Curse the body armor */
+	o_ptr = &p_ptr->inventory[slot];
+
+	/* Nothing to curse */
+	if (!o_ptr->k_idx) return (FALSE);
+
+
+	/* Describe */
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+	/* Attempt a saving throw for artifacts */
+	if (artifact_p(o_ptr) && (rand_int(100) < 50))
+	{
+		/* Cool */
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		           "terrible black aura", "surround you", o_name);
+	}
+
+	/* not artifact or failed save... */
+	else
+	{
+		/* Oops */
+		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
+
+		/* Blast the armor */
+		o_ptr->name1 = 0;
+		o_ptr->name2 = EGO_BLASTED;	// ?
+		o_ptr->name3 = 0;
+		o_ptr->to_a = 0 - randint(5) - randint(5);
+		o_ptr->to_h = 0 - randint(5) - randint(5);
+		o_ptr->to_d = 0 - randint(5) - randint(5);
+		o_ptr->ac = 0;
+		o_ptr->dd = 0;
+		o_ptr->ds = 0;
+
+		/* Curse it */
+		o_ptr->ident |= ID_CURSED;
+
+		/* Break it */
+		o_ptr->ident |= ID_BROKEN;
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Recalculate mana */
+		p_ptr->update |= (PU_MANA);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	}
+
+	return (TRUE);
+}
+#endif	// 0
+
+
 /*
  * Read a scroll (from the pack or floor).
  *
@@ -2838,7 +2908,13 @@ void do_cmd_zap_rod(int Ind, int item)
         }
 
 	/* Get a direction (unless KNOWN not to need it) */
-	if ((o_ptr->sval >= SV_ROD_MIN_DIRECTION) || !object_aware_p(Ind, o_ptr))
+	/* Pfft, dirty, dirty, diiirrrrtie!! (FIXME) */
+//	if ((o_ptr->sval >= SV_ROD_MIN_DIRECTION) || !object_aware_p(Ind, o_ptr))
+        if (((o_ptr->sval >= SV_ROD_MIN_DIRECTION) &&
+			!(o_ptr->sval == SV_ROD_DETECT_TRAP) &&
+//			!(o_ptr->sval == SV_ROD_HAVOC) &&
+			!(o_ptr->sval == SV_ROD_HOME)) ||
+		     !object_aware_p(Ind, o_ptr))
 	{
 		/* Get a direction, then return */
 		p_ptr->current_rod = item;
@@ -2846,10 +2922,14 @@ void do_cmd_zap_rod(int Ind, int item)
 		return;
 	}
 
+	/* Extract object flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 
 	/* Take a turn */
 #ifdef NEW_DUNGEON
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	p_ptr->energy -= level_speed(&p_ptr->wpos) /
+	        ((f4 & TR4_FAST_CAST)?2:1);
 #else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
 #endif
@@ -2868,9 +2948,6 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
@@ -3145,12 +3222,18 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		    !get_check("Your pack might overflow.  Continue? ")) return;
 	}*/
 
+	/* Extract object flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+
 	/* Take a turn */
 #ifdef NEW_DUNGEON
-	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	p_ptr->energy -= level_speed(&p_ptr->wpos) /
+	        ((f4 & TR4_FAST_CAST)?2:1);
 #else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
 #endif
+
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -3166,9 +3249,6 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
-
-        /* Extract object flags */
-        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
@@ -3446,6 +3526,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			break;
 		}
 
+		case SV_ROD_HAVOC:
+		{
+			call_chaos(Ind, dir);
+			ident = TRUE;
+			o_ptr->pval = 90;
+			break;
+		}
 		default:
 		{
 			msg_print(Ind, "SERVER ERROR: Tried to zap non-directional rod in directional function!");

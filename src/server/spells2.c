@@ -5180,3 +5180,73 @@ void golem_creation(int Ind, int max)
 	/* Update the monster */
 	update_mon(c_ptr->m_idx, TRUE);
 }
+
+/* pernAngband Additions	- Jir - */
+void call_chaos(int Ind, int dir)
+{
+	player_type *p_ptr = Players[Ind];
+	int Chaos_type, dummy;
+	int plev = p_ptr->lev;
+	bool line_chaos = FALSE;
+
+	int hurt_types[26] =	// 30
+	{
+		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
+		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
+//		GF_HOLY_FIRE, GF_WATER,   GF_LITE,    GF_DARK,
+		GF_WATER,   GF_LITE,    GF_DARK,
+		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
+		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
+		GF_SHARDS,    GF_SOUND,   GF_NEXUS,   GF_CONFUSION,
+//		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
+		GF_TIME,      GF_GRAVITY, GF_ROCKET,
+//		GF_HELL_FIRE, GF_DISINTEGRATE
+	};
+
+	Chaos_type = hurt_types[randint(26) - 1];
+	if (randint(4) == 1) line_chaos = TRUE;
+
+#if 0
+	/* Probably a meaningless line, a remnant from earlier code */
+	while (Chaos_type > GF_GRAVITY && Chaos_type < GF_ROCKET);
+#endif
+
+	if (randint(6) == 1)
+	{
+		for (dummy = 1; dummy < 10; dummy++)
+		{
+			if (dummy-5)
+			{
+				if (line_chaos)
+					fire_beam(Ind, Chaos_type, dummy, 75);
+				else
+					fire_ball(Ind, Chaos_type, dummy, 75, 2);
+			}
+		}
+	}
+	else if (randint(3)==1)
+	{
+		fire_ball(Ind, Chaos_type, 0, 300, 8);
+	}
+	else
+	{
+//		if (!get_aim_dir(&dir)) return;
+		if (line_chaos)
+			fire_beam(Ind, Chaos_type, dir, 150);
+		else
+			fire_ball(Ind, Chaos_type, dir, 150, 3 + (plev/35));
+	}
+}
+
+void summon_cyber(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int i;
+	int max_cyber = (getlevel(&p_ptr->wpos)/ 50) + randint(6);
+
+	for (i = 0; i < max_cyber; i++)
+	{
+		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, SUMMON_HI_DEMON);
+	}
+}
+

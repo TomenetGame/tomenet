@@ -2218,6 +2218,10 @@ static void process_player_end(int Ind)
 				/* Charge it */
 				o_ptr->pval--;
 
+				/* Charge it further */
+				if (o_ptr->pval && magik(p_ptr->skill_dev))
+					o_ptr->pval--;
+
 				/* Notice changes */
 				if (!(o_ptr->pval)) j++;
 			}

@@ -180,6 +180,9 @@ s32b artifact_power (artifact_type *a_ptr)
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_BOOMERANG:
+		case TV_AXE:
+		case TV_MSTAFF:
 		{
 			p += (a_ptr->dd * a_ptr->ds + 1) / 2;
 			if (a_ptr->flags1 & TR1_SLAY_EVIL) p = (p * 3) / 2;
@@ -416,6 +419,9 @@ void add_ability (artifact_type *a_ptr)
 			case TV_HAFTED:
 			case TV_POLEARM:
 			case TV_SWORD:
+			case TV_AXE:
+			case TV_BOOMERANG:
+			case TV_MSTAFF:
 			{
 				if (r < 4)
 				{
@@ -922,6 +928,9 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (k_ptr->tval!=TV_HAFTED) &&
 	    (k_ptr->tval!=TV_POLEARM) &&
 	    (k_ptr->tval!=TV_SWORD) &&
+	    (k_ptr->tval!=TV_BOOMERANG) &&
+	    (k_ptr->tval!=TV_AXE) &&
+	    (k_ptr->tval!=TV_MSTAFF) &&
 	    (k_ptr->tval!=TV_BOOTS) &&
 	    (k_ptr->tval!=TV_GLOVES) &&
 	    (k_ptr->tval!=TV_HELM) &&

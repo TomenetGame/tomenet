@@ -4104,6 +4104,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	/* Redraw (later) if needed */
 	update_health(m_idx);
 
+        /* Some mosnters are immune to death */
+        if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
+	
 	/* Wake it up */
 	m_ptr->csleep = 0;
 

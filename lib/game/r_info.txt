@@ -15186,10 +15186,12 @@ D:two remaining Silmarils forever burning him. Grond, the mighty Hammer of
 D:the Underworld, cries defiance as he strides towards you to crush you to a 
 D:pulp! 
 
+# Hacked so as not to come out in normal town. (FIXME)
 N:863:Human Warrior
 G:p:u
 I:110:9d8:10:10:0
-W:0:20:1700:0
+#W:0:20:1700:0
+W:10:20:1700:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:5d8
@@ -15205,7 +15207,8 @@ D:They will help you in some quests.
 N:864:Elven archer
 G:h:W
 I:110:9d7:10:10:0
-W:0:20:1400:0
+#W:0:20:1400:0
+W:20:20:1400:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:2d8
@@ -15223,7 +15226,8 @@ D:They will help you in some quests.
 N:865:Dwarven warrior
 G:h:U
 I:110:8d8:10:10:0
-W:0:20:1500:0
+#W:0:20:1500:0
+W:15:20:1500:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:6d8

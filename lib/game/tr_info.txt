@@ -735,10 +735,10 @@ D:Your vision is clouded by a blast of kaleidoscopic light!
 F:FLOOR | CHEST | DOOR
 
 # Bolt traps
-#N:161:Rocket Trap
-#I:6:80:5:6:75:25d40:g
-#D:A rocket hits you!
-#F:FLOOR | CHEST | DOOR | LEVEL3
+N:161:Rocket Trap
+I:6:80:5:6:75:25d40:g
+D:A rocket hits you!
+F:FLOOR | CHEST | DOOR | LEVEL3
 
 #N:162:Nuke Bolt Trap
 #I:6:80:5:6:15:10d12:g
@@ -849,6 +849,11 @@ F:FLOOR | CHEST | DOOR
 N:181:Trap of Present Exchange
 I:5:30:5:5:18:0d0:y
 D:You exchanged your equipments with nifty presents.
+F:FLOOR | DOOR | CHEST
+
+N:182:Garbage Trap
+I:7:30:5:5:30:0d0:W
+D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
 # N:type:name

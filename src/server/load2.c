@@ -598,11 +598,13 @@ static void rd_item(object_type *o_ptr)
 		o_ptr->dd = k_ptr->dd;
 		o_ptr->ds = k_ptr->ds;
 
+#if 0
 		/* Acquire correct weight */
 		o_ptr->weight = k_ptr->weight;
 
 		/* Paranoia */
 		o_ptr->name1 = o_ptr->name2 = 0;
+#endif
 
 		/* All done */
 		return;

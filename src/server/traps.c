@@ -518,7 +518,14 @@ bool do_player_drop_items(int Ind, int chance)
 		if (!p_ptr->inventory[i].k_idx) continue;
 		if (randint(100)>chance) continue;
 		if (p_ptr->inventory[i].name1 == ART_POWER) continue;
-		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) continue;
+		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+		{
+			char	o_name[160];
+			object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
+
+			msg_format(Ind, "%s resists the effect!", o_name);
+			continue;
+		}
 		tmp_obj = p_ptr->inventory[i];
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -560,7 +567,14 @@ bool do_player_scatter_items(int Ind, int chance)
 			if (!in_bounds(cy,cx)) continue;
 			if (!cave_floor_bold(zcave, cy,cx)) continue;
 			tmp_obj = p_ptr->inventory[i];
-			if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9)) return(FALSE);
+			if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
+			{
+				char	o_name[160];
+				object_desc(Ind, o_name, &tmp_obj, TRUE, 0);
+
+				msg_format(Ind, "%s resists the effect!", o_name);
+				continue;
+			}
 			inven_item_increase(Ind, i,-999);
 			inven_item_optimize(Ind, i);
 			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -969,7 +983,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
 {
 	player_type *p_ptr = Players[Ind];
    object_type *o_ptr, forge;
-   s16b        i, k_idx = lookup_kind(tval, sval);
+   s16b        i, deflect = 0, k_idx = lookup_kind(tval, sval);
    char        i_name[80];
 
    o_ptr = &forge;
@@ -979,12 +993,19 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
    object_desc(Ind, i_name, o_ptr, TRUE, 0);
 
    if (num == 1)
-      msg_format(Ind, "Suddenly %s hits you!", i_name);
+//      msg_format(Ind, "Suddenly %s hits you!", i_name);
+      msg_format(Ind, "Suddenly %s are shot at you!", i_name);
    else
-      msg_format(Ind, "Suddenly %s hit you!", i_name);
+//      msg_format(Ind, "Suddenly %s hit you!", i_name);
+      msg_format(Ind, "Suddenly %s is shot at you!", i_name);
 
    for (i=0; i < num; i++)
    {
+	   if (p_ptr->reflect && magik(50))
+	   {
+		   deflect++;
+		   continue;
+	   }
       take_hit(Ind, damroll(dd, ds), name);
       redraw_stuff(Ind);
       if (pdam > 0)
@@ -995,6 +1016,8 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval, s16b sval, 
          }
       }
    }
+
+   if (deflect && !p_ptr->death) msg_format(Ind, "You %s deflect the attack%s!", (deflect == num)?"completely":"partially", (num > 1)?"s":"");
 
    drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
@@ -2165,8 +2188,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
       break;
 
       /* Bolt Trap */
+      case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); break;
 #if 0	// coming..when it comes :)
-      case TRAP_OF_ROCKET: ident=player_handle_breath_trap(1, GF_ROCKET, trap); break;
       case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(1, GF_NUKE, trap); break;
       case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(1, GF_HOLY_FIRE, trap); break;
       case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(1, GF_HELL_FIRE, trap); break;
@@ -2316,6 +2339,26 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		 ident = do_player_drop_items(Ind, 50);
 		 ident |= do_player_trap_garbage(Ind, 300);
 		 break;
+      case TRAP_OF_GARBAGE_FILLING:
+         {
+            s16b nx, ny;
+			ident |= do_player_trap_garbage(Ind, 300);
+            for (nx=x-8;nx<=x+8;nx++)
+            {
+               for (ny=y-8;ny<=y+8;ny++)
+               {
+                  if (!in_bounds (ny, nx)) continue;
+
+                  if (rand_int(distance(ny,nx,y,x))>3)
+                  {
+                     place_trap(&p_ptr->wpos, ny,nx);
+                  }
+               }
+            }
+//            msg_print(Ind, "The floor vibrates in a strange way.");
+            ident = FALSE;
+         }
+         break;
       default:
       {
          s_printf("Executing unknown trap %d", trap);
@@ -2327,6 +2370,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
    {
 	   if (item < 0) delete_trap_idx(tt_ptr);
 	   else i_ptr->pval = 0;
+	   ident = FALSE;
    }
 
    if (never_id) return (FALSE);

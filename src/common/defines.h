@@ -2968,19 +2968,23 @@ that keeps many algorithms happy.
 #define GF_IDENTIFY      78
 #define GF_PSI           79
 
+#define GF_DISINTEGRATE 81
+
 #define GF_MAKE_GLYPH   85
 #define GF_ROCKET       91
+#define GF_NUKE         110
+
 #if 0
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
 #define GF_DISP_LIVING  71
-#define GF_NUKE         73
+#define GF_NUKE         73	// *
 #define GF_STASIS       75
 #define GF_STONE_WALL   76	// *
 #define GF_DEATH_RAY    77
 #define GF_STUN         78	// *
 #define GF_HOLY_FIRE    79
 #define GF_HELL_FIRE    80
-#define GF_DISINTEGRATE 81
+#define GF_DISINTEGRATE 81	// -
 #define GF_CHARM        82
 #define GF_CONTROL_UNDEAD   83
 #define GF_CONTROL_ANIMAL   84
@@ -3008,6 +3012,7 @@ that keeps many algorithms happy.
 #define GF_RAISE_DEMON 107
 #define GF_TRAP_DEMONSOUL 108
 #define GF_ATTACK       109
+
 #define MAX_GF          110
 
 #endif	// 0
@@ -4584,6 +4589,7 @@ extern int PlayerUID;
 #define TRAP_OF_SILLINESS	179
 #define TRAP_OF_GOODBYE_CHARLIE	180
 #define TRAP_OF_PRESENT_EXCHANGE	181
+#define TRAP_OF_GARBAGE_FILLING		182
 
 #define TR_LIST(c_ptr) (c_ptr->special.ptr)
 

@@ -785,6 +785,8 @@ static byte spell_color(int type)
 		case GF_PLASMA:		return (TERM_RED);
 		case GF_METEOR:		return (TERM_RED);
 		case GF_ICE:		return (TERM_WHITE);
+			case GF_NUKE:           return (mh_attr());
+			case GF_DISINTEGRATE:   return (0x05);
 	}
 
 	/* Standard "color" */
@@ -2621,6 +2623,20 @@ static bool project_f(int Ind, int who, int r, int Depth, int y, int x, int dam,
 
 			break;
 		}
+  
+                case GF_DISINTEGRATE:
+                {
+                        if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+
+                        if (((c_ptr->feat == FEAT_TREES) || (c_ptr->feat == FEAT_SMALL_TREES) ||
+                            (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) &&
+                            randint(100) < 30)
+                        {
+                                cave_set_feat(y, x, FEAT_ASH);
+                        }                 
+                        break;
+                }
+
 #endif	// 0
 
 
@@ -2832,6 +2848,13 @@ static bool project_i(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		{
 			do_kill = TRUE;
 			note_kill = (plural ? " are destroyed!" : " is destroyed!");
+		}
+
+		case GF_DISINTEGRATE:
+		{
+			do_kill = TRUE;
+			note_kill = (plural ? " evaporate!" : " evaporates!");
+			break;
 		}
 
 		/* Holy Orb -- destroys cursed non-artifacts */
@@ -4077,6 +4100,45 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			break;
 		}
 
+		/* Nuclear waste */
+		case GF_NUKE:
+		{
+			if (seen) obvious = TRUE;
+
+			if (r_ptr->flags3 & (RF3_IM_POIS))
+			{
+				note = " resists.";
+				dam *= 3; dam /= (randint(6)+6);
+				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
+			}
+			else if (randint(3)==1) do_poly = TRUE;
+			break;
+		}
+
+
+		/* Pure damage */
+		case GF_DISINTEGRATE:
+		{
+			if (seen) obvious = TRUE;
+			if (r_ptr->flags3 & (RF3_HURT_ROCK))
+			{
+				if (seen) r_ptr->r_flags3 |= (RF3_HURT_ROCK);
+				note = " loses some skin!";
+				note_dies = " evaporates!";
+				dam *= 2;
+			}
+
+			if (r_ptr->flags1 & RF1_UNIQUE)
+			{
+                                if (rand_int(m_ptr->level + 10) > rand_int(p_ptr->lev))
+				{
+					note = " resists.";
+					dam >>= 3;
+				}
+			}
+			break;
+		}
+
 			/* Default */
 		default:
 		{
@@ -4356,7 +4418,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
  * Megahack -- who == -999 means 'by trap'.		- Jir -
  */
 #ifdef NEW_DUNGEON
-static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
+static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int rad)
 #else
 static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam, int typ)
 #endif
@@ -4412,6 +4474,88 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	/* Mega-Hack -- Players cannot hurt other players */
 	if (who <= 0 && who != -999) return (FALSE);
 #endif
+
+	/* Reflection */
+#if 0
+        /* Effects done by the plane cannot bounce */
+        if (p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
+	{
+                int t_y, t_x;
+		int max_attempts = 10;
+
+		if (blind) msg_print("Something bounces!");
+		else msg_print("The attack bounces!");
+
+		/* Choose 'new' target */
+		do
+		{
+			t_y = m_list[who].fy - 1 + randint(3);
+			t_x = m_list[who].fx - 1 + randint(3);
+			max_attempts--;
+		}
+		while (max_attempts && in_bounds2(t_y, t_x) &&
+		     !(player_has_los_bold(t_y, t_x)));
+
+		if (max_attempts < 1)
+		{
+			t_y = m_list[who].fy;
+			t_x = m_list[who].fx;
+		}
+
+		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+
+		disturb(1, 0);
+		return TRUE;
+	}
+#endif	// 0
+
+        /* Effects done by the plane cannot bounce */
+        if (p_ptr->reflect && !rad &&
+			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 8 : 2))
+
+	{
+                int t_y, t_x, ay, ax;
+		int max_attempts = 10;
+
+		if (blind) msg_print(Ind, "Something bounces!");
+		else msg_print(Ind, "The attack bounces!");
+
+		if (who != -999 && who)
+		{
+			if (who < 0)
+			{
+				ay = Players[-who]->py;
+				ax = Players[-who]->px;
+			}
+			else
+			{
+				ay = m_list[who].fy;
+				ax = m_list[who].fx;
+			}
+
+
+			/* Choose 'new' target */
+			do
+			{
+				t_y = ay - 1 + randint(3);
+				t_x = ax - 1 + randint(3);
+				max_attempts--;
+			}
+			while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
+					!(player_has_los_bold(Ind, t_y, t_x)));
+
+			if (max_attempts < 1)
+			{
+				t_y = ay;
+				t_x = ax;
+			}
+
+			project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+		}
+
+		disturb(Ind, 1, 0);
+		return TRUE;
+	}
 
 	/* Extract radius */
 	div = r + 1;
@@ -5076,6 +5220,44 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 			break;
 		}
 
+		/* Standard damage -- also poisons / mutates player */
+		case GF_NUKE:
+		{
+			if (fuzzy) msg_print(Ind, "You are hit by radiation!");
+			if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
+			if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
+			take_hit(Ind, dam, killer);
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			{
+				set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+
+#if 0	// dang, later..
+				if (randint(5)==1) /* 6 */
+				{
+					msg_print("You undergo a freakish metamorphosis!");
+					if (randint(4)==1) /* 4 */
+						do_poly_self();
+					else
+                                                corrupt_player();
+				}
+#endif	// 0
+
+				if (randint(6)==1)
+				{
+					inven_damage(Ind, set_acid_destroy, 2);
+				}
+			}
+			break;
+		}
+
+		/* Standard damage */
+		case GF_DISINTEGRATE:
+		{
+			if (fuzzy) msg_print(Ind, "You are hit by pure energy!");
+			take_hit(Ind, dam, killer);
+			break;
+		}
+
 		/* Default */
 		default:
 
@@ -5571,6 +5753,19 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 					if (distance(y2, x2, y, x) != dist) continue;
 
 #ifdef NEW_DUNGEON
+#if 0
+					if (typ == GF_DISINTEGRATE)
+					{
+						if (cave_valid_bold(y,x) &&
+						     (cave[y][x].feat < FEAT_PATTERN_START
+						   || cave[y][x].feat > FEAT_PATTERN_XTRA2))
+							cave_set_feat(y, x, FEAT_FLOOR);
+
+						/* Update some things -- similar to GF_KILL_WALL */
+						p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+					}
+#endif	// 0
+					else
 					/* Ball explosions are stopped by walls */
 					if (!los(wpos, y2, x2, y, x)) continue;
 #else
@@ -5844,7 +6039,7 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			player_idx = 0 - zcave[y][x].m_idx;
 
 			/* Affect the player */
-			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad)) notice = TRUE;
 #else
 			player_idx = 0 - cave[Depth][y][x].m_idx;
 

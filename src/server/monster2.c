@@ -2539,7 +2539,7 @@ static bool summon_specific_okay(int r_idx)
 			break;
 		}
 
-#if 0
+#if 1	// welcome, Julian Lighton Hack ;)
 		case SUMMON_KIN:
 		{
 			okay = ((r_ptr->d_char == summon_kin_type) &&

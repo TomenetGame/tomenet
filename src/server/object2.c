@@ -1046,7 +1046,7 @@ static s32b object_value_real(object_type *o_ptr)
 
 			/* Give credit for bonuses */
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
-			value += ((PRICE_BOOST(o_ptr->to_h + o_ptr->to_d*2, 15) + PRICE_BOOST(o_ptr->to_a, 11)) * 100L);
+			value += ((PRICE_BOOST(o_ptr->to_h, 12) + PRICE_BOOST(o_ptr->to_d, 7) + PRICE_BOOST(o_ptr->to_a, 11)) * 100L);
 
 			/* Done */
 			break;
@@ -1250,6 +1250,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		case TV_POTION2:
 		case TV_SCROLL:
 		{
+			/* Hack for ego foods :) */
+			if (o_ptr->name3 != j_ptr->name3) return (0);
+
 			/* Assume okay */
 			break;
 		}
@@ -4005,6 +4008,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 	switch (o_ptr->tval)
 	{
 		case TV_LITE:
+
+			o_ptr->to_h = o_ptr->to_d = o_ptr->to_a = 0;
 
 		/* Hack -- Torches -- random fuel */
 			if (f4 & TR4_FUEL_LITE)
