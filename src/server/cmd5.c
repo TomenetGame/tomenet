@@ -6582,12 +6582,12 @@ void do_cmd_psi_aux(int Ind, int dir)
 						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;
 		case 4:
-			msg_format(Ind, "You attempt to use hold. {y({gcoming soon{y)");
+			msg_format(Ind, "You attempt to use hold. \377y(\377gcoming soon\377y)");
 			fire_bolt(Ind, GF_HOLD, dir,
 						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;
 		case 5:
-			msg_format(Ind, "You attempt to use dominate. {y({gcoming soon{y)");
+			msg_format(Ind, "You attempt to use dominate. \377y(\377gcoming soon\377y)");
 			fire_bolt(Ind, GF_DOMINATE, dir,
 						damroll(3 + ((plev - 1) / 5), 4 + (plev / 5)));
 			break;
