@@ -10,12 +10,7 @@
 
 #include "../world/world.h"
 
-struct rplist{
-	struct rplist *next;
-	unsigned long id;
-	short server;
-	char name[30];
-} *rpmlist;
+struct rplist *rpmlist=NULL;
 
 struct wpacket spk;
 
