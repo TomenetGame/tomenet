@@ -3129,25 +3129,28 @@ void load_server_cfg_aux(FILE * cfg)
 
 bool load_server_cfg(void)
 {
-	FILE * cfg;
+	FILE *cfg_file;
 	
 	/* Attempt to open the file */
 //	cfg = fopen("tomenet.cfg", "r");
-	cfg = fopen(MANGBAND_CFG, "r");
+	cfg_file = fopen(MANGBAND_CFG, "r");
 
 	/* Failure */
-	if (cfg == (FILE*)NULL)
+	if (cfg_file == (FILE*)NULL)
 	{
 //		printf("Error : cannot open file tomenet.cfg\n");
 		printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
 		return (FALSE);
 	}
 
+        /* Default value */
+        cfg.bind_name = NULL;
+
 	/* Actually parse the file */
-	load_server_cfg_aux(cfg);
+	load_server_cfg_aux(cfg_file);
 
 	/* Close it */
-	fclose(cfg);
+	fclose(cfg_file);
 
 	return (TRUE);
 }

@@ -350,12 +350,19 @@ bool Report_to_meta(int flag)
 		init = 1;
 
 		/* Get our hostname */
+#if 0
 #ifdef BIND_NAME
 			strncpy(local_name, BIND_NAME, 1024);
 #else
 			GetLocalHostName(local_name, 1024);
 #endif
-	}
+#else
+                        if (cfg.bind_name)
+                                strncpy(local_name, cfg.bind_name, 1024);
+                        else
+                                GetLocalHostName(local_name, 1024);
+#endif
+        }
 
 	strcpy(buf, local_name);
 
