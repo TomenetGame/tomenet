@@ -400,6 +400,10 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			fprintf(fff, " PK");
 		}
+		else if(!(q_ptr->pkill & PKILL_KILLABLE)){
+			fprintf(fff, " SAFE");
+		}
+		else fprintf(fff, "Newbie");
 				
 		/* Newline */
 		/* -AD- will this work? */
