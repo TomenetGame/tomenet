@@ -2690,8 +2690,8 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	/* Wraiths trying to walk into a house */
 	if (p_ptr->tim_wraith){
-		if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;
-		else{
+		//if(zcave[y][x].info & CAVE_STCK) p_ptr->tim_wraith=0;
+		/*else*/{
 			if ((((c_ptr->feat >= FEAT_HOME_HEAD) && (c_ptr->feat <= FEAT_HOME_TAIL)) ||
 		 	((zcave[y][x].info & CAVE_ICKY) && (wpos->wz==0))) && !wraith_access(Ind))
 			{
@@ -2863,7 +2863,7 @@ static bool wraith_access(int Ind){
 	for(i=0;i<num_houses;i++){
 		if(inarea(&houses[i].wpos, &p_ptr->wpos))
 		{
-			if(fill_house(&houses[i], 3, p_ptr)){
+			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
 				if(access_door(Ind, houses[i].dna))
 					return(TRUE);
 				break;

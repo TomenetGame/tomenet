@@ -2177,6 +2177,8 @@ errr rd_server_savefile()
 		for (i = 0; i < num_houses; i++)
 		{
 			rd_house(i);
+			if(!(houses[i].flags&HF_STOCK))
+				wild_add_uhouses(&houses[i].wpos);
 		}
 		/* insert houses into wild space if needed */
 #if 0 /* for now */
@@ -2342,6 +2344,54 @@ void rd_towns(){
 		alloc_stores(i);
 		for(j=0;j<town[i].num_stores;j++){
 			rd_store(&town[i].townstore[j]);
+		}
+	}
+}
+
+load_guildhalls(struct worldpos *wpos){
+	int i;
+	FILE *gfp;
+	struct guildsave data;
+	char buf[1024];
+	char fname[30];
+	data.mode=0;
+	for(i=0; i<num_houses; i++){
+		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
+			if(!houses[i].dna->owner) continue;
+			s_printf("load guildhall %d\n", i);
+			sprintf(fname, "guild%.4d.data", i);
+			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			gfp=fopen(buf, "r");
+			if(gfp==(FILE*)NULL) continue;
+			data.fp=gfp;
+			fill_house(&houses[i], FILL_GUILD, (void*)&data);
+			fclose(gfp);
+		}
+	}
+}
+
+save_guildhalls(struct worldpos *wpos){
+	int i;
+	FILE *gfp;
+	struct guildsave data;
+	char buf[1024];
+	char fname[30];
+	data.mode=1;
+	for(i=0; i<num_houses; i++){
+		if((houses[i].dna->owner_type==OT_GUILD) && (inarea(wpos, &houses[i].wpos))){
+			if(!houses[i].dna->owner) continue;
+			s_printf("save guildhall %d\n", i);
+			sprintf(fname, "guild%.4d.data", i);
+			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			gfp=fopen(buf, "r+");
+			if(gfp==(FILE*)NULL){
+				gfp=fopen(buf, "w");
+				if(gfp==(FILE*)NULL)
+					continue;
+			}
+			data.fp=gfp;
+			fill_house(&houses[i], FILL_GUILD, (void*)&data);
+			fclose(gfp);
 		}
 	}
 }

@@ -4734,6 +4734,9 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 
 		wipe_t_list(wpos);
 	}
+	else{
+		save_guildhalls(wpos);	/* has to be done here */
+	}
 
 	zcave=getcave(wpos);
 	for (i = 0; i < MAX_HGT; i++)

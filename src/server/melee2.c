@@ -4424,7 +4424,7 @@ static void process_monster(int Ind, int m_idx)
 	/* attempt to "mutiply" if able and allowed */
 
 	if(!istown(wpos) &&
-		(m_ptr->wpos.wz != 0 ||wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 2))
+		(m_ptr->wpos.wz != 0 ||wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius > 5))
 		if ((r_ptr->flags7 & RF7_MULTIPLY) && (num_repro < MAX_REPRO))
 		{
 			int k, y, x;

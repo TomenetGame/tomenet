@@ -2167,7 +2167,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
-	if(func==3 || func==4)
+	if(func==FILL_PLAYER || func==FILL_OBJECT)
 		success=FALSE;
 
 	if(h_ptr->flags&HF_RECT){
@@ -2175,21 +2175,30 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 		for(x=0;x<h_ptr->coords.rect.width;x++){
 			for(y=0;y<h_ptr->coords.rect.height;y++){
  				c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
-				if(func==4){ /* object in house */
+				if(func==FILL_GUILD){
+					return(FALSE);	/* for now */
+					if(((struct guildsave*)data)->mode){
+						fputc(c_ptr->feat, ((struct guildsave*)data)->fp);
+					}
+					else{
+						c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
+					}
+				}
+				if(func==FILL_OBJECT){ /* object in house */
 					object_type *o_ptr=(object_type*)data;
 					if(o_ptr->ix==h_ptr->x+x && o_ptr->iy==h_ptr->y+y){
 						success=TRUE;
 						break;
 					}
 				}
-				if(func==3){ /* player in house? */
+				if(func==FILL_PLAYER){ /* player in house? */
 					player_type *p_ptr=(player_type*)data;
 					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
 						success=TRUE;
 						break;
 					}
 				}
-				else if(func==2){
+				else if(func==FILL_MAKEHOUSE){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
 						if((pick_house(wpos,h_ptr->y,h_ptr->x))!=-1)
 							success=FALSE;
@@ -2197,10 +2206,10 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 					else
 						c_ptr->feat=FEAT_DIRT;
 				}
-				else if(func==1){
+				else if(func==FILL_CLEAR){
 					delete_object(wpos,y,x);
 				}
-				else{
+				else{ /* FILL_BUILD */
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
  						if(!(h_ptr->flags&HF_NOFLOOR))
 							c_ptr->feat=FEAT_FLOOR;
@@ -2274,21 +2283,53 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 				case 4:
 				case 6: /* outside of walls */
 					break;
-				case 0:
-					if(func==3){
+				case 0:	/* inside of walls */
+					if(func==FILL_GUILD){
+						struct key_type *key;
+						cave_type *c_ptr;
+						u16b id;
+						FILE *gfp=((struct guildsave*)data)->fp;
+						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
+						if(((struct guildsave*)data)->mode){
+							fputc(c_ptr->feat, gfp);
+							if(c_ptr->feat==FEAT_HOME_HEAD){
+								id=0;
+								if((c_ptr->special.type==KEY_DOOR) && (key=c_ptr->special.ptr))
+									id=key->id;
+								fputc((id>>8), gfp);
+								fputc(id&0xff, gfp);
+								
+							}
+						}
+						else{
+							c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
+							if(c_ptr->feat==FEAT_HOME_HEAD){
+								id=(fgetc(gfp)<<8);
+								id|=fgetc(gfp);
+								if((c_ptr->special.type!=KEY_DOOR)){
+									MAKE(c_ptr->special.ptr, struct key_type);
+									c_ptr->special.type=KEY_DOOR;
+								}
+								key=c_ptr->special.ptr;
+								key->id=id;
+							}
+						}
+						break;
+					}
+					if(func==FILL_PLAYER){
 						player_type *p_ptr=(player_type*)data;
 						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1)){
 							success=TRUE;
 						}
 						break;
 					}
-					if(func==2){
+					if(func==FILL_MAKEHOUSE){
 						if((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)){
 							success=FALSE;
 						}
 						break;
 					}
-					if(func==1){
+					if(func==FILL_CLEAR){
 						delete_object(wpos, miny+(y-1), minx+(x-1));
 						break;
 					}
@@ -2299,17 +2340,17 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
 					}
 					break;
-				case 1:
-					if(func==1) break;
-					if(func==3){
+				case 1:	/* Actual walls */
+					if(func==FILL_CLEAR) break;
+					if(func==FILL_PLAYER){
 						player_type *p_ptr=(player_type*)data;
 						if(p_ptr->px==minx+(x-1) && p_ptr->py==miny+(y-1))
 							success=TRUE;
 						break;
 					}
-					if(func==2)
+					if(func==FILL_MAKEHOUSE)
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_DIRT;
-					else
+					else if(func==FILL_BUILD)
 						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_PERM_EXTRA;
 					break;
 			}
@@ -2347,7 +2388,7 @@ void wild_add_uhouse(house_type *h_ptr){
  			c_ptr->feat=FEAT_PERM_EXTRA;
 		}
 	}
-	fill_house(h_ptr, 0, NULL);
+	fill_house(h_ptr, FILL_BUILD, NULL);
 	if(h_ptr->flags&HF_MOAT){
 		/* Draw a moat around our house */
 		/* It is already valid at this point */
@@ -2360,13 +2401,14 @@ void wild_add_uhouse(house_type *h_ptr){
 	c_ptr->special.ptr=h_ptr->dna;
 }
 
-static void wild_add_uhouses(struct worldpos *wpos){
+void wild_add_uhouses(struct worldpos *wpos){
 	int i;
 	for(i=0;i<num_houses;i++){
 		if(inarea(&houses[i].wpos,wpos) && !(houses[i].flags&HF_STOCK)){
 			wild_add_uhouse(&houses[i]);
 		}
 	}
+	load_guildhalls(wpos);
 }
 
 static void wilderness_gen_hack(struct worldpos *wpos)

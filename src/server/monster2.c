@@ -1911,7 +1911,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Hack -- no creation on glyph of warding */
 	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
 
-	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 3 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
+	if(!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10 && zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
 #if 0
 	/* should be sorted - look above */

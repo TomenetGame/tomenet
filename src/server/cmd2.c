@@ -3413,7 +3413,7 @@ void destroy_house(int Ind, struct dna_type *dna){
 			}
 			/* quicker than copying back an array. */
 			msg_print(Ind,"\377DThe house crumbles away.");
-			fill_house(&houses[i], 2, NULL);
+			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
 			houses[i].flags|=HF_DELETED;
 			break;
 		}
@@ -3606,7 +3606,7 @@ void do_cmd_own(int Ind)
 		return;
 	}
 	
-	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
+	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<4))
 	{
 		msg_format(Ind, "Sorry this land is owned by the town.");
 		return;

@@ -2346,6 +2346,7 @@ static void new_wr_dungeons(){
 		for(x=0;x<MAX_WILD_X;x++){
 			cwpos.wx=x;
 			w_ptr=&wild_info[y][x];
+			save_guildhalls(&cwpos);
 			if(getcave(&cwpos) && players_on_depth(&cwpos)) wr_dungeon(&cwpos);
 			if(w_ptr->flags & WILD_F_DOWN){
 				struct dungeon_type *d_ptr=w_ptr->dungeon;

@@ -4496,7 +4496,7 @@ bool poly_build(int Ind, char *args){
 /* Do not commit! */
 		wpcopy(&houses[num_houses].wpos, &p_ptr->wpos);
 		houses[num_houses].dna=curr->dna;
-		if(curr->cvert>=8 && fill_house(&houses[num_houses], 2, NULL)){
+		if(curr->cvert>=8 && fill_house(&houses[num_houses], FILL_MAKEHOUSE, NULL)){
 			int area=(curr->maxx-curr->minx)*(curr->maxy-curr->miny);
 			wild_add_uhouse(&houses[num_houses]);
 			curr->dna->price=area*area*400;

@@ -2346,8 +2346,22 @@ static bool stale_level(struct worldpos *wpos, int grace){
 		}
 	}
 	else{
-		if(now-wild_info[wpos->wy][wpos->wx].lastused > grace)
+		if(now-wild_info[wpos->wy][wpos->wx].lastused > grace){
+			/* Never allow dealloc where there are houses */
+			/* For now at least */
+#if 0
+			int i;
+			
+			for(i=0;i<num_houses;i++){
+				if(inarea(wpos, &houses[i].wpos)){
+					if(!(houses[i].flags&HF_DELETED))
+						return(FALSE);
+				}
+			}
+#endif
+
 			return(TRUE);
+		}
 	}
 	return(FALSE);
 }
@@ -2499,7 +2513,7 @@ void cheeze(object_type *o_ptr){
 	/* check for inside a house */
 	for(j=0;j<num_houses;j++){
 		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
-			if(fill_house(&houses[j], 4, o_ptr)){
+			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
 				if(houses[j].dna->owner_type==OT_PLAYER){
 					if(o_ptr->owner != houses[j].dna->owner){
 						if(o_ptr->level > lookup_player_level(houses[j].dna->owner))
