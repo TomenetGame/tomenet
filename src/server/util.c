@@ -1937,6 +1937,7 @@ static void do_show_monster_killed_letter(int Ind, char *letter)
 	Send_special_other(Ind);
 }
 
+
 /* Tell the player of her/his houses.	- Jir - */
 static void do_show_houses(int Ind)
 {
@@ -1981,7 +1982,7 @@ static void do_show_houses(int Ind)
 		shown = TRUE;
 		total++;
 
-		fprintf(fff, "%d)   [%d,%d] in %s", total,
+		fprintf(fff, "%3d)   [%d,%d] in %s", total,
 				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
 				wpos_format(&h_ptr->wpos));
 //				h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);

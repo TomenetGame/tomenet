@@ -5,8 +5,8 @@ If you want a help for game-play itself, try '?' key in the game instead.
 
 'Slash-commands' are set of expanded commands available via chat-command(':').
 
-Commands: afk bed bug cast dis dress ex feel help ignore less me news pkill
-          quest rec ref rfe shout tag target untag ver
+Commands: afk at bed bug cast dis dress ex feel help house ignore less me
+          monster news pkill quest rec ref rfe shout tag target untag ver
 
 Note:
 (parameter) cannot be omitted.
