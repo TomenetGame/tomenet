@@ -365,21 +365,21 @@ int main(int argc, char **argv)
 #endif
 	}
 
-#ifdef USE_CAP
-	/* Attempt to use the "main-cap.c" support */
-	if (!done)
-	{
-		if (0 == init_cap()) done = TRUE;
-		if (done) ANGBAND_SYS = "cap";
-	}
-#endif
-
 #ifdef USE_GCU
 	/* Attempt to use the "main-gcu.c" support */
 	if (!done)
 	{
 		if (0 == init_gcu()) done = TRUE;
 		if (done) ANGBAND_SYS = "gcu";
+	}
+#endif
+
+#ifdef USE_CAP
+	/* Attempt to use the "main-cap.c" support */
+	if (!done)
+	{
+		if (0 == init_cap()) done = TRUE;
+		if (done) ANGBAND_SYS = "cap";
 	}
 #endif
 
