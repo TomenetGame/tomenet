@@ -1,8 +1,8 @@
 .=========================+==--.
-| TomeNET Beginners Guide |
+|		TomeNET Guide	  |
 +=========================+-
 | Latest update: 7. June 2003; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.0.0, http://www.tomenet.net/
+| for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
 | Please send in suggestions, criticism or comments to mail@c-blue.de.
@@ -2100,6 +2100,9 @@ Detonations		Better not drink it.
 
 Scrolls
 --
+Blessing/Holy Chant/Holy Prayer
+				Increases your AC by 10/20/30, Holy prayer also increases your
+				to-hit bonus. (Temporarily)
 Rumour			Entertains the audience.
 Life			Resurrects another player's ghost if standing on a directly
 				adjacent field to you when you read it. Does not work inside
@@ -2123,6 +2126,7 @@ Remove Curse	Breaks lesser curses on items, allowing you to unwear or
 Recharging		Recharges a magical rod/wand/staff.
 Rune of Protection	Creates a warding glyph on the floor that stops monsters
 					from crossing the field or summoning on it.
+Protection from evil	Repels evil creatures that try to attack you.
 *Destruction*	Causes a local earthquake, nearly completely wiping the area
 				of monsters and objects. Can save you!
 Genocide		Removes all monsters of a certain kind from the current level.
@@ -2284,9 +2288,10 @@ Note that not every skill is available to every profession (class).
 								Increases your chance to score critical hits.
 								Also lets you create ammunition from bones,
 								skeletons and rubble on the floor (press 'm').
-								(You can't pick up rubble, stand next to it!)
+								(You can't pick up rubble; if you want to make
+								ammunition from it, just stand next to it!)
 								50 in archery grants +1 'extra might',
-								increasing your launcher's multiplied by 1.
+								increasing your launcher's multiplier by 1.
 								Lets you pseudo-id ranged weapons and
 								ammunition easier if raised over 10.
 		.Sling-mastery			Imcreases hit chance with slings.
@@ -3175,7 +3180,8 @@ Mind
 					item that you wish to teleport to the player's inventory.
 Tempo
 	Magelock		Magically locks a door.
-					Lv30: Creates a Glyph Of Warding on the ground.
+					Lv30: Creates a Glyph Of Warding on the ground that stops
+						monsters from crossing the field or summoning on it.
 	Slow Monster	Slows down a monster.
 					Lv20: Affects a zone.
 	Essence of Speed
