@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-691
+692
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -34,7 +34,7 @@ You won't want to find Raal's Tome of Destruction!
 You won't want to find Raal's Tome of Destruction, unless you are a mage.
 A Wand of Death is useless against monsters that are tougher than you.
 A Wand of Death is of little use against foes that are dead already.
-Try taking off your armor before fighting a Gelatinous Cube!
+Try taking off your armour before fighting a Gelatinous Cube!
 They say that only one sword can score *CRITICAL* hits.
 This rumor is not true.
 If you can fall like a feather, you need not care about gravity.
@@ -49,7 +49,7 @@ It's a bad idea to wield a Longsword (4d5).
 It's useless to bash monsters with bows - but there's one notable exception...
 Actually, Slime Mold Juice is not completely useless.
 Help me! I'm being held captive in a Vault at 2850'!
-Ever tried inscribing your armor {{erodeproof}?
+Ever tried inscribing your armour {{erodeproof}?
 Using a Morningstar in the evening has no effect.
 Why are you wasting time reading fortunes?
 There is a horrible, ghastly fate awaiting you... at 2700'!
@@ -316,7 +316,7 @@ Ever seen a God or Goddess player?
 {B[Evileye] hehe
 {B[Jir] {y:)
 {B[Mihi] May the source be with you! *^-')b
-[Server Admin] Server Shutdown (right now)
+{b[C. Blue] {BDid you download the latest scripts!?
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
 They say that there once was a man who fought 2 Morgothes at the same time.
@@ -699,5 +699,5 @@ They say that Hobbits have big hairy feet suitable for barefoot walking.
 They say that some skills are useful even from the elements.
 They say that Trolls can make a wizard that is not good at magic.
 They say that how can a snake fight with sword?
-They say that 
+You can check out any time you like, but you can never leave
 They say that 

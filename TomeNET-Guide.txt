@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. Nov 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. Nov 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -67,6 +67,7 @@ Contents
     (5.11)  Armour Class vs monster attacks
     (5.12)  Monster attack brands and effects
     (5.13)  Earthquakes
+    (5.14)  Curses
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -1692,12 +1693,10 @@ list, the minimum required character level to enter is usually 0.
 
 (*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
 acquired by beating Morgoth, The Lord of Darkness.
-Each floor in the Nether Realm gives a +20% bonus to experience from monster
+Each floor in the Nether Realm gives a +2% bonus to experience from monster
 kills.
-So fighting at 250ft would give 5*20% = +100% bonus, hence doubling the
-experience you gain. The amount of experience is already very high even
-without the depth-bonus, since creatures in the Nether Realm are of a very
-high level.
+The amount of experience is already very high even without the depth-bonus,
+since creatures in the Nether Realm are of a very high level.
 
 
 Shops:
@@ -2615,25 +2614,9 @@ FUEL_LITE ('It provides light radius when fueled')
 (NO_SEED 
         An ego item that is never created randomly (in terms of abilities
         or power).)
-CURSED  If you wield _any_ cursed item, you'll need to break the curse in
-        order to take it off again. Shops won't buy cursed items.
-        You need a Scroll Of Remove Curse or the according spell to uncurse
-        a CURSED item, or you can try enchanting one of its base boni
-        (tohit/todam/toac) above 0, assumed it HAS those.
-AUTO_CURSE
-        This item will re-curse itself if you equip it or pick it up or
-        take it off even. So make sure to drop an equipped auto-cursed item
-        to the ground after uncursing it, instead of just taking it off.
-HEAVY_CURSE
-        You need a Scroll Of *Remove Curse* or the according spell to break
-        this curse, or you can try enchanting one of its base boni
-        (tohit/todam/toac) above 0, assumed it HAS those.
-CURSE_NO_DROP
-        You cannot even drop this item while it's cursed.
-TY_CURSE
-        No effect, except for lowering the items value.
-DG_CURSE
-        No effect, except for greatly lowering the items value.
+CURSED, HEAVY_CURSE, PERMA_CURSE, AUTO_CURSE,
+CURSE_NO_DROP, TY_CURSE, DG_CURSE
+        See (5.14) Curses.
 
 
 
@@ -2739,6 +2722,8 @@ Protection from evil    Repels evil creatures that try to attack you.
                         See the prayer 'Protection from evil' in (6.8)!
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects. Can save you!
+                This magic will fail in towns or town-surrounding area within
+                a radius of 3 worldmap sectors.
 Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
                 The race will be determined by the monster which stands
@@ -2780,7 +2765,7 @@ Parchments      These contain informations about the game, they won't
 Wands/Rods/Staves
 --
 Genocide        See 'Scrolls'.
-Destruction     See 'Scrolls'.
+*Destruction*   See 'Scrolls'.
 Curing          Satisfies hunger, removes blindness/confusion/stun,
                 cures poison/cuts.
 Probing         Tells you hit points, melee attacks and speed of monsters in
@@ -3013,6 +2998,49 @@ Earthquakes deals 300 damage if you cannot evade the falling rocks and
 shifting ground. Depending on the number of unchanged adjacent fields to the
 player there is a chance to evade and take much less damage. Earthquakes can
 also stun you.
+
+
+
+(5.14) Curses
+-------------
+Several items you find will be {cursed}!
+Cursed items usually have bad effects that outweigh or dominate their useful
+abilities, and you cannot take them off once you equipped them, as long as
+the curse isn't broken. Cursed artifacts and ego items are pseudo-id'ed as
+{terrible}. Shops won't buy cursed items, they might buy the item after the
+curse is broken, however.
+If you equip an unidentified item and it carries a curse your character will
+notice 'Oops, it feels deadly cold!'.
+
+There are five different types of curses:
+CURSED          can be broken by a regular 'remove curse'.
+                Item cannot be taken off until the curse is broken.
+HEAVY_CURSE     requires a strong '*remove curse*' to be broken.
+                Item cannot be taken off until the curse is broken.
+PERMA_CURSE     This curse can never be broken.
+                Item can never be taken off again!
+CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
+                curse isn't broken. CURSE_NO_DROP occurs together with
+                CURSED or HEAVY_CURSE or PERMA_CURSE.
+AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
+                If the curse is broken, AUTO_CURSE items will automatically
+                recurse themselves as soon as the item is equipped, taken off,
+                or picked up. To get rid of an AUTO_CURSEd item that you don't
+                need anymore (d)rop it to the ground after the curse has been
+                broken. If you had the item equipped, don't take it off but
+                (d)rop it to the ground right from your equipment! Otherwise
+                it will recurse itself.
+TY_CURSE        No effect, except for lowering the items value by 15000 Au.
+                ("It carries an ancient foul curse.")
+DG_CURSE        No effect, except for greatly lowering the items value by
+                25000 Au.
+                ("It carries an ancient morgothian curse.")
+
+If 'CURSED' and 'HEAVY_CURSE' occurs on a weapon or armour piece, the curses
+can alternatively be broken by enchanting the item's stats above +0.
+Each enchantment of any of their stats (to-hit, to-dam, to-ac) above +0 has
+a certain chance to break the curse. This can often be cheaper than buying a
+*remove curse* scroll for HEAVY_CURSE items.
 
 
 
@@ -3765,6 +3793,18 @@ storm your head, leaving you with mad visions for a while..
 
 (6.7) Mimic details, polymorph rings
 ------------------------------------
+If a mimic polymorphs into a certain monster form, abilities and stats will be
+averaged between the normal ('@') body and the form. In most cases if the form
+is performing worse than @-form in a certain ability, the @-form will dominate
+and the ability will be only slightly worse than normal.
+The averaging is done because the mimic with all his equipment polymorphs into
+the target form. It's not like the polymorphing is done first and afterwards
+armour, weapon or jewelry is equipped.
+So wearing a ring of protection for example won't plainly add to the mimic's
+AC but just contribute to the @-form AC which is then averaged in the process
+of determining the final form's AC.
+How exactly stats are calculated is written below for each case.
+
 To find out the special abilities of a monster form, consult the file
 /lib/game/r_info.txt in your tomenet directory, and look up the monster.
 It's abilities will transform to the mimic's body as follows:
@@ -3868,7 +3908,7 @@ F: flag list
     The flags are translated to mimic abilities as follows:
     RES_xxx     Gives the mimic the specific resistance.
     IM_xxx      Gives the mimic the specific immunity! If a form offers
-                more than 2 immunities, 2 will be picked randomly, the
+                more than 1 immunity, one will be picked randomly, the
                 remaining ones will turn into resistances. Potions of
                 self-knowledge are helpful here.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
