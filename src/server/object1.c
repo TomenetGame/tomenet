@@ -434,6 +434,7 @@ static bool object_easy_know(int i)
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
+		case TV_PARCHEMENT:
 		case TV_ROD:
 				case TV_POTION2:
                 case TV_ROD_MAIN:

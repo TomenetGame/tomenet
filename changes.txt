@@ -1131,6 +1131,7 @@ To find the latest change quickly, search ==== :)
 - bow/xbow/sling/boomerang skills can prevent ammos from breaking.
 - MKEY_PRAY is valid now.
 [B] potion of learning.
+[B] MHIT +2632, MDAM +1318
 
 
 

@@ -1857,6 +1857,9 @@ static void calc_bonuses(int Ind)
 	/* Reset the "ammo" tval */
 	p_ptr->tval_ammo = 0;
 
+	/* Reset skill bonuses */
+	p_ptr->to_h_melee = 0;
+	p_ptr->to_d_melee = 0;
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
