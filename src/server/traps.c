@@ -434,8 +434,8 @@ bool do_player_trap_call_out(int Ind)
       /* we do not change the sublevel! */
       ident=TRUE;
       update_mon(h_index, TRUE);
-      monster_desc(Ind, m_name, m_ptr, 0x08);
-      msg_format("You hear a rapid-shifting wail, and %s appears!",m_name);
+      monster_desc(Ind, m_name, h_index, 0x08);
+      msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
       break;
    }
    return (ident);
@@ -606,7 +606,7 @@ static bool player_handle_trap_of_walls(void)
                      }
                   }
                   /* Describe the monster */
-                  monster_desc(m_name, m_ptr, 0);
+                  monster_desc(m_name, cv_ptr->m_idx, 0);
                   /* Scream in pain */
                   msg_format("%^s wails out in pain!", m_name);
                   /* Monster is certainly awake */
@@ -833,8 +833,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	if((zcave=getcave(&p_ptr->wpos)))
 	{
 		c_ptr=&zcave[y][x];
-		tt_ptr = c_ptr->special.ptr;
-		trap=tt_ptr->t_idx;
+
+		if (item < 0)
+		{
+			tt_ptr = c_ptr->special.ptr;
+			trap=tt_ptr->t_idx;
+		}
 	}
 
 
@@ -1499,6 +1503,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 acquirement(&p_ptr->wpos, y, x, 1, TRUE);
 //			 acquirement(&p_ptr->wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
 
+			 delete_trap_idx(tt_ptr);
 			 /* if we're on a floor or on a door, place a new trap */
 			 if ((item == -1) || (item == -2))
 			 {
@@ -1511,7 +1516,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			 }
 			 else
 			 {
-				 /* re-trap the chest */
+				 /* re-trap the chest (??) */
 				 place_trap(&p_ptr->wpos, y , x);
 			 }
 			 msg_print(Ind, "You hear a noise, and then it's echo.");
@@ -1542,7 +1547,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
                   inven_item_optimize(Ind, i);
                   p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 //                  (void)floor_carry(cy, cx, &tmp_obj);
-                  drop_near_severe(Ind, &tmp_obj, 0, p_ptr->wpos, cy, cx);
+                  drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, cy, cx);
                   if (!message)
                   {
                      msg_print(Ind, "You feel light-footed.");
@@ -2119,9 +2124,15 @@ void place_trap(struct worldpos *wpos, int y, int x)
 
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
-	/* Require empty, clean, floor grid */
-	if (!cave_naked_bold(zcave, y, x)) return;
 	c_ptr = &zcave[y][x];
+
+	/* Require empty, clean, floor grid */
+	if (!cave_floor_grid(c_ptr) &&
+		((c_ptr->feat < FEAT_DOOR_HEAD) ||
+		(c_ptr->feat > FEAT_DOOR_TAIL))) return;
+
+//	if (!cave_naked_bold(zcave, y, x)) return;
+//	if (!cave_floor_bold(zcave, y, x)) return;
 
 	/* NEVER FORGET TO EXCLUDE HOUSE-DOORS! */
 
@@ -2141,7 +2152,10 @@ void place_trap(struct worldpos *wpos, int y, int x)
 		flags = FTRAP_DOOR;
 	else flags = FTRAP_FLOOR;
 #endif	// 0
-	flags = FTRAP_FLOOR;
+	if ((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+		(c_ptr->feat <= FEAT_DOOR_TAIL))
+		flags = FTRAP_DOOR;
+	else flags = FTRAP_FLOOR;
 
 	/* try 100 times */
 	while ((more) && (cnt++)<100)
@@ -3238,7 +3252,7 @@ bool mon_hit_trap(int m_idx)
 		if (m_ptr->ml) 
 		{
 			/* Get the name */
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(m_name, m_idx, 0);
 			
 		        /* Tell the player about it */
 #if 0 /* DGDGDGDG */
@@ -3256,7 +3270,7 @@ bool mon_hit_trap(int m_idx)
 		if (m_ptr->ml) 
 		{
 			/* Get the name */
-			monster_desc(m_name, m_ptr, 0);
+			monster_desc(m_name, m_idx, 0);
 			
 			/* Print a message */
 			msg_format("%^s sets off a trap!", m_name);
@@ -3320,7 +3334,7 @@ bool mon_hit_trap(int m_idx)
                                         	if (m_ptr->ml)
                                         	{
                                         		/* describe the monster (again, just in case :-) */
-                                        		monster_desc(m_name, m_ptr, 0);
+                                        		monster_desc(m_name, m_idx, 0);
                                         		
         						/* Print a message */
 							msg_format("%^s is hit by a missile.", m_name);           		
@@ -3395,7 +3409,7 @@ bool mon_hit_trap(int m_idx)
                                        	if (m_ptr->ml)
                                        	{
                                        		/* describe the monster (again, just in case :-) */
-                                       		monster_desc(m_name, m_ptr, 0);
+                                       		monster_desc(m_name, m_idx, 0);
                                        		
         					/* Print a message */
 						msg_format("%^s is hit by fumes.", m_name);
@@ -3437,7 +3451,7 @@ bool mon_hit_trap(int m_idx)
                                        	if (m_ptr->ml)
                                        	{
                                        		/* describe the monster (again, just in case :-) */
-                                       		monster_desc(m_name, m_ptr, 0);
+                                       		monster_desc(m_name, m_idx, 0);
                                        		
         					/* Print a message */
 						msg_format("%^s activates a spell!", m_name);
@@ -3485,7 +3499,7 @@ bool mon_hit_trap(int m_idx)
                                        	if (m_ptr->ml)
                                        	{
                                        		/* describe the monster (again, just in case :-) */
-                                       		monster_desc(m_name, m_ptr, 0);
+                                       		monster_desc(m_name, m_idx, 0);
                                        		
         					/* Print a message */
 						msg_format("%^s is hit by some magic.", m_name);

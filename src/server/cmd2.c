@@ -893,6 +893,9 @@ void do_cmd_open(int Ind, int dir)
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
 
+				/* Set off trap */
+				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+
 				/* Experience */
 				gain_exp(Ind, 1);
 
@@ -1085,6 +1088,9 @@ void do_cmd_open(int Ind, int dir)
 		/* Closed door */
 		else
 		{
+			/* Set off trap */
+			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+
 			/* Take half a turn */
 #ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1251,6 +1257,9 @@ void do_cmd_close(int Ind, int dir)
 		/* Close the door */
 		else
 		{
+			/* Set off trap */
+			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+
 			/* Take a turn */
 #ifdef NEW_DUNGEON
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1683,6 +1692,9 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
+
+				/* Set off trap */
+				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
 
 				/* Hack -- Search */
 				search(Ind);
@@ -2123,6 +2135,9 @@ void do_cmd_bash(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
+
+				/* Set off trap */
+				if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
 
 				/* Break down the door */
 				if (rand_int(100) < 50)

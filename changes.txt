@@ -463,3 +463,5 @@ Change list for PernMangband
 - Fixed a grave bug concerning memory in traps.c.
 - Temporary stats drain(mainly for traps).
 
+18/12/2001 (Jir)
+- Bugfixes on traps.

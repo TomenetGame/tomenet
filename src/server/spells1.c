@@ -3073,7 +3073,7 @@ static bool project_m(int Ind, int who, int r, int Depth, int y, int x, int dam,
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
 
         /* Never hurt golem */
-        if (who < 0)
+        if (who < 0 && who != -999)
         {
                 if (Players[-who]->id == m_ptr->owner) return (FALSE);
         }

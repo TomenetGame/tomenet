@@ -790,4 +790,4 @@ F:FLOOR | CHEST | DOOR
 N:170:Acquirement Trap
 I:1:40:5:5:18:0d0:v
 D:Woh !
-F:FLOOR | DOOR
+F:FLOOR | DOOR | CHANGE

@@ -3188,7 +3188,8 @@ void player_talk_aux(int Ind, cptr message)
 					invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
 
 					/* Wish arts out! */
-					if (token[3])
+//					if (token[3])
+					if (tk > 2)
 					{
 						o_ptr->number = 1;
 						o_ptr->name1 = atoi(token[3]);

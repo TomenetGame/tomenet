@@ -631,7 +631,7 @@ static cptr t_info_flags[] =
    "CHEST",
    "DOOR",
    "FLOOR",
-   "XXX4",
+   "CHANGE",	// "XXX4",
    "XXX5",
    "XXX6",
    "XXX7",

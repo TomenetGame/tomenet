@@ -1,5 +1,5 @@
 N:*:Default
-492
+493
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -485,10 +485,11 @@ They say that potion of blindness can give greater boost than that of speed.
 They say that potion of cure critical wound has wide uses.
 Foudinni says: After you.
 They say that traps so nasty, there's still one notable exception..
-Beware! Someone've just put traps under your feet!
+Watch out! Someone've just put traps under your feet!
 They say that there's a trap you can never identify, and you do want to!
 They say that you should keep Morgul sword to slay that fearsome Frodo.
 They say that clerics have special ability to identify cursed items.
 Ever *destroy*ed the Greater Vault?
 They say that some dungeons have only one-way traffic.
 They say that some dungeons have no exit.
+Dance a tap with Witan boots on!
