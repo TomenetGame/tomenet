@@ -2358,7 +2358,7 @@ void store_purchase(int Ind, int item, int amt)
 
 	if (amt < 1)
 	{
-		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.", p_ptr->name);
+		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.", amt, p_ptr->name);
 		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
@@ -3986,7 +3986,7 @@ void home_purchase(int Ind, int item, int amt)
 
 	if (amt < 1)
 	{
-		s_printf("$INTRUSION$ Bad amount %d! (Home) Bought by %s.", p_ptr->name);
+		s_printf("$INTRUSION$ Bad amount %d! (Home) Bought by %s.", amt, p_ptr->name);
 		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
