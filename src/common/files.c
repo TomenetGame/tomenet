@@ -6,12 +6,6 @@
  * not need to worry about this.
  */
 
-/*
- * TODO: i shall implement a linked list for file
- * transfers, because an array is totally unsuitable
- * due to the dynamic nature.
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -114,11 +108,11 @@ int local_file_err(int ind, unsigned short fnum){
 int local_file_send(int ind, char *fname){
 	struct ft_data *c_fd;
 	int fd;
-	char buf[1024];
+	char buf[256];
 
 	c_fd=getfile(ind, 0);
 	if(c_fd==(struct ft_data*)NULL) return(0);
-	path_build(buf, 1024, ANGBAND_DIR, fname);
+	path_build(buf, 256, ANGBAND_DIR, fname);
 	fd=open(buf, O_RDONLY);
 	if(fd==-1) return(0);
 	c_fd->fd=fd;
@@ -149,7 +143,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	struct ft_data *c_fd;
 	int fd;
 	unsigned long lsum;
-	char buf[1024];
+	char buf[256];
 
 	c_fd=getfile(ind, fnum);
 	if(c_fd==(struct ft_data*)NULL) return(0);
@@ -158,7 +152,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 		return(0);
 	}
 	if(lsum!=sum){
-		path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
+		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
 		fd=open(buf, O_RDONLY);
 		if(fd==-1){
 			remove_ft(c_fd);
@@ -314,9 +308,9 @@ int local_file_check(char *fname, unsigned long *sum){
 	int size=4096;
 	unsigned long tbytes=0;
 	unsigned long pos, r;
-	char buf[1024];
+	char buf[256];
 
-	path_build(buf, 1024, ANGBAND_DIR, fname);
+	path_build(buf, 256, ANGBAND_DIR, fname);
 
 	fp=fopen(buf, "r");
 	if(fp==(FILE*)NULL){
