@@ -337,13 +337,13 @@ TOLUA = server/tolua
 # below.
 #
 
-install: date mangclient mangconsole mangband
-	-mv ../mangclient ../mangclient.old
+install: date tomenet mangconsole tomenet.server
+	-mv ../tomenet ../tomenet.old
 	-mv ../mangband ../mangband.old
 	-mv ../mangconsole ../mangconsole.old
-	cp mangclient ..
+	cp tomenet ..
 	cp mangconsole ..
-	cp mangband ..
+	cp tomenet.server ..
 
 mini_install: install
 
@@ -354,7 +354,7 @@ date:
 # Build the "MAngband" server
 #
 
-mangband: $(SERV_OBJS) $(TOLUA)
+tomenet.server: $(SERV_OBJS) $(TOLUA)
 	$(CC) $(CFLAGS) -o mangband $(SERV_OBJS) $(LDFLAGS) $(LIBS)
 
 
@@ -362,7 +362,7 @@ mangband: $(SERV_OBJS) $(TOLUA)
 # Build the "MAngband" client
 #
 
-mangclient: $(CLI_OBJS)
+tomenet: $(CLI_OBJS)
 	$(CC) $(CFLAGS) -o mangclient $(CLI_OBJS) $(LDFLAGS) $(LIBS)
 
 
