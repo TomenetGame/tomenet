@@ -27,7 +27,7 @@ HHEALING = add_spell
 
 HCURING = add_spell
 {
-	["name"] =      "Holy Curing",
+	["name"] =      "Curing",
 	["school"] =    {SCHOOL_HCURING},
 	["level"] =     15,
 	["mana"] =      10,
