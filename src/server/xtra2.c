@@ -5808,8 +5808,13 @@ bool master_build(int Ind, char * parms)
 	/* build a wall of type new_feat at the player's location */
 	if(c_ptr->special.type){
 		switch(c_ptr->special.type){
+			case CS_INSCRIP:
+				KILL(c_ptr->special.ptr, struct floor_insc);
+				c_ptr->special.type=CS_NONE;
+				break;
 			case KEY_DOOR:
 				KILL(c_ptr->special.ptr, struct key_type);
+				c_ptr->special.type=CS_NONE;
 				break;
 			case DNA_DOOR:	/* even DM must not kill houses like this */
 			default:
@@ -5833,6 +5838,14 @@ bool master_build(int Ind, char * parms)
 #endif
 		c_ptr->special.type=KEY_DOOR;
 		c_ptr->special.ptr=key;
+		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
+	}
+	if(c_ptr->feat==FEAT_SIGN){
+		struct floor_insc *sign;
+		MAKE(sign, struct floor_insc);
+		strcpy(sign->text, &parms[2]);
+		c_ptr->special.type=CS_INSCRIP;
+		c_ptr->special.ptr=sign;
 		p_ptr->master_move_hook=NULL;	/*buggers up if not*/
 	}
 

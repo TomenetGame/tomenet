@@ -3990,7 +3990,7 @@ void wiz_lite(int Ind)
 	byte            *w_ptr;
 
 #ifdef NEW_DUNGEON
-	struct worldpos *wpos;
+	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 #else

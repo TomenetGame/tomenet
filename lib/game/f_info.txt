@@ -186,6 +186,11 @@ G:*:g
 N:33:dark tree
 G:*:D
 
+# 0x22 --> signpost
+
+N:34:signpost
+G:#:y
+
 # 0x28 --> home door (strength 1)
 
 N:40:closed door

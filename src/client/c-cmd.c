@@ -1926,7 +1926,8 @@ void cmd_master_aux_build(void)
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) Dirt Mode");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Floor Mode");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Special Door Mode");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Build Mode Off");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Signpost");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(a) Build Mode Off");
 
 		/* Prompt */
 		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
@@ -1966,7 +1967,11 @@ void cmd_master_aux_build(void)
 				}
 				break;
 			/* Build mode off */
-			case '9': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
+			case '9':
+				buf[0] = FEAT_SIGN;
+				get_string("Sign:", &buf[2], 77);
+				break;
+			case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
 			/* Oops */
 			default : bell(); break;		
 		}

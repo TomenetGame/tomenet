@@ -2518,6 +2518,14 @@ void move_player(int Ind, int dir, int do_pickup)
 			{
 				msg_print(Ind, "There is a tree blocking your way.");
 			}
+			else if (c_ptr->feat == FEAT_SIGN)
+			{
+				if(c_ptr->special.type==CS_INSCRIP){
+					struct floor_insc *sptr=c_ptr->special.ptr;
+					msg_format(Ind, "A sign here reads: %s", sptr->text);
+				}
+				else msg_print(Ind, "A blank sign is here");
+			}
 
 			/* Wall (or secret door) */
 			else

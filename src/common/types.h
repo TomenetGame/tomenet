@@ -514,9 +514,11 @@ struct trap_type
 #if 1 /* Evileye - work in progress */
 
 /* Cave special types */
+#define CS_NONE 0
 #define DNA_DOOR 1
 #define KEY_DOOR 2
 #define CS_TRAPS 3 	// CS stands for Cave Special
+#define CS_INSCRIP 4	/* ok ;) i'll follow that from now */
 
 struct c_special{
 	unsigned char type;
@@ -1301,6 +1303,11 @@ struct dna_type{
 /* evileye - work in progress */
 struct key_type{
 	u16b id;		/* key pval */	
+};
+
+struct floor_insc{
+	char text[80];		/* that should be enough */
+	bool found;		/* we may want hidden inscription? */
 };
 
 

@@ -698,6 +698,8 @@
 #define FEAT_TREE	0x20
 #define FEAT_EVIL_TREE  0x21
 
+#define FEAT_SIGN	0x22
+
 /* Special "home doors" */
 #define FEAT_HOME_HEAD	0x28
 #define FEAT_HOME_TAIL	0x2F
