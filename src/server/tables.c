@@ -2327,52 +2327,67 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 650,
+                                '+', 600,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 550,
+                                '+', 500,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 550,
+                                '+', 500,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
-                                '+', 650,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_HDEFENSE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_HCURING,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_HSUPPORT,
+                                '+', 0,
+                                '+', 500,
                         },
                         {
                                 SKILL_MIMIC,
@@ -2782,45 +2797,20 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
-                        {
-                                SKILL_NATURE,
-                                '+', 1000,
-                                '+', 1700,
-                        },
-                        {
+/*                        {
                                 SKILL_DIVINATION,
                                 '+', 1000,
-                                '+', 1700,
-                        },
-                        {
-                                SKILL_MIND,
-                                '+', 0,
-                                '+', 1400,
-                        },
-                        {
-                                SKILL_META,
-                                '+', 0,
-                                '+', 1400,
+                                '+', 500,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
                                 '+', 900,
-                        },
+                        },,*/
                         {
-                                SKILL_FIRE,
+                                SKILL_META,
                                 '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_HOFFENSE,
@@ -3352,65 +3342,40 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 450,
                         },
-                        {
-                                SKILL_NATURE,
-                                '+', 1000,
-                                '+', 900,
-                        },
-                        {
+/*                        {
                                 SKILL_DIVINATION,
                                 '+', 1000,
                                 '+', 900,
                         },
                         {
-                                SKILL_MIND,
+                                SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 800,
-                        },
+                                '+', 700,
+                        },*/
                         {
                                 SKILL_META,
-                                '+', 0,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
                                 '+', 0,
                                 '+', 700,
                         },
                         {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_WATER,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '+', 350,
-                        },
-                        {
                                 SKILL_HOFFENSE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_HDEFENSE,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_HCURING,
                                 '+', 1000,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_HSUPPORT,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
 
                         {
@@ -3559,57 +3524,57 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 800,
+                                '+', 600,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 500,
+                                '+', 550,
                         },
 
                         {
