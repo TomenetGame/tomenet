@@ -198,7 +198,7 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 	}
 	return(TRUE);
 #endif
-	return(0);	/* temp... */
+	return(TRUE);	/* temp... */
 }
 
 void insc_load(c_special *cs_ptr){
