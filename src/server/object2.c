@@ -1160,6 +1160,11 @@ s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_IM_FIRE) total += 10000;
 	if (f2 & TR2_IM_COLD) total += 10000;
         if (f5 & TR5_SENS_FIRE) total -= 100;
+/* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
+        if (f6 & TR6_SENS_COLD) total -= 100;
+        if (f6 & TR6_SENS_ACID) total -= 100;
+        if (f6 & TR6_SENS_ELEC) total -= 100;
+        if (f6 & TR6_SENS_POIS) total -= 100; */
 	if (f5 & TR5_REFLECT) total += 10000;
 	if (f2 & TR2_FREE_ACT) total += 4500;
 	if (f2 & TR2_HOLD_LIFE) total += 8500;
@@ -4916,6 +4921,34 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		}
 
 		case TV_DRAG_ARMOR:
+#if 0
+			if (o_ptr->sval == 6)
+			{
+				switch rand_int(4)
+				{
+				        case 0:
+					{
+						o_ptr->art_flags2 |= TR2_IM_FIRE;
+						break;
+					}
+					case 1:
+					{
+						o_ptr->art_flags2 |= TR2_IM_COLD;
+						break;
+					}
+					case 2:
+					{
+						o_ptr->art_flags2 |= TR2_IM_ELEC;
+						break;
+					}
+					case 3:
+					{
+						o_ptr->art_flags2 |= TR2_IM_ACID;
+						break;
+					}
+				}
+			}
+#endif
 		case TV_HARD_ARMOR:
 		case TV_SOFT_ARMOR:
 		case TV_SHIELD:

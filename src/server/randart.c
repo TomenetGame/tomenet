@@ -342,13 +342,13 @@ s32b artifact_power (artifact_type *a_ptr)
 //	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
 	if (a_ptr->esp & (ESP_ORC)) p += 1;
 	if (a_ptr->esp & (ESP_TROLL)) p += 1;
-	if (a_ptr->esp & (ESP_DRAGON)) p += 1;
+	if (a_ptr->esp & (ESP_DRAGON)) p += 2;
 	if (a_ptr->esp & (ESP_GIANT)) p += 1;
 	if (a_ptr->esp & (ESP_DEMON)) p += 1;
 	if (a_ptr->esp & (ESP_UNDEAD)) p += 2;
 	if (a_ptr->esp & (ESP_EVIL)) p += 8;
 	if (a_ptr->esp & (ESP_ANIMAL)) p += 1;
-	if (a_ptr->esp & (ESP_DRAGONRIDER)) p += 2;
+	if (a_ptr->esp & (ESP_DRAGONRIDER)) p += 1;
 	if (a_ptr->esp & (ESP_GOOD)) p += 2;
 	if (a_ptr->esp & (ESP_NONLIVING)) p += 2;
 	if (a_ptr->esp & (ESP_UNIQUE)) p += 8;

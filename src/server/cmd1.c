@@ -2184,6 +2184,7 @@ void touch_zap_player(int Ind, int m_idx)
 
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
+			if (p_ptr->sensible_elec) aura_damage = (aura_damage+2) * 2;
 
 			msg_print(Ind, "You get zapped!");
 			take_hit(Ind, aura_damage, aura_dam);
@@ -2611,8 +2612,12 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Find the result of moving */
-	if (((r_ptr->flags1 & RF1_RAND_50) && magik(50)) ||
-		((r_ptr->flags1 & RF1_RAND_25) && magik(25)))
+	/* -C. Blue- I toned dow monster RAND_50 and RAND_25 for a mimicrying player,
+	assuming that the mimic does not use the monster mind but its own to control
+	the body, on the other hand the body still carries reflexes from the monster ;)
+	- technical reason was to make more forms useful, especially RAND_50 forms */
+	if (((r_ptr->flags1 & RF1_RAND_50) && magik(20)) ||
+		((r_ptr->flags1 & RF1_RAND_25) && magik(8)))
 	{
 		do
 		{
@@ -3573,10 +3578,10 @@ static bool run_test(int Ind)
 	int                     row, col;
 	int                     i, max, inv;
 	int                     option, option2;
-	bool	aqua = p_ptr->fly || (get_skill(p_ptr, SKILL_SWIM) > 29) ||
+	bool	aqua = p_ptr->can_swim || p_ptr->fly || (get_skill(p_ptr, SKILL_SWIM) > 29) ||
 					((p_ptr->body_monster) && (
-					(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) ||
-					(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ));
+					(r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
+					(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
 
 	cave_type               *c_ptr;
 	byte                    *w_ptr;

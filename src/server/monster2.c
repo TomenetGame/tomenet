@@ -1826,6 +1826,7 @@ void update_mon(int m_idx, bool dist)
 				if ((p_ptr->telepathy & ESP_SPIDER) && (r_ptr->flags7 & RF7_SPIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_TROLL) && (r_ptr->flags3 & RF3_TROLL)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_DRAGON) && (r_ptr->flags3 & RF3_DRAGON)) see = TRUE;
+				if ((p_ptr->telepathy & ESP_DRAGON) && (r_ptr->flags3 & RF3_DRAGONRIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_GIANT) && (r_ptr->flags3 & RF3_GIANT)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_DEMON) && (r_ptr->flags3 & RF3_DEMON)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_UNDEAD) && (r_ptr->flags3 & RF3_UNDEAD)) see = TRUE;
@@ -2376,7 +2377,6 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Mega-Hack -- catch "failure" */
 	if (!c_ptr->m_idx) return (FALSE);
 
-
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
 
@@ -2519,6 +2519,10 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
 
+/*	if(m_ptr->hold_o_idx){
+		s_printf("AHA! monster created with an object in hand!\n");
+		m_ptr->hold_o_idx=0;
+	}*/
 
 	/* Success */
 	return (TRUE);
@@ -4303,6 +4307,8 @@ bool monster_lava(int r_idx)
 	if (!monster_dungeon(r_idx)) return FALSE;
 
 	if (((r_ptr->flags3 & RF3_IM_FIRE) ||
+	     (r_ptr->flags9 & RF9_RES_FIRE) ||
+	     (r_ptr->flags3 & RF3_RES_PLAS) ||
 	     (r_ptr->flags7 & RF7_CAN_FLY)) &&
 	    !(r_ptr->flags3 & RF3_AURA_COLD))
 		return TRUE;
@@ -4321,6 +4327,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 	{
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY) ||
+		    (r_ptr->flags9 & RF9_IM_WATER) ||
 		    (r_ptr->flags7 & RF7_CAN_SWIM))
 			return TRUE;
 		else
@@ -4345,6 +4352,8 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr)
 	    (feat == FEAT_DEEP_LAVA))
 	{
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
+		    (r_ptr->flags9 & RF9_RES_FIRE) ||
+		    (r_ptr->flags3 & RF3_RES_PLAS) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY))
 			return TRUE;
 		else

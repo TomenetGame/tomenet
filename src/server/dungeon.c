@@ -1991,7 +1991,7 @@ static bool process_player_end_aux(int Ind)
 		/* Drowning, but not ghosts */
 		if(c_ptr->feat==FEAT_DEEP_WATER)
 		{
-			if(!p_ptr->fly)
+			if((!p_ptr->fly) && (!p_ptr->can_swim))
 			{
 				/* Take damage */
 				if (!(p_ptr->body_monster) || (

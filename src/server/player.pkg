@@ -607,6 +607,9 @@ struct player_type
 	bool xtra_might;	/* Extra might bow */
 	bool impact;		/* Earthquake blows */
         bool auto_id; /* Pickup = Id */
+	bool no_cut;		/* for mimic forms */
+	bool can_swim;		/* for mimic forms mainly */
+	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
 	
 	s16b invis;		/* Invisibility */
 

@@ -3763,23 +3763,29 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	switch (e_ptr->type)
 	{
 		case GF_ACID:
-			if (r_ptr->flags3 & RF3_IM_ACID) dam /= 9;
+			if (r_ptr->flags3 & RF3_IM_ACID) dam = 0;
+			else if (r_ptr->flags9 & RF9_RES_ACID) dam /= 4;
 			break;
 		case GF_ELEC:
-			if (r_ptr->flags3 & RF3_IM_ELEC) dam /= 9;
+			if (r_ptr->flags3 & RF3_IM_ELEC) dam = 0;
+			else if (r_ptr->flags9 & RF9_RES_ELEC) dam /= 4;
 			break;
 		case GF_FIRE:
-			if (r_ptr->flags3 & RF3_IM_FIRE) dam /= 9;
+			if (r_ptr->flags3 & RF3_IM_FIRE) dam = 0;
+			else if (r_ptr->flags9 & RF9_RES_FIRE) dam /= 4;
 			break;
 		case GF_COLD:
-			if (r_ptr->flags3 & RF3_IM_COLD) dam /= 9;
+			if (r_ptr->flags3 & RF3_IM_COLD) dam = 0;
+			else if (r_ptr->flags9 & RF9_RES_COLD) dam /= 4;
 			break;
 		case GF_POIS:
-			if (r_ptr->flags3 & RF3_IM_POIS) dam /= 9;
+			if (r_ptr->flags3 & RF3_IM_POIS) dam = 0;
+			else if (r_ptr->flags9 & RF9_RES_POIS) dam /= 4;
 			break;
 		case GF_WATER:
-			if ((r_ptr->d_char == 'E') && prefix(name, "W")) dam = 0;
-			else if (r_ptr->flags7 && RF7_AQUATIC) dam /= 9;
+			if (r_ptr->flags9 & RF9_IM_WATER) dam = 0;
+			else if (r_ptr->flags7 & RF7_AQUATIC) dam /= 9;
+			else if (r_ptr->flags3 & RF3_RES_WATE) dam /= 4;
 			break;
 	}
 

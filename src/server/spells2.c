@@ -793,6 +793,10 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You can fly.\n");
 	}
+	if (p_ptr->can_swim)
+	{
+		fprintf(fff, "You can swim easily.\n");
+	}
 #endif	// 0
 	if (p_ptr->free_act)
 	{
@@ -886,6 +890,34 @@ void self_knowledge(int Ind)
 	if (p_ptr->reflect)
 	{
 		fprintf(fff, "You reflect arrows and bolts.\n");
+	}
+	if (p_ptr->no_cut)
+	{
+		fprintf(fff, "You cannot be cut.\n");
+	}
+	if (p_ptr->reduce_insanity > 0)
+	{
+		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
+	}
+	if (p_ptr->sensible_fire)
+	{
+		fprintf(fff, "You are susceptible to fire.\n");
+	}
+	if (p_ptr->sensible_cold)
+	{
+		fprintf(fff, "You are susceptible to cold.\n");
+	}
+	if (p_ptr->sensible_acid)
+	{
+		fprintf(fff, "You are susceptible to acid.\n");
+	}
+	if (p_ptr->sensible_elec)
+	{
+		fprintf(fff, "You are susceptible to electricity.\n");
+	}
+	if (p_ptr->sensible_pois)
+	{
+		fprintf(fff, "You are susceptible to poison.\n");
 	}
 	if (p_ptr->sh_fire)
 	{
@@ -1399,6 +1431,10 @@ void self_knowledge(int Ind)
 	{
 		info[i++] = "You can fly.";
 	}
+	if (p_ptr->can_swim)
+	{
+		info[i++] = "You can swim easily.";
+	}
 #endif	// 0
 	if (p_ptr->free_act)
 	{
@@ -1470,6 +1506,34 @@ void self_knowledge(int Ind)
 	if (p_ptr->reflect)
 	{
 		info[i++] = "You reflect arrows and bolts.";
+	}
+	if (p_ptr->no_cut)
+	{
+		info[i++] = "You cannot be cut.";
+	}
+	if (p_ptr->reduce_insanity > 0)
+	{
+		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
+	}
+	if (p_ptr->sensible_fire)
+	{
+		info[i++] = "You are susceptible to fire.";
+	}
+	if (p_ptr->sensible_cold)
+	{
+		info[i++] = "You are susceptible to cold.";
+	}
+	if (p_ptr->sensible_acid)
+	{
+		info[i++] = "You are susceptible to acid.";
+	}
+	if (p_ptr->sensible_elec)
+	{
+		info[i++] = "You are susceptible to electricity.";
+	}
+	if (p_ptr->sensible_pois)
+	{
+		info[i++] = "You are susceptible to poison.";
 	}
 	if (p_ptr->sh_fire)
 	{

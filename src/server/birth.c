@@ -1211,6 +1211,14 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 
+	/* Potions of Self-Knowledge for Mimics */
+	if (p_ptr->pclass == CLASS_MIMIC)
+	{
+		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SELF_KNOWLEDGE));
+		o_ptr->number = rand_range(2, 3);
+		o_ptr->discount = 100;
+		do_player_outfit();
+	}
 
 	/* Hack -- Give the player newbie guide Parchment */
 	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));

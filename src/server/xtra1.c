@@ -1119,6 +1119,7 @@ static void calc_hitpoints(int Ind)
 //	u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, mhp, Ind2 = 0;
+	u32b mHPLim, finalHP;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	  {
@@ -1144,7 +1145,11 @@ static void calc_hitpoints(int Ind)
 	  {
 	    int rhp = r_info[p_ptr->body_monster].hdice * r_info[p_ptr->body_monster].hside;
 
-	    mhp = (mhp * 6 / 10) + (rhp * 3 / 22);
+	    /* mhp = (mhp * 6 / 10) + (rhp * 3 / 22); -coUGH..OMG- (C. Blue)
+	    better get serious now: */
+	    mHPLim = (100000 / ((100000 / rhp) + 15));
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 2) + (mHPLim * 1)) / 3) : ((mHPLim + mhp) / 2);
+	    mhp = finalHP;
 	  }
 
 	/* Always have at least one hitpoint per level */
@@ -1304,9 +1309,13 @@ void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int d, i, j, toac = 0, body = 0;
+	int n, d, i, j, toac = 0, body = 0, immunities = 0, immunity[7], immrand[3];
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+	
+	immunity[1] = 0; immunity[2] = 0; immunity[3] = 0;
+	immunity[4] = 0; immunity[5] = 0; immunity[6] = 0;
+	immrand[1] = 0; immrand[2] = 0;
 
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
@@ -1317,10 +1326,12 @@ void calc_body_bonus(int Ind)
 		p_ptr->num_blow = 0;
 	}
 
-	d = 0;
+	d = 0; n = 0;
 	for (i = 0; i < 4; i++)
 	{
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+
+		if (j) n++;
 
 		/* Hack -- weaponless combat */
 		if (wepless && j)
@@ -1331,7 +1342,8 @@ void calc_body_bonus(int Ind)
 
 		d += j;
 	}
-	d /= 8;		// 7
+	if (n == 0) n = 1;
+	d = (d / 2) / n;	// 8 // 7
 	p_ptr->to_d += d;
 	p_ptr->dis_to_d += d;
 
@@ -1370,8 +1382,8 @@ void calc_body_bonus(int Ind)
 
 
 	//        if(r_ptr->flags1 & RF1_NEVER_MOVE) p_ptr->immovable = TRUE;
-	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 1;
-	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 1;
+	if(r_ptr->flags2 & RF2_STUPID) p_ptr->stat_add[A_INT] -= 2;
+	if(r_ptr->flags2 & RF2_SMART) p_ptr->stat_add[A_INT] += 2;
 	if(r_ptr->flags2 & RF2_INVISIBLE){
 		//		p_ptr->tim_invisibility = 100;
 		p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
@@ -1385,26 +1397,141 @@ void calc_body_bonus(int Ind)
 	if(r_ptr->flags2 & RF2_AURA_ELEC) p_ptr->sh_elec = TRUE;
 
 	if(r_ptr->flags3 & RF3_SUSCEP_FIRE) p_ptr->sensible_fire = TRUE;
-//	if(r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->sensible_cold = TRUE;
-	if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->resist_acid = TRUE;
-	if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->resist_elec = TRUE;
-	if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->resist_fire = TRUE;
-	if(r_ptr->flags3 & RF3_IM_POIS) p_ptr->resist_pois = TRUE;
-	if(r_ptr->flags3 & RF3_IM_COLD) p_ptr->resist_cold = TRUE;
+	if(r_ptr->flags3 & RF3_SUSCEP_COLD) p_ptr->sensible_cold = TRUE;
+/* Imho, there should be only suspec fire and cold since these two are opposites.
+Something which is fire-related will usually be suspectible to cold and vice versa.
+Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C. Blue) */
+	if(r_ptr->flags9 & RF9_SUSCEP_ELEC) p_ptr->sensible_elec = TRUE;
+	if(r_ptr->flags9 & RF9_SUSCEP_ACID) p_ptr->sensible_acid = TRUE;
+	if(r_ptr->flags9 & RF9_SUSCEP_POIS) p_ptr->sensible_pois = TRUE;
+
+	if(r_ptr->flags9 & RF9_RES_ACID) p_ptr->resist_acid = TRUE;
+	if(r_ptr->flags9 & RF9_RES_ELEC) p_ptr->resist_elec = TRUE;
+	if(r_ptr->flags9 & RF9_RES_FIRE) p_ptr->resist_fire = TRUE;
+	if(r_ptr->flags9 & RF9_RES_COLD) p_ptr->resist_cold = TRUE;
+	if(r_ptr->flags9 & RF9_RES_POIS) p_ptr->resist_pois = TRUE;
+
+	/* Grant a mimic a maximum of 2 immunities for now. All further immunities
+	are turned into resistances. Which ones is random. */
+	if(r_ptr->flags3 & RF3_IM_ACID)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 1;
+	    p_ptr->resist_acid = TRUE;
+	}
+	if(r_ptr->flags3 & RF3_IM_ELEC)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 2;
+	    p_ptr->resist_elec = TRUE;
+	}
+	if(r_ptr->flags3 & RF3_IM_FIRE)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 3;
+	    p_ptr->resist_fire = TRUE;
+	}
+	if(r_ptr->flags3 & RF3_IM_COLD)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 4;
+	    p_ptr->resist_cold = TRUE;
+	}
+	if(r_ptr->flags3 & RF3_IM_POIS)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 5;
+	    p_ptr->resist_pois = TRUE;
+	}
+	if(r_ptr->flags9 & RF9_IM_WATER)
+	{
+	    immunities += 1;
+	    immunity[immunities] = 6;
+	    p_ptr->resist_water = TRUE;
+	}
+
+	/* gain not more than 2 immunities at the same time from a form */
+	if(immunities < 3)
+	{
+		if(r_ptr->flags3 & RF3_IM_ACID) p_ptr->immune_acid = TRUE;
+		if(r_ptr->flags3 & RF3_IM_ELEC) p_ptr->immune_elec = TRUE;
+		if(r_ptr->flags3 & RF3_IM_FIRE) p_ptr->immune_fire = TRUE;
+		if(r_ptr->flags3 & RF3_IM_COLD) p_ptr->immune_cold = TRUE;
+		if(r_ptr->flags3 & RF3_IM_POIS) p_ptr->immune_poison = TRUE;
+		if(r_ptr->flags9 & RF9_IM_WATER) p_ptr->immune_water = TRUE;
+	}
+	else
+	{
+		immrand[1] = 1 + rand_int(immunities);
+		immrand[2] = 1 + rand_int(immunities - 1);
+		if(!(immrand[2] < immrand[1])) immrand[2]++;
+
+		if((immunity[immrand[1]] == 1) || (immunity[immrand[2]] == 1)) p_ptr->immune_acid = TRUE;
+		if((immunity[immrand[1]] == 2) || (immunity[immrand[2]] == 2)) p_ptr->immune_elec = TRUE;
+		if((immunity[immrand[1]] == 3) || (immunity[immrand[2]] == 3)) p_ptr->immune_fire = TRUE;
+		if((immunity[immrand[1]] == 4) || (immunity[immrand[2]] == 4)) p_ptr->immune_cold = TRUE;
+		if((immunity[immrand[1]] == 5) || (immunity[immrand[2]] == 5)) p_ptr->immune_poison = TRUE;
+		if((immunity[immrand[1]] == 6) || (immunity[immrand[2]] == 6)) p_ptr->immune_water = TRUE;
+	}
+	
+	if(r_ptr->flags9 & RF9_RES_LITE) p_ptr->resist_lite = TRUE;
+	if(r_ptr->flags9 & RF9_RES_DARK) p_ptr->resist_dark = TRUE;
+	if(r_ptr->flags9 & RF9_RES_BLIND) p_ptr->resist_blind = TRUE;
+	if(r_ptr->flags9 & RF9_RES_SOUND) p_ptr->resist_sound = TRUE;
+	if(r_ptr->flags9 & RF9_RES_SHARDS) p_ptr->resist_shard = TRUE;
+	if(r_ptr->flags9 & RF9_RES_CHAOS) p_ptr->resist_chaos = TRUE;
+	if(r_ptr->flags9 & RF9_RES_TIME) p_ptr->resist_time = TRUE;
+	if(r_ptr->flags9 & RF9_RES_MANA) p_ptr->resist_mana = TRUE;
+
 	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->anti_tele = TRUE;
+	if(r_ptr->flags3 & RF3_RES_PLAS)
+	{
+	    p_ptr->resist_fire = TRUE;
+	    /* p_ptr->oppose_fire = TRUE; */
+	}
+	if(r_ptr->flags3 & RF3_RES_WATE) p_ptr->resist_water = TRUE;
 	if(r_ptr->flags3 & RF3_RES_NETH) p_ptr->resist_neth = TRUE;
-//#define RF3_RES_WATE		0x00800000	/* Resist water */
 	if(r_ptr->flags3 & RF3_RES_NEXU) p_ptr->resist_nexus = TRUE;
 	if(r_ptr->flags3 & RF3_RES_DISE) p_ptr->resist_disen = TRUE;
 	if(r_ptr->flags3 & RF3_NO_FEAR) p_ptr->resist_fear = TRUE;
 	if(r_ptr->flags3 & RF3_NO_SLEEP) p_ptr->free_act = TRUE;
 	if(r_ptr->flags3 & RF3_NO_CONF) p_ptr->resist_conf = TRUE;
+	if(r_ptr->flags8 & RF8_NO_CUT) p_ptr->no_cut = TRUE;
 	if(r_ptr->flags7 & RF7_CAN_FLY) p_ptr->fly = TRUE;
+	if(r_ptr->flags7 & RF7_CAN_SWIM) p_ptr->can_swim = TRUE;
 	if(r_ptr->flags7 & RF7_DISBELIEVE)
 	{
 		p_ptr->antimagic += r_ptr->level / 2 + 20;
 		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
 	}
+
+	if(r_ptr->flags2 & RF2_WEIRD_MIND) p_ptr->reduce_insanity = 1;
+	if(r_ptr->flags2 & RF2_EMPTY_MIND) p_ptr->reduce_insanity = 2;
+
+	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
+	if(r_ptr->flags4 & RF4_BR_LITE) p_ptr->resist_lite = TRUE;
+	if(r_ptr->flags4 & RF4_BR_DARK) p_ptr->resist_dark = TRUE;
+	/* if(r_ptr->flags & RF__) p_ptr->resist_blind = TRUE; */
+	if(r_ptr->flags4 & RF4_BR_SOUN) p_ptr->resist_sound = TRUE;
+	if(r_ptr->flags4 & RF4_BR_SHAR) p_ptr->resist_shard = TRUE;
+	if(r_ptr->flags4 & RF4_BR_CHAO) p_ptr->resist_chaos = TRUE;
+	if(r_ptr->flags4 & RF4_BR_TIME) p_ptr->resist_time = TRUE;
+	if(r_ptr->flags4 & RF4_BR_MANA) p_ptr->resist_mana = TRUE;
+	if(r_ptr->flags4 & RF4_BR_PLAS)
+	{
+	    p_ptr->resist_fire = TRUE;
+	    /* p_ptr->oppose_fire = TRUE; */
+	}
+	/* if((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
+	if (r_ptr->flags7 & RF7_AQUATIC) p_ptr->resist_water = TRUE;
+	if((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_UNDEAD)) p_ptr->resist_neth = TRUE;
+	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
+	if(r_ptr->flags4 & RF4_BR_NEXU) p_ptr->resist_nexus = TRUE;
+	if(r_ptr->flags4 & RF4_BR_DISE) p_ptr->resist_disen = TRUE;
+
+	/* The following BR-to-RES will be needed even with all of above RES implemented: */
+	if(r_ptr->flags4 & RF4_BR_GRAV) p_ptr->feather_fall = TRUE;
+	if(r_ptr->flags4 & RF4_BR_INER) p_ptr->free_act = TRUE;
 
 	/* If not changed, spells didnt changed too, no need to send them */
 	if (!p_ptr->body_changed) return;
@@ -1726,12 +1853,17 @@ void calc_bonuses(int Ind)
 	p_ptr->sh_fire = FALSE;
 	p_ptr->sh_elec = FALSE;
 	p_ptr->fly = FALSE;
+	p_ptr->can_swim = FALSE;
         p_ptr->reduc_fire = 0;
         p_ptr->reduc_cold = 0;
         p_ptr->reduc_elec = 0;
         p_ptr->reduc_acid = 0;
 	p_ptr->anti_magic = FALSE;
 	p_ptr->auto_id = FALSE;
+/*	p_ptr->reflect = FALSE;*/
+	p_ptr->no_cut = FALSE;
+	p_ptr->reflect = FALSE;
+	p_ptr->reduce_insanity = 0;
 //		p_ptr->to_s = 0;
 		p_ptr->to_m = 0;
 		p_ptr->to_l = 0;
@@ -1750,6 +1882,10 @@ void calc_bonuses(int Ind)
 	p_ptr->dodge_chance = 0;
 
 	p_ptr->sensible_fire = FALSE;
+	p_ptr->sensible_cold = FALSE;
+	p_ptr->sensible_elec = FALSE;
+	p_ptr->sensible_acid = FALSE;
+	p_ptr->sensible_pois = FALSE;
 	p_ptr->resist_continuum = FALSE;
 
 	/* Start with a single blow per turn */
@@ -1838,7 +1974,11 @@ void calc_bonuses(int Ind)
 		else if (p_ptr->prace == RACE_GNOME) p_ptr->free_act = TRUE;
 
 		/* Dwarf */
-		else if (p_ptr->prace == RACE_DWARF) p_ptr->resist_blind = TRUE;
+		else if (p_ptr->prace == RACE_DWARF)
+		{
+			p_ptr->resist_blind = TRUE;
+			p_ptr->climb = TRUE;
+		}
 
 		/* Half-Orc */
 		else if (p_ptr->prace == RACE_HALF_ORC) p_ptr->resist_dark = TRUE;
@@ -1914,7 +2054,10 @@ void calc_bonuses(int Ind)
 		p_ptr->see_infra += 2;
 		p_ptr->resist_fear = TRUE;
 		p_ptr->resist_conf = TRUE;
-		p_ptr->resist_pois = TRUE;
+		p_ptr->immune_poison = TRUE;
+		p_ptr->resist_cold = TRUE;
+		p_ptr->no_cut = TRUE;
+		p_ptr->reduce_insanity = 2;
 //		p_ptr->invis += 5; */ /* No. */
 	}
 
@@ -2142,8 +2285,13 @@ void calc_bonuses(int Ind)
 		/* Affect disarming (factor of 20) */
 		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 10;
 
-		/* Hack -- Sensible fire */
+		/* Hack -- Sensible */
 		if (f5 & (TR5_SENS_FIRE)) p_ptr->sensible_fire = TRUE;
+/* not yet implemented
+		if (f5 & (TR6_SENS_COLD)) p_ptr->sensible_cold = TRUE;
+		if (f5 & (TR6_SENS_ELEC)) p_ptr->sensible_elec = TRUE;
+		if (f5 & (TR6_SENS_ACID)) p_ptr->sensible_acid = TRUE;
+		if (f5 & (TR6_SENS_POIS)) p_ptr->sensible_acid = TRUE; */
 
 		/* Hack -- cause earthquakes */
 		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
@@ -2157,7 +2305,10 @@ void calc_bonuses(int Ind)
 
 		/* Various flags */
 		if (f3 & TR3_AGGRAVATE) p_ptr->aggravate = TRUE;
-		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
+		if ((f3 & TR3_TELEPORT) &&
+		    ((!strcmp(quark_str(o_ptr->note), ".")) ||
+			(o_ptr->ident & ID_CURSED)))
+			    p_ptr->teleport = TRUE;
 		if (f3 & TR3_DRAIN_EXP) p_ptr->exp_drain = TRUE;
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
@@ -2175,6 +2326,7 @@ void calc_bonuses(int Ind)
 		if (f5 & TR5_IM_POISON) p_ptr->immune_poison = TRUE;
 		if (f5 & TR5_IM_WATER) p_ptr->immune_water = TRUE;
 		if (f5 & TR5_RES_WATER) p_ptr->resist_water = TRUE;
+		if (f5 & TR5_PASS_WATER) p_ptr->can_swim = TRUE;
 		if (f5 & TR5_REGEN_MANA) p_ptr->regen_mana = TRUE;
                 if (esp) p_ptr->telepathy |= esp;
 //		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
@@ -3211,6 +3363,15 @@ void calc_bonuses(int Ind)
 	/* resistance to fire cancel sensibility to fire */
 	if(p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
 		p_ptr->sensible_fire=FALSE;
+	/* resistance to cold cancel sensibility to cold */
+	if(p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
+		p_ptr->sensible_cold=FALSE;
+	/* resistance to electricity cancel sensibility to fire */
+	if(p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
+		p_ptr->sensible_elec=FALSE;
+	/* resistance to acid cancel sensibility to fire */
+	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
+		p_ptr->sensible_acid=FALSE;
 
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);

@@ -4420,6 +4420,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It allows you to fly.\n");
 	}
+	if (f5 & (TR5_PASS_WATER))
+	{
+		fprintf(fff, "It allows you to swim easily.\n");
+	}
 	if (f4 & (TR4_CLIMB))
 	{
 		fprintf(fff, "It allows you to climb high mountains.\n");
@@ -5754,6 +5758,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
         if (f4 & (TR4_FLY))
 	{
                 info[i++] = "It allows you to fly.";
+	}
+	if (f5 & (TR5_PASS_WATER))
+	{
+		info[i++] = "It allows you to swim easily.";
 	}
         if (f4 & (TR4_CLIMB))
 	{

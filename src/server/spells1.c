@@ -1250,6 +1250,9 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	/* Disturb */
 	disturb(Ind, 1, 0);
 
+	/* Having WEIRD_MIND or EMPTY_MIND form helps */
+	if(p_ptr->reduce_insanity == 1) damage = (damage * 3) / 4;
+	if(p_ptr->reduce_insanity == 2) damage = (damage * 2) / 4;
 
 	/* Hurt the player */
         p_ptr->csane -= damage;
@@ -1301,13 +1304,13 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	if (p_ptr->csane < p_ptr->msane / 8)
 	{
 		/* Message */
-		msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
+		msg_print(Ind, "\377rYou can hardly suppress screaming out insane laughters!");
 		msg_print(Ind, NULL);
 	}
 	else if (p_ptr->csane < p_ptr->msane / 4)
 	{
 		/* Message */
-		msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
+		msg_print(Ind, "\377yYou feel severly disturbed and paranoid..");
 		msg_print(Ind, NULL);
 	}
 	else if (p_ptr->csane < p_ptr->msane / 2)
@@ -1318,7 +1321,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	}
 
 #if 0
-	/* Hitpoint warning */
+	/* Sanity warning */
 	if (p_ptr->csane < warning)
 	{
 		/* Hack -- bell on first notice */
@@ -1879,6 +1882,7 @@ void acid_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->immune_acid || (dam <= 0)) return;
 
 	/* Resist the damage */
+	if (p_ptr->sensible_acid) dam = (dam + 2) * 2;
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
@@ -1915,6 +1919,7 @@ void elec_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->immune_elec || (dam <= 0)) return;
 
 	/* Resist the damage */
+	if (p_ptr->sensible_elec) dam = (dam + 2) * 2;
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
@@ -1984,6 +1989,7 @@ void cold_dam(int Ind, int dam, cptr kb_str)
 	if (p_ptr->immune_cold || (dam <= 0)) return;
 
 	/* Resist the damage */
+	if (p_ptr->sensible_cold) dam = (dam + 2) * 2;
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
@@ -3857,9 +3863,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ACID)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ACID;
+			}
+			else if (r_ptr->flags9 & RF9_RES_ACID)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_ACID;
+			}
+			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->flags9 |= RF9_SUSCEP_ACID;
 			}
 			break;
 		}
@@ -3870,9 +3888,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_ELEC)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
+			}
+			else if (r_ptr->flags9 & RF9_RES_ELEC)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_ELEC;
+			}
+			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->flags9 |= RF9_SUSCEP_ELEC;
 			}
 			break;
 		}
@@ -3883,9 +3913,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+			}
+			else if (r_ptr->flags9 & RF9_RES_FIRE)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_FIRE;
+			}
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
 			}
 			break;
 		}
@@ -3896,9 +3938,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_COLD)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
+			}
+			else if (r_ptr->flags9 & RF9_RES_COLD)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_COLD;
+			}
+			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
 			}
 			break;
 		}
@@ -3909,9 +3963,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags3 & RF3_IM_POIS)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+			}
+			else if (r_ptr->flags9 & RF9_RES_POIS)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+			}
+			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
 			}
 			break;
 		}
@@ -3979,7 +4045,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (seen) obvious = TRUE;
 			if (prefix(name, "Plasma") ||
-			    (r_ptr->flags4 & RF4_BR_PLAS))
+			    (r_ptr->flags4 & RF4_BR_PLAS) ||
+			    (r_ptr->flags3 & RF3_RES_PLAS))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -3997,7 +4064,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 			}
-			else if (r_ptr->flags4 & RF4_BR_NETH)
+			else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4015,15 +4082,20 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_WATER:
 		{
 			if (seen) obvious = TRUE;
-			if ((r_ptr->d_char == 'E') && prefix(name, "W"))
+                        if (r_ptr->flags9 & RF9_IM_WATER)
 			{
-				note = " is immune.";
+	    			note = " is immune.";
 				dam = 0;
 			}
 			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
-				note = " resists a lot";
+				note = " resists a lot.";
 				dam /= 9;
+			}
+                        else if (r_ptr->flags3 & RF3_RES_WATE)
+			{
+				note = " resists.";
+				dam /= 4;
 			}
 			break;
 		}
@@ -4034,17 +4106,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
                         if (seen) obvious = TRUE;
 
-			if ((r_ptr->d_char == 'E') &&
-			   (prefix(name, "W")))
+                        if (r_ptr->flags9 & RF9_IM_WATER)
 			{
-				note = " is immune.";
+	    			note = " is immune.";
 				dam = 0;
 			}
 			else if (r_ptr->flags7 & RF7_AQUATIC)
 			{
-				note = " resists a lot";
+				note = " resists a lot.";
 				dam /= 9;
-                        }
+			}
+                        else if (r_ptr->flags3 & RF3_RES_WATE)
+			{
+				note = " resists.";
+				dam /= 4;
+			}
                         else
                         {
                                 do_stun = randint(15) / div;
@@ -4059,7 +4135,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 			do_poly = TRUE;
 			do_conf = (5 + randint(11)) / div;
-			if (r_ptr->flags4 & RF4_BR_CHAO)
+			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4072,7 +4148,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_SHARDS:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_SHAR)
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4086,7 +4162,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (seen) obvious = TRUE;
 
 //			if (magik(12)) do_cut = (10 + randint(15) +r) / (r + 1);
-			if (r_ptr->flags4 & (RF4_BR_SHAR))
+			if ((r_ptr->flags4 & (RF4_BR_SHAR)) || (r_ptr->flags9 & RF9_RES_SHARDS))
 			{
 				note = " resists somewhat.";
 				dam /= 2;
@@ -4099,6 +4175,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_STUN:
 		{
 			do_stun = (10 + randint(15)) / div;
+			if (r_ptr->flags9 & RF9_RES_SOUND) do_stun /= 4;
 			break;
 		}
 
@@ -4107,7 +4184,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (seen) obvious = TRUE;
 			do_stun = (10 + randint(15)) / div;
-			if (r_ptr->flags4 & RF4_BR_SOUN)
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 			{
 				note = " resists.";
 				dam *= 2; dam /= (randint(6)+6);
@@ -4138,7 +4215,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_DISE) ||
-			    prefix(name, "Disen"))
+			    prefix(name, "Disen") ||
+			    (r_ptr->flags9 & RF3_RES_DISE))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4151,7 +4229,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_NEXU) ||
-			    prefix(name, "Nexus"))
+			    prefix(name, "Nexus") ||
+			    (r_ptr->flags3 & RF3_RES_NEXU))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4188,7 +4267,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_TIME:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_TIME)
+			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
@@ -4248,6 +4327,16 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Pure damage */
 		case GF_MANA:
 		{
+			if (r_ptr->flags9 & RF9_RES_MANA)
+			{
+			    dam /= 3;
+			    note = " resists.";
+			}
+			else if (r_ptr->flags4 & RF4_BR_MANA)
+			{
+			    dam /= 2;
+			    note = " resists somewhat.";
+			}
 			if (seen) obvious = TRUE;
 			break;
 		}
@@ -4266,9 +4355,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			do_stun = randint(15) / div;
 			if (r_ptr->flags3 & RF3_IM_COLD)
 			{
-				note = " resists a lot";
-				dam /= 9;
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
+			}
+			else if (r_ptr->flags9 & RF9_RES_COLD)
+			{
+				note = " resists.";
+				dam /= 4;
+				if (seen) r_ptr->flags9 |= RF9_RES_COLD;
+			}
+			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
+			{
+				note = " is hit hard.";
+				dam *= 2;
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
 			}
 			break;
 		}
@@ -4514,7 +4615,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_LITE:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_LITE)
+			if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE))
 			{
 				note = " resists.";
 				dam *= 2; dam /= (randint(6)+6);
@@ -4534,7 +4635,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_DARK:
 		{
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_DARK)
+			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK))
 			{
 				note = " resists.";
 				dam *= 2; dam /= (randint(6)+6);
@@ -4850,10 +4951,16 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (seen) obvious = TRUE;
 
-			if (r_ptr->flags3 & (RF3_IM_POIS))
+			if (r_ptr->flags9 & (RF9_RES_POIS))
 			{
 				note = " resists.";
 				dam *= 3; dam /= (randint(6)+6);
+				if (seen) r_ptr->flags9 |= (RF9_RES_POIS);
+			}
+			else if (r_ptr->flags3 & (RF3_IM_POIS))
+			{
+				note = " is immune.";
+				dam = 0;
 				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
 			}
 			else if (randint(3)==1) do_poly = TRUE;
@@ -5683,6 +5790,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
+			if (p_ptr->sensible_pois) dam = (dam + 2) * 2;
 			take_hit(Ind, dam, killer);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 			{
@@ -5854,7 +5962,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		else
 		{
-			(void)set_cut(Ind, p_ptr->cut + dam);
+			if (!p_ptr->no_cut) (void)set_cut(Ind, p_ptr->cut + dam);
 		}
 		take_hit(Ind, dam, killer);
 		break;
@@ -6070,7 +6178,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Pure damage */
 		case GF_MANA:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
-		if (p_ptr->resist_mana) dam /= 3;
+		if (p_ptr->resist_mana) dam /= 2;
 		take_hit(Ind, dam, killer);
 		break;
 
@@ -6086,7 +6194,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		cold_dam(Ind, dam, killer);
 		if (!p_ptr->resist_shard)
 		{
-			(void)set_cut(Ind, p_ptr->cut + damroll(5, 8));
+			if (!p_ptr->no_cut) (void)set_cut(Ind, p_ptr->cut + damroll(5, 8));
 		}
 		if (!p_ptr->resist_sound)
 		{
@@ -6402,7 +6510,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			else
 			{
-				(void)set_cut(Ind, p_ptr->  cut + ( dam / 2) );
+				if (!p_ptr->no_cut) (void)set_cut(Ind, p_ptr->  cut + ( dam / 2) );
 			}
 
 			if (((!p_ptr->resist_shard) || (!p_ptr->resist_fire)) || (randint(3)==1))
@@ -6427,6 +6535,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 				if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
 				if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
+				if (p_ptr->sensible_pois) dam = (5 * dam + 2) / 3;
 				take_hit(Ind, dam, killer);
 				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 				{
