@@ -23,6 +23,9 @@ static void del_guild(int id);
 static void guild_msg(int guild_id, cptr msg);
 static u32b new_accid(void);
 
+/* The hash table itself */
+static hash_entry *hash_table[NUM_HASH_ENTRIES];
+
 /* most account type stuff was already in here.
    a separate file should probably be made in
    order to split party/guild from account
@@ -374,7 +377,7 @@ void account_check(int Ind){	/* Temporary Ind */
 			/* Check this name */
 			if(!GetAccountID(ptr->id)){
 				s_printf("Lost player: %s\n", ptr->name);
-				msg_format(Ind, Lost player: %s", ptr->name);
+				msg_format(Ind, "Lost player: %s", ptr->name);
 			}
 
 			/* Next entry in chain */
@@ -1786,8 +1789,6 @@ bool check_ignore(int attacker, int target)
  * however.
  */
 
-/* The hash table itself */
-static hash_entry *hash_table[NUM_HASH_ENTRIES];
 
 /*
  * Return the slot in which an ID should be stored.
