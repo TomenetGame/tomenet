@@ -1058,6 +1058,7 @@ void do_mimic_power_aux(int Ind, int dir)
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
 
 	/* Only fire in direction 5 if we have a target */
+#if 0 //temporarily - testing aiming (C. Blue)
 	if ((dir == 5) && !target_okay(Ind))
 	{
 		/* Reset current spell */
@@ -1066,7 +1067,7 @@ void do_mimic_power_aux(int Ind, int dir)
 		/* Done */
 		return;
 	}
-
+#endif
 	/* We assume that the spell can be cast, and so forth */
 	switch(p_ptr->current_spell)
 	{
