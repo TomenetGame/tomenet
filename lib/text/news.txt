@@ -7,16 +7,16 @@
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
 
+ - TomeNET 4.0.0 development version (internally 3.5.5a)
+ - skill system is being implemented. ('X' or '\X' to check)
  - items can stack on the floor now. (but not inside a house!)
- - quiver/tool slots added. (client update needed!)
  - A guild system is implemented.  - Player alignment is coming soon?
  - Simple quests are available (say /quest)
+ - quiver/tool slots added, along with a number of new tools.
  - Monster AI significantly improved; use your head, too!
- - Underground rivers, lakes and their habitants.
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
- - Client version 4.0.0 (or greater) is needed.
-   4.0.0  client is available from http:/T-o-M-E.net/pernmangband/
+ - Client ver. 4.0.0 (or 3.5.5) is needed. (will be available from URL below)
  - To learn about new features/changes, please see the help screen('?').
 
         Official TomeNET site - http://T-o-M-E.net/pernmangband/

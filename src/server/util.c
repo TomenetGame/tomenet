@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: util.c */
 
 /* Purpose: Angband utilities -BEN- */
@@ -7,7 +8,11 @@
 
 #include "angband.h"
 
-
+/*
+ * Monster themes above this value in percent are told to the players
+ * via '/ver 1'. (If below ... that's "spice" ;)
+ */
+#define TELL_MONSTER_ABOVE	50
 
 
 #ifndef HAS_MEMSET
@@ -1356,7 +1361,7 @@ bool check_guard_inscription( s16b quark, char what ) {
 	    if (*ax==0)  {
 		 return FALSE; /* end of quark, stop */
 	    }
-	    if (*ax==' ') {
+	    if (*ax==' ' || *ax=='@') {
 		 break; /* end of segment, stop */
 	    }
 	    if (*ax==what) {
@@ -1585,10 +1590,104 @@ void msg_format_near(int Ind, cptr fmt, ...)
 	msg_print_near(Ind, buf);
 }
 
+/* location-based */
+void msg_print_near_site(int y, int x, worldpos *wpos, cptr msg)
+{
+	int i;
+	player_type *p_ptr;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can he see this player? */
+		if (p_ptr->cave_flag[y][x] & CAVE_VIEW)
+		{
+			/* Send the message */
+			msg_print(i, msg);
+		}
+	}
+}
+
 /*
- * Horrible implementation... :(	- Jir -
+ * Same as above, except send a formatted message.
+ */
+void msg_format_near_site(int y, int x, worldpos *wpos, cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	msg_print_near_site(y, x, wpos, buf);
+}
+
+/*
+ * Send a message about a monster to everyone who can see it.
+ * Monster name is appended at the beginning. (XXX kludgie!)	- Jir -
  *
- * XXX XXX XXX Use the "show_file()" method, perhaps.
+ * Example: msg_print_near_monster(m_idx, "wakes up.");
+ */
+/*
+ * TODO: allow format
+ */
+void msg_print_near_monster(int m_idx, cptr msg)
+{
+	int i;
+	player_type *p_ptr;
+	cave_type **zcave;
+	char m_name[80];
+
+	monster_type	*m_ptr = &m_list[m_idx];
+	worldpos *wpos=&m_ptr->wpos;
+
+	if(!(zcave=getcave(wpos))) return;
+
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Skip if not visible */
+		if (!p_ptr->mon_vis[m_idx]) continue;
+
+		/* Can he see this player? */
+//		if (!p_ptr->cave_flag[y][x] & CAVE_VIEW) continue;
+
+		/* Acquire the monster name */
+		monster_desc(i, m_name, m_idx, 0);
+
+		msg_format(i, "%^s %s", m_name, msg);
+	}
+}
+
+/*
+ * Tell players of server settings, using temporary file. - Jir -
  */
 static void server_knowledge(int Ind)
 {
@@ -1596,221 +1695,249 @@ static void server_knowledge(int Ind)
 
 	int		 k;
 
-	msg_print(Ind, "\377G======== Server Settings ========");
-
-	/* General information */
-	msg_print(Ind, format("Game speed(FPS): %d (%+d%%)", cfg.fps, (cfg.fps-60)*100/60));
-	msg_print(Ind, format("Player-running speed is boosted (x%d).", cfg.running_speed));
-
-	/* Several restrictions */
-	if (!cfg.maximize)
-		msg_print(Ind, "This server is *NOT* maximized!");
-
-	if ((k=cfg.newbies_cannot_drop))
-		msg_print(Ind, format("Players under exp.level %d are not allowed to drop items/golds.", k));
-
-	if ((k=cfg.spell_interfere))
-		msg_print(Ind, format("Monsters adjacant to you have %d%% chance of interfering your spellcasting.", k));
-
-	if ((k=cfg.spell_stack_limit))
-		msg_print(Ind, format("Duration of assistance spells is limited to %d turns.", k));
-
-	/* level preservation */
-	if (cfg.no_ghost)
-		msg_print(Ind, "You disappear the moment you die, without becoming a ghost.");
-
-	msg_print(Ind, format("The floor will be erased about %d seconds after you left.", cfg.anti_scum));
-	if ((k=cfg.level_unstatic_chance))
-		msg_print(Ind, format("When saving in dungeon, the floor is kept for %dx(level) minutes.", k));
-
-	if ((k=cfg.min_unstatic_level) > 0) 
-		msg_print(Ind, format("Shallow dungeon(till %d) will never be saved. Save in town!", k));
-
-	if ((k=cfg.preserve_death_level) < 201)
-		msg_print(Ind, format("Site of death under level %d will be static, allowing others to loot it.", k));
-
-
-
-		
-	/* arts & winners */
-	if (cfg.anti_arts_horde)
-		msg_print(Ind, "True-Artifacts will disappear if you drop/leave them.");
-
-	if ((k=cfg.retire_timer) > 0)
-		msg_print(Ind, format("The winner will automatically retire after %d minutes.", k));
-	else if (k == 0)
-		msg_print(Ind, format("The game ends the moment you beat the final foe, Morgoth.", k));
-
-	if (k !=0)
-	{
-		if ((k=cfg.unique_respawn_time))
-			msg_print(Ind, format("After winning the game, unique monsters will resurrect randomly.(%d)", k));
-
-		if (cfg.kings_etiquette)
-			msg_print(Ind, "The winner is not allowed to carry/use artifacts(save Grond/Crown).");
-	}
-
-
-	/* monster-sets */
-	msg_print(Ind, "Monsters:");
-	if (cfg.vanilla_monsters)
-		msg_print(Ind, "  Vanilla-angband(default) monsters");
-	if (cfg.zang_monsters)
-		msg_print(Ind, "  Zelasny Angband additions");
-	if (cfg.pern_monsters)
-		msg_print(Ind, "  DragonRiders of Pern additions");
-	if (cfg.cth_monsters)
-		msg_print(Ind, "  Lovecraft additions");
-	if (cfg.joke_monsters)
-		msg_print(Ind, "  Joke-monsters");
-
-	/* trivial */
-	if (cfg.public_rfe)
-		msg_print(Ind, "You can see RFE files via '&62' command.");
-
-	if (!cfg.door_bump_open)
-		msg_print(Ind, "You should use 'o' command explicitly to open a door.");
-
-	/* Administrative */
-	if (is_admin(p_ptr))
-	{
-		msg_print(Ind, "\377o==== Administrative or hidden settings ====");
-		msg_print(Ind, format("dun_usual: %d (default = 200)", cfg.dun_unusual));
-		msg_print(Ind, format("Stores change their inventory every %d seconds(store_turns=%d).", cfg.store_turns * 10 / cfg.fps, cfg.store_turns));
-
-		msg_print(Ind, format("starting town: location [%d, %d], baselevel(%d)", cfg.town_x, cfg.town_y, cfg.town_base));
-		msg_print(Ind, format("Angband: baselevel(%d) depth(%d)", cfg.dun_base, cfg.dun_max));
-
-
-		if (cfg.mage_hp_bonus)
-			msg_print(Ind, "mage_hp_bonus is applied.");
-		if (cfg.report_to_meta)
-			msg_print(Ind, "Reporting to the meta-server.");
-		if (cfg.secret_dungeon_master)
-			msg_print(Ind, "Dungeon Master is hidden.");
-		else
-			msg_print(Ind, "Dungeon Master is *SHOWN*!!");
-		//	cfg.unique_max_respawn_time
-		//	cfg.game_port
-		//	cfg.console_port
-	}
-}
+	FILE *fff;
 
 #if 0
-static void server_knowledge(int Ind)
-{
-	player_type *p_ptr = Players[Ind];
+	char file_name[MAX_PATH_LENGTH];
 
-	int		i = 0, k;
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
-	cptr	*info = p_ptr->info;
+	strcpy(p_ptr->infofile, file_name);
+#endif
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
 
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	info[i++] = format("Game speed(FPS): %d (%+d%%)", cfg.fps, (cfg.fps-60)*100/60);
-	info[i++] = format("Player-running speed is boosted (x%d).", cfg.running_speed);
 
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	fprintf(fff, "%s\n", longVersion);
+	fprintf(fff, "======== Server Settings ========\n");
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'w');
+
+	/* General information */
+	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
+	fprintf(fff, "Player-running speed is boosted (x%d).\n", cfg.running_speed);
+	fprintf(fff, "While 'resting', HP/SP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+
+	if (k=cfg.party_xp_boost)
+		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
+
+	/* Several restrictions */
 	if (!cfg.maximize)
-		info[i++] = "This server is *NOT* maximized!";
+		fprintf(fff, "This server is *NOT* maximized!\n");
+
+	fprintf(fff,"\n");
 
 	if (k=cfg.newbies_cannot_drop)
-		info[i++] = format("Players under exp.level %d are not allowed to drop items/golds.", k);
+		fprintf(fff, "Players under exp.level %d are not allowed to drop items/golds.\n", k);
 
 	if (k=cfg.spell_interfere)
-		info[i++] = format("Monsters adjacant to you have %d%% chance of interfering your spellcasting.", k);
+		fprintf(fff, "Monsters adjacant to you have %d%% chance of interfering your spellcasting.\n", k);
 
 	if (k=cfg.spell_stack_limit)
-		info[i++] = format("Duration of assistance spells is limited to %d turns.", k);
+		fprintf(fff, "Duration of assistance spells is limited to %d turns.\n", k);
 
+	/* level preservation */
 	if (cfg.no_ghost)
-		info[i++] = "You disappear the moment you die, without becoming a ghost.";
+		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 
-	info[i++] = format("The floor will be erased about %d seconds after you left.", cfg.anti_scum);
+	fprintf(fff, "The floor will be erased about %d~%d seconds after you left.\n", cfg.anti_scum, cfg.anti_scum + 10);
 	if (k=cfg.level_unstatic_chance)
-		info[i++] = format("When saving in dungeon, the floor is kept for %dx(level) minutes.", k);
+		fprintf(fff, "When saving in dungeon, the floor is kept for %dx(level) minutes.\n", k);
 
 	if ((k=cfg.min_unstatic_level) > 0) 
-		info[i++] = format("Shallow dungeon(till %d) will never be saved. Save in town!", k);
+		fprintf(fff, "Shallow dungeon(till %d) will never be saved. Save in town!\n", k);
 
 	if ((k=cfg.preserve_death_level) < 201)
-		info[i++] = format("Site of death under level %d will be static, allowing others to loot it.", k);
+		fprintf(fff, "Site of death under level %d will be static, allowing others to loot it.\n", k);
 
 
-
+	fprintf(fff,"\n");
 		
+
 	/* arts & winners */
 	if (cfg.anti_arts_horde)
-		info[i++] = "True-Artifacts will disappear if you drop/leave them.";
+		fprintf(fff, "True-Artifacts will disappear if you drop/leave them.\n");
 
 	if ((k=cfg.retire_timer) > 0)
-		info[i++] = format("The winner will automatically retire after %d minutes.", k);
-	else if (k = 0)
-		info[i++] = format("The game ends the moment you beat the final foe, Morgoth.", k);
+		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
+	else if (k == 0)
+		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n", k);
 
 	if (k !=0)
 	{
 		if (k=cfg.unique_respawn_time)
-			info[i++] = format("After winning the game, unique moster will resurrect randomly.(%d)", k);
+			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
 
 		if (cfg.kings_etiquette)
-			info[i++] = "The winner is not allowed to carry/use artifacts(save Grond/Crown).";
+			fprintf(fff, "The winner is not allowed to carry/use artifacts(save Grond/Crown).\n");
 	}
 
+	fprintf(fff,"\n");
 
 	/* monster-sets */
-	info[i++] = "Monsters:";
-	if (cfg.vanilla_monsters)
-		info[i++] = "  Vanilla-angband(default) monsters";
-	if (cfg.zang_monsters)
-		info[i++] = "  Zelasny Angband additions";
-	if (cfg.pern_monsters)
-		info[i++] = "  DragonRiders of Pern additions";
-	if (cfg.cth_monsters)
-		info[i++] = "  Lovecraft additions";
-	if (cfg.joke_monsters)
-		info[i++] = "  Joke-monsters";
+	fprintf(fff, "Monsters:\n");
+	if (is_admin(p_ptr))
+	{
+		if (cfg.vanilla_monsters)
+			fprintf(fff, "  Vanilla-angband(default) monsters (%d%%)\n", cfg.vanilla_monsters);
+		if (cfg.zang_monsters)
+			fprintf(fff, "  Zelasny Angband additions (%d%%)\n", cfg.zang_monsters);
+		if (cfg.pern_monsters)
+			fprintf(fff, "  DragonRiders of Pern additions (%d%%)\n", cfg.pern_monsters);
+		if (cfg.cth_monsters)
+			fprintf(fff, "  Lovecraft additions (%d%%)\n", cfg.cth_monsters);
+		if (cfg.joke_monsters)
+			fprintf(fff, "  Joke-monsters (%d%%)\n", cfg.joke_monsters);
+	}
+	else
+	{
+		if (cfg.vanilla_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Vanilla-angband(default) monsters\n");
+		if (cfg.zang_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Zelasny Angband additions\n");
+		if (cfg.pern_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  DragonRiders of Pern additions\n");
+		if (cfg.cth_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Lovecraft additions\n");
+		if (cfg.joke_monsters > TELL_MONSTER_ABOVE)
+			fprintf(fff, "  Joke-monsters\n");
+	}
 
 	/* trivial */
 	if (cfg.public_rfe)
-		info[i++] = "You can see RFE files via '&62' command.";
+		fprintf(fff, "You can see RFE files via '&62' command.\n");
 
 	if (!cfg.door_bump_open)
-		info[i++] = "You should use 'o' command explicitly to open a door.";
+		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
 
 	/* Administrative */
 	if (is_admin(p_ptr))
 	{
-		info[i++] = "==== Administrative or hidden settings ====";
-		info[i++] = format("dun_usual: %d (default = 200)", cfg.dun_unusual);
-		info[i++] = format("Stores change their inventory every %d minutes.", cfg.store_turns * 10 / cfg.fps);
+		/* Output color byte */
+//		fprintf(fff, "%c\n", 'o');
 
-		info[i++] = format("starting town: location [%d, %d], baselevel(%d)", cfg.town_x, cfg.town_y, cfg.town_base);
-		info[i++] = format("Angband: baselevel(%d) depth(%d)", cfg.dun_base, cfg.dun_max);
+		fprintf(fff,"\n");
+		
 
+		fprintf(fff, "==== Administrative or hidden settings ====\n");
+
+		/* Output color byte */
+//		fprintf(fff, "%c\n", 'w');
+
+		fprintf(fff, "dun_unusual: %d (default = 200)\n", cfg.dun_unusual);
+		fprintf(fff, "Stores change their inventory every %d seconds(store_turns=%d).\n", cfg.store_turns * 10 / cfg.fps, cfg.store_turns);
+
+		fprintf(fff, "starting town: location [%d, %d], baselevel(%d)\n", cfg.town_x, cfg.town_y, cfg.town_base);
+		fprintf(fff, "Angband: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
+
+		if (cfg.auto_purge)
+			fprintf(fff, "Non-used monsters/ojbs/traps are purged every 24H.\n");
 
 		if (cfg.mage_hp_bonus)
-			info[i++] = "mage_hp_bonus is applied.";
+			fprintf(fff, "mage_hp_bonus is applied.\n");
 		if (cfg.report_to_meta)
-			info[i++] = "Reporting to the meta-server.";
+			fprintf(fff, "Reporting to the meta-server.\n");
 		if (cfg.secret_dungeon_master)
-			info[i++] = "Dungeon Master is hidden.";
+			fprintf(fff, "Dungeon Master is hidden.\n");
 		else
-			info[i++] = "Dungeon Master is *SHOWN*!!";
+			fprintf(fff, "Dungeon Master is *SHOWN*!!\n");
 		//	cfg.unique_max_respawn_time
 		//	cfg.game_port
 		//	cfg.console_port
 	}
 
-	info[i]=NULL;
+	/* Close the file */
+	my_fclose(fff);
 
 	/* Let the client know to expect some info */
 	Send_special_other(Ind);
 }
-#endif	// 0
+
+/*
+ * Tell players of the # of monsters killed, using temporary file. - Jir -
+ */
+static void do_show_monster_killed_letter(int Ind, char *letter)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int		i, j, num;
+	monster_race	*r_ptr;
+	bool	shown = FALSE;
+	bool	mimic = (p_ptr->pclass == CLASS_MIMIC);
+
+	FILE *fff;
+
+	/* Paranoia */
+	// if (!letter) return;
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through the info */
+	p_ptr->special_file_type = TRUE;
+
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'G');
+
+	if (letter) fprintf(fff, "======== Killed List for Monster Group %c ========\n", *letter);
+	else fprintf(fff, "======== Killed List ========\n");
+
+	/* for each monster race */
+	for (i = 1; i <= MAX_R_IDX; i++)
+	{
+		r_ptr = &r_info[i];
+		if (letter && *letter != r_ptr->d_char) continue;
+		num = p_ptr->r_killed[i];
+		/* Hack -- always show townie */
+		// if (num < 1 && r_ptr->level) continue;
+		if (num < 1) continue;
+		if (!r_ptr->name) continue;
+
+		if (mimic)
+		{
+			j = r_ptr->level - num;
+
+			if (j > 0)
+				fprintf(fff, "%s : %d (%d more to go)\n",
+						r_name + r_ptr->name, num, j);
+			else
+				fprintf(fff, "%s : %d (learnt)\n", r_name + r_ptr->name, num);
+		}
+		else
+		{
+			fprintf(fff, "%s : %d\n", r_name + r_ptr->name, num);
+		}
+		shown = TRUE;
+	}
+
+	if (!shown) fprintf(fff, "Nothing so far.\n");
+
+	/* Close the file */
+	my_fclose(fff);
+
+	/* Let the client know to expect some info */
+	Send_special_other(Ind);
+}
+
 
 /* Takes a trap name and returns an index, or 0 if no such trap
- * was found.
+ * was found. (NOT working!)
  */
 #if 0
 static int trap_index(char * name)
@@ -1826,8 +1953,33 @@ static int trap_index(char * name)
 }
 #endif	// 0
 
+
+static void do_slash_brief_help(int Ind)
+{
+	player_type *p_ptr = Players[Ind], *q_ptr;
+
+	msg_print(Ind, "Commands: afk bed bug cast dis dress ex feel help ignore less me monster news");	// pet ?
+	msg_print(Ind, "  pk quest rec ref rfe shout tag target untag ver;");
+
+	if (is_admin(p_ptr))
+	{
+		msg_print(Ind, "  art cfg clv cp en eq geno id kick lua purge shutdown sta trap unc unst wish");
+	}
+	else
+	{
+		msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
+	}
+	msg_print(Ind, "  please type '/help' for detailed help.");
+}
+
+
 /*
  * Slash commands - huge hack function for command expansion.
+ *
+ * TODO: introduce sl_info.txt, like:
+ * N:/lua:1
+ * F:ADMIN
+ * D:/lua (LUA script command)
  */
 
 static void do_slash_cmd(int Ind, char *message)
@@ -1875,6 +2027,20 @@ static void do_slash_cmd(int Ind, char *message)
 		else
 		{
 			msg_print(Ind, "\377oUsage: /rfe (message)");
+		}
+		return;
+	}
+	else if (prefix(message, "/shout") ||
+			prefix(message, "/sh"))
+	{
+		aggravate_monsters(Ind, 1);
+		if (colon)
+		{
+			msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, colon);
+		}
+		else
+		{
+			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
 		}
 		return;
 	}
@@ -1932,6 +2098,9 @@ static void do_slash_cmd(int Ind, char *message)
 		{
 			object_type		*o_ptr;
 			u32b f1, f2, f3, f4, f5, esp;
+
+			disturb(Ind, 1, 0);
+
 			for(i = 0; i < INVEN_PACK; i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
@@ -2207,6 +2376,9 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/naked"))
 		{
 			object_type		*o_ptr;
+
+			disturb(Ind, 1, 0);
+
 			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
@@ -2231,6 +2403,8 @@ static void do_slash_cmd(int Ind, char *message)
 			object_type		*o_ptr;
 			int j;
 
+			disturb(Ind, 1, 0);
+
 			for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
@@ -2248,74 +2422,17 @@ static void do_slash_cmd(int Ind, char *message)
 							 !strcmp(quark_str(o_ptr->note), "worthless") ||
 							 check_guard_inscription(o_ptr->note, 'w')) )continue;
 
-					if (wield_slot(Ind, o_ptr) != i)
-						if (o_ptr->tval != TV_RING ||
-								(p_ptr->inventory[INVEN_RIGHT].k_idx))
-								continue;
+					/* Already used? */
+					if (wield_slot(Ind, o_ptr) != i) continue;
 
 					do_cmd_wield(Ind, j);
+
+					/* MEGAHACK -- tweak to handle rings right */
+					if (o_ptr->tval == TV_RING) i -= 2;
+
 					break;
 				}
-
 			}
-			return;
-		}
-		/* '/cast' code is written by Ascrep(DEG). thx! */
-		else if (prefix(message, "/quaff"))
-		{
-			int book;
-
-			/* at least 1 argument required */
-			if (tk < 1)
-			{
-				msg_print(Ind, "\377oUsage: /quaff (item index or no.)");
-				return;
-			}
-
-			if(*token[1]>='1' && *token[1]<='9')
-			{	
-				object_type *o_ptr;
-				char c[4] = "@q";
-				bool found = FALSE;
-
-				c[2] = *token[1];
-				c[3] = '\0';
-
-				for(i = 0; i < INVEN_PACK; i++)
-				{
-					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) break;
-
-					if (find_inscription(o_ptr->note, c))
-					{
-						book = i;
-						found = TRUE;
-						break;
-					}
-				}
-
-				if (!found)
-				{
-					msg_format(Ind, "\377oInscription {%s} not found.", c);
-					return;
-				}
-				//					book = atoi(token[1])-1;
-			}	
-			else
-			{	
-				*token[1] &= ~(0x20);
-				if(*token[1]>='A' && *token[1]<='W')
-				{	
-					book = (int)(*token[1]-'A');
-				}		
-				else 
-				{
-					msg_print(Ind,"\377oPotion variable was out of range (a-w) or (1-9)");
-					return;
-				}	
-			}
-
-			do_cmd_quaff_potion(Ind, book);
 			return;
 		}
 		/* Display extra information */
@@ -2323,6 +2440,8 @@ static void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/examine") ||
 				prefix(message, "/ex"))
 		{
+			msg_format(Ind, "\377GThe deepest point you've reached: -%dft", p_ptr->max_dlv * 50);
+
 			/* Insanity warning (better message needed!) */
 			if (p_ptr->csane < p_ptr->msane / 8)
 				msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
@@ -2335,9 +2454,21 @@ static void do_slash_cmd(int Ind, char *message)
 
 			if (admin)
 			{
+				cave_type **zcave;
+				cave_type *c_ptr;
+				if(!(zcave=getcave(&wp)))
+				{
+					msg_print(Ind, "\377rOops, the cave's not allocated!!");
+					return;
+				}
+				c_ptr=&zcave[p_ptr->py][p_ptr->px];
+
 				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
-				msg_format(Ind, "server status: m_max(%d) o_max(%d) t_max(%d)",
-						m_max, o_max, t_max);
+				msg_format(Ind, "feat:%d o_idx:%d m_idx:%d", c_ptr->feat,
+						c_ptr->o_idx, c_ptr->m_idx);
+
+				msg_format(Ind, "server status: m_max(%d) o_max(%d)",
+						m_max, o_max);
 			}
 
 			return;
@@ -2406,115 +2537,156 @@ static void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/recall") ||
 				prefix(message, "/rec"))
 		{
-				if (admin)
+			if (admin)
+			{
+				p_ptr->word_recall = 1;
+				//					msg_print(Ind, "\377oOmnipresent you are...");
+				//					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
+			}
+			else
+			{
+				int item;
+				object_type *o_ptr;
+				bool found = FALSE;
+
+				for(i = 0; i < INVEN_PACK; i++)
 				{
-					if(cfg.runlevel>4) p_ptr->word_recall = 1;
-//					msg_print(Ind, "\377oOmnipresent you are...");
-//					msg_format(Ind, "\377oTrying to recall to %s...",wpos_format(&p_ptr->recall_pos));
-				}
-				else
-				{
-					int item;
-					object_type *o_ptr;
-					char c[3] = "@R";
-					bool found = FALSE;
+					o_ptr = &(p_ptr->inventory[i]);
+					if (!o_ptr->tval) break;
 
-					for(i = 0; i < INVEN_PACK; i++)
+					if (find_inscription(o_ptr->note, "@R"))
 					{
-						o_ptr = &(p_ptr->inventory[i]);
-						if (!o_ptr->tval) break;
-
-						if (find_inscription(o_ptr->note, c))
-						{
-							item = i;
-							found = TRUE;
-							break;
-						}
+						item = i;
+						found = TRUE;
+						break;
 					}
-
-					if (!found)
-					{
-						msg_print(Ind, "\377oInscription {@R} not found.");
-						return;
-					}
-
-					/* ALERT! Hard-coded! */
-					switch (o_ptr->tval)
-					{
-						case TV_SCROLL:
-							do_cmd_read_scroll(Ind, item);
-							break;
-						case TV_MAGIC_BOOK:		// 6e
-							do_cmd_cast(Ind, item, 4);
-							break;
-						case TV_SORCERY_BOOK:	// 5f
-							do_cmd_sorc(Ind, item, 5);
-							break;
-						case TV_PRAYER_BOOK:	// 5e
-							do_cmd_pray(Ind, item, 4);
-							break;
-						case TV_SHADOW_BOOK:	// 5c,5d
-							if (spell_okay(Ind, 35, 1) && p_ptr->csp >= 40) do_cmd_shad(Ind, item, 3);
-							else do_cmd_shad(Ind, item, 2);
-							break;
-						case TV_PSI_BOOK:	// 2d
-							do_cmd_psi(Ind, item, 3);
-							break;
-						case TV_ROD:
-							do_cmd_zap_rod(Ind, item);
-							break;
-						default:
-							do_cmd_activate(Ind, item);
-//							msg_print(Ind, "\377oYou cannot recall with that.");
-							break;
-					}
-
 				}
 
-				switch (tk)
+				if (!found)
 				{
-					case 1:
-						/* depth in feet */
-						p_ptr->recall_pos.wz = k / 50;
-						break;
+					msg_print(Ind, "\377oInscription {@R} not found.");
+					return;
+				}
 
-					case 2:
-						p_ptr->recall_pos.wx = k % MAX_WILD_X;
-						p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+				/* ALERT! Hard-coded! */
+				switch (o_ptr->tval)
+				{
+					case TV_SCROLL:
+						do_cmd_read_scroll(Ind, item);
 						break;
-
+					case TV_MAGIC_BOOK:		// 6e
+						do_cmd_cast(Ind, item, 4);
+						break;
+					case TV_SORCERY_BOOK:	// 5f
+						do_cmd_sorc(Ind, item, 5);
+						break;
+					case TV_PRAYER_BOOK:	// 5e
+						do_cmd_pray(Ind, item, 4);
+						break;
+					case TV_SHADOW_BOOK:	// 5c,5d
+						if (spell_okay(Ind, 35, 1) && p_ptr->csp >= 40) do_cmd_shad(Ind, item, 3);
+						else do_cmd_shad(Ind, item, 2);
+						break;
+					case TV_PSI_BOOK:	// 2d
+						do_cmd_psi(Ind, item, 3);
+						break;
+					case TV_ROD:
+						do_cmd_zap_rod(Ind, item);
+						break;
 					default:
-						p_ptr->recall_pos.wz = 0;
+						do_cmd_activate(Ind, item);
+						//							msg_print(Ind, "\377oYou cannot recall with that.");
+						break;
 				}
 
-				return;
+			}
+
+			switch (tk)
+			{
+				case 1:
+					/* depth in feet */
+					p_ptr->recall_pos.wz = k / 50;
+					break;
+
+				case 2:
+					p_ptr->recall_pos.wx = k % MAX_WILD_X;
+					p_ptr->recall_pos.wy = atoi(token[2]) % MAX_WILD_Y;
+					p_ptr->recall_pos.wz = 0;
+					break;
+
+				default:	/* follow the inscription */
+					/* TODO: support tower */
+//					p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
+//					p_ptr->recall_pos.wz = 0;
+			}
+
+			return;
 		}
+#if 1	/* TODO: remove &7 viewer commands */
+		/* view RFE file or any other files in lib/data. */
+		else if (prefix(message, "/less")) 
+		{
+			char    path[MAX_PATH_LENGTH];
+			if (tk && is_admin(p_ptr))
+			{
+				//					if (strstr(token[1], "log") && is_admin(p_ptr))
+				{
+					//						path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "mangband.log");
+					path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, token[1]);
+					do_cmd_check_other_prepare(Ind, path);
+					return;
+				}
+				//					else if (strstr(token[1], "rfe") &&
+
+			}
+			/* default is "mangband.rfe" */
+			else if ((is_admin(p_ptr) || cfg.public_rfe))
+			{
+				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "mangband.rfe");
+				do_cmd_check_other_prepare(Ind, path);
+				return;
+			}
+			else msg_print(Ind, "\377o/less is not opened for use...");
+			return;
+		}
+		else if (prefix(message, "/news")) 
+		{
+			char    path[MAX_PATH_LENGTH];
+			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "news.txt");
+			do_cmd_check_other_prepare(Ind, path);
+			return;
+		}
+#endif	// 0
 		else if (prefix(message, "/version") ||
 				prefix(message, "/ver"))
 		{
 			if (tk) server_knowledge(Ind);
-			msg_print(Ind, longVersion);
+			else msg_print(Ind, longVersion);
+
+			return;
 		}
-		else if(prefix(message, "/pkill")){
-			p_ptr->tim_pkill=200;	/* so many turns */
-			p_ptr->pkill^=PKILL_SET; /* Toggle value */
-			if(p_ptr->pkill&PKILL_SET){
-				msg_print(Ind, "\377rYou wish to kill other players");
-				p_ptr->pkill|=PKILL_KILLABLE;
-			}
-			else{
-				hostile_type *t_host;
-				msg_print(Ind, "\377gYou do not wish to kill other players");
-				p_ptr->pkill&=~PKILL_KILLER;
-				/* Remove all hostilities */
-				while(p_ptr->hostile){
-					t_host=p_ptr->hostile;
-					p_ptr->hostile=t_host->next;
-					KILL(t_host, hostile_type);
-				}
-			}
+		else if (prefix(message, "/help") ||
+				prefix(message, "/h") ||
+				prefix(message, "/?"))
+		{
+			char    path[MAX_PATH_LENGTH];
+
+			/* Build the filename */
+			if (admin && !tk) path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "slash_ad.hlp");
+			else path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "slash.hlp");
+
+			do_cmd_check_other_prepare(Ind, path);
+			return;
 		}
-		else if(prefix(message, "/quest")){
+		else if(prefix(message, "/pkill") ||
+				prefix(message, "/pk"))
+		{
+			set_pkill(Ind, admin? 10 : 200);
+			return;
+		}
+		else if(prefix(message, "/quest") ||
+				prefix(message, "/que"))	/* /quIt */
+		{
 			int i, j=Ind, k=0;
 			s16b r;
 			int lev;
@@ -2591,6 +2763,62 @@ static void do_slash_cmd(int Ind, char *message)
 				if(k>100) lev--;
 			} while(((lev-5) > r_info[r].level) || r_info[r].flags1 & RF1_UNIQUE);
 			add_quest(Ind, j, r, i, flags);
+			return;
+		}
+		else if (prefix(message, "/feeling") ||
+				prefix(message, "/fe"))
+		{
+			if (!show_floor_feeling(Ind))
+				msg_print(Ind, "You feel nothing special.");
+			return;
+		}
+		else if (prefix(message, "/monster") ||
+				prefix(message, "/mo"))
+		{
+			int r_idx, num;
+			monster_race *r_ptr;
+			if (!tk)
+			{
+				// msg_print(Ind, "Usage: /monster (monster letter)");
+				do_show_monster_killed_letter(Ind, NULL);
+				return;
+			}
+
+			if (strlen(token[1]) == 1)
+			{
+				do_show_monster_killed_letter(Ind, token[1]);
+				return;
+			}
+
+			/* TODO: handle specification like 'D', 'k' */
+			r_idx = race_index(token[1]);
+			if (!r_idx)
+			{
+				msg_print(Ind, "No such monster.");
+				return;
+			}
+
+			r_ptr = &r_info[r_idx];
+			num = p_ptr->r_killed[r_idx];
+
+			if (p_ptr->pclass == CLASS_MIMIC)
+			{
+				i = r_ptr->level - num;
+
+				if (i > 0)
+					msg_format(Ind, "%s : %d slain (%d more to go)",
+							r_name + r_ptr->name, num, i);
+				else
+					msg_format(Ind, "%s : %d slain (learnt)", r_name + r_ptr->name, num);
+			}
+			else
+			{
+				msg_format(Ind, "%s : %d slain.", r_name + r_ptr->name, num);
+			}
+
+			/* TODO: show monster description */
+			
+			return;
 		}
 
 		/*
@@ -2604,30 +2832,22 @@ static void do_slash_cmd(int Ind, char *message)
 			switch (tk)
 			{
 				case 1:
-				{
 					/* depth in feet */
 					wp.wz = k / 50;
 					break;
-				}
-
 				case 3:
-				{
 					/* depth in feet */
+					wp.wx = k % MAX_WILD_X;
+					wp.wy = atoi(token[2]) % MAX_WILD_Y;
 					wp.wz = atoi(token[3]) / 50;
-				}
-
+					break;
 				case 2:
-				{
 					wp.wx = k % MAX_WILD_X;
 					wp.wy = atoi(token[2]) % MAX_WILD_Y;
 					wp.wz = 0;
 					break;
-				}
-
 				default:
-				{
 					break;
-				}
 			}
 
 			if (prefix(message, "/shutdown") ||
@@ -2636,12 +2856,14 @@ static void do_slash_cmd(int Ind, char *message)
 				set_runlevel(tk ? k : (cfg.runlevel<6 ? 6 : 5));
 				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
 				time(&cfg.closetime);
+				return;
 			}
 			else if (prefix(message, "/pet")){
 #if 0
 				summon_pet(Ind);
 				msg_print(Ind, "You summon a pet");
 #endif
+				return;
 			}
 			else if (prefix(message, "/kick"))
 			{
@@ -2669,13 +2891,15 @@ static void do_slash_cmd(int Ind, char *message)
 				/* Wipe even if town/wilderness */
 				wipe_o_list_safely(&wp);
 				wipe_m_list(&wp);
-				wipe_t_list(&wp);
+				/* XXX trap clearance support dropped - reimplement! */
+//				wipe_t_list(&wp);
 
-				msg_format(Ind, "\377rItems/monsters/traps on %s are cleared.", wpos_format(&wp));
+				msg_format(Ind, "\377rItems/monsters on %s are cleared.", wpos_format(&wp));
 				return;
 			}
 			else if(prefix(message, "/cp")){
 				party_check(Ind);
+				return;
 			}
 			else if (prefix(message, "/geno-level") ||
 					prefix(message, "/geno"))
@@ -2859,6 +3083,7 @@ static void do_slash_cmd(int Ind, char *message)
 					prefix(message, "/eq"))
 			{
 				admin_outfit(Ind);
+				p_ptr->au = 50000000;
 				return;
 			}
 			else if (prefix(message, "/uncurse") ||
@@ -2870,41 +3095,21 @@ static void do_slash_cmd(int Ind, char *message)
 			/* do a wilderness cleanup */
 			else if (prefix(message, "/purge")) 
 			{
-				msg_format(Ind, "previous server status: m_max(%d) o_max(%d) t_max(%d)",
-						m_max, o_max, t_max);
+				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
+						m_max, o_max);
 				compact_monsters(0, TRUE);
 				compact_objects(0, TRUE);
-				compact_traps(0, TRUE);
-				msg_format(Ind, "current server status:  m_max(%d) o_max(%d) t_max(%d)",
-						m_max, o_max, t_max);
+//				compact_traps(0, TRUE);
+				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
+						m_max, o_max);
 
 				return;
 			}
-#if 0	// pfft, it was not suitable for slash-commands
-			/* view RFE file. this should be able to handle log file also. */
-			else if (prefix(message, "/less")) 
-			{
-				do_cmd_view_rfe(Ind);
-				return;
-			}
-#endif	// 0
-			else
-			{
-				msg_print(Ind, "Commands: afk bed bug cast dis dress ex ignore me rec ref rfe");
-				msg_print(Ind, "  tag target untag ver;");
-				msg_print(Ind, "  art cfg clv en eq geno id kick lua purge shutdown sta trap unc unst wish");
-				return;
-			}
-		}
-		else
-		{
-			msg_print(Ind, "Commands: afk bed bug cast dis dress ex ignore me rec ref rfe");
-			msg_print(Ind, "  tag target untag ver;");
-//			msg_print(Ind, "  /quaff is also available for old client users :)");
-			msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
-			return;
 		}
 	}
+
+	do_slash_brief_help(Ind);
+	return;
 }
 
 /*
@@ -3404,4 +3609,33 @@ int get_playerind(char *name)
                 if(!stricmp(Players[i]->name, name)) return(i);
         }
         return(-1);
+}
+
+/*
+ * Tell the player of the floor feeling.	- Jir -
+ * NOTE: differs from traditional 'boring' etc feeling!
+ */
+bool show_floor_feeling(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr = getfloor(wpos);
+
+	if (!l_ptr) return(FALSE);
+
+	/* Hack^2 -- display the 'feeling' */
+	if (l_ptr->flags1 & LF1_NO_TELEPORT)
+		msg_print(Ind, "\377oYou feel the air is very stable...");
+	if (l_ptr->flags1 & LF1_NO_MAGIC)
+		msg_print(Ind, "\377oYou feel an suppressive air...");
+	if (l_ptr->flags1 & LF1_NO_GENO)
+		msg_print(Ind, "\377oYou have a feeling of peace...");
+	if (l_ptr->flags1 & LF1_NOMAP)
+		msg_print(Ind, "\377oYou feel yourself amnesiac...");
+	if (l_ptr->flags1 & LF1_NO_MAGIC_MAP)
+		msg_print(Ind, "\377oYou feel like a stranger...");
+	if (l_ptr->flags1 & LF1_NO_DESTROY)
+		msg_print(Ind, "\377oThe walls here seem very solid.");
+
+	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : FALSE);
 }

@@ -1048,6 +1048,9 @@ TODO: the newest should appear the first!
 [B] TOOL_EQUIPPED ignored tval.
 [B] TV_POTION2 was white when in the inventory/0au when non-id-ed.
 
+16/06/2002 (Jir)
+- /news, displays news.txt
+[B] TV_POTION2 didn't shatter when thrown.
 
 
 ** [B] stands for Bugfix.

@@ -79,6 +79,9 @@ Note:
 	Mimics receive the 'learning' status also.
 	ex) /mo Z
 
+/news
+    Displays the news screen, in case you overlooked it when logging on.
+
 /pkill
 	Toggles 'player-killing' mode.
 

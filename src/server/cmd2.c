@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: cmd2.c */
 
 /* Purpose: Movement commands (part 2) */
@@ -434,7 +435,8 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	trap = o_ptr->pval;
 	
 	/* Message */
-	msg_print(Ind, "You found a trap!");
+//	msg_print(Ind, "You found a trap!");
+	msg_print(Ind, "You triggered a trap!");
 	
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
@@ -831,7 +833,7 @@ void do_cmd_open(int Ind, int dir)
 		{
 			if(c_ptr->special.type==DNA_DOOR) /* orig house failure */
 			{
-				if(access_door(Ind, c_ptr->special.ptr))
+				if(access_door(Ind, c_ptr->special.sc.ptr))
 				{
 					/* Open the door */
 					c_ptr->feat=FEAT_HOME_OPEN;
@@ -849,7 +851,7 @@ void do_cmd_open(int Ind, int dir)
 				}
 				else
 				{
-					struct dna_type *dna=c_ptr->special.ptr;
+					struct dna_type *dna=c_ptr->special.sc.ptr;
 					if(dna->owner){
 						char string[80];
 //						char *name;
@@ -889,7 +891,7 @@ void do_cmd_open(int Ind, int dir)
 				return;
 			}
 			else if(c_ptr->special.type==KEY_DOOR){
-				struct key_type *key=c_ptr->special.ptr;
+				struct key_type *key=c_ptr->special.sc.ptr;
 				for(j=0; j<INVEN_PACK; j++){
 					object_type *o_ptr=&p_ptr->inventory[j];
 					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
@@ -1103,7 +1105,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int                     y, x;
+	int                     y, x, power = p_ptr->skill_dig;
 
 	cave_type               *c_ptr;
 
@@ -1120,6 +1122,19 @@ void do_cmd_tunnel(int Ind, int dir)
 		msg_print(Ind, "You cannot tunnel.");
 
 		return;
+	}
+
+	/* Must be have something to dig with */
+	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
+		(p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING))
+	{
+#if 0
+		msg_print(Ind, "You need to have a shovel or pick in your tool slot.");
+		return (FALSE);
+#else	// 0
+		power >>= 1;
+
+#endif	// 0
 	}
 
 	/* Get a direction to tunnel, or Abort */
@@ -1182,7 +1197,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				/* Tunnel */
-				if ((p_ptr->skill_dig > 40 + rand_int(800)) && twall(Ind, y, x))        /* 1600 */
+				if ((power > 40 + rand_int(800)) && twall(Ind, y, x))        /* 1600 */
 				{
 					msg_print(Ind, "You have finished the tunnel.");
 				}
@@ -1212,13 +1227,13 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Quartz */
 				if (hard)
 				{
-					okay = (p_ptr->skill_dig > 20 + rand_int(400)); /* 800 */
+					okay = (power > 20 + rand_int(400)); /* 800 */
 				}
 
 				/* Magma */
 				else
 				{
-					okay = (p_ptr->skill_dig > 10 + rand_int(250)); /* 400 */
+					okay = (power > 10 + rand_int(250)); /* 400 */
 				}
 
 				/* Success */
@@ -1269,7 +1284,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* Remove the rubble */
-				if ((p_ptr->skill_dig > rand_int(200)) && twall(Ind, y, x))
+				if ((power > rand_int(200)) && twall(Ind, y, x))
 				{
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
@@ -1302,7 +1317,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_TREE)
 			{
 				/* mow down the vegetation */
-				if ((p_ptr->skill_dig > rand_int(250)) && twall(Ind, y, x)) /* 400 */
+				if ((power > rand_int(250)) && twall(Ind, y, x)) /* 400 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -1324,7 +1339,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			else if (c_ptr->feat == FEAT_EVIL_TREE)
 			{
 				/* mow down the vegetation */
-				if ((p_ptr->skill_dig > rand_int(400)) && twall(Ind, y, x)) /* 600 */
+				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 600 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -1385,7 +1400,7 @@ void do_cmd_disarm(int Ind, int dir)
 	byte                    *w_ptr;
 	object_type             *o_ptr;
 	trap_kind *t_ptr;
-	trap_type *tt_ptr;
+	int t_idx;
 
 	bool            more = FALSE;
 	cave_type **zcave;
@@ -1416,7 +1431,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 		/* Access the trap */
 		if (c_ptr->special.type == CS_TRAPS) 
-			tt_ptr = c_ptr->special.ptr;
+			t_idx = c_ptr->special.sc.trap.t_idx;
 
 		/* Nothing useful */
 #if 0
@@ -1424,10 +1439,9 @@ void do_cmd_disarm(int Ind, int dir)
 		      (c_ptr->feat <= FEAT_TRAP_TAIL)) &&
 		    (o_ptr->tval != TV_CHEST))
 
-//			!(c_ptr->special.ptr->found)) &&
+//			!(c_ptr->special.sc.ptr->found)) &&
 #endif	// 0
-		if (((c_ptr->special.type != CS_TRAPS) ||
-			!(tt_ptr->found)) &&
+		if ((!t_idx || !c_ptr->special.sc.trap.found) &&
 		    (o_ptr->tval != TV_CHEST))
 		{
 			/* Message */
@@ -1521,8 +1535,8 @@ void do_cmd_disarm(int Ind, int dir)
 			cptr name;
 
 			/* Access trap name */
-			if (p_ptr->trap_ident[tt_ptr->t_idx])
-				name = (t_name + t_info[tt_ptr->t_idx].name);
+			if (p_ptr->trap_ident[t_idx])
+				name = (t_name + t_info[t_idx].name);
 			else
 				name = "unknown trap";
 
@@ -1541,7 +1555,7 @@ void do_cmd_disarm(int Ind, int dir)
 			/* XXX XXX XXX Variable power? */
 
 			/* Extract trap "power" */
-			power = t_info[tt_ptr->t_idx].difficulty;
+			power = t_info[t_idx].difficulty;
 //			power = 5;
 
 			/* Extract the difficulty */
@@ -1560,10 +1574,10 @@ void do_cmd_disarm(int Ind, int dir)
 				gain_exp(Ind, power);
 
 				/* Remove the trap */
-				delete_trap_idx(c_ptr->special.ptr);
+				cs_erase(c_ptr);
 //				c_ptr->feat = FEAT_FLOOR;
 
-#if 0
+#if 1
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
 
@@ -1575,7 +1589,7 @@ void do_cmd_disarm(int Ind, int dir)
 #endif	// 0
 
 				/* move the player onto the trap grid */
-				move_player(Ind, dir, FALSE);
+				if (dir != 5) move_player(Ind, dir, FALSE);
 			}
 
 			/* Failure -- Keep trying */
@@ -1869,6 +1883,9 @@ void do_cmd_spike(int Ind, int dir)
 			/* Successful jamming */
 			msg_print(Ind, "You jam the door with a spike.");
 
+			/* Set off trap */
+			if (c_ptr->special.type == CS_TRAPS) player_activate_door_trap(Ind, y, x);
+
 			/* Convert "locked" to "stuck" XXX XXX XXX */
 			if (c_ptr->feat < FEAT_DOOR_HEAD + 0x08) c_ptr->feat += 0x08;
 
@@ -1931,7 +1948,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				(c_ptr->feat <= FEAT_HOME_TAIL)) 
 			{
 				if(c_ptr->special.type==DNA_DOOR){ /* orig house failure */
-					if(!access_door(Ind, c_ptr->special.ptr))
+					if(!access_door(Ind, c_ptr->special.sc.ptr))
 					{
 						do_cmd_open(Ind, dir);
 						return;
@@ -2165,7 +2182,9 @@ static int breakage_chance(object_type *o_ptr)
  * Note that Bows of "Extra Shots" give an extra shot.
  */
 /* Added a lot of hacks to handle boomerangs.	- Jir - */
-void do_cmd_fire(int Ind, int dir, int item)
+/* Added another lot of hacks to handle quiver-slot.	- Jir - */
+//void do_cmd_fire(int Ind, int dir, int item)
+void do_cmd_fire(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -2174,7 +2193,8 @@ void do_cmd_fire(int Ind, int dir, int item)
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;
-        int breakage = 0, num_ricochet = 0;
+	int breakage = 0, num_ricochet = 0;
+	int item = INVEN_AMMO;
 
 	object_type         throw_obj;
 	object_type             *o_ptr;
@@ -2194,6 +2214,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	/* Require proper missile */
 	item_tester_tval = p_ptr->tval_ammo;
 
+#if 0
 	/* Access the item (if in the pack) */
 	if (item >= 0)
 	{
@@ -2219,9 +2240,29 @@ void do_cmd_fire(int Ind, int dir, int item)
 		}
 	}
 
+#else	// 0
+	/* Get the "bow" (if any) */
+	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
+
+	/* Require a launcher */
+	if (!j_ptr->tval)
+	{
+		msg_print(Ind, "You have nothing to fire with.");
+		return;
+	}
+
+	if (j_ptr->tval == TV_BOOMERANG)
+	{
+		boomerang = TRUE;
+		item = INVEN_BOW;
+	}
+
+	o_ptr = &(p_ptr->inventory[item]);
+#endif	// 0
+
 
 	if( check_guard_inscription( o_ptr->note, 'f' )) {
-		msg_print(Ind, "The item's inscription prevents it");
+		msg_print(Ind, "The item's inscription prevents it.");
 		return;
 	}
 
@@ -2231,6 +2272,11 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 	}
 
+	if (!o_ptr->tval || !o_ptr->number)
+	{
+		msg_print(Ind, "Your quiver is empty!");
+		return;
+	}
 
 	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang)
 	{
@@ -2243,13 +2289,20 @@ void do_cmd_fire(int Ind, int dir, int item)
 		return;
 
 	/* Use the proper number of shots */
-	thits = boomerang? 1 : p_ptr->num_fire;
+//	thits = boomerang? 1 : p_ptr->num_fire;
+	thits = p_ptr->num_fire;
 
 	/* Take a (partial) turn */
 	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
 
 	/* Check if monsters around him/her hinder this */
 	if (interfere(Ind, p_ptr->pclass == CLASS_ARCHER ? 12 : 15)) return;
+
+	if (!boomerang && cursed_p(o_ptr) && magik(50))
+	{
+		msg_print(Ind, "You somehow failed to fire!");
+		return;
+	}
 
 	/* Is this Magic Arrow? */
 	magic = ((o_ptr->sval == SV_AMMO_MAGIC) && !cursed_p(o_ptr))?TRUE:FALSE;
@@ -2375,7 +2428,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 	}
 	else
 	{
-		/* Base damage from thrown object plus launcher bonus */
+		/* Base damage from thrown object */
 		tdam = damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d;
 
 		/* Actually "fire" the object */
@@ -2384,6 +2437,9 @@ void do_cmd_fire(int Ind, int dir, int item)
 
 		/* Assume a base multiplier */
 		tmul = 1;
+
+		/* Get extra "power" from "extra might" (tho this shouldn't happen) */
+		if (p_ptr->xtra_might) tmul++;
 
 		/* Hack -- sorta magic */
 		magic = TRUE;
@@ -2497,7 +2553,10 @@ void do_cmd_fire(int Ind, int dir, int item)
 				q_ptr = Players[0 - c_ptr->m_idx];
 
 				/* AD hack -- "pass over" players in same party */
-				if ((p_ptr->pkill & PKILL_KILLER) && ((!player_in_party(p_ptr->party, 0 - c_ptr->m_idx)) || (p_ptr->party == 0)))
+				if ((p_ptr->pkill & PKILL_KILLER || magik(NEUTRAL_FIRE_CHANCE)) &&
+					(p_ptr->party == 0 ||
+					 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
+					 magik(FRIEND_FIRE_CHANCE)) )
 				{ 
 
 					/* Check the visibility */
@@ -2803,6 +2862,21 @@ void do_cmd_fire(int Ind, int dir, int item)
 				msg_format(Ind, "Your %s is destroyed.",o_name);
 				inven_item_increase(Ind, item, -1);
 				inven_item_optimize(Ind, item);
+
+				/* Recalculate bonuses */
+				p_ptr->update |= (PU_BONUS);
+
+				/* Recalculate torch */
+				p_ptr->update |= (PU_TORCH);
+
+				/* Recalculate mana */
+				p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+
+				/* Redraw */
+				p_ptr->redraw |= (PR_PLUSSES);
+
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 			}
 			break;
 		}
@@ -3039,6 +3113,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	bool            hit_body = FALSE;
 
+	bool hit_wall = FALSE;
+
 	int                     missile_attr;
 	int                     missile_char;
 
@@ -3172,7 +3248,12 @@ void do_cmd_throw(int Ind, int dir, int item)
 		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 
 		/* Stopped by walls/doors */
-		if (!cave_floor_bold(zcave, ny, nx)) break;
+		if (!cave_floor_bold(zcave, ny, nx))
+		{
+			hit_wall = TRUE;
+			break;
+		}
+
 
 		/* Advance the distance */
 		cur_dis++;
@@ -3393,11 +3474,54 @@ void do_cmd_throw(int Ind, int dir, int item)
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);
 
+	/* Potions smash open */
+	if (k_info[o_ptr->k_idx].tval == TV_POTION ||
+			k_info[o_ptr->k_idx].tval == TV_POTION2)
+	{
+		if ((hit_body) || (hit_wall) || (randint(100) < j))
+		{
+			/* Message */
+			/* TODO: handle blindness */
+			msg_format_near_site(y, x, wpos, "The %s shatters!", o_name);
+
+//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
+			if (k_info[o_ptr->k_idx].tval == TV_POTION)
+				if (potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval))
+				{
+#if 0
+					if (cave[y][x].m_idx)
+					{
+						char m_name[80];
+						monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
+						switch (is_friend(&m_list[cave[y][x].m_idx]))
+						{
+							case 1:
+								msg_format("%^s gets angry!", m_name);
+								change_side(&m_list[cave[y][x].m_idx]);
+								break;
+							case 0:
+								msg_format("%^s gets angry!", m_name);
+								m_list[cave[y][x].m_idx].status = MSTATUS_NEUTRAL_M;
+								break;
+						}
+					}
+#endif	// 0
+				}
+
+			return;
+		}
+		else
+		{
+			j = 0;
+		}
+	}
+
 	/* Drop (or break) near that location */
 	drop_near_severe(Ind, o_ptr, j, wpos, y, x);
 }
 
-void destroy_house(int Ind, struct dna_type *dna){
+void destroy_house(int Ind, struct dna_type *dna)
+{
 	player_type *p_ptr=Players[Ind];
 	int i;
 	if(!p_ptr->admin_wiz)
@@ -3439,7 +3563,7 @@ void house_admin(int Ind, int dir, char *args){
 		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
 		{
 			if(c_ptr->special.type==DNA_DOOR){
-				dna=c_ptr->special.ptr;
+				dna=c_ptr->special.sc.ptr;
 				if(access_door(Ind, dna)){
 					switch(args[0]){
 						case 'O':
@@ -3517,7 +3641,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 			return;
 		}
 
-		dna=c_ptr->special.ptr;
+		dna=c_ptr->special.sc.ptr;
 		/* Take player's CHR into account */
 		factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
 #if 0

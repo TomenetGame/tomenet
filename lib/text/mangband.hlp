@@ -16,28 +16,38 @@ A resume, or 'read it and dive the hell!';)
 For further (and easy-to-read) documentation, please visit:
 
 Official Site   - http://T-o-M-E.net/pernmangband/
-Newbie Tutorial - http://www.ctt.ne.jp/~sap/mang/
+Newbie Tutorial - http://www.mangband.org/documentation/mang/
 
-Latest changes for version 3.4.0b (digest):
+Latest changes for version 3.5.5a (digest):
+- development version toward 4.0.0!
+- skill system is being implemented. (try 'X' or '\X')
+- items can stack on the floor now. (but not inside a house!)
+- potions can cause some effects when shattering; handle them with care.
+- quiver/tool slots are available. (client update needed!)
+  'fire' command no longer needs item specification.
+- pack of hounds no longer freezes the client (and instakills you :)
+- chat-line editing (^P, ^N, ^U, ^W)
+- /help, /shout, /feeling, /monster, /quest, /news
+- '/ver 1' to see server settings.
+- Monks can disturb adjacent monsters' attempt to teleport. (grabbing)
+- Vaults are varied somewhat.
+- Smaller floors can be generated.
+- Restricted floors can be generated; you gain level quickly there.
 - Name changed to 'TomeNET'(Trouble-of-Middle-Earth the NET).
 - Monster AI significantly improved; use your head, too!
 - Underground rivers, lakes and their habitants.
-- Unnumbered new items/monsters/traps etc. are added.
-- Sanity point, which describes how distant you are from insanity.
 - Genocide spell is penalized; use it with attention!
-- New item system, including hundleds of new egos/artifacts.
-- Multiple towns/dungeons/towers implemented - try exploring the wilderness!
+
+[ *** Important notes *** ]
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
 - 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
-- You'll be protected by GoI for 2-turns after recall/stairs.
-- Temple priest gives you some $ when resurrecting, so don't suicide :)
 
 [Brief instruction for new commands]
 - 'I' : examine an item (item should be *ID*ed first).
 - "'" : check other players' equipments under certain conditions.
 - Control-S : Spike doors (client update needed).
 - '/' : do many things (eg. a,A,e,E,F,i,m,n,p,q,r,t,w,z,Z)
-- Chat-line commands; enter '/' in chat-line for help.
+- Chat-line commands; enter '/help' in chat-line for help.
   + '/dis' DESTROYS everything w/o (non-system) inscription in your inventory.
   + Please send us your ideas/bug-reports via '/rfe' command.
   + '/rec -550' recalls you to -550ft, using an item inscribed {@R}.
@@ -46,7 +56,7 @@ Latest changes for version 3.4.0b (digest):
   + {@RT} lands you to the first town (where you start the game).
 - Inscription {!=} forces you to pick it up; use it on your arrows.
 - Inscription {!g} forces the ammo to disappear when fired(no litters).
-- Inscribe {@O} on missiles, and you'll fire them for auto-retaliation.
+- Inscribe {@O} on a bow, and you'll fire with it for auto-retaliation.
 - {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
 - {@Ox} on any items and auto-retaliator will be disabled.
 
@@ -642,5 +652,6 @@ Vault, greater -- You'll know one if you see one. Thats all I'm saying here.
 
 WOR (word of recall) -- A scroll which, when read in the dungeon, will
 return you to town, and if read in town will take you to the deepest depth
-you have been in the dungeon.  You can select your recall depth by inscribing
-your scrolls @R[the depth], for example @R650.
+you have been in the dungeon.  You can select your recall depth by either
+inscribing your scrolls @R[the depth] like @R-650, or by simply inscribe @R
+and calling chat-line command '/rec -650'.
