@@ -3170,8 +3170,10 @@ void player_death(int Ind)
 		sprintf(buf, "The unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
-	if ((strcmp(p_ptr->name,cfg_dungeon_master)) || (!cfg_secret_dungeon_master)) 
-		msg_broadcast(Ind, buf);
+	if ((strcmp(p_ptr->name,cfg_dungeon_master)) || (!cfg_secret_dungeon_master)) {
+		if(p_ptr->lev>1 || p_ptr->alive)
+			msg_broadcast(Ind, buf);
+	}
 
 	/* Drop gold if player has any */
         if (p_ptr->alive && p_ptr->au)

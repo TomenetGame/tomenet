@@ -205,3 +205,4 @@ Change list for PernMangband
 02/10/2001
 - Object ownership made invalid now after player ghost death. It was
   recycling ownership. It is set to MAX_ID+1.
+- Annoying level 1 suicides are no longer shown.
