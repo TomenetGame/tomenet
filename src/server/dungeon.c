@@ -1402,7 +1402,7 @@ static void process_player_end(int Ind)
 		/* Drowning */
 		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER){
 			/* Take damage */
-			take_hit(Ind, 1, "drowning");
+			take_hit(Ind, p_ptr->mhp/15, "drowning");
 		}
 
 		/* Take damage from cuts */
