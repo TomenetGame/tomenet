@@ -434,8 +434,59 @@ int pick_house(int Depth, int y, int x)
 	return -1;
 }
 
+/* Door change permissions */
+bool chmod_door(int Ind, struct dna_type *dna, char *args){
+	player_type *p_ptr=Players[Ind];
+	if(strcmp(p_ptr->name, cfg_admin_wizard) && strcmp(p_ptr->name, cfg_dungeon_master)){
+#ifdef NEWHOUSES
+		if(dna->creator!=p_ptr->dna) return(FALSE);
+#endif
+		/* more security needed... */
+	}
+
+	if((dna->a_flags=args[1])){
+		dna->min_level=atoi(&args[2]);
+	}
+	return(TRUE);
+}
+
 /* Door change ownership */
-bool chown_door(int Ind, struct dna_type *dna){
+bool chown_door(int Ind, struct dna_type *dna, char *args){
+	player_type *p_ptr=Players[Ind];
+	int newowner=-1;
+	int i;
+	if(strcmp(p_ptr->name, cfg_admin_wizard) && strcmp(p_ptr->name, cfg_dungeon_master)){
+#ifdef NEWHOUSES
+		if(dna->creator!=p_ptr->dna) return(FALSE);
+#endif
+		if(args[1]>'3') return(FALSE);
+		/* maybe make party leader only chown party */
+	}
+	switch(args[1]){
+		case '1':
+			newowner=lookup_player_id(&args[2]);
+			if(!newowner) newowner=-1;
+			break;
+		case '2':
+			newowner=party_lookup(&args[2]);
+			break;
+		case '3':
+			for(i=0;i<MAX_CLASS;i++){
+				if(!strcmp(&args[2],class_info[i].title))
+					newowner=i;
+			}
+			break;
+		case '4':
+			for(i=0;i<MAX_RACES;i++){
+				if(!strcmp(&args[2],race_info[i].title))
+					newowner=i;
+			}
+			break;
+	}
+	if(newowner!=-1){
+		dna->owner=newowner;
+		return(TRUE);
+	}
 	return FALSE;
 }
 
@@ -447,6 +498,7 @@ bool access_door(int Ind, struct dna_type *dna){
 		return(FALSE); /* defies logic a bit, but for speed */
 #endif
 	switch(dna->owner_type){
+	int i;
 		case OT_PLAYER:
 			/* new doors in new server different */
 #ifdef NEWHOUSES
@@ -2976,8 +3028,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 void house_admin(int Ind, int dir, char *args){
 	player_type *p_ptr=Players[Ind];
 	int Depth=p_ptr->dun_depth;
-	int x,y,i;
-	int newowner=-1;
+	int x,y;
+	int success=0;
 	cave_type *c_ptr;
 	struct dna_type *dna;
 
@@ -2991,36 +3043,21 @@ void house_admin(int Ind, int dir, char *args){
 		{
 			if((dna=c_ptr->special) && access_door(Ind, dna)){
 				switch(args[0]){
-					case '1':
-						newowner=lookup_player_id(&args[1]);
-						if(!newowner) newowner=-1;
+					case 'O':
+						success=chown_door(Ind, dna, args);
 						break;
-					case '2':
-						newowner=party_lookup(&args[1]);
-						break;
-					case '3':
-						for(i=0;i<MAX_CLASS;i++){
-							if(!strcmp(&args[1],class_info[i].title))
-								newowner=i;
-						}
-						break;
-					case '4':
-						for(i=0;i<MAX_RACES;i++){
-							if(!strcmp(&args[1],race_info[i].title))
-								newowner=i;
-						}
+					case 'M':
+						success=chmod_door(Ind, dna, args);
 						break;
 				}
-				if(newowner!=-1){
-					dna->owner_type=args[0]-'0';
-					dna->owner=newowner;
+				if(success){
 					msg_format(Ind,"Door change successful");
 				}
 				else msg_format(Ind,"Door change failed");
 			}
 			else msg_print(Ind,"You cant modify that door");
 		}
-		else msg_print(Ind,"There is no door");
+		else msg_print(Ind,"There is no door there");
 	}
 	return;
 }

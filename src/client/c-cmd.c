@@ -1572,7 +1572,7 @@ void cmd_redraw(void)
 	keymap_init();
 }
 
-void cmd_house_admin(int dir)
+void cmd_house_chown(int dir)
 {
 	char i=0;
 	char buf[80];
@@ -1590,9 +1590,10 @@ void cmd_house_admin(int dir)
 			case '2':
 			case '3':
 			case '4':
-				buf[0]=i;
-				buf[1]=0;
-				get_string("Enter new name:",&buf[1],79);
+				buf[0]='O';
+				buf[1]=i;
+				buf[2]=0;
+				get_string("Enter new name:",&buf[2],79);
 				Send_admin_house(dir,buf);
 				return;
 			default:
@@ -1600,6 +1601,23 @@ void cmd_house_admin(int dir)
 		}
 		c_msg_print(NULL);
 	}
+}
+
+void cmd_house_chmod(int dir){
+	char buf[80];
+	char mod=ACF_NONE;
+	u16b minlev=0;
+	Term_clear();
+	Term_putstr(0, 2, -1, TERM_BLUE, "Set new permissions");
+	if (get_check("Allow party access? ")) mod |= ACF_PARTY;
+	if (get_check("Allow class access? ")) mod |= ACF_CLASS;
+	if (get_check("Allow race access? ")) mod |= ACF_RACE;
+	minlev=c_get_quantity("Minimum level: ", 127);
+	if(minlev>1) mod |= ACF_LEVEL;
+	buf[0]='M';
+	if((buf[1]=mod))
+		sprintf(&buf[2],"%hd",minlev);
+	Send_admin_house(dir,buf);
 }
 
 void cmd_purchase_house(void)
@@ -1616,6 +1634,7 @@ void cmd_purchase_house(void)
 	Term_putstr(0, 2, -1, TERM_BLUE, "House commands");
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
+	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1627,7 +1646,11 @@ void cmd_purchase_house(void)
 				i=ESCAPE;
 				break;
 			case '2':
-				cmd_house_admin(dir);
+				cmd_house_chown(dir);
+				i=ESCAPE;
+				break;
+			case '3':
+				cmd_house_chmod(dir);
 				i=ESCAPE;
 				break;
 			default:
