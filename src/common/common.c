@@ -89,7 +89,7 @@ cptr shortVersion;
 
 void version_build()
 {
-	char temp[100];
+	char temp[256];
 
 	/* Append the version number */
 	sprintf(temp, "%s %d.%d.%d", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);

@@ -2821,7 +2821,7 @@ void do_cmd_options(void)
 			Term_putstr(0, 19, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "user.prf", ANGBAND_SYS);
+			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;

@@ -174,6 +174,7 @@ extern char reason[MAX_CHARS];	/* Receive_quit */
 extern void get_char_name(void);
 extern void get_char_info(void);
 extern bool get_server_name(void);
+extern void create_random_name(int race, char *name);
 
 /* c-cmd.c */
 extern void process_command(void);
@@ -436,10 +437,13 @@ extern int Send_King(byte type);
 extern int Send_admin_house(int dir, cptr buf);
 extern int Send_spike(int dir);
 extern int Send_skill_mod(int i);
+extern int Send_store_examine(int item);
 
 
 /* skills.c */
 extern bool hack_do_cmd_skill_wait;
+extern void do_activate_skill(int x_idx, int item);
+extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
 
 /* common/common.c */

@@ -3448,6 +3448,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	hInstance = hInst;  /* save in a global var */
 
+	/* make version strings. */
+	version_build();
+
 	if (hPrevInst == NULL)
 	{
 		wc.style         = CS_CLASSDC;

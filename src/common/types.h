@@ -1559,7 +1559,7 @@ struct key_type{
 
 struct floor_insc{
 	char text[80];		/* that should be enough */
-	bool found;		/* we may want hidden inscription? */
+	u16b found;		/* we may want hidden inscription? */
 };
 
 

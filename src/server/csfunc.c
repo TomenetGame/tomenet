@@ -138,7 +138,7 @@ void tsave(c_special *cs_ptr)
 void tsee(void *ptr, int Ind){
 	printf("tsee %d\n", Ind);
 }
-void thit(void *ptr, int Ind){
+int thit(void *ptr, int Ind){
 	printf("thit: %d\n", Ind);
 	return(0);
 }
@@ -147,7 +147,7 @@ void insc_load(c_special *cs_ptr){
 	struct floor_insc *insc;
 	MAKE(insc, struct floor_insc);
 	cs_ptr->sc.ptr=insc;
-	rd_string(&insc->text, 80);
+	rd_string(insc->text, 80);
 	rd_u16b(&insc->found);
 }
 
