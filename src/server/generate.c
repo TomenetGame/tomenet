@@ -198,9 +198,9 @@
 /*
  * makeshift river for 3.3.x
  */
-#define DUN_RIVER_CHANCE	15
-#define DUN_STR_WAT			4
-#define DUN_LAKE_TRY		8	/* how many tries to generate lake on river */
+#define DUN_RIVER_CHANCE	5
+#define DUN_STR_WAT		4
+#define DUN_LAKE_TRY		3	/* how many tries to generate lake on river */
 #define WATERY_CYCLE		25	/* (25,4) = '1100-1250,2350-2500...' */
 #define WATERY_RANGE		4
 

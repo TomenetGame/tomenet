@@ -43,7 +43,7 @@
 
 /* Chance of an out-of-sight monster to cast a spell, in percent.
  * reducing this also speeds the server up. */
-#define		INDIRECT_FREQ	50
+#define		INDIRECT_FREQ	5
  
 /* pseudo 'radius' for summoning spells. default is 3.  */
 #define		INDIRECT_SUMMONING_RADIUS	3
