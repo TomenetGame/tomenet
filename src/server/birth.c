@@ -1050,7 +1050,7 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
-
+#if 0
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
@@ -1058,7 +1058,7 @@ static void player_outfit(int Ind)
                 o_ptr->owner = p_ptr->id;
                 o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
-
+#endif
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;
@@ -1068,7 +1068,7 @@ static void player_outfit(int Ind)
 		(void)inven_carry(Ind, o_ptr);
 
 		invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
-		o_ptr->number = 9;
+		o_ptr->number = 30;
 		o_ptr->discount = 0;
 		o_ptr->pval = 10;
 		object_known(o_ptr);
