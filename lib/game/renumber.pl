@@ -1,4 +1,4 @@
-#! /usr/bin/perl
+#!/usr/pkg/bin/perl
 #from http://www.fragment.com/~jl8e/angband/
 
 #inform the user of changes in numbers, so you can fix defines.h
