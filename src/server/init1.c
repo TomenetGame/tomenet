@@ -446,7 +446,7 @@ static cptr r_info_flags8[] =
 {
 	"WILD_ONLY",
 	"WILD_TOWN",
-	"XXX8X02",
+	"WILD_EASY",	/* ground without requirements: town/shore/waste/grass/swamp */
 	"WILD_SHORE",
 	"WILD_OCEAN",
 	"WILD_WASTE",
@@ -4254,6 +4254,11 @@ errr init_r_info_txt(FILE *fp, char *buf)
 				!(r_info[i].flags8 & RF8_WILD_TOO_MASK))
 			r_info[i].flags8 |= RF8_WILD_TOO_MASK;
 #endif	// 0
+
+		/* WILD_EASY without any other wilderness flags enables all flags */
+		if ((r_info[i].flags8 & RF8_WILD_EASY) &&
+				!(r_info[i].flags8 & RF8_WILD_EASY_MASK))
+			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
 	}
 
 

@@ -6744,7 +6744,7 @@ void do_cmd_activate(int Ind, int item)
 				else
 				{
 					/* Need skill; no need of killing count */
-					if (get_skill(p_ptr, SKILL_MIMIC) < (r_info[p_ptr->body_monster].level / 2))
+					if (r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 					{
 						msg_print(Ind, "Your mimicry is not powerful enough yet.");
 						return;

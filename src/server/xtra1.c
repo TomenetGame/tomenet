@@ -3699,7 +3699,7 @@ void calc_bonuses(int Ind)
 			p_ptr->dis_to_d += (marts / 3);
 */
 			p_ptr->to_h_melee += (marts / 3) * 2;
-			p_ptr->to_d_melee += (marts / 3);
+			p_ptr->to_d_melee += (marts / 4);/* was 3, experimental */
 		}
 	}
 #endif
@@ -3723,8 +3723,8 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_d += lev;
 	}
 
-	/* Combat bonus to damage */
-	if (get_skill(p_ptr, SKILL_MASTERY))
+	/* Weaponmastery bonus to damage - not for MA!- C. Blue */
+	if (get_skill(p_ptr, SKILL_MASTERY) && o_ptr->k_idx)
 	{
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
 
@@ -3785,7 +3785,7 @@ void calc_bonuses(int Ind)
 			/* Reduce the mental bonuses */
 			if (p_ptr->dis_to_h > 0) p_ptr->dis_to_h = (3 * p_ptr->dis_to_h) / 5;
 			if (p_ptr->dis_to_d > 0) p_ptr->dis_to_d = (3 * p_ptr->dis_to_d) / 5;
-			
+
 			/* Reduce the weaponmastery bonuses */
 			if (p_ptr->to_h_melee > 0) p_ptr->to_h_melee = (3 * p_ptr->to_h_melee) / 5;
 			if (p_ptr->to_d_melee > 0) p_ptr->to_d_melee = (3 * p_ptr->to_d_melee) / 5;
@@ -3797,7 +3797,8 @@ void calc_bonuses(int Ind)
 	/* Priest weapon penalty for non-blessed edged weapons */
 //	if ((p_ptr->pclass == 2) && (!p_ptr->bless_blade) &&
 //	if ((get_skill(p_ptr, SKILL_PRAY)) && (!p_ptr->bless_blade) &&
-	if ((p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
+	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    (p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
 	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
 	    (o_ptr->tval == TV_AXE)))
 	{

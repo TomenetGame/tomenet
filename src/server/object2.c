@@ -1847,6 +1847,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
+	/* Require objects from the same modus! */
+	if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
+	    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
+		return(0);
+
 		/* Require same owner or convertable to same owner */
 //
 /*		if (o_ptr->owner != j_ptr->owner) return (0); */
@@ -4919,6 +4924,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 {
 	int i, rolls, f1, f2, power;
 
+	
+	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
+	if (lev == -2) lev = getlevel(wpos);
 
 	/* Maximum "level" for various things */
         if (lev > MAX_DEPTH_OBJ - 1) lev = MAX_DEPTH_OBJ - 1;
@@ -5431,8 +5439,8 @@ void determine_level_req(int level, object_type *o_ptr)
 	/* '17/72' == 0.2361... < 1/4 :) */
 	base >>= 1;
 	i = level - base;
-	j = (i * (i > 0 ? 1 : 2) / 4  + base) * rand_range(95,105) / 100;
-	o_ptr->level = j < 100 ? (j > 1 ? j : 1) : 100;
+	j = (i * (i > 0 ? 3 : 3) / 12  + base) * rand_range(95,105) / 100;/* was 1:2 / 4 */
+	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
 }
 

@@ -3549,7 +3549,7 @@ that keeps many algorithms happy.
  */
 #define RF8_DUNGEON             0x00000001
 #define RF8_WILD_TOWN           0x00000002
-#define RF8_XXX8X02             0x00000004
+#define RF8_WILD_EASY           0x00000004
 #define RF8_WILD_SHORE          0x00000008
 #define RF8_WILD_OCEAN          0x00000010
 #define RF8_WILD_WASTE          0x00000020
@@ -3570,9 +3570,14 @@ that keeps many algorithms happy.
 #define RF8_WILD_TOO            0x80000000
 
 #define RF8_WILD_TOO_MASK \
-	( RF8_WILD_TOWN | RF8_XXX8X02 | RF8_WILD_SHORE | \
+	( RF8_WILD_TOWN | RF8_WILD_EASY | RF8_WILD_SHORE | \
 	  RF8_WILD_OCEAN | RF8_WILD_WASTE | RF8_WILD_WOOD | RF8_WILD_VOLCANO | \
 	  RF8_XXX8X08 | RF8_WILD_MOUNTAIN | RF8_WILD_GRASS | RF8_WILD_SWAMP)
+
+#define RF8_WILD_EASY_MASK \
+        ( RF8_WILD_TOWN | RF8_WILD_SHORE | \
+          RF8_WILD_WASTE | \
+	  RF8_WILD_GRASS | RF8_WILD_SWAMP)
 
 
 /*

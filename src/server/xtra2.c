@@ -4329,7 +4329,7 @@ if(cfg.unikill_format){
 					a_info[a_idx].cur_num = 1;
 
 					/* Complete generation, especially level requirements check */
-					apply_magic(wpos, qq_ptr, -1, FALSE, TRUE, FALSE);
+					apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE);
 
 					/* Drop the artifact from heaven */
 					drop_near(qq_ptr, -1, wpos, y, x);
@@ -4386,7 +4386,7 @@ if(cfg.unikill_format){
 			qq_ptr->name1 = a_idx;
 
 			/* Mega-Hack -- Actually create the amulet of Grom */
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE);
+			apply_magic(wpos, qq_ptr, -2, TRUE, TRUE, TRUE);
 
 			a_info[a_idx].cur_num = 1;
 			/* Drop the artifact from heaven */
