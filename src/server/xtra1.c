@@ -2158,12 +2158,13 @@ void calc_bonuses(int Ind)
 		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
 		/* why would someone choose Thunderlord with all his advantages over ent gone??
 		ESP_ALL and ESP_EVIL should be removed or Thunderlords exp% lowered a great deal. */
-//		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_ALL;
-		if (p_ptr->lev >= 10) p_ptr->telepathy |= ESP_ANIMAL;//20
-		if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_TROLL;//25
-		if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_GIANT;//30
-//		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_EVIL;
-//		if (p_ptr->lev >= 50) p_ptr->telepathy = ESP_ALL;
+		if (p_ptr->lev >= 10) p_ptr->telepathy |= ESP_ANIMAL;
+		if (p_ptr->lev >= 15) p_ptr->telepathy |= ESP_ORC;
+		if (p_ptr->lev >= 20) p_ptr->telepathy |= ESP_TROLL;
+		if (p_ptr->lev >= 25) p_ptr->telepathy |= ESP_GIANT;
+		if (p_ptr->lev >= 30) p_ptr->telepathy |= ESP_DRAGON;
+		if (p_ptr->lev >= 40) p_ptr->telepathy |= ESP_DEMON;
+		if (p_ptr->lev >= 50) p_ptr->telepathy |= ESP_EVIL;
 	}
 
 	/* Thunderlord (former DragonRider) */
