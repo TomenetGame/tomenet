@@ -2556,7 +2556,7 @@ void player_talk_aux(int Ind, cptr message)
 					break;
 				case 5:
 					p_ptr->chp=-3;
-					strcpy(p_ptr->died_from, "not breathing");
+					strcpy(p_ptr->died_from, "hypoxia");
 					player_death(Ind);
 					p_ptr->spam=1;
 					return FALSE;
@@ -2620,7 +2620,7 @@ void player_talk_aux(int Ind, cptr message)
 			/* cut tokens off (thx Ascrep(DEG)) */
 			if (token[0]=strtok(message," "))
 			{
-				s_printf("%d : %s", tk, token[0]);
+//				s_printf("%d : %s", tk, token[0]);
 				for (i=1;i<=9;i++)
 				{
 					token[i]=strtok(NULL," ");

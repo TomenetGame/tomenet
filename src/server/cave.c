@@ -2082,6 +2082,7 @@ void do_cmd_view_map(int Ind)
 	/* do wilderness map */
 	/* pfft */
 //	else wild_display_map(Ind);
+	else display_map(Ind, &cy, &cx);
 }
 
 
