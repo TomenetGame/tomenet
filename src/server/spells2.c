@@ -3955,19 +3955,11 @@ bool lite_area(int Ind, int dam, int rad)
 		msg_print(Ind, "You are surrounded by a white light.");
 	}
 
-#ifdef NEW_DUNGEON
 	/* Hook into the "project()" function */
 	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg);
 
 	/* Lite up the room */
 	lite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-	/* Hook into the "project()" function */
-	(void)project(0 - Ind, rad, p_ptr->dun_depth, p_ptr->py, p_ptr->px, dam, GF_LITE_WEAK, flg);
-
-	/* Lite up the room */
-	lite_room(Ind, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Assume seen */
 	return (TRUE);
@@ -3990,19 +3982,11 @@ bool unlite_area(int Ind, int dam, int rad)
 		msg_print(Ind, "Darkness surrounds you.");
 	}
 
-#ifdef NEW_DUNGEON
 	/* Hook into the "project()" function */
 	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg);
 
 	/* Lite up the room */
 	unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-	/* Hook into the "project()" function */
-	(void)project(0 - Ind, rad, p_ptr->dun_depth, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg);
-
-	/* Lite up the room */
-	unlite_room(Ind, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 
 	/* Assume seen */
 	return (TRUE);
@@ -4037,11 +4021,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg));
-#else
-	return (project(0 - Ind, rad, p_ptr->dun_depth, ty, tx, dam, typ, flg));
-#endif
 }
 
 
@@ -4069,11 +4049,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg)
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg));
-#else
-	return (project(0 - Ind, 0, p_ptr->dun_depth, ty, tx, dam, typ, flg));
-#endif
 }
 
 
@@ -4246,11 +4222,7 @@ bool door_creation(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg));
-#else
-	return (project(0 - Ind, 1, p_ptr->dun_depth, p_ptr->py, p_ptr->px, 0, GF_MAKE_DOOR, flg));
-#endif
 }
 
 bool trap_creation(int Ind)
@@ -4258,11 +4230,7 @@ bool trap_creation(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP, flg));
-#else
-	return (project(0 - Ind, 1, p_ptr->dun_depth, p_ptr->py, p_ptr->px, 0, GF_MAKE_TRAP, flg));
-#endif
 }
 
 bool destroy_doors_touch(int Ind)
@@ -4270,11 +4238,7 @@ bool destroy_doors_touch(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE;
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
-#else
-	return (project(0 - Ind, 1, p_ptr->dun_depth, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg));
-#endif
 }
 
 bool sleep_monsters_touch(int Ind)
@@ -4282,11 +4246,7 @@ bool sleep_monsters_touch(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int flg = PROJECT_KILL | PROJECT_HIDE;
-#ifdef NEW_DUNGEON
 	return (project(0 - Ind, 1, &p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
-#else
-	return (project(0 - Ind, 1, p_ptr->dun_depth, p_ptr->py, p_ptr->px, p_ptr->lev, GF_OLD_SLEEP, flg));
-#endif
 }
 
 /* Scan magical powers for the golem */
@@ -4315,11 +4275,7 @@ struct builder{
 	int odir;
 	int moves;
 	int cvert;
-#ifdef NEW_DUNGEON
 	struct worldpos wpos;
-#else
-	int depth;
-#endif
 	bool nofloor;
 	struct dna_type *dna;
 	char *vert;
@@ -4337,10 +4293,8 @@ bool poly_build(int Ind, char *args){
 	struct builder *curr=builders;
 	int x,y;
 	int dir=0;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
-#endif
 	while(curr){
 		struct builder *prev=NULL;
 		bool kill=FALSE;
@@ -4403,15 +4357,9 @@ bool poly_build(int Ind, char *args){
 			KILL(curr, struct builder);	/* Sack the builders! */
 			return FALSE;
 		}
-#ifdef NEW_DUNGEON
 		zcave[curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
 		zcave[curr->sy][curr->sx].special.type=DNA_DOOR;
 		zcave[curr->sy][curr->sx].special.ptr=curr->dna;
-#else
-		cave[p_ptr->dun_depth][curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
-		cave[p_ptr->dun_depth][curr->sy][curr->sx].special.type=DNA_DOOR;
-		cave[p_ptr->dun_depth][curr->sy][curr->sx].special.ptr=curr->dna;
-#endif
 		builders=curr;
 		return TRUE;
 
@@ -4477,11 +4425,7 @@ bool poly_build(int Ind, char *args){
 		houses[num_houses].flags|=HF_MOAT;
 #endif
 /* Do not commit! */
-#ifdef NEW_DUNGEON
 		wpcopy(&houses[num_houses].wpos, &p_ptr->wpos);
-#else
-		houses[num_houses].depth=p_ptr->dun_depth;
-#endif
 		houses[num_houses].dna=curr->dna;
 		if(curr->cvert>=8 && fill_house(&houses[num_houses], 2, NULL)){
 			int area=(curr->maxx-curr->minx)*(curr->maxy-curr->miny);

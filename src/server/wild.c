@@ -73,13 +73,8 @@ int neighbor_index(struct worldpos *wpos, char dir)
 {
 	int cur_x, cur_y, neigh_idx;
 	
-#ifdef NEW_DUNGEON
 	cur_x = wpos->wx;
 	cur_y = wpos->wy;
-#else
-	cur_x = wild_info[Depth].world_x;
-	cur_y = wild_info[Depth].world_y;
-#endif
 		
 	switch (dir)
 	{				
@@ -101,7 +96,6 @@ int neighbor_index(struct worldpos *wpos, char dir)
    
    Note that this has to be initially called with 0,0 to work properly. 
 */
-#ifdef NEW_DUNGEON
 
 int towndist(int wx, int wy){
 	int x,y;
@@ -148,51 +142,6 @@ void init_wild_info_aux(int x, int y){
 	}
 
 }
-#else
-void init_wild_info_aux(int x, int y)
-{
-	int depth = world_index(x,y), neigh_idx;
-	char dir;
-	
-	/* if we are a valid index, initialize */
-	if (depth > -MAX_WILD)
-	{
-		wild_info[depth].world_x = x;
-		wild_info[depth].world_y = y;
-		wild_info[depth].radius = abs(x) + abs(y);
-		wild_info[depth].type =  (!depth ? WILD_TOWN : WILD_UNDEFINED);
-	}
-	
-	/* Initialize each of our uninitialized neighbors */
-	
-	/* north */
-	neigh_idx = neighbor_index(depth, DIR_NORTH);
-	/* if a valid neighbor */
-	if (neigh_idx > -MAX_WILD)
-		/* if it has not been set */
-		if (!wild_info[neigh_idx].radius)
-			init_wild_info_aux(x,y+1);
-		
-	/* east */
-	neigh_idx = neighbor_index(depth, DIR_EAST);
-	if (neigh_idx > -MAX_WILD)
-		if (!wild_info[neigh_idx].radius)
-			init_wild_info_aux(x+1,y);
-	
-		
-	 /* south */
-	neigh_idx = neighbor_index(depth, DIR_SOUTH);
-	if (neigh_idx > -MAX_WILD) 
-		if (!wild_info[neigh_idx].radius)
-			init_wild_info_aux(x,y-1);
-	
-	/* west */
-	neigh_idx = neighbor_index(depth, DIR_WEST);
-	if (neigh_idx > -MAX_WILD) 
-		if (!wild_info[neigh_idx].radius)
-			init_wild_info_aux(x-1,y);
-}
-#endif
 
 /* Initialize the wild_info coordinates and radius. Uses a recursive fill algorithm.
    This may seem a bit out of place, but I think it is too complex to go in init2.c.
@@ -267,49 +216,33 @@ void wild_apply_day(struct worldpos *wpos)
 {
 	int x,y;
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 	
 	/* scan the level */
 	for (y = 0; y < MAX_HGT; y++)
 	{
 		for (x = 0; x < MAX_WID; x++)
 		{
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[y][x];
-#else
-			c_ptr = &cave[Depth][y][x];
-#endif
 			c_ptr->info |= CAVE_GLOW;
 		}
 	}
 }
 
-#ifdef NEW_DUNGEON
 void wild_apply_night(struct worldpos *wpos)
-#else
-void wild_apply_night(int Depth)
-#endif
 {
 	int x,y;
 	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* scan the level */
 	for (y = 0; y < MAX_HGT; y++)
 	{
 		for (x = 0; x < MAX_WID; x++)
 		{
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[y][x];
-#else
-			c_ptr = &cave[Depth][y][x];
-#endif
 			
 			/* Darken the features */
 			if (!(c_ptr->info & CAVE_ROOM))
@@ -492,25 +425,15 @@ static bool wild_monst_aux_wasteland(int r_idx)
 
 
 /* this may not be the most efficient way of doing things... */
-#ifdef NEW_DUNGEON
 void wild_add_monster(struct worldpos *wpos)
-#else
-void wild_add_monster(int Depth)
-#endif
 {
 	int monst_x, monst_y, r_idx;
 	int tries = 0;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 	/* reset the monster sorting function */	
-#ifdef NEW_DUNGEON
 	switch(wild_info[wpos->wy][wpos->wx].type)
-#else
-	switch (wild_info[Depth].type)
-#endif
 	{
 		case WILD_RIVER:
 		case WILD_OCEAN:
@@ -531,11 +454,7 @@ void wild_add_monster(int Depth)
 		monst_x = rand_int(MAX_WID);
 		monst_y = rand_int(MAX_HGT);
 		
-#ifdef NEW_DUNGEON
 		if (cave_naked_bold(zcave, monst_y, monst_x)) break;
-#else
-		if (cave_naked_bold(Depth, monst_y, monst_x)) break;
-#endif
 		tries++;
 	}
 	
@@ -543,11 +462,7 @@ void wild_add_monster(int Depth)
 	r_idx = get_mon_num(monster_level);
 	
 	/* place the monster */
-#ifdef NEW_DUNGEON
 	place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE);
-#else
-	place_monster_aux(Depth, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE);
-#endif
 	
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;
@@ -559,17 +474,11 @@ void wild_add_monster(int Depth)
 
 /* chooses a clear building location, possibly specified by xcen, ycen, and "reserves" it so
  * nothing else can choose any of its squares for building again */
-#ifdef NEW_DUNGEON
 void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen)
-#else
-void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xlen, int ylen, int xcen, int ycen)
-#endif
 {
 	int x,y, attempts = 0, plot_clear;
-#ifdef NEW_DUNGEON
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#endif
 
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	while (attempts < 200)
@@ -579,11 +488,7 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
 	{
 	
 		/* if xcen, ycen have not been specified */
-#ifdef NEW_DUNGEON
 		if (!in_bounds(ycen,xcen))
-#else
-		if (!in_bounds(Depth,ycen,xcen))
-#endif
 		{
 #ifdef DEVEL_TOWN_COMPATIBILITY
 			/* the upper left corner */
@@ -605,13 +510,8 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
 			*x2 = *x1 + xlen-1;
 			*y2 = *y1 + ylen-1;
 			
-#ifdef NEW_DUNGEON
 			if ( (!in_bounds(*y1, *x1)) ||
 			     (!in_bounds(*y2, *x2)) )
-#else
-			if ( (!in_bounds(Depth, *y1, *x1)) ||
-			     (!in_bounds(Depth, *y2, *x2)) )
-#endif
 			{
 				*x1 = *y1 = *x2 = *y2 = -1;
 				return;
@@ -625,11 +525,7 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
 		{
 			for (x = *x1; x <= *x2; x++)
 			{
-#ifdef NEW_DUNGEON
 				switch (zcave[y][x].feat)
-#else
-				switch (cave[Depth][y][x].feat)
-#endif
 				{
 					/* Don't build on other buildings or farms */
 					case FEAT_LOOSE_DIRT:
@@ -643,28 +539,17 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
 				}
 #ifndef DEVEL_TOWN_COMPATIBILITY
 				/* any ickiness on the plot is NOT allowed */
-#ifdef NEW_DUNGEON
 				if (zcave[y][x].info & CAVE_ICKY) plot_clear = 0;
 				/* spaces that have already been reserved are NOT allowed */
 				if (zcave[y][x].info & CAVE_XTRA) plot_clear = 0;
-#else
-				if (cave[Depth][y][x].info & CAVE_ICKY) plot_clear = 0;
-				/* spaces that have already been reserved are NOT allowed */
-				if (cave[Depth][y][x].info & CAVE_XTRA) plot_clear = 0;
-#endif /*NEW_DUNGEON*/
 #endif
 			}
 		}	
 		
 		/* hack -- buildings and farms can partially, but not completly,
 		   be built on water. */
-#ifdef NEW_DUNGEON
 		if ( (zcave[*y1][*x1].feat == FEAT_WATER) &&
 		     (zcave[*y2][*x2].feat == FEAT_WATER) ) plot_clear = 0;
-#else
-		if ( (cave[Depth][*y1][*x1].feat == FEAT_WATER) &&
-		     (cave[Depth][*y2][*x2].feat == FEAT_WATER) ) plot_clear = 0;
-#endif
 			
 		/* if we have a clear plot, reserve it and return */
 		if (plot_clear) 
@@ -673,11 +558,7 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
 			{
 				for (x = *x1; x <= *x2; x++)
 				{
-#ifdef NEW_DUNGEON
 					zcave[y][x].info |= CAVE_XTRA; 
-#else
-					cave[Depth][y][x].info |= CAVE_XTRA; 
-#endif
 				}
 			}
 			return;			
@@ -695,23 +576,15 @@ void reserve_building_plot(int Depth, int *x1, int *y1, int *x2, int *y2, int xl
    food or not will not effect the final state it is in.
 */
 
-#ifdef NEW_DUNGEON
 static void wild_add_garden(struct worldpos *wpos, int x, int y)
-#else
-static void wild_add_garden(int Depth, int x, int y)
-#endif
 {
 	int x1, y1, x2, y2, type, xlen, ylen, attempts = 0;
 	char orientation;	
 	object_type food;
 	int tmp_seed;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
 	
 	x1 = x2 = y1 = y2 = -1;
 	
@@ -729,11 +602,7 @@ static void wild_add_garden(int Depth, int x, int y)
 	{
 #endif
 		
-#ifdef NEW_DUNGEON
 		reserve_building_plot(wpos, &x1,&y1, &x2,&y2, xlen, ylen, -1, -1);
-#else
-		reserve_building_plot(Depth, &x1,&y1, &x2,&y2, xlen, ylen, -1, -1);
-#endif
 #ifdef DEVEL_TOWN_COMPATIBILITY
 		/* we have obtained a valid plot */
 		if (x1 > 0)
@@ -757,11 +626,7 @@ static void wild_add_garden(int Depth, int x, int y)
 	{	
 		for (x = x1; x <= x2; x++)
 		{
-#ifdef NEW_DUNGEON
 			zcave[y][x].feat = FEAT_LOOSE_DIRT;
-#else
-			cave[Depth][y][x].feat = FEAT_LOOSE_DIRT;
-#endif
 		}	
 	}
 	
@@ -777,11 +642,7 @@ static void wild_add_garden(int Depth, int x, int y)
 			if (((!orientation) && (y%2)) || ((orientation) && (x%2)))
 			{					 						
 				/* set to crop */
-#ifdef NEW_DUNGEON
 				zcave[y][x].feat = FEAT_CROP;	
-#else
-				cave[Depth][y][x].feat = FEAT_CROP;	
-#endif
 				/* random chance of food */
 				if (rand_int(100) < 40)
 				{
@@ -820,11 +681,7 @@ static void wild_add_garden(int Depth, int x, int y)
 						break;
 					}
 					/* Hack -- only drop food the first time */
-#ifdef NEW_DUNGEON
 					if (!(w_ptr->flags & WILD_F_GENERATED)) drop_near(&food, -1, wpos, y, x);
-#else
-					if (!(w_ptr->flags & WILD_F_GENERATED)) drop_near(&food, -1, Depth, y, x);
-#endif
 				}				
 			}
 		}
@@ -875,23 +732,15 @@ static bool wild_obj_aux_bones(int k_idx)
 
 /* make a dwelling 'interesting'.
 */
-#ifdef NEW_DUNGEON
 void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type)
-#else
-void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
-#endif
 {
 	int x,y, cash, num_food, num_objects, num_bones, trys, r_idx, k_idx, food_sval;
 	bool inhabited, at_home, taken_over;
 	object_type forge;
 	u32b old_seed = Rand_value;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
 	
 	trys = cash = num_food = num_objects = num_bones = 0;
 	inhabited = at_home = taken_over = FALSE;
@@ -907,22 +756,14 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 			if (w_ptr->radius > 1)
 			{
 				/* are we a farmer? */
-#ifdef NEW_DUNGEON
 				if (rand_int(100) < 50) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
-#else
-				if (rand_int(100) < 50) wild_add_garden(Depth, (x1+x2)/2,(y1+y2)/2);
-#endif
 			}
 		case WILD_ROCK_HOME:
 			/* hack -- no farms near the town */
 			if (w_ptr->radius > 1)
 			{
 				/* are we a farmer? */
-#ifdef NEW_DUNGEON
 				if (rand_int(100) < 40) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
-#else
-				if (rand_int(100) < 40) wild_add_garden(Depth, (x1+x2)/2,(y1+y2)/2);
-#endif
 			}
 		
 		case WILD_PERM_HOME:		
@@ -976,17 +817,10 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 			x = rand_range(x1,x2);
 			y = rand_range(y1,y2);
 		
-#ifdef NEW_DUNGEON
 			if (cave_clean_bold(zcave,y,x))
 			{
 				object_level = cash;			
 				place_gold(wpos,y,x);
-#else
-			if (cave_clean_bold(Depth,y,x))
-			{
-				object_level = cash;			
-				place_gold(Depth,y,x);
-#endif
 				break;
 			}
 		trys++;
@@ -1001,17 +835,10 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		x = rand_range(x1,x2);
 		y = rand_range(y1,y2);
 		
-#ifdef NEW_DUNGEON
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
 			place_object(wpos,y,x,FALSE,FALSE);
-#else
-		if (cave_clean_bold(Depth,y,x))
-		{			
-			object_level = w_ptr->radius/2 +1;
-			place_object(Depth,y,x,FALSE,FALSE);
-#endif
 			num_objects--;
 		}
 		trys++;	
@@ -1026,11 +853,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		x = rand_range(x1,x2);
 		y = rand_range(y1,y2);
 		
-#ifdef NEW_DUNGEON
 		if (cave_clean_bold(zcave,y,x))
-#else
-		if (cave_clean_bold(Depth,y,x))
-#endif
 		{		
 			food_sval = SV_FOOD_MIN_FOOD+rand_int(12);
 			/* hack -- currently no food svals between 25 and 32 */
@@ -1040,11 +863,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 			
 			k_idx = lookup_kind(TV_FOOD,food_sval);
 			invcopy(&forge, k_idx);
-#ifdef NEW_DUNGEON
 			drop_near(&forge, -1, wpos, y, x);
-#else
-			drop_near(&forge, -1, Depth, y, x);
-#endif
 			
 			num_food--;
 		}
@@ -1063,20 +882,12 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		x = rand_range(x1,x2);
 		y = rand_range(y1,y2);
 		
-#ifdef NEW_DUNGEON
 		if (cave_clean_bold(zcave,y,x))
-#else
-		if (cave_clean_bold(Depth,y,x))
-#endif
 		{		
 			/* base of 500 feet for the bones */
 			k_idx = get_obj_num(10);
 			invcopy(&forge, k_idx);
-#ifdef NEW_DUNGEON
 			drop_near(&forge, -1, wpos, y, x);
-#else
-			drop_near(&forge, -1, Depth, y, x);
-#endif
 			
 			num_bones--;
 		}
@@ -1106,11 +917,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		
 		/* place the owner */
 		
-#ifdef NEW_DUNGEON
 		place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE);
-#else
-		place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE, FALSE);
-#endif
 	}
 	
 	
@@ -1127,11 +934,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
 		{
 			for (x = x1; x <= x2; x++)
 			{
-#ifdef NEW_DUNGEON
 				place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE);
-#else
-				place_monster_aux(Depth, y,x, r_idx, FALSE, FALSE, FALSE);
-#endif
 			}
 		}
 	}
@@ -1147,11 +950,7 @@ void wild_furnish_dwelling(int Depth, int x1, int y1, int x2, int y2, int type)
  for now will make a simple box,
    but we could do really fun stuff with this later.
 */
-#ifdef NEW_DUNGEON
 static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
-#else
-static void wild_add_dwelling(int Depth, int x, int y)
-#endif
 {
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2, 
 		plot_xlen, plot_ylen, house_xlen, house_ylen, 
@@ -1160,13 +959,9 @@ static void wild_add_dwelling(int Depth, int x, int y)
 	char wall_feature, door_feature, has_moat = 0;
 	cave_type *c_ptr;
 	bool rand_old = Rand_quick;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr=&wild_info[Depth];
-#endif
 	
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -1230,11 +1025,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 #endif
 	
 	/* Determine the plot's boundaries */
-#ifdef NEW_DUNGEON
 	reserve_building_plot(wpos, &p_x1, &p_y1, &p_x2, &p_y2, plot_xlen, plot_ylen, x, y);
-#else
-	reserve_building_plot(Depth, &p_x1, &p_y1, &p_x2, &p_y2, plot_xlen, plot_ylen, x, y);
-#endif
 	/* Determine the building's boundaries */
 	h_x1 = p_x1 + ((plot_xlen - house_xlen)/2); h_y1 = p_y1 + ((plot_ylen - house_ylen)/2);
 	h_x2 = p_x2 - ((plot_xlen - house_xlen)/2); h_y2 = p_y2 - ((plot_ylen - house_ylen)/2);
@@ -1336,11 +1127,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			houses[num_houses].x_2 = h_x2-1;
 			houses[num_houses].y_2 = h_y2-1;
 #endif
-#ifdef NEW_DUNGEON
 			wpcopy(&houses[num_houses].wpos,wpos);
-#else
-			houses[num_houses].depth = Depth;
-#endif
 			break;
 	}
 
@@ -1405,11 +1192,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 			break;
 		}
 		/* Access the grid */
-#ifdef NEW_DUNGEON
 		c_ptr = &zcave[door_y][door_x];
-#else
-		c_ptr = &cave[Depth][door_y][door_x];
-#endif
 		num_door_attempts++;
 	}	
 	while ((c_ptr->feat == FEAT_WATER) && (num_door_attempts < 30));
@@ -1420,11 +1203,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		for (x = h_x1; x <= h_x2; x++)
 		{
 			/* Get the grid */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[y][x];
-#else
-			c_ptr = &cave[Depth][y][x];
-#endif
 
 			/* Clear previous contents, add "basic" perma-wall */
 			c_ptr->feat = wall_feature;
@@ -1437,11 +1216,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		for (x = h_x1 + 1; x < h_x2; x++)
 		{
 			/* Get the grid */
-#ifdef NEW_DUNGEON
 			c_ptr = &zcave[y][x];
-#else
-			c_ptr = &cave[Depth][y][x];
-#endif
 
 			/* Fill with floor */
 			c_ptr->feat = FEAT_FLOOR;
@@ -1453,11 +1228,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		
 	
 	/* add the door */
-#ifdef NEW_DUNGEON
 	c_ptr = &zcave[door_y][door_x];
-#else
-	c_ptr = &cave[Depth][door_y][door_x];
-#endif
 	c_ptr->feat = door_feature;
 
 	/* Build the moat */
@@ -1466,49 +1237,26 @@ static void wild_add_dwelling(int Depth, int x, int y)
 		/* North / South */
 		for (x = h_x1-2; x <= h_x2+2; x++)
 		{
-#ifdef NEW_DUNGEON
 			zcave[h_y1-2][x].feat = FEAT_WATER; zcave[h_y1-2][x].info |= CAVE_ICKY;
 			zcave[h_y1-3][x].feat = FEAT_WATER; zcave[h_y1-3][x].info |= CAVE_ICKY;
 			zcave[h_y2+2][x].feat = FEAT_WATER; zcave[h_y2+2][x].info |= CAVE_ICKY;
 			zcave[h_y2+3][x].feat = FEAT_WATER; zcave[h_y2+3][x].info |= CAVE_ICKY;
-#else
-			cave[Depth][h_y1-2][x].feat = FEAT_WATER; cave[Depth][h_y1-2][x].info |= CAVE_ICKY;
-			cave[Depth][h_y1-3][x].feat = FEAT_WATER; cave[Depth][h_y1-3][x].info |= CAVE_ICKY;
-			cave[Depth][h_y2+2][x].feat = FEAT_WATER; cave[Depth][h_y2+2][x].info |= CAVE_ICKY;
-			cave[Depth][h_y2+3][x].feat = FEAT_WATER; cave[Depth][h_y2+3][x].info |= CAVE_ICKY;
-#endif
 		}		
 		/* East / West */
 		for (y = h_y1-2; y <= h_y2+2; y++)
 		{
 			/* Get the grid */
-#ifdef NEW_DUNGEON
 			zcave[y][h_x1-2].feat = FEAT_WATER; zcave[y][h_x1-2].info |= CAVE_ICKY;
 			zcave[y][h_x1-3].feat = FEAT_WATER; zcave[y][h_x1-3].info |= CAVE_ICKY;
 			zcave[y][h_x2+2].feat = FEAT_WATER; zcave[y][h_x2+2].info |= CAVE_ICKY;
 			zcave[y][h_x2+3].feat = FEAT_WATER; zcave[y][h_x2+3].info |= CAVE_ICKY;
-#else
-			cave[Depth][y][h_x1-2].feat = FEAT_WATER; cave[Depth][y][h_x1-2].info |= CAVE_ICKY;
-			cave[Depth][y][h_x1-3].feat = FEAT_WATER; cave[Depth][y][h_x1-3].info |= CAVE_ICKY;
-			cave[Depth][y][h_x2+2].feat = FEAT_WATER; cave[Depth][y][h_x2+2].info |= CAVE_ICKY;
-			cave[Depth][y][h_x2+3].feat = FEAT_WATER; cave[Depth][y][h_x2+3].info |= CAVE_ICKY;
-#endif
 		}		
-#ifdef NEW_DUNGEON
 		zcave[drawbridge_y[0]][drawbridge_x[0]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[0]][drawbridge_x[0]].info |= CAVE_ICKY;
 		zcave[drawbridge_y[1]][drawbridge_x[1]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[1]][drawbridge_x[1]].info |= CAVE_ICKY;
 		zcave[drawbridge_y[2]][drawbridge_x[2]].feat = FEAT_DRAWBRIDGE;
 		zcave[drawbridge_y[2]][drawbridge_x[2]].info |= CAVE_ICKY;
-#else
-		cave[Depth][drawbridge_y[0]][drawbridge_x[0]].feat = FEAT_DRAWBRIDGE;
-		cave[Depth][drawbridge_y[0]][drawbridge_x[0]].info |= CAVE_ICKY;
-		cave[Depth][drawbridge_y[1]][drawbridge_x[1]].feat = FEAT_DRAWBRIDGE;
-		cave[Depth][drawbridge_y[1]][drawbridge_x[1]].info |= CAVE_ICKY;
-		cave[Depth][drawbridge_y[2]][drawbridge_x[2]].feat = FEAT_DRAWBRIDGE;
-		cave[Depth][drawbridge_y[2]][drawbridge_x[2]].info |= CAVE_ICKY;
-#endif
 	}
 	
  	/* Hack -- finish making a town house */
@@ -1516,11 +1264,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 	if (type == WILD_TOWN_HOME)
 	{
 		/* hack -- only add a house if it is not already in memory */
-#ifdef NEW_DUNGEON
 		if ((tmp=pick_house(wpos, door_y, door_x)) == -1)
-#else
-		if ((tmp=pick_house(Depth, door_y, door_x)) == -1)
-#endif
 		{
 #ifdef NEWHOUSES
 			c_ptr->special.type=DNA_DOOR;
@@ -1557,11 +1301,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
 	}
 		
 	/* make the building interesting */
-#ifdef NEW_DUNGEON
 	wild_furnish_dwelling(wpos, h_x1+1,h_y1+1,h_x2-1,h_y2-1, type);
-#else
-	wild_furnish_dwelling(Depth, h_x1+1,h_y1+1,h_x2-1,h_y2-1, type);
-#endif
 	
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
@@ -1576,11 +1316,7 @@ static void wild_add_dwelling(int Depth, int x, int y)
    to be 2 in length, it was revised to find the total depth of the loop.
 */
 
-#ifdef NEW_DUNGEON
 int wild_clone_closed_loop_total(struct worldpos *wpos)
-#else
-int wild_clone_closed_loop_total(int cur_depth)
-#endif
 {
 	int total_depth;
 #ifdef NEW_DUNGEON
@@ -1673,11 +1409,7 @@ int wild_clone_closed_loop_total(int cur_depth)
  * they are completly defiend by the pseudorandom seed seed_town.
  */
 
-#ifdef NEW_DUNGEON
 int determine_wilderness_type(struct worldpos *wpos)
-#else
-int determine_wilderness_type(int Depth)
-#endif
 {
 	int dir, closed_loop = -0xFFF;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
@@ -1690,17 +1422,10 @@ int determine_wilderness_type(int Depth)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant wilderness */
-#ifdef NEW_DUNGEON
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
 		
 	/* check if the town */
 	if (istown(wpos)) return WILD_TOWN;		
-#else
-	Rand_value = seed_town + Depth * 600;
-		
-	/* check if the town */
-	if (!Depth) return WILD_TOWN;		
-#endif
 		
 	/* check if already defined */
  	if ((w_ptr->type != WILD_UNDEFINED) && (w_ptr->type != WILD_CLONE)) return w_ptr->type;
@@ -1710,11 +1435,7 @@ int determine_wilderness_type(int Depth)
 	{
 		/* Mega-Hack -- we are in a closed loop of clones, find the length of the loop
 		and use this to seed the pseudorandom number generator. */
-#ifdef NEW_DUNGEON
 		closed_loop = wild_clone_closed_loop_total(wpos);
-#else
-		closed_loop = wild_clone_closed_loop_total(Depth);
-#endif
 		Rand_value = seed_town + closed_loop * 8973;
 	}
 
@@ -1742,13 +1463,9 @@ int determine_wilderness_type(int Depth)
 	/* if a "clone", copy the terrain type from a neighbor, and recurse if neccecary. */
 	if (w_ptr->type == WILD_CLONE)
 	{
-#ifdef NEW_DUNGEON
 		neighbor.wx=wpos->wx;
 		neighbor.wy=wpos->wy;
 		neighbor.wz=wpos->wz; /* just for inarea */
-#else
-		neighbor_idx = 0;
-#endif
 		
 		/* get a legal neighbor index */
 		/* illegal locations -- the town and off the edge */
@@ -1945,22 +1662,14 @@ char terrain_spot(terrain_type * terrain)
    */   
 /* XXX -- I should make this use the new terrain structure, and terrain_spot. */
 
-#ifdef NEW_DUNGEON
 static void wild_add_hotspot(struct worldpos *wpos)
-#else
-static void wild_add_hotspot(int Depth)
-#endif
 {
 	int x_cen,y_cen, max_mag, magnitude, magsqr, chopiness, x, y;
 	terrain_type hot_terrain;
 	bool add_dwelling = FALSE;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr=&wild_info[Depth];
-#endif
 	
 	magnitude = 0;
 	/* set the terrain features to 0 by default */	
@@ -1996,11 +1705,7 @@ static void wild_add_hotspot(int Depth)
 	/* for each point in the square enclosing the circle 
 	   this algorithm could probably use some optimization
 	*/
-#ifdef NEW_DUNGEON
 	switch (w_ptr->type)
-#else
-	switch (wild_info[Depth].type)
-#endif
 	{
 		case WILD_GRASSLAND:
 			/* sometimes a pond */
@@ -2089,22 +1794,13 @@ static void wild_add_hotspot(int Depth)
 			/* HACK -- multiply the y's by 4 to "squash" the shape */
 			if (((x - x_cen) * (x - x_cen)) + (((y - y_cen) * (y - y_cen))*4) < magsqr + rand_int(chopiness))
 			{
-#ifdef NEW_DUNGEON
 				zcave[y][x].feat = terrain_spot(&hot_terrain);
-#else
-				cave[Depth][y][x].feat = terrain_spot(&hot_terrain);
-#endif
 			}
 		}
 	}
 	
 	/* add inhabitants */
-#ifdef NEW_DUNGEON
 	if (add_dwelling) wild_add_dwelling(wpos, x_cen, y_cen );
-#else
-	if (add_dwelling) wild_add_dwelling(Depth, x_cen, y_cen );
-#endif
-		
 }
 
 
@@ -2301,26 +1997,14 @@ void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.
 */   
-#ifdef NEW_DUNGEON
 bool should_we_bleed(struct worldpos *wpos, char dir)
-#else
-bool should_we_bleed(int Depth, char dir)
-#endif
 {
 #if 0
 	int neigh_idx = 0, tmp;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];	
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];	
-#endif
 	
 	/* get our neighbors index */
-#ifdef NEW_DUNGEON
 	neigh_idx = neighbor_index(wpos, dir);
-#else
-	neigh_idx = neighbor_index(Depth, dir);
-#endif
 	
 	/* determine whether to bleed or not */
 	/* if a valid location */
@@ -2370,11 +2054,7 @@ bool should_we_bleed(int Depth, char dir)
    
 */
    
-#ifdef NEW_DUNGEON
 void bleed_with_neighbors(struct worldpos *wpos)
-#else
-void bleed_with_neighbors(int Depth)
-#endif
 {
 #if 0 /* evileye - temp */
 	int c, d, neigh_idx[4], tmp, side[2], start, end, opposite;
@@ -2382,11 +2062,7 @@ void bleed_with_neighbors(int Depth)
 	int share_point[4][2]; 
 	int old_seed = Rand_value;
 	bool rand_old = Rand_quick;
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
@@ -2533,13 +2209,9 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 	int minx,miny,maxx,maxy;
 	int mw,mh;
 	bool success=TRUE;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&h_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
-#else
-	int Depth=h_ptr->depth;
-#endif
 
 	if(func==3)
 		success=FALSE;
@@ -2548,11 +2220,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 		cave_type *c_ptr;
 		for(x=0;x<h_ptr->coords.rect.width;x++){
 			for(y=0;y<h_ptr->coords.rect.height;y++){
-#ifdef NEW_DUNGEON
  				c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
-#else
- 				c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
-#endif
 				if(func==3){ /* player in house? */
 					player_type *p_ptr=(player_type*)data;
 					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
@@ -2562,22 +2230,14 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 				}
 				else if(func==2){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
-#ifdef NEW_DUNGEON
 						if((pick_house(wpos,h_ptr->y,h_ptr->x))!=-1)
-#else
-						if((pick_house(Depth,h_ptr->y,h_ptr->x))!=-1)
-#endif
 							success=FALSE;
 					}
 					else
 						c_ptr->feat=FEAT_DIRT;
 				}
 				else if(func==1){
-#ifdef NEW_DUNGEON
 					delete_object(wpos,y,x);
-#else
-					delete_object(Depth,y,x);
-#endif
 				}
 				else{
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
@@ -2659,21 +2319,13 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						break;
 					}
 					if(func==2){
-#ifdef NEW_DUNGEON
 						if((pick_house(wpos,miny+(y-1),minx+(x-1))!=-1)){
-#else
-						if((pick_house(Depth,miny+(y-1),minx+(x-1))!=-1)){
-#endif
 							success=FALSE;
 						}
 						break;
 					}
 					if(func==1){
-#ifdef NEW_DUNGEON
 						delete_object(wpos, miny+(y-1), minx+(x-1));
-#else
-						delete_object(Depth, miny+(y-1), minx+(x-1));
-#endif
 						break;
 					}
 					if(!(h_ptr->flags&HF_NOFLOOR))
@@ -2714,52 +2366,29 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 void wild_add_uhouse(house_type *h_ptr){
  	int x,y;
  	cave_type *c_ptr;
-#ifdef NEW_DUNGEON
 	struct worldpos *wpos=&h_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	int Depth=h_ptr->depth;
-#endif
 
 	if(h_ptr->flags&HF_DELETED) return; /* House destroyed. Ignore */
 
 	/* draw our user defined house */
  	if(h_ptr->flags&HF_RECT){
 		for(x=0;x<h_ptr->coords.rect.width;x++){
-#ifdef NEW_DUNGEON
  			c_ptr=&zcave[h_ptr->y][h_ptr->x+x];
-#else
- 			c_ptr=&cave[Depth][h_ptr->y][h_ptr->x+x];
-#endif
  			c_ptr->feat=FEAT_PERM_EXTRA;
 		}
 		for(y=h_ptr->coords.rect.height-1,x=0;x<h_ptr->coords.rect.width;x++){
-#ifdef NEW_DUNGEON
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
  			c_ptr->feat=FEAT_PERM_EXTRA;
-#else
- 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
-#endif
 		}
 		for(y=1;y<h_ptr->coords.rect.height;y++){
-#ifdef NEW_DUNGEON
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x];
  			c_ptr->feat=FEAT_PERM_EXTRA;
-#else
- 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
-#endif
 		}
 		for(x=h_ptr->coords.rect.width-1,y=1;y<h_ptr->coords.rect.height;y++){
-#ifdef NEW_DUNGEON
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
  			c_ptr->feat=FEAT_PERM_EXTRA;
-#else
- 			c_ptr=&cave[Depth][h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
-#endif
 		}
 	}
 	fill_house(h_ptr, 0, NULL);
@@ -2769,29 +2398,17 @@ void wild_add_uhouse(house_type *h_ptr){
 		if(h_ptr->flags&HF_RECT){
 		}
 	}
-#ifdef NEW_DUNGEON
 	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
-#else
-	c_ptr=&cave[Depth][h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
-#endif
 	c_ptr->feat=FEAT_HOME_HEAD;
 	c_ptr->special.type=DNA_DOOR;
 	c_ptr->special.ptr=h_ptr->dna;
 }
 
-#ifdef NEW_DUNGEON
 static void wild_add_uhouses(struct worldpos *wpos){
-#else
-static void wild_add_uhouses(int Depth){
-#endif
 #ifdef NEWHOUSES
 	int i;
 	for(i=0;i<num_houses;i++){
-#ifdef NEW_DUNGEON
 		if(inarea(&houses[i].wpos,wpos) && !(houses[i].flags&HF_STOCK)){
-#else
-		if(houses[i].depth==Depth && !(houses[i].flags&HF_STOCK)){
-#endif
 			wild_add_uhouse(&houses[i]);
 		}
 	}
@@ -2804,29 +2421,18 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	terrain_type terrain;
 	bool rand_old = Rand_quick;
 
-#ifdef NEW_DUNGEON
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-#else
-	wilderness_type *w_ptr = &wild_info[Depth];
-#endif
 
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant wilderness */
-#ifdef NEW_DUNGEON
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
 
 	/* if not already set, determine the type of terrain */
 	if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(wpos);
-#else
-	Rand_value = seed_town + Depth * 600;
-
-	/* if not already set, determine the type of terrain */
-	if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(Depth);
-#endif
 
 	/* initialize the terrain */
 	terrain.type = w_ptr->type;	
@@ -2840,11 +2446,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	{
 		for (x = 1; x < MAX_WID - 1; x++)
 		{
-#ifdef NEW_DUNGEON
 			cave_type *c_ptr = &zcave[y][x];
-#else
-			cave_type *c_ptr = &cave[Depth][y][x];
-#endif
 			c_ptr->feat = terrain_spot(&terrain);			
 		}
 	}
@@ -2852,26 +2454,14 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	/* to make the borders between wilderness levels more seamless, "bleed"
 	   the levels together */
 	
-#ifdef NEW_DUNGEON
 	bleed_with_neighbors(wpos); 
-#else
-	bleed_with_neighbors(Depth); 
-#endif
 
 	/* hack -- reseed, just to make sure everything stays consistent. */
 
-#ifdef NEW_DUNGEON
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 287 + 490836;
-#else
-	Rand_value = seed_town + Depth * 287 + 490836;
-#endif
 
 	/* to make the level more interesting, add some "hotspots" */
-#ifdef NEW_DUNGEON
 	for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(wpos);
-#else
-	for (y = 0; y < terrain.hotspot; y++) wild_add_hotspot(Depth);
-#endif
 	   
 	/* HACK -- if close to the town, make dwellings more likely */
 #ifdef DEVEL_TOWN_COMPATIBILITY
@@ -2890,11 +2480,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	 * the rest of the level more densly packed together */
 	if ((w_ptr->radius == 1) && !rand_int(2))
 	{
-#ifdef NEW_DUNGEON
 		reserve_building_plot(wpos, &x1,&y1, &x2,&y2, rand_int(30)+15, rand_int(20)+10, -1, -1);
-#else
-		reserve_building_plot(Depth, &x1,&y1, &x2,&y2, rand_int(30)+15, rand_int(20)+10, -1, -1);
-#endif
 	}
 #endif
 		
@@ -2905,20 +2491,12 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	{
 		if (rand_int(1000) < terrain.dwelling)
 		{
-#ifdef NEW_DUNGEON
 			wild_add_dwelling(wpos, -1, -1);
-#else
-			wild_add_dwelling(Depth, -1, -1);
-#endif
 		}
 		terrain.dwelling -= 50;
 	}		
 
-#ifdef NEW_DUNGEON
 	wild_add_uhouses(wpos);
-#else
-	wild_add_uhouses(Depth);
-#endif
 	
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
@@ -2982,31 +2560,21 @@ void wilderness_gen(struct worldpos *wpos)
 	
 
 	/* Hack -- Build some wilderness (from memory) */
-#ifdef NEW_DUNGEON
 	wilderness_gen_hack(wpos);
 	if(w_ptr->flags & WILD_F_UP)
 		zcave[w_ptr->dn_y][w_ptr->dn_x].feat=FEAT_LESS;
 	if(w_ptr->flags & WILD_F_DOWN)
 		zcave[w_ptr->up_y][w_ptr->up_x].feat=FEAT_MORE;
-#else
-	wilderness_gen_hack(Depth);
-#endif
-
 
 	/* Day Light */
 	
 	if (IS_DAY) 
 	{
-#ifdef NEW_DUNGEON
 		wild_apply_day(wpos);	
-#else
-		wild_apply_day(Depth);	
-#endif
 
 		/* Make some day-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED))
 #ifdef NEW_DUNGEON
-			printf("Generate %d monsters in %d,%d\n",w_ptr->type, wpos->wx, wpos->wy);
 			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
 #else
 			for (i = 0; i < wild_info[Depth].type; i++) wild_add_monster(Depth);
@@ -3020,11 +2588,7 @@ void wilderness_gen(struct worldpos *wpos)
 		/* Make some night-time residents */
 		
 		if (!(w_ptr->flags & WILD_F_INHABITED))
-#ifdef NEW_DUNGEON
 			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
-#else
-			for (i = 0; i < wild_info[Depth].type; i++) wild_add_monster(Depth);
-#endif
 		
 	}
 	

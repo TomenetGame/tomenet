@@ -2869,7 +2869,6 @@ static void process_various(void)
 			 * massive worm infestations, and uniques getting
 			 * lost out there.
 			 */
-#ifdef NEW_DUNGEON
 			struct worldpos twpos;
 			twpos.wz=0;
 			for(y=0;y<MAX_WILD_Y;y++){
@@ -2880,13 +2879,6 @@ static void process_various(void)
 					wild_info[twpos.wy][twpos.wx].flags&=~(WILD_F_INHABITED);
 				}
 			}
-#else
-			for (i = 1; i < MAX_WILD; i++) 
-				/* if no one is here the monsters 'migrate'.*/
-				if (!players_on_depth[-i]) wipe_m_list(-i);
-			/* another day, more stuff to kill... */
-			for (i = 1; i < MAX_WILD; i++) wild_info[-i].flags &= ~(WILD_F_INHABITED);
-#endif
 		
 			/* Hack -- Scan the town */
 			for (y = 0; y < MAX_HGT; y++)
@@ -3191,29 +3183,15 @@ void dungeon(void)
 			d = (j + 149) / 150;
 
 			/* Pick a location */
-#ifdef NEW_DUNGEON
 			scatter(wpos, &y, &x, starty, startx, d, 1);
 			/* Must have an "empty" grid */
-			if (!cave_empty_bold(zcave, y, x))
-			{
-				continue;
-			}
+			if (!cave_empty_bold(zcave, y, x)) continue;
 
 			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
 			if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY))
 			{
 				continue;
 			}
-#else
-			scatter(Depth, &y, &x, starty, startx, d, 1);
-			/* Must have an "empty" grid */
-			if (!cave_empty_bold(Depth, y, x)) continue;
-
-			/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-			if ((Depth <= 0) && (cave[Depth][y][x].info & CAVE_ICKY))
-				continue;
-#endif
-
 			break;
 		}
 
@@ -3278,7 +3256,6 @@ void dungeon(void)
 					continue;
 				break;
 			}
-#ifdef NEW_DUNGEON
 			if(mcave)
 			{
 				mcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
@@ -3292,15 +3269,6 @@ void dungeon(void)
 				mcave[m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
 				everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
 			}
-#else
-			cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = 0;
-			everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
-			m_ptr->dun_depth = Depth;
-			m_ptr->fx = mx;
-			m_ptr->fy = my;
-			cave[m_ptr->dun_depth][m_ptr->fy][m_ptr->fx].m_idx = m_fast[m_idx];
-			everyone_lite_spot(m_ptr->dun_depth, m_ptr->fy, m_ptr->fx);
-#endif
 
 			/* Update the monster (new location) */
 			update_mon(m_fast[m_idx], TRUE);
@@ -3340,8 +3308,7 @@ void dungeon(void)
 		update_monsters(TRUE);
 		
 		/* Tell him that he should beware */
-#ifdef NEW_DUNGEON
-		if (wpos->wz==0)
+		if (wpos->wz==0 && !istown(wpos))
 		{
 			if (wild_info[wpos->wy][wpos->wx].own)
 			{
@@ -3352,19 +3319,6 @@ void dungeon(void)
 			}
 		}
 
-#else
-		if (Depth < 0)
-		{
-			if (wild_info[Depth].own)
-			{
-				cptr p = lookup_player_name(wild_info[Depth].own);
-				if (p == NULL) p = "Someone";
-
-				msg_format(i, "You enter the land of %s.", p);
-			}
-		}
-
-#endif
 		/* Clear the flag */
 		p_ptr->new_level_flag = FALSE;
 
@@ -3880,11 +3834,7 @@ void pack_overflow(int Ind)
 		msg_format(Ind, "You drop %s.", o_name);
 
 		/* Drop it (carefully) near the player */
-#ifdef NEW_DUNGEON
 		drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-#else
-		drop_near_severe(Ind, o_ptr, 0, p_ptr->dun_depth, p_ptr->py, p_ptr->px);
-#endif
 
 		/* Decrease the item, optimize. */
 		inven_item_increase(Ind, i, -amt);
