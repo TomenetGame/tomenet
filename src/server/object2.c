@@ -172,7 +172,7 @@ void delete_object_idx(int o_idx)
 	/* Excise */
 	excise_object_idx(o_idx);
 
-#if 0
+#if 1
 	/* Object is gone */
 	if((zcave=getcave(wpos)))
 	{
@@ -188,7 +188,9 @@ void delete_object_idx(int o_idx)
 	}
 
 	/* Visual update */
-	everyone_lite_spot(wpos, y, x);
+	/* Dungeon floor */
+	if (!(o_ptr->held_m_idx)) everyone_lite_spot(wpos, y, x);
+
 	/* Wipe the object */
 	WIPE(o_ptr, object_type);
 }
@@ -503,6 +505,12 @@ void compact_objects(int size, bool purge)
 void wipe_o_list(struct worldpos *wpos)
 {
 	int i;
+	cave_type **zcave;
+	monster_type *m_ptr;
+	bool flag = FALSE;
+
+	if(zcave=getcave(wpos)) flag = TRUE;
+
 
 	/* Delete the existing objects */
 	for (i = 1; i < o_max; i++)
@@ -529,6 +537,22 @@ void wipe_o_list(struct worldpos *wpos)
 			a_info[o_ptr->name1].known = FALSE;
 		}
 
+#ifdef MONSTER_INVENTORY
+		/* Monster */
+		if (o_ptr->held_m_idx)
+		{
+			/* Monster */
+			m_ptr = &m_list[o_ptr->held_m_idx];
+
+			/* Hack -- see above */
+			m_ptr->hold_o_idx = 0;
+		}
+
+		/* Dungeon */
+		else
+#endif	// MONSTER_INVENTORY
+		if (flag) zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
 	}
@@ -550,6 +574,8 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	int i;
 
 	cave_type **zcave;
+	monster_type *m_ptr;
+
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Delete the existing objects */
@@ -581,8 +607,25 @@ void wipe_o_list_safely(struct worldpos *wpos)
 			a_info[o_ptr->name1].known = FALSE;
 		}
 
+#ifdef MONSTER_INVENTORY
+		/* Monster */
+		if (o_ptr->held_m_idx)
+		{
+			/* Monster */
+			m_ptr = &m_list[o_ptr->held_m_idx];
+
+			/* Hack -- see above */
+			m_ptr->hold_o_idx = 0;
+		}
+
+		/* Dungeon */
+		else
+#endif	// MONSTER_INVENTORY
+		{
+			zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+		}
+
 		/* Wipe the object */
-		zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
 		WIPE(o_ptr, object_type);
 	}
 
@@ -5623,6 +5666,9 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			o_ptr->ix = nx;
 			wpcopy(&o_ptr->wpos,wpos);
 
+			/* No monster */
+			o_ptr->held_m_idx = 0;
+
 			/* Build a stack */
 			o_ptr->next_o_idx = c_ptr->o_idx;
 
@@ -6213,13 +6259,13 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	p_ptr->inventory[i] = (*o_ptr);
 
 	/* Forget the old location */
-	p_ptr->inventory[i].iy = p_ptr->inventory[i].ix = 0;
-	p_ptr->inventory[i].wpos.wx = 0;
-	p_ptr->inventory[i].wpos.wy = 0;
-	p_ptr->inventory[i].wpos.wz = 0;
+	o_ptr->iy = p_ptr->inventory[i].ix = 0;
+	o_ptr->wpos.wx = 0;
+	o_ptr->wpos.wy = 0;
+	o_ptr->wpos.wz = 0;
 	/* Clean out unused fields */
-	p_ptr->inventory[i].next_o_idx = 0;
-	p_ptr->inventory[i].held_m_idx = 0;
+	o_ptr->next_o_idx = 0;
+	o_ptr->held_m_idx = 0;
 
 
 	/* Increase the weight, prepare to redraw */

@@ -2,6 +2,7 @@
 
 Change list and TODO list for ToME-NET(PernMangband)
 TODO: the newest should appear the first!
+To find the latest change quickly, search ==== :)
 
 - Added random artifacts from DrAngband
 - Mage damaging spells upgraded in destructive power
@@ -1069,6 +1070,9 @@ TODO: the newest should appear the first!
 [P]- Backporting the ToME skill system !
 [P]- Detect traps can NOT fail
 
+17/06/2002 (Jir)
+# 'pfft, my sorc cannot cast!' version ;)
+- monsters drop what they've picked up before.
 
 
 
@@ -1112,12 +1116,15 @@ below this line are the unfixed bugs known:
 [B] cannot 'run' near the outer permawall (run_test)
 [B] mon_vis, obj_vis etc. are messed while the player is off.
 [B] option '-r' puts the server into infinite-loop (genwild)
-[B] cave can be erased prematurely after loading.
+[B] GCU client flickers like hell. (fix_player)
+[B] GCU client cannot handle the cursor very well.
+[B] some ivents are not told to the players even when within the sight.
 
 *below are bugs repoorted but not confirmed*
 [B] Macro sticks sometimes
 [B] CURSE_x does 100+ dmg on 50ft? (not confirmed)
 *below are bugs not shown recently(fixed??)*
+[B] cave can be erased prematurely after loading.
 [B] /rec won't work if to wilderness? (admin)
 [B] admin monk doesn't have inventory slot a)
     (gdb) print Players[1].inventory[0]

@@ -37,6 +37,12 @@
  */
 #define RESIST_GENO 250
 
+/*
+ * 'Trap detection' is way too powerful traps and 'searching' ability
+ * are almost meanless; if this flag is defined, the spell can only
+ * detect some of the traps depending on the player level.
+ */
+//#define TRAP_DETECTION_FAILURE
 
 /*
  * Increase players hit points, notice effects, and tell the player about it.
@@ -1770,6 +1776,11 @@ bool lose_all_info(int Ind)
  *
  * We do not yet create any "hidden gold" features XXX XXX XXX
  */
+/*
+ * TODO:
+ * 1. allow to display gold carried by monsters
+ * 2. make this a ranged spell
+ */
 bool detect_treasure(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2291,9 +2302,8 @@ bool detect_trap(int Ind)
 
 				if (!c_ptr->special.sc.trap.found)
 				{
-                                        /* Hack -- check for failure */
-                                        /* DG -- NO ! */
-#if 0
+					/* Hack -- check for failure */
+#if TRAP_DETECTION_FAILURE /* DG -- NO ! */
 					if (!magik(chance)) continue;
 #endif
 					/* Pick a trap */

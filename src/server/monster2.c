@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: monster.c */
 
 /* Purpose: misc code for monsters */
@@ -178,6 +179,7 @@ void delete_monster_idx(int i)
 	struct worldpos *wpos;
 	cave_type **zcave;
 	monster_type *m_ptr = &m_list[i];
+	u16b this_o_idx, next_o_idx = 0;
 
         monster_race *r_ptr = race_inf(m_ptr);
 
@@ -219,6 +221,33 @@ void delete_monster_idx(int i)
 	}
 	/* Visual update */
 	everyone_lite_spot(wpos, y, x);
+
+#ifdef MONSTER_INVENTORY
+	/* Delete objects */
+	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		object_type *o_ptr;
+
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Hack -- efficiency */
+		o_ptr->held_m_idx = 0;
+
+		/* Hack -- Preserve unknown artifacts */
+		if (true_artifact_p(o_ptr))
+		{
+			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
+		}
+
+		/* Delete the object */
+		delete_object_idx(this_o_idx);
+	}
+#endif	// MONSTER_INVENTORY
 
 	/* Wipe the Monster */
 	FREE(m_ptr->r_ptr, monster_race);
@@ -279,6 +308,7 @@ void compact_monsters(int size, bool purge)
 			cave_type **zcave;
 			struct worldpos *wpos;
 
+	u16b this_o_idx, next_o_idx = 0;
 
 	/* Message (only if compacting) */
 	if (size) s_printf("Compacting monsters...\n");
@@ -362,6 +392,23 @@ void compact_monsters(int size, bool purge)
 			   it sometimes will not be */
 			if((zcave=getcave(wpos)))
 				zcave[ny][nx].m_idx = i;
+
+#ifdef MONSTER_INVENTORY
+			/* Repair objects being carried by monster */
+			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+			{
+				object_type *o_ptr;
+
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+
+				/* Reset monster pointer */
+				o_ptr->held_m_idx = i;
+			}
+#endif	// MONSTER_INVENTORY
 
 			/* Structure copy */
 			m_list[i] = m_list[m_max];
@@ -596,21 +643,26 @@ errr get_mon_num_prep(void)
 	return (0);
 }
 
-bool mon_allowed(monster_race *r_ptr){
-	/* Zangbandish monsters allowed ? or not ? */
-	if(!cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) return(FALSE);
-
-	/* Pernian monsters allowed ? or not ? */
-	if(!cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) return(FALSE);
-
-	/* Lovercraftian monsters allowed ? or not ? */
-	if(!cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
+/* TODO: do this job when creating allocation table, for efficiency */
+/* XXX: this function can act strange when used for non-generation checks */
+bool mon_allowed(monster_race *r_ptr)
+{
+	int i = randint(100);
 
 	/* Joke monsters allowed ? or not ? */
-	if(!cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
+	if(i > cfg.joke_monsters && (r_ptr->flags8 & RF8_JOKEANGBAND)) return(FALSE);
+
+	/* Zangbandish monsters allowed ? or not ? */
+	if(i > cfg.zang_monsters && (r_ptr->flags8 & RF8_ZANGBAND)) return(FALSE);
+
+	/* Pernian monsters allowed ? or not ? */
+	if(i > cfg.pern_monsters && (r_ptr->flags8 & RF8_PERNANGBAND)) return(FALSE);
+
+	/* Lovercraftian monsters allowed ? or not ? */
+	if(i > cfg.cth_monsters && (r_ptr->flags8 & RF8_CTHANGBAND)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
-	if(!cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);
+	if(i > cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);
 
 	return(TRUE);
 }
@@ -754,7 +806,7 @@ s16b get_mon_num(int level)
 		if(!mon_allowed(r_ptr)) continue;
 
 		/* Some dungeon types restrict the possible monsters */
-//		if(!summon_hack && !restrict_monster_to_dungeon(r_idx) && dun_level) continue;
+//		if(!summon_hack && !restrict_monster_to_dungeon(r_idx) && dlev) continue;
 
 
 		/* Accept */
@@ -1547,9 +1599,15 @@ void update_mon(int m_idx, bool dist)
 
 			/* Efficiency -- Notice multi-hued monsters */
 //			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
+#ifdef RANDUNIS 
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
 					(r_ptr->flags1 & RF1_UNIQUE) ||
 					(m_ptr->ego ) ) scan_monsters = TRUE;
+#else
+			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
+					(r_ptr->flags1 & RF1_UNIQUE) )
+				scan_monsters = TRUE;
+#endif	// RANDUNIS
 		}
 
 		/* The monster is not visible */
@@ -2000,6 +2058,8 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Access the location */
 	c_ptr = &zcave[y][x];
 
+	/* XXX makeshift; to be replaced with more generic function */
+//	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
 	if(c_ptr->feat == FEAT_WATER)
 	{
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
@@ -2021,8 +2081,10 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	/* Save the race */
 	m_ptr->r_idx = r_idx;
-        m_ptr->ego = ego;
+#ifdef RANDUNIS
+	m_ptr->ego = ego;
 //	m_ptr->name3 = randuni;		
+#endif	// RANDUNIS
 
 	/* Place the monster at the location */
 	m_ptr->fy = y;
@@ -3355,8 +3417,12 @@ monster_race* r_info_get(monster_type *m_ptr)
 {
 	/* golem? */
 	if (m_ptr->special) return (m_ptr->r_ptr);
-//	else return (&r_info[m_ptr->r_idx]);
-	else return (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3));
+#ifdef RANDUNIS
+	else if (m_ptr->ego) return (race_info_idx((m_ptr)->r_idx, (m_ptr)->ego, (m_ptr)->name3));
+	else return (&r_info[m_ptr->r_idx]);
+#else
+	else return (&r_info[m_ptr->r_idx]);
+#endif	// RANDUNIS
 }
 
 cptr r_name_get(monster_type *m_ptr)
@@ -3583,7 +3649,7 @@ int pick_randuni(int r_idx, int Level)
                 /* Not too much OoD */
                 lvl = r_info[r_idx].level;
                 MODIFY(lvl, re_ptr->level, 0);
-                lvl -= ((dun_level / 2) + (rand_int(dun_level / 2)));
+                lvl -= ((dlev / 2) + (rand_int(dlev / 2)));
                 if (lvl < 1) lvl = 1;
                 if (rand_int(lvl)) continue;
 
@@ -3700,3 +3766,45 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
 }
 
 #endif	// RANDUNIS
+
+#ifdef MONSTER_INVENTORY
+/*
+ * Drop all items carried by a monster
+ */
+void monster_drop_carried_objects(monster_type *m_ptr)
+{
+	s16b this_o_idx, next_o_idx = 0;
+	object_type forge;
+	object_type *o_ptr;
+	object_type *q_ptr;
+
+
+	/* Drop objects being carried */
+	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+	{
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
+
+		/* Paranoia */
+		o_ptr->held_m_idx = 0;
+
+		/* Get local object */
+		q_ptr = &forge;
+
+		/* Copy the object */
+		object_copy(q_ptr, o_ptr);
+
+		/* Delete the object */
+		delete_object_idx(this_o_idx);
+
+		/* Drop it */
+		drop_near(q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+	}
+
+	/* Forget objects */
+	m_ptr->hold_o_idx = 0;
+}
+#endif	// MONSTER_INVENTORY

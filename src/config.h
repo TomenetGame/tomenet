@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: config.h */
 
 /* Purpose: Angband specific configuration stuff */
@@ -72,6 +73,9 @@
 /*
  * OPTION: define "SPECIAL_BSD" for using certain versions of UNIX
  * that use the 4.4BSD Lite version of Curses in "main-gcu.c"
+ */
+/*
+ * NOTE: FreeBSD user should *NOT* define SPECIAL_BSD.
  */
 /* #define SPECIAL_BSD */
 
@@ -202,9 +206,14 @@
  * players on.  Define this to be an empty string if you don't want to
  * report to a metaserver.
  */
+/* NOTE: client uses these values.
+ * server uses those in mangband.cfg.
+ * bad design.
+ */
 #define	META_ADDRESS "www.mangband.org"
 #define	META_ADDRESS_2 "64.53.71.113"  
 
+#if 0	// not used for good, most likely. DELETEME
 /*
  * OPTION: Set a vhost bind address.  This is only used if you have
  * multiple IP's on a single box, and care which one the server
@@ -247,7 +256,7 @@
  * the code that has a 'store 9' in it.
  */
  /* #define	DEVEL_TOWN_COMPATIBILITY */ 
-
+#endif	// 0
 
 /*
  * OPTION: Use wider corrdiors (room for two people abreast).
@@ -394,6 +403,10 @@
  * learning that the player is not harmed by that attack.
  *
  * This adds about 3K to the memory and about 5K to the executable.
+ */
+/*
+ * NOTE: this option will be disabled unless it covers multi-player
+ * situation.. and prolly never.
  */
 /* #define DRS_SMART_OPTIONS */
 
@@ -612,16 +625,23 @@
  * (3.2.2)
  * 
  * Don't remove this; sure it won't compile! :-/
+ * To disable this, pls set MEGO_CHANCE to 0 instead.
+ * TODO: make this option valid
  */
 #define RANDUNIS
+#define MEGO_CHANCE             18      /* % chances of getting ego monsters */
 
 /*
- * Size of radius-tables.
+ * Size of radius-tables, used to optimize blasts/AI etc. [16]
+ *
+ * 16 should be able to cover all the spells handled in project().
+ * Code by the old way if the radius surpasses this(eg.*Destruction*).
+ * it will occupy approximately (2x(r)^2x3.14+r+1) bytes.
  */
 #define PREPARE_RADIUS	16
 
 /*
- * OPTION: verbosity of server.
+ * OPTION: verbosity of server for stdout/mangband.log.
  *
  * 0 - no debug msgs
  * 1 - very recent debug msgs
@@ -631,4 +651,61 @@
  */
 #define DEBUG_LEVEL 2
 
+
+/*
+ * OPTION: verbosity of server for players.
+ * (XXX This should be handled by client-side option.)
+ *
+ * 0 - deadly quiet [The first message you'll receive might be 'You die.']
+ * 1 - seldom speaks ['You hit ..!' etc. are surpressed.]
+ * 2 - (default)
+ * 3 - chatterbox [dying msg, monster speach etc.]
+ *
+ * NOTE: chatterbox levels 0-1 are not implemented yet.
+ */
+#define CHATTERBOX_LEVEL	3
+
+/*
+ * OPTION: suppress visual effects in project()	[10]
+ * To disable, comment it out.
+ *
+ * If you recalled into a pack of hounds, the visual effects of breathes
+ * slows the server/client and make it almost impossible to control.
+ * This option prevents this by limiting the maximum # of blasts per turn.
+ *
+ * NOTE: of course, it can happen that you cannot see the attacks made.
+ */
+#define PROJECTION_FLUSH_LIMIT 10
+
+/*
+ * OPTION: allow sanity display.
+ *
+ * affects both client and server, so be warned. TBH, I'm tired.
+ */
+#define SHOW_SANITY
+
+/* spells1.c, cmd2.c */
+/* Chance of bolt/ball harming party-member by accident. [10] */
+#define FRIEND_FIRE_CHANCE	10
+/* Chance of bolt/ball harming neutral-player by accident. [50] */
+#define NEUTRAL_FIRE_CHANCE	30
+
+/* OPTION: allow monsters to carry objects. */
+#define MONSTER_INVENTORY
+
+/*
+ * Below this line are client-only options.
+ * Probably we'd better separated into another file?	- Jir -
+ */
+
+/* 
+ * OPTION: max # of history for chat, slash-cmd etc.
+ */
+#define MSG_HISTORY_MAX	30
+
+/*
+ * Evileye's testing code for 'icky' things in the client.
+ * DELETEME - test done
+ */
+#define EVIL_TEST
 

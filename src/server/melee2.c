@@ -5265,6 +5265,8 @@ static void process_monster(int Ind, int m_idx)
 				/* Pick up the item */
 				else if (r_ptr->flags2 & RF2_TAKE_ITEM)
 				{
+					s16b this_o_idx = 0;
+
 					/* Take note */
 					did_take_item = TRUE;
 
@@ -5277,6 +5279,7 @@ static void process_monster(int Ind, int m_idx)
 
 #ifdef MONSTER_INVENTORY
 					/* Excise the object */
+					this_o_idx = c_ptr->o_idx;
 					excise_object_idx(this_o_idx);
 
 					/* Forget mark */

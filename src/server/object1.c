@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: obj-desc.c */
 
 /* Purpose: handle object descriptions, mostly string handling code */
@@ -14,6 +15,14 @@
 
 #include "angband.h"
 
+/*
+ * Name flavors by combination of adj and extra modifier, so that
+ * we don't have to devise new flavor every time adding a new item.
+ * eg. 'whirling' + 'red'
+ *
+ * Not implemented yet.		- Jir -
+ */
+//#define EXTRA_FLAVORS
 
 /*
  * XXX XXX Hack -- note that "TERM_MULTI" is now just "TERM_VIOLET"
@@ -25,228 +34,6 @@
  */
 #define TERM_MULTI	TERM_VIOLET
 
-#if 0
-/*
- * Max sizes of the following arrays
- */
-#define MAX_ROCKS      42       /* Used with rings (min 38) */
-#define MAX_AMULETS    16       /* Used with amulets (min 13) */
-#define MAX_WOODS      32       /* Used with staffs (min 30) */
-#define MAX_METALS     32       /* Used with wands/rods (min 29/28) */
-#define MAX_COLORS     63       /* Used with potions (min 60) */
-#define MAX_SHROOM     21       /* Used with mushrooms (min 20) */
-#define MAX_TITLES     50       /* Used with scrolls (min 48) */
-#define MAX_SYLLABLES 158       /* Used with scrolls (see below) */
-
-
-/*
- * Rings (adjectives and colors)
- */
-
-static cptr ring_adj[MAX_ROCKS] =
-{
-	"Alexandrite", "Amethyst", "Aquamarine", "Azurite", "Beryl",
-	"Bloodstone", "Calcite", "Carnelian", "Corundum", "Diamond",
-	"Emerald", "Fluorite", "Garnet", "Granite", "Jade",
-	"Jasper", "Lapis Lazuli", "Malachite", "Marble", "Moonstone",
-	"Onyx", "Opal", "Pearl", "Quartz", "Quartzite",
-	"Rhodonite", "Ruby", "Sapphire", "Tiger Eye", "Topaz",
-	"Turquoise", "Zircon", "Platinum", "Bronze", "Gold",
-	"Obsidian", "Silver", "Tortoise Shell", "Mithril", "Jet",
-	"Engagement", "Adamantite"
-};
-
-static byte ring_col[MAX_ROCKS] =
-{
-	TERM_GREEN, TERM_VIOLET, TERM_L_BLUE, TERM_L_BLUE, TERM_L_GREEN,
-	TERM_RED, TERM_WHITE, TERM_RED, TERM_SLATE, TERM_WHITE,
-	TERM_GREEN, TERM_L_GREEN, TERM_RED, TERM_L_WHITE, TERM_L_GREEN,
-	TERM_UMBER, TERM_BLUE, TERM_GREEN, TERM_WHITE, TERM_L_WHITE,
-	TERM_L_RED, TERM_L_WHITE, TERM_WHITE, TERM_L_WHITE, TERM_L_WHITE,
-	TERM_L_RED, TERM_RED, TERM_BLUE, TERM_YELLOW, TERM_YELLOW,
-	TERM_L_BLUE, TERM_L_UMBER, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
-	TERM_L_DARK, TERM_L_WHITE, TERM_UMBER, TERM_L_BLUE, TERM_L_DARK,
-	TERM_YELLOW, TERM_L_GREEN
-};
-
-
-/*
- * Amulets (adjectives and colors)
- */
-
-static cptr amulet_adj[MAX_AMULETS] =
-{
-	"Amber", "Driftwood", "Coral", "Agate", "Ivory",
-	"Obsidian", "Bone", "Brass", "Bronze", "Pewter",
-	"Tortoise Shell", "Golden", "Azure", "Crystal", "Silver",
-	"Copper"
-};
-
-static byte amulet_col[MAX_AMULETS] =
-{
-	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
-	TERM_L_DARK, TERM_WHITE, TERM_L_UMBER, TERM_L_UMBER, TERM_SLATE,
-	TERM_UMBER, TERM_YELLOW, TERM_L_BLUE, TERM_WHITE, TERM_L_WHITE,
-	TERM_L_UMBER
-};
-
-
-/*
- * Staffs (adjectives and colors)
- */
-
-static cptr staff_adj[MAX_WOODS] =
-{
-	"Aspen", "Balsa", "Banyan", "Birch", "Cedar",
-	"Cottonwood", "Cypress", "Dogwood", "Elm", "Eucalyptus",
-	"Hemlock", "Hickory", "Ironwood", "Locust", "Mahogany",
-	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
-	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
-	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
-	"Golden", "Ashen"/*,"Gnarled","Ivory","Willow"*/
-};
-
-static byte staff_col[MAX_WOODS] =
-{
-	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
-	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER,
-	TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER, TERM_L_UMBER, TERM_UMBER,
-	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_RED,
-	TERM_RED, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER,
-	TERM_GREEN, TERM_L_UMBER, TERM_L_UMBER, TERM_L_WHITE, TERM_UMBER,
-	TERM_YELLOW, TERM_SLATE, /*???,???,???*/
-};
-
-
-/*
- * Wands (adjectives and colors)
- */
-
-static cptr wand_adj[MAX_METALS] =
-{
-	"Aluminum", "Cast Iron", "Chromium", "Copper", "Gold",
-	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
-	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
-	"Zirconium", "Zinc", "Aluminum-Plated", "Copper-Plated", "Gold-Plated",
-	"Nickel-Plated", "Silver-Plated", "Steel-Plated", "Tin-Plated", "Zinc-Plated",
-	"Mithril-Plated", "Mithril", "Runed", "Bronze", "Brass",
-	"Platinum", "Lead"/*,"Lead-Plated","Ivory","Pewter"*/
-};
-
-static byte wand_col[MAX_METALS] =
-{
-	TERM_L_BLUE, TERM_L_DARK, TERM_WHITE, TERM_L_UMBER, TERM_YELLOW,
-	TERM_SLATE, TERM_L_WHITE, TERM_L_WHITE, TERM_L_UMBER, TERM_RED,
-	TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_WHITE, TERM_WHITE,
-	TERM_L_WHITE, TERM_L_WHITE, TERM_L_BLUE, TERM_L_UMBER, TERM_YELLOW,
-	TERM_L_UMBER, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE, TERM_L_WHITE,
-	TERM_L_BLUE, TERM_L_BLUE, TERM_UMBER, TERM_L_UMBER, TERM_L_UMBER,
-	TERM_WHITE, TERM_SLATE, /*TERM_SLATE,TERM_WHITE,TERM_SLATE*/
-};
-
-
-/*
- * Rods (adjectives and colors).
- * Efficiency -- copied from wand arrays
- */
-
-static cptr rod_adj[MAX_METALS];
-
-static byte rod_col[MAX_METALS];
-
-
-/*
- * Mushrooms (adjectives and colors)
- */
-
-static cptr food_adj[MAX_SHROOM] =
-{
-	"Blue", "Black", "Black Spotted", "Brown", "Dark Blue",
-	"Dark Green", "Dark Red", "Yellow", "Furry", "Green",
-	"Grey", "Light Blue", "Light Green", "Violet", "Red",
-	"Slimy", "Tan", "White", "White Spotted", "Wrinkled",
-	"Pink"
-};
-
-static byte food_col[MAX_SHROOM] =
-{
-	TERM_BLUE, TERM_L_DARK, TERM_L_DARK, TERM_UMBER, TERM_BLUE,
-	TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_L_WHITE, TERM_GREEN,
-	TERM_SLATE, TERM_L_BLUE, TERM_L_GREEN, TERM_VIOLET, TERM_RED,
-	TERM_SLATE, TERM_L_UMBER, TERM_WHITE, TERM_WHITE, TERM_UMBER
-};
-
-
-/*
- * Color adjectives and colors, for potions.
- * Hack -- The first four entries are hard-coded.
- * (water, apple juice, slime mold juice, something)
- */
-
-static cptr potion_adj[MAX_COLORS] =
-{
-	"Clear", "Light Brown", "Icky Green", "xxx",
-	"Azure", "Blue", "Blue Speckled", "Black", "Brown", "Brown Speckled",
-	"Bubbling", "Chartreuse", "Cloudy", "Copper Speckled", "Crimson", "Cyan",
-	"Dark Blue", "Dark Green", "Dark Red", "Gold Speckled", "Green",
-	"Green Speckled", "Grey", "Grey Speckled", "Hazy", "Indigo",
-	"Light Blue", "Light Green", "Magenta", "Metallic Blue", "Metallic Red",
-	"Metallic Green", "Metallic Purple", "Misty", "Orange", "Orange Speckled",
-	"Pink", "Pink Speckled", "Puce", "Purple", "Purple Speckled",
-	"Red", "Red Speckled", "Silver Speckled", "Smoky", "Tangerine",
-	"Violet", "Vermilion", "White", "Yellow", "Violet Speckled",
-	"Pungent", "Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
-	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
-	"Transparent"
-};
-
-static byte potion_col[MAX_COLORS] =
-{
-	TERM_WHITE, TERM_L_UMBER, TERM_GREEN, 0,
-	TERM_L_BLUE, TERM_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER, TERM_UMBER,
-	TERM_L_WHITE, TERM_L_GREEN, TERM_WHITE, TERM_L_UMBER, TERM_RED, TERM_L_BLUE,
-	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_YELLOW, TERM_GREEN,
-	TERM_GREEN, TERM_SLATE, TERM_SLATE, TERM_L_WHITE, TERM_VIOLET,
-	TERM_L_BLUE, TERM_L_GREEN, TERM_RED, TERM_BLUE, TERM_RED,
-	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_ORANGE, TERM_ORANGE,
-	TERM_L_RED, TERM_L_RED, TERM_VIOLET, TERM_VIOLET, TERM_VIOLET,
-	TERM_RED, TERM_RED, TERM_L_WHITE, TERM_L_DARK, TERM_ORANGE,
-	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
-	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
-	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
-	TERM_WHITE
-};
-
-
-/*
- * Syllables for scrolls (must be 1-4 letters each)
- */
-
-static cptr syllables[MAX_SYLLABLES] =
-{
-	"a", "ab", "ag", "aks", "ala", "an", "ankh", "app",
-	"arg", "arze", "ash", "aus", "ban", "bar", "bat", "bek",
-	"bie", "bin", "bit", "bjor", "blu", "bot", "bu",
-	"byt", "comp", "con", "cos", "cre", "dalf", "dan",
-	"den", "der", "doe", "dok", "eep", "el", "eng", "er", "ere", "erk",
-	"esh", "evs", "fa", "fid", "flit", "for", "fri", "fu", "gan",
-	"gar", "glen", "gop", "gre", "ha", "he", "hyd", "i",
-	"ing", "ion", "ip", "ish", "it", "ite", "iv", "jo",
-	"kho", "kli", "klis", "la", "lech", "man", "mar",
-	"me", "mi", "mic", "mik", "mon", "mung", "mur", "nag", "nej",
-	"nelg", "nep", "ner", "nes", "nis", "nih", "nin", "o",
-	"od", "ood", "org", "orn", "ox", "oxy", "pay", "pet",
-	"ple", "plu", "po", "pot", "prok", "re", "rea", "rhov",
-	"ri", "ro", "rog", "rok", "rol", "sa", "san", "sat",
-	"see", "sef", "seh", "shu", "ski", "sna", "sne", "snik",
-	"sno", "so", "sol", "sri", "sta", "sun", "ta", "tab",
-	"tem", "ther", "ti", "tox", "trol", "tue", "turs", "u",
-	"ulk", "um", "un", "uni", "ur", "val", "viv", "vly",
-	"vom", "wah", "wed", "werg", "wex", "whon", "wun", "x",
-	"yerg", "yp", "zun", "tri", "blaa"
-};
-
-#endif	// 0
 
 /* Ones borrowed from PernAngband.	- Jir - */
 /*
@@ -254,12 +41,22 @@ static cptr syllables[MAX_SYLLABLES] =
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
 #define MAX_AMULETS    36       /* Used with amulets (min 30) */
-#define MAX_WOODS      35       /* Used with staffs (min 32) */
+#define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
-#define MAX_COLORS     66       /* Used with potions (min 62) */
+#define MAX_COLORS     68       /* Used with potions (min 62) */
 #define MAX_SHROOM     20       /* Used with mushrooms (min 20) */
-#define MAX_TITLES     60       /* Used with scrolls (min 55) */
+#define MAX_TITLES     64       /* Used with scrolls (min 55) */
 #define MAX_SYLLABLES 164       /* Used with scrolls (see below) */
+
+#if EXTRA_FLAVORS
+
+#define MAX_MODIFIERS	6       /* Used with rings (see below) */
+static cptr ring_adj2[MAX_ROCKS2] =
+{
+	"", "Brilliant", "Dark", "Enchanting", "Murky", "Bright"
+};
+
+#endif	// EXTRA_FLAVORS
 
 
 /*
@@ -344,7 +141,8 @@ static cptr staff_adj[MAX_WOODS] =
 	"Maple", "Mulberry", "Oak", "Pine", "Redwood",
 	"Rosewood", "Spruce", "Sycamore", "Teak", "Walnut",
 	"Mistletoe", "Hawthorn", "Bamboo", "Silver", "Runed",
-	"Golden", "Ashen", "Gnarled", "Ivory", "Willow"
+	"Golden", "Ashen", "Gnarled", "Ivory", "Willow",
+	"cryptomeria"
 };
 
 static byte staff_col[MAX_WOODS] =
@@ -355,7 +153,8 @@ static byte staff_col[MAX_WOODS] =
 	TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_RED,
 	TERM_RED, TERM_L_UMBER, TERM_L_UMBER, TERM_L_UMBER, TERM_UMBER,
 	TERM_GREEN, TERM_L_UMBER, TERM_L_UMBER, TERM_L_WHITE, TERM_UMBER,
-	TERM_YELLOW, TERM_SLATE, TERM_UMBER, TERM_L_WHITE, TERM_L_UMBER
+	TERM_YELLOW, TERM_SLATE, TERM_UMBER, TERM_L_WHITE, TERM_L_UMBER,
+	TERM_L_UMBER
 };
 
 
@@ -425,6 +224,55 @@ static byte food_col[MAX_SHROOM] =
  * (water, apple juice, slime mold juice, something)
  */
 
+#ifdef EXTRA_FLAVORS
+/* 15 */
+static cptr potion_mod[MAX_MOD_COLORS] =
+{
+	"Speckled", "Bubbling", "Cloudy", "Metallic", "Misty", "Smoky",
+	"Pungent", "Clotted", "Viscous", "Oily", "Shimmering", "Coagulated",
+	"Manly", "Stinking", "Whirling",
+};
+
+/* 34 */
+static cptr potion_base[MAX_BASE_COLORS] =
+{
+        "Clear", "Light Brown", "Icky Green", "Strangely Phosphorescent",
+	"Azure", "Blue", "Black", "Brown",
+	"Chartreuse", "Crimson", "Cyan",
+	"Dark Blue", "Dark Green", "Dark Red", "Green",
+	"Grey", "Hazy", "Indigo",
+	"Light Blue", "Light Green", "Magenta",
+	"Orange",
+	"Pink", "Puce", "Purple",
+	"Red", "Tangerine",
+	"Violet", "Vermilion", "White", "Yellow",
+	"Gloopy Green",
+	"Gold",
+	"Ichor", "Ivory White", "Sky Blue",
+	"Beige",
+};
+
+static byte potion_col[MAX_COLORS] =
+{
+        TERM_WHITE, TERM_L_UMBER, TERM_GREEN, TERM_MULTI,
+	TERM_L_BLUE, TERM_BLUE, TERM_L_DARK, TERM_UMBER,
+	TERM_L_GREEN, TERM_RED, TERM_L_BLUE,
+	TERM_BLUE, TERM_GREEN, TERM_RED, TERM_GREEN,
+	TERM_SLATE,TERM_L_WHITE, TERM_VIOLET,
+	TERM_L_BLUE, TERM_L_GREEN, TERM_RED,
+	TERM_ORANGE,
+	TERM_L_RED, TERM_VIOLET, TERM_VIOLET,
+	TERM_RED, TERM_ORANGE,
+	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW,
+	TERM_GREEN,
+	TERM_YELLOW,
+	TERM_RED, TERM_WHITE, TERM_L_BLUE,
+	TERM_L_UMBER,
+};
+
+static char potion_adj[MAX_COLORS][24];
+
+#else
 static cptr potion_adj[MAX_COLORS] =
 {
         "Clear", "Light Brown", "Icky Green", "Strangely Phosphorescent",
@@ -440,6 +288,7 @@ static cptr potion_adj[MAX_COLORS] =
 	"Pungent", "Clotted Red", "Viscous Pink", "Oily Yellow", "Gloopy Green",
 	"Shimmering", "Coagulated Crimson", "Yellow Speckled", "Gold",
 	"Manly", "Stinking", "Oily Black", "Ichor", "Ivory White", "Sky Blue",
+	"Beige", "Whirling",
 };
 
 static byte potion_col[MAX_COLORS] =
@@ -456,8 +305,10 @@ static byte potion_col[MAX_COLORS] =
 	TERM_VIOLET, TERM_RED, TERM_WHITE, TERM_YELLOW, TERM_VIOLET,
 	TERM_L_RED, TERM_RED, TERM_L_RED, TERM_YELLOW, TERM_GREEN,
 	TERM_MULTI, TERM_RED, TERM_YELLOW, TERM_YELLOW,
-	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, TERM_WHITE, TERM_L_BLUE
+	TERM_L_UMBER, TERM_UMBER, TERM_L_DARK, TERM_RED, TERM_WHITE, TERM_L_BLUE,
+	TERM_L_UMBER, TERM_L_WHITE,
 };
+#endif	// 0
 
 
 /*
@@ -521,6 +372,7 @@ static bool object_has_flavor(int i)
 		case TV_WAND:
 		case TV_SCROLL:
 		case TV_POTION:
+		case TV_POTION2:	// Hack inside!
 		case TV_ROD:
 		{
 			return (TRUE);
@@ -713,6 +565,7 @@ static byte default_tval_to_attr(int tval)
 		}
 
 		case TV_POTION:
+		case TV_POTION2:
 		{
 			return (TERM_L_BLUE);
 		}
@@ -1059,6 +912,9 @@ static byte object_d_attr(int i)
 			case TV_STAFF:  return (staff_col[indexx]);
 			case TV_WAND:   return (wand_col[indexx]);
 			case TV_ROD:    return (rod_col[indexx]);
+
+			/* hack -- borrow those of potions */
+			case TV_POTION2: return (potion_col[indexx + 4]);
 		}
 	}
 
@@ -1171,21 +1027,33 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		/* Hack -- Randarts! */
 		if (o_ptr->name1 == ART_RANDART)
 		{
-			a_ptr = randart_make(o_ptr);
+			if (!(a_ptr = randart_make(o_ptr))) return;
+			(*f1) = a_ptr->flags1;
+			(*f2) = a_ptr->flags2;
+			(*f3) = a_ptr->flags3;
+			(*f4) = a_ptr->flags4;
+			(*f5) = a_ptr->flags5;
+			(*esp) = a_ptr->esp;
 		}
 		else
 		{
-			a_ptr = &a_info[o_ptr->name1];
+			if (!(a_ptr = &a_info[o_ptr->name1])) return;
+				(*f1) |= a_ptr->flags1;
+				(*f2) |= a_ptr->flags2;
+				(*f3) |= a_ptr->flags3;
+				(*f4) |= a_ptr->flags4;
+				(*f5) |= a_ptr->flags5;
+				(*esp) |= a_ptr->esp;
 		}
-		if (a_ptr == NULL) return;
+//		if (a_ptr == NULL) return;
 
+#if 0
 		(*f1) = a_ptr->flags1;
 		(*f2) = a_ptr->flags2;
 		(*f3) = a_ptr->flags3;
                 (*f4) = a_ptr->flags4;
                 (*f5) = a_ptr->flags5;
                 (*esp) = a_ptr->esp;
-#if 0
                 if ((!object_flags_no_set) && (a_ptr->set != -1))
                         apply_flags_set(o_ptr->name1, a_ptr->set, f1, f2, f3, f4, f5, esp);
 #endif	// 0
@@ -3081,6 +2949,10 @@ cptr item_activation(object_type *o_ptr)
 		{
 			return "dispel monsters (300) every 200+d200 turns";
 		}
+		case ART_BILBO:
+		{
+			return "destroy doors and traps every 30+d30 turns";
+		}
 	}
 
 	// requires some substitution..
@@ -3705,6 +3577,893 @@ cptr item_activation(object_type *o_ptr)
 
 	
 
+/*
+ * Describe a "fully identified" item
+ */
+//bool identify_fully_aux(object_type *o_ptr, FILE *fff)
+bool identify_fully_aux(int Ind, object_type *o_ptr)
+{
+	player_type *p_ptr = Players[Ind];
+//	cptr		*info = p_ptr->info;
+
+	int                     i = 0, j, k, am;
+
+	u32b f1, f2, f3, f4, f5, esp;
+
+	//        cptr            info[400];
+	//        byte            color[400];
+
+	FILE *fff;
+
+#if 0
+	char file_name[MAX_PATH_LENGTH];
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+
+	strcpy(p_ptr->infofile, file_name);
+#endif	// 0
+
+	/* Open a new file */
+	fff = my_fopen(p_ptr->infofile, "w");
+
+	/* Current file viewing */
+	strcpy(p_ptr->cur_file, p_ptr->infofile);
+
+	/* Let the player scroll through this info */
+	p_ptr->special_file_type = TRUE;
+
+	/* Output color byte */
+//	fprintf(fff, "%c", 'w');
+
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+#if 0
+	/* All white */
+	for (j = 0; j < 400; j++)
+		color[j] = TERM_WHITE;
+
+	/* No need to dump that */
+	if (fff == NULL)
+	{
+		i = grab_tval_desc(o_ptr->tval, info, 0);
+		if ((fff == NULL) && i) info[i++] = "";
+		for (j = 0; j < i; j++)
+			color[j] = TERM_L_BLUE;
+	}
+
+	if (o_ptr->k_idx)
+	{
+
+		char buff2[400], *s, *t;
+		int n, oi = i;
+		object_kind *k_ptr = &k_info[o_ptr->k_idx];
+
+		strcpy (buff2, k_text + k_ptr->text);
+
+		s = buff2;
+
+		/* Collect the history */
+		while (TRUE)
+		{
+
+			/* Extract remaining length */
+			n = strlen(s);
+
+			/* All done */
+			if (n < 60)
+			{
+				/* Save one line of history */
+				color[i] = TERM_ORANGE;
+				info[i++] = s;
+
+				/* All done */
+				break;
+			}
+
+			/* Find a reasonable break-point */
+			for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+			/* Save next location */
+			t = s + n;
+
+			/* Wipe trailing spaces */
+			while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+			/* Save one line of history */
+			color[i] = TERM_ORANGE;
+			info[i++] = s;
+
+			s = t;
+		}
+
+		/* Add a blank line */
+		if ((fff == NULL) && (oi < i)) info[i++] = "";
+	}
+
+	if (o_ptr->name1)
+	{
+
+		char buff2[400], *s, *t;
+		int n, oi = i;
+		artifact_type *a_ptr = &a_info[o_ptr->name1];
+
+		strcpy (buff2, a_text + a_ptr->text);
+
+		s = buff2;
+
+		/* Collect the history */
+		while (TRUE)
+		{
+
+			/* Extract remaining length */
+			n = strlen(s);
+
+			/* All done */
+			if (n < 60)
+			{
+				/* Save one line of history */
+				color[i] = TERM_YELLOW;
+				info[i++] = s;
+
+				/* All done */
+				break;
+			}
+
+			/* Find a reasonable break-point */
+			for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+			/* Save next location */
+			t = s + n;
+
+			/* Wipe trailing spaces */
+			while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+			/* Save one line of history */
+			color[i] = TERM_YELLOW;
+			info[i++] = s;
+
+			s = t;
+		}
+
+		/* Add a blank line */
+		if ((fff == NULL) && (oi < i)) info[i++] = "";
+
+		if (a_ptr->set != -1)
+		{
+			char buff2[400], *s, *t;
+			int n;
+			set_type *set_ptr = &set_info[a_ptr->set];
+
+			strcpy (buff2, set_text + set_ptr->desc);
+
+			s = buff2;
+
+			/* Collect the history */
+			while (TRUE)
+			{
+
+				/* Extract remaining length */
+				n = strlen(s);
+
+				/* All done */
+				if (n < 60)
+				{
+					/* Save one line of history */
+					color[i] = TERM_GREEN;
+					info[i++] = s;
+
+					/* All done */
+					break;
+				}
+
+				/* Find a reasonable break-point */
+				for (n = 60; ((n > 0) && (s[n-1] != ' ')); n--) /* loop */;
+
+				/* Save next location */
+				t = s + n;
+
+				/* Wipe trailing spaces */
+				while ((n > 0) && (s[n-1] == ' ')) s[--n] = '\0';
+
+				/* Save one line of history */
+				color[i] = TERM_GREEN;
+				info[i++] = s;
+
+				s = t;
+			}
+
+			/* Add a blank line */
+			info[i++] = "";
+		}
+	}
+
+	if (f4 & TR4_LEVELS)
+	{
+		int j = 0;
+
+		color[i] = TERM_VIOLET;
+		if (count_bits(o_ptr->pval3) == 0) info[i++] = "It is sentient.";
+		else if (count_bits(o_ptr->pval3) > 1) info[i++] = "It is sentient and can have access to the realms of:";
+		else  info[i++] = "It is sentient and can have access to the realm of:";
+
+		for (j = 0; j < MAX_FLAG_GROUP; j++)
+		{
+			if (BIT(j) & o_ptr->pval3)
+			{
+				color[i] = flags_groups[j].color;
+				info[i++] = flags_groups[j].name;
+			}
+		}
+
+		/* Add a blank line */
+		info[i++] = "";
+	}
+
+#endif
+	if (f4 & TR4_COULD2H) fprintf(fff, "It can be wielded two-handed.\n");
+	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
+
+	/* Mega Hack^3 -- describe the amulet of life saving */
+	if (o_ptr->tval == TV_AMULET &&
+			o_ptr->sval == SV_AMULET_LIFE_SAVING)
+	{
+		fprintf(fff, "It will save your life from perilous scene once.\n");
+	}
+
+	/* Mega-Hack -- describe activation */
+	if (f3 & TR3_ACTIVATE)
+	{
+		fprintf(fff, "It can be activated for...\n");
+		fprintf(fff, "%s\n", item_activation(o_ptr));
+		fprintf(fff, "...if it is being worn.\n");
+	}
+
+#if 0
+	/* Mega-Hack -- describe activation */
+	if (f3 & (TR3_ACTIVATE))
+	{
+		info[i++] = "It can be activated for...";
+		if (is_ego_p(o_ptr, EGO_MSTAFF_SPELL))
+		{
+			info[i++] = item_activation(o_ptr, 1);
+			info[i++] = "And...";
+		}
+		info[i++] = item_activation(o_ptr, 0);
+
+		/* Mega-hack -- get rid of useless line for randarts */
+		if (o_ptr->tval != TV_RANDART){
+			info[i++] = "...if it is being worn.";
+		}
+	}
+
+	/* Granted power */
+	if (object_power(o_ptr) != -1)
+	{
+		info[i++] = "It grants you the power of...";
+		info[i++] = powers_type[object_power(o_ptr)].name;
+		info[i++] = "...if it is being worn.";
+	}
+#endif	// 0
+
+
+	/* Hack -- describe lite's */
+	if (o_ptr->tval == TV_LITE)
+	{
+		int radius = 0;
+
+		if (f3 & TR3_LITE1) radius++;
+		if (f4 & TR4_LITE2) radius += 2;
+		if (f4 & TR4_LITE3) radius += 3;
+
+		if (f4 & TR4_FUEL_LITE)
+		{
+			fprintf(fff, "It provides light (radius %d) when fueled.\n", radius);
+		}
+		else if (radius)
+		{
+			fprintf(fff, "It provides light (radius %d) forever.\n", radius);
+		}
+		else
+		{
+			fprintf(fff, "It never provides light.\n");
+		}
+	}
+
+	/* Mega Hack^3 -- describe the Anchor of Space-time */
+	if (o_ptr->name1 == ART_ANCHOR)
+	{
+		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
+	}
+#if 0
+	if ((f4 & (TR4_ANTIMAGIC_50)) || (f4 & (TR4_ANTIMAGIC_30)) || (f4 & (TR4_ANTIMAGIC_20)) || (f4 & (TR4_ANTIMAGIC_10)))
+	{
+		info[i++] = "It generates an antimagic field.";
+	}
+#endif	// 0
+
+	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
+		+ ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+	if (am) am += 0 - o_ptr->to_h - o_ptr->to_d - o_ptr->pval - o_ptr->to_a;
+
+	if (am >= 100)
+		fprintf(fff, "It generates a perfect antimagic field.\n");
+	else if (am >= 80)
+		fprintf(fff, "It generates a mighty antimagic field.\n");
+	else if (am >= 60)
+		fprintf(fff, "It generates a strong antimagic field.\n");
+	else if (am >= 40)
+		fprintf(fff, "It generates an antimagic field.\n");
+	else if (am >= 20)
+		fprintf(fff, "It generates a mellow antimagic field.\n");
+	else if (am > 0) fprintf(fff, "It generates a feeble antimagic field.\n");
+
+	/* And then describe it fully */
+
+	if (f1 & (TR1_STR))
+	{
+		fprintf(fff, "It affects your strength.\n");
+	}
+	if (f1 & (TR1_INT))
+	{
+		fprintf(fff, "It affects your intelligence.\n");
+	}
+	if (f1 & (TR1_WIS))
+	{
+		fprintf(fff, "It affects your wisdom.\n");
+	}
+	if (f1 & (TR1_DEX))
+	{
+		fprintf(fff, "It affects your dexterity.\n");
+	}
+	if (f1 & (TR1_CON))
+	{
+		fprintf(fff, "It affects your constitution.\n");
+	}
+	if (f1 & (TR1_CHR))
+	{
+		fprintf(fff, "It affects your charisma.\n");
+	}
+
+	if (f1 & (TR1_STEALTH))
+	{
+		fprintf(fff, "It affects your stealth.\n");
+#if 0
+		if (o_ptr->tval != TV_TRAPKIT)
+			fprintf(fff, "It affects your stealth.\n");
+		else
+			fprintf(fff, "It is well-hidden.\n");
+#endif	// 0
+	}
+	if (f1 & (TR1_SEARCH))
+	{
+		fprintf(fff, "It affects your searching.\n");
+	}
+	if (f5 & (TR5_DISARM))
+	{
+		fprintf(fff, "It affects your disarming.\n");
+	}
+	if (f1 & (TR1_INFRA))
+	{
+		fprintf(fff, "It affects your infravision.\n");
+	}
+	if (f1 & (TR1_TUNNEL))
+	{
+		fprintf(fff, "It affects your ability to tunnel.\n");
+	}
+	if (f1 & (TR1_SPEED))
+	{
+		fprintf(fff, "It affects your speed.\n");
+	}
+	if (f1 & (TR1_BLOWS))
+	{
+		fprintf(fff, "It affects your attack speed.\n");
+	}
+	if (f5 & (TR5_CRIT))
+	{
+		fprintf(fff, "It affects your ability to score critical hits.\n");
+	}
+	if (f5 & (TR5_LUCK))
+	{
+		fprintf(fff, "It affects your luck.\n");
+	}
+
+	if (f1 & (TR1_BRAND_ACID))
+	{
+		fprintf(fff, "It does extra damage from acid.\n");
+	}
+	if (f1 & (TR1_BRAND_ELEC))
+	{
+		fprintf(fff, "It does extra damage from electricity.\n");
+	}
+	if (f1 & (TR1_BRAND_FIRE))
+	{
+		fprintf(fff, "It does extra damage from fire.\n");
+	}
+	if (f1 & (TR1_BRAND_COLD))
+	{
+		fprintf(fff, "It does extra damage from frost.\n");
+	}
+
+	if (f1 & (TR1_BRAND_POIS))
+	{
+		fprintf(fff, "It poisons your foes.\n");
+	}
+
+	if (f5 & (TR5_CHAOTIC))
+	{
+		fprintf(fff, "It produces chaotic effects.\n");
+	}
+
+	if (f1 & (TR1_VAMPIRIC))
+	{
+		fprintf(fff, "It drains life from your foes.\n");
+	}
+
+	if (f1 & (TR1_IMPACT))
+	{
+		fprintf(fff, "It can cause earthquakes.\n");
+	}
+
+	if (f1 & (TR1_VORPAL))
+	{
+		fprintf(fff, "It is very sharp and can cut your foes.\n");
+	}
+
+	if (f5 & (TR5_WOUNDING))
+	{
+		fprintf(fff, "It is very sharp and make your foes bleed.\n");
+	}
+
+	if (f1 & (TR1_KILL_DRAGON))
+	{
+		fprintf(fff, "It is a great bane of dragons.\n");
+	}
+	else if (f1 & (TR1_SLAY_DRAGON))
+	{
+		fprintf(fff, "It is especially deadly against dragons.\n");
+	}
+	if (f1 & (TR1_SLAY_ORC))
+	{
+		fprintf(fff, "It is especially deadly against orcs.\n");
+	}
+	if (f1 & (TR1_SLAY_TROLL))
+	{
+		fprintf(fff, "It is especially deadly against trolls.\n");
+	}
+	if (f1 & (TR1_SLAY_GIANT))
+	{
+		fprintf(fff, "It is especially deadly against giants.\n");
+	}
+	if (f5 & (TR5_KILL_DEMON))
+	{
+		fprintf(fff, "It is a great bane of demons.\n");
+	}
+	else if (f1 & (TR1_SLAY_DEMON))
+	{
+		fprintf(fff, "It strikes at demons with holy wrath.\n");
+	}
+	if (f5 & (TR5_KILL_UNDEAD))
+	{
+		fprintf(fff, "It is a great bane of undead.\n");
+	}
+	else if (f1 & (TR1_SLAY_UNDEAD))
+	{
+		fprintf(fff, "It strikes at undead with holy wrath.\n");
+	}
+	if (f1 & (TR1_SLAY_EVIL))
+	{
+		fprintf(fff, "It fights against evil with holy fury.\n");
+	}
+	if (f1 & (TR1_SLAY_ANIMAL))
+	{
+		fprintf(fff, "It is especially deadly against natural creatures.\n");
+	}
+	if (f1 & (TR1_MANA))
+	{
+		fprintf(fff, "It affects your mana capacity.\n");
+	}
+	if (f1 & (TR1_SPELL))
+	{
+		fprintf(fff, "It affects your spell power.\n");
+	}
+
+	if (f5 & (TR5_INVIS))
+	{
+		fprintf(fff, "It makes you invisible.\n");
+	}
+	if (f1 & (TR1_LIFE))
+	{
+		fprintf(fff, "It affects your hit points.\n");
+	}
+	//        if (o_ptr->tval != TV_TRAPKIT)
+	//        {
+	if (f2 & (TR2_SUST_STR))
+	{
+		fprintf(fff, "It sustains your strength.\n");
+	}
+	if (f2 & (TR2_SUST_INT))
+	{
+		fprintf(fff, "It sustains your intelligence.\n");
+	}
+	if (f2 & (TR2_SUST_WIS))
+	{
+		fprintf(fff, "It sustains your wisdom.\n");
+	}
+	if (f2 & (TR2_SUST_DEX))
+	{
+		fprintf(fff, "It sustains your dexterity.\n");
+	}
+	if (f2 & (TR2_SUST_CON))
+	{
+		fprintf(fff, "It sustains your constitution.\n");
+	}
+	if (f2 & (TR2_SUST_CHR))
+	{
+		fprintf(fff, "It sustains your charisma.\n");
+	}
+	if (f2 & (TR2_IM_ACID))
+	{
+		fprintf(fff, "It provides immunity to acid.\n");
+	}
+	if (f2 & (TR2_IM_ELEC))
+	{
+		fprintf(fff, "It provides immunity to electricity.\n");
+	}
+	if (f2 & (TR2_IM_FIRE))
+	{
+		fprintf(fff, "It provides immunity to fire.\n");
+	}
+	//        }
+#if 0
+	else
+	{
+		if (f2 & (TRAP2_AUTOMATIC_5))
+		{
+			fprintf(fff, "It can rearm itself.\n");
+		}
+		if (f2 & (TRAP2_AUTOMATIC_99))
+		{
+			fprintf(fff, "It rearms itself.\n");
+		}               
+		if (f2 & (TRAP2_KILL_GHOST))
+		{
+			fprintf(fff, "It is effective against Ghosts.\n");
+		}
+		if (f2 & (TRAP2_TELEPORT_TO))
+		{
+			fprintf(fff, "It can teleport monsters to you.\n");
+		}
+		if (f2 & (TRAP2_ONLY_DRAGON))
+		{
+			fprintf(fff, "It can only be set off by dragons.\n");
+		}
+		if (f2 & (TRAP2_ONLY_DEMON))
+		{
+			fprintf(fff, "It can only be set off by demons.\n");
+		}
+		if (f2 & (TRAP2_ONLY_UNDEAD))
+		{
+			fprintf(fff, "It can only be set off by undead.\n");
+		}
+		if (f2 & (TRAP2_ONLY_ANIMAL))
+		{
+			fprintf(fff, "It can only be set off by animals.\n");
+		}
+		if (f2 & (TRAP2_ONLY_EVIL))
+		{
+			fprintf(fff, "It can only be set off by evil creatures.\n");
+		}
+	}
+#endif
+
+	if (f2 & (TR2_IM_COLD))
+	{
+		fprintf(fff, "It provides immunity to cold.\n");
+	}
+
+	if (f2 & (TR2_FREE_ACT))
+	{
+		fprintf(fff, "It provides immunity to paralysis.\n");
+	}
+	if (f2 & (TR2_HOLD_LIFE))
+	{
+		fprintf(fff, "It provides resistance to life draining.\n");
+	}
+	if (f2 & (TR2_RES_FEAR))
+	{
+		fprintf(fff, "It makes you completely fearless.\n");
+	}
+	if (f2 & (TR2_RES_ACID))
+	{
+		fprintf(fff, "It provides resistance to acid.\n");
+	}
+	if (f2 & (TR2_RES_ELEC))
+	{
+		fprintf(fff, "It provides resistance to electricity.\n");
+	}
+	if (f2 & (TR2_RES_FIRE))
+	{
+		fprintf(fff, "It provides resistance to fire.\n");
+	}
+	if (f2 & (TR2_RES_COLD))
+	{
+		fprintf(fff, "It provides resistance to cold.\n");
+	}
+	if (f2 & (TR2_RES_POIS))
+	{
+		fprintf(fff, "It provides resistance to poison.\n");
+	}
+
+	if (f2 & (TR2_RES_LITE))
+	{
+		fprintf(fff, "It provides resistance to light.\n");
+	}
+	if (f2 & (TR2_RES_DARK))
+	{
+		fprintf(fff, "It provides resistance to dark.\n");
+	}
+
+	if (f2 & (TR2_RES_BLIND))
+	{
+		fprintf(fff, "It provides resistance to blindness.\n");
+	}
+	if (f2 & (TR2_RES_CONF))
+	{
+		fprintf(fff, "It provides resistance to confusion.\n");
+	}
+	if (f2 & (TR2_RES_SOUND))
+	{
+		fprintf(fff, "It provides resistance to sound.\n");
+	}
+	if (f2 & (TR2_RES_SHARDS))
+	{
+		fprintf(fff, "It provides resistance to shards.\n");
+	}
+
+	if (f4 & (TR4_IM_NETHER))
+	{
+		fprintf(fff, "It provides immunity to nether.\n");
+	}
+	if (f2 & (TR2_RES_NETHER))
+	{
+		fprintf(fff, "It provides resistance to nether.\n");
+	}
+	if (f2 & (TR2_RES_NEXUS))
+	{
+		fprintf(fff, "It provides resistance to nexus.\n");
+	}
+	if (f2 & (TR2_RES_CHAOS))
+	{
+		fprintf(fff, "It provides resistance to chaos.\n");
+	}
+	if (f2 & (TR2_RES_DISEN))
+	{
+		fprintf(fff, "It provides resistance to disenchantment.\n");
+	}
+
+	if (f3 & (TR3_WRAITH))
+	{
+		fprintf(fff, "It renders you incorporeal.\n");
+	}
+	if (f3 & (TR3_FEATHER))
+	{
+		fprintf(fff, "It allows you to levitate.\n");
+	}
+	if (f4 & (TR4_FLY))
+	{
+		fprintf(fff, "It allows you to fly.\n");
+	}
+	if (f4 & (TR4_CLIMB))
+	{
+		fprintf(fff, "It allows you to climb high mountains.\n");
+	}
+	if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))
+	{
+		fprintf(fff, "It provides light.\n");
+	}
+	if (f3 & (TR3_SEE_INVIS))
+	{
+		fprintf(fff, "It allows you to see invisible monsters.\n");
+	}
+	if (esp)
+	{
+		if (esp & ESP_ALL) fprintf(fff, "It gives telepathic powers.\n");
+		else
+		{
+			if (esp & ESP_ORC) fprintf(fff, "It allows you to sense the presence of orcs.\n");
+			if (esp & ESP_TROLL) fprintf(fff, "It allows you to sense the presence of trolls.\n");
+			if (esp & ESP_DRAGON) fprintf(fff, "It allows you to sense the presence of dragons.\n");
+			if (esp & ESP_SPIDER) fprintf(fff, "It allows you to sense the presence of spiders.\n");
+			if (esp & ESP_GIANT) fprintf(fff, "It allows you to sense the presence of giants.\n");
+			if (esp & ESP_DEMON) fprintf(fff, "It allows you to sense the presence of demons.\n");
+			if (esp & ESP_UNDEAD) fprintf(fff, "It allows you to sense presence of undead.\n");
+			if (esp & ESP_EVIL) fprintf(fff, "It allows you to sense the presence of evil beings.\n");
+			if (esp & ESP_ANIMAL) fprintf(fff, "It allows you to sense the presence of animals.\n");
+			if (esp & ESP_DRAGONRIDER) fprintf(fff, "It allows you to sense the presence of dragonriders.\n");
+			if (esp & ESP_GOOD) fprintf(fff, "It allows you to sense the presence of good beings.\n");
+			if (esp & ESP_NONLIVING) fprintf(fff, "It allows you to sense the presence of non-living things.\n");
+			if (esp & ESP_UNIQUE) fprintf(fff, "It allows you to sense the presence of unique beings.\n");
+		}
+	}
+	if (f3 & (TR3_SLOW_DIGEST))
+	{
+		fprintf(fff, "It slows your metabolism.\n");
+	}
+	if (f3 & (TR3_REGEN))
+	{
+		fprintf(fff, "It speeds your regenerative powers.\n");
+	}
+	if (f5 & (TR5_REFLECT))
+	{
+		fprintf(fff, "It reflects bolts and arrows.\n");
+	}
+	if (f3 & (TR3_SH_FIRE))
+	{
+		fprintf(fff, "It produces a fiery sheath.\n");
+	}
+	if (f3 & (TR3_SH_ELEC))
+	{
+		fprintf(fff, "It produces an electric sheath.\n");
+	}
+	if (f3 & (TR3_NO_MAGIC))
+	{
+		fprintf(fff, "It produces an anti-magic shell.\n");
+	}
+	if (f3 & (TR3_NO_TELE))
+	{
+		fprintf(fff, "It prevents teleportation.\n");
+	}
+	if (f3 & (TR3_XTRA_MIGHT))
+	{
+		fprintf(fff, "It fires missiles with extra might.\n");
+	}
+	if (f3 & (TR3_XTRA_SHOTS))
+	{
+		fprintf(fff, "It fires missiles excessively fast.\n");
+	}
+
+	if (f5 & (TR5_DRAIN_MANA))
+	{
+		fprintf(fff, "It drains mana.\n");
+	}
+
+	if (f5 & (TR5_DRAIN_HP))
+	{
+		fprintf(fff, "It drains life.\n");
+	}
+
+	if (f3 & (TR3_DRAIN_EXP))
+	{
+		fprintf(fff, "It drains experience.\n");
+	}
+	if (f3 & (TR3_TELEPORT))
+	{
+		fprintf(fff, "It induces random teleportation.\n");
+	}
+	if (f3 & (TR3_AGGRAVATE))
+	{
+		fprintf(fff, "It aggravates nearby creatures.\n");
+	}
+
+	if (f3 & (TR3_BLESSED))
+	{
+		fprintf(fff, "It has been blessed by the gods.\n");
+	}
+
+	if (f4 & (TR4_AUTO_ID))
+	{
+		fprintf(fff, "It identifies all items for you.\n");
+	}
+
+	if (f4 & (TR4_NEVER_BLOW))
+	{
+		fprintf(fff, "It can't attack.\n");
+	}
+
+	if (f4 & (TR4_BLACK_BREATH))
+	{
+		fprintf(fff, "It fills you with the Black Breath.\n");
+	}
+
+	if (cursed_p(o_ptr))
+	{
+		if (f3 & (TR3_PERMA_CURSE))
+		{
+			fprintf(fff, "It is permanently cursed.\n");
+		}
+		else if (f3 & (TR3_HEAVY_CURSE))
+		{
+			fprintf(fff, "It is heavily cursed.\n");
+		}
+		else
+		{
+			fprintf(fff, "It is cursed.\n");
+		}
+	}
+
+	if (f3 & (TR3_TY_CURSE))
+	{
+		fprintf(fff, "It carries an ancient foul curse.\n");
+	}
+
+	if (f4 & (TR4_DG_CURSE))
+	{
+		fprintf(fff, "It carries an ancient morgothian curse.\n");
+	}
+	if (f4 & (TR4_CLONE))
+	{
+		fprintf(fff, "It can clone monsters.\n");
+	}
+	if (f4 & (TR4_CURSE_NO_DROP))
+	{
+		fprintf(fff, "It cannot be droped while cursed.\n");
+	}
+	if (f3 & (TR3_AUTO_CURSE))
+	{
+		fprintf(fff, "It can re-curse itself.\n");
+	}
+	if (f4 & (TR4_CAPACITY))
+	{
+		fprintf(fff, "It can hold more mana.\n");
+	}
+	if (f4 & (TR4_CHEAPNESS))
+	{
+		fprintf(fff, "It can cast spells for a lesser mana cost.\n");
+	}
+	if (f4 & (TR4_FAST_CAST))
+	{
+		fprintf(fff, "It can cast spells faster.\n");
+	}
+	if (f4 & (TR4_CHARGING))
+	{
+		fprintf(fff, "It regenerates its mana faster.\n");
+	}
+
+	if ((f3 & (TR3_IGNORE_ACID)) && (f3 & (TR3_IGNORE_FIRE)) && (f3 & (TR3_IGNORE_COLD)) && (f3 & (TR3_IGNORE_ELEC)))
+	{
+		fprintf(fff, "It cannot be harmed by acid, cold, lightning or fire.\n");
+	}
+	else
+	{
+		if (f3 & (TR3_IGNORE_ACID))
+		{
+			fprintf(fff, "It cannot be harmed by acid.\n");
+		}
+		if (f3 & (TR3_IGNORE_ELEC))
+		{
+			fprintf(fff, "It cannot be harmed by electricity.\n");
+		}
+		if (f3 & (TR3_IGNORE_FIRE))
+		{
+			fprintf(fff, "It cannot be harmed by fire.\n");
+		}
+		if (f3 & (TR3_IGNORE_COLD))
+		{
+			fprintf(fff, "It cannot be harmed by cold.\n");
+		}
+	}
+
+
+	//	info[i]=NULL;
+	/* Close the file */
+	my_fclose(fff);
+
+
+	/* No special effects */
+//	if (!i) return (FALSE);
+
+	/* Let the client know it's about to get some info */
+	Send_special_other(Ind);
+
+	/* Gave knowledge */
+	return (TRUE);
+}
+
 
 /*
  * Describe a "fully identified" item
@@ -4104,6 +4863,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 }
 #endif	// 0
 
+#if 0
 /*
  * Describe a "fully identified" item
  */
@@ -4966,6 +5726,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	/* Gave knowledge */
 	return (TRUE);
 }
+#endif	// 0
 
 
 
@@ -5044,6 +5805,9 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 	switch (o_ptr->tval)
 	{
 		case TV_DIGGING:
+		case TV_TOOL:
+			return (INVEN_TOOL);
+
 		case TV_HAFTED:
 		case TV_POLEARM:
 		case TV_SWORD:
@@ -5054,7 +5818,8 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		}
 
 		case TV_BOW:
-//		case TV_BOOMERANG:
+		case TV_BOOMERANG:
+		case TV_INSTRUMENT:
 		{
 			return (INVEN_BOW);
 		}
@@ -5109,6 +5874,38 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		case TV_BOOTS:
 		{
 			return (INVEN_FEET);
+		}
+
+		case TV_SHOT:
+		{
+			if(p_ptr->inventory[INVEN_BOW].k_idx)
+			{
+				if(p_ptr->inventory[INVEN_BOW].sval < 10)
+//					return get_slot(INVEN_AMMO);
+					return (INVEN_AMMO);
+			}
+			return -1;
+		}
+
+		case TV_ARROW:
+		{
+			if(p_ptr->inventory[INVEN_BOW].k_idx)
+			{
+				if((p_ptr->inventory[INVEN_BOW].sval >= 10)&&(p_ptr->inventory[INVEN_BOW].sval < 20))
+//					return get_slot(INVEN_AMMO);
+					return (INVEN_AMMO);
+			}
+			return -1;
+		}
+		case TV_BOLT:
+		{                        
+			if(p_ptr->inventory[INVEN_BOW].k_idx)
+			{
+				if(p_ptr->inventory[INVEN_BOW].sval >= 20)
+//					return get_slot(INVEN_AMMO);
+				return (INVEN_AMMO);
+			}
+			return -1;
 		}
 	}
 
@@ -5364,10 +6161,12 @@ void display_equip(int Ind)
 		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the weight (if needed) */
-		wgt = o_ptr->weight * o_ptr->number;
+//		wgt = o_ptr->weight * o_ptr->number;
+		wgt = o_ptr->weight;
 
 		/* Send the info off */
-		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->tval, o_name);
+//		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->tval, o_name);
+		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_name);
 	}
 }
 

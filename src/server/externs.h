@@ -604,6 +604,9 @@ extern void update_smart_learn(int m_idx, int what);
 extern void setup_monsters(void);
 extern int race_index(char * name);
 extern void monster_gain_exp(int m_idx, u32b exp, bool silent);
+#ifdef MONSTER_INVENTORY
+extern void monster_drop_carried_objects(monster_type *m_ptr);
+#endif	// MONSTER_INVENTORY
 
 /* netserver.c */
 /*extern void Contact(int fd, void *arg);*/
