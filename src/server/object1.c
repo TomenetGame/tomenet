@@ -1631,16 +1631,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 		/* Grab any ego-item name */
 		//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
-		if (known && (o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+		if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		{
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-			//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
 			if (e_ptr->before)
 			{
 				ego = e_ptr->name + e_name;
 			}
-#if 0
+#if 1
 			else if (e2_ptr->before)
 			{
 				ego = e2_ptr->name + e_name;
@@ -1754,17 +1754,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 	/* Grab any ego-item name */
 	//                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
-	if (known && (o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+	if (known && (o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 	{
 		ego_item_type *e_ptr = &e_info[o_ptr->name2];
-		//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+		ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
 		if (e_ptr->before)
 		{
 			t = object_desc_str(t, (e_name + e_ptr->name));
 			t = object_desc_chr(t, ' ');
 		}
-#if 0
+#if 1
 		if (e2_ptr->before)
 		{
 			t = object_desc_str(t, (e_name + e2_ptr->name));
@@ -1842,20 +1842,22 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	{
 		/* Grab any ego-item name */
 //                if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
-		if ((o_ptr->name2) && (o_ptr->tval != TV_ROD_MAIN))
+		if ((o_ptr->name2 || o_ptr->name2b) && (o_ptr->tval != TV_ROD_MAIN))
 		{
 			ego_item_type *e_ptr = &e_info[o_ptr->name2];
-//			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
+			ego_item_type *e2_ptr = &e_info[o_ptr->name2b];
 
-                        if (!e_ptr->before)
+                        if (!e_ptr->before && o_ptr->name2)
                         {
                                 t = object_desc_chr(t, ' ');
                                 t = object_desc_str(t, (e_name + e_ptr->name));
                         }
-#if 0
-                        else if (!e2_ptr->before)
+#if 1
+                        else if (!e2_ptr->before && o_ptr->name2b)
                         {
-                                ego = e2_ptr->name + e_name;
+                                t = object_desc_chr(t, ' ');
+                                t = object_desc_str(t, (e_name + e2_ptr->name));
+//                                ego = e2_ptr->name + e_name;
 						}
 #endif	// 0
 		}

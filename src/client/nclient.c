@@ -2021,7 +2021,13 @@ int Receive_flush(void)
 	 * of course, better if we can specify 0.3ms sleep - helas, windoze
 	 * client doesn't support that :-/
 	 */
-	if (!thin_down_flush || magik(33)) Term_xtra(TERM_XTRA_DELAY, 1);
+//	if (!thin_down_flush || magik(33)) Term_xtra(TERM_XTRA_DELAY, 1);
+	if (thin_down_flush)
+	{
+		if (++flush_count > 10) return 1;
+	}
+
+	Term_xtra(TERM_XTRA_DELAY, 1);
 
 	return 1;
 }

@@ -1957,7 +1957,7 @@ static void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				/* skip non-matching tags */
 				if (o_ptr->note && 
-					strcmp(quark_str(o_ptr->note), "terrible") &&
+//					strcmp(quark_str(o_ptr->note), "terrible") &&
 					strcmp(quark_str(o_ptr->note), "cursed") &&
 					strcmp(quark_str(o_ptr->note), "uncursed") &&
 					strcmp(quark_str(o_ptr->note), "broken") &&
@@ -2342,6 +2342,8 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
 
+				msg_print(Ind, "Colour test - \377ddark \377wwhite \377sslate \377oorange \377rred \377ggreen \377bblue \377uumber");
+				msg_print(Ind, "\377Dl_dark \377Wl_white \377vviolet \377yyellow \377Rl_red \377Gl_green \377Bl_blue \377Ul_umber");
 				if(!(zcave=getcave(&wp)))
 				{
 					msg_print(Ind, "\377rOops, the cave's not allocated!!");
@@ -2349,8 +2351,9 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 				c_ptr=&zcave[p_ptr->py][p_ptr->px];
 
-				msg_format(Ind, "feat:%d o_idx:%d m_idx:%d", c_ptr->feat,
-						c_ptr->o_idx, c_ptr->m_idx);
+				msg_format(Ind, "(x:%d y:%d) info:%d feat:%d o_idx:%d m_idx:%d",
+						p_ptr->px, p_ptr->py,
+						c_ptr->info, c_ptr->feat, c_ptr->o_idx, c_ptr->m_idx);
 			}
 
 			return;
@@ -3019,7 +3022,11 @@ static void do_slash_cmd(int Ind, char *message)
 					else
 					{
 						/* It's ego or randarts */
-						if (nom) o_ptr->name2 = 0 - nom;
+						if (nom)
+						{
+							o_ptr->name2 = 0 - nom;
+							if (tk > 3) o_ptr->name2b = 0 - atoi(token[4]);
+						}
 						else o_ptr->name1 = ART_RANDART;
 
 						/* Piece together a 32-bit random seed */

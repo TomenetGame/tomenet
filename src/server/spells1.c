@@ -3071,7 +3071,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	bool	obvious = FALSE;
 
-	bool quiet = ((Ind <= 0) ? TRUE : FALSE);
+	bool quiet = ((Ind <= 0 || Ind > 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
 
 	    u32b f1, f2, f3, f4, f5, esp;
 
@@ -6241,6 +6241,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int y_saver, x_saver; /* For reflecting monsters */
 	int dist_hack = 0;
 	int			who_can_see[26], num_can_see = 0;
+	bool old_tacit = suppress_message;
 
 	/* Affected location(s) */
 	cave_type *c_ptr;
@@ -6795,6 +6796,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		project_m_x = 0;
 		project_m_y = 0;
 
+		if (who < 0 && who > PROJECTOR_UNUSUAL &&
+				Players[0 - who]->taciturn_messages)
+			suppress_message = TRUE;
+
 		/* Now hurt the monsters, from inside out */
 		for (i = 0; i < grids; i++)
 		{
@@ -6815,7 +6820,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Affect the monster */
 //			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 
-			if (grids <= 1 && (zcave[y][x].m_idx > 0))
+			if (zcave[y][x].m_idx <= 0) continue;
+
+//			if (grids <= 1 && (zcave[y][x].m_idx > 0))
+			if (grids <= 1)
 			{
 				monster_type *m_ptr = &m_list[zcave[y][x].m_idx];
 				monster_race *ref_ptr = race_inf(m_ptr);
@@ -6856,13 +6864,10 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					continue;
 				}
 
-				if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
 			}
-/* Evileye ball spell fix */
-			else{
-				/* Affect the monster */
-				if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
-			}
+
+			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+
 #else
 			/* Walls protect monsters */
 			if (!cave_floor_bold(Depth, y, x)) continue;
@@ -6870,6 +6875,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Affect the monster */
 			if (project_m(0-who, who, dist, Depth, y, x, dam, typ)) notice = TRUE;
 #endif
+
 		}
 
 		/* Mega-Hack */
@@ -6896,6 +6902,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				}
 			}
 		}
+
+		suppress_message = old_tacit;
 	}
 
 	/* Check player */
@@ -6934,7 +6942,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #endif
 		}
 	}
-
 
 	/* Return "something was noticed" */
 	return (notice);

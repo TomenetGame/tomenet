@@ -22,11 +22,12 @@ Newbie Tutorial - http://www.mangband.org/documentation/mang/
 
 Latest changes for version 4.0.0a (digest):
 - development version toward 4.0.0!
-- dungeon generator is improved.
-- skill system is being implemented. (try 'G')
-  this implies *MAJOR* changes in the gameplay!
+- skill system is implemented. (try 'G')
 - some of unpopular classes are removed:
   Unbeliever, Warlock, Sorceror, Ranger, Paladin, Monk and Telepath.
+- several client-options added; press '=' to check them out.
+- dungeon generator is improved.
+  this implies *MAJOR* changes in the gameplay!
 - items can stack on the floor now. (but not inside a house!)
 - potions can cause some effects when shattering; handle them with care.
 - quiver/tool slots are available. (client update needed!)
@@ -35,8 +36,7 @@ Latest changes for version 4.0.0a (digest):
 - chat-line editing (^P, ^N, ^U, ^W)
 - /help, /quest, /feeling, /shout, /monster, /news, /house, /object
 - '/ver 1' to see server settings.
-- Vaults are varied somewhat.
-- Smaller floors can be generated.
+- Vaults are varied somewhat.  - Smaller floors can be generated.
 - Restricted floors can be generated; you gain level quickly there.
 - Name changed to 'TomeNET'(Trouble-of-Middle-Earth the NET).
 - Monster AI significantly improved; use your head, too!
@@ -45,14 +45,14 @@ Latest changes for version 4.0.0a (digest):
 
 [ *** Important notes *** ]
 - YOU LOSE YOUR (non-random) ARTIFACT IF YOU LOOSE YOUR GRIP ON IT!
-- 50-350ft in dungeon cannot be static, so please SAVE IN TOWN.
+- -50~-350ft in dungeon cannot be static, so please SAVE IN TOWN.
 
 [Brief instruction for new commands]
 - 'G' : interact with skills.
   '2''8' or 'j''k' to move around. <CR> to open/close a fold.
   '6' or 'l' to use 1 skill point to the skill under the cursor. (no cancel!)
 - 'm' : activate a skill (eg. cast a spell). '/' is also available.
-- '~' : browse several data (like monster/object/trap lore)
+- '~' : browse several data (like monster/object/trap lore etc.)
 - 'I' : examine an item (item should be *ID*ed first).
 - "'" : check other players' equipments under certain conditions.
 - Control-S : Spike doors.
@@ -64,11 +64,13 @@ Latest changes for version 4.0.0a (digest):
 - You can use the following inscriptions for Word of Recall:
   + {@RW22,8} will lands you to (22,8) of the world map.
   + {@RT} lands you to the first town (where you start the game).
+- Inscription {@O} controls what you'll do to the adjacant foe:
+  + Inscribe {@O} on a bow, and you'll fire with it for auto-retaliation.
+  + {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
+  + {@Ox} on any items and auto-retaliator will be disabled.
+  + {@OMb} on any items to use Mimic innate powers 'b'.
 - Inscription {!=} forces you to pick it up; use it on your arrows.
 - Inscription {!g} forces the ammo to disappear when fired(no litters).
-- Inscribe {@O} on a bow, and you'll fire with it for auto-retaliation.
-- {@Oc} on a book makes you use the 'c' spell for auto-retaliation.
-- {@Ox} on any items and auto-retaliator will be disabled.
 
 [Please see the ChangeLog on the official site for details.]
 

@@ -531,7 +531,8 @@ static void rd_item(object_type *o_ptr)
 
 	rd_byte(&o_ptr->ident);
 
-	strip_bytes(1);
+//	strip_bytes(1);
+	rd_byte(&o_ptr->name2b);
 	/*rd_byte(&o_ptr->marked);*/
 
 	/* Old flags */

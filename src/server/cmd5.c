@@ -5450,10 +5450,10 @@ static void do_mimic_power(int Ind, int power)
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	int rlev = r_ptr->level;
-	int j, chance;
+	int j, k, chance;
 	magic_type *s_ptr = &innate_powers[power];
 
-	j = power;
+//	j = power;
 
 
 	/* Not when confused */
@@ -5462,6 +5462,23 @@ static void do_mimic_power(int Ind, int power)
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
+
+	j = power / 32;
+
+	if (j < 0 || j > 3)
+	{
+		msg_format(Ind, "SERVER ERROR: Tried to use a strange innate power(%d)!", power);
+		return;
+	}
+
+	/* confirm the power */
+	if (!p_ptr->innate_spells[j] & (1L << (power - j * 3))) 
+	{
+		msg_print(Ind, "You cannot use that power.");
+		return;
+	}
+
+	j = power;
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->csp)

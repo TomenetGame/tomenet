@@ -3238,8 +3238,14 @@ void update_view(int Ind)
 
 	int full, over;
 
+#if 0
 	int y_max = p_ptr->cur_hgt - 1;
 	int x_max = p_ptr->cur_wid - 1;
+#else	// Inefficient, but prevents south-west dead angle bug..
+	int y_max = MAX_HGT - 1;
+	int x_max = MAX_WID - 1;
+#endif	// 0
+
 
 	cave_type *c_ptr;
 	byte *w_ptr;

@@ -1289,10 +1289,10 @@ try_an_other_ego:
 	/* Hack -- apply rating bonus(it's done in apply_magic) */
 	//		rating += e_ptr->rating;
 
-#if 0	// double-ego code.. future pleasure :)
-	if (a_ptr->name2b && (a_ptr->name2b != e_idx))
+#if 1	// double-ego code.. future pleasure :)
+	if (o_ptr->name2b && (o_ptr->name2b != e_idx))
 	{
-		e_idx = a_ptr->name2b;
+		e_idx = o_ptr->name2b;
 		goto try_an_other_ego;
 	}
 #endif	// 0

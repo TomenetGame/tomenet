@@ -233,8 +233,8 @@ static void sense_inventory(int Ind)
 
 	int		i;
 
-        bool heavy = FALSE, heavy_magic = FALSE;
-        bool ok_combat = FALSE, ok_magic = FALSE;
+        bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
+        bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
 
 	cptr	feel;
 
@@ -249,10 +249,12 @@ static void sense_inventory(int Ind)
 	if (p_ptr->confused) return;
 
 	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
+	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
 	if (0 == rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
 	if ((!ok_combat) && (!ok_magic)) return;
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) > 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) > 10) ? TRUE : FALSE;
+	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) > 10) ? TRUE : FALSE;
 
 
 	/*** Sense everything ***/
@@ -270,10 +272,6 @@ static void sense_inventory(int Ind)
 		/* Valid "tval" codes */
 		switch (o_ptr->tval)
 		{
-			case TV_SHOT:
-			case TV_ARROW:
-			case TV_BOLT:
-			case TV_BOW:
 			case TV_DIGGING:
 			case TV_HAFTED:
 			case TV_POLEARM:
@@ -287,8 +285,6 @@ static void sense_inventory(int Ind)
 			case TV_SOFT_ARMOR:
 			case TV_HARD_ARMOR:
 			case TV_DRAG_ARMOR:
-			case TV_MSTAFF:
-			case TV_BOOMERANG:
 			case TV_AXE:
 			{
 				if (ok_combat) okay = 1;
@@ -302,10 +298,22 @@ static void sense_inventory(int Ind)
 			case TV_STAFF:
 			case TV_ROD:
 			case TV_FOOD:
+			case TV_MSTAFF:
 			{
 				if (ok_magic) okay = 2;
 				break;
 			}
+
+			case TV_SHOT:
+			case TV_ARROW:
+			case TV_BOLT:
+			case TV_BOW:
+			case TV_BOOMERANG:
+			{
+				if (ok_archery || (ok_combat && magik(50))) okay = 3;
+				break;
+			}
+
 		}
 
 		/* Skip non-sense machines */
@@ -318,16 +326,21 @@ static void sense_inventory(int Ind)
 		if (object_known_p(Ind, o_ptr)) continue;
 
 		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) && (0 != rand_int(5))) continue;
+		if ((i < INVEN_WIELD) &&
+				((0 != rand_int(5)) || UNAWARENESS(p_ptr))) continue;
 
 		/* Check for a feeling */
 		if (okay == 1)
 		{
 			feel = (heavy ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 		}
-		else
+		else if (okay == 2)
 		{
 			feel = (heavy_magic ? value_check_aux1_magic(o_ptr) : value_check_aux2_magic(o_ptr));
+		}
+		else
+		{
+			feel = (heavy_archery ? value_check_aux1(o_ptr) : value_check_aux2(o_ptr));
 		}
 
 		/* Skip non-feelings */
@@ -718,6 +731,32 @@ static void process_world(int Ind)
 }
 
 /*
+ * Quick hack to allow mimics to retaliate with innate powers	- Jir -
+ * It's high time we redesign auto-retaliator	XXX
+ */
+static int retaliate_mimic_power(int Ind, int power)
+{
+	player_type *p_ptr = Players[Ind];
+	int		i, k, num = 1;
+
+	/* Check for "okay" spells */
+	for (k = 0; k < 3; k++)
+	{
+		for (i = 0; i < 32; i++)
+		{
+			/* Look for "okay" spells */
+			if (p_ptr->innate_spells[k] & (1L << i)) 
+			{
+				num++;
+				if (num == power) return (k * 32 + i);
+			}
+		}
+	}
+
+	return (0);
+}
+
+/*
  * Handle items for auto-retaliation  - Jir -
  * use_old_target is *strongly* recommended to actually make use of it.
  */
@@ -730,6 +769,34 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 	/* 'Do nothing' inscription */
 	if (*inscription == 'x') return TRUE;
+
+	/* Hack -- use innate power
+	 * TODO: devise a generic way to activate skills for retaliation */
+	if (*inscription == 'M' && get_skill(p_ptr, SKILL_MIMIC))
+	{
+		/* Spell to cast */
+		if (*(inscription + 1))
+		{
+			spell = *(inscription + 1) - 96;
+
+			/* shape-changing for retaliation is not so nice idea, eh? */
+			if (spell < 2)
+			{
+				do_cmd_mimic(Ind, 0);
+				return TRUE;
+			}
+			else
+			{
+				int power = retaliate_mimic_power(Ind, spell);
+				if (power)
+				{
+					do_cmd_mimic(Ind, power + 1);
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
+	}
 
 	/* Fighter classes can use various items for this */
 	if (is_fighter(p_ptr))
@@ -798,7 +865,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
-			return FALSE;
+			if (item == INVEN_WIELD) return FALSE;
+			break;
 
 		/* directional ones */
 		case TV_SHOT:
@@ -807,11 +875,12 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		case TV_BOW:
 		case TV_BOOMERANG:
 //		case TV_INSTRUMENT:
-		{
-//			do_cmd_fire(Ind, 5, item);
-			do_cmd_fire(Ind, 5);
-			return TRUE;
-		}
+			if (item == INVEN_BOW || item == INVEN_AMMO)
+			{
+				do_cmd_fire(Ind, 5);
+				return TRUE;
+			}
+			break;
 
 		case TV_PSI_BOOK:
 		{
@@ -1279,7 +1348,8 @@ static int auto_retaliate(int Ind)
 		/* Attack him */
 		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
-		if (p_ptr->stormbringer || !retaliate_item(Ind, item, inscription))
+		if (p_ptr->stormbringer ||
+				(!retaliate_item(Ind, item, inscription) && !p_ptr->afraid))
 		{
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
@@ -1310,7 +1380,7 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (!retaliate_item(Ind, item, inscription))
+		if (!retaliate_item(Ind, item, inscription) && !p_ptr->afraid)
 		{
 			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 		}
@@ -2847,19 +2917,21 @@ static void process_various(void)
 			// If our retirement timer is set
 			if (p_ptr->retire_timer > 0)
 			{
+				int k = p_ptr->retire_timer;
+
 				// Decrement our retire timer
-				j = --p_ptr->retire_timer;
+				j = k - 1;
 
 				// Alert him
 				if (j <= 60)
 				{
 					msg_format(i, "\377rYou have %d minute%s of tenure left.", j, j > 1 ? "s" : "");
 				}
-				else if (j <= 1440 && !(p_ptr->retire_timer % 60))
+				else if (j <= 1440 && !(k % 60))
 				{
 					msg_format(i, "\377yYou have %d hours of tenure left.", j / 60);
 				}
-				else if (!(j % 1440))
+				else if (!(k % 1440))
 				{
 					msg_format(i, "\377GYou have %d days of tenure left.", j / 1440);
 				}

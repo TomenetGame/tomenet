@@ -1239,6 +1239,7 @@ static void player_setup(int Ind)
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
 	cave_type *c_ptr;
+			dun_level *l_ptr;
 
 	bool dawn = ((turn % (10L * TOWN_DAWN)) < (10L * TOWN_DAWN / 2)), unstaticed = 0; 
 
@@ -1409,8 +1410,24 @@ static void player_setup(int Ind)
 	p_ptr->current_char = 0;
 
 	/* Set the player's "panel" information */
-	p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
-	p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+	l_ptr = getfloor(wpos);
+	if (l_ptr)
+	{
+		/* Hack -- tricky formula, but needed */
+		p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
+		p_ptr->max_panel_cols = ((l_ptr->wid + SCREEN_WID / 2) / SCREEN_WID ) * 2 - 2;
+
+		p_ptr->cur_hgt = l_ptr->hgt;
+		p_ptr->cur_wid = l_ptr->wid;
+	}
+	else
+	{
+		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
+		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
+
+		p_ptr->cur_hgt = MAX_HGT;
+		p_ptr->cur_wid = MAX_WID;
+	}
 
 	p_ptr->panel_row = ((p_ptr->py - SCREEN_HGT / 4) / (SCREEN_HGT / 2));
 	if (p_ptr->panel_row > p_ptr->max_panel_rows) p_ptr->panel_row = p_ptr->max_panel_rows;
@@ -1419,9 +1436,6 @@ static void player_setup(int Ind)
 	p_ptr->panel_col = ((p_ptr->px - SCREEN_WID / 4) / (SCREEN_WID / 2));
 	if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
 	else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
-
-	p_ptr->cur_hgt = MAX_HGT;
-	p_ptr->cur_wid = MAX_WID;
 
 	/* Set the rest of the panel information */
 	panel_bounds(Ind);

@@ -55,10 +55,10 @@ int main(int argc, char **argv)
 			default:
 			/* Dump usage information */
 			puts("Usage  : mangconsole [options] [servername]");
-			puts("Example: mangconsole -Pmypass -c -s localhost");
+			puts("Example: mangconsole -Pmypass -c -s my.server.net");
+			puts("  -c        Always use CUI(GCU) interface");
 			puts("  -p<num>   Change console port number");
 			puts("  -P<pass>  Specify password");
-			puts("  -c        Always use CUI(GCU) interface");
 			puts("  -s        Shutdown the server immediataly");
 			quit(NULL);
 		}

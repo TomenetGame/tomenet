@@ -4138,7 +4138,7 @@ void player_death(int Ind)
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
 		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
-		(void)set_food(Ind, PY_FOOD_FULL - 1);
+		if (p_ptr->food < PY_FOOD_FULL) (void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Tell him */
 		msg_print(Ind, "\377RYou die.");
@@ -4174,13 +4174,13 @@ void player_death(int Ind)
 			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
-		/* Teleport him */
-		/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
-		teleport_player(Ind, 200);
-
 		/* Give him his hit points back */
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
+
+		/* Teleport him */
+		/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
+		teleport_player(Ind, 200);
 
 		/* Hack -- Give him/her the newbie death guide */
 //		if (p_ptr->max_plv < 20)	/* Now it's for everyone */
@@ -4465,10 +4465,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	player_type *p_ptr = Players[Ind];
 
 	monster_type	*m_ptr = &m_list[m_idx];
-
-        monster_race    *r_ptr = race_inf(m_ptr);
+	monster_race    *r_ptr = race_inf(m_ptr);
 
 	s32b		new_exp, new_exp_frac;
+	bool old_tacit = suppress_message;
 
 
 	/* Redraw (later) if needed */
@@ -4644,6 +4644,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 		/* Not afraid */
 		(*fear) = FALSE;
+
+		suppress_message = old_tacit;
 
 		/* Monster is dead */
 		return (TRUE);
@@ -5535,6 +5537,7 @@ s16b target_pick(int Ind, int y1, int x1, int dy, int dx)
  * just like the new "look" function allows the use of direction
  * keys to move amongst interesting locations.
  */
+static bool autotarget = FALSE;
 bool target_set(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -5545,7 +5548,8 @@ bool target_set(int Ind, int dir)
 	int		y;
 	int		x;
 
-	bool	flag = TRUE;
+//	bool	flag = TRUE;
+	bool	flag = autotarget;
 
 	char	out_val[160];
 
@@ -5752,7 +5756,7 @@ bool target_set(int Ind, int dir)
 	p_ptr->look_index = m;
 
 	/* Set target */
-	if (dir == 5)
+	if (dir == 5 || autotarget)
 	{
 		p_ptr->target_who = p_ptr->target_idx[m];
 		p_ptr->target_col = p_ptr->target_x[m];
@@ -5937,6 +5941,13 @@ bool get_aim_dir(int Ind)
 {
 	int		dir;
 	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->auto_target)
+	{
+		autotarget = TRUE;
+		target_set(Ind, 0);
+		autotarget = FALSE;
+	}
 
 	/* Hack -- auto-target if requested */
 	if (p_ptr->use_old_target && target_okay(Ind)) 

@@ -709,7 +709,8 @@ static void wr_item(object_type *o_ptr)
 
 	wr_byte(o_ptr->ident);
 
-	wr_byte(0);
+//	wr_byte(0);
+	wr_byte(o_ptr->name2b);
 
 	wr_u32b(0L);
 	wr_u32b(0L);

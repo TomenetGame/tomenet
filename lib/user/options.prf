@@ -77,3 +77,4 @@ X:taciturn_messages
 Y:last_words
 X:limit_chat
 Y:thin_down_flush
+X:auto_target

@@ -1390,7 +1390,7 @@ s32b object_value_real(int Ind, object_type *o_ptr)
 			if (star) value += flag_cost(o_ptr, o_ptr->pval);
 
 
-#if 0	// see you later :)
+#if 1	// see you later :)
 			if (o_ptr->name2b)
 			{
 				ego_item_type *e_ptr = &e_info[o_ptr->name2b];
@@ -1731,6 +1731,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 	int total = o_ptr->number + j_ptr->number;
 
 
+	/* Hack -- gold always merge */
+//	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
+
 	/* Require identical object types */
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
@@ -1768,6 +1771,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		{
 			/* Hack for ego foods :) */
 			if (o_ptr->name2 != j_ptr->name2) return (0);
+			if (o_ptr->name2b != j_ptr->name2b) return (0);
 
 			/* Assume okay */
 			break;
@@ -1793,6 +1797,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 			if (o_ptr->pval != j_ptr->pval) return (0);
 			
 			if (o_ptr->name2 != j_ptr->name2) return (0);
+			if (o_ptr->name2b != j_ptr->name2b) return (0);
 
 			/* Probably okay */
 			break;
@@ -1860,6 +1865,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 			/* Require identical "ego-item" names */
 			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Require identical random seeds */
 			if (o_ptr->name3 != j_ptr->name3) return (FALSE);
@@ -2385,13 +2391,15 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 		}
 
 		/* We must make the "rarity roll" */
-//		if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) < e_ptr->rarity)
-//		if (rand_int(e_ptr->mrarity) < e_ptr->rarity)
+//		if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) > e_ptr->rarity)
+#if 0
 		k = e_ptr->mrarity - e_ptr->rarity;
 		if (k && rand_int(k))
 		{
 			continue;
 		}
+#endif	// 0
+		if (rand_int(e_ptr->mrarity) > e_ptr->rarity)
 
 		/* Hack -- mark the item as an ego */
 		o_ptr->name2 = i;
@@ -2409,6 +2417,64 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 		break;
 	}
 
+	/*
+	 * Sometimes(rarely) tries for a double ego
+	 * Also make sure we dont already have a name2b, wchih would mean a special ego item
+	 */
+	/* try only when it's already ego	- Jir - */
+//	if (magik(7 + luck(-7, 7)) && (!o_ptr->name2b))
+	if (ret && magik(7) && (!o_ptr->name2b))
+	{
+		/* Now test them a few times */
+		for (j = 0; j < ok_num * 10; j++)
+		{
+			ego_item_type *e_ptr;
+
+			i = ok_ego[rand_int(ok_num)];
+			e_ptr = &e_info[i];
+
+			/* Cannot be a double ego of the same ego type */
+			if (i == o_ptr->name2) continue;
+
+			/* Cannot have 2 suffixes or 2 prefixes */
+			if (e_info[o_ptr->name2].before && e_ptr->before) continue;
+			if ((!e_info[o_ptr->name2].before) && (!e_ptr->before)) continue;
+
+			/* XXX XXX Enforce minimum "depth" (loosely) */
+			if (e_ptr->level > level)
+			{
+				/* Acquire the "out-of-depth factor" */
+				int d = (e_ptr->level - level);
+
+				/* Roll for out-of-depth creation */
+				if (rand_int(d) != 0)
+				{
+					continue;
+				}
+			}
+
+			/* We must make the "rarity roll" */
+//			if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) > e_ptr->rarity)
+			if (rand_int(e_ptr->mrarity) > e_ptr->rarity)
+			{
+				continue;
+			}
+
+			/* Hack -- mark the item as an ego */
+			o_ptr->name2b = i;
+
+			/* Piece together a 32-bit random seed */
+			if (!(e_ptr->fego[0] & ETR4_NO_SEED) && !o_ptr->name3)
+			{
+				o_ptr->name3 = rand_int(0xFFFF) << 16;
+				o_ptr->name3 += rand_int(0xFFFF);
+			}
+
+			/* Success */
+			ret = TRUE;
+			break;
+		}
+	}
 	C_FREE(ok_ego, MAX_E_IDX, int);
 
 	/* Return */
@@ -4990,7 +5056,7 @@ void determine_level_req(int level, object_type *o_ptr)
 //		ego_item_type *e_ptr = &e_info[o_ptr->name2];
 		base += e_info[o_ptr->name2].rating;
 
-//		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
+		if (o_ptr->name2b) base += e_info[o_ptr->name2b].rating;
 	}
 
 	/* '17/72' == 0.2361... < 1/4 :) */

@@ -2705,10 +2705,10 @@ option_type option_info[OPT_MAX] =
 	"stack_allow_wands",	"Allow wands/staffs/rods to stack" },
 
 	{ &expand_look,			FALSE,	3,	1, 4,	// XXX
-	"expand_look",			"(obsolete) Expand the power of the look command" },
+	"expand_look",			"(broken) Expand the power of the look command" },
 
 	{ &expand_list,			FALSE,	3,	1, 5,	// XXX
-	"expand_list",			"(obsolete) Expand the power of the list commands" },
+	"expand_list",			"(broken) Expand the power of the list commands" },
 
 	{ &view_perma_grids,	TRUE,	3,	1, 6,
 	"view_perma_grids",		"Map remembers all perma-lit grids" },
@@ -2804,7 +2804,8 @@ option_type option_info[OPT_MAX] =
 	"easy_tunnel",			"Automatically tunnel walls" },
 
 	{ &auto_destroy,		FALSE,	5,	9, 63,
-	"auto_destroy",			"(broken) No query to destroy known worthless items" },
+	"auto_destroy",			"(broken) No query to destroy known junks" },
+//	"auto_destroy",			"(broken) No query to destroy known worthless items" },
 
 	{ &auto_inscribe,		FALSE,	5,	9, 64,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
@@ -2820,6 +2821,9 @@ option_type option_info[OPT_MAX] =
 
 	{ &thin_down_flush,		TRUE,	5,	9, 68,
 	"thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
+
+	{ &auto_target,			FALSE,	5,	9, 69,
+	"auto_target",			"Automatically set target to the nearest enemy" },
 
 #if 0
 	{ &speak_unique,                TRUE,   2,      13,

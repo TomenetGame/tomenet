@@ -1926,15 +1926,15 @@ F:PVAL_M2
 
 # Diggers only
 
-N:178:Magical
-T:20:0:255
-X:B:24:4
-#W:0:1:10:500
-W:0:1:80:10000
-C:0:0:0:0
-Z:stone to mud
-R:100
-#F:ACTIVATE
+#N:178:Magical
+#T:20:0:255
+#X:B:24:4
+##W:0:1:10:500
+#W:0:1:80:10000
+#C:0:0:0:0
+#Z:stone to mud
+#R:100
+##F:ACTIVATE
 
 # Rod
 N:179:of Simplicity

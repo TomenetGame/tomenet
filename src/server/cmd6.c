@@ -1519,10 +1519,10 @@ static bool do_cancellation(int Ind, int flags)
 		if (o_ptr->tval==TV_KEY) continue;
 		if (o_ptr->tval==TV_FOOD) continue;
 		if (o_ptr->tval==TV_FLASK) continue;
-		if (o_ptr->name2)
+		if (o_ptr->name2 || o_ptr->name2b)
 		{
 			ident = TRUE;
-			o_ptr->name2 = o_ptr->name3 = 0;
+			o_ptr->name2 = o_ptr->name2b = 0;
 		}
 		if (o_ptr->timeout)
 		{

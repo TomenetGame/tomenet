@@ -5350,15 +5350,37 @@ static void process_monster(int Ind, int m_idx)
 			/* Don't attack your master! */
 			if (q_ptr && m_ptr->owner != q_ptr->id)
 			{
-				/* Do the attack */
-				(void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+				/* Push past weaker players (unless leaving a wall) */
+				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
+						(cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
+						magik(10) &&
+						(r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
+				{
+					/* Allow movement */
+					do_move = TRUE;
 
-				/* Took a turn */
-				do_turn = TRUE;
+					/* Monster pushed past another monster */
+					did_move_body = TRUE;
+
+					/* XXX XXX XXX Message */
+				}
+				else
+				{
+					/* Do the attack */
+					(void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+
+					/* Took a turn */
+					do_turn = TRUE;
+
+					/* Do not move */
+					do_move = FALSE;
+				}
 			}
-
-			/* Do not move */
-			do_move = FALSE;
+			else
+			{
+				/* Do not move */
+				do_move = FALSE;
+			}
 		}
 
 
@@ -5461,6 +5483,22 @@ static void process_monster(int Ind, int m_idx)
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
 			}
+			else if (c_ptr->m_idx < 0)
+			{
+				player_type *q_ptr = Players[0 - c_ptr->m_idx];
+				char m_name[80];
+
+				/* Acquire the monster name */
+				monster_desc(Ind, m_name, m_idx, 0x04);
+
+				q_ptr->py = oy;
+				q_ptr->px = ox;
+
+				/* Update the old monster */
+				update_player(0 - c_ptr->m_idx);
+				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
+			}
+
 
 			/* Hack -- Update the new location */
 			c_ptr->m_idx = m_idx;
@@ -6205,7 +6243,7 @@ void process_monsters(void)
 	/* Reset projection counts */
 	if (count_project_times >= PROJECTION_FLUSH_LIMIT_TURNS)
 	{
-#if DEBUG_LEVEL > 1
+#if DEBUG_LEVEL > 2
 		if (count_project > PROJECTION_FLUSH_LIMIT)
 			s_printf("project() flush suppressed(%d)\n", count_project);
 #endif	// DEBUG_LEVEL

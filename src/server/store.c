@@ -937,6 +937,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 	/* Require identical "ego-item" names */
 	if (o_ptr->name2 != j_ptr->name2) return (0);
+	if (o_ptr->name2b != j_ptr->name2b) return (0);
 
 	/* Hack -- Never stack "powerful" items */
 	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);

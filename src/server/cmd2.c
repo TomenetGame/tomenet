@@ -386,7 +386,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				opening_chest = TRUE;
 
 				/* Determine the "value" of the items */
-				object_level = ABS(o_ptr->pval) + 10;
+//				object_level = ABS(o_ptr->pval) + 10;
+				object_level = ABS(o_ptr->level) + 10;
 
 				/* Small chests often drop gold */
 				if (small && (rand_int(100) < 75))
@@ -3122,11 +3123,16 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
-	/* Hack -- yet another anti-cheeze(yaac) */
-	if(check_guard_inscription( o_ptr->note, 'g') ||
-		p_ptr->lev < cfg.newbies_cannot_drop)
+	if(check_guard_inscription(o_ptr->note, 'g') )
+//			|| p_ptr->lev < cfg.newbies_cannot_drop)
 	{
 		breakage = 101;
+	}
+
+	/* Hack -- yet another anti-cheeze(yaac) */
+	if (!magic && p_ptr->lev < cfg.newbies_cannot_drop)
+	{
+		o_ptr->level = 0;
 	}
 
 	/* Drop (or break) near that location */

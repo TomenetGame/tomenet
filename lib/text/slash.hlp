@@ -25,7 +25,7 @@ Note:
     Toggle 'AFK'(Away From Keyboard) mode on/off.
     AFK mode change will be announced to every players in the game.
     Players in AFK mode are shown as such in '@' screen.
-    AFK players don't comsume food(if not hugry already).
+    AFK players don't comsume food(if not hungry already).
     AFK mode is automatically turned off when the player move.
 
 /autotag [any strings] {shorthand: /at}

@@ -1442,8 +1442,8 @@ player_race race_info[MAX_RACES] =
 						/* HUMAN POWER!! */
                         {
                                 SKILL_TRAINING,
-                                '+', 500,
-                                '+', 200,
+                                '+', 1000,
+                                '+', 300,
                         },
                 },
         },
@@ -1459,7 +1459,18 @@ player_race race_info[MAX_RACES] =
 		2,
                 0xFFFFFFFF,
                 110,
-                { 0 },
+				{
+                        {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 100,
+                        },
+                        {
+                                SKILL_TRAINING,
+                                '+', 500,
+                                '+', 200,
+                        },
+				},
 	},
 
 	{
@@ -1473,7 +1484,23 @@ player_race race_info[MAX_RACES] =
 		3,
                 0xFFFFFFFF,
                 120,
-                { 0 },
+				{
+                        {
+                                SKILL_BOW,
+                                '+', 1000,
+                                '+', 200,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 0,
+                                '%', 110,
+                        },
+				},
 	},
 
 	{
@@ -1493,6 +1520,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 300,
                         },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 200,
+                        },
                 },
 	},
 
@@ -1507,7 +1539,18 @@ player_race race_info[MAX_RACES] =
 		4,
                 0xFFFFFFFF,
                 120,
-                { 0 },
+                {
+                        {
+                                SKILL_XBOW,
+                                '+', 1000,
+                                '+', 200,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 110,
+                        },
+				},
 	},
 
 	{
@@ -1526,6 +1569,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_DIG,
                                 '+', 1000,
                                 '+', 500,
+                        },
+                        {
+                                SKILL_PRAY,
+                                '+', 0,
+                                '%', 110,
                         },
                 },
 	},
@@ -1546,6 +1594,16 @@ player_race race_info[MAX_RACES] =
                                 SKILL_BACKSTAB,
                                 '+', 1000,
                                 '+', 200,
+                        },
+                        {
+                                SKILL_STEALING,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_NECROMANCY,
+                                '+', 0,
+                                '%', 110,
                         },
                         /* Not banned, but hard */
                         {
@@ -1583,6 +1641,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 3000,
                                 '%', 140,
                         },
+                        {
+                                SKILL_SWIM,
+                                '+', 2000,
+                                '%', 130,
+                        },
                         /* Not banned, but *hard* */
                         {
                                 SKILL_MAGIC,
@@ -1613,7 +1676,23 @@ player_race race_info[MAX_RACES] =
 		0,
                 0xFFFFFFFF,
                 105,
-                { 0 },
+                {
+                        {
+                                SKILL_COMBAT,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 0,
+                                '%', 110,
+                        },
+				},
         },
 
 	{
@@ -1627,7 +1706,23 @@ player_race race_info[MAX_RACES] =
 		4,
                 0xFFFFFFFF,
                 125,
-                { 0 },
+                {
+                        {
+                                SKILL_BOW,
+                                '+', 1000,
+                                '+', 200,
+                        },
+                        {
+                                SKILL_MAGIC,
+                                '+', 0,
+                                '%', 110,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 0,
+                                '%', 110,
+                        },
+				},
 	},
 
 	{
@@ -1678,6 +1773,11 @@ player_race race_info[MAX_RACES] =
                 90,
                 {
                         {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '%', 120,
+                        },
+                        {
                                 SKILL_CALMNESS,
                                 '+', 1000,
                                 '+', 100,
@@ -1695,7 +1795,13 @@ player_race race_info[MAX_RACES] =
                 0,
                 0xFFFFFFFF,
                 95,
-                { 0 },
+                {
+                        {
+                                SKILL_AURA_FEAR,
+                                '+', 2000,
+                                '+', 300,
+                        },
+				},
         },
 #if 0 // do not activate until I find a way to have a race in the server and not in the client
         {
@@ -2026,6 +2132,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
+                                SKILL_HUNTING,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
@@ -2262,7 +2373,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 700,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -2304,6 +2415,11 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_ARCHERY,
                                 '+', 0,
                                 '+', 800,
+                        },
+                        {
+                                SKILL_HUNTING,
+                                '+', 0,
+                                '+', 400,
                         },
                         {
                                 SKILL_MAGIC,
@@ -2384,7 +2500,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 800,
                         },
                         {
                                 SKILL_INTERCEPT,
@@ -2538,6 +2654,11 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 1000,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
                                 '+', 1000,
                         },
                         {
@@ -2569,7 +2690,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DIG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 800,
                         },
                         {
                                 SKILL_CALMNESS,

@@ -572,6 +572,16 @@ I:+0:+0d+0:+0:+0:+0
 W:+0:120:+0:+0:B
 H:BASEANGBAND
 
+N:44:Vigorous
+G:*:*
+I:+0:%120d%120:%120:+10:=0
+W:+5:3:+100:%150:B
+# hack - no Wyrm
+H:POWERFUL
+M:POWERFUL
+F:R_CHAR_d | R_CHAR_Z
+M:FORCE_MAXHP
+
 
 # N:x:ego name
 # G:x:y                 x is the char, y the attribute, * means the normal one

@@ -2649,6 +2649,8 @@ static errr options_dump(cptr fname)
 		fprintf(fff, "\n");
 	}
 
+	fprintf(fff, "\n");
+
 	/* Dump window flags */
 //	for (i = 1; i < ANGBAND_TERM_MAX; i++)
 	for (i = 1; i < 8; i++)

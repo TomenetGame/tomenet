@@ -215,8 +215,11 @@ bool taciturn_messages;
 bool last_words;
 bool limit_chat;
 bool thin_down_flush;
+bool auto_target;
 
 
 u32b cfg_game_port = 18348; 
 
 skill_type s_info[MAX_SKILLS];
+
+s16b flush_count = 0;

@@ -733,6 +733,7 @@ struct object_type
 
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
+	byte name2b;		/* 2e Ego-Item type, if any */
 #if 0
         s16b name2;                     /* Ego-Item type, if any */
         s16b name2b;                    /* Second Ego-Item type, if any */
@@ -1797,7 +1798,7 @@ struct player_type
 
 	/* 'make clean; make' consumes time :) */
 	bool depth_in_feet;
-	bool dummy_option_2;
+	bool auto_target;
 	bool dummy_option_3;
 	bool dummy_option_4;
 	bool dummy_option_5;

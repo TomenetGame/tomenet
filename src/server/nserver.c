@@ -1669,6 +1669,7 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->limit_chat = options[67];
 
 	p_ptr->depth_in_feet = options[7];
+	p_ptr->auto_target = options[69];
 	// bool speak_unique;
 
 }

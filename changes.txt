@@ -1332,8 +1332,24 @@ To find the latest change quickly, search ==== :)
 - monster level gaining changed:
   if a monter is too weak(2500ft mergin - MONSTER_TOO_WEAK), give some level.
 [B] oops, tim_invisibility lasted forever
+[B] crashed when exploding potion harmed another items.
 [H] Book of the Dead can be activated (WoR).
 [H] owners[][].max_cost touched.
+
+13/07/2002 (Jir)
+- auto_target: cast spell to the nearest enemy.
+- 'Archery' skill affects pseudo-id of missiles.
+- thin_down_flush is activated only when too busy.
+- {@OM} inscription to use mimics' innate powers for auto-retaliation.
+- MOVE_BODY applicable to the player too.
+- missile anti-cheeze is done by level-req(and not breakage) now.
+[P] double ego items.
+[B] daily/hourly retire-timer alarm didn't work
+[B] chest traps and contents were determined wrong
+[B] floor size was lost when saving/loading.
+[B] los check sometimes went wrong on small floor(southwest - update_view?)
+    (not really fixed, but suppressed..)
+[H] racial skill modifiers added.
 
 
 ** [B] stands for Bugfix.
@@ -1384,6 +1400,7 @@ concisely: what's hot now?
 Porting targets
 [P] show_file, for tagged file browsing
 [P] powers.c for misc activations
+[P] display_player
 
 
 =============================================================================
@@ -1400,7 +1417,6 @@ below this line are the unfixed bugs known:
 [B] some ivents are not told to the players even when within the sight.
 [B] white '@' sometimes appear on the screen(eg. when targetting).
 [B] Martial-artist has strange +To RHit/+To RDam display.
-[B] los check sometimes goes wrong (southeast)
 [B][C] inventory window sometimes loses a) b) etc.
 [B] 'write error' sometimes (old bug)
 [B] 'No more Scroll of *Identify*'
@@ -1411,7 +1427,6 @@ below this line are the unfixed bugs known:
     (esp. random vaults tend to have no entrance)
 [B] stairs/doors tend to disappear on NO_MAP floors
 [B] cannot specify some monster names in master summoning (&35)
-[B] invisibility/wraithform linger on even after item/form is removed.
 [B][C] GCU client doesn't show the motd when using 'fullauto'
 [B] monsters sometimes drop '(nothing)' (Dread?)
 

@@ -225,11 +225,13 @@ extern bool taciturn_messages;
 extern bool last_words;
 extern bool limit_chat;
 extern bool thin_down_flush;
+extern bool auto_target;
 
 extern u32b cfg_game_port;
 
 extern skill_type s_info[MAX_SKILLS];
 
+extern s16b flush_count;
 
 /*
  * Not-so-Automatically generated "function declarations"

@@ -214,6 +214,8 @@ static void Input_loop(void)
 			}
 		}
 
+		flush_count = 0;
+
 		/* See if we have a command waiting */
 		request_command(FALSE);
 

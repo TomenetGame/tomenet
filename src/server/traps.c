@@ -3311,7 +3311,9 @@ void place_trap_object(object_type *o_ptr)
       t_ptr = &t_info[trap];
 
       /* no traps below their minlevel */
-      if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
+	  /* o_ptr->wpos is not set yet */
+//      if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
+      if (t_ptr->minlevel * 3 > o_ptr->level * 4) continue;
 
       /* is this a correct trap now?   */
       if (!(t_ptr->flags & FTRAP_CHEST)) continue;
