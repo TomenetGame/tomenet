@@ -11314,7 +11314,7 @@ D:enclosed in a posture of an eternal dreadful grasping."
 
 N:685:Shoggoth
 G:j:D
-I:140:50d20:20:80:20
+I:130:50d20:20:80:20
 W:44:2:0:2500
 E:0:0:0:0:0:0
 O:30:70:0:0

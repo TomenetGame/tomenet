@@ -1822,7 +1822,10 @@ static void calc_bonuses(int Ind)
 		p_ptr->pspeed = 110;
 
 		/* Bats get +10 speed ... they need it!*/
-		if (p_ptr->fruit_bat) p_ptr->pspeed += 10;
+		if (p_ptr->fruit_bat){
+			p_ptr->pspeed += 10;
+			p_ptr->fly=TRUE;
+		}
 		if (p_ptr->fruit_bat) p_ptr->feather_fall = TRUE;
 
 		/* Elf */

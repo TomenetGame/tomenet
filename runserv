@@ -5,10 +5,10 @@ ulimit -c unlimited
 while :; do
 	./tomenet.server -Z
 	if [ -f core ] ; then
-		mv core cores/`/bin/date +"%Y%m%d%I%M%S"`
+		mv core cores/`/bin/date +"%Y%m%d%H%M%S"`
 	fi
 	if [ -f lib/data/tomenet.log ] ; then
 		gzip lib/data/tomenet.log
-		mv lib/data/tomenet.log.gz lib/data/`/bin/date +"%Y%m%d%I%M.log.gz"`
+		mv lib/data/tomenet.log.gz lib/data/`/bin/date +"%Y%m%d%H%M.log.gz"`
 	fi
 done

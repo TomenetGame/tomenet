@@ -283,28 +283,7 @@ int party_add(int adder, cptr name)
 	player_type *p_ptr;
 	player_type *q_ptr = Players[adder];
 	int party_id = q_ptr->party, Ind = 0;
-#if 0
-	/* Find name */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		/* Check this one */
-		if (streq(name, Players[i]->name))
-		{
-			/* Found him */
-			Ind = i;
-			break;
-		}
-	}
-
-	/* Check for existance */
-	if (Ind == 0)
-	{
-		/* Oops */
-		msg_print(adder, "That player is not currently in the game.");
-
-		return FALSE;
-	}
-#endif
+	
 	Ind = name_lookup_loose(adder, name, FALSE);
 
 	if (Ind <= 0)
@@ -490,30 +469,6 @@ int party_remove(int remover, cptr name)
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0;
-
-#if 0
-	/* Find name */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		/* Check this one */
-		if (streq(name, Players[i]->name))
-		{
-			/* Found him */
-			Ind = i;
-			p_ptr = Players[Ind];
-			break;
-		}
-	}
-
-	/* Check for existance */
-	if (Ind == 0)
-	{
-		/* Oops */
-		msg_print(remover, "That player is not currently in the game.");
-
-		return FALSE;
-	}
-#endif
 
 	/* Make sure this is the owner */
 	if (!streq(parties[party_id].owner, q_ptr->name))
@@ -1897,26 +1852,6 @@ void add_player_name(cptr name, int id, byte level, byte party, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
-
-#if 0 /* handled in scan_players() now */
-	time_t now;
-	
-	now=time(&now);
-	if(laston && now>laston){		/* it should be! */
-		if(now-laston>7776000){		/* 90 days in seconds */
-			int i;
-			for(i=0; i<MAX_PARTIES; i++){
-				if(streq(parties[i].owner, name)){
-					del_party(i);
-					break;
-				}
-			}
-			kill_houses(id, OT_PLAYER);
-			sf_delete(name);	/* a sad day ;( */
-			return;
-		}
-	}
-#endif
 
 	/* Set the entry's id */
 
