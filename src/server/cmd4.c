@@ -1087,6 +1087,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 
 /* Tell the player of her/his houses.	- Jir - */
+/* TODO: handle HF_DELETED */
 void do_cmd_show_houses(int Ind)
 {
 	player_type *p_ptr = Players[Ind];

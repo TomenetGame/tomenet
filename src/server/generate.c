@@ -8031,7 +8031,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 			c_ptr = &zcave[y][x];
 
 			/* Clear previous contents, add "basic" perma-wall */
-			c_ptr->feat = FEAT_PERM_EXTRA;
+			c_ptr->feat = (n == 13) ? FEAT_WALL_HOUSE : FEAT_PERM_EXTRA;
 
 			/* Hack -- The buildings are illuminated and known */
 			/* c_ptr->info |= (CAVE_GLOW); */
@@ -8269,7 +8269,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				c_ptr->feat = FEAT_PERM_EXTRA;
 			}
 
-			for (y = y1 + 1; y < y2; y++)
+			for (y = y1; y <= y2; y++)
 			{
 				/* Get the grid */
 				c_ptr = &zcave[y][(x1 + x2) / 2];
@@ -8324,7 +8324,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				if ((tmp=pick_house(wpos, dy, dx)) == -1)
 				{
 					/* Store door location information */
-					c_ptr->feat = FEAT_HOME_HEAD;
+					c_ptr->feat = FEAT_HOME;
 					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
 //						cs_ptr->type=CS_DNADOOR;
 						cs_ptr->sc.ptr = houses[num_houses].dna;
@@ -8343,7 +8343,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 				}
 				else{
 					KILL(houses[num_houses].dna, struct dna_type);
-					c_ptr->feat=FEAT_HOME_HEAD;
+					c_ptr->feat=FEAT_HOME;
 					if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
 //						cs_ptr->type=CS_DNADOOR;
 						cs_ptr->sc.ptr=houses[tmp].dna;
@@ -8407,7 +8407,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		if ((i=pick_house(wpos, y, x)) == -1)
 		{
 			/* Store door location information */
-			c_ptr->feat = FEAT_HOME_HEAD;
+			c_ptr->feat = FEAT_HOME;
 			if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
 //				cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr = houses[num_houses].dna;
@@ -8426,7 +8426,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 		}
 		else{
 			KILL(houses[num_houses].dna, struct dna_type);
-			c_ptr->feat=FEAT_HOME_HEAD;
+			c_ptr->feat=FEAT_HOME;
 			if((cs_ptr=AddCS(c_ptr, CS_DNADOOR))){
 //				cs_ptr->type=CS_DNADOOR;
 				cs_ptr->sc.ptr=houses[i].dna;
@@ -8702,6 +8702,8 @@ static void town_gen_hack(struct worldpos *wpos)
 static void town_gen(struct worldpos *wpos)
 { 
 	int		y, x;
+	int xstart = 0, ystart = 0;	/* dummy, for now */
+
 	cave_type	*c_ptr;
 	cave_type	**zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -8752,7 +8754,44 @@ static void town_gen(struct worldpos *wpos)
 	
 
 	/* Hack -- Build the buildings/stairs (from memory) */
-	town_gen_hack(wpos);
+//	town_gen_hack(wpos);
+//	process_dungeon_file("t_info.txt", &ystart, &xstart, cur_hgt, cur_wid, TRUE);
+
+	/* XXX this will be changed very soon	- Jir - */
+#if 1
+	if(wpos->wx==cfg.town_x && wpos->wy==cfg.town_y && !wpos->wz)
+	{
+		/* Hack -- Use the "simple" RNG */
+		Rand_quick = TRUE;
+
+		/* Hack -- Induce consistant town layout */
+		Rand_value = seed_town+(wpos->wx+wpos->wy*MAX_WILD_X);
+
+		/* Hack -- fill with trees
+		 * This should be determined by wilderness information */
+		for (x = 1; x < MAX_WID - 1; x++)
+		{
+			for (y = 1; y < MAX_HGT - 1; y++)
+			{
+				/* Access the grid */
+				c_ptr = &zcave[y][x];
+
+				/* Clear previous contents, add forest */
+				c_ptr->feat = FEAT_TREES;
+			}
+		}
+
+		/* Hack -- use the "complex" RNG */
+		Rand_quick = FALSE;
+
+		process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
+				MAX_HGT, MAX_WID, TRUE);
+	}
+	else town_gen_hack(wpos);
+#else	// 0
+	process_dungeon_file("t_info.txt", wpos, &ystart, &xstart,
+				MAX_HGT, MAX_WID, TRUE);
+#endif	// 0
 
 
 	/* Day Light */

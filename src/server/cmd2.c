@@ -790,8 +790,7 @@ void do_cmd_open(int Ind, int dir)
 		/* Nothing useful */
 		if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		      (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
-		    !((c_ptr->feat >= FEAT_HOME_HEAD) &&
-		      (c_ptr->feat <= FEAT_HOME_TAIL)) &&
+		    !((c_ptr->feat == FEAT_HOME)) &&
 		    (o_ptr->tval != TV_CHEST))
 		{
 			/* Message */
@@ -940,7 +939,7 @@ void do_cmd_open(int Ind, int dir)
 		}
 
 		/* Home */
-		else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+		else if (c_ptr->feat == FEAT_HOME)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
@@ -1130,7 +1129,7 @@ void do_cmd_close(int Ind, int dir)
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-			c_ptr->feat = FEAT_HOME_HEAD;
+			c_ptr->feat = FEAT_HOME;
 
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -1257,6 +1256,7 @@ bool twall(int Ind, int y, int x)
  * Digging is very difficult without a "digger" weapon, but can be
  * accomplished by strong players using heavy weapons.
  */
+/* XXX possibly wrong */
 void do_cmd_tunnel(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2290,8 +2290,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			else
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 					p_ptr->easy_open &&
-				(c_ptr->feat >= FEAT_HOME_HEAD) &&
-				(c_ptr->feat <= FEAT_HOME_TAIL)) 
+				(c_ptr->feat == FEAT_HOME_HEAD))
 			{
 				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 					if(!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
@@ -2349,8 +2348,7 @@ int do_cmd_run(int Ind, int dir)
 
 				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-				    ((c_ptr->feat >= FEAT_HOME_HEAD) &&
-				      (c_ptr->feat <= FEAT_HOME_TAIL))) 
+				    ((c_ptr->feat == FEAT_HOME)))
 				{
 					/* Check if we have enough energy to open the door */
 					if (p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -4015,7 +4013,7 @@ void house_admin(int Ind, int dir, char *args){
 		x = p_ptr->px + ddx[dir];
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
-		if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL)
+		if(c_ptr->feat==FEAT_HOME)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
@@ -4092,7 +4090,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		if (in_bounds2(wpos, y, x)) c_ptr = &zcave[y][x];
 
 		/* Check for a house */
-		if (!(c_ptr && c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
+		if (!(c_ptr && c_ptr->feat==FEAT_HOME && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
 		{
 			/* No house, message */
 			msg_print(Ind, "You see nothing to buy there.");

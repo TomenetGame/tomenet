@@ -176,6 +176,13 @@ N:25:closed door
 G:+:U
 F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | REMEMBER | DOOR
 
+# permanent wall for houses
+
+N:26:permanent wall
+G:#:w
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
 # XXX XXX XXX
 
 

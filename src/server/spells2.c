@@ -5443,7 +5443,8 @@ bool poly_build(int Ind, char *args)
 		curr->moves=25;	/* always new */
 #ifdef NEW_DUNGEON
 		wpcopy(&curr->wpos, &p_ptr->wpos);
-		if(zcave[curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
+//		if(zcave[curr->sy][curr->sx].feat==FEAT_PERM_EXTRA){
+		if(zcave[curr->sy][curr->sx].feat==FEAT_WALL_HOUSE){
 #if 0	/* not necessary? - evileye */
 			zcave[curr->sy][curr->sx].special.sc.ptr=NULL;
 #endif
@@ -5460,6 +5461,9 @@ bool poly_build(int Ind, char *args)
 			return FALSE;
 		}
 		zcave[curr->sy][curr->sx].feat=FEAT_HOME_OPEN;
+		/* CS_DNADOOR seems to be added twice (wild_add_uhouse)..
+		 * please correct it, Evileye?	- Jir -
+		 */
 		if((curr->cs=AddCS(&zcave[curr->sy][curr->sx], CS_DNADOOR))){
 //			curr->cs->type=CS_DNADOOR;
 			curr->cs->sc.ptr=curr->dna;
@@ -5574,7 +5578,8 @@ bool poly_build(int Ind, char *args)
 	return FALSE;
 }
 
-void house_creation(int Ind, bool floor, bool jail){
+void house_creation(int Ind, bool floor, bool jail)
+{
 	player_type *p_ptr=Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	char buildargs[3];
@@ -5598,7 +5603,8 @@ void house_creation(int Ind, bool floor, bool jail){
 	poly_build(Ind, (char*)&buildargs);	/* Its a (char*) ;( */
 }
 
-void summon_pet(int Ind, int max){
+void summon_pet(int Ind, int max)
+{
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
         monster_type *m_ptr;

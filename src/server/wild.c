@@ -237,7 +237,8 @@ void wild_apply_day(struct worldpos *wpos)
 
 void wild_apply_night(struct worldpos *wpos)
 {
-	int x,y;
+	int x, y, i, stores = 0, y1, x1;
+	byte sx[255], sy[255];
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -255,7 +256,37 @@ void wild_apply_night(struct worldpos *wpos)
 				/* Darken the grid */
 				c_ptr->info &= ~CAVE_GLOW;
 			}
+
+			if (c_ptr->feat == FEAT_SHOP)
+			{
+				sx[stores] = x;
+				sy[stores] = y;
+				stores++;
+			}
 		}
+	}
+
+	/* Hack -- illuminate the stores */
+	for (i = 0; i < stores; i++)
+	{
+		x = sx[i];
+		y = sy[i];
+
+		for (y1 = y - 1; y1 <= y + 1; y1++)
+		{
+			for (x1 = x - 1; x1 <= x + 1; x1++)
+			{
+				/* Get the grid */
+				c_ptr = &zcave[y1][x1];
+
+				/* Illuminate the store */
+//				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+				c_ptr->info |= CAVE_GLOW;
+			}
+		}
+
+		/* Hack -- it's nice with current design */
+//		zcave[y + 2][x].info |= CAVE_GLOW;
 	}
 }
 
@@ -1168,8 +1199,9 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			else door_feature = FEAT_DOOR_HEAD;			
 			break;
 		case WILD_TOWN_HOME:
-			wall_feature = FEAT_PERM_EXTRA;
-			door_feature = FEAT_HOME_HEAD;
+//			wall_feature = FEAT_PERM_EXTRA;
+			wall_feature = FEAT_WALL_HOUSE;
+			door_feature = FEAT_HOME;
 
 #ifdef	DEVEL_TOWN_COMPATIBILITY
 			/* Setup some "house info" */
@@ -2386,7 +2418,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						c_ptr=&zcave[miny+(y-1)][minx+(x-1)];
 						if(((struct guildsave*)data)->mode){
 							fputc(c_ptr->feat, gfp);
-							if(c_ptr->feat==FEAT_HOME_HEAD){
+							if(c_ptr->feat==FEAT_HOME){
 								id=0;
 								if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR)) && key==cs_ptr->sc.ptr)
 									id=key->id;
@@ -2400,7 +2432,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 //							if(c_ptr->feat>FEAT_INVIS)
 							if(!cave_plain_floor_grid(c_ptr))
 								c_ptr->info &= ~(CAVE_ROOM);
-							if(c_ptr->feat==FEAT_HOME_HEAD){
+							if(c_ptr->feat==FEAT_HOME){
 								id=(fgetc(gfp)<<8);
 								id|=fgetc(gfp);
 								/* XXX it's double check */
@@ -2470,7 +2502,8 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 	return(success);
 }
 
-void wild_add_uhouse(house_type *h_ptr){
+void wild_add_uhouse(house_type *h_ptr)
+{
  	int x,y;
  	cave_type *c_ptr;
 	struct worldpos *wpos=&h_ptr->wpos;
@@ -2484,19 +2517,19 @@ void wild_add_uhouse(house_type *h_ptr){
  	if(h_ptr->flags&HF_RECT){
 		for(x=0;x<h_ptr->coords.rect.width;x++){
  			c_ptr=&zcave[h_ptr->y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
+ 			c_ptr->feat=FEAT_WALL_HOUSE;
 		}
 		for(y=h_ptr->coords.rect.height-1,x=0;x<h_ptr->coords.rect.width;x++){
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
+ 			c_ptr->feat=FEAT_WALL_HOUSE;
 		}
 		for(y=1;y<h_ptr->coords.rect.height;y++){
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
+ 			c_ptr->feat=FEAT_WALL_HOUSE;
 		}
 		for(x=h_ptr->coords.rect.width-1,y=1;y<h_ptr->coords.rect.height;y++){
  			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_PERM_EXTRA;
+ 			c_ptr->feat=FEAT_WALL_HOUSE;
 		}
 	}
 	fill_house(h_ptr, FILL_BUILD, NULL);
@@ -2507,9 +2540,23 @@ void wild_add_uhouse(house_type *h_ptr){
 		}
 	}
 	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
-	c_ptr->feat=FEAT_HOME_HEAD;
-	cs_ptr=AddCS(c_ptr, CS_DNADOOR);
+
+	/*
+	 * usually, already done in poly_build..
+	 * right, Evileye?	- Jir -
+	 */
+	if (!(cs_ptr=AddCS(c_ptr, CS_DNADOOR)))
+	{
+		if (!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)))
+		{
+			s_printf("House creation failed!! (wild_add_uhouse)\n");
+			return;
+		}
+	}
 //	cs_ptr->type=CS_DNADOOR;
+
+	c_ptr->feat=FEAT_HOME;
+
 	cs_ptr->sc.ptr=h_ptr->dna;
 }
 

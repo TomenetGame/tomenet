@@ -26,6 +26,20 @@
 # - Jir -
 
 
+15/08/2002 (Jir)
+# more on new terrain code / new ToME town code :)
+[D]- predefined town code is backported. (process_dungeon_file)
+[D]- FEAT_WALL_HOUSE introduced.
+[D]- (slightly) better shop illumination
+[P]- ghost/wraith can only pass through house walls of their own.
+     (not working well for polygonal houses - use door :p)
+[m]- admin-DM can no longer use always_pickup ('g' is still usable)
+[B]- Player could stack on another player when logging on. (player_setup)
+[B]- Scroll of House Creation caused crash (by trying to add DNADOOR twice,
+     poly_build and wild_add_uhouse..  pls check if it's done right, Evileye)
+[B]- wraith_access tried to check wrong grid when called from move_player.
+     (player's location in place of destination)
+
 14/08/2002 (Jir)
 [m]- monsters no longer move 'zigzag' if not within LOS.
 [G]- skills interaction.  s_info.txt backported.  skillpoints reduced (6=>5)
@@ -1653,19 +1667,12 @@ To find the latest change quickly, search ==== :)
 =============================================================================
 TODO: things to do before 4.0.0
 
-- backport ToME spells! (..is anyone working on it..?)
+- backport ToME spells! (..well, temporally stopped..)
   + spell flags transmitted to the client
   + less packets
   + spells should be exported to LUA?
 - login code
   (PBs)
-  + 'Resume connection' doesn't seem to work; if you leave (or get
-    disconnected from) the game in the dungeon and try to reconnect at
-    once, the connection is refused with status code 9.
-  + most displaying/path-building using 'nick' should be changed to use
-    c_name (eg. 'C', tomb, 'Name:', Receive_chardump etcetc - having
-    account-name on the tombstone is weird ;)
-    we'd better make c_name grobal maybe.
   + .tomenetrc and command-line option(-l) should be able to handle
     not only account name but also character choice (read_mangrc, main)
   (RFEs)
@@ -1676,17 +1683,17 @@ TODO: things to do before 4.0.0
     /shutdown 1024, I'm meaning).
   + How about adding o_ptr->account along with o_ptr->id/owner?
     this would make cheeze-tracking much easier maybe.
-  + Char choice screen should tell the race and class of that char
-    ( a) Imrahil the Dunadan Warrior - Receive_login)
   + char name should be case-insensitive maybe? (eVileye and Evileye
     should be handled as the same char, that is)
   + documentating how to use new account system (admin handbook :)
+  + tomenet.acc contains death/winning counter
 
 
 - rebalance skill-points
+- rebalance mimics (they are way too hard, seemingly)
 - devise a nice way to control ego-item generation w/o luck
 - fix gfx
-- refine pk code
+- refine pk code (just set as option?)
 - source-code cleanup
 - sort ?_info.txt (they are quite messy now)
 - export configurable things to tomenet.cfg
@@ -1743,6 +1750,7 @@ figure out where (all LUA interpreter gives me as clue is 'nil value', pfft).
 =============================================================================
 below this line are the unfixed bugs known:
 
+** Minor Bugs **
 [B]- wpos display hides wound states(eg.'Deep Gash')
 [B]- mon_vis, obj_vis etc. are messed while the player is off.
 [B]- some ivents are not told to the players even when within the sight.
@@ -1777,9 +1785,21 @@ below this line are the unfixed bugs known:
 [B]- 'The The Borshin' when hallucinating (monster_desc)
 [B]- ego/randart lite/ring/amu can easily be distinguished with {?} req.
 [B]- unique/mego partial shimmering seems to be broken (they always shimmer)
-[B]- starting equipments don't get autotag even with auto_inscribe
+[B]- starting items don't get autotag even with auto_inscribe (Handle_login)
+[B]- '/' searching doesn't work very well due to msg compressing (x12)
+[B]- if the server dies of SIGPIPE, duplicated char can be generated.
+        Choose a character
+           a) Breadric the level 1 Half-Elf Adventurer
+           b) Olaudon the level 4 DragonRider Warrior
+           c) Kieder the level 6 High-Elf Archer
+           d) Acealdan the level 1 Half-Orc Rogue
+           e) Acealdan the level 1 Human Adventurer
+           f) Acealdan the level 1 Human Adventurer
+           g) New character                                                                                     
+           Q) Quit
 
-*Crushing bugs*
+
+**Crushing bugs**
 
 [B]- apartment doors can displace? (disabled)
      Program received signal SIGSEGV, Segmentation fault.
@@ -1824,11 +1844,13 @@ below this line are the unfixed bugs known:
      $3 = 174
 
 
-*below are bugs repoorted but not confirmed*
+**below are bugs repoorted but not confirmed**
 [B]- House doors are still said to crash sometimes. (door even vanishes??)
+[B]- Mindcrafter does unmagic? (wrong report, I'm afraid)
+[B]- No magic arrows? (at least, my server offers plenty)
 
 
-*below are bugs not shown recently(fixed??)*
+**below are bugs not shown recently(fixed??)**
 [B]- 'Nothng to buy here.' when sunrise/sunset
 [B]- [C] GCU client doesn't show the motd when using 'fullauto'
 [B]- Forest wight (Lv 4098, undamaged, clone) [<dir>, q] (on 5550')
@@ -1855,7 +1877,7 @@ below this line are the unfixed bugs known:
 
 
 
-*below are bugs not fixed but avoided*
+**below are bugs not fixed but avoided**
 [B]- [C] chat-history contains lines with 'mindcrafter'.
      (do_cmd_messages_chatonly)
 [B]- client quits badly (Destroy_connection)
@@ -1893,10 +1915,10 @@ below this line are the unfixed bugs known:
 
 
 
-*below are phenomena not confirmed as bug*
+**below are phenomena not confirmed as bug**
 [B]- breeders breed less if many players are on.
      buggie, but saves the server from getting slowed by breeding..
-[B]- p_ptr->to_d_ranged is always 0.
+[B]- p_ptr->to_d_ranged is always 0. (same with ToME)
 [B]- Yeek seems to receive the best store prices.
 [B]- meanless double egos like Elven Robe of Fire Resistance
 [B]- ^S(Spike doors) is bad key for GCU
@@ -1906,8 +1928,7 @@ below this line are the unfixed bugs known:
 
 =============================================================================
 memo and questions:
-- player_is_king() is annuled?
-- can more than one players can create characters at the same time?
+(nothing so far)
 
 ==== below this line are 'implementations' and not 'bugs' ====
 (Don't 'fix' them!! ;)
@@ -1987,7 +2008,6 @@ memo and questions:
 - obsolete c-tables.c
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
 - integrate p_ptr->fruit_bat into p_ptr->body_monster
-- p_ptr->total_weight/inven_cnt should be recalculated sometimes.
 - exploding arrows should be ego?
 
 [speeding the server up]
@@ -2011,7 +2031,6 @@ memo and questions:
 - missile traps do too small dmgs?
 - 2H weapons should be more powerful in general?
   (they actually occupy 3 equipment slots!)
-- prolly Dolphiners are too strong? (filtered)
 - Mage Staves should only be available for Sorc?
 - NO_MAGIC can be off-balancing (wizard and spellcasting monster will suck)
 - mimic could be too weak on the deepest levels
@@ -2035,7 +2054,7 @@ memo and questions:
   + some monster may become 'ghost' after being killed?
   + monster spell points.
   + upper limit of monsters per floor?
-  + better way to display egos/uniques
+  + better way to display egos/uniques (like bold/underline)
   + monsters should follow the player when climbling up/down staircase.
   + aquatic uniques
   + vault treasures should be held by guardians
@@ -2057,6 +2076,7 @@ memo and questions:
   + more tools
   + generic mimic rings (like 'D', 'Z') / ego rings
   + wooden/leather armours should be immune to water damage.
+  + sell magic ammo in normal store (I vote against it - Jir)
 - anticheeze:
   + (nothing so far)
 - players:
@@ -2116,7 +2136,6 @@ memo and questions:
   + water should 'flow'
   + score list should show middle-earth time (and not raw turn).
   + spiked/locked door should be *tougher* (cf. Vanilla)
-  + tomenet.acc contains death/winning counter
   + IRC server connection
   
 [major ones]

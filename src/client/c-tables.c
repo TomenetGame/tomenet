@@ -2609,7 +2609,7 @@ option_type option_info[OPT_MAX] =
 	"rogue_like_commands",	"Rogue-like commands" },
 
 	{ &c_cfg.quick_messages,	 	FALSE,	1,	0, 1,
-	"quick_messages",		"Activate quick messages" },
+	"quick_messages",		"Activate quick messages (skill etc)" },
 
 	{ &c_cfg.other_query_flag,	FALSE,	1,	0, 2,	// XXX
 	"other_query_flag",		"Prompt for various information (mimic polymorph)" },

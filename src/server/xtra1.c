@@ -259,12 +259,12 @@ static void prt_sanity(int Ind)
 		sprintf(buf, "%4d/%4d", p_ptr->csane, p_ptr->msane);
 	}
 	/* Percentile */
-	else if (skill >= 15)
+	else if (skill >= 20)
 	{
 		sprintf(buf, "     %3d%%", ratio);
 	}
 	/* Sanity Bar */
-	else if (skill >= 5)
+	else if (skill >= 10)
 	{
 		int tmp = ratio / 11;
 		strcpy(buf, "---------");

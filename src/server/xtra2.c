@@ -6775,7 +6775,7 @@ bool master_build(int Ind, char * parms)
 
 	/* This part to be rewritten for stacked CS */
 	c_ptr->feat = new_feat;
-	if(c_ptr->feat>=FEAT_HOME_HEAD && c_ptr->feat<=FEAT_HOME_TAIL){
+	if(c_ptr->feat==FEAT_HOME){
 		struct c_special *cs_ptr;
 		/* new special door creation (with keys) */
 		struct key_type *key;

@@ -181,7 +181,7 @@ F:MKEY_SPELL | MKEY_TVAL
 N:32:Fighting Technic
 D:Ability to perform special fighting technics
 A:5:Use a fighting technic
-I:1000:0
+I:1000:93
 F:MKEY_SPELL | MKEY_TVAL
 
 N:33:Miscellaneous
@@ -194,7 +194,7 @@ D:General ability to move on quickly
 I:1000:0
 
 N:35:Calmness
-D:Ability to stay calm when surrounded by enemies
+D:Ability to stay calm and act freely when surrounded by enemies
 I:1000:0
 
 N:36:Swimming
@@ -289,6 +289,7 @@ f:Crossbow-mastery:Combat%7
 f:Boomerang-mastery:Combat%7
 f:Hunting Lore:Combat%7
 f:Ricochet:Combat%7
+f:Fighting Technic:Combat%25
 f:Martial Arts:Combat%50
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
@@ -413,17 +414,6 @@ T:Combat:Martial Arts
 #T:Combat:Bearform-combat
 #T:Combat:Antimagic
 
-T:Main:Sneakiness
-T:Sneakiness:Stealth
-T:Sneakiness:Disarming
-T:Sneakiness:Trapping
-T:Sneakiness:Backstabing
-T:Sneakiness:Stealing
-T:Sneakiness:Dodging
-
-T:Dodging:Calmness
-T:Dodging:Interception
-
 T:Main:Magic
 T:Magic:Magic-device
 #T:Magic:Spell-learning
@@ -467,6 +457,17 @@ T:Prayer:Revelation
 #T:Monster-lore:Possession
 #T:Monster-lore:Symbiosis
 #T:Monster-lore:Mimicry
+
+T:Main:Sneakiness
+T:Sneakiness:Stealth
+T:Sneakiness:Disarming
+T:Sneakiness:Trapping
+T:Sneakiness:Backstabing
+T:Sneakiness:Stealing
+T:Sneakiness:Dodging
+
+T:Dodging:Calmness
+T:Dodging:Interception
 
 T:Main:Necromancy
 T:Necromancy:Aura power

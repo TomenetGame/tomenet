@@ -20,10 +20,11 @@
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
  */
+/*
+ * TODO: wraithes should only pass townwalls of her/his own house
+ */
 #define WRAITH_THROUGH_TOWNWALL
 
-
-static bool wraith_access(int Ind);
 
 
 
@@ -2339,6 +2340,57 @@ void do_prob_travel(int Ind, int dir)
 }
 
 
+static bool wraith_access(int Ind){
+	/* Experimental! lets hope not bugged */
+	/* Wraith walk in own house */
+	player_type *p_ptr=Players[Ind];
+	int i;
+	bool house=FALSE;
+
+	for(i=0;i<num_houses;i++){
+		if(inarea(&houses[i].wpos, &p_ptr->wpos))
+		{
+			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
+				house=TRUE;
+				if(access_door(Ind, houses[i].dna)){
+#if 0	// Jir test
+					if(houses[i].flags & HF_APART){
+						break;
+					}
+					else
+#endif	// 0
+						return(TRUE);
+				}
+				break;
+			}
+		}
+	}
+	return(house ? FALSE : TRUE);
+}
+
+
+/*
+ * Hack function to determine if the player has access to the GIVEN location,
+ * using the function above.	- Jir -
+ */
+static bool wraith_access_virtual(int Ind, int y, int x)
+{
+	player_type *p_ptr=Players[Ind];
+	int oy = p_ptr->py, ox = p_ptr->px;
+	bool result;
+
+	p_ptr->py = y;
+	p_ptr->px = x;
+
+	result = wraith_access(Ind);
+
+	p_ptr->py = oy;
+	p_ptr->px = ox;
+
+	return (result);
+}
+
+
 
 /* borrowed from ToME	- Jir - */
 bool player_can_enter(int Ind, byte feature)
@@ -2348,10 +2400,13 @@ bool player_can_enter(int Ind, byte feature)
 
 	bool only_wall = FALSE;
 
+	/* Dungeon Master pass through everything (cept array boundary :) */
+	if (p_ptr->admin_dm && feature != FEAT_PERM_SOLID)
+		return (TRUE);
 
 	/* Player can not walk through "walls" unless in Shadow Form */
 //        if (p_ptr->wraith_form || (PRACE_FLAG(PR1_SEMI_WRAITH)))
-	if (p_ptr->wraith_form || p_ptr->ghost)
+	if (/*p_ptr->wraith_form ||*/ p_ptr->ghost || p_ptr->tim_wraith)
 		pass_wall = TRUE;
 	else
 		pass_wall = FALSE;
@@ -2417,7 +2472,7 @@ bool player_can_enter(int Ind, byte feature)
 
 		case FEAT_TREES:
 		{
-			if ((p_ptr->fly) || p_ptr->prace == RACE_ENT)
+			if ((p_ptr->fly) || p_ptr->prace == RACE_ENT || pass_wall)
 #if 0
 					(PRACE_FLAG(PR1_PASS_TREE)) ||
 				(get_skill(SKILL_DRUID) > 15) ||
@@ -2427,6 +2482,14 @@ bool player_can_enter(int Ind, byte feature)
 			else
 				return (FALSE);
 		}
+
+#if 0
+		case FEAT_WALL_HOUSE:
+		{
+			if (!pass_wall || !wraith_access(Ind)) return (FALSE);
+			else return (TRUE);
+		}
+#endif	// 0
 
 		default:
 		{
@@ -2763,10 +2826,10 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	/* Prob travel */
 	if (p_ptr->prob_travel && (!cave_floor_bold(zcave, y, x)))
-	  {
-	    do_prob_travel(Ind, dir);
+	{
+		do_prob_travel(Ind, dir);
 		return;
-	  }
+	}
 
 	/* Player can not walk through "walls", but ghosts can */
 //	if ((!p_ptr->ghost) && (!p_ptr->tim_wraith) && (!cave_floor_bold(zcave, y, x)))
@@ -2774,6 +2837,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
+		bool passing = (p_ptr->tim_wraith || p_ptr->ghost);
 		struct c_special *cs_ptr;
 		/* one activate is enough */
 		cs_ptr=c_ptr->special;
@@ -2782,7 +2846,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			cs_ptr=cs_ptr->next;
 		}
 
-		if ((cfg.door_bump_open & BUMP_OPEN_HOUSE) && c_ptr->feat == FEAT_HOME)
+		if (((cfg.door_bump_open & BUMP_OPEN_HOUSE) || passing)
+					&& c_ptr->feat == FEAT_HOME)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))) /* orig house failure */
@@ -2794,6 +2859,40 @@ void move_player(int Ind, int dir, int do_pickup)
 				}
 			}
 		}
+		/* XXX quick fix */
+		else if (passing)
+		{
+#if 0
+			if (c_ptr->feat == FEAT_HOME)
+			{
+				struct c_special *cs_ptr;
+				if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
+						!access_door(Ind, cs_ptr->sc.ptr))
+				{
+					msg_print(Ind, "The door blocks your movement.");
+					disturb(Ind, 0, 0);
+					return;
+				}
+
+				myhome = TRUE;
+				msg_print(Ind, "\377GYou pass through the door.");
+			}
+			else
+#endif	// 0
+				if(c_ptr->feat == FEAT_WALL_HOUSE)
+			{
+				if (!wraith_access_virtual(Ind, y, x))
+				{
+					msg_print(Ind, "The wall blocks your movement.");
+					disturb(Ind, 0, 0);
+					return;
+				}
+
+				myhome = TRUE;
+				msg_print(Ind, "\377GYou pass through the house wall.");
+			}
+		}
+
 
 #if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
@@ -2822,7 +2921,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 			/* Closed door */
 			else if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) ||
-				 (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL))
+				 (c_ptr->feat == FEAT_HOME))
 			{
 				msg_print(Ind, "\377GYou feel a closed door blocking your way.");
 				*w_ptr |= CAVE_MARK;
@@ -2852,7 +2951,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			struct c_special *cs_ptr;
 			/* Closed doors */
 			if ((c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_DOOR_HEAD) || 
-				 (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL))
+				 (c_ptr->feat == FEAT_HOME))
 			{
 				msg_print(Ind, "There is a closed door blocking your way.");
 			}
@@ -2900,23 +2999,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		return;
 		} /* 'if (!myhome)' ends here */
 	}
-	/* XXX quick fix */
-	else if (p_ptr->tim_wraith)
-	{
-		if (c_ptr->feat == FEAT_HOME)
-		{
-			struct c_special *cs_ptr;
-			if(!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)) ||
-					!access_door(Ind, cs_ptr->sc.ptr))
-			{
-				disturb(Ind, 0, 0);
-				return;
-			}
 
-			msg_print(Ind, "\377GYou pass through the door.");
-		}
-	}
-
+#if 0
 #ifdef WRAITH_THROUGH_TOWNWALL
 	/* Wraiths trying to walk into a house */
 	if (p_ptr->tim_wraith){
@@ -2932,9 +3016,14 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Wraiths can't enter vaults so easily :) trying to walk into a permanent wall */
-	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+	/* XXX Hrm ghost cannot enter house - but maybe no pb */
+//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA && (wpos->wz))
+	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
+			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK) && wpos->wz)
 #else
-	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA)
+//	if (p_ptr->tim_wraith && c_ptr->feat >= FEAT_PERM_EXTRA)
+	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
+			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK))
 #endif	// 0
 	{
 		/* Message */
@@ -2943,9 +3032,13 @@ void move_player(int Ind, int dir, int do_pickup)
 		disturb(Ind, 0, 0);
 		return;
 	}
+#endif	// 0
 
+#if 0
 	/* Ghost trying to walk into a permanent wall */
-	if ((p_ptr->ghost || p_ptr->tim_wraith) && c_ptr->feat >= FEAT_PERM_SOLID)
+//	if ((p_ptr->ghost || p_ptr->tim_wraith) && c_ptr->feat >= FEAT_PERM_SOLID)
+	if (p_ptr->tim_wraith && f_info[c_ptr->feat].flags1 & (FF1_PERMANENT) &&
+			f_info[c_ptr->feat].flags1 & (FF1_NO_WALK))
 	{
 		/* Message */
 		msg_print(Ind, "The wall blocks your movement.");
@@ -2953,7 +3046,9 @@ void move_player(int Ind, int dir, int do_pickup)
 		disturb(Ind, 0, 0);
 		return;
 	}
+#endif	// 0
 
+	/* XXX fly? */
 	else if ((c_ptr->feat == FEAT_DARK_PIT) && !p_ptr->feather_fall)
 	{
 		msg_print(Ind, "You can't cross the chasm.");
@@ -2963,7 +3058,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Normal movement */
-	else
+//	else
 	{
 		int oy, ox;
 		struct c_special *cs_ptr;
@@ -3017,7 +3112,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		}
 
 		/* Handle "objects" */
-		if (c_ptr->o_idx) carry(Ind, do_pickup, 0);
+		if (c_ptr->o_idx && !p_ptr->admin_dm) carry(Ind, do_pickup, 0);
 		else Send_floor(Ind, 0);
 
 		/* Handle "store doors" */
@@ -3096,32 +3191,6 @@ void move_player(int Ind, int dir, int do_pickup)
 			p_ptr->master_move_hook(Ind, NULL);
 	}
 }
-
-static bool wraith_access(int Ind){
-	/* Experimental! lets hope not bugged */
-	/* Wraith walk in own house */
-	player_type *p_ptr=Players[Ind];
-	int i;
-	bool house=FALSE;
-
-	for(i=0;i<num_houses;i++){
-		if(inarea(&houses[i].wpos, &p_ptr->wpos))
-		{
-			if(fill_house(&houses[i], FILL_PLAYER, p_ptr)){
-				house=TRUE;
-				if(access_door(Ind, houses[i].dna)){
-					if(houses[i].flags & HF_APART){
-						break;
-					}
-					else return(TRUE);
-				}
-				break;
-			}
-		}
-	}
-	return(house ? FALSE : TRUE);
-}
-
 
 void black_breath_infection(int Ind, int Ind2)
 {

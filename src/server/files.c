@@ -40,6 +40,7 @@
  *
  * Hack -- We will always extract at least one token
  */
+#if 0
 s16b tokenize(char *buf, s16b num, char **tokens)
 {
 	int i = 0;
@@ -100,6 +101,68 @@ s16b tokenize(char *buf, s16b num, char **tokens)
 	/* Number found */
 	return (i);
 }
+#else	// 0
+s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2)
+{
+	int i = 0;
+
+	char *s = buf;
+
+
+	/* Process */
+	while (i < num - 1)
+	{
+		char *t;
+
+		/* Scan the string */
+		for (t = s; *t; t++)
+		{
+			/* Found a delimiter */
+			if ((*t == delim1) || (*t == delim2)) break;
+
+			/* Handle single quotes */
+			if (*t == '\'')
+			{
+				/* Advance */
+				t++;
+
+				/* Handle backslash */
+				if (*t == '\\') t++;
+
+				/* Require a character */
+				if (!*t) break;
+
+				/* Advance */
+				t++;
+
+				/* Hack -- Require a close quote */
+				if (*t != '\'') *t = '\'';
+			}
+
+			/* Handle back-slash */
+			if (*t == '\\') t++;
+		}
+
+		/* Nothing left */
+		if (!*t) break;
+
+		/* Nuke and advance */
+		*t++ = '\0';
+
+		/* Save the token */
+		tokens[i++] = s;
+
+		/* Advance */
+		s = t;
+	}
+
+	/* Save the token */
+	tokens[i++] = s;
+
+	/* Number found */
+	return (i);
+}
+#endif	// 0
 
 #ifdef CHECK_TIME
 

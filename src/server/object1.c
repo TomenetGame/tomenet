@@ -6255,15 +6255,16 @@ bool can_use(int Ind, object_type *o_ptr)
 {
 	player_type *p_ptr = Players[Ind];
 
-        /* Owner always can use */
-        if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
+	/* Owner always can use */
+	if (p_ptr->id == o_ptr->owner || p_ptr->admin_dm) return (TRUE);
 
-		if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
+	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
-        if (p_ptr->lev >= o_ptr->level)
+	/* Hack -- convert if available */
+	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
 	{
 		o_ptr->owner = p_ptr->id;
 		return (TRUE);
 	}
-        else return (FALSE);
+	else return (FALSE);
 }

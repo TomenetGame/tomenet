@@ -537,7 +537,8 @@ extern void set_runlevel(int val);
 extern void store_turnover();
 
 /* files.c */
-extern s16b tokenize(char *buf, s16b num, char **tokens);
+//extern s16b tokenize(char *buf, s16b num, char **tokens);
+extern s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2);
 extern void display_player(int Ind);
 extern errr file_character(cptr name, bool full);
 extern errr check_time_init(void);

@@ -5113,6 +5113,7 @@ static u32b noise = 0L;
  *
  * Note that the "Ind" specifies the player that the monster will go after.
  */
+/* TODO: revise FEAT_*, or strange intrusions can happen */
 static void process_monster(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
@@ -5592,6 +5593,13 @@ static void process_monster(int Ind, int m_idx)
 			do_move = TRUE;
 		}
 
+		/* Some monsters can fly */
+		else if ((f_info[c_ptr->feat].flags1 & FF1_CAN_LEVITATE) && (r_ptr->flags7 & (RF7_CAN_FLY)))
+		{
+			/* Pass through walls/doors/rubble */
+			do_move = TRUE;
+		}
+
 		/* Player ghost in wall XXX */
 		else if (c_ptr->m_idx < 0)
 		{
@@ -5601,13 +5609,13 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Permanent wall */
 		/* Hack: Morgie DIGS!! */
-		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
+//		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
 				!((r_ptr->flags2 & RF2_KILL_WALL) &&
 					(r_ptr->flags2 & RF2_PASS_WALL) &&
 					(c_ptr->feat != FEAT_PERM_SOLID) && !rand_int(9000)))
 				|| (c_ptr->feat == FEAT_PERM_CLEAR) ||
-				((c_ptr->feat >= FEAT_HOME_HEAD) &&
-				 (c_ptr->feat <= FEAT_HOME_TAIL)) ) 
+				((c_ptr->feat == FEAT_HOME)) )
 		{
 			/* Nothing */
 		}
@@ -5648,7 +5656,8 @@ static void process_monster(int Ind, int m_idx)
 		}
 
 		/* Monster moves through walls (and doors) */
-		else if (r_ptr->flags2 & RF2_PASS_WALL)
+//		else if (r_ptr->flags2 & RF2_PASS_WALL)
+		else if ((f_info[c_ptr->feat].flags1 & FF1_CAN_PASS) && (r_ptr->flags2 & (RF2_PASS_WALL)))
 		{
 			/* Pass through walls/doors/rubble */
 			do_move = TRUE;

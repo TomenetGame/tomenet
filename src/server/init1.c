@@ -5167,3 +5167,1311 @@ static int i = 0;
 
 #endif	/* ALLOW_TEMPLATES */
 
+
+/*
+ * Another big lump of ToME parts, for loading maps/quests
+ * Most part is undone yet, but at least it can read town definition files.
+ * - Jir -
+ */
+
+/* Random dungeon grid effects */
+#define RANDOM_NONE         0x00
+#define RANDOM_FEATURE      0x01
+#define RANDOM_MONSTER      0x02
+#define RANDOM_OBJECT       0x04
+#define RANDOM_EGO          0x08
+#define RANDOM_ARTIFACT     0x10
+#define RANDOM_TRAP         0x20
+
+
+typedef struct dungeon_grid dungeon_grid;
+
+struct dungeon_grid
+{
+	int		feature;		/* Terrain feature */
+	int		monster;		/* Monster */
+	int		object;			/* Object */
+	int		ego;			/* Ego-Item */
+	int		artifact;		/* Artifact */
+	int		trap;			/* Trap */
+	int		cave_info;		/* Flags for CAVE_MARK, CAVE_GLOW, CAVE_ICKY, CAVE_ROOM */
+	int		special;		/* Reserved for special terrain info */
+	int		random;			/* Number of the random effect */
+	int             bx, by;                 /* For between gates */
+	int             mimic;                  /* Mimiced features */
+	bool            ok;
+	bool            defined;
+};
+static bool meta_sleep = TRUE;
+
+static dungeon_grid letter[255];
+
+/*
+ * Parse a sub-file of the "extra info"
+ */
+bool process_dungeon_file_full = FALSE;
+//static errr process_dungeon_file_aux(char *buf, int *yval, int *xval, int xvalstart, int ymax, int xmax)
+static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *xval, int xvalstart, int ymax, int xmax)
+{
+	int i;
+
+	char *zz[33];
+
+	int dun_level = getlevel(wpos);
+	c_special *cs_ptr;
+	cave_type **zcave;
+	zcave=getcave(wpos);
+
+	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
+
+
+	/* Skip "empty" lines */
+	if (!buf[0]) return (0);
+
+	/* Skip "blank" lines */
+	if (isspace(buf[0])) return (0);
+
+	/* Skip comments */
+	if (buf[0] == '#') return (0);
+
+	/* Require "?:*" format */
+	if (buf[1] != ':') return (1);
+
+
+	/* Process "%:<fname>" */
+	if (buf[0] == '%')
+	{
+		/* Attempt to Process the given file */
+		return (process_dungeon_file(buf + 2, yval, xval, ymax, xmax, FALSE));
+	}
+
+	/* Process "N:<sleep>" */
+	if (buf[0] == 'N')
+	{
+		int num;
+
+		if ((num = tokenize(buf + 2, 1, zz, ':', '/')) > 0)
+		{
+			meta_sleep = atoi(zz[0]);
+		}
+
+		return (0);
+	}
+
+	/* Process "F:<letter>:<terrain>:<cave_info>:<monster>:<object>:<ego>:<artifact>:<trap>:<special>:<mimic>" -- info for dungeon grid */
+	if (buf[0] == 'F')
+	{
+		int num;
+
+		if ((num = tokenize(buf+2, 10, zz, ':', '/')) > 1)
+		{
+			int index = zz[0][0];
+
+			/* Reset the feature */
+			letter[index].feature = 0;
+			letter[index].monster = 0;
+			letter[index].object = 0;
+			letter[index].ego = 0;
+			letter[index].artifact = 0;
+			letter[index].trap = 0;
+			letter[index].cave_info = 0;
+			letter[index].special = 0;
+			letter[index].random = 0;
+			letter[index].mimic = 0;
+			letter[index].ok = TRUE;
+			letter[index].defined = TRUE;
+
+			if (num > 1)
+			{
+				if (zz[1][0] == '*')
+				{
+					letter[index].random |= RANDOM_FEATURE;
+					if (zz[1][1])
+					{
+						zz[1]++;
+						letter[index].feature = atoi(zz[1]);
+					}
+				}
+				else
+				{
+					letter[index].feature = atoi(zz[1]);
+				}
+			}
+
+			if (num > 2)
+				letter[index].cave_info = atoi(zz[2]);
+
+			/* Monster */
+			if (num > 3)
+			{
+				if (zz[3][0] == '*')
+				{
+					letter[index].random |= RANDOM_MONSTER;
+					if (zz[3][1])
+					{
+						zz[3]++;
+						letter[index].monster = atoi(zz[3]);
+					}
+				}
+				else
+				{
+					letter[index].monster = atoi(zz[3]);
+				}
+			}
+
+			/* Object */
+			if (num > 4)
+			{
+				if (zz[4][0] == '*')
+				{
+					letter[index].random |= RANDOM_OBJECT;
+
+					if (zz[4][1])
+					{
+						zz[4]++;
+						letter[index].object = atoi(zz[4]);
+					}
+				}
+				else
+				{
+					letter[index].object = atoi(zz[4]);
+				}
+			}
+
+			/* Ego-Item */
+			if (num > 5)
+			{
+				if (zz[5][0] == '*')
+				{
+					letter[index].random |= RANDOM_EGO;
+
+					if (zz[5][1])
+					{
+						zz[5]++;
+						letter[index].ego = atoi(zz[5]);
+					}
+				}
+				else
+				{
+					letter[index].ego = atoi(zz[5]);
+				}
+			}
+
+			/* Artifact */
+			if (num > 6)
+			{
+				if (zz[6][0] == '*')
+				{
+					letter[index].random |= RANDOM_ARTIFACT;
+
+					if (zz[6][1])
+					{
+						zz[6]++;
+						letter[index].artifact = atoi(zz[6]);
+					}
+				}
+				else
+				{
+					letter[index].artifact = atoi(zz[6]);
+				}
+			}
+
+			if (num > 7)
+			{
+				if (zz[7][0] == '*')
+				{
+					letter[index].random |= RANDOM_TRAP;
+
+					if (zz[7][1])
+					{
+						zz[7]++;
+						letter[index].trap = atoi(zz[7]);
+					}
+				}
+				else
+					letter[index].trap = atoi(zz[7]);
+			}
+
+#if 0
+			if (num > 8)
+			{
+				/* Quests can be defined by name only */
+				if (zz[8][0] == '"')
+				{
+					int i;
+
+					/* Hunt & shoot the ending " */
+					i = strlen(zz[8]) - 1;
+					if (zz[8][i] == '"') zz[8][i] = '\0';
+					letter[index].special = 0;
+					for (i = 0; i < max_q_idx; i++)
+					{
+						if (!strcmp(&zz[8][1], quest[i].name))
+						{
+							letter[index].special = i;
+							break;
+						}
+					}
+				}
+				else
+					letter[index].special = atoi(zz[8]);
+			}
+#else	// 0
+			if (num > 8)
+			{
+				/* Quests can be defined by name only */
+				if (zz[8][0] == '"')
+				{
+#if 0	// later for quest
+					int i;
+
+					/* Hunt & shoot the ending " */
+					i = strlen(zz[8]) - 1;
+					if (zz[8][i] == '"') zz[8][i] = '\0';
+					letter[index].special = 0;
+					for (i = 0; i < max_q_idx; i++)
+					{
+						if (!strcmp(&zz[8][1], quest[i].name))
+						{
+							letter[index].special = i;
+							break;
+						}
+					}
+#endif	// 0
+				}
+				else
+					letter[index].special = atoi(zz[8]);
+			}
+#endif	// 0
+
+			if (num > 9)
+			{
+				letter[index].mimic = atoi(zz[9]);
+			}
+
+			return (0);
+		}
+	}
+
+	/* Process "D:<dungeon>" -- info for the cave grids */
+	else if (buf[0] == 'D')
+	{
+		int x;
+
+		object_type object_type_body;
+
+		/* Acquire the text */
+		char *s = buf+2;
+
+		/* Length of the text */
+		int len = strlen(s);
+
+		int y = *yval;
+		*xval = xvalstart;
+		for (x = *xval, i = 0; ((x < xmax) && (i < len)); x++, s++, i++)
+		{
+			/* Access the grid */
+			cave_type *c_ptr = &zcave[y][x];
+
+			int idx = s[0];
+
+			int object_index = letter[idx].object;
+			int monster_index = letter[idx].monster;
+			int random = letter[idx].random;
+			int artifact_index = letter[idx].artifact;
+
+			if (!letter[idx].ok) s_printf("Warning '%c' not defined but used.\n", idx);
+
+//			if (init_flags & INIT_GET_SIZE) continue;
+
+			/* use the plasma generator wilderness */
+//			if (((!dun_level) || (!letter[idx].defined)) && (idx == ' ')) continue;
+			if (((!wpos->wz) || (!letter[idx].defined)) && (idx == ' ')) continue;
+
+			/* Clear some info */
+			c_ptr->info = 0;
+
+			/* Lay down a floor */
+//			c_ptr->mimic = letter[idx].mimic;
+			cave_set_feat(wpos, y, x, letter[idx].feature);
+
+			/* TERAHACK -- memorize stair locations XXX XXX */
+			if (c_ptr->feat == FEAT_LESS)	// '<'
+			{
+				new_level_down_y(wpos, y);
+				new_level_down_x(wpos, x);
+			} 
+			else if (c_ptr->feat == FEAT_MORE)
+			{
+				new_level_up_y(wpos, y);
+				new_level_up_x(wpos, x);
+			}
+
+			/* Cave info */
+			c_ptr->info |= letter[idx].cave_info;
+
+			/* Create a monster */
+			if (random & RANDOM_MONSTER)
+			{
+				int level = monster_level;
+
+//				monster_level = quest[p_ptr->inside_quest].level + monster_index;
+				monster_level = getlevel(wpos) + monster_level;
+
+				place_monster(wpos, y, x, meta_sleep, FALSE);
+
+				monster_level = level;
+			}
+#if 0
+			else if (monster_index)
+			{
+				/* Place it */
+				m_allow_special[monster_index] = TRUE;
+				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY);
+				m_allow_special[monster_index] = FALSE;
+			}
+#endif	// 0
+
+			/* Object (and possible trap) */
+			if ((random & RANDOM_OBJECT) && (random & RANDOM_TRAP))
+			{
+				int level = object_level;
+
+//				object_level = quest[p_ptr->inside_quest].level;
+				object_level = dun_level;
+
+				/*
+				 * Random trap and random treasure defined
+				 * 25% chance for trap and 75% chance for object
+				 */
+				if (rand_int(100) < 75)
+				{
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+				}
+				// else
+				if (rand_int(100) < 25)
+				{
+					place_trap(wpos, y, x, 0);
+				}
+
+				object_level = level;
+			}
+			else if (random & RANDOM_OBJECT)
+			{
+				/* Create an out of deep object */
+				if (object_index)
+				{
+					int level = object_level;
+
+//					object_level = quest[p_ptr->inside_quest].level + object_index;
+					object_level = getlevel(wpos) + object_index;
+					if (rand_int(100) < 75)
+						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+					else if (rand_int(100) < 80)
+						place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+					else
+						place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
+
+					object_level = level;
+				}
+				else if (rand_int(100) < 75)
+				{
+					place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
+				}
+				else if (rand_int(100) < 80)
+				{
+					place_object(wpos, y, x, TRUE, FALSE, default_obj_theme);
+				}
+				else
+				{
+					place_object(wpos, y, x, TRUE, TRUE, default_obj_theme);
+				}
+			}
+			/* Random trap */
+			else if (random & RANDOM_TRAP)
+			{
+				place_trap(wpos, y, x, 0);
+			}
+			else if (object_index)
+			{
+#if 0
+				/* Get local object */
+				object_type *o_ptr = &object_type_body;
+
+				k_allow_special[object_index] = TRUE;
+
+				/* Create the item */
+				object_prep(o_ptr, object_index);
+
+				/* Apply magic (no messages, no artifacts) */
+				apply_magic(wpos, o_ptr, dun_level, FALSE, TRUE, FALSE);
+
+				k_allow_special[object_index] = FALSE;
+
+				drop_near(o_ptr, -1, wpos, y, x);
+#endif	// 0
+			}
+
+			/* Artifact */
+			if (artifact_index)
+			{
+#if 0
+				int I_kind = 0;
+
+				artifact_type *a_ptr = &a_info[artifact_index];
+
+				object_type forge;
+
+				/* Get local object */
+				object_type *q_ptr = &forge;
+
+				a_allow_special[artifact_index] = TRUE;
+
+				/* Wipe the object */
+				object_wipe(q_ptr);
+
+				/* Acquire the "kind" index */
+				I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
+
+				/* Create the artifact */
+				object_prep(q_ptr, I_kind);
+
+				/* Save the name */
+				q_ptr->name1 = artifact_index;
+
+				/* Extract the fields */
+				q_ptr->pval = a_ptr->pval;
+				q_ptr->ac = a_ptr->ac;
+				q_ptr->dd = a_ptr->dd;
+				q_ptr->ds = a_ptr->ds;
+				q_ptr->to_a = a_ptr->to_a;
+				q_ptr->to_h = a_ptr->to_h;
+				q_ptr->to_d = a_ptr->to_d;
+				q_ptr->weight = a_ptr->weight;
+
+				random_artifact_resistance(q_ptr);
+
+				a_info[artifact_index].cur_num = 1;
+
+				a_allow_special[artifact_index] = FALSE;
+
+				/* Drop the artifact */
+				drop_near(q_ptr, -1, y, x);
+#endif	// 0
+			}
+
+#if 0
+			/* Terrain special */
+			if (letter[idx].special == -1)
+			{
+				if (!letter[idx].bx)
+				{
+					letter[idx].bx = x;
+					letter[idx].by = y;
+				}
+				else
+				{
+					c_ptr->special = (letter[idx].by << 8) + letter[idx].bx;
+					cave[letter[idx].by][letter[idx].bx].special = (y << 8) + x;
+				}
+			}
+			else
+			{
+				c_ptr->special = letter[idx].special;
+			}
+#else	// 0
+			/* Terrain special */
+			if (letter[idx].special == -1)
+			{
+#if 0
+				if (!letter[idx].bx)
+				{
+					letter[idx].bx = x;
+					letter[idx].by = y;
+				}
+				else
+				{
+					c_ptr->special = (letter[idx].by << 8) + letter[idx].bx;
+					cave[letter[idx].by][letter[idx].bx].special = (y << 8) + x;
+				}
+#endif	// 0
+			}
+			else
+			{
+				/* MEGAHACK -- let's just make stores available */
+				if (letter[idx].feature == FEAT_SHOP)
+				{
+					if((cs_ptr=AddCS(c_ptr, CS_SHOP)))
+					{
+						/* MEGAHACK till st_info is implemented */
+						int y1, x1;
+						int store = letter[idx].special;
+						if (store > 8) store = 8;
+
+						cs_ptr->sc.omni = store;
+
+#if 0	// not seems to work anyway
+						for (y1 = y - 1; y1 <= y + 1; y1++)
+						{
+							for (x1 = x - 1; x1 <= x + 1; x1++)
+							{
+								/* Get the grid */
+								c_ptr = &zcave[y1][x1];
+
+								/* Illuminate the store */
+								c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+							}
+						}
+#endif	// 0
+					}
+				}
+//				c_ptr->special = letter[idx].special;
+			}
+#endif	// 0
+		}
+		if ((process_dungeon_file_full) && (*xval < x)) *xval = x;
+		(*yval)++;
+
+		return (0);
+	}
+
+	/* Process "W:<command>: ..." -- info for the wilderness */
+	else if (buf[0] == 'W')
+	{
+		return (0);
+#if 0
+		/* Process "W:D:<layout> */
+		/* Layout of the wilderness */
+		if (buf[2] == 'D')
+		{
+			int x;
+			char i;
+
+			/* Acquire the text */
+			char *s = buf+4;
+
+			int y = *yval;
+
+			for(x = 0; x < max_wild_x; x++)
+			{
+				if (1 != sscanf(s + x, "%c", &i)) return (1);
+				wild_map[y][x].feat = wildc2i[(int)i];
+			}
+
+			(*yval)++;
+
+			return (0);
+		}
+		/* Process "M:<plus>:<line>" -- move line lines */
+		else if (buf[2] == 'M')
+		{
+			if (tokenize(buf+4, 2, zz, ':', '/') == 2)
+			{
+				if (atoi(zz[0]))
+				{
+					(*yval) += atoi(zz[1]);
+				}
+				else
+				{
+					(*yval) -= atoi(zz[1]);
+				}
+			}
+			else
+			{
+				return (1);
+			}
+			return (0);
+		}
+		/* Process "W:P:<x>:<y> - starting position in the wilderness */
+		else if (buf[2] == 'P')
+		{
+			if ((p_ptr->wilderness_x == 0) &&
+			    (p_ptr->wilderness_y == 0))
+			{
+				if (tokenize(buf+4, 2, zz, ':', '/') == 2)
+				{
+					p_ptr->wilderness_x = atoi(zz[0]);
+					p_ptr->wilderness_y = atoi(zz[1]);
+				}
+				else
+				{
+					return (1);
+				}
+			}
+
+			return (0);
+		}
+		/* Process "W:E:<dungeon>:<y>:<x> - entrance to the dungeon <dungeon> */
+		else if (buf[2] == 'E')
+		{
+			if (tokenize(buf+4, 3, zz, ':', '/') == 3)
+			{
+				wild_map[atoi(zz[1])][atoi(zz[2])].entrance = 1000 + atoi(zz[0]);
+			}
+			else
+			{
+				return (1);
+			}
+
+			return (0);
+		}
+#endif	// 0
+	}
+
+	/* Process "P:<x>:<y>" -- player position */
+	else if (buf[0] == 'P')
+	{
+#if 0	// It'll be needed very soon maybe
+		if (init_flags & INIT_CREATE_DUNGEON)
+		{
+			if (tokenize(buf+2, 2, zz, ':', '/') == 2)
+			{
+				/* Place player in a quest level */
+				if (p_ptr->inside_quest || (init_flags & INIT_POSITION))
+				{
+					py = atoi(zz[0]);
+					px = atoi(zz[1]); 
+				}
+				/* Place player in the town */
+				else if ((p_ptr->oldpx == 0) && (p_ptr->oldpy == 0))
+				{
+					p_ptr->oldpy = atoi(zz[0]);
+					p_ptr->oldpx = atoi(zz[1]); 
+				}
+			}
+		}
+#else	// 0.. quick Hack
+		if (tokenize(buf+2, 2, zz, ':', '/') == 2)
+		{
+			int yy = atoi(zz[0]);
+			int xx = atoi(zz[1]);
+			new_level_rand_y(wpos, yy);
+			new_level_rand_x(wpos, xx);
+#if 0
+			new_level_down_y(wpos, yy);
+			new_level_down_x(wpos, xx);
+			new_level_up_y(wpos, yy);
+			new_level_up_x(wpos, xx);
+#endif	// 0
+		}
+
+
+#endif	// 0
+		return (0);
+	}
+
+	/* Process "M:<type>:<maximum>" -- set maximum values */
+	else if (buf[0] == 'M')
+	{
+		return (0);
+
+#if	0	// It's very nice code - this should be transmitted to the client, tho
+		if (tokenize(buf+2, 3, zz, ':', '/') >= 2)
+		{
+			/* Maximum towns */
+			if (zz[0][0] == 'T')
+			{
+				max_towns = atoi(zz[1]); 
+			}
+
+			/* Maximum real towns */
+			if (zz[0][0] == 't')
+			{
+				max_real_towns = atoi(zz[1]); 
+			}
+
+			/* Maximum r_idx */
+			else if (zz[0][0] == 'R')
+			{
+				max_r_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum re_idx */
+			else if (zz[0][0] == 'r')
+			{
+				max_re_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum s_idx */
+			else if (zz[0][0] == 'k')
+			{
+				max_s_idx = atoi(zz[1]);
+				if (max_s_idx > MAX_SKILLS) return (1);
+			}
+
+			/* Maximum k_idx */
+			else if (zz[0][0] == 'K')
+			{
+				max_k_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum v_idx */
+			else if (zz[0][0] == 'V')
+			{
+				max_v_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum f_idx */
+			else if (zz[0][0] == 'F')
+			{
+				max_f_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum a_idx */
+			else if (zz[0][0] == 'A')
+			{
+				max_a_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum e_idx */
+			else if (zz[0][0] == 'E')
+			{
+				max_e_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum ra_idx */
+			else if (zz[0][0] == 'Z')
+			{
+				max_ra_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum o_idx */
+			else if (zz[0][0] == 'O')
+			{
+				max_o_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum player types */
+			else if (zz[0][0] == 'P')
+			{
+				if (zz[1][0] == 'R')
+				{
+					max_rp_idx = atoi(zz[2]); 
+				}
+				else if (zz[1][0] == 'S')
+				{
+					max_rmp_idx = atoi(zz[2]); 
+				}
+				else if (zz[1][0] == 'C')
+				{
+					max_c_idx = atoi(zz[2]);
+				}
+				else if (zz[1][0] == 'M')
+				{
+					max_mc_idx = atoi(zz[2]);
+				}
+				else if (zz[1][0] == 'H')
+				{
+					max_bg_idx = atoi(zz[2]); 
+				}
+			}
+
+			/* Maximum m_idx */
+			else if (zz[0][0] == 'M')
+			{
+				max_m_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum tr_idx */
+			else if (zz[0][0] == 'U')
+			{
+				max_t_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum wf_idx */
+			else if (zz[0][0] == 'W')
+			{
+				max_wf_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum ba_idx */
+			else if (zz[0][0] == 'B')
+			{
+				max_ba_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum st_idx */
+			else if (zz[0][0] == 'S')
+			{
+				max_st_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum set_idx */
+			else if (zz[0][0] == 's')
+			{
+				max_set_idx = atoi(zz[1]);
+			}
+
+			/* Maximum ow_idx */
+			else if (zz[0][0] == 'N')
+			{
+				max_ow_idx = atoi(zz[1]); 
+			}
+
+			/* Maximum wilderness x size */
+			else if (zz[0][0] == 'X')
+			{
+				max_wild_x = atoi(zz[1]); 
+			}
+
+			/* Maximum wilderness y size */
+			else if (zz[0][0] == 'Y')
+			{
+				max_wild_y = atoi(zz[1]); 
+			}
+
+			/* Maximum d_idx */
+			else if (zz[0][0] == 'D')
+			{
+				max_d_idx = atoi(zz[1]); 
+			}
+
+			return (0);
+		}
+#endif	// 0
+	}
+
+	/* Failure */
+	return (1);
+}
+
+
+
+
+/*
+ * Helper function for "process_dungeon_file()"
+ */
+#if 0
+static cptr process_dungeon_file_expr(char **sp, char *fp)
+{
+	cptr v;
+
+	char *b;
+	char *s;
+
+	char b1 = '[';
+	char b2 = ']';
+
+	char f = ' ';
+
+	/* Initial */
+	s = (*sp);
+
+	/* Skip spaces */
+	while (isspace(*s)) s++;
+
+	/* Save start */
+	b = s;
+
+	/* Default */
+	v = "?o?o?";
+
+	/* Analyze */
+	if (*s == b1)
+	{
+		const char *p;
+		const char *t;
+
+		/* Skip b1 */
+		s++;
+
+		/* First */
+		t = process_dungeon_file_expr(&s, &f);
+
+		/* Oops */
+		if (!*t)
+		{
+			/* Nothing */
+		}
+
+		/* Function: IOR */
+		else if (streq(t, "IOR"))
+		{
+			v = "0";
+			while (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && !streq(t, "0")) v = "1";
+			}
+		}
+
+		/* Function: AND */
+		else if (streq(t, "AND"))
+		{
+			v = "1";
+			while (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && streq(t, "0")) v = "0";
+			}
+		}
+
+		/* Function: NOT */
+		else if (streq(t, "NOT"))
+		{
+			v = "1";
+			while (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && streq(t, "1")) v = "0";
+			}
+		}
+
+		/* Function: EQU */
+		else if (streq(t, "EQU"))
+		{
+			v = "1";
+			if (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+			}
+			while (*s && (f != b2))
+			{
+				p = t;
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && !streq(p, t)) v = "0";
+			}
+		}
+
+		/* Function: LEQ */
+		else if (streq(t, "LEQ"))
+		{
+			v = "1";
+			if (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+			}
+			while (*s && (f != b2))
+			{
+				p = t;
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && (strcmp(p, t) > 0)) v = "0";
+			}
+		}
+
+		/* Function: GEQ */
+		else if (streq(t, "GEQ"))
+		{
+			v = "1";
+			if (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+			}
+			while (*s && (f != b2))
+			{
+				p = t;
+				t = process_dungeon_file_expr(&s, &f);
+				if (*t && (strcmp(p, t) < 0)) v = "0";
+			}
+		}
+
+		/* Oops */
+		else
+		{
+			while (*s && (f != b2))
+			{
+				t = process_dungeon_file_expr(&s, &f);
+			}
+		}
+
+		/* Verify ending */
+		if (f != b2) v = "?x?x?";
+
+		/* Extract final and Terminate */
+		if ((f = *s) != '\0') *s++ = '\0';
+	}
+
+	/* Other */
+	else
+        {
+                bool text_mode = FALSE;
+
+		/* Accept all printables except spaces and brackets */
+                while (isprint(*s))
+                {
+                        if (*s == '"') text_mode = !text_mode;
+                        if (!text_mode)
+                        {
+                                if (strchr(" []", *s))
+                                        break;
+                        }
+                        else
+                        {
+                                if (strchr("[]", *s))
+                                        break;
+                        }
+
+                        ++s;
+                }
+
+		/* Extract final and Terminate */
+		if ((f = *s) != '\0') *s++ = '\0';
+
+		/* Variable */
+		if (*b == '$')
+		{
+			/* System */
+			if (streq(b+1, "SYS"))
+			{
+				v = ANGBAND_SYS;
+			}
+
+			/* Graphics */
+			else if (streq(b+1, "GRAF"))
+			{
+				v = ANGBAND_GRAF;
+			}
+
+			/* Race */
+			else if (streq(b+1, "RACE"))
+			{
+				v = rp_ptr->title + rp_name;
+			}
+
+			/* Race Mod */
+			else if (streq(b+1, "RACEMOD"))
+			{
+				v = rmp_ptr->title + rmp_name;
+			}
+
+			/* Class */
+			else if (streq(b+1, "CLASS"))
+			{
+				v = cp_ptr->title + c_name;
+			}
+
+			/* Player */
+			else if (streq(b+1, "PLAYER"))
+			{
+				v = player_base;
+			}
+
+			/* Town */
+			else if (streq(b+1, "TOWN"))
+			{
+				strnfmt(pref_tmp_value, 8, "%d", p_ptr->town_num);
+				v = pref_tmp_value;
+			}
+
+			/* Town destroyed */
+			else if (prefix(b+1, "TOWN_DESTROY"))
+                        {                               
+				strnfmt(pref_tmp_value, 8, "%d", town_info[atoi(b + 13)].destroyed);
+				v = pref_tmp_value;
+			}
+
+			/* Current quest number */
+			else if (streq(b+1, "QUEST_NUMBER"))
+			{
+				strnfmt(pref_tmp_value, 8, "%d", p_ptr->inside_quest);
+				v = pref_tmp_value;
+			}
+
+			/* Number of last quest */
+			else if (streq(b+1, "LEAVING_QUEST"))
+			{
+				strnfmt(pref_tmp_value, 8, "%d", leaving_quest);
+				v = pref_tmp_value;
+			}
+
+			/* DAYTIME status */
+			else if (prefix(b+1, "DAYTIME"))
+			{
+				if ((bst(HOUR, turn) >= 6) && (bst(HOUR, turn) < 18))
+					v = "1";
+				else
+					v = "0";
+			}
+
+			/* Quest status */
+			else if (prefix(b+1, "QUEST"))
+			{
+				/* "QUEST" uses a special parameter to determine the number of the quest */
+				if (*(b + 6) != '"')
+					strnfmt(pref_tmp_value, 8, "%d", quest[atoi(b+6)].status);
+				else
+				{
+					char c[80];
+					int i;
+
+					/* Copy it to temp array, so that we can modify it safely */
+					strcpy(c, b + 7);
+
+                                        /* Hunt & shoot the ending " */
+					for (i = 0; (c[i] != '"') && (c[i] != '\0'); i++);
+					if (c[i] == '"') c[i] = '\0';
+					strcpy(pref_tmp_value, "-1");
+					for (i = 0; i < max_q_idx; i++)
+					{
+                                                if (streq(c, quest[i].name))
+                                                {
+							strnfmt(pref_tmp_value, 8, "%d", quest[i].status);
+							break;
+						}
+                                        }
+				}
+				v = pref_tmp_value;
+			}
+
+			/* Variant name */
+			else if (streq(b+1, "VARIANT"))
+			{
+				v = "ToME";
+			}
+
+			/* Wilderness */
+			else if (streq(b+1, "WILDERNESS"))
+			{
+				if (vanilla_town) v = "NONE";
+				else v = "NORMAL";
+			}
+		}
+
+		/* Constant */
+		else
+		{
+			v = b;
+		}
+	}
+
+	/* Save */
+	(*fp) = f;
+
+	/* Save */
+	(*sp) = s;
+
+	/* Result */
+	return (v);
+}
+#endif	// 0
+
+
+//errr process_dungeon_file(cptr name, int *yval, int *xval, int ymax, int xmax, bool init)
+errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int ymax, int xmax, bool init)
+{
+	FILE *fp;
+
+	char buf[1024];
+
+	int num = -1, i;
+
+	errr err = 0;
+
+	bool bypass = FALSE;
+
+	/* Save the start since it ought to be modified */
+	int xmin = *xval;
+
+	cave_type **zcave;
+	zcave=getcave(wpos);
+	if (!zcave) return (-1);	/* maybe SIGSEGV soon anyway */
+
+	if (init)
+	{
+		meta_sleep = TRUE;
+		for (i = 0; i < 255; i++)
+		{
+			letter[i].defined = FALSE;
+			if (i == ' ') letter[i].ok = TRUE;
+			else letter[i].ok = FALSE;
+			letter[i].bx = 0;
+			letter[i].by = 0;
+		}
+	}
+
+	/* Build the filename */
+//	path_build(buf, 1024, ANGBAND_DIR_EDIT, name);
+	path_build(buf, 1024, ANGBAND_DIR_GAME, name);
+
+	/* Grab permission */
+//	safe_setuid_grab();
+
+	/* Open the file */
+	fp = my_fopen(buf, "r");
+
+	/* Drop permission */
+//	safe_setuid_drop();
+
+	/* No such file */
+	if (!fp)
+	{
+		s_printf("Cannot find file %s at %s\n", name, buf);
+		return (-1);
+	}
+
+	/* Process the file */
+	while (0 == my_fgets(fp, buf, 1024))
+	{
+		/* Count lines */
+		num++;
+
+
+		/* Skip "empty" lines */
+		if (!buf[0]) continue;
+
+		/* Skip "blank" lines */
+		if (isspace(buf[0])) continue;
+
+		/* Skip comments */
+		if (buf[0] == '#') continue;
+
+
+		/* Process "?:<expr>" */
+		if ((buf[0] == '?') && (buf[1] == ':'))
+		{
+#if 0	// later
+			char f;
+			cptr v;
+			char *s;
+
+			/* Start */
+			s = buf + 2;
+
+			/* Parse the expr */
+			v = process_dungeon_file_expr(&s, &f);
+
+			/* Set flag */
+			bypass = (streq(v, "0") ? TRUE : FALSE);
+#endif // 0
+
+			/* Continue */
+			continue;
+		}
+
+		/* Apply conditionals */
+		if (bypass) continue;
+
+
+		/* Process "%:<file>" */
+		if (buf[0] == '%')
+		{
+			/* Process that file if allowed */
+			(void)process_dungeon_file(buf + 2, wpos, yval, xval, ymax, xmax, FALSE);
+
+			/* Continue */
+			continue;
+		}
+
+
+		/* Process the line */
+		err = process_dungeon_file_aux(buf, wpos, yval, xval, xmin, ymax, xmax);
+
+		/* Oops */
+		if (err) break;
+	}
+
+
+	/* Error */
+	if (err)
+	{
+		/* Useful error message */
+		s_printf("Error %d in line %d of file '%s'.\n", err, num, name);
+		s_printf("Parsing '%s'\n", buf);
+	}
+
+	/* Close the file */
+	my_fclose(fp);
+
+	/* Result */
+	return (err);
+}

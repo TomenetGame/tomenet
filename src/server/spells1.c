@@ -2950,7 +2950,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* House doors are immune */
-			else if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
+			else if (c_ptr->feat == FEAT_HOME)
 			{
 				/* Message */
 				if (!quiet && (*w_ptr & CAVE_MARK))

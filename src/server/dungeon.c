@@ -1859,9 +1859,10 @@ static bool process_player_end_aux(int Ind)
 			{
 				/* Do nothing */
 			}
-			else if (c_ptr->feat == FEAT_HOME_HEAD){/* rien */}
+			else if (c_ptr->feat == FEAT_HOME){/* rien */}
 			//else if (PRACE_FLAG(PR1_SEMI_WRAITH) && (!p_ptr->wraith_form) && (f_info[cave[py][px].feat].flags1 & FF1_CAN_PASS))
-			else if (!p_ptr->tim_wraith)
+			else if (!p_ptr->tim_wraith &&
+					!p_ptr->master_move_hook)	/* Hack -- builder is safe */
 			{
 				int amt = 1 + ((p_ptr->lev)/5) + p_ptr->mhp / 100;
 

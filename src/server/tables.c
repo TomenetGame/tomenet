@@ -2205,6 +2205,11 @@ player_class class_info[MAX_CLASS] =
                         },
 #endif	// 0
                         {
+                                SKILL_BOOMERANG,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
@@ -2296,7 +2301,7 @@ player_class class_info[MAX_CLASS] =
                         },
                         {
                                 SKILL_MAGIC,
-                                '+', 6000,
+                                '+', 4000,	/* 6000 */
                                 '+', 1000,
                         },
                         {
@@ -2383,9 +2388,14 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
                                 SKILL_MAGIC,
                                 '+', 2000,
-                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_PRAY,

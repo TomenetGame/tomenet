@@ -1381,8 +1381,16 @@ static void player_setup(int Ind, bool new)
 	if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
 
 	if (new) {
+#if 0
 		p_ptr->py=level_down_y(wpos);
 		p_ptr->px=level_down_x(wpos);
+#else	// 0
+		y=level_rand_y(wpos);
+		x=level_rand_x(wpos);
+		p_ptr->py=y;
+		p_ptr->px=x;
+
+#endif	// 0
 	}
 
 	/* Hack be sure the player is inbounds */
@@ -1427,6 +1435,25 @@ static void player_setup(int Ind, bool new)
 #else
 	x = p_ptr->px;
 	y = p_ptr->py;
+
+	/* Don't stack with another player */
+	if (zcave[y][x].m_idx)
+	{
+		for (i = 0; i < 3000; i++)
+		{
+			d = (i + 4) / 10;
+			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
+
+			if (!in_bounds(y, x) || !cave_empty_bold(zcave, y, x)) continue;
+			else
+			{
+				p_ptr->px = x;
+				p_ptr->py = y;
+			}
+
+			break;
+		}
+	}
 #endif	// 0
 
 	/* Update the location's player index */

@@ -132,7 +132,9 @@ void prt_level(int level, int max, int cur, int adv)
 		}
 		else
 		{
-			(void)sprintf(tmp, "%9ld", adv - cur);
+			/* Hack -- display in minus (to avoid confusion chez player) */
+//			(void)sprintf(tmp, "%9ld", adv - cur);
+			(void)sprintf(tmp, "%9ld", cur - adv);
 		}
 	}
 
@@ -1442,10 +1444,10 @@ void display_player(int hist)
 	/* Show location (better description needed XXX) */
 	if (c_cfg.depth_in_feet)
 		put_str(format("You are at %dft of (%d, %d).", p_ptr->wpos.wz * 50, 
-					p_ptr->wpos.wy, p_ptr->wpos.wx), 20, hist ? 10 : 1);
+					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 	else
 		put_str(format("You are at level %d of (%d, %d).", p_ptr->wpos.wz, 
-					p_ptr->wpos.wy, p_ptr->wpos.wx), 20, hist ? 10 : 1);
+					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 }
 
 /*
