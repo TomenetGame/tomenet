@@ -4337,7 +4337,7 @@ bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
  */
 bool mon_hit_trap(int m_idx)
 {
-	player_type *p_ptr(player_type*)NULL;
+	player_type *p_ptr=(player_type*)NULL;
 	monster_type *m_ptr = &m_list[m_idx];
 	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
