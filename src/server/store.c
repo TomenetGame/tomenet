@@ -1463,7 +1463,7 @@ static void store_create(store_type *st_ptr)
 
 			/* Does it pass the rarity check ? */
 			/* Balancing check for other items!!! */
-			if (!magik(chance) || magik(60)) i=0; 
+			if (!magik(chance) || magik(60)) i=0;
 			else{
 				/* Hack -- mass-produce for black-market promised items */
 				if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
@@ -1581,6 +1581,9 @@ static void store_create(store_type *st_ptr)
 
 			/* Hack -- No POTION2 items */
 			if (o_ptr->tval == TV_POTION2) continue;
+			
+			/* Hack -- Less POTION items */
+			if ((o_ptr->tval == TV_POTION) && magik(80)) continue;
 
 			/* Hack -- less athelas */
 			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
@@ -2908,11 +2911,16 @@ void store_examine(int Ind, int item)
 	/* Hack -- get a "sample" object */
 	sell_obj = *o_ptr;
 
-
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
+		/* Describe */
+		msg_format(Ind, "%s\n", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
+
                 switch(o_ptr->tval){
 	        case TV_HAFTED:
     		        msg_print(Ind, "It's a hafted weapon."); break;
@@ -3924,11 +3932,16 @@ void home_examine(int Ind, int item)
 	/* Hack -- get a "sample" object */
 	sell_obj = *o_ptr;
 
-
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
+		/* Describe */
+		msg_format(Ind, "%s\n", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
+
                 switch(o_ptr->tval){
 	        case TV_HAFTED:
     		        msg_print(Ind, "It's a hafted weapon."); break;
@@ -3952,12 +3965,6 @@ void home_examine(int Ind, int item)
 		else msg_print(Ind, "You have no special knowledge about that item.");
 		return;
 	}
-
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-	/* Describe */
-//	msg_format(Ind, "Examining %s...", o_name);
 
 	/* Describe it fully */
 	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");

@@ -1111,10 +1111,16 @@ void do_cmd_observe(int Ind, int item)
 		o_ptr = &o_list[0 - item];
 	}
 
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
 	if (!(o_ptr->ident & ID_MENTAL))
 	{
+		/* Describe */
+		msg_format(Ind, "%s", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "%s", o_name + 77);
+
 		switch(o_ptr->tval){
 		case TV_HAFTED:
 			msg_print(Ind, "It's a hafted weapon."); break;
@@ -1136,13 +1142,6 @@ void do_cmd_observe(int Ind, int item)
 		}
 		return;
 	}
-
-
-	/* Description */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-	/* Describe */
-	/* msg_format(Ind, "Examining %s...", o_name); */
 
 	/* Describe it fully */
 	if (!identify_fully_aux(Ind, o_ptr)) msg_print(Ind, "You see nothing special.");

@@ -3759,7 +3759,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	//        byte            color[400];
 
 	FILE *fff;
-	char    buf[1024];
+	char    buf[1024], o_name[150];
 
 #if 0
 	char file_name[MAX_PATH_LENGTH];
@@ -3785,6 +3785,25 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+        /* Describe the result */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+	fprintf(fff, "%s\n", o_name);
+	if (strlen(o_name) > 77) fprintf(fff, "%s\n", o_name + 77);
+
+        switch(o_ptr->tval){
+        case TV_HAFTED:
+                fprintf(fff, "It's a hafted weapon.\n"); break;
+        case TV_POLEARM:
+                fprintf(fff, "It's a polearm.\n"); break;
+        case TV_SWORD:
+                fprintf(fff, "It's a sword-type weapon.\n"); break;
+        case TV_AXE:
+                fprintf(fff, "It's an axe-type weapon.\n"); break;
+        default:
+                break;
+        }
 
 #if 0
 	/* All white */
