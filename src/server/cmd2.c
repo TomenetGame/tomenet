@@ -2011,6 +2011,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
+					p_ptr->easy_disarm &&
 					c_ptr->special.type == CS_TRAPS &&
 				c_ptr->special.sc.trap.found &&
 				!c_ptr->o_idx &&
@@ -2022,6 +2023,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			}
 
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+					p_ptr->easy_open &&
 				(c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				(c_ptr->feat <= FEAT_DOOR_TAIL))
 			{
@@ -2030,6 +2032,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			}
 			else
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+					p_ptr->easy_open &&
 				(c_ptr->feat >= FEAT_HOME_HEAD) &&
 				(c_ptr->feat <= FEAT_HOME_TAIL)) 
 			{
@@ -2082,7 +2085,7 @@ int do_cmd_run(int Ind, int dir)
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
 		{
 			/* Handle the cfg_door_bump option */
-			if (cfg.door_bump_open)
+			if (cfg.door_bump_open && p_ptr->easy_open)
 			{
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];

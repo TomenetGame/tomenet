@@ -1592,6 +1592,7 @@ static int Handle_listening(int ind)
  *
  * This is a crappy way of doing things....
  */
+#if 0
 static void sync_options(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1622,7 +1623,50 @@ static void sync_options(int Ind)
 	p_ptr->view_bright_lite = p_ptr->options[57];
 	p_ptr->view_granite_lite = p_ptr->options[58];
 	p_ptr->view_special_lite = p_ptr->options[59];
+
+	p_ptr->easy_open = p_ptr->options[59];
+
 }
+#else	// 0
+static void sync_options(int Ind, bool *options)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Do the dirty work */
+	p_ptr->carry_query_flag = options[3];
+	p_ptr->use_old_target = options[4];
+	p_ptr->always_pickup = options[5];
+	p_ptr->stack_force_notes = options[8];
+	p_ptr->stack_force_costs = options[9];
+	p_ptr->find_ignore_stairs = options[16];
+	p_ptr->find_ignore_doors = options[17];
+	p_ptr->find_cut = options[18];
+	p_ptr->find_examine = options[19];
+	p_ptr->disturb_move = options[20];
+	p_ptr->disturb_near = options[21];
+	p_ptr->disturb_panel = options[22];
+	p_ptr->disturb_state = options[23];
+	p_ptr->disturb_minor = options[24];
+	p_ptr->disturb_other = options[25];
+	p_ptr->stack_allow_items = options[30];
+	p_ptr->stack_allow_wands = options[31];
+	p_ptr->view_perma_grids = options[34];
+	p_ptr->view_torch_grids = options[35];
+	p_ptr->view_reduce_lite = options[44];
+	p_ptr->view_reduce_view = options[45];
+	p_ptr->view_yellow_lite = options[56];
+	p_ptr->view_bright_lite = options[57];
+	p_ptr->view_granite_lite = options[58];
+	p_ptr->view_special_lite = options[59];
+
+	p_ptr->easy_open = options[60];
+	p_ptr->easy_disarm = options[61];
+	p_ptr->easy_tunnel = options[62];
+	p_ptr->auto_destroy = options[63];
+	p_ptr->auto_inscribe = options[64];
+
+}
+#endif	// 0
 
 /*
  * A client has requested to start active play.
@@ -1635,6 +1679,7 @@ static int Handle_login(int ind)
 	connection_t *connp = &Conn[ind];
 	player_type *p_ptr;
 	int i;
+	bool options[OPT_MAX];
 
 	if (Id >= MAX_ID)
 	{
@@ -1667,9 +1712,9 @@ static int Handle_login(int ind)
 	p_ptr->version = connp->version;
 
 	/* Copy the client preferences to the player struct */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < OPT_MAX; i++)
 	{
-		p_ptr->options[i] = connp->Client_setup.options[i];
+		options[i] = connp->Client_setup.options[i];
 	}
 
 	for (i = 0; i < TV_MAX; i++)
@@ -1731,7 +1776,7 @@ static int Handle_login(int ind)
 		else p_ptr->use_r_gfx = TRUE;
 	}
 
-	sync_options(NumPlayers + 1);
+	sync_options(NumPlayers + 1, &options);
 
 	GetInd[Id] = NumPlayers + 1;
 
@@ -2308,7 +2353,7 @@ static int Receive_quit(int ind)
 	return 1;
 }
 
-#define RECEIVE_PLAY_SIZE (2*6+64+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
+#define RECEIVE_PLAY_SIZE (2*6+OPT_MAX+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind)
 {
@@ -2396,7 +2441,7 @@ static int Receive_play(int ind)
 #endif	// 0
 
 		/* Read the options */
-		for (i = 0; i < 64; i++)
+		for (i = 0; i < OPT_MAX; i++)
 		{
 			n = Packet_scanf(&connp->r, "%c", &connp->Client_setup.options[i]);
 
@@ -7234,9 +7279,10 @@ static int Receive_options(int ind)
 
 	if (player)
 	{
-		for (i = 0; i < 64; i++)
+		bool options[OPT_MAX];
+		for (i = 0; i < OPT_MAX; i++)
 		{
-			n = Packet_scanf(&connp->r, "%c", &p_ptr->options[i]);
+			n = Packet_scanf(&connp->r, "%c", &options[i]);
 
 			if (n <= 0)
 			{
@@ -7246,7 +7292,7 @@ static int Receive_options(int ind)
 		}
 
 		/* Sync named options */
-		sync_options(player);
+		sync_options(player, &options);
 	}
 
 	return 1;

@@ -17,12 +17,11 @@
 
 
 /*
- * Inscribe the books automatically.
- * TODO: make it a client option.
+ * Allow to use client option auto_inscribe?
  */
 // DGDGDGDG -- na, dont let tehm be lazy
 // Alas, I'm too lazy.. see '/at'	- Jir -
-//#define AUTO_INSCRIBER
+#define AUTO_INSCRIBER
 
 
 /*
@@ -6467,38 +6466,26 @@ s16b inven_carry(int Ind, object_type *o_ptr)
         }
 #endif
 
-        /* Auto-inscriber */
-#ifdef AUTO_INSCRIBER
-#if 0	// not working well with the new skill system
-	if ((o_ptr->tval == p_ptr->mp_ptr->spell_book) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
+	/* Auto-inscriber */
+#ifdef	AUTO_INSCRIBER
+	if (p_ptr->auto_inscribe)
 	{
-		char c[] = "@m ";
-		c[1] = ((p_ptr->pclass == CLASS_PRIEST) || (p_ptr->pclass == CLASS_PALADIN)? 'p':'m');
-		if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
-		c[2] = o_ptr->sval +1 +48;
-		o_ptr->note = quark_add(c);
+		if (is_book(o_ptr) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
+		{
+			char c[] = "@m ";
+			c[2] = o_ptr->sval +1 +48;
+			o_ptr->note = quark_add(c);
+		}
+		if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
+		{
+			if ((o_ptr->tval == TV_SCROLL &&
+						o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+					(o_ptr->tval == TV_ROD &&
+					 o_ptr->sval == SV_ROD_RECALL))
+				o_ptr->note = quark_add("@R");
+		}
 	}
-#else	// 0
-	if (is_book(o_ptr) && (!o_ptr->note) && (can_use(Ind, o_ptr)))
-	{
-		char c[] = "@m ";
-#if 0	// mkey rules!
-		c[1] = ((o_ptr->tval == TV_PRAYER_BOOK) ? 'p':'m');
-		if (o_ptr->tval == TV_FIGHT_BOOK) c[1] = 'n';
-#endif	// 0
-		c[2] = o_ptr->sval +1 +48;
-		o_ptr->note = quark_add(c);
-	}
-#endif	// 0
-#endif
-	if (!o_ptr->note && p_ptr->obj_aware[o_ptr->k_idx])
-	{
-		if ((o_ptr->tval == TV_SCROLL &&
-			o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-			(o_ptr->tval == TV_ROD &&
-			o_ptr->sval == SV_ROD_RECALL))
-			o_ptr->note = quark_add("@R");
-	}
+#endif	// AUTO_INSCRIBER
 			
 
 

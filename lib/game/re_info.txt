@@ -233,6 +233,7 @@ G:*:*
 I:+30:+0d+0:+20:+0:=0
 W:+15:3:+0:%400:B
 F:R_CHAR_m | R_CHAR_j | NEVER_MOVE
+H:MIMIC
 M:FORCE_DEPTH
 S:1_IN_2 | ARROW_2
 T:MF_ALL
@@ -242,6 +243,7 @@ G:*:*
 I:+0:+0d+0:+20:+0:=0
 W:+20:3:+0:%800:B
 F:R_CHAR_m | R_CHAR_j
+H:MIMIC
 M:FORCE_DEPTH
 M:HAS_LITE
 H:DISBELIEVE
@@ -386,6 +388,7 @@ G:*:*
 I:+0:+0d+0:+0:+0:+0
 W:+0:120:+0:+0:A
 H:R_CHAR_! | R_CHAR_? | R_CHAR_= | R_CHAR_> | R_CHAR_<
+H:MIMIC
 
 N:30:Sorceror
 G:*:v

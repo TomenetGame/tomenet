@@ -272,7 +272,8 @@ static cptr r_info_flags3[] =
 static cptr r_info_flags4[] =
 {
 	"SHRIEK",
-	"XXX2X4",	//	"MULTIPLY",
+	"UNMAGIC",		//	"CAUSE_4",
+//	"XXX2X4",	//	"MULTIPLY",
 	"S_ANIMAL",	// "XXX3X4",
 	"ROCKET",	// "XXX4X4",
 	"ARROW_1",	// former 1/2 (arrow)
@@ -299,10 +300,10 @@ static cptr r_info_flags4[] =
 	"BR_PLAS",
 	"BR_WALL",
 	"BR_MANA",
-	"BA_NUKE",	// "XXX5X4",
+	"BR_DISI",	// "XXX8X4"
 	"BR_NUKE",	// "XXX6X4",
-	"BA_CHAO",	// "XXX7X4",
-	"BR_DISI"	// "XXX8X4"
+	"XXX",
+	"XXX",
 };
 
 /*
@@ -325,8 +326,8 @@ static cptr r_info_flags5[] =
 	"BRAIN_SMASH",
 	"CURSE",	//	"CAUSE_1",
 	"XXX",		//	"CAUSE_2",
-	"XXX",		//	"CAUSE_3",
-	"UNMAGIC",		//	"CAUSE_4",
+	"BA_NUKE",	// "XXX5X4",
+	"BA_CHAO",	// "XXX7X4",
 	"BO_ACID",
 	"BO_ELEC",
 	"BO_FIRE",
@@ -3420,7 +3421,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
                 /* Process 'E' for "Body Parts" (one line only) */
                 if (buf[0] == 'E')
 		{
-#if 0
+#if 1
                         int weap, tors, fing, head, arms, legs;
 
 			/* Scan for the other values */

@@ -499,10 +499,10 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 
 	for (i=0;i<INVEN_PACK;i++)
 	{
-		object_type tmp_obj;
-		if (!p_ptr->inventory[i].k_idx) continue;
+		object_type tmp_obj = p_ptr->inventory[i];
+		if (tmp_obj.k_idx) continue;
 		if (randint(100)>chance) continue;
-		if (p_ptr->inventory[i].name1 == ART_POWER) continue;
+		if (tmp_obj.name1 == ART_POWER) continue;
 		if (cfg.anti_arts_horde && (artifact_p(&tmp_obj)) && (!tmp_obj.name3) && (rand_int(100)>9))
 		{
 			char	o_name[160];
@@ -511,7 +511,7 @@ bool do_player_drop_items(int Ind, int chance, bool trap)
 			msg_format(Ind, "%s resists the effect!", o_name);
 			continue;
 		}
-		tmp_obj = p_ptr->inventory[i];
+//		tmp_obj = p_ptr->inventory[i];
 		/* drop carefully */
 		drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		inven_item_increase(Ind, i,-999);

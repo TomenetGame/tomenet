@@ -3009,6 +3009,7 @@ static void calc_bonuses(int Ind)
 	}
 
 	if (get_skill(p_ptr, SKILL_DODGE))
+//	if (!(r_ptr->flags1 & RF1_NEVER_MOVE));		// not for now
 	{
 		/* Get the armor weight */
 		int cur_wgt = armour_weight(p_ptr);

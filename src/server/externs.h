@@ -504,6 +504,7 @@ extern void dungeon(void);
 //extern bool retaliate_item(int Ind, int item, cptr inscription);
 extern void pack_overflow(int Ind);
 extern void set_runlevel(int val);
+extern void store_turnover();
 
 /* files.c */
 extern s16b tokenize(char *buf, s16b num, char **tokens);
@@ -1067,6 +1068,9 @@ extern void ang_sort_swap_distance(int Ind, vptr u, vptr v, int a, int b);
 extern bool ang_sort_comp_distance(int Ind, vptr u, vptr v, int a, int b);
 extern bool ang_sort_comp_value(int Ind, vptr u, vptr v, int a, int b);
 extern void ang_sort_swap_value(int Ind, vptr u, vptr v, int a, int b);
+extern bool ang_sort_comp_tval(int Ind, vptr u, vptr v, int a, int b);
+extern void ang_sort_swap_s16b(int Ind, vptr u, vptr v, int a, int b);
+extern bool ang_sort_comp_mon_lev(int Ind, vptr u, vptr v, int a, int b);
 extern bool target_able(int Ind, int m_idx);
 extern bool target_okay(int Ind);
 extern s16b target_pick(int Ind, int y1, int x1, int dy, int dx);

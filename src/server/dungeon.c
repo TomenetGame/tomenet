@@ -2744,6 +2744,28 @@ void scan_objs(){
 }
 
 
+void store_turnover()
+{
+	int i, n;
+
+	for(i=0;i<numtowns;i++)
+	{
+		/* Maintain each shop (except home and auction house) */
+		for (n = 0; n < MAX_STORES - 2; n++)
+		{
+			/* Maintain */
+			store_maint(&town[i].townstore[n]);
+		}
+
+		/* Sometimes, shuffle the shopkeepers */
+		if (rand_int(STORE_SHUFFLE) == 0)
+		{
+			/* Shuffle a random shop (except home and auction house) */
+			store_shuffle(&town[i].townstore[rand_int(MAX_STORES - 2)]);
+		}
+	}
+}
+
 /*
  * This function handles "global" things such as the stores,
  * day/night in the town, etc.
@@ -2961,24 +2983,7 @@ static void process_various(void)
 	/* Update the stores */
 	if (!(turn % (10L * cfg.store_turns)))
 	{
-		int n;
-
-		for(i=0;i<numtowns;i++)
-		{
-			/* Maintain each shop (except home and auction house) */
-			for (n = 0; n < MAX_STORES - 2; n++)
-			{
-				/* Maintain */
-				store_maint(&town[i].townstore[n]);
-			}
-
-			/* Sometimes, shuffle the shopkeepers */
-			if (rand_int(STORE_SHUFFLE) == 0)
-			{
-				/* Shuffle a random shop (except home and auction house) */
-				store_shuffle(&town[i].townstore[rand_int(MAX_STORES - 2)]);
-			}
-		}
+		store_turnover();
 	}
 
 #if 0

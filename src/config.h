@@ -630,7 +630,13 @@
  * TODO: make this option valid
  */
 #define RANDUNIS
-#define MEGO_CHANCE             18      /* % chances of getting ego monsters */
+/* % chances of getting ego monsters(server/monster2.c) [18]*/
+#define MEGO_CHANCE             18
+
+
+/* Randart rarity (server/object2.c) [80] */
+#define RANDART_RARITY  80
+
 
 /*
  * Size of radius-tables, used to optimize blasts/AI etc. [16]

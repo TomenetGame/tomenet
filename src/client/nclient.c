@@ -546,7 +546,7 @@ int Net_start(int sex, int race, int class)
 	/*		Packet_printf(&wbuf, "%hd", class_extra); */
 			
 	/* Send the options */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < OPT_MAX; i++)
 	{
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
 	}
@@ -3175,7 +3175,7 @@ int Send_options(void)
 	}
 
 	/* Send each option */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < OPT_MAX; i++)
 	{
 		Packet_printf(&wbuf, "%c", Client_setup.options[i]);
 	}

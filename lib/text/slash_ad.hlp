@@ -126,6 +126,10 @@ Note: {worldpos} is interpreted in the following ways.
 /static {worldpos} {shorthand: /sta} 
     Makes the specified level static.
 
+/store ['owner'] {shorthand: /sto}
+    Force all the stores to change their inventory.
+    '/store owner' will change the shopkeepers.
+
 /unstatic {worldpos} {shorthand: /unst} 
     Makes the specified level unstatic.
 

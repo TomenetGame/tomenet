@@ -2582,7 +2582,22 @@ cptr window_flag_desc[32] =
  *
  * Note that bits 28-31 of set 0 are currently unused.
  */
-option_type option_info[] =
+/*
+ * XXX XXX hard-coded in sync_options!
+/*
+   bool *o_var;
+
+   byte	o_norm;
+
+   byte	o_page;
+
+   byte	o_set;	// not used at all
+   byte	o_bit;	// not used at all
+
+   cptr	o_text;
+   cptr	o_desc;
+*/
+option_type option_info[OPT_MAX] =
 {
 	/*** User-Interface ***/
 
@@ -2592,11 +2607,11 @@ option_type option_info[] =
 	{ &quick_messages,	 	FALSE,	1,	0, 1,
 	"quick_messages",		"Activate quick messages" },
 
-	{ &other_query_flag,	FALSE,	1,	0, 2,
-	"other_query_flag",		"Prompt for various information" },
+	{ &other_query_flag,	FALSE,	1,	0, 2,	// XXX
+	"other_query_flag",		"(broken) Prompt for various information" },
 
-	{ &carry_query_flag,	FALSE,	1,	0, 3,
-	"carry_query_flag",		"Prompt before picking things up" },
+	{ &carry_query_flag,	FALSE,	1,	0, 3,	// XXX
+	"carry_query_flag",		"(broken) Prompt before picking things up" },
 
 	{ &use_old_target,		FALSE,	1,	0, 4,
 	"use_old_target",		"Use old target by default" },
@@ -2604,11 +2619,11 @@ option_type option_info[] =
 	{ &always_pickup,		TRUE,	1,	0, 5,
 	"always_pickup",		"Pick things up by default" },
 
-	{ &always_repeat,		TRUE,	1,	0, 6,
-	"always_repeat",		"Repeat obvious commands" },
+	{ &always_repeat,		TRUE,	1,	0, 6,	// XXX
+	"always_repeat",		"(broken) Repeat obvious commands" },
 
-	{ &depth_in_feet,		FALSE,	1,	0, 7,
-	"depth_in_feet",		"Show dungeon level in feet" },
+	{ &depth_in_feet,		FALSE,	1,	0, 7,	// XXX (resurrect me)
+	"depth_in_feet",		"(broken) Show dungeon level in feet" },
 
 	{ &stack_force_notes,	FALSE,	1,	0, 8,
 	"stack_force_notes",	"Merge inscriptions when stacking" },
@@ -2616,17 +2631,17 @@ option_type option_info[] =
 	{ &stack_force_costs,	FALSE,	1,	0, 9,
 	"stack_force_costs",	"Merge discounts when stacking" },
 
-	{ &show_labels,			TRUE,	1,	0, 10,
-	"show_labels",			"Show labels in object listings" },
+	{ &show_labels,			TRUE,	1,	0, 10,	// XXX
+	"show_labels",			"(broken) Show labels in object listings" },
 
 	{ &show_weights,		FALSE,	1,	0, 11,
 	"show_weights",			"Show weights in object listings" },
 
-	{ &show_choices,		FALSE,	1,	0, 12,
-	"show_choices",			"Show choices in certain sub-windows" },
+	{ &show_choices,		FALSE,	1,	0, 12,	// XXX
+	"show_choices",			"(obsolete) Show choices in certain sub-windows" },
 
-	{ &show_details,		FALSE,	1,	0, 13,
-	"show_details",			"Show details in certain sub-windows" },
+	{ &show_details,		FALSE,	1,	0, 13,	// XXX
+	"show_details",			"(obsolete) Show details in certain sub-windows" },
 
 	{ &ring_bell,			TRUE,	1,	0, 14,
 	"ring_bell",			"Audible bell (on errors, etc)" },
@@ -2667,20 +2682,20 @@ option_type option_info[] =
 	{ &disturb_other,		TRUE,	2,	0, 25,
 	"disturb_other",		"Disturb whenever various things happen" },
 
-	{ &alert_hitpoint,		FALSE,	2,	0, 26,
-	"alert_hitpoint",		"Alert user to critical hitpoints" },
+	{ &alert_hitpoint,		FALSE,	2,	0, 26,	// XXX
+	"alert_hitpoint",		"(broken) Alert user to critical hitpoints" },
 
-	{ &alert_failure,		FALSE,	2,	0, 27,
-	"alert_failure",		"Alert user to various failures" },
+	{ &alert_failure,		FALSE,	2,	0, 27,	// XXX
+	"alert_failure",		"(broken) Alert user to various failures" },
 
 
 	/*** Game-Play ***/
 
-	{ &auto_haggle,			FALSE,	3,	1, 0,
-	"auto_haggle",			"Auto-haggle in stores" },
+	{ &auto_haggle,			FALSE,	3,	1, 0,	// XXX
+	"auto_haggle",			"(obsolete) Auto-haggle in stores" },
 
-	{ &auto_scum,			FALSE,	3,	1, 1,
-	"auto_scum",			"Auto-scum for good levels" },
+	{ &auto_scum,			FALSE,	3,	1, 1,	// XXX
+	"auto_scum",			"(obsolete) Auto-scum for good levels" },
 
 	{ &stack_allow_items,	TRUE,	3,	1, 2,
 	"stack_allow_items",	"Allow weapons and armor to stack" },
@@ -2688,11 +2703,11 @@ option_type option_info[] =
 	{ &stack_allow_wands,	TRUE,	3,	1, 3,
 	"stack_allow_wands",	"Allow wands/staffs/rods to stack" },
 
-	{ &expand_look,			FALSE,	3,	1, 4,
-	"expand_look",			"Expand the power of the look command" },
+	{ &expand_look,			FALSE,	3,	1, 4,	// XXX
+	"expand_look",			"(obsolete) Expand the power of the look command" },
 
-	{ &expand_list,			FALSE,	3,	1, 5,
-	"expand_list",			"Expand the power of the list commands" },
+	{ &expand_list,			FALSE,	3,	1, 5,	// XXX
+	"expand_list",			"(obsolete) Expand the power of the list commands" },
 
 	{ &view_perma_grids,	TRUE,	3,	1, 6,
 	"view_perma_grids",		"Map remembers all perma-lit grids" },
@@ -2700,68 +2715,68 @@ option_type option_info[] =
 	{ &view_torch_grids,	FALSE,	3,	1, 7,
 	"view_torch_grids",		"Map remembers all torch-lit grids" },
 
-	{ &dungeon_align,		TRUE,	3,	1, 8,
-	"dungeon_align",		"Generate dungeons with aligned rooms" },
+	{ &dungeon_align,		TRUE,	3,	1, 8,	// XXX
+	"dungeon_align",		"(obsolete) Generate dungeons with aligned rooms" },
 
-	{ &dungeon_stair,		TRUE,	3,	1, 9,
-	"dungeon_stair",		"Generate dungeons with connected stairs" },
+	{ &dungeon_stair,		TRUE,	3,	1, 9,	// XXX
+	"dungeon_stair",		"(obsolete) Generate dungeons with connected stairs" },
 
-	{ &flow_by_sound,		FALSE,	3,	1, 10,
-	"flow_by_sound",		"Monsters chase current location (v.slow)" },
+	{ &flow_by_sound,		FALSE,	3,	1, 10,	// XXX
+	"flow_by_sound",		"(obsolete) Monsters chase current location (v.slow)" },
 
-	{ &flow_by_smell,		FALSE,	3,	1, 11,
-	"flow_by_smell",		"Monsters chase recent locations (v.slow)" },
+	{ &flow_by_smell,		FALSE,	3,	1, 11,	// XXX
+	"flow_by_smell",		"(obsolete) Monsters chase recent locations (v.slow)" },
 
-	{ &track_follow,		FALSE,	3,	1, 12,
-	"track_follow",			"Monsters follow the player (broken)" },
+	{ &track_follow,		FALSE,	3,	1, 12,	// XXX
+	"track_follow",			"(obsolete) Monsters follow the player (broken)" },
 
-	{ &track_target,		FALSE,	3,	1, 13,
-	"track_target",			"Monsters target the player (broken)" },
+	{ &track_target,		FALSE,	3,	1, 13,	// XXX
+	"track_target",			"(obsolete) Monsters target the player (broken)" },
 
-	{ &smart_learn,			FALSE,	3,	1, 14,
-	"smart_learn",			"Monsters learn from their mistakes" },
+	{ &smart_learn,			FALSE,	3,	1, 14,	// XXX
+	"smart_learn",			"(obsolete) Monsters learn from their mistakes" },
 
-	{ &smart_cheat,			FALSE,	3,	1, 15,
-	"smart_cheat",			"Monsters exploit players weaknesses" },
+	{ &smart_cheat,			FALSE,	3,	1, 15,	// XXX
+	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
 
 
 	/*** Efficiency ***/
 
-	{ &view_reduce_lite,	FALSE,	4,	1, 16,
+	{ &view_reduce_lite,	FALSE,	4,	1, 16,	// (44)
 	"view_reduce_lite",		"Reduce lite-radius when running" },
 
 	{ &view_reduce_view,	FALSE,	4,	1, 17,
 	"view_reduce_view",		"Reduce view-radius in town" },
 
-	{ &avoid_abort,			FALSE,	4,	1, 18,
-	"avoid_abort",			"Avoid checking for user abort" },
+	{ &avoid_abort,			FALSE,	4,	1, 18,	// XXX
+	"avoid_abort",			"(obsolete) Avoid checking for user abort" },
 
-	{ &avoid_other,			FALSE,	4,	1, 19,
-	"avoid_other",			"Avoid processing special colors" },
+	{ &avoid_other,			FALSE,	4,	1, 19,	// XXX
+	"avoid_other",			"(obsolete) Avoid processing special colors" },
 
-	{ &flush_failure,		TRUE,	4,	1, 20,
-	"flush_failure",		"Flush input on various failures" },
+	{ &flush_failure,		TRUE,	4,	1, 20,	// XXX (resurrect me?)
+	"flush_failure",		"(obsolete) Flush input on various failures" },
 
-	{ &flush_disturb,		FALSE,	4,	1, 21,
-	"flush_disturb",		"Flush input whenever disturbed" },
+	{ &flush_disturb,		FALSE,	4,	1, 21,	// XXX
+	"flush_disturb",		"(obsolete) Flush input whenever disturbed" },
 
-	{ &flush_command,		FALSE,	4,	1, 22,
-	"flush_command",		"Flush input before every command" },
+	{ &flush_command,		FALSE,	4,	1, 22,	// XXX
+	"flush_command",		"(obsolete) Flush input before every command" },
 
-	{ &fresh_before,		TRUE,	4,	1, 23,
-	"fresh_before",			"Flush output before every command" },
+	{ &fresh_before,		TRUE,	4,	1, 23,	// XXX
+	"fresh_before",			"(obsolete) Flush output before every command" },
 
-	{ &fresh_after,			FALSE,	4,	1, 24,
-	"fresh_after",			"Flush output after every command" },
+	{ &fresh_after,			FALSE,	4,	1, 24,	// XXX
+	"fresh_after",			"(obsolete) Flush output after every command" },
 
-	{ &fresh_message,		FALSE,	4,	1, 25,
-	"fresh_message",		"Flush output after every message" },
+	{ &fresh_message,		FALSE,	4,	1, 25,	// XXX
+	"fresh_message",		"(obsolete) Flush output after every message" },
 
-	{ &compress_savefile,	TRUE,	4,	1, 26,
-	"compress_savefile",	"Compress messages in savefiles" },
+	{ &compress_savefile,	TRUE,	4,	1, 26,	// XXX
+	"compress_savefile",	"(obsolete) Compress messages in savefiles" },
 
-	{ &hilite_player,		FALSE,	4,	1, 27,
-	"hilite_player",		"Hilite the player with the cursor" },
+	{ &hilite_player,		FALSE,	4,	1, 27,	// XXX (resurrect me)
+	"hilite_player",		"(broken) Hilite the player with the cursor" },
 
 	{ &view_yellow_lite,	FALSE,	4,	1, 28,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
@@ -2772,9 +2787,26 @@ option_type option_info[] =
 	{ &view_granite_lite,	FALSE,	4,	1, 30,
 	"view_granite_lite",	"Use special colors for wall grids (slow)" },
 
-	{ &view_special_lite,	FALSE,	4,	1, 31,
+	{ &view_special_lite,	FALSE,	4,	1, 31,	// (59)
 	"view_special_lite",	"Use special colors for floor grids (slow)" },
 
+
+	/*** TomeNET additions ***/
+
+	{ &easy_open,			TRUE,	5,	9, 60,
+	"easy_open",			"Automatically open doors" },
+
+	{ &easy_disarm,			FALSE,	5,	9, 61,
+	"easy_disarm",			"Automatically disarm traps" },
+
+	{ &easy_tunnel,			FALSE,	5,	9, 62,
+	"easy_tunnel",			"Automatically tunnel walls" },
+
+	{ &auto_destroy,		FALSE,	5,	9, 63,
+	"auto_destroy",			"(broken) No query to destroy known worthless items" },
+
+	{ &auto_inscribe,		FALSE,	5,	9, 64,
+	"auto_inscribe",		"Automatically inscribe books and so on" },
 
 	/*** End of Table ***/
 
@@ -2786,13 +2818,13 @@ option_type option_info[] =
 cptr monster_spells4[32] =
 {
   "Shriek",
-  "XXX2",
+  "Negate magic",
   "XXX3",
-  "XXX4",
+  "Rocket",
   "Arrow",
-  "Arrow",
-  "Arrow",
-  "Arrow",
+  "Mighty Arrow",
+  "XXX7",
+  "XXX8",
   "Breath Acid",
   "Breath Lightning",
   "Breath Fire",
@@ -2813,8 +2845,8 @@ cptr monster_spells4[32] =
   "Breath Plasma",
   "Breath Force",
   "Breath Mana",
-  "XXX",
-  "XXX",
+  "Breath Disintegration",
+  "Breath Toxic Waste",
   "XXX",
   "XXX",
 };
@@ -2837,9 +2869,9 @@ cptr monster_spells5[32] =
   "Mind Blast",
   "Brain Smash",
   "Cause Light Wounds",
-  "Cause Serious Wounds",
-  "Cause Critical Wounds",
-  "Cause Mortal Wounds",
+  "XXX",
+  "Ball of Toxic Waste",
+  "Ball of Chaos",
   "Bolt of Acid",
   "Bolt of Lightning",
   "Bolt of Fire",

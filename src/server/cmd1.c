@@ -2545,10 +2545,13 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Notice things */
 		else
 		{
+			bool autotunnel = FALSE;
+
 			/* Rubble */
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
-				msg_print(Ind, "There is rubble blocking your way.");
+				if (p_ptr->easy_tunnel) autotunnel = TRUE;
+				else msg_print(Ind, "There is rubble blocking your way.");
 			}
 
 			/* Closed doors */
@@ -2561,7 +2564,8 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Tree */
 			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
 			{
-				msg_print(Ind, "There is a tree blocking your way.");
+				if (p_ptr->easy_tunnel) autotunnel = TRUE;
+				else msg_print(Ind, "There is a tree blocking your way.");
 			}
 			else if (c_ptr->feat == FEAT_SIGN)
 			{
@@ -2575,9 +2579,12 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* Wall (or secret door) */
 			else
 			{
-				msg_print(Ind, "There is a wall blocking your way.");
+				if (p_ptr->easy_tunnel) autotunnel = TRUE;
+				else msg_print(Ind, "There is a wall blocking your way.");
 			}
 			csfunc[c_ptr->special.type].activate(c_ptr->special.sc.ptr, Ind);
+
+			if (autotunnel) do_cmd_tunnel(Ind, dir);
 		}
 		return;
 		} /* 'if (!myhome)' ends here */

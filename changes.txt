@@ -1275,8 +1275,24 @@ To find the latest change quickly, search ==== :)
   ('#', '|', '@', '\'' keys can be obsolete now.)
 - mangband.hlp is renamed to tomenet.hlp
 - monster mimic (lazily) implemented.
+- player drops her/his bones when dying :)
+- equipment slots are restricted according to the player form (mimic).
+  (maybe rebalancement is needed)
+- admin command: /store
+- scroll of Cancellation added (you know for what)
 [B] cheap items still had {on sale} tags even they are {0% off}.
 
+10/07/2002 (Jir)
+- mimic in dragon form can eat firestone.
+- p_ptr->options[] is obsoleted.
+- client option saving/loading.
+- new client options: easy_open, easy_disarm, easy_tunnel, auto_inscribe
+- monster spells rearranged.
+- ang_sort hooks; object/unique lists are displayed sorted.
+[H] underground lakes can have various size/shape.
+[B] monster pit often had 'holes' (build_type6 - still sometimes)
+[B] monster mimics could be (mimic), mana-charged, projector ego types.
+[B] '\"' didn't transmit option changes to the server.
 
 
 ** [B] stands for Bugfix.
@@ -1349,8 +1365,10 @@ below this line are the unfixed bugs known:
 [B] Window refreshing fails sometimes, requiring ^R.
 [B] ghost gets 'The weight of your armor emcumbers your movement' msg.
 [B] isolated space can be generated (generate.c)
+    (esp. random vaults tend to have no entrance)
 [B] stairs/doors tend to disappear on NO_MAP floors
 [B] cannot specify some monster names in master summoning (&35)
+[B] invisibility/wraithform linger on even after item/form is removed.
 
 *below are bugs repoorted but not confirmed*
 (nothing so far)
@@ -1449,6 +1467,7 @@ memo and questions:
 - remove the hack in client which swaps sval/xtra1 ;(
 - obsolete c-tables.c
 - send flags for each spell, so that we can obsolete do_cmd_cast_aux etc.
+- integrate p_ptr->fruit_bat into p_ptr->body_monster
 
 [speeding the server up]
 # tomenet.server never seems to take more than 10% of CPU time. why? (sched.c?)
@@ -1512,8 +1531,9 @@ memo and questions:
   + LITE/RING/AMULET shouldn't be EASY_KNOWN? (for ego/randarts)
   + upgrade some of arts, so that they'll be treasured.
   + more tools
+  + generic mimic rings (like 'D', 'Z') / ego rings
 - anticheeze:
-  + (nothing so far)
+  + take a log when dropping/picking up gold.
 - players:
   + thirst?
   + Asclep's '/spell' should be applicable to wands/rods?
@@ -1549,9 +1569,11 @@ memo and questions:
   + client option for verbosity;
     msg_print(Ind, importance, "Vlad was here!");
   + options ('=') should be revised.
+  + auto-retaliator should be able to handle non-item actions.
 - stores:
   + allow to eXamine items in the store inventory.
   + one player shouldn't stay more than 1 minutes in a store?
+  + stores should buy {cursed} potions/scrolls/wands etc?
 - misc:
   + some measures to 'cheezy' admins (at least some warnings)
   + some places that renders special services(eg. curing, id, *ID*, enchant etc)
@@ -1621,7 +1643,7 @@ memo and questions:
   + auto_disarm_trap
   + scroll_mergin (x, y)
   + auto_destroy
-  + contents of sub-windows
+  + auto_inscribe
 
 [lunatic ones]
 - 3-D gfx and full-audio support

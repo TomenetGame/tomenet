@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-666
+671
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -674,5 +674,10 @@ Flirting with incubus drives you mad while sleeping with him drives you sad.
 Flirting with succubus drives you mad while sleeping with her drives you sad.
 They say that some skills demand perfection, some useful from the first step.
 They say that a mortal had better just avoid touching Nazgul rings.
+How comes those priests avoid to visit chapels nowadays?
+They say that generally a snake doesn't have arms.
+Ever tried to cancel your engagement rings?
+They say that a {rfirestone {wis not for you.
+They say that a tripe is to a dog as a firestone is to a dragon.
 They say that 
 They say that 

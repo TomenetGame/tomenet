@@ -1599,15 +1599,20 @@ bool make_attack_spell(int Ind, int m_idx)
 //			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
 			if (rad > srad) 
 			{
-				/* Remove inappropriate spells -
-				 * 'direct' spells should be removed this way also */
+				/* Remove inappropriate spells */
 				f4 &= ~(RF4_RADIUS_SPELLS);
 				f5 &= ~(RF5_RADIUS_SPELLS);
 //				f6 &= RF6_INT_MASK;
 
-				/* No spells left */
-				if (!f4 && !f5 && !f6) return (FALSE);
 			}
+
+			/* remove 'direct' spells */
+			f4 &= ~(RF4_DIRECT_MASK);
+			f5 &= ~(RF5_DIRECT_MASK);
+			f6 &= ~(RF6_DIRECT_MASK);
+
+			/* No spells left */
+			if (!f4 && !f5 && !f6) return (FALSE);
 		}
 #endif	// INDIRECT_FREQ
 	}
@@ -1755,7 +1760,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF4_SHRIEK */
 		case 96+0:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s makes a high pitched shriek.", m_name);
@@ -1763,12 +1767,26 @@ bool make_attack_spell(int Ind, int m_idx)
 			break;
 		}
 
-		/* RF4_XXX2X4 */
-		/* (used to be RF4_MULTIPLY .. not a spell) */
+		/* RF4_UNMAGIC */
 		case 96+1:
 		{
+			disturb(Ind, 1, 0);
+#if 0	// oops, this cannot be 'magic' ;)
+			if (monst_check_antimagic(Ind, m_idx)) break;
+#endif	// 0
+//			if (blind) msg_format(Ind, "%^s mumbles coldly.", m_name); else
+			msg_format(Ind, "%^s mumbles coldly.", m_name);
+			if (rand_int(120) < p_ptr->skill_sav)
+			{
+				msg_print(Ind, "You resist the effects!");
+			}
+			else if (!unmagic(Ind))
+			{
+				msg_print(Ind, "You are unaffected!");
+			}
 			break;
 		}
+
 #if 0
 		/* RF4_XXX3X4 */
 		case 96+2:
@@ -2144,14 +2162,14 @@ bool make_attack_spell(int Ind, int m_idx)
 		}
 
 		 /* RF4_XXX5X4 */
-		 /* RF4_BA_NUKE */
+		 /* RF4_BR_DISI */
 	 case 96+28:
 		 {
 			 disturb(Ind, 1, 0);
-			 if (blind) msg_format(Ind, "%^s mumbles.", m_name);
-			 else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
-			 breath(Ind, m_idx, GF_NUKE, (rlev + damroll(10, 6)), y, x, 2);
-			 update_smart_learn(m_idx, DRS_POIS);
+			 if (blind) msg_format(Ind, "%^s breathes.", m_name);
+			 else msg_format(Ind, "%^s breathes disintegration.", m_name);
+			 breath(Ind, m_idx, GF_DISINTEGRATE,
+				 ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
 			 break;
 		 }
 		 
@@ -2169,28 +2187,16 @@ bool make_attack_spell(int Ind, int m_idx)
 		 }
 		 
 		 /* RF4_XXX7X4 */
-		 /* RF4_BA_CHAO */
 	 case 96+30:
-		 {
-			 disturb(Ind, 1, 0);
-			 if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
-                         else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
-			 breath(Ind, m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), y, x, 4);
-			 update_smart_learn(m_idx, DRS_CHAOS);
-			 break;
-		 }
+		{
+			break;
+		}
 		 
 		 /* RF4_XXX8X4 -> Disintegration breath! */
-		 /* RF4_BA_DISI */
 	 case 96+31:
-		 {
-			 disturb(Ind, 1, 0);
-			 if (blind) msg_format(Ind, "%^s breathes.", m_name);
-			 else msg_format(Ind, "%^s breathes disintegration.", m_name);
-			 breath(Ind, m_idx, GF_DISINTEGRATE,
-				 ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
-			 break;
-		 }
+		{
+			break;
+		}
 		 
 
 
@@ -2313,7 +2319,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_DRAIN_MANA */
 		case 128+9:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (p_ptr->csp)
 			{
@@ -2372,7 +2377,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_MIND_BLAST */
 		case 128+10:
 		{
-			if (!direct) break;
 			disturb(Ind, 1, 0);
 			if (!seen)
 			{
@@ -2410,7 +2414,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_BRAIN_SMASH */
 		case 128+11:
 		{
-			if (!direct) break;
 			disturb(Ind, 1, 0);
 			if (!seen)
 			{
@@ -2451,7 +2454,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			/* rebalance might be needed? */
 			int power = rlev / 2 + randint(rlev);
-			if (!direct) break;
 			disturb(Ind, 1, 0);
 			if (power < 15)
 			{
@@ -2597,32 +2599,30 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			break;
 		}
-		/* RF5_XXX4X4? */
+
+		/* RF5_BA_NUKE */
 		case 128+14:
-		{
-			break;
-		}
-		/* RF5_XXX4X4? */
-		/* RF5_UNMAGIC (former CAUSE4) */
+		 {
+			 if (monst_check_antimagic(Ind, m_idx)) break;
+			 disturb(Ind, 1, 0);
+			 if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			 else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
+			 breath(Ind, m_idx, GF_NUKE, (rlev + damroll(10, 6)), y, x, 2);
+			 update_smart_learn(m_idx, DRS_POIS);
+			 break;
+		 }
+
+		/* RF5_BA_CHAO */
 		case 128+15:
-		{
-			if (!direct) break;
-			disturb(Ind, 1, 0);
-#if 0	// oops, this cannot be 'magic' ;)
-			if (monst_check_antimagic(Ind, m_idx)) break;
-#endif	// 0
-//			if (blind) msg_format(Ind, "%^s mumbles coldly.", m_name); else
-			msg_format(Ind, "%^s mumbles coldly.", m_name);
-			if (rand_int(120) < p_ptr->skill_sav)
-			{
-				msg_print(Ind, "You resist the effects!");
-			}
-			else if (!unmagic(Ind))
-			{
-				msg_print(Ind, "You are unaffected!");
-			}
-			break;
-		}
+		 {
+			 if (monst_check_antimagic(Ind, m_idx)) break;
+			 disturb(Ind, 1, 0);
+			 if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
+                         else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
+			 breath(Ind, m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), y, x, 4);
+			 update_smart_learn(m_idx, DRS_CHAOS);
+			 break;
+		 }
 
 		/* RF5_BO_ACID */
 		case 128+16:
@@ -2760,7 +2760,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_SCARE */
 		case 128+27:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and you hear scary noises.", m_name);
@@ -2784,7 +2783,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_BLIND */
 		case 128+28:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -2808,7 +2806,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_CONF */
 		case 128+29:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and you hear puzzling noises.", m_name);
@@ -2832,7 +2829,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_SLOW */
 		case 128+30:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s drains power from your muscles!", m_name);
@@ -2855,7 +2851,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF5_HOLD */
 		case 128+31:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3087,7 +3082,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_TELE_TO */
 		case 160+8:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
@@ -3104,7 +3098,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_TELE_AWAY */
 		case 160+9:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
@@ -3121,7 +3114,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_TELE_LEVEL */
 		case 160+10:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles strangely.", m_name);
@@ -3161,7 +3153,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_DARKNESS */
 		case 160+12:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3173,7 +3164,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_TRAPS */
 		case 160+13:
 		{
-			if (!direct) break;
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s mumbles, and then cackles evilly.", m_name);
@@ -3185,7 +3175,6 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF6_FORGET */
 		case 160+14:
 		{
-			if (!direct) break;
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s tries to blank your mind.", m_name);
 

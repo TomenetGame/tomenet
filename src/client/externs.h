@@ -215,6 +215,12 @@ extern bool view_yellow_lite;
 extern bool view_bright_lite;
 extern bool view_granite_lite;
 extern bool view_special_lite;
+//bool dummy_option;	/* for options not used in client */
+extern bool easy_open;
+extern bool easy_disarm;
+extern bool easy_tunnel;
+extern bool auto_destroy;
+extern bool auto_inscribe;
 
 extern u32b cfg_game_port;
 

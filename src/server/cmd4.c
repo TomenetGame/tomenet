@@ -233,7 +233,8 @@ void do_cmd_check_artifacts(int Ind, int line)
 void do_cmd_check_uniques(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
-	int k;
+	monster_race *r_ptr;
+	int k, l, total = 0;
 
 	FILE *fff;
 
@@ -241,6 +242,7 @@ void do_cmd_check_uniques(int Ind, int line)
 
 	player_type *q_ptr = Players[Ind];
 	bool admin = is_admin(q_ptr);
+	s16b idx[MAX_R_IDX];
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -248,6 +250,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
 
+#if 0
 	/* Scan the monster races */
 	for (k = 1; k < MAX_R_IDX-1; k++)
 	{
@@ -330,6 +333,114 @@ void do_cmd_check_uniques(int Ind, int line)
 
 		}
 	}
+#endif	// 0
+
+	/* Scan the monster races */
+	for (k = 1; k < MAX_R_IDX-1; k++)
+	{
+		r_ptr = &r_info[k];
+
+		/* Only print Uniques */
+		if (r_ptr->flags1 & RF1_UNIQUE)
+		{
+			/* Only display known uniques */
+//			if (r_ptr->r_sights && mon_allowed(r_ptr))
+			if (r_ptr->r_sights)
+			{
+				idx[total++] = k;
+			}
+		}
+	}
+
+	if (total)
+	{
+		/* Setup the sorter */
+		ang_sort_comp = ang_sort_comp_mon_lev;
+		ang_sort_swap = ang_sort_swap_s16b;
+
+		/* Sort the monsters according to value */
+		ang_sort(Ind, &idx, NULL, total);
+
+		/* for each unique */
+		for (l = total - 1; l >= 0; l--)
+		{
+			int i, j = 0;
+			byte ok = FALSE;
+			bool full = FALSE;
+
+			k = idx[l];
+			r_ptr = &r_info[k];
+
+			/* Output color byte */
+			fprintf(fff, "%c", 'w');
+
+			/* Hack -- Show the ID for admin */
+			if (admin) fprintf(fff, "(%4d) ", k);
+
+			/* Format message */
+			//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+			fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
+
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				player_type *q_ptr = Players[i];
+
+				if (q_ptr->r_killed[k])
+				{
+					//						byte attr = 'U';
+					//						fprintf(fff, "        %s\n", q_ptr->name);
+					if (!ok)
+					{
+						fprintf(fff, ":\n");
+						fprintf(fff, "%c", 'B');
+						ok = TRUE;
+					}
+#if 0
+					/* Print self in green */
+					if (Ind == k) attr = 'G';
+
+					/* Print party members in blue */
+					else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+
+					/* Print hostile players in red */
+					else if (check_hostile(Ind, i)) attr = 'r';
+
+					/* Output color byte */
+					fprintf(fff, "%c", attr);
+#endif
+
+					fprintf(fff, "  %-16.16s", q_ptr->name);
+					j++;
+					full = FALSE;
+					if (j == 4)
+					{
+						fprintf(fff, "\n");
+						fprintf(fff, "%c", 'B');
+						j = 0;
+						full = TRUE;
+					}
+				}
+			}
+			//				if (!ok) fprintf(fff, "       Nobody\n");
+			if (!ok)
+			{
+				/* Output color byte */
+				//					fprintf(fff, "%c", 'y');
+
+				if (r_ptr->r_tkills) fprintf(fff, " Somebody.");
+				else fprintf(fff, " Nobody.");
+			}
+			/* Terminate line */
+			/*                              fprintf(fff, "\n");*/
+			if (!full) fprintf(fff, "\n");
+		}
+	}
+	else
+	{
+		fprintf(fff, "%c", 'w');
+		fprintf(fff, "No uniques are witnessed so far.\n");
+	}
+
 
 	/* Close the file */
 	my_fclose(fff);
@@ -692,7 +803,7 @@ void do_cmd_check_server_settings(int Ind)
 //	fprintf(fff, "%c", 'G');
 
 	fprintf(fff, "%s\n", longVersion);
-	fprintf(fff, "======== Server Settings ========\n");
+	fprintf(fff, "======== Server Settings ========\n\n");
 
 	/* Output color byte */
 //	fprintf(fff, "%c", 'w');
@@ -709,8 +820,12 @@ void do_cmd_check_server_settings(int Ind)
 	if (!cfg.maximize)
 		fprintf(fff, "This server is *NOT* maximized!\n");
 
+	/* TODO: reflect client options too */
 	if (cfg.door_bump_open & BUMP_OPEN_DOOR)
 		fprintf(fff, "You'll try to open a door by bumping onto it.\n");
+	else
+		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
+
 	if (cfg.door_bump_open & BUMP_OPEN_HOUSE)
 		fprintf(fff, "You can 'walk through' your house door.\n");
 	if (cfg.door_bump_open & BUMP_OPEN_TRAP)
@@ -818,10 +933,7 @@ void do_cmd_check_server_settings(int Ind)
 	/* trivial */
 	if (cfg.public_rfe)
 //		fprintf(fff, "You can see RFE files via '&62' command.\n");
-		fprintf(fff, "You can see RFE files via '/less' command.\n");
-
-	if (!cfg.door_bump_open)
-		fprintf(fff, "You should use 'o' command explicitly to open a door.\n");
+		fprintf(fff, "You can see RFE files via '~e' command.\n");
 
 	/* Administrative */
 	if (is_admin(p_ptr))
@@ -905,6 +1017,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	}
 
 	/* for each monster race */
+	/* XXX I'm not sure if this list should be sorted.. */
 	for (i = 1; i <= MAX_R_IDX; i++)
 	{
 		r_ptr = &r_info[i];
@@ -1096,6 +1209,10 @@ void do_cmd_show_houses(int Ind)
 /*
  * Tell players of the known items, using temporary file. - Jir -
  */
+/*
+ * NOTE: we don't show the flavor of already-identified objects
+ * since flavors are the same for all the player.
+ */
 void do_cmd_show_known_item_letter(int Ind, char *letter)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1104,8 +1221,9 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	object_kind	*k_ptr;
 	object_type forge;
 	char o_name[80];
-	bool shown = FALSE, all = FALSE;
+	bool all = FALSE;
 	bool admin = is_admin(p_ptr);
+	s16b idx[MAX_K_IDX];
 
 	FILE *fff;
 
@@ -1132,6 +1250,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		fprintf(fff, "======== Objects known ========\n");
 	}
 
+#if 0
 	/* for each object kind */
 	for (i = 1; i <= MAX_K_IDX; i++)
 	{
@@ -1160,16 +1279,6 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		total++;
 		shown = TRUE;
 	}
-
-	if (!shown) fprintf(fff, "Nothing so far.\n");
-	else fprintf(fff, "\nTotal : %d\n", total);
-
-	fprintf(fff, "\n");
-
-	if (letter) fprintf(fff, "======== Objects tried (%c) ========\n", *letter);
-	else fprintf(fff, "======== Objects tried ========\n");
-
-	shown = FALSE;
 
 	/* for each object kind */
 	for (i = 1; i <= MAX_K_IDX; i++)
@@ -1200,11 +1309,113 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		total++;
 		shown = TRUE;
 	}
+#endif	// 0
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+//		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (!p_ptr->obj_aware[i]) continue;
+
+		idx[total++] = i;
+	}
+
+	if (total)
+	{
+		/* Setup the sorter */
+		ang_sort_comp = ang_sort_comp_tval;
+		ang_sort_swap = ang_sort_swap_s16b;
+
+		/* Sort the item list according to value */
+		ang_sort(Ind, &idx, NULL, total);
+
+		/* for each object kind */
+		for (i = total - 1; i >= 0; i--)
+		{
+			k_ptr = &k_info[idx[i]];
+
+			/* Create the object */
+			invcopy(&forge, idx[i]);
+
+			/* Describe the artifact */
+			object_desc_store(Ind, o_name, &forge, FALSE, 0);
+
+			/* Hack -- remove {0} */
+			j = strlen(o_name);
+			o_name[j-4] = '\0';
+
+			if (admin) fprintf(fff, "(%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+
+			fprintf(fff, "%s\n", o_name);
+		}
+	}
+
+
+	if (!total) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
 
 	fprintf(fff, "\n");
 
-	if (!shown) fprintf(fff, "Nothing so far.\n");
-//	else fprintf(fff, "\nTotal : %d\n", total);
+	if (!all) fprintf(fff, "======== Objects tried (%c) ========\n", *letter);
+	else fprintf(fff, "======== Objects tried ========\n");
+
+	total = 0;
+
+	/* for each object kind */
+	for (i = 1; i <= MAX_K_IDX; i++)
+	{
+		k_ptr = &k_info[i];
+		if (!k_ptr->name) continue;
+		if (!all && *letter != k_ptr->d_char) continue;	// k_char ?
+//		if (!object_easy_know(i)) continue;
+//		if (!k_ptr->easy_know) continue;
+		if (!k_ptr->has_flavor) continue;
+		if (p_ptr->obj_aware[i]) continue;
+		if (!p_ptr->obj_tried[i]) continue;
+
+		idx[total++] = i;
+	}
+
+	if (total)
+	{
+		/* Setup the sorter */
+		ang_sort_comp = ang_sort_comp_tval;
+		ang_sort_swap = ang_sort_swap_s16b;
+
+		/* Sort the item list according to value */
+		ang_sort(Ind, &idx, NULL, total);
+
+		/* for each object kind */
+		for (i = total - 1; i >= 0; i--)
+		{
+			k_ptr = &k_info[idx[i]];
+
+			/* Create the object */
+			invcopy(&forge, idx[i]);
+
+			/* Describe the artifact */
+			object_desc(Ind, o_name, &forge, FALSE, 0);
+
+			/* Hack -- remove {0} */
+			j = strlen(o_name);
+			o_name[j-4] = '\0';
+
+			if (admin) fprintf(fff, "(%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+
+			fprintf(fff, "%s\n", o_name);
+		}
+	}
+
+
+//	fprintf(fff, "\n");
+
+	if (!total) fprintf(fff, "Nothing so far.\n");
+	else fprintf(fff, "\nTotal : %d\n", total);
 
 	/* Close the file */
 	my_fclose(fff);

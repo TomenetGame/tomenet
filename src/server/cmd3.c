@@ -219,8 +219,50 @@ static bool item_tester_hook_wear(int Ind, int slot)
 {
 	player_type *p_ptr = Players[Ind];
 	
+	/*
+	 * Hack -- restrictions by forms
+	 * I'm not quite sure if wielding 6 rings and 3 weps should be allowed..
+	 */
+	if (p_ptr->body_monster)
+	{
+		monster_race    *r_ptr = &r_info[p_ptr->body_monster];
+
+		switch(slot)
+		{
+			case INVEN_WIELD:
+				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+				break;
+			case INVEN_BOW:
+				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
+				break;
+			case INVEN_LEFT:
+				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+				break;
+			case INVEN_RIGHT:
+				if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+				break;
+			case INVEN_NECK:
+			case INVEN_HEAD:
+				if (r_ptr->body_parts[BODY_HEAD]) return (TRUE);
+				break;
+			case INVEN_LITE:
+			case INVEN_BODY:
+			case INVEN_OUTER:
+			case INVEN_AMMO:
+				if (r_ptr->body_parts[BODY_TORSO]) return (TRUE);
+				break;
+			case INVEN_ARM:
+			case INVEN_HANDS:
+			case INVEN_TOOL:
+				if (r_ptr->body_parts[BODY_ARMS]) return (TRUE);
+				break;
+			case INVEN_FEET:
+				if (r_ptr->body_parts[BODY_LEGS]) return (TRUE);
+				break;
+		}
+	}
 	/* Restrict fruit bats */
-	if (p_ptr->fruit_bat)
+	else if (p_ptr->fruit_bat)
 	{
 		switch(slot)
 		{
@@ -234,6 +276,7 @@ static bool item_tester_hook_wear(int Ind, int slot)
 				return TRUE;
 		}
 	}
+#if 0
 	else if (r_info[p_ptr->body_monster].flags3 & RF3_DRAGON)
 	{
 	  switch(slot)
@@ -248,6 +291,7 @@ static bool item_tester_hook_wear(int Ind, int slot)
 	      return TRUE;
 	    }
 	}
+#endif	// 0
 	else
 	{
 		/* Check for a usable slot */

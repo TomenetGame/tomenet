@@ -459,7 +459,7 @@ struct monster_race
 
 	monster_blow blow[4];	/* Up to four blows per round */
 
-//	byte body_parts[BODY_MAX];	/* To help to decide what to use when body changing */
+	byte body_parts[BODY_MAX];	/* To help to decide what to use when body changing */
 
 	s16b level;				/* Level of creature */
 	byte rarity;			/* Rarity of creature */
@@ -1001,7 +1001,7 @@ typedef struct client_setup_t client_setup_t;
 
 struct client_setup_t
 {
-	bool options[64];
+	bool options[OPT_MAX];
 
 	byte u_attr[TV_MAX];
 	char u_char[TV_MAX];
@@ -1747,7 +1747,8 @@ struct player_type
 	bool trap_ident[MAX_T_IDX];       /* do we know the name */
 //	s16b trap_known[MAX_T_IDX];       /* how well is this trap known */
 
-	bool options[64];	/* Player's options */
+//	bool options[64];	/* Player's options */
+//	bool options[OPT_MAX];	/* obsolete */
 	byte d_attr[MAX_K_IDX];
 	char d_char[MAX_K_IDX];
 	byte f_attr[MAX_F_IDX];
@@ -1782,6 +1783,13 @@ struct player_type
 	bool view_bright_lite;
 	bool view_granite_lite;
 	bool view_special_lite;
+
+	/* TomeNET additions -- consider using macro or bitfield */
+	bool easy_open;
+	bool easy_disarm;
+	bool easy_tunnel;
+	bool auto_destroy;
+	bool auto_inscribe;
 
 	s16b max_panel_rows;
 	s16b max_panel_cols;

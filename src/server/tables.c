@@ -4198,25 +4198,28 @@ cptr player_title[MAX_CLASS][PY_MAX_LEVEL/10] =
  * of the main screen into any interested windows.
  */
 
+/*
+ * Mimic 'spells' -- they should be integrated to the realm spells
+ */
 magic_type innate_powers[96] = 
 {
 /* 0, mana, fail, 0 */
 // RF4_SHRIEK			0x00000001	/* Shriek for help */
   {0, 1, 0, 0},
-// RF4_XXX2			0x00000002	/* (?) */
+// RF4_UNMAGIC			0x00000002	/* (?) */
   {0, 0, 0, 0},
-// RF4_XXX3			0x00000004	/* (?) */
+// (S_ANIMAL) RF4_XXX3			0x00000004	/* (?) */
   {0, 0, 0, 0},
-// RF4_XXX4			0x00000008	/* (?) */
+// RF4_ROCKET			0x00000008	/* (?) */
   {0, 0, 0, 0},
 // RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
   {0, 2, 10, 0},
 // RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
   {0, 2, 12, 0},
-// RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
-  {0, 3, 15, 0},
-// RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
-  {0, 4, 18, 0},
+// XXX (RF4_ARROW_3)			0x00000040	/* Fire missiles (light) */
+  {0, 0, 0, 0},
+// XXX (RF4_ARROW_4)			0x00000080	/* Fire missiles (heavy) */
+  {0, 0, 0, 0},
 // RF4_BR_ACID			0x00000100	/* Breathe Acid */
   {0, 15, 20, 0},
 // RF4_BR_ELEC			0x00000200	/* Breathe Elec */
@@ -4257,13 +4260,13 @@ magic_type innate_powers[96] =
   {0, 30, 60, 0},
 // RF4_BR_MANA			0x08000000	/* Breathe Mana */
   {0, 60, 70, 0},
-// RF4_XXX5			0x10000000
+// RF4_BR_DISI			0x10000000
   {0, 0, 0, 0},
-// RF4_XXX6			0x20000000
+// RF4_BR_NUKE			0x20000000
   {0, 0, 0, 0},
-// RF4_XXX7			0x40000000
+// 0x40000000
   {0, 0, 0, 0},
-// RF4_XXX8			0x80000000
+// 0x80000000
   {0, 0, 0, 0},
 
 /*
@@ -4296,11 +4299,11 @@ magic_type innate_powers[96] =
 // RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
   {0, 3, 20, 0},
 // RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
-  {0, 8, 50, 0},
-// RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
-  {0, 10, 70, 0},
-// RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
-  {0, 20, 90, 0},
+  {0, 0, 0, 0},
+// RF5_BA_NUKE			0x00004000	/* Cause Critical Wound */
+  {0, 0, 0, 0},
+// RF5_BA_CHAO			0x00008000	/* Cause Mortal Wound */
+  {0, 0, 0, 0},
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
   {0, 7, 13, 0},
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
@@ -4339,7 +4342,7 @@ magic_type innate_powers[96] =
  */
 // RF6_HASTE			0x00000001	/* Speed self */
   {0, 50, 60, 0},
-// RF6_XXX1			0x00000002	/* Speed a lot (?) */
+// RF6_HAND_DOOM		0x00000002	/* Speed a lot (?) */
   {0, 0, 0, 0},
 // RF6_HEAL			0x00000004	/* Heal self */
   {0, 80, 50, 0},

@@ -220,7 +220,7 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 #define WATERY_OFFSET		19
 #define WATERY_BELT_CHANCE	100 /* chance of river generated on watery belt */
 
-#define DUN_MAZE_FACTOR		2000	/* depth/DUN_MAZE_FACTOR chance of maze */
+#define DUN_MAZE_FACTOR		1000	/* depth/DUN_MAZE_FACTOR chance of maze */
 
 /*
  * chance of getting 'smaller' floor, in percent.	[20]
@@ -952,7 +952,9 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
  */
 static void lake_level(struct worldpos *wpos)
 {
-	int y1, x1, y, x, k, t, n;
+	int y1, x1, y, x, k, t, n, rad;
+	int h1, h2, h3, h4;
+	bool distort = FALSE;
 	cave_type *c_ptr;
 
 	cave_type **zcave;
@@ -970,19 +972,32 @@ static void lake_level(struct worldpos *wpos)
 
 		if (c_ptr->feat != FEAT_WATER) continue;
 
-		/* Big area of affect */
-		for (y = (y1 - 15); y <= (y1 + 15); y++)
+		rad = rand_range(8, 18);
+		distort = magik(50 - rad * 2);
+
+		if (distort)
 		{
-			for (x = (x1 - 15); x <= (x1 + 15); x++)
+			/* Make a random metric */
+			h1 = randint(32) - 16;
+			h2 = randint(16);
+			h3 = randint(32);
+			h4 = randint(32) - 16;
+		}
+
+		/* Big area of affect */
+		for (y = (y1 - rad); y <= (y1 + rad); y++)
+		{
+			for (x = (x1 - rad); x <= (x1 + rad); x++)
 			{
 				/* Skip illegal grids */
 				if (!in_bounds(y, x)) continue;
 
 				/* Extract the distance */
-				k = distance(y1, x1, y, x);
+				k = distort ? dist2(y1, x1, y, x, h1, h2, h3, h4) :
+					distance(y1, x1, y, x);
 
 				/* Stay in the circle of death */
-				if (k >= 16) continue;
+				if (k > rad) continue;
 
 				/* Delete the monster (if any) */
 //				delete_monster(wpos, y, x);
@@ -2826,7 +2841,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
 		get_mon_num_hook = vault_aux_jelly;
 	}
 
-	else if (tmp < 40)	// 50 ... we need mimics
+	else if (tmp < 45)	// 50 ... we need mimics
 	{
 		name = "treasure";
 		get_mon_num_hook = vault_aux_treasure;
@@ -2983,10 +2998,11 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0)
  *
  * Note that "monster pits" will never contain "unique" monsters.
  */
+#define BUILD_6_MONSTER_TABLE	32
 //static void build_type6(struct worldpos *wpos, int yval, int xval)
 static void build_type6(struct worldpos *wpos, int by0, int bx0)
 {
-	int			tmp, what[16];
+	int			tmp, what[BUILD_6_MONSTER_TABLE];
 
 	int			i, j, y, x, y1, x1, y2, x2, dun_level, xval, yval;
 
@@ -3279,7 +3295,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 
 
 	/* Pick some monster types */
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < BUILD_6_MONSTER_TABLE; i++)
 	{
 		/* Get a (hard) monster type */
 		what[i] = get_mon_num(getlevel(wpos) + 10);
@@ -3302,10 +3318,10 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0)
 
 	/* XXX XXX XXX */
 	/* Sort the entries */
-	for (i = 0; i < 16 - 1; i++)
+	for (i = 0; i < BUILD_6_MONSTER_TABLE - 1; i++)
 	{
 		/* Sort the entries */
-		for (j = 0; j < 16 - 1; j++)
+		for (j = 0; j < BUILD_6_MONSTER_TABLE - 1; j++)
 		{
 			int i1 = j;
 			int i2 = j + 1;
@@ -5655,7 +5671,7 @@ static void add_outer_wall(worldpos *wpos, int x, int y, int light, int x1, int 
  *
  * Used to build crypts
  */
-static int dist2(int x1, int y1, int x2, int y2,
+int dist2(int x1, int y1, int x2, int y2,
 	int h1, int h2, int h3, int h4)
 {
 	int dx, dy;
@@ -6139,6 +6155,7 @@ void dig(maze_row *maze, int y, int x, int d)
 }
 
 
+/* methinks it's not always necessary that the entire level is 'maze'? */
 static void generate_maze(worldpos *wpos, int corridor)
 {
 	int i, j, d;
@@ -7159,7 +7176,7 @@ static void cave_gen(struct worldpos *wpos)
 		magik(WATERY_BELT_CHANCE) : magik(DUN_RIVER_CHANCE - glev * DUN_RIVER_REDUCE / 100));
 
 //	maze = (rand_int(DUN_MAZE_FACTOR) < glev - 10 && !watery) ? TRUE : FALSE;
-	maze = (rand_int(DUN_MAZE_FACTOR) < glev - 10) ? TRUE : FALSE;
+	maze = (!cavern && rand_int(DUN_MAZE_FACTOR) < glev - 10) ? TRUE : FALSE;
 
 	/* Actual maximum number of rooms on this level */
 /*	dun->row_rooms = MAX_HGT / BLOCK_HGT;

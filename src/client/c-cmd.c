@@ -564,8 +564,10 @@ void process_command()
 			do_cmd_options();
 			break;
 
-			case '\"':
-				cmd_load_pref();
+		case '\"':
+			cmd_load_pref();
+			/* Resend options to server */
+			Send_options();
 			break;
 
 		case '%':

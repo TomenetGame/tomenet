@@ -68,3 +68,8 @@ Y:view_bright_lite
 X:view_granite_lite
 Y:view_special_lite
 
+Y:easy_open
+X:easy_disarm
+X:easy_tunnel
+X:auto_destroy
+X:auto_inscribe

@@ -4156,9 +4156,24 @@ void player_death(int Ind)
 		/* Turn him into a ghost */
 		p_ptr->ghost = 1;
 
+		/* Hack -- drop bones :) */
+		for (i = 0; i < 4; i++)
+		{
+			object_type	forge;
+			o_ptr = &forge;
+
+			invcopy(o_ptr, lookup_kind(TV_SKELETON,
+						i ? SV_BROKEN_BONE : SV_BROKEN_SKULL));
+			object_known(o_ptr);
+			object_aware(Ind, o_ptr);
+			o_ptr->owner = p_ptr->id;
+			o_ptr->level = 0;
+			o_ptr->note = quark_add(format("#of %s", p_ptr->name));
+			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+
 		/* Teleport him */
-		/* XXX space-time ancor or NO_TELE can hinder this..
-		 * should they be bypassed? */
+		/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
 		teleport_player(Ind, 200);
 
 		/* Give him his hit points back */
@@ -5225,6 +5240,73 @@ void ang_sort_swap_value(int Ind, vptr u, vptr v, int a, int b)
 	x[a] = x[b];
 	x[b] = temp;
 }
+
+
+/*
+ * Sort a list of r_idx by level(depth).	- Jir -
+ *
+ * Pointer "v" should not point to anything (it isn't used, anyway).
+ */
+bool ang_sort_comp_mon_lev(int Ind, vptr u, vptr v, int a, int b)
+{
+	s16b *r_idx = (s16b*)u;
+	s32b va, vb;
+	monster_race *ra_ptr = &r_info[r_idx[a]];
+	monster_race *rb_ptr = &r_info[r_idx[b]];
+
+	if (ra_ptr->name && rb_ptr->name)
+	{
+		va = ra_ptr->level * 3000 + r_idx[a];
+		vb = rb_ptr->level * 3000 + r_idx[b];
+
+		return (va >= vb);
+	}
+
+	if (ra_ptr->name)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+/* namely. */
+void ang_sort_swap_s16b(int Ind, vptr u, vptr v, int a, int b)
+{
+	s16b *x = (s16b*)u;
+	s16b temp;
+
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
+}
+
+/*
+ * Compare the  from k_idx.	- Jir -
+ *
+ * Pointer "v" should not point to anything (it isn't used, anyway).
+ */
+bool ang_sort_comp_tval(int Ind, vptr u, vptr v, int a, int b)
+{
+	s16b *k_idx = (s16b*)u;
+	s32b va, vb;
+	object_kind *ka_ptr = &k_info[k_idx[a]];
+	object_kind *kb_ptr = &k_info[k_idx[b]];
+
+	if (ka_ptr->tval && kb_ptr->tval)
+	{
+		va = ka_ptr->tval * 256 + ka_ptr->sval;
+		vb = kb_ptr->tval * 256 + kb_ptr->sval;
+
+		return (va >= vb);
+	}
+
+	if (ka_ptr->tval)
+		return FALSE;
+
+	return TRUE;
+}
+
+
 
 	
 

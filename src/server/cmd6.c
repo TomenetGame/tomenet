@@ -61,6 +61,7 @@
 
 
 /* Quick hack to make use of firestones */
+/* Basically not cumulative */
 void do_tank(int Ind, int power)
 {
 	player_type *p_ptr = Players[Ind];
@@ -68,33 +69,33 @@ void do_tank(int Ind, int power)
 	switch (i)
 	{
 		case 1:
-			set_adrenaline(Ind, p_ptr->adrenaline + power);
+			set_adrenaline(Ind, power + randint(power));
 			break;
 		case 2:
-			set_biofeedback(Ind, p_ptr->biofeedback + power);
+			set_biofeedback(Ind, power + randint(power));
 			break;
 		case 3:
 		case 4:
-			set_tim_esp(Ind, p_ptr->tim_esp + power);
+			set_tim_esp(Ind, power + randint(power));
 			break;
 		case 5:
-			set_prob_travel(Ind, p_ptr->prob_travel + power);
+			set_prob_travel(Ind, power + randint(power));
 			break;
 		case 6:
-			set_furry(Ind, p_ptr->furry + power);
+			set_furry(Ind, power + randint(power));
 			break;
 		case 7:
-			set_fast(Ind, p_ptr->fast + power);
+			set_fast(Ind, power + randint(power));
 			break;
 		case 8:
-			set_shero(Ind, p_ptr->shero + power);
+			set_shero(Ind, power + randint(power));
 			break;
 		case 9:
-			set_oppose_acid(Ind, p_ptr->oppose_acid + randint(power));
-			set_oppose_elec(Ind, p_ptr->oppose_elec + randint(power));
-			set_oppose_fire(Ind, p_ptr->oppose_fire + randint(power));
-			set_oppose_cold(Ind, p_ptr->oppose_cold + randint(power));
-			set_oppose_pois(Ind, p_ptr->oppose_pois + randint(power));
+			set_oppose_acid(Ind, power + randint(power));
+			set_oppose_elec(Ind, power + randint(power));
+			set_oppose_fire(Ind, power + randint(power));
+			set_oppose_cold(Ind, power + randint(power));
+			set_oppose_pois(Ind, power + randint(power));
 			break;
 	}
 }
@@ -452,49 +453,105 @@ void do_cmd_eat_food(int Ind, int item)
 	/* Firestones */
 	else if (o_ptr->tval == TV_FIRESTONE)
 	{
-		/* Analyse the firestone */
-		switch (o_ptr->sval)
+		bool dragon = FALSE;
+		if (p_ptr->body_monster)
 		{
-			case SV_FIRE_SMALL:
+			monster_race *r_ptr = &r_info[p_ptr->body_monster];
+			if (strchr("dD", r_ptr->d_char))
 			{
-//				if (p_ptr->ctp < p_ptr->mtp)
-				if (p_ptr->prace == RACE_DRIDER)
+				/* Analyse the firestone */
+				switch (o_ptr->sval)
 				{
-					msg_print(Ind, "Grrrmfff ...");
-#if 0
-					p_ptr->ctp += 4;
-					if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp = p_ptr->mtp;
-#endif	// 0
-					do_tank(Ind, 20);
+					case SV_FIRE_SMALL:
+					{
+						if (p_ptr->csp < p_ptr->msp)
+						{
+							msg_print(Ind, "Grrrmfff ...");
 
-					ident = TRUE;
+							p_ptr->csp += 50;
+							if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+							p_ptr->csp_frac = 0;
+
+							/* Recalculate mana */
+							p_ptr->window |= (PW_PLAYER);
+							p_ptr->redraw |= (PR_MANA);
+
+							ident = TRUE;
+						}
+						else dragon = TRUE;
+						break;
+					}
+
+					case SV_FIRESTONE:
+					{
+						if (p_ptr->csp < p_ptr->msp)
+						{
+							msg_print(Ind, "Grrrrmmmmmmfffffff ...");
+
+							p_ptr->csp += 300;
+							if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+							p_ptr->csp_frac = 0;
+
+							/* Recalculate mana */
+							p_ptr->window |= (PW_PLAYER);
+							p_ptr->redraw |= (PR_MANA);
+
+							ident = TRUE;
+						}
+						else dragon = TRUE;
+
+						break;
+					}
 				}
-//				else msg_print(Ind, "You can't eat more firestones, you vomit!");
-				else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
-
-				break;
 			}
+		}
 
-			case SV_FIRESTONE:
+		/* Analyse the firestone */
+		if (!ident)
+		{
+			if (p_ptr->prace == RACE_DRIDER || dragon)
 			{
-//				if (p_ptr->ctp < p_ptr->mtp)
-				if (p_ptr->prace == RACE_DRIDER)
+				switch (o_ptr->sval)
 				{
-					msg_print(Ind, "Grrrrmmmmmmfffffff ...");
+					case SV_FIRE_SMALL:
+					{
+						//				if (p_ptr->ctp < p_ptr->mtp)
+						{
+							msg_print(Ind, "Grrrmfff ...");
 #if 0
-					p_ptr->ctp += 10;
-					if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp=p_ptr->mtp;
+							p_ptr->ctp += 4;
+							if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp = p_ptr->mtp;
+#endif	// 0
+							do_tank(Ind, 10);
+
+							ident = TRUE;
+						}
+						//				else msg_print(Ind, "You can't eat more firestones, you vomit!");
+
+						break;
+					}
+
+					case SV_FIRESTONE:
+					{
+						//				if (p_ptr->ctp < p_ptr->mtp)
+						{
+							msg_print(Ind, "Grrrrmmmmmmfffffff ...");
+#if 0
+							p_ptr->ctp += 10;
+							if (p_ptr->ctp > p_ptr->mtp) p_ptr->ctp=p_ptr->mtp;
 #endif	// 0
 
-					do_tank(Ind, 50);
-					do_tank(Ind, 50);	// twice
+							do_tank(Ind, 25);
+							do_tank(Ind, 25);	// twice
 
-					ident = TRUE;
+							ident = TRUE;
+						}
+
+						break;
+					}
 				}
-				else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
-
-				break;
 			}
+			else msg_print(Ind, "Yikes, you cannot eat this, you vomit!");
 		}
 	}
 
@@ -1437,6 +1494,74 @@ bool curse_an_item(int Ind, int slot)
 }
 #endif	// 0
 
+/*
+ * Cancel magic in inventory.		- Jir -
+ * Crappy, isn't it?  But it can..
+ *
+ * 0x01 - Affect the equipments too
+ * 0x02 - Turn scrolls/potions/wands/rods/staves into 'Nothing' kind
+ */
+static bool do_cancellation(int Ind, int flags)
+{
+	player_type *p_ptr = Players[Ind];
+	int i;
+	bool ident = TRUE;
+
+	for (i = 0; i < ((flags & 0x01) ? INVEN_TOTAL : INVEN_WIELD); i++)
+	{
+		object_type *o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->k_idx) continue;
+		if (artifact_p(o_ptr)) continue;
+		if (o_ptr->tval==TV_KEY) continue;
+		if (o_ptr->tval==TV_FOOD) continue;
+		if (o_ptr->tval==TV_FLASK) continue;
+		if (o_ptr->name2)
+		{
+			ident = TRUE;
+			o_ptr->name2 = o_ptr->name3 = 0;
+		}
+		if (o_ptr->timeout)
+		{
+			ident = TRUE;
+			o_ptr->timeout = 0;
+		}
+		if (o_ptr->pval > 0)
+		{
+			ident = TRUE;
+			o_ptr->pval = 0;
+		}
+		if (o_ptr->bpval)
+		{
+			ident = TRUE;
+			o_ptr->bpval = 0;
+		}
+		if (o_ptr->to_h > 0)
+		{
+			ident = TRUE;
+			o_ptr->to_h = 0;
+		}
+		if (o_ptr->to_d > 0)
+		{
+			ident = TRUE;
+			o_ptr->to_d = 0;
+		}
+		if (o_ptr->to_a > 0)
+		{
+			ident = TRUE;
+			o_ptr->to_a = 0;
+		}
+#if 0	// Not so useful anyway
+		if (flags & 0x02)
+		{
+			switch (o_ptr->tval)
+			{
+			}
+		}
+#endif	// 0
+	}
+
+	return (ident);
+}
 
 /*
  * Read a scroll (from the pack or floor).
@@ -2052,6 +2177,13 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This scroll seems to be blank.");
 				ident = TRUE;
 				keep = TRUE;
+				break;
+			}
+
+			case SV_SCROLL_CANCELLATION:
+			{
+				ident = do_cancellation(Ind, 0);
+				if (ident) msg_print(Ind, "You feel your backpack less worthy.");
 				break;
 			}
 

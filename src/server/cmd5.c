@@ -5464,7 +5464,8 @@ static void do_mimic_power(int Ind, int power)
 	}
 
 	/* Spell failure chance -- Hack, use the same stats as magery*/
-	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
+//	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
+	chance = spell_chance(Ind, REALM_MIMIC, s_ptr);
 
 	/* Failed spell */
 	if (rand_int(100) < chance)

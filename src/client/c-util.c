@@ -1,9 +1,8 @@
+/* $Id$ */
 #include "angband.h"
 
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
-
-#define EVIL_TEST /* evil test */
 
 static bool after_macro = FALSE;
 static bool parse_macro = FALSE;
@@ -953,6 +952,10 @@ void prt(cptr str, int row, int col)
  */
 
 /* APD -- added private so passwords will not be displayed. */
+/*
+ * Jir -- added history.
+ * TODO: cursor editing
+ */
 bool askfor_aux(char *buf, int len, char private)
 {
 	int y, x;
@@ -963,6 +966,13 @@ bool askfor_aux(char *buf, int len, char private)
 
 	bool done = FALSE;
 
+	/* Hack -- if short, don't use history */
+	bool nohist = private || len < 20;
+	byte cur_hist = hist_end;
+
+
+	/* Handle wrapping */
+	if (cur_hist >= MSG_HISTORY_MAX) cur_hist = 0;
 
 	/* Locate the cursor */
 	Term_locate(&x, &y);
@@ -988,6 +998,8 @@ bool askfor_aux(char *buf, int len, char private)
 	Term_erase(x, y, len);
 	Term_putstr(x, y, -1, TERM_YELLOW, buf);
 
+	if (!nohist) strcpy(message_history[hist_end], buf);
+
 
 	/* Process input */
 	while (!done)
@@ -1002,6 +1014,7 @@ bool askfor_aux(char *buf, int len, char private)
 		switch (i)
 		{
 			case ESCAPE:
+			case KTRL('X'):
 			k = 0;
 			done = TRUE;
 			break;
@@ -1016,6 +1029,43 @@ bool askfor_aux(char *buf, int len, char private)
 			case '\010':
 			if (k > 0) k--;
 			break;
+
+			case KTRL('U'):
+			k = 0;
+			break;
+
+			case KTRL('N'):
+			if (nohist) break;
+			cur_hist++;
+			if (!hist_looped && hist_end < cur_hist) cur_hist = 0;
+			strcpy(buf, message_history[cur_hist]);
+			k = strlen(buf);
+			break;
+
+			case KTRL('P'):
+			if (nohist) break;
+			if (cur_hist) cur_hist--;
+			else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
+			strcpy(buf, message_history[cur_hist]);
+			k = strlen(buf);
+			break;
+
+			case KTRL('W'):
+			{
+				bool tail = FALSE;
+				for (--k; k>=0; k--)
+				{
+					if ((buf[k] == ' ' || buf[k] == ':' || buf[k] == ',') && tail)
+					{
+						/* leave the last separator */
+						k++;
+						break;
+					}
+					tail = TRUE;
+				}
+				if (k < 0) k = 0;
+				break;
+			}
 
 			default:
 			if ((k < len) && (isprint(i)))
@@ -1051,6 +1101,18 @@ bool askfor_aux(char *buf, int len, char private)
 
 	/* Aborted */
 	if (i == ESCAPE) return (FALSE);
+
+	/* Success */
+	if (nohist) return (TRUE);
+
+	/* Add this to the history */
+	strcpy(message_history[hist_end], buf);
+	hist_end++;
+	if (hist_end >= MSG_HISTORY_MAX)
+	{
+		hist_end = 0; 
+		hist_looped = TRUE;
+	}
 
 	/* Success */
 	return (TRUE);
@@ -2038,11 +2100,6 @@ void interact_macros(void)
 
 	char tmp[160], buf[1024];
 
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is icky */
-	screen_icky = TRUE;
-#endif
-
 	/* Save screen */
 	Term_save();
 
@@ -2232,11 +2289,6 @@ void interact_macros(void)
 	/* Reload screen */
 	Term_load();
 
-#ifndef EVIL_TEST /* evil test */
-	/* Screen is no longer icky */
-	screen_icky = FALSE;
-#endif
-
 	/* Flush the queue */
 	Flush_queue();
 }
@@ -2328,6 +2380,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			case 'y':
 			case 'Y':
 			case '6':
+			case 'l':
 			{
 				(*option_info[opt[k]].o_var) = TRUE;
 				Client_setup.options[opt[k]] = TRUE;
@@ -2338,6 +2391,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			case 'n':
 			case 'N':
 			case '4':
+			case 'h':
 			{
 				(*option_info[opt[k]].o_var) = FALSE;
 				Client_setup.options[opt[k]] = FALSE;
@@ -2544,6 +2598,97 @@ static void do_cmd_options_win(void)
 }
 
 
+static errr options_dump(cptr fname)
+{
+	int i, j;
+
+	FILE *fff;
+
+	char buf[1024];
+
+	
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
+
+	/* Append to the file */
+	fff = my_fopen(buf, "a");
+
+	/* Failure */
+	if (!fff) return (-1);
+
+
+	/* Skip space */
+	fprintf(fff, "\n\n");
+
+	/* Start dumping */
+	fprintf(fff, "# Automatic option dump\n\n");
+
+	/* Dump them */
+	for (i = 0; i < OPT_MAX; i++)
+	{
+		/* Require a real option */
+		if (!option_info[i].o_desc) continue;
+
+		/* Comment */
+		fprintf(fff, "# Option '%s'\n", option_info[i].o_desc);
+
+		/* Dump the option */
+//		if (op_ptr->opt[i])
+		if (*option_info[i].o_var)
+		{
+			fprintf(fff, "Y:%s\n", option_info[i].o_text);
+		}
+		else
+		{
+			fprintf(fff, "X:%s\n", option_info[i].o_text);
+		}
+
+		/* End the option */
+		fprintf(fff, "\n");
+	}
+
+	/* Dump window flags */
+//	for (i = 1; i < ANGBAND_TERM_MAX; i++)
+	for (i = 1; i < 8; i++)
+	{
+		/* Require a real window */
+//		if (!angband_term[i]) continue;
+		if (!ang_term_name[i]) continue;
+
+		/* Check each flag */
+		for (j = 0; j < 16; j++)
+		{
+			/* Require a real flag */
+			if (!window_flag_desc[j]) continue;
+
+			/* Dump the flag */
+			if (window_flag[i] & (1L << j))
+			{
+				/* Comment */
+				fprintf(fff, "# Window '%s', Flag '%s'\n",
+						ang_term_name[i], window_flag_desc[j]);
+
+				fprintf(fff, "W:%d:%d\n", i, j);
+
+				/* Skip a line */
+				fprintf(fff, "\n");
+			}
+			else
+			{
+//				fprintf(fff, "W:%d:%d:0\n", i, j);
+			}
+		}
+	}
+
+	/* Finish dumping */
+	fprintf(fff, "\n\n\n\n");
+
+	/* Close */
+	my_fclose(fff);
+
+	/* Success */
+	return (0);
+}
 
 
 /*
@@ -2555,12 +2700,8 @@ static void do_cmd_options_win(void)
 void do_cmd_options(void)
 {
 	int k;
+	char tmp[1024];
 
-
-#ifndef EVIL_TEST /* evil test */
-	/* Enter "icky" mode */
-	screen_icky = TRUE;
-#endif
 
 	/* Save the screen */
 	Term_save();
@@ -2580,12 +2721,16 @@ void do_cmd_options(void)
 		prt("(2) Disturbance Options", 5, 5);
 		prt("(3) Game-Play Options", 6, 5);
 		prt("(4) Efficiency Options", 7, 5);
+		prt("(5) TomeNET Additional Options", 8, 5);
+
+		prt("(9) Save Options", 10, 5);
+		prt("(0) Load Options", 11, 5);
 
 		/* Window flags */
-		prt("(W) Window flags", 9, 5);
+		prt("(W) Window flags", 13, 5);
 
 		/* Prompt */
-		prt("Command: ", 11, 0);
+		prt("Command: ", 15, 0);
 
 		/* Get command */
 		k = inkey();
@@ -2621,6 +2766,51 @@ void do_cmd_options(void)
 			do_cmd_options_aux(4, "Efficiency Options");
 		}
 
+		/* Efficiency Options */
+		else if (k == '5')
+		{
+			/* Process the efficiency options */
+			do_cmd_options_aux(5, "TomeNET Options");
+		}
+
+		/* Save a 'option' file */
+		else if (k == '9')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Save an option file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+
+			/* Default filename */
+			sprintf(tmp, "user.prf");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)options_dump(tmp);
+		}
+		/* Load a pref file */
+		else if (k == '0')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Load a user pref file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+
+			/* Default filename */
+			sprintf(tmp, "user.prf", ANGBAND_SYS);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Process the given filename */
+			(void)process_pref_file(tmp);
+		}
+
+
 		/* Window flags */
 		else if (k == 'W')
 		{
@@ -2640,10 +2830,6 @@ void do_cmd_options(void)
 	/* Restore the screen */
 	Term_load();
 
-#ifndef EVIL_TEST /* evil test */
-	/* Leave "icky" mode */
-	screen_icky = FALSE;
-#endif
 	Flush_queue();
 
 

@@ -204,6 +204,13 @@ bool view_bright_lite;
 bool view_granite_lite;
 bool view_special_lite;
 
+//bool dummy_option;	/* for options not used in client */
+bool easy_open;
+bool easy_disarm;
+bool easy_tunnel;
+bool auto_destroy;
+bool auto_inscribe;
+
 u32b cfg_game_port = 18348; 
 
 skill_type s_info[MAX_SKILLS];

@@ -79,4 +79,19 @@ to keep in mind, so that everyone can play it with comfort.
 In short: 'Think of the others.'
 
 
+##### Minimal hints for survival
+
+You cannot survive without appropriate set of macros, for sure..
+Create macros to fire arrows, read scrolls etc.  Time is money!
+
+
+You melee the neighboring monster automatically;  However you can change this
+behavior with item inscriptions.
+For example, inscribe {@O} on your bow and see what will happen.
+
+
+Pay extra attention when climbing stairs or doing recall;  monsters may start
+attacking you before you're ready!
+
+
 Alright - Happy Diving!

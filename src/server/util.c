@@ -1799,7 +1799,8 @@ static void do_slash_brief_help(int Ind)
 
 	if (is_admin(p_ptr))
 	{
-		msg_print(Ind, "  art cfg clv cp en eq geno id kick lua purge shutdown sta trap unc unst wish");
+		msg_print(Ind, "  art cfg clv cp en eq geno id kick lua purge shutdown sta store");
+		msg_print(Ind, "  trap unc unst wish");
 	}
 	else
 	{
@@ -3086,6 +3087,26 @@ static void do_slash_cmd(int Ind, char *message)
 //				compact_traps(0, TRUE);
 				msg_format(Ind, "current server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
+
+				return;
+			}
+			else if (prefix(message, "/store") ||
+					prefix(message, "/sto"))
+			{
+				store_turnover();
+				if (tk && prefix(token[1], "owner"))
+				{
+					for(i=0;i<numtowns;i++)
+					{
+						for (k = 0; k < MAX_STORES - 2; k++)
+						{
+							/* Shuffle a random shop (except home and auction house) */
+							store_shuffle(&town[i].townstore[k]);
+						}
+					}
+					msg_print(Ind, "\377oStore owners had been changed!");
+				}
+				else msg_print(Ind, "\377GStore inventory had been changed.");
 
 				return;
 			}
