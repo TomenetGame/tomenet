@@ -1219,12 +1219,12 @@ void self_knowledge(int Ind)
 		}
 
 		/* Hack */
-		if (f1 & TR1_IMPACT)
+		if (f5 & TR5_IMPACT)
 		{
 			fprintf(fff, "The impact of your weapon can cause earthquakes.\n");
 		}
 
-		if (f1 & (TR1_VORPAL))
+		if (f5 & (TR5_VORPAL))
 		{
 			fprintf(fff, "Your weapon is very sharp.\n");
 		}
@@ -1842,12 +1842,12 @@ void self_knowledge(int Ind)
 		}
 
 		/* Hack */
-		if (f1 & TR1_IMPACT)
+		if (f5 & TR5_IMPACT)
 		{
 			info[i++] = "The impact of your weapon can cause earthquakes.";
 		}
 
-		if (f1 & (TR1_VORPAL))
+		if (f5 & (TR5_VORPAL))
 		{
 			info[i++] = "Your weapon is very sharp.";
 		}
@@ -6389,8 +6389,6 @@ void call_chaos(int Ind, int dir)
 
 	Chaos_type = hurt_types[randint(29) - 1];
 	if (randint(4) == 1) line_chaos = TRUE;
-
-	sprintf(p_ptr->attacker, " invokes raw chaos for", p_ptr->name);
 
 #if 0
 	/* Probably a meaningless line, a remnant from earlier code */

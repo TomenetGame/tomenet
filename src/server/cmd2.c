@@ -3023,17 +3023,17 @@ void do_cmd_fire(int Ind, int dir)
 								{
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam += o_ptr->to_d;
-									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+									tdam += o_ptr->to_d;
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 								}
 								else
 								{
 									 /* Base damage from thrown object */
 								        tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam += o_ptr->to_d;
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
 								}
 
@@ -3172,17 +3172,17 @@ void do_cmd_fire(int Ind, int dir)
 					{
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam += o_ptr->to_d;
-						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+						tdam += o_ptr->to_d;
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 					}
 					else
 					{
 						 /* Base damage from thrown object */
 					        tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam += o_ptr->to_d;
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
 					}
 
@@ -3845,8 +3845,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
-					tdam += o_ptr->to_d;
 					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg);
+					tdam += o_ptr->to_d;
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
 					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
@@ -3949,8 +3949,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 				/* Hack -- Base damage from thrown object */
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
-				tdam += o_ptr->to_d;
 				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg);
+				tdam += o_ptr->to_d;
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam);
 				if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);

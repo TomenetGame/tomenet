@@ -4353,9 +4353,9 @@ static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
 	if (f1 & TR1_SLAY_GIANT) flg3 |= RF3_GIANT;
 	if (f1 & TR1_SLAY_ORC) flg3 |= RF3_ORC;
 	if (f1 & TR1_SLAY_DEMON) flg3 |= RF3_DEMON;
-	if (f5 & TR5_KILL_DEMON) flg3 |= RF3_DEMON;
+	if (f1 & TR1_KILL_DEMON) flg3 |= RF3_DEMON;
 	if (f1 & TR1_SLAY_UNDEAD) flg3 |= RF3_UNDEAD;
-	if (f5 & TR5_KILL_UNDEAD) flg3 |= RF3_UNDEAD;
+	if (f1 & TR1_KILL_UNDEAD) flg3 |= RF3_UNDEAD;
 	if (f1 & TR1_SLAY_ANIMAL) flg3 |= RF3_ANIMAL;
 	if (f1 & TR1_SLAY_EVIL) flg3 |= RF3_EVIL;
 

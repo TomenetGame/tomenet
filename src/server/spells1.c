@@ -1322,8 +1322,8 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 
 		/* Hack -- Note death */
 		msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
-		msg_print(Ind, "\377RYou die.");
-		msg_print(Ind, NULL);
+/*		msg_print(Ind, "\377RYou die.");
+		msg_print(Ind, NULL); - already in xtra2.c (C. Blue)*/
 
 
 		/* Note cause of death */
@@ -1418,9 +1418,9 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 		sound(Ind, SOUND_DEATH);
 
 		/* Hack -- Note death */
-		msg_print(Ind, "\377RYou die.");
-		msg_print(Ind, NULL);
-
+/*		msg_print(Ind, "\377RYou die.");
+		msg_print(Ind, NULL); - what's so 'hacky' about this?
+		It's in xtra2.c anyways, so gone here now. C. Blue */
 
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause

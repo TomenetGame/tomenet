@@ -2269,22 +2269,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 650,
+                                '+', 450,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 550,
+                                '+', 350,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 550,
+                                '+', 350,
                         },
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 700,
+                                '+', 600,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -2540,27 +2540,27 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_ARCHERY,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 500,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 350,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 350,
                         },
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -2902,12 +2902,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 700,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 650,
                         },
                         {
                                 SKILL_SWORD,
@@ -3105,22 +3105,22 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 300,
+                                '+', 250,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 300,
+                                '+', 250,
                         },
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 400,
+                                '+', 300,
                         },
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
-                                '+', 500,
+                                '+', 350,
                         },
                         {
                                 SKILL_MARTIAL_ARTS,
@@ -3223,12 +3223,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 2000,
-                                '+', 900,
+                                '+', 850,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 800,
+                                '+', 750,
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -3348,12 +3348,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 450,
+                                '+', 300,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 300,
                         },
                         {
                                 /* let's keep it low for now - offbalancing */
@@ -3512,17 +3512,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 550,
+                                '+', 500,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 1000,
-                                '+', 600,
+                                '+', 450,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 450,
                         },
                         {
                                 SKILL_BOOMERANG,
@@ -3737,17 +3737,17 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SLING,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_BOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_XBOW,
                                 '+', 0,
-                                '+', 500,
+                                '+', 400,
                         },
                         {
                                 SKILL_BOOMERANG,

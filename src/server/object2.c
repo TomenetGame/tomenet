@@ -1137,11 +1137,11 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f1 & TR1_SLAY_TROLL) total += 3500;
 	if (f1 & TR1_SLAY_GIANT) total += 3500;
 	if (f1 & TR1_SLAY_DRAGON) total += 3500;
-        if (f5 & TR5_KILL_DEMON) total += 5500;
-        if (f5 & TR5_KILL_UNDEAD) total += 5500;
+        if (f1 & TR1_KILL_DEMON) total += 5500;
+        if (f1 & TR1_KILL_UNDEAD) total += 5500;
 	if (f1 & TR1_KILL_DRAGON) total += 5500;
-	if (f1 & TR1_VORPAL) total += 5000;
-	if (f1 & TR1_IMPACT) total += 5000;
+	if (f5 & TR5_VORPAL) total += 5000;
+	if (f5 & TR5_IMPACT) total += 5000;
 	if (f1 & TR1_BRAND_POIS) total += 7500;
 	if (f1 & TR1_BRAND_ACID) total += 7500;
 	if (f1 & TR1_BRAND_ELEC) total += 7500;

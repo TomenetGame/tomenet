@@ -3010,7 +3010,7 @@ I:38:5:0
 W:50:0:200:50000
 A:50/8
 P:30:2d4:-2:0:10
-F:RES_POIS | FLY |
+F:IM_POISON | FLY |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER |
 F:FEATHER
 
@@ -6159,7 +6159,7 @@ P:0:1d1:0:0:0
 # The Amulet of Grom, the Wyrm Hunter -- see artifact list
 
 N:927:& Amulet~
-G:":m
+G:":o
 I:40:38:0
 W:60:0:3:100000
 F:INSTA_ART

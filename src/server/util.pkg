@@ -235,3 +235,14 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 
 extern s32b dungeon_store_timer;	/* Keeps track of its generation */
 extern bool night_surface;		/* Is it night outside? */
+extern u16b max_s_idx;
+extern u16b max_r_idx;
+extern u16b max_k_idx;
+extern u16b max_v_idx;
+extern u16b max_f_idx;
+extern u16b max_a_idx;
+extern u16b max_e_idx;
+extern u16b max_d_idx;
+extern u16b max_o_idx;
+extern u16b max_m_idx;
+extern u16b max_t_idx;

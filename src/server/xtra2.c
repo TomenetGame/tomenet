@@ -3929,9 +3929,9 @@ void monster_death(int Ind, int m_idx)
 							p_ptr2->redraw |= (PR_TITLE);
 
 							/* Congratulations */
-							msg_print(i, "*** CONGRATULATIONS ***");
-							msg_print(i, "You have won the game!");
-							msg_print(i, "You may retire (commit suicide) when you are ready.");
+							msg_print(i, "\377G*** CONGRATULATIONS ***");
+							msg_print(i, "\377GYou have won the game!");
+							msg_print(i, "\377GYou may retire (commit suicide) when you are ready.");
 
 							num++;
 
@@ -3950,9 +3950,9 @@ void monster_death(int Ind, int m_idx)
 					q_ptr->redraw |= (PR_TITLE);
 
 					/* Congratulations */
-					msg_print(i, "*** CONGRATULATIONS ***");
-					msg_print(i, "You have won the game!");
-					msg_print(i, "You may retire (commit suicide) when you are ready.");
+					msg_print(i, "\377G*** CONGRATULATIONS ***");
+					msg_print(i, "\377GYou have won the game!");
+					msg_print(i, "\377GYou may retire (commit suicide) when you are ready.");
 
 					num++;
 
@@ -3961,6 +3961,13 @@ void monster_death(int Ind, int m_idx)
 					{
 						q_ptr->retire_timer = cfg.retire_timer;
 						msg_format(i, "Otherwise you will retire after %s minutes of tenure.", cfg.retire_timer);
+					}
+					
+					/* Turn him into pseudo-noghost mode */
+					if (cfg.lifes && (p_ptr->lives >= 1+1) && !(p_ptr->mode & MODE_NO_GHOST))
+					{
+						msg_print(i, "\377yTake care! As a winner, you have no more resurrections left!");
+						p_ptr->lives = 1+1;
 					}
 				}
 			}	
@@ -4200,33 +4207,35 @@ void monster_death(int Ind, int m_idx)
 		drop_near(qq_ptr, -1, wpos, y, x);
 	}
 
-	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: */
-	else if (r_ptr->flags3 & RF3_DRAGON && 0) //disabled
+	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
+	else if (r_ptr->flags3 & RF3_DRAGON)
 	{
+		byte a_idx = ART_AMUGROM;
+		artifact_type *a_ptr = &a_info[a_idx];
 		bool pfft = TRUE;
-		int I_kind = 0;
-		artifact_type *a_ptr = &a_info[ART_AMUGROM];
-#if 0
+
 		/* don't allow duplicates */
 		if (a_ptr->cur_num) pfft = FALSE;
 		/* only powerful wyrms may have a chance of dropping it */
-		if (m_ptr->maxhp < 4000) pfft = FALSE;/* Dracolisk/Dracolich have 3500 */
-		else if ((m_ptr->maxhp < 6000) && rand_int(100)) pfft = FALSE;
-		else if ((m_ptr->maxhp < 10000) && rand_int(65)) pfft = FALSE;
-		else if (!rand_int(40)) pfft = FALSE;
-#endif
+		if (m_ptr->maxhp < 3500) pfft = FALSE;/* Dracolisk/Dracolich have 3500, Wyrms start at 4000 */
+		else if ((m_ptr->maxhp < 6000) && rand_int(60)) pfft = FALSE;/* strong wyrms at 6000+ */
+		else if ((m_ptr->maxhp >= 6000) && (m_ptr->maxhp < 10000) && rand_int(40)) pfft = FALSE;
+		else if ((m_ptr->maxhp >= 10000) && rand_int(20)) pfft = FALSE;/* gwop ^^ */
+
+#if 0
 		if (pfft) {
+            		int chance = 0;
+                        int I_kind = 0;
 			/* Get local object */
 			qq_ptr = &forge;
 			/* Wipe the object */
 			object_wipe(qq_ptr);
-#if 0
 			/* Acquire the "kind" index */
 			I_kind = lookup_kind(a_ptr->tval, a_ptr->sval);
 			/* Create the artifact */
 			invcopy(qq_ptr, I_kind);
-    			/* Save the name */
-			qq_ptr->name1 = ART_AMUGROM;
+			/* Save the name */
+			qq_ptr->name1 = a_idx;
 			/* Extract the fields */
 			qq_ptr->pval = a_ptr->pval;
 			qq_ptr->ac = a_ptr->ac;
@@ -4236,25 +4245,15 @@ void monster_death(int Ind, int m_idx)
 			qq_ptr->to_h = a_ptr->to_h;
 			qq_ptr->to_d = a_ptr->to_d;
 			qq_ptr->weight = a_ptr->weight;
-			/* determine level-requirement */
-			//determine_level_req(lev, o_ptr);
-			qq_ptr->level = a_ptr->level;
-			qq_ptr->note = 0;
-			qq_ptr->number = 1;
-			qq_ptr->timeout = 0;
+			qq_ptr->note = local_quark;
+			/* Hack -- acquire "cursed" flag */
 			if (a_ptr->flags3 & (TR3_CURSED)) qq_ptr->ident |= (ID_CURSED);
+//			random_artifact_resistance(qq_ptr);
+			a_info[a_idx].cur_num = 1;
 			/* Drop the artifact from heaven */
-			a_ptr->cur_num = 1;
 			drop_near(qq_ptr, -1, wpos, y, x);
-#else
-			invcopy(&forge, lookup_kind(40, 38));
-			forge.name1 = ART_AMUGROM;
-			apply_magic(wpos, &forge, -1, TRUE, TRUE, TRUE);
-			forge.number = 1;
-			/* Drop it in the dungeon */
-			drop_near(&forge, -1, wpos, y, x);
-#endif
 		}
+#endif
 	}
 
 
@@ -4549,19 +4548,16 @@ void player_death(int Ind)
 		}
 	}
 	
-	/* Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue) */
-	if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;
-
 	/* Get rid of him if he's a ghost */
 	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1) ||
-	    (streq(p_ptr->died_from, "Insanity")) || (!(p_ptr->lives-1) && cfg.lifes))
+	    (streq(p_ptr->died_from, "Insanity")) || ((p_ptr->lives == 1+1) && cfg.lifes))
 	{
 		/* Tell players */
 		if (streq(p_ptr->died_from, "Insanity")) {
 			/* Tell him */
 			msg_print(Ind, "\377RYou die.");
 	//		msg_print(Ind, NULL);
-			msg_format("\377a**\377rYou have been destroyed by \377m%s\377r.\377a**", p_ptr->died_from);
+			msg_format(Ind, "\377a**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377a**");
 
 			sprintf(buf, "\377a**\377r%s was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("%s was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
@@ -4577,10 +4573,11 @@ void player_death(int Ind)
 #endif	// CHATTERBOX_LEVEL
 
 			Send_chardump(Ind);
+			Net_output1(Ind);
 		}
 		else if (p_ptr->ghost) {
 			/* Tell him */
-			msg_format("\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
+			msg_format(Ind, "\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
 
 			sprintf(buf, "\377a**\377r%s's ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("%s's ghost was destroyed by %s for %d damage.\n", p_ptr->name, p_ptr->died_from, p_ptr->deathblow);
@@ -4628,6 +4625,7 @@ void player_death(int Ind)
 #endif	// CHATTERBOX_LEVEL
 
 			Send_chardump(Ind);
+			Net_output1(Ind);
 		}
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
@@ -5174,10 +5172,13 @@ void resurrect_player(int Ind, int exploss)
 	msg_print(Ind, "You feel life return to your body.");
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
+	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
+	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
+	if (p_ptr->lives > 1+1) p_ptr->lives--;
 	if (cfg.lifes)
 	{
-		if (p_ptr->lives-1 == 1)
+		if (p_ptr->lives == 1+1)
 			msg_format(Ind, "\377GYou have no more resurrections left!");
 		else
 			msg_format(Ind, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);

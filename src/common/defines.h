@@ -1891,6 +1891,7 @@ that keeps many algorithms happy.
 #define SV_AMULET_WEAPONMASTERY         24
 #define SV_AMULET_WISDOM                28
 #define SV_AMULET_INFRA                 26
+#define SV_AMULET_GROM			38
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -2875,14 +2876,18 @@ that keeps many algorithms happy.
 #define TR1_SLAY_GIANT		0x00400000L
 #define TR1_SLAY_DRAGON		0x00800000L
 #define TR1_KILL_DRAGON		0x01000000L	/* Execute Dragon */
-#define TR1_VORPAL		0x02000000L	/* XXX5 */
-#define TR1_IMPACT		0x04000000L	/* Cause Earthquakes */
+#define TR1_KILL_DEMON          0x02000000L     /* Execute Demon */
+#define TR1_KILL_UNDEAD         0x04000000L     /* Execute Undead */
 #define TR1_BRAND_POIS		0x08000000L	/* XXX6 */
 #define TR1_BRAND_ACID		0x10000000L
 #define TR1_BRAND_ELEC		0x20000000L
 #define TR1_BRAND_FIRE		0x40000000L
 #define TR1_BRAND_COLD		0x80000000L
 
+#define TR1_MULTMASK		(TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID | TR1_BRAND_POIS | \
+				TR1_SLAY_ANIMAL | TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_ORC | \
+				TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_DRAGON | \
+				TR1_KILL_DRAGON | TR1_KILL_DEMON | TR1_KILL_UNDEAD)
 
 /* ToME hack for trapkits */
 #define TRAP2_AUTOMATIC_5       0x00000001L     /* Trap automatically rearms itself, 1 in 5 failure */
@@ -3020,8 +3025,8 @@ that keeps many algorithms happy.
 #define TR5_TEMPORARY           0x00000001L     /* In timeout turns it is destroyed */
 #define TR5_DRAIN_MANA          0x00000002L     /* Drains mana */
 #define TR5_DRAIN_HP            0x00000004L     /* Drains hp */
-#define TR5_KILL_DEMON          0x00000008L     /* Execute Demon */
-#define TR5_KILL_UNDEAD         0x00000010L     /* Execute Undead */
+#define TR5_VORPAL		0x00000008L	/* XXX5 */
+#define TR5_IMPACT		0x00000010L	/* Cause Earthquakes */
 #define TR5_CRIT                0x00000020L     /* More critical hits */
 #define TR5_ATTR_MULTI          0x00000040L     /* Object shimmer -- only allowed in k_info */
 #define TR5_WOUNDING            0x00000080L     /* Wounds monsters */
@@ -4852,7 +4857,7 @@ extern int PlayerUID;
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
-	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 100))
+	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 150))
 
 
 /* replacement of helper functions in cave.c */

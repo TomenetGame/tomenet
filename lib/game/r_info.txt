@@ -18292,7 +18292,6 @@ F:MORTAL | BASEANGBAND
 F:MULTIPLY
 D:Offbreed of the Sandworm Queen, they are harmless alone... 
 
-
 N:1032:Tik'srvzllat
 G:G:v
 I:142:180d100:200:170:0
@@ -18927,6 +18926,293 @@ S:S_HI_DRAGON
 D:Usually found guarding the first plane of Hell, Tiamat is a formidable
 D:opponent, her five heads breathing death to all who stand against her.
 
+N:1067:The Hellraiser
+G:x:r
+I:150:400d150:200:200:0
+W:167:1:0:500000
+E:1:1:1:2:1:1
+O:0:0:0:0
+B:HIT:HURT:30d10
+B:HIT:HURT:30d10
+B:GAZE:TIME:30d10
+B:GAZE:INSANITY:30d10
+F:UNIQUE | 
+F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | EMPTY_MIND | 
+#F:FORCE_SLEEP | 
+F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
+F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD |
+#F:ATTR_MULTI | 
+F:ATTR_ANY | 
+F:FORCE_DEPTH | KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
+S:1_IN_3
+S:BR_DISI | BR_MANA | BR_CHAO | SHRIEK | BA_MANA | 
+S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+D:A creature awakened on the hell forge, the powers of hell were bestowed
+D:upon it to call the ultimate terror in case it detects any intruder.
+
+N:1068:Nether Guard
+G:N:G
+I:140:150d150:200:200:255
+W:166:5:0:100000
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:HIT:HURT:70d5
+B:HIT:HURT:70d5
+B:HIT:HURT:70d5
+B:HIT:HURT:70d5
+F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA | SMART | 
+F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | DROP_GREAT | DROP_60 | 
+F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD | 
+#F:ATTR_MULTI | 
+F:ATTR_ANY | 
+F:FORCE_DEPTH | KILL_ITEM | EMPTY_MIND | COLD_BLOOD | BASH_DOOR | BLUEBAND | NO_CUT
+S:1_IN_5
+S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
+D:Bound to guard the nether realm that no mortal would set foot in it.
+
+N:1069:Gorm
+G:R:D
+I:120:30d100:25:150:50
+W:50:4:3000:14000
+E:0:1:0:2:1:0
+O:0:50:50:0
+B:GAZE:PARALYZE:5d12
+B:BITE:DISEASE:20d12
+B:BITE:DISEASE:20d12
+F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | POWERFUL |
+F:OPEN_DOOR | BASH_DOOR | EVIL | IM_FIRE | IM_COLD | IM_ACID |
+F:RES_ELEC | IM_POIS | DROP_CORPSE | RES_NETH | RES_DARK | 
+F:ANIMAL | NO_CONF | NO_SLEEP | NO_STUN | CAN_SWIM | 
+F:MORTAL | BLUEBAND
+S:1_IN_8
+S:BR_DARK
+D:A large reptile in black scales, burning the earth with
+D:the touch of hell where it steps.
+
+N:1070:Cave Gorm
+G:R:D
+I:120:40d100:25:150:50
+W:55:4:3000:18000
+E:0:1:0:2:1:0
+O:0:50:50:0
+B:GAZE:PARALYZE:5d12
+B:BITE:DISEASE:30d12
+B:BITE:DISEASE:30d12
+F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | POWERFUL |
+F:OPEN_DOOR | BASH_DOOR | EVIL | IM_FIRE | IM_COLD | IM_ACID |
+F:RES_ELEC | IM_POIS | DROP_CORPSE | RES_NETH | RES_DARK | 
+F:ANIMAL | NO_CONF | NO_SLEEP | NO_STUN | CAN_SWIM | 
+F:MORTAL | BLUEBAND
+S:1_IN_8
+S:BR_DARK
+D:A large reptile in black scales, burning the earth with
+D:the touch of hell where it steps.
+
+N:1071:Sky Blade
+G:A:B
+I:130:200d35:100:160:255
+W:70:8:3200:15000
+E:1:1:1:2:1:1
+O:0:70:30:0
+B:GAZE:TERRIFY:7d4
+B:HIT:HURT:50d1
+B:HIT:HURT:50d1
+B:GAZE:INSANITY:3d5
+F:ONLY_ITEM | DROP_1D2 | DROP_3D2 | DROP_GOOD | GOOD | REGENERATE | FORCE_MAXHP | 
+F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL | 
+F:RES_LITE | RES_DARK | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_COLD | 
+F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+S:1_IN_3
+S:TELE_TO | SCARE | BA_MANA | BR_DISE | S_ANGEL
+D:A lordly angel, designated to watch the skies and maintain their balance.
+D:Its aura is pure beyond expression, its eyes reflect supreme laws beyond
+D:comprehension, daring to look at it will drive you insane, let alone fighting
+D:it!
+
+N:1072:Solar Blade
+G:A:y
+I:130:300d35:150:180:255
+W:80:8:3200:22500
+E:1:1:1:2:1:1
+O:0:70:30:0
+B:GAZE:TERRIFY:10d4
+B:HIT:HURT:75d1
+B:HIT:HURT:75d1
+B:GAZE:INSANITY:4d5
+F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_GOOD | GOOD | REGENERATE | FORCE_MAXHP | 
+F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL | 
+F:RES_LITE | RES_DARK | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_FIRE | 
+F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+S:1_IN_3
+S:TELE_TO | BLIND | BA_MANA | BR_DISE | S_ANGEL
+D:A lordly angel, designated to watch sun, earth and moon and maintain their
+D:balance. Its aura is pure beyond expression, its eyes reflect supreme laws
+D:beyond comprehension, daring to look at it will drive you insane, let alone
+D:fighting it!
+
+N:1073:Star Blade
+G:A:b
+I:130:400d35:200:200:255
+W:90:8:3200:30000
+E:1:1:1:2:1:1
+O:0:70:30:0
+B:GAZE:TERRIFY:10d4
+B:HIT:HURT:100d1
+B:HIT:HURT:100d1
+B:GAZE:INSANITY:5d5
+F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | GOOD | REGENERATE | FORCE_MAXHP | 
+F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL | 
+F:RES_LITE | RES_DARK | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_ELEC | 
+F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI
+S:1_IN_3
+S:TELE_TO | HOLD | BA_MANA | BR_DISE | S_ANGEL
+D:A lordly angel, designated to watch the stars and the void  and maintain
+D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
+D:laws beyond comprehension, daring to look at it will drive you insane,
+D:let alone fighting it!
+
+N:1074:Michael, the Guardian Overlord
+G:A:U
+I:135:400d70:250:200:255
+W:98:8:3200:50000
+E:1:1:1:2:1:1
+O:0:70:30:0
+B:GAZE:TERRIFY:10d4
+B:HIT:HURT:100d4
+B:PUNCH:HURT:100d4
+B:GAZE:INSANITY:8d4
+F:ONLY_ITEM | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | GOOD | REGENERATE | FORCE_MAXHP | 
+F:SMART | KILL_ITEM | OPEN_DOOR | BASH_DOOR | POWERFUL | MOVE_BODY | KILL_WALL | 
+F:RES_LITE | RES_DARK | RES_TELE | RES_NEXU | RES_MANA | REFLECTING | AURA_ELEC | 
+F:CAN_FLY | NO_FEAR | NO_STUN | NO_SLEEP | HAS_LITE | BLUEBAND | AURA_FIRE | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NEXU | 
+F:RES_CHAOS | RES_DISE | ATTR_MULTI | UNIQUE | ESCORT
+S:1_IN_3
+S:BA_MANA | TELE_TO | S_ANGEL
+D:Formed from the swirling base matter of the Universe itself, Maximus was
+D:brought forth by God to be the have-all, end-all Celestial being.
+D:Encompassing the strength of Michael, the knowledge of Yves, the solidity
+D:of David, the speed of Janus, and the pure ineffability of the Lord Himself.
+
+N:1075:Lord Jubei, the legendary swordsmaster
+G:p:u
+I:130:50d100:40:500:8
+W:72:3:2000:10000
+E:1:1:1:2:1:1
+O:20:70:0:10
+B:HIT:HURT:30d4
+B:HIT:HURT:30d4
+B:HIT:DISARM:30d4
+B:HIT:DISARM:30d4
+F:MALE | 
+F:FORCE_MAXHP | DROP_CORPSE | DROP_SKELETON | UNIQUE | 
+F:ONLY_ITEM | DROP_1D2 | DROP_GREAT | DROP_GOOD | 
+F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
+F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | 
+F:NO_CONF | NO_SLEEP | RES_TELE | NO_FEAR | NO_STUN | 
+F:MORTAL | BLUEBAND | HAS_LITE | ATTR_MULTI
+D:Founder of the Yagyu school, maybe the greatest swordsman ever.
+
+N:1076:Pirotessa, Succubus Empress
+G:U:v
+I:130:12d600:90:80:10
+W:82:3:3000:15000
+E:1:1:1:2:1:1
+O:0:50:50:0
+B:CLAW:HURT:3d40
+B:HIT:LOSE_STR:10d4
+B:WHISPER:SEDUCE
+B:TOUCH:SEDUCE
+F:UNIQUE | FEMALE | CAN_SPEAK | BLUEBAND | 
+F:FORCE_SLEEP | FORCE_MAXHP | DROP_GOOD | 
+F:ONLY_ITEM | DROP_4D2 | DROP_GREAT | IM_FIRE | IM_ELEC | IM_ACID | 
+F:COLD_BLOOD | PASS_WALL | MOVE_BODY | NONLIVING | RES_DARK | RES_NETH | 
+F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | ATTR_MULTI
+S:1_IN_3 |
+S:CURSE | BA_NETH | S_HI_DEMON |
+S:FORGET | MIND_BLAST | DARKNESS
+D:Direct descendant of Lucifer, mother of Glaryssa, all Angels seeking
+D:to destroy her fell to her serpent kiss.
+
+N:1077:C. Blue, The Mad Balancer
+G:p:b
+I:160:256d256:200:150:255
+W:127:1:16000:50000
+E:1:1:1:2:1:1
+O:0:0:0:0
+B:GAZE:INSANITY:5d5
+B:MOAN:*
+B:HIT:CONFUSE:100d2
+B:HIT:LOSE_ALL:10d1
+F:ATTR_MULTI | UNIQUE | JOKEANGBAND | CAN_SPEAK | MALE | WEIRD_MIND | 
+F:AURA_FIRE | AURA_ELEC | AURA_COLD | FORCE_DEPTH | FORCE_MAXHP | INVISIBLE | 
+F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
+F:OPEN_DOOR | BASH_DOOR | GOOD | REGENERATE | REFLECTING | RES_MANA | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NETH | RES_NEXU |
+F:RES_CHAOS | RES_DISE | IM_WATER | RES_DARK | RES_LITE | 
+F:NO_CONF | NO_SLEEP | NO_STUN | SMART | CAN_SWIM | DROP_CORPSE | DROP_SKELETON
+#(BLUEBAND)
+S:1_IN_2 | 
+S:CONF | HOLD | HEAL | BR_CHAO | BA_MANA | BLINK | TPORT
+D:The coder who keeps balancing this game like there is no tomorrow.
+D:Make sure you have downloaded the latest scripts, or he will drive
+D:you to despair!
+
+N:1078:Evil Administrator from Hell
+G:e:D
+I:110:666d66:100:60:255
+W:127:3:600:50000
+E:1:1:1:2:1:1
+O:0:0:0:0
+B:GAZE:EXP_80
+B:GAZE:EXP_80
+B:GAZE:INSANITY:10d10
+B:GAZE:LOSE_ALL:10d10
+F:CAN_FLY | JOKEANGBAND | EMPTY_MIND | HURT_LITE | UNIQUE | 
+F:AURA_COLD | FORCE_DEPTH | FORCE_MAXHP | INVISIBLE | 
+F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
+F:OPEN_DOOR | BASH_DOOR | EVIL | REGENERATE | RES_MANA | 
+F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | RES_NETH | RES_NEXU |
+F:RES_CHAOS | RES_DISE | IM_WATER | RES_DARK | 
+F:NO_CONF | NO_SLEEP | NO_STUN | SMART | CAN_SWIM |
+#(BLUEBAND)
+S:1_IN_2 | 
+S:TELE_TO | S_HI_UNDEAD | BA_NETH | BA_MANA | HEAL
+D:A huge disembodied eye.  As you stare into the black nothingness of its pupil, 
+D:you feel your will and vitality draining away, and are unable to do anything 
+D:except approach it in horrified fascination. 
+
+#N:1079:The Cosmos Eater
+#G:g:r
+#I:166:500d200:200:300:0
+#W:150:1:0:150000
+#E:1:1:1:2:1:1
+#O:0:0:0:0
+#B:HIT:HURT:20d10
+#B:HIT:HURT:20d10
+#B:GAZE:TIME:20d10
+#B:GAZE:INSANITY:20d10
+#F:UNIQUE | 
+#F:NONLIVING | NO_FEAR | FORCE_MAXHP | REFLECTING | RES_MANA |
+#F:MOVE_BODY | KILL_WALL | IM_FIRE | IM_ELEC | IM_POIS | IM_ACID | IM_COLD |
+#F:RES_NETH | RES_WATE | RES_PLAS | RES_NEXU | RES_CHAOS | NO_STUN | REGENERATE |
+#F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT | 
+#F:NO_CONF | NO_SLEEP | CAN_FLY | POWERFUL | COLD_BLOOD |
+#F:ATTR_MULTI | ATTR_ANY | FORCE_DEPTH | PASS_WALL | 
+#F:EMPTY_MIND | COLD_BLOOD | BASH_DOOR | JOKEANGBAND | NO_CUT
+##(BLUEBAND)
+##S:1_IN_3
+##S:BR_DISI
+##S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+#D:An unliving opposite to Eru's creation. In eternal work it can
+#D:slowly devour a whole cosmos if it's been given just enough time.
 
 # N: serial number : monster name
 # G: symbol : color

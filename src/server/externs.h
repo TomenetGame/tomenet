@@ -767,6 +767,7 @@ extern void monster_check_experience(int m_idx, bool silent);
 extern void world_connect(int Ind);
 extern int Net_input(void);
 extern int Net_output(void);
+extern int Net_output1(int i);
 extern void setup_contact_socket(void);
 extern bool Report_to_meta(int flag);
 extern int Setup_net_server(void);

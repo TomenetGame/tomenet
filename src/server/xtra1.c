@@ -991,7 +991,8 @@ static void calc_mana(int Ind)
 			new_mana = (3 * new_mana) / 4;
 		}
 	}
-
+#if 0 // C. Blue - Taken out again since polymorphing ability of DSMs was
+// removed instead. Mimics and mimic-sorcs were punished too much.
 	/* Forms that don't have proper 'hands' (arms) have mana penalty.
 	   this will hopefully stop the masses of D form Istari :/ */
 	if (p_ptr->body_monster)
@@ -999,6 +1000,7 @@ static void calc_mana(int Ind)
 		monster_race *r_ptr = &r_info[p_ptr->body_monster];
 		if (!r_ptr->body_parts[BODY_ARMS]) new_mana = (new_mana * 1) / 2;
 	}
+#endif
 
 	if (new_mana <= 0) new_mana = 1;
 
@@ -2593,7 +2595,7 @@ void calc_bonuses(int Ind)
 		if (f5 & (TR6_SENS_POIS)) p_ptr->sensible_acid = TRUE; */
 
 		/* Hack -- cause earthquakes */
-		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
+		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
 
 		/* Boost shots */
 //		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
@@ -3420,11 +3422,11 @@ void calc_bonuses(int Ind)
 		{
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
 			/* the "xtra_might" adds damage for specifics */
-			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 20);
-			/* Isn't 4 shots/turn too small? */
-			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16)
-				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
-			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 25);
+			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
+			/* Isn't 4 shots/turn too small? Not with art ammo */
+			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
+//				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
+			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
 #if 0	// not so meaningful (25,30,50)
 			switch (archery)
 			{

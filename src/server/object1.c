@@ -2449,60 +2449,74 @@ cptr item_activation(object_type *o_ptr)
 	      {
 	      case SV_DRAGON_BLUE:
 		{
-		  return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
+		    return "Breathe lightning every 200+d100 turns";
+//		  return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_WHITE:
 		{
-		  return "polymorph into an Ancient White Dragon every 200+d100 turns";
+		    return "Breathe frost every 200+d100 turns";
+//		  return "polymorph into an Ancient White Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_BLACK:
 		{
-		  return "polymorph into an Ancient Black Dragon every 200+d100 turns";
+		    return "Breathe acid every 200+d100 turns";
+//		  return "polymorph into an Ancient Black Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_GREEN:
 		{
-		  return "polymorph into an Ancient Green Dragon every 200+d100 turns";
+		    return "Breathe poison every 200+d100 turns";
+//		  return "polymorph into an Ancient Green Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_RED:
 		{
-		  return "polymorph into an Ancient Red Dragon every 200+d100 turns";
+		    return "Breathe fire every 200+d100 turns";
+//		  return "polymorph into an Ancient Red Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_MULTIHUED:
 		{
-		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
+		    return "Breathe the elements every 200+d100 turns";
+//		  return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_PSEUDO:
 		{
+		    return "Breathe light every 200+d100 turns";
+//		  return "polymorph into an Ethereal Drake every 200+d100 turns";
 		  //return "polymorph into a Pseudo Dragon every 200+d100 turns";
-		  return "polymorph into an Ethereal Drake every 200+d100 turns";
 		}
 	      case SV_DRAGON_BRONZE:
 		{
-		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
+		    return "Breathe confusion every 200+d100 turns";
+//		  return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_GOLD:
 		{
-		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+		    return "Breathe sound every 200+d100 turns";
+//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_CHAOS:
 		{
-		  return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
+		    return "Breathe chaos every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
 		}
 	      case SV_DRAGON_LAW:
 		{
-		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
+		    return "Breathe shards every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Law every 200+d100 turns";
 		}
 	      case SV_DRAGON_BALANCE:
 		{
-		  return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
+		    return "Breathe disenchantment every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
 		}
 	      case SV_DRAGON_SHINING:
 		{
-		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
+		    return "Breathe light every 200+d100 turns";
+//		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_POWER:
 		{
-		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+		    return "Breathe havoc every 200+d100 turns";
+//		  return "polymorph into a Great Wyrm of Power every 200+d100 turns";
 		}
 	      }
 	  }
@@ -3628,9 +3642,9 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	if (f1 & TR1_SLAY_GIANT) output_dam(Ind, fff, o_ptr, 3, 0, "giants", NULL);
 	if (f1 & TR1_KILL_DRAGON) output_dam(Ind, fff, o_ptr, 5, 0, "dragons", NULL);
 	else if (f1 & TR1_SLAY_DRAGON) output_dam(Ind, fff, o_ptr, 3, 0, "dragons", NULL);
-	if (f5 & TR5_KILL_UNDEAD) output_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
 	else if (f1 & TR1_SLAY_UNDEAD) output_dam(Ind, fff, o_ptr, 3, 0, "undeads", NULL);
-	if (f5 & TR5_KILL_DEMON) output_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
+	if (f1 & TR1_KILL_DEMON) output_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
 	else if (f1 & TR1_SLAY_DEMON) output_dam(Ind, fff, o_ptr, 3, 0, "demons", NULL);
 
 	if (f1 & TR1_BRAND_FIRE) output_dam(Ind, fff, o_ptr, 3, 6, "non fire resistant creatures", "fire susceptible creatures");
@@ -3721,9 +3735,9 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	if (f1 & TR1_SLAY_GIANT) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "giants", NULL);
 	if (f1 & TR1_KILL_DRAGON) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "dragons", NULL);
 	else if (f1 & TR1_SLAY_DRAGON) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "dragons", NULL);
-	if (f5 & TR5_KILL_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
+	if (f1 & TR1_KILL_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "undeads", NULL);
 	else if (f1 & TR1_SLAY_UNDEAD) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "undeads", NULL);
-	if (f5 & TR5_KILL_DEMON) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
+	if (f1 & TR1_KILL_DEMON) output_ammo_dam(Ind, fff, o_ptr, 5, 0, "demons", NULL);
 	else if (f1 & TR1_SLAY_DEMON) output_ammo_dam(Ind, fff, o_ptr, 3, 0, "demons", NULL);
 
 	if (f1 & TR1_BRAND_FIRE) output_ammo_dam(Ind, fff, o_ptr, 3, 6, "non fire resistant creatures", "fire susceptible creatures");
@@ -4220,12 +4234,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		fprintf(fff, "It drains life from your foes.\n");
 	}
 
-	if (f1 & (TR1_IMPACT))
+	if (f5 & (TR5_IMPACT))
 	{
 		fprintf(fff, "It can cause earthquakes.\n");
 	}
 
-	if (f1 & (TR1_VORPAL))
+	if (f5 & (TR5_VORPAL))
 	{
 		fprintf(fff, "It is very sharp and can cut your foes.\n");
 	}
@@ -4255,7 +4269,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It is especially deadly against giants.\n");
 	}
-	if (f5 & (TR5_KILL_DEMON))
+	if (f1 & (TR1_KILL_DEMON))
 	{
 		fprintf(fff, "It is a great bane of demons.\n");
 	}
@@ -4263,7 +4277,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		fprintf(fff, "It strikes at demons with holy wrath.\n");
 	}
-	if (f5 & (TR5_KILL_UNDEAD))
+	if (f1 & (TR1_KILL_UNDEAD))
 	{
 		fprintf(fff, "It is a great bane of undead.\n");
 	}
@@ -4884,7 +4898,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		info[i++] = "It does extra damage from frost.";
 	}
 
-	if (f1 & TR1_IMPACT)
+	if (f5 & TR5_IMPACT)
 	{
 		info[i++] = "It can cause earthquakes.";
 	}
@@ -5565,12 +5579,12 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		info[i++] = "It drains life from your foes.";
 	}
 
-	if (f1 & (TR1_IMPACT))
+	if (f5 & (TR5_IMPACT))
 	{
 		info[i++] = "It can cause earthquakes.";
 	}
 
-	if (f1 & (TR1_VORPAL))
+	if (f5 & (TR5_VORPAL))
 	{
 		info[i++] = "It is very sharp and can cut your foes.";
 	}
@@ -5600,7 +5614,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		info[i++] = "It is especially deadly against giants.";
 	}
-        if (f5 & (TR5_KILL_DEMON))
+        if (f1 & (TR1_KILL_DEMON))
 	{
                 info[i++] = "It is a great bane of demons.";
 	}
@@ -5608,7 +5622,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	{
 		info[i++] = "It strikes at demons with holy wrath.";
 	}
-        if (f5 & (TR5_KILL_UNDEAD))
+        if (f1 & (TR1_KILL_UNDEAD))
 	{
                 info[i++] = "It is a great bane of undead.";
 	}

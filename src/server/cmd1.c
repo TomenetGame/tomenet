@@ -667,7 +667,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Execute Undead */
-			if ((f5 & TR5_KILL_UNDEAD) &&
+			if ((f1 & TR1_KILL_UNDEAD) &&
 			    (r_ptr->flags3 & RF3_UNDEAD))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
@@ -676,7 +676,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Execute Undead */
-			if ((f5 & TR5_KILL_DEMON) &&
+			if ((f1 & TR1_KILL_DEMON) &&
 			    (r_ptr->flags3 & RF3_DEMON))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
@@ -848,8 +848,13 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		}
 	}
 
+	/* Ranged weapons get less benefit from brands */
+	if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
+
 	/* Martial Arts styles get less benefit from brands */
-	if ((mult >= 2) && !p_ptr->inventory[INVEN_WIELD].k_idx) return ((tdam * mult) / 2);
+	if (!o_ptr->k_idx)
+		return ((tdam * (((mult - 1) * 10) / 3 + 10)) / 10);
 
 	/* Return the total damage */
 	return (tdam * mult);
@@ -2712,7 +2717,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						drain_result = 0;
 				}
 
-                                if (f1 & TR1_VORPAL && (randint(6) == 1))
+                                if (f5 & TR5_VORPAL && (randint(6) == 1))
                                         vorpal_cut = TRUE;
 				else vorpal_cut = FALSE;
 
@@ -3263,7 +3268,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 
 		if ((!o_ptr->name2) && (!artifact_p(o_ptr)))
 		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
 			{
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
@@ -3281,7 +3286,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 		}
 		else if (artifact_p(o_ptr) || (o_ptr->name2 == EGO_STORMBRINGER))
 		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
 			{
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;
@@ -3309,7 +3314,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 		}
 		else if (o_ptr->name2)
 		{
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f5 & TR5_KILL_UNDEAD))
+			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
 			{
 				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 				*k = 0;

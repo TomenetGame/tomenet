@@ -552,6 +552,7 @@ extern void update_smart_learn(int m_idx, int what);
 /*extern void Contact(int fd, void *arg);*/
 extern int Net_input(void);
 extern int Net_output(void);
+extern int Net_output1(int i);
 extern void setup_contact_socket(void);
 extern int Setup_net_server(void);
 extern void Destroy_connection(int Ind, char *reason);

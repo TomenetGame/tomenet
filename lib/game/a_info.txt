@@ -888,7 +888,7 @@ D:these boots will be completely at home in the mountains.
 N:63:of Bard
 I:17:2:0
 W:60:30:2:100000
-P:0:7d4:20:10:0
+P:0:4d5:15:5:0
 F:KILL_DRAGON | 
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:Dealiest of arrows, imbued with elemental strength, this shaft is 
@@ -1825,7 +1825,7 @@ D:and is said to go "snicker snack".
 N:135:'Bullseye'
 I:17:2:0
 W:40:1:2:60000
-P:0:5d4:30:0:0
+P:0:4d5:30:0:0
 F:SLAY_EVIL | KILL_DEMON | SLAY_DRAGON
 #F:SLAY_UNDEAD | SLAY_ORC | SLAY_TROLL | SLAY_GIANT | SLAY_DRAGON | KILL_DEMON | 
 #F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
@@ -1952,7 +1952,7 @@ D:spells of evil make it unsafe in any hands but of the original wielder.
 N:146:of Gondor
 I:17:2:0
 W:55:35:3:100000
-P:0:8d6:0:0:0
+P:0:4d6:0:0:0
 F:SLAY_EVIL | KILL_DEMON
 F:BRAND_ELEC | BRAND_FIRE | BRAND_COLD
 D:An arrow that was created to rid the world of demons.  
@@ -2539,7 +2539,7 @@ D:destruction of all others who would gaze into it.
 N:209:'Giver of Sleep'
 I:17:3:0
 W:20:10:3:30000
-P:0:4d4:0:0:0
+P:0:2d4:0:0:0
 F:SLAY_UNDEAD | VAMPIRIC
 
 # The Set of Cesti of Eternal Peace
@@ -2788,7 +2788,7 @@ D:It seems to absorb any form of energy.
 N:228:of Thunder
 I:18:4:21
 W:60:40:2:60000
-P:0:4d6:0:0:0
+P:0:3d6:0:0:0
 F:KILL_UNDEAD | SLAY_EVIL | BRAND_ELEC
 D:A bolt that electrocutes its targets and leaves them stunned.
 

@@ -2127,6 +2127,13 @@ static int Handle_login(int ind)
 	    !(p_ptr->mode & MODE_HELL) &&
 	    !cfg.no_ghost && cfg.lifes)
 	{
+		/* if total_winner char was loaded from old save game that
+		   didn't reduce his/her lifes to 1 on winning, do that now: */
+		if (p_ptr->total_winner && (p_ptr->lives > 1+1)) {
+			msg_format(NumPlayers, "\377yTake care! As winner, you have no more resurrections left!");
+			p_ptr->lives = 1+1;
+		}
+
 		if (p_ptr->lives-1 == 1)
     			msg_format(NumPlayers, "\377GYou have no more resurrections left!");
 	        else
@@ -2544,6 +2551,28 @@ int Net_output(void)
 	if (!(turn % (15 * cfg.fps)))
 		Report_to_meta(META_UPDATE);
 
+	return 1;
+}
+
+int Net_output1(int i)
+{
+	connection_t *connp;
+	player_type *p_ptr = NULL;
+
+	p_ptr = Players[i];
+	if (p_ptr->conn == NOT_CONNECTED) return 0;
+	if (p_ptr->new_level_flag) return 2;
+	connp = &Conn[p_ptr->conn];
+
+	if (connp->c.len > 0)
+	{
+		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0) {
+			Destroy_connection(p_ptr->conn, "write error");
+			return 3;
+		} else {
+			Send_reliable(p_ptr->conn);
+		}
+	}
 	return 1;
 }
 

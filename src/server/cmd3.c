@@ -91,6 +91,7 @@ void inven_takeoff(int Ind, int item, int amt)
 		act = "Was wearing";
 	}
 
+#if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) 
@@ -141,7 +142,7 @@ void inven_takeoff(int Ind, int item, int amt)
 			do_mimic_change(Ind, 0, TRUE);
 		}*/
 	}
-
+#endif
 	/* Check if item gave WRAITH form */
 	if(k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) p_ptr->tim_wraith = 1;
 
@@ -260,6 +261,7 @@ void inven_drop(int Ind, int item, int amt)
 		act = "Dropped";
 	}
 
+#if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR))
 	{
@@ -309,7 +311,7 @@ void inven_drop(int Ind, int item, int amt)
 			do_mimic_change(Ind, 0, TRUE);
 		}*/
 	}
-
+#endif
 	/* Message */
 	object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
 

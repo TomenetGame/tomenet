@@ -107,6 +107,8 @@ static void do_curse (artifact_type *a_ptr)
 	/* Some chance of picking up these flags */
 	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
 	if (rand_int (5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
+	if (rand_int (7) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
+	if (rand_int (7) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
 	if (rand_int (7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
 
 	/* Some chance or reversing good bonuses */
@@ -125,6 +127,7 @@ static void do_curse (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_CURSED)
 	{
 		if (rand_int (2) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
+		if (rand_int (5) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
 		return;
 	}
 
@@ -483,18 +486,28 @@ static void add_ability (artifact_type *a_ptr)
 					a_ptr->flags1 |= TR1_KILL_DRAGON;
 					a_ptr->esp |= (ESP_DRAGON);
 				}
+				else if (r < 33)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DEMON;
+					a_ptr->esp |= (ESP_DEMON);
+				}
 				else if (r < 35)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_UNDEAD;
+					a_ptr->esp |= (ESP_UNDEAD);
+				}
+				else if (r < 39)
 				{
 					a_ptr->flags1 |= TR1_SLAY_DRAGON;
 					if (magik(80)) a_ptr->esp |= (ESP_DRAGON);
 				}
-				else if (r < 40)
+				else if (r < 41)
 				{
 					a_ptr->flags1 |= TR1_SLAY_EVIL;
 					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
 				}
 
-				else if (r < 45)
+				else if (r < 46)
 				{
 					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
 					if (magik(80)) a_ptr->esp |= (ESP_EVIL);
@@ -567,11 +580,15 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 72) a_ptr->flags3 |= TR3_SEE_INVIS;
 				else if (r < 76)
 				{
-					if (a_ptr->tval == TV_BOOMERANG)
+					if (a_ptr->tval == TV_BOOMERANG) {
 						a_ptr->flags3 |= TR3_XTRA_SHOTS;
-					else a_ptr->flags1 |= TR1_BLOWS;
-					do_pval (a_ptr);
-					if (a_ptr->pval > 2) a_ptr->pval = 2;
+						do_pval (a_ptr);
+						if (a_ptr->pval > 1) a_ptr->pval = 1;
+					} else {
+						a_ptr->flags1 |= TR1_BLOWS;
+						do_pval (a_ptr);
+						if (a_ptr->pval > 3) a_ptr->pval = 3;
+					}
 				}
 				else if (r < 89)
 				{
@@ -579,7 +596,13 @@ static void add_ability (artifact_type *a_ptr)
 					a_ptr->to_h += 3 + rand_int (10);
 				}
 				else if (r < 92) a_ptr->to_a += 3 + rand_int (3);
-//				else if (r < 98)
+				else if (r < 95)
+				{
+					a_ptr->flags5 |= TR5_CRIT;
+					if (a_ptr->pval < 0) break;
+					if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
+					else if (rand_int (2) == 0) a_ptr->pval++;
+				}
 				else a_ptr->weight = (a_ptr->weight * 9) / 10;
 #if 0
 				else
@@ -616,11 +639,19 @@ static void add_ability (artifact_type *a_ptr)
 				{
 					a_ptr->flags1 |= TR1_BRAND_POIS;
 				}
-				else if (r < 28)
+				else if (r < 24)
 				{ 
 					a_ptr->flags1 |= TR1_KILL_DRAGON;
 				}
-				else if (r < 36)
+				else if (r < 28)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DEMON;
+				}
+				else if (r < 32)
+				{ 
+					a_ptr->flags1 |= TR1_KILL_UNDEAD;
+				}
+				else if (r < 40)
 				{
 					a_ptr->flags1 |= TR1_SLAY_DRAGON;
 				}
@@ -665,7 +696,12 @@ static void add_ability (artifact_type *a_ptr)
 			case TV_BOOTS:
 			{
 				if (r < 10) a_ptr->flags3 |= TR3_FEATHER;
-				else if (r < 50) a_ptr->to_a += 2 + rand_int (4);
+				else if (r < 30) a_ptr->to_a += 2 + rand_int (4);
+				else if (r < 40)
+				{
+					a_ptr->flags4 |= TR4_FLY;
+				}
+				else if (r < 50) a_ptr->flags4 |= TR4_CLIMB;
 				else if (r < 80)
 				{
 					a_ptr->flags1 |= TR1_STEALTH;
@@ -683,24 +719,116 @@ static void add_ability (artifact_type *a_ptr)
 			}
 			case TV_GLOVES:
 			{
-				if (r < 17) a_ptr->flags2 |= TR2_FREE_ACT;
-				else if (r < 37)
-				  {
-				    a_ptr->flags4 |= TR4_AUTO_ID;
-				  }
-				else if (r < 60)
-				{
-					a_ptr->flags1 |= TR1_DEX;
-					do_pval (a_ptr);
-				}
-				else if (r < 70)
+				if (r < 15) a_ptr->flags2 |= TR2_FREE_ACT;
+				else if (r < 25)
 				{
 					a_ptr->flags1 |= TR1_MANA;
 					if (a_ptr->pval == 0) a_ptr->pval = 5 + rand_int (6);
 					else do_pval (a_ptr);
 					if (a_ptr->pval < 0) a_ptr->pval = 2;
 				}
-				else if (r < 85) a_ptr->to_a += 3 + rand_int (3);
+				else if (r < 30)
+				  {
+				    a_ptr->flags4 |= TR4_AUTO_ID;
+				  }
+				else if (r < 41)
+				{
+					a_ptr->flags1 |= TR1_DEX;
+					do_pval (a_ptr);
+				}
+				else if (r < 52)
+				{
+					a_ptr->flags1 |= TR1_STR;
+					do_pval (a_ptr);
+				}
+				else if (r < 57)
+				{
+					a_ptr->flags1 |= TR1_BLOWS;
+					a_ptr->pval = randint(3);
+				}
+				else if (r < 62)
+				{
+					a_ptr->flags5 |= TR5_CRIT;
+					if (a_ptr->pval < 0) break;
+					if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int (8);
+					else if (rand_int (2) == 0) a_ptr->pval++;
+				}
+				else if (r < 77)
+				{
+				int rsub = 60 + rand_int(24);
+				if ((rsub < 62) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_BRAND_ACID;
+				}
+				else if ((rsub < 64) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_BRAND_ELEC;
+				}
+				else if ((rsub < 66) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_BRAND_FIRE;
+				}
+				else if ((rsub < 68) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_BRAND_COLD;
+				}
+				else if ((rsub < 70) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_BRAND_POIS;
+				}
+				else if ((rsub < 72) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_DRAGON;
+				}
+				else if ((rsub < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_ANIMAL;
+				}
+				else if ((rsub < 76) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_UNDEAD;
+				}
+				else if ((rsub < 78) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_DEMON;
+				}
+				else if ((rsub < 80) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_ORC;
+				}
+				else if ((rsub < 82) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_TROLL;
+				}
+				else if ((rsub < 84) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_GIANT;
+				}
+#if 0 //too powerful on gloves - Art Gloves 'soul cure' can help.
+				else if (r < 71) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DRAGON;
+				}
+				else if (r < 72) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{ 
+					a_ptr->flags1 |= TR1_KILL_UNDEAD;
+				}
+				else if (r < 73) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{ 
+					a_ptr->flags1 |= TR1_KILL_DEMON;
+				}
+				else if (r < 74) && !(a_ptr->flags1 & TR1_MULTMASK))
+				{
+					a_ptr->flags1 |= TR1_SLAY_EVIL;
+				}
+#endif
+				}
+				else if (r < 81)
+				{
+					a_ptr->flags1 |= TR1_VAMPIRIC;
+				}
+				else if (r < 92)
+					a_ptr->to_a += 3 + rand_int (3);
 				else
 				{
 					a_ptr->to_h += 2 + rand_int (3);
@@ -712,7 +840,7 @@ static void add_ability (artifact_type *a_ptr)
 			case TV_HELM:
 			case TV_CROWN:
 			{
-				if (r < 20) a_ptr->flags2 |= TR2_RES_BLIND;
+				if (r < 15) a_ptr->flags2 |= TR2_RES_BLIND;
 				else if (r < 30)
 				  {
 				    a_ptr->flags4 |= TR4_AUTO_ID;
@@ -758,10 +886,14 @@ static void add_ability (artifact_type *a_ptr)
 			}
 			case TV_CLOAK:
 			{
-				if (r < 50)
+				if (r < 45)
 				{
 					a_ptr->flags1 |= TR1_STEALTH;
 					do_pval (a_ptr);
+				}
+				else if (r < 60)
+				{
+					a_ptr->flags4 |= TR4_FLY;
 				}
 				else a_ptr->to_a += 3 + rand_int (3);
 				break;
@@ -805,7 +937,7 @@ static void add_ability (artifact_type *a_ptr)
 	}
 	else			/* Pick something universally useful. */
 	{
-		r = rand_int (45);
+		r = rand_int(45);
 		switch (r)
 		{
 			case 0:
@@ -988,8 +1120,7 @@ static void add_ability (artifact_type *a_ptr)
 			case 43:
 				a_ptr->flags3 |= TR3_REGEN; break;
 			case 44:
-				a_ptr->flags4 |= TR4_ANTIMAGIC_10; break;
-
+				a_ptr->flags3 |= TR3_NO_MAGIC; break;
 		}
 	}
 
@@ -1170,10 +1301,8 @@ artifact_type *randart_make(object_type *o_ptr)
 			a_ptr->to_d += randint(3);
 			a_ptr->to_h += randint(5);
 		}
-		if (magik(10)) {
-			a_ptr->dd += 1;
-			a_ptr->ds += rand_int(3);
-		}
+		if (magik(10)) a_ptr->ds += 1;
+		else if (magik(10)) a_ptr->dd += 1;
 	}
 	
 	/* Ensure armour has some bonus to ac */
@@ -1249,7 +1378,6 @@ artifact_type *randart_make(object_type *o_ptr)
 			ap = artifact_power (a_ptr);
 		}
 	}
-	
 	a_ptr->cost = ap * (s32b)1000;
         a_ptr->level = ap;
 
@@ -1697,7 +1825,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		}
 		if (a_ptr->tval == TV_SWORD && (randint(3) == 1))
 		{
-			a_ptr->flags1 |= TR1_VORPAL;
+			a_ptr->flags5 |= TR5_VORPAL;
 		}
 	}
 

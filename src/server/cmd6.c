@@ -4831,6 +4831,7 @@ void do_cmd_activate(int Ind, int item)
 	/* Wonder Twin Powers... Activate! */
 	msg_print(Ind, "You activate it...");
 
+#if 0
 	/* Hack -- Book of the Dead is activatable for Ghosts */
 	if (p_ptr->ghost &&
 			o_ptr->tval == TV_PARCHEMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
@@ -4845,96 +4846,100 @@ void do_cmd_activate(int Ind, int item)
 		inven_item_optimize(Ind, item);
 		return;
 	}
-
+#endif
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY)
 	{
+		/* Breath activation */
+                p_ptr->current_activation = item;
+                get_aim_dir(Ind);
+
 		switch (o_ptr->sval)
 		{
 			case SV_DRAGON_BLACK:
 			{
 				//			do_mimic_change(Ind, 429);
-				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient black dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BLUE:
 			{
 				//		      do_mimic_change(Ind, 411);
-				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient blue dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_WHITE:
 			{
 				//			do_mimic_change(Ind, 424);
-				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient white dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_RED:
 			{
 				//			do_mimic_change(Ind, 444);
-				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient red dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GREEN:
 			{
 				//			do_mimic_change(Ind, 425);
-				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient green dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_MULTIHUED:
 			{
 				//			do_mimic_change(Ind, 462);
-				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient multi-hued dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_PSEUDO:
 			{
 				//			do_mimic_change(Ind, 462);
 				//do_mimic_change(Ind, race_index("Pseudo dragon"), TRUE);
-				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
+//				do_mimic_change(Ind, race_index("Ethereal drake"), TRUE);
 				break;
 			}
 			case SV_DRAGON_SHINING:
 			{
 				//			do_mimic_change(Ind, 463);
-				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ethereal dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_LAW:
 			{
 				//			do_mimic_change(Ind, 520);
-				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
+//				do_mimic_change(Ind, race_index("Great Wyrm of Law"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BRONZE:
 			{
 				//			do_mimic_change(Ind, 412);
-				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient bronze dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_GOLD:
 			{
 				//			do_mimic_change(Ind, 445);
-				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
+//				do_mimic_change(Ind, race_index("Ancient gold dragon"), TRUE);
 				break;
 			}
 			case SV_DRAGON_CHAOS:
 			{
 				//			do_mimic_change(Ind, 519);
-				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
+//				do_mimic_change(Ind, race_index("Great Wyrm of Chaos"), TRUE);
 				break;
 			}
 			case SV_DRAGON_BALANCE:
 			{
 				//			do_mimic_change(Ind, 521);
-				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
+//				do_mimic_change(Ind, race_index("Great Wyrm of Balance"), TRUE);
 				break;
 			}
 			case SV_DRAGON_POWER:
 			{
 				//			do_mimic_change(Ind, 549);
-				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
+//				do_mimic_change(Ind, race_index("Great Wyrm of Power"), TRUE);
 				break;
 			}
 		}
@@ -6851,6 +6856,112 @@ void do_cmd_activate_dir(int Ind, int dir)
                 msg_print(Ind, "You are not high level enough.");
 		return;
         }
+
+	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
+	{
+		if (!get_aim_dir(Ind)) return;
+		o_ptr->timeout = 200 + rand_int(100);
+
+		switch(o_ptr->sval){
+		case SV_DRAGON_BLACK:
+			msg_print(Ind, "You breathe acid.");
+			sprintf(p_ptr->attacker, " breathes acid for", p_ptr->name);
+			fire_ball(Ind, GF_ACID, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_BLUE:
+			msg_print(Ind, "You breathe lightning.");
+			sprintf(p_ptr->attacker, " breathes lightning for", p_ptr->name);
+			fire_ball(Ind, GF_ELEC, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_WHITE:
+			msg_print(Ind, "You breathe .");
+			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			fire_ball(Ind, GF_COLD, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_RED:
+			msg_print(Ind, "You breathe .");
+			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			fire_ball(Ind, GF_FIRE, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_GREEN:
+			msg_print(Ind, "You breathe .");
+			sprintf(p_ptr->attacker, " breathes  for", p_ptr->name);
+			fire_ball(Ind, GF_POIS, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_MULTIHUED:
+			switch(rand_int(5)){
+			case 0:	msg_print(Ind, "You breathe acid.");
+				sprintf(p_ptr->attacker, " breathes acid for", p_ptr->name);
+				fire_ball(Ind, GF_ACID, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 1:	msg_print(Ind, "You breathe lightning.");
+				sprintf(p_ptr->attacker, " breathes lightning for", p_ptr->name);
+				fire_ball(Ind, GF_ELEC, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 2:	msg_print(Ind, "You breathe frost.");
+				sprintf(p_ptr->attacker, " breathes frost for", p_ptr->name);
+				fire_ball(Ind, GF_COLD, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 3:	msg_print(Ind, "You breathe fire.");
+				sprintf(p_ptr->attacker, " breathes fire for", p_ptr->name);
+				fire_ball(Ind, GF_FIRE, dir, 600, 4, p_ptr->attacker);
+				break;
+			case 4:	msg_print(Ind, "You breathe poison.");
+				sprintf(p_ptr->attacker, " breathes poison for", p_ptr->name);
+				fire_ball(Ind, GF_POIS, dir, 600, 4, p_ptr->attacker);
+				break;
+			}
+			break;
+		case SV_DRAGON_PSEUDO:
+			msg_print(Ind, "You breathe light.");
+			sprintf(p_ptr->attacker, " breathes light for", p_ptr->name);
+			fire_ball(Ind, GF_LITE, dir, 200, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_SHINING:
+			msg_print(Ind, "You breathe light.");
+			sprintf(p_ptr->attacker, " breathes light for", p_ptr->name);
+			fire_ball(Ind, GF_LITE, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_LAW:
+			switch(rand_int(2)){
+			case 0:	msg_print(Ind, "You breathe shards.");
+				sprintf(p_ptr->attacker, " breathes shards for", p_ptr->name);
+				fire_ball(Ind, GF_SHARDS, dir, 400, 4, p_ptr->attacker);
+				break;
+			case 1:	msg_print(Ind, "You breathe sound.");
+				sprintf(p_ptr->attacker, " breathes sound for", p_ptr->name);
+				fire_ball(Ind, GF_SOUND, dir, 400, 4, p_ptr->attacker);
+				break;
+			}
+			break;
+		case SV_DRAGON_BRONZE:
+			msg_print(Ind, "You breathe confusion.");
+			sprintf(p_ptr->attacker, " breathes confusion for", p_ptr->name);
+			fire_ball(Ind, GF_CONFUSION, dir, 300, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_GOLD:
+			msg_print(Ind, "You breathe sound.");
+			sprintf(p_ptr->attacker, " breathes sound for", p_ptr->name);
+			fire_ball(Ind, GF_SOUND, dir, 400, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_CHAOS:
+			msg_print(Ind, "You breathe chaos.");
+			sprintf(p_ptr->attacker, " breathes chaos for", p_ptr->name);
+			fire_ball(Ind, GF_CHAOS, dir, 600, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_BALANCE:
+			msg_print(Ind, "You breathe disenchantment.");
+			sprintf(p_ptr->attacker, " breathes disenchantment for", p_ptr->name);
+			fire_ball(Ind, GF_DISENCHANT, dir, 500, 4, p_ptr->attacker);
+			break;
+		case SV_DRAGON_POWER:
+			msg_print(Ind, "You breathe havoc.");
+			sprintf(p_ptr->attacker, " breathes havoc for", p_ptr->name);
+			//fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
+			call_chaos(Ind, dir);
+			break;
+		}
+	}
 
 	/* Artifacts activate by name */
 	if (o_ptr->name1)

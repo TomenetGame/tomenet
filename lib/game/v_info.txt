@@ -1857,7 +1857,7 @@ D:%#8#%
 D:%888%
 D:%#8#%
 D:%%%%%
-F:HIVES
+#F:HIVES
 
 N:83:LV (Turnabout)
 X:7:10:12:15
@@ -3767,7 +3767,6 @@ D:    %%%^^^^^^%%%
 D:       %%%%%%       
 F:HIVES | NO_PENETR
 
-
 # Jir
 N:158:footmark
 X:8:18:30:33
@@ -3802,7 +3801,6 @@ D: %.^^^^XXXXX^^^^.,...%%
 D:  %.*.^^^^^^^.*...%%%            
 D:   %%%%%%%%%%%%%%%               
 F:NO_GENO | NO_DESTROY | NO_PENETR 
-
 
 # Jir
 # Chinese letters, which read 'Mang' :)
@@ -3844,4 +3842,11 @@ D:%#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 F:NO_GENO | NO_DESTROY | NO_PENETR | NO_TELE | NOMAP | NO_MIRROR | NO_ROTATE
 
-
+# I removed HIVES and added this version instead (C. Blue)
+N:160:Miniature Cell Hives
+X:7:45:5:15
+D:XXXXXXXXXXXXXXX
+D:%X8XXXX8XXXX8XX
+D:%881XX812XX828X
+D:%X8XXXX8XXXX8XX
+D:XXXXXXXXXXXXXXX

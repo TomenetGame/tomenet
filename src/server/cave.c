@@ -2135,9 +2135,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* admins sees intensity of mana shields */
 			if (p_ptr->admin_dm && p2_ptr->tim_manashield)
 			{
-				if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) < 7)
+				if((( p2_ptr->csp * 100) / (p2_ptr->msp*10)) < 10)
 				{
-					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->csp * 95) / (p2_ptr->msp*10)));
+					sprintf((unsigned char *)&kludge,"%d", ((p2_ptr->csp * 100) / (p2_ptr->msp*10)));
 					c = kludge;
 				}
 			}
