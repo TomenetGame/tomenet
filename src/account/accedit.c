@@ -3,6 +3,9 @@
    It can be made more visually attractive later maybe.
    I just didn't want to leave accounts unchangeable
    while testing. */
+
+#define HAVE_CRYPT 1
+
 #include <curses.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -26,6 +29,8 @@ FILE *fp;
 WINDOW *listwin, *mainwin;
 
 char *fname="tomenet.acc";
+char newpass[20];
+char *crypass;
 
 int tfpos;
 
@@ -134,6 +139,13 @@ int ListAccounts(int fpos){
 		move(LINES-1, 0);
 		clrtoeol();
 		switch(ch){
+			case 'h':
+			case 'H':
+				getstring("New password: ", newpass, 20);
+				crypass=t_crypt(newpass, c_acc.name);
+				strncpy(c_acc.pass, crypass, 19);
+				change=1;
+				break;
 			case 'l':
 			case 'L':
 				quit=1;
@@ -292,6 +304,13 @@ void editor(){
 			move(LINES-1, 0);
 			clrtoeol();
 			switch(ch){
+				case 'h':
+				case 'H':
+					getstring("New password: ", newpass, 20);
+					crypass=t_crypt(newpass, c_acc.name);
+					strncpy(c_acc.pass, crypass, 19);
+					change=1;
+					break;
 				case 'Q':
 				case 'q':
 					if(ask("Are you sure you want to quit?")){
@@ -467,6 +486,41 @@ void statinput(char *prompt, char *string, int max){
 	string[pos]='\0';
 	move(LINES-1, 0);
 	clrtoeol();
+}
+
+void getstring(const char *prompt, char *string, int max){
+	char ch;
+	int i=0;
+	mvprintw(LINES-1, 0, prompt);
+	do{
+		ch=getch();
+		if(ch=='\b' && i>0)
+			i--;
+		if(ch=='\r' || ch=='\n'){
+			string[i]='\0';
+			move(LINES-1, 0);
+			clrtoeol();
+			return;
+		}
+		else{
+			string[i++]=ch;
+			addch(ch);
+		}
+	} while(1);
+}
+
+/* our password encryptor */
+static char *t_crypt(char *inbuf, const char *salt){
+#ifdef HAVE_CRYPT
+	static char out[64];
+	char setting[9];
+	setting[0]='_';
+	strncpy(&setting[1], salt, 8);
+	strcpy(out, (char*)crypt(inbuf, salt));
+	return(out);
+#else
+	return(inbuf);
+#endif
 }
 
 unsigned short ask(char *prompt){
