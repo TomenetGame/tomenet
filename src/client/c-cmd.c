@@ -1861,7 +1861,8 @@ void cmd_master_aux_level(void)
 		Term_putstr(5, 4, -1, TERM_WHITE, "(1) Static your current level");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(2) Unstatic your current level");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(3) Add dungeon");
-		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Town generation");
+		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Remove dungeon");
+		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Town generation");
 
 
 
@@ -1898,6 +1899,11 @@ void cmd_master_aux_level(void)
 			Send_master(MASTER_LEVEL, buf);
 		}
 		else if (i == '4'){
+			buf[0]='R';
+			buf[1]='\0';
+			Send_master(MASTER_LEVEL, buf);
+		}
+		else if (i == '5'){
 			buf[0]='T';
 			buf[1]=c_get_quantity("Base level: ", 127);
 			Send_master(MASTER_LEVEL, buf);

@@ -123,6 +123,7 @@ static HPALETTE PASCAL MakeDIBPalette(LPBITMAPINFOHEADER lpInfo)
 		return(GetStockObject(DEFAULT_PALETTE));
 	}
 #endif
+	return(0);
 }
 
 
@@ -304,8 +305,8 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 		GlobalUnlock(pInfo->hDIB);
 
 		hDC = GetDC(hWnd);
-		if (!MakeBitmapAndPalette(hDC, pInfo->hDIB, &(pInfo->hPalette),
-		                          &(pInfo->hBitmap)))
+		if (!MakeBitmapAndPalette(hDC, pInfo->hDIB,
+			(HPALETTE)&(pInfo->hPalette), (HBITMAP)&(pInfo->hBitmap)))
 		{
 			ReleaseDC(hWnd,hDC);
 			goto ErrExit2;

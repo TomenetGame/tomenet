@@ -1097,6 +1097,7 @@ struct quest_type{
 #define DUNGEON_IRON 2	/* one way dungeon - return portal at max level */
 #define DUNGEON_HELL 4	/* hellish dungeon - forces hellish mode on all */
 #define DUNGEON_NOMAP 8	/* player never gains level knowledge */
+#define DUNGEON_DELETED 16 /* Deleted, but not yet removed */
 
 typedef struct dun_level dun_level;
 struct dun_level{
@@ -1131,9 +1132,6 @@ struct town_type{
 	u16b num_stores;	/* always 8 or unused atm. */
 	store_type *townstore;  /* pointer to the stores */
 };
-
-#define WILD_F_UP	8	/* these are to show dungeons etc. */
-#define WILD_F_DOWN	16
 
 #endif
 

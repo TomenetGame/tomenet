@@ -3824,9 +3824,14 @@ that keeps many algorithms happy.
 
 /* wilderness flags */
 
-#define		WILD_F_GENERATED	1
-#define		WILD_F_INHABITED	2
-#define		WILD_F_IN_MEMORY	4
+#define	WILD_F_GENERATED	1
+#define	WILD_F_INHABITED	2
+#define	WILD_F_IN_MEMORY	4
+#define	WILD_F_UP		8	/* these are to show dungeons etc. */
+#define	WILD_F_DOWN		16
+#define WILD_F_LOCKUP		32	/* lock to prevent creation */
+#define WILD_F_LOCKDOWN		64
+
 
 
 /*

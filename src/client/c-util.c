@@ -2712,5 +2712,6 @@ int usleep(huge microSeconds)
 int usleep(long microSeconds)
 {
 	Sleep(microSeconds/10); /* meassured in milliseconds not microseconds*/
+	return(0);
 }
 #endif /* WIN32 */

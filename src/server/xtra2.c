@@ -3781,7 +3781,7 @@ void player_death(int Ind)
 	
 	else if (p_ptr->alive){
 		sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
-		s_printf("%s was killed by %s.", p_ptr->name, p_ptr->died_from);
+		s_printf("%s was killed by %s.\n", p_ptr->name, p_ptr->died_from);
 	}
 	else if (!p_ptr->total_winner)
 		sprintf(buf, "\377r%s committed suicide.", p_ptr->name);
@@ -5995,6 +5995,26 @@ bool master_level(int Ind, char * parms)
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
 					zcave[p_ptr->py][p_ptr->px].feat=FEAT_MORE;
+				}
+			}
+			break;
+		}
+		case 'R':
+		{
+			cave_type **zcave;
+			/* Remove dungeon (here) if it exists */
+			if((zcave=getcave(&p_ptr->wpos))){
+				switch(zcave[p_ptr->py][p_ptr->px].feat){
+					case FEAT_MORE:
+						remdungeon(&p_ptr->wpos, 0);
+						zcave[p_ptr->py][p_ptr->px].feat=FEAT_GRASS;
+						break;
+					case FEAT_LESS:
+						remdungeon(&p_ptr->wpos, 1);
+						zcave[p_ptr->py][p_ptr->px].feat=FEAT_GRASS;
+						break;
+					default:
+						msg_print(Ind, "There is no dungeon here");
 				}
 			}
 			break;

@@ -1482,7 +1482,7 @@ static errr Term_xtra_win_react(void)
 	int i;
 /*	I added this USE_GRAPHICS because we lost color support as well. -GP */
 #ifdef USE_GRAPHICS
-	static old_use_graphics = FALSE;
+	static int old_use_graphics = FALSE;
 
 
 	/* XXX XXX XXX Check "color_table[]" */

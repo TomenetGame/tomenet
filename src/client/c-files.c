@@ -301,10 +301,10 @@ errr path_parse(char *buf, cptr file)
         /* Append the rest of the filename, if any */
         if (s) (void)strcat(buf, s);
 
-        /* Success */
-        return (0);
 #endif
 #endif /* WIN32 */
+        /* Success */
+        return (0);
 }
 
 

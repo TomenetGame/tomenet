@@ -2540,6 +2540,12 @@ static void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "Runlevel set to %d", cfg.runlevel);
 				time(&cfg.closetime);
 			}
+			else if (prefix(message, "/pet")){
+#if 0
+				summon_pet(Ind);
+				msg_print(Ind, "You summon a pet");
+#endif
+			}
 			else if (prefix(message, "/kick"))
 			{
 				if (tk)

@@ -1173,7 +1173,7 @@ static int auto_retaliate(int Ind)
 		if (!p_ptr->inventory[i].tval) break;
 
 //		cptr inscription = (unsigned char *) quark_str(o_ptr->note);
-		inscription = (unsigned char *) quark_str(p_ptr->inventory[i].note);
+		inscription = quark_str(p_ptr->inventory[i].note);
 
 		/* check for a valid inscription */
 		if (inscription == NULL) continue;
@@ -2177,8 +2177,10 @@ static void process_player_end(int Ind)
 						new_pos.wx = p_ptr->wpos.wx;
 						new_pos.wy = p_ptr->wpos.wy;
 						new_pos.wz = 0;
-					
+#if 0
 						p_ptr->new_level_method = ( istown(&new_pos) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND );
+#endif
+						p_ptr->new_level_method = (p_ptr->wpos.wz>0 ? LEVEL_DOWN : LEVEL_UP);
 					}
 				}
 				/* beware! bugs inside! (jir) */

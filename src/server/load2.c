@@ -998,8 +998,8 @@ static void rd_house(int n)
 		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do{
 			i+=2;
-			rd_byte(&house_ptr->coords.poly[i]);
-			rd_byte(&house_ptr->coords.poly[i+1]);
+			rd_byte((byte*)&house_ptr->coords.poly[i]);
+			rd_byte((byte*)&house_ptr->coords.poly[i+1]);
 		}while(house_ptr->coords.poly[i] || house_ptr->coords.poly[i+1]);
 		GROW(house_ptr->coords.poly, MAXCOORD, i+2, byte);
 	}

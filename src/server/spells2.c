@@ -4565,6 +4565,114 @@ void house_creation(int Ind, bool floor, bool jail){
 	poly_build(Ind, (char*)&buildargs);	/* Its a (char*) ;( */
 }
 
+void summon_pet(int Ind, int max){
+	player_type *p_ptr = Players[Ind];
+        monster_race *r_ptr;
+        monster_type *m_ptr;
+        cave_type *c_ptr;
+	cave_type **zcave;
+        int x, y, i;
+
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+        for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
+        for (y = p_ptr->py - 1; y <= p_ptr->py; y++)
+        {
+                /* Verify location */
+                if (!in_bounds(y, x)) continue;
+                /* Require empty space */
+                if (!cave_empty_bold(zcave, y, x)) continue;
+
+                /* Hack -- no creation on glyph of warding */
+                if (zcave[y][x].feat == FEAT_GLYPH) continue;
+
+                if ((p_ptr->px == x) || (p_ptr->py == y)) continue;
+
+                break;
+        }
+	/* Access the location */
+        c_ptr = &zcave[y][x];
+
+	/* Make a new monster */
+	c_ptr->m_idx = m_pop();
+
+	/* Mega-Hack -- catch "failure" */
+        if (!c_ptr->m_idx) return;
+
+        /* Grab and allocate */
+        m_ptr = &m_list[c_ptr->m_idx];
+        MAKE(m_ptr->r_ptr, monster_race);
+        m_ptr->special = TRUE;
+        m_ptr->fx = x;
+        m_ptr->fx = y;
+
+        r_ptr = m_ptr->r_ptr;
+
+        r_ptr->flags1 = 0;
+        r_ptr->flags2 = 0;
+        r_ptr->flags3 = 0;
+        r_ptr->flags4 = 0;
+        r_ptr->flags5 = 0;
+        r_ptr->flags6 = 0;
+
+        r_ptr->text = 0;
+        r_ptr->name = 0;
+        r_ptr->sleep = 0;
+        r_ptr->aaf = 20;
+        r_ptr->speed = 140;
+
+        r_ptr->mexp = 1;
+
+        r_ptr->d_attr = TERM_YELLOW;
+        r_ptr->d_char = 'g';
+        r_ptr->x_attr = TERM_YELLOW;
+        r_ptr->x_char = 'g';
+
+        r_ptr->freq_inate = 0;
+        r_ptr->freq_spell = 0;
+        r_ptr->flags1 |= RF1_FORCE_MAXHP;
+        r_ptr->flags2 |= RF2_STUPID | RF2_EMPTY_MIND | RF2_REGENERATE | RF2_POWERFUL | RF2_BASH_DOOR | RF2_MOVE_BODY | RF2_TAKE_ITEM;
+        r_ptr->flags3 |= RF3_HURT_ROCK | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_POIS | RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF9_IM_TELE;
+
+	r_ptr->hdice = 10;
+	r_ptr->hside = 20;
+	r_ptr->ac = 90;
+        
+	m_ptr->speed = r_ptr->speed;
+        m_ptr->mspeed = m_ptr->speed;
+        m_ptr->ac = r_ptr->ac;
+        m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+        m_ptr->hp = maxroll(r_ptr->hdice, r_ptr->hside);
+
+	m_ptr->clone = TRUE;
+        m_ptr->owner = p_ptr->id;
+        for (i = 0; i < 4; i++)
+        {
+                m_ptr->blow[i].method = r_ptr->blow[i].method = RBM_HIT;
+                m_ptr->blow[i].effect = r_ptr->blow[i].effect = RBE_HURT;
+                m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice = 5;
+                m_ptr->blow[i].d_side = r_ptr->blow[i].d_side = 8;
+        }
+        m_ptr->r_idx = 1;
+
+        m_ptr->level = p_ptr->lev;
+        m_ptr->exp = MONSTER_EXP(m_ptr->level);
+
+	/* Assume no sleeping */
+	m_ptr->csleep = 0;
+	wpcopy(&m_ptr->wpos, &p_ptr->wpos);
+
+	/* No "damage" yet */
+	m_ptr->stunned = 0;
+	m_ptr->confused = 0;
+	m_ptr->monfear = 0;
+
+	/* No knowledge */
+	m_ptr->cdis = 0;
+        m_ptr->mind = (GOLEM_FOLLOW|GOLEM_ATTACK);
+
+	/* Update the monster */
+	update_mon(c_ptr->m_idx, TRUE);
+}
 
 /* Create a mindless servant ! */
 void golem_creation(int Ind, int max)

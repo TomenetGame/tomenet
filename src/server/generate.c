@@ -4760,11 +4760,58 @@ void dealloc_dungeon_level_maybe(struct worldpos *wpos)
 }
 #endif	// 0
 
+void del_dungeon(struct worldpos *wpos, bool tower){
+	struct dungeon_type *d_ptr;
+	int i;
+	struct worldpos twpos;
+	wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+
+	s_printf("%s at (%d,%d) attempt remove\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
+
+	wpcopy(&twpos, wpos);
+	d_ptr=(tower ? wild->tower : wild->dungeon);
+	if(d_ptr->flags & DUNGEON_DELETED){
+		s_printf("Deleted flag\n");
+		for(i=0;i<d_ptr->maxdepth;i++){
+			twpos.wz=(tower ? i+1 : 0-(i+1));
+			if(d_ptr->level[i].ondepth) return;
+			if(d_ptr->level[i].cave) dealloc_dungeon_level(&twpos);
+		}
+		C_KILL(d_ptr->level, d_ptr->maxdepth, struct dun_level);
+		KILL((tower ? wild->tower : wild->dungeon), struct dungeon_type);
+	}
+	else{
+		s_printf("%s at (%d,%d) restored\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
+		/* This really should not happen, but just in case */
+		/* Re allow access to the non deleted dungeon */
+		wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN);
+	}
+	/* Release the lock */
+	s_printf("%s at (%d,%d) removed\n", (tower ? "Tower" : "Dungeon"), wpos->wx, wpos->wy);
+	wild->flags &= ~(tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
+}
+
+void remdungeon(struct worldpos *wpos, bool tower){
+	struct dungeon_type *d_ptr;
+	wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
+
+	d_ptr=(tower ? wild->tower : wild->dungeon);
+	if(!d_ptr) return;
+
+	/* Lock so that dungeon cannot be overwritten while in use */
+	wild->flags |= (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN);
+	/* This will prevent players entering the dungeon */
+	wild->flags &= ~(tower ? WILD_F_UP : WILD_F_DOWN);
+	d_ptr->flags |= DUNGEON_DELETED;
+	del_dungeon(wpos, tower);	/* Hopefully first time */
+}
+
 void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower){
 	int i;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild=&wild_info[wpos->wy][wpos->wx];
+	if(wild->flags & (tower ? WILD_F_LOCKUP : WILD_F_LOCKDOWN)) return;
 	wild->flags |= (tower ? WILD_F_UP : WILD_F_DOWN); /* no checking */
 	if (tower)
 		MAKE(wild->tower, struct dungeon_type);

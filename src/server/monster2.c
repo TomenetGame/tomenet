@@ -2383,9 +2383,10 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 	/* */
 	 
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
-		int i;
+		int i,j=0;
 		monster_race *r_ptr;
 		while((r_idx=get_mon_num(monster_level))){
+			if(j++>250) break;
 			r_ptr=&r_info[r_idx];
 			if(d_ptr->r_char[0]){
                 		for (i = 0; i < 10; i++)
