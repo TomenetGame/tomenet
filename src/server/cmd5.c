@@ -4711,7 +4711,7 @@ void do_cmd_hunt(int Ind, int book, int spell)
 			  else
 			    {
 			      p_ptr->bow_brand = 0;
-                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_SOUND, 1);
+                              set_bow_brand(Ind, plev + randint(20), BOW_BRAND_BALL_SOUND, 1);
 			    }
 			  break;
 			}
