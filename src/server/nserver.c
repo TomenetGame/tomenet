@@ -357,6 +357,7 @@ bool Report_to_meta(int flag)
 			GetLocalHostName(local_name, 1024);
 #endif
 #else
+                        printf(">>%s\n",cfg.bind_name);
                         if (cfg.bind_name)
                                 strncpy(local_name, cfg.bind_name, 1024);
                         else

@@ -2873,6 +2873,7 @@ void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"BIND_NAME"))
 	{
 		cfg.bind_name = strdup(value);
+                printf("<<%s\n",cfg.bind_name);
 	}
 	else if (!strcmp(option,"CONSOLE_PASSWORD"))
 	{
