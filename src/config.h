@@ -625,4 +625,3 @@
 #endif
 
 
-#define NEWHOUSES
