@@ -5730,7 +5730,7 @@ s16b unique_quark = 0;
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, obj_theme theme, int luck)
 {
-	int prob, base;
+	int prob, base, tmp_luck;
 
 	object_type		forge;
 
@@ -5743,10 +5743,22 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
 
-	/* max luck = 40 */
-	luck = 200 - (8000 / (luck + 40));
-	if ((!good) && magik(luck / 2)) good = TRUE;
-	else if (good && (!great) && magik(luck / 15)) {great = TRUE; good = TRUE;}
+	/* Check luck */
+	luck += global_luck;
+	if (luck < -10) luck = -10;
+	if (luck > 40) luck = 40;
+
+	if (luck > 0) {
+		/* max luck = 40 */
+		tmp_luck = 200 - (8000 / (luck + 40));
+		if ((!good) && magik(tmp_luck / 2)) good = TRUE;
+		else if (good && (!great) && magik(tmp_luck / 15)) {great = TRUE; good = TRUE;}
+	} else if (luck < 0) {
+		/* min luck = -10 */
+		tmp_luck = 200 - (2000 / (-luck + 10));
+		if (great && magik(tmp_luck / 3)) {great = FALSE; good = TRUE;}
+		else if ((good) && magik(tmp_luck / 2)) good = FALSE;
+	}
 
 	/* Chance of "special object" */
 	prob = (good ? 10 : 1000);
@@ -5824,8 +5836,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, ob
 			case TV_SHOT:
 			case TV_ARROW:
 			case TV_BOLT:
-				forge.number = damroll(6,
-						(forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+				if (luck >= 0)
+				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+				else
+				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
 		}
 
 	/* Hack -- inscribe items that a unique drops */

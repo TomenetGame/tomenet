@@ -2924,6 +2924,7 @@ void calc_bonuses(int Ind)
 	}
 
 	if (p_ptr->antimagic > 90) p_ptr->antimagic = 90; /* AM cap */
+	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 
 

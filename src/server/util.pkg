@@ -260,4 +260,6 @@ extern u16b max_t_idx;
 ////extern monster_race *r_info;
 //extern monster_race *r_info[0xFFFFF] @ Monsters_real;
 ////extern player_type Players[2] @ Players_real;
+
+extern int global_luck;
   

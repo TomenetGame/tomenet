@@ -743,3 +743,5 @@ int gametype;
 char priv_note[MAX_NOTES][80], priv_note_sender[MAX_NOTES][80], priv_note_target[MAX_NOTES][80];
 char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
+
+int global_luck = 0;

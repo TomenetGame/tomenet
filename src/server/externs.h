@@ -1416,3 +1416,4 @@ school_type *grab_school_type(s16b num);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
+extern int global_luck;
