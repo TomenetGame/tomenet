@@ -366,16 +366,16 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 		      msg_print(Ind, "\377oYour ammos are covered with venom !");
 		      break;
 		    case BOW_BRAND_MANA:
-		      msg_print(Ind, "\377oYour ammos glows with power !");
+		      msg_print(Ind, "\377oYour ammos glow with power !");
 		      break;
 		    case BOW_BRAND_CONF:
-		      msg_print(Ind, "\377oYour ammos glows many colors !");
+		      msg_print(Ind, "\377oYour ammos glow many colors !");
 		      break;
 		    case BOW_BRAND_SHARP:
 		      msg_print(Ind, "\377oYour ammos sharpen !");
 		      break;
                     case BOW_BRAND_BALL_SOUND:
-                      msg_print(Ind, "\377oYour ammos vibrates !");
+                      msg_print(Ind, "\377oYour ammos vibrate !");
 		      break;
 		    }
 		  notice = TRUE;
@@ -387,7 +387,7 @@ bool set_bow_brand(int Ind, int v, int t, int p)
 	{
 		if (p_ptr->bow_brand)
 		{
-			msg_print(Ind, "\377oYour ammos seems normal again.");
+			msg_print(Ind, "\377oYour ammos seem normal again.");
 			notice = TRUE;
 		}
 	}
@@ -644,7 +644,7 @@ bool set_furry(int Ind, int v)
 	{
 		if (!p_ptr->furry)
 		{
-			msg_print(Ind, "You grow a furry!");
+			msg_print(Ind, "You grow a fury!");
 			notice = TRUE;
 		}
 	}
@@ -654,7 +654,7 @@ bool set_furry(int Ind, int v)
 	{
 		if (p_ptr->furry)
 		{
-			msg_print(Ind, "The furry stops.");
+			msg_print(Ind, "The fury stops.");
 			notice = TRUE;
 		}
 	}
@@ -762,7 +762,7 @@ bool set_tim_wraith(int Ind, int v)
 	{
 		if (p_ptr->tim_wraith)
 		{
-			msg_format_near(Ind, "%s loses his wraith powers.", p_ptr->name);
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 			msg_print(Ind, "You lose your wraith powers.");
 			notice = TRUE;
 			
