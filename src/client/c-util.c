@@ -4,6 +4,8 @@
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 
+#define NR_OPTIONS_SHOWN	20
+
 static void ascii_to_text(char *buf, cptr str);
 
 static bool after_macro = FALSE;
@@ -1403,6 +1405,48 @@ cptr message_str(s16b age)
         /* Return the message text */
         return (s);
 }
+cptr message_str_chat(s16b age)
+{
+        s16b x;
+        s16b o;
+        cptr s;
+
+        /* Forgotten messages have no text */
+        if ((age < 0) || (age >= message_num_chat())) return ("");
+
+        /* Acquire the "logical" index */
+        x = (message__next_chat + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
+
+        /* Get the "offset" for the message */
+        o = message__ptr_chat[x];
+
+        /* Access the message text */
+        s = &message__buf_chat[o];
+
+        /* Return the message text */
+        return (s);
+}
+cptr message_str_msgnochat(s16b age)
+{
+        s16b x;
+        s16b o;
+        cptr s;
+
+        /* Forgotten messages have no text */
+        if ((age < 0) || (age >= message_num_msgnochat())) return ("");
+
+        /* Acquire the "logical" index */
+        x = (message__next_msgnochat + MESSAGE_MAX - (age + 1)) % MESSAGE_MAX;
+
+        /* Get the "offset" for the message */
+        o = message__ptr_msgnochat[x];
+
+        /* Access the message text */
+        s = &message__buf_msgnochat[o];
+
+        /* Return the message text */
+        return (s);
+}
 
 
 /*
@@ -1415,6 +1459,40 @@ s16b message_num(void)
         /* Extract the indexes */
         last = message__last;
         next = message__next;
+
+        /* Handle "wrap" */
+        if (next < last) next += MESSAGE_MAX;
+
+        /* Extract the space */
+        n = (next - last);
+
+        /* Return the result */
+        return (n);
+}
+s16b message_num_chat(void)
+{
+        int last, next, n;
+
+        /* Extract the indexes */
+        last = message__last_chat;
+        next = message__next_chat;
+
+        /* Handle "wrap" */
+        if (next < last) next += MESSAGE_MAX;
+
+        /* Extract the space */
+        n = (next - last);
+
+        /* Return the result */
+        return (n);
+}
+s16b message_num_msgnochat(void)
+{
+        int last, next, n;
+
+        /* Extract the indexes */
+        last = message__last_msgnochat;
+        next = message__next_msgnochat;
 
         /* Handle "wrap" */
         if (next < last) next += MESSAGE_MAX;
@@ -1495,8 +1573,14 @@ void c_message_add(cptr str)
                 /* Assign the starting address */
                 message__ptr[x] = message__ptr[i];
 
-		/* Redraw */
-		p_ptr->window |= (PW_MESSAGE);
+		/* Redraw - assume that all chat messages start with '[' */
+#if 0
+		if (str[0]=='[')
+                p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+                else
+                p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+#endif
+		p_ptr->window |= (PW_MESSAGE); 
 
                 /* Success */
                 return;
@@ -1598,8 +1682,356 @@ void c_message_add(cptr str)
         /* Advance the "head" pointer */
         message__head += n + 1;
 
-	/* Window stuff */
-	p_ptr->window |= PW_MESSAGE;
+	/* Window stuff - assume that all chat messages start with '[' */
+        if (str[0]=='[')
+        p_ptr->window |= (PW_MESSAGE | PW_CHAT);
+        else
+        p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
+//      p_ptr->window |= PW_MESSAGE;
+	
+}
+void c_message_add_chat(cptr str)
+{
+        int i, k, x, n;
+
+
+        /*** Step 1 -- Analyze the message ***/
+
+        /* Hack -- Ignore "non-messages" */
+        if (!str) return;
+
+        /* Message length */
+        n = strlen(str);
+
+        /* Important Hack -- Ignore "long" messages */
+        if (n >= MESSAGE_BUF / 4) return;
+
+
+        /*** Step 2 -- Attempt to optimize ***/
+
+        /* Limit number of messages to check */
+        k = message_num_chat() / 4;
+
+        /* Limit number of messages to check */
+        if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
+
+        /* Check the last few messages (if any to count) */
+        for (i = message__next_chat; k; k--)
+        {
+                u16b q;
+
+                cptr old;
+
+                /* Back up and wrap if needed */
+                if (i-- == 0) i = MESSAGE_MAX - 1;
+
+                /* Stop before oldest message */
+                if (i == message__last_chat) break;
+
+                /* Extract "distance" from "head" */
+                q = (message__head_chat + MESSAGE_BUF - message__ptr_chat[i]) % MESSAGE_BUF;
+
+                /* Do not optimize over large distance */
+                if (q > MESSAGE_BUF / 2) continue;
+
+                /* Access the old string */
+                old = &message__buf_chat[message__ptr_chat[i]];
+
+                /* Compare */
+                if (!streq(old, str)) continue;
+
+                /* Get the next message index, advance */
+                x = message__next_chat++;
+
+                /* Handle wrap */
+                if (message__next_chat == MESSAGE_MAX) message__next_chat = 0;
+
+                /* Kill last message if needed */
+                if (message__next_chat == message__last_chat) message__last_chat++;
+
+                /* Handle wrap */
+                if (message__last_chat == MESSAGE_MAX) message__last_chat = 0;
+
+                /* Assign the starting address */
+                message__ptr_chat[x] = message__ptr_chat[i];
+
+		/* Redraw - assume that all chat messages start with '[' */
+                p_ptr->window |= (PW_CHAT);
+
+                /* Success */
+                return;
+        }
+
+
+        /*** Step 3 -- Ensure space before end of buffer ***/
+
+        /* Kill messages and Wrap if needed */
+        if (message__head_chat + n + 1 >= MESSAGE_BUF)
+        {
+                /* Kill all "dead" messages */
+                for (i = message__last_chat; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_chat) break;
+
+                        /* Kill "dead" messages */
+                        if (message__ptr_chat[i] >= message__head_chat)
+                        {
+                                /* Track oldest message */
+                                message__last_chat = i + 1;
+                        }
+                }
+
+                /* Wrap "tail" if needed */
+                if (message__tail_chat >= message__head_chat) message__tail_chat = 0;
+
+                /* Start over */
+                message__head_chat = 0;
+        }
+
+
+        /*** Step 4 -- Ensure space before next message ***/
+
+        /* Kill messages if needed */
+        if (message__head_chat + n + 1 > message__tail_chat)
+        {
+                /* Grab new "tail" */
+                message__tail_chat = message__head_chat + n + 1;
+
+                /* Advance tail while possible past first "nul" */
+                while (message__buf_chat[message__tail_chat-1]) message__tail_chat++;
+
+                /* Kill all "dead" messages */
+                for (i = message__last_chat; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_chat) break;
+
+                        /* Kill "dead" messages */
+                        if ((message__ptr_chat[i] >= message__head_chat) &&
+                            (message__ptr_chat[i] < message__tail_chat))
+                        {
+                                /* Track oldest message */
+                                message__last_chat = i + 1;
+                        }
+                }
+        }
+
+
+        /*** Step 5 -- Grab a new message index ***/
+
+        /* Get the next message index, advance */
+        x = message__next_chat++;
+
+        /* Handle wrap */
+        if (message__next_chat == MESSAGE_MAX) message__next_chat = 0;
+
+        /* Kill last message if needed */
+        if (message__next_chat == message__last_chat) message__last_chat++;
+
+        /* Handle wrap */
+        if (message__last_chat == MESSAGE_MAX) message__last_chat = 0;
+
+
+
+        /*** Step 6 -- Insert the message text ***/
+
+        /* Assign the starting address */
+        message__ptr_chat[x] = message__head_chat;
+
+        /* Append the new part of the message */
+        for (i = 0; i < n; i++)
+        {
+                /* Copy the message */
+                message__buf_chat[message__head_chat + i] = str[i];
+        }
+
+        /* Terminate */
+        message__buf_chat[message__head_chat + i] = '\0';
+
+        /* Advance the "head" pointer */
+        message__head_chat += n + 1;
+
+	/* Window stuff - assume that all chat messages start with '[' */
+        p_ptr->window |= (PW_CHAT);
+	
+}
+void c_message_add_msgnochat(cptr str)
+{
+        int i, k, x, n;
+
+
+        /*** Step 1 -- Analyze the message ***/
+
+        /* Hack -- Ignore "non-messages" */
+        if (!str) return;
+
+        /* Message length */
+        n = strlen(str);
+
+        /* Important Hack -- Ignore "long" messages */
+        if (n >= MESSAGE_BUF / 4) return;
+
+
+        /*** Step 2 -- Attempt to optimize ***/
+
+        /* Limit number of messages to check */
+        k = message_num_msgnochat() / 4;
+
+        /* Limit number of messages to check */
+        if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
+
+        /* Check the last few _msgnochatmessages (if any to count) */
+        for (i = message__next; k; k--)
+        {
+                u16b q;
+
+                cptr old;
+
+                /* Back up and wrap if needed */
+                if (i-- == 0) i = MESSAGE_MAX - 1;
+
+                /* Stop before oldest message */
+                if (i == message__last_msgnochat) break;
+
+                /* Extract "distance" from "head" */
+                q = (message__head_msgnochat + MESSAGE_BUF - message__ptr_msgnochat[i]) % MESSAGE_BUF;
+
+                /* Do not optimize over large distance */
+                if (q > MESSAGE_BUF / 2) continue;
+
+                /* Access the old string */
+                old = &message__buf_msgnochat[message__ptr_msgnochat[i]];
+
+                /* Compare */
+                if (!streq(old, str)) continue;
+
+                /* Get the next message index, advance */
+                x = message__next_msgnochat++;
+
+                /* Handle wrap */
+                if (message__next_msgnochat == MESSAGE_MAX) message__next_msgnochat = 0;
+
+                /* Kill last message if needed */
+                if (message__next_msgnochat == message__last_msgnochat) message__last_msgnochat++;
+
+                /* Handle wrap */
+                if (message__last_msgnochat == MESSAGE_MAX) message__last_msgnochat = 0;
+
+                /* Assign the starting address */
+                message__ptr_msgnochat[x] = message__ptr_msgnochat[i];
+
+		/* Redraw - assume that all chat messages start with '[' */
+                p_ptr->window |= (PW_MSGNOCHAT);
+
+                /* Success */
+                return;
+        }
+
+
+        /*** Step 3 -- Ensure space before end of buffer ***/
+
+        /* Kill messages and Wrap if needed */
+        if (message__head_msgnochat + n + 1 >= MESSAGE_BUF)
+        {
+                /* Kill all "dead" messages */
+                for (i = message__last_msgnochat; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_msgnochat) break;
+
+                        /* Kill "dead" messages */
+                        if (message__ptr_msgnochat[i] >= message__head_msgnochat)
+                        {
+                                /* Track oldest message */
+                                message__last_msgnochat = i + 1;
+                        }
+                }
+
+                /* Wrap "tail" if needed */
+                if (message__tail_msgnochat >= message__head_msgnochat) message__tail_msgnochat = 0;
+
+                /* Start over */
+                message__head_msgnochat = 0;
+        }
+
+
+        /*** Step 4 -- Ensure space before next message ***/
+
+        /* Kill messages if needed */
+        if (message__head_msgnochat + n + 1 > message__tail_msgnochat)
+        {
+                /* Grab new "tail" */
+                message__tail_msgnochat = message__head_msgnochat + n + 1;
+
+                /* Advance tail while possible past first "nul" */
+                while (message__buf_msgnochat[message__tail_msgnochat-1]) message__tail_msgnochat++;
+
+                /* Kill all "dead" messages */
+                for (i = message__last_msgnochat; TRUE; i++)
+                {
+                        /* Wrap if needed */
+                        if (i == MESSAGE_MAX) i = 0;
+
+                        /* Stop before the new message */
+                        if (i == message__next_msgnochat) break;
+
+                        /* Kill "dead" messages */
+                        if ((message__ptr_msgnochat[i] >= message__head_msgnochat) &&
+                            (message__ptr_msgnochat[i] < message__tail_msgnochat))
+                        {
+                                /* Track oldest message */
+                                message__last_msgnochat = i + 1;
+                        }
+                }
+        }
+
+
+        /*** Step 5 -- Grab a new message index ***/
+
+        /* Get the next message index, advance */
+        x = message__next_msgnochat++;
+
+        /* Handle wrap */
+        if (message__next_msgnochat == MESSAGE_MAX) message__next_msgnochat = 0;
+
+        /* Kill last message if needed */
+        if (message__next_msgnochat == message__last_msgnochat) message__last_msgnochat++;
+
+        /* Handle wrap */
+        if (message__last_msgnochat == MESSAGE_MAX) message__last_msgnochat = 0;
+
+
+
+        /*** Step 6 -- Insert the message text ***/
+
+        /* Assign the starting address */
+        message__ptr_msgnochat[x] = message__head_msgnochat;
+
+        /* Append the new part of the message */
+        for (i = 0; i < n; i++)
+        {
+                /* Copy the message */
+                message__buf_msgnochat[message__head_msgnochat + i] = str[i];
+        }
+
+        /* Terminate */
+        message__buf_msgnochat[message__head_msgnochat + i] = '\0';
+
+        /* Advance the "head" pointer */
+        message__head_msgnochat += n + 1;
+
+	/* Window stuff - assume that all chat messages start with '[' */
+        p_ptr->window |= (PW_MSGNOCHAT);
 }
 
 /*
@@ -1638,6 +2070,13 @@ void c_msg_print(cptr msg)
 	char buf[1024];
 
 
+	/* For message separation (chat/non-chat): */
+	char nameA[20];
+	char nameB[20];
+	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
+	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
+
+
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;
 
@@ -1670,6 +2109,15 @@ void c_msg_print(cptr msg)
 
 
 	/* Memorize the message */
+#if 1
+	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {
+		c_message_add_chat(msg);
+	}
+//#if 0
+	else {
+		c_message_add_msgnochat(msg);
+	}
+#endif
 	c_message_add(msg);
 
 
@@ -2352,7 +2800,7 @@ static void do_cmd_options_aux(int page, cptr info)
  */
 static void do_cmd_options_win(void)
 {
-	int i, j, d;
+	int i, j, d, vertikal_offset = 1;
 
 	int y = 0;
 	int x = 0;
@@ -2392,11 +2840,11 @@ static void do_cmd_options_win(void)
 			if (c_cfg.use_color && (j == x)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, (char*)s);
+			Term_putstr(35 + j * 5 - strlen(s) / 2, vertikal_offset + j % 2, -1, a, (char*)s);
 		}
 
 		/* Display the options */
-		for (i = 0; i < 16; i++)
+		for (i = 0; i < NR_OPTIONS_SHOWN; i++)
 		{
 			byte a = TERM_WHITE;
 
@@ -2409,7 +2857,7 @@ static void do_cmd_options_win(void)
 			if (!str) str = "(Unused option)";
 
 			/* Flag name */
-			Term_putstr(0, i + 5, -1, a, (char*)str);
+			Term_putstr(0, i + vertikal_offset + 2, -1, a, (char*)str);
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
@@ -2425,12 +2873,12 @@ static void do_cmd_options_win(void)
 				if (window_flag[j] & (1L << i)) c = 'X';
 
 				/* Flag value */
-				Term_putch(35 + j * 5, i + 5, a, c);
+				Term_putch(35 + j * 5, i + vertikal_offset + 2, a, c);
 			}
 		}
 
 		/* Place Cursor */
-		Term_gotoxy(35 + x * 5, y + 5);
+		Term_gotoxy(35 + x * 5, y + vertikal_offset + 2);
 
 		/* Get key */
 		ch = inkey();
@@ -2454,7 +2902,7 @@ static void do_cmd_options_win(void)
 				}
 
 				/* Clear flags */
-				for (i = 0; i < 16; i++)
+				for (i = 0; i < NR_OPTIONS_SHOWN; i++)
 				{
 					window_flag[x] &= ~(1L << i);
 				}
@@ -2486,7 +2934,7 @@ static void do_cmd_options_win(void)
 				d = keymap_dirs[ch & 0x7F];
 
 				x = (x + ddx[d] + 8) % 8;
-				y = (y + ddy[d] + 16) % 16;
+				y = (y + ddy[d] + NR_OPTIONS_SHOWN) % NR_OPTIONS_SHOWN;
 
 				if (!d) bell();
 			}
@@ -2518,7 +2966,7 @@ static void do_cmd_options_win(void)
 	}
 
 	/* Update windows */
-	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_MESSAGE | PW_PLAYER);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_MESSAGE | PW_PLAYER | PW_CHAT | PW_MSGNOCHAT);
 
 	/* Update windows */
 	window_stuff();
@@ -2585,7 +3033,7 @@ static errr options_dump(cptr fname)
 		if (!ang_term_name[i]) continue;
 
 		/* Check each flag */
-		for (j = 0; j < 16; j++)
+		for (j = 0; j < NR_OPTIONS_SHOWN; j++)
 		{
 			/* Require a real flag */
 			if (!window_flag_desc[j]) continue;

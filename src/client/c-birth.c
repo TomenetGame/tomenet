@@ -24,9 +24,9 @@ static void choose_name(void)
 	char tmp[23];
 
 	/* Prompt and ask */
-	prt("If you are new to TomeNET, read this:", 7, 2);
+	c_put_str(TERM_SLATE, "If you are new to TomeNET, read this:", 7, 2);
 	prt("http://www.c-blue.de/rogue/tomenet-guide.txt", 8, 2);
-	prt("*** Logging in with an account ***", 12, 2);
+	c_put_str(TERM_SLATE, "*** Logging in with an account ***", 12, 2);
 	prt("In order to play, you need to create an account.", 14, 2);
 	prt("Your account can hold a maximum of 7 different characters to play with!", 15, 2);
 	prt("If you don't have an account yet, just enter one of your choice and make sure", 16, 2);
@@ -110,12 +110,12 @@ static void choose_sex(void)
 	bool hazard = FALSE;
 	bool parity = magik(50);
 
-	put_str("m) Male", 20, parity ? 2 : 17);
-	put_str("f) Female", 20, parity ? 17 : 2);
+	put_str("m) Male", 21, parity ? 2 : 17);
+	put_str("f) Female", 21, parity ? 17 : 2);
 
 	while (1)
 	{
-		put_str("Choose a sex (* for random, Q to Quit): ", 19, 2);
+		c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to Quit): ", 20, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 		if (c == 'm')
@@ -189,7 +189,7 @@ static void choose_race(void)
 
 	while (1)
 	{
-		put_str("Choose a race (* for random, Q to Quit): ", n, 2);
+		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit): ", n, 2);
 		c = inkey();
 		if (c == 'Q') quit(NULL);
 
@@ -234,7 +234,7 @@ static void choose_class(void)
 
 	/* Prepare to list */
 	l = 2;
-	m = 23 - (Setup.max_class - 1) / 5;
+	m = 22 - (Setup.max_class - 1) / 5;
 	n = m - 1;
 
 	/* Display the legal choices */
@@ -261,7 +261,7 @@ static void choose_class(void)
 	/* Get a class */
 	while (1)
 	{
-		put_str("Choose a class (? for Help, * for random, Q to Quit): ", n, 2);
+		c_put_str(TERM_SLATE, "Choose a class (? for Help, * for random, Q to Quit): ", n, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 
@@ -297,76 +297,192 @@ static void choose_class(void)
  */
 static void choose_stat_order(void)
 {
-	int i, j, k, avail[6];
+	int i, j, k, avail[6], crb, maxed_stats = 0;
 	char c='\0';
-	char out_val[160], stats[6][4];
+	char out_val[160], stats[6][4], buf[8], buf2[8];
 	bool hazard = FALSE;
 
-	/* All stats are initially available */
-	for (i = 0; i < 6; i++)
-	{
-		strncpy(stats[i], stat_names[i], 3);
-		stats[i][3] = '\0';
-		avail[i] = 1;
-	}
+        player_class *cp_ptr = &class_info[class];
+        player_race *rp_ptr = &race_info[race];
 
-	/* Find the ordering of all 6 stats */
-	for (i = 0; i < 6; i++)
-	{
-		/* Clear bottom of screen */
-		clear_from(20);
 
-		/* Print available stats at bottom */
-		for (k = 0; k < 6; k++)
+        /* Character stats are randomly rolled (1 time): */
+        if (char_creation_flags == 0) {
+
+		/* All stats are initially available */
+		for (i = 0; i < 6; i++)
 		{
-			/* Check for availability */
-			if (avail[k])
+			strncpy(stats[i], stat_names[i], 3);
+			stats[i][3] = '\0';
+			avail[i] = 1;
+		}
+
+		/* Find the ordering of all 6 stats */
+		for (i = 0; i < 6; i++)
+		{
+			/* Clear bottom of screen */
+			clear_from(20);
+	
+			/* Print available stats at bottom */
+			for (k = 0; k < 6; k++)
 			{
-				sprintf(out_val, "%c) %s", I2A(k), stats[k]);
-				put_str(out_val, 21, k * 9);
+				/* Check for availability */
+				if (avail[k])
+				{
+					sprintf(out_val, "%c) %s", I2A(k), stats[k]);
+					put_str(out_val, 21, k * 9);
+				}
+			}
+	
+			/* Hack -- it's obvious */
+			/* if (i > 4) hazard = TRUE;
+			It confused too many noobiez. Taking it out for now. */
+	
+			/* Get a stat */
+			while (1)
+			{
+				put_str("Choose your stat order (* for random, Q to Quit): ", 20, 2);
+				if (hazard)
+				{
+					j = rand_int(6);
+				}
+				else
+				{
+					c = inkey();
+					if (c == 'Q') quit(NULL);
+					if (c == '*') hazard = TRUE;
+	
+					j = (islower(c) ? A2I(c) : -1);
+				}
+	
+				if ((j < 6) && (j >= 0) && (avail[j]))
+				{
+					stat_order[i] = j;
+					c_put_str(TERM_L_BLUE, stats[j], 8, 15 + i * 5);
+					avail[j] = 0;
+					break;
+				}
+				else if (c == '?')
+				{
+					/*do_cmd_help("help.hlp");*/
+				}
+				else
+				{
+					bell();
+				}
 			}
 		}
 
-		/* Hack -- it's obvious */
-		/* if (i > 4) hazard = TRUE;
-		It confused too many noobiez. Taking it out for now. */
+		clear_from(20);
+	}
+	
+        /* player can define his stats completely manually: */
+        else if (char_creation_flags == 1) {
+                j = 0; /* current stat to be modified */
+                k = 30; /* free points left */
 
-		/* Get a stat */
+                clear_from(14);
+
+                c_put_str(TERM_SLATE, "Distribute your attribute points:", 14, 5);
+                c_put_str(TERM_SLATE, "Free points: ", 14, 45);
+                c_put_str(TERM_L_GREEN, format("%2d", k), 14, 60);
+                put_str("Use keys '+', '-', 'RETURN'", 16, 5);
+                put_str("or 8/2/4/6 on the number pad", 17, 5);
+                put_str("to modify and navigate.", 18, 5);
+                put_str("Press ESC to proceed, after", 19, 5);
+                put_str("you distributed all points.", 20, 5);
+                put_str("(Press 'Q' to quit.)", 21, 5);
+                c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, 5);
+
+                for (i = 0; i < 6; i++) {
+                        stat_order[i] = 10;
+
+			strncpy(stats[i], stat_names[i], 3);
+			stats[i][3] = '\0';
+		}
+
 		while (1)
 		{
-			put_str("Choose your stat order (* for random, Q to Quit): ", 20, 2);
-			if (hazard)
-			{
-				j = rand_int(6);
-			}
-			else
-			{
-				c = inkey();
-				if (c == 'Q') quit(NULL);
-				if (c == '*') hazard = TRUE;
+			c_put_str(TERM_L_GREEN, format("%2d", k), 14, 60);
+			
+			for (i = 0; i < 6; i++) {
+				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];
+				if (crb > 18) crb = 18 + (crb - 18) * 10;
+				cnv_stat(crb, buf);
+				cnv_stat(stat_order[i], buf2);
+                        	sprintf(out_val, "%s: %s      (base %s)", stats[i], buf, buf2);
+	
+                        	if (j == i) {
+                        		if (stat_order[i] == 10-2)
+                        			c_put_str(TERM_L_RED, out_val, 16 + i, 45);
+                        		else if (stat_order[i] == 17)
+                        			c_put_str(TERM_L_BLUE, out_val, 16 + i, 45);
+                        		else
+                        			c_put_str(TERM_ORANGE, out_val, 16 + i, 45);
+                        	} else {
+                        		if (stat_order[i] == 10-2)
+		                        	c_put_str(TERM_RED, out_val, 16 + i, 45);
+                        		else if (stat_order[i] == 17)
+                        			c_put_str(TERM_VIOLET, out_val, 16 + i, 45);
+		                        else
+		                        	c_put_str(TERM_L_UMBER, out_val, 16 + i, 45);
+		                }
+                	}
 
-				j = (islower(c) ? A2I(c) : -1);
+			c = inkey();
+			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
+			if (c == '-' || c == '4') {
+				if (stat_order[j] > 10-2 && stat_order[j]+crb > 3) {
+					if (stat_order[j] <= 12) {
+						/* intermediate */
+						stat_order[j]--;
+						k++;
+					} else if (stat_order[j] <= 14) {
+						/* high */
+						stat_order[j]--;
+						k+=2;
+					} else if (stat_order[j] <= 16) {
+						/* nearly max */
+						stat_order[j]--;
+						k+=3;
+					} else {
+						/* max! */
+						stat_order[j]--;
+						k+=4;
+						maxed_stats--;
+					}
+				}
 			}
-
-			if ((j < 6) && (j >= 0) && (avail[j]))
-			{
-				stat_order[i] = j;
-				c_put_str(TERM_L_BLUE, stats[j], 8, 15 + i * 5);
-				avail[j] = 0;
-				break;
+			if (c == '+' || c == '6') {
+				if (stat_order[j] < 17) {
+					if (stat_order[j] < 12 && k >= 1) {
+						/* intermediate */
+						stat_order[j]++;
+						k--;
+					} else if (stat_order[j] < 14 && k >= 2) {
+						/* high */
+						stat_order[j]++;
+						k-=2;
+					} else if (stat_order[j] < 16 && k >= 3) {
+						/* nearly max */
+						stat_order[j]++;
+						k-=3;
+					} else if (k >= 4 && !maxed_stats) { /* only 1 maxed stat is allowed */
+						/* max! */
+						stat_order[j]++;
+						k-=4;
+						maxed_stats++;
+					}
+				}
 			}
-			else if (c == '?')
-			{
-				/*do_cmd_help("help.hlp");*/
-			}
-			else
-			{
-				bell();
-			}
+			if (c == '\r' || c == '2') j = (j+1) % 6;
+			if (c == '8') j = (j+5) % 6;
+			if (c == '\e') break;
+			if (c == 'Q') quit(NULL);
 		}
-	}
 
-	clear_from(20);
+		clear_from(14);
+        }
 }
 
 /* Quick hack!		- Jir -

@@ -14,7 +14,11 @@ char server_name[MAX_CHARS]="";
 s32b server_port;
 char cname[MAX_CHARS]="";
 
+s32b char_creation_flags=1;	/* 0 = traditional stats rolling, 1 = player-definable stats - C. Blue */
+
 char message_history[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
+char message_history_chat[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
+char message_history_msgnochat[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
 byte hist_end = 0;
 bool hist_looped = FALSE;
 
@@ -78,6 +82,18 @@ u16b message__head;
 u16b message__tail;
 u16b *message__ptr;
 char *message__buf;
+u16b message__next_chat;
+u16b message__last_chat;
+u16b message__head_chat;
+u16b message__tail_chat;
+u16b *message__ptr_chat;
+char *message__buf_chat;
+u16b message__next_msgnochat;
+u16b message__last_msgnochat;
+u16b message__head_msgnochat;
+u16b message__tail_msgnochat;
+u16b *message__ptr_msgnochat;
+char *message__buf_msgnochat;
 
 
 bool msg_flag;

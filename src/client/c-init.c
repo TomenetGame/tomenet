@@ -24,9 +24,15 @@ static void init_arrays(void)
 	/* Message variables */
 	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
 	C_MAKE(message__buf, MESSAGE_BUF, char);
+	C_MAKE(message__ptr_chat, MESSAGE_MAX, u16b);
+	C_MAKE(message__buf_chat, MESSAGE_BUF, char);
+	C_MAKE(message__ptr_msgnochat, MESSAGE_MAX, u16b);
+	C_MAKE(message__buf_msgnochat, MESSAGE_BUF, char);
 
 	/* Hack -- No messages yet */
 	message__tail = MESSAGE_BUF;
+	message__tail_chat = MESSAGE_BUF;
+	message__tail_msgnochat = MESSAGE_BUF;
 
 	/* Initialize room for the store's stock */
 	C_MAKE(store.stock, STORE_INVEN_MAX, object_type);
@@ -326,7 +332,7 @@ void client_init(char *argv1, bool skip)
 	int login_port;
 	int bytes, retries;
 	char host_name[80];
-	/* u16b version = MY_VERSION; */
+	u16b version = MY_VERSION;
         s32b temp;
 
 	/* Setup the file paths */
@@ -399,16 +405,7 @@ void client_init(char *argv1, bool skip)
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
-#if 0
 	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
-#endif
-	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, 2);
-	/* Increment the last number in the line above for each new
-	client version that requires the player to update the client!
-	I know it's not following the idea of 'MY_VERSION' but it looks
-	to me like the final version is supposed to still be '4.0.0',
-	so I don't see another way :) Also see src/server/nserver.c*/
-
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
@@ -438,14 +435,13 @@ void client_init(char *argv1, bool skip)
 		}
 
 		/* Extra info from packet */
-		Packet_scanf(&ibuf, "%c%c%d", &reply_to, &status, &temp);
+		Packet_scanf(&ibuf, "%c%c%d%d", &reply_to, &status, &temp, &char_creation_flags);
 
 		/* Hack -- set the login port correctly */
 		login_port = (int) temp;
 
 		break;
 	}
-
 
 	/* Check for failure */
 	if (retries >= 10)

@@ -76,6 +76,8 @@ extern s32b server_port;
 extern char cname[MAX_CHARS];
 
 extern char message_history[MSG_HISTORY_MAX][80];
+extern char message_history_chat[MSG_HISTORY_MAX][80];
+extern char message_history_msgnochat[MSG_HISTORY_MAX][80];
 /*extern byte hist_start; */
 extern byte hist_end;
 extern bool hist_looped;
@@ -138,6 +140,18 @@ extern u16b message__head;
 extern u16b message__tail;
 extern u16b *message__ptr;
 extern char *message__buf;
+extern u16b message__next_chat;
+extern u16b message__last_chat;
+extern u16b message__head_chat;
+extern u16b message__tail_chat;
+extern u16b *message__ptr_chat;
+extern char *message__buf_chat;
+extern u16b message__next_msgnochat;
+extern u16b message__last_msgnochat;
+extern u16b message__head_msgnochat;
+extern u16b message__tail_msgnochat;
+extern u16b *message__ptr_msgnochat;
+extern char *message__buf_msgnochat;
 
 
 
@@ -307,6 +321,7 @@ extern void init_spells(s16b new_size);
 extern void initialize_main_pref_files(void);
 extern void initialize_player_pref_files(void);
 extern void client_init(char *argv1, bool skip);
+extern s32b char_creation_flags;
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
@@ -331,8 +346,14 @@ extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void put_str(cptr str, int row, int col);
 extern bool get_check(cptr prompt);
 extern s16b message_num(void);
+extern s16b message_num_chat(void);
+extern s16b message_num_msgnochat(void);
 extern cptr message_str(s16b age);
+extern cptr message_str_chat(s16b age);
+extern cptr message_str_msgnochat(s16b age);
 extern void c_message_add(cptr msg);
+extern void c_message_add_chat(cptr msg);
+extern void c_message_add_msgnochat(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);
@@ -390,6 +411,7 @@ extern void show_equip(void);
 extern void display_player(int hist);
 extern void window_stuff(void);
 extern void prt_sane(byte attr, cptr buf);
+extern void cnv_stat(int val, char *out_val);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

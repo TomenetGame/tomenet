@@ -1414,7 +1414,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = amulet_adj[indexx];
 			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
-//			basenm = aware ? "& Amulet~" : "& # Amulet~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Amulet~" : "& # Amulet~";
+			else
 			basenm = "& # Amulet~";
 			break;
 		}
@@ -1434,7 +1436,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = ring_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Ring~" : "& # Ring~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Ring~" : "& # Ring~";
+			else
 			basenm = "& # Ring~";
 
 			/* Hack -- The One Ring */
@@ -1449,7 +1453,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = staff_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Staff~" : "& # Staff~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Staff~" : "& # Staff~";
+			else
 			basenm = "& # Staff~";
 			break;
 		}
@@ -1459,7 +1465,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = wand_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Wand~" : "& # Wand~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Wand~" : "& # Wand~";
+			else
 			basenm = "& # Wand~";
 			break;
 		}
@@ -1469,7 +1477,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = rod_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Rod~" : "& # Rod~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Rod~" : "& # Rod~";
+			else
 			basenm = "& # Rod~";
 			break;
 		}
@@ -1487,7 +1497,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = scroll_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
+			else
 			basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
 //			basenm = "& Scroll~ titled \"#\"";
 			break;
@@ -1499,7 +1511,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = potion_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Potion~" : "& # Potion~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Potion~" : "& # Potion~";
+			else
 			basenm = "& # Potion~";
 			break;
 		}
@@ -1512,7 +1526,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Color the object */
 			modstr = food_adj[indexx];
 			if (aware) append_name = TRUE;
-//			basenm = aware ? "& Mushroom~" : "& # Mushroom~";
+			if (p_ptr->short_item_names)
+			basenm = aware ? "& Mushroom~" : "& # Mushroom~";
+			else
 			basenm = "& # Mushroom~";
 			break;
 		}

@@ -1915,6 +1915,8 @@ struct player_type
 	bool always_pickup;
 	bool stack_force_notes;
 	bool stack_force_costs;
+	bool short_item_names;
+
 	bool find_ignore_stairs;
 	bool find_ignore_doors;
 	bool find_cut;
@@ -1925,12 +1927,14 @@ struct player_type
 	bool disturb_state;
 	bool disturb_minor;
 	bool disturb_other;
+
 	bool auto_afk;
 	bool newb_suicide;
 	bool stack_allow_items;
 	bool stack_allow_wands;
 	bool view_perma_grids;
 	bool view_torch_grids;
+
 	bool view_reduce_lite;
 	bool view_reduce_view;
 	bool view_yellow_lite;
@@ -2585,6 +2589,7 @@ struct client_opts
 	bool show_details;
 	bool ring_bell;
 	bool use_color;
+	bool short_item_names;
 
 	bool find_ignore_stairs;
 	bool find_ignore_doors;

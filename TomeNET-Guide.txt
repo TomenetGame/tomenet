@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. Dec 2003; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.1.8, http://www.tomenet.net/
+| Latest update: 6. Dec 2003; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.2.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -1442,8 +1442,8 @@ Ghosts have some special abilities, these are
 -they can see invisible creatures
 -life force can hardly be drained from them
 -they cannot be paralyzed
--they spot warm-blooded creatues easily
--they resist darkness effects, blindness, poison, cold, fear and confusion
+-they spot warm-blooded creatures easily
+-they resist darkness effects, poison, cold, blindness, fear and confusion
 -they cannot be cut since they don't bleed
 -they resist insanity attacks
 -they can pass solid walls and mountains
@@ -2835,9 +2835,14 @@ Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
                 it can also be used to travel between towns or on the worldmap
                 in general. See (0.3) Important Inscriptions.
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
-                it to form a blood bond between you and that player. Now you
-                can fight each other in a friendly duel. The loser won't
-                suffer a real death.
+                it to form a blood bond between you and that player. (Only one
+                of you has to read a BB scroll, it's working bidirectional).
+                Now you can hostile each other and fight in a friendly duel.
+                The loser won't suffer a real death but just get teleported
+                away. The hostility will automatically be cancelled when the
+                blood bond ends. Everyone will receive messages about a blood
+                bond being formed ("<player A> blood bonds with <player B>")
+                and about the result ("<A> wins the blood bond against <B>").
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
@@ -3664,11 +3669,12 @@ Dunadan
     little is new to them, and levels are very hard for them to gain.
     A Dunadan gets bonus on 'Combat', 'Magic' and 'Archery'.
 High-Elf
-    High-elves resist light intrinsically and can see the invisible. They are
-    a race of immortal beings dating from the beginning of time, masters of
-    all skills, strong and intelligent, although their wisdom is sometimes
-    suspect. They do very well in all   professions. There are few things that
-    they have not seen already, and experience is hard for them to gain.
+    High-elves can see the invisible and resist light and the flow of time
+    intrinsically. They are a race of immortal beings dating from the
+    beginning of time, masters of all skills, strong and intelligent, although
+    their wisdom is sometimes suspect. They do very well in all   professions.
+    There are few things that they have not seen already, and experience is
+    hard for them to gain.
     High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
     'Calmness' and 'Sneakiness'.
 Yeek
@@ -3743,7 +3749,7 @@ Half-Troll  +4  -4  -2  -4  +3  -6      12      120%    30ft
             -5  -8  -8  -2  5   -1  20  -10
 Dunadan     +1  +2  +2  +2  +3  +2      10      180%    0ft             
             4   5   5   2   13  3   15  10
-High-Elf    +1  +3  -1  +3  +1  +5      10      200%    40ft            
+High-Elf    +1  +3  -1  +3  +1  +5      10      250%    40ft            
             4   20  20  3   14  3   10  25
 Yeek        -5  -5  -5  -5  -5  -5      8       35%     0ft             
             0   0   0   0   10  0   0   0

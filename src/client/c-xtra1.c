@@ -21,7 +21,7 @@ static void prt_field(cptr info, int row, int col)
 /*
  * Converts stat num into a six-char (right justified) string
  */
-static void cnv_stat(int val, char *out_val)
+void cnv_stat(int val, char *out_val)
 {
 	if (!c_cfg.linear_stats)
 	{
@@ -1047,10 +1047,13 @@ static void fix_player(void)
  */
 static void fix_message(void)
 {
-        int j, i;
+        int j, i, k;
         int w, h;
         int x, y;
 	bool msgtarget;
+
+	cptr msg;
+	byte a;
 
 	/* Display messages in different colors -Zz */
 	char nameA[20];
@@ -1079,37 +1082,77 @@ static void fix_message(void)
                 /* Get size */
                 Term_get_size(&w, &h);
 
-                /* Dump messages */
-                for (i = 0; i < h; i++)
-                {
-			byte a = TERM_WHITE;
-			cptr msg;
-
-			msg = message_str(i);
-
-			/* Display messages in different colors -Zz */
-			if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
-				if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
-				a = TERM_GREEN;
-			} else if (msg[2] == '[') {
-				if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
-				a = TERM_L_BLUE;
-			} else {
-				if (!(window_flag[j] & (PW_MESSAGE | PW_MSGNOCHAT))) msgtarget = FALSE;
+		/* Does this terminal show the normal message_str buffer? or chat/msgnochat only?*/
+		if (window_flag[j] & PW_CHAT) {
+	                /* Dump messages */
+	                for (i = 0; i < h; i++)
+	                {
 				a = TERM_WHITE;
-			}
-			if (!msgtarget) break;
+				msg = message_str_chat(i);
+	
+				/* Display messages in different colors -Zz */
+				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
+					a = TERM_GREEN;
+				} else if (msg[2] == '[') {
+					a = TERM_L_BLUE;
+				}
+	
+	                        /* Dump the message on the appropriate line */
+	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+	
+	                        /* Cursor */
+	                        Term_locate(&x, &y);
+	
+	                        /* Clear to end of line */
+	                        Term_erase(x, y, 255);
+	                }
+		} else if (window_flag[j] & PW_MSGNOCHAT) {
+	                /* Dump messages */
+	                for (i = 0; i < h; i++)
+	                {
+				a = TERM_WHITE;
+				msg = message_str_msgnochat(i);
+	
+	                        /* Dump the message on the appropriate line */
+	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+	
+	                        /* Cursor */
+	                        Term_locate(&x, &y);
+	
+	                        /* Clear to end of line */
+	                        Term_erase(x, y, 255);
+	                }
+		} else {
+	                /* Dump messages */
+	                for (i = 0; i < h; i++)
+	                {
+				a = TERM_WHITE;
+				msg = message_str(i);
 
-                        /* Dump the message on the appropriate line */
-                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
-
-                        /* Cursor */
-                        Term_locate(&x, &y);
-
-                        /* Clear to end of line */
-                        Term_erase(x, y, 255);
-			
-                }
+				/* Display messages in different colors -Zz */
+				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
+					if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
+					a = TERM_GREEN;
+				} else if (msg[2] == '[') {
+					if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
+					a = TERM_L_BLUE;
+				} else {
+					if (!(window_flag[j] & (PW_MESSAGE | PW_MSGNOCHAT))) msgtarget = FALSE;
+					a = TERM_WHITE;
+				}
+#if 0
+				if (!msgtarget) break;
+#endif
+	                        /* Dump the message on the appropriate line */
+	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+	
+	                        /* Cursor */
+	                        Term_locate(&x, &y);
+	
+	                        /* Clear to end of line */
+	                        Term_erase(x, y, 255);
+	                }
+		}
 
                 /* Fresh */
                 Term_fresh();
@@ -1224,16 +1267,16 @@ void display_player(int hist)
         c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
         c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);
         c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 6, 15);
-        if (p_ptr->mode == MODE_NORMAL)
-	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 7, 15);
 	if (p_ptr->mode & MODE_IMMORTAL)
 	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 7, 15);
-	else if (p_ptr->mode & (MODE_NO_GHOST | MODE_HELL))
+	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HELL))
 	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 7, 15);
 	else if (p_ptr->mode & MODE_NO_GHOST)
 	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 7, 15);
         else if (p_ptr->mode & MODE_HELL)
         	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 7, 15);
+        else /*(p_ptr->mode == MODE_NORMAL)*/
+	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 7, 15);
 
         /* Age, Height, Weight, Social */
         prt_num("Age          ", (int)p_ptr->age, 2, 32, TERM_L_BLUE);

@@ -15,7 +15,7 @@ HHEALING = add_spell
         ["school"] = 	{SCHOOL_HCURING},
 	["level"] =     10,
 	["mana"] =      10,
-	["mana_max"] =  100,
+	["mana_max"] =  120,
 	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
@@ -28,7 +28,7 @@ HHEALING = add_spell
 		return "heal "..(15 + get_level(Ind, HHEALING, 43)).."% = "..get_healing_power2().."hp"
 	end,
 	["desc"] =      {
-		"Heals a percent of hitpoints",
+		"Heals a percent of hitpoints up to a maximum of 400 points healed",
 		"***Affected by the Meta spell: Project Spell***",
 	}
 }

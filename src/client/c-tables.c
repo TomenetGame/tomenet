@@ -536,7 +536,6 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.use_color,			TRUE,	1,	0, 15,
 	"use_color",			"Use color if possible (slow)" },
 
-
 	/*** Disturbance ***/
 
 	{ &c_cfg.find_ignore_stairs,	TRUE,	2,	0, 16,
@@ -735,6 +734,9 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.speak_unique,                TRUE,   2,      13,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
 #endif	/* 0 */
+
+	{ &c_cfg.short_item_names,      FALSE, 1, 	0, 77,
+        "short_item_names", 		"Don't display 'flavours' in item names" },
 
 	/*** End of Table ***/
 

@@ -353,7 +353,7 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
  *
  * For efficiency, we include a chunk of "calc_bonuses()".
  */
-static void get_stats(int Ind, int stat_order[6])
+static bool get_stats(int Ind, int stat_order[6])
 {
 	player_type *p_ptr = Players[Ind];
 	int             i, j, tries = 1000;
@@ -363,122 +363,162 @@ static void get_stats(int Ind, int stat_order[6])
 	int             dice[18];
 	int             stats[6];
 
+	int		free_points = 30, maxed_stats = 0;
+
 	/* Clear "stats" array */
 	for (i = 0; i < 6; i++)
 		stats[i] = 0;
 
-	/* Check over the given stat order, to prevent cheating */
-	for (i = 0; i < 6; i++)
-	{
-		/* Check range */
-		if (stat_order[i] < 0 || stat_order[i] > 5)
-		{
-			stat_order[i] = 1;
-		}
+	/* Traditional random stat rolling */
+	if (CHAR_CREATION_FLAGS == 0) {
 
-		/* Check for duplicated entries */
-		if (stats[stat_order[i]] == 1)
-		{
-			/* Find a stat that hasn't been specified yet */
-			for (j = 0; j < 6; j++)
+		/* Check over the given stat order, to prevent cheating */
+		for (i = 0; i < 6; i++)
+	    	{
+    			/* Check range */
+	    		if (stat_order[i] < 0 || stat_order[i] > 5)
 			{
-				if (stats[j])
-					continue;
-
-				stat_order[i] = j;
+				stat_order[i] = 1;
 			}
+
+			/* Check for duplicated entries */
+    			if (stats[stat_order[i]] == 1)
+			{
+				/* Find a stat that hasn't been specified yet */
+				for (j = 0; j < 6; j++)
+				{
+					if (stats[j])
+						continue;
+	
+					stat_order[i] = j;
+				}
+			}
+
+			/* Set flag */
+			stats[stat_order[i]] = 1;
 		}
 
-		/* Set flag */
-		stats[stat_order[i]] = 1;
-	}
-
-	/* Roll and verify some stats */
-	while (--tries)
-	{
-		/* Roll some dice */
-		for (j = i = 0; i < 18; i++)
+		/* Roll and verify some stats */
+		while (--tries)
 		{
-			/* Roll the dice */
-			dice[i] = randint(3 + i % 3);
-
-			/* Collect the maximum */
-			j += dice[i];
-		}
-
-		/* Verify totals */
+			/* Roll some dice */
+			for (j = i = 0; i < 18; i++)
+			{
+				/* Roll the dice */
+				dice[i] = randint(3 + i % 3);
+	
+				/* Collect the maximum */
+				j += dice[i];
+			}
+	
+			/* Verify totals */
 #ifdef STARTING_STAT_LIMIT
-		if ((j > 48) && (j < 58)) break;
+			if ((j > 48) && (j < 58)) break;
 #else
-		if ((j > 42) && (j < 54)) break;
+			if ((j > 42) && (j < 54)) break;
 #endif
-	}
+		}
 
-	/* Acquire the stats */
-	for (i = 0; i < 6; i++)
-	{
-		/* Extract 5 + 1d3 + 1d4 + 1d5 */
-		j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
-
-		/* Save that value */
-		stats[i] = j;
-	}
-
-	/* Now sort the stats */
-	/* I use a bubble sort because I'm lazy at the moment */
-	for (i = 0; i < 6; i++)
-	{
-		for (j = 0; j < 5; j++)
+		/* Acquire the stats */
+		for (i = 0; i < 6; i++)
 		{
-			if (stats[j] < stats[j + 1])
+			/* Extract 5 + 1d3 + 1d4 + 1d5 */
+			j = 5 + dice[3*i] + dice[3*i+1] + dice[3*i+2];
+	
+			/* Save that value */
+			stats[i] = j;
+		}
+    
+		/* Now sort the stats */
+		/* I use a bubble sort because I'm lazy at the moment */
+		for (i = 0; i < 6; i++)
+        	{
+			for (j = 0; j < 5; j++)
 			{
-				int t;
-
-				t = stats[j];
-				stats[j] = stats[j + 1];
-				stats[j + 1] = t;
+				if (stats[j] < stats[j + 1])
+				{
+    					int t;
+	
+					t = stats[j];
+					stats[j] = stats[j + 1];
+					stats[j + 1] = t;
+				}
 			}
+		}
+
+		/* Now, put them in the correct order */
+		for (i = 0; i < 6; i++)
+		{
+			p_ptr->stat_max[stat_order[i]] = stats[i];
+		}
+    
+		/* Adjust the stats */
+		for (i = 0; i < 6; i++)
+		{
+    			/* Obtain a "bonus" for "race" and "class" */
+			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
+	
+			/* Variable stat maxes */
+			if (p_ptr->maximize)
+			{
+#ifdef STARTING_STAT_LIMIT
+				if (!is_fighter(p_ptr))
+					while (modify_stat_value(p_ptr->stat_max[i], bonus) > 18 + 40)
+						p_ptr->stat_max[i]--;
+	
+#endif	//STARTING_STAT_LIMIT
+				/* Start fully healed */
+				p_ptr->stat_cur[i] = p_ptr->stat_max[i];
+	
+				/* Efficiency -- Apply the racial/class bonuses */
+				stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
+			}
+	
+			/* Fixed stat maxes */
+			else
+			{
+				/* Apply the bonus to the stat (somewhat randomly) */
+				stat_use[i] = adjust_stat(Ind, p_ptr->stat_max[i], bonus, FALSE);
+	
+				/* Save the resulting stat maximum */
+				p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
+        		}
 		}
 	}
 
-	/* Now, put them in the correct order */
-	for (i = 0; i < 6; i++)
-	{
-		p_ptr->stat_max[stat_order[i]] = stats[i];
-	}
+	/* Players may modify their stats manually */
+	else {
+		for (i = 0; i < 6; i++) {
+			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
 
-	/* Adjust the stats */
-	for (i = 0; i < 6; i++)
-	{
-		/* Obtain a "bonus" for "race" and "class" */
-		bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
+			/* Fix limits - all cases here cover malicious client-side cheating attempts :) */
+			if (stat_order[i] < 8) stat_order[i] = 8;
+			if (stat_order[i] > 17) stat_order[i] = 17;
+			if (stat_order[i] + bonus < 3) stat_order[i] = 3 - bonus;
+			if (stat_order[i] == 17) {
+				if (!maxed_stats) maxed_stats++;
+				else stat_order[i] = 16;
+			}
 
-		/* Variable stat maxes */
-		if (p_ptr->maximize)
-		{
-#ifdef STARTING_STAT_LIMIT
-			if (!is_fighter(p_ptr))
-				while (modify_stat_value(p_ptr->stat_max[i], bonus) > 18 + 40)
-					p_ptr->stat_max[i]--;
+			/* Count skill points needed to reach these stats */
+			if (stat_order[i] <= 12) free_points -= (stat_order[i] - 10);
+			else if (stat_order[i] <= 14) free_points -= (2 + (stat_order[i] - 12) * 2);
+			else if (stat_order[i] <= 16) free_points -= (6 + (stat_order[i] - 14) * 3);
+			else free_points -= 16; /* ouch */
+		}
+		
+		/* If client has been hacked or a version desync error occured, quit. */
+		if (free_points < 0) return FALSE;
 
-#endif	//STARTING_STAT_LIMIT
-			/* Start fully healed */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i];
-
-			/* Efficiency -- Apply the racial/class bonuses */
+		/* Apply selected stats */
+		for (i = 0; i < 6; i++) {
+			bonus = p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
+			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_order[i];
 			stat_use[i] = modify_stat_value(p_ptr->stat_max[i], bonus);
 		}
-
-		/* Fixed stat maxes */
-		else
-		{
-			/* Apply the bonus to the stat (somewhat randomly) */
-			stat_use[i] = adjust_stat(Ind, p_ptr->stat_max[i], bonus, FALSE);
-
-			/* Save the resulting stat maximum */
-			p_ptr->stat_cur[i] = p_ptr->stat_max[i] = stat_use[i];
-		}
 	}
+	
+	return TRUE;
 }
 
 
@@ -1694,7 +1734,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->maximize = cfg.maximize?TRUE:FALSE;
 
 	/* No autoroller */
-	get_stats(Ind, stat_order);
+	if (!get_stats(Ind, stat_order)) return FALSE;
 
 	/* Roll for base hitpoints */
 	get_extra(Ind);

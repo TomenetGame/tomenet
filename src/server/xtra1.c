@@ -2398,6 +2398,7 @@ void calc_bonuses(int Ind)
 	{
 		p_ptr->resist_lite = TRUE;
 		p_ptr->see_inv = TRUE;
+		p_ptr->resist_time = TRUE;
 	}
 
 	/* Yeek */

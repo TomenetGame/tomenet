@@ -314,6 +314,7 @@ void Receive_login(void)
 int Net_setup(void)
 {
 	int i, n, len, done = 0;
+	s16b b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
 	long todo = 1;
 	char *ptr, str[MAX_CHARS];
 
@@ -344,15 +345,26 @@ int Net_setup(void)
 
 				for (i = 0; i < Setup.max_race; i++)
 				{
-					Packet_scanf(&cbuf, "%s%ld", &str,
-							&race_info[i].choice);
+					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%ld", &b1, &b2, &b3, &b4, &b5, &b6, &str, &race_info[i].choice);
 					race_info[i].title = string_make(str);
+					race_info[i].r_adj[0] = b1 - 50;
+                                        race_info[i].r_adj[1] = b2 - 50;
+                                        race_info[i].r_adj[2] = b3 - 50;
+                                        race_info[i].r_adj[3] = b4 - 50;
+                                        race_info[i].r_adj[4] = b5 - 50;
+                                        race_info[i].r_adj[5] = b6 - 50;
 				}
 
 				for (i = 0; i < Setup.max_class; i++)
 				{
-					Packet_scanf(&cbuf, "%s", &str);
+					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, &str);
 					class_info[i].title = string_make(str);
+					class_info[i].c_adj[0] = b1 - 50;
+                                        class_info[i].c_adj[1] = b2 - 50;
+                                        class_info[i].c_adj[2] = b3 - 50;
+                                        class_info[i].c_adj[3] = b4 - 50;
+                                        class_info[i].c_adj[4] = b5 - 50;
+                                        class_info[i].c_adj[5] = b6 - 50;
 				}
 
 				ptr = (char *) &Setup;

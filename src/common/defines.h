@@ -37,8 +37,8 @@
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
-#define VERSION_MINOR   1
-#define VERSION_PATCH   7
+#define VERSION_MINOR   2
+#define VERSION_PATCH   0
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
@@ -74,6 +74,12 @@
 
 #define MY_VERSION (VERSION_MAJOR << 12 | VERSION_MINOR << 8 | VERSION_PATCH \
 	<< 4 | VERSION_EXTRA)
+
+
+/* What kind of character creation method does the server use? - C. Blue
+   currently (since 4.2.0):     0 = traditional random rolling (1 try)
+                        	1 = player can set his stats manually */
+#define CHAR_CREATION_FLAGS     1
 
 
 /*

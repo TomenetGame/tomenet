@@ -103,6 +103,8 @@
 #define MAX_MOTD_SIZE			(30*1024)
 #define MAX_MOTD_LOOPS			120
 
+
+
 static bool validstrings(char *nick, char *real, char *host);
 
 connection_t	*Conn = NULL;
@@ -314,7 +316,7 @@ static int Init_setup(void)
 //		strncpy(&Setup.race_title[i], race_info[i].title, 12);
 //		Setup.race_choice[i] = race_info[i].choice;
 		/* 1 for '\0', 4 for race_choice */
-		Setup.setup_size += strlen(race_info[i].title) + 1 + 4;
+		Setup.setup_size += strlen(race_info[i].title) + 1 + 4 + 6;
 	}
 
 	for (i = 0; i < MAX_CLASS; i++)
@@ -325,7 +327,7 @@ static int Init_setup(void)
 			break;
 		}
 //		strncpy(&Setup.class_title[i], class_info[i].title, 12);
-		Setup.setup_size += strlen(class_info[i].title) + 1;
+		Setup.setup_size += strlen(class_info[i].title) + 1 + 6;
 	}
 
 	return 0;
@@ -956,7 +958,7 @@ static void Contact(int fd, int arg)
 
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
 
-        Packet_printf(&ibuf, "%c%c%d%c", reply_to, status, login_port);
+        Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
 
 /* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
         for (i = 0; i < MAX_CLASS; i++)
@@ -992,12 +994,10 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	}
 #endif
 
-	//if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
-	/* See src/client/c-init.c for why I changed this for now
-	search the file for MY_VERSION to find it quickly :) */
-	if (version < 2) return E_VERSION_OLD;
-	if (version > 2) return E_VERSION_UNKNOWN;
-	version = ((4 << 12) | (0 << 8) | (0 << 4) | 0);
+	if (version < MY_VERSION)
+		return E_VERSION_OLD;
+	if (version > MY_VERSION)
+		return E_VERSION_UNKNOWN;
 
 	if(!player_allowed(nick))
 		return E_INVITE;
@@ -1383,6 +1383,7 @@ static int Handle_setup(int ind)
 	connection_t *connp = &Conn[ind];
 	char *buf;
 	int n, len, i;
+	char b1, b2, b3, b4, b5, b6;
 	
 	if (connp->state != CONN_SETUP)
 	{
@@ -1401,19 +1402,31 @@ static int Handle_setup(int ind)
 			return -1;
 		}
 
-        for (i = 0; i < Setup.max_race; i++)
-        {
+	        for (i = 0; i < Setup.max_race; i++)
+	        {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
-			Packet_printf(&connp->c, "%s%ld", race_info[i].title, race_info[i].choice);
-        }
+			b1 = race_info[i].r_adj[0]+50;
+			b2 = race_info[i].r_adj[1]+50;
+			b3 = race_info[i].r_adj[2]+50;
+			b4 = race_info[i].r_adj[3]+50;
+			b5 = race_info[i].r_adj[4]+50;
+			b6 = race_info[i].r_adj[5]+50;
+			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%ld", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
+	        }
 
-        for (i = 0; i < Setup.max_class; i++)
-        {
+    		for (i = 0; i < Setup.max_class; i++)
+	        {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
-			Packet_printf(&connp->c, "%s", class_info[i].title);
-        }
+			b1 = class_info[i].c_adj[0]+50;
+			b2 = class_info[i].c_adj[1]+50;
+			b3 = class_info[i].c_adj[2]+50;
+			b4 = class_info[i].c_adj[3]+50;
+			b5 = class_info[i].c_adj[4]+50;
+			b6 = class_info[i].c_adj[5]+50;
+			Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].title);
+    		}
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
 		connp->setup=0;
@@ -1649,6 +1662,8 @@ static void sync_options(int Ind, bool *options)
 	p_ptr->wide_scroll_margin = options[71];
 	p_ptr->always_repeat = options[6];
 	p_ptr->fail_no_melee = options[72];
+
+	p_ptr->short_item_names = options[77];
 	// bool speak_unique;
 
 }
