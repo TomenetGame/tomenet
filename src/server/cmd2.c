@@ -2418,7 +2418,9 @@ void do_cmd_fire(int Ind, int dir, int item)
 	for (cur_dis = 0; cur_dis <= tdis; )
 	{
 		/* Hack -- Stop at the target */
-		if ((y == ty) && (x == tx)) break;
+		if ((y == ty) && (x == tx)){
+			break;
+		}
 
 		/* Calculate the new location (see "project()") */
 		ny = y;
@@ -2560,7 +2562,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 				take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name);
 
                                 /* Add a nice ball if needed */
-                                switch (p_ptr->bow_brand)
+                                switch (p_ptr->bow_brand_t)
                                 {
                                         case BOW_BRAND_BALL_FIRE:
                                                 project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
@@ -2580,14 +2582,14 @@ void do_cmd_fire(int Ind, int dir, int item)
                                 }
 
 				/* Stop looking */
-				if (!p_ptr->bow_brand || (p_ptr->bow_brand != BOW_BRAND_SHARP)) break;
+				if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
 			}
 			
 			} /* end hack */
 #else
 
 			/* Stop looking */
-			if (!p_ptr->bow_brand || (p_ptr->bow_brand != BOW_BRAND_SHARP)) break;
+			if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
 #endif
 		}
 
@@ -2727,7 +2729,7 @@ void do_cmd_fire(int Ind, int dir, int item)
 				}
 
                                 /* Add a nice ball if needed */
-                                switch (p_ptr->bow_brand)
+                                switch (p_ptr->bow_brand_t)
                                 {
                                         case BOW_BRAND_BALL_FIRE:
                                                 project(0 - Ind, 2, p_ptr->dun_depth, y, x, 30, GF_FIRE, PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL);
@@ -2747,7 +2749,7 @@ void do_cmd_fire(int Ind, int dir, int item)
                                 }
 
 				/* Stop looking */
-				if (!p_ptr->bow_brand || (p_ptr->bow_brand != BOW_BRAND_SHARP)) break;
+				if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BOW_BRAND_SHARP)) break;
 			}
 		}
 	}

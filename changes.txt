@@ -233,3 +233,6 @@ Change list for PernMangband
 
 25/10/2001
 - The previous bugfix (timeout player) now works.
+
+27/10/2001
+- Fixed the archer spells bugs
