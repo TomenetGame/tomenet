@@ -2705,6 +2705,51 @@ D:Made of alloy of iron and black ore, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
 
 
+# The Scythe Of Slicing 'Soul Reaver'
+
+N:223:'Soul Reaver'
+I:22:30:5
+W:80:38:300:500000
+P:0:15d4:50:0:0
+F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
+F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC |
+F:IM_COLD | RES_DARK | RES_NETHER | RES_CHAOS | RES_DISEN | RES_TIME
+D:Not supposed to be used by mortals as a weapon but as a tool for the
+D:Grim Reaper himself to cut souls from the dying bodies this terrible
+D:scythe is black as the night, sucking in all light nearby and lingering
+D:for living souls. It is uncertain if a warrior brave enough exists to
+D:resist the corruption of this tool, brought by its power to give death
+D:and annihilation to any existance. Standing close to the scyhte,
+D:the cold of its blade grips your very heart and soul and makes
+D:you scream out in fear.
+
+
+# The Halberd of the Guardian
+
+N:224:of the Guardian
+I:22:15:0
+W:40:20:220:100000
+P:0:5d8:20:20:0
+F:RES_FEAR | FREE_ACTION | ESP_EVIL | SLAY_EVIL | SLOW_DIGEST |
+F:RES_COLD | RES_ELEC | RES_DARK | RES_DISEN
+D:The guard on duty's best friend.
+
+
+# The Heavy Lance of the Abyss Rider
+
+N:225:of the Abyss Rider
+I:22:29:-10
+W:20:23:400:100000
+P:0:6d8:0:13:0
+F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
+F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
+F:RES_DARK | RES_NETHER | RES_CHAOS | DRAIN_MANA | CURSED | HEAVY_CURSE |
+F:CHAOTIC
+D:Belonging to one of the riders of doom, surprising is the separation
+D:from its wielder. Maybe the lance itself is hunting for a new rider
+D:to be its slave.
+
+
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
