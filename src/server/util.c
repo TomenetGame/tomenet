@@ -2662,6 +2662,29 @@ static void do_slash_cmd(int Ind, char *message)
 			do_cmd_fill_bottle(Ind);
 			return;
 		}
+		else if (prefix(message, "/dice"))
+		{
+			int rn;
+			if (tk < 1)
+			{
+				msg_print(Ind, "\377oUsage: /dice (number of dice)");
+				return;
+			}
+			if ((k < 1) || (k > 100))
+			{
+				msg_print(Ind, "\377oNumber of dice must be between 1 and 100!");
+				return;
+			}
+			rn = 0;
+			for (i = 0; i < k; i++)
+			{
+			    rn += randint(6);
+			}
+			msg_format(Ind, "\377UYou throw %d dice and get a %d", k, rn);
+			msg_format_near(Ind, "\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
+			return;
+		}
+
 
 		/*
 		 * Admin commands
