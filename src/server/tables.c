@@ -3095,24 +3095,24 @@ cptr spell_names[8][64] =
 		"Find Traps",
 		"Detect Doors/Stairs",
 		"Slow Poison",
-
-		/* Words of Wisdom (sval 1) */
 		"Scare Monster",
+		
+		/* Words of Wisdom (sval 1) */
 		"Portal",
 		"Cure Serious Wounds",
-		"Chant",
-		"Sanctuary",
+		"Sleep Monsters",
 		"Satisfy Hunger",
 		"Remove Curse",
 		"Resist Heat and Cold",
-
-		/* Chants and Blessings (sval 2) */
 		"Neutralize Poison",
 		"Orb of Draining",
+
+		/* Chants and Blessings (sval 2) */
 		"Cure Critical Wounds",
 		"Sense Invisible",
 		"Protection from Evil",
 		"Earthquake",
+		"Chant",
 		"Sense Surroundings",
 		"Cure Mortal Wounds",
 		"Turn Undead",
