@@ -42,9 +42,9 @@ RC         = $(BCCDIR)\bin\brc32
 #
 # Name of the *.exe-file
 
-SERV_EXE = mangband.exe
+SERV_EXE = tomenet.server.exe
 CONS_EXE = mangconsole.exe
-CLI_EXE = mangclient.exe
+CLI_EXE = tomenet.exe
 
 
 ###################################################################
