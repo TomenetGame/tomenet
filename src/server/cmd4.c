@@ -400,7 +400,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
 		if (p_ptr->admin_dm || p_ptr->admin_wiz)
-			fprintf(fff, "    (%d)", k);
+			fprintf(fff, "   %c(%d)", (q_ptr->quest_id?'Q':' '), k);
 		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
 
 		/* Print extra info if these people are in the same party */

@@ -1096,7 +1096,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 	}
 
-
 	if (i_ptr == NULL)
 	{
 		if (c_ptr->o_idx==0) i_ptr=NULL;

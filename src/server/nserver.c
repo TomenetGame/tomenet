@@ -1700,6 +1700,15 @@ static int Handle_login(int ind)
 		msg_format(i, "%s%s has entered the game.", title, p_ptr->name);
 	}
 
+	if(p_ptr->quest_id){
+		for(i=0; i<20; i++){
+			if(quests[i].id==p_ptr->quest_id){
+				msg_format(NumPlayers, "\377oYour quest to kill \377y%d \377g%s \377ois not complete.", p_ptr->quest_num, r_name+r_info[quests[i].type].name);
+				break;
+			}
+		}
+	}
+
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
 
