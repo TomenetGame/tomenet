@@ -1322,6 +1322,7 @@ F:CURSED | STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE
 
 ##### Scrolls #####
 
+
 N:173:Enchant Weapon To-Hit
 G:?:d
 I:70:17:0
@@ -3712,3 +3713,9 @@ I:89:5:0
 W:10:0:30:25
 A:10/3
 P:0:1d1:0:0:0
+
+N:529:House creation
+G:?:d
+I:70:49:0
+W:40:0:5:25000
+A:40/20

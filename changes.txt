@@ -136,3 +136,14 @@ Change list for PernMangband
 - 90 day player timeout added.
 
 05/08/2001 - PernMangband 3.2.0
+
+11/08/2001 - evileye
+- New polygonal houses work ok now. Checks for moving off depth
+  work. Player disconnect is handled ok.
+  Optimisation for houses which are rectangular is needed before
+  inclusion into the game properly.
+  Scroll limits need to be discussed and set accordingly.
+
+11/08/2001 - evileye
+- Rectangular optimisation of houses complete.
+- House creation is now compatible with the dynamic houses array.
