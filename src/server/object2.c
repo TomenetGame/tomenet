@@ -115,7 +115,7 @@ void delete_object(struct worldpos *wpos, int y, int x) /* maybe */
  * After "compacting" (if needed), we "reorder" the objects into a more
  * compact order, and we reset the allocation info, and the "live" array.
  */
-void compact_objects(int size)
+void compact_objects(int size, bool purge)
 {
 	int i, y, x, num, cnt, Ind;
 
@@ -214,8 +214,9 @@ void compact_objects(int size)
 		/* real objects in unreal location are not skipped. */
 		/* hack -- items on wilderness are preserved, since
 		 * they can be house contents. */
-//		if (o_ptr->k_idx && !o_ptr->wpos.wz && getcave(&o_ptr->wpos)) continue;
-		if (o_ptr->k_idx && (!o_ptr->wpos.wz || getcave(&o_ptr->wpos))) continue;
+		if (o_ptr->k_idx &&
+			((!o_ptr->wpos.wz && (!purge || o_ptr->owner)) ||
+			 getcave(&o_ptr->wpos))) continue;
 
 		/* One less object */
 		o_max--;
@@ -304,7 +305,7 @@ void wipe_o_list(struct worldpos *wpos)
 	}
 
 	/* Compact the object list */
-	compact_objects(0);
+	compact_objects(0, FALSE);
 }
 
 
@@ -359,7 +360,7 @@ void wipe_o_list_safely(struct worldpos *wpos)
 	}
 
 	/* Compact the object list */
-	compact_objects(0);
+	compact_objects(0, FALSE);
 }
 
 

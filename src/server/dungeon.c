@@ -16,6 +16,10 @@
 /* chance of townie respawning like other monsters, in % */
 #define TOWNIE_RESPAWN_CHANCE	50
 
+/* if defined, player ghost loses exp slowly.
+ * see GHOST_XP_CASHBACK in xtra2.c also.
+ */
+#define GHOST_FADING	10000
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -633,7 +637,6 @@ static void process_world(int Ind)
 #endif	// 0
 
 	/* Cold Turkey  */
-
 	i = (p_ptr->csane << 7) / p_ptr->msane;
 	if (!(turn % 1500) && !magik(i))
 	{
@@ -645,6 +648,17 @@ static void process_world(int Ind)
 		set_image(Ind, p_ptr->image + 25 - i / 4);
 		disturb(Ind, 0, 0);
 	}
+
+#ifdef GHOST_FADING
+		if (p_ptr->ghost && !p_ptr->admin_dm &&
+//				!(turn % GHOST_FADING))
+//				!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
+				!(turn % (GHOST_FADING / p_ptr->lev * 50)))
+//				(rand_int(10000) < p_ptr->lev * p_ptr->lev))
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L,
+					"fading", TRUE, TRUE);
+#endif	// GHOST_FADING
+
 }
 
 /*
@@ -1436,14 +1450,15 @@ static void process_player_end(int Ind)
 		/*** Check the Food, and Regenerate ***/
 
 		/* Ghosts don't need food */
-		/* Allow AFK-hivernation */
-		if (!p_ptr->ghost && !p_ptr->afk)
+		/* Allow AFK-hivernation if not hungry */
+		if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT))
 		{
 			/* Digest normally */
 			if (p_ptr->food < PY_FOOD_MAX)
 			{
 				/* Every 50/6 level turns */
-			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+//			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+				if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
 				{
 					/* Basic digestion rate based on speed */
 					i = extract_energy[p_ptr->pspeed] * 2;
@@ -1910,7 +1925,9 @@ static void process_player_end(int Ind)
 		/*** Process Inventory ***/
 
 		/* Handle experience draining */
-		if (p_ptr->exp_drain)
+		if (p_ptr->exp_drain && magik(10))
+			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
+#if 0
 		{
 			if ((rand_int(100) < 10) && (p_ptr->exp > 0))
 			{
@@ -1919,13 +1936,19 @@ static void process_player_end(int Ind)
 				check_experience(Ind);
 			}
 		}
+#endif	// 0
 
         /* Handle experience draining.  In Oangband, the effect
 		 * is worse, especially for high-level characters.
 		 * As per Tolkien, hobbits are resistant.
          */
-        if (p_ptr->black_breath)
+        if (p_ptr->black_breath &&
+			rand_int(200) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 		{
+			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L,
+					"Black Breath", TRUE, TRUE);
+#if 0
 			byte chance = (p_ptr->prace == RACE_HOBBIT) ? 2 : 5;
 			int plev = p_ptr->lev;
 
@@ -1934,6 +1957,8 @@ static void process_player_end(int Ind)
 			//                if ((rand_int(100) < chance) && (p_ptr->exp > 0))
 			/* Toned down a little, considering it's realtime. */
 			if ((rand_int(200) < chance))
+				take_xp_hit(Ind, 1 + plev / 5 + p_ptr->max_exp / 10000L,
+						"Black Breath", TRUE, TRUE);
 			{
 				int reduce = 1 + plev / 5 + p_ptr->max_exp / 10000L;
 				p_ptr->exp -= reduce;
@@ -1950,6 +1975,7 @@ static void process_player_end(int Ind)
 					player_death(Ind);
 				}
 			}
+#endif	// 0
 		}
 
 		/* Drain Mana */
@@ -2275,7 +2301,7 @@ static void process_player_end(int Ind)
 	if (p_ptr->window) window_stuff(Ind);
 }
 
-static bool stale_level(struct worldpos *wpos){
+static bool stale_level(struct worldpos *wpos, int grace){
 	time_t now;
 	now=time(&now);
 	if(wpos->wz){
@@ -2284,12 +2310,15 @@ static bool stale_level(struct worldpos *wpos){
 		d_ptr=getdungeon(wpos);
 		if(!d_ptr) return(FALSE);
 		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
-		if(now-l_ptr->lastused > 300){
+#if DEBUG_LEVEL > 0
+		s_printf("%s  now:%d last:%d diff:%d grace:%d\n", wpos_format(wpos), now, l_ptr->lastused, now-l_ptr->lastused,grace);
+#endif
+		if(now-l_ptr->lastused > grace){
 			return(TRUE);
 		}
 	}
 	else{
-		if(now-wild_info[wpos->wy][wpos->wx].lastused > 300)
+		if(now-wild_info[wpos->wy][wpos->wx].lastused > grace)
 			return(TRUE);
 	}
 	return(FALSE);
@@ -2307,6 +2336,16 @@ static void do_unstat(struct worldpos *wpos)
 		if (inarea(&p_ptr->wpos, wpos)) num_on_depth++;
 	}
 	// If this level is static and no one is actually on it
+	if (!num_on_depth)
+//			&& stale_level(wpos))
+	{
+		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
+		if ((( getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) || 
+				stale_level(wpos, cfg.level_unstatic_chance * getlevel(wpos) * 60))
+			new_players_on_depth(wpos,0,FALSE);
+	}
+#if 0
+	// If this level is static and no one is actually on it
 	if (!num_on_depth && stale_level(wpos))
 	{
 		/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
@@ -2322,6 +2361,7 @@ static void do_unstat(struct worldpos *wpos)
 			new_players_on_depth(wpos,0,FALSE);
 		}
 	}
+#endif	// 0
 }
 
 /*
@@ -2364,7 +2404,8 @@ void scan_houses()
 /*
  * Deallocate all non static levels. (evileye)
  */
-static void purge_old(){
+static void purge_old()
+{
 	int x, y, i;
 
 //	if (cfg.level_unstatic_chance > 0)
@@ -2385,8 +2426,9 @@ static void purge_old(){
 					players_on_depth(&twpos))
 					do_unstat(&twpos);
 
-				if(!players_on_depth(&twpos) && !istown(&twpos) && getcave(&twpos))
-					dealloc_dungeon_level_maybe(&twpos);
+				if(!players_on_depth(&twpos) && !istown(&twpos) &&
+						getcave(&twpos) && stale_level(&twpos, cfg.anti_scum))
+					dealloc_dungeon_level(&twpos);
 
 				if(w_ptr->flags & WILD_F_UP)
 				{
@@ -2398,8 +2440,9 @@ static void purge_old(){
 							players_on_depth(&twpos))
 						do_unstat(&twpos);
 						
-						if(!players_on_depth(&twpos) && getcave(&twpos))
-							dealloc_dungeon_level_maybe(&twpos);
+						if(!players_on_depth(&twpos) && getcave(&twpos) &&
+								stale_level(&twpos, cfg.anti_scum))
+							dealloc_dungeon_level(&twpos);
 					}
 				}
 				if(w_ptr->flags & WILD_F_DOWN)
@@ -2412,8 +2455,9 @@ static void purge_old(){
 							players_on_depth(&twpos))
 							do_unstat(&twpos);
 
-						if(!players_on_depth(&twpos) && getcave(&twpos))
-							dealloc_dungeon_level_maybe(&twpos);
+						if(!players_on_depth(&twpos) && getcave(&twpos) &&
+								stale_level(&twpos, cfg.anti_scum))
+							dealloc_dungeon_level(&twpos);
 					}
 				}
 				twpos.wz=0;
@@ -3124,13 +3168,13 @@ void dungeon(void)
 	Net_input();
 
 	/* Hack -- Compact the object list occasionally */
-	if (o_top + 16 > MAX_O_IDX) compact_objects(32);
+	if (o_top + 16 > MAX_O_IDX) compact_objects(32, FALSE);
 
 	/* Hack -- Compact the monster list occasionally */
-	if (m_top + 32 > MAX_M_IDX) compact_monsters(64);
+	if (m_top + 32 > MAX_M_IDX) compact_monsters(64, FALSE);
 
 	/* Hack -- Compact the trap list occasionally */
-	if (t_top + 16 > MAX_TR_IDX) compact_traps(32);
+	if (t_top + 16 > MAX_TR_IDX) compact_traps(32, FALSE);
 
 
 	// Note -- this is the END of the last turn

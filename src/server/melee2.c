@@ -14,8 +14,7 @@
 
 #include "angband.h"
 
-/* This removes some monster-behavior codes which can
- * be a bottleneck. */
+/* This removes some monster-behavior codes which can be bottlenecksll. */
 //#define STUPID_MONSTERS
 
 /* distance for AI_ANNOY */
@@ -885,6 +884,7 @@ static int near_hit(int m_idx, int *yp, int *xp)
 	int vy = magik(50) ? -1 : 1;
 	int vx = magik(50) ? -1 : 1;
 	*/
+	bool giveup;
 
 //	int gy = 0, gx = 0, gdis = 0;
 
@@ -895,6 +895,8 @@ static int near_hit(int m_idx, int *yp, int *xp)
 	/* Start with adjacent locations, spread further */
 	for (d = 1; d < 4; d++)
 	{
+		giveup = TRUE;
+
 		/* Check nearby locations */
 		for (y = py - d; y <= py + d; y++)
 //		for (y = py - d*vy; y <= py + d*vy; y+=vy)
@@ -912,18 +914,22 @@ static int near_hit(int m_idx, int *yp, int *xp)
 				if (distance(y, x, py, px) != d) continue;
 
 				/* Check if projectable */
-				if (projectable_wall(&m_ptr->wpos, fy, fx, y, x) &&
-					projectable_wall(&m_ptr->wpos, y, x, py, px))
+				if (projectable_wall(&m_ptr->wpos, fy, fx, y, x))
 				{
-					/* Good location */
-					(*yp) = y;
-					(*xp) = x;
+					giveup = FALSE;
+					if (projectable_wall(&m_ptr->wpos, y, x, py, px))
+					{
+						/* Good location */
+						(*yp) = y;
+						(*xp) = x;
 
-					/* Found nice place */
-					return (d);
+						/* Found nice place */
+						return (d);
+					}
 				}
 			}
 		}
+		if (giveup) return (99);
 	}
 
 	/* No projectable place */
@@ -988,7 +994,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	int			k, chance, thrown_spell, rlev, failrate;
+	int			k, chance, thrown_spell, rlev;	// , failrate;
 
 	byte		spell[96], num = 0;
 
@@ -1134,10 +1140,6 @@ bool make_attack_spell(int Ind, int m_idx)
 	}
 
 
-	/* Extract the monster level */
-	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
-
-
 	/* Hack -- allow "desperate" spells */
 	if ((r_ptr->flags2 & RF2_SMART) &&
 	    (m_ptr->hp < m_ptr->maxhp / 10) &&
@@ -1242,15 +1244,21 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
 
+	/* Extract the monster level */
+	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
+
+#if 0
 	/* Calculate spell failure rate */
 	failrate = 25 - (rlev + 3) / 4;
 
 	/* Hack -- Stupid monsters will never fail (for jellies and such) */
-//	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
+	if (r_ptr->flags2 & (RF2_STUPID)) failrate = 0;
 
 	/* Check for spell failure (inate attacks never fail) */
 	if (!(r_ptr->flags2 & (RF2_STUPID)))
 	if ((thrown_spell >= 128) && (rand_int(100) < failrate))
+#endif	// 0
+	if (!stupid && thrown_spell >= 128 && magik(25 - (rlev + 3) / 4))
 	{
 		/* Message */
 		if (direct)
@@ -5360,6 +5368,7 @@ static bool player_invis(int Ind, monster_type *m_ptr)
  * always added at the end of the "m_fast" array.
  */
  
+/* FIXME */
  
 void process_monsters(void)
 {
@@ -5396,6 +5405,10 @@ void process_monsters(void)
 			continue;
 		}
 
+		/* Efficiency */
+//		if (!(getcave(m_ptr->wpos))) return(FALSE);
+		if (!players_on_depth(&m_ptr->wpos)) continue;
+
 		/* Obtain the energy boost */
 		e = extract_energy[m_ptr->mspeed];
 
@@ -5410,57 +5423,57 @@ void process_monsters(void)
 		if (m_ptr->energy < level_speed(&m_ptr->wpos)) continue;
 
 		/* Find the closest player */
-                for (pl = 1; pl < NumPlayers + 1; pl++) 
-               { 
-                        int j; 
-                        p_ptr = Players[pl]; 
+		for (pl = 1; pl < NumPlayers + 1; pl++) 
+		{ 
+			int j; 
+			p_ptr = Players[pl]; 
 
-                        /* Only check him if he is playing */ 
-                        if (p_ptr->conn == NOT_CONNECTED) 
-                                continue; 
+			/* Only check him if he is playing */ 
+			if (p_ptr->conn == NOT_CONNECTED) 
+				continue; 
 
-                        /* Make sure he's on the same dungeon level */ 
-                        if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
-                                continue; 
+			/* Make sure he's on the same dungeon level */ 
+			if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
+				continue; 
 
-                        /* Hack -- Skip him if he's shopping */ 
-                        if (p_ptr->store_num != -1) 
-                                continue; 
+			/* Hack -- Skip him if he's shopping */ 
+			if (p_ptr->store_num != -1) 
+				continue; 
 
-                        /* Hack -- make the dungeon master invisible to monsters */ 
-                        if (p_ptr->admin_dm) continue; 
+			/* Hack -- make the dungeon master invisible to monsters */ 
+			if (p_ptr->admin_dm) continue; 
 
-                        /* Monsters serve a king on his land they dont attack him */ 
-                        if (player_is_king(pl)) continue; 
+			/* Monsters serve a king on his land they dont attack him */ 
+			if (player_is_king(pl)) continue; 
 
-                        /* Compute distance */ 
-                        j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
+			/* Compute distance */ 
+			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
 
-                        /* Glaur. Check if monster has LOS to the player */ 
-                        new_los=los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
+			/* Glaur. Check if monster has LOS to the player */ 
+			new_los=los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
 
-		/*	if (p_ptr->ghost)
-			if (!new_los)
-		        j += 100; */
+			/*	if (p_ptr->ghost)
+				if (!new_los)
+				j += 100; */
 
-                        /* Glaur. Check that the closest VISIBLE target gets selected, 
-                        if no visible one available just take the closest*/ 
-                        if ((blos >= new_los) && (j > dis_to_closest) || (blos > new_los)) 
-			continue; 
+			/* Glaur. Check that the closest VISIBLE target gets selected, 
+			   if no visible one available just take the closest*/ 
+			if ((blos >= new_los) && (j > dis_to_closest) || (blos > new_los)) 
+				continue; 
 
-                        /* Glaur. Skip if same distance and stronger and same visibility*/ 
-                        if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) 
-			continue; 
+			/* Glaur. Skip if same distance and stronger and same visibility*/ 
+			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los)) 
+				continue; 
 
-                        /* Skip if the monster can't see the player */ 
-                        if (player_invis(pl, m_ptr)) continue; 
+			/* Skip if the monster can't see the player */ 
+			if (player_invis(pl, m_ptr)) continue; 
 
-                        /* Remember this player */ 
-		        blos = new_los; 
-                        dis_to_closest = j; 
-                        closest = pl; 
-                        lowhp = p_ptr->chp; 
-                } 
+			/* Remember this player */ 
+			blos = new_los; 
+			dis_to_closest = j; 
+			closest = pl; 
+			lowhp = p_ptr->chp; 
+		} 
 
 
 		/* Paranoia -- Make sure we found a closest player */

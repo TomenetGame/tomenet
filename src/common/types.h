@@ -1967,6 +1967,7 @@ struct server_opts
 	bool no_ghost;
 	bool maximize;
 	bool kings_etiquette;
+	bool public_rfe;
 	bool zang_monsters;
 	bool pern_monsters;
 	bool cth_monsters;

@@ -106,51 +106,33 @@ s32b m_top = 0;                 /* Monster top size */
  * Server options, set in mangband.cfg
  */
 
-#if 0
-bool cfg_report_to_meta = 0;
-char * cfg_meta_address;
-char * cfg_bind_name;
-char * cfg_console_password = "change_me";
-char * cfg_admin_wizard = "Serverchez";
-char * cfg_dungeon_master = "DungeonMaster";
-bool cfg_secret_dungeon_master = 0;
-s16b cfg_fps = 12;
-bool cfg_mage_hp_bonus = 1;
-s16b cfg_newbies_cannot_drop = 5;
-bool cfg_door_bump_open = 1;
-s32b cfg_preserve_death_level = 201;
-bool cfg_no_ghost = 0;
-s32b cfg_unique_respawn_time = 300;
-s32b cfg_unique_max_respawn_time = 50000;
-s32b cfg_level_unstatic_chance = 60;
-s32b cfg_min_unstatic_level = 8;
-s32b cfg_retire_timer = -1;
-bool cfg_maximize = 1;
-s32b cfg_game_port = 18348;
-s32b cfg_console_port = 18349;
-int cfg_spell_interfere = 0;
-bool cfg_anti_arts_horde = 1;
-#endif	// 0
 
 server_opts cfg =
 {
-	6, 0,
-	"mangband.org",
-	"",
-	"changeme",
-	"Serverchez",
-	"DungeonMaster",
-	201,300,50000,60,
-	8,-1,18348,18349,
-	0,200,
-	60,5,5,0,150,
+	6, 0,		// runlevel, closetime
+	"mangband.org",		// meta_address
+	"",		// bind_name
+	"changeme",		// console_password
+	"Serverchez",		// admin_wizard
+	"DungeonMaster",	// dungeon_master
+	201,		// preserve_death_level
+	300,50000,	// unique_respawn_time, unique_max_respawn_time
+	6, 8,		// level_unstatic_chance, min_unstatic_level
+	-1,18348,18349,	// retire_timer, game_port, console_port
+	0,200,		// spell_interfere, spell_stack_limit
+	60,5,5,		// fps, newbies_cannot_drop, running_speed,
+	25, 150,	// anti_scum, dun_unusual,
 
-	32,32,
-	0,
-	1, 127, 200,
+	32,32,		// town_x, town_y
+	0, 1,		// town_base, dun_base
+	127, 200,	// dun_max, store_turns
 
-	TRUE,TRUE,TRUE,FALSE,TRUE,FALSE,TRUE,TRUE,
-	FALSE,TRUE,TRUE,FALSE,TRUE
+	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
+	TRUE,FALSE, // anti_arts_horde, mage_hp_bonus
+	TRUE,FALSE,	// door_bump_open, no_ghost
+	TRUE,TRUE,	// maximize, kings_etiquette
+	FALSE,TRUE,TRUE,	// zang_monsters, pern_monsters, cth_monsters
+	FALSE,TRUE	// joke_monsters, vanilla_monsters
 };
 
 

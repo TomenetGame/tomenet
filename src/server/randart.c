@@ -234,7 +234,8 @@ s32b artifact_power (artifact_type *a_ptr)
 		}
 		case TV_LITE:
 		{
-			p += 35;
+//			p += 35;
+			p += 25;
 			break;
 		}
 		case TV_RING:
@@ -325,6 +326,7 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_LITE1) p += 2;
 	if (a_ptr->flags4 & TR4_LITE2) p += 4;
 	if (a_ptr->flags4 & TR4_LITE3) p += 8;
+	if (a_ptr->flags4 & TR4_FUEL_LITE) p -= 20;
 	if (a_ptr->flags3 & TR3_SEE_INVIS) p += 8;
 //	if (a_ptr->flags3 & TR3_TELEPATHY) p += 20;
 	if (a_ptr->esp & (ESP_ORC)) p += 1;
@@ -702,7 +704,8 @@ void add_ability (artifact_type *a_ptr)
 				else if (r < 80) a_ptr->flags4 |= TR4_LITE2;
 				else a_ptr->flags4 |= TR4_LITE3;
 
-				if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
+//				if (r % 2) a_ptr->flags4 &= ~TR4_FUEL_LITE;
+				if (!(r % 5)) a_ptr->flags4 &= ~TR4_FUEL_LITE;
 				break;
 			}
 		}

@@ -39,6 +39,25 @@ s16b ddx_ddd[9] =
 s16b ddy_ddd[9] =
 { 1, -1, 0, 0, 1, 1, -1, -1, 0 };
 
+/*
+ * bigger-radius versions of ddx/ddy
+ * change those tables if 'distance' function is modified!
+ */
+#if 0
+s16b ddx2[12] =
+{ 0, 1, 2, 2, 2, 1, 0, -1, -2, -2, -2, -1}
+
+s16b ddy2[12] =
+{ 2, 2, 1, 0, -1, -2, -2, -2, -1, 0, 1, 2}
+
+s16b ddx3[16] =
+{ 0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1}
+
+s16b ddy3[16] =
+{ 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1, 0, 1, 2, 3}
+#endif	// 0
+
+
 
 
 /*

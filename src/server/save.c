@@ -1333,8 +1333,10 @@ static void wr_dungeon(struct worldpos *wpos)
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-
-	s_printf("%d players on %d,%d,%d.\n", players_on_depth(wpos), wpos->wx, wpos->wy, wpos->wz);
+#if DEBUG_LEVEL > 1
+//	s_printf("%d players on %d,%d,%d.\n", players_on_depth(wpos), wpos->wx, wpos->wy, wpos->wz);
+	s_printf("%d players on %s.\n", players_on_depth(wpos), wpos_format(wpos));
+#endif
 
 	/* Depth */
 	wr_s16b(wpos->wx);
@@ -2194,7 +2196,7 @@ static bool wr_server_savefile(void)
 	new_wr_dungeons();	/* rename wr_dungeons(void) later */
 
 	/* Prepare to write the monsters */
-	compact_monsters(0);
+	compact_monsters(0, FALSE);
 	/* Note the number of monsters */
 	tmp32u = m_max;
 	wr_u32b(tmp32u);
@@ -2202,7 +2204,7 @@ static bool wr_server_savefile(void)
 	for (i = 0; i < tmp32u; i++) wr_monster(&m_list[i]);
 
 	/* Prepare to write the objects */
-	compact_objects(0);
+	compact_objects(0, FALSE);
 	/* Note the number of objects */
 	tmp16u = o_max;
 	wr_u16b(tmp16u);
@@ -2210,7 +2212,7 @@ static bool wr_server_savefile(void)
 	for (i = 0; i < tmp16u; i++) wr_item(&o_list[i]);
 
 	/* Prepare to write the traps */
-	compact_traps(0);
+	compact_traps(0, FALSE);
 	/* Note the number of traps */
 	tmp16u = t_max;
 	wr_u16b(tmp16u);
@@ -2497,7 +2499,9 @@ bool save_server_info(void)
 	int result = FALSE;
 	char safe[1024];
 
-	printf("save server info\n");
+#if DEBUG_LEVEL > 1
+	printf("saving server info...\n");
+#endif
 	/* New savefile */
 	path_build(safe, 1024, ANGBAND_DIR_SAVE, "server.new");
 

@@ -6560,10 +6560,12 @@ static int Receive_special_line(int ind)
 				do_cmd_help(player, line);
  				break;
 			case SPECIAL_FILE_LOG:
-				do_cmd_view_rfe(player, "mangband.log", line);
+				if (is_admin(Players[player]))
+					do_cmd_view_rfe(player, "mangband.log", line);
  				break;
 			case SPECIAL_FILE_RFE:
-				do_cmd_view_rfe(player, "mangband.rfe", line);
+				if (is_admin(Players[player]) || cfg.public_rfe)
+					do_cmd_view_rfe(player, "mangband.rfe", line);
  				break;
 		}
 	}

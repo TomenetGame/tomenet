@@ -1786,6 +1786,10 @@ void set_server_option(char * option, char * value)
 	{
 		cfg.store_turns = atoi(value);
 	}
+	else if (!strcmp(option,"PUBLIC_RFE"))
+	{
+		cfg.public_rfe = str_to_boolean(value);
+	}
 	else printf("Error : unrecognized mangband.cfg option %s\n", option);
 }
 

@@ -983,6 +983,62 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 #endif	// 0
 }
 
+/* Decrease player's exp. This is another copy of the function above.
+ * if mode is 'TRUE', it's permanent.
+ * if fatal, player dies if runs out of exp.
+ * 
+ * if not permanent nor fatal, use lose_exp instead.
+ * - Jir -
+ */
+void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Paranoia */
+	if (p_ptr->death) return;
+
+	/* Disturb */
+//	disturb(Ind, 1, 0);
+
+	/* Hurt the player */
+	p_ptr->exp -= damage;
+	if (mode) p_ptr->max_exp -= damage;;
+
+	check_experience(Ind);
+
+	/* Dead player */
+	if (fatal && p_ptr->exp == 0)
+	{
+		/* Sound */
+		sound(Ind, SOUND_DEATH);
+
+		/* Hack -- Note death */
+		msg_print(Ind, "\377RYou die.");
+		msg_print(Ind, NULL);
+
+
+		/* Note cause of death */
+		/* To preserve the players original (pre-ghost) cause
+		   of death, use died_from_list.  To preserve the original
+		   depth, use died_from_depth. */
+		
+		(void)strcpy(p_ptr->died_from, hit_from);
+		if (!p_ptr->ghost) 
+		{	strcpy(p_ptr->died_from_list, hit_from);
+			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+		}
+
+		/* No longer a winner */
+		p_ptr->total_winner = FALSE;
+
+		/* Note death */
+		p_ptr->death = TRUE;
+
+		/* Dead */
+		return;
+	}
+}
+
 
 
 

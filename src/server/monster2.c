@@ -260,7 +260,10 @@ void delete_monster(struct worldpos *wpos, int y, int x)
  * After "compacting" (if needed), we "reorder" the monsters into a more
  * compact order, and we reset the allocation info, and the "live" array.
  */
-void compact_monsters(int size)
+/*
+ * if 'purge', non-allocated wilderness monsters will be purged.
+ */
+void compact_monsters(int size, bool purge)
 {
 	int             i, num, cnt, Ind;
 
@@ -311,6 +314,8 @@ void compact_monsters(int size)
 			if (istown(&m_ptr->wpos))
 				chance = 70;
 
+//			if (!getcave(&m_ptr->wpos)) chance = 0;
+
 			/* All monsters get a saving throw */
 			if (rand_int(100) < chance) continue;
 
@@ -331,7 +336,8 @@ void compact_monsters(int size)
 
 		/* Skip real monsters */
 		/* real monsters in unreal location are not skipped. */
-		if (m_ptr->r_idx && (!m_ptr->wpos.wz || getcave(&m_ptr->wpos))) continue;
+		if (m_ptr->r_idx &&
+			((!m_ptr->wpos.wz && !purge) || getcave(&m_ptr->wpos))) continue;
 
 		/* One less monster */
 		m_max--;
@@ -449,13 +455,14 @@ void wipe_m_list(struct worldpos *wpos)
 	}
 
 	/* Compact the monster list */
-	compact_monsters(0);
+	compact_monsters(0, FALSE);
 }
 
 /* 
  * Heal up every monster on the depth, so that a player
  * cannot abuse stair-GoI and anti-scum.	- Jir -
  */
+#if 0
 void heal_m_list(struct worldpos *wpos)
 {
 	int i;
@@ -473,6 +480,7 @@ void heal_m_list(struct worldpos *wpos)
 	/* Compact the monster list */
 //	compact_monsters(0);
 }
+#endif	// 0
 
 
 /*
@@ -3512,7 +3520,9 @@ int pick_ego_monster(int r_idx, int Level)
                 if (rand_int(re_ptr->rarity)) continue;
 
 				/* (Remove me) */
-				/* s_printf("ego %d(%s)(%s) is generated.\n", ego, re_name + re_ptr->name, r_name + r_info[r_idx].name); */
+#if DEBUG_LEVEL > 2
+				s_printf("ego %d(%s)(%s) is generated.\n", ego, re_name + re_ptr->name, r_name + r_info[r_idx].name);
+#endif
 
                 /* We finanly got one ? GREAT */
                 return ego;

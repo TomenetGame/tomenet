@@ -3568,6 +3568,9 @@ void do_cmd_ghost_power(int Ind, int ability)
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
+			"the strain of ghostly powers", TRUE, TRUE);
+#if 0
 	/* Take some experience */
 	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
 	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
@@ -3583,6 +3586,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
+#endif	// 0
 }
 
 
@@ -3638,6 +3642,9 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
+	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
+			"the strain of ghostly powers", TRUE, TRUE);
+#if 0
 	/* Take some experience */
 	p_ptr->max_exp -= s_ptr->slevel * s_ptr->smana;
 	p_ptr->exp -= s_ptr->slevel * s_ptr->smana;
@@ -3653,6 +3660,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
+#endif	// 0
 }
 
 

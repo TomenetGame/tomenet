@@ -14,6 +14,13 @@
 
 #include "angband.h"
 
+/*
+ * Adjustment in exp-penulty when resurrecting.		- Jir -
+ * -10 (0%) ~ +10 (100%)
+ *
+ * cf. GHOST_FADING in dungeon.c
+ */
+#define GHOST_XP_CASHBACK	2
 
 /*
  * Set "p_ptr->adrenaline", notice observable changes
@@ -3958,6 +3965,7 @@ void player_death(int Ind)
 void resurrect_player(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+	int reduce;
 
 	/* Hack -- the dungeon master can not ressurect */
 	if (p_ptr->admin_dm) return;	// TRUE;
@@ -3966,10 +3974,17 @@ void resurrect_player(int Ind)
 	p_ptr->ghost = 0;
 	
 	
-
 	/* Lose some experience */
+	reduce = p_ptr->max_exp >> 1;
+	reduce -= reduce / 10 * GHOST_XP_CASHBACK;	// beware the overflow!
+	p_ptr->max_exp -= reduce;
+	p_ptr->exp -= reduce;
+
+#if 0
 	p_ptr->max_exp -= p_ptr->max_exp / 2;
 	p_ptr->exp -= p_ptr->exp / 2;
+#endif	// 0
+
 	check_experience(Ind);
 
 	/* Message */

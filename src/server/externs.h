@@ -500,7 +500,7 @@ extern errr get_rnd_line(cptr file_name, int entry, char *output);
 
 /* generate.c */
 extern bool dungeon_aux(int r_idx);
-extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
+//extern void dealloc_dungeon_level_maybe(struct worldpos *wpos);
 extern void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower);
 extern void alloc_dungeon_level(struct worldpos *wpos);
 extern void dealloc_dungeon_level(struct worldpos *wpos);
@@ -557,7 +557,7 @@ extern monster_race* r_info_get(monster_type *m_ptr);
 extern void delete_monster_idx(int i);
 extern void delete_monster(struct worldpos *wpos, int y, int x);
 extern void wipe_m_list(struct worldpos *wpos);
-extern void compact_monsters(int size);
+extern void compact_monsters(int size, bool purge);
 extern s16b m_pop(void);
 extern errr get_mon_num_prep(void);
 extern s16b get_mon_num(int level);
@@ -689,7 +689,7 @@ extern void place_trap(struct worldpos *wpos, int y, int x);
 extern void place_gold(struct worldpos *wpos, int y, int x);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
-extern void compact_objects(int size);
+extern void compact_objects(int size, bool purge);
 extern s16b o_pop(void);
 extern errr get_obj_num_prep(void);
 extern s16b get_obj_num(int level);
@@ -762,6 +762,7 @@ extern void setup_timer(void);
 extern void teardown_timer(void);
 
 /* spells1.c */
+extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal);
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos);
@@ -1064,7 +1065,7 @@ extern void cat_script(int Ind, char *name);
 /* traps.c */
 extern s16b t_pop(void);
 extern void delete_trap_idx(trap_type *t_ptr);
-extern void compact_traps(int size);
+extern void compact_traps(int size, bool purge);
 extern void wipe_t_list(struct worldpos *wpos);
 extern void setup_traps(void);
 extern bool do_player_trap_call_out(int Ind);

@@ -159,7 +159,7 @@ void delete_trap_idx(trap_type *t_ptr)
  * After "compacting" (if needed), we "reorder" the traps into a more
  * compact order, and we reset the allocation info, and the "live" array.
  */
-void compact_traps(int size)
+void compact_traps(int size, bool purge)
 {
 	int i, y, x, num, cnt, Ind;
 
@@ -239,7 +239,8 @@ void compact_traps(int size)
 
 		/* Skip real traps */
 		/* real traps in unreal location are not skipped. */
-		if (t_ptr->t_idx && (!t_ptr->wpos.wz || getcave(&t_ptr->wpos))) continue;
+		if (t_ptr->t_idx &&
+			((!t_ptr->wpos.wz && !purge) || getcave(&t_ptr->wpos))) continue;
 
 		/* One less trap */
 		t_max--;
@@ -320,7 +321,7 @@ void wipe_t_list(struct worldpos *wpos)
 	}
 
 	/* Compact the trap list */
-	compact_traps(0);
+	compact_traps(0, FALSE);
 }
 
 /*
@@ -2657,7 +2658,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				WIPE(o_ptr, object_type);
 			}
 			/* Compact the object list */
-			compact_objects(0);
+			compact_objects(0, FALSE);
 			break;
 		}
 		/* Preparation Trap */

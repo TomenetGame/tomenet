@@ -610,5 +610,18 @@
  * OPTION: Random Uniques and Ego Monsters.
  * not fully implemented yet.	-Jir-
  * (3.2.2)
+ * 
+ * Don't remove this; sure it won't compile! :-/
  */
 #define RANDUNIS
+
+/*
+ * OPTION: vervosity of server.
+ *
+ * 0 - no debug msgs
+ * 1 - very recent debug msgs
+ * 2 - most of recent debug msgs
+ * 3 - most of debug msgs (noisy)
+ * 4 - everything
+ */
+#define DEBUG_LEVEL 2

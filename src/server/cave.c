@@ -204,9 +204,13 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	{
 		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
 		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
+#if 0
 		if(!w_ptr->ondepth) w_ptr->lastused=0;
 		if(value>0)
 			w_ptr->lastused=now;
+#endif
+			w_ptr->lastused=now;
+
 	}
 	else
 	{
@@ -220,8 +224,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
 		if(l_ptr->ondepth < 0) l_ptr->ondepth=0;
+#if 0
 		if(!l_ptr->ondepth) l_ptr->lastused=0;
 		if(value>0) l_ptr->lastused=now;
+#endif
+		l_ptr->lastused=now;
 	}
 }
 

@@ -1956,14 +1956,19 @@ void do_slash_cmd(int Ind, cptr message){
 				for(j = 0; j < INVEN_PACK; j++)
 				{
 					o_ptr = &(p_ptr->inventory[j]);
-					if (!o_ptr->tval) break;
+					if (!o_ptr->k_idx) break;
 
 					/* skip unsuitable inscriptions */
 					if (o_ptr->note &&
 							(!strcmp(quark_str(o_ptr->note), "cursed") ||
+							 !strcmp(quark_str(o_ptr->note), "terrible") ||
+							 !strcmp(quark_str(o_ptr->note), "worthless") ||
 							 check_guard_inscription(o_ptr->note, 'w')) )continue;
 
-					if (wield_slot(Ind, o_ptr) != i) continue;
+					if (wield_slot(Ind, o_ptr) != i)
+						if (o_ptr->tval != TV_RING ||
+								(p_ptr->inventory[INVEN_RIGHT].k_idx))
+								continue;
 
 					do_cmd_wield(Ind, j);
 					break;
@@ -2048,7 +2053,7 @@ void do_slash_cmd(int Ind, cptr message){
 			if (admin)
 			{
 				msg_format(Ind, "your sanity: %d/%d", p_ptr->csane, p_ptr->msane);
-				msg_format(Ind, "server status - m_max(%d) o_max(%d) t_max(%d)",
+				msg_format(Ind, "server status: m_max(%d) o_max(%d) t_max(%d)",
 						m_max, o_max, t_max);
 			}
 
@@ -2524,6 +2529,19 @@ void do_slash_cmd(int Ind, cptr message){
 				remove_all_curse(Ind);
 				return;
 			}
+			/* do a wilderness cleanup */
+			else if (prefix(message, "/purge")) 
+			{
+				msg_format(Ind, "previous server status: m_max(%d) o_max(%d) t_max(%d)",
+						m_max, o_max, t_max);
+				compact_monsters(0, TRUE);
+				compact_objects(0, TRUE);
+				compact_traps(0, TRUE);
+				msg_format(Ind, "current server status:  m_max(%d) o_max(%d) t_max(%d)",
+						m_max, o_max, t_max);
+
+				return;
+			}
 #if 0	// pfft, it was not suitable for slash-commands
 			/* view RFE file. this should be able to handle log file also. */
 			else if (prefix(message, "/less")) 
@@ -2535,7 +2553,7 @@ void do_slash_cmd(int Ind, cptr message){
 			else
 			{
 				msg_print(Ind, "Commands: afk bed cast dis dress ex ignore me rec ref rfe tag target untag;");
-				msg_print(Ind, "  art cfg clv en eq geno id kick lua shutdown sta trap unc unst wish");
+				msg_print(Ind, "  art cfg clv en eq geno id kick lua purge shutdown sta trap unc unst wish");
 				return;
 			}
 		}

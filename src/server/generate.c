@@ -4700,17 +4700,22 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 	int i;
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
+#if DEBUG_LEVEL > 1
 	s_printf("deallocating %s\n", wpos_format(wpos));
+#endif
 
 	/* Delete any monsters on that level */
 	/* Hack -- don't wipe wilderness monsters */
-	if (wpos->wz) wipe_m_list(wpos);
+	if (wpos->wz)
+	{
+		wipe_m_list(wpos);
 
-	/* Delete any objects on that level */
-	/* Hack -- don't wipe wilderness objects */
-	if (wpos->wz) wipe_o_list(wpos);
+		/* Delete any objects on that level */
+		/* Hack -- don't wipe wilderness objects */
+		wipe_o_list(wpos);
 
-	if (wpos->wz) wipe_t_list(wpos);
+		wipe_t_list(wpos);
+	}
 
 	zcave=getcave(wpos);
 	for (i = 0; i < MAX_HGT; i++)
@@ -4741,6 +4746,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
  * evileye - Levels were being unstaticed crazily. Adding a
  * protection against this happening.
  */
+#if 0
 void dealloc_dungeon_level_maybe(struct worldpos *wpos)
 {
 	if ((( getlevel(wpos) < cfg.min_unstatic_level) &&
@@ -4749,6 +4755,7 @@ void dealloc_dungeon_level_maybe(struct worldpos *wpos)
 		dealloc_dungeon_level(wpos);
 	else heal_m_list(wpos);
 }
+#endif	// 0
 
 void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags, char *race, char *exclude, bool tower){
 	int i;
@@ -4922,11 +4929,11 @@ void generate_cave(struct worldpos *wpos)
 
 		/* Compact some objects, if necessary */
 		if (o_max >= MAX_O_IDX * 3 / 4)
-			compact_objects(32);
+			compact_objects(32, FALSE);
 
 		/* Compact some monsters, if necessary */
 		if (m_max >= MAX_M_IDX * 3 / 4)
-			compact_monsters(32);
+			compact_monsters(32, FALSE);
 	}
 
 

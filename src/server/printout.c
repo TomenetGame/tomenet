@@ -123,7 +123,7 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 	/* Path buffer */
 	char    path[1024];
 
-	if (!is_admin(p_ptr)) return(FALSE);
+//	if (!is_admin(p_ptr)) return(FALSE);
 
 	/* Hack - close the file once, so that show_file can 'open' it
 	my_fclose(fpr);
