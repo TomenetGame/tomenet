@@ -1430,39 +1430,39 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
  */
 player_race race_info[MAX_RACES] =
 {
-	{
-		"Human",
-		{  0,  0,  0,  0,  0,  0 },
-		0,  0,  0,  0,  0,  10,  0,  0,
-		10,  100,
-		14,  6,
-		72,  6, 180, 25,
-		66,  4, 150, 20,
-		0,
+        {
+                "Human",
+                {  0,  0,  0,  0,  0,  0 },
+                0,  0,  0,  0,  0,  10,  0,  0,
+                10,  100,
+                14,  6,
+                72,  6, 180, 25,
+                66,  4, 150, 20,
+                0,
                 0xFFFFFFFF,
                 100,
                 {
-						/* HUMAN POWER!! */
+                        /* HUMAN POWER!! */
                         {
                                 SKILL_TRAINING,
                                 '+', 1000,
-                                '+', 300,
+                                '+', 500,
                         },
                 },
         },
 
-	{
-		"Half-Elf",
-		{ -1,  1,  0,  1, -1,  1 },
-		2,  3,  3,  1, 6,  11, -1,  5,
-		9,  110,
-		24, 16,
-		66,  6, 130, 15,
-		62,  6, 100, 10,
-		2,
+        {
+                "Half-Elf",
+                { -1,  1,  0,  1, -1,  1 },
+                2,  3,  3,  1, 6,  11, -1,  5,
+                9,  110,
+                24, 16,
+                66,  6, 130, 15,
+                62,  6, 100, 10,
+                2,
                 0xFFFFFFFF,
                 110,
-				{
+                {
                         {
                                 SKILL_BOW,
                                 '+', 0,
@@ -1473,21 +1473,21 @@ player_race race_info[MAX_RACES] =
                                 '+', 500,
                                 '+', 200,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Elf",
-		{ -1,  2,  1,  1, -2,  1 },
-		5,  6,  6,  1, 8,  12, -5, 15,
-		8,  120,
-		75, 75,
-		60,  4, 100,  6,
-		54,  4, 80,  6,
-		3,
+        {
+                "Elf",
+                { -1,  2,  1,  1, -2,  1 },
+                5,  6,  6,  1, 8,  12, -5, 15,
+                8,  120,
+                75, 75,
+                60,  4, 100,  6,
+                54,  4, 80,  6,
+                3,
                 0xFFFFFFFF,
                 120,
-				{
+                {
                         {
                                 SKILL_BOW,
                                 '+', 1000,
@@ -1518,18 +1518,18 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 200,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Hobbit",
-		{ -2,  2,  1,  3,  2,  1 },
-		15, 18, 18, 4, 12,  15, -10, 20,
-		7,  110,
-		21, 12,
-		36,  3, 60,  3,
-		33,  3, 50,  3,
-		4,
+        {
+                "Hobbit",
+                { -2,  2,  1,  3,  2,  1 },
+                15, 18, 18, 4, 12,  15, -10, 20,
+                7,  110,
+                21, 12,
+                36,  3, 60,  3,
+                33,  3, 50,  3,
+                4,
                 0xFFFFFFFF,
                 90,
                 {
@@ -1543,18 +1543,28 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 200,
                         },
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 2000,
+                                '+', 300,
+                        },
+                        {
+                                SKILL_DODGE,
+                                '+', 1000,
+                                '+', 400,
+                        },
                 },
-	},
+        },
 
-	{
-		"Gnome",
-		{ -1,  2,  0,  2,  1, -2 },
-		10, 12, 12,  3, 6,  13, -8, 12,
-		8,  125,
-		50, 40,
-		42,  3, 90,  6,
-		39,  3, 75,  3,
-		4,
+        {
+                "Gnome",
+                { -1,  2,  0,  2,  1, -2 },
+                10, 12, 12,  3, 6,  13, -8, 12,
+                8,  125,
+                50, 40,
+                42,  3, 90,  6,
+                39,  3, 75,  3,
+                4,
                 0xFFFFFFFF,
                 120,
                 {
@@ -1573,18 +1583,18 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 300,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Dwarf",
-		{  2, -3,  2, -2,  2, -3 },
-		2,  9,  9,  -1,  7,  10, 15,  0,
-		11,  120,
-		35, 15,
-		48,  3, 150, 10,
-		46,  3, 120, 10,
-		5,
+        {
+                "Dwarf",
+                {  2, -3,  2, -2,  2, -3 },
+                2,  9,  9,  -1,  7,  10, 15,  0,
+                11,  120,
+                35, 15,
+                48,  3, 150, 10,
+                46,  3, 120, 10,
+                5,
                 0xFFFFFFFF,
                 95,
                 {
@@ -1596,28 +1606,23 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_DIG,
                                 '+', 1000,
-                                '+', 500,
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 0,
-                                '%', 110,
+                                '+', 1000,
                         },
                 },
-	},
+        },
 
-	{
-		"Half-Orc",
-		{  2, -1,  0,  0,  1, -4 },
-		-3, -3, -3,  -1,  0, 7, 12, -5,
-		10,  110,
-		11,  4,
-		66,  1, 150,  5,
-		62,  1, 120,  5,
-		3,
+        {
+                "Half-Orc",
+                {  2, -1,  0,  0,  1, -4 },
+                -3, -3, -3,  -1,  0, 7, 12, -5,
+                10,  110,
+                11,  4,
+                66,  1, 150,  5,
+                62,  1, 120,  5,
+                3,
                 0xFFFFFFFF,
                 50,
-				{
+                {
                         {
                                 SKILL_BACKSTAB,
                                 '+', 1000,
@@ -1640,30 +1645,25 @@ player_race race_info[MAX_RACES] =
                                 '%', 80,
                         },
                         {
-                                SKILL_MAGERY,
-                                '+', 0,
-                                '%', 80,
-                        },
-                        {
                                 SKILL_SORCERY,
                                 '+', 0,
                                 '%', 80,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Half-Troll",
-		{ 4, -4, -2, -4,  3, -6 },
-		-5, -8, -8, -2,  -1, 5, 20, -10,
-		12,  120,
-		20, 10,
-		96, 10, 250, 50,
-		84,  8, 225, 40,
-		3,
+        {
+                "Half-Troll",
+                { 4, -4, -2, -4,  3, -6 },
+                -5, -8, -8, -2,  -1, 5, 20, -10,
+                12,  120,
+                20, 10,
+                96, 10, 250, 50,
+                84,  8, 225, 40,
+                3,
                 0xFFFFFFFF,
                 20,
-				{
+                {
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
@@ -1686,31 +1686,26 @@ player_race race_info[MAX_RACES] =
                                 '%', 50,
                         },
                         {
-                                SKILL_MAGERY,
-                                '+', 0,
-                                '%', 50,
-                        },
-                        {
                                 SKILL_SORCERY,
                                 '+', 0,
                                 '%', 50,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Dunadan",
-		{  1,  2,  2,  2,  3,  2 },
-		4,  5,  5,  2, 3, 13, 15, 10,
-		10,  180,
-		50, 20,
-		82, 5, 190, 20,
-		78,  6, 180, 15,
-		0,
+        {
+                "Dunadan",
+                {  1,  2,  2,  2,  3,  2 },
+                4,  5,  5,  2, 3, 13, 15, 10,
+                10,  180,
+                50, 20,
+                82, 5, 190, 20,
+                78,  6, 180, 15,
+                0,
                 0xFFFFFFFF,
                 105,
                 {
-						/* Dunadan makes good generalist */
+                        /* Dunadan makes good generalist */
                         {
                                 SKILL_COMBAT,
                                 '+', 0,
@@ -1726,18 +1721,18 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '%', 110,
                         },
-				},
+                },
         },
 
-	{
-		"High-Elf",
-		{  1,  3, -1,  3,  1,  5 },
-		4,  20, 20,  3,  3, 14, 10, 25,
-		10,  200,
-		100, 30,
-		90, 10, 190, 20,
-		82, 10, 180, 15,
-		4,
+        {
+                "High-Elf",
+                {  1,  3, -1,  3,  1,  5 },
+                4,  20, 20,  3,  3, 14, 10, 25,
+                10,  200,
+                100, 30,
+                90, 10, 190, 20,
+                82, 10, 180, 15,
+                4,
                 0xFFFFFFFF,
                 125,
                 {
@@ -1771,36 +1766,37 @@ player_race race_info[MAX_RACES] =
                                 '+', 2000,
                                 '+', 300,
                         },
-				},
-	},
+                },
+        },
 
-	{
-		"Yeek",
-		{  -5, -5, -5, -5, -5, -5 },
-		0,  0,  0,  0,  0,  10,  0,  0,
-		8,  30,
-		14,  6,
-		72,  6, 180, 25,
-		66,  4, 150, 20,
-		0,
+        {
+                "Yeek",
+                {  -5, -5, -5, -5, -5, -5 },
+                0,  0,  0,  0,  0,  10,  0,  0,
+                8,  30,
+                14,  6,
+                72,  6, 180, 25,
+                66,  4, 150, 20,
+                0,
                 0xFFFFFFFF,
                 50,
                 {{ 0 }},
-	},
+        },
 
-	{
-		"Goblin",
-		{  0, -1, -5,  4,  2, -5 },
-		2, -3, -3,  0,  2, 8, 12, -5,
-		11,  115,
-		11,  4,
-		66,  1, 150,  5,
-		62,  1, 120,  5,
-		3,
+        {
+                "Goblin",
+                {  0, -1, -5,  4,  2, -5 },
+                2, -3, -3,  0,  2, 8, 12, -5,
+                11,  115,
+                11,  4,
+                66,  1, 150,  5,
+                62,  1, 120,  5,
+                3,
                 0xFFFFFFFF,
                 70,
                 {
                         /* Never ask me the reason why, I love boomerang :) */
+                        /* DG - Why ? ;) */
                         {
                                 SKILL_BOOMERANG,
                                 '+', 1000,
@@ -1812,17 +1808,17 @@ player_race race_info[MAX_RACES] =
                                 '%', 120,
                         },
                 },
-	},
+        },
 
-	{
+        {
                 "Ent",
-		{ 8, -4, +2, -4,  8, -5 },
+                { 8, -4, +2, -4,  8, -5 },
                 5, 0, 20, -6, 5, 4, 15, 5,
                 14, 300,
                 255, 70,
-		72, 6, 100, 25,
-		66, 4, 100, 20,
-		5,
+                72, 6, 100, 25,
+                66, 4, 100, 20,
+                5,
                 0xFFFFFFFF,
                 90,
                 {
@@ -1841,7 +1837,7 @@ player_race race_info[MAX_RACES] =
                                 '+', 1000,
                                 '+', 200,
                         },
-						/* Ent loves water and the Earth */
+                        /* Ent loves water and the Earth */
                         {
                                 SKILL_EARTH,
                                 '+', 0,
@@ -1852,17 +1848,17 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '%', 120,
                         },
-						/* But hates fire */
+                        /* But hates fire */
                         {
                                 SKILL_FIRE,
                                 '+', 0,
                                 '%', 60,
                         },
                 },
-	},
-	{
+        },
+        {
                 "Thunderlord",	// "DragonRider",
-//                {  6,  3,  -10,  0,  5,  5 },
+                //                {  6,  3,  -10,  0,  5,  5 },
                 {  6,  2,  1,  1,  3,  8 },
                 6,  0,  10,  -16,  30,  10,  15,  5,
                 12,  450,
@@ -1883,7 +1879,7 @@ player_race race_info[MAX_RACES] =
                                 '+', 2000,
                                 '+', 300,
                         },
-						/* TL is jumpy */
+                        /* TL is jumpy */
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
@@ -1894,15 +1890,15 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '%', 120,
                         },
-				},
+                },
         },
 #if 0 // do not activate until I find a way to have a race in the server and not in the client
         {
                 "Exp 626",
                 {  1,  2,  -3,  1,  2,  -3 },
-		4,  20, 20,  3,  3, 14, 10, 25,
+                4,  20, 20,  3,  3, 14, 10, 25,
                 11,  150,
-		14,  6,
+                14,  6,
                 180,  6, 255, 25,
                 150,  4, 230, 20,
                 0,
@@ -1959,11 +1955,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_TECHNIC,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
                                 SKILL_SWORD,
                                 '+', 0,
                                 '+', 500,
@@ -1994,11 +1985,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_HUNTING,
-                                '+', 0,
-                                '+', 500,
-                        },
-                        {
                                 SKILL_SLING,
                                 '+', 0,
                                 '+', 500,
@@ -2019,15 +2005,10 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
-                                SKILL_RICOCHET,
-                                '+', 0,
-                                '+', 300,
-                        },
-                        {
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 400,
+                                '+', 500,
                         },
 
                         /* Magic tree */
@@ -2187,11 +2168,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
-                                SKILL_AGILITY,
-                                '+', 0,
-                                '+', 300,	// *HARD* to learn
-                        },
-                        {
                                 SKILL_SWIM,
                                 '+', 1000,
                                 '+', 1000,
@@ -2232,17 +2208,12 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_COMBAT,
                                 '+', 3000,
-                                '+', 900,
+                                '+', 1000,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 900,
-                        },
-                        {
-                                SKILL_TECHNIC,
                                 '+', 1000,
-                                '+', 900,
                         },
                         {
                                 SKILL_SWORD,
@@ -2269,13 +2240,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 700,
                         },
-#if 0
-                        {
-                                SKILL_HUNTING,
-                                '+', 0,
-                                '+', 400,
-                        },
-#endif	// 0
                         {
                                 SKILL_BOOMERANG,
                                 '+', 0,
@@ -2285,7 +2249,7 @@ player_class class_info[MAX_CLASS] =
                                 /* let's keep it low for now - offbalancing */
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
 
                         {
@@ -2312,18 +2276,13 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_ANTIMAGIC,
                                 '+', 0,
-                                '+', 600,
+                                '+', 700,
                         },
 						/* Health tree */
                         {
                                 SKILL_HEALTH,
                                 '+', 2000,
                                 '+', 1200,
-                        },
-                        {
-                                SKILL_AGILITY,
-                                '+', 1000,
-                                '+', 400,
                         },
                         {
                                 SKILL_SWIM,
@@ -2432,57 +2391,57 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_NATURE,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_MIND,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                         {
                                 SKILL_TEMPORAL,
                                 '+', 0,
-                                '+', 900,
+                                '+', 1400,
                         },
                 }
 	},
@@ -2503,18 +2462,18 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 800,
                         },
 						/* let's give them some skills for non-swords */
                         {
                                 SKILL_HAFTED,
                                 '+', 0,
-                                '+', 500,
+                                '+', 600,
                         },
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
-                                '+', 400,
+                                '+', 500,
                         },
                         {
                                 SKILL_MAGIC,
@@ -2534,53 +2493,43 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_NATURE,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 1700,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 1000,
-                                '+', 800,
+                                '+', 1700,
                         },
                         {
                                 SKILL_META,
                                 '+', 0,
-                                '+', 600,
+                                '+', 1400,
                         },
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 700,
+                                '+', 1400,
                         },
 						/* Maybe 1-2 random elemental schools? */
                         {
                                 SKILL_FIRE,
                                 '+', 0,
-                                '+', 600,
+                                '+', 1500,
                         },
                         {
                                 SKILL_WATER,
                                 '+', 0,
-                                '+', 600,
+                                '+', 1500,
                         },
                         {
                                 SKILL_AIR,
                                 '+', 0,
-                                '+', 600,
+                                '+', 1500,
                         },
                         {
                                 SKILL_EARTH,
                                 '+', 0,
-                                '+', 600,
-                        },
-                        {
-                                SKILL_PRAY,
-                                '+', 1000,
-                                '+', 800,
-                        },
-                        {
-                                SKILL_SPELLRAD,
-                                '+', 1000,
-                                '+', 700,
+                                '+', 1500,
                         },
                         {
                                 SKILL_DEVICE,
@@ -2678,21 +2627,21 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_CONVEYANCE,
                                 '+', 0,
-                                '+', 400,
+                                '+', 700,
                         },
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '+', 400,
-                        },
-                        {
-                                SKILL_SHADOW,
-                                '+', 1000,
                                 '+', 700,
                         },
                         {
-                                SKILL_SPELLLENGTH,
-                                '+', 1000,
+                                SKILL_TEMPORAL,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_AIR,
+                                '+', 0,
                                 '+', 700,
                         },
                         {
@@ -2906,11 +2855,6 @@ player_class class_info[MAX_CLASS] =
                                 '+', 800,
                         },
                         {
-                                SKILL_RICOCHET,
-                                '+', 0,
-                                '+', 600,
-                        },
-                        {
                                 SKILL_DEVICE,
                                 '+', 1000,
                                 '+', 1000,
@@ -2929,11 +2873,6 @@ player_class class_info[MAX_CLASS] =
                                 SKILL_DISARM,
                                 '+', 500,
                                 '+', 500,
-                        },
-                        {
-                                SKILL_TRAPPING,
-                                '+', 0,
-                                '+', 400,
                         },
                         {
                                 SKILL_DODGE,
