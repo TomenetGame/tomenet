@@ -55,3 +55,13 @@ Change list for PernMangband
 
 ...
 
+24/07/2001 (evileye)
+- Fixed a bug in server (common/types.h) which has player_type.dun_depth as s16b,
+  but uses pointer to s32b in load/save routines. Likewise with object_type.
+  This does not manifest in some machines.
+- Fixed lack of null termination in self knowledge and *identification*.
+- Fixed the "psi-powers" bug with rods.
+- Fixed wand bug which could reduce the pval of other items.
+- tot_dam_aux_player was getting resistances the wrong way round (and redefining
+  arg p_ptr).
+- uncommented 744/745 of server/xtra1.c
