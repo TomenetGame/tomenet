@@ -1065,6 +1065,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 	/* Open the temp file */
 	fff = my_fopen(file_name, "w");
+	if(fff==(FILE*)NULL) return;
 
 	/* Assume we will show the first 20 */
 	from = 0;

@@ -343,6 +343,7 @@ void do_cmd_check_players(int Ind, int line)
 
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
+	if(fff==(FILE*)NULL) return;
 
 	/* Scan the player races */
 	for (k = 1; k < NumPlayers + 1; k++)
