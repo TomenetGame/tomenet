@@ -1565,6 +1565,11 @@ player_race race_info[MAX_RACES] =
                 0xFFFFFFFF,
                 20,
 				{
+                        {
+                                SKILL_HEALTH,
+                                '+', 0,
+                                '%', 140,
+                        },
                         /* Not banned, but *hard* */
                         {
                                 SKILL_MAGIC,

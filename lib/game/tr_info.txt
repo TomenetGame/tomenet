@@ -947,12 +947,12 @@ I:9:20:5:8:44:12d18:W:80
 D:A blast of pure energy hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
-N:200:Summon Death mold Trap
+N:200:Summon Death Mold Trap
 I:8:50:10:10:47:0d0:v:50
 D:You suddenly see a lump of malice!
 F:FLOOR | CHEST | DOOR
 
-N:201:Summon Death sword Trap
+N:201:Summon Death Sword Trap
 I:7:40:10:10:11:0d0:v:50
 D:You suddenly see a siege of malicious blades!
 F:FLOOR | CHEST | DOOR

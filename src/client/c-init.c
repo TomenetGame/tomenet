@@ -88,71 +88,81 @@ static void init_stuff(void)
  */
 void initialize_all_pref_files(void)
 {
-        char buf[1024];
+	char buf[1024];
+
+	int i;
+
+	/* MEGAHACK -- clean up the arrays
+	 * I should have made a mess of something somewhere.. */
+	for (i = 0; i < 64; i++) Client_setup.options[i] = FALSE;
+	for (i = 0; i < TV_MAX; i++) Client_setup.u_char[i] = Client_setup.u_attr[i] = 0;
+	for (i = 0; i < MAX_F_IDX; i++) Client_setup.f_char[i] = Client_setup.f_attr[i] = 0;
+	for (i = 0; i < MAX_K_IDX; i++) Client_setup.k_char[i] = Client_setup.k_attr[i] = 0;
+	for (i = 0; i < MAX_R_IDX; i++) Client_setup.r_char[i] = Client_setup.r_attr[i] = 0;
 
 
-        /* Access the "basic" pref file */
-        strcpy(buf, "pref.prf");
+	/* Access the "basic" pref file */
+	strcpy(buf, "pref.prf");
 
-        /* Process that file */
-        process_pref_file(buf);
+	/* Process that file */
+	process_pref_file(buf);
 
-        /* Access the "user" pref file */
-        sprintf(buf, "user.prf");
+	/* Access the "user" pref file */
+	sprintf(buf, "user.prf");
 
-        /* Process that file */
-        process_pref_file(buf);
+	/* Process that file */
+	process_pref_file(buf);
 
 
 
-        /* Access the "basic" system pref file */
-        sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
+	/* Access the "basic" system pref file */
+	sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
 
-        /* Process that file */
-        process_pref_file(buf);
+	/* Process that file */
+	process_pref_file(buf);
 
-        /* Access the "visual" system pref file (if any) */
-        sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+	/* Access the "visual" system pref file (if any) */
+	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
 	printf("check for %s\n",buf);
 
-        /* Process that file */
-        process_pref_file(buf);
+	/* Process that file */
+	process_pref_file(buf);
 
-        /* Access the "user" system pref file */
-        sprintf(buf, "user-%s.prf", ANGBAND_SYS);
+	/* Access the "user" system pref file */
+	sprintf(buf, "user-%s.prf", ANGBAND_SYS);
 
-        /* Process that file */
-        process_pref_file(buf);
+	/* Process that file */
+	process_pref_file(buf);
 
 
-        /* Access the "race" pref file */
-		if (race < Setup.max_race)
-		{
-//		sprintf(buf, "%s.prf", race_title[race]);
-			sprintf(buf, "%s.prf", race_info[race].title);
-			buf[0] = tolower(buf[0]);
-
-			/* Process that file */
-			process_pref_file(buf);
-		}
-
-        /* Access the "class" pref file */
-		if (class < Setup.max_class)
-		{
-			//        sprintf(buf, "%s.prf", class_title[class]);
-			sprintf(buf, "%s.prf", race_info[class].title);
-			buf[0] = tolower(buf[0]);
-
-			/* Process that file */
-			process_pref_file(buf);
-		}
-
-        /* Access the "character" pref file */
-        sprintf(buf, "%s.prf", nick);
+	/* Access the "race" pref file */
+	if (race < Setup.max_race)
+	{
+		//		sprintf(buf, "%s.prf", race_title[race]);
+		sprintf(buf, "%s.prf", race_info[race].title);
 		buf[0] = tolower(buf[0]);
 
-        /* Process that file */
-        process_pref_file(buf);
+		/* Process that file */
+		process_pref_file(buf);
+	}
+
+	/* Access the "class" pref file */
+	if (class < Setup.max_class)
+	{
+		//        sprintf(buf, "%s.prf", class_title[class]);
+		sprintf(buf, "%s.prf", race_info[class].title);
+		buf[0] = tolower(buf[0]);
+
+		/* Process that file */
+		process_pref_file(buf);
+	}
+
+	/* Access the "character" pref file */
+	sprintf(buf, "%s.prf", nick);
+	buf[0] = tolower(buf[0]);
+
+	/* Process that file */
+	process_pref_file(buf);
 }
 
 
@@ -392,40 +402,14 @@ void client_init(char *argv1, bool skip)
 		}
 
 		/* Extra info from packet */
-//		Packet_scanf(&ibuf, "%c%c%d%c", &reply_to, &status, &temp, &max_class);
 		Packet_scanf(&ibuf, "%c%c%d", &reply_to, &status, &temp);
 
-                /* Hack -- set the login port correctly */
+		/* Hack -- set the login port correctly */
 		login_port = (int) temp;
 
 		break;
 	}
 
-#if 0 // -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
-        i = 0;
-        while (i < max_class)
-        {
-                int ii;
-
-		/* Set timeout */
-		SetTimeout(1, 0);
-
-		/* Wait for info */
-		if (!SocketReadable(Socket)) continue;
-
-		/* Read reply */
-		if(DgramRead(Socket, ibuf.buf, ibuf.size) <= 0)
-		{
-			/*printf("DgramReceiveAny failed (errno = %d)\n", errno);*/
-			continue;
-		}
-
-                Packet_scanf(&ibuf, "%c%s", &ii, buf);
-                printf("c %d: %s\n", ii, buf);
-
-                i++;
-        }
-#endif
 
 	/* Check for failure */
 	if (retries >= 10)

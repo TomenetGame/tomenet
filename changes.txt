@@ -1160,6 +1160,9 @@ To find the latest change quickly, search ==== :)
 - skill-requirements for spells revised.
 [B] choose_race/choose_class still used MAX_* (and not Setup.max_*)
 [B] '%' skill modifications by race weren't reflected.
+[B] p_ptr->u_attr[] was broken (Something should be wrong in Net_setup!)
+[C] '-f' option added (use specified file in place of '.tomenet')
+[H] Speed bonus for Martial-arts is reduced by total_weight.
 
 
 ** [B] stands for Bugfix.

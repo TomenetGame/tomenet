@@ -1703,8 +1703,13 @@ static int Handle_login(int ind)
 		if (!p_ptr->k_attr[i]) p_ptr->k_attr[i] = k_info[i].x_attr;
 		if (!p_ptr->k_char[i]) p_ptr->k_char[i] = k_info[i].x_char;
 
+#if 1
 		if (!p_ptr->d_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
 		if (!p_ptr->d_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
+#else
+		if (!p_ptr->k_attr[i]) p_ptr->d_attr[i] = k_info[i].d_attr;
+		if (!p_ptr->k_char[i]) p_ptr->d_char[i] = k_info[i].d_char;
+#endif	// 0
 	}
 
 	/* Hack -- acquire a flag for ego-monsters	- Jir - */
@@ -2291,6 +2296,8 @@ static int Receive_quit(int ind)
 	return 1;
 }
 
+#define RECEIVE_PLAY_SIZE (2*6+64+2*(TV_MAX+MAX_F_IDX+MAX_K_IDX+MAX_R_IDX))
+//#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -2331,7 +2338,8 @@ static int Receive_play(int ind)
 		connp->race = race;
 		connp->class = class;
 
-		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+//		if (2654 > connp->r.len - (connp->r.ptr - connp->r.buf))
+		if (RECEIVE_PLAY_SIZE > connp->r.len - (connp->r.ptr - connp->r.buf))
 		{
 			connp->r.ptr = connp->r.buf;
 			return 1;
@@ -2349,14 +2357,16 @@ static int Receive_play(int ind)
 			}
 		}
 
+#if 0
 		/* Read class extra */	
-		//	n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
+		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 
 		if (n <= 0)
 		{
 			Destroy_connection(ind, "Misread class extra");
 			return -1;
 		}
+#endif	// 0
 
 		/* Read the options */
 		for (i = 0; i < 64; i++)
@@ -2377,11 +2387,11 @@ static int Receive_play(int ind)
 
 			if (n <= 0)
 			{
-				break;
-
-#if 0
+#ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread unknown redefinitions");
 				return -1;
+#else
+				break;
 #endif
 			}
 		}
@@ -2393,11 +2403,11 @@ static int Receive_play(int ind)
 
 			if (n <= 0)
 			{
-				break;
-
-#if 0
+#ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread feature redefinitions");
 				return -1;
+#else
+				break;
 #endif
 			}
 		}
@@ -2409,11 +2419,11 @@ static int Receive_play(int ind)
 
 			if (n <= 0)
 			{
-				break;
-
-#if 0
+#ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread object redefinitions");
 				return -1;
+#else
+				break;
 #endif
 			}
 		}
@@ -2425,11 +2435,11 @@ static int Receive_play(int ind)
 
 			if (n <= 0)
 			{
-				break;
-
-#if 0
+#ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread monster redefinitions");
 				return -1;
+#else
+				break;
 #endif
 			}
 		}

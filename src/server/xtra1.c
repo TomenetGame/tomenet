@@ -2003,14 +2003,31 @@ static void calc_bonuses(int Ind)
 #else	// 0
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
 	{
-		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
 
-		/* Free action if unencumbered at level 25 */
-		if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
-			p_ptr->free_act = TRUE;
+		if (k)
+		{
+			/* Extract the current weight (in tenth pounds) */
+			j = p_ptr->total_weight;
 
-		/* give a stealth bonus */
-		p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+			/* Extract the "weight limit" (in tenth pounds) */
+			i = weight_limit(Ind);
+
+			/* XXX XXX XXX Apply "encumbrance" from weight */
+			if (j > i/5) k -= ((j - (i/5)) / (i / 10));
+
+			if (k > 0)
+			{
+				p_ptr->pspeed += k;
+
+				/* Free action if unencumbered at level 25 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
+					p_ptr->free_act = TRUE;
+
+				/* give a stealth bonus */
+				p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 8);
+			}
+		}
 	}
 
 	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);

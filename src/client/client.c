@@ -10,7 +10,8 @@
 #include "angband.h"
 
 
-static bool read_mangrc(void)
+//static bool read_mangrc(void)
+static bool read_mangrc(cptr filename)
 {
 	char config_name[100];
 	FILE *config;
@@ -34,10 +35,12 @@ static bool read_mangrc(void)
 	/* Append filename */
 	/* TODO: accept any names as rc-file */
 #ifdef USE_EMX
-	strcat(config_name, "\\tomenet.rc");
+	strcat(config_name, "\\");
 #else
-	strcat(config_name, "/.tomenetrc");
+	strcat(config_name, "/");
 #endif
+	strcat(config_name, filename);
+
 
 	/* Attempt to open file */
 	if ((config = fopen(config_name, "r")))
@@ -362,7 +365,12 @@ int main(int argc, char **argv)
 	/* Set default values */
 	default_set();
 
-	skip = read_mangrc();
+//	skip = read_mangrc();
+#ifdef USE_EMX
+	skip = read_mangrc("tomenet.rc");
+#else
+	skip = read_mangrc(".tomenetrc");
+#endif
 
 	/* Process the command line arguments */
 	for (i = 1; argv && (i < argc); i++)
@@ -399,6 +407,11 @@ int main(int argc, char **argv)
 			i = argc;
 			break;
 			
+		/* Source other files */
+		case 'f':
+			skip = read_mangrc(&argv[i][2]);
+			break;
+
 		case 'p':
 			cfg_game_port = atoi(&argv[i][2]);
 			break;
@@ -438,10 +451,12 @@ int main(int argc, char **argv)
 	if (modus == 1 || modus < 0)
 	{
 		/* Dump usage information */
-		puts(TOMANG_VERSION_LONG_DATE);
+		puts(longVersion);
 		puts("Usage  : mangclient [options] [servername]");
 		puts("Example: mangclient -lMorgoth MorgyPass -p18348 TomeNET.net");
-		puts("  -i                 Ignore .mangrc");
+		puts("       : mangclient -f.myrc -lOlorin_archer");
+		puts("  -f                 Specify rc file to read");
+		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
 		puts("  -p<num>            Change game port number");
 		puts("  -P<path>           Set the lib directory path");
