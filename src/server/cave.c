@@ -1614,6 +1614,19 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		if (p_ptr->play_vis[0 - c_ptr->m_idx])
 		{
 		  
+		  if((( Players[0 - c_ptr->m_idx]->chp * 95)/ (Players[0 - c_ptr->m_idx]->mhp*10)) >= 7){
+		  	if (Players[0 - c_ptr->m_idx]->body_monster) c = r_info[Players[0 - c_ptr->m_idx]->body_monster].d_char;
+			else if (Players[0 - c_ptr->m_idx]->fruit_bat) c = 'b';
+			else c='@';
+		  }
+		  else
+		  {
+			sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
+			c = kludge;
+		  }                       
+
+
+#if 0
 		  if (Players[0 - c_ptr->m_idx]->body_monster) c = r_info[Players[0 - c_ptr->m_idx]->body_monster].d_char;
 			else if (Players[0 - c_ptr->m_idx]->fruit_bat) c = 'b';
 			else if((( Players[0 - c_ptr->m_idx]->chp * 95)/ (Players[0 - c_ptr->m_idx]->mhp*10)) >= 7) c = '@';
@@ -1622,6 +1635,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				sprintf((unsigned char *)&kludge,"%d", ((Players[0 - c_ptr->m_idx]->chp * 95) / (Players[0 - c_ptr->m_idx]->mhp*10)));
 				c = kludge;
 			}                       
+#endif
 
 			a = player_color(0 - c_ptr->m_idx);
 
@@ -1808,6 +1822,11 @@ void lite_spot(int Ind, int y, int x)
 
 			/* Get the "player" char */
 			c = r_ptr->d_char;
+
+			if(p_ptr->invis && !p_ptr->body_monster){
+				/* special invis colour */
+				a=TERM_VIOLET;
+			}
 			
 			if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
 			{
