@@ -40,6 +40,7 @@ I:80:& Pint~ of Fine Ale
 I:60:& Shovel~
 I:50:& Pick~
 I:100:& Iron Spike~
+I:70:& Rounded Pebble~
 I:70:& Iron Shot~
 I:70:& Bolt~
 I:70:& Arrow~
@@ -595,7 +596,7 @@ W:12
 N:42:Rare Jewelry Shop
 T:60:40:256
 T:100:45:256
-A:0:0:1:2:3:0
+A:0:0:1:2:3:4
 O:34:35:36:37
 G:6:v
 #F:RANDOM | DEPEND_LEVEL | DEEP_LEVEL | FORCE_LEVEL
@@ -607,7 +608,7 @@ W:13
 N:43:Jewelry Shop
 T:100:40:256
 T:100:45:256
-A:0:0:1:2:3:0
+A:0:0:1:2:3:4
 O:34:35:36:37
 G:6:y
 F:RANDOM | DEPEND_LEVEL | MEDIUM_LEVEL | FORCE_LEVEL
@@ -682,7 +683,7 @@ F:RARE
 W:12
 
 N:48:Expensive Black Market
-A:0:0:1:2:3:0
+A:0:0:1:2:3:4
 O:38:39:40:41
 G:7:v
 F:ALL_ITEM | RARE | DEEP_LEVEL | NO_DISCOUNT2 |
@@ -811,7 +812,7 @@ G:+:s
 W:24
 
 N:60:Secret Black Market
-A:0:0:1:2:3:0
+A:0:0:1:2:3:4
 O:38:39:40:41
 G:7:U
 F:ALL_ITEM | VERY_RARE | DEEP_LEVEL | NO_DISCOUNT | 

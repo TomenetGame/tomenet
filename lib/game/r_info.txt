@@ -558,7 +558,8 @@ D:It is a smallish, slimy, icky, blobby creature.
 
 N:27:Giant white mouse
 G:r:w
-I:110:1d3:8:4:20
+#I:110:1d3:8:4:20
+I:110:1d3:32:4:20
 W:1:1:600:1
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -611,7 +612,8 @@ D:It is a squat and ugly dog-headed humanoid.
 
 N:31:White worm mass
 G:w:w
-I:100:4d4:7:1:10
+#I:100:4d4:7:1:10
+I:100:4d4:28:1:10
 W:1:1:30:2
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -973,7 +975,8 @@ D:A striped housecat who enjoys hunting.
 
 N:58:Green worm mass
 G:w:g
-I:100:6d4:7:3:10
+#I:100:6d4:7:3:10
+I:100:6d4:28:3:10
 W:2:1:40:3
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1122,7 +1125,8 @@ D:Larger than a crow, and pitch black.
 
 N:69:Giant white louse
 G:I:w
-I:130:1d1:6:5:10
+#I:130:1d1:6:5:10
+I:130:1d1:24:5:10
 W:3:1:100:1
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1243,7 +1247,8 @@ D:It is about four feet long and carnivorous.
 
 N:78:Yellow worm mass
 G:w:y
-I:100:4d8:7:4:10
+#I:100:4d8:7:4:10
+I:100:4d8:28:4:10
 W:3:2:200:4
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1257,7 +1262,8 @@ D:It is a large slimy mass of worms.
 
 N:79:Clear worm mass
 G:w:B
-I:100:4d4:7:1:10
+#I:100:4d4:7:1:10
+I:100:4d4:28:1:10
 W:3:2:200:4
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1353,7 +1359,8 @@ D:on tiny legs.
 
 N:86:Giant white rat
 G:r:W
-I:110:2d2:8:7:30
+#I:110:2d2:8:7:30
+I:110:2d2:32:7:30
 W:4:1:200:1
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -1391,7 +1398,8 @@ D:A fish with a swordlike "beak".
 
 N:89:Blue worm mass
 G:w:b
-I:100:5d8:7:12:10
+#I:100:5d8:7:12:10
+I:100:5d8:28:12:10
 W:4:1:40:5
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -1608,7 +1616,8 @@ D:A disembodied eye, crackling with magic.
 
 N:105:Red worm mass
 G:w:r
-I:100:5d8:7:12:10
+#I:100:5d8:7:12:10
+I:100:5d8:28:12:10
 W:5:1:40:6
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -2333,7 +2342,8 @@ D:It is a strange, slimy, icky creature.
 
 N:156:Giant grey rat
 G:r:s
-I:110:2d3:8:12:20
+I:110:2d3:32:12:20
+#I:110:2d3:8:12:20
 W:9:1:250:2
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -2967,7 +2977,8 @@ D:It howls and snaps at you.
 
 N:197:Giant fruit fly
 G:I:G
-I:120:2d2:8:14:10
+#I:120:2d2:8:14:10
+I:120:2d2:32:14:10
 W:10:3:100:4
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -3210,7 +3221,8 @@ D:Yum! It looks quite tasty.  It is a pulsing mound of glowing flesh.
 
 N:213:Nether worm mass
 G:w:D
-I:100:5d8:10:15:3
+#I:100:5d8:10:15:3
+I:100:5d8:40:15:3
 W:12:4:200:6
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -3224,7 +3236,8 @@ D:the air, you...
 
 N:214:Abyss worm mass
 G:w:D
-I:100:5d8:10:15:3
+I:100:5d8:40:15:3
+#I:100:5d8:10:15:3
 W:12:4:200:7
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -3920,7 +3933,8 @@ D:A merry little gnome.
 
 N:259:Giant flea
 G:I:s
-I:120:1d2:6:7:10
+#I:120:1d2:6:7:10
+I:120:1d2:24:7:10
 W:14:3:90:3
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -4399,7 +4413,8 @@ D:A glowing fourteen foot tall giant. Flames drip from its red skin.
 
 N:289:Hummerhorn
 G:I:y
-I:120:2d2:8:14:10
+#I:120:2d2:8:14:10
+I:120:2d2:32:14:10
 W:16:4:100:4
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -5012,7 +5027,8 @@ D:of them. It smells foul, and its bite carries a rotting disease.
 
 N:328:Neekerbreeker
 G:I:D
-I:120:3d2:8:18:10
+#I:120:3d2:8:18:10
+I:120:3d2:32:18:10
 W:19:4:100:4
 B:BITE:POISON:2d2
 F:RAND_50 | RAND_25 | CAN_FLY | WILD_SWAMP | WILD_TOO | 
@@ -5554,7 +5570,8 @@ D:This fish is among the most poisonous creatures there are.
 
 N:361:Giant firefly
 G:I:r
-I:120:3d2:8:18:10
+#I:120:3d2:8:18:10
+I:120:3d2:32:18:10
 W:24:4:100:4
 B:BITE:BLIND:1d2
 F:RAND_50 | RAND_25 | CAN_FLY | 
@@ -10323,7 +10340,8 @@ D:A massive troll, equipped with a scimitar and heavy armour.
 
 N:632:Disenchanter worm mass
 G:w:v
-I:100:10d8:7:5:10
+#I:100:10d8:7:5:10
+I:100:10d8:28:5:10
 W:40:3:50:30
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -17272,7 +17290,8 @@ D:A small, apparently unassuming orb which spawns death and destruction.
 
 N:976:Bronze dragon worm
 G:w:U
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -17293,7 +17312,8 @@ D:a multitude of perplexing and distracting ways.
 
 N:977:Gold dragon worm
 G:w:y
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -17860,7 +17880,8 @@ D:enough to defend yourself adequately.
 
 N:1005:Silver mouse
 G:r:W
-I:110:1d3:8:4:20
+#I:110:1d3:8:4:20
+I:110:1d3:32:4:20
 W:4:1:200:1
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -17907,7 +17928,8 @@ D:wisest:  she is her tribe's chief shamaness.
 
 N:1008:Giant black louse
 G:I:D
-I:130:1d2:6:7:10
+#I:130:1d2:6:7:10
+I:130:1d2:24:7:10
 W:14:1:100:3
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -18197,7 +18219,8 @@ D:waving and poppy-crowned."
 
 N:1023:Blue dragon worm
 G:w:B
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18217,7 +18240,8 @@ D:breath, and the fiery eyes, of a real Dragon. Sparks fly from its jaws.
 
 N:1024:White dragon worm
 G:w:W
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18237,7 +18261,8 @@ D:breath, and the fiery eyes, of a real Dragon. Its breath condenses in the air.
 
 N:1025:Green dragon worm
 G:w:G
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18258,7 +18283,8 @@ D:on its breath.
 
 N:1026:Black dragon worm
 G:w:s
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18278,7 +18304,8 @@ D:breath, and the fiery eyes, of a real Dragon. Acidic drool drips from its jaws
 
 N:1027:Red dragon worm
 G:w:R
-I:100:10d15:10:40:80
+#I:100:10d15:10:40:80
+I:100:10d15:20:40:80
 W:20:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18298,7 +18325,8 @@ D:breath, and the fiery eyes, of a real Dragon. Smoke comes from its mouth.
 
 N:1028:Multi-hued dragon worm
 G:w:v
-I:100:10d20:10:40:80
+#I:100:10d20:10:40:80
+I:100:10d20:20:40:80
 W:23:3:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
@@ -18351,7 +18379,8 @@ D:Queen and Mother of the sandworms, fear her and her prolific children.
 
 N:1031:Sandworm
 G:w:y
-I:115:10d15:10:40:80
+#I:115:10d15:10:40:80
+I:115:10d15:20:40:80
 W:27:6:4500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
