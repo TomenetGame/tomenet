@@ -2885,6 +2885,9 @@ void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"WORLDSERVER")){
 		cfg.wserver=strdup(value);
 	}
+	else if (!strcmp(option,"WORLDPASS")){
+		cfg.pass=strdup(value);
+	}
 	else if (!strcmp(option,"BIND_NAME"))
 	{
 		cfg.bind_name = strdup(value);

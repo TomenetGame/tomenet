@@ -10,6 +10,7 @@
 struct rplist{
 	struct rplist *next;
 	unsigned long id;
+	short server;
 	char name[30];
 } *rpmlist;
 
@@ -26,7 +27,7 @@ int world_comm(int fd, int arg){
 		switch(wpk->type){
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				msg_broadcast_format(0, "!%s", wpk->d.chat.ctxt);
+				msg_broadcast_format(0, "%s", wpk->d.chat.ctxt);
 				break;
 			case WP_MESSAGE:
 				/* A raw message - no data */
@@ -38,7 +39,14 @@ int world_comm(int fd, int arg){
 				/* full death must count! */
 				add_rplayer(wpk);
 				break;
+			case WP_AUTH:
+				/* Authentication request */
+				strcpy(wpk->d.auth.pass, crypt(cfg.pass, wpk->d.auth.pass));
+				x=sizeof(struct wpacket);
+				x=send(WorldSocket, wpk, x, 0);
+				break;
 			default:
+				printf("unknown packet from world\n");
 		}
 	}
 	if(x==0){
@@ -59,7 +67,7 @@ void world_remote_players(FILE *fff){
 		fprintf(fff, "y  Remote players\nr\n");
 	}
 	while(c_pl){
-		fprintf(fff, "s   %s\n", c_pl->name);
+		fprintf(fff, "%c   %s@%d\n", c_pl->server ? 'o' : 's', c_pl->name, c_pl->server);
 		c_pl=c_pl->next;
 	}
 }
@@ -82,6 +90,7 @@ void add_rplayer(struct wpacket *wpk){
 		n_pl=malloc(sizeof(struct rplist));
 		n_pl->next=rpmlist;
 		n_pl->id=wpk->d.play.id;
+		n_pl->server=wpk->d.play.server;
 		strncpy(n_pl->name, wpk->d.play.name, 30);
 		rpmlist=n_pl;
 	}
