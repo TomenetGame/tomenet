@@ -889,23 +889,27 @@ static void calc_sanity(int Ind)
 		p_ptr->csane += (msane - p_ptr->msane);
 		/* If sanity just dropped to 0 or lower, die! */
                 if (p_ptr->csane < 0) {
-                        /* Sound */
-                        sound(Ind, SOUND_DEATH);
-                        /* Hack -- Note death */
-                        msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
-			(void)strcpy(p_ptr->died_from, "Insanity");
-			(void)strcpy(p_ptr->really_died_from, "Insanity");
-	                if (!p_ptr->ghost) {
-		                strcpy(p_ptr->died_from_list, "Insanity");
-		                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+			if (!p_ptr->safe_sane) {
+	                        /* Sound */
+	                        sound(Ind, SOUND_DEATH);
+	                        /* Hack -- Note death */
+	                        msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
+				(void)strcpy(p_ptr->died_from, "Insanity");
+				(void)strcpy(p_ptr->really_died_from, "Insanity");
+		                if (!p_ptr->ghost) {
+			                strcpy(p_ptr->died_from_list, "Insanity");
+			                p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
+				}
+	            		/* No longer a winner */
+			        p_ptr->total_winner = FALSE;
+				/* Note death */
+				p_ptr->death = TRUE;
+		                p_ptr->deathblow = 0;
+			} else {
+				p_ptr->csane = 0;
 			}
-            		/* No longer a winner */
-		        p_ptr->total_winner = FALSE;
-			/* Note death */
-			p_ptr->death = TRUE;
-	                p_ptr->deathblow = 0;
 		}
-
+		
 		p_ptr->msane = msane;
 
 		if (p_ptr->csane >= msane) {

@@ -1792,6 +1792,7 @@ struct player_type
 	bool inval;		/* Non validated account */
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
+	bool safe_sane;		/* Save players from insanity-death on resurrection (atomic flag) - C. Blue */
 	int deathblow;          /* How much damage the final blow afflicted */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */

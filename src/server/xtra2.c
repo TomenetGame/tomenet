@@ -4539,7 +4539,7 @@ void player_death(int Ind)
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024], o_name[160];
-	int i, inventory_loss = 0, equipment_loss = 0, temp_sane;
+	int i, inventory_loss = 0, equipment_loss = 0;
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
 	cptr titlebuf;
@@ -4607,9 +4607,6 @@ void player_death(int Ind)
 		p_ptr->chp = p_ptr->mhp;
 		p_ptr->chp_frac = 0;
 
-		/* Went mad? */
-		if (p_ptr->csane < 0) p_ptr->csane = p_ptr->msane / 10;
-
 		if (secure)
 		{
 			p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
@@ -4623,33 +4620,25 @@ void player_death(int Ind)
 			p_ptr->max_exp = p_ptr->max_exp * 4 / 5;
 			p_ptr->exp = p_ptr->max_exp;
 
+			p_ptr->safe_sane = TRUE;
 			check_experience(Ind);
+			p_ptr->update |= PU_SANITY;
+			update_stuff(Ind);
+			p_ptr->safe_sane = FALSE;
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_BASIC);
 
 			/* Update */
 			p_ptr->update |= (PU_BONUS);
+		} else {
+			/* Went mad? */
+			if (p_ptr->csane < 0) p_ptr->csane = 0;
 		}
 
 		/* Wow! You may return!! */
 		return;
 	}
-
-#if 0 /*check this out, test it, etc.. <?>*/
-	/* By dropping the items on death, if this lowers sanity below 0,
-	   change the death to an insanity death. Otherwise he dies on
-	   being revived?! */
-	/* this part is too complicated since it had to be checked _after_
-	   the equipment is dropped, and then re-check for death!..
-	   So let's just fix the sanity later, after the eq was dropped =p */
-	if (p_ptr->csane < 0 && !streq(p_ptr->died_from, "Insanity")) {
-		strcpy(p_ptr->really_died_from, p_ptr->died_from);
-		strcpy(p_ptr->died_from, "Insanity");
-	}
-#else
-	temp_sane = p_ptr->csane; /* Sanity _before_ equipment was dropped */
-#endif
 
 	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
 #if 0
@@ -5278,9 +5267,11 @@ void player_death(int Ind)
 		/* if (p_ptr->food < PY_FOOD_FULL) */
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
-		/* Fix sanity _after_ equipment has been dropped,
-		   to avoid insanity auto-death at being resurrected */
-		if (p_ptr->csane < 0 && temp_sane >= 0) p_ptr->csane = 0;
+		/* Don't have 'vegetable' ghosts running around after equipment was dropped */
+		p_ptr->safe_sane = TRUE;
+		p_ptr->update |= PU_SANITY;
+		update_stuff(Ind);
+		p_ptr->safe_sane = FALSE;
 
 		/* Tell him */
 		msg_print(Ind, "\377RYou die.");
@@ -5427,7 +5418,11 @@ void resurrect_player(int Ind, int loss_reduction)
 	p_ptr->exp -= p_ptr->exp / 2;
 #endif	// 0
 
+	p_ptr->safe_sane = TRUE;
 	check_experience(Ind);
+	p_ptr->update |= PU_SANITY;
+	update_stuff(Ind);
+	p_ptr->safe_sane = FALSE;
 
 	/* Message */
 	msg_print(Ind, "You feel life return to your body.");
