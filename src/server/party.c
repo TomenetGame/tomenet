@@ -115,7 +115,7 @@ int guild_create(int Ind, cptr name){
 	sprintf(temp, "A new guild '%s' has been created.", name);
 	msg_broadcast(0, temp);
 
-	p_ptr->au-=4000000;
+	p_ptr->au-=2000000;
 	p_ptr->redraw|=PR_GOLD;
 
 	/* make the guild key */
