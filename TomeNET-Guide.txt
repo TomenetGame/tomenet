@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. July 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -53,10 +53,12 @@ Contents
     (5.2)   Ranged weapons, brands
     (5.3)   Martial Arts, brands
     (5.4)   Slaying vs brands
-    (5.5)   Resistances & caps, Immunities, Susceptibilities
-    (5.6)   Qualitative classification of items
-    (5.7)   Special abilities of items
-    (5.8)   What does item xxx do exactly?
+    (5.5)   Weight of weapons
+    (5.6)   Resistances & caps, Immunities, Susceptibilities
+    (5.7)   Qualitative classification of items
+    (5.8)   Special abilities of items
+    (5.9)   What does item xxx do exactly?
+    (5.10)  Destruction of items by elemental attacks
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills
@@ -178,7 +180,7 @@ S       #       enter 'search mode'. You will search your adjacent fields once
                 each turn. If you stand next to a room and you want to find
                 its hidden door, turn this on and run along its walls until
                 you find it.
-A       A       activate an item. Usually an artefact, a dragon scale mail or
+A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
 T,+     CTRL+T  tunnel through an obstacle or a wall.
 R       R       rest. Your hit points and mana will regenerate faster while
@@ -311,6 +313,13 @@ They all start with a slash '/':
  (/dress)   not {worthless}, not {terrible}, known to you.
 /mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
  (/martyr)
+/note <player> <text>
+            Leave a note to another player.
+/notes      Display own pending notes.
+/notep <text>
+            Leave a note to the party you own.
+/noteg <text>
+            Leave a note to the guild you own.
 
 
 
@@ -319,14 +328,14 @@ They all start with a slash '/':
 All items:
     Inscribing an item with an '!' followed by a key will cause that key to
     cease working on the item anymore.
-    Example: You inscribe a 'Scroll of Artefact Creation' this way:  !k!d
+    Example: You inscribe a 'Scroll of Artifact Creation' this way:  !k!d
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
     You can uninscribe an item simply by pressing '{', then pressing the ENTER
     key (causes an 'empty' inscription, equal to no inscription at all).
     '*' is a 'wild card' which means it stands for all possible choices.
     Inscribing an item '!*' will prevent any action on it. For example,
-    if you wear an artefact and you want to avoid (d)ropping it, (t)aking it
+    if you wear an artifact and you want to avoid (d)ropping it, (t)aking it
     off or (v) throwing it away accidentally you could either inscribe it
     !d!t!v or just !*  .
     '!*' also implies '!=', so used on arrows it forces auto-pickup. Note that
@@ -376,7 +385,7 @@ A magic scroll:
 etc.. you get the idea. :)
 
 You can also inscribe items just to remember their abilities. For example
-if you find an armour that is an artefact, and you found out it resists
+if you find an armour that is an artifact, and you found out it resists
 fire and acid, you might inscribe it {ResFire,ResAcid} so that you will
 remember what it does just by looking at it and reading the inscription.
 It can make your life easier if you wear lots of items that have different
@@ -386,7 +395,7 @@ resistances or abilities.
 
 (0.4) Typical slang/abbreviations
 ---------------------------------
-Art         Artefact from the a_info.txt file. Also called 'True Art'.
+Art         Artifact from the a_info.txt file. Also called 'True Art'.
 BM          Black Market (Store '7').
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
@@ -417,7 +426,7 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
-Randart     Randomly generated artefact.
+Randart     Randomly generated artifact.
 Res         Resistance.
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
@@ -453,18 +462,19 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  and depth and luck.
 -Spells/round is always 1, even if the number displayed is higher (raised by
  items that effect your 'Spell power' via SPELL flag).
--Don't drop artefacts inside houses if the server doesn't allow artefacts to
+-Don't drop artifacts inside houses if the server doesn't allow artifacts to
  be dropped inside player houses, or you will simply lose the artifact!
--Don't use scrolls of artefact creation on item stacks, it would
+-Don't use scrolls of artifact creation on item stacks, it would
  reduce the stack to 1.
- Don't use them on ego items or artefacts, or you will lose the scroll!
- If you use it on items with a discount, the artefact will get it too.
+ Don't use them on ego items or artifacts, or you will lose the scroll!
+ If you use it on items with a discount, the artifact will get it too.
  Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
- 'Amulets of Telepathic Awareness'!
- In general, it's not always good idea to try to turn a ring or amulet that
- has high bonus numbers into an artefact, like for example a ring of
- speed (+7) or a ring of slaying (+10,+8) because these numbers will get
- erased and randomly re-rolled, (+to-hit,+to-dam) will always become (+0,+0)!
+ 'Amulets of Telepathic Awareness', 'Rings of Polymorphing' and
+ Dragon Scale Mails 'of Defense'!
+ In general, it's not always a good idea to try to turn a ring or amulet that
+ has high bonus numbers into an artifact, like for example a ring of speed
+ (+7) or a ring of slaying (+10,+15) because these numbers will get erased
+ and randomly re-rolled; (+to-hit,+to-dam) will always become (+0,+0) even!
 -Monster traps (using the Trapping skill) lack a balanced implementation at
  the moment. (Weak)
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
@@ -662,6 +672,9 @@ Everlasting characters can become king/queen, but cannot enter the high-score.
 Other character types cannot pick up items that belong to everlasting
 characters. Non-everlasting and everlasting characters can't be in the same
 party.
+If an everlasting King/Queen dies, (s)he won't be destroyed but lose the King
+status. To regain it, (s)he needs to find another player who hasn't killed
+Sauron and Morgoth yet and team up with him, because those two won't respawn.
 
 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard):
 -------------------------------------------------------
@@ -687,6 +700,9 @@ form! Fruit bats usually can take way less damage than normal characters
 before they die, and they cannot wear certain equipment like boots, gloves or
 weapons. However they are twice as fast and hard to hit. Fruit bats are said
 to make good explorers.
+
+Hard / Unworldly characters will receive 25% bonus on their high score.
+Hellish (Hard + Unworldly) characters receive 50% bonus on their high score.
 
 Note that race and class will have influence on how much experience you will
 need to gain a new character level. For example, High-Elves already know a
@@ -1518,7 +1534,9 @@ enemies. That can be very dangerous but also very rewarding. Out-of-depth
 monsters usually occur inside of so-called "pits" and "vaults". Pits are very
 large and unusual rooms with special structure. Vaults are extremely large
 structures of rooms and passages, surrounded by permanent walls that cannot be
-damaged. A vault can be a real adventure of its own!
+damaged. A vault can be a real adventure of its own! If your character isn't
+very powerful compared to the dungeon level, you better stay out of vaults
+if their structure doesn't allow easy monster killing.
 
 
 
@@ -1560,7 +1578,8 @@ The feelings are as follows:
                                         but you're only able to see your
                                         nearby surroundings within your
                                         character's radius of sight.
-"You feel like a stranger..." ->    You cannot use magic mapping here!
+"You feel like a stranger..." ->    You cannot use magic mapping nor
+                                    clairvoyance here!
 "The walls here seem very solid." ->    You cannot destroy the dungeon
                                         structure on this level.
 Vaults:
@@ -1679,6 +1698,7 @@ be added to the dice result.
 If you manage to get your hands on an item that imbues your melee weapon with
 an elemental brand (like a Ring Of Ice for example), the dice of your weapon
 will be multiplied by 3 if the target doesn't resist that brand.
+See (5.4) to get an easy overview.
 
 Characters using weapons have a limited number of melee attacks per round,
 depending on the character class (profession). A table showing the blow/round
@@ -1730,6 +1750,7 @@ weapons but the additional damage is reduced to 2/5.
 Example: Ring of Acid will usually add 2x your melee base damage.
 For ranged weapons it will add 2*2/5x of your base damage, so multiply your
 base damage by 1.8 instead of by 3 to get your total damage output.
+See (5.4) to get an easy overview.
 
 
 
@@ -1758,6 +1779,8 @@ weapons but the additional damage is reduced to 1/3.
 Example: Ring of Acid will usually add 2x your base damage.
 For MA it will add 2/3x of your base damage, so multiply your base damage
 by 1.67 instead of by 3 to get your total damage output.
+See (5.4) to get an easy overview.
+
 You cannot use special techniques while stunned or confused.
 
 Here is a list of Martial Arts special techniques:
@@ -1816,15 +1839,18 @@ If you use a weapon that slays trolls, that means its dice will be tripled if
 you hit a troll ('T'). If you have an item that gives fire brand, the dice
 would also be tripled by the brand. Slaying and brands are not cumulative.
 That means you will get a total dice multiplier of 3 here.
+Brands don't stack. The best one is taken. So if you wear a ring of fire and
+your weapon does cold damage the dice will be multiplied by 3 if the target
+doesn't resist both heat and cold. If the target is susceptible to one of
+those the dice are multiplied by 6. Same goes for SLAY flags.
 
-Brand       | Dice multiplier
-            |   is immune   |   resists |   doesn't resist  |   is suspectible
+Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
+            | Monster..
+            | ..is immune   | ..resists | ..doesn't resist  | ..is suspectible
 ------------|-----------------------------------------------------------------
-Fire        |       1               2               3                   6
-Frost       |       1               2               3                   6
-Lightning   |       1               2               3                   6
-Acid        |       1               2               3                   6
-Poison      |       1               2               3                   6
+Melee Weapon|       1               2               3                   6
+Ranged Weap.|       1               1.4             1.8                 3
+Martial Arts|       1               1.33            1.67                2.67
 
 Slaying     | Dice multiplier
 ------------|----------------
@@ -1846,7 +1872,40 @@ If several multipliers match the highest one will be used.
 
 
 
-(5.5) Resistances & caps, Immunities, Susceptibilities
+(5.5) Weight of weapons
+-----------------------
+If your melee weapon or ranged weapon is too heavy you will hardly be able
+to use it, resulting in reduced attack number per round and less damage.
+A weapon is too heavy for you if its weight is greater than the so-called
+str_hold value. Below is a table with the str_hold values, depending on a
+character's strength:
+
+        str_hold    STRength of             str_hold    STRength of
+                    the character                       the character
+        -------------------------           -------------------------
+        4           3                       45          18/40-18/49
+        5           4                       50          18/50-18/59
+        6           5                       55          18/60-18/69
+        7           6                       60          18/70-18/79
+        8           7                       65          18/80-18/89
+        10          8                       70          18/90-18/99
+        12          9                       80          18/100-18/109
+        14          10                      80          18/110-18/119
+        16          11                      80          18/120-18/129
+        18          12                      80          18/130-18/139
+        20          13                      80          18/140-18/149
+        22          14                      90          18/150-18/159
+        24          15                      90          18/160-18/169
+        26          16                      90          18/170-18/179
+        28          17                      90          18/180-18/189
+        30          18/00-18/09             90          18/190-18/199
+        30          18/10-18/19             100         18/200-18/209
+        35          18/20-18/29             100         18/210-18/219
+        40          18/30-18/39             100         18/220+
+
+
+
+(5.6) Resistances & caps, Immunities, Susceptibilities
 ------------------------------------------------------
 
 Resistances & caps
@@ -2136,7 +2195,7 @@ Physical attacks in pvp are not influenced by susceptibilities.
 
 
 
-(5.6) Qualitative classification of items
+(5.7) Qualitative classification of items
 -----------------------------------------
 Items are classified by
 -a basic item type
@@ -2144,6 +2203,8 @@ Items are classified by
 -an excellent magical enchantment (some examples: resistances on armours,
  elemental brands on weapons, enhanced brightness on light sources)
 -an ego power (for example a weapon 'of Gondolin' or a cloak 'of aman')
+-sometimes you may find an artifact which can have quite a bunch of
+ different powers combined!
 
 If you find an item, it's 'unidentified'. That means you see only the
 basic item type.
@@ -2177,18 +2238,19 @@ inventory or equipment using the 'I' key. Using 'I' requires that
 you already *identified* the item or bought it from a shop.
 Some shops offer an *identify* service but they are quite expensive.
 
-Sometimes an item turns out to be an artefact!
-Artefacts are unique. If an artefact is owned by a player, noone else
+Sometimes an item turns out to be an artifact!
+Artifacts are unique. If an artifact is owned by a player, noone else
 can find it anymore until it's lost (for example if the player dies)
-or sold to a shop. Depending on a server's configuration artefacts
+or sold to a shop. Depending on a server's configuration artifacts
 usually stay a while in the shop and can be bought by other players
 before they finally disappear from the stock.
 
-There are static artefacts and random artefacts ('randarts').
-Static artefacts are predefined and have fixed abilities. Their number
+There are static artifacts and random artifacts ('randarts').
+Static artifacts are predefined and have fixed abilities. Their number
 therefore is limited.
-In case all static artefacts are found, players can still find randomly
-generated artefacts so a server won't run out of artefacts.
+In case all static artifacts are found, players can still find randomly
+generated artifacts so a server won't run out of artifacts.
+Artifacts of any type cannot be enchanted by any means.
 
 If a player holds an unidentified item long enough he/she might get
 a 'feeling' about it. The more points in 'Combat' skill the player has
@@ -2201,18 +2263,18 @@ Items display the following pseudo-id tags:
 -Basic items, non-magical:      {average}
 -Magically enchanted items      (good}
 -Excellent magical items        {excellent}
--Artefacts (random & static)    {special}
+-Artifacts (random & static)    {special}
 -Cursed items                   {cursed}
 -Useless items (often cursed)   {worthless}
--Cursed artefacts / egos        {terrible}
- Note that some cursed artefacts can be very powerful.
+-Cursed artifacts / egos        {terrible}
+ Note that some cursed artifacts can be very powerful.
 
-Note that potions and scrolls don't have 'egos' or 'artefacts', but some of
+Note that potions and scrolls don't have 'egos' or 'artifacts', but some of
 the pots/scrolls show similar pseudo-id tags.
 
 
 
-(5.7) Special abilities of items
+(5.8) Special abilities of items
 --------------------------------
 FEATHER ('It allows you to levitate.')
         'Feather Falling', also called 'Levitation'.
@@ -2285,10 +2347,27 @@ FUEL_LITE ('It provides light radius when fueled')
 (NO_SEED 
         An ego item that is never created randomly (in terms of abilities
         or power).)
+CURSED  If you wield _any_ cursed item, you'll need to break the curse in
+        order to take it off again. Shops won't buy cursed items.
+        You need a Scroll Of Remove Curse or the according spell to uncurse
+        a CURSED item, or you can try enchanting one of its base boni
+        (tohit/todam/toac) above 0, assumed it HAS those.
+AUTO_CURSE
+        This item will re-curse itself if you equip it or pick it up or
+        take it off even. So make sure to drop an equipped auto-cursed item
+        to the ground after uncursing it, instead of just taking it off.
+HEAVY_CURSE
+        You need a Scroll Of *Remove Curse* or the according spell to break
+        this curse, or you can try enchanting one of its base boni
+        (tohit/todam/toac) above 0, assumed it HAS those.
+CURSE_NO_DROP
+        You cannot even drop this item while it's cursed.
+TY_CURSE
+        No effect, except for lowering the items value.
 
 
 
-(5.8) What does item xxx do exactly?
+(5.9) What does item xxx do exactly?
 ------------------------------------
 Some items might look bad (Mushrooms of Unhealth), but keep in mind that you
 can often throw ('v') these items to damage or impair an enemy.
@@ -2305,7 +2384,7 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 The radius of the antimagic field is several fields, getting
                 smaller if the chance is smaller than 50%.
 Magic Arrows    Those will return into your quiver magically, so you need only
-                one of them really. Same goes for artefact ammunition of any
+                one of them really. Same goes for artifact ammunition of any
                 type. (Magic Arrows can be destroyed by fire or acid though.)
 
 Potions
@@ -2392,6 +2471,9 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
+                Monsters have a chance to resist genocide, depending on their
+                level. Monsters inside vaults, Uniques, and monsters that are
+                immune to teleportation attacks cannot be genocided.
 Mass Genocide   Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
@@ -2401,6 +2483,9 @@ Mass Genocide   Removes all monsters that are close to you.
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
+                Monsters have a chance to resist genocide, depending on their
+                level. Monsters inside vaults, Uniques, and monsters that are
+                immune to teleportation attacks cannot be genocided.
 Acquirement     Gives you a great item.
 *Acquirement*   Gives you two or three great items.
 Fire/Ice/Chaos  Fires a ball of the according type around you. Make sure you
@@ -2460,6 +2545,74 @@ Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it.
 Amulet of Anti-Magic    See '5.7 NO_MAGIC'
 Mushrooms with bad effects are also often poisonous.
+
+
+
+(5.10) Destruction of items by elemental attacks
+------------------------------------------------
+Items in your inventory can be destroyed if you are hit by an elemental
+attack. Those attacks even have a very slim chance of destroying an item
+that you have equipped!
+
+In order for an item to guaranteedly survive such an attack, you must either
+be immune or double-resisting (have permanent AND temporary resistance) to
+that specific element.
+Some items have IGNORE_xxx flags which let them ignore certain elements,
+preventing them from being destroyed.
+All artifacts, random and static ones, cannot be harmed by elemental attacks
+of any type.
+
+Here is a table of items and which elements they are susceptible against:
+"Impact" happens if you fall into a pit, smashing some potions on hitting the
+floor. Items that IGNORE_COLD also resist impact damage.
+Usually items that contain wood, leather or stuff are susceptible to fire and
+acid, while things that consist only of metal are just susceptible to acid.
+
+            Acid    Elec    Fire    Cold    Impact  Water
+---------------------------------------------------------
+Arrows      x               x
+Bolts       x               x
+Pebbles
+Shots
+
+Slings      x               x
+Bows        x               x
+Crossbows   x               x
+Boomerangs  x               x
+
+Swords      x
+Axes        x               x
+Hafted      x               x
+Polearms    x               x
+
+Helms       x
+Crowns      x
+Shields     x
+
+Boots       x               x
+Gloves      x               x
+Cloaks      x               x
+Soft Armour x               x
+Hard Armour x
+DSM Armour  x
+
+Scrolls     x               x                       x
+Parchments  x               x
+Chests      x               x
+Skeletons   x
+Bottles     x                       x       x
+Junks       x
+
+Rings               x
+Amulets
+Wands               x
+Staves      x               x
+Rods
+
+Lamps                       x
+Potions                     x       x       x       x
+Flasks                              x       x
+Books/Tomes                                         x
 
 
 
@@ -2544,7 +2697,8 @@ Note that not every skill is available to every profession (class).
                                 the use of magical items much better.
                                 Increases Fear/Stun/Confuse duration of the
                                 target (if attacking causes those).
-                                Slightly increases to-damage bonus.
+                                Slightly increases to-hit bonus for all weapon
+                                types and to-damage bonus for melee weapons.
     +Weaponmastery              Improves your Fighting ability.
                                 Slightly increases melee to-dam and to-hit.
                                 Increases your chance to score critical hits.
@@ -3824,13 +3978,13 @@ Note that "Feather Falling", also known as "Levitation" provides resistance
 to gravity.
 + Get "See Invisible".
 + Get items that sustain your stats, for example a Robe of Permanence.
-+ Get Randarts (randomly generated artefacts) or Artefacts (predefined
-artefacts) as melee weapon
++ Get Randarts (randomly generated artifacts) or Artifacts (predefined
+artifacts) as melee weapon
 You will have to fight ring wraiths. Normal weapons, even those from Gondolin
 or the most powerful *Defenders* will quickly shatter if they come in contact
 with those unbelievably corrupted creatures of terror and hate. (I remember
 one day I lost 4 Gondolins that way, pure fun.. ;) Your only way to fight them
-is to equip an artefact since these resist ring wraiths greatly.
+is to equip an artifact since these resist ring wraiths greatly.
 + You will want items that permanently increase your speed!
 +10 speed or +20 speed will make you approximately twice or three times as
 fast as you usually are. Note that the curve will become flatter the higher
@@ -3886,84 +4040,133 @@ Coin pits (lots of '$' inside) can also contain very powerful mimics!
  time. If your health suddenly drops, teleport away at once.
 
 -Sometimes it might be a good idea to use a "Stone-to-mud" or "Trap/Door
-destruction" spell to open a door from a distance.
+ destruction" spell to open a door from a distance.
 
--For weaker characters it might be a good idea to stay around 1000..1500 ft and
-try to get enough stat potions (potions that raise your six primary stats, STR
-INT WIS DEX CON CHR) until they have a considerably high amount of hit points
-and/or combat potential before they dive deeper!
+-For weaker characters it might be a good idea to stay around 1000..1500 ft
+ and try to get enough stat potions (potions that raise your six primary
+ stats, STR INT WIS DEX CON CHR) until they have a considerably high amount
+ of hit points and/or combat potential before they dive deeper!
 
 Some monsters that people often get killed by are:
 
 -Druid monsters, for example druid snotlings or druid kobolds. They can appear
-at very low level and they are able to cast firebolts that insta-kill you
-(instantly kill you).
+ at very low level and they are able to cast firebolts that insta-kill you
+ (instantly kill you).
 
 -Elite Uruks, they fire extremely sharp arrows, always posing a high threat.
 
+-Chieftain/Warrior/Monk/Unbeliever monsters of any kind. You will often see
+ someone being killed by a hill troll monk or forest troll chieftain for
+ example.. Prepare to hit your phase door macro if you spot a shimmering
+ extraordinarily fast moving monster within a potentially dangerous mob.
+
+-Veteran archer/Master archer monsters of any kind can pose a very high
+ threat. Better get reflection ability if you are planning to fight these in
+ a ranged duel.
+
 -Hounds with breaths that need a high resistance or that cannot be resisted at
-all.
+ all.
 
 -Dark elven Warlocks. These belong to the few monsters that can cast mana
-bolts, which cannot be resisted and do very high damage. Even worse, DEW (Dark
-Elven Warlocks) can appear in packs. Beware!
+ bolts, which cannot be resisted and do very high damage. Even worse, DEW
+ (Dark Elven Warlocks) can appear in packs. Beware!
 
 -Colbrans. These are the lowest monsters that can "reflect". This means that
-missiles or magical bolt spells will be reflected onto the caster, which can
-insta-kill weak wizards that use hi-damage spells. (Note: Monster reflection
-was removed, so don't worry.)
+ missiles or magical bolt spells will be reflected onto the caster, which can
+ insta-kill weak wizards that use hi-damage spells. (Note: Monster reflection
+ was removed, so don't worry.)
+
+-Will o' the wisps are very hard to spot and catch, their curses are
+ devastating.
+
+-The Glass Golem drives everyone insane whom it manages to hit, high AC helps.
+
+-Drolems. A constructed dragon that will breathe poison for high damage and
+ takes a lot of hits before ceasing to function.
+
+-The Stormbringer, an animated blade that bears mad fury within. It swings
+ so powerful that it can knockout its enemies with ease. Defeating it,
+ however, will make it usable to its defeater!
+
+The most powerful representant of each class:
+-Ranger chieftains are tough opponents who can nail you on the spot and
+ use magic attacks as well as summon.
+-Knight Templars, powerful paladins who are immune to holy attacks and
+ are even able to call an angel for support.
+-Patriarchs, these unfaltering priestlords can summon and curse rapidly.
+-Master Mindcrafters, their ability to summon mighty support and to smash
+ your brain by psi attacks is feared.
+-Old sorcerors are able to summon ancient dragonkind and wyrms, beware!
+-(Grand) Swordsmasters, most skilled swordsmen that will disarm you easily.
+-(Grand) Master mystics, most powerful martial artists. With their special
+ techniques they can manage to stun you easily. Best remedy is high AC so
+ they won't hit you in the first place. Alternatively you can quaff potions
+ to remove any stun effect.
+-(Grand) Master thieves, very fast and stealthy they steal your possessions!
+
+-The most powerful monsters of the daemon realm, the dragonkind and the
+ heavenly planes, namely Star-spawns of Cthulu, Great Wyrms of Power,
+ balance keepers of the skies, sun and stars (Blades).
 
 -Further, players are often killed if they lack resistances and/or free action
-(against paralyzation) but nevertheless dive down into the dungeon very
-quickly.
+ (against paralyzation) but nevertheless dive down into the dungeon very
+ quickly.
 
 -Unique enemies. If you see a monster blinking in different colours, before
-trying to kill it you should examine the text file "r_info.txt" located in the
-lib\game directory to find out if it is a certain unique enemy. Then look up
-his abilities and make sure you are prepared to fight him.
+ trying to kill it you should examine the text file "r_info.txt" located in
+ the lib\game directory to find out if it is a certain unique enemy. Then look
+ up his abilities and make sure you are prepared to fight him.
 
 -If you see an enemy that you don't know anything about and that could pose a
-threat (especially if it's inside a vault!), STAY AWAY and consult either an
-experienced player or look into the file r_info.txt in your tomenet/lib/game
-directory to find out what the opponent is capable of. The safest (and most
-boring and least rewarding) way to play is to avoid vaults! Vaults can contain
-an enemy against which you don't have the slightest chance of beating it.
+ threat (especially if it's inside a vault!), STAY AWAY and consult either an
+ experienced player or look into the file r_info.txt in your tomenet/lib/game
+ directory to find out what the opponent is capable of. The safest (and most
+ boring and least rewarding) way to play is to avoid vaults! Vaults can
+ contain an enemy against which you don't have the slightest chance of beating
+ it.
 
 -Teleport out of trouble
-If you are not an antimagic-user, you should buy a staff of teleportation as
-soon as possible since it can take you out of dangerous situations.
-However, the staff is no guarantee :)
-After you bought it, try if you can actually use it well or if you keep
-failing! If you're not good at magic devices you might have to spend points
-into your 'Magic Device' skill.
-I recommend to always have at least 3 charges in the staff before diving into
-the dungeon.
+ If you are not an antimagic-user, you should buy a staff of teleportation as
+ soon as possible since it can take you out of dangerous situations.
+ However, the staff is no guarantee :)
+ After you bought it, try if you can actually use it well or if you keep
+ failing! If you're not good at magic devices you might have to spend points
+ into your 'Magic Device' skill.
+ I recommend to always have at least 3 charges in the staff before diving into
+ the dungeon.
+
+-Quaff potions of cure critical wounds or healing if you get (heavily) stunned
+ to prevent a lethal knockout in the next round! Further you can't use martial
+ arts special techniques while stunned, cutting your damage a lot.
+ Get sound resistance to not waste potions to cure stun effects from
+ water/sound/gravity/ice/plasma attacks.
 
 -Don't wait till you are a '1' or '0' before you try to teleport out.
-If you want to be on the safe side, teleport out when you are a '4' or '3'.
-Remember that your teleport staff may fail sometimes or that enemies may
-stun you for several turns!
+ If you want to be on the safe side, teleport out when you are a '4' or '3'.
+ Remember that your teleport staff may fail sometimes or that enemies may
+ stun you for several turns!
 
 -Before AND after a larger fight, check your inventory if you can carry on
-or if you have to return to town to stock up. A common problem is that some
-monsters can empty or burn up your teleport items, which you might overlook.
+ or if you have to return to town to stock up. A common problem is that some
+ monsters can empty or burn up your teleport items, which you might overlook.
 
 -If you are surrounded by huge piles of loot from dead monsters you might be
-tempted to drop cheaper items like phase door scrolls to make room for the
-precious loot, and go /afk to wait for pseudo-id. However, know that you
-_can_ all of a sudden be ambushed during that time by enemies. By enemies
-that _require_ you to use phase door..
+ tempted to drop cheaper items like phase door scrolls to make room for the
+ precious loot, and go /afk to wait for pseudo-id. However, know that you
+ _can_ all of a sudden be ambushed during that time by enemies. By enemies
+ that _require_ you to use phase door..
 
 -I do not recommend to drop food nor oil in exchange for loot if you're not
-planning to recall instantly after you picked up the loot.
+ planning to recall instantly after you picked up the loot.
 
 -Learn from your mistakes. If you die, think about if you were taking too high
-a risk, and check if you overlooked anything, maybe you were missing essential
-items (cure critical w. potions to get rid of confusion/blindness?). Next time,
-be more careful. Playing TomeNET means learning a lot about the monsters/items.
+ a risk, and check if you overlooked anything, maybe you were missing
+ essential items (cure critical w. potions to get rid of confusion/blindness).
+ Next time, be more careful. Playing TomeNET means learning a lot about the
+ monsters/items.
 
 -Team up with fellow players that are approximately at your character level.
-This means more fun and less danger. Your teammates can save your life.
+ This means more fun and less danger. Your teammates can save your life.
 
 
 
@@ -3976,7 +4179,7 @@ The most important files are:
 r_info.txt  contains all monsters.
 k_info.txt  contains all base item types.
 e_info.txt  contains all ego item types.
-a_info.txt  contains all artefacts.
+a_info.txt  contains all artifacts.
 All files contain a block of information, either at the beginning or at the
 end, which explains the meaning of each discrete info-line.
 
@@ -4142,7 +4345,7 @@ SOLUTION:   Open tomenet4.ini file with a text editor, look for the window
             sections, change the fonts to the same settings (8x13) as in the
             [Main window] section: FontFile=8X13.FON , Font=8X13.FON .
             Also, you could adjust the width/height of the windows (to 80x24
-            for example).
+            for example). Try other fonts too, maybe they work for you.
 PROBLEM:    I cannot browse (some) spell books, I see some LUA error messages
             if I try or when I connect to the server.
 SOLUTION:   Your LUA script files are outdated. Those files are responsible
@@ -4269,6 +4472,36 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
             "Sorry, the server is for members only."
                     Log in with 'guest'. You need to get an account for this
                     private server in order to play. 
+PROBLEM:    I can't connect to the meta-server (the server that displays you
+            a list of online TomeNET servers) or a specific TomeNET server.
+            Instead my connection seems to time-out.
+SOLUTION:   If you are behind a firewall make sure that the TCP ports
+            8801 for metaserver and 18348 for the actual TomeNET server aren't
+            blocked. (Well, the metaserver isn't needed to play - specify the
+            game server via command-line or when asked for it after starting
+            up the game then.)
+PROBLEM:    I'm not blocked by a firewall, but I still don't see the
+            metaserver when I run Tomenet. Instead after waiting for a short
+            period of time I'm asked to enter a server manually.
+SOLUTION:   The meta-server might be down or a DNS problem might be occuring
+            right now. This can happen from time to time. You don't need the
+            meta-server to play TomeNET though.
+            Just type in the IP adress of the server you'd like to connect to,
+            for europe enter:   213.186.35.70
+            Make sure your tomenet4.ini file contains the correct server port,
+            usually 18348! This port isn't needed if you use the meta-list to
+            choose a server to connect to, but it's important if you connect
+            directly!
+            You can connect directly to a TomeNET server and skip the meta
+            server list by running your Tomenet directly from the command-line
+            (DOS window) within its folder, adding the server IP as a
+            parameter. (In windows2k choose START/Run... and type 'cmd'
+            without quotation marks to open a command-line window.
+            Alternatively you can create a shortcut from your tomenet4.exe by
+            right-clicking, dragging, releasing it. Edit this shortcut's
+            properties and add the server IP to the command-line.)
+            For europe server it would look like this:
+            tomenet4.exe 213.186.35.70
 
 
 
