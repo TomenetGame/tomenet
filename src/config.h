@@ -200,8 +200,8 @@
  * players on.  Define this to be an empty string if you don't want to
  * report to a metaserver.
  */
-/* #define	META_ADDRESS "www.mangband.org" */
-#define	META_ADDRESS "64.53.71.113"  
+#define	META_ADDRESS "www.mangband.org"
+#define	META_ADDRESS_2 "64.53.71.113"  
 
 /*
  * OPTION: Set a vhost bind address.  This is only used if you have
@@ -630,3 +630,9 @@
 #define NEWHOUSES
 
 #define USE_LUA
+
+/*
+ * Option: Random Uniques and Ego Monsters.
+ * not fully implemented yet.	-Jir-
+ */
+/* #define RANDUNIS */

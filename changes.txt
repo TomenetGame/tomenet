@@ -373,3 +373,4 @@ Change list for PernMangband
 - Coloured cookie.
 - Allow URL on chat (eg. http://www.pernmangband.net/)
 - Admin command /wish
+- Client tries to use META_ADDRESS_2 in case.

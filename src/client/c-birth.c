@@ -546,7 +546,14 @@ bool get_server_name(void)
 	/* Check for failure */
 	if (socket == -1)
 	{
-		return enter_server_name();
+		/* Hack -- Connect to metaserver #2 */
+		socket = CreateClientSocket(META_ADDRESS_2, 8801);
+
+		/* Check for failure */
+		if (socket == -1)
+		{
+			return enter_server_name();
+		}
 	}
 
 	/* Read */
