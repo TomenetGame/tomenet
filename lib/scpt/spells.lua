@@ -160,9 +160,5 @@ school_book[10] = {
 school_book[11] = {
         DRAIN, GENOCIDE, WRAITHFORM, FLAMEOFUDUN,
 }
-
--- Create the book of beginner's cantrip
-school_book[50] = {
-        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTER, SENSEHIDDEN,
 }
 ]]
