@@ -1626,19 +1626,6 @@ bool player_birth(int Ind, cptr name, cptr pass, int conn, int race, int class, 
 		}
         }
 
-#if 0 // NO ! do it preperly wqith arrays in rp_ptr !
-	/* Hack */
-	switch (race)
-	{
-		case RACE_HOBBIT:
-			compute_skills(p_ptr, &value, &mod, SKILL_SLING);
-			init_skill(p_ptr, value + 1000, mod + 500, SKILL_SLING);
-		case RACE_DWARF:
-			compute_skills(p_ptr, &value, &mod, SKILL_DIG);
-			init_skill(p_ptr, value + 1000, mod + 300, SKILL_DIG);
-	}
-#endif
-
 	/* Success */
 	return TRUE;
 }

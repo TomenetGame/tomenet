@@ -1159,6 +1159,7 @@ To find the latest change quickly, search ==== :)
 26/06/2002 (Jir)
 - skill-requirements for spells revised.
 [B] choose_race/choose_class still used MAX_* (and not Setup.max_*)
+[B] '%' skill modifications by race weren't reflected.
 
 
 ** [B] stands for Bugfix.

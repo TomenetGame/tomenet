@@ -95,33 +95,37 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 {
 	s32b value = 0, mod = 0, j;
 
-        /***** class skills *****/
+	/***** class skills *****/
 
-        /* find the skill mods for that class */
-        for (j = 0; j < MAX_SKILLS; j++)
-        {
-                if (p_ptr->rp_ptr->skills[j].skill == i)
-                {
-                        value = p_ptr->rp_ptr->skills[j].value;
-                        mod = p_ptr->rp_ptr->skills[j].mod;
+	/* find the skill mods for that class */
+	for (j = 0; j < MAX_SKILLS; j++)
+	{
+		if (p_ptr->cp_ptr->skills[j].skill == i)
+		{
+			value = p_ptr->cp_ptr->skills[j].value;
+			mod = p_ptr->cp_ptr->skills[j].mod;
 
-                        *v = modify_aux(*v,
-                                        value, p_ptr->rp_ptr->skills[j].vmod);
-                        *m = modify_aux(*m,
-                                        mod, p_ptr->rp_ptr->skills[j].mmod);
-                }
+			*v = modify_aux(*v,
+					value, p_ptr->cp_ptr->skills[j].vmod);
+			*m = modify_aux(*m,
+					mod, p_ptr->cp_ptr->skills[j].mmod);
+		}
+	}
 
-                if (p_ptr->cp_ptr->skills[j].skill == i)
-                {
-                        value = p_ptr->cp_ptr->skills[j].value;
-                        mod = p_ptr->cp_ptr->skills[j].mod;
+	/* Race later (b/c of its modificative nature) */
+	for (j = 0; j < MAX_SKILLS; j++)
+	{
+		if (p_ptr->rp_ptr->skills[j].skill == i)
+		{
+			value = p_ptr->rp_ptr->skills[j].value;
+			mod = p_ptr->rp_ptr->skills[j].mod;
 
-                        *v = modify_aux(*v,
-                                        value, p_ptr->cp_ptr->skills[j].vmod);
-                        *m = modify_aux(*m,
-                                        mod, p_ptr->cp_ptr->skills[j].mmod);
-                }
-        }
+			*v = modify_aux(*v,
+					value, p_ptr->rp_ptr->skills[j].vmod);
+			*m = modify_aux(*m,
+					mod, p_ptr->rp_ptr->skills[j].mmod);
+		}
+	}
 }
 
 
