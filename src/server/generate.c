@@ -184,9 +184,16 @@
 #define ROOM_MAX	9
 
 /*
- * Maxumal 'depth' that has extra stairs
+ * Maxumal 'depth' that has extra stairs;
+ * also, those floors will be w/o trapped doors.
  */
 #define COMFORT_PASSAGE_DEPTH 5
+
+/*
+ * ((level+TRAPPED_DOOR_BASE)/TRAPPED_DOOR_RATE) chance of generation
+ */
+#define TRAPPED_DOOR_RATE	400
+#define TRAPPED_DOOR_BASE	30
 
 /*
  * Simple structure to hold a map location
@@ -462,7 +469,8 @@ static void place_locked_door(struct worldpos *wpos, int y, int x)
 	c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
 
 	/* let's trap this ;) */
-	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
+		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
 	place_trap(wpos, y, x);
 }
 
@@ -482,7 +490,8 @@ static void place_secret_door(struct worldpos *wpos, int y, int x)
 	c_ptr->feat = FEAT_SECRET;
 
 	/* let's trap this ;) */
-	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
+		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
 	place_trap(wpos, y, x);
 }
 
@@ -544,7 +553,8 @@ static void place_random_door(struct worldpos *wpos, int y, int x)
 	}
 
 	/* let's trap this ;) */
-	if ((tmp = getlevel(wpos)) < 6 || rand_int(900) < tmp) return;
+	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
+		rand_int(TRAPPED_DOOR_RATE) > tmp + TRAPPED_DOOR_BASE) return;
 	place_trap(wpos, y, x);
 }
 

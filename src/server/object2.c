@@ -1552,7 +1552,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 
 
 	/* Hack -- require semi-matching "inscriptions" */
-	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)) return (0);
+	/* Hack^2 -- books do merge.. it's to prevent some crashes */
+	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
+		&& !is_book(o_ptr)) return (0);
 
 	/* Hack -- normally require matching "inscriptions" */
 	if (!p_ptr->stack_force_notes && (o_ptr->note != j_ptr->note)) return (0);
@@ -4281,6 +4283,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Hack -- no bundled arts (esp.missiles) */
 		o_ptr->number = 1;
+		o_ptr->timeout = 0;
 
 		/* Hack -- extract the "broken" flag */
 		if (!a_ptr->cost) o_ptr->ident |= ID_BROKEN;

@@ -21,6 +21,13 @@
 /* distance for AI_ANNOY */
 #define		ANNOY_DISTANCE	5
 
+/* if bottle-neckie, change this radius. default was 10. */
+#define		SAFETY_RADIUS	8
+ 
+/* Chance of an out-of-sight monster to cast a spell, in percent.
+ * reducing this also speeds the server up. */
+#define		INDIRECT_FREQ	50
+ 
 /* How frequent they change colours? */
 #define 	MULTI_HUED_UPDATE	5
 
@@ -357,6 +364,16 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp)
  * Pass over any monsters that may be in the way
  * Affect grids, objects, monsters, and the player
  */
+static void breath(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+
+	/* Target the player with a ball attack */
+	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg);
+}
+#if 0
 static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 {
 	player_type *p_ptr = Players[Ind];
@@ -374,6 +391,7 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	/* Target the player with a ball attack */
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg);
 }
+#endif	// 0
 
 /*
  * Functions for Cleverer monster spells, borrowed from PernA.
@@ -844,6 +862,72 @@ bool monst_check_antimagic(int Ind, int m_idx)
 	return FALSE;
 }
 
+/*
+ * Check if a monster can harm the player indirectly.		- Jir -
+ * Return 99 if no suitable place is found.
+ *
+ * Great bottleneck :-/
+ */
+static int near_hit(int m_idx, int *yp, int *xp)
+{
+	monster_type *m_ptr = &m_list[m_idx];
+
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+
+	int py = *yp;
+	int px = *xp;
+
+	int y, x, d;	// , dis;
+	/*
+	int vy = magik(50) ? -1 : 1;
+	int vx = magik(50) ? -1 : 1;
+	*/
+
+//	int gy = 0, gx = 0, gdis = 0;
+
+	cave_type **zcave;
+	/* paranoia */
+	if(!(zcave=getcave(&m_ptr->wpos))) return 99;
+
+	/* Start with adjacent locations, spread further */
+	for (d = 1; d < 4; d++)
+	{
+		/* Check nearby locations */
+		for (y = py - d; y <= py + d; y++)
+//		for (y = py - d*vy; y <= py + d*vy; y+=vy)
+		{
+			for (x = px - d; x <= px + d; x++)
+//			for (x = px - d*vx; x <= px + d*vx; x+=vx)
+			{
+				/* Skip illegal locations */
+				if (!in_bounds(y, x)) continue;
+
+				/* Skip locations in a wall */
+				if (!cave_floor_bold(zcave, y, x)) continue;
+
+				/* Check distance */
+				if (distance(y, x, py, px) != d) continue;
+
+				/* Check if projectable */
+				if (projectable_wall(&m_ptr->wpos, fy, fx, y, x) &&
+					projectable_wall(&m_ptr->wpos, y, x, py, px))
+				{
+					/* Good location */
+					(*yp) = y;
+					(*xp) = x;
+
+					/* Found nice place */
+					return (d);
+				}
+			}
+		}
+	}
+
+	/* No projectable place */
+	return (99);
+}
+
 
 /*
  * Creatures can cast spells, shoot missiles, and breathe.
@@ -937,7 +1021,9 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Assume "projectable" */
 	bool direct = TRUE;
 
-	int antichance = 0, antidis = 0;
+	int rad = 0, srad = 0;
+
+//	int antichance = 0, antidis = 0;
 
 	/* Hack -- Extract the spell probability */
 	chance = (r_ptr->freq_inate + r_ptr->freq_spell) / 2;
@@ -995,6 +1081,12 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* XXX XXX XXX Handle "track_target" option (?) */
 
 
+	/* Extract the racial spell flags */
+	f4 = r_ptr->flags4;
+	f5 = r_ptr->flags5;
+	f6 = r_ptr->flags6;
+
+
 	/* Hack -- require projectable player */
 	if (normal)
 	{
@@ -1002,18 +1094,34 @@ bool make_attack_spell(int Ind, int m_idx)
 		if (m_ptr->cdis > MAX_RANGE) return (FALSE);
 
 		/* Check path */
+#ifdef STUPID_MONSTERS
 		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)) return (FALSE);
+#else
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px))
+		{
+			if (!magik(INDIRECT_FREQ)) return (FALSE);
+
+			direct = FALSE;
+			rad = near_hit(m_idx, &y, &x);
+
+			if (rad > 3 || (rad == 3 && !(r_ptr->flags2 & (RF2_POWERFUL)))) 
+			{
+				/* Remove inappropriate spells -
+				 * 'direct' spells should be removed this way also */
+				f4 &= ~(RF4_RADIUS_SPELLS);
+				f5 &= ~(RF5_RADIUS_SPELLS);
+//				f6 &= RF6_INT_MASK;
+
+				/* No spells left */
+				if (!f4 && !f5 && !f6) return (FALSE);
+			}
+		}
+#endif	// STUPID_MONSTERS
 	}
 
 
 	/* Extract the monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
-
-
-	/* Extract the racial spell flags */
-	f4 = r_ptr->flags4;
-	f5 = r_ptr->flags5;
-	f6 = r_ptr->flags6;
 
 
 	/* Hack -- allow "desperate" spells */
@@ -1043,10 +1151,10 @@ bool make_attack_spell(int Ind, int m_idx)
 
 #ifndef	STUPID_MONSTERS
 	/* Check for a clean bolt shot */
-	if ((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) ||
+	if (!direct || ((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) ||
 				f6&(RF6_BOLT_MASK)) &&
 			!(r_ptr->flags2 & (RF2_STUPID)) &&
-			!clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x))
+			!clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x)))
 	{
 		/* Remove spells that will only hurt friends */
 		f4 &= ~(RF4_BOLT_MASK);
@@ -1055,10 +1163,10 @@ bool make_attack_spell(int Ind, int m_idx)
 	}
 
 	/* Check for a possible summon */
-	if ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
+	if (rad > 3 || ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
 				f6 & (RF6_SUMMON_MASK)) &&
 			!(r_ptr->flags2 & (RF2_STUPID)) &&
-			!(summon_possible(wpos, y, x)))
+			!(summon_possible(wpos, y, x))))
 	{
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
@@ -1131,6 +1239,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	}
 #endif	// STUPID_MONSTERS
 
+	srad = (r_ptr->flags2 & (RF2_POWERFUL)) ? 3 : 2;
 
 
 	/* Cast the spell. */
@@ -1191,7 +1300,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 if (blind) msg_format(Ind, "%^s shoots something.", m_name);
 			 else msg_format(Ind, "%^s fires a rocket.", m_name);
 			 breath(Ind, m_idx, GF_ROCKET,
-				 ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), 2);
+				 ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), y, x, 2);
 			 update_smart_learn(m_idx, DRS_SHARD);
 			 break;
 			}
@@ -1300,7 +1409,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes acid.", m_name);
 			breath(Ind, m_idx, GF_ACID,
-			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -1312,7 +1421,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes lightning.", m_name);
 			breath(Ind, m_idx, GF_ELEC,
-			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -1324,7 +1433,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes fire.", m_name);
 			breath(Ind, m_idx, GF_FIRE,
-			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -1336,7 +1445,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes frost.", m_name);
 			breath(Ind, m_idx, GF_COLD,
-			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 1600 ? 1600 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -1348,7 +1457,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes gas.", m_name);
 			breath(Ind, m_idx, GF_POIS,
-			       ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -1360,7 +1469,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes nether.", m_name);
 			breath(Ind, m_idx, GF_NETHER,
-			       ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -1372,7 +1481,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes light.", m_name);
 			breath(Ind, m_idx, GF_LITE,
-			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_LITE);
 			break;
 		}
@@ -1384,7 +1493,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes darkness.", m_name);
 			breath(Ind, m_idx, GF_DARK,
-			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_DARK);
 			break;
 		}
@@ -1396,7 +1505,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes confusion.", m_name);
 			breath(Ind, m_idx, GF_CONFUSION,
-			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_CONF);
 			break;
 		}
@@ -1408,7 +1517,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes sound.", m_name);
 			breath(Ind, m_idx, GF_SOUND,
-			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_SOUND);
 			break;
 		}
@@ -1420,7 +1529,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes chaos.", m_name);
 			breath(Ind, m_idx, GF_CHAOS,
-			       ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_CHAOS);
 			break;
 		}
@@ -1432,7 +1541,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes disenchantment.", m_name);
 			breath(Ind, m_idx, GF_DISENCHANT,
-			       ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_DISEN);
 			break;
 		}
@@ -1444,7 +1553,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes nexus.", m_name);
 			breath(Ind, m_idx, GF_NEXUS,
-			       ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
 			update_smart_learn(m_idx, DRS_NEXUS);
 			break;
 		}
@@ -1456,7 +1565,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes time.", m_name);
 			breath(Ind, m_idx, GF_TIME,
-			       ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -1467,7 +1576,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes inertia.", m_name);
 			breath(Ind, m_idx, GF_INERTIA,
-			       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -1478,7 +1587,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes gravity.", m_name);
 			breath(Ind, m_idx, GF_GRAVITY,
-			       ((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)), 0);
+			       ((m_ptr->hp / 3) > 200 ? 200 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -1489,7 +1598,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes shards.", m_name);
 			breath(Ind, m_idx, GF_SHARDS,
-			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
 			update_smart_learn(m_idx, DRS_SHARD);
 			break;
 		}
@@ -1501,7 +1610,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes plasma.", m_name);
 			breath(Ind, m_idx, GF_PLASMA,
-			       ((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -1512,7 +1621,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			else msg_format(Ind, "%^s breathes force.", m_name);
 			breath(Ind, m_idx, GF_FORCE,
-			       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), 0);
+			       ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
 			break;
 		}
 
@@ -1523,7 +1632,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			 else msg_format(Ind, "%^s breathes magical energy.", m_name);
 			 breath(Ind, m_idx, GF_MANA,
-				 ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)),0);
+				 ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
 			break;
 		}
 
@@ -1534,7 +1643,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 disturb(Ind, 1, 0);
 			 if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			 else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
-			 breath(Ind, m_idx, GF_NUKE, (rlev + damroll(10, 6)), 2);
+			 breath(Ind, m_idx, GF_NUKE, (rlev + damroll(10, 6)), y, x, 2);
 			 update_smart_learn(m_idx, DRS_POIS);
 			 break;
 		 }
@@ -1547,7 +1656,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			 else msg_format(Ind, "%^s breathes toxic waste.", m_name);
 			 breath(Ind, m_idx, GF_NUKE,
-				 ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)),0);
+				 ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
 			 update_smart_learn(m_idx, DRS_POIS);
 			 break;
 		 }
@@ -1559,7 +1668,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 disturb(Ind, 1, 0);
 			 if (blind) msg_format(Ind, "%^s mumbles frighteningly.", m_name);
                          else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
-			 breath(Ind, m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), 4);
+			 breath(Ind, m_idx, GF_CHAOS, (rlev * 2) + damroll(10, 10), y, x, 4);
 			 update_smart_learn(m_idx, DRS_CHAOS);
 			 break;
 		 }
@@ -1572,7 +1681,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			 if (blind) msg_format(Ind, "%^s breathes.", m_name);
 			 else msg_format(Ind, "%^s breathes disintegration.", m_name);
 			 breath(Ind, m_idx, GF_DISINTEGRATE,
-				 ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)),0);
+				 ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
 			 break;
 		 }
 		 
@@ -1587,7 +1696,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts an acid ball.", m_name);
 			breath(Ind, m_idx, GF_ACID,
-			       randint(rlev * 3) + 15, 0);
+			       randint(rlev * 3) + 15, y, x, srad);
 			update_smart_learn(m_idx, DRS_ACID);
 			break;
 		}
@@ -1600,7 +1709,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a lightning ball.", m_name);
 			breath(Ind, m_idx, GF_ELEC,
-			       randint(rlev * 3 / 2) + 8, 0);
+			       randint(rlev * 3 / 2) + 8, y, x, srad);
 			update_smart_learn(m_idx, DRS_ELEC);
 			break;
 		}
@@ -1613,7 +1722,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a fire ball.", m_name);
 			breath(Ind, m_idx, GF_FIRE,
-			       randint(rlev * 7 / 2) + 10, 0);
+			       randint(rlev * 7 / 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_FIRE);
 			break;
 		}
@@ -1626,7 +1735,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a frost ball.", m_name);
 			breath(Ind, m_idx, GF_COLD,
-			       randint(rlev * 3 / 2) + 10, 0);
+			       randint(rlev * 3 / 2) + 10, y, x, srad);
 			update_smart_learn(m_idx, DRS_COLD);
 			break;
 		}
@@ -1639,7 +1748,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a stinking cloud.", m_name);
 			breath(Ind, m_idx, GF_POIS,
-			       damroll(12, 2), 0);
+			       damroll(12, 2), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -1651,7 +1760,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s casts a nether ball.", m_name);
-			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev), 0);
+			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev), y, x, srad);
 			update_smart_learn(m_idx, DRS_NETH);
 			break;
 		}
@@ -1665,7 +1774,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s gestures fluidly.", m_name);
 			msg_print(Ind, "You are engulfed in a whirlpool.");
 			breath(Ind, m_idx, GF_WATER,
-			       randint(rlev * 5 / 2) + 50, 0);
+			       randint(rlev * 5 / 2) + 50, y, x, srad);
 			break;
 		}
 
@@ -1677,7 +1786,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
 			else msg_format(Ind, "%^s invokes a mana storm.", m_name);
 			breath(Ind, m_idx, GF_MANA,
-			       (rlev * 5) + damroll(10, 10), 0);
+			       (rlev * 5) + damroll(10, 10), y, x, srad);
 			break;
 		}
 
@@ -1689,7 +1798,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles powerfully.", m_name);
 			else msg_format(Ind, "%^s invokes a darkness storm.", m_name);
 			breath(Ind, m_idx, GF_DARK,
-			       (rlev * 5) + damroll(10, 10), 0);
+			       (rlev * 5) + damroll(10, 10), y, x, srad);
 			update_smart_learn(m_idx, DRS_DARK);
 			break;
 		}
@@ -3038,6 +3147,183 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 
 
 /*
+* Choose a "safe" location near a monster for it to run toward.
+*
+* A location is "safe" if it can be reached quickly and the player
+* is not able to fire into it (it isn't a "clean shot").  So, this will
+* cause monsters to "duck" behind walls.  Hopefully, monsters will also
+* try to run towards corridor openings if they are in a room.
+*
+* This function may take lots of CPU time if lots of monsters are
+* fleeing.
+*
+* Return TRUE if a safe location is available.
+*/
+static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr = &m_list[m_idx];
+
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
+	int y, x, d, dis;
+	int gy = 0, gx = 0, gdis = 0;
+
+	cave_type **zcave;
+	/* paranoia */
+	if(!(zcave=getcave(&m_ptr->wpos))) return;
+
+	/* Start with adjacent locations, spread further */
+	for (d = 1; d < SAFETY_RADIUS; d++)
+	{
+		/* Check nearby locations */
+		for (y = fy - d; y <= fy + d; y++)
+		{
+			for (x = fx - d; x <= fx + d; x++)
+			{
+				/* Skip illegal locations */
+				if (!in_bounds(y, x)) continue;
+
+				/* Skip locations in a wall */
+				if (!cave_floor_bold(zcave, y, x)) continue;
+
+				/* Check distance */
+				if (distance(y, x, fy, fx) != d) continue;
+#ifdef MONSTER_FLOW
+				/* Check for "availability" (if monsters can flow) */
+				if (flow_by_sound)
+				{
+					/* Ignore grids very far from the player */
+					if (cave[y][x].when < cave[py][px].when) continue;
+
+					/* Ignore too-distant grids */
+					if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+				}
+#endif
+				/* Check for absence of shot */
+				if (!projectable(&m_ptr->wpos, y, x, py, px))
+				{
+					/* Calculate distance from player */
+					dis = distance(y, x, py, px);
+
+					/* Remember if further than previous */
+					if (dis > gdis)
+					{
+						gy = y;
+						gx = x;
+						gdis = dis;
+					}
+				}
+			}
+		}
+
+		/* Check for success */
+		if (gdis > 0)
+		{
+			/* Good location */
+			(*yp) = fy - gy;
+			(*xp) = fx - gx;
+
+			/* Found safe place */
+			return (TRUE);
+		}
+	}
+
+	/* No safe place */
+	return (FALSE);
+}
+
+
+/*
+ * Choose a good hiding place near a monster for it to run toward.
+ *
+ * Pack monsters will use this to "ambush" the player and lure him out
+ * of corridors into open space so they can swarm him.
+ *
+ * Return TRUE if a good location is available.
+ */
+/*
+ * I did ported this, however, seemingly AI_ANNOY works 50 times
+ * better than this function :(			- Jir -
+ */
+static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr = &m_list[m_idx];
+
+	int fy = m_ptr->fy;
+	int fx = m_ptr->fx;
+
+	int py = p_ptr->py;
+	int px = p_ptr->px;
+
+	int y, x, d, dis;
+	int gy = 0, gx = 0, gdis = 999, min;
+
+	cave_type **zcave;
+	/* paranoia */
+	if(!(zcave=getcave(&m_ptr->wpos))) return;
+
+	/* Closest distance to get */
+	min = distance(py, px, fy, fx) * 3 / 4 + 2;
+
+	/* Start with adjacent locations, spread further */
+	for (d = 1; d < SAFETY_RADIUS; d++)
+	{
+		/* Check nearby locations */
+		for (y = fy - d; y <= fy + d; y++)
+		{
+			for (x = fx - d; x <= fx + d; x++)
+			{
+				/* Skip illegal locations */
+				if (!in_bounds(y, x)) continue;
+
+				/* Skip locations in a wall */
+				if (!cave_floor_bold(zcave, y, x)) continue;
+
+				/* Check distance */
+				if (distance(y, x, fy, fx) != d) continue;
+
+				/* Check for hidden, available grid */
+				if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x))
+				{
+					/* Calculate distance from player */
+					dis = distance(y, x, py, px);
+
+					/* Remember if closer than previous */
+					if (dis < gdis && dis >= min)
+					{
+						gy = y;
+						gx = x;
+						gdis = dis;
+					}
+				}
+			}
+		}
+
+		/* Check for success */
+		if (gdis < 999)
+		{
+			/* Good location */
+			(*yp) = fy - gy;
+			(*xp) = fx - gx;
+
+			/* Found good place */
+			return (TRUE);
+		}
+	}
+
+	/* No good place */
+	return (FALSE);
+}
+
+
+
+/*
  * Choose "logical" directions for monster movement
  */
 static void get_moves(int Ind, int m_idx, int *mm)
@@ -3073,8 +3359,18 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Apply fear if possible and necessary */
 	if (mon_will_run(Ind, m_idx))
 	{
+#ifdef STUPID_MONSTERS
 		/* XXX XXX Not very "smart" */
 		y = (-y), x = (-x);
+#else
+		/* Try to find safe place */
+		if (!find_safety(Ind, m_idx, &y, &x))
+		{
+			/* This is not a very "smart" method XXX XXX */
+			y = (-y);
+			x = (-x);
+		}
+#endif	// STUPID_MONSTERS
 		done = TRUE;
 	}
 
@@ -3084,6 +3380,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	{
 //		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < 4)
 		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE)
+//			&& !(r_ptr->flags2 & RF2_SMART && p_ptr->pclass == CLASS_ARCHER))
 		{
 			y = -y;
 			x = -x;
@@ -3104,12 +3401,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 //        if (!stupid_monsters && (is_friend(m_ptr) < 0))
 #ifndef STUPID_MONSTERS
+	if (!done)
 	{
 		int tx = x2, ty = y2;
 		cave_type **zcave;
 		/* paranoia */
 		if(!(zcave=getcave(&m_ptr->wpos))) return;
-#if 0
+#if 1
 		/*
 		 * Animal packs try to get the player out of corridors
 		 * (...unless they can move through walls -- TY)
@@ -3136,8 +3434,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			if ((room < 8) && (p_ptr->chp > ((p_ptr->mhp * 3) / 4)))
 			{
 				/* Find hiding place */
-//				if (find_hiding(m_idx, &y, &x)) done = TRUE;
-				done = TRUE;
+				if (find_hiding(Ind, m_idx, &y, &x)) done = TRUE;
 			}
 		}
 #endif	// 0

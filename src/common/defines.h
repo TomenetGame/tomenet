@@ -3655,6 +3655,8 @@ that keeps many algorithms happy.
 
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
 
+#define RF4_RADIUS_SPELLS (0xffffff08) /* Hack ;) */
+#define RF5_RADIUS_SPELLS (0x000001ff) /* Hack ;) */
 /*
  * New monster race bit flags
  */
@@ -3677,7 +3679,7 @@ that keeps many algorithms happy.
 #define RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
 #define RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
 #endif
-#define RF5_UNMAGIC			0x00008000	/* Cause Mortal Wound */
+#define RF5_UNMAGIC			0x00008000	/* Cancel player's timed spell */
 #define RF5_BO_ACID			0x00010000	/* Acid Bolt */
 #define RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
 #define RF5_BO_FIRE			0x00040000	/* Fire Bolt */

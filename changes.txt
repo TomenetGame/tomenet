@@ -763,6 +763,16 @@ Change list for PernMangband
 [B] Nazguls didn't drop the rings
 [B] some arts were handled in a wrong way when fighting Nazguls
 
+03/03/2002 (Jir)
+- the rest part of porting of monster-AI is done;
+  now monsters have learnt to hide behind obstacles.
+  if server gets slow by this, pls adjust SAFETY_RADIUS in melee2.c.
+- monsters also cast spells even when out of sight.
+- *ID*ed items are marked with '*'.
+- /unc(urse)
+[B] client crushed when having 2 same books with different inscription.
+    (not really fixed; just hacked around)
+
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.
 ** [H] stands for Hack :)
@@ -778,18 +788,22 @@ Change list for PernMangband
 [B] 'You hit it.' etc in town (99% problem in zcave.m_idx)
 [B] /rec won't work if to wilderness? (admin)
 [B] some monsters become 'immune' to spell attacks.
-[B] savedata corruption observed when buying books:
-	#0  0x80526bf in message_str (age=0) at client/c-util.c:1340
-	#1  0x8065919 in fix_message () at client/c-xtra1.c:1067
-	#2  0x80665f8 in window_stuff () at client/c-xtra1.c:1407
-	#3  0x805b065 in Input_loop () at client/c-init.c:229
-	#4  0x805b520 in client_init (argv1=0x0) at client/c-init.c:464
-	#5  0x8068152 in main (argc=1, argv=0xbfbff774) at client/client.c:263
-	#6  0x804a311 in _start ()
 [B] ^^^^^^^^^^^^^^^^^^^^^^^ broken display (on certain vault?)
     ./mangclient: Received unknown packet type (86, 41), dropping
 [B][C] chat-history contains lines with 'mindcrafter'. 
 [B] log-file viewer leaves messy screen when done.
+	Program received signal SIGSEGV, Segmentation fault.
+	0x80526bf in message_str (age=0) at client/c-util.c:1340
+	1340            o = message__ptr[x];
+	(gdb) bt
+	#0  0x80526bf in message_str (age=0) at client/c-util.c:1340
+	#1  0x80659f1 in fix_message () at client/c-xtra1.c:1067
+	#2  0x80666d0 in window_stuff () at client/c-xtra1.c:1407
+	#3  0x805b0f5 in Input_loop () at client/c-init.c:229
+	#4  0x805b5b0 in client_init (argv1=0x0) at client/c-init.c:464
+	#5  0x806822a in main (argc=1, argv=0xbfbff740) at client/client.c:263
+	#6  0x804a311 in _start ()
+	
 
 ==== below this line are changes to be done in the future ====
 [minor ones]

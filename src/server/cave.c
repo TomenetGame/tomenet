@@ -1569,7 +1569,7 @@ void note_spot(int Ind, int y, int x)
 
 	cave_type **zcave;
 	cave_type *c_ptr;
-	zcave=getcave(&p_ptr->wpos);
+	if (!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[y][x];
 
 	/* Hack -- memorize objects */

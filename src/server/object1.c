@@ -2467,6 +2467,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		t = object_desc_str(t, mode < 8 ? " (charging)" : "(#)");
 	}
 
+	if (o_ptr->ident & ID_MENTAL)
+	{
+		t = object_desc_chr(t, '*');
+	}
+
 
 	/* No more details wanted */
 	if ((mode & 7) < 3)
