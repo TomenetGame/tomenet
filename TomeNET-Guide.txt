@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. July 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 29. July 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -264,7 +264,8 @@ _       drink from a fountain. You must stand on the fountain to do this.
 @       displays a list of players currently on the server.
 '       lets you peek at the equipment of party members or players within
         sight.
-<,>     go upstairs/downstairs.
+<,>     go upstairs/downstairs. Press '>' to use a void gate (violet '+').
+        Void jump gates teleport you to their counterpart and vice versa.
 SHIFT+<direction key>
         runs into that direction. Numlock must be turned off probably.
         You can also run by pressing the dot '.' followed by a direction key.
@@ -758,7 +759,8 @@ ghost/hellish character on mundane death).
 (3.3) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, stored in the
-inventory ("Recall" window). As a warrior you will have a Chain Mail and a Sword.
+inventory ("Recall" window). As a warrior you will have a Chain Mail and a
+Sword.
 Start-up equipment always has level 0 and cannot be used by other players!
 You should now equip your start-up items, since they won't help you if
 they stay inside the backpack. Press the key 'w', you will be asked which
@@ -798,13 +800,16 @@ Going deep down into the dungeon with a very low character level in hope of
 meeting a monster that gives lots of experience while at the same time is not
 too hard to kill is called "diving" and often is kind of suicide while
 sometimes very rewarding.
-However, buying certain items will greatly raise your chance to escape from
-dangerous situations alive or even slaying though opponents. Also, by buying
-an item like magic potions or scrolls you will remember how it looks like and
-instantly recognize it if you find some of the same type in the dungeon.
+However, buying certain items will greatly raise your chance of escaping from
+dangerous situations alive or even slaying tough opponents. Also, by buying
+an item (like magic potions or scrolls) your character will remember what it
+'looks like' and instantly recognize it if you find some of the same type in
+the dungeon. If you find a potion/scroll unknown to your character you will
+have to either use it or sell it to a shop or use a scroll of identify to find
+out what it is.
 So to prepare for hunting in the dungeon, buy:
 -Potion of Heroism
--Potion of Cure Light Wounds
+-Potion of Cure Light/Serious Wounds
 -Scroll of Phase Door
 The more you can buy of those the better. At least buy one potion of Heroism
 and Cure Light Wounds.
@@ -1249,7 +1254,11 @@ Ghosts have some special abilities, these are
 -they spot warm-blooded creatues easily
 -they resist darkness effects, blindness, poison, cold, fear and confusion
 -they cannot be cut since they don't bleed
--they resist insanity attacks.
+-they resist insanity attacks
+-they can pass solid walls and mountains
+-they can fly
+-they cannot use items
+-they cannot carry items except for the Book Of The Dead.
 
 Ghosts can access undead powers with 'U'.
 Those powers drain your experience. If you use them too often and run out
@@ -1488,11 +1497,11 @@ To enter a dungeon your character must have the displayed minimum level.
 Otherwise you'll get a message like this "Suddenly you're grasped by an
 uncontrollable fear".
 
-The deeper you decend into the dungeons, the more time will be slowed down to
-make it easier to fight very fast monsters. By the time your character enters
-those depths, it should already have boosted speed so the slowdown won't
-bother you but come in handy. For example if you enter Mordor you will notice
-a slowdown to to approx. 1/2 standard time.
+The deeper you decend into the dungeons, the more the passing of time itself
+will be slowed down to make it easier to fight very fast monsters. By the time
+your character enters those depths, it should already have boosted speed so
+the slowdown won't bother you but come in handy. For example if you enter
+Mordor you will notice a slowdown to to approx. 1/2 standard time.
 
 Also, there are several dungeons that aren't bound to a town. Here's a list:
 Dungeon                         |   Depth/Level         |   Required player
@@ -1521,6 +1530,15 @@ Nether Realm                    | 8300..9850/166..197   |       40
 
 The Europe server currently also has an 'ironman' dungeon (see (4.8)):
 Wilderness                      |  100..1100/  2..22    |        0
+
+To enter the Nether Realm a player must carry the 'King'/'Queen' title,
+acquired by beating Morgoth, The Lord of Darkness.
+Each floor in the Nether Realm gives a +20% bonus to experience from monster
+kills.
+So fighting at 250ft would give 5*20% = +100% bonus, hence doubling the
+experience you gain. The amount of experience is already very high even
+without the depth-bonus, since creatures in the Nether Realm are of a very
+high level.
 
 
 
@@ -1876,6 +1894,8 @@ If several multipliers match the highest one will be used.
 -----------------------
 If your melee weapon or ranged weapon is too heavy you will hardly be able
 to use it, resulting in reduced attack number per round and less damage.
+You will get the message "You have trouble wielding such a heavy weapon/bow"
+and probably your blows will drop to 1 and tohit/todam go near to zero.
 A weapon is too heavy for you if its weight is greater than the so-called
 str_hold value. Below is a table with the str_hold values, depending on a
 character's strength:
@@ -2364,6 +2384,8 @@ CURSE_NO_DROP
         You cannot even drop this item while it's cursed.
 TY_CURSE
         No effect, except for lowering the items value.
+DG_CURSE
+        No effect, except for greatly lowering the items value.
 
 
 
@@ -2522,6 +2544,8 @@ Magi            Restores your intelligence and your mana.
 Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
+Dragon's Breath These wands fire a ball of dragon odem (more powerful than
+                normal ball spell wands.)
 Havoc           Fires balls or beams of chaos, the exact outcome is hard to
                 tell.. it's very powerful though.
 
@@ -2750,6 +2774,9 @@ Note that not every skill is available to every profession (class).
                                 depending on your MA skill) are affected by
                                 elemental brands, but slightly less (2/3 as
                                 much) as normal weapons.
+                                Martial Arts gives you a chance / adds to your
+                                chance of intercepting an enemy! See
+                                'Interception' skill below.
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
@@ -2818,8 +2845,23 @@ Note that not every skill is available to every profession (class).
                                 you try to shoot with a bow.
         .Interception           Ability to interfere with adjacent enemies.
                                 Can prevent them from teleporting, casting,
-                                summoning, running away. Interception chance
-                                caps at 90%.
+                                summoning, running away. The chance to
+                                intercept an enemy is 3 x your interception
+                                plus your martial arts skill minus the enemy's
+                                level.
+                                Interception chance is recuded to 33% while
+                                you are blind.
+                                Interception chances also depend on what the
+                                enemy is trying to do. Certain actions are
+                                harder to intercept, those reduce the chance
+                                further, to..
+                                100%    for shooting
+                                 70%    for running (fleeing / stepping back)
+                                 50%    for casting a spell
+                                 40%    for teleporting / phasing (blinking)
+                                Interception chance caps at 90% (cap is
+                                applied after all other penalties have been
+                                factored in, at the very end of calculation).
 +Necromancy                     Drains life from killed monsters
                                 (the skill level in HPs from each kill).
     .Aura power                 Increases the power of your auras.
@@ -2839,6 +2881,8 @@ Note that not every skill is available to every profession (class).
                                 wands,staves or rods anymore!
                                 Further, this skill also slightly affects
                                 your fellow party members (casters).
+                                Each point in Antimagic adds 1% to your total
+                                AM chance, so the max gain is +50% from skill.
 +Health                         Increases your hit point regeneration rate.
                                 If you spend 10 points into Health, your
                                 sanity will be displayed as a bar.
@@ -2947,6 +2991,8 @@ a new character level. You also might have certain intrinsic abilities.
 To see numerical tables about races and classes, visit http://www.tomenet.net/
 and click 'Doc' in the menu on the left.
 (Descriptions here are partially taken from www.tomenet.net )
+For Beginners a powerful but simple race/class combination like Half-Troll
+Warrior is strongly recommended.
 
 Human
     Humans are allrounders with no special weaknesses or strengths.
@@ -3061,6 +3107,8 @@ Thunderlord (also known as Dragonrider)
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
+Note that Yeeks are limited to 4 melee attacks per round (not including boni
+from skills or items yet).
 
             STR INT WIS DEX CON CHR     HPdice  Exp%    Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT
@@ -3128,6 +3176,7 @@ Warrior
     suppression of teleportation abilities and all magic in the area around
     them.
     Warriors can also become monk-like fighters, by training the Martial Arts.
+    The warrior class is recommended for beginners.
 Istari (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
@@ -3136,8 +3185,10 @@ Istari (elvish word for Mage)
     difficult journey. On the downside, they are the worst fighters, being
     unable to use any weapon but a Mage Staff comfortably, and still unable
     to be anything even remotely approaching effective with it.
-    A Sorcerer also has the fewest hit points of any class, making survival
-    difficult in the beginning.
+    An Istari and especially Sorcerer (that's an Istari who specializes in
+    'Sorcery' skill) also has the fewest hit points of any class, making
+    survival difficult in the beginning.
+    This class is not recommended for beginners.
 Priest
     Priests use certain divine magic. Unless mages they have a fair
     fighting potential with hafted or blessed weapons. Priests can learn
@@ -3152,6 +3203,9 @@ Priest
     Priests also have excellent saving throws due to divine intervention.
     Priests make decent fighters, preferring blunt weapons over edged ones.
     Wisdom is the priest's primary stats.
+    Note that priests get a penalty for wielding non-hafted weapons, except
+    for BLESSED weapons which priests can use without problems independently
+    of their type.
 Rogue
     Rogues can backstab (works especially well in the dark) sleeping or
     fleeing monsters, and they can train stealing from shops, creatures
@@ -3770,11 +3824,12 @@ Beginners (level 1)
 Know that there are traps that can empty your stomach or drain the fuel of
 your light. If you don't have supplies then you might be doomed.
 + Potion of Heroism
-because it can approximately double the hitpoints of characters (depending on
-race/class) for a short period of time as well as greatly improve the chance
-to hit the opponent, which will raise the fighting potential for example
-against enemies like Farmer Maggot's dogs. Even if your character has a decent
-amount of Hit Points, these potions raise your fighting abilities a good deal.
+because it can approximately double the hitpoints of level 1 characters
+(depending on race/class) for a short period of time as well as greatly
+improve the chance to hit the opponent, which will raise the fighting
+potential for example against enemies like Farmer Maggot's dogs. Even if your
+character has a decent amount of Hit Points, these potions raise your fighting
+abilities a good deal.
 + Potion of Cure Light Wounds
 The become useless quickly while you gain some character levels since they
 don't heal very many HP (Hit Points). At the beginning they are very helpful
@@ -4507,8 +4562,8 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
 
 (9) End of this guide.
 ==============================================================================
-** Note that some information here can quickly be outdate because TomeNET is
-currently under development. So no guarantees ;) **
+** If TomeNET experiences changes/improvements you can also expect this guide
+to become updated shortly afterwards. Anyways, no guarantees ;) **
 Please don't hesitate to send in suggestions, criticism or comments to
 mail@c-blue.de
 ==============================================================================
