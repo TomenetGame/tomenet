@@ -388,3 +388,4 @@ Change list for PernMangband
 - wizard/DM should use console password from now on.
 - SPELL_INTERFERE option in *.cfg.
 - Failing to cast a spell takes a turn now.
+- wizard/DM can view all the players' inventory via "'".
