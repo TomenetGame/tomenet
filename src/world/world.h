@@ -70,8 +70,8 @@ struct chat{
 
 /* server world authentication */
 struct auth{
-	char pass[21];
-	long val;
+	unsigned char pass[21];
+	unsigned long val;
 };
 
 #define LT_ARTIFACT	1

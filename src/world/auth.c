@@ -10,7 +10,7 @@
 
 char salt[21];
 
-unsigned long chk(char *s1, char *s2);
+unsigned long chk(unsigned char *s1, unsigned char *s2);
 char *rpgen(char *dest);
 
 void initrand(){
@@ -58,7 +58,7 @@ short pwcheck(char *cpasswd, unsigned long val){
 }
 
 /* unified, hopefully unique password check function */
-unsigned long chk(char *s1, char *s2){
+unsigned long chk(unsigned char *s1, unsigned char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
 	static unsigned long rval[2]={0, 0};
