@@ -1041,7 +1041,7 @@ extern void update_stuff(int Ind);
 extern void redraw_stuff(int Ind);
 extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
-extern void fix_spell(int Ind);
+extern void fix_spell(int Ind, bool full);
 
 /* xtra2.c */
 extern s16b questid;
