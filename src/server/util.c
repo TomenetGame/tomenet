@@ -2557,14 +2557,19 @@ static void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				flags|=QUEST_GUILD;
+				lev=Players[j]->lev+5;
 			}
 			else if(admin && tk && (j=name_lookup_loose(Ind, token[1], FALSE))){
 				if(Players[j]->quest_id){
 					msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
 					return;
 				}
+				lev=Players[j]->lev;	/* for now */
 			}
-			else flags|=QUEST_RACE;
+			else{
+				flags|=QUEST_RACE;
+				lev=Players[j]->lev;
+			}
 			if(Players[j]->quest_id){
 				for(i=0; i<20; i++){
 					if(quests[i].id==Players[j]->quest_id){
@@ -2577,7 +2582,6 @@ static void do_slash_cmd(int Ind, char *message)
 			get_mon_num_hook=dungeon_aux;
 			get_mon_num_prep();
 			i=2+randint(7);
-			lev=Players[j]->lev;
 			do{
 				r=get_mon_num(lev);
 				k++;
