@@ -3,6 +3,8 @@
 
 /* Client global variables */
 
+bool c_quit=FALSE;
+
 char nick[MAX_CHARS]="";
 char pass[MAX_CHARS]="";
 char svname[MAX_CHARS]="";

@@ -34,6 +34,7 @@ extern cptr monster_spells6[32];
 
 
 /* variable.c */
+extern bool c_quit;
 extern char nick[MAX_CHARS];
 extern char pass[MAX_CHARS];
 extern char svname[MAX_CHARS];

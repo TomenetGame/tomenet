@@ -230,13 +230,15 @@ static char inkey_aux(void)
 			/* Update our timer and if neccecary send a keepalive packet
 			 */
 			update_ticks();
-			do_keepalive();
+			if(!c_quit)
+				do_keepalive();
 
 			/* Flush the network output buffer */
 			Net_flush();
 
 			/* Wait for .001 sec, or until there is net input */
 			SetTimeout(0, 1000);
+			if(c_quit) continue;
 
 			/* Parse net input if we got any */
 			if (SocketReadable(net_fd))
@@ -1098,7 +1100,8 @@ bool askfor_aux(char *buf, int len, char private)
 
 	/* The top line is OK now */
 	topline_icky = FALSE;
-	Flush_queue();
+	if(!c_quit)
+		Flush_queue();
 
 	/* Aborted */
 	if (i == ESCAPE) return (FALSE);
@@ -1383,7 +1386,8 @@ bool get_check(cptr prompt)
 	topline_icky = FALSE;
 
 	/* Flush any events that came in while we were icky */
-	Flush_queue();
+	if(!c_quit)
+		Flush_queue();
 
 	/* Normal negation */
 	if ((i != 'Y') && (i != 'y')) return (FALSE);

@@ -718,8 +718,6 @@ void dump_messages_aux(FILE *fff, int lines, int mode)
 		}
 
 		/* Dump the messages, bottom to top */
-//		fprintf(fff, "%s%s\n", buf, r ? format(" (x%d)", r + 1) : "");
-//		fprintf(fff, buf);
 		fputs(buf, fff);
 	}
 	fprintf(fff, "\n\n");

@@ -289,6 +289,19 @@ static void quit_hook(cptr s)
 	int j;
 
 	Net_cleanup();
+	c_quit=1;
+	if(get_check("Save chatlog?")){
+		FILE *fp;
+		char buf[80]="tome_chat.log";
+		int i;
+		i=message_num();
+		get_string("Filename:", buf, 80);
+		fp=fopen(buf, "w");
+		if(fp!=(FILE*)NULL){
+			dump_messages_aux(fp, i, 1);
+			fclose(fp);
+		}
+	}
 
 #ifdef UNIX_SOCKETS
 	SocketCloseAll();
