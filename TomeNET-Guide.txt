@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. June 2003; written by C. Blue, http://www.c-blue.de/
+| Latest update: 23. June 2003; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.1.7, http://www.tomenet.net/
 +---
 | Welcome to this guide!
@@ -37,7 +37,7 @@ Contents
     (3.7)   An example macro set for warriors
     (3.8)   Macros with special keys
     (3.9)   Level-ups and skill points
-    (3.10)   Death and Ghosts
+    (3.10)  Death and Ghosts
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
@@ -53,7 +53,7 @@ Contents
     (5.2)   Ranged weapons, brands
     (5.3)   Martial Arts, brands
     (5.4)   Slaying vs brands
-    (5.5)   Resistances & caps
+    (5.5)   Resistances & caps, Immunities, Susceptibilities
     (5.6)   Qualitative classification of items
     (5.7)   Special abilities of items
     (5.8)   What does item xxx do exactly?
@@ -1503,6 +1503,9 @@ Erebor                          | 3000..3650/ 60..73    |       35
 Mount Doom                      | 4250..5000/ 85..100   |       18
 Nether Realm                    | 8300..9850/166..197   |       40
 
+The Europe server currently also has an 'ironman' dungeon (see (4.8)):
+Wilderness                      |  100..1100/  2..22    |        0
+
 
 
 (4.6) Pits and vaults
@@ -1843,8 +1846,11 @@ If several multipliers match the highest one will be used.
 
 
 
-(5.5) Resistances & caps
-------------------------
+(5.5) Resistances & caps, Immunities, Susceptibilities
+------------------------------------------------------
+
+Resistances & caps
+------------------
 Several monsters or traps can cause elemental attacks on you. These attacks
 can deliver very high damage if you do not 'resist' the specific attack type.
 Those 'resistances' become very important in deeper dungeons where many
@@ -2086,6 +2092,48 @@ Rocket          Rockets combine shard & sound effects with heat influence on
                 3/4 (overriding fire resistance).
                 (Rockets are treated internally like breathing.)
 
+Immunities
+----------
+Players can become immune to the basic elements, poison and water by wearing
+items (for excample dragon scale mails of the corresponding colour) or by
+transforming into a monster shape that carries the according immunities
+(see (6.7) about mimicry details).
+If a player is immune to an element, (s)he won't take any damage from those
+attacks or any side-effects. Example: Wearing a Black Dragon Scale Mail
+which provides Water Immunity makes the player take 0 damage from a water
+bolt attack and also protect him from the stun+confuse effect of water bolts.
+(It won't protect him from the stun/confuse effect of other attacks though.)
+
+Susceptibilities
+----------------
+Some monsters are susceptible against certain elements. For example fire
+hounds are susceptible against cold attacks.
+
+Physical attacks vs monsters:
+Susceptibility of a monster will result in a doubled multiplier for
+branded attacks. Example: If the player hits a Cold Hound with a
+fiery broad sword (2d6) the Cold Hound will receive 2d6 * 6 damage
+instead of 2d6 * 3 (usual brand multiplier for melee weapons).
+Also see (5.4) for a table of brand multipliers.
+
+Magical attacks vs monsters:
+Susceptibility of a monster will result in double damage for the
+according elemental attacks (ie cold ball vs fire hounds).
+
+Magical/monster attacks vs players:
+Players can be susceptible against an element too. For example Ents are
+susceptible to fire by nature. Immunity will completely cancel out the
+susceptibility. If an Ent wears an item of fire immunity it will suffer
+0 damage from fire attacks, same as any other character.
+If a susceptible player without immunity is hit by the according elemental
+damage type, the damage will be doubled!
+If a player is susceptible to an element and at the same time wears an item
+that provides resistance then both factor in: Damage = Damge * 2 / 3.
+(If the player also has temporary resistance then the damage will be
+multiplied by 1/3 once more, as usual.)
+
+Physical attacks in pvp are not influenced by susceptibilities.
+
 
 
 (5.6) Qualitative classification of items
@@ -2268,6 +2316,9 @@ Heroism         Temporary effects: Increase CHP and MHP by 10. Removes fear.
 Berserk Strength
                 Temporary effects: Increase CHP and MHP by 30. Removes fear.
                 +5 bonus to-hit, +10 bonus to-dam, -10 malus to to-ac.
+Resistance      Gives you temporary resistance against heat, cold, acid,
+                electricity and poison. (Stacks with permanent resistance
+                to lower the damage to 1/9 (1/3 temp * 1/3 perm)).
 Speed           Temporary speed increase by +10.
 Cure Light Wounds
                 Cures blindness and cuts; heals 2d8 HP.
@@ -2834,7 +2885,7 @@ Ent
     land, they were summoned to guard the forests of Middle-earth.
     Being much like trees they are very slow but strong and do not have
     to eat as often. Because they consist of wood, they are quite
-    sensible to fire and they don't drown in water. As the Shepherds
+    susceptible to fire and they don't drown in water. As the Shepherds
     of the Trees, they can learn to sense the presence of others, such
     as animals  at level 10, orcs at 15, trolls at 20, giants at 25,
     dragons at 30, demons at 40 and all evil-minded creatures at level 50.
