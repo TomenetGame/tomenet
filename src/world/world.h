@@ -80,7 +80,7 @@ struct lock{
 	unsigned short ltype;	/* Lock type */
 	unsigned long ttl;	/* time to live for non final lock */
 	unsigned obj;		/* lock object by number (monster, item etc.) */
-}
+};
 
 struct smsg{
 	char stxt[160];		/* may need more info than this sometime */
