@@ -29,6 +29,7 @@
      Level cap changed to exp cap so weaker classes make sense again.
      Cap is exactly sufficient for the worst choice in terms of penalty
      to become level 50, the Thunderlord Ranger :)
+     Adjusted critical strikes.
 
 12/02/2003
 [O]- Admins can destroy/unequip anything

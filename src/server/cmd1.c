@@ -144,12 +144,30 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i, k;
+	int i, k, w;
+	
+	/* Critical hits for rogues says 'with light swords'
+	in the skill description, which is logical since you
+	cannot maneuver a heavy weapon so that it pierces through
+	the small weak spot of an opponent's armour, hitting exactly
+	into his artery or sth. So #if 0.. */
 
+#if 0
 	/* Extract "blow" power */
 	i = (weight + ((p_ptr->to_h + plus) * 5) +
                  get_skill_scale(p_ptr, SKILL_MASTERY, 150));
         i += 50 * p_ptr->xtra_crit;
+#else
+	/* Extract critical maneuver potential (interesting term..) */
+	/* The larger the weapon the more difficult to quickly strike
+	the critical spot. Cap weight influence at 100+ lbs */
+	w = weight;
+	if (w > 100) w = 10;
+	else w = 110 - w;
+	if (w < 10) w = 10; /* shouldn't happen anyways */
+	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
+#endif
+
         if (allow_skill_crit)
         {
                 i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -158,16 +176,18 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 	/* Chance */
 	if (randint(5000) <= i)
 	{
+		/* _If_ a critical hit is scored then it will deal
+		more damage if the weapon is heavier */
 		k = weight + randint(650);
                 if (allow_skill_crit)
                 {
-                        k += get_skill_scale(p_ptr, SKILL_CRITS, 400);
+                        k += get_skill_scale(p_ptr, SKILL_CRITS, 600);
                 }
 
 		if (k < 400)
 		{
 			msg_print(Ind, "It was a good hit!");
-			dam = 2 * dam + 5;
+			dam = ((3 * dam) / 2) + 5;
 		}
 		else if (k < 700)
 		{
@@ -177,7 +197,7 @@ s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit
 		else if (k < 900)
 		{
 			msg_print(Ind, "It was a superb hit!");
-			dam = 3 * dam + 15;
+			dam = ((5 * dam) / 2) + 15;
 		}
 		else if (k < 1300)
 		{
