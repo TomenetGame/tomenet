@@ -461,7 +461,7 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0x00, 0x8D, 0x44),  /* 0 2 1  Green */
 	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
 	PALETTERGB(0x8D, 0x44, 0x00),  /* 2 1 0  Umber */
-	PALETTERGB(0x44, 0x44, 0x44),  /* 1 1 1  Lt. Dark */
+	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
 	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
 	PALETTERGB(0xFF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
 	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
