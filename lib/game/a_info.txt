@@ -818,9 +818,9 @@ D:A set of handgear so corrosive that it may fire bolts of acid.
 N:58:'Camlost'
 I:31:2:-3
 W:10:20:25:0
-P:2:1d1:-11:-12:0
+P:2:1d1:-19:-14:-10
 F:STR | DEX | HIDE_TYPE | DRAIN_MANA | 
-F:RES_POIS | IM_FIRE | IM_COLD | RES_DISEN | RES_NETHER | FREE_ACT | 
+F:IM_POISON | RES_FIRE | RES_COLD | RES_DISEN | RES_NETHER | FREE_ACT | 
 F:AGGRAVATE | SHOW_MODS | HEAVY_CURSE | TY_CURSE | TELEPORT | CURSED
 D:A pair of gauntlets that sap combat ability, named after the empty hand 
 D:of Beren that once clasped a Silmaril.
@@ -957,7 +957,7 @@ N:69:of Rilia
 I:23:4:0
 W:4:40:12:35000
 P:0:2d4:4:3:0
-F:SLAY_ORC | RES_POIS | RES_DISEN | ACTIVATE | SHOW_MODS | BRAND_POIS
+F:SLAY_ORC | IM_POISON | RES_DISEN | ACTIVATE | SHOW_MODS | BRAND_POIS
 D:A large stiletto dagger that glistens with odorless poison, to which the 
 D:wearer seems oddly immune.
 
@@ -1615,7 +1615,7 @@ D:fingers and eyebrows.
 
 N:117:of Aule
 I:21:8:5
-W:60:75:120:250000
+W:60:75:140:250000
 P:0:9d4:19:21:5
 F:WIS | TUNNEL | HIDE_TYPE | RES_FEAR | RES_POIS | 
 F:KILL_DRAGON | SLAY_EVIL | BRAND_ELEC | SLAY_UNDEAD | SLAY_DEMON | 
@@ -1630,8 +1630,8 @@ D:invokes the strength of mountains to ward off the tumult of the elements.
 
 N:118:'Nar-i-vagil'
 I:21:3:3
-W:12:18:150:70000
-P:0:1d9:10:20:0
+W:12:18:140:70000
+P:0:1d11:10:20:15
 F:INT | HIDE_TYPE | 
 F:SLAY_ANIMAL | BRAND_FIRE | RES_FIRE | SHOW_MODS | FREE_ACT
 D:Named for a fiery star and set with gems of great worth binding mystic 
@@ -1642,8 +1642,8 @@ D:virtues of protection and thought.
 
 N:119:'Eriril'
 I:21:3:4
-W:16:18:130:60000
-P:0:1d9:9:8:0
+W:16:18:140:60000
+P:0:1d11:9:8:10
 F:INT | WIS | HIDE_TYPE | ESP_EVIL |
 F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT
 D:The radiant golden staff of an Istari of legend, this wizard's companion 
@@ -1654,8 +1654,8 @@ D:grants keen sight and the knowledge of many hidden things.
 
 N:120:of Olorin
 I:21:3:4
-W:30:105:150:110000
-P:0:2d9:10:16:0
+W:30:105:140:110000
+P:0:2d11:10:16:15
 F:INT | WIS | CHR | HIDE_TYPE | SEARCH | SPECIAL_GENE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC |
 F:HOLD_LIFE | RES_FIRE | RES_NETHER | SEE_INVIS | ACTIVATE | SHOW_MODS
@@ -2046,7 +2046,7 @@ N:153:of the Sandworm
 I:36:4:5
 W:30:3:80:65000
 P:30:0d0:0:0:20
-F:RES_POIS | RES_ELEC | RES_FIRE | RES_ACID | SPECIAL_GENE
+F:IM_POISON | RES_ELEC | RES_FIRE | RES_ACID | SPECIAL_GENE
 F:TUNNEL | STR | STEALTH | INFRA | ESP_ANIMAL
 D:This powerful piece of armour was made using the remains of 
 D:the Sandworm Queen.

@@ -1479,6 +1479,7 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 #R:100
 #F:CAPACITY
 
+#Robes and all cloaks
 N:131:Gnomish
 T:35:0:255
 T:36:1:1
@@ -1501,9 +1502,10 @@ F:DEX
 #R:100
 #F:CHEAPNESS
 
+#All axes/blunt except Clubs/Whips/Hatchets
 N:132:Dwarvish
-T:24:0:255
-T:21:0:255
+T:24:2:255
+T:21:3:255
 X:B:30:15
 W:0:1:60:5000
 C:8:8:0:3

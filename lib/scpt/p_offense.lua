@@ -46,10 +46,10 @@ HORBDRAIN = add_spell
         ["spell"] = 	function(args)
                 local type
         	type = GF_HOLY_ORB
-    		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 350), 2 + get_level(Ind, HORBDRAIN, 5), " casts a holy orb for")
+    		fire_ball(Ind, type, args.dir, 20 + get_level(Ind, HORBDRAIN, 475), 2 + get_level(Ind, HORBDRAIN, 5), " casts a holy orb for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, HORBDRAIN, 350)).." rad "..(2 + get_level(Ind, HORBDRAIN, 5))
+		return "dam "..(20 + get_level(Ind, HORBDRAIN, 475)).." rad "..(2 + get_level(Ind, HORBDRAIN, 5))
 	end,
         ["desc"] =	{
         		"Calls an holy orb to devour the evil",
