@@ -6606,7 +6606,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		invwipe(&p_ptr->inventory[i]);
 	}
 
-        if (!o_ptr->owner) o_ptr->owner = p_ptr->id;
+        if (!o_ptr->owner && !p_ptr->admin_dm) o_ptr->owner = p_ptr->id;
 #if 0
         if (!o_ptr->level)
         {
