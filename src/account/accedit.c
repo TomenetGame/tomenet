@@ -24,6 +24,16 @@ int main(int argc, char *argv[]){
 	fclose(fp);
 }
 
+void setupscreen(){
+	attron(A_STANDOUT);
+	move(0, 0);
+	clrtoeol();
+	mvprintw(0, COLS/2-18, "TomeNET account editor - 2002 Evileye");
+	attroff(A_STANDOUT);
+	mvprintw(LINES-3, COLS/2-19, "N: next      P: previous     D: Delete");
+	mvprintw(LINES-4, COLS/2-19, "V: Validate A: Admin S: Score M: Multi");
+}
+
 void editor(){
 	int i, x;
 	int quit=0;
@@ -41,7 +51,7 @@ void editor(){
 	initscr();
 	cbreak();
 	noecho();
-	mvprintw(5, 5, "TomeNET account editor - 2002 Evileye");
+	setupscreen();
 
 	while(!quit){
 		mvprintw(7, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
