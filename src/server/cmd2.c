@@ -1211,8 +1211,8 @@ void do_cmd_close(int Ind, int dir)
 
 
 	/* Ghosts cannot close */
-	if (p_ptr->ghost ||
-			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
+	if ((p_ptr->ghost && !is_admin(p_ptr)) ||
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot close things!");
 		return;
@@ -2632,7 +2632,7 @@ void do_cmd_stay(int Ind, int pickup)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Spontaneous Searching */
-	if ((p_ptr->skill_fos >= 50) || (0 == rand_int(50 - p_ptr->skill_fos)))
+	if ((p_ptr->skill_fos >= 75) || (0 == rand_int(76 - p_ptr->skill_fos)))
 	{
 		search(Ind);
 	}

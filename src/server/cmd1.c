@@ -4386,8 +4386,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		window_stuff(Ind);
 
 		/* Spontaneous Searching */
-		if ((p_ptr->skill_fos >= 50) ||
-		    (0 == rand_int(50 - p_ptr->skill_fos)))
+		if ((p_ptr->skill_fos >= 75) ||
+		    (0 == rand_int(76 - p_ptr->skill_fos)))
 		{
 			search(Ind);
 		}
