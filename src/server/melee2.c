@@ -1617,6 +1617,10 @@ bool make_attack_spell(int Ind, int m_idx)
 //	int antichance = 0, antidis = 0;
 
 
+	/* Don't attack your master */
+	if (p_ptr->id == m_ptr->owner) return (FALSE);
+
+
 	/* Cannot cast spells when confused */
 	if (m_ptr->confused) return (FALSE);
 
