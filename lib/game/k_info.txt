@@ -329,7 +329,7 @@ G:|:r
 I:23:28:0
 W:40:0:260:850
 A:40/1
-P:0:5d5:0:0:0
+P:0:5d6:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:41:& Katana~
@@ -587,7 +587,7 @@ F:SHOW_MODS | COULD2H
 N:72:& Scythe~ of Slicing
 G:/:r
 I:22:30:0
-W:60:0:250:3500
+W:60:0:300:3500
 A:60/3
 P:0:10d4:0:0:0
 F:SHOW_MODS | MUST2H | WOUNDING
@@ -3735,9 +3735,9 @@ F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 N:524:& Zweihander~
 G:|:w
 I:23:29:0
-W:40:0:280:680
+W:40:0:290:800
 A:40/3
-P:0:5d6:0:0:0
+P:0:4d9:0:0:0
 F:SHOW_MODS | MUST2H
 
 # Dwarven lantern
@@ -3937,9 +3937,9 @@ F:SHOW_MODS | COULD2H
 N:553:& Heavy Lance~
 G:/:s
 I:22:29:0
-W:53:0:400:2000
+W:53:0:350:1500
 A:53/2
-P:0:6d8:0:0:0
+P:0:5d8:0:0:0
 F:SHOW_MODS | MUST2H
 
 N:554:& Basillard~
@@ -5426,10 +5426,10 @@ F:SHOW_MODS
 N:805:& Slaughter Axe~
 G:/:G
 I:24:30:0
-W:70:0:300:6000
+W:70:0:300:1100
 A:70/8
 P:0:5d7:0:0:0
-F:SLAY_ANIMAL | SHOW_MODS
+F:SLAY_ANIMAL | SHOW_MODS | MUST2H
 
 #N:806:& Runestone~
 #G:?:v
@@ -6056,16 +6056,13 @@ F:INSTA_ART
 
 #N:918:Pseudo Dragon Scale Mail: defined above below the other DSMs.
 
-#The 'original' Mighty Hammer is insta-art for Grond.
-#This clone can be used for 'normal' mighty hammers. Removing INSTA_ART from
-#Grond instead might lead to problems in the winner-check code. -C. Blue
-N:919:& Mighty Hammer~
-G:\:D
-I:21:50:0
-W:60:0:320:3000
+N:919:& Thunder Axe~
+G:/:b
+I:24:33:0
+W:60:0:360:2900
 A:60/3
-P:0:5d9:0:0:0
-F:SHOW_MODS | MUST2H
+P:0:6d8:0:0:0
+F:SHOW_MODS | MUST2H | SLAY_GIANT
 
 
 #N:(No.):(name)

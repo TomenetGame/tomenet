@@ -1703,6 +1703,7 @@ that keeps many algorithms happy.
 #define SV_GREAT_AXE                    25	/* 4d4 */
 #define SV_LOCHABER_AXE                 28	/* 3d8 */
 #define SV_SLAUGHTER_AXE                30      /* 5d7 */
+#define SV_THUNDER_AXE			33	/* 6d8 */
 
 /* The "sval" values for TV_POLEARM */
 #define SV_SPEAR                         2	/* 1d6 */

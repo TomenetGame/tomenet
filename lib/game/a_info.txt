@@ -1111,7 +1111,7 @@ D:men of Umbar who met it in combat.
 N:80:'Crisdurian'
 I:23:28:1
 W:40:15:260:201000
-P:0:8d5:18:29:0
+P:0:7d6:18:29:0
 F:SLAY_DRAGON | SLAY_EVIL | SLAY_UNDEAD | SLAY_TROLL | SLAY_GIANT | BLOWS | 
 F:SLAY_ORC | SEE_INVIS | SHOW_MODS | VORPAL | BRAND_POIS | WOUNDING
 D:A giant's weapon, with a long blade tall and straight thrusting out from a 
