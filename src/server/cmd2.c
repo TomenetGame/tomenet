@@ -84,7 +84,7 @@ void do_cmd_go_up(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
-	/* He'll be safe for 2 turn */
+	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, 2);
 
 	/* Create a way back */
@@ -178,7 +178,7 @@ void do_cmd_go_down(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
-    /* He'll be safe for 2 turn */
+    /* He'll be safe for 2 turns */
     set_invuln_short(Ind, 2);
 
 	/* Create a way back */

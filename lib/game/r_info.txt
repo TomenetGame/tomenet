@@ -3622,7 +3622,7 @@ B:CRAWL:ACID:2d5
 B:BITE:HURT:1d11
 B:BITE:POISON:1d7
 F:BASH_DOOR |
-F:ANIMAL | IM_ACID
+F:ANIMAL | IM_ACID | EVIL
 D:A huge wormlike shape dripping acid, twisted by evil sorcery into a foul
 D:monster that breeds on death.
 
