@@ -483,7 +483,6 @@ void init_file_paths(char *path)
 {
         char *tail;
 
-
         /*** Free everything ***/
 
         /* Free the main path */

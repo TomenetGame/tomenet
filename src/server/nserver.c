@@ -2332,7 +2332,7 @@ static int Receive_quit(int ind)
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) != 1)
 	{
 		errno = 0;
-		Destroy_connection(ind, "receive error");
+		Destroy_connection(ind, "receive error in quit");
 		return -1;
 	}
 	
@@ -2356,7 +2356,7 @@ static int Receive_login(int ind){
 		errno = 0;
 		printf("%d\n",n);
 		plog("Failed reading login packet");
-		Destroy_connection(ind, "receive error");
+		Destroy_connection(ind, "receive error in login");
 		return -1;
 	}
 	if(strlen(choice)==0){
@@ -2413,7 +2413,7 @@ static int Receive_play(int ind)
 	{
 		errno = 0;
 		plog("Cannot receive play packet");
-		Destroy_connection(ind, "receive error");
+		Destroy_connection(ind, "receive error in play");
 		return -1;
 	}
 
@@ -2442,7 +2442,7 @@ static int Receive_play(int ind)
 		{
 			errno = 0;
 			plog("Play packet is broken");
-			Destroy_connection(ind, "receive error");
+			Destroy_connection(ind, "receive error 2 in play");
 			return -1;
 		}
 

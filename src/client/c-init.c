@@ -61,7 +61,7 @@ static void init_stuff(void)
 
 #else /* AMIGA / VM */
 
-	if (!path)
+	if (!strlen(path))
 	{
 		cptr tail;
 
@@ -123,7 +123,6 @@ void initialize_all_pref_files(void)
 
 	/* Access the "visual" system pref file (if any) */
 	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-	printf("check for %s\n",buf);
 
 	/* Process that file */
 	process_pref_file(buf);
