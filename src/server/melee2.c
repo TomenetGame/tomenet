@@ -14,7 +14,7 @@
 
 #include "angband.h"
 
-// #define STUPID_MONSTERS
+#define STUPID_MONSTERS
 
 
 #ifdef DRS_SMART_OPTIONS
@@ -1095,8 +1095,8 @@ bool make_attack_spell(int Ind, int m_idx)
 				disturb(Ind, 1, 0);
 			 if (blind) msg_format(Ind, "%^s shoots something.", m_name);
 			 else msg_format(Ind, "%^s fires a rocket.", m_name);
-			 breath(m_idx, GF_ROCKET,
-				 ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), 2, 0);
+			 breath(Ind, m_idx, GF_ROCKET,
+				 ((m_ptr->hp / 4) > 800 ? 800 : (m_ptr->hp / 4)), 2);
 			 update_smart_learn(m_idx, DRS_SHARD);
 			 break;
 			}
@@ -2632,7 +2632,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 			else msg_format(Ind, "%^s magically summons greater demons!", m_name);
 			if (blind && count) msg_print(Ind, "You hear heavy steps nearby.");
-			summon_cyber();
+			summon_cyber(Ind);
 			break;
 		}
 

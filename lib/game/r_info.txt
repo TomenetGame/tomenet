@@ -9199,6 +9199,7 @@ F:EMPTY_MIND | BASH_DOOR | POWERFUL |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 S:1_IN_6 | 
 S:BR_TIME | BR_DISE
+S:UNMAGIC
 D:Howling through the disintegrating dungeon, this awesome whirlpool of Unmagic 
 D:rips the enchantments from everything it touches. 
 
