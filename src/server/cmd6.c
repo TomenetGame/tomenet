@@ -565,6 +565,8 @@ void do_cmd_quaff_potion(int Ind, int item)
 	/* Object level */
 	lev = k_info[o_ptr->k_idx].level;
 
+	process_hooks(HOOK_QUAFF, "d", Ind);
+
 	/* Analyze the potion */
 	if (o_ptr->tval == TV_POTION)
 	{
@@ -1447,6 +1449,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	/* Object level */
 	lev = k_info[o_ptr->k_idx].level;
+	
+	process_hooks(HOOK_READ, "d", Ind);
 
 	/* Assume the scroll will get used up */
 	used_up = TRUE;
@@ -3061,6 +3065,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		return;
 	}
 
+	process_hooks(HOOK_ZAP, "d", Ind);
 
 	/* Analyze the rod */
 	switch (o_ptr->sval)
@@ -3360,6 +3365,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		return;
 	}
 
+	process_hooks(HOOK_ZAP, "d", Ind);
 
 	/* Analyze the rod */
 	switch (o_ptr->sval)
@@ -3916,6 +3922,7 @@ void do_cmd_activate(int Ind, int item)
 		return;
 	}
 
+	process_hooks(HOOK_ACTIVATE, "d", Ind);
 
 	/* Wonder Twin Powers... Activate! */
 	msg_print(Ind, "You activate it...");

@@ -112,6 +112,7 @@ void do_cmd_go_up(int Ind)
 	/* Success */
 	if (c_ptr->feat == FEAT_LESS)
 	{
+		process_hooks(HOOK_STAIR, "d", Ind);
 		msg_print(Ind, "You enter a maze of up staircases.");
 		p_ptr->new_level_method = LEVEL_UP;
 	}
@@ -234,6 +235,7 @@ void do_cmd_go_down(int Ind)
 	/* Success */
 	if (c_ptr->feat == FEAT_MORE)
 	{
+		process_hooks(HOOK_STAIR, "d", Ind);
 		msg_print(Ind, "You enter a maze of down staircases.");
 		p_ptr->new_level_method = LEVEL_DOWN;
 	}

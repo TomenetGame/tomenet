@@ -384,6 +384,8 @@ void do_cmd_wield(int Ind, int item)
 		}
 	}
 
+	process_hooks(HOOK_WIELD, "d", Ind);
+
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 

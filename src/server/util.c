@@ -2559,12 +2559,15 @@ static void do_slash_cmd(int Ind, char *message)
 				flags|=QUEST_GUILD;
 				lev=Players[j]->lev+5;
 			}
-			else if(admin && tk && (j=name_lookup_loose(Ind, token[1], FALSE))){
-				if(Players[j]->quest_id){
-					msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
-					return;
+			else if(admin && tk){
+				if((j=name_lookup_loose(Ind, token[1], FALSE))){
+					if(Players[j]->quest_id){
+						msg_format(Ind, "\377y%s has a quest already.", Players[j]->name);
+						return;
+					}
+					lev=Players[j]->lev;	/* for now */
 				}
-				lev=Players[j]->lev;	/* for now */
+				else return;
 			}
 			else{
 				flags|=QUEST_RACE;

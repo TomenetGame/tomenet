@@ -155,6 +155,7 @@ void party_check(int Ind){
 			else{
 				if((lookup_player_party(id)!=i)){
 					msg_format(Ind, "Disowned party %s (%s)", parties[i].name, parties[i].owner);
+					del_party(i);
 				}
 			}
 		}
