@@ -1767,7 +1767,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 				/* Message */
-				msg_format(Ind, "%sour %s (%c) %s destroyed!",
+				msg_format(Ind, "\377o%sour %s (%c) %s destroyed!",
 				           ((o_ptr->number > 1) ?
 				            ((amt == o_ptr->number) ? "All of y" :
 				             (amt > 1 ? "Some of y" : "One of y")) : "Y"),
@@ -1862,7 +1862,7 @@ int minus_ac(int Ind, int water)
 	}
 
 	/* Message */
-	msg_format(Ind, "Your %s is damaged!", o_name);
+	msg_format(Ind, "\377oYour %s is damaged!", o_name);
 
 	/* Damage the item */
 	o_ptr->to_a--;
@@ -2362,7 +2362,7 @@ bool apply_disenchant(int Ind, int mode)
 	if ((o_ptr->to_a > 5) && (rand_int(100) < 20)) o_ptr->to_a--;
 
 	/* Message */
-	msg_format(Ind, "Your %s (%c) %s disenchanted!",
+	msg_format(Ind, "\377oYour %s (%c) %s disenchanted!",
 	           o_name, index_to_label(t),
 	           ((o_ptr->number != 1) ? "were" : "was"));
 
@@ -2467,7 +2467,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 				break;
 			}
 
-			msg_print(Ind, "Your backpack starts to scramble...");
+			msg_print(Ind, "\377oYour backpack starts to scramble...");
 
 			if(m_ptr){
 				ii = 10 + m_ptr->level / 3;
@@ -2544,7 +2544,7 @@ static void apply_morph(int Ind, int power, char * killer)
 				{
 					/* FRUIT BAT!!!!!! */
 				
-					msg_print(Ind, "You have been turned into a fruit bat!");				
+					msg_print(Ind, "\377yYou have been turned into a fruit bat!");				
 					strcpy(p_ptr->died_from,killer);
 					p_ptr->fruit_bat = -1;
 					player_death(Ind);
@@ -3511,7 +3511,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* XXX not working? */
 				if (!quiet && note_kill)
-					msg_format_near_site(y, x, wpos, "The %s%s", o_name, note_kill);
+					msg_format_near_site(y, x, wpos, "\377oThe %s%s", o_name, note_kill);
 
 				delete_object_idx(this_o_idx);
 
@@ -3554,7 +3554,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
 			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
 			{
-				msg_format(Ind, "The %s%s", o_name, note_kill);
+				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 			}
 
 			/* Delete the object */
