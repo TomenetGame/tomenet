@@ -22,6 +22,111 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+11/05/2003
+[IMOGPDBV]- C. Blue
+    Fixed miscellaneous abilities display, saving throw was inaccurate.
+    Added several message types to CTRL+O scrollback.
+    Fixed colour tables on some operating systems (Linux/DOS).
+    Added additional skills and priest schools.
+    Added colour animations for mana shield and invulnerability.
+    Auto-cleanup code tweaked so towns won't stay littered.
+    Implemented 'Luck', improving the quality of found items.
+    Fixed maxroll and damroll overflows, since they are also used
+    to calculate monsters' HP.
+    Maximum number of resurrections definable via tomenet.cfg.
+    Morgoth becomes stronger/weaker if he encounters more/less players.
+    Killing Sauron is obligatory before killing Morgoth.
+    Kings can't cheezily help non-Kings to defeat Morgoth.
+    Night time graphics added for the world surface.
+    Critical hits adjusted/fixed.
+    Anti artefact transfer cheeze/item transfer cheeze measurements,
+    definable in tomenet.cfg. Also adjusted telekinesis.
+    Items on piles are more often visible now if top object is
+    removed. Not always though, needs fixing!
+    Darkswords resist Nazguls, Stormbringer resists like arts do.
+    Probability travel forbidden in no-tele vaults.
+    Disturbance added for entering houses/shops.
+    Disturbances removed for several minor events (was very annoying).
+    'Air is still' messages added for recalling/using stairs into
+    no-tele vault.
+    Fixed exploding silver ammo. Added randart ammo. Adjusted artifact
+    creation scrolls.
+    Added damage messages for ranged enemy/player attacks; greatly
+    increased verbosity in PvP.
+    Removed annoying 'lose wraithform' spam if using a perma WRAITH item.
+    Damage from using Morgoth crown bypasses invulnerability now.
+    Fixed randomized mimic abilities via randomizer seed.
+    Lowered mana ball damage to approx. 80-85% of its original value.
+    Added *restore mana* potions and changed restore mana potions.
+    Adjusted mana shield a lot, also gave forms without proper hands
+    mana penalty of 50% to stop the Istari-D-form cheeze.
+    Adjusted some potions, adjusted insanity potions.
+    Made several rods, staves and wands more useful, especially
+    drain life, annihilation, havoc. Made some more items useful,
+    like scrolls of dispelling.
+    Added extended death messages, telling literally about how
+    powerful the enemy was (killed,annihilated,vaporized).
+    Added /empty potion command, but commented it out to avoid cheeze.
+    Added /dice command to play dice.
+    Adjusted several message colours for better readability.
+    Adjusted sense_inventory feelings respectively values for feelings.
+    Added Mana Shield & GOI warnings on running out.
+    Mana Shield behaviour greatly changed.
+    Secret dungeon shops added, configurable in tomenet.cfg.
+    Expensive black market added in Minas Anor.
+    Added lots of store flags to specify store behaviour, making
+    stealing harder, items more expensive, more ego items, rarer items,
+    more powerful items, etc.
+    Fixed overflow in high score calculation.
+    Adjusted fountains, made them useful again, removed cheezing.
+    Added global logging function to the server, slightly 1984, but
+    good to keep track of PKing and reasons for it.
+    Golem movement fixed.
+    Monster strengthening on levelup greatly balanced, concerning
+    monsters that have boosted levels in very deep dungeons.
+    Anti-magic calculation fixed and on randarts adjusted.
+    More verbose output about antimagic on *id*.
+    Artefacts completely fixed, no more duplicates.
+    ESP item price calculations adjusted.
+    ESP amulets fixed and adjusted.
+    Polymorph ring forms fixed, prohibiting some forms according to
+    monster definitions in tomenet.cfg.
+    Some amulets, speeds, ego boots, mage staves adjusted/fixed.
+    Removed house creation scrolls since they were totally broken
+    and would only cause problems anyways.
+    Admin can add guild members too.
+    All party members can add players to the party.
+    Fixed a very nasty experience points overflow when playing
+    in a large party of several high level characters, resulting
+    in negative exp gain.
+    Fixed several item rarities. Adjusted some monsters.
+    Adjusted some messages that sounded wrong.
+    Monsters within no-tele vaults can't teleport either now.
+    Adjusted rocket damage resistance (combined).
+    Ajusted NONLIVING flag regarding mimics.
+    Adjusted life draining from demons/nonliving things.
+    Adjusted time resistance and gave stat sustaining a chance vs time.
+    Randarts can't be enchanted anymore, increased AC bonus of
+    randart armour items.
+    Slightly adjusted skill tables, stat tables; exp penalty for
+    half-orc is now 100%!
+    Added admin command to empty a store.
+    Added more variables/server config options to util.pkg.
+    Morgoth killers get a specially colours msg;).
+    Insanity/No-ghost deaths drop items now too, and also cause
+    an automatic chardump finally!
+    Ranger mana fixed. Warriors/Archers don't receive mana anymore.
+    Added reflection for players again.
+    Added more abilties for Martial Arts career.
+    Fixed BLESS weapon calculation for priests.
+    Adjusted/fixed many spells; added verbose output for spellcasting
+    telling about missing mana/failing/succeeding in the specific
+    spells.
+    Adjusted and added lots of artefacts, adjusted some ego items,
+    adjusted several base items.
+    Adjusted service costs in some shops.
+    Adjusted some terrain features.
+    Adjusted ego monster 'Fallen'.
 13/02/2003
 [P]- Mimic AC & to-dam now averaged from player & form (similar to HP)
      I hope this will balance mimics well compared to the other classes.
