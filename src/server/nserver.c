@@ -5204,36 +5204,6 @@ static int Receive_spell(int ind)
 		int tval = p_ptr->inventory[book].tval;
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
 		switch(tval){
-			case TV_SORCERY_BOOK:
-				if(get_skill(p_ptr, SKILL_SORCERY))
-					do_cmd_sorc(player, book, spell);
-				break;
-			case TV_PSI_BOOK:
-#if 0
-				if(get_skill(p_ptr, SKILL_PSI))
-					do_cmd_psi(player, book, spell);
-#endif
-				break;
-			case TV_SHADOW_BOOK:
-				if(get_skill(p_ptr, SKILL_SHADOW))
-					do_cmd_shad(player, book, spell);
-				break;
-			case TV_HUNT_BOOK:
-				if(get_skill(p_ptr, SKILL_HUNTING))
-					do_cmd_hunt(player, book, spell);
-				break;
-			case TV_MAGIC_BOOK:
-				if(get_skill(p_ptr, SKILL_MAGERY))
-					do_cmd_cast(player, book, spell);
-				break;
-			case TV_FIGHT_BOOK:
-				if(get_skill(p_ptr, SKILL_TECHNIC))
-					do_cmd_fight(player, book, spell);
-				break;
-			case TV_PRAYER_BOOK:
-				if(get_skill(p_ptr, SKILL_PRAY))
-					do_cmd_pray(player, book, spell);
-				break;
 		}
 		return 2;
 	}
@@ -5302,35 +5272,11 @@ static int Receive_activate_skill(int ind)
 		int tval = p_ptr->inventory[book].tval;
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
 		switch(tval){
-			case TV_SORCERY_BOOK:
-				if(get_skill(p_ptr, SKILL_SORCERY))
-					do_cmd_sorc(player, book, spell);
-				break;
 			case TV_PSI_BOOK:
 #if 0
 				if(get_skill(p_ptr, SKILL_PSI))
 					do_cmd_psi(player, book, spell);
 #endif
-				break;
-			case TV_SHADOW_BOOK:
-				if(get_skill(p_ptr, SKILL_SHADOW))
-					do_cmd_shad(player, book, spell);
-				break;
-			case TV_HUNT_BOOK:
-				if(get_skill(p_ptr, SKILL_HUNTING))
-					do_cmd_hunt(player, book, spell);
-				break;
-			case TV_MAGIC_BOOK:
-				if(get_skill(p_ptr, SKILL_MAGERY))
-					do_cmd_cast(player, book, spell);
-				break;
-			case TV_FIGHT_BOOK:
-				if(get_skill(p_ptr, SKILL_TECHNIC))
-					do_cmd_fight(player, book, spell);
-				break;
-			case TV_PRAYER_BOOK:
-				if(get_skill(p_ptr, SKILL_PRAY))
-					do_cmd_pray(player, book, spell);
 				break;
 		}
 		return 2;
@@ -5368,47 +5314,10 @@ static int Receive_activate_skill(int ind)
 
 		switch (mkey)
 		{
-			case MKEY_SORCERY:
-				if(get_skill(p_ptr, SKILL_SORCERY))
-					do_cmd_sorc(player, book, spell);
-				break;
-
-			case MKEY_MAGERY:
-				if(get_skill(p_ptr, SKILL_MAGERY))
-					do_cmd_cast(player, book, spell);
-				break;
-
 			case MKEY_MIMICRY:
 				if(get_skill(p_ptr, SKILL_MIMIC))
 					do_cmd_mimic(player, spell);
 				break;
-
-			case MKEY_SHADOW:
-				if(get_skill(p_ptr, SKILL_SHADOW))
-					do_cmd_shad(player, book, spell);
-				break;
-
-			case MKEY_FIGHTING:
-				if(get_skill(p_ptr, SKILL_TECHNIC))
-					do_cmd_fight(player, book, spell);
-				break;
-
-			case MKEY_ARCHERING:
-				if(get_skill(p_ptr, SKILL_HUNTING))
-					do_cmd_hunt(player, book, spell);
-				break;
-
-			case MKEY_PRAY:
-				if(get_skill(p_ptr, SKILL_PRAY))
-					do_cmd_pray(player, book, spell);
-				break;
-
-#if 0
-			case MKEY_PSI:
-				if(get_skill(p_ptr, SKILL_PSI))
-					do_cmd_psi(player, book, spell);
-				break;
-#endif
 
 			case MKEY_DODGE:
 				use_ability_blade(player);
@@ -5532,45 +5441,6 @@ static int Receive_pray(int ind)
 	{
 		p_ptr->current_spell = -1;
 		Packet_printf(&connp->q, "%c%hd%hd", ch, book, prayer);
-		return 0;
-	}
-
-	return 1;
-}
-
-static int Receive_fight(int ind)
-{
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr;
-
-	char ch;
-
-	int n, player;
-
-	s16b book, technic;
-
-	if (connp->id != -1)
-	{
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-	}
-
-	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &book, &technic)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
-	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
-	{
-		do_cmd_fight(player, book, technic);
-		return 2;
-	}
-	else if (player)
-	{
-		p_ptr->current_spell = -1;
-		Packet_printf(&connp->q, "%c%hd%hd", ch, book, technic);
 		return 0;
 	}
 
@@ -7987,22 +7857,10 @@ void Handle_direction(int Ind, int dir)
 //		if (p_ptr->current_realm == REALM_GHOST)
 		if (p_ptr->ghost)
 			do_cmd_ghost_power_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_MAGERY)
-			do_cmd_cast_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_SORCERY)
-			do_cmd_sorc_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_PRAYER)
-			do_cmd_pray_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_FIGHTING)
-			do_cmd_fight_aux(Ind, dir);
-		else if (p_ptr->current_realm == REALM_SHADOW)
-			do_cmd_shad_aux(Ind, dir);
 		else if (p_ptr->current_realm == REALM_MIMIC)
 			do_mimic_power_aux(Ind, dir);
 		else p_ptr->current_spell = -1;
 	}
-	else if (p_ptr->current_mind != -1)
-	  do_cmd_psi_aux(Ind, dir);
 	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)
@@ -8195,20 +8053,6 @@ static int Receive_autophase(int ind)
 				/* found a phase scroll, read it! */
 				do_cmd_read_scroll(player, n);
 				return 1;
-			}
-		}
-
-		/* No scrolls, see if we can cast the phase door spell */
-		/* Check for magic book I */
-
-		for (n = 0; n < INVEN_PACK; n++)
-		{
-			o_ptr = &p_ptr->inventory[n];
-			/* if this is the mage book I */
-			if ((o_ptr->tval == TV_MAGIC_BOOK) && (o_ptr->sval == 0))
-			{
-				/* attempt to cast phase door */
-				do_cmd_cast(player, 0, 2);
 			}
 		}
 	}

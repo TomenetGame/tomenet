@@ -1111,55 +1111,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			}
 			break;
 
-		case TV_PSI_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_psi(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_MAGIC_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_cast(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_PRAYER_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_pray(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_SORCERY_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_sorc(Ind, item, spell);
-			return TRUE;
-		}
-
 		/* not likely :) */
-		case TV_FIGHT_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_fight(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_SHADOW_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_shad(Ind, item, spell);
-			return TRUE;
-		}
-
-		case TV_HUNT_BOOK:
-		{
-			if (p_ptr->csp < p_ptr->msp / 10) break;
-			do_cmd_hunt(Ind, item, spell);
-			return TRUE;
-		}
 	}
 
 	/* If all fails, then melee */

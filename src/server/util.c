@@ -2190,57 +2190,6 @@ static void do_slash_cmd(int Ind, char *message)
 
 			switch (p_ptr->pclass)
 			{
-				case CLASS_SORCERER:
-					{
-						do_cmd_sorc(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
-
-				case CLASS_TELEPATH:
-					{
-						do_cmd_psi(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
-				case CLASS_ROGUE:
-					{
-						do_cmd_shad(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
-				case CLASS_ARCHER:
-					{
-						do_cmd_hunt(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
-				case CLASS_MAGE:
-				case CLASS_RANGER:
-					{
-						do_cmd_cast(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
-				case CLASS_PRIEST:
-				case CLASS_PALADIN:
-					{
-						do_cmd_pray(Ind, book, whichspell);
-#ifdef FRIENDLY_SPELL_BOOST
-						p_ptr->energy += level_speed(p_ptr->dun_depth);
-#endif
-						break;
-					}
 			}
 
 //			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
@@ -2479,24 +2428,6 @@ static void do_slash_cmd(int Ind, char *message)
 				{
 					case TV_SCROLL:
 						do_cmd_read_scroll(Ind, item);
-						break;
-					case TV_MAGIC_BOOK:		// 6e
-						do_cmd_cast(Ind, item, 4);
-						break;
-					case TV_SORCERY_BOOK:	// 5f
-						do_cmd_sorc(Ind, item, 5);
-						break;
-					case TV_PRAYER_BOOK:	// 5e
-						do_cmd_pray(Ind, item, 4);
-						break;
-					case TV_SHADOW_BOOK:	// 5c,5d
-						if (spell_okay(Ind, 35, 1, FALSE/*NOT USED*/) &&
-								p_ptr->csp >= 40)
-							do_cmd_shad(Ind, item, 3);
-						else do_cmd_shad(Ind, item, 2);
-						break;
-					case TV_PSI_BOOK:	// 2d
-						do_cmd_psi(Ind, item, 3);
 						break;
 					case TV_ROD:
 						do_cmd_zap_rod(Ind, item);
