@@ -3247,6 +3247,16 @@ void player_death(int Ind)
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
 	int i;
+	wilderness_type *wild;
+	bool hell=TRUE;
+
+	if(p_ptr->mode!=MODE_HELL){
+		struct dungeon_type *dungeon;
+		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		dungeon=(p_ptr->wpos.wz > 0 ? wild->tower : wild->dungeon);
+		if(!p_ptr->wpos.wz || !(dungeon->flags & DUNGEON_HELL))
+			hell=FALSE;
+	}
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	  {
@@ -3272,7 +3282,7 @@ void player_death(int Ind)
 	  }
 
 	/* Get rid of him if he's a ghost */
-	if (p_ptr->ghost || ((p_ptr->mode == MODE_HELL) && p_ptr->alive))
+	if (p_ptr->ghost || (hell && p_ptr->alive))
 	{
 		/* Tell players */
 		sprintf(buf, "\377r%s's ghost was destroyed by %s.",
@@ -5673,7 +5683,7 @@ bool master_level(int Ind, char * parms)
 				}
 			}
 			if(parms[3]=='d' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags&WILD_F_DOWN)){
-				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM, FALSE);
+				adddungeon(&p_ptr->wpos, parms[1], parms[2], DUNGEON_RANDOM|DUNGEON_HELL, FALSE);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 				if((zcave=getcave(&p_ptr->wpos))){
