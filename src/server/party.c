@@ -74,6 +74,26 @@ bool WriteAccount(struct account *r_acc, bool new){
 	return(found);
 }
 
+/*
+ Get an existing account and set default valid flags on it
+ That will be SCORE on only (hack it for MULTI)
+ */
+void validate(char *name){
+	struct account *c_acc;
+	c_acc=GetAccount(name, NULL, 1);
+	if(!c_acc) return;
+	c_acc->flags&=~(ACC_TRIAL | ACC_NOSCORE);
+	WriteAccount(c_acc, FALSE);
+	memset((char *)c_acc->pass, 0, 20);
+	KILL(c_acc, struct account);
+}
+
+/*
+ return player account information (by name)
+ */
+void accinfo(char *name){
+}
+
 /* most account type stuff was already in here.
    a separate file should probably be made in
    order to split party/guild from account
@@ -82,7 +102,7 @@ bool WriteAccount(struct account *r_acc, bool new){
    They will not be subject to their own 90
    days timeout, but will be removed upon
    the removal of the last character. */
-struct account *GetAccount(cptr name, char *pass){
+struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	FILE *fp;
 	struct account *c_acc;
 
@@ -106,7 +126,7 @@ struct account *GetAccount(cptr name, char *pass){
 				val=0;
 			else
 				val=strcmp(c_acc->pass, t_crypt(pass, name));
-			memset((char *)c_acc->pass, 0, 20);
+			if(!leavepass || pass!=NULL) memset((char *)c_acc->pass, 0, 20);
 			if(val){
 				fclose(fp);
 				KILL(c_acc, struct account);
@@ -163,7 +183,7 @@ bool check_account(char *accname, char *c_name){
 	hash_entry *ptr;
 	int i;
 
-	if((l_acc=GetAccount(accname, NULL))){
+	if((l_acc=GetAccount(accname, NULL, FALSE))){
 		a_id=l_acc->id;
 		flags=l_acc->flags;
 		KILL(l_acc, struct account);

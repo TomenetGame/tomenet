@@ -907,7 +907,7 @@ extern void init_match_theme(obj_theme theme);
 
 /* party.c */
 extern void sf_delete(const char *name);
-extern struct account *GetAccount(cptr name, char *pass);
+extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
 extern struct account *GetAccountID(u32b id);
 extern void set_pkill(int Ind, int delay);
 extern int guild_lookup(cptr name);

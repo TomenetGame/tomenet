@@ -1623,7 +1623,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
 
-	c_acc=GetAccount(accname, NULL);
+	c_acc=GetAccount(accname, NULL, FALSE);
 	if(c_acc){
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
@@ -1674,7 +1674,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->conn = conn;
 	
 	/* again ;( */
-	c_acc=GetAccount(accname, NULL);
+	c_acc=GetAccount(accname, NULL, FALSE);
 	if(c_acc){
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);

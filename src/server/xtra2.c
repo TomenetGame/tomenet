@@ -7483,7 +7483,7 @@ bool master_player(int Ind, char *parms){
 			break;
 		case 'r':	/* FULL ACCOUNT SCAN + RM */
 			/* Delete a player from the database/savefile */
-			d_acc=GetAccount(&parms[1], NULL);
+			d_acc=GetAccount(&parms[1], NULL, FALSE);
 			if(d_acc!=(struct account*)NULL){
 				char name[80];
 				n=player_id_list(&id_list, d_acc->id);
@@ -7494,6 +7494,10 @@ bool master_player(int Ind, char *parms){
 					sf_delete(name);
 				}
 				if(n) C_KILL(id_list, n, int);
+				d_acc->flags|=ACC_DELD;
+				/* stamp in the deleted account */
+				WriteAccount(d_acc, FALSE);
+				KILL(d_acc, struct account);
 			}
 			else
 				msg_print(Ind, "\377rCould not find account");
