@@ -3337,7 +3337,7 @@ int Send_sp(int ind, int msp, int csp)
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SP, msp, csp);
 }
 
-int Send_char_info(int ind, int race, int class, int sex)
+int Send_char_info(int ind, int race, int class, int sex, int mode)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 
@@ -3348,7 +3348,7 @@ int Send_char_info(int ind, int race, int class, int sex)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_CHAR_INFO, race, class, sex);
+	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, sex, mode);
 }
 
 int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
