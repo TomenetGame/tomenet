@@ -1346,8 +1346,6 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->max_plv);
 	rd_s16b(&p_ptr->max_dlv);
 
-	p_ptr->recall_depth = p_ptr->max_dlv;
-
 	rd_s16b(&p_ptr->py);
 	rd_s16b(&p_ptr->px);
 #ifdef NEW_DUNGEON
@@ -1360,14 +1358,22 @@ static bool rd_extra(int Ind)
 	else rd_s32b((s32b *) &p_ptr->dun_depth);
 #endif
 
+#ifdef NEW_DUNGEON
+	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+	p_ptr->recall_pos.wz = p_ptr->max_dlv;
+#else
+	p_ptr->recall_depth = p_ptr->max_dlv;
+#endif
+
+#ifndef NEW_DUNGEON
 	/* read the world coordinates if new enough */
 	if (!older_than(0,5,5))
 	{
-#ifndef NEW_DUNGEON
 		rd_s16b(&p_ptr->world_x);
 		rd_s16b(&p_ptr->world_y);
-#endif
 	}
+#endif
 
 	if (older_than(0,5,5))
 		strip_bytes(1);

@@ -3100,7 +3100,7 @@ void player_talk_aux(int Ind, cptr message)
 					}
 #endif
 					/* do it on your own risk.. pfft */
-					p_ptr->recall_depth = k;
+					p_ptr->recall_pos.wz = k;
 					p_ptr->word_recall = 1;
 
 					msg_print(Ind, "\377oOmnipresent you are...");

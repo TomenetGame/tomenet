@@ -2939,4 +2939,4 @@ extern int PlayerUID;
 
 /* wpos to old-fashioned wilderness 'height' */
 /* #define wild_idx(p_ptr) (p_ptr->wpos.wx+p_ptr->wpos.wy*MAX_WILD_X); */
-#define wild_idx(wpos) (wpos.wx + wpos.wy * MAX_WILD_X);
+/* #define wild_idx(wpos) ((wpos).wx + (wpos).wy * MAX_WILD_X); */

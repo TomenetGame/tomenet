@@ -408,3 +408,7 @@ Change list for PernMangband
 
 11/12/2001 (Jir)
 - Vertical recall supported.
+
+12/12/2001 (Jir)
+- Horizontal recall ({@RW17,22}) supported?
+- 'Cannot run' bug fixed.

@@ -1293,8 +1293,12 @@ struct player_type
 	s16b equip_cnt;		/* Number of items in equipment */
 
 	s16b max_plv;		/* Max Player Level */
-	s16b max_dlv;		/* Max level explored */
+	s16b max_dlv;		/* Max level explored - extension needed! */
+#ifdef NEW_DUNGEON
+	worldpos recall_pos;	/* what position to recall to */
+#else
 	s16b recall_depth;	/* which depth to recall to */
+#endif
 
 	s16b stat_max[6];	/* Current "maximal" stat values */
 	s16b stat_cur[6];	/* Current "natural" stat values */

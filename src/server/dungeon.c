@@ -1437,7 +1437,6 @@ static void process_player_end(int Ind)
 	byte			*w_ptr;
 	object_type		*o_ptr;
 #ifdef NEW_DUNGEON
-	worldpos new_depth;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 #endif
@@ -2187,10 +2186,14 @@ static void process_player_end(int Ind)
 			/* Activate the recall */
 			if (!p_ptr->word_recall)
 			{
+				/* sorta circumlocution? */
+				worldpos new_pos;
+
 				/* Disturbing! */
 				disturb(Ind, 0, 0);
 
 				/* Determine the level */
+				/* recalling to surface */
 #ifdef NEW_DUNGEON
 				if(p_ptr->wpos.wz)
 #else
@@ -2212,9 +2215,9 @@ static void process_player_end(int Ind)
 					/* New location */
 #ifdef NEW_DUNGEON
 //					p_ptr->wpos.wz=0;
-					new_depth.wx = p_ptr->wpos.wx;
-					new_depth.wy = p_ptr->wpos.wy;
-					new_depth.wz = 0;
+					new_pos.wx = p_ptr->wpos.wx;
+					new_pos.wy = p_ptr->wpos.wy;
+					new_pos.wz = 0;
 #else
 					new_depth = 0;
 					new_world_x = p_ptr->world_x;
@@ -2223,20 +2226,37 @@ static void process_player_end(int Ind)
 					
 					p_ptr->new_level_method = LEVEL_RAND;
 				}
-#if 0
 				/* beware! bugs inside! (jir) */
+				/* world travel */
 #ifdef NEW_DUNGEON
 				/* why wz again? (jir) */
-				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
+//				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
+				else if (!(p_ptr->recall_pos.wz))
 #else
 				else if ((p_ptr->dun_depth < 0) || (p_ptr->recall_depth < 0))
 #endif
 				{
+					if ((!(p_ptr->wild_map[(wild_idx(&p_ptr->recall_pos))/8] & (1 << (wild_idx(&p_ptr->recall_pos))%8))) ||
+						wpcmp(&p_ptr->wpos, &p_ptr->recall_pos))
+					{
+						/* lazy -- back to the centre of the world
+						 * this should land him/her back to the last town
+						 * (s)he visited.	*/
+						p_ptr->recall_pos.wx = MAX_WILD_X/2;
+						p_ptr->recall_pos.wy = MAX_WILD_Y/2;
+					}
+
+					new_pos.wx = p_ptr->recall_pos.wx;
+					new_pos.wy = p_ptr->recall_pos.wy;
+					new_pos.wz = 0;
+
+
 					/* Messages */
 					msg_print(Ind, "You feel yourself yanked sideways!");
 					msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
 					
 					/* New location */
+#if 0
 #ifdef NEW_DUNGEON
 					if (p_ptr->wpos.wz==0 && !istown(&p_ptr->wpos))
 #else
@@ -2257,28 +2277,65 @@ static void process_player_end(int Ind)
 						new_world_y = wild_info[new_depth].world_y;
 #endif
 					}
+#endif	// 0
 					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
 				}
-#endif	// 0
+
+				/* into dungeon/tower */
 				else
 				{
+					wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 					/* Messages */
-					if(p_ptr->recall_depth < 0)
+					if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
 					{
-					msg_print(Ind, "You feel yourself yanked downwards!");
-					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+//						if (p_ptr->max_dlv < getlevel(p_ptr->wpos))
+						if (p_ptr->max_dlv < w_ptr->dungeon->baselevel - p_ptr->recall_pos.wz)
+							p_ptr->recall_pos.wz = w_ptr->dungeon->baselevel - p_ptr->max_dlv;
+
+						if (-p_ptr->recall_pos.wz > w_ptr->dungeon->maxdepth)
+							p_ptr->recall_pos.wz = 0 - w_ptr->dungeon->maxdepth;
+
+						if (p_ptr->recall_pos.wz >= 0)
+						{
+							p_ptr->recall_pos.wz = 0;
+						}
+						else
+						{
+							msg_print(Ind, "You feel yourself yanked downwards!");
+							msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+						}
+					}
+					else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
+					{
+//						if (p_ptr->max_dlv < getlevel(p_ptr->wpos))
+						if (p_ptr->max_dlv < w_ptr->tower->baselevel + p_ptr->recall_pos.wz)
+							p_ptr->recall_pos.wz = 0 - w_ptr->tower->baselevel + p_ptr->max_dlv;
+
+						if (p_ptr->recall_pos.wz > w_ptr->tower->maxdepth)
+							p_ptr->recall_pos.wz = w_ptr->tower->maxdepth;
+
+						if (p_ptr->recall_pos.wz <= 0)
+						{
+							p_ptr->recall_pos.wz = 0;
+						}
+						else
+						{
+							msg_print(Ind, "You feel yourself yanked upwards!");
+							msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+						}
 					}
 					else
 					{
-					msg_print(Ind, "You feel yourself yanked upwards!");
-					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					p_ptr->recall_pos.wz = 0;
 					}
 					
+					if (p_ptr->recall_pos.wz == 0)
+						msg_print(Ind, "You feel yourself yanked toward yourself.");
 #ifdef NEW_DUNGEON
 //					p_ptr->wpos.wz=p_ptr->recall_depth;
-					new_depth.wx = p_ptr->wpos.wx;
-					new_depth.wy = p_ptr->wpos.wy;
-					new_depth.wz = p_ptr->recall_depth;
+					new_pos.wx = p_ptr->wpos.wx;
+					new_pos.wy = p_ptr->wpos.wy;
+					new_pos.wz = p_ptr->recall_pos.wz;
 #else
 					new_depth = p_ptr->recall_depth;
 					new_world_x = p_ptr->world_x;
@@ -2318,7 +2375,7 @@ static void process_player_end(int Ind)
 				forget_view(Ind);
 
 #ifdef NEW_DUNGEON
-				wpcopy(&p_ptr->wpos, &new_depth);
+				wpcopy(&p_ptr->wpos, &new_pos);
 #else
 				p_ptr->dun_depth = new_depth;
 				p_ptr->world_x = new_world_x;

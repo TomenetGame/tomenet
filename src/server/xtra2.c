@@ -5120,7 +5120,106 @@ bool get_rep_dir(int *dp)
 }
 #endif
 
+#ifdef NEW_DUNGEON
+/*
+ * Allows to travel both vertical/horizontal using Recall;
+ * probably wilderness(horizontal) travel will be made by other means
+ * in the future.
+ *
+ * Also, player_type doesn't contain the max.depth for each dungeon...
+ * Currently, this function uses getlevel() to determine the max.depth
+ * for each dungeon, but this should be replaced by actual depthes
+ * a player has been.	- Jir -
+ */
+void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
+{
+//	int recall_depth = 0;
+//	worldpos goal;
+	
+	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+	
+	/* default to the players maximum depth */
+	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+			WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
+#if 0
+	goal.wx = p_ptr->wpos.wx;
+	goal.wy = p_ptr->wpos.wy;
+//	goal.wz = 0 - p_ptr->max_dlv;	// hack -- default to 'dungeon'
+#endif	// 0
 
+	/* check for a valid inscription */
+	if (inscription == NULL) return;
+	
+	/* scan the inscription for @R */
+	while (*inscription != '\0')
+	{
+		
+		if (*inscription == '@')
+		{
+			inscription++;
+			
+			/* a valid @R has been located */
+			if (*inscription == 'R')
+			{			
+				inscription++;
+				/* @RW for World(Wilderness) travel */
+				/* It would be also amusing to limit the distance.. */
+				if ((*inscription == 'W') || (*inscription == 'X'))
+				{
+					unsigned char * next;
+					inscription++;
+					p_ptr->recall_pos.wx = atoi(inscription) % MAX_WILD_X;
+					p_ptr->recall_pos.wz = 0;
+					next = strchr(inscription,',');
+					if (next)
+					{
+						if (++next) p_ptr->recall_pos.wy = atoi(next) % MAX_WILD_Y;
+					}
+				}
+				else if (*inscription == 'Y')
+				{
+					inscription++;
+					p_ptr->recall_pos.wy = atoi(inscription) % MAX_WILD_Y;
+					p_ptr->recall_pos.wz = 0;
+				}
+#if 0
+				/* @RT for inter-Town travels (not implemented yet) */
+				else if (*inscription == 'T')
+				{
+				inscription++;
+				}
+#endif
+				else
+				{
+					if (*inscription == 'Z') inscription++;
+
+					/* convert the inscription into a level index */
+					p_ptr->recall_pos.wz = atoi(inscription) / 50;
+				}
+			}
+		}
+		inscription++;
+	}
+#if 0	/* sanity checks are done when recalling */	
+	/* do some bounds checking / sanity checks */
+	if ((recall_depth > p_ptr->max_dlv) || (!recall_depth)) recall_depth = p_ptr->max_dlv;
+	
+	/* if a wilderness level, verify that the player has visited here before */
+	if (recall_depth < 0)
+	{
+		/* if the player has not visited here, set the recall depth to the town */
+		if (!(p_ptr->wild_map[-recall_depth/8] & (1 << -recall_depth%8))) 		
+			recall_depth = 1;
+	}
+	
+	p_ptr->recall_depth = recall_depth;
+	wpcopy(&p_ptr->recall_pos, &goal);
+#endif
+}
+
+#else
 void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 {
 	int recall_depth = 0;
@@ -5165,6 +5264,7 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr)
 	
 	p_ptr->recall_depth = recall_depth;
 }
+#endif NEW_DUNGEON
 
 void telekinesis_aux(int Ind, int item)
 {

@@ -3575,7 +3575,7 @@ void run_step(int Ind, int dir)
 		run_init(Ind, dir);
 		/* check if we have enough energy to move */
 #ifdef NEW_DUNGEON
-		if (p_ptr->energy < level_speed(&p_ptr->wpos)/5);
+		if (p_ptr->energy < level_speed(&p_ptr->wpos)/5)
 #else
 		if (p_ptr->energy < (level_speed(p_ptr->dun_depth)/5))
 #endif

@@ -146,6 +146,16 @@ void wpcopy(struct worldpos *dest, struct worldpos *src){
 	dest->wz=src->wz;
 }
 
+/* better use macros maybe..	- Jir - */
+bool wpcmp(worldpos *dest, worldpos *src){
+	return ((dest->wx==src->wx && dest->wy==src->wy && dest->wz==src->wz) ?
+			TRUE : FALSE);
+}
+
+int wild_idx(worldpos *wpos){
+	return (wpos->wx + wpos->wy * MAX_WILD_X);
+}
+
 void new_players_on_depth(struct worldpos *wpos, int value, bool inc){
 	struct wilderness_type *w_ptr;
 	w_ptr=&wild_info[wpos->wy][wpos->wx];

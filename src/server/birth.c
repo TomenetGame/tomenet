@@ -1061,7 +1061,7 @@ static void player_outfit(int Ind)
 		o_ptr->owner = p_ptr->id;
 		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
-#if 0
+#if 1
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_WORD_OF_RECALL));
 		o_ptr->number = 99;
 		o_ptr->discount = 100;

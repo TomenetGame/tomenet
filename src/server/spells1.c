@@ -4848,7 +4848,7 @@ static bool project_p(int Ind, int who, int r, int Depth, int y, int x, int dam,
 		{
 			if (!p_ptr->word_recall)
 			{
-				p_ptr->recall_depth = p_ptr->max_dlv;
+				p_ptr->recall_pos.wz = p_ptr->max_dlv;
 				p_ptr->word_recall = dam;
 				if (fuzzy) msg_print(Ind, "You feel unstable!");
 				else msg_format(Ind, "%^s recalls you!", killer);
