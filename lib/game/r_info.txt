@@ -7294,7 +7294,7 @@ F:IM_COLD | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 D:It is a troll skeleton animated by dark dweomers. 
 
-N:466:Skeletal tyrannosaur 
+N:466:Skeletal tyrannosaur
 G:R:w
 I:120:50d10:20:55:20
 W:30:2:6000:225
