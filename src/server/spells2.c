@@ -4049,6 +4049,9 @@ void golem_creation(int Ind)
         m_ptr = &m_list[c_ptr->m_idx];
         MAKE(m_ptr->r_ptr, monster_race);
         m_ptr->special = TRUE;
+        m_ptr->fx = x;
+        m_ptr->fy = y;
+
         r_ptr = m_ptr->r_ptr;
 
         r_ptr->flags1 = 0;
@@ -4097,6 +4100,7 @@ void golem_creation(int Ind)
         if ((golem_type == -1) || (golem_m_legs < 2))
         {
                 msg_print(Ind, "The spell fails! You lose all your material.");
+		delete_monster_idx(c_ptr->m_idx);
                 return;
         }
 
@@ -4221,8 +4225,6 @@ void golem_creation(int Ind)
 	/* Assume no sleeping */
 	m_ptr->csleep = 0;
         m_ptr->dun_depth = p_ptr->dun_depth;
-        m_ptr->fx = x;
-        m_ptr->fy = y;
 
 	/* No "damage" yet */
 	m_ptr->stunned = 0;

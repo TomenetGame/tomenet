@@ -210,9 +210,10 @@
  * machine as well.
  * Probably almost never used.
 */
+#if 0
 #define	BIND_NAME "64.53.71.115"
 #define	BIND_IP "64.53.71.115"
-
+#endif
 
 /* Define the password for the server console, used if NEW_SERVER_CONSOLE
  * is defined below.  Provides authentication for the mangconsole program.
@@ -625,3 +626,4 @@
 #endif
 
 
+#define NEWHOUSES
