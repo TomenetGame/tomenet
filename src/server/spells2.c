@@ -3753,7 +3753,7 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg)
 
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return (project(0 - Ind, 0, p_ptr->dun_depth, ty, tx, dam, typ, flg));
-w}
+}
 
 
 /*

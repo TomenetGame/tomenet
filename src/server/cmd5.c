@@ -3736,7 +3736,7 @@ void do_cmd_fight(int Ind, int book, int spell)
 			}
 			
                         /* Spin */
-                        case 10:
+                        case 11:
 			{
                                 int d;
 
