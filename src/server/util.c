@@ -2735,6 +2735,10 @@ static void do_slash_cmd(int Ind, char *message)
 #endif
 				return;
 			}
+			else if (prefix(message, "/val")){
+				while(tk--)
+					validate(token[tk-1]);
+			}
 			else if (prefix(message, "/kick"))
 			{
 				if (tk)

@@ -459,9 +459,6 @@ void account_check(int Ind){	/* Temporary Ind */
 			delete_player_id(del);
 		}
 	}
-
-	/* Not found */
-	return 0;
 }
 
 /*
