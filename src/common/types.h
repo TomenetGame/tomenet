@@ -1694,10 +1694,9 @@ struct player_type
 
 	s16b stat_add[6];	/* Modifiers to stat values */
 	s16b stat_ind[6];	/* Indexes into stat tables */
-#if 0
+
 	s16b stat_cnt[6];	/* Counter for temporary drains */
 	s16b stat_los[6];	/* Amount of temporary drains */
-#endif	// 0
 
 	bool immune_acid;	/* Immunity to acid */
 	bool immune_elec;	/* Immunity to lightning */

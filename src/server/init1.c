@@ -720,7 +720,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -900,7 +900,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -1153,7 +1153,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -1505,7 +1505,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -1802,7 +1802,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -2138,7 +2138,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			{
 				/* It only annoying -- DG */
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -2787,7 +2787,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
                             (v3 != re_head->v_patch))
 			{
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */
@@ -3349,7 +3349,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			    (v3 != t_head->v_patch))
 			{
 //				return (2);
-				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
+//				s_printf("Warning: different version file(%d.%d.%d)\n", v1, v2, v3);
 			}
 
 			/* Okay to proceed */

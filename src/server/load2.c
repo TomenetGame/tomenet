@@ -1334,6 +1334,18 @@ static bool rd_extra(int Ind)
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_max[i]);
 	for (i = 0; i < 6; i++) rd_s16b(&p_ptr->stat_cur[i]);
 
+	/* Dump the stats (maximum and current) */
+	if (!older_than(3, 3, 1))
+	{
+		for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_cnt[i]);
+		for (i = 0; i < 6; ++i) rd_s16b(&p_ptr->stat_los[i]);
+	}
+	else
+	{
+		for (i = 0; i < 6; ++i) p_ptr->stat_cnt[i] = 0;
+		for (i = 0; i < 6; ++i) p_ptr->stat_los[i] = 0;
+	}
+
 	rd_s32b(&p_ptr->id);
 
 #ifdef NEWHOUSES

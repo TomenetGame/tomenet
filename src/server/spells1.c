@@ -1520,7 +1520,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int cur, max, loss, same, res = FALSE;
+	int cur, max, loss = 0, same, res = FALSE;
 
 
 	/* Acquire current value */
@@ -1536,10 +1536,17 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 		/* Handle "low" values */
 		if (cur <= 18)
 		{
+			if (amount > 90) loss++;
+			if (amount > 50) loss++;
+			if (amount > 20) loss++;
+			loss++;
+			cur -= loss;
+#if 0
 			if (amount > 90) cur--;
 			if (amount > 50) cur--;
 			if (amount > 20) cur--;
 			cur--;
+#endif	// 0
 		}
 
 		/* Handle "high" values */
@@ -1615,13 +1622,13 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 		/* Actually set the stat to its new value. */
 		p_ptr->stat_cur[stat] = cur;
 		p_ptr->stat_max[stat] = max;
-#if 0	// someday..
+
 		if (mode==STAT_DEC_TEMPORARY)
 		{
 			u16b dectime;
 
 			/* a little crude, perhaps */
-			dectime = rand_int(max_dlv[dungeon_type]*50) + 50;
+			dectime = rand_int(getlevel(&p_ptr->wpos)*50) + 50;
 			
 			/* prevent overflow, stat_cnt = u16b */
 			/* or add another temporary drain... */
@@ -1638,7 +1645,6 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 				p_ptr->stat_los[stat] = loss;
 			}
 		}
-#endif	// 0
 
 		/* Recalculate bonuses */
 		p_ptr->update |= (PU_BONUS);
@@ -1655,6 +1661,10 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 bool res_stat(int Ind, int stat)
 {
 	player_type *p_ptr = Players[Ind];
+
+	/* temporary drain is gone */
+	p_ptr->stat_los[stat] = 0;
+	p_ptr->stat_cnt[stat] = 0;
 
 	/* Restore if needed */
 	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat])

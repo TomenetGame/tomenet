@@ -273,6 +273,36 @@ bool do_res_stat(int Ind, int stat)
 	return (FALSE);
 }
 
+/*
+ * Restore temporary-lost "points" in a stat
+ */
+bool do_res_stat_temp(int Ind, int stat)
+{
+	player_type *p_ptr = Players[Ind];
+
+	/* Restore if needed */
+	if (p_ptr->stat_cur[stat] != p_ptr->stat_max[stat])
+	{
+		/* Restore */
+		p_ptr->stat_cur[stat] += p_ptr->stat_los[stat];
+
+		if (p_ptr->stat_cur[stat] > p_ptr->stat_max[stat])
+			p_ptr->stat_cur[stat] = p_ptr->stat_max[stat];
+
+		p_ptr->stat_los[stat] = 0;
+
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+
+		/* Message */
+		msg_format(Ind, "You feel less %s.", desc_stat_neg[stat]);
+		/* Success */
+		return (TRUE);
+	}
+
+	/* Nothing to restore */
+	return (FALSE);
+}
 
 /*
  * Gain a "point" in a stat

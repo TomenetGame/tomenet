@@ -1728,6 +1728,19 @@ static void process_player_end(int Ind)
 		/* Finally, at the end of our turn, update certain counters. */
 		/*** Timeout Various Things ***/
 
+		/* Handle temporary stat drains */
+		for (i = 0; i < 6; i++)
+		{
+			if (p_ptr->stat_cnt[i] > 0)
+			{
+				p_ptr->stat_cnt[i]--;
+				if (p_ptr->stat_cnt[i] == 0)
+				{
+					do_res_stat_temp(Ind, i);
+				}
+			}
+		}
+
 		/* Adrenaline */
 		if (p_ptr->adrenaline)
 		{

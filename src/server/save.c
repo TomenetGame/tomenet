@@ -1216,6 +1216,10 @@ static void wr_extra(int Ind)
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_max[i]);
 	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cur[i]);
 
+	/* Dump the stats (maximum and current) */
+	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_cnt[i]);
+	for (i = 0; i < 6; ++i) wr_s16b(p_ptr->stat_los[i]);
+
 	wr_s32b(p_ptr->id);
 #ifdef NEWHOUSES	/* define this before reset and DIE!!! ;) */
 	wr_u32b(p_ptr->dna);
