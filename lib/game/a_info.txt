@@ -60,7 +60,7 @@ D:The shining Star of the West, a famed heirloom of Elendil's house.
 
 N:3:of Thrain
 I:39:102:3
-W:40:50:5:60000
+W:40:50:5:75000
 P:0:1d1:0:0:0
 F:ACTIVATE | SEE_INVIS | HOLD_LIFE | RES_CHAOS | HIDE_TYPE | RES_BLIND |
 F:INSTA_ART | SPEED | RES_LITE | RES_DARK | ESP_ORC | LITE3 | LITE2 | WIS
@@ -73,7 +73,7 @@ D:glowing shards.
 
 N:4:of Carlammas
 I:40:10:3
-W:30:10:3:70000
+W:30:10:3:80000
 F:STR | CON | SUST_STR | SUST_CON | FREE_ACT | RES_FEAR | HIDE_TYPE | 
 F:ACTIVATE | IM_FIRE | RES_NETHER
 F:INSTA_ART
@@ -128,7 +128,7 @@ D:of Dragonrider.
 
 N:8:of Barahir
 I:45:32:2
-W:50:25:2:75000
+W:50:25:2:100000
 F:STR | INT | WIS | DEX | CON | CHR | STEALTH | HIDE_TYPE | 
 F:RES_POIS | RES_DARK | ACTIVATE | SEE_INVIS | SEARCH |
 F:REGEN_MANA  | RES_FEAR | HOLD_LIFE | 
@@ -430,7 +430,7 @@ D:imps are said to be less annoying with this on.
 
 N:28:'Thalkettoth'
 I:36:11:3
-W:20:3:60:35000
+W:17:3:60:35000
 P:11:1d1:-1:0:25
 F:DEX | SPEED | HIDE_TYPE | SPECIAL_GENE |
 F:RES_ACID | RES_SHARDS
@@ -650,7 +650,7 @@ D:nature and magnitude of the task.
 
 N:44:'Colluin'
 I:35:1:0
-W:5:45:10:55000
+W:5:45:10:100000
 P:1:0d0:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE | ESP_GOOD
 D:A cape worn by a hero from Valinor, a land utterly beyond the strife 
@@ -675,7 +675,7 @@ D:the Sindar.
 
 N:46:of Thingol
 I:35:1:3
-W:10:30:10:45000
+W:10:30:10:65000
 P:1:0d0:0:0:18
 F:DEX | CHR | HIDE_TYPE | 
 F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | ACTIVATE
@@ -687,7 +687,7 @@ D:and clear as moonlight on still water.
 
 N:47:of Thorongil
 I:35:1:0
-W:4:10:10:10000
+W:4:10:10:20000
 P:1:0d0:0:0:10
 F:FREE_ACT | RES_ACID | SEE_INVIS | RES_FEAR
 D:A cloak of shimmering green and brown that grants sight beyond sight and 
@@ -699,7 +699,7 @@ D:as he adventured under the name of Thorongil.
 
 N:48:'Colannon'
 I:35:1:3
-W:5:20:10:55000
+W:5:20:10:65000
 P:1:0d0:0:0:15
 F:STEALTH | SPEED | RES_NEXUS | 
 F:RES_ACID | ACTIVATE
@@ -712,7 +712,7 @@ D:trouble.
 
 N:49:of Luthien
 I:35:6:2
-W:30:40:5:85000
+W:30:40:5:95000
 P:6:0d0:0:0:25
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
 F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
@@ -727,7 +727,7 @@ D:being that ever knew death.
 
 N:50:of Tuor
 I:35:6:4
-W:20:40:5:65000
+W:20:40:5:125000
 P:6:0d0:0:0:22
 F:STEALTH | DEX | HIDE_TYPE | INVIS |
 F:FREE_ACT | IM_ACID | SEE_INVIS | CLIMB
@@ -1285,7 +1285,7 @@ D:went snicker-snack!"
 # The Beaked Axe of Theoden
 
 N:93:of Theoden
-I:24:10:5
+I:24:10:4
 W:20:15:180:70000
 P:0:4d6:10:20:0
 F:WIS | CON | HIDE_TYPE | 
@@ -1395,12 +1395,12 @@ D:and dire wolves.
 # The Great Axe of Durin
 
 N:101:of Durin
-I:24:25:5
-W:30:90:230:150000
+I:24:25:4
+W:30:90:230:200000
 P:0:7d5:10:20:15
 F:STR | CON | TUNNEL | HIDE_TYPE | ESP_EVIL | RES_FEAR | 
 F:SLAY_DRAGON | KILL_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
-F:IM_ACID | IM_FIRE | RES_LITE | RES_DARK | RES_CHAOS | SHOW_MODS | 
+F:RES_ACID | IM_FIRE | RES_LITE | RES_DARK | RES_CHAOS | SHOW_MODS | 
 F:BRAND_ACID | BRAND_FIRE
 D:The twin massive axe heads of this ancient demon's dread gleam with 
 D:mithril inlay, which tell sagas of endurance, invoking the powers of 
@@ -1426,7 +1426,7 @@ D:evil at a word, and grants Maia-like powers of body and mind.
 
 N:103:of Balli Stonehand
 I:24:22:3
-W:30:20:170:90000
+W:30:20:170:115000
 P:0:3d9:8:21:5
 F:STR | CON | STEALTH | HIDE_TYPE | ESP_NONLIVING |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1641,8 +1641,8 @@ D:virtues of protection and thought.
 # The Quarterstaff 'Eriril'
 
 N:119:'Eriril'
-I:21:3:5
-W:16:18:130:30000
+I:21:3:4
+W:16:18:130:60000
 P:0:1d9:9:8:0
 F:INT | WIS | HIDE_TYPE | ESP_EVIL |
 F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT
@@ -1654,9 +1654,9 @@ D:grants keen sight and the knowledge of many hidden things.
 
 N:120:of Olorin
 I:21:3:4
-W:30:105:150:140000
+W:30:105:150:110000
 P:0:2d9:10:16:0
-F:INT | WIS | CHR | HIDE_TYPE | SEARCH | BRAND_FIRE | SPECIAL_GENE |
+F:INT | WIS | CHR | HIDE_TYPE | SEARCH | SPECIAL_GENE |
 F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC |
 F:HOLD_LIFE | RES_FIRE | RES_NETHER | SEE_INVIS | ACTIVATE | SHOW_MODS
 D:A staff tall and sturdy, with rough-hewn runes that invoke the element of 
@@ -1715,7 +1715,7 @@ D:known for never having lost in combat.
 
 N:124:'Belthronding'
 I:19:13:5
-W:40:20:40:75000
+W:40:20:40:125000
 P:0:0d0:20:25:0
 F:DEX | STEALTH | HIDE_TYPE | 
 F:RES_DISEN | XTRA_SHOTS | SHOW_MODS | XTRA_MIGHT
@@ -1981,7 +1981,7 @@ D:the inhabitants of Angband.
 
 N:148:of Great Luck
 I:36:2:25
-W:50:80:20:60000
+W:50:80:20:166000
 P:2:0d0:0:0:5
 F:LUCK | HIDE_TYPE |
 F:SUST_STR | SUST_INT | SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR |
@@ -2669,8 +2669,8 @@ D:Not to be found by players. (C. Blue)
 # The Battle Axe of Dain Ironfoot
 
 N:219:of Dain Ironfoot
-I:24:22:5
-W:60:30:170:100000
+I:24:22:4
+W:60:45:170:100000
 P:0:5d9:8:15:0
 F:STR | CON | ESP_ORC | ESP_TROLL | RES_FEAR | 
 F:SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -2682,8 +2682,8 @@ D:very end. Baruk Khazad!
 # The Mithril Helm of the Durin // Steel helm for now, we don't have M.Helm atm.
 
 N:220:of the Durin
-I:32:6:4
-W:40:40:60:100000
+I:32:6:3
+W:40:70:60:100000
 P:9:0d0:0:0:25 
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
@@ -2716,11 +2716,11 @@ D:Strange enough, noone managed to enchant it yet.
 # The Scythe Of Slicing 'Soul Reaver'
 
 N:223:'Soul Reaver'
-I:22:30:5
+I:22:30:-10
 W:90:70:300:500000
 P:0:15d4:50:0:0
 F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
-F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC |
+F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC | CHR | 
 F:IM_COLD | RES_DARK | RES_NETHER | RES_CHAOS | RES_DISEN | RES_TIME
 D:Not supposed to be used by mortals as a weapon but as a tool for the
 D:Grim Reaper himself to cut souls from the dying bodies this terrible
@@ -2736,7 +2736,7 @@ D:you scream out in terror.
 
 N:224:of the Guardian
 I:22:15:0
-W:35:20:220:100000
+W:35:20:220:130000
 P:0:5d8:20:20:0
 F:RES_FEAR | FREE_ACT | ESP_EVIL | SLAY_EVIL | SLOW_DIGEST |
 F:RES_COLD | RES_ELEC | RES_DARK | RES_DISEN
@@ -2746,7 +2746,7 @@ D:The guard on duty's best friend.
 # The Heavy Lance of the Abyss Rider
 
 N:225:of the Abyss Rider
-I:22:29:-10
+I:22:29:-3
 W:50:23:400:100000
 P:0:6d8:0:13:0
 F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
