@@ -2558,12 +2558,12 @@ void player_talk_aux(int Ind, cptr message)
 			/* Add a trailing NULL */
 			search[colon - message] = '\0';
 
-			/* Cut off the space */
-			colon++;
+			/* Move colon pointer forward to next word */
+			while (*colon && (isspace(*colon))) colon++;
 		}
 
 		/* User commands */
-		if (prefix(message, "/ignore ") ||
+		if (prefix(message, "/ignore") ||
 			prefix(message, "/ig"))
 		{
 			add_ignore(Ind, colon);
@@ -2574,12 +2574,12 @@ void player_talk_aux(int Ind, cptr message)
 			toggle_afk(Ind);
 			return;
 		}
-		else if (prefix(message, "/me "))
+		else if (prefix(message, "/me"))
 		{
 			me = TRUE;
 		}
 		/* Semi-auto item destroyer */
-		else if ((prefix(message, "/dispose ")) ||
+		else if ((prefix(message, "/dispose")) ||
 				prefix(message, "/dis"))
 		{
 			object_type		*o_ptr;
@@ -2651,15 +2651,19 @@ void player_talk_aux(int Ind, cptr message)
 				
 
 
-		/* Admin commands */
+		/*
+		 * Admin commands
+		 *
+		 * These commands should be replaced by LUA scripts in the future.
+		 */
 		else if (!strcmp(p_ptr->name,cfg_admin_wizard)
-			|| !strcmp(p_ptr->name,cfg_dungeon_master))
+				|| !strcmp(p_ptr->name,cfg_dungeon_master))
 		{
 			if (prefix(message, "/shutdown"))
 			{
 				shutdown_server();
 			}
-			else if (prefix(message, "/kick "))
+			else if (prefix(message, "/kick"))
 			{
 				int j = name_lookup_loose(Ind, colon, FALSE);
 				if (j)
@@ -2819,7 +2823,7 @@ void player_talk_aux(int Ind, cptr message)
 
 				return;
 			}
-			else if (prefix(message, "/script ") ||
+			else if (prefix(message, "/script") ||
 					prefix(message, "/scr") ||
 					prefix(message, "/lua"))
 			{
@@ -2834,17 +2838,62 @@ void player_talk_aux(int Ind, cptr message)
 
 				return;
 			}
+			else if (prefix(message, "/wish"))
+			{
+				if (k)
+				{
+					cptr arg2;
+
+					/* Look for a TVAL followed by a space */
+					if (arg2 = strchr(colon, ' '));
+					{
+						int l = atoi(arg2);
+
+						/* Move colon pointer forward to next word */
+						while (*arg2 && (isspace(*arg2))) arg2++;
+
+						if (l)
+						{
+							object_type	forge;
+							object_type	*o_ptr = &forge;
+
+							invcopy(o_ptr, lookup_kind(k, l));
+
+							if (colon = strchr(arg2, ' '))
+							{
+								o_ptr->number = 1;
+								o_ptr->name1 = atoi(colon);
+							}
+							else
+							{
+								o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
+							}
+							
+							apply_magic(1, o_ptr, -1, TRUE, TRUE, TRUE);
+							o_ptr->discount = 99;
+							object_known(o_ptr);
+							o_ptr->owner = p_ptr->id;
+							o_ptr->level = 1;
+							(void)inven_carry(Ind, o_ptr);
+
+							return;
+						}
+					}
+				}
+				msg_print(Ind, "\377oUsage: /wish (tval) (sval) [name1]");
+				return;
+			}
 			else
 			{
 				msg_print(Ind, "Commands: afk dis ignore me tag untag;");
-				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst");
+				msg_print(Ind, "  art cfg clv geno id kick lua recall shutdown sta unst wish");
 				return;
 			}
 		}
 		else
 		{
 			msg_print(Ind, "Commands: afk dis ignore me tag untag");
-			msg_print(Ind, "/dis \377rdestroys \377wevery uninscribed items in your inventory!");
+			msg_print(Ind, "  /dis \377rdestroys \377wevery uninscribed items in your inventory!");
 			return;
 		}
 	}
