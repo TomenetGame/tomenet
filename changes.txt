@@ -397,3 +397,9 @@ Change list for PernMangband
 
 09/12/2001 (written by Tanix/modified by Jir)
 - chat-line command /cast.
+
+10/12/2001 (evileye)
+- 3d base code committed.
+- Multiple towns possible.
+- Multiple dungeons / Add dungeon in dm level menu.
+
