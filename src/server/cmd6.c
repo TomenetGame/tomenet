@@ -6571,6 +6571,18 @@ void do_cmd_activate(int Ind, int item)
 		o_ptr->timeout = rand_int(100) + 100;
 		return;
 	}
+	/* Amulets of rage can be activated for berserk strength */
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_RAGE))
+	{
+		msg_print(Ind, "Your amulet sparkles bright red...");
+
+                set_afraid(Ind, 0);
+                set_shero(Ind, p_ptr->shero + randint(25) + 25);
+                hp_player(Ind, 30);
+
+		o_ptr->timeout = rand_int(150) + 100;
+		return;
+	}
 #endif	// 0
 
 	/* Mistake */

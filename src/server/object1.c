@@ -2966,6 +2966,8 @@ cptr item_activation(object_type *o_ptr)
 				return "sleep monsters every 100+d100 turns";
 			case SV_AMULET_SERPENT:
 				return "venom breathing every 40+d60 turns";
+			case SV_AMULET_RAGE:
+				return "entering berserk rage every 150+d100 turns";
 			default:
 				return NULL;
 		}
