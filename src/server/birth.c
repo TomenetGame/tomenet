@@ -481,7 +481,8 @@ static void get_extra(int Ind)
 
 	/* Assume base hitpoints (fully healed) */
 	p_ptr->chp = p_ptr->mhp = p_ptr->hitdie;
-
+	p_ptr->csane = p_ptr->msane =
+		((int)(adj_con_mhp[p_ptr->stat_ind[A_WIS]]) - 128) / 2 + 10;
 
 	/* Minimum hitpoints at highest level */
 	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;

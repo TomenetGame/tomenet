@@ -2155,7 +2155,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 		{
 			if (o_ptr->sval == SV_AMMO_MAGIC)
 			{
-				o_ptr->to_h = o_ptr->to_d = 0;
+				o_ptr->to_h = o_ptr->to_d = o_ptr->pval = 0;
 				break;
 			}
 
@@ -2165,19 +2165,18 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
 				if (randint(100) < 30)
 				{
 					/* Exploding missile */
-					int power[25]={GF_ELEC, GF_POIS, GF_ACID,
+					int power[27]={GF_ELEC, GF_POIS, GF_ACID,
 						GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
 						GF_DARK, GF_SHARDS, GF_SOUND,
 						GF_CONFUSION, GF_FORCE, GF_INERTIA,
 						GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
 						GF_NETHER, GF_NEXUS, GF_TIME,
 						GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-						GF_TURN_ALL, GF_STUN};
-						//				     GF_TURN_ALL, GF_NUKE, GF_STUN,
-						//				     GF_DISINTEGRATE};
+						GF_TURN_ALL, GF_NUKE, GF_STUN,
+						GF_DISINTEGRATE};
 
 						//                                o_ptr->pval2 = power[rand_int(25)];
-					o_ptr->pval = power[rand_int(25)];
+					o_ptr->pval = power[rand_int(27)];
 			}
 		}
 		break;
@@ -3213,6 +3212,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_RING_CON:
 				case SV_RING_DEX:
 				case SV_RING_INT:
+				case SV_RING_SEARCHING:
+				case SV_RING_STEALTH:
 				{
 					/* Stat bonus */
 					o_ptr->pval = 1 + m_bonus(5, level);
@@ -3275,25 +3276,6 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					rating += 5;
 				}
 				break;
-
-				/* Searching */
-				case SV_RING_SEARCHING:
-				{
-					/* Bonus to searching */
-					o_ptr->pval = 1 + m_bonus(5, level);
-
-					/* Cursed */
-					if (power < 0)
-					{
-						/* Cursed */
-						o_ptr->ident |= (ID_CURSED);
-
-						/* Reverse pval */
-						o_ptr->pval = 0 - (o_ptr->pval);
-					}
-
-					break;
-				}
 
 				/* Flames, Acid, Ice */
 				case SV_RING_FLAMES:
@@ -4078,19 +4060,19 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 
 		break;
 
-                case TV_GOLEM:
-                {
-                        switch (o_ptr->sval)
-                        {
-                                case SV_GOLEM_ARM:
-                                        o_ptr->pval = 1 + m_bonus(15, level);
-                                        break;
-                                case SV_GOLEM_LEG:
-                                        o_ptr->pval = 1 + m_bonus(8, level);
-                                        break;
-                        }
-                        break;
-                }
+		case TV_GOLEM:
+		{
+			switch (o_ptr->sval)
+			{
+				case SV_GOLEM_ARM:
+					o_ptr->pval = 1 + m_bonus(15, level);
+					break;
+				case SV_GOLEM_LEG:
+					o_ptr->pval = 1 + m_bonus(8, level);
+					break;
+			}
+			break;
+		}
 
 
 		/* Hack -- consider using 'timeout' inplace */
@@ -5678,6 +5660,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 	int		n = -1;
 
 	object_type	*j_ptr;
+        u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, esp = 0;
 
 
 	/* Check for combining */
@@ -5807,6 +5790,13 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
 		c[2] = o_ptr->sval +1 +48;
 		o_ptr->note = quark_add(c);
+	}
+
+	/* Auto Curse */
+	if (f3 & TR3_AUTO_CURSE)
+	{
+		/* The object recurse itself ! */
+		o_ptr->ident |= ID_CURSED;
 	}
 
 	/* Structure copy to insert the new item */

@@ -2439,6 +2439,42 @@ void msg_broadcast_format(int Ind, cptr fmt, ...)
 	msg_broadcast(Ind, buf);
 }
 
+/* Send a formatted message only to admin chars.	-Jir- */
+void msg_admin(cptr fmt, ...)
+//void msg_admin(int Ind, cptr fmt, ...)
+{
+	int i;
+	player_type *p_ptr;
+	
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Tell every admin */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		p_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (p_ptr == NOT_CONNECTED) 
+			continue;
+			
+
+		/* Tell Mama */
+		if (p_ptr->admin_dm || p_ptr->admin_wiz)
+			msg_print(i, buf);
+	 }
+}
+
 
 
 /*
@@ -3065,6 +3101,34 @@ void player_talk_aux(int Ind, cptr message)
 				}
 
 				do_cmd_quaff_potion(Ind, book);
+				return;
+			}
+			/* Display extra information */
+			else if ((prefix(message, "/extra")) ||
+					prefix(message, "/ex"))
+			{
+				/* Insanity warning (better message needed!) */
+				if (p_ptr->csane < p_ptr->msane / 8)
+				{
+					/* Message */
+					msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
+				}
+				else if (p_ptr->csane < p_ptr->msane / 4)
+				{
+					/* Message */
+					msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
+				}
+				else if (p_ptr->csane < p_ptr->msane / 2)
+				{
+					/* Message */
+					msg_print(Ind, "\377yYou feel insanity creep into your mind..");
+				}
+				else
+				{
+					/* Message */
+					msg_print(Ind, "\377wYou are sane.");
+				}
+
 				return;
 			}
 

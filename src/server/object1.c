@@ -253,7 +253,7 @@ static cptr syllables[MAX_SYLLABLES] =
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    34       /* Used with amulets (min 30) */
+#define MAX_AMULETS    36       /* Used with amulets (min 30) */
 #define MAX_WOODS      35       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     66       /* Used with potions (min 62) */
@@ -315,7 +315,8 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Copper", "Amethyst", "Mithril", "Sapphire", "Dragon Tooth",
         "Carved Oak", "Sea Shell", "Flint Stone", "Ruby", "Scarab",
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
-        "Malachite", "Adamantite", "Mother-of-pearl", "Runed"
+        "Malachite", "Adamantite", "Mother-of-pearl", "Runed",
+		"Sandalwood", "Emerald"
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -323,10 +324,11 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_YELLOW, TERM_L_UMBER, TERM_WHITE, TERM_L_WHITE, TERM_WHITE,
 	TERM_L_DARK, TERM_WHITE, TERM_ORANGE, TERM_L_UMBER, TERM_SLATE,
 	TERM_GREEN, TERM_YELLOW, TERM_L_BLUE, TERM_L_BLUE, TERM_L_WHITE,
-        TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
-        TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
-        TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
-        TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER
+	TERM_L_UMBER, TERM_VIOLET, TERM_L_BLUE, TERM_BLUE, TERM_L_WHITE,
+	TERM_UMBER, TERM_L_BLUE, TERM_SLATE, TERM_RED, TERM_L_GREEN, 
+	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
+	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER,
+	TERM_L_WHITE, TERM_GREEN
 };
 
 

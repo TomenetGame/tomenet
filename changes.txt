@@ -576,3 +576,8 @@ Change list for PernMangband
 1/1/2001 (Jir)
 - A happy new year.
 - Merged the changes/files necessary to compile in win32(by Yakina).
+- LUA error messages are displayed only to DM/wizard.
+- bandled CAUSE_1~4 into CURSE, ARROW_1~4 into ARROW_1~2.
+- Insanity/Eldritch-horror(partially) implemented.
+- Original monsters/mego/items/egos/artifacts.
+- Drain life/mana

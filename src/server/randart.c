@@ -351,6 +351,7 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->flags3 & TR3_CURSED) p -= 4;
 	if (a_ptr->flags3 & TR3_HEAVY_CURSE) p -= 20;
 /*	if (a_ptr->flags3 & TR3_PERMA_CURSE) p -= 40; */
+	if (a_ptr->flags4 & TR4_ANTIMAGIC_10) p += 8;
 
 	return p;
 }
@@ -706,7 +707,7 @@ void add_ability (artifact_type *a_ptr)
 	}
 	else			/* Pick something universally useful. */
 	{
-		r = rand_int (44);
+		r = rand_int (45);
 		switch (r)
 		{
 			case 0:
@@ -887,6 +888,9 @@ void add_ability (artifact_type *a_ptr)
 			case 42:
 			case 43:
 				a_ptr->flags3 |= TR3_REGEN; break;
+			case 44:
+				a_ptr->flags4 |= TR4_ANTIMAGIC_10; break;
+
 		}
 	}
 
@@ -1002,15 +1006,6 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->flags3 |= (TR3_IGNORE_ACID | TR3_IGNORE_ELEC |
 			   TR3_IGNORE_FIRE | TR3_IGNORE_COLD);
 
-	/* Really powerful items should aggravate. */
-	if (power > 100)
-	{
-		if (rand_int (100) < (power - 100) * 3)
-		{
-			aggravate_me = TRUE;
-		}
-	}
-	
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval==TV_DIGGING) ||
 	    (a_ptr->tval==TV_HAFTED) ||
@@ -1327,7 +1322,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 	if (fego & ETR4_ABILITY)
 	{
 		/* Choose an ability */
-		switch (randint(8))
+		switch (randint(9))
 		{
 			case 1: a_ptr->flags3 |= (TR3_FEATHER);     break;
 			case 2: a_ptr->flags3 |= (TR3_LITE1);        break;
@@ -1356,6 +1351,7 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			case 6: a_ptr->flags3 |= (TR3_REGEN);       break;
 			case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
 			case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
+			case 9: a_ptr->flags4 |= (TR4_ANTIMAGIC_10);   break;
 		}
 	}
 

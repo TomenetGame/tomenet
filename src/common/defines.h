@@ -37,7 +37,7 @@
  
 #define VERSION_MAJOR	3
 #define VERSION_MINOR   3
-#define VERSION_PATCH   4
+#define VERSION_PATCH   5
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.
@@ -190,7 +190,8 @@
  
 #define MAX_F_IDX	128	/* Max size for "f_info[]" */
 //#define MAX_K_IDX	543	/* Max size for "k_info[]" */
-#define MAX_K_IDX	1024	/* Max size for "k_info[]" */
+//#define MAX_K_IDX	1024	/* Max size for "k_info[]" */
+#define MAX_K_IDX	768 /* Max size for "k_info[]" */
 //#define MAX_A_IDX	128	/* Max size for "a_info[]" */
 #define MAX_A_IDX	256	/* Max size for "a_info[]" */
 #define MAX_E_IDX	256 /* Max size for "e_info[]" */
@@ -632,8 +633,13 @@
 #define ROW_CURSP		19
 #define COL_CURSP		0	/* "Cur SP xxxxx" */
 
+#define ROW_SANITY              20      /* "Sanity  100%" */
+#define COL_SANITY              0
+
+#if 1
 #define ROW_INFO		20
 #define COL_INFO		0	/* "xxxxxxxxxxxx" */
+#endif	// 0
 
 #define ROW_CUT			21
 #define COL_CUT			0	/* <cut> */
@@ -1990,6 +1996,8 @@ that keeps many algorithms happy.
 //#define SV_AMULET_THE_MAGI		8
 #define SV_AMULET_THE_MOON              33
 //#define SV_AMULET_DOOM			0
+#define SV_AMULET_SUSPICION		34
+#define SV_AMULET_LIFE_SAVING	35
 
 /*
  * Special "sval" limit -- first "normal" food
@@ -2777,6 +2785,7 @@ that keeps many algorithms happy.
 #define PU_BONUS	0x00000001L	/* Calculate bonuses */
 #define PU_TORCH	0x00000002L	/* Calculate torch radius */
 /* xxx (many) */
+#define PU_SANITY       0x00000008L     /* Calculate csan and msan */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
 #define PU_MANA		0x00000020L	/* Calculate csp and msp */
 #define PU_SPELLS	0x00000040L	/* Calculate spells */
@@ -2827,6 +2836,7 @@ that keeps many algorithms happy.
 #define PR_MAP		0x04000000L	/* Display Map */
 #define PR_WIPE		0x08000000L	/* Hack -- Total Redraw */
 #define PR_SKILLS	0x10000000L	/* Display Skills */
+#define PR_SANITY	0x20000000L     /* Display Sanity */
 /* xxx */
 /* xxx */
 /* xxx */
@@ -3606,8 +3616,8 @@ that keeps many algorithms happy.
 //#define RF4_XXX4			0x00000008	/* (?) */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
 #define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
-#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
-#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
+//#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
+//#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
 #define RF4_BR_ACID			0x00000100	/* Breathe Acid */
 #define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
 #define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
@@ -3637,7 +3647,9 @@ that keeps many algorithms happy.
 //#define RF4_XXX7			0x40000000
 //#define RF4_XXX8			0x80000000
 
-#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
+//#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
+
+#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA)
 
 /*
  * New monster race bit flags
@@ -3654,10 +3666,14 @@ that keeps many algorithms happy.
 #define RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
 #define RF5_MIND_BLAST		0x00000400	/* Blast Mind */
 #define RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
+#define RF5_CURSE			0x00001000	/* Cause Light Wound */
+#if 0
 #define RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
 #define RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
 #define RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
 #define RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
+#endif
+#define RF5_UNMAGIC			0x00008000	/* Cause Mortal Wound */
 #define RF5_BO_ACID			0x00010000	/* Acid Bolt */
 #define RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
 #define RF5_BO_FIRE			0x00040000	/* Fire Bolt */

@@ -1097,6 +1097,43 @@ static void calc_spells(int Ind)
 
 
 /*
+ * Calculate the player's sanity
+ */
+
+void calc_sanity(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int bonus, msane;
+	/* Don't make the capacity too large */
+	int lev = p_ptr->lev > 50 ? 50 : p_ptr->lev;
+
+	/* Hack -- use the con/hp table for sanity/wis */
+	bonus = ((int)(adj_con_mhp[p_ptr->stat_ind[A_WIS]]) - 128);
+
+	/* Hack -- assume 5 sanity points per level. */
+	msane = 5*(lev+1) + (bonus * lev / 2);
+
+	if (msane < lev + 1) msane = lev + 1;
+
+	if (p_ptr->msane != msane) {
+
+		/* Sanity carries over between levels. */
+		p_ptr->csane += (msane - p_ptr->msane);
+
+		p_ptr->msane = msane;
+
+		if (p_ptr->csane >= msane) {
+			p_ptr->csane = msane;
+			p_ptr->csane_frac = 0;
+		}
+
+		p_ptr->redraw |= (PR_SANITY);
+		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+	}
+}
+
+
+/*
  * Calculate maximum mana.  You do not need to know any spells.
  * Note that mana is lowered by heavy (or inappropriate) armor.
  *
@@ -1684,6 +1721,8 @@ static void calc_bonuses(int Ind)
 	p_ptr->aggravate = FALSE;
 	p_ptr->teleport = FALSE;
 	p_ptr->exp_drain = FALSE;
+        p_ptr->drain_mana = 0;
+        p_ptr->drain_life = 0;
 	p_ptr->bless_blade = FALSE;
 	p_ptr->xtra_might = FALSE;
 	p_ptr->impact = FALSE;
@@ -2050,6 +2089,8 @@ static void calc_bonuses(int Ind)
 		if (f3 & TR3_AGGRAVATE) p_ptr->aggravate = TRUE;
 		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
 		if (f3 & TR3_DRAIN_EXP) p_ptr->exp_drain = TRUE;
+                if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
+                if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
 		if (f3 & TR3_BLESSED) p_ptr->bless_blade = TRUE;
 		if (f3 & TR3_XTRA_MIGHT) p_ptr->xtra_might = TRUE;
 		if (f3 & TR3_SLOW_DIGEST) p_ptr->slow_digest = TRUE;
@@ -2154,19 +2195,22 @@ static void calc_bonuses(int Ind)
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
 		minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval + o_ptr->to_a;
+#if 0	/* Now there're many other ways to get antimagic */
 		/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
 		if (p_ptr->pclass != CLASS_UNBELIEVER)
 		{
 			if (minus < -p_ptr->lev / 2) minus = -p_ptr->lev / 2;
 			if (minus < -40) minus = -40;
 		}
+#else
+		if (minus < 0) minus = 0;
+#endif
 
 		if (f4 & (TR4_ANTIMAGIC_50) && minus < 50)
 		{
 			p_ptr->antimagic += 50 - minus;
 			p_ptr->antimagic_dis += 5 - (minus / 15);
 		}
-		/* (no items seem to give 30/20/10, though..) */
 		if (f4 & (TR4_ANTIMAGIC_30) && minus < 30)
 		{
 			p_ptr->antimagic += 30 - minus;
@@ -2957,6 +3001,12 @@ void update_stuff(int Ind)
 	{
 		p_ptr->update &= ~(PU_HP);
 		calc_hitpoints(Ind);
+	}
+
+        if (p_ptr->update & (PU_SANITY))
+        {
+                p_ptr->update &= ~(PU_SANITY);
+                calc_sanity(Ind);
 	}
 
 	if (p_ptr->update & PU_MANA)

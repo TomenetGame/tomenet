@@ -393,15 +393,20 @@ static int enchant_table[16] =
 static int remove_curse_aux(int Ind, int all)
 {
 	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
 
-	int		i, cnt = 0;
+	int		i, j, cnt = 0;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Attempt to uncurse items being worn */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	/* Now this can uncurse ones in inventory */
+//	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	for (j = 0; j < INVEN_TOTAL; j++)
 	{
-	    u32b f1, f2, f3, f4, f5, esp;
 
-		object_type *o_ptr = &p_ptr->inventory[i];
+		i = (j + INVEN_WIELD) % INVEN_TOTAL;
+
+		o_ptr = &p_ptr->inventory[i];
 
 		/* Uncursed already */
 		if (!cursed_p(o_ptr)) continue;
@@ -424,6 +429,22 @@ static int remove_curse_aux(int Ind, int all)
 		/* Take note */
 		o_ptr->note = quark_add("uncursed");
 
+		/* Reverse the curse effect */
+		/* jk - scrolls of *remove curse* have a 1 in (55-level chance to */
+		/* reverse the curse effects - a ring of damage(-15) {cursed} then */
+		/* becomes a ring of damage (+15) */
+		/* this does not go for artifacts - a Sword of Mormegil +40,+60 would */
+		/* be somewhat unbalancing */
+		/* due to the nature of this procedure, it only works on cursed items */
+		/* ie you get only one chance! */
+		if (((randint(p_ptr->lev > 50) ? 5 : 55 - p_ptr->lev)==1) && !artifact_p(o_ptr))
+		{
+			if (o_ptr->to_a<0) o_ptr->to_a=-o_ptr->to_a;
+			if (o_ptr->to_h<0) o_ptr->to_h=-o_ptr->to_h;
+			if (o_ptr->to_d<0) o_ptr->to_d=-o_ptr->to_d;
+			if (o_ptr->pval<0) o_ptr->pval=-o_ptr->pval;
+		}
+
 		/* Recalculate the bonuses */
 		p_ptr->update |= (PU_BONUS);
 
@@ -432,6 +453,9 @@ static int remove_curse_aux(int Ind, int all)
 
 		/* Count the uncursings */
 		cnt++;
+		
+		/* Not everything at once. */
+		if (!all && magik(50)) break;
 	}
 
 	/* Return "something uncursed" */
@@ -5248,5 +5272,37 @@ void summon_cyber(int Ind)
 	{
 		(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, 100, SUMMON_HI_DEMON);
 	}
+}
+
+/* Heal insanity. */
+bool heal_insanity(int Ind, int val)
+{
+	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->csane < p_ptr->msane) {
+		p_ptr->csane += val;
+
+		if (p_ptr->csane >= p_ptr->msane) {
+			p_ptr->csane = p_ptr->msane;
+			p_ptr->csane_frac = 0;
+		}
+
+		p_ptr->redraw |= PR_SANITY;
+		p_ptr->window |= (PW_SPELL | PW_PLAYER);
+
+		if (val < 5) {
+			msg_print(Ind, "You feel a little saner.");
+		} else if (val < 15) {
+			msg_print(Ind, "You feel saner.");
+		} else if (val < 35) {
+			msg_print(Ind, "You feel much saner.");
+		} else {
+			msg_print(Ind, "You feel very sane.");
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 

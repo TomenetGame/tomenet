@@ -2496,3 +2496,37 @@ D:were used by kings of Numenor and later by the Exiles for rapid
 D:communication between distant lands.  This Palantir, however, was 
 D:taken by Sauron long ago, and mastered to his evil uses, to the 
 D:destruction of all others who would gaze into it.
+
+# PernMangband artifacts
+
+# The Magic Arrow 'Giver of Sleep'
+N:209:'Giver of Sleep'
+I:17:3:0
+W:25:10:3:30000
+P:0:4d4:0:0:0
+F:SLAY_UNDEAD
+
+# The Set of Cesti of Eternal Peace
+
+N:210:of Eternal Peace
+I:31:5:0
+W:40:25:40:100000
+P:5:1d1:-50:-50:30
+F:CURSED | HEAVY_CURSE | AUTO_CURSE | CURSE_NO_DROP |
+F:SEE_INVIS | REGEN | FREE_ACT
+F:LIFE | LITE3 | LITE1
+F:IM_FIRE | IM_COLD | IM_ELEC | IM_ACID | ESP_ALL
+F:RES_BLIND | RES_POIS | RES_DISEN | RES_NETHER | RES_CHAOS
+F:SUST_STR | SUST_DEX | SUST_CON | 
+F:SUST_INT | SUST_WIS | SUST_CHR | 
+F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
+F:ANTIMAGIC_50 | DRAIN_MANA
+
+#N:(No.):(name)
+#G:(appearence):(colour)
+#I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
+#W:(depth):(rarity[arts only]):(weight):(price)
+#A:(depth)/(chance[1/value])   [multiple definitions are possible]
+#P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
+#F:(attribute)|...
+#Z:(power)  [not implemented yet]

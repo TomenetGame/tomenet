@@ -964,6 +964,112 @@ void take_hit(int Ind, int damage, cptr hit_from)
 }
 
 
+/* Decrease player's sanity. This is a copy of the function above. */
+void take_sanity_hit(int Ind, int damage, cptr hit_from)
+{
+	player_type *p_ptr = Players[Ind];
+        int old_csane = p_ptr->csane;
+
+	char death_message[80];
+
+        int warning = (p_ptr->msane * hitpoint_warn / 10);
+
+
+	/* Paranoia */
+	if (p_ptr->death) return;
+
+	/* Disturb */
+	disturb(Ind, 1, 0);
+
+
+	/* Hurt the player */
+        p_ptr->csane -= damage;
+
+	/* Display the hitpoints */
+        p_ptr->redraw |= (PR_SANITY);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
+	/* Dead player */
+	if (p_ptr->csane < 0)
+	{
+		int Ind2;
+
+		/* Sound */
+		sound(Ind, SOUND_DEATH);
+
+		/* Hack -- Note death */
+		msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
+		msg_print(Ind, "\377RYou die.");
+		msg_print(Ind, NULL);
+
+
+		/* Note cause of death */
+		/* To preserve the players original (pre-ghost) cause
+		   of death, use died_from_list.  To preserve the original
+		   depth, use died_from_depth. */
+
+		(void)strcpy(p_ptr->died_from, hit_from);
+		if (!p_ptr->ghost) 
+		{	strcpy(p_ptr->died_from_list, hit_from);
+#ifdef NEW_DUNGEON
+			wpcopy(&p_ptr->died_from_depth, &p_ptr->wpos);
+#else
+			p_ptr->died_from_depth = p_ptr->dun_depth;
+#endif
+		}
+
+		/* No longer a winner */
+		p_ptr->total_winner = FALSE;
+
+		/* Note death */
+		p_ptr->death = TRUE;
+		
+		/* This way, player dies without becoming a ghost. */
+		p_ptr->ghost = TRUE;
+
+		/* Dead */
+		return;
+	}
+
+	/* Insanity warning (better message needed!) */
+	if (p_ptr->csane < p_ptr->msane / 8)
+	{
+		/* Message */
+		msg_print(Ind, "\377rYou can hardly resist the temptation to cry out!");
+		msg_print(Ind, NULL);
+	}
+	else if (p_ptr->csane < p_ptr->msane / 4)
+	{
+		/* Message */
+		msg_print(Ind, "\377yYou feel insanity about to grasp your mind..");
+		msg_print(Ind, NULL);
+	}
+	else if (p_ptr->csane < p_ptr->msane / 2)
+	{
+		/* Message */
+		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
+		msg_print(Ind, NULL);
+	}
+
+#if 0
+	/* Hitpoint warning */
+	if (p_ptr->csane < warning)
+	{
+		/* Hack -- bell on first notice */
+		if (alert_hitpoint && (old_csane > warning)) bell();
+
+		sound(SOUND_WARN);		
+
+		/* Message */
+		msg_print(Ind, TERM_RED, "*** LOW SANITY WARNING! ***");
+		msg_print(Ind, NULL);
+	}
+#endif	// 0
+}
+
+
 
 
 
@@ -5970,6 +6076,9 @@ bool project(int who, int rad, int Depth, int y, int x, int dam, int typ, int fl
 			x = gx[i];
 
 #ifdef NEW_DUNGEON
+			/* paranoia */
+			if (!in_bounds2(wpos, y, x)) continue;
+
 			/* Walls protect monsters */
 			if (!cave_floor_bold(zcave, y, x)) continue;
 

@@ -1590,6 +1590,20 @@ static bool rd_extra(int Ind)
 		rd_byte(&p_ptr->black_breath);
 	else p_ptr->black_breath = FALSE;
 
+	if (!older_than(3,3,5))
+	{
+		rd_s16b(&p_ptr->msane);
+		rd_s16b(&p_ptr->csane);
+		rd_u16b(&p_ptr->csane_frac);
+	}
+	else
+	{
+		p_ptr->csane = 999999;
+		calc_sanity(Ind);
+//		p_ptr->csane = p_ptr->msane;
+		p_ptr->csane_frac = 0;
+	}
+
 	/* Read "feeling" */
 	/*rd_byte(&tmp8u);
 	  feeling = tmp8u;*/

@@ -398,6 +398,10 @@ void do_cmd_check_artifacts(int Ind, int line)
 
 			/* Describe the artifact */
 			object_desc_store(Ind, base_name, &forge, FALSE, 0);
+
+			/* Hack -- remove {0} */
+			j = strlen(base_name);
+			base_name[j-4] = '\0';
 		}
 
 		/* Hack -- Build the artifact name */
@@ -448,45 +452,42 @@ void do_cmd_check_uniques(int Ind, int line)
 		/* Only print Uniques */
 		if (r_ptr->flags1 & RF1_UNIQUE)
 		{
-			/* Only process uniques */
-			if (r_ptr->flags1 & RF1_UNIQUE)
+			/* Only display known uniques */
+			if (r_ptr->r_sights)
 			{
-				/* Only display known uniques */
-				if (r_ptr->r_sights)
+				int i, j = 0;
+				byte ok = FALSE;
+				bool full = FALSE;
+
+				/* Format message */
+				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+
+				for (i = 1; i <= NumPlayers; i++)
 				{
-					int i, j = 0;
-					byte ok = FALSE;
-					bool k = FALSE;
-			
-					/* Format message */
-					fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
-				
-					for (i = 1; i <= NumPlayers; i++)
+					player_type *q_ptr = Players[i];
+
+					if (q_ptr->r_killed[k])
 					{
-						player_type *q_ptr = Players[i];
-						
-						if (q_ptr->r_killed[k])
+						//							fprintf(fff, "        %s\n", q_ptr->name);
+						fprintf(fff, "  %16.16s", q_ptr->name);
+						ok = TRUE;
+						j++;
+						full = FALSE;
+						if (j == 4)
 						{
-//							fprintf(fff, "        %s\n", q_ptr->name);
-							fprintf(fff, "  %16.16s", q_ptr->name);
-							ok = TRUE;
-							j++;
-							k = FALSE;
-							if (j == 4)
-							{
-								fprintf(fff, "\n");
-								j = 0;
-								k = TRUE;
-							}
+							fprintf(fff, "\n");
+							j = 0;
+							full = TRUE;
 						}
 					}
-					if (!ok) fprintf(fff, "       Nobody\n");
 				}
-
+//				if (!ok) fprintf(fff, "       Nobody\n");
+				if (!ok) fprintf(fff, "       Nobody");
 				/* Terminate line */
 				/*                              fprintf(fff, "\n");*/
-				if (!k) fprintf(fff, "\n");
+				if (!full) fprintf(fff, "\n");
 			}
+
 		}
 	}
 

@@ -2182,6 +2182,23 @@ static void process_player_end(int Ind)
 			p_ptr->window |= (PW_PLAYER);
 		}
 
+		/* Drain Hitpoints */
+		if (p_ptr->drain_life)
+		{
+			int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
+
+			take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining");
+#if 0
+			p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
+
+			/* Redraw */
+			p_ptr->redraw |= (PR_HP);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_PLAYER);
+#endif	// 0
+		}
+
 		/* Note changes */
 		j = 0;
 
@@ -4080,6 +4097,7 @@ void pack_overflow(int Ind)
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	int i;
+        u32b f1, f2, f3, f4, f5, esp;
 	
 	/* XXX XXX XXX Pack Overflow */
 	if (p_ptr->inventory[INVEN_PACK].k_idx)
@@ -4093,7 +4111,11 @@ void pack_overflow(int Ind)
 
 		for(i = INVEN_PACK; i >= 0; i--)
 		{
-			if(!check_guard_inscription( (p_ptr->inventory[i]).note, 'd' ))
+			o_ptr = &p_ptr->inventory[i];
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+			if(!check_guard_inscription( o_ptr->note, 'd' ) &&
+				!(f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) 
 			{
 				j = 1;
 				break;

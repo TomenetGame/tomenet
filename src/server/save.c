@@ -1366,6 +1366,11 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->death);
 
 	wr_byte(p_ptr->black_breath);
+
+	wr_s16b(&p_ptr->msane);
+	wr_s16b(&p_ptr->csane);
+	wr_u16b(&p_ptr->csane_frac);
+
 	/* Write feeling */
 	/*wr_byte(feeling);*/
 

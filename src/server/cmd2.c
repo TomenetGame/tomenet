@@ -3777,6 +3777,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	int                     missile_char;
 
 	char            o_name[160];
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/*int                   msec = delay_factor * delay_factor * delay_factor;*/
 #ifdef NEW_DUNGEON
@@ -3814,6 +3815,18 @@ void do_cmd_throw(int Ind, int dir, int item)
 		msg_print(Ind, "The item's inscription prevents it");
 		return;
 	};
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	/* Hack - Cannot throw away 'no drop' cursed items */
+	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP))
+	{
+		/* Oops */
+		msg_print(Ind, "Hmmm, you seem to be unable to throw it.");
+
+		/* Nope */
+		return;
+	}
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;

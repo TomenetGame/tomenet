@@ -700,6 +700,48 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF4_ARROW_1 */
 		case 96+4:
 		{
+//			int power = rlev / 2 + randint(rlev / 2),
+			int	dice = 1 + rlev / 8,
+				fois = 1 + rlev / 20;
+#if 0
+			if (power > 8) dice += 2;
+			if (power > 20) dice += 2;
+			if (power > 30) dice += 2;
+#endif
+			
+			disturb(Ind, 1, 0);
+			for (k = 0; k < fois; k++)
+			{
+				if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
+				else msg_format(Ind, "%^s fires an arrow.", m_name);
+				bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+				if (p_ptr->death) break;
+			}
+			break;
+		}
+
+		/* RF4_ARROW_2 */
+		case 96+5:
+		{
+//			int power = rlev / 2 + randint(rlev / 2),
+//				fois = 1 + rlev / 20;
+			int	dice = 5 + rlev / 15;
+#if 0
+			if (power > 8) dice += 2;
+			if (power > 20) dice += 2;
+			if (power > 30) dice += 2;
+#endif
+			
+			disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
+			else msg_format(Ind, "%^s fires a missile.", m_name);
+			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+		}
+
+#if 0
+		/* RF4_ARROW_1 */
+		case 96+4:
+		{
 			disturb(Ind, 1, 0);
 			if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
 			else msg_format(Ind, "%^s fires an arrow.", m_name);
@@ -734,6 +776,20 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
 			else msg_format(Ind, "%^s fires a missile!", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(7, 6));
+			break;
+		}
+
+#endif	// 0
+
+		/* former RF4_ARROW_3 (prolly RF4_BRAND_ARROW?) */
+		case 96+6:
+		{
+			break;
+		}
+
+		/* former RF4_ARROW_4 */
+		case 96+7:
+		{
 			break;
 		}
 
@@ -1262,7 +1318,15 @@ bool make_attack_spell(int Ind, int m_idx)
 				{
 					(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 				}
-				take_hit(Ind, damroll(8, 8), ddesc);
+
+				if ((!p_ptr->resist_chaos) && (randint(3)==1))
+				{
+					(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
+				}
+				 
+
+				take_sanity_hit(Ind, damroll(8, 8), ddesc);
+//				take_hit(Ind, damroll(8, 8), ddesc);
 			}
 			break;
 		}
@@ -1287,7 +1351,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			else
 			{
 				msg_print(Ind, "Your mind is blasted by psionic energy.");
-				take_hit(Ind, damroll(12, 15), ddesc);
+//				take_hit(Ind, damroll(12, 15), ddesc);
+				take_sanity_hit(Ind, damroll(12,15), ddesc);
 				if (!p_ptr->resist_blind)
 				{
 					(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
@@ -1305,6 +1370,78 @@ bool make_attack_spell(int Ind, int m_idx)
 			break;
 		}
 
+		/* RF5_CURSE (former CAUSE1~4) */
+		case 128+12:
+		{
+			/* rebalance might be needed? */
+			int power = rlev / 2 + randint(rlev);
+			if (!direct) break;
+			disturb(Ind, 1, 0);
+			if (power < 10)
+			{
+				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+				else msg_format(Ind, "%^s points at you and curses.", m_name);
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+					msg_print(Ind, "You resist the effects!");
+				}
+				else
+				{
+					take_hit(Ind, damroll(3, 8), ddesc);
+				}
+				break;
+			}
+
+			/* RF5_CAUSE_2 */
+			else if (power < 25)
+			{
+				if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+				else msg_format(Ind, "%^s points at you and curses horribly.", m_name);
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+					msg_print(Ind, "You resist the effects!");
+				}
+				else
+				{
+					take_hit(Ind, damroll(8, 8), ddesc);
+				}
+				break;
+			}
+
+			/* RF5_CAUSE_3 */
+			else if (power < 40)
+			{
+				if (blind) msg_format(Ind, "%^s mumbles loudly.", m_name);
+				else msg_format(Ind, "%^s points at you, incanting terribly!", m_name);
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+					msg_print(Ind, "You resist the effects!");
+				}
+				else
+				{
+					take_hit(Ind, damroll(10, 15), ddesc);
+				}
+				break;
+			}
+
+			/* RF5_CAUSE_4 */
+			else
+			{
+				if (blind) msg_format(Ind, "%^s screams the word 'DIE!'", m_name);
+				else msg_format(Ind, "%^s points at you, screaming the word DIE!", m_name);
+				if (rand_int(100) < p_ptr->skill_sav)
+				{
+					msg_print(Ind, "You resist the effects!");
+				}
+				else
+				{
+					take_hit(Ind, damroll(15, 15), ddesc);
+					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
+				}
+				break;
+			}
+		}
+#if 0
 		/* RF5_CAUSE_1 */
 		case 128+12:
 		{
@@ -1374,6 +1511,40 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				take_hit(Ind, damroll(15, 15), ddesc);
 				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
+			}
+			break;
+		}
+#endif	// 0
+
+		/* RF5_XXX4X4? */
+		case 128+13:
+		{
+			break;
+		}
+		/* RF5_XXX4X4? */
+		case 128+14:
+		{
+			break;
+		}
+		/* RF5_XXX4X4? */
+		/* RF5_UNMAGIC (former CAUSE4) */
+		case 128+15:
+		{
+			if (!direct) break;
+			disturb(Ind, 1, 0);
+			if (magik(antichance))
+			  {
+			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
+			    break;
+			  }
+			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			if (rand_int(100) < p_ptr->skill_sav)
+			{
+				msg_print(Ind, "You resist the effects!");
+			}
+			else if (!unmagic(Ind))
+			{
+				msg_print(Ind, "You are unaffected!");
 			}
 			break;
 		}

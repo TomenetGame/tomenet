@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help ** PernMAngband 3.3.4a **  The Troubles of Middle Earth **
+'?' to help ** PernMAngband 3.3.5a **  The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them

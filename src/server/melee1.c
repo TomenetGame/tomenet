@@ -1286,15 +1286,14 @@ bool make_attack_normal(int Ind, int m_idx)
 					take_hit(Ind, damage, ddesc);
 					break;
 				}
-#if 0
-                                case RBE_SANITY:
-                                {
-                                        obvious = TRUE;
 
-                                        take_sanity_hit(damage, ddesc);
-                                        break;
-                                }
-#endif	// 0
+				case RBE_SANITY:
+				{
+					obvious = TRUE;
+
+					take_sanity_hit(Ind, damage, ddesc);
+					break;
+				}
 
 			}
 

@@ -664,6 +664,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	player_type *p_ptr = Players[Ind];
 
 	object_type *o_ptr;
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Handle the newbies_cannot_drop option */	
 	if (p_ptr->lev < cfg.newbies_cannot_drop)
@@ -684,6 +685,8 @@ void do_cmd_drop(int Ind, int item, int quantity)
 		o_ptr = &o_list[0 - item];
 	}
 
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
 	if( check_guard_inscription( o_ptr->note, 'd' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
 		return;
@@ -691,15 +694,26 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 
 	/* Cannot remove cursed items */
-	if ((item >= INVEN_WIELD) && cursed_p(o_ptr))
+	if (cursed_p(o_ptr))
 	{
-		/* Oops */
-		msg_print(Ind, "Hmmm, it seems to be cursed.");
+		if ((item >= INVEN_WIELD) )
+		{
+			/* Oops */
+			msg_print(Ind, "Hmmm, it seems to be cursed.");
 
-		/* Nope */
-		return;
+			/* Nope */
+			return;
+		}
+
+		else if (f4 & TR4_CURSE_NO_DROP)
+		{
+			/* Oops */
+			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+
+			/* Nope */
+			return;
+		}
 	}
-
 
 
 #if 0
@@ -807,6 +821,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	char		o_name[160];
 
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Hack -- force destruction */
 	if (command_arg > 0) force = TRUE;
@@ -851,6 +866,17 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 #else
 	p_ptr->energy -= level_speed(p_ptr->dun_depth);
 #endif
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+	{
+		/* Oops */
+		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
+
+		/* Nope */
+		return;
+	}
 
 	/* Artifacts cannot be destroyed */
 	if (artifact_p(o_ptr))

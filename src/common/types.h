@@ -1922,8 +1922,8 @@ struct player_type
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
         byte drain_mana;        /* mana draining */
-//        byte drain_life;        /* hp draining */
-//
+        byte drain_life;        /* hp draining */
+
         bool sensible_fire;     /* Fire does more damage on the player */
 
         bool reflect;       /* Reflect 'bolt' attacks */

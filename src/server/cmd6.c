@@ -339,7 +339,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 		case SV_FOOD_WAYBREAD:
 		{
-			msg_print(Ind, "That tastes good.");
+			msg_print(Ind, "That tastes very good.");
 			(void)set_poisoned(Ind, 0);
 			(void)hp_player(Ind, damroll(4, 8));
 			set_food(Ind, PY_FOOD_MAX - 1);
@@ -350,10 +350,33 @@ void do_cmd_eat_food(int Ind, int item)
 		case SV_FOOD_PINT_OF_ALE:
 		case SV_FOOD_PINT_OF_WINE:
 		{
-			if (magik(20))
+			if (magik(o_ptr->name2? 50 : 20))
 			{
 				msg_format(Ind, "\377%c*HIC*", random_colour());
 				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
+
+				if (magik(o_ptr->name2? 60 : 30))
+					set_confused(Ind, p_ptr->confused + 20 + randint(20));
+				if (magik(o_ptr->name2? 50 : 20))
+					set_stun(Ind, p_ptr->stun + 10 + randint(10));
+
+				if (magik(o_ptr->name2? 50 : 10))
+					set_image(Ind, p_ptr->image + 10 + randint(10));
+				if (magik(o_ptr->name2? 10 : 20))
+					set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
+				if (magik(o_ptr->name2? 50 : 10))
+					set_hero(Ind, p_ptr->hero + 10 + randint(10));
+				if (magik(o_ptr->name2? 20 : 5))
+					set_shero(Ind, p_ptr->shero + 5 + randint(10));
+				if (magik(o_ptr->name2? 5 : 10))
+					set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
+				if (magik(o_ptr->name2? 5 : 10))
+					set_slow(Ind, p_ptr->slow + 10 + randint(10));
+				else if (magik(o_ptr->name2? 20 : 5))
+					set_fast(Ind, p_ptr->fast + 10 + randint(10));
+				/* Methyl! */
+				if (magik(o_ptr->name2? 0 : 3))
+					set_blind(Ind, p_ptr->blind + 10 + randint(10));
 			}
 			else msg_print(Ind, "That tastes good.");
 
@@ -1016,6 +1039,19 @@ void do_cmd_quaff_potion(int Ind, int item)
 		}
 
 		/* additions from PernA */
+		case SV_POTION_CURING:
+		{
+			if (hp_player(Ind, 50)) ident = TRUE;
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_image(Ind, 0)) ident = TRUE;
+                        if (heal_insanity(Ind, 50)) ident = TRUE;
+			break;
+		}
+
 		case SV_POTION_INVULNERABILITY:
 		{
 			ident = set_invuln(Ind, p_ptr->invuln + randint(7) + 7);
@@ -1035,7 +1071,26 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 
 	}
-	} else {/* POTION2 */}
+	}
+	else
+		/* POTION2 */
+	{
+		switch (o_ptr->sval)
+		{
+			case SV_POTION2_CURE_LIGHT_SANITY:
+				if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+				break;
+			case SV_POTION2_CURE_SERIOUS_SANITY:
+				if (heal_insanity(Ind, damroll(8,8))) ident = TRUE;
+				break;
+			case SV_POTION2_CURE_CRITICAL_SANITY:
+				if (heal_insanity(Ind, damroll(12,8))) ident = TRUE;
+				break;
+			case SV_POTION2_CURE_SANITY:
+				if (heal_insanity(Ind, damroll(10,100))) ident = TRUE;
+				break;
+		}
+	}
 
 
 	/* Combine / Reorder the pack (later) */
@@ -3097,6 +3152,11 @@ void do_cmd_zap_rod(int Ind, int item)
 				(void)set_fast(Ind, p_ptr->fast + 5);
 			}
 			o_ptr->pval = 99;
+			break;
+		}
+
+		case SV_ROD_NOTHING:
+		{
 			break;
 		}
 
@@ -5256,7 +5316,7 @@ void do_cmd_activate(int Ind, int item)
 			{
                                 msg_print(Ind, "Your sword glows an intense white...");
                                 hp_player(Ind, 7000);
-//                                heal_insanity(Ind, 50);
+                                heal_insanity(Ind, 50);
                                 set_blind(Ind, 0);
                                 set_poisoned(Ind, 0);
                                 set_confused(Ind, 0);

@@ -3790,14 +3790,6 @@ F:INSTA_ART
 #A:90/3
 #P:0:1d1:0:0:0
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-#
-#N:520:Reflection
-#G:":d
-#I:40:9:0
-#W:60:0:3:30000
-#A:60/4
-#F:REFLECT | EASY_KNOW
-#F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
 
@@ -4841,41 +4833,6 @@ P:0:0d0:0:0:0
 #A:50/3
 #P:0:1d1:0:0:0
 #F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
-
-# The potions of cure insanity, in light, medium, regular, and full
-# versions.
-
-#N:657:Cure Light Insanity
-#G:!:d
-#I:72:14:0
-#W:5:5:4:15
-#A:5/1:1/1:3/1
-#P:0:1d1:0:0:0
-#F:FOUNTAIN
-#
-#N:658:Cure Serious Insanity
-#G:!:d
-#I:72:15:0
-#W:10:5:4:40
-#A:10/1
-#P:0:1d1:0:0:0
-#F:FOUNTAIN
-#
-#N:659:Cure Critical Insanity
-#G:!:d
-#I:72:16:0
-#W:15:5:4:100
-#A:15/3
-#P:0:1d1:0:0:0
-#F:FOUNTAIN
-#
-#N:660:Cure Insanity
-#G:!:d
-#I:72:17:0
-#W:25:5:4:30
-#A:25/3
-#P:0:1d1:0:0:0
-#F:FOUNTAIN
 
 # The Phial of Undeath -- see artifact list. He he he he...
 
@@ -6729,6 +6686,75 @@ I:45:61:0
 W:8:0:2:250
 A:8/10
 F:STEALTH
+
+N:520:Reflection
+G:":d
+I:40:9:0
+W:60:0:3:30000
+A:60/4
+F:REFLECT | EASY_KNOW
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+# The potions of cure insanity, in light, medium, regular, and full
+# versions.
+
+N:657:Cure Light Insanity
+G:!:d
+I:72:14:0
+W:5:5:4:15
+A:5/1:1/1:3/1
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+N:658:Cure Serious Insanity
+G:!:d
+I:72:15:0
+W:10:5:4:40
+A:10/1
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+N:659:Cure Critical Insanity
+G:!:d
+I:72:16:0
+W:15:5:4:100
+A:15/3
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+N:660:Cure Insanity
+G:!:d
+I:72:17:0
+W:25:5:4:30
+A:25/3
+P:0:1d1:0:0:0
+F:FOUNTAIN
+
+N:163:Suspicion
+G:":d
+I:40:34:-1
+W:20:0:3:5000
+A:20/6
+F:INT | WIS | ANTIMAGIC_10
+
+# !!
+N:163:Life Saving
+G:":d
+I:40:35:0
+W:40:0:3:400000
+A:40/60
+#F:BLACK_BREATH | DRAIN_EXP | DRAIN_MANA | DRAIN_HP
+F:DRAIN_EXP | DRAIN_MANA | DRAIN_HP
+F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD
+
+# Always ego!
+
+#N:503:& Amulet~
+#G:":d
+#I:40:10:0
+#W:50:0:3:60000
+#A:25/3
+#F:INSTA_EGO
 
 #(See above - Already in)
 #N:171:the Magi

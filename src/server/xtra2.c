@@ -3732,6 +3732,40 @@ void player_death(int Ind)
 	wilderness_type *wild;
 	bool hell=TRUE;
 
+	/* Hack -- amulet of life saving */
+	if (p_ptr->alive && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING)
+	{
+		msg_print(Ind, "\377o Your amulet shatters into the pieces!");
+
+		inven_item_increase(Ind, INVEN_NECK, -99);
+		inven_item_describe(Ind, INVEN_NECK);
+		inven_item_optimize(Ind, INVEN_NECK);
+
+		/* Cure him from various maladies */
+//		p_ptr->black_breath = FALSE;
+		if (p_ptr->image) (void)set_image(Ind, 0);
+		if (p_ptr->blind) (void)set_blind(Ind, 0);
+		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
+		if (p_ptr->confused) (void)set_confused(Ind, 0);
+		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
+		if (p_ptr->stun) (void)set_stun(Ind, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0);
+
+		/* Remove the death flag */
+		p_ptr->death = 0;
+
+		/* Teleport him */
+		teleport_player(Ind, 200);
+
+		/* Give him his hit points back */
+		p_ptr->chp = p_ptr->mhp;
+		p_ptr->chp_frac = 0;
+
+		/* Wow! You may return!! */
+		return;
+	}
+
+
 	if(p_ptr->mode!=MODE_HELL){
 		struct dungeon_type *dungeon;
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];

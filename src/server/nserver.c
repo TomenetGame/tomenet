@@ -7041,7 +7041,9 @@ static int Receive_master(int ind)
 	 * authentication schemes will be neccecary. -APD
 	 */
 
-	if (!Players[player]->admin_dm && (!player_is_king(player)))
+	if (!Players[player]->admin_dm &&
+		!Players[player]->admin_wiz &&
+		!player_is_king(player))
 	{
 		/* Hack -- clear the receive and queue buffers since we won't be
 		 * reading in the dungeon master parameters that were sent.

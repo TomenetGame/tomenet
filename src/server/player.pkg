@@ -567,6 +567,15 @@ struct player_type
         byte esp_link_type;
         u16b esp_link_flags;
         u16b esp_link_end; /* Time before actual end */
+
+		/* additions */
+        bool black_breath;      /* The Tolkien's Black Breath */
+
+        s16b msane;                   /* Max sanity */
+        s16b csane;                   /* Cur sanity */
+        u16b csane_frac;              /* Cur sanity frac */
+
+
 };
 
 extern void teleport_player(int Ind, int dis);

@@ -14,6 +14,79 @@
 
 #include "angband.h"
 
+/*
+ * Descriptions from PernAngband.	- Jir -
+ */
+#define MAX_HORROR 20
+#define MAX_FUNNY 22
+#define MAX_COMMENT 5
+
+static cptr horror_desc[MAX_HORROR] =
+{
+	"abominable",
+	"abysmal",
+	"appalling",
+	"baleful",
+	"blasphemous",
+
+	"disgusting",
+	"dreadful",
+	"filthy",
+	"grisly",
+	"hideous",
+
+	"hellish",
+	"horrible",
+	"infernal",
+	"loathsome",
+	"nightmarish",
+
+	"repulsive",
+	"sacrilegious",
+	"terrible",
+	"unclean",
+	"unspeakable",
+};
+
+static cptr funny_desc[MAX_FUNNY] =
+{
+	"silly",
+	"hilarious",
+	"absurd",
+	"insipid",
+	"ridiculous",
+
+	"laughable",
+	"ludicrous",
+	"far-out",
+	"groovy",
+	"postmodern",
+
+	"fantastic",
+	"dadaistic",
+	"cubistic",
+	"cosmic",
+	"awesome",
+
+	"incomprehensible",
+	"fabulous",
+	"amazing",
+	"incredible",
+	"chaotic",
+
+	"wild",
+	"preposterous",
+};
+
+static cptr funny_comments[MAX_COMMENT] =
+{
+	"Wow, cosmic, man!",
+	"Rad!",
+	"Groovy!",
+	"Cool!",
+	"Far out!"
+};
+
 static monster_race* race_info_idx(int r_idx, int ego, int randuni);
 
 /* Monster gain a few levels ? */
@@ -975,6 +1048,221 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 	if (r_ptr->flags1 & RF1_DROP_GREAT) r_ptr->r_flags1 |= RF1_DROP_GREAT;
 }
 
+/*
+ * Here comes insanity from PernAngband.. hehehe.. - Jir -
+ */
+//void sanity_blast(int Ind, monster_type * m_ptr, bool necro)
+void sanity_blast(int Ind, int m_idx, bool necro)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type    *m_ptr = &m_list[m_idx];
+	bool happened = FALSE;
+	int power = 100;
+
+	if (!necro)
+	{
+		char            m_name[80];
+		monster_race    *r_ptr;
+
+		if (m_ptr != NULL) r_ptr = race_inf(m_ptr);
+		else return;
+
+		power = (m_ptr->level)+10;
+
+		if (m_ptr != NULL)
+		{
+			monster_desc(Ind, m_name, m_idx, 0);
+
+			if (!(r_ptr->flags1 & RF1_UNIQUE))
+			{
+				if (r_ptr->flags1 & RF1_FRIENDS)
+					power /= 2;
+			}
+			else power *= 2;
+
+			//		if (!hack_mind)
+			return; /* No effect yet, just loaded... */
+
+			//		if (!(m_ptr->ml))
+			if (!p_ptr->mon_vis[m_idx])
+				return; /* Cannot see it for some reason */
+
+			if (!(r_ptr->flags2 & RF2_ELDRITCH_HORROR))
+				return; /* oops */
+
+
+
+			//                if ((is_friend(m_ptr) > 0) && (randint(8)!=1))
+			return; /* Pet eldritch horrors are safe most of the time */
+
+
+			if (randint(power)<p_ptr->skill_sav)
+			{
+				return; /* Save, no adverse effects */
+			}
+
+
+			if (p_ptr->image)
+			{
+				/* Something silly happens... */
+				msg_format(Ind, "You behold the %s visage of %s!",
+						funny_desc[(randint(MAX_FUNNY))-1], m_name);
+				if (randint(3)==1)
+				{
+					msg_print(Ind, funny_comments[randint(MAX_COMMENT)-1]);
+					p_ptr->image = (p_ptr->image + randint(m_ptr->level));
+				}
+				return; /* Never mind; we can't see it clearly enough */
+			}
+
+			/* Something frightening happens... */
+			msg_format(Ind, "You behold the %s visage of %s!",
+					horror_desc[(randint(MAX_HORROR))-1], m_name);
+
+			r_ptr->r_flags2 |= RF2_ELDRITCH_HORROR;
+
+		}
+
+		/* Undead characters are 50% likely to be unaffected */
+#if 0
+		if ((PRACE_FLAG(PR1_UNDEAD))||(p_ptr->mimic_form == MIMIC_VAMPIRE))
+		{
+			if (randint(100) < (25 + (p_ptr->lev))) return;
+		}
+#endif	// 0
+	}
+	else
+	{
+		msg_print(Ind, "Your sanity is shaken by reading the Necronomicon!");
+	}
+
+	if (randint(power)<p_ptr->skill_sav) /* Mind blast */
+	{
+		if (!p_ptr->resist_conf)
+		{
+			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
+		}
+		if ((!p_ptr->resist_chaos) && (randint(3)==1))
+		{
+			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
+		}
+		return;
+	}
+
+	if (randint(power)<p_ptr->skill_sav) /* Lose int & wis */
+	{
+		do_dec_stat (Ind, A_INT, STAT_DEC_NORMAL);
+		do_dec_stat (Ind, A_WIS, STAT_DEC_NORMAL);
+		return;
+	}
+
+
+	if (randint(power)<p_ptr->skill_sav) /* Brain smash */
+	{
+		if (!p_ptr->resist_conf)
+		{
+			(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
+		}
+		if (!p_ptr->free_act)
+		{
+			(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
+		}
+		while (rand_int(100) > p_ptr->skill_sav)
+			(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);	
+		while (rand_int(100) > p_ptr->skill_sav)
+			(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
+		if (!p_ptr->resist_chaos)
+		{
+			(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
+		}
+		return;
+	}
+
+	if (randint(power)<p_ptr->skill_sav) /* Permanent lose int & wis */
+	{
+		if (dec_stat(Ind, A_INT, 10, TRUE)) happened = TRUE;
+		if (dec_stat(Ind, A_WIS, 10, TRUE)) happened = TRUE;
+		if (happened)
+			msg_print(Ind, "You feel much less sane than before.");
+		return;
+	}
+
+
+	if (randint(power)<p_ptr->skill_sav) /* Amnesia */
+	{
+
+		if (lose_all_info(Ind))
+			msg_print(Ind, "You forget everything in your utmost terror!");
+		return;
+	}
+
+	/* Else gain permanent insanity */
+#if 0
+	if ((p_ptr->muta3 & MUT3_MORONIC) && (p_ptr->muta2 & MUT2_BERS_RAGE) &&
+			((p_ptr->muta2 & MUT2_COWARDICE) || (p_ptr->resist_fear)) &&
+			((p_ptr->muta2 & MUT2_HALLU) || (p_ptr->resist_chaos)))
+	{
+		/* The poor bastard already has all possible insanities! */
+		return;
+	}
+
+	while (!happened)
+	{
+		switch(randint(4))
+		{
+			case 1:
+				if (!(p_ptr->muta3 & MUT3_MORONIC))
+				{
+					msg_print("You turn into an utter moron!");
+					if (p_ptr->muta3 & MUT3_HYPER_INT)
+					{
+						msg_print("Your brain is no longer a living computer.");
+						p_ptr->muta3 &= ~(MUT3_HYPER_INT);
+					}
+					p_ptr->muta3 |= MUT3_MORONIC;
+					happened = TRUE;
+				}
+				break;
+			case 2:
+				if (!(p_ptr->muta2 & MUT2_COWARDICE) && !(p_ptr->resist_fear))
+				{
+					msg_print("You become paranoid!");
+
+					/* Duh, the following should never happen, but anyway... */
+					if (p_ptr->muta3 & MUT3_FEARLESS)
+					{
+						msg_print("You are no longer fearless.");
+						p_ptr->muta3 &= ~(MUT3_FEARLESS);
+					}
+
+					p_ptr->muta2 |= MUT2_COWARDICE;
+					happened = TRUE;
+				}
+				break;
+			case 3:
+				if (!(p_ptr->muta2 & MUT2_HALLU) && !(p_ptr->resist_chaos))
+				{
+					msg_print("You are afflicted by a hallucinatory insanity!");
+					p_ptr->muta2 |= MUT2_HALLU;
+					happened = TRUE;
+				}
+				break;
+			default:
+				if (!(p_ptr->muta2 & MUT2_BERS_RAGE))
+				{
+					msg_print("You become subject to fits of berserk rage!");
+					p_ptr->muta2 |= MUT2_BERS_RAGE;
+					happened = TRUE;
+				}
+				break;
+		}
+	}
+#endif	// 0
+
+	p_ptr->update |= PU_BONUS;
+	handle_stuff(Ind);
+}
+
 
 
 /*
@@ -1287,6 +1575,13 @@ void update_mon(int m_idx, bool dist)
 				/* Disturb on appearance */
 				if(!m_list[m_idx].special && r_ptr->d_char != 't')
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
+
+				/* well, is it the right place to be? */
+				if (r_ptr->flags2 & RF2_ELDRITCH_HORROR)
+				{
+					sanity_blast(Ind, m_ptr, FALSE);
+				}
+
 			}
 		}
 
