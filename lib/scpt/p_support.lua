@@ -11,7 +11,7 @@ HSANCTUARY = add_spell
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			project(0 - Ind, get_level(Ind, HSANCTUARY, 20), player.wpos, player.py, player.px, get_level(Ind, HSANCTUARY, 50), GF_OLD_SLEEP, flg, "")
+			project(0 - Ind, get_level(Ind, HSANCTUARY, 20), player.wpos, player.py, player.px, get_level(Ind, HSANCTUARY, 50), GF_OLD_SLEEP, 64+16+8, "")
 		else
 			project_hack(Ind, GF_OLD_SLEEP, get_level(Ind, HSANCTUARY, 30))
 		end
