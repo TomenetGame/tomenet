@@ -4605,33 +4605,44 @@ static int Receive_spell(int ind)
 		return 0;
 	}
 #else	// 0
-	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->pclass == CLASS_TELEPATH))
+	/* Not by class, but by item */
+	if (connp->id != -1 && Players[old]->energy >= level_speed(&Players[old]->wpos) && (Players[old]->inventory[book].tval == TV_PSI_BOOK))
 	{
 		do_cmd_psi(player, book, spell);
 	}
 	else if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		int tval = p_ptr->inventory[book].tval;
 		p_ptr->current_char = (old == player)?TRUE:FALSE;
 
-		if (p_ptr->pclass == CLASS_SORCERER)
+		if (tval == TV_SORCERY_BOOK)
 		{
 			do_cmd_sorc(player, book, spell);
 		}
-		else if (p_ptr->pclass == CLASS_TELEPATH)
+		else if (tval == TV_PSI_BOOK)
 		{
 			do_cmd_psi(player, book, spell);
 		}
-		else if (p_ptr->pclass == CLASS_ROGUE)
+		else if (tval == TV_SHADOW_BOOK)
 		{
 			do_cmd_shad(player, book, spell);
 		}
-		else if (p_ptr->pclass == CLASS_ARCHER)
+		else if (tval == TV_HUNT_BOOK)
 		{
 			do_cmd_hunt(player, book, spell);
 		}
-		else if ((p_ptr->pclass == CLASS_MAGE) || (p_ptr->pclass == CLASS_RANGER))
+		else if (tval == TV_MAGIC_BOOK)
 		{
 			do_cmd_cast(player, book, spell);
+		}
+		/* two more */
+		else if (tval == TV_FIGHT_BOOK)
+		{
+			do_cmd_fight(player, book, spell);
+		}
+		else if (tval == TV_PRAYER_BOOK)
+		{
+			do_cmd_pray(player, book, spell);
 		}
 		return 2;
 	}

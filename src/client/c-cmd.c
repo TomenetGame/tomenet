@@ -22,7 +22,11 @@ static bool item_tester_magicable(object_type *o_ptr)
 
 	if (o_ptr->tval == TV_HUNT_BOOK) return TRUE;
 
-	if (o_ptr->tval ==TV_PSI_BOOK) return TRUE;
+	if (o_ptr->tval == TV_PSI_BOOK) return TRUE;
+
+	/* two more for expansion */
+	if (o_ptr->tval == TV_FIGHT_BOOK) return TRUE;
+	if (o_ptr->tval == TV_PRAYER_BOOK) return TRUE;
 
 	return FALSE;
 }
