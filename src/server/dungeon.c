@@ -2737,6 +2737,7 @@ void scan_houses()
 	s_printf("Doing house maintenance\n");
 	for(i=0;i<num_houses;i++)
 	{
+		if(!houses[i].dna->owner) continue;
 		switch(houses[i].dna->owner_type)
 		{
 			case OT_PLAYER:
