@@ -4012,17 +4012,18 @@ bool poly_build(int Ind, char *args){
 	static int odir;
 	static int moves;
 	static int cvert;
+	static int depth;
 	static struct dna_type *dna;
 	player_type *p_ptr=Players[Ind];
 	int x,y;
 	int dir=0;
 
-	if(curr==0){
+	if(curr==0 || !lookup_player_id(curr)){
 		if(!args){
 			p_ptr->master_move_hook=NULL;
 			return FALSE;
 		}
-		curr=Ind;
+		curr=p_ptr->id;
 		C_MAKE(vert, MAXCOORD, byte);
 		MAKE(dna, struct dna_type);
 		dna->creator=p_ptr->dna;
@@ -4040,11 +4041,12 @@ bool poly_build(int Ind, char *args){
 		dx=lx=sx;
 		dy=ly=sy;
 		moves=30;
+		depth=p_ptr->depth;
 		cave[p_ptr->dun_depth][sy][sx].feat=FEAT_HOME_OPEN;
 		cave[p_ptr->dun_depth][sy][sx].special=dna;
 		return TRUE;
 	}
-	else if(curr!=Ind){
+	else if(curr!=p_ptr->id){
 		msg_print(Ind,"The builders are on strike!"); /* add multi build soon */
 		return FALSE;
 	}
@@ -4077,6 +4079,10 @@ bool poly_build(int Ind, char *args){
 	if(p_ptr->px==sx && p_ptr->py==sy){		/* check for close */
 		vert[cvert++]=dx-lx;			/* last vertex */
 		vert[cvert++]=dy-ly;
+		if(cvert==10 /* || cvert==8 && door on corner */){
+			/*could be square...*/
+			/* optimise */
+		}
 		houses[num_houses].x=sx;
 		houses[num_houses].y=sy;
 		houses[num_houses].flags=HF_NONE;	/* polygonal */
@@ -4098,9 +4104,10 @@ bool poly_build(int Ind, char *args){
 		p_ptr->update|=PU_VIEW;
 		return TRUE;
 	}
-	cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
-	if(cvert!=MAXCOORD)
-		return TRUE;
+	if(depth==p_ptr->dun_depth){
+		cave[p_ptr->dun_depth][dy][dx].feat=FEAT_PERM_EXTRA;
+		if(cvert<MAXCOORD) return TRUE;
+	}
 	msg_print(Ind,"Your house building attempt has failed");
 	cave[p_ptr->dun_depth][sy][sx].special=NULL;
 	KILL(dna, struct dna_type);
@@ -4108,6 +4115,7 @@ bool poly_build(int Ind, char *args){
 	p_ptr->master_move_hook=NULL;
 	cvert=0;
 	curr=0L;
+	return FALSE;
 }
 
 void house_creation(int Ind){
