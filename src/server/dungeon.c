@@ -2180,6 +2180,137 @@ static void process_player_end(int Ind)
 				}
 			}
 
+			/* Rework needed! */
+			/* Activate the recall */
+      			if (!p_ptr->word_recall)
+			{
+				/* Disturbing! */
+				disturb(Ind, 0, 0);
+
+				/* Determine the level */
+#ifdef NEW_DUNGEON
+				if(p_ptr->wpos.wz)
+#else
+				if (p_ptr->dun_depth > 0)
+#endif
+				{
+					/* Messages */
+					msg_print(Ind, "You feel yourself yanked upwards!");
+					msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
+					
+					/* New location */
+#ifdef NEW_DUNGEON
+					p_ptr->wpos.wz=0;
+#else
+					new_depth = 0;
+					new_world_x = p_ptr->world_x;
+					new_world_y = p_ptr->world_y;
+#endif
+					
+					p_ptr->new_level_method = LEVEL_RAND;
+				}
+#ifdef NEW_DUNGEON
+				else if ((p_ptr->wpos.wz) || (p_ptr->recall_depth < 0))
+#else
+				else if ((p_ptr->dun_depth < 0) || (p_ptr->recall_depth < 0))
+#endif
+				{
+					/* Messages */
+					msg_print(Ind, "You feel yourself yanked sideways!");
+					msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
+					
+					/* New location */
+#ifdef NEW_DUNGEON
+					if (p_ptr->wpos.wz==0 && !istown(&p_ptr->wpos))
+#else
+					if (p_ptr->dun_depth < 0) 
+#endif
+					{
+						new_depth = 0;
+						new_world_x = 0;
+						new_world_y = 0;										
+					}
+					else 
+					{ 
+						new_depth = p_ptr->recall_depth;
+#ifdef NEW_DUNGEON
+						fail;
+#else
+						new_world_x = wild_info[new_depth].world_x;
+						new_world_y = wild_info[new_depth].world_y;
+#endif
+					}
+					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;												
+				}
+				else
+				{
+					/* Messages */
+					msg_print(Ind, "You feel yourself yanked downwards!");
+					msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
+#ifdef NEW_DUNGEON
+					p_ptr->wpos.wz=p_ptr->recall_depth;
+#else
+					new_depth = p_ptr->recall_depth;
+					new_world_x = p_ptr->world_x;
+					new_world_y = p_ptr->world_y;
+#endif
+					p_ptr->new_level_method = LEVEL_RAND;
+				}
+				
+				/* One less person here */
+#ifdef NEW_DUNGEON
+				new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+#else
+				players_on_depth[p_ptr->dun_depth]--;
+#endif
+				
+				/* paranoia, required for adding old wilderness saves to new servers */
+#ifdef NEW_DUNGEON
+				if (players_on_depth(&p_ptr->wpos) < 0) new_players_on_depth(&p_ptr->wpos,0,FALSE);
+#else
+				if (players_on_depth[p_ptr->dun_depth] < 0) players_on_depth[p_ptr->dun_depth] = 0;
+#endif
+
+				/* Remove the player */
+#ifdef NEW_DUNGEON
+				zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+				/* Show everyone that he's left */
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+#else
+				cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].m_idx = 0;
+				/* Show everyone that he's left */
+				everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
+#endif
+					
+
+				/* Forget his lite and view */
+				forget_lite(Ind);
+				forget_view(Ind);
+
+#ifdef NEW_DUNGEON
+				wpcopy(&p_ptr->wpos, &new_depth);
+#else
+				p_ptr->dun_depth = new_depth;
+				p_ptr->world_x = new_world_x;
+				p_ptr->world_y = new_world_y;
+#endif
+
+				/* One more person here */
+#ifdef NEW_DUNGEON
+				new_players_on_depth(&p_ptr->wpos,1,TRUE);
+#else
+				players_on_depth[p_ptr->dun_depth]++;
+#endif
+
+				/* He'll be safe for 2 turn */
+				set_invuln_short(Ind, 2);
+
+				p_ptr->new_level_flag = TRUE;
+
+				/* He'll be safe for 2 turns */
+				set_invuln_short(Ind, 2);
+			}
+
 #if 0 /* sorry - evileye */
 			/* Activate the recall */
       			if (!p_ptr->word_recall)

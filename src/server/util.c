@@ -2634,7 +2634,7 @@ void player_talk_aux(int Ind, cptr message)
 				toggle_afk(Ind);
 				return;
 			}
-#if 0
+
 			/* Semi-auto item destroyer */
 			else if ((prefix(message, "/dispose")) || prefix(message, "/dis"))
 			{
@@ -2651,13 +2651,15 @@ void player_talk_aux(int Ind, cptr message)
 					i--;
 
 					/* Hack - Don't take a turn here */
-					p_ptr->energy += level_speed(p_ptr->dun_depth);
+					p_ptr->energy += level_speed(&p_ptr->wpos);
+//					p_ptr->energy += level_speed(p_ptr->dun_depth);
 				}
 				/* Take total of one turn */
-				p_ptr->energy -= level_speed(p_ptr->dun_depth);
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+//				p_ptr->energy -= level_speed(p_ptr->dun_depth);
 				return;
 			}
-#endif
+
 			/* add inscription to everything */
 			else if (prefix(message, "/tag"))
 			{
