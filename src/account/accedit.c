@@ -111,8 +111,10 @@ void editor(){
 					change=0;
 					break;
 				case 'D':
-					change=1;
-					c_acc.flags|=ACC_DELD;
+					if(ask("Are you sure you wish to delete this record?")){
+						change=1;
+						c_acc.flags|=ACC_DELD;
+					}
 					break;
 				case 'v':
 				case 'V':
