@@ -21,7 +21,7 @@ void add_rplayer(struct wpacket *wpk);
 void world_comm(int fd, int arg){
 	static char buffer[1024];
 	static char bpos=0;
-	int x;
+	int x, i;
 	struct wpacket *wpk;
 	x=recv(fd, buffer+bpos, 1024-bpos, 0);
 	if(x>=sizeof(struct wpacket)){
@@ -30,6 +30,14 @@ void world_comm(int fd, int arg){
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
 				msg_broadcast_format(0, "%s", wpk->d.chat.ctxt);
+				break;
+			case WP_PMSG:
+				/* private message from afar -authed */
+				for(i=1; i<=NumPlayers; i++){
+					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
+						msg_format(i, "\377o[%s] %s", wpk->d.pmsg.player, wpk->d.pmsg.ctxt);
+					}
+				}
 				break;
 			case WP_MESSAGE:
 				/* A raw message - no data */
@@ -65,6 +73,35 @@ void world_comm(int fd, int arg){
 		close(WorldSocket);	/* ;) this'll fix it... */
 		WorldSocket=-1;
 	}
+}
+
+/* returns authed server id or 0 */
+int world_find_server(char *pname){
+	struct rplist *c_pl;
+	c_pl=rpmlist;
+
+	while(c_pl){
+		if(!strcmp(c_pl->name, pname)){
+			return(c_pl->server);
+		}
+		c_pl=c_pl->next;
+	}
+	return(0);
+}
+
+/* returns fixed pname, or NULL */
+char *world_find_player(char *pname){
+	struct rplist *c_pl;
+	c_pl=rpmlist;
+
+	while(c_pl){
+		if(!stricmp(c_pl->name, pname)){
+			strcpy(pname, c_pl->name);
+			return(pname);
+		}
+		c_pl=c_pl->next;
+	}
+	return(NULL);
 }
 
 /* proper data will come with merge */
@@ -130,6 +167,19 @@ void add_rplayer(struct wpacket *wpk){
 			n_pl->next=c_pl->next;
 		free(c_pl);
 	}
+}
+
+void world_pmsg_send(unsigned long id, char *name, char *pname, char *text){
+	int x, len;
+	if(WorldSocket==-1) return;
+	spk.type=WP_PMSG;
+	len=sizeof(struct wpacket);
+	strncpy(spk.d.pmsg.ctxt, text, 80);
+	spk.d.pmsg.id=id;
+	spk.d.pmsg.sid=world_find_server(pname);
+	strncpy(spk.d.pmsg.player, name, 80);
+	strncpy(spk.d.pmsg.victim, pname, 80);
+	x=send(WorldSocket, &spk, len, 0);
 }
 
 void world_chat(unsigned long id, char *text){

@@ -2961,15 +2961,11 @@ static void do_slash_cmd(int Ind, char *message)
 				object_type	forge;
 				object_type	*o_ptr = &forge;
 
-//				if (tk < 2 || !k || !(l = atoi(token[2])))
 				if (tk < 1 || !k)
 				{
 					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
 					return;
 				}
-
-				/* Move colon pointer forward to next word */
-//				while (*arg2 && (isspace(*arg2))) arg2++;
 
 				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[3])) : k);
 
@@ -2986,7 +2982,7 @@ static void do_slash_cmd(int Ind, char *message)
 						if (nom)
 						{
 							o_ptr->name2 = 0 - nom;
-							if (tk > 3) o_ptr->name2b = 0 - atoi(token[4]);
+							if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
 						}
 						else o_ptr->name1 = ART_RANDART;
 
@@ -3001,15 +2997,15 @@ static void do_slash_cmd(int Ind, char *message)
 				}
 
 				apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE);
-				if (tk > 2){
+				if (tk > 3){
 					o_ptr->discount = atoi(token[4]);
 				}
 				else{
 					o_ptr->discount = 100;
 				}
-				o_ptr->pval=atoi(token[3]);
 				object_known(o_ptr);
 				o_ptr->owner = 0;
+				o_ptr->pval=atoi(token[3]);
 				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
 				(void)inven_carry(Ind, o_ptr);
@@ -3354,6 +3350,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Look for a recipient who matches the search string */
 	if (len)
 	{
+		char *pname;
 		if(!stricmp(search, "Guild")){
 			if(!p_ptr->guild){
 				msg_print(Ind, "You are not in a guild");
@@ -3361,7 +3358,10 @@ static void player_talk_aux(int Ind, char *message)
 			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
 			return;
 		}
-		target = name_lookup_loose(Ind, search, TRUE);
+		pname=world_find_player(search);
+		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
+		if(!pname)
+			target = name_lookup_loose(Ind, search, TRUE);
 
 		/* Move colon pointer forward to next word */
 		while (*colon && (isspace(*colon) || *colon == ':')) colon++;
@@ -3374,6 +3374,9 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* Give up */
 			return;
+		}
+		else if(pname){
+			world_pmsg_send(p_ptr->id, p_ptr->name, pname, colon);
 		}
 	}
 
