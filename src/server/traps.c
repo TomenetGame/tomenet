@@ -712,7 +712,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
 	/* God save the arts :) */
 	if (i_ptr->name1 == ART_POWER) return (FALSE);
-	if (cfg.anti_arts_horde && (artifact_p(o_ptr)) && (!o_ptr->name3) && (rand_int(100)>9)) return(FALSE);
+	if (cfg.anti_arts_horde && (artifact_p(i_ptr)) && (!i_ptr->name3) && (rand_int(100)>9)) return(FALSE);
 
 	while (o_idx == 0)
 	{
@@ -2189,19 +2189,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
       /* Bolt Trap */
       case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); break;
+      case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
 #if 0	// coming..when it comes :)
-      case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(1, GF_NUKE, trap); break;
       case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(1, GF_HOLY_FIRE, trap); break;
       case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(1, GF_HELL_FIRE, trap); break;
 #endif	// 0
       case TRAP_OF_PSI_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_PSI, trap); break;
-#if 0
-      case TRAP_OF_PSI_DRAIN: ident=player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
+//      case TRAP_OF_PSI_DRAIN: ident=player_handle_breath_trap(1, GF_PSI_DRAIN, trap); break;
 
       /* Ball Trap */
-      case TRAP_OF_NUKE_BALL: ident=player_handle_breath_trap(3, GF_NUKE, TRAP_OF_NUKE_BALL); break;
-      case TRAP_OF_PSI_BALL: ident=player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
-#endif	// 0
+      case TRAP_OF_NUKE_BALL: ident=player_handle_breath_trap(Ind, 3, GF_NUKE, TRAP_OF_NUKE_BALL); break;
+//      case TRAP_OF_PSI_BALL: ident=player_handle_breath_trap(3, GF_PSI, TRAP_OF_NUKE_BALL); break;
 
 	/* PernMangband additions */
       /* Trap? of Ale vendor */
@@ -2223,17 +2221,17 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				o_ptr = &forge;
 				object_prep(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 
-            if (amt > 10) amt = 10;
-			amt = randint(amt);
+				if (amt > 10) amt = 10;
+				amt = randint(amt);
 
-            p_ptr->au -= amt * price;
-			o_ptr->number = amt;
-			drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+				p_ptr->au -= amt * price;
+				o_ptr->number = amt;
+				drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
-			msg_print(Ind, "You feel like having a shot.");
-			ident=TRUE;
+				msg_print(Ind, "You feel like having a shot.");
+				ident=TRUE;
 
-            p_ptr->redraw |= (PR_GOLD);
+				p_ptr->redraw |= (PR_GOLD);
 			}
          }
          break;

@@ -1399,51 +1399,48 @@ R:100
 F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD |
 
 # Rods ego
-N:131:Capacity of 
+#N:131:Capacity of 
+N:131:of Capacity
 #T:67:0:255
 T:66:0:255
-#X:A:51:10
-X:B:51:10
+X:A:51:10
 W:0:2:10:1000
 C:0:0:0:0
 R:100
 F:CAPACITY
 
-N:132:Cheapness of 
+N:132:of Cheapness
 #T:67:0:255
 T:66:0:255
-#X:A:51:10
-X:B:51:10
+X:A:51:10
 W:0:2:10:700
 C:0:0:0:0
 R:100
 F:CHEAPNESS
 
-N:133:Quickness of 
+N:133:of Quickness
 #T:67:0:255
 T:66:0:255
-#X:A:51:15
-X:B:51:15
+X:A:51:15
 W:0:3:10:1100
 C:0:0:0:0
 R:100
 F:FAST_CAST
 
-N:134:Charging of 
+N:134:of Charging
 #T:67:0:255
 T:66:0:255
-#X:A:51:15
-X:B:51:15
+X:A:51:15
 W:0:2:10:1500
 C:0:0:0:0
 R:100
 F:CHARGING
 
+#N:135:of the Istari
 N:135:the Istari of 
 #T:67:0:255
 T:66:0:255
-#X:A:51:10
-X:B:51:10
+X:A:51:10
 W:0:1:10:10000
 C:0:0:0:0
 R:100
@@ -1878,11 +1875,10 @@ Z:stone to mud
 R:100
 
 # Rod
-N:179:Simplicity of 
+N:179:of Simplicity
 #T:67:0:255
 T:66:0:255
-#X:A:51:8
-X:B:51:8
+X:A:51:8
 #W:3:2:8:1000
 W:3:2:8:5000
 C:0:0:0:0

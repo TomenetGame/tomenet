@@ -5818,8 +5818,10 @@ F:SHOW_MODS | VORPAL
 N:779:the Serpents
 G:":G
 I:40:17:0
-W:25:0:3:10000
-A:25/1
+#W:25:0:3:10000
+W:25:0:3:15000
+#A:25/1
+A:25/3
 F:RES_POIS | DEX | ACTIVATE
 
 # Here comes the new Essences

@@ -1692,7 +1692,7 @@ static int Handle_login(int ind)
 	save_server_info();
 
 	/* Handle the cfg_secret_dungeon_master option */
-	if (!p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
+	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)
