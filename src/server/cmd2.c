@@ -463,7 +463,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 #ifdef NEWHOUSES
 		if(dna->creator!=p_ptr->dna) return(FALSE);
 #endif
-		if(args[1]>'3') return(FALSE);
+		if(args[1]>='3') return(FALSE);
 		/* maybe make party leader only chown party */
 	}
 	switch(args[1]){
@@ -492,6 +492,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 			if(Players[i]->id==newowner){
 				dna->creator=Players[i]->dna;
 				dna->owner=newowner;
+				dna->owner_type=args[1]-'0';
 				return(TRUE);
 			}
 		}
@@ -505,7 +506,7 @@ bool access_door(int Ind, struct dna_type *dna){
 	if(!(strcmp(p_ptr->name,cfg_dungeon_master)) || !(strcmp(p_ptr->name,cfg_admin_wizard)))
 		return(TRUE);
 #ifdef NEWHOUSES
-	if(p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
+	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
 #endif
 	switch(dna->owner_type){
