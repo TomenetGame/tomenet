@@ -375,7 +375,7 @@ void account_check(int Ind){	/* Temporary Ind */
 		while (ptr)
 		{
 			/* Check this name */
-			if(!GetAccountID(ptr->id)){
+			if(!GetAccountID(ptr->account)){
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
 			}
