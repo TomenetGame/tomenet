@@ -2524,13 +2524,13 @@ void msg_format_near(int Ind, cptr fmt, ...)
  */
 // #define FRIENDLY_SPELL_BOOST
 
-#if 0
 /*
  * A message prefixed by a player name is sent only to that player.
  * Otherwise, it is sent to everyone.
  */
 void player_talk_aux(int Ind, cptr message)
 {
+#if 0
  	int i, len, target = 0;
 	char search[80], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -3604,6 +3604,7 @@ void player_talk_aux(int Ind, cptr message)
 		}
 	}
 	*/
+#endif /* if 0 you do it jir - evileye ;) */
 }
 
 /*
@@ -3627,7 +3628,6 @@ void toggle_afk(int Ind)
 	}
 	return;
 }
-#endif /* if 0 you do it jir - evileye ;) */
 
 /*
  * A player has sent a message to the rest of the world.
