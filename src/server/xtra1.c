@@ -1225,13 +1225,16 @@ static void calc_mana(int Ind)
 		new_mana = (new_mana * 7) / 10;
 		if (new_mana < 1) new_mana = 1;
 	}
-
+#if 0
 	/* Gloves of magic are nice things */
 	if ((f1 & TR1_MANA) && (p_ptr->pclass != CLASS_MIMIC))
 	{
 		/* 1 pval = 10% more mana */
 		new_mana += new_mana * o_ptr->pval / 10;
 	}
+#endif	// 0
+
+	if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
 	
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
@@ -1384,8 +1387,8 @@ static void calc_hitpoints(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *p_ptr2;
 
-	object_type *o_ptr;
-	    u32b f1, f2, f3, f4, f5, esp;
+//	object_type *o_ptr;
+//	    u32b f1, f2, f3, f4, f5, esp;
 
 	int bonus, mhp, Ind2 = 0;
 
@@ -1441,7 +1444,7 @@ static void calc_hitpoints(int Ind)
 		mhp += p_ptr->msp * 2 / 3;
 	}
 
-
+#if 0
 	/* Get the gloves */
 	o_ptr = &p_ptr->inventory[INVEN_NECK];
 
@@ -1452,6 +1455,9 @@ static void calc_hitpoints(int Ind)
 	  {
 	    mhp += o_ptr->pval * 10;
 	  }
+#endif	// 0
+
+	mhp += mhp * p_ptr->to_l / 10;
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -1684,6 +1690,7 @@ static void calc_bonuses(int Ind)
 	ego_item_type 		*e_ptr;
 
 	    u32b f1, f2, f3, f4, f5, esp;
+		s16b pval;
 
 
 	/* Save the old speed */
@@ -1766,6 +1773,9 @@ static void calc_bonuses(int Ind)
         p_ptr->reduc_acid = 0;
 	p_ptr->anti_magic = FALSE;
 	p_ptr->auto_id = FALSE;
+//		p_ptr->to_s = 0;
+		p_ptr->to_m = 0;
+		p_ptr->to_l = 0;
 
 	/* Invisibility */
 	p_ptr->invis = 0;
@@ -1969,6 +1979,7 @@ static void calc_bonuses(int Ind)
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
 //		e_ptr = &e_info[o_ptr->name2];
+		pval = o_ptr->pval;
 
 		/* Skip missing items */
 		if (!o_ptr->k_idx) continue;
@@ -2042,38 +2053,49 @@ static void calc_bonuses(int Ind)
 
 
 		/* Affect stats */
-		if (f1 & TR1_STR) p_ptr->stat_add[A_STR] += o_ptr->pval;
-		if (f1 & TR1_INT) p_ptr->stat_add[A_INT] += o_ptr->pval;
-		if (f1 & TR1_WIS) p_ptr->stat_add[A_WIS] += o_ptr->pval;
-		if (f1 & TR1_DEX) p_ptr->stat_add[A_DEX] += o_ptr->pval;
-		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += o_ptr->pval;
-		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += o_ptr->pval;
+		if (f1 & TR1_STR) p_ptr->stat_add[A_STR] += pval;
+		if (f1 & TR1_INT) p_ptr->stat_add[A_INT] += pval;
+		if (f1 & TR1_WIS) p_ptr->stat_add[A_WIS] += pval;
+		if (f1 & TR1_DEX) p_ptr->stat_add[A_DEX] += pval;
+		if (f1 & TR1_CON) p_ptr->stat_add[A_CON] += pval;
+		if (f1 & TR1_CHR) p_ptr->stat_add[A_CHR] += pval;
+
+//                if (f5 & (TR5_LUCK)) p_ptr->luck_cur += pval;
+
+                /* Affect spell power */
+//                if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
+
+                /* Affect mana capacity */
+                if (f1 & (TR1_MANA)) p_ptr->to_m += pval;
+
+                /* Affect life capacity */
+                if (f1 & (TR1_LIFE)) p_ptr->to_l += pval;
 
 		/* Affect stealth */
-		if (f1 & TR1_STEALTH) p_ptr->skill_stl += o_ptr->pval;
+		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
 
 		/* Affect searching ability (factor of five) */
-		if (f1 & TR1_SEARCH) p_ptr->skill_srh += (o_ptr->pval * 5);
+		if (f1 & TR1_SEARCH) p_ptr->skill_srh += (pval * 5);
 
 		/* Affect searching frequency (factor of five) */
-		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (o_ptr->pval * 5);
+		if (f1 & TR1_SEARCH) p_ptr->skill_fos += (pval * 5);
 
 		/* Affect infravision */
-		if (f1 & TR1_INFRA) p_ptr->see_infra += o_ptr->pval;
+		if (f1 & TR1_INFRA) p_ptr->see_infra += pval;
 
 		/* Affect digging (factor of 20) */
-		if (f1 & TR1_TUNNEL) p_ptr->skill_dig += (o_ptr->pval * 20);
+		if (f1 & TR1_TUNNEL) p_ptr->skill_dig += (pval * 20);
 
 		/* Affect speed */
-		if (f1 & TR1_SPEED) p_ptr->pspeed += o_ptr->pval;
+		if (f1 & TR1_SPEED) p_ptr->pspeed += pval;
 
 		/* Affect blows */
-		if (f1 & TR1_BLOWS) extra_blows += o_ptr->pval;
-                if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += o_ptr->pval;
+		if (f1 & TR1_BLOWS) extra_blows += pval;
+                if (f5 & (TR5_CRIT)) p_ptr->xtra_crit += pval;
 
 		/* Affect spellss */
-//		if (f1 & TR1_SPELL_SPEED) extra_spells += o_ptr->pval;
-		if (f1 & TR1_SPELL) extra_spells += o_ptr->pval;
+//		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
+		if (f1 & TR1_SPELL) extra_spells += pval;
 
 		/* Hack -- cause earthquakes */
 		if (f1 & TR1_IMPACT) p_ptr->impact = TRUE;
@@ -2194,7 +2216,7 @@ static void calc_bonuses(int Ind)
 		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
-		minus = o_ptr->to_h + o_ptr->to_d + o_ptr->pval + o_ptr->to_a;
+		minus = o_ptr->to_h + o_ptr->to_d + pval + o_ptr->to_a;
 #if 0	/* Now there're many other ways to get antimagic */
 		/* if ((minus < 0) && (q_ptr->pclass != CLASS_UNBELIEVER)) minus = 0; */
 		if (p_ptr->pclass != CLASS_UNBELIEVER)

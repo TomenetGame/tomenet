@@ -99,11 +99,20 @@ void inven_takeoff(int Ind, int item, int amt)
 	inven_item_increase(Ind, item, -amt);
 	inven_item_optimize(Ind, item);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_EQUIP);
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Recalculate torch */
+	p_ptr->update |= (PU_TORCH);
+
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Redraw */
 	p_ptr->redraw |= (PR_PLUSSES);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
 
@@ -583,7 +592,7 @@ void do_cmd_wield(int Ind, int item)
 	p_ptr->update |= (PU_TORCH);
 
 	/* Recalculate mana */
-	p_ptr->update |= (PU_MANA | PU_HP);
+	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Redraw */
 	p_ptr->redraw |= (PR_PLUSSES);

@@ -2247,6 +2247,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 				if (true_artifact_p(o_ptr))
 				{
 					a_info[o_ptr->name1].cur_num = 0;
+					a_info[o_ptr->name1].known = FALSE;
 				}
 
 				msg_print(Ind, "Your weapon is destroyed !");

@@ -2524,7 +2524,7 @@ F:SUST_INT | SUST_WIS | SUST_CHR |
 F:FEATHER | SLOW_DIGEST | HOLD_LIFE |
 F:ANTIMAGIC_50 | DRAIN_MANA
 
-# The Amulet of Suspicion Methodique
+# The (Amulet of) Suspicion Methodique
 
 N:211:Methodique
 I:40:34:0

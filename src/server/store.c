@@ -1486,6 +1486,7 @@ static void store_delete(store_type *st_ptr)
 	{
 		/* Preserve this one */
 		a_info[st_ptr->stock[what].name1].cur_num = 0;
+		a_info[st_ptr->stock[what].name1].known = FALSE;
 	}
 
 	/* Actually destroy (part of) the item */
@@ -2493,9 +2494,10 @@ void store_confirm(int Ind)
 	handle_stuff(Ind);
 
 	/* Artifact won't be sold in a store */
-	if (cfg.anti_arts_horde && (artifact_p(&sold_obj)) && (!sold_obj.name3))
+	if (cfg.anti_arts_horde && true_artifact_p(&sold_obj))
 	{
 		a_info[sold_obj.name1].cur_num = 0;
+		a_info[sold_obj.name1].known = FALSE;
 		return;
 	}
 

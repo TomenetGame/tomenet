@@ -301,6 +301,8 @@ struct artifact_type
 
         s16b set;               /* Does it belongs to a set ?*/
 #endif	// 0
+
+	bool known;			/* Is this artifact already IDed? */
 };
 
 
@@ -1916,6 +1918,13 @@ struct player_type
         u16b esp_link_end; /* Time before actual end */
 	bool (*master_move_hook)(int Ind, char * args);
 
+	/* some new borrowed flags (saved) */
+        bool black_breath;      /* The Tolkien's Black Breath */
+
+        s16b msane;                   /* Max sanity */
+        s16b csane;                   /* Cur sanity */
+        u16b csane_frac;              /* Cur sanity frac */
+
 	/* elements under this line won't be saved...for now. - Jir - */
 	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
@@ -1944,12 +1953,9 @@ struct player_type
 
         s16b xtra_crit;         /* % of increased crits */
 
-	/* some new borrowed flags (saved) */
-        bool black_breath;      /* The Tolkien's Black Breath */
-
-        s16b msane;                   /* Max sanity */
-        s16b csane;                   /* Cur sanity */
-        u16b csane_frac;              /* Cur sanity frac */
+        s16b to_l;                      /* Bonus to life */
+        s16b to_m;                      /* Bonus to mana */
+//        s16b to_s;                      /* Bonus to spell(num_spell) */
 
 };
 
@@ -2004,3 +2010,6 @@ struct server_opts
 	bool joke_monsters;
 	bool vanilla_monsters;
 };
+
+/* from spells1.c */
+typedef int (*inven_func)(object_type *);

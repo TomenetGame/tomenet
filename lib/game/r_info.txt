@@ -2769,7 +2769,8 @@ D:Yum! It smells quite tasty.  If you could only see it...
 N:185:Quiver slot
 G:,:U
 I:120:1d1:4:1:0
-W:10:2:60:3
+#W:10:2:60:3
+W:10:5:60:3
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:SPORE:CONFUSE:1d1

@@ -597,3 +597,5 @@ Change list for PernMangband
 - new(?) traps: pit, chasm
 - Shopkeepers always benefit from transaction(STORE_BENEFIT).
 - Store can merge items in a reasonable way.
+- LIFE/MANA item flags implemented.
+- Fixed a bug that allowed multiple artifacts(like Galadriel).

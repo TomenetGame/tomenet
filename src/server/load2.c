@@ -2518,6 +2518,7 @@ errr rd_server_savefile()
 		rd_byte(&tmp8u);
 		a_info[i].cur_num = tmp8u;
 		rd_byte(&tmp8u);
+		a_info[i].known = tmp8u;
 		rd_byte(&tmp8u);
 		rd_byte(&tmp8u);
 	}

@@ -565,6 +565,23 @@ void self_knowledge(int Ind)
 		sprintf(info[i++], "%d%% of your mind is under your control.", k);
 	}
 #endif
+	/* Insanity warning (better message needed!) */
+	if (p_ptr->csane < p_ptr->msane / 8)
+	{
+		/* Message */
+		info[i++] = "You are next to mad.";
+	}
+	else if (p_ptr->csane < p_ptr->msane / 4)
+	{
+		/* Message */
+		info[i++] = "Your mind is filled with insane thoughts.";
+	}
+	else if (p_ptr->csane < p_ptr->msane / 2)
+	{
+		/* Message */
+		info[i++] = "You have a seed of insanity in your mind.";
+	}
+
 
 
 	if (p_ptr->blind)

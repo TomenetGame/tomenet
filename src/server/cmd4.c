@@ -277,6 +277,9 @@ void do_cmd_check_artifacts(int Ind, int line)
 		/* Skip "uncreated" artifacts */
 		if (!a_ptr->cur_num) continue;
 
+		/* Skip "unknown" artifacts */
+		if (!a_ptr->known) continue;
+
 		/* Assume okay */
 		okay[k] = TRUE;
 	}

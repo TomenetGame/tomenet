@@ -3817,6 +3817,7 @@ void player_death(int Ind)
 			{
 				/* set the artifact as unfound */
 				a_info[p_ptr->inventory[i].name1].cur_num = 0;
+				a_info[p_ptr->inventory[i].name1].known = FALSE;
 			}
 		}
 
@@ -3940,6 +3941,7 @@ void player_death(int Ind)
 		{
 			/* set the artifact as unfound */
 			a_info[p_ptr->inventory[i].name1].cur_num = 0;
+			a_info[p_ptr->inventory[i].name1].known = 0;
 			
 			/* Don't drop the artifact */
 			continue;
@@ -5890,10 +5892,11 @@ void telekinesis_aux(int Ind, int item)
 	p2_ptr = Players[Ind2];
 
 	/* You cannot send artifact */
-	if(cfg.anti_arts_horde && (artifact_p(q_ptr)) && (!q_ptr->name3))
+	if(cfg.anti_arts_horde && true_artifact_p(q_ptr))
 	{
 		msg_print(Ind, "You have an acute feeling of loss!");
 		a_info[q_ptr->name1].cur_num = 0;
+		a_info[q_ptr->name1].cur_num = FALSE;
 	}
 	else
 	{

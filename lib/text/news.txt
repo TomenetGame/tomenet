@@ -7,11 +7,11 @@
                   In the land of Mordor where the shadows lie"
                                 "Lord of The Rings", J.R.R.Tolkien
 
+ - Sanity system is added; going insane is no good of you.
  - New item system, including hundleds of new egos/artifacts.
  - 1043 PernAngband monsters are ported (not fully implemented, though)
  - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
  - About 170 new traps added; They now are nasty foes!
- - Ego monsters added; monsters with special abilities can be generated.
  - Dropping/throwing/selling(etc) will make non-random artifacts disappear!
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.

@@ -66,6 +66,7 @@ void delete_object_idx(int o_idx)
 	if ((artifact_p(o_ptr)) && (!o_ptr->name3))
 	{
 		 a_info[o_ptr->name1].cur_num = 0;
+		 a_info[o_ptr->name1].known = FALSE;
 	}
 
 	/* Object is gone */
@@ -348,6 +349,7 @@ void wipe_o_list(int Depth)
 
 			/* Mega-Hack -- Preserve the artifact */
 			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
 		}
 
 		/* Delete it */
@@ -437,6 +439,7 @@ void wipe_o_list_safely(int Depth)
 
 			/* Mega-Hack -- Preserve the artifact */
 			a_info[o_ptr->name1].cur_num = 0;
+			a_info[o_ptr->name1].known = FALSE;
 		}
 
 		/* Delete it */
@@ -779,6 +782,14 @@ void object_known(object_type *o_ptr)
 
 	/* Now we know about the item */
 	o_ptr->ident |= ID_KNOWN;
+
+	/* Artifact becomes 'found' status */
+	if (true_artifact_p(o_ptr))
+	{
+		 a_info[o_ptr->name1].cur_num = 1;	// parano
+		 a_info[o_ptr->name1].known = TRUE;
+	}
+
 }
 
 
@@ -1944,6 +1955,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr)
 
 		/* Mega-Hack -- mark the item as an artifact */
 		o_ptr->name1 = i;
+
+		/* Hack -- Mark the artifact as "created" */
+		a_ptr->cur_num = 1;
 
 		/* Success */
 		return (TRUE);
@@ -5529,6 +5543,7 @@ void drop_near_severe(int Ind, object_type *o_ptr, int chance, int Depth, int y,
 
 		msg_format(Ind, "%s fades into the air!", o_name);
 		a_info[o_ptr->name1].cur_num = 0;
+		a_info[o_ptr->name1].known = FALSE;
 		return;
 	}
 	else drop_near(o_ptr,chance,wpos,y,x);

@@ -3306,11 +3306,13 @@ void player_talk_aux(int Ind, cptr message)
 						if (a_info[k].cur_num)
 						{
 							a_info[k].cur_num = 0;
+							a_info[k].known = FALSE;
 							msg_format(Ind, "Artifact %d is now \377Gfindable\377w.", k);
 						}
 						else
 						{
 							a_info[k].cur_num = 1;
+							a_info[k].known = TRUE;
 							msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
 						}
 					}
@@ -3318,6 +3320,7 @@ void player_talk_aux(int Ind, cptr message)
 					{
 						for (i = 0; i < MAX_A_IDX ; i++)
 							a_info[i].cur_num = 0;
+							a_info[k].known = FALSE;
 							msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
 					}
 					else
