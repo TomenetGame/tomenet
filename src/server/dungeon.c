@@ -2348,12 +2348,6 @@ static bool process_player_end_aux(int Ind)
 
 				/* Digest some food */
 				(void)set_food(Ind, p_ptr->food - i);
-
-				/* Hack -- check to see if we have been kicked off
-				 * due to starvation 
-				 */
-
-				if (NumPlayers != NumPlayers_old) return (FALSE);
 			}
 		}
 

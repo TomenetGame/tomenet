@@ -3102,17 +3102,6 @@ bool set_food(int Ind, int v)
 			/* Fainting / Starving */
 			case 0:
 			msg_print(Ind, "You are getting faint from hunger!");
-			/* Hack -- if the player is at full hit points, 
-			 * destroy his conneciton (this will hopefully prevent
-			 * people from starving while afk)
-			 */
-			if (p_ptr->chp >= p_ptr->mhp) /* changed it due to CHP = MHP-1 bug.. -C. Blue */
-			{
-				/* Use the value */
-				p_ptr->food = v;
-				Destroy_connection(p_ptr->conn, "Starving to death!");
-				return TRUE;
-			}
 			break;
 
 			/* Weak */
@@ -7597,8 +7586,9 @@ static void unstatic_level(struct worldpos *wpos){
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		if (Players[i]->conn == NOT_CONNECTED) continue;
-		if (Players[i]->st_anchor){
+		if (Players[i]->st_anchor || Players[i]->anti_tele){
 			Players[i]->st_anchor=0;
+			Players[i]->anti_tele=0;
 			msg_print(GetInd[Players[i]->id],"Your space/time anchor breaks\n");
 		}
 	}
