@@ -747,6 +747,10 @@ void do_cmd_activate_skill()
 			item_tester_tval = TV_HUNT_BOOK;
 			cmd_cast_skill();
 			break;
+		case MKEY_PRAY:
+			item_tester_tval = TV_PRAYER_BOOK;
+			cmd_cast_skill();
+			break;
 #if 0	// not implemeted yet.
 		case MKEY_PSI:
 			item_tester_tval = TV_PSI_BOOK;
