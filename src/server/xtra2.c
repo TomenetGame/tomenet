@@ -3761,6 +3761,7 @@ void player_death(int Ind)
 		sprintf(buf, "The unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 	/* Tell the players */
 	/* handle the secret_dungeon_master option */
+	/* bug??? evileye - shouldnt it be && */
 	if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 		if(p_ptr->lev>1 || p_ptr->alive)
 			msg_broadcast(Ind, buf);

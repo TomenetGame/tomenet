@@ -1399,6 +1399,12 @@ static void process_player_end(int Ind)
 			take_hit(Ind, 1, "poison");
 		}
 
+		/* Drowning */
+		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER){
+			/* Take damage */
+			take_hit(Ind, 1, "drowning");
+		}
+
 		/* Take damage from cuts */
 		if (p_ptr->cut)
 		{
@@ -1428,7 +1434,7 @@ static void process_player_end(int Ind)
 
 		/* Ghosts don't need food */
 		/* Allow AFK-hivernation */
-		if (!p_ptr->ghost || !p_ptr->afk)
+		if (!p_ptr->ghost && !p_ptr->afk)
 		{
 			/* Digest normally */
 			if (p_ptr->food < PY_FOOD_MAX)
