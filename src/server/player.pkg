@@ -689,3 +689,4 @@ extern bool can_use(int Ind, object_type *o_ptr);
 extern bool interfere(int Ind, int chance);
 
 extern void telekinesis_aux(int Ind, int item);
+extern void recall_player(int Ind, char *message);

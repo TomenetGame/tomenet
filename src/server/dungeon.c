@@ -1744,13 +1744,60 @@ static void apply_effect(int Ind)
 	}
 }
 
+#if 0
+/* admin can summon a player anywhere he/she wants */
+void summon_player(int victim, struct worldpos *wpos, char *message){
+	struct player_type *p_ptr;
+	p_ptr=Players[victim];
+	p_ptr->recall_pos.wx=wpos->wx;
+	p_ptr->recall_pos.wy=wpos->wy;
+	p_ptr->recall_pos.wz=wpos->wz;
+	recall_player(victim, message);
+}
+#endif
+
+/* actually recall a player with no questions asked */
+void recall_player(int Ind, char *message){
+	struct player_type *p_ptr;
+	cave_type **zcave;
+
+	p_ptr=Players[Ind];
+	
+	if(!p_ptr) return;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
+
+	/* One less person here */
+	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
+
+	/* Remove the player */
+	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
+	/* Show everyone that he's left */
+	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+
+	msg_print(Ind, message);
+	/* Forget his lite and view */
+	forget_lite(Ind);
+	forget_view(Ind);
+
+	wpcopy(&p_ptr->wpos, &p_ptr->recall_pos);
+
+	/* One more person here */
+	new_players_on_depth(&p_ptr->wpos,1,TRUE);
+
+	p_ptr->new_level_flag = TRUE;
+
+	/* He'll be safe for 2 turns */
+	set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+}
+
 
 /* Handles WoR
  * XXX dirty -- REWRITEME
  */
-static void do_recall(int Ind)
+static void do_recall(int Ind, bool bypass)
 {
 	player_type *p_ptr = Players[Ind];
+	char *message;
 
 	/* sorta circumlocution? */
 	worldpos new_pos;
@@ -1761,7 +1808,7 @@ static void do_recall(int Ind)
 
 	/* Determine the level */
 	/* recalling to surface */
-	if(p_ptr->wpos.wz)
+	if(p_ptr->wpos.wz && !bypass)
 	{
 		struct dungeon_type *d_ptr;
 		d_ptr=getdungeon(&p_ptr->wpos);
@@ -1774,12 +1821,12 @@ static void do_recall(int Ind)
 		else{
 			if(p_ptr->wpos.wz > 0)
 			{
-				msg_print(Ind, "You feel yourself yanked downwards!");
+				message="You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 			else
 			{
-				msg_print(Ind, "You feel yourself yanked upwards!");
+				message="You feel yourself yanked upwards!";
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 
@@ -1796,7 +1843,7 @@ static void do_recall(int Ind)
 	/* beware! bugs inside! (jir) (no longer I hope) */
 	/* world travel */
 	/* why wz again? (jir) */
-	else if (!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN) ))
+	else if ((!(p_ptr->recall_pos.wz) || !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_UP|WILD_F_DOWN))) && !bypass)
 	{
 		int dis;
 
@@ -1829,7 +1876,7 @@ static void do_recall(int Ind)
 		new_pos.wz = 0;
 
 		/* Messages */
-		msg_print(Ind, "You feel yourself yanked sideways!");
+		message="You feel yourself yanked sideways!";
 		msg_format_near(Ind, "%s is yanked sideways!", p_ptr->name);
 
 		/* New location */
@@ -1866,7 +1913,7 @@ static void do_recall(int Ind)
 			}
 			else
 			{
-				msg_print(Ind, "You feel yourself yanked downwards!");
+				message="You feel yourself yanked downwards!";
 				msg_format_near(Ind, "%s is yanked downwards!", p_ptr->name);
 			}
 		}
@@ -1895,7 +1942,7 @@ static void do_recall(int Ind)
 			}
 			else
 			{
-				msg_print(Ind, "You feel yourself yanked upwards!");
+				message="You feel yourself yanked upwards!";
 				msg_format_near(Ind, "%s is yanked upwards!", p_ptr->name);
 			}
 		}
@@ -1909,7 +1956,7 @@ static void do_recall(int Ind)
 		new_pos.wz = p_ptr->recall_pos.wz;
 		if (p_ptr->recall_pos.wz == 0)
 		{
-			msg_print(Ind, "You feel yourself yanked toward nowhere...");
+			message="You feel yourself yanked toward nowhere...";
 			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		}
 		else p_ptr->new_level_method = LEVEL_RAND;
@@ -1917,6 +1964,10 @@ static void do_recall(int Ind)
 
 	if(recall_ok)
 	{
+		/* back into here */
+		wpcopy(&p_ptr->recall_pos, &new_pos);
+		recall_player(Ind, message);
+#if 0
 		cave_type **zcave;
 		if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
 
@@ -1941,6 +1992,7 @@ static void do_recall(int Ind)
 
 		/* He'll be safe for 2 turns */
 		set_invuln_short(Ind, 5);	// It runs out if attacking anyway
+#endif
 	}
 }
 
@@ -3003,7 +3055,7 @@ static bool process_player_end_aux(int Ind)
 		/* Activate the recall */
 		if (!p_ptr->word_recall)
 		{
-			do_recall(Ind);
+			do_recall(Ind, 0);
 		}
 	}
 
