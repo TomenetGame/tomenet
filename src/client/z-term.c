@@ -1,3 +1,4 @@
+/* $Id$ */
 /* File: z-term.c */
 
 /* Purpose: a generic, efficient, terminal window package -BEN- */
@@ -8,12 +9,8 @@
 
 #include "../common/angband.h"
 
-#define EVIL_TEST /* evil test */
-
 /* evil test */
-#ifdef EVIL_TEST
 extern short screen_icky;
-#endif
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -480,7 +477,62 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s)
 	return (-1);
 }
 
+#ifdef CLIENT_SHIMMER
+/* 
+ * Some eye-candies from PernAngband :)		- Jir -
+ */
+char get_shimmer_color()
+{
+	switch (randint(7))
+	{
+		case 1:
+			return TERM_RED;
+		case 2:
+			return TERM_L_RED;
+		case 3:
+			return TERM_WHITE;
+		case 4:
+			return TERM_L_GREEN;
+		case 5:
+			return TERM_BLUE;
+		case 6:
+			return TERM_L_DARK;
+		case 7:
+			return TERM_GREEN;
+	}
+	return (TERM_VIOLET);
+}
+#endif
 
+byte flick_colour(byte attr){
+	switch(attr){
+		case TERM_MULTI:
+			return(random()&15);
+			break;	/* unnecessary breaks ;) */
+		case TERM_FIRE:
+			return(random()&1?TERM_RED:TERM_L_RED);
+			break;
+		case TERM_HALF:
+			return(get_shimmer_color());
+			break;
+		default:
+			return(attr);
+	}
+}
+
+void flicker(){
+	int y, x;
+	char ch, attr;
+
+	for(y=0; y<Term->hgt; y++){
+		for(x=0; x<Term->wid; x++){
+			if(Term->scr->a[y][x]<TERM_MULTI) continue;
+			ch=Term->scr->c[y][x];
+			attr=flick_colour(Term->scr->a[y][x]);
+			(void)((*Term->text_hook)(x, y, 1, attr, &ch));
+		}
+	}
+}
 
 /*** Refresh routines ***/
 
@@ -629,9 +681,11 @@ static void Term_fresh_row_text_wipe(int y)
 				/* Forget the pending thread */
 				n = 0;
 			}
-
 			/* Save the new color */
-			fa = na;
+			if(na>=TERM_MULTI)
+				fa=flick_colour(na);
+			else
+				fa = na;
 		}
 
 		/* Start a new thread, if needed */
@@ -2148,12 +2202,17 @@ errr Term_save(void)
 	int h = Term->hgt;
 
 /* evileye - design upgrade test */
-	//screen_icky++;
-	//if(screen_icky>1) return(0);
+#ifdef EVIL_TEST
+//	screen_icky++;
+//	if(screen_icky>1) return(0);
 
-	if(screen_icky>3) return(0);
+ 	if(screen_icky>3) return(0);
+
+ 	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
+#else
 	/* Grab */
-	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
+	term_win_copy(Term->mem, Term->scr, w, h);
+#endif
 
 	/* Success */
 	return (0);
@@ -2173,12 +2232,16 @@ errr Term_load(void)
 	int h = Term->hgt;
 
 /* evileye - design upgrade test */
+#ifdef EVIL_TEST
 	if(!screen_icky) return(0);	/* should really be a value */
-	//screen_icky--;
-	//if(screen_icky) return(0);
+//	screen_icky--;
+//	if(screen_icky) return(0);
 
+ 	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
+#else
 	/* Load */
-	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
+	term_win_copy(Term->scr, Term->mem, w, h);
+#endif
 
 	/* Assume change */
 	for (y = 0; y < h; y++)

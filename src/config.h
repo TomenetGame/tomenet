@@ -779,3 +779,5 @@
  */
 #define EVIL_TEST
 
+#define CLIENT_SHIMMER
+

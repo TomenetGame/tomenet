@@ -3485,6 +3485,15 @@ void do_keepalive()
 	}
 }
 
+#define FL_SPEED 1
+
+void do_flicker(){
+	static int flticks=0;
+	if(ticks-flticks<FL_SPEED) return;
+	flicker();
+	flticks=ticks;
+}
+
 void do_mail(){
 #if 0
 #ifdef SET_UID

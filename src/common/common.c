@@ -73,6 +73,9 @@ int color_char_to_attr(char c)
 		case 'G': return (TERM_L_GREEN);
 		case 'B': return (TERM_L_BLUE);
 		case 'U': return (TERM_L_UMBER);
+
+		case 'h': return (TERM_HALF);
+		case 'm': return (TERM_MULTI);
 	}
 
 	return (-1);

@@ -5064,10 +5064,18 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist)
  * Special NPC processing
  *
  * Call LUA stuff where needed.
- *
+ * Experimental
  * Evileye
  */
 void process_npcs(){
+#if 0
+	struct cave_type **zcave;
+	zcave=getcave(&Npcs[0].wpos);
+	if(!Npcs[0].active) return;
+	if(zcave!=(cave_type**)NULL){
+		process_hooks(HOOK_NPCTEST, "d", &Npcs[0]);
+	}
+#endif
 }
 
 /*

@@ -32,7 +32,7 @@
  * of chaos, and one something else).  See the SHIMMER_OBJECTS code
  * in "dungeon.c" and the object color extractor in "cave.c".
  */
-#define TERM_MULTI	TERM_VIOLET
+/*#define TERM_MULTI	TERM_VIOLET */
 
 
 /* Ones borrowed from PernAngband.	- Jir - */

@@ -801,6 +801,7 @@ static void image_random(byte *ap, char *cp)
 	}
 }
 
+#ifndef CLIENT_SHIMMER
 /* 
  * Some eye-candies from PernAngband :)		- Jir -
  */
@@ -825,6 +826,7 @@ char get_shimmer_color()
 	}
 	return (TERM_VIOLET);
 }
+#endif
 
 /* 
  * Table of breath colors.  Must match listings in a single set of 
@@ -890,7 +892,13 @@ static byte multi_hued_attr(monster_race *r_ptr)
 	int second_color = 0;
 
 	/* Monsters with no ranged attacks can be any color */
+#ifdef CLIENT_SHIMMER
+	if (!r_ptr->freq_inate){
+		return (TERM_HALF);
+	}
+#else
 	if (!r_ptr->freq_inate) return (get_shimmer_color());
+#endif
 
 	/* Check breaths */
 	for (i = 0; i < 32; i++)
@@ -907,14 +915,22 @@ static byte multi_hued_attr(monster_race *r_ptr)
 		if (first_color == 0) continue;
 
 		/* Monster can be of any color */
+#ifdef CLIENT_SHIMMER
+		if (first_color == 255) return (TERM_MULTI);
+#else
 		if (first_color == 255) return (randint(15));
+#endif
 
 
 		/* Increment the number of breaths */
 		breaths++;
 
 		/* Monsters with lots of breaths may be any color. */
+#ifdef CLIENT_SHIMMER
+		if (breaths == 6) return (TERM_MULTI);
+#else
 		if (breaths == 6) return (randint(15));
+#endif
 
 
 		/* Always store the first color */
@@ -940,7 +956,13 @@ static byte multi_hued_attr(monster_race *r_ptr)
 	}
 
 	/* Monsters with no breaths may be of any color. */
+#ifdef CLIENT_SHIMMER
+	if (breaths == 0 || breaths==5){
+		return (TERM_HALF);
+	}
+#else
 	if (breaths == 0) return (get_shimmer_color());
+#endif
 
 	/* If monster has one breath, store the second color too. */
 	if (breaths == 1)
@@ -1525,7 +1547,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* Abnormal attr */
 /*                        if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
 			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
+#ifdef CLIENT_SHIMMER
+				(*ap) = TERM_HALF;
+#else
 				(*ap) = get_shimmer_color();
+#endif
 /*				(*ap) = randint(15); */
 
 			/* Hack -- hallucination */
@@ -1595,8 +1621,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 				/* Multi-hued attr */
 				if (r_ptr->flags2 & (RF2_ATTR_ANY))
-					(*ap) = randint(15);
-				else (*ap) = get_shimmer_color();
+					(*ap) = TERM_MULTI;
+				else (*ap) = TERM_HALF;
 			}
 
 			/* Multi-hued monster */
@@ -1620,7 +1646,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 #ifdef MULTI_HUED_PROPER
 				else (*ap) = multi_hued_attr(r_ptr);
 #else
+#ifdef CLIENT_SHIMMER
+				else (*ap) = TERM_HALF;
+#else
 				else (*ap) = get_shimmer_color();
+#endif
 #endif	/* MULTI_HUED_PROPER */
 #if 0
 				/* Normal char */

@@ -181,3 +181,5 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 #define HOOK_LOAD_GAME          41
 #define HOOK_LEVEL_REGEN        42
 #define HOOK_LEVEL_END_GEN      43
+#define HOOK_NPCTEST		44	/* undecided on npc hooks atm */
+					/* this one is proximity activated */

@@ -4055,6 +4055,15 @@ extern int PlayerUID;
 #define TERM_L_BLUE		14	/* 'B' */	/* 0,4,4 */
 #define TERM_L_UMBER	15	/* 'U' */	/* 3,2,1 */
 
+/* Non encoded shimmer attributes */
+#define TERM_MULTI	16	/* all the main colours */
+
+#define TERM_HALF	63	/* only the brighter colours */
+
+/* Reserved attr values - do not exceed */
+#define TERM_RLE	0x40	/* 64 */
+#define TERM_RESERVED	0x80	/* 128 */
+
 
 /*** Sound constants ***/
 
@@ -4548,7 +4557,8 @@ extern int PlayerUID;
 #define HOOK_LOAD_GAME          41
 #define HOOK_LEVEL_REGEN        42
 #define HOOK_LEVEL_END_GEN      43
-#define MAX_HOOKS               44
+#define HOOK_NPCTEST		44
+#define MAX_HOOKS               45
 
 /*
  * Mkeys are skill activations

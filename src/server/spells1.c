@@ -988,7 +988,7 @@ byte spell_color(int type)
 #if 0
 	switch (type)
 	{
-		case GF_MISSILE:	return (mh_attr());
+		case GF_MISSILE:	return (TERM_MULTI);
 		case GF_ACID:		return (TERM_SLATE);
 		case GF_ELEC:		return (TERM_BLUE);
 		case GF_FIRE:		return (TERM_RED);
@@ -1001,7 +1001,7 @@ byte spell_color(int type)
 		case GF_ARROW:		return (TERM_WHITE);
 		case GF_WATER:		return (TERM_SLATE);
 		case GF_NETHER:		return (TERM_L_GREEN);
-		case GF_CHAOS:		return (mh_attr());
+		case GF_CHAOS:		return (TERM_MULTI);
 		case GF_DISENCHANT:	return (TERM_VIOLET);
 		case GF_NEXUS:		return (TERM_L_RED);
 		case GF_CONFUSION:	return (TERM_L_UMBER);
@@ -1018,7 +1018,7 @@ byte spell_color(int type)
 		case GF_PLASMA:		return (TERM_RED);
 		case GF_METEOR:		return (TERM_RED);
 		case GF_ICE:		return (TERM_WHITE);
-			case GF_NUKE:           return (mh_attr());
+			case GF_NUKE:           return (TERM_MULTI);
 			case GF_DISINTEGRATE:   return (0x05);
 	}
 #else	// 0
@@ -1040,7 +1040,7 @@ byte spell_color(int type)
 		case GF_WATER:          return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 //		case GF_WAVE:           return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 		case GF_NETHER:         return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
-		case GF_CHAOS:          return (mh_attr(15));
+		case GF_CHAOS:          return (TERM_MULTI);
 		case GF_DISENCHANT:     return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
 		case GF_NEXUS:          return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
 		case GF_CONFUSION:      return (mh_attr(4));

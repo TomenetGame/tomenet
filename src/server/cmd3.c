@@ -2210,6 +2210,7 @@ void do_cmd_look(int Ind, int dir)
 
 		/* Format string */
 //                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+		m_ptr=&m_list[c_ptr->m_idx];
 		sprintf(out_val, "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 				m_ptr->level, look_mon_desc(c_ptr->m_idx),
 				m_ptr->clone ? ", clone" : "");

@@ -187,6 +187,7 @@ static void Input_loop(void)
 		// Send out a keepalive packet if need be
 		do_keepalive();
 		do_mail();
+		do_flicker();
 
 		if (Net_flush() == -1)
 		{

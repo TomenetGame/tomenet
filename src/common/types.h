@@ -813,6 +813,7 @@ struct object_type
  */
 
 struct npc_type{
+	byte active;			/* ignore this? */
 	char name[20];			/* NPC name */
 	s16b fy, fx;			/* Position */
 	struct worldpos wpos;
