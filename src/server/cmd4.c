@@ -562,24 +562,25 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, " AFK");
 		}
 				
-		/* Print extra info if these people are in the same party */
-		/* Hack -- always show extra info to dungeon master */
-		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)))
-		{
-#ifdef NEW_DUNGEON
-			fprintf(fff, " at (%d,%d) %dft", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
-#else
-			fprintf(fff, " at %ld ft", q_ptr->dun_depth * 50);
-#endif
-		}
-
 		/* Newline */
 		/* -AD- will this work? */
 		fprintf(fff, "\n");
 		if (!strcmp(p_ptr->name,cfg_admin_wizard) ||
 			!strcmp(p_ptr->name, cfg_dungeon_master))
 			fprintf(fff, "    (%d)", k);
-		fprintf(fff, "         %s@%s\n", q_ptr->realname, q_ptr->hostname);
+		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
+
+		/* Print extra info if these people are in the same party */
+		/* Hack -- always show extra info to dungeon master */
+		if ((p_ptr->party == q_ptr->party && p_ptr->party) || (!strcmp(p_ptr->name,cfg_dungeon_master)) || Ind == k)
+		{
+#ifdef NEW_DUNGEON
+			fprintf(fff, "   [(%d,%d), %dft]", q_ptr->wpos.wx, q_ptr->wpos.wy, q_ptr->wpos.wz*50);
+#else
+			fprintf(fff, " - at %ld ft", q_ptr->dun_depth * 50);
+#endif
+		}
+		fprintf(fff, "\n");
 
 	}
 
