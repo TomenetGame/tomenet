@@ -547,8 +547,16 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 		/* To prevent cheezing */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
-			price = 100;
-			if(o_ptr->pval==0) o_ptr->level=0;
+			if(o_ptr->pval==0)
+			{
+				o_ptr->level = 1; //= 0
+				price = 1000; //= 100
+			}
+			else
+			{
+				o_ptr->level = 15 + (1000 / ((2000 / r_info[o_ptr->pval].level) + 10));
+				price = 1000;
+			}
 		}
 	}
 

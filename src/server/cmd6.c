@@ -6448,14 +6448,50 @@ void do_cmd_activate(int Ind, int item)
 					else{
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
-						//							p_ptr->r_killed[p_ptr->body_monster]=0;
-						p_ptr->r_killed[p_ptr->body_monster] >>= 1;
+						o_ptr->level = 15 + (1000 / ((2000 / r_info[p_ptr->body_monster].level) + 10));
+
+						/* Reduce player's kill count by the monster level */
+						p_ptr->r_killed[p_ptr->body_monster] -= r_info[p_ptr->body_monster].level;
+
+						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
+							do_mimic_change(Ind, 0, FALSE);
+
 						object_known(o_ptr);
 					}
 				}
 				else
 				{
 					/* Need skill; no need of killing count */
+					if (get_skill(p_ptr, SKILL_MIMIC) < (r_info[p_ptr->body_monster].level / 2))
+					{
+						msg_print(Ind, "Your mimicry is not powerful enough yet.");
+						return;
+					}
+					
+					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
+					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
+					{
+						msg_print(Ind, "There is a bright flash of light.");
+
+						/* Dangerous Hack -- Destroy the item */
+						/* Reduce and describe inventory */
+						if (item >= 0)
+						{
+						        inven_item_increase(Ind, item, -999);
+						        inven_item_describe(Ind, item);
+				    		        inven_item_optimize(Ind, item);
+			    			}
+						/* Reduce and describe floor item */
+						else
+			    			{
+			    			        floor_item_increase(0 - item, -999);
+						        floor_item_describe(0 - item);
+						        floor_item_optimize(0 - item);
+						}
+						return;
+					}
+
 					do_mimic_change(Ind, o_ptr->pval, FALSE);
 #if 0
 					monster_race *r_ptr = &r_info[o_ptr->pval];

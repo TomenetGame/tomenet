@@ -3807,8 +3807,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 							break;
 						}
 						o_ptr->pval = i;
+						//o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
 					}
-					else o_ptr->level=0;
+					else o_ptr->level=1;
 					break;
 				}
 
