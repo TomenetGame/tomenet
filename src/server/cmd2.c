@@ -3275,6 +3275,13 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 
+		/* Extra (exploding) hack: */
+		/* Stopped by walls/doors ?*/
+		if (!cave_floor_bold(zcave, ny, nx)) {
+			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x);
+		}
+
+
 		/* Chance of breakage (during attacks) */
 		j = (hit_body ? breakage_chance(o_ptr) : 0);
 		j = (j * (100 - get_skill_scale(p_ptr, archery,
