@@ -1099,13 +1099,13 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 1;
 	do_admin_outfit();
 #endif
-
+#if 0 //it's annoying that each admin gets this imho :)
 	invcopy(o_ptr, lookup_kind(TV_HAFTED, SV_GROND));
 	o_ptr->name1 = ART_GROND;
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
 	do_admin_outfit();
-
+#endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE);
 	o_ptr->number = 1;
