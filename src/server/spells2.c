@@ -3971,7 +3971,8 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 		/* Take damage */
 		if (Ind > 0)
 		{
-			take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide");
+			if (!p_ptr->admin_dm)
+				take_hit(Ind, randint(4 + (tmp >> 3)), "the strain of casting Genocide");
 
 			/* Redraw */
 			p_ptr->redraw |= (PR_HP);
@@ -3993,8 +3994,8 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 	if (Ind > 0)
 	{
 #ifdef SEVERE_GENO
-		if (!p_ptr->death && result)
-			take_hit(Ind, p_ptr->chp >> 2, "the strain of casting Genocide");
+		if (!p_ptr->death && result && !p_ptr->admin_dm)
+			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_HP);
@@ -4152,7 +4153,7 @@ bool mass_genocide(int Ind)
 	}
 
 #ifdef SEVERE_GENO
-	if (!p_ptr->death && result)
+	if (!p_ptr->death && result && !p_ptr->admin_dm)
 			take_hit(Ind, p_ptr->chp >> 1, "the strain of casting Genocide");
 
 	/* Redraw */
