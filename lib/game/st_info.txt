@@ -305,7 +305,8 @@ I:100:Restore Mana
 I:50:Blood Bond
 #potion of resistance
 #T:5:71:60
-T:10:71:60
+#T:10:71:60
+T:25:71:60
 #scroll of *enchant weapon*
 T:10:70:21
 #scroll of *enchant armour*

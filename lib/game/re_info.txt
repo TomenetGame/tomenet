@@ -285,6 +285,8 @@ B:*:*:%150d%150
 B:*:*:%150d%150
 F:R_CHAR_A
 M:EVIL | FORCE_MAXHP | FORCE_DEPTH
+# no 'Corrupted Fallen Angel either'..
+H:EVIL
 S:BO_NETH | BA_NETH | S_DEMON
 T:S_ANGEL
 

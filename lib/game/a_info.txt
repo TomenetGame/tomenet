@@ -1493,7 +1493,7 @@ D:evil and undead.
 
 N:108:of Ulmo
 I:22:5:4
-W:50:90:70:200000
+W:50:90:70:150000
 P:0:4d8:15:19:0
 F:DEX | HIDE_TYPE | 
 F:SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID | 
@@ -2878,7 +2878,7 @@ N:232:'Soul Cure'
 I:31:1:4
 W:40:30:5:50000
 P:1:1d1:0:0:19
-F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE
+F:WIS | HIDE_TYPE | KILL_UNDEAD | REGEN | ACTIVATE | FREE_ACT
 D:Sacred gloves of an arch priest whose name is not remembered.
 
 
@@ -2912,6 +2912,7 @@ W:60:50:45:200000
 P:0:3d5:14:8:0
 F:CRIT
 F:SHOW_MODS | VORPAL | RES_ELEC | SEE_INVIS
+D:A blade which can even cut the skin of stone giants.
 
 
 # The Mage Staff of Hellfire
@@ -2922,7 +2923,7 @@ W:80:70:12:200000
 P:0:1d5:0:0:0
 F:MANA | IM_FIRE | RES_DISEN | AUTO_ID | REGEN_MANA | 
 F:RES_ELEC | SEE_INVIS | ESP_EVIL | ACTIVATE
-D:The staff which bound the hellraiser's power.
+D:The ebony staff crowned by three rubies, which evoked the hellraiser's power.
 
 
 # The Mage Staff 'Cobalt Focus'
@@ -2933,7 +2934,9 @@ W:60:60:12:100000
 P:0:1d5:0:0:0
 F:MANA | IM_COLD | REGEN_MANA | RES_ELEC | RES_MANA | 
 F:SEE_INVIS | RES_FEAR
-D:The staff which bound the hellraiser's power.
+D:A stick of white marbled wood with a small blue crystal embedded at the top
+D:which rensembles a perfect globe showing no trace of inclusions and shines
+D:in every glimpse of light it catches.
 
 
 # The Pair of Soft Leather Boots 'Skywalker'
@@ -2965,7 +2968,7 @@ D:southern hemisphere by a mighty guardian of the skies.
 
 N:240:'Stormspire'
 I:22:20:1
-W:60:70:300:80000
+W:60:70:300:180000
 P:0:5d8:20:30:0
 F:BLOWS | CON | LIFE | HIDE_TYPE | RES_FEAR | FREE_ACT | SHOW_MODS |
 F:SLAY_EVIL | KILL_UNDEAD | KILL_DEMON | SLAY_ANIMAL | SLAY_TROLL | SLAY_ORC |
