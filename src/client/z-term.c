@@ -1659,12 +1659,35 @@ errr Term_putch(int x, int y, byte a, char c)
 errr Term_putstr(int x, int y, int n, byte a, cptr s)
 {
 	errr res;
+	char *ptr;
+	char tmp[512];
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
 
-	/* Then add the string */
-	if ((res = Term_addstr(n, a, s)) != 0) return (res);
+	ptr=strchr(s,'\377');
+	if(!ptr){
+		/* Then add the string */
+		if ((res = Term_addstr(n, a, s)) != 0) return (res);
+		return(0);
+	}
+
+	while(ptr){
+		strncpy(tmp,s,ptr-s);
+		tmp[ptr-s]='\0';
+		if((res=Term_addstr(ptr-s, a, tmp))!=0) return(res);
+		s=ptr+1;
+		if(*s>='a' && *s<='p'){
+			a=*s-'a';
+		}
+		else{
+			if(*s=='\377') *s='{';
+			Term_addstr(1, a, s);
+		}
+		s++;
+		ptr=strchr(s,'\377');
+	}
+	if(strlen(s)) Term_addstr(strlen(s),a,s);
 
 	/* Success */
 	return (0);

@@ -1216,11 +1216,16 @@ void cmd_help(void)
 void cmd_message(void)
 {
 	char buf[60];
+	int i;
 
 	buf[0] = '\0';
 
-	if (get_string("Message: ", buf, 59))
+	if (get_string("Message: ", buf, 59)){
+		for(i=0;i<60;i++){
+			if(buf[i]=='{') buf[i]='\377';
+		}
 		Send_msg(buf);
+	}
 }
 
 void cmd_party(void)
