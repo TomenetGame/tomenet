@@ -1776,17 +1776,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
 			switch (a)
 	    		{
-			case TERM_DARK: a = TERM_DARK; break;
 			case TERM_WHITE: a = TERM_SLATE; break;
 			case TERM_SLATE: a = TERM_L_DARK; break;
 			case TERM_ORANGE: a = TERM_UMBER; break;
-			case TERM_RED: a = TERM_RED; break;
-			case TERM_GREEN: a = TERM_GREEN; break;
-			case TERM_BLUE: a = TERM_BLUE; break;
-			case TERM_UMBER: a = TERM_UMBER; break;
-			case TERM_L_DARK: a = TERM_L_DARK; break;
 			case TERM_L_WHITE: a = TERM_SLATE; break;
-			case TERM_VIOLET: a = TERM_VIOLET; break;
 			case TERM_YELLOW: a = TERM_L_UMBER; break;
 			case TERM_L_RED: a = TERM_RED; break;
 			case TERM_L_GREEN: a = TERM_GREEN; break;
