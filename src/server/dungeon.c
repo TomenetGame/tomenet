@@ -1399,10 +1399,14 @@ static void process_player_end(int Ind)
 			take_hit(Ind, 1, "poison");
 		}
 
-		/* Drowning */
-		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER){
+		/* Drowning, but not ghosts */
+		if(!p_ptr->ghost && zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER){
+			int hit=p_ptr->mhp/15;
+			if(!hit) hit=1;
+
 			/* Take damage */
-			take_hit(Ind, p_ptr->mhp/15, "drowning");
+			if(!p_ptr->pclass==CLASS_MIMIC && !r_info[p_ptr->body_monster].flags7&RF7_AQUATIC)
+				take_hit(Ind, hit, "drowning");
 		}
 
 		/* Take damage from cuts */
