@@ -210,3 +210,4 @@ Change list for PernMangband
 03/10/2001
 - A couple of bug fixes, and some debug stuff removed (mine)
 - Fixed golem change places with owner.
+- Life scroll now shows life returning (lite_spot)

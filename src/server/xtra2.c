@@ -3365,6 +3365,7 @@ void resurrect_player(int Ind)
 
 	/* Message */
 	msg_print(Ind, "You feel life return to your body.");
+	everyone_lite_spot(p_ptr->dun_depth, p_ptr->py, p_ptr->px);
 
 	/* Redraw */
 	p_ptr->redraw |= (PR_BASIC);
