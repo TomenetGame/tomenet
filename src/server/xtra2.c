@@ -5490,6 +5490,10 @@ bool master_summon(int Ind, char * parms)
 	return TRUE;
 }
 
+void player_edit(char *name){
+	
+}
+
 bool master_player(int Ind, char *parms){
 	player_type *p_ptr=Players[Ind];
 	player_type *q_ptr;
@@ -5508,7 +5512,7 @@ bool master_player(int Ind, char *parms){
 					return(FALSE);
 				}
 			}
-			//player_edit(&parms[1]);
+			player_edit(&parms[1]);
 
 			break;
 		case 'A':	/* acquirement */
@@ -5550,6 +5554,13 @@ bool master_player(int Ind, char *parms){
 			
 		case 'U':	/* Unstatic him */
 			stat_player(&parms[1], FALSE);
+			break;
+		case 't':	/* DM telekinesis */
+			/* I needed this before - it is useful */
+			/* Unfortunately the current telekinesis */
+			/* is not compatible with it, and I do not */
+			/* want to combine it while there is a */
+			/* potential bug. */
 			break;
 	}
 	return(FALSE);

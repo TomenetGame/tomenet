@@ -2411,6 +2411,11 @@ void cmd_master_aux_player(){
 				buf[0]='U';
 				get_string("Enter player name:",&buf[1],15);
 				break;
+			case '6':
+				/* DM to player telekinesis */
+				buf[0]='t';
+				get_string("Enter player name:",&buf[1],15);
+				break;
 			case ESCAPE:
 				break;
 			default:

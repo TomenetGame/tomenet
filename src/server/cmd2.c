@@ -494,6 +494,7 @@ bool chown_door(int Ind, struct dna_type *dna, char *args){
 					dna->creator=Players[i]->dna;
 					dna->owner=newowner;
 					dna->owner_type=args[1]-'0';
+					dna->a_flags=ACF_NONE;
 					return(TRUE);
 				}
 			}

@@ -413,7 +413,10 @@ int Setup_net_server(void)
 
 	memset(Conn, 0, size);
 
-	C_MAKE(Players, max_connections, player_type *);
+	/* Last player is the DM Edit player ! */
+	/* As no extra connection is required, */
+	/* we need only allocate the player_type for it */
+	C_MAKE(Players, max_connections+1, player_type *);
 
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);
