@@ -492,7 +492,7 @@ char inkey(void)
 	if (!inkey_scan && (!inkey_flag))
 	{
 		/* Show the cursor */	
-		/*(void)Term_set_cursor(1);*/
+		(void)Term_set_cursor(1);
 	}
 
 

@@ -628,9 +628,14 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			/* XXX another Hack -- don't allow to resume connection if
 			 * in 'character edit' mode		- Jir -
 			 */
+
+			/* resume connection at this point is not compatible
+			   with multicharacter accounts */
 			if ((!strcasecmp(p_ptr->realname, real_name)) &&
-					(!strcasecmp(p_ptr->addr, addr)) && (cfg.runlevel != 1024))
+					(!strcasecmp(p_ptr->addr, addr)) && (cfg.runlevel != 1024)){
+				printf("%s %s\n", p_ptr->realname, p_ptr->addr);
 				Destroy_connection(p_ptr->conn, "resume connection");
+			}
 			else return E_IN_USE;
 		    }
 		
@@ -837,11 +842,17 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	if (NumPlayers >= MAX_SELECT_FD)
 		return E_GAME_FULL;
 
+#if 0	/* This would pass in the account name rather than the
+	   player's character name. Also, we must *always* allow
+	   a second account login - it may be a subsequent resume.
+	   We can check duplicate account use on player entry
+	   (PKT_LOGIN) */
 	if ((status = Check_names(nick, real, host, addr)) != SUCCESS)
 	{
 		/*s_printf("Check_names failed with result %d.\n", status);*/
 		return status;
 	}
+#endif
 
 	if (version < ((4 << 12) | (0 << 8) | (0 << 4) | 0))
 		return E_VERSION;
@@ -1129,6 +1140,11 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 				free_conn_index = i;
 			continue;
 		}
+
+		/* Do not deny access here, or we cannot *ever*
+		   resume or allow multiple connections from
+		   a single account. */
+#if 0
 		if (strcasecmp(connp->nick, nick) == 0)
 		{
 			if (connp->state == CONN_LISTENING
@@ -1137,6 +1153,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 					return connp->my_port;
 			else return -1;
 		}
+#endif
 	}
 
 	if (free_conn_index >= max_connections)
@@ -1679,6 +1696,8 @@ static int Handle_login(int ind)
 		return -1;
 	}
 
+	/* This will cause problems for account/char with same name */
+#if 0
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
 		if (strcasecmp(Players[i]->name, connp->nick) == 0)
@@ -1688,6 +1707,7 @@ static int Handle_login(int ind)
 			return -1;
 		}
 	}
+#endif
 
 	if (!player_birth(NumPlayers + 1, connp->nick, connp->c_name, ind, connp->race, connp->class, connp->sex, connp->stat_order))
 	{
@@ -2387,13 +2407,21 @@ static int Receive_login(int ind){
 		return(0);
 	}
 	else{
+		/* at this point, we are authorised as the owner
+		   of the account. any valid name will be
+		   allowed. */
+		/* i realise it should return different value depending
+		   on reason - evileye */
 		if(check_account(connp->nick, choice)){
+			/* Validate names/resume in proper place */
+			if(Check_names(choice, connp->real, connp->host, connp->addr));
 			Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
 			connp->c_name=strdup(choice);
 		}
 		else{
 			/* fail login here */
 			Destroy_connection(ind, "Name already owned");
+			return(-1);
 		}
 	}
 	if (connp->setup >= Setup.setup_size)

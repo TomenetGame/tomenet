@@ -90,14 +90,23 @@ static char *t_crypt(char *inbuf, cptr salt){
 bool check_account(char *accname, char *c_name){
 	struct account *l_acc;
 	u32b id, a_id;
+	u16b flags;
 	hash_entry *ptr;
+	int i;
+
 	if(l_acc=GetAccount(accname, NULL)){
 		a_id=l_acc->id;
+		flags=l_acc->flags;
 		KILL(l_acc, struct account);
 		id=lookup_player_id(c_name);
 		ptr=lookup_player(id);
-		if(!ptr || ptr->account==a_id)
+		if(!ptr || ptr->account==a_id){
+			for(i=1; i<=NumPlayers; i++){
+				if(Players[i]->account==a_id && !(flags&ACC_MULTI) && strcmp(c_name, Players[i]->name))
+					return(FALSE);
+			}
 			return(TRUE);
+		}
 	}
 	return(FALSE);
 }
@@ -106,6 +115,8 @@ struct account *GetAccountID(u32b id){
 	FILE *fp;
 	struct account *c_acc;
 
+	/* we may want to store a local index for fast
+	   id/name/filepos lookups in the future */
 	MAKE(c_acc, struct account);
 	if(c_acc==(struct account*)NULL) return(NULL);
 	fp=fopen("tomenet.acc", "r+");
