@@ -2416,8 +2416,7 @@ void lite_spot(int Ind, int y, int x)
 
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
-		    p_ptr->scr_info[dispy][dispx].a != a ||
-		    (x == p_ptr->px && y==p_ptr->py))
+		    p_ptr->scr_info[dispy][dispx].a != a)
 		{
 			/* Modify internal buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
