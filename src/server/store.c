@@ -422,6 +422,9 @@ static s32b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Adjust for greed */
 		adjust = 100 + (300 - (greed + factor));
 
+		/* Hack -- Shopkeepers hate higher level-requirement */
+		adjust += (20 - o_ptr->level) / 2 ;
+
 		/* Never get "silly" */
 		if (adjust > 100) adjust = 100;
 
