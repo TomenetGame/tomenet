@@ -960,7 +960,7 @@ void do_cmd_steal(int Ind, int dir)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
-	if ((p_ptr->ghost))
+	if ((p_ptr->ghost) || !(p_ptr->pkill & PKILL_KILLABLE))
 	{
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
