@@ -512,3 +512,5 @@ Change list for PernMangband
 
 26/12/2001 (Jir)
 - Item activations for Some of new items are implemented.
+- Added a hack to make insta-killing traps appear in deeper levels.
+- Thrown randarts never break.

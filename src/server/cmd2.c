@@ -2705,6 +2705,9 @@ void do_cmd_rest(void)
  */
 static int breakage_chance(object_type *o_ptr)
 {
+	/* artifacts never break */
+	if (artifact_p(o_ptr)) return (0);
+
 	/* Examine the item type */
 	switch (o_ptr->tval)
 	{

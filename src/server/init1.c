@@ -3963,6 +3963,10 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			t_ptr->ds          = (s16b)ds;
 			t_ptr->color       = color_char_to_attr(color);
 
+			/* Megahack -- move pernA-oriented instakill traps deeper */
+			if (19 < error_idx && error_idx < 134)
+				t_ptr->minlevel += 5;
+
 			/* Next... */
 			continue;
 		}
