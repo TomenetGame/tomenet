@@ -3220,6 +3220,10 @@ static void player_talk_aux(int Ind, char *message)
 	bool admin = is_admin(p_ptr);
 	bool broadcast = FALSE;
 
+#ifdef TOMENET_WORLDS
+	char tmessage[160];		/* TEMPORARY! We will not send the name soon */
+#endif
+
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
@@ -3397,14 +3401,28 @@ static void player_talk_aux(int Ind, char *message)
 		case 1:	msg_print(Ind, "Please do not swear");
 	}
 
+#ifdef TOMENET_WORLDS
+	if(broadcast)
+		sprintf(tmessage, "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+	else if (!me)
+		sprintf(tmessage, "\377%c[%s] \377B%s", c, sender, message + mycolor);
+	else sprintf(tmessage, "%s %s", sender, message + 4);
+	world_chat(p_ptr->id, tmessage);	/* no ignores... */
+	for(i = 1; i <= NumPlayers; i++){
+		q_ptr=Players[i];
+
+		if (!admin)
+		{
+			if (check_ignore(i, Ind)) continue;
+			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
+					!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+		}
+		msg_print(i, tmessage);
+	}
+#else
 	/* Send to everyone */
 	for (i = 1; i <= NumPlayers; i++)
 	{
-#ifdef TOMENET_WORLDS
-		char tmessage[160];		/* TEMPORARY! We will not send the name soon */
-		sprintf(tmessage, "\377%c[%s] \377B%s", c, sender, message + mycolor);
-		world_chat(tmessage);
-#endif
 		q_ptr = Players[i];
 
 		if (!admin)
@@ -3424,6 +3442,7 @@ static void player_talk_aux(int Ind, char *message)
 		} 
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
+#endif
 }
 
 /*

@@ -27,16 +27,20 @@ int world_comm(int fd, int arg){
 	if(x==0){
 		/* This happens... we are screwed (fortunately SIGPIPE isnt handled) */
 		printf("pfft. world server closed\n");
+		remove_input(WorldSocket);
 		close(WorldSocket);	/* ;) this'll fix it... */
+		WorldSocket=-1;
 	}
 	return(0);
 }
 
-void world_chat(char *text){
+void world_chat(unsigned long id, char *text){
 	int x, len;
+	if(WorldSocket==-1) return;
 	spk.type=WP_CHAT;
 	len=sizeof(struct wpacket);
 	strncpy(spk.d.chat.ctxt, text, 80);
+	spk.d.chat.id=id;
 	x=send(WorldSocket, &spk, len, 0);
 }
 
