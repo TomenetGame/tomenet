@@ -3452,9 +3452,15 @@ bool player_can_enter(int Ind, byte feature)
 		case FEAT_DEEP_LAVA:
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
+		case FEAT_DEAD_TREE:
 		case FEAT_TREES:
+		case FEAT_SMALL_TREES:
 		{
-			if ((p_ptr->fly) || p_ptr->prace == RACE_ENT || pass_wall)
+			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
+			if ((p_ptr->fly) || (p_ptr->prace == RACE_ENT) || pass_wall ||
+			    (p_ptr->pclass == CLASS_RANGER) ||
+			    (p_ptr->body_monster == 708) || (p_ptr->body_monster == 83) || (p_ptr->body_monster == 142) ||
+			    (p_ptr->body_monster == 345) || (p_ptr->body_monster == 637) || (p_ptr->body_monster == 945))
 #if 0
 					(PRACE_FLAG(PR1_PASS_TREE)) ||
 				(get_skill(SKILL_DRUID) > 15) ||
