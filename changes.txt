@@ -161,3 +161,13 @@ Change list for PernMangband
 25/08/2001
 - Rings of Flames, Acid and Ice now reduce the corresponding element damage
   by (AC * 5)%
+
+28/08/2001
+- Slowing effect of monks doubled in effectiveness
+
+30/08/2001
+- Updated commands.txt thanks to jir
+
+10/09/2001
+- When someone dies stuff only gets dropped if he/she was >= lvl5.
+  Thats to prevent cheezing

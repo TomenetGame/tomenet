@@ -3193,7 +3193,7 @@ void player_death(int Ind)
 		msg_broadcast(Ind, buf);
 
 	/* Drop gold if player has any */
-	if (p_ptr->alive && p_ptr->au)
+        if ((p_ptr->lev >= 5) && p_ptr->alive && p_ptr->au)
 	{
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], 488);
@@ -3227,6 +3227,8 @@ void player_death(int Ind)
 	}	
 	
 	/* Starting with the most valuable, drop things one by one */
+        if (p_ptr->lev >= 5)
+        {
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
 		/* Make sure we have an object */
@@ -3255,7 +3257,7 @@ void player_death(int Ind)
 		p_ptr->inventory[i].ident = 0;
 		inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 	}
-
+        }
 	if (p_ptr->fruit_bat != -1)
 
 	/* Handle suicide */

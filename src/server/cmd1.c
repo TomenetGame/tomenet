@@ -1552,7 +1552,7 @@ void py_attack_mon(int Ind, int y, int x)
 				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d) < m_ptr->hp))
 				{
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
-					    (randint(p_ptr->lev) > r_ptr->level) &&
+                                            (randint(p_ptr->lev * 2) > r_ptr->level) &&
 					    m_ptr->mspeed > 60)
 					{
 						msg_format(Ind, "%^s starts limping slower.", m_name);
