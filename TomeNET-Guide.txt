@@ -43,7 +43,7 @@ Contents
     (3.5)   Creating basic macros & inscribing items
     (3.6)   Creating macros for ranged attacks & abilities (spells)
     (3.6a)  Ability codes [contained within (3.6)]
-    (3.7)   An example macro set for warriors
+    (3.7)   An example macro set for fighters or archers
     (3.8)   Macros with special keys
     (3.9)   Experience, level-ups and skill points
     (3.10)  Death, ghosts and looting
@@ -1229,7 +1229,9 @@ a) casting a magical spell
      pref file', then specifying the according filename.
     Note that if your character gains additional abilities that show up
     in the 'm' menu, it might happen that 'b) cast a spell' becomes
-    'c) cast a spell' which requires you to redefine your macros, sorry.
+    'c) cast a spell' which would require you to redefine your macros.
+    Fortunately there is a way around this, by using Ability Codes instead of
+    letters to pick a skill to use. See 'Ability codes' below.
 b) throwing an item at a monster (or player)
     Throwing would be done by pressing 'v', followed by the item and either
     one of the 8 directions or '*t' to designate the closest enemy as the
@@ -1322,6 +1324,9 @@ until the 30 shots are finished. The character is 'locked'.
 The ')' in the macro '\e)f*t' clears all previous keypresses and hence
 allows you to hammer the macro without fearing a lock.
 
+(3.6a) Ability codes
+--------------------
+
 A problem with the 'm' key is that it not only brings up your magic spells
 but a menu containing all skills you can use. Those can be arrow fletching
 or dodging for example.
@@ -1336,7 +1341,6 @@ macros need to be rewritten to take account of this question.
 To avoid this, you can directly choose which skill (ie spell-casting) you
 want to use in your macros, by specifying the "ability code"!
 
-[(3.6a) Ability codes:]
 Here is a list of all available ability codes:
 9       Create ammunition (for archers)
 3       Cast monster spell (for mimics)
@@ -1373,8 +1377,8 @@ mb2a*t
 
 
 
-(3.7)   An example macro set for warriors
------------------------------------------
+(3.7) An example macro set for fighters or archers
+--------------------------------------------------
 Here is an example macro set for a (Thunderlord) Warrior:
 (For the meaning of '\e)' see below (3.8). I recommend to have all your
 macros start with the '\e)' sequence to avoid character lock-ups due to
