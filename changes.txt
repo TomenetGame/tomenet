@@ -22,6 +22,9 @@
 
 # bug.txt should follow the exact same format
 
+11/09/2002
+[D]- Adjusted some traps
+
 09/09/2002
 [P]- Casting spells cost a turn ;)
 [m]- New news.txt

@@ -344,63 +344,63 @@ void do_player_trap_change_depth(int Ind, int dis)
 
 bool do_player_trap_call_out(int Ind)
 {
-	player_type *p_ptr = Players[Ind];
-   s16b          i,sn,cx,cy;
-   s16b          h_index = 0;
-   s16b          h_level = 0;
-   monster_type  *m_ptr;
-   monster_race  *r_ptr;
-   char          m_name[80];
-   bool          ident = FALSE;
-	cave_type **zcave;
-	zcave=getcave(&p_ptr->wpos);
+        player_type *p_ptr = Players[Ind];
+        s16b          i,sn,cx,cy;
+        s16b          h_index = 0;
+        s16b          h_level = 0;
+        monster_type  *m_ptr;
+        monster_race  *r_ptr;
+        char          m_name[80];
+        bool          ident = FALSE;
+        cave_type **zcave;
+        zcave=getcave(&p_ptr->wpos);
 
-	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
+        if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
 
-   for (i = 1; i < m_max; i++)
-   {
-       m_ptr = &m_list[i];
-       r_ptr = race_inf(m_ptr);
+        for (i = 1; i < m_max; i++)
+        {
+                m_ptr = &m_list[i];
+                r_ptr = race_inf(m_ptr);
 
-	/* Paranoia -- Skip dead monsters */
-	if (!m_ptr->r_idx) continue;
+                /* Paranoia -- Skip dead monsters */
+                if (!m_ptr->r_idx) continue;
 
-	if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
-	if (m_ptr->level>=h_level)
-	{
-		h_level = m_ptr->level;
-		h_index = i;
-	}
-   }
-   /* if the level is empty of monsters, h_index will be 0 */
-   if (!h_index) return(FALSE);
+                if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+                if (m_ptr->level>=h_level)
+                {
+                        h_level = m_ptr->level;
+                        h_index = i;
+                }
+        }
+        /* if the level is empty of monsters, h_index will be 0 */
+        if (!h_index) return(FALSE);
 
-   m_ptr = &m_list[h_index];
+        m_ptr = &m_list[h_index];
 
-   sn = 0;
-   for (i = 0; i < 8; i++)
-   {
-      cx = p_ptr->px + ddx[i];
-      cy = p_ptr->py + ddy[i];
-      /* Skip non-empty grids */
-      if (!cave_valid_bold(zcave, cy, cx)) continue;
-      if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
-      if ((cx==p_ptr->px) && (cy==p_ptr->py)) continue;
-      sn++;
-      /* Randomize choice */
-      if (rand_int(sn) > 0) continue;
-      zcave[cy][cx].m_idx=h_index;
-      zcave[m_ptr->fy][m_ptr->fx].m_idx=0;
-      m_ptr->fx = cx;
-      m_ptr->fy = cy;
-      /* we do not change the sublevel! */
-      ident=TRUE;
-      update_mon(h_index, TRUE);
-      monster_desc(Ind, m_name, h_index, 0x08);
-      msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
-      break;
-   }
-   return (ident);
+        sn = 0;
+        for (i = 0; i < 8; i++)
+        {
+                cx = p_ptr->px + ddx[i];
+                cy = p_ptr->py + ddy[i];
+                /* Skip non-empty grids */
+                if (!cave_valid_bold(zcave, cy, cx)) continue;
+                if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
+                if ((cx==p_ptr->px) && (cy==p_ptr->py)) continue;
+                sn++;
+                /* Randomize choice */
+                if (rand_int(sn) > 0) continue;
+                zcave[cy][cx].m_idx=h_index;
+                zcave[m_ptr->fy][m_ptr->fx].m_idx=0;
+                m_ptr->fx = cx;
+                m_ptr->fy = cy;
+                /* we do not change the sublevel! */
+                ident=TRUE;
+                update_mon(h_index, TRUE);
+                monster_desc(Ind, m_name, h_index, 0x08);
+                msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
+                break;
+        }
+        return (ident);
 }
 
 /* done */
@@ -1748,27 +1748,27 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_ARROWS_I:
 			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 0, "Arrow Trap"); break;
 		case TRAP_OF_ARROWS_II:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 10, 8, 0, "Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 0, "Bolt Trap"); break;
 		case TRAP_OF_ARROWS_III:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 12, 12, 0, "Seeker Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 9, 0, "Seeker Arrow Trap"); break;
 		case TRAP_OF_ARROWS_IV:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 12, 16, 0, "Seeker Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 0, "Seeker Bolt Trap"); break;
 		case TRAP_OF_POISON_ARROWS_I:
 			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_NORMAL, 4, 8, 10+randint(20), "Poison Arrow Trap"); break;
 		case TRAP_OF_POISON_ARROWS_II:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 10, 8, 15+randint(30), "Poison Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_NORMAL, 5, 8, 15+randint(30), "Poison Bolt Trap"); break;
 		case TRAP_OF_POISON_ARROWS_III:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 12, 12, 30+randint(50), "Poison Seeker Arrow Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_ARROW, SV_AMMO_HEAVY, 6, 8, 30+randint(50), "Poison Seeker Arrow Trap"); break;
 		case TRAP_OF_POISON_ARROWS_IV:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 12, 16, 40+randint(70), "Poison Seeker Bolt Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_BOLT, SV_AMMO_HEAVY, 8, 10, 40+randint(70), "Poison Seeker Bolt Trap"); break;
 		case TRAP_OF_DAGGERS_I:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 0, "Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 0, "Dagger Trap"); break;
 		case TRAP_OF_DAGGERS_II:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 10, 8, 0, "Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 3, 8, 0, "Dagger Trap"); break;
 		case TRAP_OF_POISON_DAGGERS_I:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 4, 8, 15+randint(20), "Poison Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_BROKEN_DAGGER, 2, 8, 15+randint(20), "Poison Dagger Trap"); break;
 		case TRAP_OF_POISON_DAGGERS_II:
-			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 10, 8, 20+randint(30), "Poison Dagger Trap"); break;
+			ident = player_handle_missile_trap(Ind, 2+(glev / 30), TV_SWORD, SV_DAGGER, 3, 8, 20+randint(30), "Poison Dagger Trap"); break;
 
 		/* it was '20,90,70'... */
 		case TRAP_OF_DROP_ITEMS:
@@ -1939,7 +1939,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Trap of Divine Anger */
 		case TRAP_OF_DIVINE_ANGER:
 		{
-#if 0	// No hell below us above us only sky o/~
+#if 0	// No hell below us above us only sky o/~  // DG - lol :)
 			{
 				if (p_ptr->pgod == 0)
 				{
@@ -2192,7 +2192,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 
 			l = glev / 10;
-			l = l > 5 ? 5 : (l < 1 ? 1 : l);
+			l = l > 3 ? 3 : (l < 1 ? 1 : l);
 			k = maxfall > l ? randint(l) : randint(maxfall);
 
 			ident = TRUE;
@@ -2461,7 +2461,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "You feel very despondent..");
 			break;
 		}
-		case TRAP_OF_DESPAIR:
+		case TRAP_OF_DESPAIR: /* AHAH jir well done ;) */
 		{
 			object_type     forge;
 			object_type     *o_ptr = &forge;
@@ -2495,15 +2495,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		case TRAP_OF_RARE_BOOKS:
 		{
-#if 0	// disabled
 			object_type     forge;
 			object_type     *o_ptr = &forge;
 
 			msg_print(Ind, "Suddenly you felt something really splendid just happened to you!");
 
-			if (p_ptr->pclass == CLASS_SORCERER)
-				invcopy(o_ptr, lookup_kind(TV_MAGIC_BOOK, 7));
-			else invcopy(o_ptr, lookup_kind(TV_SORCERY_BOOK, 7));
+                        /* 0 - 11 = Tomes */
+			invcopy(o_ptr, lookup_kind(TV_BOOK, rand_range(0, 11)));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
@@ -2512,7 +2510,6 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			(void)inven_carry(Ind, o_ptr);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-#endif	// 0
 			break;
 		}
 		/* Wrong Target Trap */
@@ -3059,6 +3056,9 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 		/* is this a correct trap now?   */
 		if (!(t_ptr->flags & flags)) continue;
 
+                /* No special_gene traps */
+                if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
+
 		/* hack, no trap door at the bottom of dungeon or in flat(non dungeon) places */
 		//      if (((d_ptr->maxdepth == dlev) || (d_ptr->flags1 & DF1_FLAT)) && (trap == TRAP_OF_SINKING)) continue;
 
@@ -3086,37 +3086,40 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
  */
 void place_trap_object(object_type *o_ptr)
 {
-   bool           more       = TRUE;
-   s16b           trap;
-   trap_kind	*t_ptr;
-   s16b           cnt        = 0;
+        bool           more       = TRUE;
+        s16b           trap;
+        trap_kind	*t_ptr;
+        s16b           cnt        = 0;
 
-   /* no traps in town or on first level */
-//   if (dlev<=1) return;
+        /* no traps in town or on first level */
+        //   if (dlev<=1) return;
 
-   /* try 100 times */
-   while ((more) && (cnt++)<100)
-   {
-      trap = randint(MAX_T_IDX - 1);
-      t_ptr = &t_info[trap];
+        /* try 100 times */
+        while ((more) && (cnt++)<100)
+        {
+                trap = randint(MAX_T_IDX - 1);
+                t_ptr = &t_info[trap];
 
-      /* no traps below their minlevel */
-	  /* o_ptr->wpos is not set yet */
-//      if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
-      if (t_ptr->minlevel * 3 > o_ptr->level * 4) continue;
+                /* no traps below their minlevel */
+                /* o_ptr->wpos is not set yet */
+                //      if (t_ptr->minlevel>getlevel(&o_ptr->wpos)) continue;
+                if (t_ptr->minlevel * 3 > o_ptr->level * 4) continue;
 
-      /* is this a correct trap now?   */
-      if (!(t_ptr->flags & FTRAP_CHEST)) continue;
+                /* is this a correct trap now?   */
+                if (!(t_ptr->flags & FTRAP_CHEST)) continue;
 
-      /* how probable is this trap   */
-      if (rand_int(100)<t_ptr->probability)
-	  {
-		  o_ptr->pval = trap;
-		  more = FALSE;
-      }
-   }
+                /* No special_gene traps */
+                if (t_ptr->flags & FTRAP_SPECIAL_GENE) continue;
 
-   return;
+                /* how probable is this trap   */
+                if (rand_int(100)<t_ptr->probability)
+                {
+                        o_ptr->pval = trap;
+                        more = FALSE;
+                }
+        }
+
+        return;
 }
 
 /* Dangerous trap placing function */

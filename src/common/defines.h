@@ -4509,7 +4509,7 @@ extern int PlayerUID;
 #define FTRAP_DOOR       0x000000002 /* may appear on doors/floors */
 #define FTRAP_FLOOR      0x000000004 /* may appear on floor */
 #define FTRAP_CHANGE     0x000000008 /* Color changing */
-#define FTRAP_XXX5       0x000000010
+#define FTRAP_SPECIAL_GENE 0x000000010 /* Dont randomly generate */
 #define FTRAP_XXX6       0x000000020
 #define FTRAP_XXX7       0x000000040
 #define FTRAP_XXX8       0x000000080

@@ -489,12 +489,7 @@ T:Archery:Sling-mastery
 T:Archery:Bow-mastery
 T:Archery:Crossbow-mastery
 T:Archery:Boomerang-mastery
-T:Archery:Hunting Lore
-#T:Archery:Ricochet
-T:Combat:Fighting Technique
 T:Combat:Martial Arts
-#T:Combat:Bearform-combat
-#T:Combat:Antimagic
 
 T:Main:Magic
 T:Magic:Magic-device
@@ -540,7 +535,6 @@ T:Sneakiness:Trapping
 T:Sneakiness:Backstabing
 T:Sneakiness:Stealing
 T:Sneakiness:Dodging
-
 T:Dodging:Calmness
 T:Dodging:Interception
 

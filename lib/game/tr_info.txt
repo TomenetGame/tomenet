@@ -197,6 +197,7 @@ N:31:Lose Memory Trap
 I:6:30:30:6:10:0d0:r:10
 D:You suddenly can't remember what you were doing here...
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:32:Bitter Regret Trap
 I:9:15:20:9:20:0d0:r:10
@@ -227,6 +228,8 @@ N:37:Steal Item Trap
 I:3:100:50:3:6:0d0:y:10
 D:The chest seems to swell, while your backpack feels lighter..
 F:FLOOR | CHEST
+# We could still allow it .. dunno
+F:SPECIAL_GENE
 
 N:38:Summon Fast Quylthulgs Trap
 I:8:50:10:10:25:0d0:v:50
@@ -257,6 +260,7 @@ N:43:Trap of Silent Switching
 I:4:100:50:3:6:0d0:y:10
 D:You suddenly are a different person!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:44:Trap of Walls
 I:6:100:50:2:10:0d0:o:10
@@ -292,6 +296,7 @@ N:50:Trap of Scatter Items
 I:10:50:50:6:12:0d0:w:10
 D:You hear crashing sounds from all over the dungeon!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:51:Trap of Decay
 I:4:100:50:4:4:0d0:r:10
@@ -318,27 +323,27 @@ F:FLOOR | CHEST | DOOR
 #
 
 N:60:Lightning Bolt Trap
-I:2:80:5:3:2:3d8:g:10
+I:2:80:5:3:2:2d8:g:10
 D:You are jolted with electricity!
 F:FLOOR | CHEST | DOOR | LEVEL1
 
 N:61:Poison Bolt Trap
-I:2:80:5:3:2:3d8:g:10
+I:2:80:5:3:2:2d8:g:10
 D:A blast of poison gas hits you!
 F:FLOOR | CHEST | DOOR | LEVEL1
 
 N:62:Acid Bolt Trap
-I:2:80:5:3:2:3d8:g:10
+I:2:80:5:3:2:2d8:g:10
 D:A jet of acid shoots out at you!
 F:FLOOR | CHEST | DOOR | LEVEL1
 
 N:63:Cold Bolt Trap
-I:2:80:5:3:2:3d8:g:10
+I:2:80:5:3:2:2d8:g:10
 D:You are suddenly very cold!
 F:FLOOR | CHEST | DOOR | LEVEL1
 
 N:64:Fire Bolt Trap
-I:2:80:5:3:2:3d8:g:10
+I:2:80:5:3:2:2d8:g:10
 D:You are suddenly very hot!
 F:FLOOR | CHEST | DOOR | LEVEL1
 
@@ -348,17 +353,17 @@ D:A bolt of plasma hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
 N:66:Water Bolt Trap
-I:4:80:5:5:8:6d10:g:10
+I:4:80:5:5:8:5d10:g:10
 D:A gush of water hits you!
 F:FLOOR | CHEST | DOOR | LEVEL2
 
 N:67:Lite Bolt Trap
-I:4:80:5:5:8:6d10:g:10
+I:4:80:5:5:8:5d10:g:10
 D:There is a sudden flash of light around you!
 F:FLOOR | CHEST | DOOR | LEVEL2
 
 N:68:Dark Bolt Trap
-I:4:80:5:5:8:6d10:g:10
+I:4:80:5:5:8:5d10:g:10
 D:A bolt of pure elemental darkness hits you!
 F:FLOOR | CHEST | DOOR | LEVEL2
 
@@ -393,7 +398,7 @@ D:A bolt of pure magic hits you!
 F:FLOOR | CHEST | DOOR | LEVEL4
 
 N:75:Ice Bolt Trap
-I:4:80:5:5:8:6d10:g:10
+I:4:80:5:5:8:5d10:g:10
 D:A bolt of ice hits you!
 F:FLOOR | CHEST | DOOR | LEVEL2
 
@@ -744,6 +749,7 @@ N:161:Rocket Trap
 I:6:80:5:6:75:25d40:g:10
 D:A rocket hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
+F:SPECIAL_GENE
 
 N:162:Nuke Bolt Trap
 I:6:80:5:6:15:10d12:g:10
@@ -816,6 +822,7 @@ N:173:Discordance Trap
 I:6:15:5:5:10:0d0:W:10
 D:You're in a very bad mood!
 F:FLOOR | DOOR | CHEST
+F:SPECIAL_GENE
 
 N:174:Voluminous Cuisine Trap
 I:6:90:20:1:3:0d0:r:10
@@ -851,11 +858,13 @@ N:180:Goodbye-Charlie Trap
 I:10:50:50:6:25:0d0:W:10
 D:You feel like a sucker.
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:181:Trap of Present Exchange
 I:5:30:5:5:18:0d0:y:10
 D:You exchanged your equipments with nifty presents.
 F:FLOOR | DOOR | CHEST
+F:SPECIAL_GENE
 
 N:182:Garbage Trap
 I:7:30:5:5:30:0d0:W:80
@@ -881,6 +890,7 @@ N:186:Scribble Trap
 I:7:30:50:2:40:0d0:y:10
 D:A magic marker dances around you!
 F:FLOOR | DOOR | CHEST
+F:SPECIAL_GENE
 
 N:187:Slump Trap
 I:12:15:5:8:80:0d0:b:10
@@ -941,21 +951,25 @@ N:198:Disintegration Ball Trap
 I:9:40:5:8:48:15d18:B:80
 D:A blast of pure energy hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
+F:SPECIAL_GENE
 
 N:199:Battle Field Trap
 I:9:20:5:8:44:12d18:W:80
 D:A blast of pure energy hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
+F:SPECIAL_GENE
 
 N:200:Summon Death Mold Trap
 I:8:50:10:10:47:0d0:v:50
 D:You suddenly see a lump of malice!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:201:Summon Death Sword Trap
 I:7:40:10:10:13:0d0:v:50
 D:You suddenly see a siege of malicious blades!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:202:Trap of Unlight
 I:4:70:10:10:10:0d0:W:10
@@ -996,6 +1010,7 @@ N:209:Jack-in-the-box Trap
 I:6:100:10:10:36:0d0:v:100
 D:Surprise!
 F:CHEST
+F:SPECIAL_GENE
 
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
