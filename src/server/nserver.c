@@ -1035,11 +1035,13 @@ bool Destroy_connection(int ind, char *reason)
 	/*len++;*/
 	if (sock != -1)
 	{
+#if 0
 		if (DgramWrite(sock, pkt, len) != len)
 		{
 			GetSocketError(sock);
 			DgramWrite(sock, pkt, len);
 		}
+#endif
 	}
 	s_printf("%s: Goodbye %s=%s@%s (\"%s\")\n",
 		showtime(),
