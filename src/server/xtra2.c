@@ -5227,7 +5227,7 @@ bool master_player(int Ind, char *parms){
 				q_ptr=Players[Ind2];
 				msg_print(Ind2, "You are hit by a bolt from the skies!");
 				strcpy(q_ptr->died_from,"divine wrath");
-				q_ptr->alive=FALSE;
+				//q_ptr->alive=FALSE;
 				player_death(Ind2);
 			}
 			else
