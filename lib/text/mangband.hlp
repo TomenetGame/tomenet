@@ -181,17 +181,15 @@ ISPs, as lag varies from one to another.
 unplayable. To determine your exact latency, try pinging the server.  To
 do so from windows, goto start/run. Type in command.  A dos shell should now
 come up. Type in ping [insert the IP adress of the server here] and hit
-enter.  You are cautioned, however, that his won't work on the fox-099 
-server, as incoming (and outgoing!) pings are firewalled. [if you don't know 
-what this means, don't worry about it]  A simple test for if you are 
-outragously lagged is to try to talk. (hit ':') If your message repeats 
-several times (as seen above with "LAG"), then you most likely are.  If you 
-are extremly lagged, and playing over a modem, it is sometimes helpful to 
-reconnect to your ISP, as you might be able to get a better connection.
+enter. If you are extremly lagged, and playing over a modem, it is sometimes
+helpful to reconnect to your ISP, as you might be able to get a better
+connection.
        It should be noted that we have had some players who have gotten high
 level characters (> lvl 30) while playing with extreme lag. The most notable 
 example is Aga, who plays over a modem from Russia.
 
+       (NB: Don't use the word 'lag' too much in the game, since everyone
+is annoyed with it. Try call it 'The Lady' - Jir)
 
 b. C  H  O  P  P  I  N  E  S  S
 
@@ -228,8 +226,16 @@ controls.
 
 7. It says I need a modified client. Where can I get one?
 
-      On fox-099, certain changes have been made that a modified client is
-needed for.
+      At present, you can d/l PernMangband client version 3.2.1.6 from the
+official site(http://www.pernmangband.net/), and you can play the game
+with it; however, some features are only available with modified client,
+for example bat-(wo)man start, observing other players' outlook, chatting
+with multi-byte letters, all-in-one command.
+      If you want to make use of such features, please d/l the client
+source-code from CVS(http://sourceforge.net/cvs/?group_id=26297) and
+compile it.
+      (Though unofficial, you can d/l the windoze binary from-
+file:///usr/home/jir/webpage/mang/patches.html)
 
 8. What happens when I die?
 
@@ -243,6 +249,10 @@ town). You will then lose half your exp, but you can pick up things again :)
       Note that these are just a few the standard controls.  If you use the
 roguelike controls, it is assumed that you know what you are doing.
 
+      If you have 'patched' client, you can aim, apply, activate, eat,
+fuel, cast, pray, read, quaff, fire, wield, zap, view inventory/equipment
+with single '/' key.
+
 a * denotes something new to mangband (from angband)
 
 movement - num pad (make sure numlock is on)
@@ -250,6 +260,8 @@ run - '.'
 talk - ':' *
 See who is connected - '@' *
 [Conn - On my keyboard (In win98) it's leftctrl+leftalt+2.]
+view previous messages - control-p
+view previous chat messages - control-o
 Rest - 'R' *
 quit the game - control-x
 view your inventory - 'i'
@@ -272,7 +284,9 @@ buy a house 'h' *
 party options - 'P'
 undead powers - 'U'
 
-[there are a lot more commands]
+[there are a lot more commands - I recommend you to have a printout of
+ command summary(available from the official site).]
+
 
 Part II -- Getting Started
 --------------------------
@@ -321,6 +335,7 @@ game and leave the level.
 monster is - it's same with angband, but actually no one would do that.
       Here's what is new: you'll attack nearby monsters automatically if you
 don't type a command(it's called "auto-retaliator").
+
       Furthermore, now the game has configurable auto-retaliator:
       If you inscribe {@O} on missiles, you'll auto-attack monsters with them.
       {@Oc} on a book makes you auto-cast the spell 'c'.
@@ -527,15 +542,13 @@ Part VI. -- Glossary of mang-related slang/vocabulary
 ------------------------------------------------------
 Name (alternative names) -- defenition
 
-Artifact (holy Sh$t man!!!!) -- An object, possessing special powers, of 
-which only one exists in the game. Generally very rare, and valuable. Hit ~ 
-to see a list of the artifacts that have been found.
+Artifact (arts) (holy Sh$t man!!!!) -- An object, possessing special powers,
+of which only one exists in the game. Generally very rare, and valuable.
+Hit ~ to see a list of the artifacts that have been found.
+(They say you should hold firm to the arts so as not to lose them.)
 
 BM (7) - The black market, a store (7) in town that sells powerful items for
 outrageous prices.
-
-Buffer Dump -- An unecpected client crash. Usually happens on fox-099 more
-than on other servers. Very deadly.
 
 Cheez (chez, cheese) -- Any questionable practice, from a gameplay or 
 roleplaying standpoint. Includes, but not limited to, storage characters, 
@@ -611,6 +624,5 @@ Vault, greater -- You'll know one if you see one. Thats all I'm saying here.
 
 WOR (word of recall) -- A scroll which, when read in the dungeon, will
 return you to town, and if read in town will take you to the deepest depth
-you have been in the dungeon.  On servers with the fox-099 modifications,
-you can select your recall depth by inscribing your scrolls @R[the depth], 
-for example @R650.
+you have been in the dungeon.  You can select your recall depth by inscribing
+your scrolls @R[the depth], for example @R650.
