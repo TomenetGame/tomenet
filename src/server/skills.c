@@ -182,7 +182,7 @@ static void increase_related_skills(int Ind, int i)
 void increase_skill(int Ind, int i)
 {
 	player_type *p_ptr = Players[Ind];
-	int as, ws, old_value;
+	int as, ws, old_value, new_value;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)
@@ -243,96 +243,91 @@ void increase_skill(int Ind, int i)
 	p_ptr->update |= (PU_SKILL_MOD);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
-	if (old_value == get_skill(p_ptr, i)) return;
+	new_value = get_skill(p_ptr, i);
+	if (old_value == new_value) return;
 	as = get_archery_skill(p_ptr);
 	ws = get_weaponmastery_skill(p_ptr);
 	switch(i) {
-	case SKILL_CLIMB:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to climb mountains!");;
+	case SKILL_CLIMB:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to climb mountains!");;
 				break;
-	case SKILL_FLY: 	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to fly!");;
+	case SKILL_FLY: 	if (new_value == 1) msg_print(Ind, "\377GYou learn how to fly!");;
 				break;
-	case SKILL_FREEACT:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
+	case SKILL_FREEACT:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
 				break;
-	case SKILL_RESCONF:	if (get_skill(p_ptr, i) == 1) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
+	case SKILL_RESCONF:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
 				break;
 	case SKILL_MARTIAL_ARTS:
-		switch(get_skill(p_ptr, i)) {
-		case 10: msg_print(Ind, "\377GYou learn how to fall safely!");
+		if (old_value < 10 && new_value >= 10) {
+			msg_print(Ind, "\377GYou learn how to fall safely!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 15: msg_print(Ind, "\377GYou learn how to tame your fear!");
-			break;
-		case 20: msg_print(Ind, "\377GYou learn how to keep your mind focussed and avoid confusion!");
+		} if (old_value < 15 && new_value >= 15) {
+			msg_print(Ind, "\377GYou learn how to tame your fear!");
+		} if (old_value < 20 && new_value >= 20) {
+			msg_print(Ind, "\377GYou learn how to keep your mind focussed and avoid confusion!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 25: msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");
-			break;
-		case 30: msg_print(Ind, "\377GYou learn how to swim easily!");
+		} if (old_value < 25 && new_value >= 25) {
+			msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");
+		} if (old_value < 30 && new_value >= 30) {
+			msg_print(Ind, "\377GYou learn how to swim easily!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 35: msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 40: msg_print(Ind, "\377GYou learn how to climb mountains!");
+		} if (old_value < 35 && new_value >= 35) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 45: msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		case 50: msg_print(Ind, "\377GYou learn the technique of flying!");
+		} if (old_value < 40 && new_value >= 40) {
+			msg_print(Ind, "\377GYou learn how to climb mountains!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
+		} if (old_value < 45 && new_value >= 45) {
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+		} if (old_value < 50 && new_value >= 50) {
+			msg_print(Ind, "\377GYou learn the technique of flying!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
 		}
 		break;
 	case SKILL_ARCHERY:
-		switch (get_skill(p_ptr, i)) {
-		case 10: msg_print(Ind, "\377GYou learn how to create ammunition from bones and rubble!");
-			break;
-		case 11: msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons!");
-			break;
-		case 20: msg_print(Ind, "\377GYour ability to create ammunition improved remarkably!");
-			break;
-		case 50: msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
-			break;
+		if (old_value < 10 && new_value >= 10) {
+			msg_print(Ind, "\377GYou learn how to create ammunition from bones and rubble!");
+		} if (old_value < 11 && new_value >= 11) {
+			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons!");
+		} if (old_value < 20 && new_value >= 20) {
+			msg_print(Ind, "\377GYour ability to create ammunition improved remarkably!");
+		} if (old_value < 50 && new_value >= 50) {
+			msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
 		}
 		break;
 	case SKILL_COMBAT:
-		switch (get_skill(p_ptr, i)) {
-		case 11: msg_print(Ind, "\377GYou got better at recognizing the power of unknown weapons.");
-			break;
-		case 31: msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
-			break;
-		case 41: msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
-			break;
+		if (old_value < 11 && new_value >= 11) {
+			msg_print(Ind, "\377GYou got better at recognizing the power of unknown weapons.");
+		} if (old_value < 31 && new_value >= 31) {
+			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
+		} if (old_value < 41 && new_value >= 41) {
+			msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
 		}
 		break;
 	case SKILL_MAGIC:
-		if (get_skill(p_ptr, i) == 11) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+		if (old_value < 11 && new_value >= 11) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
 		break;
 #if 1
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_HAFTED: case SKILL_POLEARM:
-		switch (get_skill(p_ptr, i)) {
-		case 25: case 50:
+		if ((old_value < 25 && new_value >= 25) || (old_value < 50 && new_value >= 50)) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
 		}
 		break;
 	case SKILL_SLING: case SKILL_BOW: case SKILL_XBOW: case SKILL_BOOMERANG:
-		switch (get_skill(p_ptr, i)) {
-		case 16: case 32: case 48:
+		if ((old_value < 16 && new_value >= 16) || (old_value < 32 && new_value >= 32) ||
+		    (old_value < 48 && new_value >= 48)) {
 			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
-			break;
 		}
 		break;
 	}
 #else
 	}
 	if (i == ws) {
-		switch (get_skill(p_ptr, i)) {
+		switch (new_value) {
 		case 25: case 50:
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
 			break;
 		}
 	} else if (i == as) {
-		switch (get_skill(p_ptr, i)) {
+		switch (new_value) {
 		case 16: case 32: case 48:
 			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
 			break;
