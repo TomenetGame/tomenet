@@ -12,7 +12,7 @@
 
 /* evil test */
 #ifdef EVIL_TEST
-extern bool screen_icky;
+extern short screen_icky;
 #endif
 
 /*

@@ -1092,6 +1092,7 @@ void ascii_to_text(char *buf, cptr str)
 static int hack_dir = 0;
 
 
+#if 0
 /*
  * Convert a "Rogue" keypress into an "Angband" keypress
  * Pass extra information as needed via "hack_dir"
@@ -1245,6 +1246,7 @@ static char original_commands(char command)
 	/* Default */
 	return (command);
 }
+#endif
 
 /*
  * Local variable -- we are inside a "control-underscore" sequence
@@ -1828,12 +1830,13 @@ static int trap_index(char * name)
  * Slash commands - huge hack function for command expansion.
  */
 
-static void do_slash_cmd(int Ind, cptr message)
+static void do_slash_cmd(int Ind, char *message)
 {
 	int i;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind], *q_ptr;
- 	cptr colon;
+ 	/* cptr colon; */
+ 	char *colon;
 	char *token[9];
 	worldpos wp;
 	bool admin = is_admin(p_ptr);
@@ -2866,7 +2869,7 @@ int censor(char *line){
  * This function is hacked *ALOT* to add extra-commands w/o
  * client change.		- Jir -
  */
-void player_talk_aux(int Ind, cptr message)
+static void player_talk_aux(int Ind, char *message)
 {
  	int i, len, target = 0;
 	char search[80], sender[80];
@@ -3022,10 +3025,11 @@ void player_talk_aux(int Ind, cptr message)
 		else if (p_ptr->ghost) c = 'r';
 	}
 	switch((i=censor(message))){
+		case 0:
+			break;
 		default:
 			imprison(Ind, i*20, "swearing");
 		case 1:	msg_print(Ind, "Please do not swear");
-		case 0:
 	}
 
 	/* Send to everyone */

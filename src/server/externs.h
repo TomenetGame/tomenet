@@ -27,6 +27,7 @@ extern int ConsoleSocket;
 extern void process_pending_commands(int Ind);
 extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
+extern void add_banlist(int Ind, int time);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);
@@ -310,6 +311,7 @@ extern void server_birth(void);
 extern void admin_outfit(int Ind);
 
 /* cave.c */
+extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos);
 extern bool can_go_down(struct worldpos *wpos);
@@ -343,6 +345,7 @@ extern void forget_flow(void);
 extern void update_flow(void);
 extern void map_area(int Ind);
 extern void wiz_lite(int Ind);
+extern void wiz_lite_extra(int Ind);
 extern void wiz_dark(int Ind);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2);
@@ -420,6 +423,7 @@ extern void do_cmd_query_symbol(int Ind, char sym);
 extern void do_cmd_check_artifacts(int Ind, int line);
 extern void do_cmd_check_uniques(int Ind, int line);
 extern void do_cmd_check_players(int Ind, int line);
+extern void do_cmd_check_player_equip(int Ind, int line);
 extern void do_cmd_check_other(int Ind, int line);
 
 /* cmd5.c */
@@ -476,6 +480,7 @@ extern void shutdown_server(void);
 extern void dungeon(void);
 //extern bool retaliate_item(int Ind, int item, cptr inscription);
 extern void pack_overflow(int Ind);
+extern void set_runlevel(int val);
 
 /* files.c */
 extern s16b tokenize(char *buf, s16b num, char **tokens);
@@ -532,6 +537,8 @@ extern errr init_k_info_txt(FILE *fp, char *buf);
 extern errr init_a_info_txt(FILE *fp, char *buf);
 extern errr init_e_info_txt(FILE *fp, char *buf);
 extern errr init_r_info_txt(FILE *fp, char *buf);
+extern errr init_re_info_txt(FILE *fp, char *buf);
+extern errr init_t_info_txt(FILE *fp, char *buf);
 
 /* init.c */
 extern void init_file_paths(char *path);
@@ -688,6 +695,7 @@ extern void delete_object_idx(int i);
 extern void delete_object(struct worldpos *wpos, int y, int x);
 extern void wipe_o_list(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great);
+extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great);
 extern void determine_level_req(int level, object_type *o_ptr);
 extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great);
@@ -715,15 +723,17 @@ extern void setup_objects(void);
 extern s16b m_bonus(int max, int level);
 
 /* party.c */
+extern int guild_lookup(cptr name);
 extern int party_lookup(cptr name);
 extern bool player_in_party(int party_id, int Ind);
 extern int party_create(int Ind, cptr name);
 extern int party_add(int adder, cptr name);
 extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind);
-extern void party_msg(int party_id, cptr msg);
 extern void party_msg_format(int party_id, cptr fmt, ...);
 extern void party_gain_exp(int Ind, int party_id, s32b amount);
+extern void guild_leave(int Ind);
+extern void guild_msg_format(int guild_id, cptr fmt, ...);
 extern bool add_hostility(int Ind, cptr name);
 extern bool remove_hostility(int Ind, cptr name);
 extern bool add_ignore(int Ind, cptr name);
@@ -886,6 +896,7 @@ extern void house_creation(int Ind, bool floor, bool jail);
 
 
 /* store.c */
+extern void alloc_stores(int townval);
 extern void store_purchase(int Ind, int item, int amt);
 extern void store_sell(int Ind, int item, int amt);
 extern void store_confirm(int Ind);
@@ -946,6 +957,8 @@ extern void handle_stuff(int Ind);
 
 /* xtra2.c */
 extern s16b questid;
+extern void imprison(int Ind, u16b time, char *reason);
+extern bool add_quest(s16b type, s16b num, int midlevel);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
 extern bool set_adrenaline(int Ind, int v);

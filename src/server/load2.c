@@ -686,7 +686,7 @@ static void rd_trap(trap_type *t_ptr)
 	rd_byte(&t_ptr->t_idx);
 	rd_byte(&t_ptr->iy);
 	rd_byte(&t_ptr->ix);
-	rd_byte(&t_ptr->found);
+	rd_byte((byte*)&t_ptr->found);
 }
 
 
@@ -718,9 +718,9 @@ static void rd_monster_race(monster_race *r_ptr)
 	rd_s16b(&r_ptr->level);
 	rd_byte(&r_ptr->rarity);
 	rd_byte(&r_ptr->d_attr);
-	rd_byte(&r_ptr->d_char);
+	rd_byte((byte *)&r_ptr->d_char);
 	rd_byte(&r_ptr->x_attr);
-	rd_byte(&r_ptr->x_char);
+	rd_byte((byte *)&r_ptr->x_char);
 	for (i = 0; i < 4; i++)
 	{
 		rd_byte(&r_ptr->blow[i].method);
@@ -742,7 +742,7 @@ static void rd_monster(monster_type *m_ptr)
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
 
-	rd_byte(&m_ptr->special);
+	rd_byte((byte *)&m_ptr->special);
 
 	/* Owner */
 	rd_s32b(&m_ptr->owner);
@@ -995,7 +995,7 @@ static void rd_house(int n)
 	}
 	else{
 		int i=-2;
-		C_MAKE(house_ptr->coords.poly, MAXCOORD, byte);
+		C_MAKE(house_ptr->coords.poly, MAXCOORD, char);
 		do{
 			i+=2;
 			rd_byte(&house_ptr->coords.poly[i]);
@@ -1219,7 +1219,7 @@ static bool rd_extra(int Ind)
 
 	rd_byte(&p_ptr->confusing);
 	rd_s16b(&p_ptr->tim_wraith);
-	rd_byte(&p_ptr->wraith_in_wall);
+	rd_byte((byte *)&p_ptr->wraith_in_wall);
 	rd_byte(&p_ptr->searching);
 	rd_byte(&p_ptr->maximize);
 	rd_byte(&p_ptr->preserve);
@@ -1307,7 +1307,7 @@ static bool rd_extra(int Ind)
 	rd_byte(&tmp8u);
 	p_ptr->death = tmp8u;
 
-	rd_byte(&p_ptr->black_breath);
+	rd_byte((byte*)&p_ptr->black_breath);
 
 	rd_s16b(&p_ptr->msane);
 	rd_s16b(&p_ptr->csane);
@@ -2265,8 +2265,8 @@ void new_rd_wild(){
 				rd_u32b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
-					rd_byte(&d_ptr->r_char[i]);
-					rd_byte(&d_ptr->nr_char[i]);
+					rd_byte((byte*)&d_ptr->r_char[i]);
+					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				wptr->dungeon=d_ptr;
@@ -2280,8 +2280,8 @@ void new_rd_wild(){
 				rd_u32b(&d_ptr->flags);
 				rd_byte(&d_ptr->maxdepth);
 				for(i=0;i<10;i++){
-					rd_byte(&d_ptr->r_char[i]);
-					rd_byte(&d_ptr->nr_char[i]);
+					rd_byte((byte*)&d_ptr->r_char[i]);
+					rd_byte((byte*)&d_ptr->nr_char[i]);
 				}
 				C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
 				wptr->tower=d_ptr;

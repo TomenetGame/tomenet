@@ -827,7 +827,7 @@ static int auto_retaliate(int Ind)
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2;
-	unsigned char * inscription;
+	cptr inscription;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
@@ -1172,7 +1172,7 @@ static int auto_retaliate(int Ind)
 	{
 		if (!p_ptr->inventory[i].tval) break;
 
-//		unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
+//		cptr inscription = (unsigned char *) quark_str(o_ptr->note);
 		inscription = (unsigned char *) quark_str(p_ptr->inventory[i].note);
 
 		/* check for a valid inscription */

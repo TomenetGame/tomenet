@@ -1384,7 +1384,7 @@ struct house_type{
 	struct worldpos wpos;
 	union{
 		struct{ byte width, height; }rect;
-		cptr poly;	/* coordinate array for non rect houses */
+		char *poly;	/* coordinate array for non rect houses */
 	}coords;
 };
 

@@ -55,14 +55,14 @@ void prt_stat(int stat, int max, int cur)
 
 	if (cur < max)
 	{
-		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, stat_names_reduced[stat]);
+		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names_reduced[stat]);
 		cnv_stat(cur, tmp);
 		Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_YELLOW, tmp);
 	}
 
 	else
 	{
-		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, stat_names[stat]);
+		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names[stat]);
 		cnv_stat(cur, tmp);
 		Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_GREEN, tmp);
 	}
@@ -498,7 +498,7 @@ void prt_stun(int stun)
  */
 void prt_basic(void)
 {
-	cptr r, c;
+	cptr r=NULL, c=NULL;
 
 	switch(race)
 	{
@@ -534,8 +534,8 @@ void prt_basic(void)
 		case CLASS_TELEPATH: c = "Telepath"; break;
 	}
 
-	prt_field(r, ROW_RACE, COL_RACE);
-	prt_field(c, ROW_CLASS, COL_CLASS);
+	prt_field((char *)r, ROW_RACE, COL_RACE);
+	prt_field((char *)c, ROW_CLASS, COL_CLASS);
 }
 
 /*
@@ -1073,7 +1073,7 @@ void fix_message(void)
 				a = TERM_WHITE;
 
                         /* Dump the message on the appropriate line */
-                        Term_putstr(0, (h - 1) - i, -1, a, msg);
+                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
                         /* Cursor */
                         Term_locate(&x, &y);

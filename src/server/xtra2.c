@@ -2736,7 +2736,7 @@ void check_experience(int Ind)
  */
 void gain_exp(int Ind, s32b amount)
 {
-	player_type *p_ptr = Players[Ind], *p_ptr2;
+	player_type *p_ptr = Players[Ind], *p_ptr2=NULL;
 	int Ind2 = 0;
 
 	/* You cant gain xp on your land */
@@ -2744,60 +2744,60 @@ void gain_exp(int Ind, s32b amount)
         if (p_ptr->ghost) return;
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
-	  {
-	    Ind2 = find_player(p_ptr->esp_link);
+	{
+		Ind2 = find_player(p_ptr->esp_link);
 
-	    if (!Ind2)
-	      end_mind(Ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-	      }
-	  }
+		if (!Ind2)
+			end_mind(Ind, TRUE);
+		else
+		{
+			p_ptr2 = Players[Ind2];
+		}
+	}
 
 	if (Ind2)
-	  {
-	    /* Gain some experience */
-	    p_ptr->exp += amount / 2;
+	{
+		/* Gain some experience */
+		p_ptr->exp += amount / 2;
 
-	    /* Slowly recover from experience drainage */
-	    if (p_ptr->exp < p_ptr->max_exp)
-	      {
-		/* Gain max experience (10%) */
-		p_ptr->max_exp += amount / 20;
-	      }
+		/* Slowly recover from experience drainage */
+		if (p_ptr->exp < p_ptr->max_exp)
+		{
+			/* Gain max experience (10%) */
+			p_ptr->max_exp += amount / 20;
+		}
 	    
-	    /* Check Experience */
-	    check_experience(Ind);
+		/* Check Experience */
+		check_experience(Ind);
 
-	    /* Gain some experience */
-            p_ptr2->exp += amount / 2;
+		/* Gain some experience */
+		p_ptr2->exp += amount / 2;
 
-	    /* Slowly recover from experience drainage */
-	    if (p_ptr2->exp < p_ptr2->max_exp)
-	      {
-		/* Gain max experience (10%) */
-		p_ptr2->max_exp += amount / 20;
-	      }
+		/* Slowly recover from experience drainage */
+		if (p_ptr2->exp < p_ptr2->max_exp)
+		{
+			/* Gain max experience (10%) */
+			p_ptr2->max_exp += amount / 20;
+		}
 	    
-	    /* Check Experience */
-	    check_experience(Ind2);
-	  }
+		/* Check Experience */
+		check_experience(Ind2);
+	}
 	else
-	  {
-	    /* Gain some experience */
-	    p_ptr->exp += amount;
+	{
+		/* Gain some experience */
+		p_ptr->exp += amount;
 
-	    /* Slowly recover from experience drainage */
-	    if (p_ptr->exp < p_ptr->max_exp)
-	      {
-		/* Gain max experience (10%) */
-		p_ptr->max_exp += amount / 10;
-	      }
+		/* Slowly recover from experience drainage */
+		if (p_ptr->exp < p_ptr->max_exp)
+		{
+			/* Gain max experience (10%) */
+			p_ptr->max_exp += amount / 10;
+		}
 	    
-	    /* Check Experience */
-	    check_experience(Ind);
-	  }
+		/* Check Experience */
+		check_experience(Ind);
+	}
 }
 
 
@@ -3106,7 +3106,7 @@ void monster_death(int Ind, int m_idx)
 	if (r_ptr->flags1 & RF1_UNIQUE)
 	{
 	        int Ind2 = 0;
-		player_type *p_ptr2;
+		player_type *p_ptr2=NULL;
 
 		if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 		  {
@@ -4040,7 +4040,7 @@ void del_quest(int id){
 
 void kill_quest(int Ind){
 	int i;
-	s16b id, pos;
+	s16b id, pos=-1;
 	player_type *p_ptr=Players[Ind], *q_ptr;
 	char temp[160];
 
@@ -4051,6 +4051,7 @@ void kill_quest(int Ind){
 			break;
 		}
 	}
+	if(pos==-1) return;
 
 	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
 	msg_broadcast(Ind, temp);
@@ -5724,17 +5725,17 @@ void telekinesis_aux(int Ind, int item)
 int get_player(int Ind, object_type *o_ptr)
 {
         bool ok = FALSE;
-        int Ind2;
+	int Ind2=0;
 
 	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
 
        	/* check for a valid inscription */
 	if (inscription == NULL)
-	  {
-//	    msg_print(Ind, "Nobody to use the power with.");
-	    msg_print(Ind, "No target player specified.");
-	    return 0;
-	  }
+	{
+//		msg_print(Ind, "Nobody to use the power with.");
+		msg_print(Ind, "No target player specified.");
+		return 0;
+	}
 	
 	/* scan the inscription for @P */
 	while ((*inscription != '\0') && !ok)
@@ -5758,10 +5759,10 @@ int get_player(int Ind, object_type *o_ptr)
 	}
 	
         if (!ok)
-	  {
-	    msg_print(Ind, "Couldn't find the target.");
-	    return 0;
-	  }
+	{
+		msg_print(Ind, "Couldn't find the target.");
+		return 0;
+	}
 
 	if (Ind == Ind2)
 	{
@@ -6152,7 +6153,8 @@ bool master_build(int Ind, char * parms)
 		object_type newkey;
 		int id;
 		MAKE(key, struct key_type);
-		sscanf(&parms[2],"%d",&key->id);
+		sscanf(&parms[2],"%d",&id);
+		key->id=id;
 		invcopy(&newkey, lookup_kind(TV_KEY, 1));
 		newkey.pval=key->id;
 		drop_near(&newkey, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);

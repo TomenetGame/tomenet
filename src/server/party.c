@@ -5,6 +5,9 @@
 #include "angband.h"
 
 static void del_party(int id);
+static void party_msg(int party_id, cptr msg);
+static void del_guild(int id);
+static void guild_msg(int guild_id, cptr msg);
 
 /*
  * Lookup a guild number by name.
@@ -133,13 +136,14 @@ int guild_create(int Ind, cptr name){
 	/* Add the owner as a member */
 	p_ptr->guild = index;
 	guilds[index].num=1;
+	return(TRUE);
 }
 
 /* 
  * New party check function - to be timed 
  *
  */
-int party_check(int Ind){
+void party_check(int Ind){
 	int i, id;
 	for (i = 1; i < MAX_PARTIES; i++)
 	{
@@ -626,7 +630,7 @@ void party_leave(int Ind)
 /*
  * Send a message to everyone in a party.
  */
-void guild_msg(int guild_id, cptr msg)
+static void guild_msg(int guild_id, cptr msg)
 {
 	int i;
 
@@ -646,7 +650,7 @@ void guild_msg(int guild_id, cptr msg)
 /*
  * Send a message to everyone in a party.
  */
-void party_msg(int party_id, cptr msg)
+static void party_msg(int party_id, cptr msg)
 {
 	int i;
 

@@ -3,10 +3,9 @@
 /* Purpose: Support for X Athena Widget based Angband */
 /* Most code written by Torbjörn Lindgren (tl@cd.chalmers.se) */
 
-#ifdef USE_XAW
-
 #include "angband.h"
 
+#ifdef USE_XAW
 
 #ifndef __MAKEDEPEND__
 #include <X11/Xlib.h>

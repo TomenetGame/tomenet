@@ -2368,7 +2368,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 
 	/* Dump "pval" flags for wearable items */
-        if (known && ((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK))) || (o_ptr->tval == TV_GOLEM))
+        if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK))) || (o_ptr->tval == TV_GOLEM)))
 	{
 		/* Hack -- first display any base pval bonuses.  
 		 * The "bpval" flags are never displayed.  */

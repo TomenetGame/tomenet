@@ -2730,7 +2730,7 @@ void cmd_master(void)
 	Term_save();
 
 	/* Process requests until done */
-	while (i!='\e')
+	while (i!=ESCAPE)
 	{
 		/* Clear screen */
 		Term_clear();

@@ -14,6 +14,7 @@
 
 #include "angband.h"
 
+static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num);
 
 /*
  * Note that Level generation is *not* an important bottleneck,
@@ -1109,7 +1110,7 @@ static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int
 /*
  * Hack -- Place some sleeping monsters near the given location
  */
-void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
+static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 {
 	int          k, i, y, x;
 	cave_type **zcave;

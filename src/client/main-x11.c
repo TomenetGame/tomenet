@@ -520,7 +520,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 }
 
 
-
+#if 0
 /*
  * Nuke the current metadpy
  */
@@ -545,7 +545,7 @@ static errr Metadpy_nuke(void)
 	/* Return Success */
 	return (0);
 }
-
+#endif
 
 
 
@@ -600,7 +600,7 @@ static errr Infowin_set_name(cptr name)
 	return (0);
 }
 
-
+#if 0
 /*
  * Set the icon name of Infowin
  */
@@ -635,7 +635,7 @@ static errr Infowin_nuke(void)
 	/* Success */
 	return (0);
 }
-
+#endif
 
 
 
@@ -649,7 +649,8 @@ static errr Infowin_prepare(Window xid)
 
 	Window tmp_win;
 	XWindowAttributes xwa;
-	int x, y, w, h, b, d;
+	int x, y;
+	unsigned int w, h, b, d;
 
 	/* Assign stuff */
 	iwin->win = xid;
@@ -681,7 +682,7 @@ static errr Infowin_prepare(Window xid)
 
 
 
-
+#if 0
 /*
  * Initialize a new 'infowin'.
  */
@@ -696,11 +697,7 @@ static errr Infowin_init_real(Window xid)
 	/* Attempt to Prepare ourself */
 	return (Infowin_prepare(xid));
 }
-
-
-
-
-
+#endif
 
 /*
  * Init an infowin by giving some data.
@@ -886,13 +883,7 @@ static Pixell Infoclr_Pixell(cptr name)
 	return (Metadpy->fg);
 }
 
-
-
-
-
-
-
-
+#if 0
 /*
  * Initialize a new 'infoclr' with a real GC.
  */
@@ -932,9 +923,7 @@ static errr Infoclr_nuke(void)
 	/* Success */
 	return (0);
 }
-
-
-
+#endif
 
 
 /*
@@ -1022,7 +1011,7 @@ static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip)
 
 /* OPEN: x-infofnt.c */
 
-
+#if 0
 /*
  * Nuke an old 'infofnt'.
  */
@@ -1047,7 +1036,7 @@ static errr Infofnt_nuke (void)
 	/* Success */
 	return (0);
 }
-
+#endif
 
 
 /*
@@ -1084,7 +1073,7 @@ static errr Infofnt_prepare(XFontStruct *info)
 
 
 
-
+#if 0
 /*
  * Initialize a new 'infofnt'.
  */
@@ -1099,7 +1088,7 @@ static errr Infofnt_init_real(XFontStruct *info)
 	/* Attempt to prepare it */
 	return (Infofnt_prepare (info));
 }
-
+#endif
 
 
 
@@ -1200,7 +1189,7 @@ static errr Infowin_map (void)
 	return (0);
 }
 
-
+#if 0
 /*
  * Request that Infowin be unmapped
  */
@@ -1212,7 +1201,7 @@ static errr Infowin_unmap (void)
 	/* Success */
 	return (0);
 }
-
+#endif
 
 
 /*
@@ -1227,7 +1216,7 @@ static errr Infowin_raise(void)
 	return (0);
 }
 
-
+#if 0
 /*
  * Request that Infowin be lowered
  */
@@ -1240,10 +1229,6 @@ static errr Infowin_lower(void)
 	return (0);
 }
 
-
-
-
-
 /*
  * Request that Infowin be moved to a new location
  */
@@ -1255,6 +1240,7 @@ static errr Infowin_impell(int x, int y)
 	/* Success */
 	return (0);
 }
+#endif
 
 
 
@@ -1270,7 +1256,7 @@ static errr Infowin_resize(int w, int h)
 	return (0);
 }
 
-
+#if 0
 /*
  * Move and Resize an infowin
  */
@@ -1282,11 +1268,7 @@ static errr Infowin_locate(int x, int y, int w, int h)
 	/* Success */
 	return (0);
 }
-
-
-
-
-
+#endif
 
 /*
  * Visually clear Infowin
@@ -1300,7 +1282,7 @@ static errr Infowin_wipe(void)
 	return (0);
 }
 
-
+#if 0
 /*
  * Visually Paint Infowin with the current color
  */
@@ -1313,7 +1295,7 @@ static errr Infowin_fill(void)
 	/* Success */
 	return (0);
 }
-
+#endif
 
 /* SHUT: r-infowin.c */
 

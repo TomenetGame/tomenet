@@ -90,7 +90,7 @@ s16b stat_order[6];			/* Desired order of stats */
 s16b class_extra;
 
 bool topline_icky;
-bool screen_icky;
+short screen_icky;
 bool party_mode;
 
 cptr race_title[] = {

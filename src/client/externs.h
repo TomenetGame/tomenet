@@ -118,7 +118,7 @@ extern s16b class_extra;
 extern s16b stat_order[6];
 
 extern bool topline_icky;
-extern bool screen_icky;
+extern short screen_icky;
 extern bool party_mode;
 
 
@@ -378,6 +378,7 @@ extern void show_equip(void);
 extern void fix_message(void);
 extern void display_player(int hist);
 extern void window_stuff(void);
+extern void prt_sane(void);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
@@ -453,6 +454,7 @@ extern int Send_store_confirm(void);
 extern int Send_redraw(void);
 extern int Send_special_line(int type, int line);
 extern int Send_party(s16b command, cptr buf);
+extern int Send_guild(s16b command, cptr buf);
 extern int Send_purchase_house(int dir);
 extern int Send_suicide(void);
 extern int Send_options(void);

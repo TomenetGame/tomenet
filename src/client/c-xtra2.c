@@ -21,7 +21,7 @@
  */
 void do_cmd_messages(void)
 {
-	int i, j, k, n, nn, q, r, s, t;
+	int i, j, k, n, nn, q, r, s, t=0;
 
 	char shower[80] = "";
 	char finder[80] = "";
@@ -133,7 +133,7 @@ void do_cmd_messages(void)
 #endif
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, msg);
+			Term_putstr(0, 21-j, -1, a, (char*)msg);
 			t = strlen(msg);
 		}
 
@@ -399,7 +399,7 @@ void do_cmd_messages_chatonly(void)
 				a = TERM_WHITE;
 #endif
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, msg);
+			Term_putstr(0, 21-j, -1, a, (char*)msg);
 		}
 
 		/* Display header XXX XXX XXX */

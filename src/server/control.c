@@ -329,6 +329,7 @@ static void console_shutdown(void)
 	shutdown_server();
 }
 
+#if 0
 static bool console_bad_name(cptr name)
 {
 	char localname[1024];
@@ -349,6 +350,7 @@ static bool console_bad_name(cptr name)
 	/* Assume OK */
 	return FALSE;
 }
+#endif
 
 /*
  * This is the response function when incoming data is received on the

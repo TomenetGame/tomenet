@@ -2647,7 +2647,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
  */
 static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ)
 {
-	player_type *p_ptr;
+	player_type *p_ptr=NULL;
 
 	bool	obvious = FALSE;
 

@@ -128,6 +128,15 @@ void init_wild_info_aux(int x, int y){
 
 }
 
+static void initwild(){
+	int i,j;
+	for(i=0;i<MAX_WILD_X;i++){
+		for(j=0;j<MAX_WILD_Y;j++){
+			wild_info[j][i].type=WILD_UNDEFINED;
+		}
+	}
+}
+
 /* Initialize the wild_info coordinates and radius. Uses a recursive fill algorithm.
    This may seem a bit out of place, but I think it is too complex to go in init2.c.
    Note that the flags for these structures are loaded from the server savefile.
@@ -185,7 +194,7 @@ void init_wild_info()
 	/* inefficient? thats an understatement */
 	for(y=0;y<MAX_WILD_Y;y++){
 		for(x=0;x<MAX_WILD_X;x++){
-			if(wild_info[y][x].radius<=2 && wild_info[y][x].type==WILD_WASTELAND || wild_info[y][x].type==WILD_DENSEFOREST){
+			if(wild_info[y][x].radius<=2 && (wild_info[y][x].type==WILD_WASTELAND || wild_info[y][x].type==WILD_DENSEFOREST)){
 				wild_info[y][x].type=WILD_GRASSLAND;
 			}
 		}
@@ -2222,7 +2231,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 	}
 	mw=maxx+3-minx;
 	mh=maxy+3-miny;
-	C_MAKE(matrix,mw*mh,byte);
+	C_MAKE(matrix,mw*mh,char);
 	ptr=coord;
 
 	while(ptr[0] || ptr[1]){
@@ -2306,7 +2315,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 			}
 		}
 	}
-	C_KILL(matrix,mw*mh,byte);
+	C_KILL(matrix,mw*mh,char);
 	return(success);
 }
 
@@ -2554,15 +2563,6 @@ void wilderness_gen(struct worldpos *wpos)
 #define WASTE 512	/* wasteland */
 #define RIVERS 512	/* rivers */
 #define LAKES 512	/* lakes */
-
-static void initwild(){
-	int i,j;
-	for(i=0;i<MAX_WILD_X;i++){
-		for(j=0;j<MAX_WILD_Y;j++){
-			wild_info[j][i].type=WILD_UNDEFINED;
-		}
-	}
-}
 
 static void island(int y, int x, unsigned char type, unsigned char fill, int size){
 	int ranval;

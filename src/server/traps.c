@@ -698,7 +698,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x)
 
 	/* Paranoia */
 	cave_type **zcave;
-	if (!in_bounds(y, x)) return;
+	if (!in_bounds(y, x)) return(FALSE);
 	if((zcave=getcave(&p_ptr->wpos)))
 	{
 		/* naught */

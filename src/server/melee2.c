@@ -3311,7 +3311,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return;
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Start with adjacent locations, spread further */
 	for (i = 1; i <= tdi[SAFETY_RADIUS]; i++)
@@ -3460,7 +3460,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 
 	cave_type **zcave;
 	/* paranoia */
-	if(!(zcave=getcave(&m_ptr->wpos))) return;
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
 	/* Closest distance to get */
 	min = distance(py, px, fy, fx) * 3 / 4 + 2;
@@ -5652,7 +5652,7 @@ void process_monsters(void)
 
 			/* Glaur. Check that the closest VISIBLE target gets selected, 
 			   if no visible one available just take the closest*/ 
-			if ((blos >= new_los) && (j > dis_to_closest) || (blos > new_los)) 
+			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) 
 				continue; 
 
 			/* Glaur. Skip if same distance and stronger and same visibility*/ 

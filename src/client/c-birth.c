@@ -96,7 +96,7 @@ void enter_password(void)
  */
 static void choose_sex(void)
 {
-	char        c;
+	char        c='\0';		/* pfft redesign while(1) */
 	bool hazard = FALSE;
 
 	put_str("m) Male", 20, 2);
@@ -208,7 +208,7 @@ static void choose_race(void)
 		{
 			race = j;
 			rp_ptr = &race_info[j];
-			c_put_str(TERM_L_BLUE, rp_ptr->title, 5, 15);
+			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 5, 15);
 			break;
 		}
 		else if (c == '?')
@@ -234,7 +234,7 @@ static void choose_class(void)
         player_race *rp_ptr = &race_info[race];
 	int          j, l, m;
 
-	char         c;
+	char         c='\0';
 
 	char	 out_val[160];
 	bool hazard = FALSE;
@@ -282,7 +282,7 @@ static void choose_class(void)
 
 			class = j;
 			cp_ptr = &class_info[j];
-			c_put_str(TERM_L_BLUE, cp_ptr->title, 6, 15);
+			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 6, 15);
 			break;
 		}
 		else if (c == '?')
@@ -305,7 +305,7 @@ static void choose_class(void)
 void choose_stat_order(void)
 {
 	int i, j, k, avail[6];
-	char c;
+	char c='\0';
 	char out_val[160], stats[6][4];
 	bool hazard = FALSE;
 
@@ -411,6 +411,7 @@ static void choose_bat(void)
 	clear_from(20);
 }
 
+#if 0
 /*
  * Gets a character class				-JWT-
  */
@@ -445,7 +446,7 @@ static void choose_class_mage(void)
 
 	clear_from(20);
 }
-
+#endif
 
 /*
  * Get the name/pass for this character.

@@ -1260,7 +1260,7 @@ bool get_dir(int *dp)
 void c_put_str(byte attr, cptr str, int row, int col)
 {
 	/* Position cursor, Dump the attr/text */
-	Term_putstr(col, row, -1, attr, str);
+	Term_putstr(col, row, -1, attr, (char*)str);
 }
 
 
@@ -1270,7 +1270,7 @@ void c_put_str(byte attr, cptr str, int row, int col)
 void put_str(cptr str, int row, int col)
 {
 	/* Spawn */
-	Term_putstr(col, row, -1, TERM_WHITE, str);
+	Term_putstr(col, row, -1, TERM_WHITE, (char*)str);
 }
 
 /*
@@ -2411,7 +2411,7 @@ static void do_cmd_options_win(void)
 			if (use_color && (j == x)) a = TERM_L_BLUE;
 
 			/* Window name, staggered, centered */
-			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, s);
+			Term_putstr(35 + j * 5 - strlen(s) / 2, 2 + j % 2, -1, a, (char*)s);
 		}
 
 		/* Display the options */
@@ -2428,7 +2428,7 @@ static void do_cmd_options_win(void)
 			if (!str) str = "(Unused option)";
 
 			/* Flag name */
-			Term_putstr(0, i + 5, -1, a, str);
+			Term_putstr(0, i + 5, -1, a, (char*)str);
 
 			/* Display the windows */
 			for (j = 0; j < 8; j++)
