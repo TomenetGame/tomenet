@@ -3267,6 +3267,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
 	{
+		/*world_reboot();*/
 		shutdown_server();
 		return;
 	}
@@ -3407,7 +3408,12 @@ static void player_talk_aux(int Ind, char *message)
 		sprintf(tmessage, "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
 	else if (!me)
 		sprintf(tmessage, "\377%c[%s] \377B%s", c, sender, message + mycolor);
-	else sprintf(tmessage, "%s %s", sender, message + 4);
+	else{
+		/* Why not... */
+		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1))?2:0;
+		if(mycolor) c=message[5];
+		sprintf(tmessage, "\377%c%s %s", c, sender, message + 4+mycolor);
+	}
 	world_chat(p_ptr->id, tmessage);	/* no ignores... */
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr=Players[i];
