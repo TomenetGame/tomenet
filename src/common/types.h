@@ -605,10 +605,10 @@ struct c_special{
 #endif
 
 struct sfunc{		/* structure containing calls for specials */
-	void (*load)(void);		/* load function */
-	void (*save)(void);		/* save function */
-	void (*see)(int Ind);		/* sets player view */
-	void (*activate)(int Ind);	/* walk on/bump */
+	void (*load)(void *ptr);		/* load function */
+	void (*save)(void *ptr);		/* save function */
+	void (*see)(void *ptr, int Ind);	/* sets player view */
+	void (*activate)(void *ptr, int Ind);	/* walk on/bump */
 };
 #endif
 

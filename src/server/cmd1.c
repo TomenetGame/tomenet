@@ -2820,6 +2820,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	{
 		/* walk-through entry for house owners ... sry it's DIRTY -Jir- */
 		bool myhome = FALSE;
+		csfunc[c_ptr->special.type].activate(c_ptr->special.ptr, Ind);
 		if (c_ptr->feat >= FEAT_HOME_HEAD && c_ptr->feat <= FEAT_HOME_TAIL)
 		{
 #ifndef NEWHOUSES
@@ -2874,7 +2875,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE)
+			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
 			{
 				msg_print(Ind, "\377GYou feel a tree blocking your way.");
 				*w_ptr |= CAVE_MARK;
@@ -2915,7 +2916,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREE)
+			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE)
 			{
 				msg_print(Ind, "There is a tree blocking your way.");
 			}
@@ -2933,7 +2934,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			{
 				msg_print(Ind, "There is a wall blocking your way.");
 			}
-			csfunc[c_ptr->special.type].activate(Ind);
+			csfunc[c_ptr->special.type].activate(c_ptr->special.ptr, Ind);
 		}
 		return;
 		} /* 'if (!myhome)' ends here */

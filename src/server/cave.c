@@ -2206,7 +2206,11 @@ void wild_display_map(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef NEW_DUNGEON
+	int x,y,type;
+#else
 	int world_x,world_y, x,y, wild_idx, type;
+#endif
 
 	byte ta;
 	char tc;
@@ -2255,9 +2259,9 @@ void wild_display_map(int Ind)
 		{
 			/* Location */
 #ifdef NEW_DUNGEON
-			twpos.wy = p_ptr->wpos.wy + (MAP_HGT+2)/2 + y;
-			twpos.wx = p_ptr->wpos.wx + (MAP_HGT+2)/2 + x;
-			if(twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wy < MAX_WILD_X)
+			twpos.wy = p_ptr->wpos.wy + (MAP_HGT+2)/2 - y;
+			twpos.wx = p_ptr->wpos.wx - (MAP_HGT+2)/2 + x;
+			if(twpos.wy >= 0 && twpos.wy < MAX_WILD_Y && twpos.wx >=0 && twpos.wx < MAX_WILD_X)
 				type = determine_wilderness_type(&twpos);
 #else
 			world_y = p_ptr->world_y + (MAP_HGT+2)/2 - y;
@@ -2274,11 +2278,7 @@ void wild_display_map(int Ind)
 			/* Hack -- serverchez has knowledge of the full world */
 			if (!p_ptr->admin_dm)
 #ifdef NEW_DUNGEON
-//			wild_idx=twpos.wx+twpos.wy*MAX_WILD_Y;
-//			wild_idx=wild_idx(twpos);
-			wild_idx=twpos.wx+twpos.wy*MAX_WILD_X;
-
-			if (!(p_ptr->wild_map[wild_idx / 8] & (1 << (wild_idx % 8)))) type = -1;
+			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1 << (wild_idx(&twpos) % 8)))) type = -1;
 #else
 			if (!(p_ptr->wild_map[-wild_idx / 8] & (1 << (-wild_idx % 8)))) type = -1;
 #endif
@@ -2297,6 +2297,11 @@ void wild_display_map(int Ind)
 				case WILD_WASTELAND: tc = '.'; ta=TERM_UMBER; break;
 				case WILD_TOWN: tc = 'T'; ta = TERM_YELLOW; break;
 				case WILD_CLONE: tc = 'C'; ta = TERM_RED; break;
+				case WILD_MOUNTAIN: tc = '^'; ta = TERM_L_DARK; break;
+				case WILD_VOLCANO: tc = '^'; ta = TERM_RED; break;
+				case WILD_RIVER: tc = '~'; ta = TERM_L_BLUE; break;
+				case WILD_COAST: tc = ','; ta = TERM_YELLOW; break;
+				case WILD_OCEAN: tc = '%'; ta = TERM_BLUE; break;
 				case -1: tc = ' '; ta = TERM_DARK; break;
 				default: tc = 'O'; ta = TERM_YELLOW; break;
 			} 
@@ -2404,8 +2409,9 @@ void do_cmd_view_map(int Ind)
 #endif
 	/* do wilderness map */
 	/* pfft, fix me pls, Evileye ;) */
-//	else wild_display_map(Ind);
-	else display_map(Ind, &cy, &cx);
+	/* pfft. fixed */
+	else wild_display_map(Ind);
+	//else display_map(Ind, &cy, &cx);
 }
 
 

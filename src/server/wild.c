@@ -233,11 +233,16 @@ void init_wild_info()
 {
 	int x,y;
 	memset(&wild_info[0][0],0,sizeof(wilderness_type)*(MAX_WILD_Y*MAX_WILD_X));
+	/* evileye test new wilderness map */
+/*
 	for(y=0;y<MAX_WILD_Y;y++){
 		for(x=0;x<MAX_WILD_X;x++){
 			wild_info[y][x].type=WILD_UNDEFINED;
 		}
 	}
+*/
+	initwild();
+	genwild();
 	addtown(MAX_WILD_Y/2, MAX_WILD_X/2, 0, 0);	/* base town */
 	init_wild_info_aux(0,0);
 }
@@ -3044,4 +3049,218 @@ void wilderness_gen(int Depth)
 	/* Set if we have generated the level before, to determine
 	   whether or not to respawn objects and monsters */
 	w_ptr->flags |= (WILD_F_GENERATED | WILD_F_INHABITED);
+}
+
+
+#define MAX_WILD_X 64
+#define MAX_WILD_Y 64
+#define MAXISLAND 5	/* maximum island size */
+#define MAXMOUNT 3	/* maximum mountain range size */
+#define MAXWOOD 3	/* maximum forest size */
+#define MAXWASTE 3	/* maximum wasteland size */
+#define MAXLAKE 3	/* maximum lake size */
+#define SEADENSITY 64	/* land/sea ratio */
+#define ROCKY 256	/* mountains */
+#define WOODY 256	/* trees */
+#define WASTE 512	/* wasteland */
+#define RIVERS 512	/* rivers */
+#define LAKES 512	/* lakes */
+
+void initwild(){
+	int i,j;
+	printf("initwild\n");
+	for(i=0;i<MAX_WILD_X;i++){
+		for(j=0;j<MAX_WILD_Y;j++){
+			wild_info[j][i].type=WILD_UNDEFINED;
+		}
+	}
+}
+
+void makeland(){
+	int p,i;
+	int x,y;
+	int density=MAXISLAND;
+	p=(MAX_WILD_Y*MAX_WILD_X)/SEADENSITY;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_UNDEFINED);
+		island(y,x,WILD_GRASSLAND, WILD_UNDEFINED, random()&((1<<density)-1));
+	}
+}
+
+unsigned short makecoast(int y, int x){
+	unsigned short r=0;
+	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) return(0);
+	if(wild_info[y][x].type!=WILD_UNDEFINED){
+		return((wild_info[y][x].type==WILD_GRASSLAND));
+	}
+	wild_info[y][x].type=WILD_OCEAN;
+	if(makecoast(y,x-1)) r=1;
+	if(makecoast(y,x+1)) r=1;
+	if(makecoast(y-1,x)) r=1;
+	if(makecoast(y+1,x)) r=1;
+	if(r)
+		wild_info[y][x].type=WILD_COAST;
+	return(0);
+}
+
+void island(int y, int x, unsigned char type, unsigned char fill, int size){
+	int ranval;
+	if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_Y) return;
+	if(wild_info[y][x].type!=fill) return;
+	ranval=random()&15;
+	if(size){
+		if(ranval&1) island(y,x-1,type,fill,size-1);
+		if(ranval&2) island(y,x+1,type,fill,size-1);
+		if(ranval&4) island(y-1,x,type,fill,size-1);
+		if(ranval&8) island(y+1,x,type,fill,size-1);
+	}
+	if((random()&17)==0){
+		switch(type){
+			case WILD_MOUNTAIN:
+				type=WILD_VOLCANO;
+				break;
+			case WILD_LAKE:
+				type=WILD_SWAMP;
+				break;
+		}
+	}
+	wild_info[y][x].type=type;
+}
+
+void addhills(){
+	int i,p;
+	int x,y;
+	p=(MAX_WILD_Y*MAX_WILD_X)/ROCKY;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_GRASSLAND);
+		island(y,x, WILD_MOUNTAIN, WILD_GRASSLAND, random()&((1<<MAXMOUNT)-1)); 
+	}
+}
+
+void addlakes(){
+	int i,p;
+	int x,y;
+	p=(MAX_WILD_Y*MAX_WILD_X)/LAKES;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_GRASSLAND);
+		island(y,x, WILD_LAKE, WILD_GRASSLAND, random()&((1<<MAXLAKE)-1)); 
+	}
+}
+
+void addwaste(){
+	int i,p;
+	int x,y;
+	p=(MAX_WILD_Y*MAX_WILD_X)/WASTE;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_GRASSLAND);
+		island(y,x, WILD_WASTELAND, WILD_GRASSLAND, random()&((1<<MAXWASTE)-1)); 
+	}
+}
+
+void addforest(){
+	int i,p;
+	int x,y;
+	int size;
+	p=(MAX_WILD_Y*MAX_WILD_X)/WOODY;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_GRASSLAND);
+		size=random()&((1<<MAXWOOD)-1); 
+		island(y,x, WILD_FOREST, WILD_GRASSLAND, size);
+		if(size>3)
+			island(y,x, WILD_DENSEFOREST, WILD_FOREST, size-3);
+	}
+}
+
+int mvx[]={0,1,1,1,0,-1,-1,-1};
+int mvy[]={1,1,0,-1,-1,-1,0,1};
+
+void river(int y, int x){
+	int mx, my;
+	int dir,cdir,t;
+
+	dir=random()&7;
+	while(wild_info[y][x].type!=WILD_OCEAN){
+		cdir=dir;
+		if(y<0 || x<0 || y>=MAX_WILD_Y || x>=MAX_WILD_X) break;	
+		wild_info[y][x].type=WILD_RIVER;
+		t=random()&31;
+		switch(t){
+			case 0: cdir+=4;
+				break;
+			case 1: cdir+=5;
+				break;
+			case 2: cdir+=3; 
+				break;
+			case 3:
+			case 4:
+				cdir+=6;
+				break;
+			case 5:
+			case 6: cdir+=2;
+				break;
+			case 7:
+			case 8:
+			case 9: cdir+=1;
+				break;
+			case 10:
+			case 11:
+			case 12: cdir+=7;
+				break;
+		}
+		if(cdir>7) cdir-=8;
+		mx=x+mvx[cdir];
+		my=y+mvy[cdir];
+		if(mx<0 || my<0 || mx>=MAX_WILD_X || my>=MAX_WILD_Y) continue;
+		if(wild_info[my][mx].type==WILD_TOWN) continue;
+		x=mx;
+		y=my;
+	}
+}
+
+void addrivers(){
+	int i,p;
+	int x,y;
+	p=(MAX_WILD_Y*MAX_WILD_X)/RIVERS;
+	for(i=0;i<p;i++){
+		do{
+			x=random()&(MAX_WILD_X-1);
+			y=random()&(MAX_WILD_Y-1);
+		}while(wild_info[y][x].type!=WILD_MOUNTAIN);
+		river(y,x);
+	}
+}
+
+
+void genwild(){
+	int j,i;
+	printf("genwild\n");
+	island(32,32,WILD_GRASSLAND, WILD_UNDEFINED,5);
+	wild_info[32][32].type=WILD_TOWN;
+	makeland();
+	for(j=0;j<MAX_WILD_Y;j++){
+		for(i=0;i<MAX_WILD_X;i++){
+			if(wild_info[j][i].type==WILD_UNDEFINED)
+				makecoast(j,i);
+		}
+	}
+	addhills();
+	addrivers();
+	addforest();
+	addlakes();
+	addwaste();
 }

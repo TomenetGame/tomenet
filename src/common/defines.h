@@ -3834,6 +3834,11 @@ that keeps many algorithms happy.
 #define		WILD_UNDEFINED		8
 #define		WILD_CLONE		9 /* we should copy the terrain type of a neighbor */
 #define		WILD_TOWN		10
+#define		WILD_OCEAN		11
+#define		WILD_RIVER		12
+#define		WILD_COAST		13
+#define		WILD_MOUNTAIN		14
+#define		WILD_VOLCANO		3
 
 /* different buildings */
 #define		WILD_LOG_CABIN		0
