@@ -2184,14 +2184,14 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
 					}
 				}
-				if(func==FILL_OBJECT){ /* object in house */
+				else if(func==FILL_OBJECT){ /* object in house */
 					object_type *o_ptr=(object_type*)data;
 					if(o_ptr->ix==h_ptr->x+x && o_ptr->iy==h_ptr->y+y){
 						success=TRUE;
 						break;
 					}
 				}
-				if(func==FILL_PLAYER){ /* player in house? */
+				else if(func==FILL_PLAYER){ /* player in house? */
 					player_type *p_ptr=(player_type*)data;
 					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
 						success=TRUE;
@@ -2209,7 +2209,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 				else if(func==FILL_CLEAR){
 					delete_object(wpos,y,x);
 				}
-				else{ /* FILL_BUILD */
+				else if(func==FILL_BUILD){
 					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
  						if(!(h_ptr->flags&HF_NOFLOOR))
 							c_ptr->feat=FEAT_FLOOR;
@@ -2219,6 +2219,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
  						c_ptr->info|=CAVE_ICKY;
 					}
 				}
+				else s_printf("rect fill house (func: %d\n", func);
 			}
 		}
 		return(success);
@@ -2333,12 +2334,16 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						delete_object(wpos, miny+(y-1), minx+(x-1));
 						break;
 					}
-					if(!(h_ptr->flags&HF_NOFLOOR))
-						zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
-					zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
-					if(h_ptr->flags&HF_JAIL){
-						zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
+					if(func==FILL_BUILD){
+						if(!(h_ptr->flags&HF_NOFLOOR))
+							zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
+						zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_ICKY;
+						if(h_ptr->flags&HF_JAIL){
+							zcave[miny+(y-1)][minx+(x-1)].info|=CAVE_STCK;
+						}
+						break;
 					}
+					s_printf("poly fill house (func: %d)\n", func);
 					break;
 				case 1:	/* Actual walls */
 					if(func==FILL_CLEAR) break;
