@@ -457,6 +457,7 @@ static void rd_item(object_type *o_ptr)
 {
 	byte old_dd;
 	byte old_ds;
+	s16b old_ac;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -514,7 +515,7 @@ static void rd_item(object_type *o_ptr)
 	rd_s16b(&o_ptr->to_d);
 	rd_s16b(&o_ptr->to_a);
 
-	rd_s16b(&o_ptr->ac);
+	rd_s16b(&old_ac);
 
 	rd_byte(&old_dd);
 	rd_byte(&old_ds);
@@ -654,12 +655,19 @@ static void rd_item(object_type *o_ptr)
 		/* Obtain the ego-item info */
 		e_ptr = &e_info[o_ptr->name2];
 
+		/* UnHack. pffft! */
+		if ((o_ptr->ac < old_ac)) o_ptr->ac=old_ac;
+		if ((o_ptr->dd < old_dd)) o_ptr->dd=old_dd;
+		if ((o_ptr->ds < old_ds)) o_ptr->ds=old_ds;
+
+#if 0
 		/* Hack -- keep some old fields */
 		if ((o_ptr->dd < old_dd) && (o_ptr->ds == old_ds))
 		{
 			/* Keep old boosted damage dice */
 			o_ptr->dd = old_dd;
 		}
+#endif
 
 		/* Hack -- extract the "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
