@@ -662,7 +662,7 @@ Change list for PernMangband
 15/01/2002 (Evileye)
 - Fixed temple priest for dungeon master.
 - Fixed typo in "amulet shatters".
-
+- Base town no longer has wasteland or deep forest beside it.
 
 ** [B] stands for Bugfix.
 ** [C] stands for Client changes.

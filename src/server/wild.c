@@ -240,6 +240,15 @@ void init_wild_info()
 	genwild();
 	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0);	/* base town */
 	init_wild_info_aux(0,0);
+
+	/* inefficient? thats an understatement */
+	for(y=0;y<MAX_WILD_Y;y++){
+		for(x=0;x<MAX_WILD_X;x++){
+			if(wild_info[y][x].radius<=2 && wild_info[y][x].type==WILD_WASTELAND || wild_info[y][x].type==WILD_DENSEFOREST){
+				wild_info[y][x].type=WILD_GRASSLAND;
+			}
+		}
+	}
 }
 
 /* Called when the player goes onto a wilderness level, to 
