@@ -39,7 +39,10 @@ void do_cmd_messages(void)
         n = message_num();
 	nn = 0;  // number of new messages
 
-	/* Filter message buffer for "unimportant messages" add to message_recall*/
+	/* Filter message buffer for "unimportant messages" add to message_recall
+         * "Target Selected" messages are too much clutter for archers to remove 
+         * from msg recall
+         */
 	for (i = 0; i < n; i++)
 	{
 		cptr msg = message_str(i);
@@ -322,12 +325,6 @@ void do_cmd_messages_chatonly(void)
 				a = TERM_GREEN;
 			else if (msg[0] == '[')
 				a = TERM_L_BLUE;
-			else if ((strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_destroyed) != NULL) || (strstr(msg, msg_suicide) != NULL))
-				a = TERM_RED;
-			else if (strstr(msg, msg_unique) != NULL)
-				a = TERM_BLUE;
-			else if ((strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || (strstr(msg, msg_telepath) != NULL))
-				a = TERM_L_RED;
 			else 
 				a = TERM_WHITE;
 
