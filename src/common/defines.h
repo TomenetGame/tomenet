@@ -38,7 +38,7 @@
 /*
  * Current version number of TomeNET:
  */
-#define TOMANG_VERSION_LONG_DATE "TomeNET 3.4.3 beta (compiled "
+#define TOMANG_VERSION_LONG_DATE "TomeNET 3.5.2 beta (compiled "
 
 /*
  * This value specifies the suffix to the version info sent to the metaserver.
@@ -156,12 +156,12 @@
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-#define MAX_RACES           14
+#define MAX_RACES	14
 
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS            12
+#define MAX_CLASS	12
 
 /*
  * Maximum number of parties to allow.  If, while trying to create a new
@@ -287,12 +287,12 @@
 /*
  * Maximum value storable in a "byte" (hard-coded)
  */
-#define MAX_UCHAR       255
+#define MAX_UCHAR	255
 
 /*
  * Maximum value storable in a "s16b" (hard-coded)
  */
-#define MAX_SHORT       32767
+#define MAX_SHORT	32767
 
 
 /*
@@ -330,8 +330,8 @@
 #define	MASTER_SUMMON_SPEFIC	0	
 #define	MASTER_SUMMON_
 
-#define	MASTER_SCRIPTB_W        'w'
-#define	MASTER_SCRIPTB_A        'a'
+#define	MASTER_SCRIPTB_W	'w'
+#define	MASTER_SCRIPTB_A	'a'
 
 
 /*
@@ -362,7 +362,7 @@
 #define SPECIAL_FILE_OTHER	4
 #define SPECIAL_FILE_SCORES	5
 #define SPECIAL_FILE_HELP	6
-#define SPECIAL_FILE_PLAYER_EQUIP      7
+#define SPECIAL_FILE_PLAYER_EQUIP	7
 #define SPECIAL_FILE_LOG		8
 #define SPECIAL_FILE_RFE		9
 
@@ -412,11 +412,11 @@
 #define TOWN_DAWN		10000	/* Number of turns from dawn to dawn XXX */
 #define GROW_TREE	5000		/* How often to grow a new tree in town */
 #define BREAK_GLYPH		550		/* Rune of protection resistance */
-#define BTH_PLUS_ADJ    3       /* Adjust BTH per plus-to-hit */
+#define BTH_PLUS_ADJ	3		/* Adjust BTH per plus-to-hit */
 #define MON_MULT_ADJ	8		/* High value slows multiplication */
 #define MON_SUMMON_ADJ	2		/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2		/* Percent of player exp drained per hit */
-#define USE_DEVICE      3		/* x> Harder devices x< Easier devices     */
+#define USE_DEVICE	3		/* x> Harder devices x< Easier devices */
 
 /*
  * There is a 1/20 (5%) chance of inflating the requested object_level
@@ -488,9 +488,9 @@
 /*
  * Player constants
  */
-#define PY_MAX_EXP      999999999L       /* Maximum exp */
+#define PY_MAX_EXP	999999999L	/* Maximum exp */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold */
-#define PY_MAX_LEVEL    100             /* Maximum level */
+#define PY_MAX_LEVEL	100		/* Maximum level */
 
 /*
  * Player "food" crucial values
@@ -529,18 +529,18 @@
 /*
  * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
  */
-#define INVEN_WIELD		24
-#define INVEN_BOW       25
-#define INVEN_LEFT      26
-#define INVEN_RIGHT     27
-#define INVEN_NECK      28
-#define INVEN_LITE      29
-#define INVEN_BODY      30
-#define INVEN_OUTER     31
-#define INVEN_ARM       32
-#define INVEN_HEAD      33
-#define INVEN_HANDS     34
-#define INVEN_FEET      35
+#define INVEN_WIELD	24
+#define INVEN_BOW	25
+#define INVEN_LEFT	26
+#define INVEN_RIGHT	27
+#define INVEN_NECK	28
+#define INVEN_LITE	29
+#define INVEN_BODY	30
+#define INVEN_OUTER	31
+#define INVEN_ARM	32
+#define INVEN_HEAD	33
+#define INVEN_HANDS	34
+#define INVEN_FEET	35
 
 /*
  * Total number of inventory slots (hard-coded).
@@ -596,7 +596,7 @@
 #define CLASS_MIMIC		7
 #define CLASS_UNBELIEVER	8
 #define CLASS_ARCHER		9
-#define CLASS_MONK              10
+#define CLASS_MONK		10
 #define CLASS_TELEPATH		11
 
 
@@ -645,8 +645,8 @@
 #define ROW_CURSP		19
 #define COL_CURSP		0	/* "Cur SP xxxxx" */
 
-#define ROW_SANITY              14      /* "Sanity  100%" */
-#define COL_SANITY              0
+#define ROW_SANITY		14	/* "Sanity  100%" */
+#define COL_SANITY		0
 
 #if 1
 #define ROW_INFO		20
@@ -922,7 +922,7 @@ that keeps many algorithms happy.
 #define ART_RANDART		255
 
 /* Lites */
-#define ART_GALADRIEL                   1
+#define ART_GALADRIEL			1
 #define ART_ELENDIL                     2
 #define ART_THRAIN                      3
 #define ART_PALANTIR                    202
@@ -1473,21 +1473,21 @@ that keeps many algorithms happy.
 /* The "sval" codes for TV_SWORD */
 #define SV_BROKEN_DAGGER		1	/* 1d1 */
 #define SV_BROKEN_SWORD			2	/* 1d2 */
-#define SV_DAGGER				4	/* 1d4 */
+#define SV_DAGGER			4	/* 1d4 */
 #define SV_MAIN_GAUCHE			5	/* 1d5 */
-#define SV_RAPIER				7	/* 1d6 */
+#define SV_RAPIER			7	/* 1d6 */
 #define SV_SMALL_SWORD			8	/* 1d6 */
 #define SV_SHORT_SWORD			10	/* 1d7 */
-#define SV_SABRE				11	/* 1d7 */
-#define SV_CUTLASS				12	/* 1d7 */
-#define SV_TULWAR				15	/* 2d4 */
+#define SV_SABRE			11	/* 1d7 */
+#define SV_CUTLASS			12	/* 1d7 */
+#define SV_TULWAR			15	/* 2d4 */
 #define SV_BROAD_SWORD			16	/* 2d5 */
 #define SV_LONG_SWORD			17	/* 2d5 */
-#define SV_SCIMITAR				18	/* 2d5 */
-#define SV_KATANA				20	/* 3d4 */
+#define SV_SCIMITAR			18	/* 2d5 */
+#define SV_KATANA			20	/* 3d4 */
 #define SV_BASTARD_SWORD		21	/* 3d4 */
 #define SV_TWO_HANDED_SWORD		25	/* 3d6 */
-#define SV_EXECUTIONERS_SWORD	28	/* 4d5 */
+#define SV_EXECUTIONERS_SWORD		28	/* 4d5 */
 #define SV_DARK_SWORD  			29	/* 3d7 */
 #define SV_BLADE_OF_CHAOS		30	/* 6d5 */
 
@@ -1507,7 +1507,7 @@ that keeps many algorithms happy.
 #define SV_IRON_CROWN			10
 #define SV_GOLDEN_CROWN			11
 #define SV_JEWELED_CROWN		12
-#define SV_MORGOTH				50
+#define SV_MORGOTH			50
 
 /* The "sval" codes for TV_BOOTS */
 #define SV_PAIR_OF_SOFT_LEATHER_BOOTS	2
@@ -1516,19 +1516,19 @@ that keeps many algorithms happy.
 #define SV_PAIR_OF_WITAN_BOOTS          8
 
 /* The "sval" codes for TV_CLOAK */
-#define SV_CLOAK					1
-#define SV_KOLLA                                        3
-#define SV_SHADOW_CLOAK				6
+#define SV_CLOAK			1
+#define SV_KOLLA			3
+#define SV_SHADOW_CLOAK			6
 
 /* The "sval" codes for TV_GLOVES */
 #define SV_SET_OF_LEATHER_GLOVES	1
-#define SV_SET_OF_GAUNTLETS			2
-#define SV_SET_OF_ELVEN_GLOVES			4
-#define SV_SET_OF_CESTI				5
+#define SV_SET_OF_GAUNTLETS		2
+#define SV_SET_OF_ELVEN_GLOVES		4
+#define SV_SET_OF_CESTI			5
 
 /* The "sval" codes for TV_SOFT_ARMOR */
-#define SV_FILTHY_RAG				1
-#define SV_ROBE						2
+#define SV_FILTHY_RAG			1
+#define SV_ROBE				2
 #define SV_SOFT_LEATHER_ARMOR		4
 #define SV_SOFT_STUDDED_LEATHER		5
 #define SV_HARD_LEATHER_ARMOR		6
