@@ -2588,8 +2588,13 @@ int Send_skill_init(int ind, int type, int i)
 		plog(format("Connection not ready for skill init (%d.%d.%d)",
 			ind, connp->state, connp->id));
 		return 0;
-	}
-        return Packet_printf(&connp->c, "%c%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, (type == PKT_SKILL_INIT_NAME) ? s_info[i].name : s_info[i].desc);
+        }
+        if (type == PKT_SKILL_INIT_NAME)
+                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].name);
+        else if (type == PKT_SKILL_INIT_DESC)
+                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].desc);
+        else if (type == PKT_SKILL_INIT_MKEY)
+                return Packet_printf(&connp->c, "%c%d%d%d%d%s", PKT_SKILL_INIT, type, i, s_info[i].father, s_info[i].action_mkey, s_info[i].action_desc);
 }
 
 int Send_skill_info(int ind, int i)

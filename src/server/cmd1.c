@@ -1663,7 +1663,7 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 		return;
 	}
 
-	if (p_ptr->pclass == CLASS_ROGUE)
+	if (get_skill(p_ptr, SKILL_BACKSTAB))
 	{
 		if(m_ptr->csleep /*&& m_ptr->ml*/)
 			backstab = TRUE;
@@ -1827,15 +1827,17 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr);
 
-				if (backstab)
-				{
-					backstab = FALSE;
-					k *= (3 + (p_ptr->lev / 40));
-				}
-				else if (stab_fleeing)
-				{
-					k = ((3 * k) / 2);
-				}
+                                if (backstab)
+                                {
+                                        k += (k *
+                                              get_skill_scale(p_ptr, SKILL_BACKSTAB,
+                                                              100)) / 100;
+                                }
+                                else if (stab_fleeing)
+                                {
+                                        k += (k * get_skill_scale(p_ptr, SKILL_BACKSTAB, 70)) /
+                                                100;
+                                }
 
 				/* Select a chaotic effect (50% chance) */
 				if ((f5 & TR5_CHAOTIC) && (randint(2)==1))
@@ -1876,8 +1878,8 @@ void py_attack_mon(int Ind, int y, int x, bool old)
 						drain_result = 0;
 				}
 
-				if (f1 & TR1_VORPAL && (randint(6) == 1))
-					vorpal_cut = TRUE;
+                                if (f1 & TR1_VORPAL && (randint(6) == 1))
+                                        vorpal_cut = TRUE;
 				else vorpal_cut = FALSE;
 
 				if ((p_ptr->impact && (k > 50)) || chaos_effect == 2) do_quake = TRUE;

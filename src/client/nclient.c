@@ -1341,19 +1341,22 @@ int Receive_skill_init(void)
 {
 	int	n;
 	char	ch;
-	int	i, type, father;
+	int	i, type, father, mkey;
 	char    buf[300];
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%s", &ch, &type, &i, &father, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%s", &ch, &type, &i, &father, &mkey, buf)) <= 0)
 	{
 		return n;
 	}
 
         if (type == PKT_SKILL_INIT_NAME)
                 s_info[i].name = string_make(buf);
-        else
+        if (type == PKT_SKILL_INIT_DESC)
                 s_info[i].desc = string_make(buf);
+        else
+                s_info[i].action_desc = string_make(buf);
         s_info[i].father = father;
+        s_info[i].action_mkey = mkey;
 
 	return 1;
 }

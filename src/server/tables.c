@@ -1654,6 +1654,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 400,
                         },
+                        {
+                                SKILL_ARCHERY,
+                                '+', 1000,
+                                '+', 700,
+                        },
                 }
 	},
 
@@ -1702,7 +1707,24 @@ player_class class_info[MAX_CLASS] =
 		{-5, 5, 1, 0, -1, 0},
 		35, 40, 30, 2, 16, 20, 30, 20,
 		8,  15,  9, 0,  0,  0, 11, 15,
-		0, 30
+		0, 30,
+                {
+                        {
+                                SKILL_MAGIC,
+                                '+', 6000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_CASTSPEED,
+                                '+', 0,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_SORCERY,
+                                '+', 1000,
+                                '+', 900,
+                        },
+                }
 	},
 
 	{
@@ -4189,6 +4211,106 @@ skill_type s_info[MAX_SKILLS] =
 
                 /* Father skills */
                 SKILL_ARCHERY,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Backstabing",
+                "Ability to use backstab sleeping and fleeing monsters",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_COMBAT,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Magic",
+                "General ability to use magic. Also influence mana capacity.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                -1,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Casting-speed",
+                "Ability to cast spells faster than one turn.",
+
+                /* Mkey desc/mkey */
+                NULL,
+                0,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_MAGIC,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Sorcery",
+                "Ability to cast sorcery spells, beware it reduces hp",
+
+                /* Mkey desc/mkey */
+                "Cast sorcery spell",
+                MKEY_SORCERY,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_MAGIC,
+
+                /* Order, unused .. I hope */
+                0,
+
+                /* Flags */
+                0,
+        },
+        {
+                "Magery",
+                "Ability to cast magery spells",
+
+                /* Mkey desc/mkey */
+                "Cast magery spell",
+                MKEY_MAGERY,
+
+                /* Effect on other skills */
+                {},
+
+                /* Father skills */
+                SKILL_MAGIC,
 
                 /* Order, unused .. I hope */
                 0,

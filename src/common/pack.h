@@ -152,6 +152,7 @@
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
 #define PKT_SKILL_INIT_DESC     1
+#define PKT_SKILL_INIT_MKEY     2
 
 
 

@@ -32,9 +32,9 @@
  * You have been warned.
  */
 
-#define VERSION_MAJOR   3
-#define VERSION_MINOR   5
-#define VERSION_PATCH   5
+#define VERSION_MAJOR   4
+#define VERSION_MINOR   0
+#define VERSION_PATCH   0
 
 /*
  * Current version number of TomeNET:
@@ -42,7 +42,7 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. 
  * TODO: reflect versions automatically to TOMANG_VERSION_SHORT
  */
-#define TOMANG_VERSION_SHORT		"TomeNET 3.5.5a"
+#define TOMANG_VERSION_SHORT		"TomeNET 4.0.0"
 #define TOMANG_VERSION_LONG_DATE TOMANG_VERSION_SHORT "  (compiled "
 
 
@@ -4901,6 +4901,11 @@ extern int PlayerUID;
 #define HOOK_LEVEL_END_GEN      43
 #define MAX_HOOKS               44
 
+/*
+ * Mkeys are skill activations
+ */
+#define MKEY_SORCERY            1
+#define MKEY_MAGERY             2
 
 /*
  * Skills
@@ -4919,6 +4924,11 @@ extern int PlayerUID;
 #define SKILL_SLING             7
 #define SKILL_BOW               8
 #define SKILL_XBOW              9
+#define SKILL_BACKSTAB          10
+#define SKILL_MAGIC             11
+#define SKILL_CASTSPEED         12
+#define SKILL_SORCERY           13
+#define SKILL_MAGERY            14
 
 /* Ugly but needed */
 #define MAX_SKILLS              70

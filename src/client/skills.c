@@ -12,6 +12,46 @@
 
 #include "angband.h"
 
+/*
+ * Given the name of a skill, returns skill index or -1 if no
+ * such skill is found
+ */
+s16b find_skill(cptr name)
+{
+	u16b i;
+
+	/* Scan skill list */
+	for (i = 1; i < MAX_SKILLS; i++)
+	{
+		/* The name matches */
+		if (streq(s_info[i].name, name)) return (i);
+	}
+
+	/* No match found */
+	return (-1);
+}
+
+
+/*
+ *
+ */
+s16b get_skill(int skill)
+{
+	return (p_ptr->s_info[skill].value / SKILL_STEP);
+}
+
+
+/*
+ *
+ */
+s16b get_skill_scale(int skill, u32b scale)
+{
+	/* XXX XXX XXX */
+	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
+	         (SKILL_MAX / 10)) /
+	        (SKILL_STEP / 10));
+}
+
 
 #if 0
 /*
@@ -69,26 +109,6 @@ void decrease_skill(int i, s16b *invest)
 	/* Decrease the skill */
 	s_info[i].value -= s_info[i].mod;
         invest[i]--;
-}
-
-
-/*
- * Given the name of a skill, returns skill index or -1 if no
- * such skill is found
- */
-s16b find_skill(cptr name)
-{
-	u16b i;
-
-	/* Scan skill list */
-	for (i = 1; i < MAX_SKILLS; i++)
-	{
-		/* The name matches */
-		if (streq(s_info[i].name + s_name, name)) return (i);
-	}
-
-	/* No match found */
-	return (-1);
 }
 
 #endif
@@ -505,6 +525,8 @@ void select_default_melee()
 	}
 }
 
+#endif
+
 /*
  * Print a batch of skills.
  */
@@ -520,10 +542,10 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 		if (i >= max) break;
 
                 /* Hack -- only able to learn spells when learning is required */
-                if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
-                        continue;
+//                if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
+//                        continue;
                 else if (p[i] > 0)
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_text + s_info[p[i]].action_desc);
+			sprintf(buff, "  %c-%3d) %-30s", I2A(j), p[i] + 1, s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
@@ -547,14 +569,14 @@ int do_cmd_activate_skill_aux()
 	/* Count the max */
 
 	/* More than 1 melee skill ? */
-	if (get_melee_skills() > 1)
-	{
-		p[max++] = 0;
-	}
+//	if (get_melee_skills() > 1)
+//	{
+//		p[max++] = 0;
+//	}
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		if (s_info[i].action_mkey && s_info[i].value)
+		if (s_info[i].action_mkey && p_ptr->s_info[i].value)
 		{
 			int j;
 			bool next = FALSE;
@@ -571,24 +593,30 @@ int do_cmd_activate_skill_aux()
                         if (next) continue;
 
                         /* Hack -- only able to learn spells when learning is required */
-                        if ((i == SKILL_LEARN) && (!must_learn_spells()))
-                                continue;
+//                      if ((i == SKILL_LEARN) && (!must_learn_spells()))
+//                              continue;
                         p[max++] = i;
 		}
 	}
 
 	if (!max)
 	{
-		msg_print("You dont have any activable skills.");
+		c_msg_print("You dont have any activable skills.");
 		return -1;
 	}
+	if (max == 1)
+	{
+		return p[0];
+	}
 
-	character_icky = TRUE;
-	Term_save();
+#ifndef EVIL_TEST /* evil test */
+	screen_icky = TRUE;
+#endif
+        Term_save();
 
 	while (1)
 	{
-		print_skill_batch(p, start, max, mode);
+                print_skill_batch(p, start, max, mode);
 		which = inkey();
 
 		if (which == ESCAPE)
@@ -600,34 +628,43 @@ int do_cmd_activate_skill_aux()
 		{
 			mode = (mode)?FALSE:TRUE;
 			Term_load();
-			character_icky = FALSE;
-		}
+			Term_save();
+#ifndef EVIL_TEST /* evil test */
+			screen_icky = FALSE;
+#endif
+                }
 		else if (which == '+')
 		{
 			start += 20;
 			if (start >= max) start -= 20;
 			Term_load();
-			character_icky = FALSE;
+			Term_save();
+#ifndef EVIL_TEST /* evil test */
+			screen_icky = FALSE;
+#endif
 		}
 		else if (which == '-')
 		{
 			start -= 20;
 			if (start < 0) start += 20;
 			Term_load();
-			character_icky = FALSE;
+			Term_save();
+#ifndef EVIL_TEST /* evil test */
+			screen_icky = FALSE;
+#endif
 		}
 		else if (which == '@')
                 {
                         char buf[80];
 
-                        strcpy(buf, "Cast a spell");
+                        strcpy(buf, "Cast sorcery spell");
                         if (!get_string("Skill action? ", buf, 79))
                                 return FALSE;
 
                         /* Find the skill it is related to */
                         for (i = 1; i < MAX_SKILLS; i++)
                         {
-                                if (!strcmp(buf, s_info[i].action_desc + s_text) && get_skill(i))
+                                if (s_info[i].action_desc && (!strcmp(buf, s_info[i].action_desc) && get_skill(i)))
                                         break;
                         }
                         if ((i < MAX_SKILLS))
@@ -656,7 +693,9 @@ int do_cmd_activate_skill_aux()
 		}
 	}
 	Term_load();
-	character_icky = FALSE;
+#ifndef EVIL_TEST /* evil test */
+        screen_icky = FALSE;
+#endif
 
 	C_FREE(p, MAX_SKILLS, int);
 
@@ -666,113 +705,45 @@ int do_cmd_activate_skill_aux()
 /* Ask & execute a skill */
 void do_cmd_activate_skill()
 {
-	int x_idx;
-	bool push = TRUE;
+	int x_idx = -1;
 
 	/* Get the skill, if available */
-	if (repeat_pull(&x_idx))
-	{
-		if ((x_idx < 0) || (x_idx >= MAX_SKILLS)) return;
-		push = FALSE;
-	}
-	else if (!command_arg) x_idx = do_cmd_activate_skill_aux();
-	else
+        x_idx = do_cmd_activate_skill_aux();
+#if 0
+        else
 	{
 		x_idx = command_arg - 1;
 		if ((x_idx < 0) || (x_idx >= MAX_SKILLS)) return;
                 if ((!s_info[x_idx].value) || (!s_info[x_idx].action_mkey))
                 {
-                        msg_print("You cannot use this skill.");
+                        c_msg_print("You cannot use this skill.");
                         return;
                 }
 	}
-
+#endif
 	if (x_idx == -1) return;
 
-	if (push) repeat_push(x_idx);
-
-	if (!x_idx)
-	{
-		choose_melee();
-		return;
-	}
-
-	/* Break goi/manashield */
-	if (p_ptr->invuln)
-	{
-		set_invuln(0);
-	}
-	if (p_ptr->disrupt_shield)
-	{
-		set_disrupt_shield(0);
-	}
+//	if (!x_idx)
+//	{
+//		choose_melee();
+//		return;
+//	}
 
 	switch (s_info[x_idx].action_mkey)
 	{
-		case MKEY_ANTIMAGIC:
-			do_cmd_unbeliever();
+		case MKEY_SORCERY:
+			cmd_cast();
 			break;
-		case MKEY_MINDCRAFT:
-			do_cmd_mindcraft();
+		case MKEY_MAGERY:
+			cmd_cast();
 			break;
-		case MKEY_ALCHEMY:
-			do_cmd_alchemist();
-			break;
-		case MKEY_MIMIC:
-			do_cmd_mimic();
-			break;
-		case MKEY_POWER_MAGE:
-			do_cmd_powermage();
-			break;
-		case MKEY_RUNE:
-			do_cmd_runecrafter();
-			break;
-		case MKEY_FORGING:
-			do_cmd_archer();
-			break;
-		case MKEY_INCARNATION:
-			do_cmd_possessor();
-			break;
-		case MKEY_TELEKINESIS:
-			do_cmd_portable_hole();
-			break;
-		case MKEY_REALM:
-			do_cmd_cast();
-			break;
-		case MKEY_BLADE:
-			do_cmd_blade();
-			break;
-		case MKEY_SUMMON:
-			do_cmd_summoner();
-			break;
-		case MKEY_NECRO:
-			do_cmd_necromancer();
-			break;
-		case MKEY_TRAP:
-			do_cmd_set_trap();
-			break;
-		case MKEY_STEAL:
-			do_cmd_steal();
-			break;
-		case MKEY_DODGE:
-			use_ability_blade();
-			break;
-		case MKEY_SCHOOL:
-			cast_school_spell();
-			break;
-                case MKEY_LEARN:
-                        do_cmd_study();
-			break;
-                case MKEY_COPY:
-                        do_cmd_copy_spell();
-                        break;
 		default:
-			process_hooks(HOOK_MKEY, "(d)", s_info[x_idx].action_mkey);
 			break;
 	}
 }
 
 
+#if 0
 /* Which magic forbids non FA gloves */
 bool forbid_gloves()
 {
@@ -876,9 +847,9 @@ void do_get_new_skill()
                 s_ptr->value += val[res];
                 s_ptr->mod += mod[res];
                 if (mod[res])
-                        msg_format("You can now learn the %s skill.", s_ptr->name + s_name);
+                        c_msg_format("You can now learn the %s skill.", s_ptr->name + s_name);
                 else
-                        msg_format("Your knowledge of the %s skill increase.", s_ptr->name + s_name);
+                        c_msg_format("Your knowledge of the %s skill increase.", s_ptr->name + s_name);
         }
 
         /* Free them ! */

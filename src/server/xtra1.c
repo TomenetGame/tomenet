@@ -1154,7 +1154,7 @@ static void calc_mana(int Ind)
 	if (levels < 0) levels = 0;
 
 	/* Extract total mana */
-	new_mana = adj_mag_mana[p_ptr->stat_ind[p_ptr->mp_ptr->spell_stat]] * levels / 2;
+	new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + (adj_mag_mana[p_ptr->stat_ind[A_INT]] * levels / 5) + (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * levels / 5);
 
 	/* Hack -- usually add one mana */
 	if (new_mana) new_mana++;
@@ -1163,10 +1163,10 @@ static void calc_mana(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_HANDS];
 
 	/* Examine the gloves */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	/* Only mages are affected */
-	if (p_ptr->mp_ptr->spell_book == TV_MAGIC_BOOK)
+	/* Only Sorcery/Magery users are affected */
+	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
 		/* Assume player is not encumbered by gloves */
 		p_ptr->cumber_glove = FALSE;
@@ -1187,33 +1187,26 @@ static void calc_mana(int Ind)
         if (p_ptr->pclass != CLASS_WARRIOR) new_mana = new_mana * p_ptr->rp_ptr->mana / 100;
         if (new_mana <= 0) new_mana = 1;
 
-	/* Sorcerer really need that */
-	if (p_ptr->pclass == CLASS_SORCERER)
+	/* Sorcery helps mana */
+	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
-		new_mana += (new_mana * 4) / 10;
+		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
 	}
-
+#if 0 // DGDGDGDG
 	/* Mimic really need that */
 	if (p_ptr->pclass == CLASS_MIMIC)
 	{
 		new_mana = (new_mana * 7) / 10;
 		if (new_mana < 1) new_mana = 1;
-	}
-#if 0
-	/* Gloves of magic are nice things */
-	if ((f1 & TR1_MANA) && (p_ptr->pclass != CLASS_MIMIC))
-	{
-		/* 1 pval = 10% more mana */
-		new_mana += new_mana * o_ptr->pval / 10;
-	}
-#endif	// 0
+        }
+#endif
 
 	if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 10;
 	
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
 	{
-		new_mana += new_mana / 2;
+		new_mana += (new_mana * get_skill(p_ptr, SKILL_SORCERY)) / 100;
 	}
 
 	/* Disruption Shield now increases hp at the cost of mana */
@@ -1222,14 +1215,14 @@ static void calc_mana(int Ind)
 	/* commented out (evileye for power) */
 	/*	new_mana -= new_mana / 2; */
 	}
-	
+#if 0 // DGDGDG
 	/* Warrior dont get much */
 	if (p_ptr->pclass == CLASS_WARRIOR)
 	{
 		new_mana /= 8;
 		if (!new_mana) new_mana++;
 	}
-
+#endif
 	/* Assume player not encumbered by armor */
 	p_ptr->cumber_armor = FALSE;
 
@@ -1399,9 +1392,11 @@ static void calc_hitpoints(int Ind)
 	/* Always have at least one hitpoint per level */
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
 
+#if 0 // DGDGDGDG why ?
 	/* Option : give mages a bonus hitpoint / lvl */
 	if (cfg.mage_hp_bonus)
 		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
+#endif
 
 	/* Factor in the hero / superhero settings */
 	if (p_ptr->hero) mhp += 10;
@@ -1415,25 +1410,18 @@ static void calc_hitpoints(int Ind)
 		mhp = mhp * 3 / 5;
 	}
 
+        /* Sorcery reduces hp */
+	if (get_skill(p_ptr, SKILL_SORCERY))
+	{
+		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
+	}
+
 	/* Disruption Shield */
 	if (p_ptr->tim_manashield)
 	{
 	/* commented out (evileye for power) */
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
-
-#if 0
-	/* Get the gloves */
-	o_ptr = &p_ptr->inventory[INVEN_NECK];
-
-	/* Examine the gloves */
-			  object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-	if (f1 & TR1_LIFE)
-	  {
-	    mhp += o_ptr->pval * 10;
-	  }
-#endif	// 0
 
 	mhp += mhp * p_ptr->to_l / 10;
 
@@ -3215,6 +3203,8 @@ void update_stuff(int Ind)
                         {
                                 Send_skill_init(Ind, PKT_SKILL_INIT_NAME, i);
                                 Send_skill_init(Ind, PKT_SKILL_INIT_DESC, i);
+                                if (s_info[i].action_desc != NULL)
+                                        Send_skill_init(Ind, PKT_SKILL_INIT_MKEY, i);
                         }
                 }
 	}

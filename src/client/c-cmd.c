@@ -417,7 +417,7 @@ void process_command()
 			break;
 
 		case 'm':
-			cmd_cast();
+			do_cmd_activate_skill();
 			break;
 
 		case 'p':

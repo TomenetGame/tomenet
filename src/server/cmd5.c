@@ -997,6 +997,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 
 	bool antifail = FALSE;
 
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
 
@@ -1092,7 +1094,8 @@ void do_cmd_cast(int Ind, int book, int spell)
 	chance = spell_chance(Ind, s_ptr);
 
 	/* Failed spell */
-	if ((rand_int(100) < chance) || antifail)
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
 	{
 		msg_print(Ind, "You failed to get the spell off!");
 	}
@@ -1375,7 +1378,7 @@ void do_cmd_cast(int Ind, int book, int spell)
 			case 31:
 			{
 				msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
 				break;
 			}
 
@@ -2115,6 +2118,8 @@ void do_cmd_sorc(int Ind, int book, int spell)
 
 	bool antifail = FALSE;
 
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
 	
@@ -2202,14 +2207,16 @@ void do_cmd_sorc(int Ind, int book, int spell)
 		return;
 	}
 
-	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_spell;
+        /* Take a turn */
+        /* Compute in the effect of Castingspeed skill */
+	p_ptr->energy -= ((level_speed(&p_ptr->wpos) * get_skill_scale(p_ptr, SKILL_CASTSPEED, 60)) / 100) / p_ptr->num_spell;
 
 	/* Spell failure chance */
 	chance = spell_chance(Ind, s_ptr);
 
 	/* Failed spell */
-	if ((rand_int(100) < chance) || antifail)
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
 	{
 		msg_print(Ind, "You failed to get the spell off!");
 	}
@@ -2500,7 +2507,7 @@ void do_cmd_sorc(int Ind, int book, int spell)
                         take_hit(Ind, 90, "the heat of a Pyrrhic Blast");
                         break;
                 case 47: /* Word of Destruction */
-                        destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+                        destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
                         break;
 
                 case 48: /* Radiate Fear */
@@ -2965,6 +2972,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 
 	bool antifail = FALSE;
 
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
 
@@ -3065,7 +3074,8 @@ void do_cmd_pray(int Ind, int book, int spell)
 	chance = spell_chance(Ind, s_ptr);
 
 	/* Check for failure */
-	if ((rand_int(100) < chance) || antifail)
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
 	{
 		msg_print(Ind, "You failed to concentrate hard enough!");
 	}
@@ -3533,7 +3543,7 @@ void do_cmd_pray(int Ind, int book, int spell)
 			case 44:
 			{
 				msg_format_near(Ind, "%s unleashs a spell of great power!", p_ptr->name);
-				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE);
+				destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR);
 				break;
 			}
 
@@ -4636,6 +4646,8 @@ void do_cmd_shad(int Ind, int book, int spell)
 
 	bool antifail = FALSE;
 
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
 
@@ -4728,7 +4740,8 @@ void do_cmd_shad(int Ind, int book, int spell)
 	chance = spell_chance(Ind, s_ptr);
 
 	/* Failed spell */
-	if ((rand_int(100) < chance) || antifail)
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
 	{
 		msg_print(Ind, "You failed to get the spell off!");
 	}
@@ -5093,6 +5106,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 
 	bool antifail = FALSE;
 
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) antifail = TRUE;
 
@@ -5185,7 +5200,8 @@ void do_cmd_hunt(int Ind, int book, int spell)
 	chance = spell_chance(Ind, s_ptr);
 
 	/* Failed spell */
-	if ((rand_int(100) < chance) || antifail)
+	if ((rand_int(100) < chance) || antifail ||
+			(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC))
 	{
 		msg_print(Ind, "You failed to get the spell off!");
 	}
@@ -6356,6 +6372,10 @@ void do_cmd_mimic(int Ind, int spell)
 {
 	player_type *p_ptr = Players[Ind];
 	int j;
+
+	/* should it..? */
+	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 
 	/* No anti-magic shields around ? */
 	if (check_antimagic(Ind)) {

@@ -22,6 +22,14 @@ typedef unsigned int u32b;
 #define SKILL_SWORD             3
 #define SKILL_POLEARM           4
 #define SKILL_HAFTED            5
+#define SKILL_ARCHERY           6
+#define SKILL_SLING             7
+#define SKILL_BOW               8
+#define SKILL_XBOW              9
+#define SKILL_BACKSTAB          10
+#define SKILL_MAGIC             11
+#define SKILL_CASTSPEED         12
+#define SKILL_SORCERY           13
 
 /* Ugly but needed */
 #define MAX_SKILLS              70
@@ -263,6 +271,80 @@ struct player_type
 
 	s16b health_who;	/* Who's shown on the health bar */
 
+	s16b view_n;		/* Array of grids viewable to player */
+	byte view_y[VIEW_MAX];
+	byte view_x[VIEW_MAX];
+
+	s16b lite_n;		/* Array of grids lit by player lite */
+	byte lite_y[LITE_MAX];
+	byte lite_x[LITE_MAX];
+
+	s16b temp_n;		/* Array of grids used for various things */
+	byte temp_y[TEMP_MAX];
+	byte temp_x[TEMP_MAX];
+
+	s16b target_n;		/* Array of grids used for targetting/looking */
+	byte target_y[TEMP_MAX];
+	byte target_x[TEMP_MAX];
+	s16b target_idx[TEMP_MAX];
+
+/*	cptr info[128];		Temp storage of *ID* and Self Knowledge info */
+	char infofile[1024];		/* Temp storage of *ID* and Self Knowledge info */
+	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
+
+	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
+	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
+	bool trap_ident[MAX_T_IDX];       /* do we know the name */
+
+	bool options[64];	/* Player's options */
+	byte d_attr[MAX_K_IDX];
+	char d_char[MAX_K_IDX];
+	byte f_attr[MAX_F_IDX];
+	char f_char[MAX_F_IDX];
+	byte k_attr[MAX_K_IDX];
+	char k_char[MAX_K_IDX];
+	byte r_attr[MAX_R_IDX];
+	char r_char[MAX_R_IDX];
+
+	bool carry_query_flag;
+	bool use_old_target;
+	bool always_pickup;
+	bool stack_force_notes;
+	bool stack_force_costs;
+	bool find_ignore_stairs;
+	bool find_ignore_doors;
+	bool find_cut;
+	bool find_examine;
+	bool disturb_move;
+	bool disturb_near;
+	bool disturb_panel;
+	bool disturb_state;
+	bool disturb_minor;
+	bool disturb_other;
+	bool stack_allow_items;
+	bool stack_allow_wands;
+	bool view_perma_grids;
+	bool view_torch_grids;
+	bool view_reduce_lite;
+	bool view_reduce_view;
+	bool view_yellow_lite;
+	bool view_bright_lite;
+	bool view_granite_lite;
+	bool view_special_lite;
+
+	s16b max_panel_rows;
+	s16b max_panel_cols;
+	s16b panel_row;
+	s16b panel_col;
+	s16b panel_row_min;
+	s16b panel_row_max;
+	s16b panel_col_min;
+	s16b panel_col_max;
+	s16b panel_col_prt;	/* What panel this guy's on */
+	s16b panel_row_prt;
+	s16b panel_row_old;
+	s16b panel_col_old;
+
 	char died_from[80];	/* What off-ed him */
 	char died_from_list[80]; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
@@ -387,6 +469,7 @@ struct player_type
 	bool old_heavy_wield;
 	bool old_heavy_shoot;
 	bool old_icky_wield;
+	bool old_awkward_wield;	/* Icky weapon */
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
@@ -399,6 +482,7 @@ struct player_type
 	bool heavy_wield;	/* Heavy weapon */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
+	bool awkward_wield;	/* Icky weapon */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 
