@@ -1540,6 +1540,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr)
 		{
 			/* Require full knowledge of both items */
 			if (!object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
+			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
 
 			/* Fall through */
 		}
