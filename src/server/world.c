@@ -50,6 +50,7 @@ struct list *addlist(struct list **head, int dsize){
 struct list *remlist(struct list **head, struct list *dlp){
 	struct list *lp;
 	lp=*head;
+	if(!lp || !dlp) return(NULL);
 	if(dlp==*head){
 		*head=lp->next;
 		free(dlp->data);
