@@ -191,10 +191,11 @@ void delete_monster(int Depth, int y, int x)
 		for(i=0;i<m_max;i++){
 			monster_type *m_ptr=&m_list[i];
 #ifdef NEW_DUNGEON
-			if(m_ptr->r_idx && inarea(wpos, &m_ptr->wpos)){
+			if(m_ptr->r_idx && inarea(wpos, &m_ptr->wpos))
 #else
-			if(m_ptr->r_idx && Depth==m_ptr->dun_depth){
+			if(m_ptr->r_idx && Depth==m_ptr->dun_depth)
 #endif
+			{
 				if(y==m_ptr->fy && x==m_ptr->fx)
 					delete_monster_idx(i);
 			}

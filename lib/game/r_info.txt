@@ -2,6 +2,7 @@
 # With new monsters for Zangband 2.2 (or 2.3)
 # With new monsters for PernAngband 3.x.x
 # With lots of monsters for PernAngband 4.x.x
+# Ported from PernAngband to PernMangband (3.3.x)
 
 # This file is used to initialize the "lib/raw/r_info.raw" file, which is
 # used to initialize the "monster race" information for the Angband game.
@@ -288,8 +289,9 @@ I:110:35d10:40:10:3
 W:0:4:730:0
 E:0:1:1:2:1:1
 O:0:100:0:0
-#B:MOAN:*
-#B:MOAN:*
+# Soon MOAN will be removed again?
+B:MOAN:*
+B:MOAN:*
 F:UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE |
 F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | 
 F:ONLY_ITEM | DROP_90 | DROP_GOOD | NEVER_MOVE
@@ -18337,6 +18339,8 @@ F:NEVER_MOVE | NEVER_BLOW | GOOD | NO_TARGET
 F:MORTAL | BASEANGBAND | UNIQUE | NEUTRAL | NO_DEATH
 D:He must have suffered horrible tortures...
 
+# PernMangband Additions
+
 N:1043:Pitiful-looking Cheezer
 G:t:U
 I:110:1d4:10:1:40
@@ -18350,3 +18354,14 @@ F:TAKE_ITEM | OPEN_DOOR |
 F:MORTAL | JOKEANGBAND | HAS_LITE
 D:You just can't help feeling sorry for him. 
 
+# N: serial number : monster name
+# G: symbol : color
+# I: speed : hit points : vision : armor class : alertness
+# W: depth : rarity : corpse weight : experience for kill
+# E: weapons : torso : arms : finger : head : leg
+# O: treasure : combat : magic : tool
+# B: attack method : attack effect : damage
+# F: flag | flag | etc
+# S: spell frequency |
+# S: spell type | spell type | etc
+# D: Description

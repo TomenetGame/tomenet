@@ -1,5 +1,5 @@
 ':' to chat **********************************************************
-'?' to help ** PernMAngband 3.3.2a **  The Troubles of Middle Earth **
+'?' to help ** PernMAngband 3.3.4a **  The Troubles of Middle Earth **
             **********************************************************
 
                "One Ring to rule them all, One Ring to find them
@@ -8,16 +8,16 @@
                                 "Lord of The Rings", J.R.R.Tolkien
 
  - New item system, including hundleds of new egos/artifacts.
+ - 1043 PernAngband monsters are ported (not fully implemented, though)
  - Multiple towns/dungeons/towers implemented. Try exploring the wilderness!
- - About 160 new traps added; They now are nasty foes!
+ - About 170 new traps added; They now are nasty foes!
  - Ego monsters added; monsters with special abilities can be generated.
  - Dropping/throwing/selling(etc) will make non-random artifacts disappear!
  - Save the game in town as far as possible, so as not to be buried alive.
  - Please don't abuse the system, so as not to have your character removed.
  - Client version 3.2.1.6 (or greater) is needed.
-   The latest client is available from the official site below.
+   3.2.1.6 client is available from the official site below.
  - To learn about new features/changes, please see the help screen('?').
 
         Official PernMangband site - http://www.pernmangband.org/
-   PernMAngband 3.x: DarkGod(darkgod@ifrance.com) / PernMangband dev-team
- Send all comments, bug reports, patches, etc, to "darkgod@pernangband.org".
+  PernMAngband 3.x: DarkGod(darkgod@pernangband.org) / PernMangband dev-team

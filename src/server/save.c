@@ -1476,6 +1476,7 @@ static void wr_dungeon(int Depth)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 #endif
+	s_printf("%d players on %d,%d,%d.\n", players_on_depth(wpos), wpos->wx, wpos->wy, wpos->wz);
 
 	/* Depth */
 #ifdef NEW_DUNGEON

@@ -1022,6 +1022,18 @@ void do_cmd_quaff_potion(int Ind, int item)
 			break;
 		}
 
+		case SV_POTION_RESISTANCE:
+		{
+			ident = 
+				set_oppose_acid(Ind, p_ptr->oppose_acid + randint(20) + 20) |
+				set_oppose_elec(Ind, p_ptr->oppose_elec + randint(20) + 20) |
+				set_oppose_fire(Ind, p_ptr->oppose_fire + randint(20) + 20) |
+				set_oppose_cold(Ind, p_ptr->oppose_cold + randint(20) + 20) |
+				set_oppose_pois(Ind, p_ptr->oppose_pois + randint(20) + 20);
+			break;
+		}
+
+
 	}
 	} else {/* POTION2 */}
 

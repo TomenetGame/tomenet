@@ -338,6 +338,26 @@ void wild_apply_night(int Depth)
 
 /*
  * Helper function for wild_add_monster
+ *
+ * a hack not to have elven archers etc. on town.
+ */
+static bool wild_monst_aux_town(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Maggot is allowed :) */
+	if (!strcmp(&r_name[r_ptr->name],"Farmer Maggot")) return TRUE;
+
+	/* no special monsters allowed */
+	if (r_ptr->flags9 & RF9_SPECIAL_GENE) return FALSE;
+
+	/* OK */
+	return FALSE;
+}
+
+
+/*
+ * Helper function for wild_add_monster
  */
 static bool wild_monst_aux_lake(int r_idx)
 {
@@ -481,6 +501,7 @@ void wild_add_monster(int Depth)
 		case WILD_SWAMP: get_mon_num_hook = wild_monst_aux_swamp; break;
 		case WILD_DENSEFOREST: get_mon_num_hook = wild_monst_aux_denseforest; break;
 		case WILD_WASTELAND: get_mon_num_hook = wild_monst_aux_wasteland; break;
+		case WILD_TOWN: get_mon_num_hook = wild_monst_aux_town; break;
 		default: get_mon_num_hook = NULL;	
 	}
 	get_mon_num_prep();

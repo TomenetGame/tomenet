@@ -13,6 +13,11 @@
  * included in all such copies.
  */
 
+/*
+ * Things using the similar method as randarts are also
+ * put in here, eg. ego-items (and randunis).		- Jir -
+ */
+
 #include "angband.h"
 
 /* How much power is assigned to randarts */

@@ -543,4 +543,5 @@ Change list for PernMangband
   - Most of new flags are not implemented yet.
 - Black-Breath is implemented.
 - Specific ESP (eg. slay-orc weapon gives orc-only ESP)
+- Fixed a bug that allowed to generate breeders on the wilderness.
 
