@@ -2087,11 +2087,20 @@ void c_msg_print(cptr msg)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
+        cptr msg_inven_destroy1 = "\377oYour ";
+        cptr msg_inven_destroy2 = "\377oOne of your ";
+        cptr msg_inven_destroy3 = "\377oSome of your ";
+        cptr msg_inven_destroy4 = "\377oAll of your ";
+/*	cptr msg_inven_destroy1 = "was destroyed!";
+        cptr msg_inven_destroyx = "were destroyed!";*/
 	cptr msg_nopkfight = "You have beaten";
 	cptr msg_nopkfight2 = "has beaten you";
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
+	cptr msg_afk1 = "seems to be AFK now";	 	
+        cptr msg_afk2 = "has returned from AFK";
+
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
 	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
 
@@ -2147,8 +2156,12 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
 	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
 	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
+	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) || \
+	    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) || \
+//	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
 	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[')) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		c_message_add_chat(msg);
