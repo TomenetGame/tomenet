@@ -2478,7 +2478,7 @@ static void purge_old()
  * this clearing.
  */
 void scan_objs(){
-	int i;
+	int i,cnt=0, dcnt=0;
 	object_type *o_ptr;
 	cave_type **zcave;
 	for(i=0;i<MAX_K_IDX;i++){
@@ -2488,12 +2488,16 @@ void scan_objs(){
 			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos))){
 				/* ick suggests a store, so leave) */
 				if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
-					if(++o_ptr->marked==3)
+					if(++o_ptr->marked==3){
 						delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx);
+						dcnt++;
+					}
 				}
+				cnt++;
 			}
 		}
 	}
+	s_printf("Scanned %d objects. Removed %d.\n");
 }
 
 
