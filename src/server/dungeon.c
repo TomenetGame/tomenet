@@ -1401,7 +1401,7 @@ static void process_player_end(int Ind)
 
 		/* Drowning, but not ghosts */
 		if(zcave[p_ptr->py][p_ptr->px].feat==FEAT_WATER && !p_ptr->ghost && !p_ptr->fly){
-			int hit=p_ptr->mhp/15;
+			int hit=p_ptr->mhp/10;
 			if(!hit) hit=1;
 
 			/* Take damage */
@@ -1409,7 +1409,21 @@ static void process_player_end(int Ind)
 				!(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
 				!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD)
 				))
-				take_hit(Ind, hit, "drowning");
+			{
+				/* temporary abs weight calc */
+				if(p_ptr->wt+p_ptr->total_weight/10 > 170){
+					int factor=(p_ptr->wt+p_ptr->total_weight/10)-150;
+					/* too heavy, always drown? */
+					if(factor<300){
+						if(randint(factor)<20) hit=0;
+					}
+					if(randint(1000-factor)<10){
+						msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
+						do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
+					}
+					take_hit(Ind, hit, "drowning");
+				}
+			}
 		}
 
 		/* Take damage from cuts */
