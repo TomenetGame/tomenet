@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. July 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. July 2004; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.2.2, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -2947,19 +2947,21 @@ Items are classified by
 If you find an item, it's 'unidentified'. That means you see only the
 basic item type.
 Example:
-A whip (1d6) {+,?}
+A whip {+,?} (1d6)
 The ? indicates that you don't know yet which level is required to wield
 this item. You have to identify the item to find out more about it.
+(The (1d6) means that this weapon has one 6-sided dice rolled to determine
+its damage afflicted to your target.)
 
 Assuming you identify it you could get one of the results below:
 
 Example 1:
-A whip (1d6) (+0,+3) {+,1}
+A whip {+,1} (1d6) (+0,+3)
 This is a magical whip. Magical, because its damage is enchanted to +3.
 It doesn't possess any further special abilities.
 
 Example 2:
-A Fiery Whip of Gondolin (1d6) (+8,+11) (+3)
+A Fiery Whip of Gondolin {+,24} (1d6) (+8,+11) (+3)
 This is an ego-weapon ('of Gondolin') with a fire brand ('fiery'). The
 base weapon type is a whip which makes it belong to the hafted weapons.
 Its to-hit and to-damage are magically enchanted to +8 and +11.
@@ -3055,6 +3057,13 @@ the faster and clearer he can feel the items value. This is called
 'pseudo-identifying'. Warriors are more likely to pseudo-id than casters.
 If a player pseudo-ids an item, the 'feeling' will be appended in { }
 brackets to the item name.
+Note that archers or casters will also become better at pseudo-id'ing,
+if they train the 'Archery' or 'Magic' skill respectively.
+'Archery' at level 11 helps to get more detailed ('excellent' too instead of
+just 'good') feelings about ranged weapons and ammunition.
+'Magic' at level 11 helps to get more detailed ('excellent' too, instead of
+just 'good') feelings about magic items, potions and scrolls.
+
 Items display the following pseudo-id tags:
 
 -Basic items, non-magical:      {average}
@@ -4867,6 +4876,7 @@ All vampires and vampire bats
             Vampire bat form has 100% chance to do a vampiric attack,
             real vampire forms have 50% chance (half their attacks are hits,
             the other half is biting). For details see '(5.15) Vampirism'.
+All angels  Resist light, blindness and poison (usually immunity).
 
 Keep in mind that by changing forms you can potentially lose abilities that
 you had in player form, because they were bound to your normal form.
