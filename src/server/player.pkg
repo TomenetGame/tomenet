@@ -624,6 +624,7 @@ struct player_type
 };
 
 extern bool imprison(int Ind, int time, char *reason);
+bool check_antimagic(int Ind);
 
 extern int NumPlayers;
 extern player_type *Players[0xFFFFF] @ Players_real;

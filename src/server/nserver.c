@@ -317,6 +317,13 @@ static int Init_setup(void)
 	return 0;
 }
 	
+void init_players(){
+	/* Last player is the DM Edit player ! */
+	/* As no extra connection is required, */
+	/* we need only allocate the player_type for it */
+	C_MAKE(Players, max_connections+1, player_type *);
+}
+
 
 /*
  * Talk to the metaserver.
@@ -470,11 +477,6 @@ int Setup_net_server(void)
 		quit("Cannot allocate memory for connections");
 
 	memset(Conn, 0, size);
-
-	/* Last player is the DM Edit player ! */
-	/* As no extra connection is required, */
-	/* we need only allocate the player_type for it */
-	C_MAKE(Players, max_connections+1, player_type *);
 
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);

@@ -641,7 +641,7 @@ u32b get_school_spell(cptr do_what)
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
-		o_ptr = &p_ptr->inventory[item];
+		o_ptr = &inventory[item];
 	}
 
 #if 0 //someome fix ;)
@@ -719,7 +719,6 @@ u32b get_school_spell(cptr do_what)
                                 /* Redo asking */
                                 continue;
                         }
-
 
                         /* Note verify */
                         ask = (isupper(choice));

@@ -269,6 +269,8 @@ int main(int argc, char *argv[])
 	if (!load_server_cfg() && config_specified)
 		quit(NULL);
 
+	init_players();
+
 	/* Initialize the arrays */
 	init_some_arrays();
 
