@@ -1188,7 +1188,8 @@ extern int stricmp(cptr a, cptr b);
 /* script.c */
 extern void init_lua();
 extern bool pern_dofile(int Ind, char *file);
-extern bool exec_lua(int Ind, char *file);
+extern int exec_lua(int Ind, char *file);
+extern cptr string_exec_lua(int Ind, char *file);
 extern void master_script_begin(char *name, char mode);
 extern void master_script_end();
 extern void master_script_line(char *buf);

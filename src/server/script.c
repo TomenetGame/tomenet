@@ -254,13 +254,39 @@ bool pern_dofile(int Ind, char *file)
         return (FALSE);
 }
 
-bool exec_lua(int Ind, char *file)
+int exec_lua(int Ind, char *file)
 {
-        int oldtop = lua_gettop(L);
+	int oldtop = lua_gettop(L);
+        int res;
+
         lua_dostring(L, format("Ind = %d", Ind));
-        lua_dostring(L, file);
+        if (!lua_dostring(L, file))
+        {
+                int size = lua_gettop(L) - oldtop;
+                res = tolua_getnumber(L, -size, 0);
+        }
+	else
+                res = 0;
+
         lua_settop(L, oldtop);
-        return (FALSE);
+	return (res);
+}
+
+cptr string_exec_lua(int Ind, char *file)
+{
+	int oldtop = lua_gettop(L);
+	cptr res;
+
+        lua_dostring(L, format("Ind = %d", Ind));
+	if (!lua_dostring(L, file))
+        {
+                int size = lua_gettop(L) - oldtop;
+                res = tolua_getstring(L, -size, "");
+        }
+	else
+		res = "";
+        lua_settop(L, oldtop);
+	return (res);
 }
 
 static FILE *lua_file;
