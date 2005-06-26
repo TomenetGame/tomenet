@@ -6,7 +6,7 @@
 # if you need others tell me
 # (well, then, what for town/wilderness?)
 #
-# date is always this format
+# Date is always this format
 # 02/1/2002
 #
 # tags are always this form: '[x]- ' this is 5 chars, so if the line must
@@ -398,7 +398,7 @@
 [O]- Orchast activation (detect_monsters_xxx)
 [M]- monster AI is tuned for new terrains.
 [O]- store buys (*Defender*) as if it's (+0, +0)
-[O]- Mummy Wrapping (tool 
+[O]- Mummy Wrapping (tool
 [B]- some store owners didn't have 'cost(C:)' entry. (same with ToME)
 [B]- build_room_vault crashed.
 [B]- wrong death reason was shown when killed by a trap.
@@ -491,7 +491,7 @@
 [m]- new cs activate method. (please be careful ;( )
 [m]- cs save/load key doors.
 [m]- old key door code in "open" left in.
-[m]- guildhall key doors will be saved twice in rare cases 
+[m]- guildhall key doors will be saved twice in rare cases
       known, do not change
 # do not delete/modify any of the above changes please
 [m]- inscriptions moved to csfunc
@@ -504,7 +504,7 @@
 # to change activation method again first.
 # it still needs work remember. if you would
 # rather wait until it is finished that is ok
-# it will probably fail just now. 
+# it will probably fail just now.
 # do not delete
 
 22/08/2002 (evileye)
@@ -538,7 +538,7 @@
 18/08/2002 (evileye)
 [m]- File transfer changes. I have changed script upload in client to
      use the file transfer system which I wrote. Server replies with
-     suitable messages regarding success/permission. My intent is to 
+     suitable messages regarding success/permission. My intent is to
      change the system so that it will upload/download into a
      predefined set of directories (and check for illegal characters in
      filenames which pose a security threat).
@@ -958,11 +958,11 @@ To find the latest change quickly, search ==== :)
 
 
 28/09/2001 - Client changes (Zz)
-- Now you can specify an argument in Windows and client will connect 
+- Now you can specify an argument in Windows and client will connect
   directly bypassing meta server (previously this only worked for Unix clients)
-- Multiple colors for different types of messages in recall window 
+- Multiple colors for different types of messages in recall window
   (death, kill, private messages, etc.)
-- CTRL-O works like CTRL-P except only shows important messages - good 
+- CTRL-O works like CTRL-P except only shows important messages - good
   for review after a long fight or long AFK
 
 29/09/2001
@@ -1077,7 +1077,7 @@ To find the latest change quickly, search ==== :)
 - You can scroll chat-history with ctrl-o.
 - "'" command is supported(see above).
 - Graphics bug in win-client is fixed (by Asclep)
- 
+
 19/11/2001 (Jir)
 - Some xp bonus to encourage partying (C.Blue's idea)
 - Revised conditions to check equipments.
@@ -1562,7 +1562,7 @@ To find the latest change quickly, search ==== :)
 - PUBLIC_RFE: allows all the players to see rfe-file sent by /rfe.
 - /purge: clear monsters/items/traps on the wilderness (save owned items)
 [B] unstaticer is (I hope) sane now.
-[B] lantern refilling 
+[B] lantern refilling
 [B] watery respawning crashed
 [B] a trap caused buggy screen like ^^^^^^^^^^^^^^^^^^^^^^^
 [B] food comsumption was too slow, you know
@@ -1646,7 +1646,7 @@ To find the latest change quickly, search ==== :)
 - slash-commands online manual: /help
 - /less
 - more efficiency codes.
-[B] /rec without parameter 
+[B] /rec without parameter
 [B] summoner could summon 'behind' walls.
 -- fixes merged (Evileye)
 [B] 'I' or 'e' messes the screen inside stores (/* evil test */ stuff)
@@ -2508,7 +2508,7 @@ Porting targets
   + spiked/locked door should be *tougher* (cf. Vanilla)
   + IRC server connection
   + player in multi-hued form should be multi-hued (naturally - code it)
-  
+
 [major ones]
 - monsters' interactions
 - subclass system (thief, esper, erudit, tough, mighty etc)
@@ -2645,7 +2645,7 @@ below this line are the unfixed bugs known:
            d) Acealdan the level 1 Half-Orc Rogue
            e) Acealdan the level 1 Human Adventurer
            f) Acealdan the level 1 Human Adventurer
-           g) New character                                                                                     
+           g) New character
            Q) Quit
 
 
@@ -2744,7 +2744,7 @@ below this line are the unfixed bugs known:
      (maybe already fixed?)
      20 Aug 15:58:51: Goodbye Afared(Key)=key@pm.dip.jp ("client quit")
      send end
-     
+
      Program received signal SIGSEGV, Segmentation fault.
      Packet_printf (sbuf=0x88b1024, fmt=0x8171e65 "%c%c%hd") at common/sockbuf.c:473
      473                     *buf++ = cval;
@@ -2843,17 +2843,17 @@ below this line are the unfixed bugs known:
 #6  0x80f56ca in main (argc=2, argv=0xbfbff6c4) at server/main.c:272
 #7  0x8049d65 in _start ()
 (gdb) print *dun.l_ptr
-$6 = {ondepth = 1, lastused = 1025134735, up_x = 63 '?', up_y = 41 ')', 
-  dn_x = 50 '2', dn_y = 41 ')', rn_x = 183 '', rn_y = 8 '\b', flags1 = 0, 
+$6 = {ondepth = 1, lastused = 1025134735, up_x = 63 '?', up_y = 41 ')',
+  dn_x = 50 '2', dn_y = 41 ')', rn_x = 183 '', rn_y = 8 '\b', flags1 = 0,
     hgt = 44 ',', wid = 99 'c', cave = 0x87c6600}
 
 Program received signal SIGSEGV, Segmentation fault.
-0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
+0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179,
         dam=500, typ=13) at server/spells1.c:2606
 2606            o_ptr = &o_list[c_ptr->o_idx];
-#0  0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179, 
+#0  0x80879d3 in project_i (Ind=1, who=-1, r=0, wpos=0x8d3ca2c, y=121, x=179,
         dam=500, typ=13) at server/spells1.c:2606
-#1  0x808d8b1 in project (who=-1, rad=16, wpos=0x8d3ca2c, y=121, x=179, 
+#1  0x808d8b1 in project (who=-1, rad=16, wpos=0x8d3ca2c, y=121, x=179,
         dam=500, typ=13, flg=120) at server/spells1.c:5850
 #2  0x8095348 in fire_ball (Ind=1, typ=13, dir=6, dam=500, rad=16)
 at server/spells2.c:4082
