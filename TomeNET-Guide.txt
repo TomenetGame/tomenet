@@ -3557,6 +3557,36 @@ Havoc           Fires balls or beams of random type, the exact outcome is hard
                 to tell.. it's very powerful though.
 
 
+Jewelry
+--
+Talisman (Amulet)       Increases your luck, helps you finding better loot.
+Rings of Might          increase strength and constitution.
+Rings of Toughness      increase dexterity and constitution.
+Rings of Cunningness    increase strength and intelligence.
+Rings of Ready Wit      increase dexterity and intelligence.
+Amulets of Brilliance   increase intelligence and wisdom, provide light.
+Rings of Sustain Might          sustain strength and constitution.
+Rings of Sustain Ability        sustain strength and dexterity.
+Rings of Sustain Cunningness    sustain strength, intelligence and charisma.
+Rings of Sustain Steadiness     sustain wisdom and constitution.
+Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
+Rings of Sustain Brilliance     sustain intelligence and wisdom.
+Rings/Amulets of Slow Digestion will slow your food digestion so you have to
+                        eat less often. Also prevents instant paralysation if
+                        you hit a bowel cramps trap.
+Amulet of Anti-Magic    See '5.7 NO_MAGIC'
+Amulet of Anti-Teleportation    If worn it will suppress all attemps to
+                                teleport, phase or recall on the whole level!
+                                This can be very dangerous but also very
+                                helpful since it affects both players as well
+                                as monsters.
+                                Any word-of-recall that is cast while
+                                teleportation is supressed will be suspended
+                                and then immediately kick in as soon as the
+                                amulet is taken off. This allows some
+                                interesting tactics..
+
+
 Misc
 --
 (Small) Firestones  These can be eaten by Thunderlords and have various
@@ -3581,6 +3611,9 @@ Misc
                         - Speed-up:     Speed bonus.
                         - Heroism:      10 more HP, to-hit bonus, resist fear.
                         - Temp res:     Temporary base and poison resistance.
+Dwarven lanterns    Make you resist fear. Don't need to be fueled.
+Feanorian lamps     Make you resist fear and see the invisible. Don't need to
+                    be fueled.
 Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     (+to-hit, +to-dam) on digging tools as well as a high
                     weight help to further increase their effectiveness.
@@ -3617,35 +3650,6 @@ Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it.
 Guild key               See (6.9).
-
-Jewelry
---
-Talisman (Amulet)       Increases your luck, helps you finding better loot.
-Rings of Might          increase strength and constitution.
-Rings of Toughness      increase dexterity and constitution.
-Rings of Cunningness    increase strength and intelligence.
-Rings of Ready Wit      increase dexterity and intelligence.
-Amulets of Brilliance   increase intelligence and wisdom, provide light.
-Rings of Sustain Might          sustain strength and constitution.
-Rings of Sustain Ability        sustain strength and dexterity.
-Rings of Sustain Cunningness    sustain strength, intelligence and charisma.
-Rings of Sustain Steadiness     sustain wisdom and constitution.
-Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
-Rings of Sustain Brilliance     sustain intelligence and wisdom.
-Rings/Amulets of Slow Digestion will slow your food digestion so you have to
-                        eat less often. Also prevents instant paralysation if
-                        you hit a bowel cramps trap.
-Amulet of Anti-Magic    See '5.7 NO_MAGIC'
-Amulet of Anti-Teleportation    If worn it will suppress all attemps to
-                                teleport, phase or recall on the whole level!
-                                This can be very dangerous but also very
-                                helpful since it affects both players as well
-                                as monsters.
-                                Any word-of-recall that is cast while
-                                teleportation is supressed will be suspended
-                                and then immediately kick in as soon as the
-                                amulet is taken off. This allows some
-                                interesting tactics..
 
 Mushrooms with bad effects are also often poisonous.
 
