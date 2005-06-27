@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. February 2004; written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. June 2005; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -3373,6 +3373,10 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 AC boni on Dark Swords won't affect the antimagic field.
                 The antimagic chance of a dark sword stacks with the
                 Antimagic skill (see 6.2).
+Bluesteel Blade Cannot rust (immune against water attacks) and are especially
+                sharp (see 'VORPAL' under (5.8)).
+Shadow Blade    Resists darkness, cannot be harmed by acid or water, provides
+                a fixed stealth bonus of +2..
 Magic Arrows    Those will return into your quiver magically, so you need only
                 one of them really. Same goes for artifact ammunition of any
                 type. (Magic Arrows can be destroyed by fire or acid though.)
@@ -3459,6 +3463,9 @@ Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 blood bond ends. Everyone will receive messages about a blood
                 bond being formed ("<player A> blood bonds with <player B>")
                 and about the result ("<A> wins the blood bond against <B>").
+                (Hit 'P' for party menu to declare war on someone after you
+                read blood bond. Making peace will be done automatically when
+                a blood bond ends!)
 Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 destroy them. Note that many items can be sold for good cash
                 as soon as they are uncursed!
@@ -3741,7 +3748,8 @@ _average_ of 700 total damage points per _turn_ (Monster, depending on their
 race, can perform up to 4 melee attacks each turn they can move/act). Note
 that the monster may attack for more damage, it's just the averaged value.
 Wearing armour will further reduce the total average damage you can expect to
-take per turn from that monster.
+take per turn from that monster. The cap will be used on the monster's raw
+damage output _before_ the player's AC is factored in.
 Sanity-draining melee attacks are capped at 55 points of _average_ sanity
 damage per _blow_ (not per round).
 
@@ -4200,20 +4208,23 @@ Note that not every skill is available to every profession (class).
                                 At 50, it will raise spell levels by 40%.
                                 (It won't raise the level of spells which you
                                 haven't learned yet.)
-    .Sorcery                    Ability to use all magic schools!
-                                Comes at the cost of your hit points!
-    .Mana                       Ability to use spells of the Mana school.
-    .Fire                       See Mana
-    .Water                      See Mana
-    .Air                        See Mana
-    .Earth                      See Mana
-    .Meta                       See Mana
-    .Conveyance                 See Mana
-    .Divination                 See Mana
-    .Temporal                   See Mana
-    .Mind                       See Mana
-    .Nature                     See Mana
-    .Udun                       See Mana
+    .Sorcery                    Learn to use spells of ALL magic schools at
+                                once, instead of training a particular branch!
+                                Comes at the cost of your hit points.
+                                << For more information about learning spells,
+                                see (6.8) >>
+    .Mana                       Learn spells of the Mana branch.
+    .Fire                       Learn spells of the Fire branch.
+    .Water                      Learn spells of the Water branch.
+    .Air                        Learn spells of the Air branch.
+    .Earth                      Learn spells of the Earth branch.
+    .Meta                       Learn spells of the Meta branch.
+    .Conveyance                 Learn spells of the Conveyance branch.
+    .Divination                 Learn spells of the Divination branch.
+    .Temporal                   Learn spells of the Temporal branch.
+    .Mind                       Learn spells of the Mind branch.
+    .Nature                     Learn spells of the Nature branch.
+    .Udun                       Learn spells of the Udun branch.
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -5146,7 +5157,23 @@ their inventory.
 Those books can be purchased in store '9' (the 'book store') or in '7'
 (the 'black market' - very expensive but you often find tomes here!).
 
-*Experimental* feature (can change / be removed anytime!):
+Note that you must spend enough points into a particular magic school (or
+into sorcery) for the spell turning from grey into green in your spell book,
+in order to use that spell. A spell will turn green when its current level has
+become at least 1 in your spellbook.
+A level 'x' spell will requires at least 'x' points in its school before you
+can cast it and it turns gree in the book. You'll cast it at power level 1
+then, if you spend more points into that school the spell will become more
+powerful.
+Example:
+Noxious Cloud is a level 3 spell of the Air school. That means if you spend at
+least 3 points into Air school, the spell will become usable and be displayed
+as "level 1" in your spell book.
+If you raise your Air school to 6 by spending 3 more points into it, the level
+of your Noxious Cloud spell will increase by 3 and now be displayed as
+"level 4" in your spellbook. The spell now deals more damage and lasts longer
+than it did on power level 1 when you just barely learned it.
+
 Schools give certain permanent boni and abilities to the player, when trained
 to a certain extent. The boni are listed below each school.
 
@@ -5411,7 +5438,7 @@ Here you can..
     levels to each other and on the same dungeon/tower level respectively
     the same worldmap/wilderness sector. A slight experience bonus is applied
     for killing monsters in a party.
-    The range is 10 levels instead of 7 for winners (queens/kings/empresses/
+    The range is 11 levels instead of 7 for winners (queens/kings/empresses/
     emperors).
     Kings/Queens and normal players don't share experience in a party.
     'Anti-magic fields' of fellow party members have greatly reduced effect
@@ -5955,7 +5982,7 @@ Teamplay:
  support you with helpful spells, items and knowledge.
  A player in a party gets a share of experience points from the kills of other
  party members if they are within 7 levels to the player.
- For winners (queens/kings/empresses/emperors) the range is 10 levels.
+ For winners (queens/kings/empresses/emperors) the range is 11 levels.
 
 -Good combinations are the classical meat shields / damage dealers /
  supporters. Keep your teammates in mind and don't teleport out if it meant
@@ -6601,6 +6628,23 @@ SOLUTION:   No real solution at this time, sorry. See (0.5) for more
 
 PROBLEM 16: I cannot see monster x although I can 'See Invisible'.
 SOLUTION:   Some monsters have no appeareance and cannot be seen at all.
+
+PROBLEM 17: After my character appears in the actual game, I receive an orange
+            message saying "Receiving updated file ....", followed by a red
+            message saying "No access to lib directory!".
+SOLUTION:   The first message means, that one or more magic spells or prayers
+            have been changed, and your client tries to automatically update
+            its spell scripts to the latest version (LUA scripts in lib/scpt).
+            Since this update didn't always work for everyone, and sometimes
+            the scripts would be deleted instead of updated due to a bug, all
+            spell scripts (LUA files) were set to be write-protected. This
+            prevents accidental deletion, but also prevents auto-updating,
+            which is indicated by the red error message!
+            To solve this, you will have to delete the files within your
+            /lib/scpt directory and replace them with the latest versions
+            manually. You can usually download the latest scripts from
+            www.c-blue.de/rogue. Otherwise the global server notes should tell
+            you where to get the latest scripts.
 
 
 
