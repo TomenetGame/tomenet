@@ -1646,8 +1646,11 @@ static int auto_retaliate(int Ind)
 					inscription++;
 					/* Don't let @Ox stop auto-retaliation if it's
 					   not on an equipped weapon at all! */
-					if ((*inscription != 'x') || (i == INVEN_WIELD) ||
-					    (i == INVEN_BOW) || (i == INVEN_AMMO)) {
+					/* Changed @Ox to work on entire equipment because
+					   batty players can't wield weapons - mikaelh */
+					if ((*inscription != 'x') /* || (i == INVEN_WIELD) ||
+					    (i == INVEN_BOW) || (i == INVEN_AMMO) */
+					    || (i >= INVEN_WIELD)) {
 						item = i;
 						i = INVEN_TOTAL;
 						break;
@@ -2123,14 +2126,14 @@ static void do_recall(int Ind, bool bypass)
 }
 
 /* Does player have ball? */
-int has_ball(player_type *p_ptr){
+int has_ball (player_type *p_ptr) {
 	int i;
-	for(i=0; i<INVEN_WIELD; i++){
-		if(p_ptr->inventory[i].tval==1 && p_ptr->inventory[i].sval==9){
+	for(i = 0; i < INVEN_WIELD; i++){
+		if(p_ptr->inventory[i].tval == 1 && p_ptr->inventory[i].sval == 9) {
 			break;
 		}
 	}
-	if(i==INVEN_WIELD) i=-1;
+	if (i == INVEN_WIELD) i = -1;
 	return(i);
 }
 
@@ -3399,7 +3402,9 @@ static void process_games(int Ind){
 				break;
 			/* capture the flag */
 			case EEGAME_CTF:
+				break;
 			default:
+				break; /* gcc 3.4 actually wants this - mikaelh */
 		}
 	}
 }

@@ -748,6 +748,7 @@ u16b max_wf_idx;
 
 /* EVILEYE GAMES */
 int teamscore[2];
+int teams[2]; // for counting players in teams - mikaelh
 int gametype;
 
 /* Private notes for fellow players

@@ -3852,6 +3852,9 @@ void calc_bonuses(int Ind)
 
 		/* Cap shots per round at 5 */
 		if (p_ptr->num_fire > 5) p_ptr->num_fire = 5;
+
+		/* Other classes than archer or ranger have cap at 4 - the_sandman and mikaelh */
+		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
 	}
 
 	/* Add in the "bonus spells" */

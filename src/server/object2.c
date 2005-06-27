@@ -2222,6 +2222,17 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	/* Add together the item counts */
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
 
+	/* NEVER clone gold!!! - mikaelh
+	 * o_ptr->number > 1 gold could be seperated by eg. bashing
+	 * creating/destroying (o_ptr->pval - j_ptr->pval) gold.
+	 * Colour won't always be right but let's make one item with combined
+	 * amount of gold?
+	 */
+	if (o_ptr->tval == TV_GOLD) {
+		o_ptr->number = 1;
+		o_ptr->pval += j_ptr->pval;
+	}
+
 	/* Hack -- blend "known" status */
 	if (Ind && object_known_p(Ind, j_ptr)) object_known(o_ptr);
 

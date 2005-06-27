@@ -373,7 +373,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		{
 			if (cost <= 60L) size += mass_roll(3, 5);
 			if (cost <= 240L) size += mass_roll(1, 5);
-			if (st_ptr->st_idx == STORE_BTSUPPLY && o_ptr->sval == SV_POTION_STAR_HEALING) size += mass_roll(3, 5);
+			if (st_ptr->st_idx == STORE_BTSUPPLY && (o_ptr->sval == SV_POTION_STAR_HEALING || o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */)) size += mass_roll(3, 5);
 			break;
 		}
 

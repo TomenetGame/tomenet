@@ -1876,7 +1876,8 @@ struct player_type
 	bool new_level_flag;	/* Has this player changed depth? */
 	byte new_level_method;	/* Climb up stairs, down, or teleport level? */
 
-	byte party;		/* The party he belongs to (or 0 if neutral) */
+	/* changed from byte to u16b - mikaelh */
+	u16b party;		/* The party he belongs to (or 0 if neutral) */
 	byte guild;		/* The guild he belongs to (0 if neutral)*/
 
 	u16b target_who;

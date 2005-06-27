@@ -44,7 +44,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   2
-#define SF_VERSION_PATCH   3
+#define SF_VERSION_PATCH   4
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -664,8 +664,8 @@
  * Player constants
  */
 #define PY_MAX_EXP	999999999L	/* Maximum exp */
-/*#define PY_MAX_EXP	4899999996L	/* Maximum exp (Thunderlord Mimic 3.5*1.4) */
-/*#define PY_MAX_EXP	3899999997L	/* Maximum exp (Thunderlord Mimic 3.5+0.4) */
+//#define PY_MAX_EXP	4899999996L	/* Maximum exp (Thunderlord Mimic 3.5*1.4) */
+//#define PY_MAX_EXP	3899999997L	/* Maximum exp (Thunderlord Mimic 3.5+0.4) */
 #define PY_MAX_GOLD	999999999L	/* Maximum gold */
 #define PY_MAX_LEVEL	100		/* Maximum level */
 

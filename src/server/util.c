@@ -2121,7 +2121,7 @@ bool is_a_vowel(int ch)
  *
  * if 'party' is TRUE, party name is also looked up.
  */
-int name_lookup_loose(int Ind, cptr name, bool party)
+int name_lookup_loose(int Ind, cptr name, u16b party)
 {
 	int i, len, target = 0;
 	player_type *q_ptr, *p_ptr;

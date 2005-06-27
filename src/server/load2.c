@@ -892,6 +892,7 @@ static bool rd_extra(int Ind)
 
 	byte tmp8u, panic;
 	u16b tmp16b;
+	byte old_party;
 
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
 	strcpy(login_char_name, p_ptr->name);
@@ -916,7 +917,12 @@ static bool rd_extra(int Ind)
 	rd_byte(&p_ptr->prace);
         rd_byte(&p_ptr->pclass);
 	rd_byte(&p_ptr->male);
-	rd_byte(&p_ptr->party);
+	if (older_than(4, 2, 4))
+	{
+		rd_byte(&old_party);
+		p_ptr->party = old_party; /* convert the old byte to u16b - mikaelh */
+	}
+	else rd_u16b(&p_ptr->party);
 	rd_byte(&p_ptr->mode);
 
 	/* Special Race/Class info */
@@ -1900,6 +1906,15 @@ errr rd_server_savefile()
 	{
 		rd_party(i);
 	}
+	if (s_older_than(4, 2, 4))
+	{
+		for (i = tmp16u; i < MAX_PARTIES; i++)
+		{
+			/* HACK Initialize new parties just to make sure they'll work - mikaelh */
+			parties[i].members = 0;
+			parties[i].created = 0;
+		}
+	}
 
 	/* XXX If new enough, read in the saved levels and monsters. */
 
@@ -1966,8 +1981,9 @@ errr rd_server_savefile()
 	/* Read the player name database if new enough */
 	{
 		char name[80];
-		byte level, party, guild, race, class, mode;
+		byte level, old_party, guild, race, class, mode;
 		u32b acct;
+		u16b party;
 		u16b quest;
 
 		rd_u32b(&tmp32u);
@@ -1985,7 +2001,12 @@ errr rd_server_savefile()
 			rd_byte(&class);
 		        if (!older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);
-			rd_byte(&party);
+			if (older_than(4, 2, 4))
+			{
+				rd_byte(&old_party);
+				party = old_party; /* convert old byte to u16b - mikaelh */
+			}
+			else rd_u16b(&party);
 			rd_byte(&guild);
 			rd_u16b(&quest);
 

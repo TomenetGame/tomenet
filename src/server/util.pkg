@@ -52,7 +52,8 @@ struct hash_entry
 
 	/* new in 3.4.2 */
 	byte level;			/* Player maximum level */
-	byte party;			/* Player party */
+	/* changed from byte to u16b - mikaelh */
+	u16b party;			/* Player party */
 	/* 3.5.0 */
 	byte guild;			/* Player guild */
 	s16b quest;			/* Player quest */

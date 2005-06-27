@@ -58,7 +58,7 @@ void grow_trees(int Ind, int rad)
 		if (!in_bounds2(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
 
-		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i))
+		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i) && (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
 			cave_set_feat(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, FEAT_TREES);
 		}

@@ -2064,6 +2064,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			price *= price;
 			if (price < 5) price = 5;
+			if (price > 5000) price = 5000; /* better cap this thing somewhere - mikaelh */
 			amt = (p_ptr->au / price);
 
 			if (amt < 1)

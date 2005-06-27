@@ -1306,7 +1306,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/notep"))
 		{
 			int p = -1, i, j = 0;
-			for (i = 0; i < MAX_PARTIES; i++) {
+			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 				if(!strcmp(parties[i].owner, p_ptr->name)) p = i;
 			}
 			if (p < 0) {
@@ -1541,6 +1541,38 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(Ind, "\377yNote for account '%s' has been stored.", priv_note_target[found_note]);
 			return;
 		}
+		else if (prefix(message, "/play")) /* for joining games - mikaelh */
+		{
+	
+			if (p_ptr->team != 0 && gametype == EEGAME_RUGBY)
+			{
+				teams[p_ptr->team - 1]--;
+				p_ptr->team = 0;
+				msg_print(Ind, "\377gYou are no more playing!");
+				return;
+			}
+			if (gametype == EEGAME_RUGBY)
+			{
+				msg_print(Ind, "\377gThere's a rugby game going on!");
+				if (teams[0] > teams[1])
+				{
+					p_ptr->team = 2;
+					teams[1]++;
+					msg_print(Ind, "\377gYou have been added to the light blue team!");
+				}
+				else
+				{
+					p_ptr->team = 1;
+					teams[0]++;
+					msg_print(Ind, "\377gYou have been added to the light red team!");
+				}
+			}
+			else
+			{
+				msg_print(Ind, "\377gThere's no game going on!");
+			}
+			return;
+		}
 
 #ifdef FUN_SERVER /* make wishing available to players for fun, until rollback happens - C. Blue */
 		else if (prefix(message, "/wish"))
@@ -1718,8 +1750,14 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/val")){
 				if(!tk) return;
-				msg_format(Ind, "\377GValidating %s", message3);
-				validate(message3);
+				/* added checking for account existance - mikaelh */
+				if (validate(message3)) {
+					msg_format(Ind, "\377GValidating %s", message3);
+				}
+				else {
+					msg_format(Ind, "\377rAccount %s not found", message3);
+				}
+					
 /*				do{
 					msg_format(Ind, "\377GValidating %s", token[tk]);
 					validate(token[tk]);
@@ -1861,10 +1899,29 @@ void do_slash_cmd(int Ind, char *message)
 
 					teamscore[0]=0;
 					teamscore[1]=0;
+					teams[0]=0;
+					teams[1]=0;
 					gametype=EEGAME_RUGBY;
-					msg_broadcast(0, "A new game of rugby has started!");
+					msg_broadcast(0, "\377pA new game of rugby has started!");
 					for(k=1; k<=NumPlayers; k++){
 						Players[k]->team=0;
+					}
+				}
+				else if (!strcmp(token[1], "stop")) /* stop all games - mikaelh */
+				{
+					char sstr[80];
+					int ball;
+					msg_broadcast(0, "\377pThe game has been stopped!");
+					sprintf(sstr, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
+					msg_broadcast(0, sstr);
+					teamscore[0] = 0;
+					teamscore[1] = 0;
+					teams[0] = 0;
+					teams[1] = 0;
+					gametype = 0;
+					for (k = 1; k <= NumPlayers; k++)
+					{
+						Players[k]->team = 0;
 					}
 				}
 				return;
@@ -2729,6 +2786,19 @@ void do_slash_cmd(int Ind, char *message)
 				if (!p) return;
 				lua_strip_true_arts_from_present_player(Ind, 0);
 				msg_format(Ind, "Stripped arts from player %s.", Players[Ind]->name);
+				return;
+			}
+			/* wipe wilderness map of tournament players - mikaelh */
+			else if (prefix(message, "/wipewild")) {
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /wipewild <player name>");
+					return;
+				}
+				int p = name_lookup_loose(Ind, message3, FALSE);
+				if (!p) return;
+				for (i = 0; i < MAX_WILD_8; i++)
+					Players[p]->wild_map[i] = 0;
+				msg_format(Ind, "Wiped wilderness map of player %s.", Players[p]->name);
 				return;
 			}
 		}

@@ -1125,7 +1125,7 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->prace);
 	wr_byte(p_ptr->pclass);
 	wr_byte(p_ptr->male);
-	wr_byte(p_ptr->party);
+	wr_u16b(p_ptr->party); /* changed to u16b to allow more parties - mikaelh */
 	wr_byte(p_ptr->mode);
 
 	wr_byte(p_ptr->hitdie);
@@ -2259,7 +2259,7 @@ static void wr_player_names(void)
 			wr_byte(ptr->class);
 			wr_byte(ptr->mode);
 			wr_byte(ptr->level);
-			wr_byte(ptr->party);
+			wr_u16b(ptr->party); /* changed to u16b to allow more parties */
 			wr_byte(ptr->guild);
 			wr_u16b(ptr->quest);
 			/* Store the player name */

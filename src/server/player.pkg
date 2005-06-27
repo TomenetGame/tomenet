@@ -92,6 +92,8 @@ typedef unsigned int u32b;
 #define SKILL_HEALTH			43
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
+#define SKILL_TRAPPING		46
+#define SKILL_AXE		47
 
 #define SKILL_CONVEYANCE        48
 #define SKILL_SPELL	   	49
@@ -340,7 +342,8 @@ struct player_type
 	bool new_level_flag;	/* Has this player changed depth? */
 	byte new_level_method;	/* Climb up stairs, down, or teleport level? */
 
-	byte party;		/* The party he belongs to (or 0 if neutral) */
+	/* changed from byte to u16b - mikaelh */
+	u16b party;		/* The party he belongs to (or 0 if neutral) */
 	byte guild;		/* The guild he belongs to (or 0 if neutral) */
 
 	s16b target_who;

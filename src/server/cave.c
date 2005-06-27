@@ -2475,7 +2475,23 @@ void lite_spot(int Ind, int y, int x)
 				case 5: return (TERM_WHITE);
 		*/              }
 			}
-			
+
+			if (p_ptr->team) {
+				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */
+					switch(p_ptr->team) {
+						case 1:
+							a = TERM_L_RED;
+							break;
+						case 2:
+							a = TERM_L_BLUE;
+							break;
+						default:
+							break;
+					}
+				}
+				else if ((has_ball(p_ptr) != -1) && magik(25)) a = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
+			}
+
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat) c = 'b';
 			if(p_ptr->chp<0) c='-';

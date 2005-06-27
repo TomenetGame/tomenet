@@ -125,6 +125,7 @@ extern town_extra town_profile[6];
 
 /* variable.c */
 extern int teamscore[];
+extern int teams[];
 extern int gametype;
 extern obj_theme default_obj_theme;
 extern s16b count_project;
@@ -613,6 +614,7 @@ extern void dungeon(void);
 extern void pack_overflow(int Ind);
 extern void set_runlevel(int val);
 extern void store_turnover(void);
+int has_ball (player_type *p_ptr);
 
 extern void cheeze(object_type *o_ptr);
 extern void cheeze_trad_house(void);
@@ -938,7 +940,7 @@ extern int place_object_restrictor;
 /* party.c */
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
-extern void validate(char *name);
+extern int validate(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
 extern struct account *GetAccountID(u32b id);
@@ -967,7 +969,7 @@ extern cptr lookup_player_name(int id);
 extern int lookup_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte party, byte guild, u16b quest, time_t laston);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1152,6 +1154,7 @@ extern bool do_res_stat_temp(int Ind, int stat);
 extern void swap_position(int Ind, int lty, int ltx);
 extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
+extern void wizard_lock(int Ind, int dir);
 
 
 /* store.c */
@@ -1177,7 +1180,7 @@ extern bool suppress_message;
 extern void use_ability_blade(int Ind);
 extern bool show_floor_feeling(int Ind);
 extern void msg_admin(cptr fmt, ...);
-extern int name_lookup_loose(int Ind, cptr name, bool party);
+extern int name_lookup_loose(int Ind, cptr name, u16b party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
 extern FILE *my_fopen(cptr file, cptr mode);

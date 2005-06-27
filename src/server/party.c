@@ -79,15 +79,18 @@ bool WriteAccount(struct account *r_acc, bool new){
 /*
  Get an existing account and set default valid flags on it
  That will be SCORE on only (hack it for MULTI)
+ Modified to return 1 on success and 0 if account can't be
+ found - mikaelh
  */
-void validate(char *name){
+int validate(char *name){
 	struct account *c_acc;
 	c_acc=GetAccount(name, NULL, 1);
-	if(!c_acc) return;
+	if(!c_acc) return(0);
 	c_acc->flags&=~(ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
 	KILL(c_acc, struct account);
+	return(1);
 }
 
 /*
@@ -283,7 +286,7 @@ int party_lookup(cptr name)
 	int i;
 
 	/* Check each party */
-	for (i = 0; i < MAX_PARTIES; i++)
+	for (i = 1; i < MAX_PARTIES; i++) /* was i = 0 but real parties start from i = 1 - mikaelh */
 	{
 		/* Check name */
 		if (streq(parties[i].name, name))
@@ -2313,7 +2316,7 @@ void scan_players(){
 
 				s_printf("Removing player: %s\n", ptr->name);
 
-				for(i=0; i<MAX_PARTIES; i++){
+				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
 					if(streq(parties[i].owner, ptr->name)){
 						s_printf("Disbanding party: %s\n",parties[i].name);
 						del_party(i);
@@ -2385,7 +2388,7 @@ void scan_players(){
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte party, byte guild, u16b quest, time_t laston)
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston)
 {
 	int slot;
 	hash_entry *ptr;
@@ -2421,7 +2424,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte party, byte guild, u16b quest, time_t laston)
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston)
 {
 	hash_entry *ptr = lookup_player(id);
 

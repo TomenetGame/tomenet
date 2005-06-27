@@ -3912,7 +3912,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr))// && (object_value(0, o_ptr) > 0))
+	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval==9 /* rugby ball */)) // && (object_value(0, o_ptr) > 0))
 	{
 /*		msg_format(Ind, "Please don't litter the %s.",
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/

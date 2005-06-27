@@ -3323,7 +3323,8 @@ void check_experience(int Ind)
 		}
 
 #ifdef KINGCAP_LEV
-		if(p_ptr->lev == 50) msg_print(Ind, "\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
+		/* Added a check that (s)he's not already a king - mikaelh */
+		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
 #endif
 
 		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
@@ -4703,11 +4704,6 @@ void player_death(int Ind)
 		return;
 	}
 
-
-	/* No longer a winner */
-	p_ptr->total_winner = FALSE;
-
-
 	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
 #if 0
 		struct dungeon_type *dungeon;
@@ -5127,6 +5123,10 @@ void player_death(int Ind)
 					msg_print(i, buf);
 		}
 */	}
+
+	/* Hmm... Shouldn't this be after the death message so we can get a nice message for retiring winners? - mikaelh */
+	/* No longer a winner */
+	p_ptr->total_winner = FALSE;
 
 	/* Unown land */
 	if (p_ptr->total_winner)
@@ -7625,6 +7625,13 @@ void telekinesis_aux(int Ind, int item)
 	if(cfg.anti_arts_send && artifact_p(q_ptr) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "The artifact resists telekinesis!");
+		return;
+	}
+
+	/* Add a check for full inventory of target player - mikaelh */
+	if (!inven_carry_okay(Ind2, q_ptr))
+	{
+		msg_print(Ind, "That item doesn't fit to the player's inventory.");
 		return;
 	}
 

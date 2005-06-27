@@ -2776,6 +2776,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
                		/* Beware of the houses in town */
                		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;
 
+			/* Not if it's an open house door - mikaelh */
+			if (c_ptr->feat == FEAT_HOME_OPEN) break;
+
                         /* Place a wall */
 			c_ptr->feat = FEAT_WALL_EXTRA;
 					
@@ -2988,10 +2991,44 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (cave_floor_bold(zcave, y, x)) break;
 
 			/* Permanent walls */
-			if ( (c_ptr->feat >= FEAT_PERM_EXTRA) || (c_ptr->feat == FEAT_PERM_CLEAR) ) break;
+			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
+				&& !(c_ptr->feat >= FEAT_SANDWALL && c_ptr->feat <= FEAT_SANDWALL_K)) break;
 
+
+			/* the_sandman: sandwalls are stm-able too? */
+			/* fixed it and also added the treasures in sandwalls - mikaelh */
+			/* Sandwall */
+			if (c_ptr->feat == FEAT_SANDWALL)
+			{
+				/* Message */
+				if (!quiet && (*w_ptr & CAVE_MARK))
+				{
+					msg_print(Ind, "The sandwall collapses!");
+					obvious = TRUE;
+				}
+
+				/* Destroy the wall */
+				c_ptr->feat = FEAT_SAND;
+			}
+			/* Sandwall with treasure */
+			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
+			{
+				/* Message */
+				if (!quiet && (*w_ptr & CAVE_MARK))
+				{
+					msg_print(Ind, "The sandwall collapses!");
+					msg_print(Ind, "You have found something!");
+					obvious = TRUE;
+				}
+
+				/* Destroy the wall */
+				c_ptr->feat = FEAT_SAND;
+
+				/* Place some gold */
+				place_gold(wpos, y, x);
+			}
 			/* Granite */
-			if (c_ptr->feat >= FEAT_WALL_EXTRA)
+			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
 				byte feat;
 				/* Message */
@@ -3005,7 +3042,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				feat = twall_erosion(wpos, y, x);
 				c_ptr->feat = (feat == FEAT_FLOOR) ? FEAT_DIRT : feat;
 			}
-
 			/* Quartz / Magma with treasure */
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
 			{
@@ -8486,7 +8522,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					    (c_ptr2->feat != FEAT_SHAL_LAVA) &&
 					    //(c_ptr2->feat != FEAT_ASH) &&
 					    (c_ptr2->feat != FEAT_MUD) &&
-					    (c_ptr2->feat != FEAT_DIRT))
+					    (c_ptr2->feat != FEAT_DIRT) &&
+					    (c_ptr2->feat != FEAT_HOME))
 					{
 						/* no terraforming in Bree.. */
 						if (wpos->wx != 32 || wpos->wy != 32 || wpos->wz != 0)
@@ -8712,8 +8749,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Effect ? */
 			if (flg & PROJECT_STAY)
 			{
-				zcave[y][x].effect = effect;
-				everyone_lite_spot(wpos, y, x);
+				if (effect != -1) /* not out of effects - mikaelh */
+				{
+					zcave[y][x].effect = effect;
+					everyone_lite_spot(wpos, y, x);
+				}
 			}
 		}
 	}
