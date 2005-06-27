@@ -19,7 +19,7 @@ extern sockbuf_t ibuf;
 
 extern char server_name[80];
 extern char pass[40];
-extern bool shutdown;
+extern bool server_shutdown;
 extern bool force_cui;
 
 extern term *ang_term[8];

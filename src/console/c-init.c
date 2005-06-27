@@ -124,7 +124,7 @@ static void Input_loop(void)
 	for (;;)
 	{
 		/* Hack -- shutdown at once */
-		if (shutdown)
+		if (server_shutdown)
 		{
 			/* Clear the buffer */
 			Sockbuf_clear(&ibuf);

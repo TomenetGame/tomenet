@@ -7,7 +7,7 @@ sockbuf_t ibuf;
 
 char server_name[80] = "undefined";
 char pass[40] = "undefined";
-bool shutdown = FALSE;
+bool server_shutdown = FALSE;
 bool force_cui = FALSE;
 
 term *ang_term[8];

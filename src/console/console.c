@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 			}
 			case 's':
 			{
-				shutdown = TRUE;
+				server_shutdown = TRUE;
 				break;
 			}
 
