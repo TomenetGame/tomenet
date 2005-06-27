@@ -3942,8 +3942,8 @@ void do_cmd_throw(int Ind, int dir, int item)
 
 	/* Handle rugby ball */
 	if(o_ptr->tval==1 && o_ptr->sval==9){
-		msg_print(Ind, "You pass the ball");
-		msg_format_near(Ind, "%s passes the ball", p_ptr->name);
+		msg_print(Ind, "\377yYou pass the ball");
+		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
 
 	/* Create a "local missile object" */
@@ -4114,13 +4114,13 @@ void do_cmd_throw(int Ind, int dir, int item)
 			if(o_ptr->tval==1 && o_ptr->sval==9){
 				cave_type *c_ptr = &zcave[y][x];
 				if(rand_int(11)>6){
-					msg_format_near(0-c_ptr->m_idx, "%s catches the ball", Players[0-c_ptr->m_idx]->name);
-					msg_print(0-c_ptr->m_idx, "You catch the ball");
+					msg_format_near(0-c_ptr->m_idx, "\377y%s catches the ball", Players[0-c_ptr->m_idx]->name);
+					msg_print(0-c_ptr->m_idx, "\377yYou catch the ball");
 					inven_carry(0-c_ptr->m_idx, o_ptr);
 				}
 				else{
-					msg_format_near(0-c_ptr->m_idx, "%s misses the ball", Players[0-c_ptr->m_idx]->name);
-					msg_print(0-c_ptr->m_idx, "You miss the ball");
+					msg_format_near(0-c_ptr->m_idx, "\377r%s misses the ball", Players[0-c_ptr->m_idx]->name);
+					msg_print(0-c_ptr->m_idx, "\377rYou miss the ball");
 					o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 					drop_near(o_ptr, -1, wpos, y, x);
 				}
