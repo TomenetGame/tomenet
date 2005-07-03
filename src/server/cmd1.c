@@ -1500,6 +1500,12 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
+		if (p_ptr->inval && p_ptr->id != o_ptr->owner)
+		{
+			msg_print(Ind, "\377oYou cannot take gold of other players without a valid account.");
+			return;
+		}
+
 		if ((cfg.charmode_trading_restrictions > 0) &&
 		    (o_ptr->owner) &&
 		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
@@ -1573,6 +1579,12 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 			else msg_format(Ind, "You see %s%s.", o_name,
 						o_ptr->next_o_idx ? " on a pile" : "");
 			Send_floor(Ind, o_ptr->tval);
+			return;
+		}
+
+		if (p_ptr->inval && p_ptr->id != o_ptr->owner)
+		{
+			msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
 			return;
 		}
 

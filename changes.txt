@@ -22,6 +22,9 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+03/07/2005
+[m]- Prevent invalid players from picking up gold/items owned by other players
+
 27/06/2005
 [B]- Fixed a gold duplication exploit.
 
