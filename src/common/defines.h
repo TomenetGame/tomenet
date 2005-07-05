@@ -211,7 +211,7 @@
  * this number.  However, you should NEVER decrease this number after a
  * server has been run, or all sorts of bad things could happen.
  */
-#define MAX_PARTIES	256
+#define MAX_PARTIES	512
 #define MAX_GUILDS	32	/* test value */
 
 /*
