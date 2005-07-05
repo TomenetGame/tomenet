@@ -1500,7 +1500,7 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 		/* Disturb */
 		disturb(Ind, 0, 0);
 
-		if (p_ptr->inval && p_ptr->id != o_ptr->owner)
+		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner)
 		{
 			msg_print(Ind, "\377oYou cannot take gold of other players without a valid account.");
 			return;
@@ -1582,7 +1582,7 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 			return;
 		}
 
-		if (p_ptr->inval && p_ptr->id != o_ptr->owner)
+		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner)
 		{
 			msg_print(Ind, "\377oYou cannot take items of other players without a valid account.");
 			return;
