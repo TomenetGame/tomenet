@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. June 2005; written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. July 2005; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -3406,7 +3406,7 @@ Cure Light Wounds
 Cure Serious Wounds
                 Cures blindness, cuts, confusion; heals 5d8 HP.
 Cure Critical Wounds
-                Cures blindness, cuts, confusion, stun; heals 8d8 HP.
+                Cures blindness, cuts, confusion, stun; heals 14d8 HP.
 Healing         Cures blindness, cuts, confusion, stun, poison; heals 300 HP.
 *Healing*       Cures blindness, cuts, confusion, stun, poison; heals 700 HP.
 Restore Mana    Restores 500 MP.
@@ -4232,6 +4232,7 @@ Note that not every skill is available to every profession (class).
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
+                                See section (6.7) for more info.
                                 To find out details about a monster form
                                 look into the file r_info.txt in your
                                 tomenet/lib/game directory!
@@ -4899,7 +4900,7 @@ I: speed : hit points : vision : armor class : alertness
     receive a speed bonus of 50% of the monster's speed above 110.
     If the monster is slower, the mimic will receive a speed malus of
     30% of the monster's speed malus below 110.
-    So a monster moving at 130 speed will give the mimic +12 speed.
+    So a monster moving at 130 speed will give the mimic +10 speed.
   hit points:
     The monster's hit dice xdy are multiplied and then capped against ~2500,
     so gain might decrease in higher regions. (Cap details: The monster HP is
