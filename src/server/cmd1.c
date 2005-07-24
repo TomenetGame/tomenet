@@ -1790,7 +1790,7 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 			if (p_ptr->carry_query_flag && !confirm)
 			{
 				char out_val[160];
-				sprintf(out_val, "Pick up %s? ", o_name);
+				snprintf(out_val, 160, "Pick up %s? ", o_name);
 				Send_pickup_check(Ind, out_val);
 				return;
 			}
@@ -2034,7 +2034,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	{
 		if(!(q_ptr->pkill & PKILL_KILLABLE)){
 			char string[30];
-			sprintf(string, "attacking %s", q_ptr->name);
+			snprintf(string, 30, "attacking %s", q_ptr->name);
 			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
 			if(!imprison(Ind, 500, string)){
 				/* This wrath can be too much */

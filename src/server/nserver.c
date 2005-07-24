@@ -368,7 +368,8 @@ bool Report_to_meta(int flag)
  	static char local_name[1024];
 	static int init = 0;
         static long resolved_ip;
-	int bytes, i, sock;
+//	int bytes;
+	int i, sock;
 	char temp[100];
 	bool hidden_dungeon_master = 0;
 
@@ -2587,6 +2588,9 @@ static int Receive_login(int ind){
 		Sockbuf_flush(&connp->w);
 		return(0);
 	} else if (connp->password_verified) {
+		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */
+		choice[20] = '\0';
+
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
 		Trim_name(choice);
@@ -4684,9 +4688,9 @@ int Send_party(int ind)
 	}
 
 	if (parties[p_ptr->party].mode == PA_IRONTEAM)
-		sprintf(bufn, "Party (Iron Team): %s", parties[p_ptr->party].name);
+		snprintf(bufn, 90, "Party (Iron Team): %s", parties[p_ptr->party].name);
 	else
-		sprintf(bufn, "Party  : %s", parties[p_ptr->party].name);
+		snprintf(bufn, 90, "Party  : %s", parties[p_ptr->party].name);
 
 	bufm[0] = '\0';
 	bufo[0] = '\0';
@@ -4694,7 +4698,7 @@ int Send_party(int ind)
 	if (p_ptr->party > 0)
 	{
 		strcpy(bufm, "Members: ");
-		sprintf(buf, "%d", parties[p_ptr->party].members);
+		snprintf(buf, 10, "%ld", parties[p_ptr->party].members);
 		strcat(bufm, buf);
 
 		strcpy(bufo, "Owner  : ");

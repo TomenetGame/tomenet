@@ -1027,7 +1027,7 @@ static bool restrict_monster_to_dungeon(int r_idx, int dun_type)
 //s16b get_mon_num(int level)
 s16b get_mon_num(int level, int dun_type)
 {
-	int                     i, j, p, d1 = 0, d2 = 0;
+	int                     i, j, p; //, d1 = 0, d2 = 0;
 
 	int                     r_idx;
 
@@ -3044,7 +3044,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 862) {
 		dun_level *l_ptr;
 		s_printf("Morgoth was created on %d\n", getlevel(wpos));
-/*		check_Morgoth(); /* was he allowed to spawn!? */
+//		check_Morgoth(); /* was he allowed to spawn!? */
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= LF1_NO_GHOST;
@@ -4398,50 +4398,50 @@ cptr r_name_get(monster_type *m_ptr)
 {
 	static char buf[100];
 
-        if (m_ptr->special)
-        {
-                cptr p = (m_ptr->owner)?lookup_player_name(m_ptr->owner):"**INTERNAL BUG**";
-                if (p == NULL) p = "**INTERNAL BUG**";
-                switch (m_ptr->r_idx - 1)
-                {
-                        case SV_GOLEM_WOOD:
-                                sprintf(buf, "%s's Wood Golem", p);
-                                break;
-                        case SV_GOLEM_COPPER:
-                                sprintf(buf, "%s's Copper Golem", p);
-                                break;
-                        case SV_GOLEM_IRON:
-                                sprintf(buf, "%s's Iron Golem", p);
-                                break;
-                        case SV_GOLEM_ALUM:
-                                sprintf(buf, "%s's Aluminium Golem", p);
-                                break;
-                        case SV_GOLEM_SILVER:
-                                sprintf(buf, "%s's Silver Golem", p);
-                                break;
-                        case SV_GOLEM_GOLD:
-                                sprintf(buf, "%s's Gold Golem", p);
-                                break;
-                        case SV_GOLEM_MITHRIL:
-                                sprintf(buf, "%s's Mithril Golem", p);
-                                break;
-                        case SV_GOLEM_ADAM:
-                                sprintf(buf, "%s's Adamantite Golem", p);
-                                break;
-                }
-                return (buf);
-        }
+	if (m_ptr->special)
+	{
+		cptr p = (m_ptr->owner)?lookup_player_name(m_ptr->owner):"**INTERNAL BUG**";
+		if (p == NULL) p = "**INTERNAL BUG**";
+		switch (m_ptr->r_idx - 1)
+		{
+			case SV_GOLEM_WOOD:
+				snprintf(buf, sizeof(buf), "%s's Wood Golem", p);
+				break;
+			case SV_GOLEM_COPPER:
+				snprintf(buf, sizeof(buf), "%s's Copper Golem", p);
+				break;
+			case SV_GOLEM_IRON:
+				snprintf(buf, sizeof(buf), "%s's Iron Golem", p);
+				break;
+			case SV_GOLEM_ALUM:
+				snprintf(buf, sizeof(buf), "%s's Aluminium Golem", p);
+				break;
+			case SV_GOLEM_SILVER:
+				snprintf(buf, sizeof(buf), "%s's Silver Golem", p);
+				break;
+			case SV_GOLEM_GOLD:
+				snprintf(buf, sizeof(buf), "%s's Gold Golem", p);
+				break;
+			case SV_GOLEM_MITHRIL:
+				snprintf(buf, sizeof(buf), "%s's Mithril Golem", p);
+				break;
+			case SV_GOLEM_ADAM:
+				snprintf(buf, sizeof(buf), "%s's Adamantite Golem", p);
+				break;
+		}
+		return (buf);
+	}
 #ifdef RANDUNIS
 		else if(m_ptr->ego)
 		{
 			if (re_info[m_ptr->ego].before)
 			{
-				sprintf(buf, "%s %s", re_name + re_info[m_ptr->ego].name,
+				snprintf(buf, sizeof(buf), "%s %s", re_name + re_info[m_ptr->ego].name,
 						r_name + r_info[m_ptr->r_idx].name);
 			}
 			else
 			{
-				sprintf(buf, "%s %s", r_name + r_info[m_ptr->r_idx].name,
+				snprintf(buf, sizeof(buf), "%s %s", r_name + r_info[m_ptr->r_idx].name,
 						re_name + re_info[m_ptr->ego].name);
 			}
 			return (buf);

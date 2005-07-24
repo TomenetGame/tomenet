@@ -2149,7 +2149,7 @@ static bool process_player_end_aux(int Ind)
 	cave_type		*c_ptr;
 	object_type		*o_ptr;
 	int		i, j;
-	int		regen_amount, NumPlayers_old=NumPlayers;
+	int		regen_amount; //, NumPlayers_old=NumPlayers;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	/* Unbelievers "resist" magic */
@@ -3353,7 +3353,7 @@ static void process_games(int Ind){
 	cave_type *c_ptr;
 	char sstr[80];
 	int score=0;
-	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr=&zcave[p_ptr->py][p_ptr->px];
 
 	if(c_ptr->feat==FEAT_AGOAL || c_ptr->feat==FEAT_BGOAL){
@@ -3380,7 +3380,7 @@ static void process_games(int Ind){
 					s16b ox, oy;
 					int try;
 					p_ptr->energy=0;
-					sprintf(sstr, "Score: \377rReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
+					snprintf(sstr, 80, "Score: \377rReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
 					msg_broadcast(0, sstr);
 
 					for(try=0; try<1000; try++){
@@ -4188,9 +4188,9 @@ static void process_various(void)
 				r_ptr->respawn_timer = -1;
 
 				/* Tell every player */
-				sprintf(buf,"%s rises from the dead!",(r_name + r_ptr->name));
+				snprintf(buf, sizeof(buf), "%s rises from the dead!",(r_name + r_ptr->name));
 				msg_broadcast(0,buf); 
-			}	    			
+			}
 		}
 #endif
 	}
@@ -4669,7 +4669,7 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
-	int i, j;
+	int i;
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
 
@@ -4825,7 +4825,7 @@ void dungeon(void)
 		{
 			char buf[20];
 
-			sprintf(buf, get_day(bst(YEAR, turn) + START_YEAR));
+			snprintf(buf, 20, get_day(bst(YEAR, turn) + START_YEAR));
 			msg_broadcast_format(0,
 					"\377GToday it is %s of the %s year of the third age.",
 					get_month_name(bst(DAY, turn), FALSE, FALSE), buf);

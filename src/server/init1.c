@@ -962,7 +962,7 @@ static cptr d_info_flags2[] =
 	"IRON",
 	"HELL",
 	"NO_RECALL_DOWN",
-/*	"NOMAP",	/* will be annexed to DF1_FORGET */
+//	"NOMAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
 	"XXX1",
 	"XXX1",
@@ -2055,7 +2055,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
  */
 static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 {
-	int i, rr;
+	int i;
 
 	/* Check flags1 */
 	for (i = 0; i < 32; i++)
@@ -7117,7 +7117,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	{
 		int x;
 
-		object_type object_type_body;
+//		object_type object_type_body;
 
 		/* Acquire the text */
 		char *s = buf+2;
@@ -7135,7 +7135,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			int idx = s[0];
 
 			int object_index = letter[idx].object;
+#if 0
 			int monster_index = letter[idx].monster;
+#endif // 0
 			int random = letter[idx].random;
 			int artifact_index = letter[idx].artifact;
 
@@ -7251,9 +7253,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			{
 				place_trap(wpos, y, x, 0);
 			}
+#if 0
 			else if (object_index)
 			{
-#if 0
 				/* Get local object */
 				object_type *o_ptr = &object_type_body;
 
@@ -7268,8 +7270,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				k_allow_special[object_index] = FALSE;
 
 				drop_near(o_ptr, -1, wpos, y, x);
-#endif	// 0
 			}
+#endif	// 0
 
 			/* Artifact */
 			if (artifact_index)

@@ -1777,11 +1777,11 @@ void do_slash_cmd(int Ind, char *message)
 						if (tk < 3)
 						{
 							msg_format(Ind, "Banning %s for %d minutes...", Players[j]->name, atoi(token[2]));
-							sprintf(kickmsg, "banned for %d minutes", atoi(token[2]));
+							snprintf(kickmsg, 80, "banned for %d minutes", atoi(token[2]));
 							Destroy_connection(Players[j]->conn, kickmsg);
 						} else {
 							msg_format(Ind, "Banning %s for %d minutes (%s)...", Players[j]->name, atoi(token[2]), token[3]);
-							sprintf(kickmsg, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
+							snprintf(kickmsg, 80, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
 							Destroy_connection(Players[j]->conn, kickmsg);
 						}
 						/* Kick him */
@@ -1825,7 +1825,7 @@ void do_slash_cmd(int Ind, char *message)
 							Destroy_connection(Players[j]->conn, "kicked out");
 						} else {
 							msg_format(Ind, "Kicking %s out (%s)...", Players[j]->name, token[2]);
-							sprintf(kickmsg, "kicked out (%s)", token[2]);
+							snprintf(kickmsg, 80, "kicked out (%s)", token[2]);
 							Destroy_connection(Players[j]->conn, kickmsg);
 						}
 						/* Kick him */
@@ -1910,9 +1910,8 @@ void do_slash_cmd(int Ind, char *message)
 				else if (!strcmp(token[1], "stop")) /* stop all games - mikaelh */
 				{
 					char sstr[80];
-					int ball;
 					msg_broadcast(0, "\377pThe game has been stopped!");
-					sprintf(sstr, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
+					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
 					msg_broadcast(0, sstr);
 					teamscore[0] = 0;
 					teamscore[1] = 0;
@@ -2426,7 +2425,7 @@ void do_slash_cmd(int Ind, char *message)
 				worldpos *tpos = &p_ptr->wpos;
 				wilderness_type *wild=&wild_info[tpos->wy][tpos->wx];
 
-				if (d_ptr = wild->tower) tower = TRUE;
+				if ((d_ptr = wild->tower)) tower = TRUE;
 				else d_ptr = wild->dungeon;
 				type = d_ptr->type;
 
@@ -2600,7 +2599,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/counthouses")) {
-				int i;
 				if (!tk || (atoi(token[1]) < 1) || (atoi(token[1]) > NumPlayers)) {
 					msg_print(Ind, "Usage: /counthouses <player-Index>");
 					return;

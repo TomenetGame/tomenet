@@ -578,7 +578,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, int line, int color)
 	if (!fff)
 	{
 		/* Caption */
-		sprintf(caption, "Help file '%s'", name);
+		snprintf(caption, sizeof(caption), "Help file '%s'", name);
 
 		/* Build the filename */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
@@ -859,11 +859,11 @@ bool process_player_name(int Ind, bool sf)
 		char temp[128];
 
 		/* Rename the savefile, using the player_base */
-		(void)sprintf(temp, "%s", p_ptr->basename);
+		(void)snprintf(temp, sizeof(temp), "%s", p_ptr->basename);
 
 #ifdef VM
 		/* Hack -- support "flat directory" usage on VM/ESA */
-		(void)sprintf(temp, "%s.sv", player_base);
+		(void)snprintf(temp, sizeof(temp), "%s.sv", player_base);
 #endif /* VM */
 
 		/* Build the filename */
@@ -1407,7 +1407,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		}
 
 		/* Dump some info */
-		sprintf(out_val, "%2s%3d.%10s %s%s the %s%s %s, Level %d",
+		snprintf(out_val, sizeof(out_val), "%2s%3d.%10s %s%s the %s%s %s, Level %d",
 			attrc, place, the_score.pts, modecol, the_score.who, modestr, 
 			race_info[pr].title, class_info[pc].title,
 			clev);
@@ -1420,23 +1420,27 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 
 		/* Another line of info */
 		if (strcmp(the_score.how, "winner"))
-			sprintf(out_val, "               Killed by %s\n"
-					 "               on %s %d%s%s",
-					 the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val),
+				"               Killed by %s\n"
+				"               on %s %d%s%s",
+				the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 		else
-			sprintf(out_val, "               \377vRetired after a legendary career\n"
-					 "               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+			snprintf(out_val, sizeof(out_val),
+				"               \377vRetired after a legendary career\n"
+				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 
 		/* Hack -- some people die in the town */
 		if (!cdun)
 		{
 			if (strcmp(the_score.how, "winner"))
-				sprintf(out_val, "               Killed by %s\n"
-						 "               in town%s",
-						 the_score.how, mdun > cdun ? format(" (max %d)", mdun) : "");
+				snprintf(out_val, sizeof(out_val),
+					"               Killed by %s\n"
+					"               in town%s",
+					the_score.how, mdun > cdun ? format(" (max %d)", mdun) : "");
 			else
-				sprintf(out_val, "               \377vRetired after a legendary career\n"
-						 "               in town%s", mdun > cdun ? format(" (max %d)", mdun) : "");
+				snprintf(out_val, sizeof(out_val),
+					"               \377vRetired after a legendary career\n"
+					"               in town%s", mdun > cdun ? format(" (max %d)", mdun) : "");
 		}
 
 		/* Append a "maximum level" */

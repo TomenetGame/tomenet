@@ -136,8 +136,8 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 static void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
 	int new_value = get_skill(p_ptr, i);
-	int as = get_archery_skill(p_ptr);
-	int ws = get_weaponmastery_skill(p_ptr);
+//	int as = get_archery_skill(p_ptr);
+//	int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
 	if (old_value == new_value) return;
@@ -400,7 +400,8 @@ static void increase_related_skills(int Ind, int i)
 void increase_skill(int Ind, int i)
 {
 	player_type *p_ptr = Players[Ind];
-	int as, ws, old_value, new_value;
+	int old_value;
+//	int as, ws, new_value;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)
@@ -1065,9 +1066,9 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
                 if ((p[i] == SKILL_LEARN) && (!must_learn_spells()))
                         continue;
                 else if (p[i] > 0)
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, s_text + s_info[p[i]].action_desc);
+			snprintf(buff, 80, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, s_text + s_info[p[i]].action_desc);
 		else
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
+			snprintf(buff, 80, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
 		if (mode) prt(buff, 2 + j, 20);
 		j++;

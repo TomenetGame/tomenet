@@ -29,7 +29,7 @@ void inven_takeoff(int Ind, int item, int amt)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int			posn,j;
+	int			posn; //, j;
 
 	object_type		*o_ptr;
 	object_type		tmp_obj;
@@ -222,7 +222,7 @@ void inven_drop(int Ind, int item, int amt)
 	object_type		 tmp_obj;
 
 	cptr		act;
-	int		j;
+//	int		j;
 
 	char		o_name[160];
 
@@ -1110,7 +1110,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	if (!force || other_query_flag)
 	{
 		/* Make a verification */
-		sprintf(out_val, "Really destroy %s? ", o_name);
+		snprintf(out_val, sizeof(out_val), "Really destroy %s? ", o_name);
 		if (!get_check(Ind, out_val)) return;
 	}
 #endif
@@ -2505,16 +2505,16 @@ void do_cmd_look(int Ind, int dir)
 		if (q_ptr->body_monster)
 		{
 			if (q_ptr->lev < 60)
-			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			sprintf(out_val, "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 		}
 		else
 		{
 			if (q_ptr->lev < 60)
-			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			sprintf(out_val, "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 			//, class_info[q_ptr->pclass].title
 		}
 	}
@@ -2524,9 +2524,9 @@ void do_cmd_look(int Ind, int dir)
 		health_track(Ind, c_ptr->m_idx);
 
 		/* Format string */
-//                sprintf(out_val, "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
+//                snprintf(out_val, sizeof(out_val), "%s (%s)", r_name_get(&m_list[c_ptr->m_idx]), look_mon_desc(c_ptr->m_idx));
 		m_ptr=&m_list[c_ptr->m_idx];
-		sprintf(out_val, "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
+		snprintf(out_val, sizeof(out_val), "%s (Lv %d, %s%s)", r_name_get(&m_list[c_ptr->m_idx]),
 				m_ptr->level, look_mon_desc(c_ptr->m_idx),
 				m_ptr->clone ? ", clone" : "");
 	}
@@ -2537,7 +2537,7 @@ void do_cmd_look(int Ind, int dir)
 		/* Obtain an object description */
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-		sprintf(out_val, "You see %s%s", o_name,
+		snprintf(out_val, sizeof(out_val), "You see %s%s", o_name,
 				o_ptr->next_o_idx ? " on a pile" : "");
 
 		/* Check if the object is on a detected trap */
@@ -2621,8 +2621,8 @@ void do_cmd_look(int Ind, int dir)
 		}
 
 		/* Message */
-		if (strlen(info)) sprintf(out_val, "%s%s%s (%s)", p1, p2, name, info);
-		else sprintf(out_val, "%s%s%s", p1, p2, name);
+		if (strlen(info)) snprintf(out_val, sizeof(out_val), "%s%s%s (%s)", p1, p2, name, info);
+		else snprintf(out_val, sizeof(out_val), "%s%s%s", p1, p2, name);
 	}
 
 	/* Append a little info */

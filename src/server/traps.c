@@ -31,6 +31,7 @@
  * party.c; it's written in this way so that all this will be
  * done w/o anyone noticing it.		- Jir -
  */
+#if 0 /* not used - mikaelh */
 static bool player_handle_trap_of_hostility(int Ind)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
@@ -138,7 +139,9 @@ static bool player_handle_trap_of_hostility(int Ind)
 
 	return (ident);
 }
+#endif
 
+#if 0
 static bool do_trap_of_silliness(int Ind, int power)
 {
 //	return (FALSE);
@@ -161,6 +164,7 @@ static bool do_trap_of_silliness(int Ind, int power)
 	return (aware);
 
 }
+#endif // 0
 
 bool do_player_drop_items(int Ind, int chance, bool trap)
 {
@@ -4350,8 +4354,9 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, int sval)
 static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 {
 	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = &r_info[m_ptr->r_idx];
-        int dam = 0, typ = 0, rad = 1, i;
+//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+        int dam = 0, typ = 0, rad = 1;
+//	int i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
         int sval = o_ptr->sval;
@@ -4619,7 +4624,10 @@ bool mon_hit_trap(int m_idx)
 	int difficulty = 0;
 	int smartness;
 
-	char m_name[80], brand_msg[80];
+#if 0 /* see below */
+	char m_name[80];
+#endif
+	char brand_msg[80];
 
 	bool notice = FALSE;
 	bool disarm = FALSE;
@@ -4735,7 +4743,7 @@ bool mon_hit_trap(int m_idx)
 		/* Tell the player about it */
 #if 0 /* DGDGDGDG */
 		if (m_ptr->ml) l_ptr->r_flags2 |= (RF2_NOTICE_TRAP & r_ptr->flags2);
-#endif         
+#endif
 		/* Get trap disarming difficulty */
 		difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
 
@@ -4746,11 +4754,11 @@ bool mon_hit_trap(int m_idx)
 		/* Some monsters are great at disarming */
 #if 0 /* DGDGDGDG */
 		if (r_ptr->flags2 & RF2_DISARM_TRAP) smartness += 20;
-#endif         
+#endif
 		/* After disarming one trap, the next is easier */
 #if 0 /* DGDGDGDG */
 		if (m_ptr->status & STATUS_DISARM_TRAP) smartness += 20;
-#endif         
+#endif
 		/* Smart monsters are better at disarming */
 		if (r_ptr->flags2 & RF2_SMART) smartness *= 2;
 
@@ -4772,7 +4780,7 @@ bool mon_hit_trap(int m_idx)
 		/* Next time disarming will be easier */
 #if 0 /* DGDGDGDG */
 		m_ptr->status |= STATUS_DISARM_TRAP;
-#endif                         
+#endif
 #if 0
 		if (who > 0 && p_ptr->mon_vis[m_idx]) 
 		{
@@ -4782,7 +4790,7 @@ bool mon_hit_trap(int m_idx)
 			/* Tell the player about it */
 #if 0 /* DGDGDGDG */
 			l_ptr->r_flags2 |= (RF2_DISARM_TRAP & r_ptr->flags2);
-#endif                 
+#endif
 			/* Print a message */
 			msg_format(who, "%^s disarms a trap!", m_name);
 		}

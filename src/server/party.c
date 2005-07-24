@@ -381,7 +381,7 @@ int guild_create(int Ind, cptr name){
 		return FALSE;
 	}
 	/* broadcast the news */
-	sprintf(temp, "\377GA new guild '%s' has been created.", name);
+	snprintf(temp, 160, "\377GA new guild '%s' has been created.", name);
 	msg_broadcast(0, temp);
 
 	p_ptr->au-=2000000;
@@ -453,7 +453,7 @@ void party_check(int Ind){
 void account_check(int Ind){	/* Temporary Ind */
 	hash_entry *ptr;
 	int i,del;
-	player_type *p_ptr=Players[Ind];
+//	player_type *p_ptr=Players[Ind];
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++)
@@ -827,7 +827,7 @@ static void del_guild(int id){
 	}
 
 	/* Tell everyone */
-	sprintf(temp, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
+	snprintf(temp, 160, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
 	msg_broadcast(0, temp);
 	/* Clear the basic info */
 	guilds[id].members=0;	/* it should be zero anyway */

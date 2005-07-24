@@ -1072,7 +1072,7 @@ void admin_outfit(int Ind, int realm)
 	object_type     forge;
 	object_type     *o_ptr = &forge;
 
-	int note = quark_add("!k");
+//	int note = quark_add("!k");
 
 	if (!is_admin(p_ptr)) return;
 

@@ -1916,15 +1916,15 @@ static void player_talk_aux(int Ind, char *message)
 
 #ifdef TOMENET_WORLDS
 	if(broadcast)
-		sprintf(tmessage, "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+		snprintf(tmessage, sizeof(tmessage), "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
 	else if (!me)
-		sprintf(tmessage, "\377%c[%s] \377B%s", c, sender, message + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\377%c[%s] \377B%s", c, sender, message + mycolor);
 	else{
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1))?2:0;
 		else return;
 		if(mycolor) c=message[5];
-		sprintf(tmessage, "\377%c[%s %s]", c, sender, message + 4+mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4+mycolor);
 	}
 	world_chat(p_ptr->id, tmessage);	/* no ignores... */
 	for(i = 1; i <= NumPlayers; i++){
@@ -1985,9 +1985,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				sprintf(afk, "\377o%s has returned from AFK.", p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377o%s has returned from AFK.", p_ptr->name);
 			else
-				sprintf(afk, "\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = FALSE;
 	}
@@ -2014,9 +2014,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				sprintf(afk, "\377o%s seems to be AFK now.", p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377o%s seems to be AFK now.", p_ptr->name);
 			else
-				sprintf(afk, "\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = TRUE;
 
@@ -2377,7 +2377,7 @@ s32b bst(s32b what, s32b t)
 		default:
 			return (0);
 	}
-}	    
+}
 
 cptr get_month_name(int day, bool full, bool compact)
 {
@@ -2398,9 +2398,9 @@ cptr get_month_name(int day, bool full, bool compact)
 		{
 			char buf2[20];
 
-			sprintf(buf2, get_day(day + 1));
-			if (full) sprintf(buf, "%s (%s day)", month_name[i], buf2);
-			else sprintf(buf, "%s", month_name[i]);
+			snprintf(buf2, 20, get_day(day + 1));
+			if (full) snprintf(buf, 40, "%s (%s day)", month_name[i], buf2);
+			else snprintf(buf, 40, "%s", month_name[i]);
 			break;
 		}
 		/* 'Normal' months + Enderi */
@@ -2409,12 +2409,12 @@ cptr get_month_name(int day, bool full, bool compact)
 			char buf2[20];
 			char buf3[20];
 
-			sprintf(buf2, get_day(day + 1 - month_day[i]));
-			sprintf(buf3, get_day(day + 1));
+			snprintf(buf2, 20, get_day(day + 1 - month_day[i]));
+			snprintf(buf3, 20, get_day(day + 1));
 
-			if (full) sprintf(buf, "%s day of %s (%s day)", buf2, month_name[i], buf3);
-			else if (compact) sprintf(buf, "%s day of %s", buf2, month_name[i]);
-			else sprintf(buf, "%s %s", buf2, month_name[i]);
+			if (full) snprintf(buf, 40, "%s day of %s (%s day)", buf2, month_name[i], buf3);
+			else if (compact) snprintf(buf, 40, "%s day of %s", buf2, month_name[i]);
+			else snprintf(buf, 40, "%s %s", buf2, month_name[i]);
 			break;
 		}
 	}
@@ -2432,7 +2432,7 @@ cptr get_day(int day)
 	else if ((day % 10) == 2) p = "nd";
 	else if ((day % 10) == 3) p = "rd";
 
-	sprintf(buf, "%d%s", day, p);
+	snprintf(buf, 20, "%d%s", day, p);
 	return (buf);
 }
 

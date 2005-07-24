@@ -263,6 +263,7 @@ static int		to_min_free = 3;
 static int		to_max_free = 5;
 static int		to_cur_free = 0;
 
+#if 0 /* to_alloc is only used by install_timeout() that's #iffed - mikaelh */
 static void to_fill(void)
 {
     if (to_cur_free < to_min_free) {
@@ -296,6 +297,7 @@ static struct to_handler *to_alloc(void)
 
     return top;
 }
+#endif
 
 static void to_free(struct to_handler *top)
 {

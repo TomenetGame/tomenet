@@ -691,7 +691,7 @@ static bool wild_monst_aux_wasteland(int r_idx)
 		
 }
 
-
+#if 0 /* looks like these aren't used - mikaelh */
 static bool wild_monst_aux_ocean(int r_idx)
 {
 	monster_race *r_ptr = &r_info[r_idx];
@@ -721,7 +721,7 @@ static bool wild_monst_aux_volcano(int r_idx)
 	else
 		return FALSE;
 }
-
+#endif // 0
 
 
 /* this may not be the most efficient way of doing things... */
@@ -878,7 +878,10 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 
 static void wild_add_garden(struct worldpos *wpos, int x, int y)
 {
-	int x1, y1, x2, y2, type, xlen, ylen, attempts = 0;
+	int x1, y1, x2, y2, type, xlen, ylen;
+#ifdef DEVEL_TOWN_COMPATIBILITY
+	int attempts = 0;
+#endif
 	char orientation;	
 	object_type food;
 	int tmp_seed;
@@ -1680,7 +1683,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 static int wild_clone_closed_loop_total(struct worldpos *wpos)
 {
 	int total_depth;
-	struct worldpos start, curr, total, neigh;
+	struct worldpos start, curr, neigh; //, total;
 	//wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	int iter=0;	/* hack ;( locks otherwise */
 		
@@ -1748,7 +1751,7 @@ static int wild_clone_closed_loop_total(struct worldpos *wpos)
 
 int determine_wilderness_type(struct worldpos *wpos)
 {
-	int dir, closed_loop = -0xFFF;
+	int closed_loop = -0xFFF;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	struct worldpos neighbor;
 	

@@ -280,12 +280,12 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) /* may
  */
 void compact_objects(int size, bool purge)
 {
-	int i, j, y, x, num, cnt, Ind; // , ny, nx;
+	int i, y, x, num, cnt, Ind; //, j, ny, nx;
 
 	int cur_val, cur_lev, cur_dis, chance;
 	struct worldpos *wpos;
 	cave_type **zcave;
-	object_type *q_ptr;
+//	object_type *q_ptr;
 	cave_type *c_ptr;
 
 	int tmp_max=o_max;
@@ -1045,7 +1045,7 @@ static void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u
 static s32b flag_cost(object_type * o_ptr, int plusses)
 {
 	s32b total = 0;
-	u32b f1, f2, f3, f4, f5, esp, am;
+	u32b f1, f2, f3, f4, f5, esp; //, am;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
@@ -2208,7 +2208,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
 	int total = o_ptr->number + j_ptr->number;
 
         /* Prepare ammo for possible combining */
-        int o_to_h, o_to_d;
+//	int o_to_h, o_to_d;
 	bool merge_inscriptions = check_guard_inscription(o_ptr->note, 'M') || check_guard_inscription(j_ptr->note, 'M');
 	bool merge_ammo = ((o_ptr->tval == TV_BOLT || o_ptr->tval == TV_ARROW || o_ptr->tval == TV_SHOT) &&
 			    merge_inscriptions);
@@ -5159,7 +5159,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	object_type *o_ptr_bak = &forge_bak;
 	u32b ego_value1, ego_value2;
 	long depth = ABS(getlevel(wpos)), depth_value;
-	int i, j, rolls, f1, f2, power;
+	int i, rolls, f1, f2, power; //, j;
 
 	/* if true arts aren't forbidden, allow them to get a chance of being generated
 	   (goes in hand with the same check in apply_magic) - C. Blue */

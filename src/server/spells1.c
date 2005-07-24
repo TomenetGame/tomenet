@@ -392,7 +392,7 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x)
 {
 	int i;
 
-	dun_level		*l_ptr = getfloor(wpos);
+//	dun_level		*l_ptr = getfloor(wpos);
 
 	for (i = 1; i <= NumPlayers; i++)
 	  {
@@ -554,7 +554,7 @@ void teleport_to_player(int Ind, int m_idx)
 	int attempts = 200;
 
 	struct worldpos *wpos=&m_ptr->wpos;
-	dun_level		*l_ptr = getfloor(wpos);
+//	dun_level		*l_ptr = getfloor(wpos);
 
 	cave_type **zcave;
 //        if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
@@ -943,7 +943,7 @@ void teleport_player_level(int Ind)
 	wilderness_type *w_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 	struct worldpos new_depth;
-	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+//	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char *msg="\377rCritical bug!";
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -4723,7 +4723,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_GRAVITY:
 		{
 			bool resist_tele = FALSE;
-			dun_level		*l_ptr = getfloor(wpos);
+//			dun_level		*l_ptr = getfloor(wpos);
 
 			if (seen) obvious = TRUE;
 			
@@ -5283,7 +5283,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_AWAY_ALL:
 		{
 			bool resists_tele = FALSE;
-			dun_level		*l_ptr = getfloor(wpos);
+//			dun_level		*l_ptr = getfloor(wpos);
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
 				(r_ptr->flags3 & (RF3_RES_TELE)))
@@ -5559,7 +5559,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_TELE_TO:
 		{
 			bool resists_tele = FALSE;
-			dun_level		*l_ptr = getfloor(wpos);
+//			dun_level		*l_ptr = getfloor(wpos);
 
 			/* Teleport to nowhere..? */
 			if (quiet) break;
@@ -6219,7 +6219,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	int psi_resists = 0;
 
 	/* Hack -- messages */
-	cptr act = NULL;
+//	cptr act = NULL;
 	
 	/* For resist_time: Limit randomization of effect */
 	int time_influence_choices;
@@ -7425,6 +7425,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			                p_ptr->redraw |= PR_SANITY;
 			                p_ptr->window |= (PW_PLAYER);
 				}
+				if (p_ptr->csane > p_ptr->msane) p_ptr->csane = p_ptr->msane; /* isn't supposed to happen... - mikaelh */
 			}
 			break;
 		case GF_SOULCURE_PLAYER:
@@ -7633,8 +7634,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_TELE_TO:
 		{
-			bool resists_tele = FALSE;
-			dun_level		*l_ptr = getfloor(wpos);
+//			bool resists_tele = FALSE;
+//			dun_level		*l_ptr = getfloor(wpos);
 
 			/* Teleport to nowhere..? */
 			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;

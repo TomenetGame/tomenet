@@ -4119,7 +4119,7 @@ void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
 	int i;
 
 	bool sleep = FALSE;
-	bool speed = FALSE;
+//	bool speed = FALSE;
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++)
@@ -4166,7 +4166,7 @@ void wake_minions(int Ind, int who)
 	int i;
 
 	bool sleep = FALSE;
-	bool speed = FALSE;
+//	bool speed = FALSE;
 
 	monster_desc(Ind, mw_name, who, 0x00);
 
@@ -5589,7 +5589,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 	}
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
-	sprintf(pattacker, "%s%s", p_ptr->name, attacker);
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
 	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
@@ -5621,7 +5621,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *att
 	}
 	project_time = time;
 
-    	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+    	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	return (project(0 - Ind, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
@@ -5637,7 +5637,7 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, 
 {
 	char pattacker[80];
 	project_time_effect = eff;
-        sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+        snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	return (fire_cloud(Ind, typ, dir, dam, rad, time, pattacker));
 }
 
@@ -5797,7 +5797,7 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker)
 {
 	char pattacker[80];
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
@@ -5810,7 +5810,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
 {
         char pattacker[80];
 	int flg = PROJECT_BEAM | PROJECT_KILL;
-        sprintf(pattacker,"%s%s", Players[Ind]->name, attacker);
+        snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
 }
 
@@ -5897,7 +5897,7 @@ bool disarm_trap(int Ind, int dir)
 bool heal_monster(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(Players[Ind]->attacker, "%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_OLD_HEAL, dir, damroll(4, 6), flg, Players[Ind]->attacker));
 }
 
@@ -5960,28 +5960,28 @@ bool teleport_monster(int Ind, int dir)
 bool cure_light_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker), "%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(2, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_serious_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(4, 10), flg, Players[Ind]->attacker));
 }
 
 bool cure_critical_wounds_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, damroll(6, 10), flg, Players[Ind]->attacker));
 }
 
 bool heal_other_proj(int Ind, int dir)
 {
 	int flg = PROJECT_STOP | PROJECT_KILL;
-	sprintf(Players[Ind]->attacker,"%s heals you for", Players[Ind]->name);
+	snprintf(Players[Ind]->attacker, sizeof(Players[Ind]->attacker),"%s heals you for", Players[Ind]->name);
 	return (project_hook(Ind, GF_HEAL_PLAYER, dir, 2000, flg, Players[Ind]->attacker));
 }
 

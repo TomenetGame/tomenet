@@ -258,12 +258,12 @@ static void prt_sanity(int Ind)
 	/* Full */
 	if (skill >= 40)
 	{
-		sprintf(buf, "%4d/%4d", p_ptr->csane, p_ptr->msane);
+		snprintf(buf, sizeof(buf), "%4d/%4d", p_ptr->csane, p_ptr->msane);
 	}
 	/* Percentile */
 	else if (skill >= 20)
 	{
-		sprintf(buf, "     %3d%%", ratio);
+		snprintf(buf, sizeof(buf), "     %3d%%", ratio);
 	}
 	/* Sanity Bar */
 	else if (skill >= 10)
@@ -1349,7 +1349,7 @@ void calc_hitpoints(int Ind)
 	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
 	    /* pre-cap monster HP against ~3500 (5000) */
-	    mHPLim = (100000 / ((100000 / rhp) + 18));/*18/*
+	    mHPLim = (100000 / ((100000 / rhp) + 18));/*18*/
 	    /* average with player HP */
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 	    /* cap final HP against ~2300 */
@@ -1516,10 +1516,10 @@ static void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-        cave_type **zcave;
-        if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int n, d, i, j, toac = 0, body = 0, immunities = 0, immunity[7], immrand[3];
+	int n, d, i, j, immunities = 0, immunity[7], immrand[3]; //, toac = 0, body = 0;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	
@@ -2292,12 +2292,12 @@ void calc_bonuses(int Ind)
 {
 	cptr inscription = NULL;
 	
-	char tmp[80];
+//	char tmp[80];
 
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
         cave_type **zcave;
-        if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+        if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	int			i, j, hold, minus, am;
 	long			w;
@@ -3965,7 +3965,7 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_h += lev;
 
 /*		if (o_ptr->k_idx) {
-/*			p_ptr->to_d += lev;
+			p_ptr->to_d += lev;
 			p_ptr->dis_to_d += lev;*/
 			p_ptr->to_d_melee += lev;
 /*		}*/

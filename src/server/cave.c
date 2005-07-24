@@ -1482,7 +1482,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 static byte player_color(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	monster_race *r_ptr = &r_info[p_ptr->body_monster];
+//	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	byte pcolor = p_ptr->pclass;
 	char dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
@@ -2530,7 +2530,7 @@ void lite_spot(int Ind, int y, int x)
 		/* Only draw if different than buffered */
 		if (p_ptr->scr_info[dispy][dispx].c != c ||
 		    p_ptr->scr_info[dispy][dispx].a != a ||
-		    (x == p_ptr->px && y==p_ptr->py))
+		    (x == p_ptr->px && y==p_ptr->py && !p_ptr->afk)) /* let's try disabling this when AFK to save bandwidth - mikaelh */
 		{
 			/* Modify internal buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;

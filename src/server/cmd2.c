@@ -4600,9 +4600,9 @@ void do_cmd_own(int Ind)
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
 	
 	if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
-		sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
+		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	} else {
-		sprintf(buf, "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
+		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	}
 	msg_broadcast(Ind, buf);
 	msg_print(Ind, buf);

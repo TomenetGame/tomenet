@@ -987,6 +987,7 @@ extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
 extern bool check_account(char *accname, char *c_name);
 extern void strip_true_arts_from_hashed_players(void);
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);

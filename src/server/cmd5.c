@@ -258,6 +258,7 @@ bool check_antimagic(int Ind)
 	return FALSE;
 }
 
+#if 0 /* not used? - mikaelh */
 /*
  * Brand the current weapon
  */
@@ -306,6 +307,7 @@ static void brand_weapon(int Ind)
 		msg_print(Ind, "The Branding failed.");
 	}
 }
+#endif // 0
 
 /*
  * Use a ghostly ability. --KLJ--
@@ -455,7 +457,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 		}
 		case 4:
 		{
-			sprintf(p_ptr->attacker, " casts a nether bolt for", p_ptr->name);
+			sprintf(p_ptr->attacker, " casts a nether bolt for");
 			fire_bolt_or_beam(Ind, plev * 2, GF_NETHER, dir, 50 + damroll(5, 5) + plev, p_ptr->attacker);
 			break;
 		}
@@ -1094,14 +1096,14 @@ void do_mimic_power_aux(int Ind, int dir)
 		int k;
 		for (k = 0; k < 1 + rlev / 20; k++)
 		{
-			sprintf(p_ptr->attacker, " fires an arrow for", p_ptr->name);
+			sprintf(p_ptr->attacker, " fires an arrow for");
 			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6), p_ptr->attacker);
 			break;
 		}
 	}
 //#define RF4_ARROW_2			0x00000020	/* Fire missiles */
     case 5:
-    sprintf(p_ptr->attacker, " fires an arrow for", p_ptr->name);
+    sprintf(p_ptr->attacker, " fires an arrow for");
       fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
       break;
 //#define RF4_ARROW_3			0x00000040	/* XXX */
@@ -1112,119 +1114,119 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
-    sprintf(p_ptr->attacker, " breathes acid for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes acid for");
       fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
     case 9:
-    sprintf(p_ptr->attacker, " breathes lightning for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes lightning for");
       fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
-    sprintf(p_ptr->attacker, " breathes fire for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes fire for");
       fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
     case 11:
-    sprintf(p_ptr->attacker, " breathes frost for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes frost for");
       fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
     case 12:
-    sprintf(p_ptr->attacker, " breathes poison for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes poison for");
       fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 2) > 500) ? 500 : (p_ptr->chp / 2), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
     case 13:
-    sprintf(p_ptr->attacker, " breathes nether for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes nether for");
       fire_ball(Ind, GF_NETHER, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_LITE			0x00004000	/* Breathe Lite */
     case 14:
-    sprintf(p_ptr->attacker, " breathes light for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes light for");
       fire_ball(Ind, GF_LITE, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_DARK			0x00008000	/* Breathe Dark */
     case 15:
-    sprintf(p_ptr->attacker, " breathes darkness for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes darkness for");
       fire_ball(Ind, GF_DARK, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_CONF			0x00010000	/* Breathe Confusion */
     case 16:
-    sprintf(p_ptr->attacker, " breathes confusion for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes confusion for");
       fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 3) > 400) ? 400 : (p_ptr->chp / 3), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_SOUN			0x00020000	/* Breathe Sound */
     case 17:
-    sprintf(p_ptr->attacker, " breathes sound for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes sound for");
       fire_ball(Ind, GF_SOUND, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_CHAO			0x00040000	/* Breathe Chaos */
     case 18:
-    sprintf(p_ptr->attacker, " breathes chaos for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes chaos for");
       fire_ball(Ind, GF_CHAOS, dir, ((p_ptr->chp / 4) > 500) ? 500 : (p_ptr->chp / 4), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_DISE			0x00080000	/* Breathe Disenchant */
     case 19:
-    sprintf(p_ptr->attacker, " breathes disenchantment for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes disenchantment for");
       fire_ball(Ind, GF_DISENCHANT, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_NEXU			0x00100000	/* Breathe Nexus */
     case 20:
-    sprintf(p_ptr->attacker, " breathes nexus for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes nexus for");
       fire_ball(Ind, GF_NEXUS, dir, ((p_ptr->chp / 3) > 250) ? 250 : (p_ptr->chp / 3), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_TIME			0x00200000	/* Breathe Time */
     case 21:
-    sprintf(p_ptr->attacker, " breathes time for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes time for");
       fire_ball(Ind, GF_TIME, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4), rad, p_ptr->attacker);
       break;
 //#define RF4_BR_INER			0x00400000	/* Breathe Inertia */
     case 22:
-    sprintf(p_ptr->attacker, " breathes inertia for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes inertia for");
       fire_ball(Ind, GF_INERTIA, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_GRAV			0x00800000	/* Breathe Gravity */
     case 23:
-    sprintf(p_ptr->attacker, " breathes gravity for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes gravity for");
       fire_ball(Ind, GF_GRAVITY, dir, ((p_ptr->chp / 3) > 200) ? 200 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_SHAR			0x01000000	/* Breathe Shards */
     case 24:
-    sprintf(p_ptr->attacker, " breathes shards for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes shards for");
       fire_ball(Ind, GF_SHARDS, dir, ((p_ptr->chp / 4) > 300) ? 300 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
     case 25:
-    sprintf(p_ptr->attacker, " breathes plasma for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes plasma for");
       fire_ball(Ind, GF_PLASMA, dir, ((p_ptr->chp / 4) > 150) ? 150 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_WALL			0x04000000	/* Breathe Force */
     case 26:
-    sprintf(p_ptr->attacker, " breathes force for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes force for");
       fire_ball(Ind, GF_FORCE, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
       break;
 //#define RF4_BR_MANA			0x08000000	/* Breathe Mana */
     case 27:
-    sprintf(p_ptr->attacker, " breathes mana for", p_ptr->name);
+    sprintf(p_ptr->attacker, " breathes mana for");
       fire_ball(Ind, GF_MANA, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
       break;
 	/* RF4_BR_DISI */
 	case 28:
-	sprintf(p_ptr->attacker, " breathes disintegration for", p_ptr->name);
+	sprintf(p_ptr->attacker, " breathes disintegration for");
 	  fire_ball(Ind, GF_DISINTEGRATE, dir,
 			  ((p_ptr->chp / 3) > 300 ? 300 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
 	  break;
 	/* RF4_BR_NUKE */
 	case 29:
-	sprintf(p_ptr->attacker, " breathes toxic waste for", p_ptr->name);
+	sprintf(p_ptr->attacker, " breathes toxic waste for");
 	  fire_ball(Ind, GF_NUKE, dir,
 			  ((p_ptr->chp / 3) > 800 ? 800 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
 	  break;
 	/* RF4_BOULDER */
     case 31:
-    sprintf(p_ptr->attacker, " hurls a boulder at you for", p_ptr->name);
+    sprintf(p_ptr->attacker, " hurls a boulder at you for");
       fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 7, 12), p_ptr->attacker);
       break;
 		 
@@ -1233,52 +1235,52 @@ void do_mimic_power_aux(int Ind, int dir)
 
 // RF5_BA_ACID			0x00000001	/* Acid Ball */
     case 32:
-    sprintf(p_ptr->attacker, " casts an acid ball for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts an acid ball for");
       fire_ball(Ind, GF_ACID, dir, randint(rlev * 3) + 15 , rad, p_ptr->attacker);
       break;
 // RF5_BA_ELEC			0x00000002	/* Elec Ball */
     case 33:
-    sprintf(p_ptr->attacker, " casts a lightning ball for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a lightning ball for");
       fire_ball(Ind, GF_ELEC, dir, randint(rlev * 3 / 2) + 8 , rad, p_ptr->attacker);
       break;
 // RF5_BA_FIRE			0x00000004	/* Fire Ball */
     case 34:
-    sprintf(p_ptr->attacker, " casts a fire ball for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a fire ball for");
       fire_ball(Ind, GF_FIRE, dir, randint(rlev * 7 / 2) + 10 , rad, p_ptr->attacker);
       break;
 // RF5_BA_COLD			0x00000008	/* Cold Ball */
     case 35:
-    sprintf(p_ptr->attacker, " casts a cold ball for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a cold ball for");
       fire_ball(Ind, GF_COLD, dir, randint(rlev * 2) + 10 , rad, p_ptr->attacker);
       break;
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
     case 36:
-    sprintf(p_ptr->attacker, " casts a stinking cloud for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a stinking cloud for");
       fire_ball(Ind, GF_POIS, dir, damroll(12, 2) , rad, p_ptr->attacker);
       break;
 // RF5_BA_NETH			0x00000020	/* Nether Ball */
     case 37:
-	sprintf(p_ptr->attacker, " casts a nether ball for", p_ptr->name);
+	sprintf(p_ptr->attacker, " casts a nether ball for");
       fire_ball(Ind, GF_NETHER, dir, 50  + damroll(10, 10) + rlev , rad, p_ptr->attacker);
       break;
 // RF5_BA_WATE			0x00000040	/* Water Ball */
     case 38:
-	sprintf(p_ptr->attacker, " casts a water ball for", p_ptr->name);
+	sprintf(p_ptr->attacker, " casts a water ball for");
       fire_ball(Ind, GF_WATER, dir, randint(rlev * 5 / 2) + 50 , rad, p_ptr->attacker);
       break;
 // RF5_BA_MANA			0x00000080	/* Mana Storm */
     case 39:
-    sprintf(p_ptr->attacker, " invokes a mana storm for", p_ptr->name);
+    sprintf(p_ptr->attacker, " invokes a mana storm for");
       fire_ball(Ind, GF_MANA, dir, damroll(10, 10) + (rlev * 2) , rad, p_ptr->attacker);
       break;
 // RF5_BA_DARK			0x00000100	/* Darkness Storm */
     case 40:
-	sprintf(p_ptr->attacker, " invokes a darkness storm for", p_ptr->name);
+	sprintf(p_ptr->attacker, " invokes a darkness storm for");
       fire_ball(Ind, GF_DARK, dir, damroll(10, 10) + (rlev * 2) , rad, p_ptr->attacker);
       break;
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
-    //sprintf(p_ptr->attacker, " tries to blast your mind for", p_ptr->name);
+    //sprintf(p_ptr->attacker, " tries to blast your mind for");
     sprintf(p_ptr->attacker, "");
       fire_bolt(Ind, GF_PSI, dir, damroll(3 + rlev / 5, 8), "");
       break;
@@ -1289,7 +1291,7 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF5_CAUSE_1			0x00001000	/* Cause Wound */
     case 44:
-    sprintf(p_ptr->attacker, " casts a mana bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a mana bolt for");
       fire_bolt(Ind, GF_MANA, dir, damroll(3 + rlev / 4, 8), p_ptr->attacker);
       break;
 // RF5_CAUSE_2			0x00002000	/* XXX */
@@ -1297,67 +1299,67 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 	/* RF5_BA_NUKE */
 	case 32+14:
-	sprintf(p_ptr->attacker, " invokes a radiation ball for", p_ptr->name);
+	sprintf(p_ptr->attacker, " invokes a radiation ball for");
 	  fire_ball(Ind, GF_NUKE, dir, (rlev + damroll(10, 6)), 2, p_ptr->attacker);
 	  break;
 	/* RF5_BA_CHAO */
 	case 32+15:
-	sprintf(p_ptr->attacker, " invokes a chaos ball for", p_ptr->name);
+	sprintf(p_ptr->attacker, " invokes a chaos ball for");
 	  fire_ball(Ind, GF_CHAOS, dir, (rlev * 2) + damroll(10, 10), 4, p_ptr->attacker);
 	  break;
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
     case 48:
-    sprintf(p_ptr->attacker, " casts an acid bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts an acid bolt for");
       fire_bolt(Ind, GF_ACID, dir, damroll(7, 8) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
     case 49:
-    sprintf(p_ptr->attacker, " casts a lightning bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a lightning bolt for");
       fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_BO_FIRE			0x00040000	/* Fire Bolt */
     case 50:
-    sprintf(p_ptr->attacker, " casts a fire bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a fire bolt for");
       fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
     case 51:
-    sprintf(p_ptr->attacker, " casts a frost bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a frost bolt for");
       fire_bolt(Ind, GF_COLD, dir, damroll(6, 8) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
     case 52:
-    sprintf(p_ptr->attacker, " casts a poison bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a poison bolt for");
       fire_bolt(Ind, GF_POIS, dir, damroll(3, 8) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
     case 53:
-    sprintf(p_ptr->attacker, " casts a nether bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a nether bolt for");
       fire_bolt(Ind, GF_NETHER, dir, 30 + damroll(5, 5) + (rlev * 3) / 2, p_ptr->attacker);
       break;
 // RF5_BO_WATE			0x00400000	/* Water Bolt */
     case 54:
-    sprintf(p_ptr->attacker, " casts a water bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a water bolt for");
       fire_bolt(Ind, GF_WATER, dir, damroll(10, 10) + (rlev), p_ptr->attacker);
       break;
 // RF5_BO_MANA			0x00800000	/* Mana Bolt */
     case 55:
-    sprintf(p_ptr->attacker, " casts a mana bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a mana bolt for");
       fire_bolt(Ind, GF_MANA, dir, randint(rlev * 7 / 4) + 50, p_ptr->attacker);
       break;
 // RF5_BO_PLAS			0x01000000	/* Plasma Bolt */
     case 56:
-    sprintf(p_ptr->attacker, " casts a plasma bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts a plasma bolt for");
       fire_bolt(Ind, GF_PLASMA, dir, 10 + damroll(8, 7) + (rlev), p_ptr->attacker);
       break;
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
     case 57:
-    sprintf(p_ptr->attacker, " casts an ice bolt for", p_ptr->name);
+    sprintf(p_ptr->attacker, " casts an ice bolt for");
       fire_bolt(Ind, GF_ICE, dir, damroll(6, 6) + (rlev), p_ptr->attacker);
       break;
 // RF5_MISSILE			0x04000000	/* Magic Missile */
     case 58:
-    sprintf(p_ptr->attacker, " fires a missile for", p_ptr->name);
+    sprintf(p_ptr->attacker, " fires a missile for");
       fire_bolt(Ind, GF_MISSILE, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
       break;
 // RF5_SCARE			0x08000000	/* Frighten Player */
@@ -1381,7 +1383,7 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
-    sprintf(p_ptr->attacker, " invokes the hand of doom for", p_ptr->name);
+    sprintf(p_ptr->attacker, " invokes the hand of doom for");
 	  (void)project_hook(Ind, GF_HAND_DOOM, dir, 1, PROJECT_STOP | PROJECT_KILL, p_ptr->attacker);
       break;
 // RF6_TELE_TO
@@ -1517,13 +1519,11 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 void do_cmd_mimic(int Ind, int spell, int dir)
 {
-	char out_val[5];
-
 	player_type *p_ptr = Players[Ind];
 	int j, k;
 
 	/* should it..? */
-	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
+//	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 //(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
 
 	if (!get_skill(p_ptr, SKILL_MIMIC))

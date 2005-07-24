@@ -1547,7 +1547,7 @@ static void display_entry(int Ind, int pos)
 	i = (pos % 12);
 
 	/* Label it, clear the line --(-- */
-	(void)sprintf(out_val, "%c) ", I2A(i));
+	(void)snprintf(out_val, sizeof(out_val), "%c) ", I2A(i));
 	prt(out_val, i+6, 0);
 #endif
 
@@ -2224,11 +2224,11 @@ void store_purchase(int Ind, int item, int amt)
 	/* Prompt */
 	if (p_ptr->store_num == 7)
 	{
-		sprintf(out_val, "Which item do you want to take? ");
+		snprintf(out_val, sizeof(out_val), "Which item do you want to take? ");
 	}
 	else
 	{
-		sprintf(out_val, "Which item are you interested in? ");
+		snprintf(out_val, sizeof(out_val), "Which item are you interested in? ");
 	}
 
 	/* Get the item number to be bought */
@@ -4169,7 +4169,7 @@ static void display_house_entry(int Ind, int pos)
 	i = (pos % 12);
 
 	/* Label it, clear the line --(-- */
-	(void)sprintf(out_val, "%c) ", I2A(i));
+	(void)snprintf(out_val, sizeof(out_val), "%c) ", I2A(i));
 	prt(out_val, i+6, 0);
 #endif
 

@@ -259,7 +259,7 @@ void show_news(void)
 		char why[1024];
 
 		/* Message */
-		sprintf(why, "Cannot access the '%s' file!", buf);
+		snprintf(why, 1024, "Cannot access the '%s' file!", buf);
 
 		/* Crash and burn */
 		show_news_aux(why);
@@ -315,7 +315,7 @@ void show_news(void)
 			char why[1024];
 
 			/* Message */
-			sprintf(why, "Cannot create the '%s' file!", buf);
+			snprintf(why, 1024, "Cannot create the '%s' file!", buf);
 
 			/* Crash and burn */
 			show_news_aux(why);

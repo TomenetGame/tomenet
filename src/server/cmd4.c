@@ -1007,16 +1007,16 @@ void do_cmd_check_server_settings(int Ind)
 	switch (k)
 	{
 		case PK_RULES_DECLARE:
-			fprintf(fff, "You should use /pk first to attack other players.\n", k);
+			fprintf(fff, "You should use /pk first to attack other players.\n");
 			break;
 
 		case PK_RULES_NEVER:
-			fprintf(fff, "You are not allowed to attack/rob other players.\n", k);
+			fprintf(fff, "You are not allowed to attack/rob other players.\n");
 			break;
 
 		case PK_RULES_TRAD:
 		default:
-			fprintf(fff, "You can attack/rob other players(but not recommended).\n", k);
+			fprintf(fff, "You can attack/rob other players(but not recommended).\n");
 			break;
 	}
 
@@ -1028,7 +1028,7 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.houses_per_player)
 		fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once.\n", cfg.houses_per_player);
 	else
-		fprintf(fff, "Players may own as many houses at once as they like.\n");	    
+		fprintf(fff, "Players may own as many houses at once as they like.\n");
 
 	fprintf(fff,"\n");
 
@@ -1039,7 +1039,7 @@ void do_cmd_check_server_settings(int Ind)
 	case 3:
 		fprintf(fff, "Non-sleeping monsters adjust to highest player within their awareness area.\n");
 	case 2:
-		fprintf(fff, "Level of a player casting support spells on you affects exp for %d turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
+		fprintf(fff, "Level of a player casting support spells on you affects exp for %ld turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
 	case 1:
 		fprintf(fff, "Monsters' exp value is affected by highest attacking or targetted player.\n");
 		break;
@@ -1083,7 +1083,7 @@ void do_cmd_check_server_settings(int Ind)
 	if ((k=cfg.retire_timer) > 0)
 		fprintf(fff, "The winner will automatically retire after %d minutes.\n", k);
 	else if (k == 0)
-		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n", k);
+		fprintf(fff, "The game ends the moment you beat the final foe, Morgoth.\n");
 
 	if (k !=0)
 	{
@@ -1212,7 +1212,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	monster_race	*r_ptr;
 	bool	shown = FALSE, all = FALSE;
 	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
-	bool	admin = is_admin(p_ptr);
+//	bool	admin = is_admin(p_ptr);
 
 	FILE *fff;
 

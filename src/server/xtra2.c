@@ -3124,7 +3124,7 @@ void check_experience(int Ind)
 
 	bool newlv = FALSE;
 	int old_lev;
-	long int i;
+//	long int i;
 #ifdef LEVEL_GAINING_LIMIT
 	int limit;
 #endif	// LEVEL_GAINING_LIMIT
@@ -3327,7 +3327,7 @@ void check_experience(int Ind)
 		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
 #endif
 
-		sprintf(str, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		snprintf(str, 160, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
 #ifdef TOMENET_WORLDS
@@ -3746,7 +3746,7 @@ void monster_death(int Ind, int m_idx)
 				case RBE_SANITY:    typ = GF_MISSILE; break;
 			}
 
-			sprintf(p_ptr->attacker, "%s inflicts", m_name);
+			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s inflicts", m_name);
 			project(m_idx, 3, wpos, y, x, damage > base_damage ? base_damage : damage, typ, flg, p_ptr->attacker);
 			break;
 		}
@@ -3905,9 +3905,9 @@ if(cfg.unikill_format){
 
 		if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
 		{
-			sprintf(buf,"\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else {
-			sprintf(buf,"\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		}
 }else{
 	/* for now disabled (works though) since we don't have telepath class
@@ -3916,16 +3916,16 @@ if(cfg.unikill_format){
 		if (!Ind2)
 		{
 			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-				sprintf(buf,"\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 			else
-				sprintf(buf,"\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
 		}
 		else
 		{
 			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-				sprintf(buf,"\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			else
-				sprintf(buf,"\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
 
 		/* give credit to the party if there is a teammate on the 
@@ -3937,9 +3937,9 @@ if(cfg.unikill_format){
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
 				{
 					if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-						sprintf(buf, "\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					else
-						sprintf(buf, "\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break; 
 				} 
 
@@ -4607,7 +4607,7 @@ void player_death(int Ind)
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE;
 	cptr titlebuf;
-	int inven_sort_map[INVEN_TOTAL];
+//	int inven_sort_map[INVEN_TOTAL];
 
 	/* prepare player's title */
 	if (p_ptr->lev < 60)
@@ -4758,9 +4758,9 @@ void player_death(int Ind)
 			msg_format(Ind, "\377a**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377a**");
 
 			if (cfg.unikill_format)
-			sprintf(buf, "\377a**\377r%s %s was destroyed by \377m%s\377r.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377a**\377r%s %s was destroyed by \377m%s\377r.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 			else
-			sprintf(buf, "\377a**\377r%s was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377a**\377r%s was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("(%d) %s was destroyed by %s for %d damage at %d, %d, %d.\n", p_ptr->lev, p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -4783,9 +4783,9 @@ void player_death(int Ind)
 			msg_format(Ind, "\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
 
 			if (cfg.unikill_format)
-			sprintf(buf, "\377a**\377r%s %s's ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377a**\377r%s %s's ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 			else
-			sprintf(buf, "\377a**\377r%s's ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377a**\377r%s's ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			s_printf("(%d) %s's ghost was destroyed by %s for %d damage on %d, %d, %d.\n", p_ptr->lev, p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -4816,9 +4816,9 @@ void player_death(int Ind)
 				}
 				msg_format(Ind, "\377a**\377rYou have been %s by %s.\377a**", funky_msg, p_ptr->died_from);
 				if (cfg.unikill_format) {
-					sprintf(buf, "\377a**\377r%s %s was %s by %s.\377a**", titlebuf, p_ptr->name, funky_msg, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s %s was %s by %s.\377a**", titlebuf, p_ptr->name, funky_msg, p_ptr->died_from);
 				} else {
-					sprintf(buf, "\377a**\377r%s was %s and destroyed by %s.\377a**", p_ptr->name, funky_msg, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s was %s and destroyed by %s.\377a**", p_ptr->name, funky_msg, p_ptr->died_from);
 				}
 			} else {
 #endif
@@ -4834,18 +4834,18 @@ void player_death(int Ind)
 
 			if (cfg.unikill_format) {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)))
-					sprintf(buf, "\377a**\377r%s %s was killed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s %s was killed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					sprintf(buf, "\377a**\377r%s %s was annihilated by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s %s was annihilated by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 				else
-					sprintf(buf, "\377a**\377r%s %s was vaporized by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s %s was vaporized by %s.\377a**", titlebuf, p_ptr->name, p_ptr->died_from);
 			} else {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)))
-					sprintf(buf, "\377a**\377r%s was killed and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s was killed and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					sprintf(buf, "\377a**\377r%s was annihilated and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s was annihilated and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 				else
-					sprintf(buf, "\377a**\377r%s was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377a**\377r%s was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->died_from);
 			}
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
@@ -5073,7 +5073,7 @@ void player_death(int Ind)
 			add_high_score(Ind);
 
 		/* Format string */
-		sprintf(buf, "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
+		snprintf(buf, sizeof(buf), "Killed by %s (%ld pts)", p_ptr->died_from, total_points(Ind));
 
 		/* Get rid of him */
 		Destroy_connection(p_ptr->conn, buf);
@@ -5084,17 +5084,17 @@ void player_death(int Ind)
 
 	/* Tell everyone he died */
 	if (p_ptr->fruit_bat == -1)
-		sprintf(buf, "\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
+		snprintf(buf, sizeof(buf), "\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
 	
  	else if (p_ptr->alive){
 		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))) {
-			sprintf(buf, "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from);
 		}
 		else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-			sprintf(buf, "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from);
 		}
 		else {
-			sprintf(buf, "\377r%s was vaporized by %s.", p_ptr->name, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377r%s was vaporized by %s.", p_ptr->name, p_ptr->died_from);
 		}
 		s_printf("(%d) %s was killed by %s for %d damage at %d, %d, %d.\n", p_ptr->lev, p_ptr->name, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
@@ -5102,10 +5102,10 @@ void player_death(int Ind)
 
 	}
 	else if (!p_ptr->total_winner) {
-		sprintf(buf, "\377D%s committed suicide.", p_ptr->name);
+		snprintf(buf, sizeof(buf), "\377D%s committed suicide.", p_ptr->name);
 		s_printf("(%d) %s committed suicide.\n", p_ptr->lev, p_ptr->name);
 	} else {
-		sprintf(buf, "\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
+		snprintf(buf, sizeof(buf), "\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 		s_printf("(%d) %s committed suicide. (Retirement)\n", p_ptr->lev, p_ptr->name);
 	}
 	/* Tell the players */
@@ -5242,7 +5242,7 @@ void player_death(int Ind)
 #endif	/* DEATH_ITEM_SCATTER */
 				{
 					if (!item_lost) {
-						/* not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
+						// not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
 #if 0
 						p_ptr->inventory[i].marked=3;
 #else
@@ -5628,7 +5628,7 @@ void kill_quest(int Ind){
 	
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
-	sprintf(temp,"\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
+	snprintf(temp, 160, "\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
 	if(quests[i].flags&QUEST_RACE)
 		msg_broadcast(Ind, temp);
 	if(quests[i].flags&QUEST_GUILD){
@@ -5783,7 +5783,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	s64b 		tmp_exp, req_lvl;
 	bool old_tacit = suppress_message;
 
-        int dun_level2 = getlevel(&p_ptr->wpos);
+//        int dun_level2 = getlevel(&p_ptr->wpos);
         dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
 	int dun_type2;
 	dungeon_info_type *d_ptr2;
@@ -7138,7 +7138,7 @@ bool target_set(int Ind, int dir)
 		handle_stuff(Ind);
 
 		/* Describe, prompt for recall */
-		sprintf(out_val,
+		snprintf(out_val, sizeof(out_val),
                         "%s{%d} (%s) [<dir>, q, t] ",
                         r_name_get(m_ptr),
                         m_ptr->level,
@@ -7164,7 +7164,7 @@ bool target_set(int Ind, int dir)
 		handle_stuff(Ind);
 
 		/* Describe */
-		sprintf(out_val, "%s [<dir>, q, t] ", q_ptr->name);
+		snprintf(out_val, sizeof(out_val), "%s [<dir>, q, t] ", q_ptr->name);
 
 		/* Tell the client about it */
 		Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
@@ -7317,7 +7317,7 @@ bool target_set_friendly(int Ind, int dir, ...)
 		handle_stuff(Ind);
 
 		/* Describe */
-		sprintf(out_val, "%s targetted.", q_ptr->name);
+		snprintf(out_val, sizeof(out_val), "%s targetted.", q_ptr->name);
 
 		/* Tell the client about it */
 		Send_target_info(Ind, x - p_ptr->panel_col_prt, y - p_ptr->panel_row_prt, out_val);
@@ -8542,7 +8542,7 @@ bool imprison(int Ind, u16b time, char *reason){
 			p_ptr->new_level_method=LEVEL_HOUSE;
 
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-			sprintf(string, "\377v%s was jailed for %s", p_ptr->name, reason);
+			snprintf(string, sizeof(string), "\377v%s was jailed for %s", p_ptr->name, reason);
 			msg_broadcast(Ind, string);
 			msg_format(Ind, "\377vYou have been jailed for %s", reason);
 			p_ptr->tim_jail=time+p_ptr->tim_susp;
