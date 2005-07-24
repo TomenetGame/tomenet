@@ -22,6 +22,12 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+24/07/2005
+[m]- Lots of cleanups
+[m]- Replace bunch of sprintf's with snprintf
+[m]- Limit the length of player's name on server side
+[B]- Fixed a bug preventing targetting players
+
 03/07/2005
 [m]- Prevent invalid players from picking up gold/items owned by other players
 
