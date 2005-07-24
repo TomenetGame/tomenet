@@ -154,7 +154,7 @@ void wproto(struct client *ccl){
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[160];
-					sprintf(msg, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					snprintf(msg, 160, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
 					strncpy(wpk->d.chat.ctxt, msg, 120);
 					relay(wpk, ccl);
 				}
