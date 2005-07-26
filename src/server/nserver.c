@@ -2589,7 +2589,7 @@ static int Receive_login(int ind){
 		return(0);
 	} else if (connp->password_verified) {
 		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */
-		choice[20] = '\0';
+		choice[19] = '\0';
 
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
