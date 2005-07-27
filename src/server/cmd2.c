@@ -235,7 +235,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
-	
+
 	/* (HACK) sanity check to cover cut-off vaults with missing void gate end-points! - C. Blue */
 	if (bx < 1 || by < 1 || bx >= l_ptr->wid - 1 || by >= l_ptr->hgt - 1) {
 		msg_print(Ind, "The gate seems broken.");
@@ -281,7 +281,7 @@ void do_cmd_go_down(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
-	
+
 	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
 		msg_print(Ind,"The dungeon is closed");
 		return;
@@ -338,7 +338,7 @@ void do_cmd_go_down(int Ind)
 	{
 		/* Check interference */
 		if (interfere(Ind, 20)) return;
-		
+
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
 	}
@@ -372,7 +372,7 @@ void do_cmd_go_down(int Ind)
 		msg_print(Ind, "There is nothing below you.");
 		return;
 	}
-	
+
 	/* Verify maximum depth */
 	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz)
 	{
@@ -658,11 +658,11 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 
 	/* Obtain the trap */
 	trap = o_ptr->pval;
-	
+
 	/* Message */
 //	msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
-	
+
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
 	if (ident && !p_ptr->trap_ident[o_ptr->pval])
@@ -753,13 +753,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 					msg_print(Ind, "At his current level, that player cannot own more houses!");
 				return (FALSE);
 			}
-			
+
 			if ((Players[i]->mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)) {
 				if (p_ptr->mode & MODE_IMMORTAL) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
 				else msg_print(Ind, "You cannot transfer houses to everlasting players!");
 				return(FALSE);
 			}
-			
+
 			/* Finally change the owner */
 			newowner=lookup_player_id_messy(&args[2]);
 			if(!newowner) newowner=-1;
@@ -853,9 +853,9 @@ bool access_door(int Ind, struct dna_type *dna){
 }
 
 
-char *get_house_owner(struct c_special *cs_ptr)
+cptr get_house_owner(struct c_special *cs_ptr)
 {
-	char string[80];
+	static char string[80];
 	struct dna_type *dna=cs_ptr->sc.ptr;
 	strcpy(string,"nobody.");
 	if(dna->owner){
@@ -1112,7 +1112,7 @@ void do_cmd_open(int Ind, int dir)
 
 					/* Redraw */
 					everyone_lite_spot(wpos, y, x);
-					
+
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
@@ -1120,7 +1120,7 @@ void do_cmd_open(int Ind, int dir)
 				else
 				{
 					struct dna_type *dna=cs_ptr->sc.ptr;
-					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) 
+					if (!strcmp(get_house_owner(cs_ptr), "nobody."))
 					{
 						long factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -1543,7 +1543,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					{
 						place_object_restrictor = 0;
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
-						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE, 
+						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE,
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
 						{
@@ -1565,7 +1565,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					more = TRUE;
 				}
 			}
-			
+
 			else if (c_ptr->feat == FEAT_TREES)
 			{
 				/* mow down the vegetation */
@@ -1575,7 +1575,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You hack your way through the vegetation.");
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
-					
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -1589,7 +1589,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					more = TRUE;
 				}
 			}
-			
+
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
 				/* mow down the vegetation */
@@ -1597,7 +1597,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
-					
+
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -2279,7 +2279,7 @@ void do_cmd_bash(int Ind, int dir)
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-				
+
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE);
 
@@ -2501,7 +2501,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 					p_ptr->easy_open &&
-				(c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				(c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				(c_ptr->feat <= FEAT_DOOR_TAIL))
 			{
 				do_cmd_open(Ind, dir);
@@ -2567,7 +2567,7 @@ int do_cmd_run(int Ind, int dir)
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 				    ((c_ptr->feat == FEAT_HOME)))
 				{
@@ -2625,7 +2625,7 @@ void do_cmd_stay(int Ind, int pickup)
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	
+
 	if (p_ptr->new_level_flag) return;
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -2805,7 +2805,7 @@ int get_shooter_mult(object_type *o_ptr)
 
 		case SV_LONG_BOW:
 		{
-			/* Long Bow and Arrow */		
+			/* Long Bow and Arrow */
 			tmul = 3;
 			break;
 		}
@@ -2884,7 +2884,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	int                     missile_attr;
 	int                     missile_char;
-	
+
 	char brand_msg[80];
 
         bool            drain_msg = TRUE;
@@ -2915,7 +2915,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-		
+
 	/* Require a launcher */
 	if (!j_ptr->tval)
 	{
@@ -3232,7 +3232,7 @@ void do_cmd_fire(int Ind, int dir)
 							 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
 							 magik(FRIEND_FIRE_CHANCE))
 							&& !p_ptr->admin_dm)
-					{ 
+					{
 
 						/* Check the visibility */
 						visible = p_ptr->play_vis[0 - c_ptr->m_idx];
@@ -3350,10 +3350,10 @@ void do_cmd_fire(int Ind, int dir)
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
 								if (!boomerang && p_ptr->bow_brand_t
-										&& p_ptr->bow_brand_t != BRAND_CONF) 
+										&& p_ptr->bow_brand_t != BRAND_CONF)
 									do_arrow_brand_effect(Ind, y, x);
 
-								if (!magic && o_ptr->pval) 
+								if (!magic && o_ptr->pval)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
@@ -3494,7 +3494,7 @@ void do_cmd_fire(int Ind, int dir)
 					   Should general p_ptr->vampiric help for ranged attacks?
 					   - for now vampiric from items (-1) helps a bit,
 					   - vampiric from vampire form (>0) doesn't (relies on melee-biting!) */
-					if ((((f1 | f1a) & TR1_VAMPIRIC) || 
+					if ((((f1 | f1a) & TR1_VAMPIRIC) ||
 					    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE_RANGED))) &&
 					    !((r_ptr->flags3 & RF3_UNDEAD) ||
 /*          				    (r_ptr->flags3 & RF3_DEMON) ||*/
@@ -3520,7 +3520,7 @@ void do_cmd_fire(int Ind, int dir)
 						dead, the drain does not work... */
 						if (drain_result) {
 							drain_result -= m_ptr->hp;  /* Calculate the difference */
-						
+
 							if (drain_result > 0) /* Did we really hurt it? */
 							{
 								drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was /8 for 50 max_drain */
@@ -3560,10 +3560,10 @@ void do_cmd_fire(int Ind, int dir)
 						}
 					}
 
-					if (!boomerang && p_ptr->bow_brand_t) 
+					if (!boomerang && p_ptr->bow_brand_t)
 						do_arrow_brand_effect(Ind, y, x);
 
-					if (!magic && o_ptr->pval) 
+					if (!magic && o_ptr->pval)
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
@@ -3951,9 +3951,9 @@ void do_cmd_throw(int Ind, int dir, int item)
 	throw_obj.number = 1;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (o_ptr->tval == TV_WAND)
@@ -4430,7 +4430,7 @@ void house_admin(int Ind, int dir, char *args){
 /*
  * Buy a house.  It is assumed that the player already knows the
  * price.
- 
+
  Hacked to sell houses for half price. -APD-
  Doesn't use a turn / disable AFK at this time. - C. Blue
  */
@@ -4457,7 +4457,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		msg_print(Ind, "You cannot buy a house.");
 
 		return;
-	}       
+	}
 
 	if(p_ptr->inval){
 		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
@@ -4518,7 +4518,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 				dna->creator=0L;
 				dna->owner=0L;
 				dna->a_flags=ACF_NONE;
-				
+
 				/* Erase house contents */
 				for (i = 0; i < num_houses; i++)
 					if (houses[i].dx == x && houses[i].dy == y)
@@ -4558,7 +4558,7 @@ void do_cmd_own(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	char buf[100];
-	
+
 	if (!p_ptr->total_winner)
 	{
 		msg_format(Ind, "You must be a %s to own a land!", (p_ptr->male)?"king":"queen");
@@ -4570,7 +4570,7 @@ void do_cmd_own(int Ind)
 		msg_format(Ind, "You can't own more than 2 terrains.");
 		return;
 	}
-	
+
 	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own)
 	{
 		msg_format(Ind, "Sorry this land is owned by someone else.");
@@ -4581,13 +4581,13 @@ void do_cmd_own(int Ind)
 		msg_format(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
-	
+
 	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<4))
 	{
 		msg_format(Ind, "Sorry this land is owned by the town.");
 		return;
 	}
-	
+
 	/* Ok all check did lets appropriate */
 	if(p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
 	{
@@ -4598,7 +4598,7 @@ void do_cmd_own(int Ind)
 		wpcopy(&p_ptr->own1, &p_ptr->wpos);
 	}
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
-	
+
 	if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
 		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	} else {

@@ -198,7 +198,7 @@ extern s32b m_top;
 extern s32b t_nxt;
 extern s32b t_max;
 extern s32b t_top;
-extern header *re_head; 
+extern header *re_head;
 extern monster_ego *re_info;
 extern header *d_head;
 extern dungeon_info_type *d_info;
@@ -479,7 +479,7 @@ extern int see_wall(int Ind, int dir, int y, int x);
 extern bool player_can_enter(int Ind, byte feature);
 
 /* cmd2.c */
-extern char *get_house_owner(struct c_special *cs_ptr);
+extern cptr get_house_owner(struct c_special *cs_ptr);
 extern bool access_door(int Ind, struct dna_type *dna);
 extern void do_cmd_own(int Ind);
 extern void do_cmd_go_up(int Ind);
@@ -614,7 +614,7 @@ extern void dungeon(void);
 extern void pack_overflow(int Ind);
 extern void set_runlevel(int val);
 extern void store_turnover(void);
-int has_ball (player_type *p_ptr);
+extern int has_ball (player_type *p_ptr);
 
 extern void cheeze(object_type *o_ptr);
 extern void cheeze_trad_house(void);
@@ -987,7 +987,7 @@ extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
 extern bool check_account(char *accname, char *c_name);
 extern void strip_true_arts_from_hashed_players(void);
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston);
+extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u16b quest, time_t laston);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
