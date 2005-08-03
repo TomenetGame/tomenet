@@ -147,7 +147,7 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 
                         /* Save the "cmd_flag" */
                         macro__cmd[n] = cmd_flag;
-                        
+
                         /* Save the hybrid flag */
                         macro__hyb[n] = hyb_flag;
 
@@ -193,7 +193,7 @@ static void sync_sleep(int milliseconds)
 	for (n = 0; n < milliseconds / 100; n++) {
 
 		usleep(1000);
-	
+
 		/* Flush output - maintain flickering/multi-hued characters */
 		do_flicker();
 		/* Update our timer and if neccecary send a keepalive packet
@@ -201,13 +201,13 @@ static void sync_sleep(int milliseconds)
 		update_ticks();
 		if(!c_quit)
 			do_keepalive();
-	
+
 		/* Flush the network output buffer */
 		Net_flush();
 		/* Wait for .001 sec, or until there is net input */
 		SetTimeout(0, 1000);
 		if(c_quit) continue;
-	
+
 		/* Parse net input if we got any */
 		if (SocketReadable(net_fd))
 		{
@@ -215,10 +215,10 @@ static void sync_sleep(int milliseconds)
 			{
 				quit(NULL);
 			}
-	
+
 			/* Update the screen */
 			Term_fresh();
-	
+
 			/* Redraw windows if necessary */
 			if (p_ptr->window)
 			{
@@ -261,7 +261,7 @@ static char inkey_aux(void)
 	cptr	pat, act;
 
 	char	buf[1024];
-	
+
 	char	buf_atoi[3];
 
 	int net_fd;
@@ -332,7 +332,7 @@ static char inkey_aux(void)
 	/* Do not check "ascii 28" */
 	if (ch == 28) return (ch);
 
-	
+
 	/* Do not check "ascii 29" */
 	if (ch == 29) return (ch);
 
@@ -448,7 +448,7 @@ static char inkey_aux(void)
 	/* Push the "macro complete" key */
 	if (Term_key_push(29)) return (0);
 
-	
+
 	/* Access the macro action */
 	act = macro__act[k];
 
@@ -571,7 +571,7 @@ char inkey(void)
 	/* Show the cursor if waiting, except sometimes in "command" mode */
 	if (!inkey_scan && (!inkey_flag))
 	{
-		/* Show the cursor */	
+		/* Show the cursor */
 		(void)Term_set_cursor(1);
 	}
 
@@ -1195,7 +1195,7 @@ bool askfor_aux(char *buf, int len, char private)
 	hist_end++;
 	if (hist_end >= MSG_HISTORY_MAX)
 	{
-		hist_end = 0; 
+		hist_end = 0;
 		hist_looped = TRUE;
 	}
 
@@ -1655,7 +1655,7 @@ void c_message_add(cptr str)
                 else
                 p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
 #endif
-		p_ptr->window |= (PW_MESSAGE); 
+		p_ptr->window |= (PW_MESSAGE);
 
                 /* Success */
                 return;
@@ -1763,7 +1763,7 @@ void c_message_add(cptr str)
         else
         p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
 //      p_ptr->window |= PW_MESSAGE;
-	
+
 }
 void c_message_add_chat(cptr str)
 {
@@ -1935,7 +1935,7 @@ void c_message_add_chat(cptr str)
 
 	/* Window stuff - assume that all chat messages start with '[' */
         p_ptr->window |= (PW_CHAT);
-	
+
 }
 void c_message_add_msgnochat(cptr str)
 {
@@ -2176,7 +2176,7 @@ void c_msg_print(cptr msg)
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
-	cptr msg_afk1 = "seems to be AFK now";	 	
+	cptr msg_afk1 = "seems to be AFK now";
         cptr msg_afk2 = "has returned from AFK";
 
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
@@ -2320,7 +2320,7 @@ void c_msg_format(cptr fmt, ...)
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -2512,7 +2512,7 @@ static errr macro_dump(cptr fname)
 
 	char buf[1024];
 
-	
+
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
@@ -2640,7 +2640,6 @@ void interact_macros(void)
 		/* Display the current action */
 		Term_putstr(0, 21, -1, TERM_WHITE, buf);
 
-
 		/* Selections */
 		Term_putstr(5,  4, -1, TERM_WHITE, "(1) Load a user pref file");
 		Term_putstr(5,  5, -1, TERM_WHITE, "(2) Dump macros");
@@ -2650,6 +2649,7 @@ void interact_macros(void)
 		Term_putstr(5,  9, -1, TERM_WHITE, "(6) Create a normal macro");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(7) Create a identity macro");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(8) Create an empty macro");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Query a macro");
 
 		/* Prompt */
 		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
@@ -2812,6 +2812,37 @@ void interact_macros(void)
 			c_msg_print("Created a new empty macro.");
 		}
 
+		else if (i == '9')
+		{
+			/* Prompt */
+			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+
+			/* Get a macro trigger */
+			get_macro_trigger(buf);
+
+			/* Using i here shouldn't matter anymore */
+			for (i = 0; i < macro__num; i++)
+			{
+				if (streq(macro__pat[i], buf))
+				{
+					strcpy(macro__buf, macro__act[i]);
+
+					/* Message */
+					if (macro__hyb[i]) c_msg_print("A hybrid macro queried.");
+					else if (macro__cmd[i]) c_msg_print("A command macro queried.");
+					else c_msg_print("A normal macro queried.");
+
+					break;
+				}
+			}
+
+			if (i == macro__num)
+			{
+				/* Message */
+				c_msg_print("No macro found.");
+			}
+		}
+
 		/* Oops */
 		else
 		{
@@ -2864,7 +2895,7 @@ static void do_cmd_options_aux(int page, cptr info)
 		/* Prompt XXX XXX XXX */
 		sprintf(buf, "%s (RET to advance, y/n to set, ESC to accept) ", info);
 		prt(buf, 0, 0);
-	
+
 		/* Display the options */
 		for (i = 0; i < n; i++)
 		{
@@ -3143,7 +3174,7 @@ static errr options_dump(cptr fname)
 
 	char buf[1024];
 
-	
+
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
@@ -3485,7 +3516,7 @@ static void print_tomb(cptr reason)
 
 		if (c_cfg.depth_in_feet)
 			(void)sprintf(tmp, "Died on %dft of [%2d, %2d]", p_ptr->wpos.wz * 50, p_ptr->wpos.wy, p_ptr->wpos.wx);
-		else 
+		else
 			(void)sprintf(tmp, "Died on Level %d of [%2d, %2d]", p_ptr->wpos.wz, p_ptr->wpos.wy, p_ptr->wpos.wx);
 		center_string(buf, tmp);
 		put_str(buf, 14, 11);
