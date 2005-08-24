@@ -628,7 +628,8 @@ static bool item_tester_hook_device(object_type *o_ptr)
 static bool item_tester_hook_potion(object_type *o_ptr)
 {
 	if ((o_ptr->tval == TV_POTION) ||
-	    (o_ptr->tval == TV_POTION2)) return (TRUE);
+	    (o_ptr->tval == TV_POTION2) ||
+	    (o_ptr->tval == TV_FLASK)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);
