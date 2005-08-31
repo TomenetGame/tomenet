@@ -22,6 +22,22 @@
 # special tag to specify the current version
 [V]  TomeNET 4.0.0 aka "The Gathering"
 
+30/08/2005
+[MGm]- !X added
+       Trapping/Disarming skills
+       Backstab new formula
+       [RPG]: prob trav disabled
+       The Pint's effect change
+       Colours added/changed
+       Charge drain reduced
+       Monsters' stun-recovery fixed
+       Trap stacking bug fixed
+       Chests enabled again
+       Aura/Necro skill multipliers for adventurers increased to 1.0
+       Mimics are now orange
+       Removed SPR cap for the RPG server
+       MA changes implemented for both server
+
 24/07/2005
 [m]- Lots of cleanups
 [m]- Replace bunch of sprintf's with snprintf
