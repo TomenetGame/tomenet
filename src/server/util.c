@@ -1687,7 +1687,7 @@ static void player_talk_aux(int Ind, char *message)
 		/* Default name */
 		strcpy(sender, "Server Admin");
 	}
-
+	if (p_ptr->age == 0 && !admin) return; 	// You're too young to be chatting!
 	/* Default to no search string */
 	strcpy(search, "");
 

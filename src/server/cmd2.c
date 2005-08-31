@@ -196,6 +196,11 @@ void do_cmd_go_up(int Ind)
 	}
 	else
 	{
+/* no prob trav on rpg server! - the_sandman */
+#ifdef RPG_SERVER
+		msg_print("You cannot do that here!");
+		if (!is_admin(p_ptr)) return;
+#endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else if (wpos->wz == -1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else msg_print(Ind, "You float upwards.");
@@ -461,6 +466,11 @@ void do_cmd_go_down(int Ind)
 	}
 	else
 	{
+/* no prob trav on rpg server! - the_sandman */
+#ifdef RPG_SERVER
+		msg_print("You cannot do that here!");
+		if (!is_admin(p_ptr)) return;
+#endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else if (wpos->wz == 1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else msg_print(Ind, "You float downwards.");
@@ -1823,6 +1833,7 @@ static void do_id_trap(int Ind, int t_idx)
 
 /*
  * Disarms a trap, or chest     -RAK-
+ * Added a chance for a trapkit being acquired upon a successful disarm - the_sandman
  */
 void do_cmd_disarm(int Ind, int dir)
 {
@@ -2036,6 +2047,65 @@ void do_cmd_disarm(int Ind, int dir)
 			{
 				/* Message */
 				msg_format(Ind, "You have disarmed the %s.", name);
+
+                                /* A chance to drop a trapkit! - the_sandman */
+                                int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value/1000);
+                                if (randint(100) < sdis) {
+                                        object_type yay;
+                                        invcopy(&yay, lookup_kind(TV_TRAPKIT, randint(7)));
+                                        if (randint(2) == 1) {  /* chance for a non 0 0 */
+                                                yay.to_h=randint((int)(p_ptr->lev)/2);
+                                                yay.to_d=randint((int)(p_ptr->lev)/2);
+                                        }
+                                        if (randint(15-(int)(sdis/5)) == 1) { /* chance for ego! */
+                                                int egokind = randint(12);
+                                                yay.name2 = 150+egokind;      // NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
+                                                switch (egokind) {
+                                                        case 1:
+                                                        case 2:         // ES or EM
+                                                                yay.to_h=randint(20);
+                                                                yay.to_d=randint(20);
+                                                                yay.pval=randint(2);
+                                                                if (sdis>25) yay.pval++;
+                                                                break;
+                                                        case 3:         // Auto
+                                                        case 4:         // Full auto
+                                                                yay.to_h=randint(10);
+                                                                yay.to_d=randint(10);
+                                                                break;
+                                                        case 5:         // Well-hidden
+                                                                yay.pval=randint(12);
+                                                                yay.to_a=randint(5);
+                                                                break;
+                                                        case 6:         // Complex
+                                                                yay.pval=randint(30);
+                                                                break;
+                                                        case 7:         // Obvious (cursed)
+                                                                yay.to_h = 0 - yay.to_h;
+                                                                yay.to_d = 0 - yay.to_d;
+                                                                yay.to_a = 0 - randint(30);
+                                                                yay.pval = 0 - randint(30);
+                                                                break;
+                                                        case 8:         // the slaying egos
+                                                        case 9:
+                                                        case 10:
+                                                        case 11:
+                                                        case 12:
+                                                                yay.to_h = randint(20);
+                                                                yay.to_d = randint(20);
+                                                                yay.to_a = randint(10);
+                                                                yay.pval = randint(4);
+                                                                break;
+                                                        default:
+                                                                break;
+                                                }
+
+                                        }
+                                        yay.number=1;
+                                        yay.level=p_ptr->lev;
+                                        drop_near(&yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+                                        msg_format(Ind, "You have discovered a trapkit!");
+                                }
 
 				/* Reward */
 				gain_exp(Ind, power);

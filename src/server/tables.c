@@ -2424,27 +2424,27 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_NECROMANCY,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_AURA_POWER,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_AURA_FEAR,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_AURA_SHIVER,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_AURA_DEATH,
                                 '+', 0,
-                                '+', 500,
+                                '+', 1000,
                         },
                         {
                                 SKILL_ANTIMAGIC,
@@ -3068,7 +3068,8 @@ player_class class_info[MAX_CLASS] =
 
         {
                 "Mimic",
-                TERM_L_WHITE,
+//                TERM_L_WHITE, //confusing
+		  TERM_ORANGE,
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 7, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,

@@ -419,7 +419,32 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_PINT_OF_ALE:
 			case SV_FOOD_PINT_OF_WINE:
 			{
-				if (magik(o_ptr->name2? 50 : 20))
+				/* Let's make this usable... - the_sandman */
+                                if (o_ptr->name1 == ART_DWARVEN_ALE) {
+                                        msg_format(Ind, "\377gYou drank the drinks of the gods");
+                                        msg_format(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+                                        switch (randint(10)) {
+                                                case 1:
+                                                case 2:
+                                                case 3: // 3 in 10 for Hero effect
+                                                        set_hero(Ind, 20 + randint(10)); break;
+                                                case 4:
+                                                case 5:
+                                                case 6: // 3 in 10 for Speed
+                                                        set_fast(Ind, 20 + randint(10), 10); break;
+                                                case 7:
+                                                case 8:
+                                                case 9: // 3 in 10 for Berserk
+                                                        set_shero(Ind, 20 + randint(10)); break;
+                                                case 10:// 1 in 10 for confusion ;)
+                                                default:
+                                                        if (!(p_ptr->resist_conf)) {
+                                                                set_confused(Ind, randint(10));
+                                                        } break;
+                                        }
+                                        p_ptr->food = PY_FOOD_FULL;     // A quaff will bring you to the norm sustenance level!
+
+				} else if (magik(o_ptr->name2? 50 : 20))
 				{
 					msg_format(Ind, "\377%c*HIC*", random_colour());
 					msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);

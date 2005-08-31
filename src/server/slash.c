@@ -1295,6 +1295,51 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format_near(Ind, "\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
 			return;
 		}
+                /* An alternative to dicing :) -the_sandman */
+                else if (prefix(message, "/deal"))
+                {
+                        int value, flower;
+                        char* temp;
+                        temp = (char*)malloc(10*sizeof(char));
+                        value = randint(13); flower = randint(4);
+                        switch (value) {
+                                case 1: strcpy(temp, "Ace"); break;
+                                case 2: strcpy(temp, "Two"); break;
+                                case 3: strcpy(temp, "Three"); break;
+                                case 4: strcpy(temp, "Four"); break;
+                                case 5: strcpy(temp, "Five"); break;
+                                case 6: strcpy(temp, "Six"); break;
+                                case 7: strcpy(temp, "Seven"); break;
+                                case 8: strcpy(temp, "Eight"); break;
+                                case 9: strcpy(temp, "Nine"); break;
+                                case 10: strcpy(temp, "Ten"); break;
+                                case 11: strcpy(temp, "Jack"); break;
+                                case 12: strcpy(temp, "Queen"); break;
+                                case 13: strcpy(temp, "King"); break;
+                                default: strcpy(temp, "joker ^^"); break;
+                        }
+                        switch (flower) {
+                                case 1:
+                                        msg_format(Ind, "\377U%s was dealt the %s of Diamond", p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377U%s was dealt the %s of Diamond", p_ptr->name, temp);
+                                        break;
+                                case 2:
+                                        msg_format(Ind, "\377U%s was dealt the %s of Club", p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377U%s was dealt the %s of Club", p_ptr->name, temp);
+                                        break;
+                                case 3:
+                                        msg_format(Ind, "\377U%s was dealt the %s of Heart", p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377U%s was dealt the %s of Heart", p_ptr->name, temp);
+                                        break;
+                                case 4:
+                                        msg_format(Ind, "\377U%s was dealt the %s of Spade", p_ptr->name, temp);
+                                        msg_format_near(Ind, "\377U%s was dealt the %s of Spade", p_ptr->name, temp);
+                                        break;
+                                default:
+                                        break;
+                        }
+                        free(temp); return;
+                }
 		else if (prefix(message, "/martyr") || prefix(message, "/mar"))
 		{
 			if (Players[Ind]->martyr_timeout)
@@ -1835,6 +1880,34 @@ void do_slash_cmd(int Ind, char *message)
 
 				msg_print(Ind, "\377oUsage: /kick (Player name) [reason]");
 				return;
+			}
+			/* The idea is to reduce the age of the target player because s/he was being
+			 * immature (and deny his/her chatting privilege). - the_sandman
+			else if (prefix(message, "/mute"))
+			{
+				if (tk)
+				{
+					int j = name_lookup_loose(Ind, token[1], FALSE);
+					if (j)
+					{
+						Players[j].age = 0;
+					}
+					return;
+				}
+				msg_print(Ind, "\377oUsage: /mute (player name)");
+			}
+			else if (prefix(message, "/unmute"))	//oh no!
+			{
+				if (tk)
+				{
+					int j = name_lookup_loose(Ind, token[1], FALSE);
+					if (j)
+					{
+						Players[j].age = 5;
+					}
+					return;
+				}
+				msg_print(Ind, "\377oUsage: /unmute (player name)");
 			}
 			/* erase items and monsters */
 			else if (prefix(message, "/clear-level") ||

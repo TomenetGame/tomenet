@@ -3849,12 +3849,13 @@ void calc_bonuses(int Ind)
 
 		/* Require at least one shot */
 		if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
-
+#ifndef RPG_SERVER	//spr cap doesn't make sense in the RPG server
 		/* Cap shots per round at 5 */
 		if (p_ptr->num_fire > 5) p_ptr->num_fire = 5;
 
 		/* Other classes than archer or ranger have cap at 4 - the_sandman and mikaelh */
 		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
+#endif
 	}
 
 	/* Add in the "bonus spells" */
@@ -3922,13 +3923,14 @@ void calc_bonuses(int Ind)
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;
 
+		if (marts > 1) p_ptr->num_blow++;	//booster for MA
 		if (marts >  9) p_ptr->num_blow++;
 		if (marts > 19) p_ptr->num_blow++;
 		if (marts > 29) p_ptr->num_blow++;
 		if (marts > 34) p_ptr->num_blow++;
 		if (marts > 39) p_ptr->num_blow++;
 		if (marts > 44) p_ptr->num_blow++;
-		if (marts > 49) p_ptr->num_blow++;
+//		if (marts > 49) p_ptr->num_blow++;
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
@@ -3944,6 +3946,13 @@ void calc_bonuses(int Ind)
 */
 			p_ptr->to_h_melee += marts;
 			p_ptr->to_d_melee += (marts / 4);/* was 3, experimental */
+
+			// booster for MA's toHit
+			p_ptr->to_h_melee += (int)((p_ptr->stat_cur[A_DEX])/5);
+			
+			/* Booster for MA's toDmg. Non-mimicing class do NOT get the +todmg bonus */
+			if (p_ptr->pclass != CLASS_MIMIC) p_ptr->to_d_melee+=(marts/2);
+			
 		}
 	}
 #endif

@@ -4155,7 +4155,7 @@ static void process_various(void)
 				//				r_ptr->respawn_timer = -1;
 
 				/* Tell the player */
-				msg_format(j,"%s rises from the dead!",(r_name + r_ptr->name));
+				msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
 				//				msg_broadcast(0,buf); 
 			}
 		}
@@ -4188,7 +4188,7 @@ static void process_various(void)
 				r_ptr->respawn_timer = -1;
 
 				/* Tell every player */
-				snprintf(buf, sizeof(buf), "%s rises from the dead!",(r_name + r_ptr->name));
+				snprintf(buf, sizeof(buf), "\377v%s rises from the dead!",(r_name + r_ptr->name));
 				msg_broadcast(0,buf); 
 			}
 		}

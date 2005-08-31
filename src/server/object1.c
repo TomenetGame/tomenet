@@ -1849,7 +1849,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Add the false name */
 			if (str)
 			{
-				t = object_desc_chr(t, ' ');
+				/* Ommited the space =) - the_sandman */
+				//t = object_desc_chr(t, ' ');
 				t = object_desc_str(t, &str[1]);
 			}
 		}
@@ -6651,6 +6652,7 @@ bool can_use(int Ind, object_type *o_ptr)
 
 bool can_use_verbose(int Ind, object_type *o_ptr)
 {
+#ifndef RPG_SERVER
 	player_type *p_ptr = Players[Ind];
 
 	/* Owner always can use */
@@ -6686,4 +6688,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		msg_print(Ind, "Your level is not high enough yet to use this.");
 		return (FALSE);
 	}
+#else	// turn off item restriction for rpg server - the_sandman
+	return (TRUE);
+#endif
 }

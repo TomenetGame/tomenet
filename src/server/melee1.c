@@ -1082,7 +1082,12 @@ bool make_attack_normal(int Ind, int m_idx)
 #endif
 								}
 							} else {
-								o_ptr->pval = 0;
+                                                               /* Pfft, this is really sucky... -,- MD should have something to
+                                                                 * do with it, at least... Will change it to 1_in_MDlev chance of
+                                                                 * total draining. Otherwise we will decrement. the_sandman */
+                                                                s16b chance = randint(get_skill_scale(p_ptr, SKILL_DEVICE, 100));
+                                                                if (chance == 1) o_ptr->pval = 0;
+                                                                else o_ptr->pval--;
 							}
 
 							/* Combine / Reorder the pack */

@@ -1632,7 +1632,8 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 				if (!is_admin(p_ptr)) return;
 			}
 		}
-
+/* taken off for the rpg server -  the_sandman */
+#ifndef RPG_SERVER
 		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) && (o_ptr->level > p_ptr->lev || o_ptr->level == 0))
 		{
 			if (cfg.anti_cheeze_pickup)
@@ -1647,7 +1648,7 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 				return;
 			}
 		}
-
+#endif
 #if 1
 		/* Try to add to the quiver */
 		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0))
@@ -1844,6 +1845,40 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 
 				/* Get the item again */
 				o_ptr = &(p_ptr->inventory[slot]);
+
+                                /* the_sandman: if there is an identify scroll in bag, read it :) and id this item
+                                * Perhaps this should work for staves too? w00t? :)
+                                * Er, doesnt really work since you can fail do_cmd_use_staff (MD suckage? AM?) */
+                                /* Check that we don't know the item and can read a scroll - mikaelh */
+                                if (!object_known_p(Ind, o_ptr) && !p_ptr->blind && !no_lite(Ind) && !p_ptr->confused) {
+                                        int index;
+                                        for (index = 0; index < INVEN_PACK; index++) {
+                                                /* Optimizer: is the items are really sorted by TVALs? If so, then we can add:
+                                                if (p_ptr->inventory[index].tval > TV_SCROLL) break; */
+                                                if (p_ptr->inventory[index].tval == TV_SCROLL &&
+                                                p_ptr->inventory[index].sval == SV_SCROLL_IDENTIFY &&
+                                                p_ptr->inventory[index].number > 0) {
+
+                                                        /* Check if the player does want this feature (!X - for now :) ) */
+                                                        if (!check_guard_inscription(p_ptr->inventory[index].note, 'X')) continue;
+
+                                                        /* we id the newly picked up item */
+                                                        object_aware(Ind, o_ptr);
+                                                        object_known(o_ptr);
+
+                                                        /* consume a turn for reading a scroll */
+                                                        p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+                                                        /* Destroy a scroll in the pack */
+                                                        if (index >= 0) {
+                                                                inven_item_increase(Ind, index, -1);
+                                                                inven_item_describe(Ind, index);
+                                                                inven_item_optimize(Ind, index);
+                                                        }
+                                                        break;
+                                                }
+                                        }
+                                }
 
 #if 0
 				if (!o_ptr->level)
@@ -2877,10 +2912,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
-				if (backstab)
+                                if (backstab)
 				{
-					k += (k * (nolite ? 3 : 1) *
-						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
+                                        /* New backstab formula: takes into account m_hp - the_sandman */
+                                        int bsskill = (int)(p_ptr->s_info[SKILL_BACKSTAB].value/1000);
+                                        int percentage = randint(bsskill*2 - m_ptr->level) + (int)(bsskill/10);
+                                        if (!nolite) percentage += 5;
+                                        if (percentage<0) percentage = 0;
+                                        k += (m_ptr->hp*percentage)/100 + (nolite? bsskill: bsskill/2);
+
+//					k += (k * (nolite ? 3 : 1) *
+//						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
 //					backstab = FALSE;
 				}
 				else if (stab_fleeing)
@@ -4146,24 +4188,25 @@ void move_player(int Ind, int dir, int do_pickup)
 				if(tackle>10){
 					tmp_obj=*o_ptr;
 					if(tackle<18){
-						msg_format_near(Ind2, "%s is tackled by %s", q_ptr->name, p_ptr->name);
-						msg_format(Ind2, "%s tackles you", p_ptr->name);
+						msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
+						msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
 						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
 						drop_near(&tmp_obj, -1, wpos, y, x);
 					}
 					else{
-						msg_format_near(Ind2, "%s gets the ball from %s", p_ptr->name, q_ptr->name);
-						msg_format(Ind2, "%s gets the ball from you", p_ptr->name);
+						msg_format_near(Ind2, "\377v%s gets the ball from %s", p_ptr->name, q_ptr->name);
+						msg_format(Ind2, "\377v%s gets the ball from you", p_ptr->name);
 						inven_carry(Ind, o_ptr);
 					}
+					
 					inven_item_increase(Ind2, ball, -1);
 					inven_item_describe(Ind2, ball);
 					inven_item_optimize(Ind2, ball);
 					q_ptr->energy=0;
 				}
 				else{
-					msg_format(Ind2, "%s tries to tackle you", p_ptr->name);
-					msg_format(Ind, "You fail to tackle %s", q_ptr->name);
+					msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
+					msg_format(Ind, "\377rYou fail to tackle %s", q_ptr->name);
 				}
 			}
 			else{

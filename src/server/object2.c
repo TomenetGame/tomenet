@@ -2063,6 +2063,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
+		case TV_TRAPKIT:
 		{
 			/* Require permission */
 			if (!Ind || !p_ptr->stack_allow_items) return (0);
@@ -5077,13 +5078,13 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 
 		/* Pick a trap */
 		place_trap_object(o_ptr);
-#if 0					
+//#if 0		// <- why are chests disabled?
 		/* Hack -- pick a "difficulty" */
 		o_ptr->pval = randint(k_info[o_ptr->k_idx].level);
 
 		/* Never exceed "difficulty" of 55 to 59 */
-		if (o_ptr->pval > 55) o_ptr->pval = 55 + rand_int(5);
-#endif	// 0
+		if (o_ptr->pval > 55) o_ptr->pval = 55 + rand_int(4);
+//#endif	// 0
 
 		break;
 

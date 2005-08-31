@@ -1888,7 +1888,9 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			//if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			msg_format(Ind, "%^s makes a high pitched shriek.", m_name);
+                        /* the_sandman: changed it so that other ppl nearby will know too */
+                        msg_format(Ind, "%^s makes a high pitched shriek.", m_name);
+                        msg_format_near(Ind, "%^s makes a high pitched shriek.", m_name);
 			aggravate_monsters(Ind, m_idx);
 			break;
 		}
@@ -5735,7 +5737,10 @@ static void process_monster(int Ind, int m_idx)
 		int d = 1;
 
 		/* Make a "saving throw" against stun */
-		if (rand_int(5000) <= r_ptr->level * r_ptr->level)
+
+                /* the_sandman: Blegh; lvl 71+ monsters will recover immediately.*/
+                // if (rand_int(5000) <= r_ptr->level * r_ptr->level) 
+		if (rand_int(200) <= r_ptr->level)
 		{
 			/* Recover fully */
 			d = m_ptr->stunned;
@@ -6605,6 +6610,9 @@ static void process_monster(int Ind, int m_idx)
 
 					/* Take note */
 					did_take_item = TRUE;
+
+					/* log monster picking up owned items - the_sandman */
+					if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name);
 
 					/* Describe observable situations */
 					if (player_has_los_bold(Ind, ny, nx))

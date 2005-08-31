@@ -3859,9 +3859,19 @@ void monster_death(int Ind, int m_idx)
 	if (p_ptr->r_killed[m_ptr->r_idx] < 1000)
 	{
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
-
+#ifdef RPG_SERVER
+                if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_killed[m_ptr->r_idx] > 0 ) &&
+                     ( (randint((r_info[m_ptr->r_idx].level - p_ptr->r_killed[m_ptr->r_idx]) *
+                                (r_info[m_ptr->r_idx].level - p_ptr->r_killed[m_ptr->r_idx])) == 1))) {
+                        p_ptr->r_killed[m_ptr->r_idx] = r_info[m_ptr->r_idx].level;
+                } else { /* Badluck */
+                        p_ptr->r_killed[m_ptr->r_idx]++;
+                }
+#else
 		/* Remember */
 		p_ptr->r_killed[m_ptr->r_idx]++;
+#endif
+
 		if (i && i >= r_info[m_ptr->r_idx].level &&
 		    ((p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level) ||
 		    /* for level 0 townspeople: */
@@ -3893,7 +3903,8 @@ void monster_death(int Ind, int m_idx)
 				p_ptr2->r_killed[m_ptr->r_idx]++;
 			}
 		}
-
+		/* Rumor-spam :) - the_sandman */
+		fortune(Ind, TRUE);
 
 		/* give credit to the killer by default */
 if(cfg.unikill_format){
@@ -5413,7 +5424,7 @@ void player_death(int Ind)
 			o_ptr->owner = p_ptr->id;
 			o_ptr->owner_mode = p_ptr->mode;
 			o_ptr->level = 0;
-			o_ptr->note = quark_add(format("#of %s", p_ptr->name));
+			o_ptr->note = quark_add(format(" #of %s", p_ptr->name));
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;/* NEVER would be nicer, but leads to littered towns - C. Blue */
 			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
