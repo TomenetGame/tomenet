@@ -43,7 +43,7 @@ struct ft_data{
 	unsigned short id;	/* unique xfer ID */
 	int ind;		/* server security - who has this transfer */
 	char fname[30];		/* actual filename */
-	FILE* fp;			/* file descriptor */
+	FILE* fp;		/* FILE pointer */
 	unsigned short state;	/* status of transfer */
 	char buffer[MAX_TNF_SEND];
 };
@@ -133,7 +133,7 @@ int local_file_send(int ind, char *fname){
 	if(c_fd==(struct ft_data*)NULL) return(0);
 	path_build(buf, 256, ANGBAND_DIR, fname);
 	fp=fopen(buf, "rb");
-	if(fp==(FILE*) NULL) return(0);
+	if(!fp) return(0);
 	c_fd->fp=fp;
 	c_fd->ind=ind;
 	c_fd->id=new_fileid();	/* ALWAYS succeed */
@@ -175,7 +175,7 @@ int check_return(int ind, unsigned short fnum, unsigned long sum){
 	if(lsum!=sum){
 		path_build(buf, 256, ANGBAND_DIR, c_fd->fname);
 		fp=fopen(buf, "rb");
-		if(fp==(FILE*) NULL) {
+		if(!fp) {
 			remove_ft(c_fd);
 			return(0);
 		}
@@ -263,7 +263,7 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	fd=mkstemp(tname);
 	c_fd->fp=fdopen(fd, "wb+");
 	c_fd->state=FS_READY;
-	if(c_fd->fp!=(FILE*) NULL){
+	if(c_fd->fp){
 		unlink(tname);		/* don't fill up /tmp */
 		c_fd->id=fnum;
 		c_fd->ind=ind;	/* not really needed for client */
@@ -300,7 +300,7 @@ int local_file_close(int ind, unsigned short fnum){
 	path_build(buf, 4096, ANGBAND_DIR, c_fd->fname);
 
 	wp=fopen(buf, "wb");	/* b for windows */
-	if(wp!=(FILE*)NULL){
+	if(wp){
 		fseek(c_fd->fp, 0, SEEK_SET);
 		do{
 			x=fread(buf, 1, size, c_fd->fp);
@@ -345,7 +345,7 @@ int local_file_check(char *fname, unsigned long *sum){
 	path_build(buf, 256, ANGBAND_DIR, fname);
 
 	fp=fopen(buf, "rb");	/* b for windows.. */
-	if(fp==(FILE*)NULL){
+	if(!fp){
 		return(0);
 	}
 	buffer=(unsigned char*)malloc(size);
