@@ -1138,7 +1138,7 @@ cptr quark_str(s16b i)
  */
 
 bool check_guard_inscription( s16b quark, char what ) {
-    const char  *   ax;     
+    const char  *   ax;
     ax=quark_str(quark);
     if( ax == NULL ) { return FALSE; };
     while( (ax=strchr(ax,'!')) != NULL ) {
@@ -1168,11 +1168,11 @@ bool check_guard_inscription( s16b quark, char what ) {
 		    case 't': /* no take off */
 		      return TRUE;
 		};
-	    };  
-	};  
-    };  
+	    };
+	};
+    };
     return FALSE;
-}  
+}
 
 
 /*
@@ -1315,18 +1315,18 @@ void msg_print(int Ind, cptr msg)
 void msg_broadcast(int Ind, cptr msg)
 {
 	int i;
-	
+
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED) 
+		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
-			
+
 		/* Skip the specified player */
 		if (i == Ind)
-			continue;       
-			
+			continue;
+
 		/* Tell this one */
 		msg_print(i, msg);
 	 }
@@ -1335,14 +1335,14 @@ void msg_broadcast(int Ind, cptr msg)
 void msg_broadcast_format(int Ind, cptr fmt, ...)
 {
 //	int i;
-	
+
 	va_list vp;
 
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1358,14 +1358,14 @@ void msg_admin(cptr fmt, ...)
 {
 	int i;
 	player_type *p_ptr;
-	
+
 	va_list vp;
 
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1378,9 +1378,9 @@ void msg_admin(cptr fmt, ...)
 		p_ptr = Players[i];
 
 		/* Skip disconnected players */
-		if (p_ptr->conn == NOT_CONNECTED) 
+		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
-			
+
 
 		/* Tell Mama */
 		if (is_admin(p_ptr))
@@ -1401,7 +1401,7 @@ void msg_format(int Ind, cptr fmt, ...)
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-	
+
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1739,7 +1739,7 @@ static void player_talk_aux(int Ind, char *message)
 		shutdown_server();
 		return;
 	}
-	
+
 	if(message[0]=='/'){
 		if(!strncmp(message, "/me", 3)) me=TRUE;
 		else if(!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
@@ -1748,7 +1748,7 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 	}
-	
+
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
@@ -1960,7 +1960,7 @@ static void player_talk_aux(int Ind, char *message)
 		{
 			msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
 			/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
-		} 
+		}
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
@@ -2088,7 +2088,7 @@ void player_talk(int Ind, char *message)
 		}
 	}
 }
-	
+
 
 /*
  * Check a char for "vowel-hood"
@@ -2123,9 +2123,10 @@ bool is_a_vowel(int ch)
  */
 int name_lookup_loose(int Ind, cptr name, u16b party)
 {
-	int i, len, target = 0;
+	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
 	cptr problem = "";
+	bool party_online;
 
 	p_ptr=Players[Ind];
 
@@ -2145,6 +2146,24 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			{
 				/* Skip if empty */
 				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++)
+				{
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
 
 				/* Check name */
 				if (!strncasecmp(parties[i].name, name, len))
@@ -2263,7 +2282,7 @@ char *wpos_format(int Ind, worldpos *wpos)
 
 byte count_bits(u32b array)
 {
-	byte k = 0, i;        
+	byte k = 0, i;
 
 	if(array)
 		for(i = 0; i < 32; i++)
@@ -2334,7 +2353,7 @@ bool show_floor_feeling(int Ind)
 
 /*
  * Given item name as string, return the index in k_info array. Name
- * must exactly match (look out for commas and the like!), or else 0 is 
+ * must exactly match (look out for commas and the like!), or else 0 is
  * returned. Case doesn't matter. -DG-
  */
 
@@ -2354,7 +2373,7 @@ int test_item_name(cptr name)
        return (0);
 }
 
-/* 
+/*
  * Middle-Earth (Imladris) calendar code from ToME
  */
 /*
