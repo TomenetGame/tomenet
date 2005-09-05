@@ -4591,7 +4591,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 				/* Erase house contents */
 				for (i = 0; i < num_houses; i++)
-					if (houses[i].dx == x && houses[i].dy == y)
+					if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos))
 						kill_house_contents(&houses[i]);
 				return;
 			}
