@@ -743,6 +743,9 @@ struct player_type
 	
 	/* C. Blue - fun stuff */
 	s16b corner_turn;
+	
+	/* muted? */
+	bool muted;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

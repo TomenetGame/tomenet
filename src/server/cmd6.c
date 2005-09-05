@@ -422,7 +422,7 @@ void do_cmd_eat_food(int Ind, int item)
 				/* Let's make this usable... - the_sandman */
                                 if (o_ptr->name1 == ART_DWARVEN_ALE) {
                                         msg_format(Ind, "\377gYou drank the drinks of the gods");
-                                        msg_format(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+                                        msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
                                         switch (randint(10)) {
                                                 case 1:
                                                 case 2:

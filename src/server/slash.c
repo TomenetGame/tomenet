@@ -1904,34 +1904,36 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oUsage: /kick (Player name) [reason]");
 				return;
 			}
-			/* The idea is to reduce the age of the target player because s/he was being
-			 * immature (and deny his/her chatting privilege). - the_sandman
-			else if (prefix(message, "/mute"))
-			{
-				if (tk)
-				{
-					int j = name_lookup_loose(Ind, token[1], FALSE);
-					if (j)
-					{
-						Players[j].age = 0;
-					}
-					return;
-				}
-				msg_print(Ind, "\377oUsage: /mute (player name)");
-			}
-			else if (prefix(message, "/unmute"))	//oh no!
-			{
-				if (tk)
-				{
-					int j = name_lookup_loose(Ind, token[1], FALSE);
-					if (j)
-					{
-						Players[j].age = 5;
-					}
-					return;
-				}
-				msg_print(Ind, "\377oUsage: /unmute (player name)");
-			}
+                        /* The idea is to reduce the age of the target player because s/he was being
+                         * immature (and deny his/her chatting privilege). - the_sandman
+                         */
+                        else if (prefix(message, "/mute"))
+                        {
+                                if (tk)
+                                {
+                                        int j = name_lookup_loose(Ind, token[1], FALSE);
+                                        if (j)
+                                        {
+                                                Players[j]->muted = TRUE;
+                                                msg_print(j, "\377fYou have been muted.");
+                                        }
+                                        return;
+                                }
+                                msg_print(Ind, "\377oUsage: /mute (player name)");
+                        }
+                        else if (prefix(message, "/unmute"))    //oh no!
+                        {
+                                if (tk)
+                                {
+                                        int j = name_lookup_loose(Ind, token[1], FALSE);
+                                        if (j)
+                                        {
+                                                Players[j]->muted = FALSE;
+                                        }
+                                        return;
+                                }
+                                msg_print(Ind, "\377oUsage: /unmute (player name)");
+                        }
 			/* erase items and monsters */
 			else if (prefix(message, "/clear-level") ||
 					prefix(message, "/clv"))

@@ -2409,6 +2409,9 @@ struct player_type
 	
 	/* Ignoring normal chat? (Will only see private & party messages then) */
 	bool ignoring_chat;
+	
+	/* muted? */
+	bool muted;
 };
 
 /* For Monk martial arts */
