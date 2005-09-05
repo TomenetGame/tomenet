@@ -1,6 +1,6 @@
 /*
  * Slash commands..
- * It was getting too ugly, and 
+ * It was getting too ugly, and
  * util.c was getting big
  *
  * old (working) code is at bottom of file
@@ -21,7 +21,7 @@ static void do_slash_brief_help(int Ind);
 struct scmd{
 	char *cmd;
 	unsigned short admin;		/* bool require admin or not */
-	short minargs, maxargs;		/* MIN/MAX number of args 
+	short minargs, maxargs;		/* MIN/MAX number of args
 					 * both 0 for a line content, -1 for any */
 	void (*func)(int, void*);	/* point either to char * or args (NULL terminated char**) */
 	char *errorhlp;			/* if its bad, tell them this */
@@ -106,16 +106,16 @@ void do_slash_cmd(int Ind, char *message){
 					}
 					if(*cp=='\0') break;
 					args[j++]=cp;
-	
+
 					while(*cp!=' ') cp++;
 					if(*cp=='\0') break;
 				}
-	
+
 				if(j < scmd[i].minargs || j > scmd[i].maxargs){
 					if(scmd[i].errorhlp) msg_print(Ind, scmd[i].errorhlp);
 					return;
 				}
-	
+
 				args[j]=NULL;
 				if(scmd[i].maxargs==1){
 					scmd[i].func(Ind, args[0]);
@@ -249,9 +249,9 @@ static char *find_inscription(s16b quark, char *what)
 {
     const char  *ax = quark_str(quark);
     if( ax == NULL || !what) { return FALSE; };
-	
+
 	return (strstr(ax, what));
-}  
+}
 
 static void do_cmd_refresh(int Ind)
 {
@@ -479,7 +479,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* skip inscribed items */
 				/* skip non-matching tags */
-				if (o_ptr->note && 
+				if (o_ptr->note &&
 					strcmp(quark_str(o_ptr->note), "terrible") &&
 					strcmp(quark_str(o_ptr->note), "cursed") &&
 					strcmp(quark_str(o_ptr->note), "uncursed") &&
@@ -601,7 +601,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			if(*token[1]>='1' && *token[1]<='9')
-			{	
+			{
 				object_type *o_ptr;
 				char c[4] = "@";
 				bool found = FALSE;
@@ -631,30 +631,30 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				//					book = atoi(token[1])-1;
-			}	
+			}
 			else
-			{	
+			{
 				*token[1] &= ~(0x20);
 				if(*token[1]>='A' && *token[1]<='W')
-				{	
+				{
 					book = (int)(*token[1]-'A');
-				}		
-				else 
+				}
+				else
 				{
 					msg_print(Ind,"\377oBook variable was out of range (a-i) or (1-9)");
 					return;
-				}	
+				}
 			}
 
 			if(*token[2]>='1' && *token[2]<='9')
-			{	
+			{
 				//					whichspell = atoi(token[2]+'A'-1);
 				whichspell = atoi(token[2]) - 1;
-			}	
+			}
 			else if(*token[2]>='a' && *token[2]<='i')
-			{	
+			{
 				whichspell = (int)(*token[2]-'a');
-			}		
+			}
 			/* if Capital letter, it's for friends */
 			else if(*token[2]>='A' && *token[2]<='I')
 			{
@@ -663,11 +663,11 @@ void do_slash_cmd(int Ind, char *message)
 				//					whichspell = *token[2]-1;
 				ami = TRUE;
 			}
-			else 
+			else
 			{
 				msg_print(Ind,"\377oSpell out of range [A-I].");
 				return;
-			}	
+			}
 
 			if (token[3])
 			{
@@ -686,7 +686,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				else
 				{
-//					msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
+//					msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer);
 					target_set_friendly(Ind,5,whichplayer);
 					whichspell += 64;
 				}
@@ -705,7 +705,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 			}
 
-//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
+//			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer);
 #endif
                         return;
 		}
@@ -888,7 +888,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			tx = p_ptr->px + k;
 			ty = p_ptr->py + atoi(token[2]);
-			
+
 			if (!in_bounds(ty,tx))
 			{
 				msg_print(Ind, "\377oIllegal position!");
@@ -901,7 +901,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			/* Set 'stationary' target */
 			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
-			
+
 			return;
 		}
 		/* Now this command is opened for everyone */
@@ -939,29 +939,52 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
-				if (i==-1)
+				if (item==-1)
 				{
 					msg_print(Ind, "\377oInscription {@R} not found.");
-					return;
+					//return;
 				}
-
-				disturb(Ind, 1, 0);
-
-				/* ALERT! Hard-coded! */
-				switch (o_ptr->tval)
+				else
 				{
-					case TV_SCROLL:
-						do_cmd_read_scroll(Ind, item);
-						break;
-					case TV_ROD:
-						do_cmd_zap_rod(Ind, item);
-						break;
-					default:
-						do_cmd_activate(Ind, item);
-						//							msg_print(Ind, "\377oYou cannot recall with that.");
-						break;
-				}
+					int spell;
+					disturb(Ind, 1, 0);
 
+					/* ALERT! Hard-coded! */
+					switch (o_ptr->tval)
+					{
+						case TV_SCROLL:
+							do_cmd_read_scroll(Ind, item);
+							break;
+						case TV_ROD:
+							do_cmd_zap_rod(Ind, item);
+							break;
+						/* Cast Recall spell - mikaelh */
+						case TV_BOOK:
+							spell=exec_lua(Ind, "return find_spell(\"Recall\")");
+							if (o_ptr->sval == 255)
+							{
+								if (o_ptr->pval != spell)
+								{
+									msg_print(Ind, "\377oThis is not Spellbook of Recall.");
+									return;
+								}
+							}
+							else
+							{
+								if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
+								{
+									msg_print(Ind, "\377oRecall spell not found in this book.");
+									return;
+								}
+							}
+							cast_school_spell(Ind, item, spell, -1, -1, 0);
+							break;
+						default:
+							do_cmd_activate(Ind, item);
+							//msg_print(Ind, "\377oYou cannot recall with that.");
+							break;
+					}
+				}
 			}
 
 			switch (tk)
@@ -987,7 +1010,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		/* TODO: remove &7 viewer commands */
 		/* view RFE file or any other files in lib/data. */
-		else if (prefix(message, "/less")) 
+		else if (prefix(message, "/less"))
 		{
 			char    path[MAX_PATH_LENGTH];
 			if (tk && is_admin(p_ptr))
@@ -1012,7 +1035,7 @@ void do_slash_cmd(int Ind, char *message)
 			else msg_print(Ind, "\377o/less is not opened for use...");
 			return;
 		}
-		else if (prefix(message, "/news")) 
+		else if (prefix(message, "/news"))
 		{
 			char    path[MAX_PATH_LENGTH];
 			path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "news.txt");
@@ -1054,7 +1077,7 @@ void do_slash_cmd(int Ind, char *message)
 			s16b r;
 			int lev;
 			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
-	
+
 			if(tk && !strcmp(token[1], "reset")){
 				int qn;
 				if(!admin) return;
@@ -1117,13 +1140,13 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			
+
 			/* don't start too early -C. Blue */
 			if (Players[j]->lev < 5) {
 				msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
 				return;
 			}
-			
+
 			/* plev 1..50 -> mlev 1..100 (!) */
 			if (lev <= 50) lev += (lev * lev) / 83;
 			else lev = 80 + rand_int(20);
@@ -1136,8 +1159,8 @@ void do_slash_cmd(int Ind, char *message)
 				r=get_mon_num(lev, 0);
 				k++;
 				if(k>100) lev--;
-			} while(	((lev-5) > r_info[r].level) || 
-					(r_info[r].flags1 & RF1_UNIQUE) || 
+			} while(	((lev-5) > r_info[r].level) ||
+					(r_info[r].flags1 & RF1_UNIQUE) ||
 					!(r_info[r].level > 2)); /* no Training Tower quests */
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
 			add_quest(Ind, j, r, i, flags);
@@ -1195,7 +1218,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 			/* TODO: show monster description */
-			
+
 			return;
 		}
 		/* add inscription to books */
@@ -1398,7 +1421,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377yNote has been stored.");
 					return;
 				}
-				
+
 				/* seach for free spot to create a new party note */
 				for (i = 0; i < MAX_PARTYNOTES; i++) {
 	    				if (!strcmp(party_note[i], "")) {
@@ -1466,7 +1489,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_format(Ind, "\377yNote has been stored.");
 					return;
 				}
-				
+
 				/* seach for free spot to create a new guild note */
 				for (i = 0; i < MAX_GUILDNOTES; i++) {
 	    				if (!strcmp(guild_note[i], "")) {
@@ -1588,7 +1611,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/play")) /* for joining games - mikaelh */
 		{
-	
+
 			if (p_ptr->team != 0 && gametype == EEGAME_RUGBY)
 			{
 				teams[p_ptr->team - 1]--;
@@ -1802,7 +1825,7 @@ void do_slash_cmd(int Ind, char *message)
 				else {
 					msg_format(Ind, "\377rAccount %s not found", message3);
 				}
-					
+
 /*				do{
 					msg_format(Ind, "\377GValidating %s", token[tk]);
 					validate(token[tk]);
@@ -2310,7 +2333,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			/* do a wilderness cleanup */
-			else if (prefix(message, "/purge")) 
+			else if (prefix(message, "/purge"))
 			{
 				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
@@ -2374,7 +2397,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* take 'cheezelog'
 			 * result is output to the logfile */
-			else if (prefix(message, "/cheeze")) 
+			else if (prefix(message, "/cheeze"))
 			{
 				char    path[MAX_PATH_LENGTH];
 				object_type *o_ptr;
@@ -2392,7 +2415,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Respawn monsters on the floor
 			 * TODO: specify worldpos to respawn */
-			else if (prefix(message, "/respawn")) 
+			else if (prefix(message, "/respawn"))
 			{
 				/* Set the monster generation depth */
 				monster_level = getlevel(&p_ptr->wpos);
@@ -2465,7 +2488,7 @@ void do_slash_cmd(int Ind, char *message)
 				town[2].y = town[4].y;
 				town[4].x = tmptown.x;
 				town[4].y = tmptown.y;
-				
+
 				return;
 			}
 			else if (prefix(message, "/debug-s")){
@@ -2870,6 +2893,22 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i < MAX_WILD_8; i++)
 					Players[p]->wild_map[i] = 0;
 				msg_format(Ind, "Wiped wilderness map of player %s.", Players[p]->name);
+				return;
+			}
+			/* Find all true arts in o_list an tell where they are - mikaelh */
+			else if (prefix(message, "/findarts")) {
+				object_type *o_ptr;
+				char o_name[160];
+				for(i = 0; i < o_max; i++){
+					o_ptr = &o_list[i];
+					if (o_ptr->k_idx) {
+						if (true_artifact_p(o_ptr))
+						{
+							object_desc(Ind, o_name, o_ptr, FALSE, 0);
+							msg_format(Ind, "%s is at (%d, %d, %d) (x=%d,y=%d)", o_name, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+						}
+					}
+				}
 				return;
 			}
 		}
