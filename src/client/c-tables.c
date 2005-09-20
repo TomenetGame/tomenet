@@ -395,10 +395,10 @@ cptr stat_names_reduced[6] =
 cptr ang_term_name[8] =
 {
 	"Angband",
-	"Mirror",
-	"Recall",
-	"Choice",
-	"Term-4",
+	"Game messages",
+	"Inventory",
+	"Character overview",
+	"Chat",
 	"Term-5",
 	"Term-6",
 	"Term-7"
