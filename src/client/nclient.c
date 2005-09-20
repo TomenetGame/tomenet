@@ -243,41 +243,57 @@ void Receive_login(void)
 {
 	int n;
 	char ch;
-	int i=0;
-	char names[8][MAX_CHARS], colour_sequence[3];
+	int i=0, max_cpa = MAX_CHARS_PER_ACCOUNT;
+	char names[max_cpa + 1][MAX_CHARS], colour_sequence[3];
 	char tmp[MAX_CHARS+3];	/* like we'll need it... */
 
 	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
+
+	/* Read server detail flags for informational purpose - C. Blue */
+	s32b sflag3, sflag2, sflag1, sflag0;
+	bool s_RPG = FALSE, s_FUN = FALSE;
+	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
+	if (sflag0 & 0x1) s_RPG = TRUE;
+	if (sflag0 & 0x2) s_FUN = TRUE;
+	
 	Term_clear();
-	c_put_str(TERM_L_BLUE, "Character Overview", 1, 30);
-	c_put_str(TERM_L_BLUE, "(You can create up to 7 different characters to play with)", 2, 10);
-	c_put_str(TERM_L_BLUE, "Choose an existing character:", 5, 8);
+
+	if (s_RPG) {
+		c_put_str(TERM_SLATE, "The server is running 'RPG_SERVER' settings.", 21, 10);
+		max_cpa = 1;
+	}
+	if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
+
+	c_put_str(TERM_L_BLUE, "Character Overview", 0, 30);
+	if (!s_RPG)
+		c_put_str(TERM_L_BLUE, format("(You can create up to %d different characters to play with)", max_cpa), 1, 10);
+	else
+		c_put_str(TERM_L_BLUE, "(You can create only ONE characters at a time to play with)", 1, 10);
+	c_put_str(TERM_L_BLUE, "Choose an existing character:", 3, 8);
 	while((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) >0){
 		if(!strlen(c_name)){
 			break;
 		}
 		strcpy(names[i], c_name);
 		sprintf(tmp, "%c) %s%s the level %d %s %s", 'a'+i, colour_sequence, c_name, level, race_info[c_race].title, class_info[c_class].title);
-		c_put_str(TERM_WHITE, tmp, 7+i, 11);
+		c_put_str(TERM_WHITE, tmp, 5+i, 11);
 		i++;
-		if(i==8) break; /* should be changed to 7 */
+		if(i==max_cpa + 1) break; /* should be changed to max_cpa + 0 */
 	}
-	for (n = (7 - i); n > 0; n--)
-		c_put_str(TERM_SLATE, "<free slot>", 7+i+n-1, 11);
-	n = i; /* buffer for i here for latter use below */
-	i = 7;
-	if (n < 7)
+	for (n = (max_cpa - i); n > 0; n--)
+		c_put_str(TERM_SLATE, "<free slot>", 5+i+n-1, 11);
+	if (i < max_cpa)
 	{
-		c_put_str(TERM_L_BLUE, "N) Create a new character", 8+i, 8);
+		c_put_str(TERM_L_BLUE, "N) Create a new character", 6+max_cpa, 8);
 	}
 	else
 	{
-		c_put_str(TERM_L_BLUE, "(Maximum of 7 character reached.", 8+i, 8);
-		c_put_str(TERM_L_BLUE, " Get rid of one (suicide) before creating another.)", 9+i, 8);
+		c_put_str(TERM_L_BLUE, format("(Maximum of %d character reached.", max_cpa), 6+max_cpa, 8);
+		c_put_str(TERM_L_BLUE, " Get rid of one (suicide) before creating another.)", 7+max_cpa, 8);
 	}
-	c_put_str(TERM_L_BLUE, "Q) Quit the game", 14+i, 8);
-	while((ch<'a' || ch>='a'+n) && (ch != 'N' || n > (7-1))){
+	c_put_str(TERM_L_BLUE, "Q) Quit the game", 11+max_cpa, 8);
+	while((ch<'a' || ch>='a'+i) && (ch != 'N' || i > (max_cpa-1))){
 		ch=inkey();
 		if (ch == 'Q') quit(NULL);
 	}
@@ -285,11 +301,11 @@ void Receive_login(void)
 		if (!strlen(cname)) strcpy(c_name, nick);
 		else strcpy(c_name, cname);
 
-		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 12+i, 11);
+		c_put_str(TERM_WHITE, "(ESC to pick a random name)", 9+max_cpa, 11);
 
 		while (1)
 		{
-			c_put_str(TERM_YELLOW, "New name: ", 10+i, 11);
+			c_put_str(TERM_YELLOW, "New name: ", 8+max_cpa, 11);
 			askfor_aux(c_name, MAX_CHARS, 0);
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);

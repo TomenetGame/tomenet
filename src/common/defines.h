@@ -39,12 +39,12 @@
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   3
-#define VERSION_PATCH   0
+#define VERSION_PATCH   5
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   2
-#define SF_VERSION_PATCH   4
+#define SF_VERSION_PATCH   5
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -77,8 +77,35 @@
 	<< 4 | VERSION_EXTRA)
 
 
+/* Server is a true RPG server? - C. Blue - This means..
+ * - 1 real-life person may only create up to 1 character in total
+ * - all characters are no-ghost by default (death is permanent)
+ */
+#define RPG_SERVER
+
+
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
 /* #define FUN_SERVER */
+
+
+
+/* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
+   (has no effect if KINGCAP_EXP is defined) */
+#define ALT_EXPRATIO
+
+
+
+/* Startup equipment treatment: [3]
+   0 = like any item
+   1 = level 0 (unusable by others), can be sold by anyone
+   2 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till level 5
+   3 = level 0 (unusable by others), can't be sold at all */
+#define STARTEQ_TREATMENT 3
+
+
+
+/* Maximum number of different characters one player account may hold - C. Blue */
+#define MAX_CHARS_PER_ACCOUNT	7
 
 
 /* What kind of character creation method does the server use? - C. Blue
@@ -197,7 +224,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       10
+#define MAX_CLASS       12	/* 11 if there're Druids. 10 o/w. */
 
 /*
  * Maximum NPC robots to allow.
@@ -371,16 +398,16 @@
 
 /* Maximum level difference for winner-party members,
    and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_KING_PARTY_LEVEL_DIFF 10
+#define MAX_KING_PARTY_LEVEL_DIFF 11
 
 /* Limit value for Anti-magic fields (AM cap)
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */
-#define ANTIMAGIC_CAP 80
+#define ANTIMAGIC_CAP		80
 
 /* Limit effectiveness of interception/martial arts,
    Should range from 75%..80%. - C. Blue */
-#define INTERCEPT_CAP 80
+#define INTERCEPT_CAP		80
 
 /* upper limit of dodging chance.       [90] */
 #define DODGE_MAX_CHANCE        80
@@ -417,6 +444,11 @@
 /* Reduce the effect of aggravating equipment on the player
    and especially fellow players? - C. Blue */
 #define REDUCED_AGGRAVATION
+
+
+/* Approximate cap of a monster's average raw melee damage output per turn
+   (before AC of the target is even incorporated)	[700] */
+#define AVG_MELEE_CAP		700
 
 
 /*
@@ -541,12 +573,12 @@
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
 #define STORE_TURNOVER	9		/* Normal shop turnover, per day */
 #if 0
-#define STORE_MIN_KEEP	12		/* Min slots to "always" keep full */
-#define STORE_MAX_KEEP	36		/* Max slots to "always" keep full */
-#else	/* 0 */
+#define STORE_MIN_KEEP	10		/* Min slots to "always" keep full */
+#define STORE_MAX_KEEP	42		/* Max slots to "always" keep full */
+#else /* 0 */
 #define STORE_MIN_KEEP	6		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	24		/* Max slots to "always" keep full */
-#endif	/* 0 */
+#endif /* 0 */
 #define STORE_SHUFFLE	20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT	60		/* Max turns a player may stay in a store if crowded */
 #define STORE_TURNS	(cfg.store_turns)	/* Number of turns between turnovers */
@@ -807,7 +839,9 @@
 #define CLASS_ARCHER		6
 #define CLASS_PALADIN		7
 #define CLASS_RANGER		8
-#define CLASS_BARD		9
+//#define CLASS_BARD		9
+#define CLASS_DRUID		9	
+#define CLASS_SHAMAN		10
 
 /*
  * Define the realms
@@ -1219,6 +1253,7 @@ that keeps many algorithms happy.
 #define ART_NENYA                       11
 #define ART_VILYA                       12
 #define ART_POWER                       13
+#define ART_PHASING			203
 /* 14 used by the anchor of space-time */
 /* 15 used by the stone of lore */
 
@@ -2833,6 +2868,13 @@ that keeps many algorithms happy.
 #define GF_HELL_FIRE    82 /* was HOLY_ORB */
 
 #define GF_MAKE_GLYPH   85
+/* For the new priest spell I'm conjuring - the_sandman */
+#define GF_CURSE	153
+/* Here comes the druid items - the_sandman */
+#define GF_HEALINGCLOUD 154
+#define GF_WATERPOISON  155
+#define GF_ICEPOISON    156
+
 #define GF_ROCKET       91
 
 /* for traps.h :) - C. Blue */
@@ -2935,7 +2977,10 @@ that keeps many algorithms happy.
 #define GF_TRAP_DEMONSOUL 108
 #define GF_ATTACK       109
 
-#define MAX_GF          152
+/* Increased it (from 152) to 153 - the_sandman*/
+/* Increaing it again by ... 3-- to 156 :-) - the_sandman */
+#define MAX_GF          156
+
 
 #endif	/* 0 */
 
@@ -3927,10 +3972,17 @@ that keeps many algorithms happy.
 /*#define DF2_NOMAP		0x00000008L *//* player never gains level knowledge */
 #define DF2_NO_RECALL_DOWN	0x00000008L /* Player may not recall downwards into this dungeon /
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue */
-
 #define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
+#define DF2_NO_DEATH            0x00000080L /* death penalty is reduced */
 
-#define DF2_NO_DEATH            0x00000100L /* death penalty is reduced */
+#define DF2_IRONFIX1           	0x00000100L /* like DF2_IRON, but you may recall every 250 ft */
+#define DF2_IRONFIX2            0x00000200L /* like DF2_IRON, but you may recall every 500 ft */
+#define DF2_IRONFIX3           	0x00000400L /* like DF2_IRON, but you may recall every 750 ft */
+#define DF2_IRONFIX4            0x00000800L /* like DF2_IRON, but you may recall every 1000 ft */
+#define DF2_IRONRND1           	0x00001000L /* like DF2_IRON, but each dlvl has 20% chance of allowing recall */
+#define DF2_IRONRND2            0x00002000L /* like DF2_IRON, but each dlvl has 10% chance of allowing recall */
+#define DF2_IRONRND3           	0x00004000L /* like DF2_IRON, but each dlvl has 7% chance of allowing recall */
+#define DF2_IRONRND4            0x00008000L /* like DF2_IRON, but each dlvl has 5% chance of allowing recall */
 
 #define DF2_ADJUST_LEVEL_1_2    0x10000000L /* Minimum monster level will be half the dungeon level */
 #define DF2_NO_SHAFT            0x20000000L /* No shafts */
@@ -3953,6 +4005,7 @@ that keeps many algorithms happy.
 #define LF1_NO_DESTROY          0x00000200L
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
+#define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
 #define LF1_NO_MULTIPLY		0x80000000L /* for scrolls of vermin control */
 
 #define LF1_FEELING_MASK \
@@ -5197,7 +5250,8 @@ extern int PlayerUID;
 #define SKILL_STEALING          24
 #define SKILL_NECROMANCY        25
 #define SKILL_ANTIMAGIC         26
-#define SKILL_AURA_POWER        27
+/* #define SKILL_AURA_POWER       27 */
+#define SKILL_TRAUMATURGY       27
 #define SKILL_AURA_FEAR         28
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
@@ -5304,9 +5358,11 @@ extern int PlayerUID;
 #define SF1_PRICY_ITEMS2      	0x00400000L     /* items are worth 5000+ */
 #define SF1_PRICY_ITEMS3      	0x00800000L	/* items are worth 10000+ */
 #define SF1_PRICY_ITEMS4      	0x01000000L	/* items are worth 20000+ */
-#define SF1_HARD_STEAL 	      	0x02000000L     /* apply_magic good */
-#define SF1_VHARD_STEAL	      	0x04000000L     /* apply_magic good */
-#define SF1_NO_STEAL   	      	0x08000000L     /* apply_magic good */
+#define SF1_HARD_STEAL 	      	0x02000000L     /* hard to steal from this shop */
+#define SF1_VHARD_STEAL	      	0x04000000L     /* hard to steal from this shop */
+#define SF1_NO_STEAL   	      	0x08000000L     /* can't steal from this shop */
+#define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
+#define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
 
 /*
  * Total number of stores (see "store.c", etc)
@@ -5330,6 +5386,16 @@ extern int PlayerUID;
 #define STORE_BLACKS	60
 #define STORE_BTSUPPLY	61
 #define STORE_HERBALIST 62
+#define STORE_STRADER	63	/* for ironman dungeons / RPG_SERVER settings */
+
+/* The specialist shops - the_sandman */
+#define STORE_SPEC_AXE		38
+#define STORE_SPEC_HAFTED	39
+#define STORE_SPEC_POLE		40
+#define STORE_SPEC_SWORD	41
+#define STORE_SPEC_POTION	53
+#define STORE_SPEC_ARCHER	55
+
 
 
 /*
@@ -5462,4 +5528,6 @@ extern int PlayerUID;
 /* C. Blue - Automatic transport sequences for characters
    (kind of scripted transport for special situations) */
 #define AT_BLINK	1	/* teleport short range; used after panic-save auto-recalling */
+#define AT_TPORT	2	/* teleport long range */
+#define AT_VALINOR	3	/* send player to the shores of Valinor */
 

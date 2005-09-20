@@ -44,7 +44,8 @@ typedef unsigned int u32b;
 #define SKILL_STEALING          24
 #define SKILL_NECROMANCY        25
 #define SKILL_ANTIMAGIC         26
-#define SKILL_AURA_POWER        27
+/*#define SKILL_AURA_POWER        27*/
+#define SKILL_TRAUMATURGY				27
 #define SKILL_AURA_FEAR         28
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30

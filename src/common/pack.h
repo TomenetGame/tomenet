@@ -181,6 +181,11 @@
 #define PKT_FILE_ERR		5	/* failure - close */
 #define PKT_FILE_SUM		6	/* checksum reply */
 
+/* Give the client some info about the server details. - C. Blue
+   For example: Is it running 'RPG_SERVER' settings? or 'FUN_SERVER'? */
+#define PKT_SERVERDETAILS	162
+
+
 
 /*
  * Possible error codes returned
