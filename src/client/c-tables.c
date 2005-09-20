@@ -392,13 +392,13 @@ cptr stat_names_reduced[6] =
 /*
  * Standard window names
  */
-cptr ang_term_name[8] =
+char ang_term_name[8][40] =
 {
 	"Angband",
-	"Game messages",
-	"Inventory",
-	"Character overview",
-	"Chat",
+	"Mirror",
+	"Recall",
+	"Choice",
+	"Term-4",
 	"Term-5",
 	"Term-6",
 	"Term-7"

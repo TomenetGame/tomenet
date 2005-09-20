@@ -806,6 +806,7 @@ static void save_prefs(void)
 static void load_prefs_aux(term_data *td, cptr sec_name)
 {
 	char tmp[128];
+	int i;
 
 	/* Visibility (Sub-window) */
 	if (td != &data[0])
@@ -838,6 +839,11 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
 	/* Window position */
 	td->pos_x = GetPrivateProfileInt(sec_name, "PositionX", td->pos_x, ini_file);
 	td->pos_y = GetPrivateProfileInt(sec_name, "PositionY", td->pos_y, ini_file);
+
+	/* Window title */
+	i = GetPrivateProfileInt(sec_name, "WindowNumber", i, ini_file);
+	GetPrivateProfileString(sec_name, "WindowTitle", ang_term_name[i], tmp, 127, ini_file);
+	strcpy(ang_term_name[i], string_make(tmp));
 }
 
 
