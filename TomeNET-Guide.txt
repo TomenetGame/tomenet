@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. July 2005; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.3.0, http://www.tomenet.net/
+| Latest update: 20. September 2005; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.3.5, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -90,6 +90,7 @@ Contents
     (6.7)   Mimic details, polymorph rings
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
+    (6.10)  Magic Device skill/ability details
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -1458,19 +1459,19 @@ F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
     (magic device must be high enough or
-    you will keep failing)
+    you will keep failing; also see (6.10))
 F9  quaff a potion of resistance                    \e)q4           @q4
     (an important thing later in the game)
 F10 zap some rod                                    \e)z1           @z1
     (magic device must be high enough or
-    you will keep failing)
+    you will keep failing; also see (6.10))
 F11 eat something.                                  \e)E1           @E1
     (Thunderlords could inscribe some firestones
     (see 5.9) instead of normal food, to quickly
     boost their powers if needed.)
 F12 use a wand on the closest target                \e)a1*t         @a1
     (magic device must be high enough or
-    you will keep failing)
+    you will keep failing; also see (6.10))
 
 As you can see this fighter is supposed to be able to use quite some magic
 for support in addition to fighting. Especially helpful are rods of perception
@@ -2006,7 +2007,10 @@ There are different types of dungeons. The main five are:
  Sending items via telekinesis to a player who is currently in an ironman
  dungeon/tower will only work if both players are on the same dungeon floor.
  To leave an ironman dungeon/tower you'll have to get to it's bottom
- respectively top.
+ respectively top. There might possibilities to use Word-of-Recall even if
+ you're not at bottom/top yet, depending on the server configuration. In
+ general you will recognize levels which allow recalling by a green message,
+ saying "You don't sense a magic barrier here..." (compare (4.8)).
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
 -Hellish. Players suffer no-ghost deaths inside hellish dungeons.
  Even if they're everlasting.
@@ -2165,7 +2169,7 @@ Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
             |of the town|                     | of the local     |player level
             |itself     |                     | dungeon          |for entering
 ------------+-----------+---------------------+------------------+------------
-Bree        |   0 ft/  0|The Training Tower   | +50..+400/ 1..10 |    1
+Bree        |   0 ft/  0|The Training Tower   | +50..+100/ 1..2  |    1
             |           |Barrow-Downs         |  50..1750/ 1..35 |    1
 Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   15
 Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   20
@@ -2188,24 +2192,24 @@ Dungeon                         |   Depth/Level         | Min. required player
 --------------------------------+-----------------------+---------------------
 Death Fate                      |   50..  50/  1..1     |        1
 The Halls of Mandos             |   50..4900/  1..98    |        1
-The Orc Cave                    |  500..1100/ 10..23    |        3
-Mirkwood                        |  550..1650/ 11..34    |        5
-The Old Forest                  |  650..1250/ 13..26    |        5
-The Helcaraxe                   | 1000..2000/ 20..41    |       10
+The Orc Cave                    |  500..1150/ 10..23    |        3
+Mirkwood                        |  550..1700/ 11..34    |        5
+The Old Forest                  |  650..1300/ 13..26    |        5
+The Helcaraxe                   | 1000..2050/ 20..41    |       10
 The Sandworm lair               | 1100..1500/ 22..30    |       12
 The Heart of the Earth          | 1250..1850/ 25..37    |       10
 The Maze                        | 1250..1900/ 25..38    |       15
-Cirith Ungol                    | 1250..2050/ 25..51    |       10
+Cirith Ungol                    | 1250..2550/ 25..51    |       10
 The Land Of Rhun                | 1300..2050/ 26..41    |       13
-Moria                           | 1500..2550/ 30..50    |       15
+Moria                           | 1500..2500/ 30..50    |       15
 The Small Water Cave            | 1600..1750/ 32..35    |       15
 Submerged Ruins                 | 1750..2550/ 35..51    |       15
-The Illusory Castle             | 1750..2650/ 35..52    |       10
+The Illusory Castle             | 1750..2600/ 35..52    |       10
 The Sacred Land Of Mountains    | 2000..2250/ 40..45    |       20
-Erebor                          | 2500..3150/ 50..61    |       35
+Erebor                          | 2500..3050/ 50..61    |       35
 Dol Guldur                      | 2850..3550/ 57..71    |       28
 Mount Doom                      | 4250..5000/ 85..100   |       38
-Nether Realm                    | 8300..9850/166..196   |       40 (*)
+Nether Realm                    | 8300..9800/166..196   |       40 (*)
 
 The Europe server usually has one or several 'ironman' dungeons (see (4.8)),
 their entrances (stairs) waiting to be discovered by some bold explorers.
@@ -2359,10 +2363,10 @@ for Demons      - Only triggers against demons. Especially hard to spot.
                   Fires extra shots.
 for Animals     - Only triggers against animals. Especially hard to spot.
                   Fires extra shots.
-for Undead      - Only triggers against dragons. Especially hard to spot.
-                  Fires extra shots. Especially deadly against ghosts.
-for Evil        - Only triggers against dragons. Especially hard to spot.
-                  Fires extra shots. Especially deadly against ghosts.
+for Undead      - Only triggers against undead. Especially hard to spot.
+                  Fires extra shots. May damage or destroy ghosts.
+for Evil        - Only triggers against evil. Especially hard to spot.
+                  Fires extra shots. May damage or destroy ghosts.
 
 If monsters notice a trap they can try to disarm it. Armour class of a trap
 makes it harder for monsters to disarm the trap. Trap sets and ammo that were
@@ -2410,6 +2414,10 @@ The feelings are as follows:
                                         normal and hard-mode players will die
                                         the same way as unworldly and hellish
                                         ones!
+"You don't sense a magic barrier here..." ->   This message only occurs in
+                                        Ironman dungeons/towers. It lets you
+                                        know that you may use word-of-recall
+                                        on this floor!
 
 Vaults:
 Vaults can also bear a very dangerous feature that is displayed as dark grey
@@ -3320,6 +3328,7 @@ CHEAPNESS (of Cheapness) ('It can cast spells for a lesser mana cost.')
         No effect currently. Traps of cheapness have halved timeout duration.
 EASY_USE (of Simplicity)
         You have a much higher chance of succeeding to use the magic device.
+        Also see (6.10) for more information about the 'Magic Device' skill.
 CHARGING (of Charging) ('It regenerates its mana faster.')
         This magic device (rod) will take only 1/3 of the usual time to
         fully recharge.
@@ -3547,7 +3556,7 @@ Drain Life      Wand: Drains 10..20% life from your target, giving you 50% of
                 the drained life force.
 Annihilation    Wand only: Drains 15..30% life from your target, giving you 25%
                 of the drained life force.
-Magi            Restores your intelligence and your mana.
+Magi            Restores your intelligence and 500 mana points.
 Power           Dispels nearby monsters.
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
@@ -3790,6 +3799,7 @@ EAT_xxx         DEX,stealing skill.
 UN_BONUS        disenchantment.
 UN_POWER        none.(drains charges/energy from your items)
                 Magic Device skill helps to prevent draining though.
+                See (6.10) for more information about the Magic Device skill.
 TIME            time.
 DISEASE         poison. This attack
                 can also decrease
@@ -3914,7 +3924,7 @@ does the actual leeching!).
 (5.16) Invisibility
 -------------------
 A player who is invisible is harder to spot for monsters, making them move
-eratically instead of directly targetting the player. This also helps against
+erratically instead of directly targetting the player. This also helps against
 casters, archers or breathers who won't be able to target you as well (often)
 as they usually could. Being invisible costs your body a lot of effort,
 resulting in getting hungry quickly.
@@ -4041,6 +4051,7 @@ Intelligence (INT)
     -How much mana for spellcasting do you have?
     -How well can you cast spells?
     -How well can you handle and use magic devices?
+    Also see (6.10) for more information about the 'Magic Device' skill.
 Wisdom (WIS)
     -How well can you cast priest prayers? (certain spells that are for
      priests)
@@ -4207,6 +4218,7 @@ Note that not every skill is available to every profession (class).
     .Magic-device               Ability to use magic devices (wands,rods,etc.)
                                 without failing. Also increases their power.
                                 Speeds up recharging of rods you carry (1.5x).
+                                See (6.10) for more information.
     .Spell-power                Increases the power of learned spells by
                                 adding a bonus to the spell level.
                                 At 50, it will raise spell levels by 40%.
@@ -4214,7 +4226,6 @@ Note that not every skill is available to every profession (class).
                                 haven't learned yet.)
     .Sorcery                    Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
-                                Comes at the cost of your hit points.
                                 << For more information about learning spells,
                                 see (6.8) >>
     .Mana                       Learn spells of the Mana branch.
@@ -4239,6 +4250,7 @@ Note that not every skill is available to every profession (class).
                                 (See (7.4) for more info about spoiler files.)
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
+                                Slightly increases perception and searching.
     .Stealth                    Increases your stealth, which determines
                                 if monsters can hear you from a distance
                                 or if you can sneak past them. Note that even
@@ -4468,6 +4480,7 @@ Disarming
 Magic Device
     How well you can use magic items like wands, staves, rods (these are often
     especially hard to use) or activate magic items like Dragon Scale Mails.
+    See (6.10) for more information.
 Blows/Round
     How often per round you are able to strike with your weapon. This depends
     on your strength, dexterity, your class, your weapon. (Note that Yeeks
@@ -4646,34 +4659,34 @@ from skills or items yet).
             STR INT WIS DEX CON CHR     HPdice  Exp%    Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT
 ------------------------------------------------------------------------------
-Human       +0  +0  +0  +0  +0  +0      10      100%    0ft             
-            0   0   0   0   10  0   0   0
-Half-Elf    -1  +1  +0  +1  -1  +1      9       110%    20ft            
-            2   3   3   1   11  6   -1  6
-Elf         -1  +2  +1  +1  -2  +2      8       120%    30ft            
-            5   6   6   1   1   8   -5  15
-Hobbit      -2  +2  +1  +3  +0  +1      7       110%    40ft            
-            15  18  18  4   15  12  -10 20
-Gnome       -1  +2  +0  +2  +1  -2      8       125%    40ft            
-            10  12  12  3   13  6   -8  12
-Dwarf       +2  -3  +2  -2  +2  -3      11      120%    50ft            
-            2   9   9   -1  10  7   15  0
-Half-Orc    +2  -1  +0  +0  +1  -4      11      100%    30ft            
-            -3  -3  -3  -1  7   0   12  -5
-Half-Troll  +4  -4  -2  -4  +3  -6      12      120%    30ft            
-            -5  -8  -8  -2  5   -1  20  -10
-Dunadan     +1  +2  +2  +2  +3  +2      10      180%    0ft             
-            4   5   5   2   13  3   15  10
-High-Elf    +1  +3  -1  +3  +1  +3      10      230%    40ft            
-            4   20  20  3   14  3   10  25
-Yeek        -5  -5  -5  -5  -5  -5      7       50%     0ft             
-            0   0   0   0   10  0   0   0
-Goblin      +0  -1  -5  +4  +2  -5      11      115%    30ft            
-            2   -3  -3  0   8   2   12  -5
-Ent         +8  -4  +2  -4  +8  -5      14      300%    50ft            
-            5   0   20  -6  4   5   15  5
-Thunderlord +6  +2  +1  +1  +3  +5      12      350%    0ft             
-            6   0   10  -16 10  30  15  5
+Human        0   0   0   0   0   0       10     100%     0ft             
+             0   0   0   0  10   0    0   0
+Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft            
+             2   3   3   1  11   6   -1   6
+Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft            
+             5   6   6   1   1   8   -5  15
+Hobbit      -2  +2  +1  +3  +0  +1        7     110%    40ft            
+            15  18  18   4  15  12  -10  20
+Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft            
+            10  12  12   3  13   6   -8  12
+Dwarf       +2  -2  +2  -2  +2  -3       11     120%    50ft            
+             2   9   9  -1  10   7   15   0
+Half-Orc    +2  -1  +0  +0  +1  -4       11     100%    30ft            
+            -3  -3  -3  -1   7   0   12  -5
+Half-Troll  +4  -4  -2  -4  +3  -6       12     120%    30ft            
+            -5  -8  -8  -2   5  -1   20 -10
+Dunadan     +1  +2  +2  +2  +3  +2       10     180%     0ft             
+             4   5   5   2  13   3   15  10
+High-Elf    +1  +3  -1  +3  +1  +3       10     230%    40ft            
+             4  20  20   3  14   3   10  25
+Yeek        -5  -5  -5  -5  -5  -5        7      80%     0ft             
+             0   0   0   0  10   0    0   0
+Goblin      +0  -1  -5  +4  +2  -5       11     115%    30ft            
+             2  -3  -3   0   8   2   12  -5
+Ent         +8  -4  +2  -4  +8  -5       14     300%    50ft            
+             5   0  20  -6   4   5   15   5
+Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft             
+             6   0  10 -16  10  30   15   5
 
 
 
@@ -4710,7 +4723,7 @@ Warrior
     them.
     Warriors can also become monk-like fighters, by training the Martial Arts.
     The warrior class is recommended for beginners.
-Istari (elvish word for Mage)
+Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
     They are the all-around best magicians, having the most powerful spells.
@@ -4718,10 +4731,9 @@ Istari (elvish word for Mage)
     difficult journey. On the downside, they are the worst fighters, being
     unable to use any weapon but a Mage Staff comfortably, and still unable
     to be anything even remotely approaching effective with it.
-    An Istari and especially Sorcerer (that's an Istari who specializes in
-    'Sorcery' skill) also has the fewest hit points of any class, making
-    survival difficult in the beginning.
-    This class is not recommended for beginners.
+    An Istari has very few hit points compared to other classes, making
+    survival difficult in the beginning. That's why this class is not
+    recommended for beginners.
 Priest
     Priests use certain divine magic. Unless mages they have a fair
     fighting potential with hafted or blessed weapons. Priests can learn
@@ -4801,6 +4813,27 @@ Ranger
     jack-of-all-trades class who can find several different ways out of
     any situation. They use intelligence for spellcasting, same as mages.
     At level 20 rangers learn to find paths passing thick woods.
+Druid
+    Druids are able to call upon the mystical powers of nature and very good
+    at it. Their wisdom is of primary importance to determine their mana.
+    Druids can shapechange into several animal forms without having to fight
+    or kill them in order to learn about their form. They learn one or more
+    new forms at each character level that is dividable by 5.
+    They're about as good at fighting as priests or shamans, not too great but
+    fair enough; they despise the use of weapons though.
+    A specialty of druids is, that they are still able to wear their full
+    equipment even if their appearent shape is not human but of an animal.
+Shaman
+    Shamans are able to call upon both spiritual and magical powers,
+    whatever they deem most appropriate. Their mind is also trained in a very
+    versatile manner, allowing them to collect energy from intelligence or
+    wisdom, whatever currently is easiest for them! Shamans are able to learn
+    to take on shape of animals, giants or dragons, and even ride on summoned
+    dragons, taking on the shape of dragonriders. Shamans are excellent at
+    magic and may have weaker combat abilities than rangers or paladins, but
+    still don't need to hide from a melee. Their spiritual abilities allow
+    them to easily train various aspects of necromancy as they see fit.
+    At level 20 shamans learn to perceive the invisible.
 
 If you raise in levels, you will get new titles. These are displayed between
 your class name and your character level in the main window. If you die and
@@ -4824,24 +4857,28 @@ Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
             STR INT WIS DEX CON CHR     HPdice  Exp%    max.Blows/Round
             Di  MD  ST  St  Pe  Sr  Fi  BT              (from STR & DEX)
 ------------------------------------------------------------------------------
-Adventurer  +0  +0  +0  +0  +0  +0      +6       +10%       4
-            20  20  20  2   15  15  50  50
+Adventurer   0   0   0   0   0   0       +6      +10%       4
+            20  20  20   2  15  15  50  50
 Warrior     +5  -2  -2  +2  +2  -1      +10       +0%       6
-            25  18  18  1   2   14  70  55
-Istari      -5  +3  +0  +1  -2  +1      +0       +35%       1
-            30  36  30  2   20  16  34  20
-Priest      -1  -3  +3  -1  +0  +2      +4       +20%       4
-            25  30  32  2   8   16  48  35
-Rogue       +2  +1  -2  +3  +1  -1      +5       +25%       5
-            45  32  28  5   32  24  60  66
-Mimic       +1  +0  +0  +1  +1  -4      +5       +40%       4
-            25  35  28  7   18  18  60  66
-Archer      +1  +0  +2  +3  +1  -1      +5       +15%       3
-            30  32  28  2   20  24  56  82
-Paladin     +3  -3  +1  +0  +2  +2      +8       +30%       5
-            10  21  54  1   16  13  60  29
-Ranger      +2  +2  -1  +1  +2  +0      +7       +35%       5
-            34  32  30  5   30  30  50  60
+            25  18  18   1   2  14  70  55
+Istari      -5  +3  +0  +1  -2  +1       +0      +35%       1
+            30  36  30   2  20  16  34  20
+Priest      -1  -3  +3  -1  +0  +2       +4      +20%       4
+            25  30  32   2   8  16  48  35
+Rogue       +2  +1  -2  +3  +1  -1       +5      +25%       5
+            45  32  28   5  32  24  60  66
+Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       4
+            25  35  28   7  18  18  60  66
+Archer      +1  +0  +2  +3  +1  -1       +5      +15%       3
+            30  32  28   2  20  24  56  82
+Paladin     +3  -3  +1  +0  +2  +2       +8      +30%       5
+            10  21  54   1  16  13  60  29
+Ranger      +2  +2  -1  +1  +2  +0       +7      +35%       5
+            34  32  30   5  30  30  50  60
+Druid       +1   0  +2  -2  -2  +1       +5      +50%       4
+            30  40  30   5  25  25  50  60
+Shaman       0  +1  +2  -2   0   0       +5      +30%       4
+            10  13  30   5  30  20  45  20
 
 
 
@@ -4897,15 +4934,15 @@ W: depth : rarity : corpse weight : experience for kill
 I: speed : hit points : vision : armor class : alertness
   speed:
     110 means normal speed. If the monster is faster, the mimic will
-    receive a speed bonus of 50% of the monster's speed above 110.
+    receive a speed bonus of 30% of the monster's speed above 110.
     If the monster is slower, the mimic will receive a speed malus of
-    30% of the monster's speed malus below 110.
-    So a monster moving at 130 speed will give the mimic +10 speed.
+    20% of the monster's speed malus below 110.
+    So a monster moving at 130 speed will give the mimic +7 speed.
   hit points:
     The monster's hit dice xdy are multiplied and then capped against ~2500,
     so gain might decrease in higher regions. (Cap details: The monster HP is
     calculated by the following formula before further calculations are made:
-    monster HP = 100000 / ((100000 / hdice*hsides) + 18) .)
+    monster HP = 50000 / ((50000 / hdice*hsides) + 20) .)
     Now, if the mimic's HP are less then the result, the mimic's HP will
     become approx. ((3*x*y) + (2*normal_HP)) / 5. (2/5 monster HP, 3/5 player
     HP.) If the mimic's HP in player form (0) are greater than x*y, the
@@ -5268,7 +5305,7 @@ Divination
     Sense Monsters  Detects all monsters nearby.                    (project)
                     Lv30: Gives you temporary ESP.
   BONI:             Automatic identification at 50.
-Nature (This school uses WISDOM to determine fail-rates)
+Nature
     Grow Trees      Grows trees quickly around you.
     Healing         Heals a percentage of your hit points.          (project)
     Recovery        Reduces poison duration.
@@ -5322,7 +5359,7 @@ Udun
 
 Istari/priest schools:
 ----------------------
-Meta (This school uses WISDOM to determine fail-rates)
+Meta
     Recharge        Recharges a magic staff or wand.
     Project Spells  Makes several spells and prayers affect other players too,
                     in a radius around you that grows bigger depending on the
@@ -5350,6 +5387,8 @@ Holy Offense
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
                     Lv15: Calls a more powerful kind of light.
+    Curse           Causes randomly slowness or confusion or damage.
+                    Lv25: Affects all monsters in line of sight.
     Exorcism        Dispels nearby undead.
                     Lv20: Dispels nearby demons.
                     Lv30: Dispels nearby evil.
@@ -5357,6 +5396,8 @@ Holy Offense
     Orb Of Draining Summons a holy orb, devouring monsters.
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
+    Cloud Of Draining
+                    Similar to 'Drain Life' but affects a whole area.
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
 Holy Defense
@@ -5494,6 +5535,40 @@ Here you can..
     are wiped.
 -Leave guild
     If the guild master leaves, the whole guild is disbanded.
+
+
+
+(6.10)  Magic Device skill/ability details
+------------------------------------------
+The player's "Magic Device" ability in the character overview screen is
+calculated from a base ability depending on race/class, and the magic device
+skill in the skill screen ('G').
+The Magic Device ability is not limited to a maximum value, although the
+player won't be able to increase it unlimitedly. The scale is:
+0+  bad
+12+ poor
+18+ fair
+30+ good
+36+ very good
+42+ excellent
+54+ superb
+84+ heroic
+108+  legendary
+
+The magic device ability does this...
+-makes it easier to use wands, staves and rods and to activate items:
+  If random(1 to (skill - itemlevel)) > 3 then you will successfully
+  use the item. (There's always a slim chance to succeed even if your
+  chances should be zero.) The item level is from k_info.txt and caps
+  at 50. Confusion halves your skill, EASY_USE doubles it.
+-speeds up recharging of rods:
+  Skill in percent is added to the recharge rate; caps at skill 100,
+  which means +100% recharge rate (approximately).
+
+The magic device skill does the following...
+-helps to reduce effects of UN_POWER attacks,
+-helps to increase the power of forged polymorph-rings.
+-increases the power of magic devices.
 
 
 
@@ -6199,9 +6274,22 @@ of slaying (+10,+15) will keep the (+10,+15)).
 (Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0.)
 
 HOW IT WORKS ON NON-JEWELRY:
-All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
+-All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
 randomly rerolled. So it won't matter what stats the item has, only its
 base type is important.
+
+ITEMS THAT ALREADY HAVE ONE OR MORE ABILITIES:
+-Some items already possess certain abilities even without ego powers.
+For example dragon scale mails or jewelry. Important: The abilities of these
+items will be added to the randart abilities when it comes to determining the
+total power of that random artifact. That means that you're less likely to see
+many additonal abilities on an item which already has several abilities in
+it's usual form.
+-The following items will never get additional abilities when they are turned
+into an artifact, so don't waste your scrolls here:
+Multi-hued Dragon Scale Mail
+Power Dragon Scale Mail
+
 
 Mods on the final randart:
 --------------------------
@@ -6220,6 +6308,7 @@ Ammunition (shots/pebbles, arrows, bolts) will never get general mods but only
 type-dependant ones.
 Boomerangs, bows, crossbows and slings usually get more type-dependant mods
 than general mods.
+
 
 Type-dependant mods:
 --------------------
@@ -6287,7 +6376,7 @@ Gloves
         Extra attacks (+1 or +2)
         Critical hit bonus
         One of the elemental brands (acid/elec/fire/cold/poison) or SLAY mods
-        Vampiric life leeech
+        Vampiric life leech
         Hit point bonus (+LIFE)   (*)
         Extra +AC bonus
         +hit and +dam bonus
