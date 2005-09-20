@@ -457,7 +457,7 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
 	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
 	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
-	PALETTERGB(0xD7, 0x00, 0x00),  /* 3 0 0  Red (was 2,0,0) */
+	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
 	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
 	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
 	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
@@ -465,7 +465,7 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
 	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
 	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
-	PALETTERGB(0xFF, 0x00, 0x00),  /* 4 0 0  Lt. Red (was 4,1,3) */
+	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
 	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
 	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
 	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
@@ -3488,6 +3488,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	/* We are now initialized */
 	initialized = TRUE;
+
+	/* HACK - Latest Cygwin causes a space in beginning of lpCmdLine? - mikaelh */
+	if (lpCmdLine[0] == ' ') lpCmdLine++;
 
 	/* Do network initialization, etc. */
 	/* Add ability to specify cmdline to windows  -Zz*/
