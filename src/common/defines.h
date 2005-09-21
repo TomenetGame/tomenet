@@ -2874,7 +2874,8 @@ that keeps many algorithms happy.
 #define GF_HEALINGCLOUD 154
 #define GF_WATERPOISON  155
 #define GF_ICEPOISON    156
-
+#define GF_EXTRA_STATS  157
+#define GF_EXTRA_SPR	158
 #define GF_ROCKET       91
 
 /* for traps.h :) - C. Blue */
@@ -5294,12 +5295,13 @@ extern int PlayerUID;
 #define SKILL_HCURING           72
 #define SKILL_HSUPPORT          73
 
+#define SKILL_DRUID		74
+
 /* additional ones */
 #define SKILL_CLIMB		90
 #define SKILL_FLY		91
 #define SKILL_FREEACT		92
 #define SKILL_RESCONF		93
-
 #if 0	/* skills to come	- Jir - */
 #define SKILL_INNATE_POWER	/* in mimicry tree */
 #define SKILL_EGO_POWER
