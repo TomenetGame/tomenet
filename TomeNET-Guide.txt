@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. September 2005; written by C. Blue, http://www.c-blue.de/
+| Latest update: 21. September 2005; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.5, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -4823,6 +4823,7 @@ Druid
     fair enough; they despise the use of weapons though.
     A specialty of druids is, that they are still able to wear their full
     equipment even if their appearent shape is not human but of an animal.
+    Druids learn how to quickly pass through thick forest at level 10.
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
     whatever they deem most appropriate. Their mind is also trained in a very
