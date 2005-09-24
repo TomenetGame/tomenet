@@ -198,7 +198,7 @@ void do_cmd_go_up(int Ind)
 	{
 /* no prob trav on rpg server! - the_sandman */
 #ifdef RPG_SERVER
-		msg_print("You cannot do that here!");
+		msg_print(Ind, "You cannot do that here!");
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
@@ -468,7 +468,7 @@ void do_cmd_go_down(int Ind)
 	{
 /* no prob trav on rpg server! - the_sandman */
 #ifdef RPG_SERVER
-		msg_print("You cannot do that here!");
+		msg_print(Ind, "You cannot do that here!");
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
