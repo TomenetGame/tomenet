@@ -81,7 +81,7 @@
  * - 1 real-life person may only create up to 1 character in total
  * - all characters are no-ghost by default (death is permanent)
  */
-#define RPG_SERVER
+/* #define RPG_SERVER */
 
 
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
