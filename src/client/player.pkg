@@ -578,7 +578,7 @@ struct player_type
 	bool aggravate;		/* Aggravate monsters */
 	bool teleport;		/* Random teleporting */
 
-	bool exp_drain;		/* Experience draining */
+	byte drain_exp;		/* Experience draining */
 
 	bool feather_fall;	/* No damage falling */
 	bool lite;		/* Permanent light */
