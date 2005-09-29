@@ -39,7 +39,7 @@
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   3
-#define VERSION_PATCH   5
+#define VERSION_PATCH   6
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
@@ -5295,7 +5295,18 @@ extern int PlayerUID;
 #define SKILL_HCURING           72
 #define SKILL_HSUPPORT          73
 
-#define SKILL_DRUID		74
+#define SKILL_DRUID             74              /* <- obsolete entry as soon as 3.4.6 is out */
+#define SKILL_DRUID_ARCANE              74
+#define SKILL_DRUID_PHYSICAL            75
+#define SKILL_DRUID_EXTRA               76
+#define SKILL_DRUID_EXTRA2              77
+
+#define SKILL_SHAMAN            78
+#define SKILL_SHAMAN2           79
+#define SKILL_SHAMAN3           80
+#define SKILL_SHAMAN4           81
+#define SKILL_SHAMAN5           82
+
 
 /* additional ones */
 #define SKILL_CLIMB		90

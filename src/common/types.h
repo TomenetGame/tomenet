@@ -2215,8 +2215,6 @@ struct player_type
 	bool aggravate;		/* Aggravate monsters */
 	bool teleport;		/* Random teleporting */
 
-	bool exp_drain;		/* Experience draining */
-
 	bool feather_fall;	/* No damage falling */
 	bool lite;		/* Permanent light */
 	bool free_act;		/* Never paralyzed */
@@ -2314,6 +2312,7 @@ struct player_type
 	char	afk_msg[80];	/* afk reason */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
+	byte drain_exp;		/* Experience draining */
 	byte drain_mana;        /* mana draining */
 	byte drain_life;        /* hp draining */
 
