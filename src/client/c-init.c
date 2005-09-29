@@ -458,9 +458,9 @@ void client_init(char *argv1, bool skip)
 		switch (status)
 		{
 			case E_VERSION_OLD:
-				quit("Your client is outdated. Please get the latest one from http://www.tomenet.net/");
+				quit("Your client is outdated. Please get the latest one from http://www.c-blue.de/rogue");
 			case E_VERSION_UNKNOWN:
-				quit("Server responds 'Unknown client version'. Server might be outdated or client is invalid. (Latest client is at http://www.tomenet.net/)");
+				quit("Server responds 'Unknown client version'. Server might be outdated or client is invalid. (Latest client is at http://www.c-blue.de/rogue)");
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:

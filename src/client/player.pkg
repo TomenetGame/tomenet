@@ -81,13 +81,23 @@ typedef unsigned int u32b;
 #define SKILL_UDUN              60
 
 /* Priests/Paladins */
-#define SKILL_HOFFENSE		70
-#define SKILL_HDEFENSE		71
-#define SKILL_HCURING		72
-#define SKILL_HSUPPORT		73
+#define SKILL_HOFFENSE			70
+#define SKILL_HDEFENSE			71
+#define SKILL_HCURING			72
+#define SKILL_HSUPPORT			73
 
 /* Druids */
-#define SKILL_DRUID			74
+#define SKILL_DRUID_ARCANE		74
+#define SKILL_DRUID_PHYSICAL	75
+#define SKILL_DRUID_EXTRA   	76
+#define SKILL_DRUID_EXTRA2		77
+
+/* Shamans */
+#define SKILL_SHAMAN			78
+#define SKILL_SHAMAN2			79
+#define SKILL_SHAMAN3			80
+#define SKILL_SHAMAN4			81
+#define SKILL_SHAMAN5			82
 
 /* additional ones */
 #define SKILL_CLIMB             90

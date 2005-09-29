@@ -1189,7 +1189,7 @@ int Receive_quit(void)
 
 			c_close_game(reason);
 		}
-		quit(format("Quitting: %s", reason));
+		quit(format("%s", reason));
 	}
 	return -1;
 }
