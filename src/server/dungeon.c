@@ -3058,7 +3058,7 @@ static bool process_player_end_aux(int Ind)
 	/*** Process Inventory ***/
 
 	/* Handle experience draining */
-	if (p_ptr->exp_drain && magik(10))
+	if (p_ptr->drain_exp && magik(10))
 		//			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
 		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
 				"Draining", TRUE, FALSE);

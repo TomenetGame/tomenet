@@ -1002,7 +1002,7 @@ static void calc_mana(int Ind)
 		new_mana = 0;
 		break;
 	case CLASS_ADVENTURER:
-	case CLASS_BARD:
+//	case CLASS_BARD:
 	default:
 	    	/* 50% Int, 50% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -2226,7 +2226,7 @@ int calc_blows(int Ind, object_type *o_ptr)
 		case CLASS_RANGER: num = 5; wgt = 35; mul = 5; break;//mul4
 
 
-		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break;
+//		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break;
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */
@@ -2363,7 +2363,7 @@ void calc_bonuses(int Ind)
 	/* Clear all the flags */
 	p_ptr->aggravate = FALSE;
 	p_ptr->teleport = FALSE;
-	p_ptr->exp_drain = FALSE;
+	p_ptr->drain_exp = 0;
         p_ptr->drain_mana = 0;
         p_ptr->drain_life = 0;
 	p_ptr->bless_blade = FALSE;
@@ -2979,7 +2979,7 @@ void calc_bonuses(int Ind)
 				}
 			}
 		}
-		if (f3 & TR3_DRAIN_EXP) p_ptr->exp_drain = TRUE;
+		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp = 1;
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
 		if (f5 & (TR5_INVIS)){

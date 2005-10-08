@@ -2427,7 +2427,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                         },
                         {
-                                SKILL_AURA_POWER,
+                                SKILL_TRAUMATURGY,
                                 '+', 0,
                                 '+', 1000,
                         },

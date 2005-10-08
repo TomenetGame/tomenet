@@ -1602,14 +1602,14 @@ static void do_bard_skill(int Ind)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		/* Receives most of 'father' skills for free */
+#if 0		/* Receives most of 'father' skills for free */
 		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
 				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
 				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
 //				i == SKILL_NECROMANCY ||
 				i == SKILL_SPELL ||
 				i == SKILL_AURA_POWER || i == SKILL_DODGE) continue;
-
+#endif
 		if (magik(67))
 		{
 			bool resist = FALSE;
@@ -1875,11 +1875,11 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	}
 
 	/* Bards receive really random skills */
-	if (p_ptr->pclass == CLASS_BARD)
+/*	if (p_ptr->pclass == CLASS_BARD)
 	{
 		do_bard_skill(Ind);
 	}
-
+*/
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes+1;
 

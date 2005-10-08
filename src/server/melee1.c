@@ -2100,7 +2100,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (!(r_ptr->flags3 & RF3_NO_FEAR) && magik(chance))
 					{
 						msg_format(Ind, "%^s appears afraid.", m_name);
-						m_ptr->monfear = get_skill_scale(p_ptr, SKILL_AURA_POWER, 10) + 2;
+						m_ptr->monfear = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 10) + 2;
 					}
 				}
 
@@ -2113,9 +2113,9 @@ bool make_attack_normal(int Ind, int m_idx)
 					{
 #if 0
 						msg_format(Ind, "%^s appears frozen.", m_name);
-						m_ptr->stunned = get_skill_scale(p_ptr, SKILL_AURA_POWER, 20);
+						m_ptr->stunned = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 20);
 #endif	// 0
-						m_ptr->stunned += get_skill_scale(p_ptr, SKILL_AURA_POWER, 30) + 10;
+						m_ptr->stunned += get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 30) + 10;
 						if (m_ptr->stunned >= 100)
 							msg_format(Ind, "%^s appears frozen.", m_name);
 						else if (m_ptr->stunned >= 50)
@@ -2138,7 +2138,7 @@ bool make_attack_normal(int Ind, int m_idx)
 							msg_format(Ind, "%^s gets hit by a wave of plasma.", m_name);
 //							msg_print(Ind, "It explodes into a wave of plasma!");
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
-							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
+							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 150), 1, p_ptr->attacker);
 						}
 						else
 						{
@@ -2146,7 +2146,7 @@ bool make_attack_normal(int Ind, int m_idx)
 //							msg_print(Ind, "It explodes into a wave of ice!");
 							msg_format(Ind, "%^s gets hit by a wave of ice.", m_name);
 							sprintf(p_ptr->attacker, " eradiates a wave of ice for");
-							fire_ball(Ind, GF_ICE, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
+							fire_ball(Ind, GF_ICE, 0, 5 + get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 150), 1, p_ptr->attacker);
 						}
 					}
 				}
