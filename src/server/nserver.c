@@ -2562,6 +2562,15 @@ static int Receive_login(int ind){
 			int *id_list, i;
 			byte tmpm;
 			char colour_sequence[3];
+			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
+#ifdef RPG_SERVER
+			sflg0 |= 0x1;
+#endif
+#ifdef FUN_SERVER
+			sflg0 |= 0x2;
+#endif
+			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflg3, sflg2, sflg1, sflg0);
+
 			connp->password_verified = TRUE;
 			free(connp->pass);
 			connp->pass=NULL;
