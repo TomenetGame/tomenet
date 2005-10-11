@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. September 2005; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.3.5, http://www.tomenet.net/
+| Latest update: 11. October 2005; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -65,8 +65,8 @@ Contents
 (5) Item details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
-    (5.3)   Martial Arts, brands
-    (5.4)   Slaying vs brands
+    (5.3)   Slaying vs brands
+    (5.4)   Martial Arts, brands
     (5.5)   Weight of weapons and armour
     (5.6)   Resistances & caps, Immunities, Susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
@@ -350,6 +350,10 @@ They all start with a slash '/':
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
+/ex         Gives you detailed information about your character's status, such
+ (/examine) as turn, speed, deepest dungeon level, sanity, body shape (this is
+            interesting if you are a shapechanger). Druids get additional info
+            about forms they can shapechange into.
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Can only be used if target player is afk).
 /que        gives a quest! It needs to be fulfilled before a certain period
@@ -394,7 +398,6 @@ They all start with a slash '/':
             Leave a note to another player. Note: You have to specify his
             ACCOUNT NAME, not a character name. That way, no matter which of
             his characters he chooses to logon, he always gets the note.
-            Important: Account names are case-sensitive.
 /note <account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
@@ -1691,6 +1694,9 @@ Each character level requires your character to accumulate more experience
 than was needed for the level before, up to millions of experience points!
 All characters start the game at level 1. At level 50 they are supposed to
 fight the bad boss of the game, Morgoth, the Lord of Darkness.
+Depending on race and class, characters need to kill a different amount of
+monsters in order to reach the next level. Yeeks get experience fastest,
+while Thunderlords are slowest. (See (6.4) and (6.5).)
 
 Each time your character gains a new level, (s)he also gains a few skill
 points that you can distribute on your character's skills, press 'G' to invoke
@@ -2543,7 +2549,7 @@ be added to the dice result.
 If you manage to get your hands on an item that imbues your melee weapon with
 an elemental brand (like a Ring Of Ice for example), the dice of your weapon
 will be multiplied by 3 if the target doesn't resist that brand.
-See (5.4) to get an easy overview.
+See (5.3) to get an easy overview.
 
 Characters using weapons have a limited number of melee attacks per round,
 depending on the character class (profession). A table showing the blow/round
@@ -2595,11 +2601,50 @@ weapons but the additional damage is reduced to 2/5.
 Example: Ring of Acid will usually add 2x your melee base damage.
 For ranged weapons it will add 2*2/5x of your base damage, so multiply your
 base damage by 1.8 instead of by 3 to get your total damage output.
-See (5.4) to get an easy overview.
+See (5.3) to get an easy overview.
 
 
 
-(5.3) Martial Arts, brands
+(5.3) Slaying vs brands
+-----------------------
+If you use a weapon that slays trolls, that means its dice will be tripled if
+you hit a troll ('T'). If you have an item that gives fire brand, the dice
+would also be tripled by the brand. Slaying and brands are not cumulative.
+That means you will get a total dice multiplier of 3 here.
+Brands don't stack. The best one is taken. So if you wear a ring of fire and
+your weapon does cold damage the dice will be multiplied by 3 if the target
+doesn't resist both heat and cold. If the target is susceptible to one of
+those the dice are multiplied by 6. Same goes for SLAY flags.
+
+Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
+            | Monster..
+            | ..is immune   | ..resists | ..doesn't resist  | ..is susceptible
+------------|-----------------------------------------------------------------
+Melee Weapon|       1             2               3                   6
+Ranged Weap.|       1             1.4             1.8                 3
+Martial Arts|       1             1.33            1.67                2.67
+
+Slaying     | Dice multiplier | Description
+------------|-----------------------------------------------------------------
+Slay Animal |       2         | It is esp. deadly against natural creatures.
+Slay Giant  |       3         | It is especially deadly against giants.
+Slay Undead |       3         | It strikes at undead with holy wrath.
+Slay Troll  |       3         | It is especially deadly against trolls.
+Slay Orc    |       3         | It is especially deadly against orcs.
+Slay Dragon |       3         | It is especially deadly against dragons.
+Slay Demon  |       3         | It strikes at undead with holy wrath.
+Slay Evil   |       2         | It fights against evil with holy fury.
+Kill Undead |       5         | It is a great bane of undead.
+Kill Dragon |       5         | It is a great bane of dragons.
+Kill Demon  |       5         | It is a great bane of demons.
+
+Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
+
+If several multipliers match the highest one will be used.
+
+
+
+(5.4) Martial Arts, brands
 --------------------------
 The "auto-retaliator" (see 5.1) also works if you fight bare-handed.
 
@@ -2621,7 +2666,8 @@ of several points..
 -a light backpack makes a martial artist move faster and stealthier.
 -a very heavy backpack (inventory) will nullify the abilities and resistances,
  as well as the speed and stealth bonus! You will see a red warning message,
- telling you that your backpack isn't comfortable to wear anymore.
+ telling you about weight encumberment:
+ "You can't move freely due to your backpack weight."
 -using too heavy armour will cut your number of blows per round to half, and
  nullify your to-hit, to-dam, speed and stealth bonus from MA.
 -using a melee or ranged weapon or carrying a very heavy backpack will nullify
@@ -2634,9 +2680,9 @@ of several points..
 -using a heavy shield, melee or ranged weapon will nullify your speed and
  stealth bonus.
 
-The armour weight limit is 10.0 lb + Martial Arts skill level * 0.4 lb.
-So for MA 50 it is 10.0 + 20.0 = 30.0 lb.
-You will receive a warning message if your armour gets too heavy.
+The armour weight limit is 5.0 lb + Martial Arts skill level * 0.4 lb.
+So for MA 50 it is 5.0 + 20.0 = 25.0 lb.
+
 
 Here's a table, for those who prefer this view:
 
@@ -2655,7 +2701,7 @@ weapons but the additional damage is reduced to 1/3.
 Example: Ring of Acid will usually add 2x your base damage.
 For MA it will add 2/3x of your base damage, so multiply your base damage
 by 1.67 instead of by 3 to get your total damage output.
-See (5.4) to get an easy overview.
+See (5.3) to get an easy overview.
 
 You cannot use special techniques while stunned or confused.
 
@@ -2709,47 +2755,16 @@ Martial Arts skill level        Attacks per round
 
 
 
-(5.4) Slaying vs brands
------------------------
-If you use a weapon that slays trolls, that means its dice will be tripled if
-you hit a troll ('T'). If you have an item that gives fire brand, the dice
-would also be tripled by the brand. Slaying and brands are not cumulative.
-That means you will get a total dice multiplier of 3 here.
-Brands don't stack. The best one is taken. So if you wear a ring of fire and
-your weapon does cold damage the dice will be multiplied by 3 if the target
-doesn't resist both heat and cold. If the target is susceptible to one of
-those the dice are multiplied by 6. Same goes for SLAY flags.
-
-Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
-            | Monster..
-            | ..is immune   | ..resists | ..doesn't resist  | ..is susceptible
-------------|-----------------------------------------------------------------
-Melee Weapon|       1             2               3                   6
-Ranged Weap.|       1             1.4             1.8                 3
-Martial Arts|       1             1.33            1.67                2.67
-
-Slaying     | Dice multiplier | Description
-------------|-----------------------------------------------------------------
-Slay Animal |       2         | It is esp. deadly against natural creatures.
-Slay Giant  |       3         | It is especially deadly against giants.
-Slay Undead |       3         | It strikes at undead with holy wrath.
-Slay Troll  |       3         | It is especially deadly against trolls.
-Slay Orc    |       3         | It is especially deadly against orcs.
-Slay Dragon |       3         | It is especially deadly against dragons.
-Slay Demon  |       3         | It strikes at undead with holy wrath.
-Slay Evil   |       2         | It fights against evil with holy fury.
-Kill Undead |       5         | It is a great bane of undead.
-Kill Dragon |       5         | It is a great bane of dragons.
-Kill Demon  |       5         | It is a great bane of demons.
-
-Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
-
-If several multipliers match the highest one will be used.
-
-
-
 (5.5) Weight of weapons and armour
 ----------------------------------
+Weight of items in your inventory or equipment can have great effect on
+martial artists. If you use martial arts, also see (5.4) for more information.
+
+Even if you're not using martial arts, there are certain types of encumberment
+which may affect your character:
+
+Weapon weight
+-------------
 If your melee weapon or ranged weapon is too heavy you will hardly be able
 to use it, resulting in reduced attack number per round and less damage.
 You will get the message "You have trouble wielding such a heavy weapon/bow"
@@ -2781,20 +2796,38 @@ character's strength:
         35          18/20-18/29             100         18/210-18/219
         40          18/30-18/39             100         18/220+
 
-
+Armour weight (concerning magic)
+--------------------------------
 Wearing armour which is too bulky gives you this message:
+"The weight of your armour strains your spellcasting."
+That means your mana (Spell Points) will be (severely) reduced from the
+bulkiness of your armour. To counter this effect, train your 'Combat' skill.
+To cast freely, you may wear 20.0 lbs of armoury plus your combat skill (in
+lbs). So 50 points in 'Combat' would allow you to wear 20.0 + 50.0 = 70.0 lbs
+of armour parts without being encumbered.
+
+Armour weight
+-------------
+Wearing armour which is too heavy for you will reduce your to-hit bonus and
+speed bonus from 'Sneakiness' skill.
+You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
-That means your mana will be (severely) reduced. To counter this effect,
-train your 'Combat' skill.
-In general, you can wear 20.0 lbs of armoury plus your combat skill (in lbs).
-So 50 points in 'Combat' would allow you to wear 20.0 + 50.0 = 70.0 lbs of
-armour parts without being encumbered.
+To move freely, you may wear 10.0 lbs of armoury plus a strength-factor plus
+6 * your combat skill. Strength factor is 0.6 * str_hold (see table above to
+find your str_hold). So the top weight limit is
+10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lbs.
+
+Glove encumberment (concerning magic)
+-------------------------------------
+Wearing gloves as a sorceror may reduce your mana (Spell Points) if they are
+not magically enchanted, such as:
+Providing 'Free Action' / increasing your mana / increasing your dexterity.
+You will receive a warning message, saying:
+"Your covered hands feel unsuitable for spellcasting."
+
 
 Very heavy armour and/or heavy items in your inventory may also slow you down
-(reduce your moving speed) if your STRength isn't very great.
-
-Armour weight also affects Martial Arts, see (5.3) for more information if
-you are a Martial Artist.
+(slightly reduce your moving speed) if your STRength isn't very great.
 
 
 
@@ -3080,7 +3113,7 @@ Susceptibility of a monster will result in a doubled multiplier for
 branded attacks. Example: If the player hits a Cold Hound with a
 fiery broad sword (2d6) the Cold Hound will receive 2d6 * 6 damage
 instead of 2d6 * 3 (usual brand multiplier for melee weapons).
-Also see (5.4) for a table of brand multipliers.
+Also see (5.3) for a table of brand multipliers.
 
 Magical attacks vs monsters:
 Susceptibility of a monster will result in double damage for the
@@ -3531,7 +3564,7 @@ wilderness Mapping  Maps the wilderness area around the worldmap sector you
                     are currently within. These scrolls also sometimes carry
                     an inscription telling the location of a hidden dungeon.
 Cancellation    Don't use it! It can heavily disenchant magic items in your
-                inventory. It hasn't got a useful purpose.
+                inventory and/or equipment. It hasn't got a useful purpose.
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 
@@ -4171,18 +4204,20 @@ Note that not every skill is available to every profession (class).
                                 NOTE: The extra might bonus does not apply
                                 to Boomerangs! All other boni do apply.
         .Sling-mastery          Imcreases hit chance (while using a sling).
-                                At 16,32,48 you will get +1 additional shot
-                                per round each (while using a sling).
-                                (Note: Number of shots per round is capped at
-                                5 in total, so Extra Shot forms won't make
-                                mimics better archers than true archers.)
+                                At 10,20,30,40,50 you will get +1 additional
+                                shot per round each (while using a sling).
                                 Also reduces the chance of your ammunition to
                                 shatter from 50% at skill 0 down to 10% at 50
                                 (only concerns ammo for slings).
                                 Artifact ammunition never breaks.
-        .Bow-mastery            See Sling-mastery, analogue
-        .Crossbow-mastery       See Sling-mastery, analogue
-        .Boomerang-mastery      See Sling-mastery, and also increases ranged
+        .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
+                                shot per round each.
+                                Same as Sling-mastery regarding ammunition.
+        .Crossbow-mastery       At 25 and 50 you will get +1 extra shot AND
+                                +1 extra-might-bonus each.
+                                Same as Sling-mastery regarding ammunition.
+        .Boomerang-mastery      At 16.6, 33.3 and 50 you get +1 extra throw
+                                each. Boomerang-mastery Also increases ranged
                                 to-damage bonus while using a boomerang, and
                                 reduces the chance of a boomerang to break.
                                 Skill 0 -> 2% chance. Skill 50 -> 0,1% chance.
@@ -4190,6 +4225,8 @@ Note that not every skill is available to every profession (class).
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises you character speed.
                                 Lets you attack with special combat styles.
+                                You get +1 extra attack at 1,10,20,30,40,45,50
+                                each, so up to +7 blows per round in total.
                                 At 10 you receive Feather Falling (Levitation).
                                 At 15 your character gets fear resistance.
                                 At 20 your character gets confusion resistance.
@@ -4201,7 +4238,7 @@ Note that not every skill is available to every profession (class).
                                 At 50 a martial artist will learn the
                                 technique of flying!
                                 Under certain conditions MA abilities cannot
-                                be used and lose their effect, see (5.3)!
+                                be used and lose their effect, see (5.4)!
                                 The dice of martial arts special techniques
                                 (which your character will use automatically
                                 depending on your MA skill) are affected by
@@ -4210,14 +4247,22 @@ Note that not every skill is available to every profession (class).
                                 Martial Arts gives you a chance / adds to your
                                 chance of intercepting an enemy! See
                                 'Interception' skill below.
-                                For more details about MA see section (5.3).
+                                For more details about MA see section (5.4).
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
                                 scrolls easier if raised to at least 11.
+    .Mimicry                    Ability to shapechange into a monster!
+                                You also inherit the monsters abilities,
+                                weaknesses and resistances!
+                                See section (6.7) for more info.
+                                To find out details about a monster form
+                                look into the file r_info.txt in your
+                                tomenet/lib/game directory!
+                                (See (7.4) for more info about spoiler files.)
     .Magic-device               Ability to use magic devices (wands,rods,etc.)
                                 without failing. Also increases their power.
-                                Speeds up recharging of rods you carry (1.5x).
+                                Speeds up recharging of rods you carry.
                                 See (6.10) for more information.
     .Spell-power                Increases the power of learned spells by
                                 adding a bonus to the spell level.
@@ -4226,8 +4271,7 @@ Note that not every skill is available to every profession (class).
                                 haven't learned yet.)
     .Sorcery                    Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
-                                << For more information about learning spells,
-                                see (6.8) >>
+<< For more information about learning spells, see (6.8) >>
     .Mana                       Learn spells of the Mana branch.
     .Fire                       Learn spells of the Fire branch.
     .Water                      Learn spells of the Water branch.
@@ -4240,14 +4284,12 @@ Note that not every skill is available to every profession (class).
     .Mind                       Learn spells of the Mind branch.
     .Nature                     Learn spells of the Nature branch.
     .Udun                       Learn spells of the Udun branch.
-    .Mimicry                    Ability to shapechange into a monster!
-                                You also inherit the monsters abilities,
-                                weaknesses and resistances!
-                                See section (6.7) for more info.
-                                To find out details about a monster form
-                                look into the file r_info.txt in your
-                                tomenet/lib/game directory!
-                                (See (7.4) for more info about spoiler files.)
+    .Holy Offense               Learn prayers of the Holy Offense branch.
+    .Holy Defense               Learn prayers of the Holy Defense branch.
+    .Holy Curing                Learn prayers of the Holy Curing branch.
+    .Holy Support               Learn prayers of the Holy Support branch.
+    .Arcane Lore                Learn druid magic tought by arcane lore.
+    .Physical Lore              Learn druid magic tought by physical lore.
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
@@ -4280,6 +4322,11 @@ Note that not every skill is available to every profession (class).
                                 get BAD prices (blackmarket-style) in shops.
                                 Your blacklist timer won't decrease while you
                                 are /afk!!.
+                                You'll also be on the 'watchlist', meaning
+                                that you can shop normally, but are unable to
+                                steal until the shopkeepers stop to watch you
+                                so intensely. The watchlist runs out slower
+                                than the blacklist.
                                 Your chance to steal an item from a shop
                                 depends on your dexterity, your stealing skill
                                 and the price and weight of the item. Stealth
@@ -4337,15 +4384,12 @@ Note that not every skill is available to every profession (class).
                                 Interception chance caps at 80% (cap is
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
-+Necromancy                     Drains life from killed monsters
-                                (higher monster level and skill -> more HP).
-    .Aura power                 Increases the power of your auras.
-                                NOTE: Aura skills only affect the chance of
-                                the corresponding aura to react to an attack,
-                                not their damage. The damage/duration of all
-                                auras is only increased by 'Aura power'.
-                                (Aura power doesn't affect auras from items,
-                                for example fire auras of cloaks.)
++Necromancy                     Drains life and mana from killed monsters,
+                                replenishing your HP and SP.
+                                Only works if you are able to see the target.
+    .Traumaturgy                Drains mana from monsters when you inflict
+                                damage on them, replenishing your SP.
+                                Only works if you are able to see the target.
     .Aura of Fear               Monsters that hit you are stroke by fear.
     .Shivering Aura             Monsters that hit you are stunned.
                                 At a skill of 30 the aura is so strong that
@@ -4458,7 +4502,8 @@ Depending on your race and class, you will be better or worse at certain
 abilities. You can see your abilities in the character screen (press 'C').
 
 Fighting
-    How well you can fight, how easily you get disarmed.
+    How well you can fight (hit chance; further boni like skills or +hit from
+    equipment are added to the ability) or how easily you get disarmed.
 Bows/Throw
     How well you can shoot/throw.
 Saving Throw
@@ -4487,7 +4532,7 @@ Blows/Round
     are limited to 4 blows per round.)
     Spending points in specific weapon masteries will give you an additional
     blow at 25 and at 50 (like sword or hafted mastery).
-    Tables of blows/round limits are at (5.3) (for martial arts) and at (6.5)
+    Tables of blows/round limits are at (5.4) (for martial arts) and at (6.5)
     (for melee weapons).
 Shots/Round
     How often per round you are able to use your ranged weapon.
@@ -4735,16 +4780,16 @@ Istar (elvish word for Mage)
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
 Priest
-    Priests use certain divine magic. Unless mages they have a fair
-    fighting potential with hafted or blessed weapons. Priests can learn
-    many spells that are helpful to their party members. Priests use mainly
-    wisdom for their prayers, determining the amount of mana and how low their
-    failure rate is.
+    Priests use certain divine magic, uttered as prayers. Unless mages they
+    have a fair fighting potential with hafted or blessed weapons. Priests
+    can learn many spells that are helpful to their party members. They use
+    mainly wisdom for their prayers, determining the amount of mana and how
+    low their failure rate is.
     A Priest is a character of holy devotion. They explore the dungeon only
     to destroy the evil that lurks within, and if treasure just happens to
     fall into their packs, well, so much more to the glory of their church!
     They are very good with magical devices, preferring to call them
-    instruments of their god, but are not as good as a Istaris in their use.
+    instruments of their god, but are not as good as Istari in their use.
     Priests also have excellent saving throws due to divine intervention.
     Priests make decent fighters, preferring blunt weapons over edged ones.
     Wisdom is the priest's primary stats.
@@ -4815,10 +4860,12 @@ Ranger
     At level 20 rangers learn to find paths passing thick woods.
 Druid
     Druids are able to call upon the mystical powers of nature and very good
-    at it. Their wisdom is of primary importance to determine their mana.
+    at it. Their wisdom is of primary importance to determine their mana and
+    success chances when casting spells.
     Druids can shapechange into several animal forms without having to fight
     or kill them in order to learn about their form. They learn one or more
-    new forms at each character level that is dividable by 5.
+    new forms at each character level that is dividable by 5. Druids are able
+    to always use their full equipment, even while transformed.
     They're about as good at fighting as priests or shamans, not too great but
     fair enough; they despise the use of weapons though.
     A specialty of druids is, that they are still able to wear their full
@@ -4830,10 +4877,14 @@ Shaman
     versatile manner, allowing them to collect energy from intelligence or
     wisdom, whatever currently is easiest for them! Shamans are able to learn
     to take on shape of animals, giants or dragons, and even ride on summoned
-    dragons, taking on the shape of dragonriders. Shamans are excellent at
-    magic and may have weaker combat abilities than rangers or paladins, but
-    still don't need to hide from a melee. Their spiritual abilities allow
-    them to easily train various aspects of necromancy as they see fit.
+    dragons, taking on the shape of dragonriders. They can also appear as a
+    spirit, elemental or ghost after they destroyed enough of them, while
+    still using their full equipment! Shamans are always able to move straight
+    even if the creature in whose shape they appear usually doesn't.
+    Shamans are excellent at magic and may have weaker combat abilities than
+    rangers or paladins, but still don't need to hide from a melee. Their
+    spiritual abilities allow them to easily train various aspects of
+    necromancy as they see fit.
     At level 20 shamans learn to perceive the invisible.
 
 If you raise in levels, you will get new titles. These are displayed between
@@ -4850,7 +4901,7 @@ To that maximum of blows per round further boni are added, like extra blows
 from a specific weapon-type mastery or from rings of extra attacks or magical
 influence from priest prayer 'Zeal'.
 Note that these blow/round limits don't count for Martial Arts users (as long
-as they fight barehanded). See (5.3) for a table of MA attacks.
+as they fight barehanded). See (5.4) for a table of MA attacks.
 
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
@@ -5225,34 +5276,49 @@ Istari schools:
 Earth
     Stone Skin      Creates a shield of earth, increasing your AC.
                     Lv25: Deals damage to attackers.
+                    Required skill level for first spell level: 1.
     Dig             Turns walls into mud.
+                    Required skill level for first spell level: 12.
     Stone Prison    Creates a prison of granite walls around you.
+                    Required skill level for first spell level: 25.
     Strike          Creates a micro-ball of force, pushing monsters backwards.
                     Lv12: it turns into a small ball.
+                    Required skill level for first spell level: 25.
     Shake           Creates a local earthquake.
+                    Required skill level for first spell level: 27.
   BONI:             Shard resistance at 30,
                     Great damage reduction against earthquakes at 45.
 Air
-    Noxious Cloud   Fires a poison cloud.
+    Noxious Cloud   Fires a poison cloud at a designated target.
                     Lv30: Unbreath cloud, irresistable.
+                    Required skill level for first spell level: 3.
     Wings of Wind   Grants levitation (feather falling).
                     Lv16: Lets you fly.
+                    Required skill level for first spell level: 22.
     Invisibility    Turns you invisible.
+                    Required skill level for first spell level: 30.
     Poison Blood    Gives temporary poison resistance.
                     Lv10: Brands melee weapons with venom.
+                    Required skill level for first spell level: 22.
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
+                    Required skill level for first spell level: 25.
   BONI:             Feather falling at 30,
                     Poison resistance at 40,
                     Flying at 50.
 Water
     Tidal Wave      Summons a monstrous tidal wave.
+                    Required skill level for first spell level: 16.
     Ice Storm       Engulfs you in a storm of roaring cold.
                     Lv15: Turns into a storm of shards of ice.
+                    Required skill level for first spell level: 22.
     Ent's Potion    Fills your stomach.
                     Lv5: Removes fear.
                     Lv12: Makes you heroic.
-    Vapor           Fills the air with toxic moisture (water damage).
+                    Required skill level for first spell level: 6.
+    Vapor           Fills the air around you with toxic moisture
+                    (which does pure water damage, not poison).
+                    Required skill level for first spell level: 2.
   BONI:             Water resistance at 30,
                     Passing water at 40,
                     Water immunity at 50.
@@ -5260,60 +5326,84 @@ Fire
     Globe of Light  Creates a globe of magical light.
                     Lv10: Damages monsters.
                     Lv 25: Turns into a more powerful kind of light.
-    Fireflash              Conjures a fire ball.
+                    Required skill level for first spell level: 1.
+    Fireflash       Conjures a fire ball.
                     Lv20: Turns into holy fire which is especially deadly to
                           EVIL opponents.
+                    Required skill level for first spell level: 10.
     Fiery Shield    Creates a shield of flames around you.
+                    Required skill level for first spell level: 16.
     Firewall        Creates a fire wall to incinerate monsters that cross it.
+                    Required skill level for first spell level: 20.
   BONI:             Fire resistance at 30,
                     Fire immunity at 50.
 Mana
     Manathrust      Casts a powerful mana bolt.
+                    Required skill level for first spell level: 1.
     Remove Curses   Removes all curses of carried/worn objects.
                     Lv20: Switches to *remove curses*.
+                    Required skill level for first spell level: 20.
     Elemental Shield
                     Gives temporary resistance to the elements,
                     fire/cold/lightning/acid.                       (project)
+                    Required skill level for first spell level: 20.
     Disruption Shield
                     Conjures a shield that protects you from taking damage.
                     Instead, the shield will consume your mana to absorb it.
+                    Required skill level for first spell level: 35.
   BONI:             Mana resistance at 40.
 Conveyance
     Phase Door      Teleports you on a small scale range.           (project)
+                    Required skill level for first spell level: 1.
     Disarm          Destroys doors and traps around you.
+                    Required skill level for first spell level: 3.
     Teleport        Teleports you within the level.                 (project)
+                    Required skill level for first spell level: 10.
     Teleport Away   Teleports a line of monsters away.
                     Lv10: Turns into a ball.
                     Lv20: Teleports away all monsters in sight.
+                    Required skill level for first spell level: 23.
     Recall          Works like Word Of Recall.                      (project)
                     Inscribe your spellbook like you'd inscribe a scroll,
                     in order to specify a destination.
+                    Required skill level for first spell level: 30.
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards.
+                    Required skill level for first spell level: 35.
   BONI:             Resistance to teleportation attacks at 30.
 Divination
     Identify        Identifies items.
                     Lv17: Identifies all items that you carry/wear.
                     Lv27: Also identifies all items on the floor around you.
+                    Required skill level for first spell level: 8.
     Greater Identify
                     *Identifies* an item.
+                    Required skill level for first spell level: 35.
     Vision          Detects the dungeon layout around you.
                     Lv25: Maps and lights the whole level.
+                    Required skill level for first spell level: 15.
     Sense Hidden    Detects traps.                                  (project)
                     Lv15: Lets you see invisible for a while.       (project)
+                    Required skill level for first spell level: 5.
     Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
+                    Required skill level for first spell level: 9.
     Sense Monsters  Detects all monsters nearby.                    (project)
                     Lv30: Gives you temporary ESP.
+                    Required skill level for first spell level: 1.
   BONI:             Automatic identification at 50.
 Nature
     Grow Trees      Grows trees quickly around you.
+                    Required skill level for first spell level: 6.
     Healing         Heals a percentage of your hit points.          (project)
+                    Required skill level for first spell level: 10.
     Recovery        Reduces poison duration.
                     Lv10: Cures poison and cuts.                    (project)
                     Lv20: Restores drained stats.
                     Lv25: Restores lost experience.
+                    Required skill level for first spell level: 15.
     Regeneration    Increases your hit point regeneration rate.
+                    Required skill level for first spell level: 20.
   BONI:             Regeneration ability (Hit Points) at 30,
                     Pass trees easily at 30,
                     Pass water easily at 40.
@@ -5321,8 +5411,10 @@ Mind
     Confuse         Confuses a monsters.
                     Lv15: Turns into a ball.
                     Lv35: Affects all monsters in sight.
+                    Required skill level for first spell level: 5.
     Stun            Stunds a monster.
                     Lv25: Turns into a ball.
+                    Required skill level for first spell level: 15.
     Telekinesis     Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
@@ -5330,18 +5422,23 @@ Mind
                     since everyone can send you any items, so better close it
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
+                    Required skill level for first spell level: 30.
   BONI:             Reduces confusion and hallucination at 30,
                     Reduce insanity influence at 40 and especially at 50.
 Temporal
     Magelock        Magically locks a door.
                     Lv30: Creates a Glyph Of Warding on the ground that stops
                           monsters from crossing the field or summoning on it.
+                    Required skill level for first spell level: 1.
     Slow Monster    Slows down a monster.
                     Lv20: Affects a zone.
+                    Required skill level for first spell level: 10.
     Essence of Speed
                     Hastes you for a while.                         (project)
+                    Required skill level for first spell level: 15.
     Banishment      Teleports away all monsters within sight.
                     Lv15: Locks monsters in stasis for a while.
+                    Required skill level for first spell level: 30.
   BONI:             Time resistance at 50.
 Udun
     Genocide        Genocides all monsters of a race on the level.
@@ -5350,11 +5447,15 @@ Udun
                     For details on the effects "genocide" and "mass genocide"
                     of this spell, please see (5.9) scroll of geno/mass geno.
                     (This spell uses WISDOM to determine fail-rates!)
+                    Required skill level for first spell level: 25.
     Wraithform      Turns your form immaterial.                     (project)
+                    Required skill level for first spell level: 35.
     Disenchantment Bolt
                     Conjures a powerful and nearly irresistible bolt.
+                    Required skill level for first spell level: 40.
     Hellfire        Conjures a ball of hellfire which is especially deadly to
                     GOOD opponents.
+                    Required skill level for first spell level: 20.
   BONI:             Resist teleportation attacks at 30,
                     Hold life at 40.
 
@@ -5362,6 +5463,7 @@ Istari/priest schools:
 ----------------------
 Meta
     Recharge        Recharges a magic staff or wand.
+                    Required skill level for first spell level: 5.
     Project Spells  Makes several spells and prayers affect other players too,
                     in a radius around you that grows bigger depending on the
                     'Project Spells' level.
@@ -5374,12 +5476,14 @@ Meta
                     The closer another player stands to you, the more he will
                     usually get out of the spell (eg healed HP amount,
                     duration of resistances, etc..).
+                    Required skill level for first spell level: 10.
     Disperse Magic  Removes magical influences.
                     Lv1: Blindness.
                     Lv5: Confusion/Hallucination.
                     Lv10: Speed/Slowness.
                     Lv15: Stun/Cuts.
                     Lv20: Heroism/Berserk strength/Blessing/Shields/Fear.
+                    Required skill level for first spell level: 15.
   BONI:             Improves saving throw, the further it's trained above 20.
 
 Priest schools:
@@ -5388,61 +5492,82 @@ Holy Offense
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
                     Lv15: Calls a more powerful kind of light.
+                    Required skill level for first spell level: 1.
+                    Note that this is a spell shared between offense and
+                    support school, meaning that increases in one of those
+                    school will increase the spell level by only half as much.
     Curse           Causes randomly slowness or confusion or damage.
+                    Lv15: Turns from bolt into beam, passing through the
+                          target and also hitting those behind.
                     Lv25: Affects all monsters in line of sight.
+                    Required skill level for first spell level: 1.
     Exorcism        Dispels nearby undead.
                     Lv20: Dispels nearby demons.
                     Lv30: Dispels nearby evil.
+                    Required skill level for first spell level: 11.
     Release Souls   *Dispels undead*.
+                    Required skill level for first spell level: 10.
     Orb Of Draining Summons a holy orb, devouring monsters.
+                    Required skill level for first spell level: 20.
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
+                    Required skill level for first spell level: 20.
     Cloud Of Draining
                     Similar to 'Drain Life' but affects a whole area.
+                    Required skill level for first spell level: 40.
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
 Holy Defense
     Blessing        Increases AC by 10 temporarily.                 (project)
                     Lv15: Increases AC by 20 temporarily.           (project)
                     Lv30: Increases AC by 30 temporarily.           (project)
+                    Required skill level for first spell level: 1.
     Holy Resistance Lets you resist heat.                           (project)
                     Lv5: Lets you also resist cold.                 (project)
                     Lv10: Lets you also resist lightning.           (project)
                     Lv15: Lets you also resist acid.                (project)
                     Lv25: Lets you also resist poison.              (project)
+                    Required skill level for first spell level: 11.
     Protection from evil.
                     Repels evil creatures that try to attack you.
                     Works very well, as long as the creature isn't of a higher
                     level than you.
+                    Required skill level for first spell level: 12.
     Glyph Of Warding
                     Creates a rune on the ground that monsters cannot cross
                     nor summon on. Powerful monsters may break it.
+                    Required skill level for first spell level: 40.
     Eternal Martyr  Burns you in holy fire, making you invulnerable.
                     When your martyrium ends, you will be left close to death
                     with up to 30 HP, depending on your maximum HP.
                     (Remaining HP = MaxHP / 15, but never more than 30.)
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
+                    Required skill level for first spell level: 40.
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
 Holy Curing
     Remove Fear     Keeps your heart boldened for a while           (project)
+                    Required skill level for first spell level: 1.
     Healing         Heals a percentage of hit points.               (project)
+                    Required skill level for first spell level: 10.
     Curing          Reduces poison duration.
                     Lv10: Cure poison/cuts/stun/blindness/confusion.(project)
                     Lv20: Restore stats.                            (project)
                     Lv25: Restore experience.                       (project)
-    Mind Focus      Cure hallucinations.                            (project)
-                    Lv10: Slightly cure bad insanity.               (project)
-                    Lv20: Fairly cure bad insanity.                 (project)
+                    Required skill level for first spell level: 16.
+    Mind Focus      Cure hallucinations and insanity.               (project)
+                    Required skill level for first spell level: 21.
     Resurrection    Resurrect another player's ghost. The resurrected player
                     will lose less experience the higher the spell level is.
                     Exp loss is usually 40% if revived in the temple or via
                     life scroll.
                     Resurrection prayer exp loss goes down from 40% and caps
                     at 33%.
+                    Required skill level for first spell level: 30.
     Soul Curing     Cures Black Breath (See 1.5 for more information about
                     Black Breath).                                  (project)
+                    Required skill level for first spell level: 25.
   BONI:             Improves HP regeneration rate extraordinarily the further
                     it is trained above 30,
                     Half duration of various bad effects on the body at
@@ -5452,26 +5577,75 @@ Holy Curing
 Holy Support
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
-                    Lv15: Calls a more powerful kind of light.
+                    Lv8: Calls a more powerful kind of light.
+                    Required skill level for first spell level: 1.
+                    Note that this is a spell shared between offense and
+                    support school, meaning that increases in one of those
+                    school will increase the spell level by only half as much.
     Sense Monsters  Detect monsters, see invisible for a while.     (project)
                     Lv30: Gives full temporary ESP.
+                    Required skill level for first spell level: 1.
     Sanctuary       Puts nearby monsters asleep.
                     Lv20: Lets all monsters in line of sight fall asleep.
+                    Required skill level for first spell level: 1.
     Satisfy Hunger  Satisfies your hunger.                          (project)
+                    Required skill level for first spell level: 10.
     Remove Curses   Removes curses.
                     Lv30: Removes heavy curses.
+                    Required skill level for first spell level: 10.
     Sense Surroundings
                     Detect monsters, see invisible for a while.     (project)
                     Lv15: Maps the dungeon around you.              (project)
                     Lv30: Gives clairvoyance (full enlightened map).
                           Gives full temporary ESP.
+                    Required skill level for first spell level: 10.
     Zeal            Gives +1 extra attack per round for a while.    (project)
                     Lv10: Gives +2 EA.                              (project)
                     Lv20: Gives +3 EA.                              (project)
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
+                    Required skill level for first spell level: 31.
   BONI:             Keeps the hunger satisfied all the time at 40,
                     Suppresses effects of DG_CURSE and TY_CURSE at 50.
+
+Druid schools:
+--------------
+Arcane Lore
+    Nature's Call   Quickly grows trees around you.
+                    Required skill level for first spell level: 12.
+    Toxic Moisture  Creates a cloud of toxic moisture at a designated target.
+                    At level 30 it turns into ice shards.
+                    Required skill level for first spell level: 4.
+    Ancient Lore    Identifies all items in your inventory.
+                    Required skill level for first spell level: 20.
+    Garden of the Gods
+                    Transforms solid walls into green trees!
+                    Required skill level for first spell level: 15.
+    Call of the Forest
+                    Dispels all animals from your line of sight.
+                    Required skill level for first spell level: 1.
+Physical Lore
+    Forest's Embrace
+                    Creates a cloud around you which heals everyone including
+                    yourself over time.
+                    Required skill level for first spell level: 18.
+    Quickfeet       Temporarily boosts your own speed as well as others
+                    players around you.
+                    Required skill level for first spell level: 13.
+    Herbal Tea      Satisfies your hunger.
+                    Lv20: Restores your experience.
+                    Lv25: Restores your attributes.
+                    Lv35: Cures black breath!
+                    Required skill level for first spell level: 3.
+    Extra Growth    Increases your attributes temporarily.
+                    Lv5: Increases charisma.
+                    Lv10: Also increases dexterity.
+                    Lv15: Also increases strength.
+                    Lv20: Also increases constitution.
+                    Lv25: Also increases intelligence.
+                    Required skill level for first spell level: 10.
+    Focus           <<currently does nothing>>
+                    Required skill level for first spell level: 1.
 
 
 
@@ -5594,7 +5768,7 @@ Beginners (level 1)
   your character has a decent amount of Hit Points, these potions raise your
   fighting abilities a good deal.
 + Potion of Cure Light Wounds
-  The become useless quickly while you gain some character levels since they
+  They become useless quickly while you gain some character levels since they
   don't heal very many HP (Hit Points). At the beginning they are very helpful
   however.
 + Scroll of Phase Door
@@ -5717,6 +5891,9 @@ Very high characters (36 and above)
 + maybe a Rod of Illumination and a Rod of Disarming or Trap/Door Destruction
   for clearing Vaults.
 + Sprigs of Athelas
++ Later on (character level 40+) scrolls of *destruction*. These annihilate
+  all monsters around you instantly (not giving any experience), removing
+  otherwise deadly threats.
 
 
 
@@ -5739,10 +5916,12 @@ Beginners (level 1)
   increase the total damage you inflict on enemies, since it's multiplied by
   the bow's power factor.
 + An appropriate melee weapon
-  Check out how many blows per round you get with a light "Whip (1d6)". If
-  your character has only one hit per round even with light weapons, choose a
-  heavy weapon that can deal more damage in one blow. If your character is low
-  on strength, pay attention that you don't buy a weapon that is too heavy.
+  Check out how many blows per round you get with a light Dagger, Whip,
+  Hatchet or Sickle, depending on your favourite weapon class.
+  If your character has only one hit per round even with light weapons, choose
+  a heavy weapon that can deal more damage in one blow. If your character is
+  low on strength, pay attention that you don't buy a weapon that is too heavy
+  to use at all.
 
 Low level character (up to 15)
 ---
@@ -6740,6 +6919,13 @@ SOLUTION:   The first message means, that one or more magic spells or prayers
             manually. You can usually download the latest scripts from
             www.c-blue.de/rogue. Otherwise the global server notes should tell
             you where to get the latest scripts.
+PROBLEM 18: When I try to unpack the latest TomeNET ZIP file, I get strange
+            messages telling of 'write-protected', 'read-only' or 'password-
+            protected'. Afterwards, the client won't function properly.
+SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
+            new version. If TomeNET is running, the unpacking will fail to
+            overwrite the existing files! Shut down TomeNET, then extract the
+            ZIP (overwriting everything), then start TomeNET again.
 
 
 
