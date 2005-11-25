@@ -2752,7 +2752,7 @@ void interact_macros(void)
 			macro_add(buf, macro__buf, FALSE, TRUE);
 
 			/* Message */
-			c_msg_print("Created a new command macro.");
+			c_msg_print("Created a new hybrid macro.");
 		}
 
 		/* Create a normal macro */
