@@ -2812,8 +2812,12 @@ void interact_macros(void)
 			c_msg_print("Created a new empty macro.");
 		}
 
+		/* Query a macro */
 		else if (i == '9')
 		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Query a macro");
+
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
 
@@ -2828,9 +2832,9 @@ void interact_macros(void)
 					strcpy(macro__buf, macro__act[i]);
 
 					/* Message */
-					if (macro__hyb[i]) c_msg_print("A hybrid macro queried.");
-					else if (macro__cmd[i]) c_msg_print("A command macro queried.");
-					else c_msg_print("A normal macro queried.");
+					if (macro__hyb[i]) c_msg_print("A hybrid macro was found.");
+					else if (macro__cmd[i]) c_msg_print("A command macro was found.");
+					else c_msg_print("A normal macro was found.");
 
 					break;
 				}
