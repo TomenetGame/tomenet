@@ -796,7 +796,7 @@ errr process_pref_file_aux(char *buf)
                 return (0);
         }
 
-        /* Process "C:<str>" -- create hybrid macro */
+        /* Process "H:<str>" -- create hybrid macro */
         else if (buf[0] == 'H')
         {
                 char tmp[1024];
