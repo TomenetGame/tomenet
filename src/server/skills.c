@@ -63,9 +63,11 @@ s16b get_skill(player_type *p_ptr, int skill)
 s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 {
 	/* XXX XXX XXX */
-	return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
+	/* return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
 	         (SKILL_MAX / 10)) /
-	        (SKILL_STEP / 10));
+		(SKILL_STEP / 10)); */
+	/* Simpler formula suggested by Potter - mikaelh */
+	return ((p_ptr->s_info[skill].value * scale) / SKILL_MAX);
 }
 
 /* Will add, sub, .. */
@@ -384,7 +386,7 @@ static void increase_related_skills(int Ind, int i)
 
 			/* Update the client */
 			Send_skill_info(Ind, j);
-			
+
 			/* Take care of gained abilities */
 			msg_gained_abilities(Ind, old_value, j);
 		}
