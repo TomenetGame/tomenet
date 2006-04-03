@@ -94,7 +94,7 @@ void inven_takeoff(int Ind, int item, int amt)
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) 
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR))
 	{
 		/* Well, so we gotta check if the player, in case he is a
 		mimic, is using a form that can _only_ come from the armor */
@@ -133,7 +133,7 @@ void inven_takeoff(int Ind, int item, int amt)
 			j = race_index("Great Wyrm of Power"); break;
 			}
 			if((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_killed[j] < r_info[j].level) || 
+			    ((p_ptr->r_killed[j] < r_info[j].level) ||
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
@@ -147,7 +147,7 @@ void inven_takeoff(int Ind, int item, int amt)
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	{
-		if ((p_ptr->body_monster == o_ptr->pval) && 
+		if ((p_ptr->body_monster == o_ptr->pval) &&
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{
@@ -253,9 +253,9 @@ void inven_drop(int Ind, int item, int amt)
 	tmp_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
-	 * charges need to be allocated between the two stacks.  If all the items 
-	 * are being dropped, it makes for a neater message to leave the original 
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or
+	 * charges need to be allocated between the two stacks.  If all the items
+	 * are being dropped, it makes for a neater message to leave the original
 	 * stack's pval alone. -LM-
 	 */
 	if (o_ptr->tval == TV_WAND)
@@ -336,7 +336,7 @@ void inven_drop(int Ind, int item, int amt)
 			j = race_index("Great Wyrm of Power"); break;
 			}
 			if((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_killed[j] < r_info[j].level) || 
+			    ((p_ptr->r_killed[j] < r_info[j].level) ||
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
@@ -350,7 +350,7 @@ void inven_drop(int Ind, int item, int amt)
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	{
-		if ((p_ptr->body_monster == o_ptr->pval) && 
+		if ((p_ptr->body_monster == o_ptr->pval) &&
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{
@@ -409,7 +409,7 @@ void inven_drop(int Ind, int item, int amt)
 bool item_tester_hook_wear(int Ind, int slot)
 {
 	player_type *p_ptr = Players[Ind];
-	
+
 	/*
 	 * Hack -- restrictions by forms
 	 * I'm not quite sure if wielding 6 rings and 3 weps should be allowed..
@@ -702,8 +702,8 @@ void do_cmd_wield(int Ind, int item)
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
-	
-	if(slot == INVEN_AMMO) num = o_ptr->number; 
+
+	if(slot == INVEN_AMMO) num = o_ptr->number;
 	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
@@ -763,7 +763,7 @@ void do_cmd_wield(int Ind, int item)
 				// tmp_obj.number += o_ptr->number;
 				object_absorb(Ind, &tmp_obj, o_ptr);
 			}
-		}                
+		}
 	}
 #endif	// 0
 
@@ -829,7 +829,7 @@ void do_cmd_wield(int Ind, int item)
 
 
 	  }
-	
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -932,7 +932,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	/* Handle the newbies_cannot_drop option */	
+	/* Handle the newbies_cannot_drop option */
 	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 	{
@@ -1015,7 +1015,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 		msg_print(Ind, "You may not drop gold. Ask an admin to validate your account.");
 		return;
 	}
-	
+
 
 	/* Error checks */
 	if (amt <= 0) return;
@@ -1212,7 +1212,7 @@ void do_cmd_observe(int Ind, int item)
 	char		o_name[160];
 
         u32b f1, f2, f3, f4, f5, esp;
-						      
+
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
@@ -1595,12 +1595,12 @@ void do_cmd_steal(int Ind, int dir)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
-	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER || 
+	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER ||
 		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules == PK_RULES_DECLARE))
 	{
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
-	}	                                                        
+	}
 
 	/* May not steal from yourself */
 	if (!dir || dir == 5) return;
@@ -1679,7 +1679,9 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* Compute base chance of being noticed */
 	notice = 5 * (adj_mag_stat[q_ptr->stat_ind[A_INT]] - p_ptr->skill_stl);
-	notice += 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
+
+	/* Reversed this as suggested by Potter - mikaelh */
+	notice -= 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
 
 	/* Hack -- Rogues get bonuses to chances */
 	if (get_skill(p_ptr, SKILL_STEALING))
@@ -2406,10 +2408,10 @@ void do_cmd_look(int Ind, int dir)
 			{
 				/* Require line of sight, unless "look" is "expanded" */
 				if (!player_has_los_bold(Ind, y, x)) continue;
-	
+
 				/* Require interesting contents */
 				if (!do_cmd_look_accept(Ind, y, x)) continue;
-	
+
 				/* Save the location */
 				p_ptr->target_x[p_ptr->target_n] = x;
 				p_ptr->target_y[p_ptr->target_n] = y;
@@ -2426,12 +2428,12 @@ void do_cmd_look(int Ind, int dir)
 			msg_print(Ind, "You see nothing special.");
 			return;
 		}
-	
-	
+
+
 		/* Set the sort hooks */
 		ang_sort_comp = ang_sort_comp_distance;
 		ang_sort_swap = ang_sort_swap_distance;
-	
+
 		/* Sort the positions */
 		ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
 
