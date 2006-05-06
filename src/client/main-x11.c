@@ -38,6 +38,14 @@
  */
 #define GRAPHIC_MIRROR
 
+/* More options: Enable windows 5..8 (term-4..term-7) - C. Blue */
+#define GRAPHIC_TERM_4
+#define GRAPHIC_TERM_5
+/*
+#define GRAPHIC_TERM_6
+#define GRAPHIC_TERM_7
+*/
+
 
 /*
  * Notes on Colors:
@@ -1255,6 +1263,18 @@ static term_data choice;
 
 #endif
 
+#ifdef GRAPHIC_TERM_4
+static term_data term_4;
+#endif
+#ifdef GRAPHIC_TERM_5
+static term_data term_5;
+#endif
+#ifdef GRAPHIC_TERM_6
+static term_data term_6;
+#endif
+#ifdef GRAPHIC_TERM_7
+static term_data term_7;
+#endif
 
 
 /*
@@ -1532,6 +1552,78 @@ static errr CheckEvent(bool wait)
 	else if (xev->xany.window == choice.outer->win)
 	{
 		td = &choice;
+		iwin = td->outer;
+	}
+
+#endif
+
+#ifdef GRAPHIC_TERM_4
+
+	/* Choice window, inner window */
+	else if (xev->xany.window == term_4.inner->win)
+	{
+		td = &term_4;
+		iwin = td->inner;
+	}
+
+	/* Choice Window, outer window */
+	else if (xev->xany.window == term_4.outer->win)
+	{
+		td = &term_4;
+		iwin = td->outer;
+	}
+
+#endif
+
+#ifdef GRAPHIC_TERM_5
+
+	/* Choice window, inner window */
+	else if (xev->xany.window == term_5.inner->win)
+	{
+		td = &term_5;
+		iwin = td->inner;
+	}
+
+	/* Choice Window, outer window */
+	else if (xev->xany.window == term_5.outer->win)
+	{
+		td = &term_5;
+		iwin = td->outer;
+	}
+
+#endif
+
+#ifdef GRAPHIC_TERM_6
+
+	/* Choice window, inner window */
+	else if (xev->xany.window == term_6.inner->win)
+	{
+		td = &term_6;
+		iwin = td->inner;
+	}
+
+	/* Choice Window, outer window */
+	else if (xev->xany.window == term_6.outer->win)
+	{
+		td = &term_6;
+		iwin = td->outer;
+	}
+
+#endif
+
+#ifdef GRAPHIC_TERM_7
+
+	/* Choice window, inner window */
+	else if (xev->xany.window == term_7.inner->win)
+	{
+		td = &term_7;
+		iwin = td->inner;
+	}
+
+	/* Choice Window, outer window */
+	else if (xev->xany.window == term_7.outer->win)
+	{
+		td = &term_7;
 		iwin = td->outer;
 	}
 
@@ -1964,6 +2056,7 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
  */
 static cptr color_name[16] =
 {
+#if 0
 	"black",        /* BLACK */
 	"white",        /* WHITE */
 	"#d7d7d7",      /* GRAY */
@@ -1980,6 +2073,24 @@ static cptr color_name[16] =
 	"#00ff00",      /* LIGHTGREEN */
 	"#00c8ff",      /* LIGHTBLUE */
 	"#ffcc80",      /* LIGHTBROWN */
+#else /* same as main-win.c, which is reference */
+	"#000000",      /* BLACK */
+	"#ffffff",      /* WHITE */
+	"#9d9d9d",      /* GRAY */
+	"#ff8d00",      /* ORANGE */
+	"#b70000",      /* RED */
+	"#009d44",      /* GREEN */
+	"#0000ff",      /* BLUE */
+	"#8d6600",      /* BROWN */
+	"#747474",      /* DARKGRAY */
+	"#d7d7d7",      /* LIGHTGRAY */
+	"#af00ff",      /* PURPLE */
+	"#ffff00",      /* YELLOW */
+	"#ff3030",      /* PINK */
+	"#00ff00",      /* LIGHTGREEN */
+	"#00ffff",      /* LIGHTBLUE */
+	"#c79d55",      /* LIGHTBROWN */
+#endif
 };
 
 #ifdef USE_GRAPHICS
@@ -2338,6 +2449,78 @@ errr init_x11(void)
 	term_data_init(&choice, FALSE, "Choice", fnt_name);
 	term_choice = Term;
 	ang_term[3]=Term;
+
+#endif
+
+#ifdef GRAPHIC_TERM_4
+
+	/* Check environment for "choice" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_4");
+
+	/* Check environment for "base" font */
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+
+	/* No environment variables, use the default */
+	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
+
+	/* Initialize the choice window */
+	term_data_init(&term_4, FALSE, "Term-4", fnt_name);
+	term_term_4 = Term;
+	ang_term[4]=Term;
+
+#endif
+
+#ifdef GRAPHIC_TERM_5
+
+	/* Check environment for "choice" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_5");
+
+	/* Check environment for "base" font */
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+
+	/* No environment variables, use the default */
+	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
+
+	/* Initialize the choice window */
+	term_data_init(&term_5, FALSE, "Term-5", fnt_name);
+	term_term_5 = Term;
+	ang_term[5]=Term;
+
+#endif
+
+#ifdef GRAPHIC_TERM_6
+
+	/* Check environment for "choice" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_6");
+
+	/* Check environment for "base" font */
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+
+	/* No environment variables, use the default */
+	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
+
+	/* Initialize the choice window */
+	term_data_init(&term_6, FALSE, "Term-6", fnt_name);
+	term_term_6 = Term;
+	ang_term[6]=Term;
+
+#endif
+
+#ifdef GRAPHIC_TERM_7
+
+	/* Check environment for "choice" font */
+	fnt_name = getenv("TOMENET_X11_FONT_TERM_7");
+
+	/* Check environment for "base" font */
+	if (!fnt_name) fnt_name = getenv("TOMENET_X11_FONT");
+
+	/* No environment variables, use the default */
+	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
+
+	/* Initialize the choice window */
+	term_data_init(&term_7, FALSE, "Term-7", fnt_name);
+	term_term_7 = Term;
+	ang_term[7]=Term;
 
 #endif
 
