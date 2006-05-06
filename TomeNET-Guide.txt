@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. October 2005; written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. April 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -62,7 +62,7 @@ Contents
     (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
-(5) Item details
+(5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
     (5.3)   Slaying vs brands
@@ -74,12 +74,14 @@ Contents
     (5.9)   What does item xxx do exactly?
     (5.10)  Destruction of items by elemental attacks
     (5.11)  Armour Class vs monster attacks, damage caps
-    (5.12)  Monster attack brands and effects
+    (5.12)  Monster attack types and brands
     (5.13)  Earthquakes
     (5.14)  Curses
     (5.15)  Vampirism
     (5.16)  Invisibility
     (5.17)  How abilities, resistances and boni stack
+    (5.18)  Monster auras
+    (5.19)  Experience-draining items
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -143,7 +145,7 @@ Contents
  If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
  followed by a direction key. (If you use rogue-like keys, see section (0.2)!)
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
- from your inventory which is displayed in the window labeled 'Recall'.
+ from your inventory which is displayed in the bottom right window.
 -You can pick up items if you stand on them and press 'g'.
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
@@ -157,7 +159,8 @@ Contents
  While you're a ghost you can freely float up/down by pressing '<' and '>'.
 -Press '?' to get an in-game help about keys and commands.
 -If you have any journals like 'Guide to Middle Earth' or 'The Gazette' in
- your inventory (Recall window) you should read those by pressing 'r' to read.
+ your inventory (bottom right window) you should read those by pressing 'r' to
+ read.
 -If your character gains a new level it also gains skill points. To distribute
  those, invoke the skill screen with 'G'. (See 3.9, 6.2 and 7.5.)
 -If you don't like your character and want to delete it, you may commit
@@ -287,6 +290,9 @@ X       quickly swap between two equippable items. They must be inscribed
 _       drink from a fountain. You must stand on the fountain to do this.
         Fountains can have good/bad/no effects. There is no fountain of death,
         neither one of detonations, so you won't get instakilled.
+        If you see a message 'You feel less thirsty' that means the fountain
+        was just plain water. A message 'You have quenched your thirst' means
+        that the fountain had no effect on you, although it wasn't water.
 %       edit your macros.
 =       edit your preferences. (Contains many obsolete effectless entries.)
         Most important entries here are..
@@ -300,7 +306,7 @@ _       drink from a fountain. You must stand on the fountain to do this.
             "Set 'AFK' mode automatically" will set you afk after some
                 minutes of inactivity.
             "Flicker messages in recall" will allow you to see animated
-                messages in the 'recall' window (message history).
+                messages in the bottom left window (message history).
         Efficiency Options:
             Mostly moved to server-side, hence obsolete.
         TomeNET Options:
@@ -345,8 +351,13 @@ They all start with a slash '/':
             quick break from playing. If your character is currently on the
             blacklist of merchants (because you got caught stealing from a
             shop!) your blacklist timer won't decrease while you're AFK!
-            Note that your character won't need to consume food while afk if
+            Note that your character won't need to consume food while afk _IF_
             you are not already 'hungry' or even 'weak' from a lack of food!
+            All other timed effects will continue to be processed (like
+            magical effects such as haste/slowness/hallucination, pseudo-ID or
+            wearing off of temporary stat drain from traps) and eventually
+            wear off, _except_ for blacklist timer from being caught by a shop
+            owner on attempting to steal.
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
@@ -362,7 +373,8 @@ They all start with a slash '/':
 /sip        drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
-            (It's easier to press '_' instead of using the /sip command.)
+            (It's easier to press '_' instead of using the /sip command.
+            Also see '_' above, for additional information.)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
 /shout <text>
@@ -389,7 +401,8 @@ They all start with a slash '/':
  (/dispose) inventory.
 /rec -550   recalls you to -550ft, using an item inscribed {@R}.
 /rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
- (/recall)  using an item inscribed {RR}.
+ (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
+            for more info about Word of Recall.
 /dr         Wields all items in your inventory that are: not cursed,
  (/dress)   not {worthless}, not {terrible}, known to you.
 /mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
@@ -449,6 +462,12 @@ Word-Of-Recall scrolls:
                 World map ranges from 0,0 to 63,63.
     You must've already been at that depth or deeper in order to teleport
     there via WoR!
+    IMPORTANT: In order to recall to a place on the world map, you need to
+    have been there before, NOT while you were dead (ghost), but while you
+    were alive! So don't try to travel to Gondolin as a ghost, the priest
+    over there will reject you and you won't remember the place when you
+    return and revive in Bree.
+
 
 Weapons:
     @Ox         Don't auto-retaliate with it. (The letter 'O', not the number)
@@ -467,6 +486,7 @@ Spellbooks:
                 IMPORTANT: If you cannot cast spells from the book or you
                 inscribe an unsuitable item, auto-retaliation will be disabled
                 completely!
+                (If 'c' is omittted, the first spell will be chosen.)
 
 Ammunition:
     !=          will make your character auto-pickup the ammo from the floor.
@@ -475,6 +495,10 @@ Ammunition:
                 will be averaged and rounded downwards. (Doesn't work for
                 cursed or artefact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
+
+Scrolls of Identify:
+    !X          If you pick up an unidentified item, you will automatically
+                read a scroll to identify it.
 
 An item that can be activated:
     @A1         pressing the keys 'A' and then '1' will activate that item.
@@ -513,6 +537,8 @@ Dive        A trip into the dungeon, usually quite deep compared to the
             diver's character level.
 DSM         Dragon Scale Mail. Legendary pieces of armour.
 Excellents  Items that pseudo-identified as 'excellent'.
+EA          Extra Attacks. Rings, gloves or weapons which increase your number
+            of blows per round with melee weapons. Quite expensive.
 FA          Free Action (immunity to paralysis).
 FF          Feather falling (Levitation).
 Gorth       Room in the dungeon, divided into 4 chambers. Similar to a pit.
@@ -551,7 +577,7 @@ Unique      A monster that is named and exists only once (although it can
             respawn, each player will receive loot only once from it).
             Uniques often have large escorts.
 WoR         Word-Of-Recall (teleports you into the dungeon and back or on the
-            world map).
+            world map). See "(0.3) Important inscriptions" for more info.
 Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 
@@ -658,8 +684,8 @@ Links:
 Newsgroups:
     rec.games.roguelike.*
 IRC:
-    - Channel #mangband on server irc.worldirc.org (port 6667) for mainly
-      MAngband/TomeNET discussion.
+    - Channel #tomenet on server irc.worldirc.org (port 6667) for
+      TomeNET discussion. Development team often meets there.
     - Channel #angband for general rogue-like discussion.
     (For help on Internet Relay Chat visit www.irchelp.org )
 
@@ -998,12 +1024,11 @@ After you logged in with a character you will now see yourself (you are the
 '@' symbol) in the town of Bree in the main window. You can move around in all
 8 directions by using the number pad keys! You can run by pressing the SHIFT
 key together with a direction key. You can pickup items with 'g'.
-The "Choice" window will give an overview of your character attributes and
-miscellanous abilities. The "Recall" window will show the contents of your
+The top right window will give an overview of your character attributes and
+miscellanous abilities. The bottom right window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
-The "Mirror" window will show status or chat messages from the server or from
-fellow players. If the "Choice"/"Recall"/"Mirror" windows stay empty, see
-(8.5) for possible solutions.
+The bottom left window will show combat- chat- and server-messages. If most
+of the windows stay totally empty, see (8.5) for possible solutions.
 To the left border in the main window you see a short overview of your most
 important stats, starting with your race, your class and your current title
 (the title will change as you gain experience levels by fighting monsters),
@@ -1035,8 +1060,8 @@ Also see (0.2) for some details about suiciding.
 (3.3) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, stored in the
-inventory ("Recall" window). As a warrior you will have a Chain Mail and a
-Sword.
+inventory (bottom right window). As a warrior you will have a Chain Mail and
+a Sword.
 Start-up equipment always has level 0 and cannot be used by other players!
 You should now equip your start-up items, since they won't help you if
 they stay inside the backpack. Press the key 'w', you will be asked which
@@ -1090,7 +1115,7 @@ So to prepare for hunting in the dungeon, buy:
 The more you can buy of those the better. At least buy one potion of Heroism
 and Cure Light Wounds.
 And if you still have spare money (this one costs a lot) a
--Scroll of Word-Of-Recall
+-Scroll of Word-Of-Recall. (See "(0.3) Important inscriptions" for more info.)
 
 
 
@@ -1491,8 +1516,8 @@ Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 
 The above macro set slightly changed to fit
-additional needs of a low level istari or other casters:
---------------------------------------------------------
+additional needs of a low level istar or other casters:
+-------------------------------------------------------
 This macro set is already in your /lib/user folder! If it's not there,
 download the latest client from www.c-blue.de/rogue.
 You can load this macro file by hitting % to invoke the macro menu,
@@ -1592,7 +1617,7 @@ Miscellanous escape sequences:
                 Use this for macros which contain several commands in a row
                 which depend on each others execution. You might have to
                 adjust the delay to your personal latency, depending on your
-                internet connection.
+                internet connection and speed at which your character acts.
 
 (3.8a) Creating a chat macro for your party
 -------------------------------------------
@@ -1622,7 +1647,15 @@ There are two different ways to easily talk to your party.
     Using longer or shorter (at least 4 letters) strings works too of course,
     as long as there isn't a party of similar name which could get confused
     with yours.
-Solution (1.) is much easier than (2.) of course, and the recommended way.
+The best way in my opinion is to combine the two ways and to set up a macro
+which types   :!:   for you on a single key press automatically:
+    Enter the macro menu ('%'), enter a new action ('3'), enter the macro
+    :!:
+    hit the Enter key to accept it, create a command macro ('4'), choose a
+    key you wish to use for party chat from now on, and dump your macro ('2')
+    to a file which is loaded automatically, like '<Your charname>.prf', for
+    example Kinkan.prf. This way, no matter what your party is called, you
+    will always be able to chat to it by pressing a single key.
 
 
 
@@ -2495,8 +2528,8 @@ Party/Guild access are currently disabled due to abuse, sorry :|.
 
 
 
-(5) Item details
-================
+(5) Item and monster details
+============================
 (5.1) Melee weapons, brands
 ---------------------------
 One of TomeNET's features is the "auto-retaliator". This means, if an enemy
@@ -2533,7 +2566,7 @@ One of these scrolls can enchant a weapon so one extra point is added to the
 damage dice after they have been added. If we manage to enchant the damage of
 the broad sword 9 times, the weapon will look like this:
 "Broad Sword (2d5) (+0,+9)"
-That means after 2 dice with 5 sides each have been added, there will be
+That means after 2 dice with 5 sides each have been added up, there will be
 further 9 points of damage added to the result!
 
 Broad Sword 2d5 (+0,+9) 1 blow per round  -->  1* [ 2*(1..5) + 9 ] damage
@@ -2555,11 +2588,26 @@ Characters using weapons have a limited number of melee attacks per round,
 depending on the character class (profession). A table showing the blow/round
 limits is at section (6.5).
 
+There are four different classes of melee weapons,
+swords/daggers, hafted (blunt) weapons, axes, polearms.
+You may examine a weapon by pressing 'I' to see its base class.
+Those again are divided into four sub-classes each:
+Single-handed, forced two-handed, should-be-wielded-two-handed,
+may-be-wielded-two-handed. If you examine ('I') a weapon, it will tell you if
+it belongs to one of the latter three sub-classes:
+"It must be wielded two-handed"
+"It should be wielded two-handed"
+"It may be wielded two-handed"
+
 While smaller melee weapons require only 1 hand to use them, some larger
 weapons need 2 hands. Using a shield together with those is not possible.
-Some weapons _can_ be used two-handed. That means you will receive penalties
-to to-hit and to-dam bonus if you use it one-handed. Look at your character
-screen ('C') to compare the to-hit/to-dam boni and see if it's worth it.
+Some larger weapons that should be used two-handed can also be used
+single-handed, but you will receive penalties to to-hit and to-dam bonus if
+you use it that way. Look at your character screen ('C') to compare the
+to-hit/to-dam boni and see if it's worth it.
+Medium weapons which 'may' be used two-handed won't give malus if used
+single-handed, but you might get more blows per round if you wield them with
+both hands! Again check your character screen ('C') to spot any difference.
 
 
 
@@ -2663,8 +2711,9 @@ Training Martial Arts will give you..
 
 However, to use the full potential of martial arts you will need to take care
 of several points..
--a light backpack makes a martial artist move faster and stealthier.
--a very heavy backpack (inventory) will nullify the abilities and resistances,
+-a very light backpack will give martial artists a small additional speed and
+ stealth bonus. (No warning message here.)
+-a very heavy backpack will nullify the abilities and resistances,
  as well as the speed and stealth bonus! You will see a red warning message,
  telling you about weight encumberment:
  "You can't move freely due to your backpack weight."
@@ -2680,8 +2729,33 @@ of several points..
 -using a heavy shield, melee or ranged weapon will nullify your speed and
  stealth bonus.
 
+The backpack weight limit includes the weight of your equipment and is
+depending on your strength and martial arts skill. It is
+(str_wgt * 2.0 lb) + (str_wgt * rounddown(skill * 0.12 lb)).
+
+Here's a table to tell you the values for str_wgt:
+(Warning message is: "You can't move freely due to your backpack weight.")
+
+        str_wgt     STRength of             str_wgt     STRength of
+                    the character                       the character
+        -------------------------           -------------------------
+        5           3                       16          14
+        6           4                       17          15
+        7           5                       18          16
+        8           6                       19          17
+        9           7                       20          18/00-18/09
+        10          8                       22          18/10-18/19
+        11          9                       24          18/20-18/29
+        12          10                      26          18/30-18/39
+        13          11                      28          18/40-18/49
+        14          12                      30          18/50-18/220+
+        15          13                      
+
+
 The armour weight limit is 5.0 lb + Martial Arts skill level * 0.4 lb.
 So for MA 50 it is 5.0 + 20.0 = 25.0 lb.
+If your armour becomes too heavy, you will see this warning message:
+"Your armor weight strains your martial arts performance."
 
 
 Here's a table, for those who prefer this view:
@@ -2744,11 +2818,10 @@ who fight barehanded without having Martial Arts skill at 01.000 or higher!
 
 Martial Arts skill level        Attacks per round
 -------------------------------------------------
-            1..9                        1
-            10                          2
-            20                          3
-            30                          4
-            35                          5
+             1                          2
+            10                          3
+            20                          4
+            30                          5
             40                          6
             45                          7
             50                          8
@@ -3072,8 +3145,9 @@ Plasma          Plasma attacks combine raw force and immense heat.
                 Also has stun effect if sound resistance is missing.
                 Breath damage is monster HP/6. Plasma breath caps at 150.
                 Plasma bolts do 10+level+(8d7) damage.
-Radiation/Nuke/ This is a poisonous attack that can have acidic effects on
- Toxic Waste    your inventory.
+Radiation/Nuke/ This is a poisonous attack (player suffers pure poison damage)
+ Toxic Waste    that may have acidic effect on your inventory (inventory may
+                get destroyed as if you were hit by acidic attacks).
                 If you resist poison
                 - you will just take 2/5 of the damage
                 - you will be protected from being poisoned
@@ -3323,6 +3397,16 @@ LUCK ('The item increases your luck')
         Luck caps at 40, having higher bonus won't help any more.
         The higher your luck is, the more diminishing is the effect of
         increasing it even more.
+        What does 'better items' mean exactly?
+        It simply means that you have a higher chance to get good or great
+        items when...
+        -killing monsters
+        -opening chests
+        -finding items in the dirt by (magical or physical) digging.
+        'Good' means that an item has enchantments to hitchance, damage or
+        armour class. How much exactly it has isn't affected by luck!
+        'Great' means that an item has ego powers or is an artifact. Luck does
+        not affect how great its ego power or artifact abilities will be!
 NO_MAGIC ('Antimagic shell')
         Raises your saving throw to 95%, making you nearly immune to any
         malicious magical influence (like paralysation). Also prevents
@@ -3355,6 +3439,9 @@ IMPACT ('It can cause earthquakes')
         Causes earthquakes if the damage is > 50. (See (5.13).)
 WOUNDING ('It is very sharp and makes your foes bleed.')
         Has additional to-hit/to-dam bonus.
+Weapons of Spinning
+        Spin around on activation, hitting every monster around you in a
+        radius of 1.
 CAPACITY (of Capacity) ('It can hold more mana.')
         No effect currently.
 CHEAPNESS (of Cheapness) ('It can cast spells for a lesser mana cost.')
@@ -3388,6 +3475,9 @@ SPECIAL_GENE
         regular monsters but require a certain key monster to be killed.
         For example the Suit of Mardra can only drop from Mardra (there is no
         guarantee that she will always drop it though).
+'Imbued' books and tomes.
+        Those especially treatened books and tomes resist the influence of
+        heat, water and acid strongly.
 
 
 
@@ -3415,9 +3505,9 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 AC boni on Dark Swords won't affect the antimagic field.
                 The antimagic chance of a dark sword stacks with the
                 Antimagic skill (see 6.2).
-Bluesteel Blade Cannot rust (immune against water attacks) and are especially
+Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
-Shadow Blade    Resists darkness, cannot be harmed by acid or water, provides
+Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
                 a fixed stealth bonus of +2..
 Magic Arrows    Those will return into your quiver magically, so you need only
                 one of them really. Same goes for artifact ammunition of any
@@ -3429,6 +3519,7 @@ Shadow Cloak    Makes you hard to spot for other players, regarding
                 yourself while being invisible vs. someone who is able to see
                 invisible creatures/players. See '(5.16) Invisibility'.
 Dragonrider Coat        Resists heat & cold.
+Elven Gloves    Regenerate hit points and spell points.
 
 
 Potions
@@ -3459,8 +3550,12 @@ Curing          Heals some HP, removes blindness/confusion/stun, cures
 Life            Heals 5000 HP, removes blindness/confusion/stun, cures
                 poison/cuts/hallucinations, cures Black Breath,
                 restores all your stats (except experience).
-Experience      Gives you additionally half your experience plus 10,
-                or 100,000 experience points depending on what is less.
+Experience      Gives you additionally half your current experience plus 10,
+                but only up to a maximum of +100,000 points. So you'll get the
+                most out of it if you quaff it when you reached 200,000 exp.
+                However, some players prefer to quaff it earlier, when it's
+                especially hard for them to reach the next level for some
+                reason, maybe harder than if they were at 200,000 exp already.
 Self-Knowledge  Tells you everything about yourself :)
 chauve-souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
@@ -3495,7 +3590,12 @@ Aggravate Monsters
                 spell or traps of aggravation).
 Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
                 it can also be used to travel between towns or on the worldmap
-                in general. See (0.3) Important Inscriptions.
+                in general. See "(0.3) Important Inscriptions" for more info
+                about Word of Recall! ("Word-of-recall", "WoR")
+                If you read another Word of Recall while you're still waiting
+                for one to kick in, the effect will be cancelled!
+                That way you can change your mind, for example if you suddenly
+                spot a monster you want to kill just after you read a WoR.
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
@@ -3601,6 +3701,8 @@ Havoc           Fires balls or beams of random type, the exact outcome is hard
 
 Jewelry
 --
+Amulets of Adornment    They might be looking fancy, but they don't do
+                        anything and have no effect on your character.
 Talisman (Amulet)       Increases your luck, helps you finding better loot.
 Rings of Might          increase strength and constitution.
 Rings of Toughness      increase dexterity and constitution.
@@ -3671,6 +3773,8 @@ Money Belt          Prevents thieves from stealing your money.
 Device of theft prevention
                     Prevents thieves from stealing from you.
 Climbing set        Allows you to travel over mountain fields.
+                    Info for mimics & co: In order to be able to use it, your
+                    appearance form must have arms and fingers.
 Fortune Cookie      Gives you a line of wisdom.
 Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
                     information about Black Breath),
@@ -3678,7 +3782,11 @@ Sprig of Athelas    Eat this one to cure Black Breath (see 1.5 for more
 Mushrooms of paranoia/cure paranoia
                     Cause/remove fear, cause/reduce hallucinations.
 Mushroom of Unmagic
-                  Removes all magical effects from your body if eaten.
+                    Removes all magical effects from your body if eaten.
+Mushroom of Restoring
+                    Restores your stats and your experience if drained.
+Lembas (elvish waybread)
+                    Satisifies your hunger, cures poison and hallucinations.
 Firestones          Eath them only if you are a Thunderlord (Dragonrider).
                     They will randomly boost your powers for a short time.
                     See (5.9) for firestone details. If you eat too many of
@@ -3686,7 +3794,7 @@ Firestones          Eath them only if you are a Thunderlord (Dragonrider).
                     by adrenaline overdose, with lethal results.
 Flint               Prevents your light from going out.
 Empty bottles       You can /fill these at fountains to turn them into
-                    potions.
+                    potions. (See 0.2 for more details.)
 Skeletons/Bones/Skulls  You can create ammunition from these if your Archery
                         skill is sufficient.
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
@@ -3761,7 +3869,7 @@ Rods
 Lamps                       x
 Potions                     x       x       x       x
 Flasks                              x       x
-Books/Tomes                 x                       x
+Books/Tomes x               x                       x
 
 
 Items, even tomes, resist certain elements if they have the according
@@ -4044,6 +4152,53 @@ In fact, they add up / stack. Those are:
 
 
 
+(5.18) Monster auras
+--------------------
+Some monsters have auras of flashing lightning, freezing cold or furious
+flames surrounding them! If a player engages such foes in close combat, each
+time he lands a blow the aura will retaliate, dealing lightning / cold / fire
+damage depending on the aura type. Some monsters even have multiple auras.
+The damage of such auras may be significant. Especially important is the fact,
+that the faster a player hits a monster, the more he will suffer from its
+auras.
+
+The damage an aura deals is decided by a dice roll:
+[1 + (monsterlevel/26)] d [1 + (monsterlevel / 17)]
+
+Example:
+A warrior of level 30 is fighting a storm giant. The storm giant has an aura
+of lightning surrounding him. The warrior is able to deal 6 blows per round
+with his current weapon. The warrior has a source of permanent lightning
+resistance (elvenkind armour), he lacks potions of resistance or lightning
+immunity though. This means:
+
+Storm giant has monster level 35 (assumed the warrior encounters him on
+dungeon level 35), so his lightning aura will inflict 2d3 damage each hit.
+The warrior has lightning resistance, so the damage will be cut down to 1/3,
+which is 1 or 2.
+Since the warrior has 6 bpr, he will suffer between 6 and 12 (6*1 and 6*2)
+damage per turn while hitting the storm giant.
+
+
+
+(5.19) Experience-draining items
+--------------------------------
+Some items, such as rings of power or ethereal dragon scale mails drain your
+experience points permanently. Here are some details about that process:
+-Experience drain from multiple items stacks, although it doesnt add in a
+ linear way. So, wearing two rings of power won't drain twice as fast as one,
+ but about 1,5x as fast.
+-Experience drain is permanent. It cannot be restored by potions of 
+ restore life levels.
+-Experience drain won't go further than the experience you need at least to
+ maintain your current character level. If you reach that experience border,
+ experience drain will stop, even if you still have the items equipped.
+ So you will not lose levels from experience drain.
+ HOWEVER: If a monster or other effect drains your experience below your
+ current level, the experience drain from items will kick in again!
+
+
+
 (6) Tables
 ==========
 (6.1) Attributes
@@ -4165,14 +4320,18 @@ Note that not every skill is available to every profession (class).
                                 NOTES ABOUT CRITICAL HITS IN GENERAL:
                                 You can always score critical hits,
                                 independent on weapon class and crit-skill.
-                                Martial artists can score critical hits too.
-                                The probability will be small though, if you
-                                don't have +critical hit items or this skill
-                                to help out. Critical hit bonus on items
-                                counts slightly more than the skill, and it
-                                is applied to melee AND ranged attacks!
-                                For weapon users the weight of their weapon
-                                affects their critical hits:
+                                Martial artists can score critical hits too,
+                                although the Critical-Strike skill won't do
+                                anything for them (it only helps light SWORDS
+                                not heavier than 10.0 lb).
+                                The probability to land a critical hit will be
+                                small though, if you don't have +critical hit
+                                items or this skill to help out. Critical hit
+                                bonus on items counts slightly more than the
+                                skill, and it is applied to melee AND ranged
+                                attacks!
+                                For ALL weapon users the weight of their
+                                weapon affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
                                 chances to score a critical hit will further
                                 increase.
@@ -4386,10 +4545,18 @@ Note that not every skill is available to every profession (class).
                                 factored in, at the very end of calculation).
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and SP.
-                                Only works if you are able to see the target.
+                                Only works if you are able to see the target,
+                                and if you are not dead yourself.
+                                The amount of points gained depends on the
+                                skill and the target's level. To get maximum
+                                drain, the skill should be at least half as
+                                high as the monster level.
     .Traumaturgy                Drains mana from monsters when you inflict
                                 damage on them, replenishing your SP.
                                 Only works if you are able to see the target.
+                                The amount of points gained is a fraction of
+                                the damage points you inflicted and only
+                                depends on damage and skill.
     .Aura of Fear               Monsters that hit you are stroke by fear.
     .Shivering Aura             Monsters that hit you are stunned.
                                 At a skill of 30 the aura is so strong that
@@ -4500,6 +4667,28 @@ Take care on the following combinations:
 ---------------
 Depending on your race and class, you will be better or worse at certain
 abilities. You can see your abilities in the character screen (press 'C').
+
+Miscellaneous Abilities can range from Bad to Legendary:
+Bad         (red)
+Poor        (red)
+Fair        (yellow)
+Good        (light green)
+Very good   (light green)
+Excellent   (light green)
+Superb      (light green)
+Heroic      (light green)
+Legendary   (light green)
+
+Some of those abilities have a maximum value after which they cannot be
+increased any further. Such abilities show 'legendary' in different colours
+than just light green. Instead they use:
+Legendary   (dark green)    This means it's good enough to deserve being
+                            called 'legendary'.
+Legendary   (golden)        This means, that you have reached the absolute
+                            highest possible value for this ability.
+
+
+Here is a list of detailed information about miscellaneous abilities:
 
 Fighting
     How well you can fight (hit chance; further boni like skills or +hit from
@@ -4654,6 +4843,8 @@ Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
     falling (same as 'levitation' effect).
+    Often having to escape from precarious situations, yeeks are able to pass
+    through dense forest quickly.
     Yeeks are the least powerful of all the races. They suffer disadvantages
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
@@ -4871,6 +5062,8 @@ Druid
     A specialty of druids is, that they are still able to wear their full
     equipment even if their appearent shape is not human but of an animal.
     Druids learn how to quickly pass through thick forest at level 10.
+    (Special note (compare 6.7): If they wield a weapon while using a form
+    which usually cannot use weapons, they will only get 1 blow per round.)
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
     whatever they deem most appropriate. Their mind is also trained in a very
@@ -4938,8 +5131,10 @@ Shaman       0  +1  +2  -2   0   0       +5      +30%       4
 ------------
 Your sanity can have the following values:
 Sound, Sane, Weird, Insane, Mad, Vegetable.
+
 If you spend 10 points on your 'Health' skill, the sanity display will turn
-into a bar, displaying exacter values.
+into a bar, displaying exacter values. At 20 points you'll get the percentage
+displayed. At 40 the value will be shown.
 
 At the beginning, your sanity is always 'Sound'. That means you are completely
 sane. Monsters or traps can reduce your sanity. If your sanity drops to zero,
@@ -4969,6 +5164,10 @@ So wearing a ring of protection for example won't plainly add to the mimic's
 AC but just contribute to the @-form AC which is then averaged in the process
 of determining the final form's AC.
 How exactly stats are calculated is written below for each case.
+
+If a mimic wields a weapon while using a form which usually cannot use weapons
+the number of blows per round will be set to 1 (regardless of extra attacks).
+(This only really applies to druids, shamans or perma-cursed weapons (5.14)).
 
 To find out the special abilities of a monster form, consult the file
 /lib/game/r_info.txt in your tomenet directory, and look up the monster.
@@ -5105,7 +5304,6 @@ F: flag list
                 since the monster seems to be good at shooting.
                 If the monster shoots 1_IN_3 or better, the player will
                 even receive 2 extra shots with bows!
-                (Note that the number of shots per round is capped at 5!)
     HURT_ROCK   Means that this creature has a rock-like skin and body.
                 Takes damage from Stone-To-Mud and takes more damage from
                 'disintegration' attacks, but at the same time resists shards!
@@ -5367,6 +5565,8 @@ Conveyance
                     Inscribe your spellbook like you'd inscribe a scroll,
                     in order to specify a destination.
                     Required skill level for first spell level: 30.
+                    See "(0.3) Important inscriptions" for more info about
+                    Word of Recall!
     Probability Travel
                     Renders you instable, allowing to pass walls and to
                     float upwards/downwards.
@@ -5551,6 +5751,8 @@ Holy Curing
                     Required skill level for first spell level: 1.
     Healing         Heals a percentage of hit points.               (project)
                     Required skill level for first spell level: 10.
+    Cleansing Cloud Continuously heals every player who steps inside.
+                    Required skill level for first spell level: 18.
     Curing          Reduces poison duration.
                     Lv10: Cure poison/cuts/stun/blindness/confusion.(project)
                     Lv20: Restore stats.                            (project)
@@ -5644,7 +5846,8 @@ Physical Lore
                     Lv20: Also increases constitution.
                     Lv25: Also increases intelligence.
                     Required skill level for first spell level: 10.
-    Focus           <<currently does nothing>>
+    Focus           Increases your accuracy, adding a bonus to your
+                    melee-to-hit and ranged-to-hit.
                     Required skill level for first spell level: 1.
 
 
@@ -5720,15 +5923,15 @@ calculated from a base ability depending on race/class, and the magic device
 skill in the skill screen ('G').
 The Magic Device ability is not limited to a maximum value, although the
 player won't be able to increase it unlimitedly. The scale is:
-0+  bad
-12+ poor
-18+ fair
-30+ good
-36+ very good
-42+ excellent
-54+ superb
-84+ heroic
-108+  legendary
+0+  Bad
+12+ Poor
+18+ Fair
+30+ Good
+36+ Very good
+42+ Excellent
+54+ Superb
+84+ Heroic
+108+  Legendary
 
 The magic device ability does this...
 -makes it easier to use wands, staves and rods and to activate items:
@@ -6299,8 +6502,8 @@ same dungeon level as you died on. Your items are scattered on the floor, now
 what to do? The items will disappear forever if you leave that dungeon level
 and noone remains down there to "keep it static" or "hold the level", as the
 technical term are. If you think you really need the items, ask someone to get
-down on your dungeon level and either revive you there using a scroll of life
-or pick up your items and give them back to you in the town.
+down to your dungeon level and either revive you there using a scroll of life
+or pick up your items and give them back to you in town.
 If your level is still very low, you can just decide to suicide and start
 over. That is sometimes easier. 
 In TomeNET you will often encounter new situations that can lead to death. The
@@ -6652,6 +6855,16 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 (8.5) Troubleshooting
 ---------------------
+PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
+            play TomeNET?
+SOLUTION:   You only need to open port 18348 for an outgoing TCP/IP
+            connection, that's the standard port. (If you'd like to play on
+            the RPG server, it's port 19348 instead of 18348.)
+            If you don't have access to the firewall, for example in school or
+            at work, you can still try to set up an SSH tunnel or a socks
+            proxy server (on either the firewall machine or your PC at home or
+            any other PC outside. Ask google for info about how to do that).
+
 PROBLEM 01: I don't get to see a server list when I start TomeNET.
             Instead, I am immediately asked for account and password.
 SOLUTION:   This is a typical problem on Windows XP. There are 3
@@ -6776,32 +6989,36 @@ PROBLEM 08: I am disconnected from the server with an error message, this
             happens before I can even start playing.
 SOLUTION:   Read the error message displayed in a message box on quitting.
             Here is a list of possible errors and solutions:
-            "Your name is too long!"
++           "Your name is too long!"
                     Don't use names longer than 15 characters.
-            "Your name contains control chars!"
+-           "Your name contains control chars!"
                     Don't use control chars in your name.
-            "No such character"
+??          "No such character"
                     Your client tried to log in with a
                     non-existant character (shouldn't happen).
-            "You are temporarily banned"
++           "You are temporarily banned from connecting to this server!"
                     Self-explaining.
-            "disconnect in login"
+-           "disconnect in login"
                     Don't take too long for your character
                     creation or you might time out.
-            "login failure"
++           "login failure" or "can't read on socket"+"net input error" in the
+            character overview screen:
                     A wrong account or password was entered.
-            "Name already owned"
+-           "Name already owned"
                     Account name already exists.
-            "Your client is outdated"
++           "Your client is outdated. Please get the latest one from
+            http://www.c-blue.de/rogue"
                     Download the latest client, see (0.1).
-            "Server responds 'Unknown client version'"
++           "Server responds 'Unknown client version'. Server might be
+            outdated or client is invalid. (Latest client is a at http://
+            www.c-blue.de/rogue)"
                     The server might be running an older
                     version than your client is.
-            "Sorry, the game is full."
+            "Sorry, the game is full.  Try again later."
                     Wow the game is really full!
-            "That nickname is already in use."
+-           "That nickname is already in use."
                     Choose a different character name.
-            "The server didn't like your nickname, realname or hostname"
+x           "The server didn't like your nickname, realname or hostname"
             (or just "Net input error")
                     Player characters are identified by 3 names:
                     -Nickname (character's name)
@@ -6814,13 +7031,40 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     The realname and hostname must not be empty. The nickname
                     (character name) needs to start with a letter ('A'..'Z'
                     or 'a'..'z').
-            "There is already another character from this user/machine.."
+-           "There is already another character from this user/machine on the
+            server."
                     You tried to login with two characters from the same
                     account or machine simultaneously, which is usually
                     forbidden.
-            "Sorry, the server is for members only."
++           "Sorry, the server is for members only.  Please retry with name
+            'guest'."
                     Log in with 'guest'. You need to get an account for this
-                    private server in order to play. 
+                    private server in order to play. Check the server's intro
+                    screen for information about how to obtain an account.
+            "That nick name is already in use. If it is your nickname, wait 30
+            seconds and try again."
+                    Happens if you get disconnected and then try to reconnect
+                    from a different IP adress before your character timed out
+                    (which takes approximately 20-30 seconds).
+            ("Connection failed with status xx" (xx is an error code)
+                    This message should never appear.)
+            "That server either isn't up, or you mistyped the hostname."
+                    The client was unable to connect to the server you
+                    specified. If you are sure that you have entered the
+                    correct IP adress or hostname, check your firewall (see
+                    PROBLEM 00 for more information).
+                    NOTE: Servers might be down temporarily when they are
+                    updated. So make sure to try again after a few minutes.
+                    If the server really seems to be down for a longer period
+                    of time, visit the forum at http://www.tomenet.net/ ,
+                    probably an administrator has written some explanation.
+            "Server didn't respond!"
+                    The server is up, but something is awry. Wait for a few
+                    minutes, there might be admins working on it at the
+                    moment. Otherwise, visit the forum (see above).
+            "Network verify failed!"
+                    May happen if you specify a wrong password or try to
+                    create an account which already exists.
             If you get kicked out with an error message on the character
             overview screen (which seems to be empty), also see PROBLEM 14.
 
@@ -6869,6 +7113,8 @@ SOLUTION:   Seems to happen on Windows XP machines sometimes.
             Edit /lib/user/font-win.prf and comment out the lines which end on
             the string '\31' (should be 2 lines at the beginning of the file,
             those labelled 'Floors' and 'Invis Traps').
+            'Commenting out' means that you simply put a '#' symbol at the
+            beginning of a line.
 
 PROBLEM 12: Every time I connect to the server it will automatically download
             LUA script files. However, they will have a size of 0 Bytes.
