@@ -576,7 +576,7 @@
 /*
  * OPTION: Default font (when using X11).
  */
-#define DEFAULT_X11_FONT		"9x15"
+#define DEFAULT_X11_FONT		"8x13"
 
 /*
  * OPTION: Default fonts (when using X11)
