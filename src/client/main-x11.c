@@ -1969,6 +1969,10 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	term *t = &td->t;
 
 	int wid, hgt, num;
+	
+	int win_cols = 80, win_lines = 24;
+	cptr n;
+	int topx = 0, topy = 0;
 
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
@@ -1978,14 +1982,65 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
 
+#if 0 /* must remain 80x24! */
+	if (!strcmp(name, "Screen")) {
+		n = getenv("TOMENET_X11_WID_SCREEN");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_SCREEN");
+		if (n) win_lines = atoi(n);
+	}
+#endif
+	if (!strcmp(name, "Mirror")) {
+		n = getenv("TOMENET_X11_WID_MIRROR");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_MIRROR");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Recall")) {
+		n = getenv("TOMENET_X11_WID_RECALL");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_RECALL");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Choice")) {
+		n = getenv("TOMENET_X11_WID_CHOICE");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_CHOICE");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Term-4")) {
+		n = getenv("TOMENET_X11_WID_TERM_4");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_4");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Term-5")) {
+		n = getenv("TOMENET_X11_WID_TERM_5");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_5");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Term-6")) {
+		n = getenv("TOMENET_X11_WID_TERM_6");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_6");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, "Term-7")) {
+		n = getenv("TOMENET_X11_WID_TERM_7");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_7");
+		if (n) win_lines = atoi(n);
+	}
+
 	/* Hack -- Assume full size windows */
-	wid = 80 * td->fnt->wid;
-	hgt = 24 * td->fnt->hgt;
+	wid = win_cols * td->fnt->wid;
+	hgt = win_lines * td->fnt->hgt;
 
 	/* Create a top-window (border 5) */
 	MAKE(td->outer, infowin);
 	Infowin_set(td->outer);
-	Infowin_init_top(0, 0, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
+	Infowin_init_top(topx, topy, wid + 2, hgt + 2, 1, Metadpy->fg, Metadpy->bg);
 	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
 	Infowin_set_name(name);
 	Infowin_set_class_hint(name);
@@ -2005,7 +2060,7 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 #endif /* USE_GRAPHICS */
 
 	/* Initialize the term (full size) */
-	term_init(t, 80, 24, num);
+	term_init(t, win_cols, win_lines, num);
 
 	/* Use a "soft" cursor */
 	t->soft_cursor = TRUE;
