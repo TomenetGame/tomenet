@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. April 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 10. May 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -4717,8 +4717,7 @@ Magic Device
     See (6.10) for more information.
 Blows/Round
     How often per round you are able to strike with your weapon. This depends
-    on your strength, dexterity, your class, your weapon. (Note that Yeeks
-    are limited to 4 blows per round.)
+    on your strength, dexterity, your class, your weapon.
     Spending points in specific weapon masteries will give you an additional
     blow at 25 and at 50 (like sword or hafted mastery).
     Tables of blows/round limits are at (5.4) (for martial arts) and at (6.5)
