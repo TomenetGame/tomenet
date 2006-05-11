@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. May 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. May 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -5299,10 +5299,13 @@ F: flag list
     DISBELIEVE  Will increase the player's anti-magic field by
                 ((monsterlevel / 2) + 20) percent. The range of the anti-magic
                 field is increased by ((monsterlevel / 15) + 3) fields.
-    ARROW_1     The player will receive an additional shot per round with bows
-                since the monster seems to be good at shooting.
+    ARROW_1, ARROW_2, ARROW_3
+                The player will receive an additional shot per round with
+                slings and bows since the monster seems to be good at
+                shooting.
                 If the monster shoots 1_IN_3 or better, the player will
-                even receive 2 extra shots with bows!
+                in total receive 2 extra shots with slings and bows, or 1
+                extra shot with crossbows.
     HURT_ROCK   Means that this creature has a rock-like skin and body.
                 Takes damage from Stone-To-Mud and takes more damage from
                 'disintegration' attacks, but at the same time resists shards!
