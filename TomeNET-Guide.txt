@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. May 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 16. May 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -4871,7 +4871,8 @@ Ent
     experience very slowly. Ents do not eat normal food, but are able to
     consume liquids. Ents resist the force of unleashed water.
     They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
-    'Water' and they receive penalties on 'Fire' school.
+    'Water' and they receive penalties on 'Fire' school, 'Axe-mastery' and a
+    slight penalty on 'Sword-mastery'.
 Thunderlord (also known as Dragonrider)
     Thunderlords can eat firestones to temporarily boost their powers.
     They have an intrinsic telepathic vision of all nearby creatures, the
@@ -5439,6 +5440,12 @@ While using its form, the energy will decrease. If it reaches zero, the ring
 will disintegrate and the player will polymorph back to his standard form.
 If a player forges a ring, his magic device skill helps to obtain a high
 amount of energy in the ring.
+
+Important: Each time you activate the ring, it will drain a considerable
+amount of energy, so you should avoid activating/deactivating it, but instead
+keep using it until it runs out of turns once you activated it.
+UN_POWER attacks will drain energy from rings quickly, avoid monsters which
+are able to drain energy while using a ring of polymorphing.
 
 
 
