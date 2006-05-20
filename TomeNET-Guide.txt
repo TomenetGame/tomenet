@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. May 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. May 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -3720,10 +3720,10 @@ Rings/Amulets of Slow Digestion will slow your food digestion so you have to
                         you hit a bowel cramps trap.
 Amulet of Anti-Magic    See '5.7 NO_MAGIC'
 Amulet of Anti-Teleportation    If worn it will suppress all attemps to
-                                teleport, phase or recall on the whole level!
-                                This can be very dangerous but also very
-                                helpful since it affects both players as well
-                                as monsters.
+                                teleport, phase or recall the wearer,
+                                regardless whether initiated by a monster or
+                                by himself. It will also prevent certain
+                                effects of unresisted nexus attacks.
                                 Any word-of-recall that is cast while
                                 teleportation is supressed will be suspended
                                 and then immediately kick in as soon as the
