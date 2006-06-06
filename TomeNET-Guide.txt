@@ -48,7 +48,7 @@ Contents
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
-    (3.10)   Experience, level-ups and skill points
+    (3.10)  Experience, level-ups and skill points
     (3.11)  Death, ghosts and looting
     (3.12)  Malicious effects players can suffer
 (4) The world
@@ -851,6 +851,10 @@ Last but not least, you may use the following command-line options:
 <ip address>    for example 62.210.141.11
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim 62.210.141.11
+If your name contains spaces, it is neccessary to put a '\' in front of each.
+Example:
+        ./tomenet -p18348 -lIron\ Man geheimer 62.210.141.11
+..if your account name is 'Iron Man'.
 
 
 
@@ -1055,7 +1059,7 @@ number key pad on the right side of your keyboard is turned off. A green lamp
 will usually indicate whether it is on or off.
 
 You can wear/wield items with 'w' (weapons, armour, light source..)
-. You can pickup items with 'g'.
+You can pickup items with 'g'.
 You can see a list of players who are currently online with '@' key.
 You can chat with other players (say hello ^^) with ':' key.
 
