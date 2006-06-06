@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. May 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 6. June 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -36,21 +36,21 @@ Contents
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.2)   Starting TomeNET and getting to play on an internet server
-    (2.3)   Behaviour and chat messages
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
     (3.2)   The display (user-interface)
-    (3.3)   Start-up equipment & how to use it
-    (3.4)   Preparing the first time for fighting enemies
-    (3.5)   Creating basic macros & inscribing items (IMPORTANT)
-    (3.6)   Creating macros for ranged attacks & abilities (spells)
-    (3.6a)  Ability codes [contained within (3.6)]
-    (3.7)   Example macro sets
-    (3.8)   Macros with special keys
-    (3.8a)  Creating a chat macro for your party
-    (3.9)   Experience, level-ups and skill points
-    (3.10)  Death, ghosts and looting
-    (3.11)  Malicious effects players can suffer
+    (3.3)   Behaviour and chat messages
+    (3.4)   Start-up equipment & how to use it
+    (3.5)   Preparing the first time for fighting enemies
+    (3.6)   Creating basic macros & inscribing items (IMPORTANT)
+    (3.7)   Creating macros for ranged attacks & abilities (spells)
+    (3.7a)  Ability codes [contained within (3.7)]
+    (3.8)   Example macro sets
+    (3.9)   Macros with special keys
+    (3.9a)  Creating a chat macro for your party
+    (3.10)   Experience, level-ups and skill points
+    (3.11)  Death, ghosts and looting
+    (3.12)  Malicious effects players can suffer
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
@@ -113,6 +113,8 @@ Contents
 ==============
 (0.1) Start & play
 ------------------
+If you are using Linux, you will find additional information about how to
+compile the game under '(2.1) Installing TomeNET'.
 -Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html
  (called 'tomenet-???-client.zip') and extract it (to C:\Tomenet for example).
 -Either run 'tomenet4-europe.bat' to directly connect to europe server
@@ -135,13 +137,16 @@ Contents
    Warriors don't really need INT so you should reduce it to spend the points
    on other attributes. WIS isn't really needed either, but it can be useful
    to resist sanity-reducing effects.
+ (If you are new to the game, it is NOT recommended to choose one of these:
+ Istar, Priest, Shaman, Adventurer.)
 -Make sure you choose [n]ormal mode (or [e]verlasting). Not 'fruit bat' :).
  Now you're in the game and should see the town (Bree) :)
 -To chat, press the colon key ':' . Don't hesitate to ask other players
  if you have any problems with getting started.
 -To run, press SHIFT+<direction key> where direction keys are on
  the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
- numlock is turned off (press the 'num' key so the green light is off).
+ Numlock is turned off (press the 'Num' key above your number key pad on the
+ right side of your keyboard, so the green light is off).
  If SHIFT+<direction> doesn't work on your system, you can press the dot '.'
  followed by a direction key. (If you use rogue-like keys, see section (0.2)!)
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
@@ -162,7 +167,7 @@ Contents
  your inventory (bottom right window) you should read those by pressing 'r' to
  read.
 -If your character gains a new level it also gains skill points. To distribute
- those, invoke the skill screen with 'G'. (See 3.9, 6.2 and 7.5.)
+ those, invoke the skill screen with 'G'. (See 3.10, 6.2 and 7.5.)
 -If you don't like your character and want to delete it, you may commit
  suicide by pressing SHIFT+q or CTRL+c and double-confirming the following
  questions with 'y' and '@'.
@@ -172,6 +177,9 @@ Contents
  he is online (Admin's names are displayed in dark blue in the chat).
  The e-mail address is usually mentioned in the server's intro screen or just
  ask fellow players for it.
+
+It is strongly recommended that you don't stop reading here, but continue at
+(3.2) now >;)
 
 
 
@@ -196,7 +204,9 @@ Pressing '5' will cause you to spend a turn with doing nothing.
 
 SHIFT+<direction key>
         runs into that direction. Numlock must probably be turned off,
-        depending on your system.
+        depending on your system. (Numlock is the key labeled 'Num' above the
+        number key pad on the right side of your keyboard. A green lamp
+        usually indicates whether it is on or off.)
         You can also run by pressing the dot '.' followed by a direction key.
 
 
@@ -342,6 +352,8 @@ Q or CTRL+C or CTRL+K
         normal 'final death'.
 ?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
+!       Look at the in-game bulletin board. Players can write lines of text to
+        it by using the /bbs <text> command.
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
@@ -365,6 +377,8 @@ They all start with a slash '/':
  (/examine) as turn, speed, deepest dungeon level, sanity, body shape (this is
             interesting if you are a shapechanger). Druids get additional info
             about forms they can shapechange into.
+/fe         Repeat the level feeling. See (4.8) for more information.
+ (/feeling)
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Can only be used if target player is afk).
 /que        gives a quest! It needs to be fulfilled before a certain period
@@ -418,6 +432,8 @@ They all start with a slash '/':
             Leave a note to the party you own.
 /noteg <text>
             Leave a note to the guild you own.
+/bbs <text> Add a line of text to the in-game bulletin board system. Players
+            can look at the board by pressing the '!' key.
 
 
 
@@ -778,24 +794,76 @@ the mundane world.
 ------------------------
 Go to http://www.c-blue.de/rogue.html , download the latest client (version
 number sometimes stays the same although a minor update was made, it's at
-least 4.0.0 though).
+least 4.x.x though).
 Extract it to a new directory, preserving the pathnames.
+
+Windows:
+--------
 You may edit the file "tomenet4.ini" and do some changes to your likings.
 If it's not already disabled by default, it is recommended to turn off
 graphics ("GRAPHICS=0"). Further you can specify an account name and password
 of your own choice. That will relieve you from entering them every time
 you join a TomeNET internet server.
 
+Linux:
+------
+How to compile the game binary:
+Go into '/tomenet/src' where the file 'makefile' is located.
+Make sure you have X11, ncurses, ncurses-devel and crypt libraries installed.
+Enter these two lines:
+	make clean
+	make tomenet
+and the binary 'tomenet' will be created in this folder 'tomenet/src'.
+IMPORTANT NOW: Move the binary one level upwards, ie into '/tomenet' !
+Type:
+        ./tomenet
+to start the game.
+
+If you don't want 6 windows or if you want MORE (up to 8), just edit the file
+'main-x11.c' and comment out/uncomment the lines starting on
+        #define GRAPHICS_TERM_...
+near the beginning of the file as you like, then compile the binary again.
+
+You can use environment variables to set font sizes and window sizes for each
+of the up to 8 windows separately:
+TOMENET_X11_FONT_SCREEN (height and width of main window cannot be changed)
+TOMENET_X11_WID_MIRROR, TOMENET_X11_HGT_MIRROR, TOMENET_X11_FONT_MIRROR
+TOMENET_X11_WID_CHOICE, TOMENET_X11_HGT_CHOICE, TOMENET_X11_FONT_CHOICE
+TOMENET_X11_WID_RECALL, TOMENET_X11_HGT_RECALL, TOMENET_X11_FONT_RECALL
+TOMENET_X11_WID_TERM_4, TOMENET_X11_HGT_TERM_4, TOMENET_X11_FONT_TERM_4
+TOMENET_X11_WID_TERM_5, TOMENET_X11_HGT_TERM_5, TOMENET_X11_FONT_TERM_5
+TOMENET_X11_WID_TERM_6, TOMENET_X11_HGT_TERM_6, TOMENET_X11_FONT_TERM_6
+TOMENET_X11_WID_TERM_7, TOMENET_X11_HGT_TERM_7, TOMENET_X11_FONT_TERM_7
+Use the 'export' command to set them, eg:
+        export TOMENET_X11_FONT_SCREEN=8x13
+        export TOMENET_X11_WID_TERM_4=80
+        export TOMENET_X11_HGT_TERM_4=24
+It's a good idea to make a little script file for this.
+Some possible font sizes are:
+5x7, 5x8, 6x9, 6x10, 6x12, 6x13, 6x13B, 7x13, 7x13B, 7x14, 7x14B,8x13, 8x13B,
+9x15, 9x15B, 10x20 depending on your system.
+TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
+the window-specific font variables listed above though.
+
+Last but not least, you may use the following command-line options:
+-p<Port>        for example -p19348
+-l<Name> <Pass>	for example -lGandalf geheim
+<ip address>    for example 62.210.141.11
+Full command-line example:
+        ./tomenet -p19348 -lGandalf geheim 62.210.141.11
+
 
 
 (2.2) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
-To start the TomeNET client, run "tomenet4.exe".
+To start the TomeNET client, run 'tomenet4-europe.bat' or 'tomenet4.exe'.
+(If you run the '.bat' file, the meta-server steps will be skipped and you
+will be directly connected to the main europe server instead.)
 Now TomeNET tries to connect to a meta-server which contains a list of all
 available TomeNET internet servers.
 After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
-avoid high latency. 
+avoid high latency.
 This step is reported to often cause problems under Windows XP. If you don't
 see that list, or if other problems occur, see (8.5) for possible solutions.
 Now you will be prompted to enter your account name and password. You can
@@ -825,76 +893,15 @@ with an ASCII code between 32 (SPACE) and 122 ('z').
 The realname and hostname must not be empty. The nickname (character name)
 needs to start with a letter ('A'..'Z' or 'a'..'z').
 
-To drop items, privately chat with other players, or advance beyond a certain
-level you will need to ask an admin to 'validate' your account. To do so,
-send an email to the admin mentioning your account name, or ask an admin when
-he is online (Admin's names are displayed in dark blue in the chat).
+Newly created accounts are marked as 'not yet validated' and have certain
+limitations, which are:
+Cannot drop items or chat privately with other players, or advance beyond a
+certain level.
+You will need to ask an admin to 'validate' your account. To do so, send an
+email to the admin mentioning your account name, or ask an admin when he is
+online (Admin's names are displayed in dark blue in the chat).
 The e-mail address is usually mentioned in the server's intro screen or just
 ask fellow players for it.
-
-
-
-(2.3) Behaviour and chat messages
----------------------------------
-You can chat with other players by pressing the colon key ':' once you have
-joined a game with your character.
-In general, don't hesitate to ask questions. Players are usually willing to
-help you with the beginnings. Keep in mind that the message window is flooded
-with status messages if a player is in combat, that means if you write to
-someone while he is fighting monsters he most likely won't notice your
-message. Politely try again after some time.
-You can scroll back the messages using CTRL+P, or look at chat-only messages
-using CTRL+O.
-
-You can also enter slash commands in the chat line. For details about slash
-commands see (0.2).
-
-To type a private message to someone, enter <name>:<text>
-Example:    Hi!             <- goes to everyone
-            C. Blue:Hi!     <- goes privately to the character named 'C. Blue'
-In chat messages you can type a double colon '::' to force output of a normal
-colon ':' instead of having it interpreted as separator for a private chat
-message. Most smileys are recognized automatically and don't require you to
-enter a double colon ( ':)' will work equally to '::)' ). (If you want to send
-a private message to someone which starts with a smiley, you will have to
-enter a space between the private-separator colon and the smiley colon,
-example: 'd00d: :)' sends a private message to d00d, containing  ' :)'
-while 'd00d::)' will result in a public chat message looking like this
-'d00d:)' .)
-
-You can use colours in messages. To change the message colour, put a {
-followed by a colour code somewhere into your message line.
-Example:
-        {pHi!               <- results in a 'poison-coloured' Hi!
-        I see some {vh {Bto the east
-                            <- results in "I see some h in the east"
-                               where the 'h' is violet. The rest of the
-                               message is light blue (standard colour).
-If you cannot see coloured messages in your secondary Tomenet windows other
-than the big main window, check your client option settings by typing  =3
-and looking for 'Flicker messages in recall' (recall_flicker). Set it to
-'yes'.
-If you want to type the character '{' in a chat message, rather than using
-it for a colour code, type it twice '{{'. It will become '{'.
-
-Here is a list of colour codes (try not to annoy your fellow players :)
-    d   black           b   blue            B   light blue
-    D   dark            g   green           G   light green
-    s   slate           r   red             R   light red (pink)
-    W   white           u   umber           U   light umber
-    w   bright white    y   yellow          o   orange          v   violet
-
-    a   acidic          c   cold            e   electric        f   fire
-    p   poison          L   light flicker   h   half-multi      m   multi
-
-
-Character names in chat lines have different colours to indicate their status:
-
-Light blue      Normal / everlasting player.
-Light grey      Hard-mode player.
-Dark grey       No-ghost / hellish player.
-Violet          Player character is king / queen.
-Dark blue       Player is admin.
 
 
 
@@ -904,21 +911,39 @@ Dark blue       Player is admin.
 -----------------------------------------------
 First you may choose your gender. This will not have actual influence on your
 strengths or weaknesses.
+
 Now you have to choose your race. Humans are good allrounders, while the other
 races are more or less specialized. For example half-trolls are usually quite
 dumb but very strong, and hobbits are quite nimble and intelligent but not
-very strong. For more information look at the official website
-http://www.tomenet.net/ where you will find descriptions of all races and
-classes.
+very strong. For more information about races see (6.4).
 A half-troll warrior might be the best choice for a beginner to try since he
 is tough and has less chance of dying instantly in case you make a more
 serious mistake. Also you don't have to worry about the spell-casting system
-for now. So choose your class, also called profession. Wizards are physically
-weaker but cast spells the better the higher their intelligence is, so
-choosing a race that is very intelligent might be a good idea, while a race
-with high strength and constitution will be fitting a warrior profession.
+for now.
+
+Now to choosing your class, also called profession. Spellcasters like
+Istari are physically weaker and especially hard to play for beginners.
+If you choose a spellcaster, be aware that his casting ability depends on
+either his INTelligence or his WISdom, depending on the actual class. For more
+information about classes and their pros and cons see (6.5).
+Spellcasting involves using 'macros' (see (3.6)) and might be a bit difficult
+for beginners.
+Classes definitely NOT recommended for beginners are:
+Istar (mage), Priest, Shaman, Adventurer.
+
 Now you will see your six basic attributes STRength, INTelligence, WISdom,
 DEXterity, CONstitution, CHaRisma.
+
+IMPORTANT NOTE: For fighters (rogues also belong to these) that use weapons,
+it is important that you have enough STRength and DEXterity to execute at
+least two attacks per round, called bpr (blows per round). Sometimes this
+srequires you to get rid of your initial weapon and buy a very light weapon,
+for example one of these:
+dagger or main gauche (sword class),
+whip (hafted class),
+hatched (axe class) or
+spear (polearm class).
+Sometimes it is even possible to start out with 3 bpr (warriors mostly).
 
 Depending on the server configuration, starting at TomeNET version 4.2.0,
 there are 2 alternative stages of character creation that may follow now.
@@ -1021,9 +1046,19 @@ important server-specific information or announcements to the players.
 (3.2) The display (user-interface)
 ----------------------------------
 After you logged in with a character you will now see yourself (you are the
-'@' symbol) in the town of Bree in the main window. You can move around in all
-8 directions by using the number pad keys! You can run by pressing the SHIFT
-key together with a direction key. You can pickup items with 'g'.
+'@' symbol) in the town of Bree in the main window.
+
+You can move around in all 8 directions by using the number pad keys! You can
+run by pressing the SHIFT key together with a direction key.
+IMPORTANT: To run (SHIFT+direction) make sure that the Numlock key above your
+number key pad on the right side of your keyboard is turned off. A green lamp
+will usually indicate whether it is on or off.
+
+You can wear/wield items with 'w' (weapons, armour, light source..)
+. You can pickup items with 'g'.
+You can see a list of players who are currently online with '@' key.
+You can chat with other players (say hello ^^) with ':' key.
+
 The top right window will give an overview of your character attributes and
 miscellanous abilities. The bottom right window will show the contents of your
 backpack, also called inventory. All characters except ghosts have a backpack.
@@ -1057,7 +1092,71 @@ Also see (0.2) for some details about suiciding.
 
 
 
-(3.3) Start-up equipment
+(3.3) Behaviour and chat messages
+---------------------------------
+You can chat with other players by pressing the colon key ':' once you have
+joined a game with your character.
+In general, don't hesitate to ask questions. Players are usually willing to
+help you with the beginnings. Keep in mind that players often don't have time
+to look at the chat while they are fighting monsters, that means if you write
+to someone while he is in the dungeon, he often likely won't notice your
+message. Politely try again after some time.
+You can scroll back the messages using CTRL+P, or look at chat-only messages
+using CTRL+O.
+
+You can also enter slash commands in the chat line. For details about slash
+commands see (0.2).
+
+To type a private message to someone, enter <name>:<text>
+Example:    Hi!             <- goes to everyone
+            C. Blue:Hi!     <- goes privately to the character named 'C. Blue'
+In chat messages you can type a double colon '::' to force output of a normal
+colon ':' instead of having it interpreted as separator for a private chat
+message. Most smileys are recognized automatically and don't require you to
+enter a double colon ( ':)' will work equally to '::)' ). (If you want to send
+a private message to someone which starts with a smiley, you will have to
+enter a space between the private-separator colon and the smiley colon,
+example: 'd00d: :)' sends a private message to d00d, containing  ' :)'
+while 'd00d::)' will result in a public chat message looking like this
+'d00d:)' .)
+
+You can use colours in messages. To change the message colour, put a {
+followed by a colour code somewhere into your message line.
+Example:
+        {pHi!               <- results in a 'poison-coloured' Hi!
+        I see some {vh {Bto the east
+                            <- results in "I see some h in the east"
+                               where the 'h' is violet. The rest of the
+                               message is light blue (standard colour).
+If you cannot see coloured messages in your secondary Tomenet windows other
+than the big main window, check your client option settings by typing  =3
+and looking for 'Flicker messages in recall' (recall_flicker). Set it to
+'yes'.
+If you want to type the character '{' in a chat message, rather than using
+it for a colour code, type it twice '{{'. It will become '{'.
+
+Here is a list of colour codes (try not to annoy your fellow players :)
+    d   black           b   blue            B   light blue
+    D   dark            g   green           G   light green
+    s   slate           r   red             R   light red (pink)
+    W   white           u   umber           U   light umber
+    w   bright white    y   yellow          o   orange          v   violet
+
+    a   acidic          c   cold            e   electric        f   fire
+    p   poison          L   light flicker   h   half-multi      m   multi
+
+
+Character names in chat lines have different colours to indicate their status:
+
+Light blue      Normal / everlasting player.
+Light grey      Hard-mode player.
+Dark grey       No-ghost / hellish player.
+Violet          Player character is king / queen.
+Dark blue       Player is admin.
+
+
+
+(3.4) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, stored in the
 inventory (bottom right window). As a warrior you will have a Chain Mail and
@@ -1087,7 +1186,7 @@ hints for newbies.
 
 
 
-(3.4) Preparing the first time for fighting enemies
+(3.5) Preparing the first time for fighting enemies
 ---------------------------------------------------
 Before you enter a dungeon by stepping onto a staircase leading into the earth
 (looks like this: '>') and pressing the staircase symbol '>' you will have to
@@ -1119,7 +1218,7 @@ And if you still have spare money (this one costs a lot) a
 
 
 
-(3.5) Creating basic macros & inscribing items
+(3.6) Creating basic macros & inscribing items
 ----------------------------------------------
 Macros are absolutely obligatory, you _will_ need them, so read this
 carefully and if something isn't explained well, ask a fellow player
@@ -1259,7 +1358,7 @@ the key 'r' which is used to read a scroll, you can reset the key by
 
 
 
-(3.6) Creating macros for ranged attacks & abilities (spells)
+(3.7) Creating macros for ranged attacks & abilities (spells)
 -------------------------------------------------------------
 Those macros basically consist of three parts.
 1. Clearing the keyboard buffer (to avoid your character locking up in
@@ -1401,7 +1500,7 @@ until the 30 shots are finished. The character is 'locked'.
 The ')' in the macro '\e)f*t' clears all previous keypresses and hence
 allows you to hammer the macro without fearing a lock.
 
-(3.6a) Ability codes
+(3.7a) Ability codes
 --------------------
 A problem with the 'm' key is that it not only brings up your magic spells
 but a menu containing all skills you can use. Those can be arrow fletching
@@ -1453,9 +1552,9 @@ mb2a*t
 
 
 
-(3.7) Example macro sets
+(3.8) Example macro sets
 ------------------------
-(For the meaning of '\e)' see below (3.8). I recommend to have all your
+(For the meaning of '\e)' see below (3.9). I recommend to have all your
 macros start with the '\e)' sequence to avoid character lock-ups due to
 queued keypresses that have to be processed.)
 
@@ -1569,7 +1668,7 @@ attack spell, like fire flash) and inscribed it accordingly.
 
 
 
-(3.8) Macros with special keys
+(3.9) Macros with special keys
 ------------------------------
 You can use so-called 'escapes', meaning a combination of '\' and a regular
 key to emulate some special keys in your macros:
@@ -1619,7 +1718,7 @@ Miscellanous escape sequences:
                 adjust the delay to your personal latency, depending on your
                 internet connection and speed at which your character acts.
 
-(3.8a) Creating a chat macro for your party
+(3.9a) Creating a chat macro for your party
 -------------------------------------------
 Using public chat for party coordination can prove annoying to other players
 and as well confusing to your fellow party members since it's sometimes hard
@@ -1659,7 +1758,7 @@ which types   :!:   for you on a single key press automatically:
 
 
 
-(3.9) Experience, level-ups and skill points
+(3.10) Experience, level-ups and skill points
 --------------------------------------------
 By killing monsters your character gains experience. In general, harder
 monsters on deeper dungeon levels give more experience than easy kills.
@@ -1755,7 +1854,7 @@ DEXterity, CONstitution, CHaRisma). This chance too is increased by the
 
 
 
-(3.10) Death, ghosts and looting
+(3.11) Death, ghosts and looting
 --------------------------------
 Normal/everlasting characters will turn into ghosts if they die. When you
 become a ghost, your title will change to 'Ghost' until you get revived.
@@ -1825,7 +1924,7 @@ drop their items on death, their loot will vanish forever.
 
 
 
-(3.11)  Malicious effects players can suffer
+(3.12)  Malicious effects players can suffer
 --------------------------------------------
 The player can suffer from various effects caused by monsters, traps or
 himself. Against several of these effects the 'Savint Throw' ability helps
@@ -1879,7 +1978,9 @@ If no monsters are within your sight, you are able to run. This
 feature was introduced to let you quickly cross empty areas, while it will
 cease to work as long as you fight monsters. To run, press SHIFT+<direction>
 or type '.' followed by a direction. Running using SHIFT+<direction> will
-currently only work if NUMLOCK is turned off unfortunately.
+only work if Numlock is turned off. Numlock is the key labeled 'Num' above the
+number key pad on the right side of your keyboard. Usually a green lamp will
+indicate whether Numlock is on or off.
 
 If you want to pick up an item from the floor, step on that field and press
 'g' (or press '5' on the numpad, while NUMLOCK must be on). For more
@@ -1905,7 +2006,7 @@ press the asterisk '*' followed by a 't' to designate the closest enemy as
 your target, which usually is what you want.
 To learn how to create a macro instead of typing all these letters every time
 you want to launch a ranged attack, look at
-'(3.6) Creating macros for ranged attacks'.
+'(3.7) Creating macros for ranged attacks'.
 
 
 
@@ -5301,12 +5402,10 @@ F: flag list
                 ((monsterlevel / 2) + 20) percent. The range of the anti-magic
                 field is increased by ((monsterlevel / 15) + 3) fields.
     ARROW_1, ARROW_2, ARROW_3
-                The player will receive an additional shot per round with
-                slings and bows since the monster seems to be good at
-                shooting.
+                The player will receive an additional shot per round since the
+                monster seems to be good at shooting.
                 If the monster shoots 1_IN_3 or better, the player will
-                in total receive 2 extra shots with slings and bows, or 1
-                extra shot with crossbows.
+                receive an additional extra shot with slings and bows.
     HURT_ROCK   Means that this creature has a rock-like skin and body.
                 Takes damage from Stone-To-Mud and takes more damage from
                 'disintegration' attacks, but at the same time resists shards!
@@ -5474,6 +5573,22 @@ If you raise your Air school to 6 by spending 3 more points into it, the level
 of your Noxious Cloud spell will increase by 3 and now be displayed as
 "level 4" in your spellbook. The spell now deals more damage and lasts longer
 than it did on power level 1 when you just barely learned it.
+
+Casting spells on other players:
+Magic spells, prayers and druid magic are partially able to be used on fellow
+players. However, the ways this is done differs from each other.
+- Istari and other users of their magic may cast some magic spells on others
+  by summoning an ethereal projector sphere on their mind. While this project
+  spell is active, some of their spells will affect not only themselves but
+  also those players nearby. The project spell is found in their 'Meta' school
+  of magic. It works like a switch. Cast it once to enable projecting, cast it
+  again to disable projecting again.
+  The spells which are projectable are marked by a '(project)' tag below.
+- Priests and other classes who rely on prayers, as well as druids do not use
+  any kind of projector sphere. Their spells will always affect fellow players
+  nearby
+  The prayers and druid spells which are projected on others are marked by a
+  '(auto-project)' tag at the end of the spell description below. 
 
 Schools give certain permanent boni and abilities to the player, when trained
 to a certain extent. The boni are listed below each school.
@@ -5668,8 +5783,6 @@ Udun
   BONI:             Resist teleportation attacks at 30,
                     Hold life at 40.
 
-Istari/priest schools:
-----------------------
 Meta
     Recharge        Recharges a magic staff or wand.
                     Required skill level for first spell level: 5.
@@ -5727,15 +5840,15 @@ Holy Offense
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
 Holy Defense
-    Blessing        Increases AC by 10 temporarily.                 (project)
-                    Lv15: Increases AC by 20 temporarily.           (project)
-                    Lv30: Increases AC by 30 temporarily.           (project)
+    Blessing        Increases AC by 10 temporarily.            (auto-project)
+                    Lv15: Increases AC by 20 temporarily.      (auto-project)
+                    Lv30: Increases AC by 30 temporarily.      (auto-project)
                     Required skill level for first spell level: 1.
-    Holy Resistance Lets you resist heat.                           (project)
-                    Lv5: Lets you also resist cold.                 (project)
-                    Lv10: Lets you also resist lightning.           (project)
-                    Lv15: Lets you also resist acid.                (project)
-                    Lv25: Lets you also resist poison.              (project)
+    Holy Resistance Lets you resist heat.                      (auto-project)
+                    Lv5: Lets you also resist cold.            (auto-project)
+                    Lv10: Lets you also resist lightning.      (auto-project)
+                    Lv15: Lets you also resist acid.           (auto-project)
+                    Lv25: Lets you also resist poison.         (auto-project)
                     Required skill level for first spell level: 11.
     Protection from evil.
                     Repels evil creatures that try to attack you.
@@ -5756,18 +5869,18 @@ Holy Defense
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
 Holy Curing
-    Remove Fear     Keeps your heart boldened for a while           (project)
+    Remove Fear     Keeps your heart boldened for a while      (auto-project)
                     Required skill level for first spell level: 1.
-    Healing         Heals a percentage of hit points.               (project)
-                    Required skill level for first spell level: 10.
+    Healing         Heals a percentage of hit points.          (auto-project)
+                    Required skill level for first spell level: 3.
     Cleansing Cloud Continuously heals every player who steps inside.
                     Required skill level for first spell level: 18.
     Curing          Reduces poison duration.
-                    Lv10: Cure poison/cuts/stun/blindness/confusion.(project)
-                    Lv20: Restore stats.                            (project)
-                    Lv25: Restore experience.                       (project)
+                    Lv10: Cure poison/cuts/stun/blindness/confusion.(auto-p.)
+                    Lv20: Restore stats.                       (auto-project)
+                    Lv25: Restore experience.                  (auto-project)
                     Required skill level for first spell level: 16.
-    Mind Focus      Cure hallucinations and insanity.               (project)
+    Mind Focus      Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
     Resurrection    Resurrect another player's ghost. The resurrected player
                     will lose less experience the higher the spell level is.
@@ -5777,7 +5890,7 @@ Holy Curing
                     at 33%.
                     Required skill level for first spell level: 30.
     Soul Curing     Cures Black Breath (See 1.5 for more information about
-                    Black Breath).                                  (project)
+                    Black Breath).                             (auto-project)
                     Required skill level for first spell level: 25.
   BONI:             Improves HP regeneration rate extraordinarily the further
                     it is trained above 30,
@@ -5793,26 +5906,26 @@ Holy Support
                     Note that this is a spell shared between offense and
                     support school, meaning that increases in one of those
                     school will increase the spell level by only half as much.
-    Sense Monsters  Detect monsters, see invisible for a while.     (project)
+    Sense Monsters  Detect monsters, see invisible for a while.
                     Lv30: Gives full temporary ESP.
                     Required skill level for first spell level: 1.
     Sanctuary       Puts nearby monsters asleep.
                     Lv20: Lets all monsters in line of sight fall asleep.
                     Required skill level for first spell level: 1.
-    Satisfy Hunger  Satisfies your hunger.                          (project)
+    Satisfy Hunger  Satisfies your hunger.                     (auto-project)
                     Required skill level for first spell level: 10.
     Remove Curses   Removes curses.
                     Lv30: Removes heavy curses.
                     Required skill level for first spell level: 10.
     Sense Surroundings
-                    Detect monsters, see invisible for a while.     (project)
-                    Lv15: Maps the dungeon around you.              (project)
+                    Detect monsters, see invisible for a while.
+                    Lv15: Maps the dungeon around you.
                     Lv30: Gives clairvoyance (full enlightened map).
                           Gives full temporary ESP.
                     Required skill level for first spell level: 10.
-    Zeal            Gives +1 extra attack per round for a while.    (project)
-                    Lv10: Gives +2 EA.                              (project)
-                    Lv20: Gives +3 EA.                              (project)
+    Zeal            Gives +1 extra attack per round for a while.    (auto-p.)
+                    Lv10: Gives +2 EA.                         (auto-project)
+                    Lv20: Gives +3 EA.                         (auto-project)
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
                     Required skill level for first spell level: 31.
@@ -5838,15 +5951,14 @@ Arcane Lore
 Physical Lore
     Forest's Embrace
                     Creates a cloud around you which heals everyone including
-                    yourself over time.
+                    yourself over time.                        (auto-project)
                     Required skill level for first spell level: 18.
-    Quickfeet       Temporarily boosts your own speed as well as others
-                    players around you.
+    Quickfeet       Temporarily boosts your speed.             (auto-project)
                     Required skill level for first spell level: 13.
-    Herbal Tea      Satisfies your hunger.
-                    Lv20: Restores your experience.
-                    Lv25: Restores your attributes.
-                    Lv35: Cures black breath!
+    Herbal Tea      Satisfies your hunger.                     (auto-project)
+                    Lv20: Restores your experience.            (auto-project)
+                    Lv25: Restores your attributes.            (auto-project)
+                    Lv35: Cures black breath!                  (auto-project)
                     Required skill level for first spell level: 3.
     Extra Growth    Increases your attributes temporarily.
                     Lv5: Increases charisma.
@@ -6907,7 +7019,8 @@ SOLUTION:   There are 2 possible solutions.
 
 PROBLEM 03: All windows except for the main window stay empty. (occurs on
             Windows XP machines).
-SOLUTION:   Open tomenet4.ini file with a text editor, look for the window
+SOLUTION:   Reasons are unknown. Sometimes a simple reboot helps. Otherwise:
+            Open tomenet4.ini file with a text editor, look for the window
             sections, change the fonts to the same settings (8x13) as in the
             [Main window] section: FontFile=8X13.FON , Font=8X13.FON .
             Also, you could adjust the width/height of the windows (to 80x24
