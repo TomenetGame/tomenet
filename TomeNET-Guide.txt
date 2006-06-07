@@ -748,10 +748,25 @@ profit from its magical abilities then it's strongly recommended to inscribe
 the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
 (4.1) about auto-retaliation.
 If you rely on melee weapons you must try to get your hands on an artifact
-since these resist Nazgul greatly!
+since these resist Nazgul greatly! The Stormbringer also resists like an
+artifact. (It doesn't matter if the artifact is a random or a static one.)
 Dark Swords and ego weapons also have a certain chance to resist destruction,
 ego Dark Swords are the best non-artifact weapons against Nazgul.
-(It doesn't matter if the artifact is a random or a static one.)
+If your weapon gets destroyed you'll receive a warning message:
+"Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed !"
+(The permanently cursed weapon 'Mighty Hammer of Grond' cannot be destroyed.)
+
+Your weapon itself will not damage the Nazgul if it doesn't have one of the
+mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD. However, you might still be able
+to damage the Nazgul, if your raw to-dam bonus is high enough. Enchantments
+from rings or other items and the damage bonus from your skills will be the
+only factors which decide the damage you deal, in that case.
+For weapons which damage dice and to-dam bonus will not be counted (ie non-
+SLAY/KILL EVIL/UNDEAD weapons) you'll see the message:
+"The Ringwraith is IMPERVIOUS to the mundane weapon."
+
+Martial Arts users can fight relatively efficiently against Nazguls, but their
+chance to receive Black Breath is higher than for weapon users.
 
 If you come in contact with a Nazgul or a very powerful undead creature there
 is a chance that you will be infected by the Black Breath. This dark aura is
@@ -2856,7 +2871,6 @@ Here's a table to tell you the values for str_wgt:
         14          12                      30          18/50-18/220+
         15          13                      
 
-
 The armour weight limit is 5.0 lb + Martial Arts skill level * 0.4 lb.
 So for MA 50 it is 5.0 + 20.0 = 25.0 lb.
 If your armour becomes too heavy, you will see this warning message:
@@ -2873,6 +2887,7 @@ Heavy armour         |     0                           0           0     50%
 Any melee weapon     |                        0               0    0      0
 Any ranged weapon    |                        0               0    0      0
 Heavy shield/weapons |                        0        0           0
+
 
 Martial Arts special combat techniques have certain dice, similar to normal
 weapons. These dice are also effected by brands and slays same as normal 
@@ -2930,6 +2945,12 @@ Martial Arts skill level        Attacks per round
             40                          6
             45                          7
             50                          8
+
+
+Martial Arts users have a higher risk of being infected with Black Breath
+from high undead monsters than weapon-users.
+Also, they have a high risk of being badly cut if a monster uses a disarming
+attack against them.
 
 
 
