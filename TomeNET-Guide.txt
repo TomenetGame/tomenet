@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. June 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. June 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.3.6, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -4150,6 +4150,14 @@ your target each hit! The more damage you deal and the more attacks per round
 you have, the more life you will leech back. There's a maximum amount of HP
 which you can leech from a victim per round (usually around 50..100).
 
+Vampirism does not work on all types of monsters. From some it is not possible
+to drain life force. Those immune to vampirism are:
+- undead monsters
+- nonliving monsters
+- in general, all elementals ('E'), golems ('g') and vortices ('v').
+Although demons and angels don't really 'live', vampirism is able to drain
+the powers that allow them to exist, and so vampirism works against those too.
+
 The best case is to have vampiric flag on a weapon, that will drain at maximum
 efficiency. If you use vampiric equipment like gloves, they will be a bit less
 efficient than an actual vampiric weapon, meaning that you won't leech on
@@ -4656,12 +4664,17 @@ Note that not every skill is available to every profession (class).
                                 skill and the target's level. To get maximum
                                 drain, the skill should be at least half as
                                 high as the monster level.
+                                Necromancy has no effect on undead and
+                                nonliving monsters. (Also, it does not work if
+                                the player himself is currently dead.)
     .Traumaturgy                Drains mana from monsters when you inflict
                                 damage on them, replenishing your SP.
                                 Only works if you are able to see the target.
                                 The amount of points gained is a fraction of
                                 the damage points you inflicted and only
                                 depends on damage and skill.
+                                Traumaturgy has no effect on angels, undead,
+                                and nonliving monsters.
     .Aura of Fear               Monsters that hit you are stroke by fear.
     .Shivering Aura             Monsters that hit you are stunned.
                                 At a skill of 30 the aura is so strong that
@@ -5006,13 +5019,13 @@ Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft
              2   3   3   1  11   6   -1   6
 Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft            
              5   6   6   1   1   8   -5  15
-Hobbit      -2  +2  +1  +3  +0  +1        7     110%    40ft            
+Hobbit      -2  +2  +1  +3  +0  +1        7     115%    40ft            
             15  18  18   4  15  12  -10  20
 Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft            
             10  12  12   3  13   6   -8  12
 Dwarf       +2  -2  +2  -2  +2  -3       11     120%    50ft            
              2   9   9  -1  10   7   15   0
-Half-Orc    +2  -1  +0  +0  +1  -4       11     100%    30ft            
+Half-Orc    +2  -1  +0  +0  +1  -4       11     110%    30ft            
             -3  -3  -3  -1   7   0   12  -5
 Half-Troll  +4  -4  -2  -4  +3  -6       12     120%    30ft            
             -5  -8  -8  -2   5  -1   20 -10
@@ -5022,7 +5035,7 @@ High-Elf    +1  +3  -1  +3  +1  +3       10     230%    40ft
              4  20  20   3  14   3   10  25
 Yeek        -5  -5  -5  -5  -5  -5        7      80%     0ft             
              0   0   0   0  10   0    0   0
-Goblin      +0  -1  -5  +4  +2  -5       11     115%    30ft            
+Goblin      +0  -1  -5  +4  +2  -5       11     125%    30ft            
              2  -3  -3   0   8   2   12  -5
 Ent         +8  -4  +2  -4  +8  -5       14     300%    50ft            
              5   0  20  -6   4   5   15   5
