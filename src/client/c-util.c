@@ -3733,3 +3733,76 @@ int usleep(long microSeconds)
 	return(0);
 }
 #endif /* WIN32 */
+
+
+/*
+ * Make a html screenshot - mikaelh
+ */
+void take_screenshot(cptr file) {
+	static cptr color[16] = {
+		"#000000",      /* BLACK */
+		"#ffffff",      /* WHITE */
+		"#9d9d9d",      /* GRAY */
+		"#ff8d00",      /* ORANGE */
+		"#b70000",      /* RED */
+		"#009d44",      /* GREEN */
+		"#0000ff",      /* BLUE */
+		"#8d6600",      /* BROWN */
+		"#747474",      /* DARKGRAY */
+		"#d7d7d7",      /* LIGHTGRAY */
+		"#af00ff",      /* PURPLE */
+		"#ffff00",      /* YELLOW */
+		"#ff3030",      /* PINK */
+		"#00ff00",      /* LIGHTGREEN */
+		"#00ffff",      /* LIGHTBLUE */
+		"#c79d55",      /* LIGHTBROWN */
+	};
+	FILE *fp;
+	byte *scr_aa;
+	char *scr_cc;
+	byte cur_attr;
+	int x, y;
+
+	fp = fopen(file, "w");
+	if (!fp) {
+		c_msg_print("Couldn't open the screenshot file for writing");
+		return;
+	}
+
+	fprintf(fp, "<html><head><title>TomeNET Screenshot</title></head><body>\n<pre style='background: black'>");
+
+	cur_attr = Term->scr->a[0][0];
+	fprintf(fp, "<font color='%s'>", color[cur_attr]);
+
+	for (y = 0; y < Term->hgt; y++) {
+		scr_aa = Term->scr->a[y];
+		scr_cc = Term->scr->c[y];
+		for (x = 0; x < Term->wid; x++) {
+			if (scr_aa[x] != cur_attr) {
+				cur_attr = scr_aa[x];
+				/* right now just pick a random colour for flickering colours
+				 * maybe add some javascript for real flicker later */
+				fprintf(fp, "</font><font color='%s'>", color[flick_colour(cur_attr)]);
+			}
+			switch (scr_cc[x]) {
+				case '&':
+					fprintf(fp, "&amp;");
+					break;
+				case '<':
+					fprintf(fp, "&lt;");
+					break;
+				case '>':
+					fprintf(fp, "&gt;");
+					break;
+				default:
+					fprintf(fp, "%c", scr_cc[x]);
+			}
+		}
+		fprintf(fp, "\n");
+	}
+
+	fprintf(fp, "</font></pre></body></html>\n");
+	fclose(fp);
+	c_msg_print("Screenshot saved");
+}
+

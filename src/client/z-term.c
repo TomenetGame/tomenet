@@ -14,7 +14,7 @@ extern client_opts c_cfg;
 extern short screen_icky;
 
 static char get_shimmer_color(void);
-static byte flick_colour(byte attr);
+byte flick_colour(byte attr);
 
 /*
  * This file provides a generic, efficient, terminal window package,
@@ -508,7 +508,7 @@ static char get_shimmer_color()
 }
 #endif
 
-static byte flick_colour(byte attr){
+byte flick_colour(byte attr){
 	if ((attr >= TERM_BNW) && (attr < TERM_RLE)){
 		if (randint(7)<6) return (attr - TERM_BNW);
 		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);

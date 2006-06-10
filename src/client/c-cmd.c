@@ -1389,10 +1389,25 @@ void cmd_message(void)
 	inkey_msg = TRUE;
 
 	if (get_string("Message: ", buf, 59)){
+		/* hack - screenshot - mikaelh */
+		if (!strncmp(buf, "/shot", 5) || !strncmp(buf, "/screenshot", 11)) {
+			for (i = 0; i < 60; i++) {
+				if (buf[i] == ' ') {
+					take_screenshot(buf + i + 1);
+					break;
+				}
+				if (buf[i] == '\0') {
+					take_screenshot("screenshot.htm");
+					break;
+				}
+			}
+		}
+		else {
 		for(i=0;i<60;i++){
 			if(buf[i]=='{') buf[i]='\377';
 		}
 		Send_msg(buf);
+	}
 	}
 	
 	inkey_msg = FALSE;

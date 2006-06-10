@@ -367,6 +367,7 @@ extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
+extern void take_screenshot(cptr file);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */

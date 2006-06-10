@@ -268,6 +268,7 @@ extern errr Term_activate(term *t);
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
 
+extern byte flick_colour(byte attr);
 extern void flicker(void);
 
 
