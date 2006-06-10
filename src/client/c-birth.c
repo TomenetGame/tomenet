@@ -674,7 +674,7 @@ static bool enter_server_name(void)
 	move_cursor(5, 1);
 
 	/* Default */
-        strcpy(server_name, "127.0.0.1");
+        strcpy(server_name, "62.210.141.11");
 
 	/* Ask for server name */
 	return askfor_aux(server_name, 80, 0);
