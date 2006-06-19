@@ -517,7 +517,7 @@ static int do_cmd_activate_skill_aux()
 
 	if (!max)
 	{
-		c_msg_print("You dont have any activable skills.");
+		c_msg_print("You don't have any activable skills.");
 		return -1;
 	}
 /*	if (max == 1 && c_cfg.quick_messages)
@@ -695,6 +695,38 @@ static void do_trap(int item_kit)
 }
 
 /*
+ * cast a runic spell
+ */
+static void do_rune() {
+	int basic_rune, mod_rune;
+	object_type *o_ptr;
+
+        //Ask for a basic rune
+	item_tester_tval = TV_RUNE1;
+	if (!c_get_item(&basic_rune, "Use which basic rune? ", FALSE, TRUE, FALSE))
+	{
+		if (basic_rune == -2)
+			c_msg_print("You have no runes.");
+		return;
+	}
+
+	o_ptr = &inventory[basic_rune];
+
+	//Ask for a modifier rune
+	item_tester_tval = TV_RUNE2;
+
+	if (!c_get_item(&mod_rune, "Use which modifier rune? ", TRUE, TRUE, FALSE))
+	{
+		if (mod_rune == -2)
+			c_msg_print("You have nothing to use that with.");
+		return;
+	}
+
+	/* Send it */
+	Send_activate_skill(MKEY_RUNE, basic_rune, mod_rune, 0, 0, 0);
+}
+
+/*
  * Handle the mkey according to the types.
  * if item is less than zero, ask for an item if needed.
  */
@@ -712,6 +744,9 @@ void do_activate_skill(int x_idx, int item)
 				break;
 			case MKEY_TRAP:
 				do_trap(item);
+				break;
+			case MKEY_RUNE:
+				do_rune();
 				break;
 			default:
 				c_msg_print("Very sorry, you need more recent client.");
