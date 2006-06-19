@@ -219,7 +219,7 @@
  * bad design.
  */
 #define	META_ADDRESS "62.210.141.11"
-#define	META_ADDRESS_2 "europe.tomenet.org"
+#define	META_ADDRESS_2 "europe.tomenet.net"
 
 /*
  * Server gateway: Provide raw data for applications
