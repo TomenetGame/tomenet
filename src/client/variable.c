@@ -5,6 +5,7 @@
 
 bool c_quit=FALSE;
 
+char meta_address[MAX_CHARS]="";
 char nick[MAX_CHARS]="";
 char pass[MAX_CHARS]="";
 char svname[MAX_CHARS]="";

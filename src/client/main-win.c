@@ -921,6 +921,9 @@ static void load_prefs(void)
 	for (i = 1; i < SOUND_MAX; i++) load_prefs_sound(i);
 #endif
 
+	/* Metaserver address */
+	GetPrivateProfileString("MAngband", "meta", "", meta_address, MAX_CHARS - 1, ini_file);
+
 	/* Pull nick/pass */
 	GetPrivateProfileString("MAngband", "nick", "PLAYER", nick, 70, ini_file);
 	GetPrivateProfileString("MAngband", "pass", "passwd", pass, 19, ini_file);

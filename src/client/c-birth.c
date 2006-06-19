@@ -695,10 +695,10 @@ bool get_server_name(void)
         cptr tmp;
 
 #ifdef EXPERIMENTAL_META
-	int j, bytes, socket;
+	int j, bytes, socket = -1;
 	char buf[80192], c;
 #else
-	int j, k, l, bytes, socket, offsets[20], lines = 0;
+	int j, k, l, bytes, socket = -1, offsets[20], lines = 0;
 	char buf[80192], *ptr, c, out_val[260];
 #endif
 
@@ -711,8 +711,16 @@ bool get_server_name(void)
 	/* Make sure message is shown */
 	Term_fresh();
 
-        /* Connect to metaserver */
-	socket = CreateClientSocket(META_ADDRESS, 8801);
+	if (strlen(meta_address) > 0) {
+		/* Metaserver in config file */
+		socket = CreateClientSocket(meta_address, 8801);
+	}
+
+	/* Failed to connect to metaserver in config file, connect to hard-coded address */
+	if (socket == -1) {
+	        /* Connect to metaserver */
+		socket = CreateClientSocket(META_ADDRESS, 8801);
+	}
 
 	/* Check for failure */
 	if (socket == -1)
