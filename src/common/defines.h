@@ -224,7 +224,7 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       12	/* 11 if there're Druids. 10 o/w. */
+#define MAX_CLASS       13	/* 11 if there're Druids. 10 o/w. */
 
 /*
  * Maximum NPC robots to allow.
@@ -278,7 +278,7 @@
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
 #define MAX_T_IDX	256 /* Max size for "t_info[]" */
 #define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
-#define MAX_ST_IDX	64 /* Max size for "st_info[]" */
+#define MAX_ST_IDX	96 /* Max size for "st_info[]" */
 #define MAX_BA_IDX	64 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
@@ -4243,7 +4243,7 @@ that keeps many algorithms happy.
 #define term_mirror	(ang_term[1])
 #define term_recall	(ang_term[2])
 #define term_choice	(ang_term[3])
-#define term_term_4	(ang_term[4])
+#define term_chat	(ang_term[4])
 #define term_term_5	(ang_term[5])
 #define term_term_6	(ang_term[6])
 #define term_term_7	(ang_term[7])
@@ -5217,9 +5217,10 @@ extern int PlayerUID;
 #define MKEY_PRAY               7
 
 #define MKEY_DODGE              8
-#define MKEY_FLETCHERY			9
+#define MKEY_FLETCHERY		9
 #define MKEY_TRAP               10
 #define MKEY_SCHOOL             11
+#define MKEY_RUNE		12
 
 /*
  * Skills
