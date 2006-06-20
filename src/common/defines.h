@@ -4243,7 +4243,7 @@ that keeps many algorithms happy.
 #define term_mirror	(ang_term[1])
 #define term_recall	(ang_term[2])
 #define term_choice	(ang_term[3])
-#define term_chat	(ang_term[4])
+#define term_term_4	(ang_term[4])
 #define term_term_5	(ang_term[5])
 #define term_term_6	(ang_term[6])
 #define term_term_7	(ang_term[7])
