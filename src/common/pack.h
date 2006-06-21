@@ -155,9 +155,9 @@
 #define PKT_SKILL_INIT		154
 #define PKT_ACTIVATE_SKILL	155
 #define PKT_RAW_KEY		156
-#define PKT_CHARDUMP	157
+#define PKT_CHARDUMP		157
 #define PKT_BACT		158
-#define PKT_STORE_CMD	159
+#define PKT_STORE_CMD		159
 
 /* its a cleanup, not a hack */
 #define PKT_SKILL_PTS   	160
@@ -165,28 +165,28 @@
 /* Page someone who is afk */
 #define PKT_BEEP		161
 
-#define PKT_AFK			162
-#define PKT_ENCUMBERMENT	163
-
-
-/* HACK -- used for SKILL_INIT */
-#define PKT_SKILL_INIT_NAME     0
-#define PKT_SKILL_INIT_DESC     1
-#define PKT_SKILL_INIT_MKEY     2
-
-/* Not hack - file transfer packet subtypes */
-/* DO NOT TOUCH - work in progress */
-#define	PKT_FILE_INIT		7	/* initiate a transfer */
-#define PKT_FILE_DATA		1
-#define PKT_FILE_END		2
-#define PKT_FILE_CHECK		3
-#define PKT_FILE_ACK		4	/* acknowledge whatever */
-#define PKT_FILE_ERR		5	/* failure - close */
-#define PKT_FILE_SUM		6	/* checksum reply */
-
 /* Give the client some info about the server details. - C. Blue
    For example: Is it running 'RPG_SERVER' settings? or 'FUN_SERVER'? */
 #define PKT_SERVERDETAILS	162
+
+#define PKT_AFK			163
+#define PKT_ENCUMBERMENT	164
+
+
+/* HACK -- used for SKILL_INIT */
+#define PKT_SKILL_INIT_NAME     200
+#define PKT_SKILL_INIT_DESC     201
+#define PKT_SKILL_INIT_MKEY     202
+
+/* Not hack - file transfer packet subtypes */
+/* DO NOT TOUCH - work in progress */
+#define PKT_FILE_DATA		211
+#define PKT_FILE_END		212
+#define PKT_FILE_CHECK		213
+#define PKT_FILE_ACK		214	/* acknowledge whatever */
+#define PKT_FILE_ERR		215	/* failure - close */
+#define PKT_FILE_SUM		216	/* checksum reply */
+#define	PKT_FILE_INIT		217	/* initiate a transfer */
 
 
 
