@@ -49,16 +49,14 @@ HSATISFYHUNGER = add_spell
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
 			set_food(Ind, PY_FOOD_MAX - 1)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 3, "")
 			end,
 	["info"] =	function()
 			return ""
 			end,
 	["desc"] =	{
 			"Satisfies your hunger.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
 			}
 }
 
@@ -100,20 +98,11 @@ HSENSE = add_spell
 		if get_level(Ind, HSENSE, 50) >= 30 then
 			set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, HSENSE, 20))
   			wiz_lite_extra(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project, "")
-			end
 		elseif get_level(Ind, HSENSE, 50) >= 15 then
 			map_area(Ind)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, player.spell_project, "")
-			end
 		end
 		set_tim_invis(Ind, 10 + get_level(Ind, HSENSE, 50))
 		detect_creatures(Ind)
-		if player.spell_project > 0 then
-			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
-		end
 	end,
 	["info"] =      function()
 		return ""
@@ -123,7 +112,6 @@ HSENSE = add_spell
 		"At level 15 it also maps the dungeon around you.",
 		"At level 30 it grants you clairvoyance and lets you",
 		"sense the presence of creatures for a while.",
-		"***Affected by the Meta spell: Project Spell***",
 	}
 }
 
@@ -139,9 +127,6 @@ HSENSEMON = add_spell
 	["spell"] =     function()
 		set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
 		detect_creatures(Ind)
-		if player.spell_project > 0 then
-			fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
-		end
 		if get_level(Ind, HSENSEMON, 50) >= 30 then
 			set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, HSENSEMON, 20))
 		end
@@ -152,7 +137,6 @@ HSENSEMON = add_spell
 	["desc"] =      {
 		"Lets you see nearby creatures and allows you to see invisible.",
 		"At level 30 it lets you sense the presence creatures for a while.",
-		"***Affected by the Meta spell: Project Spell***",
 	}
 }
 
@@ -170,15 +154,13 @@ HZEAL = add_spell
 		d = 14 + randint(5)
 		p = get_zeal_power()
 		set_zeal(Ind, p, d)
-		if player.spell_project > 0 then
-			fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, player.spell_project, "")
-		end
+		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] =      function()
 			return "dur 14+d5, "..(get_zeal_power() / 10).." EA"
 	end,
 	["desc"] =      {
 		"Increases your melee attacks per round by up to +3 for 14+d5 turns.",
-		"***Affected by the Meta spell: Project Spell***",
+		"***Automatically projecting***",
 	}
 }

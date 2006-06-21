@@ -116,7 +116,7 @@ F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
 M:FORCE_MAXHP | FRIENDS | SMART | DROP_1D2
 
 N:7:Shaman
-G:*:r
+G:*:R
 I:+0:%90d%100:+10:%90:=0
 W:+2:1:%90:%120:A
 F:R_CHAR_o | R_CHAR_k | R_CHAR_n | BASEANGBAND
@@ -125,7 +125,7 @@ O:FRIENDS
 S:1_IN_6 | MISSILE | CURSE | CONF | BLINK
 
 N:8:Priest
-G:*:G
+G:*:g
 I:+0:%90d%100:+10:%90:=0
 W:+3:2:%90:%120:A
 F:R_CHAR_T | R_CHAR_P | R_CHAR_O | BASEANGBAND
@@ -134,7 +134,8 @@ S:1_IN_6 | CURSE | MISSILE | DARKNESS | CONF | SCARE | BLINK
 
 N:9:Mage
 G:*:r
-I:+0:%150d%100:+10:%120:=0
+#I:+0:%150d%100:+10:%120:=0 //maybe they are overpowered -C. Blue
+I:+0:%100d%100:+10:%120:=0
 W:+5:4:%120:%150:A
 B:*:*:+0d+0
 B:*:*:+0d+0
@@ -147,7 +148,7 @@ O:FRIENDS
 S:1_IN_6 | BA_COLD | BO_FIRE | TRAPS | HEAL | HOLD | S_MONSTER | TPORT
 
 N:10:Archer
-G:*:W
+G:*:o
 I:+0:+0d+0:+0:+0:=0
 W:+1:1:%100:%110:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | BASEANGBAND
@@ -186,7 +187,7 @@ M:FORCE_MAXHP | DROP_1D2
 S:1_IN_6 | HEAL |
 
 N:13:Veteran Archer
-G:*:W
+G:*:o
 I:+10:+0d+0:+0:+0:=0
 W:+12:4:%100:%140:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | R_CHAR_T
@@ -303,7 +304,7 @@ S:1_IN_5 | BLINK | TELE_TO
 
 
 N:23:Master Archer
-G:*:W
+G:*:o
 I:+15:%200d%200:+20:+50:=0
 W:+30:4:%100:%500:A
 F:R_CHAR_y | R_CHAR_k | R_CHAR_O | R_CHAR_o | R_CHAR_T
@@ -347,7 +348,7 @@ S:1_IN_12 | HEAL
 
 # (T)
 N:26:Archpriest
-G:*:G
+G:*:g
 I:+10:%120d%100:+10:%90:=0
 W:+20:4:%90:%200:A
 # hack - avoid Troll priest archpriest
@@ -359,7 +360,7 @@ S:1_IN_2 | CURSE | MISSILE | DARKNESS | CONF | SCARE | BLINK
 S:S_MONSTER | S_UNDEAD | HEAL | HOLD
 
 N:27:Warrior
-G:*:*
+G:*:u
 I:+10:%200d%150:+10:%120:=0
 W:+10:4:%120:%250:A
 B:*:*:%200d%200
@@ -437,7 +438,7 @@ F:EVIL
 O:EVIL
 
 N:33:Master Thief
-G:.:w
+G:.:b
 I:+20:%150d%150:+0:+50:=0
 W:+15:8:%90:%250:A
 B:*:EAT_ITEM:+2d+2

@@ -165,6 +165,9 @@
 /* Page someone who is afk */
 #define PKT_BEEP		161
 
+#define PKT_AFK			162
+#define PKT_ENCUMBERMENT	163
+
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0

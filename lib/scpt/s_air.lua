@@ -15,11 +15,11 @@ NOXIOUSCLOUD = add_spell
                         if get_level(Ind, NOXIOUSCLOUD, 50) >= 30 then type = GF_UNBREATH
                         else type = GF_POIS end
 --			type = GF_POIS
---		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 150)/2) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
-		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 150)/2), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
+--		        fire_cloud(Ind, type, args.dir, ((1 + get_level(Ind, NOXIOUSCLOUD, 75)) + (get_level(Ind,MANATHRUST,50) * 2)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
+		        fire_cloud(Ind, type, args.dir, (1 + get_level(Ind, NOXIOUSCLOUD, 75)), 3, 5 + get_level(Ind, NOXIOUSCLOUD, 40), " fires a noxious cloud of")
 	end,
 	["info"] = 	function()
-			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 150))/2).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
+			return "dam "..(1 + (get_level(Ind, NOXIOUSCLOUD, 75))).." rad 3 dur "..(5 + get_level(Ind, NOXIOUSCLOUD, 40))
 	end,
         ["desc"] =	{
         		"Creates a cloud of poison",

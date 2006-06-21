@@ -17,7 +17,6 @@ GROWTREE = add_spell
         ["mana"] = 	6,
         ["mana_max"] = 	30,
         ["fail"] = 	20,
-        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 5))
 	end,
@@ -37,7 +36,6 @@ HEALING = add_spell
         ["mana"] = 	15,
         ["mana_max"] = 	180,
         ["fail"] = 	30,
-        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		hp_player(Ind, get_healing_power())
                         if player.spell_project > 0 then
@@ -62,7 +60,6 @@ RECOVERY = add_spell
         ["mana"] = 	10,
         ["mana_max"] = 	25,
         ["fail"] = 	20,
-        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		set_poisoned(Ind, player.poisoned / 2)
                         if get_level(Ind, RECOVERY, 50) >= 10 then
@@ -104,7 +101,6 @@ REGENERATION = add_spell
         ["level"] = 	20,
         ["mana"] = 	30,
         ["mana_max"] = 	55,
-        ["stat"] =      A_WIS,
         ["fail"] = 	20,
         ["spell"] = 	function()
         		set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 300 + get_level(Ind, REGENERATION, 700))
@@ -126,7 +122,6 @@ SUMMONANIMAL = add_spell
         ["mana"] = 	25,
         ["mana_max"] = 	50,
         ["fail"] = 	20,
-        ["stat"] =      A_WIS,
         ["spell"] = 	function()
         		summon_specific_level = 25 + get_level(SUMMONANIMAL, 50)
         		summon_monster(py, px, dun_level, TRUE, SUMMON_ANIMAL)

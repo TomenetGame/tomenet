@@ -155,7 +155,8 @@ D:This knowledge also protects you from robbery
 I:1000:0
 
 N:25:Necromancy
-D:General ability at necromantic skills. Provides life drain on monster death
+#D:General ability at necromantic skills. Provides life drain on monster death
+D:Drains spiritual energy on opponents' death, replenishing your life and mana
 I:1000:0
 
 N:26:Antimagic
@@ -163,8 +164,11 @@ D:Aura that surrounds you and prevents monsters from casting spells
 D:Beware, you won't make an exception!
 I:1000:0
 
-N:27:Aura power
-D:Increases you auras power
+#N:27:Aura power
+#D:Increases you auras power
+#I:1000:0
+N:27:Traumaturgy
+D:Drains spiritual energy from your opponent when you attack him
 I:1000:0
 
 N:28:Aura of Fear
@@ -224,9 +228,9 @@ N:39:Boomerang-mastery
 D:Ability to use (and not to destroy) boomerangs
 I:1000:0
 
-N:40:Training
-D:Ability to train yourself and overcome weak points
-I:1000:0
+#N:40:Training
+#D:Ability to train yourself and overcome weak points
+#I:1000:0
 
 N:41:Interception
 D:Ability to hinder the opponents around you
@@ -364,23 +368,46 @@ D:Spells use the wisdom stat
 A:11:Cast a spell
 I:1000:111
 
+# druid
+
+#N:74:Druidry
+#D:Access to the Druid's Arcane Realm
+#A:11:Cast a spell
+#I:1000:111
+
+N:74:Arcane Lore
+D:Access to the Druid's Arcane Realm
+A:11:Cast a spell
+I:1000:111
+
+N:75:Physical Lore
+D:Access to the Druid's Physical Realm
+A:11:Cast a spell
+I:1000:111
+
+N:76:Runemastery
+D:Access to the Runic knowledge
+A:12:Draw a rune
+I:1000:0
+F:MKEY_HARDCODE
+
 # additional ones
 
 N:90:Climbing
 D:Ability to climb highest mountains withouth problems
 I:1000:0
 
-N:91:Flying
-D:Ability to fly over the ground
-I:1000:0
-
-N:92:Free Action
-D:Immunity to paralyzing attacks
-I:1000:0
-
-N:93:Confusion Resistance
-D:Resistance to confusion in general
-I:1000:0
+#N:91:Flying
+#D:Ability to fly over the ground
+#I:1000:0
+#
+#N:92:Free Action
+#D:Immunity to paralyzing attacks
+#I:1000:0
+#
+#N:93:Confusion Resistance
+#D:Resistance to confusion in general
+#I:1000:0
 
 #
 # Skill interactions
@@ -495,6 +522,10 @@ f:Holy Defense:Magic%10
 f:Holy Curing:Magic%10
 f:Holy Support:Magic%10
 
+#f:Druidry:Magic%10
+f:Arcane Lore:Magic%10
+f:Physical Lore:Magic%10
+
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
 f:Trapping:Sneakiness%15
@@ -509,29 +540,22 @@ f:Interception:Sneakiness%7
 
 
 # Auras increase Necromancy skill (pfft who forgot this? :) - C. Blue)
-f:Aura power:Necromancy%20
+#f:Aura power:Necromancy%20
+f:Traumaturgy:Necromancy%20
 f:Aura of Fear:Necromancy%20
 f:Shivering Aura:Necromancy%20
 f:Aura of Death:Necromancy%20
 #Antimagic increasing Necromancy wouldn't make sense!
 
 # Exercises are good to your health :)
-f:Training:Health%25
+#f:Training:Health%25
 f:Agility:Health%25
 f:Swimming:Health%25
 f:Digging:Health%25
 f:Climbing:Health%25
-f:Flying:Health%15
-f:Free Action:Health%15
-f:Confusion Resistance:Health%15
-
-# I'm not quite sure if they should affect the Necromancy
-
-#f:Aura power:Necromancy%25
-#f:Aura of Fear:Necromancy%25
-#f:Shivering Aura:Necromancy%25
-#f:Aura of Death:Necromancy%25
-#f:Antimagic:Necromancy%10
+#f:Flying:Health%15
+#f:Free Action:Health%15
+#f:Confusion Resistance:Health%15
 
 
 ################################## SKILL TREE ################################
@@ -551,6 +575,7 @@ T:Archery:Boomerang-mastery
 T:Combat:Martial Arts
 
 T:Main:Magic
+T:Magic:Mimicry
 T:Magic:Magic-device
 #T:Magic:Spell-learning
 T:Magic:Spell-power
@@ -572,12 +597,13 @@ T:Magic:Udun
 #T:Magic:Runecraft
 #T:Magic:Thaumaturgy
 #T:Magic:Alchemy
-T:Magic:Mimicry
-
 T:Magic:Holy Offense
 T:Magic:Holy Defense
 T:Magic:Holy Curing
 T:Magic:Holy Support
+#T:Magic:Druidry
+T:Magic:Arcane Lore
+T:Magic:Physical Lore
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer
@@ -592,6 +618,8 @@ T:Magic:Holy Support
 #T:Monster-lore:Symbiosis
 #T:Monster-lore:Mimicry
 
+T:Main:Runemastery
+
 T:Main:Sneakiness
 T:Sneakiness:Stealth
 T:Sneakiness:Disarming
@@ -603,21 +631,23 @@ T:Dodging:Calmness
 T:Dodging:Interception
 
 T:Main:Necromancy
-T:Necromancy:Aura power
+#T:Necromancy:Aura power
+T:Necromancy:Traumaturgy
 T:Necromancy:Aura of Fear
 T:Necromancy:Shivering Aura
 T:Necromancy:Aura of Death
-T:Necromancy:Antimagic
+
+T:Main:Antimagic
 
 T:Main:Health
-T:Health:Training
+#T:Health:Training
 T:Health:Agility
 T:Health:Swimming
 T:Health:Digging
 T:Health:Climbing
-T:Health:Flying
-T:Health:Free Action
-T:Health:Confusion Resistance
+#T:Health:Flying
+#T:Health:Free Action
+#T:Health:Confusion Resistance
 
 #T:Main:Miscellaneous
 #T:Miscellaneous:Calmness

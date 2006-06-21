@@ -978,6 +978,10 @@ void keymap_init(void)
 		/* Save the direction */
 		keymap_dirs[i] = hack_dir;
 	}
+	
+	/* give a warning, in case we haven't saved macros, so we know
+	   that we just lost all unsaved keymap changes. */
+	c_msg_print("Keymap has been reinitialized.");
 }
 
 
@@ -2213,7 +2217,7 @@ void c_msg_print(cptr msg)
 	/* Paranoia */
 	if (n > 1000) return;
 
-
+#if 0 //we have PKT_AFK now (4.4.0) - C. Blue
 	/* Ok, bad hack - Sorry ;) - C. Blue */
 	if (strstr(msg, "AFK mode is turned \377rON\377w.") - msg == 0) {
 		p_ptr->afk = TRUE;
@@ -2223,6 +2227,7 @@ void c_msg_print(cptr msg)
 		p_ptr->afk = FALSE;
 		put_str("   ", 22, 0);
 	}
+#endif
 
 	/* Memorize the message */
 #if 1

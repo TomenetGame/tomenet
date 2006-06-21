@@ -22,25 +22,43 @@ HHEALING = add_spell
 {
 	["name"] = 	"Healing",
         ["school"] = 	{SCHOOL_HCURING},
-	["level"] =     10,
-	["mana"] =      10,
+	["level"] =     3,
+	["mana"] =      3,
 	["mana_max"] =  70,
 	["fail"] =      25,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 		hp_player(Ind, get_healing_power2())
-		if player.spell_project > 0 then
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), player.spell_project, " points at your wounds.")
-		end
+		fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), 1, " points at your wounds.")
 	end,
 	["info"] =      function()
-		return "heal "..(15 + get_level(Ind, HHEALING, 43)).."%="..get_healing_power2().."/"..((get_healing_power2() * 3) / 4).."hp"
+			return "heal "..(15 + get_level(Ind, HHEALING, 43)).."%="..get_healing_power2().."/"..((get_healing_power2() * 3) / 4).."hp"
 	end,
 	["desc"] =      {
 		"Heals a percent of hitpoints up to a maximum of 400 points healed",
 		"Projecting it will heal 3/4 of that amount on other players",
-		"***Affected by the Meta spell: Project Spell***",
+		"***Automatically projecting***",
 	}
+}
+
+HHEALING2 = add_spell
+{
+        ["name"] =      "Cleansing Cloud",
+        ["school"] =    {SCHOOL_HCURING},
+        ["level"] =     18,
+        ["mana"] =      1,
+        ["mana_max"] =  100,
+        ["fail"] =      30,
+        ["stat"] =      A_WIS,
+        ["direction"] = FALSE,
+        ["spell"] =     function()
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 50)), " calls the spirits")
+                        end,
+        ["info"] =      function()
+                        return "heals " .. (get_level(Ind, HHEALING2, 60) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 50))
+                        end,
+        ["desc"] =      { "Continuously heals you and those around you.",
+			  }
 }
 
 HCURING = add_spell
@@ -58,9 +76,7 @@ HCURING = add_spell
 		                set_poisoned(Ind, 0)
 		                set_cut(Ind, 0)
 				set_stun(Ind, 0)
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, player.spell_project, " concentrates on your maladies.")
-                    		end
+	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, 1, " concentrates on your maladies.")
 			end
 	                if get_level(Ind, HCURING, 50) >= 20 then
 			        do_res_stat(Ind, A_STR)
@@ -69,15 +85,11 @@ HCURING = add_spell
 			        do_res_stat(Ind, A_WIS)
 			        do_res_stat(Ind, A_INT)
 				do_res_stat(Ind, A_CHR)
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, player.spell_project, "")
-                    		end
+	                        fire_ball(Ind, GF_RESTORESTATS_PLAYER, 0, 1, 1, "")
                         end
                         if get_level(Ind, HCURING, 50) >= 25 then
 	                        restore_level(Ind)
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, player.spell_project, "")
-                    		end
+	                        fire_ball(Ind, GF_RESTORELIFE_PLAYER, 0, 1, 1, "")
 	                end
 		        end,
 	["info"] =      function()
@@ -88,10 +100,11 @@ HCURING = add_spell
                         "At level 10 it cures poison, cuts, stun, blindness and confusion",
                         "At level 20 it restores drained stats",
 	                "At level 25 it restores lost experience",
-                	"***Affected by the Meta spell: Project Spell***",
+                	"***Automatically projecting***",
 	}
 }
 
+--[[ old mind focus spell
 HSANITY = add_spell
 {
 	["name"] =      "Mind Focus",
@@ -103,34 +116,55 @@ HSANITY = add_spell
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 			set_image(Ind, 0)
-	                if get_level(Ind, HSANITY, 50) >= 20 then
+			if get_level(Ind, HSANITY, 50) >= 20 then
 				if player.csane < (player.msane * 6 / 12) then
 					player.csane = (player.msane * 6 / 12)
 				end
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 6 * 2, player.spell_project, " waves over your eyes, murmuring some words.")
-	            		end
-	                elseif get_level(Ind, HSANITY, 50) >= 10 then
+				fire_ball(Ind, GF_SANITY_PLAYER, 0, 6 * 2, 1, " waves over your eyes, murmuring some words.")
+			elseif get_level(Ind, HSANITY, 50) >= 10 then
 				if player.csane < (player.msane * 3 / 12) then
 					player.csane = (player.msane * 3 / 12)
 				end
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 3 * 2, player.spell_project, " waves over your eyes, murmuring some words.")
-	            		end
+				fire_ball(Ind, GF_SANITY_PLAYER, 0, 3 * 2, 1, " waves over your eyes, murmuring some words.")
 			else
-		                if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_SANITY_PLAYER, 0, 0, player.spell_project, " waves over your eyes.")
-	            		end
-	                end
-		        end,
+				fire_ball(Ind, GF_SANITY_PLAYER, 0, 0, 1, " waves over your eyes.")
+			end
+			end,
 	["info"] =      function()
-		        return ""
-	    		end,
-        ["desc"] =      {
-                        "Frees your mind from hallucinations",
-                        "At level 10 it slightly cures very bad insanity",
-                        "At level 20 it fairly cures very bad insanity",
-                	"***Affected by the Meta spell: Project Spell***",
+			return ""
+			end,
+	["desc"] =      {
+			"Frees your mind from hallucinations",
+			"At level 10 it slightly cures very bad insanity",
+			"At level 20 it fairly cures very bad insanity",
+			"***Automatically projecting***",
+		}
+}
+]]
+
+-- the new mind focus spell - mikaelh
+-- effect ranges from a light SN potion at level 21 to a serious SN potion at level 50
+-- increased max_mana from 100 to 150
+HSANITY = add_spell
+{
+	["name"] =      "Mind Focus",
+	["school"] =    {SCHOOL_HCURING},
+	["level"] =     21,
+	["mana"] =      50,
+	["mana_max"] =  150,
+	["fail"] =      50,
+	["stat"] =      A_WIS,
+	["spell"] =     function()
+			set_image(Ind, 0)
+			heal_insanity(Ind, 15 + get_level(Ind, HSANITY, 55))
+			fire_ball(Ind, GF_SANITY_PLAYER, 0, 30 + get_level(Ind, HSANITY, 110), 1, " waves over your eyes, murmuring some words..")
+			end,
+	["info"] =      function()
+			return "cures "..(15 + get_level(Ind, HSANITY, 55)).." SN"
+			end,
+	["desc"] =      {
+			"Frees your mind from hallucinations and later on cures some insanity",
+			"***Automatically projecting***",
 		}
 }
 
@@ -165,9 +199,7 @@ HDELFEAR = add_spell
 	["fail"] =	10,
 	["stat"] =	A_WIS,
 	["spell"] =	function()
-	                if player.spell_project > 0 then
-	                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), player.spell_project, " speaks some faithful words and you lose your fear.")
-            		end
+                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), 4, " speaks some faithful words and you lose your fear.")
 			set_afraid(Ind, 0)
 			player.res_fear_temp = get_level(Ind, HDELFEAR, 50)
 			end,
@@ -176,7 +208,7 @@ HDELFEAR = add_spell
 			end,
 	["desc"] =	{
 			"Removes fear from your heart.",
-                	"***Affected by the Meta spell: Project Spell***",
+                	"***Automatically projecting***",
 			}
 }
 
@@ -184,8 +216,9 @@ HDELBB = add_spell
 {
 	["name"] =      "Soul Curing",
 	["school"] =    {SCHOOL_HCURING},
-	["level"] =     45,
-	["mana"] =      200,
+	["level"] =     25,	-- 45 the_sandman: too high lvl and this spell doesn't seem to be useful then. Asked around,
+				-- and ppl say their first encounter with RW is about pvp 25-32ish.
+	["mana"] =      150,	-- was 200. Only chat/hope has priests with >200 mana at lvl ~25+ =)
 	["mana_max"] =  200,
 	["fail"] =      0,
 	["stat"] =      A_WIS,
@@ -195,15 +228,13 @@ HDELBB = add_spell
 	            		msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				player.black_breath = FALSE
 			end
-	                if player.spell_project > 0 then
-	                        fire_ball(Ind, GF_SOULCURE_PLAYER, 0, 1, 1, " chants loudly, praising the light!")
-            		end
+                        fire_ball(Ind, GF_SOULCURE_PLAYER, 0, 1, 1, " chants loudly, praising the light!")
 		        end,
 	["info"] =      function()
 		        return ""
 	    		end,
         ["desc"] =      {
                         "Cures the Black Breath.",
-                	"***Affected by the Meta spell: Project Spell***",
+                	"***Automatically projecting***",
 		}
 }

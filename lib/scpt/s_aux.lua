@@ -454,6 +454,17 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	--player.window = bor(player.window, PW_SPELL)
 end
 
+function get_spellbook_name_colour(i)
+	local s
+	s = __spell_school[i][1]
+	-- green for priests
+	if (s >= SCHOOL_HOFFENSE and s <= SCHOOL_HSUPPORT) then return TERM_GREEN end
+	-- light green for druids
+	if (s == SCHOOL_DRUID_ARCANE or s == SCHOOL_DRUID_PHYSICAL) then return TERM_L_GREEN end
+	-- light blue for the rest (istari schools)
+	return TERM_L_BLUE
+end
+
 
 -- Helper functions
 HAVE_ARTIFACT = 0

@@ -183,3 +183,26 @@ HELLFIRE = add_spell
 	                "Conjures a ball of hellfire to burn your foes to ashes",
 		        }
 }
+
+STOPWRAITH = add_spell
+{
+	["name"] = 	"Stop Wraithform",
+	["school"] = 	{SCHOOL_UDUN},
+	["level"] = 	30,
+	["mana"] = 	10,
+	["mana_max"] = 	20,
+	["fail"] = 	0,
+	["spell"] = 	function()
+			set_tim_wraith(Ind, 0)
+			if player.spell_project > 0 then
+				fire_ball(Ind, GF_WRAITH_PLAYER, 0, 0, player.spell_project, "")
+			end
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+	["desc"] = 	{
+			"Immediately returns you into a material being",
+			"***Affected by the Meta spell: Project Spell***",
+	}
+}

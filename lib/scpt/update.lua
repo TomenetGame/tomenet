@@ -23,6 +23,9 @@ __update_table =
 	"scpt/p_curing.lua",
 	"scpt/p_support.lua",
 
+	"scpt/dr_arcane.lua",
+	"scpt/dr_physical.lua",
+
 	"scpt/powers.lua",
         "scpt/meta.lua",
 }

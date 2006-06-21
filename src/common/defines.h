@@ -44,7 +44,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   2
-#define SF_VERSION_PATCH   5
+#define SF_VERSION_PATCH   8
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -80,8 +80,11 @@
 /* Server is a true RPG server? - C. Blue - This means..
  * - 1 real-life person may only create up to 1 character in total
  * - all characters are no-ghost by default (death is permanent)
+ * - dungeons are IRONMAN
+ * - and many more things that are just a little bit different :)
  */
-/* #define RPG_SERVER */
+#define RPG_SERVER
+
 
 
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
@@ -97,21 +100,25 @@
 
 /* Startup equipment treatment: [3]
    0 = like any item
-   1 = level 0 (unusable by others), can be sold by anyone
-   2 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till level 5
-   3 = level 0 (unusable by others), can't be sold at all */
+   1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel 5
+   2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel 5
+   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel 5 */
 #define STARTEQ_TREATMENT 3
 
 
 
 /* Maximum number of different characters one player account may hold - C. Blue */
-#define MAX_CHARS_PER_ACCOUNT	7
+#define MAX_CHARS_PER_ACCOUNT	8
 
 
 /* What kind of character creation method does the server use? - C. Blue
    currently (since 4.2.0):     0 = traditional random rolling (1 try)
                         	1 = player can set his stats manually */
 #define CHAR_CREATION_FLAGS     1
+
+
+/* Does drinking from fountains bear the possibility of conjuring a guardian monster? */
+#define FOUNTAIN_GUARDS 10	/* chance of appearing */
 
 
 /*
@@ -219,12 +226,13 @@
  * Maximum number of player "race" types (see "table.c", etc)
  */
 /*#define MAX_RACES	14 */
-#define MAX_RACES	15
+#define MAX_RACES	16
 
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
 #define MAX_CLASS       13	/* 11 if there're Druids. 10 o/w. */
+				// 12 => shaman; 13 => runemaster
 
 /*
  * Maximum NPC robots to allow.
@@ -260,6 +268,10 @@
  * This must be a power of 2!
  */
 #define NUM_HASH_ENTRIES	256
+
+
+/* Turn currently invalid items into seals? Otherwise they are simply deleted. */
+#define SEAL_INVALID_OBJECTS
 
 
 /*
@@ -332,6 +344,9 @@
 #define MAX_PARTYNOTES 30
 #define MAX_GUILDNOTES 10
 #define MAX_ADMINNOTES 10
+
+/* Number of text lines for the in-game BBS */
+#define BBS_LINES 15
 
 /*
  * Maximum size of the "view" array (see "cave.c")
@@ -449,6 +464,12 @@
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
 #define AVG_MELEE_CAP		700
+
+
+
+/* Should a mind-link also display shops and shop actions to the secondary player? */
+//#define MINDLINK_STORE
+
 
 
 /*
@@ -706,10 +727,10 @@
  */
 #define PY_FOOD_MAX		15000	/* Food value (Bloated) */
 #define PY_FOOD_FULL	10000	/* Food value (Normal) */
-#define PY_FOOD_ALERT	2000	/* Food value (Hungry) */
-#define PY_FOOD_WEAK	1000	/* Food value (Weak) */
-#define PY_FOOD_FAINT	500		/* Food value (Fainting) */
-#define PY_FOOD_STARVE	100		/* Food value (Starving) */
+#define PY_FOOD_ALERT	3000	/* Food value (Hungry) was 2000 */
+#define PY_FOOD_WEAK	2000	/* Food value (Weak) was 1000 */
+#define PY_FOOD_FAINT	1000		/* Food value (Fainting) was 500 */
+#define PY_FOOD_STARVE	200		/* Food value (Starving) was 100 */
 
 /*
  * Player regeneration constants
@@ -717,7 +738,10 @@
 #define PY_REGEN_NORMAL		197		/* Regen factor*2^16 when full */
 #define PY_REGEN_WEAK		98		/* Regen factor*2^16 when weak */
 #define PY_REGEN_FAINT		33		/* Regen factor*2^16 when fainting */
-#define PY_REGEN_HPBASE		1442	/* Min amount hp regen*2^16 */
+//#define PY_REGEN_HPBASE		1442		/* Min amount hp regen*2^16 */  <- doesn't counter single life drain.
+//#define PY_REGEN_HPBASE		1642		/* Min amount hp regen*2^16 */  <- works well, a bit stronger regen rate.
+#define PY_REGEN_HPBASE		1542		/* Min amount hp regen*2^16 */
+//#define PY_REGEN_HPBASE		1492		/* Min amount hp regen*2^16 */  <- works negatively at ~<=215 HP, positively at ~>=260 HP
 #define PY_REGEN_MNBASE		524		/* Min amount mana regen*2^16 */
 
 
@@ -825,6 +849,9 @@
 #define RACE_GOBLIN 	11
 #define RACE_ENT   	12
 #define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
+#define RACE_DARK_ELF	14
+#define RACE_VAMPIRE	15
+//#define RACE_HATCHLING  14
 /* (or simply replace all those defines with p_info.txt) */
 
 /*
@@ -842,6 +869,11 @@
 //#define CLASS_BARD		9
 #define CLASS_DRUID		9	
 #define CLASS_SHAMAN		10
+
+#ifdef RPG_SERVER
+#define CLASS_RUNEMASTER	11
+#endif
+//#define CLASS_NONE		11
 
 /*
  * Define the realms
@@ -1152,8 +1184,9 @@ that keeps many algorithms happy.
 #define FEAT_SANDWALL           0x62
 #define FEAT_SANDWALL_H         0x63
 #define FEAT_SANDWALL_K         0x64
-/* Feature 0x65 -- high mountain chain */
-/* Feature 0x66 -- nether mist */
+#define FEAT_HIGH_MOUNTAIN	0x65
+#define FEAT_NETHER_MIST	0x66
+#define FEAT_GLIT_WATER         0x67	/* For Valinor */
 
 /* Features 0x67 - 0x9F -- unused */
 
@@ -1711,8 +1744,31 @@ that keeps many algorithms happy.
 #define TV_HYPNOS       99      /* To wield monsters !:) */
 #define TV_GOLD         100     /* Gold can only be picked up by players(?) */
 #define TV_RANDART      102     /* Random Artifacts */
+
+//We're finally using these two defs? :)
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
+
+//Here comes the base runes (k_info.txt);
+#define SV_RUNE1_BOLT   1
+#define SV_RUNE1_BEAM   2
+#define SV_RUNE1_BALL   3
+#define SV_RUNE1_CLOUD  4
+
+//Here are the modifiers (k_info.txt)
+//BASIC
+#define SV_RUNE2_FIRE   1
+#define SV_RUNE2_COLD   2
+#define SV_RUNE2_ACID   3 
+#define SV_RUNE2_ELEC   4
+#define SV_RUNE2_POIS   5
+
+//INTERMEDIATE -- more to add...
+#define SV_RUNE2_GRAV	11
+#define SV_RUNE2_WATER	12
+
+//ADVANCE -- more to add...
+#define SV_RUNE2_ROCKET 21
 
 #define TV_BOOK         111
 #if 0   /* (reserved) we'll use TomeNET books :) */
@@ -1738,6 +1794,9 @@ that keeps many algorithms happy.
 /* Exactly, it's "is_realm_book" */
 #define is_book(o_ptr) \
 	(89 <= o_ptr->tval && o_ptr->tval <= 95)
+
+/* for invalid items */
+#define TV_SEAL		127
 
 /* Maximum "tval" */
 #define TV_MAX		127
@@ -1904,7 +1963,7 @@ that keeps many algorithms happy.
 #define SV_BROAD_AXE                    11	/* 2d6 */
 #define SV_BATTLE_AXE                   22	/* 2d8 */
 #define SV_GREAT_AXE                    25	/* 4d4 */
-#define SV_LOCHABER_AXE                 28	/* 3d8 */
+#define SV_HEAVY_WAR_AXE                 28	/* 3d8 */
 #define SV_SLAUGHTER_AXE                30      /* 5d7 */
 #define SV_THUNDER_AXE			33	/* 6d8 */
 
@@ -1916,7 +1975,7 @@ that keeps many algorithms happy.
 #define SV_FAUCHARD                      6  /* 1d10 */
 #define SV_BROAD_SPEAR                   7	/* 1d9 */
 #define SV_PIKE                          8	/* 2d5 */
-#define SV_KHOPESH                       9  	/* 2d4 */
+#define SV_RHOMPHAIA                     9  	/* 2d4 */
 #define SV_GLAIVE                       13	/* 2d6 */
 #define SV_HALBERD                      15	/* 3d4 */
 #define SV_GUISARME                     16  /* 2d5 */
@@ -2354,6 +2413,7 @@ that keeps many algorithms happy.
 #define SV_SCROLL_WILDERNESS_MAP	63
 /* more stuff - C. Blue */
 #define SV_SCROLL_CONJURE_MONSTER       64
+#define SV_SCROLL_SLEEPING       	65
 
 
 /* The "sval" codes for TV_POTION */
@@ -2369,7 +2429,7 @@ that keeps many algorithms happy.
 #define SV_POTION_CONFUSION              9
 #define SV_POTION_MUTATION              10
 #define SV_POTION_SLEEP                 11
-#define SV_POTION_LEARNING              12
+#define SV_POTION_LEARNING              12 /* not used. see SV_POTION2_LEARNING instead */
 #define SV_POTION_LOSE_MEMORIES         13
 /* xxx */
 #define SV_POTION_RUINATION             15
@@ -2424,6 +2484,7 @@ that keeps many algorithms happy.
 #define SV_POTION_STAR_RESTORE_MANA	64
 
 #define SV_POTION_LAST                  64
+
 /*
  * NOTE: due to hard-coded flavor code, adding SV_POTION is bad idea.
  * Add it to SV_POTION2 instead.
@@ -2431,29 +2492,31 @@ that keeps many algorithms happy.
  */
 
 /* The "sval" codes for TV_POTION2 */
-#define SV_POTION2_MIMIC_ABOMINATION     1
-#define SV_POTION2_MIMIC_WOLF            2
-#define SV_POTION2_MIMIC_APE             3
-#define SV_POTION2_MIMIC_GOAT            4
-#define SV_POTION2_MIMIC_INSECT          5
-#define SV_POTION2_MIMIC_SPARROW         6
-#define SV_POTION2_MIMIC_STATUE          7
-#define SV_POTION2_MIMIC_VAMPIRE         8
-#define SV_POTION2_MIMIC_SPIDER          9
-#define SV_POTION2_MIMIC_MANA_BALL       10
-#define SV_POTION2_MIMIC_FIRE_CLOUD      11
-#define SV_POTION2_MIMIC_COLD_CLOUD      12
-#define SV_POTION2_MIMIC_CHAOS_CLOUD     13
-#define SV_POTION2_CURE_LIGHT_SANITY     14
-#define SV_POTION2_CURE_SERIOUS_SANITY   15
-#define SV_POTION2_CURE_CRITICAL_SANITY  16
-#define SV_POTION2_CURE_SANITY           17
-#define SV_POTION2_CURE_WATER            18
+#define SV_POTION2_MIMIC_ABOMINATION    1
+#define SV_POTION2_MIMIC_WOLF           2
+#define SV_POTION2_MIMIC_APE            3
+#define SV_POTION2_MIMIC_GOAT           4
+#define SV_POTION2_MIMIC_INSECT         5
+#define SV_POTION2_MIMIC_SPARROW        6
+#define SV_POTION2_MIMIC_STATUE         7
+#define SV_POTION2_MIMIC_VAMPIRE        8
+#define SV_POTION2_MIMIC_SPIDER         9
+#define SV_POTION2_MIMIC_MANA_BALL      10
+#define SV_POTION2_MIMIC_FIRE_CLOUD     11
+#define SV_POTION2_MIMIC_COLD_CLOUD     12
+#define SV_POTION2_MIMIC_CHAOS_CLOUD    13
+#define SV_POTION2_CURE_LIGHT_SANITY    14
+#define SV_POTION2_CURE_SERIOUS_SANITY  15
+#define SV_POTION2_CURE_CRITICAL_SANITY 16
+#define SV_POTION2_CURE_SANITY          17
+#define SV_POTION2_CURE_WATER           18
 
-#define SV_POTION2_CHAUVE_SOURIS		19
-#define SV_POTION2_LEARNING				20
+#define SV_POTION2_CHAUVE_SOURIS	19
+#define SV_POTION2_LEARNING		20
 
-#define SV_POTION2_LAST                  20
+#define SV_POTION2_AMBER		21	/* artifact potion */
+
+#define SV_POTION2_LAST                 21
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON                   0
@@ -2529,6 +2592,9 @@ that keeps many algorithms happy.
 #define SV_PARCHMENT_NEWBIE	50
 #define SV_PARCHMENT_DEATH	51
 #define SV_PARCHMENT_NEWS	52
+
+/* for invalid items */
+#define SV_SEAL_INVALID		0
 
 
 /*** General flag values ***/
@@ -3228,9 +3294,9 @@ that keeps many algorithms happy.
 #define TR4_RECHARGE            0x00000008L     /* For artifact Wands and Staffs */
 #define TR4_FLY                 0x00000010L     /* This one and ONLY this one allow you to fly over trees */
 #define TR4_DG_CURSE            0x00000020L     /* The Ancient Morgothian Curse */
-#define TR4_COULD2H             0x00000040L     /* Can wield it 2 Handed */
+#define TR4_SHOULD2H            0x00000040L     /* Can wield it 2 Handed */
 #define TR4_MUST2H              0x00000080L     /* Must wield it 2 Handed */
-#define TR4_LEVELS              0x00000100L     /* Can gain exp/exp levels !! */
+#define TR4_COULD2H             0x00000100L     /* Can wield it 2 Handed */
 #define TR4_CLONE               0x00000200L     /* Can clone monsters */
 #define TR4_SPECIAL_GENE        0x00000400L     /* The object can only be generated in special conditions like quests, special dungeons, ... */
 #define TR4_CLIMB               0x00000800L     /* Allow climbing mountains */
@@ -3268,6 +3334,7 @@ that keeps many algorithms happy.
 #define TR5_FULL_NAME           0x00000100L     /* Uses direct name from k_info */
 #define TR5_LUCK                0x00000200L     /* Luck += pval */
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
+#define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
 /* XXX */
 /*#define TR5_LIFE                0x04000000L */
 #define TR5_IGNORE_WATER	0x00040000L	/* Item ignores Water damage */
@@ -3602,13 +3669,9 @@ that keeps many algorithms happy.
 #define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
 #define RF4_ROCKET                      0x00000008  /* TY: Rocket */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
-#define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
-
-#if 0
-#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
-#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
-#endif
-
+#define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
+#define RF4_ARROW_3			0x00000040	/* Fire a bolt (heavy) */
+#define RF4_ARROW_4			0x00000080	/* Fire a missile (heavy) */
 #define RF4_BR_ACID			0x00000100	/* Breathe Acid */
 #define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
 #define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
@@ -3742,6 +3805,13 @@ that keeps many algorithms happy.
 #define RF7_AI_ANNOY            0x00001000  /* Try to tease the player */
 #define RF7_AI_SPECIAL          0x00002000  /* For quests */
 #define RF7_NEUTRAL             0x00004000  /* Monster is neutral */
+
+#define RF7_DROPART             0x00008000  /* Monster is neutral */
+#define RF7_DROPRANDART         0x00010000  /* Monster is neutral */
+#define RF7_AI_PLAYER           0x00020000  /* Monster is neutral */
+#define RF7_NO_THEFT            0x00040000  /* Monster is neutral */
+
+#define RF7_NEVER_ACT           0x00080000  /* Monster is neutral */
 
 #define RF7_S_LOWEXP		0x08000000  /* Summons/Clones give little exp */
 #define RF7_S_NOEXP		0x10000000  /* Summons/Clones don't give exp */
@@ -3984,6 +4054,19 @@ that keeps many algorithms happy.
 #define DF2_IRONRND2            0x00002000L /* like DF2_IRON, but each dlvl has 10% chance of allowing recall */
 #define DF2_IRONRND3           	0x00004000L /* like DF2_IRON, but each dlvl has 7% chance of allowing recall */
 #define DF2_IRONRND4            0x00008000L /* like DF2_IRON, but each dlvl has 5% chance of allowing recall */
+
+#define DF2_NO_ENTRY_STAIR      0x00010000L /* Can't be entered by staircases */
+#define DF2_NO_ENTRY_WOR      	0x00020000L /* Can't be entered by word-of-recall */
+#define DF2_NO_ENTRY_PROB      	0x00040000L /* Can't be entered by probability travel */
+#define DF2_NO_ENTRY_FLOAT      0x00080000L /* Can't be entered by floating */
+
+#define DF2_NO_EXIT_STAIR      	0x00100000L /* Can't be exited by staircases */
+#define DF2_NO_EXIT_WOR      	0x00200000L /* Can't be exited by word-of-recall */
+#define DF2_NO_EXIT_PROB      	0x00400000L /* Can't be exited by probability travel */
+#define DF2_NO_EXIT_FLOAT      	0x00800000L /* Can't be exited by floating */
+
+#define DF2_NO_TRAVEL_UP      	0x01000000L /* Can't be exited by probability travel */
+#define DF2_NO_TRAVEL_DOWN     	0x02000000L /* Can't be exited by floating */
 
 #define DF2_ADJUST_LEVEL_1_2    0x10000000L /* Minimum monster level will be half the dungeon level */
 #define DF2_NO_SHAFT            0x20000000L /* No shafts */
@@ -4243,10 +4326,10 @@ that keeps many algorithms happy.
 #define term_mirror	(ang_term[1])
 #define term_recall	(ang_term[2])
 #define term_choice	(ang_term[3])
-#define term_term_4	(ang_term[4])
-#define term_term_5	(ang_term[5])
-#define term_term_6	(ang_term[6])
-#define term_term_7	(ang_term[7])
+#define term_term_4     (ang_term[4])
+#define term_term_5     (ang_term[5])
+#define term_term_6     (ang_term[6])
+#define term_term_7     (ang_term[7])
 
 
 /*
@@ -5109,7 +5192,7 @@ extern int PlayerUID;
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
-	 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
+	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
 
 
 /* replacement of helper functions in cave.c */
@@ -5217,7 +5300,7 @@ extern int PlayerUID;
 #define MKEY_PRAY               7
 
 #define MKEY_DODGE              8
-#define MKEY_FLETCHERY		9
+#define MKEY_FLETCHERY			9
 #define MKEY_TRAP               10
 #define MKEY_SCHOOL             11
 #define MKEY_RUNE		12
@@ -5300,18 +5383,21 @@ extern int PlayerUID;
 #define SKILL_HCURING           72
 #define SKILL_HSUPPORT          73
 
-#define SKILL_DRUID             74              /* <- obsolete entry as soon as 3.4.6 is out */
-#define SKILL_DRUID_ARCANE              74
-#define SKILL_DRUID_PHYSICAL            75
-#define SKILL_DRUID_EXTRA               76
-#define SKILL_DRUID_EXTRA2              77
+#define SKILL_DRUID		74		/* <- obsolete entry as soon as 3.4.6 is out */
+#define SKILL_DRUID_ARCANE		74 
+#define SKILL_DRUID_PHYSICAL		75
 
-#define SKILL_SHAMAN            78
-#define SKILL_SHAMAN2           79
-#define SKILL_SHAMAN3           80
-#define SKILL_SHAMAN4           81
-#define SKILL_SHAMAN5           82
+#define SKILL_RUNEMASTERY		76
 
+#define SKILL_DRUID_EXTRA		76
+#define SKILL_DRUID_EXTRA2		77
+
+
+#define SKILL_SHAMAN		78
+#define SKILL_SHAMAN2		79
+#define SKILL_SHAMAN3		80
+#define SKILL_SHAMAN4		81
+#define SKILL_SHAMAN5		82
 
 /* additional ones */
 #define SKILL_CLIMB		90
@@ -5411,8 +5497,11 @@ extern int PlayerUID;
 #define STORE_SPEC_HAFTED	39
 #define STORE_SPEC_POLE		40
 #define STORE_SPEC_SWORD	41
+#define STORE_SPEC_SCROLL	52
 #define STORE_SPEC_POTION	53
 #define STORE_SPEC_ARCHER	55
+#define STORE_SPEC_CLOSECOMBAT	64
+#define STORE_HIDDENLIBRARY	65
 
 
 
@@ -5548,4 +5637,125 @@ extern int PlayerUID;
 #define AT_BLINK	1	/* teleport short range; used after panic-save auto-recalling */
 #define AT_TPORT	2	/* teleport long range */
 #define AT_VALINOR	3	/* send player to the shores of Valinor */
+#define AT_VALINOR2	4
+#define AT_VALINOR3	5
+#define AT_VALINOR4	6
+#define AT_VALINOR5	7
+#define AT_VALINOR6	8
 
+
+/* Masks for restricted mimicry */
+/*	Shaman: Animals, Giants, Dragon(rider)s, Elementals/Spirits, Ghosts.
+	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
+/*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
+#define mimic_shaman(ridx)	\
+	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) && \
+	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
+	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975)) || \
+	((r_info[ridx].d_char == 'G')))
+/*	Druid: Selected Animals and animal-similar creatures. */
+#define mimic_druid(ridx, plv)	\
+	((plv >= 5 && (ridx == 160 || ridx == 198)) || \
+	(plv >= 10 && (ridx == 191 || ridx == 154)) || \
+	(plv >= 15 && (ridx == 279 || ridx == 343)) || \
+	(plv >= 20 && (ridx == 414 || ridx == 335 || ridx == 901 || ridx == 963)) || \
+	(plv >= 25 && (ridx == 334 || ridx == 513)) || \
+	(plv >= 30 && (ridx == 440 || ridx == 641 || ridx == 482)) || \
+	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
+	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
+	(plv >= 45 && (ridx == 723 || ridx == 704 || ridx == 716)) || \
+	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 782)))
+#define mimic_hatchling(ridx)	\
+	((r_info[ridx].flags3 & (RF3_DRAGON))
+
+/* for global_event - C. Blue */
+#define MAX_GLOBAL_EVENTS	16
+#define MAX_GE_PARTICIPANTS	64
+
+/* Here comes the new rune master macros and what not */
+#ifdef CLASS_RUNEMASTER
+#warning: RUNE MASTERY ENABLED
+/* Here is how the rune spell damage gets calculated... 
+ * I'll try to keep the latest table of dmg values updated @ 
+ *    http://72.58.254.71/meow/rune_damage.txt
+ */
+#define rbolt_dmg(x) damroll(1 + (x), 1 + (x))
+#define rbeam_dmg(x) damroll(1 + (x), 1 + (x)*2/3)
+#define rball_dmg(x) damroll(1 + (x), 1 + (x)*2/3)
+
+// Halved dmg/sp if runemastery < 25
+#define ALTERNATE_DMG	
+#define RBARRIER 25
+
+//By comparison, Nox does 76 damage per turn with no spell power.
+//#define rcloud_dmg(x) damroll((x), 1)
+#define rcloud_dmg(x) (x)
+
+/* Duration of the rune cloud spells...
+ * As a comparator, Noxious Cloud (at 50, no spell power) has 45 duration 
+ * We can max is at once to keep in the theme of "each class of rune spell
+ * takes about the same amount of work to pull off...."
+ * These are already expensive as heck anyway...
+ */ 
+#define RCLOUD_DURATION		50
+
+/* The level for perfect rune base spell casting... */
+#define RSAFE_BOLT	15
+#define RSAFE_BEAM	25
+#define RSAFE_BALL	35
+#define RSAFE_CLOUD	50
+
+/* "What about SKILL_RUNEMASTERY?! Doesn't that determine dmg?" -- you say.
+ * Well, no. Not if you're reading this!
+ * Damage takes into account the value of RUNEMASTERY and char level!
+ * Since skills stop at 50 and monsters do not, if we relate the damage to
+ * the player's level instead, then we can allow the players to do some
+ * decent damage later on. At the moment, the only thing capable to downing
+ * Zu is probably a bow/xbow... Mages can't do it with maxed Spell Power...
+ * Something new to try =)
+ * 
+ * SKILL_RUNEMASTERY, however, is used to determine rune breakage. The more
+ * skilled you are, the better you are at doing the correct gestures, etc.
+ *
+ * Note that all rune spells have 0% intrinsic failure rate, but 
+ * interceptable. If done in the presence of AM field, give a % chance for
+ * the mod AND/OR base runes to shatter and does ball damage.
+ *
+ * TODO: Add the rune breakage code, add the AM field check too.
+ * TODO: Let some badass mob (Tik?) drop the clouding rune (and only him!)
+ */
+#define RUNE_DMG (p_ptr->lev + 1)/2 + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25)
+
+/* The folowing are the basic SP usage multipler for the modifier runes */
+#define RBASIC_COST 	1 /* At lvl 50, this costs 1*50 */
+#define RMEDIUM_COST 	3 /* At lvl 50, this costs 3*50 */
+#define RADVANCE_COST 	5 /* At lvl 50, this costs OMG, 250?! =) */
+
+/* The following are the SP usage multiplier
+ * The value here is multiplied with the cost obtained above.
+ * At 50 ...
+ * a basic bolt spell will cost 50 SP to cast,
+ * a medium bolt spell will cost 150 SP to cast,
+ *
+ * a basic beam spell will cost 100 SP to cast,
+ * a medium beam spell will cost 300 SP to cast,
+ *
+ * a basic ball spell will cost 150 SP to cast,
+ * a medium ball spell will cost 450 SP to cast
+ *
+ * a basic cloud spell will cost 250 SP to cast. 
+ * a medium cloud spell will cost 750 SP to cast
+ * 
+ * The idea is that each rune spell in the same class takes about the 
+ * same amount of handwork to pull through...
+ *
+ * Some fun numbers to laugh/look at... 
+ *  Base SP with *** stats for these guys are about 800 SP (w/o SKILL_MAGIC)
+ *  Advanced cloud rune spell will cost about 1250 SP
+ *  Advanced ball rune spell will cost about 750 SP
+ */ 
+#define RBOLT_BASE 	1
+#define RBEAM_BASE 	2
+#define RBALL_BASE 	3
+#define RCLOUD_BASE 	5
+#endif //Runemaster

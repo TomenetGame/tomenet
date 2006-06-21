@@ -16,27 +16,21 @@ HBLESSING = add_spell
 				player.blessed_power = 10
 				dur = 9 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
-				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " recites a blessing.")
-			        end
+	                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " recites a blessing.")
 			end
                 elseif get_level(Ind, HBLESSING, 50) < 30 then
 			if player.blessed_power < 20 then
 				player.blessed_power = 20
 				dur = 17 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
-				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " chants.")
-			        end
+	                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " chants.")
 			end
 		else
 			if player.blessed_power < 30 then
 				player.blessed_power = 30
 				dur = 32 + randint(get_level(Ind, HBLESSING, 25))
 				set_blessed(Ind, dur)
-				if player.spell_project > 0 then
-		                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, player.spell_project, " speaks a holy prayer.")
-			        end
+	                        fire_ball(Ind, GF_BLESS_PLAYER, 0, dur, 2, " speaks a holy prayer.")
 			end
 		end
 	end,
@@ -53,7 +47,7 @@ HBLESSING = add_spell
         		"Protects you with a shield of righterousness",
         		"At level 15 it turns into a holy chant",
         		"At level 30 becomes a holy prayer",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
         }
 }
 
@@ -71,32 +65,22 @@ HRESISTS = add_spell
 		dur = randint(10) + 15 + get_level(Ind, HRESISTS, 50)
 
 		set_oppose_fire(Ind, dur)
-		if player.spell_project > 0 then
-			fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, player.spell_project, " calls to the heavens for protection from the elements.")
-		end
-        	if get_level(Ind, HRESISTS, 50) > 4 then
+		fire_ball(Ind, GF_RESFIRE_PLAYER, 0, dur, 1, " calls to the heavens for protection from the elements.")
+        	if get_level(Ind, HRESISTS, 50) >= 5 then
 			set_oppose_cold(Ind, dur)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_RESCOLD_PLAYER, 0, dur, 1, "")
 		end
-                if get_level(Ind, HRESISTS, 50) > 9 then
+                if get_level(Ind, HRESISTS, 50) >= 10 then
 			set_oppose_elec(Ind, dur)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_RESELEC_PLAYER, 0, dur, 1, "")
 		end
-                if get_level(Ind, HRESISTS, 50) > 14 then
+                if get_level(Ind, HRESISTS, 50) >= 15 then
 			set_oppose_acid(Ind, dur)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
 		end
-                if get_level(Ind, HRESISTS, 50) > 24 then
+                if get_level(Ind, HRESISTS, 50) >= 25 then
 			set_oppose_pois(Ind, dur)
-			if player.spell_project > 0 then
-				fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, player.spell_project, "")
-			end
+			fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, 1, "")
 		end
 	end,
 	["info"] = 	function()
@@ -118,7 +102,7 @@ HRESISTS = add_spell
         		"At level 10 you resist lightning too.",
         		"At level 15 it gives acid resistance as well.",
         		"At level 25 lets you resist poison too.",
-			"***Affected by the Meta spell: Project Spell***",
+			"***Automatically projecting***",
         }
 }
 

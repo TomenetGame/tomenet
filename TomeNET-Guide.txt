@@ -436,6 +436,10 @@ They all start with a slash '/':
             Leave a note to the guild you own.
 /bbs <text> Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
+/shot  or  /shot <filename>
+ (/screenshot)
+            Takes a screen shot to a html file. If <filename> is omitted, it
+            writes to 'screenshot.html' by default.
 
 
 

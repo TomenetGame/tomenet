@@ -11,15 +11,15 @@ GLOBELIGHT = add_spell
         ["spell"] = 	function()
 		local ret, dir
 
-                if get_level(Ind, GLOBELIGHT, 50) > 10 then lite_area(Ind, 10, 4)
+                if get_level(Ind, GLOBELIGHT, 50) >= 10 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
-                if get_level(Ind, GLOBELIGHT, 50) > 25 then
+                if get_level(Ind, GLOBELIGHT, 50) >= 25 then
 		        fire_ball(Ind, GF_LITE, 0, 10 + get_level(Ind, GLOBELIGHT, 100), 5 + get_level(Ind, GLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
-        	if get_level(Ind, GLOBELIGHT, 50) > 15 then
+        	if get_level(Ind, GLOBELIGHT, 50) >= 10 then
 			return "dam "..(10 + get_level(Ind, GLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, GLOBELIGHT, 6))
                 else
                 	return ""
@@ -70,7 +70,7 @@ FIERYAURA = add_spell
         ["fail"] = 	50,
         ["spell"] = 	function()
 		local type
---        	if (get_level(Ind, FIERYAURA, 50) > 7) then
+--        	if (get_level(Ind, FIERYAURA, 50) >= 8) then
 --	        	type = SHIELD_GREAT_FIRE
 --        	else
         		type = SHIELD_FIRE
@@ -97,7 +97,7 @@ FIREWALL = add_spell
         ["direction"] = TRUE,
         ["spell"] = 	function(args)
                 local type
---        	if (get_level(Ind, FIREWALL, 50) > 5) then
+--        	if (get_level(Ind, FIREWALL, 50) >= 6) then
 --	        	type = GF_HOLY_FIRE
 --        	else
         		type = GF_FIRE

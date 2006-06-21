@@ -2,7 +2,9 @@
 -- This file takes care of the schools of magic
 -- (Edit this file and funny funny things will happen :)
 
+
 -- Create the schools
+
 SCHOOL_CONVEYANCE = add_school
 {
 	["name"] = "Conveyance", 
@@ -110,6 +112,18 @@ SCHOOL_HSUPPORT = add_school
         ["skill"] = SKILL_HSUPPORT,
 }
 
+-- Druids
+SCHOOL_DRUID_ARCANE = add_school
+{
+	["name"] = "Arcane Lore",
+	["skill"] = SKILL_DRUID_ARCANE,
+}
+SCHOOL_DRUID_PHYSICAL = add_school
+{
+	["name"] = "Physical Lore",
+	["skill"] = SKILL_DRUID_PHYSICAL,
+}
+
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
@@ -128,6 +142,9 @@ pern_dofile(Ind, "p_offense.lua")
 pern_dofile(Ind, "p_defense.lua")
 pern_dofile(Ind, "p_curing.lua")
 pern_dofile(Ind, "p_support.lua")
+
+pern_dofile(Ind, "dr_arcane.lua") 
+pern_dofile(Ind, "dr_physical.lua")
 
 -- Create the crystal of mana
 school_book[0] = {
@@ -186,14 +203,14 @@ school_book[10] = {
 
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing
 school_book[11] = {
-        GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE,
+        GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE, STOPWRAITH,
 }
 
 -- Priests / Paladins:
 
 -- Create the book of Holy Offense
 school_book[12] = {
-        HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, 
+        HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD,
 }
 
 -- Create the book of Holy Defense
@@ -203,12 +220,22 @@ school_book[13] = {
 
 -- Create the book of Holy Curing
 school_book[14] = {
-	HDELFEAR, HHEALING, HCURING, HSANITY, HRESURRECT, HDELBB,
+	HDELFEAR, HHEALING, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
 }
 
 -- Create the book of Holy Support
 school_book[15] = {
 	HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,  HZEAL,
+}
+
+-- Create the book of druidism: Arcane Lore
+school_book[16] = {
+	NATURESCALL, WATERPOISON, BAGIDENTIFY, REPLACEWALL, BANISHANIMALS,
+}
+
+-- Create the book of druidism: Physical Lore
+school_book[17] = {
+	HEALINGCLOUD, QUICKFEET, HERBALTEA, EXTRASTATS, FOCUSSHOT,
 }
 
 -- Create the book of beginner's cantrip

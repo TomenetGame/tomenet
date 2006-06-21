@@ -1,26 +1,55 @@
 -- handle the holy offense school
 
+HCURSE = add_spell
+{
+        ["name"] =      "Curse",
+        ["school"] =    {SCHOOL_HOFFENSE},
+        ["level"] =     1,
+        ["mana"] =      2,
+        ["mana_max"] =  30,
+        ["fail"] =      10,
+	["stat"] =	A_WIS,
+        ["direction"] = function () if get_level(Ind, HCURSE, 50) >= 25 then return FALSE else return TRUE end end,
+        ["spell"] =     function(args)
+                        if get_level(Ind, HCURSE, 50) >= 25 then
+				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150))
+                        elseif get_level(Ind, HCURSE, 50) >= 15 then
+				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "")
+			else
+				fire_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "")
+                        end
+        end,
+        ["info"] =      function()
+                        return "power "..(10 + get_level(Ind, HCURSE, 150))
+        end,
+        ["desc"] =      {
+                        "Curse an enemy.",
+                        "At level 15 it passes through monsters, affecting those behind as well",
+                        "At level 25 it affects all monsters in sight",
+        }
+}
+
 HGLOBELIGHT = add_spell
 {
 	["name"] = 	"Holy Light",
         ["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
         ["level"] = 	1,
         ["mana"] = 	2,
-        ["mana_max"] = 	15,
+        ["mana_max"] = 	30,
         ["fail"] = 	10,
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
 		local ret, dir
 
-                if get_level(Ind, HGLOBELIGHT, 50) > 3 then lite_area(Ind, 10, 4)
+                if get_level(Ind, HGLOBELIGHT, 50) >= 3 then lite_area(Ind, 10, 4)
                 else lite_room(Ind, player.wpos, player.py, player.px) end
-                if get_level(Ind, HGLOBELIGHT, 50) > 15 then
+                if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
 		        fire_ball(Ind, GF_LITE, 0, (10 + get_level(Ind, HGLOBELIGHT, 100)) * 2, 5 + get_level(Ind, HGLOBELIGHT, 6), " calls a globe of light of")
 		end
 		msg_print(Ind, "You are surrounded by a globe of light")
 	end,
 	["info"] = 	function()
-        	if get_level(Ind, HGLOBELIGHT, 50) > 15 then
+        	if get_level(Ind, HGLOBELIGHT, 50) >= 8 then
 			return "dam "..(10 + get_level(Ind, HGLOBELIGHT, 100)).." rad "..(5 + get_level(Ind, HGLOBELIGHT, 6))
                 else
                 	return ""
@@ -29,7 +58,7 @@ HGLOBELIGHT = add_spell
         ["desc"] =	{
         		"Creates a globe of pure light",
         		"At level 3 it starts damaging monsters",
-        		"At level 15 it starts creating a more powerful kind of light",
+        		"At level 8 it starts creating a more powerful kind of light"
         }
 }
 
@@ -129,6 +158,41 @@ HRELSOULS = add_spell
 			}
 }
 
+HDRAINCLOUD = add_spell
+{
+        ["name"] =      "Cloud of Draining",
+        ["school"] =    {SCHOOL_HOFFENSE},
+        ["level"] =     40,     -- pointless for crap with low lvl anyway
+        ["mana"] =      50,
+        ["mana_max"] =  100,
+        ["fail"] =      -30,
+	["stat"] = 	A_WIS,
+        ["direction"] = TRUE,
+        ["spell"] =     function(args)
+                        fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), " drains for")
+                        -- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
+			-- (with, of course, maxed spell power and h_offense schools)
+                        -- The amount of what goes to player is 15% of the damage the monster taken. 
+                        -- 9999 is a hack handled in spells1.c. Sorry for this. For the moment this
+                        -- the only possible way (i think) to do this spell without affecting the
+                        -- current ability of wands and artifacts (that can be activated) that uses
+                        -- GF_OLD_DRAIN as well. Once I get to know my way around better, I'll fix this.
+                        -- By the way, the real value there is 2.
+                        -- HUGE note about this spell: it can NOT kill a monster!
+                        --                                                      -the_sandman
+        end,
+        ["info"] =      function()
+                        return "dam ".."var".." rad 3 dur "..(8 + get_level(Ind, HDRAINCLOUD, 10))
+        end,
+        ["desc"] =      {
+                        "Creates an area of draining",
+                        "The cloud will persist for a short while. During its duration, it will drain the",
+			"life of the monsters inside and give 15% of the damage back to the caster's hp."
+        }
+}
+
+
+
 --[[
 HHOLYWORD = add_spell
 {
@@ -152,4 +216,5 @@ HHOLYWORD = add_spell
 			"Dispels evil, heals and cures you."
 			}
 }
+
 ]]

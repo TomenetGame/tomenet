@@ -1857,7 +1857,7 @@ D:%#8#%
 D:%888%
 D:%#8#%
 D:%%%%%
-F:NO_GENO | NO_DESTROY
+F:NO_GENO | NO_DESTROY | NO_TELE
 #F:HIVES
 
 N:83:LV (Turnabout)

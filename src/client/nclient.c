@@ -131,6 +131,8 @@ static void Receive_init(void)
 	receive_tbl[PKT_BACT]		= Receive_store_action;
 
 	receive_tbl[PKT_BEEP]		= Receive_beep;
+	receive_tbl[PKT_AFK]		= Receive_AFK;
+	receive_tbl[PKT_ENCUMBERMENT]	= Receive_encumberment;
 }
 
 /* Head of file transfer system receive */
@@ -827,8 +829,13 @@ static int Net_packet(void)
 		if (receive_tbl[type] == NULL)
 		{
 			errno = 0;
+#ifndef WIN32 /* suppress annoying msg boxes in windows clients, when unknown-packet-errors occur. */
 			plog(format("Received unknown packet type (%d, %d), dropping",
 				type, prev_type));
+#endif
+			/* hack: redraw after a packet was dropped, to make sure we didn't miss something important */
+			Send_redraw(0);
+
 			Sockbuf_clear(&rbuf);
 			break;
 		}
@@ -2623,6 +2630,63 @@ int Receive_beep(void)
 //	beep();
 	fprintf(stderr, "\007");
 	fflush(stderr);
+
+	return 1;
+}
+
+int Receive_AFK(void)
+{
+	int	n;
+	char	ch;
+	byte	afk;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &afk)) <= 0)
+	{
+		return n;
+	}
+
+	if (!screen_icky && !shopping)
+		prt_AFK(afk);
+	else
+		if ((n = Packet_printf(&qbuf, "%c%c", ch, afk)) <= 0)
+		{
+			return n;
+		}
+
+	return 1;
+}
+
+int Receive_encumberment(void)
+{
+	int	n;
+	char	ch;
+        byte cumber_armor;      /* Encumbering armor (tohit/sneakiness) */
+        byte awkward_armor;     /* Mana draining armor */
+        byte cumber_glove;      /* Mana draining gloves */
+        byte heavy_wield;       /* Heavy weapon */
+        byte heavy_shoot;       /* Heavy shooter */
+        byte icky_wield;        /* Icky weapon */
+        byte awkward_wield;     /* shield and COULD_2H weapon */
+        byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
+        byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
+        byte monk_heavyarmor;   /* Reduced MA power? */
+        byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shoot,
+	    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
+	{
+		return n;
+	}
+
+	if (!screen_icky && !shopping)
+		prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+				icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+	else
+		if ((n = Packet_printf(&qbuf, "%c%c%c%c%c%c%c%c%c%c%c%c", ch, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+		    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot)) <= 0)
+		{
+			return n;
+		}
 
 	return 1;
 }

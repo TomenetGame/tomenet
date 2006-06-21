@@ -139,12 +139,14 @@ F:FLOOR | CHEST | DOOR
 #
 
 N:20:Trap of Curse Weapon
-I:5:10:0:12:20:0d0:y:10
+#DISABLED I:5:10:0:12:20:0d0:y:10
+I:5:0:0:12:20:0d0:y:10
 D:Your weapon will never be the same...
 F:FLOOR | CHEST | DOOR
 
 N:21:Trap of Curse Armour
-I:5:15:0:12:20:0d0:y:10
+#DISABLED I:5:15:0:12:20:0d0:y:10
+I:5:0:0:12:20:0d0:y:10
 D:Your armour doesn't exactly get better by setting off this trap...
 F:FLOOR | CHEST | DOOR
 
@@ -252,7 +254,8 @@ D:Money isn't everything, they say...
 F:FLOOR | CHEST | DOOR
 
 N:42:Trap of No Return
-I:5:20:10:4:8:0d0:y:10
+#DISABLED I:5:20:10:4:8:0d0:y:10
+I:5:0:10:4:8:0d0:y:10
 D:Do stay a while!
 F:FLOOR | CHEST | DOOR
 
@@ -282,10 +285,11 @@ I:6:100:70:2:3:0d0:y:10
 D:You feel as if you've just lost something...
 F:FLOOR | CHEST | DOOR
 
-#N:48:Trap of Stair Movement
-#I:6:100:50:3:4:0d0:o
-#D:The dungeon seems different...
-#F:FLOOR | CHEST | DOOR
+N:48:Trap of Stair Movement
+#DISABLED I:6:100:50:3:4:0d0:o
+I:6:0:50:3:4:0d0:o:50
+D:The dungeon seems different...
+F:FLOOR | CHEST | DOOR
 
 N:49:Trap of New Trap
 I:5:100:5:0:4:0d0:o:10
@@ -293,7 +297,8 @@ D:Somehow, disarming isn't over, you feel...
 F:FLOOR | CHEST | DOOR
 
 N:50:Trap of Scatter Items
-I:10:50:50:6:12:0d0:w:10
+#DISABLED I:10:50:50:6:12:0d0:w:10
+I:10:0:50:6:12:0d0:w:10
 D:You hear crashing sounds from all over the dungeon!
 F:FLOOR | CHEST | DOOR
 F:SPECIAL_GENE
@@ -314,7 +319,8 @@ D:The whole room vibrates in a strange way...
 F:FLOOR | CHEST | DOOR
 
 N:54:Trap of Drain Speed
-I:8:50:10:25:80:0d0:y:10
+#DISABLED I:8:50:10:25:80:0d0:y:10
+I:8:0:10:25:80:0d0:y:10
 D:You suddenly seem to have more time to self-reflect...
 F:FLOOR | CHEST | DOOR
 
@@ -691,19 +697,22 @@ F:FLOOR | CHEST | DOOR
 
 #-SC-
 N:150:Trap of Feminity
-I:4:30:5:0:10:2d8:r:10
+#DISABLED I:4:30:5:0:10:2d8:r:10
+I:4:0:5:0:10:2d8:r:10
 D:You feel like a new woman!
 F:FLOOR | CHEST | DOOR
 
 N:151:Trap of Masculinity
-I:4:30:5:0:10:2d8:r:10
+#DISABLED I:4:30:5:0:10:2d8:r:10
+I:4:0:5:0:10:2d8:r:10
 D:You feel like a new man!
 F:FLOOR | CHEST | DOOR
 
-#N:152:Trap of Neutrality
-#I:4:30:5:0:10:2d8:r
-#D:You feel like a new woman... erm, a new man... er, WHAT did you say???
-#F:FLOOR | CHEST | DOOR
+N:152:Trap of Neutrality
+#DISABLED I:4:30:5:0:10:2d8:r:50
+I:4:0:5:0:10:2d8:r:50
+D:You feel like a new woman... erm, a new man... er, WHAT did you say???
+F:FLOOR | CHEST | DOOR
 
 N:153:Trap of Aging
 I:5:50:5:0:15:1d8:r:10
@@ -720,22 +729,27 @@ I:3:75:5:0:5:1d8:r:10
 D:You begin to shrink!
 F:FLOOR | CHEST | DOOR
 
-#N:156: UNUSED
+N:156:UNUSED
+#DISABLED
+I:3:0:0:0:0:0d0:r:0
+D:UNUSED
+F:FLOOR
 
-#N:157:Trap of Tanker Drain
-#I:4:100:50:3:4:0d0:r
-#D:You suddenly don't feel so clear anymore...
-#F:FLOOR | CHEST | DOOR
+N:157:Trap of Tanker Drain
+#DISABLED I:4:100:50:3:4:0d0:r:100
+I:4:0:50:3:4:0d0:r:100
+D:You suddenly don't feel so clear anymore...
+F:FLOOR | CHEST | DOOR
 
 N:158:Trap of Divine Anger
-I:6:100:5:0:15:0d0:G:10
-#D:A voice booms out "Have a care, mortal!"
+#DISABLED I:6:100:5:0:15:0d0:G:10
+I:6:0:5:0:15:0d0:G:10
 D:A voice booms out 'Have a care, mortal!'
 F:FLOOR | CHEST | DOOR | NO_ID
 
 N:159:Trap of Divine Wrath
-I:9:50:5:0:30:0d0:G:10
-#D:A voice booms out "Sacrilege!"
+#DISABLED I:9:50:5:0:30:0d0:G:10
+I:9:0:5:0:30:0d0:G:10
 D:A voice booms out 'Sacrilege!'
 F:FLOOR | CHEST | DOOR | NO_ID
 
@@ -819,7 +833,8 @@ D:You feel like a dustbinman!
 F:FLOOR | DOOR | CHEST
 
 N:173:Discordance Trap
-I:6:15:5:5:10:0d0:W:10
+#DISABLED (Trap of Hostility) I:6:15:5:5:10:0d0:W:10
+I:6:0:5:5:10:0d0:W:10
 D:You're in a very bad mood!
 F:FLOOR | DOOR | CHEST
 F:SPECIAL_GENE
@@ -850,7 +865,8 @@ D:You suddenly can't remember what you were doing here...
 F:FLOOR | CHEST | DOOR
 
 N:179:Silliness Trap
-I:4:50:30:6:20:0d0:r:10
+#DISABLED I:4:50:30:6:20:0d0:r:10
+I:4:0:30:6:20:0d0:r:10
 D:You seem to forget what little you've learnt..
 F:FLOOR | CHEST | DOOR
 
@@ -887,13 +903,15 @@ D:Your backpack feels lighter, now it's the time to depart!
 F:FLOOR | DOOR | CHEST
 
 N:186:Scribble Trap
-I:7:30:50:2:40:0d0:y:10
+#DISABLED I:7:30:50:2:40:0d0:y:10
+I:7:0:50:2:40:0d0:y:10
 D:A magic marker dances around you!
 F:FLOOR | DOOR | CHEST
 F:SPECIAL_GENE
 
 N:187:Slump Trap
-I:12:15:5:8:80:0d0:b:10
+#DISABLED I:12:15:5:8:80:0d0:b:10
+I:12:0:5:8:80:0d0:b:10
 D:You feel yourself hitting a slump nowadays.
 F:FLOOR | CHEST | DOOR
 

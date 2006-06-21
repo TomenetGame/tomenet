@@ -169,9 +169,17 @@ static void choose_race(void)
 
 	char		out_val[160];
 
-	l = 2;
-	m = 23 - (Setup.max_race - 1) / 5;
-	n = m - 1;
+
+        l = 2;
+        m = 22 - (Setup.max_race - 1) / 5;
+        n = m - 1;
+
+        put_str("                                                                             ", 18, l);
+        put_str("                                                                             ", 19, l);
+        put_str("                                                                             ", 20, 1);
+        put_str("                                                                             ", 21, 1);
+        put_str("                                                                             ", 22, 1);
+        put_str("                                                                             ", 23, 1);
 
 
 	for (j = 0; j < Setup.max_race; j++)
@@ -200,6 +208,7 @@ static void choose_race(void)
 		{
 			race = j;
 			rp_ptr = &race_info[j];
+			put_str("                    ", 5, 15);
 			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 5, 15);
 			break;
 		}
@@ -220,7 +229,7 @@ static void choose_race(void)
 /*
  * Gets a character class				-JWT-
  */
-static void choose_class(void)
+static bool choose_class(void)
 {
 	player_class *cp_ptr;
         player_race *rp_ptr = &race_info[race];
@@ -232,38 +241,48 @@ static void choose_class(void)
 	bool hazard = FALSE;
 
 
-	/* Prepare to list */
-	l = 2;
-	m = 22 - (Setup.max_class - 1) / 5;
-	n = m - 1;
+        /* Prepare to list */
+        l = 2;
+        m = 22 - (Setup.max_class - 1) / 5;
+        n = m - 1;
 
-	/* Display the legal choices */
-	for (j = 0; j < Setup.max_class; j++)
-	{
-		cp_ptr = &class_info[j];
+        put_str("                                                                             ", 18, l);
+        put_str("                                                                             ", 19, l);
+        put_str("                                                                             ", 20, l);
+        put_str("                                                                             ", 21, l);
+        put_str("                                                                             ", 22, l);
+        put_str("                                                                             ", 23, l);
+
+        /* Display the legal choices */
+        for (j = 0; j < Setup.max_class; j++)
+        {
+                cp_ptr = &class_info[j];
 
                 if (!(rp_ptr->choice & BITS(j)))
                 {
-                        l += 15;
-                        continue;
+                        sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
+                        c_put_str(TERM_L_DARK, out_val, m, l);
+                } else {
+                        sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
+                        c_put_str(TERM_WHITE, out_val, m, l);
                 }
 
-		sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
-		put_str(out_val, m, l);
-		l += 15;
-		if (l > 70)
-		{
-			l = 2;
-			m++;
-		}
-	}
+                l += 15;
+                if (l > 70)
+                {
+                        l = 2;
+                        m++;
+                }
+        }
 
-	/* Get a class */
-	while (1)
-	{
-		c_put_str(TERM_SLATE, "Choose a class (? for Help, * for random, Q to Quit): ", n, 2);
-		if (!hazard) c = inkey();
-		if (c == 'Q') quit(NULL);
+        /* Get a class */
+        while (1)
+        {
+                c_put_str(TERM_SLATE, "Choose a class (? for Help, * for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+                if (!hazard) c = inkey();
+
+                if (c == 'Q') quit(NULL);
+                if (c == '\b') return FALSE;
 
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_class);
@@ -289,6 +308,7 @@ static void choose_class(void)
 	}
 
 	clear_from(n);
+	return TRUE;
 }
 
 
@@ -476,7 +496,7 @@ static void choose_stat_order(void)
 				}
 			}
 			if (c == '\r' || c == '2') j = (j+1) % 6;
-			if (c == '8') j = (j+5) % 6;
+			if (c == '8' || c == '\b') j = (j+5) % 6;
 			if (c == '\e') break;
 			if (c == 'Q') quit(NULL);
 		}
@@ -635,11 +655,11 @@ void get_char_info(void)
 	/* Choose a sex */
 	choose_sex();
 
-	/* Choose a race */
-	choose_race();
-
-	/* Choose a class */
-	choose_class();
+        do {
+                /* Choose a race */
+                choose_race();
+                /* Choose a class */
+        } while (!choose_class());
 
 	class_extra = 0;	
 		

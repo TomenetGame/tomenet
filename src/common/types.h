@@ -771,12 +771,18 @@ struct object_type
 
 	byte tval;			/* Item type (from kind) */
 	byte sval;			/* Item sub-type (from kind) */
+	byte tval2;			/* normally unused (except for item-invalid-seal) */
+	byte sval2;			/* normally unused (except for item-invalid-seal) */
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
 #if 1
-	s16b pval2;			/* Item extra-parameter for some special items (name2b) */
-	s32b pval3;			/* Item extra-parameter for some special items (unused) */
+	s32b pval2;			/* Item extra-parameter for some special items */
+	s32b pval3;			/* Item extra-parameter for some special items */
+#endif
+#if 1
+	s32b pval4;			/* Item extra-parameter for some special items */
+	s32b pval5;			/* Item extra-parameter for some special items */
 #endif
 
 	byte discount;		/* Discount (if any) */
@@ -862,95 +868,96 @@ typedef struct monster_type monster_type;
 
 struct monster_type
 {
-        bool special;                   /* Does it use a special r_info ? */
-        monster_race *r_ptr;            /* The aforementionned r_info */
+   byte pet;
+   bool special;                   /* Does it use a special r_info ? */
+   monster_race *r_ptr;            /* The aforementionned r_info */
 
-        s32b owner;                     /* Player owning it */
+   s32b owner;                     /* Player owning it */
 
-	s16b r_idx;			/* Monster race index */
+   s16b r_idx;			/* Monster race index */
 
-	byte fy;			/* Y location on map */
-	byte fx;			/* X location on map */
+   byte fy;			/* Y location on map */
+   byte fx;			/* X location on map */
 
-	struct worldpos wpos;
+   struct worldpos wpos;
 
-        s32b exp;                       /* Experience of the monster */
-        s16b level;                     /* Level of the monster */
+   s32b exp;                       /* Experience of the monster */
+   s16b level;                     /* Level of the monster */
 
-        monster_blow blow[4];           /* Up to four blows per round */
-        byte speed;                     /* Monster "speed" - better s16b? */
-        s16b ac;                        /* Armour Class */
-        s16b org_ac;                /* Armour Class */
+   monster_blow blow[4];           /* Up to four blows per round */
+   byte speed;                     /* Monster "speed" - better s16b? */
+   s16b ac;                        /* Armour Class */
+   s16b org_ac;                /* Armour Class */
 
-        s32b hp;                        /* Current Hit points */
-        s32b maxhp;                     /* Max Hit points */
-        s32b org_maxhp;                     /* Max Hit points */
+   s32b hp;                        /* Current Hit points */
+   s32b maxhp;                     /* Max Hit points */
+   s32b org_maxhp;                     /* Max Hit points */
 
-	s16b csleep;		/* Inactive counter */
+   s16b csleep;		/* Inactive counter */
 
-	byte mspeed;		/* Monster "speed" */
-	s16b energy;		/* Monster "energy" */
+   byte mspeed;		/* Monster "speed" */
+   s16b energy;		/* Monster "energy" */
 
-	byte stunned;		/* Monster is stunned */
-	byte confused;		/* Monster is confused */
-	byte monfear;		/* Monster is afraid */
+   byte stunned;		/* Monster is stunned */
+   byte confused;		/* Monster is confused */
+   byte monfear;		/* Monster is afraid */
 
-#if 0
-	s16b bleeding;          /* Monster is bleeding */
-	s16b poisoned;          /* Monster is poisoned */
-#endif
+   #if 0
+   s16b bleeding;          /* Monster is bleeding */
+   s16b poisoned;          /* Monster is poisoned */
+   #endif
 
-	u16b hold_o_idx;	/* Object being held (if any) */
+   u16b hold_o_idx;	/* Object being held (if any) */
 
-	byte cdis;			/* Current dis from player */
+   byte cdis;			/* Current dis from player */
 
-/*	bool los;*/			/* Monster is "in sight" */
-/*	bool ml;*/			/* Monster is "visible" */
+   /*	bool los;*/			/* Monster is "in sight" */
+   /*	bool ml;*/			/* Monster is "visible" */
 
-	s16b closest_player;	/* The player closest to this monster */
+   s16b closest_player;	/* The player closest to this monster */
 
-#ifdef WDT_TRACK_OPTIONS
+   #ifdef WDT_TRACK_OPTIONS
 
-	byte ty;			/* Y location of target */
-	byte tx;			/* X location of target */
+   byte ty;			/* Y location of target */
+   byte tx;			/* X location of target */
 
-	byte t_dur;			/* How long are we tracking */
+   byte t_dur;			/* How long are we tracking */
 
-	byte t_bit;			/* Up to eight bit flags */
+   byte t_bit;			/* Up to eight bit flags */
 
-#endif
+   #endif
 
-#ifdef DRS_SMART_OPTIONS
+   #ifdef DRS_SMART_OPTIONS
 
-	u32b smart;			/* Field for "smart_learn" */
+   u32b smart;			/* Field for "smart_learn" */
 
-#endif
-	u16b clone;			/* clone value */
-	u16b clone_summoning;		/* counter to keep track of summoning */
+   #endif
+   u16b clone;			/* clone value */
+   u16b clone_summoning;		/* counter to keep track of summoning */
 
-	s16b mind;                      /* Current action -- golems */
+   s16b mind;                      /* Current action -- golems */
 
-#ifdef RANDUNIS
-	u16b ego;                       /* Ego monster type */
-	s32b name3;			/* Randuni seed, if any */
-#endif
-#if 0
-	s16b status;		/* Status(friendly, pet, companion, ..) */
+   #ifdef RANDUNIS
+   u16b ego;                       /* Ego monster type */
+   s32b name3;			/* Randuni seed, if any */
+   #endif
+   #if 0
+   s16b status;		/* Status(friendly, pet, companion, ..) */
 
-	s16b target;		/* Monster target */
+   s16b target;		/* Monster target */
 
-	s16b possessor;		/* Is it under the control of a possessor ? */
-#endif
+   s16b possessor;		/* Is it under the control of a possessor ? */
+   #endif
 
-	u16b ai_state;		/* What special behaviour this monster takes now? */
-	s16b last_target;	/* For C. Blue's anti-cheeze AI in melee2.c */
+   u16b ai_state;		/* What special behaviour this monster takes now? */
+   s16b last_target;	/* For C. Blue's anti-cheeze AI in melee2.c */
 
-	s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
-				   This keeps track of the highest player which the monster
-				   has 'encountered' (might offer various definitions of this
-				   by different #defines) and adjusts its own experience value
-				   towards that player, so low players who get powerful help
-				   will get less exp out of it. */
+   s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
+      This keeps track of the highest player which the monster
+      has 'encountered' (might offer various definitions of this
+      by different #defines) and adjusts its own experience value
+      towards that player, so low players who get powerful help
+      will get less exp out of it. */
 };
 
 typedef struct monster_ego monster_ego;
@@ -1731,6 +1738,17 @@ struct skill_player
 #define ACC_ADMIN 0x0002	/* Account members are admins */
 #define ACC_MULTI 0x0004	/* Simultaneous play */
 #define ACC_NOSCORE 0x0008	/* No scoring allowed */
+#define ACC_RESTRICTED 0x0010	/* is restricted (ie after cheezing) */
+#define ACC_VRESTRICTED 0x0020	/* is restricted (ie after cheating) */
+#define ACC_PRIVILEGED 0x0040	/* has privileged powers (ie for running quests) */
+#define ACC_VPRIVILEGED 0x0080	/* has privileged powers (ie for running quests) */
+#define ACC_PVP 0x0100		/* may kill other players */
+#define ACC_NOPVP 0x0200	/* is not able to kill other players */
+#define ACC_ANOPVP 0x0400	/* cannot kill other players; gets punished on trying */
+#define ACC_0800 0x800		/* */
+#define ACC_QUIET 0x1000	/* may not chat or emote in public */
+#define ACC_VQUIET 0x2000	/* may not chat or emote, be it public or private */
+#define ACC_BANNED 0x4000	/* account is temporarily suspended */
 #define ACC_DELD  0x8000	/* Delete account/members */
 
 /*
@@ -1790,7 +1808,12 @@ struct player_type
 
 	char savefile[MAX_PATH_LENGTH];	/* Name of the savefile */
 
+	byte restricted;	/* account is restricted (ie after cheating) */
+	byte privileged;	/* account is privileged (ie for quest running) */
+	byte pvpexception;	/* account uses different pvp rules than server settings */
+	byte mutedchat;		/* account has chat restrictions */
 	bool inval;		/* Non validated account */
+
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
 	bool safe_sane;		/* Save players from insanity-death on resurrection (atomic flag) - C. Blue */
@@ -2045,6 +2068,7 @@ struct player_type
 	s16b current_identify;	/* Are we identifying something? */
 	s16b current_star_identify;
 	s16b current_recharge;
+	s16b current_rune_dir; /* Current rune spell direction */
   s16b current_artifact;
   object_type *current_telekinesis;
 	s16b current_curse;
@@ -2066,6 +2090,17 @@ struct player_type
 	s16b poisoned;		/* Timed -- Poisoned */
 	s16b cut;			/* Timed -- Cut */
 	s16b stun;			/* Timed -- Stun */
+
+	s16b xtrastat;		/* timed temp +stats */
+	s16b statval;		/* which */
+	byte xstr;
+	byte xint;
+	byte xdex;
+	byte xcon;
+	byte xchr;
+
+	s16b focus_time;		/* focus shot */
+	s16b focus_val;
 
 	s16b protevil;		/* Timed -- Protection */
 	s16b zeal;		/* timed EA bonus */
@@ -2139,28 +2174,38 @@ struct player_type
 	byte searching;		/* Currently searching */
 
 	bool old_cumber_armor;
+	bool old_awkward_armor;
 	bool old_cumber_glove;
 	bool old_heavy_wield;
 	bool old_heavy_shoot;
 	bool old_icky_wield;
 	bool old_awkward_wield;
+	bool old_easy_wield;
 	bool old_cumber_weight;
+	bool old_monk_heavyarmor;
+	bool old_awkward_shoot;
 
 	s16b old_lite;		/* Old radius of lite (if any) */
+	s16b old_vlite;		/* Old radius of virtual lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
 
 	s16b old_food_aux;	/* Old value of food */
 
 
-	bool cumber_armor;	/* Mana draining armor */
+	bool cumber_armor;	/* Encumbering armor (tohit/sneakiness) */
+	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* shield and COULD_2H weapon */
+	bool easy_wield;	/* Using a 1-h weapon which is MAY2H with both hands */
 	bool cumber_weight;	/* Full weight. FA from MA will be lost if overloaded */
+	bool monk_heavyarmor;	/* Reduced MA power? */
+	bool awkward_shoot;	/* using ranged weapon while having a shield on the arm */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
+	s16b cur_vlite;		/* radius of virtual light (not visible to others) */
 
 
 	u32b notice;		/* Special Updates (bit flags) */
@@ -2313,14 +2358,17 @@ struct player_type
 	bool	use_r_gfx;	/* hack - client uses gfx? */
 
 	byte drain_exp;		/* Experience draining */
-	byte drain_mana;        /* mana draining */
 	byte drain_life;        /* hp draining */
+	byte drain_mana;        /* mana draining */
 
 	bool sensible_fire;     /* Fire does more damage on the player */
 	bool sensible_cold;     /* Cold does more damage on the player */
 	bool sensible_acid;     /* Acid does more damage on the player */
 	bool sensible_elec;     /* Electricity does more damage on the player */
 	bool sensible_pois;     /* Poison does more damage on the player */
+	bool sensible_lite;	/* Light does more damage on the player */
+	bool sensible_good;	/* Anti-evil effects do more damage on the player */
+	bool sensible_life;	/* Anti-undead effects do more damage on the player */
 
 	bool reflect;       /* Reflect 'bolt' attacks */
 	bool no_cut;	    /* For mimic forms */
@@ -2363,7 +2411,8 @@ struct player_type
 	s16b dodge_chance;		/* Chance of dodging blows/missiles */
 
 	s32b balance;		/* Deposit/debt */
-	s32b tim_blacklist;		/* Player is on the 'Black List' */
+	s32b tim_blacklist;		/* Player is on the 'Black List' (he gets penalties in shops) */
+	s32b tim_watchlist;		/* Player is on the 'Watch List' (he may not steal) */
 	int ret_dam;                    /* Drained life from a monster */
 	char attacker[80];		/* Monster doing a ranged attack on the player */
 #if 0
@@ -2395,7 +2444,7 @@ struct player_type
 	s16b support_timer;		/* safe maximum possible duration of the support spells */
 
 	/* any automatic savegame update to perform? (toggle) */
-	byte updated;
+	byte updated_savegame;
 	
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	s16b corner_turn;
@@ -2409,8 +2458,30 @@ struct player_type
 	/* Ignoring normal chat? (Will only see private & party messages then) */
 	bool ignoring_chat;
 	
-	/* muted? */
+	/* Being an ass? - the_sandman */
 	bool muted;
+	
+	/* Pet limiter */
+	bool has_pet;
+	
+	/* Give out a message telling to restart after LUA scripts were updated */
+	bool done_lua_updating;
+	
+	/* Global events participant? */
+	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
+	time_t global_event_signup[MAX_GLOBAL_EVENTS];
+	time_t global_event_started[MAX_GLOBAL_EVENTS];
+	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
+	s32b global_event_temp; /* not saved */
+	int rune_num_of_buffs;
+
+	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
+	 * and that number will affect mana usage */
+#ifdef CLASS_RUNEMASTER
+	int rune_speed;
+	int rune_stealth;
+	int rune_IV;
+#endif //runemaster
 };
 
 /* For Monk martial arts */
@@ -2589,6 +2660,7 @@ struct server_opts
 
 	bool anti_arts_hoard;
 	bool anti_arts_house;
+	bool anti_arts_wild;
 	bool anti_arts_shop;
 	bool anti_arts_pickup;
 	bool anti_arts_send;
@@ -2623,6 +2695,8 @@ struct server_opts
 	s16b henc_strictness;
 	s16b bonus_calc_type;		/* The way hit points are calculated (0 = traditional, 1 = modern) */
 	s16b charmode_trading_restrictions; /* how restricted is trading between everlating and non-everlasting players */
+	s16b item_awareness;	/* How easily the player becomes aware of unknown items (id scroll/shop/..)-C. Blue */
+	bool worldd_pubchat, worldd_privchat, worldd_broadcast, worldd_lvlup, worldd_unideath, worldd_pwin, worldd_pdeath, worldd_pjoin, worldd_pleave, worldd_plist;
 };
 
 /* Client option struct */
@@ -2787,4 +2861,28 @@ struct school_type
 {
         cptr name;                      /* Name */
         s16b skill;                     /* Skill used for that school */
+};
+
+/* C. Blue - don't confuse with quest_type, which is for the basic kill '/quest'.
+   This is more of a global event, first use will be automated Highlander Tournament
+   schedule. Timing is possible too. Might want to make use of AT_... sequences. */
+typedef struct global_event_type global_event_type;
+struct global_event_type
+{
+    int getype;			/* Type of the event (or quest) */
+    bool paused;		/* Is the event currently paused? (special admin command) */
+    u32b state[64];		/* progress */
+    u32b extra[64];		/* extra info */
+    s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
+    s32b creator;       	/* Player ID or 0L */
+    long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
+    s32b start_turn;          	/* quest started */
+    s32b end_turn;		/* quest will end */
+    time_t started;		/* quest started */
+    time_t ending;		/* quest will end */
+    char title[64];		/* short title of this event (used for /gesign <n> player command) */
+    char description[6][72];	/* longer event description */
+    bool hidden;		/* hidden from the players? */
+    int min_participants;	/* minimum amount of participants */
+    int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
 };

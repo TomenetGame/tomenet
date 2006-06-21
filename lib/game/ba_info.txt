@@ -93,7 +93,8 @@ N:15:Town history
 C:0:0:0
 I:2:0:h:0
 
-N:16:Race legends
+#N:16:Race legends
+N:16:View cheeze archives
 C:0:0:0
 I:3:0:l:0
 
@@ -201,7 +202,8 @@ C:0:0:0
 I:7:2:d:0
 
 N:42:Morph restoration
-C:3000:1500:1000
+#C:3000:1500:1000
+C:6000:5000:4000
 I:37:0:r:0
 
 #for The Mirror
@@ -237,7 +239,8 @@ I:29:0:r:0
 
 #for Sea-Dome
 N:49:Morph restoration
-C:1500:1500:1500
+#C:1500:1500:1500
+C:5000:5000:5000
 I:37:0:r:0
 
 #for The Golden Flower

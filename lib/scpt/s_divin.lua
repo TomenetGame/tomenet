@@ -105,7 +105,7 @@ SENSEHIDDEN = add_spell
                         if player.spell_project > 0 then
                                 fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, player.spell_project, "")
                         end
-        		if get_level(Ind, SENSEHIDDEN, 50) >= 10 then
+        		if get_level(Ind, SENSEHIDDEN, 50) >= 15 then
                         	set_tim_invis(Ind, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40))
 	                        if player.spell_project > 0 then
         	                        fire_ball(Ind, GF_SEEINVIS_PLAYER, 0, 10 + randint(20) + get_level(Ind, SENSEHIDDEN, 40), player.spell_project, "")
@@ -113,7 +113,7 @@ SENSEHIDDEN = add_spell
                         end
 	end,
 	["info"] = 	function()
-        		if get_level(Ind, SENSEHIDDEN, 50) >= 10 then
+        		if get_level(Ind, SENSEHIDDEN, 50) >= 15 then
 				return "rad "..(10 + get_level(Ind, SENSEHIDDEN, 40)).." dur "..(10 + get_level(Ind, SENSEHIDDEN, 40)).."+d20"
 			else
                                 return "rad "..(10 + get_level(Ind, SENSEHIDDEN, 40))
