@@ -38,8 +38,8 @@
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
-#define VERSION_MINOR   3
-#define VERSION_PATCH   6
+#define VERSION_MINOR   4
+#define VERSION_PATCH   0
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
