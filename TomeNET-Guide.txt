@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. June 2006; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.3.6, http://www.tomenet.net/
+| Latest update: 21. June 2006; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
 +---
@@ -82,6 +82,7 @@ Contents
     (5.17)  How abilities, resistances and boni stack
     (5.18)  Monster auras
     (5.19)  Experience-draining items
+    (5.20)  Runes
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -152,6 +153,7 @@ compile the game under '(2.1) Installing TomeNET'.
 -You can wear/wield your armour/weapons by pressing 'w' and choosing them
  from your inventory which is displayed in the bottom right window.
 -You can pick up items if you stand on them and press 'g'.
+-You can drop items with 'd' or destroy items with 'k'.
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
 -Nearby the town there's often a 'newbie tower' which is a good place
@@ -441,8 +443,9 @@ They all start with a slash '/':
 ----------------------------
 All items:
     Inscribing an item with an '!' followed by a key will cause that key to
-    cease working on the item anymore.
-    Example: You inscribe a 'Scroll of Artifact Creation' this way:  !k!d
+    cease working on the item anymore. You may also specify several keys.
+    A space or other non-related character will end the '!-sequence'.
+    Example: You inscribe a 'Scroll of Artifact Creation' this way:  !kd
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
@@ -454,8 +457,7 @@ The !* inscription:
     (selling a key, '!h') / selling an item to a shop (!s).
     For example, if you wear an artifact and you want to avoid (d)ropping it,
     (t)aking it off or (v) throwing it away accidentally you could either
-    inscribe it  !d!t!v  or just  !*  .
-    '!*'  also implies  '!='  , so used on arrows it forces auto-pickup.
+    inscribe it  !dtv  or just  !*  . ('!*'  also implies  '!='.)
 
 Items that induce random teleportation, like a 'ring of teleportation' or
 'weapon of the thunderlords':
@@ -511,6 +513,9 @@ Ammunition:
                 will be averaged and rounded downwards. (Doesn't work for
                 cursed or artefact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
+
+Weapons that ricochet (sling ammo):
+    !R          Prevents ricochetting.
 
 Scrolls of Identify:
     !X          If you pick up an unidentified item, you will automatically
@@ -855,8 +860,8 @@ Use the 'export' command to set them, eg:
         export TOMENET_X11_HGT_TERM_4=24
 It's a good idea to make a little script file for this.
 Some possible font sizes are:
-5x7, 5x8, 6x9, 6x10, 6x12, 6x13, 6x13B, 7x13, 7x13B, 7x14, 7x14B,8x13, 8x13B,
-9x15, 9x15B, 10x20 depending on your system.
+4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24
+depending on your system.
 TOMENET_X11_FONT sets one font globally for all windows. It's overridden by
 the window-specific font variables listed above though.
 
@@ -1074,7 +1079,7 @@ number key pad on the right side of your keyboard is turned off. A green lamp
 will usually indicate whether it is on or off.
 
 You can wear/wield items with 'w' (weapons, armour, light source..)
-You can pickup items with 'g'.
+You can pickup items with 'g'. Drop items with 'd'. Destroy items with 'k'.
 You can see a list of players who are currently online with '@' key.
 You can chat with other players (say hello ^^) with ':' key.
 
@@ -1090,7 +1095,7 @@ followed by your current character level, your amount of experience and your
 cash ('Au' stands for Aurum, latin for gold), your 6 character attributes,
 your current sanity (sound means you are completely sane, this might drop, for
 example if a mindcrafter blasts your mind with psionic energy, leaving you
-mad), then comes your Armor Class (AC) which describes you well you are
+mad), then comes your Armor Class (AC) which describes how well you are
 protected by all the armor you currently wear. The last four values are most
 important and will change all the time while fighting monsters.
 They are your theoretical maximum of Hit Points (HP) and Spell Points (SP) as
@@ -1178,20 +1183,21 @@ Dark blue       Player is admin.
 (3.4) Start-up equipment
 ------------------------
 Every new player has some items right from the beginning, stored in the
-inventory (bottom right window). As a warrior you will have a Chain Mail and
-a Sword.
+inventory (bottom right window). As a warrior you will have a chain mail and
+a weapon, for example a sword.
 Start-up equipment always has level 0 and cannot be used by other players!
 You should now equip your start-up items, since they won't help you if
 they stay inside the backpack. Press the key 'w', you will be asked which
 item you would like to wear or wield, choose the letter in front of the item
-inside your inventory, for example e) if the Sword is the fifth item in your
+inside your inventory, for example e) if the sword is the fifth item in your
 backpack. Equip both, sword and armor this way. You can also equip a
 lightsource like a torch or lantern this way. If it is night in town that will
 help you to see anything. Inside a dungeon you should always make sure that you
 have a lightsource equippped.
+Startup items that you don't want to use you may simply destroy with 'k'.
 The numbers '1' to '9' stand for different shops that you can enter to sell or
-buy items. It is recommended that you sell your torches in store '1' (General
-Store) and buy a lantern there instead, because a lantern provides more light,
+buy items. It is recommended that instead of using your torches, buy a brass
+lantern from store '1' (General Store), because a lantern provides more light,
 increasing your radius of sight in the darkness. Also buy a flask of oil for
 your lantern to refill it if it runs out of oil.
 Press '?' to see an in-game introduction and overview of the keys and commands
@@ -1199,7 +1205,7 @@ that you may use. For example 'e' will show your currently equipped items.
 You can chat with other players using the ':' key. This way you can also enter
 certain commands like /fill to fill an empty bottle with water of a fountain.
 At the beginning, all players receive a parchment with their start-up
-equipment. It's the "Adventurer's guide to Middle Earth". Press '/' to read
+equipment. It's the "Adventurer's guide to Middle Earth". Press 'r' to read
 it. It often contains some notes about the server, about player etiquette and
 hints for newbies.
 
@@ -3830,6 +3836,7 @@ Jewelry
 Amulets of Adornment    They might be looking fancy, but they don't do
                         anything and have no effect on your character.
 Talisman (Amulet)       Increases your luck, helps you finding better loot.
+                        (See (5.8) for more information about luck.)
 Rings of Might          increase strength and constitution.
 Rings of Toughness      increase dexterity and constitution.
 Rings of Cunningness    increase strength and intelligence.
@@ -4163,8 +4170,8 @@ a certain chance to break the curse. This can often be cheaper than buying a
 ----------------
 Weapons and other items that you can equip may by 'vampiric' (see (5.8)),
 meaning that they drain life from your target.
-Mimics who use a vampire form will also get a vampiric 'brand' on their melee
-attacks (see (6.7)).
+Mimics who use a vampire form and players of 'Vampire' race will also get a
+vampiric 'brand' on their melee attacks (see (6.7)).
 
 Vampiric life draining heals you with a part of the damage you afflicted on
 your target each hit! The more damage you deal and the more attacks per round
@@ -4330,6 +4337,75 @@ experience points permanently. Here are some details about that process:
  So you will not lose levels from experience drain.
  HOWEVER: If a monster or other effect drains your experience below your
  current level, the experience drain from items will kick in again!
+
+
+
+(5.20) Runes
+------------
+Runes are magical symbols, often hidden in ancient digging sites, or carried
+around by clueless creatures who are not aware of the power of these relicts.
+Runes can be combined to create powerful magical effects by skilled rune
+hunters who are known by the title of 'Runemasters'. Those folks are more
+often than not queer, known for their greediness, and to be encountered with
+care since most of them are actually not scientists but a bunch of clever
+outlaws who are trying their luck after becoming aware of the potential of
+these stones.
+
+
+When semi-skilled pseudo-professional folks use runes, there's quite a chance
+for them to break! General chance formula is:
+
+For bolts, beams and balls:
+(perfect_cast_level - skill_level) %, minimum is 0%.
+
+For clouds:
+((perfect_cast_level - skill_level) * 2) %, minimum is 0%.
+
+perfect_cast_level is 15 for bolts
+                      25 for beams
+                      35 for balls
+                      50 for clouds.
+
+E.g., perfect_cast_level for a ball spell is 35. So if you're casting a
+ball rune spell at level 20, you have (35-20)% == 15% of the rune to break.
+Note that only a 'modifier rune' can break this way! 'Base runes' don't break!
+
+
+There are two types of runes: 'Base runes', and 'Modifier runes' or short
+'Mod runes'.
+Base runes determine the class of attack: Bolting, Beaming, Engulfing (Ball),
+                                          and Clouding.
+Mod runes determine the tpye of damage: Fire, acid, ... etc.
+
+The way it works is by combining a base and a mod together to conjure a
+spell. For example, a bolt + fire runes combination will result in a fire
+bolt being launched. The game will query for the base rune first (i.e.,
+type of spell you want to conjure: ball, beam, cloud, or bolt) then the
+element you want it to be associated with.
+
+Be aware that there are special kinds of mod runes that will do the same
+thing for any base rune it gets combined with! For example, any base rune
+combined with a Gravity rune will result in a speed buff being casted.
+The cost will not matter if you use Ball of Gravity or Bolt of Gravity.
+This should allow some flexibility in macroing.
+
+An example for macroing:
+The magic number for rune spells is 12.
+    \e)*tm@12\r15
+with Bolt rune inscribed @m0 and a Fire rune inscribed @m5 will launch
+a fire bolt. Note the location of the target input '*t'.
+
+Special buffs for Runemasters:
+Some mod runes offer 'buffs', that are spells that increase your power in some
+way. Regardless of the base rune they are combined with, the buff rune will
+always only work on the runemaster himself, not on any monster or other being.
+So the base rune type doesn't actually matter for buffs.
+About buffs this is important to know:
+    All buffs are toggle spells. Cast again to turn them off again.
+    The more buffs you have enabled, the more your SP usage will increase in
+     casting any other spells.
+    The states are not saved across connections: If you log out, your buffs
+     are reset.
 
 
 
@@ -4583,6 +4659,22 @@ Note that not every skill is available to every profession (class).
     .Holy Support               Learn prayers of the Holy Support branch.
     .Arcane Lore                Learn druid magic tought by arcane lore.
     .Physical Lore              Learn druid magic tought by physical lore.
+.Runemastery                    Determines how skillful you are in handling
+                                magical symbols aka 'Runes'.
+                                At 15, it gives perfect bolt casting
+                                (0% break chance for rune on casting bolts).
+                                At 25, it gives perfect beam casting
+                                (0% break chance for rune on casting beams),
+                                And at this level, all shackles are removed
+                                from the runic spells: They will do full
+                                damage and use full amount of SP.
+                                From here on, the usage and the damage will
+                                increase in a linear manner.
+                                At 35, it gives perfect ball casting
+                                (0% break chance for rune on casting balls).
+                                At 50, it gives perfect cloud casting
+                                (0% break chance for rune on casting clouds).
+                                For more info about runes, see '(5.20) Runes'.
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
@@ -4707,7 +4799,7 @@ Note that not every skill is available to every profession (class).
                                 your melee attacks (weapon as well as martial
                                 arts) will be branded by it.
                                 (Alternating fire or cold brand.)
-    .Antimagic                  Generated from your strong disbelief in magic
+.Antimagic                      Generated from your strong disbelief in magic
                                 an anti-magic field surrounds you, preventing
                                 attempts from other casters to cast spells or
                                 summon monsters. This effect is cumulative
@@ -4741,24 +4833,9 @@ Note that not every skill is available to every profession (class).
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
-    .Training                   Increases the chance of getting an additional
-                                skillpoint or even a stat-point on level ups.
-                                Note that all characters already have a slim
-                                chance to get an additional skill/stat-point
-                                on level ups even without Training skill.
-                                The weaker an attribute is, the more likely
-                                it's raised. (This stat increase counts like
-                                a stat potion you'd quaffed.)
-                                Everytime you gain a level, a random number
-                                between 0 and 99 will be generated. If it's
-                                smaller than your Training skill, you will
-                                receive an extra skill point.
     .Swimming                   Self-explaining
     .Digging                    Self-explaining
     .Climbing                   You need this at 01.000 to learn climbing.
-    .Flying                     You need this at 01.000 to learn how to fly.
-    .Free Action                You need this at 01.000 to resist paralysis.
-    .Confusion Resistance       You need this at 01.000 to resist confusion.
 
 In my opinion, the sub-skills of 'Health' should be avoided. There are more
 important skills to care about. Also see (7.5) for suggestions about skill
@@ -5023,7 +5100,33 @@ Thunderlord (also known as Dragonrider)
     feather falling (levitation) from birth. See (5.9) for firestone details.
     They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
     schools 'Conveyance' and 'Fire'.
-
+Dark-elf
+    Dark elves dwell below the surface in huge caverns of their underground
+    city. The children are already drilled to become sworn enemies of most
+    other races of the underground, and also of the hated elves and high-elves
+    who live on the surface under the burning light of the sun. Overthrowing
+    rivals by treachery and murder are acknowledged ways in their society.
+    Dark elves are good fighters and sorcerors, but also decent priests.
+    Dark-elves intrinsically resist darkness, but are susceptible to light.
+    At level 20 they learn to see the invisible.
+    They get bonus on 'Archery', 'Stealth', 'Dodging' and 'Sneakiness'.
+Vampire
+    These powerful undead creatues move out in the night to hunt living prey
+    and suck its blood to sustain themselves. Vampires resist darkness, but
+    are susceptible to light. They fear the sun light and any other kind of
+    blessed light source, since it burns them, draining their hit points.
+    They don't actually need a light source, since they are able to determine
+    their close surroundings even in complete darkness. This ability grows
+    when the vampire rises in character-levels.
+    Vampires are good fighters and decent mages. However, they are unable to
+    utilize magic of water, nature or divination school. Neither can they make
+    use of mimicry techniques or holy spells.
+    They resist darkness, nether, poison or cold and it's hard to drain their
+    life force. They also have partially life leeching (vampiric) attacks
+    (see '(5.15) Vampirism' for more information).
+    Vampires cannot eat normal food, instead they need to feed off living
+    creatures. Vampires dislike hafted weapons, but receive a bonus on all
+    necromancy skills.
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -5034,34 +5137,38 @@ from skills or items yet).
             STR INT WIS DEX CON CHR     HPdice  Exp%    Infra-Vision
             Di  MD  ST  St  Pe  Sr  Fi  BT
 ------------------------------------------------------------------------------
-Human        0   0   0   0   0   0       10     100%     0ft             
+Human        0   0   0   0   0   0       10     100%     0ft
              0   0   0   0  10   0    0   0
-Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft            
+Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft
              2   3   3   1  11   6   -1   6
-Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft            
+Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft
              5   6   6   1   1   8   -5  15
-Hobbit      -2  +2  +1  +3  +0  +1        7     115%    40ft            
+Hobbit      -2  +2  +1  +3  +0  +1        7     115%    30ft
             15  18  18   4  15  12  -10  20
-Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft            
+Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft
             10  12  12   3  13   6   -8  12
-Dwarf       +2  -2  +2  -2  +2  -3       11     120%    50ft            
+Dwarf       +2  -2  +2  -2  +2  -3       11     130%    50ft
              2   9   9  -1  10   7   15   0
-Half-Orc    +2  -1  +0  +0  +1  -4       11     110%    30ft            
+Half-Orc    +2  -1  +0  +0  +1  -4       11     115%    30ft
             -3  -3  -3  -1   7   0   12  -5
-Half-Troll  +4  -4  -2  -4  +3  -6       12     120%    30ft            
+Half-Troll  +4  -4  -2  -4  +3  -6       12     135%    30ft
             -5  -8  -8  -2   5  -1   20 -10
-Dunadan     +1  +2  +2  +2  +3  +2       10     180%     0ft             
+Dunadan     +1  +2  +2  +2  +3  +2       10     180%     0ft
              4   5   5   2  13   3   15  10
-High-Elf    +1  +3  -1  +3  +1  +3       10     230%    40ft            
+High-Elf    +1  +3  -1  +3  +1  +3       10     230%    40ft
              4  20  20   3  14   3   10  25
-Yeek        -5  -5  -5  -5  -5  -5        7      80%     0ft             
+Yeek        -5  -5  -5  -5  -5  -3        7      80%     0ft
              0   0   0   0  10   0    0   0
-Goblin      +0  -1  -5  +4  +2  -5       11     125%    30ft            
+Goblin       0  -1  -4  +4  +2  -5       10     120%    30ft
              2  -3  -3   0   8   2   12  -5
-Ent         +8  -4  +2  -4  +8  -5       14     300%    50ft            
+Ent         +8  -4  +2  -4  +8  -4       14     300%    50ft
              5   0  20  -6   4   5   15   5
 Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft             
              6   0  10 -16  10  30   15   5
+Dark-elf     0  +2  +1  +3  +1  -6       10     140%    50ft
+             0   3   6   2  10   6   15  15
+Vampire     +2   0  -3  -1   0  -6       11     250%   100ft
+            -4   0  20   2  13  -4   10 -10
 
 
 
@@ -5219,6 +5326,30 @@ Shaman
     necromancy as they see fit.
     At level 20 shamans learn to perceive the invisible.
 
+Runemaster
+    Runemasters are very skilled in exploiting magical symbols to their own
+    ends. A few meaningful finger gestures or a scribble on a piece of rock
+    could launch a powerful spell at their enemies. They rely mainly on their
+    intelligence and dexterity to be witty enough in the most demanding
+    situations. Because of this, they are often mistaken to be rogues...
+    until you see the most powerful spells come out of their fingers! Most of
+    these folks actually are not scientists but clever and ruthless outlaws
+    who became aware of the potential of rune stones; these rune hunters are
+    sly as rogues and witty as mages. Quite dangerous persons all in all.
+    'Magic' skill has the least effect on this class, and it is not very easy
+    to learn. Runemasters' spells receive a half-damage and half-SP usage
+    penalty that gradually dissapears as their Runemastery reaches 25. At this
+    level, they do full damage and are able to fully tap their potential.
+    The amount of damage and SP their spell use is directly related to their
+    level and their skillfulness in Runemastery.
+    Their roguish nature allows them to train in a specific weapon proficiency
+    except for 'Weaponmastery', and they are also able to train some skills
+    that are typical for rogues. They're very calm under pressure and are able
+    to intercept and disarm things very well.
+    Runemastery is not part of intrinsic magic but of hard scientific work,
+    and hence only available to quite intelligent races.
+    For more information about runes, see '(5.20) Runes'.
+
 If you raise in levels, you will get new titles. These are displayed between
 your class name and your character level in the main window. If you die and
 become a ghost, the title will change to 'Ghost' until you get revived.
@@ -5245,14 +5376,14 @@ Adventurer   0   0   0   0   0   0       +6      +10%       4
             20  20  20   2  15  15  50  50
 Warrior     +5  -2  -2  +2  +2  -1      +10       +0%       6
             25  18  18   1   2  14  70  55
-Istari      -5  +3  +0  +1  -2  +1       +0      +35%       1
+Istar       -5  +3  +0  +1  -2  +1       +0      +35%       1
             30  36  30   2  20  16  34  20
 Priest      -1  -3  +3  -1  +0  +2       +4      +20%       4
             25  30  32   2   8  16  48  35
 Rogue       +2  +1  -2  +3  +1  -1       +5      +25%       5
             45  32  28   5  32  24  60  66
 Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       4
-            25  35  28   7  18  18  60  66
+            25  35  28   1  18  18  60  66
 Archer      +1  +0  +2  +3  +1  -1       +5      +15%       3
             30  32  28   2  20  24  56  82
 Paladin     +3  -3  +1  +0  +2  +2       +8      +30%       5
@@ -5263,6 +5394,8 @@ Druid       +1   0  +2  -2  -2  +1       +5      +50%       4
             30  40  30   5  25  25  50  60
 Shaman       0  +1  +2  -2   0   0       +5      +30%       4
             10  13  30   5  30  20  45  20
+Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
+            10  20  20   0  30  20  45  20
 
 
 
