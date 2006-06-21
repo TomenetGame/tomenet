@@ -174,19 +174,19 @@
 
 
 /* HACK -- used for SKILL_INIT */
-#define PKT_SKILL_INIT_NAME     200
-#define PKT_SKILL_INIT_DESC     201
-#define PKT_SKILL_INIT_MKEY     202
+#define PKT_SKILL_INIT_NAME     0
+#define PKT_SKILL_INIT_DESC     1
+#define PKT_SKILL_INIT_MKEY     2
 
 /* Not hack - file transfer packet subtypes */
 /* DO NOT TOUCH - work in progress */
-#define PKT_FILE_DATA		211
-#define PKT_FILE_END		212
-#define PKT_FILE_CHECK		213
-#define PKT_FILE_ACK		214	/* acknowledge whatever */
-#define PKT_FILE_ERR		215	/* failure - close */
-#define PKT_FILE_SUM		216	/* checksum reply */
-#define	PKT_FILE_INIT		217	/* initiate a transfer */
+#define PKT_FILE_DATA		1
+#define PKT_FILE_END		2
+#define PKT_FILE_CHECK		3
+#define PKT_FILE_ACK		4	/* acknowledge whatever */
+#define PKT_FILE_ERR		5	/* failure - close */
+#define PKT_FILE_SUM		6	/* checksum reply */
+#define	PKT_FILE_INIT		7	/* initiate a transfer */
 
 
 
