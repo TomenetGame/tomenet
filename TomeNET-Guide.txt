@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. June 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 22. June 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -521,7 +521,7 @@ Ammunition:
 Weapons that ricochet (sling ammo):
     !R          Prevents ricochetting.
 
-Scrolls of Identify:
+Scrolls of Identify, rods/staves of perception:
     !X          If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
 
@@ -1117,6 +1117,27 @@ Intelligence, etc. and try several times until they get a luckier result. Note
 that a suicided character is completely and permanently gone (as is a no-
 ghost/hellish character on mundane death).
 Also see (0.2) for some details about suiciding.
+
+Between AU and STR is a line indicating if you are encumbered in any way.
+This line consists of several little icons which have the following meaning:
+(Order: From left to right)
+    Brown [ armour      Your armour is too heavy (tohit/sneakiness penalty).
+    Red weapon          Your weapon is too heavy for you.
+    Orange \ weapon     Your weapon isn't fit for your character (e.g. priest
+                        using non-edged non-blessed weapons like swords).
+    Yellow / weapon     You are using a 1,5-h weapon together with a shield.
+    Green | weapon      You are using a 1h weapon two-handed and get a small
+                        bonus from that (only works for some 1h weapons).
+    Red } weapon        Your ranged weapon is too heavy for you.
+    Yellow } weapon     You are using a shield on your arm, reducing your
+                        accuracy with your ranged weapon.
+    Light-red 'F'       You are martial arts user and your backpack is too
+                        heavy, so that you don't receive Free Action from MA!
+    Yellow [ armour     You're martial arts user and your armour is too heavy.
+    Violet [ armour     Your armour is so heavy that it reduces your SP.
+    Violet ] armour     Your gloves are not made for spellcasting, reducing
+                        your SP.
+Also see (5.4) for more information about encumberment.
 
 
 
@@ -3035,6 +3056,10 @@ You will receive a warning message, saying:
 "Your covered hands feel unsuitable for spellcasting."
 
 
+Also see (3.2) at the end of the chapter, for information about the
+'Encumberment status line'.
+
+
 Very heavy armour and/or heavy items in your inventory may also slow you down
 (slightly reduce your moving speed) if your STRength isn't very great.
 
@@ -4396,7 +4421,7 @@ This should allow some flexibility in macroing.
 An example for macroing:
 The magic number for rune spells is 12.
     \e)*tm@12\r15
-with Bolt rune inscribed @m0 and a Fire rune inscribed @m5 will launch
+with Bolt rune inscribed @m1 and a Fire rune inscribed @m5 will launch
 a fire bolt. Note the location of the target input '*t'.
 
 Special buffs for Runemasters:
@@ -4700,8 +4725,8 @@ Note that not every skill is available to every profession (class).
                                 traps for higher damage output.
                                 See (4.7) for details about monster traps.
     .Backstabbing               Lets you backstab enemies, afflicting high
-                                damage. Works best in the dark and if the
-                                opponent is sleeping.
+                                damage. Works best if the opponent is
+                                sleeping.
     .Stealing                   Ability to steal (from shops)! Very nasty >:)
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for some minutes up
