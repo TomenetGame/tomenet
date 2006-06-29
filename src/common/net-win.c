@@ -94,7 +94,7 @@ static			jmp_buf env;
 
 /* Global socklib errno variable */
 int			sl_errno = 0;
-#ifndef CYGWIN
+#if !defined(CYGWIN) && !defined(MINGW)
 int			errno = 0;
 #endif
 

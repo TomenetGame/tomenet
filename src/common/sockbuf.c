@@ -48,6 +48,11 @@
 # endif
 #endif
 
+/* MinGW doesn't have EWOULDBLOCK either - mikaelh */
+#ifdef MINGW
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#endif
+
 
 #include "angband.h"
 #include "version.h"

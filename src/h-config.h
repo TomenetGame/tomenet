@@ -244,7 +244,7 @@
  * OPTION: Hack -- Make sure "strchr()" and "strrchr()" will work
  */
 #if defined(SYS_III) || defined(SYS_V) || defined(MSDOS)
-# if !defined(__TURBOC__) && !defined(__WATCOMC__)
+# if !defined(__TURBOC__) && !defined(__WATCOMC__) && !defined(MINGW)
 #  define strchr index
 #  define strrchr rindex
 # endif
