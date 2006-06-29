@@ -30,6 +30,8 @@
 
 #include <sys/stat.h>
 
+#include <sys/time.h>
+
 extern void flicker(void);
 
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */

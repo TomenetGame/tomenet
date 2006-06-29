@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/file.h>
 
 #include "account.h"
 
