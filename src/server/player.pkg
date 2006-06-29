@@ -739,7 +739,7 @@ struct player_type
         s16b support_timer;             /* safe maximum possible duration of the support spells */
 
         /* C. Blue - any automatic savegame update to perform? (toggle) */
-        byte updated;
+        byte updated_savegame;
 	
 	/* C. Blue - fun stuff */
 	s16b corner_turn;

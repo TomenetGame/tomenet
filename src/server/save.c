@@ -1288,7 +1288,7 @@ static void wr_extra(int Ind)
 
         /* Toggle for possible automatic save-game updates
            (done via script login-hook, eg custom.lua) - C. Blue */
-	wr_byte(p_ptr->updated);
+	wr_byte(p_ptr->updated_savegame);
 
 	/* Ignore some flags */
 	wr_u32b(0L);	/* oops */

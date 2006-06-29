@@ -1154,7 +1154,7 @@ static bool rd_extra(int Ind)
 	
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
-	rd_byte(&p_ptr->updated);
+	rd_byte(&p_ptr->updated_savegame);
 
 	/* Skip the flags */
 	strip_bytes(12);

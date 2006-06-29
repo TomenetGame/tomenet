@@ -172,8 +172,8 @@ server_opts cfg =
 	/* bool */
 	TRUE,TRUE,	// report_to_meta, secret_dungeon_master
 
-	// anti_arts_hoard, anti_arts_house, anti_arts_shop, anti_arts_pickup, 
-	FALSE,TRUE,FALSE,TRUE,TRUE,
+	// anti_arts_hoard, anti_arts_house, anti_arts_wild, anti_arts_shop, anti_arts_pickup, 
+	FALSE,TRUE,TRUE,FALSE,TRUE,TRUE,
 	FALSE, //anti_arts_send, anti_cheeze_pickup
 	10,		// surface_item_removal (minutes for scan_objs)
 	30,		// dungeon_item_removal (minutes for scan_objs)

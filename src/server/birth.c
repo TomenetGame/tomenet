@@ -1827,7 +1827,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Needs to be adjusted to the currently used value, usually in custom.lua) */
-	p_ptr->updated = 0;
+	p_ptr->updated_savegame = 0;
 
 	/* Roll for age/height/weight */
 	get_ahw(Ind);
