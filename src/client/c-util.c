@@ -3790,6 +3790,9 @@ void take_screenshot(cptr file) {
 				fprintf(fp, "</font><font color='%s'>", color[flick_colour(cur_attr)]);
 			}
 			switch (scr_cc[x]) {
+				case 31: /* Windows client uses ASCII char 31 for paths */
+					fprintf(fp, ".");
+					break;
 				case '&':
 					fprintf(fp, "&amp;");
 					break;
