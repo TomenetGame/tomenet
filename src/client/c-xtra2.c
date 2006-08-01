@@ -321,6 +321,7 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_killed2 = "was annihilated ";
 	cptr msg_killed3 = "was vaporized ";
 	cptr msg_destroyed = "was destroyed ";
+	cptr msg_killedF = "by Morgoth, Lord of Darkness"; /* for fancy death messages */
 	cptr msg_suicide = "committed suicide.";
 	cptr msg_entered = "has entered the game.";
 	cptr msg_left = "has left the game.";
@@ -358,11 +359,12 @@ void do_cmd_messages_chatonly(void)
 		if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') || \
 		    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) || \
 		    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
-		    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide)   != NULL) || \
-		    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left)   != NULL) || \
+		    (strstr(msg, msg_killedF) != NULL) || \
+		    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) || \
+		    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) || \
 		    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
 		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
-		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB)     != NULL) || \
+		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB) != NULL) || \
 		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) || \
 		    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) || \
 /*		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \ */
@@ -607,8 +609,12 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr msg_deadB = "You die";
 	cptr msg_unique = "was slain by";
 	cptr msg_killed = "was killed by";
-	cptr msg_destroyed = "ghost was destroyed by";
+        cptr msg_killed2 = "was annihilated ";
+        cptr msg_killed3 = "was vaporized ";
+//	cptr msg_destroyed = "ghost was destroyed by";
+	cptr msg_destroyed = "was destroyed by";
 	cptr msg_suicide = "committed suicide.";
+	cptr msg_killedF = "by Morgoth, Lord of Darkness"; /* for fancy death messages */
 
 
 	char buf[160];
@@ -642,7 +648,10 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 			if (
 				(msg[0] == '[') || (msg[2] == '[') ||
 				(strstr(msg, msg_killed) != NULL) ||
+				(strstr(msg, msg_killed2) != NULL) ||
+				(strstr(msg, msg_killed3) != NULL) ||
 				(strstr(msg, msg_destroyed) != NULL) ||
+				(strstr(msg, msg_killedF) != NULL) ||
 				(strstr(msg, msg_unique) != NULL) ||
 				(strstr(msg, msg_suicide) != NULL) ||
 				(strstr(msg, msg_deadA) != NULL) ||
