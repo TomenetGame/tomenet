@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. June 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 1. August 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -354,6 +354,7 @@ Q or CTRL+C or CTRL+K
         normal 'final death'.
 ?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
+ (/refresh)
 !       Look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
 
@@ -395,6 +396,7 @@ They all start with a slash '/':
             fountain. You must stand on the fountain to do this.
 /shout <text>
             Shout <text> loudly, will wake up and aggravate nearby monsters.
+            (Same effect as scroll of aggravate monsters, see (5.9)).
 
 (The /empty function is currently disabled:)
 /empty <inventory slot>
@@ -1023,21 +1025,24 @@ permanent, like it is for unworldly characters.)
 Create an everlasting character for an infinite amount of resurrections.
 Everlasting characters can become king/queen, but cannot enter the high-score.
 Other character types cannot use items that belong to everlasting
-characters. Non-everlasting and everlasting characters can't be in the same
-party.
+characters. Exception: Word-of-recall scrolls can be exchanged between an
+everlasting and a non-everlasting player!
+Non-everlasting and everlasting characters can't be in the same party.
 If an everlasting King/Queen dies, he won't be destroyed but lose the
 King/Queen status. To regain it, he needs to find another player who hasn't
 killed Sauron and Morgoth yet and team up with him, because those two won't
 (re)spawn for the everlasting player.
+Since it was often asked: Non-everlasting and everlasting players can revive
+each other without problems.
 
 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard):
 -------------------------------------------------------
-A character without a ghost, as well as hellish characters (who basically are
-a combination of 'no-ghost' and 'hard') will be annihilated and deleted
-completely on death.
+Unworldly characters are like normal characters, but they have only one life.
+Unworldly as well as hellish characters (who are a combination of 'no-ghost'
+and 'hard') will be completely annihilated and deleted on death.
 
-'Hard' and 'Hellish':
----------------------
+'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
+-------------------------------------------------------------------
 Hard characters and hellish characters get certain penalties in gameplay.
 These are:
 -losing -1 to all stats
@@ -1053,7 +1058,8 @@ A fruit bat is like a normal character, just not in humanoid shape but in bat
 form! Fruit bats usually can take way less damage than normal characters
 before they die, and they cannot wear certain equipment like boots, gloves or
 weapons. However they are twice as fast and hard to hit. Fruit bats are said
-to make good explorers.
+to make good explorers. If you're new to the game, it's absolutely not
+recommended to try and play fruit bat.
 
 
 Hard / Unworldly characters will receive 25% bonus on their high score.
@@ -1578,7 +1584,7 @@ In a macro, this is done by '\r' (one of the so-called escape sequences).
 Example for a macro that directly specifies the ability code to cast the magic
 spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
 
-\e)m@11\r2a*t
+\e)m@11\r2a*m@mt
 
 What does that mean?
 \e  ->  escape any pending input request, if there is any
@@ -3737,18 +3743,20 @@ Detonations     Better not drink it.
 
 Scrolls
 --
-Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 10/20/30, also increases your to-hit
-                bonus. (Temporarily)
 Rumour          Entertains the audience.
+Blessing/Holy Chant/Holy Prayer
+                Increases your AC by 10/15/20, also increases your to-hit
+                bonus. (Temporarily)
 Life            Resurrects another player's ghost if standing on a directly
                 adjacent field to you when you read it. Does not work inside
                 vaults, and only over solid ground.
                 Also restores your experience points if they were drained.
+                Since it was often asked: Non-everlasting and everlasting
+                players can revive each other without problems.
 Aggravate Monsters
                 Wakes up all monsters in whose radius of awareness you are.
                 Hastes all monsters in your line of sight (same as SHRIEK
-                spell or traps of aggravation).
+                spell or traps of aggravation or the "/shout" command).
 Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
                 it can also be used to travel between towns or on the worldmap
                 in general. See "(0.3) Important Inscriptions" for more info
@@ -3757,6 +3765,8 @@ Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
                 for one to kick in, the effect will be cancelled!
                 That way you can change your mind, for example if you suddenly
                 spot a monster you want to kill just after you read a WoR.
+                Word-of-recall scrolls can be exchanged between an everlasting
+                and a non-everlasting player!
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
@@ -4031,7 +4041,7 @@ Rods
 Lamps                       x
 Potions                     x       x       x       x
 Flasks                              x       x
-Books/Tomes x               x                       x
+wBooks/Tomes x               x                       x
 
 
 Items, even tomes, resist certain elements if they have the according
@@ -4740,7 +4750,7 @@ Note that not every skill is available to every profession (class).
                                 that you can shop normally, but are unable to
                                 steal until the shopkeepers stop to watch you
                                 so intensely. The watchlist runs out slower
-                                than the blacklist.
+                                than the blacklist, but allows you to be AFK.
                                 Your chance to steal an item from a shop
                                 depends on your dexterity, your stealing skill
                                 and the price and weight of the item. Stealth
@@ -4854,6 +4864,7 @@ Note that not every skill is available to every profession (class).
                                 (skill_level * 2)% chance to regenerate 1,5x
                                 the normal amount of HP per turn (stacks with
                                 REGEN items).
+                                Increases your hit points by 2 for each point.
                                 Also helps you to recover from temporary stats
                                 drain, hallucination, blindness, paralysis,
                                 confusion, slowness, poison, stun and cuts
@@ -5155,7 +5166,7 @@ Vampire
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
     creatures. Vampires dislike hafted weapons, but receive a bonus on all
-    necromancy skills.
+    necromancy skills. They become able to turn into a bat at level 20.
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -5631,7 +5642,12 @@ F: flag list
     OPEN_DOOR   This form can open doors.
     BASH_DOOR   This form can bash doors
                 (useful to forms that cannot OPEN_DOORs!).
-    EVIL        This form will take 2x damage from holy orbs or holy fire.
+    EVIL        Currently no effect, since it's assumed that the evilness of
+                the form is overridden by the mimic's state of mind.
+    DEMON or UNDEAD
+                This form will take 2x damage from holy orbs or holy fire,
+                and suffer from various 'good' effects/spells. UNDEAD has
+                in general more trouble with 'good' effects than DEMON.
     HURT_LITE   This form will take 2x damage from light attacks.
 S: spell list
     These spells can be cast by the monster. Most of them are available to
@@ -6040,9 +6056,9 @@ Holy Offense
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
 Holy Defense
-    Blessing        Increases AC by 10 temporarily.            (auto-project)
-                    Lv15: Increases AC by 20 temporarily.      (auto-project)
-                    Lv30: Increases AC by 30 temporarily.      (auto-project)
+    Blessing        Same effect as scroll of Blessing.         (auto-project)
+                    Lv15: Same effect as scroll of Holy Chant. (auto-project)
+                    Lv30: Same effect as scroll of Holy Prayer.(auto-project)
                     Required skill level for first spell level: 1.
     Holy Resistance Lets you resist heat.                      (auto-project)
                     Lv5: Lets you also resist cold.            (auto-project)
