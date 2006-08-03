@@ -4043,7 +4043,7 @@ Rods
 Lamps                       x
 Potions                     x       x       x       x
 Flasks                              x       x
-wBooks/Tomes x               x                       x
+Books/Tomes x               x                       x
 
 
 Items, even tomes, resist certain elements if they have the according
