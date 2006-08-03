@@ -1586,7 +1586,7 @@ In a macro, this is done by '\r' (one of the so-called escape sequences).
 Example for a macro that directly specifies the ability code to cast the magic
 spell "a) Manathrust" from book "a) Beginner Cantrips" on the closest monster:
 
-\e)m@11\r2a*m@mt
+\e)m@11\r2a*t
 
 What does that mean?
 \e  ->  escape any pending input request, if there is any
