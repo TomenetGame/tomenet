@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. August 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 3. August 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -384,6 +384,8 @@ They all start with a slash '/':
  (/feeling)
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Can only be used if target player is afk).
+                        If you're on Linux and not hearing the page sounds,
+                        see problem 19 in the troubleshooting section (8.5).
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes. The player who completes it gets a great item
             as reward. It will appear right below the player on the ground.
@@ -7510,6 +7512,20 @@ SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
             new version. If TomeNET is running, the unpacking will fail to
             overwrite the existing files! Shut down TomeNET, then extract the
             ZIP (overwriting everything), then start TomeNET again.
+PROBLEM 19: On GNU/Linux OS, When someone uses the /page command to page me,
+            I don't hear the three beeps.
+SOLUTION:   You are probably using OSS. If your soundcard or soundchip doesn't
+            support mixing of multiple sources, that means only one program at
+            a time can output sound. In that case, do the following:
+            Make sure all your programs, like media players, instant
+            messengers, system setting tools, etc. are set to use 'ALSA' for
+            sound, not OSS. Now that all programs use ALSA, make Tomenet use
+            ALSA too. You can do that by using an "ALSA wrapper" which takes
+            the OSS sound output of any application that doesn't support ALSA
+            natively, and wraps it to ALSA. The ALSA wrapper is called 'aoss'.
+            After installing 'aoss', just use call it with the OSS application
+            as parameter. Example:    $> aoss ./tomenet
+            Another example (to start the Opera webbrowser):    $> aoss opera
 
 
 
