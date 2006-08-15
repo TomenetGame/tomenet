@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. August 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 15. August 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -1888,7 +1888,7 @@ Depending on race and class, characters need to kill a different amount of
 monsters in order to reach the next level. Yeeks get experience fastest,
 while Thunderlords are slowest. (See (6.4) and (6.5).)
 
-Each time your character gains a new level, (s)he also gains a few skill
+Each time your character gains a new level, (s)he also gains 5 skill
 points that you can distribute on your character's skills, press 'G' to invoke
 the skill chart where you can raise skills of your choice. Do this at a safe
 place, so your character won't be attacked and killed while you are looking
@@ -1899,16 +1899,8 @@ character's class are greyed out and cannot be raised.
 On the skill chart you can press 'Up'/'Down' keys to select a skill and
 'Right' key to invest one of your spare skill points into it. Choices cannot
 be undone, so be careful here.
-At each level-up you gain 5 skill points, so you will have gained at least 250
-skill points at level 50. There is a slim chance that you get 6. This chance
-can be raised by spending points into the 'Training' skill.
 For details about skill point distribution and the different skills see (6.2).
 Also see (7.5) for suggestions about skill point distribution.
-
-Further, there is a slim chance that you gain an extra stat point on stats you
-are very bad at ("stats" = "attributes" = STRength, INTelligence, WISdom,
-DEXterity, CONstitution, CHaRisma). This chance too is increased by the
-'Training' skill.
 
 
 
@@ -3585,7 +3577,7 @@ ANTIMAGIC ('Antimagic field')
         applies to nearby enemy spellcasters and other players. The
         field has less influence on _party members_ who try to cast.
         The radius is approximately the field power / 15. The field
-        power is the chance of suppressing a spell. It caps at 80%.
+        power is the chance of suppressing a spell. It caps at 75%.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
         without penalties, even if they are not 'hafted' (blunt).
@@ -4846,15 +4838,15 @@ Note that not every skill is available to every profession (class).
                                 summon monsters. This effect is cumulative
                                 with the anti-magic field of a Dark Sword.
                                 (See 5.9 for more info about dark swords.)
-                                It's capped at 80% chance of interrupting
+                                It's capped at 75% chance of interrupting
                                 enemy spells.
                                 Note that as soon as you invest a point into
                                 this skill you won't be able to use any magic
                                 wands,staves or rods anymore!
                                 This skill also slightly affects your fellow
                                 party members (casters).
-                                Each point in Antimagic adds 0.8% to your
-                                AM chance, so the max gain is +40% from skill.
+                                Each point in Antimagic adds 0.6% to your
+                                AM chance, so the max gain is +30% from skill.
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
                                 Antimagic will also reduce the duration of all
@@ -5014,13 +5006,13 @@ Human
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
-    Humans are very good at 'Training'.
+    Humans get a bonus on 'Interception' and 'Climbing'.
 Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
-    They get bonus on 'Bows-Mastery' and 'Trainig'.
+    They get bonus on 'Bows-Mastery' and 'Interception'.
 Elf
     Elves resist light effects intrinsically and see invisible creatures.
     Elves are better magicians then humans, but not as good at fighting.
