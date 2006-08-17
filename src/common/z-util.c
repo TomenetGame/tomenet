@@ -3,6 +3,7 @@
 /* Purpose: Low level utilities -BEN- */
 
 #include "z-util.h"
+#include "z-form.h"
 
 
 
