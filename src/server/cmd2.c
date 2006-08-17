@@ -2937,7 +2937,7 @@ void do_cmd_fire(int Ind, int dir)
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
 
-	long                    i, j, y, x, ny, nx, ty, tx, bx, by;
+	int                     i, j, y, x, ny, nx, ty, tx, bx, by;
 	int                     tdam, tdis, thits, tmul;
 	int                     bonus, chance;
 	int                     cur_dis, visible;

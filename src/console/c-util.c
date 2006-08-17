@@ -445,7 +445,7 @@ void prt_num(cptr header, int num, int row, int col, byte color)
 	char out_val[32];
 	put_str(header, row, col);
 	put_str("   ", row, col + len);
-	(void)sprintf(out_val, "%6ld", (long)num);
+	(void)sprintf(out_val, "%6d", num);
 	c_put_str(color, out_val, row, col + len + 3);
 }
 
@@ -454,7 +454,7 @@ void prt_lnum(cptr header, s32b num, int row, int col, byte color)
 	int len = strlen(header);
 	char out_val[32];
 	put_str(header, row, col);
-	(void)sprintf(out_val, "%9ld", (long)num);
+	(void)sprintf(out_val, "%9d", num);
 	c_put_str(color, out_val, row, col + len);
 }
 

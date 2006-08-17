@@ -146,10 +146,8 @@
 
 /*
  * OPTION: Define "L64" if a "long" is 64-bits.  See "h-types.h".
- * The only such platform that angband is ported to is currently
- * DEC Alpha AXP running OSF/1 (OpenVMS uses 32-bit longs).
  */
-#if defined(__alpha)
+#if defined(__alpha) || defined(__amd64__) || defined(__ia64__)
 # define L64
 #endif
 

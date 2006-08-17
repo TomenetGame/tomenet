@@ -205,7 +205,7 @@ static void Init_receive(void)
 	login_receive[PKT_ACK]			= Receive_ack;
 	login_receive[PKT_VERIFY]		= Receive_discard;
 	login_receive[PKT_LOGIN]		= Receive_login;
-	
+
 	playing_receive[PKT_ACK]		= Receive_ack;
 	playing_receive[PKT_VERIFY]		= Receive_discard;
 	playing_receive[PKT_QUIT]		= Receive_quit;
@@ -317,7 +317,7 @@ static int Init_setup(void)
 
 		my_fclose(fp);
 	}
-	
+
 	/* MEGAHACK -- copy race/class names */
 	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
 	for (i = 0; i < MAX_RACES; i++)
@@ -346,7 +346,7 @@ static int Init_setup(void)
 
 	return 0;
 }
-	
+
 void init_players(){
 	max_connections = MAX_SELECT_FD - 5;
 	/* Last player is the DM Edit player ! */
@@ -531,7 +531,7 @@ bool Report_to_meta(int flag)
 	return TRUE;
 }
 
-	 
+
 /*
  * Initialize the connection structures.
  */
@@ -571,7 +571,7 @@ int Setup_net_server(void)
 			char buf[80];
 			char *cmd="./evilmeta";
 			char *args[]={cmd, NULL};
-	
+
 			getcwd(buf, 80);
 			printf("in %s\n", buf);
 			/* We are the meta client */
@@ -602,12 +602,12 @@ static sockbuf_t ibuf;
 
 void setup_contact_socket(void)
 {
-	plog("Create TCP socket..."); 
+	plog("Create TCP socket...");
 	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
 		sleep(1);
 	}
-	plog("Set Non-Blocking..."); 
+	plog("Set Non-Blocking...");
 	if (SetSocketNonBlocking(Socket, 1) == -1)
 	{
 		plog("Can't make contact socket non-blocking");
@@ -628,7 +628,7 @@ void setup_contact_socket(void)
 	}
 
 	install_input(Contact, Socket, 0);
-	
+
 #ifdef SERVER_CONSOLE
 	/* Hack -- Install stdin an the "console" input */
 	install_input(Console, 0, 0);
@@ -703,7 +703,7 @@ static int Reply(char *host_addr, int fd)
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
 	{
 		GetSocketError(ibuf.sock);
-	}	
+	}
 
 	return result;
 }
@@ -783,8 +783,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			 * authorize the "hijacking" of an existing connection,
 			 * we check to see if the username and hostname are
 			 * identical.  Note that it may be possobile to spoof this,
-			 * kicking someone off.  This is a quick hack that should 
-			 * be replaced with proper password checking. 
+			 * kicking someone off.  This is a quick hack that should
+			 * be replaced with proper password checking.
 			 */
 			/* XXX another Hack -- don't allow to resume connection if
 			 * in 'character edit' mode		- Jir -
@@ -799,13 +799,13 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			}
 			else return E_IN_USE;
 		    }
-		
-		    /* All restrictions on the number of allowed players from one IP have 
+
+		    /* All restrictions on the number of allowed players from one IP have
 		     * been removed at this time. -APD
 		     *
 		     * Restored after the advent of Tcp/IP, becuase there is
 		     * no longer any good reason to allow them.  --Crimson
-		
+
 		    if (!strcasecmp(Players[i]->realname, real_name) &&
 			!strcasecmp(Players[i]->addr, addr) &&
 			strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
@@ -848,7 +848,7 @@ static void Console(int fd, int arg)
 		shutdown_server();
 	}
 
-		
+
 	if (!strncmp(buf, "STATUS", 6))
 	{
 		s_printf("There %s %d %s.\n", (NumPlayers != 1 ? "are" : "is"), NumPlayers, (NumPlayers != 1 ? "players" : "player"));
@@ -870,14 +870,14 @@ static void Console(int fd, int arg)
 		/* Acknowledge */
 		s_printf("Message sent.\n");
 	}
-		
+
 	if (!strncmp(buf, "KELDON", 6))
 	{
 		/* Whatever I need at the moment */
 	}
 }
 #endif // if 0
-		
+
 static void Contact(int fd, int arg)
 {
 	int bytes, login_port, newsock;
@@ -893,7 +893,7 @@ static void Contact(int fd, int arg)
 
 	/* Create a TCP socket for communication with whoever contacted us */
 	/* Hack -- check if this data has arrived on the contact socket or not.
-	 * If it has, then we have not created a connection with the client yet, 
+	 * If it has, then we have not created a connection with the client yet,
 	 * and so we must do so.
 	 */
 
@@ -972,7 +972,7 @@ static void Contact(int fd, int arg)
 #if 0
 	s_printf("Received contact from %s:%d.\n", host_name, port);
 	s_printf("Address: %s.\n", host_addr);
-	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);  
+	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);
 #endif
 
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
@@ -1005,7 +1005,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	//int status;
 
 	*login_port = 0;
-	
+
 	if(!validstrings(nick, real, host))
 		return E_INVAL;
 
@@ -1041,7 +1041,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 
 	return SUCCESS;
 }
-		
+
 
 static void Conn_set_state(connection_t *connp, int state, int drain_state)
 {
@@ -1117,7 +1117,7 @@ static void Delete_player(int Ind)
 
 	/* If he was actively playing, tell everyone that he's left */
 	/* handle the cfg_secret_dungeon_master option */
-	if (p_ptr->alive && !p_ptr->death && 
+	if (p_ptr->alive && !p_ptr->death &&
 	   (!p_ptr->admin_dm || !cfg.secret_dungeon_master))
 	{
 		cptr title = "";
@@ -1193,7 +1193,7 @@ static void Delete_player(int Ind)
 	/* Update Morgoth eventually if the player was on his level */
 	check_Morgoth();
 
-	/* Tell the metaserver about the loss of a player */	
+	/* Tell the metaserver about the loss of a player */
 	Report_to_meta(META_UPDATE);
 }
 
@@ -1417,7 +1417,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 		Destroy_connection(free_conn_index, "no memory");
 		return -1;
 	}
-	
+
 	// Remove the contact input handler
 	remove_input(sock);
 	// Install the game input handler
@@ -1432,7 +1432,7 @@ static int Handle_setup(int ind)
 	char *buf;
 	int n, len, i;
 	char b1, b2, b3, b4, b5, b6;
-	
+
 	if (connp->state != CONN_SETUP)
 	{
 		Destroy_connection(ind, "not setup");
@@ -1530,7 +1530,7 @@ static int Handle_setup(int ind)
 }
 
 /*
- * No spaces/strange characters in the account name, 
+ * No spaces/strange characters in the account name,
  * real name or hostname.
  */
 static bool validstrings(char *nick, char *real, char *host){
@@ -1590,8 +1590,8 @@ static int Handle_listening(int ind)
 			connp->w.sock = -1;
 			Destroy_connection(ind, "TCP connection closed");
 		}
-		/* It's already Dead, Jim. 
-		else 
+		/* It's already Dead, Jim.
+		else
 			Destroy_connection(ind, "read first packet error");
 		*/
 		return -1;
@@ -1638,7 +1638,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify incorrect");
 		return -1;
 	}
-	
+
 	/* Set his character info */
 	connp->pass = strdup(pass);
 
@@ -1845,7 +1845,7 @@ static int Handle_login(int ind)
 		if (MaxSimultaneousPlayers > 15) s_printf("SimultaneousPlayers (above 15): %d\n", MaxSimultaneousPlayers);
 	}
 	connp->id = Id++;
-	
+
 	//Conn_set_state(connp, CONN_READY, CONN_PLAYING);
 	Conn_set_state(connp, CONN_PLAYING, CONN_PLAYING);
 
@@ -1854,7 +1854,7 @@ static int Handle_login(int ind)
 		plog("Cannot send play reply");
 		return -1;
 	}
-	
+
 	/* Send party information */
 	Send_party(NumPlayers);
 
@@ -1995,7 +1995,7 @@ static int Handle_login(int ind)
 void process_pending_commands(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr = NULL;	
+	player_type *p_ptr = NULL;
 	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
 
@@ -2036,11 +2036,11 @@ void process_pending_commands(int ind)
 
 	// Attempt to execute every pending command. Any command that fails due
 	// to lack of energy will be put into the queue for next turn by the
-	// respective receive function. 		
+	// respective receive function.
 
-	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) && 
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
+	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
 		char *foo=connp->r.ptr;
@@ -2058,7 +2058,7 @@ void process_pending_commands(int ind)
 			return;
 
 		// We didn't have enough energy to execute an important command.
-		if (result == 0) 
+		if (result == 0)
 		{
 			/* Hack -- if we tried to do something while resting, wake us up.
 			 */
@@ -2077,7 +2077,7 @@ void process_pending_commands(int ind)
 			 * actions such as talking while we wait for enough
 			 * energy to execute our next queued in game action.
 			 */
-			if (p_ptr->energy) 
+			if (p_ptr->energy)
 			{
 				old_energy = p_ptr->energy;
 				p_ptr->energy = 0;
@@ -2152,7 +2152,7 @@ void Handle_input(int fd, int arg)
 #if 0
 	/* Clear connp->r, which will be our new queue */
 	Sockbuf_clear(&connp->r);
-	
+
 	/* Put any old commands at the beginning of the new queue we are reading into */
 	if (connp->q.len > 0)
 	{
@@ -2171,7 +2171,7 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->q);
 #endif
 
-	
+
 	/* Mega-Hack */
 	if (connp->id != -1 && Players[GetInd[connp->id]] && Players[GetInd[connp->id]]->new_level_flag) return;
 
@@ -2189,7 +2189,7 @@ void Handle_input(int fd, int arg)
 			// If this happens, the the client has probably closed his TCP connection.
 			do_quit(ind, 0);
 		}
-		
+
 		//Destroy_connection(ind, "input error");
 		return;
 	}
@@ -2346,14 +2346,14 @@ int Net_output(void)
 		/* XXX XXX XXX Mega-Hack -- Redraw player's spot every time */
 		/* This keeps the network connection "active" even if nothing is */
 		/* happening -- KLJ */
-		/* This has been changed to happen less often, operating at close to 3 
-		 * times a second to keep the BGP routing tables happy.  
-		 * I had originally changed this to about once every 2 seconds, 
+		/* This has been changed to happen less often, operating at close to 3
+		 * times a second to keep the BGP routing tables happy.
+		 * I had originally changed this to about once every 2 seconds,
 		 * but apparently it was doing bad things, as the inactivity in the UDP
 		 * stream was causing us to loose priority in the routing tables.
 		 * Thanks to Crimson for explaining this. -APD
 		 */
-		
+
 		/* to keep a good UDP connection, send data that requests a response
 		 * every 1/4 of a second
 		 */
@@ -2364,23 +2364,23 @@ int Net_output(void)
 		 * synchronized way.
 		 */
 
-		/* 	
+		/*
 		   Can't coment this out, it updates things like food
-		    and stores.   
+		    and stores.
 		   Still have to worry about routing with TCP :)
 		   -- Crimson
 		   --- But STill buggy, so off for now.
 		if (!((turn + i) % 8))
 		{
-			lite_spot(i, p_ptr->py, p_ptr->px); 
+			lite_spot(i, p_ptr->py, p_ptr->px);
 		}
 		*/
 
 		/* otherwise, send normal data if there is any */
-		//else 
+		//else
 		//{
-	//		  Tell the client that this is the end  
-	//		  
+	//		  Tell the client that this is the end
+	//
 	//		If we have any data to send to the client, terminate it
 	//		and send it to the client.
 			if (connp->c.len > 0)
@@ -2392,7 +2392,7 @@ int Net_output(void)
 				}
 				Send_reliable(p_ptr->conn);
 			}
-			// Flush the output buffers 
+			// Flush the output buffers
 		//	if (Sockbuf_flush(&connp->w) == -1)
 		//		return -1;
 		//}
@@ -2477,7 +2477,7 @@ void do_quit(int ind, bool tellclient)
 	player_type *p_ptr = NULL;
 	connection_t * connp = &Conn[ind];
 
-	if (connp->id != -1) 
+	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
 		p_ptr=Players[player];
@@ -2510,7 +2510,7 @@ static int Receive_quit(int ind)
 	connection_t *connp = &Conn[ind];
 	char ch;
 
-	if (connp->id != -1) 
+	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
 	}
@@ -2520,9 +2520,9 @@ static int Receive_quit(int ind)
 		Destroy_connection(ind, "receive error in quit");
 		return -1;
 	}
-	
+
 	do_quit(ind, 0);
-	
+
 	return 1;
 }
 
@@ -2729,7 +2729,7 @@ static int Receive_play(int ind)
 		}
 
 #if 0
-		/* Read class extra */	
+		/* Read class extra */
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 
 		if (n <= 0)
@@ -2870,7 +2870,7 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile transfer refused");
-					x=0; 
+					x=0;
 				}
 				else{
 					msg_print(Ind, "\377gAttempting file transfer");
@@ -2890,7 +2890,7 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile check refused");
-					x=0; 
+					x=0;
 				}
 				else{
 					msg_print(Ind, "\377yChecking file");
@@ -3148,14 +3148,14 @@ static int Receive_ack(int ind)
 			&& connp->c.buf[0] != PKT_SUCCESS
 			&& connp->c.buf[0] != PKT_FAILURE)))
 		Conn_set_state(connp, connp->drain_state, connp->drain_state);
-	
+
 	connp->rtt_timeouts = 0;
 
 	/*printf("Received ack to data sent at %ld.\n", rel_loops);*/
 
 	return 1;
 }
- 
+
 static int Receive_discard(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -3256,7 +3256,7 @@ int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, 
+	return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev,
 			max, cur, adv);
 }
 
@@ -3269,7 +3269,7 @@ int Send_skill_init(int ind, u16b i)
 	connection_t *connp = &Conn[Players[ind]->conn];
 
 	char *tmp;
-	
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -3646,7 +3646,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	player_type *p_ptr = Players[ind];
 	bool ville = istown(wpos);
 	cptr desc = "";
-	
+
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
 	if (ville)
@@ -4206,7 +4206,7 @@ int Send_line_info(int ind, int y)
 		p_ptr2 = Players[Ind2];
 	      }
 	  }
-	
+
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
 	if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%hd", PKT_LINE_INFO, y);
@@ -4249,14 +4249,14 @@ int Send_line_info(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a); 
+			Packet_printf(&connp->c, "%c%c", c, a);
 			if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%c", c, a);
 		}
 	}
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-	
+
 	return 1;
 }
 
@@ -4290,7 +4290,7 @@ int Send_mini_map(int ind, int y)
 		connp2 = &Conn[p_ptr2->conn];
 	      }
 	  }
-	
+
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
      	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
@@ -4333,14 +4333,14 @@ int Send_mini_map(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a); 
-			if (Ind2) Packet_printf(&connp2->c, "%c%c", c, a); 
+			Packet_printf(&connp->c, "%c%c", c, a);
+			if (Ind2) Packet_printf(&connp2->c, "%c%c", c, a);
 		}
 	}
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-	
+
 	return 1;
 }
 
@@ -4673,7 +4673,7 @@ int Send_pickup_check(int ind, cptr buf)
 }
 
 /* adding ultimate quick and dirty hack here so geraldo can play his 19th lvl char
-   with the 80 character party name...... 
+   with the 80 character party name......
    -APD-
 */
 
@@ -4785,7 +4785,7 @@ int Send_skills(int ind)
 
 	return 1;
 }
-	
+
 
 int Send_pause(int ind)
 {
@@ -4927,7 +4927,7 @@ static int Receive_walk(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -4979,7 +4979,7 @@ static int Receive_walk(int ind)
 		else
 		{
 			// If we have a walk command queued at the end of the queue,
-			// then replace it with this queue request.  
+			// then replace it with this queue request.
 			if (connp->q.buf[connp->q.len - 2] == PKT_WALK)
 			{
 				connp->q.len -= 2;
@@ -5010,7 +5010,7 @@ static int Receive_run(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5020,13 +5020,13 @@ static int Receive_run(int ind)
 		      }
 		  }
 	}
-	
+
 	if(p_ptr->command_rep){
 		p_ptr->command_rep=-1;
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (!p_ptr->admin_dm) 
+	if (!p_ptr->admin_dm)
 	{
 		/* Check for monsters in sight or confusion */
 		for (i = 0; i < m_max; i++)
@@ -5104,7 +5104,7 @@ static int Receive_tunnel(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5167,7 +5167,7 @@ static int Receive_aim_wand(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5206,7 +5206,7 @@ static int Receive_drop(int ind)
 
 	char ch;
 
-	int n, player = -1; 
+	int n, player = -1;
 	s16b item, amt;
 
 	if (connp->id != -1)
@@ -5217,7 +5217,7 @@ static int Receive_drop(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5267,7 +5267,7 @@ static int Receive_fire(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5357,7 +5357,7 @@ static int Receive_stand(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5403,7 +5403,7 @@ static int Receive_destroy(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5452,7 +5452,7 @@ static int Receive_look(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5500,7 +5500,7 @@ static int Receive_activate_skill(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5596,7 +5596,7 @@ static int Receive_open(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5665,7 +5665,7 @@ static int Receive_mind(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link)
 		  {
 		    Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5794,7 +5794,7 @@ static int Receive_quaff(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5844,7 +5844,7 @@ static int Receive_read(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5893,7 +5893,7 @@ static int Receive_search(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5954,7 +5954,7 @@ static int Receive_take_off(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6004,7 +6004,7 @@ static int Receive_use(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6054,7 +6054,7 @@ static int Receive_throw(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6105,7 +6105,7 @@ static int Receive_wield(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6155,7 +6155,7 @@ static int Receive_zap(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6205,7 +6205,7 @@ static int Receive_target(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6247,7 +6247,7 @@ static int Receive_target_friendly(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6293,7 +6293,7 @@ static int Receive_inscribe(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6337,7 +6337,7 @@ static int Receive_uninscribe(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6380,7 +6380,7 @@ static int Receive_activate(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6429,7 +6429,7 @@ static int Receive_bash(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6487,7 +6487,7 @@ static int Receive_disarm(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6546,7 +6546,7 @@ static int Receive_eat(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6578,7 +6578,7 @@ static int Receive_eat(int ind)
 	return 1;
 }
 
-		
+
 static int Receive_fill(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -6597,7 +6597,7 @@ static int Receive_fill(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6646,7 +6646,7 @@ static int Receive_locate(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6688,7 +6688,7 @@ static int Receive_map(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6730,7 +6730,7 @@ static int Receive_search_mode(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6771,7 +6771,7 @@ static int Receive_close(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6820,7 +6820,7 @@ static int Receive_skill_mod(int ind)
 		p_ptr = Players[player];
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%ld", &ch, &i)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &i)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -6850,7 +6850,7 @@ static int Receive_go_up(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6899,7 +6899,7 @@ static int Receive_go_down(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6950,7 +6950,7 @@ static int Receive_direction(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6995,7 +6995,7 @@ static int Receive_item(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7042,7 +7042,7 @@ static int Receive_message(int ind)
 
 	return 1;
 }
-	
+
 static int Receive_admin_house(int ind){
 	connection_t *connp = &Conn[ind];
 	char ch, dir;
@@ -7058,7 +7058,7 @@ static int Receive_admin_house(int ind){
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7097,7 +7097,7 @@ static int Receive_purchase(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7141,7 +7141,7 @@ static int Receive_sell(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7182,7 +7182,7 @@ static int Receive_store_leave(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7196,7 +7196,7 @@ static int Receive_store_leave(int ind)
 
 	if (player)
 		p_ptr = Players[player];
-	
+
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
 		if (n == -1)
@@ -7228,7 +7228,7 @@ static int Receive_store_leave(int ind)
 	/* hack -- update night/day in wilderness levels */
 	/* XXX it's not so good place to do such things -
 	 * prolly we'll need PU_SUN or sth.		- Jir - */
-	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
+	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos);
 	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
 
 	return 1;
@@ -7249,7 +7249,7 @@ static int Receive_store_confirm(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7295,7 +7295,7 @@ static int Receive_store_examine(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7338,7 +7338,7 @@ static int Receive_store_command(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7379,7 +7379,7 @@ static int Receive_drop_gold(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7390,7 +7390,7 @@ static int Receive_drop_gold(int ind)
 		  }
 	}
 
-	if ((n = Packet_scanf(&connp->r, "%c%ld", &ch, &amt)) <= 0)
+	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &amt)) <= 0)
 	{
 		if (n == -1)
 			Destroy_connection(ind, "read error");
@@ -7428,7 +7428,7 @@ static int Receive_steal(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7479,7 +7479,7 @@ static int Receive_King(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7517,7 +7517,7 @@ static int Receive_King(int ind)
 
 	return 1;
 }
-	
+
 static int Receive_redraw(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -7604,7 +7604,7 @@ static int Receive_rest(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7618,7 +7618,7 @@ static int Receive_rest(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
-		if (n == -1)	
+		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
@@ -7714,7 +7714,7 @@ static int Receive_clear_buffer(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7728,7 +7728,7 @@ static int Receive_clear_buffer(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
-		if (n == -1)	
+		if (n == -1)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
@@ -8029,7 +8029,7 @@ void Handle_direction(int Ind, int dir)
 	if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
 	    Ind2 = find_player(p_ptr->esp_link);
-	    
+
 	    if (!Ind2)
 	      end_mind(Ind, TRUE);
 	}
@@ -8049,7 +8049,7 @@ void Handle_direction(int Ind, int dir)
 	else if (p_ptr->current_activation != -1)
 		do_cmd_activate_dir(Ind, dir);
 }
-		
+
 void Handle_item(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
@@ -8096,13 +8096,13 @@ bool player_is_king(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	return FALSE;
-	
+
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
 	{
 		return TRUE;
 	}
 
-	/* Assume false */	
+	/* Assume false */
 	return FALSE;
 }
 
@@ -8162,7 +8162,7 @@ static int Receive_master(int ind)
 				master_summon(player, buf);
 				break;
 			}
-		
+
 			case MASTER_GENERATE:
 			{
 				master_generate(player, buf);
@@ -8221,7 +8221,7 @@ static int Receive_autophase(int ind)
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	/* a valid player was found, try to do the autophase */	
+	/* a valid player was found, try to do the autophase */
 	if (player)
 	{
 		p_ptr = Players[player];
@@ -8276,7 +8276,7 @@ static int Receive_spike(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -8328,7 +8328,7 @@ static int Receive_raw_key(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-		    
+
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else

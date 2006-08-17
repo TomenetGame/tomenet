@@ -11,7 +11,7 @@
  * rbuf is basically temporary storage that we read data into, and also
  * where we put the data before we call the command processing functions.
  * cbuf is the "command buffer".  qbuf is the "old command queue". wbuf
- * isn't used much.  The use of these buffers should probably be 
+ * isn't used much.  The use of these buffers should probably be
  * cleaned up.  -Alex
  */
 
@@ -74,7 +74,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_LOGIN]		= NULL;	/* Should not be called like
 						   this */
 	receive_tbl[PKT_FILE]		= Receive_file;
-	
+
 
 	/*reliable_tbl[PKT_LEAVE]		= Receive_leave;*/
 	receive_tbl[PKT_QUIT]		= Receive_quit;
@@ -260,7 +260,7 @@ void Receive_login(void)
 	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
 	if (sflag0 & 0x1) s_RPG = TRUE;
 	if (sflag0 & 0x2) s_FUN = TRUE;
-	
+
 	Term_clear();
 
 	if (s_RPG) {
@@ -353,7 +353,7 @@ int Net_setup(void)
 		{
 			if (done == 0)
 			{
-				n = Packet_scanf(&cbuf, "%ld%hd%c%c%ld",
+				n = Packet_scanf(&cbuf, "%d%hd%c%c%d",
 					&Setup.motd_len, &Setup.frames_per_second, &Setup.max_race, &Setup.max_class, &Setup.setup_size);
 				if (n <= 0)
 				{
@@ -367,7 +367,7 @@ int Net_setup(void)
 
 				for (i = 0; i < Setup.max_race; i++)
 				{
-					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%ld", &b1, &b2, &b3, &b4, &b5, &b6, &str, &race_info[i].choice);
+					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s%d", &b1, &b2, &b3, &b4, &b5, &b6, &str, &race_info[i].choice);
 					race_info[i].title = string_make(str);
 					race_info[i].r_adj[0] = b1 - 50;
                                         race_info[i].r_adj[1] = b2 - 50;
@@ -480,7 +480,7 @@ int Net_verify(char *real, char *nick, char *pass)
 		return -1;
 	if (Receive_reply(&type, &result) <= 0)
 	{
-		errno = 0;	
+		errno = 0;
 		plog("Can't receive verify reply packet");
 		return -1;
 	}
@@ -651,7 +651,7 @@ unsigned char Net_login(){
 	{
 		quit("Can't send first login packet");
 	}
-	SetTimeout(5, 0);	
+	SetTimeout(5, 0);
 	if (!SocketReadable(rbuf.sock))
 	{
 		errno = 0;
@@ -729,7 +729,7 @@ int Net_start(int sex, int race, int class)
 	}
 
 	/* Wait for data to arrive */
-	SetTimeout(5, 0);	
+	SetTimeout(5, 0);
 	if (!SocketReadable(rbuf.sock))
 	{
 		errno = 0;
@@ -977,12 +977,11 @@ int Flush_queue(void)
  */
 int Receive_start(void)
 {
-	int	n;
-	long	loops;
+	int	n, loops;
 	byte	ch;
 	long	key_ack;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld", &ch, &loops, &key_ack)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &loops, &key_ack)) <= 0)
 			return n;
 
 	/*
@@ -1217,7 +1216,7 @@ int Receive_sanity(void)
 	c_p_ptr->sanity_attr = attr;
 	if (!screen_icky && !shopping){
 		prt_sane(attr, (char*)buf);
-		if (c_cfg.alert_hitpoint && (attr == TERM_MULTI)) 
+		if (c_cfg.alert_hitpoint && (attr == TERM_MULTI))
 		{
 			if (c_cfg.ring_bell) bell();
 		}
@@ -1283,7 +1282,7 @@ int Receive_hp(void)
 	if (!screen_icky && !shopping)
 	{
 		prt_hp(max, cur);
-		if (c_cfg.alert_hitpoint && (cur < max / 5)) 
+		if (c_cfg.alert_hitpoint && (cur < max / 5))
 		{
 			if (c_cfg.ring_bell) bell();
 			c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
@@ -1521,7 +1520,7 @@ int Receive_skill_init(void)
 	u32b	flags1;
 	u16b	tval;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%ld%c%S%S%S", &ch, &i,
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%d%c%S%S%S", &ch, &i,
 		&father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0)
 	{
 		return n;
@@ -1548,7 +1547,7 @@ int Receive_skill_points(void)
         char	ch;
 	int	pt;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld", &ch, &pt)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &pt)) <= 0)
 	{
 		return n;
 	}
@@ -1567,7 +1566,7 @@ int Receive_skill_info(void)
         s32b    val;
 	int	i, mod, dev, hidden;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%ld%ld", &ch, &i, &val, &mod, &dev, &hidden)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden)) <= 0)
 	{
 		return n;
 	}
@@ -1701,16 +1700,16 @@ int Receive_message(void)
 
 	/* XXX Mega-hack -- because we are not using checksums, sometimes under
 	 * heavy traffic Receive_line_input receives corrupted data, which will cause
-	 * the run-length encoded algorithm to exit prematurely.  Since there is no 
+	 * the run-length encoded algorithm to exit prematurely.  Since there is no
 	 * end of line_info tag, the packet interpretor assumes the line_input data
 	 * is finished, and attempts to parse the next byte as a new packet type.
-	 * Since the ascii value of '.' (a frequently updated character) is 46, 
+	 * Since the ascii value of '.' (a frequently updated character) is 46,
 	 * which equals PKT_MESSAGE, if corrupted line_info data is received this function
 	 * may get called wihtout a valid string.  To try to prevent the client from
 	 * displaying a garbled string and messing up our screen, we will do a quick
 	 * sanity check on the string.  Note that this might screw up people using
 	 * international character sets.  (Such as the Japanese players)
-	 * 
+	 *
 	 * A better solution for this would be to impliment some kind of packet checksum.
 	 * -APD
 	 */
@@ -1765,7 +1764,7 @@ int Receive_state(void)
 		{
 			return n;
 		}
-	
+
 	return 1;
 }
 
@@ -1845,7 +1844,7 @@ int Receive_confused(void)
 
 	return 1;
 }
-	
+
 int Receive_poison(void)
 {
 	int	n;
@@ -1867,7 +1866,7 @@ int Receive_poison(void)
 
 	return 1;
 }
-	
+
 int Receive_study(void)
 {
 	int	n;
@@ -2048,7 +2047,7 @@ int Receive_item(void)
 		{
 			return n;
 		}
-	
+
 	return 1;
 }
 
@@ -2060,7 +2059,7 @@ int Receive_spell_info(void)
 	char	buf[MAX_CHARS];
 	s32b    spells[3];
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld%ld%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%hu%hu%hu%s", &ch, &spells[0], &spells[1], &spells[2], &realm, &book, &line, buf)) <= 0)
 	{
 		return n;
 	}
@@ -2157,7 +2156,7 @@ int Receive_line_info(void)
 	/* If this is the mini-map then we can draw if the screen is icky */
 	if (ch == PKT_MINI_MAP || (!screen_icky && !shopping))
 		draw = TRUE;
-	
+
 	/* Check the max line count */
 	if (y > last_line_info)
 		last_line_info = y;
@@ -2194,9 +2193,9 @@ int Receive_line_info(void)
 		x += n - 1;
 
 		/* hack -- if x > 80, assume we have received corrupted data,
-		 * flush our buffers 
+		 * flush our buffers
 		 */
-		if (x > 80) 
+		if (x > 80)
 		{
 			Sockbuf_clear(&rbuf);
 			Sockbuf_clear(&cbuf);
@@ -2488,7 +2487,7 @@ int Receive_party(void)
 	{
 		return n;
 	}
-	
+
 	/* Copy info */
 	strcpy(party_info_name, pname);
 	strcpy(party_info_members, pmembers);
@@ -2745,7 +2744,7 @@ int Send_drop_gold(s32b amt)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%ld", PKT_DROP_GOLD, amt)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_DROP_GOLD, amt)) <= 0)
 	{
 		return n;
 	}
@@ -3206,7 +3205,7 @@ int Send_ghost(int ability)
 	{
 		return n;
 	}
-	
+
 	return 1;
 }
 
@@ -3314,7 +3313,7 @@ int Send_redraw(char mode)
 	{
 		return n;
 	}
-	
+
 	return 1;
 }
 
@@ -3346,7 +3345,7 @@ int Send_skill_mod(int i)
 {
 	int	n;
 
-	if ((n = Packet_printf(&wbuf, "%c%ld", PKT_SKILL_MOD, i)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_SKILL_MOD, i)) <= 0)
 	{
 		return n;
 	}
@@ -3493,7 +3492,7 @@ int gettimeofday(struct timeval *timenow)
  * Update the current time, which is stored in 100 ms "ticks".
  * I hope that Windows systems have gettimeofday on them by default.
  * If not there should hopefully be some simmilar efficient call with the same
- * functionality. 
+ * functionality.
  * I hope this doesn't prove to be a bottleneck on some systems.  On my linux system
  * calling gettimeofday seems to be very very fast.
  */
@@ -3527,11 +3526,11 @@ void update_ticks()
 
 	/* Assume that it has not been more than one second since this function was last called */
 	if (newticks < ticks) newticks += 10;
-	ticks = newticks;	
+	ticks = newticks;
 }
 
 /* Write a keepalive packet to the output queue if it has been two seconds
- * since we last sent anything.  
+ * since we last sent anything.
  * Note that if the loop that is calling this function doesn't flush the
  * network output before calling this function again very bad things could
  * happen, such as an overflow of our send queue.
