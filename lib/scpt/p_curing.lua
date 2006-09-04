@@ -3,8 +3,8 @@
 function get_healing_power2()
         local pow
         pow = player.mhp * (25 + get_level(Ind, HHEALING, 31)) / 100
-	if pow > get_level(Ind, HHEALING, 400)
-		pow = get_level(Ind, HHEALING, 400)
+	if pow > get_level(Ind, HHEALING, 417) then
+		pow = get_level(Ind, HHEALING, 417)
 	end
         if pow > 400 then
                 pow = 400
