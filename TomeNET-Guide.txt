@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. August 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. August 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -260,7 +260,8 @@ R       R       rest. Your hit points and mana will regenerate faster while
 o       o       open something.
 c       c       close something.
 d       d       drop an item.
-$       $       drop some gold.
+$       $       drop some gold. You can use 'k' and 'm' for thousands or
+                millions, example: 3k -> drops 3000. 2m -> drops 2000000.
 D       D       disarm a trap.
 k       CTRL+D  destroy an item.
 G       G       skills screen.
@@ -440,6 +441,9 @@ They all start with a slash '/':
             Leave a note to the guild you own.
 /bbs <text> Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
+            You can use the /time command to check how old an entry is.
+/time       Tells you the current date and time (of the server, not of your
+            local timezone). Useful to compare with bbs time stamps.
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
@@ -603,8 +607,15 @@ Static      A level that is static will not change if you leave it but stay
             All levels remain static for a short period of time after the
             last player leaves them to prevent scumming.
 Unique      A monster that is named and exists only once (although it can
-            respawn, each player will receive loot only once from it).
+            respawn for another player who hasn't defeated it yet, each player
+            will receive loot only once from it).
             Uniques often have large escorts.
+            Unique monsters will randomly respawn for winners, ie Kings,
+            Queens, Emperors and Empresses. That means: The game will "forget"
+            that you already defeated them, allowing you to defeat them once
+            more. There are some exceptions though, the following monsters
+            will never respawn: The Nazguls, Sauron, Michael, Morgoth, and all
+            super-uniques that come after Morgoth, starting with Tik'srvzllat.
 WoR         Word-Of-Recall (teleports you into the dungeon and back or on the
             world map). See "(0.3) Important inscriptions" for more info.
 Wormy       Wormtongue, Agent of Saruman. He drops great items.
