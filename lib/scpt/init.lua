@@ -36,8 +36,8 @@ pern_dofile(Ind, "dg.lua")
 pern_dofile(Ind, "evil.lua")
 -- pern_dofile(Ind, "zz.lua") -- file isn't there? -the_sandman
 pern_dofile(Ind, "jir.lua")
---pern_dofile(Ind, "it.lua")
---pern_dofile(Ind, "mikaelh.lua")
+pern_dofile(Ind, "it.lua")
+pern_dofile(Ind, "mikaelh.lua")
 
 
 -- Custom scripts that are run automatically - C. Blue
@@ -52,3 +52,6 @@ pern_dofile(Ind, "custom.lua")
 
 -- Restore a good neat handler
 _ALERT = __old_ALERT
+
+-- Seed random number generator - mikaelh
+randomseed(date("%s"))
