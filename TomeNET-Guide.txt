@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. August 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. September 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -3948,7 +3948,7 @@ Tarpaulin           Prevents your inventory from taking water damage on
 Picklock            Improves your disarm ability.
 Money Belt          Prevents thieves from stealing your money.
 Device of theft prevention
-                    Prevents thieves from stealing from you.
+                    Prevents thieves from stealing items from you.
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers.
@@ -5292,11 +5292,12 @@ Rogue
     A rogue's perception is higher than any other class, and usually they
     notice traps or secret doors without needing a search. Rarely will a
     rogue be unable to avoid or disarm a trap. Rogues also have the unique
-    ability to train stealing from his fellow man, a dangerous but sometimes
+    ability to train stealing from his fellow men, a dangerous but sometimes
     very rewarding profession. Rogues are better than warriors or paladins
     with magical devices, but still can not rely on their performance.
-    Rogues can also learn a few spells. A rogue's primary stats are
-    Intelligence and Dexterity. 
+    Rogues can also learn a few spells. When searching for hidden traps and
+    doors, they may spot them more easily, even from a distance!
+    A rogue's primary stats are Intelligence and Dexterity. 
 Mimic
     Mimics can learn how to shapechange and use monsters' forms, thus
     inheriting nearly all of the monster's abilities. Mimics learn forms
@@ -6168,6 +6169,7 @@ Arcane Lore
                     Required skill level for first spell level: 15.
     Call of the Forest
                     Dispels all animals from your line of sight.
+                    Animals have a chance to resist, depending on their level.
                     Required skill level for first spell level: 1.
 Physical Lore
     Forest's Embrace
