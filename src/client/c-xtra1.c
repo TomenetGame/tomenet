@@ -950,7 +950,7 @@ void show_equip(void)
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight)
 		{
-			wgt = o_ptr->weight * o_ptr->number;
+			wgt = o_ptr->weight;//multiplied server-side: * o_ptr->number;
 			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
 			put_str(tmp_val, j + 1, 71);
 			totalwgt += wgt;
