@@ -233,7 +233,7 @@ void prt_sp(int max, int cur)
 
 
         put_str("Cur SP ", ROW_CURSP, COL_CURSP);
-		
+
 	sprintf(tmp, "%5d", cur);
 
 	if (cur >= max)
@@ -404,18 +404,18 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 #if 0
 		if (get_skill(SKILL_STEALTH) <= 10)
 		{
-			strcpy(text, "Searching ");			
+			strcpy(text, "Searching ");
 		}
-		
+
 		else
 		{
 			attr = TERM_L_DARK;
 			strcpy(text,"Stlth Mode");
 		}
 #else
-		strcpy(text, "Searching ");			
+		strcpy(text, "Searching ");
 #endif
-	
+
 	}
 
 	else if (resting)
@@ -597,7 +597,7 @@ void health_redraw(int num, byte attr)
 }
 
 /*
- * Choice window "shadow" of the "show_inven()" function. 
+ * Choice window "shadow" of the "show_inven()" function.
  */
 static void display_inven(void)
 {
@@ -639,7 +639,7 @@ static void display_inven(void)
 
 		/* Display the index (or blank space) */
 		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
-		
+
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
 
@@ -671,7 +671,7 @@ static void display_inven(void)
 
 
 /*
- * Choice window "shadow" of the "show_equip()" function. 
+ * Choice window "shadow" of the "show_equip()" function.
  */
 static void display_equip(void)
 {
@@ -704,7 +704,7 @@ static void display_equip(void)
 
 		/* Display the index (or blank space) */
 		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
-		
+
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
 
@@ -1070,7 +1070,7 @@ static void fix_player(void)
 	}
 }
 
- 
+
 /*
  * Hack -- display recent messages in sub-windows
  *
@@ -1078,7 +1078,7 @@ static void fix_player(void)
  */
 static void fix_message(void)
 {
-        int j, i, k;
+        int j, i;
         int w, h;
         int x, y;
 	bool msgtarget;
@@ -1120,20 +1120,20 @@ static void fix_message(void)
 	                {
 				a = TERM_WHITE;
 				msg = message_str_chat(i);
-	
+
 				/* Display messages in different colors -Zz */
 				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
 					a = TERM_GREEN;
 				} else if (msg[2] == '[') {
 					a = TERM_L_BLUE;
 				}
-	
+
 	                        /* Dump the message on the appropriate line */
 	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
-	
+
 	                        /* Cursor */
 	                        Term_locate(&x, &y);
-	
+
 	                        /* Clear to end of line */
 	                        Term_erase(x, y, 255);
 	                }
@@ -1143,13 +1143,13 @@ static void fix_message(void)
 	                {
 				a = TERM_WHITE;
 				msg = message_str_msgnochat(i);
-	
+
 	                        /* Dump the message on the appropriate line */
 	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
-	
+
 	                        /* Cursor */
 	                        Term_locate(&x, &y);
-	
+
 	                        /* Clear to end of line */
 	                        Term_erase(x, y, 255);
 	                }
@@ -1176,10 +1176,10 @@ static void fix_message(void)
 #endif
 	                        /* Dump the message on the appropriate line */
 	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
-	
+
 	                        /* Cursor */
 	                        Term_locate(&x, &y);
-	
+
 	                        /* Clear to end of line */
 	                        Term_erase(x, y, 255);
 	                }
@@ -1396,7 +1396,7 @@ void display_player(int hist)
 	else
 	{
 		put_str("(Miscellaneous Abilities)", 15, 25);
-		
+
 		/* Display "skills" */
 		put_str("Fighting    :", 16, 1);
 		desc = likert(p_ptr->skill_thn, 120, 0);
@@ -1520,10 +1520,10 @@ void display_player(int hist)
 
 	/* Show location (better description needed XXX) */
 	if (c_cfg.depth_in_feet)
-		put_str(format("You are at %dft of (%d, %d).", p_ptr->wpos.wz * 50, 
+		put_str(format("You are at %dft of (%d, %d).", p_ptr->wpos.wz * 50,
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 	else
-		put_str(format("You are at level %d of (%d, %d).", p_ptr->wpos.wz, 
+		put_str(format("You are at level %d of (%d, %d).", p_ptr->wpos.wz,
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 }
 
@@ -1564,4 +1564,4 @@ void window_stuff(void)
 	}
 }
 
-	
+

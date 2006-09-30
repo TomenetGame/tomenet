@@ -19,6 +19,7 @@ static int get_idx(int i);
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
  */
+#if 0 /* not used - mikaelh */
 static s16b find_skill(cptr name)
 {
 	u16b i;
@@ -33,6 +34,7 @@ static s16b find_skill(cptr name)
 	/* No match found */
 	return (-1);
 }
+#endif
 
 
 /*
@@ -449,10 +451,10 @@ void do_cmd_skill()
 
 	/* Load the screen */
 	Term_load();
-	
+
 	/* XXX test -- redraw when done */
 	if (changed) Send_redraw(1);
-	
+
 	/* Display training messages */
 	Flush_queue();
 }

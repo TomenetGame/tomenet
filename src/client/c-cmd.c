@@ -88,7 +88,7 @@ static void cmd_all_in_one(void)
 				Send_fill(item);
 			}
 			else
-			{ 
+			{
 				Send_wield(item);
 			}
 			break;
@@ -99,7 +99,7 @@ static void cmd_all_in_one(void)
 			Send_fill(item);
 			break;
 		}
-	
+
 		case TV_FOOD:
 		case TV_FIRESTONE:
 		{
@@ -440,13 +440,13 @@ void process_command()
 			break;
 
 		case '&':
-			/* Dungeon master commands, normally only accessible to 
-			 * a valid dungeon master.  These commands only are 
+			/* Dungeon master commands, normally only accessible to
+			 * a valid dungeon master.  These commands only are
 			 * effective for a valid dungeon master.
 			 */
 
 			/*
-			   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master(); 
+			   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master();
 			   else prt("Hit '?' for help.", 0, 0);
 			   */
 			cmd_master();
@@ -631,7 +631,7 @@ void cmd_locate(void)
 
 	/* Done */
 	Send_locate(0);
-	
+
 	/* Clear */
 	c_msg_print(NULL);
 }
@@ -956,7 +956,7 @@ void cmd_aim_wand(void)
 	}
 
 	get_dir(&dir);
-	
+
 	/* Send it */
 	Send_aim(item, dir);
 }
@@ -1089,10 +1089,10 @@ int cmd_target(void)
 			default:
 			{
 				d = keymap_dirs[ch & 0x7F];
-				if (!d) 
+				if (!d)
 				{
-					/* APD exit if not a direction, since 
-					 * the player is probably trying to do 
+					/* APD exit if not a direction, since
+					 * the player is probably trying to do
 					 * something else, like stay alive...
 					 */
 					/* Clear the top line */
@@ -1102,7 +1102,7 @@ int cmd_target(void)
 				else
 				{
 					if (position)
-						Send_target(d + 128);	
+						Send_target(d + 128);
 					else Send_target(d);
 				}
 				break;
@@ -1169,7 +1169,7 @@ void cmd_look(void)
 	}
 }
 
-			
+
 void cmd_character(void)
 {
 	char ch = 0;
@@ -1381,35 +1381,39 @@ void cmd_check_misc(void)
 
 void cmd_message(void)
 {
-	char buf[60];
+	char buf[70];
 	int i;
 
 	buf[0] = '\0';
-	
+
 	inkey_msg = TRUE;
 
-	if (get_string("Message: ", buf, 59)){
+	if (get_string("Message: ", buf, 69))
+	{
 		/* hack - screenshot - mikaelh */
-		if (!strncmp(buf, "/shot", 5) || !strncmp(buf, "/screenshot", 11)) {
-			for (i = 0; i < 60; i++) {
-				if (buf[i] == ' ') {
-					take_screenshot(buf + i + 1);
-					break;
+		if (prefix(buf, "/shot") || prefix(buf, "/screenshot"))
+		{
+			for (i = 0; i < 70; i++)
+			{
+				if (buf[i] == ' ')
+				{
+					html_screenshot(buf + i + 1);
+					return;
 				}
-				if (buf[i] == '\0') {
-					take_screenshot("screenshot.htm");
-					break;
-				}
+				else if (buf[i] == '\0') break;
 			}
+			html_screenshot("screenshotXXXX");
+			return;
 		}
-		else {
-		for(i=0;i<60;i++){
-			if(buf[i]=='{') buf[i]='\377';
+		else
+		{
+			for (i = 0; i < 70; i++) {
+				if (buf[i] == '{') buf[i] = '\377';
+			}
 		}
 		Send_msg(buf);
 	}
-	}
-	
+
 	inkey_msg = FALSE;
 }
 
@@ -1566,7 +1570,7 @@ void cmd_fire(void)
 
 	if (!get_dir(&dir))
 		return;
-	
+
 	/* Send it */
 	Send_fire(dir);
 }
@@ -1729,7 +1733,7 @@ void cmd_purchase_house(void)
 		i=inkey();
 		switch(i){
 			case '1':
-	
+
 				/* Send it */
 				Send_purchase_house(dir);
 				i=ESCAPE;
@@ -1874,7 +1878,7 @@ static void cmd_master_aux_generate_vault(void)
 	while (1)
 	{
 		redo_hack = 0;
-		
+
 		/* Clear screen */
 		Term_clear();
 
@@ -1905,7 +1909,7 @@ static void cmd_master_aux_generate_vault(void)
 			if(!buf[2]) redo_hack = 1;
 			buf[3] = 0;
 		}
-		
+
 		/* Generate by name */
 		else if (i == '2')
 		{
@@ -2059,7 +2063,7 @@ static void cmd_master_aux_build(void)
 				break;
 			case 'a': buf[0] = FEAT_FLOOR; buf[1] = 'F'; break;
 			/* Oops */
-			default : bell(); break;		
+			default : bell(); break;
 		}
 
 		/* If we got a valid command, send it */
@@ -2322,12 +2326,12 @@ static void cmd_master_aux_summon(void)
 		switch (i)
 		{
 			/* orc menu */
-			case '1': 
+			case '1':
 			{
 				/* get the specific kind of orc */
 				race_name = cmd_master_aux_summon_orcs();
 				/* if no string was specified */
-				if (!race_name) 
+				if (!race_name)
 				{
 					redo_hack = 1;
 					break;
@@ -2337,7 +2341,7 @@ static void cmd_master_aux_summon(void)
 				break;
 			}
 			/* low undead menu */
-			case '2': 
+			case '2':
 			{	/* get the specific kind of low undead */
 				race_name = cmd_master_aux_summon_undead_low();
 				/* if no string was specified */
@@ -2350,7 +2354,7 @@ static void cmd_master_aux_summon(void)
 				strcpy(&buf[3], race_name);
 				break;
 			}/* high undead menu */
-			case '3': 
+			case '3':
 			{	/* get the specific kind of low undead */
 				race_name = cmd_master_aux_summon_undead_high();
 				/* if no string was specified */
@@ -2405,16 +2409,16 @@ static void cmd_master_aux_summon(void)
 
 				redo_hack = 1;
 				break;
-			}	
+			}
 
-			
+
 			/* Oops */
 			default : bell(); redo_hack = 1; break;
 		}
 
 		/* get how it should be summoned */
 
-		/* hack -- make sure our method is unset so we only send 
+		/* hack -- make sure our method is unset so we only send
 		 * a monster summon request if we get a valid summoning type
 		 */
 
@@ -2452,7 +2456,7 @@ static void cmd_master_aux_summon(void)
 			switch (i)
 			{
 				/* X here */
-				case '1': 
+				case '1':
 					buf[0] = 'x';
 					buf[1] = c_get_quantity("Summon how many? ", 127);
 					break;
@@ -2502,7 +2506,7 @@ static void cmd_master_aux_player()
 	Term_putstr(5, 9, -1, TERM_WHITE, "(6) Delete player");
 	Term_putstr(5, 10, -1, TERM_WHITE, "(7) Telekinesis");
 	Term_putstr(5, 11, -1, TERM_WHITE, "(8) Broadcast");
-	
+
 	Term_putstr(0, 13, -1, TERM_WHITE, "Command: ");
 
 	while(i!=ESCAPE){
@@ -2612,7 +2616,7 @@ static void cmd_master_aux_system()
 		Term_putstr(5, 7, -1, TERM_WHITE, "(e) Execute script command");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(u) Upload script file");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(c) Execute local script command");
-	
+
 		Term_putstr(0, 12, -1, TERM_WHITE, "Command: ");
 
 		/* Get a key */
@@ -2717,7 +2721,7 @@ static void cmd_master(void)
 			default:
 				bell();
 		}
-		
+
 		/* Flush messages */
 		c_msg_print(NULL);
 	}
@@ -2735,7 +2739,7 @@ static void cmd_master(void)
 void cmd_king()
 {
 	if (!get_check("Do you really want to own this land ?")) return;
-	
+
 	Send_King(KING_OWN);
 }
 

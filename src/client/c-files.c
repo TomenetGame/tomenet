@@ -355,7 +355,7 @@ bool my_freadable(cptr file)
 	fff = my_fopen(file, "r");
 
 	if (fff) return (FALSE);
-	
+
 	my_fclose(fff);
 	return (TRUE);
 }
@@ -982,7 +982,7 @@ void show_motd(int delay)
  */
 void peruse_file(void)
 {
-	char k; 
+	char k;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1256,3 +1256,156 @@ errr file_character(cptr name, bool full)
 	/* Success */
 	return (0);
 }
+
+/*
+ * Make a html screenshot - mikaelh
+ * Some code borrowed from ToME
+ */
+void html_screenshot(cptr name)
+{
+	static cptr color_table[16] =
+	{
+		"#000000",      /* BLACK */
+		"#ffffff",      /* WHITE */
+		"#9d9d9d",      /* GRAY */
+		"#ff8d00",      /* ORANGE */
+		"#b70000",      /* RED */
+		"#009d44",      /* GREEN */
+		"#0000ff",      /* BLUE */
+		"#8d6600",      /* BROWN */
+		"#747474",      /* DARKGRAY */
+		"#d7d7d7",      /* LIGHTGRAY */
+		"#af00ff",      /* PURPLE */
+		"#ffff00",      /* YELLOW */
+		"#ff3030",      /* PINK */
+		"#00ff00",      /* LIGHTGREEN */
+		"#00ffff",      /* LIGHTBLUE */
+		"#c79d55",      /* LIGHTBROWN */
+	};
+	FILE *fp;
+	byte *scr_aa;
+	char *scr_cc;
+	byte cur_attr;
+	int i, x, y;
+	char buf[1024];
+	char real_name[256];
+
+	x = strlen(name) - 4;
+
+	/* Replace "XXXX" in the end with numbers */
+	if (!strcmp("XXXX", &name[x]))
+	{
+		char tmp[5];
+		if (x > 244) x = 244;
+		memcpy(real_name, name, x);
+		strcpy(&real_name[x], "0000.xhtml");
+
+		for (i = 1; i < 10000; i++)
+		{
+			/* Copy the number to the name */
+			sprintf(tmp, "%.4d", i);
+			memcpy(&real_name[x], tmp, 4);
+
+			path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+			/* Check if the file exists */
+			fp = fopen(buf, "r");
+			if (fp)
+			{
+				/* File exists, close and continue */
+				fclose(fp);
+			}
+			else break;
+		}
+		if (i == 10000)
+		{
+			/* Oops */
+			return;
+		}
+	}
+	else
+	{
+		strncpy(real_name, name, 249);
+		real_name[249] = '\0';
+		strcat(real_name, ".xhtml");
+		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+		fp = fopen(buf, "r");
+		if (fp)
+		{
+			char buf2[1028];
+			fclose(fp);
+			strcpy(buf2, buf);
+			strcat(buf2, ".bak");
+			/* Make a backup of an already existing file */
+			rename(buf, buf2);
+		}
+	}
+
+	fp = fopen(buf, "w");
+	if (!fp)
+	{
+		/* Couldn't write */
+		return;
+	}
+
+	x = strlen(real_name);
+	real_name[x - 6] = '\0'; /* Kill the ".xhtml" from the end */
+
+	fprintf(fp, "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
+	             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n"
+	             "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+	             "<head>\n");
+	fprintf(fp, "<meta name=\"GENERATOR\" content=\"TomeNET %d.%d.%d\"/>\n",
+	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	fprintf(fp, "<title>%s</title>\n", real_name);
+	fprintf(fp, "</head>\n"
+	             "<body>\n"
+	             "<pre style=\"color: #ffffff; background-color: #000000; font-family: monospace\">\n");
+
+	cur_attr = Term->scr->a[0][0];
+	fprintf(fp, "<span style=\"color: %s\">", color_table[flick_colour(cur_attr)]);
+
+	for (y = 0; y < Term->hgt; y++)
+	{
+		scr_aa = Term->scr->a[y];
+		scr_cc = Term->scr->c[y];
+		for (x = 0; x < Term->wid; x++)
+		{
+			if (scr_aa[x] != cur_attr)
+			{
+				cur_attr = scr_aa[x];
+				/* right now just pick a random colour for flickering colours
+				 * maybe add some javascript for real flicker later */
+				fprintf(fp, "</span><span style=\"color: %s\">", color_table[flick_colour(cur_attr)]);
+			}
+			switch (scr_cc[x])
+			{
+				case 31: /* Windows client uses ASCII char 31 for paths */
+					fprintf(fp, ".");
+					break;
+				case '&':
+					fprintf(fp, "&amp;");
+					break;
+				case '<':
+					fprintf(fp, "&lt;");
+					break;
+				case '>':
+					fprintf(fp, "&gt;");
+					break;
+				default:
+					fprintf(fp, "%c", scr_cc[x]);
+			}
+		}
+		fprintf(fp, "\n");
+	}
+
+	fprintf(fp, "</span>\n"
+	            "</pre>\n"
+	            "</body>\n"
+	            "</html>\n");
+
+	fclose(fp);
+
+	c_msg_print("Screenshot saved");
+}
+
