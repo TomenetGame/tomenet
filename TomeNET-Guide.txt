@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. September 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. September 2006; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -288,7 +288,7 @@ P               party screen. Form/disband/modify a party with other players
                 within 7 character levels to each other and on the same
                 dungeon/tower level respectively the same worldmap/wilderness
                 sector. See (6.9) for details.
-                For winners (queens/kings/empresses/emperors) the range is 10
+                For winners (queens/kings/empresses/emperors) the range is 11
                 levels instead of 7.
 
 /       in general use an item (combines q,r, etc..).
@@ -555,8 +555,14 @@ resistances or abilities.
 
 (0.4) Typical slang/abbreviations
 ---------------------------------
-Art         Artifact from the a_info.txt file. Also called 'True Art'.
+Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
+            file, also called 'True Arts'. Or they may be 'Randomly generated
+            artifacts' also called 'Randarts'.
             (See (7.4) for more info about spoiler files.)
+            Winners who beat Morgoth, The Lord of Darkness will usually not
+            be able to use static artifacts, but rely on randarts instead.
+            Depending on the server settings, fallen winners might also not be
+            able to use static arts.
 Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
@@ -594,7 +600,9 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
-Randart     Randomly generated artifact.
+Randart     Randomly generated artifact. As opposed to 'Truearts' which are
+            also called 'Static arts' from the file a_info.txt. See 'Art'
+            at the top of this section for more information.
 Res         Resistance.
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
@@ -606,6 +614,8 @@ Static      A level that is static will not change if you leave it but stay
             the same, permanently until it is unstaticed.
             All levels remain static for a short period of time after the
             last player leaves them to prevent scumming.
+Static Art  See 'Art' at the top of this section.
+True Art    See 'Art' at the top of this section.
 Unique      A monster that is named and exists only once (although it can
             respawn for another player who hasn't defeated it yet, each player
             will receive loot only once from it).
@@ -7157,6 +7167,10 @@ Light sources
      a) winners (Queens/Kings/Empresses/Emperors)
      b) players whose current level is at least as high as the item level
         (even if they are the rightful owner of the randart).
+     c) if the server as the 'Fallen Kings Etiquette' enabled, meaning that
+        players who won once but then died cannot use static artifacts either,
+        then they will be able to find and use +LIFE randarts if they are at
+        least level 50!
 
 
 General mods:
