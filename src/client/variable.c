@@ -121,7 +121,6 @@ s16b race;
 s16b class;
 s16b sex;
 s16b mode;
-s16b client;
 
 s16b stat_order[6];			/* Desired order of stats */
 
@@ -155,7 +154,7 @@ bool use_sound;
 
 client_opts c_cfg;
 
-
+byte client_mode = CLIENT_NORMAL;
 
 u32b cfg_game_port = 18348; 
 

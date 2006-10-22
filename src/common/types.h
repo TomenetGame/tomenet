@@ -2337,7 +2337,6 @@ struct player_type
 	s32b blood_bond; /* Norc is now happy :) */
 
 	byte mode; /* Difficulty MODE */
-	byte client_type; /* Used to have client do different things */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;

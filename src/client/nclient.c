@@ -262,6 +262,7 @@ void Receive_login(void)
 	if (sflag0 & 0x1) s_RPG = TRUE;
 	if (sflag0 & 0x2) s_FUN = TRUE;
 	if (sflag0 & 0x3) s_PARTY = TRUE;
+	client_mode = sflag1;
 
 	Term_clear();
 
@@ -1400,7 +1401,7 @@ int Receive_char_info(void)
 	/* Clear any old info */
 	race = class = sex = mode = client = 0;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode, &client)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0)
 	{
 		return n;
 	}
@@ -1411,7 +1412,6 @@ int Receive_char_info(void)
         p_ptr->cp_ptr = &class_info[class];
 	p_ptr->male = sex;
 	p_ptr->mode = mode;
-	p_ptr->client_type = client;
 
 	/* Load preferences */
 	initialize_player_pref_files();

@@ -267,7 +267,6 @@ struct player_type
 
 	byte prace;			/* Race index */
 	byte pclass;		/* Class index */
-	byte client_type;		/* Client type */
 	byte male;			/* Sex of character */
 	byte oops;			/* Unused */
 

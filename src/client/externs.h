@@ -212,6 +212,7 @@ extern bool use_sound;
 
 extern client_opts c_cfg;
 
+extern byte client_mode;
 
 extern u32b cfg_game_port;
 

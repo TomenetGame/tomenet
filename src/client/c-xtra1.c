@@ -81,7 +81,7 @@ void cnv_stat(int val, char *out_val)
  */
 void prt_stat(int stat, int max, int cur, int cur_base)
 {
-	if (p_ptr->client_type == CLIENT_PARTY)
+	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
@@ -178,7 +178,7 @@ void prt_gold(int gold)
  */
 void prt_ac(int ac)
 {	
-	if (p_ptr->client_type == CLIENT_PARTY)
+	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
@@ -198,7 +198,7 @@ void prt_hp(int max, int cur)
 	char tmp[32];
 	byte color;
 
-	if (p_ptr->client_type == CLIENT_PARTY)
+	if (client_mode == CLIENT_PARTY)
 	{
 		color = TERM_L_RED;
 		sprintf(tmp, "HP: %4d ", max);
@@ -259,7 +259,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 		rowspacing += (4 * member_num);
 	}
 	
-	if (p_ptr->client_type != CLIENT_PARTY)
+	if (client_mode != CLIENT_PARTY)
 	{
 		return;
 	}
@@ -329,7 +329,7 @@ void prt_sp(int max, int cur)
 	char tmp[32];
 	byte color;
 
-	if (p_ptr->client_type == CLIENT_PARTY)
+	if (client_mode == CLIENT_PARTY)
 	{
 		sprintf(tmp, "SP: %4d ", max);
 		color = TERM_L_BLUE;
@@ -389,7 +389,7 @@ void prt_sp(int max, int cur)
  */
 void prt_sane(byte attr, cptr buf)
 {
-	if (p_ptr->client_type == CLIENT_PARTY)
+	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
