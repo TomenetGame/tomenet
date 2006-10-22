@@ -725,7 +725,7 @@ void do_cmd_wield(int Ind, int item)
 
 	/*** Could make procedure "inven_wield()" ***/
 #if 1
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_LIFE) && (tmp_obj.tval == TV_AMULET) && (tmp_obj.sval == SV_AMULET_LIFE))
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_INVINCIBILITY) && (tmp_obj.tval == TV_AMULET) && (tmp_obj.sval == SV_AMULET_HIGHLANDS))
 	  {
 	    o_ptr->pval += tmp_obj.pval;
 	  }

@@ -4632,7 +4632,7 @@ void player_death(int Ind)
         if (o_ptr->k_idx)
         {
             if (o_ptr->tval == TV_AMULET &&
-                o_ptr->sval == SV_AMULET_IMMORTALITY)
+                o_ptr->sval == SV_AMULET_INVINCIBILITY)
 	        return;
         }
 

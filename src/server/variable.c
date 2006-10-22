@@ -181,7 +181,7 @@ server_opts cfg =
 
 	FALSE,		// mage_hp_bonus
 	7,FALSE,0,5,	// door_bump_open, no_ghost, lifes (0 = infinite), maxhouses = 50/_houses_per_player_,
-	TRUE,TRUE,	// maximize, kings_etiquette
+	TRUE,TRUE,TRUE,	// maximize, kings_etiquette, fallenkings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
 	FALSE,2,0,	// log_u, replace_hiscore, unikill_format

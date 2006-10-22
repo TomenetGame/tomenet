@@ -6353,7 +6353,7 @@ static void process_monster(int Ind, int m_idx)
 			/* Don't attack your master! Invincible players can't be atacked! */
 			if ((q_ptr && m_ptr->owner != q_ptr->id) &&
 			    !((q_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-			    (q_ptr->inventory[INVEN_NECK].sval == SV_AMULET_IMMORTALITY)))
+			    (q_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)))
 			{
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
@@ -7383,7 +7383,7 @@ void process_monsters(void)
 			
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			if ((p_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_IMMORTALITY))
+			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY))
 				continue;
 
 			/* Remember this player */ 

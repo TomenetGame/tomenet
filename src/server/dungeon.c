@@ -2413,7 +2413,7 @@ static bool process_player_end_aux(int Ind)
         if (o_ptr->k_idx)
         {
             if (o_ptr->tval == TV_AMULET &&
-                o_ptr->sval == SV_AMULET_IMMORTALITY)
+                o_ptr->sval == SV_AMULET_INVINCIBILITY)
 		p_ptr->food = PY_FOOD_MAX - 1;
 	}
 

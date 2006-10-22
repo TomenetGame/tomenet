@@ -1149,7 +1149,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
         if (o_ptr->k_idx)
 	{
 	    if (o_ptr->tval == TV_AMULET &&
-        	o_ptr->sval == SV_AMULET_IMMORTALITY)
+        	o_ptr->sval == SV_AMULET_INVINCIBILITY)
 		return;
 	}
 
