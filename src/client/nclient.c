@@ -261,7 +261,7 @@ void Receive_login(void)
 	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
 	if (sflag0 & 0x1) s_RPG = TRUE;
 	if (sflag0 & 0x2) s_FUN = TRUE;
-	if (sflag0 & 0x3) s_PARTY = TRUE;
+	if (sflag0 & 0x4) s_PARTY = TRUE;
 	client_mode = sflag1;
 
 	Term_clear();
