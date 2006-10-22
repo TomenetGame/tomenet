@@ -1399,7 +1399,7 @@ int Receive_char_info(void)
 	char	ch;
 
 	/* Clear any old info */
-	race = class = sex = mode = client = 0;
+	race = class = sex = mode = 0;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0)
 	{
