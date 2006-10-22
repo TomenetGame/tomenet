@@ -121,6 +121,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_FLOOR]		= Receive_floor;
 	receive_tbl[PKT_PICKUP_CHECK]	= Receive_pickup_check;
 	receive_tbl[PKT_PARTY]		= Receive_party;
+	receive_tbl[PKT_PARTY_STATS]	= Receive_party_stats;
 	receive_tbl[PKT_SKILLS]		= Receive_skills;
 	receive_tbl[PKT_PAUSE]		= Receive_pause;
 	receive_tbl[PKT_MONSTER_HEALTH]	= Receive_monster_health;
@@ -256,10 +257,11 @@ void Receive_login(void)
 
 	/* Read server detail flags for informational purpose - C. Blue */
 	s32b sflag3, sflag2, sflag1, sflag0;
-	bool s_RPG = FALSE, s_FUN = FALSE;
+	bool s_RPG = FALSE, s_FUN = FALSE, s_PARTY = FALSE;
 	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
 	if (sflag0 & 0x1) s_RPG = TRUE;
 	if (sflag0 & 0x2) s_FUN = TRUE;
+	if (sflag0 & 0x3) s_PARTY = TRUE;
 
 	Term_clear();
 
@@ -268,6 +270,7 @@ void Receive_login(void)
 		max_cpa = 1;
 	}
 	if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
+	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
 
 	c_put_str(TERM_L_BLUE, "Character Overview", 0, 30);
 	if (!s_RPG)
@@ -1395,9 +1398,9 @@ int Receive_char_info(void)
 	char	ch;
 
 	/* Clear any old info */
-	race = class = sex = mode = 0;
+	race = class = sex = mode = client = 0;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode, &client)) <= 0)
 	{
 		return n;
 	}
@@ -1408,6 +1411,7 @@ int Receive_char_info(void)
         p_ptr->cp_ptr = &class_info[class];
 	p_ptr->male = sex;
 	p_ptr->mode = mode;
+	p_ptr->client_type = client;
 
 	/* Load preferences */
 	initialize_player_pref_files();
@@ -2472,6 +2476,24 @@ int Receive_pickup_check(void)
 	{
 		/* Pick it up */
 		Send_stay();
+	}
+
+	return 1;
+}
+
+
+int Receive_party_stats(void)
+{
+	int n,j,k,chp, mhp, csp, msp, color;
+	char ch, partymembername[90];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%s%d%d%d%d%d", &ch, &j, &color, &partymembername, &k, &chp, &mhp, &csp, &msp)) <= 0)
+	{
+		return n;
+	}
+
+	if (!screen_icky && !shopping) {
+		prt_party_stats(j,color,partymembername,k,chp,mhp,csp,msp);
 	}
 
 	return 1;

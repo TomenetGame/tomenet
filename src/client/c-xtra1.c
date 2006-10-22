@@ -81,6 +81,11 @@ void cnv_stat(int val, char *out_val)
  */
 void prt_stat(int stat, int max, int cur, int cur_base)
 {
+	if (p_ptr->client_type == CLIENT_PARTY)
+	{
+		return;
+	}
+
 	char tmp[32];
 
 	if (cur < max)
@@ -172,7 +177,12 @@ void prt_gold(int gold)
  * Prints current AC
  */
 void prt_ac(int ac)
-{
+{	
+	if (p_ptr->client_type == CLIENT_PARTY)
+	{
+		return;
+	}
+	
 	char tmp[32];
 
 	put_str("Cur AC ", ROW_AC, COL_AC);
@@ -188,23 +198,95 @@ void prt_hp(int max, int cur)
 	char tmp[32];
 	byte color;
 
-	put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
-
-	sprintf(tmp, "%5d", max);
-	color = TERM_L_GREEN;
-
-	c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP + 7);
-
-
-	put_str("Cur HP ", ROW_CURHP, COL_CURHP);
-
-	sprintf(tmp, "%5d", cur);
-
-	if (cur >= max)
+	if (p_ptr->client_type == CLIENT_PARTY)
 	{
-		color = TERM_L_GREEN;
+		color = TERM_L_RED;
+		sprintf(tmp, "HP: %4d ", max);
+		c_put_str(color, tmp, CLIENT_PARTY_ROWHP, CLIENT_PARTY_COLHP);
+
+		sprintf(tmp, "%4d", cur);
+
+		if (cur >= max)
+		{
+			color = TERM_L_RED;
+		}
+		else if (cur > max / 10)
+		{
+			color = TERM_YELLOW;
+		}
+		else
+		{
+			color = TERM_RED;
+		}
+		c_put_str(color, tmp, CLIENT_PARTY_ROWHP, CLIENT_PARTY_COLHP + 9);
 	}
-	else if (cur > max / 10)
+	/* DEG Default to else since only 2 types for now */
+	else
+	{
+		put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
+		sprintf(tmp, "%5d", max);
+		color = TERM_L_GREEN;
+		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP + 7);
+
+		put_str("Cur HP ", ROW_CURHP, COL_CURHP);
+
+		sprintf(tmp, "%5d", cur);
+
+		if (cur >= max)
+		{
+			color = TERM_L_GREEN;
+		}
+		else if (cur > max / 10)
+		{
+			color = TERM_YELLOW;
+		}
+		else
+		{
+			color = TERM_RED;
+		}
+	
+		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
+	}
+}
+/* DEG print party members hps to screen */
+void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp)
+{
+	char tmp[32];
+	int rowspacing = 0;
+
+	if (member_num != 0)
+	{
+		rowspacing += (4 * member_num);
+	}
+	
+	if (p_ptr->client_type != CLIENT_PARTY)
+	{
+		return;
+	}
+
+	if (member_name[0] == '\0' && member_lev == 0) {
+		/* Empty member? Just clear it - mikaelh */
+		int i;
+		for (i = CLIENT_PARTY_ROWMBR + rowspacing; i < CLIENT_PARTY_ROWMBR + rowspacing + 3; i++) {
+			Term_erase(0, i, 12);
+		}
+		return;
+	}
+
+	sprintf(tmp, "%s", member_name);
+	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing) ,CLIENT_PARTY_COLMBR);
+		
+	sprintf(tmp, "HP: %4d ", member_mhp);
+	color = TERM_L_RED;
+	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 1) ,CLIENT_PARTY_COLMBR);
+	
+	sprintf(tmp, "%4d", member_chp);
+
+	if (member_chp >= member_mhp)
+	{
+		color = TERM_L_RED;
+	}
+	else if (member_chp > member_mhp / 10)
 	{
 		color = TERM_YELLOW;
 	}
@@ -213,8 +295,31 @@ void prt_hp(int max, int cur)
 		color = TERM_RED;
 	}
 
-	c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
+	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 1) ,CLIENT_PARTY_COLMBR + 9);
+
+
+	sprintf(tmp, "SP: %4d ", member_msp);
+	color = TERM_L_BLUE;
+	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 2) , CLIENT_PARTY_COLMBR + 0);
+
+	sprintf(tmp, "%4d", member_csp);
+
+	if (member_csp >= member_msp)
+	{
+		color = TERM_L_BLUE; 
+	}
+	else if (member_csp > member_msp / 10)
+	{
+		color = TERM_YELLOW;
+	}
+	else
+	{
+		color = TERM_RED;
+	}
+
+	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 2) , CLIENT_PARTY_COLMBR + 9);
 }
+
 
 /*
  * Prints Max/Cur spell points
@@ -224,32 +329,59 @@ void prt_sp(int max, int cur)
 	char tmp[32];
 	byte color;
 
-        put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
-
-	sprintf(tmp, "%5d", max);
-	color = TERM_L_GREEN;
-
-	c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 7);
-
-
-        put_str("Cur SP ", ROW_CURSP, COL_CURSP);
-
-	sprintf(tmp, "%5d", cur);
-
-	if (cur >= max)
+	if (p_ptr->client_type == CLIENT_PARTY)
 	{
+		sprintf(tmp, "SP: %4d ", max);
+		color = TERM_L_BLUE;
+		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP);
+
+		sprintf(tmp, "%4d", cur);
 		color = TERM_L_GREEN;
-	}
-	else if (cur > max / 10)
-	{
-		color = TERM_YELLOW;
-	}
-	else
-	{
-		color = TERM_RED;
-	}
 
-	c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
+		if (cur >= max)
+		{
+			color = TERM_L_BLUE;
+		}
+		else if (cur > max / 10)
+		{
+			color = TERM_YELLOW;
+		}
+		else
+		{
+			color = TERM_RED;
+		}
+
+		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP + 9);
+	}
+	else 
+	{
+		put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
+
+		sprintf(tmp, "%5d", max);
+		color = TERM_L_GREEN;
+
+		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 7);
+
+
+		put_str("Cur SP ", ROW_CURSP, COL_CURSP);
+
+		sprintf(tmp, "%5d", cur);
+
+		if (cur >= max)
+		{
+			color = TERM_L_GREEN;
+		}
+		else if (cur > max / 10)
+		{
+			color = TERM_YELLOW;
+		}
+		else
+		{
+			color = TERM_RED;
+		}
+
+		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
+	}
 }
 
 /*
@@ -257,6 +389,12 @@ void prt_sp(int max, int cur)
  */
 void prt_sane(byte attr, cptr buf)
 {
+	if (p_ptr->client_type == CLIENT_PARTY)
+	{
+		return;
+	}
+
+
 #ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
 
   put_str("SN:         ", ROW_SANITY, COL_SANITY);

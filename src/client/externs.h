@@ -180,6 +180,8 @@ extern s16b class;
 extern s16b sex;
 extern s16b mode;
 
+/* DEG Stuff for new party client */
+extern s16b client;
 extern s16b class_extra;
 
 extern s16b stat_order[6];
@@ -397,6 +399,7 @@ extern void prt_level(int level, s32b max, s32b cur, s32b adv);
 extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
+extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
 extern void prt_sp(int max, int cur);
 extern void prt_depth(int x, int y, int z, bool town, int recall, cptr buf);
 extern void prt_hunger(int food);

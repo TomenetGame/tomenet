@@ -418,7 +418,7 @@
 /* Limit value for Anti-magic fields (AM cap)
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */
-#define ANTIMAGIC_CAP		80
+#define ANTIMAGIC_CAP		75
 
 /* Limit effectiveness of interception/martial arts,
    Should range from 75%..80%. - C. Blue */
@@ -851,7 +851,6 @@
 #define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-//#define RACE_HATCHLING  14
 /* (or simply replace all those defines with p_info.txt) */
 
 /*
@@ -898,6 +897,16 @@
  * Currently, row 8 and 15 are the only "blank" rows.
  * That leaves a "border" around the "stat" values.
  */
+
+/* DEG PARTY Client defines */
+#define CLIENT_PARTY_ROWHP      8
+#define CLIENT_PARTY_COLHP      0
+
+#define CLIENT_PARTY_ROWSP      9
+#define CLIENT_PARTY_COLSP      0
+
+#define CLIENT_PARTY_ROWMBR     11
+#define CLIENT_PARTY_COLMBR     0
 
 #define ROW_RACE		1
 #define COL_RACE		0	/* <race name> */
@@ -1582,6 +1591,7 @@ that keeps many algorithms happy.
 #define EGO_MORGUL		103
 #define EGO_NOTHINGNESS		104
 #define EGO_ACCURACY		105
+#define EGO_VELOCITY		106
 #define EGO_EXTRA_MIGHT		107
 #define EGO_EXTRA_SHOTS		108
 #define EGO_LORIEN              109
@@ -1754,6 +1764,7 @@ that keeps many algorithms happy.
 #define SV_RUNE1_BEAM   2
 #define SV_RUNE1_BALL   3
 #define SV_RUNE1_CLOUD  4
+#define SV_RUNE1_SELF	5
 
 //Here are the modifiers (k_info.txt)
 //BASIC
@@ -1766,9 +1777,13 @@ that keeps many algorithms happy.
 //INTERMEDIATE -- more to add...
 #define SV_RUNE2_GRAV	11
 #define SV_RUNE2_WATER	12
+#define SV_RUNE2_DARK	13
+#define SV_RUNE2_LITE	14
+#define SV_RUNE2_STONE	15
+
 
 //ADVANCE -- more to add...
-#define SV_RUNE2_ROCKET 21
+#define SV_RUNE2_ARMAGEDDON 16
 
 #define TV_BOOK         111
 #if 0   /* (reserved) we'll use TomeNET books :) */
@@ -1835,12 +1850,10 @@ that keeps many algorithms happy.
 #define SV_PAIR_OF_WITAN_BOOTS          8
 #define SV_AMULET_TERKEN		30
 #define SV_AMULET_SPEED			31
-#define SV_AMULET_LIFE                  32	/* For highlander games only */
 #define SV_AMULET_THE_MOON              33
 #define SV_AMULET_RAGE			34
 #define SV_AMULET_LIFE_SAVING		35
 #define SV_AMULET_MANA_CHARGING		36
-#define SV_AMULET_IMMORTALITY		37	/* For admins only */
 
 /*
  * Special "sval" limit -- first "normal" food
@@ -2066,6 +2079,7 @@ that keeps many algorithms happy.
 #define SV_STONE_AND_HIDE_ARMOR         15  /* 15 */
 #define SV_DRAGONRIDER_SUIT             16
 #define SV_WYVERNHIDE_ARMOR             17
+#define SV_SHIRT             		18
 
 /* The "sval" codes for TV_HARD_ARMOR */
 #define SV_RUSTY_CHAIN_MAIL              1  /* 14- */
@@ -2148,6 +2162,8 @@ that keeps many algorithms happy.
 #define SV_AMULET_WEAPONMASTERY         24
 #define SV_AMULET_WISDOM                28
 #define SV_AMULET_INFRA                 26
+#define SV_AMULET_HIGHLANDS             32	/* for highlander games */
+#define SV_AMULET_INVINCIBILITY		37	/* for admins */
 #define SV_AMULET_GROM			38
 #define SV_AMULET_LUCK			39	/* Talisman */
 
@@ -2414,6 +2430,12 @@ that keeps many algorithms happy.
 /* more stuff - C. Blue */
 #define SV_SCROLL_CONJURE_MONSTER       64
 #define SV_SCROLL_SLEEPING       	65
+/* DEG Stuff to make game more party friendly */
+#define SV_SCROLL_TELEPORT_TO_PARTY   	66
+#define SV_SCROLL_STAR_TELEPORT_TO_PARTY   	67
+#define SV_SCROLL_PARTY_RECALL   	68
+#define SV_SCROLL_EMERGENCY_RECALL   	69
+#define SV_SCROLL_EMERGENCY_PARTY_RECALL	70
 
 
 /* The "sval" codes for TV_POTION */
@@ -2454,10 +2476,10 @@ that keeps many algorithms happy.
 #define SV_POTION_CURE_LIGHT            34
 #define SV_POTION_CURE_SERIOUS          35
 #define SV_POTION_CURE_CRITICAL         36
-#define SV_POTION_HEALING               37
-#define SV_POTION_STAR_HEALING          38
+#define SV_POTION_STAR_HEALING          37
+#define SV_POTION_HEALING               38
 #define SV_POTION_LIFE                  39
-#define SV_POTION_RESTORE_MANA          40
+#define SV_POTION_STAR_RESTORE_MANA     40
 #define SV_POTION_RESTORE_EXP           41
 #define SV_POTION_RES_STR               42
 #define SV_POTION_RES_INT               43
@@ -2481,7 +2503,7 @@ that keeps many algorithms happy.
 #define SV_POTION_CURING                61
 #define SV_POTION_INVULNERABILITY       62
 #define SV_POTION_NEW_LIFE              63
-#define SV_POTION_STAR_RESTORE_MANA	64
+#define SV_POTION_RESTORE_MANA          64
 
 #define SV_POTION_LAST                  64
 
@@ -2620,6 +2642,7 @@ that keeps many algorithms happy.
 
 /* Field 'remembers' if it belongs to a perma-wall vault or normal vault */
 #define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
+#define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
@@ -2784,6 +2807,7 @@ that keeps many algorithms happy.
 #define PR_WIPE		0x08000000L	/* Hack -- Total Redraw */
 #define PR_SKILLS	0x10000000L	/* Display Skills */
 #define PR_SANITY	0x20000000L     /* Display Sanity */
+#define PR_ENCUMBERMENT	0x40000000L	/* Display Encumberment status line */
 /* xxx */
 /* xxx */
 /* xxx */
@@ -3985,6 +4009,18 @@ that keeps many algorithms happy.
 #define FF1_TUNNELABLE          0x00008000L
 #define FF1_WEB                 0x00010000L
 #define FF1_ATTR_MULTI          0x00020000L
+#define FF1_SLOW_RUNNING_1	0x00040000L	/* half speed */
+#define FF1_SLOW_RUNNING_2	0x00080000L	/* quarter speed */
+#define FF1_SLOW_FLYING_1	0x00040000L
+#define FF1_SLOW_FLYING_2	0x00080000L
+#define FF1_SLOW_CLIMBING_1	0x00100000L
+#define FF1_SLOW_CLIMBING_2	0x00200000L
+#define FF1_SLOW_WALKING_1	0x00400000L
+#define FF1_SLOW_WALKING_2	0x00800000L
+#define FF1_SLOW_SWIMMING_1	0x01000000L
+#define FF1_SLOW_SWIMMING_2	0x02000000L
+#define FF1_PROTECTED		0x04000000L	/* monsters cannot teleport to nor spawn on this grid */
+//#define FF1_BLOCK_LOS		0x08000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 
 
 /*** Dungeon type flags -- DG ***/
@@ -4512,6 +4548,20 @@ that keeps many algorithms happy.
 #define cave_floor_bold(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
 
+/* #define cave_std_los(ZCAVE,Y,X) \
+	(!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)) */
+
+/*
+ * Determine if a "legal" grid is a "floor" grid or a passable grid
+ * due to special abilities of a player, making it same to floor grid. (for run_test())
+ * (NEW_RUNNING_FEAT)
+ */
+#define cave_running_bold(p_ptr,ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
+	((ZCAVE[Y][X].feat == 92 || ZCAVE[Y][X].feat == 96 || ZCAVE[Y][X].feat == 202) && p_ptr->pass_trees) || \
+	((ZCAVE[Y][X].feat == 84 || ZCAVE[Y][X].feat == 103 || ZCAVE[Y][X].feat == 174 || ZCAVE[Y][X].feat == 187) && p_ptr->can_swim))
+
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
     (cave_mountain_bold(ZCAVE,Y,X) && \
@@ -4830,6 +4880,9 @@ extern int PlayerUID;
 #define BRAND_BALL_ACID     11
 #define BRAND_BALL_SOUND    12
 
+/* e */
+#define CLIENT_NORMAL		0x0000
+#define CLIENT_PARTY		0x0001
 
 /* Diff mode */
 #define MODE_NORMAL		0x0000
@@ -5483,6 +5536,7 @@ extern int PlayerUID;
 #define STORE_HOME      7
 #define STORE_BOOK      8
 #define STORE_PET       9
+#define STORE_RUNE	STORE_PET /* Using this space for now */
 #define STORE_JEWELX	42
 #define STORE_SHOESX	45
 #define STORE_BLACKX	48
@@ -5665,23 +5719,32 @@ extern int PlayerUID;
 	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
 	(plv >= 45 && (ridx == 723 || ridx == 704 || ridx == 716)) || \
 	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 782)))
+/* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
+#define mimic_vampire(ridx, plv)	\
+	(plv >= 20 && ridx == 391)
+//	add vampiric mist at higher level or something
+
 #define mimic_hatchling(ridx)	\
 	((r_info[ridx].flags3 & (RF3_DRAGON))
+
 
 /* for global_event - C. Blue */
 #define MAX_GLOBAL_EVENTS	16
 #define MAX_GE_PARTICIPANTS	64
+/* types of global events: */
+#define GE_NONE			0	/* <disabled> ie no event running */
+#define GE_HIGHLANDER		1	/* Highlander Tournament */
+#define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
 
 /* Here comes the new rune master macros and what not */
 #ifdef CLASS_RUNEMASTER
-#warning: RUNE MASTERY ENABLED
 /* Here is how the rune spell damage gets calculated... 
  * I'll try to keep the latest table of dmg values updated @ 
  *    http://72.58.254.71/meow/rune_damage.txt
  */
-#define rbolt_dmg(x) damroll(1 + (x), 1 + (x))
-#define rbeam_dmg(x) damroll(1 + (x), 1 + (x)*2/3)
-#define rball_dmg(x) damroll(1 + (x), 1 + (x)*2/3)
+#define rbolt_dmg(x) (3 + damroll(1 + (x), 1 + (x)/2))
+#define rbeam_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
+#define rball_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
 
 // Halved dmg/sp if runemastery < 25
 #define ALTERNATE_DMG	
@@ -5724,11 +5787,11 @@ extern int PlayerUID;
  * TODO: Add the rune breakage code, add the AM field check too.
  * TODO: Let some badass mob (Tik?) drop the clouding rune (and only him!)
  */
-#define RUNE_DMG (p_ptr->lev + 1)/2 + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25)
+#define RUNE_DMG ((p_ptr->lev + 1)/2 + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25))
 
 /* The folowing are the basic SP usage multipler for the modifier runes */
 #define RBASIC_COST 	1 /* At lvl 50, this costs 1*50 */
-#define RMEDIUM_COST 	3 /* At lvl 50, this costs 3*50 */
+#define RMEDIUM_COST 	2 /* At lvl 50, this costs 2*50 */
 #define RADVANCE_COST 	5 /* At lvl 50, this costs OMG, 250?! =) */
 
 /* The following are the SP usage multiplier
@@ -5758,4 +5821,5 @@ extern int PlayerUID;
 #define RBEAM_BASE 	2
 #define RBALL_BASE 	3
 #define RCLOUD_BASE 	5
+#define RSELF_BASE	1
 #endif //Runemaster

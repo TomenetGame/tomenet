@@ -540,7 +540,7 @@ struct monster_race
 
 	/*byte r_xtra1;			changed to time for japanese patch APD Something (unused)
 	  byte r_xtra2;                    Something (unused) */
-
+	  
 	s32b respawn_timer;			/* The amount of time until the unique respawns */
 
 	byte r_drop_gold;		/* Max number of gold dropped at once */
@@ -850,9 +850,9 @@ struct npc_type{
 
         s32b exp;                       /* Experience of the monster */
         s16b level;                     /* Level of the monster */
-
+	
 	s16b energy;		/* Monster "energy" */
-
+	
 	byte stunned;		/* Monster is stunned */
 	byte confused;		/* Monster is confused */
 	byte monfear;		/* Monster is afraid */
@@ -1591,7 +1591,7 @@ typedef struct house_type house_type;
 
 /*
 In order to delete the contents of a house after its key is lost,
-added x_1, y_1, x_2, y_2, which are the locations of the opposite
+added x_1, y_1, x_2, y_2, which are the locations of the opposite 
 corners of the house.
 -APD-
 */
@@ -1648,7 +1648,7 @@ struct dna_type{
 
 /* evileye - work in progress */
 struct key_type{
-	u16b id;		/* key pval */
+	u16b id;		/* key pval */	
 };
 
 struct floor_insc{
@@ -1830,7 +1830,7 @@ struct player_type
 
         skill_player s_info[MAX_SKILLS]; /* Player skills */
         s16b skill_points;      /* number of skills assignable */
-
+	
 	s16b class_extra;	/* Class extra info */
 
 	byte hitdie;		/* Hit dice (sides) */
@@ -2022,7 +2022,7 @@ struct player_type
 
 				/* What he should be seeing */
 	cave_view_type scr_info[SCREEN_HGT + 20][SCREEN_WID + 24];
-
+	
 	s32b mimic_seed;	/* seed for random mimic immunities etc. */
 
 	char died_from[80];	/* What off-ed him */
@@ -2031,6 +2031,7 @@ struct player_type
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
+	u16b once_winner;	/* Has this guy ever been a winner */
 	struct worldpos own1, own2;	/* IF we are a king what do we own ? */
 	u16b retire_timer;	/* The number of minutes this guy can play until
 				   he will be forcibly retired.
@@ -2069,6 +2070,8 @@ struct player_type
 	s16b current_star_identify;
 	s16b current_recharge;
 	s16b current_rune_dir; /* Current rune spell direction */
+	s16b current_rune1; /* Current rune1 index in bag */
+	s16b current_rune2; /* Current rune2 index in bag */
   s16b current_artifact;
   object_type *current_telekinesis;
 	s16b current_curse;
@@ -2280,7 +2283,7 @@ struct player_type
 	bool impact;		/* Earthquake blows */
         bool auto_id; /* Pickup = Id */
 	bool reduce_insanity;	/* For mimic forms with weird/empty mind */
-
+	
 	s16b invis;		/* Invisibility */
 
 	s16b dis_to_h;		/* Known bonus to hit */
@@ -2323,17 +2326,18 @@ struct player_type
 	byte tval_ammo;		/* Correct ammo tval */
 
 	s16b pspeed;		/* Current speed */
-
+	
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
-
+	
 	bool anti_magic;	/* Can the player resist magic */
 
 	s32b blood_bond; /* Norc is now happy :) */
 
 	byte mode; /* Difficulty MODE */
+	byte client_type; /* Used to have client do different things */
 
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;
@@ -2381,7 +2385,7 @@ struct player_type
 	bool fly;               /* Can fly over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
-
+	
 	int luck_cur;	/* Extra luck of this player */
 
 	/*        byte anti_magic_spell;    *//* Anti-magic(newer one..) */
@@ -2406,6 +2410,7 @@ struct player_type
 	s16b extra_blows;		/* Number of extra blows */
 
 	s16b to_l;                      /* Bonus to life */
+	s32b to_hp;                      /* Bonus to Hit Points */
 	s16b to_m;                      /* Bonus to mana */
 	/*        s16b to_s; */                     /* Bonus to spell(num_spell) */
 	s16b dodge_chance;		/* Chance of dodging blows/missiles */
@@ -2413,6 +2418,7 @@ struct player_type
 	s32b balance;		/* Deposit/debt */
 	s32b tim_blacklist;		/* Player is on the 'Black List' (he gets penalties in shops) */
 	s32b tim_watchlist;		/* Player is on the 'Watch List' (he may not steal) */
+	s32b pstealing;			/* Player has just tried to steal from another player. Cooldown timer. */
 	int ret_dam;                    /* Drained life from a monster */
 	char attacker[80];		/* Monster doing a ranged attack on the player */
 #if 0
@@ -2435,38 +2441,33 @@ struct player_type
 
 	/* evileye games */
 	s16b team;			/* what team */
-
+	
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
-
+	
 	/* Anti-cheeze */
 	s16b supported_by;		/* level of the highest supporter */
 	s16b support_timer;		/* safe maximum possible duration of the support spells */
 
 	/* any automatic savegame update to perform? (toggle) */
 	byte updated_savegame;
-
-	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
-	s16b corner_turn;
-
-	/* automatic (scripted) transport sequences */
-	byte auto_transport;
-
-	/* Player being paged by others? (Beep counter) */
-	byte paging;
-
-	/* Ignoring normal chat? (Will only see private & party messages then) */
-	bool ignoring_chat;
-
-	/* Being an ass? - the_sandman */
-	bool muted;
-
-	/* Pet limiter */
-	bool has_pet;
-
 	/* Give out a message telling to restart after LUA scripts were updated */
 	bool done_lua_updating;
-
+	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
+	s16b corner_turn;
+	/* automatic (scripted) transport sequences */
+	byte auto_transport;
+	/* Player being paged by others? (Beep counter) */
+	byte paging;
+	/* Ignoring normal chat? (Will only see private & party messages then) */
+	bool ignoring_chat;
+	/* Being an ass? - the_sandman */
+	bool muted;
+	/* Pet limiter */
+	bool has_pet;
+	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */
+	bool auto_retaliating;
+	
 	/* Global events participant? */
 	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
 	time_t global_event_signup[MAX_GLOBAL_EVENTS];
@@ -2608,13 +2609,13 @@ struct server_opts
 	time_t closetime;	/* Server closedown time */
 	char *meta_address;
 	s16b meta_port;
-
+	
 	char *bind_name;
 	char *console_password;
 	char *admin_wizard;
 	char *dungeon_master;
 	char *wserver;
-
+	
 	char *pass;
 	s32b preserve_death_level;
 	s32b unique_respawn_time;
@@ -2680,6 +2681,7 @@ struct server_opts
 				    it's: max_houses = (player_level / houses_per_player). */
 	bool maximize;
 	bool kings_etiquette;
+	bool fallenkings_etiquette;
 
 	bool public_rfe;
 	bool auto_purge;

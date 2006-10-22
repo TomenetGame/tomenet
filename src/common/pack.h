@@ -169,9 +169,11 @@
    For example: Is it running 'RPG_SERVER' settings? or 'FUN_SERVER'? */
 #define PKT_SERVERDETAILS	162
 
-#define PKT_AFK			163
-#define PKT_ENCUMBERMENT	164
+#define PKT_AFK                 163
+#define PKT_ENCUMBERMENT        164
 
+/* DEG Packet type for party member info */
+#define PKT_PARTY_STATS		165
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
@@ -198,6 +200,8 @@
 #define E_GAME_FULL	0x02
 #define E_NEED_INFO	0x03
 #define E_TWO_PLAYERS	0x04
+#define E_PASSWORD	0x05
+#define E_
 #define E_IN_USE	0x08
 #define E_SOCKET	0x09
 #define E_INVAL		0x0A
