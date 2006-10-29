@@ -3497,6 +3497,8 @@ int Send_raw_key(int key)
 }
 
 #if defined(WINDOWS) && !defined(CYGWIN)
+/* this gettimeofday implementation is totally broken - mikaelh */
+#if 0
 int gettimeofday(struct timeval *timenow)
 {
 	time_t t;
@@ -3508,6 +3510,22 @@ int gettimeofday(struct timeval *timenow)
 
 	return 0;
 }
+#else
+/* Try using the old ftime() instead */
+#include <sys/timeb.h>
+int gettimeofday(struct timeval *timenow)
+{
+	struct timeb t;
+	struct timeb *tp = &t;
+
+	ftime(tp);
+
+	timenow->tv_sec = tp->time;
+	timenow->tv_usec = tp->millitm;
+
+	return 0;
+}
+#endif
 #endif
 
 /*
