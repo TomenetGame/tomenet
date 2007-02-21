@@ -2266,6 +2266,7 @@ void c_msg_print(cptr msg)
 	/* Analyze the buffer */
 	t = buf;
 
+#if 0 /* Done on server-side now - mikaelh */
 	/* Split message */
 	while (n > 72)
 	{
@@ -2304,6 +2305,10 @@ void c_msg_print(cptr msg)
 		/* Prepare to recurse on the rest of "buf" */
 		t += split; n -= split;
 	}
+#else
+	/* Small length limit */
+	if (n > 80) n = 80;
+#endif
 
 
 	/* Display the tail of the message */
