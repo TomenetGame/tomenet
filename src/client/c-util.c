@@ -2656,12 +2656,12 @@ void interact_macros(void)
 		Term_putstr(5,  4, -1, TERM_WHITE, "(1) Load a user pref file");
 		Term_putstr(5,  5, -1, TERM_WHITE, "(2) Dump macros");
 		Term_putstr(5,  6, -1, TERM_WHITE, "(3) Enter a new action");
-		Term_putstr(5,  9, -1, TERM_SLATE, "(4) Create a normal macro");
+		Term_putstr(5,  7, -1, TERM_SLATE, "(4) Create a normal macro");
 		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a hybrid macro    (recommended)");
-		Term_putstr(5,  7, -1, TERM_SLATE, "(6) Create a command macro");
+		Term_putstr(5,  9, -1, TERM_SLATE, "(6) Create a command macro");
 		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
 		Term_putstr(5, 11, -1, TERM_SLATE, "(8) Create an empty macro    (disables a key)");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Query a macro");
+		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Query an existing macro");
 
 		/* Prompt */
 		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
