@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. September 2006; written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. March 2007; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | or join discussion in the forum on http://www.tomenet.net/
@@ -3053,9 +3053,14 @@ Wearing armour which is too bulky gives you this message:
 "The weight of your armour strains your spellcasting."
 That means your mana (Spell Points) will be (severely) reduced from the
 bulkiness of your armour. To counter this effect, train your 'Combat' skill.
-To cast freely, you may wear 20.0 lbs of armoury plus your combat skill (in
-lbs). So 50 points in 'Combat' would allow you to wear 20.0 + 50.0 = 70.0 lbs
-of armour parts without being encumbered.
+To cast freely, you may wear 20.0 to 30.0 lbs of armour (depending on your
+class and hence the type of magic you utilize) plus your combat skill (in
+lbs). So 50 points in 'Combat' would allow an istar to wear 20.0 + 50.0 =
+70.0 lbs of armour parts without being encumbered.
+In general, using prayers is easier than weaving spells, and using innate
+powers is easiest of all magic.
+Your total armour weight is the sum of the weight of any armour pieces worn
+on head (helmet), body, arm (a shield), hands, feet, and your cloak.
 
 Armour weight
 -------------
@@ -3130,10 +3135,13 @@ leaving approx. 400 damage.
 
 Overview:
 Breath damage is capped, the number is given in the corresponding description.
-Bolts and balls are not capped (except for the general damage cap of 1600).
+Bolts and balls are only capped by the general magic damage cap of 1600.
 Their damage maximum depends on the level of the casting monster as the
-formulas show. The total maximum damage an attack can do in TomeNET is 1600
-(general damage cap for all breath/bolt/ball attacks).
+formulas show. The total maximum damage a magical attack can do in TomeNET,
+assumed that the target is NOT susceptible, is 1600. This is the general
+damage cap for all magical attacks (breath/bolt/ball/cloud/beam/wall/..).
+Keep in mind that susceptibility may still double that damage though!
+
 
 There are four so-called 'basic resistances'. These are
 Fire/Heat               These attacks can burn items in your inventory.
@@ -3785,12 +3793,18 @@ Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
+                Everyone on the server will receive messages about that blood
+                bond been formed: "<player A> blood bonds with <player B>".
+                IF YOU DON'T SEE THIS MESSAGE, YOU DID SOMETHING WRONG. IN
+                THAT CASE DO NOT ATTACK OR YOU MIGHT KILL YOUR OPPONENT FOR
+                REAL! Instead, just get another scroll and repeat the blood
+                bonding until you see the confirmation message.
                 Now you can hostile each other and fight in a friendly duel.
                 The loser won't suffer a real death but just get teleported
                 away. The hostility will automatically be cancelled when the
-                blood bond ends. Everyone will receive messages about a blood
-                bond being formed ("<player A> blood bonds with <player B>")
-                and about the result ("<A> wins the blood bond against <B>").
+                blood bond ends.
+                Everyone on the server will be informed about the result:
+                "<A> wins the blood bond against <B>".
                 (Hit 'P' for party menu to declare war on someone after you
                 read blood bond. Making peace will be done automatically when
                 a blood bond ends!)
@@ -4054,7 +4068,7 @@ Staves      x               x
 Rods
 
 Lamps                       x
-Potions                     x       x       x       x
+Potions                     x       x       x       
 Flasks                              x       x
 Books/Tomes x               x                       x
 
@@ -4168,6 +4182,9 @@ Earthquakes can deal up to 300 damage if you cannot evade the falling rocks
 and shifting ground: Depending on the number of unchanged (by the earthquake)
 empty fields that are adjacent to your character, there is a chance to 'evade'
 and take much less damage or even none at all. Earthquakes can also stun you.
+
+Items will usually be destroyed/lost, only very rarely you'll be able to grab
+one before it falls into a chasm and vanish forever.
 
 
 
@@ -5329,7 +5346,7 @@ Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
     Archers are to bows what warriors are to melee. They are the best class
-    around with any bow/xbow/sling but are especially powerful with bows.
+    around with any bow/xbow/sling, usually most familiar with bows.
     An Archer is very bad at melee, being only better than the Sorcerer.
     Archers can create ammunition from the bones of their opponents.
 Paladin
@@ -5524,7 +5541,7 @@ I: speed : hit points : vision : armor class : alertness
     monster HP = 50000 / ((50000 / hdice*hsides) + 20) .)
     Now, if the mimic's HP are less then the result, the mimic's HP will
     become approx. ((3*x*y) + (2*normal_HP)) / 5. (2/5 monster HP, 3/5 player
-    HP.) If the mimic's HP in player form (0) are greater than x*y, the
+    HP.) If the mimic's HP in player form (code 0) are greater than x*y, the
     resulting HP will be ((x*y * 4) + (mimic_HP * 1)) / 5.
     (1/5 monster HP, 4/5 player HP!)
   armour class:
@@ -6101,10 +6118,11 @@ Holy Defense
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
 Holy Curing
-    Remove Fear     Keeps your heart boldened for a while      (auto-project)
-                    Required skill level for first spell level: 1.
     Healing         Heals a percentage of hit points.          (auto-project)
                     Required skill level for first spell level: 3.
+    Remove Curses   Removes curses.
+                    Lv30: Removes heavy curses.
+                    Required skill level for first spell level: 10.
     Cleansing Cloud Continuously heals every player who steps inside.
                     Required skill level for first spell level: 18.
     Curing          Reduces poison duration.
@@ -6131,6 +6149,8 @@ Holy Curing
                     (hallucination),
                     Less frequent suffering from black breath at 50.
 Holy Support
+    Remove Fear     Keeps your heart boldened for a while      (auto-project)
+                    Required skill level for first spell level: 1.
     Holy Light      Creates a globe of pure light.
                     Lv3: Damages monsters.
                     Lv8: Calls a more powerful kind of light.
@@ -6145,9 +6165,6 @@ Holy Support
                     Lv20: Lets all monsters in line of sight fall asleep.
                     Required skill level for first spell level: 1.
     Satisfy Hunger  Satisfies your hunger.                     (auto-project)
-                    Required skill level for first spell level: 10.
-    Remove Curses   Removes curses.
-                    Lv30: Removes heavy curses.
                     Required skill level for first spell level: 10.
     Sense Surroundings
                     Detect monsters, see invisible for a while.
@@ -6409,7 +6426,7 @@ Higher characters (up to 35)
   your scrolls of WOR.
 + Lots of Scrolls of Identify (up to 99!). Maybe later on a Rod of Perception.
   A rod of perception does the same thing like a scroll of identify. A rod of
-  perception of quickness would be perfect. This one takes less time to
+  perception of charging would be perfect. This one takes less time to
   recharge! A rod of perception of the istari..nearly godlike ;)
 + Several Potions of Speed
 + Potions of Healing
