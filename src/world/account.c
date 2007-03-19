@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <string.h>
 
 #include "world.h"
 #include "../common/defines.h"
 #include "../account/account.h"
+#include "externs.h"
 
 u_int32_t account_id;		/* Current account ID */
 

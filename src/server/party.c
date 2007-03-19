@@ -15,6 +15,7 @@
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
 
 #ifdef HAVE_CRYPT
+#define __USE_XOPEN
 #include <unistd.h>
 #endif	// HAVE_CRYPT
 
@@ -79,25 +80,30 @@ bool WriteAccount(struct account *r_acc, bool new){
 /*
  Get an existing account and set default valid flags on it
  That will be SCORE on only (hack it for MULTI)
- Modified to return 1 on success and 0 if account can't be
- found - mikaelh
+ Modified to return TRUE on success and FALSE if account can't
+ be found - mikaelh
+ Makes the player valid now too - mikaelh
  */
 int validate(char *name){
 	struct account *c_acc;
+	int i;
 	c_acc=GetAccount(name, NULL, 1);
-	if(!c_acc) return(0);
+	if(!c_acc) return(FALSE);
 	c_acc->flags&=~(ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->account == c_acc->id) Players[i]->inval = 0;
+	}
 	KILL(c_acc, struct account);
-	return(1);
+	return(TRUE);
 }
 
 /*
  return player account information (by name)
  */
-void accinfo(char *name){
-}
+//void accinfo(char *name){
+//}
 
 /* most account type stuff was already in here.
    a separate file should probably be made in
@@ -168,6 +174,47 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	return(NULL);
 }
 
+/* Return account structure of a specified account name */
+struct account *Admin_GetAccount(cptr name){
+	FILE *fp;
+	struct account *c_acc;
+
+	MAKE(c_acc, struct account);
+	if(c_acc==(struct account*)NULL) return(NULL);
+	fp=fopen("tomenet.acc", "r");
+	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
+	while(!feof(fp)){
+		fread(c_acc, sizeof(struct account), 1, fp);
+		if(c_acc->flags & ACC_DELD) continue;
+		if(!strcmp(c_acc->name, name)){
+			fclose(fp);
+			return(c_acc);
+		}
+	}
+	return(NULL);
+}
+
+/* Return account name of a specified PLAYER id */
+cptr lookup_accountname(int p_id){
+	FILE *fp;
+	struct account *c_acc;
+	u32b acc_id = lookup_player_account(p_id);
+
+	MAKE(c_acc, struct account);
+	if(c_acc==(struct account*)NULL) return(NULL);
+	fp=fopen("tomenet.acc", "r");
+	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
+	while(!feof(fp)){
+		fread(c_acc, sizeof(struct account), 1, fp);
+		if(c_acc->flags & ACC_DELD) continue;
+		if(c_acc->id == acc_id){
+			fclose(fp);
+			return(c_acc->name);
+		}
+	}
+	return(NULL);
+}
+
 /* our password encryptor */
 static char *t_crypt(char *inbuf, cptr salt){
 #ifdef HAVE_CRYPT
@@ -190,6 +237,22 @@ bool check_account(char *accname, char *c_name){
 	int i;
 
 	if((l_acc=GetAccount(accname, NULL, FALSE))){
+#ifdef RPG_SERVER /* Allow only up to 1 character per account! */
+		int *id_list, chars;
+                chars = player_id_list(&id_list, l_acc->id);
+		/* If this account DOES have characters, but the chosen character name is
+		   NOT equal to the first character of this account, don't allow it!
+		   (To restrict players to only 1 character per account! - C. Blue) */
+//s_printf("chars = %d\n", chars);
+#if 0
+		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0]))) {
+#else /* allow multiple chars for admins, even on RPG server */
+		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
+#endif
+//s_printf("return FALSE\n");
+			return(FALSE);
+		}
+#endif
 		a_id=l_acc->id;
 		flags=l_acc->flags;
 		KILL(l_acc, struct account);
@@ -468,12 +531,21 @@ void account_check(int Ind){	/* Temporary Ind */
 			if(!GetAccountID(ptr->account)){
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
+#if 0 /* del might not always be initialized! */
 				del=ptr->id;
 			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;
 			delete_player_id(del);
+#else /* isn't it supposed to be this way instead?: */
+				del=ptr->id;
+				delete_player_id(del);
+			}
+
+			/* Next entry in chain */
+			ptr = ptr->next;
+#endif
 		}
 	}
 }
@@ -1287,13 +1359,13 @@ static bool players_in_level(int Ind, int Ind2)
         return TRUE;
 }
 
-void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount)
+void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc)
 {
 	player_type *p_ptr;
 	int i;
 	struct worldpos *wpos=&Players[Ind]->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
-	s64b modified_level;
+	s64b modified_level, req_lvl;
 
 	/* Iron Teams only get exp if the whole team is on the same floor! */
 	if (parties[party_id].mode == PA_IRONTEAM)
@@ -1365,18 +1437,40 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount)
 						
 			}
 			
+			new_amount = amount;
+
 			/*			
 			new_exp = (amount * modified_level) / (average_lev * num_members * p_ptr->lev);
 			new_exp_frac = ((((amount * modified_level) % (average_lev * num_members * p_ptr->lev) )
 			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
 			*/
 
+			/* Don't allow cheap support from super-high level characters */
+			if (cfg.henc_strictness && !p_ptr->total_winner) {
+				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			}
+
+			/* Higher characters who farm monsters on low levels compared to
+			    their clvl will gain less exp */
+			if (p_ptr->lev >= 20) {
+				if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
+				else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
+				else req_lvl = (p_ptr->lev * 2);
+				if (getlevel(&p_ptr->wpos) < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
+			}
+
 			/* Never get too much exp off a monster
             		   due to high level difference,
 			   make exception for low exp boosts like "holy jackal" */
-			new_amount = amount;
+#if 1 /* isn't this buggy? see below 'else' clause for assumingly correct version.. */
+/* no it's not buggy, new_amount gets divided by p_ptr->lev later - mikaelh */
                         if ((new_amount > base_amount * 4 * p_ptr->lev) && (new_amount > 200 * p_ptr->lev))
 				new_amount = base_amount * 4 * p_ptr->lev;
+#else
+                        if ((new_amount > base_amount * 4) && (new_amount > 200))
+				new_amount = base_amount * 4;
+#endif
 
 			/* Some bonus is applied to encourage partying	- Jir - */
 			new_exp = (new_amount * modified_level * (PARTY_XP_BOOST + 1)) /
@@ -1428,15 +1522,32 @@ bool add_hostility(int Ind, cptr name)
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
-		if(!(p_ptr->pkill & PKILL_KILLER)){
+		if(!(p_ptr->pkill & PKILL_KILLER) && (p_ptr->pvpexception != 1)){
 			msg_print(Ind, "\377yYou may not be hostile to other players.");
 			return FALSE;
 		}
 	}
 
-	if (cfg.use_pk_rules == PK_RULES_NEVER)
+	if (cfg.use_pk_rules == PK_RULES_NEVER && (p_ptr->pvpexception != 1))
 	{
 		msg_print(Ind, "\377yYou may not be hostile to other players.");
+		return FALSE;
+	}
+
+	/* Non-validated players may not pkill */
+	if (p_ptr->inval) {
+		msg_print(Ind, "Your account needs to be validated in order to fight other players.");
+		return FALSE;
+	}
+
+	if (p_ptr->pvpexception == 2) return FALSE;
+	if (p_ptr->pvpexception == 3) {
+                p_ptr->chp=-3;
+                strcpy(p_ptr->died_from, "adrenaline poisoning");
+                p_ptr->deathblow = 0;
+		p_ptr->energy = -666;
+//		p_ptr->death = 1;
+                player_death(Ind);
 		return FALSE;
 	}
 
@@ -1465,7 +1576,7 @@ bool add_hostility(int Ind, cptr name)
 				return FALSE;
 			}
 		}
-
+		
 		/* Create a new hostility node */
 		MAKE(h_ptr, hostile_type);
 
@@ -1569,6 +1680,12 @@ bool add_hostility(int Ind, cptr name)
 
 		/* Message */
 		msg_format(Ind, "\377oYou are now hostile toward %s.", q_ptr->name);
+
+		/* Warn if not blood bonded */
+		if (p_ptr->blood_bond != q_ptr->id)
+		{
+			msg_format(Ind, "\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
+		}
 
 		/* Success */
 		return TRUE;
@@ -2059,7 +2176,7 @@ u16b lookup_player_type(int id) {
 /*
  * Get the player's current party.
  */
-byte lookup_player_party(int id)
+s32b lookup_player_party(int id)
 {
 	hash_entry *ptr;
 	if((ptr=lookup_player(id)))
@@ -2186,6 +2303,16 @@ int lookup_player_id_messy(cptr name)
 
 	/* Not found */
 	return 0;
+}
+
+u32b lookup_player_account(int id)
+{
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return ptr->account;
+
+	/* Not found */
+	return -1L;
 }
 
 void stat_player(char *name, bool on){
@@ -2340,17 +2467,7 @@ void scan_players(){
 				{
 					o_ptr = &o_list[i];
 			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
-#if 0
-			                {
-			                        {
-			                                /* Make it available again */
-			                                a_info[o_ptr->name1].cur_num = 0;
-				                	a_info[o_ptr->name1].known = FALSE;
-			                        }
-			                }
-#else
 						delete_object_idx(i, TRUE);
-#endif
     				}
 
     				/* remove pending notes to this player -C. Blue */
@@ -2383,6 +2500,112 @@ void scan_players(){
 		}
 	}
 	s_printf("Finished player inactivity check\n");
+}
+
+/*
+ *  Erase a player by charfile-name - C. Blue
+ */
+void erase_player_name(char *pname){
+	int slot;
+	hash_entry *ptr, *pptr=NULL;
+	object_type *o_ptr;
+
+	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+		pptr=NULL;
+		ptr=hash_table[slot];
+		while(ptr){
+			if(!strcmp(ptr->name, pname)){
+				int i,j;
+				hash_entry *dptr;
+
+				s_printf("Removing player: %s\n", ptr->name);
+
+				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
+					if(streq(parties[i].owner, ptr->name)){
+						s_printf("Disbanding party: %s\n",parties[i].name);
+						del_party(i);
+	        				/* remove pending notes to his party -C. Blue */
+					        for (j = 0; j < MAX_PARTYNOTES; j++) {
+					                if (!strcmp(party_note_target[j], parties[i].name)) {
+			                		        strcpy(party_note_target[j], "");
+					                        strcpy(party_note[j], "");
+					                }
+					        }
+						break;
+					}
+				}
+				kill_houses(ptr->id, OT_PLAYER);
+				rem_quest(ptr->quest);
+				/* Added this one.. should work well? */
+				kill_objs(ptr->id);
+
+				/* Wipe Artifacts (s)he had  -C. Blue */
+				for (i = 0; i < o_max; i++)
+				{
+					o_ptr = &o_list[i];
+			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+						delete_object_idx(i, TRUE);
+    				}
+
+    				/* remove pending notes to this player */
+			        for (i = 0; i < MAX_NOTES; i++) {
+			                if (!strcmp(priv_note_target[i], ptr->name)) {
+			                        strcpy(priv_note_sender[i], "");
+			                        strcpy(priv_note_target[i], "");
+			                        strcpy(priv_note[i], "");
+			                }
+			        }
+
+				sf_delete(ptr->name);	/* a sad day ;( */
+				if(!pptr)
+					hash_table[slot]=ptr->next;
+				else
+					pptr->next=ptr->next;
+				/* Free the memory in the player name */
+				free((char *)(ptr->name));
+
+				dptr=ptr;	/* safe storage */
+				ptr=ptr->next;	/* advance */
+
+				/* Free the memory for this struct */
+				KILL(dptr, hash_entry);
+
+				continue;
+			}
+			pptr=ptr;
+			ptr=ptr->next;
+		}
+	}
+}
+
+/*
+ * List of players about to expire - mikaelh
+ */
+void checkexpiry(int Ind, int days)
+{
+	int slot, expire;
+	hash_entry *ptr;
+	time_t now;
+	now = time(&now);
+	msg_format(Ind, "\377oPlayers that are about to expire in %d days:", days);
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			if (ptr->laston && (now - ptr->laston > (7776000 - days * 86400))) {
+				expire = 7776000 - now + ptr->laston;
+				if (expire < 86400) {
+					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
+				}
+				else if (expire < 604800) {
+					msg_format(Ind, "\377yPlayer %s (accid %d) will expire in %d days!", ptr->name, ptr->account, (expire / 86400));
+				}
+				else {
+					msg_format(Ind, "\377gPlayer %s (accid %d) will expire in %d days.", ptr->name, ptr->account, (expire / 86400));
+				}
+			}
+			ptr = ptr->next;
+		}
+	}
 }
 
 /*
@@ -2565,6 +2788,16 @@ int player_id_list(int **list, u32b account)
 	}
 
 	/* Return length */
+#if 0 /*not needed*/
+//ifdef RPG_SERVER /* Display only 1 character per account */
+s_printf("len = %d\n", len);
+	return (len > 1 ? 2 : len);
+//endif
+#endif
+	/* Limit number of characters per account - C. Blue */
+	/* This screwed up saving players in save.c, check that account is not 0 - mikaelh */
+	if (len > MAX_CHARS_PER_ACCOUNT && account) len = MAX_CHARS_PER_ACCOUNT;
+
 	return len;
 }
 
@@ -2717,7 +2950,12 @@ void strip_true_arts_from_hashed_players(){
                             (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
                             (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
                             ))
-	                        delete_object_idx(i, TRUE);
+#if 1 /* set 0 to not change cur_num */
+	                    	    delete_object_idx(i, TRUE);
+#else
+				    excise_object_idx(o_idx);
+				    WIPE(o_ptr, object_type);
+#endif
 	        }
 	}
         s_printf("Finished true artifact stripping for %d players.\n", j);

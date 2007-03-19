@@ -1,10 +1,23 @@
 -- The xml module
 xml = {}
 
+xml.ent = {lt = "<", gt = ">", amp = "&", quot = "\""}
+
+-- parse entities - mikaelh
+function xml:parseentities (s)
+  local t
+  t = gsub(s, "&(%w+);", function (s)
+    if (xml.ents[s] == nil) then return("&" .. s .. ";")
+    else return xml.ent[s]
+    end
+  end)
+  return t
+end
+
 function xml:parseargs (s)
   local arg = {}
   gsub(s, "(%w+)=([\"'])(.-)%2", function (w, _, a)
-    %arg[w] = a
+    %arg[w] = xml:parseentities(a)
   end)
   return arg
 end
@@ -21,7 +34,7 @@ function xml:collect (s)
     if not ni then break end
     local text = strsub(s, i, ni-1)
     if not strfind(text, "^%s*$") then
-      tinsert(top, text)
+      tinsert(top, xml:parseentities(text))
     end
     if empty == "/" then  -- empty element tag
       tinsert(top, {n=0, label=label, args=xml:parseargs(args), empty=1})
@@ -43,7 +56,7 @@ function xml:collect (s)
   end
   local text = strsub(s, i)
   if not strfind(text, "^%s*$") then
-    tinsert(stack[stack.n], text)
+    tinsert(stack[stack.n], xml:parseentities(text))
   end
   if stack.n > 1 then
     error("unclosed "..stack[stack.n].label)

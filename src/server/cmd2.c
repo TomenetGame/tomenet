@@ -45,6 +45,7 @@ void do_cmd_go_up(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	bool tower=TRUE;
 	cave_type **zcave;
+	int i;
 	if(!(zcave=getcave(wpos))) return;
 
         /* Are we entering/inside a dungeon or a tower? */
@@ -81,6 +82,12 @@ void do_cmd_go_up(int Ind)
 		return;
 	}
 
+	/* not for some global events (Highlander Tournament) */
+	if ((p_ptr->global_event_temp & 0x2) && (p_ptr->wpos.wz == -1)) {
+		msg_print(Ind, "The staircase is blocked.");
+		if (!is_admin(p_ptr)) return;
+	}
+
 	/* Player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -97,7 +104,8 @@ void do_cmd_go_up(int Ind)
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
-#if 0	// no need for this anymore - C. Blue
+#if 1	// no need for this anymore - C. Blue
+	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
 		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
 		{
 			/* anti Ghost-dive */
@@ -106,15 +114,30 @@ void do_cmd_go_up(int Ind)
 		}
 #endif
 	}
-	if(wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP))
+	if(wpos->wz==0)
 	{
-		msg_print(Ind, "There is nothing above you.");
-		return;
+		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_UP)) {
+			msg_print(Ind, "There is nothing above you.");
+			return;
+		} else if ((c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS) &&
+			    ((!p_ptr->prob_travel || (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_ENTRY_PROB)) &&
+			    (!p_ptr->ghost || (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_ENTRY_FLOAT)))) {
+			msg_print(Ind, "There is nothing above you.");
+			if (!is_admin(p_ptr)) return;
+		}
 	}
 	if(wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz){
 		msg_print(Ind,"You are at the top of the tower!");
 		return;
 	}
+
+#ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
+	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
+		msg_print(Ind,"\377sOnly ruins of a former tower remain at this place..");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
 	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 			 wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
@@ -139,6 +162,7 @@ void do_cmd_go_up(int Ind)
 		}
 	}
 #endif
+
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -187,18 +211,60 @@ void do_cmd_go_up(int Ind)
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (c_ptr->feat == FEAT_WAY_LESS) {
 			msg_print(Ind, "You enter the previous area.");
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+			}
+#endif
 		} else {
-			if (!wpos->wz) msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-			else if (wpos->wz == -1) msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-			else msg_print(Ind, "You enter a maze of up staircases.");
+			if (!wpos->wz) {
+				msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s has entered %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+				}
+#endif
+			}
+			else if (wpos->wz == -1) {
+				msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s has left %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+				}
+#endif
+			}
+			else {
+				msg_print(Ind, "You enter a maze of up staircases.");
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s took a staircase upwards to %dft..]", p_ptr->name, (wpos->wz + 1) * 50);
+				}
+#endif
+			}
 		}
 		p_ptr->new_level_method = LEVEL_UP;
 	}
 	else
 	{
-/* no prob trav on rpg server! - the_sandman */
-#ifdef RPG_SERVER
-		msg_print(Ind, "You cannot do that here!");
+#ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
+		msg_print(Ind, "This harsh world knows not what you're trying to do.");
+        forget_view(Ind); //the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
@@ -206,7 +272,6 @@ void do_cmd_go_up(int Ind)
 		else msg_print(Ind, "You float upwards.");
 		p_ptr->new_level_method = LEVEL_GHOST;
 	}
-
 	/* A player has left this depth */
 	new_players_on_depth(wpos,-1,TRUE);
 	wpos->wz++;
@@ -214,6 +279,7 @@ void do_cmd_go_up(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
+    forget_view(Ind); //the_sandman
 	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
@@ -240,7 +306,7 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 
 	by = cs_ptr->sc.between.fy;
 	bx = cs_ptr->sc.between.fx;
-
+	
 	/* (HACK) sanity check to cover cut-off vaults with missing void gate end-points! - C. Blue */
 	if (bx < 1 || by < 1 || bx >= l_ptr->wid - 1 || by >= l_ptr->hgt - 1) {
 		msg_print(Ind, "The gate seems broken.");
@@ -254,6 +320,8 @@ static bool between_effect(int Ind, cave_type *c_ptr)
 	if (p_ptr->prace == RACE_DRIDER)
 	{
 		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
+
+		if (reduc < 1) reduc = 1; /* Really, really low AC, like some TL eating firestones - mikaelh */
 
 		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between", 0);
 	}
@@ -278,6 +346,7 @@ void do_cmd_go_down(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	bool tower = FALSE;
 	cave_type **zcave;
+	int i;
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Are we entering/inside a dungeon or a tower? */
@@ -286,18 +355,26 @@ void do_cmd_go_down(int Ind)
 	/* Make sure he hasn't just changed depth */
 	if (p_ptr->new_level_flag)
 		return;
-
-	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
-		msg_print(Ind,"The dungeon is closed");
-		return;
-	}
-
+	
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE)
 	{
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
+
+	if(cfg.runlevel<5 && !p_ptr->wpos.wz){
+		msg_print(Ind,"The dungeon is closed");
+		return;
+	}
+
+#if 0 //let's give them another chance
+	/* not for some global events (Highlander Tournament) */
+	if ((p_ptr->global_event_temp & 0x2) && (p_ptr->wpos.wz == 0)) {
+		msg_print(Ind, "The staircase is blocked.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
 
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
@@ -343,7 +420,7 @@ void do_cmd_go_down(int Ind)
 	{
 		/* Check interference */
 		if (interfere(Ind, 20)) return;
-
+		
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
 	}
@@ -363,7 +440,8 @@ void do_cmd_go_down(int Ind)
 			msg_print(Ind, "I see no down staircase here.");
 			return;
 		}
-#if 0	// no need for this anymore - C. Blue
+#if 1	// no need for this anymore - C. Blue
+	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
 		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
 		{
 			/* anti Ghost-dive */
@@ -372,18 +450,32 @@ void do_cmd_go_down(int Ind)
 		}
 #endif
 	}
-	if (wpos->wz==0 && !(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN))
+	if (wpos->wz==0)
 	{
-		msg_print(Ind, "There is nothing below you.");
-		return;
+		if (!(wild_info[wpos->wy][wpos->wx].flags&WILD_F_DOWN)) {
+			msg_print(Ind, "There is nothing below you.");
+			return;
+		} else if ((c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE) &&
+			    ((!p_ptr->prob_travel || (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_ENTRY_PROB)) &&
+			    (!p_ptr->ghost || (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_ENTRY_FLOAT)))) {
+			msg_print(Ind, "There is nothing below you.");
+			if (!is_admin(p_ptr)) return;
+		}
 	}
-
+	
 	/* Verify maximum depth */
 	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz)
 	{
 		msg_print(Ind, "You are at the bottom of the dungeon.");
 		return;
 	}
+
+#ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
+	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_DEATH)) {
+		msg_print(Ind,"\377sOnly mud-filled ruins of a former cave remain at this place..");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
 
 /*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
 	if(wpos->wz>0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
@@ -457,18 +549,60 @@ void do_cmd_go_down(int Ind)
 		process_hooks(HOOK_STAIR, "d", Ind);
 		if (c_ptr->feat == FEAT_WAY_MORE) {
 			msg_print(Ind, "You enter the next area.");
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+			if (p_ptr->party)
+			for (i = 1; i <= NumPlayers; i++) {
+			        if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (i == Ind) continue;
+				if (Players[i]->party == p_ptr->party)
+					msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+			}
+#endif
 		} else {
-			if (!wpos->wz) msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
-			else if (wpos->wz == 1) msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
-			else msg_print(Ind, "You enter a maze of down staircases.");
+			if (!wpos->wz) {
+				msg_format(Ind, "\377uYou enter %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s has entered %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+				}
+#endif
+			}
+			else if (wpos->wz == 1) {
+				msg_format(Ind, "\377uYou leave %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s has left %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+				}
+#endif
+			}
+			else {
+				msg_print(Ind, "You enter a maze of down staircases.");
+#ifdef RPG_SERVER /* stair scumming in non-IRON dungeons might create mad spam otherwise */
+				if (p_ptr->party)
+				for (i = 1; i <= NumPlayers; i++) {
+				        if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (i == Ind) continue;
+					if (Players[i]->party == p_ptr->party)
+						msg_format(i, "\377G[%s took a staircase downwards to %dft..]", p_ptr->name, (wpos->wz - 1) * 50);
+				}
+#endif
+			}
 		}
 		p_ptr->new_level_method = LEVEL_DOWN;
 	}
 	else
 	{
-/* no prob trav on rpg server! - the_sandman */
-#ifdef RPG_SERVER
-		msg_print(Ind, "You cannot do that here!");
+#ifdef RPG_SERVER	/* This is an iron-server... Prob trav should not work - the_sandman */
+		msg_print(Ind, "This harsh world knows not what you're trying to do.");
+        forget_view(Ind);//the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
@@ -476,7 +610,6 @@ void do_cmd_go_down(int Ind)
 		else msg_print(Ind, "You float downwards.");
 		p_ptr->new_level_method = LEVEL_GHOST;
 	}
-
 	/* A player has left this depth */
 	new_players_on_depth(wpos,-1,TRUE);
 	wpos->wz--;
@@ -484,6 +617,7 @@ void do_cmd_go_down(int Ind)
 
 	p_ptr->new_level_flag = TRUE;
 
+    forget_view(Ind); //the_sandman
 	/* He'll be safe for 2 turns */
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
@@ -579,6 +713,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 //	int             i, d, ny, nx;
 	int             number, small;
+	long		cash;
 
 	if(!(zcave=getcave(wpos))) return;
 
@@ -590,10 +725,13 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 
 	/* Determine how much to drop (see above) */
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
-
+	
 	/* Generate some treasure */
 	if (o_ptr->pval && (number > 0))
 	{
+		/* let's not be scrooges =) - C. Blue */
+		cash = (((o_ptr->level + 10) * (o_ptr->level + 10)) * 3) / number;
+
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number)
 		{
@@ -618,17 +756,19 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				object_level = ABS(o_ptr->level) + 10;
 
 				/* Small chests often drop gold */
-				if (small && (rand_int(100) < 75))
+				if (small && magik(75))
 				{
-					place_gold(wpos, y, x);
+					place_gold(wpos, y, x, cash);
 				}
 
 				/* Otherwise drop an item */
 				else
 				{
 					place_object_restrictor = 0;
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					place_object(wpos, y, x, TRUE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
+
+				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
 
 				/* Reset the object level */
 				object_level = getlevel(wpos);
@@ -668,14 +808,16 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 
 	/* Obtain the trap */
 	trap = o_ptr->pval;
-
+	
 	/* Message */
 //	msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
-
+	
 	/* Set off trap */
 	ident = player_activate_trap_type(Ind, y, x, o_ptr, o_idx);
-	if (ident && !p_ptr->trap_ident[o_ptr->pval])
+
+	/* Some traps may destroy the chest */
+	if (o_ptr && ident && !p_ptr->trap_ident[o_ptr->pval])
 	{
 		p_ptr->trap_ident[o_ptr->pval] = TRUE;
 		msg_format(Ind, "You identified the trap as %s.",
@@ -763,13 +905,13 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 					msg_print(Ind, "At his current level, that player cannot own more houses!");
 				return (FALSE);
 			}
-
+			
 			if ((Players[i]->mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)) {
 				if (p_ptr->mode & MODE_IMMORTAL) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
 				else msg_print(Ind, "You cannot transfer houses to everlasting players!");
 				return(FALSE);
 			}
-
+			
 			/* Finally change the owner */
 			newowner=lookup_player_id_messy(&args[2]);
 			if(!newowner) newowner=-1;
@@ -918,8 +1060,8 @@ void do_cmd_open(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 
-	/* Ghosts cannot open doors */
-	if ((p_ptr->ghost && !is_admin(p_ptr)) ||
+	/* Ghosts cannot open doors ; not in WRAITHFORM */
+	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot open things!");
@@ -1019,7 +1161,8 @@ void do_cmd_open(int Ind, int dir)
 			{
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
-
+				/* Some traps might destroy the chest on setting off */
+				if (o_ptr)
 				/* Let the Chest drop items */
 				chest_death(Ind, y, x, o_ptr);
 			}
@@ -1122,7 +1265,7 @@ void do_cmd_open(int Ind, int dir)
 
 					/* Redraw */
 					everyone_lite_spot(wpos, y, x);
-
+					
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
@@ -1130,7 +1273,7 @@ void do_cmd_open(int Ind, int dir)
 				else
 				{
 					struct dna_type *dna=cs_ptr->sc.ptr;
-					if (!strcmp(get_house_owner(cs_ptr), "nobody."))
+					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) 
 					{
 						long factor,price;
 						factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
@@ -1221,8 +1364,8 @@ void do_cmd_close(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 
-	/* Ghosts cannot close */
-	if ((p_ptr->ghost && !is_admin(p_ptr)) ||
+	/* Ghosts cannot close ; not in WRAITHFORM */
+	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
 	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
 	{
 		msg_print(Ind, "You cannot close things!");
@@ -1438,8 +1581,8 @@ void do_cmd_tunnel(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
-	/* Ghosts have no need to tunnel */
-	if ( (p_ptr->ghost))
+	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith)) 
 	{
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
@@ -1553,7 +1696,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					{
 						place_object_restrictor = 0;
 //						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
-						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE,
+						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE, 
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
 						{
@@ -1575,7 +1718,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					more = TRUE;
 				}
 			}
-
+			
 			else if (c_ptr->feat == FEAT_TREES)
 			{
 				/* mow down the vegetation */
@@ -1585,7 +1728,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You hack your way through the vegetation.");
 					if (p_ptr->prace == RACE_ENT)
 						msg_print(Ind, "You have a bad feeling about it.");
-
+					
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -1599,7 +1742,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					more = TRUE;
 				}
 			}
-
+			
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
 				/* mow down the vegetation */
@@ -1607,7 +1750,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
-
+					
 					/* Notice */
 					note_spot_depth(wpos, y, x);
 
@@ -1666,6 +1809,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					okay = (power > 10 + rand_int(400)); /* 400 */
 				}
+				if (istown(wpos)) gold = FALSE;
 
 				/* Success */
 				if (okay && twall(Ind, y, x))
@@ -1676,7 +1820,7 @@ void do_cmd_tunnel(int Ind, int dir)
 						do
 						{
 							/* Place some gold */
-							place_gold(wpos, y, x);
+							place_gold(wpos, y, x, 0);
 						} while (magik(mining));
 
 						/* Notice it */
@@ -1827,13 +1971,17 @@ static void do_id_trap(int Ind, int t_idx)
 	msg_format(Ind, "You identified that trap as %s.",
 			t_name + tr_ptr->name);
 
-	/* Small reward */
-	if (power >= 10) gain_exp(Ind, power / 10);
+	/* Fair reward - C. Blue */
+	gain_exp(Ind, (tr_ptr->difficulty * tr_ptr->minlevel * (200 - tr_ptr->probability)) / 100);
 }
 
 /*
  * Disarms a trap, or chest     -RAK-
- * Added a chance for a trapkit being acquired upon a successful disarm - the_sandman
+ */
+
+/* A nice idea:
+ * Disarming a trap will have a disarm_skill% chance of dropping a 
+ * random trap set? =) - the_sandman
  */
 void do_cmd_disarm(int Ind, int dir)
 {
@@ -1852,8 +2000,8 @@ void do_cmd_disarm(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
-	/* Ghosts cannot disarm */
-	if ( (p_ptr->ghost))
+	/* Ghosts cannot disarm ; not in WRAITHFORM */
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot disarm things!");
@@ -2048,65 +2196,69 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Message */
 				msg_format(Ind, "You have disarmed the %s.", name);
 
-                                /* A chance to drop a trapkit! - the_sandman */
-                                int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value/1000);
-                                if (randint(100) < sdis) {
-                                        object_type yay;
-                                        invcopy(&yay, lookup_kind(TV_TRAPKIT, randint(7)));
-                                        if (randint(2) == 1) {  /* chance for a non 0 0 */
-                                                yay.to_h=randint((int)(p_ptr->lev)/2);
-                                                yay.to_d=randint((int)(p_ptr->lev)/2);
-                                        }
-                                        if (randint(15-(int)(sdis/5)) == 1) { /* chance for ego! */
-                                                int egokind = randint(12);
-                                                yay.name2 = 150+egokind;      // NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
-                                                switch (egokind) {
-                                                        case 1:
-                                                        case 2:         // ES or EM
-                                                                yay.to_h=randint(20);
-                                                                yay.to_d=randint(20);
-                                                                yay.pval=randint(2);
-                                                                if (sdis>25) yay.pval++;
-                                                                break;
-                                                        case 3:         // Auto
-                                                        case 4:         // Full auto
-                                                                yay.to_h=randint(10);
-                                                                yay.to_d=randint(10);
-                                                                break;
-                                                        case 5:         // Well-hidden
-                                                                yay.pval=randint(12);
-                                                                yay.to_a=randint(5);
-                                                                break;
-                                                        case 6:         // Complex
-                                                                yay.pval=randint(30);
-                                                                break;
-                                                        case 7:         // Obvious (cursed)
-                                                                yay.to_h = 0 - yay.to_h;
-                                                                yay.to_d = 0 - yay.to_d;
-                                                                yay.to_a = 0 - randint(30);
-                                                                yay.pval = 0 - randint(30);
-                                                                break;
-                                                        case 8:         // the slaying egos
-                                                        case 9:
-                                                        case 10:
-                                                        case 11:
-                                                        case 12:
-                                                                yay.to_h = randint(20);
-                                                                yay.to_d = randint(20);
-                                                                yay.to_a = randint(10);
-                                                                yay.pval = randint(4);
-                                                                break;
-                                                        default:
-                                                                break;
-                                                }
 
-                                        }
-                                        yay.number=1;
-                                        yay.level=p_ptr->lev;
-                                        drop_near(&yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-                                        msg_format(Ind, "You have discovered a trapkit!");
-                                }
-
+				/* A chance to drop a trapkit! - the_sandman */
+				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value/1000);
+				if (randint(100) < sdis) {
+					/* object_type* yay = (object_type*)malloc(sizeof(object_type)); - better avoid malloc in tomenet style here - mikaelh */
+					object_type forge;
+					object_type* yay = &forge;
+					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
+					if (randint(2) == 1) {	/* chance for non 00 */
+						yay->to_h=randint((int)(p_ptr->lev)/2);
+						yay->to_d=randint((int)(p_ptr->lev)/2);
+					}
+					if (randint(15-(int)(sdis/5)) == 1) { /* chance for ego! */
+						int egokind = randint(12);
+						yay->name2 = 150+egokind;	// NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
+						switch (egokind) {
+							case 1: 
+							case 2: 	// ES or EM
+								yay->to_h=randint(20);
+								yay->to_d=randint(20);
+								yay->pval=randint(2);
+								if (sdis>25) yay->pval++;
+								break;
+							case 3:		// Auto
+							case 4:		// Full auto
+								yay->to_h=randint(10);
+								yay->to_d=randint(10);
+								break;
+							case 5:		// Well-hidden
+								yay->pval=randint(12);
+								yay->to_a=randint(5);
+								break;
+							case 6:		// Complex
+								yay->pval=randint(30);
+								break;
+							case 7: 	// Obvious (cursed)
+								yay->to_h = 0 - yay->to_h;
+								yay->to_d = 0 - yay->to_d;
+								yay->to_a = 0 - randint(30);
+								yay->pval = 0 - randint(30);
+								break;
+							case 8: 	// the slaying egos
+							case 9: 
+							case 10: 
+							case 11: 
+							case 12: 
+								yay->to_h = randint(20);
+								yay->to_d = randint(20);
+								yay->to_a = randint(10);
+								yay->pval = randint(4);
+								break;
+							default:
+								break;
+						}
+							
+					}
+					yay->number=1;
+					yay->level=p_ptr->lev;
+					drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+					msg_format(Ind, "You have discovered a trapkit!");
+				}
+				
+				
 				/* Reward */
 				gain_exp(Ind, power);
 
@@ -2149,7 +2301,8 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_format(Ind, "You set off the %s!", name);
 
 				/* Move the player onto the trap */
-				move_player(Ind, dir, FALSE);
+				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
+				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
 			}
 
 			/* only aesthetic */
@@ -2197,8 +2350,8 @@ void do_cmd_bash(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 
 
-	/* Ghosts cannot bash */
-	if ( (p_ptr->ghost) || (p_ptr->fruit_bat) ||
+	/* Ghosts cannot bash ; not in WRAITHFORM */
+	if ( (p_ptr->ghost) || (p_ptr->fruit_bat && !p_ptr->body_monster) || (p_ptr->tim_wraith) ||
 			(p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR)))
 	{
 		/* Message */
@@ -2349,7 +2502,7 @@ void do_cmd_bash(int Ind, int dir)
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
-
+				
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE);
 
@@ -2441,8 +2594,8 @@ void do_cmd_spike(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
-	/* Ghosts cannot spike */
-	if ( (p_ptr->ghost))
+	/* Ghosts cannot spike ; not in WRAITHFORM */
+	if ((p_ptr->ghost) || (p_ptr->tim_wraith))
 	{
 		/* Message */
 		msg_print(Ind, "You cannot spike doors!");
@@ -2570,17 +2723,19 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 			}
 
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
-					p_ptr->easy_open &&
-				(c_ptr->feat >= FEAT_DOOR_HEAD) &&
-				(c_ptr->feat <= FEAT_DOOR_TAIL))
+				p_ptr->easy_open &&
+				(c_ptr->feat >= FEAT_DOOR_HEAD) && 
+				(c_ptr->feat <= FEAT_DOOR_TAIL) &&
+				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				do_cmd_open(Ind, dir);
 				return;
 			}
 			else
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
-					p_ptr->easy_open &&
-				(c_ptr->feat == FEAT_HOME_HEAD))
+				p_ptr->easy_open &&
+				(c_ptr->feat == FEAT_HOME_HEAD) &&
+				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
 					if((!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
@@ -2623,7 +2778,30 @@ int do_cmd_run(int Ind, int dir)
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr;
 	cave_type **zcave;
+
+	/* slower 'running' movement over certain terrain */
+	int real_speed = cfg.running_speed;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+#if 1 /* NEW_RUNNING_FEAT */
+	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
+	/* are we in fact running-flying? */
+	if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+	}
+        /* or running-swimming? */
+        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+                if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+                if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+        }
+	/* or just normally running? */
+	else {
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
+	}
+	}
+#endif
 
 	/* Get a "repeated" direction */
 	if (dir)
@@ -2632,12 +2810,12 @@ int do_cmd_run(int Ind, int dir)
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px))
 		{
 			/* Handle the cfg_door_bump option */
-			if (cfg.door_bump_open && p_ptr->easy_open)
+			if (cfg.door_bump_open && p_ptr->easy_open && !p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-				if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+				if (((c_ptr->feat >= FEAT_DOOR_HEAD) && 
 				      (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
 				    ((c_ptr->feat == FEAT_HOME)))
 				{
@@ -2661,7 +2839,8 @@ int do_cmd_run(int Ind, int dir)
 		}
 
 		/* Make sure we have enough energy to start running */
-		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
+		if (p_ptr->energy >= (level_speed(&p_ptr->wpos)*(real_speed + 1))/real_speed)
+//		if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
 			/* Hack -- Set the run counter */
 			p_ptr->running = 1000;
@@ -2695,7 +2874,7 @@ void do_cmd_stay(int Ind, int pickup)
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-
+	
 	if (p_ptr->new_level_flag) return;
 
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -2875,7 +3054,7 @@ int get_shooter_mult(object_type *o_ptr)
 
 		case SV_LONG_BOW:
 		{
-			/* Long Bow and Arrow */
+			/* Long Bow and Arrow */		
 			tmul = 3;
 			break;
 		}
@@ -2954,7 +3133,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	int                     missile_attr;
 	int                     missile_char;
-
+	
 	char brand_msg[80];
 
         bool            drain_msg = TRUE;
@@ -2985,7 +3164,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Get the "bow" (if any) */
 	j_ptr = &(p_ptr->inventory[INVEN_BOW]);
-
+		
 	/* Require a launcher */
 	if (!j_ptr->tval)
 	{
@@ -3022,6 +3201,12 @@ void do_cmd_fire(int Ind, int dir)
 		msg_print(Ind, "You cannot fire that!");
 		return;
 	}
+
+#if (STARTEQ_TREATMENT > 1)
+        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+                o_ptr->level = 0;
+#endif
 
 	/* Extract the item flags */
         object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &esp);
@@ -3064,7 +3249,9 @@ void do_cmd_fire(int Ind, int dir)
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	/* Is this Magic Arrow? */
-	magic = ((o_ptr->sval == SV_AMMO_MAGIC) &&
+	/* or magic shots or magic bolts? */
+	magic = (((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
+			 && o_ptr->sval == SV_AMMO_MAGIC) &&
 			(!cursed_p(o_ptr) || artifact_p(o_ptr)))?TRUE:FALSE;
 
 	/* Ricochets ? */
@@ -3302,7 +3489,7 @@ void do_cmd_fire(int Ind, int dir)
 							 !player_in_party(p_ptr->party, 0 - c_ptr->m_idx) ||
 							 magik(FRIEND_FIRE_CHANCE))
 							&& !p_ptr->admin_dm)
-					{
+					{ 
 
 						/* Check the visibility */
 						visible = p_ptr->play_vis[0 - c_ptr->m_idx];
@@ -3370,11 +3557,17 @@ void do_cmd_fire(int Ind, int dir)
 								/* Apply special damage XXX XXX XXX */
 								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
+								/* factor in AC */
+								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < 150) ? (q_ptr->ac + q_ptr->to_a) : 150) / 250);
+
 								/* No negative damage */
 								if (tdam < 0) tdam = 0;
 
 								/* XXX Reduce damage by 1/3 */
 								tdam = (tdam + 2) / 3;
+
+						                /* can't attack while in WRAITHFORM (explosion still works) */
+							        if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
 
 								/* Handle unseen player */
 								if (!visible)
@@ -3404,6 +3597,7 @@ void do_cmd_fire(int Ind, int dir)
 									/* Make target hostile if not already */
 									if (!check_hostile(0 - c_ptr->m_idx, Ind))
 									{
+										if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 									}
 								}
@@ -3414,16 +3608,17 @@ void do_cmd_fire(int Ind, int dir)
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
 								}
 
+
 								/* Take damage */
 								take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name, Ind);
 
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
 								if (!boomerang && p_ptr->bow_brand_t
-										&& p_ptr->bow_brand_t != BRAND_CONF)
+										&& p_ptr->bow_brand_t != BRAND_CONF) 
 									do_arrow_brand_effect(Ind, y, x);
 
-								if (!magic && o_ptr->pval)
+								if (!magic && o_ptr->pval) 
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
@@ -3442,6 +3637,8 @@ void do_cmd_fire(int Ind, int dir)
 
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
 				monster_race *r_ptr = race_inf(m_ptr);
+				/* Do not hit pets - the_sandman */
+				if (m_ptr->pet) break;
 
 				/* Check the visibility */
 				visible = p_ptr->mon_vis[c_ptr->m_idx];
@@ -3474,6 +3671,14 @@ void do_cmd_fire(int Ind, int dir)
 					}
 
 
+					/* Handle reflection - it's back, though weaker - C. Blue */
+					if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
+						msg_format(Ind, "The %s was deflected.", o_name);
+						num_ricochet = 1;
+						hit_body = 1;
+						break;
+					}
+					
 					/* Handle unseen monster */
 					if (!visible)
 					{
@@ -3523,6 +3728,10 @@ void do_cmd_fire(int Ind, int dir)
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
 
+			                /* can't attack while in WRAITHFORM (explosion still works) */
+					/* wraithed players can attack wraithed monsters - mikaelh */
+					if (p_ptr->tim_wraith && 
+					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) tdam = 0;
 #if 0
 					/* XXX consider using project() with GF_CONF */
 					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CONF)) &&
@@ -3564,7 +3773,7 @@ void do_cmd_fire(int Ind, int dir)
 					   Should general p_ptr->vampiric help for ranged attacks?
 					   - for now vampiric from items (-1) helps a bit,
 					   - vampiric from vampire form (>0) doesn't (relies on melee-biting!) */
-					if ((((f1 | f1a) & TR1_VAMPIRIC) ||
+					if ((((f1 | f1a) & TR1_VAMPIRIC) || 
 					    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE_RANGED))) &&
 					    !((r_ptr->flags3 & RF3_UNDEAD) ||
 /*          				    (r_ptr->flags3 & RF3_DEMON) ||*/
@@ -3590,7 +3799,7 @@ void do_cmd_fire(int Ind, int dir)
 						dead, the drain does not work... */
 						if (drain_result) {
 							drain_result -= m_ptr->hp;  /* Calculate the difference */
-
+						
 							if (drain_result > 0) /* Did we really hurt it? */
 							{
 								drain_heal = randint(2) + damroll(2,(drain_result / 16));/* was 4,../6 -- was /8 for 50 max_drain */
@@ -3626,14 +3835,17 @@ void do_cmd_fire(int Ind, int dir)
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 							/* Message */
-							msg_format(Ind, "%^s flees in terror!", m_name);
+							if (!streq(m_name, "Morgoth, Lord of Darkness"))
+								msg_format(Ind, "%^s flees in terror!", m_name);
+							else
+								msg_format(Ind, "%^s retreats!", m_name);
 						}
 					}
 
-					if (!boomerang && p_ptr->bow_brand_t)
+					if (!boomerang && p_ptr->bow_brand_t) 
 						do_arrow_brand_effect(Ind, y, x);
 
-					if (!magic && o_ptr->pval)
+					if (!magic && o_ptr->pval) 
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
@@ -3653,7 +3865,8 @@ void do_cmd_fire(int Ind, int dir)
 		/* finer resolution to match reduced break rate of boomerangs - C. Blue */
 		j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
 		if (archery == SKILL_BOOMERANG)
-			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
+//			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
+			j = (j * (2500 - get_skill_scale(p_ptr, archery, 2450))) / 5000;
 		else
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100;
 
@@ -3691,6 +3904,16 @@ void do_cmd_fire(int Ind, int dir)
 //		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
 		if((num_ricochet) && (hit_body) && (magik(ricochet_chance)))
 		{
+			/* Some players do not want ricocheting shots as to not wake up other
+			 * monsters. How about we remove ricocheting shots for slingers, but
+			 * instead, adds a chance to do a double damage (than normal and/or crit)
+			 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
+			if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') ||
+			    check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
+				num_ricochet=0;
+				break;
+			}
+
 			byte d;
 
 			num_ricochet--;
@@ -3792,13 +4015,16 @@ void do_cmd_fire(int Ind, int dir)
 		breakage = 101;
 	}
 
+#if 0 /* covered by STARTEQ_TREATMENT */
+#ifndef RPG_SERVER	/* Let's not... here at least... This is annoying. */
 	/* Hack -- yet another anti-cheeze(yaac) */
 	if ((!magic &&
 		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 	}
-
+#endif
+#endif
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
 	if ((!magic) && (!artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
@@ -3842,6 +4068,8 @@ bool interfere(int Ind, int chance)
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;
+			/* Pet never interfere  - the_sandman */
+			if (m_ptr->pet) continue; 
 		}
 		else
 		{
@@ -3950,6 +4178,9 @@ void do_cmd_throw(int Ind, int dir, int item)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+	/* throwing works even while in WRAITHFORM (due to slow speed of
+	   object, allowing it to lose the wraithform ;) */
+
 	/* Break goi/manashield */
 #if 0
 	if (p_ptr->invuln)
@@ -3982,13 +4213,15 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval==9 /* rugby ball */)) // && (object_value(0, o_ptr) > 0))
+#if (STARTEQ_TREATMENT == 1)
+	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
 	{
 /*		msg_format(Ind, "Please don't litter the %s.",
 			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
 		msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
 		return;
 	}
+#endif
 
 	if( check_guard_inscription( o_ptr->note, 'v' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -4007,6 +4240,12 @@ void do_cmd_throw(int Ind, int dir, int item)
 		return;
 	}
 
+#if (STARTEQ_TREATMENT > 1)
+        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+                o_ptr->level = 0;
+#endif
+
 	/* S(he) is no longer afk */
 	if (p_ptr->afk) toggle_afk(Ind, "");
 
@@ -4021,18 +4260,12 @@ void do_cmd_throw(int Ind, int dir, int item)
 	throw_obj.number = 1;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or
-	 * charges need to be allocated between the two stacks.  If all the items
-	 * are being dropped, it makes for a neater message to leave the original
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-	{
-		if (o_ptr->tval == TV_WAND)
-		{
-			throw_obj.pval = divide_charged_item(o_ptr, 1);
-		}
-	}
+	if (o_ptr->tval == TV_WAND) throw_obj.pval = divide_charged_item(o_ptr, 1);
 
 	/* Reduce and describe inventory */
 	if (item >= 0)
@@ -4361,7 +4594,10 @@ void do_cmd_throw(int Ind, int dir, int item)
 						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 						/* Message */
-						msg_format(Ind, "%^s flees in terror!", m_name);
+						if (!streq(m_name, "Morgoth, Lord of Darkness"))
+							msg_format(Ind, "%^s flees in terror!", m_name);
+						else
+							msg_format(Ind, "%^s retreats!", m_name);
 					}
 				}
 
@@ -4500,7 +4736,7 @@ void house_admin(int Ind, int dir, char *args){
 /*
  * Buy a house.  It is assumed that the player already knows the
  * price.
-
+ 
  Hacked to sell houses for half price. -APD-
  Doesn't use a turn / disable AFK at this time. - C. Blue
  */
@@ -4527,7 +4763,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		msg_print(Ind, "You cannot buy a house.");
 
 		return;
-	}
+	}       
 
 	if(p_ptr->inval){
 		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
@@ -4618,6 +4854,11 @@ void do_cmd_purchase_house(int Ind, int dir)
 		dna->a_flags=ACF_NONE;
 		dna->min_level=1;
 
+		/* Erase house contents */
+		for (i = 0; i < num_houses; i++)
+			if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos))
+				kill_house_contents(&houses[i]);
+
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);
 	}
@@ -4628,7 +4869,7 @@ void do_cmd_own(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	char buf[100];
-
+	
 	if (!p_ptr->total_winner)
 	{
 		msg_format(Ind, "You must be a %s to own a land!", (p_ptr->male)?"king":"queen");
@@ -4640,7 +4881,7 @@ void do_cmd_own(int Ind)
 		msg_format(Ind, "You can't own more than 2 terrains.");
 		return;
 	}
-
+	
 	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own)
 	{
 		msg_format(Ind, "Sorry this land is owned by someone else.");
@@ -4651,13 +4892,13 @@ void do_cmd_own(int Ind)
 		msg_format(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
-
+	
 	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<4))
 	{
 		msg_format(Ind, "Sorry this land is owned by the town.");
 		return;
 	}
-
+	
 	/* Ok all check did lets appropriate */
 	if(p_ptr->own1.wx || p_ptr->own1.wy || p_ptr->own1.wz)
 	{
@@ -4668,7 +4909,7 @@ void do_cmd_own(int Ind)
 		wpcopy(&p_ptr->own1, &p_ptr->wpos);
 	}
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
-
+	
 	if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
 		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	} else {

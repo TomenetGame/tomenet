@@ -16,9 +16,11 @@
 
 /* chance of townie respawning like other monsters, in % [50] */
 #ifndef HALLOWEEN
-#define TOWNIE_RESPAWN_CHANCE	33
+ /* Default */
+ #define TOWNIE_RESPAWN_CHANCE	250
 #else
-#define TOWNIE_RESPAWN_CHANCE	100	/* better for Helloween event */
+ /* better for Helloween event */
+ #define TOWNIE_RESPAWN_CHANCE	50
 #endif
 
 /* if defined, player ghost loses exp slowly. [10000]
@@ -200,7 +202,11 @@ static cptr value_check_aux2(object_type *o_ptr)
 	if (artifact_p(o_ptr)) return "good";
 
 	/* Ego-Items -- except cursed/broken ones */
-	if (ego_item_p(o_ptr)) return "good";
+	if (!k_ptr->cost) return "broken";
+	if (ego_item_p(o_ptr)) {
+//		if (o_ptr->name2 == 125 || o_ptr->name2a == 125) return "broken"; /* backbiting */
+		return "good";
+	}
 
 	switch (o_ptr->tval)
 	{
@@ -493,7 +499,7 @@ static void regenhp(int Ind, int percent)
 	old_chp = p_ptr->chp;
 
 	/* Extract the new hitpoints */
-	new_chp = ((long)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
+	new_chp = ((s32b)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
 	/* Apply the healing */
 	hp_player_quiet(Ind, new_chp >> 16);
 	//p_ptr->chp += new_chp >> 16;   /* div 65536 */
@@ -526,7 +532,7 @@ static void regenmana(int Ind, int percent)
 	int                   old_csp;
 
 	old_csp = p_ptr->csp;
-	new_mana = ((long)p_ptr->msp) * percent + PY_REGEN_MNBASE;
+	new_mana = ((s32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
 	p_ptr->csp += new_mana >> 16;	/* div 65536 */
 	/* check for overflow */
 	if ((p_ptr->csp < 0) && (old_csp > 0))
@@ -792,7 +798,7 @@ static void process_effects(void)
 				c_ptr = &zcave[j][i];
 
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
-						(distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
+						(distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad))
 				{
 					c_ptr->effect = k;
 					everyone_lite_spot(wpos, j, i);
@@ -897,7 +903,9 @@ static void process_world(int Ind)
 
 				/* Message */
 				msg_print(Ind, "The sun has risen.");
-	
+//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* daylight */
+		
 				/* Hack -- Scan the level */
 				for (y = 0; y < MAX_HGT; y++)
 				{
@@ -931,6 +939,9 @@ static void process_world(int Ind)
 
 				/* Message  */
 				msg_print(Ind, "The sun has fallen.");
+//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* no more daylight */
+
 
 				 /* Hack -- Scan the level */
 				for (y = 0; y < MAX_HGT; y++)
@@ -1013,9 +1024,11 @@ static void process_world(int Ind)
 	 */
 
 	/* Check for creature generation */
-	if ((rand_int(MAX_M_ALLOC_CHANCE) == 0) && ((!istown(&p_ptr->wpos)) || magik(TOWNIE_RESPAWN_CHANCE)))
+	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
+	    (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0)))
 	{
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		/* Should we disallow those with MULTIPLY flags to spawn on surface? */
 		if (!l_ptr || !(l_ptr->flags1 & LF1_NO_NEW_MONSTER))
 		{
 			/* Set the monster generation depth */
@@ -1099,8 +1112,8 @@ static int retaliate_mimic_power(int Ind, int power)
 static bool retaliate_item(int Ind, int item, cptr inscription)
 {
 	player_type *p_ptr = Players[Ind];
-	//object_type		*o_ptr;
-	int spell = 0;
+	object_type		*o_ptr = &p_ptr->inventory[item];
+	int cost, choice = 0, spell = 0;
 
 	if (item < 0) return FALSE;
 
@@ -1114,17 +1127,17 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		/* Spell to cast */
 		if (*(inscription + 1))
 		{
-			spell = *(inscription + 1) - 96;
+			choice = *(inscription + 1) - 96;
 
 			/* shape-changing for retaliation is not so nice idea, eh? */
-			if (spell < 3)	/* 2 polymorph powers */
+			if (choice < 3)	/* 2 polymorph powers */
 			{
 				do_cmd_mimic(Ind, 0, 5);//w0t0w
 				return TRUE;
 			}
 			else
 			{
-				int power = retaliate_mimic_power(Ind, spell);
+				int power = retaliate_mimic_power(Ind, choice);
 				if (power)
 				{
 					do_cmd_mimic(Ind, power + 2, 5); /* 2 polymorph powers *///w0t0w
@@ -1143,7 +1156,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		if (*inscription == '-' && p_ptr->chp > p_ptr->mhp / 2) return FALSE;
 #endif
 
-		switch (p_ptr->inventory[item].tval)
+		switch (o_ptr->tval)
 		{
 			/* non-directional ones */
 			case TV_SCROLL:
@@ -1190,11 +1203,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 	/* Spell to cast */
 	if (inscription != NULL)
 	{
-		spell = *inscription - 96 - 1;
-		if (spell < 0 || spell > 9) spell = 0;
+		choice = *inscription - 96 - 1;
+		if (choice < 0 || choice > 9) choice = 0;
 	}
 
-	switch (p_ptr->inventory[item].tval)
+	switch (o_ptr->tval)
 	{
 		/* weapon -- attack normally! */
 		case TV_MSTAFF:
@@ -1229,6 +1242,35 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			{
 				retaliating_cmd = TRUE;
 				do_cmd_fire(Ind, 5);
+				return TRUE;
+			}
+			break;
+
+		/* spellbooks - mikaelh */
+		case TV_BOOK:
+			if (o_ptr->sval == 255)
+			{
+				/* It's a spellbook */
+
+				/* There's only one spell in a spellbook */
+				spell = o_ptr->pval;
+			}
+			else
+			{
+				/* It's a tome */
+
+				/* Get the spell */
+				spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
+			}
+
+			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
+
+			/* Check that it's ok... more checks needed here? */
+			/* Limit amount of mana used? */
+			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp && 
+				exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell)))
+			{
+				cast_school_spell(Ind, item, spell, 5, -1, 0);
 				return TRUE;
 			}
 			break;
@@ -1699,6 +1741,9 @@ static int auto_retaliate(int Ind)
 	{
 		/* set the target */
 		p_ptr->target_who = target;
+		if (m_target_ptr->pet) { //a pet?
+			return 0;
+		}
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
@@ -1733,15 +1778,116 @@ static void process_player_begin(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	/*
-	int			i;
-	object_type		*o_ptr;
-	*/
-
+	/* for AT_VALINOR: */
+	int x, y, xstart = 0, ystart = 0, ox, oy;
+	dungeon_type *d_ptr;
+        cave_type **zcave;
+	dun_level *l_ptr;
 
 	/* Perform pending automatic transportation */
 	switch (p_ptr->auto_transport) {
-	case AT_BLINK: teleport_player(Ind, 10); p_ptr->auto_transport = 0; break;
+	case AT_BLINK: teleport_player_force(Ind, 10); p_ptr->auto_transport = 0; break;
+	case AT_TPORT: teleport_player_force(Ind, 100); p_ptr->auto_transport = 0; break;
+	case AT_VALINOR: /* allocate Valinor; recall player there */
+#if 0
+		if (players_on_depth(wpos) && !getcave(wpos))
+		{
+		    	/* Allocate space for it */
+			alloc_dungeon_level(wpos);
+			/* Generate a dungeon level there */
+			generate_cave(wpos, p_ptr);
+		}
+		zcave = getcave(wpos);
+		l_ptr = getfloor(wpos);
+#endif
+#if 1
+		for (y = 0; y < MAX_WILD_Y; y++) {
+			for (x = 0; x < MAX_WILD_X; x++) {
+				if ((d_ptr = wild_info[y][x].tower) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
+				        p_ptr->recall_pos.wx = x;
+			    		p_ptr->recall_pos.wy = y;
+					p_ptr->recall_pos.wz = 1;
+				        p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				        recall_player(Ind, "");
+					break;
+				}
+				if ((d_ptr = wild_info[y][x].dungeon) && (!strcmp(d_name + d_info[d_ptr->type].name, "The Shores of Valinor"))) {
+				        p_ptr->recall_pos.wx = x;
+				        p_ptr->recall_pos.wy = y;
+					p_ptr->recall_pos.wz = -1;
+					// let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
+				        p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				        recall_player(Ind, "");
+					break;
+				}
+		        }
+		}
+		p_ptr->auto_transport = AT_VALINOR2;
+		break;
+#endif
+	case AT_VALINOR2: /* (re-)generate Valinor from scratch; move player into position; lite it up for the show; place 'monsters' */
+	        zcave=getcave(&p_ptr->wpos);
+                l_ptr = getfloor(&p_ptr->wpos);
+		/* Get rid of annoying level flags */
+		l_ptr->flags1 &= ~(LF1_NOMAP | LF1_NO_MAGIC_MAP);
+		for (y = 0; y < MAX_HGT; y++) {
+			for (x = 0; x < MAX_WID; x++) {
+				if (zcave[y][x].feat == FEAT_PERM_SOLID) zcave[y][x].feat = FEAT_HIGH_MOUNTAIN;
+			}
+		}
+		/* Wipe any monsters/objects */
+                wipe_o_list_safely(&p_ptr->wpos);
+                wipe_m_list(&p_ptr->wpos);
+		/* Regenerate the level from fixed layout */
+		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 67, TRUE);
+		/* Some lil hacks */
+		msg_format(Ind, "\377uYou enter the shores of Valinor..");
+		wiz_lite(Ind);
+		/* Move @ to designated starting position (level_rand_x/y()) and redraw */
+		oy = p_ptr->py;
+		ox = p_ptr->px;
+		p_ptr->py = 15;
+		p_ptr->px = 16;
+		zcave[oy][ox].m_idx = 0;
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
+		everyone_lite_spot(&p_ptr->wpos, oy, ox);
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		/* Summon 'monsters' */
+		place_monster_aux(&p_ptr->wpos, 7, 10, 1100, FALSE, FALSE, 0, 0);
+		everyone_lite_spot(&p_ptr->wpos, 7, 10);
+		place_monster_aux(&p_ptr->wpos, 7, 15, 1100, FALSE, FALSE, 0, 0);
+		everyone_lite_spot(&p_ptr->wpos, 7, 15);
+		place_monster_aux(&p_ptr->wpos, 10, 25, 1098, FALSE, FALSE, 0, 0);
+		everyone_lite_spot(&p_ptr->wpos, 10, 25);
+		p_ptr->update |= PU_LITE;
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+		p_ptr->update |= (PU_DISTANCE);
+		redraw_stuff(Ind);
+		p_ptr->auto_transport = AT_VALINOR3;
+		break;
+	case AT_VALINOR3:	/* Orome mumbles */
+		if (turn % 300) break; /* cool down.. */
+		msg_print(Ind, "\377oOrome, The Hunter, mumbles something about a spear..");
+		p_ptr->auto_transport = AT_VALINOR4;
+		break;
+	case AT_VALINOR4:	/* Orome looks */
+		if (turn % 500) break; /* cool down.. */
+		msg_print(Ind, "\377oOrome, The Hunter, notices you and surprise crosses his face!");
+		p_ptr->auto_transport = AT_VALINOR5;
+		break;
+	case AT_VALINOR5:	/* Orome laughs */
+		if (turn % 500) break; /* cool down.. */
+		msg_print(Ind, "\377oOrome, The Hunter, laughs out loudly!");
+		set_afraid(Ind, 8);
+		p_ptr->auto_transport = AT_VALINOR6;
+		break;
+	case AT_VALINOR6:	/* Orome offers */
+		if (turn % 500) break; /* cool down.. */
+		msg_print(Ind, "\377oOrome, The Hunter, offers you to stay here!");
+		msg_print(Ind, "\377y(You may hit the suicide keys in order to retire here,");
+		msg_print(Ind, "\377yor take the staircase back to the mundane world.)");
+		p_ptr->auto_transport = 0;
+		break;
 	}
 
 
@@ -1905,7 +2051,7 @@ void recall_player(int Ind, char *message){
 static void do_recall(int Ind, bool bypass)
 {
 	player_type *p_ptr = Players[Ind];
-	char *message;
+	char *message = NULL;
 
 	/* sorta circumlocution? */
 	worldpos new_pos;
@@ -1913,6 +2059,19 @@ static void do_recall(int Ind, bool bypass)
 
 	/* Disturbing! */
 	disturb(Ind, 0, 0);
+
+	/* special restriction for global events (Highlander Tournament) */
+	if (sector00separation && !is_admin(p_ptr) && (
+	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
+	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))) {
+		if (p_ptr->global_event_temp & 0x1) {
+			p_ptr->global_event_temp &= ~0x1;
+		} else {
+			msg_print(Ind, "A tension leaves the air around you...");
+			p_ptr->redraw |= (PR_DEPTH);
+			return;
+		}
+	}
 
 	/* Determine the level */
 	/* recalling to surface */
@@ -1923,7 +2082,7 @@ static void do_recall(int Ind, bool bypass)
 
 		/* Messages */
 		if((((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth>ABS(p_ptr->wpos.wz)) ||
-		    (d_ptr->flags1 & DF1_NO_RECALL))) {
+		    (d_ptr->flags1 & DF1_NO_RECALL)) && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
 			msg_print(Ind, "You feel yourself being pulled toward the surface!");
 			if (!is_admin(p_ptr)) {
 				recall_ok=FALSE;
@@ -2008,10 +2167,14 @@ static void do_recall(int Ind, bool bypass)
 			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
-			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN))))
+#ifdef RPG_SERVER /* Prevent recalling into NO_DEATH dungeons */
+			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
+#endif
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) ||
+			    (d_ptr->flags2 & DF2_NO_ENTRY_WOR))
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
@@ -2043,10 +2206,14 @@ static void do_recall(int Ind, bool bypass)
 			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
-			if(((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
+			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
 			    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev) ||
 			    (d_ptr->flags1 & (DF1_NO_RECALL | DF1_NO_UP | DF1_FORCE_DOWN)) ||
-			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN))))
+#ifdef RPG_SERVER /* Prevent recalling into NO_DEATH towers */
+			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
+#endif
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) ||
+			    (d_ptr->flags2 & DF2_NO_ENTRY_WOR))
 			{
 				if (!is_admin(p_ptr))
 					p_ptr->recall_pos.wz = 0;
@@ -2220,10 +2387,13 @@ static bool process_player_end_aux(int Ind)
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-								magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly)
+								magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
+								!p_ptr->immune_water)
 						{
+						    if (!p_ptr->resist_water || magik(50)) {
 							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(20)) minus_ac(Ind, 1);
+							equip_damage(Ind, GF_WATER);
+						    }
 						}
 
 						if(randint(1000-factor)<10)
@@ -2245,12 +2415,12 @@ static bool process_player_end_aux(int Ind)
 						(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
 						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
 			{
-				int hit = p_ptr->mhp>>6;
-				hit += randint(p_ptr->mhp>>5);
+				long hit = p_ptr->mhp>>6;
+				hit += randint(p_ptr->chp>>5);
 				if(!hit) hit=1;
 
 				/* Take CON into consideration(max 30%) */
-				if (!magik(adj_str_wgt[p_ptr->stat_ind[A_CON]])) hit = 0;
+				hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
 				if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
 
 				if(randint(1000)<10)
@@ -2333,7 +2503,8 @@ static bool process_player_end_aux(int Ind)
 	/* Allow AFK-hivernation if not hungry */
 	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
-	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
+//	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
+	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
 	{
 		/* Digest normally */
 		if (p_ptr->food < PY_FOOD_MAX)
@@ -2361,6 +2532,9 @@ static bool process_player_end_aux(int Ind)
 				/* DragonRider and Half-Troll take more food */
 				if (p_ptr->prace == RACE_DRIDER
 						|| p_ptr->prace == RACE_HALF_TROLL) i += 15;
+
+                                /* Vampires consume food very quickly */
+                                if (p_ptr->prace == RACE_VAMPIRE) i += 20;
 
 				/* Invisibility consume a lot of food */
 				i += p_ptr->invis / 2;
@@ -2599,7 +2773,7 @@ static bool process_player_end_aux(int Ind)
 			jy=p_ptr->py;
 			jx=p_ptr->px;
 			zcave[jy][jx].info &= ~CAVE_STCK;
-			teleport_player(Ind, 1);
+			teleport_player_force(Ind, 1);
 			zcave[jy][jx].info |= CAVE_STCK;
 		}
 	}
@@ -2696,6 +2870,18 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->slow)
 	{
 		(void)set_slow(Ind, p_ptr->slow - minus - recovery);
+	}
+
+	/* xtra shot? - the_sandman */
+	if (p_ptr->focus_time)
+	{
+		(void)do_focus_shot(Ind, p_ptr->focus_time - minus, p_ptr->focus_val);
+	}
+
+	/* xtra stats? - the_sandman */
+	if (p_ptr->xtrastat)
+	{
+		(void)do_xtra_stats(Ind, p_ptr->xtrastat - minus, p_ptr->statval);
 	}
 
 	/* Protection from evil */
@@ -3044,12 +3230,14 @@ static bool process_player_end_aux(int Ind)
 				msg_print(Ind, "\377oYou vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
 				take_hit(Ind, 1, "circulation collapse", 0);
+			    if (!p_ptr->sensible_life) {
 				if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 					if (p_ptr->food > PY_FOOD_FAINT - 1)
 					        (void)set_food(Ind, PY_FOOD_FAINT - 1);
 				(void)set_poisoned(Ind, 0);
 				if (!p_ptr->free_act && !p_ptr->slow_digest)
 				        (void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
+			    }
 			}
 		}
 	}
@@ -3058,10 +3246,26 @@ static bool process_player_end_aux(int Ind)
 	/*** Process Inventory ***/
 
 	/* Handle experience draining */
-	if (p_ptr->drain_exp && magik(10))
-		//			take_xp_hit(Ind, 1, "Draining", TRUE, FALSE);
-		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L,
-				"Draining", TRUE, FALSE);
+//	if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+/* experimental: maybe no expdrain or just less expdrain while player is on world surface.
+   idea: allow classes who lack a *remove curse* spell to make more use of the rings. */
+//	if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+//	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 25) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+//		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE);
+		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
+	{
+		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L;
+#ifdef ALT_EXPRATIO
+		if ((p_ptr->lev >= 2) && (player_exp[p_ptr->lev - 2] > p_ptr->exp - exploss))
+			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
+#else
+		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->exp_fact)) / 100L > p_ptr->exp - exploss))
+			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
+#endif
+		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE);
+	}
+
 #if 0
 	{
 		if ((rand_int(100) < 10) && (p_ptr->exp > 0))
@@ -3154,7 +3358,6 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->drain_life)
 	{
 		int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
-
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 #if 0
 		p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
@@ -3308,6 +3511,21 @@ static bool process_player_end_aux(int Ind)
 		p_ptr->tim_blacklist--;
 	}
 
+#if 1 /* use turns instead of day/night cycles */
+	if (p_ptr->tim_watchlist)
+	{
+		/* Count down towards turnout */
+		p_ptr->tim_watchlist--;
+	}
+#endif
+
+	if (p_ptr->pstealing)
+	{
+		/* Count down towards turnout */
+		p_ptr->pstealing--;
+		if (!p_ptr->pstealing) msg_print(Ind, "You're calm enough to steal from another player.");
+	}
+
 	/* Delayed Word-of-Recall */
 	if (p_ptr->word_recall)
 	{
@@ -3365,13 +3583,13 @@ static void process_games(int Ind){
 
 				if(p_ptr->team==1 && c_ptr->feat==FEAT_BGOAL){
 					teamscore[0]++;
-					msg_format_near(Ind, "\377r%s scored a goal!!!", p_ptr->name);
+					msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
 					msg_format(Ind, "\377rYou scored a goal!!!");
 					score=1;
 				}
 				if(p_ptr->team==2 && c_ptr->feat==FEAT_AGOAL){
 					teamscore[1]++;
-					msg_format_near(Ind, "\377g%s scored a goal!!!", p_ptr->name);
+					msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
 					msg_format(Ind, "\377gYou scored a goal!!!");
 					score=1;
 				}
@@ -3380,7 +3598,7 @@ static void process_games(int Ind){
 					s16b ox, oy;
 					int try;
 					p_ptr->energy=0;
-					snprintf(sstr, 80, "Score: \377rReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
+					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
 					msg_broadcast(0, sstr);
 
 					for(try=0; try<1000; try++){
@@ -3397,7 +3615,7 @@ static void process_games(int Ind){
 						break;
 					}
 					/* Move the player from the goal area */
-					teleport_player(Ind, 20);
+					teleport_player_force(Ind, 20);
 				}
 				break;
 			/* capture the flag */
@@ -3421,6 +3639,32 @@ static void process_player_end(int Ind)
 	char		attackstatus;
 
 //	byte			*w_ptr;
+
+	/* slower 'running' movement over certain terrain */
+	int real_speed = cfg.running_speed;
+	cave_type *c_ptr;
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+#if 1 /* NEW_RUNNING_FEAT */
+	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
+	/* are we in fact running-flying? */
+	if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+	}
+        /* or running-swimming? */
+	else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+        }
+	/* or just normally running? */
+	else {
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
+		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
+	}
+	}
+#endif
 
 	if (Players[Ind]->conn == NOT_CONNECTED)
 		return;
@@ -3448,17 +3692,22 @@ static void process_player_end(int Ind)
 		 */
 		if ((attackstatus = auto_retaliate(Ind)))
 		{
+			p_ptr->auto_retaliating = TRUE;
 			/* Use energy */
 //			p_ptr->energy -= level_speed(p_ptr->dun_depth);
+		} else {
+			p_ptr->auto_retaliating = FALSE;
 		}
 	}
 
+	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
-	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*(cfg.running_speed + 1))/cfg.running_speed)
+	while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos)*(real_speed + 1))/real_speed)
 	{
 		run_step(Ind, 0);
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / cfg.running_speed;
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
 	}
+
 
 
 	/* Notice stuff */
@@ -4012,6 +4261,9 @@ void store_turnover()
 static void process_various(void)
 {
 	int i, j;
+	int h, m, s;
+	time_t now;
+	struct tm *tmp;
 	//cave_type *c_ptr;
 	player_type *p_ptr;
 
@@ -4039,6 +4291,16 @@ static void process_various(void)
 		}
 	}
 
+	/* Extra LUA function in custom.lua */
+	time(&now);
+	tmp = localtime(&now);
+	h = tmp->tm_hour;
+	m = tmp->tm_min;
+	s = tmp->tm_sec;
+
+	if (!(turn % (cfg.fps * 3600)))
+		exec_lua(0, format("cron_1h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
+
 	/* daily maintenance */
 	if (!(turn % (cfg.fps * 86400)))
 	{
@@ -4060,6 +4322,9 @@ static void process_various(void)
 				m_max, o_max);
 #endif
 		s_printf("Finished maintenance\n");
+		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
+		
+/*		bss_add_line("--- new day line ---"); */
 	}
 
 	if (!(turn % (cfg.fps * 10))){
@@ -4140,7 +4405,9 @@ static void process_various(void)
 				if (r_ptr->flags1 & RF1_QUESTOR) continue;
 				/* ..hardcoding them instead: */
 //				if (i == 860 || i == 862 || i == 1032 || i == 1067 || i == 1085 || i == 1097) continue;
-				if (r_ptr->level >= 99) continue;
+				if (r_ptr->level >= 98) continue; /* Not Michael either */
+
+				if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
 
 				/* Special-dropping uniques too! */
 				/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
@@ -4155,6 +4422,7 @@ static void process_various(void)
 				//				r_ptr->respawn_timer = -1;
 
 				/* Tell the player */
+				/* the_sandman: added colour */
 				msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
 				//				msg_broadcast(0,buf); 
 			}
@@ -4188,6 +4456,7 @@ static void process_various(void)
 				r_ptr->respawn_timer = -1;
 
 				/* Tell every player */
+				/* the_sandman: added colour */
 				snprintf(buf, sizeof(buf), "\377v%s rises from the dead!",(r_name + r_ptr->name));
 				msg_broadcast(0,buf); 
 			}
@@ -4242,7 +4511,7 @@ int find_player(s32b id)
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
 		player_type *p_ptr = Players[i];
-		
+		if (Players[i]->conn == NOT_CONNECTED) return 0;	
 		if (p_ptr->id == id) return i;
 	}
 	
@@ -4303,14 +4572,15 @@ static void process_player_change_wpos(int Ind)
 			if (!o_ptr->k_idx || !true_artifact_p(o_ptr)) continue;
 
 			/* fix the list */
-			if (!a_info[o_ptr->name1].cur_num)
-				a_info[o_ptr->name1].cur_num = 1;
-
+			handle_art_inumpara(o_ptr->name1);
 			if (!a_info[o_ptr->name1].known && (o_ptr->ident & ID_KNOWN))
 				a_info[o_ptr->name1].known = TRUE;
 
-			if (!(cfg.kings_etiquette && p_ptr->total_winner && !is_admin(p_ptr)))
-				continue;
+			if (!(cfg.fallenkings_etiquette && p_ptr->once_winner && !p_ptr->total_winner && !is_admin(p_ptr))) {
+				if (!(cfg.kings_etiquette && p_ptr->total_winner && !is_admin(p_ptr))) {
+					continue;
+				}
+			}
 
 			if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
 			    strstr((a_name + a_info[o_ptr->name1].name),"Morgoth") ||
@@ -4322,8 +4592,7 @@ static void process_player_change_wpos(int Ind)
 
 			/* Message */
 			msg_format(Ind, "\377y%s bids farewell to you...", o_name);
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
+			handle_art_d(o_ptr->name1);
 
 			/* Eliminate the item  */
 			inven_item_increase(Ind, j, -99);
@@ -4486,7 +4755,7 @@ static void process_player_change_wpos(int Ind)
 	//printf("finding area (%d,%d)\n",startx,starty);
 	/* Place the player in an empty space */
 	//for (j = 0; j < 1500; ++j)
-	for (j = 0; j < 3000; j++)
+	for (j = 0; j < 5000; j++)
 	{
 		/* Increasing distance */
 		d = (j + 149) / 150;
@@ -4507,6 +4776,10 @@ static void process_player_change_wpos(int Ind)
 	        if((zcave[y][x].info & CAVE_STCK) &&
 		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
 		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND))
+			continue;
+
+		/* Must be inside the level borders - mikaelh */
+		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)
 			continue;
 
 		break;
@@ -4654,6 +4927,9 @@ static void process_player_change_wpos(int Ind)
 	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
 		imprison(Ind, 0, "old crimes");
 	}
+	
+	/* daylight problems for vampires */
+	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind);
 }
 
 
@@ -4669,6 +4945,12 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
+	if (last_chat_line != NULL && last_chat_owner != NULL) {
+		exec_lua(1, "chat_handler()");
+		free(last_chat_line); last_chat_line = NULL;
+		free(last_chat_owner); last_chat_owner = NULL;
+	}
+
 	int i;
 	/* Return if no one is playing */
 	/* if (!NumPlayers) return; */
@@ -4688,8 +4970,7 @@ void dungeon(void)
 	/* Check player's depth info */
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
-		player_type *p_ptr = Players[i];
-
+		player_type *p_ptr = Players[i]; 
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
 		process_player_change_wpos(i);
@@ -4806,7 +5087,25 @@ void dungeon(void)
 				break;
 			}
 			if(!i) {
-				msg_broadcast(-1, "\377o<<<Server is being updated and will be back in a minute.>>>");
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				cfg.runlevel = 2049;
+			}
+		}
+		if(cfg.runlevel == 2047)
+		{
+			for(i = NumPlayers; i > 0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
+				if(admin_p(i)) continue;
+				/* Ignore characters that are afk and not in a dungeon/tower */
+//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+				/* Ignore characters that are not in a dungeon/tower */
+				if(Players[i]->wpos.wz == 0) continue;
+				break;
+			}
+			if(!i && (NumPlayers <= 5)) {
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
 		}
@@ -4829,6 +5128,13 @@ void dungeon(void)
 			msg_broadcast_format(0,
 					"\377GToday it is %s of the %s year of the third age.",
 					get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+
+	        	/* the_sandman prints a rumour */
+		        if (NumPlayers)
+			{
+				msg_print(1, "Suddenly a thought comes to your mind:");
+				fortune(1, TRUE);
+			}
 		}
 
 		for (i = 1; i < NumPlayers + 1; i++)
@@ -4841,6 +5147,14 @@ void dungeon(void)
 		}
 	}
 
+	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
+	if (!(turn % 650000)) { /* 650k ~ 3hours */
+		worldpos wp;
+		wp.wx=32;wp.wy=32;wp.wz=0;
+		wipe_m_list_chance(&wp, 70);
+		s_printf("%s Bree auto-genocided.\n", showtime());
+	}
+
 	/* Process everything else */
 	if (!(turn % 10))
 	{
@@ -4849,7 +5163,7 @@ void dungeon(void)
 		/* Hack -- Regenerate the monsters every hundred game turns */
 		if (!(turn % 100)) regen_monsters();
 	}
-
+	
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
@@ -4878,6 +5192,18 @@ void dungeon(void)
 	{
 		/* Colour animation is done in lite_spot */
 		lite_spot(i, Players[i]->py, Players[i]->px);
+	}
+
+	if (!(turn % cfg.fps))
+	{
+		/* Process global_events each second */
+		process_global_events();
+
+		/* Call a specific lua function every second */
+		exec_lua(1, "second_handler()");
+
+		/* Tell the scripts that we're alive */
+		update_check_file();
 	}
 
 	/* Send any information over the network */
@@ -4912,13 +5238,15 @@ void set_runlevel(int val)
 			break;
 		case 5:
 			/* Shutdown warning mode, automatic timer */
-			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
+//			msg_broadcast(0, "\377yWarning. Server shutdown will take place in five minutes.");
+			msg_broadcast(0, "\377yWarning. Server shutdown will take place in ten minutes.");
 			break;
 		case 1024:
 			Report_to_meta(META_DIE);
 			meta=FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2047:
 		case 2048:
 			/* Shutdown as soon as server is empty (admins don't count) */
 			break;
@@ -4954,24 +5282,6 @@ void play_game(bool new_game)
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
 
-	/* Attempt to load the server state information */
-	if (!load_server_info())
-	{
-		/* Oops */
-		quit("broken server savefile(s)");
-	}
-
-	/* Nothing loaded */
-	if (!server_state_loaded)
-	{
-		/* Make server state info */
-		new_game = TRUE;
-
-		/* Create a new dungeon */
-		server_dungeon = FALSE;
-	}
-	else server_dungeon = TRUE;
-
 	/* Init the RNG */
 	// Is it a good idea ? DGDGDGD --  maybe FIXME
 	//	if (Rand_quick)
@@ -4994,6 +5304,24 @@ void play_game(bool new_game)
 		/* Seed the "complex" RNG */
 		Rand_state_init(seed);
 	}
+
+	/* Attempt to load the server state information */
+	if (!load_server_info())
+	{
+		/* Oops */
+		quit("broken server savefile(s)");
+	}
+
+	/* Nothing loaded */
+	if (!server_state_loaded)
+	{
+		/* Make server state info */
+		new_game = TRUE;
+
+		/* Create a new dungeon */
+		server_dungeon = FALSE;
+	}
+	else server_dungeon = TRUE;
 
 	/* Roll new town */
 	if (new_game)

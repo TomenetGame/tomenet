@@ -53,7 +53,15 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i)
  */
 s16b get_skill(player_type *p_ptr, int skill)
 {
+#if 0
+	/* prevent breaking the +2 limit */
+	int s;
+	s =  (p_ptr->s_info[skill].value / SKILL_STEP);
+	if (s > p_ptr->lev + 2) s = p_ptr->lev + 2;
+	return s;
+#else
 	return (p_ptr->s_info[skill].value / SKILL_STEP);
+#endif
 }
 
 
@@ -62,12 +70,28 @@ s16b get_skill(player_type *p_ptr, int skill)
  */
 s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 {
+#if 0
+	/* prevent breaking the +2 limit */
+	int s;
+/*	s =  ((p_ptr->s_info[skill].value * 1000) / SKILL_STEP);
+	if (s > (p_ptr->lev * 1000) + 2000) s = (p_ptr->lev * 1000) + 2000;
+	s = (s * SKILL_STEP) / 1000;
+	return (((s / 10) * (scale * (SKILL_STEP / 10)) / (SKILL_MAX / 10)) / (SKILL_STEP / 10)); */
+
+	/* Cleaning up this mess too... - mikaelh */
+	s = p_ptr->s_info[skill].value;
+	if (s > (p_ptr->lev + 2) * SKILL_STEP) s = (p_ptr->lev + 2) * SKILL_STEP;
+	return ((s * scale) / SKILL_MAX);
+	
+#else
 	/* XXX XXX XXX */
 	/* return (((p_ptr->s_info[skill].value / 10) * (scale * (SKILL_STEP / 10)) /
 	         (SKILL_MAX / 10)) /
-		(SKILL_STEP / 10)); */
+	        (SKILL_STEP / 10)); */
 	/* Simpler formula suggested by Potter - mikaelh */
 	return ((p_ptr->s_info[skill].value * scale) / SKILL_MAX);
+
+#endif
 }
 
 /* Will add, sub, .. */
@@ -137,196 +161,246 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
    from increasing a skill */
 static void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
-	int new_value = get_skill(p_ptr, i);
+	int new_value = get_skill_scale(p_ptr, i, 500);
 //	int as = get_archery_skill(p_ptr);
 //	int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
 	if (old_value == new_value) return;
 	switch(i) {
-	case SKILL_CLIMB:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to climb mountains!");;
+	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to climb mountains!");;
 				break;
-	case SKILL_FLY: 	if (new_value == 1) msg_print(Ind, "\377GYou learn how to fly!");;
+	case SKILL_FLY: 	if (new_value == 10) msg_print(Ind, "\377GYou learn how to fly!");;
 				break;
-	case SKILL_FREEACT:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
+	case SKILL_FREEACT:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
 				break;
-	case SKILL_RESCONF:	if (new_value == 1) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
+	case SKILL_RESCONF:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
 				break;
 	case SKILL_MARTIAL_ARTS:
-		if (old_value < 10 && new_value >= 10) {
+		if (old_value < 10 && new_value >= 10) { /* the_sandman */
+//			msg_print(Ind, "\377GYou feel as if you could take on the world!");
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+		} if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\377GYou learn how to fall safely!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 15 && new_value >= 15) {
+		} if (old_value < 150 && new_value >= 150) {
 			msg_print(Ind, "\377GYou learn how to tame your fear!");
-		} if (old_value < 20 && new_value >= 20) {
+		} if (old_value < 200 && new_value >= 200) {
 			msg_print(Ind, "\377GYou learn how to keep your mind focussed and avoid confusion!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 25 && new_value >= 25) {
+		} if (old_value < 250 && new_value >= 250) {
 			msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");
-		} if (old_value < 30 && new_value >= 30) {
+		} if (old_value < 300 && new_value >= 300) {
 			msg_print(Ind, "\377GYou learn how to swim easily!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 35 && new_value >= 35) {
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 40 && new_value >= 40) {
+/*		} if (old_value < 350 && new_value >= 350) {  <- this one is now at skill 1.000 already
+			msg_print(Ind, "\377GYour attack speed has become faster due to your training!"); */
+		} if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\377GYou learn how to climb mountains!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 45 && new_value >= 45) {
+		} if (old_value < 450 && new_value >= 450) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 50 && new_value >= 50) {
+		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\377GYou learn the technique of flying!");
+		/* The final +ea has been moved down from lvl 50 to lvl 1 to boost MA a little - the_sandman - moved it to 350 - C. Blue */
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
 		}
 		break;
 	case SKILL_ARCHERY:
-		if (old_value < 10 && new_value >= 10) {
+		if (old_value < 100 && new_value >= 100) {
 			msg_print(Ind, "\377GYou learn how to create ammunition from bones and rubble!");
-		} if (old_value < 11 && new_value >= 11) {
+		} if (old_value < 110 && new_value >= 110) {
 			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons!");
-		} if (old_value < 20 && new_value >= 20) {
+		} if (old_value < 200 && new_value >= 200) {
 			msg_print(Ind, "\377GYour ability to create ammunition improved remarkably!");
-		} if (old_value < 50 && new_value >= 50) {
+		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
 		}
 		break;
 	case SKILL_COMBAT:
-		if (old_value < 11 && new_value >= 11) {
+		if (old_value < 110 && new_value >= 110) {
 			msg_print(Ind, "\377GYou got better at recognizing the power of unknown weapons.");
-		} if (old_value < 31 && new_value >= 31) {
+		} if (old_value < 310 && new_value >= 310) {
 			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
-		} if (old_value < 41 && new_value >= 41) {
+		} if (old_value < 410 && new_value >= 410) {
 			msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
 		}
 		break;
 	case SKILL_MAGIC:
-		if (old_value < 11 && new_value >= 11) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+		if (old_value < 110 && new_value >= 110) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
 		break;
 	case SKILL_EARTH:
-		if (old_value < 30 && new_value >= 30) {
+		if (old_value < 300 && new_value >= 300) {
 			msg_print(Ind, "\377GYou feel able to prevent shards of rock from striking you.");
-		} if (old_value < 45 && new_value >= 45) {
+		} if (old_value < 450 && new_value >= 450) {
 			msg_print(Ind, "\377GYou feel able to prevent large masses of rock from striking you.");
 		}
 		break;
 	case SKILL_AIR:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou feel light as a feather.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou feel able to breathe within poisoned air.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feel flying is easy.");
                 }
                 break;
 	case SKILL_WATER:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou feel able to prevent water streams from striking you.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou feel able to move through water easily.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feel able to prevent tidal waves from striking you.");
                 }
                 break;
 	case SKILL_FIRE:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou feel able to resist fire easily.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feel that fire cannot harm you anymore.");
                 }
                 break;
 	case SKILL_MANA:
-                if (old_value < 40 && new_value >= 40) {
+                if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou feel able to defend from mana attacks easily.");
                 }
                 break;
 	case SKILL_CONVEYANCE:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
                 }
                 break;
 	case SKILL_DIVINATION:
-                if (old_value < 50 && new_value >= 50) {
+                if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou find identifying items ridiculously easy.");
                 }
                 break;
 	case SKILL_NATURE:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYour magic allows you to pass trees and forests easily.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYour magic allows you to pass water easily.");
                 }
 		/* + continuous effect */
                 break;
 	case SKILL_MIND:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou feels strong against confusion and hallucinations.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou feels strong against insanity attacks.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feels very strong against insanity attacks.");
                 }
                 break;
 	case SKILL_TEMPORAL:
-                if (old_value < 50 && new_value >= 50) {
+                if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou don't fear time attacks as much anymore.");
                 }
                 break;
 	case SKILL_UDUN:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou have strong control over your life force.");
                 }
                 break;
 	case SKILL_META: /* + continuous effect */
                 break;
 	case SKILL_HOFFENSE:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou fight against undead with holy wrath.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou fight against demons with holy wrath.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou fight against evil with holy fury.");
                 }
                 break;
 	case SKILL_HDEFENSE:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou stand fast against undead.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou stand fast against demons.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou stand fast against evil.");
                 }
                 break;
 	case SKILL_HCURING:
-                if (old_value < 30 && new_value >= 30) {
+                if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377GYou feel strong against blindness and poison.");
-                } if (old_value < 40 && new_value >= 40) {
+                } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou feel strong against stun and cuts.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feel strong against hallucination and black breath.");
                 }
 		/* + continuous effect */
                 break;
 	case SKILL_HSUPPORT:
-                if (old_value < 40 && new_value >= 40) {
+                if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377GYou don't feel hunger for worldly food anymore.");
-                } if (old_value < 50 && new_value >= 50) {
+                } if (old_value < 500 && new_value >= 500) {
                         msg_print(Ind, "\377GYou feel superior to ancient curses.");
                 }
                 break;
 #if 1
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_HAFTED: case SKILL_POLEARM:
-		if ((old_value < 25 && new_value >= 25) || (old_value < 50 && new_value >= 50)) {
+		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
 		}
 		break;
-	case SKILL_SLING: case SKILL_BOW: case SKILL_XBOW: case SKILL_BOOMERANG:
-		if ((old_value < 16 && new_value >= 16) || (old_value < 32 && new_value >= 32) ||
-		    (old_value < 48 && new_value >= 48)) {
+	case SKILL_SLING:
+		if ((old_value < 100 && new_value >= 100) || (old_value < 200 && new_value >= 200) ||
+		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
 		}
 		break;
+	case SKILL_BOW:
+		if ((old_value < 125 && new_value >= 125) || (old_value < 250 && new_value >= 250) ||
+		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500)) {
+			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+		}
+		break;
+	case SKILL_XBOW:
+		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
+			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+		}
+		break;
+/*	case SKILL_SLING:
+	case SKILL_BOW:
+	case SKILL_XBOW:
+*/	case SKILL_BOOMERANG:
+		if ((old_value < 166 && new_value >= 166) || (old_value < 333 && new_value >= 333) ||
+		    (old_value < 500 && new_value >= 500)) {
+			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+		}
+		break; 
+	case SKILL_HEALTH:
+		if ((old_value < 300) && new_value >= 300) msg_print(Ind, "\377GYou feel healthy.");
+		if ((old_value < 400) && new_value >= 400) msg_print(Ind, "\377GYou feel healthy.");
+		if ((old_value < 500) && new_value >= 500) msg_print(Ind, "\377GYou feel healthy.");
+		break;
+#ifdef CLASS_RUNEMASTER
+	case SKILL_RUNEMASTERY:
+		if (old_value < RSAFE_BOLT*10 && new_value >= RSAFE_BOLT*10) {
+		    msg_print(Ind, "\377GYou are able to cast bolt rune spells without breaking the runes!");
+		} else if (old_value < RSAFE_BEAM*10 && new_value >= RSAFE_BEAM*10) {
+		    msg_print(Ind, "\377GYou are able to cast beam rune spells without breaking the runes!");
+		} else if (old_value < RSAFE_BALL*10 && new_value >= RSAFE_BALL*10) {
+		    msg_print(Ind, "\377GYou are able to cast ball rune spells without breaking the runes!");
+		} else if (old_value < RSAFE_CLOUD*10 && new_value >= RSAFE_CLOUD*10) {
+		    msg_print(Ind, "\377GYou are able to cast cloud rune spells without breaking the runes!");
+		}
+
+
+#ifdef ALTERNATE_DMG
+		if (old_value < RBARRIER*10 && new_value >= RBARRIER*10) {
+		    msg_print(Ind, "\377GYou feel your potential unleashed.");
+		}
+#endif //ALTERNATE_DMG
+#endif //CLASS_RUNEMASTER
 	}
+
 #else
 	}
 	if (i == ws) {
@@ -369,7 +443,7 @@ static void increase_related_skills(int Ind, int i)
 		else
 		{
 			/* Save previous value */
-			int old_value = get_skill(p_ptr, j);
+			int old_value = get_skill_scale(p_ptr, j, 500);
 
 			/* Increase / decrease with a % */
 			s32b val = p_ptr->s_info[j].value +
@@ -386,7 +460,7 @@ static void increase_related_skills(int Ind, int i)
 
 			/* Update the client */
 			Send_skill_info(Ind, j);
-
+			
 			/* Take care of gained abilities */
 			msg_gained_abilities(Ind, old_value, j);
 		}
@@ -431,7 +505,8 @@ void increase_skill(int Ind, int i)
 	}
 
 	/* Cannot allocate more than player level + 2 levels */
-	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)
+	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)  /* <- this allows limit breaks at very high step values  -- handled in GET_SKILL now! */
+//	if ((((p_ptr->s_info[i].value + p_ptr->s_info[i].mod) * 10) / SKILL_STEP) > (p_ptr->lev * 10) + 20)  /* <- this often doesn't allow proper increase to +2 at high step values */
 	{
 		Send_skill_info(Ind, i);
 		return;
@@ -442,7 +517,9 @@ void increase_skill(int Ind, int i)
 
 	/* Save previous value for telling the player about newly gained
 	   abilities later on. Round down extra-safely (just paranoia). */
-	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
+//	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
+	/*multiply by 10, so we get +1 digit*/
+	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % (SKILL_STEP / 10))) / (SKILL_STEP / 10);
 
 	/* Increase the skill */
 	p_ptr->s_info[i].value += p_ptr->s_info[i].mod;
@@ -1431,4 +1508,4 @@ void do_get_new_skill()
         /* Check if some skills didnt influence other stuff */
         recalc_skills(FALSE);
 }
-#endif
+#endif /*0*/

@@ -177,7 +177,8 @@ byte level_rand_y(struct worldpos *wpos)
 	return(wpos->wz>0?wild->tower->level[wpos->wz-1].rn_y:wild->dungeon->level[ABS(wpos->wz)-1].rn_y);
 }
 
-bool can_go_up(struct worldpos *wpos)
+/* mode: 1 stairs, 2 wor, 3 probtravel, 4 ghostfloating */
+bool can_go_up(struct worldpos *wpos, byte mode)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
 
@@ -185,6 +186,12 @@ bool can_go_up(struct worldpos *wpos)
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+
+	if (mode & 0x1) {
+		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
+		if (wpos->wz == -1 && (d_ptr->flags2 & DF2_NO_EXIT_STAIR)) return(FALSE);
+		if (wpos->wz && (d_ptr->flags2 & DF2_NO_TRAVEL_UP)) return(FALSE);
+	}
 
 	if(wpos->wz<0) {
 		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) ||
@@ -197,15 +204,20 @@ bool can_go_up(struct worldpos *wpos)
 
 	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
 }
-bool can_go_down(struct worldpos *wpos)
+/* mode: 1 stairs, 2 wor, 3 probtravel, 4 ghostfloating */
+bool can_go_down(struct worldpos *wpos, byte mode)
 {
         struct wilderness_type *wild=&wild_info[wpos->wy][wpos->wx];
 
         struct dungeon_type *d_ptr = wild->dungeon;
         if (wpos->wz > 0) d_ptr = wild->tower;
 	/* Check for empty staircase without any connected dungeon/tower! */
-	if (!d_ptr) {
-		return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+	if (!d_ptr) return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
+
+	if (mode & 0x1) {
+		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
+		if (wpos->wz == 1 && (d_ptr->flags2 & DF2_NO_EXIT_STAIR)) return(FALSE);
+		if (wpos->wz && (d_ptr->flags2 & DF2_NO_TRAVEL_DOWN)) return(FALSE);
 	}
 
 	if(wpos->wz>0) {
@@ -249,12 +261,28 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	player_type *p_ptr;
 	monster_type *m_ptr;
 
+	object_type *o_ptr;
+	char o_name[160];
+
+	cave_type **zcave;
+	bool flag = FALSE;
+	if ((zcave = getcave(wpos))) flag = TRUE;
+
 	now=time(&now);
 
 	w_ptr=&wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
 		s_printf("new_players_on_depth.. %s  now:%d value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc?"TRUE":"FALSE");
 #endif
+	if (getlevel(wpos) == 200) {
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (admin_p(i)) continue;
+			p_ptr = Players[i];
+			if (inarea(&p_ptr->wpos, wpos)) s_printf("(%s) VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
+		}
+	}
 
         /* Page all dungeon masters to notify them of a Nether Realm breach >:) - C. Blue */
 	if ((value > 0) && (getlevel(wpos) >= 166) && (watch_nr))
@@ -288,13 +316,28 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
 		if(!w_ptr->ondepth) w_ptr->lastused=0;
 		if(value>0) w_ptr->lastused=now;
+		/* remove 'deposited' true artefacts if last player leaves a level,
+		   and if true artefacts aren't allowed to be stored (in houses for example) */
+		if (!w_ptr->ondepth && cfg.anti_arts_wild) {
+			for(i = 0; i < o_max; i++){
+				o_ptr = &o_list[i];
+				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) && true_artifact_p(o_ptr)) {
+					object_desc(0, o_name, o_ptr, FALSE, 0);
+					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n", o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+					handle_art_d(o_ptr->name1);
+					if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
+						zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
+					WIPE(o_ptr, object_type);
+				}
+			}
+		}
 	}
 
 
 	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */
 	/* If a player enters a new level */
 	if ((value <= 0) || (cfg.henc_strictness < 4)) return;
-	if (wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0) return; /* not in Bree, because of Halloween :) */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return; /* not in Bree, because of Halloween :) */
 
 	/* Who is the highest player around? */
 	for (i = 1; i <= NumPlayers; i++)
@@ -1505,7 +1548,14 @@ static byte player_color(int Ind)
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
 //	if (p_ptr->body_monster) pcolor = (r_ptr->d_attr);
-	if (p_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+//	if (p_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+/* the_sandman: an attempt to actually diplay the mhd flickers on mimicking player using DS spell */
+	if (p_ptr->body_monster) {
+		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+		if (p_ptr->tim_manashield > 10) {
+			pcolor = TERM_SHIELDM; //the_sandman: so we can have mhd monsters mimicked :)
+		}
+	}
 
 	/* Bats are orange */
 	/* taking this out since bat parties
@@ -1519,10 +1569,16 @@ static byte player_color(int Ind)
 		/* may have multiteam */
 		switch(p_ptr->team){
 			case 1:
-				pcolor = TERM_RED;
+				pcolor = TERM_L_RED; //the_sandman: changed it to light red
+						     //since red == istari.
+				break;
 			case 2:
 				pcolor = TERM_L_BLUE;
+				break;
+			default:
+				break;
 		}
+		if ((has_ball(p_ptr) != -1) && magik(50)) pcolor = TERM_ORANGE; /* game ball carrier has orange flickering - mikaelh */
 	}
 
 	/* Mana Shield and GOI also flicker */
@@ -1530,6 +1586,14 @@ static byte player_color(int Ind)
 //	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
 //	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
 	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
+//the_sandman: some redudant stuff, mebbe needs to be added here as the last colour possible
+	if (p_ptr->body_monster) {
+		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+		if (p_ptr->tim_manashield > 10) {
+			pcolor = TERM_SHIELDM;
+		}
+	}
+
 	if (p_ptr->invuln > 5) return TERM_SHIELDI;
 #else
 /*	if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
@@ -1567,10 +1631,8 @@ static byte player_color(int Ind)
 	}
 #endif
 	/* Holy Martyr */
-	if (p_ptr->martyr) pcolor += TERM_BNW;
-
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->admin_wiz) pcolor += TERM_BNW;
+	if (p_ptr->martyr || p_ptr->admin_wiz) pcolor += TERM_BNW;
 
 	/* Color is based off of class */
 	return pcolor;
@@ -2075,9 +2137,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	/**** Apply special random effects ****/
 /*	if (!avoid_other) */
 	if (((*w_ptr & CAVE_MARK) ||
-				((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
-				  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
-				 !p_ptr->blind)) || (p_ptr->admin_dm))
+	((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
+	  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
+	 !p_ptr->blind)) || (p_ptr->admin_dm))
 	{
 		f_ptr = &f_info[feat];
 
@@ -2232,10 +2294,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		{
 			/* part 'A' now here (experimental, see below) */
 			a = player_color(Ind2);
+
 			if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
 			/* part 'A' end */
+
+			/* TERM_BNW if blood bonded - mikaelh */
+			if (p_ptr->blood_bond == p2_ptr->id) a |= TERM_BNW;
 
 			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) >= 7)
 			{
@@ -2450,7 +2516,8 @@ void lite_spot(int Ind, int y, int x)
 		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
 		        if (p_ptr->admin_wiz) a += TERM_BNW;
 
-			if(p_ptr->invis && !p_ptr->body_monster){
+/*			if(p_ptr->invis && !p_ptr->body_monster){  - hmm why not always TERM_VIOLET */
+			if(p_ptr->invis){
 				/* special invis colour */
 				a=TERM_VIOLET;
 			}
@@ -2493,7 +2560,7 @@ void lite_spot(int Ind, int y, int x)
 			}
 
 			/* bugfix on MASSIVE deaths (det/death) */
-			if (p_ptr->fruit_bat) c = 'b';
+			if (p_ptr->fruit_bat && !p_ptr->body_monster) c = 'b';
 			if(p_ptr->chp<0) c='-';
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
@@ -2535,10 +2602,9 @@ void lite_spot(int Ind, int y, int x)
 			/* Modify internal buffer */
 			p_ptr->scr_info[dispy][dispx].c = c;
 			p_ptr->scr_info[dispy][dispx].a = a;
-
 			/* Tell client to redraw this grid */
 			(void)Send_char(Ind, dispx, dispy, a, c);
-		} 
+    	} 
 	}
 }
 
@@ -3431,7 +3497,7 @@ void update_lite(int Ind)
 	/*** Special case ***/
 
 	/* Hack -- Player has no lite */
-	if (p_ptr->cur_lite <= 0)
+	if (p_ptr->cur_lite <= 0 && p_ptr->cur_vlite <= 0)
 	{
 		/* Forget the old lite */
 		forget_lite(Ind);
@@ -3495,7 +3561,7 @@ void update_lite(int Ind)
 	cave_lite_hack(p_ptr->py, p_ptr->px);
 
 	/* Radius 1 -- torch radius */
-	if (p_ptr->cur_lite >= 1)
+	if (p_ptr->cur_lite >= 1 || p_ptr->cur_vlite >= 1)
 	{
 		/* Adjacent grid */
 		cave_lite_hack(p_ptr->py+1, p_ptr->px);
@@ -3511,7 +3577,7 @@ void update_lite(int Ind)
 	}
 
 	/* Radius 2 -- lantern radius */
-	if (p_ptr->cur_lite >= 2)
+	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2)
 	{
 		/* South of the player */
 		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
@@ -3547,12 +3613,13 @@ void update_lite(int Ind)
 	}
 
 	/* Radius 3+ -- artifact radius */
-	if (p_ptr->cur_lite >= 3)
+	if (p_ptr->cur_lite >= 3 || p_ptr->cur_vlite >= 3)
 	{
 		int d, p;
 
 		/* Maximal radius */
 		p = p_ptr->cur_lite;
+		if (p_ptr->cur_vlite > p) p = p_ptr->cur_vlite;
 
 		/* Paranoia -- see "LITE_MAX" */
 		if (p > LITE_CAP) p = LITE_CAP;
@@ -5767,7 +5834,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
 	   without calling this function */
 	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
-	if ((feat == FEAT_GLYPH) && ((wpos->wx == 32 && wpos->wy == 32 && wpos->wz == 0) ||
+	if ((feat == FEAT_GLYPH) && (
+	    (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) ||
+	    ((getlevel(wpos) == 200) && (wpos->wz == 1)) ||
 	    (!((c_ptr->feat == FEAT_NONE) || 
 	    (c_ptr->feat == FEAT_FLOOR) || 
 	    (c_ptr->feat == FEAT_DIRT) || 
@@ -5777,7 +5846,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
 	    (c_ptr->feat == FEAT_FLOWER)))))
-	    /* And no 'terraforming' in Bree either (counting glyph spell to those) */
+	    /* And no 'terraforming' in Bree or Valinor either (counting glyph spell to those) */
 	    
 	    return;
 
@@ -5983,17 +6052,38 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
 {
 	int nx, ny;
+	long tries = 100000;
+	
+        cave_type **zcave;
+        if(!(zcave=getcave(wpos))) {
+		(*yp) = y;
+		(*xp) = x;
+		return;
+	}
 
 	/* Pick a location */
 	while (TRUE)
 	{
+		/* Don't freeze in infinite loop!
+		   Conditions: wpos is not allocated.
+		   Note: los() returns TRUE if x==nx and y==ny.
+		   Due to the conditions, following code will probably cause panic save,
+		   that's still better than infinite loop though. */
+		tries--;
+		if (!tries) {
+s_printf("!!! INFINITE LOOP IN scatter() !!! -- Please reboot server and do '/unsta %d %d -%d'\n",
+            wpos->wx, wpos->wy,wpos->wz);
+			ny = y;
+			nx = x;
+			break;
+		}
+
 		/* Pick a new location */
 		ny = rand_spread(y, d);
 		nx = rand_spread(x, d);
 
 		/* Ignore illegal locations and outer walls */
 		if (!in_bounds(ny, nx)) continue;
-		
 
 		/* Ignore "excessively distant" locations */
 		if ((d > 1) && (distance(y, x, ny, nx) > d)) continue;
@@ -6188,9 +6278,13 @@ int new_effect(int who, int type, int dam, int time, worldpos *wpos, int cy, int
 {
 	int i, who2 = who;
 /*	player_type *p_ptr = NULL; */
+#if 0 /* isn't this wrong? */
 	if (who < 0 && who != PROJECTOR_EFFECT)
 		who2 = 0 - Players[0 - who]->id;
-
+#else
+	if (who < 0 && who > PROJECTOR_UNUSUAL)
+		who2 = 0 - Players[0 - who]->id;
+#endif
 
         if ((i = effect_pop(who2)) == -1) return -1;
 

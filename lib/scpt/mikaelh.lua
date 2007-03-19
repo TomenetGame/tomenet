@@ -1,0 +1,138 @@
+function get_skill_formatted(p, skill)
+	return (players(p).s_info[skill + 1].value / 1000) .. "." .. mod(players(p).s_info[skill + 1].value, 1000)
+end
+
+function get_skill_value(p, skill)
+	return players(p).s_info[skill + 1].value
+end
+
+-- Neat list of player skills
+function showskills(name)
+	local p
+	p = ind(name)
+	if (p == -1) then return -1 end
+	msg_print(Ind, "\255BSkills of player " .. p)
+	if get_skill_value(p, SKILL_COMBAT) > 0 then		msg_print(Ind, " - Combat                         " .. get_skill_formatted(p, SKILL_COMBAT)) end
+	if get_skill_value(p, SKILL_MASTERY) > 0 then		msg_print(Ind, "     - Weaponmastery              " .. get_skill_formatted(p, SKILL_MASTERY)) end
+	if get_skill_value(p, SKILL_SWORD) > 0 then		msg_print(Ind, "         - Sword-mastery          " .. get_skill_formatted(p, SKILL_SWORD)) end
+	if get_skill_value(p, SKILL_CRITS) > 0 then		msg_print(Ind, "             . Critical-strike    " .. get_skill_formatted(p, SKILL_CRITS)) end
+	if get_skill_value(p, SKILL_AXE) > 0 then		msg_print(Ind, "         . Axe-mastery            " .. get_skill_formatted(p, SKILL_AXE)) end
+	if get_skill_value(p, SKILL_HAFTED) > 0 then		msg_print(Ind, "         . Hafted-master          " .. get_skill_formatted(p, SKILL_HAFTED)) end
+	if get_skill_value(p, SKILL_POLEARM) > 0 then		msg_print(Ind, "         . Polearm-mastery        " .. get_skill_formatted(p, SKILL_POLEARM)) end
+	if get_skill_value(p, SKILL_ARCHERY) > 0 then		msg_print(Ind, "     - Archery                    " .. get_skill_formatted(p, SKILL_ARCHERY)) end
+	if get_skill_value(p, SKILL_SLING) > 0 then		msg_print(Ind, "         . Sling-mastery          " .. get_skill_formatted(p, SKILL_SLING)) end
+	if get_skill_value(p, SKILL_BOW) > 0 then		msg_print(Ind, "         . Bow-mastery            " .. get_skill_formatted(p, SKILL_BOW)) end
+	if get_skill_value(p, SKILL_XBOW) > 0 then		msg_print(Ind, "         . Crossbow-mastery       " .. get_skill_formatted(p, SKILL_XBOW)) end
+	if get_skill_value(p, SKILL_BOOMERANG) > 0 then		msg_print(Ind, "         . Boomerang-mastery      " .. get_skill_formatted(p, SKILL_BOOMERANG)) end
+	if get_skill_value(p, SKILL_MARTIAL_ARTS) > 0 then	msg_print(Ind, "     . Martial Arts               " .. get_skill_formatted(p, SKILL_MARTIAL_ARTS)) end
+	if get_skill_value(p, SKILL_MAGIC) > 0 then		msg_print(Ind, " - Magic                          " .. get_skill_formatted(p, SKILL_MAGIC)) end
+	if get_skill_value(p, SKILL_MIMIC) > 0 then		msg_print(Ind, "     . Mimicry                    " .. get_skill_formatted(p, SKILL_MIMIC)) end
+	if get_skill_value(p, SKILL_DEVICE) > 0 then		msg_print(Ind, "     . Magic-device               " .. get_skill_formatted(p, SKILL_DEVICE)) end
+	if get_skill_value(p, SKILL_SPELL) > 0 then		msg_print(Ind, "     . Spell-power                " .. get_skill_formatted(p, SKILL_SPELL)) end
+	if get_skill_value(p, SKILL_SORCERY) > 0 then		msg_print(Ind, "     . Sorcery                    " .. get_skill_formatted(p, SKILL_SORCERY)) end
+	if get_skill_value(p, SKILL_MANA) > 0 then		msg_print(Ind, "     . Mana                       " .. get_skill_formatted(p, SKILL_MANA)) end
+	if get_skill_value(p, SKILL_FIRE) > 0 then		msg_print(Ind, "     . Fire                       " .. get_skill_formatted(p, SKILL_FIRE)) end
+	if get_skill_value(p, SKILL_WATER) > 0 then		msg_print(Ind, "     . Water                      " .. get_skill_formatted(p, SKILL_WATER)) end
+	if get_skill_value(p, SKILL_AIR) > 0 then		msg_print(Ind, "     . Air                        " .. get_skill_formatted(p, SKILL_AIR)) end
+	if get_skill_value(p, SKILL_EARTH) > 0 then		msg_print(Ind, "     . Earth                      " .. get_skill_formatted(p, SKILL_EARTH)) end
+	if get_skill_value(p, SKILL_META) > 0 then		msg_print(Ind, "     . Meta                       " .. get_skill_formatted(p, SKILL_META)) end
+	if get_skill_value(p, SKILL_CONVEYANCE) > 0 then	msg_print(Ind, "     . Conveyance                 " .. get_skill_formatted(p, SKILL_CONVEYANCE)) end
+	if get_skill_value(p, SKILL_DIVINATION) > 0 then	msg_print(Ind, "     . Divination                 " .. get_skill_formatted(p, SKILL_DIVINATION)) end
+	if get_skill_value(p, SKILL_TEMPORAL) > 0 then		msg_print(Ind, "     . Temporal                   " .. get_skill_formatted(p, SKILL_TEMPORAL)) end
+	if get_skill_value(p, SKILL_MIND) > 0 then		msg_print(Ind, "     . Mind                       " .. get_skill_formatted(p, SKILL_MIND)) end
+	if get_skill_value(p, SKILL_NATURE) > 0 then		msg_print(Ind, "     . Nature                     " .. get_skill_formatted(p, SKILL_NATURE)) end
+	if get_skill_value(p, SKILL_UDUN) > 0 then		msg_print(Ind, "     . Udun                       " .. get_skill_formatted(p, SKILL_UDUN)) end
+	if get_skill_value(p, SKILL_HOFFENSE) > 0 then		msg_print(Ind, "     . Holy Offense               " .. get_skill_formatted(p, SKILL_HOFFENSE)) end
+	if get_skill_value(p, SKILL_HDEFENSE) > 0 then		msg_print(Ind, "     . Holy Defense               " .. get_skill_formatted(p, SKILL_HDEFENSE)) end
+	if get_skill_value(p, SKILL_HCURING) > 0 then		msg_print(Ind, "     . Holy Curing                " .. get_skill_formatted(p, SKILL_HCURING)) end
+	if get_skill_value(p, SKILL_HSUPPORT) > 0 then		msg_print(Ind, "     . Holy Support               " .. get_skill_formatted(p, SKILL_HSUPPORT)) end
+	if get_skill_value(p, SKILL_DRUID_ARCANE) > 0 then	msg_print(Ind, "     . Arcane Lore                " .. get_skill_formatted(p, SKILL_DRUID_ARCANE)) end
+	if get_skill_value(p, SKILL_DRUID_PHYSICAL) > 0 then	msg_print(Ind, "     . Physical Lore              " .. get_skill_formatted(p, SKILL_DRUID_PHYSICAL)) end
+	if get_skill_value(p, SKILL_SNEAKINESS) > 0 then	msg_print(Ind, " - Sneakiness                     " .. get_skill_formatted(p, SKILL_SNEAKINESS)) end
+	if get_skill_value(p, SKILL_STEALTH) > 0 then		msg_print(Ind, "     . Stealth                    " .. get_skill_formatted(p, SKILL_STEALTH)) end
+	if get_skill_value(p, SKILL_DISARM) > 0 then		msg_print(Ind, "     . Disarming                  " .. get_skill_formatted(p, SKILL_DISARM)) end
+	if get_skill_value(p, SKILL_TRAPPING) > 0 then		msg_print(Ind, "     . Trapping                   " .. get_skill_formatted(p, SKILL_TRAPPING)) end
+	if get_skill_value(p, SKILL_BACKSTAB) > 0 then		msg_print(Ind, "     . Backstabbing               " .. get_skill_formatted(p, SKILL_BACKSTAB)) end
+	if get_skill_value(p, SKILL_STEALING) > 0 then		msg_print(Ind, "     . Stealing                   " .. get_skill_formatted(p, SKILL_STEALING)) end
+	if get_skill_value(p, SKILL_DODGE) > 0 then		msg_print(Ind, "     - Dodging                    " .. get_skill_formatted(p, SKILL_DODGE)) end
+	if get_skill_value(p, SKILL_CALMNESS) > 0 then		msg_print(Ind, "         . Calmness               " .. get_skill_formatted(p, SKILL_CALMNESS)) end
+	if get_skill_value(p, SKILL_INTERCEPT) > 0 then		msg_print(Ind, "         . Interception           " .. get_skill_formatted(p, SKILL_INTERCEPT)) end
+	if get_skill_value(p, SKILL_NECROMANCY) > 0 then	msg_print(Ind, " - Necromancy                     " .. get_skill_formatted(p, SKILL_NECROMANCY)) end
+	if get_skill_value(p, SKILL_TRAUMATURGY) > 0 then	msg_print(Ind, "     . Traumaturgy                " .. get_skill_formatted(p, SKILL_TRAUMATURGY)) end
+	if get_skill_value(p, SKILL_AURA_FEAR) > 0 then		msg_print(Ind, "     . Aura of Fear               " .. get_skill_formatted(p, SKILL_AURA_FEAR)) end
+	if get_skill_value(p, SKILL_AURA_SHIVER) > 0 then	msg_print(Ind, "     . Shivering Aura             " .. get_skill_formatted(p, SKILL_AURA_SHIVER)) end
+	if get_skill_value(p, SKILL_AURA_DEATH) > 0 then	msg_print(Ind, "     . Aura of Death              " .. get_skill_formatted(p, SKILL_AURA_DEATH)) end
+	if get_skill_value(p, SKILL_ANTIMAGIC) > 0 then		msg_print(Ind, " - Antimagic                      " .. get_skill_formatted(p, SKILL_ANTIMAGIC)) end
+	if get_skill_value(p, SKILL_HEALTH) > 0 then		msg_print(Ind, " - Health                         " .. get_skill_formatted(p, SKILL_HEALTH)) end
+--	if get_skill_value(p, SKILL_TRAINING) > 0 then		msg_print(Ind, "     . Training                   " .. get_skill_formatted(p, SKILL_TRAINING)) end
+	if get_skill_value(p, SKILL_SWIM) > 0 then		msg_print(Ind, "     . Swimming                   " .. get_skill_formatted(p, SKILL_SWIM)) end
+	if get_skill_value(p, SKILL_DIG) > 0 then		msg_print(Ind, "     . Digging                    " .. get_skill_formatted(p, SKILL_DIG)) end
+	if get_skill_value(p, SKILL_CLIMB) > 0 then		msg_print(Ind, "     . Climbing                   " .. get_skill_formatted(p, SKILL_CLIMB)) end
+--	if get_skill_value(p, SKILL_FLY) > 0 then		msg_print(Ind, "     . Flying                     " .. get_skill_formatted(p, SKILL_FLY)) end
+--	if get_skill_value(p, SKILL_FREEACT) > 0 then		msg_print(Ind, "     . Free Action                " .. get_skill_formatted(p, SKILL_FREEACT)) end
+--	if get_skill_value(p, SKILL_RESCONF) > 0 then		msg_print(Ind, "     . Confusion Resistance       " .. get_skill_formatted(p, SKILL_RESCONF)) end
+end
+
+-- Alias for showskills()
+function skills(name)
+	showskills(name)
+end
+
+-- Manual forced update
+function update_p(name)
+	local p
+	p = ind(name)
+	if (p == -1) then return -1 end
+	players(name).update = bor(players(name).update, 3145919)
+
+-- 3145919 is a combination of the following:
+-- PU_BONUS		0x00000001L	Calculate bonuses
+-- PU_TORCH		0x00000002L	Calculate torch radius
+-- PU_SKILL_INFO	0x00000004L	Update client skill info
+-- PU_SANITY		0x00000008L	Calculate csane and msane
+-- PU_HP		0x00000010L	Calculate chp and mhp
+-- PU_MANA		0x00000020L	Calculate csp and msp
+-- PU_SKILL_MOD		0x00000080L	Update client skill values/...
+-- PU_VIEW		0x00100000L	Update view
+-- PU_LITE		0x00200000L	Update lite
+
+end
+
+-- Manual forced redraw
+function redraw_p(name)
+	local p
+	p = ind(name)
+	if (p == -1) then return -1 end
+	players(name).redraw = bor(players(name).redraw, 134217728) -- PR_WIPE	0x08000000L	Total Redraw
+end
+
+-- Manual forced update & redraw
+function ur_p(name)
+	local p
+	p = ind(name)
+	if (p == -1) then return -1 end
+	update_p(name)
+	redraw_p(name)
+end
+
+-- Fix spellbooks after adding new spells
+-- Usage: fix_spellbooks(<player name>, <new spell number>, 1)
+-- Example, after adding the Stop Wraithform spell:
+-- fix_spellbooks("Pfft", STOPWRAITH, 1)
+function fix_spellbooks(name, start, mod)
+	local i, p
+	p = ind(name)
+	if (p == -1) then return -1 end
+	for i = 1, INVEN_PACK do
+		if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255) and (players(p).inventory[i].pval >= start)) then
+			players(p).inventory[i].pval = players(p).inventory[i].pval + mod
+		end
+	end
+end
+
+-- Fix for the stop wraithform spell
+--[[
+function fix1(name)
+	fix_spellbooks(name, STOPWRAITH, 1)
+end
+]]--

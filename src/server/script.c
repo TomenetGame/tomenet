@@ -215,6 +215,7 @@ void init_lua()
 
 	/* Register the Lua base libraries */
 	lua_baselibopen(L);
+	lua_mathlibopen(L);
 	lua_strlibopen(L);
 	lua_iolibopen(L);
 	lua_dblibopen(L);

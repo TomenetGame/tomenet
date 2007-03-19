@@ -11,8 +11,8 @@ make your game more comfortable, we expect.
 
 
 Commands: afk at bed broadcast bug cast dis dress ex feel fill help house
-          ignore less me monster news object pkill quest rec ref rfe shout
-          sip tag target untag ver
+          ignore less me monster news object pkill play quest rec ref rfe
+          shout sip tag target untag ver
 
 Note:
 (parameter) cannot be omitted.
@@ -126,6 +126,9 @@ Note:
     It takes *long* for the change to actually become valid, so be careful.
     (You'll receive a message when the switching completes.)
     NOTE: this command can be disabled by the server settings.
+
+/play
+    Toggles participation in the current game enabled.
 
 /quest [guild (name)]
     Requests for a quest.

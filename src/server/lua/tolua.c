@@ -63,6 +63,7 @@ int main (int argc, char* argv[])
  lua_State* L = lua_open(0);
  lua_baselibopen(L);
  lua_iolibopen(L);
+ lua_mathlibopen(L);
  lua_strlibopen(L);
  lua_pushstring(L,TOLUA_VERSION); lua_setglobal(L,"TOLUA_VERSION");
 

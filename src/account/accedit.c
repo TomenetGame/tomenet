@@ -59,6 +59,7 @@ void setupscreen(){
 	move(0, 0);
 	clrtoeol();
 	mvprintw(0, COLS/2-18, "TomeNET account editor - 2002 Evileye");
+	mvprintw(1, COLS/2-10, "(Updated by C. Blue)");
 	attroff(A_STANDOUT);
 	mvprintw(LINES-3, COLS/2-19, "N: next      P: previous     D: Delete");
 	mvprintw(LINES-4, COLS/2-19, "V: Validate A: Admin S: Score M: Multi");
@@ -107,11 +108,16 @@ int ListAccounts(int fpos){
 
 	touchwin(listwin);
 	mvwaddstr(listwin, 0, 5, "Name");
-	mvwaddstr(listwin, 0, 25, "Valid");
-	mvwaddstr(listwin, 0, 33, "Admin");
-	mvwaddstr(listwin, 0, 41, "Score");
-	mvwaddstr(listwin, 0, 49, "Multi");
-	mvwaddstr(listwin, 0, 59, "Account ID");
+	mvwaddstr(listwin, 0, 27, "Val");
+	mvwaddstr(listwin, 0, 31, "Adm");
+	mvwaddstr(listwin, 0, 35, "Sco");
+	mvwaddstr(listwin, 0, 39, "Mul");
+	mvwaddstr(listwin, 0, 43, "Res");
+	mvwaddstr(listwin, 0, 47, "Pri");
+	mvwaddstr(listwin, 0, 51, "PK");
+	mvwaddstr(listwin, 0, 55, "Qui");
+	mvwaddstr(listwin, 0, 59, "Ban");
+	mvwaddstr(listwin, 0, 64, "Account ID");
 	if(fpos>LINES-11){
 		ifpos=fpos-(LINES-11);
 	}
@@ -121,11 +127,17 @@ int ListAccounts(int fpos){
 			for(i=0; i<(LINES-10); i++){
 				x=fread(&c_acc, sizeof(struct account), 1, fp);
 				if(x==0) break;
-				mvwprintw(listwin, i+1, 5, "%-22s%-8c%-8c%-8c%-8c%.10d%10s", c_acc.name,
-				c_acc.flags & ACC_TRIAL ? '.' : 'X',
-				c_acc.flags & ACC_ADMIN ? 'X' : '.',
-				c_acc.flags & ACC_NOSCORE ? '.' : 'X',
-				c_acc.flags & ACC_MULTI ? 'X' : '.', c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
+				mvwprintw(listwin, i+1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
+				c_acc.flags & ACC_TRIAL ? '.' : 'Y',
+				c_acc.flags & ACC_ADMIN ? 'Y' : '.',
+				c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
+				c_acc.flags & ACC_MULTI ? 'Y' : '.',
+				c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'Y' : '.',
+				c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'Y' : '.',
+				c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'N' : '.',
+				c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'Y' : '.',
+				c_acc.flags & ACC_BANNED ? 'Y' : '.',
+				c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			}
 			reload=0;
 			redraw=1;
@@ -135,11 +147,17 @@ int ListAccounts(int fpos){
 			x=fread(&c_acc, sizeof(struct account), 1, fp);
 		}
 		if(redraw){
-			mvwprintw(listwin, (fpos-ifpos)+1, 5, "%-22s%-8c%-8c%-8c%-8c%.10d%10s", c_acc.name,
-			c_acc.flags & ACC_TRIAL ? '.' : 'X',
-			c_acc.flags & ACC_ADMIN ? 'X' : '.',
-			c_acc.flags & ACC_NOSCORE ? '.' : 'X',
-			c_acc.flags & ACC_MULTI ? 'X' : '.', c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
+			mvwprintw(listwin, (fpos-ifpos)+1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%.10d%10s", c_acc.name,
+			c_acc.flags & ACC_TRIAL ? '.' : 'Y',
+			c_acc.flags & ACC_ADMIN ? 'Y' : '.',
+			c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
+			c_acc.flags & ACC_MULTI ? 'Y' : '.',
+			c_acc.flags & ACC_VRESTRICTED ? 'V' : c_acc.flags & ACC_RESTRICTED ? 'Y' : '.',
+			c_acc.flags & ACC_VPRIVILEGED ? 'V' : c_acc.flags & ACC_PRIVILEGED ? 'Y' : '.',
+			c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'N' : '.',
+			c_acc.flags & ACC_VQUIET ? 'V' : c_acc.flags & ACC_QUIET ? 'Y' : '.',
+			c_acc.flags & ACC_BANNED ? 'Y' : '.',
+			c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			redraw=0;
 		}
 		mvwaddch(listwin, (fpos-ifpos)+1, 3, '>');
@@ -272,6 +290,62 @@ int ListAccounts(int fpos){
 				redraw=1;
 				c_acc.flags^=ACC_NOSCORE;
 				break;
+			case 'c':
+			case 'C':
+				change=1;
+				if (c_acc.flags & ACC_VQUIET) {
+					c_acc.flags &= ~(ACC_VQUIET | ACC_QUIET);
+				} else if (c_acc.flags & ACC_QUIET) {
+					c_acc.flags &= ~ACC_QUIET;
+					c_acc.flags |= ACC_VQUIET;
+				} else {
+					c_acc.flags |= ACC_QUIET;
+				}
+				break;
+			case 'b':
+			case 'B':
+				change=1;
+				c_acc.flags^=ACC_BANNED;
+				break;
+			case 'k':
+			case 'K':
+				change=1;
+				if (c_acc.flags & ACC_ANOPVP) {
+					c_acc.flags &= ~(ACC_ANOPVP | ACC_NOPVP);
+				} else if (c_acc.flags & ACC_NOPVP) {
+					c_acc.flags &= ~ACC_NOPVP;
+					c_acc.flags |= ACC_ANOPVP;
+				} else if (c_acc.flags & ACC_PVP) {
+					c_acc.flags &= ~ACC_PVP;
+					c_acc.flags |= ACC_NOPVP;
+				} else {
+					c_acc.flags |= ACC_PVP;
+				}
+				break;
+			case 'r':
+			case 'R':
+				change=1;
+				if (c_acc.flags & ACC_VRESTRICTED) {
+					c_acc.flags &= ~(ACC_VRESTRICTED | ACC_RESTRICTED);
+				} else if (c_acc.flags & ACC_RESTRICTED) {
+					c_acc.flags &= ~ACC_RESTRICTED;
+					c_acc.flags |= ACC_VRESTRICTED;
+				} else {
+					c_acc.flags |= ACC_RESTRICTED;
+				}
+				break;
+			case 'i':
+			case 'I':
+				change=1;
+				if (c_acc.flags & ACC_VPRIVILEGED) {
+					c_acc.flags &= ~(ACC_VPRIVILEGED | ACC_PRIVILEGED);
+				} else if (c_acc.flags & ACC_PRIVILEGED) {
+					c_acc.flags &= ~ACC_PRIVILEGED;
+					c_acc.flags |= ACC_VPRIVILEGED;
+				} else {
+					c_acc.flags |= ACC_PRIVILEGED;
+				}
+				break;
 			default:
 				beep();
 		}
@@ -302,10 +376,15 @@ void editor(){
 	while(!quit){
 		mvwprintw(mainwin, 0, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
 		mvwprintw(mainwin, 1, 4, "%-20s", c_acc.pass);
-		mvwprintw(mainwin, 3, 4, "Trial: %-3s", c_acc.flags & ACC_TRIAL ? "Yes" : "No");
-		mvwprintw(mainwin, 4, 4, "Admin: %-3s", c_acc.flags & ACC_ADMIN ? "Yes" : "No");
-		mvwprintw(mainwin, 5, 4, "Score: %-3s", c_acc.flags & ACC_NOSCORE ? "No" : "Yes");
-		mvwprintw(mainwin, 6, 4, "Multi: %-3s", c_acc.flags & ACC_MULTI ? "Yes" : "No");
+		mvwprintw(mainwin, 3, 4, "Trial (inval): %-4s", c_acc.flags & ACC_TRIAL ? "Yes " : "No  ");
+		mvwprintw(mainwin, 4, 4, "Administrator: %-4s", c_acc.flags & ACC_ADMIN ? "Yes " : "No  ");
+		mvwprintw(mainwin, 5, 4, "Scoreboard:    %-4s", c_acc.flags & ACC_NOSCORE ? "No  " : "Yes ");
+		mvwprintw(mainwin, 6, 4, "Multi-login:   %-4s", c_acc.flags & ACC_MULTI ? "Yes " : "No  ");
+		mvwprintw(mainwin, 7, 4, "Restricted:    %-4s", c_acc.flags & ACC_VRESTRICTED ? "Very" : c_acc.flags & ACC_RESTRICTED ? "Yes " : "No  ");
+		mvwprintw(mainwin, 8, 4, "Privileged:    %-3s", c_acc.flags & ACC_VPRIVILEGED ? "Very" : c_acc.flags & ACC_PRIVILEGED ? "Yes " : "No  ");
+		mvwprintw(mainwin, 9, 4, "May pkill:     %-3s", c_acc.flags & ACC_PVP ? "Yes " : c_acc.flags & ACC_ANOPVP ? "_NO_" : c_acc.flags & ACC_NOPVP ? "No  " : "std.");
+		mvwprintw(mainwin, 10, 4, "Muted chat:    %-3s", c_acc.flags & ACC_VQUIET ? "Very" : c_acc.flags & ACC_QUIET ? "Yes " : "No  ");
+		mvwprintw(mainwin, 11, 4, "Banned:        %-3s", c_acc.flags & ACC_BANNED ? "Yes " : "No  ");
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do{
@@ -429,6 +508,62 @@ void editor(){
 				case 'S':
 					change=1;
 					c_acc.flags^=ACC_NOSCORE;
+					break;
+				case 'c':
+				case 'C':
+					change=1;
+					if (c_acc.flags & ACC_VQUIET) {
+						c_acc.flags &= ~(ACC_VQUIET | ACC_QUIET);
+					} else if (c_acc.flags & ACC_QUIET) {
+						c_acc.flags &= ~ACC_QUIET;
+						c_acc.flags |= ACC_VQUIET;
+					} else {
+						c_acc.flags |= ACC_QUIET;
+					}
+					break;
+				case 'b':
+				case 'B':
+					change=1;
+					c_acc.flags^=ACC_BANNED;
+					break;
+				case 'k':
+				case 'K':
+					change=1;
+					if (c_acc.flags & ACC_ANOPVP) {
+						c_acc.flags &= ~(ACC_ANOPVP | ACC_NOPVP);
+					} else if (c_acc.flags & ACC_NOPVP) {
+						c_acc.flags &= ~ACC_NOPVP;
+						c_acc.flags |= ACC_ANOPVP;
+					} else if (c_acc.flags & ACC_PVP) {
+						c_acc.flags &= ~ACC_PVP;
+						c_acc.flags |= ACC_NOPVP;
+					} else {
+						c_acc.flags |= ACC_PVP;
+					}
+					break;
+				case 'r':
+				case 'R':
+					change=1;
+					if (c_acc.flags & ACC_VRESTRICTED) {
+						c_acc.flags &= ~(ACC_VRESTRICTED | ACC_RESTRICTED);
+					} else if (c_acc.flags & ACC_RESTRICTED) {
+						c_acc.flags &= ~ACC_RESTRICTED;
+						c_acc.flags |= ACC_VRESTRICTED;
+					} else {
+						c_acc.flags |= ACC_RESTRICTED;
+					}
+					break;
+				case 'i':
+				case 'I':
+					change=1;
+					if (c_acc.flags & ACC_VPRIVILEGED) {
+						c_acc.flags &= ~(ACC_VPRIVILEGED | ACC_PRIVILEGED);
+					} else if (c_acc.flags & ACC_PRIVILEGED) {
+						c_acc.flags &= ~ACC_PRIVILEGED;
+						c_acc.flags |= ACC_VPRIVILEGED;
+					} else {
+						c_acc.flags |= ACC_PRIVILEGED;
+					}
 					break;
 				default:
 					ch=' ';

@@ -34,7 +34,7 @@
 
 /* Enable/disable Halloween Event Mode- by C. Blue :) -
    also see r_info.txt for 'Pumpkin' and follow instructions there. */
-/* #define HALLOWEEN */
+// #define HALLOWEEN
 
 /* MAJOR/MINOR/PATCH version should be 0-15.  */
 #define VERSION_MAJOR   4
@@ -43,8 +43,8 @@
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   2
-#define SF_VERSION_PATCH   8
+#define SF_VERSION_MINOR   3
+#define SF_VERSION_PATCH   0
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -83,7 +83,7 @@
  * - dungeons are IRONMAN
  * - and many more things that are just a little bit different :)
  */
-#define RPG_SERVER
+// #define RPG_SERVER
 
 
 
@@ -869,9 +869,9 @@
 #define CLASS_DRUID		9	
 #define CLASS_SHAMAN		10
 
-#ifdef RPG_SERVER
+//#ifdef RPG_SERVER
 #define CLASS_RUNEMASTER	11
-#endif
+//#endif
 //#define CLASS_NONE		11
 
 /*
@@ -4555,6 +4555,14 @@ that keeps many algorithms happy.
  * Determine if a "legal" grid is a "floor" grid or a passable grid
  * due to special abilities of a player, making it same to floor grid. (for run_test())
  * (NEW_RUNNING_FEAT)
+92  == FEAT_DEAD_TREE
+96  == FEAT_TREES
+202 == FEAT_SMALL_TREES
+
+84  == FEAT_SHAL_WATER
+103 == FEAT_GLIT_WATER
+174 == FEAT_TAINTED_WATER
+187 == FEAT_DEEP_WATER
  */
 #define cave_running_bold(p_ptr,ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \

@@ -205,7 +205,7 @@ static void Init_receive(void)
 	login_receive[PKT_ACK]			= Receive_ack;
 	login_receive[PKT_VERIFY]		= Receive_discard;
 	login_receive[PKT_LOGIN]		= Receive_login;
-
+	
 	playing_receive[PKT_ACK]		= Receive_ack;
 	playing_receive[PKT_VERIFY]		= Receive_discard;
 	playing_receive[PKT_QUIT]		= Receive_quit;
@@ -317,7 +317,7 @@ static int Init_setup(void)
 
 		my_fclose(fp);
 	}
-
+	
 	/* MEGAHACK -- copy race/class names */
 	/* XXX I know this ruins the meaning of Setup... sry	- Jir - */
 	for (i = 0; i < MAX_RACES; i++)
@@ -346,7 +346,7 @@ static int Init_setup(void)
 
 	return 0;
 }
-
+	
 void init_players(){
 	max_connections = MAX_SELECT_FD - 5;
 	/* Last player is the DM Edit player ! */
@@ -372,10 +372,13 @@ bool Report_to_meta(int flag)
 	int i, sock;
 	char temp[100];
 	bool hidden_dungeon_master = 0;
+#ifdef EVIL_METACLIENT
+	int status;
+#endif
 
 
         /* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2048)))
+	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2047)))
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */
@@ -414,25 +417,25 @@ bool Report_to_meta(int flag)
 	memset(buf_meta, '\0', 16384);
 
 	strcpy(buf_meta, "<server url='");
-        strcat(buf_meta, local_name);
-        strcat(buf_meta, "' port='");
-        sprintf(temp, "%ld", cfg.game_port);
-        strcat(buf_meta, temp);
+	strcat(buf_meta, local_name);
+	strcat(buf_meta, "' port='");
+	sprintf(temp, "%ld", cfg.game_port);
+	strcat(buf_meta, temp);
 //	strcat(buf_meta, "' notes='");
 //	sprintf(temp, "%s", cfg.server_notes);
 //	strcat(buf_meta, temp);
-        strcat(buf_meta, "'");
+	strcat(buf_meta, "'");
 	if (flag & META_DIE)
 	{
 		strcat(buf_meta, " death='true'></server>");
-        }
-        else
-        {
-                strcat(buf_meta, ">");
-                if (flag & META_START)
-                {
+	}
+	else
+	{
+		strcat(buf_meta, ">");
+		if (flag & META_START)
+		{
 			signal(SIGUSR1, SIG_IGN);
-                }
+		}
 
                 else if (flag & META_UPDATE)
                 {
@@ -465,7 +468,15 @@ bool Report_to_meta(int flag)
                         }
                 }
 
+#ifdef RPG_SERVER
+		strcat(buf_meta, "<game>TomeNET RPG (not for beginners)</game>");
+#else
+#ifdef FUN_SERVER
+		strcat(buf_meta, "<game>TomeNET Fun</game>");
+#else
                 strcat(buf_meta, "<game>TomeNET</game>");
+#endif
+#endif
 
                 /* Append the version number */
                 sprintf(temp, "<version>%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
@@ -521,8 +532,20 @@ bool Report_to_meta(int flag)
                 close(sock);
 	}
 #ifdef EVIL_METACLIENT
+	/* check what has happened to evilmeta - mikaelh */
+	if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
+	{
+		if (WIFEXITED(status) || WIFSIGNALED(status))
+		{
+			/* evilmeta is dead, restart it */
+			s_printf("evilmeta is dead, restarting it\n");
+			metapid = 0;
+			Start_evilmeta();
+		}
+	}
+
 	/* kill it or update it */
-	if(metapid){
+	if (metapid) {
 		kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
 	}
 #else
@@ -531,6 +554,39 @@ bool Report_to_meta(int flag)
 	return TRUE;
 }
 
+/*
+ * Start the evilmeta client
+ */
+void Start_evilmeta(void)
+{
+#ifdef EVIL_METACLIENT
+	if (cfg.report_to_meta && !metapid) {
+		metapid = fork();
+		if (metapid == -1) {
+			/* didnt work.. we should die */
+			fprintf(stderr, "fork failed!\n");
+			exit(-5);
+		}
+		if (metapid == 0) {
+			char buf[80];
+#ifdef RPG_SERVER
+			char *cmd = "./evilmeta.rpg";
+#else
+			char *cmd = "./evilmeta";
+#endif
+			char *args[] = {cmd, NULL};
+
+			getcwd(buf, 80);
+			printf("in %s\n", buf);
+			/* We are the meta client */
+			execve(args[0], args, NULL);
+			/* GONE */
+			printf("exec failed! [%d - %s]\n", errno, strerror(errno));
+			exit(-20);
+		}
+	}
+#endif
+}
 
 /*
  * Initialize the connection structures.
@@ -560,27 +616,7 @@ int Setup_net_server(void)
 	/* Tell the metaserver that we're starting up */
 	Report_to_meta(META_START);
 #ifdef EVIL_METACLIENT
-	if(cfg.report_to_meta){
-		metapid=fork();
-		if(metapid==-1){
-			/* didnt work.. we should die */
-			fprintf(stderr, "bah\n");
-			exit(-5);
-		}
-		if(metapid==0){
-			char buf[80];
-			char *cmd="./evilmeta";
-			char *args[]={cmd, NULL};
-
-			getcwd(buf, 80);
-			printf("in %s\n", buf);
-			/* We are the meta client */
-			execve(args[0], args, NULL);
-			/* GONE */
-			printf("exec failed! [%d - %s]\n", errno, strerror(errno));
-			exit(-20);
-		}
-	}
+	Start_evilmeta();
 #endif
 
 	s_printf("%s\n", longVersion);
@@ -602,15 +638,20 @@ static sockbuf_t ibuf;
 
 void setup_contact_socket(void)
 {
-	plog("Create TCP socket...");
+	plog(format("Create TCP socket on port %d...", cfg.game_port));
 	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
 		sleep(1);
 	}
-	plog("Set Non-Blocking...");
+	plog("Set Non-Blocking..."); 
 	if (SetSocketNonBlocking(Socket, 1) == -1)
 	{
 		plog("Can't make contact socket non-blocking");
+	}
+	/* HACK - Make the socket close-on-exec - mikaelh */
+	if (fcntl(Socket, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		plog("Can't make contact socket close-on-exec");
 	}
 	if (SetSocketNoDelay(Socket, 1) == -1)
 	{
@@ -628,7 +669,7 @@ void setup_contact_socket(void)
 	}
 
 	install_input(Contact, Socket, 0);
-
+	
 #ifdef SERVER_CONSOLE
 	/* Hack -- Install stdin an the "console" input */
 	install_input(Console, 0, 0);
@@ -703,7 +744,7 @@ static int Reply(char *host_addr, int fd)
 	if ((result = DgramWrite(fd, ibuf.buf, ibuf.len)) == -1)
 	{
 		GetSocketError(ibuf.sock);
-	}
+	}	
 
 	return result;
 }
@@ -734,14 +775,56 @@ static bool player_allowed(char *name){
 	return(success);
 }
 
+/* blacklist of special nicknames unavailable to players (monster names, "Insanity",..) - C. Blue */
+static bool forbidden_name(char *name){
+	FILE *sfp;
+	char buffer[80];
+	bool success=FALSE;
+	/* Hack -- allow 'guest' account */
+	/* if (!strcmp("Guest", name)) return FALSE; */
+
+	sfp=fopen("forbidlist","r");
+	if(sfp==(FILE*)NULL)
+		return FALSE;
+	else{
+		while(fgets(buffer, 80, sfp)){
+			/* allow for \n */
+			if((strlen(name)+1)!=strlen(buffer)) continue;
+			if(!strncmp(buffer,name, strlen(name))){
+				success=TRUE;
+				break;
+			}
+		}
+		fclose(sfp);
+	}
+	return(success);
+}
+
 static void Trim_name(char *nick_name)
 {
 	char *ptr;
+	/* spaces at the beginning are impossible thanks to check_names */
+	/* remove spaces at the end */
 	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
 	{
 		if (isascii(*ptr) && isspace(*ptr))
 			*ptr = '\0';
 		else break;
+	}
+	/* remove special chars that are used for parsing purpose */
+	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
+	{
+		switch (*ptr) {
+		case ':':
+		case '(':
+		case ')':
+		case '|':
+		case '*':
+		case '!':
+		case '?':
+		case '=':
+			*ptr = '_';
+		}
 	}
 }
 
@@ -783,8 +866,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			 * authorize the "hijacking" of an existing connection,
 			 * we check to see if the username and hostname are
 			 * identical.  Note that it may be possobile to spoof this,
-			 * kicking someone off.  This is a quick hack that should
-			 * be replaced with proper password checking.
+			 * kicking someone off.  This is a quick hack that should 
+			 * be replaced with proper password checking. 
 			 */
 			/* XXX another Hack -- don't allow to resume connection if
 			 * in 'character edit' mode		- Jir -
@@ -799,13 +882,13 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 			}
 			else return E_IN_USE;
 		    }
-
-		    /* All restrictions on the number of allowed players from one IP have
+		
+		    /* All restrictions on the number of allowed players from one IP have 
 		     * been removed at this time. -APD
 		     *
 		     * Restored after the advent of Tcp/IP, becuase there is
 		     * no longer any good reason to allow them.  --Crimson
-
+		
 		    if (!strcasecmp(Players[i]->realname, real_name) &&
 			!strcasecmp(Players[i]->addr, addr) &&
 			strcasecmp(Players[i]->realname, cfg_admin_wizard) &&
@@ -848,7 +931,7 @@ static void Console(int fd, int arg)
 		shutdown_server();
 	}
 
-
+		
 	if (!strncmp(buf, "STATUS", 6))
 	{
 		s_printf("There %s %d %s.\n", (NumPlayers != 1 ? "are" : "is"), NumPlayers, (NumPlayers != 1 ? "players" : "player"));
@@ -870,14 +953,14 @@ static void Console(int fd, int arg)
 		/* Acknowledge */
 		s_printf("Message sent.\n");
 	}
-
+		
 	if (!strncmp(buf, "KELDON", 6))
 	{
 		/* Whatever I need at the moment */
 	}
 }
 #endif // if 0
-
+		
 static void Contact(int fd, int arg)
 {
 	int bytes, login_port, newsock;
@@ -893,7 +976,7 @@ static void Contact(int fd, int arg)
 
 	/* Create a TCP socket for communication with whoever contacted us */
 	/* Hack -- check if this data has arrived on the contact socket or not.
-	 * If it has, then we have not created a connection with the client yet,
+	 * If it has, then we have not created a connection with the client yet, 
 	 * and so we must do so.
 	 */
 
@@ -972,7 +1055,7 @@ static void Contact(int fd, int arg)
 #if 0
 	s_printf("Received contact from %s:%d.\n", host_name, port);
 	s_printf("Address: %s.\n", host_addr);
-	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);
+	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);  
 #endif
 
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
@@ -1005,7 +1088,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	//int status;
 
 	*login_port = 0;
-
+	
 	if(!validstrings(nick, real, host))
 		return E_INVAL;
 
@@ -1041,7 +1124,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 
 	return SUCCESS;
 }
-
+		
 
 static void Conn_set_state(connection_t *connp, int state, int drain_state)
 {
@@ -1105,50 +1188,93 @@ static void Delete_player(int Ind)
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	}
 
-        /* If (s)he was in a game team, remove him/her - mikaelh */
-        if (p_ptr->team != 0)
-        {
-                teams[p_ptr->team - 1]--;
-                p_ptr->team = 0;
-        }
+	/* If (s)he was in a game team, remove him/her - mikaelh */
+	if (p_ptr->team != 0)
+	{
+		teams[p_ptr->team - 1]--;
+		p_ptr->team = 0;
+	}
+
+	/* Also remove hostility if (s)he was blood bonded - mikaelh */
+	if (p_ptr->blood_bond)
+	{
+		remove_hostility(Ind, lookup_player_name(p_ptr->blood_bond));
+
+		i = find_player(p_ptr->blood_bond);
+		if (i)
+		{
+			remove_hostility(i, p_ptr->name);
+			Players[i]->blood_bond = 0;
+		}
+
+		p_ptr->blood_bond = 0;
+	}
 
 	/* Try to save his character */
 	save_player(Ind);
 
 	/* If he was actively playing, tell everyone that he's left */
 	/* handle the cfg_secret_dungeon_master option */
-	if (p_ptr->alive && !p_ptr->death &&
-	   (!p_ptr->admin_dm || !cfg.secret_dungeon_master))
+	if (p_ptr->alive && !p_ptr->death)
 	{
-		cptr title = "";
-		if (p_ptr->total_winner)
+		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master)
 		{
-			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
-			{
-				title = (p_ptr->male)?"Emperor ":"Empress ";
+			cptr title = "";
+			if (p_ptr->total_winner)
+    			{
+				if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
+				{
+					title = (p_ptr->male)?"Emperor ":"Empress ";
+				}
+				else
+				{
+					title = (p_ptr->male)?"King ":"Queen ";
+				}
 			}
-			else
-			{
-				title = (p_ptr->male)?"King ":"Queen ";
-			}
-		}
-		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 
+#ifdef TOMENET_WORLDS /* idea: maybe use the 'quiet' flag as 'dungeon master' flag instead? */
+			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+#endif
+
+			for (i = 1; i < NumPlayers + 1; i++)
+			{
+				if (Players[i]->conn == NOT_CONNECTED)
+					continue;
+
+				/* Don't tell him about himself */
+				if (i == Ind) continue;
+
+				/* Send a little message */
+				msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
+			}
 #ifdef TOMENET_WORLDS
-		world_player(p_ptr->id, p_ptr->name, FALSE, FALSE);
-#endif	// TOMENET_WORLDS
+			if (cfg.worldd_pleave) world_msg(format("\377U%s%s has left the game.", title, p_ptr->name));
+#endif
+		} else {
+			cptr title = "";
+			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+#if 0 /* Don't show admins in the list!! Reenable this when 'quiet' flag got reworked into 'dm' flag or sth. */
+#ifdef TOMENET_WORLDS
+			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+#endif
+#endif
+			for (i = 1; i < NumPlayers + 1; i++)
+			{
+				if (Players[i]->conn == NOT_CONNECTED)
+					continue;
+				if (!(Players[i]->admin_dm || Players[i]->admin_wiz))
+					continue;
 
-		for (i = 1; i < NumPlayers + 1; i++)
-		{
-			if (Players[i]->conn == NOT_CONNECTED)
-				continue;
+				/* Don't tell him about himself */
+				if (i == Ind) continue;
 
-			/* Don't tell him about himself */
-			if (i == Ind) continue;
-
-			/* Send a little message */
-			msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
+				/* Send a little message */
+				msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
+				/* missing TOMENET_WORLDS relay here :/ (currently no way to send to 'foreign' admins only) - C. Blue */
+			}
 		}
 	}
 
@@ -1193,7 +1319,7 @@ static void Delete_player(int Ind)
 	/* Update Morgoth eventually if the player was on his level */
 	check_Morgoth();
 
-	/* Tell the metaserver about the loss of a player */
+	/* Tell the metaserver about the loss of a player */	
 	Report_to_meta(META_UPDATE);
 }
 
@@ -1276,6 +1402,7 @@ bool Destroy_connection(int ind, char *reason)
 	if (connp->nick != NULL) free(connp->nick);
 	if (connp->addr != NULL) free(connp->addr);
 	if (connp->host != NULL) free(connp->host);
+	if (connp->c_name != NULL) free(connp->c_name);
 	Sockbuf_cleanup(&connp->w);
 	Sockbuf_cleanup(&connp->r);
 	Sockbuf_cleanup(&connp->c);
@@ -1417,7 +1544,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 		Destroy_connection(free_conn_index, "no memory");
 		return -1;
 	}
-
+	
 	// Remove the contact input handler
 	remove_input(sock);
 	// Install the game input handler
@@ -1432,7 +1559,7 @@ static int Handle_setup(int ind)
 	char *buf;
 	int n, len, i;
 	char b1, b2, b3, b4, b5, b6;
-
+	
 	if (connp->state != CONN_SETUP)
 	{
 		Destroy_connection(ind, "not setup");
@@ -1530,7 +1657,7 @@ static int Handle_setup(int ind)
 }
 
 /*
- * No spaces/strange characters in the account name,
+ * No spaces/strange characters in the account name, 
  * real name or hostname.
  */
 static bool validstrings(char *nick, char *real, char *host){
@@ -1590,8 +1717,8 @@ static int Handle_listening(int ind)
 			connp->w.sock = -1;
 			Destroy_connection(ind, "TCP connection closed");
 		}
-		/* It's already Dead, Jim.
-		else
+		/* It's already Dead, Jim. 
+		else 
 			Destroy_connection(ind, "read first packet error");
 		*/
 		return -1;
@@ -1613,6 +1740,16 @@ static int Handle_listening(int ind)
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
 		Destroy_connection(ind, "verify broken");
+		return -1;
+	}
+
+	/* Permanently ban Arjelis from using any other account...
+	 * His IP seems to be 70.181.210.103 - mikaelh */
+	if (strcmp("Arjelis", connp->nick) && !strcmp("70.181.210.103", connp->addr))
+	{
+		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
+		Send_reliable(ind);
+		Destroy_connection(ind, "hijack attempt");
 		return -1;
 	}
 
@@ -1638,7 +1775,7 @@ static int Handle_listening(int ind)
 		Destroy_connection(ind, "verify incorrect");
 		return -1;
 	}
-
+	
 	/* Set his character info */
 	connp->pass = strdup(pass);
 
@@ -1729,6 +1866,10 @@ static int Handle_login(int ind)
 	int i;
 	bool options[OPT_MAX];
 
+	char namebuf1[80], namebuf2[80];
+	int j;
+	cptr title = "";
+
 	if (Id >= MAX_ID)
 	{
 		errno = 0;
@@ -1758,7 +1899,7 @@ static int Handle_login(int ind)
 
 	p_ptr = Players[NumPlayers + 1];
 	strcpy(p_ptr->realname, connp->real);
-	strcpy(p_ptr->hostname, connp->host);
+	strncpy(p_ptr->hostname, connp->host, 25); /* cap ridiculously long hostnames - C. Blue */
 	strcpy(p_ptr->accountname, connp->nick);
 	strcpy(p_ptr->addr, connp->addr);
 	p_ptr->version = connp->version;
@@ -1845,7 +1986,7 @@ static int Handle_login(int ind)
 		if (MaxSimultaneousPlayers > 15) s_printf("SimultaneousPlayers (above 15): %d\n", MaxSimultaneousPlayers);
 	}
 	connp->id = Id++;
-
+	
 	//Conn_set_state(connp, CONN_READY, CONN_PLAYING);
 	Conn_set_state(connp, CONN_PLAYING, CONN_PLAYING);
 
@@ -1854,7 +1995,7 @@ static int Handle_login(int ind)
 		plog("Cannot send play reply");
 		return -1;
 	}
-
+	
 	/* Send party information */
 	Send_party(NumPlayers);
 
@@ -1885,9 +2026,14 @@ static int Handle_login(int ind)
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
+		strcpy(namebuf1, priv_note_target[i]);
+		strcpy(namebuf2, connp->nick);
+		j = 0; while(namebuf1[j]) { namebuf1[j] = tolower(namebuf1[j]); j++; }
+		j = 0; while(namebuf2[j]) { namebuf2[j] = tolower(namebuf2[j]); j++; }
 //		if (!strcmp(priv_note_target[i], Players[NumPlayers]->name)) { /* <- sent to a character name */
-		if (!strcmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, woot */
-			msg_format(NumPlayers, "\377sNote from %s: %s", priv_note_sender[i], priv_note[i]);
+//		if (!strcmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name */
+		if (!strcmp(namebuf1, namebuf2)) { /* <- sent to an account name, case-independant */
+			msg_format(NumPlayers, "\377bNote from %s: %s", priv_note_sender[i], priv_note[i]);
 			strcpy(priv_note_sender[i], "");
 			strcpy(priv_note_target[i], "");
 			strcpy(priv_note[i], "");
@@ -1897,20 +2043,20 @@ static int Handle_login(int ind)
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[Players[NumPlayers]->party].name)) {
 			if (strcmp(admin_note[i], ""))
-			msg_format(NumPlayers, "\377sParty Note: %s", party_note[i]);
+			msg_format(NumPlayers, "\377bParty Note: %s", party_note[i]);
 		}
 	}
 	if(p_ptr->guild)
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[Players[NumPlayers]->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-			msg_format(NumPlayers, "\377sGuild Note: %s", guild_note[i]);
+			msg_format(NumPlayers, "\377bGuild Note: %s", guild_note[i]);
 		}
 	}
 
 	/* Brand-new players get super-short instructions presented here: */
 #if 1
-	if (p_ptr->inval) {
+	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. */
 		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
 		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
@@ -1920,6 +2066,8 @@ static int Handle_login(int ind)
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
 		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
+	if (p_ptr->admin_dm && (cfg.runlevel == 2047))
+		msg_print(NumPlayers, "\377y* Low-server-shutdown command pending *");
 
 	/* Execute custom script if player joins the server */
 	if (first_player_joined) {
@@ -1929,18 +2077,37 @@ static int Handle_login(int ind)
 	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 
+#if 0 /* not here, but below instead. Or admins will be shown in the list! */
+#ifdef TOMENET_WORLDS
+	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+#endif
+#endif
+
 	/* Handle the cfg_secret_dungeon_master option */
-	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) return 0;
+	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
+		/* Tell other secret dungeon masters about our new player */
+		for (i = 1; i < NumPlayers; i++)
+    		{
+			title = "";
+			if (Players[i]->conn == NOT_CONNECTED)
+				continue;
+			if (!(Players[i]->admin_dm || Players[i]->admin_wiz))
+				continue;
+			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+			msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
+		}
+		return 0;
+	}
 
 #ifdef TOMENET_WORLDS
-	world_player(p_ptr->id, p_ptr->name, TRUE, FALSE);
-#endif	// TOMENET_WORLDS
+	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+#endif
 
 	/* Tell everyone about our new player */
 	for (i = 1; i < NumPlayers; i++)
 	{
-	  cptr title = "";
-
+		title = "";
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
 		if (p_ptr->total_winner)
@@ -1958,6 +2125,10 @@ static int Handle_login(int ind)
 		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
 	}
+
+#ifdef TOMENET_WORLDS
+	if (cfg.worldd_pjoin) world_msg(format("\377U%s%s has entered the game.", title, p_ptr->name));
+#endif
 
 	if(p_ptr->quest_id){
 		for(i=0; i<20; i++){
@@ -1995,7 +2166,7 @@ static int Handle_login(int ind)
 void process_pending_commands(int ind)
 {
 	connection_t *connp = &Conn[ind];
-	player_type *p_ptr = NULL;
+	player_type *p_ptr = NULL;	
 	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
 
@@ -2036,11 +2207,11 @@ void process_pending_commands(int ind)
 
 	// Attempt to execute every pending command. Any command that fails due
 	// to lack of energy will be put into the queue for next turn by the
-	// respective receive function.
+	// respective receive function. 		
 
-	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
-	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
+	//while ( (p_ptr->energy >= level_speed(p_ptr->dun_depth)) && 
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
+	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
 		char *foo=connp->r.ptr;
@@ -2058,7 +2229,7 @@ void process_pending_commands(int ind)
 			return;
 
 		// We didn't have enough energy to execute an important command.
-		if (result == 0)
+		if (result == 0) 
 		{
 			/* Hack -- if we tried to do something while resting, wake us up.
 			 */
@@ -2077,7 +2248,7 @@ void process_pending_commands(int ind)
 			 * actions such as talking while we wait for enough
 			 * energy to execute our next queued in game action.
 			 */
-			if (p_ptr->energy)
+			if (p_ptr->energy) 
 			{
 				old_energy = p_ptr->energy;
 				p_ptr->energy = 0;
@@ -2152,7 +2323,7 @@ void Handle_input(int fd, int arg)
 #if 0
 	/* Clear connp->r, which will be our new queue */
 	Sockbuf_clear(&connp->r);
-
+	
 	/* Put any old commands at the beginning of the new queue we are reading into */
 	if (connp->q.len > 0)
 	{
@@ -2171,7 +2342,7 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->q);
 #endif
 
-
+	
 	/* Mega-Hack */
 	if (connp->id != -1 && Players[GetInd[connp->id]] && Players[GetInd[connp->id]]->new_level_flag) return;
 
@@ -2189,7 +2360,7 @@ void Handle_input(int fd, int arg)
 			// If this happens, the the client has probably closed his TCP connection.
 			do_quit(ind, 0);
 		}
-
+		
 		//Destroy_connection(ind, "input error");
 		return;
 	}
@@ -2346,14 +2517,14 @@ int Net_output(void)
 		/* XXX XXX XXX Mega-Hack -- Redraw player's spot every time */
 		/* This keeps the network connection "active" even if nothing is */
 		/* happening -- KLJ */
-		/* This has been changed to happen less often, operating at close to 3
-		 * times a second to keep the BGP routing tables happy.
-		 * I had originally changed this to about once every 2 seconds,
+		/* This has been changed to happen less often, operating at close to 3 
+		 * times a second to keep the BGP routing tables happy.  
+		 * I had originally changed this to about once every 2 seconds, 
 		 * but apparently it was doing bad things, as the inactivity in the UDP
 		 * stream was causing us to loose priority in the routing tables.
 		 * Thanks to Crimson for explaining this. -APD
 		 */
-
+		
 		/* to keep a good UDP connection, send data that requests a response
 		 * every 1/4 of a second
 		 */
@@ -2364,23 +2535,23 @@ int Net_output(void)
 		 * synchronized way.
 		 */
 
-		/*
+		/* 	
 		   Can't coment this out, it updates things like food
-		    and stores.
+		    and stores.   
 		   Still have to worry about routing with TCP :)
 		   -- Crimson
 		   --- But STill buggy, so off for now.
 		if (!((turn + i) % 8))
 		{
-			lite_spot(i, p_ptr->py, p_ptr->px);
+			lite_spot(i, p_ptr->py, p_ptr->px); 
 		}
 		*/
 
 		/* otherwise, send normal data if there is any */
-		//else
+		//else 
 		//{
-	//		  Tell the client that this is the end
-	//
+	//		  Tell the client that this is the end  
+	//		  
 	//		If we have any data to send to the client, terminate it
 	//		and send it to the client.
 			if (connp->c.len > 0)
@@ -2392,7 +2563,7 @@ int Net_output(void)
 				}
 				Send_reliable(p_ptr->conn);
 			}
-			// Flush the output buffers
+			// Flush the output buffers 
 		//	if (Sockbuf_flush(&connp->w) == -1)
 		//		return -1;
 		//}
@@ -2477,7 +2648,7 @@ void do_quit(int ind, bool tellclient)
 	player_type *p_ptr = NULL;
 	connection_t * connp = &Conn[ind];
 
-	if (connp->id != -1)
+	if (connp->id != -1) 
 	{
 		player = GetInd[connp->id];
 		p_ptr=Players[player];
@@ -2510,7 +2681,7 @@ static int Receive_quit(int ind)
 	connection_t *connp = &Conn[ind];
 	char ch;
 
-	if (connp->id != -1)
+	if (connp->id != -1) 
 	{
 		player = GetInd[connp->id];
 	}
@@ -2520,9 +2691,9 @@ static int Receive_quit(int ind)
 		Destroy_connection(ind, "receive error in quit");
 		return -1;
 	}
-
+	
 	do_quit(ind, 0);
-
+	
 	return 1;
 }
 
@@ -2564,7 +2735,7 @@ static int Receive_login(int ind){
 			char colour_sequence[3];
 			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
 #ifdef RPG_SERVER
-			sflg0 |= 0x1;
+			if (!(l_acc->flags & ACC_ADMIN)) sflg0 |= 0x1; /* Allow multiple chars per account for admins! */
 #endif
 #ifdef FUN_SERVER
 			sflg0 |= 0x2;
@@ -2603,6 +2774,12 @@ static int Receive_login(int ind){
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
 		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, strlen(choice));
 		Trim_name(choice);
+
+		if (forbidden_name(choice)) {
+//			Packet_printf(&connp->c, "%c", E_INVAL);
+                        Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
+                        return(-1);
+		}
 
 		/* at this point, we are authorised as the owner
 		   of the account. any valid name will be
@@ -2729,7 +2906,7 @@ static int Receive_play(int ind)
 		}
 
 #if 0
-		/* Read class extra */
+		/* Read class extra */	
 		n = Packet_scanf(&connp->r, "%hd", &connp->class_extra);
 
 		if (n <= 0)
@@ -2870,7 +3047,7 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile transfer refused");
-					x=0;
+					x=0; 
 				}
 				else{
 					msg_print(Ind, "\377gAttempting file transfer");
@@ -2890,7 +3067,7 @@ static int Receive_file(int ind){
 				Packet_scanf(&connp->r, "%s", fname);
 				if(!is_admin(p_ptr)){
 					msg_print(Ind, "\377rFile check refused");
-					x=0;
+					x=0; 
 				}
 				else{
 					msg_print(Ind, "\377yChecking file");
@@ -2901,7 +3078,11 @@ static int Receive_file(int ind){
 				break;
 			case PKT_FILE_SUM:
 				Packet_scanf(&connp->r, "%ld", &csum);
-				check_return(ind, fnum, csum);
+				if ((check_return(ind, fnum, csum) == 2) && !p_ptr->done_lua_updating) {
+					/* give a message once, telling to restart after updating */
+					msg_print(Ind, "\377yIMPORTANT: After all files have been \377greceived\377y, you must restart TomeNET!");
+					p_ptr->done_lua_updating = TRUE;
+				}
 				return(1);
 				break;
 			case PKT_FILE_ACK:
@@ -3148,14 +3329,14 @@ static int Receive_ack(int ind)
 			&& connp->c.buf[0] != PKT_SUCCESS
 			&& connp->c.buf[0] != PKT_FAILURE)))
 		Conn_set_state(connp, connp->drain_state, connp->drain_state);
-
+	
 	connp->rtt_timeouts = 0;
 
 	/*printf("Received ack to data sent at %ld.\n", rel_loops);*/
 
 	return 1;
 }
-
+ 
 static int Receive_discard(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -3256,7 +3437,7 @@ int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev,
+	return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, 
 			max, cur, adv);
 }
 
@@ -3269,7 +3450,7 @@ int Send_skill_init(int ind, u16b i)
 	connection_t *connp = &Conn[Players[ind]->conn];
 
 	char *tmp;
-
+	
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -3646,7 +3827,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 	player_type *p_ptr = Players[ind];
 	bool ville = istown(wpos);
 	cptr desc = "";
-
+	
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
 	if (ville)
@@ -3669,6 +3850,13 @@ int Send_depth(int ind, struct worldpos *wpos)
 			ind, connp->state, connp->id));
 		return 0;
 	}
+
+	/* Hack for Valinor */
+	if (getlevel(wpos) == 200 && wpos->wz == 1) {
+		ville = TRUE;
+		desc = "Valinor";
+	}
+	
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
@@ -3682,10 +3870,42 @@ int Send_depth(int ind, struct worldpos *wpos)
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr2->word_recall, desc);
+		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, p_ptr2->word_recall, desc);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, istown(wpos), p_ptr->word_recall, desc);
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, p_ptr->word_recall, desc);
+}
+
+/* added for Valinor */
+int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+	
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for depth (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr2->word_recall, desc);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr->word_recall, desc);
 }
 
 int Send_food(int ind, int food)
@@ -4061,10 +4281,10 @@ int Send_message(int ind, cptr msg)
 		    plog(format("Connection not ready for message (%d.%d.%d)",
 				ind, connp2->state, connp2->id));
 		  }
-		else Packet_printf(&connp2->c, "%c%s", PKT_MESSAGE, buf);
+		else Packet_printf(&connp2->c, "%c%S", PKT_MESSAGE, buf);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%s", PKT_MESSAGE, buf);
+	return Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf);
 }
 
 int Send_char(int ind, int x, int y, byte a, char c)
@@ -4206,7 +4426,7 @@ int Send_line_info(int ind, int y)
 		p_ptr2 = Players[Ind2];
 	      }
 	  }
-
+	
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
 	if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%hd", PKT_LINE_INFO, y);
@@ -4249,14 +4469,14 @@ int Send_line_info(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a);
+			Packet_printf(&connp->c, "%c%c", c, a); 
 			if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%c", c, a);
 		}
 	}
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-
+	
 	return 1;
 }
 
@@ -4290,7 +4510,7 @@ int Send_mini_map(int ind, int y)
 		connp2 = &Conn[p_ptr2->conn];
 	      }
 	  }
-
+	
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
      	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
@@ -4333,14 +4553,14 @@ int Send_mini_map(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a);
-			if (Ind2) Packet_printf(&connp2->c, "%c%c", c, a);
+			Packet_printf(&connp->c, "%c%c", c, a); 
+			if (Ind2) Packet_printf(&connp2->c, "%c%c", c, a); 
 		}
 	}
 
 	/* Hack -- Prevent buffer overruns by flushing after each line sent */
 	/* Send_reliable(Players[ind]->conn); */
-
+	
 	return 1;
 }
 
@@ -4348,7 +4568,9 @@ int Send_mini_map(int ind, int y)
 int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4361,6 +4583,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 	/* Hack -- send pval only if it's School book */
 	if (tval != TV_BOOK) pval = 0;
 
+#ifdef MINDLINK_STORE
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
@@ -4377,6 +4600,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 	      }
 	  }
+#endif
 
 	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 }
@@ -4390,7 +4614,9 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 //int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4400,6 +4626,7 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 		return 0;
 	}
 
+#ifdef MINDLINK_STORE
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	{
 		int Ind2 = find_player(p_ptr->esp_link);
@@ -4418,6 +4645,7 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 		}
 	}
+#endif
 
 	return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 //	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
@@ -4426,7 +4654,9 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4436,6 +4666,7 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 		return 0;
 	}
 
+#ifdef MINDLINK_STORE
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	{
 		int Ind2 = find_player(p_ptr->esp_link);
@@ -4452,6 +4683,7 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
 		}
 	}
+#endif
 
 	return Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
 }
@@ -4459,7 +4691,9 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 int Send_store_sell(int ind, int price)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4469,6 +4703,7 @@ int Send_store_sell(int ind, int price)
 		return 0;
 	}
 
+#ifdef MINDLINK_STORE
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
@@ -4485,6 +4720,7 @@ int Send_store_sell(int ind, int price)
 		Packet_printf(&connp2->c, "%c%d", PKT_SELL, price);
 	      }
 	  }
+#endif
 
 	return Packet_printf(&connp->c, "%c%d", PKT_SELL, price);
 }
@@ -4492,7 +4728,9 @@ int Send_store_sell(int ind, int price)
 int Send_store_kick(int ind)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4502,6 +4740,7 @@ int Send_store_kick(int ind)
 		return 0;
 	}
 
+#ifdef MINDLINK_STORE
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
@@ -4518,6 +4757,7 @@ int Send_store_kick(int ind)
 		Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE);
 	      }
 	  }
+#endif
 
 	return Packet_printf(&connp->c, "%c", PKT_STORE_LEAVE);
 }
@@ -4590,6 +4830,72 @@ int Send_beep(int ind)
 
 	return Packet_printf(&connp->c, "%c", PKT_BEEP);
 }
+
+int Send_AFK(int ind, byte afk)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for AFK (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%c", PKT_AFK, afk);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%c", PKT_AFK, afk);
+}
+
+int Send_encumberment(int ind, byte cumber_armor,byte awkward_armor,byte cumber_glove,byte heavy_wield,byte heavy_shoot,
+                        byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for encumberment (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+		                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+}
+		
 
 int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 {
@@ -4673,7 +4979,7 @@ int Send_pickup_check(int ind, cptr buf)
 }
 
 /* adding ultimate quick and dirty hack here so geraldo can play his 19th lvl char
-   with the 80 character party name......
+   with the 80 character party name...... 
    -APD-
 */
 
@@ -4785,7 +5091,7 @@ int Send_skills(int ind)
 
 	return 1;
 }
-
+	
 
 int Send_pause(int ind)
 {
@@ -4927,7 +5233,7 @@ static int Receive_walk(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -4979,7 +5285,7 @@ static int Receive_walk(int ind)
 		else
 		{
 			// If we have a walk command queued at the end of the queue,
-			// then replace it with this queue request.
+			// then replace it with this queue request.  
 			if (connp->q.buf[connp->q.len - 2] == PKT_WALK)
 			{
 				connp->q.len -= 2;
@@ -5010,7 +5316,7 @@ static int Receive_run(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5020,13 +5326,13 @@ static int Receive_run(int ind)
 		      }
 		  }
 	}
-
+	
 	if(p_ptr->command_rep){
 		p_ptr->command_rep=-1;
 	}
 
 	/* If not the dungeon master, who can always run */
-	if (!p_ptr->admin_dm)
+	if (!p_ptr->admin_dm) 
 	{
 		/* Check for monsters in sight or confusion */
 		for (i = 0; i < m_max; i++)
@@ -5040,6 +5346,24 @@ static int Receive_run(int ind)
 				return Receive_walk(ind);
 			}
 		}
+	}
+	
+	/* hack to fix 'movelock' bug, which occurs if a player tries to RUN away from a
+	   monster while he's currently auto-retaliating. (WALKING away instead of
+	   trying to run works by the way.)
+	   It doesn't matter if auto-retaliation is done by melee weaponry, shooting, or by spellcasting.
+	   The bug results in the player being unable to move until he clears the buffer with ')' key or
+	   (even while attacking) inscribes his item to stop auto-retaliating.
+	   So this fix checks for adjacent monsters and, if found, changes the run command to a walk
+	   command.
+	   Note that the bug ONLY happens if the player is auto-retaliating. Manual attacks are fine.
+	   The fix also makes kind of sense, since players can't run anyways while seeing a monster that's
+	   awake. And any monster that's auto-retaliated (if not a 'pseudo monster' which rensembles an
+	   inanimate object) should definitely be awake.
+	   Better solutions (that also fix the 'double energy' players have after performing no action
+	   for a turn) are welcome though. - C. Blue */
+	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
+		return Receive_walk(ind);
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -5104,7 +5428,7 @@ static int Receive_tunnel(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5167,7 +5491,7 @@ static int Receive_aim_wand(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 		      end_mind(ind, TRUE);
 		    else
@@ -5206,7 +5530,7 @@ static int Receive_drop(int ind)
 
 	char ch;
 
-	int n, player = -1;
+	int n, player = -1; 
 	s16b item, amt;
 
 	if (connp->id != -1)
@@ -5217,7 +5541,7 @@ static int Receive_drop(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5267,7 +5591,7 @@ static int Receive_fire(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5357,7 +5681,7 @@ static int Receive_stand(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5403,7 +5727,7 @@ static int Receive_destroy(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5452,7 +5776,7 @@ static int Receive_look(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5500,7 +5824,7 @@ static int Receive_activate_skill(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5529,10 +5853,10 @@ static int Receive_activate_skill(int ind)
 			return 2;
 		}
 
+#if 0
 		/* Break goi/manashield */
 		if (mkey != MKEY_DODGE)	// it's not real 'activation'
 		{
-#if 0
 			if (p_ptr->invuln)
 			{
 				set_invuln(player, 0);
@@ -5541,11 +5865,10 @@ static int Receive_activate_skill(int ind)
 			{
 				set_tim_manashield(player, 0);
 			}
-#endif
 		}
+#endif
 
-		switch (mkey)
-		{
+		switch (mkey) {
 			case MKEY_MIMICRY:
 				if(get_skill(p_ptr, SKILL_MIMIC))
 					do_cmd_mimic(player, spell, dir);//w0t0w
@@ -5553,18 +5876,23 @@ static int Receive_activate_skill(int ind)
 
 			case MKEY_DODGE:
 				use_ability_blade(player);
-				break;
-
+				break; 
 			case MKEY_FLETCHERY:
 				do_cmd_fletchery(player);
 				break;
 			case MKEY_TRAP:
 				do_cmd_set_trap(player, book, spell);
 				break;
-                	case MKEY_SCHOOL:
+			case MKEY_SCHOOL:
 				cast_school_spell(player, book, spell, dir, item, aux);
+				break; 
 
-                }
+#ifdef CLASS_RUNEMASTER
+			case MKEY_RUNE:
+				cast_rune_spell_header(player, book, spell); 
+				break;
+#endif
+		}
 		return 2;
 	}
 	else if (player)
@@ -5596,7 +5924,7 @@ static int Receive_open(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5665,7 +5993,7 @@ static int Receive_mind(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link)
 		  {
 		    Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5794,7 +6122,7 @@ static int Receive_quaff(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5844,7 +6172,7 @@ static int Receive_read(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5893,7 +6221,7 @@ static int Receive_search(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -5954,7 +6282,7 @@ static int Receive_take_off(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6004,7 +6332,7 @@ static int Receive_use(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6054,7 +6382,7 @@ static int Receive_throw(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6105,7 +6433,7 @@ static int Receive_wield(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6155,7 +6483,7 @@ static int Receive_zap(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6205,7 +6533,7 @@ static int Receive_target(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6247,7 +6575,7 @@ static int Receive_target_friendly(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6293,7 +6621,7 @@ static int Receive_inscribe(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6337,7 +6665,7 @@ static int Receive_uninscribe(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6380,7 +6708,7 @@ static int Receive_activate(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6429,7 +6757,7 @@ static int Receive_bash(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6487,7 +6815,7 @@ static int Receive_disarm(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6546,7 +6874,7 @@ static int Receive_eat(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6578,7 +6906,7 @@ static int Receive_eat(int ind)
 	return 1;
 }
 
-
+		
 static int Receive_fill(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -6597,7 +6925,7 @@ static int Receive_fill(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6646,7 +6974,7 @@ static int Receive_locate(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6688,7 +7016,7 @@ static int Receive_map(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6730,7 +7058,7 @@ static int Receive_search_mode(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6771,7 +7099,7 @@ static int Receive_close(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6850,7 +7178,7 @@ static int Receive_go_up(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6899,7 +7227,7 @@ static int Receive_go_down(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6950,7 +7278,7 @@ static int Receive_direction(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -6995,7 +7323,7 @@ static int Receive_item(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7042,7 +7370,7 @@ static int Receive_message(int ind)
 
 	return 1;
 }
-
+	
 static int Receive_admin_house(int ind){
 	connection_t *connp = &Conn[ind];
 	char ch, dir;
@@ -7058,7 +7386,7 @@ static int Receive_admin_house(int ind){
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7097,7 +7425,7 @@ static int Receive_purchase(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7141,7 +7469,7 @@ static int Receive_sell(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7169,6 +7497,9 @@ static int Receive_sell(int ind)
 static int Receive_store_leave(int ind)
 {
 	connection_t *connp = &Conn[ind];
+#ifdef MINDLINK_STORE
+	connection_t *connp2;
+#endif
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7179,24 +7510,30 @@ static int Receive_store_leave(int ind)
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 
+#ifdef MINDLINK_STORE
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
 		      {
 			player = Ind2;
 			p_ptr = Players[Ind2];
+
+		        connp2 = &Conn[p_ptr->conn];
+		        Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE); /* not working */
 		      }
 		  }
+#endif
+
 	}
 	else player = 0;
 
 	if (player)
 		p_ptr = Players[player];
-
+	
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
 		if (n == -1)
@@ -7222,13 +7559,13 @@ static int Receive_store_leave(int ind)
 		p_ptr->store_num = -1;
 
 		/* Hack -- don't stand in the way */
-		teleport_player(player, 1);
+		teleport_player_force(player, 1);
 	}
 
 	/* hack -- update night/day in wilderness levels */
 	/* XXX it's not so good place to do such things -
 	 * prolly we'll need PU_SUN or sth.		- Jir - */
-	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos);
+	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
 	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
 
 	return 1;
@@ -7249,7 +7586,7 @@ static int Receive_store_confirm(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7295,7 +7632,7 @@ static int Receive_store_examine(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7338,7 +7675,7 @@ static int Receive_store_command(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7379,7 +7716,7 @@ static int Receive_drop_gold(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7428,7 +7765,7 @@ static int Receive_steal(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7479,7 +7816,7 @@ static int Receive_King(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7517,7 +7854,7 @@ static int Receive_King(int ind)
 
 	return 1;
 }
-
+	
 static int Receive_redraw(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -7604,7 +7941,7 @@ static int Receive_rest(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7618,7 +7955,7 @@ static int Receive_rest(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
-		if (n == -1)
+		if (n == -1)	
 			Destroy_connection(ind, "read error");
 		return n;
 	}
@@ -7714,7 +8051,7 @@ static int Receive_clear_buffer(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -7728,7 +8065,7 @@ static int Receive_clear_buffer(int ind)
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
-		if (n == -1)
+		if (n == -1)	
 			Destroy_connection(ind, "read error");
 		return n;
 	}
@@ -8023,13 +8360,16 @@ void Handle_direction(int Ind, int dir)
 		p_ptr->current_mind = -1;
 		p_ptr->current_rod = -1;
 		p_ptr->current_activation = -1;
+		p_ptr->current_rune_dir = -1;
+		p_ptr->current_rune1 =  -1;
+		p_ptr->current_rune2 =  -1;
 		return;
 	}
 
 	if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
 	    Ind2 = find_player(p_ptr->esp_link);
-
+	    
 	    if (!Ind2)
 	      end_mind(Ind, TRUE);
 	}
@@ -8044,12 +8384,17 @@ void Handle_direction(int Ind, int dir)
 			do_mimic_power_aux(Ind, dir);
 		else p_ptr->current_spell = -1;
 	}
-	else if (p_ptr->current_rod != -1)
+#ifdef CLASS_RUNEMASTER
+	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1) {
+		cast_rune_spell(Ind, dir);
+	}
+#endif
+       	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)
 		do_cmd_activate_dir(Ind, dir);
 }
-
+		
 void Handle_item(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
@@ -8096,13 +8441,13 @@ bool player_is_king(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	return FALSE;
-
+	
 	if (p_ptr->total_winner && ((inarea(&p_ptr->own1, &p_ptr->wpos)) || (inarea(&p_ptr->own2, &p_ptr->wpos))))
 	{
 		return TRUE;
 	}
 
-	/* Assume false */
+	/* Assume false */	
 	return FALSE;
 }
 
@@ -8162,7 +8507,7 @@ static int Receive_master(int ind)
 				master_summon(player, buf);
 				break;
 			}
-
+		
 			case MASTER_GENERATE:
 			{
 				master_generate(player, buf);
@@ -8221,7 +8566,7 @@ static int Receive_autophase(int ind)
 	if (connp->id != -1) player = GetInd[connp->id];
 		else player = 0;
 
-	/* a valid player was found, try to do the autophase */
+	/* a valid player was found, try to do the autophase */	
 	if (player)
 	{
 		p_ptr = Players[player];
@@ -8276,7 +8621,7 @@ static int Receive_spike(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -8319,6 +8664,8 @@ static int Receive_raw_key(int ind)
 	char ch, key;
 
 	int n, player = -1;
+	
+	bool bbs_empty = TRUE;
 
 	if (connp->id != -1)
 	{
@@ -8328,7 +8675,7 @@ static int Receive_raw_key(int ind)
 		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
 		  {
 		    int Ind2 = find_player(p_ptr->esp_link);
-
+		    
 		    if (!Ind2)
 	      	      end_mind(ind, TRUE);
 		    else
@@ -8377,6 +8724,17 @@ static int Receive_raw_key(int ind)
 						p_ptr->esp_link_flags |= LINKF_TELEKIN;
 					}
 					break;
+				case '!':
+					/* Look at in-game bbs - C. Blue */
+					msg_print(player, "\377wBulletin board (type '/bbs' to write something):");
+					for (n = 0; n < BBS_LINES; n++)
+						if (strcmp(bbs_line[n], "")) {
+							msg_format(player, "\377s %s", bbs_line[n]);
+							bbs_empty = FALSE;
+						}
+					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
+					break;
+//					return 1; /* consume no energy/don't disturb character (resting mode) */
 				default:
 					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 					break;

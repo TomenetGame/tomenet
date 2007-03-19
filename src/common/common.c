@@ -82,9 +82,58 @@ int color_char_to_attr(char c)
 		case 'a': return (TERM_ACID);
 		case 'e': return (TERM_ELEC);
 		case 'c': return (TERM_COLD);
+		
+		/* Let's add the two missing ones - C. Blue */
+		case 'z': return (TERM_SHAR);
+		case 'n': return (TERM_CONF);
+		case 'i': return (TERM_SOUN);
 	}
 
 	return (-1);
+}
+
+/*
+ * Convert a color to a color letter.
+ * The colors are: dwsorgbuDWvyRGBU, as shown below
+ */
+char color_attr_to_char(int a)
+{
+	switch (a)
+	{
+		case TERM_DARK: return 'd';
+		case TERM_WHITE: return 'w';
+		case TERM_SLATE: return 's';
+		case TERM_ORANGE: return 'o';
+		case TERM_RED: return 'r';
+		case TERM_GREEN: return 'g';
+		case TERM_BLUE: return 'b';
+		case TERM_UMBER: return 'u';
+
+		case TERM_L_DARK: return 'D';
+		case TERM_L_WHITE: return 'W';
+		case TERM_VIOLET: return 'v';
+		case TERM_YELLOW: return 'y';
+		case TERM_L_RED: return 'R';
+		case TERM_L_GREEN: return 'G';
+		case TERM_L_BLUE: return 'B';
+		case TERM_L_UMBER: return 'U';
+
+		case TERM_HALF: return 'h';
+		case TERM_MULTI: return 'm';
+		case TERM_POIS: return 'p';
+		case TERM_LITE: return 'L';
+		case TERM_FIRE: return 'f';
+		case TERM_ACID: return 'a';
+		case TERM_ELEC: return 'e';
+		case TERM_COLD: return 'c';
+		
+		/* Let's add the two missing ones - C. Blue */
+		case TERM_SHAR: return 'z';
+		case TERM_CONF: return 'n';
+		case TERM_SOUN: return 'i';
+	}
+
+	return 'w';
 }
 
 /*

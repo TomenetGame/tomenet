@@ -827,6 +827,57 @@ static void get_money(int Ind)
 	p_ptr->au = gold;
 	p_ptr->balance = 0;
 	p_ptr->tim_blacklist = 0;
+	p_ptr->tim_watchlist = 0;
+	p_ptr->pstealing = 0;
+
+#ifdef RPG_SERVER /* casters need to buy a decent book, warriors don't */
+ #if 1
+/* cant sell eq anymore since it's 100% off, so..
+        switch(p_ptr->pclass){
+        case CLASS_MAGE:        p_ptr->au += 850; break;
+        case CLASS_PRIEST:      p_ptr->au += 600; break;
+	case CLASS_SHAMAN:	p_ptr->au += 450; break;
+	case CLASS_ADVENTURER:	p_ptr->au += 200; break;
+	case CLASS_ROGUE:	p_ptr->au += 200; break;
+	case CLASS_ARCHER:	p_ptr->au += 200; break;
+        case CLASS_RANGER:      p_ptr->au += 200; break;
+        case CLASS_PALADIN:     p_ptr->au += 200; break;
+	case CLASS_DRUID:	p_ptr->au += 200; break;
+	case CLASS_MIMIC:	p_ptr->au += 100; break;
+	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
+        default:                ;
+        }
+*/
+        switch(p_ptr->pclass){
+        case CLASS_MAGE:        p_ptr->au +=1000; break;
+	case CLASS_SHAMAN:	p_ptr->au +=1000; break;
+        case CLASS_PRIEST:      p_ptr->au += 800; break;
+	case CLASS_DRUID:	p_ptr->au += 800; break;
+        case CLASS_RANGER:      p_ptr->au += 800; break;
+        case CLASS_PALADIN:     p_ptr->au += 800; break;
+	case CLASS_ARCHER:	p_ptr->au += 800; break; /* need to buy phase doors */
+	case CLASS_ROGUE:	p_ptr->au += 600; break;
+	case CLASS_ADVENTURER:	p_ptr->au += 600; break;
+	case CLASS_MIMIC:	p_ptr->au += 600; break;
+	case CLASS_WARRIOR:	p_ptr->au += 600; break;
+#ifdef CLASS_RUNEMASTER
+	case CLASS_RUNEMASTER:  p_ptr->au +=1000; break;
+#endif
+        default:                ;
+        }
+  #if 0
+	if ((p_ptr->pclass != CLASS_WARRIOR) && (p_ptr->pclass != CLASS_MIMIC))
+		p_ptr->au += 200; /* their startup eq sells for most */
+  #endif
+ #else
+	p_ptr->au = 1000;
+ #endif
+#else
+ #if STARTEQ_TREATMENT == 3
+	p_ptr->au += 300;
+ #endif
+#endif
+	if (p_ptr->pclass == CLASS_ARCHER) p_ptr->au += 100; /* needs to buy a weapon, doesn't have one at the beginning :/ */
 
 	/* Since it's not a king/queen */
 	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
@@ -838,7 +889,7 @@ static void get_money(int Ind)
 		p_ptr->au = 50000000;
 		p_ptr->lev = 100;
 		p_ptr->exp = 999999999;
-		p_ptr->noscore = 1;
+//		p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
 		p_ptr->max_dlv = 200;
@@ -854,7 +905,7 @@ static void get_money(int Ind)
 		p_ptr->exp = 999999999;
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
-		p_ptr->noscore = 1;
+//		p_ptr->noscore = 1;
 		p_ptr->max_dlv = 200;
 		p_ptr->max_plv = 99;
 	}
@@ -907,6 +958,7 @@ static void player_wipe(int Ind)
 
 	/* Assume no winning game */
 	p_ptr->total_winner = FALSE;
+	p_ptr->once_winner = FALSE;
 
 	/* Assume no panic save */
 	panic_save = 0;
@@ -943,88 +995,93 @@ static void player_wipe(int Ind)
  * If { 0, 0} or other 'illigal' item, one random item from bard_init
  * will be given instead.	- Jir -
  */
-static byte player_init[MAX_CLASS][3][2] =
+static byte player_init[MAX_CLASS][3][3] =
 {
 	{
 		/* Adventurer */
-//		{ TV_RING, SV_RING_SEE_INVIS },
-//		{ TV_BOOK, 50 },
-		{ TV_SWORD, SV_SABRE },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
-		{ TV_SCROLL, SV_SCROLL_MAPPING },
+		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
+		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
 	},
 
 	{
 		/* Warrior */
-		{ TV_POTION, SV_POTION_BESERK_STRENGTH },
-		{ TV_SWORD, SV_BROAD_SWORD },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
+		{ TV_SWORD, SV_BROAD_SWORD, 0 },
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
+		{ TV_POTION, SV_POTION_BESERK_STRENGTH, 0 },
 	},
 
 	{
 		/* Mage */
-		{ TV_SWORD, SV_DAGGER },
-		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_BOOK, 50 },
-		{ TV_SOFT_ARMOR, SV_ROBE },
+		{ TV_SWORD, SV_DAGGER, 0 },
+		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
+		{ TV_BOOK, 50, 0 },
 	},
 
 	{
 		/* Priest */
-		{ TV_HAFTED, SV_MACE },
-		{ TV_POTION, SV_POTION_HEALING },
-		{ TV_SCROLL, SV_SCROLL_BLESSING },
-		/* XXX Some kind of prayer book should be here */
-		// { TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
-		//{ TV_BOOK, 50 },
+		{ TV_HAFTED, SV_MACE, 0 },
+		{ TV_POTION, SV_POTION_HEALING, 0 },
+		{ TV_BOOK, 255, 60 }, /* Spellbook of Blessing */
 	},
 
 	{
 		/* Rogue */
-		{ TV_SWORD, SV_MAIN_GAUCHE },
-		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR },
-		{ 255, 255 },
-//		{ TV_GLOVES, SV_SET_OF_LEATHER_GLOVES},
+		{ TV_SWORD, SV_MAIN_GAUCHE, 0 },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
 		/* Mimic */
-		//{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-		{ TV_SWORD, SV_TULWAR },
-		{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
-		{ TV_POTION, SV_POTION_CURE_LIGHT },
+		{ TV_SWORD, SV_TULWAR, 0 },
+		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
+		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
 	},
 
 	{
 		/* Archer */
-		{ TV_ARROW, SV_AMMO_MAGIC },
-		{ TV_BOW, SV_LONG_BOW },
-		{ TV_BOW, SV_SLING },	/* was Hunting book */
+		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
+		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
+		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
 	},
 
 	{
 		/* Paladin */
-		{ TV_HAFTED, SV_LUCERN_HAMMER },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
-		{ TV_POTION, SV_POTION_CURE_SERIOUS },
-		//{ TV_BOOK, 50 },
+		{ TV_HAFTED, SV_LUCERN_HAMMER, 0 },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
+		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
 	},
 
 	{
 		/* Ranger */
-		{ TV_SWORD, SV_LONG_SWORD },
-		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL },
-		{ TV_BOOK, 50 },
+		{ TV_SWORD, SV_LONG_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
+		{ TV_BOOK, 50, 0 },
 	},
 
 	{
-		/* Bard */
-		//{ TV_RING, SV_RING_SEE_INVIS },
-		{ TV_SWORD, SV_SABRE },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR },
-		{ 0, 0},
+		/* Druid */
+		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
+		{ TV_POTION, SV_POTION_INVIS, 0 },
+		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
 	},
 
+	{
+		/* Shaman */
+		{ TV_BOOK, 50, 0 },
+		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
+		{ TV_AMULET, SV_AMULET_INFRA, 3 },
+/*		{ TV_AMULET, SV_AMULET_LUCK, 3 },*/
+	},
+#ifdef CLASS_RUNEMASTER
+	{
+		/* Runemaster */
+		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
+		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+	},
+#endif
 };
 
 
@@ -1114,7 +1171,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 99;
 	do_admin_outfit();
 
-	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_LIFE));
+	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
 	o_ptr->number = 20;
 	o_ptr->pval = 1;
 	//o_ptr->note = note;
@@ -1128,17 +1185,27 @@ void admin_outfit(int Ind, int realm)
 
 	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
 	o_ptr->note = quark_add("@f1");
-	apply_magic_depth(1, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->number = 98;
 	do_admin_outfit();
 #endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
-	apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 }
 
-#define do_player_outfit()	\
+#if STARTEQ_TREATMENT == 0
+    #define do_player_outfit()	\
+	object_aware(Ind, o_ptr); \
+	object_known(o_ptr); \
+	o_ptr->ident |= ID_MENTAL; \
+	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner_mode = p_ptr->mode; \
+	o_ptr->level = 1; \
+	(void)inven_carry(Ind, o_ptr);
+#else
+    #define do_player_outfit()	\
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
@@ -1146,7 +1213,8 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->owner_mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	(void)inven_carry(Ind, o_ptr);
-
+/*	o_ptr->discount = 100; \ <- replaced this by making level-0-items unsellable in general */
+#endif
 
 /*
  * Init players with some belongings
@@ -1156,7 +1224,7 @@ void admin_outfit(int Ind, int realm)
 static void player_outfit(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int             i, j, tv, sv, k_idx;
+	int             i, j, tv, sv, pv, k_idx;
 
 	object_type     forge;
 
@@ -1167,6 +1235,7 @@ static void player_outfit(int Ind)
 	{
 		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_SATISFY_HUNGER));
 		o_ptr->number = rand_range(3, 7);
+		do_player_outfit();
 	}
 	/* XXX problem is that Lembas sell dear.. */
 	else if (p_ptr->prace == RACE_HALF_ELF ||
@@ -1174,13 +1243,22 @@ static void player_outfit(int Ind)
 	{
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
 		o_ptr->number = rand_range(2, 3);
+		do_player_outfit();
 	}
-	else
+	/* vampires feed off living prey, using their vampiric life leech */
+	else if (p_ptr->prace != RACE_VAMPIRE)
 	{
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
 		o_ptr->number = rand_range(3, 7);
+		do_player_outfit();
 	}
-	do_player_outfit();
+	/* vampires get mummy wrapping against the burning sun light */
+	else
+	{
+		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
+		o_ptr->number = 1;
+		do_player_outfit();
+	}
 
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr))
@@ -1190,17 +1268,19 @@ static void player_outfit(int Ind)
 	}
 
 	/* Hack -- Give the player some torches */
-	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
-	o_ptr->number = rand_range(3, 7);
-	o_ptr->timeout = rand_range(3, 7) * 500;
-	do_player_outfit();
+	if (p_ptr->prace != RACE_VAMPIRE) {
+		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
+		o_ptr->number = rand_range(3, 7);
+		o_ptr->timeout = rand_range(3, 7) * 500;
+		do_player_outfit();
+	}
 
 	if (!strcmp(p_ptr->name, "Moltor"))
 	{
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 		o_ptr->name2 = 188;	// Bud ;)
 		o_ptr->number = 9;
-		apply_magic_depth(1, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
+		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, TRUE);
 		o_ptr->discount = 72;
 		o_ptr->owner = p_ptr->id;
                 o_ptr->owner_mode = p_ptr->mode;
@@ -1218,6 +1298,21 @@ static void player_outfit(int Ind)
 	{
 		tv = player_init[p_ptr->pclass][i][0];
 		sv = player_init[p_ptr->pclass][i][1];
+		pv = player_init[p_ptr->pclass][i][2];
+
+		/* ugly hack: give warriors different weapons - C. Blue */
+		if (p_ptr->pclass == CLASS_WARRIOR && i == 0) {
+			switch (p_ptr->prace) {
+			case RACE_HALF_TROLL:
+			case RACE_ENT:
+				tv = 21; sv = 5; break;//mace
+			case RACE_DWARF:
+				tv = 24; sv = 11; break;//broad axe; 24,2 cleaver
+			case RACE_DRIDER:
+				tv = 22; sv = 5; break;//trident
+			}
+		}
+		
 		if (tv == 255 && sv == 255) {
 			/* nothing */
 		} else {
@@ -1230,6 +1325,7 @@ static void player_outfit(int Ind)
 			if (k_idx > 1)
 			{
 				invcopy(o_ptr, k_idx);
+				o_ptr->pval = pv;
 				do_player_outfit();
 			}
 		}
@@ -1268,6 +1364,32 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 
+	/* Lantern of Brightness for Archers */
+	if (p_ptr->pclass == CLASS_ARCHER)
+	{
+		u32b f1,f2,f3,f4,f5,f6;
+		do {
+			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
+			o_ptr->number = rand_range(1, 1);
+			o_ptr->discount = 100;
+			o_ptr->name2 = 139;
+			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+			object_flags(o_ptr,&f1,&f2,&f3,&f4,&f5,&f6);
+		} while (f2 & TR2_RES_DARK);
+		do_player_outfit();
+	}
+
+#ifdef RPG_SERVER /* give extra startup survival kit - so unaffected by very low CHR! */
+		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS));
+		o_ptr->number = 5;
+		o_ptr->discount = 100;
+		do_player_outfit();
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR));
+		o_ptr->number = (p_ptr->pclass == CLASS_ARCHER) ? 10 : 5;
+		o_ptr->discount = 100;
+		do_player_outfit();
+#endif
+
 	/* Hack -- Give the player newbie guide Parchment */
 	invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_NEWBIE));
 	do_player_outfit();
@@ -1303,7 +1425,6 @@ static void player_setup(int Ind, bool new)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 
-
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
@@ -1324,27 +1445,66 @@ static void player_setup(int Ind, bool new)
                 wpos->wy = 32;
 		wpos->wz = 0;
 	}
-
+	
+	/* hack for sector00separation (Highlander Tournament): Players mustn't enter sector 0,0 */
+	/* note that this hack will also prevent players who got disconnected during Highlander Tourney
+	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
+	   with a certain character during highlander tourneys and continue to level it up
+	   infinitely! :) So, who gets disconnected will be removed from the event! */
+	if (sector00separation && !wpos->wx && !wpos->wy) {
+		/* Teleport him out of the event area */
+		switch rand_int(3){
+		case 0:	wpos->wx = 1;
+		case 1:	wpos->wy = 1; break;
+		case 2: wpos->wx = 1;
+		}
+		wpos->wz = 0;
+		/* Remove him from the event and strip quest items off him */
+		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
+		if (p_ptr->global_event_type[d] != GE_NONE) {
+			switch (p_ptr->global_event_type[d]) {
+			case GE_HIGHLANDER:
+				p_ptr->global_event_type[d] = GE_NONE;
+				p_ptr->global_event_temp = 0;
+				for (i = 0; i <= INVEN_TOTAL; i++) /* Erase the highlander amulets */
+                    			if (p_ptr->inventory[i].tval == TV_AMULET && p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS) {
+			    	    		p_ptr->inventory[i].k_idx = 0;
+					        inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
+					        inven_item_optimize(Ind, i);
+    		                	}
+//                                p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
+                                if (cfg.use_pk_rules == PK_RULES_DECLARE)
+                                {
+                                        if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
+                                        set_pkill(i, 1);
+                                }
+			}
+		}
+	}
 
 	/* If the player encountered a server crash last time he was saved (panic save),
 	   carry him out of that dungeon to make sure he doesn't die to the crash. */
 	if (p_ptr->panic) {
-		if (wpos->wz || !strcmp("Appelmoes", p_ptr->name)) {
+#ifndef RPG_SERVER    /* Not in RPG */
+		if (wpos->wz) {
 			s_printf("Auto-recalled panic-saved player %s.\n", p_ptr->name);
 			wpos->wz = 0;
-			/* Don't accidentally recall into nirvana.. */
-			p_ptr->word_recall = 0;
-			/* Avoid critical border spots which might lead to segfaults.. (don't ask) */
-			if (p_ptr->px < 2) p_ptr->px = 2;
-			if (p_ptr->px > MAX_WID - 2) p_ptr->px = MAX_WID - 2;
-			if (p_ptr->py < 2) p_ptr->py = 2;
-			if (p_ptr->py > MAX_HGT - 2) p_ptr->py = MAX_HGT - 2;
 	    		/* Avoid landing in permanent rock or trees or mountains etc.
 		           after an auto-recall, caused by a previous panic save. */
-   			p_ptr->auto_transport = AT_BLINK;
+			p_ptr->auto_transport = AT_BLINK;
 		}
+#endif
+		/* Avoid critical border spots which might lead to segfaults.. (don't ask) */
+		if (p_ptr->px < 2) p_ptr->px = 2;
+		if (p_ptr->px > MAX_WID - 2) p_ptr->px = MAX_WID - 2;
+		if (p_ptr->py < 2) p_ptr->py = 2;
+		if (p_ptr->py > MAX_HGT - 2) p_ptr->py = MAX_HGT - 2;
 		p_ptr->panic = FALSE;
 	}
+
+	/* Don't accidentally recall into nirvana.. */
+	/* p_ptr->recall_pos isn't saved so we really need this always, not just for panics - mikaelh */
+	p_ptr->word_recall = 0;
 
 
 	/* anti spammer code */
@@ -1413,11 +1573,11 @@ static void player_setup(int Ind, bool new)
 			if((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
 				p_ptr->px=l_ptr->wid/2;
 				p_ptr->py=l_ptr->hgt/2;
-				teleport_player(Ind, 1);
+				teleport_player_force(Ind, 1);
 			}
 
 			if(p_ptr->lev<=5){
-				teleport_player(Ind, 5);
+				teleport_player_force(Ind, 5);
 			}
 		}
 		else{
@@ -1531,6 +1691,15 @@ static void player_setup(int Ind, bool new)
 
 	/* Set his "current activities" variables */
 	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_activation = -1;
+#ifdef CLASS_RUNEMASTER
+	p_ptr->current_rune_dir = -1;
+	p_ptr->current_rune1 = -1;
+	p_ptr->current_rune2 = -1;
+	p_ptr->rune_speed = 0;
+	p_ptr->rune_num_of_buffs = 0;
+	p_ptr->rune_IV = 0;
+	p_ptr->rune_stealth = 0;
+#endif
 	p_ptr->current_mind = -1;
 	p_ptr->current_selling = p_ptr->store_num = -1;
 	p_ptr->current_char = 0;
@@ -1594,6 +1763,7 @@ static void player_setup(int Ind, bool new)
 
 
 /* Hack -- give the bard(or whatever randskill class) random skills	- Jir - */
+#if 0
 static void do_bard_skill(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1602,14 +1772,14 @@ static void do_bard_skill(int Ind)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-#if 0		/* Receives most of 'father' skills for free */
+		/* Receives most of 'father' skills for free */
 		if (i == SKILL_COMBAT || i == SKILL_MASTERY ||
 				i == SKILL_ARCHERY || i == SKILL_MAGIC ||
 				i == SKILL_SNEAKINESS || i == SKILL_HEALTH ||
 //				i == SKILL_NECROMANCY ||
 				i == SKILL_SPELL ||
 				i == SKILL_AURA_POWER || i == SKILL_DODGE) continue;
-#endif
+
 		if (magik(67))
 		{
 			bool resist = FALSE;
@@ -1681,7 +1851,7 @@ static void do_bard_skill(int Ind)
 		}
 	}
 }
-
+#endif /*0*/
 /*
  * Create a character.  Then wait for a moment.
  *
@@ -1697,6 +1867,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	player_type *p_ptr;
 	int i;
 	struct account *c_acc;
+	bool acc_banned = FALSE;
 
 	/* To find out which characters crash the server */
 	s_printf("Trying to log in with character %s...\n", name);
@@ -1727,7 +1898,21 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
 		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
+		/* more flags - C. Blue */
+		p_ptr->restricted=(c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
+		acc_banned = (c_acc->flags & ACC_BANNED);
+		s_printf("ACC1:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
+	}
+	
+	/* handle banned player 1/2 */
+	if (acc_banned) {
+		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
+		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		return FALSE;
 	}
 
 	/* Verify his name and create a savefile name */
@@ -1750,7 +1935,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	{
 		/* Log for freeze bug */
 		s_printf("Loaded character %s on %d %d %d\n", name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-		/* Loading succeeded */         
+		/* Loading succeeded */
 		player_setup(Ind, FALSE);
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
@@ -1762,7 +1947,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 			}
 			if(i==20) p_ptr->quest_id=0;
 		}
-		return TRUE;            
+		return TRUE;
 	}
 
 	/* Else, loading failed, but we just create a new character */
@@ -1780,8 +1965,22 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->account=c_acc->id;
 		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
 		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
+		/* more flags - C. Blue */
+		p_ptr->restricted=(c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
+		acc_banned = (c_acc->flags & ACC_BANNED);
+		s_printf("ACC2:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
+	/* handle banned player 2/2 */
+	if (acc_banned) {
+		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
+		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		return FALSE;
+	}
+
 	p_ptr->turn=turn;	/* Birth time (for info) */
 
 	/* Reprocess his name */
@@ -1813,6 +2012,11 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->rp_ptr = &race_info[race];
 	p_ptr->cp_ptr = &class_info[class];
 
+#ifdef RPG_SERVER /* Make characters always NO_GHOST */
+	p_ptr->mode |= MODE_NO_GHOST;
+	p_ptr->mode &= ~MODE_IMMORTAL;
+#endif
+
 	/* Set his ID */
 	p_ptr->id = newid();
 
@@ -1827,7 +2031,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Needs to be adjusted to the currently used value, usually in custom.lua) */
-	p_ptr->updated_savegame = 0;
+	p_ptr->updated_savegame = 0;	/* ALT_EXPRATIO conversion */
+					/* 2 for artifact reset */
 
 	/* Roll for age/height/weight */
 	get_ahw(Ind);
@@ -1875,13 +2080,18 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	}
 
 	/* Bards receive really random skills */
-/*	if (p_ptr->pclass == CLASS_BARD)
+#if 0
+	if (p_ptr->pclass == CLASS_BARD)
 	{
 		do_bard_skill(Ind);
 	}
-*/
+#endif
 	/* Give the player some resurrections */
 	p_ptr->lives = cfg.lifes+1;
+
+	/* msp is only calculated in calc_mana which is only in update_stuff though.. */
+	calc_mana(Ind);
+	p_ptr->csp = p_ptr->msp;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

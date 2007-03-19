@@ -485,7 +485,7 @@ LUA_API void lua_concat (lua_State *L, int n) {
 
 
 LUA_API void *lua_newuserdata (lua_State *L, size_t size) {
-  TString *ts = luaS_newudata(L, size, NULL);
+  TString *ts = luaS_newudata(L, (size==0) ? 1 : size, NULL);
   tsvalue(L->top) = ts;
   ttype(L->top) = LUA_TUSERDATA;
   api_incr_top(L);

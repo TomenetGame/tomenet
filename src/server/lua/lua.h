@@ -22,7 +22,7 @@
 #endif
 
 
-#define LUA_VERSION	"Lua 4.0"
+#define LUA_VERSION	"Lua 4.0.1"
 #define LUA_COPYRIGHT	"Copyright (C) 1994-2000 TeCGraf, PUC-Rio"
 #define LUA_AUTHORS 	"W. Celes, R. Ierusalimschy & L. H. de Figueiredo"
 

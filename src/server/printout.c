@@ -11,6 +11,8 @@
 static FILE *fp = NULL;
 static int init = FALSE;
 static int print_to_file = FALSE;
+static FILE *fpc = NULL;
+static int initc = FALSE;
 
 /* s_print_only_to_file 
  * Controls if we should only print to file
@@ -46,7 +48,7 @@ extern int s_shutdown( void )
 	return(TRUE);
 }
 
-extern int s_printf(char *str, ...)
+extern int s_printf(const char *str, ...)
 {
 	va_list va;
 
@@ -138,3 +140,27 @@ extern bool do_cmd_view_rfe(int Ind, char *str, int line)
 	return(TRUE);
 }
 #endif	// 0
+
+/* Log all -CHEEZY- transactions into a separate file besides tomenet.log */
+extern int c_printf(char *str, ...)
+{
+        char    path[MAX_PATH_LENGTH];
+        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze.log");
+
+	va_list va;
+
+	if(initc == FALSE)   /* in case we don't start her up properly */
+	{
+		fpc = fopen(path,"a+");
+		initc = TRUE;
+	}
+
+	va_start(va, str);
+	vfprintf(fpc,str,va);
+	va_end(va);
+
+	/* KLJ -- Flush the log so that people can look at it while the server is running */
+	fflush(fpc);
+
+	return(TRUE);
+}

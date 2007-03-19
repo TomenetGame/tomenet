@@ -416,6 +416,9 @@ static s32b artifact_power (artifact_type *a_ptr)
         if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
         if (a_ptr->flags3 & TR3_SH_ELEC) p += 5;
 
+	/* only for Ethereal DSM basically.. */
+	if (a_ptr->flags3 & TR3_WRAITH) p += 20;
+
 	return p;
 }
 
@@ -472,11 +475,11 @@ static void add_ability (artifact_type *a_ptr)
 	int r;
 
 	
-	r = rand_int (10);
+	r = rand_int (100);
 	if ((a_ptr->tval == TV_BOOMERANG) || (a_ptr->tval == TV_BOW)) r -= 2;
-	/* if r < 5 -> Pick something dependent on item type. */
-	if ((r < 5) || (a_ptr->tval == TV_SHOT) ||
-	(a_ptr->tval == TV_ARROW) || (a_ptr->tval == TV_BOLT))
+	/* if r < 50 -> Pick something dependent on item type. */
+	if ((r < 50) || ((r < 67) && (a_ptr->tval == TV_DRAG_ARMOR)) ||
+	    (a_ptr->tval == TV_SHOT) || (a_ptr->tval == TV_ARROW) || (a_ptr->tval == TV_BOLT))
 	{
 		r = rand_int (100);
 		switch (a_ptr->tval)
@@ -541,7 +544,7 @@ static void add_ability (artifact_type *a_ptr)
 				else if (r < 25)
 				{
 					a_ptr->dd += 1 + rand_int (2) + rand_int (2);
-//					if (a_ptr->dd > 9) a_ptr->dd = 9;
+//					if (a_ptr->dd > 9) a_ptr->dd = 9; <- limit checks are done later.
 				}
 				else if (r < 27)
 				{ 
@@ -1075,23 +1078,23 @@ static void add_ability (artifact_type *a_ptr)
 				break;
 			}
 			case TV_DRAG_ARMOR:
-				if (r < 55) ;
-				else if (r < 63) a_ptr->flags2 |= TR2_HOLD_LIFE;
-				else if (r < 69)
+/*				if (r < 55) ; --changed into 67% hack above */
+				if (r < 15) a_ptr->flags2 |= TR2_HOLD_LIFE;
+				else if (r < 30)
 				{
 					a_ptr->flags1 |= TR1_CON;
 					do_pval (a_ptr);
 					if (rand_int (2) == 0)
 						a_ptr->flags2 |= TR2_SUST_CON;
 				}
-				else if (r < 75)
+				else if (r < 45)
 				{
 					a_ptr->flags1 |= TR1_STR;
 					do_pval (a_ptr);
 					if (rand_int (2) == 0)
 						a_ptr->flags2 |= TR2_SUST_STR;
 				}
-				else if (r < 77)
+				else if (r < 50)
 				{
 					a_ptr->flags1 |= TR1_LIFE;
 					do_pval (a_ptr);
@@ -1411,8 +1414,13 @@ artifact_type *randart_make(object_type *o_ptr)
 	    return (NULL);
 	  }
 
-	if (k_ptr->flags4 & TR4_COULD2H) quality_boost += 15;
+/* taken out the quality boosts again, since those weapons already deal insane damage.
+   alternatively their damage could be lowered so they don't rival grond (7d8 weapon w/ kill flags..). */
+#if 0
+	if (k_ptr->flags4 & TR4_SHOULD2H) quality_boost += 15;
 	if (k_ptr->flags4 & TR4_MUST2H) quality_boost += 30;
+#endif
+	if (k_ptr->flags4 & TR4_COULD2H) quality_boost += 0;
 	
 	/* Wipe the artifact_type structure */
 	WIPE(&randart, artifact_type);
@@ -1421,7 +1429,13 @@ artifact_type *randart_make(object_type *o_ptr)
 	 * First get basic artifact quality
 	 * 90% are good
 	 */
-	if (rand_int(10))
+	 
+	/* Hack - make nazgul rings of power more useful: */
+	if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_SPECIAL))
+	{
+		power = 60 + rand_int(20) + RANDART_QUALITY; /* 60..rnd(20)+RQ should be maximum */
+	}
+	else if (rand_int(10))
 	{
 		/* maybe move quality_boost to become added to randart_quality.. */
 		power = rand_int(80 + quality_boost) + RANDART_QUALITY;
@@ -1685,9 +1699,10 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* Never have more than +11 bonus */
 	if (a_ptr->pval > 11) a_ptr->pval = 11;
 
-	/* Don't exaggerate at weapon dice */
+	/* Don't exaggerate at weapon dice */ /* current base max 2*avg dam: m2h 6d8 54, s2h 6d5 35, 1h 2d9 20 */
 //	while (((a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
-	while (((1+ a_ptr->dd) * (a_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
+//	while (((1+ a_ptr->dd) * (a_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?(75-15):(40-10)))
+	while (((a_ptr->dd) * (1+a_ptr->ds) >= ((k_ptr->flags4 & TR4_MUST2H)?55:((k_ptr->flags4 & TR4_SHOULD2H)?40:30)))
 		&& (a_ptr->dd > 1))
 		a_ptr->dd -= 1; /* No overpowered randart */
 	/* fix lower limit (paranoia) */
@@ -1800,8 +1815,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
 	} else if (a_ptr->tval == TV_BOW) {
-		if (a_ptr->to_h > 35) a_ptr->to_h = 35;
-		if (a_ptr->to_d > 35) a_ptr->to_d = 35;
+		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
+		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
 	} else {
 		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
 		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
@@ -2161,6 +2176,14 @@ try_an_other_ego:
 		}
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
+	/* not too high to-hit/to-dam boni. No need to check gloves. */
+	if (o_ptr->tval == TV_BOW) {
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+	} else {
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+	}
 #if 0 /* removed LIFE from VAMPIRIC items for now */
 	/* Back Hack :( */
 	if ((o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC) &&
@@ -2317,33 +2340,33 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 #else /* this instead?: */
 			a_ptr->dd = k_ptr->dd;
 #endif
-			while (((1+ a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?75:40))
+			while (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?60:40))
 				&& (a_ptr->dd > 0))
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
 			/* fix lower limit */
 			if (a_ptr->dd < 0) a_ptr->dd = 0;
 		} else if (randint(2) == 1) {
 			while ((randint(a_ptr->dd + 1) == 1) &&
-				((1+ a_ptr->dd + k_ptr->dd + 1) * (a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				((a_ptr->dd + k_ptr->dd + 1) * (1 + a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?60:40)))
 				/* No overpowered slaying weapons */
 			{
 				a_ptr->dd++;
 			}
 			while ((randint(a_ptr->ds + 1) == 1) &&
-				((1+ a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?60:40)))
 				/* No overpowered slaying weapons */
 			{
 				a_ptr->ds++;
 			}
 		} else {
 			while ((randint(a_ptr->ds + 1) == 1) &&
-				((1+ a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				((a_ptr->dd + k_ptr->dd) * (1 + a_ptr->ds + k_ptr->ds + 1) <= ((k_ptr->flags4 & TR4_MUST2H)?60:40)))
 				/* No overpowered slaying weapons */
 			{
 				a_ptr->ds++;
 			}
 			while ((randint(a_ptr->dd + 1) == 1) &&
-				((1+ a_ptr->dd + k_ptr->dd + 1) * (a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?75:40)))
+				((a_ptr->dd + k_ptr->dd + 1) * (1 + a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?60:40)))
 				/* No overpowered slaying weapons */
 			{
 				a_ptr->dd++;

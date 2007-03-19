@@ -258,7 +258,7 @@ D:understanding as you stare into its depths.
 
 N:16:'Razorback'
 I:38:6:0
-W:75:9:400:350000
+W:75:9:400:500000
 P:40:2d4:-4:0:30
 F:FREE_ACT | IM_ELEC | SPECIAL_GENE | IM_ACID | RES_FEAR | 
 F:IM_FIRE | IM_COLD | RES_POIS | RES_LITE | RES_DARK | 
@@ -290,7 +290,7 @@ D:powers elemental and ethereal.
 
 N:18:of Melkor
 I:22:2:-4
-W:65:45:200:100000
+W:65:45:200:60000
 P:0:4d5:12:24:0
 F:STEALTH | WIS | CURSED | HEAVY_CURSE | TY_CURSE | ESP_GOOD | 
 F:DRAIN_MANA | DRAIN_HP | 
@@ -303,7 +303,7 @@ D:The mighty spear used once by Melkor to slay the trees of Valinor.
 N:19:'Soulkeeper'
 I:37:30:2
 #W:75:9:420:300000
-W:75:9:400:300000
+W:75:9:400:200000
 P:40:2d4:-4:0:20
 F:CON | 
 F:HOLD_LIFE | SUST_CON | ESP_UNDEAD | RES_CONF | RES_FEAR | 
@@ -318,7 +318,7 @@ D:nothing else can.
 
 N:20:of Isildur
 I:37:15:1
-W:22:3:300:60000
+W:22:3:300:50000
 P:25:2d4:0:0:25
 F:CON | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
@@ -344,7 +344,7 @@ D:cloth.  Within it is the spirit of Eorl the Young, matchless in combat.
 
 N:22:'Belegennon'
 I:37:20:4
-W:40:10:150:150000
+W:40:10:150:100000
 P:28:1d4:-1:0:20
 F:STEALTH | WIS | INT |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | RES_NEXUS | 
@@ -359,7 +359,8 @@ D:concealment rests within.
 
 N:23:of Celeborn
 I:37:25:4
-W:40:3:250:175000
+#W:40:3:250:125000
+W:40:3:200:125000
 P:35:2d4:-3:0:25
 F:STR | CHR | HIDE_TYPE | ESP_ORC |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_DARK | RES_LITE | RES_CHAOS | 
@@ -386,7 +387,7 @@ D:as you put it on.
 
 N:25:of Caspanion
 I:37:6:3
-W:25:9:270:45000
+W:25:9:270:35000
 P:16:1d4:-2:0:20
 F:INT | WIS | STR | CON | HIDE_TYPE | 
 F:RES_ACID | RES_POIS | RES_CONF | ACTIVATE
@@ -481,7 +482,7 @@ D:that contains the conflicts of the elements.
 
 N:32:of Anarion
 I:34:5:0
-W:40:9:120:160000
+W:40:9:120:80000
 P:5:1d3:0:0:25
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT | 
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | ESP_EVIL
@@ -493,7 +494,7 @@ D:himself powerless to wither or diminish.
 
 N:33:of Hurin
 I:24:10:1
-W:20:15:180:90000
+W:20:15:180:30000
 P:0:4d6:12:20:0
 F:STR | CON | HIDE_TYPE | BRAND_ACID | RES_ACID | LITE1 | DRAIN_MANA | 
 F:SLAY_ORC | KILL_DEMON | SLAY_TROLL | ACTIVATE | SHOW_MODS | BLOWS
@@ -525,7 +526,7 @@ D:crown is abruptly ended where a third jewel might have shone.
 
 N:35:of Beruthiel
 I:33:10:-4
-W:40:12:20:0
+W:40:12:20:50000
 P:0:1d1:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | RES_BLIND | RES_DARK | 
 F:FREE_ACT | SEE_INVIS | ESP_ALL | RES_DISEN | 
@@ -564,7 +565,7 @@ D:understanding.
 
 N:38:of Hammerhand
 I:32:6:3
-W:20:2:60:100000
+W:20:2:60:70000
 P:6:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | SPECIAL_GENE | RES_FEAR | 
 F:SUST_STR | SUST_DEX | SUST_CON | 
@@ -578,7 +579,7 @@ D:blows of Helm, the Hammerhand!
 
 N:39:of Dor-Lomin
 I:32:7:4
-W:40:12:75:250000
+W:40:12:75:150000
 P:8:1d3:0:0:20
 F:STR | DEX | CON | HIDE_TYPE | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_BLIND | REGEN | 
@@ -590,7 +591,7 @@ D:servants of Morgoth.
 
 N:40:'Holhenneth'
 I:32:5:3
-W:20:5:75:100000
+W:20:5:75:50000
 P:5:1d3:0:0:10
 F:INT | WIS | SEARCH | HIDE_TYPE | 
 F:RES_BLIND | SEE_INVIS | ACTIVATE
@@ -618,7 +619,7 @@ D:needed succor.
 
 N:42:of Gondor
 I:33:11:3
-W:40:40:30:250000
+W:40:40:30:200000
 P:0:1d1:0:0:15
 F:STR | WIS | CON | HIDE_TYPE | SPEED | RES_CONF | RES_SOUND | 
 F:RES_COLD | RES_FIRE | RES_LITE | RES_BLIND | RES_ELEC | RES_CHAOS |
@@ -633,7 +634,7 @@ D:Gondor though an age of the world.
 
 N:43:of Numenor
 I:33:12:3
-W:60:30:40:180000
+W:60:30:40:140000
 P:0:1d1:0:0:18
 F:INT | DEX | CHR | SEARCH | SPEED | HIDE_TYPE | 
 F:SEE_INVIS | FREE_ACT | RES_DARK | RES_BLIND | 
@@ -650,7 +651,7 @@ D:nature and magnitude of the task.
 
 N:44:'Colluin'
 I:35:1:0
-W:5:45:10:100000
+W:5:45:10:50000
 P:1:0d0:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE | ESP_GOOD
 D:A cape worn by a hero from Valinor, a land utterly beyond the strife 
@@ -675,7 +676,7 @@ D:the Sindar.
 
 N:46:of Thingol
 I:35:1:3
-W:10:30:10:65000
+W:10:30:10:35000
 P:1:0d0:0:0:18
 F:DEX | CHR | HIDE_TYPE | 
 F:FREE_ACT | RES_ACID | RES_FIRE | RES_COLD | ACTIVATE
@@ -716,7 +717,7 @@ W:30:40:5:95000
 P:6:0d0:0:0:25
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
 F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
-F:REGEN_MANA
+F:REGEN_MANA | RES_LITE | RES_DARK
 D:The opaque midnight folds, inset with a multitude of tiny diamonds, of 
 D:this cloak swirl around you and you feel a hint, a fragment of the 
 D:knowledge and power to restore that lay in Luthien, the most beautiful 
@@ -751,7 +752,7 @@ D:completely harmless.
 
 N:52:'Cambeleg'
 I:31:1:3
-W:10:6:5:36000
+W:10:6:5:26000
 P:1:0d0:8:8:15
 F:STR | CON | HIDE_TYPE | 
 F:FREE_ACT | SHOW_MODS
@@ -762,7 +763,7 @@ D:A hero's handgear that lends great prowess in battle.
 
 N:53:'Cammithrim'
 I:31:1:3
-W:10:3:5:30000
+W:10:3:5:20000
 P:1:1d1:0:0:10
 F:DEX | CHR | FREE_ACT | RES_LITE | SUST_CON | LITE1 | ACTIVATE |
 F:SPECIAL_GENE | REGEN
@@ -887,7 +888,7 @@ D:these boots will be completely at home in the mountains.
 
 N:63:of Bard
 I:17:2:0
-W:60:30:2:100000
+W:60:30:3:100000
 P:0:3d5:15:5:0
 F:KILL_DRAGON | 
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
@@ -899,7 +900,7 @@ D:feared especially by the wyrmkin.
 
 N:64:of Maedhros
 I:23:5:3
-W:13:30:30:65000
+W:13:30:30:75000
 P:0:2d5:12:15:0
 F:INT | DEX | HIDE_TYPE | SPEED | ESP_EVIL | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_GIANT | FREE_ACT | SEE_INVIS | SHOW_MODS
@@ -911,7 +912,7 @@ D:his right hand in the pits of Thangorodrim.
 
 N:65:'Angrist'
 I:23:4:4
-W:20:80:12:125000
+W:20:80:12:100000
 P:0:2d4:10:15:5
 F:DEX | HIDE_TYPE | STEALTH | SEARCH | BRAND_POIS | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | BRAND_ACID |
@@ -966,7 +967,7 @@ D:wearer seems oddly immune.
 
 N:70:'Belangil'
 I:23:4:2
-W:10:40:12:100000
+W:10:40:12:60000
 P:0:2d4:6:9:0
 F:DEX | HIDE_TYPE | SPEED | BLOWS |
 F:BRAND_COLD | RES_COLD |
@@ -980,7 +981,7 @@ D:an edge to wound the wind.
 
 N:71:'Calris'
 I:23:21:5
-W:30:15:160:100000
+W:30:15:160:50000
 P:0:5d5:-20:20:0
 F:CON | HIDE_TYPE | DRAIN_HP | 
 F:KILL_DRAGON | SLAY_EVIL | SLAY_DEMON | SLAY_TROLL | RES_DISEN | 
@@ -995,7 +996,7 @@ D:peril.
 
 N:72:'Arunruth'
 I:23:16:4
-W:20:45:150:145000
+W:20:45:150:130000
 P:0:3d5:20:14:0
 F:STR | DEX | CON | SUST_CON | SUST_STR
 F:REGEN | FREE_ACT | SEE_INVIS |
@@ -1026,7 +1027,7 @@ D:who dared to come near hidden Gondolin.
 
 N:74:'Aeglin'
 I:23:15:5
-W:20:90:150:95000
+W:20:90:150:35000
 P:0:2d5:12:16:0
 F:SEARCH | BLESSED | LITE1 | HIDE_TYPE | 
 F:BRAND_ELEC | SLAY_ORC | SLAY_GIANT | SLAY_TROLL | RES_FEAR |
@@ -1041,7 +1042,7 @@ D:eerily in the globe of light they create.
 
 N:75:'Orcrist'
 I:23:16:3
-W:10:20:150:40000
+W:10:20:150:30000
 P:0:2d5:10:16:0
 F:SEARCH | ESP_ORC | SLAY_DRAGON | ESP_DRAGON | RES_COLD | HIDE_TYPE | 
 F:SLAY_EVIL | BRAND_COLD | SLAY_ORC | RES_COLD | LITE1 | RES_DARK | 
@@ -1054,7 +1055,7 @@ D:know its power all too well.
 
 N:76:'Gurthang'
 I:23:25:2
-W:20:30:200:125000
+W:20:30:200:70000
 P:0:4d6:13:20:0
 F:STR | HIDE_TYPE | VORPAL | ESP_DRAGON | DRAIN_HP | 
 F:IM_FIRE | RES_POIS | BRAND_FIRE | BRAND_POIS | 
@@ -1068,7 +1069,7 @@ D:who wield it eventually.
 
 N:77:'Zarcuthra'
 I:23:22:4
-W:30:80:250:205000
+W:30:80:250:100000
 P:0:5d6:19:25:0
 F:STR | CHR | INFRA | HIDE_TYPE | VORPAL | DRAIN_MANA | 
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_FIRE |
@@ -1182,7 +1183,7 @@ D:living lightning trapped inside.
 
 N:85:'Elvagil'
 I:23:24:2
-W:12:8:170:40000
+W:12:8:170:30000
 P:0:2d9:5:12:0
 F:DEX | CHR | STEALTH | HIDE_TYPE | ESP_ORC | ESP_TROLL | SLAY_TROLL | RES_FEAR | 
 F:SLAY_TROLL | SLAY_ORC | FEATHER | SEE_INVIS | SHOW_MODS | SLAY_ORC
@@ -1249,7 +1250,7 @@ D:the "Sickle of Harad", and a deadly foe to the undead.
 
 N:90:'Gilettar'
 I:23:10:2
-W:13:8:80:55000
+W:13:8:80:65000
 P:0:1d7:3:7:0
 F:BLOWS | HIDE_TYPE | 
 F:SLAY_ANIMAL | SLOW_DIGEST | REGEN | SHOW_MODS | SEE_INVIS | RES_NEXUS
@@ -1261,7 +1262,7 @@ D:Brethil.
 
 N:91:'Doomcaller'
 I:23:30:0
-W:70:25:180:250000
+W:70:25:180:150000
 P:0:6d5:18:28:-30
 F:KILL_DRAGON | SLAY_ANIMAL | SLAY_EVIL | BRAND_COLD | SLAY_TROLL | 
 F:SLAY_ORC | FREE_ACT | RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | 
@@ -1275,7 +1276,7 @@ D:owner as they inflict wounds that will never heal.
 
 N:92:'Vorpal Blade'
 I:23:17:2
-W:50:30:150:200000
+W:50:30:150:150000
 P:0:5d5:32:32:0
 F:VORPAL | SLAY_EVIL | WOUNDING |
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
@@ -1286,7 +1287,7 @@ D:went snicker-snack!"
 
 N:93:of Theoden
 I:24:10:4
-W:20:15:180:70000
+W:20:15:180:60000
 P:0:4d6:10:20:0
 F:WIS | CON | HIDE_TYPE | 
 F:SLAY_DRAGON | ESP_EVIL | ESP_UNDEAD | SLOW_DIGEST | ACTIVATE | SHOW_MODS
@@ -1299,7 +1300,7 @@ D:the minds of their enemies.
 
 N:94:of Pain
 I:22:13:0
-W:30:155:190:150000
+W:30:155:190:100000
 P:0:9d6:0:30:0
 F:SHOW_MODS | LEVELS | DRAIN_MANA
 D:The massive chopper that crowns this glaive glows blood-red and black; 
@@ -1338,7 +1339,7 @@ D:demons, who war forever, trapped by magely spells.
 
 N:97:'Aeglos'
 I:22:2:4
-W:15:45:50:112000
+W:15:45:50:92000
 P:0:3d5:15:20:5
 F:DEX | WIS | HIDE_TYPE |
 F:BRAND_COLD | BRAND_ELEC | LITE1 | 
@@ -1396,7 +1397,7 @@ D:and dire wolves.
 
 N:101:of Durin
 I:24:25:4
-W:30:90:230:200000
+W:30:90:230:150000
 P:0:7d5:10:20:15
 F:STR | CON | TUNNEL | HIDE_TYPE | ESP_EVIL | RES_FEAR | 
 F:SLAY_DRAGON | KILL_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1411,7 +1412,7 @@ D:Khazad-dum to protect the wearer and slay all evils found underground.
 
 N:102:of Eonwe
 I:24:25:3
-W:30:120:230:200000
+W:30:120:230:190000
 P:0:6d5:15:18:8
 F:STR | INT | WIS | DEX | CON | CHR | HIDE_TYPE | 
 F:SLAY_EVIL | BRAND_COLD | KILL_DEMON | KILL_UNDEAD | ESP_NONLIVING |
@@ -1426,7 +1427,7 @@ D:evil at a word, and grants Maia-like powers of body and mind.
 
 N:103:of Balli Stonehand
 I:24:22:3
-W:30:20:170:115000
+W:30:20:170:95000
 P:0:3d9:8:21:5
 F:STR | CON | STEALTH | HIDE_TYPE | ESP_NONLIVING |
 F:SLAY_DEMON | SLAY_TROLL | SLAY_ORC | FREE_ACT | 
@@ -1440,7 +1441,7 @@ D:to resist and endure lie ready for he who shall wield it once more.
 
 N:104:'Lotharang'
 I:24:22:1
-W:10:15:170:41000
+W:10:15:170:31000
 P:0:2d9:4:9:0
 F:STR | DEX | HIDE_TYPE | BLOWS | REGEN | RES_SHARDS | 
 F:SLAY_TROLL | SLAY_ORC | ACTIVATE | SHOW_MODS
@@ -1452,7 +1453,7 @@ D:allows rapid recovery from their blows.
 
 N:105:of the Dwarves
 I:24:28:10
-W:30:12:250:100000
+W:30:12:250:80000
 P:0:3d7:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT | SLAY_EVIL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
@@ -1466,7 +1467,7 @@ D:to ward off the elements and smite evil.
 
 N:106:'Barukkheled'
 I:24:11:3
-W:20:8:160:60000
+W:20:8:160:40000
 P:0:2d6:13:19:0
 F:CON | HIDE_TYPE | 
 F:SLAY_EVIL | SLAY_TROLL | SLAY_GIANT | SLAY_ORC | 
@@ -1479,7 +1480,7 @@ D:creatures of the earth.
 
 N:107:of Wrath
 I:22:5:2
-W:15:35:300:90000
+W:15:35:300:80000
 P:0:3d8:16:18:0
 F:STR | DEX | HIDE_TYPE | CHAOTIC | DRAIN_MANA | SPECIAL_GENE |
 F:SLAY_EVIL | KILL_UNDEAD | RES_LITE | RES_DARK | SEE_INVIS | 
@@ -1493,7 +1494,7 @@ D:evil and undead.
 
 N:108:of Ulmo
 I:22:5:4
-W:50:90:70:150000
+W:50:90:70:130000
 P:0:4d8:15:19:0
 F:DEX | HIDE_TYPE | 
 F:SLAY_DRAGON | SLAY_ANIMAL | FREE_ACT | HOLD_LIFE | IM_ACID | 
@@ -1523,7 +1524,7 @@ D:returning.
 N:110:of the Dawn
 I:23:17:4
 #W:40:160:140:250000 -- reduce value since ACTIVATE for this isn't implemented
-W:40:160:140:100000
+W:40:160:140:50000
 P:0:3d5:20:20:0
 F:ACTIVATE | BRAND_FIRE | FREE_ACT | RES_FIRE | INFRA | LEVELS | ESP_EVIL | 
 F:SLAY_EVIL | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON | VORPAL | CLONE |
@@ -1829,7 +1830,7 @@ D:and is said to go "snicker snack".
 
 N:135:'Bullseye'
 I:17:2:0
-W:40:1:2:60000
+W:40:1:3:60000
 P:0:3d5:30:0:0
 F:SLAY_EVIL | KILL_DEMON | SLAY_DRAGON
 #F:SLAY_UNDEAD | SLAY_ORC | SLAY_TROLL | SLAY_GIANT | SLAY_DRAGON | KILL_DEMON | 
@@ -1842,7 +1843,7 @@ D:A powerful arrow that is feared by even the mightiest demons.
 N:136:'Travak'
 #I:16:0:0
 I:18:1:0
-W:5:1:2:25000
+W:5:1:3:25000
 P:0:2d5:8:3:0
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:A bolt imbued with the powers of the elements.  
@@ -2028,7 +2029,7 @@ D:the torture of the wraithworld awaits those who dare.
 
 N:151:of the Elves
 I:18:2:0
-W:127:220:130:100000
+W:127:220:4:100000
 P:0:5d5:5:6:0
 F:BRAND_COLD | BRAND_FIRE | BRAND_ELEC | BRAND_ACID | BRAND_POIS |
 F:SLAY_DRAGON | SLAY_GIANT | SLAY_TROLL | KILL_UNDEAD | SLAY_ORC |
@@ -2570,7 +2571,7 @@ D:destruction of all others who would gaze into it.
 # The Magic Arrow 'Giver of Sleep'
 N:209:'Giver of Sleep'
 I:17:3:0
-W:20:10:3:30000
+W:20:10:2:30000
 P:0:2d4:0:0:0
 F:SLAY_UNDEAD | VAMPIRIC
 
@@ -2749,7 +2750,7 @@ D:Uzbadkhazaddumu, the last Lord of Moria.
 
 N:221:of Moon-Stone
 I:16:0:0
-W:40:20:4:50000
+W:40:20:2:50000
 P:0:1d2:0:10:0
 F:SLAY_EVIL | KILL_DEMON | KILL_DRAGON
 D:A mysterious shard that fell down from heaven.
@@ -2759,7 +2760,7 @@ D:A mysterious shard that fell down from heaven.
 
 N:222:'Ripper'
 I:16:1:0
-W:20:5:5:15000
+W:20:5:4:15000
 P:0:3d4:0:0:0
 D:Made of alloy of iron and black ore, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
@@ -2839,7 +2840,7 @@ D:It seems to absorb any form of energy.
 
 N:228:of Thunder
 I:18:4:21
-W:60:40:2:60000
+W:60:40:3:60000
 P:0:3d6:0:0:0
 F:KILL_UNDEAD | SLAY_EVIL | BRAND_ELEC
 D:A bolt that electrocutes its targets and leaves them stunned.
@@ -3124,8 +3125,8 @@ D:A unappearent leather cap with surprising abilities.
 #P:0:0d0:0:0:0
 #F:INSTA_ART | HIDE_TYPE
 #D:A yellow-golden potion, capable of turning you to amberite temporarily.
-#
-#
+
+
 ## The Scroll of Sleeping
 #
 #N:253:of Sleeping
@@ -3136,6 +3137,13 @@ D:A unappearent leather cap with surprising abilities.
 #D:A scroll that calms every being in your widest surroundings.
 
 
+N:254:'Stormshield'
+I:34:6:3
+W:70:40:200:120000
+P:8:1d3:0:0:40
+F:STR | CON | RES_SOUND | RES_COLD | IM_ELEC
+D:Gleaming steel, brass-shod with flashes of light running over its surface,
+D:this shield is astonishingly heavy and not easy to handle.
 
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'

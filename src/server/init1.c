@@ -276,10 +276,10 @@ static cptr r_info_flags4[] =
 //	"XXX2X4",	//	"MULTIPLY",
 	"S_ANIMAL",	// "XXX3X4",
 	"ROCKET",	// "XXX4X4",
-	"ARROW_1",	// former 1/2 (arrow)
-	"ARROW_2",	// former 3/4 (missile)
-	"XXX",		//	"ARROW_3",
-	"XXX",		//	"ARROW_4",
+	"ARROW_1",	// former 1/2 (arrow), now arrow/light
+	"ARROW_2",	// former 3/4 (missile), now shot/heavy
+	"ARROW_3",	//	"ARROW_3", now bolt/heavy
+	"ARROW_4",	//	"ARROW_4", now missile/heavy
 	"BR_ACID",
 	"BR_ELEC",
 	"BR_FIRE",
@@ -424,7 +424,7 @@ static cptr r_info_flags7[] =
 		"DROP_RANDART",
 		"AI_PLAYER",
 		"NO_THEFT",
-	"XXX7X19",
+	"NEVER_ACT",
 	"XXX7X20",
 	"XXX7X21",
 	"XXX7X22",
@@ -729,9 +729,9 @@ static cptr k_info_flags4[] =
         "RECHARGE",
         "FLY",
         "DG_CURSE",
-        "COULD2H",
+        "SHOULD2H",
         "MUST2H",
-        "LEVELS",
+        "COULD2H",
         "CLONE",
         "SPECIAL_GENE",
         "CLIMB",
@@ -773,7 +773,7 @@ static cptr k_info_flags5[] =
         "FULL_NAME",
         "LUCK",
         "IMMOVABLE",
-	"XXX8X22",
+        "LEVELS",
 	"XXX8X22",
 	"XXX8X02",
 	"XXX8X02",
@@ -899,18 +899,18 @@ static cptr f_info_flags1[] =
 	"TUNNELABLE",
 	"WEB",
 	"ATTR_MULTI",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
+	"SLOW_RUNNING_1",
+	"SLOW_RUNNING_2",
+	"SLOW_FLYING_1",
+	"SLOW_FLYING_2",
+	"SLOW_CLIMBING_1",
+	"SLOW_CLIMBING_2",
+	"SLOW_WALKING_1",
+	"SLOW_WALKING_2",
+	"SLOW_SWIMMING_1",
+	"SLOW_SWIMMING_2",
+	"PROTECTED",	/* monsters cannot spawn on nor teleport to this grid */
+//	"BLOCK_LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
 	"XXX1",
 	"XXX1"
 };
@@ -966,27 +966,27 @@ static cptr d_info_flags2[] =
 	"NO_MAGIC_MAP",
 	"XXX1",
 	"XXX1",
-	"XXX1",
-	"NO_DEATH",	/* 0x00000100L */
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1",
+	"NO_DEATH",	/* 0x00000080L */
+	"IRONFIX1",
+	"IRONFIX2",
+	"IRONFIX3",
+	"IRONFIX4",
+	"IRONRND1",
+	"IRONRND2",
+	"IRONRND3",
+	"IRONRND4",
+	"NO_ENTRY_STAIR",
+	"NO_ENTRY_WOR",
+	"NO_ENTRY_PROB",
+	"NO_ENTRY_FLOAT",
+	"NO_EXIT_STAIR",
+	"NO_EXIT_WOR",
+	"NO_EXIT_PROB",
+	"NO_EXIT_FLOAT",
+	"NO_TRAVEL_UP",
+	"NO_TRAVEL_DOWN",
+	"",
+	"",
 	"ADJUST_LEVEL_1_2",
 	"NO_SHAFT",
 	"ADJUST_LEVEL_PLAYER",
@@ -1154,10 +1154,10 @@ static cptr st_info_flags1[] =
 	"HARD_STEAL",
 	"VHARD_STEAL",
 	"NO_STEAL",
-	"XXX1",
-	"XXX1",
-	"XXX1",
-	"XXX1"
+	"BUY67",
+	"BUY50",
+	"XXX",
+	"XXX"
 //	"XXX1",
 };
 
@@ -7312,7 +7312,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 				random_artifact_resistance(q_ptr);
 
-				a_info[artifact_index].cur_num = 1;
+				handle_art_inum(artifact_index);
 
 				a_allow_special[artifact_index] = FALSE;
 

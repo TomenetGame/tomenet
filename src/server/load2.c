@@ -160,6 +160,14 @@ bool wearable_p(object_type *o_ptr)
 			{
 				return (TRUE);
 			}
+#if 0
+		case TV_RUNE1:
+		{
+			if ((o_ptr->sval == SV_RUNE1_SELF) && (o_ptr->name2 != 0)) {
+				return (TRUE);
+			}
+		}
+#endif
 	}
 
 	/* Nope */
@@ -337,6 +345,10 @@ static void rd_item(object_type *o_ptr)
 	/* Type/Subtype */
 	rd_byte(&o_ptr->tval);
 	rd_byte(&o_ptr->sval);
+	if (!older_than(4, 2, 6)) {
+		rd_byte(&o_ptr->tval2);
+		rd_byte(&o_ptr->sval2);
+	}
 
 /* HACKHACKHACK - C. Blue - Moved Khopesh to polearms */
 //if (o_ptr->tval == 23 && o_ptr->sval == 14) {o_ptr->tval = 22; o_ptr->sval = 9;}
@@ -347,6 +359,10 @@ static void rd_item(object_type *o_ptr)
         if (!older_than(4, 2, 3)) {
 		rd_s32b(&o_ptr->pval2);
 		rd_s32b(&o_ptr->pval3);
+	}
+        if (!older_than(4, 2, 6)) {
+		rd_s32b(&o_ptr->pval4);
+		rd_s32b(&o_ptr->pval5);
 	}
 
 	rd_byte(&o_ptr->discount);
@@ -364,6 +380,22 @@ static void rd_item(object_type *o_ptr)
 	rd_s16b(&o_ptr->to_h);
 	rd_s16b(&o_ptr->to_d);
 	rd_s16b(&o_ptr->to_a);
+
+/* DEBUGGING PURPOSES - the_sandman */
+#if 0
+	if (o_ptr->tval == 46)
+	 {
+	  s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d loaded\n",
+				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
+	 }
+#endif
+
+	/* Cap all old non-trueart bows - mikaelh */
+	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == 255))
+	{
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+	}
 
 	rd_s16b(&old_ac);
 
@@ -385,6 +417,42 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->xtra1);
 	rd_byte(&o_ptr->xtra2);
 
+#if 0 /*buggy?*/
+	/* Give old Multi-Hued Dragon Scale Mails random immunities */
+	if (o_ptr->sval == SV_DRAGON_MULTIHUED && (o_ptr->xtra2 == 0 || /* no immunities or only one immunity? */
+		o_ptr->xtra2 == 0x01 || o_ptr->xtra2 == 0x02 || o_ptr->xtra2 == 0x04 ||
+		o_ptr->xtra2 == 0x08 || o_ptr->xtra2 == 0x10))
+	{
+		o_ptr->xtra2 = 0;
+		int i = 2, tries = 100; /* give 2 random immunities */
+		while (i && tries) {
+			switch(rand_int(5)){
+			case 0:if (!(o_ptr->xtra2 & 0x01)){
+					o_ptr->xtra2 |= 0x01;
+					i--;}
+					break;
+			case 1:if (!(o_ptr->xtra2 & 0x02)){
+					o_ptr->xtra2 |= 0x02;
+					i--;}
+					break;
+			case 2:if (!(o_ptr->xtra2 & 0x04)){
+					o_ptr->xtra2 |= 0x04;
+					i--;}
+					break;
+			case 3:if (!(o_ptr->xtra2 & 0x08)){
+					o_ptr->xtra2 |= 0x08;
+					i--;}
+					break;
+			case 4:if (!(o_ptr->xtra2 & 0x10)){
+					o_ptr->xtra2 |= 0x10;
+					i--;}
+					break;
+			}
+			tries--;
+		}
+	}
+#endif
+
 	/* Inscription */
 	rd_string(note, 128);
 
@@ -398,6 +466,43 @@ static void rd_item(object_type *o_ptr)
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	
+#ifdef SEAL_INVALID_OBJECTS
+	/* Object does no longer exist? (for example now commented out, in k_info)
+	   - turn it into a 'seal' instead of deleting it! - C. Blue */
+	if (!o_ptr->k_idx) {
+		s_printf("SEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+		o_ptr->tval2 = o_ptr->tval;
+		o_ptr->sval2 = o_ptr->sval;
+		o_ptr->note = quark_add(format("%d-%d", o_ptr->tval2, o_ptr->sval2));
+		o_ptr->tval = TV_SEAL;
+		o_ptr->sval = SV_SEAL_INVALID;
+		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+		/* In case someone is silly and removes seals while leaving the definition enabled: */
+		if (!o_ptr->k_idx) return;
+//		s_printf("sealed to %d, %d\n", o_ptr->tval, o_ptr->sval);
+	} else if (o_ptr->tval == TV_SEAL && o_ptr->sval == SV_SEAL_INVALID) {
+		/* Try to restore the original item from the seal */
+		if (lookup_kind(o_ptr->tval2, o_ptr->sval2)) {
+			o_ptr->tval = o_ptr->tval2;
+			o_ptr->sval = o_ptr->sval2;
+			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+			o_ptr->note = 0;
+			s_printf("UNSEALING: %d, %d\n", o_ptr->tval, o_ptr->sval);
+		}
+	}
+#else
+	/* Object does no longer exist? Delete it! */
+	if (!o_ptr->k_idx) return;
+#endif
+
+#if 0 /* commented out again till it's of use once more (hopefully not) */
+/*HACK just to get rid of invalid seals in Bree.. */
+if (o_ptr->tval == TV_SEAL) {
+	o_ptr->tval = 0; o_ptr->sval = 0;
+	return;
+}
+#endif
 
 	/* Obtain the "kind" template */
 	k_ptr = &k_info[o_ptr->k_idx];
@@ -407,7 +512,7 @@ static void rd_item(object_type *o_ptr)
 
 
 	/* Repair non "wearable" items */
-	if (!wearable_p(o_ptr))
+	if ((o_ptr->tval != TV_TRAPKIT && o_ptr->tval != TV_RUNE1) && !wearable_p(o_ptr))
 	{
 		/* Acquire correct fields */
 		o_ptr->to_h = k_ptr->to_h;
@@ -553,7 +658,11 @@ static void rd_monster(monster_type *m_ptr)
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
-
+	if (older_than(4,2,7)) {
+		m_ptr->pet = 0;
+	} else {
+		rd_byte(&m_ptr->pet);
+	}
 	rd_byte((byte *)&m_ptr->special);
 
 	/* Owner */
@@ -886,13 +995,12 @@ static bool rd_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, j;
 	monster_race *r_ptr;
 	char login_char_name[80];
 
 	byte tmp8u, panic;
 	u16b tmp16b;
-	byte old_party;
 
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
 	strcpy(login_char_name, p_ptr->name);
@@ -912,13 +1020,18 @@ static bool rd_extra(int Ind)
 	{
 		rd_string(p_ptr->history[i], 60);
 	}
-
+	if (older_than(4, 2, 7)) {
+		p_ptr->has_pet = 0; //assume no pet
+	} else {
+		rd_byte(&p_ptr->has_pet);
+	}
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
         rd_byte(&p_ptr->pclass);
 	rd_byte(&p_ptr->male);
 	if (older_than(4, 2, 4))
 	{
+		byte old_party;
 		rd_byte(&old_party);
 		p_ptr->party = old_party; /* convert the old byte to u16b - mikaelh */
 	}
@@ -982,8 +1095,13 @@ static bool rd_extra(int Ind)
 	rd_s32b(&p_ptr->max_exp);
         /* Build maximum level (the one displayed if life levels were restored right now) */
 	p_ptr->max_lev = 1;
+#ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
 	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
+#else
+	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+#endif
 	{
 		/* Gain a level */
 		p_ptr->max_lev++;
@@ -1155,6 +1273,26 @@ static bool rd_extra(int Ind)
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
 	rd_byte(&p_ptr->updated_savegame);
+#if 0 /* ALT_EXPRATIO conversion: */
+if (p_ptr->updated_savegame == 0) {
+    s64b i, i100, ief;
+    i = (s64b)p_ptr->max_exp;
+    i100 = (s64b)100;
+    ief = (s64b)p_ptr->expfact;
+    i = (i * i100) / ief;
+    p_ptr->max_exp = (s32b)i;
+    p_ptr->max_lev = 1;
+    while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+        (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
+    {
+	/* Gain a level */
+	p_ptr->max_lev++;
+    }
+    p_ptr->exp = p_ptr->max_exp;
+    if (p_ptr->lev > p_ptr->max_lev) p_ptr->lev = p_ptr->max_lev;
+    p_ptr->updated_savegame = 3;//set to = 2 for artifact reset
+}
+#endif
 
 	/* Skip the flags */
 	strip_bytes(12);
@@ -1176,6 +1314,7 @@ static bool rd_extra(int Ind)
         }
 
 	rd_u16b(&p_ptr->total_winner);
+	if (!older_than(4, 3, 0)) rd_u16b(&p_ptr->once_winner);
 
 	rd_s16b(&p_ptr->own1.wx);
 	rd_s16b(&p_ptr->own1.wy);
@@ -1199,6 +1338,21 @@ static bool rd_extra(int Ind)
 
 	rd_s32b(&p_ptr->balance);
 	rd_s32b(&p_ptr->tim_blacklist);
+
+	if (!older_than(4, 2, 5)) rd_s32b(&p_ptr->tim_watchlist);
+	else p_ptr->tim_watchlist = 0;
+
+	if (!older_than(4, 2, 9)) rd_s32b(&p_ptr->pstealing);
+	else p_ptr->pstealing = 0;
+
+        if (!older_than(4, 2, 8)) {
+		for (i = 0; i <	MAX_GLOBAL_EVENTS; i++) {
+			rd_s16b(&p_ptr->global_event_type[i]);
+			rd_u32b(&p_ptr->global_event_signup[i]);
+			rd_u32b(&p_ptr->global_event_started[i]);
+			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
+		}
+	}
 
 	/* Success */
 	return FALSE;
@@ -1254,16 +1408,20 @@ static errr rd_inventory(int Ind)
 			continue;
 		}
 
+#if 0
 		/* Mega-Hack -- Handle artifacts that aren't yet "created" */
+if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 		if (artifact_p(&forge))
 		{
 			/* If this artifact isn't created, mark it as created */
 			/* Only if this isn't a "death" restore */
 			if (!a_info[forge.name1].cur_num && !p_ptr->death)
-				a_info[forge.name1].cur_num = 1;
+				handle_art_inum(forge.name1);
 			if (!a_info[forge.name1].known && (forge.ident & ID_KNOWN))
 				a_info[forge.name1].known = TRUE;
 		}
+}
+#endif
 
 		/* Wield equipment */
 		if (n >= INVEN_WIELD)

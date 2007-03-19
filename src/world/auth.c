@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "world.h"
 #include "externs.h"
@@ -39,10 +42,13 @@ char *rpgen(char *dest){
 		salt[i]=58 + (x & 0x3f);
 	}
 	salt[20]='\0';
+	fprintf(stderr, "(rpgen..");
 	if(dest!=(char*)NULL){
 		strcpy(dest, salt);
+		fprintf(stderr, "dest)\n");
 		return(dest);
 	}
+	fprintf(stderr, "salt)\n");
 	return(salt);
 }
 

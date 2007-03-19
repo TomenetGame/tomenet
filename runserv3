@@ -1,0 +1,62 @@
+#!/bin/sh
+# Runserv, by Chris Atenasio
+# Upgraded to store server logs by evileye
+# Modified by mikaelh
+
+PIDFILE=lib/data/tomenet.pid
+PATH=/bin:/usr/bin:/usr/local/bin
+CRASHES=0
+CRASHES_START_TIME=`date +%s`
+
+#cd /home/$USER/tomenet
+ulimit -c unlimited
+
+crash_check () {
+	TIMESTAMP=`date +%s`
+	if [ `expr $TIMESTAMP - $CRASHES_START_TIME` -gt 60 ] ; then
+		# reset the counter
+		CRASHES=0
+		CRASHES_START_TIME=$TIMESTAMP
+	fi
+	(( CRASHES += 1 ))
+	if [ $CRASHES -gt 5 ] ; then
+		echo "More than 5 crashes within 60 seconds, exiting..."
+		exit
+	fi
+}
+
+files_check () {
+	TIME=`date +"%Y%m%d%H%M%S"`
+	if [ -f core ] ; then
+		mv core cores/core.$TIME
+	fi
+	if [ -f tomenet.server.core ] ; then
+		mv tomenet.server.core cores/core.$TIME
+	fi
+	if [ -f lib/data/tomenet.log ] ; then
+		bzip2 lib/data/tomenet.log
+		mv lib/data/tomenet.log.bz2 lib/data/`date +"%Y%m%d%H%M.log.bz2"`
+	fi
+}
+
+if [ -f $PIDFILE ] ; then
+        TOMENETPID=`cat $PIDFILE`
+        if [ `ps ux | grep "\./tomenet\.server" | grep " $TOMENETPID " | grep -v -c grep` = 1 ]
+        then
+		echo "Server is already running, exiting..."
+                exit
+        fi
+fi
+
+files_check
+
+while :; do
+	killall -9 tomenet
+	killall -9 evilmeta
+
+	./tomenet.server
+	files_check
+	crash_check
+
+	sleep 1
+done

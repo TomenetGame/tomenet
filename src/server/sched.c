@@ -259,11 +259,11 @@ struct to_handler {
 };
 static struct to_handler *to_busy_list = NULL;
 static struct to_handler *to_free_list = NULL;
-static int		to_min_free = 3;
+//static int		to_min_free = 3; /* not used? - mikaelh */
 static int		to_max_free = 5;
 static int		to_cur_free = 0;
 
-#if 0 /* to_alloc is only used by install_timeout() that's #iffed - mikaelh */
+#if 0 /* to_alloc is only used by install_timeout() that's also #if 0'd - mikaelh */
 static void to_fill(void)
 {
     if (to_cur_free < to_min_free) {

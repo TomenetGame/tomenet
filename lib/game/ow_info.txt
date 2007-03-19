@@ -299,8 +299,7 @@ N:44:Gandar the Neutral(Dark-Elf)
 I:25000:120:110:7:19
 C:120:100:80
 L:Dark-Elf
-#L:High-Elf | Half-Elf | Elf
-H:Half-Orc | Half-Troll
+H:Half-Orc | Half-Troll | High-Elf | Half-Elf | Elf
 
 N:45:Ro-sha the Patient(Elf)
 I:30000:140:105:6:12

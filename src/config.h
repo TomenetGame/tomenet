@@ -685,7 +685,7 @@
  * 3 - most of debug msgs (noisy)
  * 4 - everything
  */
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 1
 
 /*
  * OPTION: verbosity of server for anti-cheeze msgs in stdout/mangband.log.
@@ -792,7 +792,7 @@
  */
 /* #define USE_MANG_HOUSE_ONLY	*//* Not tested yet */
 #define USE_MANG_HOUSE
-#define MANG_HOUSE_RATE	80	/* 80 is important to allow newbies without */
+#define MANG_HOUSE_RATE	85	/* 80 is important to allow newbies without */
 				/* 300k cash to spend to buy a house too! (C. Blue) */
 
 

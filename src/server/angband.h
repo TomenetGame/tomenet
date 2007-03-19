@@ -51,7 +51,6 @@
 #include "externs.h"
 
 
-
 /***** Some copyright messages follow below *****/
 
 /*

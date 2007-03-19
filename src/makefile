@@ -60,7 +60,7 @@ SERV_SRCS = \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c server/bldg.c \
-  common/files.c common/w_z_pack.c server/world.c server/slash.c
+  common/files.c common/w_z_pack.c server/world.c server/slash.c server/runes.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -75,7 +75,7 @@ SERV_OBJS = \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o server/bldg.o \
-  common/files.o common/w_z_pack.o server/world.o server/slash.o
+  common/files.o common/w_z_pack.o server/world.o server/slash.o server/runes.o
 
 
 CLI_SRCS = \
@@ -127,7 +127,7 @@ TOLUASRCS = \
   server/lua/ltable.c server/lua/ltests.c server/lua/ltm.c server/lua/lundump.c server/lua/lvm.c server/lua/lzio.c \
   server/lua/lauxlib.c server/lua/lbaselib.c server/lua/ldblib.c server/lua/liolib.c server/lua/lstrlib.c \
   server/lua/tolua_lb.c server/lua/tolua_rg.c server/lua/tolua_tt.c server/lua/tolua_tm.c server/lua/tolua_gp.c \
-  server/lua/tolua_eh.c server/lua/tolua_bd.c
+  server/lua/tolua_eh.c server/lua/tolua_bd.c server/lua/lmathlib.c
 
 LUAOBJS = \
   server/script.o server/lua_bind.o \
@@ -139,7 +139,7 @@ TOLUAOBJS = \
   server/lua/ltable.o server/lua/ltests.o server/lua/ltm.o server/lua/lundump.o server/lua/lvm.o server/lua/lzio.o \
   server/lua/lauxlib.o server/lua/lbaselib.o server/lua/ldblib.o server/lua/liolib.o server/lua/lstrlib.o \
   server/lua/tolua_lb.o server/lua/tolua_rg.o server/lua/tolua_tt.o server/lua/tolua_tm.o server/lua/tolua_gp.o \
-  server/lua/tolua_eh.o server/lua/tolua_bd.o
+  server/lua/tolua_eh.o server/lua/tolua_bd.o server/lua/lmathlib.o
 
 CLI_LUASRCS = \
   client/c-script.c client/lua_bind.c \
@@ -213,7 +213,7 @@ X11BASE = /usr/X11R6
 CFLAGS = -g -pipe -Wall -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3 -Wmissing-declarations -Wnested-externs
 #CFLAGS = -g -pipe -Wall -Wuninitialized -D"USE_X11" -D"USE_GCU" -I${X11BASE}/include -DDEFAULT_PATH="\"./lib\"" -O3 -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs
 #-Werror
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 
 ##
@@ -354,6 +354,7 @@ install: all
 	install -b tomenet ..
 	install -b tomenet.console ..
 	install -b tomenet.server ..
+	install -b accedit ..
 	install -b evilmeta ..
 	touch ../tomenet.acc
 

@@ -119,7 +119,7 @@ TString *luaS_newudata (lua_State *L, size_t s, void *udata) {
   ts->nexthash = NULL;
   ts->len = s;
   ts->u.d.tag = 0;
-  ts->u.d.value = (udata == NULL) ? uts+1 : udata;
+  ts->u.d.value = (s > 0) ? uts+1 : udata;
   L->nblocks += sizestring(s);
  /* insert it on table */
   newentry(L, &L->udt, ts, IntPoint(ts->u.d.value) & (L->udt.size-1));

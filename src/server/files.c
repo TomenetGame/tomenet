@@ -17,6 +17,7 @@
 
 #ifdef HANDLE_SIGNALS
 #include <signal.h>
+#include <sys/wait.h>
 #endif
 
 /* The first x highscore entries that are displayed to players: */
@@ -746,6 +747,19 @@ void do_cmd_help(int Ind, int line)
 
 
 
+/* view cheeze archives */
+void do_cmd_view_cheeze(int Ind)
+{
+//	cptr name = "cheeze.log";
+//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+
+	char    path[MAX_PATH_LENGTH];
+        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
+        do_cmd_check_other_prepare(Ind, path);
+}
+
+
+
 /*
  * Hack -- display the contents of a file on the screen
  *
@@ -911,6 +925,8 @@ void do_cmd_suicide(int Ind)
 	p_ptr->ghost = FALSE;
 
 	if (p_ptr->total_winner) kingly(Ind);
+	/* Retirement in Valinor? - C. Blue :) */
+	if (getlevel(&p_ptr->wpos) == 200 && (p_ptr->wpos.wz == 1)) kingly2(Ind);
 
 	/* Kill him */
 	p_ptr->deathblow = 0;
@@ -997,6 +1013,7 @@ long total_points(int Ind)
 		bonusm += 25;
 	}
 	
+#ifndef ALT_EXPRATIO
 	/* Bonus might cause overflow at lvl 94+ - so maybe compensate */
 	tmp_base = (p_ptr->max_exp * 3) / 3; //leaving this, changing lev_factoring instead..
 	lev_factoring = 58; //was 33 -> overflow at 94+
@@ -1008,6 +1025,19 @@ long total_points(int Ind)
 	tmp3 = (tmp_base - tmp3a) / 10000000;
 	points = (((tmp3a * bonusm) / bonusd) * tmp1) / tmp2;
 	points += ((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3;
+#else
+	tmp_base = p_ptr->max_exp;
+	lev_factoring = 75; /* (yeek warrior -> tl mimic : *3) */
+	lev_factoring = 230; /* (yeek warrior -> tl mimic : *2) */
+
+	/* split the number against overflow bug; divide by 10 to avoid overflow again */
+	tmp1 = (p_ptr->expfact + lev_factoring) / 10;
+	tmp2 = 310 / 10; /* (230 + 80 (yeek warrior)) */
+	tmp3a = tmp_base % 10000000;
+	tmp3 = (tmp_base - tmp3a) / 10000000;
+	points = (((tmp3a * bonusm) / bonusd) * tmp1) / tmp2;
+	points += ((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3;
+#endif
 	return points;
 
 	//level counts mainly, exp factors in at higher levels
@@ -1393,6 +1423,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			strcpy(modecol, "\377D");
 			break;
                 case MODE_NORMAL:
+//			strcpy(modecol, "\377W");
 		default:
 			strcpy(modestr, "");
 			strcpy(modecol, "");
@@ -1419,19 +1450,24 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		fprintf(fff, "%s\n", out_val);
 
 		/* Another line of info */
-		if (strcmp(the_score.how, "winner"))
+		if (strcmp(the_score.how, "winner") && strcmp(the_score.how, "*winner*"))
 			snprintf(out_val, sizeof(out_val),
 				"               Killed by %s\n"
 				"               on %s %d%s%s",
 				the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-		else
+		else if (!strcmp(the_score.how, "winner"))
 			snprintf(out_val, sizeof(out_val),
 				"               \377vRetired after a legendary career\n"
+				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
+		else if (!strcmp(the_score.how, "*winner*"))
+			snprintf(out_val, sizeof(out_val),
+				"               \377vRetired on the shores of Valinor\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 
 		/* Hack -- some people die in the town */
 		if (!cdun)
 		{
+			/* (can't be in Valinor while we're in town, can we) */
 			if (strcmp(the_score.how, "winner"))
 				snprintf(out_val, sizeof(out_val),
 					"               Killed by %s\n"
@@ -1697,6 +1733,30 @@ void kingly(int Ind)
 	/* Hack -- Player gets an XP bonus for beating the game */
 	/* p_ptr->exp = p_ptr->max_exp += 10000000L; */
 }
+void kingly2(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+#if 0	// No, this makes Delete_player fail!
+	/* Hack -- retire in town */
+	p_ptr->wpos.wx=0;	// pfft, not 0 maybe
+	p_ptr->wpos.wy=0;
+	p_ptr->wpos.wz=0;
+#endif	// 0
+
+	/* Fake death */
+	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
+	(void)strcpy(p_ptr->died_from_list, "*winner*");
+
+	/* Restore the experience */
+	p_ptr->exp = p_ptr->max_exp;
+
+	/* Restore the level */
+	p_ptr->lev = p_ptr->max_plv;
+
+	/* Hack -- Player gets an XP bonus for beating the game */
+	/* p_ptr->exp = p_ptr->max_exp += 10000000L; */
+}
 
 
 /*
@@ -1763,6 +1823,8 @@ void close_game(void)
 		{
 			/* Handle retirement */
 			if (p_ptr->total_winner) kingly(i);
+		        /* Retirement in Valinor? - C. Blue :) */
+	    		if (getlevel(&p_ptr->wpos) == 200 && (p_ptr->wpos.wz == 1)) kingly2(i);
 
 			/* Save memories */
 			if (!save_player(i)) msg_print(i, "death save failed!");
@@ -2119,13 +2181,21 @@ void exit_game_panic(void)
 
 	if (!save_server_info()) quit("server panic info save failed!");
 
-
+#if 0
 	/* Dump a nice core - Chris */
 #ifdef HANDLE_SIGNALS
-	signal(11, 0);
+	signal(SIGSEGV, SIG_IGN);
+
 #ifndef WINDOWS
-	kill(getpid(), 11);
+	kill(getpid(), SIGSEGV);
 #endif
+#endif
+#else
+	/* make a core dump using abort() - mikaelh */
+#ifdef HANDLE_SIGNALS
+	signal(SIGABRT, SIG_IGN);
+#endif
+	abort();
 #endif
 	
 	/* Successful panic save of server info */
@@ -2290,7 +2360,6 @@ static void handle_signal_abort(int sig)
 {
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
-
 
 	/* Nothing to save, just quit */
 	if (!server_generated || server_saved) quit(NULL);

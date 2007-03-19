@@ -336,7 +336,7 @@ void luaC_collect (lua_State *L, int all) {
 }
 
 
-static void luaC_collectgarbage (lua_State *L) {
+void luaC_collectgarbage (lua_State *L) {
   markall(L);
   invalidaterefs(L);  /* check unlocked references */
   luaC_collect(L, 0);

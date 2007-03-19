@@ -203,6 +203,7 @@ static bool vprocess_hooks_return(int h_idx, char *ret, char *fmt, va_list *ap)
 	return FALSE;
 }
 
+#if 0 /* not used? - mikaelh */
 static bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...)
 {
 	va_list ap;
@@ -213,6 +214,7 @@ static bool process_hooks_ret(int h_idx, char *ret, char *fmt, ...)
 	va_end(ap);
 	return (r);
 }
+#endif // 0
 
 bool process_hooks(int h_idx, char *fmt, ...)
 {

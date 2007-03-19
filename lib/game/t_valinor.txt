@@ -1,40 +1,41 @@
 #$Id$
 
 # Town Name: Shores of Valinor
-# Created for ToMENet by C. Blue (mail@c-blue.de
+# Created for ToMENet by C. Blue (mail@c-blue.de)
 #
 
 %:t_pref.txt
 
 F:m:101:3
+#F:~:103:3
+F:~:84:3
+F:,:84:3
 
 ###################### Buildings ########################
 
 
 # Town Layout
-#64D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-
-D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmmmm^^mmmmmmmmmmmmmmmmm
-D:mmmmmmmmmm.......mmmmmmmmmmmmmm
-D:mmmmmmm.............mmmmmmmmmmm
-D:mmmmmm...............mmmmmmmmmm
-D:mmmmmmm.......<.....mmmmmmmmmmm
-D:mmmmmmmm          mmmmmmmmmmmmm
-D:mmmm                  mmmmmmmmm
-D:mmm                         mmm
-D:m                             m
-D:mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^--^mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^--^mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^--^mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+D:mmmmmmmmmmmm^--^mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm-----------mmmmmmm
+D:mmmmmmmmmmm^^--^mmmmmmmmmmmmmmmmmmmmmmmmm-----------------;-mmmmm
+D:mmmmmmmmmm^----^^mmmmmmmmmmmmmmmmmm-----------------------mmmmmmm
+D:mmmmmmm^^^------^^^^^mmmmmmmmmm---------------mmmmmmmmmmmmmmmmmmm
+D:mmmmmm----------------------;;------------------;-mmmmmmmmmmmmmmm
+D:mmm-----------------------------------------------------------mmm
+D:m--------;---------------------------------------;--------------m
+D:m---------------------------------------------------------------m
+D:m-------------------;-------------------------------------------m
+D:m---------------;-----------------------------------------------m
+D:m-;-------------------------------------------------------------m
+D:mmm;----------------------------------;-------------------------m
+D:mmmmmm----------------------------------->--------------;------mm
+D:mmmmmmmm------------------~~~~~~-----------------------------mmmm
+D:mmmmm---------------~~~~~~~~~~~~~~~~~---------~~~~~~~~~~~------mm
+D:mm~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~m
+D:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+D:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Default starting position
-# ?:[EQU $LEAVING_QUES  0]
 P:14:15

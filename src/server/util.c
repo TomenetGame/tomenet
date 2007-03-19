@@ -9,6 +9,10 @@
 #include "angband.h"
 #include "../world/world.h"
 
+#define MAX_CHAT_BUFFER 256
+char* last_chat_owner = NULL; /* Who said it */
+char* last_chat_line = NULL;  /* What was said */ 
+char* last_chat_prev = NULL;  /* What was said before the above*/
 
 #ifndef HAS_MEMSET
 
@@ -1138,15 +1142,15 @@ cptr quark_str(s16b i)
  */
 
 bool check_guard_inscription( s16b quark, char what ) {
-    const char  *   ax;
+    const char *ax;
     ax=quark_str(quark);
     if( ax == NULL ) { return FALSE; };
     while( (ax=strchr(ax,'!')) != NULL ) {
 	while( ax++ != NULL ) {
 	    if (*ax==0)  {
 		 return FALSE; /* end of quark, stop */
-	    }
-	    if (*ax==' ' || *ax=='@') {
+	    } 
+	    if (*ax==' ' || *ax=='@' || *ax=='#') {
 		 break; /* end of segment, stop */
 	    }
 	    if (*ax==what) {
@@ -1164,15 +1168,15 @@ bool check_guard_inscription( s16b quark, char what ) {
 		    case 'v': /* no thowing */
 		    case '=': /* force pickup */
 		    /* you forgot important ones */
-//		    case 'w': /* no wear/wield */
+		    case 'w': /* no wear/wield */
 		    case 't': /* no take off */
 		      return TRUE;
 		};
-	    };
-	};
-    };
+	    };  
+	};  
+    };  
     return FALSE;
-}
+}  
 
 
 /*
@@ -1204,7 +1208,7 @@ void msg_print(int Ind, cptr msg)
 	int line_len = 72 + 1; /* maximum length of a text line to be displayed
 			      (72, or client produces garbage sometimes;
 			      for example Itangast getting slain by a legendary adventurer of name length 12) */
-	char msg_buf[line_len + 2 + 80]; /* buffer for 1 line. + 2 bytes for colour code (+80 bytes for colour codeeeezz) */
+	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0;
 	char colour_code = 0;
@@ -1249,6 +1253,13 @@ void msg_print(int Ind, cptr msg)
 				text_len = line_len;
 				continue;
 			case '\377': /* Colour code! Text length does not increase. */
+#if 0
+				/* Avoid lines ending on special colour char #255 */
+				if ((text_len == line_len) && (msg[msg_scan - 1] == '\377')) {
+					msg_scan--;
+					msg_buf[strlen(msg_buf) - 1] = '\0';
+				}
+#endif
 				msg_minibuf[0] = msg[msg_scan];
 				msg_scan++;
 				/* Is it a complete colour code, or just a half-way fake? */
@@ -1291,9 +1302,9 @@ void msg_print(int Ind, cptr msg)
 						space_scan--;
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
-						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z')) &&
+						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
+						(msg[space_scan - 1] == '\377')) &&
 						space_scan > 0);
-					if (msg[space_scan] == '\377') space_scan--;
 					if (space_scan) {
 						msg_buf[strlen(msg_buf) - msg_scan + space_scan] = '\0';
 						msg_scan = space_scan;
@@ -1301,6 +1312,7 @@ void msg_print(int Ind, cptr msg)
 				}
 			}
 		}
+//s_printf("#%s#\n", msg_buf);
 		Send_message(Ind, msg_buf);
 	}
 	if (msg == NULL) Send_message(Ind, msg);
@@ -1315,18 +1327,18 @@ void msg_print(int Ind, cptr msg)
 void msg_broadcast(int Ind, cptr msg)
 {
 	int i;
-
+	
 	/* Tell every player */
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		/* Skip disconnected players */
-		if (Players[i]->conn == NOT_CONNECTED)
+		if (Players[i]->conn == NOT_CONNECTED) 
 			continue;
-
+			
 		/* Skip the specified player */
 		if (i == Ind)
-			continue;
-
+			continue;       
+			
 		/* Tell this one */
 		msg_print(i, msg);
 	 }
@@ -1335,14 +1347,14 @@ void msg_broadcast(int Ind, cptr msg)
 void msg_broadcast_format(int Ind, cptr fmt, ...)
 {
 //	int i;
-
+	
 	va_list vp;
 
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-
+	
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1358,14 +1370,14 @@ void msg_admin(cptr fmt, ...)
 {
 	int i;
 	player_type *p_ptr;
-
+	
 	va_list vp;
 
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-
+	
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1378,9 +1390,9 @@ void msg_admin(cptr fmt, ...)
 		p_ptr = Players[i];
 
 		/* Skip disconnected players */
-		if (p_ptr->conn == NOT_CONNECTED)
+		if (p_ptr->conn == NOT_CONNECTED) 
 			continue;
-
+			
 
 		/* Tell Mama */
 		if (is_admin(p_ptr))
@@ -1401,7 +1413,7 @@ void msg_format(int Ind, cptr fmt, ...)
 
 	/* Begin the Varargs Stuff */
 	va_start(vp, fmt);
-
+	
 	/* Format the args, save the length */
 	(void)vstrnfmt(buf, 1024, fmt, vp);
 
@@ -1658,6 +1670,12 @@ static int censor(char *line){
 /*
  * This function is hacked *ALOT* to add extra-commands w/o
  * client change.		- Jir -
+ * 
+ * Yeah. totally.
+ *
+ * Muted players can't talk now (player_type.muted-- can be enabled
+ * through /mute <name> and disabled through /unmute <name>).
+ *				- the_sandman
  */
 static void player_talk_aux(int Ind, char *message)
 {
@@ -1687,7 +1705,7 @@ static void player_talk_aux(int Ind, char *message)
 		/* Default name */
 		strcpy(sender, "Server Admin");
 	}
-	if (p_ptr->age == 0 && !admin) return; 	// You're too young to be chatting!
+	if (p_ptr->muted && !admin) return;		/* the_sandman */
 	/* Default to no search string */
 	strcpy(search, "");
 
@@ -1699,39 +1717,94 @@ static void player_talk_aux(int Ind, char *message)
 	/* (C. Blue) changing colon parsing. :: becomes
 	    textual :  - otherwise : stays control char */
 	if (colon) {
+		bool smiley = FALSE;
 		/* if another colon followed this one then
 		   it was not meant to be a control char */
 		switch(*(colon + 1)){
-		/* accept these chars for smileys */
+		/* accept these chars for smileys, but only if the colon is either first in the line or stands after a SPACE,
+		   otherwise it is to expect that someone tried to write to party/privmsg */
 		case '(':	case ')':
 		case '[':	case ']':
 		case '{':	case '}':
-//		case '<':	case '>':
-		case '\\':
-			colon = NULL;
+/* staircases, so cannot be used for smileys here ->		case '<':	case '>': */
+		case '\\':	case '|':
+		case 'p': case 'P': case 'o': case 'O':
+			if (message == colon || *(colon - 1) == ' ' ||
+			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
+				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
-			if (!strchr("123456789", *(colon + 2))) colon = NULL;
+			if (message == colon || *(colon - 1) == ' ' || /* here especially important: '-' often is for numbers/recall depth */
+			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
+				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
 		/* only accept / at the end of a chat message */
 			if ('\0' == *(colon + 2)) colon = NULL;
 			break;
 		case ':':
-			/* remove the 1st colon found */
+			/* remove the 1st colon found, .. */
+			
+			/* always if there's no chat-target in front of the double-colon: */
+			if (message == colon || *(colon - 1) == ' ') {
+				i = (int) (colon - message);
+				do message[i] = message[i+1];
+				while(message[i++]!='\0');
+				colon = NULL;
+				break;
+			}
+
+			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
+			   and if it's appearently meant to be a smiley. */
+			if ((colon - message == 1) && (*(colon - 1)=='!'))
+			switch (*(colon + 2)) {
+			case '(': case ')':
+			case '[': case ']':
+			case '{': case '}':
+			case '<': case '>':
+			case '-': case '|':
+			case 'p': case 'P': case 'o': case 'O': case 'D':
+			smiley = TRUE; break; }
+			
+			/* check for smiley at end of the line */
+			if ((message + strlen(message) - colon >= 3) &&
+			    (message + strlen(message) - colon <= 4)) // == 3 for 2-letter-smileys only.
+//			if ((*(colon + 2)) && !(*(colon + 3)))
+			switch (*(colon + 2)) {
+			case '(': case ')':
+			case '[': case ']':
+			case '{': case '}':
+			case '<': case '>':
+			case '-': case '/':
+			case '\\': case '|':
+			case 'p': case 'P': case 'o': case 'O': case 'D':
+			smiley = TRUE; break; }
+
+			if (smiley) break;
+
+			/* Pretend colon wasn't there */
 			i = (int) (colon - message);
 			do message[i] = message[i+1];
 			while(message[i++]!='\0');
-
-			/* Pretend colon wasn't there */
+			colon = NULL;
+			break;
+		case '\0':
+			/* if colon is last char in the line, it's not a priv/party msg. */
 			colon = NULL;
 			break;
 		}
 	}
 
 	/* no big brother */
-	if(cfg.log_u && !colon) s_printf("[%s] %s\n", sender, message);
+	if(cfg.log_u && !colon){ // && message[0] != '/'){
+		s_printf("[%s] %s\n", sender, message);
 
+		/* tBot's stuff */
+		if (last_chat_line == NULL) last_chat_line = (char*)malloc(MAX_CHAT_BUFFER); 
+		if(last_chat_owner == NULL) last_chat_owner = (char*)malloc(20);
+		strncpy(last_chat_owner, sender, 20);
+		strncpy(last_chat_line, message, MAX_CHAT_BUFFER);
+	}
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
 	{
@@ -1739,16 +1812,16 @@ static void player_talk_aux(int Ind, char *message)
 		shutdown_server();
 		return;
 	}
-
+	
 	if(message[0]=='/'){
-		if(!strncmp(message, "/me", 3)) me=TRUE;
-		else if(!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
-		else{
+		if (!strncmp(message, "/me ", 4)) me = TRUE;
+		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
+		else {
 			do_slash_cmd(Ind, message);	/* add check */
 			return;
 		}
 	}
-
+	
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
@@ -1794,9 +1867,16 @@ static void player_talk_aux(int Ind, char *message)
 	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party))
 	{
 		target = p_ptr->party;
+#if 1 /* No private chat for invalid accounts ? */
+		if(p_ptr->inval){
+			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			return;
+		}
+#endif
 		/* Send message to target party */
-//		party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 1);
-		party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 2);
+		if (p_ptr->mutedchat < 2)
+			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 2);
+//			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 1);
 		/* Done */
 		return;
 	}
@@ -1804,6 +1884,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Form a search string if we found a colon */
 	if (colon)
 	{
+		if (p_ptr->mutedchat == 2) return;
 #if 1 /* No private chat for invalid accounts ? */
 		if(p_ptr->inval){
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
@@ -1815,7 +1896,7 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Add a trailing NULL */
 		search[colon - message] = '\0';
-	}
+	} else if (p_ptr->mutedchat) return;
 
 	/* Acquire length of search string */
 	len = strlen(search);
@@ -1831,18 +1912,21 @@ static void player_talk_aux(int Ind, char *message)
 			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
 			return;
 		}
-		w_player=world_find_player(search, 0);
+		w_player=world_find_player(search, 0); /* no #ifdef TOMENET_WORLDS here? */
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
 		if(!w_player)
 			target = name_lookup_loose(Ind, search, TRUE);
-		else{
+		else if (cfg.worldd_privchat) {
 			world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon+1);
-			msg_format(Ind, "\377o[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
+			msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
 			return;
 		}
 
 		/* Move colon pointer forward to next word */
-		while (*colon && (isspace(*colon) || *colon == ':')) colon++;
+/* no, this isn't needed and actually has annoying effects if you try to write smileys:
+		while (*colon && (isspace(*colon) || *colon == ':')) colon++; */
+/* instead, this is sufficient: */
+		if (colon) colon++;
 
 		/* lookup failed */
 		if (!target)
@@ -1926,7 +2010,9 @@ static void player_talk_aux(int Ind, char *message)
 		if(mycolor) c=message[5];
 		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4+mycolor);
 	}
-	world_chat(p_ptr->id, tmessage);	/* no ignores... */
+	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
+	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
+		world_chat(p_ptr->id, tmessage);	/* no ignores... */
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr=Players[i];
 
@@ -1960,7 +2046,7 @@ static void player_talk_aux(int Ind, char *message)
 		{
 			msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
 			/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
-		}
+		} 
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
@@ -1993,6 +2079,10 @@ void toggle_afk(int Ind, char *msg)
 	}
 	else
 	{
+#if 1		
+		/* stop every major action */
+		disturb(Ind, 1, 0);
+#else
 	        /* Stop searching */
 	        if (p_ptr->searching)
 		{
@@ -2005,7 +2095,7 @@ void toggle_afk(int Ind, char *msg)
 		        /* Redraw the state */
 		        p_ptr->redraw |= (PR_STATE);
 		}
-
+#endif
 		strcpy(p_ptr->afk_msg, msg);
 		if (strlen(p_ptr->afk_msg) == 0)
 			msg_print(Ind, "AFK mode is turned \377rON\377w.");
@@ -2021,7 +2111,11 @@ void toggle_afk(int Ind, char *msg)
 		p_ptr->afk = TRUE;
 
 		/* still too many starvations, so give a warning - C. Blue */
-		if (p_ptr->food < PY_FOOD_ALERT) msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
+		if (p_ptr->food <= PY_FOOD_ALERT)
+		{
+			p_ptr->paging = 3; /* add some beeps, too - mikaelh */
+			msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
+		}
 	}
 
 	/* Replaced msg_broadcast by this, to allow /ignore and /ic */
@@ -2040,6 +2134,8 @@ void toggle_afk(int Ind, char *msg)
 		msg_print(i, afk);
 	}
 
+	p_ptr->redraw |= PR_EXTRA;
+	redraw_stuff(Ind);
 	return;
 }
 
@@ -2088,7 +2184,7 @@ void player_talk(int Ind, char *message)
 		}
 	}
 }
-
+	
 
 /*
  * Check a char for "vowel-hood"
@@ -2203,8 +2299,12 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !is_admin(p_ptr)) continue;
-
+			if (q_ptr->admin_dm && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "moltor") 
+			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			
 			/* Check name */
 			if (!strncasecmp(q_ptr->name, name, len))
 			{
@@ -2274,15 +2374,47 @@ void bracer_ff(char *buf)
  */
 char *wpos_format(int Ind, worldpos *wpos)
 {
-	if (!Ind || Players[Ind]->depth_in_feet)
-	return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
-	else return (format("Lev %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
+	int i = Ind, d = 0, n;
+	cptr desc = "";
+	bool ville = istown(wpos);
+	dungeon_type *d_ptr;
+	/* Hack for Valinor originally */
+	if (i < 0) i = -i;
+	if (wpos->wz > 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].tower))
+		d = d_ptr->type;
+	if (wpos->wz < 0 && (d_ptr = wild_info[wpos->wy][wpos->wx].dungeon))
+		d = d_ptr->type;
+	if (!wpos->wz && ville)
+		for (n = 0; n < numtowns; n++)
+			if (town[n].x == wpos->wx && town[n].y == wpos->wy) {
+				desc = town_profile[town[n].type].name;
+				break;
+			}
+	if (!strcmp(desc, "")) ville = FALSE;
+
+	if (!i || Players[i]->depth_in_feet) {
+		if (Ind >= 0 || (!d && !ville)) {
+			return (format("%dft of (%d,%d)", wpos->wz * 50, wpos->wx, wpos->wy));
+		} else
+			if (!ville)
+				return (format("%dft in %s", wpos->wz * 50, d_info[d].name + d_name));
+			else
+				return (format("%dft in %s", wpos->wz * 50, desc));
+	} else {
+		if (Ind >= 0 || (!d && !ville)) {
+			return (format("Lev %d of (%d,%d)", wpos->wz, wpos->wx, wpos->wy));
+		} else
+			if (!ville)
+				return (format("Lev %d in %s", wpos->wz, d_info[d].name + d_name));
+			else
+				return (format("Lev %d of %s", wpos->wz, desc));
+	}
 }
 
 
 byte count_bits(u32b array)
 {
-	byte k = 0, i;
+	byte k = 0, i;        
 
 	if(array)
 		for(i = 0; i < 32; i++)
@@ -2319,6 +2451,12 @@ bool show_floor_feeling(int Ind)
 	dun_level *l_ptr = getfloor(wpos);
 	bool felt = FALSE;
 
+	/* Hack for Valinor - C. Blue */
+	if ((getlevel(wpos) == 200) && (p_ptr->wpos.wz == 1)) {
+		msg_print(Ind, "\377gYou have a wonderful feeling of peace...");
+		return TRUE;
+	}
+
 	/* XXX devise a better formula */
 	if (p_ptr->lev * ((p_ptr->lev >= 40) ? 3 : 2) + 5 < getlevel(wpos))
 	{
@@ -2348,12 +2486,16 @@ bool show_floor_feeling(int Ind)
 	if (l_ptr->flags1 & DF1_NO_RECALL)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
 #endif
+	/* Can leave IRONMAN? */
+	if(l_ptr->flags1 & LF1_IRON_RECALL)
+		msg_print(Ind, "\377gYou don't sense a magic barrier here...");
+
 	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
 }
 
 /*
  * Given item name as string, return the index in k_info array. Name
- * must exactly match (look out for commas and the like!), or else 0 is
+ * must exactly match (look out for commas and the like!), or else 0 is 
  * returned. Case doesn't matter. -DG-
  */
 
@@ -2373,7 +2515,7 @@ int test_item_name(cptr name)
        return (0);
 }
 
-/*
+/* 
  * Middle-Earth (Imladris) calendar code from ToME
  */
 /*
@@ -2470,4 +2612,19 @@ void lua_intrusion(int Ind, char *problem_diz)
 	s_printf(format("LUA INTRUSION: %s : %s\n", Players[Ind]->name, problem_diz));
 	take_hit(Ind, Players[Ind]->chp - 1, "", 0);
 	msg_print(Ind, "\377rThat was close huh?!");
+}
+
+void bss_add_line(cptr textline)
+{
+	int i, j;
+	/* either find an empty bbs entry (store its position in j) */
+	for (i = 0; i < BBS_LINES; i++)
+    		if(!strcmp(bbs_line[i], "")) break;
+	j = i;
+	/* or scroll up by one line, discarding the first line */
+	if (i == BBS_LINES)
+	        for (j = 0; j < BBS_LINES - 1; j++)
+	                strcpy(bbs_line[j], bbs_line[j + 1]);
+	/* write the line to the bbs */
+	strncpy(bbs_line[j], textline, 77); /* lines get one leading spaces on outputting, so it's 78-1 */
 }

@@ -1,15 +1,18 @@
--- Sample custom.lua for server admins :)
+-- C. Blue's automatic stuff --
+-------------------------------
 
 -- Run automatically on server starting up:
 function server_startup(timestamp)
-	lua_add_anote("Some note...")
+--	lua_add_anote("Some server note...")
+	watch_nr = 1
+	watch_morgoth = 1
 end
 
--- Run additionally when 1st player joins since starting up:
+-- Run additionally when 1st player joins since starting up: (character fully loaded at this point)
 function first_player_has_joined(num, id, name, timestamp)
 end
 
--- Run additionally if server was currently empty:
+-- Run additionally if server was currently empty: (character fully loaded at this point)
 function player_has_joined_empty_server(num, id, name, timestamp)
 end
 
@@ -31,4 +34,12 @@ end
 
 -- Run additionally when the last player has left and server becomes empty:
 function last_player_has_left(num, id, name, timestamp)
+end
+
+-- Run once every hour:
+function cron_1h(timestamp, h, m, s)
+end
+
+-- Run once every 24 hours:
+function cron_24h(timestamp, h, m, s)
 end

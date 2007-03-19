@@ -503,8 +503,9 @@ void lua_s_print(cptr logstr) {
 	return;
 }
 
-void lua_add_anote(cptr anote) {
+void lua_add_anote(char *anote) {
 	int i;
+	bracer_ff(anote); /* allow colouring */
 	for (i = 0; i < MAX_ADMINNOTES; i++)
 	        if (!strcmp(admin_note[i], "")) break;
 	if (i < MAX_ADMINNOTES) strcpy(admin_note[i], anote);
@@ -613,8 +614,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
 	                //msg_format(Ind, "%s fades into the air!", o_name);
 			if (mode == 0) {
-				a_info[o_ptr->name1].cur_num = 0;
-				a_info[o_ptr->name1].known = FALSE;
+				handle_art_d(o_ptr->name1);
 			}
 
 		        /* Decrease the item, optimize. */
@@ -650,13 +650,16 @@ void lua_strip_true_arts_from_absent_players(void) {
 void lua_strip_true_arts_from_floors(void) {
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
+#if 0
 	cave_type **zcave;
+#endif
 
 	for(i=0; i<o_max; i++){
 		o_ptr=&o_list[i];
 		if(o_ptr->k_idx){
 			cnt++;
 			/* check items on the world's floors */
+#if 0
 			if((zcave=getcave(&o_ptr->wpos)) &&
 			    true_artifact_p(o_ptr) && !(
 			    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
@@ -667,6 +670,17 @@ void lua_strip_true_arts_from_floors(void) {
 				delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
                                 dcnt++;
 			}
+#else
+			if(true_artifact_p(o_ptr) && !(
+			    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+			    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+			    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+			    ))
+			{
+				delete_object_idx(i, TRUE);
+                                dcnt++;
+			}
+#endif
 		}
 	}
 	s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
@@ -679,6 +693,16 @@ int lua_get_mon_lev(int r_idx) {
 /* Return a monster name */
 char *lua_get_mon_name(int r_idx) {
 	return(r_name + r_info[r_idx].name);
+}
+
+/* Return the last chat line */
+inline char *lua_get_last_chat_line() {
+	return last_chat_line;
+}
+
+/* Return the last person who said the last chat line */
+char *lua_get_last_chat_owner() {
+	return last_chat_owner;
 }
 
 /* Reset all towns */
@@ -697,4 +721,123 @@ void lua_towns_treset(void) {
 			if(getcave(&wpos)) dealloc_dungeon_level(&wpos);
 		}
 	}
+}
+
+/* To do some connection magik ! */
+long lua_player_exp(int level, int expfact)
+{
+	s32b adv_exp;
+	s64b adv;
+	if ((level > 1) && (level < 100))
+#ifndef ALT_EXPRATIO
+	        adv = ((s64b)player_exp[level - 1] * (s64b)expfact / 100L);
+#else
+	        adv = (s64b)player_exp[level - 1];
+#endif
+	else
+		adv = 0;
+	adv_exp = (s32b)(adv);		
+	return adv;
+}
+
+/* Fix all spellbooks not in players inventories (houses...)
+ * Adds mod to spellbook pval if it's greater than or equal to spell
+ * spell in most cases is the number of the new spell and mod is 1
+ * - mikaelh */
+void lua_fix_spellbooks(int spell, int mod)
+{
+	int i;
+	object_type *o_ptr;
+
+	for (i = 0; i < o_max; i++)
+	{
+		o_ptr = &o_list[i];
+		if (o_ptr->tval == 111 && o_ptr->sval == 255 && o_ptr->pval >= spell)
+		{
+			o_ptr->pval += mod;
+		}
+	}
+}
+
+/* This function is called after load_player, so his artifacts would already be set to 1;
+   for that reason we disable the mega-hack in load2.c instead for players whose updated_savegame
+   flag shows that they might still carry unfixed arts, and do a general incrementing here  - C. Blue */
+void lua_arts_fix(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+	int i; //, total_number = 0;
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (true_artifact_p(o_ptr) && !(
+		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
+		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
+		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
+		    )) {
+			handle_art_i(o_ptr->name1);
+		}
+	}
+}
+
+/* Display a player's global_event status */
+void lua_get_pgestat(int Ind, int n) {
+	player_type *p_ptr = Players[Ind];
+	msg_format(Ind, "%s: #%d, type %d, signup %ld, started %ld,",
+		    p_ptr->name, n, p_ptr->global_event_type[n], p_ptr->global_event_signup[n], p_ptr->global_event_started[n]);
+	msg_format(Ind, "  progress: %ld,%ld,%ld,%ld", p_ptr->global_event_progress[n][0], p_ptr->global_event_progress[n][1],
+		    p_ptr->global_event_progress[n][2], p_ptr->global_event_progress[n][3]);
+}
+
+void lua_start_global_event(int Ind, int evtype, char *parm) {
+	int err = start_global_event(Ind, evtype, parm);
+}
+
+/* Fix items that were changed on updating the server. If Ind == 0 -> scan world/houses - C. Blue */
+void lua_apply_item_changes(int Ind) {
+        int i, j;
+	object_type *o_ptr;
+	house_type *h_ptr;
+
+	if (!Ind) {
+    /* scan world/houses */
+#ifndef USE_MANG_HOUSE_ONLY
+	/* scan traditional (vanilla) houses */
+		for(j=0;j<num_houses;j++){
+			h_ptr = &houses[j];
+			for (i = 0; i < h_ptr->stock_num; i++){
+				o_ptr = &h_ptr->stock[i];
+		                if(!o_ptr->k_idx) continue;
+				lua_apply_item_changes_aux(o_ptr);
+			}
+		}
+		s_printf("LUA_APPLY_ITEM_CHANGES done to traditional houses.\n");
+#endif
+	/* scan world (includes MAngband-style houses) */
+	        for(i = 0; i < o_max; i++) {
+    	        	o_ptr = &o_list[i];
+        	        if(!o_ptr->k_idx) continue;
+			lua_apply_item_changes_aux(o_ptr);
+    		}
+		s_printf("LUA_APPLY_ITEM_CHANGES done to world/mang-style houses.\n");
+	} else {
+    /* scan a player's inventory/equipment */
+		for (i = 0; i < INVEN_TOTAL; i++){
+			o_ptr = &Players[Ind]->inventory[i];
+    		        if(!o_ptr->k_idx) continue;
+			lua_apply_item_changes_aux(o_ptr);
+		}
+		s_printf("LUA_APPLY_ITEM_CHANGES done to player %s\n", Players[Ind]->name);
+	}
+}
+void lua_apply_item_changes_aux(object_type *o_ptr) {
+#if 1
+	/* swap *healing* and healing */
+	if (o_ptr->tval == TV_POTION) {
+		if (o_ptr->sval == SV_POTION_HEALING) o_ptr->sval = SV_POTION_STAR_HEALING;
+		else if (o_ptr->sval == SV_POTION_STAR_HEALING) o_ptr->sval = SV_POTION_HEALING;
+		if (o_ptr->sval == SV_POTION_RESTORE_MANA) o_ptr->sval = SV_POTION_STAR_RESTORE_MANA;
+		else if (o_ptr->sval == SV_POTION_STAR_RESTORE_MANA) o_ptr->sval = SV_POTION_RESTORE_MANA;
+		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+	}
+#endif
 }

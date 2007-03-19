@@ -33,7 +33,7 @@ if two black dice are 2 and 9, and you rolled 2, you lose.
 
 Two 6-faced (cube) dice are used for this game.
 
-You cast the two dice; if the sum of rolls is 7 or 11, you win at once.
+You cast the two dice; if the sum of rolls is 9, you win at once.
 if the sum is 2, 3 or 12, you lose at once(craps!).
 
 If the sum isn't one of the numbers above, you cast them once more.

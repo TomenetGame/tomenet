@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <signal.h>
 #include <netinet/in.h>
+#include <unistd.h>
 
 #include <errno.h>
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[]){
 		world(ser);
 		close(ser);
 	}
+	return(0);
 }
 
 int createsocket(int port, unsigned long ip){
@@ -61,7 +63,6 @@ int createsocket(int port, unsigned long ip){
 
 void loadservers(){
 	FILE *fp;
-	char buf[80];
 	int i=0;
 	fp=fopen("servers", "r");
 	if(fp==(FILE*)NULL) return;

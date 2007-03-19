@@ -477,6 +477,23 @@ M:ANIMAL
 R:75:0
 
 
+# For the Ring Of Phasing's activation:
+# 
+# levels 1-2
+N:31:The Shores of Valinor
+D:SOV:Valinor, for retirement.
+W:200:200:1:0:14:160
+L:1:100:1:0:1:0
+A:56:100:56:0:56:0:95:95
+O:0:0:0:0
+F:PRINCIPAL | TOWER | EMPTY | NO_DEATH | SMALLEST 
+F:FILL_METHOD_3 | NO_STREAMERS
+F:NO_ENTRY_STAIR | NO_ENTRY_WOR | NO_ENTRY_PROB | NO_ENTRY_FLOAT
+F:FILL_METHOD_9
+R:100:0
+
+
+
 # N:<index>:<name>
 # D:<3 letter short name>:<long name>
 # W:<min depth>:<max depth>:<min player level>:<next dungeon>:<min alloc>:<max alloc chance>

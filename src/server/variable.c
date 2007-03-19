@@ -195,6 +195,9 @@ server_opts cfg =
 	3,		/* henc_strictness - how easily monsters adjust their exp to their highest player encounter */
 	1,		/* bonus_calc_type - how HP are calculated (0 = old, 1 = new way) */
 	2,		/* charmode_trading_restrictions - how restricted is trading? 0 = allow all, 1 = no ever->nonever, 2 = no exchange */
+	0,		/* item_awareness - how easily the player becomes aware of sofar un-identified items
+					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop */
+	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 };
 
 struct ip_ban *banlist=NULL;
@@ -759,6 +762,9 @@ char party_note[MAX_PARTYNOTES][80], party_note_target[MAX_PARTYNOTES][80];
 char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
 char admin_note[MAX_ADMINNOTES][80];
 
+/* in-game bbs :) - C. Blue */
+char bbs_line[BBS_LINES][80];
+
 int global_luck = 0;
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
@@ -768,3 +774,8 @@ bool watch_morgoth = 0;
 
 /* for lua_bind.c */
 bool first_player_joined = TRUE;
+
+/* for global events (xtra1.c, slash.c) */
+global_event_type global_event[MAX_GLOBAL_EVENTS];
+int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
+			 to use it in a special way - WoR won't work either */

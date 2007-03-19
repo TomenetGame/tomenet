@@ -3002,6 +3002,10 @@ static void set_server_option(char * option, char * value)
 	{
 		cfg.anti_arts_house = str_to_boolean(value);
 	}
+	else if (!strcmp(option,"ANTI_ARTS_WILD"))
+	{
+		cfg.anti_arts_wild = str_to_boolean(value);
+	}
 	else if (!strcmp(option,"ANTI_ARTS_SHOP"))
 	{
 		cfg.anti_arts_shop = str_to_boolean(value);
@@ -3045,6 +3049,10 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"KINGS_ETIQUETTE"))
 	{
 		cfg.kings_etiquette = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"FALLENKINGS_ETIQUETTE"))
+	{
+		cfg.fallenkings_etiquette = str_to_boolean(value);
 	}
 	else if (!strcmp(option,"ZANG_MONSTERS"))
 	{
@@ -3181,6 +3189,50 @@ static void set_server_option(char * option, char * value)
 	else if (!strcmp(option,"CHARMODE_TRADING_RESTRICTIONS"))
 	{
 		cfg.charmode_trading_restrictions = atoi(value);
+	}
+	else if (!strcmp(option,"ITEM_AWARENESS"))
+	{
+		cfg.item_awareness = atoi(value);
+	}
+	else if (!strcmp(option,"WORLDD_PUBCHAT"))
+	{
+		cfg.worldd_pubchat = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PRIVCHAT"))
+	{
+		cfg.worldd_privchat = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_BROADCAST"))
+	{
+		cfg.worldd_broadcast = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_LVLUP"))
+	{
+		cfg.worldd_lvlup = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_UNIDEATH"))
+	{
+		cfg.worldd_unideath = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PWIN"))
+	{
+		cfg.worldd_pwin = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PDEATH"))
+	{
+		cfg.worldd_pdeath = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PJOIN"))
+	{
+		cfg.worldd_pjoin = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PLEAVE"))
+	{
+		cfg.worldd_pleave = str_to_boolean(value);
+	}
+	else if (!strcmp(option,"WORLDD_PLIST"))
+	{
+		cfg.worldd_plist = str_to_boolean(value);
 	}
 	else printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }

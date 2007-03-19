@@ -23,7 +23,7 @@ typedef unsigned int u32b;
 #define MAX_RE_IDX      128     /* Max size for "re_info[]" */
 #define MAX_T_IDX       256 /* Max size for "t_info[]" */
 #define MAX_OW_IDX      96 /* Max size for "ow_info[]" */
-#define MAX_ST_IDX      64 /* Max size for "st_info[]" */
+#define MAX_ST_IDX      96 /* Max size for "st_info[]" */
 #define MAX_BA_IDX      64 /* Max size for "ba_info[]" */
 #define MAX_D_IDX       64 /* Max size for "d_info[]" */
 
@@ -126,6 +126,7 @@ struct server_opts
 
 	bool anti_arts_hoard;
 	bool anti_arts_house;
+	bool anti_arts_wild;
 	bool anti_arts_shop;
 	bool anti_arts_pickup;
 	bool anti_arts_send;
@@ -144,6 +145,7 @@ struct server_opts
 	int houses_per_player;
 	bool maximize;
 	bool kings_etiquette;
+	bool fallenkings_etiquette;
 
 	bool public_rfe;
 	bool auto_purge;
@@ -159,6 +161,17 @@ struct server_opts
 	s16b henc_strictness;	/* how easily monster adjust their exp to their highest player encounter */
 	s16b bonus_calc_type;	/* how HP are calculated */
 	s16b charmode_trading_restrictions; /* how trading between everlasting and non-everlasting players is restricted */
+	s16b item_awareness;
+	bool worldd_pubchat;
+	bool worldd_privchat;
+	bool worldd_broadcast;
+	bool worldd_lvlup;
+	bool worldd_unideath;
+	bool worldd_pwin;
+	bool worldd_pdeath;
+	bool worldd_pjoin;
+	bool worldd_pleave;
+	bool worldd_plist;
 };
 
 extern s32b turn;
@@ -280,3 +293,7 @@ extern char *sST;
    'watch' as AFK reason! */
 extern bool watch_nr;
 extern bool watch_morgoth;
+
+/* Stuff for global events */
+/* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
+extern int sector00separation;

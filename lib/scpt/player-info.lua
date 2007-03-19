@@ -114,8 +114,10 @@ function init()
 	pern_dofile(Ind, "cblue.lua")
 	pern_dofile(Ind, "dg.lua")
 	pern_dofile(Ind, "evil.lua")
-	pern_dofile(Ind, "zz.lua")
+--	pern_dofile(Ind, "zz.lua")
 	pern_dofile(Ind, "jir.lua")
+	pern_dofile(Ind, "it.lua")
+	pern_dofile(Ind, "mikaelh.lua")
 end
 
 -- get all the skills (cept antimagic)

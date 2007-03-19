@@ -146,7 +146,7 @@ bool check_antimagic(int Ind)
 
 		/* Reduction for party */
 		if ((i != Ind) && player_in_party(p_ptr->party, i))
-			antichance >>= 1;
+			antichance >>= 2;	/* was >>= 1 */
 #if 0
 		dis = distance(y2, x2, q_ptr->py, q_ptr->px);
 		antidis = q_ptr->antimagic_dis;
@@ -603,17 +603,21 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
       get_aim_dir(Ind);
       p_ptr->current_spell = j;
       return;
-//#define RF4_ARROW_2			0x00000020	/* Fire an arrow (heavy) */
+//#define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
     case 5:
       get_aim_dir(Ind);
       p_ptr->current_spell = j;
       return;
-//#define RF4_ARROW_3			0x00000040	/* Fire missiles (light) */
+//#define RF4_ARROW_3			0x00000040	/* Fire a bolt (heavy) */
     case 6:
-      break;
-//#define RF4_ARROW_4			0x00000080	/* Fire missiles (heavy) */
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
+//#define RF4_ARROW_4			0x00000080	/* Generic missile */
     case 7:
-      break;
+      get_aim_dir(Ind);
+      p_ptr->current_spell = j;
+      return;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
       get_aim_dir(Ind);
@@ -1088,29 +1092,34 @@ void do_mimic_power_aux(int Ind, int dir)
 	/* We assume that the spell can be cast, and so forth */
 	switch(p_ptr->current_spell)
 	{
-//#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) */
+//#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) (light) */
 		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
 		 * remove this 'innate' power? (see calc_body_bonus) */
     case 4:
 	{
-		int k;
-		for (k = 0; k < 1 + rlev / 20; k++)
-		{
+//cool stuff, needs some testing:	int k;
+//		for (k = 0; k < 1 + rlev / 20; k++)
+//		{
 			sprintf(p_ptr->attacker, " fires an arrow for");
+//			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6), p_ptr->attacker);
 			fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 8, 6), p_ptr->attacker);
 			break;
-		}
+//		}
 	}
-//#define RF4_ARROW_2			0x00000020	/* Fire missiles */
+//#define RF4_ARROW_2			0x00000020	/* Fire shot (heavy) */
     case 5:
-    sprintf(p_ptr->attacker, " fires an arrow for");
+    sprintf(p_ptr->attacker, " fires a shot for");
       fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
       break;
-//#define RF4_ARROW_3			0x00000040	/* XXX */
+//#define RF4_ARROW_3			0x00000040	/* Fire bolt (heavy) */
     case 6:
+    sprintf(p_ptr->attacker, " fires a bolt for");
+      fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
       break;
-//#define RF4_ARROW_4			0x00000080	/* XXX */
+//#define RF4_ARROW_4			0x00000080	/* Fire generic missile (heavy) */
     case 7:
+    sprintf(p_ptr->attacker, " fires a missile for");
+      fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
       break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
@@ -1478,7 +1487,7 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 	        return;
 	}
 	/* Not when confused */
-	if (p_ptr->confused)
+	if (p_ptr->confused && !force)
 	{
 		msg_print(Ind, "You are too confused!");
 		return;
@@ -1525,7 +1534,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	/* should it..? */
 //	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
 //(changed it to no_tele)	if(l_ptr && l_ptr->flags1 & LF1_NO_MAGIC) return;
-
+	
 	if (!get_skill(p_ptr, SKILL_MIMIC))
 	{
 		msg_print(Ind, "You are too solid.");
@@ -1554,13 +1563,33 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 			if (j > MAX_R_IDX) j = 0;
 
+			if (p_ptr->pclass == CLASS_DRUID) {
+			    if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
+				/* (S)he is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+				do_mimic_change(Ind, j, TRUE);
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return;
+			    } else { continue; }
+			}
+			if (p_ptr->prace == RACE_VAMPIRE) {
+			    if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
+				/* (S)he is no longer afk */
+				if (p_ptr->afk) toggle_afk(Ind, "");
+				do_mimic_change(Ind, j, TRUE);
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				return;
+			    } else { continue; }
+			}
+
 			if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (p_ptr->r_killed[j] < r_info[j].level) continue;
 			if (p_ptr->r_killed[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
 			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
-			
+			if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) continue;
+
 			/* Don't accidentally poly into a form that suppresses polymorphing */
 			if (r_info[j].flags7 & RF7_DISBELIEVE) continue;
 
@@ -1579,6 +1608,27 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		//j = get_quantity("Which form (0 for player form)?", 0);
 		j = spell - 20000;
 
+	    if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
+		if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
+			/* (S)he is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
+			do_mimic_change(Ind, j, TRUE);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+		} else {
+			msg_print(Ind, "You cannot use that form!");
+		}
+	    } else if (p_ptr->prace == RACE_VAMPIRE) {
+		if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
+			/* (S)he is no longer afk */
+			if (p_ptr->afk) toggle_afk(Ind, "");
+
+			do_mimic_change(Ind, j, TRUE);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+		} else {
+			msg_print(Ind, "You cannot use that form!");
+		}
+	    } else {
 		if ((j > MAX_R_IDX) || (j < 0))
 		{
 			msg_print(Ind, "That form does not exist in the realm!");
@@ -1612,15 +1662,16 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			msg_print(Ind, "You cannot use that form!");
 			return;
 		}
-
-		/* (S)he is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))){
+			msg_print(Ind, "You cannot use that form!");
+			return;
+		}
 
 		/* Ok we found */
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
-	}
-	else {
+	    }
+	} else {
 		/* (S)he is no longer afk */
 		if (p_ptr->afk) toggle_afk(Ind, "");
 

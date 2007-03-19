@@ -23,7 +23,7 @@ end
 
 HHEALING = add_spell
 {
-	["name"] = 	"Healing",
+	["name"] = 	"Heal",
         ["school"] = 	{SCHOOL_HCURING},
 	["level"] =     3,
 	["mana"] =      3,

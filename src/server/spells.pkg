@@ -136,6 +136,14 @@ typedef unsigned int u32b;
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
 
+#define GF_CURSE	153		/* new priest spell - the_sandman */
+/* Here comes the druid stuff: - the_sandman */
+#define GF_HEALINGCLOUD 154
+#define GF_WATERPOISON  155
+#define GF_ICEPOISON    156
+#define GF_EXTRA_STATS  157
+#define GF_EXTRA_SPR	158
+
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
 #define PROJECTOR_TRAP		-1001
@@ -180,6 +188,7 @@ extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 //extern bool check_st_anchor(struct worldpos *wpos);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
+extern void swap_position(int Ind, int lty, int ltx);
 extern bool teleport_away(int m_idx, int dis);
 extern void teleport_player(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
@@ -201,8 +210,9 @@ extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
 extern int set_impact_destroy(object_type *o_ptr);
 extern int set_water_destroy(object_type *o_ptr);
-extern int minus_ac(int Ind, int water);
+extern int equip_damage(int Ind, int typ);
 extern int inven_damage(int Ind, inven_func typ, int perc);
+extern int weapon_takes_damage(int Ind, int typ);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
 extern bool set_oppose_acid(int Ind, int v);
 extern bool set_oppose_elec(int Ind, int v);
@@ -364,6 +374,12 @@ extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 
+/* Druidry */
+extern bool create_garden(int Ind, int level);
+extern bool do_banish_animals(int Ind, int chance);
+extern bool do_xtra_stats(int Ind, int p, int v);
+extern bool do_focus_shot(int Ind, int p, int v);
+
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
 extern bool set_recall(int Ind, int v, object_type * o_ptr);
@@ -408,7 +424,7 @@ extern s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bo
 extern s32b lua_spell_chance(int Ind, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
 /* extern u32b get_school_spell(cptr do_what); */
 extern void lua_s_print(cptr logstr);
-extern void lua_add_anote(cptr anote);
+extern void lua_add_anote(char *anote);
 extern void lua_count_houses(int Ind);
 extern void lua_recalc_char(int Ind);
 extern void lua_examine_item(int Ind, cptr name, int item);
@@ -420,3 +436,11 @@ extern void lua_check_player_for_true_arts(int Ind);
 extern int lua_get_mon_lev(int r_idx);
 extern char *lua_get_mon_name(int r_idx);
 extern void lua_towns_treset(void);
+extern long lua_player_exp(int level, int expfact);
+extern void lua_fix_spellbooks(int spell, int mod);
+extern void lua_arts_fix(int Ind);
+extern char* lua_get_last_chat_line();
+extern char* lua_get_last_chat_owner();
+extern void lua_get_pgestat(int Ind, int n);
+exterm void lua_start_global_event(int Ind, int evtype, char *parm);
+exterm void lua_apply_item_changes(int Ind);

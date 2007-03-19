@@ -13,8 +13,9 @@
 
 #define SERVER
 
-#define DEBUG1	/* for monster generation in place_monster_one */
-#define DEBUG1_IDX 1097	/* monster index to monitor at DEBUG1 (1033) */
+// #define DEBUG1	/* for monster generation in place_monster_one */
+// #define DEBUG1_IDX 1097	/* monster index to monitor at DEBUG1 (1033) */
+#define DEBUG1_IDX 1098
 
 #include "angband.h"
 
@@ -104,28 +105,29 @@ int pick_ego_monster(int r_idx, int Level);
 
 
 /* Monster gain a few levels ? */
-void monster_check_experience(int m_idx, bool silent)
+int monster_check_experience(int m_idx, bool silent)
 {
 	int		i, try;
 	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0, tmp_dice, tmp;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
-
+	int old_level = m_ptr->level;
 	/* Gain levels while possible */
 	while ((m_ptr->level < MONSTER_LEVEL_MAX) &&
 	       (m_ptr->exp >= (MONSTER_EXP(m_ptr->level + 1))))
 	{
 		/* Gain a level */
 		m_ptr->level++;
-		if(m_ptr->owner){
+#if 0 /* Check the return code now for level ups */
+		if(m_ptr->owner ) {
 			int i;
-			for(i=0; i<=NumPlayers; i++){
+			for(i=1; i<=NumPlayers; i++){
 				if(Players[i]->id==m_ptr->owner){
-					msg_format(i, "\377UYour %s looks more experienced!", r_name_get(m_ptr));
+					msg_format(i, "\377UYour pet looks more experienced!");
 				}
 			}
 		}
-
+#endif
 		/* Gain hp */
 		if (magik(90))
 		{
@@ -285,7 +287,7 @@ void monster_check_experience(int m_idx, bool silent)
 			/* Count number of powerful attacks */
 			try++;
 		}
-		if (tmp <= 700) break;
+		if (tmp <= AVG_MELEE_CAP) break;
 		/* Randomly pick one of the attacks to lower */
 		try = randint(try);
 		tmp = 0;
@@ -303,16 +305,17 @@ void monster_check_experience(int m_idx, bool silent)
                         }
 		}
 	} 
+	return (old_level-m_ptr->level == 0? 0 : 1);
 }
 
 /* Monster gain some xp */
-void monster_gain_exp(int m_idx, u32b exp, bool silent)
+int monster_gain_exp(int m_idx, u32b exp, bool silent)
 {
 	monster_type *m_ptr = &m_list[m_idx];
 
 	m_ptr->exp += exp;
 
-	monster_check_experience(m_idx, silent);
+	return monster_check_experience(m_idx, silent);
 }
 
 
@@ -357,7 +360,12 @@ void delete_monster_idx(int i, bool unfound_arts)
 	{
 		/* Skip this player if he isn't playing */
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
-
+#ifdef RPG_SERVER
+		if (Players[Ind]->id == m_ptr->owner && m_ptr->pet) {
+			msg_format(Ind, "\377RYour pet has died! You feel sad.");
+			Players[Ind]->has_pet=0;
+		}
+#endif 
 		Players[Ind]->mon_vis[i] = FALSE;
 		Players[Ind]->mon_los[i] = FALSE;
 
@@ -397,8 +405,7 @@ void delete_monster_idx(int i, bool unfound_arts)
 		/* Hack -- Preserve unknown artifacts */
 /*		if (true_artifact_p(o_ptr))
 		{
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
+			handle_art_d(o_ptr->name1);
 		}
 */
 		/* Delete the object */
@@ -562,8 +569,13 @@ void compact_monsters(int size, bool purge)
 
 #ifdef MONSTER_INVENTORY
 			/* Repair objects being carried by monster */
-//			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+#if 0
+			/* No point in this... - mikaelh */
 			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+#else
+			/* Shouldn't it be this way? - mikaelh */
+			for (this_o_idx = m_list[m_max].hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
+#endif
 			{
 				object_type *o_ptr;
 
@@ -674,6 +686,22 @@ void wipe_m_list(struct worldpos *wpos)
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos))
+			delete_monster_idx(i, TRUE);
+	}
+
+	/* Compact the monster list */
+	compact_monsters(0, FALSE);
+}
+void wipe_m_list_chance(struct worldpos *wpos, int chance)
+{
+	int i;
+
+	/* Delete all the monsters, except for target dummies (1101) */
+	for (i = m_max - 1; i >= 1; i--)
+	{
+		monster_type *m_ptr = &m_list[i];
+
+		if (inarea(&m_ptr->wpos,wpos) && magik(chance) && (m_ptr->r_idx != 1101))
 			delete_monster_idx(i, TRUE);
 	}
 
@@ -2588,6 +2616,15 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
 	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
+
+	/* require non-protected field. - C. Blue
+	    Note that there are two ways (technically) to protect a field:
+	    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
+	    2) use CAVE_PROT which can be toggled on runtime as required
+	*/
+	if (zcave[y][x].info & CAVE_PROT) return (FALSE);
+	if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
+
 #if 0
 	if (!(cave_empty_bold(zcave, y, x) || 
 	    (cave_empty_mountain(zcave, y, x) &&
@@ -2612,6 +2649,11 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 	/* Special hack - bottom of NR is empty except for Zu-Aon */
 	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
 
+	/* Another special hack - No monster spawn in Valinor, except for.. */
+	if ((getlevel(wpos) == 200) && (wpos->wz == 1) &&
+	    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
+		return(FALSE);
+
 	/* hard-coded -C. Blue */
 	/* Wight-King of the Barrow-downs might not occur anywhere else */
 	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
@@ -2633,7 +2675,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 	/* Nether Guard isn't a unique but there's only 1 guard per level,
 	   If Zu-Aon appears, the Nether Guard disappears instead */
 	if (r_idx == 1068) {
+#if DEBUG_LEVEL > 2
 		s_printf("Checking for old Nether Guards\n");
+#endif
 		for (i = m_top - 1; i >= 0; i--)
 		{
 	        	m_idx = m_fast[i];
@@ -2966,7 +3010,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (m_ptr->clone > 100) m_ptr->clone = 100;
 	/* Don't let it overflow over time.. (well, not very realistic) */
 	if (m_ptr->clone_summoning - cfg.clone_summoning > 4) m_ptr->clone_summoning = 4 + cfg.clone_summoning;
-
+        
 	/* Hack - Unique monsters are never clones - C. Blue */
 	if (r_ptr->flags1 & RF1_UNIQUE) m_ptr->clone = 0;
 
@@ -3064,7 +3108,6 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 1097) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
 	return (TRUE);
 }
-
 
 /*
  * Maximum size of a group of monsters
@@ -3225,6 +3268,8 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	/* Require the "group" flag */
 	if (!grp) return (TRUE);
 
+	/* Do not allow breeders to spawn in the wilderness - the_sandman */
+	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
 
 	/* Friend for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIEND)
@@ -3487,9 +3532,6 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp)
 	/* Nope */
 	return (FALSE);
 }
-
-
-
 
 /*
  * Hack -- the "type" of the current "summon specific"
@@ -4014,6 +4056,8 @@ bool multiply_monster(int m_idx)
 
 	/* NO UNIQUES */
 	if (r_ptr->flags1 & RF1_UNIQUE) return FALSE;
+	/* Not in town -_- */
+	if (istown(wpos)) return FALSE;
 
 	/* Try up to 18 times */
 	for (i = 0; i < 18; i++)
@@ -4771,8 +4815,15 @@ void monster_drop_carried_objects(monster_type *m_ptr)
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);
 
-		/* Drop it */
-		drop_near(q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+		/* the_sandman - Perhaps we can filter out the nothings here?
+		 */
+//		char* tempbuf = (char*) malloc(sizeof(char)*80);
+//		object_desc(Ind, tempbuf, o_ptr, 0, 0);
+//		if (!strcmp(tempbuf, "(nothing)")) {
+			/* Drop it */
+			drop_near(q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+//		}
+//		free(tempbuf);
 	}
 
 	/* Forget objects */
@@ -4809,8 +4860,7 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr)
 		/* Hack -- Preserve artifacts */
 		if (q_ptr->name1)
 		{
-			a_info[q_ptr->name1].cur_num = 0;
-			a_info[q_ptr->name1].known = FALSE;
+			handle_art_d(q_ptr->name1);
 		}
 	}
 }

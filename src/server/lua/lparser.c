@@ -997,7 +997,7 @@ static void retstat (LexState *ls) {
   /* stat -> RETURN explist */
   FuncState *fs = ls->fs;
   next(ls);  /* skip RETURN */
-  if (!block_follow(ls->t.token))
+  if (!block_follow(ls->t.token) && ls->t.token != ';')
     explist1(ls);  /* optional return values */
   luaK_code1(fs, OP_RETURN, ls->fs->nactloc);
   fs->stacklevel = fs->nactloc;  /* removes all temp values */

@@ -73,6 +73,7 @@ int world_index(int world_x, int world_y)
 	return idx;
 } 
 
+#if 0 /* not used? - mikaelh */
 /* returns the neighbor index, valid or invalid. */
 static int neighbor_index(struct worldpos *wpos, char dir)
 {
@@ -92,6 +93,7 @@ static int neighbor_index(struct worldpos *wpos, char dir)
 	}
 	return neigh_idx;
 }
+#endif // 0
 
 
 
@@ -199,10 +201,10 @@ void deltown(int Ind)
 		tpos.wx = x; tpos.wy = y; tpos.wz = 0;
 		for(i=0;i<num_houses;i++)
 		if(inarea(&tpos, &houses[i].wpos)) {
-#if 0
+//#if 0
 			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
 	    		houses[i].flags|=HF_DELETED;
-#endif
+//#endif
 		}
 		wilderness_gen(&tpos);
 	}
@@ -210,8 +212,8 @@ void deltown(int Ind)
 
 	if(numtowns <= 5) return;
 
-
-	wild_info[wpos->wy][wpos->wx].type=WILD_GRASSLAND;
+//	wild_info[wpos->wy][wpos->wx].type=WILD_GRASSLAND;
+	wild_info[wpos->wy][wpos->wx].type=WILD_OCEAN;
 	wild_info[wpos->wy][wpos->wx].radius=towndist(y, x);
 	wilderness_gen(wpos);
 
@@ -334,15 +336,16 @@ void wild_spawn_towns()
 
 		adddungeon(&wpos, 0, 0, 0, 0, NULL, NULL, FALSE, i);
 
+		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
 		if (d_info[i].flags1 & DF1_TOWER)
 		{
-			new_level_down_y(&wpos, rand_int(MAX_HGT));
-			new_level_down_x(&wpos, rand_int(MAX_WID));
+			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
+			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
 		}
 		else
 		{
-			new_level_up_y(&wpos, rand_int(MAX_HGT));
-			new_level_up_x(&wpos, rand_int(MAX_WID));
+			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
+			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
 		}
 #if 0
 		if((zcave=getcave(&p_ptr->wpos))){
@@ -731,6 +734,9 @@ void wild_add_monster(struct worldpos *wpos)
 	int tries = 0;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
+	if (sector00separation && !wpos->wx && !wpos->wy) return;
 
 	/* reset the monster sorting function */	
 	switch(wild_info[wpos->wy][wpos->wx].type)
@@ -1124,7 +1130,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			if (cave_clean_bold(zcave,y,x))
 			{
 				object_level = cash;			
-				place_gold(wpos,y,x);
+				place_gold(wpos,y,x, 0);
 				break;
 			}
 		trys++;
@@ -2200,6 +2206,7 @@ static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 
 }
 
+#if 0 /* not used? - mikaelh */
 /* using a simple fractal algorithm, generates the bleedmap used by the function below. */
 /* hack -- for this algorithm to work nicely, an initial span of a power of 2 is required. */
 static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
@@ -2256,6 +2263,7 @@ static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
 	}
 
 }
+#endif // 0
 
 /* this function "bleeds" the terrain type of bleed_from to the side of bleed_to
    specified by dir.
@@ -2354,6 +2362,7 @@ void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.
 */   
+#if 0
 static bool should_we_bleed(struct worldpos *wpos, char dir)
 {
 #if 0
@@ -2399,6 +2408,7 @@ static bool should_we_bleed(struct worldpos *wpos, char dir)
 #endif /*if 0 - evil - temp */
 	return(FALSE);
 }
+#endif // 0
 
 
 /* to determine whether we bleed into our neighbor or whether our neighbor
@@ -2858,6 +2868,8 @@ void wild_add_uhouses(struct worldpos *wpos){
 static void wilderness_gen_hack(struct worldpos *wpos)
 {
 	int y, x, x1, x2, y1, y2;
+	cave_type *c_ptr, *c2_ptr;
+	int found_more_water;
 	terrain_type terrain;
 	bool rand_old = Rand_quick;
 
@@ -2886,7 +2898,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	{
 		for (x = 1; x < MAX_WID - 1; x++)
 		{
-			cave_type *c_ptr = &zcave[y][x];
+			c_ptr = &zcave[y][x];
 			c_ptr->feat = terrain_spot(&terrain);			
 		}
 	}
@@ -2937,6 +2949,27 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	}		
 
 	wild_add_uhouses(wpos);
+
+	/* C. Blue - turn single deep water fields to shallow (non-drownable) water: */
+	for (y = 1; y < MAX_HGT - 1; y++)
+	for (x = 1; x < MAX_WID - 1; x++) {
+		c_ptr = &zcave[y][x];
+		if (c_ptr->feat == FEAT_DEEP_WATER) {
+			found_more_water = 0;
+			for (y2 = y-1; y2 <= y+1; y2++)
+			for (x2 = x-1; x2 <= x+1; x2++) {
+				c2_ptr = &zcave[y2][x2];
+				if (y2 == y && x2 == x) continue;
+				if (c2_ptr->feat == FEAT_SHAL_WATER ||
+//				    c2_ptr->feat == FEAT_WATER ||
+				    c2_ptr->feat == FEAT_TAINTED_WATER ||
+				    c2_ptr->feat == FEAT_DEEP_WATER) {
+					found_more_water++;
+				}
+			}
+			if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
+		}
+	}
 	
 	/* Hack -- use the "complex" RNG */
 	Rand_quick = rand_old;
@@ -3004,9 +3037,9 @@ void wilderness_gen(struct worldpos *wpos)
 
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
-	if(w_ptr->flags & WILD_F_UP)
+	if((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1))
 		zcave[w_ptr->dn_y][w_ptr->dn_x].feat=FEAT_LESS;
-	if(w_ptr->flags & WILD_F_DOWN)
+	if((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1))
 		zcave[w_ptr->up_y][w_ptr->up_x].feat=FEAT_MORE;
 	/* TODO: add 'inscription' to the dungeon/tower entrances */
 
@@ -3043,6 +3076,8 @@ void wilderness_gen(struct worldpos *wpos)
 		if ((wpos->wy < MAX_HGT - 1) && magik(30)) {
 			w_ptr2 = &wild_info[wpos->wy + 1][wpos->wx];
 			c_ptr = &zcave[1][x];
+			/* Don't cover stairs - mikaelh */
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			switch(w_ptr2->type) {
 			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
 //			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
@@ -3055,6 +3090,8 @@ void wilderness_gen(struct worldpos *wpos)
 		if ((wpos->wy > 0) && magik(30)) {
 			w_ptr2 = &wild_info[wpos->wy - 1][wpos->wx];
 			c_ptr = &zcave[MAX_HGT-2][x];
+			/* Don't cover stairs - mikaelh */
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			switch(w_ptr2->type) {
 			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
 //			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
@@ -3070,6 +3107,8 @@ void wilderness_gen(struct worldpos *wpos)
 		if ((wpos->wx < MAX_WID - 1) && magik(30)) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx + 1];
 			c_ptr = &zcave[y][MAX_WID-2];
+			/* Don't cover stairs - mikaelh */
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			switch(w_ptr2->type) {
 			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
 //			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
@@ -3082,6 +3121,8 @@ void wilderness_gen(struct worldpos *wpos)
 		if ((wpos->wx > 0) && magik(30)) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx - 1];
 			c_ptr = &zcave[y][1];
+			/* Don't cover stairs - mikaelh */
+			if (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_LESS) continue;
 			switch(w_ptr2->type) {
 			case WILD_VOLCANO: c_ptr->feat = FEAT_SHAL_LAVA; break;
 //			case WILD_SHORE1: case WILD_SHORE2: case WILD_COAST:
@@ -3432,3 +3473,108 @@ bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w)
 	return (shown);
 }
 
+/* Add new dungeons/towers that were added to d_info.txt after the server was already initialized - C. Blue */
+void wild_add_new_dungeons() {
+	int i, j, k, x, y, tries;
+	bool retry, skip, found;
+	dungeon_type *d_ptr;
+	worldpos wpos;
+
+	for (i = 1; i < max_d_idx; i++)
+	{
+		retry = FALSE;
+
+		/* Skip empty entry */
+		if (!d_info[i].name) continue;
+
+		/* Hack -- omit dungeons associated with towns */
+		skip = FALSE;
+		for (j = 1; j < 6; j++)
+		{
+			for (k = 0; k < 2; k++)
+			{
+				if (town_profile[j].dungeons[k] == i) skip = TRUE;
+			}
+		}
+		if (skip) continue;
+		
+		/* Does this dungeon exist yet? */
+		found = FALSE;
+		for (y = 0; y < MAX_WILD_Y; y++)
+		for (x = 0; x < MAX_WILD_X; x++) {
+			if ((d_ptr = wild_info[y][x].tower)) {
+				if (d_ptr->type == i) found = TRUE;
+			}
+			if ((d_ptr = wild_info[y][x].dungeon)) {
+				if (d_ptr->type == i) found = TRUE;
+//				if (!strcmp(d_ptr->name + d_name, d_info[i].name + d_name)) found = TRUE;
+//				if (d_ptr->id == i) found = TRUE;
+			}
+		}
+		if (found) continue;
+
+		/* Add it */
+		tries = 100;
+		while (tries) {
+			y = rand_int(MAX_WILD_Y);
+			x = rand_int(MAX_WILD_X);
+			retry = FALSE;
+
+			wpos.wy = y;
+			wpos.wx = x;
+
+			/* Don't build them too near to towns
+			 * (otherwise entrance can be within a house) */
+			for (j = 1; j < 6; j++)
+			{
+				if (distance(y, x, town[j].y, town[j].x) < 3)
+				{
+	    				retry = TRUE;
+					break;
+				}
+	    		}
+			if (!retry)
+			{
+				if (wild_info[y][x].dungeon || wild_info[y][x].tower) retry = TRUE;
+
+	    			/* TODO: easy dungeons around Bree,
+				 * hard dungeons around Lorien */
+			}
+#if 0
+			if (retry)
+			{
+				if (tries-- > 0) i--;
+				continue;
+			}
+#else
+			tries--;
+			if (!retry) break;
+#endif
+		}
+
+		adddungeon(&wpos, 0, 0, 0, 0, NULL, NULL, FALSE, i);
+
+		/* 0 or MAX_{HGT,WID}-1 are bad places for stairs - mikaelh */
+		if (d_info[i].flags1 & DF1_TOWER)
+		{
+			new_level_down_y(&wpos, 1+rand_int(MAX_HGT-2));
+			new_level_down_x(&wpos, 1+rand_int(MAX_WID-2));
+		}
+		else
+		{
+			new_level_up_y(&wpos, 1+rand_int(MAX_HGT-2));
+			new_level_up_x(&wpos, 1+rand_int(MAX_WID-2));
+		}
+#if 0
+		if((zcave=getcave(&p_ptr->wpos))){
+			zcave[p_ptr->py][p_ptr->px].feat=FEAT_MORE;
+		}
+#endif	// 0
+
+#if DEBUG_LEVEL > 0
+		s_printf("Dungeon %d is generated in %s.\n", i, wpos_format(0, &wpos));
+#endif	// 0
+
+		tries = 100;
+	}
+}

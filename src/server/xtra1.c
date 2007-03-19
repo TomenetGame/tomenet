@@ -163,7 +163,11 @@ static void prt_level(int Ind)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
+#ifndef ALT_EXPRATIO
 	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+#else
+	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
+#endif
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
@@ -180,7 +184,11 @@ static void prt_exp(int Ind)
 
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 		adv_exp = 0;
+#ifndef ALT_EXPRATIO
 	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
+#else
+	else adv_exp = (s64b)player_exp[p_ptr->lev - 1];
+#endif
 
 	Send_experience(Ind, p_ptr->lev, p_ptr->max_exp, p_ptr->exp, adv_exp);
 }
@@ -487,7 +495,11 @@ static void prt_cut(int Ind)
 
 	int c = p_ptr->cut;
 
-	Send_cut(Ind, c);
+	/* Cut status and wpos coordinated occupy the same line in the client,
+	   so send the wpos when the player isn't stunned - mikaelh */
+
+	Send_cut(Ind, c); /* need to send this always since the client doesn't clear the whole field */
+	if (!c) Send_depth(Ind, &p_ptr->wpos);
 }
 
 
@@ -551,6 +563,36 @@ static void prt_skills(int Ind)
 {
 	Send_skills(Ind);
 }
+
+static void prt_AFK(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	byte afk = (p_ptr->afk ? 1 : 0);
+
+	Send_AFK(Ind, afk);
+}
+
+static void prt_encumberment(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+	byte cumber_armor = p_ptr->cumber_armor?1:0;
+	byte awkward_armor = p_ptr->awkward_armor?1:0;
+	byte cumber_glove = p_ptr->cumber_glove?1:0;
+	byte heavy_wield = p_ptr->heavy_wield?1:0;
+	byte heavy_shoot = p_ptr->heavy_shoot?1:0;
+	byte icky_wield = p_ptr->icky_wield?1:0;
+	byte awkward_wield = p_ptr->awkward_wield?1:0;
+	byte easy_wield = p_ptr->easy_wield?1:0;
+	byte cumber_weight = p_ptr->cumber_weight?1:0;
+	byte monk_heavyarmor = p_ptr->monk_heavyarmor?1:0;
+	byte awkward_shoot = p_ptr->awkward_shoot?1:0;
+
+	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+}
+
 
 
 /*
@@ -783,9 +825,13 @@ static void prt_frame_basic(int Ind)
  */
 static void prt_frame_extra(int Ind)
 {
+	/* Mega-Hack : display AFK status in place of 'stun' status! */
+	prt_AFK(Ind);
+
 	/* Cut/Stun */
 	prt_cut(Ind);
-	prt_stun(Ind);
+	/* Mega-Hack : AFK and Stun share a field */
+	if (Players[Ind]->stun || !Players[Ind]->afk) prt_stun(Ind);
 
 	/* Food */
 	prt_hunger(Ind);
@@ -805,7 +851,6 @@ static void prt_frame_extra(int Ind)
 	/* Study spells */
 	prt_study(Ind);
 }
-
 
 
 /*
@@ -931,7 +976,8 @@ static void calc_sanity(int Ind)
  *
  * This function induces status messages.
  */
-static void calc_mana(int Ind)
+//static void calc_mana(int Ind)
+void calc_mana(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	player_type *p_ptr2=(player_type*)NULL;
@@ -973,12 +1019,14 @@ static void calc_mana(int Ind)
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (300));
 		break;
 	case CLASS_RANGER:
+//	case CLASS_DRUID: -- moved
 		/* much Int, few Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (500)) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels / (500));
 		break;
 	case CLASS_PRIEST:
+	case CLASS_DRUID:
 		/* few Int, much Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels / (400)) +
@@ -1001,8 +1049,35 @@ static void calc_mana(int Ind)
 	case CLASS_WARRIOR:
 		new_mana = 0;
 		break;
+	case CLASS_SHAMAN:
+#if 0
+		/* more Wis than Int */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 35 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 65 * levels / (400));
+#else
+		/* Depends on what's better, his WIS or INT */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    ((p_ptr->stat_ind[A_INT] > p_ptr->stat_ind[A_WIS]) ?
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 100 * levels / (400)) :
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels / (400)));
+#endif
+		break; 
+	/* Need a lot of SP for the spells. Reducing bonus to 1 tho. 2 seems excessive */
+#ifdef CLASS_RUNEMASTER
+#define RUNEMASTER_SP_CALC_BONUS	1 /* 2 */
+	case CLASS_RUNEMASTER: 
+		//2 SP per 1 point in SKILL_MAGIC
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 100) + 
+		//Their spells are abit on the expensive side... Allow more max than mages.
+		//A different system, really ... See runes.c
+		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_INT]]) * levels / (2) +
+		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_DEX]]) * levels / (2) ;
+		break;
+#endif
+
 	case CLASS_ADVENTURER:
-//	case CLASS_BARD:
+//	case CLASS_BARD:	
 	default:
 	    	/* 50% Int, 50% Wis */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1029,7 +1104,8 @@ static void calc_mana(int Ind)
 		/* Normal gloves hurt mage-type spells */
 		if (o_ptr->k_idx &&
 		    !(f2 & TR2_FREE_ACT) && !(f1 & TR1_MANA) &&
-		    !((f1 & TR1_DEX) && (o_ptr->pval > 0)))
+		    !((f1 & TR1_DEX) && (o_ptr->pval > 0)) && 
+		    !(o_ptr->tval == TV_GLOVES && o_ptr->sval == SV_SET_OF_ELVEN_GLOVES)) //Elven Gloves -> no penalty
 		{
 			/* Encumbered */
 			p_ptr->cumber_glove = TRUE;
@@ -1041,7 +1117,7 @@ static void calc_mana(int Ind)
 #if 0 // C. Blue - Taken out again since polymorphing ability of DSMs was
 // removed instead. Mimics and mimic-sorcs were punished too much.
 	/* Forms that don't have proper 'hands' (arms) have mana penalty.
-	   this will hopefully stop the masses of D form Istari :/ */
+	   this will hopefully stop the masses of D form Istar :/ */
 	if (p_ptr->body_monster)
 	{
 		monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -1102,8 +1178,10 @@ static void calc_mana(int Ind)
 	/* commented out (evileye for power) */
 	/*	new_mana -= new_mana / 2; */
 	}
+
+#if 1 /* done in calc_bonuses now, which is called before calc_mana */
 	/* Assume player not encumbered by armor */
-	p_ptr->cumber_armor = FALSE;
+	p_ptr->awkward_armor = FALSE;
 
 	/* Weigh the armor */
 	cur_wgt = armour_weight(p_ptr);
@@ -1115,11 +1193,19 @@ static void calc_mana(int Ind)
 	if (((cur_wgt - max_wgt) / 10) > 0)
 	{
 		/* Encumbered */
-		p_ptr->cumber_armor = TRUE;
+		p_ptr->awkward_armor = TRUE;
 
 		/* Reduce mana */
 		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 	}
+#else
+	/* Heavy armor reduces mana */
+	cur_wgt = armour_weight(p_ptr);
+	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 500);
+	if (p_ptr->awkward_armor) {
+		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
+	}
+#endif
 
 	if (Ind2)
 	{
@@ -1189,11 +1275,11 @@ static void calc_mana(int Ind)
 		/* Message */
 		if (p_ptr->cumber_glove)
 		{
-			msg_print(Ind, "Your covered hands feel unsuitable for spellcasting.");
+			msg_print(Ind, "\377oYour covered hands feel unsuitable for spellcasting.");
 		}
 		else
 		{
-			msg_print(Ind, "Your hands feel more suitable for spellcasting.");
+			msg_print(Ind, "\377gYour hands feel more suitable for spellcasting.");
 		}
 
 		/* Save it */
@@ -1207,16 +1293,38 @@ static void calc_mana(int Ind)
 		/* Message */
 		if (p_ptr->cumber_armor)
 		{
-			msg_print(Ind, "The weight of your armour encumbers your movement.");
+			msg_print(Ind, "\377oThe weight of your armour encumbers your movement.");
 		}
 		else
 		{
-			msg_print(Ind, "You feel able to move more freely.");
+			msg_print(Ind, "\377gYou feel able to move more freely.");
 		}
 
 		/* Save it */
 		p_ptr->old_cumber_armor = p_ptr->cumber_armor;
 	}
+
+
+	/* Take note when "armor state" changes */
+	if (p_ptr->old_awkward_armor != p_ptr->awkward_armor)
+	{
+	    if (p_ptr->pclass != CLASS_WARRIOR && p_ptr->pclass != CLASS_ARCHER) {
+		/* Message */
+		if (p_ptr->awkward_armor)
+		{
+			msg_print(Ind, "\377oThe weight of your armour strains your spellcasting.");
+		}
+		else
+		{
+			msg_print(Ind, "\377gYou feel able to cast more freely.");
+		}
+	    }
+		/* Save it */
+		p_ptr->old_awkward_armor = p_ptr->awkward_armor;
+	}
+	
+	/* refresh encumberment status line */
+//	p_ptr->redraw |= PR_ENCUMBERMENT; <- causes bad packet bugs when shopping
 }
 
 
@@ -1260,8 +1368,8 @@ void calc_hitpoints(int Ind)
 	/* Calculate hitpoints */
 	if (!cfg.bonus_calc_type) {
 		/* The traditional way.. */
-		if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev);
-		else mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
+/*		if (p_ptr->fruit_bat) mhp = (p_ptr->player_hp[p_ptr->lev-1] / 4) + (bonus * p_ptr->lev); //the_sandman: removed hp penalty
+		else */ mhp = p_ptr->player_hp[p_ptr->lev-1] + (bonus * p_ptr->lev / 2);
 	} else {
 #if 1
 		/* Don't exaggerate with HP on low levels (especially Ents) (bonus range is -5..+25) */
@@ -1287,9 +1395,9 @@ void calc_hitpoints(int Ind)
 		   - The penalty is finely tuned to make Yeek Priests still a deal
 		   tougher than Istari, even without sorcery, while keeping in account
 		   the relation to all stronger classes as well. - C. Blue */
-		if (p_ptr->fruit_bat)
+/*		if (p_ptr->fruit_bat)
 			mhp = ((p_ptr->player_hp[p_ptr->lev-1] * 4) * (20 + bonus)) / (45 * 3);
-		else
+		else */ // removed hp penalty -- the_sandman
 			mhp = (p_ptr->player_hp[p_ptr->lev-1] * 2 * (20 + bonus)) / 45;
 
 /* I think it might be better to dimish the boost for yeeks after level 50 slowly towards level 100 
@@ -1331,12 +1439,16 @@ void calc_hitpoints(int Ind)
 		if (p_ptr->pclass == CLASS_MAGE) mhp += p_ptr->lev;
 #endif
 
+#ifndef RPG_SERVER /* already greatly reduced Sorcery Skill ratio in tables.c */
+#endif
+#if 0 /* tables.c count for all servers now, not just RPG_SERVER */
 	/* Sorcery reduces hp */
 	if (get_skill(p_ptr, SKILL_SORCERY))
 	{
 		// mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 20)) / 100;
 		mhp -= (mhp * get_skill_scale(p_ptr, SKILL_SORCERY, 33)) / 100;
 	}
+#endif
 
 	/* Now we calculated the base player form mhp. Save it for use with
 	   +LIFE bonus. This will prevent mimics from total uber HP,
@@ -1348,12 +1460,44 @@ void calc_hitpoints(int Ind)
 	{
 	    long rhp = ((long)(r_info[p_ptr->body_monster].hdice)) * ((long)(r_info[p_ptr->body_monster].hside));
 
+#if 0 /* this gives bad HP if your race has high HD and you don't use an uber-form */
 	    /* pre-cap monster HP against ~3500 (5000) */
-	    mHPLim = (100000 / ((100000 / rhp) + 18));/*18*/
+/*	    mHPLim = (100000 / ((100000 / rhp) + 18)); this was for non RPG_SERVER originally */
+	    mHPLim = (50000 / ((50000 / rhp) + 20));/*18*/ /* for the new RPG_SERVER originally */
 	    /* average with player HP */
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 	    /* cap final HP against ~2300 */
 //	    finalHP = (100000 / ((100000 / finalHP) + 20));
+#endif
+#if 0 /* fairer for using non-uber forms; still bad for races with high HD (thunderlord) */
+	    mHPLim = (50000 / ((50000 / rhp) + 20));
+	    if (mHPLim < mhp) {
+		    levD = p_ptr->lev - r_ptr->level;
+		    hpD = mhp - mHPLim;
+		    if (levD < 0) levD = 0;
+		    mHPLim = mhp - hpD * levD / 20; /* When your form is 20 or more levels below your charlevel,
+						       you receive the full HP difference in the formula below. */
+	    }
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+#endif
+#if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
+	    mHPLim = (50000 / ((50000 / rhp) + 20));
+	    long levD, hpD, raceHPbonus;
+
+	    raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
+	    mhp -= raceHPbonus;
+	    if (mHPLim < mhp) {
+		    levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
+		    if (levD < 0) levD = 0;
+		    if (levD > 20) levD = 20;
+		    hpD = mhp - mHPLim;
+		    mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
+						       you receive the full HP difference in the formula below. */
+	    }
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+	    finalHP += raceHPbonus;
+#endif
+
 	    /* done */
 	    mhp = finalHP;
 	}
@@ -1378,6 +1522,18 @@ void calc_hitpoints(int Ind)
 	{
 	/* commented out (evileye for power) */
 	/*	mhp += p_ptr->msp * 2 / 3; */
+	}
+
+	/* Fixed Hit Point Bonus */
+	if (!is_admin(p_ptr) && p_ptr->to_hp > 200) p_ptr->to_hp = 200;
+	if (mhp > mhp_playerform) {
+		/* Reduce the use for mimics (while in monster-form) */
+		if (p_ptr->to_hp > 0)
+			mhp += (mhp_playerform * p_ptr->to_hp) / mhp;
+		else
+			mhp += p_ptr->to_hp;
+	} else {
+		mhp += p_ptr->to_hp;
 	}
 
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
@@ -1475,10 +1631,11 @@ static void calc_torch(int Ind)
 	{
 		/* Reduce the lite radius if needed */
 		if (p_ptr->cur_lite > 1) p_ptr->cur_lite = 1;
+		if (p_ptr->cur_vlite > 1) p_ptr->cur_vlite = 1;
 	}
 
 	/* Notice changes in the "lite radius" */
-	if (p_ptr->old_lite != p_ptr->cur_lite)
+	if ((p_ptr->old_lite != p_ptr->cur_lite) || (p_ptr->old_vlite != p_ptr->cur_vlite))
 	{
 		/* Update the lite */
 		p_ptr->update |= (PU_LITE);
@@ -1488,6 +1645,7 @@ static void calc_torch(int Ind)
 
 		/* Remember the old lite */
 		p_ptr->old_lite = p_ptr->cur_lite;
+		p_ptr->old_vlite = p_ptr->cur_vlite;
 	}
 }
 
@@ -1519,7 +1677,8 @@ static void calc_body_bonus(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int n, d, i, j, immunities = 0, immunity[7], immrand[3]; //, toac = 0, body = 0;
+	int n, d, immunities = 0, immunity[7], immrand[3]; //, toac = 0, body = 0;
+	int i, j;
 	bool wepless = FALSE;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	
@@ -1566,10 +1725,17 @@ static void calc_body_bonus(int Ind)
 	}
 	d /= 4;
 	
-	/* Apply STR bonus/malus, derived from form damage */
+	/* Apply STR bonus/malus, derived from form damage and race */
 	if (d == 0) d = 1;
 	/* 0..147 (greater titan) -> 0..5 -> -1..+4 */
-	p_ptr->stat_add[A_STR] += (((15000 / ((15000 / d) + 50)) / 29) - 1);
+	i = (((15000 / ((15000 / d) + 50)) / 29) - 1);
+	if (strstr(r_name + r_ptr->name, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
+	if (r_ptr->flags3 & RF3_TROLL) i+=1;
+	if (r_ptr->flags3 & RF3_GIANT) i+=1;
+	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(r_name + r_ptr->name, "Mature ") ||
+	    (r_ptr->d_char == 'D')))
+		i+=1; /* only +1 since more bonus is coming from its damage already */
+	p_ptr->stat_add[A_STR] += i;
 
 #if 0
 	if (n == 0) n = 1;
@@ -1617,14 +1783,19 @@ static void calc_body_bonus(int Ind)
 	if (r_ptr->speed < 110)
 	{
 		/* let slowdown not be that large that players will never try that form */
-		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 30) / 100);
+		p_ptr->pspeed = 110 - (((110 - r_ptr->speed) * 20) / 100);
 	}
 	else
 	{
 		/* let speed bonus not be that high that players won't try any slower form */
-		p_ptr->pspeed = (((r_ptr->speed - 110) * 50) / 100) + 110;
+		//p_ptr->pspeed = (((r_ptr->speed - 110) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
+		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
+		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves 
+		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
+		p_ptr->pspeed = (((r_ptr->speed - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
 
+#if 0 /* Should forms affect your searching/perception skills? Probably not. */
 #if 0
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh /= 2;
@@ -1640,6 +1811,7 @@ static void calc_body_bonus(int Ind)
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos += r_ptr->aaf / 20 - 5;
 #endif
+#endif
 
 	/* Stealth ability is influenced by weight (-> size) of the monster */
 	if (r_ptr->weight <= 500) p_ptr->skill_stl += 2;
@@ -1653,14 +1825,26 @@ static void calc_body_bonus(int Ind)
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
 	/* Extra fire if good archer */
-	if ((r_ptr->flags4 & RF4_ARROW_1) &&
+	/*  1_IN_1  -none-
+	    1_IN_2  Grandmaster Thief
+	    1_IN_3  Halfling Slinger, Ranger Chieftain
+	    1_IN_4  Ranger
+	*/
+	if ((r_ptr->flags4 & (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3)) &&	/* 1=BOW,2=XBOW,3=SLING; 4=generic missile */
 	    (p_ptr->inventory[INVEN_BOW].k_idx) && (p_ptr->inventory[INVEN_BOW].tval == TV_BOW))
 	{
-		p_ptr->num_fire++;	// Free
-		if (r_ptr->freq_inate > 30) p_ptr->num_fire++;	// 1_IN_3 (ranger 1/4, chieftain 1/3)
-/*		if (r_ptr->freq_inate == 100) p_ptr->num_fire++;	// 1_IN_1
-   this doesnt occur anyways, and grand master thief (1_IN_2) would already be too powerful
-   if 1_IN_1 gets lowered to that.. */
+#if 0 /* normal way to handle xbow <-> sling/bow shot frequency */
+		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
+		if (r_ptr->freq_inate > 30) p_ptr->num_fire++; /* this time for crossbows too */
+#else /* give xbow an advantage */
+		if (r_ptr->freq_inate > 30) 
+		if ((p_ptr->inventory[INVEN_BOW].sval == SV_SLING) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_SHORT_BOW) ||
+		    (p_ptr->inventory[INVEN_BOW].sval == SV_LONG_BOW)) p_ptr->num_fire++;
+		p_ptr->num_fire++; /* this time for crossbows too */
+#endif
 	}
 
 	/* Extra casting if good spellcaster */
@@ -1764,11 +1948,10 @@ static void calc_body_bonus(int Ind)
 			p_ptr->pspeed -= 2;
 			p_ptr->sensible_fire = TRUE;
 			p_ptr->resist_water = TRUE;
-
-			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
-
+/* not form-dependant:			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE; */
 			p_ptr->can_swim = TRUE; /* wood? */
 			p_ptr->pass_trees = TRUE;
+			break;
 		}
 		
 		/* Ghosts get additional boni - undead see below */
@@ -1927,6 +2110,14 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags9 & RF9_RES_FIRE) p_ptr->resist_fire = TRUE;
 	if(r_ptr->flags9 & RF9_RES_COLD) p_ptr->resist_cold = TRUE;
 	if(r_ptr->flags9 & RF9_RES_POIS) p_ptr->resist_pois = TRUE;
+	
+	if(r_ptr->flags3 & RF3_HURT_LITE) p_ptr->sensible_lite = TRUE;
+#if 0 /* for now let's say EVIL is a state of mind, so the mimic isn't necessarily evil */
+	if(r_ptr->flags3 & RF3_EVIL) p_ptr->sensible_good = TRUE;
+#else /* the appearence is important for damage though - let's keep it restricted to demon/undead for now */
+	if(r_ptr->flags3 & RF3_DEMON || r_ptr->flags3 & RF3_UNDEAD) p_ptr->sensible_good = TRUE;
+#endif
+	if(r_ptr->flags3 & RF3_UNDEAD) p_ptr->sensible_life = TRUE;
 
 	/* Grant a mimic a maximum of 2 immunities for now. All further immunities
 	are turned into resistances. Which ones is random. */
@@ -2004,6 +2195,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		p_ptr->resist_shard = TRUE;
 
 	if(r_ptr->flags3 & RF3_RES_TELE) p_ptr->res_tele = TRUE;
+	if(r_ptr->flags9 & RF9_IM_TELE) p_ptr->res_tele = TRUE;
 	if(r_ptr->flags3 & RF3_RES_PLAS)
 	{
 	    p_ptr->resist_fire = TRUE;
@@ -2106,7 +2298,7 @@ bool monk_heavy_armor(int Ind)
 #endif	// 0
 
 //	return (monk_arm_wgt > ( 100 + (p_ptr->lev * 4))) ;
-	return (monk_arm_wgt > 100 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
+	return (monk_arm_wgt > 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200));
 #endif
 }
 #endif	// 0
@@ -2187,19 +2379,19 @@ int calc_blows(int Ind, object_type *o_ptr)
 	player_type *p_ptr = Players[Ind];
 	int str_index, dex_index, eff_weight = o_ptr->weight;
 
-	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0;
+	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0, str_adj;
 
-	/* Weapons which are wielded 2-handed are easier to swing
+	/* Weapons which can be wielded 2-handed are easier to swing
 	   than with one hand - experimental - C. Blue */
 	if ((!p_ptr->inventory[INVEN_ARM].k_idx) &&
-	    (k_info[o_ptr->k_idx].flags4 & (TR4_COULD2H | TR4_MUST2H)))
+	    (k_info[o_ptr->k_idx].flags4 & (TR4_SHOULD2H | TR4_MUST2H | TR4_COULD2H)))
 		eff_weight = (eff_weight * 2) / 3;
 
 	/* Analyze the class */
 	switch (p_ptr->pclass)
 	{
 							/* Adevnturer */
-		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 5; break;
+		case CLASS_ADVENTURER: num = 4; wgt = 30; mul = 5; break;//wgt=35, but MA is too easy in comparison.
 //was num = 5; ; mul = 6
 							/* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
@@ -2212,6 +2404,10 @@ int calc_blows(int Ind, object_type *o_ptr)
 //was num = 5; ; 
 							/* Rogue */
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
+		/* I'm a rogue like :-o */
+#ifdef CLASS_RUNEMASTER
+		case CLASS_RUNEMASTER: num = 3; wgt = 40; mul = 4; break; 
+#endif
 
 							/* Mimic */
 		case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
@@ -2223,17 +2419,26 @@ int calc_blows(int Ind, object_type *o_ptr)
 		case CLASS_PALADIN: num = 5; wgt = 35; mul = 5; break;//mul4
 
 							/* Ranger */
-		case CLASS_RANGER: num = 5; wgt = 35; mul = 5; break;//mul4
+		case CLASS_RANGER: num = 5; wgt = 35; mul = 4; break;//mul4
 
 
-//		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break;
+		case CLASS_DRUID: num = 4; wgt = 35; mul = 4; break; 
+
+/* if he is to become a spellcaster, necro working on spell-kills:		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
+    however, then Martial Arts would require massive nerfing too for this class (or being removed even).
+otherwise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
+
+/*		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */
 	div = ((eff_weight < wgt) ? wgt : eff_weight);
 
+
 	/* Access the strength vs weight */
-	str_index = (adj_str_blow[p_ptr->stat_ind[A_STR]] * mul / div);
+	str_adj = adj_str_blow[p_ptr->stat_ind[A_STR]];
+	if (str_adj == 240) str_adj = 266; /* hack to reach 6 bpr with 400 lb weapons (max) at *** STR - C. Blue */
+	str_index = ((str_adj * mul) / div);
 
 	/* Maximal value */
 	if (str_index > 11) str_index = 11;
@@ -2299,7 +2504,7 @@ void calc_bonuses(int Ind)
         cave_type **zcave;
         if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int			i, j, hold, minus, am;
+	int			i, j, hold, minus, am, to_life = 0;
 	long			w;
 
 	int			old_speed;
@@ -2350,8 +2555,16 @@ void calc_bonuses(int Ind)
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
 
-
-	/* Clear the Displayed/Real armor class */
+	/* Druidism bonuses */
+	if (p_ptr->xtrastat > 0) {
+		p_ptr->stat_add[A_STR] = p_ptr->xstr;
+		p_ptr->stat_add[A_INT] = p_ptr->xint;
+		p_ptr->stat_add[A_DEX] = p_ptr->xdex;
+		p_ptr->stat_add[A_CON] = p_ptr->xcon;
+		p_ptr->stat_add[A_CHR] = p_ptr->xchr;
+	}
+	
+    /* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;
 
 	/* Clear the Displayed/Real Bonuses */
@@ -2385,6 +2598,7 @@ void calc_bonuses(int Ind)
 	p_ptr->telepathy = 0;
 	p_ptr->lite = FALSE;
 	p_ptr->cur_lite = 0;
+	p_ptr->cur_vlite = 0;
 	p_ptr->sustain_str = FALSE;
 	p_ptr->sustain_int = FALSE;
 	p_ptr->sustain_wis = FALSE;
@@ -2431,9 +2645,10 @@ void calc_bonuses(int Ind)
 //	p_ptr->to_s = 0;
 	p_ptr->to_m = 0;
 	p_ptr->to_l = 0;
+	p_ptr->to_hp = 0;
 	p_ptr->black_breath_tmp = FALSE;
-	p_ptr->stormbringer = FALSE;
-
+	/* hack for global events (highlander tournament) */
+	if (!(p_ptr->global_event_temp & 0x2)) p_ptr->stormbringer = FALSE;
 	/* Invisibility */
 	p_ptr->invis = 0;
 	if (!p_ptr->tim_invisibility) p_ptr->tim_invis_power = 0;
@@ -2451,6 +2666,9 @@ void calc_bonuses(int Ind)
 	p_ptr->sensible_elec = FALSE;
 	p_ptr->sensible_acid = FALSE;
 	p_ptr->sensible_pois = FALSE;
+	p_ptr->sensible_lite = FALSE;
+	p_ptr->sensible_good = FALSE;
+	p_ptr->sensible_life = FALSE;
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric = 0;
 
@@ -2508,6 +2726,26 @@ void calc_bonuses(int Ind)
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
 
+        /* Bonus +to_l from SKILL_HEALTH */
+#if 0
+	/* it's a bit too much, and doesn't feel 'smooth' at all IMHO, balance-wise :/
+	 Mainly because already strong chars can now get uber-tough - but.. see #else branch below..
+	 Also, +LIFE is mostly to give non-mimics a chance to catch up a bit to mimics,
+	 especially postking. Pre-king using a +LIFE weapon (only way) will be costly since it's
+	 a whole slot used up, which could otherwise give resistances or deal more damage from an
+	 artifact/ego weapon (archers have it easier than warriors though). */
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 30)
+	        to_life++;
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 40)
+	        to_life++;
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 50)
+	        to_life++;
+#else 
+	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
+         need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
+	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
+        p_ptr->to_hp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
+#endif
 
 	/* Calc bonus body */
 	if(p_ptr->body_monster)
@@ -2583,7 +2821,14 @@ void calc_bonuses(int Ind)
 	}
 
 	/* Yeek */
-	else if (p_ptr->prace == RACE_YEEK) p_ptr->feather_fall = TRUE;
+	else if (p_ptr->prace == RACE_YEEK) {
+		p_ptr->feather_fall = TRUE;
+		/* not while in mimicried form */
+		if(!p_ptr->body_monster)
+		{
+			p_ptr->pass_trees = TRUE;
+		}
+	}
 
 	/* Goblin */
 	else if (p_ptr->prace == RACE_GOBLIN)
@@ -2596,16 +2841,18 @@ void calc_bonuses(int Ind)
 	/* Ent */
 	else if (p_ptr->prace == RACE_ENT)
 	{
+		/* always a bit slowish */
 		p_ptr->slow_digest = TRUE;
+		/* even while in different form? */
 		p_ptr->sensible_fire = TRUE;
 		p_ptr->resist_water = TRUE;
 
 		/* not while in mimicried form */
 		if(!p_ptr->body_monster)
 		{
+			p_ptr->pspeed -= 2;
 			p_ptr->can_swim = TRUE; /* wood? */
 			p_ptr->pass_trees = TRUE;
-			p_ptr->pspeed -= 2;
 		}
 
 		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
@@ -2635,8 +2882,43 @@ void calc_bonuses(int Ind)
 		    if (p_ptr->lev >= 30) p_ptr->fly = TRUE;
 	}
 
+	/* Dark-Elves */
+        else if (p_ptr->prace == RACE_DARK_ELF)
+        {
+		p_ptr->sensible_lite = TRUE;
+//		p_ptr->sensible_good = TRUE;//maybe too harsh
+                p_ptr->resist_dark = TRUE;
+                if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+        }
+
+        /* Vampires */
+        else if (p_ptr->prace == RACE_VAMPIRE)
+        {
+		p_ptr->sensible_lite = TRUE;
+		p_ptr->sensible_good = TRUE;
+		p_ptr->sensible_life = TRUE;
+                p_ptr->resist_dark = TRUE;
+                p_ptr->resist_neth = TRUE;
+                p_ptr->resist_pois = TRUE;
+                p_ptr->resist_cold = TRUE;
+                p_ptr->hold_life = TRUE;
+                p_ptr->vampiric = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+		/* damage from sun light */
+		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
+		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING)) p_ptr->drain_life++;
+		/* sense surroundings without light source! (virtual lite / dark light) */
+		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
+//		if (p_ptr->lev >= 30) p_ptr->fly = TRUE; can poly into bat instead
+        }
+
 	if (p_ptr->pclass == CLASS_RANGER)
 	    if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
+
+	if (p_ptr->pclass == CLASS_SHAMAN)
+	    if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+	
+	if (p_ptr->pclass == CLASS_DRUID)
+	    if (p_ptr->lev >= 10) p_ptr->pass_trees = TRUE;
 
 	/* Check ability skills */
 	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) p_ptr->climb = TRUE;
@@ -2648,7 +2930,7 @@ void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
-		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 40);
+		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 30);
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 	}
 
@@ -2721,6 +3003,13 @@ void calc_bonuses(int Ind)
 		p_ptr->inven_cnt++;
 		p_ptr->total_weight += o_ptr->weight * o_ptr->number;
 	}
+    
+	/* Apply the bonus from Druidism */
+	p_ptr->to_h += p_ptr->focus_val;
+	p_ptr->dis_to_h += p_ptr->focus_val;
+
+	p_ptr->to_h_ranged += p_ptr->focus_val; 
+	p_ptr->dis_to_h_ranged += p_ptr->focus_val; 
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
@@ -2797,7 +3086,7 @@ void calc_bonuses(int Ind)
 
 	                /* Affect mana capacity */
     	        	if (f1 & (TR1_MANA)) {
-				if ((f4 & TR4_COULD2H) &&
+				if ((f4 & TR4_SHOULD2H) &&
 				    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
 					p_ptr->to_m += (o_ptr->bpval * 20) / 3;
 				else
@@ -2806,7 +3095,9 @@ void calc_bonuses(int Ind)
 
     	        	/* Affect life capacity */
         	        if (f1 & (TR1_LIFE))
-				if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->bpval;
+				if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+				    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
+				    (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->bpval;
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK)
@@ -2823,7 +3114,9 @@ void calc_bonuses(int Ind)
 		   pval should contain life bonus, bpval stealth. */
 /*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
 		if (f1 & (TR1_LIFE))
-			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level))
+			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
+			    (p_ptr->lev >= o_ptr->level))
 		{
 /*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||
 			    (o_ptr->pval > 0 && o_ptr->bpval < 0)) {*/
@@ -2865,6 +3158,20 @@ void calc_bonuses(int Ind)
 			}
 		}
 
+#if 0 /* now done in xtra1.c, process_global_event() */
+		/* HACK - Amulet of Highlands activates pkill - mikaelh */
+		if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
+			p_ptr->stormbringer = TRUE; /* let's make it similiar to Stormbringer */
+			if (cfg.use_pk_rules == PK_RULES_DECLARE)
+			{
+				p_ptr->pkill|=PKILL_KILLABLE;
+				if (!(p_ptr->pkill & PKILL_KILLER) &&
+							!(p_ptr->pkill & PKILL_SET))
+						set_pkill(Ind, 50);
+			}
+		}
+#endif
+
 		if (o_ptr->name1 == ART_RANDART)
 		{
 			artifact_type *a_ptr;
@@ -2892,7 +3199,7 @@ void calc_bonuses(int Ind)
 
                 /* Affect mana capacity */
                 if (f1 & (TR1_MANA)) {
-			if ((f4 & TR4_COULD2H) &&
+			if ((f4 & TR4_SHOULD2H) &&
 			    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
 				p_ptr->to_m += (pval * 20) / 3;
 			else
@@ -2901,7 +3208,10 @@ void calc_bonuses(int Ind)
 
                 /* Affect life capacity */
                 if (f1 & (TR1_LIFE))
-			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner || (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->pval;
+			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
+			    (p_ptr->lev >= o_ptr->level))
+				p_ptr->to_l += o_ptr->pval;
 
 		/* Affect stealth */
 		if (f1 & TR1_STEALTH) p_ptr->skill_stl += pval;
@@ -2979,7 +3289,7 @@ void calc_bonuses(int Ind)
 				}
 			}
 		}
-		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp = 1;
+		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp++;
                 if (f5 & (TR5_DRAIN_MANA)) p_ptr->drain_mana++;
                 if (f5 & (TR5_DRAIN_HP)) p_ptr->drain_life++;
 		if (f5 & (TR5_INVIS)){
@@ -3016,6 +3326,18 @@ void calc_bonuses(int Ind)
 
 			p_ptr->cur_lite += j;
 			if (j && !(f4 & TR4_FUEL_LITE)) p_ptr->lite = TRUE;
+		}
+
+		/* powerful lights and anti-undead/evil items damage vampires */
+		if (p_ptr->prace == RACE_VAMPIRE && !cursed_p(o_ptr)) {
+			if (j) { /* light sources */
+				if ((j > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+				    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
+					p_ptr->drain_life++;
+			} else {
+				if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_UNDEAD))
+					p_ptr->drain_life++;
+			}
 		}
 
 		/* Immunity flags */
@@ -3067,7 +3389,18 @@ void calc_bonuses(int Ind)
 			}
 		}
                 if (f4 & (TR4_FLY)) p_ptr->fly = TRUE;
-                if (f4 & (TR4_CLIMB)) p_ptr->climb = TRUE;
+                if (f4 & (TR4_CLIMB)) {
+			/* hack: climbing kit is made for humanoids, so it won't work for other forms! */
+			if (o_ptr->tval != TV_TOOL || o_ptr->sval != SV_TOOL_CLIMB || !p_ptr->body_monster)
+				p_ptr->climb = TRUE; /* item isn't a climbing kit or player is in normal @ form */
+#if 0
+			else if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_DRAGONRIDER)) || (strchr("hkptyuVsLW", r_ptr->d_char)))
+				p_ptr->climb = TRUE; /* only for normal-sized humanoids (well..trolls, would be unfair to half-trolls) */
+#else
+			else if (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_ARMS])
+				p_ptr->climb = TRUE; /* everyone with arms and fingers may use it. ok? */
+#endif
+		}
                 if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
 		if (f5 & (TR5_REFLECT)) p_ptr->reflect = TRUE;
 		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
@@ -3129,6 +3462,15 @@ void calc_bonuses(int Ind)
 		/* Generally vampiric? */
 		if (f1 & TR1_VAMPIRIC) p_ptr->vampiric = -1;
 
+		/* Hack MHDSM: */
+		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
+			if (o_ptr->xtra2 & 0x01) p_ptr->immune_fire = TRUE;
+			if (o_ptr->xtra2 & 0x02) p_ptr->immune_cold = TRUE;
+			if (o_ptr->xtra2 & 0x04) p_ptr->immune_elec = TRUE;
+			if (o_ptr->xtra2 & 0x08) p_ptr->immune_acid = TRUE;
+			if (o_ptr->xtra2 & 0x10) p_ptr->immune_poison = TRUE;
+		}
+
 		/* Apply the bonuses to hit/damage */
 		p_ptr->to_h += o_ptr->to_h;
 		p_ptr->to_d += o_ptr->to_d;
@@ -3138,6 +3480,10 @@ void calc_bonuses(int Ind)
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
 
 	}
+	
+	/* calculate higher to-life bonus from items / skills (non-stacking!) */
+	if (p_ptr->to_l < 0) p_ptr->to_l += to_life;
+	else if (p_ptr->to_l < to_life) p_ptr->to_l = to_life;
 
 	/* Hard/Hellish mode also gives mana penalty */
 	if (p_ptr->mode & MODE_HELL) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
@@ -3225,233 +3571,6 @@ void calc_bonuses(int Ind)
 		}
 	}
 
-#if 0 // DGDGDGDG -- skill powa !
-	switch(p_ptr->pclass)
-	{
-		case CLASS_MONK:
-			/* Unencumbered Monks become faster every 10 levels */
-			if (!(monk_heavy_armor(Ind)))
-				p_ptr->pspeed += (p_ptr->lev) / 10;
-
-			/* Free action if unencumbered at level 25 */
-			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
-				p_ptr->free_act = TRUE;
-			break;
-
-			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
-			 * this may be out of place, but.... */
-	
-		case CLASS_ROGUE:
-			p_ptr->pspeed += p_ptr->lev / 6;
-			break;
-	}
-#else	// 0
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
-	{
-		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 6);
-
-		if (k)
-		{
-			/* Extract the current weight (in tenth pounds) */
-			w = p_ptr->total_weight;
-
-			/* Extract the "weight limit" (in tenth pounds) */
-			i = weight_limit(Ind);
-
-			/* XXX XXX XXX Apply "encumbrance" from weight */
-			if (w> i/5) k -= ((w - (i/5)) / (i / 10));
-
-			/* Assume unencumbered */
-			p_ptr->cumber_weight = FALSE;
-
-			if (k > 0)
-			{
-				/* Feather Falling if unencumbered at level 10 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
-					p_ptr->feather_fall = TRUE;
-
-				/* Fear Resistance if unencumbered at level 15 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 14)
-					p_ptr->resist_fear = TRUE;
-
-				/* Confusion Resistance if unencumbered at level 20 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
-					p_ptr->resist_conf = TRUE;
-
-				/* Free action if unencumbered at level 25 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
-					p_ptr->free_act = TRUE;
-
-				/* Swimming if unencumbered at level 30 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 29)
-					p_ptr->can_swim = TRUE;
-
-				/* Climbing if unencumbered at level 40 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 39)
-					p_ptr->climb = TRUE;
-
-				/* Flying if unencumbered at level 50 */
-				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
-					p_ptr->fly = TRUE;
-
-				if (((!p_ptr->inventory[INVEN_ARM].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight < 100)) &&
-				    ((!p_ptr->inventory[INVEN_BOW].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_BOW].k_idx].weight < 150)) &&
-				    ((!p_ptr->inventory[INVEN_WIELD].k_idx) ||
-				    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight < 150)))
-				{
-					/* give a speed bonus */
-					p_ptr->pspeed += k;
-
-					/* give a stealth bonus */
-					p_ptr->skill_stl += k;
-				}
-			}
-			else
-			{
-			    p_ptr->cumber_weight = TRUE;
-			}
-			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight)
-			{
-				if (p_ptr->cumber_weight)
-				{
-					msg_print(Ind, "\377RYou can't move freely due to your backpack weight.");
-
-				}
-				else
-				{
-					msg_print(Ind, "\377gYour backpack is very comfortable to wear.");
-				}
-				p_ptr->old_cumber_weight = p_ptr->cumber_weight;
-			}
-		}
-
-		/* Monks get extra ac for wearing very light or no armour at all */
-		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
-			!p_ptr->inventory[INVEN_WIELD].k_idx &&
-			!p_ptr->cumber_weight)
-		{
-			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
-			int martsbonus, martsweight, martscapacity;
-			
-			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_BODY].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 80);
-			if (!(p_ptr->inventory[INVEN_BODY].k_idx))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if (martsweight <= martscapacity){
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-
-			martsbonus = ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_OUTER].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 40);
-			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if ((martsweight <= martscapacity) && (marts > 15)) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-
-			martsbonus = ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_ARM].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 30);
-			if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if ((martsweight <= martscapacity) && (marts > 10)) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-
-			martsbonus = (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_HEAD].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
-			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if ((martsweight <= martscapacity) && (marts > 4)) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-
-			martsbonus = (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_HANDS].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 20);
-			if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if (martsweight <= martscapacity) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-
-			martsbonus = (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			martsweight = p_ptr->inventory[INVEN_FEET].weight;
-			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 45);
-			if (!(p_ptr->inventory[INVEN_FEET].k_idx))
-			{
-				p_ptr->to_a += martsbonus;
-				p_ptr->dis_to_a += martsbonus;
-			} else if (martsweight <= martscapacity) {
-				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
-			}
-		}
-	}
-
-	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
-	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
-#endif	// 0
-
-#if 0 // DGDGDGDGDG - no monks ffor the time being
-	/* Monks get extra ac for armour _not worn_ */
-//	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
-		!(p_ptr->inventory[INVEN_BOW].k_idx))
-	{
-		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
-		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
-		{
-			p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
-		{
-			p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
-		{
-			p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
-		{
-			p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
-		{
-			p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-		if (!(p_ptr->inventory[INVEN_FEET].k_idx))
-		{
-			p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-			p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
-		}
-	}
-#endif
 
 	/* Apply temporary "stun" */
 	if (p_ptr->stun > 50)
@@ -3672,44 +3791,280 @@ void calc_bonuses(int Ind)
 		}
 	}
 
-	if (p_ptr->mode & MODE_HELL && p_ptr->pspeed > 110)
+
+#if 0 /* done in calc_mana atm, can be changed anytime though */
+        /* Assume player not encumbered by armor */
+        p_ptr->awkward_armor = FALSE;
+        /* Heavy armor penalizes mana */
+        if (((armour_weight(p_ptr) - (200 + get_skill_scale(p_ptr, SKILL_COMBAT, 500))) / 10) > 0)
+        {
+                /* Encumbered */
+                p_ptr->awkward_armor = TRUE;
+        }
+#endif
+        /* Assume player not encumbered by armor */
+        p_ptr->cumber_armor = FALSE;
+        /* Heavy armor penalizes to-hit and sneakiness speed */
+        if (((armour_weight(p_ptr) - (100 + get_skill_scale(p_ptr, SKILL_COMBAT, 300) + adj_str_hold[p_ptr->stat_ind[A_STR]] * 6)) / 10) > 0)
+        {
+                /* Encumbered */
+                p_ptr->cumber_armor = TRUE;
+        }
+
+
+#if 0 // DGDGDGDG -- skill powa !
+	switch(p_ptr->pclass)
 	{
-		int speed = p_ptr->pspeed - 110;
+		case CLASS_MONK:
+			/* Unencumbered Monks become faster every 10 levels */
+			if (!(monk_heavy_armor(Ind)))
+				p_ptr->pspeed += (p_ptr->lev) / 10;
 
-		speed /= 2;
+			/* Free action if unencumbered at level 25 */
+			if  ((p_ptr->lev > 24) && !(monk_heavy_armor(Ind)))
+				p_ptr->free_act = TRUE;
+			break;
 
-		p_ptr->pspeed = speed + 110;
+			/* -APD- Hack -- rogues +1 speed at 5,20,35,50.
+			 * this may be out of place, but.... */
+	
+		case CLASS_ROGUE:
+			p_ptr->pspeed += p_ptr->lev / 6;
+			break;
+	}
+#else	/* 0 */
+	p_ptr->monk_heavyarmor = monk_heavy_armor(p_ptr);
+	if (p_ptr->old_monk_heavyarmor != p_ptr->monk_heavyarmor) {
+		if (p_ptr->monk_heavyarmor)
+		{
+			msg_print(Ind, "\377oThe weight of your armor strains your martial arts performance.");
+		}
+		else
+		{
+			msg_print(Ind, "\377gYour armor is comfortable for using martial arts.");
+		}
+		p_ptr->old_monk_heavyarmor = p_ptr->monk_heavyarmor;
+	}
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
+	{
+		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 6);
+
+		if (k)
+		{
+			/* Extract the current weight (in tenth pounds) */
+			w = p_ptr->total_weight;
+
+			/* Extract the "weight limit" (in tenth pounds) */
+			i = weight_limit(Ind);
+
+			/* XXX XXX XXX Apply "encumbrance" from weight */
+			if (w> i/5) k -= ((w - (i/5)) / (i / 10));
+
+			/* Assume unencumbered */
+			p_ptr->cumber_weight = FALSE;
+
+			if (k > 0)
+			{
+				/* Feather Falling if unencumbered at level 10 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 9)
+					p_ptr->feather_fall = TRUE;
+
+				/* Fear Resistance if unencumbered at level 15 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 14)
+					p_ptr->resist_fear = TRUE;
+
+				/* Confusion Resistance if unencumbered at level 20 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 19)
+					p_ptr->resist_conf = TRUE;
+
+				/* Free action if unencumbered at level 25 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 24)
+					p_ptr->free_act = TRUE;
+
+				/* Swimming if unencumbered at level 30 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 29)
+					p_ptr->can_swim = TRUE;
+
+				/* Climbing if unencumbered at level 40 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 39)
+					p_ptr->climb = TRUE;
+
+				/* Flying if unencumbered at level 50 */
+				if  (get_skill(p_ptr, SKILL_MARTIAL_ARTS) > 49)
+					p_ptr->fly = TRUE;
+
+				if (((!p_ptr->inventory[INVEN_ARM].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_ARM].k_idx].weight < 100)) &&
+				    ((!p_ptr->inventory[INVEN_BOW].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_BOW].k_idx].weight < 150)) &&
+				    ((!p_ptr->inventory[INVEN_WIELD].k_idx) ||
+				    (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].weight < 150)))
+				{
+					/* give a speed bonus */
+					p_ptr->pspeed += k;
+
+					/* give a stealth bonus */
+					p_ptr->skill_stl += k;
+				}
+			}
+			else
+			{
+			    p_ptr->cumber_weight = TRUE;
+			}
+			if (p_ptr->old_cumber_weight != p_ptr->cumber_weight)
+			{
+				if (p_ptr->cumber_weight)
+				{
+					msg_print(Ind, "\377RYou can't move freely due to your backpack weight.");
+
+				}
+				else
+				{
+					msg_print(Ind, "\377gYour backpack is very comfortable to wear.");
+				}
+				p_ptr->old_cumber_weight = p_ptr->cumber_weight;
+			}
+		}
+
+		/* Monks get extra ac for wearing very light or no armour at all */
+		if (!p_ptr->inventory[INVEN_BOW].k_idx &&
+			!p_ptr->inventory[INVEN_WIELD].k_idx &&
+			!p_ptr->cumber_weight)
+		{
+			int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
+			int martsbonus, martsweight, martscapacity;
+			
+			martsbonus = (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_BODY].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 80);
+			if (!(p_ptr->inventory[INVEN_BODY].k_idx))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity){
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+
+			martsbonus = ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_OUTER].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 40);
+			if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 15)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+
+			martsbonus = ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_ARM].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 30);
+			if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 10)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+
+			martsbonus = (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_HEAD].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
+			if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if ((martsweight <= martscapacity) && (marts > 4)) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+
+			martsbonus = (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_HANDS].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 20);
+			if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+
+			martsbonus = (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			martsweight = p_ptr->inventory[INVEN_FEET].weight;
+			martscapacity = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 45);
+			if (!(p_ptr->inventory[INVEN_FEET].k_idx))
+			{
+				p_ptr->to_a += martsbonus;
+				p_ptr->dis_to_a += martsbonus;
+			} else if (martsweight <= martscapacity) {
+				p_ptr->to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+				p_ptr->dis_to_a += (martsbonus * (martscapacity - martsweight) / martscapacity);
+			}
+		}
 	}
 
-	/* Display the speed (if needed) */
-	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
+#endif	// 0
 
+#if 0 // DGDGDGDGDG - no monks ffor the time being
+	/* Monks get extra ac for armour _not worn_ */
+//	if ((p_ptr->pclass == CLASS_MONK) && !(monk_heavy_armor(Ind)))
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !(monk_heavy_armor(p_ptr)) &&
+		!(p_ptr->inventory[INVEN_BOW].k_idx))
+	{
+		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 60);
+		if (!(p_ptr->inventory[INVEN_BODY].k_idx))
+		{
+			p_ptr->to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts * 3) / 2 * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+		if (!(p_ptr->inventory[INVEN_OUTER].k_idx) && (marts > 15))
+		{
+			p_ptr->to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += ((marts - 13) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+		if (!(p_ptr->inventory[INVEN_ARM].k_idx) && (marts > 10))
+		{
+			p_ptr->to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += ((marts - 8) / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+		if (!(p_ptr->inventory[INVEN_HEAD].k_idx)&& (marts > 4))
+		{
+			p_ptr->to_a += (marts - 2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts -2) / 3 * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+		if (!(p_ptr->inventory[INVEN_HANDS].k_idx))
+		{
+			p_ptr->to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts / 2) * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+		if (!(p_ptr->inventory[INVEN_FEET].k_idx))
+		{
+			p_ptr->to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+			p_ptr->dis_to_a += (marts / 3) * MARTIAL_ARTS_AC_ADJUST / 100;
+		}
+	}
+#endif
 
-	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
-//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
-
-	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
-	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
-
-	/* Modify ranged weapon boni. DEX now very important for to_hit */
-//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
-	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {
-		body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
-			+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
-			+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
-			+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
+		if (p_ptr->pclass == CLASS_DRUID)
+			body = 1 + 3 + 0 + 0; /* 0 1 0 2 1 0 = typical ANIMAL pattern,
+						need to hardcode it here to balance
+						'Spectral tyrannosaur' form especially.
+						(weap, tors, arms, finger, head, leg) */
+		else if ((p_ptr->pclass == CLASS_SHAMAN) && strchr("EG", r_ptr->d_char))
+			body = 1 + 3 + 2 + 1; /* they can wear all items even in these 000000 forms! */
+		else /* normal mimicry */
+			body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
+				+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
+				+ (r_ptr->body_parts[BODY_ARMS] ? 2 : 0)
+				+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
 		toac = r_ptr->ac * 14 / (7 + body);
 		/* p_ptr->ac += toac;
@@ -3814,9 +4169,29 @@ void calc_bonuses(int Ind)
 			p_ptr->to_h_ranged += get_skill_scale(p_ptr, archery, 25);
 			/* the "xtra_might" adds damage for specifics */
 			p_ptr->to_d_ranged += get_skill_scale(p_ptr, SKILL_ARCHERY, 10);
+#if 0 /* new, since RPG_SERVER - C. Blue */
 			/* Isn't 4 shots/turn too small? Not with art ammo */
 			p_ptr->num_fire += (get_skill(p_ptr, archery) / 16);
 //				+ get_skill_scale(p_ptr, SKILL_ARCHERY, 1);
+#else
+			switch(archery){
+			case SKILL_SLING:
+				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 100;
+				break;
+			case SKILL_BOW:
+				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 125;
+				break;
+			case SKILL_XBOW:
+				p_ptr->num_fire += get_skill_scale(p_ptr, archery, 500) / 250;
+				p_ptr->xtra_might += get_skill_scale(p_ptr, archery, 500) / 250;
+				break;
+			case SKILL_BOOMERANG:
+				if (get_skill_scale(p_ptr, archery, 500) >= 500) p_ptr->num_fire++;
+				if (get_skill_scale(p_ptr, archery, 500) >= 333) p_ptr->num_fire++;
+				if (get_skill_scale(p_ptr, archery, 500) >= 166) p_ptr->num_fire++;
+				break;
+			}
+#endif
 			p_ptr->xtra_might += (get_skill(p_ptr, archery) / 50);
 			/* Boomerang-mastery directly increases damage! - C. Blue */
 			if (archery == SKILL_BOOMERANG)
@@ -3846,16 +4221,18 @@ void calc_bonuses(int Ind)
 
 		/* Add in the "bonus shots" */
 		p_ptr->num_fire += extra_shots;
-
+	
 		/* Require at least one shot */
 		if (p_ptr->num_fire < 1) p_ptr->num_fire = 1;
-#ifndef RPG_SERVER	//spr cap doesn't make sense in the RPG server
-		/* Cap shots per round at 5 */
-		if (p_ptr->num_fire > 5) p_ptr->num_fire = 5;
 
+/* Turn off the spr cap in rpg? -the_sandman */
+		/* Cap shots per round at 5 */
+/*		if (p_ptr->num_fire > 5) p_ptr->num_fire = 5;
+*/
 		/* Other classes than archer or ranger have cap at 4 - the_sandman and mikaelh */
-		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
-#endif
+/*		if (p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RANGER && p_ptr->num_fire > 4) p_ptr->num_fire = 4;
+*/
+
 	}
 
 	/* Add in the "bonus spells" */
@@ -3923,14 +4300,15 @@ void calc_bonuses(int Ind)
 		int marts = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 50);
 		p_ptr->num_blow = 0;
 
-		if (marts > 1) p_ptr->num_blow++;	//booster for MA
+		/*the_sandman for the RPG server (might as well stay for all servers ^^ - C. Blue) */
+		if (marts >  0) p_ptr->num_blow++;
 		if (marts >  9) p_ptr->num_blow++;
 		if (marts > 19) p_ptr->num_blow++;
 		if (marts > 29) p_ptr->num_blow++;
-		if (marts > 34) p_ptr->num_blow++;
+//		if (marts > 34) p_ptr->num_blow++; /* this is 'marts > 0' now */
 		if (marts > 39) p_ptr->num_blow++;
 		if (marts > 44) p_ptr->num_blow++;
-//		if (marts > 49) p_ptr->num_blow++;
+		if (marts > 49) p_ptr->num_blow++;	/* Do we want 9ea from MA? certainly not. */
 
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
@@ -3944,18 +4322,51 @@ void calc_bonuses(int Ind)
 			p_ptr->dis_to_h += (marts / 3) * 2;
 			p_ptr->dis_to_d += (marts / 3);
 */
-			p_ptr->to_h_melee += marts;
-			p_ptr->to_d_melee += (marts / 4);/* was 3, experimental */
-
-			// booster for MA's toHit
+			p_ptr->to_h_melee += marts*3/2; 	
+			/* the_sandman: needs to be played out properly.. */
+			/* the new addition. max dex (40) -> 90 to_h base.. decent imo */
+			/* DEX influence the to hit. lets make every 5 dex -> +1 toHit */
 			p_ptr->to_h_melee += (int)((p_ptr->stat_cur[A_DEX])/5);
-			
-			/* Booster for MA's toDmg. Non-mimicing class do NOT get the +todmg bonus */
-			if (p_ptr->pclass != CLASS_MIMIC) p_ptr->to_d_melee+=(marts/2);
-			
+			p_ptr->to_d_melee += (marts / 3);/* was 3, experimental 
+							    was 4, too low w/o mimicry for decent forms -,- reverted back to 3. the_sandman */
+			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
+			/* Lowered to marts/2 */
+			/* changed by C. Blue, so it's available to mimics too */
+			p_ptr->to_d_melee+=20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
 		}
+		
+		/* At least +1, max. +3 */
+		if (p_ptr->zeal) p_ptr->num_blow += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+	}
+	else /* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
+	{
+		if (p_ptr->cumber_armor && (p_ptr->to_h_melee > 0)) p_ptr->to_h_melee = (p_ptr->to_h_melee * 2) / 3;
 	}
 #endif
+
+//	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
+	else p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
+
+#ifdef CLASS_RUNEMASTER
+	/* Add the buffs bonuses here */
+	p_ptr->pspeed += p_ptr->rune_speed; 
+	p_ptr->skill_stl += p_ptr->rune_stealth;
+	p_ptr->see_infra += p_ptr->rune_IV;
+	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
+#endif
+	if (p_ptr->mode & MODE_HELL && p_ptr->pspeed > 110)
+	{
+		int speed = p_ptr->pspeed - 110;
+
+		speed /= 2;
+
+		p_ptr->pspeed = speed + 110;
+	}
+
+	/* Display the speed (if needed) */
+	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
+
 
 	/* Hell mode is HARD */
 	if ((p_ptr->mode & MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
@@ -3970,8 +4381,13 @@ void calc_bonuses(int Ind)
 	{
 		int lev = get_skill_scale(p_ptr, SKILL_COMBAT, 10);
 
+#if 0
+                p_ptr->dis_to_h += lev;
 		p_ptr->to_h += lev;
-		p_ptr->dis_to_h += lev;
+#else /* reason for this is that DEX has influence on combat +hit bonus! (only affects h_melee and h_ranged, not to_h */
+                p_ptr->to_h_melee += lev;
+                p_ptr->to_h_ranged += lev;
+#endif
 
 /*		if (o_ptr->k_idx) {
 			p_ptr->to_d += lev;
@@ -4025,6 +4441,8 @@ void calc_bonuses(int Ind)
 	/* Assume okay */
 	p_ptr->icky_wield = FALSE;
 	p_ptr->awkward_wield = FALSE;
+	p_ptr->easy_wield = FALSE;
+	p_ptr->awkward_shoot = FALSE;
 
 	/* 2handed weapon and shield = less damage */
 //	if (inventory[INVEN_WIELD + i].k_idx && inventory[INVEN_ARM + i].k_idx)
@@ -4033,7 +4451,7 @@ void calc_bonuses(int Ind)
 		/* Extract the item flags */
 		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
 
-		if (f4 & TR4_COULD2H)
+		if (f4 & TR4_SHOULD2H)
 		{                
 			/* Reduce the real bonuses */
 			if (p_ptr->to_h > 0) p_ptr->to_h = (2 * p_ptr->to_h) / 3;
@@ -4049,6 +4467,20 @@ void calc_bonuses(int Ind)
 
 			p_ptr->awkward_wield = TRUE;
 		}
+	}
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && !p_ptr->inventory[INVEN_ARM].k_idx) {
+		object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
+		if (f4 & TR4_COULD2H) {
+			p_ptr->easy_wield = TRUE;
+		}
+	}
+
+	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
+	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_ARM].k_idx)
+	{
+		/* can't aim well while carrying a shield on the arm! */
+		p_ptr->to_h_ranged /= 2;
+		p_ptr->awkward_shoot = TRUE;
 	}
 
 	/* Priest weapon penalty for non-blessed edged weapons */
@@ -4140,6 +4572,35 @@ void calc_bonuses(int Ind)
 		(((p_ptr->dis_to_d * 1) + (d * 1)) / 2);	*/
 	}
 
+
+	/* Actual Modifier Bonuses (Un-inflate stat bonuses) */
+	p_ptr->to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+	p_ptr->to_d_melee += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+#if 0 /* addition */
+	p_ptr->to_h_melee += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) */
+	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+#endif
+	p_ptr->to_h_melee += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+
+	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
+	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+
+	/* Modify ranged weapon boni. DEX now very important for to_hit */
+//	p_ptr->to_h_ranged += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+#if 0 /* addition */
+	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+#else /* multiplication (percent) */
+	p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+#endif
+
+
 	/* Redraw plusses to hit/damage if necessary */
 	if ((p_ptr->dis_to_h != old_dis_to_h) || (p_ptr->dis_to_d != old_dis_to_d))
 	{
@@ -4186,10 +4647,10 @@ void calc_bonuses(int Ind)
 	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 
 	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 5)) + get_skill(p_ptr, SKILL_SNEAKINESS);
+	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 5));// + get_skill(p_ptr, SKILL_SNEAKINESS);
+	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
 
 
 #endif	// 0
@@ -4224,7 +4685,6 @@ void calc_bonuses(int Ind)
 #endif	// 0
 
 
-
 	/* Knowledge in magic schools can give permanent extra boni */
 	/* - SKILL_EARTH gives resistance in earthquake() */
 	if (get_skill(p_ptr, SKILL_EARTH) >= 30) p_ptr->resist_shard = TRUE;
@@ -4257,7 +4717,6 @@ void calc_bonuses(int Ind)
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
 
 
-
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
@@ -4278,15 +4737,15 @@ void calc_bonuses(int Ind)
 		/* Message */
 		if (p_ptr->heavy_shoot)
 		{
-			msg_print(Ind, "You have trouble wielding such a heavy bow.");
+			msg_print(Ind, "\377oYou have trouble wielding such a heavy bow.");
 		}
 		else if (p_ptr->inventory[INVEN_BOW].k_idx)
 		{
-			msg_print(Ind, "You have no trouble wielding your bow.");
+			msg_print(Ind, "\377gYou have no trouble wielding your bow.");
 		}
 		else
 		{
-			msg_print(Ind, "You feel relieved to put down your heavy bow.");
+			msg_print(Ind, "\377gYou feel relieved to put down your heavy bow.");
 		}
 
 		/* Save it */
@@ -4300,15 +4759,15 @@ void calc_bonuses(int Ind)
 		/* Message */
 		if (p_ptr->heavy_wield)
 		{
-			msg_print(Ind, "You have trouble wielding such a heavy weapon.");
+			msg_print(Ind, "\377oYou have trouble wielding such a heavy weapon.");
 		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
-			msg_print(Ind, "You have no trouble wielding your weapon.");
+			msg_print(Ind, "\377gYou have no trouble wielding your weapon.");
 		}
 		else
 		{
-			msg_print(Ind, "You feel relieved to put down your heavy weapon.");
+			msg_print(Ind, "\377gYou feel relieved to put down your heavy weapon.");
 		}
 
 		/* Save it */
@@ -4322,15 +4781,15 @@ void calc_bonuses(int Ind)
 		/* Message */
 		if (p_ptr->icky_wield)
 		{
-			msg_print(Ind, "You do not feel comfortable with your weapon.");
+			msg_print(Ind, "\377oYou do not feel comfortable with your weapon.");
 		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
-			msg_print(Ind, "You feel comfortable with your weapon.");
+			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
 		}
 		else
 		{
-			msg_print(Ind, "You feel more comfortable after removing your weapon.");
+			msg_print(Ind, "\377gYou feel more comfortable after removing your weapon.");
 		}
 
 		/* Save it */
@@ -4343,19 +4802,55 @@ void calc_bonuses(int Ind)
 		/* Message */
 		if (p_ptr->awkward_wield)
 		{
-			msg_print(Ind, "You find it hard to fight with your weapon and shield.");
+			msg_print(Ind, "\377oYou find it hard to fight with your weapon and shield.");
 		}
 		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
 		{
-			msg_print(Ind, "You feel comfortable with your weapon.");
+			msg_print(Ind, "\377gYou feel comfortable with your weapon.");
 		}
 		else if (!p_ptr->inventory[INVEN_ARM].k_idx)
 		{
-			msg_print(Ind, "You feel more dexterous after removing your shield.");
+			msg_print(Ind, "\377gYou feel more dexterous after removing your shield.");
 		}
 
 		/* Save it */
 		p_ptr->old_awkward_wield = p_ptr->awkward_wield;
+	}
+
+	if (p_ptr->old_easy_wield != p_ptr->easy_wield)
+	{
+		/* Message */
+		if (p_ptr->easy_wield)
+		{
+			msg_print(Ind, "\377wWithout shield, your weapon feels especially easy to swing.");
+		}
+		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
+		{
+/*			msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
+			this above line does also show if you don't equip a shield but just switch from a
+			may_2h to a normal weapon, hence confusing. */
+			msg_print(Ind, "\377wYour weapon feels comfortable as usual.");
+		}
+
+		/* Save it */
+		p_ptr->old_easy_wield = p_ptr->easy_wield;
+	}
+
+	/* Take note when "illegal weapon" changes */
+	if (p_ptr->old_awkward_shoot != p_ptr->awkward_shoot)
+	{
+		/* Message */
+		if (p_ptr->awkward_shoot)
+		{
+			msg_print(Ind, "\377oYou find it hard to shoot while carrying your shield.");
+		}
+		else if (p_ptr->inventory[INVEN_BOW].k_idx)
+		{
+			msg_print(Ind, "\377gYou find it easier to shoot without using a shield.");
+		}
+
+		/* Save it */
+		p_ptr->old_awkward_shoot = p_ptr->awkward_shoot;
 	}
 
 
@@ -4372,7 +4867,8 @@ void calc_bonuses(int Ind)
 	/* resistance to acid cancel sensibility to fire */
 	if(p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
 		p_ptr->sensible_acid=FALSE;
-
+	/* resistance to light cancels sensibility to light */
+	if(p_ptr->resist_lite) p_ptr->sensible_lite=FALSE;
 
 	/* Limit mana capacity bonus */
 	if ((p_ptr->to_m > 300) && !is_admin(p_ptr)) p_ptr->to_m = 300;
@@ -4400,9 +4896,13 @@ void calc_bonuses(int Ind)
 	/* Limit blows per round (just paranoia^^) */
 	if (p_ptr->num_blow < 0) p_ptr->num_blow = 0;
 	if ((p_ptr->num_blow > 20) && !is_admin(p_ptr)) p_ptr->num_blow = 20;
+	/* ghost-dive limit to not destroy the real gameplay */
+	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
 
 	/* XXX - Always resend skills */
 	p_ptr->redraw |= (PR_SKILLS);
+	/* also redraw encumberment status line */
+	p_ptr->redraw |= (PR_ENCUMBERMENT);
 }
 
 
@@ -4607,6 +5107,12 @@ void redraw_stuff(int Ind)
 		p_ptr->redraw &= ~(PR_ARMOR | PR_HP | PR_MANA);
 		p_ptr->redraw &= ~(PR_DEPTH | PR_HEALTH);
 		prt_frame_basic(Ind);
+	}
+
+	if (p_ptr->redraw & PR_ENCUMBERMENT)
+	{
+		p_ptr->redraw &= ~(PR_ENCUMBERMENT);
+		prt_encumberment(Ind);
 	}
 
 	if (p_ptr->redraw & PR_MISC)
@@ -4860,3 +5366,450 @@ void handle_stuff(int Ind)
 }
 
 
+/*
+ * Start a global_event (highlander tournament etc.) - C. Blue
+ * IMPORTANT: Ind may be 0 if this is called from custom.lua !
+ */
+int start_global_event(int Ind, int getype, char *parm)
+{
+	int n, i;
+	player_type *p_ptr = NULL;
+	global_event_type *ge;
+	if (Ind) p_ptr = Players[Ind];
+#if 1 /* randomize the global_event's ID? (makes sense if you have 'hidden' events) */
+	int f = 0, c;
+	for (n = 0; n < MAX_GLOBAL_EVENTS; n++) if (global_event[n].getype == GE_NONE) f++;
+	if (!f) return(1); /* error, no more global events */
+	c = randint(f);
+	f = 0;
+	for (n = 0; n < MAX_GLOBAL_EVENTS; n++) if (global_event[n].getype == GE_NONE) {
+		f++;
+		if (f == c) break;
+	}
+#else
+	for (n = 0; n < MAX_GLOBAL_EVENTS; n++) if (global_event[n].getype == GE_NONE) break;/* success */
+	if (n == MAX_GLOBAL_EVENTS) return(1); /* error, no more global events */
+#endif
+
+	ge = &global_event[n];
+	ge->getype = getype;
+	ge->creator = 0;
+	if (Ind) ge->creator = p_ptr->id;
+	ge->announcement_time = 3600; /* 2 hours default, until event finally starts */
+	ge->start_turn = turn;
+	time(&global_event[n].started);
+#if 0 /* obsolete */
+	if (turn % cfg.fps) { /* if executed from script (custom.lua) we don't need/want the hack! */
+		ge->started++; /* hack to already have an announcement directly after creating the event! */
+		ge->start_turn++; /* hack, same reason as for ge->started */
+	}
+#endif
+	ge->paused = FALSE;
+	for (i = 0; i<64; i++) {/* yeah I could use WIPE.. */
+	        ge->state[i]=0;
+		ge->participant[i]=0;
+		ge->extra[i]=0;
+	}
+	ge->end_turn=0;
+	ge->ending=0;
+	strcpy(ge->title, "(UNTITLED EVENT)");
+	for (i = 0; i<6; i++) strcpy(ge->description[i], "");
+	strcpy(ge->description[0], "(NO DESCRIPTION AVAILABLE)");
+	ge->hidden=FALSE;
+	ge->min_participants=0; /* no minimum */
+	ge->limited=0; /* no maximum */
+
+	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
+	switch(getype) {
+	case GE_HIGHLANDER:	/* 'Highlander Tournament' [<reward item level>] */
+			strcpy(ge->title, "Highlander Tournament");
+			strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this deathmatch! ");
+			strcpy(ge->description[1], " You're teleported into a dungeon and you have 15 minutes to level up. ");
+			strcpy(ge->description[2], " After that, everyone will meet under the sky for a bloody slaughter.  ");
+			strcpy(ge->description[3], " Add amulets of defeated opponents to yours to increase its power!     ");
+			strcpy(ge->description[4], " HINT: Buy your equipment BEFORE it starts. Or you'll go naked.        ");
+			strcpy(ge->description[5], " HINT: Make sure that you don't gain any experience until it starts.   ");
+			ge->end_turn = turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
+									most of the time is just for announcing it
+									so players will sign on via /gesign <n> */
+			ge->extra[0] = atoi(parm); /* item level of the reward */
+			ge->min_participants = 2;
+			if (!ge->extra[0]) ge->extra[0] = 95; /* no objects of lvl 96..99 anyways */
+			if (Ind) msg_format(Ind, "Reward item level = %d.", ge->extra[0]);
+			break;
+	}
+
+	/* give feedback to the creator; tell all admins if this was called from a script */
+	if (Ind) msg_format(Ind, "created new event #%d of type %d parms='%s'", n+1, getype, parm);
+	else {
+		for (i = 1;i <= NumPlayers; i++)
+		    if (is_admin(Players[i]))
+			msg_format(i, "created new event #%d of type %d parms='%s'", n+1, getype, parm);
+	}
+	return(0);
+}
+
+/*
+ * Stop a global event :(
+ */
+void stop_global_event(int Ind, int n){
+	int i, j;
+	global_event_type *ge = &global_event[n];
+	msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
+	if (ge->getype) msg_broadcast(0, format("\377y[Event '%s' was cancelled.]", ge->title));
+	ge->getype = GE_NONE;
+	for (i = 1; i <= NumPlayers; i++) Players[i]->global_event_type[n] = GE_NONE;
+	return;
+}
+
+/*
+ * A player signs on for a global_event - C. Blue
+ */
+void global_event_signup(int Ind, int n){
+	int i, p, max_p;
+	global_event_type *ge = &global_event[n];
+	player_type *p_ptr = Players[Ind];
+
+	/* Still room for more participants? */
+	max_p = MAX_GE_PARTICIPANTS;
+	if (ge->limited) max_p = ge->limited; /* restricted number of participants? */
+	for (p = 0; p < max_p; p++) if (!ge->participant[p]) break;/* success */
+	if (p == max_p) {
+		msg_print(Ind, "Sorry, maximum number of possible participants has been reached.");
+		return;
+	}
+
+	for (i = 0; i < max_p; i++) if (ge->participant[i] == p_ptr->id) {
+		msg_print(Ind, "You have already signed up!");
+		return;
+	}
+
+	/* check individual event restrictions against player */
+	if (!is_admin(p_ptr))
+	switch (ge->getype) {
+	case GE_HIGHLANDER:	/* Highlander Tournament */
+			if (p_ptr->max_exp > 0) {
+				msg_print(Ind, "Sorry, only newly created characters may sign up for this event.");
+				return;
+			}
+			if (p_ptr->fruit_bat) { /* 1 = native bat, 2 = from chauve-souris */
+				msg_print(Ind, "Sorry, fruit bats are not eligible to join this event.");
+				return;
+			}
+			break;
+	}
+
+	/* currently no warning/error/solution if you try to sign on for multiple events at the same time :|
+	   However, player_type has MAX_GLOBAL_EVENTS sized data arrays for each event, so a player *could*
+	   theoretically participate in all events at this time.. */
+	msg_format(Ind, "\377a[>>>You signed up for %s<<<]", ge->title);
+	msg_print(Ind, "\377d ");
+	for (i = 1; i <= NumPlayers; i++) if (is_admin(Players[i])) msg_format(i, "Event %d (%s): %s signed up.", n + 1, ge->title, p_ptr->name);
+	ge->participant[p] = p_ptr->id;
+	p_ptr->global_event_type[n] = ge->getype;
+	time(&p_ptr->global_event_signup[n]);
+	p_ptr->global_event_started[n] = ge->started;
+	for (i = 0; i < 4; i++) p_ptr->global_event_progress[n][i] = 0; /* WIPE :p */
+}
+
+/*
+ * Process a global event - C. Blue
+ */
+static void process_global_event(int ge_id)
+{
+	global_event_type *ge = &global_event[ge_id];
+	player_type *p_ptr;
+	object_type forge, *o_ptr = &forge;
+	wilderness_type w_type;
+	bool timeout = FALSE;
+	worldpos wpos;
+	int participants = 0;
+	int i, j, n, d; /* misc variables, used by the events */
+	long int elapsed; /* amounts of seconds elapsed since the event was started (created) */
+	time_t now;
+	time(&now);
+        /* real timer will sometimes fail when using in a function which isn't sync'ed against it but instead relies
+	    on the game's FPS for timining ..strange tho :s */
+	elapsed = (turn - ge->start_turn) / cfg.fps;
+	wpos.wx = 0; wpos.wy = 0; wpos.wz = 0; /* sector 0,0 by default, for 'sector00separation' */
+
+	if (ge->announcement_time - elapsed == 240) { /* extra warning at T-4min for last minute subscribers */
+		msg_broadcast(0, format("\377o[>%s starts in %d minutes<]", ge->title, (ge->announcement_time - elapsed) / 60));
+		msg_broadcast(0, "\377o[Use /geinfo and /gesign commands to learn more or to subscribe]");
+		return; /* not yet >:) */
+	} else if (ge->announcement_time - elapsed >= 0) {
+		if (!((ge->announcement_time - elapsed) % 900)) {
+			if (ge->announcement_time - elapsed > 0) {
+				msg_broadcast(0, format("\377o[>%s starts in %d minutes<]", ge->title, (ge->announcement_time - elapsed) / 60));
+				return; /* not yet >:) */
+			} else {
+				msg_broadcast(0, format("\377o[>>%s starts now!<<]", ge->title));
+				/* count participants */
+				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) if (ge->participant[i]) participants++;
+				/* enough participants? Don't hand out reward for free to someone. */
+				if (ge->min_participants && (participants < ge->min_participants)) {
+					msg_broadcast(0, format("\377o%s needs at least %d participants.", ge->title, ge->min_participants));
+					ge->getype = GE_NONE;
+				}
+			}
+		} else {
+			return; /* still announcing */
+		}
+	}
+
+	/* Time Over? :( */
+	if ((ge->end_turn && turn >= ge->end_turn) ||
+	    (ge->ending && now >= ge->ending)) {
+		timeout = TRUE; /* d'oh */
+		ge->state[0] = 255; /* state[0] is used as indicator for clean-up phase of any event */
+		msg_broadcast(0, format("\377y[>>'%s' ends due to time limit!<<]", ge->title));
+	}
+	/* Time warning at T-5minutes! (only if the whole event lasts at least 10 minutes) */
+	if ((ge->end_turn && ge->end_turn - ge->start_turn >= 600 * cfg.fps && turn == ge->end_turn - 300 * cfg.fps) ||
+	    (!ge->end_turn && ge->ending && ge->ending - ge->started >= 600 && now == ge->ending - 300)) {
+		msg_broadcast(0, format("\377y[>'%s' runs only 5 more minutes!<]", ge->title));
+	}
+
+	switch(ge->getype){
+	/* Highlander Tournament */
+	case GE_HIGHLANDER:
+			switch(ge->state[0]){
+			case 0: /* prepare level, gather everyone, start exp'ing */
+				sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+				wipe_m_list(&wpos); /* clear any (powerful) spawns */
+				wipe_o_list_safely(&wpos); /* and objects too */
+				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+				ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
+				switch(rand_int(3)) {
+				case 0: wild_info[wpos.wy][wpos.wx].type = WILD_WASTELAND;
+				case 1: wild_info[wpos.wy][wpos.wx].type = WILD_SWAMP;
+				case 2: wild_info[wpos.wy][wpos.wx].type = WILD_GRASSLAND;
+				}
+				wilderness_gen(&wpos);/* generate solid battleground, not oceans and stuff */
+
+				for (i = 1; i <= NumPlayers; i++) 
+				for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
+				if (ge->participant[j] == Players[i]->id) {
+					p_ptr = Players[i];
+					if (p_ptr->max_exp && !is_admin(p_ptr)) {
+						msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
+						ge->participant[j] = 0;
+						p_ptr->global_event_type[ge_id] = GE_NONE;
+						continue;
+					}
+					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
+						p_ptr->recall_pos.wx = 0;
+						p_ptr->recall_pos.wy = 0;
+						p_ptr->recall_pos.wz = -1;
+						p_ptr->global_event_temp = 0x7;  /* 1: pass through sector00separation;
+										    2: die permanently in the tournament;
+										    4: don't die while still in dungeon; */
+	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					        recall_player(i, "");
+					}
+					/* Give him the amulet of the highlands */
+					invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
+				        o_ptr->number = 1;
+					o_ptr->level = 0;
+				        object_aware(i, o_ptr);
+			        	object_known(o_ptr);
+				        o_ptr->discount = 0;
+				        o_ptr->ident |= ID_MENTAL;
+				        o_ptr->owner = p_ptr->id;
+				        o_ptr->owner_mode = p_ptr->mode;
+					inven_carry(i, o_ptr);
+					/* give some safe time for exp'ing */
+					p_ptr->pkill &= ~PKILL_KILLABLE;
+				}
+
+				ge->state[0] = 1;
+				break;
+			case 1: /* exp phase */
+				n = 0;
+				for (i = 1; i <= NumPlayers; i++)
+					if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+						n++;
+						j = i;
+					}
+				if (!n) {
+					ge->state[0] = 255; /* double kill or something? ew. */
+					break;
+				}
+				if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+					ge->state[0] = 5;
+					ge->extra[2] = j;
+					break;
+				}
+
+				if (elapsed - ge->announcement_time >= 800) { /* give a warning, peace ends soon */
+					for (i = 1; i <= NumPlayers; i++)
+					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377o[Warning - the slaughter will begin soon!]");
+					ge->state[0] = 2;
+				}
+				break;
+			case 2: /* exp phase // get people out of the dungeon and make them fight each other properly */
+				n = 0;
+				for (i = 1; i <= NumPlayers; i++)
+					if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+						n++;
+						j = i;
+					}
+				if (!n) {
+					ge->state[0] = 255; /* double kill or something? ew. */
+					break;
+				}
+				if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+					ge->state[0] = 5;
+					ge->extra[2] = j;
+					break;
+				}
+
+				if (elapsed - ge->announcement_time >= 900) {
+					for (i = 1; i <= NumPlayers; i++)
+					if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+						p_ptr = Players[i];
+//						p_ptr->pkill |= PKILL_KILLABLE;
+						p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
+						if (cfg.use_pk_rules == PK_RULES_DECLARE)
+						{
+							p_ptr->pkill|=PKILL_KILLABLE;
+							if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill & PKILL_SET))
+								set_pkill(i, 1);
+						}
+						p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
+						p_ptr->recall_pos.wx = 0;
+						p_ptr->recall_pos.wy = 0;
+						p_ptr->recall_pos.wz = 0;
+						p_ptr->global_event_temp |= 0x1; /* pass through sector00separation; */
+	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					        recall_player(i, "");
+					}
+					ge->state[0] = 3;
+				}
+				break;
+			case 3: /* teleport them around first */
+				for (i = 1; i <= NumPlayers; i++)
+					if (inarea(&Players[i]->wpos, &wpos)) {
+						p_ptr = Players[i];
+						teleport_player(i, 200);
+						/* in case some player waited in a NO_TELE vault..!: */
+						if (p_ptr->wpos.wz && !is_admin(p_ptr)) {
+							msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
+							strcpy(p_ptr->died_from,"a mysterious accident");
+							p_ptr->deathblow = 0;
+							player_death(i);
+						}
+					}
+				ge->state[0] = 4;
+				break;
+			case 4: /* deathmatch phase -- might add some random teleportation for more fun */
+				n = 0;
+				for (i = 1; i <= NumPlayers; i++)
+					if (!is_admin(Players[i]) && inarea(&Players[i]->wpos, &wpos)) {
+						n++;
+						j = i;
+					}
+				if (!n) ge->state[0] = 255; /* double kill or something? ew. */
+				if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
+					ge->state[0] = 5;
+					ge->extra[2] = j;
+				}
+				break;
+			case 5: /* we have a winner! */
+				j = ge->extra[2];
+				if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
+				    p_ptr = Players[j];
+				    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
+					msg_broadcast(0, format("\377c[>>%s wins the %s!<<]", p_ptr->name, ge->title));
+					for (i = 0; i <= INVEN_TOTAL; i++) /* Erase the highlander amulets */
+						if (p_ptr->inventory[i].tval == TV_AMULET && p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS) {
+//							p_ptr->inventory[i].k_idx = 0;
+    				                        inven_item_increase(j, i, -p_ptr->inventory[i].number);
+			                                inven_item_optimize(j, i);
+						}
+					teleport_player(j, 20); /* So he doesn't stand on trees/mountains and gets the reward */
+//					acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, !p_ptr->total_winner);
+					d = object_level; /* ppp (purely pointless paranoia) */
+					object_level = ge->extra[0];
+					place_object_restrictor = 0;
+					place_object(&p_ptr->wpos, p_ptr->py, p_ptr->px, TRUE, TRUE, TRUE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					object_level = d;
+					o_ptr = &o_list[getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].o_idx];
+				        object_aware(j, o_ptr);
+			        	object_known(o_ptr);
+				        o_ptr->discount = 100;
+				        o_ptr->ident |= ID_MENTAL;
+//				        o_ptr->owner = p_ptr->id;
+//				        o_ptr->owner_mode = p_ptr->mode;
+					carry(j, 1, 0);
+					ge->state[0] = 6;
+					ge->state[1] = elapsed;
+				    } else {
+					ge->state[0] = 255; /* no winner, d'oh */
+				    }
+				} else {
+					ge->state[0] = 255; /* no winner, d'oh */
+				}
+			case 6: /* chill out (or get killed -- but now there aren't monster spawns anymore) */
+				if (elapsed - ge->state[1] >= 5) {
+					ge->state[0] = 255;
+				}
+				break;
+			case 255: /* clean-up */
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) {
+						p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
+						if (cfg.use_pk_rules == PK_RULES_DECLARE)
+						{
+							if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
+								set_pkill(i, 1);
+						}
+						p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+//						set_recall_timer(i, is_admin(p_ptr)?1:3+randint(15));
+						p_ptr->recall_pos.wx = 32;
+						p_ptr->recall_pos.wy = 32;
+						p_ptr->recall_pos.wz = 0;
+	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					        recall_player(i, "");
+					}
+				}
+				sector00separation--;
+				wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
+				wipe_m_list(&wpos); /* clear any (powerful) spawns */
+				wipe_o_list_safely(&wpos); /* and objects too */
+				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+				ge->getype = GE_NONE; /* end of event */
+				break;
+			}
+	}
+	
+	/* Check for end of event */
+	if (ge->getype == GE_NONE) msg_broadcast(0, format("\377s[>The event '%s' has ended.<]", ge->title));
+}
+
+/*
+ * Process running global_events - C. Blue
+ */
+void process_global_events(void)
+{
+	int n;
+	for (n = 0; n < MAX_GLOBAL_EVENTS; n++)
+		if ((global_event[n].getype != GE_NONE) && !global_event[n].paused) process_global_event(n);
+}
+
+/*
+ * Update the 'tomenet.check' file - mikaelh
+ */
+void update_check_file(void)
+{
+	FILE *fp;
+	char buf[1024];
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.check");
+	fp = fopen(buf, "w");
+	if (fp) {
+		/* print the current timestamp into the file */
+		fprintf(fp, "%d\n", (int)time(NULL));
+		fclose(fp);
+	}
+}

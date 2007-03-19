@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g
+CFLAGS=-O2 -Wall -g
 
 all: worldd
 

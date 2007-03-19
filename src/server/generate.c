@@ -521,9 +521,21 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 		if (((k_ptr->tval == TV_POTION) || (k_ptr->tval == TV_POTION2)) &&
 		    (k_ptr->level <= dun_level) && (k_ptr->flags4 & TR4_FOUNTAIN))
 		{
-			if (k_ptr->tval == TV_POTION2) svals[maxsval] = k_ptr->sval + SV_POTION_LAST;
-			else svals[maxsval] = k_ptr->sval;
-			maxsval++;
+			/* C. Blue -- reduce amount of stat-draining fountains before sustain rings become available */
+			if (!((k_ptr->tval == TV_POTION) && (
+			    ((dun_level < 8) && /* no stat-draining fountains above -400ft (finding sustain-rings there) */
+			    (k_ptr->sval == SV_POTION_DEC_STR || k_ptr->sval == SV_POTION_DEC_INT ||
+			    k_ptr->sval == SV_POTION_DEC_WIS || k_ptr->sval == SV_POTION_DEC_DEX ||
+			    k_ptr->sval == SV_POTION_DEC_CON)) || /* allow CHR drain */
+			    ((dun_level < 20) && /* no exp-draining fountains before stat-fountains appear */
+			    ((k_ptr->sval == SV_POTION_LOSE_MEMORIES) ||
+			    ((!k_ptr->cost) && magik(50)))) /* bad fountains 50% less probable before stat-fountains appear */
+			    )))
+			{
+				if (k_ptr->tval == TV_POTION2) svals[maxsval] = k_ptr->sval + SV_POTION_LAST;
+				else svals[maxsval] = k_ptr->sval;
+				maxsval++;
+			}
 		}
 	}
 
@@ -553,13 +565,13 @@ static void place_fountain(struct worldpos *wpos, int y, int x)
 		case SV_POTION_EXPERIENCE:
 		case SV_POTION_INVULNERABILITY:
 		case SV_POTION_STAR_RESTORE_MANA:
-		case SV_POTION_LEARNING:
-			cs_ptr->sc.fountain.rest = damroll(1, 2);
-			break;
 		case SV_POTION_STAR_HEALING:
 		case SV_POTION_LIFE:
 		case SV_POTION_SELF_KNOWLEDGE:
 			cs_ptr->sc.fountain.rest = damroll(1, 3);
+			break;
+		case SV_POTION_LEARNING: /* not used, see SV_POTION2_LEARNING instead */
+			cs_ptr->sc.fountain.rest = damroll(1, 2);
 			break;
 		}
 		else
@@ -646,13 +658,13 @@ static void place_between(struct worldpos *wpos, int y, int x)
  */
 static void place_up_stairs(struct worldpos *wpos, int y, int x)
 {
-	cave_type **zcave;
+    cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 
 	/* Create up stairs */
-	if (can_go_up(wpos))
+	if (can_go_up(wpos, 0x1))
 	c_ptr->feat = FEAT_LESS;
 }
 
@@ -668,7 +680,7 @@ static void place_down_stairs(worldpos *wpos, int y, int x)
 	c_ptr=&zcave[y][x];
 
 	/* Create down stairs */
-	if (can_go_down(wpos))
+	if (can_go_down(wpos, 0x1))
 	c_ptr->feat = FEAT_MORE;
 }
 
@@ -686,13 +698,13 @@ static void place_random_stairs(struct worldpos *wpos, int y, int x)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 	if(!cave_clean_bold(zcave, y, x)) return;
-	if(!can_go_down(wpos) && !can_go_up(wpos)){
+	if(!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)){
 		/* special or what? */
 	}
-	else if(!can_go_down(wpos) && can_go_up(wpos)){
+	else if(!can_go_down(wpos, 0x1) && can_go_up(wpos, 0x1)){
 		place_up_stairs(wpos, y, x);
 	}
-	else if(!can_go_up(wpos) && can_go_down(wpos)){
+	else if(!can_go_up(wpos, 0x1) && can_go_down(wpos, 0x1)){
 		place_down_stairs(wpos, y, x);
 	}
 	else if (rand_int(100) < 50)
@@ -880,7 +892,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				if (!can_go_up_simple(wpos))
 				{
 					/* Clear previous contents, add down stairs */
-					if (can_go_down(wpos)) c_ptr->feat = FEAT_MORE;
+					if (can_go_down(wpos, 0x1)) c_ptr->feat = FEAT_MORE;
 
 					if(!istown(wpos)){
 						new_level_up_y(wpos,y);
@@ -892,7 +904,7 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				else if (is_quest(wpos) || !can_go_down_simple(wpos))
 				{
 					/* Clear previous contents, add up stairs */
-					if (can_go_up(wpos)) c_ptr->feat = FEAT_LESS;
+					if (can_go_up(wpos, 0x1)) c_ptr->feat = FEAT_LESS;
 
 					/* Set this to be the starting location for people going down */
 					new_level_down_y(wpos,y);
@@ -903,8 +915,8 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 				else
 				{
 					/* Clear previous contents, add stairs */
-					if ((can_go_up(wpos) && (feat == FEAT_LESS || feat == FEAT_WAY_LESS)) ||
-					    (can_go_down(wpos) && (feat == FEAT_MORE || feat == FEAT_WAY_MORE)))
+					if ((can_go_up(wpos, 0x1) && (feat == FEAT_LESS || feat == FEAT_WAY_LESS)) ||
+					    (can_go_down(wpos, 0x1) && (feat == FEAT_MORE || feat == FEAT_WAY_MORE)))
 						c_ptr->feat = feat;
 
 					if (feat == FEAT_LESS || feat == FEAT_WAY_LESS)
@@ -1002,7 +1014,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 
 			case ALLOC_TYP_GOLD:
 			{
-				place_gold(wpos, y, x);
+				place_gold(wpos, y, x, 0);
 				/* hack -- trap can be hidden under gold */
 				if (rand_int(100) < 3) place_trap(wpos, y, x, 0);
 				break;
@@ -1539,7 +1551,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 			/* Place gold */
 			else
 			{
-				place_gold(wpos, j, k);
+				place_gold(wpos, j, k, 0);
 			}
 
 			/* Placement accomplished */
@@ -3000,7 +3012,28 @@ static bool vault_aux_chapel(int r_idx)
 
 	/* Require "priest" or Angel */
 	if (!((r_ptr->d_char == 'A') ||
-		strstr((r_name + r_ptr->name),"riest")))
+		strstr((r_name + r_ptr->name),"riest") || 
+		strstr((r_name + r_ptr->name),"aladin") ||
+		strstr((r_name + r_ptr->name),"emplar")))
+	{
+		return (FALSE);
+	}
+
+	/* Okay */
+	return (TRUE);
+}
+static bool vault_aux_lesser_chapel(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Require "priest" or Angel */
+	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
+		strstr((r_name + r_ptr->name),"riest") || 
+		strstr((r_name + r_ptr->name),"aladin") ||
+		strstr((r_name + r_ptr->name),"emplar")))
 	{
 		return (FALSE);
 	}
@@ -3067,7 +3100,8 @@ static bool vault_aux_clone(int r_idx)
 static bool vault_aux_symbol(int r_idx)
 {
 	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
-		&& !(r_info[r_idx].flags1 & RF1_UNIQUE));
+		&& !(r_info[r_idx].flags1 & RF1_UNIQUE)
+		&& !(r_info[r_idx].d_char == 'A' && r_info[r_idx].level > 70));
 }
 
 
@@ -3398,7 +3432,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		if (rand_int(3) == 0)
 		{
 			name = "chapel";
-			get_mon_num_hook = vault_aux_chapel;
+			get_mon_num_hook = vault_aux_lesser_chapel;
 		}
 		else
 		{
@@ -3538,6 +3572,8 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 		dungeon_type *dt_ptr = getdungeon(wpos);
 		int dun_type = dt_ptr->type;
+
+	bool (*chosen_type)(int r_idx);
 
 	cptr		name;
 	cave_type **zcave;
@@ -3699,7 +3735,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		{
 
 			name = "ordered chapel";
-			get_mon_num_hook = vault_aux_chapel;
+			get_mon_num_hook = vault_aux_lesser_chapel;
 		}
 
 	}
@@ -3826,15 +3862,18 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	/* Pick some monster types */
 	for (i = 0; i < BUILD_6_MONSTER_TABLE; i++)
 	{
-		/* Get a (hard) monster type */
-		what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
-
+		for (j = 0; j < 100; j++) {
+			/* Get a (hard) monster type */
+			what[i] = get_mon_num(getlevel(wpos) + 10, dun_type);
+			if (what[i] && !(r_info[what[i]].flags1 & RF1_UNIQUE)) break;
+		}
 		/* Notice failure */
 		if (!what[i]) empty = TRUE;
 	}
 
 
 	/* Remove restriction */
+	chosen_type = get_mon_num_hook; /* preserve */
 	get_mon_num_hook = dungeon_aux;
 
 	/* Prepare allocation table */
@@ -3842,7 +3881,10 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 
 	/* Oops */
-	if (empty) return;
+	if (empty) {
+s_printf("EMPTY\n");
+		return;
+	}
 
 
 	/* XXX XXX XXX */
@@ -3872,8 +3914,134 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	for (i = 0; i < 8; i++)
 	{
 		/* Every other entry */
-		what[i] = what[i * 2];
+		if (chosen_type == vault_aux_symbol ||	/* All dangerous nests get weakened here.. */
+		    chosen_type == vault_aux_clone ||
+		    chosen_type == vault_aux_kennel ||
+		    chosen_type == vault_aux_animal ||
+		    chosen_type == vault_aux_undead ||
+		    chosen_type == vault_aux_dragon ||
+		    chosen_type == vault_aux_demon ||
+		    chosen_type == vault_aux_chapel ||
+		    chosen_type == vault_aux_lesser_chapel ||
+		    (chosen_type == vault_aux_troll && dun_level < 35)) /* otherwise too much exp */
+			what[i] = what[i * 2];	/* ..note that this takes only the weaker half
+						of the 32 (BUILD_6_MONSTER_TABLE) sorted monsters!.. */
+/*		else if (chosen_type == vault_aux_man ||
+			chosen_type == vault_aux_giant ||
+			chosen_type == vault_aux_aquatic ||*/
+		else if	(chosen_type == vault_aux_troll && dun_level < 45) /* otherwise too much exp? but also very dangerous.. */
+			what[i] = what[i * 3];	/* exclude the top quarter */
+		else	/* orc, ogre, troll */
+			what[i] = what[i * 3 + 10];	/* full size & nice diversity */
+/*		else	
+			what[i] = what[BUILD_6_MONSTER_TABLE - 15 + i * 2];  <- too powerful =) - C. Blue */
 	}
+#if 0	
+	/* Restrict ultra P pits */
+	if (chosen_type == vault_aux_giant) {
+		/* Find the first 'Hru' */
+		for (i = 0; i < 8; i++) {
+			if (what[i] == 709) {
+				/* make one 'Hru' the top entry, all following entries weaker than 'Hru' */
+				for (j = 7; j >= 7-i; j--) {
+					what[j] = what[i+j-7];
+				}
+				break;
+			}
+		}
+		/* Restrict Hru/Greater Titan/Lesser Titan to entry#1, entry#1/#2/#3, entry #1/#2/#3 respectively */
+		/* Check for Hru at positions below #1 (leaving out the last entry, shouldn't occur there really) */
+		for (i = 1; i < 7; i++) {
+			if (what[i] == 709) {
+				/* Copy over the following entries (duplicating the last entry effectively) */
+				for (j = i; j >= 1; j--) {
+					what[j] = what[j-1];
+				}
+			}
+		}
+		/* Check for Greater Titan at positions below #2 or #3 (leaving out the last entry, shouldn't occur there really) */
+//		for (i = 1; i < (what[7] == 709 ? 6 : 5); i++) { /* allow more GTs if there's no Hru inside as well */
+		for (i = 1; i < 6; i++) { /* up to 3 GTs allowed (at positions #1 and #2) */
+			if (what[i] == 702) {
+				/* Copy over the following entries (duplicating the last entry effectively) */
+				for (j = i; j >= 1; j--) {
+					what[j] = what[j-1];
+				}
+			}
+		}
+		/* Check for Lesser Titan at positions below #2 or #3 (leaving out the last entry, shouldn't occur there really) */
+//		for (i = 1; i < (what[7] == 634 ? 6 : 5); i++) { /* disallow too many LTs */
+		for (i = 1; i < ((what[6] == 634) ? 6 : 5); i++) { /* disallow too many LTs */
+			if (what[i] == 634) {
+				/* Copy over the following entries (duplicating the last entry effectively) */
+				for (j = i; j >= 1; j--) {
+					what[j] = what[j-1];
+				}
+			}
+		}
+	}
+#else /* restrict them some more: */
+	/* Restrict ultra P pits */
+	if (chosen_type == vault_aux_giant) {
+		/* Find the first 'Hru' */
+		for (i = 0; i < 8; i++) {
+			if (what[i] == 709) {
+				/* make one 'Hru' the top entry, all following entries weaker than 'Hru' */
+				for (j = 7; j >= 7-i; j--) {
+					what[j] = what[i+j-7];
+				}
+				break;
+			}
+		}
+		/* Find the first 'Greater Titan' */
+		for (i = 0; i < 8; i++) {
+			if (what[i] == 702) {
+				if (what[7] == 709) { /* Is a 'Hru' at the top? */
+					/* make 'Greater Titan' the second to top entry, all following entries weaker than 'Greater Titan' */
+					for (j = 6; j >= 6-i; j--) {
+						what[j] = what[i+j-6];
+					}
+					break;
+				} else {
+					/* make one 'Greater Titan' the top entry, all following entries weaker than 'Greater Titan' */
+					for (j = 7; j >= 7-i; j--) {
+						what[j] = what[i+j-7];
+					}
+					break;
+				}
+			}
+		}
+		/* Find the first 'Lesser Titan' */
+		for (i = 0; i < 8; i++) {
+			if (what[i] == 634) {
+				if (what[6] == 702) { /* Is a 'Greater Titan' already occupying the second to top position? */
+					/* Remove either 'Lesser Titan' or 'Greater Titan' since 6 of them would be too many */
+					if (magik(50)) what[i] = 702;
+					for (j = 6; j >= 6-i; j--) {
+						what[j] = what[i+j-6];
+					}
+					break;
+				} else if (what[7] == 702 || what[7] == 709) {
+					/* make one 'Lesser Titan' the second to top entry, all following entries weaker than 'Lesser Titan' */
+					for (j = 6; j >= 6-i; j--) {
+						what[j] = what[i+j-6];
+					}
+					break;
+				} else {
+					/* make one 'Lesser Titan' the top entry, all following entries weaker than 'Lesser Titan' */
+					for (j = 7; j >= 7-i; j--) {
+						what[j] = what[i+j-7];
+					}
+					break;
+				}
+			}
+		}
+	}
+#endif
+
+for (i = 0; i < 8; i++){
+    if (!what[i]) s_printf("HOLE(%d)\n", i);
+}
 
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++)
@@ -8173,7 +8341,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	bool nether_level = FALSE, nether_bottom = FALSE;
 	int build_special_store = 0; /* 0 = don't build a dungeon store,
 					1 = build deep dungeon store,
-					2 = build low-level dungeon store - C. Blue */
+					2 = build low-level dungeon store,
+					3 = build ironman supply store - C. Blue */
 
 	bool destroyed = FALSE;
 	bool empty_level = FALSE, dark_empty = TRUE;
@@ -8267,6 +8436,23 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Hack -- NOMAP often comes with NO_MAGIC_MAP */
 	if ((dun->l_ptr->flags1 & LF1_NOMAP) && magik(55))
 		dun->l_ptr->flags1 |= LF1_NO_MAGIC_MAP;
+
+	/* IRONMAN allows recalling at bottom/top */
+        if((d_ptr && (d_ptr->flags2 & DF2_IRON)) &&
+	    ((wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz) ||
+	    (wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz)))
+		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+	/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
+	if(d_ptr && (getlevel(wpos) >= 30) &&
+	    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
+	    ((d_ptr->flags2 & DF2_IRONRND2) && magik(10)) ||
+	    ((d_ptr->flags2 & DF2_IRONRND3) && magik(7)) ||
+	    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5)) ||
+	    ((d_ptr->flags2 & DF2_IRONFIX1) && !(wpos->wz % 5)) ||
+	    ((d_ptr->flags2 & DF2_IRONFIX2) && !(wpos->wz % 10))||
+	    ((d_ptr->flags2 & DF2_IRONFIX3) && !(wpos->wz % 15)) ||
+	    ((d_ptr->flags2 & DF2_IRONFIX4) && !(wpos->wz % 20))))
+		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 
 	/* Possible cavern */
 	if (rand_int(dun_level) > DUN_CAVERN && magik(DUN_CAVERN2))
@@ -8727,6 +8913,13 @@ if (!nether_bottom) {
 			/* Place 1 or 2 up stairs near some walls */
 			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_LESS : FEAT_LESS, rand_range(3, 4), 3);
 		}
+
+		/* Hack -- add *more* downstairs for Highlander Tournament event */
+		if (sector00separation && !wpos->wz && !wpos->wy && dun_level > COMFORT_PASSAGE_DEPTH)
+		{
+			/* Place 3 or 4 down stairs near some walls */
+			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2);
+		}
 	}
 
 #if 0
@@ -8940,6 +9133,11 @@ if (!nether_bottom) {
 		/* if failed, check for building low-level store */
 		if ((!build_special_store) &&
 		    (!dungeon_store2_timer) && (dun_level >= 10) && (dun_level <= 30)) build_special_store = 2;
+#ifdef RPG_SERVER
+		if ((!build_special_store) && (d_ptr->flags2 & DF2_IRON) && (dun_level >= 13) &&
+		    !rand_int(3)) build_special_store = 3;
+//		    ((dun_level + rand_int(3) - 1) % 5 == 0)) build_special_store = 3;
+#endif
 		/* if failed, we're done */
 		if (!build_special_store) return;
 		/* reset deep shop timeout */
@@ -8951,7 +9149,7 @@ if (!nether_bottom) {
 	/* build only one special shop in the Nether Realm */
 	} else if (((dun_level - 166) % 5 != 0) || (dun_level == 196)) return;
 	/* Try to create a dungeon store */
-	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level)
+	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level || (build_special_store == 3))
 	{
 		/* Try hard to place one */
 		for (i = 0; i<300; i++)
@@ -9082,22 +9280,37 @@ if (!nether_bottom) {
 						csbm_ptr->info |= CAVE_NOPK;
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
 							if (!nether_level) {
-								if (cfg.dungeon_shop_type == 999){
-									if (build_special_store == 1) {
+								if (build_special_store == 1) {
+									if (cfg.dungeon_shop_type == 999){
 										switch(rand_int(3)){
 										case 1:cs_ptr->sc.omni = STORE_JEWELX;break; /*Rare Jewelry Shop */
 										case 2:cs_ptr->sc.omni = STORE_SHOESX;break; /*Rare Footwear Shop */
 										default:cs_ptr->sc.omni = STORE_BLACKS;break; /*The Secret Black Market */
 										}
 									} else {
-										cs_ptr->sc.omni = STORE_HERBALIST;
-									}
-								} else {
-									if (build_special_store == 1) {
 										cs_ptr->sc.omni = cfg.dungeon_shop_type;
-									} else {
-										cs_ptr->sc.omni = STORE_HERBALIST;
 									}
+								} else if (build_special_store == 2) {
+									cs_ptr->sc.omni = STORE_HERBALIST;
+								} else if (build_special_store == 3) {
+									//Add specialist stores? - the_sandman
+									switch(randint(10)){
+/*									case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
+									case 2: cs_ptr->sc.omni = STORE_SPEC_HAFTED;break;
+									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
+									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
+									case 1: case 2:cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT;break;
+									case 3: cs_ptr->sc.omni = STORE_SPEC_POTION;break;
+									case 4: cs_ptr->sc.omni = STORE_SPEC_SCROLL;break;
+									case 5: cs_ptr->sc.omni = STORE_SPEC_ARCHER;break;
+									case 6: cs_ptr->sc.omni = STORE_HIDDENLIBRARY;break;
+									default: cs_ptr->sc.omni = STORE_STRADER; break;
+
+									}
+									/*
+s_printf("STRADE\n");
+									cs_ptr->sc.omni = STORE_STRADER;
+									*/
 								}
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
@@ -10221,6 +10434,7 @@ void remdungeon(struct worldpos *wpos, bool tower){
 void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, int flags2, char *race, char *exclude, bool tower, int type)
 {
 	int i;
+	bool found_town = FALSE;
 	wilderness_type *wild;
 	struct dungeon_type *d_ptr;
 	wild=&wild_info[wpos->wy][wpos->wx];
@@ -10257,6 +10471,21 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 		d_ptr->flags2=flags2; 
 		d_ptr->maxdepth=maxdep;
 	}
+
+#ifdef RPG_SERVER /* Make towers/dungeons harder */
+	for(i=0;i<numtowns;i++)
+		if(town[i].x==wpos->wx && town[i].y==wpos->wy) {
+			found_town = TRUE;
+			if (wpos->wx == 32 && wpos->wy == 32)
+				d_ptr->flags2 |= DF2_IRON;
+			else
+				d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;
+		}
+	if (!found_town) {
+		d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;
+//		d_ptr->flags1 |= DF1_NO_UP;
+	}
+#endif
 
 	for(i=0;i<10;i++){
 		d_ptr->r_char[i]='\0';

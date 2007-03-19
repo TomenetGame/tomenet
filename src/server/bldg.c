@@ -541,6 +541,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				}
 				case BACT_CRAPS:  /* Game of Craps */
 				{
+#if 0 	/* Mikaelh reported that winning seems too easy due to RNG problems */
 					msg_print(Ind, "\377GCraps");
 					win = 3;
 					odds = 1;
@@ -550,7 +551,8 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 					choice = roll3;
 					msg_format(Ind, "First roll: %d %d    Total: %d", roll1, 
 					        roll2, roll3);
-					if ((roll3 == 7) || (roll3 == 11))
+/* chances too high for winning 	if ((roll3 == 7) || (roll3 == 11)) */
+					if (roll3 == 9)
 						win = TRUE;
 					else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
 						win = FALSE;
@@ -573,7 +575,12 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 								win = FALSE;
 						} while ((win != TRUE) && (win != FALSE));
 					}
-
+					if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+					else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, odds * wager);
+#else
+					msg_print(Ind, "\377GSorry, we're currently out of mon..err dice!");
+					return (FALSE);
+#endif
 					break;
 				}
 
@@ -715,6 +722,7 @@ static bool inn_comm(int Ind, int cmd)
 	/* Extract race info */
 	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form==MIMIC_VAMPIRE));
 #endif	// 0
+	vampire = p_ptr->sensible_life;
 
 	switch(cmd)
 	{
@@ -1829,16 +1837,17 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			town_history();
 			break;
 		}
-
+#endif
 		case BACT_RACE_LEGENDS:
 		{
-			race_legends();
+//			race_legends();
+			do_cmd_view_cheeze(Ind);
 			break;
 		}
-
+#if 1
 		case BACT_GREET_KING:
 		{
-			castle_greet();
+//			castle_greet();
 			break;
 		}
 
@@ -1848,6 +1857,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_QUEST3:
 		case BACT_QUEST4:
 		{
+#if 0
 			int y = 1, x = 1;
 			bool ok = FALSE;
 
@@ -1875,9 +1885,17 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			{
 				msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
 			}
+#else
+			u16b flags = QUEST_MONSTER | QUEST_RANDOM | QUEST_RACE;
+			int lev = p_ptr->lev;
+			u16b type, num;
+			if (prepare_quest(Ind, Ind, flags, &lev, &type, &num))
+				add_quest(Ind, Ind, type, num, flags);
+#endif
 			break;
 		}
-
+#endif
+#if 0
 		case BACT_KING_LEGENDS:
 		case BACT_ARENA_LEGENDS:
 		case BACT_LEGENDS:
@@ -2137,12 +2155,16 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 
 		case BACT_MIMIC_NORMAL:
 		{
-			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* It's Shadow mimicry */
-			if (p_ptr->body_monster)
+			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* Undo temporary mimicry (It's Shadow mimicry)*/
+			if (p_ptr->fruit_bat == 2) { /* Undo fruit bat form from chauve-souris potion */
+				p_ptr->fruit_bat = 0;
+				p_ptr->update |= (PU_BONUS | PU_HP);
+				paid = TRUE;
+			}
+			if (p_ptr->body_monster) /* Undo normal mimicry */
 			{
 				p_ptr->body_monster = 0;
 				p_ptr->body_changed = TRUE;
-				msg_print(Ind, "You polymorph back to the normal form!");
 				paid = TRUE;
 
 				note_spot(Ind, p_ptr->py, p_ptr->px);
@@ -2157,37 +2179,39 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 			}
+			if (paid) msg_print(Ind, "You are polymorphed back to normal form!");
 			break;
 		}
 
-#if 0
+#if 1
 		case BACT_VIEW_BOUNTIES:
 		{
-			show_bounties();
+//			show_bounties();
 			break;
 		}
 
 		case BACT_VIEW_QUEST_MON:
 		{
-			show_quest_monster();
+//			show_quest_monster();
 			break;
 		}
 
 		case BACT_SELL_QUEST_MON:
 		{
-			sell_quest_monster();
+//			sell_quest_monster();
 			break;
 		}
 
 		case BACT_SELL_CORPSES:
 		{
-			sell_corpses();
+//			sell_corpses();
 			break;
 		}
 
 		/* XXX no fates, for now */
 		case BACT_DIVINATION:
 		{
+#if 0
 			int i, count = 0;
 			bool something = FALSE;
 
@@ -2205,12 +2229,14 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			}
 
 			if(!something) msg_print(Ind, "Well, you have no fate, anyway I'll keep your money!");
-
+#else /* fortune cookies for now, lol */
+			fortune(Ind, FALSE);
+#endif
 			paid = TRUE;
 			break;
 
 		}
-#endif	// 0
+#endif	// 1
 
 		case BACT_BUY:
 		{
@@ -2248,7 +2274,7 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		/* XXX This will be quite abusable.. */
 		case BACT_GET_LOAN:
 		{
-			s32b i, price, req;
+			s64b i, price, req;
 
 			if(p_ptr->loan)
 			{

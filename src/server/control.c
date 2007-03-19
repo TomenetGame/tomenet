@@ -237,12 +237,12 @@ static void console_change_artifact(int artifact, int status)
 	if (status)
 	{
 		/* Make found */
-		a_ptr->cur_num = 1;
+		handle_art_inum(artifact);
 	}
 	else
 	{
 		/* Make unfound */
-		a_ptr->cur_num = 0;
+		handle_art_dnum(artifact);
 	}
 
 	/* Succeeded */
@@ -300,11 +300,11 @@ static void console_change_unique(int unique, cptr killer)
 
 		/* Tell people if the monster is respawning */
 		if (!r_ptr->max_num)
-		{
+		{	/* the_sandman: added colour */
 			snprintf(buf, 80, "\377v%s rises from the dead!",(r_name + r_ptr->name));
-			
+    			
 			/* Tell every player */
-			msg_broadcast(0,buf);
+			msg_broadcast(0,buf);    				    				
 		}
 		r_ptr->max_num = 1;
 	}

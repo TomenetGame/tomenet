@@ -2482,6 +2482,11 @@ struct player_type
 	int rune_stealth;
 	int rune_IV;
 #endif //runemaster
+
+	/* Prevent players from taking it multiple times from a single effect - mikaelh */
+	bool got_hit;
+	/* No insane amounts of damage either */
+	s32b total_damage;
 };
 
 /* For Monk martial arts */

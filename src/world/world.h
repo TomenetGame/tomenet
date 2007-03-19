@@ -86,7 +86,7 @@ struct death{
 
 struct chat{
 	unsigned long id;	/* From ID */
-	char ctxt[120];
+	char ctxt[160];
 };
 
 struct pmsg{
@@ -94,7 +94,7 @@ struct pmsg{
 	unsigned short sid;	/* To server ID */
 	char player[80];	/* thats what it is in server :( */
 	char victim[80];	/* thats what it is in server :( */
-	char ctxt[120];
+	char ctxt[160];
 };
 
 struct sinfo{
@@ -106,7 +106,7 @@ struct sinfo{
 
 /* server world authentication */
 struct auth{
-	unsigned char pass[21];
+	char pass[21];
 	unsigned long val;
 };
 

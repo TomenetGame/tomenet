@@ -252,7 +252,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -260,7 +260,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_SICKNESS:
 			{
-				take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -268,7 +268,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_STUPIDITY:
 			{
-				take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -276,7 +276,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_NAIVETY:
 			{
-				take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -284,7 +284,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_UNHEALTH:
 			{
-				take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -292,7 +292,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_DISEASE:
 			{
-				take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->sensible_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -325,8 +325,11 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_CURE_SERIOUS:
 			{
-				(void)set_poisoned(Ind, 0);
-				(void)set_image(Ind, 0);	// ok?
+				if (set_blind(Ind, 0)) ident = TRUE;
+				if (set_confused(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
+//				(void)set_poisoned(Ind, 0);
+//				(void)set_image(Ind, 0);	// ok?
 				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
 				break;
 			}
@@ -351,12 +354,14 @@ void do_cmd_eat_food(int Ind, int item)
 				if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 				if (do_res_stat(Ind, A_CON)) ident = TRUE;
 				if (do_res_stat(Ind, A_CHR)) ident = TRUE;
+				if (restore_level(Ind)) ident = TRUE; /* <- new (for RPG_SERVER) */
 				break;
 			}
 
 			case SV_FOOD_FORTUNE_COOKIE:
 			{
-				msg_print(Ind, "That tastes good.");
+				if (!p_ptr->sensible_life)
+					msg_print(Ind, "That tastes good.");
 				if (p_ptr->blind || no_lite(Ind))
 				{
 					msg_print(Ind, "You feel some paper in it - what a pity you cannot see!");
@@ -381,6 +386,7 @@ void do_cmd_eat_food(int Ind, int item)
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					p_ptr->black_breath = FALSE;
 				}
+				if (p_ptr->sensible_life) take_hit(Ind, 250, "a sprig of athelas", 0);
 				ident = TRUE;
 				break;
 			}
@@ -400,50 +406,55 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_JERKY:
 			case SV_FOOD_SLIME_MOLD:
 			{
-				msg_print(Ind, "That tastes good.");
+				if (!p_ptr->sensible_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
+					msg_print(Ind, "That tastes good.");
 				ident = TRUE;
 				break;
 			}
 
 			case SV_FOOD_WAYBREAD:
 			{
+			    if (!p_ptr->sensible_life) {
 				msg_print(Ind, "That tastes very good.");
 				(void)set_poisoned(Ind, 0);
 				(void)set_image(Ind, 0);	// ok?
 				(void)hp_player(Ind, damroll(5, 8));
 				set_food(Ind, PY_FOOD_MAX - 1);
 				ident = TRUE;
+			    } else {
+				msg_print(Ind, "Doesn't taste very special.");
+			    }
 				break;
 			}
 
 			case SV_FOOD_PINT_OF_ALE:
 			case SV_FOOD_PINT_OF_WINE:
 			{
+			    if (!p_ptr->sensible_life) {
 				/* Let's make this usable... - the_sandman */
-                                if (o_ptr->name1 == ART_DWARVEN_ALE) {
-                                        msg_format(Ind, "\377gYou drank the drinks of the gods");
-                                        msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
-                                        switch (randint(10)) {
-                                                case 1:
-                                                case 2:
-                                                case 3: // 3 in 10 for Hero effect
-                                                        set_hero(Ind, 20 + randint(10)); break;
-                                                case 4:
-                                                case 5:
-                                                case 6: // 3 in 10 for Speed
-                                                        set_fast(Ind, 20 + randint(10), 10); break;
-                                                case 7:
-                                                case 8:
-                                                case 9: // 3 in 10 for Berserk
-                                                        set_shero(Ind, 20 + randint(10)); break;
-                                                case 10:// 1 in 10 for confusion ;)
-                                                default:
-                                                        if (!(p_ptr->resist_conf)) {
-                                                                set_confused(Ind, randint(10));
-                                                        } break;
-                                        }
-                                        p_ptr->food = PY_FOOD_FULL;     // A quaff will bring you to the norm sustenance level!
-
+				if (o_ptr->name1 == ART_DWARVEN_ALE) {
+					msg_format(Ind, "\377gYou drank the liquior of the gods");
+					msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+					switch (randint(10)) {
+						case 1: 
+						case 2:
+						case 3:	// 3 in 10 for Hero effect
+							set_hero(Ind, 20 + randint(10)); break;
+						case 4: 
+						case 5:
+						case 6:	// 3 in 10 for Speed
+							set_fast(Ind, 20 + randint(10), 10); break;
+						case 7:
+						case 8:
+						case 9: // 3 in 10 for Berserk
+							set_shero(Ind, 20 + randint(10)); break;
+						case 10:// 1 in 10 for confusion ;)
+						default: 
+							if (!(p_ptr->resist_conf)) {
+								set_confused(Ind, randint(10));
+							} break;
+					}
+					p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
 				} else if (magik(o_ptr->name2? 50 : 20))
 				{
 					msg_format(Ind, "\377%c*HIC*", random_colour());
@@ -495,7 +506,9 @@ void do_cmd_eat_food(int Ind, int item)
 						(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 				}
 				else msg_print(Ind, "That tastes good.");
-
+			    } else {
+				msg_print(Ind, "That tastes fair but has no effect.");
+			    }
 				if (o_ptr->name1 == ART_DWARVEN_ALE) keep = TRUE;
 
 				ident = TRUE;
@@ -643,7 +656,8 @@ void do_cmd_eat_food(int Ind, int item)
 
 
 	/* Food can feed the player */
-	(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+	if (!p_ptr->sensible_life)
+		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 
 	/* Hack -- really allow certain foods to be "preserved" */
@@ -700,12 +714,16 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_SALT_WATER:
 				{
+				    if (!p_ptr->sensible_life) {
 					msg_print(Ind, "The potion makes you vomit!");
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
 					/* made salt water less deadly -APD */
 					(void)set_food(Ind, (p_ptr->food/2)-400);
 					(void)set_poisoned(Ind, 0);
 					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+				    } else {
+					msg_print(Ind, "That potion tastes awful.");
+				    }
 					ident = TRUE;
 					break;
 				}
@@ -837,9 +855,14 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_DEATH:
 				{
-					msg_print(Ind, "A feeling of Death flows through your body.");
-					take_hit(Ind, 5000, "a potion of Death", 0);
-					ident = TRUE;
+					if (!p_ptr->sensible_life) {
+						msg_print(Ind, "A feeling of Death flows through your body.");
+						take_hit(Ind, 5000, "a potion of Death", 0);
+						ident = TRUE;
+					} else {
+						msg_print(Ind, "You burp.");
+						msg_format_near(Ind, "%s burps.", p_ptr->name);
+					}
 					break;
 				}
 
@@ -862,7 +885,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				}
 			case SV_POTION_INVIS:
 				{
-					set_invis(Ind, 30 + randint(40), p_ptr->lev * 4 / 5);
+/* too low to allow a pot of invis given as startup eq to have any effect:
+					set_invis(Ind, 30 + randint(40), p_ptr->lev * 4 / 5); */
+					set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
 #if 0
 					p_ptr->tim_invisibility = 30+randint(40);
 					p_ptr->tim_invis_power = p_ptr->lev * 4 / 5;
@@ -957,7 +982,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_CURE_CRITICAL:
 				{
-					if (hp_player(Ind, damroll(8, 8))) ident = TRUE;
+					if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					//			if (set_poisoned(Ind, 0)) ident = TRUE;	/* use specialized pots */
@@ -1281,6 +1306,14 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
 
 				break;
+			case SV_POTION2_AMBER:
+				ident = TRUE;
+				msg_print(Ind, "Your muscles bulge, and your skin turns to amber!");
+				do_xtra_stats(Ind, 20, 20);
+				set_shero(Ind, 20); /* -AC cancelled by blessing below */
+				p_ptr->blessed_power = 35;
+				set_blessed(Ind, 20);
+				break;
 		}
 	}
 
@@ -1364,6 +1397,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	if (ident && !object_aware_p(Ind, o_ptr))
 	{
 		object_aware(Ind, o_ptr);
+//		object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
 		gain_exp(Ind, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
 	}
 
@@ -1372,8 +1406,10 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 
 	/* Potions can feed the player */
-	(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+	if (!p_ptr->sensible_life)
+		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
+	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 
 	/* Destroy a potion in the pack */
 	if (item >= 0)
@@ -1408,6 +1444,7 @@ void do_cmd_drink_fountain(int Ind)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	/* decided to allow players in WRAITHFORM to drink ;) */
 	if (p_ptr->ghost) {
 		msg_print(Ind, "You cannot drink.");
 		return;
@@ -1507,6 +1544,26 @@ void do_cmd_drink_fountain(int Ind)
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
 	}
+	
+#ifdef FOUNTAIN_GUARDS
+	pval = 0;
+//	if (k_info[lookup_kind(tval, sval)].cost > 0) {
+	if (magik(FOUNTAIN_GUARDS)) {
+		if (getlevel(&p_ptr->wpos) >= 40) { pval = 924;
+		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:pval = 1038;break; case 2:pval = 893;break; case 3:pval = 902; }
+		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1:pval = 512;break; case 2:pval = 509; }
+		} else if (getlevel(&p_ptr->wpos) >= 25) { pval = 443;
+		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) {case 1:pval = 919;break; case 2:pval = 882;break; case 3:pval = 927;break; case 4:pval = 1057; }
+		} else if (getlevel(&p_ptr->wpos) >= 15) { switch (randint(3)) {case 1:pval = 303;break; case 2:pval = 923;break; case 3:pval = 926; }
+		} else if (getlevel(&p_ptr->wpos) >= 10) { pval = 925;
+		} else if (getlevel(&p_ptr->wpos) >= 5) { pval = 207;
+		} else { pval = 900;
+		}
+		s_printf("FOUNTAIN_GUARDS: %d.\n", pval);
+	}
+//	}
+	if (pval) summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, pval, 0, 1);
+#endif
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1535,6 +1592,11 @@ void do_cmd_fill_bottle(int Ind)
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
+		    msg_print(Ind, "The water seems to pass through the bottle!");
+		return;
+	}
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN)
 	{
@@ -1732,8 +1794,7 @@ bool curse_armor(int Ind)
 
 		if (true_artifact_p(o_ptr))
 		{
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
+			handle_art_d(o_ptr->name1);
 		}
 
 		/* Blast the armor */
@@ -1805,8 +1866,7 @@ bool curse_weapon(int Ind)
 
 		if (true_artifact_p(o_ptr))
 		{
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
+			handle_art_d(o_ptr->name1);
 		}
 
 		/* Shatter the weapon */
@@ -1881,8 +1941,7 @@ bool curse_an_item(int Ind, int slot)
 
 		if (true_artifact_p(o_ptr))
 		{
-			a_info[o_ptr->name1].cur_num = 0;
-			a_info[o_ptr->name1].known = FALSE;
+			handle_art_d(o_ptr->name1);
 		}
 
 		/* Blast the armor */
@@ -2130,6 +2189,8 @@ static int check_self_summon(player_type *p_ptr){
 void do_cmd_read_scroll(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
+        monster_type    *m_ptr;
+        monster_race    *r_ptr;
 	//cave_type * c_ptr;
 
 	int	k, ident, lev, d_no, d_tries, x, y; //, antichance;
@@ -2143,11 +2204,6 @@ void do_cmd_read_scroll(int Ind, int item)
 	if (p_ptr->blind)
 	{
 		msg_print(Ind, "You can't see anything.");
-		return;
-	}
-	if (no_lite(Ind))
-	{
-		msg_print(Ind, "You have no light to read by.");
 		return;
 	}
 	if (p_ptr->confused)
@@ -2178,6 +2234,12 @@ void do_cmd_read_scroll(int Ind, int item)
 	else
 	{
 		o_ptr = &o_list[0 - item];
+	}
+
+	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_PARCHMENT_DEATH)))
+	{
+		msg_print(Ind, "You have no light to read by.");
+		return;
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'r' )) {
@@ -2333,6 +2395,20 @@ void do_cmd_read_scroll(int Ind, int item)
 				}
 				break;
 			}
+			case SV_SCROLL_SLEEPING:
+				msg_print(Ind, "A veil of sleep falls down over the wide surroundings..");
+			        for (k = m_top - 1; k >= 0; k--)
+			        {
+			                /* Access the monster */
+			                m_ptr = &m_list[m_fast[k]];
+					r_ptr = race_inf(m_ptr);
+	    			        /* On this level? Test its highest encounter so far */
+			                if (inarea(&m_ptr->wpos, &p_ptr->wpos) &&
+					    !((r_ptr->flags1 & RF1_UNIQUE) ||
+			                    (r_ptr->flags3 & RF3_NO_SLEEP)))
+						m_ptr->csleep = 1000;
+			        }
+				break;
 
 			/* not adding bounds checking now... because of perma walls
 			   hope that I don't need to...... 
@@ -2461,7 +2537,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "This is a scroll of *enchant* armour.");
+				msg_print(Ind, "This is a scroll of *enchant armour*.");
 				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, 0);
 				used_up = FALSE;
 				ident = TRUE;
@@ -2470,7 +2546,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_ENCHANT_WEAPON:
 			{
-				msg_print(Ind, "This is a scroll of *enchant* weapon.");
+				msg_print(Ind, "This is a scroll of *enchant weapon*.");
 				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, 0);
 				used_up = FALSE;
 				ident = TRUE;
@@ -2489,6 +2565,12 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_LIGHT:
 			{
 				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
+				//if (p_ptr->sensible_lite && !p_ptr->resist_lite) 
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite) 
+					take_hit(Ind, damroll(10, 3), "a scroll of light", 0);
+                        	//if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) 
+				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind) 
+					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				break;
 			}
 
@@ -2531,15 +2613,21 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_SATISFY_HUNGER:
 			{
-				if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
+				//if (!p_ptr->sensible_life)
+				if (p_ptr->prace != RACE_VAMPIRE)
+					if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 				break;
 			}
 
 			case SV_SCROLL_BLESSING:
 			{
-				if (p_ptr->blessed_power == 0)
+				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(5, 3), "a scroll of blessing", 0);
+				}	
+				else if (p_ptr->blessed_power == 0)
 				{
-				        p_ptr->blessed_power = 10;
+				        p_ptr->blessed_power = 8;
 					if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
 				}
 				break;
@@ -2547,9 +2635,13 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_HOLY_CHANT:
 			{
-				if (p_ptr->blessed_power == 0)
+				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(10, 3), "a scroll of holy chant", 0);
+				}
+				else if (p_ptr->blessed_power == 0)
 				{
-					p_ptr->blessed_power = 20;
+					p_ptr->blessed_power = 14;
 					if (set_blessed(Ind, randint(24) + 12)) ident = TRUE; /* removed stacking */
 				}
 				break;
@@ -2557,9 +2649,13 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_HOLY_PRAYER:
 			{
-				if (p_ptr->blessed_power == 0)
+				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(30, 3), "a scroll of holy prayer", 0);
+				}
+				else if (p_ptr->blessed_power == 0)
 				{
-					p_ptr->blessed_power = 30;
+					p_ptr->blessed_power = 20;
 					if (set_blessed(Ind, randint(48) + 24)) ident = TRUE; /* removed stacking */
 				}
 				break;
@@ -2578,8 +2674,13 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_PROTECTION_FROM_EVIL:
 			{
-				k = 3 * p_ptr->lev;
-				if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
+				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				//if (p_ptr->prace == RACE_VAMPIRE) {
+					take_hit(Ind, damroll(10, 3), "a scroll of protection from evil", 0);
+				} else {
+					k = 3 * p_ptr->lev;
+					if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
+				}
 				break;
 			}
 
@@ -2606,6 +2707,9 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_DISPEL_UNDEAD:
 			{
 				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
+				//if (p_ptr->sensible_life) 
+				if (p_ptr->prace == RACE_VAMPIRE)
+					take_hit(Ind, damroll(30, 3), "a scroll of dispel undead", 0);
 				break;
 			}
 
@@ -2629,6 +2733,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
+			        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
 				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
@@ -2639,6 +2744,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
+			        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
 				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
@@ -2672,7 +2778,11 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_CHAOS:
 			{
 				sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
-				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
+#if 0 // GF_CHAOS == teleporting/polymorphing stuff around...
+				fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker); 
+#else
+				call_chaos(Ind, 0, 0);
+#endif
 				if (!p_ptr->resist_chaos)
 					take_hit(Ind, 111+randint(111), "a Scroll of Chaos", 0);
 				ident = TRUE;
@@ -2760,6 +2870,8 @@ void do_cmd_read_scroll(int Ind, int item)
 					    d_tries = MAX_D_IDX;
 					}
 				    }
+				    
+				    if (!strcmp(d_info[d_no].name + d_name, "The Shores of Valinor")) break;
 				    
 				    d_tries = 0;
 				    for (y = 0; y < MAX_WILD_Y; y++)
@@ -2861,6 +2973,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	/* Hack -- really allow certain scrolls to be "preserved" */
 	if (keep) return;
+
+	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 
 	/* Destroy a scroll in the pack */
 	if (item >= 0)
@@ -3117,6 +3231,8 @@ void do_cmd_use_staff(int Ind, int item)
 				msg_print(Ind, "The end of the staff glows brightly...");
 			}
 			for (k = 0; k < 8; k++) lite_line(Ind, ddd[k]);
+			if (p_ptr->sensible_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a staff of starlight", 0);
+                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			ident = TRUE;
 			break;
 		}
@@ -3125,6 +3241,8 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
+			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), "a staff of Light", 0);
+                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			break;
 		}
 
@@ -3173,7 +3291,12 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_CURE_LIGHT:
 		{
-			if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
+//			if (hp_player(Ind, randint(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10)))) ident = TRUE;
+			/* Turned it into 'Cure Serious Wounds' - C. Blue */
+			if (set_blind(Ind, 0)) ident = TRUE;
+			if (set_confused(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
+			if (hp_player(Ind, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8))) ident = TRUE;
 			break;
 		}
 
@@ -3249,6 +3372,10 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_DISPEL_EVIL:
 		{
 			if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
+			if (p_ptr->sensible_good) {
+				take_hit(Ind, damroll(30, 3), "a staff of dispel evil", 0);
+				ident = TRUE;
+			}
 			break;
 		}
 
@@ -3261,13 +3388,18 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_HOLINESS:
 		{
 			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-			if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
-			if (set_poisoned(Ind, 0)) ident = TRUE;
-			if (set_afraid(Ind, 0)) ident = TRUE;
-			if (hp_player(Ind, 50)) ident = TRUE;
-			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				take_hit(Ind, damroll(50, 3), "a staff of holiness", 0);
+				ident = TRUE;
+			} else {
+				k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+				if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
+				if (set_poisoned(Ind, 0)) ident = TRUE;
+				if (set_afraid(Ind, 0)) ident = TRUE;
+				if (hp_player(Ind, 50)) ident = TRUE;
+				if (set_stun(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, 0)) ident = TRUE;
+			}
 			break;
 		}
 
@@ -4064,14 +4196,14 @@ void do_cmd_zap_rod(int Ind, int item)
 		case SV_ROD_DETECT_TRAP:
 		{
 			if (detect_trap(Ind, rad)) ident = TRUE;
-			o_ptr->pval = 50;
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
 			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			o_ptr->pval = 70;
+			o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		}
 
@@ -4079,7 +4211,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			ident = TRUE;
 			if (!ident_spell(Ind)) use_charge = FALSE;
-			o_ptr->pval = 10;
+			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4087,7 +4219,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			ident = TRUE;
-			o_ptr->pval = 60;
+			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 			break;
 		}
 
@@ -4095,7 +4227,9 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-			o_ptr->pval = 30;
+			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
 
@@ -4103,7 +4237,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			map_area(Ind);
 			ident = TRUE;
-			o_ptr->pval = 99;
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
@@ -4111,7 +4245,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			detection(Ind, rad);
 			ident = TRUE;
-			o_ptr->pval = 99;
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
@@ -4119,7 +4253,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			probing(Ind);
 			ident = TRUE;
-			o_ptr->pval = 50;
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 
@@ -4132,17 +4266,26 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (set_cut(Ind, 0)) ident = TRUE;
                         if (p_ptr->food >= PY_FOOD_MAX)
                         if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
-			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
+			//o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
+			//Keep with the trend, only upto 50% faster =)
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
 
 		case SV_ROD_HEALING:
 		{
+#if 0
 			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
+#else
+			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0)) ident = TRUE;
+			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
 			break;
+#endif
 		}
 
 		case SV_ROD_RESTORATION:
@@ -4154,7 +4297,8 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
 			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+			//o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 
@@ -4319,15 +4463,15 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
-	/* High level objects are harder */
-	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
-	if (chance < 0) chance = 0;
-
         /* Is it simple to use ? */
         if (f4 & TR4_EASY_USE)
         {
-                chance *= 10;
+                chance *= 2;
         }
+
+	/* High level objects are harder */
+	chance = chance - ((lev > 50) ? 50 : lev) - p_ptr->antimagic;
+	if (chance < 0) chance = 0;
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -4357,14 +4501,18 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_TELEPORT_AWAY:
 		{
 			if (teleport_monster(Ind, dir)) ident = TRUE;
-			o_ptr->pval = 25;
+			//o_ptr->pval = 25;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
 			break;
 		}
 
 		case SV_ROD_DISARMING:
 		{
 			if (disarm_trap(Ind, dir)) ident = TRUE;
-			o_ptr->pval = 30;
+			//o_ptr->pval = 30;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
 
@@ -4373,21 +4521,27 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			msg_print(Ind, "A line of blue shimmering light appears.");
 			lite_line(Ind, dir);
 			ident = TRUE;
-			o_ptr->pval = 9;
+			//o_ptr->pval = 9;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 9 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
 			break;
 		}
 
 		case SV_ROD_SLEEP_MONSTER:
 		{
 			if (sleep_monster(Ind, dir)) ident = TRUE;
-			o_ptr->pval = 18;
+			//o_ptr->pval = 18;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 18 - get_skill_scale(p_ptr, SKILL_DEVICE, 9);
 			break;
 		}
 
 		case SV_ROD_SLOW_MONSTER:
 		{
 			if (slow_monster(Ind, dir)) ident = TRUE;
-			o_ptr->pval = 20;
+			//o_ptr->pval = 20;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
 			break;
 		}
 
@@ -4398,14 +4552,18 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 				hp_player(Ind, p_ptr->ret_dam / 3);
 				p_ptr->ret_dam = 0;
 			}
-			o_ptr->pval = 23;
+			//o_ptr->pval = 23;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
 			break;
 		}
 
 		case SV_ROD_POLYMORPH:
 		{
 			if (poly_monster(Ind, dir)) ident = TRUE;
-			o_ptr->pval = 25;
+			//o_ptr->pval = 25;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
 			break;
 		}
 
@@ -4415,7 +4573,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires an acid bolt for");
 			fire_bolt_or_beam(Ind, 10, GF_ACID, dir, damroll(6, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 12;
+			//o_ptr->pval = 12;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 12 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		}
 
@@ -4425,7 +4585,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a lightning bolt for");
 			fire_bolt_or_beam(Ind, 10, GF_ELEC, dir, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 120), p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 11;
+			//o_ptr->pval = 11;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 11 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4435,7 +4597,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a fire bolt for");
 			fire_bolt_or_beam(Ind, 10, GF_FIRE, dir, damroll(8, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 210), p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 15;
+			//o_ptr->pval = 15;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
 			break;
 		}
 
@@ -4445,7 +4609,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a frost bolt for");
 			fire_bolt_or_beam(Ind, 10, GF_COLD, dir, damroll(5, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)) + 20 + get_skill_scale(p_ptr, SKILL_DEVICE, 180), p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 13;
+			//o_ptr->pval = 13;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 13 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		}
 
@@ -4455,7 +4621,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires an acid ball for");
 			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 2, p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 27;
+			//o_ptr->pval = 27;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 27 - get_skill_scale(p_ptr, SKILL_DEVICE, 13);
 			break;
 		}
 
@@ -4465,7 +4633,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a lightning ball for");
 			fire_ball(Ind, GF_ELEC, dir, 32 + get_skill_scale(p_ptr, SKILL_DEVICE, 160), 2, p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 23;
+			//o_ptr->pval = 23;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 23 - get_skill_scale(p_ptr, SKILL_DEVICE, 11);
 			break;
 		}
 
@@ -4475,7 +4645,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a fire ball for");
 			fire_ball(Ind, GF_FIRE, dir, 72 + get_skill_scale(p_ptr, SKILL_DEVICE, 360), 2, p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 30;
+			//o_ptr->pval = 30;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
 
@@ -4485,7 +4657,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " fires a frost ball for");
 			fire_ball(Ind, GF_COLD, dir, 48 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
 			ident = TRUE;
-			o_ptr->pval = 25;
+			//o_ptr->pval = 25;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 25 - get_skill_scale(p_ptr, SKILL_DEVICE, 12);
 			break;
 		}
 
@@ -4494,14 +4668,18 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_DETECT_TRAP:
 		{
 			if (detect_trap(Ind, rad)) ident = TRUE;
-			o_ptr->pval = 50;
+			//o_ptr->pval = 50;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 
 		case SV_ROD_DETECT_DOOR:
 		{
 			if (detect_sdoor(Ind, rad)) ident = TRUE;
-			o_ptr->pval = 70;
+			//o_ptr->pval = 70;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 70 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		}
 
@@ -4509,7 +4687,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			ident = TRUE;
 			if (!ident_spell(Ind)) use_charge = FALSE;
-			o_ptr->pval = 10;
+			//o_ptr->pval = 10;
+			/* up to 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4517,7 +4697,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			set_recall(Ind, rand_int(20) + 15, o_ptr);
 			ident = TRUE;
-			o_ptr->pval = 60;
+			//o_ptr->pval = 60;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 60 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
 			break;
 		}
 
@@ -4525,7 +4707,11 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-			o_ptr->pval = 30;
+			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			//o_ptr->pval = 30;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
 
@@ -4533,7 +4719,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			map_area(Ind);
 			ident = TRUE;
-			o_ptr->pval = 99;
+			//o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
@@ -4541,7 +4729,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			detection(Ind, rad);
 			ident = TRUE;
-			o_ptr->pval = 99;
+			//o_ptr->pval = 99;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49);
 			break;
 		}
 
@@ -4549,7 +4739,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			probing(Ind);
 			ident = TRUE;
-			o_ptr->pval = 50;
+			//o_ptr->pval = 50;
+			/* up to a 50% faster with maxed MD - the_sandman */
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		}
 
@@ -4568,11 +4760,19 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 		case SV_ROD_HEALING:
 		{
+#if 0
 			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
+#else // how about...
+			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (set_stun(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0)) ident = TRUE;
+			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
+			break; 
+#endif
 		}
 
 		case SV_ROD_RESTORATION:
@@ -4599,18 +4799,28 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 				(void)set_fast(Ind, p_ptr->fast + 5, 10);
 				 /* not removed stacking due to interesting effect */
 			}
-			o_ptr->pval = 99;
+			o_ptr->pval = 99 - get_skill_scale(p_ptr, SKILL_DEVICE, 49); 
 			break;
 		}
 
 		case SV_ROD_HAVOC:
 		{
+#if 0
 			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
 			ident = TRUE;
-			o_ptr->pval = 90;
+			o_ptr->pval = 90; //50% faster recharge here -> too powerful, perhaps?
 			break;
+
+#else			//Nerf the initial damage spam.
+			//pfft. the third argument here is the extra damage.
+			sprintf(p_ptr->attacker, " invokes havoc for");
+			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 675));
+			ident = TRUE;
+			o_ptr->pval = 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23); 
+			break; 
+#endif
 		}
-		case SV_ROD_NOTHING:
+		case SV_ROD_NOTHING: //lol?
 		{
 			break;
 		}
@@ -4854,6 +5064,7 @@ void do_cmd_activate(int Ind, int item)
 #endif	// 0
 
 
+if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	if (p_ptr->anti_magic)
 	{
 		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
@@ -4869,6 +5080,7 @@ void do_cmd_activate(int Ind, int item)
                 msg_print(Ind, "Your anti-magic field disrupts your attempt.");
                 return;
         }
+}
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -4938,23 +5150,28 @@ void do_cmd_activate(int Ind, int item)
 	/* Confusion hurts skill */
 	if (p_ptr->confused) chance = chance / 2;
 
+        /* Is it simple to use ? */
+        if (f4 & TR4_EASY_USE)
+        {
+                chance *= 2;
+        }
+
 	/* Hight level objects are harder */
 	chance = chance - ((lev > 50) ? 50 : lev);
 
         /* Extract object flags */
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-        /* Is it simple to use ? */
-        if (f4 & TR4_EASY_USE)
+        /* Certain items are easy to use too */
+        if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+	    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH))
         {
-                chance *= 10;
+		if (chance < USE_DEVICE * 2) chance = USE_DEVICE * 2;
         }
-
-        /* Rings of Polymorphing are easy to use too */
-        if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
-        {
-                chance *= 10;
-        }
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH && !p_ptr->total_winner) {
+		msg_print(Ind, "Only royalties may activate this Ring!");
+		return;
+	}
 
 	/* Give everyone a (slight) chance */
 	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
@@ -5557,6 +5774,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The phial wells with clear light...");
 				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+				if (p_ptr->sensible_lite) take_hit(Ind, damroll(50, 5), "the phial of galadriel", 0);
+                        	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				o_ptr->timeout = rand_int(10) + 10;
 				break;
 			}
@@ -6040,6 +6259,8 @@ void do_cmd_activate(int Ind, int item)
 			{
 				msg_print(Ind, "The phial wells with clear light...");
 				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+				if (p_ptr->sensible_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
+                        	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				o_ptr->timeout = rand_int(10) + 10;
 				break;
 			}
@@ -6255,12 +6476,14 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "The phial wells with dark light...");
 				unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 				take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
-				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
-				(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
-				(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
-				(void)dec_stat(Ind, A_STR, 25, STAT_DEC_PERMANENT);
-				(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
-				(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
+				if (!p_ptr->sensible_life) {
+					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
+					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
+					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
+					(void)dec_stat(Ind, A_STR, 25, STAT_DEC_PERMANENT);
+					(void)dec_stat(Ind, A_CHR, 25, STAT_DEC_PERMANENT);
+					(void)dec_stat(Ind, A_INT, 25, STAT_DEC_PERMANENT);
+				}
 				o_ptr->timeout = rand_int(10) + 10;
 				break;
 			}
@@ -6689,7 +6912,7 @@ void do_cmd_activate(int Ind, int item)
 				if (p_ptr->blessed_power == 0)
 				{
 					msg_print(Ind, "Your gloves glow golden...");
-					p_ptr->blessed_power = 30;
+					p_ptr->blessed_power = 20;
 	        			set_blessed(Ind, randint(48) + 24); /* removed stacking */
 					o_ptr->timeout = 150 + randint(200);
 				} else {
@@ -6712,6 +6935,13 @@ void do_cmd_activate(int Ind, int item)
 				msg_print(Ind, "Shimmers and flashes travel over the surface of the amulet...");
 				o_ptr->timeout = 300 + randint(100);
 				(void)set_tim_wraith(Ind, 150);
+			}
+			case ART_PHASING:
+			{
+				msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
+//				msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
+				o_ptr->timeout = 1000;
+				p_ptr->auto_transport = AT_VALINOR;
 			}
 		}
 
@@ -7019,10 +7249,10 @@ void do_cmd_activate(int Ind, int item)
 		msg_print(Ind, "Your amulet sparkles bright red...");
 
                 set_afraid(Ind, 0);
-                set_fury(Ind, randint(15) + 20); /* removed stacking */
+                set_fury(Ind, randint(10) + 15); /* removed stacking */
                 hp_player(Ind, 40);
 
-		o_ptr->timeout = rand_int(150) + 100;
+		o_ptr->timeout = rand_int(150) + 250;
 		return;
 	}
 #endif	// 0
@@ -7181,7 +7411,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			msg_print(Ind, "You breathe havoc.");
 			sprintf(p_ptr->attacker, " breathes havoc for");
 			//fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
-			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
+			//Increased from 1k to 2k since base dmg from call_chaos was lowered (havoc rods rebalancing)
+			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
 			break;
 		case SV_DRAGON_DEATH:
 			msg_print(Ind, "You breathe nether.");
@@ -7509,7 +7740,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case ART_HELLFIRE:
 			{
 				sprintf(p_ptr->attacker, " invokes raw chaos for");
-				call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
+				//Increases the extra damage from 1k to 2k since call_chaos's base damage was lowered (havoc rods rebalancing)
+				call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
 				o_ptr->timeout = rand_int(200) + 250;
 				break;
 			}
@@ -7654,7 +7886,7 @@ void fortune(int Ind, bool broadcast)
 	}
 	bracer_ff(Rumor);
 //	msg_format(Ind, "%s", Rumor);
-	msg_format(Ind, Rumor);
+	msg_print(Ind, Rumor);
 	msg_print(Ind, NULL);
 
 	if (broadcast)
@@ -7829,6 +8061,11 @@ void do_cmd_fletchery(int Ind)
 	{
 		int x,y, dir;
 		cave_type *c_ptr;
+		
+		if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
+			msg_print(Ind, "You can't pick up the rubble!");
+			return;
+		}
 
 //		if (!get_rep_dir(&dir)) return;
 		for (dir = 1; dir <= 9; dir++)

@@ -675,10 +675,14 @@ static void wr_item(object_type *o_ptr)
 
 	wr_byte(o_ptr->tval);
 	wr_byte(o_ptr->sval);
+	wr_byte(o_ptr->tval2);
+	wr_byte(o_ptr->sval2);
 	wr_s32b(o_ptr->bpval);
 	wr_s32b(o_ptr->pval);
 	wr_s32b(o_ptr->pval2);
 	wr_s32b(o_ptr->pval3);
+	wr_s32b(o_ptr->pval4);
+	wr_s32b(o_ptr->pval5);
 
 	wr_byte(o_ptr->discount);
 	wr_byte(o_ptr->number);
@@ -692,6 +696,15 @@ static void wr_item(object_type *o_ptr)
 	wr_s16b(o_ptr->to_h);
 	wr_s16b(o_ptr->to_d);
 	wr_s16b(o_ptr->to_a);
+
+/* DEBUGGING PURPOSES - the_sandman */
+#if 0
+        if (o_ptr->tval == 46)
+         {
+          s_printf("TRAP_DEBUG: Trap with s_val:%d,to_h:%d,to_d:%d,to_a:%d written\n",
+                                o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
+         }
+#endif
 	wr_s16b(o_ptr->ac);
 	wr_byte(o_ptr->dd);
 	wr_byte(o_ptr->ds);
@@ -787,7 +800,7 @@ static void wr_monster_race(monster_race *r_ptr)
 static void wr_monster(monster_type *m_ptr)
 {
 	int i;
-
+	wr_byte(m_ptr->pet);
 	wr_byte(m_ptr->special);
 	wr_s32b(m_ptr->owner);
 	wr_s16b(m_ptr->r_idx);
@@ -1107,7 +1120,7 @@ static void wr_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, j;
 	u16b tmp16u;
 
 	wr_string(p_ptr->name);
@@ -1120,7 +1133,7 @@ static void wr_extra(int Ind)
 	{
 		wr_string(p_ptr->history[i]);
 	}
-
+	wr_byte(p_ptr->has_pet); //pet pet 
 	/* Race/Class/Gender/Party */
 	wr_byte(p_ptr->prace);
 	wr_byte(p_ptr->pclass);
@@ -1305,6 +1318,7 @@ static void wr_extra(int Ind)
 	/* Special stuff */
 	wr_u16b(panic_save);
 	wr_u16b(p_ptr->total_winner);
+	wr_u16b(p_ptr->once_winner);
 
 	wr_s16b(p_ptr->own1.wx);
 	wr_s16b(p_ptr->own1.wy);
@@ -1327,7 +1341,15 @@ static void wr_extra(int Ind)
 
 	wr_s32b(p_ptr->balance);
 	wr_s32b(p_ptr->tim_blacklist);
+	wr_s32b(p_ptr->tim_watchlist);
+	wr_s32b(p_ptr->pstealing);
 
+        for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
+                wr_s16b(p_ptr->global_event_type[i]);
+                wr_u32b(p_ptr->global_event_signup[i]);
+                wr_u32b(p_ptr->global_event_started[i]);
+                for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
+        }
 }
 
 /*

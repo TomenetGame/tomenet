@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# New TomeNET server startup script
+# This script uses the tomenet.pid file in lib/data and should cause less problems
+# You can use cron to run this script every minute
+
+PIDFILE=lib/data/tomenet.pid
+PATH=/bin:/usr/bin:/usr/local/bin
+
+#cd /home/$USER/tomenet
+ulimit -c unlimited # allow core dumps
+
+if [ -f $PIDFILE ]
+then
+	TOMENETPID=`cat $PIDFILE`
+	if [ `ps ux | grep "\./tomenet\.server" | grep " $TOMENETPID " | grep -v -c grep` = 1 ]
+	then
+		exit
+	fi
+	#rm -f $PIDFILE
+fi
+
+if [ -f core ] ; then
+    mv core cores/core.`date +"%Y%m%d%H%M%S"`
+fi
+if [ -f tomenet.server.core ] ; then
+    mv tomenet.server.core cores/core.`date +"%Y%m%d%H%M%S"`
+fi
+if [ -f lib/data/tomenet.log ] ; then
+    bzip2 lib/data/tomenet.log
+    mv lib/data/tomenet.log.bz2 lib/data/`date +"%Y%m%d%H%M.log.bz2"`
+fi
+
+echo "Server seems to be dead, killing tomenet.server and evilmeta and starting tomenet.server"
+killall -9 tomenet.server
+killall -9 evilmeta
+
+./tomenet.server >/dev/null 2>&1 &

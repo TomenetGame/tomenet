@@ -94,7 +94,7 @@ void inven_takeoff(int Ind, int item, int amt)
 #if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR))
+	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) 
 	{
 		/* Well, so we gotta check if the player, in case he is a
 		mimic, is using a form that can _only_ come from the armor */
@@ -133,7 +133,7 @@ void inven_takeoff(int Ind, int item, int amt)
 			j = race_index("Great Wyrm of Power"); break;
 			}
 			if((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_killed[j] < r_info[j].level) ||
+			    ((p_ptr->r_killed[j] < r_info[j].level) || 
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
@@ -147,7 +147,7 @@ void inven_takeoff(int Ind, int item, int amt)
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	{
-		if ((p_ptr->body_monster == o_ptr->pval) &&
+		if ((p_ptr->body_monster == o_ptr->pval) && 
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{
@@ -253,18 +253,12 @@ void inven_drop(int Ind, int item, int amt)
 	tmp_obj.number = amt;
 
 	/*
-	 * Hack -- If rods or wands are dropped, the total maximum timeout or
-	 * charges need to be allocated between the two stacks.  If all the items
-	 * are being dropped, it makes for a neater message to leave the original
+	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
+	 * charges need to be allocated between the two stacks.  If all the items 
+	 * are being dropped, it makes for a neater message to leave the original 
 	 * stack's pval alone. -LM-
 	 */
-	if (o_ptr->tval == TV_WAND)
-	{
-		if (o_ptr->tval == TV_WAND)
-		{
-			tmp_obj.pval = divide_charged_item(o_ptr, amt);
-		}
-	}
+	if (o_ptr->tval == TV_WAND) tmp_obj.pval = divide_charged_item(o_ptr, amt);
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
@@ -336,7 +330,7 @@ void inven_drop(int Ind, int item, int amt)
 			j = race_index("Great Wyrm of Power"); break;
 			}
 			if((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_killed[j] < r_info[j].level) ||
+			    ((p_ptr->r_killed[j] < r_info[j].level) || 
 			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
 				do_mimic_change(Ind, 0, TRUE);
 		/*}
@@ -350,7 +344,7 @@ void inven_drop(int Ind, int item, int amt)
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
 	{
-		if ((p_ptr->body_monster == o_ptr->pval) &&
+		if ((p_ptr->body_monster == o_ptr->pval) && 
 		    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{
@@ -409,15 +403,33 @@ void inven_drop(int Ind, int item, int amt)
 bool item_tester_hook_wear(int Ind, int slot)
 {
 	player_type *p_ptr = Players[Ind];
-
+	monster_race *r_ptr = NULL;
+	if (p_ptr->body_monster) r_ptr = &r_info[p_ptr->body_monster];
+	
 	/*
 	 * Hack -- restrictions by forms
 	 * I'm not quite sure if wielding 6 rings and 3 weps should be allowed..
-	 */
-	if (p_ptr->body_monster)
+	 * Shapechanging Druids do not get penalized...
+	 
+	 * Another hack for shamans (very experimental):
+	 * They can use their full equipment in E and G (spirit/elemental/ghost) form.
+	 * 
+	 * Druid bats can't wear full eq.
+	 */ 
+#if 0
+	if (p_ptr->body_monster &&
+	    ((p_ptr->pclass != CLASS_DRUID) || p_ptr->fruit_bat) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    ((p_ptr->prace != RACE_VAMPIRE) || p_ptr->fruit_bat)
+	    )
+#else
+	if (p_ptr->body_monster &&
+	    (p_ptr->pclass != CLASS_DRUID) &&
+	    ((p_ptr->pclass != CLASS_SHAMAN) || !strchr("EG", r_ptr->d_char)) &&
+	    (p_ptr->prace != RACE_VAMPIRE)
+	    )
+#endif
 	{
-		monster_race    *r_ptr = &r_info[p_ptr->body_monster];
-
 		switch(slot)
 		{
 			case INVEN_WIELD:
@@ -425,10 +437,10 @@ bool item_tester_hook_wear(int Ind, int slot)
 				if (r_ptr->body_parts[BODY_WEAPON]) return (TRUE);
 				break;
 			case INVEN_LEFT:
-				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
+				if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
 				break;
 			case INVEN_RIGHT:
-				if (r_ptr->body_parts[BODY_FINGER] > 1) return (TRUE);
+				if (r_ptr->body_parts[BODY_FINGER]) return (TRUE);
 				break;
 			case INVEN_NECK:
 			case INVEN_HEAD:
@@ -466,7 +478,16 @@ bool item_tester_hook_wear(int Ind, int slot)
 		}
 	}
 	/* Restrict fruit bats */
-	else if (p_ptr->fruit_bat)
+#if 0
+	else if (p_ptr->fruit_bat && !p_ptr->body_monster)
+#else
+	else if (p_ptr->fruit_bat && (
+	    !p_ptr->body_monster ||
+	    p_ptr->pclass == CLASS_DRUID ||
+	    (p_ptr->pclass == CLASS_SHAMAN && !strchr("EG", r_ptr->d_char)) ||
+	    p_ptr->prace != RACE_VAMPIRE
+	    ))
+#endif
 	{
 		switch(slot)
 		{
@@ -476,7 +497,8 @@ bool item_tester_hook_wear(int Ind, int slot)
 			case INVEN_HEAD:
 			case INVEN_OUTER:
 			case INVEN_LITE:
-		case INVEN_ARM:
+			case INVEN_ARM:
+			case INVEN_TOOL:    //allow them to wear, say, picks and shovels - the_sandman
 				return TRUE;
 		}
 	}
@@ -702,8 +724,8 @@ void do_cmd_wield(int Ind, int item)
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
-
-	if(slot == INVEN_AMMO) num = o_ptr->number;
+	
+	if(slot == INVEN_AMMO) num = o_ptr->number; 
 	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
@@ -727,7 +749,7 @@ void do_cmd_wield(int Ind, int item)
 #if 1
 	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_INVINCIBILITY) && (tmp_obj.tval == TV_AMULET) && (tmp_obj.sval == SV_AMULET_HIGHLANDS))
 	  {
-	    o_ptr->pval += tmp_obj.pval;
+	    o_ptr->bpval += tmp_obj.bpval;
 	  }
 	else
 #endif	// 0
@@ -763,7 +785,7 @@ void do_cmd_wield(int Ind, int item)
 				// tmp_obj.number += o_ptr->number;
 				object_absorb(Ind, &tmp_obj, o_ptr);
 			}
-		}
+		}                
 	}
 #endif	// 0
 
@@ -829,7 +851,7 @@ void do_cmd_wield(int Ind, int item)
 
 
 	  }
-
+	
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -932,13 +954,15 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	/* Handle the newbies_cannot_drop option */
+	/* Handle the newbies_cannot_drop option */	
+#if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 	{
 		msg_print(Ind, "You are not experienced enough to drop items. (Sell/destroy it instead.)");
 		return;
 	}
+#endif
 
 	if( check_guard_inscription( o_ptr->note, 'd' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -987,6 +1011,12 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	/* Let's not end afk for this - C. Blue */
 /* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
 
+#if (STARTEQ_TREATMENT > 1)
+	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+		o_ptr->level = 0;
+#endif
+
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
@@ -1015,7 +1045,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 		msg_print(Ind, "You may not drop gold. Ask an admin to validate your account.");
 		return;
 	}
-
+	
 
 	/* Error checks */
 	if (amt <= 0) return;
@@ -1053,6 +1083,10 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	/* Message */
 //	msg_format(Ind, "You drop %ld pieces of gold.", amt);
 	msg_format(Ind, "You drop %ld pieces of %s.", amt, k_name + k_info[tmp_obj.k_idx].name);
+
+/* #if DEBUG_LEVEL > 3 */
+	if (amt >= 10000)
+		s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", amt, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);
@@ -1179,8 +1213,37 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		return;
 	}
 
+	/* Polymorph back */
+	/* XXX this can cause strange things for players with mimicry skill.. */
+	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
+	{
+		if ((p_ptr->body_monster == o_ptr->pval) &&
+		   ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+		   (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
+		{
+			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+#if 1
+			msg_print(Ind, "You polymorph back to your normal form.");
+			do_mimic_change(Ind, 0, TRUE);
+#endif
+			s_printf("DESTROY_EXPLOIT (poly): %s destroyed %s\n", p_ptr->name, o_name);
+		}
+	}
+
+	/* Check if item gave WRAITH form */
+	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+		s_printf("DESTROY_EXPLOIT (wraith): %s destroyed %s\n", p_ptr->name, o_name);
+#if 1
+		p_ptr->tim_wraith = 1;
+#endif
+	}
+
 	/* Message */
 	msg_format(Ind, "You destroy %s.", o_name);
+
+	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+
+	if (o_ptr->tval == TV_WAND) (void)divide_charged_item(o_ptr, quantity);
 
 	/* Eliminate the item (from the pack) */
 	if (item >= 0)
@@ -1212,7 +1275,7 @@ void do_cmd_observe(int Ind, int item)
 	char		o_name[160];
 
         u32b f1, f2, f3, f4, f5, esp;
-
+						      
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
@@ -1252,8 +1315,9 @@ void do_cmd_observe(int Ind, int item)
 			break;
 		}
 
-    		if (f4 & TR4_COULD2H) msg_print(Ind, "It can be wielded two-handed.");
+    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "It can be wielded two-handed.");
 	        if (f4 & TR4_MUST2H) msg_print(Ind, "It must be wielded two-handed.");
+    		if (f4 & TR4_COULD2H) msg_print(Ind, "It may be wielded two-handed.");
 
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
@@ -1300,6 +1364,12 @@ void do_cmd_uninscribe(int Ind, int item)
 		return;
 	}
 
+	/* small hack, make shirt logos permanent */
+	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot uninscribe shirts.");
+		return;
+	}
+
 	/* Message */
 	msg_print(Ind, "Inscription removed.");
 
@@ -1336,6 +1406,12 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	else
 	{
 		o_ptr = &o_list[0 - item];
+	}
+
+	/* small hack, make shirt logos permanent */
+	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
+		msg_print(Ind, "Cannot inscribe shirts.");
+		return;
 	}
 
 	/* Describe the activity */
@@ -1387,8 +1463,8 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-        /* Ghosts cannot steal */
-        if (p_ptr->ghost)
+        /* Ghosts cannot steal ; not in WRAITHFORM */
+        if (p_ptr->ghost || p_ptr->tim_wraith)
         {
                 msg_print(Ind, "You cannot steal things!");
                 return;
@@ -1417,6 +1493,12 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 	}
 
 #if 0
+	/* not in WRAITHFORM */
+	if (p_ptr->tim_wraith) {
+		msg_print("You can't grab anything!");
+		return;
+	}
+
 	/* The monster is immune */
 	if (r_info[m_ptr->r_idx].flags7 & (RF7_NO_THEFT))
 	{
@@ -1595,12 +1677,20 @@ void do_cmd_steal(int Ind, int dir)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Ghosts cannot steal */
-	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER ||
+#if 0 /* changed since RPG_SERVER */
+	if ((p_ptr->ghost) || cfg.use_pk_rules == PK_RULES_NEVER || 
 		(!(p_ptr->pkill & PKILL_KILLABLE) && cfg.use_pk_rules == PK_RULES_DECLARE))
 	{
 	        msg_print(Ind, "You cannot steal things!");
 	        return;
-	}
+	}	                                                        
+#else
+	/* not in WRAITHFORM either */
+	if (p_ptr->ghost || p_ptr->tim_wraith) {
+	        msg_print(Ind, "You cannot steal things!");
+	        return;
+	}	                                                        
+#endif
 
 	/* May not steal from yourself */
 	if (!dir || dir == 5) return;
@@ -1640,8 +1730,25 @@ void do_cmd_steal(int Ind, int dir)
 		}
 	}
 
+        /* Small delay to prevent crazy steal-spam */
+        if (p_ptr->pstealing)
+        {
+                msg_print(Ind, "You're still not calm enough to steal again..");
+                return;
+        }
+
+	/* May not steal from AFK players, sportsmanship ;) - C. Blue */
+	if (q_ptr->afk)
+	{
+		/* Message */
+		msg_print(Ind, "For sportsmanship you may not steal from players who are AFK.");
+
+		return;
+	}
+
 	/* May not steal from hostile players */
 	/* I doubt if it's reasonable..dunno	- Jir - */
+#if 0 /* turned off now */
 	if (check_hostile(0 - c_ptr->m_idx, Ind))
 	{
 		/* Message */
@@ -1649,7 +1756,7 @@ void do_cmd_steal(int Ind, int dir)
 
 		return;
 	}
-
+#endif
 	dal=(p_ptr->lev>q_ptr->lev ? p_ptr->lev-q_ptr->lev : 1);
 
 	/* affect alignment on attempt (after hostile check) */
@@ -1673,6 +1780,7 @@ void do_cmd_steal(int Ind, int dir)
 		return;
 	}
 
+#if 1 /* maybe rework this */
 	/* Compute chance of success */
 	success = 3 * (adj_dex_safe[p_ptr->stat_ind[A_DEX]] - adj_dex_safe[q_ptr->stat_ind[A_DEX]]);
 	success += 2 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
@@ -1682,6 +1790,8 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* Reversed this as suggested by Potter - mikaelh */
 	notice -= 1 * (UNAWARENESS(q_ptr) - UNAWARENESS(p_ptr));
+
+//	notice -= q_ptr->skill_fos; /* perception */
 
 	/* Hack -- Rogues get bonuses to chances */
 	if (get_skill(p_ptr, SKILL_STEALING))
@@ -1704,6 +1814,8 @@ void do_cmd_steal(int Ind, int dir)
 
 	/* Hack -- Always small chance to succeed */
 	if (success < 2) success = 2;
+#else
+#endif
 
 	/* Check for success */
 	if (rand_int(100) < success)
@@ -1718,6 +1830,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
+				s_printf("Stealing: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
 			/* Transfer gold */
@@ -1733,6 +1846,7 @@ void do_cmd_steal(int Ind, int dir)
 
 				/* Tell thief */
 				msg_format(Ind, "You steal %ld gold.", amt);
+				s_printf("Stealing: %s steals %d gold from %s (chance %d%%).\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
 			/* Always small chance to be noticed */
@@ -1766,6 +1880,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
 				notice += 50;
+				s_printf("Stealing: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
 
 			/* True artifact is HARD to steal */
@@ -1773,10 +1888,12 @@ void do_cmd_steal(int Ind, int dir)
 				&& ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success )))
 			{
 				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("Stealing: %s fails to steal from %s (chance %d%%): true artifact.\n", p_ptr->name, q_ptr->name, success);
 			}
 			else
 			{
 				/* Give one item to thief */
+				if (o_ptr->tval == TV_WAND) forge.pval = divide_charged_item(o_ptr, 1);
 				forge.number = 1;
 				inven_carry(Ind, &forge);
 
@@ -1787,6 +1904,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Tell thief what he got */
 				object_desc(Ind, o_name, &forge, TRUE, 3);
 				msg_format(Ind, "You stole %s.", o_name);
+				s_printf("Stealing: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
 			}
 
 			/* Easier to notice heavier objects */
@@ -1811,6 +1929,7 @@ void do_cmd_steal(int Ind, int dir)
 	{
 		/* Message */
 		msg_print(Ind, "You fail to steal anything.");
+		s_printf("Stealing: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
 
 		/* Always small chance to be noticed */
 		if (notice < 5) notice = 5;
@@ -1826,6 +1945,7 @@ void do_cmd_steal(int Ind, int dir)
 		}
 	}
 
+#if 0 /* now turned off */
 	/* Counter blow! */
 	if (caught)
 	{
@@ -1850,7 +1970,10 @@ void do_cmd_steal(int Ind, int dir)
 		}
 
 		/* Make target hostile */
-		if (q_ptr->exp > p_ptr->exp / 2 - 200) add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+		if (q_ptr->exp > p_ptr->exp / 2 - 200) {
+			if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
+			add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+		}
 
 		/* Message */
 		msg_format(Ind, "\377r%s gave you an unexpected blow!",
@@ -1885,6 +2008,10 @@ void do_cmd_steal(int Ind, int dir)
 		set_fury(0 - c_ptr->m_idx, q_ptr->fury + 15 + randint(15));
 
 	}
+#else
+	/* set timeout before attempting to pvp-steal again */
+	p_ptr->pstealing = 10; /* 10 turns aka 10 seconds */
+#endif
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2199,7 +2326,7 @@ bool do_auto_refill(int Ind)
 	}
 
 	/* It's a torch */
-	else if (j_ptr->sval == SV_LITE_TORCH)
+	else if (o_ptr->sval == SV_LITE_TORCH)
 	{
 		/* Restrict the choices */
 		item_tester_hook = item_tester_refill_torch;
@@ -2408,10 +2535,10 @@ void do_cmd_look(int Ind, int dir)
 			{
 				/* Require line of sight, unless "look" is "expanded" */
 				if (!player_has_los_bold(Ind, y, x)) continue;
-
+	
 				/* Require interesting contents */
 				if (!do_cmd_look_accept(Ind, y, x)) continue;
-
+	
 				/* Save the location */
 				p_ptr->target_x[p_ptr->target_n] = x;
 				p_ptr->target_y[p_ptr->target_n] = y;
@@ -2428,12 +2555,12 @@ void do_cmd_look(int Ind, int dir)
 			msg_print(Ind, "You see nothing special.");
 			return;
 		}
-
-
+	
+	
 		/* Set the sort hooks */
 		ang_sort_comp = ang_sort_comp_distance;
 		ang_sort_swap = ang_sort_swap_distance;
-
+	
 		/* Sort the positions */
 		ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
 

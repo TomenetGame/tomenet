@@ -22,7 +22,7 @@ struct list *svlist=NULL;
 
 struct wpacket spk;
 
-unsigned long chk(unsigned char *s1, unsigned char *s2);
+unsigned long chk(char *s1, char *s2);
 void rem_server(short id);
 void add_rplayer(struct wpacket *wpk);
 void add_server(struct sinfo *sinfo);
@@ -145,7 +145,7 @@ void world_comm(int fd, int arg){
 				for(i=1; i<=NumPlayers; i++){
 					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
 						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid))
-							msg_format(i, "\377o[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
+							msg_format(i, "\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 					}
 				}
 				break;
@@ -228,7 +228,7 @@ void world_remote_players(FILE *fff){
 	char servername[30];
 	lp=rpmlist;
 	if(lp){
-		fprintf(fff, "y  Remote players\nr\n");
+		fprintf(fff, "\n\377y Remote players on different servers:\n\n");
 	}
 	while(lp){
 		c_pl=(struct rplist*)lp->data;
@@ -243,7 +243,7 @@ void world_remote_players(FILE *fff){
 			slp=slp->next;
 		}
 		
-		fprintf(fff, "%c   %s@%s\n", c_pl->server ? 'o' : 's', c_pl->name, servername);
+		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
 		lp=lp->next;
 	}
 }
@@ -296,7 +296,7 @@ void add_rplayer(struct wpacket *wpk){
 	struct rplist *n_pl, *c_pl;
 	unsigned short found=0;
 	if(!wpk->d.play.silent)
-		msg_broadcast_format(0, "\377s%s has %s the game.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
+		msg_broadcast_format(0, "\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
 
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
 	lp=rpmlist;
@@ -326,7 +326,7 @@ void world_pmsg_send(unsigned long id, char *name, char *pname, char *text){
 	if(WorldSocket==-1) return;
 	spk.type=WP_PMSG;
 	len=sizeof(struct wpacket);
-	strncpy(spk.d.pmsg.ctxt, text, 80);
+	strncpy(spk.d.pmsg.ctxt, text, 120);
 	spk.d.pmsg.id=id;
 	spk.d.pmsg.sid=world_find_server(pname);
 	strncpy(spk.d.pmsg.player, name, 80);
@@ -339,7 +339,7 @@ void world_chat(unsigned long id, char *text){
 	if(WorldSocket==-1) return;
 	spk.type=WP_CHAT;
 	len=sizeof(struct wpacket);
-	strncpy(spk.d.chat.ctxt, text, 80);
+	strncpy(spk.d.chat.ctxt, text, 120);
 	spk.d.chat.id=id;
 	x=send(WorldSocket, &spk, len, 0);
 }
@@ -374,7 +374,7 @@ void world_player(unsigned long id, char *name, unsigned short enter, byte quiet
 }
 
 /* unified, hopefully unique password check function */
-unsigned long chk(unsigned char *s1, unsigned char *s2){
+unsigned long chk(char *s1, char *s2){
 	unsigned int i, j=0;
 	int m1, m2;
 	static unsigned long rval[2]={0, 0};

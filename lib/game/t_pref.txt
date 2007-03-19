@@ -115,3 +115,13 @@ F:M:204:3
 
 # Fake blank feature
 F: :0:3
+
+# the_sandman: rugby goals
+# team one
+F:A:208:3
+
+# team two
+F:+:209:3
+
+# C. Blue: special flags to protect players resting in '8' houses
+F:p:210:3

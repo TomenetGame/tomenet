@@ -883,6 +883,7 @@ extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 
 /* common.c */
 extern int color_char_to_attr(char c);
+extern char color_attr_to_char(int a);
 extern int find_realm(int book);
 extern void version_build(void);
 

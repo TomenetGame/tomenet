@@ -132,7 +132,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		}
 
 		/* Hack -- Build the artifact name */
-		if (admin) fprintf(fff, "(%3d)", k);
+		if (admin) fprintf(fff, "(%3d) (%3d)", k, a_ptr->cur_num);
 		fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ?
 				" (unknown)" : "");
 
@@ -323,7 +323,10 @@ void do_cmd_check_uniques(int Ind, int line)
 
 			/* Format message */
 			//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
-			fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
+			/* different colour for uniques higher than Morgoth (the 'boss') */
+			if (r_ptr->level > 100)	fprintf(fff, "\377s%s has been killed by", r_name + r_ptr->name);
+			else if (r_ptr->level == 100) fprintf(fff, "\377v%s has been killed by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+			else fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
 
 			for (i = 1; i <= NumPlayers; i++)
 			{
@@ -395,10 +398,11 @@ void do_cmd_check_uniques(int Ind, int line)
 	fd_kill(file_name);
 }
 
-static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modify)
+static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modify, char attr)
 {
 	int modify_number = 0;
 	cptr p = "";
+	char info_chars[4];
 	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE;
 
 	/* Prepare title already */
@@ -432,8 +436,9 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			q_ptr->fruit_bat ? "Fruit bat, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
+#define MORE_TITLE_USAGE_PLX
+#ifndef MORE_TITLE_USAGE_PLX
 	fprintf(fff, "  %s the ", q_ptr->name);
-
 	switch(modify_number){
 	case 1:	fprintf(fff, "wussy "); break;
 	case 2: fprintf(fff, "silyl "); break;
@@ -472,6 +477,33 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	default:
 		fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
 	}
+
+#else
+#if 0
+	switch (q_ptr->mode)	// TODO: give better modifiers
+	{
+		case MODE_NORMAL:
+			break;
+		case MODE_HELL:
+			fprintf(fff, "\377s");
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "\377D");
+			break;
+		case MODE_IMMORTAL:
+			fprintf(fff, "\377B");
+			break;
+		case (MODE_HELL + MODE_NO_GHOST):
+			fprintf(fff, "\377s");
+			break;
+	}
+	fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
+#else
+	fprintf(fff, "  %s the ", q_ptr->name);
+#endif
+	//e.g., God the Human Grand Runemistress =P
+	fprintf(fff, "%s %s ", special_prace_lookup[q_ptr->prace],  p); 
+#endif
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -523,7 +555,38 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	if (text_pk || text_silent || text_afk || text_ignoring_chat) fprintf(fff, ")");
 
 	/* Line break here, it's getting too long with all that mods -C. Blue */
-	fprintf(fff, "\n\377U     ");
+#ifdef MORE_TITLE_USAGE_PLX
+#if 0
+	strcpy(info_chars, " "));
+#else
+	if (q_ptr->fruit_bat == 1)
+		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
+	else
+		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
+#endif
+	switch (q_ptr->mode)	// TODO: give better modifiers
+	{
+		case MODE_NORMAL:
+			fprintf(fff, "\n\377W  *%s\377U ", info_chars);
+			break;
+		case MODE_HELL:
+			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
+			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
+			break;
+		case MODE_IMMORTAL:
+			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
+			break;
+		case (MODE_HELL + MODE_NO_GHOST):
+			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
+			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			break;
+	}
+#else
+	fprintf(fff, "\n*\377U     ");
+#endif
 
 	switch(modify_number){
 	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
@@ -538,16 +601,18 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		    ((q_ptr->mode & (MODE_HELL | MODE_NO_GHOST))?
 			((q_ptr->male)?"\377vEmperor\377U ":"\377vEmpress\377U "):
 		        ((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U ")):
-		((q_ptr->male)?"Male ":"Female "));
+		((q_ptr->male)?"Male ":"Female ")); 
 		break;
 	}
 	
-	if (q_ptr->party)
+	if (q_ptr->party) {
 	fprintf(fff, "%sLevel %d, Party: '%s%s\377U'",
 		q_ptr->fruit_bat ? "Batty " : "",
 		q_ptr->lev,
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
+	}
+
 	else
 	fprintf(fff, "%sLevel %d",
 		q_ptr->fruit_bat ? "Batty " : "",
@@ -613,7 +678,7 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print a message */
 //		if(Ind!=k) i=TRUE; else i=FALSE;
 		i=TRUE;
-		do_write_others_attributes(fff, q_ptr, i);
+		do_write_others_attributes(fff, q_ptr, i, attr);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
 		/* not needed anymore since we have linebreak now
@@ -626,9 +691,9 @@ void do_cmd_check_players(int Ind, int line)
 		if (is_admin(p_ptr)) fprintf(fff, "  (%d)", k);
 
 #if 0 /* show local system username? */
-		fprintf(fff, "     %s@%s", q_ptr->realname, q_ptr->hostname);
+		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->realname, q_ptr->hostname);
 #else /* show account name instead? */
-		fprintf(fff, "     %s@%s", q_ptr->accountname, q_ptr->hostname);
+		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->accountname, q_ptr->hostname);
 #endif
 
 		/* Print extra info if these people are in the same party */
@@ -637,7 +702,8 @@ void do_cmd_check_players(int Ind, int line)
 		{
 			/* maybe too kind? */
 //			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
-			fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
+			if (admin) fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(Ind, &q_ptr->wpos));
+			else fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(-Ind, &q_ptr->wpos));
 
 		}
 		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
@@ -651,8 +717,8 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, "\n     \377U(%s)\n", q_ptr->afk_msg);
 	}
 #ifdef TOMENET_WORLDS
-	world_remote_players(fff);
-#endif	// TOMENET_WORLDS
+	if (cfg.worldd_plist) world_remote_players(fff);
+#endif
 
 	/* Close the file */
 	my_fclose(fff);
@@ -754,7 +820,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 		/* Print a message */
 //		if(Ind!=k) m=TRUE; else m=FALSE;
 		m=TRUE;
-		do_write_others_attributes(fff, q_ptr, m);
+		do_write_others_attributes(fff, q_ptr, m, attr);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
 		/* not needed anymore since we have a linebreak now
@@ -862,6 +928,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].tower))
 			{
 				i = d_ptr->type;
+				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
 				fprintf(fff, " (%3d, %3d) %-30s", x, y,
 						d_info[i].name + d_name);
 				if (admin)
@@ -881,6 +948,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 			if ((d_ptr = wild_info[y][x].dungeon))
 			{
 				i = d_ptr->type;
+				if (!strcmp(d_info[i].name + d_name, "The Shores of Valinor") && !admin) continue;
 				fprintf(fff, " (%3d, %3d) %-30s", x, y,
 						d_info[i].name + d_name);
 				if (admin)
@@ -1073,8 +1141,12 @@ void do_cmd_check_server_settings(int Ind)
 	/* arts & winners */
 	if (cfg.anti_arts_hoard)
 		fprintf(fff, "True artifacts will disappear if you drop/leave them.\n");
-	else if (cfg.anti_arts_house)
-		fprintf(fff, "True artifacts will disappear if you drop/leave them inside a house.\n");
+	else {
+		if (cfg.anti_arts_house)
+			fprintf(fff, "True artifacts will disappear if you drop/leave them inside a house.\n");
+		if (cfg.anti_arts_wild)
+			fprintf(fff, "True artifacts will disappear if they are left behind in the wild.\n");
+	}
 	if (cfg.anti_arts_pickup)
 		fprintf(fff, "Artifacts cannot be transferred to a character of too low a level.\n");
 	if (cfg.anti_arts_send)
@@ -1088,7 +1160,10 @@ void do_cmd_check_server_settings(int Ind)
 	if (k !=0)
 	{
 		if (cfg.kings_etiquette)
-			fprintf(fff, "The winner is not allowed to carry/use artifacts(save Grond/Crown).\n");
+			fprintf(fff, "The winner is not allowed to carry/use static artifacts(save Grond/Crown).\n");
+
+		if (cfg.fallenkings_etiquette)
+			fprintf(fff, "Fallen winners are not allowed to carry/use static artifacts.\n");
 
 		if ((k=cfg.unique_respawn_time))
 			fprintf(fff, "After winning the game, unique monsters will resurrect randomly.(%d)\n", k);
@@ -1213,6 +1288,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	bool	shown = FALSE, all = FALSE;
 	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
 //	bool	admin = is_admin(p_ptr);
+	bool	druid_form, vampire_form;
 
 	FILE *fff;
 
@@ -1247,9 +1323,20 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 //		if (letter && *letter != r_ptr->d_char) continue;
 		if (!all && !strchr(letter, r_ptr->d_char)) continue;
 		num = p_ptr->r_killed[i];
+
+		/* Hack for druid */
+		druid_form = FALSE;
+		if ((p_ptr->pclass == CLASS_DRUID) && mimic_druid(i, p_ptr->lev))
+			druid_form = TRUE;
+
+		/* Hack for vampires */
+		vampire_form = FALSE;
+		if ((p_ptr->prace == RACE_VAMPIRE) && mimic_vampire(i, p_ptr->lev))
+			vampire_form = TRUE;
+
 		/* Hack -- always show townie */
 		// if (num < 1 && r_ptr->level) continue;
-		if (num < 1) continue;
+		if ((num < 1) && !druid_form && !vampire_form) continue;
 		if (!r_ptr->name) continue;
 
 		/* Let's not show uniques here */
@@ -1257,11 +1344,14 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 		/*if (admin)*/ fprintf(fff, "(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */
 
-		if (mimic && mimic >= r_ptr->level)
+		if (((mimic && (mimic >= r_ptr->level)) || druid_form) &&
+		    !((p_ptr->pclass == CLASS_DRUID) && !mimic_druid(i, p_ptr->lev)) &&
+		    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(i, p_ptr->lev)) &&
+		    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
 		{
 			j = r_ptr->level - num;
 
-			if (j > 0)
+			if ((j > 0) && !druid_form && !vampire_form)
 				fprintf(fff, "%-30s : %d (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
 			else

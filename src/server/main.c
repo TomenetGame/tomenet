@@ -14,6 +14,8 @@
 
 #include "angband.h"
 
+#include <sys/types.h>
+#include <unistd.h>
 
 /*
  * Some machines have a "main()" function in their "main-xxx.c" file,
@@ -101,6 +103,16 @@ static void init_stuff(void)
 }
 
 
+static void writepid(char *str)
+{
+	FILE *fp;
+	fp = fopen(str, "w");
+	if (fp) {
+		fprintf(fp, "%d\n", (int) getpid());
+		fclose(fp);
+	}
+}
+
 
 /*
  * Some machines can actually parse command line args
@@ -164,6 +176,12 @@ int main(int argc, char *argv[])
 
 	/* Open the file */
 	s_setupr(buf);
+
+	/* Initiliaze PID file */
+	path_build(buf, 1024, ANGBAND_DIR_DATA, "tomenet.pid");
+
+	/* Write PID */
+	writepid(buf);
 
 	/* Acquire the version strings */
 	version_build();

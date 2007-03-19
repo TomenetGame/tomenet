@@ -299,13 +299,13 @@ N:6:Black Market
 T:100:71:29
 T:100:71:29
 #potion of Healing
-T:100:71:37
-T:100:71:37
+T:100:71:38
+T:100:71:38
 #scroll of Teleportation
 T:90:70:9
 #potion of Restore Mana
-T:100:71:40
-T:100:71:40
+T:100:71:64
+T:100:71:64
 #potion of resistance
 #T:25:71:60
 T:50:71:60
@@ -320,9 +320,9 @@ T:5:71:61
 #scroll of vermin control
 T:10:70:61
 #pot of *healing* - added especially for Nether Realm visits
-T:5:71:38
+T:5:71:37
 #pot of *restore mana* - shouldn't be buyable. too exquisite!
-#T:5:71:64
+#T:5:71:40
 I:50:Blood Bond
 A:30:0:1:2:3:4
 O:38:39:40:41
@@ -338,8 +338,8 @@ G:8:y
 W:24
 
 N:8:Book Store
-I:100:[Minstrel's Music]
-I:100:[Life in symbiosis]
+#I:100:[Minstrel's Music]
+#I:100:[Life in symbiosis]
 # & Book~ of Beginner Cantrips
 T:100:111:50
 T:100:111:50
@@ -359,18 +359,44 @@ T:100:111:255
 T:100:111:255
 T:100:111:255
 T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
 A:0:0:1:2:3:4
 O:42:43:44:45
 G:9:o
-W:24
+W:48
 
-N:9:Pet Shop
-I:100:Egg
-T:100:70:6
-I:100:& Hard Biscuit~
+#N:9:Pet Shop
+#I:100:Egg
+#T:100:70:6
+#I:100:& Hard Biscuit~
+N:9:Rune Repository
+T:100:104:1
+T:80:104:2
+T:50:104:3
+T:50:104:5
+T:90:105:1
+T:90:105:2
+T:90:105:3
+T:90:105:4
+T:90:105:5
+T:50:105:11
+T:50:105:12
 A:0:0:1:2:3:4
 O:46:47:48:49
-G:+:b
+#G:+:b
+G:+:B
 F:MEDIUM_LEVEL
 W:12
 
@@ -572,6 +598,7 @@ O:12:13:14:15
 G:3:w
 F:RANDOM | MEDIUM_LEVEL
 W:12
+F:BUY67
 
 N:39:Hafted Smith
 T:100:21:256
@@ -580,6 +607,7 @@ O:12:13:14:15
 G:3:w
 F:RANDOM | MEDIUM_LEVEL
 W:12
+F:BUY67
 
 N:40:Polearm Smith
 T:100:22:256
@@ -588,6 +616,7 @@ O:12:13:14:15
 G:3:w
 F:RANDOM | MEDIUM_LEVEL
 W:12
+F:BUY67
 
 N:41:Sword Smith
 T:100:23:256
@@ -596,10 +625,15 @@ O:12:13:14:15
 G:3:w
 F:RANDOM | MEDIUM_LEVEL
 W:12
+F:BUY67
 
 N:42:Rare Jewelry Shop
 T:60:40:256
 T:100:45:256
+#Trap-scrolls
+T:100:70:48
+T:100:70:49
+T:100:70:50
 A:0:0:1:2:3:4
 O:34:35:36:37
 G:6:v
@@ -690,9 +724,26 @@ N:48:Expensive Black Market
 A:0:0:1:2:3:4
 O:38:39:40:41
 G:7:v
+T:5:111:1
+T:5:111:2
+T:5:111:3
+T:5:111:4
+T:5:111:5
+T:5:111:6
+T:5:111:7
+T:5:111:8
+T:5:111:9
+T:5:111:10
+T:5:111:11
+T:5:111:12
+T:5:111:13
+T:5:111:14
+T:5:111:15
+T:5:111:16
+T:5:111:17
 F:ALL_ITEM | RARE | DEEP_LEVEL | NO_DISCOUNT2 |
 F:PRICE4 | PRICE2 | PRICY_ITEMS2 | HARD_STEAL
-W:13
+W:24
 
 N:49:Common Shop
 I:95:& Brass Lantern~
@@ -739,6 +790,7 @@ O:8:9:10:11
 G:5:B
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
 W:12
+F:BUY67
 
 N:53:Potion Store
 T:100:71:256
@@ -746,8 +798,9 @@ T:100:72:256
 A:0:0:1:2:3:4
 O:8:9:10:11
 G:5:B
-F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
+F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | PRICE2
 W:12
+F:BUY67
 
 N:54:Recaller
 I:100:Word of Recall
@@ -760,9 +813,9 @@ W:2
 N:55:Master Archer
 T:100:19:2
 T:100:19:12
-T:20:19:13
+T:50:19:13
 T:100:19:23
-T:20:19:24
+T:50:19:24
 T:50:16:256
 T:50:17:256
 T:50:18:256
@@ -772,6 +825,7 @@ G:3:g
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL
 F:RARE
 W:24
+F:BUY67
 
 N:56:Merchants Guild
 #A:0:0:56:57:58:0
@@ -825,14 +879,14 @@ W:13
 
 N:61:Bordertravel supplies
 T:95:71:29
-T:95:71:37
+T:95:71:38
 T:95:70:9
 I:95:Restore Mana
 T:95:71:60
 T:95:70:35
 T:95:71:61
-#T:95:71:38 - *Healing*
-T:100:71:38
+#T:95:71:37 - *Healing*
+T:100:71:37
 I:95:& Flask~ of oil
 I:100:& Ration~ of Food
 I:95:Restore Life Levels
@@ -840,10 +894,11 @@ T:75:45:40
 T:75:45:18
 I:100:& Wooden Torch~
 I:95:& Brass Lantern~
-I:100:& Hard Biscuit~
-I:90:& Strip~ of Venison
-I:70:& Pint~ of Fine Wine
-I:80:& Pint~ of Fine Ale
+#I:100:& Hard Biscuit~
+#I:90:& Strip~ of Venison
+#I:70:& Pint~ of Fine Wine
+#I:80:& Pint~ of Fine Ale
+I:100:Satisfy Hunger
 #I:70:& Iron Shot~
 #I:70:& Bolt~
 #I:70:& Arrow~
@@ -882,3 +937,100 @@ G:5:u
 W:24
 F:RANDOM
 # | PRICE2
+
+#the_sandman: added normal ammos to shop & increased amount of ids
+N:63:Seasoned Tradesman
+T:95:16:1
+T:95:17:1
+T:95:18:1
+#Trap-scrolls
+T:100:70:48
+T:100:70:49
+T:100:70:50
+I:50:Enchant Weapon To-Hit
+I:50:Enchant Weapon To-Dam
+I:50:Enchant Armour
+I:100:Identify
+I:100:Identify
+I:100:Phase Door
+I:50:Magic Mapping
+I:50:Trap Detection
+I:50:Detect Invisible
+I:50:Recharging
+I:50:Satisfy Hunger
+I:50:Word of Recall
+T:2:70:9
+T:50:71:42
+I:50:Restore Intelligence
+I:50:Restore Wisdom
+I:50:Restore Dexterity
+T:50:71:46
+I:50:Restore Charisma
+I:2:*Identify*
+T:50:70:29
+I:50:Resist Heat
+I:50:Resist Cold
+I:50:& Flask~ of oil
+I:50:& Ration~ of Food
+I:50:Remove Curse
+I:50:Holy Chant
+I:50:Heroism
+I:100:Word of Recall
+T:50:71:35
+I:100:Cure Critical Wounds
+I:50:Restore Life Levels
+I:2:*Remove Curse*
+I:50:Neutralize Poison
+T:100:111:50
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+A:0:0:1:2:3:4
+O:30:31:32:33
+G:1:s
+W:36
+F:BUY67
+
+N:64:Close Combat
+T:100:30:256
+T:100:31:256
+T:100:32:256
+T:100:33:256
+T:100:34:256
+T:100:36:256
+T:100:37:256
+T:100:24:256
+T:100:21:256
+T:100:22:256
+T:100:23:256
+A:0:0:1:2:3:4
+O:12:13:14:15
+G:3:w
+F:RANDOM | MEDIUM_LEVEL
+W:24
+F:BUY67
+
+N:65:Hidden Library
+T:100:111:50
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+T:100:111:255
+A:27:0:1:2:3:0
+O:8:9:10:11
+G:9:r
+W:24

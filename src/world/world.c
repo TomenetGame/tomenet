@@ -7,10 +7,15 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
+
+#include <string.h>
 
 #include "world.h"
+#include "externs.h"
 
 #define MAX(x,y) (x > y ? x : y)
+
 
 extern int bpipe;
 
@@ -30,12 +35,15 @@ struct list *clist=NULL;	/* struct client */
 void world(int ser){
 	int sl;
 	struct sockaddr_in cl_in;
-	int length=sizeof(struct sockaddr_in);
-	char buff[40], *check;
+	socklen_t length = sizeof(struct sockaddr_in);
+//	char buff[40], *check;
 	fd_set fds;
-/*	secure.secure=1;	*//* default security setting */
-	secure.secure=0;
-	secure.chat=1;
+
+/* Adding some commentary here -.- Also note that gameservers are referred to as 'clients' (c_cl)  - C. Blue */
+	secure.secure=0;	/* 1 = don't allow unauth'ed gameservers to connect! */
+	secure.chat=0;		/* 1 = relay chat from unauth'ed gameservers */
+	secure.msgs=0;		/* 1 = relay messages from unauth'ed gameservers */
+	secure.play=0;		/* 1 = add players from unauth'ed gameservers */
 
 	while(1){
 		int mfd=ser;
@@ -77,8 +85,9 @@ void world(int ser){
                         fprintf(stderr, "added!\n");
 		}
 
-		for(lp=clist; lp; lp=lp->next)
+		for(lp=clist; lp; lp=lp->next) {
 			if(FD_ISSET(((struct client*)lp->data)->fd, &fds)) handle((struct client*)lp->data);
+		}
 
 		lp=clist;
 		while(lp){
@@ -154,14 +163,25 @@ void wproto(struct client *ccl){
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
 					char msg[160];
-					snprintf(msg, 160, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-					strncpy(wpk->d.chat.ctxt, msg, 120);
+//					snprintf(msg, 160, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					snprintf(msg, 160, "\377%c[%d]\377w %s%c", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt, '\0');
+//					msg[159] = '\0';
+					strncpy(wpk->d.chat.ctxt, msg, 160);
 					relay(wpk, ccl);
 				}
 				break;
 			case WP_PMSG:
 				/* MUST be authed for private messages */
 				if(ccl->authed>0){
+
+					/* add same code in front as for WP_CHAT */
+//					char msg[160];
+//					snprintf(msg, 160, "\377%c[%d]\377w %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+//					strncpy(wpk->d.chat.ctxt, msg, 160);
+//d.pmsg.player
+//d.pmsg.victim
+//d.pmsg.ctxt
+
 					struct list *lp;
 					struct client *dcl;
 					wpk->serverid=ccl->authed;
@@ -186,6 +206,14 @@ void wproto(struct client *ccl){
 			case WP_MESSAGE:
 				/* simple relay message */
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
+
+					/* add same code in front as for WP_CHAT */
+					char msg[160];
+					snprintf(msg, 160, "\377%c[%d]\377w %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.smsg.stxt);
+					/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh */
+					msg[159] = '\0';
+					strncpy(wpk->d.smsg.stxt, msg, 160);
+
 					relay(wpk, ccl);
 				}
 				break;
@@ -268,9 +296,12 @@ void addclient(int fd){
 /* Generic list handling function */
 struct list *remlist(struct list **head, struct list *dlp){
 	struct list *lp;
+	struct client *ncl;
 	lp=*head;
 	if(dlp==*head){
 		*head=lp->next;
+		ncl = (struct client*)dlp->data;
+		close(ncl->fd); /* the socket needs to be closed - mikaelh */
 		free(dlp->data);
 		free(dlp);
 		return(*head);
@@ -278,6 +309,8 @@ struct list *remlist(struct list **head, struct list *dlp){
 	while(lp){
 		if(lp->next==dlp){
 			lp->next=dlp->next;
+			ncl = (struct client*)dlp->data;
+			close(ncl->fd); /* the socket needs to be closed - mikaelh */
 			free(dlp->data);
 			free(dlp);
 			return(lp->next);
