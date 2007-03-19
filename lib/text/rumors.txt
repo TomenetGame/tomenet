@@ -7,7 +7,7 @@
 # You should manually write the total # of rumous (lines - 10).
 
 N:*:Default
-692
+958
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -29,10 +29,7 @@ You will encounter a dark, tall stranger...
 A Mithril mail will not rust.
 An Adamantite mail will not rust.
 A Rusty Chain Mail cannot rust any further.
-If you are a mage, you will NOT want to find Raal's Tome of Destruction!
 You won't want to find Raal's Tome of Destruction!
-You won't want to find Raal's Tome of Destruction, unless you are a mage.
-A Wand of Death is useless against monsters that are tougher than you.
 A Wand of Death is of little use against foes that are dead already.
 Try taking off your armour before fighting a Gelatinous Cube!
 They say that only one sword can score *CRITICAL* hits.
@@ -46,7 +43,6 @@ There *is* a good use for Potions of Detonations, Ruination and Death...
 Watch your step!
 It's a bad idea to throw away a Longsword (4d5).
 It's a bad idea to wield a Longsword (4d5).
-It's useless to bash monsters with bows - but there's one notable exception...
 Actually, Slime Mold Juice is not completely useless.
 Help me! I'm being held captive in a Vault at 2850'!
 Ever tried inscribing your armour {{erodeproof}?
@@ -152,7 +148,7 @@ PLEASE ignore the previous rumor.
 There are scrolls that can be read only by mages.
 Some undead opponents will come back if defeated, more powerful than before!
 The answer is 42.
-Your mother wears army boots!
+The raven sings, the raven saw and in the corn he sayeth 'CAH'
 One level further down somebody is getting killed, right now.
 Meet me at 1900' if you are a man.
 Bashing a creature may sometimes stun it.
@@ -197,11 +193,9 @@ Never attempt to Call the Void in an enclosed space!
 Call the Void needs a lot of room to cast...
 Why doesn't Detect Monsters show invisible monsters? 'Cos you can't see 'em!
 I'll tell you the truth, son: your soul's gonna burn in a lake of fire!
-There is a rare spellbook called [M$ PowerFools] {{cursed}
 *** LOW HITPOINT WARNING! ***
 You cruelly stab the helpless, sleeping Software bug!
 Slab: Jus' say AarrghaarrghpleeassennononoUGH.
-You feel the Windows (95) on your hard disk is broken...
 Spirit, hatch that painted spirit of the lamb sparrow.
 Gone insane from the pain that sure they know: for who the flange sound?
 With time the child dissipates within, this blinking boy made badly.
@@ -225,12 +219,10 @@ They say that removing a rubble sometimes gives you a treasure.
 They say that some players are more invisible than others.
 They say that an archer should try 'killing from afar'.
 They say that they say that what they say can be utterly wrong.
-They say that DarkSword hates magic.
-They say that DarkSword is just a cursed sword.
-(AD) Need a help? Just visit http://www.ctt.ne.jp/~sap/mang/
-(AD) Wanna have a talk? Just visit #mangband on irc.worldirc.org
-(AD) Recent news? Just subscribe PernMangband-subscribe@yahoogroups.com
-(AD) Press '?' sometimes, even if you don't need a help.
+They say that a Dark Sword hates magic.
+They say that a Dark Sword is just a cursed sword.
+Need a help? Just read the guide in your tomenet folder.
+Wanna have a talk? Just visit #tomenet on irc.worldirc.org
 They say that behind Morgoth lies another world of extreme danger.
 They say that wizards are subtle and quick to anger, even the kindest.
 They say that a macro can save your life hundreds of times.
@@ -248,13 +240,13 @@ They say that you should be good to the poor farmer.
 Never forget to lock the door when you leave your house!
 They say that {RThe Lady {whates to have her *real* name called.
 They say that some cookies were imported from overseas.
-They say that DarkSword can be great if enchanted neatly.
+They say that a Dark Sword can be great if enchanted neatly.
 They say that a pair of leather boots 'Ringil' won't always grant speed.
 They say that some supreme spells won't concern worldly matters.
 You can do away with notorious {RThe Lady {wby doing the following:
 They say that a clever thief never does her job with her pack full.
 They say that a Demigod should leave his worldly treasures.
-They say that Morgoth never forget to inscribe his hammer with {{!E}.
+They say that Morgoth never forgets to inscribe his hammer with {{!E}.
 Ever tried a batman archer?
 Ever tried a batman monk?
 Ever tried a female Ent?
@@ -262,7 +254,7 @@ They say that you should enter jelly-pit naked.
 Just call the police if you find a hideout of evil above 1000'
 They say that better ask veterans than pray to a goddess.
 They say that there's a world called 'potland'.
-They say that cloning technology is prohibited by the U.S. government.
+They say that cloning technology is prohibited.
 They say that a warrior starts his adventure by selling his Broad Sword.
 They say that a true rogue should learn to turn off the light.
 They say that you should learn to type '/' on the chat-line.
@@ -274,7 +266,7 @@ They say that you should learn to haggle.
 Get killed? Just ask a sorceror for a rescue!
 Get killed? Just ask a warlock for a rescue!
 Get killed? Never tell it to a rogue!
-They say that you should learn to throw Molotov cocktail.
+They say that you should learn to throw Molotov cocktails.
 They say that chattering deep in dungeon is a bad habit for dungeoneers.
 They say that some mad players are attempting to create a golem...
 They say that 50' is safer place than the town.
@@ -310,34 +302,34 @@ Ever tried to rob a store?
 Ever been in yeek town?
 Ever heard about Mirkwood Legends?
 Ever seen a God or Goddess player?
-{R[The Lady] {BThou art doomed, poor little mangband player..
+{R[The Lady] {BThou art doomed, poor little Tomenet player..
 {B[Olorin] mh
 {D[Moltor] {Bpfft
 {B[Evileye] hehe
 {B[Jir] {y:)
 {B[Mihi] May the source be with you! *^-')b
 {b[C. Blue] {BDid you download the latest scripts!?
+{D[Magnet] {BLet's slay evil !
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
 They say that there once was a man who fought 2 Morgothes at the same time.
 They say that reading Anne McCaffrey won't help you at all.
 They say that often a sorc came in through the bathroom window.
 They say that Choppiness is a warm gun.
-They say that a disenchanted DarkSword is not so good for non-unbelievers.
+They say that a disenchanted Dark Sword is not so good for non-unbelievers.
 Watch out!! The Erlkonig Thavakrache is just behind you!!!
 They say that zombie uniques are nothing to worth while slaying.
 They say that you should read a scroll of acquirement in town.
 They say that a vault is a place to die, and not a place to resurrect.
 They say that you shouldn't give someone of the same sex an engagement ring.
 They say that archers should learn more about their opponents.
-They say that a death in Mangband is very akin to that of real life.
+They say that a death in Tomenet is very akin to that of real life.
 They say that you should let someone else to go down first.
 They say that act as a fool and you'll be treated as a fool.
 They say that be harsh to others and you'll be treated in a similar way.
 Beware! Cave spiders are MUCH more powerful here!
 Never slam the door!
-(AD) please deposit your spare artifacts to PARC(Pern Arts Recycle Centre)!
-YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE ML NOW!
+YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE FORUM NOW!
 They say that One of the easiest way to find PoAS is to play an unbeliever.
 They say that alchemist never stocks restore potions of the kind you need. 
 Segmentation fault - core dumped.
@@ -364,8 +356,6 @@ Try inscribing #'Ringil' on your Long Sword.
 Try inscribing #of Feanor on your Hard Leather Boots.
 Ever tried to eat a ring?
 Ever asked {RThe Lady {wfor a date?
-You feel the Windows (Xp) on your hard disk is as broken as all the others...
-They say that playing angband on Windoze is a bad joke.
 Darn, that rogue casted the spell of Summon Lag!
 They say that you should learn to dive, though it's not in the water.
 They say that when you have Chaos resistance, why bother Confusion one?
@@ -403,7 +393,7 @@ They say that a tengu sometimes marks an instakill.
 Ever wondered why all those small town stores are open 24/7?
 Ever seen a living statue? Or ever been?
 Ever bounced on a phase spiders' trampoline?
-They say that carrion crawlers are good at creating carrions.
+They say that carrion crawlers are good at creating carrion.
 They say that the deeper you go the higher you fly.
 Your stuffs weigh you down? Drop the gold!
 They say that you should lead cold hounds to breathe at fire hounds.
@@ -430,7 +420,7 @@ Ever seen a {rcoloured {bcookie{w?
 Yikes! This cookie was {rp{Ga{vi{on{Bt{Re{yd{w!!
 They say that {yP {wis terrible and {oP {wis horrible.
 Ever seen a {DP{w?
-You know you played PernM too much when you wonder why you don't auto-attack.
+You know you played Tomenet too much when you wonder why you don't auto-attack.
 Ever macroed \eQy@ ?
 They say that it's no good digging with a dagger.
 {rYou die.
@@ -457,7 +447,7 @@ Inscribe your potion of death {{augmentation}.
 Inscribe your nifty randarts {{Slow Metabolism}.
 What on earth is the difference between sickness and sickliness?
 Ever seen a pack of multi-coloured walking potions of experience?
-They say that mangband incubi/succubi are on the other side of the screen.
+They say that tomenet incubi/succubi are on the other side of the screen.
 They say that mage staff helps mages of ages to walk.
 They say that without mage staff a mage should crawl to move around.
 They say that shadow cloak envelops a rogue in the shade.
@@ -483,7 +473,6 @@ They say that prepare to die when you dared to enter the land of kings.
 Built a castle? Time to vacate your long-dwelt small flat!
 They say that all the wizards are positivists and never believe in words.
 They say that shopkeepers won't change inventory as far as a customer is in.
-(AD) Suggestions very welcome - either in unidiff or in context-diff.
 Glue the shards of pottery and you'll have a china.
 Ever faced a Greater Titan Sorceror?
 They say that genius is but one remove from idiot.
@@ -583,7 +572,7 @@ They say that if you see a {vm {won the top of dungeon, just don't touch it.
 They say that an archer generally is coward but that doesn't matter him.
 They say that there's fifteen ways to leave your Morgul weapon.
 Doorway too broad? Jam some!
-(AD) Send us new cookies via /rfe command!
+Send us new cookies via /rfe command!
 They say that shopkeepers crafty, they beat prices down if your lore is poor.
 They say that every shopkeeper is racist.
 A failed alpinist said; that peak was way too high!
@@ -639,7 +628,7 @@ They say that from a garbage dump you can pick nice grenades.
 They say that jump over the doors and everything's fine.
 They say that if you find a long and straight corridor, just don't walk in.
 They say that you cannot master martial arts really without learning to dodge.
-(AD) Purchase the Gazette and you'll never miss the trend!
+Purchase the Gazette and you'll never miss the trend!
 They say that you can't teach an old dog new tricks.
 Lifelong study is nice thing, but start training when lv50 isn't so cool idea.
 Ever cursed a {DMorgul {wdagger?
@@ -701,3 +690,279 @@ They say that Trolls can make a wizard that is not good at magic.
 They say that how can a snake fight with sword?
 You can check out any time you like, but you can never leave
 They say that 
+{sIRON, STEEL, {fMETAL!
+... But the evil that man do lives on ...
+Peace of mind, you run away from me!
+What if God was one of us?
+SERVER ERROR: Please update your graphic driver
+must... kill.. the... king....
+I wonder what Motok will be without ales
+The Power of NOW!
+Leave it. You won't need your ego here.
+You feel the dagger in your bag is {{special}
+4th Reich is rising for the last time!
+Today, I shall rule the world!
+But on this battlefield no one wins
+You take my life, but I'll take yours too
+You better stand, there's no turning back
+Without a tear, I draw my parting groan
+He pulls the trigger and I feel the blow
+I can see the light... IT {fBURNS
+A light in the black.. Oh just the fear of the dark
+Iron Maiden can't be fought
+Iron Maiden can't be sought
+Iron Maiden wants you for dead
+I have a phobia that someone's always there
+What is real?
+FUTUREAL!
+yodelllleeeeiiiiioooooo
+To cheez, or not to cheez- That is the question
+I better leave this level...
+Lame life awaits those who avoids Death
+If birthday is celebrated, why not death?
+I used to remember when....
+Who likes short shorts?
+I like short shorts
+I am the antithesarus
+Now we wander into our final hour
+... finding new ways to betray ...
+If the Bible is fake, why is it on the non-fiction side?
+SHUT UP AND LISTEN, f00
+I pity the fool
+Stand up, it's time to face your day
+Such a bitter taste...
+Put the needle on it
+What is the meaning of life?
+What is life without death?
+What is life with infinite ressurections?
+What is life?
+Ugh, what's that horrid smell? Some cheezer nearby?
+Close your eyes as we witness another... BULLET RIDE
+This whole thing smells of death
+I smell better than the sh*t you're in
+You wanna piece o me?
+70m3|\|37 r0xx0r
+Leave him in the Sunset 28
+To remember the moments in the sun
+To the diamond that lost her world today
+Give her faith and a reason
+Eat steel, beast!
+Haha, taste steel!
+tell her that she is valuable... less than tomenet
+Carry on even if it's hard
+To remember the moments in the sun
+For the fire of a handgun.. {fBurns brighter than the sun
+I can't believe it's not buttocks
+Hot chick, 10 o'clock
+This is it
+The kiss of Judas...
+If there is a God, he is like me
+I hear footsteps closing in...
+I recognize them from my early days..
+Time changes, images stay the same
+I dont know who you are, but I'm with you
+Undead promises... The Night awaits
+I feel the lips on my cheek...
+Haunts me once again
+Why'd you have to go and make things so complicated?
+All man dies
+Valar Morghulis
+For what is life, without death?
+Poo is a funny word
+Damn, that @ has one sexy set of ass
+Run, live to fly -- fly to live!
+Wake me up inside!
+Can I play with madness?
+Give me the sense to wonder -- to wonder if I'm free
+Spit back in their face
+The fires of hell raged in his eyes
+The prophet stared at his crystal ball...
+Your soul's gonna burn in the lake of fire
+We'll live like kings! Damn hell ass kings!
+How DARE he laugh at me...
+All immortals will face their doom soon enough
+The higher you fly, the farther you'll fall
+I don't wanna fall to pieces, I just wanna sit and stare at you
+Hit me one more time, come on
+My little sister can hit harder than that
+BRING IT ON!!!
+I'm fading into fantasy
+I was born into a scene of angriness and greed, and dominance and persecution
+All days are lost, to conditioned zones
+I'm a .. wrathchild!
+Pick up the bones and set them on fire
+ain't nothin' gonna alter the course of my destination
+Spice up your life!
+Just a slob, like one of us?
+Put a needle on it!
+pfft
+I feel pretty!
+Seven deadly sins Seven ways to win Seven holy paths to hell...
+pfft is such an overrated word
+The Angel on one side... The Devil the other...
+Roll the dice!
+Do I really feel lucky?
+... I'M HIDEOUS!
+You're not gonna win- you'd better go back again
+Lost in this maze...
+So what does it matter?
+Don't you think God can save your life
+Rage, rage against the dying of the light
+Nothing to lose, so much to gain
+I _will_ prevail
+Ha ha, a yellow p
+Only the good die young
+If you're over 50, take some meds
+The demon in your mind will rape you in your bed at night
+If I cancel tomorrow the undead will thank me today
+Fly in the face of your prophets I mock your morality plays
+Walking on water are miracles all you can trust
+Which path do you take?
+What if you wait? It's maybe too late
+No one can save you now from the hell you're in
+The thought fled from your mind
+What if I stab my own mind?
+Where are you, body?
+That's a lie!
+Don't run, I won't hurt you...
+Just because I'm not cute enough!!
+You meanie!
+Life is a dream in which we will all wake from...
+Stop procastinating!
+Don't you feel it's more than this if you concentrate
+Going for a ride, to meet them in the Fiction City
+No one can escape Destiny
+What kind of man kills because of ideology?
+What kind of god justifies violence?
+There's a clone of everyone somewhere...
+Too much cheeze makes you fat and smelly!
+Why don't you take me there?
+{rNow you're on the black list of merchants...
+{rNow you're on the black list of admins...
+{y'Bastard{L!!!{w - The angry shopkeeper throws you out!
+{yMorgoth, the Lord of Darkness dies from {e754{y damage.
+Moldoux, the Defenceless Mold breathes fire for {f800 {wdamage!
+{GMoltor has attained level 99.
+Gotta pee!
+{b**{cFarmet Maggot was slain by Captain America.{b**
+The thought fled from your mind.
+Your parts are showing...
+unh?
+I like it better when it hurts.
+You make me wanna lala!
+It's easy to see I'm not down with that.
+If you want to, I can save you.
+He wasn't what I wanted, what I thought, no.
+Freak out, let it go.
+Don't turn around, I'm sick and I'm tired of your face.
+How does it feel?
+Uh huh, life's like this.
+Everything's chaaaaaaaaaaangin, when I turn around.
+You don't want me there, you just shut me ouuuuuuut
+I'd rather be anything but ordinary please.
+These things I'll never say.
+Got fired by fried chicken ass.
+Doesn't really matter how I feel inside.
+Nothing to surround me and keep me from my fears.
+I'm naked around you, and it feels so right.
+Gimme fuel gimme fire gimme that which I desire!
+So much for my happy ending.
+I know exactly what to do to reach a higher level of you.
+Come on in, come on in to my world tonight.
+Read between the lines.
+I see the red light more and more!
+Don't stop at the top!
+I refuse to be brought down by you!
+I know that only you can render pain.
+Taste of my scythe!
+One day I'll face you all alone, enduring out with wind and ice!
+3.14159265358979323846264338327950288419716939937510582
+Are you happy now?
+Goodbye to you.
+I can feel the beat, feel the beat, feel the beat.
+Everybody, move your feet until you're naughty!
+Oh yeah!
+DON'T STOP don't stop DON'T STOP the beat!
+Get up, come on get down with the sickness.
+I see spirits in the mist!
+Are you a man or a mouse?
+How can this be, is this reality?
+Shut your mouth, try not to panic.
+Run my baby, run my baby run
+If there is a God, he is like me.
+What is left when honor is lost?
+Get outta the kiddie pool and start makin moves!
+Thou art too proud of thy little deeds.
+Humility is the root of all virtue.
+Strive to do justice unto all things!
+Thou hath lost an eighth!
+Stellarian fighters are ready to strike!
+I am very pizza-eee.
+He's all gross and old and eew.
+Human flesh is the big natural resource now.
+Make peace with laziness.
+End the delusion of time.
+Direct your attention inward.
+Power over others is weakness disguised as strength.
+Wherever you are, be there totally.
+Death is a stripping away of all that is not you.
+Primary reality is within, secondary reality without. 
+The problems of the mind cannot be solved on the level of the mind.
+No matter what happens, I will create no more pain for myself.
+Nothing ever happened in the past; it happened in the Now.
+Nothing will ever happen in the future; it will happen in the Now.
+The more you are focused on time, the more you miss the Now.
+Pain is inevitable as long as you are identified with your mind.
+We must travel in the direction of our fear.
+There is no happy ending.
+All your achievements are going to dissolve and you are going to die.
+um
+My fall will be for you.
+Corn is no place for a mighty warrior!
+Twelve sided died!
+Ow, my most of me!
+ROFLOMGWTFBBQ
+There is no business like show business!
+It's a good idea for team members to stick together.
+Fold preflop.
+Like, you know, whatever.
+WHAAAAAAAAAAAAAZZZZZZZZZZZZZZZZZUUUUUUUUUUUUP
+Destroy, she said.
+Pwned!
+How do you pronounce pwned?
+Dude!
+werd
+Total carnage!
+Sup with that?
+up up down down left right left right B A start
+Hear the pfft of destiny.
+If i don't make it, someone else will stand my ground.
+Deceiver of hearts, deciever of fools
+Do I believe in wonders, do I believe in dreams?
+My senses capture me
+Inside?
+Do you see why?
+I'll let others elaborate.
+They say that the color of one's speech shows their tone of voice.
+There is no greater adventure than looking for a hidden staircase.
+To hell with this chart, I'm raisin AJ & KQ UTG!
+I'm tired.
+Man, I'm faux pasing all over the place.
+fear -> anger -> hate -> the dark side
+{mwheeedle woodlewoodle wheeeew!
+It is the Order of Things.
+Your dreams will lead you to aphelion!
+I guess that's really just it.
+the head plans the hands kill the heart only pumps blood
+What if Gillette had designed the guillotine?
+I've run out of mental RAM.
+We didn't start the fire!
+o rly?
+I really need to figure out what the hell I'm doing.
+But that's just, like, your opinion, man.
+Like, free your mind or something.
+You can't OWN property, man.
+Dude, where's my car?
+The technological singularity is coming!
+O fortuna! Velut luna!
+Never feed a gremlin after midnight.
