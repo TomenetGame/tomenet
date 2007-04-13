@@ -1393,6 +1393,7 @@ void cmd_message(void)
 		/* hack - screenshot - mikaelh */
 		if (prefix(buf, "/shot") || prefix(buf, "/screenshot"))
 		{
+			inkey_msg = FALSE;
 			for (i = 0; i < 70; i++)
 			{
 				if (buf[i] == ' ')
@@ -1403,7 +1404,6 @@ void cmd_message(void)
 				else if (buf[i] == '\0') break;
 			}
 			html_screenshot("screenshotXXXX");
-			inkey_msg = FALSE;
 			return;
 		}
 		else
