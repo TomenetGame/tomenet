@@ -1403,6 +1403,7 @@ void cmd_message(void)
 				else if (buf[i] == '\0') break;
 			}
 			html_screenshot("screenshotXXXX");
+			inkey_msg = FALSE;
 			return;
 		}
 		else
