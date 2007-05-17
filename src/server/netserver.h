@@ -159,6 +159,8 @@ static int Receive_raw_key(int ind);
 static int Receive_store_examine(int ind);
 static int Receive_store_command(int ind);
 
+static int Receive_ping(int ind);
+
 static void Handle_item(int Ind, int item);
 
 int Setup_net_server(void);

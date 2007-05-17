@@ -286,6 +286,7 @@ static void Init_receive(void)
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
 	playing_receive[PKT_STORE_EXAMINE]		= Receive_store_examine;
 	playing_receive[PKT_STORE_CMD]		= Receive_store_command;
+	playing_receive[PKT_PING]		= Receive_ping;
 }
 
 static int Init_setup(void)
@@ -8748,5 +8749,35 @@ static int Receive_raw_key(int ind)
 		return 0;
 	}
 
+	return 1;
+}
+
+/* Reply to ping packets - mikaelh */
+static int Receive_ping(int ind) {
+	connection_t *connp = &Conn[ind];
+	char ch, pong, buf[MSG_LEN];
+	int n, id, tim, utim;
+
+	if ((n = Packet_scanf(&connp->r, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0)
+	{
+		if (n == -1)
+			Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (!pong)
+	{
+		if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+		{
+			errno = 0;
+			plog(format("Connection not ready for pong (%d.%d.%d)",
+				ind, connp->state, connp->id));
+			return 0;
+		}
+
+		pong = 1;
+
+		Packet_printf(&connp->c, "%c%c%d%d%d%S", PKT_PING, pong, id, tim, utim, buf);
+	}
 	return 1;
 }

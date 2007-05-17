@@ -116,7 +116,7 @@
 #define PKT_LOCATE		98
 #define PKT_MAP			99
 
-#define PKT_SEARCH_MODE		100	
+#define PKT_SEARCH_MODE		100
 #define PKT_FIGHT		101
 #define PKT_CLOSE		103
 #define PKT_GAIN		104
@@ -174,6 +174,9 @@
 
 /* DEG Packet type for party member info */
 #define PKT_PARTY_STATS		165
+
+/* Ping packet */
+#define PKT_PING                166
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
