@@ -156,7 +156,7 @@ client_opts c_cfg;
 
 byte client_mode = CLIENT_NORMAL;
 
-u32b cfg_game_port = 18348; 
+u32b cfg_game_port = 18348;
 
 skill_type s_info[MAX_SKILLS];
 
@@ -169,4 +169,10 @@ s16b max_spells;
 spell_type *school_spells;
 s16b max_schools;
 school_type *schools;
+
+/* Server ping statistics */
+int ping_id = 0;
+int ping_times[60];
+bool ping_stats_enabled = FALSE;
+bool ping_stats_viewing = FALSE;
 

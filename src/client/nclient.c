@@ -136,6 +136,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_BEEP]		= Receive_beep;
 	receive_tbl[PKT_AFK]		= Receive_AFK;
 	receive_tbl[PKT_ENCUMBERMENT]	= Receive_encumberment;
+	receive_tbl[PKT_PING]		= Receive_ping;
 }
 
 /* Head of file transfer system receive */
@@ -2714,6 +2715,50 @@ int Receive_encumberment(void)
 	return 1;
 }
 
+int Receive_ping(void)
+{
+	int n, id, tim, utim, tim_now, utim_now, rtt, index;
+	char ch, pong;
+	char buf[MSG_LEN];
+	struct timeval tv;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0)
+	{
+		return n;
+	}
+
+	if (pong) {
+		if (gettimeofday(&tv, NULL) == -1) {
+			return 0;
+		}
+
+		tim_now = tv.tv_sec;
+		utim_now = tv.tv_usec;
+
+		rtt = (tim_now - tim) * 1000 + (utim_now - utim) / 1000;
+
+		index = ping_id - id;
+		if (index >= 0 && index < 60) {
+			ping_times[index] = rtt;
+		}
+
+		show_ping_stats();
+	}
+	else
+	{
+		/* reply */
+
+		pong = 1;
+
+		if ((n = Packet_printf(&wbuf, "%c%c%d%d%d%S", ch, pong, id, tim, utim, buf)) <= 0)
+		{
+			return n;
+		}
+	}
+
+	return 1;
+}
+
 int Send_search(void)
 {
 	int	n;
@@ -3496,32 +3541,69 @@ int Send_raw_key(int key)
 	return 1;
 }
 
+int Send_ping(void)
+{
+	int i, n, tim, utim;
+	char pong = 0;
+	char *buf = "";
+	struct timeval tv;
+
+	if (gettimeofday(&tv, NULL) == -1) {
+		return 0;
+	}
+
+	tim = tv.tv_sec;
+	utim = tv.tv_usec;
+
+	if ((n = Packet_printf(&wbuf, "%c%c%d%d%d%S", PKT_PING, pong, ++ping_id, tim, utim, buf)) <= 0)
+	{
+		return n;
+	}
+
+	/* Shift ping_times */
+	for (i = 59; i > 0; i--) {
+		ping_times[i] = ping_times[i - 1];
+	}
+	ping_times[i] = -1;
+
+	return 1;
+}
+
 #if defined(WINDOWS) && !defined(CYGWIN)
-/* this gettimeofday implementation is totally broken - mikaelh */
 #if 0
-int gettimeofday(struct timeval *timenow)
+/*
+ * This is broken - mikaelh
+ * From clock(3) manpage:
+ * "The clock() function returns an approximation of processor time used by the program."
+ */
+int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
 	time_t t;
 
 	t = clock();
 
-	timenow->tv_usec = t % 1000;
-	timenow->tv_sec = t / CLK_TCK;
+	tv->tv_usec = t % 1000;
+	tv->tv_sec = t / CLK_TCK;
 
 	return 0;
 }
 #else
-/* Try using the old ftime() instead */
+/*
+ * Use the old ftime() instead
+ * It's accurate enough for us and it works
+ * Timezone argument not supported
+ *  - mikaelh
+ */
 #include <sys/timeb.h>
-int gettimeofday(struct timeval *timenow)
+int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
 	struct timeb t;
 	struct timeb *tp = &t;
 
 	ftime(tp);
 
-	timenow->tv_sec = tp->time;
-	timenow->tv_usec = tp->millitm;
+	tv->tv_sec = tp->time;
+	tv->tv_usec = tp->millitm * 1000;
 
 	return 0;
 }
@@ -3544,11 +3626,7 @@ void update_ticks()
 #ifdef AMIGA
 	GetSysTime(&cur_time);
 #else
-#if defined(WINDOWS) && !defined(CYGWIN)
-	gettimeofday(&cur_time);
-#else
 	gettimeofday(&cur_time, NULL);
-#endif
 #endif
 
 	/* Set the new ticks to the old ticks rounded down to the number of seconds. */
@@ -3557,11 +3635,7 @@ void update_ticks()
 #ifdef AMIGA
 	newticks += cur_time.tv_micro / 100000;
 #else
-#if defined(WINDOWS) && !defined(CYGWIN)
-	newticks += cur_time.tv_usec / 100;
-#else
 	newticks += cur_time.tv_usec / 100000;
-#endif
 #endif
 
 	/* Assume that it has not been more than one second since this function was last called */
@@ -3645,4 +3719,15 @@ void do_mail(){
 	}
 #endif
 #endif /* CHECK_MAIL */
+}
+
+/* Ping the server once a second when enabled - mikaelh */
+void do_ping()
+{
+	static int last_ping = 0;
+
+	if (ping_stats_enabled && (ticks - last_ping >= 10)) {
+		last_ping = ticks;
+		Send_ping();
+	}
 }

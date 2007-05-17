@@ -102,8 +102,8 @@ static void print_mimic_spells()
  * Allow user to choose a spell/prayer from the given book.
  */
 
-/* modified to accept certain capital letters for priest spells. -AD- */ 
- 
+/* modified to accept certain capital letters for priest spells. -AD- */
+
 int get_spell(s32b *sn, cptr prompt, int book, bool known)
 {
 	int		i, num = 0;
@@ -111,7 +111,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	char		choice;
 	char		out_val[160];
 	cptr p;
-	
+
 	object_type *o_ptr = &inventory[book];
 	int realm = find_realm(o_ptr->tval);
 	/* see Receive_inven .. one of the dirtiest hack ever :( */
@@ -210,7 +210,7 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 			/* Ask again */
 			continue;
 		}
-		
+
 		/* hack for CAPITAL prayers (heal other) */
 		/* hack once more for possible expansion */
                 /* lowercase */
@@ -272,7 +272,7 @@ void show_browse(object_type *o_ptr)
 
 	/* Display the spells */
 	print_spells(o_ptr);
-	
+
 	/* Clear the top line */
 	prt("", 0, 0);
 
@@ -309,7 +309,7 @@ static int get_mimic_spell(int *sn)
 	for (i = 0; i < 32; i++)
 	{
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[0] & (1L << i)) 
+		if (p_ptr->innate_spells[0] & (1L << i))
 		{
 		  corresp[num] = i + 2;
 		  num++;
@@ -318,7 +318,7 @@ static int get_mimic_spell(int *sn)
 	for (i = 0; i < 32; i++)
 	{
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[1] & (1L << i)) 
+		if (p_ptr->innate_spells[1] & (1L << i))
 		{
 		  corresp[num] = i + 32 + 2;
 		  num++;
@@ -327,7 +327,7 @@ static int get_mimic_spell(int *sn)
 	for (i = 0; i < 32; i++)
 	{
 		/* Look for "okay" spells */
-		if (p_ptr->innate_spells[2] & (1L << i)) 
+		if (p_ptr->innate_spells[2] & (1L << i))
 		{
 		  corresp[num] = i + 64 + 2;
 		  num++;
@@ -395,7 +395,7 @@ static int get_mimic_spell(int *sn)
 			/* Ask again */
 			continue;
 		}
-		
+
 	       	/* extract request */
 		i = (islower(choice) ? A2I(choice) : -1);
 	      	if (i >= num) i = -1;
@@ -703,12 +703,14 @@ s32b get_school_spell(cptr do_what, int *item_book)
 					Term_save();
 
 				}
-				/* Rstore the screen */
+#if 0 /* would leave garbage behind - mikaelh */
+				/* Restore the screen */
 				else
 				{
 					/* Restore the screen */
 					Term_load();
 				}
+#endif
 
 				/* Display a list of spells */
 				where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));

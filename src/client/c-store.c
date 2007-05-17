@@ -618,7 +618,7 @@ void display_store(void)
 
 	/* Start at the top */
 	store_top = 0;
-	
+
 	/* Interact with player */
 	while (!leave_store)
 	{
@@ -672,6 +672,7 @@ void display_store(void)
 			 * neccecary */
 			update_ticks();
 			do_keepalive();
+			do_ping();
 
 			if (Net_flush() == -1)
 			{

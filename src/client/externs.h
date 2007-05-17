@@ -230,6 +230,12 @@ extern spell_type *school_spells;
 extern s16b max_schools;
 extern school_type *schools;
 
+/* Server ping statistics */
+extern int ping_id;
+extern int ping_times[60];
+extern bool ping_stats_enabled;
+extern bool ping_stats_viewing;
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -372,6 +378,8 @@ extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
+extern void show_ping_stats(void);
+extern void do_cmd_ping_stats(void);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */
@@ -439,6 +447,7 @@ extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);
 extern void do_keepalive(void);
+extern void do_ping(void);
 extern int Net_setup(void);
 extern unsigned char Net_login(void);
 extern int Net_verify(char *real, char *nick, char *pass);
@@ -522,6 +531,7 @@ extern int Send_skill_mod(int i);
 extern int Send_store_examine(int item);
 extern int Send_store_command(int action, int item, int item2, int amt, int gold);
 extern int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux);
+extern int Send_ping(void);
 
 
 /* skills.c */

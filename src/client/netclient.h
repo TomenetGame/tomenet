@@ -80,3 +80,4 @@ int Receive_chardump(void);
 int Receive_beep(void);
 int Receive_AFK(void);
 int Receive_encumberment(void);
+int Receive_ping(void);

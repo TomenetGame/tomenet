@@ -2,7 +2,7 @@
 /* Client initialization module */
 
 /*
- * This file should contain non-system-specific code.  If a 
+ * This file should contain non-system-specific code.  If a
  * specific system needs its own "main" function (such as
  * Windows), then it should be placed in the "main-???.c" file.
  */
@@ -213,6 +213,7 @@ static void Input_loop(void)
 		do_mail();
 		do_flicker();
 		do_xfers();
+		do_ping();
 
 		if (Net_flush() == -1)
 		{
@@ -279,7 +280,7 @@ static void Input_loop(void)
 		}
 
 	}
-}	
+}
 
 /*
  * A hook for "quit()".
@@ -344,7 +345,7 @@ void client_init(char *argv1, bool skip)
 
 	/* Initialize lua scripting */
 	open_lua();
-	
+
 	GetLocalHostName(host_name, 80);
 
 	/* Set the "quit hook" */
@@ -402,7 +403,7 @@ void client_init(char *argv1, bool skip)
 
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
-	
+
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
@@ -412,7 +413,7 @@ void client_init(char *argv1, bool skip)
 #ifdef UNIX_SOCKETS
 	if ((DgramConnect(Socket, server_name, cfg_game_port)) == -1)
 #endif
-	
+
 	/* Send the info */
 	if ((bytes = DgramWrite(Socket, ibuf.buf, ibuf.len) == -1))
 	{
@@ -503,7 +504,7 @@ void client_init(char *argv1, bool skip)
 		Net_cleanup();
 		quit("Network setup failed!\n");
 	}
-	
+
 	status=Net_login();
 
 	/* Hack -- display the nick */

@@ -499,6 +499,14 @@ void process_command()
 			cmd_spike();
 			break;
 
+		case KTRL('T'):
+			html_screenshot("screenshotXXXX");
+			break;
+
+		case KTRL('I'):
+			do_cmd_ping_stats();
+			break;
+
 		default:
 			cmd_raw_key(command_cmd);
 			break;
@@ -1404,6 +1412,13 @@ void cmd_message(void)
 				else if (buf[i] == '\0') break;
 			}
 			html_screenshot("screenshotXXXX");
+			return;
+		}
+		/* ping command - mikaelh */
+		else if (prefix(buf, "/ping"))
+		{
+			inkey_msg = FALSE;
+			Send_ping();
 			return;
 		}
 		else

@@ -317,6 +317,7 @@ void do_cmd_skill()
 					*/
 					update_ticks();
 					do_keepalive();
+					do_ping();
 
 					/* Flush the network output buffer */
 					Net_flush();

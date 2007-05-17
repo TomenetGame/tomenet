@@ -199,8 +199,10 @@ static void sync_sleep(int milliseconds)
 		/* Update our timer and if neccecary send a keepalive packet
 		 */
 		update_ticks();
-		if(!c_quit)
+		if(!c_quit) {
 			do_keepalive();
+			do_ping();
+		}
 
 		/* Flush the network output buffer */
 		Net_flush();
@@ -294,8 +296,10 @@ static char inkey_aux(void)
 			/* Update our timer and if neccecary send a keepalive packet
 			 */
 			update_ticks();
-			if(!c_quit)
+			if(!c_quit) {
 				do_keepalive();
+				do_ping();
+			}
 
 			/* Flush the network output buffer */
 			Net_flush();
@@ -3686,6 +3690,140 @@ void c_close_game(cptr reason)
 			bell();
 		}
 	}
+}
+
+void show_ping_stats(void)
+{
+	int i, cnt, sum, min, max, avg, x, y, packet_loss, height;
+	char tmp[1024];
+	char graph[16][61];
+
+	if (ping_stats_viewing) {
+		/* Clear screen */
+		Term_clear();
+
+		/* Why are we here */
+		prt("The Lag-o-meter", 1, 30);
+
+		if (ping_stats_enabled) {
+			/* Find min and max and calculate avg */
+			packet_loss = cnt = sum = 0;
+			min = max = -1;
+			for (i = 0; i < 60; i++) {
+				if (ping_times[i] > 0) {
+					if (min == -1) min = ping_times[i];
+					else if (ping_times[i] < min) min = ping_times[i];
+
+					if (max == -1) max = ping_times[i];
+					else if (ping_times[i] > max) max = ping_times[i];
+
+					cnt++;
+					sum += ping_times[i];
+				}
+				else if (ping_times[i] == -1) {
+					packet_loss++;
+				}
+			}
+
+			if (cnt) avg = sum / cnt;
+			else avg = -1;
+
+			/* Latest ping might not be lost yet */
+			if (ping_times[0] == -1) packet_loss--;
+
+			/* Clear the graph */
+			for (y = 0; y < 16; y++) {
+				for (x = 0; x < 60; x++) {
+					graph[y][x] = ' ';
+				}
+				graph[y][60] = '\0';
+			}
+
+			/* Create the graph */
+			for (i = 0; i < 60; i++) {
+				/* Calculate the height */
+				height = (16 * ping_times[i] + max / 2) / max;
+
+				for (y = 0; y < height; y++) {
+					graph[15 - y][59 - i] = '*';
+				}
+			}
+
+			/* Draw the graph */
+			for (y = 0; y < 16; y++) {
+				prt(graph[y], 4 + y, 10);
+			}
+
+			prt("Avg:", 19, 2);
+			if (avg != -1) sprintf(tmp, "%dms", avg);
+			else tmp[0] = '\0';
+			prt(tmp, 19, 8);
+
+			prt("Min:", 19, 19);
+			if (min != -1) sprintf(tmp, "%dms", min);
+			else tmp[0] = '\0';
+			prt(tmp, 19, 25);
+
+			prt("Max:", 19, 36);
+			if (max != -1) sprintf(tmp, "%dms", max);
+			else tmp[0] = '\0';
+			prt(tmp, 19, 42);
+
+			prt("Packet loss:", 19, 53);
+			sprintf(tmp, "%d", packet_loss);
+			prt(tmp, 19, 66);
+
+			prt("(1) Disable lag-o-meter", 21, 4);
+		}
+		else {
+			prt("(1) Enable lag-o-meter", 21, 4);
+		}
+
+		prt("Command: ", 22, 2);
+	}
+}
+
+void do_cmd_ping_stats(void)
+{
+	int k, i;
+
+	/* Save the screen */
+	Term_save();
+
+	ping_stats_viewing = TRUE;
+
+	/* Interact */
+	while (1)
+	{
+		show_ping_stats();
+
+		/* Get command */
+		k = inkey();
+
+		/* Exit */
+		if (k == ESCAPE || k == KTRL('X')) break;
+
+		switch (k) {
+			case '1':
+				if (!ping_stats_enabled) {
+					ping_stats_enabled = TRUE;
+					for (i = 0; i < 60; i++) {
+						ping_times[i] = 0;
+					}
+				}
+				else {
+					ping_stats_enabled = FALSE;
+				}
+				break;
+		}
+	}
+
+	ping_stats_viewing = FALSE;
+
+	/* Restore the screen */
+	Term_load();
+
+	Flush_queue();
 }
 
 
