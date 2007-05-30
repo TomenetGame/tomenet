@@ -122,6 +122,15 @@ typedef unsigned int u32b;
 #define SKILL_DRUID_PHYSICAL	75
 #define SKILL_DRUID_EXTRA	76
 
+/* Runemasters */
+#define SKILL_RUNEMASTERY	76
+
+/* Divine race */
+#define SKILL_ASTRAL		77
+#define DIVINE_UNDEF		0x00
+#define DIVINE_ANGEL 		0x01
+#define DIVINE_DEMON 		0x10
+
 /* additional ones */
 #define SKILL_CLIMB             90
 #define SKILL_FLY               91
@@ -200,6 +209,7 @@ typedef unsigned int u32b;
 #define RACE_DRIDER   	13
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
+#define RACE_DIVINE	16
 
 struct worldpos{
 	s16b wx;	/* west to east */
@@ -273,39 +283,39 @@ struct skill_player
 
 struct player_type
 {
-	int conn;			/* Connection number */
-	char name[MAX_CHARS];		/* Nickname */
-	char basename[MAX_CHARS];
-	char realname[MAX_CHARS];	/* Userid */
-	char hostname[MAX_CHARS];	/* His hostname */
-	char addr[MAX_CHARS];		/* His IP address */
-	unsigned int version;		/* His version */
+	int conn;		/* Connection number */
+	const char *name;	/* Nickname */
+	const char *basename;
+	const char *realname;	/* Userid */
+	const char *hostname;	/* His hostname */
+	const char *addr;	/* His IP address */
+	unsigned int version;	/* His version */
 
 	s32b id;		/* Unique ID to each player */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 
 	hostile_type *hostile;	/* List of players we wish to attack */
 
-	char savefile[1024];	/* Name of the savefile */
+	const char *savefile;	/* Name of the savefile */
 
         byte restricted;        /* account is restricted (ie after cheating) */
         byte privileged;        /* account is privileged (ie for quest running) */
         byte pvpexception;      /* account uses different pvp rules than server settings */
         byte mutedchat;         /* account has chat restrictions */
-	bool inval;	/* dont make them logout to validate */
+	bool inval;		/* dont make them logout to validate */
 
 	bool alive;		/* Are we alive */
 	bool death;		/* Have we died */
 	int deathblow;		/* How much damage the final blow afflicted */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
-	byte lives;         /* number of times we have ressurected */
+	byte lives;		/* number of times we have ressurected */
 	byte houses_owned;	/* number of simultaneously owned houses */
 
-	byte prace;			/* Race index */
+	byte prace;		/* Race index */
 	byte pclass;		/* Class index */
-	byte male;			/* Sex of character */
-	byte oops;			/* Unused */
+	byte male;		/* Sex of character */
+	byte oops;		/* Unused */
 
 	skill_player s_info[MAX_SKILLS]; /* Player skills */
 	s16b skill_points;      /* number of skills assignable */
@@ -313,24 +323,24 @@ struct player_type
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
 
-	s32b au;			/* Current Gold */
-	s32b balance;			/* Deposit/debt in bank account */
+	s32b au;		/* Current Gold */
+	s32b balance;		/* Deposit/debt in bank account */
 
 	s32b max_exp;		/* Max experience */
-	s32b exp;			/* Cur experience */
+	s32b exp;		/* Cur experience */
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
-	s16b lev;			/* Level */
+	s16b lev;		/* Level */
 	s16b max_lev;		/* Level according to max_exp */
 
-	s16b mhp;			/* Max hit pts */
-	s16b chp;			/* Cur hit pts */
+	s16b mhp;		/* Max hit pts */
+	s16b chp;		/* Cur hit pts */
 	u16b chp_frac;		/* Cur hit frac (times 2^16) */
 
 	s16b player_hp[PY_MAX_LEVEL];
 
-	s16b msp;			/* Max mana pts */
-	s16b csp;			/* Cur mana pts */
+	s16b msp;		/* Max mana pts */
+	s16b csp;		/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
@@ -387,7 +397,7 @@ struct player_type
 	s16b target_idx[TEMP_MAX];
 
 /*	cptr info[128];		Temp storage of *ID* and Self Knowledge info */
-	char infofile[1024];		/* Temp storage of *ID* and Self Knowledge info */
+	const char *infofile;		/* Temp storage of *ID* and Self Knowledge info */
 	byte special_file_type;	/* Is he using *ID* or Self Knowledge? */
 
 	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
@@ -452,9 +462,9 @@ struct player_type
 	s16b panel_row_old;
 	s16b panel_col_old;
 
-	char died_from[80];	/* What off-ed him */
-	char really_died_from[80];	/* What off-ed him */
-	char died_from_list[80]; /* what goes on the high score list */
+	const char *died_from;	/* What off-ed him */
+	const char *really_died_from;	/* What off-ed him */
+	const char *died_from_list; /* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
@@ -580,6 +590,7 @@ struct player_type
 	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shield;	/* Heavy shield */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
@@ -639,6 +650,8 @@ struct player_type
 	bool sensible_life;
 
 	bool reflect;       /* Reflect 'bolt' attacks */
+        byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
+        byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
         bool res_tele;          /* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
@@ -731,7 +744,7 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-        s32b blood_bond; /* Norc is now happy :) */
+        player_list_type	*blood_bond;	/* Norc is now happy :) */
 
         byte mode; /* Difficulty MODE */
 
@@ -755,7 +768,7 @@ struct player_type
 
 	u16b team;
 	int ret_dam;			/* Drained life from a monster */
-	char attacker[80];		/* Attacking player string, contains name and attack */
+	const char *attacker;		/* Attacking player string, contains name and attack */
 
         int luck_cur;   /* Extra luck of this player */
 
@@ -784,6 +797,9 @@ struct player_type
         time_t global_event_signup[MAX_GLOBAL_EVENTS];
         time_t global_event_started[MAX_GLOBAL_EVENTS];
 //        u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
+/*
+	byte divinity;
+*/
 };
 
 extern bool imprison(int Ind, int time, char *reason);
