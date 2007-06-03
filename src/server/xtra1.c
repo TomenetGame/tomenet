@@ -5767,8 +5767,8 @@ static void process_global_event(int ge_id)
 						}
 						p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
 //						set_recall_timer(i, is_admin(p_ptr)?1:3+randint(15));
-						p_ptr->recall_pos.wx = 32;
-						p_ptr->recall_pos.wy = 32;
+						p_ptr->recall_pos.wx = cfg.town_x;
+						p_ptr->recall_pos.wy = cfg.town_y;
 						p_ptr->recall_pos.wz = 0;
 	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 					        recall_player(i, "");

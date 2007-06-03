@@ -2776,7 +2776,7 @@ if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 				        for(i=0;i<numtowns;i++) {
 	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
 							found_town = TRUE;
-							if (tpos->wx == 32 && tpos->wy == 32)
+							if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y)
 								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 							else
 								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
@@ -2805,7 +2805,7 @@ if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 				        for(i=0;i<numtowns;i++) {
 	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
 							found_town = TRUE;
-							if (tpos->wx == 32 && tpos->wy == 32)
+							if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y)
 								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 							else
 								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */

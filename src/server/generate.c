@@ -10476,7 +10476,7 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	for(i=0;i<numtowns;i++)
 		if(town[i].x==wpos->wx && town[i].y==wpos->wy) {
 			found_town = TRUE;
-			if (wpos->wx == 32 && wpos->wy == 32)
+			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y)
 				d_ptr->flags2 |= DF2_IRON;
 			else
 				d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;

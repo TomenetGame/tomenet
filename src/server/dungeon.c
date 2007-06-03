@@ -5150,7 +5150,7 @@ void dungeon(void)
 	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
 	if (!(turn % 650000)) { /* 650k ~ 3hours */
 		worldpos wp;
-		wp.wx=32;wp.wy=32;wp.wz=0;
+		wp.wx=cfg.town_x;wp.wy=cfg.town_y;wp.wz=0;
 		wipe_m_list_chance(&wp, 70);
 		s_printf("%s Bree auto-genocided.\n", showtime());
 	}

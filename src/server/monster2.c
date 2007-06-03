@@ -2656,7 +2656,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 
 	/* hard-coded -C. Blue */
 	/* Wight-King of the Barrow-downs might not occur anywhere else */
-	if ((r_idx == 971) && ((wpos->wx != 32) || (wpos->wy != 32))) return (FALSE);
+	if ((r_idx == 971) && ((wpos->wx != cfg.town_x) || (wpos->wy != cfg.town_y))) return (FALSE);
 	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
 	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
 	if ((r_idx == 1067) && (getlevel(wpos) < (166 + 1))) return (FALSE);

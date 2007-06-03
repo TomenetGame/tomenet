@@ -1432,8 +1432,8 @@ static void player_setup(int Ind, bool new)
 	if ((wpos->wx > 63) || (wpos->wy > 63) || (wpos->wz > 255) ||
 	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -255)) {
 		s_printf("Ultra-hack executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-		wpos->wx = 32;
-                wpos->wy = 32;
+		wpos->wx = cfg.town_x;
+                wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
 	/* If dungeon existances changed, restore players who saved
@@ -1441,8 +1441,8 @@ static void player_setup(int Ind, bool new)
 	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == 0)) ||
 	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == 0))) {
 		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
-		wpos->wx = 32;
-                wpos->wy = 32;
+		wpos->wx = cfg.town_x;
+                wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
 	

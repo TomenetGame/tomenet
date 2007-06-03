@@ -6285,7 +6285,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	update_health(m_idx);
 
 	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
-	if (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+	if (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
 		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 	}
 
