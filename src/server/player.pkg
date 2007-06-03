@@ -125,12 +125,6 @@ typedef unsigned int u32b;
 /* Runemasters */
 #define SKILL_RUNEMASTERY	76
 
-/* Divine race */
-#define SKILL_ASTRAL		77
-#define DIVINE_UNDEF		0x00
-#define DIVINE_ANGEL 		0x01
-#define DIVINE_DEMON 		0x10
-
 /* additional ones */
 #define SKILL_CLIMB             90
 #define SKILL_FLY               91
@@ -209,7 +203,6 @@ typedef unsigned int u32b;
 #define RACE_DRIDER   	13
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-#define RACE_DIVINE	16
 
 struct worldpos{
 	s16b wx;	/* west to east */
@@ -590,7 +583,6 @@ struct player_type
 	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
-	bool heavy_shield;	/* Heavy shield */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
@@ -650,8 +642,6 @@ struct player_type
 	bool sensible_life;
 
 	bool reflect;       /* Reflect 'bolt' attacks */
-        byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
-        byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
         bool res_tele;          /* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
@@ -797,9 +787,6 @@ struct player_type
         time_t global_event_signup[MAX_GLOBAL_EVENTS];
         time_t global_event_started[MAX_GLOBAL_EVENTS];
 //        u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
-/*
-	byte divinity;
-*/
 };
 
 extern bool imprison(int Ind, int time, char *reason);
