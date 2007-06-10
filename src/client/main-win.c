@@ -3475,7 +3475,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* Try to set timer resolution to 1ms - mikaelh */
 	if (timeGetDevCaps(&tc, sizeof (tc)) == TIMERR_NOERROR)
 		wTimerRes = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
-		timemeBeginPeriod(wTimerRes);
+		timeBeginPeriod(wTimerRes);
 	}
 
 	/* Determine if display is 16/256/true color */
