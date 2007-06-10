@@ -41,6 +41,9 @@
 #define VERSION_MINOR   4
 #define VERSION_PATCH   0
 
+/* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
+#define CLIENT_VERSION_TAG "c"
+
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3

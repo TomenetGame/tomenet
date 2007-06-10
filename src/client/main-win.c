@@ -2074,8 +2074,8 @@ static void init_windows(void)
 	td = &data[0];
 	WIPE(td, term_data);
 
-	sprintf(version, "TomeNET %d.%d.%d", 
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	sprintf(version, "TomeNET %d.%d.%d%s", 
+			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 	td->s = version;
 	td->keys = 1024;
 	td->rows = 24;

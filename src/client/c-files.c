@@ -1001,8 +1001,8 @@ void peruse_file(void)
 
 		/* Show a general "title" */
 		prt(format("[%s]", shortVersion), 0, 0);
-/*		prt(format("[TomeNET %d.%d.%d]",
-			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH), 0, 0);	*/
+/*		prt(format("[TomeNET %d.%d.%d%s]",
+			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);	*/
 
 
 		/* Prompt */
@@ -1127,8 +1127,8 @@ errr file_character(cptr name, bool full)
 
 
 	/* Begin dump */
-	fprintf(fff, "  [TomeNET %d.%d.%d @ %s Character Dump]\n\n",
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, server_name);
+	fprintf(fff, "  [TomeNET %d.%d.%d%s @ %s Character Dump]\n\n",
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG, server_name);
 
 	/* Display player */
 	display_player(0);
@@ -1355,8 +1355,8 @@ void html_screenshot(cptr name)
 	             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n"
 	             "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
 	             "<head>\n");
-	fprintf(fp, "<meta name=\"GENERATOR\" content=\"TomeNET %d.%d.%d\"/>\n",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	fprintf(fp, "<meta name=\"GENERATOR\" content=\"TomeNET %d.%d.%d%s\"/>\n",
+	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 	fprintf(fp, "<title>%s</title>\n", real_name);
 	fprintf(fp, "</head>\n"
 	             "<body>\n"
