@@ -128,7 +128,7 @@ TOLUASRCS = \
   server/lua/ltable.c server/lua/ltests.c server/lua/ltm.c server/lua/lundump.c server/lua/lvm.c server/lua/lzio.c \
   server/lua/lauxlib.c server/lua/lbaselib.c server/lua/ldblib.c server/lua/liolib.c server/lua/lstrlib.c \
   server/lua/tolua_lb.c server/lua/tolua_rg.c server/lua/tolua_tt.c server/lua/tolua_tm.c server/lua/tolua_gp.c \
-  server/lua/tolua_eh.c server/lua/tolua_bd.c
+  server/lua/tolua_eh.c server/lua/tolua_bd.c server/lua/lmathlib.c
 
 LUAOBJS = \
   server/script.o server/lua_bind.o \
@@ -140,7 +140,7 @@ TOLUAOBJS = \
   server/lua/ltable.o server/lua/ltests.o server/lua/ltm.o server/lua/lundump.o server/lua/lvm.o server/lua/lzio.o \
   server/lua/lauxlib.o server/lua/lbaselib.o server/lua/ldblib.o server/lua/liolib.o server/lua/lstrlib.o \
   server/lua/tolua_lb.o server/lua/tolua_rg.o server/lua/tolua_tt.o server/lua/tolua_tm.o server/lua/tolua_gp.o \
-  server/lua/tolua_eh.o server/lua/tolua_bd.o
+  server/lua/tolua_eh.o server/lua/tolua_bd.o server/lua/lmathlib.o
 
 CLI_LUASRCS = \
   client/c-script.c client/lua_bind.c \
@@ -207,7 +207,7 @@ CC = gcc
 ## Variation -- MinGW
 ##
 CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN -DMINGW
-LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32
+LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 # MinGW compiler and linker on my system - mikaelh
 CC = i386-mingw32msvc-gcc
