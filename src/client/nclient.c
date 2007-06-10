@@ -3569,7 +3569,7 @@ int Send_ping(void)
 	return 1;
 }
 
-#if defined(WINDOWS) && !defined(CYGWIN)
+#if defined(WINDOWS) && !defined(CYGWIN) && !defined(MINGW)
 #if 0
 /*
  * This is broken - mikaelh
