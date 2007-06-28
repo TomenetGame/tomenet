@@ -3694,7 +3694,7 @@ void c_close_game(cptr reason)
 
 void show_ping_stats(void)
 {
-	int i, cnt, sum, min, max, avg, x, y, packet_loss, height;
+	int i, cnt, sum, cur, min, max, avg, x, y, packet_loss, height;
 	char tmp[1024];
 	char graph[16][61];
 
@@ -3729,7 +3729,11 @@ void show_ping_stats(void)
 			else avg = -1;
 
 			/* Latest ping might not be lost yet */
-			if (ping_times[0] == -1) packet_loss--;
+			if (ping_times[0] == -1) {
+				packet_loss--;
+				cur = ping_times[1];
+			}
+			else cur = ping_times[0];
 
 			/* Clear the graph */
 			for (y = 0; y < 16; y++) {
@@ -3754,24 +3758,29 @@ void show_ping_stats(void)
 				prt(graph[y], 4 + y, 10);
 			}
 
-			prt("Avg:", 19, 2);
-			if (avg != -1) sprintf(tmp, "%dms", avg);
+			prt("Cur:", 19, 2);
+			if (cur != -1) sprintf(tmp, "%5dms", cur);
 			else tmp[0] = '\0';
-			prt(tmp, 19, 8);
+			prt(tmp, 19, 7);
 
-			prt("Min:", 19, 19);
-			if (min != -1) sprintf(tmp, "%dms", min);
+			prt("Avg:", 19, 17);
+			if (avg != -1) sprintf(tmp, "%5dms", avg);
 			else tmp[0] = '\0';
-			prt(tmp, 19, 25);
+			prt(tmp, 19, 22);
 
-			prt("Max:", 19, 36);
-			if (max != -1) sprintf(tmp, "%dms", max);
+			prt("Min:", 19, 32);
+			if (min != -1) sprintf(tmp, "%5dms", min);
 			else tmp[0] = '\0';
-			prt(tmp, 19, 42);
+			prt(tmp, 19, 37);
 
-			prt("Packet loss:", 19, 53);
-			sprintf(tmp, "%d", packet_loss);
-			prt(tmp, 19, 66);
+			prt("Max:", 19, 47);
+			if (max != -1) sprintf(tmp, "%5dms", max);
+			else tmp[0] = '\0';
+			prt(tmp, 19, 52);
+
+			prt("Packet Loss:", 19, 62);
+			sprintf(tmp, "%2d", packet_loss);
+			prt(tmp, 19, 75);
 
 			prt("(1) Disable lag-o-meter", 21, 4);
 		}
@@ -3801,7 +3810,7 @@ void do_cmd_ping_stats(void)
 		k = inkey();
 
 		/* Exit */
-		if (k == ESCAPE || k == KTRL('X')) break;
+		if (k == ESCAPE || k == KTRL('X') || k == KTRL('I')) break;
 
 		switch (k) {
 			case '1':
