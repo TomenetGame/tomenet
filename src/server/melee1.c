@@ -502,7 +502,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 	char            ddesc[80];
 	
-	char		dam_msg[80];
+	char		dam_msg[80] = { '\0' };
 
 	bool            blinked, prot = FALSE;
 
@@ -979,7 +979,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					break;
@@ -1004,7 +1004,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
@@ -1025,7 +1025,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_UN_BONUS:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Allow complete resist */
@@ -1044,7 +1044,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_UN_POWER:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Saving throw by Magic Device skill (9%..99%) */
@@ -1133,7 +1133,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_GOLD:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Obvious */
@@ -1177,7 +1177,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_ITEM:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Saving throw (unless paralyzed) based on dex and level */
@@ -1229,7 +1229,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_FOOD:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Steal some food */
@@ -1272,7 +1272,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_EAT_LITE:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Access the lite */
@@ -1325,7 +1325,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
@@ -1359,7 +1359,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
@@ -1393,7 +1393,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
@@ -1427,7 +1427,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */
@@ -1439,7 +1439,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_BLIND:
 				{
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "blind" */
@@ -1460,7 +1460,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_CONFUSE:
 				{
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "confused" */
@@ -1481,7 +1481,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_TERRIFY:
 				{
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "afraid" */
@@ -1512,7 +1512,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_PARALYZE:
 				{
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "paralyzed" */
@@ -1543,7 +1543,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_STR:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1555,7 +1555,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_INT:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1567,7 +1567,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_WIS:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1579,7 +1579,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_DEX:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1591,7 +1591,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_CON:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1603,7 +1603,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_CHR:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stat) */
@@ -1615,7 +1615,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_LOSE_ALL:
 				{
 					/* Damage (physical) */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Damage (stats) */
@@ -1638,7 +1638,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Radius 8 earthquake centered at the monster */
@@ -1653,7 +1653,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 95))
@@ -1683,7 +1683,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 90))
@@ -1713,7 +1713,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 75))
@@ -1743,7 +1743,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (p_ptr->hold_life && (rand_int(100) < 50))
@@ -1772,7 +1772,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				{
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Take "poison" effect */
@@ -1806,7 +1806,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_HALLU:
 				{
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Increase "image" */
@@ -1867,7 +1867,7 @@ bool make_attack_normal(int Ind, int m_idx)
 							}
 					}
 					//                                        carried_monster_hit = TRUE;
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 					break;
 				}
@@ -1895,7 +1895,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					bool shield = p_ptr->inventory[INVEN_ARM].k_idx ? TRUE : FALSE;
 
 					/* Take damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Bare-handed? oh.. */
@@ -1949,7 +1949,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_FAMINE:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (!p_ptr->sensible_life) {
@@ -1964,7 +1964,7 @@ bool make_attack_normal(int Ind, int m_idx)
 				case RBE_SEDUCE:
 				{
 					/* Take some damage */
-					if (dam_msg) msg_format(Ind, dam_msg, damage);
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					gone = blinked = do_seduce(Ind, m_idx);
