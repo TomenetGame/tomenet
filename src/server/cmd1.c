@@ -1124,7 +1124,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		if (f1 & TR1_BRAND_COLD)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msg[0])
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -1134,7 +1134,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		if (f1 & TR1_BRAND_ELEC)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msg[0])
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -1144,7 +1144,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		if (f1 & TR1_BRAND_FIRE)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msg[0])
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");
@@ -1154,7 +1154,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		}
 		if (f1 & TR1_BRAND_POIS)
 		{
-			if (!(brand_msg == ""))
+			if (brand_msg[0])
 			{
 			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
 			    else strcat(brand_msg,", ");

@@ -1903,7 +1903,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
 		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
-		acc_banned = (c_acc->flags & ACC_BANNED);
+		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
 		s_printf("ACC1:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
@@ -1970,7 +1970,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
 		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
-		acc_banned = (c_acc->flags & ACC_BANNED);
+		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
 		s_printf("ACC2:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
