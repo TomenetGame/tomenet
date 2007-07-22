@@ -48,7 +48,7 @@ static long		last_send_anything,
 #if 0 /* unused */
 static long		reliable_full_len,
 			latest_reliable;
-#end
+#endif
 static char		talk_pend[1024], initialized = 0;
 
 /*
