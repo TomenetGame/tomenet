@@ -39,6 +39,7 @@
 
 /* internal function prototype */
 static void setmethods (lua_State* L);
+int toluaI_gettag (lua_State* L, char* tagname);
 
 static void settag (lua_State* L, int lo, char* tag_registry_field)
 {
