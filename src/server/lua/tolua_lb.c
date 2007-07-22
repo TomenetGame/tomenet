@@ -17,10 +17,10 @@
 #include "tolua_tm.h"
 #include "tolua_tt.h"
 
+int tolua_tolua_open (lua_State* L);
 
 int tolua_open (lua_State* L)
 {
- int tolua_tolua_open (lua_State* L);
  /* check if alread opened */
  toluaI_getregistry(L,"TOLUA");
  if (lua_isnil(L,-1))

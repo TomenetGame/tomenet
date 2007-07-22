@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+int tolua_tolualua_open(lua_State* L);
 
 static void help (void)
 {
@@ -106,7 +107,6 @@ int main (int argc, char* argv[])
 
 #if 1
  {
-  int tolua_tolualua_open(lua_State* L);
   tolua_tolualua_open(L);
  }
 #else
