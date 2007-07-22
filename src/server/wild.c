@@ -214,7 +214,7 @@ void deltown(int Ind)
 
 //	wild_info[wpos->wy][wpos->wx].type=WILD_GRASSLAND;
 	wild_info[wpos->wy][wpos->wx].type=WILD_OCEAN;
-	wild_info[wpos->wy][wpos->wx].radius=towndist(y, x);
+	wild_info[wpos->wy][wpos->wx].radius=towndist(wpos->wy, wpos->wx);
 	wilderness_gen(wpos);
 
 	/* 'SHRINK' by reverse GROW ;) */
