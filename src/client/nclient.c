@@ -44,9 +44,11 @@ static unsigned		magic;
 static long		last_send_anything,
 			last_keyboard_change,
 			last_keyboard_ack,
-			reliable_offset,
-			reliable_full_len,
+			reliable_offset;
+#if 0 /* unused */
+static long		reliable_full_len,
 			latest_reliable;
+#end
 static char		talk_pend[1024], initialized = 0;
 
 /*
@@ -1055,6 +1057,7 @@ int Send_ack(long rel_loops)
 	return 1;
 }
 
+#if 0 /* unused */
 int old_Receive_reliable(void)
 {
 	int	n;
@@ -1141,6 +1144,7 @@ int old_Receive_reliable(void)
 		return -1;
 	return 1;
 }
+#endif // 0
 
 int Receive_reliable(void)
 {
@@ -1532,10 +1536,11 @@ int Receive_skill_init(void)
 	}
 
 	/* XXX XXX These are x32b, not char * !!!!!
-	 * It's really needed that we separate c-types.h from types.h */
-	s_info[i].name = string_make(name);
-	s_info[i].desc = string_make(desc);
-	s_info[i].action_desc = (strlen(act) ? string_make(act) : 0L);
+	 * It's really needed that we separate c-types.h from types.h
+	 * Now they're uintptr */
+	s_info[i].name = (uintptr)string_make(name);
+	s_info[i].desc = (uintptr)string_make(desc);
+	s_info[i].action_desc = (uintptr)(strlen(act) ? string_make(act) : 0L);
 
 	s_info[i].father = father;
 	s_info[i].order = order;
