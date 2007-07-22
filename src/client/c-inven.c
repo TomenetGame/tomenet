@@ -175,8 +175,8 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 {
 	char	n1, n2, which = ' ';
 
-	int	k, i1, i2, e1, e2;
-	bool	ver, done, item;
+	int	k, i1, i2, e1, e2, ver;
+	bool	done, item;
 
 	char	tmp_val[160];
 	char	out_val[160];
