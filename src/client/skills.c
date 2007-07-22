@@ -475,7 +475,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode)
 		if (i >= max) break;
 
 		if (p[i] > 0)
-			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, s_info[p[i]].action_desc);
+			sprintf(buff, "  %c-%3d) %-30s", I2A(j), s_info[p[i]].action_mkey, (char*)s_info[p[i]].action_desc);
 		else
 			sprintf(buff, "  %c-%3d) %-30s", I2A(j), 1, "Change melee style");
 
