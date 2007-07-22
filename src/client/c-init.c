@@ -367,7 +367,9 @@ void client_init(char *argv1, bool skip)
 	{
 		/* Set the server's name */
                 strcpy(server_name, argv1);
-                if (strchr(server_name, ':'))
+                if (strchr(server_name, ':') &&
+		    /* Make sure it's not an IPv6 address. */
+		    !strchr(strchr(server_name, ':') + 1, ':'))
                 {
 
                         char *port = strchr(server_name, ':');

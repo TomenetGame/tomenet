@@ -130,9 +130,13 @@ typedef unsigned long u32b;
 #ifndef WINDOWS
 typedef int64_t s64b;
 typedef u_int64_t u64b;
+/* An int big enough to store a pointer. */
+#include <stdint.h>
+typedef uintptr_t uintptr;
 #else
 typedef __int64 s64b;
 typedef unsigned __int64 u64b;
+typedef u32b uintptr; /* TODO: Proper type for 64-bit Windows */
 #endif
 #ifdef CYGWIN
 #define WINDOWS
