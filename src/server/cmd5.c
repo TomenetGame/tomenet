@@ -548,7 +548,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 	}
 
 	/* confirm the power */
-	if (!p_ptr->innate_spells[j] & (1L << (power - j * 3))) 
+	if (!(p_ptr->innate_spells[j] & (1L << (power - j * 32)))) 
 	{
 		msg_print(Ind, "You cannot use that power.");
 		return;
