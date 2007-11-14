@@ -56,7 +56,7 @@ static void cmd_all_in_one(void)
 		}
 
 		case TV_SCROLL:
-		case TV_PARCHEMENT:
+		case TV_PARCHMENT:
 		{
 			Send_read(item);
 			break;
@@ -932,7 +932,7 @@ void cmd_quaff(void)
 static bool item_tester_readable(object_type *o_ptr)
 {
 	if (o_ptr->tval == TV_SCROLL) return TRUE;
-	if (o_ptr->tval == TV_PARCHEMENT) return TRUE;
+	if (o_ptr->tval == TV_PARCHMENT) return TRUE;
 
 	return FALSE;
 }
