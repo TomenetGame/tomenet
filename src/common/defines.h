@@ -1,4 +1,4 @@
-/* $Id$ */
+* $Id$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
@@ -47,7 +47,11 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   0
+//#ifdef RACE_DIVINE
+#define SF_VERSION_PATCH   2
+//#else
+//#define SF_VERSION_PATCH   1
+//#endif
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -86,19 +90,44 @@
  * - dungeons are IRONMAN
  * - and many more things that are just a little bit different :)
  */
-// #define RPG_SERVER
+//#define RPG_SERVER
 
-
+/* Server is Moltor's Smash Arcade server? */
+//#define ARCADE_SERVER
 
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
 /* #define FUN_SERVER */
 
 
+//TEMPORARY (if only RACE_DIVINE is on!)
+#ifndef RPG_SERVER
+#undef SF_VERSION_PATCH
+#define SF_VERSION_PATCH   1
+#endif
+
+
+/* Allow a bunch of latest experimental changes to be compiled into this build? */
+#ifdef RPG_SERVER
+ #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
+// #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
+ #define AUCTION_BETA		/* less restrictions while beta testing */
+ #define AUCTION_SYSTEM
+ #define AUCTION_DEBUG
+#endif
+
+
+/* Use new shields with block/deflect values instead of traditional ac/+ac ? */
+#ifdef ENABLE_NEW_MELEE
+ #define USE_NEW_SHIELDS
+/* Use blocking/parrying? if USE_NEW_SHIELDS is disabled, AC will be used to determine block chance */
+ #define USE_BLOCKING
+ #define USE_PARRYING
+#endif
+
 
 /* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
    (has no effect if KINGCAP_EXP is defined) */
 #define ALT_EXPRATIO
-
 
 
 /* Startup equipment treatment: [3]
@@ -229,7 +258,12 @@
  * Maximum number of player "race" types (see "table.c", etc)
  */
 /*#define MAX_RACES	14 */
+#ifdef RPG_SERVER
+#define MAX_RACES	17
+#else
 #define MAX_RACES	16
+#endif
+
 
 /*
  * Maximum number of player "class" types (see "table.c", etc)
@@ -285,9 +319,9 @@
  */
  
 #define MAX_F_IDX	256	/* Max size for "f_info[]" */
-#define MAX_K_IDX	1024 /* Max size for "k_info[]" */
-#define MAX_A_IDX	256	/* Max size for "a_info[]" */
-#define MAX_E_IDX	256 /* Max size for "e_info[]" */
+#define MAX_K_IDX	1024 	/* Max size for "k_info[]" */
+#define MAX_A_IDX	512	/* Max size for "a_info[]" */
+#define MAX_E_IDX	256 	/* Max size for "e_info[]" */
 #define MAX_R_IDX	1152	/* Max size for "r_info[]" */
 #define MAX_V_IDX 	256	/* Max size for "v_info[]" */
 #define MAX_RE_IDX	128	/* Max size for "re_info[]" */
@@ -418,6 +452,17 @@
    and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
 #define MAX_KING_PARTY_LEVEL_DIFF 11
 
+/* Maximum armour class value that yields in a reduction of damage.
+   Note: The chance to get hit still goes down further above this value.
+   Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
+#ifdef ENABLE_NEW_MELEE
+ #define AC_CAP		250
+ #define AC_CAP_DIV	350
+#else
+ #define AC_CAP		150
+ #define AC_CAP_DIV	250
+#endif
+
 /* Limit value for Anti-magic fields (AM cap)
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */
@@ -430,6 +475,11 @@
 /* upper limit of dodging chance.       [90] */
 #define DODGE_MAX_CHANCE        80
 
+
+/* Levels that Morgoth spawns on will not allow *destruction* nor any use of
+   genocide spells. This can also prevent too trivial loot retrieval in
+   case of unexpected deathhh - C. Blue */
+#define MORGOTH_DANGEROUS_LEVEL
 
 /* If Morgoth is generated within a vault at the time the
    dungeon level is generated, set it to NO_TELE.
@@ -452,10 +502,10 @@
 /* Both of the above lead to preventing live spawns of Morgoth, other than during
    generation of the dungeon level. (for technical reasons) */
 #ifdef MORGOTH_NO_TELE_VAULTS
-#define MORGOTH_NO_LIVE_SPAWN
+ #define MORGOTH_NO_LIVE_SPAWN
 #endif
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
-#define MORGOTH_NO_LIVE_SPAWN
+ #define MORGOTH_NO_LIVE_SPAWN
 #endif
 
 
@@ -467,7 +517,10 @@
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
 #define AVG_MELEE_CAP		700
-
+/* Non-magical ranged monsters' damage cap */
+#define RANGED_CAP		500	/* UNUSED currently */
+/* Generic magical damage cap (BEFORE susceptibilities, for those it may still be doubled) */
+#define MAGICAL_CAP		1600
 
 
 /* Should a mind-link also display shops and shop actions to the secondary player? */
@@ -854,6 +907,9 @@
 #define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
+#ifdef RPG_SERVER
+#define RACE_DIVINE 	16
+#endif
 /* (or simply replace all those defines with p_info.txt) */
 
 /*
@@ -1199,6 +1255,7 @@ that keeps many algorithms happy.
 #define FEAT_HIGH_MOUNTAIN	0x65
 #define FEAT_NETHER_MIST	0x66
 #define FEAT_GLIT_WATER         0x67	/* For Valinor */
+#define FEAT_HIGH_MOUNT_SOLID	0x68	/* For Valinor */
 
 /* Features 0x67 - 0x9F -- unused */
 
@@ -1261,7 +1318,7 @@ that keeps many algorithms happy.
  * Number of effects
  */
 #define MAX_EFFECTS             256	/* 128 */
-#define MAX_EFFECTS_PLAYER      32
+#define MAX_EFFECTS_PLAYER      128	/* 32 */
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
@@ -1271,7 +1328,7 @@ that keeps many algorithms happy.
 
 
 /* Randarts */
-#define ART_RANDART		255
+#define ART_RANDART		999
 
 /* Lites */
 #define ART_GALADRIEL			1
@@ -1715,7 +1772,7 @@ that keeps many algorithms happy.
 #define TV_SPIKE         5      /* Spikes ('~') */
 #define TV_MSTAFF        6      /* Mage Staffs */
 #define TV_CHEST         7      /* Chests ('~') */
-#define TV_PARCHEMENT    8      /* Parchements from Kamband */
+#define TV_PARCHMENT     8      /* Parchments from Kamband */
 #define TV_CORPSE        9      /* Monster corpses */
 #define TV_EGG          10      /* Monster Eggs */
 #define TV_JUNK         11      /* Sticks, Pottery, etc ('~') */
@@ -2169,6 +2226,8 @@ that keeps many algorithms happy.
 #define SV_AMULET_INVINCIBILITY		37	/* for admins */
 #define SV_AMULET_GROM			38
 #define SV_AMULET_LUCK			39	/* Talisman */
+#define SV_AMULET_SSHARD		40	/* Spirit Shard (artifact) */
+#define SV_AMULET_INVULNERABILITY	41	/* for admins */
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -2613,10 +2672,17 @@ that keeps many algorithms happy.
 #define SV_CORPSE_SKULL      4
 #define SV_CORPSE_MEAT       5
 
-/* The "sval" codes for TV_PARCHEMENT */
+/* The "sval" codes for TV_PARCHMENT */
 #define SV_PARCHMENT_NEWBIE	50
 #define SV_PARCHMENT_DEATH	51
 #define SV_PARCHMENT_NEWS	52
+
+#define SV_DEED_HIGHLANDER	60
+
+/* for TV_BOOK */
+#define SV_SPELLBOOK		255
+#define SV_BOOK_COMBO		50
+
 
 /* for invalid items */
 #define SV_SEAL_INVALID		0
@@ -2883,10 +2949,14 @@ that keeps many algorithms happy.
 #define SUMMON_GHOST                56
 #define SUMMON_QUYLTHULG            57
 #define SUMMON_LUA                  58
-
 /* Again, TomeNET one(s)	- Jir - */
 #define SUMMON_VERMIN		59
 #define SUMMON_IMMOBILE		60
+/* New stuff (RF0_) - C. Blue */
+#define SUMMON_HI_MONSTER	61
+#define SUMMON_HI_MONSTERS	62
+#define SUMMON_HI_UNIQUE	63
+
 
 
 /*
@@ -3370,23 +3440,30 @@ that keeps many algorithms happy.
 #define TR5_IM_POISON		0x00200000L
 #define TR5_IM_WATER		0x00400000L	/* Water immunity, should also let you breathe under water */
 #define TR5_RES_WATER		0x00800000L	/* Resist Water */
-#define TR5_REGEN_MANA			0x01000000L	/* Item induces regeneration */
-#define TR5_DISARM				0x02000000L
-#define TR5_NO_ENCHANT			0x04000000L
+#define TR5_REGEN_MANA		0x01000000L	/* Item induces regeneration */
+#define TR5_DISARM		0x02000000L
+#define TR5_NO_ENCHANT		0x04000000L
 #define TR5_CHAOTIC             0x08000000L
 #define TR5_INVIS               0x10000000L
-#define TR5_SENS_FIRE           0x20000000L
-#define TR5_REFLECT             0x40000000L
-#define TR5_PASS_WATER		0x80000000L
+#define TR5_REFLECT             0x20000000L
+#define TR5_PASS_WATER		0x40000000L
+#define TR5_WINNERS_ONLY        0x80000000L
 
+
+/*#define TR5_SENS_FIRE           0x20000000L*/
 /*#define TR5_NO_NORM_ART         0x80000000L */
-
 /* Not yet implemented/used. Cold might be needed. For monsters, even susc-poison is implemented.
    For the player I think fire and cold are enough. (C. Blue)
 #define TR6_SENS_COLD		0x00000001L
 #define TR6_SENS_ACID		0x00000002L
 #define TR6_SENS_ELEC		0x00000004L
 */
+
+
+/* Item placement restrictors */
+#define PR_TRUE_ART	0x001	/* allow true artifacts */
+#define PR_WINNER	0x002	/* allow TR5_WINNERS_ONLY items */
+
 
 /* ESP defines */
 #define ESP_ORC                 0x00000001L
@@ -3724,14 +3801,14 @@ that keeps many algorithms happy.
 #define RF4_MOAN			0x40000000	/* For Halloween event :) -C. Blue */
 #define RF4_BOULDER			0x80000000  /* Hurl Boulder (Vanilla) */
 
-#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | RF4_BR_MANA | RF4_BR_DISI | RF4_BR_NUKE)
-
+#define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ARROW_1 | RF4_ARROW_2 | RF4_BR_ACID | \
+    RF4_BR_ELEC | RF4_BR_FIRE | RF4_BR_COLD | RF4_BR_POIS | RF4_BR_NETH | RF4_BR_LITE | \
+    RF4_BR_DARK | RF4_BR_CONF | RF4_BR_SOUN | RF4_BR_CHAO | RF4_BR_DISE | RF4_BR_NEXU | \
+    RF4_BR_TIME | RF4_BR_INER | RF4_BR_GRAV | RF4_BR_SHAR | RF4_BR_PLAS | RF4_BR_WALL | \
+    RF4_BR_MANA | RF4_BR_DISI | RF4_BR_NUKE)
 /* NOTE: BR_DISI is not considered as 'radius spell', since this can
  * eliminate walls between the caster and the player. */
 #define RF4_RADIUS_SPELLS (0xafffff08) /* Changed for Halloween event, now includes ranged MOAN. -C. Blue */
-#define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
-		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
-		RF5_BA_MANA | RF5_BA_DARK | RF5_BA_NUKE | RF5_BA_CHAO )
 
 /*
  * New monster race bit flags
@@ -3773,7 +3850,11 @@ that keeps many algorithms happy.
 #define RF5_CONF			0x20000000	/* Confuse Player */
 #define RF5_SLOW			0x40000000	/* Slow Player */
 #define RF5_HOLD			0x80000000	/* Paralyze Player */
+
 #define RF5_PLAYER_SPELLS (0xffffffff & ~(RF5_DRAIN_MANA | RF5_BLIND))
+#define RF5_RADIUS_SPELLS ( RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | \
+		RF5_BA_COLD | RF5_BA_POIS | RF5_BA_NETH | RF5_BA_WATE | \
+		RF5_BA_MANA | RF5_BA_DARK | RF5_BA_NUKE | RF5_BA_CHAO )
 
 /*
  * New monster race bit flags
@@ -3813,6 +3894,7 @@ that keeps many algorithms happy.
 
 #define RF6_PLAYER_SPELLS (RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | \
 		RF6_BLINK | RF6_TPORT | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL)
+#define RF6_RADIUS_SPELLS (0L)
 
 /*
  * New monster race bit flags from ToME.		- Jir -
@@ -3932,6 +4014,15 @@ that keeps many algorithms happy.
 #define RF9_RES_PSI			0x80000000	/* Resist (?) */
 
 
+/* New monster attack spells and stuff - C. Blue */
+#define RF0_S_HI_MONSTER	0x00000001
+#define RF0_S_HI_MONSTERS	0x00000002
+#define RF0_S_HI_UNIQUE		0x00000004
+
+#define RF0_PLAYER_SPELLS (0L)
+#define RF0_RADIUS_SPELLS (0L)
+
+
 
 /* 
 	Different types of terrain, used for the wilderness.
@@ -4014,16 +4105,16 @@ that keeps many algorithms happy.
 #define FF1_ATTR_MULTI          0x00020000L
 #define FF1_SLOW_RUNNING_1	0x00040000L	/* half speed */
 #define FF1_SLOW_RUNNING_2	0x00080000L	/* quarter speed */
-#define FF1_SLOW_FLYING_1	0x00040000L
-#define FF1_SLOW_FLYING_2	0x00080000L
-#define FF1_SLOW_CLIMBING_1	0x00100000L
-#define FF1_SLOW_CLIMBING_2	0x00200000L
-#define FF1_SLOW_WALKING_1	0x00400000L
-#define FF1_SLOW_WALKING_2	0x00800000L
-#define FF1_SLOW_SWIMMING_1	0x01000000L
-#define FF1_SLOW_SWIMMING_2	0x02000000L
-#define FF1_PROTECTED		0x04000000L	/* monsters cannot teleport to nor spawn on this grid */
-//#define FF1_BLOCK_LOS		0x08000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
+#define FF1_SLOW_FLYING_1	0x00100000L
+#define FF1_SLOW_FLYING_2	0x00200000L
+#define FF1_SLOW_CLIMBING_1	0x00400000L
+#define FF1_SLOW_CLIMBING_2	0x00800000L
+#define FF1_SLOW_WALKING_1	0x01000000L
+#define FF1_SLOW_WALKING_2	0x02000000L
+#define FF1_SLOW_SWIMMING_1	0x04000000L
+#define FF1_SLOW_SWIMMING_2	0x08000000L
+#define FF1_PROTECTED		0x10000000L	/* monsters cannot teleport to nor spawn on this grid */
+//#define FF1_BLOCK_LOS		0x20000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 
 
 /*** Dungeon type flags -- DG ***/
@@ -4125,7 +4216,7 @@ that keeps many algorithms happy.
 #define LF1_NO_GENO             0x00000040L
 #define LF1_NOMAP		0x00000080L /* player never gains level knowledge */
 #define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
-#define LF1_NO_DESTROY          0x00000200L
+#define LF1_NO_DESTROY          0x00000200L /* Cannot use Destruction spells/Earthquakes */
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
 #define LF1_IRON_RECALL		0x00001000L /* Recalling is allowed on this floor of an IRONMAN dungeon/tower */
@@ -4181,6 +4272,9 @@ that keeps many algorithms happy.
     RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_WRAITH | RF6_S_UNIQUE | \
     RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
 
+#define RF0_INT_MASK \
+    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+
 /*
  * Spells castable even when farther than MAX_RANGE
  */
@@ -4193,6 +4287,9 @@ that keeps many algorithms happy.
 
 #define RF6_INDIRECT_MASK \
 	(RF6_HASTE | RF6_BLINK | RF6_TPORT | RF6_HEAL)
+
+#define RF0_INDIRECT_MASK \
+	(0L)
 
 
 /*
@@ -4210,6 +4307,9 @@ that keeps many algorithms happy.
 	(RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_DARKNESS | \
 	 RF6_TRAPS | RF6_FORGET)
 
+#define RF0_DIRECT_MASK \
+	(0L)
+
  
 /*
  * Hack -- "bolt" spells that may hurt fellow monsters
@@ -4224,16 +4324,19 @@ that keeps many algorithms happy.
     RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
 
 #define RF6_BOLT_MASK \
-   0L
+    (0L)
+
+#define RF0_BOLT_MASK \
+    (0L)
 
 
 /* Hack -- summon spells */
 
 #define RF4_SUMMON_MASK \
-    0L
+    (0L)
 
 #define RF5_SUMMON_MASK \
-    0L
+    (0L)
 
 #define RF6_SUMMON_MASK \
     (RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
@@ -4241,6 +4344,8 @@ that keeps many algorithms happy.
      RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
      RF6_S_WRAITH | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
 
+#define RF0_SUMMON_MASK \
+    (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
 
 
 /*
@@ -4255,6 +4360,8 @@ that keeps many algorithms happy.
 #define RF6_ESCAPE_MASK \
 	(RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY | RF6_TELE_LEVEL)
 
+#define RF0_ESCAPE_MASK \
+	(0L)
 
 /*
  * Spells that hurt the player directly
@@ -4280,6 +4387,9 @@ that keeps many algorithms happy.
 #define RF6_ATTACK_MASK \
 	(RF6_HAND_DOOM)
 
+#define RF0_ATTACK_MASK \
+	(0L)
+
 
 /*
  * Spells that improve the caster's tactical position
@@ -4293,6 +4403,8 @@ that keeps many algorithms happy.
 #define RF6_TACTIC_MASK \
 	(RF6_BLINK)
 
+#define RF0_TACTIC_MASK \
+	(0L)
 
 /*
  * Annoying spells
@@ -4308,6 +4420,8 @@ that keeps many algorithms happy.
 #define RF6_ANNOY_MASK \
 	(RF6_TELE_TO | RF6_DARKNESS | RF6_TRAPS | RF6_FORGET)
 
+#define RF0_ANNOY_MASK \
+	(0L)
 
 /*
  * Spells that increase the caster's relative speed
@@ -4321,6 +4435,8 @@ that keeps many algorithms happy.
 #define RF6_HASTE_MASK \
 	(RF6_HASTE)
 
+#define RF0_HASTE_MASK \
+	(0L)
 
 /*
  * Healing spells
@@ -4334,6 +4450,8 @@ that keeps many algorithms happy.
 #define RF6_HEAL_MASK \
 	(RF6_HEAL)
 
+#define RF0_HEAL_MASK \
+	(0L)
 
 /* Masks to find out if a monster is really a spellcaster,
    which uses magic spells, or if the 'spells' are merely
@@ -4354,6 +4472,8 @@ that keeps many algorithms happy.
 	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
 	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
 	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_WRAITH | RF6_S_UNIQUE)
+#define RF0_SPELLCASTER_MASK \
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
 
 /*** Macro Definitions ***/
 
@@ -4854,14 +4974,14 @@ extern int PlayerUID;
  * Hack -- attempt to reduce various values
  */
 #ifdef ANGBAND_LITE
-# undef MACRO_MAX
-# define MACRO_MAX	128
-# undef QUARK_MAX
-# define QUARK_MAX	128
-# undef MESSAGE_MAX
-# define MESSAGE_MAX	128
-# undef MESSAGE_BUF
-# define MESSAGE_BUF	4096
+ #undef MACRO_MAX
+ #define MACRO_MAX	128
+ #undef QUARK_MAX
+ #define QUARK_MAX	128
+ #undef MESSAGE_MAX
+ #define MESSAGE_MAX	128
+ #undef MESSAGE_BUF
+ #define MESSAGE_BUF	4096
 #endif
 
 
@@ -4923,6 +5043,7 @@ extern int PlayerUID;
 #define LINKF_TELEKIN	0x0040
 /* Additional link flags */
 #define LINKF_HIDDEN	0x0080 /* No link status messages */
+#define LINKF_VIEW_DEDICATED	0x0100 /* View dedicated for watching other player */
 
 /* Monster gaining levels */
 #define MONSTER_LEVEL_MAX       500
@@ -5258,6 +5379,11 @@ extern int PlayerUID;
 	 armour_weight(p_ptr) > \
 	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
 
+#define rogue_heavy_armor(p_ptr) \
+	((get_skill(p_ptr, SKILL_DUAL) || p_ptr->pclass == CLASS_ROGUE) && \
+	 armour_weight(p_ptr) > \
+	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 50))
+
 
 /* replacement of helper functions in cave.c */
 /* prolly compilers will do this job anyway..? */
@@ -5452,10 +5578,14 @@ extern int PlayerUID;
 #define SKILL_DRUID_PHYSICAL		75
 
 #define SKILL_RUNEMASTERY		76
+#ifdef RACE_DIVINE
+#define SKILL_ASTRAL			77
+#endif
 
 #define SKILL_DRUID_EXTRA		76
 #define SKILL_DRUID_EXTRA2		77
 
+#define SKILL_DUAL		78 /* dual-wield for rogues - C. Blue */
 
 #define SKILL_SHAMAN		78
 #define SKILL_SHAMAN2		79
@@ -5489,6 +5619,9 @@ extern int PlayerUID;
 
 /* Skill points per level (xtra2.c) */
 #define SKILL_NB_BASE           5
+#ifdef ARCADE_SERVER
+#define SKILL_NB_BASE 0
+#endif
 
 
 /* Stores/buildings defines */
@@ -5629,8 +5762,13 @@ extern int PlayerUID;
 #define BACT_DEPOSIT				54
 #define BACT_WITHDRAW				55
 #define BACT_EXTEND_HOUSE			56
+
+#define BACT_CHEEZE_LIST			57
+#define BACT_DEED_ITEM				58
+#define BACT_DEED_BLESSING			59
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_INFO for TomeNET	- Jir - */
+
 
 #define BACT_F_NOTHING		0x00
 #define BACT_F_STORE_ITEM	0x01
@@ -5716,8 +5854,9 @@ extern int PlayerUID;
 #define mimic_shaman(ridx)	\
 	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) && \
 	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
-	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975)) || \
-	((r_info[ridx].d_char == 'G')))
+	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx))
+#define mimic_shaman_E(ridx)	\
+	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
 /*	Druid: Selected Animals and animal-similar creatures. */
 #define mimic_druid(ridx, plv)	\
 	((plv >= 5 && (ridx == 160 || ridx == 198)) || \
@@ -5753,17 +5892,17 @@ extern int PlayerUID;
  * I'll try to keep the latest table of dmg values updated @ 
  *    http://72.58.254.71/meow/rune_damage.txt
  */
-#define rbolt_dmg(x) (3 + damroll(1 + (x), 1 + (x)/2))
-#define rbeam_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
-#define rball_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
+ #define rbolt_dmg(x) (3 + damroll(1 + (x), 1 + (x)/2))
+ #define rbeam_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
+ #define rball_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
 
 // Halved dmg/sp if runemastery < 25
-#define ALTERNATE_DMG	
-#define RBARRIER 25
+ #define ALTERNATE_DMG	
+ #define RBARRIER 25
 
 //By comparison, Nox does 76 damage per turn with no spell power.
 //#define rcloud_dmg(x) damroll((x), 1)
-#define rcloud_dmg(x) (x)
+ #define rcloud_dmg(x) (x)
 
 /* Duration of the rune cloud spells...
  * As a comparator, Noxious Cloud (at 50, no spell power) has 45 duration 
@@ -5771,13 +5910,13 @@ extern int PlayerUID;
  * takes about the same amount of work to pull off...."
  * These are already expensive as heck anyway...
  */ 
-#define RCLOUD_DURATION		50
+ #define RCLOUD_DURATION		50
 
 /* The level for perfect rune base spell casting... */
-#define RSAFE_BOLT	15
-#define RSAFE_BEAM	25
-#define RSAFE_BALL	35
-#define RSAFE_CLOUD	50
+ #define RSAFE_BOLT	15
+ #define RSAFE_BEAM	25
+ #define RSAFE_BALL	35
+ #define RSAFE_CLOUD	50
 
 /* "What about SKILL_RUNEMASTERY?! Doesn't that determine dmg?" -- you say.
  * Well, no. Not if you're reading this!
@@ -5798,12 +5937,12 @@ extern int PlayerUID;
  * TODO: Add the rune breakage code, add the AM field check too.
  * TODO: Let some badass mob (Tik?) drop the clouding rune (and only him!)
  */
-#define RUNE_DMG ((p_ptr->lev + 1)/2 + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25))
+ #define RUNE_DMG (((p_ptr->lev + 1)/2) + get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 25))
 
 /* The folowing are the basic SP usage multipler for the modifier runes */
-#define RBASIC_COST 	1 /* At lvl 50, this costs 1*50 */
-#define RMEDIUM_COST 	2 /* At lvl 50, this costs 2*50 */
-#define RADVANCE_COST 	5 /* At lvl 50, this costs OMG, 250?! =) */
+ #define RBASIC_COST 	(1) /* At lvl 50, this costs 1*50 */
+ #define RMEDIUM_COST 	(2) /* At lvl 50, this costs 2*50 */
+ #define RADVANCE_COST 	(5) /* At lvl 50, this costs OMG, 250?! =) */
 
 /* The following are the SP usage multiplier
  * The value here is multiplied with the cost obtained above.
@@ -5825,12 +5964,93 @@ extern int PlayerUID;
  *
  * Some fun numbers to laugh/look at... 
  *  Base SP with *** stats for these guys are about 800 SP (w/o SKILL_MAGIC)
- *  Advanced cloud rune spell will cost about 1250 SP
- *  Advanced ball rune spell will cost about 750 SP
+ * XXX Advanced cloud rune spell will cost about 1250 SP
+ * XXX Advanced ball rune spell will cost about 750 SP
+ * UPDATE: Toned it down a little.
  */ 
-#define RBOLT_BASE 	1
-#define RBEAM_BASE 	2
-#define RBALL_BASE 	3
-#define RCLOUD_BASE 	5
-#define RSELF_BASE	1
+ #define RBOLT_BASE 	(1.0)
+// #define RBEAM_BASE 	2.0
+ #define RBEAM_BASE 	(1.5)
+// #define RBALL_BASE 	3
+// #define RBALL_BASE 	2.5
+ #define RBALL_BASE 	(2.0)
+// #define RCLOUD_BASE 	3.5
+ #define RCLOUD_BASE 	(3.0)
+ #define RSELF_BASE	RBOLT_BASE
 #endif //Runemaster
+#ifdef RACE_DIVINE
+ #define DIVINE_UNDEF 0x00
+ #define DIVINE_ANGEL 0x01
+ #define DIVINE_DEMON 0x10
+
+ #define MONSTER_RIDX_CANDLEBEARER 1104
+ #define MONSTER_RIDX_DARKLING 1105
+#endif
+
+/* Auction system - mikaelh */
+#ifdef AUCTION_SYSTEM
+
+/* Minimum required value of an auctionable item */
+#ifdef AUCTION_BETA
+#define AUCTION_MINIMUM_VALUE		1
+#else
+#define AUCTION_MINIMUM_VALUE		1000
+#endif
+
+/* Time limits */
+#ifdef AUCTION_BETA
+#define AUCTION_MINIMUM_DURATION	15	/* 15 seconds */
+#define AUCTION_MAXIMUM_DURATION	86400	/* 24 hours */
+#else
+#define AUCTION_MINIMUM_DURATION	3600	/* 1 hour */
+#define AUCTION_MAXIMUM_DURATION	604800	/* 7 days */
+#endif
+
+#ifdef AUCTION_BETA
+#define AUCTION_MINIMUM_STARTING_PRICE	50
+#define AUCTION_MAXIMUM_STARTING_PRICE	150
+#define AUCTION_MINIMUM_BUYOUT_PRICE	100
+#define AUCTION_MAXIMUM_BUYOUT_PRICE	1000
+#else
+/* Minimum starting price (in percents of the real value) */
+#define AUCTION_MINIMUM_STARTING_PRICE	66
+
+/* Maximum starting price (in percents of the real value) */
+#define AUCTION_MAXIMUM_STARTING_PRICE	150
+
+/* Minimum buyout price (in percents of the real value) */
+#define AUCTION_MINIMUM_BUYOUT_PRICE	150
+
+/* Maximum buyout price (in percents of the real value) */
+#define AUCTION_MAXIMUM_BUYOUT_PRICE	1000
+#endif
+
+/* Status codes */
+#define AUCTION_STATUS_EMPTY		0
+#define AUCTION_STATUS_SETUP		1
+#define AUCTION_STATUS_BIDDING		2
+#define AUCTION_STATUS_FINISHED		3
+#define AUCTION_STATUS_CANCELLED	4
+
+/* Flags */
+#define AUCTION_FLAG_WINNER_PAID	1 /* If the winning bidder has paid for the item */
+#define AUCTION_FLAG_SELLER_PAID	2 /* If money from the auction has been given to the seller */
+
+/* Error codes */
+#define	AUCTION_ERROR_INVALID_ID		-1 /* Invalid auction id */
+#define AUCTION_ERROR_NOT_BIDDING		-2 /* Bidding hasn't yet started */
+#define AUCTION_ERROR_OWN_ITEM			-3 /* Own item */
+#define AUCTION_ERROR_OVERFLOW			-4 /* Overflow or invalid input */
+#define AUCTION_ERROR_INVALID_SLOT		-5 /* Invalid inventory slot */
+#define AUCTION_ERROR_EMPTY_SLOT		-6 /* Empty inventory slot */
+#define AUCTION_ERROR_TOO_CHEAP			-7 /* Item is too cheap to be auctioned */
+#define AUCTION_ERROR_ALREADY_STARTED		-8 /* Auction has already been started */
+#define AUCTION_ERROR_NOT_SUPPORTED		-9 /* Action not supported for auction */
+#define AUCTION_ERROR_INSUFFICIENT_MONEY	-10 /* Not enough money */
+#define AUCTION_ERROR_TOO_SMALL			-11 /* Bid is too small */
+#define AUCTION_ERROR_INSUFFICIENT_LEVEL	-12 /* Player doesn't satisfy the item's level requirement */
+#define AUCTION_ERROR_EVERLASTING_ITEM		-13 /* Non-everlasting / everlasting separation */
+#define AUCTION_ERROR_NONEVERLASTING_ITEM	-14 /* Non-everlasting / everlasting separation */
+#define AUCTION_ERROR_INVALID_ACCOUNT		-15 /* Invalid account */
+
+#endif
