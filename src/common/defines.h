@@ -1,4 +1,4 @@
-* $Id$ */
+/* $Id$ */
 /* File: defines.h */
 
 /* Purpose: global constants and macro definitions */
