@@ -2656,9 +2656,12 @@ int Receive_beep(void)
 	int	n;
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
-//	beep();
+#ifdef WIN32
+	Beep(880,200);
+#else
 	fprintf(stderr, "\007");
 	fflush(stderr);
+#endif
 
 	return 1;
 }
