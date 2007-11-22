@@ -422,7 +422,7 @@ static cptr ini_file = NULL;
 /*
  * Name of application
  */
-static cptr AppName  = "ANGBAND";
+static cptr AppName  = "TOMENET";
 
 /*
  * Name of sub-window type
