@@ -447,7 +447,7 @@ common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
 #
 
 client/icon.o: client/icon.rc client/tomenet4.ico
-	cd client; mingw32-windres -o icon.o icon.rc
+	cd client; $(WINDRES) -o icon.o icon.rc; cd ..
 
 #
 # Generate dependancies automatically
