@@ -1134,8 +1134,8 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_IM_ELEC) total += 15000;
 	if (f2 & TR2_IM_FIRE) total += 15000;
 	if (f2 & TR2_IM_COLD) total += 15000;
-        if (f5 & TR5_SENS_FIRE) total -= 100;
 /* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
+//        if (f5 & TR5_SENS_FIRE) total -= 100;
         if (f6 & TR6_SENS_COLD) total -= 100;
         if (f6 & TR6_SENS_ACID) total -= 100;
         if (f6 & TR6_SENS_ELEC) total -= 100;
@@ -6118,7 +6118,7 @@ static bool kind_is_theme(int k_idx)
 		case TV_ROD:            prob = match_theme.magic; break;
 		case TV_ROD_MAIN:       prob = match_theme.magic; break;
 		case TV_SCROLL:         prob = match_theme.magic; break;
-		case TV_PARCHEMENT:     prob = match_theme.magic; break;
+		case TV_PARCHMENT:      prob = match_theme.magic; break;
 		case TV_POTION:         prob = match_theme.magic; break;
 		case TV_POTION2:        prob = match_theme.magic; break;
 

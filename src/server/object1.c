@@ -426,7 +426,7 @@ static bool object_easy_know(int i)
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_SCROLL:
-		case TV_PARCHEMENT:
+		case TV_PARCHMENT:
 		case TV_ROD:
 				case TV_POTION2:
                 case TV_ROD_MAIN:
@@ -554,7 +554,7 @@ static byte default_tval_to_attr(int tval)
 		}
 
 		case TV_SCROLL:
-		case TV_PARCHEMENT:
+		case TV_PARCHMENT:
 		{
 			return (TERM_WHITE);
 		}
@@ -1557,7 +1557,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			break;
 		}
 
-		case TV_PARCHEMENT:
+		case TV_PARCHMENT:
 		{
 			modstr = basenm;
 			basenm = "& Parchment~ - #";

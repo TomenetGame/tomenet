@@ -3243,8 +3243,8 @@ void calc_bonuses(int Ind)
 		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 10;
 
 		/* Hack -- Sensible */
-		if (f5 & (TR5_SENS_FIRE)) p_ptr->sensible_fire = TRUE;
 /* not yet implemented
+		if (f5 & (TR5_SENS_FIRE)) p_ptr->sensible_fire = TRUE;
 		if (f5 & (TR6_SENS_COLD)) p_ptr->sensible_cold = TRUE;
 		if (f5 & (TR6_SENS_ELEC)) p_ptr->sensible_elec = TRUE;
 		if (f5 & (TR6_SENS_ACID)) p_ptr->sensible_acid = TRUE;

@@ -364,7 +364,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		case TV_FOOD:
 		case TV_FLASK:
 		case TV_LITE:
-		case TV_PARCHEMENT:
+		case TV_PARCHMENT:
 		{
 			if (cost <= 5L) size += mass_roll(3, 5);
 			if (cost <= 20L) size += mass_roll(3, 5);
@@ -612,7 +612,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_DIGGING:
 				case TV_CLOAK:
 				case TV_TOOL:
-				case TV_PARCHEMENT:
+				case TV_PARCHMENT:
 				/* and now new... :) */
 				case TV_TRAPKIT:
 				break;

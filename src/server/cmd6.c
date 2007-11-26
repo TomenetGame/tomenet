@@ -2247,7 +2247,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		return;
 	};
 
-	if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHEMENT)
+	if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHMENT)
 	{
 		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
 		return;
@@ -2911,7 +2911,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 		}
 	}
-	else if (o_ptr->tval == TV_PARCHEMENT)
+	else if (o_ptr->tval == TV_PARCHMENT)
 	{
 #if 0
 		/* Maps */
@@ -2937,7 +2937,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			}
 		}
 
-		/* Normal parchements */
+		/* Normal parchments */
 		else
 #endif	// 0
 		{
@@ -5201,7 +5201,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 #if 0
 	/* Hack -- Book of the Dead is activatable for Ghosts */
 	if (p_ptr->ghost &&
-			o_ptr->tval == TV_PARCHEMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
+			o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
 	{
 //		msg_print(Ind, "The parchment explodes into a space distorsion.");
 		p_ptr->recall_pos.wx = p_ptr->town_x;

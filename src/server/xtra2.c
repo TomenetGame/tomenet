@@ -5855,7 +5855,7 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 			object_type	forge;
 			o_ptr = &forge;
 
-			invcopy(o_ptr, lookup_kind(TV_PARCHEMENT, SV_PARCHMENT_DEATH));
+			invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_DEATH));
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			o_ptr->owner = p_ptr->id;
