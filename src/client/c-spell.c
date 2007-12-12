@@ -824,3 +824,131 @@ void browse_school_spell(int book, int pval)
 	Term_load();
 }
 
+static void print_combatstances()
+{
+	int col = 20, j = 2;
+
+	/* Title the list */
+	prt("", 1, col);
+	put_str("Name", 1, col + 5);
+
+	prt("", j, col);
+	put_str("a) Balanced stance (normal behaviour)", j++, col);
+
+	prt("", j, col);
+	put_str("b) Defensive stance", j++, col);
+
+	prt("", j, col);
+	put_str("b) Offensive stance", j++, col);
+
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static int get_combatstance(int *cs)
+{
+	int		i, num = 3; /* number of pre-defined stances here in this function */
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	int             corresp[5];
+
+	corresp[0] = 0; /* balanced stance */
+	corresp[1] = 1; /* defensive stance */
+	corresp[2] = 2; /* offensive stance */
+
+	/* Assume cancelled */
+	(*cs) = -1;
+	/* Nothing chosen yet */
+	flag = FALSE;
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all spells) */
+	strnfmt(out_val, 78, "(Stances %c-%c, *=List, ESC=exit) enter which stance? ",
+		I2A(0), I2A(num - 1));
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+		/* Save the screen */
+		Term_save();
+		/* Display a list of spells */
+		print_combatstances();
+	}
+
+	/* Get a spell from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+				/* Save the screen */
+				Term_save();
+				/* Display a list of spells */
+				print_combatstances();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+				/* Restore the screen */
+				Term_load();
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+	      	if (i >= num) i = -1;
+
+		/* Totally Illegal */
+		if (i < 0)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+		/* Flush any events */
+		Flush_queue();
+	}
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	(*cs) = corresp[i];
+	/* Success */
+	return (TRUE);
+}
+
+/*
+ * Enter a combat stance (warriors) - C. Blue
+ */
+void do_stance()
+{
+	int stance;
+	/* Ask for the spell */
+	if(!get_combatstance(&stance)) return;
+	Send_activate_skill(MKEY_STANCE, stance, 0, 0, 0, 0);
+}

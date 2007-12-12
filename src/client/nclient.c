@@ -3739,3 +3739,33 @@ void do_ping()
 		Send_ping();
 	}
 }
+
+int Send_sip(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_SIP)) <= 0) return n;
+	return 1;
+}
+
+int Send_telekinesis(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_TELEKINESIS)) <= 0) return n;
+	return 1;
+}
+
+int Send_BBS(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_BBS)) <= 0) return n;
+	return 1;
+}
+
+int Send_wield2(int item) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c%hd", PKT_WIELD2, item)) <= 0) return n;
+	return 1;
+}
+
+int Send_cloak(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_CLOAK)) <= 0) return n;
+	return 1;
+}

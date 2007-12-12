@@ -737,7 +737,6 @@ void do_activate_skill(int x_idx, int item)
 {
 	int dir=0;
 	s32b spell=0L;
-
 	if (s_info[x_idx].flags1 & SKF1_MKEY_HARDCODE)
 	{
 		switch (s_info[x_idx].action_mkey)
@@ -750,6 +749,9 @@ void do_activate_skill(int x_idx, int item)
 				break;
 			case MKEY_RUNE:
 				do_rune();
+				break;
+			case MKEY_STANCE:
+				do_stance();
 				break;
 			default:
 				c_msg_print("Very sorry, you need more recent client.");

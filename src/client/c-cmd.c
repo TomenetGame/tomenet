@@ -402,6 +402,22 @@ void process_command()
 			cmd_observe();
 			break;
 
+		case '_':
+			cmd_sip();
+			break;
+
+		case 'p':
+			cmd_telekinesis();
+			break;
+
+		case 'W':
+			cmd_wield2();
+			break;
+
+		case 'V':
+			cmd_cloak();
+			break;
+
 			/*** Information ***/
 		case 'C':
 			cmd_character();
@@ -505,6 +521,10 @@ void process_command()
 
 		case KTRL('I'):
 			do_cmd_ping_stats();
+			break;
+
+		case '!':
+			cmd_BBS();
 			break;
 
 		default:
@@ -803,6 +823,19 @@ void cmd_wield(void)
 
 	/* Send it */
 	Send_wield(item);
+}
+
+void cmd_wield2(void)
+{
+	int item;
+
+	if (!c_get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, FALSE))
+	{
+		return;
+	}
+
+	/* Send it */
+	Send_wield2(item);
 }
 
 void cmd_observe(void)
@@ -2781,3 +2814,18 @@ void cmd_raw_key(int key)
 	Send_raw_key(key);
 }
 
+void cmd_sip() {
+	Send_sip();
+}
+
+void cmd_BBS() {
+	Send_BBS();
+}
+
+void cmd_telekinesis() {
+	Send_telekinesis();
+}
+
+void cmd_cloak() {
+	Send_cloak();
+}

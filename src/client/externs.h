@@ -271,6 +271,7 @@ extern void cmd_equip(void);
 extern void cmd_drop(void);
 extern void cmd_drop_gold(void);
 extern void cmd_wield(void);
+extern void cmd_wield2(void);
 extern void cmd_observe(void);
 extern void cmd_take_off(void);
 extern void cmd_destroy(void);
@@ -313,6 +314,10 @@ extern void cmd_suicide(void);
 extern void cmd_spike(void);
 extern void cmd_raw_key(int key);
 extern void cmd_check_misc(void);
+extern void cmd_sip(void);
+extern void cmd_BBS(void);
+extern void cmd_telekinesis(void);
+extern void cmd_cloak(void);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);
@@ -393,6 +398,7 @@ extern void do_pray(int book);
 extern void do_fight(int book);
 extern void do_ghost(void);
 extern void do_mimic(void);
+extern void do_stance(void);
 
 /* c-store.c */
 extern bool leave_store;
@@ -532,6 +538,11 @@ extern int Send_store_examine(int item);
 extern int Send_store_command(int action, int item, int item2, int amt, int gold);
 extern int Send_activate_skill(int mkey, int book, int spell, int dir, int item, int aux);
 extern int Send_ping(void);
+extern int Send_sip(void);
+extern int Send_telekinesis(void);
+extern int Send_BBS(void);
+extern int Send_wield2(int item);
+extern int Send_cloak(void);
 
 
 /* skills.c */
