@@ -894,6 +894,7 @@ errr init_gcu(void)
 
 	COLORS=16;
 	COLOR_PAIRS=16;
+#define REDEFINE_COLORS
 #ifdef REDEFINE_COLORS
 	/* Can we change colors? */
 	can_fix_color = (can_use_color && can_change_color() &&
@@ -903,18 +904,30 @@ errr init_gcu(void)
 	if (can_fix_color)
 	{
 		/* Prepare the color pairs */
-		for (i = 0; i < 16; i++)
-		{
-			/* Reset the color */
-			init_pair(i, i, i);
+		/* if (can_use_color) { */
+		init_pair(0, 0, 0);	/*black */
+		init_pair(1, 1, 0);	/*white */
+		init_pair(2, 2, 0);	/*grey */
+		init_pair(3, 3, 0);	/*orange */
+		init_pair(4, 4, 0);	/*red */
+		init_pair(5, 5, 0);	/*green */
+		init_pair(6, 6, 0);	/*blue */
+		init_pair(7, 7, 0);	/*umber */
+		init_pair(8, 8, 0);	/*dark grey */
+		init_pair(9, 9, 0);	/*light grey */
+		init_pair(10, 10, 0);	/*violet */
+		init_pair(11, 11, 0);	/*yellow */
+		init_pair(12, 12, 0);	/*light red */
+		init_pair(13, 13, 0);	/*light green */
+		init_pair(14, 14, 0);	/*light blue */
+		init_pair(15, 15, 0);	/*light umber */
 
-			/* Reset the color data */
-			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
-		}
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
+		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
 		/* Prepare the "Angband Colors" */
+#if 0 /* trying to adjust them even better below */
 		init_color(0,     0,    0,    0);	/* Black */
 		init_color(1,  1000, 1000, 1000);	/* White */
 		init_color(2,   500,  500,  500);	/* Grey */
@@ -931,16 +944,24 @@ errr init_gcu(void)
 		init_color(13,    0, 1000,    0);	/* Light Green */
 		init_color(14,    0, 1000, 1000);	/* Light Blue */
 		init_color(15,  750,  500,  250);	/* Light Brown */
-
-		/* if (can_use_color) { */
-		init_pair(0, 0, 0);	/*black */
-		init_pair(1, 1, 0);	/*white */
-		init_pair(2, 2, 0);	/*grey */
-		init_pair(3, 3, 0);	/*orange */
-		init_pair(4, 4, 0);	/*red */
-		init_pair(5, 5, 0);	/*green */
-		init_pair(6, 6, 0);	/*blue */
-		init_pair(7, 7, 0);	/*brown */
+#else /* real ones hopefully */
+		init_color(0,     0,    0,    0);	/* Dark */
+		init_color(1,  1000, 1000, 1000);	/* White */
+		init_color(2,   616,  616,  616);	/* Slate */
+		init_color(3,  1000,  552,    0);	/* Orange */
+		init_color(4,   718,    0,    0);	/* Red */
+		init_color(5,     0,  616,  267);	/* Green */
+		init_color(6,     0,    0, 1000);	/* Blue */
+		init_color(7,   552,  400,    0);	/* Umber */
+		init_color(8,   455,  455,  455);	/* "Light Dark" */
+		init_color(9,   843,  843,  843);	/* Light Slate */
+		init_color(10,  686,    0, 1000);	/* Violet */
+		init_color(11, 1000, 1000,    0);	/* Yellow */
+		init_color(12, 1000,  188,  188);	/* Light Red */
+		init_color(13,    0, 1000,    0);	/* Light Green */
+		init_color(14,    0, 1000, 1000);	/* Light Blue */
+		init_color(15,  780,  616,  333);	/* Light Umber */
+#endif
 
 		/* Prepare the "Angband Colors" */
 		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
@@ -952,14 +973,14 @@ errr init_gcu(void)
 		colortable[6] = (COLOR_PAIR(6) | A_NORMAL);	/* Blue */
 		colortable[7] = (COLOR_PAIR(7) | A_NORMAL);	/* Umber */
 
-		colortable[8] = (COLOR_PAIR(0) | A_BRIGHT);	/* Dark-grey XXX */
-		colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);	/* Light-grey XXX */
-		colortable[10] = (COLOR_PAIR(2) | A_BRIGHT);	/* Purple */
-		colortable[11] = (COLOR_PAIR(3) | A_BRIGHT);	/* Yellow */
-		colortable[12] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Red XXX */
-		colortable[13] = (COLOR_PAIR(5) | A_BRIGHT);	/* Light Green */
-		colortable[14] = (COLOR_PAIR(6) | A_BRIGHT);	/* Light Blue */
-		colortable[15] = (COLOR_PAIR(7) | A_NORMAL);	/* Light Umber XXX */
+		colortable[8] = (COLOR_PAIR(8) | A_NORMAL);	/* Dark-grey XXX */
+		colortable[9] = (COLOR_PAIR(9) | A_NORMAL);	/* Light-grey XXX */
+		colortable[10] = (COLOR_PAIR(10) | A_NORMAL);	/* Purple */
+		colortable[11] = (COLOR_PAIR(11) | A_NORMAL);	/* Yellow */
+		colortable[12] = (COLOR_PAIR(12) | A_NORMAL);	/* Light Red XXX */
+		colortable[13] = (COLOR_PAIR(13) | A_NORMAL);	/* Light Green */
+		colortable[14] = (COLOR_PAIR(14) | A_NORMAL);	/* Light Blue */
+		colortable[15] = (COLOR_PAIR(15) | A_NORMAL);	/* Light Umber XXX */
 	}
 
 	/* Attempt to use colors */
