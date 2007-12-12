@@ -47,11 +47,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-//#ifdef RACE_DIVINE
-#define SF_VERSION_PATCH   2
-//#else
-//#define SF_VERSION_PATCH   1
-//#endif
+#define SF_VERSION_PATCH   3
 #define SF_VERSION_EXTRA   0
 
 /*
@@ -90,7 +86,7 @@
  * - dungeons are IRONMAN
  * - and many more things that are just a little bit different :)
  */
-//#define RPG_SERVER
+#define RPG_SERVER
 
 /* Server is Moltor's Smash Arcade server? */
 //#define ARCADE_SERVER
@@ -107,9 +103,11 @@
 
 
 /* Allow a bunch of latest experimental changes to be compiled into this build? */
+#define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
+#define USE_PARRYING
 #ifdef RPG_SERVER
  #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
-// #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
+ #define ENABLE_STANCES		/* combat stances for warriors */
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
  #define AUCTION_DEBUG
@@ -121,7 +119,6 @@
  #define USE_NEW_SHIELDS
 /* Use blocking/parrying? if USE_NEW_SHIELDS is disabled, AC will be used to determine block chance */
  #define USE_BLOCKING
- #define USE_PARRYING
 #endif
 
 
@@ -328,7 +325,7 @@
 #define MAX_T_IDX	256 /* Max size for "t_info[]" */
 #define MAX_OW_IDX	96 /* Max size for "ow_info[]" */
 #define MAX_ST_IDX	96 /* Max size for "st_info[]" */
-#define MAX_BA_IDX	64 /* Max size for "ba_info[]" */
+#define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
 
@@ -831,14 +828,14 @@
  * Indexes used for various "equipment" slots (hard-coded by savefiles, etc).
  */
 #define INVEN_WIELD	24
-#define INVEN_BOW	25
-#define INVEN_LEFT	26
-#define INVEN_RIGHT	27
-#define INVEN_NECK	28
-#define INVEN_LITE	29
-#define INVEN_BODY	30
-#define INVEN_OUTER	31
-#define INVEN_ARM	32
+#define INVEN_ARM	25
+#define INVEN_BOW	26
+#define INVEN_LEFT	27
+#define INVEN_RIGHT	28
+#define INVEN_NECK	29
+#define INVEN_LITE	30
+#define INVEN_BODY	31
+#define INVEN_OUTER	32
 #define INVEN_HEAD	33
 #define INVEN_HANDS	34
 #define INVEN_FEET	35
@@ -867,7 +864,8 @@
 /*
  * Total number of inventory slots (hard-coded).
  */
-#define INVEN_TOTAL	38
+#define INVEN_TOTAL	38	/* since they start at 0, max slot index is INVEN_TOTAL - 1 (!) */
+/* Number of equipment slots, INVEN_TOTAL ... INVEN_TOTAL + INVEN_EQ - 1 */
 #define INVEN_EQ        (INVEN_TOTAL - INVEN_WIELD)
 
 
@@ -1573,7 +1571,6 @@ that keeps many algorithms happy.
 #define EGO_INTELLIGENCE	24
 #define EGO_WISDOM		25
 #define EGO_BEAUTY		26
-#define EGO_WISDOM              25
 #define EGO_MAGI                27
 #define EGO_MIGHT		28
 #define EGO_LORDLINESS		29
@@ -2180,6 +2177,7 @@ that keeps many algorithms happy.
 #define SV_DRAGON_DRACOLICH		42
 #define SV_DRAGON_DRACOLISK		43
 #define SV_DRAGON_SKY			44
+#define SV_DRAGON_SILVER                45
 
 /* The sval codes for TV_LITE */
 #define SV_LITE_TORCH                    0
@@ -2228,6 +2226,7 @@ that keeps many algorithms happy.
 #define SV_AMULET_LUCK			39	/* Talisman */
 #define SV_AMULET_SSHARD		40	/* Spirit Shard (artifact) */
 #define SV_AMULET_INVULNERABILITY	41	/* for admins */
+#define SV_AMULET_HIGHLANDS2            42	/* for highlander games, with ESP */
 
 /* The sval codes for TV_RING */
 #define SV_RING_WOE                      0
@@ -2677,7 +2676,8 @@ that keeps many algorithms happy.
 #define SV_PARCHMENT_DEATH	51
 #define SV_PARCHMENT_NEWS	52
 
-#define SV_DEED_HIGHLANDER	60
+#define SV_DEED_HIGHLANDER	60 /* for winner */
+#define SV_DEED2_HIGHLANDER	61 /* for participant */
 
 /* for TV_BOOK */
 #define SV_SPELLBOOK		255
@@ -3039,6 +3039,8 @@ that keeps many algorithms happy.
 #define GF_ICEPOISON    156
 #define GF_EXTRA_STATS  157
 #define GF_EXTRA_SPR	158
+
+#define GF_PUSH 	159 /* Moltor */
 #define GF_ROCKET       91
 
 /* for traps.h :) - C. Blue */
@@ -3101,6 +3103,7 @@ that keeps many algorithms happy.
 #define GF_TELE_TO	150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
+
 
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -5369,7 +5372,8 @@ extern int PlayerUID;
 #define armour_weight(p_ptr) \
 	( p_ptr->inventory[INVEN_BODY].weight \
 	+ p_ptr->inventory[INVEN_HEAD].weight \
-	+ p_ptr->inventory[INVEN_ARM].weight \
+	+ (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) ? \
+	    p_ptr->inventory[INVEN_ARM].weight : 0 \
 	+ p_ptr->inventory[INVEN_OUTER].weight \
 	+ p_ptr->inventory[INVEN_HANDS].weight \
 	+ p_ptr->inventory[INVEN_FEET].weight)
@@ -5380,7 +5384,10 @@ extern int PlayerUID;
 	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
 
 #define rogue_heavy_armor(p_ptr) \
-	((get_skill(p_ptr, SKILL_DUAL) || p_ptr->pclass == CLASS_ROGUE) && \
+	((p_ptr->pclass == CLASS_ROGUE || \
+	  (get_skill(p_ptr, SKILL_DUAL) && \
+	   p_ptr->inventory[INVEN_WIELD].k_idx && \
+	   p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) && \
 	 armour_weight(p_ptr) > \
 	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 50))
 
@@ -5495,6 +5502,9 @@ extern int PlayerUID;
 #define MKEY_SCHOOL             11
 #define MKEY_RUNE		12
 
+#define MKEY_STANCE		13	/* combat stances for warriors - C. Blue */
+
+
 /*
  * Skills
  */
@@ -5585,7 +5595,8 @@ extern int PlayerUID;
 #define SKILL_DRUID_EXTRA		76
 #define SKILL_DRUID_EXTRA2		77
 
-#define SKILL_DUAL		78 /* dual-wield for rogues - C. Blue */
+#define SKILL_DUAL		78 /* dual-wield for rogues */
+#define SKILL_STANCE		79 /* combat stances for warriors */
 
 #define SKILL_SHAMAN		78
 #define SKILL_SHAMAN2		79

@@ -74,19 +74,21 @@ int color_char_to_attr(char c)
 		case 'B': return (TERM_L_BLUE);
 		case 'U': return (TERM_L_UMBER);
 
-		case 'h': return (TERM_HALF);
-		case 'm': return (TERM_MULTI);
 		case 'p': return (TERM_POIS);
-		case 'L': return (TERM_LITE);
 		case 'f': return (TERM_FIRE);
 		case 'a': return (TERM_ACID);
 		case 'e': return (TERM_ELEC);
 		case 'c': return (TERM_COLD);
+		case 'h': return (TERM_HALF);
+		case 'm': return (TERM_MULTI);
+		case 'L': return (TERM_LITE);
 		
-		/* Let's add the two missing ones - C. Blue */
-		case 'z': return (TERM_SHAR);
-		case 'n': return (TERM_CONF);
-		case 'i': return (TERM_SOUN);
+		case 'C': return (TERM_CONF);
+		case 'S': return (TERM_SOUN);
+		case 'H': return (TERM_SHAR);
+		case 'A': return (TERM_DARKNESS);
+		case 'M': return (TERM_SHIELDM);
+		case 'I': return (TERM_SHIELDI);
 	}
 
 	return (-1);
@@ -121,16 +123,18 @@ char color_attr_to_char(int a)
 		case TERM_HALF: return 'h';
 		case TERM_MULTI: return 'm';
 		case TERM_POIS: return 'p';
-		case TERM_LITE: return 'L';
 		case TERM_FIRE: return 'f';
 		case TERM_ACID: return 'a';
 		case TERM_ELEC: return 'e';
 		case TERM_COLD: return 'c';
+		case TERM_LITE: return 'L';
 		
-		/* Let's add the two missing ones - C. Blue */
-		case TERM_SHAR: return 'z';
-		case TERM_CONF: return 'n';
-		case TERM_SOUN: return 'i';
+		case TERM_CONF: return 'C';
+		case TERM_SOUN: return 'S';
+		case TERM_SHAR: return 'H';
+		case TERM_DARKNESS: return 'A';
+		case TERM_SHIELDM: return 'M';
+		case TERM_SHIELDI: return 'I';
 	}
 
 	return 'w';

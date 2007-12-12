@@ -504,6 +504,8 @@ struct monster_race
 	u32b flags7;			/* Flags 7 (movement related abilities) */
 	u32b flags8;			/* Flags 8 (wilderness info) */
 	u32b flags9;			/* Flags 9 (drops info) */
+
+	u32b flags0;			/* Flags 10 (extra spells) */
 #endif
 
 	monster_blow blow[4];	/* Up to four blows per round */
@@ -562,6 +564,7 @@ struct monster_race
 	u32b r_flags8;			/* Observed racial flags */
 	u32b r_flags9;			/* Observed racial flags */
 
+	u32b r_flags0;			/* Observed racial flags */
 #endif
 	obj_theme drops;		/* The drops type */
 };
@@ -724,6 +727,7 @@ struct cave_type
 typedef struct effect_type effect_type;
 struct effect_type
 {
+	s16b	interval;	/* How quickly does it tick (10 = normal, once per 10 frames at 0 ft depth) */
 	s16b    time;           /* For how long */
 	s16b    dam;            /* How much damage */
 	s16b    type;           /* Of which type */ /* GF_XXX, for now */
@@ -791,9 +795,9 @@ struct object_type
 
 	s16b weight;		/* Item weight */
 
-	byte name1;			/* Artifact type, if any */
-	byte name2;			/* Ego-Item type, if any */
-	byte name2b;		/* 2e Ego-Item type, if any */
+	u16b name1;			/* Artifact type, if any */
+	u16b name2;			/* Ego-Item type, if any */
+	u16b name2b;			/* 2e Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
 						/* now it's common with ego-items -Jir-*/
 
@@ -993,12 +997,14 @@ struct monster_ego
 	u32b flags7;                    /* Flags 1 */
 	u32b flags8;                    /* Flags 1 */
 	u32b flags9;                    /* Flags 1 */
+	u32b flags0;                    /* Flags 1 */
 	u32b hflags1;                    /* Flags 1 */
 	u32b hflags2;                    /* Flags 1 */
 	u32b hflags3;                    /* Flags 1 */
 	u32b hflags7;                    /* Flags 1 */
 	u32b hflags8;                    /* Flags 1 */
 	u32b hflags9;                    /* Flags 1 */
+	u32b hflags0;                    /* Flags 1 */
 
 	/* Monster flags */
 	u32b mflags1;                    /* Flags 1 (general) */
@@ -1010,6 +1016,7 @@ struct monster_ego
 	u32b mflags7;                    /* Flags 7 (movement related abilities) */
 	u32b mflags8;                    /* Flags 8 (wilderness info) */
 	u32b mflags9;                    /* Flags 9 (drops info) */
+	u32b mflags0;                    /* Flags 10 (extra spells) */
 
 	/* Negative Flags, to be removed from the monster flags */
 	u32b nflags1;                    /* Flags 1 (general) */
@@ -1021,6 +1028,7 @@ struct monster_ego
 	u32b nflags7;                    /* Flags 7 (movement related abilities) */
 	u32b nflags8;                    /* Flags 8 (wilderness info) */
 	u32b nflags9;                    /* Flags 9 (drops info) */
+	u32b nflags0;                    /* Flags 10 (extra spells) */
 
 	s16b level;                     /* Level of creature */
 	s16b rarity;                    /* Rarity of creature */
@@ -1669,6 +1677,7 @@ struct trad_house_type
 #endif	/* 0 */
 
 
+#if 0
 /*
  * Information about a "hostility"
  */
@@ -1679,14 +1688,42 @@ struct hostile_type
 	s32b id;		/* ID of player we are hostile to */
 	hostile_type *next;	/* Next in list */
 };
+#else
+/*
+ * More general linked list for player id numbers
+ */
+#define hostile_type player_list_type
+typedef struct player_list_type player_list_type;
+
+struct player_list_type
+{
+	s32b id;		/* ID of player */
+	player_list_type *next;
+};
+#endif
 
 /* remotely ignore players */
 struct remote_ignore
 {
-	unsigned long id;		/* player unique id */
+	unsigned long int id;		/* player unique id */
 	short serverid;
 	struct remote_ignore *next;	/* Next in list */
 };
+
+#if 0 /* not finished - mikaelh */
+/*
+ * ESP link list
+ */
+typedef struct esp_link_type esp_link_type;
+struct esp_link_type
+{
+	s32b id;	/* player ID */
+	byte type;
+	u16b flags;
+	u16b end;
+	esp_link_type *next;
+};
+#endif
 
 /* The Troll Pit */
 /* Temporary banning of certain addresses */
@@ -1804,7 +1841,7 @@ struct player_type
 	byte spam;
 	byte talk;		/* talk too much (moltors idea) */
 
-	hostile_type *hostile;	/* List of players we wish to attack */
+	player_list_type *hostile;	/* List of players we wish to attack */
 
 	char savefile[MAX_PATH_LENGTH];	/* Name of the savefile */
 
@@ -2154,11 +2191,14 @@ struct player_type
         s16b prob_travel;       /* Timed -- Probability travel */
         s16b st_anchor;         /* Timed -- Space/Time Anchor */
         s16b tim_esp;           /* Timed -- ESP */
-  s16b adrenaline;
-  s16b biofeedback;
+	s16b adrenaline;
+	s16b biofeedback;
+	s16b auto_tunnel;
+	s16b body_monster;
+	bool dual_wield;	/* Currently wielding 2 one-handers at once */
 
-  s16b auto_tunnel;
-  s16b body_monster;
+	s16b bless_temp_luck;		/* Timed blessing - luck */
+	s16b bless_temp_luck_power;
 
 	s16b oppose_acid;	/* Timed -- oppose acid */
 	s16b oppose_elec;	/* Timed -- oppose lightning */
@@ -2180,6 +2220,7 @@ struct player_type
 	bool old_awkward_armor;
 	bool old_cumber_glove;
 	bool old_heavy_wield;
+	bool old_heavy_shield;
 	bool old_heavy_shoot;
 	bool old_icky_wield;
 	bool old_awkward_wield;
@@ -2187,6 +2228,7 @@ struct player_type
 	bool old_cumber_weight;
 	bool old_monk_heavyarmor;
 	bool old_awkward_shoot;
+	bool old_rogue_heavyarmor;
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_vlite;		/* Old radius of virtual lite (if any) */
@@ -2199,6 +2241,7 @@ struct player_type
 	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shield;	/* Heavy shield */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* shield and COULD_2H weapon */
@@ -2206,6 +2249,7 @@ struct player_type
 	bool cumber_weight;	/* Full weight. FA from MA will be lost if overloaded */
 	bool monk_heavyarmor;	/* Reduced MA power? */
 	bool awkward_shoot;	/* using ranged weapon while having a shield on the arm */
+	bool rogue_heavyarmor;	/* No AoE-searching? Encumbered dual-wield? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 	s16b cur_vlite;		/* radius of virtual light (not visible to others) */
@@ -2334,14 +2378,20 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-	s32b blood_bond; /* Norc is now happy :) */
+	player_list_type	*blood_bond;	/* Norc is now happy :) */
 
 	byte mode; /* Difficulty MODE */
 
+#if 1
 	s32b esp_link; /* Mental link */
 	byte esp_link_type;
 	u16b esp_link_flags;
 	u16b esp_link_end; /* Time before actual end */
+#else
+	/* new esp link stuff - mikaelh */
+	esp_link_type *esp_link; /* Mental link */
+	u16b esp_link_flags; /* Some flags */
+#endif
 	bool (*master_move_hook)(int Ind, char *args);
 
 	/* some new borrowed flags (saved) */
@@ -2354,7 +2404,7 @@ struct player_type
 	u16b csane_frac;              /* Cur sanity frac */
 
 	/* elements under this line won't be saved...for now. - Jir - */
-	hostile_type	*ignore;  /* List of players whose chat we wish to ignore */
+	player_list_type	*ignore;  /* List of players whose chat we wish to ignore */
 	struct remote_ignore	*w_ignore;  /* List of players whose chat we wish to ignore */
 	bool	afk;		/* player is afk */
 	char	afk_msg[80];	/* afk reason */
@@ -2364,16 +2414,18 @@ struct player_type
 	byte drain_life;        /* hp draining */
 	byte drain_mana;        /* mana draining */
 
-	bool sensible_fire;     /* Fire does more damage on the player */
-	bool sensible_cold;     /* Cold does more damage on the player */
-	bool sensible_acid;     /* Acid does more damage on the player */
-	bool sensible_elec;     /* Electricity does more damage on the player */
-	bool sensible_pois;     /* Poison does more damage on the player */
-	bool sensible_lite;	/* Light does more damage on the player */
-	bool sensible_good;	/* Anti-evil effects do more damage on the player */
-	bool sensible_life;	/* Anti-undead effects do more damage on the player */
+	bool suscep_fire;     /* Fire does more damage on the player */
+	bool suscep_cold;     /* Cold does more damage on the player */
+	bool suscep_acid;     /* Acid does more damage on the player */
+	bool suscep_elec;     /* Electricity does more damage on the player */
+	bool suscep_pois;     /* Poison does more damage on the player */
+	bool suscep_lite;	/* Light does more damage on the player */
+	bool suscep_good;	/* Anti-evil effects do more damage on the player */
+	bool suscep_life;	/* Anti-undead effects do more damage on the player */
 
 	bool reflect;       /* Reflect 'bolt' attacks */
+	byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
+	byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
 	bool no_cut;	    /* For mimic forms */
 	bool sh_fire;       /* Fiery 'immolation' effect */
 	bool sh_elec;       /* Electric 'immolation' effect */
@@ -2440,7 +2492,15 @@ struct player_type
 
 	/* evileye games */
 	s16b team;			/* what team */
-	
+
+	/* Moltor's arcade crap */
+
+	char firedir; 
+	char game;
+	int gametime;
+	char pushed;
+	char pushdir;
+
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
 	
@@ -2463,7 +2523,7 @@ struct player_type
 	/* Being an ass? - the_sandman */
 	bool muted;
 	/* Pet limiter */
-	bool has_pet;
+	byte has_pet; 
 	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */
 	bool auto_retaliating;
 	
@@ -2487,6 +2547,21 @@ struct player_type
 	bool got_hit;
 	/* No insane amounts of damage either */
 	s32b total_damage;
+
+#ifdef RACE_DIVINE
+	/* Divine classes (angels and demons). Only applicable if prace == RACE_DIVINITY*/
+	byte divinity;
+#endif
+
+#ifdef AUCTION_SYSTEM
+	/* The current auction - mikaelh */
+	int current_auction;
+#endif
+
+/* ENABLE_STANCES - this code must always be compiled, otherwise savegames would screw up! so no #ifdef here. */
+	/* combat stances */
+	int combat_stance; /* 0 = normal, 1 = def, 2 = off */
+	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
 };
 
 /* For Monk martial arts */
@@ -2519,6 +2594,7 @@ struct rule_type
 	u32b mflags7;
 	u32b mflags8;
 	u32b mflags9;
+	u32b mflags0;
 
 	char r_char[5];                 /* Monster race allowed */
 };
@@ -2877,11 +2953,13 @@ struct global_event_type
 {
     int getype;			/* Type of the event (or quest) */
     bool paused;		/* Is the event currently paused? (special admin command) */
-    u32b state[64];		/* progress */
-    u32b extra[64];		/* extra info */
+    s32b paused_turns;	/* Keeps track of turns the event was actually frozen */
+    s32b state[64];		/* progress */
+    s32b extra[64];		/* extra info */
     s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
     s32b creator;       	/* Player ID or 0L */
     long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
+    bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
     s32b start_turn;          	/* quest started */
     s32b end_turn;		/* quest will end */
     time_t started;		/* quest started */
@@ -2892,3 +2970,31 @@ struct global_event_type
     int min_participants;	/* minimum amount of participants */
     int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
 };
+
+/* Auction system - mikaelh */
+#ifdef AUCTION_SYSTEM
+typedef struct bid_type bid_type;
+struct bid_type
+{
+	s32b		bid;
+	s32b		bidder;
+};
+
+typedef struct auction_type auction_type;
+struct auction_type
+{
+	byte		status;			/* Status: setup, bidding, finished or cancelled */
+	byte		flags;			/* Flags: payments */
+	byte		mode;			/* Owner mode: Non-everlasting or everlasting */
+	s32b		owner;			/* Owner */
+	object_type	item;			/* Auctioned item */
+	char		*desc;			/* Item description */
+	s32b		starting_price;		/* Starting price */
+	s32b		buyout_price;		/* Buy-out price */
+	bid_type	*bids;
+	int		bids_cnt;		/* Number of bids */
+	int		winning_bid;		/* The winning bid (after bidding is over) */
+	time_t		start;
+	time_t		duration;
+};
+#endif

@@ -116,7 +116,7 @@
 #define PKT_LOCATE		98
 #define PKT_MAP			99
 
-#define PKT_SEARCH_MODE		100
+#define PKT_SEARCH_MODE		100	
 #define PKT_FIGHT		101
 #define PKT_CLOSE		103
 #define PKT_GAIN		104
@@ -176,7 +176,7 @@
 #define PKT_PARTY_STATS		165
 
 /* Ping packet */
-#define PKT_PING                166
+#define PKT_PING		166
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
@@ -193,6 +193,12 @@
 #define PKT_FILE_SUM		6	/* checksum reply */
 #define	PKT_FILE_INIT		7	/* initiate a transfer */
 
+/* new things for v4.4.1 (dual-wield & co) - C. Blue */
+#define PKT_SIP			167
+#define PKT_TELEKINESIS		168
+#define PKT_BBS			169
+#define PKT_WIELD2		170
+#define PKT_CLOAK		171
 
 
 /*
