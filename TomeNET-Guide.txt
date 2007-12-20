@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. December 2007; written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. December 2007; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.0d, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
@@ -260,11 +260,29 @@ S       #       enter 'search mode'. You will search your adjacent fields once
                 its hidden door, turn this on and run along its walls until
                 you find it.
 V       V       enter 'cloaking mode'. This can only be used by rogues.
-                It will take a couple of turns to completely cloak yourself,
-                after which you will be completely invisible to monsters
-                who use normal sight or infra-vision. Only a few monsters
-                who are able to utilize ESP (telepathy) will still notice you.
-                Attacking or taking damage immediately breaks cloaking.
+                It will take a couple of turns to perfectly cloak your
+                physical appearance and body warmth pattern, after which you
+                will be completely invisible to monsters who use normal sight
+                or infra-vision.
+                Only a few monsters who are able to utilize ESP (telepathy) or
+                have especially powerful detection will still notice you.
+                Those are eyes, angels, nether guards, and unique monsters
+                which are both smart and powerful at once.
+                Taking damage (HP/sanity/experience), attacking, casting
+                spells, reading scrolls, tunneling, bashing, picking up/
+                opening/closing/dropping/destroying things, using
+                wands/staves/rods, activating items, or any other action that
+                causes noticable noise immediately breaks cloaking!
+                Auto-retaliation is disabled while cloaked, except for the
+                Stormbringer (which will break the effec of course).
+                Cloaking will also increase your searching, greatly increase
+                your stealth, but decrease your speed. Sneakiness skill may
+                very slightly reduce the decrease.
+                Note: Cloaking has no effect on shoplifting; it breaks on
+                entering any shop.
+                Note: Although ESP is supposed to detect cloaked targets, for
+                now it's still set to overrides ESP of other players for the
+                sake of PvP usage, similar to invisibility.
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
 T,+     CTRL+T  tunnel through an obstacle or a wall.
@@ -1648,7 +1666,7 @@ Here is a list of all available ability codes:
 8       Check your dodge chance (for dodging skill)
 10      Set a monster trap (for trapping skill)
 11      Cast a magic spell / recite a holy prayer
-13      Change combat stance (for warriors)
+13      Change combat stance (for combat stances skill)
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
@@ -2893,7 +2911,8 @@ attacks with his weapon and block attacks with his shield, provided he uses
 one. For more details about class-specific ability to utilize weapons and
 shields for parrying and blocking, see (6.5). In general, the bigger a weapon
 the more you may parry, while the bigger a shield the more you will block!
-Also, "Weaponmastery" skill increases your block chance a good deal!
+Last but not least, training "Weaponmastery" skill will also increase your
+block chance a good deal.
 
 
 
@@ -3196,9 +3215,12 @@ find your str_hold). So the top weight limit is
 10.0 + 0.6 * 50 (combat) + 0.6 * 100 (str_hold) = 100.0 lbs.
 
 Some special abilities depend on armour weight too. Those are..
--area searching for the 'Rogue' class (exclusive ability).
+-dodge chance from 'Dodging' skill.
+-critical hit bonus from 'Critical-strike' skill.
 -extra parry bonus from dual-wielding two weapons.
 -extra blow/round bonus from dual-wielding two weapons.
+-area searching for the 'Rogue' class (exclusive ability).
+-cloaking mode for the 'Rogue' class (exclusive ability).
 If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
 The weight limit is 20.0 + (Combat skill / 10) lbs.
@@ -4764,6 +4786,9 @@ Note that not every skill is available to every profession (class).
                                 Critical-strike skill only helps light swords,
                                 not heavier than 10.0 lb., while critical-hits
                                 items will work with all weapons.
+                                Also, Critical-strike skill will not give you
+                                any benefits if your armour is so heavy that
+                                you get a flexibility warning (compare (5.5)).
                                 NOTES ABOUT CRITICAL HITS IN GENERAL:
                                 You can always score critical hits,
                                 independent on weapon class and crit-skill.
@@ -4795,27 +4820,45 @@ Note that not every skill is available to every profession (class).
         .Combat Stances         This ability cannot be trained, but it is
                                 increased automatically each time your
                                 character gains a level.
+                                Only warriors, mimics, paladins and rangers
+                                can learn certain stances.
+                                On certain skill levels, you will learn a new
+                                rank of a stance.
                                 Press 'm' to enter one of the combat stances
                                 you have learned. You will learn a couple of
                                 ranks of three basic combat stances, when you
                                 reach a certain character level i.e. skill.
-                                In defensive stance, you will block more, but
-                                also deal less damage and intercept less.
-                                In offensive stance, you can stun opponents
-                                (compare (3.13)), intercept more often,
-                                but you parry and dodge less often.
+                                Each stance has advantages and disadvantages,
+                                those are:
+                                Defensive stance - you will block more,
+                                                 - intercept less often,
+                                                 - deal less damage.
+                                Offensive stance - you can stun opponents
+                                                   (compare (3.13)),
+                                                 - intercept more often,
+                                                 - parry and dodge less often.
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
     .Dual-Wield                 The ability to wield two weapons at once. This
                                 ability cannot be trained (it's a switch).
                                 Dual-wielding will give you additional parry
-                                chance as well as a blows/round bonus. And of
-                                course your character gains all magical
-                                abilities of both weapons at once! (In combat,
-                                the weapon which is used to strike an enemy
-                                will be determined randomly for each blow.)
+                                chance as well as a blows/round bonus.
+                                You won't receive these boni if your armour is
+                                too heavy (see (5.5)). By dual-wielding, your
+                                character gains all magical abilities of both
+                                weapons at once (only very few don't stack)!
+                                In combat, a coin is flipped for each blow you
+                                deal, determining randomly which weapon will
+                                be used for that particular hit.
                                 Note that both weapons must be 1-handed.
                                 1,5- or 2-handed weapons cannot be used.
+                                To avoid confusion: If you use weapons with
+                                different blows/round, their bpr will get
+                                averaged, and rounded down, then bpr bonus for
+                                dual-wielding is added. That means you should
+                                avoid such bpr differences that are odd
+                                numbers, due to the loss on rounding them.
+                                Example: 4bpr & 5bpr = 4.5bpr rounded to 4bpr.
     +Archery                    Improves ranged to-damage bonus.
                                 Increases your chance to score critical hits.
                                 At 10 you may create ammunition from bones,
@@ -4878,6 +4921,8 @@ Note that not every skill is available to every profession (class).
                                 chance of intercepting an enemy! See
                                 'Interception' skill below.
                                 For more details about MA see section (5.4).
+                                Training Martial Arts skill will also slightly
+                                increase your Dodging skill.
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
@@ -4940,6 +4985,9 @@ Note that not every skill is available to every profession (class).
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
+                                Slightly reduces speed loss while in searching
+                                mode, and very slightly while in rogues'
+                                cloaking mode.
     .Stealth                    Increases your stealth, which determines
                                 if monsters can hear you from a distance
                                 or if you can sneak past them. Note that even
@@ -4998,8 +5046,16 @@ Note that not every skill is available to every profession (class).
                                 It's a good idea to wear as many +DEX items
                                 as possible while trying to steal from a shop.
                                 Stealth and invisibility might also help.
-    +Dodging                    Ability to evade attacks. Doesn't work well
-                                if you wear heavier armour.
+    +Dodging                    Ability to evade attacks. In order to get any
+                                benefits from doding skill at all, your armour
+                                mustn't be so heavy that you get a flexibility
+                                warning (compare (5.5)).
+                                Apart from that, dodging depends on the total
+                                weight you are carrying around with you, that
+                                is, inventory and equipment added up. You can
+                                check your average dodging chance against
+                                opponents of same level by pressing 'm' and
+                                choosing "Check dodge chance".
         .Calmness               Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
@@ -5102,9 +5158,14 @@ Note that not every skill is available to every profession (class).
     .Digging                    Self-explaining
     .Climbing                   You need this at 01.000 to learn climbing.
 
-In my opinion, the sub-skills of 'Health' should be avoided. There are more
-important skills to care about. Also see (7.5) for suggestions about skill
-point distribution.
+The abilities Swimming, Digging and Climbing are also granted by items you
+can find. Those are for example items that grants you flying, so you may just
+fly over water instead of swimming across. Wands of stone-to-mud will turn any
+obstacle to mud that you could dig through, and some boots or a climbing set
+might grant you the ability to climb highest mountains. Dwarves also learn
+this ability automatically when they reach level 30.
+
+Also see (7.5) for suggestions about skill point distribution.
 
 Here is what the numbers mean (we will use the Axe-Mastery skill for this
 example:
@@ -5509,9 +5570,10 @@ Priest
     of their type.
 Rogue
     Rogues can backstab (works especially well in the dark) sleeping or
-    fleeing monsters, and they can train stealing from shops, creatures
+    fleeing monsters, and they can train stealing items from shops, creatures
     or players. Due to their high dexterity they can often hit several
-    times per round with light weapons.
+    times per round with light weapons. Also, rogues are especially fond of
+    dual-wielding two light one-handed weapons at once.
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome. A rogue will learn to set many
@@ -5524,9 +5586,18 @@ Rogue
     ability to train stealing from his fellow men, a dangerous but sometimes
     very rewarding profession. Rogues are better than warriors or paladins
     with magical devices, but still can not rely on their performance.
-    Rogues can also learn a few spells. When searching for hidden traps and
-    doors, they may spot them more easily, even from a distance!
-    A rogue's primary stats are Intelligence and Dexterity. 
+    Rogues can also learn a few spells. When searching for hidden traps, doors
+    and stairs, they may spot them more easily, even from a distance, which
+    increases when the rogue gains levels.
+    At level 15, rogues will learn another special ability: Cloaking mode.
+    (Press 'V' to make your character prepare for cloaking up / uncloaking.)
+    By cloaking their physical appearance and body warmth pattern perfectly,
+    which takes a certain time to get prepared, they become completely
+    untrackable to almost any monster, for exceptions see (0.2).
+    Attacking, taking damage, and a couple of other actions immediately
+    breaks cloaking, again see (0.2) for details.
+    Auto-retaliation is disabled while cloaked, except for the Stormbringer.
+    A rogue's primary stats are Intelligence and Dexterity.
 Mimic
     Mimics can learn how to shapechange and use monsters' forms, thus
     inheriting nearly all of the monster's abilities. Mimics learn forms
@@ -5647,6 +5718,9 @@ In general parrying works better with larger weapons, while blocking works
 better with larger shields. So 2-hand weapons parry better than 1.5-handed,
 and those better than 1-handed. If you wield a 1-hand weapon WITHOUT a shield
 which feels especially easy to swing that way, you'll also get a parry bonus.
+Many effects that normal armour usually doesn't protect from can actually be
+blocked, for example your character may quickly duck behind his shield just in
+time when an eye tries to gaze in your eyes to paralyze you.
 "Weaponmastery" skill will further increase your parry chance a good deal.
 
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -5666,11 +5740,11 @@ Priest      -1  -3  +3  -1  +0  +2       +4      +20%       4
 Rogue       +2  +1  -2  +3  +1  -1       +5      +25%       5
             45  32  28   5  32  24  60  66              superb   fair
 Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       4
-            25  35  28   1  18  18  60  66              good     superb
+            25  35  28   1  18  18  60  66              good     good
 Archer      +1  +0  +2  +3  +1  -1       +5      +15%       3
             30  32  28   2  20  24  56  82              fair     fair
 Paladin     +3  -3  +1  +0  +2  +2       +8      +30%       5
-            10  21  54   1  16  13  60  29              superb   good
+            10  21  54   1  16  13  60  29              good     superb
 Ranger      +2  +2  -1  +1  +2  +0       +7      +35%       5
             34  32  30   5  30  30  50  60              good     fair
 Druid       +1   0  +2  -2  -2  +1       +5      +50%       4
@@ -7067,9 +7141,9 @@ end, which explains the meaning of each discrete info-line.
 ------------------------------
 Melee fighters should maximize (to get extra attacks and extra damage) one of
 the weapon masteries (Sword, Hafted, Polearm, Axes) or Martial Arts if they
-prefer this, and 'Interception'!
+prefer weaponless combat, and 'Interception'.
 Interception is especially important if they don't train Martial Arts, in
-order to prevent the target from summoning or casting spells.
+order to try and prevent their opponent from summoning or casting spells.
 Hybrid classes might choose to not fully train their chosen mastery to have
 spare skill points for spell casting or other skills.
 
@@ -7077,13 +7151,14 @@ Spellcasters might want to train Spell-Power additionally to their school
 spells to further boost their powers.
 
 Archers probably want to train Calmness to keep shooting adjacent enemies,
-without getting interrupted by them. And of course they should train one of
-the ranged-weapon masteries (Bows, Crossbows, Slings) to eventually get 3
+without getting intercepted by them. And of course they should train one of
+the ranged-weapon masteries (Bows, Crossbows, Slings) to eventually get some
 extra shots per round, and also train Archery up to 50 to get additional
 extra might.
 
 Spare skill points might be well invested into Stealth and Sneakiness,
-especially in Stealth if your stealth is rather low.
+especially in Stealth if your stealth is rather low and you tend to wake up
+every monster nearby early.
 
 
 
@@ -7095,17 +7170,18 @@ You died. Hm, very annoying indeed. If you are a "No-ghost" or "Hellish"
 character, then you are wiped out now. Otherwise you became a ghost on the
 same dungeon level as you died on. Your items are scattered on the floor, now
 what to do? The items will disappear forever if you leave that dungeon level
-and noone remains down there to "keep it static" or "hold the level", as the
-technical term are. If you think you really need the items, ask someone to get
-down to your dungeon level and either revive you there using a scroll of life
-or pick up your items and give them back to you in town.
-If your level is still very low, you can just decide to suicide and start
-over. That is sometimes easier. 
+and noone remains down there to "keep the level static" or "hold the level",
+as the technical terms are. If you think you really need the items, ask
+someone to get down to your dungeon level and either revive you there using a
+scroll of life or pick up your items and give them back to you in town after
+you revived in the town's temple (green '4').
+If your character level is still very low, you can just decide to suicide and
+start over. That is sometimes easier.
 In TomeNET you will often encounter new situations that can lead to death. The
-most important thing here is that you really keep in mind your mistakes of the
-past to prevent them from happening again. A key to winning is a firm
-knowledge of the monsters that you encounter, so you will be able to decide if
-you should attack or flee.
+most important thing here is that you keep in mind your mistakes of the past
+to prevent them from happening again. A key to winning is a firm knowledge of
+the monsters that you encounter, so you will be able to decide if you should
+attack or flee.
 In my opinion playing TomeNET can be called "the art not to die".
 
 
@@ -7778,7 +7854,7 @@ SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
             ZIP (overwriting everything), then start TomeNET again.
 PROBLEM 19: On GNU/Linux OS, When someone uses the /page command to page me,
             I don't hear the three beeps.
-SOLUTION:   You are probably using OSS. If your soundcard or soundchip doesn't
+SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
             support mixing of multiple sources, that means only one program at
             a time can output sound. In that case, do the following:
             Make sure all your programs, like media players, instant
@@ -7790,6 +7866,9 @@ SOLUTION:   You are probably using OSS. If your soundcard or soundchip doesn't
             After installing 'aoss', just use call it with the OSS application
             as parameter. Example:    $> aoss ./tomenet
             Another example (to start the Opera webbrowser):    $> aoss opera
+SOLUTION B: If you are using X11, this problem may occur depending on your
+            terminal configuration. At this time, all you can do is change
+            your configuration, sorry.
 
 
 
