@@ -561,11 +561,23 @@ static int do_cmd_activate_skill_aux()
 		{
 			start += 20;
 			if (start >= max) start -= 20;
+			if (term_saved)
+			{
+				/* Draw the new list on a fresh copy of the screen */
+				Term_load();
+				Term_save();
+			}
 		}
 		else if (which == '-')
 		{
 			start -= 20;
 			if (start < 0) start += 20;
+			if (term_saved)
+			{
+				/* Draw the new list on a fresh copy of the screen */
+				Term_load();
+				Term_save();
+			}
 		}
 		else if (which == '@')
 		{
