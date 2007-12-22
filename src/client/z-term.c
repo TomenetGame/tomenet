@@ -482,7 +482,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s)
 }
 
 #ifdef CLIENT_SHIMMER
-/* 
+/*
  * Some eye-candies from PernAngband :)		- Jir -
  */
 static char get_shimmer_color()
@@ -581,7 +581,7 @@ byte flick_colour(byte attr){
 			break;
 		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
 		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
-			
+
 
 		default:
 			return(attr);
@@ -2112,7 +2112,7 @@ errr Term_what(int x, int y, byte *a, char *c)
  * hook, and doing special things for "TERM_XTRA_EVENT", "TERM_XTRA_FLUSH",
  * and "TERM_XTRA_BORED", but this method is a lot "cleaner", and gives
  * much better results when "profiling" the code.
- * 
+ *
  * See the "Borg" documentation for more details.
  */
 errr (*Term_inkey_hook)(char *ch, bool wait, bool take) = NULL;
@@ -2268,7 +2268,7 @@ errr Term_save(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
- 	if(screen_icky>3) return(0);
+ 	if (screen_icky > 3) return(0);
 
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 
@@ -2289,7 +2289,7 @@ errr Term_load(void)
 	int w = Term->wid;
 	int h = Term->hgt;
 
-	if(!screen_icky) return(0);	/* should really be a value */
+	if (!screen_icky) return(0);	/* should really be a value */
 
  	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
 
@@ -2309,6 +2309,27 @@ errr Term_load(void)
 	return (0);
 }
 
+
+/*
+ * Switch the current screen with one in memory.
+ *
+ * This might be a bit dirty.
+ * - mikaelh
+ */
+errr Term_switch(int screen)
+{
+	term_win *tmp;
+
+	/* Not in memory */
+	if (screen > screen_icky) return 1;
+
+	tmp = Term->scr;
+	Term->scr = Term->mem[screen - 1];
+	Term->mem[screen - 1] = tmp;
+
+	/* Success */
+	return 0;
+}
 
 
 

@@ -1221,14 +1221,20 @@ int Receive_sanity(void)
 	{
 		return n;
 	}
+
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
-	if (!screen_icky && !shopping){
+
+	if (!shopping) {
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_sane(attr, (char*)buf);
 		if (c_cfg.alert_hitpoint && (attr == TERM_MULTI))
 		{
 			if (c_cfg.ring_bell) bell();
 		}
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%s", ch, attr, buf)) <= 0)
@@ -1259,8 +1265,14 @@ int Receive_stat(void)
 	p_ptr->stat_ind[(int) stat] = s_ind;
 	p_ptr->stat_cur[(int) stat] = cur_base;
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_stat(stat, max, cur, cur_base);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%hd%hd%hd%hd", ch, stat, max, cur, s_ind, cur_base)) <= 0)
 		{
@@ -1288,14 +1300,18 @@ int Receive_hp(void)
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
 	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_hp(max, cur);
 		if (c_cfg.alert_hitpoint && (cur < max / 5))
 		{
 			if (c_cfg.ring_bell) bell();
 			c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
 		}
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd%hd", ch, max, cur)) <= 0)
@@ -1323,8 +1339,14 @@ int Receive_ac(void)
 	p_ptr->dis_ac = base;
 	p_ptr->dis_to_a = plus;
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_ac(base + plus);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd%hd", ch, base, plus)) <= 0)
 		{
@@ -1421,8 +1443,14 @@ int Receive_char_info(void)
 	/* Load preferences */
 	initialize_player_pref_files();
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_basic();
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd%hd%hd", ch, race, class, sex)) <= 0)
 		{
@@ -1505,8 +1533,14 @@ int Receive_experience(void)
 	p_ptr->exp = cur;
 	exp_adv = adv;
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_level(lev, max, cur, adv);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hu%d%d%d", ch, lev, max, cur, adv)) <= 0)
 		{
@@ -1610,10 +1644,13 @@ int Receive_gold(void)
 		/* Display the players remaining gold */
 		c_store_prt_gold();
 	}
-	else if (!screen_icky) prt_gold(gold);
-	else if ((n = Packet_printf(&qbuf, "%c%d%d", ch, gold, balance)) <= 0)
+	else
 	{
-		return n;
+		if (screen_icky) Term_switch(screen_icky);
+
+		prt_gold(gold);
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 
 	/* Window stuff */
@@ -1636,8 +1673,14 @@ int Receive_sp(void)
 	p_ptr->msp = max;
 	p_ptr->csp = cur;
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_sp(max, cur);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd%hd", ch, max, cur)) <= 0)
 		{
@@ -1684,9 +1727,13 @@ int Receive_char(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
 	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		Term_draw(x, y, a, c);
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%c%c%c", ch, x, y, a, c)) <= 0)
@@ -1743,9 +1790,13 @@ int Receive_message(void)
 		else strcpy(talk_pend, "");
 	}
 
-	if (!topline_icky && (party_mode || shopping || !screen_icky))
+	if (!topline_icky)
 	{
+		if (screen_icky) Term_switch(screen_icky);
+
                 c_msg_print(buf);
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
                 if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
@@ -1767,8 +1818,14 @@ int Receive_state(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_state(paralyzed, searching, resting);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu", ch, paralyzed, searching, resting)) <= 0)
 		{
@@ -1792,8 +1849,14 @@ int Receive_title(void)
 	/* XXX -- Extract "ghost-ness" */
 	p_ptr->ghost = streq(buf, "Ghost");
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_title(buf);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
 		{
@@ -1816,13 +1879,17 @@ int Receive_depth(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
 	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		p_ptr->wpos.wx = x;
 		p_ptr->wpos.wy = y;
 		p_ptr->wpos.wz = z;
 		strncpy(c_p_ptr->location_name, buf, 20);
 		prt_depth(x, y, z, town, recall, buf);
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hu%hu%hu%c%hu%s", ch, x, y, z, town, recall, buf)) <= 0)
@@ -1844,8 +1911,14 @@ int Receive_confused(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_confused(confused);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, confused)) <= 0)
 		{
@@ -1866,8 +1939,14 @@ int Receive_poison(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_poisoned(poison);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, poison)) <= 0)
 		{
@@ -1888,8 +1967,14 @@ int Receive_study(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_study(study);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, study)) <= 0)
 		{
@@ -1910,8 +1995,14 @@ int Receive_food(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_hunger(food);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hu", ch, food)) <= 0)
 		{
@@ -1932,8 +2023,14 @@ int Receive_fear(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_afraid(afraid);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, afraid)) <= 0)
 		{
@@ -1954,8 +2051,14 @@ int Receive_speed(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_speed(speed);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd", ch, speed)) <= 0)
 		{
@@ -1976,8 +2079,14 @@ int Receive_cut(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_cut(cut);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd", ch, cut)) <= 0)
 		{
@@ -1998,8 +2107,14 @@ int Receive_blind(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_blind(blind);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, blind)) <= 0)
 		{
@@ -2020,8 +2135,14 @@ int Receive_stun(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_stun(stun);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%hd", ch, stun)) <= 0)
 		{
@@ -2163,10 +2284,15 @@ int Receive_line_info(void)
 		return n;
 	}
 
+#if 0
 	/* If this is the mini-map then we can draw if the screen is icky */
 	if (ch == PKT_MINI_MAP || (!screen_icky && !shopping))
 		draw = TRUE;
+#else
+	if (!shopping) draw = TRUE;
 
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(screen_icky);
+#endif
 	/* Check the max line count */
 	if (y > last_line_info)
 		last_line_info = y;
@@ -2212,6 +2338,8 @@ int Receive_line_info(void)
 		}
 
 	}
+
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(screen_icky);
 
 	/* Request a redraw if the screen was icky */
 	if (screen_icky)
@@ -2498,8 +2626,16 @@ int Receive_party_stats(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping) {
+	if (!shopping) {
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_party_stats(j,color,partymembername,k,chp,mhp,csp,msp);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
+	else if ((n = Packet_printf(&qbuf, "%c%d%d%s%d%d%d%d%d", ch, j, color, partymembername, k, chp, mhp, csp, msp)) <= 0)
+	{
+		return n;
 	}
 
 	return 1;
@@ -2614,10 +2750,14 @@ int Receive_monster_health(void)
 		return n;
 	}
 
-	if (!screen_icky)
+	if (!shopping)
 	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		/* Draw the health bar */
 		health_redraw(num, attr);
+
+		if (screen_icky) Term_switch(screen_icky);
 	}
 	else
 	{
@@ -2677,8 +2817,12 @@ int Receive_AFK(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_AFK(afk);
+
+		if (screen_icky) Term_switch(screen_icky);
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c", ch, afk)) <= 0)
 		{
@@ -2710,9 +2854,15 @@ int Receive_encumberment(void)
 		return n;
 	}
 
-	if (!screen_icky && !shopping)
+	if (!shopping)
+	{
+		if (screen_icky) Term_switch(screen_icky);
+
 		prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
 				icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+
+		if (screen_icky) Term_switch(screen_icky);
+	}
 	else
 		if ((n = Packet_printf(&qbuf, "%c%c%c%c%c%c%c%c%c%c%c%c", ch, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
 		    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot)) <= 0)
