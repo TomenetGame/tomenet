@@ -493,6 +493,7 @@ static int do_cmd_activate_skill_aux()
 	int ret;
 	bool mode = c_cfg.always_show_lists;
 	int *p;
+	bool term_saved = FALSE;
 
 	C_MAKE(p, MAX_SKILLS, int);
 
@@ -528,7 +529,9 @@ static int do_cmd_activate_skill_aux()
 		return p[0];
 	}
 */
-	Term_save();
+
+//	Term_save(); /* Not needed always */
+	topline_icky = TRUE;
 
 	while (1)
 	{
@@ -543,22 +546,26 @@ static int do_cmd_activate_skill_aux()
 		else if (which == '*' || which == '?' || which == ' ')
 		{
 			mode = (mode)?FALSE:TRUE;
-			Term_load();
-			Term_save();
+			if (!mode && term_saved)
+			{
+				Term_load();
+				term_saved = FALSE;
+			}
+			else if (mode && !term_saved)
+			{
+				Term_save();
+				term_saved = TRUE;
+			}
 		}
 		else if (which == '+')
 		{
 			start += 20;
 			if (start >= max) start -= 20;
-			Term_load();
-			Term_save();
 		}
 		else if (which == '-')
 		{
 			start -= 20;
 			if (start < 0) start += 20;
-			Term_load();
-			Term_save();
 		}
 		else if (which == '@')
 		{
@@ -605,7 +612,9 @@ static int do_cmd_activate_skill_aux()
 			break;
 		}
 	}
-	Term_load();
+
+	if (term_saved) Term_load();
+	topline_icky = FALSE;
 
 	C_FREE(p, MAX_SKILLS, int);
 
