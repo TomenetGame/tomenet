@@ -89,7 +89,7 @@ static void enter_password(void)
 		break;
 	}
 
-	/* Pad the name (to clear junk) 
+	/* Pad the name (to clear junk)
 	sprintf(tmp, "%-15.15s", pass); */
 
 	 /* Re-Draw the name (in light blue) */
@@ -342,7 +342,7 @@ static void choose_stat_order(void)
 		{
 			/* Clear bottom of screen */
 			clear_from(20);
-	
+
 			/* Print available stats at bottom */
 			for (k = 0; k < 6; k++)
 			{
@@ -353,11 +353,11 @@ static void choose_stat_order(void)
 					put_str(out_val, 21, k * 9);
 				}
 			}
-	
+
 			/* Hack -- it's obvious */
 			/* if (i > 4) hazard = TRUE;
 			It confused too many noobiez. Taking it out for now. */
-	
+
 			/* Get a stat */
 			while (1)
 			{
@@ -371,10 +371,10 @@ static void choose_stat_order(void)
 					c = inkey();
 					if (c == 'Q') quit(NULL);
 					if (c == '*') hazard = TRUE;
-	
+
 					j = (islower(c) ? A2I(c) : -1);
 				}
-	
+
 				if ((j < 6) && (j >= 0) && (avail[j]))
 				{
 					stat_order[i] = j;
@@ -395,7 +395,7 @@ static void choose_stat_order(void)
 
 		clear_from(20);
 	}
-	
+
         /* player can define his stats completely manually: */
         else if (char_creation_flags == 1) {
                 j = 0; /* current stat to be modified */
@@ -424,14 +424,14 @@ static void choose_stat_order(void)
 		while (1)
 		{
 			c_put_str(TERM_L_GREEN, format("%2d", k), 14, 60);
-			
+
 			for (i = 0; i < 6; i++) {
 				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];
 				if (crb > 18) crb = 18 + (crb - 18) * 10;
 				cnv_stat(crb, buf);
 				cnv_stat(stat_order[i], buf2);
                         	sprintf(out_val, "%s: %s      (base %s)", stats[i], buf, buf2);
-	
+
                         	if (j == i) {
                         		if (stat_order[i] == 10-2)
                         			c_put_str(TERM_L_RED, out_val, 16 + i, 45);
@@ -661,8 +661,8 @@ void get_char_info(void)
                 /* Choose a class */
         } while (!choose_class());
 
-	class_extra = 0;	
-		
+	class_extra = 0;
+
 	/* Choose stat order */
 	choose_stat_order();
 
@@ -842,6 +842,11 @@ bool get_server_name(void)
 		if (c == 'Q')
 		{
 			return enter_server_name();
+		}
+		else if (c == ESCAPE)
+		{
+			quit(NULL);
+			return FALSE;
 		}
 
 		/* Index */
