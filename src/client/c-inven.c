@@ -184,7 +184,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* The top line is icky */
 	topline_icky = TRUE;
 
-	/* Not done */	
+	/* Not done */
 	done = FALSE;
 
 	/* No item selected */
@@ -230,7 +230,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		/* Cancel command_see */
 		command_see = FALSE;
 
-		/* Hack -- Nothing to choose */	
+		/* Hack -- Nothing to choose */
 		*cp = -2;
 
 		/* Done */
@@ -262,13 +262,17 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		}
 	}
 
+	/* Redraw inventory */
+	p_ptr->window |= PW_INVEN;
+	window_stuff();
+
 	/* Hack -- start out in "display" mode */
-	if (command_see) 
+	if (command_see)
 	{
 		Term_save();
 	}
 
-	
+
 	/* Repeat while done */
 	while (!done)
 	{
@@ -296,7 +300,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 		/* Viewing inventory */
 		if (!command_wrk)
 		{
-			/* Begin the prompt */	
+			/* Begin the prompt */
 			sprintf(out_val, "Inven:");
 
 			/* Some legal items */
@@ -337,7 +341,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 			/* Indicate the ability to "view" */
 			if (!command_see) strcat(out_val, " * to see,");
 
-			/* Append */	
+			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
 		}
 
@@ -540,7 +544,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 
 	/* Fix the screen if necessary */
-	if (command_see) 
+	if (command_see)
 	{
 		Term_load();
 	}
@@ -561,6 +565,10 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	/* Forget the item_tester_hook restriction */
 	item_tester_hook = 0;
 
+	/* Redraw inventory */
+	p_ptr->window |= PW_INVEN;
+	window_stuff();
+
 
 	/* Clear the prompt line */
 	prt("", 0, 0);
@@ -572,4 +580,4 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 	return (item);
 }
 
-					
+

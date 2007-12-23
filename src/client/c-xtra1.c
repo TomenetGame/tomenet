@@ -177,12 +177,12 @@ void prt_gold(int gold)
  * Prints current AC
  */
 void prt_ac(int ac)
-{	
+{
 	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
-	
+
 	char tmp[32];
 
 	put_str("Cur AC ", ROW_AC, COL_AC);
@@ -244,7 +244,7 @@ void prt_hp(int max, int cur)
 		{
 			color = TERM_RED;
 		}
-	
+
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
 	}
 }
@@ -258,7 +258,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 	{
 		rowspacing += (4 * member_num);
 	}
-	
+
 	if (client_mode != CLIENT_PARTY)
 	{
 		return;
@@ -275,11 +275,11 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 
 	sprintf(tmp, "%s", member_name);
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing) ,CLIENT_PARTY_COLMBR);
-		
+
 	sprintf(tmp, "HP: %4d ", member_mhp);
 	color = TERM_L_RED;
 	c_put_str(color, tmp, (CLIENT_PARTY_ROWMBR + rowspacing + 1) ,CLIENT_PARTY_COLMBR);
-	
+
 	sprintf(tmp, "%4d", member_chp);
 
 	if (member_chp >= member_mhp)
@@ -306,7 +306,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 
 	if (member_csp >= member_msp)
 	{
-		color = TERM_L_BLUE; 
+		color = TERM_L_BLUE;
 	}
 	else if (member_csp > member_msp / 10)
 	{
@@ -353,7 +353,7 @@ void prt_sp(int max, int cur)
 
 		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP + 9);
 	}
-	else 
+	else
 	{
 		put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
 
@@ -765,18 +765,23 @@ static void display_inven(void)
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
+		/* Prepare an "index" */
+		tmp_val[0] = index_to_label(i);
+
+		/* Bracket the "index" --(-- */
+		tmp_val[1] = ')';
+
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr))
 		{
-			/* Prepare an "index" */
-			tmp_val[0] = index_to_label(i);
-
-			/* Bracket the "index" --(-- */
-			tmp_val[1] = ')';
+			/* Display the index */
+			Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
 		}
-
-		/* Display the index (or blank space) */
-		Term_putstr(0, i, 3, TERM_WHITE, tmp_val);
+		else
+		{
+			/* Grey out the index */
+			Term_putstr(0, i, 3, TERM_L_DARK, tmp_val);
+		}
 
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
