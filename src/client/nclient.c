@@ -258,6 +258,12 @@ void Receive_login(void)
 	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
 
+	/* Check if the server wanted to destroy the connection - mikaelh */
+	if (rbuf.ptr[0] == PKT_QUIT) {
+		Receive_quit();
+		return;
+	}
+
 	/* Read server detail flags for informational purpose - C. Blue */
 	s32b sflag3, sflag2, sflag1, sflag0;
 	bool s_RPG = FALSE, s_FUN = FALSE, s_PARTY = FALSE;
