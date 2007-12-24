@@ -839,7 +839,7 @@ static void print_combatstances()
 	put_str("b) Defensive stance", j++, col);
 
 	prt("", j, col);
-	put_str("b) Offensive stance", j++, col);
+	put_str("c) Offensive stance", j++, col);
 
 	/* Clear the bottom line */
 	prt("", j++, col);
