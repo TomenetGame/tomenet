@@ -42,7 +42,7 @@
 #define VERSION_PATCH   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "c"
+#define CLIENT_VERSION_TAG "e"
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
