@@ -1231,7 +1231,7 @@ int Receive_sanity(void)
 	strcpy(c_p_ptr->sanity, buf);
 	c_p_ptr->sanity_attr = attr;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_sane(attr, (char*)buf);
 	if (c_cfg.alert_hitpoint && (attr == TERM_MULTI))
@@ -1239,7 +1239,7 @@ int Receive_sanity(void)
 		if (c_cfg.ring_bell) bell();
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1265,11 +1265,11 @@ int Receive_stat(void)
 	p_ptr->stat_ind[(int) stat] = s_ind;
 	p_ptr->stat_cur[(int) stat] = cur_base;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_stat(stat, max, cur, cur_base);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1291,7 +1291,7 @@ int Receive_hp(void)
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_hp(max, cur);
 	if (c_cfg.alert_hitpoint && (cur < max / 5))
@@ -1300,7 +1300,7 @@ int Receive_hp(void)
 		c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1322,11 +1322,11 @@ int Receive_ac(void)
 	p_ptr->dis_ac = base;
 	p_ptr->dis_to_a = plus;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_ac(base + plus);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1418,11 +1418,11 @@ int Receive_char_info(void)
 	/* Load preferences */
 	initialize_player_pref_files();
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_basic();
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1500,11 +1500,11 @@ int Receive_experience(void)
 	p_ptr->exp = cur;
 	exp_adv = adv;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_level(lev, max, cur, adv);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1605,11 +1605,11 @@ int Receive_gold(void)
 	}
 	else
 	{
-		if (screen_icky) Term_switch(screen_icky);
+		if (screen_icky) Term_switch(0);
 
 		prt_gold(gold);
 
-		if (screen_icky) Term_switch(screen_icky);
+		if (screen_icky) Term_switch(0);
 	}
 
 	/* Window stuff */
@@ -1632,11 +1632,11 @@ int Receive_sp(void)
 	p_ptr->msp = max;
 	p_ptr->csp = cur;
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_sp(max, cur);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
@@ -1678,11 +1678,11 @@ int Receive_char(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	Term_draw(x, y, a, c);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1735,11 +1735,11 @@ int Receive_message(void)
 
 	if (!topline_icky)
 	{
-		if (screen_icky) Term_switch(screen_icky);
+		if (screen_icky) Term_switch(0);
 
                 c_msg_print(buf);
 
-		if (screen_icky) Term_switch(screen_icky);
+		if (screen_icky) Term_switch(0);
 	}
 	else
                 if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
@@ -1761,11 +1761,11 @@ int Receive_state(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_state(paralyzed, searching, resting);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1784,11 +1784,11 @@ int Receive_title(void)
 	/* XXX -- Extract "ghost-ness" */
 	p_ptr->ghost = streq(buf, "Ghost");
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_title(buf);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1806,7 +1806,7 @@ int Receive_depth(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	p_ptr->wpos.wx = x;
 	p_ptr->wpos.wy = y;
@@ -1814,7 +1814,7 @@ int Receive_depth(void)
 	strncpy(c_p_ptr->location_name, buf, 20);
 	prt_depth(x, y, z, town, recall, buf);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1830,11 +1830,11 @@ int Receive_confused(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_confused(confused);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1850,11 +1850,11 @@ int Receive_poison(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_poisoned(poison);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1870,11 +1870,11 @@ int Receive_study(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_study(study);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1890,11 +1890,11 @@ int Receive_food(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_hunger(food);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1910,11 +1910,11 @@ int Receive_fear(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_afraid(afraid);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1930,11 +1930,11 @@ int Receive_speed(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_speed(speed);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1950,11 +1950,11 @@ int Receive_cut(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_cut(cut);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1970,11 +1970,11 @@ int Receive_blind(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_blind(blind);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -1990,11 +1990,11 @@ int Receive_stun(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_stun(stun);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -2138,7 +2138,7 @@ int Receive_line_info(void)
 #else
 	draw = TRUE;
 
-	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(screen_icky);
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 #endif
 	/* Check the max line count */
 	if (y > last_line_info)
@@ -2186,7 +2186,7 @@ int Receive_line_info(void)
 
 	}
 
-	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(screen_icky);
+	if (screen_icky && ch != PKT_MINI_MAP) Term_switch(0);
 
 	/* Request a redraw if the screen was icky */
 	if (screen_icky)
@@ -2474,11 +2474,11 @@ int Receive_party_stats(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_party_stats(j,color,partymembername,k,chp,mhp,csp,msp);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -2592,12 +2592,12 @@ int Receive_monster_health(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	/* Draw the health bar */
 	health_redraw(num, attr);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -2649,11 +2649,11 @@ int Receive_AFK(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_AFK(afk);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }
@@ -2680,12 +2680,12 @@ int Receive_encumberment(void)
 		return n;
 	}
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 
-	if (screen_icky) Term_switch(screen_icky);
+	if (screen_icky) Term_switch(0);
 
 	return 1;
 }

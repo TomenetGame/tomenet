@@ -2324,8 +2324,8 @@ errr Term_switch(int screen)
 	if (screen > screen_icky) return 1;
 
 	tmp = Term->scr;
-	Term->scr = Term->mem[screen - 1];
-	Term->mem[screen - 1] = tmp;
+	Term->scr = Term->mem[screen];
+	Term->mem[screen] = tmp;
 
 	/* Success */
 	return 0;
