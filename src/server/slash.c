@@ -3668,7 +3668,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 			/* for now only loads Valinor */
 			else if (prefix(message, "/loadmap")) {
 				int xstart = 0, ystart = 0;
-				if (!message2) {
+				if (tk < 1) {
 					msg_print(Ind, "Usage: /loadmap t_<mapname>.txt");
 					return;
 				}
