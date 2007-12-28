@@ -1,4 +1,4 @@
-- C. Blue's automatic stuff --
+-- C. Blue's automatic stuff --
 -------------------------------
 
 -- Run automatically on server starting up:

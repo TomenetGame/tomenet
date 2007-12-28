@@ -1,4 +1,4 @@
-- $Id$
+-- $Id$
 -- Server side LUA initialization of TomeNET
 
 -- Get a normal alert to stdout so we can see bugs at server init

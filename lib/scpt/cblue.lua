@@ -1,4 +1,4 @@
-- C. Blue admin functions. --
+-- C. Blue admin functions. --
 ------------------------------
 
 -- Grants a player awareness of all items.
