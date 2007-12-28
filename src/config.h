@@ -214,14 +214,16 @@
  * players on.  Define this to be an empty string if you don't want to
  * report to a metaserver.
  */
+
 /* NOTE: client uses these values.
  * server uses those in mangband.cfg.
  * bad design.
  */
-#if 0 /* moved to tomenet.cfg long ago - C. Blue */
+
+// #if 0 /* moved to tomenet.cfg long ago - C. Blue */
 #define	META_ADDRESS "62.210.141.11"
 #define	META_ADDRESS_2 "europe.tomenet.net"
-#endif
+// #endif
 
 /*
  * Server gateway: Provide raw data for applications
