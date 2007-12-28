@@ -58,7 +58,8 @@ typedef struct {
 	char		*host;
 	char		*pass;
 	bool		password_verified;
-	byte		inactive;
+	int		inactive_keepalive;
+	int		inactive_ping;
 	int		race;
 	int		class;
 	int		sex;
@@ -160,6 +161,12 @@ static int Receive_store_examine(int ind);
 static int Receive_store_command(int ind);
 
 static int Receive_ping(int ind);
+
+static int Receive_sip(int ind);
+static int Receive_telekinesis(int ind);
+static int Receive_BBS(int ind);
+static int Receive_wield2(int ind);
+static int Receive_cloak(int ind);
 
 static void Handle_item(int Ind, int item);
 

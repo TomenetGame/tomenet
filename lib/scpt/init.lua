@@ -1,4 +1,4 @@
--- $Id$
+- $Id$
 -- Server side LUA initialization of TomeNET
 
 -- Get a normal alert to stdout so we can see bugs at server init
@@ -47,6 +47,13 @@ pern_dofile(Ind, "mikaelh.lua")
 -- 3) on player joining an empty server, additionally execute:
 --    player_has_joined_empty_server(int num, int id, string name, string time)
 -- 4) on player joining: player_has_joined(int num, int id, string name, string time)
+-- 5) on player leaving: player_leaves(int num, int id, string name, string time)
+-- 6) on player leaving but still waiting for time out (exited in dungeon):
+--    player_leaves_timeout(int num, int id, string name, string time)
+-- 7) on player having left completely: player_has_left(int num, int id, string name, string time)
+-- 8) on last player having left: last_player_has_left(int num, int id, string name, string time)
+-- 9) every hour: cron_1h(string time, int h, int m, int s)
+-- 10) every 24 hours: cron_24h(string time, int h, int m, int s)
 pern_dofile(Ind, "custom.lua")
 
 

@@ -6,6 +6,9 @@ function get_skill_value(p, skill)
 	return players(p).s_info[skill + 1].value
 end
 
+-- till the server is recompiled...
+SKILL_RUNEMASTERY = 76
+
 -- Neat list of player skills
 function showskills(name)
 	local p
@@ -48,6 +51,7 @@ function showskills(name)
 	if get_skill_value(p, SKILL_HSUPPORT) > 0 then		msg_print(Ind, "     . Holy Support               " .. get_skill_formatted(p, SKILL_HSUPPORT)) end
 	if get_skill_value(p, SKILL_DRUID_ARCANE) > 0 then	msg_print(Ind, "     . Arcane Lore                " .. get_skill_formatted(p, SKILL_DRUID_ARCANE)) end
 	if get_skill_value(p, SKILL_DRUID_PHYSICAL) > 0 then	msg_print(Ind, "     . Physical Lore              " .. get_skill_formatted(p, SKILL_DRUID_PHYSICAL)) end
+	if get_skill_value(p, SKILL_RUNEMASTERY ) > 0 then	msg_print(Ind, " - Runemastery                    " .. get_skill_formatted(p, SKILL_RUNEMASTERY)) end
 	if get_skill_value(p, SKILL_SNEAKINESS) > 0 then	msg_print(Ind, " - Sneakiness                     " .. get_skill_formatted(p, SKILL_SNEAKINESS)) end
 	if get_skill_value(p, SKILL_STEALTH) > 0 then		msg_print(Ind, "     . Stealth                    " .. get_skill_formatted(p, SKILL_STEALTH)) end
 	if get_skill_value(p, SKILL_DISARM) > 0 then		msg_print(Ind, "     . Disarming                  " .. get_skill_formatted(p, SKILL_DISARM)) end
@@ -80,9 +84,6 @@ end
 
 -- Manual forced update
 function update_p(name)
-	local p
-	p = ind(name)
-	if (p == -1) then return -1 end
 	players(name).update = bor(players(name).update, 3145919)
 
 -- 3145919 is a combination of the following:
@@ -100,17 +101,11 @@ end
 
 -- Manual forced redraw
 function redraw_p(name)
-	local p
-	p = ind(name)
-	if (p == -1) then return -1 end
-	players(name).redraw = bor(players(name).redraw, 134217728) -- PR_WIPE	0x08000000L	Total Redraw
+	players(name).redraw = bor(players(name).redraw, 134217727) -- 2^27 - 1 = 134217727
 end
 
 -- Manual forced update & redraw
 function ur_p(name)
-	local p
-	p = ind(name)
-	if (p == -1) then return -1 end
 	update_p(name)
 	redraw_p(name)
 end
@@ -136,3 +131,36 @@ function fix1(name)
 	fix_spellbooks(name, STOPWRAITH, 1)
 end
 ]]--
+
+-- Establish VNC mind link
+function vnc_p2p(target, receiver)
+    local p, p2, id
+    p = ind(target)
+    if (p == -1) then return -1 end
+    p2 = ind(receiver)
+    if (p2 == -1) then return -1 end
+    id = players(p2).id
+    players(p).esp_link = id
+    players(p).esp_link_type = 1
+    players(p).esp_link_end = 0
+    players(p).esp_link_flags = 1 + 128
+    msg_print(p2, "Mind link established.")
+end
+
+-- Break VNC mind link
+-- needed?
+--[[
+function vncoff_p2p(name, receiver)
+    local p, p2
+    p = ind(name)
+    if (p == -1) then return -1 end
+    p2 = ind(receiver)
+    if (p2 == -1) then return -1 end
+    
+    players(p).esp_link = 0
+    players(p).esp_link_type = 0
+    players(p).esp_link_end = 0
+    players(p).esp_link_flags = 0
+    msg_print(p2, "Mind link broken.")
+end
+--]]

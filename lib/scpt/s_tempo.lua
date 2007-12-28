@@ -96,9 +96,9 @@ BANISHMENT = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	10,
         ["spell"] = 	function()
-                        project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, BANISHMENT, 160))
+                        project_los(Ind, GF_AWAY_ALL, 40 + get_level(Ind, BANISHMENT, 160), "casts a spell")
                         if get_level(Ind, BANISHMENT, 50) >= 15 then
-                                project_los(Ind, GF_STASIS, 20 + get_level(Ind, BANISHMENT, 120))
+                                project_los(Ind, GF_STASIS, 20 + get_level(Ind, BANISHMENT, 120), "casts a spell")
                         end
 	end,
 	["info"] = 	function()

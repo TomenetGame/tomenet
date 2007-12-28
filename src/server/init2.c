@@ -2581,6 +2581,12 @@ static errr init_other(void)
 	C_MAKE(houses, 1024, house_type);
 	house_alloc=1024;
 
+#ifdef AUCTION_SYSTEM
+	/*** alloc for the auctions ***/
+	C_MAKE(auctions, 16, auction_type);
+	auction_alloc = 16;
+#endif
+
 	/*** Pre-allocate the basic "auto-inscriptions" ***/
 
 	/* The "basic" feelings */

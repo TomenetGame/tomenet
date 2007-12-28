@@ -9,6 +9,29 @@ function get_zeal_power()
 	return pow
 end
 
+HDELFEAR = add_spell
+{
+        ["name"] =      "Remove Fear",
+        ["school"] =    {SCHOOL_HSUPPORT},
+        ["level"] =     1,
+        ["mana"] =      2,
+        ["mana_max"] =  10,
+        ["fail"] =      10,
+        ["stat"] =      A_WIS,
+        ["spell"] =     function()
+                fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), 4, " speaks some faithful words and you lose your fear.")
+                set_afraid(Ind, 0)
+                player.res_fear_temp = get_level(Ind, HDELFEAR, 50)
+	        end,
+        ["info"] =      function()
+    		return "dur "..get_level(Ind, HDELFEAR, 50)
+	        end,
+	["desc"] =      {
+                "Removes fear from your heart.",
+                "***Automatically projecting***",
+                }
+}
+
 HSANCTUARY = add_spell
 {
 	["name"] = 	"Sanctuary",
@@ -20,9 +43,9 @@ HSANCTUARY = add_spell
 	["stat"] =      A_WIS,
         ["spell"] = 	function()
                 if get_level(Ind, HSANCTUARY, 50) < 20 then
-			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, HSANCTUARY, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "")
+			project(0 - Ind, get_level(Ind, HSANCTUARY, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, HSANCTUARY, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "mumbles softly")
 		else
-			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25))
+			project_los(Ind, GF_OLD_SLEEP, 3 + get_level(Ind, HSANCTUARY, 25), "mumbles softly")
 		end
 	end,
 	["info"] = 	function()
@@ -58,31 +81,6 @@ HSATISFYHUNGER = add_spell
 			"Satisfies your hunger.",
 			"***Automatically projecting***",
 			}
-}
-
-HDELCURSES = add_spell
-{
-	["name"] =      "Remove Curses",
-	["school"] =    SCHOOL_HSUPPORT,
-	["level"] =     10,
-	["mana"] =      20,
-	["mana_max"] =  40,
-	["fail"] =      40,
-	["stat"] =      A_WIS,
-	["spell"] =     function()
-		local done
-
-		if get_level(Ind, HDELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
-		else done = remove_curse(Ind) end
-		if done == TRUE then msg_print(Ind, "The curse is broken!") end
-	end,
-	["info"] =      function()
-		return ""
-	end,
-	["desc"] =      {
-		"Remove curses of worn objects",
-		"At level 30 switches to *remove curses*"
-	}
 }
 
 HSENSE = add_spell

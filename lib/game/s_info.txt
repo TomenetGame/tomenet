@@ -391,6 +391,21 @@ A:12:Draw a rune
 I:1000:0
 F:MKEY_HARDCODE
 
+$ENABLE_DIVINE$N:77:Astral Knowledge
+$ENABLE_DIVINE$D:Access to the astral spells
+$ENABLE_DIVINE$A:11:Cast a spell
+$ENABLE_DIVINE$I:1000:0
+
+$DUAL_WIELD$N:78:Dual-Wield
+$DUAL_WIELD$D:Ability to wield two one-handed weapons at once
+$DUAL_WIELD$I:1000:0
+
+$ENABLE_STANCES$N:79:Combat Stances
+$ENABLE_STANCES$D:Ability to use different stances in armed melee combat
+$ENABLE_STANCES$A:13:Change combat stance
+$ENABLE_STANCES$I:1000:0
+$ENABLE_STANCES$F:MKEY_HARDCODE
+
 # additional ones
 
 N:90:Climbing
@@ -432,16 +447,26 @@ f:Hunting Lore:Archery%5
 #f:Sling-mastery:Ricochet%25
 
 # All combat skills improve Combat
-f:Weaponmastery:Combat%50
-f:Sword-mastery:Combat%15
-f:Axe-mastery:Combat%15
-f:Polearm-mastery:Combat%15
-f:Hafted-mastery:Combat%15
-f:Archery:Combat%50
-f:Sling-mastery:Combat%10
-f:Bow-mastery:Combat%10
-f:Crossbow-mastery:Combat%10
-f:Boomerang-mastery:Combat%10
+#f:Weaponmastery:Combat%50
+#f:Sword-mastery:Combat%15
+#f:Axe-mastery:Combat%15
+#f:Polearm-mastery:Combat%15
+#f:Hafted-mastery:Combat%15
+#f:Archery:Combat%50
+#f:Sling-mastery:Combat%10
+#f:Bow-mastery:Combat%10
+#f:Crossbow-mastery:Combat%10
+#f:Boomerang-mastery:Combat%10
+f:Weaponmastery:Combat%20
+f:Sword-mastery:Combat%20
+f:Axe-mastery:Combat%20
+f:Polearm-mastery:Combat%20
+f:Hafted-mastery:Combat%20
+f:Archery:Combat%15
+f:Sling-mastery:Combat%15
+f:Bow-mastery:Combat%15
+f:Crossbow-mastery:Combat%15
+f:Boomerang-mastery:Combat%15
 f:Hunting Lore:Combat%7
 #f:Ricochet:Combat%7
 f:Fighting Technique:Combat%25
@@ -526,17 +551,22 @@ f:Holy Support:Magic%10
 f:Arcane Lore:Magic%10
 f:Physical Lore:Magic%10
 
+$ENABLE_DIVINE$f:Astral Knowledge:Magic%10
+
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
-f:Trapping:Sneakiness%15
+#f:Trapping:Sneakiness%15
+f:Trapping:Disarming%15
 f:Backstabbing:Sneakiness%5
-f:Stealing:Sneakiness%15
+f:Stealing:Sneakiness%20
 f:Dodging:Sneakiness%10
 
-f:Calmness:Dodging%20
-f:Interception:Dodging%20
-f:Calmness:Sneakiness%7
-f:Interception:Sneakiness%7
+#f:Calmness:Dodging%20
+#f:Interception:Dodging%20
+#f:Calmness:Sneakiness%7
+f:Calmness:Sneakiness%10
+#f:Interception:Sneakiness%7
+f:Interception:Combat%10
 
 
 # Auras increase Necromancy skill (pfft who forgot this? :) - C. Blue)
@@ -557,16 +587,21 @@ f:Climbing:Health%25
 #f:Free Action:Health%15
 #f:Confusion Resistance:Health%15
 
+#martial arts improves dodging! making up for low ac (important for NR)
+f:Martial Arts:Dodging%20
+
 
 ################################## SKILL TREE ################################
 
 T:Main:Combat
 T:Combat:Weaponmastery
+$DUAL_WIELD$T:Combat:Dual-Wield
 T:Weaponmastery:Sword-mastery
 T:Sword-mastery:Critical-strike
 T:Weaponmastery:Axe-mastery
 T:Weaponmastery:Hafted-mastery
 T:Weaponmastery:Polearm-mastery
+$ENABLE_STANCES$T:Weaponmastery:Combat Stances
 T:Combat:Archery
 T:Archery:Sling-mastery
 T:Archery:Bow-mastery
@@ -604,6 +639,7 @@ T:Magic:Holy Support
 #T:Magic:Druidry
 T:Magic:Arcane Lore
 T:Magic:Physical Lore
+$ENABLE_DIVINE$T:Magic:Astral Knowledge
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer
@@ -623,12 +659,16 @@ T:Main:Runemastery
 T:Main:Sneakiness
 T:Sneakiness:Stealth
 T:Sneakiness:Disarming
-T:Sneakiness:Trapping
+#T:Sneakiness:Trapping
+T:Disarming:Trapping
 T:Sneakiness:Backstabbing
 T:Sneakiness:Stealing
 T:Sneakiness:Dodging
-T:Dodging:Calmness
-T:Dodging:Interception
+#T:Dodging:Calmness
+#T:Dodging:Interception
+T:Sneakiness:Calmness
+#T:Sneakiness:Interception
+T:Combat:Interception
 
 T:Main:Necromancy
 #T:Necromancy:Aura power

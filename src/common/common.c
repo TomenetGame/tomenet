@@ -198,7 +198,7 @@ void version_build()
 	char temp[256];
 
 	/* Append the version number */
-	sprintf(temp, "%s %d.%d.%d", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	sprintf(temp, "%s %d.%d.%d%s", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
 
 	/* Append the additional version info */
 	if (VERSION_EXTRA == 1)

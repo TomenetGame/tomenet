@@ -5,7 +5,8 @@
  * written by Mark (Mark@Dave).
  */ 
 
-int do_use_mp(int, int, int);
+/* cast_rune_spell moved to externs.h - mikaelh */
+int do_use_mp(int, int, float);
 void cast_rune_spell(int, int);
 void transform_level(int, byte, int);
 
@@ -45,7 +46,7 @@ void transform_level(int Ind, byte feat, int chance) {
 
 //Returns 0 if successful
 //Else, return SP needed
-int do_use_mp(int Ind, int mod, int mul) {
+int do_use_mp(int Ind, int mod, float mul) {
 	player_type *p_ptr = Players[Ind];
 	int cost = RUNE_DMG;
 
@@ -85,7 +86,7 @@ int do_use_mp(int Ind, int mod, int mul) {
 	} 
 
 	if (p_ptr->rune_num_of_buffs)
-		cost += (1<<(p_ptr->rune_num_of_buffs + 1));
+		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
 
 	if (p_ptr->csp < cost) return cost;
 	else {
@@ -275,7 +276,7 @@ void cast_rune_spell (int Ind, int dir) {
 		case SV_RUNE1_BALL:
 			if (ability_lvl < RSAFE_BALL) 
 				chance_to_break = RSAFE_BALL - ability_lvl; 
-			notice = do_use_mp(Ind, mod->sval, RBEAM_BASE);
+			notice = do_use_mp(Ind, mod->sval, RBALL_BASE);
 			if (!notice) {
 				sprintf(p_ptr->attacker, " fires %s %s ball for", 
 				  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
@@ -288,13 +289,13 @@ void cast_rune_spell (int Ind, int dir) {
 		case SV_RUNE1_CLOUD:
 			if (ability_lvl < RSAFE_CLOUD) 
 				chance_to_break = (RSAFE_CLOUD - ability_lvl) * 2;
-			notice = do_use_mp(Ind, mod->sval, RBEAM_BASE);
+			notice = do_use_mp(Ind, mod->sval, RCLOUD_BASE);
 			if (!notice) {
 				sprintf(p_ptr->attacker, " invokes %s %s cloud for", 
 				  (elem_n[0] == 'a' || elem_n[0] == 'e' || elem_n[0] == 'i' || elem_n[0] == 'o' || elem_n[0] == 'u') ? "an" : "a",
 				  elem_n
 				);
-				fire_cloud(Ind, elem, dir, rcloud_dmg(rune_dmg), rad, RCLOUD_DURATION, p_ptr->attacker);
+				fire_cloud(Ind, elem, dir, rcloud_dmg(rune_dmg), rad, RCLOUD_DURATION, 10, p_ptr->attacker);
 			}
 			what = "cloud spell";
 			break;
@@ -321,25 +322,21 @@ void cast_rune_spell (int Ind, int dir) {
 						set_oppose_pois(Ind, randint(rune_dmg) + 10); 
 						break;
 					case SV_RUNE2_WATER:
-						if (!p_ptr->sensible_life)
+						if (!p_ptr->suscep_life)
 							set_food(Ind, PY_FOOD_MAX - 1);
 						break; 
 					/* Speed BUff */
 					case SV_RUNE2_GRAV:
 						/* Unset */
 						if (p_ptr->rune_speed) {
-							notice = 0;
 							p_ptr->rune_speed = 0;
 							p_ptr->rune_num_of_buffs--; 
 							what = "Anti Speed"; 
 						/* Set */
 						} else {
-							notice = do_use_mp(Ind, mod->sval, 0);
-							if (!notice) {
-								p_ptr->rune_speed = 7;
-								p_ptr->rune_num_of_buffs++;
-								what = "Speed Spell";
-							}
+							p_ptr->rune_speed = 7;
+							p_ptr->rune_num_of_buffs++;
+							what = "Speed Spell";
 						}
 						p_ptr->redraw |= PR_SPEED;
 						break; 
@@ -347,18 +344,13 @@ void cast_rune_spell (int Ind, int dir) {
 					case SV_RUNE2_DARK:
 						/* Unset */
 						if (p_ptr->rune_stealth) {
-							notice = 0;
-							p_ptr->rune_stealth = 0;
 							p_ptr->rune_num_of_buffs--; 
 							what = "Anti Stealth";
 						/* Set */
 						} else {
-							notice = do_use_mp(Ind, mod->sval, 0);
-							if (!notice) {
-								p_ptr->rune_stealth = 7;
-								p_ptr->rune_num_of_buffs++;
-								what = "Stealth Spell";
-							}
+							p_ptr->rune_stealth = 7;
+							p_ptr->rune_num_of_buffs++;
+							what = "Stealth Spell";
 						}
 						p_ptr->redraw |= PR_EXTRA;
 						break; 
@@ -366,31 +358,26 @@ void cast_rune_spell (int Ind, int dir) {
 					case SV_RUNE2_LITE:
 						/* Unset */
 						if (p_ptr->rune_IV) {
-							notice = 0;
 							p_ptr->rune_IV = 0;
 							p_ptr->rune_num_of_buffs--; 
 							what = "Half Infravision spell";
 						/* Set */
 						} else {
-							notice = do_use_mp(Ind, mod->sval, 0);
-							if (!notice) {
-								p_ptr->rune_IV = 7;
-								p_ptr->rune_num_of_buffs++;
-								what = "Boost Infravision spell";
-							}
+							p_ptr->rune_IV = 7;
+							p_ptr->rune_num_of_buffs++;
+							what = "Boost Infravision spell";
 						}
 						p_ptr->redraw |= PR_EXTRA;
 						break; 
 					case SV_RUNE2_STONE: 
+						what = "Mad Earthquake"; 
+						transform_level(Ind, FEAT_FLOOR, rune_dmg);
+						p_ptr->redraw |= PR_MAP;
+						break;
 					case SV_RUNE2_ARMAGEDDON: 
-						if (mod->sval == SV_RUNE2_STONE) {
-							what = "Mad Earthquake"; 
-							transform_level(Ind, FEAT_FLOOR, rune_dmg);
-						}
-						else if (mod->sval == SV_RUNE2_ARMAGEDDON) {
-							what = "Highway to Hell";
-							transform_level(Ind, FEAT_QUARTZ, rune_dmg);
-						}
+						what = "Highway to Hell";
+						if (magik(50)) transform_level(Ind, FEAT_QUARTZ, rune_dmg);
+						else transform_level(Ind, FEAT_MAGMA, rune_dmg);
 						p_ptr->redraw |= PR_MAP;
 						break;
 					default: 
@@ -425,7 +412,7 @@ void cast_rune_spell (int Ind, int dir) {
 		msg_format(Ind, "\377rThe rune cracks and becomes unusable.");
 		return;
 	} else {
-		if (what) msg_format(Ind, "\377gYou pulled off the \377U%s\377g gracefully.", what);
+		if (what) msg_format(Ind, "\377gYou cast \377U%s\377g gracefully.", what);
 		return;
 	} 
 	return;

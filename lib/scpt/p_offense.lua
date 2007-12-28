@@ -12,11 +12,11 @@ HCURSE = add_spell
         ["direction"] = function () if get_level(Ind, HCURSE, 50) >= 25 then return FALSE else return TRUE end end,
         ["spell"] =     function(args)
                         if get_level(Ind, HCURSE, 50) >= 25 then
-				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150))
+				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         elseif get_level(Ind, HCURSE, 50) >= 15 then
-				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "")
+				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
 			else
-				fire_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "")
+				fire_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         end
         end,
         ["info"] =      function()
@@ -169,7 +169,8 @@ HDRAINCLOUD = add_spell
 	["stat"] = 	A_WIS,
         ["direction"] = TRUE,
         ["spell"] =     function(args)
-                        fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), " drains for")
+--			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
+			fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 9999, 3, 4 + get_level(Ind, HDRAINCLOUD, 4), 10, " drains for")
                         -- dmgs a Power D for 2050 (307 goes to hp), Balance D for 1286 (192 goes to hp) from full hp
 			-- (with, of course, maxed spell power and h_offense schools)
                         -- The amount of what goes to player is 15% of the damage the monster taken. 

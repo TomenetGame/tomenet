@@ -15,10 +15,11 @@
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
 
 #ifdef HAVE_CRYPT
-#define __USE_XOPEN
+#define _XOPEN_SOURCE 500
 #include <unistd.h>
 #endif	// HAVE_CRYPT
 
+extern char *crypt(char *inbuf, cptr salt);
 static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
@@ -87,9 +88,9 @@ bool WriteAccount(struct account *r_acc, bool new){
 int validate(char *name){
 	struct account *c_acc;
 	int i;
-	c_acc=GetAccount(name, NULL, 1);
-	if(!c_acc) return(FALSE);
-	c_acc->flags&=~(ACC_TRIAL | ACC_NOSCORE);
+	c_acc = GetAccount(name, NULL, 1);
+	if (!c_acc) return(FALSE);
+	c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
 	for (i = 1; i <= NumPlayers; i++) {
@@ -118,27 +119,33 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
-	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r");
-	if(fp==(FILE*)NULL){
-		if(errno==ENOENT){	/* ONLY if non-existent */
-			fp=fopen("tomenet.acc", "w+");
-			if(fp==(FILE*)NULL) return(NULL);
+	if(c_acc == (struct account*)NULL) return(NULL);
+	fp = fopen("tomenet.acc", "r");
+	if (fp == (FILE*)NULL) {
+		if (errno == ENOENT) {	/* ONLY if non-existent */
+			fp = fopen("tomenet.acc", "w+");
+			if (fp == (FILE*)NULL) {
+				KILL(c_acc, struct account);
+				return(NULL);
+			}
 			s_printf("Generated new account file\n");
 		}
-		else return(NULL);	/* failed */
+		else {
+			KILL(c_acc, struct account);
+			return(NULL);	/* failed */
+		}
 	}
-	while(!feof(fp)){
+	while (!feof(fp)) {
 		fread(c_acc, sizeof(struct account), 1, fp);
-		if(c_acc->flags & ACC_DELD) continue;
-		if(!strcmp(c_acc->name, name)){
+		if (c_acc->flags & ACC_DELD) continue;
+		if (!strcmp(c_acc->name, name)) {
 			int val;
-			if(pass==NULL)		/* direct name lookup */
-				val=0;
+			if (pass == NULL)	/* direct name lookup */
+				val = 0;
 			else
-				val=strcmp(c_acc->pass, t_crypt(pass, name));
-			if(!leavepass || pass!=NULL) memset((char *)c_acc->pass, 0, 20);
-			if(val){
+				val = strcmp(c_acc->pass, t_crypt(pass, name));
+			if (!leavepass || pass != NULL) memset((char *)c_acc->pass, 0, 20);
+			if (val) {
 				fclose(fp);
 				KILL(c_acc, struct account);
 				return(NULL);
@@ -148,20 +155,20 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 		}
 	}
 	/* New accounts always have pass */
-	if(pass==(char*)NULL){
+	if (pass == (char*)NULL){
 		KILL(c_acc, struct account);
 		fclose(fp);
 		return(NULL);
 	}
 
 	/* No account found. Create trial account */ 
-	c_acc->id=new_accid();
-	if(c_acc->id!=0L){
-		c_acc->flags=(ACC_TRIAL|ACC_NOSCORE);
+	c_acc->id = new_accid();
+	if (c_acc->id != 0L) {
+		c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
 		strncpy(c_acc->name, name, 29);
-		c_acc->name[29]='\0';
+		c_acc->name[29] = '\0';
 		strcpy(c_acc->pass, t_crypt(pass, name));
-		if(!(WriteAccount(c_acc, TRUE))){
+		if (!(WriteAccount(c_acc, TRUE))) {
 			KILL(c_acc, struct account);
 			fclose(fp);
 			return(NULL);
@@ -169,7 +176,9 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	}
 	memset((char *)c_acc->pass, 0, 20);
 	fclose(fp);
-	if(c_acc->id) return(c_acc);
+	if(c_acc->id) {
+		return(c_acc);
+	}
 	KILL(c_acc, struct account);
 	return(NULL);
 }
@@ -180,17 +189,21 @@ struct account *Admin_GetAccount(cptr name){
 	struct account *c_acc;
 
 	MAKE(c_acc, struct account);
-	if(c_acc==(struct account*)NULL) return(NULL);
-	fp=fopen("tomenet.acc", "r");
-	if(fp==(FILE*)NULL) return(NULL); /* cannot access account file */
-	while(!feof(fp)){
+	if(c_acc == (struct account*)NULL) return(NULL);
+	fp = fopen("tomenet.acc", "r");
+	if(fp == (FILE*)NULL) {
+		KILL(c_acc, struct account);
+		return(NULL); /* cannot access account file */
+	}
+	while (!feof(fp)) {
 		fread(c_acc, sizeof(struct account), 1, fp);
-		if(c_acc->flags & ACC_DELD) continue;
-		if(!strcmp(c_acc->name, name)){
+		if (c_acc->flags & ACC_DELD) continue;
+		if (!strcmp(c_acc->name, name)) {
 			fclose(fp);
 			return(c_acc);
 		}
 	}
+	KILL(c_acc, struct account);
 	return(NULL);
 }
 
@@ -236,7 +249,7 @@ bool check_account(char *accname, char *c_name){
 	hash_entry *ptr;
 	int i;
 
-	if((l_acc=GetAccount(accname, NULL, FALSE))){
+	if ((l_acc = GetAccount(accname, NULL, FALSE))) {
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		int *id_list, chars;
                 chars = player_id_list(&id_list, l_acc->id);
@@ -250,17 +263,20 @@ bool check_account(char *accname, char *c_name){
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
 #endif
 //s_printf("return FALSE\n");
+			if (chars) C_KILL(id_list, chars, int);
 			return(FALSE);
 		}
+		if (chars) C_KILL(id_list, chars, int);
 #endif
-		a_id=l_acc->id;
-		flags=l_acc->flags;
+
+		a_id = l_acc->id;
+		flags = l_acc->flags;
 		KILL(l_acc, struct account);
-		id=lookup_player_id(c_name);
-		ptr=lookup_player(id);
-		if(!ptr || ptr->account==a_id){
-			for(i=1; i<=NumPlayers; i++){
-				if(Players[i]->account==a_id && !(flags&ACC_MULTI) && strcmp(c_name, Players[i]->name))
+		id = lookup_player_id(c_name);
+		ptr = lookup_player(id);
+		if (!ptr || ptr->account == a_id) {
+			for(i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->account == a_id && !(flags & ACC_MULTI) && strcmp(c_name, Players[i]->name))
 					return(FALSE);
 			}
 			return(TRUE);
@@ -528,7 +544,7 @@ void account_check(int Ind){	/* Temporary Ind */
 		while (ptr)
 		{
 			/* Check this name */
-			if(!GetAccountID(ptr->account)){
+			if (!GetAccountID(ptr->account)) {
 				s_printf("Lost player: %s\n", ptr->name);
 				msg_format(Ind, "Lost player: %s", ptr->name);
 #if 0 /* del might not always be initialized! */
@@ -1033,13 +1049,17 @@ int guild_remove(int remover, cptr name){
 /*
  * Remove a person from a party.
  *
- * Removing the party owner destroys the party.
+ * Removing the party owner destroys the party. - Not anymore:
+ * Now removing will just promote someone else to owner, better for RPG partys! - C. Blue
  */
 int party_remove(int remover, cptr name)
 {
 	player_type *p_ptr;
 	player_type *q_ptr = Players[remover];
 	int party_id = q_ptr->party, Ind = 0;
+#ifdef RPG_SERVER
+	int i, j;
+#endif
 
 	/* Make sure this is the owner */
 	if (!streq(parties[party_id].owner, q_ptr->name) && !is_admin(q_ptr))
@@ -1075,6 +1095,7 @@ int party_remove(int remover, cptr name)
 		return FALSE;
 	}
 
+#ifndef RPG_SERVER
 	/* See if this is the owner we're deleting */
 	if (remover == Ind)
 	{
@@ -1083,6 +1104,30 @@ int party_remove(int remover, cptr name)
 
 	/* Keep the party, just lose a member */
 	else
+#else
+	if (remover == Ind)
+	{
+		for (i = 1; i <= NumPlayers; i++) {
+			if (is_admin(Players[i])) continue;
+			if (Players[i]->party == q_ptr->party && i != Ind) {
+				strcpy(parties[party_id].owner, Players[i]->name);
+				Send_party(i);
+				msg_print(i, "\377yYou are now the party owner!");
+				for (j = 1; j <= NumPlayers; j++)
+					if (Players[j]->party == Players[i]->party && j != i) {
+						Send_party(j);
+						msg_print(j, format("\377y%s is now the party owner.", Players[i]->name));
+					}
+				break;
+			}
+		}
+		/* no other player online who is in the same party and could overtake leadership? Then erase party! */
+		if (i > NumPlayers) {
+			del_party(party_id);
+			return TRUE;
+		}
+	}
+#endif
 	{
 		/* Lose a member */
 		parties[party_id].members--;
@@ -1104,7 +1149,6 @@ int party_remove(int remover, cptr name)
 		/* Resend info */
 		Send_party(Ind);
 	}
-
 	return TRUE;
 }
 
@@ -1682,7 +1726,11 @@ bool add_hostility(int Ind, cptr name)
 		msg_format(Ind, "\377oYou are now hostile toward %s.", q_ptr->name);
 
 		/* Warn if not blood bonded */
+#if 0
 		if (p_ptr->blood_bond != q_ptr->id)
+#else
+		if (!check_blood_bond(Ind, i))
+#endif
 		{
 			msg_format(Ind, "\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
 		}
@@ -2226,6 +2274,34 @@ byte lookup_player_mode(int id)
 	return -1L;
 }
 
+#ifdef AUCTION_SYSTEM
+/*
+ * Get the amount of gold the player has.
+ */
+s32b lookup_player_au(int id)
+{
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return ptr->au;
+
+	/* Not found */
+	return -1L;
+}
+
+/*
+ * Get the player's bank balance.
+ */
+s32b lookup_player_balance(int id)
+{
+	hash_entry *ptr;
+	if((ptr=lookup_player(id)))
+		return ptr->balance;
+
+	/* Not found */
+	return -1L;
+}
+#endif
+
 /*
  * Lookup a player's ID by name.  Return 0 if not found.
  */
@@ -2360,6 +2436,12 @@ void clockin(int Ind, int type){
 				case 4:
 					ptr->quest=p_ptr->quest_id;
 					break;
+#ifdef AUCTION_SYSTEM
+				case 5:
+					ptr->au = p_ptr->au;
+					ptr->balance = p_ptr->balance;
+					break;
+#endif
 			}
 			break;
 		}
@@ -2945,11 +3027,8 @@ void strip_true_arts_from_hashed_players(){
 	        for (i = 0; i < o_max; i++)
 	        {
 	                o_ptr = &o_list[i];
-	                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id) && !(
-                            (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-                            (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-                            (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-                            ))
+	                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id) &&
+                            !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 #if 1 /* set 0 to not change cur_num */
 	                    	    delete_object_idx(i, TRUE);
 #else

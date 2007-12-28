@@ -196,7 +196,7 @@ int monster_check_experience(int m_idx, bool silent)
 //	levels_gained += 1600 / (r_ptr->level + 10);
 	levels_gained += ((levels_gained - 100) * 57) / (r_ptr->level + 10);
 
-	/* calculate square root of the factor, to apply to dice & dice sides */
+	/* calculate square root of the factor, to apply to dice & dice sides - C. Blue */
 	tmp = levels_gained;
 	tmp *= 1000;
 	levels_gained_tmp = 1;
@@ -685,8 +685,12 @@ void wipe_m_list(struct worldpos *wpos)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos))
+		if (inarea(&m_ptr->wpos,wpos)) {
+#ifdef HALLOWEEN                                                                                                                                                       
+                        if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
+#endif                                                                                                                                                                 
 			delete_monster_idx(i, TRUE);
+		}
 	}
 
 	/* Compact the monster list */
@@ -696,13 +700,18 @@ void wipe_m_list_chance(struct worldpos *wpos, int chance)
 {
 	int i;
 
-	/* Delete all the monsters, except for target dummies (1101) */
+	/* Delete all the monsters, except for target dummies (1101), because those are
+	   usually in town, and this function is called periodically for town! */
 	for (i = m_max - 1; i >= 1; i--)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos) && magik(chance) && (m_ptr->r_idx != 1101))
+		if (inarea(&m_ptr->wpos,wpos) && magik(chance) && (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1102)) { /* hardcoded -_- */
+#ifdef HALLOWEEN
+			if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+#endif	
 			delete_monster_idx(i, TRUE);
+		}
 	}
 
 	/* Compact the monster list */
@@ -2228,7 +2237,9 @@ void update_mon(int m_idx, bool dist)
 				if (r_ptr->r_sights < MAX_SHORT) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't')
+				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				    /* Not in Bree (for Santa Claus) - C. Blue */
+	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 
@@ -2267,7 +2278,9 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->health_who == m_idx) p_ptr->redraw |= (PR_HEALTH);
 
 				/* Disturb on disappearance*/
-				if(!m_list[m_idx].special && r_ptr->d_char != 't')
+				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				    /* Not in Bree (for Santa Claus) - C. Blue */
+	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 		}
@@ -2283,7 +2296,9 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = TRUE;
 
 				/* Disturb on appearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't')
+				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				    /* Not in Bree (for Santa Claus) - C. Blue */
+	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 
 				/* well, is it the right place to be? */
@@ -2305,7 +2320,9 @@ void update_mon(int m_idx, bool dist)
 				p_ptr->mon_los[m_idx] = FALSE;
 
 				/* Disturb on disappearance */
-				if(!m_list[m_idx].special && r_ptr->d_char != 't')
+				if(!m_list[m_idx].special && r_ptr->d_char != 't' &&
+				    /* Not in Bree (for Santa Claus) - C. Blue */
+	                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
 			}
 		}
@@ -2451,6 +2468,7 @@ void update_player(int Ind)
 				if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
 					flag = FALSE;
 			}
+			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
 
 			/* hack -- dungeon masters are invisible */
 			if (q_ptr->admin_dm) flag = FALSE;
@@ -2617,6 +2635,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Require empty space */
 	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
 
+/* override all validity checks! (for summoning done by dungeon master) */
+if (!summon_override_check_all) {
+
 	/* require non-protected field. - C. Blue
 	    Note that there are two ways (technically) to protect a field:
 	    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
@@ -2637,6 +2658,8 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 
 	if(((!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10) || istown(wpos)) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
+} /* summon_override_check_all */
+
 	/* Paranoia */
 	if (!r_idx) return (FALSE);
 
@@ -2645,6 +2668,9 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 #endif
+
+/* override all validity checks! (for summoning done by dungeon master) */
+if (!summon_override_check_all) {
 
 	/* Special hack - bottom of NR is empty except for Zu-Aon */
 	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
@@ -2740,12 +2766,14 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 
 	/* Morgoth shouldn't spawn on NO_DESTROY levels,
 	   since his earthquakes are an important weapon! */
+#if 0 /* His quakes now override LF1_NO_DESTROY ! */
 	if ((r_idx == 862) && (getfloor(wpos)->flags1 & LF1_NO_DESTROY)) {
 #if DEBUG_LEVEL > 2
 		s_printf("Morgoth spawn prevented on NO_DESTROY level\n");
 #endif
 		return (FALSE);
 	}
+#endif
 
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
@@ -2838,6 +2866,8 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 #endif
 
+} /* summon_override_check_all */
+
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
 
@@ -2885,6 +2915,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 	else if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
 #endif	// 0
 
+/* override all validity checks! (for summoning done by dungeon master) */
+if (!summon_override_check_all) {
+
 	/* This usually shouldn't happen */
 	/* but can happen when monsters group */
 	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
@@ -2894,6 +2927,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 #endif	// DEBUG_LEVEL
 		return FALSE;
 	}
+
+} /* summon_override_check_all */
+
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 7\n");
 #endif
@@ -3044,6 +3080,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		monster_check_experience(c_ptr->m_idx, TRUE);
 	}
 #endif	// 0
+
 	if (getlevel(wpos) > (m_ptr->level + 7)) {
 	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
 	    m_ptr->exp = MONSTER_EXP(l);
@@ -3085,6 +3122,10 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	/* Success */
 	/* Report some very interesting monster creating: */
 	if (r_idx == 860) s_printf("Sauron was created on %d\n", getlevel(wpos));
+#ifdef ENABLE_DIVINE
+	if (r_idx == 1104) s_printf("Candlebearer was created on %d\n", getlevel(wpos));
+	if (r_idx == 1105) s_printf("Darkling was created on %d\n", getlevel(wpos));
+#endif
 	if (r_idx == 862) {
 		dun_level *l_ptr;
 		s_printf("Morgoth was created on %d\n", getlevel(wpos));
@@ -3092,6 +3133,11 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= LF1_NO_GHOST;
+#endif
+#ifdef MORGOTH_DANGEROUS_LEVEL
+		/* make it even harder? */
+//		l_ptr->flags1 |= LF1_NO_DESTROY;
+		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 #endif
 		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
 		if (watch_morgoth)
@@ -3105,7 +3151,16 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
 	if (r_idx == 1085) s_printf("Dor was created on %d\n", getlevel(wpos));
-	if (r_idx == 1097) s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
+	/* no easy escape from Zu-Aon besides resigning by recalling! */
+	if (r_idx == 1097) {
+		dun_level *l_ptr;
+		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
+		l_ptr = getfloor(wpos);
+		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
+	}
+
+summon_override_check_all = FALSE; /* reset admin summoning override flags */
+
 	return (TRUE);
 }
 
@@ -3262,14 +3317,14 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	int level=getlevel(wpos);
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
+	/* Do not allow breeders to spawn in the wilderness - the_sandman */
+	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
+
 	/* Place one monster, or fail */
 	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) return (FALSE);
 
 	/* Require the "group" flag */
 	if (!grp) return (TRUE);
-
-	/* Do not allow breeders to spawn in the wilderness - the_sandman */
-	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
 
 	/* Friend for certain monsters */
 	if (r_ptr->flags1 & RF1_FRIEND)
@@ -3354,9 +3409,55 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
 	int r_idx;
+#ifdef HALLOWEEN
+	int l = getlevel(wpos);
+#endif
 	struct dungeon_type *d_ptr;
 
 	d_ptr=getdungeon(wpos);
+
+
+#ifdef HALLOWEEN
+	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
+#ifndef RPG_SERVER
+	if (!great_pumpkin_timer && (l < 40) && (wpos->wz != 0)) {
+ #if 0
+		r_idx = 1086 + rand_int(2);
+ #else
+		r_idx = 1088;//3k HP, smallest version
+		if (magik(25)) r_idx = 1087; /* sometimes tougher */
+		if (l > 20) r_idx = 1087;//6k HP
+		if (magik(25)) r_idx = 1088; /* sometimes tougher */
+		if (l > 33) r_idx = 1088;//10k HP
+ #endif
+#else
+	if ((great_pumpkin_timer == 0) && (l < 50) && (wpos->wz != 0) &&
+	    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
+ #if 0
+		r_idx = 1086 + rand_int(2);
+ #else
+		r_idx = 1088;//3k HP, smallest version
+		if (magik(15)) r_idx = 1087; /* sometimes tougher */
+		if (l > 30) r_idx = 1087;//6k HP
+		if (magik(15)) r_idx = 1088; /* sometimes tougher */
+		if (l > 40) r_idx = 1088;//10k HP
+ #endif
+#endif
+		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
+//			great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
+			/* log */
+			s_printf("%s Generated Great Pumpkin on %d,%d,%d (lev %d)\n", showtime(), wpos->wx, wpos->wy, wpos->wz, l);
+			great_pumpkin_timer = -1; /* put generation on hold */
+			check_Pumpkin(); /* recall high-level players off this floor! */
+			return (TRUE);
+		}
+		/* oupsee */
+//		great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
+		return (FALSE);
+	}
+#endif
+
+
 	/* Specific filter - should be made more useful */
 	/* Ok, I'll see to that later	- Jir - */
 	 
@@ -3614,9 +3715,10 @@ static bool summon_specific_okay(int r_idx)
 
 		case SUMMON_HI_UNDEAD:
 		{
-			okay = ((r_ptr->d_char == 'L') ||
+			okay = (((r_ptr->d_char == 'L') ||
 				(r_ptr->d_char == 'V') ||
-				(r_ptr->d_char == 'W'));
+				(r_ptr->d_char == 'W')) &&
+				(r_ptr->level >= 45));
 			break;
 		}
 
@@ -3691,6 +3793,7 @@ static bool summon_specific_okay(int r_idx)
 		{
 			okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
                                 (r_ptr->d_char == 'U') &&
+				(r_ptr->level >= 49) &&
 			       !(r_ptr->flags1 & RF1_UNIQUE));
 			break;
 		}
@@ -3736,6 +3839,7 @@ static bool summon_specific_okay(int r_idx)
 			okay = (((r_ptr->d_char == 'L') ||
 			         (r_ptr->d_char == 'V') ||
 			         (r_ptr->d_char == 'W')) &&
+				 (r_ptr->level >= 45) &&
 			        !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		}
@@ -3842,6 +3946,19 @@ static bool summon_specific_okay(int r_idx)
 #endif
 #endif
 
+		case SUMMON_HI_MONSTER:
+		case SUMMON_HI_MONSTERS:
+		{
+			okay = (r_ptr->level >= 60);
+			break;
+		}
+
+		case SUMMON_HI_UNIQUE:
+		{
+			okay = ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->level >= 60));
+			break;
+		}
+
 	}
 
 	/* Result */
@@ -3924,8 +4041,21 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	/* XXX: Exception for Morgoth (so that he won't summon townies)
 	 * This fix presumes Morgie and Morgie only has level 100 */
 	
-	/* Ok, now let them summon what they can */
-	r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, 0);
+	for (i = 0; i < 10; i++) { /* try a couple of times */
+		/* Hack for RF0_S_HI_ flags */
+		if (type == SUMMON_HI_MONSTER || type == SUMMON_HI_MONSTERS || type == SUMMON_HI_UNIQUE) {
+			/* Ok, now let them summon what they can */
+			r_idx = get_mon_num(100 + 5, 0);
+			if (r_info[r_idx].level < 60) {
+				r_idx = 0; /* failure - see below */
+				continue;
+			}
+		} else {
+			/* Ok, now let them summon what they can */
+			r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, 0);
+		}
+		break;
+	}
 	
 	/* Don't allow uniques if escorts/friends (sidekicks) weren't allowed */
 	if (!allow_sidekicks && (r_info[r_idx].flags1 & RF1_UNIQUE)) return (FALSE);
@@ -4585,6 +4715,11 @@ int pick_ego_monster(int r_idx, int Level)
 
         /* No townspeople ego */
         if (!r_info[r_idx].level) return 0;
+	
+#ifdef HALLOWEEN
+	/* No Great Pumpkin ego */
+	if (r_idx == 1086 || r_idx == 1087 || r_idx == 1088) return 0;
+#endif
 
         /* First are we allowed to find an ego */
         if (!magik(MEGO_CHANCE)) return 0;

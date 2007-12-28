@@ -1,4 +1,4 @@
--- C. Blue admin functions. --
+- C. Blue admin functions. --
 ------------------------------
 
 -- Grants a player awareness of all items.
@@ -54,7 +54,7 @@ end
 function allrec()
     local p = 0
     for p = 1, NumPlayers do
-	if players(p).wpos.wz < 0 then
+	if players(p).wpos.wz ~= 0 then
 	    recall(p)
 	end
     end
@@ -147,34 +147,44 @@ end
 -- Displays status information about a player, for example to
 -- calculate the possible difficulty level of admin quests :).
 function status(name)
-    local p, r, k
+    local p, r, k, bspeed, rs, ks
     p = ind(name)
     r = players(p).body_monster
-    msg_print(Ind, "\255UStatus for "..name.." (Index "..p..", id "..players(p).id..")")
-    msg_print(Ind, "HP :  "..players(p).chp.." / "..players(p).mhp.."    SP :  "..players(p).csp.." / "..players(p).msp.."    San:  "..players(p).csane.." / "..players(p).msane)
-    msg_print(Ind, "AC :  "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
-    if players(p).r_killed[863] > 0 then
-	msg_print(Ind, "Spd:  "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   Killed Morgoth")
-    elseif players(p).r_killed[861] > 0 then
-	msg_print(Ind, "Spd:  "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   Killed Sauron")
-    else
-	msg_print(Ind, "Spd:  "..players(p).pspeed.."   MDLev: "..players(p).max_dlv)
-    end
-    msg_print(Ind, "ToH:  "..players(p).to_h.."   THM:  "..players(p).to_h_melee.."   THR:  "..players(p).to_h_ranged.."   *TMH*:  "..players(p).dis_to_h+players(p).to_h_melee)
-    msg_print(Ind, "ToD:  "..players(p).to_d.."   TDM:  "..players(p).to_d_melee.."   TDR:  "..players(p).to_d_ranged.."   *TMD*:  "..players(p).dis_to_d+players(p).to_d_melee)
-    msg_print(Ind, "BpR:  "..players(p).num_blow.."   SpR:  "..players(p).num_fire.."   CpR:  "..players(p).num_spell)
-    msg_print(Ind, "Au :  "..players(p).au.."   Bank:  "..players(p).balance)
-    if players(p).lev < 100 then
---        msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev] / 100 * players(p).expfact))
-        msg_print(Ind, "Exp:  "..players(p).exp.."   MEx:  "..players(p).max_exp.."   E2A:  "..(player_exp[players(p).lev]))
-    end
+
     if r > 0 then
 	k = players(p).r_killed[r + 1]
-	msg_print(Ind, "Body: "..r.." ("..lua_get_mon_name(r)..", level "..lua_get_mon_lev(r)..", killed: "..k..")")
+	rs = r.." ("..lua_get_mon_name(r)..", level "..lua_get_mon_lev(r)..", killed: "..k..")"
     else
-	msg_print(Ind, "Body: Normal form")
+	rs = "Normal form"
     end
-    msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned)
+    if players(p).r_killed[863] > 0 then
+	ks = "Killed Morgoth"
+    elseif players(p).r_killed[861] > 0 then
+	ks = "Killed Sauron"
+    else
+	ks = ""
+    end
+    
+    if players(p).fast > 0 then
+	bspeed = players(p).fast_mod
+    else
+	bspeed = 0
+    end
+
+    msg_print(Ind, "\255UStatus for "..players(p).name.." (Index "..p..", id "..players(p).id..")")
+    msg_print(Ind, "HP: "..players(p).chp.." / "..players(p).mhp.."    SP: "..players(p).csp.." / "..players(p).msp.."    San: "..players(p).csane.." / "..players(p).msane)
+    msg_print(Ind, "Base Spd: "..players(p).pspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
+    msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv)
+    msg_print(Ind, "Body: "..rs)
+    msg_print(Ind, "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
+    msg_print(Ind, "ToH: "..players(p).to_h.."   THM: "..players(p).to_h_melee.."   THR: "..players(p).to_h_ranged.."   *TMH*: "..players(p).dis_to_h+players(p).to_h_melee)
+    msg_print(Ind, "ToD: "..players(p).to_d.."   TDM: "..players(p).to_d_melee.."   TDR: "..players(p).to_d_ranged.."   *TMD*: "..players(p).dis_to_d+players(p).to_d_melee)
+    msg_print(Ind, "BpR: "..players(p).num_blow.."   SpR: "..players(p).num_fire.."   CpR: "..players(p).num_spell.."   Au : "..players(p).au.."   Bank:  "..players(p).balance)
+    if players(p).lev < 100 then
+--        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev] / 100 * players(p).expfact))
+        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
+    end
+    msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
 end
 
 -- Displays resistance/suspectibilities/immunities of a player
@@ -275,6 +285,8 @@ function vnc(name)
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
     players(p).esp_link_flags = 1 + 128
+    players(Ind).esp_link_flags = bor(players(Ind).esp_link_flags, 256)
+    players(p).redraw = bor(players(p).redraw, 67108864) -- 67108864 = PR_MAP
     msg_print(Ind, "Mind link established.")
 end
 
@@ -286,6 +298,8 @@ function vncoff(name)
     players(p).esp_link_type = 0
     players(p).esp_link_end = 0
     players(p).esp_link_flags = 0
+    players(Ind).esp_link_flags = band(players(Ind).esp_link_flags, bnot(256))
+    players(Ind).redraw = bor(players(Ind).redraw, 67108864)
     msg_print(Ind, "Mind link broken.")
 end
 
@@ -312,9 +326,32 @@ function prn(tolua_S)
     msg_print(Ind, tolua_S.."#")
 end
 
---quickly manipulate items
-function inv(tolua_S)
-    exec_lua(Ind, "players(Ind).inventory"..tolua_S)
+--quickly get own item
+function sginv(i, tolua_S)
+    exec_lua(Ind, "msg_print(Ind, players(Ind).inventory["..i.."]."..tolua_S.."..\"#\")")
+end
+--quickly manipulate own item
+function sinv(i, tolua_S)
+    exec_lua(Ind, "players(Ind).inventory["..i.."]."..tolua_S)
+end
+--quickly display own property
+function sgprop(tolua_S)
+    exec_lua(Ind, "msg_print(Ind, players(Ind)."..tolua_S.."..\"#\")")
+end
+--quickly get item
+function ginv(name, i, tolua_S)
+    p = ind(name)
+    exec_lua(Ind, "msg_print(Ind, players("..p..").inventory["..i.."]."..tolua_S.."..\"#\")")
+end
+--quickly manipulate item
+function inv(name, i, tolua_S)
+    p = ind(name)
+    exec_lua(Ind, "players("..p..").inventory["..i.."]."..tolua_S)
+end
+--quickly display property
+function gprop(name, tolua_S)
+    p = ind(name)
+    exec_lua(Ind, "msg_print(Ind, players("..p..")."..tolua_S.."..\"#\")")
 end
 
 --refills own spell points
@@ -388,8 +425,91 @@ function rsp(name, skill0)
     players(p).skill_points = players(p).skill_points + s
 end
 
+--erase ALL skills - for admins
+function admin_es(name)
+    local skill, p, s
+    p = ind(name)
+    for s = 1, MAX_SKILLS do
+        players(p).s_info[s].value = 0
+    end
+end
+
 --mhh
 function lsd(name)
     p = ind(name)
     players(p).image = players(p).image + 20
+end
+
+--show a skill
+function shows(name, skill)
+    p = ind(name)
+    msg_print(Ind, "val "..players(p).s_info[skill + 1].value.." mod "..players(p).s_info[skill + 1].mod)
+end
+--fix old chars for DUAL_WIELD / SKILL_DUAL
+function fixs(name)
+    p = ind(name)
+    players(p).s_info[78 + 1].value = 1000
+end
+--automatically fix old chars for DUAL_WIELD / SKILL_DUAL
+function fix_dual_wield(p)
+    if players(p).pclass == 1 then
+        players(p).s_info[78 + 1].value = 1000
+    end
+    if players(p).pclass == 4 then
+        players(p).s_info[78 + 1].value = 1000
+    end
+    if players(p).pclass == 8 then
+        players(p).s_info[78 + 1].value = 1000
+    end
+end
+--automatically fix old chars for ENABLE_STANCES / SKILL_STANCE
+function fix_stance(p)
+    local l
+    l = players(p).max_lev
+    l = l * 1000
+    if l > 50000 then
+	l = 50000
+    end
+    if players(p).pclass == 1 then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == 5 then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == 7 then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == 8 then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+end
+--check whether player has a fraction of dodge skill
+function hasdodge(p)
+    i = ind(p)
+    --has dodge?
+    if players(p).s_info[42+1].value > 0 then
+	--but has no MA?
+        if players(p).s_info[37+1].value == 0 then
+	    --got it from interception then?
+            if players(p).s_info[41+1].value > 0 then
+		--not a new char?
+		if players(p).lev > 1 then
+		    lua_s_print("DODGE_FRACTION: "..p.."\n")
+		end
+	    end
+	end
+    end
+end
+--get rid of rogue_heavy_armor warnings if player didn't intend to skill dodging
+--by just zeroing the remaining dodging skill value
+function ddodge(p)
+    players(p).s_info[42+1].value = 0
 end

@@ -590,11 +590,9 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) && !(
-		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-		    )) total_number++;
+		if (true_artifact_p(o_ptr) &&
+		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+			total_number++;
 	}
 
 	/* Tell the player what's going on.. */
@@ -604,11 +602,8 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) && !(
-		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-		    ))
+		if (true_artifact_p(o_ptr) &&
+		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 	        {
 	                //char  o_name[160];
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
@@ -633,11 +628,9 @@ void lua_check_player_for_true_arts(int Ind) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) && !(
-		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-		    )) total_number++;
+		if (true_artifact_p(o_ptr) &&
+		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+			total_number++;
 	}
 /*	if (total_number) s_printf("True-art scan: %s carries %d.\n", p_ptr->name, total_number);*/
 }
@@ -661,21 +654,15 @@ void lua_strip_true_arts_from_floors(void) {
 			/* check items on the world's floors */
 #if 0
 			if((zcave=getcave(&o_ptr->wpos)) &&
-			    true_artifact_p(o_ptr) && !(
-			    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-			    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-			    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-			    ))
+			    true_artifact_p(o_ptr) &&
+			    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 			{
 				delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
                                 dcnt++;
 			}
 #else
-			if(true_artifact_p(o_ptr) && !(
-			    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-			    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-			    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-			    ))
+			if(true_artifact_p(o_ptr) &&
+			    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 			{
 				delete_object_idx(i, TRUE);
                                 dcnt++;
@@ -683,7 +670,7 @@ void lua_strip_true_arts_from_floors(void) {
 #endif
 		}
 	}
-	s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
+	s_printf("Scanned %d objects. Removed %d artefacts.\n", cnt, dcnt);
 }
 
 /* Return a monster level */
@@ -752,7 +739,7 @@ void lua_fix_spellbooks(int spell, int mod)
 	for (i = 0; i < o_max; i++)
 	{
 		o_ptr = &o_list[i];
-		if (o_ptr->tval == 111 && o_ptr->sval == 255 && o_ptr->pval >= spell)
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell)
 		{
 			o_ptr->pval += mod;
 		}
@@ -769,13 +756,9 @@ void lua_arts_fix(int Ind) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) && !(
-		    (o_ptr->tval == TV_HAFTED && o_ptr->sval == SV_GROND) || /* Mighty Hammer Grond */
-		    (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_MORGOTH) || /* Massive Iron Crown of Morgoth */
-		    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH) /* Ring of Phasing */
-		    )) {
+		if (true_artifact_p(o_ptr) &&
+		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 			handle_art_i(o_ptr->name1);
-		}
 	}
 }
 
@@ -789,11 +772,11 @@ void lua_get_pgestat(int Ind, int n) {
 }
 
 void lua_start_global_event(int Ind, int evtype, char *parm) {
-	int err = start_global_event(Ind, evtype, parm);
+	start_global_event(Ind, evtype, parm);
 }
 
 /* Fix items that were changed on updating the server. If Ind == 0 -> scan world/houses - C. Blue */
-void lua_apply_item_changes(int Ind) {
+void lua_apply_item_changes(int Ind, int changes) {
         int i, j;
 	object_type *o_ptr;
 	house_type *h_ptr;
@@ -807,7 +790,7 @@ void lua_apply_item_changes(int Ind) {
 			for (i = 0; i < h_ptr->stock_num; i++){
 				o_ptr = &h_ptr->stock[i];
 		                if(!o_ptr->k_idx) continue;
-				lua_apply_item_changes_aux(o_ptr);
+				lua_apply_item_changes_aux(o_ptr, changes);
 			}
 		}
 		s_printf("LUA_APPLY_ITEM_CHANGES done to traditional houses.\n");
@@ -816,7 +799,7 @@ void lua_apply_item_changes(int Ind) {
 	        for(i = 0; i < o_max; i++) {
     	        	o_ptr = &o_list[i];
         	        if(!o_ptr->k_idx) continue;
-			lua_apply_item_changes_aux(o_ptr);
+			lua_apply_item_changes_aux(o_ptr, changes);
     		}
 		s_printf("LUA_APPLY_ITEM_CHANGES done to world/mang-style houses.\n");
 	} else {
@@ -824,13 +807,13 @@ void lua_apply_item_changes(int Ind) {
 		for (i = 0; i < INVEN_TOTAL; i++){
 			o_ptr = &Players[Ind]->inventory[i];
     		        if(!o_ptr->k_idx) continue;
-			lua_apply_item_changes_aux(o_ptr);
+			lua_apply_item_changes_aux(o_ptr, changes);
 		}
 		s_printf("LUA_APPLY_ITEM_CHANGES done to player %s\n", Players[Ind]->name);
 	}
 }
-void lua_apply_item_changes_aux(object_type *o_ptr) {
-#if 1
+void lua_apply_item_changes_aux(object_type *o_ptr, int changes) {
+#if 0
 	/* swap *healing* and healing */
 	if (o_ptr->tval == TV_POTION) {
 		if (o_ptr->sval == SV_POTION_HEALING) o_ptr->sval = SV_POTION_STAR_HEALING;
@@ -840,4 +823,77 @@ void lua_apply_item_changes_aux(object_type *o_ptr) {
 		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 	}
 #endif
+	switch (changes) {
+	case 1:
+		/* remove stone skin book */
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval > 17) o_ptr->pval--;
+		break;
+	case 2: /* more than 254 artifacts now!! */
+		if (o_ptr->name1 == 255) o_ptr->name1 = ART_RANDART;
+		break;
+	case 3:
+		/* add vermin control book */
+		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
+		    o_ptr->pval >= exec_lua(0, "return(VERMINCONTROL)")) o_ptr->pval++;
+		break;
+	}
+}
+
+/* sets LFx_ flags on the dungeon master's floor to specific values */
+void lua_set_floor_flags(int Ind, u32b flags) {
+	getfloor(&Players[Ind]->wpos)->flags1 = flags;
+}
+
+s32b lua_get_skill_mod(int Ind, int i) {
+	s32b value = 0, mod = 0;
+	player_type *p_ptr = Players[Ind];
+	compute_skills(p_ptr, &value, &mod, i); 
+	return mod;
+}
+
+s32b lua_get_skill_value(int Ind, int i) {
+	s32b value = 0, mod = 0;
+	player_type *p_ptr = Players[Ind];
+	compute_skills(p_ptr, &value, &mod, i); 
+	return value; 
+}
+
+/* fix dual-wield slot position change */
+void lua_fix_equip_slots(int Ind) {
+	int i;
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		if (p_ptr->inventory[i].k_idx &&
+		    wield_slot(Ind, &p_ptr->inventory[i]) != i &&
+		    !(i == INVEN_ARM && wield_slot(Ind, &p_ptr->inventory[i]) == INVEN_WIELD)) {
+
+			/* Hack - wield_slot always returns INVEN_LEFT for rings because they're already being worn
+			 * This prevents the ring in the right hand from being taken off
+			 * - mikaelh
+			 */
+			if (i == INVEN_RIGHT && p_ptr->inventory[i].tval == TV_RING) continue;
+
+		    	bypass_inscrption = TRUE;
+			inven_takeoff(Ind, i, 255);
+	}
+	bypass_inscrption = FALSE;
+
+	/* excise bugged zero-items */
+	/* (same as in do_cmd_refresh) */
+        /* Hack -- fix the inventory count */
+        p_ptr->inven_cnt = 0;
+        for (i = 0; i < INVEN_PACK; i++)
+        {
+                o_ptr = &p_ptr->inventory[i];
+                /* Skip empty items */
+                if (!o_ptr->k_idx || !o_ptr->tval) {
+	        	/* hack - make sure the item is really erased - had some bugs there
+		           since some code parts use k_idx, and some tval, to kill/test items - C. Blue */
+			invwipe(o_ptr);
+			continue;
+		}
+		p_ptr->inven_cnt++;
+	}
 }

@@ -13,6 +13,8 @@ static int init = FALSE;
 static int print_to_file = FALSE;
 static FILE *fpc = NULL;
 static int initc = FALSE;
+static FILE *fpp = NULL;
+static int initp = FALSE;
 
 /* s_print_only_to_file 
  * Controls if we should only print to file
@@ -161,6 +163,30 @@ extern int c_printf(char *str, ...)
 
 	/* KLJ -- Flush the log so that people can look at it while the server is running */
 	fflush(fpc);
+
+	return(TRUE);
+}
+
+/* Log amount of players logged on, to generate a "traffic chart" :) - C. Blue */
+extern int p_printf(char *str, ...)
+{
+        char    path[MAX_PATH_LENGTH];
+        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "traffic.log");
+
+	va_list va;
+
+	if(initc == FALSE)   /* in case we don't start her up properly */
+	{
+		fpp = fopen(path,"a+");
+		initp = TRUE;
+	}
+
+	va_start(va, str);
+	vfprintf(fpp,str,va);
+	va_end(va);
+
+	/* KLJ -- Flush the log so that people can look at it while the server is running */
+	fflush(fpp);
 
 	return(TRUE);
 }

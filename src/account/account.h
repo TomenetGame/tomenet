@@ -1,4 +1,3 @@
-
 /* account flags */
 #define ACC_TRIAL 0x0001	/* Account is awaiting validation */
 #define ACC_ADMIN 0x0002	/* Account members are admins */

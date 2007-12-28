@@ -131,12 +131,14 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				for(i=1; i<=NumPlayers; i++){
-					if(Players[i]->conn!=NOT_CONNECTED){
-						/* lame method just now */
-						if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
-								continue;
-						msg_print(i, wpk->d.chat.ctxt);
+				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(wpk->d.chat.ctxt, "\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
+					for(i=1; i<=NumPlayers; i++){
+						if(Players[i]->conn!=NOT_CONNECTED){
+							/* lame method just now */
+							if(world_check_ignore(i, wpk->d.chat.id, wpk->serverid))
+									continue;
+							msg_print(i, wpk->d.chat.ctxt);
+						}
 					}
 				}
 				break;
@@ -243,7 +245,8 @@ void world_remote_players(FILE *fff){
 			slp=slp->next;
 		}
 		
-		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
+//		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
+		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
 		lp=lp->next;
 	}
 }
@@ -302,7 +305,8 @@ void add_rplayer(struct wpacket *wpk){
 	lp=rpmlist;
 	while(lp){
 		c_pl=(struct rplist*)lp->data;
-		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
+//		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
+		if(c_pl->server==wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))){
 			found=1;
 			break;
 		}

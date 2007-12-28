@@ -18,6 +18,9 @@
 #define MAX_VAMPIRIC_DRAIN 50	/* was 25 - note: this counts per turn, not per blow */
 #define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
 
+/* Reduce damage in PvP by this factor */
+#define PVP_MELEE_DAM_REDUCTION 3
+
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
  */
@@ -82,7 +85,7 @@ bool test_hit_fire(int chance, int ac, int vis)
  *
  * Note -- Always miss 5%, always hit 5%, otherwise random.
  */
-bool test_hit_norm(int chance, int ac, int vis)
+bool test_hit_melee(int chance, int ac, int vis)
 {
 	int k;
 
@@ -113,9 +116,12 @@ bool test_hit_norm(int chance, int ac, int vis)
  */
 s16b critical_shot(int Ind, int weight, int plus, int dam)
 {
-//	player_type *p_ptr = Players[Ind];
-
+	player_type *p_ptr = Players[Ind];
 	int i, k;
+//	int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
+//	if xtra_crit > 50 cap
+//	xtra_crit = 65 - (975 / (xtra_crit + 15));
+	
 
 	/* Extract "shot" power */
 	if (Ind > 0)
@@ -135,7 +141,6 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 		
 		if (Ind > 0)
 		{
-			player_type *p_ptr = Players[Ind];
 			k += get_skill_scale(p_ptr, SKILL_ARCHERY, 100) + randint(600 - (12000 / (p_ptr->xtra_crit + 20)));
 		}
 
@@ -176,7 +181,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
  *
  * Factor in weapon weight, total plusses, player level.
  */
-s16b critical_norm(int Ind, int weight, int plus, int dam, bool allow_skill_crit)
+s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -430,14 +435,16 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL) &&
+		    (i != INVEN_ARM || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* dual-wielders */
+			f1 |= ef1;
 
 		/* Add bow branding on correct ammo types */
 		if(i==INVEN_BOW && e_ptr->tval==TV_BOW){
 			if(( (e_ptr->sval==SV_SHORT_BOW || e_ptr->sval==SV_LONG_BOW) && o_ptr->tval==TV_ARROW) ||
 			   ( (e_ptr->sval==SV_LIGHT_XBOW || e_ptr->sval==SV_HEAVY_XBOW) && o_ptr->tval==TV_BOLT) ||
 			   (e_ptr->sval==SV_SLING && o_ptr->tval==TV_SHOT))
-			   f1|=ef1;
+				f1|=ef1;
 		}
 	}
 
@@ -447,7 +454,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
-		if (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->brand) {
+		if ((p_ptr->inventory[INVEN_WIELD].k_idx || 
+		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) && /* dual-wield */
+		    p_ptr->brand) {
 			switch (p_ptr->brand_t)
 			{
 				case BRAND_ELEC:
@@ -631,8 +640,11 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			}
 
 			/* Slay Evil */
-			if (((f1 & TR1_SLAY_EVIL) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 50)) &&
-			    (r_ptr->flags3 & RF3_EVIL))
+			if (((f1 & TR1_SLAY_EVIL) || (get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
+#ifdef ENABLE_DIVINE
+				|| (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity&DIVINE_ANGEL) && p_ptr->lev >= 50)
+#endif 
+				) && (r_ptr->flags3 & RF3_EVIL))
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
 
@@ -1031,7 +1043,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
 		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL)) f1 |= ef1;
+		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL) &&
+		    (i != INVEN_ARM || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* dual-wielders */
+			f1 |= ef1;
 	}
 
 #if 1 /* for debugging only, so far: */
@@ -1489,10 +1503,19 @@ void carry(int Ind, int pickup, int confirm)
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
+
+	/* moved the object_felt_p() code downwards */
+
+
 /* TEMPORARY ANTI-CHEEZE HACKS */
 if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
 	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
 	determine_level_req(70, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
+	s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+	determine_level_req(80, o_ptr);
 	s_printf("%d.\n", o_ptr->level);
 }
 if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
@@ -1504,12 +1527,48 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 	s_printf("HACK-STORMBRINGER.\n");
 	o_ptr->level = 0;
 }
+/* Fix high quality runes levels */
+if (o_ptr->tval == TV_RUNE1) {
+	s_printf("HACK-RUNE.\n");
+	switch (o_ptr->sval) {
+		case SV_RUNE1_CLOUD:
+			o_ptr->level=35;
+			break;
+		default:
+			break;
+	} 
+}
+if (o_ptr->tval == TV_RUNE2) {
+	s_printf("HACK-RUNE.\n");
+	switch (o_ptr->sval) {
+		case SV_RUNE2_STONE:
+			o_ptr->level=35;
+			break;
+		case SV_RUNE2_ARMAGEDDON:
+			o_ptr->level=40;
+			break;
+		default:
+			break;
+	} 
+}
 
 	/* Pick up gold */
 	if (o_ptr->tval == TV_GOLD)
 	{
 		/* Disturb */
 		disturb(Ind, 0, 0);
+
+		/* hack for cloaking: since picking up anything breaks it,
+		   we don't pickup gold except if the player really wants to */
+		if (p_ptr->cloaked == 1 && !pickup) {
+			if (p_ptr->blind || no_lite(Ind))
+				msg_format(Ind, "You feel %s%s here.", o_name, 
+						o_ptr->next_o_idx ? " on a pile" : "");
+			else msg_format(Ind, "You see %s%s.", o_name,
+						o_ptr->next_o_idx ? " on a pile" : "");
+			Send_floor(Ind, o_ptr->tval);
+			return;
+		}
 
 		if (p_ptr->inval && o_ptr->owner && p_ptr->id != o_ptr->owner)
 		{
@@ -1596,10 +1655,27 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 		/* Describe the object */
 		if (!pickup && !force_pickup)
 		{
+			char pseudoid[13];
+			strcpy(pseudoid, "");
+			/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
+			   Note: currently all objects for which that is true are 'magic', hence we only
+			   use object_value_auxX_MAGIC() below. */
+			if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr) && object_felt_p(Ind, o_ptr)) {
+				if (!object_felt_heavy_p(Ind, o_ptr)) {
+					/* only show pseudoid if its current inscription doesn't already tell us! */
+					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux1_magic(o_ptr)))
+						sprintf(pseudoid, " {%s}", value_check_aux1_magic(o_ptr));
+				} else {
+					/* only show pseudoid if its current inscription doesn't already tell us! */
+					if (!o_ptr->note || strcmp(quark_str(o_ptr->note), value_check_aux2_magic(o_ptr)))
+						sprintf(pseudoid, " {%s}", value_check_aux2_magic(o_ptr));
+				}
+			}
+
 			if (p_ptr->blind || no_lite(Ind))
-				msg_format(Ind, "You feel %s%s here.", o_name, 
+				msg_format(Ind, "You feel %s%s%s here.", o_name, pseudoid,
 						o_ptr->next_o_idx ? " on a pile" : "");
-			else msg_format(Ind, "You see %s%s.", o_name,
+			else msg_format(Ind, "You see %s%s%s.", o_name, pseudoid,
 						o_ptr->next_o_idx ? " on a pile" : "");
 			Send_floor(Ind, o_ptr->tval);
 			return;
@@ -1615,8 +1691,10 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 		    (o_ptr->owner) &&
 		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
-			if (o_ptr->tval == TV_SCROLL && o_ptr->sval== SV_SCROLL_WORD_OF_RECALL) {
-				o_ptr->number = 1;
+			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
+			    (o_ptr->tval == TV_FOOD)) {
+//				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
@@ -1630,6 +1708,9 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 				}
 		        /* exception for amulet of the highlands for tournaments */
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
+				o_ptr->owner_mode = p_ptr->mode;
+			// the one with esp
+    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
 				o_ptr->owner_mode = p_ptr->mode;
 			} else {
 				msg_print(Ind, "You cannot take items of everlasting players.");
@@ -1640,8 +1721,10 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 		    (o_ptr->owner) &&
 		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
-			if (o_ptr->tval == TV_SCROLL && o_ptr->sval== SV_SCROLL_WORD_OF_RECALL) {
-				o_ptr->number = 1;
+			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
+			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
+			    (o_ptr->tval == TV_FOOD)) {
+//				o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
 //					o_ptr->owner = p_ptr->id;
@@ -1656,15 +1739,21 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 		        /* exception for amulet of the highlands for tournaments */
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
 				o_ptr->owner_mode = p_ptr->mode;
+			// the one with esp
+    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
+				o_ptr->owner_mode = p_ptr->mode;
 			} else {
 				msg_print(Ind, "You cannot take items of non-everlasting players.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
 
-#ifdef RPG_SERVER
+/*#ifdef RPG_SERVER -- let's do this also for normal server */
+#if 1
 		/* Turn level 0 food into level 1 food - mikaelh */
-		if (o_ptr->owner != p_ptr->id && o_ptr->level == 0 && o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD)
+		if (o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
+		    ((o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
+		    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER)))
 		{
 			o_ptr->level = 1;
 			o_ptr->discount = 100;
@@ -1689,6 +1778,11 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 
 		}
 #endif
+		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
+		    && !p_ptr->total_winner) { /* <- added this just for testing when admin char sets .total_winner=1 */
+			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+			return;
+		}
 #if 1
 		/* Try to add to the quiver */
 		if (object_similar(Ind, o_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0))
@@ -1848,10 +1942,10 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 					o_ptr->owner = p_ptr->id;
 					o_ptr->owner_mode = p_ptr->mode;
 #if CHEEZELOG_LEVEL > 2
-					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d:\n  %s\n",
-									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
-					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d:\n  %s\n",
-									    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
+					if (true_artifact_p(o_ptr)) s_printf("Artifact %d found by %s(lv %d) at %d,%d,%d: %s\n",
+									    o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
+					else if (o_ptr->name1 == ART_RANDART) s_printf("Randart found by %s(lv %d) at %d,%d,%d: %s\n",
+									    p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
 #endif	// CHEEZELOG_LEVEL
 				}
 
@@ -1891,17 +1985,9 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 
 				can_use(Ind, o_ptr);
 
-				/* Carry the item */
-				o_ptr->marked = 0;
-				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-				slot = inven_carry(Ind, o_ptr);
-
-				/* Get the item again */
-				o_ptr = &(p_ptr->inventory[slot]);
-
 				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
  				 * Check that we don't know the item and can read a scroll - mikaelh */
-				if (!object_known_p(Ind, o_ptr)) {
+				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) { /* was just object_known_p */
 					int index;
 					for (index = 0; index < INVEN_PACK; index++) {
 						/* Check if the player does want this feature (!X - for now :) ) */
@@ -2038,6 +2124,15 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 						}
 					} 
 				}
+
+				/* Carry the item */
+				slot = inven_carry(Ind, o_ptr);
+
+				/* Get the item again */
+				o_ptr = &(p_ptr->inventory[slot]);
+				o_ptr->marked = 0;
+				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+
 #if 0
 				if (!o_ptr->level)
 				{
@@ -2049,11 +2144,39 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
-				o_ptr->marked = 0;
-				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
-				/* Message */
-				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
+				   Note: currently all objects for which that is true are 'magic', hence we only
+				   use object_value_auxX_MAGIC() below. Note that if we add an item to an already
+				   felt item in our inventory, the combined items will have ID_SENSE set of course,
+				   so we won't get another "remember" message, just as it makes sense :) - C. Blue */
+				if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr)
+				    && !(o_ptr->ident & ID_SENSE) && object_felt_p(Ind, o_ptr)) {
+					/* We have "felt" this kind of object already before */
+				        o_ptr->ident |= (ID_SENSE);
+					if (!object_felt_heavy_p(Ind, o_ptr)) {
+						/* at least give a notice */
+						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+						    o_name, index_to_label(slot), ((o_ptr->number == 1) ? "was" : "were"), value_check_aux1_magic(o_ptr));
+						/* otherwise inscribe it textually */
+						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+					} else {
+						/* at least give a notice */
+						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+						    o_name, index_to_label(slot), ((o_ptr->number == 1) ? "was" : "were"), value_check_aux2_magic(o_ptr));
+						/* otherwise inscribe it textually */
+						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+					}
+#if 0					
+					/* Combine / Reorder the pack (later) */
+			                p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+			                /* Window stuff */
+			                p_ptr->window |= (PW_INVEN | PW_EQUIP);
+#endif
+				} else {
+					/* Just standard message */
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				}
 
 				/* guild key? */
 				if(o_ptr->tval==TV_KEY && o_ptr->sval==2){
@@ -2088,6 +2211,7 @@ if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 
 		equip_damage(Ind, GF_WATER);
 	}
 
+	break_cloaking(Ind);
 }
 
 #if 0
@@ -2180,9 +2304,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	int num = 0, k, bonus, chance;
 	player_type *q_ptr;
 
-	object_type *o_ptr;
+	object_type *o_ptr = NULL;
 
-	char p_name[80], brand_msg[80];
+	char p_name[80], brand_msg[80] = { '\0' };
 
 	bool do_quake = FALSE;
 
@@ -2241,24 +2365,6 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
 	}
-	if (cfg.use_pk_rules == PK_RULES_DECLARE)
-	{
-		if(!(q_ptr->pkill & PKILL_KILLABLE)){
-			char string[30];
-			snprintf(string, 30, "attacking %s", q_ptr->name);
-			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
-			if(!imprison(Ind, 500, string)){
-				/* This wrath can be too much */
-				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
-				/* It's prison here :) */
-				msg_print(Ind, "{yYou feel yourself bound hand and foot!");
-				set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
-				return;
-			}
-			else return;
-		}
-	}
-
 	/* Hack -- divided turn for auto-retaliator */
 	if (!old)
 	{
@@ -2283,24 +2389,44 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		/* Done */
 		return;
 	}
+	
+	break_cloaking(Ind);
 
-	/* Access the weapon */
-	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
-
-	/* Calculate the "attack quality" */
-	bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
-	chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
+	if (cfg.use_pk_rules == PK_RULES_DECLARE)
+	{
+		if(!(q_ptr->pkill & PKILL_KILLABLE)){
+			char string[30];
+			snprintf(string, 30, "attacking %s", q_ptr->name);
+			s_printf("%s attacked defenceless %s\n", p_ptr->name, q_ptr->name);
+			if(!imprison(Ind, 500, string)){
+				/* This wrath can be too much */
+				//			take_hit(Ind, randint(p_ptr->lev*30), "wrath of the Gods", 0);
+				/* It's prison here :) */
+				msg_print(Ind, "{yYou feel yourself bound hand and foot!");
+				set_paralyzed(Ind, p_ptr->paralyzed + rand_int(15) + 15);
+				return;
+			}
+			else return;
+		}
+	}
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow)
 	{
-		/* Test for hit */
-		if (test_hit_norm(chance, q_ptr->ac + q_ptr->to_a, 1))
-		{
-			/* Sound */
-			sound(Ind, SOUND_HIT);
+		/* Access the weapon */
+		o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
+		if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50))
+			o_ptr = &(p_ptr->inventory[INVEN_ARM]); /* dual-wield! */
 
-#if 1 //SKILL_DODGE works in pvp? ^_^" 
+		/* Calculate the "attack quality" */
+		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
+		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
+
+		/* Test for hit */
+		if (test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1))
+		{
+#ifndef NEW_DODGING
+ #if 1 /*SKILL_DODGE works in pvp? ^_^" */
 			/* 20 dodge vs lvl 20 => 22% max chance
 			 * 30 dodge vs lvl 30 => 33% max chance
 			 * 45 dodge vs lvl 50 => 40% max chance
@@ -2311,14 +2437,51 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			 * 50 dodge vs lvl 70 => 17% max chance
 			 * ---- Level 79+ melee hits are not dodgable ----
 			 */
-			int dodge_chance = q_ptr->dodge_chance - p_ptr->lev*19/10;
+			int dodge_chance = q_ptr->dodge_level - p_ptr->lev*19/10;
 			if (dodge_chance > DODGE_MAX_CHANCE) dodge_chance = DODGE_MAX_CHANCE;
 			if ((dodge_chance > 0) && magik(dodge_chance)) {
 				msg_format(Ind, "%s dodges your attack!", p_name);
 				msg_format(0 - c_ptr->m_idx, "You dodge %s's attack!", p_ptr->name); 
 				continue; 
 			}
+ #endif
+#else /* :-o */
+			if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
+				msg_format(Ind, "%s dodges your attack!", p_name);
+				msg_format(0 - c_ptr->m_idx, "You dodge %s's attack!", p_ptr->name); 
+				continue; 
+			}
 #endif
+
+			/* Sound */
+			sound(Ind, SOUND_HIT);
+
+#ifdef USE_BLOCKING
+			/* Parry/Block - belongs to new-NR-viability changes */
+			/* choose whether to attempt to block or to parry (can't do both at once),
+			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
+			   has been left out, since if you want max block, you'll have to take off your weapon!) */
+			if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
+				if (magik(q_ptr->shield_deflect + 15)) { /* boost for PvP! */
+					msg_format(Ind, "%s blocks your attack!", p_name);
+					msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
+					continue; 
+				}
+			}
+#endif
+#ifdef USE_PARRYING
+			if (q_ptr->weapon_parry) {
+				if (magik(q_ptr->weapon_parry +
+				     /* boost for PvP!:  Note: No need to check second hand, because 2h cannot be dual-wielded.
+				        this implies that 2h-weapons always go into INVEN_WIELD though. */
+				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10)) {
+					msg_format(Ind, "%s parries your attack!", p_name);
+					msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
+					continue; 
+				}
+			}
+#endif
+
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
@@ -2330,8 +2493,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = p_ptr->lev;
 			*/
 				//k = p_ptr->lev * (p_ptr->lev + 50) / 50;
-#if 1 // DGDGDG -- monks are no more
-//			if (p_ptr->pclass == CLASS_MONK)
+#if 1
 			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
 					&& !p_ptr->inventory[INVEN_ARM].k_idx
 					&& !p_ptr->inventory[INVEN_BOW].k_idx)
@@ -2389,7 +2551,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
-				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -2405,7 +2567,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				{
 					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10))
 					{
-						msg_format(Ind, "\377o%^s is stunned.", q_ptr->name);
+						msg_format(Ind, "\377y%^s is stunned.", q_ptr->name);
 
 						set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 					}
@@ -2415,6 +2577,31 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
+#ifdef ENABLE_STANCES
+				/* apply stun from offensive combat stance */
+				if (p_ptr->combat_stance == 2) {
+					int stun_effect, resist_stun;
+
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]]) + 1;
+					stun_effect /= 2;
+
+					resist_stun = adj_con_fix[q_ptr->stat_cur[A_CON]]; /* 0..9 */
+					if (q_ptr->free_act) resist_stun += 3;
+					resist_stun += 6 - 300 / (50 + q_ptr->ac + q_ptr->to_a); /* 0..5 */
+					resist_stun -= adj_con_fix[p_ptr->stat_cur[A_DEX]];
+					if (resist_stun < 0) resist_stun = 0; /* 0..17 (usually 8 vs fighters) */
+
+					switch(p_ptr->combat_stance_power) {
+					case 0: if (!magik(20 - resist_stun * 2)) stun_effect = 0; break;
+					case 1: if (!magik(30 - resist_stun * 2)) stun_effect = 0; break;
+					case 2: if (!magik(40 - resist_stun * 2)) stun_effect = 0; break;
+					case 3: if (!magik(50 - resist_stun * 2)) stun_effect = 0; break;
+					}
+					msg_format(Ind, "\377y%^s is stunned.", q_ptr->name);
+					set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
+				}
+#endif
+
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				if ((p_ptr->impact || (k_info[o_ptr->k_idx].flags5 & TR5_IMPACT)) &&
 				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
@@ -2424,7 +2611,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100)));
+				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor));
 			}
 			/* handle bare fists/bat/ghost */
 			else
@@ -2436,13 +2623,13 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
 			
 			/* factor in AC */
-			k -= (k * (((q_ptr->ac + q_ptr->to_a) < 150) ? (q_ptr->ac + q_ptr->to_a) : 150) / 250);
-			
+			k -= (k * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
+
 			/* No negative damage */
 			if (k < 0) k = 0;
 
 			/* XXX Reduce damage by 1/3 */
-			k = (k + 2) / 3;
+			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
 			/* Damage */
 			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK ||
@@ -2666,7 +2853,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				else
 				{
 					msg_format(Ind, "%^s appears confused.", p_name);
-					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 10 + rand_int(get_skill(p_ptr, SKILL_COMBAT)) / 5);
+					set_confused(0 - c_ptr->m_idx, q_ptr->confused + 3 + rand_int(2 + get_skill(p_ptr, SKILL_COMBAT) / 5));
 				}
 			}
 
@@ -2708,7 +2895,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
 
 			/* Fruit bats get life stealing */
-			if (p_ptr->fruit_bat && !p_ptr->body_monster)
+			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster)
 			{
 				int leech;
 				
@@ -2759,22 +2946,28 @@ static void py_attack_player(int Ind, int y, int x, bool old)
  */
 static void py_attack_mon(int Ind, int y, int x, bool old)
 {
-	player_type *p_ptr = Players[Ind];
-	int                     num = 0, k, bonus, chance;
+	player_type 	*p_ptr = Players[Ind];
+	int             num = 0, bonus, chance, slot;
+	long		k;
+        object_type     *o_ptr = NULL;
+	bool            do_quake = FALSE;
 
-        object_type             *o_ptr;
-
-	char            m_name[80], brand_msg[80];
-
+	char            m_name[80], brand_msg[80] = { '\0' };
 	monster_type	*m_ptr;
 	monster_race    *r_ptr;
 
 	bool		fear = FALSE;
-	bool            do_quake = FALSE;
+	int 		fear_chance;
 
-	bool            backstab = FALSE, stab_fleeing = FALSE;
-	bool nolite, nolite2, martial = FALSE;
-
+	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
+	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1); /* can player backstab the monster? */
+	bool            backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
+	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
+	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
+	bool		dual_wield = primary_wield && secondary_wield;
+	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
+	bool 		nolite, nolite2, martial = FALSE;
+	int 		block = 0, parry = 0;
 
 	bool            vorpal_cut = FALSE;
 	int             chaos_effect = 0;
@@ -2782,11 +2975,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	int             drain_result = 0, drain_heal = 0;
 	int             drain_left = MAX_VAMPIRIC_DRAIN;
 
-	struct worldpos *wpos=&p_ptr->wpos;
-	cave_type **zcave;
-	cave_type *c_ptr;
-
-	int fear_chance;
+	struct worldpos	*wpos=&p_ptr->wpos;
+	cave_type	**zcave;
+	cave_type 	*c_ptr;
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster];
 	int mon_aqua = 0, mon_acid = 0, mon_fire = 0;
@@ -2902,12 +3093,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Done */
 		return;
 	}
-	/* Access the weapon */
-	o_ptr = &(p_ptr->inventory[INVEN_WIELD]);
-
 
 	/* Cannot 'stab' with martial-arts */
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)
+			&& !p_ptr->inventory[INVEN_WIELD].k_idx
 			&& !p_ptr->inventory[INVEN_ARM].k_idx
 			&& !p_ptr->inventory[INVEN_BOW].k_idx)
 	{
@@ -2920,30 +3109,60 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		*/
 #if 0
 		if (get_skill(p_ptr, SKILL_BACKSTAB)) {
-			if(m_ptr->csleep /*&& m_ptr->ml*/)
+			if(m_ptr->csleep /*&& m_ptr->ml*/ || p_ptr->cloaked)
 				backstab = TRUE;
 			else if (m_ptr->monfear /*&& m_ptr->ml)*/)
 				stab_fleeing = TRUE;
 		}
 #endif
 	}
-	/* Need TV_SWORD type weapon to backstab */
-	else if (get_skill(p_ptr, SKILL_BACKSTAB) && (o_ptr->tval == TV_SWORD))
-	{
-		if(m_ptr->csleep /*&& m_ptr->ml*/)
-			backstab = TRUE;
-		else if (m_ptr->monfear /*&& m_ptr->ml)*/)
-			stab_fleeing = TRUE;
-	}
 
+	/* check whether monster can be backstabbed */
+	if (!m_ptr->csleep /*&& m_ptr->ml*/) sleep_stab = FALSE;
+	if (m_ptr->backstabbed) cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped */
+	if (!sleep_stab && !cloaked_stab) dual_stab = 0;
 
+	/* cloaking mode stuff */
+	break_cloaking(Ind);
 	/* Disturb the monster */
 	m_ptr->csleep = 0;
-
 
 	/* Attack once for each legal blow */
 	while (num++ < p_ptr->num_blow)
 	{
+		/* Access the weapon */
+		if (!primary_wield && secondary_wield) slot = INVEN_ARM;
+		else slot = INVEN_WIELD;
+
+	        if (dual_wield) {
+			switch (dual_stab) {
+			case 0: if (magik(50)) slot = INVEN_ARM; break;
+			case 1:	if (magik(50)) {
+					slot = INVEN_ARM;
+					dual_stab = 3;
+				} else {
+					dual_stab = 2;
+				}
+				break;
+			case 2: slot = INVEN_ARM;
+			case 3: dual_stab = 0; break;
+			}
+		}
+
+		o_ptr = &p_ptr->inventory[slot];
+
+		/* Manage backstabbing and 'flee-stabbing' */
+		if (stab_skill && (o_ptr->tval == TV_SWORD)) /* Need TV_SWORD type weapon to backstab */
+		{
+			if (sleep_stab || cloaked_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
+				backstab = TRUE;
+				m_ptr->backstabbed = 1;
+			} else if (m_ptr->monfear /*&& m_ptr->ml)*/) {
+				stab_fleeing = TRUE;
+			}
+		}
+		if (!dual_stab) sleep_stab = cloaked_stab = FALSE;
+
 		u32b f1=0, f2=0, f3=0, f4=0, f5=0, esp=0;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 		chaos_effect = 0;	// we need this methinks..?
@@ -2959,7 +3178,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 		/* Test for hit */
-		if (test_hit_norm(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
+		if (test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
 		{
 			/* Sound */
 			sound(Ind, SOUND_HIT);
@@ -2992,10 +3211,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					&& !p_ptr->inventory[INVEN_ARM].k_idx
 					&& !p_ptr->inventory[INVEN_BOW].k_idx)
 #endif	// 0
-	/* New feature: 'backstab' works on Martial Artists as well. - the_sandman 
-	 * The initial/fleeing stab hit is, of course, lower than one might do with sword because
-	 * MA has already got a few boosts lately.. 
-	 */
+#if 0 //Hm, not necessary and plus, no one does em anyway :) - the_sandman
+			/* New feature: 'backstab' works on Martial Artists as well. - the_sandman 
+			 * The initial/fleeing stab hit is, of course, lower than one might do with sword because
+			 * MA has already got a few boosts lately.. 
+			 */
 			if (martial && (backstab || stab_fleeing)) {
 				int bsskill = (int)(p_ptr->s_info[SKILL_BACKSTAB].value/1000);
 				int percentage = randint(bsskill*2 - m_ptr->level);
@@ -3005,6 +3225,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += (m_ptr->hp*percentage/100) + bsskill;
 				if (k < bsskill) k+= bsskill;	// Important for fleeing stab as m_hp is quite low
 			} else if (martial && !backstab && !stab_fleeing)
+#else
+			if (martial)
+#endif
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
@@ -3072,7 +3295,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
-				k = critical_norm(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
@@ -3132,6 +3355,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
+#ifdef ENABLE_STANCES
+				int stun_effect, resist_stun;
+#endif
 				k = damroll(o_ptr->dd, o_ptr->ds);
 				/* weapons that inflict little damage, especially of only 1 damage dice,
 				   mostly don't cause earthquakes at all */
@@ -3144,6 +3370,46 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //				    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
+#ifdef ENABLE_STANCES
+				/* apply stun from offensive combat stance */
+				if (p_ptr->combat_stance == 2) {
+
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]]) + 1;
+					stun_effect /= 2;
+
+					resist_stun = 6 - 300 / (50 + m_ptr->ac); /* 0..5 */
+					if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 10;
+					if (r_ptr->flags3 & RF3_NO_CONF) resist_stun += 5;
+					if (r_ptr->flags3 & RF3_NO_SLEEP) resist_stun += 5;
+					if (r_ptr->flags3 & RF3_UNDEAD)	resist_stun += 10;
+
+					switch(p_ptr->combat_stance_power) {
+					case 0: resist_stun = (resist_stun * 5) / 4; break;
+					case 1: resist_stun = (resist_stun * 4) / 4; break;
+					case 2: resist_stun = (resist_stun * 3) / 4; break;
+					case 3: resist_stun = (resist_stun * 2) / 3; break;
+					}
+
+					if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
+						/* Stun the monster */
+						if (r_ptr->flags3 & RF3_NO_STUN) {
+							/* nothing:
+							msg_format(Ind, "%^s is unaffected.", m_name);*/
+						}
+						else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
+							m_ptr->stunned += (stun_effect);
+							if (m_ptr->stunned > 100)
+								msg_format(Ind, "\377o%^s is knocked out.", m_name);
+							else if (m_ptr->stunned > 50)
+								msg_format(Ind, "\377o%^s is heavily stunned.", m_name);
+							else
+								msg_format(Ind, "\377o%^s is stunned.", m_name);
+						}
+					}
+				}
+#endif
+
+#if 0 // A better formula below...
 				if (backstab)
 				{
 					/* New backstab formula: takes into account m_hp - the_sandman */
@@ -3155,7 +3421,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					k += (m_ptr->hp*percentage)/100 + bsskill;
 
 //					k += (k * (nolite ? 3 : 1) *
-//						get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
+//					get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
 //					backstab = FALSE;
 				}
 				else if (stab_fleeing)
@@ -3163,9 +3429,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					/* The old fleeing stab formula is fine - the_sandman */
 //					k += (k * (nolite2 ? 2 : 1) *
 					k += (k * 1 *
-						get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
+					get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
 					stab_fleeing = FALSE;
 				}
+#endif
 
 				/* Select a chaotic effect (50% chance) */
 				if ((f5 & TR5_CHAOTIC) && (randint(2)==1))
@@ -3250,20 +3517,20 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //				if (i && magik(20 + (i > 5 ? 5 : i) * 6)) {
 				if (i && magik(i > 5 ? 5 : i)) {
 					i = rand_int(i);
-					if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER);
-					else if (i < mon_aqua + mon_acid) weapon_takes_damage(Ind, GF_ACID);
-					else weapon_takes_damage(Ind, GF_FIRE);
+					if (i < mon_aqua) weapon_takes_damage(Ind, GF_WATER, slot);
+					else if (i < mon_aqua + mon_acid) weapon_takes_damage(Ind, GF_ACID, slot);
+					else weapon_takes_damage(Ind, GF_FIRE, slot);
 				}
 
 				/* May it clone the monster ? */
-				if ((f4 & TR4_CLONE) && magik(30))
+				if ((f4 & TR4_CLONE) && magik(10))
 				{
 					msg_format(Ind, "Oh no ! Your weapon clones %^s!", m_name);
 					multiply_monster(c_ptr->m_idx);
 				}
 
 				/* heheheheheh */
-				do_nazgul(Ind, &k, &num, r_ptr, o_ptr);
+				do_nazgul(Ind, &k, &num, r_ptr, slot);
 
 				/* Apply the player damage bonuses */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -3272,7 +3539,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
-				k = critical_norm(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100)));
+				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor));
 
 				/* Penalty for could-2H when having a shield */
 /* isn't that already in xtra1.c included, by reducing to_d_... and to_h_... boni?! */
@@ -3302,11 +3569,19 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* No negative damage */
 			if (k < 0) k = 0;
 
+			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
+			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
+			if (backstab || stab_fleeing) {
+				int bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 400);
+				k *= (100 + bs_multiplier);
+				k /= (dual_wield ? 150 : 100);
+				k += m_ptr->hp / 33; /**0.03; <- floats are evil */
+			}
+
 			/* DEG Updated hit message to include damage */
 			if(backstab)
 			{
 				backstab = FALSE;
-			
 			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You %s twist the neck of the sleeping %s for \377e%d \377wdamage.", nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr), k);
@@ -3323,8 +3598,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 			else if (stab_fleeing)
 			{
-			   if (martial) {
 				stab_fleeing = FALSE;
+			   if (martial) {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377e%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377g%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
@@ -3636,7 +3911,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 
 			/* Fruit bats get life stealing */
-			if (p_ptr->fruit_bat && !p_ptr->body_monster)
+			if (p_ptr->fruit_bat == 1 && !p_ptr->body_monster)
 			{
 				int leech;
 				
@@ -3656,8 +3931,23 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			backstab = FALSE;
 
+			if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+			    (!r_ptr->flags3 & RF3_ANIMAL)) {
+#ifdef USE_BLOCKING
+				block = 10;
+#endif
+#ifdef USE_PARRYING
+				parry = 5 + m_ptr->ac / 10;
+#endif
+			}
+
 			/* Message */
-			msg_format(Ind, "You miss %s.", m_name);
+			if (magik(block))
+				msg_format(Ind, "%s blocks.", m_name);
+			else if (magik(parry))
+				msg_format(Ind, "%s parries.", m_name);
+			else
+				msg_format(Ind, "You miss %s.", m_name);
 		}
 
 		/* Hack -- divided turn for auto-retaliator */
@@ -3763,7 +4053,7 @@ void touch_zap_player(int Ind, int m_idx)
 
 			if (p_ptr->oppose_fire) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->resist_fire) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->sensible_fire) aura_damage = (aura_damage+2) * 2;
+			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
@@ -3786,7 +4076,7 @@ void touch_zap_player(int Ind, int m_idx)
 
 			if (p_ptr->oppose_elec) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->resist_elec) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->sensible_elec) aura_damage = (aura_damage+2) * 2;
+			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
@@ -3809,7 +4099,7 @@ void touch_zap_player(int Ind, int m_idx)
 
 			if (p_ptr->oppose_cold) aura_damage = (aura_damage+2) / 3;
 			if (p_ptr->resist_cold) aura_damage = (aura_damage+2) / 3;
-			if (p_ptr->sensible_cold) aura_damage = (aura_damage+2) * 2;
+			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, 0);
@@ -3832,11 +4122,13 @@ void touch_zap_player(int Ind, int m_idx)
 /* Mega Hack -- Hitting Nazgul is REALY dangerous
  * (ideas from Akhronath) */
 //void do_nazgul(int *k, int *num, int num_blow, int weap, monster_race *r_ptr, object_type *o_ptr)
-void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_ptr)
+void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 {
+	object_type *o_ptr = &Players[Ind]->inventory[slot];
+
 	if (r_ptr->flags7 & RF7_NAZGUL)
 	{
-		int weap = 0;	// Hack!
+//		int weap = 0;	// Hack!  <- ???
 		u32b f1, f2, f3, f4, f5, esp;
 
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -3853,8 +4145,10 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100))
 			{
 				msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
-				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				inven_item_optimize(Ind, INVEN_WIELD + weap);
+//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
+				inven_item_optimize(Ind, slot);
 				/* To stop attacking */
 	//			*num = num_blow;
 			}
@@ -3876,8 +4170,10 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			{
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 				msg_print(Ind, "\377rYour weapon is destroyed !");
-				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				inven_item_optimize(Ind, INVEN_WIELD + weap);
+//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				inven_item_increase(Ind, slot, -1);
+				inven_item_optimize(Ind, slot);
 
 				/* To stop attacking */
 //				*num = num_blow;
@@ -3896,8 +4192,10 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, object_type *o_pt
 			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(3) : magik(20))
 			{
 				msg_print(Ind, "\377rYour weapon is destroyed !");
-				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				inven_item_optimize(Ind, INVEN_WIELD + weap);
+//				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+//				inven_item_optimize(Ind, INVEN_WIELD + weap);
+				inven_item_increase(Ind, slot, -1);
+				inven_item_optimize(Ind, slot);
 
 				/* To stop attacking */
 //				*num = num_blow;
@@ -4078,7 +4376,7 @@ bool player_can_enter(int Ind, byte feature)
 	bool only_wall = FALSE;
 
 	/* Dungeon Master pass through everything (cept array boundary :) */
-	if (p_ptr->admin_dm && feature != FEAT_PERM_SOLID)
+	if (p_ptr->admin_dm && feature != FEAT_PERM_SOLID && feature != FEAT_HIGH_MOUNT_SOLID)
 		return (TRUE);
 
 	/* Player can not walk through "walls" unless in Shadow Form */
@@ -4245,7 +4543,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 
 	/* (S)He's no longer AFK, lol */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE)
@@ -4823,7 +5121,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Continuous Searching */
 		if (p_ptr->searching)
 		{
-			if (p_ptr->pclass == CLASS_ROGUE) {
+			if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
 				//Radius of 5 ... 15 squares
 				detect_bounty(Ind, (p_ptr->lev/5) + 5);
 			} else {
@@ -5384,13 +5682,15 @@ static bool run_test(int Ind)
 
 
 		/* Visible monsters abort running */
-		if (c_ptr->m_idx > 0)
-		{
+		if (c_ptr->m_idx > 0 &&
+		    /* Pets don't interrupt running */
+		    (!(m_list[c_ptr->m_idx].pet))
+		    /* Even in Bree (despite of Santa Claus: Rogues in cloaking mode might want to not 'run him over' but wait for allies) - C. Blue */
+		    ) {
 			/* Visible monster */
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
-			  !(m_list[c_ptr->m_idx].special) && 
-			  !(m_list[c_ptr->m_idx].pet) && 
-			  r_info[m_list[c_ptr->m_idx].r_idx].level != 0)
+			   (!(m_list[c_ptr->m_idx].special) && 
+			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
 					return (TRUE); 
 		}
 
@@ -5545,7 +5845,8 @@ static bool run_test(int Ind)
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */
-		if (inv || cave_running_bold(p_ptr, zcave, row, col) || ((!in_bounds(row, col)) && (wpos->wz==0)) )
+		if ((inv || cave_running_bold(p_ptr, zcave, row, col) || ((!in_bounds(row, col)) && (wpos->wz==0)) )
+		    && !(cave_running_bold_nofloor(p_ptr, zcave, p_ptr->py, p_ptr->px))) /* <- if player is running on non-floor grids, don't make him stop on "corners" */
 		{
 			/* Looking for open area */
 			if (p_ptr->find_openarea)
@@ -5623,7 +5924,7 @@ static bool run_test(int Ind)
 			col = p_ptr->px + ddx[new_dir];
 
 			/* Unknown grid or floor */
-			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || cave_running_bold(p_ptr, zcave, row, col))
+			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || (cave_running_bold_floor(p_ptr, zcave, row, col)))
 			{
 				/* Looking to break right */
 				if (p_ptr->find_breakright)
@@ -5652,7 +5953,7 @@ static bool run_test(int Ind)
 			col = p_ptr->px + ddx[new_dir];
 
 			/* Unknown grid or floor */
-			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || cave_running_bold(p_ptr, zcave, row, col))
+			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || (cave_running_bold_floor(p_ptr, zcave, row, col)))
 			{
 				/* Looking to break left */
 				if (p_ptr->find_breakleft)
@@ -5779,21 +6080,21 @@ void run_step(int Ind, int dir)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-	/* are we in fact running-flying? */
-	if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
-	}
-	/* or running-swimming? */
-	else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-	}
-	/* or just normally running? */
-	else {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-	}
+		/* are we in fact running-flying? */
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		}
+		/* or running-swimming? */
+		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+		}
+		/* or just normally running? */
+		else {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
+		}
 	}
 #endif
 
@@ -5809,7 +6110,7 @@ void run_step(int Ind, int dir)
 		/* Initialize */
 		run_init(Ind, dir);
 		/* check if we have enough energy to move */
-		if (p_ptr->energy < level_speed(&p_ptr->wpos)/real_speed)
+		if (p_ptr->energy < level_speed(&p_ptr->wpos) / real_speed)
 			return;
 	}
 
@@ -5840,4 +6141,62 @@ void run_step(int Ind, int dir)
 
 	/* Move the player, using the "pickup" flag */
 	move_player(Ind, p_ptr->find_current, p_ptr->always_pickup);
+}
+
+/* 
+ * Get a real chance of dodging, based on the player's dodge_level (1..100)
+ * and the difficulty ie relation between attack level and player level - C. Blue
+ * (This will only be used if NEW_DODGING is defined.)
+ */
+int apply_dodge_chance(int Ind, int attack_level) {
+	int plev = Players[Ind]->lev;
+	int skill = get_skill(Players[Ind], SKILL_DODGE);
+	int dodge = Players[Ind]->dodge_level;
+	int chance;
+
+	/* Dodging doesn't work with a shield */
+	if (Players[Ind]->inventory[INVEN_ARM].k_idx && Players[Ind]->inventory[INVEN_ARM].tval == TV_SHIELD) return(1);
+	
+	/* hack: adding 1000 to attack_level means it's a ranged attack and we are
+	   supposed to halve the chance to dodge it */
+	if (attack_level > 1000) {
+		attack_level -= 1000;
+		dodge /= 2;
+	}
+	
+	/* although this is a bit unfair, it keeps it somewhat sane (no perma-dodge vs lowbies). */
+	if (attack_level < plev / 2) attack_level = plev / 2;
+
+	/* lower limit (townies & co), preventing calc bugs */
+	if (attack_level < 1) attack_level = 1;
+	
+	/* smooth out attack level a little bit if it's above our own level. */
+	if (attack_level > plev) attack_level = plev + (attack_level - plev) / 2;
+	
+	/* smooth out player level a little bit if it's above level 50, the cap for skill values. (might need adjusting) */
+	if (plev > 50) plev = 50 + (plev - 50) / 2;
+
+	/* give especially low dodge chance during the first 2 levels,
+	   because most chars start out with 1.000 dodging, and everyone
+	   would dodge way too well right at the start then. */
+	if (plev == 1) dodge /= 3;
+	if (plev == 2) dodge = (dodge * 2) / 3;
+
+        /* reduce player's effective dodge level if (s)he neglected to train dodging skill alongside character level. */
+	/* note: training dodge skill +2 ahead (like other skills usually) won't help for dodging, sorry. */
+        dodge = (dodge * (skill > plev ? plev : skill)) / (plev >= 50 ? 50 : plev);
+
+	/* calculate real dodge chance from our dodge level, and relation of our level vs enemy level. */
+	chance = dodge * plev / (attack_level * 3);
+
+#if 1 /* instead of capping... */
+	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
+#else /* ...let it scale? >:) */
+        chance = (chance * DODGE_MAX_CHANCE) / 100;
+#endif
+
+	/* always slight chance to actually evade an enemy attack, no matter whether skilled or not :) */
+	if (chance < 1) chance = 1;
+
+	return(chance);
 }

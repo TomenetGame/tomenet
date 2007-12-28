@@ -12,11 +12,11 @@ CHARM = add_spell
         ["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
                         if get_level(Ind, CHARM, 50) >= 35 then
-                                project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150))
+                                project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
                         elseif get_level(Ind, CHARM, 50) >= 15 then
-                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "")
+                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
                         else
-                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "")
+                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
                         end
 	end,
 	["info"] = 	function()
@@ -40,11 +40,11 @@ CONFUSE = add_spell
         ["direction"] = function () if get_level(Ind, CONFUSE, 50) >= 35 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
                         if get_level(Ind, CONFUSE, 50) >= 35 then
-                                project_los(Ind, GF_OLD_CONF, 10 + get_level(Ind, CONFUSE, 150))
+                                project_los(Ind, GF_OLD_CONF, 10 + get_level(Ind, CONFUSE, 150), "focusses on your mind")
                         elseif get_level(Ind, CONFUSE, 50) >= 15 then
-                                fire_ball(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), 3, "")
+                                fire_ball(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), 3, "focusses on your mind")
                         else
-                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), "")
+                                fire_bolt(Ind, GF_OLD_CONF, args.dir, 10 + get_level(Ind, CONFUSE, 150), "focusses on your mind")
                         end
 	end,
 	["info"] = 	function()
@@ -113,7 +113,7 @@ TELEKINESIS = add_spell
 			return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
 	end,
         ["desc"] =	{
-        		"Inscribe your book wiht @Pplayername, cast it, select an item",
+        		"Inscribe your book with @Pplayername, cast it, select an item",
                         "and the item will be teleported to that player whereever he/she might",
                         "be in the Universe",
         }

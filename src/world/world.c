@@ -29,6 +29,7 @@ void wproto(struct client *ccl);
 void addclient(int fd);
 void remclient(struct list *dlp);
 struct list *remlist(struct list **head, struct list *dlp);
+int get_message_type(char *msg);
 
 struct list *clist=NULL;	/* struct client */
 
@@ -40,7 +41,7 @@ void world(int ser){
 	fd_set fds;
 
 /* Adding some commentary here -.- Also note that gameservers are referred to as 'clients' (c_cl)  - C. Blue */
-	secure.secure=0;	/* 1 = don't allow unauth'ed gameservers to connect! */
+	secure.secure=1;	/* 1 = don't allow unauth'ed gameservers to connect! */
 	secure.chat=0;		/* 1 = relay chat from unauth'ed gameservers */
 	secure.msgs=0;		/* 1 = relay messages from unauth'ed gameservers */
 	secure.play=0;		/* 1 = add players from unauth'ed gameservers */
@@ -59,12 +60,13 @@ void world(int ser){
 			FD_SET(c_cl->fd, &fds);
 		}
 
-		sl=select(mfd+1, &fds, NULL, NULL, NULL);
-		if(sl==-1){
+		sl = select(mfd+1, &fds, NULL, NULL, NULL);
+		if (sl == -1) {
                         fprintf(stderr, "select broke\n");
+			perror("select");
 			return;
 		}
-		if(FD_ISSET(ser, &fds)){
+		if (FD_ISSET(ser, &fds)) {
 			sl=accept(ser, (struct sockaddr*)&cl_in, &length);
 			if(sl==-1){
 				fprintf(stderr, "accept broke\n");
@@ -132,7 +134,7 @@ void wproto(struct client *ccl){
 				/* ignore unauthed servers
 				   only legitimate servers should
 				   ever send this */
-				if(ccl->authed>0){
+				if (ccl->authed > 0) {
 					l_account(wpk, ccl);
 				}
 				break;
@@ -235,30 +237,46 @@ void wproto(struct client *ccl){
 	}
 }
 
-/* Send duplicate packet to all servers except originating
-   one */
+/* Send duplicate packet to all servers except originating one */
 void relay(struct wpacket *wpk, struct client *talker){
 	struct list *lp;
 	struct client *ccl;
-	wpk->serverid=talker->authed;
-	for(lp=clist; lp; lp=lp->next){
-		ccl=(struct client*)lp->data;
-		if(ccl!=talker){
+
+	wpk->serverid = talker->authed;
+
+	for(lp = clist; lp; lp = lp->next){
+		ccl = (struct client*)lp->data;
+		if (ccl != talker) {
+			/* Check the packet relay mask for authed servers - mikaelh */
+			if (ccl->authed > 0) {
+				if (!(slist[ccl->authed - 1].rflags & (1 << wpk->type))) {
+					continue; /* don't relay */
+				}
+
+				/* Filter messages */
+				if (wpk->type == WP_MESSAGE) {
+					if (!(slist[ccl->authed - 1].mflags & get_message_type(wpk->d.smsg.stxt))) {
+						continue; /* don't relay */
+					}
+				}
+			}
+			
 			send(ccl->fd, wpk, sizeof(struct wpacket), 0); 
+
 			/* Temporary stderr output */
-			if(bpipe){
+			if (bpipe) {
 				fprintf(stderr, "SIGPIPE from relay (fd: %d)\n", ccl->fd);
-				bpipe=0;
+				bpipe = 0;
 			}
 		}
 	}
 }
 
-void reply(struct wpacket *wpk, struct client *ccl){
+void reply(struct wpacket *wpk, struct client *ccl) {
 	send(ccl->fd, wpk, sizeof(struct wpacket), 0);
-	if(bpipe){
+	if (bpipe) {
 		fprintf(stderr, "SIGPIPE from reply (fd: %d)\n", ccl->fd);
-		bpipe=0;
+		bpipe = 0;
 	}
 }
 
@@ -331,4 +349,36 @@ void remclient(struct list *dlp){
 		spk.d.sid=ccl->authed;
 		relay(&spk, ccl);
 	}
+}
+
+int get_message_type(char *msg) {
+	/* skip to the real message */
+	msg = strchr(msg, ' ') + 1;
+
+	if (strstr(msg, " has left the game.")) {
+		return WMF_PLEAVE;
+	} else if (strstr(msg, " has entered the game.")) {
+		return WMF_PJOIN;
+	} else if (strstr(msg, " is henceforth known as  ")) {
+		return WMF_PWIN;
+	} else if (strstr(msg, " has attained level ")) {
+		return WMF_LVLUP;
+	} else if (strstr(msg, " was slain by ")) {
+		return WMF_UNIDEATH;
+	} else if (strstr(msg, " was destroyed by ") ||
+		   strstr(msg, " was wasted by ") ||
+		   strstr(msg, " was crushed by ") ||
+		   strstr(msg, " was shredded by ") ||
+		   strstr(msg, " was torn up by ") ||
+		   strstr(msg, " and destroyed by ") ||
+		   strstr(msg, " was killed by ") ||
+		   strstr(msg, " was annihilated by ") ||
+		   strstr(msg, " was vaporized by ") ||
+		   strstr(msg, " committed suicide.") ||
+		   strstr(msg, " has retired to ") ||
+		   strstr(msg, " bids farewell to this plane")) {
+		return WMF_PDEATH;
+	}
+
+	return 0;
 }

@@ -1,11 +1,8 @@
--- C. Blue's automatic stuff --
+- C. Blue's automatic stuff --
 -------------------------------
 
 -- Run automatically on server starting up:
 function server_startup(timestamp)
---	lua_add_anote("Some server note...")
-	watch_nr = 1
-	watch_morgoth = 1
 end
 
 -- Run additionally when 1st player joins since starting up: (character fully loaded at this point)

@@ -1,5 +1,6 @@
 -- The earth school
 
+--[[
 STONESKIN = add_spell
 {
 	["name"] = 	"Stone Skin",
@@ -29,7 +30,7 @@ STONESKIN = add_spell
                         "At level 25 it starts dealing damage to attackers"
 		}
 }
-
+]]
 DIG = add_spell
 {
 	["name"] = 	"Dig",

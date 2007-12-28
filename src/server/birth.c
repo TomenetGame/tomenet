@@ -831,53 +831,55 @@ static void get_money(int Ind)
 	p_ptr->pstealing = 0;
 
 #ifdef RPG_SERVER /* casters need to buy a decent book, warriors don't */
- #if 1
-/* cant sell eq anymore since it's 100% off, so..
+ #if 0
+	p_ptr->au = 1000;
+ #else
+  #if STARTEQ_TREATMENT < 3
         switch(p_ptr->pclass){
         case CLASS_MAGE:        p_ptr->au += 850; break;
         case CLASS_PRIEST:      p_ptr->au += 600; break;
-	case CLASS_SHAMAN:	p_ptr->au += 450; break;
-	case CLASS_ADVENTURER:	p_ptr->au += 200; break;
-	case CLASS_ROGUE:	p_ptr->au += 200; break;
-	case CLASS_ARCHER:	p_ptr->au += 200; break;
+	case CLASS_SHAMAN:	p_ptr->au += 550; break;
+	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
+	case CLASS_ROGUE:	p_ptr->au += 400; break;
+	case CLASS_ARCHER:	p_ptr->au += 400; break;
         case CLASS_RANGER:      p_ptr->au += 200; break;
         case CLASS_PALADIN:     p_ptr->au += 200; break;
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
 	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
+   #ifdef CLASS_RUNEMASTER
+	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
+   #endif
         default:                ;
         }
-*/
+  #else
         switch(p_ptr->pclass){
         case CLASS_MAGE:        p_ptr->au +=1000; break;
 	case CLASS_SHAMAN:	p_ptr->au +=1000; break;
         case CLASS_PRIEST:      p_ptr->au += 800; break;
-	case CLASS_DRUID:	p_ptr->au += 800; break;
-        case CLASS_RANGER:      p_ptr->au += 800; break;
-        case CLASS_PALADIN:     p_ptr->au += 800; break;
-	case CLASS_ARCHER:	p_ptr->au += 800; break; /* need to buy phase doors */
+	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
+	case CLASS_DRUID:	p_ptr->au += 600; break;
+        case CLASS_RANGER:      p_ptr->au += 600; break;
+        case CLASS_PALADIN:     p_ptr->au += 600; break;
 	case CLASS_ROGUE:	p_ptr->au += 600; break;
-	case CLASS_ADVENTURER:	p_ptr->au += 600; break;
 	case CLASS_MIMIC:	p_ptr->au += 600; break;
 	case CLASS_WARRIOR:	p_ptr->au += 600; break;
-#ifdef CLASS_RUNEMASTER
-	case CLASS_RUNEMASTER:  p_ptr->au +=1000; break;
-#endif
+	case CLASS_ARCHER:	p_ptr->au += 400; break; /* gets ammo, bow, lantern, extra phases! */
+   #ifdef CLASS_RUNEMASTER
+	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
+   #endif
         default:                ;
         }
-  #if 0
-	if ((p_ptr->pclass != CLASS_WARRIOR) && (p_ptr->pclass != CLASS_MIMIC))
-		p_ptr->au += 200; /* their startup eq sells for most */
   #endif
- #else
-	p_ptr->au = 1000;
  #endif
 #else
  #if STARTEQ_TREATMENT == 3
 	p_ptr->au += 300;
+ #else
+	if ((p_ptr->pclass != CLASS_WARRIOR) && (p_ptr->pclass != CLASS_MIMIC))
+		p_ptr->au += 200; /* their startup eq sells for most */
  #endif
 #endif
-	if (p_ptr->pclass == CLASS_ARCHER) p_ptr->au += 100; /* needs to buy a weapon, doesn't have one at the beginning :/ */
 
 	/* Since it's not a king/queen */
 	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
@@ -995,13 +997,15 @@ static void player_wipe(int Ind)
  * If { 0, 0} or other 'illigal' item, one random item from bard_init
  * will be given instead.	- Jir -
  */
-static byte player_init[MAX_CLASS][3][3] =
+static byte player_init[MAX_CLASS][5][3] =
 {
 	{
 		/* Adventurer */
 		{ TV_SWORD, SV_SHORT_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
+		{ TV_BOW, SV_SLING, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1009,6 +1013,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_SWORD, SV_BROAD_SWORD, 0 },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
 		{ TV_POTION, SV_POTION_BESERK_STRENGTH, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1016,19 +1022,25 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_BOOK, 50, 0 },
+		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
 		/* Priest */
 		{ TV_HAFTED, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, 255, 60 }, /* Spellbook of Blessing */
+		{ TV_BOOK, SV_SPELLBOOK, 65 }, /* Spellbook of Healing */
+		{ TV_SOFT_ARMOR, SV_ROBE, 0},
+		{ 255, 255, 0 },
 	},
 
 	{
 		/* Rogue */
 		{ TV_SWORD, SV_MAIN_GAUCHE, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
 		{ 255, 255, 0 },
 	},
 
@@ -1037,6 +1049,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_SWORD, SV_TULWAR, 0 },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
 		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
+		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1044,6 +1058,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
 		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1051,6 +1067,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_HAFTED, SV_LUCERN_HAMMER, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, 60 }, /* Spellbook of Blessing */
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1058,6 +1076,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_SWORD, SV_LONG_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_BOOK, 50, 0 },
+		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 	},
 
 	{
@@ -1065,6 +1085,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
 		{ TV_POTION, SV_POTION_INVIS, 0 },
 		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1072,7 +1094,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_BOOK, 50, 0 },
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_AMULET, SV_AMULET_INFRA, 3 },
-/*		{ TV_AMULET, SV_AMULET_LUCK, 3 },*/
+		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
+		{ 255, 255, 0 },
 	},
 #ifdef CLASS_RUNEMASTER
 	{
@@ -1080,6 +1103,8 @@ static byte player_init[MAX_CLASS][3][3] =
 		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
 	},
 #endif
 };
@@ -1137,6 +1162,7 @@ void admin_outfit(int Ind, int realm)
 	/* Hack -- assume the player has an initial knowledge of the area close to town */
 	for (i = 0; i < MAX_WILD_X*MAX_WILD_Y; i++)  p_ptr->wild_map[i/8] |= 1<<(i%8);
 
+#if 0 /* book spam stopped for now -_-  -C. Blue */
 	for (i = 0; i < 255; i++)
 	{
 		int k_idx = lookup_kind(TV_BOOK, i);
@@ -1147,51 +1173,45 @@ void admin_outfit(int Ind, int realm)
 		apply_magic(&p_ptr->wpos, o_ptr, 1, TRUE, FALSE, FALSE, FALSE, FALSE);
 		do_admin_outfit();
 	}
-#if 0
-	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY));
-	o_ptr->number = 99;
-	o_ptr->note = quark_add("@r8");
-	do_admin_outfit();
-
-#if 1
-	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_EXPERIENCE));
-	o_ptr->number = 99;
-	do_admin_outfit();
 #endif
-	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
-	o_ptr->number = 99;
-	o_ptr->note = note;
-	do_admin_outfit();
 
-	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
-	o_ptr->number = 99;
-	do_admin_outfit();
-
-	invcopy(o_ptr, lookup_kind(TV_POTION2, SV_POTION2_LEARNING));
-	o_ptr->number = 99;
-	do_admin_outfit();
-
-	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
-	o_ptr->number = 20;
-	o_ptr->pval = 1;
-	//o_ptr->note = note;
-	do_admin_outfit();
-#if 0
-	invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_PROBING));
-	o_ptr->number = 1;
-	o_ptr->pval = 30000;
-	do_admin_outfit();
-#endif	// 0
-
-	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
-	o_ptr->note = quark_add("@f1");
-	apply_magic_depth(0, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
-	o_ptr->number = 98;
-	do_admin_outfit();
-#endif
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_INVINCIBILITY));
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_INVULNERABILITY));
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_CLOAK, SV_SHADOW_CLOAK));
+	o_ptr->name1 = ART_DUNGEON_WIZARD;
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->to_h = 200;
+	o_ptr->to_d = 200;
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_ARROW, SV_AMMO_MAGIC));
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_ROD, SV_ROD_PROBING));
+	o_ptr->number = 3;
+	o_ptr->name2 = EGO_RISTARI;
+	o_ptr->pval = 0;
 	do_admin_outfit();
 }
 
@@ -1260,11 +1280,12 @@ static void player_outfit(int Ind)
 		do_player_outfit();
 	}
 
-	/* special outfits for admin (pack overflows!) */
-	if (is_admin(p_ptr))
+	/* Firestones for Dragonriders */
+	if (p_ptr->prace == RACE_DRIDER)
 	{
-		admin_outfit(Ind, 0);
-		return;
+		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
+		o_ptr->number = rand_range(3, 5);
+		do_player_outfit();
 	}
 
 	/* Hack -- Give the player some torches */
@@ -1293,8 +1314,8 @@ static void player_outfit(int Ind)
 
 	//admin_outfit(Ind);
 
-	/* Hack -- Give the player three useful objects */
-	for (i = 0; i < 3; i++)
+	/* Hack -- Give the player useful objects */
+	for (i = 0; i < 5; i++)
 	{
 		tv = player_init[p_ptr->pclass][i][0];
 		sv = player_init[p_ptr->pclass][i][1];
@@ -1312,6 +1333,13 @@ static void player_outfit(int Ind)
 				tv = 22; sv = 5; break;//trident
 			}
 		}
+
+#if 0		
+		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
+			if (pv == 60) pv = exec_lua(0, "return(HBLESSING)");
+//			if (pv != 255) pv = 60;
+		}
+#endif
 		
 		if (tv == 255 && sv == 255) {
 			/* nothing */
@@ -1326,42 +1354,10 @@ static void player_outfit(int Ind)
 			{
 				invcopy(o_ptr, k_idx);
 				o_ptr->pval = pv;
+				o_ptr->number = 1;
 				do_player_outfit();
 			}
 		}
-	}
-
-	/* Rogue / Ranger get a random trapkit */
-	if (p_ptr->pclass == CLASS_RANGER) {
-		invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
-		o_ptr->number = 1;
-		do_player_outfit();
-	}
-	if (p_ptr->pclass == CLASS_ROGUE) {
-		if (rand_int(2) == 1) {
-			invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_SLING));
-		} else {
-			invcopy(o_ptr, lookup_kind(TV_TRAPKIT, SV_TRAPKIT_POTION));
-		}
-		o_ptr->number = 1;
-		do_player_outfit();
-	}
-
-	/* Firestones for Dragonriders */
-	if (p_ptr->prace == RACE_DRIDER)
-	{
-		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		o_ptr->number = rand_range(3, 5);
-		do_player_outfit();
-	}
-
-	/* Potions of Self-Knowledge for Mimics */
-	if (p_ptr->pclass == CLASS_MIMIC)
-	{
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_SELF_KNOWLEDGE));
-		o_ptr->number = rand_range(1, 1);
-		o_ptr->discount = 100;
-		do_player_outfit();
 	}
 
 	/* Lantern of Brightness for Archers */
@@ -1370,7 +1366,7 @@ static void player_outfit(int Ind)
 		u32b f1,f2,f3,f4,f5,f6;
 		do {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
-			o_ptr->number = rand_range(1, 1);
+			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->name2 = 139;
 			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
@@ -1380,18 +1376,19 @@ static void player_outfit(int Ind)
 	}
 
 #ifdef RPG_SERVER /* give extra startup survival kit - so unaffected by very low CHR! */
-		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS));
-		o_ptr->number = 5;
-		o_ptr->discount = 100;
-		do_player_outfit();
-		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR));
-		o_ptr->number = (p_ptr->pclass == CLASS_ARCHER) ? 10 : 5;
-		o_ptr->discount = 100;
-		do_player_outfit();
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS));
+	o_ptr->number = 5;
+	o_ptr->discount = 100;
+	do_player_outfit();
+	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR));
+	o_ptr->number = (p_ptr->pclass == CLASS_ARCHER) ? 10 : 5;
+	o_ptr->discount = 100;
+	do_player_outfit();
 #endif
 
 	/* Hack -- Give the player newbie guide Parchment */
 	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWBIE));
+	o_ptr->number = 1;
 	do_player_outfit();
 }
 
@@ -1451,7 +1448,8 @@ static void player_setup(int Ind, bool new)
 	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
 	   with a certain character during highlander tourneys and continue to level it up
 	   infinitely! :) So, who gets disconnected will be removed from the event! */
-	if (sector00separation && !wpos->wx && !wpos->wy) {
+//	if (sector00separation && !wpos->wx && !wpos->wy) {
+	if (!wpos->wx && !wpos->wy) {
 		/* Teleport him out of the event area */
 		switch rand_int(3){
 		case 0:	wpos->wx = 1;
@@ -1466,18 +1464,25 @@ static void player_setup(int Ind, bool new)
 			case GE_HIGHLANDER:
 				p_ptr->global_event_type[d] = GE_NONE;
 				p_ptr->global_event_temp = 0;
-				for (i = 0; i <= INVEN_TOTAL; i++) /* Erase the highlander amulets */
-                    			if (p_ptr->inventory[i].tval == TV_AMULET && p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS) {
-			    	    		p_ptr->inventory[i].k_idx = 0;
+				for (i = 0; i < INVEN_TOTAL; i++) /* Erase the highlander amulets */
+                    			if (p_ptr->inventory[i].tval == TV_AMULET && 
+					    (p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS || p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS2)) {
 					        inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 					        inven_item_optimize(Ind, i);
     		                	}
+#if 0
 //                                p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
                                 if (cfg.use_pk_rules == PK_RULES_DECLARE)
                                 {
                                         if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
                                         set_pkill(i, 1);
                                 }
+#else
+				p_ptr->pkill &= ~PKILL_SET;
+				p_ptr->pkill &= ~PKILL_KILLER;/* for ranged targetting */
+				p_ptr->pkill &= ~PKILL_KILLABLE;
+                                p_ptr->stormbringer = FALSE;/* for melee */
+#endif
 			}
 		}
 	}
@@ -1703,6 +1708,9 @@ static void player_setup(int Ind, bool new)
 	p_ptr->current_mind = -1;
 	p_ptr->current_selling = p_ptr->store_num = -1;
 	p_ptr->current_char = 0;
+#ifdef AUCTION_SYSTEM
+	p_ptr->current_auction = 0;
+#endif
 
 	/* Set the player's "panel" information */
 	l_ptr = getfloor(wpos);
@@ -1893,16 +1901,16 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
 
-	c_acc=GetAccount(accname, NULL, FALSE);
-	if(c_acc){
-		p_ptr->account=c_acc->id;
-		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
-		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
+	c_acc = GetAccount(accname, NULL, FALSE);
+	if (c_acc) {
+		p_ptr->account = c_acc->id;
+		p_ptr->noscore = (c_acc->flags & ACC_NOSCORE);
+		p_ptr->inval = (c_acc->flags & ACC_TRIAL);
 		/* more flags - C. Blue */
-		p_ptr->restricted=(c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
-		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
-		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
+		p_ptr->restricted = (c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged = (c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
 		s_printf("ACC1:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
@@ -1960,16 +1968,16 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->conn = conn;
 	
 	/* again ;( */
-	c_acc=GetAccount(accname, NULL, FALSE);
-	if(c_acc){
-		p_ptr->account=c_acc->id;
-		p_ptr->noscore=(c_acc->flags & ACC_NOSCORE);
-		p_ptr->inval=(c_acc->flags & ACC_TRIAL);
+	c_acc = GetAccount(accname, NULL, FALSE);
+	if (c_acc) {
+		p_ptr->account = c_acc->id;
+		p_ptr->noscore = (c_acc->flags & ACC_NOSCORE);
+		p_ptr->inval = (c_acc->flags & ACC_TRIAL);
 		/* more flags - C. Blue */
-		p_ptr->restricted=(c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
-		p_ptr->privileged=(c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
-		p_ptr->pvpexception=(c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
-		p_ptr->mutedchat=(c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
+		p_ptr->restricted = (c_acc->flags & ACC_VRESTRICTED) ? 2 : (c_acc->flags & ACC_RESTRICTED) ? 1 : 0;
+		p_ptr->privileged = (c_acc->flags & ACC_VPRIVILEGED) ? 2 : (c_acc->flags & ACC_PRIVILEGED) ? 1 : 0;
+		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
+		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
 		s_printf("ACC2:Player %s has flags %d\n", accname, c_acc->flags);
 		KILL(c_acc, struct account);
@@ -2008,6 +2016,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->prace = race;
 	p_ptr->pkill=(PKILL_KILLABLE);
 
+	
+	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, p_ptr->mode);
+
 	/* Set pointers */
 	p_ptr->rp_ptr = &race_info[race];
 	p_ptr->cp_ptr = &class_info[class];
@@ -2030,9 +2041,14 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	get_extra(Ind);
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
-	   (Needs to be adjusted to the currently used value, usually in custom.lua) */
-	p_ptr->updated_savegame = 0;	/* ALT_EXPRATIO conversion */
-					/* 2 for artifact reset */
+	   (Can be used for different purpose, usually in conjuction with custom.lua) */
+	/* An artifact reset can be done by changing just custom.lua. */
+#ifdef RPG_SERVER
+	p_ptr->updated_savegame = 0;
+#endif
+#ifndef RPG_SERVER
+	p_ptr->updated_savegame = 0;
+#endif
 
 	/* Roll for age/height/weight */
 	get_ahw(Ind);
@@ -2043,8 +2059,11 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Roll for gold */
 	get_money(Ind);
 
+	/* special outfits for admin (pack overflows!) */
+	if (is_admin(p_ptr)) admin_outfit(Ind, 0);
 	/* Hack -- outfit the player */
-	player_outfit(Ind);
+	else player_outfit(Ind);
+
 
 	/* Set his location, panel, etc. */
 	player_setup(Ind, TRUE);
@@ -2108,14 +2127,14 @@ bool confirm_admin(int Ind)
 	player_type *p_ptr = Players[Ind];
 	bool admin=FALSE;
 
-	c_acc=GetAccountID(p_ptr->account);
-	if(!c_acc) return(FALSE);
-	if(c_acc->flags&ACC_ADMIN) admin=TRUE;
+	c_acc = GetAccountID(p_ptr->account);
+	if (!c_acc) return(FALSE);
+	if (c_acc->flags & ACC_ADMIN) admin = TRUE;
 	/* sucks, but allows an admin wizard. i'll change - evileye */
 	/* one DM is enough - jir :) */
-//	if(!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
-	if(strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz=admin;
-	else p_ptr->admin_dm=admin;
+//	if (!strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz = admin;
+	if (strcmp(p_ptr->name, c_acc->name)) p_ptr->admin_wiz = admin;
+	else p_ptr->admin_dm = admin;
 	KILL(c_acc, struct account);
 	return(admin);
 }

@@ -125,3 +125,6 @@ F:+:209:3
 
 # C. Blue: special flags to protect players resting in '8' houses
 F:p:210:3
+
+# High Mountain chain
+F:m:101:3

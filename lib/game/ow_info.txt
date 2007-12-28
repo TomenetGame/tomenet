@@ -73,7 +73,7 @@ N:8:Kon-Dar the Ugly(Half-Orc)
 I:5000:210:115:5:7
 C:120:100:80
 L:Half-Orc | Half-Troll | Goblin
-H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire
+H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire | Dunadan
 
 N:9:Darg-Low the Grim(Human)
 I:10000:190:111:4:9
@@ -108,7 +108,7 @@ N:14:Eddie Beast-Master(Half-Orc)
 I:25000:190:115:5:7
 C:120:100:80
 L:Half-Orc | Half-Troll | Goblin
-H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire
+H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf | Vampire | Dunadan
 
 N:15:Oglign Dragon-Slayer(Dwarf)
 I:30000:195:112:4:8

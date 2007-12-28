@@ -35,6 +35,81 @@
  */
 #define RESIST_GENO 250
 
+#ifdef ENABLE_DIVINE
+/*
+ * For angelic beings, this spell will gather any party 
+ * members on the same level to him/herself. This also 
+ * tele_to's all monsters in LOS.
+ * For demonic beings, do a dispel on LOS.
+ */
+void divine_vengeance(int Ind, int power) { 
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->divinity==DIVINE_ANGEL) {
+		int i;
+		/* players TELE_TO */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Skip self */
+			if (i == Ind) continue;
+
+			player_type *q_ptr = Players[i];
+
+			/* Skip disconnected players */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Skip players not on this depth */
+			if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
+
+			/* Skip players not in the same party */
+			if (q_ptr->party == 0 || p_ptr->party == 0) continue;
+			if (p_ptr->party != q_ptr->party) continue;
+
+			teleport_player_to(i, p_ptr->py, p_ptr->px);
+		}
+		/* monsters TELE_TO */
+		project_hack(Ind, GF_TELE_TO, 0, " commands return");
+	} else if (p_ptr->divinity==DIVINE_DEMON) {
+		dispel_monsters(Ind, power);
+	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
+	}
+}
+#endif
+
+#if 0 //Divine spell def'ns
+/* A: speeds you up (+lvl/4)
+ * D: +hp (does not stack with +LIFE)
+ */
+void divine_empowerment(int Ind) { 
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->divinity==DIVINE_ANGEL) {
+		/* +speed, +1 per 5 levels */
+		set_fast(Ind, 20+p_ptr->lev, p_ptr->lev/5);
+	} else if (p_ptr->divinity==DIVINE_DEMON) {
+	}
+}
+
+/* A: mass slow, +mana/time resistance
+ * D: +crit
+ */
+void divine_intensify(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->divinity==DIVINE_ANGEL) {
+	} else if (p_ptr->divinity==DIVINE_DEMON) {
+		//todo: add a trigger for xtra1.c to increment to_l
+	}
+}
+
+/* A: instant wor for every party member on level. INCLUDING town recalls. 
+ *    /rec 32 32 -> will attempt to teleport party members to Bree.
+ * D: void jumpgate creation
+ */
+void divine_gateway(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->divinity==DIVINE_ANGEL) {
+	} else if (p_ptr->divinity==DIVINE_DEMON) {
+	}
+}
+
+#endif
 /*
  * Grow trees
  */
@@ -135,10 +210,8 @@ bool create_garden(int Ind, int chance) {
  * Yep. More druidry. - the_sandman 
  */
 bool do_focus_shot(int Ind, int v, int p) {
-	player_type *p_ptr = Players[Ind];
-    bool notice = FALSE;
-
-	p = (int)(p/2); 
+    player_type *p_ptr = Players[Ind];
+    bool notice = FALSE; 
 
     /* Hack -- Force good values */
     v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -170,8 +243,11 @@ bool do_focus_shot(int Ind, int v, int p) {
             p_ptr->focus_val = 0;
     }
 
+#if 0
+//Buggy with another set_fast
 	/* Decrease speed */
 	if (p_ptr->focus_time != 0) set_fast(Ind, v, -(p/5));
+#endif
 
     /* Nothing to notice */
     if (!notice) return (FALSE);
@@ -1158,6 +1234,10 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You are invisible.\n");
 	}
+	if (p_ptr->cloaked)
+	{
+		fprintf(fff, "You are cloaked.\n");
+	}
 	if (p_ptr->see_inv)
 	{
 		fprintf(fff, "You can see invisible creatures.\n");
@@ -1249,6 +1329,36 @@ void self_knowledge(int Ind)
 		else fprintf(fff, "You are surrounded by a feeble anti-magic field.\n");
 
 	}
+#ifdef USE_BLOCKING
+	if (p_ptr->shield_deflect)
+	{
+		if (p_ptr->shield_deflect >= 50)
+			fprintf(fff, "You are extremely good at blocking with your shield.\n");
+		else if (p_ptr->shield_deflect >= 30)
+			fprintf(fff, "You are very good at blocking with your shield.\n");
+		else if (p_ptr->shield_deflect >= 20)
+			fprintf(fff, "You are fairly good at blocking with your shield.\n");
+		else if (p_ptr->shield_deflect >= 15)
+			fprintf(fff, "You aren't that good at blocking with your shield.\n");
+		else if (p_ptr->shield_deflect > 0)
+			fprintf(fff, "You are rather bad at blocking with your shield.\n");
+	}
+#endif
+#ifdef USE_PARRING
+	if (p_ptr->weapon_parry)
+	{
+		if (p_ptr->weapon_parry >= 30)
+			fprintf(fff, "You are extremely good at parrying with your weapon.\n");
+		else if (p_ptr->weapon_parry >= 25)
+			fprintf(fff, "You are very good at parrying with your weapon\n");
+		else if (p_ptr->weapon_parry >= 20)
+			fprintf(fff, "You are fairly good at parrying with your weapon.\n");
+		else if (p_ptr->weapon_parry >= 10)
+			fprintf(fff, "You aren't that good at parrying with your weapon.\n");
+		else if (p_ptr->weapon_parry > 0)
+			fprintf(fff, "You are rather bad at parrying with your weapon.\n");
+	}
+#endif
 #if 1
         if (p_ptr->anti_magic)	// newer (saving-throw boost)
 	{
@@ -1283,35 +1393,35 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
 	}
-	if (p_ptr->sensible_fire)
+	if (p_ptr->suscep_fire)
 	{
 		fprintf(fff, "You are susceptible to fire.\n");
 	}
-	if (p_ptr->sensible_cold)
+	if (p_ptr->suscep_cold)
 	{
 		fprintf(fff, "You are susceptible to cold.\n");
 	}
-	if (p_ptr->sensible_acid)
+	if (p_ptr->suscep_acid)
 	{
 		fprintf(fff, "You are susceptible to acid.\n");
 	}
-	if (p_ptr->sensible_elec)
+	if (p_ptr->suscep_elec)
 	{
 		fprintf(fff, "You are susceptible to electricity.\n");
 	}
-	if (p_ptr->sensible_pois)
+	if (p_ptr->suscep_pois)
 	{
 		fprintf(fff, "You are susceptible to poison.\n");
 	}
-	if (p_ptr->sensible_lite)
+	if (p_ptr->suscep_lite)
 	{
 		fprintf(fff, "You are susceptible to light.\n");
 	}
-	if (p_ptr->sensible_good)
+	if (p_ptr->suscep_good)
 	{
 		fprintf(fff, "You are susceptible to evil-vanquishing effects.\n");
 	}
-	if (p_ptr->sensible_life)
+	if (p_ptr->suscep_life)
 	{
 		fprintf(fff, "You are susceptible to undead-vanquishing effects.\n");
 	}
@@ -1555,11 +1665,9 @@ void self_knowledge(int Ind)
 	else if (p_ptr->luck_cur > 0)
 		fprintf(fff, "You are lucky sometimes.\n");
 
-	/* Access the current weapon */
-	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-
 	/* Analyze the weapon */
-	if (o_ptr->k_idx)
+	if (p_ptr->inventory[INVEN_WIELD].k_idx ||
+	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield */
 	{
 		/* Indicate Blessing */
 		if (f3 & TR3_BLESSED)
@@ -1938,35 +2046,35 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
 	}
-	if (p_ptr->sensible_fire)
+	if (p_ptr->suscep_fire)
 	{
 		info[i++] = "You are susceptible to fire.";
 	}
-	if (p_ptr->sensible_cold)
+	if (p_ptr->suscep_cold)
 	{
 		info[i++] = "You are susceptible to cold.";
 	}
-	if (p_ptr->sensible_acid)
+	if (p_ptr->suscep_acid)
 	{
 		info[i++] = "You are susceptible to acid.";
 	}
-	if (p_ptr->sensible_elec)
+	if (p_ptr->suscep_elec)
 	{
 		info[i++] = "You are susceptible to electricity.";
 	}
-	if (p_ptr->sensible_pois)
+	if (p_ptr->suscep_pois)
 	{
 		info[i++] = "You are susceptible to poison.";
 	}
-	if (p_ptr->sensible_lite)
+	if (p_ptr->suscep_lite)
 	{
 		info[i++] = "You are susceptible to light.";
 	}
-	if (p_ptr->sensible_good)
+	if (p_ptr->suscep_good)
 	{
 		info[i++] = "You are susceptible to evil-vanquishing effects.";
 	}
-	if (p_ptr->sensible_life)
+	if (p_ptr->suscep_life)
 	{
 		info[i++] = "You are susceptible to undead-vanquishing effects.";
 	}
@@ -2197,12 +2305,9 @@ void self_knowledge(int Ind)
 	else if (p_ptr->luck_cur > 0)
 		info[i++] = "You are lucky sometimes.";
 
-
-	/* Access the current weapon */
-	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-
 	/* Analyze the weapon */
-	if (o_ptr->k_idx)
+        if (p_ptr->inventory[INVEN_WIELD].k_idx ||
+            (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield */
 	{
 		/* Indicate Blessing */
 		if (f3 & TR3_BLESSED)
@@ -2977,8 +3082,13 @@ bool detect_bounty(int Ind, int rad)
 
 			/* Detect traps on chests */
 			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval) 
-			&& magik(chance)) {
+			    && magik(chance) && !object_known_p(Ind, o_ptr)) {
+				/* Message =-p */
+				msg_print(Ind, "You have discovered a trap on the chest!");
+				/* Know the trap */
 				object_known(o_ptr);
+				/* Notice it */
+//				disturb(Ind, 0, 0);
 				detect = TRUE;
 			}
 
@@ -3737,7 +3847,7 @@ bool create_artifact_aux(int Ind, int item)
 	/* Log it (security) */
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
-	s_printf("%s: ART_CREATION succeeded: %s\n", o_name);
+	s_printf("%s: ART_CREATION succeeded: %s\n", showtime(), o_name);
 
 	return TRUE;
 }
@@ -3804,6 +3914,9 @@ bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags)
 	player_type *p_ptr = Players[Ind];
 
 	get_item(Ind);
+
+	/* Clear any other pending actions - mikaelh */
+	clear_current(Ind);
 
 	p_ptr->current_enchant_h = num_hit;
 	p_ptr->current_enchant_d = num_dam;
@@ -3917,6 +4030,9 @@ bool ident_spell(int Ind)
 
 	get_item(Ind);
 
+	/* Clear any other pending actions - mikaelh */
+	clear_current(Ind);
+
 	p_ptr->current_identify = 1;
 
 	return TRUE;
@@ -3994,6 +4110,9 @@ bool identify_fully(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	get_item(Ind);
+
+	/* Clear any other pending actions - mikaelh */
+	clear_current(Ind);
 
 	p_ptr->current_star_identify = 1;
 
@@ -4109,6 +4228,9 @@ bool recharge(int Ind, int num)
 	player_type *p_ptr = Players[Ind];
 
 	get_item(Ind);
+
+	/* Clear any other pending actions - mikaelh */
+	clear_current(Ind);
 
 	p_ptr->current_recharge = num;
 
@@ -4291,18 +4413,17 @@ bool recharge_aux(int Ind, int item, int num)
 /*
  * Apply a "project()" directly to all viewable monsters
  */
-bool project_hack(int Ind, int typ, int dam)
+bool project_hack(int Ind, int typ, int dam, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
-
 	struct worldpos *wpos=&p_ptr->wpos;
-
 	int		i, x, y;
-
 	int		flg = PROJECT_JUMP | PROJECT_KILL | PROJECT_HIDE;
+	bool		obvious = FALSE;
+	char		pattacker[80];
 
-	bool	obvious = FALSE;
-
+	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+	else snprintf(pattacker, 80, "Something%s", attacker);
 
 	/* Affect all (nearby) monsters */
 	for (i = 1; i < m_max; i++)
@@ -4323,10 +4444,10 @@ bool project_hack(int Ind, int typ, int dam)
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
 		/* Jump directly to the target monster */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, "")) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
 	}
 
-#if 0	//this would require to differ between project_hack calls that are meant
+#if 1	//this would require to differ between project_hack calls that are meant
 	//to work on players and those that are meant to work on monsters only
 	//like GF_OLD_SPEED, GF_OLD_HEAL, etc. If this is done, an attacker string
 	//should be added as well, however.
@@ -4357,7 +4478,7 @@ bool project_hack(int Ind, int typ, int dam)
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
 		/* Jump directly to the target player */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, "")) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
 	}
 #endif
 
@@ -4373,7 +4494,7 @@ bool speed_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_OLD_SPEED, p_ptr->lev));
+	return (project_hack(Ind, GF_OLD_SPEED, p_ptr->lev, ""));
 }
 
 /*
@@ -4383,7 +4504,7 @@ bool slow_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_OLD_SLOW, p_ptr->lev));
+	return (project_hack(Ind, GF_OLD_SLOW, p_ptr->lev, ""));
 }
 
 /*
@@ -4393,7 +4514,7 @@ bool sleep_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_OLD_SLEEP, p_ptr->lev));
+	return (project_hack(Ind, GF_OLD_SLEEP, p_ptr->lev, ""));
 }
 
 /*
@@ -4403,7 +4524,7 @@ bool fear_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_TURN_ALL, p_ptr->lev));
+	return (project_hack(Ind, GF_TURN_ALL, p_ptr->lev, ""));
 }
 
 /*
@@ -4413,7 +4534,7 @@ bool stun_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_STUN, p_ptr->lev));
+	return (project_hack(Ind, GF_STUN, p_ptr->lev, ""));
 }
 
 
@@ -4422,7 +4543,7 @@ bool stun_monsters(int Ind)
  */
 bool banish_evil(int Ind, int dist)
 {
-	return (project_hack(Ind, GF_AWAY_EVIL, dist));
+	return (project_hack(Ind, GF_AWAY_EVIL, dist, " banishes all evil"));
 }
 
 
@@ -4433,7 +4554,7 @@ bool turn_undead(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	return (project_hack(Ind, GF_TURN_UNDEAD, p_ptr->lev));
+	return (project_hack(Ind, GF_TURN_UNDEAD, p_ptr->lev, " calls against all undead"));
 }
 
 /*
@@ -4441,7 +4562,7 @@ bool turn_undead(int Ind)
  */
 bool turn_monsters(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_TURN_ALL, dam));
+	return (project_hack(Ind, GF_TURN_ALL, dam, " calls against all monsters"));
 }
 
 
@@ -4450,7 +4571,7 @@ bool turn_monsters(int Ind, int dam)
  */
 bool dispel_undead(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_UNDEAD, dam));
+	return (project_hack(Ind, GF_DISP_UNDEAD, dam, " banishes all undead"));
 }
 
 /*
@@ -4458,12 +4579,12 @@ bool dispel_undead(int Ind, int dam)
  */
 bool dispel_evil(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_EVIL, dam));
+	return (project_hack(Ind, GF_DISP_EVIL, dam, " banishes all evil"));
 }
 
 bool dispel_demons(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_DEMON, dam));
+	return (project_hack(Ind, GF_DISP_DEMON, dam, " banishes all demons"));
 }
 
 /*
@@ -4471,7 +4592,7 @@ bool dispel_demons(int Ind, int dam)
  */
 bool dispel_monsters(int Ind, int dam)
 {
-	return (project_hack(Ind, GF_DISP_ALL, dam));
+	return (project_hack(Ind, GF_DISP_ALL, dam, " banishes all monsters"));
 }
 
 
@@ -4582,7 +4703,7 @@ void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
 
 /*
  * Wake up minions (escorts/friends). May be used by a pack monster or unique.
- * As soon as a monster is hit by a player or has a LOS to him.
+ * As soon as a monster is hit by a player or has a LOS to him. - C. Blue
  */
 void wake_minions(int Ind, int who)
 {
@@ -5100,14 +5221,15 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				p_ptr = Players[Ind];
 
 				/* Message */
-				msg_print(Ind, "There is a searing blast of light!");
-	
+				msg_print(Ind, "\377oThere is a searing blast of light and a terrible shockwave!");
+
 				/* Blind the player */
 				if (!p_ptr->resist_blind && !p_ptr->resist_lite)
 				{
 					/* Become blind */
-					(void)set_blind(Ind, p_ptr->blind + 10 + randint(10));
+					(void)set_blind(Ind, p_ptr->blind + 20 + randint(10));
 				}
+				(void)set_stun(Ind, 120); /* ~20s in NR, depends tho */
 
 				/* Mega-Hack -- Forget the view and lite */
 				p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
@@ -5189,6 +5311,13 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			}
 		}
 	}
+	for (k = 1; k <= NumPlayers; k++) {
+		if (inarea(wpos, &Players[k]->wpos) &&
+		    Players[k]->stun < 120) {
+			msg_print(k, "\377oYou are hit by a terrible shockwave!");
+			(void)set_stun(k, 120 - (distance(Players[k]->py, Players[k]->px, y1, x1) - r) / 3);
+		}
+	}
 }
 
 
@@ -5233,7 +5362,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
-	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
+	if(l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
+	override_LF1_NO_DESTROY = FALSE;
 
 	/* Don't hurt town or surrounding areas */
 	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
@@ -5251,6 +5381,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 		}
 	}
 
+	/* No one has taken any damage from this earthquake yet - mikaelh */
 	for (Ind = 1; Ind <= NumPlayers; Ind++)
 	{
 		Players[Ind]->total_damage = 0;
@@ -5348,7 +5479,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				}
 
 				/* Hurt the player a lot */
-				if (!sn && !p_ptr->got_hit)
+				if (!sn)
 				{
 					/* Message and damage */
 					damage = 300;
@@ -6071,7 +6202,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *attacker)
+bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
@@ -6094,6 +6225,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *att
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
+	project_interval = interval;
 	project_time = time;
 
    	if (snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker) < 0) return (FALSE);
@@ -6114,7 +6246,7 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *att
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, char *attacker)
+bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker)
 {
 	char pattacker[80];
 
@@ -6123,8 +6255,66 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, 
 
 	project_time_effect = eff;
         snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
-	return (fire_cloud(Ind, typ, dir, dam, rad, time, pattacker));
+	return (fire_cloud(Ind, typ, dir, dam, rad, time, interval, pattacker));
 }
+
+#ifdef WINTER_SEASON
+/*
+ * Let it snow, let it snow, let it snow...
+ */
+bool cast_snowflake(worldpos *wpos, int x, int interval) /* interval is movement speed */
+{
+	char pattacker[80];
+        strcpy(pattacker, "");
+
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	project_time_effect = EFF_SNOWING;
+	project_interval = interval;
+	project_time = 100; /* just any value long enough to traverse the screen */
+
+	return (project(PROJECTOR_EFFECT, 0, wpos, 0, x, 0, GF_SNOWFLAKE, flg, pattacker));
+}
+#endif
+#ifdef NEW_YEARS_EVE
+/*
+ * Fireworks!
+ */
+bool cast_fireworks(worldpos *wpos, int x, int y)
+{
+	char pattacker[80];
+        strcpy(pattacker, "");
+
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	int typ = rand_int(7 * 3); /* colour & style */
+	
+	if (typ < 7) project_time_effect = EFF_FIREWORKS1;
+	else if (typ < 7 * 2) {
+		project_time_effect = EFF_FIREWORKS2;
+		typ -= 7;
+	} else {
+		project_time_effect = EFF_FIREWORKS3;
+		typ -= 7 * 2;
+	}
+	
+	switch(typ) {
+	case 0: typ = GF_FW_FIRE; break;
+	case 1: typ = GF_FW_ELEC; break;
+	case 2: typ = GF_FW_POIS; break;
+	case 3: typ = GF_FW_LITE; break;
+	case 4: typ = GF_FW_SHDI; break;
+	case 5: typ = GF_FW_SHDM; break;
+	case 6: typ = GF_FW_MULT; break;
+	}
+
+	project_interval = 4;
+	project_time = 5 + 5; /* X units to rise into the air, X units to explode */
+
+	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
+}
+#endif
+
 
 /*
  * Player swaps position with whatever in (lty, ltx)
@@ -6308,7 +6498,7 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker)
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
  */
-bool fire_wall(int Ind, int typ, int dir, int dam, int time, char *attacker)
+bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker)
 {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
@@ -6328,6 +6518,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, char *attacker)
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
 	}
+	project_interval = interval;
 	project_time = time;
 
 	/* Analyze the "dir" and the "target", do NOT explode */
@@ -6757,10 +6948,174 @@ void house_creation(int Ind, bool floor, bool jail)
 	poly_build(Ind, (char*)&buildargs);	/* Its a (char*) ;( */
 }
 
+
+extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
+{
+	int                     i, Ind, j;
+	cave_type               *c_ptr;
+
+	monster_type    *m_ptr;
+	monster_race    *r_ptr = &r_info[r_idx];
+
+	char buf[80];
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return (0);
+	/* Verify location */
+	if (!in_bounds(y, x)) return (0);
+	/* Require empty space */
+	if (!cave_empty_bold(zcave, y, x)) return (0);
+	
+	/* Paranoia */
+	if (!r_idx) return (0);
+
+	/* Paranoia */
+	if (!r_ptr->name) return (0);
+
+	/* Update r_ptr due to possible r_idx changes */
+	r_ptr = &r_info[r_idx];
+
+	if ((r_ptr->flags1 & RF1_UNIQUE)) return (0);
+
+	c_ptr = &zcave[y][x];
+
+	/* Make a new monster */
+	c_ptr->m_idx = m_pop();
+
+	/* Mega-Hack -- catch "failure" */
+	if (!c_ptr->m_idx) return (0);
+
+	/* Get a new monster record */
+	m_ptr = &m_list[c_ptr->m_idx];
+
+	/* Save the race */
+	m_ptr->r_idx = r_idx;
+
+	/* Place the monster at the location */
+	m_ptr->fy = y;
+	m_ptr->fx = x;
+	wpcopy(&m_ptr->wpos, wpos);
+
+	m_ptr->special = 0;
+
+	/* Hack -- Count the monsters on the level */
+	r_ptr->cur_num++;
+
+
+	/* Hack -- count the number of "reproducers" */
+	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro++;
+
+
+	/* Assign maximal hitpoints */
+	if (r_ptr->flags1 & RF1_FORCE_MAXHP)
+	{
+		m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
+	}
+	else
+	{
+		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
+	}
+
+	/* And start out fully healthy */
+	m_ptr->hp = m_ptr->maxhp;
+
+	/* Extract the monster base speed */
+	m_ptr->speed = r_ptr->speed;
+	m_ptr->mspeed = m_ptr->speed;
+
+	/* Extract base ac and  other things */
+	m_ptr->ac = r_ptr->ac;
+
+	for (j = 0; j < 4; j++)
+	{
+		m_ptr->blow[j].effect = r_ptr->blow[j].effect;
+		m_ptr->blow[j].method = r_ptr->blow[j].method;
+		m_ptr->blow[j].d_dice = r_ptr->blow[j].d_dice;
+		m_ptr->blow[j].d_side = r_ptr->blow[j].d_side;
+	}
+	m_ptr->level = r_ptr->level;
+	m_ptr->exp = MONSTER_EXP(m_ptr->level);
+	m_ptr->owner = 0;
+
+	/* Hack -- small racial variety */
+	if (!(r_ptr->flags1 & RF1_UNIQUE))
+	{
+		/* Allow some small variation per monster */
+		i = extract_energy[m_ptr->speed] / 10;
+		if (i)
+		{
+			j = rand_spread(0, i);
+			m_ptr->mspeed += j;
+
+			if (m_ptr->mspeed < j) m_ptr->mspeed = 255;
+		} 
+	}
+
+
+	/* Give a random starting energy */
+	m_ptr->energy = rand_int(100);
+
+	/* Hack -- Reduce risk of "instant death by breath weapons" */
+	if (r_ptr->flags1 & RF1_FORCE_SLEEP)
+	{
+		/* Start out with minimal energy */
+		m_ptr->energy = rand_int(10);
+	}
+
+
+	/* No "damage" yet */
+	m_ptr->stunned = 0;
+	m_ptr->confused = 0;
+	m_ptr->monfear = 0;
+
+	/* No knowledge */
+	m_ptr->cdis = 0;
+
+	/* clone value */
+
+        m_ptr->owner = 0;
+        m_ptr->pet = 0;
+
+	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
+	{
+		if (Players[Ind]->conn == NOT_CONNECTED)
+			continue;
+
+		Players[Ind]->mon_los[c_ptr->m_idx] = 0;
+		Players[Ind]->mon_vis[c_ptr->m_idx] = 0;
+	}
+
+	if (getlevel(wpos) > (m_ptr->level + 7)) {
+	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
+	    m_ptr->exp = MONSTER_EXP(l);
+	    monster_check_experience(c_ptr->m_idx, TRUE);
+	}
+
+	strcpy(buf, (r_name + r_ptr->name));
+
+	/* Update the monster */
+	update_mon(c_ptr->m_idx, TRUE);
+
+
+	/* Assume no sleeping */
+	m_ptr->csleep = 0;
+
+	/* STR */
+	for (j = 0; j < 4; j++) {
+		m_ptr->blow[j].org_d_dice = r_ptr->blow[j].d_dice;
+		m_ptr->blow[j].org_d_side = r_ptr->blow[j].d_side;
+	}
+	/* DEX */
+	m_ptr->org_ac = m_ptr->ac;
+	/* CON */
+	m_ptr->org_maxhp = m_ptr->maxhp;
+
+	return (TRUE);
+}
 #ifdef RPG_SERVER
 bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 {
-	int                     i, Ind, j;
+	int                     Ind, j;
 	cave_type               *c_ptr;
 
 	monster_type    *m_ptr;
@@ -7325,3 +7680,13 @@ bool heal_insanity(int Ind, int val)
 	return FALSE;
 }
 
+bool do_vermin_control(int Ind) {
+        dun_level *l_ptr = getfloor(&Players[Ind]->wpos);
+        if(l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY))
+        {
+                l_ptr->flags1 |= LF1_NO_MULTIPLY;
+                msg_print(Ind, "You feel less itchy.");
+                return TRUE;
+        }
+        return FALSE;
+}

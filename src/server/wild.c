@@ -1140,7 +1140,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* add the objects */
 	
 	trys = 0;
-	place_object_restrictor = 1;
+	place_object_restrictor = RESF_NOHIDSM;
 	while ((num_objects) && (trys < 300))
 	{
 		x = rand_range(x1,x2);
@@ -1149,12 +1149,12 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		if (cave_clean_bold(zcave,y,x))
 		{			
 			object_level = w_ptr->radius/2 +1;
-			place_object(wpos, y, x, FALSE, FALSE, FALSE, FALSE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+			place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 			num_objects--;
 		}
 		trys++;	
 	}
-	place_object_restrictor = 0;
+	place_object_restrictor = 0x000;
 	
 	/* add the food */
 	
@@ -1301,7 +1301,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3], 
 		tmp, type, area, price, num_door_attempts;
 	int size;
-	char wall_feature, door_feature, has_moat = 0;
+	char wall_feature = 0, door_feature = 0;
+	char has_moat = 0;
 	cave_type *c_ptr;
 	bool rand_old = Rand_quick;
 	bool trad = !magik(MANG_HOUSE_RATE);

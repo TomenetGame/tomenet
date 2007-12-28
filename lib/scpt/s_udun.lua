@@ -188,9 +188,9 @@ STOPWRAITH = add_spell
 {
 	["name"] = 	"Stop Wraithform",
 	["school"] = 	{SCHOOL_UDUN},
-	["level"] = 	30,
-	["mana"] = 	10,
-	["mana_max"] = 	20,
+	["level"] = 	20,
+	["mana"] = 	5,
+	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["spell"] = 	function()
 			set_tim_wraith(Ind, 0)

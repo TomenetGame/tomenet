@@ -674,6 +674,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
+				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_GREEN) return FALSE;
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
@@ -707,7 +708,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-				case TV_BOOK:
+				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE) return FALSE;
 				case TV_AMULET:
 				case TV_RING:
 				case TV_STAFF:
@@ -824,6 +825,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 		{
 			switch (o_ptr->tval)
 			{
+				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_GREEN) return FALSE;
 				case TV_FOOD:
 					if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
 					    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
@@ -1093,14 +1095,6 @@ static bool black_market_crap(object_type *o_ptr)
 	int		i, j, k;
 	store_type *st_ptr;
 
-	/* Ego items are never crap */
-	if (o_ptr->name2) return (FALSE);
-
-	/* Good items are never crap */
-	if (o_ptr->to_a > 0) return (FALSE);
-	if (o_ptr->to_h > 0) return (FALSE);
-	if (o_ptr->to_d > 0) return (FALSE);
-
 	/* No Talismans in the BM (can only be found! >:) */
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
 
@@ -1114,6 +1108,17 @@ static bool black_market_crap(object_type *o_ptr)
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval > 50 && o_ptr->sval < 100) return (TRUE);
+
+	/* No items that can be used by WINNERS_ONLY in the BM - C. Blue */
+	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) return (TRUE);
+
+	/* Ego items are never crap */
+	if (o_ptr->name2) return (FALSE);
+
+	/* Good items are never crap */
+	if (o_ptr->to_a > 0) return (FALSE);
+	if (o_ptr->to_h > 0) return (FALSE);
+	if (o_ptr->to_d > 0) return (FALSE);
 
 	/* check individual store would be better. *later* */
 	for(i=0; i<max_st_idx; i++){
@@ -1431,12 +1436,17 @@ static void store_create(store_type *st_ptr)
 			if ((o_ptr->name2 || o_ptr->name2b))
 			{
 				if ((!(st_info[st_ptr->st_idx].flags1 & SF1_EGO)) &&
-				    !magik(STORE_EGO_CHANCE))
+				    !magik(STORE_EGO_CHANCE) && st_ptr->st_idx != STORE_GENERAL) /* more ego lamps in general store please */
 					continue;
 			}
 
 			/* Hack -- General store shouldn't sell too much aman cloaks etc */
+/* C. Blue: Softened it up to allow brightness lamps! (for RPG mainly) */
+#if 0
 			if (st_ptr->st_idx == 0 && object_value(0, o_ptr) > 1000 &&
+#else
+			if (st_ptr->st_idx == STORE_GENERAL && object_value(0, o_ptr) > 18000 && /* ~13000 probably max */
+#endif
 			    magik(33) && 
 			    !(st_info[st_ptr->st_idx].flags1 & SF1_EGO))
 				continue;
@@ -2024,6 +2034,11 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
+        if (p_ptr->pstealing) {
+                msg_print(Ind, "You're still not calm enough to steal again..");
+                return;
+	}
+
 	/* Level restriction (mainly anticheeze) */
 	if (p_ptr->lev < 5)
 	{
@@ -2120,7 +2135,7 @@ void store_stole(int Ind, int item)
 
 	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
-	while((tccompare / 10) < tbest)
+	while((tccompare / 10) < tbest) /* calculate square root - C. Blue */
 	{
 		tcadd = (tcadd * 114) / 100;
 		tccompare = (tccompare * 13) / 10;
@@ -2320,6 +2335,9 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr-
 		store_kick(Ind, FALSE);
 	}
 
+        /* set timeout before attempting to shoplift again */
+        p_ptr->pstealing = 0; /* 10 turns aka 6 seconds */
+
 	/* Not kicked out */
 	return;
 }
@@ -2438,6 +2456,12 @@ void store_purchase(int Ind, int item, int amt)
                         msg_print(Ind, "You aren't powerful enough yet to pick up that artifact!");
                         return;
                 }
+	}
+	
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
+	    && !p_ptr->total_winner) { /* <- obsolete. Added that one just for testing when admin char sets .total_winner=1 */
+                msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+                return;
 	}
 
 	/* Assume the player wants just one of them */
@@ -3144,7 +3168,7 @@ void store_examine(int Ind, int item)
  		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
-			int blows = calc_blows(Ind, o_ptr);
+			int blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
@@ -3307,6 +3331,9 @@ void do_cmd_store(int Ind)
 		}
 	}
 
+	break_cloaking(Ind);
+	handle_stuff(Ind); /* update stealth/search display now */
+
 	/* Set the timer */
 	p_ptr->tim_store = STORE_TURNOUT;
 
@@ -3332,7 +3359,7 @@ void do_cmd_store(int Ind)
 
 	/* Save the store number */
 	p_ptr->store_num = which;
-
+	
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
@@ -4121,6 +4148,12 @@ void home_purchase(int Ind, int item, int amt)
                 }
 	}
 
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
+	    && !p_ptr->total_winner) { /* <- Obsolete. Added that one just for testing when admin char sets .total_winner=1 */
+                msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+                return;
+	}
+
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
 
@@ -4245,7 +4278,7 @@ void home_examine(int Ind, int item)
 	object_type		*o_ptr;
 
 	char		o_name[160];
-
+	
 	house_type *h_ptr;
 
 	/* This should never happen */
@@ -4298,7 +4331,7 @@ void home_examine(int Ind, int item)
 		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
-			int blows = calc_blows(Ind, o_ptr);
+			int blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
@@ -4578,5 +4611,120 @@ void do_cmd_trad_house(int Ind)
 }
 
 
-
 #endif	// USE_MANG_HOUSE_ONLY
+
+
+void view_cheeze_list(int Ind)
+{
+        char    path[MAX_PATH_LENGTH];
+//      cptr name = "cheeze.log";
+//      (void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
+        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
+        do_cmd_check_other_prepare(Ind, path);
+}
+
+void reward_deed_item(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type forge, *o_ptr = &forge;
+	object_type *o2_ptr = &p_ptr->inventory[item];
+	WIPE(o_ptr, object_type);
+
+	if (o2_ptr->tval != TV_PARCHMENT || o2_ptr->sval < SV_DEED_HIGHLANDER) {
+		msg_print(Ind, "That's not a deed.");
+		return;
+	}
+	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
+		return;
+	}
+	
+	switch (o2_ptr->sval) {
+	case SV_DEED_HIGHLANDER: /* winner's deed */
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW, 3000); /* 95 is default depth for highlander tournament */
+                object_aware(Ind, o_ptr);
+                object_known(o_ptr);
+                o_ptr->discount = 100;
+                o_ptr->level = 0;
+                o_ptr->ident |= ID_MENTAL;
+		o_ptr->note = quark_add("Highlander reward");
+		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		break;
+	case SV_DEED2_HIGHLANDER: /* participant's deed */
+		msg_print(Ind, "\377yAfter examining the deed, the mayor tells you that they don't have any");
+		msg_print(Ind, "\377yitems for rewards, but he suggests that you get a blessing instead!");
+		return;
+	default:
+		msg_print(Ind, "\377oAfter examining the deed, the mayor tells you that they don't have any");
+		msg_print(Ind, "\377oappropriate rewards. With a sorry gesture, he returns the deed to you.");
+		return;
+	}
+
+        /* Take the item from the player, describe the result */
+        inven_item_increase(Ind, item, -1);
+        inven_item_describe(Ind, item);
+        inven_item_optimize(Ind, item);
+
+	/* give him the reward item after taking the deed */
+	if (o_ptr->k_idx) inven_carry(Ind, o_ptr);
+
+        /* Handle stuff */
+	handle_stuff(Ind);
+}
+
+void reward_deed_blessing(int Ind, int item)
+{
+	player_type *p_ptr = Players[Ind];
+	object_type *o2_ptr = &p_ptr->inventory[item];
+
+	if (o2_ptr->tval != TV_PARCHMENT || o2_ptr->sval < SV_DEED_HIGHLANDER) {
+		msg_print(Ind, "That's not a deed.");
+		return;
+	}
+	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+		switch (o2_ptr->sval) {
+		/* all contender's deeds: */
+		case SV_DEED2_HIGHLANDER:
+			msg_print(Ind, "\377oYou can only redeem your own contender's deeds.");
+			return;
+		/* not a contender's deed, but a winner's deed! */
+		default: 
+			msg_print(Ind, "\377yThe mayor frowns at the deed, but accepts it.");
+		}
+	}
+
+	switch (o2_ptr->sval) {
+	case SV_DEED_HIGHLANDER: /* winner's deed */
+		msg_print(Ind, "\377GThe town priest speaks a blessing, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		/* it's inaccurate, due to hack-like process_player_end_aux call timing
+		   (about once every 31 turns on wz=0), but who cares :) */
+#ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
+		bless_temp_luck(Ind, 4, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
+#else
+		bless_temp_luck(Ind, 4, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
+#endif
+		break;
+	case SV_DEED2_HIGHLANDER: /* participant's deed */
+		msg_print(Ind, "\377GThe town priest speaks a blessing.");
+#ifdef RPG_SERVER /* longer duration since dungeons are all ironman; also you can hardly trade parchments on RPG */
+		bless_temp_luck(Ind, 1, (30 * 60 * cfg.fps) / 31); /* somewhere around 30 minutes */
+#else
+		bless_temp_luck(Ind, 1, (20 * 60 * cfg.fps) / 31); /* somewhere around 20 minutes */
+#endif
+		break;
+	default:
+		msg_print(Ind, "\377oAfter examining the deed, the mayor tells you that they don't have any");
+		msg_print(Ind, "\377oappropriate rewards. With a sorry gesture, he returns the deed to you.");
+		return;
+	}
+
+        /* Take the item from the player, describe the result */
+        inven_item_increase(Ind, item, -1);
+        inven_item_describe(Ind, item);
+        inven_item_optimize(Ind, item);
+
+        /* Handle stuff */
+	handle_stuff(Ind);
+}

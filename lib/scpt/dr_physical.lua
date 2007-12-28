@@ -17,15 +17,16 @@ HEALINGCLOUD = add_spell
         ["school"] =    {SCHOOL_DRUID_PHYSICAL},
         ["level"] =     18,
         ["mana"] =      1,
-        ["mana_max"] =  100,
+        ["mana_max"] =  40,
         ["fail"] =      30,
         ["stat"] =      A_WIS,
         ["direction"] = FALSE,
         ["spell"] =     function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD, 25)), (1 + get_level(Ind, HEALINGCLOUD, 2)), (5 + get_level(Ind, HEALINGCLOUD, 20)), " calls the spirits")
+--			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD, 25)), (1 + get_level(Ind, HEALINGCLOUD, 2)), (5 + get_level(Ind, HEALINGCLOUD, 20)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD, 25)), (1 + get_level(Ind, HEALINGCLOUD, 2)), (5 + get_level(Ind, HEALINGCLOUD, 5)), 10, " calls the spirits")
                         end,
         ["info"] =      function()
-                        return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 20))
+                        return "heals " .. (get_level(Ind, HEALINGCLOUD, 25) + 1) .. " rad " .. (1 + get_level(Ind,HEALINGCLOUD,2)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD, 5))
                         end,
         ["desc"] =      { "Continuously heals you and those around you. (Auto-projecting)",
 			  }
@@ -112,13 +113,14 @@ EXTRASTATS = add_spell
 			do_xtra_stats(Ind, get_level(Ind, EXTRASTATS, 100), get_level(Ind, EXTRASTATS, 50))
 			end,
 	["info"] = 	function()
-			return "dur " .. (20 + get_level(Ind, EXTRASTATS, 50))
+			return "+" .. (get_level(Ind, EXTRASTATS,50)/5) .. " dur " .. (20 + get_level(Ind, EXTRASTATS, 50))
 			end,
 	["desc"] = 	{ "At level 5 increases your charisma.",
 			  "At level 10 also increases your dexterity.",
 			  "At level 15 also increases your strength.",
 			  "At level 20 also increases your constitution.",
-			  "At level 25 also increases your intelligence.",}
+			  "At level 25 also increases your intelligence.",
+			  "Not projecttable.",}
 }
 
 -- A shot that increases a players SPR (if wearing a shooter) 
@@ -134,10 +136,10 @@ FOCUSSHOT = add_spell
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_focus_shot(Ind, get_level(Ind, FOCUSSHOT, 100), get_level(Ind, FOCUSSHOT, 50))
+			do_focus_shot(Ind, get_level(Ind, FOCUSSHOT, 100), get_level(Ind, FOCUSSHOT, 25))
 			end,
 	["info"] = 	function()
-			return "increases toXHit by " .. get_level(Ind, FOCUSSHOT, 25)
+			return "+" .. get_level(Ind, FOCUSSHOT, 25) .. " dur " .. get_level(Ind, FOCUSSHOT, 100)
 			end,
 	["desc"] = 	{ "Increases your accuracy.", }
 }

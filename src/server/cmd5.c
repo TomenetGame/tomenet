@@ -351,7 +351,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Spell effects */
 	switch(i)
@@ -440,7 +440,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 	s_ptr = &ghost_spells[p_ptr->current_spell];
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* We assume everything is still OK to cast */
 	switch (p_ptr->current_spell)
@@ -564,7 +564,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
@@ -1265,7 +1265,8 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
     case 36:
     sprintf(p_ptr->attacker, " casts a stinking cloud for");
-      fire_ball(Ind, GF_POIS, dir, damroll(12, 2) , rad, p_ptr->attacker);
+//      fire_ball(Ind, GF_POIS, dir, damroll(12, 2) , rad, p_ptr->attacker);
+      fire_cloud(Ind, GF_POIS, dir, damroll(4, 2), rad, 4, 9, p_ptr->attacker);
       break;
 // RF5_BA_NETH			0x00000020	/* Nether Ball */
     case 37:
@@ -1290,12 +1291,12 @@ void do_mimic_power_aux(int Ind, int dir)
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
     //sprintf(p_ptr->attacker, " tries to blast your mind for");
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " focusses on your mind for");
       fire_bolt(Ind, GF_PSI, dir, damroll(3 + rlev / 5, 8), "");
       break;
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
     case 43:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " focusses on your mind for");
       fire_bolt(Ind, GF_PSI, dir, damroll(5 + rlev / 4, 8), "");
       break;
 // RF5_CAUSE_1			0x00001000	/* Cause Wound */
@@ -1373,21 +1374,22 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF5_SCARE			0x08000000	/* Frighten Player */
     case 59:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " focusses on your mind");
       fire_bolt(Ind, GF_TURN_ALL, dir, damroll(2, 6) + (rlev / 3), "");
       break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " focusses on your mind");
       fire_bolt(Ind, GF_CONFUSION, dir, damroll(2, 6) + (rlev / 3), "");
       break;
 // RF5_SLOW			0x40000000	/* Slow Player */
     case 62:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " concentrates on your body");
       fire_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3), "");
       break;
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
+    sprintf(p_ptr->attacker, " concentrates on your body");
       fire_bolt(Ind, GF_STASIS, dir, damroll(2, 6) + (rlev / 3), "");
       break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
@@ -1397,16 +1399,17 @@ void do_mimic_power_aux(int Ind, int dir)
       break;
 // RF6_TELE_TO
 	case 72:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " commands you to return");
 	  (void)project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, p_ptr->attacker);
 	  break;
 // RF6_TELE_AWAY
 	case 73:
-    sprintf(p_ptr->attacker, "");
+    sprintf(p_ptr->attacker, " invokes a teleportation spell");
           (void)fire_beam(Ind, GF_AWAY_ALL, dir, rlev, "");
 	  break;
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:
+    sprintf(p_ptr->attacker, " cackles evilly");
 	  /* I dunno if you're happy with it :) */
       fire_ball(Ind, GF_MAKE_TRAP, dir, 1, 1 + rlev / 30, "");
       break;
@@ -1509,6 +1512,8 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 		msg_format_near(Ind, "%s polymorphs back to normal form.", p_ptr->name);
 	}
 
+	break_cloaking(Ind); /* can't happen, adding it anyways :-p */
+
 	note_spot(Ind, p_ptr->py, p_ptr->px);
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
@@ -1566,7 +1571,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (p_ptr->pclass == CLASS_DRUID) {
 			    if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
 				/* (S)he is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 				do_mimic_change(Ind, j, TRUE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 				return;
@@ -1575,7 +1580,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (p_ptr->prace == RACE_VAMPIRE) {
 			    if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
 				/* (S)he is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 				do_mimic_change(Ind, j, TRUE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 				return;
@@ -1598,7 +1603,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		}
 
 		/* (S)he is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		un_afk_idle(Ind);
 
 		do_mimic_change(Ind, j, FALSE);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1611,7 +1616,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	    if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
 		if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
 			/* (S)he is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			do_mimic_change(Ind, j, TRUE);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1621,7 +1626,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	    } else if (p_ptr->prace == RACE_VAMPIRE) {
 		if (mimic_vampire(j, p_ptr->lev) || (j == 0)) {
 			/* (S)he is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			do_mimic_change(Ind, j, TRUE);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1673,7 +1678,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	    }
 	} else {
 		/* (S)he is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		un_afk_idle(Ind);
 
 		do_mimic_power(Ind, spell - 2, dir); /* 2 polymorph self abilities *///w0t0w
 	}
@@ -1697,7 +1702,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		msg_print(Ind, "Ahah dont try to hack your client please :) :: tval");
 		return;
 	}
-	else if (o_ptr->sval == 255)
+	else if (o_ptr->sval == SV_SPELLBOOK)
 	{
 		if (o_ptr->pval != spell)
 		{
@@ -1714,6 +1719,8 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		}
 	}
 
+	break_cloaking(Ind);
+
 	/* No magic */
 	if (p_ptr->anti_magic)
 	{
@@ -1729,7 +1736,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	/* TODO: use energy */
 
 	/* (S)he is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Actualy cast the choice */
 	if (spell != -1)

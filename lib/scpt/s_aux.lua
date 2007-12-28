@@ -339,8 +339,11 @@ function spell_chance(i, s)
 
 	s_ptr = spell(s)
 
+--if (s_ptr.fail = -1) then chance = 100
+--else
 	-- Extract the base spell failure rate
         chance = lua_spell_chance(i, s_ptr.fail, get_level(i, s, 50), s_ptr.skill_level, get_mana(i, s), get_power(i, s), get_spell_stat(s))
+--end
 
 	-- Return the chance
 	return chance

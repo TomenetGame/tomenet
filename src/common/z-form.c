@@ -233,7 +233,10 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 	bool do_long;
 
 	/* The argument needs "processing" */
-	bool do_xtra;
+	bool do_capitilization;
+
+	/* Escape quotes - mikaelh */
+	bool do_escape;
 
 	/* Bytes used in buffer */
 	uint n;
@@ -341,7 +344,8 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		do_long = FALSE;
 
 		/* Assume no "xtra" processing */
-		do_xtra = FALSE;
+		do_capitilization = FALSE;
+		do_escape = FALSE;
 
 		/* Build the "aux" string */
 		while (TRUE)
@@ -425,9 +429,19 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 				else if (*s == '^')
 				{
 					/* Note the "xtra" flag */
-					do_xtra = TRUE;
+					do_capitilization = TRUE;
 
 					/* Skip the "^" */
+					s++;
+				}
+
+				/* Another Mega-Hack -- Handle '/' (escape) - mikaelh */
+				else if (*s == '/')
+				{
+					/* Note the "xtra" flag */
+					do_escape = TRUE;
+
+					/* Skip the '/' */
 					s++;
 				}
 
@@ -473,7 +487,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					long arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, long);
+					arg = va_arg(vp, long int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -501,7 +515,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 					unsigned long arg;
 
 					/* Access next argument */
-					arg = va_arg(vp, unsigned long);
+					arg = va_arg(vp, unsigned long int);
 
 					/* Format the argument */
 					sprintf(tmp, aux, arg);
@@ -601,7 +615,7 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 
 
 		/* Mega-Hack -- handle "capitilization" */
-		if (do_xtra)
+		if (do_capitilization)
 		{
 			/* Now append "tmp" to "buf" */
 			for (q = 0; tmp[q]; q++)
@@ -623,6 +637,18 @@ uint vstrnfmt(char *buf, uint max, cptr fmt, va_list vp)
 		{
 			/* Check total length */
 			if (n == max-1) break;
+
+			/* Escape \ and " (for LUA expressions) - mikaelh */
+			if (do_escape)
+			{
+				if (tmp[q] == '\\' || tmp[q] == '"')
+				{
+					/* Escaped char needs more space */
+					if (n == max-2) break;
+
+					buf[n++] = '\\';
+				}
+			}
 
 			/* Save the character */
 			buf[n++] = tmp[q];

@@ -104,8 +104,16 @@
 #define MAX_MOTD_LOOPS			120
 
 
+/* hack to prevent the floor tile bug on windows xp and windows 2003 machines */
+#define FLOORTILEBUG_WORKAROUND
 
+
+#if 0
 static bool validstrings(char *nick, char *real, char *host);
+#else
+static bool validstring(char *nick);
+#endif
+void validatestring(char *string);
 
 connection_t	*Conn = NULL;
 static int		max_connections = 0;
@@ -143,11 +151,14 @@ char *showtime(void)
 				"Bug"
 			};
 	static char	buf[80];
-
+	/* adding weekdays, basically just for p_printf() - C. Blue */
+	static char	day_names[7][4] = {
+				"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
+			};
 	time(&now);
 	tmp = localtime(&now);
-	sprintf(buf, "%02d %s %02d:%02d:%02d",
-		tmp->tm_mday, month_names[tmp->tm_mon],
+	sprintf(buf, "%02d %s (%s) %02d:%02d:%02d",
+		tmp->tm_mday, month_names[tmp->tm_mon], day_names[tmp->tm_wday],
 		tmp->tm_hour, tmp->tm_min, tmp->tm_sec);
 	return buf;
 }
@@ -282,11 +293,18 @@ static void Init_receive(void)
 	playing_receive[PKT_GUILD]		= Receive_guild;
 
         playing_receive[PKT_SKILL_MOD]		= Receive_skill_mod;
-        playing_receive[PKT_ACTIVATE_SKILL]		= Receive_activate_skill;
+        playing_receive[PKT_ACTIVATE_SKILL]	= Receive_activate_skill;
 	playing_receive[PKT_RAW_KEY]		= Receive_raw_key;
-	playing_receive[PKT_STORE_EXAMINE]		= Receive_store_examine;
+	playing_receive[PKT_STORE_EXAMINE]	= Receive_store_examine;
 	playing_receive[PKT_STORE_CMD]		= Receive_store_command;
 	playing_receive[PKT_PING]		= Receive_ping;
+
+	/* New stuff for v4.4.1 or 4.4.0d (dual-wield & co) - C. Blue */
+	playing_receive[PKT_SIP]		= Receive_sip;
+	playing_receive[PKT_TELEKINESIS]	= Receive_telekinesis;
+	playing_receive[PKT_BBS]		= Receive_BBS;
+	playing_receive[PKT_WIELD2]		= Receive_wield2;
+	playing_receive[PKT_CLOAK]		= Receive_cloak;
 }
 
 static int Init_setup(void)
@@ -379,7 +397,7 @@ bool Report_to_meta(int flag)
 
 
         /* Abort if the user doesn't want to report */
-	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2047)))
+	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045)))
 		return FALSE;
 
 	/* If this is the first time called, initialize our hostname */
@@ -417,18 +435,18 @@ bool Report_to_meta(int flag)
 
 	memset(buf_meta, '\0', 16384);
 
-	strcpy(buf_meta, "<server url='");
+	strcpy(buf_meta, "<server url=\"");
 	strcat(buf_meta, local_name);
-	strcat(buf_meta, "' port='");
+	strcat(buf_meta, "\" port=\"");
 	sprintf(temp, "%ld", cfg.game_port);
 	strcat(buf_meta, temp);
-//	strcat(buf_meta, "' notes='");
+//	strcat(buf_meta, "\" notes=\"");
 //	sprintf(temp, "%s", cfg.server_notes);
 //	strcat(buf_meta, temp);
-	strcat(buf_meta, "'");
+	strcat(buf_meta, "\"");
 	if (flag & META_DIE)
 	{
-		strcat(buf_meta, " death='true'></server>");
+		strcat(buf_meta, " death=\"true\"></server>");
 	}
 	else
 	{
@@ -457,13 +475,47 @@ bool Report_to_meta(int flag)
                         /* if someone other than a dungeon master is playing */
                         if (NumPlayers - hidden_dungeon_master)
                         {
+				char *name;
+				int j, k;
                                 for (i = 1; i <= NumPlayers; i++)
                                 {
                                         /* handle the cfg_secret_dungeon_master option */
                                         if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 
                                         strcat(buf_meta, "<player>");
-                                        strcat(buf_meta, Players[i]->basename);
+					name = Players[i]->name;
+					temp[0] = '\0';
+					k = 0;
+					for (j = 0; j < MAX_CHARS; j++)
+					{
+						if (name[j] == '\0') break;
+						else if (name[j] == '<')
+						{
+							strcat(temp, "&lt;");
+							k += 4;
+						}
+						else if (name[j] == '>')
+						{
+							strcat(temp, "&gt;");
+							k += 4;
+						}
+						else if (name[j] == '&')
+						{
+							strcat(temp, "&amp;");
+							k += 5;
+						}
+						else if (name[j] == '"')
+						{
+							strcat(temp, "&quot;");
+							k += 6;
+						}
+						else
+						{
+							temp[k++] = name[j];
+							temp[k] = '\0';
+						}
+					}
+					strcat(buf_meta, temp);
                                         strcat(buf_meta, "</player>");
                                 }
                         }
@@ -472,24 +524,31 @@ bool Report_to_meta(int flag)
 #ifdef RPG_SERVER
 		strcat(buf_meta, "<game>TomeNET RPG (not for beginners)</game>");
 #else
-#ifdef FUN_SERVER
+ #ifdef FUN_SERVER
 		strcat(buf_meta, "<game>TomeNET Fun</game>");
-#else
+ #else
+  #ifdef ARCADE_SERVER
+		strcat(buf_meta, "<game>TomeNET Smash Arcade</game>");
+  #else
                 strcat(buf_meta, "<game>TomeNET</game>");
-#endif
+  #endif
+ #endif
 #endif
 
                 /* Append the version number */
-                sprintf(temp, "<version>%d.%d.%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+                sprintf(temp, "<version>%d.%d.%d%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
                 strcat(buf_meta, temp);
 
+#if 1 /* spam - C. Blue */
                 /* Append the additional version info */
+//		if (VERSION_EXTRA > 0) strcat(buf_meta, " ");
                 if (VERSION_EXTRA == 1)
                         strcat(buf_meta, "alpha");
                 if (VERSION_EXTRA == 2)
                         strcat(buf_meta, "beta");
                 if (VERSION_EXTRA == 3)
                         strcat(buf_meta, "development");
+#endif
 
                 strcat(buf_meta, "</version></server>");
         }
@@ -533,8 +592,8 @@ bool Report_to_meta(int flag)
                 close(sock);
 	}
 #ifdef EVIL_METACLIENT
-	/* check what has happened to evilmeta - mikaelh */
-	if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
+	/* find out what has happened to evilmeta - mikaelh */
+	if (metapid == 0 || waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
 	{
 		if (WIFEXITED(status) || WIFSIGNALED(status))
 		{
@@ -573,7 +632,11 @@ void Start_evilmeta(void)
 #ifdef RPG_SERVER
 			char *cmd = "./evilmeta.rpg";
 #else
+ #ifdef ARCADE_SERVER
+			char *cmd = "./evilmeta.smash";
+ #else
 			char *cmd = "./evilmeta";
+ #endif
 #endif
 			char *args[] = {cmd, NULL};
 
@@ -783,6 +846,16 @@ static bool forbidden_name(char *name){
 	bool success=FALSE;
 	/* Hack -- allow 'guest' account */
 	/* if (!strcmp("Guest", name)) return FALSE; */
+
+	/* Note: Character names always start upper-case, so some of these aren't really needed. (Paranoia) */
+	/* Hardcode some critically important ones */
+	if (!strcmp("server", name)) return TRUE; /* server save file is stored in same folder as player save files */
+	if (!strcmp("tomenet.acc", name)) return TRUE; /* just in case someone copies it over into save folder */
+	if (!strcmp("Insanity", name)) return TRUE; /* just in case someone copies it over into save folder */
+	if (strstr(name, "guild") && strstr(name, ".data")) return TRUE; /* moved guild hall save files to save folder, from data folder */
+	/* Hardcode some not so important ones */
+	if (!strcmp("tBot", name)) return TRUE; /* Sandman's internal chat bot */
+	if (!strcmp("8ball", name)) return TRUE; /* Sandman's internal chat bot */
 
 	sfp=fopen("forbidlist","r");
 	if(sfp==(FILE*)NULL)
@@ -1053,11 +1126,15 @@ static void Contact(int fd, int arg)
 	nick_name[sizeof(nick_name) - 1] = '\0';
 	host_name[sizeof(host_name) - 1] = '\0';
 
-#if 0
+#if 1
 	s_printf("Received contact from %s:%d.\n", host_name, port);
 	s_printf("Address: %s.\n", host_addr);
 	s_printf("Info: real_name %s, port %hu, nick %s, host %s, version %hu\n", real_name, port, nick_name, host_name, version);  
 #endif
+
+	/* Replace all weird chars - mikaelh */
+	validatestring(real_name);
+	validatestring(host_name);
 
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
 				version, port, &login_port, fd);
@@ -1089,11 +1166,16 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	//int status;
 
 	*login_port = 0;
-	
+
+#if 0
 	if(!validstrings(nick, real, host))
+#else
+	/* Only check the account name for weird chars - mikaelh */
+	if(!validstring(nick))
+#endif
 		return E_INVAL;
 
-	if (NumPlayers >= MAX_SELECT_FD)
+	if (NumPlayers >= max_connections)
 		return E_GAME_FULL;
 
 #if 0	/* This would pass in the account name rather than the
@@ -1199,6 +1281,7 @@ static void Delete_player(int Ind)
 	/* Also remove hostility if (s)he was blood bonded - mikaelh */
 	if (p_ptr->blood_bond)
 	{
+#if 0
 		remove_hostility(Ind, lookup_player_name(p_ptr->blood_bond));
 
 		i = find_player(p_ptr->blood_bond);
@@ -1209,6 +1292,41 @@ static void Delete_player(int Ind)
 		}
 
 		p_ptr->blood_bond = 0;
+#else
+		player_list_type *pl_ptr, *tmp;
+		pl_ptr = p_ptr->blood_bond;
+
+		while (pl_ptr)
+		{
+			remove_hostility(Ind, lookup_player_name(pl_ptr->id));
+
+			i = find_player(pl_ptr->id);
+			if (i)
+			{
+				remove_hostility(i, p_ptr->name);
+				remove_blood_bond(i, Ind);
+			}
+
+			tmp = pl_ptr;
+			pl_ptr = pl_ptr->next;
+			KILL(tmp, player_list_type);
+		}
+#endif
+	}
+
+	/* Remove ignores - mikaelh */
+	if (p_ptr->ignore)
+	{
+		hostile_type *h_ptr, *tmp;
+
+		h_ptr = p_ptr->ignore;
+
+		while (h_ptr)
+		{
+			tmp = h_ptr;
+			h_ptr = h_ptr->next;
+			KILL(tmp, hostile_type);
+		}
 	}
 
 	/* Try to save his character */
@@ -1279,6 +1397,11 @@ static void Delete_player(int Ind)
 		}
 	}
 
+#ifdef AUCTION_SYSTEM
+	/* Save his/her money in the hash table */
+	clockin(Ind, 5);
+#endif
+
 	if(p_ptr->esp_link_type && p_ptr->esp_link){
 		/* This is the last chance to get out!!! */
 		int Ind2=find_player(p_ptr->esp_link);
@@ -1331,11 +1454,17 @@ static void Delete_player(int Ind)
  * closed.  If our connection to it has been closed, then connp->w.sock will
  * be set to -1.
  */
-bool Destroy_connection(int ind, char *reason)
+bool Destroy_connection(int ind, char *reason_orig)
 {
 	connection_t		*connp = &Conn[ind];
 	int			id, len, sock;
 	char			pkt[MAX_CHARS];
+	char			*reason;
+	int			i;
+	char			traffic[50+1];
+
+	/* reason was probably made using format() which uses a static buffer so copy it - mikaelh */
+	reason = (char*)string_make(reason_orig);
 
 	kill_xfers(ind);	/* don't waste time sending to a dead
 				   connection ( or crash! ) */
@@ -1344,10 +1473,11 @@ bool Destroy_connection(int ind, char *reason)
 	{
 		errno = 0;
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
+		string_free(reason);
 		return FALSE;
 	}
 
-	exec_lua(NumPlayers, format("player_leaves(%d, %d, \"%s\", \"%s\")", NumPlayers, connp->id, connp->c_name, showtime()));
+	exec_lua(NumPlayers, format("player_leaves(%d, %d, \"%/s\", \"%s\")", NumPlayers, connp->id, connp->c_name, showtime()));
 
 	sock = connp->w.sock;
 	if (sock != -1)
@@ -1396,8 +1526,12 @@ bool Destroy_connection(int ind, char *reason)
 		Delete_player(GetInd[id]);
 	}
 
-	exec_lua(NumPlayers, format("player_has_left(%d, %d, \"%s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
-	if (NumPlayers == 0) exec_lua(NumPlayers, format("last_player_has_left(%d, %d, \"%s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+	exec_lua(NumPlayers, format("player_has_left(%d, %d, \"%/s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+	if (NumPlayers == 0) exec_lua(NumPlayers, format("last_player_has_left(%d, %d, \"%/s\", \"%s\")", NumPlayers + 1, connp->id, connp->c_name, showtime()));
+	strcpy(traffic, "");
+	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
+		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
+	p_printf("%s -  %03d  %s\n", showtime(), NumPlayers, traffic);
 
 	if (connp->real != NULL) free(connp->real);
 	if (connp->nick != NULL) free(connp->nick);
@@ -1416,6 +1550,8 @@ bool Destroy_connection(int ind, char *reason)
 	{
 		DgramClose(sock);
 	}
+
+	string_free(reason);
 
 	return TRUE;
 }
@@ -1661,6 +1797,7 @@ static int Handle_setup(int ind)
  * No spaces/strange characters in the account name, 
  * real name or hostname.
  */
+#if 0
 static bool validstrings(char *nick, char *real, char *host){
 	int i;
 	int rval=1;
@@ -1684,6 +1821,34 @@ static bool validstrings(char *nick, char *real, char *host){
 		}
 	}
 	return(rval);
+}
+#else
+static bool validstring(char *nick) {
+	int i, rval = 1;
+
+	for (i = 0; nick[i]; i++) {
+		if (nick[i] < 32 || nick[i] > 'z') {
+			nick[i] = '\0';
+			rval = 0;
+		}
+	}
+
+	return(rval);
+}
+#endif
+
+/*
+ * Replace all weird chars with underscores
+ * Alternate to validstrings() - mikaelh
+ */
+void validatestring(char *string) {
+	int i;
+
+	for (i = 0; string[i]; i++) {
+		if (string[i] < 32 || string[i] > 'z') {
+			string[i] = '_';
+		}
+	}
 }
 
 /*
@@ -1741,16 +1906,6 @@ static int Handle_listening(int ind)
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
 		Destroy_connection(ind, "verify broken");
-		return -1;
-	}
-
-	/* Permanently ban Arjelis from using any other account...
-	 * His IP seems to be 70.181.210.103 - mikaelh */
-	if (strcmp("Arjelis", connp->nick) && !strcmp("70.181.210.103", connp->addr))
-	{
-		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
-		Send_reliable(ind);
-		Destroy_connection(ind, "hijack attempt");
 		return -1;
 	}
 
@@ -1864,12 +2019,15 @@ static int Handle_login(int ind)
 {
 	connection_t *connp = &Conn[ind];
 	player_type *p_ptr = NULL;
+	object_type forge, *o_ptr = &forge;
 	int i;
 	bool options[OPT_MAX];
 
 	char namebuf1[80], namebuf2[80];
 	int j;
 	cptr title = "";
+
+	char			traffic[50+1];
 
 	if (Id >= MAX_ID)
 	{
@@ -1935,10 +2093,10 @@ static int Handle_login(int ind)
 /* Hacking the no-floor bug for loth/bree tower/gondo city -C. Blue */
 		p_ptr->f_attr[i] = connp->Client_setup.f_attr[i];
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
-#if 1
+#ifndef FLOORTILEBUG_WORKAROUND
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
 		if (!p_ptr->f_char[i]) p_ptr->f_char[i] = f_info[i].z_char;
-#else		//now all tiles are bright white and never dimmed.
+#else		/*now all tiles are bright white and never dimmed.*/
 		p_ptr->f_attr[i] = f_info[i].z_attr;
 		p_ptr->f_char[i] = f_info[i].z_char;
 #endif
@@ -2069,20 +2227,45 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\377y* Empty-server-shutdown command pending *");
 	if (p_ptr->admin_dm && (cfg.runlevel == 2047))
 		msg_print(NumPlayers, "\377y* Low-server-shutdown command pending *");
+	if (p_ptr->admin_dm && (cfg.runlevel == 2046))
+		msg_print(NumPlayers, "\377y* VeryLow-server-shutdown command pending *");
+	if (p_ptr->admin_dm && (cfg.runlevel == 2045))
+		msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
 
 	/* Execute custom script if player joins the server */
 	if (first_player_joined) {
 		first_player_joined = FALSE;
-		exec_lua(NumPlayers, format("first_player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+		exec_lua(NumPlayers, format("first_player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 	}
-	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
-	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	strcpy(traffic, "");
+	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
+		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
+	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
 
 #if 0 /* not here, but below instead. Or admins will be shown in the list! */
 #ifdef TOMENET_WORLDS
 	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
+
+	/* receive previously buffered global-event-contender-deed from other character of her/his account */
+	for (i = 0; i < 128; i++)
+		if (ge_contender_buffer_ID[i] == p_ptr->account) {
+			ge_contender_buffer_ID[i] = 0;
+			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
+			invcopy(o_ptr, i);
+			o_ptr->number = 1;
+			object_aware(NumPlayers, o_ptr);
+			object_known(o_ptr);
+			o_ptr->discount = 0;
+			o_ptr->level = 0;
+			o_ptr->ident |= ID_MENTAL;
+			inven_carry(NumPlayers, o_ptr);
+			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
+			break;
+		}
 
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
@@ -2156,6 +2339,27 @@ static int Handle_login(int ind)
 	        else
 			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 	}
+	
+	/* receive previously buffered global-event-contender-deed from other character of her/his account */
+	for (i = 0; i < 128; i++)
+		if (ge_contender_buffer_ID[i] == p_ptr->account) {
+			ge_contender_buffer_ID[i] = 0;
+			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
+			invcopy(o_ptr, i);
+			o_ptr->number = 1;
+			object_aware(NumPlayers, o_ptr);
+			object_known(o_ptr);
+			o_ptr->discount = 0;
+			o_ptr->level = 0;
+			o_ptr->ident |= ID_MENTAL;
+			inven_carry(NumPlayers, o_ptr);
+			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
+			break;
+		}
+
+#ifdef AUCTION_SYSTEM
+	auction_player_joined(NumPlayers);
+#endif
 
 	/* Tell the meta server about the new player */
 	Report_to_meta(META_UPDATE);
@@ -2215,9 +2419,14 @@ void process_pending_commands(int ind)
 	//while ( (connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) && 
 	while ((connp->r.ptr < connp->r.buf + connp->r.len))
 	{
-		char *foo=connp->r.ptr;
+		char *foo = connp->r.ptr;
 		type = (connp->r.ptr[0] & 0xFF);
-		if(type != PKT_KEEPALIVE) connp->inactive=0;
+		if (type != PKT_KEEPALIVE && type != PKT_PING)
+		{
+			connp->inactive_keepalive = 0;
+			connp->inactive_ping = 0;
+			if (connp->id != -1) p_ptr->idle = 0;
+		}
 		result = (*receive_tbl[type])(ind);
 		if(connp->r.ptr==foo){ /* thx for the warning, evileye */
 			break;
@@ -2444,9 +2653,9 @@ int Net_input(void)
 		{
 			if (connp->state & (CONN_PLAYING | CONN_READY))
 			{
-				sprintf(msg, "%s mysteriously disappeared!",
+/*				sprintf(msg, "%s mysteriously disappeared!",
 					connp->nick);
-				/*Set_message(msg);*/
+				Set_message(msg); */
 			}
 			sprintf(msg, "timeout %02x", connp->state);
 			Destroy_connection(i, msg);
@@ -2672,7 +2881,7 @@ void do_quit(int ind, bool tellclient)
 		Destroy_connection(ind, "client quit");
 	}
 	// Otherwise wait for the timeout
-	else exec_lua(NumPlayers, format("player_leaves_timeout(%d, %d, \"%s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	else exec_lua(NumPlayers, format("player_leaves_timeout(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
 }
 
 
@@ -2699,9 +2908,9 @@ static int Receive_quit(int ind)
 }
 
 static int Receive_login(int ind){
-	connection_t *connp=&Conn[ind];
+	connection_t *connp=&Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
-	int n;
+	int i, n;
 	char choice[MAX_CHARS];
 	struct account *l_acc;
 
@@ -2730,7 +2939,7 @@ static int Receive_login(int ind){
 			Destroy_connection(ind, "The server didn't like your nickname, realname or hostname");
 			return(-1);
 		}
-		if(connp->pass && (l_acc=GetAccount(connp->nick, connp->pass, FALSE))){
+		if (connp->pass && (l_acc = GetAccount(connp->nick, connp->pass, FALSE))) {
 			int *id_list, i;
 			byte tmpm;
 			char colour_sequence[3];
@@ -2745,11 +2954,11 @@ static int Receive_login(int ind){
 
 			connp->password_verified = TRUE;
 			free(connp->pass);
-			connp->pass=NULL;
-			n=player_id_list(&id_list, l_acc->id);
+			connp->pass = NULL;
+			n = player_id_list(&id_list, l_acc->id);
 			/* Display all account characters here */
-			for(i=0; i<n; i++){
-				u16b ptype=lookup_player_type(id_list[i]);
+			for(i = 0; i < n; i++) {
+				u16b ptype = lookup_player_type(id_list[i]);
 				/* do not change protocol here */
 				tmpm = lookup_player_mode(id_list[i]);
 				if (tmpm & MODE_IMMORTAL) strcpy(colour_sequence, "\377g");
@@ -2759,7 +2968,7 @@ static int Receive_login(int ind){
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
 			Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
-			if(n) C_KILL(id_list, n, int);
+			if (n) C_KILL(id_list, n, int);
 			KILL(l_acc, struct account);
 		}
 		else{
@@ -2788,6 +2997,18 @@ static int Receive_login(int ind){
 		/* i realise it should return different value depending
 		   on reason - evileye */
 		if(check_account(connp->nick, choice)){
+			/* Check that no one else is creating a char with the same name - mikaelh */
+			for (i = 0; i < max_connections; i++) {
+				connp2 = &Conn[i];
+				if (connp2->state == CONN_FREE) continue;
+				if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
+				    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
+					/* Fail login */
+					Destroy_connection(ind, "Name already owned");
+					return(-1);
+				}
+			}
+
 			/* Validate names/resume in proper place */
 			if(Check_names(choice, connp->real, connp->host, connp->addr, TRUE)){
 /* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
@@ -4295,7 +4516,9 @@ int Send_char(int ind, int x, int y, byte a, char c)
 	if (!BIT(Conn[Players[ind]->conn].state, CONN_PLAYING | CONN_READY))
 		return 0;
 
-	if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
 
@@ -4416,6 +4639,8 @@ int Send_line_info(int ind, int y)
 		return 0;
 	}
 
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    Ind2 = find_player(p_ptr->esp_link);
@@ -4499,6 +4724,9 @@ int Send_mini_map(int ind, int y)
 			ind, connp->state, connp->id));
 		return 0;
 	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
 	  {
 	    Ind2 = find_player(p_ptr->esp_link);
@@ -4937,6 +5165,13 @@ int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 	    case TERM_ELEC:	xattr = 'e';break;
 	    case TERM_LITE:	xattr = 'L';break;
 	    case TERM_HALF:	xattr = 'h';break;
+            case TERM_CONF:	xattr = 'C';break;
+            case TERM_SOUN:	xattr = 'S';break;
+            case TERM_SHAR:	xattr = 'H';break;
+            case TERM_DARKNESS:	xattr = 'A';break;
+            case TERM_SHIELDM:	xattr = 'M';break;
+            case TERM_SHIELDI:	xattr = 'I';break;
+
 	}
 
 	strncpy(temp, buf, 79);
@@ -5046,12 +5281,19 @@ int Send_skills(int ind)
 	player_type *p_ptr = Players[ind];
 	connection_t *connp = &Conn[p_ptr->conn];
 	s16b skills[12];
-	int i, tmp;
+	int i, tmp = 0;
 	object_type *o_ptr;
 
 	/* Fighting skill */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	tmp = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
+	tmp = o_ptr->to_h;
+	/* dual-wield? */
+	o_ptr = &p_ptr->inventory[INVEN_ARM];
+	if (o_ptr->k_idx && o_ptr->tval != TV_SHIELD) tmp += o_ptr->to_h;
+	/* average? */
+	if (p_ptr->dual_wield) tmp /= 2;
+	
+	tmp += p_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
 	/* Shooting skill */
@@ -5194,7 +5436,7 @@ static int Receive_keepalive(int ind)
 	int n, Ind;
 	connection_t *connp = &Conn[ind];
 	char ch;
-	player_type *p_ptr = NULL;
+	player_type *p_ptr;
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
@@ -5202,15 +5444,29 @@ static int Receive_keepalive(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
 	/* If client has not been hacked, this should set AFK after 1 minute
 	   of no activity. */
-	if(connp->id != -1){
-		Ind=GetInd[connp->id];
-		p_ptr=Players[Ind];
-		if(!p_ptr->afk && p_ptr->auto_afk){	/* dont oscillate ;) */
-//			if(++connp->inactive>45)	/* auto AFK timer (>1.5 min) */
-			if(++connp->inactive>30)	/* auto AFK timer (>1 min) */
-				toggle_afk(Ind, "");
+
+	connp->inactive_keepalive++;
+
+	if(connp->id != -1) {
+		Ind = GetInd[connp->id];
+		p_ptr = Players[Ind];
+
+		p_ptr->idle++;
+		p_ptr->idle_char++;
+
+		/* Kick a starving player */
+		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > 15)
+		{
+			Destroy_connection(ind, "starving auto-kick");
+		}
+
+		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > 30)	/* dont oscillate ;) */
+		{
+			/* auto AFK timer (>1 min) */
+			toggle_afk(Ind, "");
 		}
 	}
 
@@ -5339,8 +5595,10 @@ static int Receive_run(int ind)
 		for (i = 0; i < m_max; i++)
 		{
 			/* Check this monster */
-			if ((p_ptr->mon_los[i] && !m_list[i].csleep &&
-				m_list[i].level && !m_list[i].special) || (p_ptr->confused))
+			if ((p_ptr->confused) || ((p_ptr->mon_los[i] && !m_list[i].csleep &&
+			    m_list[i].level && !m_list[i].special) &&
+			    /* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
+                            (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz)))
 			{
 				// Treat this as a walk request
 				// Hack -- send the same connp->r "arguments" to Receive_walk
@@ -5615,8 +5873,13 @@ static int Receive_fire(int ind)
 	if (p_ptr->confused)
 	{
 		/* Change firing direction */
+#if 0
 		while (dir == 5)
 			dir = randint(9);
+#else /* no targetted shooting anymore while confused! */
+		do dir = randint(9);
+		while (dir == 5);
+#endif
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)/p_ptr->num_fire)
@@ -5881,6 +6144,11 @@ static int Receive_activate_skill(int ind)
 			case MKEY_FLETCHERY:
 				do_cmd_fletchery(player);
 				break;
+#ifdef ENABLE_STANCES
+			case MKEY_STANCE:
+				do_cmd_stance(player, book);
+				break;
+#endif
 			case MKEY_TRAP:
 				do_cmd_set_trap(player, book, spell);
 				break;
@@ -6454,7 +6722,7 @@ static int Receive_wield(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-		do_cmd_wield(player, item);
+		do_cmd_wield(player, item, 0x0);
 		return 2;
 	}
 	else if (player)
@@ -7982,12 +8250,14 @@ static int Receive_rest(int ind)
 
 		if(!(zcave=getcave(&p_ptr->wpos))) return 2;
 
+#if 0 /* why? don't see a reason atm */
 		/* Can't rest on a Void Jumpgate -- too dangerous */
 		if (zcave[p_ptr->py][p_ptr->px].feat == FEAT_BETWEEN)
 		{
 			msg_print(player, "Resting on a Void Jumpgate is too dangerous!");
 			return 2;
 		}
+#endif
 
 		/* Resting takes a lot of energy! */
 		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos)*2)-1)
@@ -8250,6 +8520,11 @@ static int Receive_party(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+	
+	/* sanitize input - C. Blue */
+	if (strlen(buf) > 40) *(buf + 40) = 0;
+	for (n = 0; n < strlen(buf); n++)
+		if (*(buf + n) < 32) *(buf + n) = '_';
 
 	if (player)
 	{
@@ -8663,11 +8938,8 @@ static int Receive_raw_key(int ind)
 	player_type *p_ptr = NULL;
 
 	char ch, key;
-
 	int n, player = -1;
 	
-	bool bbs_empty = TRUE;
-
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
@@ -8709,6 +8981,7 @@ static int Receive_raw_key(int ind)
 		{
 			switch (key)
 			{
+#if 0 /* all in client 4.4.1 or 4.4.0d now! #if 0 this when released */
 				/* Drink from a fountain (test passed:) */
 				case '_':
 					do_cmd_drink_fountain(player);
@@ -8727,7 +9000,7 @@ static int Receive_raw_key(int ind)
 					break;
 				case '!':
 					/* Look at in-game bbs - C. Blue */
-					msg_print(player, "\377wBulletin board (type '/bbs' to write something):");
+					msg_print(player, "\377wBulletin board (type '/bbs' to write something) :");
 					for (n = 0; n < BBS_LINES; n++)
 						if (strcmp(bbs_line[n], "")) {
 							msg_format(player, "\377s %s", bbs_line[n]);
@@ -8736,6 +9009,13 @@ static int Receive_raw_key(int ind)
 					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 					break;
 //					return 1; /* consume no energy/don't disturb character (resting mode) */
+#endif
+				case '_':
+				case '!':
+				case 'p':
+					msg_print(player, "\377RYour client is outdated (probably version 4.4.0).");
+					msg_print(player, "\377RPlease download latest client from www.c-blue.de/rogue");
+					break;
 				default:
 					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 					break;
@@ -8756,7 +9036,8 @@ static int Receive_raw_key(int ind)
 static int Receive_ping(int ind) {
 	connection_t *connp = &Conn[ind];
 	char ch, pong, buf[MSG_LEN];
-	int n, id, tim, utim;
+	int n, id, tim, utim, Ind;
+	player_type *p_ptr;
 
 	if ((n = Packet_scanf(&connp->r, "%c%c%d%d%d%S", &ch, &pong, &id, &tim, &utim, &buf)) <= 0)
 	{
@@ -8767,17 +9048,223 @@ static int Receive_ping(int ind) {
 
 	if (!pong)
 	{
+		connp->inactive_ping++;
+
+		if (connp->id != -1) {
+			Ind = GetInd[connp->id];
+			p_ptr = Players[Ind];
+
+			/* Kick a starving player */
+			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > 30)
+			{
+				Destroy_connection(ind, "starving auto-kick");
+			}
+
+			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > 60)	/* dont oscillate ;) */
+			{
+				/* auto AFK timer (>1 min) */
+				toggle_afk(Ind, "");
+			}
+		}
+
 		if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 		{
 			errno = 0;
 			plog(format("Connection not ready for pong (%d.%d.%d)",
 				ind, connp->state, connp->id));
-			return 0;
+			return 1;
 		}
 
 		pong = 1;
 
 		Packet_printf(&connp->c, "%c%c%d%d%d%S", PKT_PING, pong, id, tim, utim, buf);
+	}
+
+	return 2;
+}
+
+static int Receive_sip(int ind) {
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
+			int Ind2 = find_player(p_ptr->esp_link);
+			if (!Ind2) end_mind(ind, TRUE);
+			else {
+				player = Ind2;
+				p_ptr = Players[Ind2];
+			}
+		}
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_drink_fountain(player);
+		return 2;
+	} else if (player) {
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_telekinesis(int ind) {
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
+			int Ind2 = find_player(p_ptr->esp_link);
+			if (!Ind2) end_mind(ind, TRUE);
+			else {
+				player = Ind2;
+				p_ptr = Players[Ind2];
+			}
+		}
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		/* Open/close mind to receive items via telekinesis */
+		/* But we can also use this for telekinesis! - C. Blue
+		   (mostly to avoid PK exploits */
+		if (p_ptr->esp_link_flags & LINKF_TELEKIN) {
+			msg_print(player, "\377yYou stop concentrating on telekinesis.");
+			p_ptr->esp_link_flags &= ~LINKF_TELEKIN;
+		} else {
+			msg_print(player, "\377RYou concentrate on telekinesis!");
+			p_ptr->esp_link_flags |= LINKF_TELEKIN;
+		}
+		return 2;
+	} else if (player) {
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_BBS(int ind) {
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+	bool bbs_empty = TRUE;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
+			int Ind2 = find_player(p_ptr->esp_link);
+			if (!Ind2) end_mind(ind, TRUE);
+			else {
+				player = Ind2;
+				p_ptr = Players[Ind2];
+			}
+		}
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1) {
+		/* Look at in-game bbs - C. Blue */
+		msg_print(player, "\377wBulletin board (type '/bbs' to write something):");
+		for (n = 0; n < BBS_LINES; n++)
+			if (strcmp(bbs_line[n], "")) {
+				msg_format(player, "\377s %s", bbs_line[n]);
+				bbs_empty = FALSE;
+			}
+		if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
+		return 2; /* consume no energy/don't disturb character (resting mode) */
+	} else if (player) {
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_wield2(int ind) {
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr = NULL;
+
+	char ch;
+	s16b item;
+	int n, player = -1;
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
+		        int Ind2 = find_player(p_ptr->esp_link);
+		        if (!Ind2) end_mind(ind, TRUE);
+			else {
+				player = Ind2;
+				p_ptr = Players[Ind2];
+			}
+		}
+	}
+	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_wield(player, item, 0x2);
+		return 2;
+	} else if (player) {
+		Packet_printf(&connp->q, "%c%hd", ch, item);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_cloak(int ind) {
+	connection_t *connp = &Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+
+		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
+			int Ind2 = find_player(p_ptr->esp_link);
+			if (!Ind2) end_mind(ind, TRUE);
+			else {
+				player = Ind2;
+				p_ptr = Players[Ind2];
+			}
+		}
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		do_cmd_cloak(player);
+		return 2;
+	} else if (player) {
+		Packet_printf(&connp->q, "%c", ch);
+		return 0;
 	}
 	return 1;
 }

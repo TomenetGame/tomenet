@@ -386,9 +386,9 @@ extern bool is_quest(int level);
 
 /* cmd1.c */
 extern bool test_hit_fire(int chance, int ac, int vis);
-extern bool test_hit_norm(int chance, int ac, int vis);
+extern bool test_hit_melee(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam);
-extern s16b critical_norm(int Ind, int weight, int plus, int dam);
+extern s16b critical_melee(int Ind, int weight, int plus, int dam);
 extern s16b tot_dam_aux(object_type *o_ptr, int tdam, monster_type *m_ptr);
 extern void search(int Ind);
 extern void carry(int Ind, int pickup);
@@ -525,7 +525,7 @@ extern errr rd_savefile_new(int Ind);
 
 /* melee1.c */
 /* melee2.c */
-extern bool make_attack_normal(int Ind, int m_idx);
+extern bool make_attack_melee(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
 extern void process_monsters(void);
 
@@ -648,10 +648,10 @@ extern void object_absorb(object_type *o_ptr, object_type *j_ptr);
 extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);
 extern void invcopy(object_type *o_ptr, int k_idx);
-extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art);
+extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf);
 /*extern void place_object(int Depth, int y, int x, bool good, bool great, bool true_art, int luck);*/
-extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, bool true_art, obj_theme theme, int luck, byte removal_marker);
-extern void acquirement(int Depth, int y1, int x1, int num, bool great, bool verygreat, bool true_art);
+extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u16b resf, obj_theme theme, int luck, byte removal_marker);
+extern void acquirement(int Depth, int y1, int x1, int num, bool great, bool verygreat, u16b resf);
 extern void place_trap(int Depth, int y, int x);
 extern void place_gold(int Depth, int y, int x);
 extern void process_objects(void);

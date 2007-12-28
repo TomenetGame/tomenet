@@ -1,4 +1,4 @@
-/* $Id$ */
+* $Id$ */
 /* File: config.h */
 
 #ifndef TOMENET_CONFIG_H
@@ -218,8 +218,10 @@
  * server uses those in mangband.cfg.
  * bad design.
  */
+#if 0 /* moved to tomenet.cfg long ago - C. Blue */
 #define	META_ADDRESS "62.210.141.11"
 #define	META_ADDRESS_2 "europe.tomenet.net"
+#endif
 
 /*
  * Server gateway: Provide raw data for applications
@@ -237,7 +239,7 @@
 #define TOMENET_WORLDS
 #endif
 
-#if 0
+#if 0 /* moved to tomenet.cfg.. */
 #define BIND_NAME "TomeNET.net"
 #define	BIND_IP "64.53.71.115"
 #endif
@@ -401,10 +403,13 @@
 /* #define MONSTER_FLOW */
 
 
+
+#if 0 /* moved to defines.h - C. Blue */
 /*
  * OPTION: Maximum flow depth when using "MONSTER_FLOW"
  */
 #define MONSTER_FLOW_DEPTH 32
+#endif
 
 
 

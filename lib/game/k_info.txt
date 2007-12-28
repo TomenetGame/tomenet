@@ -123,13 +123,12 @@ P:0:10d10:0:0:0
 N:11:Restore Constitution
 G:,:d
 I:80:18:500
-W:20:0:1:350
-A:20/1
+W:10:0:1:350
+A:10/1
 
 N:12:Restoring
 G:,:d
 I:80:19:500
-#W:20:0:1:1600 increased price to 2000 since it restores life levels too (RPG_SERVER):
 W:20:0:1:2000
 A:20/8:30/4:40/1
 
@@ -168,8 +167,8 @@ A:20/1
 N:18:Restore Strength
 G:,:d
 I:80:17:500
-W:20:0:1:350
-A:20/1
+W:10:0:1:350
+A:10/1
 
 N:19:Disease
 G:,:d
@@ -300,7 +299,7 @@ G:|:v
 I:23:30:0
 W:70:0:180:4000
 A:70/8
-P:0:6d5:0:0:0
+P:0:5d5:0:0:0
 F:ATTR_MULTI
 F:RES_CHAOS | CHAOTIC | SHOW_MODS | SHOULD2H
 
@@ -379,7 +378,7 @@ F:SHOW_MODS
 N:46:& Small Sword~
 G:|:W
 I:23:8:0
-W:5:0:75:48
+W:5:0:70:48
 A:5/1
 P:0:1d6:0:0:0
 F:SHOW_MODS
@@ -407,7 +406,7 @@ G:\:D
 I:21:2:0
 W:3:0:30:30
 A:3/1
-P:0:1d6:0:0:0
+P:0:1d4:0:0:0
 F:SHOW_MODS
 
 N:50:& Flail~
@@ -595,7 +594,8 @@ I:22:30:0
 W:60:0:300:3500
 A:60/3
 P:0:10d4:0:0:0
-F:SHOW_MODS | MUST2H | WOUNDING
+F:SHOW_MODS | MUST2H
+#currently no effect | WOUNDING
 
 
 ##### Bows, Crossbows, Slings #####
@@ -803,10 +803,13 @@ P:6:1d3:0:0:0
 N:98:& Iron Crown~
 G:]:s
 I:33:10:0
-W:45:0:20:500
-A:45/1
+#W:45:0:20:500
+#A:45/1
+W:40:0:20:300
+A:40/1
 P:0:1d1:0:0:0
 
+#in theory, gold is more than 2x as heavy as iron :-p
 N:99:& Golden Crown~
 G:]:y
 I:33:11:0
@@ -826,15 +829,15 @@ F:IGNORE_ACID | IGNORE_WATER
 N:101:& Robe~
 G:(:b
 I:36:2:0
-W:1:0:20:4
-A:1/1:50/1
+W:1:0:20:11
+A:10/1:50/1
 P:2:0d0:0:0:0
 F:IGNORE_WATER
 
 N:102:& Filthy Rag~
 G:(:D
 I:36:1:0
-W:0:0:20:1
+W:0:0:10:1
 A:0/1
 P:1:0d0:0:0:-1
 F:IGNORE_WATER
@@ -905,7 +908,7 @@ G:[:s
 I:37:6:0
 W:30:0:270:900
 A:30/1
-P:16:1d4:-2:0:0
+P:17:1d4:-2:0:0
 
 N:112:Bar Chain Mail~
 G:[:s
@@ -956,7 +959,9 @@ N:118:Adamantite Plate Mail~
 G:[:G
 I:37:30:0
 #W:75:0:420:20000
-W:75:0:400:20000
+#W:75:0:400:20000
+#W:75:0:270:20000
+W:75:0:250:20000
 A:75/4
 P:40:2d4:-4:0:0
 F:IGNORE_ACID | IGNORE_WATER
@@ -965,6 +970,7 @@ N:119:Mithril Plate Mail~
 G:[:B
 I:37:25:0
 #W:60:0:300:15000
+#W:60:0:250:15000
 W:60:0:200:15000
 A:60/3
 P:35:2d4:-3:0:0
@@ -973,9 +979,11 @@ F:IGNORE_ACID | IGNORE_WATER
 N:120:Mithril Chain Mail~
 G:[:B
 I:37:20:0
+#W:55:0:200:7000
 W:55:0:150:7000
 A:55/3
-P:28:1d4:-1:0:0
+#P:28:1d4:-1:0:0
+P:24:1d4:-1:0:0
 F:IGNORE_ACID | IGNORE_WATER
 
 N:121:Double Chain Mail~
@@ -993,7 +1001,8 @@ G:[:B
 I:34:10:0
 W:70:0:100:10000
 A:70/3
-P:10:1d1:0:0:10
+$USE_NEW_SHIELDS$P:25:1d1:0:0:0
+$USE_NEW_SHIELDS!P:10:1d1:0:0:10
 F:IGNORE_ACID
 
 
@@ -1048,7 +1057,8 @@ G:):U
 I:34:2:0
 W:3:0:50:30
 A:3/1
-P:2:1d1:0:0:0
+$USE_NEW_SHIELDS$P:10:1d1:0:0:0
+$USE_NEW_SHIELDS!P:2:1d1:0:0:0
 F:IGNORE_WATER
 
 N:129:& Large Leather Shield~
@@ -1056,22 +1066,25 @@ G:):U
 I:34:4:0
 W:15:0:100:120
 A:15/1
-P:4:1d2:0:0:0
+$USE_NEW_SHIELDS$P:18:1d2:0:0:0
+$USE_NEW_SHIELDS!P:4:1d2:0:0:0
 F:IGNORE_WATER
 
 N:130:& Small Metal Shield~
 G:):s
 I:34:3:0
 W:10:0:65:50
-A:10/1
-P:3:1d2:0:0:0
+A:14/1
+$USE_NEW_SHIELDS$P:13:1d2:0:0:0
+$USE_NEW_SHIELDS!P:3:1d2:0:0:0
 
 N:131:& Large Metal Shield~
 G:):s
 I:34:5:0
 W:30:0:120:200
 A:30/1
-P:5:1d3:0:0:0
+$USE_NEW_SHIELDS$P:21:1d3:0:0:0
+$USE_NEW_SHIELDS!P:5:1d3:0:0:0
 
 
 ##### Rings #####
@@ -1482,7 +1495,7 @@ I:70:9:0
 W:10:0:5:400
 A:10/1
 
-#taken out while RPG_SERVER is active
+#taken out (originally b/c of RPG_SERVER)
 #N:187:Teleport Level
 #G:?:d
 #I:70:10:0
@@ -1608,6 +1621,7 @@ I:70:52:0
 W:70:0:5:500000
 #A:70/16
 A:70/32
+F:IGNORE_FIRE | IGNORE_WATER
 
 N:206:Recharging
 G:?:d
@@ -2014,7 +2028,8 @@ F:FOUNTAIN
 N:258:Berserk Strength
 G:!:d
 I:71:33:0
-W:3:0:4:100
+#W:3:0:4:100
+W:3:0:4:250
 A:3/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -2713,7 +2728,7 @@ N:349:& Empty Bottle~
 G:!:w
 I:2:1:0
 W:0:0:2:1
-A:0/1
+A:1/1:10/1:20/1:30/1:40/1
 P:0:1d1:0:0:0
 
 
@@ -3007,7 +3022,7 @@ F:SHOW_MODS | MUST2H
 ##### Dragon Scale Mail #####
 
 N:400:Black Dragon Scale Mail~
-G:[:s
+G:[:D
 I:38:1:0
 W:60:0:200:60000
 A:60/8
@@ -3019,7 +3034,7 @@ F:RES_WATER
 N:401:Blue Dragon Scale Mail~
 G:[:b
 I:38:2:0
-W:55:0:200:50000
+W:55:0:200:40000
 A:55/8
 P:30:2d4:-2:0:10
 F:IM_ELEC | FLY | 
@@ -3057,12 +3072,12 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 #F:FEATHER
 
 N:405:Multi-Hued Dragon Scale Mail~
-G:[:v
+G:[:h
 I:38:6:0
 W:90:0:200:500000
 A:90/64
 P:30:2d4:-2:0:10
-F:ATTR_MULTI
+#F:ATTR_MULTI
 #F:IM_ACID | IM_ELEC | IM_FIRE | IM_COLD | RES_POIS | FLY |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | FLY |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
@@ -3074,15 +3089,15 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 N:918:Pseudo Dragon Scale Mail~
 G:[:o
 I:38:8:0
-W:60:0:200:60000
-A:70/16
+W:50:0:200:30000
+A:50/16
 P:30:2d4:-2:0:10
 F:RES_LITE | RES_DARK | FLY |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 F:RES_BLIND
 
 N:406:Ethereal Dragon Scale Mail~
-G:[:o
+G:[:L
 I:38:10:0
 #W:90:0:200:500000
 W:90:0:200:250000
@@ -3122,17 +3137,18 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 F:RES_ACID | RES_FEAR
 
 N:410:Chaos Dragon Scale Mail~
-G:[:v
+G:[:m
 I:38:18:0
 W:80:0:200:150000
 A:80/16
 P:30:2d4:-2:0:10
-F:ATTR_MULTI
+#F:ATTR_MULTI
 F:RES_CHAOS | RES_DISEN | FLY |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:411:Balance Dragon Scale Mail~
-G:[:v
+#G:[:v
+G:[:I
 I:38:20:0
 W:95:0:200:350000
 #A:95/32
@@ -3142,12 +3158,12 @@ F:RES_CHAOS | RES_DISEN | RES_SOUND | RES_SHARDS | FLY |
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
 N:412:Power Dragon Scale Mail~
-G:[:v
+G:[:m
 I:38:30:0
 W:100:0:200:2000000
 A:100/64
 P:40:2d4:-3:0:15
-F:ATTR_MULTI
+#F:ATTR_MULTI
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FLY |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_CONF |
@@ -3156,7 +3172,8 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 ## PDSM has been restored to (almost) its former glory in Zangband
 
 N:928:Death Dragon Scale Mail~
-G:[:G
+#G:[:G
+G:[:A
 I:38:40:0
 #W:95:0:200:700000
 W:95:0:200:300000
@@ -3167,7 +3184,7 @@ F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATE
 # | DRAIN_HP | DRAIN_EXP //removed since wraithform is nerfed (can't attack)
 
 N:929:Crystal Dragon Scale Mail~
-G:[:U
+G:[:H
 #or B or w, but Crystal Drakes are u/U
 I:38:41:0
 #W:85:0:200:175000
@@ -3206,11 +3223,20 @@ P:40:2d4:-3:0:15
 F:FLY | RES_LITE | IM_ELEC | FEATHER | BRAND_ELEC | BRAND_COLD | SH_ELEC | IM_COLD
 F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
 
+N:978:Silver Dragon Scale Mail~
+G:[:c
+I:38:45:0
+W:55:0:200:70000
+A:55/10
+P:30:2d4:-2:0:10
+F:FLY | IM_COLD | FREE_ACT | REFLECT |
+F:ACTIVATE | IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+
 N:413:& Dragon Helm~
 G:]:G
 I:32:7:0
-W:45:0:50:10000
-A:80/4
+W:45:0:60:10000
+A:80/6
 P:8:1d3:0:0:10
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD | IGNORE_WATER
 
@@ -3219,7 +3245,8 @@ G:[:G
 I:34:6:0
 W:70:0:100:10000
 A:80/4
-P:8:1d3:0:0:10
+$USE_NEW_SHIELDS$P:23:1d3:0:0:0
+$USE_NEW_SHIELDS!P:8:1d3:0:0:10
 F:IGNORE_ACID | IGNORE_FIRE | IGNORE_ELEC | IGNORE_COLD | IGNORE_WATER
 
 ##### Extra potions #####
@@ -3700,7 +3727,8 @@ F:SHOW_MODS | INSTA_ART | MUST2H
 N:499:& Massive Iron Crown~
 G:]:D
 I:33:50:0
-W:44:0:20:1000
+#W:44:0:20:1000
+W:44:0:30:1000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
@@ -3932,8 +3960,8 @@ F:EASY_KNOW | IGNORE_FIRE | LITE3 | LITE1 | RES_FEAR | SEE_INVIS
 N:531:& Fur Cloak~
 G:(:W
 I:35:3:0
-W:20:0:30:300
-A:20/2:30/2
+W:12:0:30:300
+A:12/2:30/2
 P:3:0d0:0:0:0
 F:IGNORE_WATER
 
@@ -3959,18 +3987,24 @@ F:SHOW_MODS
 N:535:Rhino Hide Armour~
 G:(:s
 I:36:8:0
-W:15:0:110:400
+W:15:0:110:300
 A:15/1
 P:8:1d1:-1:0:0
 F:IGNORE_WATER
 
-N:536:Leather Jacket~
-G:(:U
+#N:536:Leather Jacket~
+#W:20:0:130:550
+#P:12:1d2:-1:0:0
+#N:536:Leather Jerkin~
+#W:20:0:70:150
+#P:5:1d2:-1:0:0
+N:536:Serpent Scale Mail~
+G:(:o
 I:36:12:0
-W:20:0:130:550
-A:20/3
+W:10:0:130:600
+A:15/3
 P:12:1d2:-1:0:0
-F:IGNORE_WATER
+F:IGNORE_WATER | IGNORE_ACID | IGNORE_FIRE | RES_ACID
 
 ##### New weapons #####
 
@@ -4117,7 +4151,7 @@ F:IGNORE_WATER
 N:558:Paper Armour~
 G:(:w
 I:36:3:0
-W:5:0:30:40
+W:5:0:40:40
 A:5/2
 P:4:1d1:0:0:0
 
@@ -4271,7 +4305,8 @@ W:5:0:12:300
 #A:5/1:20/1:50/1:80/1
 A:5/3:45/2
 P:0:1d4:0:0:0
-F:SHOW_MODS | SHOULD2H | REGEN_MANA
+#F:SHOW_MODS | SHOULD2H | REGEN_MANA
+F:SHOW_MODS | MUST2H | REGEN_MANA
 
 # An extra ring, out of place
 
@@ -4782,7 +4817,7 @@ F:INVIS | HIDE_TYPE
 N:646:& Dragonrider Coat~
 G:(:y
 I:36:16:0
-W:15:0:60:400
+W:15:0:60:800
 A:25/1
 P:9:1d1:0:0:0
 F:RES_FIRE | RES_COLD | IGNORE_WATER
@@ -4799,7 +4834,7 @@ F:INSTA_ART
 N:648:& small wooden Boomerang~
 G:{:y
 I:15:1:0
-W:5:0:60:400
+W:5:0:60:80
 A:5/1
 P:0:1d4:0:0:0
 F:IGNORE_WATER
@@ -4807,7 +4842,7 @@ F:IGNORE_WATER
 N:649:& wooden Boomerang~
 G:{:y
 I:15:2:0
-W:10:0:60:400
+W:10:0:60:130
 A:10/1
 P:0:1d9:0:0:0
 F:IGNORE_WATER
@@ -4815,7 +4850,7 @@ F:IGNORE_WATER
 N:650:& small metal Boomerang~
 G:{:y
 I:15:3:0
-W:15:0:60:400
+W:15:0:60:100
 A:15/1
 P:0:1d8:0:0:0
 F:IGNORE_FIRE
@@ -4823,7 +4858,7 @@ F:IGNORE_FIRE
 N:651:& metal Boomerang~
 G:{:y
 I:15:4:0
-W:20:0:60:300
+W:20:0:60:160
 A:20/1
 P:0:2d4:0:0:0
 F:IGNORE_FIRE
@@ -4926,7 +4961,7 @@ F:INSTA_ART
 # Here comes the Runes
 #
 N:682:Bolting
-G:&:G
+G:&:U
 I:104:1:0
 W:6:5:2:200
 A:1/8
@@ -4935,7 +4970,7 @@ F:IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_ACID | IGNORE_WATER
 F:FULL_NAME | EASY_KNOW
 
 N:683:Beaming
-G:&:s
+G:&:o
 I:104:2:0
 W:6:5:2:4000
 A:10/16
@@ -4963,7 +4998,7 @@ P:0:1d1:0:0:0
 F:IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_ACID | IGNORE_WATER
 
 N:686:Self
-G:&:m
+G:&:v
 I:104:5:0
 W:6:5:2:20000
 A:25/16
@@ -4971,7 +5006,7 @@ P:0:1d1:0:0:0
 F:IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_ACID | IGNORE_WATER
 
 N:690:Fire
-G:&:f
+G:&:r
 I:105:1:0
 W:3:5:2:200
 A:3/2
@@ -4979,7 +5014,7 @@ P:0:1d1:0:0:0
 F:IGNORE_FIRE
 
 N:691:Cold
-G:&:c
+G:&:w
 I:105:2:0
 W:3:5:2:200
 A:3/2
@@ -4987,7 +5022,7 @@ P:0:1d1:0:0:0
 F:IGNORE_COLD
 
 N:692:Acid
-G:&:a
+G:&:s
 I:105:3:0
 W:3:5:2:200
 A:3/2
@@ -4995,7 +5030,7 @@ P:0:1d1:0:0:0
 F:IGNORE_ACID
 
 N:692:Electricity
-G:&:e
+G:&:b
 I:105:4:0
 W:3:5:2:200
 A:3/2
@@ -5003,7 +5038,7 @@ P:0:1d1:0:0:0
 F:IGNORE_ELEC
 
 N:694:Poison
-G:&:p
+G:&:g
 I:105:5:0
 W:3:5:2:200
 A:3/1
@@ -5012,36 +5047,36 @@ P:0:1d1:0:0:0
 N:695:Gravity
 G:&:W
 I:105:11:0
-W:3:5:2:20000
-A:25/32
+W:3:5:2:17000
+A:25/25
 P:0:1d1:0:0:0
 
 N:696:Water
-G:&:b
+G:&:B
 I:105:12:0
-W:3:5:2:20000
-A:25/32
+W:3:5:2:17000
+A:25/25
 P:0:1d1:0:0:0
 F:IGNORE_WATER
 
 N:697:Darkness
 G:&:D
 I:105:13:0
-W:3:5:2:20000
-A:25/32
+W:3:5:2:17000
+A:25/25
 P:0:1d1:0:0:0
 
 N:698:Lightness
 G:&:y
 I:105:14:0
-W:3:5:2:20000
-A:25/32
+W:3:5:2:17000
+A:25/25
 P:0:1d1:0:0:0
 
 N:699:Earth
-G:&:s
+G:&:u
 I:105:15:0
-W:3:5:2:20000
+W:3:5:2:17000
 A:65/16
 P:0:1d1:0:0:0
 
@@ -5262,10 +5297,10 @@ A:25/2:55/1:85/1
 N:721:& Dark Sword~
 G:|:D
 I:23:33:0
-W:25:0:70:500
+W:25:0:110:500
 A:25/1:80/2
 P:0:3d7:0:0:0
-F:SHOW_MODS | ANTIMAGIC_50
+F:SHOW_MODS | ANTIMAGIC_50 | SHOULD2H
 
 #N:722:Numenorean for beginners (I)
 #G:?:s
@@ -5520,7 +5555,7 @@ F:IGNORE_ACID | RES_DARK | STEALTH | IGNORE_WATER
 N:778:& Bluesteel Blade~
 G:|:b
 I:23:31:0
-W:60:1800:50:6000
+W:60:1800:60:6000
 A:60/20
 P:0:3d5:4:0:0
 F:SHOW_MODS | VORPAL | IGNORE_WATER
@@ -5531,7 +5566,6 @@ G:":G
 I:40:17:0
 #W:25:0:3:10000
 W:25:0:3:15000
-#A:25/1
 #A:25/3 <- used to be like this, but a bit strict for RPG_SERVER
 A:25/1
 F:RES_POIS | DEX | ACTIVATE
@@ -6014,7 +6048,8 @@ G:):D
 I:34:7:0
 W:40:0:100:25000
 A:40/4
-P:5:1d3:0:0:5
+$USE_NEW_SHIELDS$P:19:1d3:0:0:0
+$USE_NEW_SHIELDS!P:5:1d3:0:0:5
 F:STR | CON
 F:IGNORE_ACID | IGNORE_COLD | IGNORE_FIRE | IGNORE_ELEC | IGNORE_WATER
 
@@ -6023,7 +6058,8 @@ G:(:G
 #I:35:3:0
 I:35:7:0
 # hrm, isn't it a little too expensive?
-W:65:0:5:80000
+#W:65:0:5:80000
+W:65:0:5:50000
 A:65/4
 P:3:0d0:0:0:4
 F:STR | CON | DEX | SUST_STR | SUST_CON | SUST_DEX
@@ -6067,7 +6103,6 @@ P:0:0d0:0:0:0
 F:SPEED | HIDE_TYPE
 
 ## Only for Highlander tornaments ##
-
 N:888:the Highlands
 G:":e
 #I:40:15:1
@@ -6075,6 +6110,7 @@ I:40:32:1
 W:127:255:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
+F:REGEN_MANA | REGEN | FREE_ACT
 
 N:889:the Moon
 G:":d
@@ -6309,7 +6345,7 @@ G:\:W
 I:21:21:0
 W:30:0:70:400
 A:30/2
-P:0:4d2:0:0:0
+P:0:3d2:0:0:0
 F:SHOW_MODS
 
 N:916:& Mummy Wrapping~
@@ -6373,7 +6409,7 @@ F:SHOW_MODS | MUST2H | SLAY_GIANT
 
 N:920:*Invincibility*
 G:":d
-I:40:37:1
+I:40:37:0
 W:127:255:3:1
 A:127/255
 F:HIDE_TYPE
@@ -6589,23 +6625,21 @@ P:0:1d1:0:0:0
 
 #950-951 are druid tomes
 
-#special artifacts
-
+#taken out due to unbalancedness > coolness
 #Potion of Amber (RPG-only)
-#N:952:& Potion~
-#G:!:y
-#I:72:21:0
-#W:20:30:4:15000
-#P:0:0d0:0:0:0
-#F:INSTA_ART
-
+#$RPG_SERVER$N:952:& Potion~
+#$RPG_SERVER$G:!:y
+#$RPG_SERVER$I:72:21:0
+#$RPG_SERVER$W:20:30:4:15000
+#$RPG_SERVER$P:0:0d0:0:0:0
+#$RPG_SERVER$F:INSTA_ART
 #Scroll of Sleeping (RPG-only)
-#N:953:& Scroll~
-#G:?:W
-#I:70:65:0
-#W:20:20:4:15000
-#P:0:0d0:0:0:0
-#F:INSTA_ART
+#$RPG_SERVER$N:953:& Scroll~
+#$RPG_SERVER$G:?:W
+#$RPG_SERVER$I:70:65:0
+#$RPG_SERVER$W:20:20:4:15000
+#$RPG_SERVER$P:0:0d0:0:0:0
+#$RPG_SERVER$F:INSTA_ART
 
 #more items
 
@@ -6630,7 +6664,7 @@ N:956:& Elementalist's Handbook~
 G:?:m
 I:111:51:0
 W:50:0:30:14000
-A:20/20:40/50
+A:20/30:40/70
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
 
@@ -6674,6 +6708,13 @@ A:20/30:40/65
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
 
+$ENABLE_DIVINE$N:974:& Astral Grimoire~
+$ENABLE_DIVINE$G:?:L
+$ENABLE_DIVINE$I:111:56:0
+$ENABLE_DIVINE$W:50:0:30:800
+$ENABLE_DIVINE$A:20/30:40/65
+$ENABLE_DIVINE$P:0:1d1:0:0:0
+$ENABLE_DIVINE$F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
 
 #Catcarnage stuff:
 #N:220:Scroll of Teleport to Party
@@ -6705,6 +6746,154 @@ F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
 #I:70:70:0
 #W:90:0:5:150
 #A:5/1
+
+# stuff for the Nether Realm viability project ;)
+
+$RPG_SERVER$N:961:Heavy Mithril Scale Armour~
+$RPG_SERVER$G:[:B
+$RPG_SERVER$I:37:26:0
+$RPG_SERVER$W:90:0:300:20000
+$RPG_SERVER$A:90/16
+$RPG_SERVER$P:65:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+$RPG_SERVER$N:962:Heavy Ribbed Mithril Armour~
+$RPG_SERVER$G:[:B
+$RPG_SERVER$I:37:27:0
+$RPG_SERVER$W:90:0:300:25000
+$RPG_SERVER$A:90/16
+$RPG_SERVER$P:70:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+$RPG_SERVER$N:963:Heavy Mithril Plate Armour~
+$RPG_SERVER$G:[:B
+$RPG_SERVER$I:37:28:0
+$RPG_SERVER$W:110:0:340:30000
+$RPG_SERVER$A:110/16
+$RPG_SERVER$P:75:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+$RPG_SERVER$N:964:Heavy Adamantite Scale Armour~
+$RPG_SERVER$G:[:G
+$RPG_SERVER$I:37:29:0
+$RPG_SERVER$W:95:0:310:25000
+$RPG_SERVER$A:95/24
+$RPG_SERVER$P:70:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+$RPG_SERVER$N:965:Heavy Ribbed Adamantite Armour~
+$RPG_SERVER$G:[:G
+$RPG_SERVER$I:37:31:0
+$RPG_SERVER$W:105:0:370:30000
+$RPG_SERVER$A:105/24
+$RPG_SERVER$P:75:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+$RPG_SERVER$N:966:Heavy Adamantite Plate Armour~
+$RPG_SERVER$G:[:G
+$RPG_SERVER$I:37:32:0
+$RPG_SERVER$W:120:0:400:35000
+$RPG_SERVER$A:120/24
+$RPG_SERVER$P:80:4d4:-3:0:10
+$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+
+N:967:& Mithril Helm~
+G:]:B
+I:32:10:0
+W:80:0:50:8000
+A:80/12
+P:7:1d3:0:0:10
+#P:10:1d3:0:0:10
+F:IGNORE_ACID | IGNORE_WATER
+
+N:968:& Frock~
+G:(:u
+I:36:20:0
+W:1:0:20:4
+A:1/1:40/1
+P:2:0d0:0:0:0
+F:IGNORE_WATER
+
+N:969:& Tunic~
+G:(:o
+I:36:21:0
+W:1:0:20:8
+A:10/2:60/3
+P:2:0d0:0:0:0
+F:IGNORE_WATER
+
+N:970:& Gown~
+G:(:o
+I:36:22:0
+W:1:0:20:16
+A:20/3:50/3
+P:1:0d0:0:0:0
+F:IGNORE_WATER
+
+N:971:& Leather Frock~
+G:(:u
+I:36:23:0
+W:1:0:30:22
+A:15/2:50/2
+P:3:0d0:0:0:0
+F:IGNORE_WATER
+
+#way too much (diluting): Linen Hat~ / Fulled Wool Cap~ / Cotton Hat~ / Silk Cap~ / Circlet/Diadem
+N:972:& Cloth Hat~
+G:]:o
+I:32:1:0
+W:1:0:10:10
+A:1/1
+P:1:0d0:0:0:0
+F:IGNORE_WATER
+
+N:973:Wire Fleece~
+G:(:s
+I:36:13:0
+W:30:0:100:250
+A:30/2
+P:8:1d2:-1:0:0
+F:IGNORE_WATER
+
+#974 is Astral Grimoire
+
+N:975:*Invulnerability*
+G:":d
+I:40:41:37
+W:127:255:3:1
+A:127/255
+F:HIDE_TYPE | ESP_ALL | SPEED | STR | DEX | CON | INT | WIS | CHR
+
+# 'Reward Tokens' for Highlander Tournament or other events. - C. Blue
+# Can be traded in town store or so, for items, temporary blessings or whatever.
+# They are level 0, so the owner cannot be changed and it's up to the shops
+# whether they accept it or not.
+N:976:Highlander Victory Deed
+G:?:v
+I:8:60:0
+W:127:255:5:0
+A:127/255
+F:EASY_KNOW
+
+N:977:Highlander Contender Deed
+G:?:b
+I:8:61:0
+W:127:255:5:0
+A:127/255
+F:EASY_KNOW
+
+#N:978: Silver Dragon Scale Mail, defined above with the other DSMs
+
+## Only for Highlander tornaments, version 2 with ESP (for surface combat!) ##
+N:979:the Highlands
+G:":e
+I:40:42:1
+W:127:255:3:1
+A:127/255
+F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
+F:REGEN_MANA | REGEN | ESP_ALL | SEE_INVIS | FREE_ACT
+
+
 
 
 #Placeholder that prevents item corruption in case k_info.txt doesn't meet

@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. December 2007; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.0d, http://www.tomenet.net/
+| Latest update: 26. December 2007; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.0e, http://www.tomenet.net/
 | for latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion in the forum on http://www.tomenet.net/
@@ -266,8 +266,8 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 or infra-vision.
                 Only a few monsters who are able to utilize ESP (telepathy) or
                 have especially powerful detection will still notice you.
-                Those are eyes, angels, nether guards, and unique monsters
-                which are both smart and powerful at once.
+                Those are eyes, angels, Nazgul, nether guards, and unique
+                monster which is both smart and powerful at once.
                 Taking damage (HP/sanity/experience), attacking, casting
                 spells, reading scrolls, tunneling, bashing, picking up/
                 opening/closing/dropping/destroying things, using
@@ -710,7 +710,6 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 -Items on the floor within a house don't form piles! If you drop too many
  items and space in the house runs out the dropped item may just disappear!
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
--Auto-retaliation with spell books is currently not working.
 -Sometimes if you pick up an item from a pile, the next item below doesn't
  become visible on the map. You still 'feel' it if you step on the pile
  though. So if you died and were revived, scan your loot piles on the ground
@@ -2092,6 +2091,8 @@ Stun    -Stun           Reduces to-hit and to-dam.
                         Reduces your martial arts damage (because you cannot
                         perform MA special styles while stunned).
                         Reduces chance for successful spell-casting.
+                        Prevents you from intercepting a monster (see (6.2)
+                        'Interception' skill).
         -Heavy stun     Greatly reduces to-hit and to-dam.
                         Reduces your martial arts damage (because you cannot
                         perform MA special styles while stunned).
@@ -2136,8 +2137,9 @@ Slowing on monsters is currently a permanent effect. Very effective, although
         although monsters might resist.
 Stun    Stun can be caused by special martial art attacks among other things.
         Stunned monsters have a harder time to successfully cast spells or hit
-        you in melee combat. Many monsters are immune to stun, but also many
-        monsters - even of high level - are not.
+        you in melee combat. Also monsters cannot interfere with your actions
+        while they are stunned. Many monsters are immune to stun, but also
+        many monsters - even of high level - are not.
         Monsters can also be heavily stunned or knocked out, same as players.
         Stun is temporary and will wear off, if no new stun effect is applied.
 
@@ -5049,13 +5051,16 @@ Note that not every skill is available to every profession (class).
     +Dodging                    Ability to evade attacks. In order to get any
                                 benefits from doding skill at all, your armour
                                 mustn't be so heavy that you get a flexibility
-                                warning (compare (5.5)).
-                                Apart from that, dodging depends on the total
-                                weight you are carrying around with you, that
-                                is, inventory and equipment added up. You can
-                                check your average dodging chance against
-                                opponents of same level by pressing 'm' and
-                                choosing "Check dodge chance".
+                                warning (compare (5.5)) and also you must not
+                                be using a shield.
+                                Apart from that, your actual chance to dodge
+                                an attack depends on the total weight you are
+                                carrying around with you, that is, inventory
+                                and equipment added up, your dodging skill,
+                                and the opponent's level.
+                                You can check your average dodging chance
+                                against opponents of same level by pressing
+                                'm' and choosing "Check dodge chance".
         .Calmness               Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
@@ -5090,6 +5095,8 @@ Note that not every skill is available to every profession (class).
                                 Interception chance caps at 80% (cap is
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
+                                Note: You aren't able to intercept a monster's
+                                action while you are stunned. (Compare (3.12))
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and SP.
                                 Only works if you are able to see the target,
@@ -5339,7 +5346,8 @@ Gnome
     perception, and stealth. They have lower strength than humans so they are
     not very good at fighting with hand weapons. Gnomes have fair infra-vision,
     so they can detect warm-blooded creatures at a distance.
-    Gnomes receive bonus on 'Crossbow-Mastery', 'Magic' and 'Digging'.
+    Gnomes receive bonus on 'Crossbow-Mastery', 'Magic', 'Dodging' and
+    'Digging'.
 Dwarf
     Dwarves can never be blinded and at level 30 they learn to travel across
     even the highest mountain regions.
@@ -5386,8 +5394,8 @@ High-Elf
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
-    'Calmness' and 'Sneakiness'.
+    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Calmness',
+    'Sneakiness' and 'Dodging'.
 Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
@@ -6262,6 +6270,9 @@ Nature
                     Required skill level for first spell level: 15.
     Regeneration    Increases your hit point regeneration rate.
                     Required skill level for first spell level: 20.
+    Vermin Control  Prevents vermin from breeding any further on
+                    your current level.
+                    Required skill level for first spell level: 15.
   BONI:             Regeneration ability (Hit Points) at 30,
                     Pass trees easily at 30,
                     Pass water easily at 40.

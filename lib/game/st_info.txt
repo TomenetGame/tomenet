@@ -29,8 +29,12 @@
 V:4.0.0
 
 N:0:General Store
+#more light sources (for RPG mainly) to get higher chance for brightness lamps
 I:100:& Wooden Torch~
-I:95:& Brass Lantern~
+I:100:& Wooden Torch~
+I:100:& Wooden Torch~
+I:100:& Brass Lantern~
+I:100:& Brass Lantern~
 I:95:& Flask~ of oil
 I:100:& Ration~ of Food
 I:100:& Hard Biscuit~
@@ -46,6 +50,8 @@ I:70:& Bolt~
 I:70:& Arrow~
 I:98:& Cloak~
 I:46:& Fur Cloak~
+#boomerang
+T:30:15:1
 A:0:0:1:2:3:4
 O:0:5:6:7
 G:1:U
@@ -64,6 +70,9 @@ I:90:Hard Leather Armour~
 I:85:Hard Studded Leather~
 I:90:Leather Scale Mail~
 I:80:Metal Scale Mail~
+I:70:Double Chain Mail~
+I:70:Ring Mail~
+I:70:Double Ring Mail~
 I:75:Chain Mail~
 I:80:Augmented Chain Mail~
 I:75:Metal Brigandine Armour~
@@ -196,6 +205,8 @@ I:100:Word of Recall
 I:100:Word of Recall
 I:100:Word of Recall
 I:100:Word of Recall
+#let's sell trap/door dest. scrolls
+T:100:70:39
 #(Scroll of Teleportation)
 T:2:70:9
 #T:100:70:9
@@ -341,6 +352,7 @@ N:8:Book Store
 #I:100:[Minstrel's Music]
 #I:100:[Life in symbiosis]
 # & Book~ of Beginner Cantrips
+T:100:111:56
 T:100:111:50
 T:100:111:50
 T:100:111:255
@@ -393,6 +405,8 @@ T:90:105:4
 T:90:105:5
 T:50:105:11
 T:50:105:12
+T:50:105:13
+T:50:105:14
 A:0:0:1:2:3:4
 O:46:47:48:49
 #G:+:b
@@ -401,7 +415,7 @@ F:MEDIUM_LEVEL
 W:12
 
 N:10:Mayor's Office
-A:0:0:16:0:35:0
+A:63:64:16:65:35:0
 O:1:1:1:1
 G:+:o
 W:0
@@ -724,6 +738,7 @@ N:48:Expensive Black Market
 A:0:0:1:2:3:4
 O:38:39:40:41
 G:7:v
+T:5:111:0
 T:5:111:1
 T:5:111:2
 T:5:111:3
@@ -1008,7 +1023,8 @@ T:100:23:256
 A:0:0:1:2:3:4
 O:12:13:14:15
 G:3:w
-F:RANDOM | MEDIUM_LEVEL
+#needs PRICE4 because it very often sells ego items
+F:RANDOM | MEDIUM_LEVEL | PRICE4
 W:24
 F:BUY67
 

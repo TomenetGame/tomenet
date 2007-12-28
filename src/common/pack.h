@@ -193,7 +193,7 @@
 #define PKT_FILE_SUM		6	/* checksum reply */
 #define	PKT_FILE_INIT		7	/* initiate a transfer */
 
-/* new things for v4.4.1 (dual-wield & co) - C. Blue */
+/* new things for v4.4.1 or 4.4.0d (dual-wield & co) - C. Blue */
 #define PKT_SIP			167
 #define PKT_TELEKINESIS		168
 #define PKT_BBS			169
@@ -210,7 +210,7 @@
 #define E_NEED_INFO	0x03
 #define E_TWO_PLAYERS	0x04
 #define E_PASSWORD	0x05
-#define E_
+//#define E_
 #define E_IN_USE	0x08
 #define E_SOCKET	0x09
 #define E_INVAL		0x0A

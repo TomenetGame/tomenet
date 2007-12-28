@@ -9,10 +9,12 @@ TIDALWAVE = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	20,
         ["spell"] = 	function()
-		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 10), EFF_WAVE, " casts a tidal wave for")
+--		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 10), 10, EFF_WAVE, " casts a tidal wave for")
+--1.5		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 140), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
+		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(40 + get_level(Ind, TIDALWAVE,  200)).." rad "..(6 + get_level(Ind, TIDALWAVE,  10))
+			return "dam "..(40 + get_level(Ind, TIDALWAVE,  140)).." rad "..(6 + get_level(Ind, TIDALWAVE, 6))
 	end,
         ["desc"] =	{
         		"Summons a monstruous tidal wave that will expand and crush the",
@@ -33,10 +35,12 @@ ICESTORM = add_spell
         
         		if get_level(Ind, ICESTORM, 50) >= 15 then type = GF_ICE
                         else type = GF_COLD end
-		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), EFF_STORM, " summons an ice storm for")
+--		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 70), 10, EFF_STORM, " summons an ice storm for")
+--1.5		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 150), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
+		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad "..(1 + get_level(Ind, ICESTORM, 3, 0)).." dur "..(20 + get_level(Ind, ICESTORM, 70))
+			return "dam "..(80 + get_level(Ind, ICESTORM, 150)).." rad "..(1 + get_level(Ind, ICESTORM, 3, 0)).." dur "..(20 + get_level(Ind, ICESTORM, 47))
 	end,
         ["desc"] =	{
         		"Engulfs you in a storm of roaring cold that strikes your foes",
@@ -102,10 +106,13 @@ VAPOR = add_spell
         ["mana_max"] = 	12,
         ["fail"] = 	20,
         ["spell"] = 	function()
-		        fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 20), 3 + get_level(Ind, VAPOR, 9, 0), 5, " fires a cloud of vapor for")
+--		        fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 20), 3 + get_level(Ind, VAPOR, 9, 0), 5, 10, " fires a cloud of vapor for")
+--dur should strictly calculating be 3, but that'd be too short feeling-wise, so leaving it at 5, buffing the spell a bit.
+--1.5			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 24), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
+			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 34), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()
-       			return "dam "..(3 + get_level(Ind, VAPOR, 20)).." rad "..(3 + get_level(Ind, VAPOR, 9, 0)).." dur 5"
+       			return "dam "..(3 + get_level(Ind, VAPOR, 24)).." rad "..(3 + get_level(Ind, VAPOR, 9, 0)).." dur 5"
 	end,
         ["desc"] =	{
                         "Fills the air with toxic moisture to eradicate annoying critters"

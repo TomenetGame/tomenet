@@ -44,6 +44,30 @@ HHEALING = add_spell
 	}
 }
 
+HDELCURSES = add_spell
+{
+        ["name"] =      "Remove Curses",
+        ["school"] =    SCHOOL_HCURING,
+        ["level"] =     10,
+        ["mana"] =      20,
+        ["mana_max"] =  40,
+        ["fail"] =      40,
+        ["stat"] =      A_WIS,
+        ["spell"] =     function()
+                local done
+		if get_level(Ind, HDELCURSES, 50) >= 30 then done = remove_all_curse(Ind)
+                else done = remove_curse(Ind) end
+                if done == TRUE then msg_print(Ind, "The curse is broken!") end
+	        end,
+        ["info"] =      function()
+                return ""
+	        end,
+        ["desc"] =      {
+                "Remove curses of worn objects",
+                "At level 30 switches to *remove curses*"
+        }
+}
+
 HHEALING2 = add_spell
 {
         ["name"] =      "Cleansing Cloud",
@@ -55,10 +79,11 @@ HHEALING2 = add_spell
         ["stat"] =      A_WIS,
         ["direction"] = FALSE,
         ["spell"] =     function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 50)), " calls the spirits")
+--			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 50)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 16)), 10, " calls the spirits")
                         end,
         ["info"] =      function()
-                        return "heals " .. (get_level(Ind, HHEALING2, 60) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 50))
+                        return "heals " .. (get_level(Ind, HHEALING2, 60) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 16))
                         end,
         ["desc"] =      { "Continuously heals you and those around you.",
 			  }
@@ -190,29 +215,6 @@ HRESURRECT = add_spell
                         "Resurrects another player's ghost back to life.",
 			"The higher the skill, the less experience he will lose, down to 33%.",
 		}
-}
-
-HDELFEAR = add_spell
-{
-	["name"] =	"Remove Fear",
-	["school"] =	{SCHOOL_HCURING},
-	["level"] = 	1,
-	["mana"] =	2,
-	["mana_max"] =	10,
-	["fail"] =	10,
-	["stat"] =	A_WIS,
-	["spell"] =	function()
-                        fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, HDELFEAR, 50 * 2), 4, " speaks some faithful words and you lose your fear.")
-			set_afraid(Ind, 0)
-			player.res_fear_temp = get_level(Ind, HDELFEAR, 50)
-			end,
-	["info"] =	function()
-			return "dur "..get_level(Ind, HDELFEAR, 50)
-			end,
-	["desc"] =	{
-			"Removes fear from your heart.",
-                	"***Automatically projecting***",
-			}
 }
 
 HDELBB = add_spell

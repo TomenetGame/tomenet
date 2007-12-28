@@ -16,7 +16,7 @@
 
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
-static int lInd = 0;
+//static int lInd = 0;
 #ifdef NOTYET	/* new idea */
 
 struct scmd{
@@ -216,7 +216,7 @@ void sc_wish(int Ind, void *argp){
 		o_ptr->number = o_ptr->weight > 100 ? 2 : 99;
 	}
 
-	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, p_ptr->total_winner?FALSE:TRUE);
+	apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 	if (tk > 3){
 		o_ptr->discount = atoi(token[4]);
 	}
@@ -267,7 +267,12 @@ static void do_cmd_refresh(int Ind)
 		o_ptr = &p_ptr->inventory[k];
 
 		/* Skip empty items */
-		if (!o_ptr->k_idx) continue;
+		if (!o_ptr->k_idx || !o_ptr->tval) {
+			/* hack - make sure the item is really erased - had some bugs there
+			   since some code parts use k_idx, and some tval, to kill/test items - C. Blue */
+			invwipe(o_ptr);
+			continue;
+		}
 
 		p_ptr->inven_cnt++;
 	}
@@ -367,13 +372,31 @@ void do_slash_cmd(int Ind, char *message)
 		if (colon)
 		{
 			msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, colon);
+			msg_format(Ind, "\377BYou shout:%s", colon);
 		}
 		else
 		{
 			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
+			msg_format(Ind, "\377BYou shout!", colon);
 		}
-		msg_format(Ind, "\377BYou shout:%s", colon);
+		break_cloaking(Ind);
 		return;
+	}
+	/* RPG-style talking to people who are nearby, instead of global chat. - C. Blue */
+	else if (prefix(message, "/say"))
+	{
+		if (colon)
+		{
+			msg_format_near(Ind, "\377B%^s says:%s", p_ptr->name, colon);
+			msg_format(Ind, "\377BYou say:%s", colon);
+		}
+		else
+		{
+			msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
+			msg_format(Ind, "\377BYou clear your throat.", colon);
+		}
+		return;
+// :)		break_cloaking(Ind);
 	}
 
 	else
@@ -793,7 +816,7 @@ void do_slash_cmd(int Ind, char *message)
 								!strstr(quark_str(o_ptr->note), token[1])))
 						continue;
 
-					do_cmd_wield(Ind, j);
+					do_cmd_wield(Ind, j, 0x0);
 
 					/* MEGAHACK -- tweak to handle rings right */
 					if (o_ptr->tval == TV_RING && !gauche)
@@ -814,6 +837,26 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
 			do_cmd_time(Ind);
+
+#ifdef ENABLE_STANCES
+			if (get_skill(p_ptr, SKILL_STANCE)) {
+				switch (p_ptr->combat_stance) {
+				case 0: msg_print(Ind, "You are currently in balanced combat stance."); break;
+				case 1: switch (p_ptr->combat_stance_power) {
+					case 0: msg_print(Ind, "You are currently in defensive combat stance rank I."); break;
+					case 1: msg_print(Ind, "You are currently in defensive combat stance rank II."); break;
+					case 2: msg_print(Ind, "You are currently in defensive combat stance rank III."); break;
+					case 3: msg_print(Ind, "You are currently in Royal Rank defensive combat stance."); break;
+					} break;
+				case 2: switch (p_ptr->combat_stance_power) {
+					case 0: msg_print(Ind, "You are currently in offensive combat stance rank I."); break;
+					case 1: msg_print(Ind, "You are currently in offensive combat stance rank II."); break;
+					case 2: msg_print(Ind, "You are currently in offensive combat stance rank III."); break;
+					case 3: msg_print(Ind, "You are currently in Royal Rank offensive combat stance."); break;
+					} break;
+				}
+			}
+#endif
 
 //			do_cmd_knowledge_dungeons(Ind);
 			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
@@ -902,27 +945,26 @@ void do_slash_cmd(int Ind, char *message)
 				}
 #endif
 				msg_format(Ind, "\377B|  Type  |   Damage   | Cost (base, medium, adv)");
-				msg_format(Ind, "\377B|  Bolt  | %2dd%2d + 3  | %4d, %4d, %4d", 
-					1 + RUNE_DMG, 1 + RUNE_DMG/2,
-					RUNE_DMG*RBASIC_COST*RBOLT_BASE,
-					RUNE_DMG*RMEDIUM_COST*RBOLT_BASE,
-					RUNE_DMG*RADVANCE_COST*RBOLT_BASE);
-				msg_format(Ind, "\377B|  Beam  | %2dd%2d + 3  | %4d, %4d, %4d", 
-					1 + RUNE_DMG, 1 + RUNE_DMG/3,
-					RUNE_DMG*RBASIC_COST*RBEAM_BASE,
-					RUNE_DMG*RMEDIUM_COST*RBEAM_BASE,
-					RUNE_DMG*RADVANCE_COST*RBEAM_BASE);
-				msg_format(Ind, "\377B|  Ball  | %2dd%2d + 3  | %4d, %4d, %4d", 
-					1 + RUNE_DMG, 1 + RUNE_DMG/3,
-					RUNE_DMG*RBASIC_COST*RBALL_BASE,
-					RUNE_DMG*RMEDIUM_COST*RBALL_BASE,
-					RUNE_DMG*RADVANCE_COST*RBALL_BASE);
-
-				msg_format(Ind, "\377B|  Cloud | %2d dur:%2d  | %4d, %4d, %4d", 
-					rcloud_dmg(RUNE_DMG), RCLOUD_DURATION,
-					RUNE_DMG*RBASIC_COST*RCLOUD_BASE,
-					RUNE_DMG*RMEDIUM_COST*RCLOUD_BASE,
-					RUNE_DMG*RADVANCE_COST*RCLOUD_BASE);
+				msg_format(Ind, "\377B|  Bolt  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
+					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/2),
+					(RUNE_DMG*RBASIC_COST*RBOLT_BASE),
+					(RUNE_DMG*RMEDIUM_COST*RBOLT_BASE),
+					(RUNE_DMG*RADVANCE_COST*RBOLT_BASE));
+				msg_format(Ind, "\377B|  Beam  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
+					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/3),
+					(RUNE_DMG*RBASIC_COST*RBEAM_BASE),
+					(RUNE_DMG*RMEDIUM_COST*RBEAM_BASE),
+					(RUNE_DMG*RADVANCE_COST*RBEAM_BASE));
+				msg_format(Ind, "\377B|  Ball  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
+					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/3),
+					(RUNE_DMG*RBASIC_COST*RBALL_BASE),
+					(RUNE_DMG*RMEDIUM_COST*RBALL_BASE),
+					(RUNE_DMG*RADVANCE_COST*RBALL_BASE)); 
+				msg_format(Ind, "\377B|  Cloud | %2d dur:%2d  | %4.0f, %4.0f, %4.0f", 
+					(int)(rcloud_dmg(RUNE_DMG)), (int)(RCLOUD_DURATION),
+					(RUNE_DMG*RBASIC_COST*RCLOUD_BASE),
+					(RUNE_DMG*RMEDIUM_COST*RCLOUD_BASE),
+					(RUNE_DMG*RADVANCE_COST*RCLOUD_BASE));
 
 				lev = get_skill(p_ptr, SKILL_RUNEMASTERY);
 
@@ -936,7 +978,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 35) msg_print(Ind, "\377BYou have perfect ball casting.");
 				if (lev >= 50) msg_print(Ind, "\377BYou have perfect cloud casting."); //omg wtf woot ^_^"
 #else
-				msg_print(Ind, "\377BFailure rate: 0.1%"); 
+				msg_print(Ind, "\377BFailure rate: 0.1%%"); 
 #endif
 				lev = p_ptr->lev; //restore ^^"
 			}
@@ -1041,7 +1083,7 @@ void do_slash_cmd(int Ind, char *message)
 						/* Cast Recall spell - mikaelh */
 						case TV_BOOK:
 							spell=exec_lua(Ind, "return find_spell(\"Recall\")");
-							if (o_ptr->sval == 255)
+							if (o_ptr->sval == SV_SPELLBOOK)
 							{
 								if (o_ptr->pval != spell)
 								{
@@ -1153,7 +1195,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if(prefix(message, "/quest") ||
 				prefix(message, "/que"))	/* /quIt */
 		{
-			int i, j=Ind, k=0;
+			int i, j=Ind; //k=0;
 			u16b r, num;
 			int lev;
 			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
@@ -1245,7 +1287,12 @@ void do_slash_cmd(int Ind, char *message)
 			do{
 				r=get_mon_num(lev, 0);
 				k++;
-				if(k>100) lev--;
+                                if(k>1000) {
+                                        lev--;
+                                        k = lev * 5;
+//                                      k = lev * 9;
+//                                      k = 900;
+                                }
 			} while(	((lev-5) > r_info[r].level) || 
 					(r_info[r].flags1 & RF1_UNIQUE) || 
 					(r_info[r].flags7 & RF7_MULTIPLY) || 
@@ -1253,7 +1300,7 @@ void do_slash_cmd(int Ind, char *message)
 #ifndef RPG_SERVER
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
 #else /* very hard in the beginning in ironman dungeons */
-			if (lev < 35) {
+			if (lev < 40) {
 				if (r_info[r].flags1 & RF1_FRIENDS) i = i * 2;
 				else i = (i + 1) / 2;
 			} else {
@@ -1441,9 +1488,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 #endif 
                 else if (prefix(message, "/pet")) {
-			if (strcasecmp(Players[i]->accountname, "the_sandman") && 
- 			    strcasecmp(Players[i]->accountname, "the_sandman2") && 
- 			    strcasecmp(Players[i]->accountname, "God")) { 
+			if (strcmp(Players[Ind]->accountname, "The_sandman")) {
 				msg_format(Ind, "\377rPet system is disabled.");
 				return;
 			}
@@ -1461,19 +1506,21 @@ void do_slash_cmd(int Ind, char *message)
                 else if (prefix(message, "/unpet")) {
 			#ifdef RPG_SERVER
 			msg_format(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
-			if (Players[Ind]->wpos.wz != 0) {
+			if (strcmp(Players[Ind]->accountname, "The_sandman")) return;
+//			if (Players[Ind]->wpos.wz != 0) {
 				for (i = m_top-1; i >= 0; i--) {
 					monster_type *m_ptr = &m_list[i];
-					if (m_ptr->owner == Players[Ind]->id && m_ptr->pet) {
+					if (!m_ptr->pet) continue;
+					if (find_player(m_ptr->owner) == Ind) {
 						m_ptr->pet = 0; //default behaviour!
 						m_ptr->owner = 0;
-						i = -1;
+						Players[Ind]->has_pet = 0; //spec value
+						i = -1; //quit early
 					}
 				} 
-				Players[Ind]->has_pet = 2; //spec value
-			} else {
-				msg_format(Ind, "\377yYou cannot abandon your pet while the whole town is looking!");
-			}
+//			} else {
+//				msg_format(Ind, "\377yYou cannot abandon your pet while the whole town is looking!");
+//			}
 			#endif
 			return;
                 } 
@@ -1692,9 +1739,11 @@ void do_slash_cmd(int Ind, char *message)
 			int i, notes = 0, found_note=MAX_NOTES, j = 0;
 			bool colon = FALSE;
 			char tname[80]; /* target's account name */
+			struct account *c_acc;
 			if (tk < 1)	/* Explain command usage */
 			{
-				msg_print(Ind, "\377oUsage: /note <player-account>[:<text>]  --  Example: /note El Hazard:Hiho!");
+				msg_print(Ind, "\377oUsage: /note <player-account>[:<text>]");
+				msg_print(Ind, "\377oExample: /note El Hazard:Hiho!");
 				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that account.");
 				msg_print(Ind, "\377oTo clear all pending notes of yours, type: /note *");
 				return;
@@ -1727,6 +1776,12 @@ void do_slash_cmd(int Ind, char *message)
 						}
 					break;
 				}
+			/* does target account exist? */
+			c_acc = GetAccount(tname, NULL, FALSE);
+			if (!c_acc) {
+				msg_print(Ind, "\377oThat account does not exist.");
+				return;
+			}
 			/* No colon found -> only a name parm give */
 			if (!colon)	/* Delete all pending notes to a specified player */
 			{
@@ -1744,24 +1799,32 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377oDeleted %d notes.", notes);
 				return;
 			}
+
 			/* Colon found, store a note to someone */
 			/* Store a new note from this player to the specified player */
-			/* Look for free space to store the new note */
+
+			/* Check whether player has his notes quota exceeded */
 			for (i = 0; i < MAX_NOTES; i++) {
-				if (!strcmp(priv_note[i], "")) {
-					/* found a free memory spot */
-					found_note = i;
-				}
 				if (!strcmp(priv_note_sender[i], p_ptr->name)) notes++;
-			}
-			if (found_note == MAX_NOTES) {
-				msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
-				return;
 			}
 			if ((notes >= 3) && !is_admin(p_ptr)) {
 				msg_print(Ind, "\377oYou have already reached the maximum of 3 pending notes per player.");
 				return;
 			}
+
+			/* Look for free space to store the new note */
+			for (i = 0; i < MAX_NOTES; i++) {
+				if (!strcmp(priv_note[i], "")) {
+					/* found a free memory spot */
+					found_note = i;
+					break;
+				}
+			}
+			if (found_note == MAX_NOTES) {
+				msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
+				return;
+			}
+
 			strcpy(priv_note_sender[found_note], p_ptr->name);
 			strcpy(priv_note_target[found_note], tname);
 			strcpy(priv_note[found_note], message2 + j + 1);
@@ -1884,24 +1947,55 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 		else if (prefix(message, "/geinfo")) /* get info on a global event */
 		{
-			int i, n=0;
+			int i, n=0, j;
+			char ppl[75];
+			bool found = FALSE;
 			if (tk < 1) {
+				msg_print(Ind, "\377d ");
 				for (i = 0; i<MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden==FALSE || admin)) {
 					n++;
-					if (n == 1) msg_print(Ind, "\377W** \377sCurrently ongoing events: \377W**");
-					msg_format(Ind, " - Event #%d: %s", i+1, global_event[i].title);
+					if (n == 1) {
+						msg_print(Ind, "\377sCurrently ongoing events:");
+						msg_print(Ind, "\377sUse command '/geinfo <number>' to get information on a specific event.");
+					}
+					/* Event still in announcement phase? */
+					if (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps) > 0)
+						msg_format(Ind, " # %d '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, (global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
+					/* or has already begun? */
+					else	msg_format(Ind, " # %d '%s' began %d mins ago.", i+1, global_event[i].title, -(global_event[i].announcement_time - ((turn - global_event[i].start_turn) / cfg.fps)) / 60);
 				}
 				if (!n) msg_print(Ind, "\377sNo events are currently running.");
-				else msg_print(Ind, "\377s Try   /geinfo <number>   to get info on a specific event.");
 				msg_print(Ind, "\377d ");
 			} else if ((k < 1) || (k > MAX_GLOBAL_EVENTS)) {
 				msg_format(Ind, "Usage: /geinfo    or    /geinfo 1..%d", MAX_GLOBAL_EVENTS);
 			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin)) {
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
-				msg_format(Ind, "\377W>>Info on event #%d '\377s%s\377W':", k, global_event[k-1].title);
+				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
 				for (i = 0; i<6; i++) if (strcmp(global_event[k-1].description[i], ""))
 					msg_print(Ind, global_event[k-1].description[i]);
+//				msg_print(Ind, "\377d ");
+				if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) >= 120) {
+					msg_format(Ind, "\377WThis event will start in %d minutes.", (global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60);
+				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > 0) {
+					msg_format(Ind, "\377WThis event will start in %d seconds.", global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps));
+				} else if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) > -120) {
+					msg_format(Ind, "\377WThis event has been running for %d seconds.", -global_event[k-1].announcement_time + ((turn - global_event[k-1].start_turn) / cfg.fps));
+				} else {
+					msg_format(Ind, "\377WThis event has been running for %d minutes.", -(global_event[k-1].announcement_time - ((turn - global_event[k-1].start_turn) / cfg.fps)) / 60);
+				}
+				strcpy(ppl, "\377WSubscribers: ");
+				for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+					if (!global_event[k-1].participant[j]) continue;
+					for (i = 1; i <= NumPlayers; i++) {
+						if (global_event[k-1].participant[j] == Players[i]->id) {
+							if (found) strcat(ppl, ", ");
+							strcat(ppl, Players[i]->name);
+							found = TRUE;
+						}
+					}
+				}
+				if (found) msg_format(Ind, "%s", ppl);
 				msg_print(Ind, "\377d ");
 			}
 			return;
@@ -1933,11 +2027,277 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /bbs <line of text for others to read>");
 				return;
 			}
-			bss_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
+			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			return;
 		}
 		else if (prefix(message, "/time")) { /* show time / date */
 			msg_format(Ind, "Current server time is %s", showtime());
+			return;
+		}
+#ifdef AUCTION_SYSTEM
+		else if (prefix(message, "/auc")) {
+			int n;
+			if (!p_ptr->wpos.wz && !is_admin(p_ptr))
+			{
+				if (p_ptr->wpos.wz < 0) msg_print(Ind, "\377B[@] \377rYou can't use the auction system while in a dungeon!");
+				else msg_print(Ind, "\377B[@] \377rYou can't use the auction system while in a tower!");
+			}
+			else if ((tk < 1) || ((tk < 2) && (!strcmp("help", token[1]))))
+			{
+				msg_print(Ind, "\377B[@] \377wTomeNET Auction system");
+				msg_print(Ind, "\377B[@] \377oUsage: /auction <subcommand> ...");
+				msg_print(Ind, "\377B[@] \377GAvailable subcommands:");
+				msg_print(Ind, "\377B[@] \377w  bid  buyout  cancel  examine  list");
+				msg_print(Ind, "\377B[@] \377w  retrieve  search  show  set  start");
+				msg_print(Ind, "\377B[@] \377GFor help about a specific subcommand:");
+				msg_print(Ind, "\377B[@] \377o  /auction help <subcommand>");
+			}
+			else if (!strcmp("help", token[1]))
+			{
+				if (!strcmp("bid", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction bid <auction id> <bid>");
+					msg_print(Ind, "\377B[@] \377wPlaces a bid on an item.");
+					msg_print(Ind, "\377B[@] \377wYou must be able to pay your bid in order to win.");
+					msg_print(Ind, "\377B[@] \377wYou also have to satisfy the level requirement when placing your bid.");
+				}
+				else if (!strcmp("buyout", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction buyout <auction id>");
+					msg_print(Ind, "\377B[@] \377wInstantly buys an item.");
+					msg_print(Ind, "\377B[@] \377wUse the \377Gretrieve \377wcommand to get the item.");
+				}
+				else if (!strcmp("cancel", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction cancel [auction id]");
+					msg_print(Ind, "\377B[@] \377wCancels your bid on an item or aborts the auction on your item.");
+				}
+				else if (!strcmp("examine", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction examine <auction id>");
+					msg_print(Ind, "\377B[@] \377wTells you everything about an item.");
+				}
+				else if (!strcmp("list", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction list");
+					msg_print(Ind, "\377B[@] \377wShows a list of all items available.");
+				}
+				else if (!strcmp("retrieve", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction retrieve");
+					msg_print(Ind, "\377B[@] \377wRetrieve won and cancelled items.");
+				}
+				else if (!strcmp("search", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction search <description>");
+					msg_print(Ind, "\377B[@] \377wSearches for items with matching descriptions.");
+				}
+				else if (!strcmp("show", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction show <auction id>");
+					msg_print(Ind, "\377B[@] \377wShows auction-related information about an item.");
+				}
+				else if (!strcmp("set", token[2]))
+				{
+					char *time_string;
+					msg_print(Ind, "\377B[@] \377oUsage: /auction set <inventory slot> <starting price> <buyout price> <duration>");
+					msg_print(Ind, "\377B[@] \377wSets up an auction.");
+					msg_print(Ind, "\377B[@] \377wInventory slot is the item's letter in your inventory.");
+#ifdef AUCTION_MINIMUM_STARTING_PRICE
+					msg_format(Ind, "\377B[@] \377wMinimum starting price is %d%% of the item's real value.", AUCTION_MINIMUM_STARTING_PRICE);
+#endif
+#ifdef AUCTION_MAXIMUM_STARTING_PRICE
+					msg_format(Ind, "\377B[@] \377wMaximum starting price is %d%% of the item's real value.", AUCTION_MAXIMUM_STARTING_PRICE);
+#endif
+#ifdef AUCTION_MINIMUM_BUYOUT_PRICE
+					msg_format(Ind, "\377B[@] \377wMinimum buyout price is %d%% of the item's real value.", AUCTION_MINIMUM_BUYOUT_PRICE);
+#endif
+#ifdef AUCTION_MAXIMUM_BUYOUT_PRICE
+					msg_format(Ind, "\377B[@] \377wMaximum buyout price is %d%% of the item's real value.", AUCTION_MAXIMUM_BUYOUT_PRICE);
+#endif
+#ifdef AUCTION_MINIMUM_DURATION
+					time_string = auction_format_time(AUCTION_MINIMUM_DURATION);
+					msg_format(Ind, "\377B[@] \377wShortest duration allowed is %d seconds.", time_string);
+					C_KILL(time_string, strlen(time_string), char);
+#endif
+#ifdef AUCTION_MAXIMUM_DURATION
+					time_string = auction_format_time(AUCTION_MINIMUM_DURATION);
+					msg_format(Ind, "\377B[@] \377wLongest duration allowed is %d seconds.", AUCTION_MAXIMUM_DURATION);
+					C_KILL(time_string, strlen(time_string), char);
+#endif
+				}
+				else if (!strcmp("start", token[2]))
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction start");
+					msg_print(Ind, "\377B[@] \377wConfirms that you want to start start an auction.");
+				}
+				else
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction help <subcommand>");
+					msg_print(Ind, "\377B[@] \377ySee \"\377G/auction help\377y\" for list of valid subcommands.");
+				}
+			}
+			else if (!strcmp("bid", token[1]))
+			{
+				if (tk < 3)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction bid <auction id> <bid>");
+				}
+				else
+				{
+					k = atoi(token[2]);
+					n = auction_place_bid(Ind, k, token[3]);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("buyout", token[1]))
+			{
+				if (tk < 2)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction buyout <auction id>");
+				}
+				else
+				{
+					k = atoi(token[2]);
+					n = auction_buyout(Ind, k);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("cancel", token[1]))
+			{
+				if (tk < 2)
+				{
+					if (p_ptr->current_auction)
+					{
+						auction_cancel(Ind, p_ptr->current_auction);
+					}
+					else
+					{
+						msg_print(Ind, "\377B[@] \377rNo item to cancel!");
+						msg_print(Ind, "\377B[@] \377oUsage: /auction cancel [auction id]");
+					}
+				}
+				else
+				{
+					k = atoi(token[2]);
+					n = auction_cancel(Ind, k);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("examine", token[1]))
+			{
+				if (tk < 2)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction examine <auction id>");
+				}
+				else
+				{
+					k = atoi(token[2]);
+					n = auction_examine(Ind, k);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("list", token[1]))
+			{
+				auction_list(Ind);
+			}
+			else if (!strcmp("retrieve", token[1]))
+			{
+				int retrieved, unretrieved;
+				auction_retrieve_items(Ind, &retrieved, &unretrieved);
+				if (!unretrieved) msg_format(Ind, "\377B[@] \377wRetrieved %d item(s).", retrieved);
+				else msg_format(Ind, "\377B[@] \377wRetrieved %d items, you didn't have room for %d more item(s).", retrieved, unretrieved);
+			}
+			else if (!strcmp("search", token[1]))
+			{
+				if (tk < 2)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction search <name>");
+				}
+				else
+				{
+					auction_search(Ind, message3 + 7);
+				}
+			}
+			else if (!strcmp("show", token[1]))
+			{
+				if (tk < 2)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction show <auction id>");
+				}
+				else
+				{
+					k = atoi(token[2]);
+					n = auction_show(Ind, k);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("set", token[1]))
+			{
+				if (tk < 5)
+				{
+					msg_print(Ind, "\377B[@] \377oUsage: /auction set <inventory slot> <starting price> <buyout price> <duration>");
+				}
+				else
+				{
+					n = auction_set(Ind, token[2][0], token[3], token[4], token[5]);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else if (!strcmp("start", token[1]))
+			{
+				if (!p_ptr->current_auction)
+				{
+					msg_print(Ind, "\377B[@] \377rNo item!");
+				}
+				else
+				{
+					n = auction_start(p_ptr->current_auction);
+					if (n)
+					{
+						auction_print_error(Ind, n);
+					}
+				}
+			}
+			else
+			{
+				msg_print(Ind, "\377B[@] \377rUnknown subcommand!");
+				msg_print(Ind, "\377B[@] \377ySee \"/auction help\" for list of valid subcommands.");
+			}
+			return;
+		}
+#endif
+		/* workaround - refill ligth source (outdated clients cannot use 'F' due to INVEN_ order change */
+		else if (prefix(message, "/lite"))
+		{
+			if (tk != 1) {
+				msg_print(Ind, "Usage: /lite a...w");
+				return;
+			}
+			k = message3[0] - 97;
+			if (k < 0 || k >= INVEN_PACK) {
+				msg_print(Ind, "Usage: /lite a...w");
+				return;
+			}
+			do_cmd_refill(Ind, k);
 			return;
 		}
 
@@ -2014,6 +2374,16 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/shutlow")) {
 				msg_print(Ind, "\377y* Shutting down as soon as dungeons are empty and few players are on *");
 				cfg.runlevel = 2047;
+				return;
+			}
+			else if (prefix(message, "/shutvlow")) {
+				msg_print(Ind, "\377y* Shutting down as soon as dungeons are empty and very few players are on *");
+				cfg.runlevel = 2046;
+				return;
+			}
+			else if (prefix(message, "/shutnone")) {
+				msg_print(Ind, "\377y* Shutting down as soon as no players are on anymore *");
+				cfg.runlevel = 2045;
 				return;
 			}
 #if 0	/* not implemented yet - /shutempty is currently working this way */
@@ -2473,7 +2843,7 @@ void do_slash_cmd(int Ind, char *message)
 					int nom = atoi(token[5]);
 					o_ptr->number = 1;
 
-					if (nom == ART_RANDART) { /* 255, see defines.h */
+					if (nom == ART_RANDART) { /* see defines.h */
 						/* Piece together a 32-bit random seed */
 						o_ptr->name1 = ART_RANDART;
 						o_ptr->name3 = rand_int(0xFFFF) << 16;
@@ -2749,8 +3119,11 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/debug-dun")){
 				/* C. Blue's mad debug code to change
 				   dungeon flags [of Nether Realm] */
-				int type, i, x, y;
+				int type, x, y;
+#ifdef RPG_SERVER
 				bool found_town = FALSE;
+				int i;
+#endif
 				struct dungeon_type *d_ptr;
 				struct worldpos *tpos = &p_ptr->wpos;
 				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
@@ -2776,7 +3149,7 @@ if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 				        for(i=0;i<numtowns;i++) {
 	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
 							found_town = TRUE;
-							if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y)
+							if (tpos->wx == 32 && tpos->wy == 32)
 								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 							else
 								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
@@ -2805,7 +3178,7 @@ if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
 				        for(i=0;i<numtowns;i++) {
 	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
 							found_town = TRUE;
-							if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y)
+							if (tpos->wx == 32 && tpos->wy == 32)
 								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
 							else
 								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
@@ -2978,17 +3351,42 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
-				int j = name_lookup_loose(Ind, token[1], FALSE);
+				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /slap <player name>");
 					return;
 				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
 				bypass_invuln = TRUE;
 			        take_hit(j, Players[j]->chp / 2, "", 0);
 				bypass_invuln = FALSE;
 			        msg_print(j, "\377rYou are slapped by something invisible!");
 			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
+				return;
+			}
+			else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /pat <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou are patted by something invisible!");
+			        msg_format_near(j, "\377y%s is patted by something invisible!", Players[j]->name);
+				return;
+			}
+			else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /hug <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou are hugged by something invisible!");
+			        msg_format_near(j, "\377y%s is hugged by something invisible!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/deltown")){
@@ -3240,28 +3638,28 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					return;
 				}
 				msg_format(Ind, "Looking up account %s.", message3);
-				l_acc=Admin_GetAccount(message3);
-				if(l_acc) {
-					n=player_id_list(&id_list, l_acc->id);
+				l_acc = Admin_GetAccount(message3);
+				if (l_acc) {
+					n = player_id_list(&id_list, l_acc->id);
 					/* Display all account characters here */
-					for(i=0; i<n; i++){
-						u16b ptype=lookup_player_type(id_list[i]);
+					for(i = 0; i < n; i++) {
+//unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
 						if (tmpm & MODE_IMMORTAL) strcpy(colour_sequence, "\377g");
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
 						else if (tmpm & MODE_HELL) strcpy(colour_sequence, "\377W");
 						else strcpy(colour_sequence, "\377w");
-						msg_format(Ind, "Character #%d: %s%s (%d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]));
+						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
-					if(n) C_KILL(id_list, n, int);
+					if (n) C_KILL(id_list, n, int);
 					KILL(l_acc, struct account);
 				} else {
 					msg_print(Ind, "Account not found.");
 				}
 				return;
 			}
-			else if (prefix(message, "/addnewdun")){
+			else if (prefix(message, "/addnewdun")) {
 				msg_print(Ind, "Trying to add new dungeons..");
 				wild_add_new_dungeons();
 				msg_print(Ind, "done.");
@@ -3270,8 +3668,14 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 			/* for now only loads Valinor */
 			else if (prefix(message, "/loadmap")) {
 				int xstart = 0, ystart = 0;
+				if (!message2) {
+					msg_print(Ind, "Usage: /loadmap t_<mapname>.txt");
+					return;
+				}
 				msg_print(Ind, "Trying to load map..");
-                                process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+//                                process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
+                                process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+
 				msg_print(Ind, "done.");
 				return;
 			}
@@ -3288,9 +3692,9 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
 						o_ptr = &o_list[this_o_idx];
 
-						if (!o_ptr->k_idx)
+						if (!o_ptr->k_idx || o_ptr->k_idx == 1)
 						{
-							msg_format(Ind, "Monster #%d is holding an invalid item (#%d)!", i, m_ptr->hold_o_idx);
+							msg_format(Ind, "Monster #%d is holding an invalid item (#%d) (k_idx=%d)!", i, m_ptr->hold_o_idx, o_ptr->k_idx);
 						}
 
 						if (o_ptr->held_m_idx != i)
@@ -3329,12 +3733,12 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 			}
 			/* start a predefined global_event (quest, highlander tournament..),
 			   see process_events() in xtra1.c for details - C. Blue */
-			else if (prefix(message, "/startev"))
+			else if (prefix(message, "/gestart"))
 			{
 				char message4[80];
 				int err, msgpos = 0;
 				if (tk < 1) {
-					msg_print(Ind, "Usage: /startev <predefined type> [parameters...]");
+					msg_print(Ind, "Usage: /gestart <predefined type> [parameters...]");
 					return;
 				}
 				while(message3[msgpos] && message3[msgpos] != 32) msgpos++;
@@ -3344,10 +3748,10 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				if (err) msg_print(Ind, "Error: no more global events.");
 				return;
 			}
-			else if (prefix(message, "/stopev"))
+			else if (prefix(message, "/gestop"))
 			{
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
-					msg_format(Ind, "Usage: /stopev 1..%d", MAX_GLOBAL_EVENTS);
+					msg_format(Ind, "Usage: /gestop 1..%d", MAX_GLOBAL_EVENTS);
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
@@ -3357,10 +3761,10 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				stop_global_event(Ind, k-1);
 				return;
 			}
-			else if (prefix(message, "/pauseev"))
+			else if (prefix(message, "/gepause"))
 			{
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
-					msg_format(Ind, "Usage: /pauseev 1..%d", MAX_GLOBAL_EVENTS);
+					msg_format(Ind, "Usage: /gepause 1..%d", MAX_GLOBAL_EVENTS);
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
@@ -3376,11 +3780,11 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				}
 				return;
 			}
-			else if (prefix(message, "/evnow")) /* skip the announcements, start NOW */
+			else if (prefix(message, "/geretime")) /* skip the announcements, start NOW */
 			{
 				int t = 60;
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
-					msg_format(Ind, "Usage: /evnow 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
+					msg_format(Ind, "Usage: /geretime 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
@@ -3390,36 +3794,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				if (tk == 2) t = atoi(token[2]);
 				if ((turn - global_event[k-1].start_turn) / cfg.fps < global_event[k-1].announcement_time) {
 					global_event[k-1].announcement_time = (turn - global_event[k-1].start_turn) / cfg.fps + t;
-					if (t >= 120) msg_broadcast(0, format("\377o[>%s starts in %d minutes!<]", global_event[k-1].title, t / 60));
-					else msg_broadcast(0, format("\377o[>%s starts in %d seconds!<]", global_event[k-1].title, t));
-				}
-				return;
-			}
-			else if (prefix(message, "/evinfo")) /* skip the announcements, start NOW */
-			{
-				global_event_type *ge;
-				int j;
-				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
-					msg_format(Ind, "Usage: /evnow 1..%d", MAX_GLOBAL_EVENTS);
-					return;
-				}
-				if (global_event[k-1].getype == GE_NONE) {
-					msg_format(Ind, "no such event.");
-					return;
-				}
-				ge = &global_event[k-1];
-				msg_format(Ind, "Event %d '%s' details:", k, ge->title);
-				msg_print(Ind, " Subscribers:");
-				for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
-					bool found = FALSE;
-					if (!ge->participant[j]) continue;
-					for (i = 1; i <= NumPlayers; i++) {
-						if (ge->participant[j] == Players[i]->id) {
-							msg_format(Ind, "  %s", Players[i]->name);
-							found = TRUE;
-						}
-					}
-					if (found == FALSE) msg_format(Ind, "  <%ld>", ge->participant[j]);
+					announce_global_event(k-1);
 				}
 				return;
 			}
@@ -3438,12 +3813,12 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				msg_print(Ind, "Party data dumped to tomenet_parties");
 				return;
 			}
-			else if (prefix(message, "/partyclean")) /* reset the party creation times for empty parties - THIS MUST BE RUN WHEN THE TURN COUNTER IS RESET - mikaelh */
+			else if (prefix(message, "/partyclean")) /* reset the creation times of empty parties - THIS MUST BE RUN WHEN THE TURN COUNTER IS RESET - mikaelh */
 			{
 				for (i = 1; i < MAX_PARTIES; i++) {
 					if (parties[i].members == 0) parties[i].created = 0;
 				}
-				msg_print(Ind, "Empty party creation times succesfully reseted!");
+				msg_print(Ind, "Creation times of empty parties reseted!");
 				return;
 			}
 			else if (prefix(message, "/meta"))
@@ -3499,6 +3874,230 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				//.......
 			}
 #endif
+		        else if (prefix(message, "/rem")) {     /* write a remark (comment) to log file, for bookmarking - C. Blue */
+	            		char *rem = "-";
+				if (tk) rem = message3;
+				s_printf("%s ADMIN_REMARK by %s: %s\n", showtime(), p_ptr->name, rem);
+				return;
+			}
+			else if (prefix(message, "/mcarry")) { /* give a designated item to the monster currently looked at (NOT the one targetted) - C. Blue */
+#ifdef MONSTER_INVENTORY
+				s16b o_idx, m_idx;
+				object_type *o_ptr;
+				monster_type *m_ptr;
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				if (p_ptr->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return; /* no monster targetted */
+				}
+				m_idx = p_ptr->health_who;
+				m_ptr = &m_list[m_idx];
+				o_ptr = &p_ptr->inventory[k];
+				o_idx = o_pop();
+				if (o_idx) {
+					object_type *j_ptr;
+					j_ptr = &o_list[o_idx];
+					object_copy(j_ptr, o_ptr);
+					j_ptr->owner = 0;
+					j_ptr->owner_mode = 0;
+					j_ptr->held_m_idx = m_idx;
+					j_ptr->next_o_idx = m_ptr->hold_o_idx;
+					m_ptr->hold_o_idx = o_idx;
+					inven_item_increase(Ind, k, -j_ptr->number);
+					inven_item_optimize(Ind, k);
+					msg_print(Ind, "Monster-carry successfully completed.");
+				} else {
+					msg_print(Ind, "No more objects available.");
+				}
+#else
+				msg_print(Ind, "MONSTER_INVENTORY not defined.");
+#endif  // MONSTER_INVENTORY
+				return;
+			}
+			else if (prefix(message, "/erasehashtableid")) { /* erase a player id in case there's a duplicate entry in the hash table - mikaelh */
+				int id;
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /erasehashtableid <player id>");
+					return;
+				}
+				id = atoi(message3);
+				if (!id) {
+					msg_print(Ind, "Invalid ID");
+					return;
+				}
+                                msg_format(Ind, "Erasing player id %d from hash table.", id);
+                                delete_player_id(id);
+				return;
+			}
+			/* check o_list for invalid items - mikaelh */
+			else if (prefix(message, "/nothingcheck")) {
+				object_type *o_ptr;
+				int i;
+				msg_print(Ind, "Check o_list for invalid items...");
+				for (i = 0; i < o_max; i++) {
+					o_ptr = &o_list[i];
+
+					if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+						if (o_ptr->held_m_idx) {
+							msg_format(Ind, "Invalid item #%d (k_idx=%d) held by monster %d", i, o_ptr->k_idx, o_ptr->held_m_idx);
+						}
+						else {
+							msg_format(Ind, "Invalid item #%d (k_idx=%d) found at (%d,%d,%d) (x=%d,y=%d)", i, o_ptr->k_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+						}
+					}
+				}
+				msg_print(Ind, "Check complete.");
+				return;
+			}
+			/* check for anomalous items somewhere - mikaelh */
+			else if (prefix(message, "/floorcheck")) {
+				struct worldpos wpos;
+				cave_type **zcave, *c_ptr;
+				object_type *o_ptr;
+				int y, x, o_idx;
+				if (tk > 1) {
+					wpos.wx = atoi(token[1]);
+					wpos.wy = atoi(token[2]);
+					if (tk > 2) wpos.wz = atoi(token[3]);
+					else wpos.wz = 0;
+				}
+				else {
+					wpcopy(&wpos, &p_ptr->wpos);
+				}
+				msg_format(Ind, "Checking (%d,%d,%d)...", wpos.wx, wpos.wy, wpos.wz);
+				zcave = getcave(&wpos);
+				if (!zcave) {
+					msg_print(Ind, "Couldn't getcave().");
+					return;
+				}
+				for (y = 1; y < MAX_HGT - 1; y++) {
+					for (x = 1; x < MAX_WID - 1; x++) {
+						c_ptr = &zcave[y][x];
+						o_idx = c_ptr->o_idx;
+						if (o_idx) {
+							if (o_idx > o_max) {
+								msg_format(Ind, "Non-existent object #%d found at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+								continue;
+							}
+							o_ptr = &o_list[o_idx];
+							/* k_idx = 1 is something weird... */
+							if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+								msg_format(Ind, "Invalid item #%d (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
+							}
+							if (o_ptr->wpos.wx != wpos.wx || o_ptr->wpos.wy != wpos.wy || o_ptr->wpos.wz != wpos.wz) {
+								msg_format(Ind, "WORMHOLE! Found item #%d that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+								msg_format(Ind, "Wormhole located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+							}
+							/* more objects on this grid? */
+							while (o_ptr->next_o_idx) {
+								o_idx = o_ptr->next_o_idx;
+								if (o_idx > o_max) {
+									msg_format(Ind, "Non-existent object #%d found under a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+									break;
+								}
+								o_ptr = &o_list[o_idx];
+								if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+									msg_format(Ind, "Invalid item #%d (k_idx=%d) found under a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
+								}
+								if (o_ptr->wpos.wx != wpos.wx || o_ptr->wpos.wy != wpos.wy || o_ptr->wpos.wz != wpos.wz) {
+									msg_format(Ind, "WORMHOLE! Found item #%d that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+									msg_format(Ind, "Wormhole located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+								}
+							}
+						}
+					}
+				}
+				msg_print(Ind, "Check complete.");
+				return;
+			}
+			/* delete a line from bbs */
+			else if (prefix(message, "/dbbs")) {
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /dbbs <line number>");
+					return;
+				}
+				bbs_del_line(k);
+				return;
+			}
+			/* erase all bbs lines */
+			else if (prefix(message, "/ebbs")) {
+				bbs_erase();
+				return;
+			}
+			else if (prefix(message, "/reward")) { /* for testing purpose - C. Blue */
+				int j;
+				object_type reward_forge;
+				object_type *o_ptr = &reward_forge;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /reward <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377GYou have been rewarded by the gods!");
+
+//				create_reward(Ind, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
+                                create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW, 5000);
+                                object_aware(Ind, o_ptr);
+                                object_known(o_ptr);
+                                o_ptr->discount = 100;
+                                o_ptr->ident |= ID_MENTAL;
+                                inven_carry(Ind, o_ptr);
+				return;
+			}
+			else if (prefix(message, "/debug1")) { /* debug an issue at hand */
+				int j;
+				for (j = INVEN_TOTAL; j >= 0; j--)
+	                                if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS)
+    		                                invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
+				p_ptr->update |= (PU_BONUS | PU_VIEW);
+				handle_stuff(Ind);
+				msg_print(Ind, "debug1");
+				return;
+			}
+			else if (prefix(message, "/debug2")) { /* debug an issue at hand */
+				int j;
+				for (j = INVEN_TOTAL - 1; j >= 0; j--)
+	                                if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
+    		                                invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
+    		                                p_ptr->inventory[j].number = 1;
+    		                                p_ptr->inventory[j].level = 0;
+    		                                p_ptr->inventory[j].discount = 0;
+    		                                p_ptr->inventory[j].ident |= ID_MENTAL;
+    		                                p_ptr->inventory[j].owner = p_ptr->id;
+    		                                p_ptr->inventory[j].owner_mode = p_ptr->mode;
+    		                                object_aware(Ind, &p_ptr->inventory[j]);
+    		                                object_known(&p_ptr->inventory[j]);
+					}
+				p_ptr->update |= (PU_BONUS | PU_VIEW);
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				handle_stuff(Ind);
+				msg_print(Ind, "debug2");
+				return;
+			}
+			else if (prefix(message, "/daynight")) { /* switch between day and night - use carefully! */
+				int t = turn % ((10L * DAY) / 2);
+				turn += ((10L * DAY) / 2) - t - 1;
+				return;
+			}
+			else if (prefix(message, "/weather")) { /* toggle snowfall during WINTER_SEASON */
+				if (weather == 1) weather = 0;
+				else weather = 1;
+				return;
+			}
+			else if (prefix(message, "/fireworks")) { /* toggle fireworks during NEW_YEARS_EVE */
+				if (fireworks == 1) fireworks = 0;
+				else fireworks = 1;
+				return;
+			}
 		}
 	}
 

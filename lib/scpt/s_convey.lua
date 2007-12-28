@@ -78,9 +78,9 @@ TELEAWAY = add_spell
         ["direction"] = function () if get_level(Ind, TELEAWAY) >= 10 then return FALSE else return TRUE end end,
         ["spell"] = 	function(args)
         		if get_level(Ind, TELEAWAY, 50) >= 20 then
-                                project_los(Ind, GF_AWAY_ALL, 100)
+                                project_los(Ind, GF_AWAY_ALL, 100, "points and shouts")
                         elseif get_level(Ind, TELEAWAY, 50) >= 10 then
-                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4), "")
+                                fire_ball(Ind, GF_AWAY_ALL, args.dir, 100, 3 + get_level(Ind, TELEAWAY, 4), "points and shouts")
                         else
                                 teleport_monster(Ind, args.dir)
 			end

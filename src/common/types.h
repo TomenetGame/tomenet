@@ -697,20 +697,24 @@ struct sfunc{
 struct cave_type
 {
 	u16b info;		/* Hack -- cave flags */
-
 	byte feat;		/* Hack -- feature type */
-
 	s16b o_idx;		/* Item index (in o_list) or zero */
-
 	s16b m_idx;		/* Monster index (in m_list) or zero */
 				/* or negative if a player */
 
-#ifdef MONSTER_FLOW
-
+#ifdef MONSTER_FLOW		/* Note: Currently only flow_by_sound is implemented, not flow_by_smell - C. Blue */
 	byte cost;		/* Hack -- cost of flowing */
 	byte when;		/* Hack -- when cost was computed */
-
 #endif
+#ifdef MONSTER_FLOW_BY_SMELL	/* Added this for reduced stamp radius around the player, representing his "scent" surrounding him - C. Blue */
+	byte cost_smell;	/* Hack -- cost of flowing */
+	byte when_smell;	/* Hack -- when cost was computed */
+#endif
+
+#ifdef MONSTER_ASTAR		/* A* path finding - C. Blue */
+	byte astarF, astarG, astarH; /* grid score (F=G+H), starting point distance cost, estimated goal distance cost */
+#endif
+
 	struct c_special *special;	/* Special pointer to various struct */
 
 	/* I don't really love to enlarge cave_type ... but it'd suck if
@@ -718,7 +722,7 @@ struct cave_type
 	/* Adding 1byte in this struct costs 520Kb memory, in average */
 	/* This should be replaced by 'stackable c_special' code -
 	 * let's wait for evileye to to this :)		- Jir - */
-	byte effect;            /* The lasting effects */
+	int effect;            /* The lasting effects */
 };
 
 /* ToME parts, arranged */
@@ -888,18 +892,18 @@ struct monster_type
    s32b exp;                       /* Experience of the monster */
    s16b level;                     /* Level of the monster */
 
-   monster_blow blow[4];           /* Up to four blows per round */
-   byte speed;                     /* Monster "speed" - better s16b? */
-   s16b ac;                        /* Armour Class */
-   s16b org_ac;                /* Armour Class */
+   monster_blow blow[4];        /* Up to four blows per round */
+   byte speed;			/* CURRENT Monster "speed" (needs fixing all across the code) */
+   byte mspeed;			/* ORIGINAL Monster "speed" (needs fixing all across the code) */
+   s16b ac;                     /* Armour Class */
+   s16b org_ac;               	/* Armour Class */
 
    s32b hp;                        /* Current Hit points */
    s32b maxhp;                     /* Max Hit points */
-   s32b org_maxhp;                     /* Max Hit points */
+   s32b org_maxhp;                 /* Max Hit points */
 
    s16b csleep;		/* Inactive counter */
 
-   byte mspeed;		/* Monster "speed" */
    s16b energy;		/* Monster "energy" */
 
    byte stunned;		/* Monster is stunned */
@@ -924,9 +928,7 @@ struct monster_type
 
    byte ty;			/* Y location of target */
    byte tx;			/* X location of target */
-
    byte t_dur;			/* How long are we tracking */
-
    byte t_bit;			/* Up to eight bit flags */
 
    #endif
@@ -936,6 +938,7 @@ struct monster_type
    u32b smart;			/* Field for "smart_learn" */
 
    #endif
+
    u16b clone;			/* clone value */
    u16b clone_summoning;		/* counter to keep track of summoning */
 
@@ -947,14 +950,13 @@ struct monster_type
    #endif
    #if 0
    s16b status;		/* Status(friendly, pet, companion, ..) */
-
    s16b target;		/* Monster target */
-
    s16b possessor;		/* Is it under the control of a possessor ? */
    #endif
 
    u16b ai_state;		/* What special behaviour this monster takes now? */
-   s16b last_target;	/* For C. Blue's anti-cheeze AI in melee2.c */
+   s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */
+   s16b last_target_melee;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
 
    s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
       This keeps track of the highest player which the monster
@@ -962,6 +964,7 @@ struct monster_type
       by different #defines) and adjusts its own experience value
       towards that player, so low players who get powerful help
       will get less exp out of it. */
+   byte backstabbed;	/* has this monster been backstabbed from cloaking mode already? prevent exploit */
 };
 
 typedef struct monster_ego monster_ego;
@@ -1979,6 +1982,8 @@ struct player_type
 
 	bool obj_aware[MAX_K_IDX]; /* Is the player aware of this obj type? */
 	bool obj_tried[MAX_K_IDX]; /* Has the player tried this obj type? */
+	bool obj_felt[MAX_K_IDX]; /* Has the player felt the value of this obj type via pseudo-id before? - C. Blue */
+	bool obj_felt_heavy[MAX_K_IDX]; /* Has the player had strong pseudo-id on this item? */
 
 	bool trap_ident[MAX_T_IDX];       /* do we know the name */
 
@@ -2215,6 +2220,7 @@ struct player_type
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
+	byte cloaked;		/* Cloaking mode enabled */
 
 	bool old_cumber_armor;
 	bool old_awkward_armor;
@@ -2406,6 +2412,8 @@ struct player_type
 	/* elements under this line won't be saved...for now. - Jir - */
 	player_list_type	*ignore;  /* List of players whose chat we wish to ignore */
 	struct remote_ignore	*w_ignore;  /* List of players whose chat we wish to ignore */
+	long int idle;   	/* player is idling for <idle> seconds.. */
+	long int idle_char;   	/* character is idling for <idle_char> seconds (player still might be chatting etc) */
 	bool	afk;		/* player is afk */
 	char	afk_msg[80];	/* afk reason */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
@@ -2464,7 +2472,7 @@ struct player_type
 	s32b to_hp;                      /* Bonus to Hit Points */
 	s16b to_m;                      /* Bonus to mana */
 	/*        s16b to_s; */                     /* Bonus to spell(num_spell) */
-	s16b dodge_chance;		/* Chance of dodging blows/missiles */
+	s16b dodge_level;		/* Chance of dodging blows/missiles */
 
 	s32b balance;		/* Deposit/debt */
 	s32b tim_blacklist;		/* Player is on the 'Black List' (he gets penalties in shops) */
@@ -2548,10 +2556,8 @@ struct player_type
 	/* No insane amounts of damage either */
 	s32b total_damage;
 
-#ifdef RACE_DIVINE
 	/* Divine classes (angels and demons). Only applicable if prace == RACE_DIVINITY*/
 	byte divinity;
-#endif
 
 #ifdef AUCTION_SYSTEM
 	/* The current auction - mikaelh */
@@ -2953,7 +2959,7 @@ struct global_event_type
 {
     int getype;			/* Type of the event (or quest) */
     bool paused;		/* Is the event currently paused? (special admin command) */
-    s32b paused_turns;	/* Keeps track of turns the event was actually frozen */
+    s32b paused_turns;		/* Keeps track of turns the event was actually frozen */
     s32b state[64];		/* progress */
     s32b extra[64];		/* extra info */
     s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */

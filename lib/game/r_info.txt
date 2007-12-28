@@ -200,7 +200,8 @@ O:0:0:0:0
 N:1:Filthy street urchin
 G:t:D
 I:110:1d4:4:1:40
-W:0:2:1200:0
+$HALLOWEEN!W:0:2:1200:0
+$HALLOWEEN$W:127:2:1200:0
 E:1:1:1:2:1:1
 O:1:1:1:1
 B:BEG:*
@@ -227,7 +228,8 @@ D:A skinny little furball with sharp claws and a menacing look.
 N:3:Sparrow
 G:B:U
 I:110:1d1:30:1:10
-W:0:3:90:0
+$HALLOWEEN!W:0:3:90:0
+$HALLOWEEN$W:127:3:90:0
 #E:0:1:1:0:1:0
 E:0:1:0:1:1:2
 O:0:0:0:0
@@ -240,7 +242,8 @@ D:Utterly harmless, except when angry.
 N:4:Chaffinch
 G:B:r
 I:110:1d1:30:1:10
-W:0:3:80:0
+$HALLOWEEN!W:0:3:80:0
+$HALLOWEEN$W:127:3:80:0
 E:0:1:0:1:1:2
 O:0:0:0:0
 #B:BITE:HURT:1d1
@@ -253,7 +256,8 @@ D:Utterly harmless, except when angry.
 N:5:Wild rabbit
 G:r:U
 I:110:1d2:30:1:10
-W:0:3:100:0
+$HALLOWEEN!W:0:3:100:0
+$HALLOWEEN$W:127:3:100:0
 E:0:1:0:2:1:2
 O:0:0:0:0
 #B:BITE:HURT:1d1
@@ -267,7 +271,8 @@ D:close.
 N:6:Woodsman
 G:t:g
 I:110:3d3:10:1:255
-W:0:1:1000:0
+$HALLOWEEN!W:0:1:1000:0
+$HALLOWEEN$W:127:1:1000:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:1d6
@@ -281,7 +286,8 @@ D:He has a strong axe with a sharp edge.
 N:7:Scruffy little dog
 G:C:U
 I:110:1d3:20:1:5
-W:0:3:300:0
+$HALLOWEEN!W:0:3:300:0
+$HALLOWEEN$W:127:3:300:0
 E:0:1:0:2:1:4
 O:0:0:0:0
 B:BITE:HURT:1d1
@@ -313,7 +319,8 @@ D:hobbit!
 N:9:Blubbering idiot
 G:t:W
 I:110:1d2:6:1:0
-W:0:1:1500:0
+$HALLOWEEN!W:0:1:1500:0
+$HALLOWEEN$W:127:1:1500:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
@@ -326,7 +333,8 @@ D:He tends to blubber a lot.
 N:10:Boil-covered wretch
 G:t:g
 I:110:1d2:6:1:0
-W:0:1:1400:0
+$HALLOWEEN!W:0:1:1400:0
+$HALLOWEEN$W:127:1:1400:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
@@ -340,7 +348,8 @@ D:Ugly doesn't begin to describe him.
 N:11:Village idiot
 G:t:G
 I:120:4d4:6:1:0
-W:0:1:1400:0
+$HALLOWEEN!W:0:1:1400:0
+$HALLOWEEN$W:127:1:1400:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:DROOL:*
@@ -353,7 +362,8 @@ D:Drooling and comical, but then, what do you expect?
 N:12:Pitiful-looking beggar
 G:t:U
 I:110:1d4:10:1:40
-W:0:1:1300:0
+$HALLOWEEN!W:0:1:1300:0
+$HALLOWEEN$W:127:1:1300:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BEG:*
@@ -367,7 +377,8 @@ D:You just can't help feeling sorry for him.
 N:13:Mangy-looking leper
 G:t:u
 I:110:1d1:10:1:50
-W:0:1:1300:0
+$HALLOWEEN!W:0:1:1300:0
+$HALLOWEEN$W:127:1:1300:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BEG:*
@@ -382,7 +393,8 @@ D:You feel it isn't safe to touch him.
 N:14:Agent of the black market
 G:t:b
 I:110:2d8:10:8:99
-W:0:1:1200:0
+$HALLOWEEN!W:0:1:1200:0
+$HALLOWEEN$W:127:1:1200:0
 E:1:1:1:2:1:1
 O:25:50:20:5
 B:HIT:HURT:1d4
@@ -398,7 +410,8 @@ D:He 'finds' new wares for the Black Market. From unwary adventurers...
 N:15:Singing, happy drunk
 G:t:y
 I:110:2d3:10:1:0
-W:0:1:1100:0
+$HALLOWEEN!W:0:1:1100:0
+$HALLOWEEN$W:127:1:1100:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:BEG:*
@@ -412,7 +425,8 @@ D:He makes you glad to be sober.
 N:16:Aimless-looking merchant
 G:t:o
 I:110:3d3:10:1:255
-W:0:1:1500:0
+$HALLOWEEN!W:0:1:1500:0
+$HALLOWEEN$W:127:1:1500:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:HURT:1d3
@@ -426,7 +440,8 @@ D:amulets of adornment to buy.
 N:17:Mean-looking mercenary
 G:t:r
 I:110:5d8:10:20:250
-W:0:3:1700:0
+$HALLOWEEN!W:0:3:1700:0
+$HALLOWEEN$W:127:3:1700:0
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:HIT:HURT:1d10
@@ -439,7 +454,8 @@ D:No job is too low for him.
 N:18:Battle-scarred veteran
 G:t:B
 I:110:7d8:10:30:250
-W:0:5:1650:0
+$HALLOWEEN!W:0:5:1650:0
+$HALLOWEEN$W:127:5:1650:0
 E:1:1:1:2:1:1
 O:25:50:25:0
 B:HIT:HURT:2d6
@@ -2313,7 +2329,8 @@ D:Don't feed them after midnight!
 
 N:154:Yeti
 G:Y:w
-I:110:11d9:20:24:10
+#I:110:11d9:20:24:10 pimpin druid forms
+I:110:12d10:20:24:10
 W:9:3:3500:30
 E:1:1:1:2:1:1
 O:0:0:0:0
@@ -2384,7 +2401,8 @@ D:serves chaos fervently and is greatly feared by others.
 
 N:159:The wounded bear
 G:q:r
-I:110:10d10:10:35:10
+#I:110:10d10:10:35:10
+I:110:15d15:10:35:10
 W:12:1:3000:30
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -2398,7 +2416,8 @@ D:A wounded bear, who has occasionally attacked humans.
 
 N:160:Cave bear
 G:q:u
-I:110:8d8:10:35:10
+#I:110:8d8:10:35:10 pimpin druid forms
+I:110:12d12:10:35:10
 W:9:1:3000:25
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -2502,7 +2521,7 @@ D:This hatchling dragon is still soft, its eyes unaccustomed to light and
 D:its scales a sickly green. 
 
 N:166:Baby black dragon
-G:d:s
+G:d:D
 I:110:10d10:20:30:70
 W:9:2:4000:35
 E:0:1:0:6:1:2
@@ -2609,7 +2628,8 @@ D:A magnificent huge predatory bird.
 
 N:173:War bear
 G:q:u
-I:110:10d10:10:35:10
+#I:110:10d10:10:35:10
+I:110:13d13:10:35:10
 W:9:1:2000:25
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -2888,7 +2908,8 @@ D:It is a strange hairy growth on the dungeon floor.
 
 N:191:Grizzly bear
 G:q:U
-I:110:15d15:10:35:10
+#I:110:15d15:10:35:10 pimpin druid forms
+I:110:18d18:10:35:10
 W:16:2:2600:55
 E:0:1:0:2:1:0
 O:0:0:0:0
@@ -4939,7 +4960,7 @@ S:BOULDER
 D:It is eighteen feet tall and looking at you. 
 
 N:322:Giant black dragon fly
-G:F:s
+G:F:D
 I:120:3d8:12:20:50
 W:20:2:150:70
 E:0:1:0:2:1:0
@@ -8742,7 +8763,7 @@ S:BO_ACID | BA_ACID
 D:It is a towering mass of filth, an eyesore of ooze. 
 
 N:546:Young black dragon
-G:d:s
+G:d:D
 I:110:30d10:20:60:70
 W:31:1:20000:700
 E:0:1:0:6:1:2
@@ -9594,7 +9615,7 @@ D:A dragon of strange crystalline form. Light shines through it, dazzling
 D:your eyes with spectrums of colour. 
 
 N:592:Mature black dragon
-G:d:s
+G:d:D
 I:110:62d10:20:80:70
 W:36:1:110000:1500
 E:0:1:0:6:1:2
@@ -10216,7 +10237,7 @@ S:BRAIN_SMASH | DARKNESS | BO_NETH
 D:A foul wind chills your bones as this ghastly figure approaches. 
 
 N:624:Ancient black dragon
-G:D:s
+G:D:D
 I:120:100d15:20:110:80
 W:41:1:170000:2500
 E:0:1:0:6:1:2
@@ -11958,8 +11979,8 @@ D:split stones and even the very rock of Isengard with its roots.
 N:709:Hru
 G:P:s
 I:120:40d100:30:180:15
-W:66:1:40000:14500
-#W:66:2:40000:14500
+#W:66:1:40000:14500
+W:66:2:40000:14500
 E:1:1:1:2:1:1
 O:0:0:0:0
 B:HIT:SHATTER:14d13
@@ -15402,16 +15423,17 @@ B:HIT:LOSE_ALL:10d12
 B:TOUCH:UN_POWER
 F:UNIQUE | CAN_SPEAK | MALE | 
 F:FORCE_SLEEP | FORCE_MAXHP | FORCE_DEPTH | 
-F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_3D2 | DROP_4D2 | RES_CHAOS | 
+F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_3D2 | DROP_4D2 | RES_CHAOS | RES_DISE |
 F:DROP_GOOD | DROP_GREAT | DROP_CHOSEN | RES_NETH | RES_MANA | RES_PLAS | 
 F:SMART | KILL_WALL | MOVE_BODY | AURA_COLD | RES_DARK | KILL_ITEM | 
 F:REGENERATE | POWERFUL | PASS_WALL | CAN_SWIM | CAN_FLY | 
-F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | 
+F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | REFLECTING |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | RES_TELE | BASEANGBAND | HAS_LITE
 S:1_IN_3 | 
 S:BRAIN_SMASH | 
 S:BA_MANA | BA_NETH | BA_CHAO | BA_DARK | ANIM_DEAD | 
-S:S_MONSTERS | S_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
+#S:S_MONSTERS | S_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
+S:S_HI_MONSTERS | S_HI_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | 
 S:ROCKET | BR_NETH | BR_DISI | S_WRAITH
 #S:BO_MANA
 #S:HAND_DOOM | 
@@ -16629,7 +16651,7 @@ D:from the beast nearly make you vomit; and while you may try to hold
 D:your breath as you fight it, it sees no reason to do likewise. 
 
 N:939:Great Bile Wyrm
-G:D:s
+G:D:D
 I:130:50d100:30:150:80
 W:67:2:190000:23000
 E:0:1:0:6:1:2
@@ -17896,7 +17918,7 @@ B:BITE:HURT:6d14
 B:BITE:HURT:6d14
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | WILD_MOUNTAIN | 
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
-F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | SMART | 
+F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | SMART | REFLECTING | 
 F:EVIL | DRAGON | NO_CONF | NO_SLEEP | NO_STUN | BASEANGBAND | HAS_LITE
 #F:ATTR_MULTI
 S:1_IN_4 | 
@@ -17976,7 +17998,7 @@ O:0:0:100:0
 B:HIT:HURT:5d5
 F:UNIQUE | MALE | CAN_SPEAK
 F:FORCE_MAXHP | UNDEAD | EVIL | NO_CONF | NO_SLEEP | REGENERATE | 
-F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | IM_POIS | NO_STUN | 
+F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | IM_POIS | NO_STUN | IM_FIRE | 
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | PASS_WALL | 
 F:MORTAL | BASEANGBAND | HAS_LITE | NO_CUT
 S:1_IN_6
@@ -18311,7 +18333,7 @@ D:breath, and the fiery eyes, of a real Dragon. You can smell foul gases
 D:on its breath.
 
 N:1026:Black dragon worm
-G:w:s
+G:w:D
 #I:100:10d15:10:40:80
 I:100:10d15:20:40:80
 W:20:3:4500:12
@@ -19484,10 +19506,8 @@ D:slowly turning around and around forever.
 #      powerful players above 35 should maybe not participate.. too easy?
 
 #Instructions for enabling the Halloween event:
-#-set townies' level to 127.
-#-comment out JOKEANGBAND and uncomment BLUEBAND of the 'townies' below.
-#-in defines.h uncomment #define HALLOWEEN, recompile, restart.
-#-summmon pumpkins as you feel like. ;)
+#-in defines.h uncomment #define HALLOWEEN, recompile ('make clean'), restart.
+#-summmon pumpkins (1086/1087/1088) as you feel like. ;)
 
 #10k HP version (toughest)
 N:1086:Great Pumpkin
@@ -19506,8 +19526,8 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT |
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_MANA | RES_DISE | 
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | GOOD | 
 F:COLD_BLOOD | WEIRD_MIND | REGENERATE | EVIL | UNDEAD
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
 #S:MOAN | SLOW | SCARE | HOLD | HASTE | DRAIN_MANA | TPORT
@@ -19532,8 +19552,8 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT |
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_MANA | RES_DISE | 
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | GOOD | 
 F:COLD_BLOOD | WEIRD_MIND | REGENERATE | EVIL | UNDEAD
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
 
@@ -19554,8 +19574,8 @@ F:ONLY_ITEM | DROP_4D2 | DROP_2D2 | DROP_GOOD | DROP_GREAT |
 F:IM_POIS | IM_COLD | RES_ACID | RES_ELEC | IM_FIRE | RES_MANA | RES_DISE | 
 F:NO_CONF | NO_SLEEP | NO_CUT | NO_FEAR | GOOD | 
 F:COLD_BLOOD | WEIRD_MIND | REGENERATE | EVIL | UNDEAD
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 S:1_IN_3 |
 S:MOAN | SLOW | SCARE | HOLD | TPORT
 
@@ -19568,8 +19588,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19583,8 +19603,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19598,8 +19618,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19613,8 +19633,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19628,8 +19648,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19643,8 +19663,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19658,8 +19678,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:It is someone costumed for Halloween festival!
@@ -19673,8 +19693,8 @@ O:0:0:0:0
 B:GAZE:TERRIFY
 B:MOAN:*
 F:RAND_50 | RAND_25 | NO_TARGET | DROP_60 | HAS_LITE | CAN_SPEAK |
-#F:BLUEBAND
-F:JOKEANGBAND
+$HALLOWEEN$F:BLUEBAND
+$HALLOWEEN!F:JOKEANGBAND
 #F:NO_DEATH | MORTAL | 
 F:WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR | 
 D:The nightmare on Elmstreet. But it is just someone costumed for Halloween festival!
@@ -19773,7 +19793,8 @@ D:let alone fighting it!
 
 # for the town, or wherever. Just for fun, and for testing one's macros - C. Blue
 N:1101:Target dummy
-G:p:D
+$WINTER_SEASON!G:p:D
+$WINTER_SEASON$G:p:W
 I:110:10d2:0:15:0
 W:0:255:500:0
 E:1:1:1:2:1:1
@@ -19785,43 +19806,183 @@ F:RES_TELE | RES_NEXU | IM_TELE
 ##quick little hack to add santa:
 N:1102:Santa Claus
 G:h:r
-I:140:70d100:90:100:10
-W:0:255:2600:0
+#I:140:70d100:90:100:10
+I:140:70d100:200:100:10
+W:127:255:2600:0
 E:1:1:1:2:1:1
 O:20:20:20:20
 B:CHARGE:EAT_GOLD
-F:REFLECTING | RES_MANA | DROP_SKELETON | DROP_CORPSE
-F:FORCE_SLEEP | FORCE_MAXHP | SMART
+F:REFLECTING | RES_MANA | DROP_SKELETON | DROP_CORPSE |
+F:FORCE_SLEEP | FORCE_MAXHP | SMART |
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_GOOD | DROP_GREAT |
-F:NO_STUN | NO_SLEEP | NO_CONF |  REGENERATE
+F:NO_STUN | NO_SLEEP | NO_CONF |  REGENERATE | POWERFUL |
 F:RES_ELEC | RES_FIRE | RES_POIS | RES_COLD |
 F:COLD_BLOOD | RES_TELE | HAS_LITE | EMPTY_MIND
 F:AI_ANNOY
 S:1_IN_3 |
 S:HOLD | TELE_AWAY | BLINK | HEAL | HEAL | HEAL
 
-N:1103:Kenshiro, Fist of the North Star
-G:p:o
-I:130:52d100:30:300:5
-W:77:3:1800:15000
-E:1:1:1:2:1:1
-O:40:0:40:20
-B:KICK:HURT:30d2
-B:KICK:HURT:20d2
-B:HIT:CONFUSE:20d1
-B:HIT:PARALYZE:15d1
-F:MALE | 
-F:FORCE_MAXHP | DROP_CORPSE | DROP_SKELETON | 
-F:ONLY_ITEM | DROP_4D2 | NO_STUN | 
-F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
-F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | NO_CONF | NO_SLEEP | NO_FEAR |
-F:MORTAL | BLUEBAND | HAS_LITE | WILD_MOUNTAIN | WILD_WASTE
-S:1_IN_5 | 
-S:TELE_TO | HASTE
-D:He is one of the few true masters of the art, being extremely skillful in 
-D:all forms of unarmed combat and controlling the world's natural creatures 
-D:with disdainful ease. 
+#$RPG_SERVER$N:1103:Kenshiro, Fist of the North Star
+#$RPG_SERVER$G:p:o
+#$RPG_SERVER$I:130:52d100:30:300:5
+#$RPG_SERVER$W:77:3:1800:15000
+#$RPG_SERVER$E:1:1:1:2:1:1
+#$RPG_SERVER$O:40:0:40:20
+#$RPG_SERVER$B:KICK:HURT:30d2
+#$RPG_SERVER$B:KICK:HURT:20d2
+#$RPG_SERVER$B:HIT:CONFUSE:20d1
+#$RPG_SERVER$B:HIT:PARALYZE:15d1
+#$RPG_SERVER$F:MALE | UNIQUE | 
+#$RPG_SERVER$F:FORCE_MAXHP | DROP_CORPSE | DROP_SKELETON | 
+#$RPG_SERVER$F:ONLY_ITEM | DROP_4D2 | NO_STUN | 
+#$RPG_SERVER$F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
+#$RPG_SERVER$F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | NO_CONF | NO_SLEEP | NO_FEAR |
+#$RPG_SERVER$F:MORTAL | BLUEBAND | HAS_LITE | WILD_MOUNTAIN | WILD_WASTE
+#$RPG_SERVER$S:1_IN_5 | 
+#$RPG_SERVER$S:TELE_TO | HASTE
+#$RPG_SERVER$D:He is one of the few true masters of the art, being extremely skillful in 
+#$RPG_SERVER$D:all forms of unarmed combat and controlling the world's natural creatures 
+#$RPG_SERVER$D:with disdainful ease. 
 
+
+$ENABLE_DIVINE$N:1104:Candlebearer
+$ENABLE_DIVINE$G:h:y
+$ENABLE_DIVINE$#G:h:w (unused!)
+$ENABLE_DIVINE$I:100:25d10:20:30:20
+$ENABLE_DIVINE$W:15:1:150:150
+$ENABLE_DIVINE$E:1:1:1:2:1:1
+$ENABLE_DIVINE$O:40:0:40:20
+$ENABLE_DIVINE$B:HIT:CONFUSE:1d3
+$ENABLE_DIVINE$B:HIT:HURT:1d3
+$ENABLE_DIVINE$B:HIT:HURT:1d3
+$ENABLE_DIVINE$#F:UNIQUE | ATTR_MULTI |
+$ENABLE_DIVINE$F:FEMALE | FORCE_MAXHP | FORCE_SLEEP |
+$ENABLE_DIVINE$F:OPEN_DOOR | BASH_DOOR | GOOD |
+$ENABLE_DIVINE$F:RES_FIRE | RES_COLD | RES_POIS | NO_CONF | NO_SLEEP | 
+$ENABLE_DIVINE$F:BASEANGBAND | HAS_LITE
+$ENABLE_DIVINE$S:1_IN_5 | 
+$ENABLE_DIVINE$S:HEAL | BLIND | CONF
+$ENABLE_DIVINE$#S:HEAL | HASTE
+$ENABLE_DIVINE$#D:Quest monster to transform into a demon
+
+$ENABLE_DIVINE$N:1105:Darkling
+$ENABLE_DIVINE$G:u:s
+$ENABLE_DIVINE$#G:u:D (death quasit confusion)
+$ENABLE_DIVINE$I:100:25d10:20:30:20
+$ENABLE_DIVINE$W:15:1:150:150
+$ENABLE_DIVINE$E:1:1:1:2:1:1
+$ENABLE_DIVINE$O:0:0:0:0
+$ENABLE_DIVINE$B:HIT:CONFUSE:1d3
+$ENABLE_DIVINE$B:HIT:HURT:1d3
+$ENABLE_DIVINE$B:HIT:HURT:1d3
+$ENABLE_DIVINE$#F:UNIQUE | ATTR_MULTI |
+$ENABLE_DIVINE$F:MALE | FORCE_MAXHP | FORCE_SLEEP |
+$ENABLE_DIVINE$F:OPEN_DOOR | BASH_DOOR | EVIL | DEMON |
+$ENABLE_DIVINE$F:RES_FIRE | RES_COLD | RES_POIS | NO_CONF | NO_SLEEP | 
+$ENABLE_DIVINE$F:BASEANGBAND | HAS_LITE
+$ENABLE_DIVINE$S:1_IN_5 | 
+$ENABLE_DIVINE$S:HEAL | BLIND | CURSE
+$ENABLE_DIVINE$#D:Quest monster to transform into an angel
+
+#Why didn't we have silver dragons all this time? They're part of D&D too after all.. -C. Blue
+N:1106:Baby silver dragon
+G:d:s
+I:110:10d10:20:30:70
+W:9:2:4000:35
+E:0:1:0:6:1:2
+O:0:0:0:0
+B:CLAW:HURT:1d3
+B:CLAW:HURT:1d3
+B:BITE:HURT:1d5
+F:FORCE_MAXHP | FORCE_SLEEP | CAN_FLY | DROP_CORPSE | 
+F:ONLY_GOLD | DROP_60 | DROP_1D2 | 
+F:OPEN_DOOR | BASH_DOOR | 
+F:EVIL | DRAGON | HAS_EGG | IMPRESED | BASEANGBAND | HAS_LITE
+F:NO_SLEEP | IM_COLD | SUSCEP_FIRE | REFLECTING
+#F:ATTR_MULTI
+S:1_IN_12 | 
+S:BR_COLD
+D:This hatchling dragon is still soft, its eyes unaccustomed to light and 
+D:its scales a pale silver.
+
+N:1107:Young silver dragon
+G:d:s
+I:110:28d10:20:55:70
+W:30:1:20000:600
+E:0:1:0:6:1:2
+O:50:50:0:0
+B:CLAW:HURT:2d5
+B:CLAW:HURT:2d5
+B:BITE:HURT:2d7
+F:FORCE_SLEEP | FORCE_MAXHP | WILD_TOO | WILD_MOUNTAIN | 
+F:DROP_3D2 | DROP_CORPSE | BASEANGBAND |
+F:OPEN_DOOR | BASH_DOOR | EVIL | DRAGON
+F:CAN_FLY | NO_SLEEP | IM_COLD | SUSCEP_FIRE | REFLECTING
+#| ATTR_MULTI
+S:1_IN_10 | 
+S:SCARE | 
+S:BR_COLD
+D:It has a form that legends are made of. Its still-tender scales are a 
+D:shining silvery gleam, and its shape masks its true form. 
+
+N:1108:Mature silver dragon
+G:d:s
+I:110:56d10:20:75:70
+W:35:1:110000:1400
+E:0:1:0:6:1:2
+O:50:50:0:0
+B:CLAW:HURT:2d9
+B:CLAW:HURT:2d9
+B:BITE:HURT:4d9
+F:FORCE_SLEEP | FORCE_MAXHP | WILD_TOO | WILD_MOUNTAIN |
+F:DROP_4D2 | BASEANGBAND | HAS_LITE |
+F:BASH_DOOR | DROP_CORPSE | EVIL | DRAGON |
+F:CAN_FLY | NO_SLEEP | IM_COLD | REFLECTING
+#| ATTR_MULTI
+S:1_IN_9 | 
+S:CONF | SCARE | BR_COLD | BR_INER
+D:A large dragon with scales of radiating silver. 
+
+N:1109:Ancient silver dragon
+G:D:s
+I:120:90d15:20:110:80
+W:41:1:170000:2400
+E:0:1:0:6:1:2
+O:50:50:0:0
+B:CLAW:HURT:4d9
+B:CLAW:HURT:4d9
+B:BITE:HURT:7d8
+F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE
+F:DROP_3D2 | DROP_4D2 | CAN_FLY | REFLECTING | WILD_MOUNTAIN | 
+F:SMART | BASH_DOOR | POWERFUL | MOVE_BODY | 
+F:EVIL | DRAGON | NO_SLEEP | BASEANGBAND | HAS_LITE | IM_COLD
+#| ATTR_MULTI
+S:1_IN_6 | 
+S:BLIND | CONF | SCARE | BR_COLD | BR_INER
+D:A huge draconic form wreathed in a radiance of silver. Its roar stuns and 
+D:deafens you. 
+
+N:1110:Great Wyrm of Radiance
+G:D:s
+I:130:46d100:30:170:80
+W:65:2:190000:22000
+E:0:1:0:6:1:2
+O:50:50:0:0
+B:CLAW:HURT:4d12
+B:CLAW:HURT:4d12
+B:BITE:HURT:6d14
+B:BITE:HURT:6d14
+F:FORCE_SLEEP | FORCE_MAXHP | CAN_FLY | WILD_MOUNTAIN | 
+F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD | 
+F:BASH_DOOR | POWERFUL | MOVE_BODY | DROP_CORPSE | SMART | 
+F:EVIL | DRAGON | NO_CONF | BASEANGBAND | HAS_LITE
+F:NO_SLEEP | NO_STUN | IM_COLD | REFLECTING
+#F:ATTR_MULTI
+S:1_IN_4 | 
+S:BLIND | CONF | SCARE | BR_COLD | BR_INER
+D:A dragon of great size and power.  Its polished silver scales reflect the 
+D:light in blinding brightness, and you find it hard to keep your 
+D:mind on the job of fighting for your life. 
 
 
 # N: serial number : monster name

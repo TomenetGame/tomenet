@@ -24,7 +24,7 @@ typedef unsigned int u32b;
 #define MAX_T_IDX       256 /* Max size for "t_info[]" */
 #define MAX_OW_IDX      96 /* Max size for "ow_info[]" */
 #define MAX_ST_IDX      96 /* Max size for "st_info[]" */
-#define MAX_BA_IDX      64 /* Max size for "ba_info[]" */
+#define MAX_BA_IDX      96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX       64 /* Max size for "d_info[]" */
 
 #define TERM_DARK                0  /* 'd' */   /* 0,0,0 */
@@ -264,6 +264,7 @@ extern hooks_chain* add_hook(int h_idx, cptr script, cptr name);
 
 extern s32b dungeon_store_timer;	/* Keeps track of its generation */
 extern s32b dungeon_store2_timer;	/* Keeps track of its generation */
+extern s32b great_pumpkin_timer;	/* Keeps track of its generation (timeout), for HALLOWEEN */
 extern bool night_surface;		/* Is it night outside? */
 extern u16b max_s_idx;
 extern u16b max_r_idx;
@@ -297,3 +298,18 @@ extern bool watch_morgoth;
 /* Stuff for global events */
 /* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
 extern int sector00separation;
+extern u32b ge_contender_buffer_ID[128];
+extern int ge_contender_buffer_deed[128];
+
+/* The party information */
+party_type parties[MAX_PARTIES];
+struct guild_type guilds[MAX_GUILDS];
+
+/* for snowfall during WINTER_SEASON mainly */
+extern int weather;
+extern int weather_duration;
+extern int wind_gust;
+extern int wind_gust_delay;
+/* for controlling fireworks on NEW_YEARS_EVE */
+extern int fireworks;
+extern int fireworks_delay;

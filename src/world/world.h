@@ -6,6 +6,7 @@
 
 #define MAX_SERVERS	30	/* Max servers we will deal */
 
+/* World packet types */
 #define WP_CHAT		1	/* chat message */
 #define WP_NPLAYER	2	/* player enters */
 #define WP_QPLAYER	3	/* player leaves */
@@ -20,6 +21,29 @@
 #define WP_PMSG		12	/* private message */
 #define WP_SINFO	13	/* server info */
 
+/* World packet flags */
+#define WPF_CHAT	0x001	/* chat message - C */
+#define WPF_NPLAYER	0x002	/* player enters - N */
+#define WPF_QPLAYER	0x004	/* player leaves - Q */
+#define WPF_DEATH	0x008	/* player death - D */
+#define WPF_LOCK	0x010
+#define WPF_UNLOCK	0x020
+#define WPF_MESSAGE	0x040	/* all critical server messages - M */
+#define WPF_AUTH	0x080
+#define WPF_SQUIT	0x100
+#define WPF_RESTART	0x200
+#define WPF_LACCOUNT	0x400
+#define WPF_PMSG	0x800	/* private message - P */
+#define WPF_SINFO	0x1000
+
+/* World message flags */
+#define WMF_LVLUP	0x01
+#define WMF_UNIDEATH	0x02
+#define WMF_PWIN	0x04
+#define WMF_PDEATH	0x10
+#define WMF_PJOIN	0x20
+#define	WMF_PLEAVE	0x40
+
 /* now we are going to be the server which authenticates
  * the players. Once they are logged in, they will receive
  * a key which will enable to pass worlds without needing
@@ -29,8 +53,10 @@
 #define CL_QUIT		1
 
 struct serverinfo{
-	char name[20];	/* server world name */
-	char pass[20];	/* server plaintext password */
+	char name[20];		/* server world name */
+	char pass[20];		/* server plaintext password */
+	int rflags;		/* relay flags for packets sent to server */
+	int mflags;		/* messages flags */
 };
 
 /* Single linked list - its not like we are sorting it */

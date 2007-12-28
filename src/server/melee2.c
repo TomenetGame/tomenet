@@ -13,6 +13,7 @@
 
 #define SERVER
 #define C_BLUE_AI
+#define C_BLUE_MELEE_AI
 
 #include "angband.h"
 
@@ -37,6 +38,8 @@
  * - choose the best spell available (STUPID_MONSTER_SPELLS) <medium>
  * - try to cast spells indirectly (INDIRECT_FREQ) <slow>
  * - pick up as many items on floor as possible (MONSTERS_GREEDY) <fast>
+ * currently not including try to avoid being kited (C_BLUE_AI)
+ * C_BLUE_MELEE_AI ignores STUPID_MONSTER flag partially, as makes sense.
  */
 //#define STUPID_MONSTERS
 
@@ -234,7 +237,7 @@ static bool int_outof(monster_race *r_ptr, int prob)
 /*
  * Remove the "bad" spells from a spell list
  */
-static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
+static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *f0p)
 {
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
@@ -242,6 +245,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	u32b f4 = (*f4p);
 	u32b f5 = (*f5p);
 	u32b f6 = (*f6p);
+	u32b f0 = (*f0p);
 
 	u32b smart = 0L;
 
@@ -487,6 +491,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p)
 	(*f4p) = f4;
 	(*f5p) = f5;
 	(*f6p) = f6;
+	(*f0p) = f0;
 }
 
 
@@ -542,6 +547,40 @@ static void breath(int Ind, int m_idx, int typ, int dam_hp, int rad)
 	(void)project(m_idx, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
 }
 #endif	// 0
+
+#if 0
+/*
+ * Cast a beam at the player
+ * Affect monsters, items?, and the player
+ */
+static void beam(int Ind, int m_idx, int typ, int dam_hp)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int flg = PROJECT_STOP | PROJECT_KILL;
+
+	/* Target the player with a bolt attack */
+	(void)project(m_idx, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam_hp, typ, flg, p_ptr->attacker);
+}
+
+/*
+ * Cast a cloud attack at the player
+ * Pass over any monsters that may be in the way
+ * Affect grids, objects, monsters, and the player
+ */
+static void cloud(int Ind, int m_idx, int typ, int dam_hp, int y, int x, int rad, int duration, int interval)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY;
+	project_time = duration;
+	project_interval = interval;
+
+	/* Target the player with a ball attack */
+	(void)project(m_idx, rad, &p_ptr->wpos, y, x, dam_hp, typ, flg, p_ptr->attacker);
+}
+#endif
+
 
 /*
  * Functions for Cleverer monster spells, borrowed from PernA.
@@ -636,7 +675,7 @@ static bool summon_possible(worldpos *wpos, int y1, int x1)
  * This is exactly like "projectable", but it will return FALSE if a monster
  * is in the way.
  */
-static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2)
+static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range)
 {
 	int dist, y, x;
 	cave_type **zcave;
@@ -647,7 +686,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2)
 	y = y1, x = x1;
 	
 	/* See "project()" and "projectable()" */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
+	for (dist = 0; dist <= range; dist++)
 	{
 		/* Never pass through walls */
 		if (dist && !cave_floor_bold(zcave, y, x)) break;
@@ -809,6 +848,7 @@ static bool spell_heal(byte spell)
 #define RF4_OFFSET (32 * 3)
 #define RF5_OFFSET (32 * 4)
 #define RF6_OFFSET (32 * 5)
+#define RF0_OFFSET (32 * 9)
 
 
 /*
@@ -949,7 +989,7 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
  * Faster and smarter code, borrowed from (Vanilla) Angband 3.0.0.
  */
 /* Hack -- borrowing 'direct' flag for los check */
-static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bool direct)
+static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u32b f0, bool direct)
 {
 	//player_type *p_ptr = Players[Ind];
 
@@ -960,6 +1000,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 	u32b f4_mask = 0L;
 	u32b f5_mask = 0L;
 	u32b f6_mask = 0L;
+	u32b f0_mask = 0L;
 
 	//int py = p_ptr->py, px = p_ptr->px;
 
@@ -976,25 +1017,32 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 		/* What have we got? */
 		has_escape = ((f4 & (RF4_ESCAPE_MASK)) ||
 		              (f5 & (RF5_ESCAPE_MASK)) ||
-		              (f6 & (RF6_ESCAPE_MASK)));
+		              (f6 & (RF6_ESCAPE_MASK)) ||
+		              (f0 & (RF0_ESCAPE_MASK)));
 		has_attack = ((f4 & (RF4_ATTACK_MASK)) ||
 		              (f5 & (RF5_ATTACK_MASK)) ||
-		              (f6 & (RF6_ATTACK_MASK)));
+		              (f6 & (RF6_ATTACK_MASK)) ||
+		              (f0 & (RF0_ATTACK_MASK)));
 		has_summon = ((f4 & (RF4_SUMMON_MASK)) ||
 		              (f5 & (RF5_SUMMON_MASK)) ||
-		              (f6 & (RF6_SUMMON_MASK)));
+		              (f6 & (RF6_SUMMON_MASK)) ||
+		              (f0 & (RF0_SUMMON_MASK)));
 		has_tactic = ((f4 & (RF4_TACTIC_MASK)) ||
 		              (f5 & (RF5_TACTIC_MASK)) ||
-		              (f6 & (RF6_TACTIC_MASK)));
+		              (f6 & (RF6_TACTIC_MASK)) ||
+		              (f0 & (RF0_TACTIC_MASK)));
 		has_annoy = ((f4 & (RF4_ANNOY_MASK)) ||
 		             (f5 & (RF5_ANNOY_MASK)) ||
-		             (f6 & (RF6_ANNOY_MASK)));
+		             (f6 & (RF6_ANNOY_MASK)) ||
+		             (f0 & (RF0_ANNOY_MASK)));
 		has_haste = ((f4 & (RF4_HASTE_MASK)) ||
 		             (f5 & (RF5_HASTE_MASK)) ||
-		             (f6 & (RF6_HASTE_MASK)));
+		             (f6 & (RF6_HASTE_MASK)) ||
+		             (f0 & (RF0_HASTE_MASK)));
 		has_heal = ((f4 & (RF4_HEAL_MASK)) ||
 		            (f5 & (RF5_HEAL_MASK)) ||
-		            (f6 & (RF6_HEAL_MASK)));
+		            (f6 & (RF6_HEAL_MASK)) ||
+		            (f0 & (RF0_HEAL_MASK)));
 
 		/*** Try to pick an appropriate spell type ***/
 
@@ -1009,6 +1057,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_ESCAPE_MASK);
 			f5_mask = (RF5_ESCAPE_MASK);
 			f6_mask = (RF6_ESCAPE_MASK);
+			f0_mask = (RF0_ESCAPE_MASK);
 		}
 
 		/* Still hurt badly, couldn't flee, attempt to heal */
@@ -1018,6 +1067,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_HEAL_MASK);
 			f5_mask = (RF5_HEAL_MASK);
 			f6_mask = (RF6_HEAL_MASK);
+			f0_mask = (RF0_HEAL_MASK);
 		}
 
 		/* Player is close and we have attack spells, blink away */
@@ -1029,6 +1079,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_TACTIC_MASK);
 			f5_mask = (RF5_TACTIC_MASK);
 			f6_mask = (RF6_TACTIC_MASK);
+			f0_mask = (RF0_TACTIC_MASK);
 		}
 
 		/* We're hurt (not badly), try to heal */
@@ -1039,6 +1090,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_HEAL_MASK);
 			f5_mask = (RF5_HEAL_MASK);
 			f6_mask = (RF6_HEAL_MASK);
+			f0_mask = (RF0_HEAL_MASK);
 		}
 
 		/* Summon if possible (sometimes) */
@@ -1048,6 +1100,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_SUMMON_MASK);
 			f5_mask = (RF5_SUMMON_MASK);
 			f6_mask = (RF6_SUMMON_MASK);
+			f0_mask = (RF0_SUMMON_MASK);
 		}
 
 		/* Attack spell (most of the time) */
@@ -1057,6 +1110,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_ATTACK_MASK);
 			f5_mask = (RF5_ATTACK_MASK);
 			f6_mask = (RF6_ATTACK_MASK);
+			f0_mask = (RF0_ATTACK_MASK);
 		}
 
 		/* Try another tactical spell (sometimes) */
@@ -1066,6 +1120,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_TACTIC_MASK);
 			f5_mask = (RF5_TACTIC_MASK);
 			f6_mask = (RF6_TACTIC_MASK);
+			f0_mask = (RF0_TACTIC_MASK);
 		}
 
 		/* Haste self if we aren't already somewhat hasted (rarely) */
@@ -1076,6 +1131,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_HASTE_MASK);
 			f5_mask = (RF5_HASTE_MASK);
 			f6_mask = (RF6_HASTE_MASK);
+			f0_mask = (RF0_HASTE_MASK);
 		}
 
 		/* Annoy player (most of the time) */
@@ -1085,6 +1141,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 			f4_mask = (RF4_ANNOY_MASK);
 			f5_mask = (RF5_ANNOY_MASK);
 			f6_mask = (RF6_ANNOY_MASK);
+			f0_mask = (RF0_ANNOY_MASK);
 		}
 
 		/* Else choose no spell (The masks default to this.) */
@@ -1093,9 +1150,10 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 		f4 &= f4_mask;
 		f5 &= f5_mask;
 		f6 &= f6_mask;
+		f0 &= f0_mask;
 
 		/* Anything left? */
-		if (!(f4 || f5 || f6)) return (0);
+		if (!(f4 || f5 || f6 || f0)) return (0);
 	}
 
 #endif /* STUPID_MONSTER_SPELLS */
@@ -1116,6 +1174,12 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, bo
 	for (i = 0; i < 32; i++)
 	{
 		if (f6 & (1L << i)) spells[num++] = i + RF6_OFFSET;
+	}
+
+	/* Extract the "extra" spells */
+	for (i = 0; i < 32; i++)
+	{
+		if (f0 & (1L << i)) spells[num++] = i + RF0_OFFSET;
 	}
 
 #ifdef HALLOWEEN
@@ -1205,7 +1269,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 	cave_type **zcave;
 	int i, x2 = m_ptr->fx, y2 = m_ptr->fy;
-	int grabchance;
+	int grabchance = 0;
 	int rlev = r_ptr->level;
 
 	if (!(zcave=getcave(wpos))) return(FALSE);
@@ -1220,16 +1284,34 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-		/* Compute distance */
-		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
-
-		/* Cannot grab what you cannot see */
-		if (!q_ptr->mon_vis[m_idx]) continue;
+		if (q_ptr->cloaked) continue;
 
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
 
-		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100) - (rlev / 3);
+		/* Cannot grab what you cannot see */
+		if (!q_ptr->mon_vis[m_idx]) continue;
+
+		/* Compute distance */
+		if (distance(y2, x2, q_ptr->py, q_ptr->px) > 1) continue;
+
+
+#ifdef ENABLE_STANCES
+		if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
+			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 50);
+			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 55);
+			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 60);
+			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 65);
+		} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
+			case 0: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 103);
+			case 1: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 106);
+			case 2: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 109);
+			case 3: grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 115);
+		} else
+#endif
+		grabchance = get_skill_scale(q_ptr, SKILL_INTERCEPT, 100);
+		grabchance -= (rlev / 3);
+
 
 		/* Apply Martial-arts bonus */
 		if (get_skill(q_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(q_ptr) &&
@@ -1256,10 +1338,10 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 //			    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
-			if (i == Ind) msg_format(Ind, "\377oYou grab %s back from teleportation!", m_name);
+			if (i == Ind) msg_format(Ind, "\377yYou grab %s back from teleportation!", m_name);
 			else msg_format(Ind, "%s grabs %s back from teleportation!", q_ptr->name, m_name);
 #else	// 0
-			msg_format(i, "\377oYou intercept %s's attempt to %s!", m_name, desc);
+			msg_format(i, "\377yYou intercept %s's attempt to %s!", m_name, desc);
 			msg_format_near(i, "%s intercepts %s's attempt to %s!", q_ptr->name, m_name, desc);
 #endif	// 0
 			return TRUE;
@@ -1273,7 +1355,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 
 static bool monst_check_antimagic(int Ind, int m_idx)
 {
-	player_type *p_ptr;
+//	player_type *p_ptr;
 	monster_type	*m_ptr = &m_list[m_idx];
 //	monster_race    *r_ptr = race_inf(m_ptr);
 
@@ -1442,8 +1524,8 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 		if (!cave_floor_bold(zcave, y, x)) continue;
 
 		/* Check if projectable */
-		if (projectable(&m_ptr->wpos, fy, fx, y, x) &&
-				projectable_wall(&m_ptr->wpos, y, x, py, px))
+		if (projectable(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE) &&
+				projectable_wall(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
 		{
 			/* Good location */
 			(*yp) = y;
@@ -1477,10 +1559,10 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 				if (distance(y, x, py, px) != d) continue;
 
 				/* Check if projectable */
-				if (projectable_wall(&m_ptr->wpos, fy, fx, y, x))
+				if (projectable_wall(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
 				{
 					giveup = FALSE;
-					if (projectable_wall(&m_ptr->wpos, y, x, py, px))
+					if (projectable_wall(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
 					{
 						/* Good location */
 						(*yp) = y;
@@ -1564,7 +1646,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 //	byte		spell[96], num = 0;
 
-	u32b		f4, f5, f6, f7;
+	u32b		f4, f5, f6, f7, f0;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);
@@ -1643,6 +1725,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	f5 = r_ptr->flags5;
 	f6 = r_ptr->flags6;
 	f7 = r_ptr->flags7;
+	f0 = r_ptr->flags0;
 
 	/* reduce exp from summons and from summons' summons.. */
 	if (cfg.clone_summoning != 999) clone_summoning++;
@@ -1660,6 +1743,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	 * is 25-50; one can massacre uniques without any dangers.
 	 * This attempt to prevent it somewhat by allowing monsters to cast
 	 * some spells (like teleport) under such situations.
+	 * -- arrow range has been limited by now. leaving this as it is though. --
 	 */
 #ifndef	STUPID_MONSTER_SPELLS // see MAX_SIGHT in process_monsters
 	if (m_ptr->cdis > MAX_RANGE)
@@ -1669,9 +1753,10 @@ bool make_attack_spell(int Ind, int m_idx)
 		f4 &= (RF4_INDIRECT_MASK | RF4_SUMMON_MASK);
 		f5 &= (RF5_INDIRECT_MASK | RF5_SUMMON_MASK);
 		f6 &= (RF6_INDIRECT_MASK | RF6_SUMMON_MASK);
+		f0 &= (RF0_INDIRECT_MASK | RF0_SUMMON_MASK);
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 
 		normal = FALSE;
 		direct = FALSE;
@@ -1679,8 +1764,8 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* Hack -- summon around itself */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-		summon = f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
-			f6 & (RF6_SUMMON_MASK);
+		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
+			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 	}
 #else	// STUPID_MONSTER_SPELLS
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
@@ -1694,11 +1779,11 @@ bool make_attack_spell(int Ind, int m_idx)
 
 		/* Check path */
 #if INDIRECT_FREQ < 1
-		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px)) return (FALSE);
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE)) return (FALSE);
 #else
-		summon = f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) || f6 & (RF6_SUMMON_MASK);
+		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) || (f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 
-		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px))
+		if (!projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE))
 		{
 #ifdef STUPID_Q
 			if (r_ptr->d_char == 'Q') return (FALSE);
@@ -1713,8 +1798,10 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			/* effort to avoid bottlenecks.. */
 			if (summon ||
-					f4 & RF4_RADIUS_SPELLS ||
-					f5 & RF5_RADIUS_SPELLS)
+					(f4 & RF4_RADIUS_SPELLS) ||
+					(f5 & RF5_RADIUS_SPELLS) ||
+					(f6 & RF6_RADIUS_SPELLS) || /* (HACK) added this one, not sure if cool! */
+					(f0 & RF0_RADIUS_SPELLS))
 				rad = near_hit(m_idx, &y, &x,
 						srad > INDIRECT_SUMMONING_RADIUS ?
 						srad : INDIRECT_SUMMONING_RADIUS);
@@ -1726,6 +1813,8 @@ bool make_attack_spell(int Ind, int m_idx)
 				/* Remove inappropriate spells */
 				f4 &= ~(RF4_RADIUS_SPELLS);
 				f5 &= ~(RF5_RADIUS_SPELLS);
+				f6 &= ~(RF6_RADIUS_SPELLS); /* (HACK) added - unsure if cool */
+				f0 &= ~(RF0_RADIUS_SPELLS); /* (HACK) added - unsure if cool */
 //				f6 &= RF6_INT_MASK;
 
 			}
@@ -1734,9 +1823,10 @@ bool make_attack_spell(int Ind, int m_idx)
 			f4 &= ~(RF4_DIRECT_MASK);
 			f5 &= ~(RF5_DIRECT_MASK);
 			f6 &= ~(RF6_DIRECT_MASK);
+			f0 &= ~(RF0_DIRECT_MASK); /* (HACK) added - unsure if cool */
 
 			/* No spells left */
-			if (!f4 && !f5 && !f6) return (FALSE);
+			if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 		}
 #endif	// INDIRECT_FREQ
 	}
@@ -1751,9 +1841,10 @@ bool make_attack_spell(int Ind, int m_idx)
 		f4 &= RF4_INT_MASK;
 		f5 &= RF5_INT_MASK;
 		f6 &= RF6_INT_MASK;
+		f0 &= RF0_INT_MASK;
 
 		/* No spells left */
-		if (!f4 && !f5 && !f6) return (FALSE);
+		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 	}
 
 	/* Stupid monster flag */
@@ -1763,29 +1854,30 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifdef DRS_SMART_OPTIONS
 
 	/* Remove the "ineffective" spells */
-	remove_bad_spells(m_idx, &f4, &f5, &f6);
+	remove_bad_spells(m_idx, &f4, &f5, &f6, &f0);
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 
 #endif
 
 #ifndef	STUPID_MONSTER_SPELLS
 	/* Check for a clean bolt shot */
 	if (!direct ||
-		((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6&(RF6_BOLT_MASK)) &&
-		 !stupid && !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x)))
+		((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6&(RF6_BOLT_MASK) || f0&(RF0_BOLT_MASK)) &&
+		 !stupid && !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
 	{
 		/* Remove spells that will only hurt friends */
 		f4 &= ~(RF4_BOLT_MASK);
 		f5 &= ~(RF5_BOLT_MASK);
 		f6 &= ~(RF6_BOLT_MASK);
+		f0 &= ~(RF0_BOLT_MASK);
 	}
 
 	/* Check for a possible summon */
 	/*
 	if (rad > 3 || ((f4 & (RF4_SUMMON_MASK) || f5 & (RF5_SUMMON_MASK) ||
-				f6 & (RF6_SUMMON_MASK)) &&
+				f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 //	if (rad > 3 ||
 	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
@@ -1796,31 +1888,39 @@ bool make_attack_spell(int Ind, int m_idx)
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
 		f6 &= ~(RF6_SUMMON_MASK);
+		f0 &= ~(RF0_SUMMON_MASK);
 	}
 
 	/* No spells left */
-	if (!f4 && !f5 && !f6) return (FALSE);
+	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 #endif	// STUPID_MONSTER_SPELLS
 
 #if 0
 	/* Extract the "inate" spells */
 	for (k = 0; k < 32; k++)
 	{
-		if (f4 & (1L << k)) spell[num++] = k + 32 * 3;
-		if (f5 & (1L << k)) spell[num++] = k + 32 * 4;
-		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
+		if (f4 & (1L << k)) spell[num++] = k + RF4_OFFSET;
+		if (f5 & (1L << k)) spell[num++] = k + RF5_OFFSET;
+		if (f6 & (1L << k)) spell[num++] = k + RF6_OFFSET;
+		if (f0 & (1L << k)) spell[num++] = k + RF0_OFFSET;
 	}
 
 	/* Extract the "normal" spells */
 	for (k = 0; k < 32; k++)
 	{
-		if (f5 & (1L << k)) spell[num++] = k + 32 * 4;
+		if (f5 & (1L << k)) spell[num++] = k + RF5_OFFSET;
 	}
 
 	/* Extract the "bizarre" spells */
 	for (k = 0; k < 32; k++)
 	{
-		if (f6 & (1L << k)) spell[num++] = k + 32 * 5;
+		if (f6 & (1L << k)) spell[num++] = k + RF6_OFFSET;
+	}
+
+	/* Extract the "extra" spells */
+	for (k = 0; k < 32; k++)
+	{
+		if (f0 & (1L << k)) spell[num++] = k + RF0_OFFSET;
 	}
 
 	/* No spells left */
@@ -1837,7 +1937,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 	/* Choose a spell to cast */
 //	thrown_spell = choose_attack_spell(Ind, m_idx, spell, num);
-	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6, direct);
+	thrown_spell = choose_attack_spell(Ind, m_idx, f4, f5, f6, f0, direct);
 
 	/* Abort if no spell was chosen */
 	if (!thrown_spell) return (FALSE);
@@ -2468,8 +2568,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_format(Ind, "Something mumbles.", m_name);
 //			else msg_format(Ind, "%^s casts a stinking cloud.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a stinking cloud for", m_name);
-			breath(Ind, m_idx, GF_POIS,
-					damroll(12, 2), y, x, srad);
+			breath(Ind, m_idx, GF_POIS, damroll(12, 2), y, x, srad);
 			update_smart_learn(m_idx, DRS_POIS);
 			break;
 		}
@@ -3820,6 +3919,63 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			}
 			break;
 		}
+
+		/* RF0_S_HI_MONSTER */
+		case RF0_OFFSET+0:
+		{
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			else msg_format(Ind, "%^s magically summons help!", m_name);
+			for (k = 0; k < 1; k++)
+			{
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
+			}
+			m_ptr->clone_summoning = clone_summoning;
+			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
+			break;
+		}
+
+		/* RF0_S_HI_MONSTERS */
+		case RF0_OFFSET+1:
+		{
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			else msg_format(Ind, "%^s magically summons monsters!", m_name);
+			for (k = 0; k < 8; k++)
+			{
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
+			}
+			m_ptr->clone_summoning = clone_summoning;
+			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
+			break;
+		}
+
+		/* RF0_S_HI_UNIQUE */
+		case RF0_OFFSET+2:
+		{
+			if (monst_check_antimagic(Ind, m_idx)) break;
+			disturb(Ind, 1, 0);
+			if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
+			for (k = 0; k < 8; k++)
+			{
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNIQUE, 1, clone_summoning);
+			}
+			m_ptr->clone_summoning = clone_summoning;
+			for (k = 0; k < 8; k++)
+			{
+				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+			}
+			m_ptr->clone_summoning = clone_summoning;
+			if (blind && count)
+			{
+				msg_print(Ind, "You hear many powerful things appear nearby.");
+			}
+			break;
+		}
+
 	}
 
 
@@ -3987,7 +4143,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
         monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Monster flowing disabled */
-	if (!flow_by_sound) return (FALSE);
+	if (!flow_by_sound && !flow_by_smell) return (FALSE);
 
 	/* Monster can go through rocks */
 	if (r_ptr->flags2 & RF2_PASS_WALL) return (FALSE);
@@ -4433,7 +4589,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 		}
 #endif
 		/* Check for absence of shot */
-		if (!projectable(&m_ptr->wpos, y, x, py, px))
+		if (!projectable(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
 		{
 			/* Calculate distance from player */
 			dis = distance(y, x, py, px);
@@ -4488,7 +4644,7 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 				}
 #endif
 				/* Check for absence of shot */
-				if (!projectable(&m_ptr->wpos, y, x, py, px))
+				if (!projectable(&m_ptr->wpos, y, x, py, px, MAX_RANGE))
 				{
 					/* Calculate distance from player */
 					dis = distance(y, x, py, px);
@@ -4576,7 +4732,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 		if (!cave_floor_bold(zcave, y, x)) continue;
 
 		/* Check for hidden, available grid */
-		if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x))
+		if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
 		{
 			/* Calculate distance from player */
 			dis = distance(y, x, py, px);
@@ -4621,7 +4777,7 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 				if (distance(y, x, fy, fx) != d) continue;
 
 				/* Check for hidden, available grid */
-				if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x))
+				if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
 				{
 					/* Calculate distance from player */
 					dis = distance(y, x, py, px);
@@ -4817,28 +4973,28 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	/* Anti-cheeze vs Hit&Run-tactics if player has slightly superiour speed:
 	   Monster tries to make player approach so it gets attack turns! -C. Blue */
 	else if ((
-#if 1 /* Different behaviour, depending on monster type and level? */
+ #if 1 /* Different behaviour, depending on monster type and level? */
 		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
 		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
 		/* Elder animals have great instinct or intelligence */
 		((r_ptr->level >= 50) && 
 		!(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) ||
-#endif
+ #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
 		/* Distance must == 2; distance() won't work for diagonals here */
 		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
 		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
 		/* Player must be faster than the monster to cheeze */
 		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
-#if 1 /* Watch our/player's HP? */
+ #if 1 /* Watch our/player's HP? */
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though, since we probably still can't hurt him] */
 		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 4) && (p_ptr->chp > (p_ptr->mhp * 4) / 5)) ||
 		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
 		((m_ptr->hp < (m_ptr->maxhp * 1) / 2) && ((p_ptr->chp >= (p_ptr->mhp * 1) / 5) || (p_ptr->chp >= 200)))) &&
-#endif
+ #endif
 		/* No need to keep a distance if the player doesn't pose
 		   a potential threat in close combat: */
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
@@ -5053,27 +5209,27 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	   (to us) area to charge in a pattern that won't allow us to
 	   get a turn if we keep moving back and forth pointlessly. */
 	if ((
-#if 1 /* Different behaviour, depending on monster type and level? */
+ #if 1 /* Different behaviour, depending on monster type and level? */
 		/* Demons are reckless, undead/nonliving are rarely intelligent, animals neither */
 		((r_ptr->level >= 30) &&
 		!(r_ptr->flags3 & (RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON))) ||
 		/* Elder animals have great instinct or intelligence */
 		((r_ptr->level >= 50)) ||
-#endif
+ #endif
 		(r_ptr->flags2 & RF2_SMART)) && !(r_ptr->flags2 & RF2_STUPID) &&
 		/* Distance must == 2; distance() won't work for diagonals here */
 		((ABS(m_ptr->fy - y2) == 2 && ABS(m_ptr->fx - x2) <= 2) ||
 		(ABS(m_ptr->fy - y2) <= 2 && ABS(m_ptr->fx - x2) == 2)) &&
 		/* Player must be faster than the monster to cheeze */
 		(p_ptr->pspeed > m_ptr->mspeed) && rand_int(600) &&
-#if 1 /* Watch our/player's HP? */
+ #if 1 /* Watch our/player's HP? */
 		/* As long as we have good HP there's no need to hold back,
 		   [if player is low on HP we should try to attack him anyways,
 		   this is not basing on consequent logic though, since we probably still can't hurt him] */
 		(((m_ptr->hp <= (m_ptr->maxhp * 3) / 5) && (p_ptr->chp > (p_ptr->mhp * 5) / 6)) ||
 		/* If we're very low on HP, only try to attack the player if he's hurt *badly* */
 		((m_ptr->hp < (m_ptr->maxhp * 1) / 4) && (p_ptr->chp >= (p_ptr->mhp * 1) / 5))) &&
-#endif
+ #endif
 		/* No need to keep a distance if the player doesn't pose
 		   a potential threat in close combat: */
 		(p_ptr->s_info[SKILL_MASTERY].value >= 3000 || p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= 10000) &&
@@ -5100,13 +5256,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		 * In the real-time, it does work :)
 		 */
 		if (ax < 2 && ay > 5 &&
-			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
+			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
 		{
 			x = (x > 0 || (!x && magik(50))) ? -ay / 2: ay / 2;
 			ax = ay / 2;
 		}
 		if (ay < 2 && ax > 5 &&
-			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2))
+			projectable(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, y2, x2, MAX_RANGE))
 		{
 			y = (y > 0 || (!y && magik(50))) ? -ax / 2: ax / 2;
 			ay = ax / 2;
@@ -6703,7 +6859,160 @@ static void process_monster(int Ind, int m_idx)
 		/* The player is in the way.  Attack him. */
 		if (do_move && (c_ptr->m_idx < 0))
 		{
-			player_type *q_ptr = Players[0 - c_ptr->m_idx];
+			int p_idx_target = 0 - c_ptr->m_idx;
+			player_type *q_ptr;
+
+
+#ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
+			bool keeping_previous_target = FALSE;
+			int i, p_idx_chosen = 0 - c_ptr->m_idx, reason;
+			int p_idx[9], targets = 0;
+			int p_idx_weak[9], p_idx_medium[9], p_idx_strong[9], weak_targets = 0, medium_targets = 0, strong_targets = 0;
+			int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
+			cave_type *cd_ptr;
+			player_type pd_ptr;
+
+			/* get all adjacent players */
+			for (i = 0; i < 8; i++) {
+				c_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
+
+				/* found a player? */
+				if (cd_ptr->m_idx < 0) {
+					pd_ptr = Players[-cd_ptr->m_idx];
+
+					/* did we choose this player for target in our previous turn?
+					   then lets stick with it and not change targets again */
+					if (-cd_ptr->m_idx == m_ptr->last_target_melee) {
+						keeping_previous_target = TRUE;
+						break;
+					}
+							
+					/* get him if allowed */
+					if ((m_ptr->owner != pd_ptr->id) && /* Don't attack your master! */
+					    /* Invincible players can't be atacked! */
+					    !((pd_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
+			    		    (pd_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY))) {
+
+						targets++;
+				    		p_idx[targets] = -cd_ptr->m_idx;
+
+						/* remember whether player's class is vulnerable or tough */
+						switch (pd_ptr->pclass) {
+						case CLASS_WARRIOR:
+						case CLASS_PALADIN:
+						case CLASS_DRUID:
+
+						case CLASS_ROGUE:
+						case CLASS_MIMIC:
+						case CLASS_RANGER:
+							strong_targets++;
+							p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+							break;
+
+						case CLASS_ARCHER:
+
+						case CLASS_ADVENTURER:
+						case CLASS_SHAMAN:
+						case CLASS_RUNEMASTER:
+							medium_targets++;
+							p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+							break;
+						case CLASS_MAGE:
+						case CLASS_PRIEST:
+							weak_targets++;
+							p_idx_weak[weak_targets] = -cd_ptr->m_idx;
+							break;
+						}
+
+						/* remember lowest and highest victim level */
+						if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
+						if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
+					}
+				}
+			}
+
+		    if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
+
+			/* *** Rules to choose between allowed targets: ***
+			   Animals attack the one that "seems" most wounded: (hp_max / hp_cur) ?
+			    maybe not good. except for wolves or such :).
+			    attack randomly for now.
+			   Low undead who have empty mind/Nonliving/weirdmind/emptymind attack randomly.
+			   Really "weakest" target would be based on
+			    HP/AC/parry/deflect/dodge/manashield/level/class, too complicated.
+			   SMART monsters attack based on class and level (can have manashield at level x?) :).
+			    At high levels this matters less, then just slightly prefer lowest level player.
+			   STUPID monsters attack randomly.
+			   Angels attack randomly (they don't swing like "hey you're weakest, I'm gonna kill you first!").
+			   POWERFUL or deemed powerful (ancient dragons, dragonriders) or "proud" monsters attack randomly.
+			   All other monsters -including minded undead- attack based on class during low levels, and random at high levels.
+			*/
+			reason = 1;
+			if (r_ptr->flags2 & RF2_SMART) reason = 2;
+			if (r_ptr->flags7 & RF7_NO_DEATH) reason = 0;
+			if (r_ptr->flags7 & RF7_MULTIPLY) reason = 0;
+			if (r_ptr->flags3 & RF3_NONLIVING) reason = 0;
+			if (r_ptr->flags3 & RF3_GOOD) reason = 0;
+			if (r_ptr->flags3 & RF3_GIANT) reason = 0;
+			if (r_ptr->flags3 & RF3_ANIMAL) reason = 0;
+			if (r_ptr->flags2 & RF2_STUPID) reason = 0;
+			if (r_ptr->flags2 & (RF2_WEIRD_MIND | RF2_EMPTY_MIND) reason = 0;
+			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0;
+			if (strchr("AD", r_ptr->d_char)) reason = 0;
+
+ #ifndef STUPID_MONSTER
+			/* generate behaviour based on selected rule */
+			switch (reason) {
+			case 0: /* random */
+				p_idx_chosen = p_idx[randint(targets)];
+				break;
+			case 1: /* at low level choose weaker classes first */
+				if (lowest_player_level < 30) {
+					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else p_idx_chosen = p_idx[randint(targets)];
+				} else {
+					p_idx_chosen = p_idx[randint(targets)];
+				}
+				break;
+			case 2: /* like (1), but more sophisticated */
+				if (highest_player_level < 30 && lowest_target_level + 5> highest_target_level) {
+					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else p_idx_chosen = p_idx[randint(targets)];
+				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
+					/* check which targets have a significantly lower level than others */
+					for (i = 1; i < targets; i++) {
+						if (Players[p_idx[i]].lev + Players[p_idx[i]].lev / 10 < higest_target_level) {
+							low_targets++;
+							p_idx_low[low_targets] = p_idx[i];
+						}
+					}
+					/* choose one of the lowbies of the player pack */
+					p_idx_chosen = p_idx_low[randint(low_targets)];
+				} else {
+					p_idx_chosen = p_idx[randint(targets)];
+				}
+				break;
+			}
+ #else
+			p_idx_chosen = p_idx[randint(targets)];
+ #endif
+			/* Remember this target, so we won't switch to a different one
+			   in case this player has a levelup or something during our fighting,
+			   depending on our monster's way to choose a target (see above).
+			   This could be made dependent on further monster behaviour! :) */
+			if (keeping_previous_target) p_idx_chosen = m_ptr->last_target_melee;
+			/* note: storing id would be cleaner than idx, but it doesn't really make a practical difference */
+			else m_ptr->last_target_melee = p_idx_chosen;
+			
+			/* connect to outside world */
+			p_idx_target = p_idx_chosen;
+		    }
+#endif
+
+
+			q_ptr = Players[p_idx_target];
 
 			/* Don't attack your master! Invincible players can't be atacked! */
 			if ((q_ptr && m_ptr->owner != q_ptr->id) &&
@@ -6727,7 +7036,7 @@ static void process_monster(int Ind, int m_idx)
 				else
 				{
 					/* Do the attack */
-					(void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+					(void)make_attack_melee(p_idx_target, m_idx);
 
 					/* Took a turn */
 					do_turn = TRUE;
@@ -6916,7 +7225,9 @@ static void process_monster(int Ind, int m_idx)
 			    (p_ptr->disturb_move ||
 			     (p_ptr->mon_los[m_idx] &&
 			      p_ptr->disturb_near)) &&
-				r_ptr->level != 0)
+				r_ptr->level != 0 &&
+			    /* Not in Bree (for Santa Claus) - C. Blue */
+                    	    (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz))
 			{
 				/* Disturb */
                                 if (p_ptr->id != m_ptr->owner) disturb(Ind, 0, 0);
@@ -7502,7 +7813,7 @@ static void process_monster_pet(int Ind, int m_idx)
 			/* do the attack only if hostile... */
 			if (Players[0-c_ptr->m_idx]->id != m_ptr->owner && 
 			    check_hostile(0-c_ptr->m_idx, find_player(m_ptr->owner))) {
-				(void)make_attack_normal(0 - c_ptr->m_idx, m_idx); 
+				(void)make_attack_melee(0 - c_ptr->m_idx, m_idx); 
 				do_move = FALSE; 
 				do_turn = TRUE;
 			} else {
@@ -7938,7 +8249,7 @@ static void process_monster_golem(int Ind, int m_idx)
                 if (do_move && (c_ptr->m_idx < 0))
 		{
 			/* Do the attack */
-                        if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_normal(0 - c_ptr->m_idx, m_idx);
+                        if (Players[0-c_ptr->m_idx]->id != m_ptr->owner) (void)make_attack_melee(0 - c_ptr->m_idx, m_idx);
 
 			/* Do not move */
 			do_move = FALSE;
@@ -8071,7 +8382,6 @@ void process_monsters(void)
 	monster_race	*r_ptr;
 	player_type *p_ptr;
 
-
 	/* maybe better do in dungeon()?	- Jir - */
 #ifdef PROJECTION_FLUSH_LIMIT
 	count_project_times++;
@@ -8203,6 +8513,21 @@ void process_monsters(void)
 			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)
 			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
+			
+			/* can spot/uncloak cloaked player? */
+			if (p_ptr->cloaked == 1) {
+				if (strchr("eAN", r_ptr->d_char) ||
+				    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
+				    (r_ptr->flags7 & RF7_NAZGUL)
+				    ) {
+#if 0 /* no reason to go this far I think, just attacking the player as usual should be enough - C. Blue */
+					monster_desc(pl, m_name, i, 0);
+				    	msg_format(pl, "\377r%^s reveals your presence!", m_name);
+					break_cloaking(pl);
+#endif
+				} else /* can't see cloaked player? */
+					continue;
+			}
 
 			/* Remember this player */ 
 			blos = new_los; 
@@ -8285,7 +8610,7 @@ void process_monsters(void)
 		if (!test) continue;
 
 	        /* Change monster's highest player encounter (mode 1+ : monster actively targets a player) */
-		if (!m_ptr->csleep && (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0)) { /* not in Bree, because of Halloween :) */
+		if (!m_ptr->csleep && (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0)) { /* not in Bree, because of Halloween & Christmas (Santa Claus) :) */
 	    		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 		}
 
@@ -8362,7 +8687,7 @@ void curse_equipment(int Ind, int chance, int heavy_chance)
 	player_type *p_ptr = Players[Ind];
 	bool changed = FALSE;
         u32b    o1, o2, o3, o4, esp, o5;
-	object_type * o_ptr = &p_ptr->inventory[INVEN_WIELD - 1 + randint(12)];
+	object_type * o_ptr = &p_ptr->inventory[INVEN_WIELD + rand_int(12)];
 
 	if (randint(100) > chance) return;
 

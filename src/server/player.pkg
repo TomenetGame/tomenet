@@ -1,4 +1,4 @@
-/* $Id$ */
+* $Id$ */
 $#include "angband.h"
 
 typedef char* cptr;
@@ -89,7 +89,6 @@ typedef unsigned int u32b;
 #define SKILL_TRAINING			40
 #define SKILL_INTERCEPT			41
 #define SKILL_DODGE				42
-#define SKILL_DODGE				42
 #define SKILL_HEALTH			43
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
@@ -124,6 +123,13 @@ typedef unsigned int u32b;
 
 /* Runemasters */
 #define SKILL_RUNEMASTERY	76
+
+/* Divine race */
+/* ENABLE_DIVINE */
+/* #define SKILL_ASTRAL		77*/
+#define DIVINE_UNDEF		0x00
+#define DIVINE_ANGEL 		0x01
+#define DIVINE_DEMON 		0x10
 
 /* additional ones */
 #define SKILL_CLIMB             90
@@ -203,6 +209,8 @@ typedef unsigned int u32b;
 #define RACE_DRIDER   	13
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
+/* ENABLE_DIVINE */
+/* #define RACE_DIVINE	16*/
 
 struct worldpos{
 	s16b wx;	/* west to east */
@@ -285,6 +293,7 @@ struct player_type
 	unsigned int version;	/* His version */
 
 	s32b id;		/* Unique ID to each player */
+	u32b account;           /* account group id */
 	u32b dna;		/* DNA - psuedo unique to each player life */
 
 	hostile_type *hostile;	/* List of players we wish to attack */
@@ -572,6 +581,7 @@ struct player_type
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
+	byte cloaked;		/* Cloaking mode enabled */
 
 	s16b old_lite;		/* Old radius of lite (if any) */
 	s16b old_view;		/* Old radius of view (if any) */
@@ -583,10 +593,15 @@ struct player_type
 	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shield;	/* Heavy shield */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */
+	bool easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
 	bool cumber_weight;	/* FA from MA is lost if overburdened */
+        bool monk_heavyarmor;   /* Reduced MA power? */
+        bool awkward_shoot;     /* using ranged weapon while having a shield on the arm */
+	bool rogue_heavyarmor;  /* No AoE-searching? Encumbered dual-wield? */
 
 	s16b cur_lite;		/* Radius of lite (if any) */
 
@@ -632,16 +647,18 @@ struct player_type
 
 	bool immune_neth;       /* Immunity to nether */
 
-        bool sensible_fire;     /* Fire does more damage on the player */
-        bool sensible_cold;     /* Cold does more damage on the player */
-        bool sensible_acid;     /* Acid does more damage on the player */
-        bool sensible_elec;     /* Electricity does more damage on the player */
-        bool sensible_pois;     /* Poison does more damage on the player */
-	bool sensible_lite;
-	bool sensible_good;
-	bool sensible_life;
+        bool suscep_fire;     /* Fire does more damage on the player */
+        bool suscep_cold;     /* Cold does more damage on the player */
+        bool suscep_acid;     /* Acid does more damage on the player */
+        bool suscep_elec;     /* Electricity does more damage on the player */
+        bool suscep_pois;     /* Poison does more damage on the player */
+	bool suscep_lite;
+	bool suscep_good;
+	bool suscep_life;
 
 	bool reflect;       /* Reflect 'bolt' attacks */
+        byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
+        byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
         bool res_tele;          /* Prevents being teleported from someone else */
 
 	bool ty_curse;		/* bad curses from artifacts */
@@ -660,6 +677,7 @@ struct player_type
 	bool aggravate;		/* Aggravate monsters */
 	bool teleport;		/* Random teleporting */
 
+	long int idle;		/* player's been idle for <idle> seconds */
 	bool afk;		/* Player is afk */
 	byte drain_exp;		/* Experience draining */
 
@@ -734,7 +752,7 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-	s32b blood_bond;	/* Norc is now happy :) */
+        player_list_type	*blood_bond;	/* Norc is now happy :) */
 
         byte mode; /* Difficulty MODE */
 
@@ -752,11 +770,14 @@ struct player_type
 
 
         byte spell_project;             /* Do the spells(some) affect nearby party members ? */
+	s16b dodge_level;
 	s32b tim_blacklist;
 	s32b tim_watchlist;
 	s32b pstealing;
 
 	u16b team;
+	char pushed;
+	char pushdir;
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
@@ -787,6 +808,10 @@ struct player_type
         time_t global_event_signup[MAX_GLOBAL_EVENTS];
         time_t global_event_started[MAX_GLOBAL_EVENTS];
 //        u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
+	byte divinity;
+
+	int combat_stance;
+	int combat_stance_power;
 };
 
 extern bool imprison(int Ind, int time, char *reason);
@@ -803,3 +828,4 @@ extern bool interfere(int Ind, int chance);
 
 extern void telekinesis_aux(int Ind, int item);
 extern void recall_player(int Ind, char *message);
+extern int apply_dodge_chance(int Ind, int attack_level);

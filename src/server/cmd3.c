@@ -68,6 +68,10 @@ void inven_takeoff(int Ind, int item, int amt)
 	{
 		act = "You were wielding";
 	}
+	else if (item == INVEN_ARM)
+	{
+		act = "You were wielding";
+	}
 	else if (item == INVEN_BOW)
 	{
 		act = "You were shooting with";
@@ -192,6 +196,15 @@ void inven_takeoff(int Ind, int item, int amt)
 	inven_item_increase(Ind, item, -amt);
 	inven_item_optimize(Ind, item);
 
+#ifdef ENABLE_STANCES
+	/* take care of combat stances */
+	if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
+	    (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+		msg_print(Ind, "\377sYou return to balanced combat stance.");
+		p_ptr->combat_stance = 0;
+	}
+#endif
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -266,6 +279,10 @@ void inven_drop(int Ind, int item, int amt)
 		act = "Dropped";
 	}
 	else if (item == INVEN_WIELD)
+	{
+		act = "Was wielding";
+	}
+	else if (item == INVEN_ARM)
 	{
 		act = "Was wielding";
 	}
@@ -383,7 +400,14 @@ void inven_drop(int Ind, int item, int amt)
 		}
 	}
 
-
+#ifdef ENABLE_STANCES
+        /* take care of combat stances */
+        if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
+            (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+                msg_print(Ind, "\377sYou return to balanced combat stance.");
+                p_ptr->combat_stance = 0;
+        }
+#endif
 
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
@@ -395,6 +419,8 @@ void inven_drop(int Ind, int item, int amt)
 	inven_item_increase(Ind, item, -amt);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
+	
+	break_cloaking(Ind);
 }
 
 /*
@@ -554,7 +580,8 @@ void do_takeoff_impossible(int Ind)
 	for (k = INVEN_WIELD; k < INVEN_TOTAL; k++)
 	{
 		o_ptr = &p_ptr->inventory[k];
-		if ((o_ptr->k_idx) && (!item_tester_hook_wear(Ind, k)))
+		if ((o_ptr->k_idx) && /* following is a hack for dual-wield.. */
+		    (!item_tester_hook_wear(Ind, (k == INVEN_ARM && o_ptr->tval != TV_SHIELD) ? INVEN_WIELD : k)))
 		{
 			/* Extract the flags */
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -571,12 +598,20 @@ void do_takeoff_impossible(int Ind)
 
 /*
  * Wield or wear a single item from the pack or floor
+ * Added alt_slots to specify an alternative slot when an item fits in
+ * two places - C. Blue
+ * 0 = equip in first free slot that fits, if none is free, replace item in first slot (standard/traditional behaviour)
+ * 1 = equip in first slot that fits, replacing the item if any
+ * 2 = equip in second slot that fits, replacing the item if any
+ * 4 = don't equip if slot is already occupied (ie don't replace by taking off an item)
+ * Note: Rings make an exception in 4: First ring always goes in second ring slot.
  */
-void do_cmd_wield(int Ind, int item)
+void do_cmd_wield(int Ind, int item, u16b alt_slots)
 {
 	player_type *p_ptr = Players[Ind];
 
 	int slot, num = 1;
+	bool item_fits_dual = FALSE, equip_fits_dual = FALSE, all_cursed = FALSE;
 	object_type tmp_obj;
 	object_type *o_ptr;
 	object_type *x_ptr;
@@ -612,7 +647,6 @@ void do_cmd_wield(int Ind, int item)
 	/* Check the slot */
 	slot = wield_slot(Ind, o_ptr);
 
-
 	if (!item_tester_hook_wear(Ind, slot))
 	{
 		msg_print(Ind, "You may not wield that item.");
@@ -621,22 +655,59 @@ void do_cmd_wield(int Ind, int item)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	
+	/* check whether the item to wield is fit for dual-wielding */
+	if (!(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;
+	/* check whether our current equipment allows a dual-wield setup with the new item */
+	if (!(k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) equip_fits_dual = TRUE;
+
+	/* Do we have dual-wield and are trying to equip a weapon?.. */
+	if (get_skill(p_ptr, SKILL_DUAL) && slot == INVEN_WIELD) {
+		/* Equip in arm slot if weapon slot alreay occupied but arm slot still empty */
+		if ((p_ptr->inventory[INVEN_WIELD].k_idx || (alt_slots & 0x2))
+		    && (!p_ptr->inventory[INVEN_ARM].k_idx || (alt_slots & 0x2))
+		    && !(alt_slots & 0x1)
+		    /* If to-wield weapon is 2h or 1.5h, choose normal INVEN_WIELD slot instead */
+		    && item_fits_dual
+		    /* If main-hand weapon is 2h or 1.5h, choose normal INVEN_WIELD slot instead */
+		    && equip_fits_dual)
+			slot = INVEN_ARM;
+	}
+
+	if (slot == INVEN_LEFT && (alt_slots & 0x2)) slot = INVEN_RIGHT;
+	if (slot == INVEN_RIGHT && (alt_slots & 0x1)) slot = INVEN_LEFT;
+
+	if ((alt_slots & 0x4) && p_ptr->inventory[slot].k_idx) {
+		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
+		msg_format(Ind, "Take off your %s first.", o_name);
+		return;
+	}
+
 	/* Prevent wielding into a cursed slot */
+	/* Try alternative slots if one is cursed and item can go in multiple places */
+	if (cursed_p(&p_ptr->inventory[slot]) && !(alt_slots & 0x3)) {
+		switch (slot) {
+		case INVEN_LEFT: slot = INVEN_RIGHT; all_cursed = TRUE; break;
+		case INVEN_RIGHT: slot = INVEN_LEFT; all_cursed = TRUE; break;
+		case INVEN_WIELD: if (get_skill(p_ptr, SKILL_DUAL) && item_fits_dual && equip_fits_dual) { slot = INVEN_ARM; all_cursed = TRUE; break; }
+		}
+	}
 	if (cursed_p(&(p_ptr->inventory[slot])))
 	{
 		/* Describe it */
 		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
 
 		/* Message */
-		msg_format(Ind, "The %s you are %s appears to be cursed.",
-		           o_name, describe_use(Ind, slot));
+		if (all_cursed)
+			msg_format(Ind, "The items you are already %s both appear to be cursed.", describe_use(Ind, slot));
+		else
+			msg_format(Ind, "The %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
 
 		/* Cancel the command */
 		return;
 	}
-
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Two handed weapons can't be wielded with a shield */
 	/* TODO: move to item_tester_hook_wear? */
@@ -645,11 +716,22 @@ void do_cmd_wield(int Ind, int item)
 	    (f4 & TR4_MUST2H) &&
 	    (inventory[slot - INVEN_WIELD + INVEN_ARM].k_idx != 0))
 #endif	// 0
-	if ( (f4 & TR4_MUST2H) &&
+
+	if ((f4 & TR4_MUST2H) &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx != 0))
 	{
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
-		msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
+		if (get_skill(p_ptr, SKILL_DUAL))
+			msg_format(Ind, "You cannot wield your %s with a shield or a secondary weapon.", o_name);
+		else
+			msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
+		return;
+	}
+	if ((f4 & TR4_SHOULD2H) &&
+	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield not with 1.5h */
+	{
+		object_desc(Ind, o_name, o_ptr, FALSE, 0);
+		msg_format(Ind, "You cannot wield your %s with a secondary weapon.", o_name);
 		return;
 	}
 
@@ -717,7 +799,7 @@ void do_cmd_wield(int Ind, int item)
 	process_hooks(HOOK_WIELD, "d", Ind);
 
 	/* Let's not end afk for this - C. Blue */
-/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/*	un_afk_idle(Ind); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -746,14 +828,14 @@ void do_cmd_wield(int Ind, int item)
 	o_ptr = &(p_ptr->inventory[slot]);
 
 	/*** Could make procedure "inven_wield()" ***/
-#if 1
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_INVINCIBILITY) && (tmp_obj.tval == TV_AMULET) && (tmp_obj.sval == SV_AMULET_HIGHLANDS))
-	  {
-	    o_ptr->bpval += tmp_obj.bpval;
-	  }
-	else
-#endif	// 0
-	  {
+    //no need to try to combine the non esp HL amulet?
+    //if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS))
+    if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS2 && tmp_obj.tval == TV_AMULET && tmp_obj.sval == SV_AMULET_HIGHLANDS2))
+    {
+	o_ptr->bpval += tmp_obj.bpval;
+    }
+    else
+    {
 
 #if 0
 	/* Take off the "entire" item if one is there */
@@ -803,6 +885,10 @@ void do_cmd_wield(int Ind, int item)
 	{
 		act = "You are wielding";
 	}
+	if (slot == INVEN_ARM)
+	{
+		act = "You are wielding";
+	}
 	else if (slot == INVEN_BOW)
 	{
 		act = "You are shooting with";
@@ -849,9 +935,24 @@ void do_cmd_wield(int Ind, int item)
 		o_ptr->ident |= ID_SENSE;
 	}
 
-
-	  }
+    }
 	
+#ifdef ENABLE_STANCES
+	/* take care of combat stances */
+	if (slot == INVEN_ARM && p_ptr->combat_stance == 2) {
+		msg_print(Ind, "\377sYou return to balanced combat stance.");
+		p_ptr->combat_stance = 0;
+	}
+#endif
+
+	/* Give additional warning messages if item prevents a certain ability */
+	if (o_ptr->tval == TV_SHIELD) {
+		if (get_skill(p_ptr, SKILL_DODGE))
+			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
+		if (get_skill(p_ptr, SKILL_MARTIAL_ARTS))
+			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");
+	}
+
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -920,7 +1021,7 @@ void do_cmd_takeoff(int Ind, int item)
 	}
 
 	/* Let's not end afk for this - C. Blue */
-/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/*	un_afk_idle(Ind); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -1009,7 +1110,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 #endif
 
 	/* Let's not end afk for this - C. Blue */
-/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/* 	un_afk_idle(Ind); */
 
 #if (STARTEQ_TREATMENT > 1)
 	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
@@ -1078,7 +1179,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	p_ptr->au -= amt;
 
 	/* Let's not end afk for this - C. Blue */
-/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/* 	un_afk_idle(Ind); */
 
 	/* Message */
 //	msg_format(Ind, "You drop %ld pieces of gold.", amt);
@@ -1087,6 +1188,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 /* #if DEBUG_LEVEL > 3 */
 	if (amt >= 10000)
 		s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", amt, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+	break_cloaking(Ind);
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);
@@ -1150,7 +1253,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 #endif
 
 	/* Let's not end afk for this - C. Blue */
-/* 	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/* 	un_afk_idle(Ind); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1260,6 +1363,8 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		floor_item_describe(0 - item);
 		floor_item_optimize(0 - item);
 	}
+
+	break_cloaking(Ind);
 }
 
 
@@ -1273,7 +1378,7 @@ void do_cmd_observe(int Ind, int item)
 	object_type		*o_ptr;
 
 	char		o_name[160];
-
+	
         u32b f1, f2, f3, f4, f5, esp;
 						      
 	/* Get the item (in the pack) */
@@ -1321,7 +1426,7 @@ void do_cmd_observe(int Ind, int item)
 
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
-			int blows = calc_blows(Ind, o_ptr);
+			int blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
@@ -1556,7 +1661,6 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 				if (ver && !verify("Try", 0 - monst_list[k]))
 				{
 					done = TRUE;
-
 					break;
 				}
 
@@ -1571,7 +1675,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 #endif	// 0
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	if (item != -1)
 	{
@@ -1595,11 +1699,9 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 			/* Speed up because monsters are ANGRY when you try to thief them */
 			m_ptr->mspeed += 5;
-
 			screen_load();
-
+			break_cloaking(Ind);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
-
 			return;
 		}
 
@@ -1650,7 +1752,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 		}
 
 		/* Delete it */
-		o_list[item].k_idx = 0;
+		invwipe(&o_list[item]);
 	}
 
 	screen_load();
@@ -1713,7 +1815,7 @@ void do_cmd_steal(int Ind, int dir)
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Examine target */
 	q_ptr = Players[0 - c_ptr->m_idx];
@@ -1753,7 +1855,6 @@ void do_cmd_steal(int Ind, int dir)
 	{
 		/* Message */
 		msg_format(Ind, "%^s is on guard against you.", q_ptr->name);
-
 		return;
 	}
 #endif
@@ -1858,7 +1959,6 @@ void do_cmd_steal(int Ind, int dir)
 				/* Message */
 				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %ld gold!",
 						p_ptr->name, amt);
-
 				caught = TRUE;
 			}
 		}
@@ -1875,7 +1975,7 @@ void do_cmd_steal(int Ind, int dir)
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (70))
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (80))
 			{
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
@@ -1920,7 +2020,6 @@ void do_cmd_steal(int Ind, int dir)
 				/* Message */
 				msg_format(0 - c_ptr->m_idx, "\377rYou notice %s stealing %s!",
 				           p_ptr->name, o_name);
-
 				caught = TRUE;
 			}
 		}
@@ -1940,10 +2039,11 @@ void do_cmd_steal(int Ind, int dir)
 			/* Message */
 			msg_format(0 - c_ptr->m_idx, "\377rYou notice %s try to steal from you!",
 			           p_ptr->name);
-
 			caught = TRUE;
 		}
 	}
+
+	if (caught) break_cloaking(Ind);
 
 #if 0 /* now turned off */
 	/* Counter blow! */
@@ -2010,7 +2110,7 @@ void do_cmd_steal(int Ind, int dir)
 	}
 #else
 	/* set timeout before attempting to pvp-steal again */
-	p_ptr->pstealing = 10; /* 10 turns aka 10 seconds */
+	p_ptr->pstealing = 15; /* 15 turns aka ~10 seconds */
 #endif
 
 	/* Take a turn */
@@ -2083,7 +2183,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	}
 
 	/* Let's not end afk for this. - C. Blue */
-/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/*	un_afk_idle(Ind); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -2183,7 +2283,7 @@ static void do_cmd_refill_torch(int Ind, int item)
 	}
 
 	/* Let's not end afk for this. - C. Blue */
-/*	if (p_ptr->afk) toggle_afk(Ind, ""); */
+/*	un_afk_idle(Ind); */
 
 	/* Take a partial turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;

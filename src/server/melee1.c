@@ -228,6 +228,16 @@ static bool do_eat_item(int Ind, int m_idx)
 	char			o_name[160];
 	int i, k;
 
+        /* Amulet of Immortality */
+        o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+        {
+                if (o_ptr->tval == TV_AMULET &&
+                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
+	                return FALSE;
+        }
+
 	/* Find an item */
 	for (k = 0; k < 10; k++)
 	{
@@ -480,28 +490,25 @@ static bool do_seduce(int Ind, int m_idx)
 /*
  * Attack a player via physical attacks.
  */
-bool make_attack_normal(int Ind, int m_idx)
+bool make_attack_melee(int Ind, int m_idx)
 {
 	player_type *p_ptr = Players[Ind];
 
 	monster_type    *m_ptr = &m_list[m_idx];
-
         monster_race    *r_ptr = race_inf(m_ptr);
 
-	int                     ap_cnt;
+	int      	ap_cnt;
+	int		mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int                     i, j, k, tmp, ac, rlev;
-	int                     do_cut, do_stun, factor = 100;
-	int 			player_aura_dam;
+	int             i, j, k, tmp, ac, rlev;
+	int             do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
+	int 		player_aura_dam;
 
-	object_type             *o_ptr;
+	object_type     *o_ptr;
 
 	char            o_name[160];
-
 	char            m_name[80];
-
 	char            ddesc[80];
-	
 	char		dam_msg[80] = { '\0' };
 
 	bool            blinked, prot = FALSE;
@@ -530,6 +537,16 @@ bool make_attack_normal(int Ind, int m_idx)
 	/* Get the "died from" information (i.e. "a kobold") */
 	monster_desc(Ind, ddesc, m_idx, 0x0188);
 
+	/* determine how much parrying or blocking would endanger our weapon/shield */
+	for (i = 0; i < 4; i++) { 
+		if (r_ptr->blow[i].effect == RBE_ACID) mon_acid += 12;
+        	if (r_ptr->blow[i].effect == RBE_FIRE) mon_fire += 12;
+		blows_total++;
+	}
+	if (blows_total) {
+		mon_acid /= blows_total;
+		mon_fire /= blows_total;
+	}
 
 	/* Assume no blink */
 	blinked = FALSE;
@@ -608,7 +625,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 		switch (method)
 		{
-			case RBM_GAZE:
+			case RBM_GAZE: if (p_ptr->blind) continue; /* :-D */
 			case RBM_WAIL:
 			case RBM_SPORE:
 			case RBM_BEG:
@@ -624,21 +641,24 @@ bool make_attack_normal(int Ind, int m_idx)
 		/* Monster hits player */
 		if (!effect || check_hit(Ind, power, rlev * factor / 100, bypass_ac))
 		{
-			int chance = p_ptr->dodge_chance - ((rlev * 5) / 6);
-//						- UNAWARENESS(p_ptr) * 2;
-
-			/* always 10% chance to hit */
-			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
-
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
-
+#ifndef NEW_DODGING
+			int chance = p_ptr->dodge_level - ((rlev * 5) / 6);
+//						- UNAWARENESS(p_ptr) * 2;
+			/* always 10% chance to hit */
+			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
 			if ((chance > 0) && !bypass_ac && magik(chance))
 			{
 				msg_format(Ind, "You dodge %s's attack!", m_name);
 				continue;
 			}
-
+#else
+			if (!bypass_ac && magik(apply_dodge_chance(Ind, rlev))) {
+				msg_format(Ind, "You dodge %s's attack!", m_name);
+				continue;
+			}
+#endif
 
 			/* Hack -- Apply "protection from evil" */
 #if 0
@@ -679,6 +699,24 @@ bool make_attack_normal(int Ind, int m_idx)
 				continue;
 			}
 
+#ifdef USE_BLOCKING
+			/* Parry/Block - belongs to new-NR-viability changes */
+			/* choose whether to attempt to block or to parry (can't do both at once),
+			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
+			   has been left out, since if you want max block, you'll have to take off your weapon!) */
+			if (p_ptr->shield_deflect && 
+			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
+				if (magik(p_ptr->shield_deflect)) {
+					msg_format(Ind, "You block %^s's attack.", m_name);
+					if (randint(mon_acid + mon_fire) > mon_acid) {
+						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
+					} else if (mon_acid + mon_fire) {
+						if (magik(10)) shield_takes_damage(Ind, GF_ACID);
+					}
+					continue;
+				}
+			}
+#endif
 
 			/* Assume no cut or stun */
 			do_cut = do_stun = 0;
@@ -890,8 +928,31 @@ bool make_attack_normal(int Ind, int m_idx)
 
 			}
 
+#ifdef USE_PARRYING
+			/* parrying */
+			if (p_ptr->weapon_parry && touched) {
+				if (magik(p_ptr->weapon_parry)) {
+					int slot = INVEN_WIELD;
+					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
+						slot = INVEN_ARM;
+					msg_format(Ind, "You parry %^s's attack.", m_name);
+					if (randint(mon_acid + mon_fire) > mon_acid) {
+						if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
+					} else if (mon_acid + mon_fire) {
+						if (magik(10)) weapon_takes_damage(Ind, GF_ACID, slot);
+					}
+					continue;
+				}
+			}
+#endif
+
 			/* Roll out the damage */
 			damage = damroll(d_dice, d_side);
+
+#if 0			
+			/* to prevent cloaking mode from breaking (break_cloaking) if an attack didn't do damage */
+			if (!d_dice && !d_side) no_dam = TRUE;
+#endif
 
 			/* Message */
 			/* DEG Modified to give damage number */
@@ -901,21 +962,19 @@ bool make_attack_normal(int Ind, int m_idx)
 #ifdef HALLOWEEN
 				/* Colour change for ranged MOAN for Halloween event -C. Blue */
 				if (method == RBM_MOAN)
-				msg_format(Ind, "\377o%^s %s.", m_name, act);
+					msg_format(Ind, "\377o%^s %s.", m_name, act);
 				else
 #endif
 				msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
 			}
-			else
-			if ((act) && (r_ptr->flags1 & (RF1_UNIQUE)))
+			else if ((act) && (r_ptr->flags1 & (RF1_UNIQUE)))
 			{
 //				msg_format(Ind, "%^s %s for \377f%d \377wdamage.", m_name, act, damage);
 //				sprintf(dam_msg, "%^s %s for \377f%%d \377wdamage.", m_name, act);
 				sprintf(dam_msg, "%s %s for \377f%%d \377wdamage.", m_name, act);
 			}
-			else 
-			if (act)
+			else if (act)
 			{		
 //				msg_format(Ind, "%^s %s for \377r%d \377wdamage.", m_name, act, damage);
 //				sprintf(dam_msg, "%^s %s for \377r%%d \377wdamage.", m_name, act);
@@ -976,7 +1035,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Hack -- Player armor reduces total damage */
-					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / AC_CAP_DIV);
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1000,7 +1059,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					/* Take some damage */
@@ -1148,7 +1207,11 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (!p_ptr->paralyzed &&
 					    (rand_int(100 + UNAWARENESS(p_ptr)) <
 						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-						  get_skill(p_ptr, SKILL_STEALING))))
+						  get_skill(p_ptr, SKILL_STEALING)
+#ifdef ENABLE_STANCES
+						  + (p_ptr->combat_stance == 1 ? 15 + p_ptr->combat_stance_power * 3 : 0)
+#endif
+						  )))
 #endif	// 0
 					{
 						/* Saving throw message */
@@ -1189,7 +1252,11 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (!p_ptr->paralyzed &&
 					    (rand_int(100 + UNAWARENESS(p_ptr)) <
 						 (adj_dex_safe[p_ptr->stat_ind[A_DEX]] +
-						  get_skill(p_ptr, SKILL_STEALING))))
+						  get_skill(p_ptr, SKILL_STEALING)
+#ifdef ENABLE_STANCES
+						  + (p_ptr->combat_stance == 1 ? 15 + p_ptr->combat_stance_power * 3 : 0)
+#endif
+						  )))
 #endif	// 0
 					{
 						/* Saving throw message */
@@ -1206,7 +1273,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					}
 
 					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION &&
-							magik (70))
+							magik (80))
 					{
 						/* Saving throw message */
 						msg_print(Ind, "Your backpack was secured!");
@@ -1246,7 +1313,7 @@ bool make_attack_normal(int Ind, int m_idx)
 
 						/* Only eat food */
 						if (o_ptr->tval != TV_FOOD) continue;
-
+						
 						/* Get a description */
 						object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
@@ -1322,7 +1389,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb (let's keep Osyluths etc dangerous!) */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1356,7 +1423,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1390,7 +1457,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1424,7 +1491,7 @@ bool make_attack_normal(int Ind, int m_idx)
 						/* 100% elemental */
 						damage = 0;
 					}
-					damage -= (damage * ((ac < 150) ? ac : 150) / (250 + 100)); /* + 100: harder to absorb */
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1635,15 +1702,18 @@ bool make_attack_normal(int Ind, int m_idx)
 					obvious = TRUE;
 
 					/* Hack -- Reduce damage based on the player armor class */
-					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / AC_CAP_DIV);
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Radius 8 earthquake centered at the monster */
-					if (damage > 23) earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
-
+					/* Morgoth overrides LF1_NO_DESTROY */
+					if (damage > 23) {
+						if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) override_LF1_NO_DESTROY = TRUE;
+						earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
+					}
 					break;
 				}
 
@@ -1890,9 +1960,21 @@ bool make_attack_normal(int Ind, int m_idx)
 
 				case RBE_DISARM:
 				{
+					int slot = INVEN_WIELD;
 					u32b f1, f2, f3, f4, f5, esp;
-					object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
-					bool shield = p_ptr->inventory[INVEN_ARM].k_idx ? TRUE : FALSE;
+					object_type *o_ptr;
+					bool shield = FALSE, secondary = FALSE;
+
+					if (p_ptr->inventory[INVEN_ARM].k_idx) {
+						shield = p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? TRUE : FALSE;
+						secondary = !shield;
+					}
+					if (p_ptr->dual_wield) {
+						if (magik(50)) slot = INVEN_ARM;
+					} else if (secondary) {
+						slot = INVEN_ARM;
+					}
+					o_ptr = &p_ptr->inventory[slot];
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
@@ -1914,33 +1996,52 @@ bool make_attack_normal(int Ind, int m_idx)
 					/* can never take off permanently cursed stuff */
 					if (f3 & TR3_PERMA_CURSE) break;
 
-					if (!p_ptr->heavy_wield && !shield && (
-								magik(50) ||
-								((f4 & TR4_MUST2H) && magik(90)) ||
-								((f4 & TR4_SHOULD2H) && magik(80)) ))
+					/* do we hold one weapon with two hands? very safe */
+					if (!p_ptr->heavy_wield && !shield && !p_ptr->dual_wield && (
+					    magik(50) ||
+					    ((f4 & TR4_MUST2H) && magik(90)) ||	((f4 & TR4_SHOULD2H) && magik(80)) || ((f4 & TR4_COULD2H) && magik(50))
+					    ))
 						break;
 					
 					/* riposte */
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
 							< (rlev + damage + UNAWARENESS(p_ptr)))
 					{
-						msg_print(Ind, "\377rYou lose the grip of your weapon!");
-//						msg_format(Ind, "\377r%^s disarms you!", m_name);
-						bypass_inscrption = TRUE;
-						if (cfg.anti_arts_hoard && true_artifact_p(o_ptr)
-								&& magik(98)) {
-							inven_takeoff(Ind, INVEN_WIELD, 1);
-						} else {
-							inven_drop(Ind, INVEN_WIELD, 1);
+						if (!p_ptr->dual_wield || magik(80)) {
+							msg_print(Ind, "\377rYou lose the grip of your weapon!");
+//							msg_format(Ind, "\377r%^s disarms you!", m_name);
+							bypass_inscrption = TRUE;
+							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
+								inven_takeoff(Ind, slot, 1);
+							} else {
+								inven_drop(Ind, slot, 1);
 #if 0
-							/* Drop it (carefully) near the player */
-							drop_near_severe(Ind, &p_ptr->inventory[INVEN_WIELD], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-							/* Decrease the item, optimize. */
-							inven_item_increase(Ind, INVEN_WIELD, -p_ptr->inventory[INVEN_WIELD].number);
-							inven_item_optimize(Ind, INVEN_WIELD);
+								/* Drop it (carefully) near the player */
+								drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+								/* Decrease the item, optimize. */
+								inven_item_increase(Ind, slot, -p_ptr->inventory[slot].number);
+								inven_item_optimize(Ind, slot);
 #endif
+							}
+						} else { /* dual-wield "feature".. get dual-disarmed :-p */
+							msg_print(Ind, "\377rYou lose the grip of your weapons!");
+//							msg_format(Ind, "\377r%^s disarms you!", m_name);
+							bypass_inscrption = TRUE;
+							o_ptr = &p_ptr->inventory[INVEN_WIELD];
+							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
+								inven_takeoff(Ind, slot, 1);
+							} else {
+								inven_drop(Ind, slot, 1);
+							}
+							o_ptr = &p_ptr->inventory[INVEN_ARM];
+							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
+								inven_takeoff(Ind, slot, 1);
+							} else {
+								inven_drop(Ind, slot, 1);
+							}
 						}
 
+						p_ptr->update |= (PU_BONUS);
 						obvious = TRUE;
 					}
 					break;
@@ -1952,7 +2053,7 @@ bool make_attack_normal(int Ind, int m_idx)
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
-					if (!p_ptr->sensible_life) {
+					if (!p_ptr->suscep_life) {
 						set_food(Ind, p_ptr->food / 2);
 						msg_print(Ind, "You have a sudden attack of hunger!");
 					}
@@ -2351,10 +2452,12 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 {
 	/* Targer */
 	monster_type    *tm_ptr = &m_list[tm_idx];
-
+#ifdef RPG_SERVER
+        monster_race    *tr_ptr = race_inf(tm_ptr);
+	int exp_gain;
+#endif
 	/* Attacker */
-	monster_type    *m_ptr = &m_list[m_idx];
-
+	monster_type    *m_ptr = &m_list[m_idx]; 
         monster_race    *r_ptr = race_inf(m_ptr);
 
 	int                     ap_cnt;
@@ -2376,7 +2479,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
 #ifdef RPG_SERVER
-	int exp_gain = race_inf(tm_ptr)->level;
+	exp_gain = race_inf(tm_ptr)->level;
 #endif
 
 	/* Assume no blink */
@@ -2459,7 +2562,7 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					obvious = TRUE;
 
 					/* Hack -- Player armor reduces total damage */
-					damage -= (damage * ((ac < 150) ? ac : 150) / 250);
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / AC_CAP_DIV);
 					/* Take damage */
 					dead = mon_take_hit_mon(m_idx, tm_idx, damage, &fear, NULL);
 
@@ -2485,8 +2588,11 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 			}
 #ifdef RPG_SERVER
 			if (dead && m_ptr->pet) {
-				msg_format(find_player(m_ptr->owner), "\377yYour pet killed something!");
-				if (monster_gain_exp(m_idx, exp_gain/10, FALSE) > 0) {
+				char monster_name[80];
+				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
+				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
+				gain_exp(find_player(m_ptr->owner), (unsigned int)(tr_ptr->mexp/2));
+				if (monster_gain_exp(m_idx,(unsigned int)(tr_ptr->mexp/2), FALSE) > 0) {
 					msg_format(find_player(m_ptr->owner), "\377GYour pet looks more experienced!");
 				}
 			}

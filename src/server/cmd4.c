@@ -502,7 +502,19 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	fprintf(fff, "  %s the ", q_ptr->name);
 #endif
 	//e.g., God the Human Grand Runemistress =P
-	fprintf(fff, "%s %s ", special_prace_lookup[q_ptr->prace],  p); 
+#ifdef ENABLE_DIVINE
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->lev >= 20) {
+		if (q_ptr->divinity==DIVINE_ANGEL)
+			fprintf(fff, "%s %s ", "Angelic", p);
+		else if (q_ptr->divinity==DIVINE_DEMON)
+			fprintf(fff, "%s %s ", "Demonic", p);
+
+	}
+	else
+#endif
+	{
+		fprintf(fff, "%s %s ", special_prace_lookup[q_ptr->prace],  p); 
+	}
 #endif
 
 	/* PK */
@@ -607,7 +619,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	
 	if (q_ptr->party) {
 	fprintf(fff, "%sLevel %d, Party: '%s%s\377U'",
-		q_ptr->fruit_bat ? "Batty " : "",
+		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 		q_ptr->lev,
 		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
@@ -615,7 +627,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 
 	else
 	fprintf(fff, "%sLevel %d",
-		q_ptr->fruit_bat ? "Batty " : "",
+		q_ptr->fruit_bat == 1 ? "Batty " : "", /* only for true battys, not polymorphed ones */
 		q_ptr->lev);
 #endif	// 0
 }
@@ -813,6 +825,7 @@ void do_cmd_check_player_equip(int Ind, int line)
 				 ((q_ptr->inventory[INVEN_OUTER].k_idx) && (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) && (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
 				((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2))))
 			continue;
+		if (q_ptr->cloaked && !admin && attr != 'B') continue;
 
 		/* Output color byte */
 		fprintf(fff, "\377%c", attr);
@@ -842,9 +855,19 @@ void do_cmd_check_player_equip(int Ind, int line)
 				fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}
-
 		/* Covered by a mummy wrapping? */
-		if (hidden) fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
+		if (hidden) {
+#if 0 /* changed position of INVEN_ARM to occur before INVEN_LEFT, so following hack isn't needed anymore */
+			/* for dual-wield, but also in general, INVEN_ARM should be visible too */
+			object_type *o_ptr = &q_ptr->inventory[INVEN_ARM];
+			char o_name[160];
+			if (o_ptr->tval) {
+				object_desc(Ind, o_name, o_ptr, TRUE, 3 + 0x10);
+				fprintf(fff, "\377w %s\n", o_name);
+			}
+#endif
+			fprintf(fff, "\377%c (Covered by a grubby wrapping)\n", 'D');
+		}
 
 		/* Add blank line */
 		fprintf(fff, "\377%c\n", 'w');

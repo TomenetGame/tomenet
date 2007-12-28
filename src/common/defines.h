@@ -32,43 +32,50 @@
  * You have been warned.
  */
 
+
+
 /* Enable/disable Halloween Event Mode- by C. Blue :) -
    also see r_info.txt for 'Pumpkin' and follow instructions there. */
 // #define HALLOWEEN
 
-/* MAJOR/MINOR/PATCH version should be 0-15.  */
+/* Enable/disable Winter season
+   Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
+// #define WINTER_SEASON   2
+
+/* Enable/disable New Year's Eve */
+// #define NEW_YEARS_EVE
+
+
+
+/* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   0
-
-/* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "e"
-
-/* For savefile purpose only */
-#define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   3
-#define SF_VERSION_EXTRA   0
-
-/*
- * Base version strings of TomeNET (see version_build)
- */
-#define TOMENET_VERSION_SHORT		"TomeNET"
-
-
-/*
- * This value specifies the suffix to the version info sent to the metaserver.
+/* This value specifies the suffix to the version info sent to the metaserver.
+ * (Currently it also affects version check vs connecting clients! Might need fixing.)
  *
  * 0 - nothing
  * 1 - "alpha"
  * 2 - "beta"
  * 3 - "development"
  */
-/* sorry DG, it should be 'dev' till all the spells and skills
- * will be finished (no concessions.)
- * please don't make me a lier :)		- Jir -
- */
 #define VERSION_EXTRA	3
+/* Server release version tag: Minimum client version tag required to "play 100%". */
+#define SERVER_VERSION_TAG "" /* "e" */
+
+/* For savefile purpose only */
+#define SF_VERSION_MAJOR   4
+#define SF_VERSION_MINOR   3
+#define SF_VERSION_PATCH   4
+#define SF_VERSION_EXTRA   0
+
+/* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
+#define CLIENT_VERSION_TAG "e"
+
+/*
+ * Base version strings of TomeNET (see version_build)
+ */
+#define TOMENET_VERSION_SHORT		"TomeNET"
 
 
 
@@ -80,32 +87,18 @@
 	<< 4 | VERSION_EXTRA)
 
 
-/* Server is a true RPG server? - C. Blue - This means..
- * - 1 real-life person may only create up to 1 character in total
- * - all characters are no-ghost by default (death is permanent)
- * - dungeons are IRONMAN
- * - and many more things that are just a little bit different :)
- */
-#define RPG_SERVER
-
-/* Server is Moltor's Smash Arcade server? */
-//#define ARCADE_SERVER
-
-/* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
-/* #define FUN_SERVER */
-
-
-//TEMPORARY (if only RACE_DIVINE is on!)
-#ifndef RPG_SERVER
-#undef SF_VERSION_PATCH
-#define SF_VERSION_PATCH   1
-#endif
+/* Determine fundamental server type (Normal, RPG, Smash arcade, Fun flagged). */
+#include "defines-local.h"
 
 
 /* Allow a bunch of latest experimental changes to be compiled into this build? */
 #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
 #define USE_PARRYING
-#ifdef RPG_SERVER
+#define ENABLE_CLOAKING		/* cloaking mode for rogues */
+
+#if 0 //RPG_SERVER
+ #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
+ #define ENABLE_DIVINE		/* enable RACE_DIVINE */
  #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
  #define ENABLE_STANCES		/* combat stances for warriors */
  #define AUCTION_BETA		/* less restrictions while beta testing */
@@ -116,9 +109,64 @@
 
 /* Use new shields with block/deflect values instead of traditional ac/+ac ? */
 #ifdef ENABLE_NEW_MELEE
- #define USE_NEW_SHIELDS
+ #ifndef USE_NEW_SHIELDS
+  #define USE_NEW_SHIELDS
+ #endif
 /* Use blocking/parrying? if USE_NEW_SHIELDS is disabled, AC will be used to determine block chance */
- #define USE_BLOCKING
+ #ifndef USE_BLOCKING
+  #define USE_BLOCKING
+ #endif
+ #ifndef USE_PARRYING
+  #define USE_PARRYING
+ #endif
+#endif
+
+
+/* Allow monsters with AI_ASTAR r_info flag to use A* pathfinding algorithm? - C. Blue */
+#define MONSTER_ASTAR
+
+/* C. Blue - Note about flow_by_sound/flow_by_smell:
+   Smell is currently not distinct from sound, but code is kind of incomplete or mixed up in some parts.
+   I added various limits for each sound and flow, although these aren't implemented yet they should be here,
+   because they won't bring additional costs! So on fixing sound/smell they should definitely be added.
+   Also, distinctions between sound/smell/ESP(new ;)) should be added, depending on monster races. */
+
+/* Allow monsters to use flowing pathfinding algorithm? */
+//#define MONSTER_FLOW_BY_SOUND
+/* Range limit? */
+#define MONSTER_FLOW_BY_SOUND_DEPTH	64
+/* Time limit? */
+#define MONSTER_FLOW_BY_SOUND_TIME	50
+
+/* Allow monsters to use smelling pathfinding algorithm? */
+//#define MONSTER_FLOW_BY_SMELL
+/* Range limit? */
+#define MONSTER_FLOW_BY_SMELL_DEPTH	200
+/* Time limit? */
+#define MONSTER_FLOW_BY_SMELL_TIME	50
+/* Scent radius surrounding a player. Note: not implemented yet, but it doesn't bring additional cost, so adding it. - C. Blue */
+#define MONSTER_FLOW_BY_SMELL_RADIUS	2
+
+/* Allow monsters to use flow algorithm without range/radius (well as far as we have cpu powah..)/time restrictions?
+   Let's just use same as for MONSTER_FLOW_BY_SOUND, so we don't need more fields for cave_type.. - C. Blue */
+//#define MONSTER_FLOW_BY_ESP
+
+/* Total flow depth? Might be superfluous, just flood whole level, and let sound/smell take care of the rest.. - C. Blue */
+#define MONSTER_FLOW_DEPTH	32
+
+
+#ifdef MONSTER_FLOW_BY_SOUND
+ #define MONSTER_FLOW
+#endif
+#ifdef MONSTER_FLOW_BY_SMELL
+ #ifndef MONSTER_FLOW
+  #define MONSTER_FLOW
+ #endif
+#endif
+#ifdef MONSTER_FLOW_BY_ESP
+ #ifndef MONSTER_FLOW
+  #define MONSTER_FLOW
+ #endif
 #endif
 
 
@@ -254,11 +302,10 @@
 /*
  * Maximum number of player "race" types (see "table.c", etc)
  */
-/*#define MAX_RACES	14 */
-#ifdef RPG_SERVER
-#define MAX_RACES	17
+#ifdef ENABLE_DIVINE
+ #define MAX_RACES	17
 #else
-#define MAX_RACES	16
+ #define MAX_RACES	16
 #endif
 
 
@@ -905,8 +952,8 @@
 #define RACE_DRIDER   	13	/* TODO: rename it to RACE_TLORD */
 #define RACE_DARK_ELF	14
 #define RACE_VAMPIRE	15
-#ifdef RPG_SERVER
-#define RACE_DIVINE 	16
+#ifdef ENABLE_DIVINE
+ #define RACE_DIVINE 	16
 #endif
 /* (or simply replace all those defines with p_info.txt) */
 
@@ -1315,11 +1362,16 @@ that keeps many algorithms happy.
 /*
  * Number of effects
  */
-#define MAX_EFFECTS             256	/* 128 */
-#define MAX_EFFECTS_PLAYER      128	/* 32 */
+#define MAX_EFFECTS             16384	/* 256, 128 */
+#define MAX_EFFECTS_PLAYER      16384	/* 128, 32 */
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
+#define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
+#define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
+#define EFF_FIREWORKS3		0x40000000	/* For new year's eve too. */
+#define EFF_SNOWING		0x80000000	/* For WINTER_SEASON */
+
 
 
 /*** Artifact indexes (see "lib/edit/a_info.txt") ***/
@@ -1467,35 +1519,35 @@ that keeps many algorithms happy.
 #define ART_AEGLOS                      97
 #define ART_OROME                       98
 #define ART_NIMLOTH                     99
-#define ART_EORLINGAS           100
+#define ART_EORLINGAS           	100
 #define ART_DURIN                       101
 #define ART_EONWE                       102
 #define ART_BALLI                       103
-#define ART_LOTHARANG           104
-#define ART_MUNDWINE            105
-#define ART_BARUKKHELED         106
+#define ART_LOTHARANG           	104
+#define ART_MUNDWINE            	105
+#define ART_BARUKKHELED         1	06
 #define ART_WRATH                       107
 #define ART_ULMO                        108
 #define ART_AVAVIR                      109
 #define ART_FUNDIN                      175
 
 /* The sword of the Dawn */
-#define ART_DAWN                110
+#define ART_DAWN                	110
 
 /* Hafted */
 #define ART_MELKOR                      18
 #define ART_HURIN                       33
 #define ART_GROND                       111
 #define ART_TOTILA                      112
-#define ART_THUNDERFIST         113
-#define ART_BLOODSPIKE          114
-#define ART_FIRESTAR            115
+#define ART_THUNDERFIST         	113
+#define ART_BLOODSPIKE          	114
+#define ART_FIRESTAR            	115
 #define ART_TARATOL                     116
 #define ART_AULE                        117
 #define ART_NAR                         118
 #define ART_ERIRIL                      119
 #define ART_OLORIN                      120
-#define ART_DEATHWREAKER        121
+#define ART_DEATHWREAKER        	121
 #define ART_TURMIL                      122
 #define ART_GOTHMOG                     123
 #define ART_AXE_GOTHMOG                 145
@@ -1505,9 +1557,9 @@ that keeps many algorithms happy.
 
 /* Bows */
 #define ART_BELTHRONDING        124
-#define ART_BARD                        125
+#define ART_BARD                125
 #define ART_CUBRAGOL            126
-#define ART_UMBAR                       171
+#define ART_UMBAR               171
 
 /* Mage Staffs */
 #define ART_GANDALF             127
@@ -1533,14 +1585,61 @@ that keeps many algorithms happy.
 #define ART_NATUREBANE          158
 
 /* ToME-NET additions */
-#define ART_BILBO				214
-#define ART_DWARVEN_ALE			216
+#define ART_GIVEROFSLEEP	209
+#define ART_MOLTOR		210 /* was ETERNALPEACE */
+#define ART_METHODIQUE		211
+#define ART_SCHMERZGLAUBE	212
+#define ART_DOUBLEZEE		213
+#define ART_BILBO		214
+#define ART_HALFLINGS		215
+#define ART_DWARVEN_ALE		216
 
 /* C. Blue (arts > 216) */
+#define ART_OCEAN_SOUL		217
+#define ART_DUNGEON_WIZARD	218
+#define ART_IRONFOOT		219
+#define ART_HELM_DURIN		220
+#define ART_MOONSTONE		221
+#define ART_RIPPER		222
+#define ART_REAVER		223
+#define ART_GUARDIAN		224
+#define ART_ABYSS		225
+#define ART_FORGOTTEN		226
+#define ART_BLACKORE		227
+#define ART_THUNDERBOLT		228
+#define ART_ZODIA		229
+#define ART_GOBLINS		230
+#define ART_DOMINATION		231
 #define ART_SOULCURE		232
 #define ART_AMUGROM		233
+#define ART_WRATHVERGE		234
+#define ART_ARTERYCUTTER	235
 #define ART_HELLFIRE		236
+#define ART_COBALTFOCUS		237
+#define ART_SKYWALKER		238
+#define ART_SUNSPIRE		239
+#define ART_STORMSPIRE		240
+#define ART_BLOODSCOURGE	241
+#define ART_QUIETUS		242
+#define ART_ICONOFLIFE		243
 #define ART_SPIRITSHARD		244
+#define ART_RIPSAW		245
+#define ART_NIGHTCLAW		246
+#define ART_MISERICORDIA	247
+#define ART_HOPEDAWN		248
+#define ART_IMPALER		249
+#define ART_SLICING		250
+#define ART_TARNKAPPE		251
+#define ART_AMBER		252
+#define ART_SLEEPING		253
+#define ART_STORMSHIELD		254
+#define ART_PIETY		255
+#define ART_WINDS		256
+#define ART_FIONA		257
+#define ART_SCARLETORDER	258
+#define ART_THINKINGCAP		259
+#define ART_MIRROROFGLORY	260
+/* #define ART_ANGTIRCALAD		*/
 
 
 /*** Ego-Item indices (see "lib/edit/e_info.txt") ***/
@@ -2736,6 +2835,7 @@ that keeps many algorithms happy.
  *   ITEM: Affect each object in the "blast area" in some way
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
+ *   DUMY: Doesn't do anything at all, except for the visual effect (used for EFF_FIREWORKS...).
  */
 #define PROJECT_JUMP	0x00000001
 #define PROJECT_BEAM	0x00000002
@@ -2745,6 +2845,7 @@ that keeps many algorithms happy.
 #define PROJECT_ITEM	0x00000020
 #define PROJECT_KILL	0x00000040
 #define PROJECT_HIDE	0x00000080
+#define PROJECT_DUMY	0x80000000
 
 /* ToME expansions */
 #if 0	/* soon */
@@ -3104,6 +3205,16 @@ that keeps many algorithms happy.
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
 
+/* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
+#define GF_SNOWFLAKE	200
+/* For fireworks on NEW_YEARS_EVE - C. Blue */
+#define GF_FW_FIRE	201
+#define GF_FW_ELEC	202
+#define GF_FW_POIS	203
+#define GF_FW_LITE	204
+#define GF_FW_SHDI	205
+#define GF_FW_SHDM	206
+#define GF_FW_MULT	207
 
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -3463,9 +3574,19 @@ that keeps many algorithms happy.
 */
 
 
-/* Item placement restrictors */
-#define PR_TRUE_ART	0x001	/* allow true artifacts */
-#define PR_WINNER	0x002	/* allow TR5_WINNERS_ONLY items */
+/* Item-generation restriction flags */
+#define RESF_WINNER		0x001	/* allow TR5_WINNERS_ONLY items */
+#define RESF_NOTRUEART		0x002	/* prevent true artifacts */
+#define RESF_NORANDART		0x004	/* prevent random artifacts */
+#define RESF_NODOUBLEEGO	0x008	/* prevent double ego items */
+#define RESF_NOHIDSM		0x010	/* prevent generation of high dragon scale mails */
+#define RESF_LOWSPEED		0x020	/* not more than +4 speed */
+#define RESF_NOHISPEED		0x040	/* not more than +6 speed */
+#define RESF_LOWVALUE		0x080	/* no items worth more than 35000 Au */
+#define RESF_NOHIVALUE		0x100	/* no items worth more than 100000 Au */
+#define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED)	/* prevent generation of especially powerful items */
+#define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items */
+#define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
 
 
 /* ESP defines */
@@ -4506,6 +4627,14 @@ that keeps many algorithms happy.
 #define object_tried_p(IND, T) \
     (Players[IND]->obj_tried[(T)->k_idx])
 
+/*
+ * Determine if a given inventory item is "felt"
+ */
+#define object_felt_p(IND, T) \
+    (Players[IND]->obj_felt[(T)->k_idx])
+#define object_felt_heavy_p(IND, T) \
+    (Players[IND]->obj_felt_heavy[(T)->k_idx])
+
 
 /*
  * Determine if a given inventory item is "known"
@@ -4695,6 +4824,14 @@ that keeps many algorithms happy.
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
 	((ZCAVE[Y][X].feat == 92 || ZCAVE[Y][X].feat == 96 || ZCAVE[Y][X].feat == 202) && p_ptr->pass_trees) || \
 	((ZCAVE[Y][X].feat == 84 || ZCAVE[Y][X].feat == 103 || ZCAVE[Y][X].feat == 174 || ZCAVE[Y][X].feat == 187) && p_ptr->can_swim))
+/* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
+#define cave_running_bold_floor(p_ptr,ZCAVE,Y,X) \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
+	((ZCAVE[Y][X].feat == 84 || ZCAVE[Y][X].feat == 103 || ZCAVE[Y][X].feat == 174 || ZCAVE[Y][X].feat == 187) && p_ptr->can_swim))
+/* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
+#define cave_running_bold_nofloor(p_ptr,ZCAVE,Y,X) \
+	((ZCAVE[Y][X].feat == 92 || ZCAVE[Y][X].feat == 96 || ZCAVE[Y][X].feat == 202) && (p_ptr->pass_trees || p_ptr->fly))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
@@ -5369,11 +5506,27 @@ extern int PlayerUID;
 		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
 		p_ptr->inventory[INVEN_TOOL].sval : -1)
 
+#define equip_weight(p_ptr) \
+	(p_ptr->inventory[INVEN_WIELD].weight \
+	+ p_ptr->inventory[INVEN_ARM].weight \
+	+ p_ptr->inventory[INVEN_BOW].weight \
+	+ p_ptr->inventory[INVEN_LEFT].weight \
+	+ p_ptr->inventory[INVEN_RIGHT].weight \
+	+ p_ptr->inventory[INVEN_NECK].weight \
+	+ p_ptr->inventory[INVEN_LITE].weight \
+	+ p_ptr->inventory[INVEN_BODY].weight \
+	+ p_ptr->inventory[INVEN_OUTER].weight \
+	+ p_ptr->inventory[INVEN_HEAD].weight \
+	+ p_ptr->inventory[INVEN_HANDS].weight \
+	+ p_ptr->inventory[INVEN_FEET].weight \
+	+ p_ptr->inventory[INVEN_AMMO].weight \
+	+ p_ptr->inventory[INVEN_TOOL].weight)
+
 #define armour_weight(p_ptr) \
 	( p_ptr->inventory[INVEN_BODY].weight \
 	+ p_ptr->inventory[INVEN_HEAD].weight \
-	+ (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) ? \
-	    p_ptr->inventory[INVEN_ARM].weight : 0 \
+	+ ((p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) ? \
+	    p_ptr->inventory[INVEN_ARM].weight : 0) \
 	+ p_ptr->inventory[INVEN_OUTER].weight \
 	+ p_ptr->inventory[INVEN_HANDS].weight \
 	+ p_ptr->inventory[INVEN_FEET].weight)
@@ -5387,9 +5540,11 @@ extern int PlayerUID;
 	((p_ptr->pclass == CLASS_ROGUE || \
 	  (get_skill(p_ptr, SKILL_DUAL) && \
 	   p_ptr->inventory[INVEN_WIELD].k_idx && \
-	   p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) && \
-	 armour_weight(p_ptr) > \
-	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 50))
+	   p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) || \
+	   (get_skill(p_ptr, SKILL_DODGE)) || \
+	   (get_skill(p_ptr, SKILL_CRITS))) && \
+	 (armour_weight(p_ptr) > \
+	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 50)))
 
 
 /* replacement of helper functions in cave.c */
@@ -5411,7 +5566,7 @@ extern int PlayerUID;
 	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type==WILD_TOWN)
 
 
-/* paralysis should be handled by other means! */
+/* paralysis should be handled by other means! (0..80, or 1000 if paralyzed. Usually 10..25.) */
 #define UNAWARENESS(p_ptr) ( \
 	(p_ptr->stun > 50 ? 10 : 0) + \
 	(p_ptr->stun ? 15 : 0) + \
@@ -5556,7 +5711,6 @@ extern int PlayerUID;
 #define SKILL_TRAINING			40
 #define SKILL_INTERCEPT			41
 #define SKILL_DODGE				42
-#define SKILL_DODGE				42
 #define SKILL_HEALTH			43
 #define SKILL_DIG				44
 #define SKILL_SPELLRAD			45
@@ -5588,8 +5742,8 @@ extern int PlayerUID;
 #define SKILL_DRUID_PHYSICAL		75
 
 #define SKILL_RUNEMASTERY		76
-#ifdef RACE_DIVINE
-#define SKILL_ASTRAL			77
+#ifdef ENABLE_DIVINE
+ #define SKILL_ASTRAL			77
 #endif
 
 #define SKILL_DRUID_EXTRA		76
@@ -5989,14 +6143,15 @@ extern int PlayerUID;
  #define RCLOUD_BASE 	(3.0)
  #define RSELF_BASE	RBOLT_BASE
 #endif //Runemaster
-#ifdef RACE_DIVINE
+
+//#ifdef ENABLE_DIVINE  <- now always defined for important purpose of making savefiles uniform!
  #define DIVINE_UNDEF 0x00
  #define DIVINE_ANGEL 0x01
  #define DIVINE_DEMON 0x10
 
  #define MONSTER_RIDX_CANDLEBEARER 1104
  #define MONSTER_RIDX_DARKLING 1105
-#endif
+//#endif
 
 /* Auction system - mikaelh */
 #ifdef AUCTION_SYSTEM

@@ -421,7 +421,7 @@ errr check_load_init(void)
 static void display_player_middle(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
+	int bmh = 0, bmd = 0;
 	s32b adv_exp;
 
 	int show_tohit_m = p_ptr->dis_to_h + p_ptr->to_h_melee;
@@ -432,17 +432,41 @@ static void display_player_middle(int Ind)
 	int show_tohit_r = p_ptr->dis_to_h + p_ptr->to_h_ranged;
 	int show_todam_r = p_ptr->to_d_ranged;
 
+        /* well, about dual-wield.. we can only display the boni of one weapon or their average until we add another line
+           to squeeze info about the secondary weapon there too. so for now let's just stick with this. - C. Blue */
 	object_type *o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o_ptr2 = &p_ptr->inventory[INVEN_BOW];
 	object_type *o_ptr3 = &p_ptr->inventory[INVEN_AMMO];
+	object_type *o_ptr4 = &p_ptr->inventory[INVEN_ARM];
 
 	/* Hack -- add in weapon info if known */
-	if (object_known_p(Ind, o_ptr)) show_tohit_m += o_ptr->to_h;
-	if (object_known_p(Ind, o_ptr)) show_todam_m += o_ptr->to_d;
-	if (object_known_p(Ind, o_ptr2)) show_tohit_r += o_ptr2->to_h;
-	if (object_known_p(Ind, o_ptr2)) show_todam_r += o_ptr2->to_d;
-	if (object_known_p(Ind, o_ptr3)) show_tohit_r += o_ptr3->to_h;
-	if (object_known_p(Ind, o_ptr3)) show_todam_r += o_ptr3->to_d;
+	if (object_known_p(Ind, o_ptr)) {
+		bmh += o_ptr->to_h;
+		bmd += o_ptr->to_d;
+	}
+	if (object_known_p(Ind, o_ptr2)) {
+		show_tohit_r += o_ptr2->to_h;
+		show_todam_r += o_ptr2->to_d;
+	}
+	if (object_known_p(Ind, o_ptr3)) {
+		show_tohit_r += o_ptr3->to_h;
+		show_todam_r += o_ptr3->to_d;
+	}
+	/* dual-wield..*/
+	if (o_ptr4->k_idx && o_ptr4->tval != TV_SHIELD) {
+		if (object_known_p(Ind, o_ptr4)) {
+			bmh += o_ptr4->to_h;
+			bmd += o_ptr4->to_d;
+		}
+		if (object_known_p(Ind, o_ptr) && object_known_p(Ind, o_ptr4)) {
+			/* average of both */
+			bmh /= 2;
+			bmd /= 2;
+		}
+	}
+
+	show_tohit_m += bmh;
+	show_todam_m += bmd;
 
 	/* Dump the bonuses to hit/dam */
 //	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
@@ -746,17 +770,6 @@ void do_cmd_help(int Ind, int line)
 }
 
 
-
-/* view cheeze archives */
-void do_cmd_view_cheeze(int Ind)
-{
-//	cptr name = "cheeze.log";
-//	(void)do_cmd_help_aux(Ind, name, NULL, line, FALSE);
-
-	char    path[MAX_PATH_LENGTH];
-        path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
-        do_cmd_check_other_prepare(Ind, path);
-}
 
 
 
@@ -2120,7 +2133,24 @@ void wipeout_needless_objects()
  */
 void exit_game_panic(void)
 {
-	int i = 1;
+	int i = 1, dumppid, dumpstatus;
+
+	/* fork() a child process that will abort() - mikaelh */
+	dumppid = fork();
+	if (dumppid == 0) {
+		/* child process */
+
+#ifdef HANDLE_SIGNALS
+		signal(SIGABRT, SIG_IGN);
+#endif
+
+		/* dump core */
+		abort();
+	}
+	else if (dumppid != -1) {
+		/* wait for the child */
+		waitpid(dumppid, &dumpstatus, 0);
+	}
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
@@ -2181,20 +2211,11 @@ void exit_game_panic(void)
 
 	if (!save_server_info()) quit("server panic info save failed!");
 
-#if 0
-	/* Dump a nice core - Chris */
-#ifdef HANDLE_SIGNALS
-	signal(SIGSEGV, SIG_IGN);
-
-#ifndef WINDOWS
-	kill(getpid(), SIGSEGV);
-#endif
-#endif
-#else
+#if 0 /* abort() done above in a child process */
 	/* make a core dump using abort() - mikaelh */
-#ifdef HANDLE_SIGNALS
+# ifdef HANDLE_SIGNALS
 	signal(SIGABRT, SIG_IGN);
-#endif
+# endif
 	abort();
 #endif
 	
@@ -2508,3 +2529,141 @@ void signals_init(void)
 #endif  /* HANDLE_SIGNALS */
 
 
+/*
+ * New v* functions for accessing files in memory
+ * Uses non-blocking fds to read the files
+ *  - mikaelh
+ */
+
+/* Same as in nserver.c */
+#define MAX_FD 1023
+
+#define VFILE_INPUT_INSTALLED	1
+
+struct vfile {
+	char *name;
+	char *data;
+	size_t alloc;
+	size_t len;
+	off_t pos;
+	int flags;
+	int vflags;
+	int (*callback)(int, int);
+};
+
+typedef struct vfile vfile;
+
+struct vfile vfiles[MAX_FD];
+
+void vfile_receive_input(int fd, int arg);
+int vopen(const char *pathname, int flags, int (*callback)(int, int));
+int vclose(int fd);
+ssize_t vread(int fd, char *buf, size_t len);
+off_t vseek(int fd, off_t offset, int whence);
+
+void vfile_receive_input(int fd, int arg) {
+	vfile *vf = &vfiles[fd];
+	ssize_t read_len;
+
+	if (vf->alloc - vf->len < 4096) {
+		vf->alloc += 4096;
+		vf->data = realloc(vf->data, vf->alloc);
+	}	
+
+	read_len = read(fd, vf->data + vf->len, vf->alloc - vf->len);
+	if (read_len > 0) {
+		vf->len += read_len;
+	}
+	else if (read_len == 0) { /* end of file */
+		remove_input(fd);
+		vf->vflags &= ~VFILE_INPUT_INSTALLED;
+		(*vf->callback)(fd, 0);
+	}
+	else if (errno != EAGAIN) {
+		/* fatal error, close the file and notify callback */
+		vclose(fd);
+		(*vf->callback)(fd, -1);
+	}
+}
+
+int vopen(const char *pathname, int flags, int (*callback)(int, int)) {
+	int fd;
+	size_t len;
+	vfile *vf;
+
+	flags |= O_NONBLOCK;
+
+	fd = open(pathname, flags);
+
+	if (fd >= 0) {
+		vf = &vfiles[fd];
+		memset(vf, 0, sizeof(struct vfile));
+		len = strlen(pathname);
+		vf->name = malloc(len + 1);
+		strcpy(vf->name, pathname);
+		vf->flags = flags;
+		vf->callback = callback;
+		vf->alloc = 4096;
+		vf->data = malloc(vf->alloc);
+
+		install_input(vfile_receive_input, fd, 0);
+		vf->vflags |= VFILE_INPUT_INSTALLED;
+	}
+
+	return fd;
+}
+
+int vclose(int fd) {
+	vfile *vf = &vfiles[fd];
+	int n;
+
+	if (vf->vflags & VFILE_INPUT_INSTALLED) {
+		remove_input(fd);
+		vf->vflags &= ~VFILE_INPUT_INSTALLED;
+	}
+
+	n = close(fd);
+
+	if (!n) {
+		free(vf->name);
+		free(vf->data);
+		memset(vf, 0, sizeof(struct vfile));
+	}
+
+	return n;
+}
+
+ssize_t vread(int fd, char *buf, size_t len) {
+	vfile *vf = &vfiles[fd];
+
+	if (!vf->data) {
+		return -1;
+	}
+
+	if (vf->pos + len > vf->len) {
+		len = vf->len - vf->pos;
+	}
+
+	if (len < 0) return 0;
+
+	memcpy(buf, &vf->data[vf->pos], len);
+	vf->pos += len;
+
+	return len;
+}
+
+off_t vseek(int fd, off_t offset, int whence) {
+	vfile *vf = &vfiles[fd];
+
+	if (whence == SEEK_SET) {
+		vf->pos = offset;
+	} else if (whence == SEEK_CUR) {
+		vf->pos += offset;
+	} else if (whence == SEEK_END) {
+		vf->pos = vf->len + offset;
+	} else {
+		return -1;
+	}
+
+	return vf->pos;
+}

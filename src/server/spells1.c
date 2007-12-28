@@ -16,6 +16,9 @@
 #include "angband.h"
 
 
+/* divide magical damage by this in PvP */
+#define PVP_SPELL_DAM_REDUCTION 5
+
 /* 1/x chance of reducing stats (for elemental attacks) */
 #define HURT_CHANCE 16
 
@@ -26,7 +29,7 @@
 #define	DAM_STAT_TYPE(inv) \
 	(magik(inv*25) ? STAT_DEC_NORMAL : STAT_DEC_TEMPORARY)
 
-/* 
+/*
  * Maximum lower limit for player teleportation.	[30]
  * This should make teleportation of high-lv players look 'more random'.
  * To disable, comment it out.
@@ -38,6 +41,11 @@
 
 /* Limitation for teleport radius on the wilderness.	[20] */
 #define WILDERNESS_TELEPORT_RADIUS	40
+
+/* Macro to test in project_p() whether we are hurt by a PvP
+   (player vs player) or a normal PvM (player vs monster) attack */
+#define PVP	(who < 0 && who > -MAX_PLAYERS)
+#define PLAYER(i)	(i > 0 && i < MAX_PLAYERS)
 
 
  /*
@@ -259,7 +267,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			dt = GF_NETHER;		/* let's use mana damage for now.. */
 			dam = damroll(30,30);
 			angry = TRUE;
-			radius = 1;
+			radius = 2;
 			ident = TRUE;
 			break;
 		case SV_POTION_SPEED:
@@ -1172,7 +1180,7 @@ byte spell_color(int type)
  * that tells 'what kind of damage'.
  */
 bool bypass_invuln = FALSE;
-
+	
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1181,17 +1189,20 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	int old_num, new_num;
 
 	/* Amulet of Immortality */
-		object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-		/* Skip empty items */
-		if (o_ptr->k_idx)
+	object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
+	/* Skip empty items */
+	if (o_ptr->k_idx)
 	{
 		if (o_ptr->tval == TV_AMULET &&
-			o_ptr->sval == SV_AMULET_INVINCIBILITY)
+			(o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
 		return;
 	}
 
 	/* Heavenly invulnerability? */
-	if (p_ptr->martyr && !bypass_invuln) return;
+	if (p_ptr->martyr && !bypass_invuln) {
+		break_cloaking(Ind); /* still notice! paranoia though, rogues can't use martyr */
+		return;
+	}
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
@@ -1204,7 +1215,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 */		old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 		if (old_num >= 7) old_num = 10;
 /*	}
-	else
+	else if (p_ptr->msp > 0)
 	{
 
 		old_num = (p_ptr->csp * 95) / (p_ptr->msp*10); 
@@ -1228,6 +1239,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		if (magik(40))
 		{
 			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			break_cloaking(Ind);
 			return;
 		}
 
@@ -1283,6 +1295,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 	p_ptr->deathblow = damage;
+	
+	break_cloaking(Ind);
 
 	/* Update health bars */
 	update_health(0 - Ind);
@@ -1314,10 +1328,11 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* Dead player */
 	if (p_ptr->chp < 0)
 	{
-		int Ind2;
-
 		/* Sound */
 		sound(Ind, SOUND_DEATH);
+
+#if 0
+		int Ind2;
 
 		/* Hack -- Blond bond */
 		Ind2 = find_player(p_ptr->blood_bond);
@@ -1330,6 +1345,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 			p_ptr->redraw |= (PR_HP);
 			Players[Ind2]->redraw |= (PR_HP);
 
+			s_printf("BLOOD_BOND: %s won the blood bond against %s\n", Players[Ind2]->name, p_ptr->name);
 			msg_broadcast(0, format("%s won the blood bond against %s.", Players[Ind2]->name, p_ptr->name));
 
 			p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
@@ -1343,6 +1359,34 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 			return;
 		}
+#else
+		if (PLAYER(Ind_attacker))
+		{
+			if (check_blood_bond(Ind, Ind_attacker))
+			{
+				player_type *p2_ptr = Players[Ind_attacker];
+				p_ptr->chp = p_ptr->mhp;
+				p2_ptr->chp = p2_ptr->mhp;
+				p_ptr->redraw |= PR_HP;
+				p2_ptr->redraw |= PR_HP;
+
+				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
+				msg_broadcast(0, format("%s won the blood bond against %s.", p2_ptr->name, p_ptr->name));
+
+				remove_blood_bond(Ind, Ind_attacker);
+				remove_blood_bond(Ind_attacker, Ind);
+				remove_hostility(Ind, p2_ptr->name);
+				remove_hostility(Ind_attacker, p_ptr->name);
+
+				target_set(Ind, 0);
+				target_set(Ind_attacker, 0);
+
+				teleport_player(Ind, 400);
+
+				return;
+			}
+		}
+#endif
 
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause
@@ -1379,6 +1423,15 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
+        /* Amulet of Immortality */
+        object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+        {
+                if (o_ptr->tval == TV_AMULET &&
+                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
+	                return;
+        }
 
 	/* Paranoia */
 	if (p_ptr->death) return;
@@ -1430,12 +1483,13 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 
 		/* Note death */
 		p_ptr->death = TRUE;
-		p_ptr->deathblow = 0;
+		p_ptr->deathblow = damage;
 
 		/* This way, player dies without becoming a ghost. */
 //		ptr->ghost = TRUE;
 
 		/* Dead */
+		break_cloaking(Ind);
 		return;
 	}
 
@@ -1458,6 +1512,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
 		msg_print(Ind, NULL);
 	}
+	break_cloaking(Ind);
 }
 
 /* Decrease player's exp. This is another copy of the function above.
@@ -1470,6 +1525,16 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 {
 	player_type *p_ptr = Players[Ind];
+
+        /* Amulet of Immortality */
+        object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
+        /* Skip empty items */
+        if (o_ptr->k_idx)
+        {
+                if (o_ptr->tval == TV_AMULET &&
+                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
+	                return;
+        }
 
 	/* Paranoia */
 	if (p_ptr->death) return;
@@ -1515,8 +1580,10 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 		p_ptr->deathblow = 0;
 
 		/* Dead */
+		break_cloaking(Ind);
 		return;
 	}
+	break_cloaking(Ind);
 }
 
 
@@ -1711,8 +1778,8 @@ bool hates_water(object_type *o_ptr)
 {
 	switch (o_ptr->tval)
 	{
-		case TV_POTION:		/* dilutes */
-		case TV_POTION2:	/* dilutes */
+//		case TV_POTION:		/* dilutes */
+//		case TV_POTION2:	/* dilutes */
 		case TV_SCROLL:		/* fades */
 		case TV_BOOK:
 		{
@@ -1970,11 +2037,9 @@ int inven_damage(int Ind, inven_func typ, int perc)
 
 
 /*
- * Acid has hit the player, attempt to affect some armor.
- *
+ * Acid or water has hit the player, attempt to affect some armor. - C. Blue
  * Note that the "base armor" of an object never changes.
- *
- * If any armor is damaged (or resists), the player takes less damage.
+ * If any armor is damaged (or resists), the player takes less damage. <- not implemented atm
  */
 /* Hack -- 'water' means it was water damage (and not acid).
  * TODO: add IGNORE_WATER flags */
@@ -1999,11 +2064,12 @@ int equip_damage(int Ind, int typ)
 
 	switch (typ) {
 	case GF_WATER:
-		if (!set_rust_destroy(o_ptr)) return(FALSE); /* for some equipped items set_rust_destroy and set_water_destroy may be different */
+		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
-		if (!set_acid_destroy(o_ptr)) return(FALSE);
+		if (!set_acid_destroy(o_ptr)) return(FALSE); else break; 
 	case GF_FIRE:
-		if (!set_fire_destroy(o_ptr)) return(FALSE);
+		if (!set_fire_destroy(o_ptr)) return(FALSE); else break;
+	default: return(FALSE);
 	}
 
 	/* No damage left to be done */
@@ -2028,25 +2094,83 @@ int equip_damage(int Ind, int typ)
 	return (TRUE);
 }
 
-int weapon_takes_damage(int Ind, int typ)
+/*
+ * Acid or water has hit the player but he blocked it. Damage the shield! - C. Blue
+ * Note that the "base armor" of an object never changes.
+ */
+int shield_takes_damage(int Ind, int typ)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr = NULL;
+	object_type		*o_ptr = &p_ptr->inventory[INVEN_ARM];
 	char		o_name[160];
-		u32b f1, f2, f3, f4, f5, esp;
-
-	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	/* Nothing to damage */
 	if (!o_ptr->k_idx) return (FALSE);
 
 	switch (typ) {
 	case GF_WATER:
-		if (!set_rust_destroy(o_ptr)) return(FALSE); /* for some equipped items set_rust_destroy and set_water_destroy may be different */
+		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
-		if (!set_acid_destroy(o_ptr)) return(FALSE);
+		if (!set_acid_destroy(o_ptr)) return(FALSE); else break;
 	case GF_FIRE:
-		if (!set_fire_destroy(o_ptr)) return(FALSE);
+		if (!set_fire_destroy(o_ptr)) return(FALSE); else break;
+	default: return(FALSE);
+	}
+
+	/* No damage left to be done */
+	if (o_ptr->ac + o_ptr->to_a <= 0) return (FALSE);
+
+	/* Describe */
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+	/* Message */
+	msg_format(Ind, "\377oYour %s is damaged!", o_name);
+
+	/* Damage the item */
+	o_ptr->to_a--;
+
+	/* Calculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	/* Item was damaged */
+	return (TRUE);
+}
+
+int weapon_takes_damage(int Ind, int typ, int slot)
+{
+	player_type *p_ptr = Players[Ind];
+	char		o_name[160];
+		u32b f1, f2, f3, f4, f5, esp;
+#if 0
+	object_type		*o_ptr = NULL, *o2_ptr = NULL;
+
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	/* dual-wield */
+	o2_ptr = &p_ptr->inventory[INVEN_ARM];
+	if (!o2_ptr->k_idx || o2_ptr->tval == TV_SHIELD) o2_ptr = NULL;
+
+	/* Nothing to damage */
+	if (!o_ptr->k_idx && o2_ptr == NULL) return (FALSE);
+	/* dual-wield - choose one randomly */
+	if (!o_ptr->k_idx || (o2_ptr != NULL && magik(50))) o_ptr = o2_ptr;
+#else
+	object_type		*o_ptr = &p_ptr->inventory[slot];
+
+	/* Nothing to damage */
+	if (!o_ptr->k_idx) return (FALSE);
+#endif
+
+	switch (typ) {
+	case GF_WATER:
+		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
+	case GF_ACID:
+		if (!set_acid_destroy(o_ptr)) return(FALSE); else break; 
+	case GF_FIRE:
+		if (!set_fire_destroy(o_ptr)) return(FALSE); else break; 
+	default: return(FALSE);
 	}
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -2102,7 +2226,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->immune_acid || (dam <= 0)) return(0);
 
 	/* Resist the damage */
-	if (p_ptr->sensible_acid) dam = (dam + 2) * 2;
+	if (p_ptr->suscep_acid) dam = dam * 2;
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
@@ -2123,10 +2247,14 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (Ind_attacker > 0 && Ind_attacker < MAX_PLAYERS) {
+	if (PLAYER(Ind_attacker)) {
+#if 0
 		player_type *p2 = Players[Ind_attacker];
 
 		if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
+#else
+		if (check_blood_bond(Ind, Ind_attacker)) {
+#endif
 			breakable = 0;
 		}
 	} 
@@ -2155,7 +2283,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->immune_elec || (dam <= 0)) return(0);
 
 	/* Resist the damage */
-	if (p_ptr->sensible_elec) dam = (dam + 2) * 2;
+	if (p_ptr->suscep_elec) dam = dam * 2;
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
@@ -2168,10 +2296,14 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (Ind_attacker > 0 && Ind_attacker < MAX_PLAYERS) {
+	if (PLAYER(Ind_attacker)) {
+#if 0
 		player_type *p2 = Players[Ind_attacker];
 
 		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
+#else
+		if (check_blood_bond(Ind, Ind_attacker)) {
+#endif
 			breakable = 0;
 		}
 	}
@@ -2203,7 +2335,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->immune_fire || (dam <= 0)) return(0);
 
 	/* Resist the damage */
-	if (p_ptr->sensible_fire) dam = (dam + 2) * 2;
+	if (p_ptr->suscep_fire) dam = dam * 2;
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
 
@@ -2216,10 +2348,14 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (Ind_attacker > 0 && Ind_attacker < MAX_PLAYERS) {
+	if (PLAYER(Ind_attacker)) {
+#if 0
 		player_type *p2 = Players[Ind_attacker];
 
 		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
+#else
+		if (check_blood_bond(Ind, Ind_attacker)) {
+#endif
 			breakable = 0;
 		}
 	}
@@ -2249,7 +2385,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->immune_cold || (dam <= 0)) return(0);
 
 	/* Resist the damage */
-	if (p_ptr->sensible_cold) dam = (dam + 2) * 2;
+	if (p_ptr->suscep_cold) dam = dam * 2;
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
@@ -2262,10 +2398,14 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (Ind_attacker > 0 && Ind_attacker < MAX_PLAYERS) {
+	if (PLAYER(Ind_attacker)) {
+#if 0
 		player_type *p2 = Players[Ind_attacker];
 
 		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
+#else
+		if (check_blood_bond(Ind, Ind_attacker)) {
+#endif
 			breakable = 0;
 		}
 	}
@@ -3291,8 +3431,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					/* Place object */
 					if (!istown(wpos)) {
-						place_object_restrictor = 0;
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+						place_object_restrictor = 0x000;
+						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 					}
 				}
 			}
@@ -3872,7 +4012,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_ROCKET:
 		{
-			do_smash_effect = TRUE;
+			do_smash_effect = FALSE; /* was exploitable for easy insta-killing */
 			do_kill = TRUE;
 			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
 						: (plural ? " is pulverized!" : " is pulverized!");
@@ -4118,7 +4258,7 @@ static bool psi_backlash(int Ind, int m_idx, int dam)
  */
 static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg)
 {
-	int i, div, k;
+	int i = 0, div, k;
 
 	monster_type *m_ptr;
 
@@ -5241,15 +5381,24 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note = " is unaffected!";
 				obvious = FALSE;
 			}
+			else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) /* cannot randint higher? (see 'resist' branch below) */
+			{
+				note = " resists easily."; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
+				obvious = FALSE;
+			}
 			else if (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
 			{
 				note = " resists.";
 				obvious = FALSE;
 			}
-			else /* Normal monsters slow down */
+			else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
 			{
-				if (m_ptr->mspeed > 60) m_ptr->mspeed -= 10;
+//				if (m_ptr->mspeed > 60) m_ptr->mspeed -= 10;
+				m_ptr->speed -= 10;
 				note = " starts moving slower.";
+			} else {
+				note = " is unaffected.";
+				obvious = FALSE;
 			}
 
 			/* No "real" damage */
@@ -5388,7 +5537,6 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				break;
 			} else { //Blind
 				do_blind = dam;
-				break;
 			}
 			break;
 		}
@@ -5666,7 +5814,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			/* Only affect undead */
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-				(r_ptr->flags3 & (RF3_EVIL)))
+				!(r_ptr->flags3 & (RF3_EVIL)))
 			{
 				bool resists_tele = FALSE;
 
@@ -5707,7 +5855,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			dun_level		*l_ptr = getfloor(wpos);
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-				(r_ptr->flags3 & (RF3_RES_TELE)))
+				!(r_ptr->flags3 & (RF3_RES_TELE)))
 			{
 				if (r_ptr->flags1 & (RF1_UNIQUE))
 				{
@@ -5987,7 +6135,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (quiet) break;
 
 			if (!(r_ptr->flags9 & RF9_IM_TELE) &&
-				(r_ptr->flags3 & (RF3_RES_TELE)))
+				!(r_ptr->flags3 & (RF3_RES_TELE)))
 			{
 				if (r_ptr->flags1 & (RF1_UNIQUE))
 				{
@@ -6001,6 +6149,10 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note = " resists!";
 					resists_tele = TRUE;
 				}
+			} else {
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+				note = " is unaffected!";
+				resists_tele = TRUE;
 			}
 
 			if (!resists_tele)
@@ -6288,6 +6440,8 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* "Unique" monsters cannot be polymorphed */
 	if (r_ptr->flags1 & RF1_UNIQUE) do_poly = FALSE;
+	/* nor IM_TELE monsters.. */
+	if (r_ptr->flags9 & RF9_IM_TELE) do_poly = FALSE;
 
 
 	/* "Unique" monsters can only be "killed" by the player */
@@ -6649,6 +6803,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* For resist_time: Limit randomization of effect */
 	int time_influence_choices;
 
+
 	/* Bad player number */
 	if (Ind <= 0)
 		return (FALSE);
@@ -6686,128 +6841,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return(FALSE);
 	}
 
-	/* Bolt attack from a monster, a player or a trap */
-//	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
-	/* Hack -- HIDE(direct) spell cannot be dodged */
-	if (get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE))
-	{
-		if ((!rad) && (who >= PROJECTOR_TRAP))
-		{
-			//		int chance = (p_ptr->dodge_chance - ((r_info[who].level * 5) / 6)) / 3;
-			/* Hack -- let's use 'dam' for now */
-			int chance = (p_ptr->dodge_chance - dam / 6) / 3;
-
-			if ((chance > 0) && magik(chance))
-			{
-//				msg_print(Ind, "You dodge a magical attack!");
-				msg_print(Ind, "You dodge the projectile!");
-				return (TRUE);
-			}
-		}
-		/* MEGAHACK -- allow to dodge 'bolt' traps */
-		else if ((rad < 2) && (who == PROJECTOR_TRAP))
-		{
-			/* Hack -- let's use 'dam' for now */
-			int chance = (p_ptr->dodge_chance - dam / 4) / 4;
-
-			if ((chance > 0) && magik(chance))
-			{
-				msg_print(Ind, "You dodge a magical attack!");
-				return (TRUE);
-			}
-		}
-	}
-
-	/* Reflection */
-#if 0
-		/* Effects done by the plane cannot bounce */
-		if (p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
-	{
-				int t_y, t_x;
-		int max_attempts = 10;
-
-		if (blind) msg_print("Something bounces!");
-		else msg_print("The attack bounces!");
-
-		/* Choose 'new' target */
-		do
-		{
-			t_y = m_list[who].fy - 1 + randint(3);
-			t_x = m_list[who].fx - 1 + randint(3);
-			max_attempts--;
-		}
-		while (max_attempts && in_bounds2(t_y, t_x) &&
-			 !(player_has_los_bold(t_y, t_x)));
-
-		if (max_attempts < 1)
-		{
-			t_y = m_list[who].fy;
-			t_x = m_list[who].fx;
-		}
-
-		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
-
-		disturb(1, 0);
-		return(TRUE);
-	}
-#endif	// 0
-
-		/* Effects done by the plane cannot bounce */
-		if (p_ptr->reflect && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-		(flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)) &&	/* balls / clouds / storms cannot bounce - C. Blue */
-			rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
-
-	{
-				int t_y, t_x, ay, ax;
-		int max_attempts = 10;
-
-		if (blind) msg_print(Ind, "Something bounces!");
-		else msg_print(Ind, "The attack bounces!");
-
-/*		if ((who != PROJECTOR_TRAP) && who)  isn't this wrong? */
-		if (who && (who > PROJECTOR_UNUSUAL)) /* can only hit a monster or a player when bouncing */
-		{
-			if (who < 0)
-			{
-				ay = Players[-who]->py;
-				ax = Players[-who]->px;
-			}
-			else
-			{
-				ay = m_list[who].fy;
-				ax = m_list[who].fx;
-			}
-
-
-			/* Choose 'new' target */
-			do
-			{
-				t_y = ay - 1 + randint(3);
-				t_x = ax - 1 + randint(3);
-				max_attempts--;
-			}
-#if 0
-			while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
-					!(player_has_los_bold(Ind, t_y, t_x)));
-#else	// 0
-			while (max_attempts && (!in_bounds2(wpos, t_y, t_x) ||
-					!(player_has_los_bold(Ind, t_y, t_x))));
-#endif	// 0
-
-			if (max_attempts < 1)
-			{
-				t_y = ay;
-				t_x = ax;
-			}
-
-//			project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
-			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
-		}
-
-		disturb(Ind, 1, 0);
-		return TRUE;
-	}
-
 	/* Extract radius */
 	div = r + 1;
 
@@ -6819,7 +6852,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (dam <= 0) dam = 1;
 
 	/* Hack -- Never do excessive damage */
-	if (dam > 1600) dam = 1600;
+	if (dam > MAGICAL_CAP) dam = MAGICAL_CAP;
 
 
 	/* If the player is blind, be more descriptive */
@@ -6859,14 +6892,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if(t_idx){
 				/* huh? */
 				// t_ptr = zcave[p_ptr->py][p_ptr->px].special.sc.ptr;
-				sprintf(killer, t_name + t_info[t_idx].name);
-				sprintf(m_name, t_name + t_info[t_idx].name);
+				sprintf(killer, "a %s", t_name + t_info[t_idx].name);
+				sprintf(m_name, "a %s", t_name + t_info[t_idx].name);
 			}
 			else if(c_ptr->o_idx){
 				/* Chest (object) trap */
 				object_type *o_ptr=&o_list[c_ptr->o_idx];
-				sprintf(killer, t_name + t_info[o_ptr->pval].name);
-				sprintf(m_name, t_name + t_info[o_ptr->pval].name);
+				sprintf(killer, "a %s", t_name + t_info[o_ptr->pval].name);
+				sprintf(m_name, "a %s", t_name + t_info[o_ptr->pval].name);
 			}
 			else{
 				/* Hopefully never. */
@@ -6930,7 +6963,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_RESTORESTATS_PLAYER) && (typ != GF_RESTORELIFE_PLAYER) &&
 						(typ != GF_CURE_PLAYER) && (typ != GF_RESURRECT_PLAYER) &&
 						(typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
-			(typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) &&
+                        (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{
@@ -6949,7 +6982,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (check_hostile(Ind, 0 - who))
 			{
 				/* XXX Reduce damage to 1/3 */
-				dam = (dam + 2) / 3;
+				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
 			}
 
 			/* people not in the same party hit each other */
@@ -6958,12 +6991,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{			
 #if 0			/* NO - C. Blue */
 #else			/* changed it to YES..  - still C. Blue - but added an if..*/
-if (check_hostile(0 - who, Ind)) {
+			if (check_hostile(0 - who, Ind)) {
 				/* XXX Reduce damage by 1/3 */
-				dam = (dam + 2) / 3;
-				if((cfg.use_pk_rules == PK_RULES_DECLARE &&
-							!(p_ptr->pkill & PKILL_KILLER)) &&
-						!magik(NEUTRAL_FIRE_CHANCE))
+				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
+				if ((cfg.use_pk_rules == PK_RULES_DECLARE &&
+				    !(p_ptr->pkill & PKILL_KILLER)) &&
+				    !magik(NEUTRAL_FIRE_CHANCE))
 //#endif (<- use this endif, if above #if 0 becomes #if 1 again)			/* Just return without harming: */
 					return(FALSE);
 } else { return(FALSE); }
@@ -6973,7 +7006,7 @@ if (check_hostile(0 - who, Ind)) {
 			{
 				/* Players in the same party can't harm each others */
 #if FRIEND_FIRE_CHANCE
-				dam = (dam + 2) / 3;
+				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
 				if (!magik(FRIEND_FIRE_CHANCE))
 #endif
 				return(FALSE);
@@ -7035,6 +7068,171 @@ if (check_hostile(0 - who, Ind)) {
 	(typ == GF_HEALINGCLOUD) ||
 	(typ == GF_OLD_POLY))))))
 	{ /* No effect on ghosts / admins */
+
+
+
+#ifndef NEW_DODGING
+	/* Bolt attack from a monster, a player or a trap */
+//	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
+	/* Hack -- HIDE(direct) spell cannot be dodged */
+	if (get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)))
+	{
+		if ((!rad) && (who >= PROJECTOR_TRAP))
+		{
+			//		int chance = (p_ptr->dodge_level - ((r_info[who].level * 5) / 6)) / 3;
+			/* Hack -- let's use 'dam' for now */
+			int chance = (p_ptr->dodge_level - dam / 6) / 3;
+
+			if ((chance > 0) && magik(chance))
+			{
+//				msg_print(Ind, "You dodge a magical attack!");
+				msg_print(Ind, "You dodge the projectile!");
+				return (TRUE);
+			}
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if ((rad < 2) && (who == PROJECTOR_TRAP))
+		{
+			/* Hack -- let's use 'dam' for now */
+			int chance = (p_ptr->dodge_level - dam / 4) / 4;
+
+			if ((chance > 0) && magik(chance))
+			{
+				msg_print(Ind, "You dodge a magical attack!");
+				return (TRUE);
+			}
+		}
+	}
+#else
+	/* Bolt attack from a monster, a player or a trap */
+//	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
+	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
+		if ((!rad) && (who >= PROJECTOR_TRAP)) {
+			msg_format(Ind, "You dodge %s's projectile!", m_name);
+			return (TRUE);
+		}
+		/* MEGAHACK -- allow to dodge 'bolt' traps */
+		else if ((rad < 2) && (who == PROJECTOR_TRAP)) {
+			msg_format(Ind, "You dodge %s's magical attack!", m_name);
+			return (TRUE);
+		}
+	}
+#endif
+
+	/* Reflection */
+#if 0
+	/* Effects done by the plane cannot bounce */
+	if (p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
+	{
+				int t_y, t_x;
+		int max_attempts = 10;
+
+		if (blind) msg_print("Something bounces!");
+		else msg_print("The attack bounces!");
+
+		/* Choose 'new' target */
+		do
+		{
+			t_y = m_list[who].fy - 1 + randint(3);
+			t_x = m_list[who].fx - 1 + randint(3);
+			max_attempts--;
+		}
+		while (max_attempts && in_bounds2(t_y, t_x) &&
+			 !(player_has_los_bold(t_y, t_x)));
+
+		if (max_attempts < 1)
+		{
+			t_y = m_list[who].fy;
+			t_x = m_list[who].fx;
+		}
+
+		project(0, 0, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
+
+		disturb(1, 0);
+		return(TRUE);
+	}
+#endif	// 0
+	/* Effects done by the plane cannot bounce */
+	if ((p_ptr->reflect && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+	    (flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)) &&	/* balls / clouds / storms cannot bounce - C. Blue */
+	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
+#ifdef USE_BLOCKING
+	    /* using a shield? requires USE_BLOCKING */
+	    || (magik(p_ptr->shield_deflect / 5) && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+	    (flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)) &&
+	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
+#endif
+	    )
+	{
+		int t_y, t_x, ay, ax;
+		int max_attempts = 10;
+
+		if (blind) msg_print(Ind, "Something bounces!");
+		else msg_format(Ind, "%s's attack bounces!", m_name);
+
+/*		if ((who != PROJECTOR_TRAP) && who)  isn't this wrong? */
+		if (who && (who > PROJECTOR_UNUSUAL)) /* can only hit a monster or a player when bouncing */
+		{
+			if (who < 0)
+			{
+				ay = Players[-who]->py;
+				ax = Players[-who]->px;
+			}
+			else
+			{
+				ay = m_list[who].fy;
+				ax = m_list[who].fx;
+			}
+
+
+			/* Choose 'new' target */
+			do
+			{
+				t_y = ay - 1 + randint(3);
+				t_x = ax - 1 + randint(3);
+				max_attempts--;
+			}
+#if 0
+			while (max_attempts && in_bounds2(wpos, t_y, t_x) &&
+					!(player_has_los_bold(Ind, t_y, t_x)));
+#else	// 0
+			while (max_attempts && (!in_bounds2(wpos, t_y, t_x) ||
+					!(player_has_los_bold(Ind, t_y, t_x))));
+#endif	// 0
+
+			if (max_attempts < 1)
+			{
+				t_y = ay;
+				t_x = ax;
+			}
+
+//			project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
+			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
+		}
+
+		disturb(Ind, 1, 0);
+		return TRUE;
+	}
+
+#ifdef USE_BLOCKING
+	/* Took cover behind a shield? requires USE_BLOCKING */
+	if ((p_ptr->shield_deflect && 	/* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
+	     /* jump for LOS projecting, stay for clouds; !grid was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
+	    (flg & PROJECT_KILL) && (flg & PROJECT_GRID) && !((flg & PROJECT_JUMP) || (flg & PROJECT_STAY)) &&
+	    (magik(p_ptr->shield_deflect)))) /* requires stances to * 2 etc.. post-king -> best stance */
+	{
+		if (blind) msg_print(Ind, "Something hurls along your shield!");
+		else msg_format(Ind, "You cover before %s's attack!", m_name);
+
+		/* if we hid behind the shield from an acidic attack, damage the shield probably! */
+		if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
+
+		disturb(Ind, 1, 0);
+		return TRUE;
+	}
+#endif
+
+
 
 	/* Analyze the damage */
 	switch (typ)
@@ -7122,13 +7320,17 @@ if (check_hostile(0 - who, Ind)) {
 		{
 			if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 			if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-			if (p_ptr->sensible_pois) dam = (dam + 2) * 2;
+			if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
 			if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
-			{
-				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+				/* don't poison for too long in pvp */
+				if (PVP) {
+					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4));
+				} else {
+					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10);
+				}
 			}
 		}
 		break;
@@ -7140,15 +7342,23 @@ if (check_hostile(0 - who, Ind)) {
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
+#ifdef ARCADE_SERVER
+                case GF_PUSH:
+          //    msg_print(Ind, "You are pushed by something!");
+                msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+                (void)set_pushed(Ind, dam);
+		break;
+#endif
+                
 
 		case GF_HELL_FIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
-		if (p_ptr->sensible_good) dam = (dam * 3) / 4;
+		if (p_ptr->suscep_good) dam = (dam * 3) / 4;
 		if (p_ptr->immune_fire) dam /= 2;
 		else {
 			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 			if (p_ptr->oppose_fire) dam = ((dam + 2) * 3) / 4;
-			if (p_ptr->sensible_fire) dam = ((dam + 2) * 5) / 3;
+			if (p_ptr->suscep_fire) dam = ((dam + 2) * 5) / 3;
 		}
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
@@ -7157,7 +7367,7 @@ if (check_hostile(0 - who, Ind)) {
 
 		/* Holy Orb -- Player only takes partial damage */
 		case GF_HOLY_ORB:
-		if (p_ptr->sensible_good) dam *= 2;
+		if (p_ptr->suscep_good) dam *= 2;
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
 		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
@@ -7167,13 +7377,13 @@ if (check_hostile(0 - who, Ind)) {
 		break;
 
 		case GF_HOLY_FIRE:
-		if (p_ptr->sensible_good) dam *= 2;
+		if (p_ptr->suscep_good) dam *= 2;
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam /= 4;
 		if (p_ptr->immune_fire) dam /= 2;
 		else {
 			if (p_ptr->resist_fire) dam = ((dam + 2) * 3) / 4;
 				if (p_ptr->oppose_fire) dam = ((dam + 2) * 3) / 4;
-			if (p_ptr->sensible_fire) dam = ((dam + 2) * 4) / 3;
+			if (p_ptr->suscep_fire) dam = ((dam + 2) * 4) / 3;
 		}
 		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
@@ -7219,10 +7429,14 @@ if (check_hostile(0 - who, Ind)) {
 
 		/* Don't kill inventory in bloodbond... */
 		int breakable = 1;
-		if (who < 0 && who > -MAX_PLAYERS) {
+		if (PVP) {
+#if 0
 			player_type *p2 = Players[-who];
 
 			if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
+#else
+			if (check_blood_bond(Ind, -who)) {
+#endif
 				breakable = 0;
 			}
 		}
@@ -7298,10 +7512,14 @@ if (check_hostile(0 - who, Ind)) {
 				if (!p_ptr->resist_water || magik(50)) {
 					/* Don't kill inventory in bloodbond... */
 					int breakable = 1;
-					if (who < 0 && who > -MAX_PLAYERS) {
+					if (PVP) {
+#if 0
 						player_type *p2 = Players[-who];
 
 						if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
+#else
+						if (check_blood_bond(Ind, -who)) {
+#endif
 							breakable = 0;
 						}
 					}
@@ -7315,11 +7533,19 @@ if (check_hostile(0 - who, Ind)) {
 			{
 					if (!p_ptr->resist_sound)
 				{
-					(void)set_stun(Ind, p_ptr->stun + randint(40));
+					if (PVP) {
+						(void)set_stun(Ind, p_ptr->stun + randint(10));
+					} else { /* pvm */
+						(void)set_stun(Ind, p_ptr->stun + randint(40));
+					}
 				}
 				if (!p_ptr->resist_conf)
 				{
-					(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+					if (PVP) {
+//						(void)set_confused(Ind, p_ptr->confused + randint(2));
+					} else { /* pvm */
+						(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+					}
 				}
 			}
 		}
@@ -7331,8 +7557,8 @@ if (check_hostile(0 - who, Ind)) {
 		if (!p_ptr->resist_sound)
 		{
 			(void)set_stun(Ind, p_ptr->stun + randint(40));
-			dam = 0;
 		}
+		dam = 0;
 		break;
 
 		/* Chaos -- many effects */
@@ -7477,14 +7703,14 @@ if (check_hostile(0 - who, Ind)) {
 		}
 		else
 		{
-			(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 1);
+			(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
 		}
 		take_hit(Ind, dam, killer, -who);
 		break;
 
 		/* Lite -- blinding */
 		case GF_LITE:
-		if (p_ptr->sensible_lite)
+		if (p_ptr->suscep_lite)
 		{
 			dam *= 2;
 		}
@@ -7638,7 +7864,7 @@ if (check_hostile(0 - who, Ind)) {
 					{
 						if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 						if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-						if (p_ptr->sensible_pois) dam = (dam + 2) * 2;
+						if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 						take_hit(Ind, dam, killer, -who);
@@ -7740,7 +7966,7 @@ if (check_hostile(0 - who, Ind)) {
 					{
 						if (p_ptr->resist_pois) dam = (dam + 2) / 3;
 						if (p_ptr->oppose_pois) dam = (dam + 2) / 3;
-						if (p_ptr->sensible_pois) dam = (dam + 2) * 2;
+						if (p_ptr->suscep_pois) dam = (dam + 2) * 2;
 						if (fuzzy) msg_format(Ind, "You are hit by poison for \377%c%d \377wdamage!", damcol, dam);
 						else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 						take_hit(Ind, dam, killer, -who);
@@ -7753,6 +7979,40 @@ if (check_hostile(0 - who, Ind)) {
 				}
 			} 
 			break;
+
+		case GF_CURSE: {
+			int curse = randint(3);
+			if (curse == 1) { //Slow
+				if (fuzzy) msg_format(Ind, "Your body seems difficult to move!");
+				else msg_format(Ind, "%s curses at you, slowing your movements!", killer);
+				if (p_ptr->pspeed <= 100) {
+					/* unaffected */
+				} else if (!p_ptr->free_act) {
+					(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 4);
+				} else {
+					(void)set_slow(Ind, p_ptr->slow + rand_int(3) + 2);
+				}
+				dam = 0;
+			} else if (curse == 2) { //Conf
+				dam = damroll(3, (dam / 2)) + 1;
+				if (p_ptr->resist_conf || p_ptr->resist_chaos){
+					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
+					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+					dam *= 5; dam /= (randint(6) + 6);
+				}else{
+					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
+					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+					(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
+				}
+				take_hit(Ind, dam, killer, -who);
+			} else { //Blind
+				if (fuzzy) msg_format(Ind, "Your eyes suddenly burn!");
+				else msg_format(Ind, "%s casts a spell, burning your eyes!", killer);
+				if (!blind && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
+				dam = 0;
+			}
+			break;
+		}
 
 		/* Teleport other -- Teleports */
 		case GF_AWAY_ALL:
@@ -7769,10 +8029,10 @@ if (check_hostile(0 - who, Ind)) {
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
 			set_tim_wraith(Ind, dam);
 			break;
-				}
+		}
 
 		case GF_BLESS_PLAYER:
-				{
+		{
 			if (dam < 18)
 			{
 				p_ptr->blessed_power = 8;
@@ -7787,43 +8047,47 @@ if (check_hostile(0 - who, Ind)) {
 			{
 				p_ptr->blessed_power = 20;
 			}	
-						(void)set_blessed(Ind, dam);
-						break;
-				}
+			(void)set_blessed(Ind, dam);
+			break;
+		}
 	
 		case GF_REMFEAR_PLAYER:
-				{
-						set_afraid(Ind, 0);
+		{
+			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
-					p_ptr->res_fear_temp = dam;
-						break;
+			p_ptr->res_fear_temp = dam;
+			break;
 		}
 
 		case GF_HPINCREASE_PLAYER:
-				{
+		{
 			(void)hp_player(Ind, dam);
-						break;
+			break;
 		}
 
 		case GF_HERO_PLAYER:
-				{
+		{
 			(void)set_hero(Ind, dam); /* removed stacking */
-						break;
+			break;
 		}
 
 		case GF_SHERO_PLAYER:
-				{
+		{
 			(void)set_shero(Ind, dam); /* removed stacking */
-						break;
+			break;
 		}
 
 		case GF_SATHUNGER_PLAYER:
-				{
-		    if (!p_ptr->sensible_life) {
+		{
+		    if (!p_ptr->suscep_life) {
+#if 0
+			msg_format_near(Ind, "\377y%s doesn't look hungry any longer.", p_ptr->name);
+#else
 			if (p_ptr->male)
 			msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
 			else
 			msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
+#endif
 			(void)set_food(Ind, PY_FOOD_MAX - 1);
 		    }
 			break;
@@ -7855,13 +8119,13 @@ if (check_hostile(0 - who, Ind)) {
 	
 		case GF_RESCOLD_PLAYER:
 		{
-						(void)set_oppose_cold(Ind, dam); /* removed stacking */
+			(void)set_oppose_cold(Ind, dam); /* removed stacking */
 			break;
 		}
 
 		case GF_CUREPOISON_PLAYER:
 		{
-						(void)set_poisoned(Ind, 0);
+			(void)set_poisoned(Ind, 0);
 			break;
 		}
 
@@ -7878,7 +8142,7 @@ if (check_hostile(0 - who, Ind)) {
 		}
 		case GF_SEEMAP_PLAYER:
 		{
-						map_area(Ind);
+			map_area(Ind);
 			break;
 		}
 			
@@ -7890,37 +8154,37 @@ if (check_hostile(0 - who, Ind)) {
 
 		case GF_CURESTUN_PLAYER:
 		{
-						(void)set_stun(Ind, p_ptr->stun - dam);
+			(void)set_stun(Ind, p_ptr->stun - dam);
 			break;
 		}
 
 		case GF_DETECTDOOR_PLAYER:
 		{
-						(void)detect_sdoor(Ind, DEFAULT_RADIUS);
+			(void)detect_sdoor(Ind, DEFAULT_RADIUS);
 			break;
 		}
 
 		case GF_DETECTTRAP_PLAYER:
 		{
-						(void)detect_trap(Ind, DEFAULT_RADIUS);
+			(void)detect_trap(Ind, DEFAULT_RADIUS);
 			break;
 		}
 
 		case GF_CURECUT_PLAYER:
 		{
-						(void)set_cut(Ind, p_ptr->cut - dam);
+			(void)set_cut(Ind, p_ptr->cut - dam);
 			break;
 		}
 
 		case GF_TELEPORTLVL_PLAYER:
 		{
-						teleport_player_level(Ind);
+			teleport_player_level(Ind);
 			break;
 		}
 
 		case GF_HEAL_PLAYER:
 		{
-			if (!p_ptr->sensible_life)
+			if (!p_ptr->suscep_life)
 			{
 				msg_format(Ind, "\377gYou have been healed for %ld damage",dam);
 				msg_format_near(Ind, "\377g%s has been healed for %ld damage!.", p_ptr->name, dam);
@@ -7933,7 +8197,7 @@ if (check_hostile(0 - who, Ind)) {
 		/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
 		case GF_HEALINGCLOUD:
 		{
-				if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->sensible_life)
+				if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life)
 				{
 						if (rand_int(100) < p_ptr->skill_sav)
 						{
@@ -8004,12 +8268,12 @@ if (check_hostile(0 - who, Ind)) {
 			else msg_format(Ind, "%^s shields you!", killer);
 
 #if 0 /* removed stacking */
-					if (!p_ptr->shield)
-							(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
-				 	else
-							(void)set_shield(Ind, p_ptr->shield + (dam / 5), 50, SHIELD_NONE, 0, 0);
+			if (!p_ptr->shield)
+				(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
+		 	else
+				(void)set_shield(Ind, p_ptr->shield + (dam / 5), 50, SHIELD_NONE, 0, 0);
 #else
-						(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
+				(void)set_shield(Ind, dam, 50, SHIELD_NONE, 0, 0);
 #endif
 			break;
 				}
@@ -8062,11 +8326,14 @@ if (check_hostile(0 - who, Ind)) {
 				(void)set_cut(Ind, 0);
 				break;
 			case 2:
-							msg_print(Ind, "You feel a calming warmth touching your soul.");
+#if 1
+				if (p_ptr->suscep_life) take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
+#endif
+				msg_print(Ind, "You feel a calming warmth touching your soul.");
 				if (p_ptr->black_breath)
-					{
-								msg_print(Ind, "The hold of the Black Breath on you is broken!");
-							p_ptr->black_breath = FALSE;
+				{
+					msg_print(Ind, "The hold of the Black Breath on you is broken!");
+					p_ptr->black_breath = FALSE;
 				}
 				break;
 			}
@@ -8099,10 +8366,7 @@ if (check_hostile(0 - who, Ind)) {
 		case GF_SOULCURE_PLAYER:
 			if (strcmp(attacker, " gives you something bitter to drink."))
 			{
-				if (p_ptr->sensible_life)
-				{
-					take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
-				}
+				if (p_ptr->suscep_life)	take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
 			}
 			msg_print(Ind, "You feel a calming warmth touching your soul.");
 			if (p_ptr->black_breath) {
@@ -8124,8 +8388,10 @@ if (check_hostile(0 - who, Ind)) {
 		{
 			msg_print(Ind, "You disbelieve the feeble spell.");
 		}
-		else set_confused(Ind, p_ptr->confused + dam);
+		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
+		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));
 		
+		dam = 0;
 		break;
 		
 		case GF_OLD_SLOW:
@@ -8141,8 +8407,10 @@ if (check_hostile(0 - who, Ind)) {
 		{
 			msg_print(Ind, "You resist the effects!");
 		}
-		else set_slow(Ind, p_ptr->slow + dam);
-		
+		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
+		else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
+
+		dam = 0;
 		break;
 		
 		case GF_TURN_ALL:
@@ -8160,9 +8428,11 @@ if (check_hostile(0 - who, Ind)) {
 		}
 		else
 		{
-			(void)set_afraid(Ind, p_ptr->afraid + dam);
+			//(void)set_afraid(Ind, p_ptr->afraid + dam);  too much for pvp
+			(void)set_afraid(Ind, p_ptr->afraid + 2 + rand_int(3));
 		}
 		
+		dam = 0;
 		break;
 		
 		case GF_OLD_POLY:
@@ -8234,7 +8504,7 @@ if (check_hostile(0 - who, Ind)) {
 			{
 				if (p_ptr->resist_pois) dam = (2 * dam + 2) / 5;
 				if (p_ptr->oppose_pois) dam = (2 * dam + 2) / 5;
-				if (p_ptr->sensible_pois) dam = (5 * dam + 2) / 3;
+				if (p_ptr->suscep_pois) dam = (5 * dam + 2) / 3;
 				if (fuzzy) msg_format(Ind, "You are hit by radiation for \377%c%d \377wdamage!", damcol, dam);
 				else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 				take_hit(Ind, dam, killer, -who);
@@ -8257,10 +8527,14 @@ if (check_hostile(0 - who, Ind)) {
 					{
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
-						if (who <  0 && who > -MAX_PLAYERS) {
+						if (PVP) {
+#if 0
 							player_type *p2 = Players[-who];
 
 							if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
+#else
+							if (check_blood_bond(Ind, -who)) {
+#endif
 								breakable = 0;
 							}
 						}
@@ -8377,7 +8651,7 @@ if (check_hostile(0 - who, Ind)) {
 
 		case GF_AWAY_UNDEAD:
 		{
-			if (p_ptr->ghost || p_ptr->sensible_life) {
+			if (p_ptr->ghost || p_ptr->suscep_life) {
 
 			/* Only affect undead */
 			if (p_ptr->res_tele)
@@ -8404,7 +8678,7 @@ if (check_hostile(0 - who, Ind)) {
 		/* Teleport evil (Use "dam" as "power") */
 		case GF_AWAY_EVIL:
 		{
-			if (p_ptr->sensible_good) {
+			if (p_ptr->suscep_good) {
 
 			/* Only affect evil */
 			if (p_ptr->res_tele)
@@ -8489,7 +8763,7 @@ if (check_hostile(0 - who, Ind)) {
 		case GF_TURN_EVIL:
 		{
 			/* Only affect evil */
-			if (p_ptr->sensible_good){
+			if (p_ptr->suscep_good){
 				if (p_ptr->resist_fear)
 				{
 					msg_print(Ind, "You are unaffected!");
@@ -8571,7 +8845,7 @@ if (check_hostile(0 - who, Ind)) {
 		case GF_DISP_EVIL:
 		{
 			/* Only affect evil */
-			if (p_ptr->sensible_good)
+			if (p_ptr->suscep_good)
 			{
 				if (rand_int(100) < p_ptr->skill_sav)
 				{
@@ -9041,7 +9315,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				if (c_ptr->m_idx > 0) break;
 			
 				/* Hostile players hit each other */
-						if (check_hostile(0 - who, 0 - c_ptr->m_idx)) break;
+				if (check_hostile(0 - who, 0 - c_ptr->m_idx)) break;
 
 				/* Always affect players (regardless of hostility/party state): */
 				if (typ == GF_OLD_POLY) break;
@@ -9408,15 +9682,16 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			 */
 			if (rad == 0)
 			{
-				effect = new_effect(who, typ, dam, project_time, wpos,
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 						(y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
 						project_time_effect);
 			}
 			else
 			{
-				effect = new_effect(who, typ, dam, project_time, wpos,
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 						y2, x2, rad, project_time_effect);
 			}
+			project_interval = 0;
 			project_time = 0;
 			project_time_effect = 0;
 		}
@@ -9447,6 +9722,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		}
 	}
 
+	/* PROJECT_DUMY means we don't have to project on floor/items/monsters/players,
+	   because the effect was just for visual entertainment.. - C. Blue */
+	if (flg & PROJECT_DUMY) return(FALSE);
 
 	/* Check objects */
 	if (flg & PROJECT_ITEM)
@@ -9509,13 +9787,13 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (zcave[y][x].m_idx <= 0) continue;
 
 //			if (grids <= 1 && (zcave[y][x].m_idx > 0))
-			if (grids <= 1)
+/*			if (grids <= 1)
 			{
 				monster_type *m_ptr = &m_list[zcave[y][x].m_idx];
-//				monster_race *ref_ptr = race_inf(m_ptr);
-//				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
+				monster_race *ref_ptr = race_inf(m_ptr);
+				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
 			}
-
+*/
 			if (project_m(0-who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 
@@ -9591,8 +9869,3 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	/* Return "something was noticed" */
 	return (notice);
 }
-
-
-
-
-

@@ -19,7 +19,7 @@
  /* Default */
  #define TOWNIE_RESPAWN_CHANCE	250
 #else
- /* better for Helloween event */
+ /* better for Halloween event */
  #define TOWNIE_RESPAWN_CHANCE	50
 #endif
 
@@ -44,7 +44,7 @@
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
-static cptr value_check_aux1(object_type *o_ptr)
+cptr value_check_aux1(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -120,7 +120,7 @@ static cptr value_check_aux1(object_type *o_ptr)
 	return "average";
 }
 
-static cptr value_check_aux1_magic(object_type *o_ptr)
+cptr value_check_aux1_magic(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -188,7 +188,7 @@ static cptr value_check_aux1_magic(object_type *o_ptr)
 /*
  * Return a "feeling" (or NULL) about an item.  Method 2 (Light).
  */
-static cptr value_check_aux2(object_type *o_ptr)
+cptr value_check_aux2(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -246,7 +246,7 @@ static cptr value_check_aux2(object_type *o_ptr)
 	return (NULL);
 }
 
-static cptr value_check_aux2_magic(object_type *o_ptr)
+cptr value_check_aux2_magic(object_type *o_ptr)
 {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
 
@@ -324,11 +324,10 @@ static void sense_inventory(int Ind)
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
 	bool ok_curse = FALSE;
 
-
 	cptr	feel;
+	bool	felt_heavy;
 
 	object_type *o_ptr;
-
 	char o_name[160];
 
 
@@ -376,6 +375,7 @@ static void sense_inventory(int Ind)
 				(magik(80) || UNAWARENESS(p_ptr))) continue;
 
 		feel = NULL;
+		felt_heavy = FALSE;
 
 		if (ok_curse && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
 
@@ -401,6 +401,7 @@ static void sense_inventory(int Ind)
 				if (ok_combat)
 					feel = (heavy ? value_check_aux1(o_ptr) :
 							value_check_aux2(o_ptr));
+				if (heavy) felt_heavy = TRUE;
 				break;
 			}
 
@@ -409,6 +410,7 @@ static void sense_inventory(int Ind)
 				if (ok_magic)
 					feel = (heavy_magic ? value_check_aux1(o_ptr) :
 							value_check_aux2(o_ptr));
+				if (heavy_magic) felt_heavy = TRUE;
 				break;
 			}
 
@@ -423,6 +425,7 @@ static void sense_inventory(int Ind)
 				if (ok_magic && !object_aware_p(Ind, o_ptr))
 					feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
 							value_check_aux2_magic(o_ptr));
+				if (heavy_magic) felt_heavy = TRUE;
 				break;
 			}
 
@@ -435,6 +438,7 @@ static void sense_inventory(int Ind)
 				if (ok_archery || (ok_combat && magik(33)))
 					feel = (heavy_archery ? value_check_aux1(o_ptr) :
 							value_check_aux2(o_ptr));
+				if (heavy_archery) felt_heavy = TRUE;
 				break;
 			}
 		}
@@ -471,6 +475,25 @@ static void sense_inventory(int Ind)
 
 		/* We have "felt" it */
 		o_ptr->ident |= (ID_SENSE);
+		
+		/* Remember feeling of that flavour, if and only if an item is always the same!
+		   For example, rings might be cursed by ego power. Wands may not.
+		   Other than that, this way an interesting middle-way between RPG-style
+		   remember-items-seen-in-shops and normal ID-remembrance can be created:
+		   Remember static items seen in shops just by feeling before having IDed one. :)
+		    - C. Blue */
+		switch(o_ptr->tval) {
+		case TV_WAND:
+		case TV_STAFF:
+		case TV_ROD:
+		case TV_ROD_MAIN:
+		case TV_SCROLL:
+		case TV_POTION:
+		case TV_POTION2:
+		case TV_FOOD:
+			p_ptr->obj_felt[o_ptr->k_idx] = TRUE;
+			if (felt_heavy) p_ptr->obj_felt_heavy[o_ptr->k_idx] = TRUE;
+		}
 
 		/* Inscribe it textually */
 		if (!o_ptr->note) o_ptr->note = quark_add(feel);
@@ -586,6 +609,7 @@ static void erase_effects(int effect)
 
 	e_ptr->time = 0;
 
+	e_ptr->interval = 0;
 	e_ptr->type = 0;
 	e_ptr->dam = 0;
 	e_ptr->time = 0;
@@ -661,6 +685,9 @@ static void process_effects(void)
 			/* TODO - excise it */
 			continue;
 		}
+		
+		/* check if it's time to process this effect now (depends on level_speed) */
+		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 3) continue;
 
 		/* Reduce duration */
 		e_ptr->time--;
@@ -692,6 +719,12 @@ static void process_effects(void)
 		/* Storm ends if the cause is gone */
 		if (e_ptr->flags & EFF_STORM && who == PROJECTOR_EFFECT)
 		{
+			erase_effects(k);
+			continue;
+		}
+		
+		/* Snowflakes disappear if they reach end of traversed screen */
+		if ((e_ptr->flags & EFF_SNOWING) && e_ptr->cy == MAX_HGT - 2) {
 			erase_effects(k);
 			continue;
 		}
@@ -748,6 +781,7 @@ static void process_effects(void)
 					c_ptr->effect = 0;
 			}
 #else	// 0
+
 			if (!(e_ptr->flags & EFF_LAST))
 			{
 				if ((e_ptr->flags & EFF_WAVE))
@@ -760,10 +794,18 @@ static void process_effects(void)
 				}
 				else if ((e_ptr->flags & EFF_STORM))
 				{
-					{
-						c_ptr->effect = 0;
-						everyone_lite_spot(wpos, j, i);
-					}
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				}
+				else if ((e_ptr->flags & EFF_SNOWING))
+				{
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				}
+				else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))
+				{
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
 				}
 			}
 #endif	// 0
@@ -776,6 +818,72 @@ static void process_effects(void)
 				{
 					c_ptr->effect = k;
 					everyone_lite_spot(wpos, j, i);
+				}
+			}
+
+			/* Generate fireworks effects */
+			if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
+				int semi = (e_ptr->time + e_ptr->rad) / 2;
+				/* until half-time (or half-radius) the fireworks rise into the air */
+				if (e_ptr->rad < e_ptr->time) {
+					if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad) {
+						c_ptr->effect = k;
+						everyone_lite_spot(wpos, j, i);
+					}
+				} else { /* after that, they explode (w00t) */
+					/* explosion is faster than flying upwards */
+//doesn't work					e_ptr->interval = 2;
+
+#if 0					
+					if (e_ptr->flags & EFF_FIREWORKS1) { /* simple rocket (line) */
+						if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+#endif
+					if (e_ptr->flags & EFF_FIREWORKS1) { /* 3-star */
+						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
+						    (i == e_ptr->cx && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j == e_ptr->cy - semi) && /* left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j == e_ptr->cy - semi)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j == e_ptr->cy - semi) && /* right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j == e_ptr->cy - semi))) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					} else if (e_ptr->flags & EFF_FIREWORKS2) { /* 5-star */
+						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
+						    (i == e_ptr->cx && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j >= e_ptr->cy - e_ptr->rad) && /* up-left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j >= e_ptr->cy - e_ptr->rad) && /* up-right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad))) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					} else { /* EFF_FIREWORKS3 */ /* 7-star whoa */
+						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
+						    (i == e_ptr->cx && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j == e_ptr->cy - semi) && /* left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j == e_ptr->cy - semi)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j == e_ptr->cy - semi) && /* right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j == e_ptr->cy - semi)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j >= e_ptr->cy - e_ptr->rad) && /* up-left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j >= e_ptr->cy - e_ptr->rad) && /* up-right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
+						    ((i >= e_ptr->cx + semi - e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-left */
+						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)) ||
+						    ((i <= e_ptr->cx - semi + e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-right */
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad))) {
+							c_ptr->effect = k;
+							everyone_lite_spot(wpos, j, i);
+						}
+					}
 				}
 			}
 		}
@@ -804,6 +912,27 @@ static void process_effects(void)
 					everyone_lite_spot(wpos, j, i);
 				}
 			}
+		}
+		/* snowflakes */
+		else if (e_ptr->flags & EFF_SNOWING) {
+			e_ptr->cy++; /* for now just fall straight downwards */
+			/* gusts of wind */
+			if (wind_gust > 0) {
+				e_ptr->cx--;
+				if (e_ptr->cx < 1) e_ptr->cx = MAX_WID - 2;
+			}
+			if (wind_gust < 0) {
+				e_ptr->cx++;
+				if (e_ptr->cx >= MAX_WID - 1) e_ptr->cx = 1;
+			}
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			c_ptr->effect = k;
+			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+		}
+
+		/* fireworks */
+		else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
+			e_ptr->rad++; /* while radius < time/2 -> "rise into the air", otherwise "explode" */
 		}
 	}
 
@@ -896,8 +1025,13 @@ static void process_world(int Ind)
 			/* Check for dawn */
 			dawn = (!(turn % (10L * DAY)));
 
+#ifndef HALLOWEEN
 			/* Day breaks */
-			if (dawn)
+			if (dawn && !fireworks) /* remain night during NEW_YEARS_EVE !*/
+#else
+			/* not during Halloween {>_>} */
+			if (FALSE)
+#endif
 			{
 				night_surface = FALSE;
 
@@ -929,8 +1063,9 @@ static void process_world(int Ind)
 				}
 			}
 
-			/* Night falls */
-			else
+			/* Night falls - but only if it was actually day so far:
+			   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
+			else if (!dawn && !night_surface)
 			{
 				int stores = 0, y1, x1;
 				byte sx[255], sy[255];
@@ -1112,7 +1247,7 @@ static int retaliate_mimic_power(int Ind, int power)
 static bool retaliate_item(int Ind, int item, cptr inscription)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type		*o_ptr = &p_ptr->inventory[item];
+	object_type *o_ptr = &p_ptr->inventory[item];
 	int cost, choice = 0, spell = 0;
 
 	if (item < 0) return FALSE;
@@ -1215,7 +1350,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
-			if (item == INVEN_WIELD) return FALSE;
+//redundant?->		if (item == INVEN_WIELD) return FALSE;
+			return FALSE;
 			break;
 
 		/* directional ones */
@@ -1248,7 +1384,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 		/* spellbooks - mikaelh */
 		case TV_BOOK:
-			if (o_ptr->sval == 255)
+			if (o_ptr->sval == SV_SPELLBOOK)
 			{
 				/* It's a spellbook */
 
@@ -1322,6 +1458,8 @@ static int auto_retaliate(int Ind)
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
+	
+	if (p_ptr->cloaked && !p_ptr->stormbringer) return 0;
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
@@ -1832,7 +1970,7 @@ static void process_player_begin(int Ind)
 		l_ptr->flags1 &= ~(LF1_NOMAP | LF1_NO_MAGIC_MAP);
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
-				if (zcave[y][x].feat == FEAT_PERM_SOLID) zcave[y][x].feat = FEAT_HIGH_MOUNTAIN;
+				if (zcave[y][x].feat == FEAT_PERM_SOLID) zcave[y][x].feat = FEAT_HIGH_MOUNT_SOLID;
 			}
 		}
 		/* Wipe any monsters/objects */
@@ -1918,7 +2056,9 @@ static void process_player_begin(int Ind)
 	if (p_ptr->image && (randint(10) < 1)) p_ptr->redraw |= (PR_MAP);
 
 	/* Mega-Hack -- Random teleportation XXX XXX XXX */
-	if ((p_ptr->teleport) && (rand_int(100) < 1))
+	if ((p_ptr->teleport) && (rand_int(100) < 1)
+	    /* not during highlander tournament */
+	    && (p_ptr->wpos.wx || p_ptr->wpos.wy || !sector00separation))
 	{
 		/* Teleport player */
 		teleport_player(Ind, 40);
@@ -2321,8 +2461,9 @@ static bool process_player_end_aux(int Ind)
 
 	/* Unbelievers "resist" magic */
 	//		int minus = (p_ptr->anti_magic)?3:1;
-	int minus = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 3);
-	int recovery = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?3:0;
+	int minus = 1;
+	int minus_magic = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 2);/* was 3 before, trying slightly less harsh 2 now */
+	int minus_health = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?2:0;/* was 3, but then HEALTH didn't give HP.. */
 
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -2362,6 +2503,9 @@ static bool process_player_end_aux(int Ind)
 					int swim = get_skill_scale(p_ptr, SKILL_SWIM, 90);
 					hit += randint(p_ptr->mhp>>5);
 					if(!hit) hit=1;
+
+					/* Take CON into consideration(max 30%) */
+					hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
 
 					/* temporary abs weight calc */
 					if(p_ptr->wt+p_ptr->total_weight/10 > 170 + swim * 2)	// 190
@@ -2429,7 +2573,9 @@ static bool process_player_end_aux(int Ind)
 					//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
 					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
 				}
-				take_hit(Ind, hit, "anoxia", 0);
+/*				if (p_ptr->stun < 20) set_stun(Ind, 20);
+				else set_stun(Ind, p_ptr->stun + 5);
+*/				take_hit(Ind, hit, "anoxia", 0);
 			}
 		}
 
@@ -2587,7 +2733,7 @@ static bool process_player_end_aux(int Ind)
         if (o_ptr->k_idx)
         {
             if (o_ptr->tval == TV_AMULET &&
-                o_ptr->sval == SV_AMULET_INVINCIBILITY)
+                (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
 		p_ptr->food = PY_FOOD_MAX - 1;
 	}
 
@@ -2633,6 +2779,9 @@ static bool process_player_end_aux(int Ind)
 
 	/* Regenerate the mana */
 	/* Hack -- regenerate mana 5/3 times faster */
+#ifdef ARCADE_SERVER
+        p_ptr->regen_mana = TRUE;
+#endif
 	if (p_ptr->csp < p_ptr->msp)
 	{
 		regenmana(Ind, (regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1) / 3);
@@ -2644,7 +2793,7 @@ static bool process_player_end_aux(int Ind)
 		regen_amount = regen_amount * 2;
 	}
 
-	if (recovery)
+	if (minus_health)
 	{
 		regen_amount = regen_amount * 3 / 2;
 	}
@@ -2682,7 +2831,7 @@ static bool process_player_end_aux(int Ind)
 	{
 		if (p_ptr->stat_cnt[i] > 0)
 		{
-			p_ptr->stat_cnt[i] -= (1 + recovery);
+			p_ptr->stat_cnt[i] -= (1 + minus_health);
 			if (p_ptr->stat_cnt[i] <= 0)
 			{
 				do_res_stat_temp(Ind, i);
@@ -2705,36 +2854,36 @@ static bool process_player_end_aux(int Ind)
 	/* Hack -- Bow Branding */
 	if (p_ptr->bow_brand)
 	{
-		(void)set_bow_brand(Ind, p_ptr->bow_brand - minus, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
+		(void)set_bow_brand(Ind, p_ptr->bow_brand - minus_magic, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
 	}
 
 	/* weapon brand time */
 	if(p_ptr->brand){
-		(void)set_brand(Ind, p_ptr->brand - minus, p_ptr->brand_t, p_ptr->brand_d);
+		(void)set_brand(Ind, p_ptr->brand - minus_magic, p_ptr->brand_t, p_ptr->brand_d);
 	}
 
 	/* Hack -- Timed ESP */
 	if (p_ptr->tim_esp)
 	{
-		(void)set_tim_esp(Ind, p_ptr->tim_esp - minus);
+		(void)set_tim_esp(Ind, p_ptr->tim_esp - minus_magic);
 	}
 
 	/* Hack -- Space/Time Anchor */
 	if (p_ptr->st_anchor)
 	{
-		(void)set_st_anchor(Ind, p_ptr->st_anchor - minus);
+		(void)set_st_anchor(Ind, p_ptr->st_anchor - minus_magic);
 	}
 
 	/* Hack -- Prob travel */
 	if (p_ptr->prob_travel)
 	{
-		(void)set_prob_travel(Ind, p_ptr->prob_travel - minus);
+		(void)set_prob_travel(Ind, p_ptr->prob_travel - minus_magic);
 	}
 
 	/* Hack -- Avoid traps */
 	if (p_ptr->tim_traps)
 	{
-		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus);
+		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus_magic);
 	}
 
 	/* Hack -- Mimicry */
@@ -2746,7 +2895,7 @@ static bool process_player_end_aux(int Ind)
 	/* Hack -- Timed manashield */
 	if (p_ptr->tim_manashield)
 	{
-		set_tim_manashield(Ind, p_ptr->tim_manashield - minus);
+		set_tim_manashield(Ind, p_ptr->tim_manashield - minus_magic);
 		if (p_ptr->tim_manashield == 10) msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
 	}
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -2801,25 +2950,29 @@ static bool process_player_end_aux(int Ind)
 	/* Hack -- Wraithform */
 	if (p_ptr->tim_wraith)
 	{
-		(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus);
+		(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus_magic);
 	}
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->image)
 	{
-		(void)set_image(Ind, p_ptr->image - 1 - recovery);
+		int adjust = 1 + minus_health;
+		if (get_skill(p_ptr, SKILL_HCURING) >= 50) adjust++;
+		(void)set_image(Ind, p_ptr->image - adjust);
 	}
 
 	/* Blindness */
 	if (p_ptr->blind)
 	{
-		(void)set_blind(Ind, p_ptr->blind - 1 - recovery);
+		int adjust = 1 + minus_health;
+		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust++;
+		(void)set_blind(Ind, p_ptr->blind - adjust);
 	}
 
 	/* Times see-invisible */
 	if (p_ptr->tim_invis)
 	{
-		(void)set_tim_invis(Ind, p_ptr->tim_invis - minus);
+		(void)set_tim_invis(Ind, p_ptr->tim_invis - minus_magic);
 	}
 
 	/* Times invisibility */
@@ -2832,56 +2985,58 @@ static bool process_player_end_aux(int Ind)
 		}		    
 		else
 		{
-			(void)set_invis(Ind, p_ptr->tim_invisibility - minus, p_ptr->tim_invis_power);
+			(void)set_invis(Ind, p_ptr->tim_invisibility - minus_magic, p_ptr->tim_invis_power);
 		}
 	}
 
 	/* Timed infra-vision */
 	if (p_ptr->tim_infra)
 	{
-		(void)set_tim_infra(Ind, p_ptr->tim_infra - minus);
+		(void)set_tim_infra(Ind, p_ptr->tim_infra - minus_magic);
 	}
 
 	/* Paralysis */
 	if (p_ptr->paralyzed)
 	{
-		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - recovery);
+		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1 - minus_health);
 	}
 
 	/* Confusion */
 	if (p_ptr->confused)
 	{
-		(void)set_confused(Ind, p_ptr->confused - minus - recovery);
+		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
+		(void)set_confused(Ind, p_ptr->confused - adjust - minus_health);
 	}
 
 	/* Afraid */
 	if (p_ptr->afraid)
 	{
-		(void)set_afraid(Ind, p_ptr->afraid - minus);
+		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
+		(void)set_afraid(Ind, p_ptr->afraid - adjust);
 	}
 
 	/* Fast */
 	if (p_ptr->fast)
 	{
-		(void)set_fast(Ind, p_ptr->fast - minus, p_ptr->fast_mod);
+		(void)set_fast(Ind, p_ptr->fast - minus_magic, p_ptr->fast_mod);
 	}
 
 	/* Slow */
 	if (p_ptr->slow)
 	{
-		(void)set_slow(Ind, p_ptr->slow - minus - recovery);
+		(void)set_slow(Ind, p_ptr->slow - minus_magic); // - minus_health
 	}
 
 	/* xtra shot? - the_sandman */
 	if (p_ptr->focus_time)
 	{
-		(void)do_focus_shot(Ind, p_ptr->focus_time - minus, p_ptr->focus_val);
+		(void)do_focus_shot(Ind, p_ptr->focus_time - minus_magic, p_ptr->focus_val);
 	}
 
 	/* xtra stats? - the_sandman */
 	if (p_ptr->xtrastat)
 	{
-		(void)do_xtra_stats(Ind, p_ptr->xtrastat - minus, p_ptr->statval);
+		(void)do_xtra_stats(Ind, p_ptr->xtrastat - minus_magic, p_ptr->statval);
 	}
 
 	/* Protection from evil */
@@ -2910,11 +3065,25 @@ static bool process_player_end_aux(int Ind)
 		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
 	}
 
+	if (p_ptr->cloaked > 1) {
+#if 0 /* done in un_afk_idle now */
+		if (!p_ptr->idle_char) stop_cloaking(Ind); /* stop preparations if we perform any action */
+		else 
+#endif
+		if (--p_ptr->cloaked == 1) {
+			msg_print(Ind, "\377sYou cloaked your appearance!");
+			msg_format_near(Ind, "\377w%s disappears before your eyes!", p_ptr->name);
+			p_ptr->update |= (PU_BONUS | PU_MONSTERS);
+			p_ptr->redraw |= (PR_STATE | PR_SPEED);
+		        handle_stuff(Ind);
+		}
+	}
+
 	/* Invulnerability */
 	/* Hack -- make -1 permanent invulnerability */
 	if (p_ptr->invuln)
 	{
-		if (p_ptr->invuln > 0) (void)set_invuln(Ind, p_ptr->invuln - minus);
+		if (p_ptr->invuln > 0) (void)set_invuln(Ind, p_ptr->invuln - minus_magic);
 		if (p_ptr->invuln == 5) msg_print(Ind, "\377vThe invulnerability shield starts to flicker and fade...");
 	}
 
@@ -3046,37 +3215,60 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->poisoned)
 	{
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
 
 		/* Apply some healing */
-		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - recovery * 2);
-		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + recovery) * (recovery + 1));
+		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2);
+		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1));
 	}
 
 	/* Stun */
 	if (p_ptr->stun)
 	{
+#if 0
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
-
 		/* Apply some healing */
-		//(void)set_stun(Ind, p_ptr->stun - adjust - recovery * 2);
-		(void)set_stun(Ind, p_ptr->stun - (adjust + recovery) * (recovery + 1));
+		//(void)set_stun(Ind, p_ptr->stun - adjust - minus_health * 2);
+		(void)set_stun(Ind, p_ptr->stun - (adjust + minus_health) * (minus_health + 1));
+#endif
+#if 0
+		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
+		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++; /* '*= 2' would be a bit too fast w/ max combat I think */
+#endif
+#if 0
+		int adjust = get_skill_scale(p_ptr, SKILL_COMBAT, 3);
+		adjust = minus + adjust / 2 + ((adjust == 1 || adjust == 3) && magik(50) ? 1 : 0);
+		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
+#endif
+		int adjust = minus + (magik(get_skill_scale(p_ptr, SKILL_COMBAT, 100)) ? 2 : 0);
+//		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = (adjust * 5) / 3;
+		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
+
+		(void)set_stun(Ind, p_ptr->stun - adjust);
 	}
 
 	/* Cut */
 	if (p_ptr->cut)
 	{
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+		int adjust = minus;// = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
+		/* Biofeedback always helps */
+		if (p_ptr->biofeedback) adjust += 5;
+		
 		/* Hack -- Truly "mortal" wound */
 		if (p_ptr->cut > 1000) adjust = 0;
 
-		/* Biofeedback always helps */
-		if (p_ptr->biofeedback) adjust += adjust + 10;
+		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust *= 2;
+
 
 		/* Apply some healing */
-		//(void)set_cut(Ind, p_ptr->cut - adjust - recovery * 2);
-		(void)set_cut(Ind, p_ptr->cut - (adjust + recovery) * (recovery + 1));
+		//(void)set_cut(Ind, p_ptr->cut - adjust - minus_health * 2);
+//		(void)set_cut(Ind, p_ptr->cut - (adjust + minus_health) * (minus_health + 1));
+		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1));
 	}
+
+	/* Temporary blessing of luck */
+	if (p_ptr->bless_temp_luck) (void)bless_temp_luck(Ind, p_ptr->bless_temp_luck_power, p_ptr->bless_temp_luck - 1);
 
 	/* Still possible effects from another player's support spell on this player? */
 	if (p_ptr->support_timer)
@@ -3230,7 +3422,7 @@ static bool process_player_end_aux(int Ind)
 				msg_print(Ind, "\377oYou vomit!");
 				msg_format_near(Ind, "%s vomits!", p_ptr->name);
 				take_hit(Ind, 1, "circulation collapse", 0);
-			    if (!p_ptr->sensible_life) {
+			    if (!p_ptr->suscep_life) {
 				if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 					if (p_ptr->food > PY_FOOD_FAINT - 1)
 					        (void)set_food(Ind, PY_FOOD_FAINT - 1);
@@ -3292,7 +3484,7 @@ static bool process_player_end_aux(int Ind)
 #endif
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(60) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+	if (p_ptr->dg_curse && (rand_int(60) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && !istown(&p_ptr->wpos)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
 		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev * 2, 100, 0, 0, 0);
 	}
@@ -3523,7 +3715,8 @@ static bool process_player_end_aux(int Ind)
 	{
 		/* Count down towards turnout */
 		p_ptr->pstealing--;
-		if (!p_ptr->pstealing) msg_print(Ind, "You're calm enough to steal from another player.");
+//		if (!p_ptr->pstealing) msg_print(Ind, "You're calm enough to steal from another player.");
+		if (!p_ptr->pstealing) msg_print(Ind, "You're calm enough to attempt to steal something.");
 	}
 
 	/* Delayed Word-of-Recall */
@@ -3648,21 +3841,21 @@ static void process_player_end(int Ind)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-	/* are we in fact running-flying? */
-	if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
-	}
-        /* or running-swimming? */
-	else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-        }
-	/* or just normally running? */
-	else {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-	}
+		/* are we in fact running-flying? */
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		}
+    	    /* or running-swimming? */
+		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+		        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+	    	    if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+	        }
+		/* or just normally running? */
+		else {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
+		}
 	}
 #endif
 
@@ -3698,7 +3891,7 @@ static void process_player_end(int Ind)
 		} else {
 			p_ptr->auto_retaliating = FALSE;
 		}
-	}
+	} else p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
@@ -4253,15 +4446,19 @@ void store_turnover()
  * This function handles "global" things such as the stores,
  * day/night in the town, etc.
  */
- 
 /* Added the japanese unique respawn patch -APD- 
    It appears that each moment of time is equal to 10 minutes?
 */
-/* called only every 10 turns */
+/* called only every 10 turns
+*/
+/* WARNING: Every if-check in here that tests for turns % cfg.fps
+   should also multiply the cfg.fps by a multiple of 10, otherwise
+   depending on cfg.fps it might be skipped sometimes, which may or
+   may not be critical depending on what it does! - C. Blue */
 static void process_various(void)
 {
 	int i, j;
-	int h, m, s;
+	int h = 0, m = 0, s = 0;
 	time_t now;
 	struct tm *tmp;
 	//cave_type *c_ptr;
@@ -4291,6 +4488,7 @@ static void process_various(void)
 		}
 	}
 
+#if 0 /* might skip an hour if transition is unprecice, ie 1:59 -> 3:00 */
 	/* Extra LUA function in custom.lua */
 	time(&now);
 	tmp = localtime(&now);
@@ -4300,6 +4498,20 @@ static void process_various(void)
 
 	if (!(turn % (cfg.fps * 3600)))
 		exec_lua(0, format("cron_1h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
+#else
+	if (!(turn % (cfg.fps * 10))) { /* call every 10 seconds instead of every 10 turns, to save some CPU time (yeah well...)*/
+		/* Extra LUA function in custom.lua */
+		time(&now);
+		tmp = localtime(&now);
+		h = tmp->tm_hour;
+		m = tmp->tm_min;
+		s = tmp->tm_sec;
+		if (h != cron_1h_last_hour) {
+			exec_lua(0, format("cron_1h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
+			cron_1h_last_hour = h;
+		}
+	}
+#endif
 
 	/* daily maintenance */
 	if (!(turn % (cfg.fps * 86400)))
@@ -4324,11 +4536,16 @@ static void process_various(void)
 		s_printf("Finished maintenance\n");
 		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
 		
-/*		bss_add_line("--- new day line ---"); */
+/*		bbs_add_line("--- new day line ---"); */
 	}
 
 	if (!(turn % (cfg.fps * 10))){
 		purge_old();
+	}
+
+	if (!(turn % (cfg.fps * 30))) {
+		/* Tell the scripts that we're alive */
+		update_check_file();
 	}
 
 	/* Handle certain things once a minute */
@@ -4343,6 +4560,9 @@ static void process_various(void)
 
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
+#ifdef HALLOWEEN
+		if (great_pumpkin_timer > 0) great_pumpkin_timer--;
+#endif
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
@@ -4582,9 +4802,8 @@ static void process_player_change_wpos(int Ind)
 				}
 			}
 
-			if (strstr((a_name + a_info[o_ptr->name1].name),"Grond") ||
-			    strstr((a_name + a_info[o_ptr->name1].name),"Morgoth") ||
-			    strstr((a_name + a_info[o_ptr->name1].name),"Phasing"))
+			if (o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING ||
+			    k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)
 				continue;
 
 			/* Describe the object */
@@ -4945,11 +5164,10 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
-	if (last_chat_line != NULL && last_chat_owner != NULL) {
-		exec_lua(1, "chat_handler()");
-		free(last_chat_line); last_chat_line = NULL;
-		free(last_chat_owner); last_chat_owner = NULL;
-	}
+/* fires bigass machinegun, if applicable. -Molt */
+#ifdef ARCADE_SERVER
+if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
+#endif
 
 	int i;
 	/* Return if no one is playing */
@@ -5041,7 +5259,7 @@ void dungeon(void)
 	}
 
 	/* Process spell effects */
-	if ((turn % 10) == 3) process_effects();
+	process_effects();
 
 	/* Process all of the monsters */
 	if (!(turn % MONSTER_TURNS))
@@ -5083,7 +5301,10 @@ void dungeon(void)
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) continue;
+				if(Players[i]->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+				}
 				break;
 			}
 			if(!i) {
@@ -5093,18 +5314,64 @@ void dungeon(void)
 		}
 		if(cfg.runlevel == 2047)
 		{
+			int n = 0;
 			for(i = NumPlayers; i > 0 ;i--)
 			{
 				if(Players[i]->conn==NOT_CONNECTED) continue;
 				/* Ignore admins that are loged in */
 				if(admin_p(i)) continue;
+				/* count players */
+				n++;
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
-				if(Players[i]->wpos.wz == 0) continue;
+				if(Players[i]->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+				}
 				break;
 			}
-			if(!i && (NumPlayers <= 5)) {
+			if(!i && (n <= 5)) {
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				cfg.runlevel = 2049;
+			}
+		}
+		if(cfg.runlevel == 2046)
+		{
+			int n = 0;
+			for(i = NumPlayers; i > 0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
+				if(admin_p(i)) continue;
+				/* count players */
+				n++;
+				/* Ignore characters that are afk and not in a dungeon/tower */
+//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+				/* Ignore characters that are not in a dungeon/tower */
+				if(Players[i]->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+				}
+				break;
+			}
+			if(!i && (n <= 2)) {
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				cfg.runlevel = 2049;
+			}
+		}
+		if(cfg.runlevel == 2045)
+		{
+			int n = 0;
+			for(i = NumPlayers; i > 0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
+				if(admin_p(i)) continue;
+				/* count players */
+				n++;
+			}
+			if(!n) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -5198,13 +5465,70 @@ void dungeon(void)
 	{
 		/* Process global_events each second */
 		process_global_events();
+		
+#ifdef WINTER_SEASON
+		if (!weather) { /* not snowing? */
+			if (weather_duration <= 0 && WINTER_SEASON > 0) { /* change weather? */
+				weather = 1; /* snowing now */
+				weather_duration = WINTER_SEASON * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		} else { /* it's currently snowing */
+			if (weather_duration <= 0 && (4 - WINTER_SEASON) > 0) { /* change weather? */
+				weather = 0; /* stop snowing */
+				weather_duration = (4 - WINTER_SEASON) * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		}
+		if (wind_gust > 0) wind_gust--; /* gust from east */
+		if (wind_gust < 0) wind_gust++; /* gust from west */
+		if (!wind_gust_delay) { /* gust of wind coming up? */
+			wind_gust_delay = 15 + rand_int(240); /* so sometimes no gust at all during 4-min snow periods */
+			wind_gust = rand_int(60) + 5;
+			if (rand_int(2)) wind_gust = -wind_gust;
+		} else wind_gust_delay--;
+#endif
+
+#ifdef AUCTION_SYSTEM
+		/* Process auctions */
+		process_auctions();
+#endif
 
 		/* Call a specific lua function every second */
-		exec_lua(1, "second_handler()");
-
-		/* Tell the scripts that we're alive */
-		update_check_file();
+		exec_lua(0, "second_handler()");
 	}
+
+#ifdef WINTER_SEASON
+	/* if it's snowing, create snowflakes */
+	if (weather && !(turn % (cfg.fps / 30)) && !fireworks) {
+		worldpos wpos;
+		/* Snow in Bree */
+		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+		cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
+	}
+#endif
+
+#ifdef NEW_YEARS_EVE
+	if (fireworks && !(turn % (cfg.fps / 4))) {
+		if (!fireworks_delay) { /* fire! */
+			worldpos wpos;
+			switch(rand_int(4)) {
+			case 0:	fireworks_delay = 0; break;
+			case 1:	fireworks_delay = 1; break;
+			case 2:	fireworks_delay = 4; break;
+			case 3:	fireworks_delay = 8; break;
+			}
+			/* Fireworks in Bree */
+			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+			/* "type" determines colour and explosion style */
+			cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
+		} else {
+			fireworks_delay--;
+		}
+	}
+#endif
 
 	/* Send any information over the network */
 	Net_output();
@@ -5246,6 +5570,8 @@ void set_runlevel(int val)
 			meta=FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2045:
+		case 2046:
 		case 2047:
 		case 2048:
 			/* Shutdown as soon as server is empty (admins don't count) */

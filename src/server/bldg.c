@@ -432,7 +432,8 @@ static void display_fruit(int row, int col, int fruit)
 static bool gamble_comm(int Ind, int cmd, int gold)
 {
 	player_type *p_ptr = Players[Ind];
-	int roll1, roll2, roll3, choice, odds, win;
+	int roll1, roll2;//, roll3;
+	int choice, odds, win;
 
 	s32b wager;
 
@@ -722,7 +723,7 @@ static bool inn_comm(int Ind, int cmd)
 	/* Extract race info */
 	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form==MIMIC_VAMPIRE));
 #endif	// 0
-	vampire = p_ptr->sensible_life;
+	vampire = p_ptr->suscep_life;
 
 	switch(cmd)
 	{
@@ -734,8 +735,10 @@ static bool inn_comm(int Ind, int cmd)
 				// msg_print(Ind, NULL);
 				(void) set_food(Ind, PY_FOOD_MAX - 1);
 			}
-			else
+			else {
 				msg_print(Ind, "You're a vampire and I don't have any food for you!");
+				return(FALSE);
+			}
 
 			break;
 		}
@@ -1837,13 +1840,12 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 			town_history();
 			break;
 		}
-#endif
 		case BACT_RACE_LEGENDS:
 		{
-//			race_legends();
-			do_cmd_view_cheeze(Ind);
+			race_legends();
 			break;
 		}
+#endif
 #if 1
 		case BACT_GREET_KING:
 		{
@@ -2361,6 +2363,24 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		{
 			//paid = home_extend(Ind);
 			home_extend(Ind);
+			break;
+		}
+
+		case BACT_CHEEZE_LIST:
+		{
+			view_cheeze_list(Ind);
+			break;
+		}
+
+		case BACT_DEED_ITEM:
+		{
+			reward_deed_item(Ind, item);
+			break;
+		}
+
+		case BACT_DEED_BLESSING:
+		{
+			reward_deed_blessing(Ind, item);
 			break;
 		}
 

@@ -688,8 +688,8 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->number);
 	wr_s16b(o_ptr->weight);
 
-	wr_byte(o_ptr->name1);
-	wr_byte(o_ptr->name2);
+	wr_u16b(o_ptr->name1);
+	wr_u16b(o_ptr->name2);
 	wr_s32b(o_ptr->name3);
 	wr_s32b(o_ptr->timeout);
 
@@ -712,7 +712,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->ident);
 
 //	wr_byte(0);
-	wr_byte(o_ptr->name2b);
+	wr_u16b(o_ptr->name2b);
 
 	wr_u32b(0L);
 	wr_u32b(0L);
@@ -910,6 +910,8 @@ static void wr_xtra(int Ind, int k_idx)
 
 	if (p_ptr->obj_aware[k_idx]) tmp8u |= 0x01;
 	if (p_ptr->obj_tried[k_idx]) tmp8u |= 0x02;
+	if (p_ptr->obj_felt[k_idx]) tmp8u |= 0x04;
+	if (p_ptr->obj_felt_heavy[k_idx]) tmp8u |= 0x08;
 
 	wr_byte(tmp8u);
 }
@@ -1134,6 +1136,8 @@ static void wr_extra(int Ind)
 		wr_string(p_ptr->history[i]);
 	}
 	wr_byte(p_ptr->has_pet); //pet pet 
+	wr_byte(p_ptr->divinity);
+
 	/* Race/Class/Gender/Party */
 	wr_byte(p_ptr->prace);
 	wr_byte(p_ptr->pclass);
@@ -1350,6 +1354,10 @@ static void wr_extra(int Ind)
                 wr_u32b(p_ptr->global_event_started[i]);
                 for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
         }
+
+        wr_s16b(p_ptr->combat_stance);
+        wr_s16b(p_ptr->combat_stance_power);
+	wr_byte(p_ptr->cloaked);
 }
 
 /*
@@ -2290,7 +2298,7 @@ static void wr_player_names(void)
 	}
 
 	/* Free the memory in the list */
-	C_KILL(id_list, num, int);
+	if (num) C_KILL(id_list, num, int);
 }
 
 static bool wr_server_savefile()

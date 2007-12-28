@@ -159,7 +159,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 	/* Let the player stay afk while eating,
 	   since we assume he's resting ;) - C. Blue */
-/*	if (p_ptr->afk) toggle_afk(Ind, "");*/
+/*	un_afk_idle(Ind); */
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -252,7 +252,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -260,7 +260,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_SICKNESS:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -268,7 +268,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_STUPIDITY:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -276,7 +276,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_NAIVETY:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -284,7 +284,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_UNHEALTH:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -292,7 +292,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_DISEASE:
 			{
-				if (!p_ptr->sensible_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -313,7 +313,8 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_CURE_PARANOIA:
 			{
 				if (set_afraid(Ind, 0)) ident = TRUE;
-				if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
+//				if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
+				if (set_image(Ind, 0)) ident = TRUE;
 				break;
 			}
 
@@ -360,7 +361,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_FORTUNE_COOKIE:
 			{
-				if (!p_ptr->sensible_life)
+				if (!p_ptr->suscep_life)
 					msg_print(Ind, "That tastes good.");
 				if (p_ptr->blind || no_lite(Ind))
 				{
@@ -386,7 +387,7 @@ void do_cmd_eat_food(int Ind, int item)
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					p_ptr->black_breath = FALSE;
 				}
-				if (p_ptr->sensible_life) take_hit(Ind, 250, "a sprig of athelas", 0);
+				if (p_ptr->suscep_life) take_hit(Ind, 250, "a sprig of athelas", 0);
 				ident = TRUE;
 				break;
 			}
@@ -406,7 +407,7 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_JERKY:
 			case SV_FOOD_SLIME_MOLD:
 			{
-				if (!p_ptr->sensible_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
+				if (!p_ptr->suscep_life || o_ptr->sval == SV_FOOD_SLIME_MOLD)
 					msg_print(Ind, "That tastes good.");
 				ident = TRUE;
 				break;
@@ -414,7 +415,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_WAYBREAD:
 			{
-			    if (!p_ptr->sensible_life) {
+			    if (!p_ptr->suscep_life) {
 				msg_print(Ind, "That tastes very good.");
 				(void)set_poisoned(Ind, 0);
 				(void)set_image(Ind, 0);	// ok?
@@ -430,7 +431,7 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_PINT_OF_ALE:
 			case SV_FOOD_PINT_OF_WINE:
 			{
-			    if (!p_ptr->sensible_life) {
+			    if (!p_ptr->suscep_life) {
 				/* Let's make this usable... - the_sandman */
 				if (o_ptr->name1 == ART_DWARVEN_ALE) {
 					msg_format(Ind, "\377gYou drank the liquior of the gods");
@@ -656,7 +657,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 
 	/* Food can feed the player */
-	if (!p_ptr->sensible_life)
+	if (!p_ptr->suscep_life)
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 
@@ -714,7 +715,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_SALT_WATER:
 				{
-				    if (!p_ptr->sensible_life) {
+				    if (!p_ptr->suscep_life) {
 					msg_print(Ind, "The potion makes you vomit!");
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
 					/* made salt water less deadly -APD */
@@ -855,7 +856,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_DEATH:
 				{
-					if (!p_ptr->sensible_life) {
+					if (!p_ptr->suscep_life) {
 						msg_print(Ind, "A feeling of Death flows through your body.");
 						take_hit(Ind, 5000, "a potion of Death", 0);
 						ident = TRUE;
@@ -1195,6 +1196,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					{
 						s32b ee = (p_ptr->exp / 2) + 10;
 						if (ee > 100000L) ee = 100000L;
+#ifdef ALT_EXPRATIO
+						ee = (ee * (s64b)p_ptr->expfact) / 100L; /* give same amount to anyone */
+#endif
 						msg_print(Ind, "\377GYou feel more experienced.");
 						gain_exp(Ind, ee);
 						ident = TRUE;
@@ -1372,7 +1376,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1406,7 +1410,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 
 
 	/* Potions can feed the player */
-	if (!p_ptr->sensible_life)
+	if (!p_ptr->suscep_life)
 		(void)set_food(Ind, p_ptr->food + o_ptr->pval);
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
@@ -1528,7 +1532,7 @@ void do_cmd_drink_fountain(int Ind)
 #endif	// 0
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	ident = quaff_potion(Ind, tval, sval, pval);
 	if (ident) cs_ptr->sc.fountain.known = TRUE;
@@ -1702,7 +1706,7 @@ void do_cmd_fill_bottle(int Ind)
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1749,7 +1753,7 @@ void do_cmd_empty_potion(int Ind, int slot)
 	inven_carry(Ind, q_ptr);
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1844,7 +1848,9 @@ bool curse_weapon(int Ind)
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 
 	/* Nothing to curse */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx &&
+	    (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) return (FALSE);
+	if (!o_ptr->k_idx) o_ptr = &p_ptr->inventory[INVEN_ARM]; /* dual-wield..*/
 
 
 	/* Describe */
@@ -2174,7 +2180,10 @@ static int check_self_summon(player_type *p_ptr){
 		/* not on wilderness edge */
 		if(p_ptr->wpos.wz || in_bounds(p_ptr->py, p_ptr->px)){
 			/* and not sitting on the stairs */
-			if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) return(TRUE);
+			if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE &&
+			    c_ptr->feat != FEAT_WAY_LESS && c_ptr->feat != FEAT_WAY_MORE &&
+			    c_ptr->feat != FEAT_BETWEEN)
+				return(TRUE);
 		}
 	}
 
@@ -2211,16 +2220,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		msg_print(Ind, "You are too confused!");
 		return;
 	}
-#if 0
-	/* unbelievers need some more disadvantage, but this might be too much */
-	antichance = p_ptr->antimagic / 4;
-	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
-	/* Got disrupted ? */
-	if (magik(antichance)) {
-    		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
-	        return;
-	}
-#endif
+
 	/* Restrict choices to scrolls */
 	item_tester_tval = TV_SCROLL;
 
@@ -2255,8 +2255,19 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
+#if 0
+	/* unbelievers need some more disadvantage, but this might be too much */
+	antichance = p_ptr->antimagic / 4;
+	if (antichance > ANTIMAGIC_CAP) antichance = ANTIMAGIC_CAP;/* AM cap */
+	/* Got disrupted ? */
+	if (magik(antichance)) {
+    		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
+	        return;
+	}
+#endif
+
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2565,10 +2576,10 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_LIGHT:
 			{
 				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-				//if (p_ptr->sensible_lite && !p_ptr->resist_lite) 
+				//if (p_ptr->suscep_lite && !p_ptr->resist_lite) 
 				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite) 
 					take_hit(Ind, damroll(10, 3), "a scroll of light", 0);
-                        	//if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) 
+                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) 
 				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind) 
 					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				break;
@@ -2613,7 +2624,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_SATISFY_HUNGER:
 			{
-				//if (!p_ptr->sensible_life)
+				//if (!p_ptr->suscep_life)
 				if (p_ptr->prace != RACE_VAMPIRE)
 					if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 				break;
@@ -2621,7 +2632,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_BLESSING:
 			{
-				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(5, 3), "a scroll of blessing", 0);
 				}	
@@ -2635,7 +2646,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_HOLY_CHANT:
 			{
-				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(10, 3), "a scroll of holy chant", 0);
 				}
@@ -2649,7 +2660,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_HOLY_PRAYER:
 			{
-				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(30, 3), "a scroll of holy prayer", 0);
 				}
@@ -2674,7 +2685,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_PROTECTION_FROM_EVIL:
 			{
-				if (p_ptr->sensible_good || p_ptr->sensible_life) {
+				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(10, 3), "a scroll of protection from evil", 0);
 				} else {
@@ -2707,7 +2718,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_DISPEL_UNDEAD:
 			{
 				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
-				//if (p_ptr->sensible_life) 
+				//if (p_ptr->suscep_life) 
 				if (p_ptr->prace == RACE_VAMPIRE)
 					take_hit(Ind, damroll(30, 3), "a scroll of dispel undead", 0);
 				break;
@@ -2734,7 +2745,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
 			        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2745,7 +2756,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
 			        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
-				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), !p_ptr->total_winner);
+				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2758,7 +2769,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				fire_ball(Ind, GF_FIRE, 0, 100, 4, p_ptr->attacker);
 				/* Note: "Double" damage since it is centered on the player ... */
 				if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-					//                                take_hit(Ind, 50+randint(50)+(p_ptr->sensible_fire)?20:0, "a Scroll of Fire", 0);
+					//                                take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
 					take_hit(Ind, 50+randint(50), "a Scroll of Fire", 0);
 				ident = TRUE;
 				break;
@@ -2823,13 +2834,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_VERMIN_CONTROL:
 			{
-				dun_level *l_ptr = getfloor(&p_ptr->wpos);
-				if(l_ptr && !(l_ptr->flags1 & LF1_NO_MULTIPLY))
-				{
-					l_ptr->flags1 |= LF1_NO_MULTIPLY;
-					msg_print(Ind, "You feel less itchy.");
-					ident = TRUE;
-				}
+				if (do_vermin_control(Ind)) ident = TRUE;
 				break;
 			}
 
@@ -2953,6 +2958,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		}
 	}
 
+	break_cloaking(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3102,7 +3108,7 @@ void do_cmd_use_staff(int Ind, int item)
 	}*/
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -3163,7 +3169,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_DARKNESS:
 		{
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
-			if (!p_ptr->resist_blind)
+			if (!p_ptr->resist_blind && !p_ptr->resist_dark)
 			{
 				if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
 			}
@@ -3231,8 +3237,8 @@ void do_cmd_use_staff(int Ind, int item)
 				msg_print(Ind, "The end of the staff glows brightly...");
 			}
 			for (k = 0; k < 8; k++) lite_line(Ind, ddd[k]);
-			if (p_ptr->sensible_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a staff of starlight", 0);
-                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			if (p_ptr->suscep_lite) take_hit(Ind, damroll((p_ptr->resist_lite ? 10: 30), 3), "a staff of starlight", 0);
+                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			ident = TRUE;
 			break;
 		}
@@ -3241,8 +3247,8 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), 2)) ident = TRUE;
-			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), "a staff of Light", 0);
-                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(20, 3), "a staff of Light", 0);
+                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			break;
 		}
 
@@ -3372,7 +3378,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_DISPEL_EVIL:
 		{
 			if (dispel_evil(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 300) + p_ptr->lev * 2)) ident = TRUE;
-			if (p_ptr->sensible_good) {
+			if (p_ptr->suscep_good) {
 				take_hit(Ind, damroll(30, 3), "a staff of dispel evil", 0);
 				ident = TRUE;
 			}
@@ -3388,7 +3394,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_HOLINESS:
 		{
 			if (dispel_evil(Ind, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 300))) ident = TRUE;
-			if (p_ptr->sensible_good || p_ptr->sensible_life) {
+			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				take_hit(Ind, damroll(50, 3), "a staff of holiness", 0);
 				ident = TRUE;
 			} else {
@@ -3452,6 +3458,7 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
+	break_cloaking(Ind);
 
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
@@ -3607,7 +3614,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -3667,10 +3674,18 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	sval = o_ptr->sval;
 
 	/* XXX Hack -- Wand of wonder can do anything before it */
-	if (sval == SV_WAND_WONDER) sval = rand_int(SV_WAND_WONDER);
+	if (sval == SV_WAND_WONDER) {
+		sval = rand_int(SV_WAND_WONDER);
+		/* limit wand of wonder damage in Highlander Tournament */
+		if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && !p_ptr->wpos.wz && sector00separation) {
+			/* no high wand effects for cheap mass zapping in PvP */
+			sval = rand_int(SV_WAND_WONDER - 8 - 2);
+			if (sval >= SV_WAND_DRAIN_LIFE) sval += 2;
+		}
+	}
 
 	/* Analyze the wand */
-	switch (sval)
+	switch (sval % 1000)
 	{
 		case SV_WAND_HEAL_MONSTER:
 		{
@@ -3766,7 +3781,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a stinking cloud for");
-			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+//			fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+			fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 17), 2, 4, 9, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3784,7 +3800,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires an acid bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires an acid bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(7 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_ACID, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 13), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3793,7 +3809,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a lightning bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a lightning bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_ELEC, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 11), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3802,7 +3818,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a fire bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_FIRE, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 14), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3811,7 +3827,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost bolt.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost bolt for");
-			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8), p_ptr->attacker);
+			fire_bolt_or_beam(Ind, 20, GF_COLD, dir, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 12), 8), p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3820,7 +3836,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a ball of acid.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a ball of acid for");
-			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 240), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ACID, dir, 60 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3829,7 +3845,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a ball of electricity.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a ball of electricity for");
-			fire_ball(Ind, GF_ELEC, dir, 64 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_ELEC, dir, 40 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3838,7 +3854,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a fire ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a fire ball for");
-			fire_ball(Ind, GF_FIRE, dir, 144 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_FIRE, dir, 70 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3847,7 +3863,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 		{
 			msg_format_near(Ind, "%s fires a frost ball.", p_ptr->name);
 			sprintf(p_ptr->attacker, " fires a frost ball for");
-			fire_ball(Ind, GF_COLD, dir, 96 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
+			fire_ball(Ind, GF_COLD, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 2, p_ptr->attacker);
 			ident = TRUE;
 			break;
 		}
@@ -3974,6 +3990,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+
+	break_cloaking(Ind);
 
 	/* Mark it as tried */
 	object_tried(Ind, o_ptr);
@@ -4140,7 +4158,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
@@ -4227,8 +4245,8 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
-			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
-                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 			break;
 		}
@@ -4329,6 +4347,8 @@ void do_cmd_zap_rod(int Ind, int item)
 		}
 	}
 	if(f4 & TR4_CHARGING) o_ptr->pval/=3;
+
+	break_cloaking(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4445,7 +4465,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos) /
@@ -4707,8 +4727,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		{
 			msg_format_near(Ind, "%s calls light.", p_ptr->name);
 			if (lite_area(Ind, damroll(2, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 2)) ident = TRUE;
-			if (p_ptr->sensible_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
-                    	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite) take_hit(Ind, damroll(10, 3), "a rod of illumination", 0);
+                    	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			//o_ptr->pval = 30;
 			/* up to a 50% faster with maxed MD - the_sandman */
 			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -4832,6 +4852,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		}
 	}
 
+	break_cloaking(Ind);
 
 	/* Clear the current rod */
 	p_ptr->current_rod = -1;
@@ -5064,6 +5085,18 @@ void do_cmd_activate(int Ind, int item)
 #endif	// 0
 
 
+	/* Get the item (in the pack) */
+	if (item >= 0)
+	{
+		o_ptr = &p_ptr->inventory[item];
+	}
+
+	/* Get the item (on the floor) */
+	else
+	{
+		o_ptr = &o_list[0 - item];
+	}
+
 if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	if (p_ptr->anti_magic)
 	{
@@ -5081,18 +5114,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
                 return;
         }
 }
-
-	/* Get the item (in the pack) */
-	if (item >= 0)
-	{
-		o_ptr = &p_ptr->inventory[item];
-	}
-
-	/* Get the item (on the floor) */
-	else
-	{
-		o_ptr = &o_list[0 - item];
-	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr))
@@ -5133,7 +5154,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 #endif	// 0
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -5197,6 +5218,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 	/* Wonder Twin Powers... Activate! */
 	msg_print(Ind, "You activate it...");
+
+	break_cloaking(Ind);
 
 #if 0
 	/* Hack -- Book of the Dead is activatable for Ghosts */
@@ -5774,8 +5797,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "The phial wells with clear light...");
 				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				if (p_ptr->sensible_lite) take_hit(Ind, damroll(50, 5), "the phial of galadriel", 0);
-                        	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+				if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 5), "the phial of galadriel", 0);
+                        	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				o_ptr->timeout = rand_int(10) + 10;
 				break;
 			}
@@ -6259,8 +6282,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "The phial wells with clear light...");
 				lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-				if (p_ptr->sensible_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
-                        	if (p_ptr->sensible_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+				if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
+                        	if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 				o_ptr->timeout = rand_int(10) + 10;
 				break;
 			}
@@ -6476,7 +6499,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				msg_print(Ind, "The phial wells with dark light...");
 				unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 				take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
-				if (!p_ptr->sensible_life) {
+				if (!p_ptr->suscep_life) {
 					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);
 					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_PERMANENT);
 					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_PERMANENT);
@@ -7069,7 +7092,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case SV_RING_POLYMORPH:
 			{
 				/* Mimics only */
-				if (!get_skill(p_ptr, SKILL_MIMIC)) return;
+//				if (!get_skill(p_ptr, SKILL_MIMIC)) return;
+				if (p_ptr->pclass != CLASS_MIMIC) return;
 
 				if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
 					msg_print(Ind, "You must be wearing the ring!");
@@ -7312,6 +7336,8 @@ void do_cmd_activate_dir(int Ind, int dir)
         }; 
 
         if (!can_use_verbose(Ind, o_ptr)) return;
+	
+	break_cloaking(Ind);
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
 	{
@@ -7366,14 +7392,26 @@ void do_cmd_activate_dir(int Ind, int dir)
 			}
 			break;
 		case SV_DRAGON_PSEUDO:
-			msg_print(Ind, "You breathe light.");
-			sprintf(p_ptr->attacker, " breathes light for");
-			fire_ball(Ind, GF_LITE, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 4, p_ptr->attacker);
+			if (magik(50)) {
+				msg_print(Ind, "You breathe light.");
+				sprintf(p_ptr->attacker, " breathes light for");
+				fire_ball(Ind, GF_LITE, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 4, p_ptr->attacker);
+			} else {
+				msg_print(Ind, "You breathe darkness.");
+				sprintf(p_ptr->attacker, " breathes darkness for");
+				fire_ball(Ind, GF_DARK, dir, 200 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 4, p_ptr->attacker);
+			}
 			break;
 		case SV_DRAGON_SHINING:
-			msg_print(Ind, "You breathe light.");
-			sprintf(p_ptr->attacker, " breathes light for");
-			fire_ball(Ind, GF_LITE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			if (magik(50)) {
+				msg_print(Ind, "You breathe light.");
+				sprintf(p_ptr->attacker, " breathes light for");
+				fire_ball(Ind, GF_LITE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			} else {
+				msg_print(Ind, "You breathe darkness.");
+				sprintf(p_ptr->attacker, " breathes darkness for");
+				fire_ball(Ind, GF_DARK, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			}
 			break;
 		case SV_DRAGON_LAW:
 			switch(rand_int(2)){
@@ -7412,7 +7450,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 			sprintf(p_ptr->attacker, " breathes havoc for");
 			//fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
 			//Increased from 1k to 2k since base dmg from call_chaos was lowered (havoc rods rebalancing)
-			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
+			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
 			break;
 		case SV_DRAGON_DEATH:
 			msg_print(Ind, "You breathe nether.");
@@ -7435,6 +7473,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 				fire_ball(Ind, GF_COLD, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
 				break;
 			}
+			break;
 		case SV_DRAGON_DRACOLISK:
 			switch(rand_int(2)){
 			case 0:	msg_print(Ind, "You breathe fire.");
@@ -7446,6 +7485,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 				fire_ball(Ind, GF_NEXUS, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 4, p_ptr->attacker);
 				break;
 			}
+			break;
 		case SV_DRAGON_SKY:
 			switch(rand_int(3)){
 			case 0:	msg_print(Ind, "You breathe lightning.");
@@ -7461,6 +7501,18 @@ void do_cmd_activate_dir(int Ind, int dir)
 				fire_ball(Ind, GF_GRAVITY, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
 				break;
 			}
+			break;
+		case SV_DRAGON_SILVER:
+			if (magik(50)) {
+				msg_print(Ind, "You breathe inertia.");
+				sprintf(p_ptr->attacker, " breathes inertia for");
+				fire_ball(Ind, GF_INERTIA, dir, 250 + get_skill_scale(p_ptr, SKILL_DEVICE, 250), 4, p_ptr->attacker);
+			} else {
+				msg_print(Ind, "You breathe cold.");
+				sprintf(p_ptr->attacker, " breathes cold for");
+				fire_ball(Ind, GF_COLD, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+			}
+			break;
 		}
 		o_ptr->timeout = 200 + rand_int(100);
 	}
@@ -7498,7 +7550,8 @@ void do_cmd_activate_dir(int Ind, int dir)
 			case ART_RILIA:
 			{
 				sprintf(p_ptr->attacker, " casts a stinking cloud for");
-				fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
+//				fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
+				fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
 				o_ptr->timeout = rand_int(4) + 4;
 				break;
 			}
@@ -7741,7 +7794,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 			{
 				sprintf(p_ptr->attacker, " invokes raw chaos for");
 				//Increases the extra damage from 1k to 2k since call_chaos's base damage was lowered (havoc rods rebalancing)
-				call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
+				call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
 				o_ptr->timeout = rand_int(200) + 250;
 				break;
 			}
@@ -8076,7 +8129,7 @@ void do_cmd_fletchery(int Ind)
 			if (c_ptr->feat == FEAT_RUBBLE)
 			{
 				/* S(he) is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 
 				/* Get local object */
 				q_ptr = &forge;
@@ -8138,7 +8191,7 @@ void do_cmd_fletchery(int Ind)
 		}
 
 		/* S(he) is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		un_afk_idle(Ind);
 
 		/* Remember amount of raw materials used for this */
 		raw_materials = q_ptr->number;
@@ -8213,7 +8266,7 @@ void do_cmd_fletchery(int Ind)
 		}
 
 		/* S(he) is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		un_afk_idle(Ind);
 
 		/* Remember amount of raw materials used for this */
 		raw_materials = q_ptr->number;
@@ -8255,5 +8308,239 @@ void do_cmd_fletchery(int Ind)
 	}
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	break_cloaking(Ind);
 }
 
+/*
+ * Use a combat stance for armed melee combat (warriors only atm) - C. Blue
+ * Note: SKILL_STANCE is increased automatically by +1.000 every 5 levels!
+ * Players start out with 1.000 skill. The skill number is just for show though ;)
+ */
+void do_cmd_stance(int Ind, int stance) {
+	int power = 0;
+	player_type *p_ptr = Players[Ind];
+#ifndef ENABLE_STANCES
+	return;
+#endif
+
+	if (!get_skill(p_ptr, SKILL_STANCE)) return;
+
+	switch(stance) {
+	case 0: /* always known, no different power levels here */
+		if (!p_ptr->combat_stance) {
+			msg_print(Ind, "\377sYou already are in balanced stance!");
+			return;
+		}
+		msg_print(Ind, "\377sYou enter a balanced stance!");
+	break;
+	case 1:
+	    switch(p_ptr->pclass) {
+	    case CLASS_WARRIOR:
+		if (p_ptr->max_lev < 5) {
+			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_MIMIC:
+		if (p_ptr->max_lev < 10) {
+			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_PALADIN:
+		if (p_ptr->max_lev < 5) {
+			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_RANGER:
+		if (p_ptr->max_lev < 10) {
+			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+			return;
+		}
+	    break;
+	    }
+
+		if (p_ptr->combat_stance == 1) {
+			msg_print(Ind, "\377sYou already are in defensive stance!");
+			return;
+		}
+		if (!p_ptr->inventory[INVEN_ARM].k_idx ||
+		    p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) { /* not dual-wielding? */
+			msg_print(Ind, "\377yYou cannot enter defensive stance without wielding a shield.");
+			return;
+		}
+		
+	    switch(p_ptr->pclass) {
+	    case CLASS_WARRIOR:
+		if (p_ptr->max_lev < 15) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter defensive stance rank I");
+		} else if (p_ptr->max_lev < 35) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter defensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter defensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+		}
+	    break;
+	    case CLASS_MIMIC:
+		if (p_ptr->max_lev < 20) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter defensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter defensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter defensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+		}
+	    break;
+	    case CLASS_PALADIN:
+		if (p_ptr->max_lev < 20) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter defensive stance rank I");
+		} else if (p_ptr->max_lev < 35) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter defensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter defensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+		}
+	    break;
+	    case CLASS_RANGER:
+		if (p_ptr->max_lev < 20) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter defensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter defensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter defensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+		}
+	    break;
+	    }
+	break;
+	case 2:
+	    switch(p_ptr->pclass) {
+	    case CLASS_WARRIOR:
+		if (p_ptr->max_lev < 10) {
+			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_MIMIC:
+		if (p_ptr->max_lev < 15) {
+			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_PALADIN:
+		if (p_ptr->max_lev < 15) {
+			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+			return;
+		}
+	    break;
+	    case CLASS_RANGER:
+		if (p_ptr->max_lev < 15) {
+			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+			return;
+		}
+	    break;
+	    }
+
+		if (p_ptr->combat_stance == 2) {
+			msg_print(Ind, "\377sYou already are in offensive stance!");
+			return;
+		}
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx ||
+		    !(k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H | TR4_COULD2H)) ||
+		    p_ptr->inventory[INVEN_ARM].k_idx) {
+			msg_print(Ind, "\377yYou need to wield a weapon with both hands for offensive stances.");
+			return;
+		}
+		
+	    switch(p_ptr->pclass) {
+	    case CLASS_WARRIOR:
+		if (p_ptr->max_lev < 20) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter offensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter offensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter offensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+		}
+	    break;
+	    case CLASS_MIMIC:
+		if (p_ptr->max_lev < 25) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter offensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter offensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter offensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+		}
+	    break;
+	    case CLASS_PALADIN:
+		if (p_ptr->max_lev < 25) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter offensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter offensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter offensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+		}
+	    break;
+	    case CLASS_RANGER:
+		if (p_ptr->max_lev < 25) {
+			power = 0;
+			msg_print(Ind, "\377sYou enter offensive stance rank I");
+		} else if (p_ptr->max_lev < 40) {
+			power = 1;
+			msg_print(Ind, "\377sYou enter offensive stance rank II");
+		} else if (!p_ptr->total_winner) {
+			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+			msg_print(Ind, "\377sYou enter offensive stance rank III");
+		} else {
+			power = 3; /* royal rank */
+			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+		}
+	    break;
+	    }
+	break;
+	}
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+	p_ptr->combat_stance = stance;
+	p_ptr->combat_stance_power = power;
+	p_ptr->update |= (PU_BONUS);
+	p_ptr->redraw |= (PR_PLUSSES);
+//	handle_stuff();
+}

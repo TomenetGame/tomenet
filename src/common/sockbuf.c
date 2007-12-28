@@ -427,10 +427,10 @@ int Packet_printf(va_alist)
 			failure = 0,
 			max_str_size;
     unsigned		uval;
-    short		sval;
-    unsigned short	usval;
-    long		lval;
-    unsigned long	ulval;
+    short int		sval;
+    unsigned short int	usval;
+    long int		lval;
+    unsigned long int	ulval;
     char		*str,
 			*end,
 			*buf,
@@ -527,14 +527,14 @@ int Packet_printf(va_alist)
 		}
 		switch (fmt[++i]) {
 		case 'd':
-		    lval = va_arg(ap, long);
+		    lval = va_arg(ap, long int);
 		    *buf++ = lval >> 24;
 		    *buf++ = lval >> 16;
 		    *buf++ = lval >> 8;
 		    *buf++ = lval;
 		    break;
 		case 'u':
-		    ulval = va_arg(ap, unsigned long);
+		    ulval = va_arg(ap, unsigned long int);
 		    *buf++ = ulval >> 24;
 		    *buf++ = ulval >> 16;
 		    *buf++ = ulval >> 8;
@@ -616,10 +616,10 @@ int Packet_scanf(va_alist)
 			failure = 0,
 			max_str_size;
     unsigned		*uptr;
-    short		*sptr;
-    unsigned short	*usptr;
-    long		*lptr;
-    unsigned long	*ulptr;
+    short int		*sptr;
+    unsigned short int	*usptr;
+    long int		*lptr;
+    unsigned long int	*ulptr;
     char		*cptr,
 			*str;
     va_list		ap;
@@ -746,14 +746,14 @@ int Packet_scanf(va_alist)
 		}
 		switch (fmt[++i]) {
 		case 'd':
-		    lptr = va_arg(ap, long *);
+		    lptr = va_arg(ap, long int *);
 		    *lptr = sbuf->ptr[j++] << 24;
 		    *lptr |= (sbuf->ptr[j++] & 0xFF) << 16;
 		    *lptr |= (sbuf->ptr[j++] & 0xFF) << 8;
 		    *lptr |= (sbuf->ptr[j++] & 0xFF);
 		    break;
 		case 'u':
-		    ulptr = va_arg(ap, unsigned long *);
+		    ulptr = va_arg(ap, unsigned long int *);
 		    *ulptr = (sbuf->ptr[j++] & 0xFF) << 24;
 		    *ulptr |= (sbuf->ptr[j++] & 0xFF) << 16;
 		    *ulptr |= (sbuf->ptr[j++] & 0xFF) << 8;

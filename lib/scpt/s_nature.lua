@@ -113,6 +113,25 @@ REGENERATION = add_spell
         }
 }
 
+VERMINCONTROL = add_spell
+{
+	["name"] = 	"Vermin Control",
+        ["school"] = 	{SCHOOL_NATURE},
+        ["level"] = 	15,
+        ["mana"] = 	30,
+        ["mana_max"] = 	30,
+        ["fail"] = 	30,
+        ["spell"] = 	function()
+			do_vermin_control(Ind)
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+        ["desc"] =	{
+        		"Prevents any vermin from breeding.",
+        }
+}
+
 --[[
 SUMMONANIMAL = add_spell
 {

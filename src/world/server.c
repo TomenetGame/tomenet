@@ -63,15 +63,69 @@ int createsocket(int port, unsigned long ip){
 
 void loadservers(){
 	FILE *fp;
-	int i=0;
-	fp=fopen("servers", "r");
-	if(fp==(FILE*)NULL) return;
-	do{
-                fscanf(fp, "%s%s\n", &slist[i].name, &slist[i].pass);
+	int i = 0, j, n;
+	char flags[20];
+	fp = fopen("servers", "r");
+	if(fp == (FILE*)NULL) return;
+	do {
+                fscanf(fp, "%s%s%s\n", &slist[i].name, &slist[i].pass, flags);
+
+		/* Normalize server name lengths to 15 characters: */
+		while (strlen(slist[i].name) < 15) strcat(slist[i].name, " ");
+
+		/* Default packet mask */
+		slist[i].rflags = WPF_LOCK | WPF_UNLOCK | WPF_AUTH | WPF_SQUIT | WPF_RESTART | WPF_SINFO;
+		/* WPF_LACCOUNT is never relayed */
+
+		/* Default message mask */
+		slist[i].mflags = 0; /* Empty */
+
+		/* Packet flags - mikaelh */
+		for (j = 0, n = strlen(flags); j < n; j++) {
+			switch (flags[j]) {
+				case 'C':
+					slist[i].rflags |= WPF_CHAT;
+					break;
+				case 'N':
+					slist[i].rflags |= WPF_NPLAYER;
+					break;
+				case 'Q':
+					slist[i].rflags |= WPF_QPLAYER;
+					break;
+				case 'D':
+					slist[i].rflags |= WPF_DEATH;
+					break;
+				case 'M':
+					slist[i].rflags |= WPF_MESSAGE;
+					break;
+				case 'P':
+					slist[i].rflags |= WPF_PMSG;
+					break;
+				case 'l':
+					slist[i].mflags |= WMF_LVLUP;
+					break;
+				case 'u':
+					slist[i].mflags |= WMF_UNIDEATH;
+					break;
+				case 'w':
+					slist[i].mflags |= WMF_PWIN;
+					break;
+				case 'd':
+					slist[i].mflags |= WMF_PDEATH;
+					break;
+				case 'n':
+					slist[i].mflags |= WMF_PJOIN;
+					break;
+				case 'q':
+					slist[i].mflags |= WMF_PLEAVE;
+					break;
+			}
+		}
+
                 printf("server: %s : [%s]\n", slist[i].name, slist[i].pass);
 		i++;
-	} while(!feof(fp) && i<MAX_SERVERS);
-	snum=i;
+	} while (!feof(fp) && i < MAX_SERVERS);
+	snum = i;
 	fclose(fp);
 }
 

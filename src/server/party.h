@@ -23,6 +23,12 @@ struct hash_entry
 	s16b quest;			/* Player quest */
 
 	time_t laston;			/* Last on time */
+
+#ifdef AUCTION_SYSTEM
+	s32b au;
+	s32b balance;
+#endif
+
 	struct hash_entry *next;	/* Next entry in the chain */
 };
 

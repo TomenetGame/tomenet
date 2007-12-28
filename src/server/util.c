@@ -9,10 +9,7 @@
 #include "angband.h"
 #include "../world/world.h"
 
-#define MAX_CHAT_BUFFER 256
-char* last_chat_owner = NULL; /* Who said it */
-char* last_chat_line = NULL;  /* What was said */ 
-char* last_chat_prev = NULL;  /* What was said before the above*/
+static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 
 #ifndef HAS_MEMSET
 
@@ -1594,8 +1591,9 @@ void msg_print_near_monster(int m_idx, cptr msg)
 void use_ability_blade(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+#ifndef NEW_DODGING
 	int dun_level = getlevel(&p_ptr->wpos);
-	int chance = p_ptr->dodge_chance - (dun_level * 5 / 6);
+	int chance = p_ptr->dodge_level - (dun_level * 5 / 6);
 
 	if (chance < 0) chance = 0;
 	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;	// see DODGE_MAX_CHANCE in melee1.c
@@ -1626,9 +1624,27 @@ void use_ability_blade(int Ind)
 	}
 	else
 	{
-		msg_format(Ind, "You will usually dodge succesfully a level %d monster.", dun_level);
+		msg_format(Ind, "You will usually dodge a level %d monster.", dun_level);
 	}
+#else
+	int lev = p_ptr->lev;
+	int chance = apply_dodge_chance(Ind, lev);
+	if (is_admin(p_ptr))
+		msg_format(Ind, "You have exactly %d%% chances of dodging a level %d monster.", chance, lev);
 
+	if (chance < 5)
+		msg_format(Ind, "You have almost no chance of dodging a level %d monster.", lev);
+	else if (chance < 14)
+		msg_format(Ind, "You have a slight chance of dodging a level %d monster.", lev);
+	else if (chance < 23)
+		msg_format(Ind, "You have a significant chance of dodging a level %d monster.", lev);
+	else if (chance < 30)
+		msg_format(Ind, "You have a good chance of dodging a level %d monster.", lev);
+	else if (chance < 40)
+		msg_format(Ind, "You have a very good chance of dodging a level %d monster.", lev);
+	else
+		msg_format(Ind, "You have a high chance of doding a level %d monster.", lev);
+#endif
 	return;
 }
 
@@ -1705,11 +1721,23 @@ static void player_talk_aux(int Ind, char *message)
 		/* Default name */
 		strcpy(sender, "Server Admin");
 	}
-	if (p_ptr->muted && !admin) return;		/* the_sandman */
+
+#if 0
+	if (p_ptr->muted && !admin) return;		/* moved down there - the_sandman */
+#endif
+
 	/* Default to no search string */
 	strcpy(search, "");
 
 	/* Look for a player's name followed by a colon */
+
+	/* tBot's stuff */
+	/* moved here to allow tbot to see fake pvt messages. -Molt */
+	strncpy(last_chat_owner, sender, 20);
+	strncpy(last_chat_line, message, 160);
+	/* do exec_lua() not here instead of in dungeon.c - mikaelh */
+
+
 	colon = strchr(message, ':');
 
 	/* Ignore "smileys" or URL */
@@ -1729,12 +1757,12 @@ static void player_talk_aux(int Ind, char *message)
 /* staircases, so cannot be used for smileys here ->		case '<':	case '>': */
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
-			if (message == colon || *(colon - 1) == ' ' ||
+			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* >:) -> evil smiley */
 			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
-			if (message == colon || *(colon - 1) == ' ' || /* here especially important: '-' often is for numbers/recall depth */
+			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* here especially important: '-' often is for numbers/recall depth */
 			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
@@ -1798,12 +1826,6 @@ static void player_talk_aux(int Ind, char *message)
 	/* no big brother */
 	if(cfg.log_u && !colon){ // && message[0] != '/'){
 		s_printf("[%s] %s\n", sender, message);
-
-		/* tBot's stuff */
-		if (last_chat_line == NULL) last_chat_line = (char*)malloc(MAX_CHAT_BUFFER); 
-		if(last_chat_owner == NULL) last_chat_owner = (char*)malloc(20);
-		strncpy(last_chat_owner, sender, 20);
-		strncpy(last_chat_line, message, MAX_CHAT_BUFFER);
 	}
 	/* Special - shutdown command (for compatibility) */
 	if (prefix(message, "@!shutdown") && admin)
@@ -1848,7 +1870,7 @@ static void player_talk_aux(int Ind, char *message)
 		if(p_ptr->msg-last > 240 && p_ptr->spam) p_ptr->spam--;
 		p_ptr->msgcnt=0;
 	}
-	if(p_ptr->spam > 1) return;
+	if(p_ptr->spam > 1 || p_ptr->muted) return;
 
 	process_hooks(HOOK_CHAT, "d", Ind);
 
@@ -1884,7 +1906,7 @@ static void player_talk_aux(int Ind, char *message)
 	/* Form a search string if we found a colon */
 	if (colon)
 	{
-		if (p_ptr->mutedchat == 2) return;
+		if (p_ptr->mutedchat == 2) { return;	}
 #if 1 /* No private chat for invalid accounts ? */
 		if(p_ptr->inval){
 			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
@@ -1912,15 +1934,19 @@ static void player_talk_aux(int Ind, char *message)
 			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
 			return;
 		}
-		w_player=world_find_player(search, 0); /* no #ifdef TOMENET_WORLDS here? */
+
 		/* NAME_LOOKUP_LOOSE DESPERATELY NEEDS WORK */
-		if(!w_player)
-			target = name_lookup_loose(Ind, search, TRUE);
-		else if (cfg.worldd_privchat) {
-			world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon+1);
-			msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
-			return;
+		target = name_lookup_loose_quiet(Ind, search, TRUE);
+#ifdef TOMENET_WORLDS
+		if(!target && cfg.worldd_privchat) {
+			w_player=world_find_player(search, 0);
+			if (w_player) {
+				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon+1);
+				msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
+				return;
+			}
 		}
+#endif
 
 		/* Move colon pointer forward to next word */
 /* no, this isn't needed and actually has annoying effects if you try to write smileys:
@@ -1932,7 +1958,11 @@ static void player_talk_aux(int Ind, char *message)
 		if (!target)
 		{
 			/* Bounce message to player who sent it */
-			msg_format(Ind, "(no receipient for: %s)", colon);
+//			msg_format(Ind, "(no receipient for: %s)", colon);
+			msg_print(Ind, "(Cannot match desired receipient)");
+
+			/* Allow fake private msgs to be intercepted - Molt */
+			exec_lua(0, "chat_handler()");
 
 			/* Give up */
 			return;
@@ -1953,6 +1983,8 @@ static void player_talk_aux(int Ind, char *message)
 
 		if (q_ptr->afk) msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
 
+		exec_lua(0, "chat_handler()");
+
 		/* Done */
 		return;
 	}
@@ -1970,11 +2002,14 @@ static void player_talk_aux(int Ind, char *message)
 			   parties[0 - target].name, sender, colon);
 		}
 
-		/* Done */
+		exec_lua(0, "chat_handler()");
+
+		/* Done */ 
 		return;
 	}
 
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1))?2:0;
+	
 
 	if (!Ind) c = 'y';
 	/* Disabled this for now to avoid confusion. */
@@ -1990,6 +2025,10 @@ static void player_talk_aux(int Ind, char *message)
 		/* Dungeon Master / Dungeon Wizard have their own colour now :) */
 		if (is_admin(p_ptr)) c = 'b';
 	}
+
+	/* Admins have exclusive colour - the_sandman */
+	if (c == 'b' && !is_admin(p_ptr)) return;
+
 	switch((i=censor(message))){
 		case 0:
 			break;
@@ -2010,9 +2049,14 @@ static void player_talk_aux(int Ind, char *message)
 		if(mycolor) c=message[5];
 		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4+mycolor);
 	}
+#if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
+#else
+		/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
+		world_chat(p_ptr->id, tmessage);	/* no ignores... */
+#endif
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr=Players[i];
 
@@ -2050,6 +2094,17 @@ static void player_talk_aux(int Ind, char *message)
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
+
+	exec_lua(0, "chat_handler()");
+
+}
+
+/* toggle AFK mode off if it's currently on, also reset idle time counter for in-game character.
+   required for cloaking mode! - C. Blue */
+void un_afk_idle(int Ind) {
+	Players[Ind]->idle_char = 0;
+	if (Players[Ind]->afk) toggle_afk(Ind, "");
+	stop_cloaking(Ind);
 }
 
 /*
@@ -2357,6 +2412,144 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 	return target;
 }
 
+/* same as name_lookup_loose, but without warning message if no name was found */
+static int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
+{
+	int i, j, len, target = 0;
+	player_type *q_ptr, *p_ptr;
+	cptr problem = "";
+	bool party_online;
+
+	p_ptr=Players[Ind];
+
+	/* don't waste time */
+	if(p_ptr==(player_type*)NULL) return(0);
+
+	/* Acquire length of search string */
+	len = strlen(name);
+
+	/* Look for a recipient who matches the search string */
+	if (len)
+	{
+		if (party)
+		{
+			/* First check parties */
+			for (i = 1; i < MAX_PARTIES; i++)
+			{
+				/* Skip if empty */
+				if (!parties[i].members) continue;
+
+				/* Check that the party has players online - mikaelh */
+				party_online = FALSE;
+				for (j = 1; j <= NumPlayers; j++)
+				{
+					/* Check this one */
+					q_ptr = Players[j];
+
+					/* Skip if disconnected */
+					if (q_ptr->conn == NOT_CONNECTED) continue;
+
+					/* Check if the player belongs to this party */
+					if (q_ptr->party == i) {
+						party_online = TRUE;
+						break;
+					}
+				}
+				if (!party_online) continue;
+
+				/* Check name */
+				if (!strncasecmp(parties[i].name, name, len))
+				{
+					/* Set target if not set already */
+					if (!target)
+					{
+						target = 0 - i;
+					}
+					else
+					{
+						/* Matching too many parties */
+						problem = "parties";
+					}
+
+					/* Check for exact match */
+					if (len == strlen(parties[i].name))
+					{
+						/* Never a problem */
+						target = 0 - i;
+						problem = "";
+
+						/* Finished looking */
+						break;
+					}
+				}
+			}
+		}
+
+		/* Then check players */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			/* Check this one */
+			q_ptr = Players[i];
+
+			/* Skip if disconnected */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+
+			/* let admins chat */
+			if (q_ptr->admin_dm && !is_admin(p_ptr)
+			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
+			    && strcasecmp(p_ptr->accountname, "moltor") 
+			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
+			
+			/* Check name */
+			if (!strncasecmp(q_ptr->name, name, len))
+			{
+				/* Set target if not set already */
+				if (!target)
+				{
+					target = i;
+				}
+				else
+				{
+					/* Matching too many people */
+					problem = "players";
+				}
+
+				/* Check for exact match */
+				if (len == strlen(q_ptr->name))
+				{
+					/* Never a problem */
+					target = i;
+					problem = "";
+
+					/* Finished looking */
+					break;
+				}
+			}
+		}
+	}
+
+	/* Check for recipient set but no match found */
+	if ((len && !target) || (target < 0 && !party))
+	{
+		/* Give up */
+		return 0;
+	}
+
+	/* Check for multiple recipients found */
+	if (strlen(problem))
+	{
+		/* Send an error message */
+		msg_format(Ind, "'%s' matches too many %s.", name, problem);
+
+		/* Give up */
+		return 0;
+	}
+
+	/* Success */
+	return target;
+}
+
 /*
  * Convert bracer '{' into '\377'
  */
@@ -2448,6 +2641,7 @@ bool show_floor_feeling(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
+	struct dungeon_type *d_ptr = getdungeon(wpos);
 	dun_level *l_ptr = getfloor(wpos);
 	bool felt = FALSE;
 
@@ -2487,7 +2681,7 @@ bool show_floor_feeling(int Ind)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
 #endif
 	/* Can leave IRONMAN? */
-	if(l_ptr->flags1 & LF1_IRON_RECALL)
+	if(l_ptr->flags1 & LF1_IRON_RECALL || ((d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth == ABS(p_ptr->wpos.wz)))
 		msg_print(Ind, "\377gYou don't sense a magic barrier here...");
 
 	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
@@ -2614,7 +2808,7 @@ void lua_intrusion(int Ind, char *problem_diz)
 	msg_print(Ind, "\377rThat was close huh?!");
 }
 
-void bss_add_line(cptr textline)
+void bbs_add_line(cptr textline)
 {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
@@ -2627,4 +2821,22 @@ void bss_add_line(cptr textline)
 	                strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* write the line to the bbs */
 	strncpy(bbs_line[j], textline, 77); /* lines get one leading spaces on outputting, so it's 78-1 */
+}
+
+void bbs_del_line(int entry)
+{
+	int j;
+	if (entry < 0) return;
+	if (entry >= BBS_LINES) return;
+        for (j = entry; j < BBS_LINES - 1; j++)
+                strcpy(bbs_line[j], bbs_line[j + 1]);
+	/* erase last line */
+	strcpy(bbs_line[BBS_LINES], "");
+}
+
+void bbs_erase(void)
+{
+	int i;
+        for (i = 0; i < BBS_LINES; i++)
+                strcpy(bbs_line[i], "");
 }

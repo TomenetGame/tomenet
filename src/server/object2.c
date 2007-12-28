@@ -23,6 +23,8 @@
 // Alas, I'm too lazy.. see '/at'	- Jir -
 #define AUTO_INSCRIBER
 
+/* At 50% there were too many cursed jewelry in general in my opinion, using a macro now - C. Blue */
+#define CURSED_JEWELRY_CHANCE	25
 
 /*
  * Excise a dungeon object from any stacks
@@ -592,9 +594,12 @@ void wipe_o_list_safely(struct worldpos *wpos)
 		if(!(inarea(wpos, &o_ptr->wpos)))
 			continue;
 
-		/* Skip objects inside a house(or something) */
-		if(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
-			continue;
+/* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
+//		if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
+			/* Skip objects inside a house(or something) */
+			if(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
+				continue;
+//		}
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
@@ -722,6 +727,42 @@ errr get_obj_num_prep(void)
 	{
 		/* Accept objects which pass the restriction, if any */
 		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index))
+		{
+			/* Accept this object */
+			table[i].prob2 = table[i].prob1;
+		}
+
+		/* Do not use this object */
+		else
+		{
+			/* Decline this object */
+			table[i].prob2 = 0;
+		}
+	}
+
+	/* Success */
+	return (0);
+}
+
+
+
+/*
+ * Apply a "object restriction function" to the "object allocation table"
+ * This function only takes objects of a certain TVAL! - C. Blue
+ */
+errr get_obj_num_prep_tval(int tval)
+{
+	int i;
+
+	/* Get the entry */
+	alloc_entry *table = alloc_kind_table;
+
+	/* Scan the allocation table */
+	for (i = 0; i < alloc_kind_size; i++)
+	{
+		/* Accept objects which pass the restriction, if any */
+		if ((!get_obj_num_hook || (*get_obj_num_hook)(table[i].index)) &&
+		    k_info[table[i].index].tval == tval)
 		{
 			/* Accept this object */
 			table[i].prob2 = table[i].prob1;
@@ -1670,7 +1711,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	{
 		case TV_BOOK:
 		{
-			if (o_ptr->sval == 255)
+			if (o_ptr->sval == SV_SPELLBOOK)
 			{
 				int sl = school_spells[o_ptr->pval].skill_level + 2;
 				/* override k_info.txt to have easier handling of possible changes here */
@@ -1745,14 +1786,14 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 : 
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4): 
-				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5): 
+				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
 				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
-				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) + 
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
 				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 4):
-				    PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) ) * 100L;
+				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 			/* Done */
 			break;
 		}
@@ -1782,14 +1823,14 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 //			value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4):
-				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
 				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
-				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4))) + 
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5))) + 
 				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 4):
-				    PRICE_BOOST(o_ptr->to_a - k_ptr->to_a, 9, 4))) ) * 100L;
+				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
+				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
 
 			/* Hack -- Factor in extra damage dice */
 			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
@@ -1814,11 +1855,11 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 //			value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 			/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
 			value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 4):
-				    PRICE_BOOST(o_ptr->to_h - k_ptr->to_h, 9, 4))) + 
+				    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, 9, 5):
+				    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), 9, 5))) + 
 				    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 4):
-				    PRICE_BOOST(o_ptr->to_d - k_ptr->to_d, 9, 4)))  ) * 5L;
+				    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, 9, 5):
+				    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), 9, 5)))  ) * 5L;
 
 			/* Hack -- Factor in extra damage dice */
 			if (((o_ptr->dd > k_ptr->dd) && (o_ptr->ds == k_ptr->ds)) &&
@@ -2492,12 +2533,10 @@ s16b m_bonus(int max, int level)
  *
  * Note -- see "make_artifact()" and "apply_magic()"
  */
-static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, bool true_art)
+static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u16b resf)
 {
-	int			i;
-
-	int			k_idx = 0;
-
+	int	i;
+	int	k_idx = 0;
 
 	/* Check if artifact generation is currently disabled -
 	   added this for maintenance reasons -C. Blue */
@@ -2508,7 +2547,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, boo
 
 	/* swallow true artifacts if king/queen finds them
 	   (dropped by monsters) */
-	if (!true_art) return (FALSE);
+	if (resf & RESF_NOTRUEART) return (FALSE);
 
 	/* Check the artifact list (just the "specials") */
 //	for (i = 0; i < ART_MIN_NORMAL; i++)
@@ -2580,11 +2619,10 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, boo
  *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
-static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_art)
+static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u16b resf)
 {
 	int i, tries = 0;
 	artifact_type *a_ptr;
-
 
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
@@ -2592,10 +2630,14 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 	/* Paranoia -- no "plural" artifacts */
 	if (o_ptr->number != 1) return (FALSE);
 
+	/* no arts allowed at all? (neither randart nor trueart)
+	   Note: this line is redundant, it's checked below again.
+	   But maybe we save a nanosecond of cpu time :-p */
+	if ((resf & RESF_NORANDART) && (resf & RESF_NOTRUEART)) return (FALSE);
+
         /* Check if true artifact generation is currently disabled -
 	added this for maintenance reasons -C. Blue */
 	if (!cfg.arts_disabled) {
-
 		/* Check the artifact list (skip the "specials") */
 	//	for (i = ART_MIN_NORMAL; i < MAX_A_IDX; i++)
 	        for (i = 0; i < MAX_A_IDX; i++)
@@ -2634,7 +2676,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 
 			/* swallow true artifacts if true_art isn't allowed
 			   (meaning that a king/queen did the monster kill!) */
-			if (!true_art) return (FALSE); /* Don't replace them with randarts! */
+			if (resf & RESF_NOTRUEART) return (FALSE); /* Don't replace them with randarts! */
 
 			/* Hack -- mark the item as an artifact */
 			o_ptr->name1 = i;
@@ -2646,6 +2688,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 			return (TRUE);
 		}
 	}
+
+	/* Break here if randarts aren't allowed */
+	if (resf & RESF_NORANDART) return (FALSE);
 
 	/* An extra chance at being a randart. XXX RANDART */
 	if (!rand_int(RANDART_RARITY))
@@ -2677,8 +2722,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
 			
 			/* Check if we can break the loop (artifact is allowed) */
 			a_ptr = randart_make(o_ptr);
-			/* hack - we use 'true_art' as '!p_ptr->total_winner' here */
-			if (!true_art || !(a_ptr->flags1 & TR1_LIFE)) break;
+			/* hack - we use 'RESF_NOTRUEART' to actually check for
+			   '!p_ptr->total_winner' (which we're unable to access) here: */
+			if ((resf & RESF_NOTRUEART) || !(a_ptr->flags1 & TR1_LIFE)) break;
 		}
 		
 		return (TRUE);
@@ -2703,7 +2749,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, bool true_a
  *
  * This routine should only be called by "apply_magic()"
  */
-static bool make_ego_item(int level, object_type *o_ptr, bool good)
+static bool make_ego_item(int level, object_type *o_ptr, bool good, u16b resf)
 {
 	int i = 0, j;
 #if 0
@@ -2819,7 +2865,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good)
 	 */
 	/* try only when it's already ego	- Jir - */
 //	if (magik(7 + luck(-7, 7)) && (!o_ptr->name2b))
-	if (ret && magik(7) && (!o_ptr->name2b))
+	if (ret && magik(7) && (!o_ptr->name2b) && !(resf & RESF_NODOUBLEEGO))
 	{
 		/* Now test them a few times */
 		for (j = 0; j < ok_num * 10; j++)
@@ -2917,7 +2963,7 @@ static void charge_wand(object_type *o_ptr)
 		case SV_WAND_FEAR_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
 		case SV_WAND_DRAIN_LIFE:		o_ptr->pval = randint(3)  + 3; break;
 		case SV_WAND_POLYMORPH:			o_ptr->pval = randint(8)  + 6; break;
-		case SV_WAND_STINKING_CLOUD:	o_ptr->pval = randint(8)  + 6; break;
+		case SV_WAND_STINKING_CLOUD:		o_ptr->pval = randint(8)  + 6; break;
 		case SV_WAND_MAGIC_MISSILE:		o_ptr->pval = randint(10) + 6; break;
 		case SV_WAND_ACID_BOLT:			o_ptr->pval = randint(8)  + 6; break;
 		case SV_WAND_ELEC_BOLT:			o_ptr->pval = randint(8)  + 6; break;
@@ -3022,7 +3068,7 @@ static void charge_staff(object_type *o_ptr)
  * Hack -- note special processing for weapon/digger
  * Hack -- note special rating boost for dragon scale mail
  */
-static void a_m_aux_1(object_type *o_ptr, int level, int power)
+static void a_m_aux_1(object_type *o_ptr, int level, int power, u16b resf)
 {
 	int tohit1 = randint(5) + m_bonus(5, level);
 	int todam1 = randint(5) + m_bonus(5, level);
@@ -3038,12 +3084,12 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power)
         {
                 /* Make ego item */
 //                if (!rand_int(RANDART_WEAPON) && (o_ptr->tval != TV_TRAPKIT)) create_artifact(o_ptr, FALSE, TRUE);	else
-                make_ego_item(level, o_ptr, TRUE);
+                make_ego_item(level, o_ptr, TRUE, resf);
         }
         else if (power < -1)
         {
                 /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE);
+                make_ego_item(level, o_ptr, FALSE, resf);
         }
 
 	/* Good */
@@ -3467,6 +3513,16 @@ tries = 100;
 		}
 	}
 #endif	// 0
+
+	/* CAP_ITEM_BONI */
+	switch (o_ptr->tval) {
+	case TV_BOW:
+	case TV_BOOMERANG:
+	default:
+		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
+		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+		break;
+	}
 }
 
 
@@ -3476,7 +3532,7 @@ tries = 100;
  * Hack -- note special processing for crown/helm
  * Hack -- note special processing for robe of permanence
  */
-static void a_m_aux_2(object_type *o_ptr, int level, int power)
+static void a_m_aux_2(object_type *o_ptr, int level, int power, u16b resf)
 {
 	int toac1 = randint(5) + m_bonus(5, level);
 
@@ -3489,12 +3545,12 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
         {
                 /* Make ego item */
 //                if (!rand_int(RANDART_ARMOR)) create_artifact(o_ptr, FALSE, TRUE);	else
-                make_ego_item(level, o_ptr, TRUE);
+                make_ego_item(level, o_ptr, TRUE, resf);
         }
         else if (power < -1)
         {
                 /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE);
+                make_ego_item(level, o_ptr, FALSE, resf);
         }
 
 
@@ -3796,7 +3852,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 
                                         case 16: case 17:
 					{
-						o_ptr->name2 = EGO_MAGIC;
+						o_ptr->name2 = EGO_OFTHEMAGI;
 						break;
 					}
 
@@ -4128,6 +4184,17 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
 		}
 	}
 #endif	// 0
+
+	/* CAP_ITEM_BONI */
+#ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
+                        /* dramatic a change if it gets enabled temporarily - C. Blue */
+	if (o_ptr->tval == TV_SHIELD) {
+		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+	} else
+#endif
+	{
+		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+	}
 }
 
 
@@ -4140,7 +4207,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power)
  * Hack -- note special "pval boost" code for ring of speed
  * Hack -- note that some items must be cursed (or blessed)
  */
-static void a_m_aux_3(object_type *o_ptr, int level, int power)
+static void a_m_aux_3(object_type *o_ptr, int level, int power, u16b resf)
 {
 	//int tries;
 	artifact_bias = 0;
@@ -4153,12 +4220,12 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 			else
 #endif
 		/* Make ego item */
-                make_ego_item(level, o_ptr, TRUE);
+                make_ego_item(level, o_ptr, TRUE, resf);
         }
         else if (power < -1)
         {
                 /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE);
+                make_ego_item(level, o_ptr, FALSE, resf);
         }
 
 
@@ -4546,7 +4613,17 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 					break;
 				}
 
-				case SV_AMULET_NO_MAGIC: case SV_AMULET_NO_TELE:
+				case SV_AMULET_NO_MAGIC:
+				{
+#if 0 /* if it's already 'anti-magic' then it shouldn't be cursed all the time, to be more specific: never - C. Blue */
+					if (power < 0)
+					{
+						o_ptr->ident |= (ID_CURSED);
+					}
+#endif
+					break;
+				}
+				case SV_AMULET_NO_TELE:
 				{
 					if (power < 0)
 					{
@@ -4646,7 +4723,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
 				case SV_AMULET_ESP:
 				{
 //					o_ptr->name2 = EGO_ESP;
-			                make_ego_item(level, o_ptr, TRUE);
+			                make_ego_item(level, o_ptr, TRUE, resf);
 					break;
 				}
 
@@ -5063,7 +5140,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int level, int power)
+static void a_m_aux_4(object_type *o_ptr, int level, int power, u16b resf)
 {
         u32b f1, f2, f3, f4, f5, esp;
 
@@ -5072,12 +5149,12 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
         {
                 /* Make ego item */
 //                if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE, TRUE);	else
-                make_ego_item(level, o_ptr, TRUE);
+                make_ego_item(level, o_ptr, TRUE, resf);
         }
         else if (power < -1)
         {
                 /* Make ego item */
-                make_ego_item(level, o_ptr, FALSE);
+                make_ego_item(level, o_ptr, FALSE, resf);
         }
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -5088,7 +5165,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
 		case TV_BOOK:
 		{
 			/* Randomize random books */
-			if (o_ptr->sval == 255)
+			if (o_ptr->sval == SV_SPELLBOOK)
 			{
 				int  i = 0, tries = 1000;
 
@@ -5236,20 +5313,23 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power)
  * "verygreat" makes sure that ego items aren't just resist fire etc.
  * Has no influence on artifacts. - C. Blue
  */
-void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art)
+void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf)
 {
 	/* usually lev = dungeonlevel (sometimes more, if in vault) */
-	object_type forge_bak;
-	object_type *o_ptr_bak = &forge_bak;
+	object_type forge_bak, forge_highest;
+	object_type *o_ptr_bak = &forge_bak, *o_ptr_highest = &forge_highest;
 	s32b ego_value1, ego_value2, ovr, fc;
 	long depth = ABS(getlevel(wpos)), depth_value;
-	int i, rolls, f1, f2, power; //, j;
+	int i, rolls, chance1, chance2, power; //, j;
         char o_name[80];
+	u32b f1, f2, f3, f4, f5, esp; /* for RESF checks */
 
+#if 0 /* moved to make_resf() */
 	/* if true arts aren't forbidden, allow them to get a chance of being generated
-	   (goes in hand with the same check in apply_magic) - C. Blue */
-	if (!cfg.winners_find_randarts) true_art = TRUE;
-	
+	   (goes in hand with the same check in place_object) - C. Blue */
+	if (!cfg.winners_find_randarts) resf |= RESF_TRUEART;
+#endif
+
 	/* Fix for reasonable level reqs on DROP_CHOSEN/SPECIAL_GENE items -C. Blue */
 	if (lev == -2) lev = getlevel(wpos);
 
@@ -5258,39 +5338,39 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 
 	/* Base chance of being "good" */
-	f1 = lev + 10;
+	chance1 = lev + 10;
 
 	/* Maximal chance of being "good" */
-	if (f1 > 75) f1 = 75;
+	if (chance1 > 75) chance1 = 75;
 
 	/* Base chance of being "great" */
-	f2 = f1 / 2;
+	chance2 = chance1 / 2;
 
 	/* Maximal chance of being "great" */
-	if (f2 > 20) f2 = 20;
+	if (chance2 > 20) chance2 = 20;
 
 
 	/* Assume normal */
 	power = 0;
 
 	/* Roll for "good" */
-	if (good || magik(f1))
+	if (good || magik(chance1))
 	{
 		/* Assume "good" */
 		power = 1;
 
 		/* Roll for "great" */
-		if (great || magik(f2)) power = 2;
+		if (great || magik(chance2)) power = 2;
 	}
 
 	/* Roll for "cursed" */
-	else if (magik(f1))
+	else if (magik(chance1))
 	{
 		/* Assume "cursed" */
 		power = -1;
 
 		/* Roll for "broken" */
-		if (magik(f2)) power = -2;
+		if (magik(chance2)) power = -2;
 	}
 
 
@@ -5310,7 +5390,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	for (i = 0; i < rolls; i++)
 	{
 		/* Roll for an artifact */
-		if (make_artifact(wpos, o_ptr, true_art)) break;
+		if (make_artifact(wpos, o_ptr, resf)) break;
 	}
 
 	/* virgin */
@@ -5330,8 +5410,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		{
 			/* Allow mods on non-artified randart jewelry! */
 			if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) {
-				if (!power && (rand_int(100) < 50)) power = -1;
-				a_m_aux_3(o_ptr, lev, power);
+				if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
+				a_m_aux_3(o_ptr, lev, power, resf);
 			}
 
 			a_ptr =	randart_make(o_ptr);
@@ -5391,8 +5471,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	/* In case we get an ego item, check "verygreat" flag and retry a few times if needed */
 if (verygreat) s_printf("verygreat apply_magic:\n");
 	object_copy(o_ptr_bak, o_ptr);
+	object_copy(o_ptr_highest, o_ptr);
 	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
-	for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 7 : 4 + depth / 5); i++) {
+//  for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 7 : 4 + depth / 5); i++) {
+//  for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 5 : 4 + depth / 5); i++) {
+for (i = 0; i < 25; i++) {
 	object_copy(o_ptr, o_ptr_bak);
 
 
@@ -5411,7 +5494,7 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 		case TV_AXE:
 		case TV_MSTAFF:
 		{
-			if (power) a_m_aux_1(o_ptr, lev, power);
+			if (power) a_m_aux_1(o_ptr, lev, power, resf);
 			break;
 		}
 
@@ -5456,29 +5539,29 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 			// Power is no longer required since things such as
 			// Kollas need magic applied to finish their normal
 			// generation.
-			//if (power) a_m_aux_2(o_ptr, lev, power);
-			a_m_aux_2(o_ptr, lev, power);
+			//if (power) a_m_aux_2(o_ptr, lev, power, resf);
+			a_m_aux_2(o_ptr, lev, power, resf);
 			break;
 		}
 
 		case TV_RING:
 		case TV_AMULET:
 		{
-			if (!power && (rand_int(100) < 50)) power = -1;
-			a_m_aux_3(o_ptr, lev, power);
+			if (!power && (rand_int(100) < CURSED_JEWELRY_CHANCE)) power = -1;
+			a_m_aux_3(o_ptr, lev, power, resf);
 			break;
 		}
 		
 		case TV_CHEST:
 	                /* Traps (placed in a_m_aux4) won't be placed on a level 0 object */
 	                determine_level_req(lev, o_ptr); /* usually lev == dungeonlevel (+ x for vaults) */
-			a_m_aux_4(o_ptr, lev, power);
+			a_m_aux_4(o_ptr, lev, power, resf);
 			/* that's it already */
 			return;
 
 		default:
 		{
-			a_m_aux_4(o_ptr, lev, power);
+			a_m_aux_4(o_ptr, lev, power, resf);
 			break;
 		}
 	}
@@ -5603,7 +5686,7 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 			}
 
                         /* Gloves of Magic */
-                        case EGO_MAGIC:
+                        case EGO_OFTHEMAGI:
 			{
                                 o_ptr->xtra1 = EGO_XTRA_ABILITY;
 				break;
@@ -5721,6 +5804,11 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 		if (k_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 	}
 
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+	if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+	if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
+	if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
+	if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
 
 	/* "verygreat" check: */
 	/* 2000 to exclude res, light, reg, etc */
@@ -5733,6 +5821,12 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
         object_desc(0, o_name, o_ptr, FALSE, 3);
 	ovr = object_value_real(0, o_ptr);
 	fc = flag_cost(o_ptr, o_ptr->pval);
+	/* remember most expensive object we rolled, in case we don't find any better we can fallback to it */
+	if (ovr > object_value_real(0, o_ptr_highest))
+		object_copy(o_ptr_highest, o_ptr);
+	else
+		continue;
+
 	s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
 		depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
 
@@ -5742,19 +5836,20 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 	} else {
 		/* Ammo amount is increased in place_object */
 		if (object_value_real(0, o_ptr) >= depth + 150) break;
-	}
-	/* verygreat-loop end */
-	}
-if (verygreat) s_printf("taken\n");
+	}	
+    } /* verygreat-loop end */
 
-
+	if (verygreat) {
+	        s_printf("taken\n");
+		object_copy(o_ptr, o_ptr_highest);
+	}
 }
 
 /*
  * This 'utter hack' function is to allow item-generation w/o specifing
  * worldpos.
  */
-void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, bool true_art)
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf)
 {
 	worldpos wpos;
 
@@ -5762,7 +5857,7 @@ void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool g
 	wpos.wx = cfg.town_x;
 	wpos.wy = cfg.town_y;
 	wpos.wz = Depth > 0 ? 0 - Depth : Depth;
-	apply_magic(&wpos, o_ptr, lev, okay, good, great, verygreat, true_art);
+	apply_magic(&wpos, o_ptr, lev, okay, good, great, verygreat, resf);
 }
 
 
@@ -5998,6 +6093,7 @@ void determine_level_req(int level, object_type *o_ptr)
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_CHAOS) && (o_ptr->level < 30)) o_ptr->level = 30;
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30 + o_ptr->bpval - 1) && (o_ptr->bpval > 0))
 		o_ptr->level = 30 + o_ptr->bpval - 1 + rand_int(3);
+	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
 	/* tone down deep randarts a bit to allow winner-trading */
 	if (o_ptr->name1 == ART_RANDART) {
@@ -6008,10 +6104,18 @@ void determine_level_req(int level, object_type *o_ptr)
 	if (o_ptr->level > 50) o_ptr->level--;
 	if (o_ptr->level > 45) o_ptr->level--;
 	if (o_ptr->level > 40) o_ptr->level--;
+
 	/* Special limit for +LIFE randarts */
 	if ((o_ptr->name1 == ART_RANDART) &&
 	    (a_ptr->flags1 & TR1_LIFE) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(2);
+
+	/* Special limit for WINNERS_ONLY items */
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
+		o_ptr->level = 51 + rand_int(2);
+
+	/* Fix cheap but high +dam weaponry: */
+	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
 }
 
 
@@ -6249,7 +6353,7 @@ static bool kind_is_good(int k_idx)
 		/* Ammo -- Arrows/Bolts are good */
 		case TV_BOLT:
 		case TV_ARROW:
-//		case TV_SHOT:	/* are Shots bad? */
+		case TV_SHOT:	/* are Shots bad? */
 		case TV_MSTAFF:
 		{
 			return (TRUE);
@@ -6290,7 +6394,7 @@ static bool kind_is_good(int k_idx)
 s16b unique_quark = 0;
 
 /* Restrict the type of placed objects */
-int place_object_restrictor = 0;
+u16b place_object_restrictor = 0x000;
 
 /*
  * Attempt to place an object (normal or good/great) at the given location.
@@ -6302,7 +6406,7 @@ int place_object_restrictor = 0;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, bool true_art, obj_theme theme, int luck, byte removal_marker)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u16b resf, obj_theme theme, int luck, byte removal_marker)
 {
 	int prob, base, tmp_luck, i;
 	int tries = 0, k_idx;
@@ -6321,9 +6425,14 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
 
+#if 0 /* moved to make_resf() */
 	/* if true arts aren't forbidden, allow them to get a chance of being generated
 	   (goes in hand with the same check in apply_magic) - C. Blue */
-	if (!cfg.winners_find_randarts) true_art = TRUE;
+	if (!cfg.winners_find_randarts) resf |= RESF_TRUEART;
+#endif
+
+	/* place_object_restrictor overrides resf */
+	resf |= place_object_restrictor;
 
 	/* Check luck */
 	luck += global_luck;
@@ -6353,7 +6462,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	invwipe(&forge);
 
 	/* Generate a special object, or a normal object */
-	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, true_art))
+	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf))
 	{
 	
 		/* Check global variable, if some base types are forbidden */
@@ -6414,23 +6523,32 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			}
 #endif	// 0
 
-			/* values for place_object_restrictor: */
-			/* 0 = no restrictions */
-			if (!place_object_restrictor) break;
-			/* 1 = no expensive DSMs */
-			if ((place_object_restrictor == 1) &&
-			    ((k_info[k_idx].tval != TV_DRAG_ARMOR) ||
-			    (k_info[k_idx].sval == SV_DRAGON_BLUE) ||
-			    (k_info[k_idx].sval == SV_DRAGON_WHITE) ||
-			    (k_info[k_idx].sval == SV_DRAGON_BLACK) ||
-			    (k_info[k_idx].sval == SV_DRAGON_RED) ||
-			    (k_info[k_idx].sval == SV_DRAGON_GREEN) ||
-			    (k_info[k_idx].sval == SV_DRAGON_BRONZE) ||
-			    (k_info[k_idx].sval == SV_DRAGON_GOLD) ||
-			    (k_info[k_idx].sval == SV_DRAGON_PSEUDO)))
-				break;
+			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
+			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
+			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+				continue;
+			
+			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
+			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
+			
+			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
+			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
+
+			/* Allow all other items here - mikaelh */
+			break;
 		} while(tries < 10);
+
+		/* Note that if we run out of 'tries', the last tested object WILL be used,
+		   except if we clear k_idx now. */
+		if (tries == 10) k_idx = 0;
 
 		/* Handle failure */
 		if (!k_idx) return;
@@ -6440,7 +6558,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	/* Apply magic (allow artifacts) */
-	apply_magic(wpos, &forge, object_level, TRUE, good, great, verygreat, true_art);
+	apply_magic(wpos, &forge, object_level, TRUE, good, great, verygreat, resf);
 
 	/* Hack -- generate multiple spikes/missiles */
 	if (!forge.name1)
@@ -6512,9 +6630,9 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, bool true_art)
+void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u16b resf)
 {
-	int        y, x, i, d;
+//	int        y, x, i, d;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -6534,8 +6652,8 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object_restrictor = 0;
-			place_object(wpos, y, x, TRUE, great, verygreat, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+			place_object_restrictor = 0x000;
+			place_object(wpos, y, x, TRUE, great, verygreat, resf, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
 
@@ -6554,8 +6672,8 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 		}
 #else /* should work always, stacks to pile if required */
 		/* Place a good (or great) object */
-		place_object_restrictor = 0;
-		place_object(wpos, y1, x1, TRUE, great, verygreat, true_art, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+		place_object_restrictor = 0x000;
+		place_object(wpos, y1, x1, TRUE, great, verygreat, resf, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 		/* Notice */
 		note_spot_depth(wpos, y1, x1);
 		/* Redraw */
@@ -6565,57 +6683,470 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 }
 
 
+
+/* for create_reward() ... */
+#if 0
+static int reward_weapon_check(player_type *p_ptr) {
+	long int rnd_range, weapon_tval;
+	rnd_range = p_ptr->s_info[SKILL_SWORD].value;
+	rnd_range += p_ptr->s_info[SKILL_HAFTED].value;
+	rnd_range += p_ptr->s_info[SKILL_AXE].value;
+	rnd_range += p_ptr->s_info[SKILL_POLEARM].value;
+	rnd_range += p_ptr->s_info[SKILL_MARTIAL_ARTS].value;
+	rnd_result = randint(rnd_range);
+	if (!rnd_result) return 0;
+	if (rnd_result <= p_ptr->s_info[SKILL_SWORD].value) weapon_tval = TV_SWORD;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value <= p_ptr->s_info[SKILL_HAFTED].value) weapon_tval = TV_HAFTED;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value <= p_ptr->s_info[SKILL_AXE].value) weapon_tval = TV_AXE;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value - p_ptr->s_info[SKILL_AXE].value <= p_ptr->s_info[SKILL_POLEARM].value) weapon_tval = TV_POLEARM;
+	else weapon_tval = -1; /* Martial Arts doesn't use weapons */
+	return (weapon_tval);
+}
+#endif
+static int reward_melee_check(player_type *p_ptr, long int treshold) {
+	long int rnd_result = 0, selection = 0;
+	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0;
+	if (p_ptr->s_info[SKILL_SWORD].value >= treshold) choice1 = p_ptr->s_info[SKILL_SWORD].value;
+	if (p_ptr->s_info[SKILL_HAFTED].value >= treshold) choice2 = p_ptr->s_info[SKILL_HAFTED].value;
+	if (p_ptr->s_info[SKILL_AXE].value >= treshold) choice3 = p_ptr->s_info[SKILL_AXE].value;
+	if (p_ptr->s_info[SKILL_POLEARM].value >= treshold) choice4 = p_ptr->s_info[SKILL_POLEARM].value;
+	if (p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= treshold) choice5 = p_ptr->s_info[SKILL_MARTIAL_ARTS].value;
+	rnd_result = randint(choice1 + choice2 + choice3 + choice4 + choice5);
+	/* manipulation concerning magic/melee hybrids but also priests:
+	   melee takes precedence over magic, since someone wouldn't skill melee otherwise */
+/* TV_MSTAFF	*/
+	if (!rnd_result) return 0;
+/*  TV_SWORD
+    TV_HAFTED
+    TV_AXE
+    TV_POLEARM
+    TV_SHIELD	*/
+	if (rnd_result <= choice1) selection = 1;
+	else if (rnd_result - choice1 <= choice2) selection = 2;
+	else if (rnd_result - choice1 - choice2 <= choice3) selection = 3;
+	else if (rnd_result - choice1 - choice2 - choice3 <= choice4) selection = 4;
+/* Martial Arts	- will get some light armor or any misc item instead! */
+	else if (rnd_result - choice1 - choice2 - choice3 - choice4 <= choice5) selection = 5;
+
+/* Receive a shield instead of a weapon? Depends on actual weapon type! */
+	if (p_ptr->pclass == CLASS_ROGUE) return(selection); /* rogues dual-wield, shields are bad for them. */
+	switch (selection) {
+	case 1: if magik(50) selection = 6; break;
+	case 2: if magik(35) selection = 6; break;
+	case 3: if magik(15) selection = 6; break;
+	case 4: if magik(10) selection = 6; break;
+	}
+	return (selection);
+}
+static int reward_ranged_check(player_type *p_ptr, long int treshold) {
+	long int rnd_result = 0, selection = 0;
+	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0;
+	if (p_ptr->s_info[SKILL_BOW].value >= treshold) choice1 = p_ptr->s_info[SKILL_BOW].value;
+	if (p_ptr->s_info[SKILL_XBOW].value >= treshold) choice2 = p_ptr->s_info[SKILL_XBOW].value;
+	if (p_ptr->s_info[SKILL_SLING].value >= treshold) choice3 = p_ptr->s_info[SKILL_SLING].value;
+	if (p_ptr->s_info[SKILL_BOOMERANG].value >= treshold) choice4 = p_ptr->s_info[SKILL_BOOMERANG].value;
+	rnd_result = randint(choice1 + choice2 + choice3 + choice4);
+	if (!rnd_result) return 0;
+/*  TV_BOW:
+    SV_SHORT_BOW, SV_LONG_BOW
+    SV_LIGHT_XBOW, SV_HEAVY_XBOW
+    SV_SLING
+    TV_BOOMERANG	*/
+	if (rnd_result <= choice1) selection = 1;
+	else if (rnd_result - choice1 <= choice2) selection = 2;
+	else if (rnd_result - choice1 - choice2 <= choice3) selection = 3;
+	else if (rnd_result - choice1 - choice2 - choice3 <= choice4) selection = 4;
+	/* For now no shooter reward for unskilled players (not necessarily needed though..everyone wants a good shooter!) */
+	if (!(choice1 + choice2 + choice3 + choice4)) selection = 0;
+	return (selection);
+}
+static int reward_armor_check(player_type *p_ptr, bool mha, bool rha) {
+//	int maxweight = (adj_str_hold[p_ptr->stat_ind[A_STR]] - 10) * 10;
+	int maxweight = adj_str_armor[p_ptr->stat_ind[A_STR]] * 10;
+	long int rnd_result = 0, selection = 0;
+	int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0, choice6 = 0, choice7 = 0, choice8 = 0;
+/*  TV_SOFT_ARMOR
+    TV_HARD_ARMOR
+    TV_DRAG_ARMOR
+    TV_BOOTS
+    TV_GLOVES
+    TV_HELM
+    TV_CROWN
+    TV_CLOAK	*/
+	if (maxweight < 240) choice1 = 10;
+	if (maxweight >= 240 && !mha && !rha) choice2 = 30; /* If player can make good use of heavy armour, make him likely to get one! */
+	if (maxweight >= 200 && !mha && !rha) choice3 = 3; /* Only slim chance to get a Dragon Scale Mail! */
+	choice4 = 10;
+	choice5 = 10;
+	choice6 = 10;
+	choice7 = 5;/* actually funny to give the "Highlander Tournament" winner a crown ;) */
+	choice8 = 10;
+	rnd_result = randint(choice1 + choice2 + choice3 + choice4 + choice5 + choice6 + choice7 + choice8);
+	if (!rnd_result) return 0;
+	if (rnd_result <= choice1) selection = 1;
+	else if (rnd_result - choice1 <= choice2) selection = 2;
+	else if (rnd_result - choice1 - choice2 <= choice3) selection = 3;
+	else if (rnd_result - choice1 - choice2 - choice3 <= choice4) selection = 4;
+	else if (rnd_result - choice1 - choice2 - choice3 - choice4 <= choice5) selection = 5;
+	else if (rnd_result - choice1 - choice2 - choice3 - choice4 - choice5 <= choice6) selection = 6;
+	else if (rnd_result - choice1 - choice2 - choice3 - choice4 - choice5 - choice6 <= choice7) selection = 7;
+	else selection = 8;
+	return (selection);
+}
+static int reward_spell_check(player_type *p_ptr, long int treshold) {
+	int selection = 0;
+	s32b value = 0, mod = 0;
+
+	/* get base value of MAGIC skill */
+	compute_skills(p_ptr, &value, &mod, SKILL_MAGIC);
+	/* check whether player increased magic skill above its base value */
+	if (p_ptr->s_info[SKILL_MAGIC].value > value) selection = 1;
+
+#if 0 /* players won't increase this during tourney maybe, and only runemasters can actually have this skill atm */
+	/* get base value of RUNEMASTERY skill (doesn't increase magic skill atm) */
+	compute_skills(p_ptr, &value, &mod, SKILL_RUNEMASTERY);
+	/* check whether player increased magic skill above its base value */
+	if (p_ptr->s_info[SKILL_RUNEMASTERY].value > value) selection = 1;
+#else
+	if (get_skill(p_ptr, SKILL_RUNEMASTERY)) selection = 1;
+#endif
+
+	return (selection);
+}
+static int reward_misc_check(player_type *p_ptr) {
+/*  TV_LITE
+    TV_AMULET
+    TV_RING	*/
+	return (randint(3));
+}
+
 /*
  * Create a reward (form quests etc) for the player //UNFINISHED, just started to code a few lines, o laziness
+ * <min_lv> and <max_lv> restrict the object's base level when choosing from k_info.txt.
+ *    currently, they are just averaged to form a 'base object level' for get_obj_num() though.
+ * <treshold> is the skill treshold a player must have for a skill to be considered for choosing a reward. - C. Blue
  */
-void create_reward(player_type *p_ptr, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, bool true_art)
+void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u16b resf, long int treshold)
 {
-	int weapon_tval = 0, armor_tval = 0;
-	int weapon_maxweight = 0;
-	long int rnd_range = 0, rnd_result;
+	player_type *p_ptr = Players[Ind];
+	bool good = TRUE;
+	int base = (min_lv + max_lv) / 2; /* base object level */
+//	int base = 100;
+	int tries = 0, i = 0, j = 0;
+	char o_name[160];
+	u32b f1, f2, f3, f4, f5, esp;
+	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 
-	/* analyze class */
-		/* analyze skills */
-	switch (p_ptr->pclass) {
-	case CLASS_WARRIOR:
-	case CLASS_MIMIC:
-	case CLASS_PALADIN:
-	case CLASS_RANGER:
-	case CLASS_ARCHER:
-		rnd_range = p_ptr->s_info[SKILL_SWORD].value;
-		rnd_range += p_ptr->s_info[SKILL_HAFTED].value;
-		rnd_range += p_ptr->s_info[SKILL_AXE].value;
-		rnd_range += p_ptr->s_info[SKILL_POLEARM].value;
-		rnd_range += p_ptr->s_info[SKILL_MARTIAL_ARTS].value;
-		rnd_result = randint(rnd_range);
-		if (rnd_result <= p_ptr->s_info[SKILL_SWORD].value) weapon_tval = TV_SWORD;
-		else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value <= p_ptr->s_info[SKILL_HAFTED].value) weapon_tval = TV_HAFTED;
-		else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value <= p_ptr->s_info[SKILL_AXE].value) weapon_tval = TV_AXE;
-		else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value - p_ptr->s_info[SKILL_AXE].value <= p_ptr->s_info[SKILL_POLEARM].value) weapon_tval = TV_POLEARM;
-		else ; /* Martial Arts doesn't use weapons */
-		/* check boomy/bows..*/
-		/* no soft armor maybe? */
-	break;
-	case CLASS_ROGUE:
-		weapon_tval = TV_SWORD;
-		/* all armor */
-	break;
-	case CLASS_MAGE:
-		
-	break;
-	case CLASS_PRIEST:
-		
-	break;
-	case CLASS_DRUID:
-		
-	break;
-	case CLASS_SHAMAN:
-		
-	break;
-	case CLASS_ADVENTURER:
-		
-	break;
+	/* for analysis functions and afterwards for determining concrete reward */
+	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
+	int maxweight_ranged = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
+	int maxweight_shield = ((adj_str_hold[p_ptr->stat_ind[A_STR]] / 7) + 4) * 10;
+//	int maxweight_armor = (adj_str_hold[p_ptr->stat_ind[A_STR]] - 10) * 10; /* not really directly calculatable, since cumber_armor uses TOTAL armor weight, so just estimate something.. pft */
+	int maxweight_armor = adj_str_armor[p_ptr->stat_ind[A_STR]] * 10;
+
+	/* analysis results: */
+	int melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice;
+	int final_choice = 0; /* 1 = melee, 2 = ranged, 3 = armor, 4 = misc item */
+
+	/* concrete reward */
+	int reward_tval = 0, reward_sval = 0, k_idx = 0, reward_maxweight = 500;
+	invwipe(o_ptr);
+
+	/* fix reasonable limits */
+	if (maxweight_armor < 30) maxweight_armor = 30;
+
+	/* analyze skills */
+	melee_choice = reward_melee_check(p_ptr, treshold);
+	mha = (melee_choice == 5); /* monk heavy armor */
+	rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(skill_critical) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
+	ranged_choice = reward_ranged_check(p_ptr, treshold);
+	armor_choice = reward_armor_check(p_ptr, mha, rha);
+	spell_choice = reward_spell_check(p_ptr, treshold);
+	misc_choice = reward_misc_check(p_ptr);
+	/* martial arts -> no heavy armor (paranoia, shouldn't happen, already cought in reward_armor_check) */
+	if (melee_choice == 5 &&
+	    (armor_choice == 2 || armor_choice == 3))
+		armor_choice = 1;
+
+	/* Special low limits for Martial Arts or Rogue-skill users: */
+	if (rha) {
+		switch (armor_choice) {
+		case 1: maxweight_armor = 100; break;
+		case 2: /* cannot happen */ break;
+		case 3: /* cannot happen */ break;
+		case 4: maxweight_armor = 40; break;
+		case 5: maxweight_armor = 25; break;
+		case 6: maxweight_armor = 30; break;
+		case 7: maxweight_armor = 30; break;
+		case 8: maxweight_armor = 15; break;
+		}
 	}
+	if (mha) {
+		switch (armor_choice) {
+		case 1: maxweight_armor = 30; break;
+		case 2: /* cannot happen */ break;
+		case 3: /* cannot happen */ break;
+		case 4: maxweight_armor = 20; break;
+		case 5: maxweight_armor = 20; break;
+		case 6: maxweight_armor = 30; break;
+		case 7: maxweight_armor = 30; break;
+		case 8: maxweight_armor = 15; break;
+		}
+	}
+
+	/* Choose between possible rewards we gathered from analyzing so far */
+	/* Priority: Weapon -> Ranged -> Armor -> Misc */
+	if (!melee_choice && spell_choice && ((!armor_choice && !ranged_choice) || magik(50))) final_choice = 4;
+	if (melee_choice && ((!armor_choice && !ranged_choice) || magik(50))) final_choice = 1;
+	if (ranged_choice && !final_choice && (!armor_choice || magik(50))) final_choice = 2;
+	if (melee_choice == 5) final_choice = 3;
+	if (armor_choice && !final_choice) final_choice = 3;
+/*	if (final_choice == 3 && magik(25)) final_choice = 4; <- no misc items for now, won't be good if not (rand)arts anyway! */
+	/* to catch cases where NO result has been chose at all (paranoia): */
+	if (!final_choice) final_choice = 3;
+
+	/* Generate TV_ from raw final choice, and choose an appropriate SV_ sub-type now */
+	switch (final_choice) {
+	case 1:  reward_maxweight = maxweight_melee;
+		switch (melee_choice) {
+		case 1: reward_tval = TV_SWORD; break;
+		case 2: reward_tval = TV_HAFTED; break;
+		case 3: reward_tval = TV_AXE; break;
+		case 4: reward_tval = TV_POLEARM; break;
+		/* 5 -> Martial Arts, handled above */
+		case 6: reward_tval = TV_SHIELD; reward_maxweight = maxweight_shield; break;
+		}
+		break;
+	case 2: reward_tval = TV_BOW;
+		reward_maxweight = maxweight_ranged;
+		switch (ranged_choice) {
+		case 1: if (magik(50)) reward_sval = SV_SHORT_BOW; else reward_sval = SV_LONG_BOW; break;
+		case 2: if (magik(50) || maxweight_ranged < 200) reward_sval = SV_LIGHT_XBOW; else reward_sval = SV_HEAVY_XBOW; break;
+		case 3: reward_sval = SV_SLING; break;
+		case 4: reward_tval = TV_BOOMERANG; break;
+		}
+		break;
+	case 3: reward_maxweight = maxweight_armor;
+		switch (armor_choice) {
+		case 1: reward_tval = TV_SOFT_ARMOR; break;
+		case 2: reward_tval = TV_HARD_ARMOR; break;
+		case 3: reward_tval = TV_DRAG_ARMOR; break;
+		case 4: reward_tval = TV_BOOTS; break;
+		case 5: reward_tval = TV_GLOVES; break;
+		case 6: reward_tval = TV_HELM; break;
+		case 7: reward_tval = TV_CROWN; break;
+		case 8: reward_tval = TV_CLOAK; break;
+		/* to catch cases where NO result has been chosen at all (paranoia): */
+//		default: reward_tval = TV_CROWN; reward_maxweight = 40; break;
+		}
+		break;
+	case 4: reward_maxweight = 500;
+		reward_tval = TV_MSTAFF; reward_sval = SV_MSTAFF; break;
+	case 5: reward_maxweight = 500; /* no use, so just use any high value.. */
+		switch (misc_choice) {
+		case 1: reward_tval = TV_LITE; break;
+		case 2: reward_tval = TV_AMULET; break;
+		case 3: reward_tval = TV_RING; break;
+		}
+		break;
+	}
+
+
+	/* In case no SVAL has been defined yet: 
+	   Choose a random SVAL while paying attention to maxweight limit! */
+	if (!reward_sval) {
+		/* Check global variable, if some base types are forbidden */
+		do {
+			tries++;
+			k_idx = 0;
+
+			if (reward_tval != TV_AMULET && reward_tval != TV_RING) /* rings+amulets don't count as good so they won't be generated (see kind_is_good) */
+			{
+				get_obj_num_hook = kind_is_good;
+				get_obj_num_prep_tval(reward_tval);
+			}
+			else
+			{
+				get_obj_num_hook = NULL;
+				get_obj_num_prep_tval(reward_tval);
+			}
+
+			/* Pick a random object */
+			/* Magic arrows from DROP_GREAT monsters are annoying.. - C. Blue */
+			/* Added lines for the other magic ammos - the_sandman */
+			if (great)
+				for (i = 0; i < 20; i++) {
+					k_idx = get_obj_num(base);
+					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					break;
+				}
+			else
+				k_idx = get_obj_num(base);
+
+			/* Prepare the object */
+			invcopy(o_ptr, k_idx);
+			reward_sval = o_ptr->sval;
+			
+			/* Note that in theory the item's weight might change depending on it's
+			   apply_magic_depth outcome, we're ignoring that here for now though. */
+
+			/* Check for weight limit! */
+			if (k_info[k_idx].weight > reward_maxweight) continue;
+
+			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
+			if (reward_tval == TV_SWORD || reward_tval == TV_HAFTED || reward_tval == TV_AXE || reward_tval == TV_POLEARM) { /* melee weapon */
+				if (p_ptr->inventory[INVEN_WIELD].k_idx) i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
+				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) j = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
+				if (j > i) i = j; /* for dual-wielders, use the faster one */
+				if (!i) i = 3; /* if player doesn't hold a weapon atm (why!?) just start trying for 3 bpr */
+				if ((calc_blows_obj(Ind, o_ptr) < i) && (tries < 70)) continue; /* try hard to not lose a single bpr at first */
+				if ((calc_blows_obj(Ind, o_ptr) < i) && (i < 4) && (tries < 90)) continue; /* try to at least not lose a bpr if it drops us below 3 */
+				if ((calc_blows_obj(Ind, o_ptr) < i) && (i < 3)) continue; /* 1 bpr is simply the worst, gotta keep trying */
+			}
+
+			if ((resf & RESF_NOHIDSM) &&
+			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
+			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
+			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+				continue;
+				
+			break;
+		} while (tries < 100); /* need more tries here than in place_object() because of additional weight limit check */
+
+#if 0 /* Let's just take the last attempt then. We NEED a reward. */
+		/* Note that if we run out of 'tries', the last tested object WILL be used,
+		   except if we clear k_idx now. */
+		if (tries == 100) k_idx = 0;
+		/* Handle failure */
+		if (!k_idx) {
+			invwipe(o_ptr);
+			return;
+		}
+#endif
+
+	} else {
+		/* Prepare the object */
+		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
+	}
+
+	/* debug log */
+	s_printf("REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+	if (is_admin(p_ptr))
+		msg_format(Ind, "Reward: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+
+	/* hack - fix the shit with an ugly workaround for now (shouldn't happen anymore) */
+	if (!o_ptr->sval) {
+		for (i = 1; i < max_k_idx; i++)
+			if (k_info[i].tval == reward_tval && k_info[k_idx].weight <= reward_maxweight) {
+				reward_sval = k_info[i].sval;
+				break;
+			}
+		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
+		s_printf("REWARD_UGLY (%d,%d)\n", o_ptr->tval, o_ptr->sval);
+	}
+
+	/* apply_magic to that item, until we find a fitting one */
+	tries = 0;
+	i = o_ptr->k_idx;
+	do {
+		tries++;
+		invwipe(o_ptr);
+		invcopy(o_ptr, i);
+
+		/* Apply magic (allow artifacts) */
+		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf);
+		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight);
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+		
+		/* This should have already been checked in apply_magic_depth above itself,
+		   but atm it seems not to work: */
+		if ((o_ptr->name1 == ART_RANDART) && (resf & RESF_NORANDART)) continue;
+		if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART) && (resf & RESF_NOTRUEART)) continue;
+		if ((o_ptr->name2 && o_ptr->name2b) && (resf & RESF_NODOUBLEEGO)) continue;
+		if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+		if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
+		if ((resf & RESF_LOWSPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
+		if ((resf & RESF_NOHISPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
+
+		/* Don't generate cursed randarts.. */
+		if (cursed_p(o_ptr)) continue;
+
+		/* Don't generate mage-only benefitting reward if we don't use magic */
+		if (!spell_choice) {
+			switch (o_ptr->name2) {
+			case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
+			case EGO_CONCENTRATION:
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+			case EGO_BRILLIANCE:
+			case EGO_ISTARI:
+			case EGO_OFTHEMAGI: continue;
+			}
+			switch (o_ptr->name2b) {
+			case EGO_MAGI: /* crown of magi, it's not bad for anyone actually */
+			case EGO_CLOAK_MAGI: /* well, it does provide speed.. */
+			case EGO_CONCENTRATION:
+			case EGO_INTELLIGENCE:
+			case EGO_WISDOM:
+			case EGO_BRILLIANCE:
+			case EGO_ISTARI:
+			case EGO_OFTHEMAGI: continue;
+			}
+		}
+		
+		/* analyze class (so far nothing is done here, but everything is determined by skills instead) */
+		switch (p_ptr->pclass) {
+		case CLASS_WARRIOR:
+		case CLASS_ARCHER:
+			break;
+		case CLASS_ADVENTURER:
+		case CLASS_SHAMAN:
+			if ((p_ptr->stat_max[A_INT] > p_ptr->stat_max[A_WIS]) &&
+			    (o_ptr->name2 == EGO_WISDOM || o_ptr->name2b == EGO_WISDOM)) continue;
+			if ((p_ptr->stat_max[A_WIS] > p_ptr->stat_max[A_INT]) &&
+			    (o_ptr->name2 == EGO_INTELLIGENCE || o_ptr->name2b == EGO_INTELLIGENCE)) continue;
+			break;
+		case CLASS_MAGE:
+		case CLASS_RANGER:
+		case CLASS_ROGUE:
+		case CLASS_RUNEMASTER:
+			if (o_ptr->name2 == EGO_WISDOM || o_ptr->name2b == EGO_WISDOM) continue;
+			break;
+		case CLASS_PRIEST:
+		case CLASS_PALADIN:
+		case CLASS_DRUID:
+			if (o_ptr->name2 == EGO_INTELLIGENCE || o_ptr->name2b == EGO_INTELLIGENCE) continue;
+			break;
+		}
+		
+		/* analyze race */
+		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
+
+		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
+		if (spell_choice) {
+			if (f5 & TR5_DRAIN_MANA) continue;
+			if (f3 & TR3_NO_MAGIC) continue;
+		}
+
+		break;
+	} while (tries < 20);
+
+	/* more loggin' */
+	object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
+	s_printf("REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
+	
+	/* Give the object to the player who is to be rewarded */
+/*	inven_carry(Ind, o_ptr); <- not neccessarily >;) */
 }
 
 
@@ -6957,6 +7488,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 		/* Message */
 		/*msg_format("The %s disappear%s.",
 		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
+
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 		return (-1);
 	}
 
@@ -7014,6 +7547,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			if (!quiet) everyone_lite_spot(wpos, y, x);
 		}
 #endif
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
 		return (-1);
 	}
 
@@ -7140,6 +7674,8 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 			/* Success */
 //			flag = TRUE;
+		} else /* paranoia: couldn't allocate a new object */ {
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 		}
 	}
 
@@ -7158,11 +7694,9 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	if (is_admin(p_ptr)) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 
 	/* Artifact always disappears, depending on tomenet.cfg flags */
-	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && (cfg.anti_arts_hoard ||
-				    			  (p_ptr->total_winner && 
-				    				(o_ptr->name1 != 34) &&
-								(o_ptr->name1 != 111) &&
-								(o_ptr->name1 != 203))))
+	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
+	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && (cfg.anti_arts_hoard || p_ptr->total_winner) &&
+	    o_ptr->name1 != ART_MORGOTH && o_ptr->name1 != ART_GROND && o_ptr->name1 != ART_PHASING)
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];
@@ -7378,6 +7912,9 @@ void inven_item_increase(int Ind, int item, int num)
 
 /*
  * Erase an inventory slot if it has no more items
+ * WARNING: Since this slides down following items, DON'T use this in a loop that
+ * processes items and goes from lower value upwards to higher value if you don't
+ * intend that result for some reason!! - C. Blue
  */
 bool inven_item_optimize(int Ind, int item)
 {
@@ -7386,7 +7923,10 @@ bool inven_item_optimize(int Ind, int item)
 	object_type *o_ptr = &p_ptr->inventory[item];
 
 	/* Only optimize real items */
-	if (!o_ptr->k_idx) return (FALSE);
+	if (!o_ptr->k_idx) {
+		invwipe(o_ptr); /* hack just for paranoia: make sure it's erased */
+		return (FALSE);
+	}
 
 	/* Only optimize empty items */
 	if (o_ptr->number) return (FALSE);
@@ -7405,6 +7945,9 @@ bool inven_item_optimize(int Ind, int item)
 			/* Structure copy */
 			p_ptr->inventory[i] = p_ptr->inventory[i+1];
 		}
+
+		/* Update inventory indeces - mikaelh */
+		update_current_items_slide(Ind, i + 1, -1, INVEN_PACK);
 
 		/* Erase the "final" slot */
 		invwipe(&p_ptr->inventory[i]);
@@ -7892,6 +8435,9 @@ void combine_pack(int Ind)
 					p_ptr->inventory[k] = p_ptr->inventory[k+1];
 				}
 
+				/* Update inventory indeces - mikaelh */
+				update_current_items_slide(Ind, i + 1, -1, INVEN_PACK);
+
 				/* Erase the "final" slot */
 				invwipe(&p_ptr->inventory[k]);
 
@@ -8005,6 +8551,10 @@ void reorder_pack(int Ind)
 
 		/* Insert the moved item */
 		p_ptr->inventory[j] = temp;
+
+		/* Update inventory indeces - mikaelh */
+		update_current_items_move(Ind, i, j);
+		update_current_items_slide(Ind, j, 1, i);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -8228,28 +8778,69 @@ s16b floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 #endif	// 0
 
 /* Easier unified artifact handling */
-void handle_art_i(aidx) {
+void handle_art_i(int aidx) {
 	if (a_info[aidx].cur_num < 255) a_info[aidx].cur_num++;
 	a_info[aidx].known = TRUE;
 }
-void handle_art_ipara(aidx) { /* only for paranoia.. could be removed basically (except for the known=TRUE part) */
+void handle_art_ipara(int aidx) { /* only for paranoia.. could be removed basically (except for the known=TRUE part) */
 	if (!a_info[aidx].cur_num && (a_info[aidx].cur_num < 255)) a_info[aidx].cur_num++;
 	a_info[aidx].known = TRUE;
 }
-void handle_art_inum(aidx) {
+void handle_art_inum(int aidx) {
 	if (a_info[aidx].cur_num < 255) a_info[aidx].cur_num++;
 }
-void handle_art_inumpara(aidx) {
+void handle_art_inumpara(int aidx) {
 	if (!a_info[aidx].cur_num && (a_info[aidx].cur_num < 255)) a_info[aidx].cur_num++;
 }
-void handle_art_dnum(aidx) {
+void handle_art_dnum(int aidx) {
 	if (a_info[aidx].cur_num > 0) a_info[aidx].cur_num--;
 }
-void handle_art_d(aidx) {
+void handle_art_d(int aidx) {
 	if (a_info[aidx].cur_num > 0) {
 		a_info[aidx].cur_num--;
 		if (!a_info[aidx].cur_num) a_info[aidx].known = FALSE;
 	} else {
 		a_info[aidx].cur_num = 0;
 	}
+}
+
+/* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it */
+bool anti_undead(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, esp;
+	int l = 0;
+
+	if (cursed_p(o_ptr)) return(FALSE);
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+        if (f3 & TR3_LITE1) l++;
+        if (f4 & TR4_LITE2) l += 2;
+        if (f4 & TR4_LITE3) l += 3;
+	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
+
+	/* powerful lights and anti-undead/evil items damage vampires */
+	if (l) { /* light sources, or other items that provide light */
+		if ((l > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
+			return(TRUE);
+	} else {
+		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_UNDEAD))
+			return(TRUE);
+	}
+
+	return(FALSE);
+}
+
+/* 
+ * Generate default item-generation restriction flags for a given player - C. Blue
+ * Note: RESF_WINNER has currently no effect.
+ */
+u16b make_resf(player_type *p_ptr) {
+	u16b f = 0x0000;
+	if (p_ptr == NULL) return(0x0000);
+	
+	if (p_ptr->once_winner) f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once. */
+	if (p_ptr->total_winner) f |= RESF_NOTRUEART; /* player is a winner? Then don't find true arts! */
+	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* winners aren't restricted to finding randarts? */
+
+	return (f);
 }

@@ -1,4 +1,4 @@
-/* $Id$ */
+* $Id$ */
 /* File: spells.pkg */
 
 /*
@@ -144,6 +144,7 @@ typedef unsigned int u32b;
 #define GF_EXTRA_STATS  157
 #define GF_EXTRA_SPR	158
 
+#define GF_PUSH 	159 	/* Moltor */
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
 #define PROJECTOR_TRAP		-1001
@@ -160,6 +161,7 @@ typedef unsigned int u32b;
 #define PROJECT_ITEM	0x00000020
 #define PROJECT_KILL	0x00000040
 #define PROJECT_HIDE	0x00000080
+#define PROJECT_DUMY    0x80000000
 
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
@@ -179,6 +181,12 @@ typedef unsigned int u32b;
 #define BRAND_BALL_ELEC     10
 #define BRAND_BALL_ACID     11
 #define BRAND_BALL_SOUND    12
+
+/* cave.c */
+extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+
+/* generate.c */
+extern void place_up_stairs(worldpos *wpos, int y, int x); 
 
 /* spells1.c */
 extern byte spell_color(int type);
@@ -212,7 +220,8 @@ extern int set_impact_destroy(object_type *o_ptr);
 extern int set_water_destroy(object_type *o_ptr);
 extern int equip_damage(int Ind, int typ);
 extern int inven_damage(int Ind, inven_func typ, int perc);
-extern int weapon_takes_damage(int Ind, int typ);
+extern int weapon_takes_damage(int Ind, int typ, int slot);
+extern int shield_takes_damage(int Ind, int typ);
 //extern int inven_damage(int Ind, object_type *typ, int perc);
 extern bool set_oppose_acid(int Ind, int v);
 extern bool set_oppose_elec(int Ind, int v);
@@ -279,6 +288,7 @@ extern bool detect_monsters_xxx(int Ind, u32b match_flag);
 extern bool detect_creatures(int Ind);
 
 /* spells2.c */
+extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
 extern bool heal_insanity(int Ind, int val);
 extern void summon_cyber(int Ind, int s_clone, int clone_summoning);
 extern void golem_creation(int Ind, int max);
@@ -324,7 +334,7 @@ extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
 extern bool probing(int Ind);
-extern bool project_hack@project_los(int Ind, int typ, int dam);
+extern bool project_hack@project_los(int Ind, int typ, int dam, char *attacker);
 extern bool banish_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
@@ -339,9 +349,9 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
-extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, char *attacker);
-extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, char *attacker);
-extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, s32b eff, char *attacker);
+extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
+extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
@@ -373,12 +383,20 @@ extern bool create_artifact_aux(int Ind, int item);
 extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
+extern bool do_vermin_control(int Ind);
+
+/* traps.c */
+extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
+
 
 /* Druidry */
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
+
+/* ENABLE_DIVINE */
+/*extern void divine_vengeance(int Ind, int power);*/
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
@@ -412,6 +430,7 @@ extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 
 /* This could have some good uses */
+extern s16b project_interval;
 extern s16b project_time;
 /* extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker); */
 
@@ -442,5 +461,9 @@ extern void lua_arts_fix(int Ind);
 extern char* lua_get_last_chat_line();
 extern char* lua_get_last_chat_owner();
 extern void lua_get_pgestat(int Ind, int n);
-exterm void lua_start_global_event(int Ind, int evtype, char *parm);
-exterm void lua_apply_item_changes(int Ind);
+extern void lua_start_global_event(int Ind, int evtype, char *parm);
+extern void lua_apply_item_changes(int Ind, int changes);
+extern void lua_set_floor_flags(int Ind, u32b flags);
+extern s32b lua_get_skill_mod(int Ind, int i);
+extern s32b lua_get_skill_value(int Ind, int i);
+extern void lua_fix_equip_slots(int Ind);

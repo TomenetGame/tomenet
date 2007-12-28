@@ -15,13 +15,13 @@ struct list *addlist(struct list **head, int dsize);
 struct list *remlist(struct list **head, struct list *dlp);
 
 /* Send server information to other servers */
-void send_sinfo(struct client *ccl, struct client *priv){
+void send_sinfo(struct client *ccl, struct client *priv) {
 	struct wpacket spk;
-	spk.type=WP_SINFO;
-	spk.serverid=0;
+	spk.type = WP_SINFO;
+	spk.serverid = 0;
 	strncpy(spk.d.sinfo.name, slist[ccl->authed-1].name, 30);
-	spk.d.sinfo.sid=ccl->authed;
-	if(priv)
+	spk.d.sinfo.sid = ccl->authed;
+	if (priv)
 		reply(&spk, priv);
 	else
 		relay(&spk, ccl);
@@ -90,7 +90,8 @@ void add_rplayer(struct wpacket *wpk){
 	lp=rpmlist;
 	while(lp){
 		c_pl=(struct rplist*)lp->data;
-		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
+//		if(/* c_pl->id==wpk->d.play.id && */ !(strcmp(c_pl->name, wpk->d.play.name))){
+		if(c_pl->server==wpk->d.play.server && !(strcmp(c_pl->name, wpk->d.play.name))){
 			found=1;
 			break;
 		}

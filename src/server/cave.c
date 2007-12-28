@@ -363,6 +363,68 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 	}
 }
 
+
+void check_Pumpkin(void)
+{
+#ifdef HALLOWEEN
+	int k, i, m_idx;
+	struct worldpos *wpos;
+	char msg[80];
+	player_type *p_ptr;
+	monster_type *m_ptr;
+
+	/* Process the monsters */
+	for (k = m_top - 1; k >= 0; k--)
+	{
+		/* Access the index */
+		m_idx = m_fast[k];
+		/* Access the monster */
+		m_ptr = &m_list[m_idx];
+		/* Excise "dead" monsters */
+		if (!m_ptr->r_idx)
+		{
+		        /* Excise the monster */
+	    		m_fast[k] = m_fast[--m_top];
+		        /* Skip */
+		        continue;
+		}
+
+		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
+		/* search for Great Pumpkins */
+		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
+			wpos = &m_ptr->wpos;
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				p_ptr = Players[i];
+				if (is_admin(p_ptr)) continue;
+				if (inarea(&p_ptr->wpos, wpos) &&
+#ifndef RPG_SERVER
+				    (p_ptr->max_lev > 30))
+#else
+				    (p_ptr->max_lev > 40))
+#endif
+				{
+					sprintf(msg, "\377sL ghostly force drives you out of this dungeon!");
+					/* log */
+#ifndef RPG_SERVER
+					s_printf("Great Pumpkin recalled player>30 %s\n", p_ptr->name);
+#else
+					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
+#endif
+					/* get him out of here */
+					p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
+					p_ptr->recall_pos.wx=p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy=p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz=0;
+//					p_ptr->word_recall=-666;/*HACK: avoid recall_player loops! */
+					recall_player(i, msg);
+				}
+			}
+		}
+	}
+#endif
+}
+
 /* This lets Morgoth become stronger, weaker or teleport himself away if
  * a King/Queen joins his level or if a player enters it who hasn't killed 
  * Sauron, the Sorceror yet - C. Blue
@@ -370,10 +432,17 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 void check_Morgoth(void)
 {
 	int k, i, x, y, num_on_depth = 0, m_idx;
-	player_type *p_ptr;
-	monster_type *m_ptr;
+	s32b tmphp;
 	struct worldpos *wpos;
 	char msg[80];
+	player_type *p_ptr;
+	monster_type *m_ptr;
+
+
+#ifdef HALLOWEEN
+	check_Pumpkin();
+#endif
+
 
 	/* Let Morgoth, Lord of Darkness gain additional power
 	for each player who joins the depth */
@@ -393,6 +462,43 @@ void check_Morgoth(void)
 		        /* Skip */
 		        continue;
 		}
+
+#if 0
+#ifdef HALLOWEEN
+		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
+		/* search for Great Pumpkins */
+		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
+			wpos = &m_ptr->wpos;
+			for (i = 1; i <= NumPlayers; i++)
+			{
+				p_ptr = Players[i];
+				if (is_admin(p_ptr)) continue;
+				if (inarea(&p_ptr->wpos, wpos) &&
+#ifndef RPG_SERVER
+				    (p_ptr->max_lev > 30))
+#else
+				    (p_ptr->max_lev > 40))
+#endif
+				{
+					sprintf(msg, "\377sL ghostly force drives you out of this dungeon!");
+					/* log */
+#ifndef RPG_SERVER
+					s_printf("Great Pumpkin recalled player>30 %s\n", p_ptr->name);
+#else
+					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
+#endif
+					/* get him out of here */
+					p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
+					p_ptr->recall_pos.wx=p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy=p_ptr->wpos.wy;
+					p_ptr->recall_pos.wz=0;
+//					p_ptr->word_recall=-666;/*HACK: avoid recall_player loops! */
+					recall_player(i, msg);
+				}
+			}
+		}
+#endif
+#endif
 
 		/* search for Morgy */
 		if (!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) continue;
@@ -498,16 +604,18 @@ void check_Morgoth(void)
 			}
 		}
 
+#if 0
 		/* More players here than Morgy has power for? */
-    		if (((m_ptr->speed + 6 - 140) / 6) < num_on_depth)
+    		if (((m_ptr->speed - r_ptr->speed + 6) / 6) < num_on_depth)
 		{
-			s32b tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 2) * 2));
+			/* tmphp is actually the base hp, from r_info.txt */
+			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 2) * 2));
 			if (m_ptr->maxhp < tmphp + (tmphp * num_on_depth * 2 / 3))
 			{
 				m_ptr->hp += tmphp * 2 / 3;
 				m_ptr->maxhp += tmphp * 2 / 3;
 			}
-			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
+			m_ptr->speed = (r_ptr->speed - 6) + (6 * num_on_depth);
 			
 			/* Anti-cheeze: Fully heal!
 			   Otherwise 2 players could bring him down and the 3rd one
@@ -521,16 +629,20 @@ void check_Morgoth(void)
 			return;
 		}
 		/* Less players here than Morgy has power for? */
-		else if (((m_ptr->speed + 6 - 140) / 6) > num_on_depth)
+		else if (((m_ptr->speed - r_ptr->speed + 6) / 6) > num_on_depth)
 		{
-			s32b tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 0) * 2));
+			/* tmphp is actually the base hp, from r_info.txt */
+			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 0) * 2));
 			/* anti-cheeze */
 			if (m_ptr->hp == m_ptr->maxhp)
 			{
 				m_ptr->hp -= tmphp * 2 / 3;
 			}
 			m_ptr->maxhp -= tmphp * 2 / 3;
-			m_ptr->speed = (140 - 6) + (6 * num_on_depth);
+			m_ptr->speed = (r_ptr->speed - 6) + (6 * num_on_depth);
+
+			/* Sanity check */
+			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
 
 			/* log */
 			s_printf("Morgoth weakens\n");
@@ -538,6 +650,43 @@ void check_Morgoth(void)
 			msg_print_near_monster(m_idx, "becomes weaker!");
 			return;
 		}
+#else
+		tmphp = (m_ptr->org_maxhp * (2 * (num_on_depth - 1) + 3)) / 3; /* 2/3 HP boost for each additional player */
+		/* More players here than Morgy has power for? */
+    		if (m_ptr->maxhp < tmphp)
+		{
+			m_ptr->maxhp = tmphp;
+			m_ptr->speed += 6;
+			/* Anti-cheeze: Fully heal!
+			   Otherwise 2 players could bring him down and the 3rd one
+			   just joins for the last 'few' HP.. */
+			m_ptr->hp = m_ptr->maxhp;
+
+			/* log */
+			s_printf("Morgoth grows stronger\n");
+			/* Tell everyone related to Morgy's depth */
+			msg_print_near_monster(m_idx, "becomes stronger!");
+			return;
+		}
+		/* Less players here than Morgy has power for? */
+    		else if (m_ptr->maxhp > tmphp)
+		{
+			/* anti-cheeze */
+			if (m_ptr->hp == m_ptr->maxhp)
+			{
+				m_ptr->hp -= (tmphp - m_ptr->maxhp);
+			}
+			m_ptr->maxhp = tmphp;
+			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
+			m_ptr->speed -= 6;
+
+			/* log */
+			s_printf("Morgoth weakens\n");
+			/* Tell everyone related to Morgy's depth */
+			msg_print_near_monster(m_idx, "becomes weaker!");
+			return;
+		}
+#endif
 	}
 }
 
@@ -625,6 +774,22 @@ c_special *ReplaceCS(cave_type *c_ptr, byte type)
 	return(cs_ptr);
 }
 
+/* Free all memory related to c_ptr->special - mikaelh */
+/* Note: doesn't clear the c_ptr->special pointer */
+void FreeCS(cave_type *c_ptr)
+{
+	struct c_special *trav, *prev;
+
+	prev = trav = c_ptr->special;
+
+	while (trav)
+	{
+		prev = trav;
+		trav = trav->next;
+		FREE(prev, struct c_special);
+	}
+}
+
 
 
 /*
@@ -662,12 +827,12 @@ int distance(int y1, int x1, int y2, int x2)
  */
 static bool is_wall(cave_type *c_ptr)
 {
-	byte feat;
+	int feat;
 
 	feat = c_ptr->feat;
 
 	/* Paranoia */
-	if (feat >= MAX_F_IDX) return FALSE;
+	if (feat > MAX_F_IDX) return FALSE;
 
 	/* Vanilla floors and doors aren't considered to be walls */
 	if (feat < FEAT_SECRET) return FALSE;
@@ -1544,6 +1709,7 @@ static byte player_color(int Ind)
 
 	/* Covered by a mummy wrapping? */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
+	if (p_ptr->cloaked == 1) pcolor = TERM_L_DARK;
 
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
@@ -1552,11 +1718,12 @@ static byte player_color(int Ind)
 /* the_sandman: an attempt to actually diplay the mhd flickers on mimicking player using DS spell */
 	if (p_ptr->body_monster) {
 		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
+#if 0 /* done couple of lines below */
 		if (p_ptr->tim_manashield > 10) {
 			pcolor = TERM_SHIELDM; //the_sandman: so we can have mhd monsters mimicked :)
 		}
+#endif
 	}
-
 	/* Bats are orange */
 	/* taking this out since bat parties
 	become hard to oversee. Mimicked bats stay orange,
@@ -1636,6 +1803,103 @@ static byte player_color(int Ind)
 
 	/* Color is based off of class */
 	return pcolor;
+}
+
+/*
+ * Manipulate colours outside on world surface, depending on
+ * clima or daytime!  - C. Blue
+ */
+static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y, int color)
+{
+	u32b tmp_seed = Rand_value; /* save RNG */
+
+#ifdef WINTER_SEASON
+	/* Replace green trees and grass by white =-} */
+	if (!wpos->wz) { /* only on the world surface */
+		/* Sometimes display a feat still as green, sometimes brown.
+		   To use always the same feats for this everytime the player
+		   enters a worldmap sector, we seed the RNG with that particular
+		   worldmap coords. */
+#if 0
+		Rand_quick = TRUE;
+		Rand_value = wpos->wy +	wpos->wx + y + x;
+#endif
+#if 0
+		Rand_quick = TRUE;
+		Rand_value = wpos->wy * (MAX_WILD_X * 64 + 1) * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
+			wpos->wx * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
+			y * (MAX_WID * 2 + 2) +
+			x;
+#endif
+#if 0
+		Rand_quick = FALSE;
+		Rand_place = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+			y * (MAX_WID + 2) +
+			x;
+#endif
+#if 0
+		Rand_quick = FALSE;
+		Rand_state_init(wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+			y * (MAX_WID + 2) +
+			x);
+#endif
+#if 1
+		Rand_quick = TRUE;
+		Rand_value = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+			y * (MAX_WID + 2) +
+			x;
+#endif
+
+		switch (c_ptr->feat) {
+		case FEAT_GRASS:
+			switch (Rand_div(7)) {
+			case 0: case 1: case 2: case 3: case 4:
+				color = TERM_L_WHITE; break;
+			case 5: if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER; 
+				else color = TERM_UMBER;
+				break;
+			case 6: color = TERM_SLATE; break;
+			}
+			
+			break;
+//		case FEAT_TREE:
+		case FEAT_TREES:
+		case FEAT_SMALL_TREES:
+			if (Rand_div(500)) color = TERM_WHITE;
+			else if (Rand_div(3) != 0) color = TERM_UMBER;
+			else color = TERM_GREEN;
+			break;
+		}
+	}
+#endif
+
+	/* Darkness on the world surface at night. Darken all colours. */
+	if (!wpos->wz && night_surface && !(c_ptr->info & (CAVE_GLOW | CAVE_LITE)))
+		switch (color) {
+		case TERM_DARK: color = TERM_DARK; break;
+		case TERM_WHITE: color = TERM_SLATE; break;
+		case TERM_SLATE: color = TERM_L_DARK; break;
+		case TERM_ORANGE: color = TERM_UMBER; break;
+		case TERM_RED: color = TERM_RED; break;
+		case TERM_GREEN: color = TERM_GREEN; break;
+		case TERM_BLUE: color = TERM_BLUE; break;
+		case TERM_UMBER: color = TERM_UMBER; break;
+		case TERM_L_DARK: color = TERM_L_DARK; break;
+		case TERM_L_WHITE: color = TERM_SLATE; break;
+		case TERM_VIOLET: color = TERM_VIOLET; break;
+		case TERM_YELLOW: color = TERM_L_UMBER; break;
+		case TERM_L_RED: color = TERM_RED; break;
+		case TERM_L_GREEN: color = TERM_GREEN; break;
+		case TERM_L_BLUE: color = TERM_BLUE; break;
+		case TERM_L_UMBER: color = TERM_UMBER; break;
+		}
+
+	Rand_quick = FALSE; /* resume complex rng - mikaelh */
+	Rand_value = tmp_seed; /* restore RNG */
+	return (color);
 }
 
 
@@ -1811,7 +2075,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Normal attr */
 			a = p_ptr->f_attr[feat];
-
+			
 			/* Hack to display detected traps */
 			if((cs_ptr=GetCS(c_ptr, CS_TRAPS)))
 			{
@@ -1900,27 +2164,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 
-			/* Darkness on the world surface at night */
-			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
-			switch (a)
-	    		{
-			case TERM_DARK: a = TERM_DARK; break;
-			case TERM_WHITE: a = TERM_SLATE; break;
-			case TERM_SLATE: a = TERM_L_DARK; break;
-			case TERM_ORANGE: a = TERM_UMBER; break;
-			case TERM_RED: a = TERM_RED; break;
-			case TERM_GREEN: a = TERM_GREEN; break;
-			case TERM_BLUE: a = TERM_BLUE; break;
-			case TERM_UMBER: a = TERM_UMBER; break;
-			case TERM_L_DARK: a = TERM_L_DARK; break;
-			case TERM_L_WHITE: a = TERM_SLATE; break;
-			case TERM_VIOLET: a = TERM_VIOLET; break;
-			case TERM_YELLOW: a = TERM_L_UMBER; break;
-			case TERM_L_RED: a = TERM_RED; break;
-			case TERM_L_GREEN: a = TERM_GREEN; break;
-			case TERM_L_BLUE: a = TERM_BLUE; break;
-			case TERM_L_UMBER: a = TERM_UMBER; break;
-			}
+			a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
@@ -2086,27 +2330,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 				}
 			}
 
-			/* Darkness on the world surface at night */
-			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
-			switch (a)
-	    		{
-			case TERM_DARK: a = TERM_DARK; break;
-			case TERM_WHITE: a = TERM_SLATE; break;
-			case TERM_SLATE: a = TERM_L_DARK; break;
-			case TERM_ORANGE: a = TERM_UMBER; break;
-			case TERM_RED: a = TERM_RED; break;
-			case TERM_GREEN: a = TERM_GREEN; break;
-			case TERM_BLUE: a = TERM_BLUE; break;
-			case TERM_UMBER: a = TERM_UMBER; break;
-			case TERM_L_DARK: a = TERM_L_DARK; break;
-			case TERM_L_WHITE: a = TERM_SLATE; break;
-			case TERM_VIOLET: a = TERM_VIOLET; break;
-			case TERM_YELLOW: a = TERM_L_UMBER; break;
-			case TERM_L_RED: a = TERM_RED; break;
-			case TERM_L_GREEN: a = TERM_GREEN; break;
-			case TERM_L_BLUE: a = TERM_BLUE; break;
-			case TERM_L_UMBER: a = TERM_UMBER; break;
-			}
+			a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 
 			/* The attr */
 			(*ap) = a;
@@ -2158,27 +2382,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			a = f_ptr->shimmer[rand_int(7)];
 
 			if (rand_int(8) != 1)
-			/* Darkness on the world surface at night */
-			if ((p_ptr->wpos.wz == 0) && (night_surface) && !(c_ptr->info & CAVE_GLOW))
-			switch (a)
-	    		{
-			case TERM_DARK: a = TERM_DARK; break;
-			case TERM_WHITE: a = TERM_SLATE; break;
-			case TERM_SLATE: a = TERM_L_DARK; break;
-			case TERM_ORANGE: a = TERM_UMBER; break;
-			case TERM_RED: a = TERM_RED; break;
-			case TERM_GREEN: a = TERM_GREEN; break;
-			case TERM_BLUE: a = TERM_BLUE; break;
-			case TERM_UMBER: a = TERM_UMBER; break;
-			case TERM_L_DARK: a = TERM_L_DARK; break;
-			case TERM_L_WHITE: a = TERM_SLATE; break;
-			case TERM_VIOLET: a = TERM_VIOLET; break;
-			case TERM_YELLOW: a = TERM_L_UMBER; break;
-			case TERM_L_RED: a = TERM_RED; break;
-			case TERM_L_GREEN: a = TERM_GREEN; break;
-			case TERM_L_BLUE: a = TERM_BLUE; break;
-			case TERM_L_UMBER: a = TERM_UMBER; break;
-			}
+				a = manipulate_cave_color(c_ptr, &p_ptr->wpos, x, y, a);
 			
 			(*ap) = a;
 		}
@@ -2301,7 +2505,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* part 'A' end */
 
 			/* TERM_BNW if blood bonded - mikaelh */
-			if (p_ptr->blood_bond == p2_ptr->id) a |= TERM_BNW;
+			if (check_blood_bond(Ind, Ind2)) a |= TERM_BNW;
 
 			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) >= 7)
 			{
@@ -2319,7 +2523,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 			
 			/* admins sees intensity of mana shields */
-			if (p_ptr->admin_dm && p2_ptr->tim_manashield)
+			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0)
 			{
 				if((( p2_ptr->csp * 100) / (p2_ptr->msp*10)) < 10)
 				{
@@ -2339,6 +2543,30 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 		}
 	}
+	
+#ifdef WINTER_SEASON
+	/* display white snowflakes */
+	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_SNOWING)) {
+		(*ap) = TERM_WHITE;
+		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
+	}
+#endif
+#ifdef NEW_YEARS_EVE
+	/* display fireworks */
+	if (c_ptr->effect && (effects[c_ptr->effect].flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))) {
+		switch (effects[c_ptr->effect].type) {
+		case GF_FW_FIRE: (*ap) = TERM_FIRE; break;
+		case GF_FW_ELEC: (*ap) = TERM_ELEC; break;
+		case GF_FW_POIS: (*ap) = TERM_POIS; break;
+		case GF_FW_LITE: (*ap) = TERM_LITE; break;
+		case GF_FW_SHDI: (*ap) = TERM_SHIELDI; break;
+		case GF_FW_SHDM: (*ap) = TERM_SHIELDM; break;
+		case GF_FW_MULT: (*ap) = TERM_MULTI; break;
+		}
+		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
+	}
+#endif
+
 }
 
 
@@ -2510,25 +2738,23 @@ void lite_spot(int Ind, int y, int x)
 			/* Get the "player" char */
 			c = r_ptr->d_char;
 
-		        /* Holy Martyr */
-		        if (p_ptr->martyr) a += TERM_BNW;
-
-		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
-		        if (p_ptr->admin_wiz) a += TERM_BNW;
-
 /*			if(p_ptr->invis && !p_ptr->body_monster){  - hmm why not always TERM_VIOLET */
-			if(p_ptr->invis){
+			if(p_ptr->invis) {
 				/* special invis colour */
 				a=TERM_VIOLET;
 			}
+			if (p_ptr->cloaked == 1) {
+				a=TERM_L_DARK;
+			}
 			/* Mana Shield and GOI also flicker */
 			if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
+				/* prevent too much violet colour in our mix.. */
 				if (a!=TERM_VIOLET)
-				a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
+					a=(randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
 				else
-				a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
+					a=(randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
 			}
-			else if ((p_ptr->invuln > 5) && (randint(4)!=1)){
+			if ((p_ptr->invuln > 5) && (randint(4)!=1)){
 				switch(randint(5)) {
 				case 1: a=TERM_L_RED;break;
 				case 2: a=TERM_L_GREEN;break;
@@ -2542,6 +2768,13 @@ void lite_spot(int Ind, int y, int x)
 				case 5: return (TERM_WHITE);
 		*/              }
 			}
+			
+			/* notice own Black Breath by colour instead just from occasional message */
+			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
+
+		        /* Holy Martyr */
+		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
+		        if (p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */
@@ -2569,7 +2802,7 @@ void lite_spot(int Ind, int y, int x)
 					num=(p_ptr->chp*95) / (p_ptr->mhp*10);
 					c = '0'+num;
 				}
-			} else {
+			} else if (p_ptr->msp > 0) {
 				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) < 7) 
 				{
 					int num;
@@ -5473,7 +5706,7 @@ void update_flow(void)
 	int x, y, d;
 
 	/* Hack -- disabled */
-	if (!flow_by_sound) return;
+	if (!flow_by_sound && !flow_by_smell) return;
 
 	/* Paranoia -- make sure the array is empty */
 	if (temp_n) return;
@@ -5980,7 +6213,7 @@ void mmove2(int *y, int *x, int y1, int x1, int y2, int x2)
  *
  * This is slightly (but significantly) different from "los(y1,x1,y2,x2)".
  */
-bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
 {
 	int dist, y, x;
 	cave_type **zcave;
@@ -5990,7 +6223,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	y = y1, x = x1;
 
 	/* See "project()" */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
+	for (dist = 0; dist <= range; dist++)
 	{
 		/* Never pass through walls */
 		if (dist && !cave_floor_bold(zcave, y, x)) break;
@@ -6007,7 +6240,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	return (FALSE);
 }
 
-bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
 {
 	int dist, y, x;
 	cave_type **zcave;
@@ -6017,7 +6250,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	y = y1, x = x1;
 
 	/* See "project()" */
-	for (dist = 0; dist <= MAX_RANGE; dist++)
+	for (dist = 0; dist <= range; dist++)
 	{
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -6222,6 +6455,9 @@ void disturb(int Ind, int stop_search, int unused_flag)
 
 		/* Redraw the state */
 		p_ptr->redraw |= (PR_STATE);
+
+		/* cancel cloaking preparations too */
+		stop_cloaking(Ind);
 	}
 }
 
@@ -6274,7 +6510,7 @@ static int effect_pop(int who)
 	return -1;
 }
 
-int new_effect(int who, int type, int dam, int time, worldpos *wpos, int cy, int cx, int rad, s32b flags)
+int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags)
 {
 	int i, who2 = who;
 /*	player_type *p_ptr = NULL; */
@@ -6287,7 +6523,7 @@ int new_effect(int who, int type, int dam, int time, worldpos *wpos, int cy, int
 #endif
 
         if ((i = effect_pop(who2)) == -1) return -1;
-
+	effects[i].interval = interval;
         effects[i].type = type;
         effects[i].dam = dam;
         effects[i].time = time;

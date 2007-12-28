@@ -302,7 +302,7 @@ static cptr r_info_flags4[] =
 	"BR_MANA",
 	"BR_DISI",	// "XXX8X4"
 	"BR_NUKE",	// "XXX6X4",
-	"MOAN",		//"XXX",    <- MOAN is for Helloween event :) -C. Blue
+	"MOAN",		//"XXX",    <- MOAN is for Halloween event :) -C. Blue
 	"BOULDER",	// "XXX",
 };
 
@@ -518,6 +518,44 @@ static cptr r_info_flags9[] =
 	"RES_PSI",
 };
 
+/*
+ * Monster race flags - Additional stuff - C. Blue
+ */
+static cptr r_info_flags0[] =
+{
+	"S_HI_MONSTER",
+	"S_HI_MONSTERS",
+	"S_HI_UNIQUE",
+	"X00000008",//4
+	"X00000010",
+	"X00000020",
+	"X00000040",
+	"X00000080",//8
+	"X00000100",
+	"X00000200",
+	"X00000400",
+	"X00000800",//12
+	"X00001000",
+	"X00002000",
+	"X00004000",
+	"X00008000",//16
+	"X00010000",
+	"X00020000",
+	"X00040000",
+	"X00080000",//20
+	"X00100000",
+	"X00200000",
+	"X00400000",
+	"X00800000",//24
+	"X01000000",
+	"X02000000",
+	"X04000000",
+	"X08000000",//28
+	"X10000000",
+	"X20000000",
+	"X40000000",
+	"X80000000",//32
+};
 
 /*
  * Trap flags (PernAngband)
@@ -792,9 +830,9 @@ static cptr k_info_flags5[] =
 //	"LIFE",		//"XXX8X27",
 	"CHAOTIC",	//"XXX8X26",
 	"INVIS",	//"XXX8X28",
-	"SENS_FIRE",	//"XXX8X25",
 	"REFLECT",	//"XXX8X29",
 	"PASS_WATER",	// "NORM_ART" is already in TR3
+	"WINNERS_ONLY",
 };
 
 /*
@@ -1164,6 +1202,113 @@ static cptr st_info_flags1[] =
 /*** Initialize from ascii template files ***/
 
 
+
+/* New: Parse for conditioned comments depending on compilation definitions - C. Blue
+   Example: $RPG_SERVER$N:158:The Secret Weapon */
+static bool invalid_server_conditions(char *buf)
+{
+	char cc[1024 + 1], m[20];
+	int ccn = 1;
+	bool invalid = FALSE;
+
+	/* while loop to allow multiple macros appended to each other in the same line! */
+	while (buf[0] == '$') {
+		bool negation = FALSE;
+
+		/* read the tag between $...$ symbols */
+		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0') cc[ccn - 1] = buf[ccn++];
+		if (buf[ccn] == '\0') return TRUE; /* end of line reached, completely invalid */
+
+		/* inverted rule? means that tag is between $...! symbols */
+		if (buf[ccn] == '!') negation = TRUE;
+		cc[ccn - 1] = '\0';
+		/* remember the macro we found */
+		strcpy(m, cc);
+
+		/* In case the line passes and we will actually process it,
+		   already prepare it by cutting away the leading $...$ tag. */
+		strcpy(cc, buf + ccn + 1);
+		strcpy(buf, cc);
+		
+		/* info:
+		   'MAIN_SERVER' isn't defined in the actual program.
+		   It's just a switch that means
+		   "don't parse this line if any special macro is defined".
+		   (negation: "parse this line if any special macro is defined".)
+		   
+		   Any other rule means
+		   "only parse this line if that particular macro is defined".
+
+		   And any negation of a rule means
+		   "don't parse this line if that particular macro is defined".
+		*/
+#ifndef RPG_SERVER
+		if (streq(m, "RPG_SERVER") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "MAIN_SERVER") && !negation) invalid = TRUE;
+		if (streq(m, "RPG_SERVER") && negation) invalid = TRUE;
+#endif
+#ifndef ARCADE_SERVER
+		if (streq(m, "ARCADE_SERVER") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "MAIN_SERVER") && !negation) invalid = TRUE;
+		if (streq(m, "ARCADE_SERVER") && negation) invalid = TRUE;
+#endif
+
+		/* special flags that can occur additionally to server types */
+#ifndef HALLOWEEN
+		if (streq(m, "HALLOWEEN") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "HALLOWEEN") && negation) invalid = TRUE;
+#endif
+#ifndef WINTER_SEASON
+		if (streq(m, "WINTER_SEASON") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "WINTER_SEASON") && negation) invalid = TRUE;
+#endif
+#ifndef NEW_YEARS_EVE
+		if (streq(m, "NEW_YEARS_EVE") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "NEW_YEARS_EVE") && negation) invalid = TRUE;
+#endif
+#ifndef ENABLE_DIVINE
+		if (streq(m, "ENABLE_DIVINE") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_DIVINE") && negation) invalid = TRUE;
+#endif
+#ifndef USE_NEW_SHIELDS
+		if (streq(m, "USE_NEW_SHIELDS") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "USE_NEW_SHIELDS") && negation) invalid = TRUE;
+#endif
+#ifndef DUAL_WIELD
+		if (streq(m, "DUAL_WIELD") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "DUAL_WIELD") && negation) invalid = TRUE;
+#endif
+#ifndef ENABLE_STANCES
+		if (streq(m, "ENABLE_STANCES") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_STANCES") && negation) invalid = TRUE;
+#endif
+
+		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
+		if (strcmp(m, "MAIN_SERVER") &&
+		    strcmp(m, "RPG_SERVER") &&
+		    strcmp(m, "ARCADE_SERVER") &&
+		    strcmp(m, "HALLOWEEN") &&
+		    strcmp(m, "WINTER_SEASON") &&
+		    strcmp(m, "NEW_YEARS_EVE") &&
+		    strcmp(m, "ENABLE_DIVINE") &&
+		    strcmp(m, "USE_NEW_SHIELDS") &&
+		    strcmp(m, "DUAL_WIELD") &&
+		    strcmp(m, "ENABLE_STANCES"))
+			invalid = TRUE;
+	}
+
+	return invalid; /* only pass if none of our tests proves to be invalid */
+}
+
 /*
  * Grab one race flag from a textual string
  */
@@ -1296,6 +1441,9 @@ errr init_v_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -1502,6 +1650,9 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -1747,6 +1898,9 @@ errr init_f_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -2172,9 +2326,12 @@ errr init_k_info_txt(FILE *fp, char *buf)
 		/* Advance the line number */
 		error_line++;
 
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
-
+		
 		/* Verify correct "colon" format */
 		if (buf[1] != ':') return (1);
 
@@ -2575,6 +2732,9 @@ errr init_a_info_txt(FILE *fp, char *buf)
 		/* Advance the line number */
 		error_line++;
 
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
 
@@ -2873,6 +3033,9 @@ errr init_s_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -3344,6 +3507,9 @@ errr init_e_info_txt(FILE *fp, char *buf)
 		/* Advance the line number */
 		error_line++;
 
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
 
@@ -3730,6 +3896,16 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 		}
 	}
 
+	/* Scan flags0 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags0[i]))
+		{
+			r_ptr->flags0 |= (1L << i);
+			return (0);
+		}
+	}
+
 	/* Oops */
 	s_printf("Unknown monster flag '%s'.", what);
 
@@ -3771,6 +3947,16 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 		if (streq(what, r_info_flags6[i]))
 		{
 			r_ptr->flags6 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags0 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags0[i]))
+		{
+			r_ptr->flags0 |= (1L << i);
 			return (0);
 		}
 	}
@@ -3830,6 +4016,9 @@ errr init_r_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -4406,6 +4595,19 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add)
                                 re_ptr->mflags6 |= (1L << i);
                         else
                                 re_ptr->nflags6 |= (1L << i);
+			return (0);
+		}
+	}
+
+	/* Scan flags0 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags0[i]))
+		{
+                        if (add)
+                                re_ptr->mflags0 |= (1L << i);
+                        else
+                                re_ptr->nflags0 |= (1L << i);
 			return (0);
 		}
 	}
@@ -5112,6 +5314,9 @@ errr init_t_info_txt(FILE *fp, char *buf)
 		/* Advance the line number */
 		error_line++;
 
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
 
@@ -5447,6 +5652,16 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
 		}
 	}
 
+	/* Scan flags0 */
+	for (i = 0; i < 32; i++)
+	{
+		if (streq(what, r_info_flags0[i]))
+		{
+			d_ptr->rules[rule].mflags0 |= (1L << i);
+			return (0);
+		}
+	}
+
 	/* Oops */
 	s_printf("Unknown monster flag '%s'.\n", what);
 
@@ -5489,6 +5704,9 @@ errr init_d_info_txt(FILE *fp, char *buf)
 	{
 		/* Advance the line number */
 		error_line++;
+
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
 
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
@@ -7207,7 +7425,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				 */
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				// else
 				if (rand_int(100) < 25)
@@ -7227,25 +7445,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //					object_level = quest[p_ptr->inside_quest].level + object_index;
 					object_level = getlevel(wpos) + object_index;
 					if (rand_int(100) < 75)
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else if (rand_int(100) < 80)
-						place_object(wpos, y, x, TRUE, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, TRUE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else
-						place_object(wpos, y, x, TRUE, TRUE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, TRUE, TRUE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 					object_level = level;
 				}
 				else if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else if (rand_int(100) < 80)
 				{
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, TRUE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else
 				{
-					place_object(wpos, y, x, TRUE, TRUE, FALSE, TRUE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, TRUE, TRUE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 			}
 			/* Random trap */

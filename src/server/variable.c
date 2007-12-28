@@ -116,6 +116,7 @@ s32b m_top = 0;                 /* Monster top size */
 
 s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
+s32b great_pumpkin_timer = 0; /* Timeout. Keeps track of its generation, for HALLOWEEN */
 bool night_surface = FALSE;
 
 s16b MaxSimultaneousPlayers = 0;	/* Tracks very high amounts of simultaneously logged-in players,
@@ -641,6 +642,7 @@ school_type *schools;
 /*
  * Lasting spell effects
  */
+int project_interval = 0;
 int project_time = 0;
 s32b project_time_effect = 0;
 effect_type effects[MAX_EFFECTS];
@@ -775,7 +777,39 @@ bool watch_morgoth = 0;
 /* for lua_bind.c */
 bool first_player_joined = TRUE;
 
+/* for cron_1h (using turns % 3600 isn't precise enough, might happen that
+   one hour gets skipped, eg if transition is 1:59 -> 3:00; so now we're
+   polling the timer instead. */
+int cron_1h_last_hour = -1; /* -1 to call immediately after server restart */
+
 /* for global events (xtra1.c, slash.c) */
 global_event_type global_event[MAX_GLOBAL_EVENTS];
 int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
+u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
+int ge_contender_buffer_deed[128]; /* contender's deeds on different characters (Highlander Tournament!) */
+
+/* for dungeon master/wizard summoning, to override all validity checks and
+   definitely summon what his/her heart desires! - C. Blue */
+bool summon_override_check_all = FALSE;
+/* Morgoth may override no-destroy, with his shattering hits */
+bool override_LF1_NO_DESTROY = FALSE;
+
+/* for snowfall during WINTER_SEASON mainly */
+int weather = 0;
+int weather_duration = 0;
+int wind_gust = 0;
+int wind_gust_delay = 0;
+/* for controlling fireworks on NEW_YEARS_EVE */
+int fireworks = 0;
+int fireworks_delay = 0;
+
+
+char last_chat_line[160];  /* What was said */
+char last_chat_owner[20]; /* Who said it */
+// char last_chat_prev[160];  /* What was said before the above*/
+
+#ifdef AUCTION_SYSTEM
+auction_type *auctions;
+int auction_alloc;
+#endif

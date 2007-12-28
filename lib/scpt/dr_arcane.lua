@@ -40,10 +40,13 @@ WATERPOISON = add_spell
 			elseif get_level(Ind, WATERPOISON, 50) >= 20 then
 				type = GF_WATERPOISON
 			end
-			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 100)), 3, (5 + get_level(Ind, WATERPOISON, 40)), " fires a toxic moisture of")
+--			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 100)), 3, (5 + get_level(Ind, WATERPOISON, 40)), 10, " fires a toxic moisture of")
+--1.5			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 136)), 3, (5 + get_level(Ind, WATERPOISON, 14)), 9, " fires a toxic moisture of")
+			fire_cloud(Ind, type, args.dir, (2 + get_level(Ind, WATERPOISON, 182)), 3, (5 + get_level(Ind, WATERPOISON, 14)), 9, " fires a toxic moisture of")
 			end,
 	["info"] = 	function()
-			return "dam " .. (2 + get_level(Ind, WATERPOISON, 100)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON, 40))
+--			return "dam " .. (2 + get_level(Ind, WATERPOISON, 136)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON, 14))
+			return "dam " .. (2 + get_level(Ind, WATERPOISON, 182)) .. " rad 3 dur " .. (5 + get_level(Ind, WATERPOISON, 14))
 			end,
 	["desc"] = 	{ "Creates a cloud of toxic moisture.",
 			  "At level 20 it combines the surrounding air into the attack.",

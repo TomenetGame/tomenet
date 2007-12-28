@@ -102,10 +102,12 @@ FIREWALL = add_spell
 --        	else
         		type = GF_FIRE
 --	        end
-	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 150), 6 + get_level(Ind, FIREWALL, 14), " summons a fire wall for")
+--	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 150), 6 + get_level(Ind, FIREWALL, 14), 10, " summons a fire wall for")
+--1.5	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 184), 6 + get_level(Ind, FIREWALL, 4), 8, " summons a fire wall for")
+	        fire_wall(Ind, type, args.dir, 20 + get_level(Ind, FIREWALL, 252), 6 + get_level(Ind, FIREWALL, 4), 8, " summons a fire wall for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREWALL, 150)).." dur "..(6 + get_level(Ind, FIREWALL, 14))
+		return "dam "..(20 + get_level(Ind, FIREWALL, 184)).." dur "..(6 + get_level(Ind, FIREWALL, 4))
 	end,
         ["desc"] =	{
         		"Creates a fiery wall to incinerate monsters stupid enough to attack you"

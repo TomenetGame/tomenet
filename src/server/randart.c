@@ -1744,6 +1744,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->pval = (a_ptr->pval * 2) / 3;
 		if (!a_ptr->pval) a_ptr->pval = 1;
 	}
+
 	/* Limits for +MANA */
         if (a_ptr->flags1 & TR1_MANA)
 	{
@@ -1759,15 +1760,24 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if (a_ptr->flags1 & TR1_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
-	/* No more than +4 IV on helms and crowns */
-	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN) &&
-	    (a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;
+	if ((a_ptr->tval == TV_HELM || a_ptr->tval == TV_CROWN)) {
+		/* Not more than +4 IV on helms and crowns */
+		if ((a_ptr->flags1 & TR1_INFRA) && (a_ptr->pval > 4)) a_ptr->pval = 4;
+		/* Not more than +3 speed on helms/crowns */
+		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 3)) a_ptr->pval = 3;
+	}
+	
+	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
+	if (k_ptr->tval == TV_SHIELD ||
+	    ((k_ptr->tval == TV_SWORD || k_ptr->tval == TV_HAFTED || k_ptr->tval == TV_AXE || k_ptr->tval == TV_POLEARM) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))))
+		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 
-	/* No more than +6 stealth */
+	/* Not more than +6 stealth */
 	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 5)) a_ptr->pval = 5;/* was 6, but I think that's too much Stealth in one item?.. */
-	/* No more than +5 luck */
+	/* Not more than +5 luck */
 	if ((a_ptr->flags5 & TR5_LUCK) && (a_ptr->pval > 5)) a_ptr->pval = 5;
-	/* No more than +3 disarming ability (randart picklocks aren't allowed anyways) */
+	/* Not more than +3 disarming ability (randart picklocks aren't allowed anyways) */
 	if ((a_ptr->flags5 & TR5_DISARM) && (a_ptr->pval > 3)) a_ptr->pval = 3;
 	/* Never increase stats too greatly */
 	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR))
@@ -1811,15 +1821,27 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* Never have super EA _and_ LIFE at the same time o_o */
 	if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->flags1 & TR1_BLOWS) && (a_ptr->pval > 1)) a_ptr->pval = 1;
 	/* Never more than +6 +hit/+dam on gloves, +30 in general */
-	if (a_ptr->tval == TV_GLOVES) {
+	switch (a_ptr->tval) { /* CAP_ITEM_BONI */
+	case TV_GLOVES:
 		if (a_ptr->to_h > 6) a_ptr->to_h = 6;
 		if (a_ptr->to_d > 6) a_ptr->to_d = 6;
-	} else if (a_ptr->tval == TV_BOW) {
+		break;
+	case TV_SHIELD:
+#ifdef USE_NEW_SHIELDS  /* should actually be USE_BLOCKING, but could be too */
+                        /* dramatic a change if it gets enabled temporarily - C. Blue */
+		if (a_ptr->to_a > 15) a_ptr->to_a = 15;
+		break;
+#endif
+	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
+	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_BOOTS:
+		if (a_ptr->to_a > 50) a_ptr->to_a = 50;
+		break;
+	case TV_BOW:
+	case TV_BOOMERANG:
+	default: /* all melee weapons */
 		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
 		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
-	} else {
-		if (a_ptr->to_h > 30) a_ptr->to_h = 30;
-		if (a_ptr->to_d > 30) a_ptr->to_d = 30;
+		break;
 	}
 
 	/* Hack -- DarkSword randarts should have this */
@@ -2092,13 +2114,13 @@ try_an_other_ego:
 	/* Hack -- apply rating bonus(it's done in apply_magic) */
 	//		rating += e_ptr->rating;
 
-#if 1	// double-ego code.. future pleasure :)
+#if 1	/* double-ego code.. future pleasure :) */
 	if (o_ptr->name2b && (o_ptr->name2b != e_idx))
 	{
 		e_idx = o_ptr->name2b;
 		goto try_an_other_ego;
 	}
-#endif	// 0
+#endif
 
         /* Fix some limits */
         /* Never have more than +15 bonus */
@@ -2177,12 +2199,23 @@ try_an_other_ego:
 		if (a_ptr->pval == 0) a_ptr->pval = 1;
         }
 	/* not too high to-hit/to-dam boni. No need to check gloves. */
-	if (o_ptr->tval == TV_BOW) {
+	switch (o_ptr->tval) { /* CAP_ITEM_BONI */
+	case TV_SHIELD:
+#ifdef USE_NEW_SHIELDS	/* should actually be USE_BLOCKING, but could be too */
+			/* dramatic a change if it gets enabled temporarily - C. Blue */
+		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+		break;
+#endif
+	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
+	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
+		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+		break;
+	case TV_BOW:
+	case TV_BOOMERANG:
+	default: /* all melee weapons */
 		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
 		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
-	} else {
-		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
-		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+		break;
 	}
 #if 0 /* removed LIFE from VAMPIRIC items for now */
 	/* Back Hack :( */
@@ -2343,8 +2376,6 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			while (((1 + a_ptr->dd + k_ptr->dd) * (a_ptr->ds + k_ptr->ds) > ((k_ptr->flags4 & TR4_MUST2H)?60:40))
 				&& (a_ptr->dd > 0))
 				a_ptr->dd -= 1; /* No overpowered slaying weapons */
-			/* fix lower limit */
-			if (a_ptr->dd < 0) a_ptr->dd = 0;
 		} else if (randint(2) == 1) {
 			while ((randint(a_ptr->dd + 1) == 1) &&
 				((a_ptr->dd + k_ptr->dd + 1) * (1 + a_ptr->ds + k_ptr->ds) <= ((k_ptr->flags4 & TR4_MUST2H)?60:40)))

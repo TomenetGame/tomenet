@@ -94,7 +94,7 @@ C:0:0:0
 I:2:0:h:0
 
 #N:16:Race legends
-N:16:View cheeze archives
+N:16:Race legends
 C:0:0:0
 I:3:0:l:0
 
@@ -300,3 +300,14 @@ N:62:Extend the house
 C:0:0:0
 I:56:0:h:0
 
+N:63:Public cheeze records
+C:0:0:0
+I:57:0:c:0
+
+N:64:Redeem deed for an item
+C:0:0:0
+I:58:0:i:2
+
+N:65:Redeem deed for a blessing
+C:0:0:0
+I:59:0:b:2

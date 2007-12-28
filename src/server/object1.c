@@ -40,7 +40,7 @@
  * Max sizes of the following arrays
  */
 #define MAX_ROCKS      62       /* Used with rings (min 58) */
-#define MAX_AMULETS    41       /* Used with amulets (min 30) */
+#define MAX_AMULETS    43       /* Used with amulets (min 30) */
 #define MAX_WOODS      36       /* Used with staffs (min 32) */
 #define MAX_METALS     39       /* Used with wands/rods (min 32/30) */
 #define MAX_COLORS     68       /* Used with potions (min 62) */
@@ -114,7 +114,7 @@ static cptr amulet_adj[MAX_AMULETS] =
         "Origami Paper", "Meteoric Iron", "Platinum", "Glass", "Beryl",
         "Malachite", "Adamantite", "Mother-of-pearl", "Runed", "Sandalwood",
 	"Emerald", "Aquamarine", "Sapphire", "Glimmer-Stone", "Ebony",
-	"Meerschaum",
+	"Meerschaum", "Jade", "Red Opal",
 };
 
 static byte amulet_col[MAX_AMULETS] =
@@ -127,7 +127,7 @@ static byte amulet_col[MAX_AMULETS] =
 	TERM_WHITE, TERM_L_DARK, TERM_L_WHITE, TERM_WHITE, TERM_L_GREEN, 
 	TERM_GREEN, TERM_VIOLET, TERM_L_WHITE, TERM_UMBER, TERM_L_WHITE,
 	TERM_GREEN, TERM_L_BLUE, TERM_ELEC, TERM_LITE, TERM_L_DARK,
-	TERM_L_WHITE,
+	TERM_L_WHITE, TERM_L_GREEN, TERM_RED
 };
 
 
@@ -1227,6 +1227,59 @@ static char *object_desc_int(char *t, sint v)
 
 
 /*
+ * Print an unsigned number "n" into a string "t", as if by
+ * sprintf(t, "%u%%", n), and return a pointer to the terminator.
+ */
+static char *object_desc_per(char *t, sint v)
+{
+	uint p, n;
+
+	/* Negative */
+	if (v < 0)
+	{
+		/* Take the absolute value */
+		n = 0 - v;
+
+		/* Use a "minus" sign */
+		*t++ = '-';
+	}
+
+	/* Positive (or zero) */
+	else
+	{
+		/* Use the actual number */
+		n = v;
+	}
+
+	/* Find "size" of "n" */
+	for (p = 1; n >= p * 10; p = p * 10) /* loop */;
+
+	/* Dump each digit */
+	while (p >= 1)
+	{
+		/* Dump the digit */
+		*t++ = '0' + n / p;
+
+		/* Remove the digit */
+		n = n % p;
+
+		/* Process next digit */
+		p = p / 10;
+	}
+
+	/* Use a "percent" sign */
+	*t++ = '%';
+
+	/* Terminate */
+	*t = '\0';
+
+	/* Result */
+	return (t);
+}
+
+
+
+/*
  * Creates a description of the item "o_ptr", and stores it in "out_val".
  *
  * One can choose the "verbosity" of the description, including whether
@@ -1291,6 +1344,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 	bool		show_weapon = FALSE;
 	bool		show_armour = FALSE;
+	bool		show_shield = FALSE;
 
 	cptr		s, u;
 	char		*t;
@@ -1311,7 +1365,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-	/* hack - don't show special abilities on shirts easily */
+	/* hack - don't show special abilities on shirts easily (by adding them to their item name) - C. Blue */
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) mode |= 32;
 
 	/* Assume aware and known if not a valid player */
@@ -1388,12 +1442,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 			/* Armour */
+		case TV_SHIELD:
+#ifdef USE_NEW_SHIELDS
+			show_shield = TRUE;
+			break;
+#endif
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_CLOAK:
 		case TV_CROWN:
 		case TV_HELM:
-		case TV_SHIELD:
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
@@ -1442,9 +1500,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
 			//if (artifact_p(o_ptr) && known && o_ptr->sval!=SV_RING_SPECIAL) break;
-			if( o_ptr->sval == SV_RING_SPECIAL) {
-				basenm = "The Ring of Power";
-			}
+			if(o_ptr->sval == SV_RING_SPECIAL) basenm = "Ring of Power";
 			if (artifact_p(o_ptr) && known) break;
 
 			/* Color the object */
@@ -1574,7 +1630,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_BOOK:
 		{                        
 //			basenm = k_name + k_ptr->name;
-			if (o_ptr->sval == 255) modstr = school_spells[o_ptr->pval].name;
+			if (o_ptr->sval == SV_SPELLBOOK) modstr = school_spells[o_ptr->pval].name;
 			break;
 		}
 		case TV_RUNE1:
@@ -2059,6 +2115,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Display the item like armour */
 	if (o_ptr->ac) show_armour = TRUE;
 
+#ifdef USE_NEW_SHIELDS
+	if (o_ptr->tval == TV_SHIELD) {
+		show_armour = FALSE;
+		show_shield = TRUE;
+	}
+#endif
+
 
 	/* Dump base weapon info */
 	switch (o_ptr->tval)
@@ -2161,6 +2224,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			t = object_desc_chr(t, b2);
 		}
 
+		else if (show_shield)
+		{
+			if (!(mode & 8)) t = object_desc_chr(t, ' ');
+			t = object_desc_chr(t, b1);
+			t = object_desc_per(t, o_ptr->ac);
+			t = object_desc_chr(t, ',');
+			t = object_desc_int(t, o_ptr->to_a);
+			t = object_desc_chr(t, b2);
+		}
+
 		/* No base armor, but does increase armor */
 		else if (o_ptr->to_a)
 		{
@@ -2177,6 +2250,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		if (!(mode & 8)) t = object_desc_chr(t, ' ');
 		t = object_desc_chr(t, b1);
 		t = object_desc_num(t, o_ptr->ac);
+		t = object_desc_chr(t, b2);
+	}
+	else if (show_shield)
+	{
+		if (!(mode & 8)) t = object_desc_chr(t, ' ');
+		t = object_desc_chr(t, b1);
+		t = object_desc_per(t, o_ptr->ac);
 		t = object_desc_chr(t, b2);
 	}
 
@@ -2427,6 +2507,15 @@ if (!(mode & 32)) {
 		strcat(tmp_val, "% off");
 	}
 
+#if 0 /* moved to carry() in cmd1.c. */
+	/* if we have felt the object's value before by pseudo-id, remember that now */
+	if (!o_ptr->note && !aware && object_felt_p(Ind, o_ptr) && strcmp(tmp_val, "empty")) {
+		/* note: currently all items that give a static pseudo-id happen to be 'magic'.. */
+		if (object_felt_heavy_p(Ind, o_ptr)) strcpy(tmp_val, value_check_aux2_magic(o_ptr));
+		else strcpy(tmp_val, value_check_aux1_magic(o_ptr));
+	}
+#endif
+
 	/* Append the inscription, if any */
 	if (tmp_val[0])
 	{
@@ -2576,7 +2665,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 	      case SV_DRAGON_PSEUDO:
 		{
-		    return "Breathe light every 200+d100 turns";
+		    return "Breathe light/dark every 200+d100 turns";
 //		  return "polymorph into an Ethereal Drake every 200+d100 turns";
 		  //return "polymorph into a Pseudo Dragon every 200+d100 turns";
 		}
@@ -2607,7 +2696,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 	      case SV_DRAGON_SHINING:
 		{
-		    return "Breathe light every 200+d100 turns";
+		    return "Breathe light/dark every 200+d100 turns";
 //		  return "polymorph into an Ethereal Dragon every 200+d100 turns";
 		}
 	      case SV_DRAGON_POWER:
@@ -2639,6 +2728,11 @@ cptr item_activation(object_type *o_ptr)
 		{
 		    return "Breathe electricity/light/gravity every 200+d100 turns";
 //		  return "polymorph into a sky drake every 200+d100 turns";
+		}
+	      case SV_DRAGON_SILVER:
+		{
+		    return "Breathe inertia/cold every 200+d100 turns";
+//		  return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	      }
 	  }
@@ -2700,7 +2794,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_RILIA:
 		{
-			return "stinking cloud (12) every 4+d4 turns";
+			return "stinking cloud (16) every 4+d4 turns";
 		}
 		case ART_BELANGIL:
 		{
@@ -3156,7 +3250,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_RILIA:
 		{
-			return "stinking cloud (12) every 4+d4 turns";
+			return "stinking cloud (16) every 4+d4 turns";
 		}
 		case ART_BELANGIL:
 		{
@@ -3398,7 +3492,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_BA_POIS_1:
 			{
-				return "stinking cloud (12), rad. 3, every 4+d4 turns";
+				return "stinking cloud (16), rad. 3, every 4+d4 turns";
 			}
 			case ACT_BO_ELEC_1:
 			{
@@ -3734,6 +3828,8 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 
 
 /* XXX this ignores the chance of extra dmg via 'critical hit' */
+/* the following stuff is a really bad hack, because the player's real in-game values
+   will be modified. TODO: definitely change this to an independant calculation - C. Blue */
 static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
 	player_type *p_ptr = Players[Ind];
@@ -3749,6 +3845,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Ok now the hackish stuff, we replace the current weapon with this one */
 	/* XXX this hack can be even worse under TomeNET, dunno :p */
+	/* this stuff doesn't take into account dual-wield at all, might cause really bugged results */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
 
@@ -6578,7 +6675,7 @@ cptr mention_use(int Ind, int i)
 		case INVEN_LITE:  p = "Light source"; break;
 		case INVEN_BODY:  p = "On body"; break;
 		case INVEN_OUTER: p = "About body"; break;
-		case INVEN_ARM:   p = "On arm"; break;
+		case INVEN_ARM:   p = "On off-hand"; break; //was 'On arm'
 		case INVEN_HEAD:  p = "On head"; break;
 		case INVEN_HANDS: p = "On hands"; break;
 		case INVEN_FEET:  p = "On feet"; break;
@@ -6586,7 +6683,7 @@ cptr mention_use(int Ind, int i)
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD)
+	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */
 	{
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
@@ -6634,7 +6731,7 @@ cptr describe_use(int Ind, int i)
 		case INVEN_LITE:  p = "using to light the way"; break;
 		case INVEN_BODY:  p = "wearing on your body"; break;
 		case INVEN_OUTER: p = "wearing on your back"; break;
-		case INVEN_ARM:   p = "wearing on your arm"; break;
+		case INVEN_ARM:   p = "wielding in off-hand"; break;//was "wearing on your arm"
 		case INVEN_HEAD:  p = "wearing on your head"; break;
 		case INVEN_HANDS: p = "wearing on your hands"; break;
 		case INVEN_FEET:  p = "wearing on your feet"; break;
@@ -6642,7 +6739,7 @@ cptr describe_use(int Ind, int i)
 	}
 
 	/* Hack -- Heavy weapon */
-	if (i == INVEN_WIELD)
+	if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield, not that needed here though */
 	{
 		object_type *o_ptr;
 		o_ptr = &p_ptr->inventory[i];
@@ -6907,7 +7004,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 byte get_book_name_color(int Ind, object_type *o_ptr)
 {
 	//player_type *p_ptr = Players[Ind];
-	if (o_ptr->sval == 255)
+	if (o_ptr->sval == SV_SPELLBOOK)
 	{
 		return (byte)exec_lua(Ind, format("return get_spellbook_name_colour(%d)", o_ptr->pval));
 	}

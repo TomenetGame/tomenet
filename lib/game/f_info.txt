@@ -121,7 +121,7 @@ D:1:You tunnel through the web.
 
 # Trap -- the flags are not used by the program
 N:17:trap
-G:^:w
+G:^:W
 F:FLOOR | NOTICE | REMEMBER
 
 
@@ -670,7 +670,7 @@ D:1:You easily tunnel into the sandwall.
 D:2:a sandwall blocking your way
 
 N:101:high mountain chain
-G:^:W
+G:^:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
@@ -683,7 +683,6 @@ E:4d4:8:NETHER
 F:ATTR_MULTI
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
-
 N:103:glittering water
 G:~:B
 S:B:B:B:b:W:g:w
@@ -691,6 +690,14 @@ F:ATTR_MULTI
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING
 
+#impassable by admins, like PERM_FEAT_SOLID just as mountain chain
+N:104:high mountain chain
+G:^:w
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+#might also add 'permanent water' and 'permanent grass' to improve Valinor.
 
 N:160:Void Jumpgate
 G:+:v

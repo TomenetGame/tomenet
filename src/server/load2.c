@@ -369,13 +369,29 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->number);
 	rd_s16b(&o_ptr->weight);
 
-	rd_byte(&o_ptr->name1);
-	rd_byte(&o_ptr->name2);
+	if (!older_than(4,3,1)) {
+		rd_u16b(&o_ptr->name1);
+		rd_u16b(&o_ptr->name2);
+
+	} else {
+		/* Increase portability with pointers to correct type - mikaelh */
+		byte old_name1, old_name2;
+		rd_byte(&old_name1);
+		rd_byte(&old_name2);
+		o_ptr->name1 = old_name1;
+		if (o_ptr->name1 == 255) o_ptr->name1 = ART_RANDART;
+		o_ptr->name2 = old_name2;
+	}
 	rd_s32b(&o_ptr->name3);
         if (!older_than(4, 2, 1))
 		rd_s32b(&o_ptr->timeout);
 	else
-		rd_s16b(&o_ptr->timeout);
+	{
+		/* Increase portability with pointers to correct type - mikaelh */
+		s16b old_timeout;
+		rd_s16b(&old_timeout);
+		o_ptr->timeout = old_timeout;
+	}
 
 	rd_s16b(&o_ptr->to_h);
 	rd_s16b(&o_ptr->to_d);
@@ -389,12 +405,48 @@ static void rd_item(object_type *o_ptr)
 				o_ptr->sval, o_ptr->to_h, o_ptr->to_d, o_ptr->to_a);
 	 }
 #endif
-
+#if 0 /* should all be fixed now hopefully - C. Blue */
 	/* Cap all old non-trueart bows - mikaelh */
-	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == 255))
-	{
+	if (o_ptr->tval == TV_BOW && (o_ptr->name1 == 0 || o_ptr->name1 == ART_RANDART))
+	{/* CAP_ITEM_BONI */
 		if (o_ptr->to_h > 30) o_ptr->to_h = 30;
 		if (o_ptr->to_d > 30) o_ptr->to_d = 30;
+	}
+#endif
+#ifdef USE_NEW_SHIELDS
+	/* Cap all old shields' +ac - C. Blue */
+	if (o_ptr->tval == TV_SHIELD)
+	{/* CAP_ITEM_BONI */
+		/* if (o_ptr->to_a > 15) o_ptr->to_h = 15; */ // this must've been wrong - mikaelh
+		if (o_ptr->to_a > 15) o_ptr->to_a = 15;
+	}
+#endif
+	/* Fix shields base AC or percentage, in case USE_NEW_SHIELDS has been toggled. */
+	if (o_ptr->tval == TV_SHIELD) {
+		o_ptr->ac = k_info[o_ptr->k_idx].ac;
+		/* Fix to_h being set on shields (see above) - mikaelh */
+		o_ptr->to_h = 0;
+	}
+	/* Fix high quality runes levels */
+	if (o_ptr->tval == TV_RUNE1) {
+		switch (o_ptr->sval) {
+			case SV_RUNE1_CLOUD:
+				o_ptr->level=35;
+			default:
+				break;
+		} 
+	}
+	if (o_ptr->tval == TV_RUNE2) {
+		switch (o_ptr->sval) {
+			case SV_RUNE2_STONE:
+				o_ptr->level=35;
+				break;
+			case SV_RUNE2_ARMAGEDDON:
+				o_ptr->level=40;
+				break;
+			default:
+				break;
+		} 
 	}
 
 	rd_s16b(&old_ac);
@@ -404,7 +456,14 @@ static void rd_item(object_type *o_ptr)
 
 	rd_byte(&o_ptr->ident);
 
-	rd_byte(&o_ptr->name2b);
+	if (!older_than(4,3,1)) {
+		rd_u16b(&o_ptr->name2b);
+	} else {
+		/* Increase portability with pointers to correct type - mikaelh */
+		byte old_name2b;
+		rd_byte(&old_name2b);
+		o_ptr->name2b = old_name2b;
+	}
 	/*rd_byte(&o_ptr->marked);*/
 
 	/* Old flags */
@@ -499,7 +558,7 @@ static void rd_item(object_type *o_ptr)
 #if 0 /* commented out again till it's of use once more (hopefully not) */
 /*HACK just to get rid of invalid seals in Bree.. */
 if (o_ptr->tval == TV_SEAL) {
-	o_ptr->tval = 0; o_ptr->sval = 0;
+	invwipe(o_ptr);
 	return;
 }
 #endif
@@ -999,8 +1058,8 @@ static bool rd_extra(int Ind)
 	monster_race *r_ptr;
 	char login_char_name[80];
 
-	byte tmp8u, panic;
-	u16b tmp16b;
+	byte tmp8u;
+	u16b tmp16b, panic;
 
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
 	strcpy(login_char_name, p_ptr->name);
@@ -1025,15 +1084,22 @@ static bool rd_extra(int Ind)
 	} else {
 		rd_byte(&p_ptr->has_pet);
 	}
+
+	/* Divinity support in savefile now on all servers - mikaelh */
+	if (older_than(4, 3, 2)) {
+		p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
+	} else {
+		rd_byte(&p_ptr->divinity);
+	}
+
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
         rd_byte(&p_ptr->pclass);
 	rd_byte(&p_ptr->male);
 	if (older_than(4, 2, 4))
 	{
-		byte old_party;
-		rd_byte(&old_party);
-		p_ptr->party = old_party; /* convert the old byte to u16b - mikaelh */
+		rd_byte(&tmp8u);
+		p_ptr->party = tmp8u; /* convert the old byte to u16b - mikaelh */
 	}
 	else rd_u16b(&p_ptr->party);
 	rd_byte(&p_ptr->mode);
@@ -1353,6 +1419,12 @@ if (p_ptr->updated_savegame == 0) {
 			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
 		}
 	}
+	
+	if (!older_than(4, 3, 3)) {
+		rd_s16b(&p_ptr->combat_stance);
+		rd_s16b(&p_ptr->combat_stance_power);
+	}
+	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
 
 	/* Success */
 	return FALSE;
@@ -1703,7 +1775,7 @@ static errr rd_savefile_new_aux(int Ind)
 
 	int i, err_code = 0;
 
-	byte panic;
+//	byte panic;
 	u16b tmp16u;
 	u32b tmp32u;
 
@@ -1763,6 +1835,8 @@ static errr rd_savefile_new_aux(int Ind)
 
 		Players[Ind]->obj_aware[i] = (tmp8u & 0x01) ? TRUE : FALSE;
 		Players[Ind]->obj_tried[i] = (tmp8u & 0x02) ? TRUE : FALSE;
+		Players[Ind]->obj_felt[i] = (tmp8u & 0x04) ? TRUE : FALSE;
+		Players[Ind]->obj_felt_heavy[i] = (tmp8u & 0x08) ? TRUE : FALSE;
 	}
 
 	/* Trap Memory */
@@ -2297,7 +2371,8 @@ void load_guildhalls(struct worldpos *wpos){
 			s_printf("load guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
-			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+//			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname);/* moved this 'file spam' over to save... C. Blue */
 			gfp=fopen(buf, "r");
 			if(gfp==(FILE*)NULL) continue;
 			data.fp=gfp;
@@ -2321,7 +2396,8 @@ void save_guildhalls(struct worldpos *wpos){
 			s_printf("save guildhall %d\n", i);
 #endif
 			sprintf(fname, "guild%.4d.data", i);
-			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+//			path_build(buf, 1024, ANGBAND_DIR_DATA, fname);
+			path_build(buf, 1024, ANGBAND_DIR_SAVE, fname); /* moved this 'file spam' over to save... C. Blue */
 			gfp=fopen(buf, "r+");
 			if(gfp==(FILE*)NULL){
 				gfp=fopen(buf, "w");

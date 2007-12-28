@@ -176,7 +176,15 @@ static void msg_gained_abilities(int Ind, int old_value, int i) {
 				break;
 	case SKILL_RESCONF:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
 				break;
+	case SKILL_DODGE:
+		if (old_value == 0 && new_value > 0 &&
+		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
+		break;
 	case SKILL_MARTIAL_ARTS:
+		if (old_value == 0 && new_value > 0 &&
+		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
+			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");
 		if (old_value < 10 && new_value >= 10) { /* the_sandman */
 //			msg_print(Ind, "\377GYou feel as if you could take on the world!");
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
@@ -539,6 +547,10 @@ void increase_skill(int Ind, int i)
 
 	/* XXX updating is delayed till player leaves the skill screen */
 	p_ptr->update |= (PU_SKILL_MOD);
+	
+	/* also update 'C' character screen live! */
+	p_ptr->update |= (PU_BONUS);
+	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
 
 	/* Take care of gained abilities */
 	msg_gained_abilities(Ind, old_value, i);

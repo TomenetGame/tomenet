@@ -1,4 +1,4 @@
-# $Id$
+ $Id$
 # File: a_info.txt
 
 
@@ -303,7 +303,8 @@ D:The mighty spear used once by Melkor to slay the trees of Valinor.
 N:19:'Soulkeeper'
 I:37:30:2
 #W:75:9:420:300000
-W:75:9:400:200000
+#W:75:9:400:200000
+W:75:9:300:200000
 P:40:2d4:-4:0:20
 F:CON | 
 F:HOLD_LIFE | SUST_CON | ESP_UNDEAD | RES_CONF | RES_FEAR | 
@@ -356,6 +357,7 @@ D:concealment rests within.
 
 
 # The Mithril Plate Mail of Celeborn
+# changed to Mithril Scale Mail now, since Plate is used for NR-armour.
 
 N:23:of Celeborn
 I:37:25:4
@@ -456,12 +458,12 @@ D:lie, cheat and steal - but never ready to actually fight.
 # The Small Metal Shield of Thorin
 
 N:30:of Thorin
-I:34:3:4
+I:34:3:2
 W:19:6:65:140000
-P:3:1d2:0:0:25
+$USE_NEW_SHIELDS!P:3:1d2:0:0:25
+$USE_NEW_SHIELDS$P:14:1d2:0:0:15
 F:STR | CON | HIDE_TYPE | 
-F:FREE_ACT | IM_ACID | RES_SOUND | 
-F:RES_CHAOS | ESP_ORC
+F:FREE_ACT | IM_ACID | RES_SOUND | ESP_ORC
 D:Invoking the strength and endurance of Thorin, King under the Mountain, 
 D:this little metal shield is proof against the Element of Earth.
 
@@ -471,7 +473,8 @@ D:this little metal shield is proof against the Element of Earth.
 N:31:of Celegorm
 I:34:4:0
 W:18:3:60:50000
-P:4:1d2:0:0:20
+$USE_NEW_SHIELDS!P:4:1d2:0:0:20
+$USE_NEW_SHIELDS$P:18:1d2:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_LITE | RES_DARK
 D:This shield emblazoned with a multitude of creatures not seen for ages 
 D:once protected Celegorm, lord of Himlad; around it lies a mystic balance  
@@ -483,7 +486,8 @@ D:that contains the conflicts of the elements.
 N:32:of Anarion
 I:34:5:0
 W:40:9:120:80000
-P:5:1d3:0:0:25
+$USE_NEW_SHIELDS!P:5:1d3:0:0:25
+$USE_NEW_SHIELDS$P:21:1d3:0:0:15
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | SUST_STR | SUST_INT | 
 F:SUST_WIS | SUST_DEX | SUST_CON | SUST_CHR | ESP_EVIL
 D:The great metal-bound shield of Anarion, son of Elendil, who Sauron found 
@@ -507,7 +511,9 @@ D:troll-bane smoked in the black blood of Gothmog's guards.
 N:34:of Morgoth
 I:33:50:125
 #I:33:50:10
-W:100:1:20:10000000
+#W:100:1:20:10000000
+#P:0:1d1:0:0:0
+W:100:1:30:10000000
 P:0:1d1:0:0:0
 F:STR | INT | WIS | DEX | CON | CHR | INFRA | HIDE_TYPE | 
 #F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS |
@@ -647,12 +653,12 @@ D:always knowing what he faces - unless his own folly blinds him to the
 D:nature and magnitude of the task.
 
 
-# The Cloak 'Colluin'
+# The Fur Cloak 'Colluin'
 
 N:44:'Colluin'
-I:35:1:0
-W:5:45:10:50000
-P:1:0d0:0:0:20
+I:35:3:0
+W:20:45:10:50000
+P:3:0d0:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE | ESP_GOOD
 D:A cape worn by a hero from Valinor, a land utterly beyond the strife 
 D:of Elements.
@@ -662,7 +668,7 @@ D:of Elements.
 
 N:45:'Holcolleth'
 I:35:1:2
-W:5:25:10:40000
+W:15:25:10:40000
 P:1:0d0:0:0:4
 F:INT | WIS | SPEED | STEALTH | HIDE_TYPE | 
 F:RES_ACID | ACTIVATE
@@ -696,13 +702,13 @@ D:shakes off holding magics, worn by Aragorn son of Arathorn in his youth
 D:as he adventured under the name of Thorongil.
 
 
-# The Cloak 'Colannon'
+# The Elven Cloak 'Colannon'
 
 N:48:'Colannon'
-I:35:1:3
-W:5:20:10:65000
-P:1:0d0:0:0:15
-F:STEALTH | SPEED | RES_NEXUS | 
+I:35:2:3
+W:30:20:10:75000
+P:4:0d0:0:0:15
+F:STEALTH | SPEED | RES_NEXUS | SEARCH | LUCK
 F:RES_ACID | ACTIVATE
 D:A crystal-blue cape of fine silk worn by a silent messenger of 
 D:the forces of Law. Somehow, its wearer is always able to escape 
@@ -927,7 +933,7 @@ D:ordinary metal as easily as its title, "Iron Cleaver", suggests.
 N:66:'Narthanc'
 I:23:4:0
 W:1:100:12:12000
-P:0:1d4:4:6:0
+P:0:1d4:8:12:0
 F:BRAND_FIRE | IM_FIRE | ACTIVATE | SHOW_MODS | LITE1 | LEVELS
 D:A fiery dagger finely balanced for deadly throws.
 
@@ -937,7 +943,7 @@ D:A fiery dagger finely balanced for deadly throws.
 N:67:'Nimthanc'
 I:23:4:0
 W:1:100:12:11000
-P:0:1d4:4:6:0
+P:0:1d4:8:12:0
 F:BRAND_COLD | IM_COLD | ACTIVATE | SHOW_MODS | LEVELS
 D:A frosty dagger finely balanced for deadly throws.
 
@@ -947,7 +953,7 @@ D:A frosty dagger finely balanced for deadly throws.
 N:68:'Dethanc'
 I:23:4:0
 W:1:100:12:13000
-P:0:1d4:4:6:0
+P:0:1d4:8:12:0
 F:BRAND_ELEC | IM_ELEC | ACTIVATE | SHOW_MODS | LEVELS
 D:A dagger covered in sparks and finely balanced for deadly throws.
 
@@ -1219,7 +1225,7 @@ D:dismay to creatures natural and unnatural.
 
 N:88:'Sting'
 I:23:8:1
-W:20:40:75:75000
+W:20:40:70:75000
 P:0:1d6:7:8:0
 F:STR | DEX | CON | BLOWS | SPEED | LEVELS | 
 F:ESP_ORC | ESP_UNDEAD | ESP_SPIDER | 
@@ -1705,7 +1711,7 @@ D:physically.
 N:123:of Gothmog
 I:21:2:-2
 W:35:15:120:100000
-P:0:3d6:15:16:0
+P:0:3d5:15:16:0
 F:INT | DEX | INFRA | HIDE_TYPE | DRAIN_HP | 
 F:HEAVY_CURSE | CURSED | AGGRAVATE | 
 F:BRAND_FIRE | SLAY_ANIMAL | SLAY_DEMON | IM_FIRE | ESP_SPIDER | 
@@ -1744,11 +1750,13 @@ D:songs record.
 # The Light Crossbow 'Cubragol'
 
 N:126:'Cubragol'
-I:19:23:10
-W:50:25:110:300000
+#I:19:23:10
+I:19:23:6
+#W:50:25:110:300000
+W:50:25:110:150000
 P:0:0d0:10:14:0
 F:SPEED | HIDE_TYPE | 
-F:RES_FIRE | ACTIVATE | SHOW_MODS
+F:RES_FIRE | BRAND_FIRE | ACTIVATE | SHOW_MODS
 D:A crossbow that grants fiery speed to he who finds it, and from which 
 D:shoot bolts that blaze with flame unquenchable.
 
@@ -1818,7 +1826,7 @@ D:wearer to see things not seen by all.
 N:134:'Lasher'
 I:21:2:3
 W:20:5:30:125000
-P:0:1d6:12:15:0
+P:0:1d4:12:15:0
 F:DEX | BLOWS | HIDE_TYPE | 
 F:SLAY_ANIMAL | SLAY_ORC | BRAND_POIS | VORPAL | 
 F:RES_POIS | FREE_ACT | ESP_ORC
@@ -1991,10 +1999,10 @@ D:at the command of its wielder as the weapon passes Supreme Judgment on
 D:the inhabitants of Angband.
 
 
-# The Robe of Great Luck
+# The Tunic of Great Luck
 
 N:148:of Great Luck
-I:36:2:25
+I:36:21:25
 W:50:80:20:166000
 P:2:0d0:0:0:5
 F:LUCK | HIDE_TYPE |
@@ -2209,8 +2217,10 @@ D:The sword that was broken shall be reforged...
 N:165:'Lebohaum'
 I:32:6:0
 W:20:15:15:99999
-P:20:0d0:0:0:80
+#P:20:0d0:0:0:80
+P:20:0d0:0:0:40
 F:ACTIVATE
+F:FREE_ACT
 D:With the Helm 'Lebohaum' your head is safe!
 
 
@@ -2255,9 +2265,10 @@ D:truly more than it appears.
 # The Shield of Deflection of Gil-galad
 
 N:169:of Gil-galad
-I:34:10:5
+I:34:10:4
 W:60:4:80:165000
-P:10:1d3:0:0:30
+$USE_NEW_SHIELDS!P:10:1d3:0:0:30
+$USE_NEW_SHIELDS$P:25:1d3:0:0:15
 F:ACTIVATE | 
 F:LITE1 | WIS | CHR | SEARCH | LUCK
 F:RES_ELEC | RES_ACID | RES_DISEN | RES_DARK | HIDE_TYPE | 
@@ -2364,7 +2375,8 @@ D:who seek life beyond death.
 N:176:of the Haradrim
 I:34:4:2
 W:15:12:120:30000
-P:4:1d2:0:0:15
+$USE_NEW_SHIELDS!P:4:1d2:0:0:15
+$USE_NEW_SHIELDS$P:18:1d2:0:0:15
 F:ACTIVATE | 
 F:STR | CON | SUST_STR | SUST_CON | HIDE_TYPE | 
 F:RES_FEAR | RES_BLIND | RES_POIS
@@ -2476,8 +2488,9 @@ P:0:1d1:0:0:0
 F:SPEED | SEE_INVIS |
 # LUCK | 
 F:CURSED | HEAVY_CURSE | REGEN
-F:WRAITH | IM_NETHER | DRAIN_EXP | HOLD_LIFE | SPECIAL_GENE |
+F:IM_NETHER | HOLD_LIFE | SPECIAL_GENE |
 F:INSTA_ART | ACTIVATE
+#F:WRAITH | DRAIN_EXP 
 Z:teleport
 D:Imbued with the screams of the victims of undead everywhere, this 
 D:ring is more a hole in reality than anything else. Strange forces ripple over 
@@ -2623,7 +2636,7 @@ F:TUNNEL | SUST_INT | SUST_WIS | INT | STR | STEALTH
 # The Dark Sword 'Schmerzglaube'
 N:212:'Schmerzglaube'
 I:23:33:2
-W:50:30:70:120000
+W:50:30:110:120000
 P:0:5d7:10:10:5
 F:BLOWS | CON | HIDE_TYPE |
 F:SLAY_ANIMAL | SLAY_UNDEAD | SLAY_DEMON | 
@@ -2732,11 +2745,12 @@ D:body of Brand, King of Dale, during the War of the Rings. Valiant till the
 D:very end. Baruk Khazad! 
 
 
-# The Mithril Helm of the Durin // Steel helm for now, we don't have M.Helm atm.
+# The Mithril Helm of the Durin
 
 N:220:of the Durin
-I:32:6:3
-W:40:70:60:100000
+I:32:10:3
+#W:40:70:60:100000
+W:40:40:60:100000
 P:9:0d0:0:0:23
 F:STR | CON | HIDE_TYPE | RES_FEAR | SUST_STR | SUST_CON | 
 F:IM_FIRE | RES_CONF | SEARCH | SEE_INVIS | LITE1 
@@ -2919,7 +2933,7 @@ D:Gauntlets that convert the wielder's anger to strength in combat.
 
 N:235:'Artery Cutter'
 I:23:31:10
-W:60:50:45:200000
+W:60:50:50:200000
 P:0:3d5:14:8:0
 F:CRIT
 F:SHOW_MODS | VORPAL | RES_ELEC | SEE_INVIS
@@ -2993,7 +3007,7 @@ D:northern hemisphere by a mighty guardian of the skies.
 N:241:'Bloodscourge'
 I:21:21:3
 W:35:35:70:111000
-P:0:8d2:25:15:0
+P:0:6d2:25:15:0
 F:STR | CON | INFRA | HIDE_TYPE | VAMPIRIC | BLOWS | 
 F:HEAVY_CURSE | CURSED | AUTO_CURSE | AGGRAVATE | 
 F:BRAND_FIRE | ESP_GOOD | ESP_EVIL | 
@@ -3117,33 +3131,102 @@ F:INVIS | RES_BLIND | RES_DARK | FREE_ACT
 D:A unappearent leather cap with surprising abilities.
 
 
+#taken out due to unbalancedness > coolness
 ## The Potion of Amber
-#
-#N:252:of Amber
-#I:72:21:0
-#W:20:30:4:15000
-#P:0:0d0:0:0:0
-#F:INSTA_ART | HIDE_TYPE
-#D:A yellow-golden potion, capable of turning you to amberite temporarily.
-
-
+#$RPG_SERVER$N:252:of Amber
+#$RPG_SERVER$I:72:21:0
+#$RPG_SERVER$W:20:30:4:15000
+#$RPG_SERVER$P:0:0d0:0:0:0
+#$RPG_SERVER$F:INSTA_ART | HIDE_TYPE
+#$RPG_SERVER$D:A yellow-golden potion, capable of turning you to amberite temporarily.
 ## The Scroll of Sleeping
-#
-#N:253:of Sleeping
-#I:70:65:0
-#W:20:20:4:15000
-#P:0:0d0:0:0:0
-#F:INSTA_ART | HIDE_TYPE
-#D:A scroll that calms every being in your widest surroundings.
+#$RPG_SERVER$N:253:of Sleeping
+#$RPG_SERVER$I:70:65:0
+#$RPG_SERVER$W:20:20:4:15000
+#$RPG_SERVER$P:0:0d0:0:0:0
+#$RPG_SERVER$F:INSTA_ART | HIDE_TYPE
+#$RPG_SERVER$D:A scroll that calms every being in your widest surroundings.
 
+
+# The Dragon Shield 'Stormshield'
 
 N:254:'Stormshield'
 I:34:6:3
 W:70:40:200:120000
-P:8:1d3:0:0:40
+$USE_NEW_SHIELDS!P:8:1d3:0:0:40
+$USE_NEW_SHIELDS$P:23:1d3:0:0:15
 F:STR | CON | RES_SOUND | RES_COLD | IM_ELEC
 D:Gleaming steel, brass-shod with flashes of light running over its surface,
 D:this shield is astonishingly heavy and not easy to handle.
+
+
+# The Frock of Piety
+
+N:255:of Piety
+I:36:20:4
+W:25:35:20:30000
+P:2:0d0:0:0:15
+F:HIDE_TYPE | WIS | INT | REGEN_MANA | RES_FIRE | RES_COLD
+D:A traditional monk's gown, made for improving meditation and also worn
+D:while serving repentance.
+
+
+# The Tunic of the Winds
+
+N:256:of the Winds
+I:36:21:2
+W:40:60:20:60000
+P:2:0d0:0:0:19
+F:HIDE_TYPE | DEX | SUST_DEX | FLY | ESP_ANIMAL | SPEED
+F:IM_COLD | RES_SOUND | RES_FEAR | FREE_ACT | RES_CONF
+D:A traditional monk's gown, made for improving meditation and also worn
+D:while serving repentance.
+
+
+# The Gown of Fiona
+
+N:257:of Fiona
+I:36:22:5
+W:15:30:20:20000
+P:1:0d0:0:0:20
+F:HIDE_TYPE | CHR | SUST_CHR |
+F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC
+D:A very beatiful dress, probably matching her leather boots in a fashionable way.
+
+
+# The Leather Frock of Scarlet Order
+
+N:258:of Scarlet Order
+I:36:23:2
+W:40:50:30:50000
+P:4:0d0:0:0:20
+F:HIDE_TYPE | DEX | STR | RES_FIRE | RES_COLD | RES_ELEC |
+F:RES_CONF | FREE_ACT | HOLD_LIFE | REGEN
+D:Manufactured by the armourers of the Scarlet Order, this Leather Gown
+D:aids every zealot in his struggle against the unholy forces.
+
+
+# The Cloth Hat 'Thinking Cap'
+
+N:259:'Thinking Cap'
+I:32:1:4
+W:40:20:10:40000
+P:1:0d0:0:0:13
+F:INT | WIS | REGEN_MANA | HIDE_TYPE | 
+F:RES_BLIND | RES_CONF | FREE_ACT | ESP_UNIQUE
+D:To uncover truths and stay focussed, this hat sharpens the wearer's mind,
+D:allowing him to discover new ideas.
+
+
+# Artifacts for the nether realm viability project - C. Blue
+
+# The Heavy Mithril Scale Armour 'Mirror Of Glory'
+$RPG_SERVER$N:260:'Mirror Of Glory'
+$RPG_SERVER$I:37:26:5
+$RPG_SERVER$W:90:40:300:200000
+$RPG_SERVER$P:65:4d4:-3:0:20
+$RPG_SERVER$F:WINNERS_ONLY | REGEN | IM_ACID | RES_FIRE | RES_ELEC | STR | CON | CHR
+
 
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'

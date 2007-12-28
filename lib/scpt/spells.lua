@@ -2,7 +2,7 @@
 -- This file takes care of the schools of magic
 -- (Edit this file and funny funny things will happen :)
 
-
+-- <- dummy line to change checksum - C. Blue
 -- Create the schools
 
 SCHOOL_CONVEYANCE = add_school
@@ -146,94 +146,95 @@ pern_dofile(Ind, "p_support.lua")
 pern_dofile(Ind, "dr_arcane.lua") 
 pern_dofile(Ind, "dr_physical.lua")
 
--- Create the crystal of mana
+-- Create the crystal of mana (1-4)
 school_book[0] = {
 	MANATHRUST, DELCURSES, RESISTS, MANASHIELD,
 }
 
--- The book of the eternal flame
+-- The book of the eternal flame (5-8)
 school_book[1] = {
 	GLOBELIGHT, FIREFLASH, FIERYAURA, FIREWALL,
 }
 
--- The book of the blowing winds
+-- The book of the blowing winds (9-13)
 school_book[2] = {
         NOXIOUSCLOUD, POISONBLOOD, INVISIBILITY, AIRWINGS, THUNDERSTORM,
 }
 
--- The book of the impenetrable earth
+-- The book of the impenetrable earth (14-17)
 school_book[3] = {
-        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+--        STONESKIN, DIG, STONEPRISON, SHAKE, STRIKE,
+        DIG, STONEPRISON, SHAKE, STRIKE,
 }
 
--- The book of the everrunning wave
+-- The book of the everrunning wave (18-21)
 school_book[4] = {
         VAPOR, ENTPOTION, TIDALWAVE, ICESTORM,
 }
 
--- Create the book of translocation
+-- Create the book of translocation (22-27)
 school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL,
 }
 
--- Create the book of the tree * SUMMONANIMAL requires pets first
+-- Create the book of the tree * SUMMONANIMAL requires pets first (28-31)
 school_book[6] = {
-        GROWTREE, HEALING, RECOVERY, REGENERATION,
+        GROWTREE, HEALING, RECOVERY, REGENERATION, VERMINCONTROL,
 }
 
--- Create the book of Knowledge
+-- Create the book of Knowledge (32-37)
 school_book[7] = {
         SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
 }
 
--- Create the book of the Time
+-- Create the book of the Time (38-41)
 school_book[8] = {
         MAGELOCK, SLOWMONSTER, ESSENSESPEED, BANISHMENT,
 }
 
--- Create the book of meta spells
+-- Create the book of meta spells (42-44)
 school_book[9] = {
         RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
 }
 
--- Create the book of the mind * CHARM requires pets first
+-- Create the book of the mind * CHARM requires pets first (45-47)
 school_book[10] = {
         CONFUSE, STUN, TELEKINESIS,
 }
 
--- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing
+-- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (48-52)
 school_book[11] = {
         GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE, STOPWRAITH,
 }
 
 -- Priests / Paladins:
 
--- Create the book of Holy Offense
+-- Create the book of Holy Offense (53-59)
 school_book[12] = {
         HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD,
 }
 
--- Create the book of Holy Defense
+-- Create the book of Holy Defense (60-64)
 school_book[13] = {
 	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT, HMARTYR,
 }
 
--- Create the book of Holy Curing
+-- Create the book of Holy Curing (65-71)
 school_book[14] = {
-	HDELFEAR, HHEALING, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
+	HHEALING, HDELCURSES, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
 }
 
--- Create the book of Holy Support
+-- Create the book of Holy Support (72-78)
 school_book[15] = {
-	HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HDELCURSES, HSENSE,  HZEAL,
+	HDELFEAR, HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HSENSE,  HZEAL,
 }
 
--- Create the book of druidism: Arcane Lore
+-- Create the book of druidism: Arcane Lore (79-83)
 school_book[16] = {
 	NATURESCALL, WATERPOISON, BAGIDENTIFY, REPLACEWALL, BANISHANIMALS,
 }
 
--- Create the book of druidism: Physical Lore
+-- Create the book of druidism: Physical Lore (84-88)
 school_book[17] = {
 	HEALINGCLOUD, QUICKFEET, HERBALTEA, EXTRASTATS, FOCUSSHOT,
 }

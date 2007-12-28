@@ -18,6 +18,11 @@
 #define MAX_VAMPIRIC_DRAIN_RANGED 10	/* was 25 - note: this counts per shot, not per turn */
 #define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
 
+/* Reduce damage in PvP by this factor */
+#define PVP_SHOOT_DAM_REDUCTION 3
+/* Reduce damage in PvP by this factor */
+#define PVP_THROW_DAM_REDUCTION 3
+
 /* chance of walking in a random direction when confused and trying to climb,
  * in percent. [50]
  */
@@ -32,7 +37,10 @@
 /* commented out due to monster AI improvements.
  * activate it if STUPID_MONSTER_SPELLS is defined!
  * */
-//#define ARROW_DIST_LIMIT	MAX_RANGE
+#define ARROW_DIST_LIMIT	MAX_RANGE
+
+/* when do rogues learn cloaking mode? */
+#define LEARN_CLOAKING_LEVEL 15
 
 /*
  * Go up one level                                      -RAK-
@@ -45,7 +53,9 @@ void do_cmd_go_up(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	bool tower=TRUE;
 	cave_type **zcave;
+#ifdef RPG_SERVER
 	int i;
+#endif
 	if(!(zcave=getcave(wpos))) return;
 
         /* Are we entering/inside a dungeon or a tower? */
@@ -104,7 +114,7 @@ void do_cmd_go_up(int Ind)
 			msg_print(Ind, "I see no up staircase here.");
 			return;
 		}
-#if 1	// no need for this anymore - C. Blue
+#if 1	/* no need for this anymore - C. Blue */
 	// argh there is.. people exploit the hell out of every possibility they see. - C. Blue
 		else if ((p_ptr->max_dlv + 5 <= getlevel(&twpos)) && (twpos.wz != 0)) /* player may return to town though! */
 		{
@@ -137,6 +147,12 @@ void do_cmd_go_up(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
+
+	/* For Highlander Tournament */
+	if (wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && !(p_ptr->global_event_temp & 0x1)) { /* not while passing sector00separation */
+		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
+		if (!is_admin(p_ptr)) return;
+	}
 
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
 	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
@@ -191,7 +207,7 @@ void do_cmd_go_up(int Ind)
 	}
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -346,7 +362,9 @@ void do_cmd_go_down(int Ind)
 	struct worldpos *wpos=&p_ptr->wpos;
 	bool tower = FALSE;
 	cave_type **zcave;
+#ifdef RPG_SERVER
 	int i;
+#endif
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Are we entering/inside a dungeon or a tower? */
@@ -531,7 +549,7 @@ void do_cmd_go_down(int Ind)
 	}
 
 	/* S(he) is no longer afk */
-        if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Remove the player from the old location */
 	c_ptr->m_idx = 0;
@@ -637,7 +655,7 @@ void do_cmd_search(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -651,7 +669,12 @@ void do_cmd_search(int Ind)
 	if (p_ptr->always_repeat) p_ptr->command_rep = PKT_SEARCH;
 
 	/* Search */
-	search(Ind);
+        if (p_ptr->pclass == CLASS_ROGUE && !p_ptr->rogue_heavyarmor) {
+                //Radius of 5 ... 15 squares
+                detect_bounty(Ind, (p_ptr->lev/5) + 5);
+        } else {
+                search(Ind);
+        }
 }
 
 
@@ -679,7 +702,7 @@ void do_cmd_toggle_search(int Ind)
 	else
 	{
 		/* S(he) is no longer afk */
-		if (p_ptr->afk) toggle_afk(Ind, "");
+		un_afk_idle(Ind);
 
 		/* Set the searching flag */
 		p_ptr->searching = TRUE;
@@ -764,8 +787,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object_restrictor = 0;
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, p_ptr->total_winner?FALSE:TRUE, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					place_object_restrictor = 0x000;
+					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
@@ -1108,7 +1131,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (o_ptr->tval == TV_CHEST)
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1159,12 +1182,13 @@ void do_cmd_open(int Ind, int dir)
 			/* Allowed to open */
 			if (flag)
 			{
+				break_cloaking(Ind);
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 				/* Some traps might destroy the chest on setting off */
 				if (o_ptr)
-				/* Let the Chest drop items */
-				chest_death(Ind, y, x, o_ptr);
+					/* Let the Chest drop items */
+					chest_death(Ind, y, x, o_ptr);
 			}
 		}
 
@@ -1172,7 +1196,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x08)
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1185,7 +1209,7 @@ void do_cmd_open(int Ind, int dir)
 		else if (c_ptr->feat >= FEAT_DOOR_HEAD + 0x01)
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1211,6 +1235,7 @@ void do_cmd_open(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
+				break_cloaking(Ind);
 
 				/* Set off trap */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -1256,7 +1281,8 @@ void do_cmd_open(int Ind, int dir)
 					msg_print(Ind, "Just walk in.");
 #endif	// USE_MANG_HOUSE
 					/* S(he) is no longer afk */
-					if (p_ptr->afk) toggle_afk(Ind, "");
+					un_afk_idle(Ind);
+					break_cloaking(Ind);
 
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1292,22 +1318,24 @@ void do_cmd_open(int Ind, int dir)
 					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
-						if (p_ptr->afk) toggle_afk(Ind, "");
+						un_afk_idle(Ind);
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+						break_cloaking(Ind);
 						return;
 					} else if (is_admin(p_ptr)) {
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
-						if (p_ptr->afk) toggle_afk(Ind, "");
+						un_afk_idle(Ind);
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
+						break_cloaking(Ind);
 						return;
 					}
 				}
@@ -1322,7 +1350,8 @@ void do_cmd_open(int Ind, int dir)
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
+			break_cloaking(Ind);
 
 			/* Take half a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1426,7 +1455,8 @@ void do_cmd_close(int Ind, int dir)
 			i = pick_house(wpos, y, x);
 
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
+			break_cloaking(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1451,7 +1481,8 @@ void do_cmd_close(int Ind, int dir)
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
+			break_cloaking(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1586,7 +1617,6 @@ void do_cmd_tunnel(int Ind, int dir)
 	{
 		/* Message */
 		msg_print(Ind, "You cannot tunnel.");
-
 		return;
 	}
 
@@ -1656,7 +1686,7 @@ void do_cmd_tunnel(int Ind, int dir)
 		else
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1675,6 +1705,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
+				break_cloaking(Ind);
 
 				/* Nope */
 				return;
@@ -1694,15 +1725,15 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
 					if ((rand_int(100) < 10 + mining) && !istown(wpos))
 					{
-						place_object_restrictor = 0;
-//						place_object(wpos, y, x, FALSE, FALSE, default_obj_theme);
-						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, p_ptr->total_winner?FALSE:TRUE, 
+						place_object_restrictor = 0x000;
+						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW, 
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
 						{
 							msg_print(Ind, "You have found something!");
 						}
 					}
+					break_cloaking(Ind);
 
 					/* Notice */
 					note_spot_depth(wpos, y, x);
@@ -1715,6 +1746,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					/* Message, keep digging */
 					msg_print(Ind, "You dig in the rubble.");
+					break_cloaking(Ind);
 					more = TRUE;
 				}
 			}
@@ -1741,6 +1773,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
+				break_cloaking(Ind);
 			}
 			
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
@@ -1763,6 +1796,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
+				break_cloaking(Ind);
 			}
 
 			/* Quartz / Magma */
@@ -1864,7 +1898,8 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You tunnel into the magma vein.");
 					more = TRUE;
 				}
-#endif	// 0
+#endif	/* 0 */
+				break_cloaking(Ind);
 			}
 
 			/* Default to secret doors */
@@ -1876,6 +1911,7 @@ void do_cmd_tunnel(int Ind, int dir)
 
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
+				break_cloaking(Ind);
 
 				/* Hack -- Search */
 				search(Ind);
@@ -1896,6 +1932,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You tunnel into the granite wall.");
 					more = TRUE;
 				}
+				break_cloaking(Ind);
 			}
 
 			/* Doors */
@@ -1914,6 +1951,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 				}
+				break_cloaking(Ind);
 			}
 
 		}
@@ -1930,8 +1968,10 @@ void do_cmd_tunnel(int Ind, int dir)
 	if ((p_ptr->inventory[INVEN_TOOL].k_idx) &&
 	    (p_ptr->impact || k_info[o_ptr->k_idx].flags5 & TR5_IMPACT) &&
 	    (randint(200) < power) && magik(50)) {
-		if (!check_guard_inscription(o_ptr->note, 'E' ))
-		earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+		if (!check_guard_inscription(o_ptr->note, 'E' )) {
+			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
+			break_cloaking(Ind); /* redundant, done above already */
+		}
 	}
 
 	/* Cancel repetition unless we can continue */
@@ -2101,7 +2141,7 @@ void do_cmd_disarm(int Ind, int dir)
 			else if (rand_int(100) < j)
 			{
 				/* S(he) is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 
 				msg_print(Ind, "You have disarmed the chest.");
 				gain_exp(Ind, t_ptr->difficulty * 3);
@@ -2114,7 +2154,7 @@ void do_cmd_disarm(int Ind, int dir)
 			else if ((i > 5) && (randint(i) > 5))
 			{
 				/* S(he) is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 
 				/* We may keep trying */
 				more = TRUE;
@@ -2126,10 +2166,11 @@ void do_cmd_disarm(int Ind, int dir)
 			else
 			{
 				/* S(he) is no longer afk */
-				if (p_ptr->afk) toggle_afk(Ind, "");
+				un_afk_idle(Ind);
 
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
+				break_cloaking(Ind);
 				done = TRUE;
 			}
 
@@ -2144,7 +2185,7 @@ void do_cmd_disarm(int Ind, int dir)
 		if (!done && cs_ptr->type == CS_MON_TRAP) /* same thing.. */
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			msg_print(Ind, "You disarm the monster trap.");
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
@@ -2166,7 +2207,7 @@ void do_cmd_disarm(int Ind, int dir)
 //			cptr name = (f_name + f_info[c_ptr->feat].name);
 
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2200,7 +2241,6 @@ void do_cmd_disarm(int Ind, int dir)
 				/* A chance to drop a trapkit! - the_sandman */
 				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value/1000);
 				if (randint(100) < sdis) {
-					/* object_type* yay = (object_type*)malloc(sizeof(object_type)); - better avoid malloc in tomenet style here - mikaelh */
 					object_type forge;
 					object_type* yay = &forge;
 					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
@@ -2303,6 +2343,7 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Move the player onto the trap */
 				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
 				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
+				break_cloaking(Ind);
 			}
 
 			/* only aesthetic */
@@ -2400,12 +2441,13 @@ void do_cmd_bash(int Ind, int dir)
 					c_ptr->feat == FEAT_SHAL_WATER)
 				{
 					/* S(he) is no longer afk */
-					if (p_ptr->afk) toggle_afk(Ind, "");
+					un_afk_idle(Ind);
 
 					/* Take a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 					msg_print(Ind, "Splash!");
+					break_cloaking(Ind);
 					return;
 				}
 
@@ -2419,7 +2461,7 @@ void do_cmd_bash(int Ind, int dir)
 					object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 					/* S(he) is no longer afk */
-					if (p_ptr->afk) toggle_afk(Ind, "");
+					un_afk_idle(Ind);
 
 					/* Take a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -2436,6 +2478,7 @@ void do_cmd_bash(int Ind, int dir)
 					floor_item_increase(item, -1);
 					floor_item_optimize(item);
 
+					break_cloaking(Ind);
 					return;
 				}
 
@@ -2455,7 +2498,7 @@ void do_cmd_bash(int Ind, int dir)
 		else
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2531,6 +2574,7 @@ void do_cmd_bash(int Ind, int dir)
 				/* Hack -- Lose balance ala paralysis */
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
 			}
+			break_cloaking(Ind);
 		}
 	}
 
@@ -2633,7 +2677,7 @@ void do_cmd_spike(int Ind, int dir)
 		else if (c_ptr->m_idx > 0)
 		{
 			/* S(he) is no longer afk */
-			if (p_ptr->afk) toggle_afk(Ind, "");
+			un_afk_idle(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2785,21 +2829,21 @@ int do_cmd_run(int Ind, int dir)
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
-	/* are we in fact running-flying? */
-	if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
-	}
-        /* or running-swimming? */
-        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-                if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-                if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
-        }
-	/* or just normally running? */
-	else {
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
-		if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
-	}
+		/* are we in fact running-flying? */
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		}
+    		/* or running-swimming? */
+	        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
+    	        	if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+        	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+	        }
+		/* or just normally running? */
+		else {
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_1) real_speed /= 2;
+			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
+		}
 	}
 #endif
 
@@ -3134,7 +3178,7 @@ void do_cmd_fire(int Ind, int dir)
 	int                     missile_attr;
 	int                     missile_char;
 	
-	char brand_msg[80];
+	char brand_msg[80] = { '\0' };
 
         bool            drain_msg = TRUE;
         int             drain_result = 0, drain_heal = 0;
@@ -3202,33 +3246,53 @@ void do_cmd_fire(int Ind, int dir)
 		return;
 	}
 
-#if (STARTEQ_TREATMENT > 1)
-        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-                o_ptr->level = 0;
-#endif
-
 	/* Extract the item flags */
         object_flags(o_ptr, &f1a, &fx, &fx, &fx, &fx, &esp);
 
+	/* Use a base distance */
+//	tdis = 10;
+
+	if (!boomerang)
+	{
+		/* Actually "fire" the object */
+		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
+		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+
+    		tmul = get_shooter_mult(j_ptr);
+	}
+	else
+	{
+		/* Actually "fire" the object */
+		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
+		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+
+		/* Assume a base multiplier */
+		tmul = 1;
+
+		/* Hack -- sorta magic */
+		magic = TRUE;
+	}
+
+	/* Get extra "power" from "extra might" */
+//	if (p_ptr->xtra_might) tmul++;
+	if (!boomerang) tmul += p_ptr->xtra_might;
+
+	/* Base range */
+	tdis = 9 + 3 * tmul;
+	if (boomerang) tdis = 15;
+
+	/* Play fairly */
+#ifdef ARROW_DIST_LIMIT
+	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
+#endif	// ARROW_DIST_LIMIT
+
 	/* Only fire in direction 5 if we have a target */
-	if ((dir == 5) && !target_okay(Ind))
-		return;
-
-	/* Use the proper number of shots */
-//	thits = boomerang? 1 : p_ptr->num_fire;
-	thits = p_ptr->num_fire;
-
-	/* S(he) is no longer afk */
-	if (p_ptr->afk && !retaliating_cmd) toggle_afk(Ind, "");
-	retaliating_cmd = FALSE;
-
-	/* Take a (partial) turn */
-	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
-
-	/* Adjust VAMPIRIC draining to shooting speed, since
-	   do_cmd_fire only handles ONE shot :/ */
-	drain_left /= thits;
+	/* Also only fire at all at a desired target, if we're actually within shooting range - C. Blue */
+	if (dir == 5) {
+		if (!target_okay(Ind)) return;
+		/* some minor launchers cannot achieve required range for the specified target - C. Blue */
+		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
+	}
 
 	/* Check if monsters around him/her hinder this */
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
@@ -3245,14 +3309,35 @@ void do_cmd_fire(int Ind, int dir)
 		return;
 	}
 
+#if (STARTEQ_TREATMENT > 1)
+        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+                o_ptr->level = 0;
+#endif
+
+	/* Use the proper number of shots */
+//	thits = boomerang? 1 : p_ptr->num_fire;
+	thits = p_ptr->num_fire;
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk && !retaliating_cmd) un_afk_idle(Ind);
+	retaliating_cmd = FALSE;
+
+	/* Take a (partial) turn */
+	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
+
+	/* Adjust VAMPIRIC draining to shooting speed, since
+	   do_cmd_fire only handles ONE shot :/ */
+	drain_left /= thits;
+
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	/* Is this Magic Arrow? */
 	/* or magic shots or magic bolts? */
-	magic = (((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
-			 && o_ptr->sval == SV_AMMO_MAGIC) &&
-			(!cursed_p(o_ptr) || artifact_p(o_ptr)))?TRUE:FALSE;
+	if (((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
+	     && o_ptr->sval == SV_AMMO_MAGIC) && (!cursed_p(o_ptr) || artifact_p(o_ptr)))
+	        magic = TRUE;
 
 	/* Ricochets ? */
 #if 0 // DG - no
@@ -3274,6 +3359,36 @@ void do_cmd_fire(int Ind, int dir)
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
 	throw_obj.number = 1;
+
+	/* Use the missile object */
+	o_ptr = &throw_obj;
+
+	/* Describe the object */
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+	/* Find the color and symbol for the object for throwing */
+	missile_attr = object_attr(o_ptr);
+	missile_char = object_char(o_ptr);
+
+
+	/* Start at the player */
+	y = p_ptr->py;
+	x = p_ptr->px;
+        by = y;
+        bx = x;
+
+	/* Predict the "target" location */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* Check for "target request" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	
+	break_cloaking(Ind);
 
 	/* Reduce and describe inventory */
 	if (!boomerang)
@@ -3308,11 +3423,13 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 		else
-			/* Magic Ammo are NOT allowed to be enchanted */
 		{
+#if 0 /* this stuff isn't needed anymore, since magic ammo always is +0,+0 now */
+			/* Magic Ammo are NOT allowed to be enchanted */
 			/* C. Blue - Except magic artifact ammo: */
 			if (!artifact_p(o_ptr))
 				o_ptr->to_h = o_ptr->to_d = o_ptr->name2 = o_ptr->pval = 0;
+#endif
 			if (item >= 0)
 			{
 				inven_item_describe(Ind, item);
@@ -3327,71 +3444,6 @@ void do_cmd_fire(int Ind, int dir)
 		}
 	}
 
-	/* Use the missile object */
-	o_ptr = &throw_obj;
-
-	/* Describe the object */
-	object_desc(Ind, o_name, o_ptr, FALSE, 3);
-
-	/* Find the color and symbol for the object for throwing */
-	missile_attr = object_attr(o_ptr);
-	missile_char = object_char(o_ptr);
-
-
-	/* Use a base distance */
-//	tdis = 10;
-
-	if (!boomerang)
-	{
-		/* Actually "fire" the object */
-		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
-		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
-
-    		tmul = get_shooter_mult(j_ptr);
-	}
-	else
-	{
-		/* Actually "fire" the object */
-		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
-		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
-
-		/* Assume a base multiplier */
-		tmul = 1;
-
-		/* Hack -- sorta magic */
-		magic = TRUE;
-	}
-
-	/* Get extra "power" from "extra might" */
-//	if (p_ptr->xtra_might) tmul++;
-	if (!boomerang) tmul += p_ptr->xtra_might;
-
-	/* Base range */
-	tdis = 10 + 5 * tmul;
-
-	/* Play fairly */
-#ifdef ARROW_DIST_LIMIT
-	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
-#endif	// ARROW_DIST_LIMIT
-
-	/* Start at the player */
-	y = p_ptr->py;
-	x = p_ptr->px;
-        by = y;
-        bx = x;
-
-	/* Predict the "target" location */
-	tx = p_ptr->px + 99 * ddx[dir];
-	ty = p_ptr->py + 99 * ddy[dir];
-
-	/* Check for "target request" */
-	if ((dir == 5) && target_okay(Ind))
-	{
-		tx = p_ptr->target_col;
-		ty = p_ptr->target_row;
-	}
-
-
 	/* Hack -- Handle stuff */
 	handle_stuff(Ind);
 
@@ -3399,7 +3451,12 @@ void do_cmd_fire(int Ind, int dir)
 	while(TRUE)
 	{
 		/* Travel until stopped */
+#if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
+/* and it goes from 0 to tdis, that's tdis+1 steps in total. Correct me if wrong~~  C. Blue */
 		for (cur_dis = 0; cur_dis <= tdis; )
+#else
+		for (cur_dis = 0; cur_dis < tdis; )
+#endif
 		{
 			/* Hack -- Stop at the target */
 			if ((y == ty) && (x == tx)){
@@ -3517,19 +3574,53 @@ void do_cmd_fire(int Ind, int dir)
 							/* Get the name */
 							strcpy(p_name, q_ptr->name);
 
+#ifndef NEW_DODGING
 							if (get_skill(q_ptr, SKILL_DODGE))
 							{
-//								int chance = (q_ptr->dodge_chance - p_ptr->lev - archery) / 3;
-								int chance = (q_ptr->dodge_chance - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
+//								int chance = (q_ptr->dodge_level - p_ptr->lev - archery) / 3;
+								int chance = (q_ptr->dodge_level - p_ptr->lev - get_skill(p_ptr, archery)) / 3;
 
 								if ((chance > 0) && magik(chance))
 								{
 									//				msg_print(Ind, "You dodge a magical attack!");
 									msg_print(0 - c_ptr->m_idx, "You dodge the projectile!");
-									if (visible) msg_format(Ind, "The %s dodges %s.", p_name, o_name);
+									if (visible) msg_format(Ind, "%s dodges %s.", p_name, o_name);
 									dodged = TRUE;
+/* gotta remove the dodged=TRUE stuff etc, we simply continue!*/	continue;
 								}
 							}
+#else
+//							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3 + 1000))) { /* hack - more difficult to dodge ranged attacks */
+							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3))) {
+								// msg_print(Ind, "You dodge a magical attack!");
+								msg_print(0 - c_ptr->m_idx, "You dodge the projectile!");
+								if (visible) msg_format(Ind, "%s dodges %s.", p_name, o_name);
+								continue;
+							}
+#endif
+
+#ifdef USE_BLOCKING /* Parry/Block - belongs to new-NR-viability changes */
+				                        /* choose whether to attempt to block or to parry (can't do both at once),
+				                           50% chance each, except for if weapon is missing (anti-retaliate-inscription
+				                    	   has been left out, since if you want max block, you'll have to take off your weapon!) */
+				                	if (q_ptr->shield_deflect &&
+							    (!q_ptr->inventory[INVEN_WIELD].k_idx || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
+								if (magik(q_ptr->shield_deflect + 15)) { /* boost for PvP! */
+									if (visible) msg_format(Ind, "%s blocks %s!", p_name, o_name);
+									msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
+									continue;
+								}
+							}
+#endif
+#ifdef USE_PARRYING
+							if (q_ptr->weapon_parry) {
+								if (magik(q_ptr->weapon_parry + 5)) { /* boost for PvP! */
+									if (visible) msg_format(Ind, "%s parries %s!", p_name, o_name);
+									msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
+									continue;
+								}
+							}
+#endif
 
 							if (!dodged)	// 'goto' would be cleaner
 							{
@@ -3558,13 +3649,13 @@ void do_cmd_fire(int Ind, int dir)
 								tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
 								/* factor in AC */
-								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < 150) ? (q_ptr->ac + q_ptr->to_a) : 150) / 250);
+								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
 								/* No negative damage */
 								if (tdam < 0) tdam = 0;
 
 								/* XXX Reduce damage by 1/3 */
-								tdam = (tdam + 2) / 3;
+								tdam = (tdam + PVP_SHOOT_DAM_REDUCTION - 1) / PVP_SHOOT_DAM_REDUCTION;
 
 						                /* can't attack while in WRAITHFORM (explosion still works) */
 							        if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
@@ -3860,6 +3951,7 @@ void do_cmd_fire(int Ind, int dir)
 			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 		}
 
+		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
 
 		/* Chance of breakage (during attacks) */
 		/* finer resolution to match reduced break rate of boomerangs - C. Blue */
@@ -3874,11 +3966,23 @@ void do_cmd_fire(int Ind, int dir)
 		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))
 		{
 			breakage = 100;
-			if (boomerang)
+			if (boomerang) /* change a large part of the break chance to actually
+					  result in not returning instead of real breaking - C. Blue */
 			{
-				msg_format(Ind, "Your %s is destroyed.",o_name);
-				inven_item_increase(Ind, item, -1);
-				inven_item_optimize(Ind, item);
+				if (magik(90)) {
+					msg_format(Ind, "\377oYour %s drops to the ground.",o_name);
+#if 1 /* hope this works */
+					inven_item_increase(Ind, item, -1);
+					inven_item_optimize(Ind, item);
+					drop_near_severe(Ind, &throw_obj, 0, wpos, y, x);
+#else /* silly - like failing to catch it instead of it not returning ;-p */
+					inven_drop(Ind, INVEN_BOW, 1);
+#endif
+				} else {
+					msg_format(Ind, "\377oYour %s is destroyed.",o_name);
+					inven_item_increase(Ind, item, -1);
+					inven_item_optimize(Ind, item);
+				}
 
 				/* Recalculate bonuses */
 				p_ptr->update |= (PU_BONUS);
@@ -4037,13 +4141,16 @@ void do_cmd_fire(int Ind, int dir)
  */
 bool interfere(int Ind, int chance)
 {
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind], *q_ptr;
 	monster_race *r_ptr;
 	monster_type *m_ptr;
 	int d, i, tx, ty, x = p_ptr->px, y = p_ptr->py;
 	int calmness = get_skill_scale(p_ptr, SKILL_CALMNESS, 80);
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
+
+	/* monster doesn't know the player is actually next to it? */
+	if (p_ptr->cloaked) return(FALSE);
 
 	chance = chance * (100 - calmness) / 100;
 
@@ -4073,13 +4180,32 @@ bool interfere(int Ind, int chance)
 		}
 		else
 		{
+			q_ptr = Players[-i];
 			/* hostile player? */
 			if (!check_hostile(Ind, -i) ||
-				Players[-i]->paralyzed ||
-				r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
+				q_ptr->paralyzed ||
+				q_ptr->stun >= 100 ||
+				q_ptr->confused ||
+				q_ptr->afraid ||
+				(r_info[q_ptr->body_monster].flags1 & RF1_NEVER_MOVE))
 				continue;
+#ifdef ENABLE_STANCES
+			if (q_ptr->combat_stance == 1) switch(q_ptr->combat_stance_power) {
+				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 23);
+				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 26);
+				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 29);
+				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 35);
+			} else if (q_ptr->combat_stance == 2) switch(q_ptr->combat_stance_power) {
+				case 0: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 53);
+				case 1: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 56);
+				case 2: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 59);
+				case 3: chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 65);
+			} else
+#endif
+			chance += get_skill_scale(q_ptr, SKILL_INTERCEPT, 50);
 		}
 
+		if (chance > 95) chance = 95;
 		if (rand_int(100) < chance)
 		{
 			char m_name[80];
@@ -4090,7 +4216,7 @@ bool interfere(int Ind, int chance)
 			else
 			{
 				/* FIXME: even not visible... :( */
-//				strcpy(m_name, Players[-i]->name);
+//				strcpy(m_name, q_ptr->name);
 				/* fixed :) */
 				player_desc(Ind, m_name, -i, 0);
 			}
@@ -4114,6 +4240,8 @@ bool interfere(int Ind, int chance)
 				/* hostile player? */
 				if (!check_hostile(Ind, -i) ||
 					Players[-i]->paralyzed ||
+					Players[-i]->stunned >= 100 ||
+					Players[-i]->confused ||
 					r_info[Players[-i]->body_monster].flags1 & RF1_NEVER_MOVE)
 					continue;
 			}
@@ -4173,7 +4301,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	char            o_name[160];
 	u32b f1, f2, f3, f4, f5, esp;
 
-	char brand_msg[80];
+	char brand_msg[80] = { '\0' };
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
@@ -4247,13 +4375,15 @@ void do_cmd_throw(int Ind, int dir, int item)
 #endif
 
 	/* S(he) is no longer afk */
-	if (p_ptr->afk) toggle_afk(Ind, "");
+	un_afk_idle(Ind);
 
 	/* Handle rugby ball */
 	if(o_ptr->tval==1 && o_ptr->sval==9){
 		msg_print(Ind, "\377yYou pass the ball");
 		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
+
+	break_cloaking(Ind);
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
@@ -4467,7 +4597,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 					if (tdam < 0) tdam = 0;
 
 					/* XXX Reduce damage by 1/3 */
-					tdam = (tdam + 2) / 3;
+					tdam = (tdam + PVP_THROW_DAM_REDUCTION - 1) / PVP_THROW_DAM_REDUCTION;
 
 					/* Handle unseen player */
 					if (!visible)
@@ -4917,4 +5047,110 @@ void do_cmd_own(int Ind)
 	}
 	msg_broadcast(Ind, buf);
 	msg_print(Ind, buf);
+}
+
+
+
+/*
+ * Rogue special ability - enter cloaking (stealth+search+special invisibility) mode - C. Blue
+ */
+void do_cmd_cloak(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+#ifndef ENABLE_CLOAKING
+	return;
+#endif
+
+        if (p_ptr->pclass != CLASS_ROGUE) return;
+
+    if (!p_ptr->cloaked) {
+	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {
+		msg_format(Ind, "\377yYou need to be level %d to learn how to cloak yourself effectively.", LEARN_CLOAKING_LEVEL);
+		return;
+	}
+	if (p_ptr->rogue_heavyarmor) {
+		msg_print(Ind, "\377yYour armour is too heavy to cloak yourself effectively.");
+		return;
+	}
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+		msg_print(Ind, "\377yYour weapon is too large to cloak yourself effectively.");
+		return;
+	}
+	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+		msg_print(Ind, "\377yYou cannot cloak yourself effectively while carrying a shield.");
+		return;
+	}
+	if (p_ptr->stormbringer) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while wielding the Stormbringer!");
+		return;
+	}
+	if (p_ptr->aggravate) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while using aggravating items!");
+		return;
+	}
+	if (p_ptr->ghost) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while you are dead!");
+		return;
+	}
+	if (p_ptr->blind) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while blind.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while confused.");
+		return;
+	}
+	if (p_ptr->stun >= 50) {
+		msg_print(Ind, "\377yYou cannot cloak yourself while heavily stunned.");
+		return;
+	}
+	if (p_ptr->paralyzed) { /* just paranoia, no energy anyway */
+		msg_print(Ind, "\377yYou cannot cloak yourself while paralyzed.");
+		return;
+	}
+    }
+
+	/* S(he) is no longer afk */
+//	if (p_ptr->afk) toggle_afk(Ind, "");
+	p_ptr->idle_char = 0;
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	if (p_ptr->cloaked > 1) {
+		stop_cloaking(Ind);
+	} else if (p_ptr->cloaked == 1) {
+		msg_print(Ind, "\377WYou uncloak yourself.");
+		p_ptr->cloaked = 0;
+	} else {
+		/* stop other actions like running.. */
+		disturb(Ind, 1, 0);
+		/* prepare to cloak.. */
+		msg_print(Ind, "\377WYou begin to cloak your appearance...");
+		msg_format_near(Ind, "\377w%s begins to cloak %s appearance...", p_ptr->name, p_ptr->male ? "his" : "her");
+		p_ptr->cloaked = 10; /* take this number of seconds-1 to complete */
+	}
+	p_ptr->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+	p_ptr->redraw |= (PR_STATE | PR_SPEED);
+}
+
+/* break cloaking */
+void break_cloaking(int Ind) {
+	if (Players[Ind]->cloaked) {
+		msg_print(Ind, "\377oYour camouflage drops!");
+		if (Players[Ind]->cloaked == 1) msg_format_near(Ind, "%s appears before your eyes.", Players[Ind]->name);
+		Players[Ind]->cloaked = 0;
+		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+	}
+}
+
+/* stop cloaking preparations */
+void stop_cloaking(int Ind) {
+	if (Players[Ind]->cloaked > 1) {
+		msg_print(Ind, "\377yYou stop cloaking preparations.");
+		Players[Ind]->cloaked = 0;
+		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+	}
 }
