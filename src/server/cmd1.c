@@ -2948,7 +2948,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type 	*p_ptr = Players[Ind];
 	int             num = 0, bonus, chance, slot;
-	long		k;
+	int		k;
         object_type     *o_ptr = NULL;
 	bool            do_quake = FALSE;
 
