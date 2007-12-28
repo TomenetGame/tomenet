@@ -1,4 +1,4 @@
- $Id$
+# $Id$
 # File: a_info.txt
 
 
