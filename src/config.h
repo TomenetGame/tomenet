@@ -1,4 +1,4 @@
-* $Id$ */
+/* $Id$ */
 /* File: config.h */
 
 #ifndef TOMENET_CONFIG_H
