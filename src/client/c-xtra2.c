@@ -289,6 +289,7 @@ void do_cmd_messages(void)
 		{
 			/* Take a screenshot */
 			xhtml_screenshot("screenshotXXXX");
+			continue;
 		}
 
 		/* Hack -- Error of some kind */
@@ -587,6 +588,7 @@ void do_cmd_messages_chatonly(void)
 		{
 			/* Take a screenshot */
 			xhtml_screenshot("screenshotXXXX");
+			continue;
 		}
 
 		/* Hack -- Error of some kind */
