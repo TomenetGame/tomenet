@@ -1900,7 +1900,6 @@ static void cmd_master_aux_level(void)
 		else if (i == KTRL('T'))
 		{
 			xhtml_screenshot("screenshotXXXX");
-			break;
 		}
 
 		/* static the current level */
