@@ -45,7 +45,7 @@ void do_cmd_messages(void)
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
-	 * "Target Selected" messages are too much clutter for archers to remove 
+	 * "Target Selected" messages are too much clutter for archers to remove
 	 * from msg recall
 	 */
 
@@ -57,9 +57,9 @@ void do_cmd_messages(void)
 
 		if (strstr(msg, nomsg_target) ||
 				strstr(msg, nomsg_map))
-			continue;	
+			continue;
 
-		message_recall[nn] = msg;	
+		message_recall[nn] = msg;
 		nn++;
 	}
 
@@ -285,6 +285,12 @@ void do_cmd_messages(void)
 			}
 		}
 
+		if (k == KTRL('T'))
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Hack -- Error of some kind */
 		if (i == j) bell();
 	}
@@ -308,7 +314,7 @@ void do_cmd_messages_chatonly(void)
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
 	/* occurs when user hits CTRL-O which is usally in safe place  */
-	/* or after AFK) 					       */ 
+	/* or after AFK) 					       */
 	cptr message_chat[MESSAGE_MAX] = {0};
 
 	/* Display messages in different colors */
@@ -340,7 +346,7 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_bloodbond = "blood bond";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
-        cptr msg_afk1 = "seems to be AFK now";	 	
+        cptr msg_afk1 = "seems to be AFK now";
         cptr msg_afk2 = "has returned from AFK";
 
 	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
@@ -373,7 +379,7 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '['))
 		{
-			message_chat[nn] = msg;	
+			message_chat[nn] = msg;
 			nn++;
 		}
 	}
@@ -577,6 +583,12 @@ void do_cmd_messages_chatonly(void)
 			}
 		}
 
+		if (k == KTRL('T'))
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Hack -- Error of some kind */
 		if (i == j) bell();
 	}
@@ -624,7 +636,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "unimportant messages" add to message_recall
-	 * "Target Selected" messages are too much clutter for archers to remove 
+	 * "Target Selected" messages are too much clutter for archers to remove
 	 * from msg recall
 	 */
 
@@ -638,9 +650,9 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		{
 			if (strstr(msg, nomsg_target) ||
 					strstr(msg, nomsg_map))
-				continue;	
+				continue;
 
-			message_recall[nn] = msg;	
+			message_recall[nn] = msg;
 			nn++;
 		}
 		else
@@ -658,7 +670,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 				(strstr(msg, msg_deadB) != NULL)
 				)
 			{
-				message_recall[nn] = msg;	
+				message_recall[nn] = msg;
 				nn++;
 			}
 		}

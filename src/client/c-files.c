@@ -1066,6 +1066,12 @@ void peruse_file(void)
 			cur_line = max_line - 20;
 		}
 
+		if (k == KTRL('T'))
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('X')) break;
 
@@ -1258,10 +1264,10 @@ errr file_character(cptr name, bool full)
 }
 
 /*
- * Make a html screenshot - mikaelh
+ * Make an xhtml screenshot - mikaelh
  * Some code borrowed from ToME
  */
-void html_screenshot(cptr name)
+void xhtml_screenshot(cptr name)
 {
 	static cptr color_table[16] =
 	{

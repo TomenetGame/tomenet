@@ -332,7 +332,7 @@ extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr file_character(cptr name, bool full);
 extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
-extern void html_screenshot(cptr name);
+extern void xhtml_screenshot(cptr name);
 
 /* c-init.c */
 extern void init_schools(s16b new_size);

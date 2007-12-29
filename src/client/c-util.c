@@ -2676,6 +2676,12 @@ void interact_macros(void)
 		/* Leave */
 		if (i == ESCAPE) break;
 
+		/* Take a screenshot */
+		else if (i == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Load a pref file */
 		else if (i == '1')
 		{
@@ -2947,6 +2953,13 @@ static void do_cmd_options_aux(int page, cptr info)
 				return;
 			}
 
+			case KTRL('T'):
+			{
+				/* Take a screenshot */
+				xhtml_screenshot("screenshotXXXX");
+				break;
+			}
+
 			case '-':
 			case '8':
 			case 'k':
@@ -3102,6 +3115,13 @@ static void do_cmd_options_win(void)
 			case ESCAPE:
 			{
 				go = FALSE;
+				break;
+			}
+
+			case KTRL('T'):
+			{
+				/* Take a screenshot */
+				xhtml_screenshot("screenshotXXXX");
 				break;
 			}
 
@@ -3325,6 +3345,12 @@ void do_cmd_options(void)
 
 		/* Exit */
 		if (k == ESCAPE || k == KTRL('X')) break;
+
+		/* Take a screenshot */
+		if (k == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
 
 		/* General Options */
 		if (k == '1')
@@ -3597,6 +3623,12 @@ void c_close_game(cptr reason)
 		/* Exit */
 		if (k == ESCAPE || k == KTRL('X') || k == 'q' || k == 'Q') return;
 
+		else if (k == KTRL('T'))
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Dump */
 		else if ((k == 'f') || (k == 'F'))
 		{
@@ -3644,8 +3676,14 @@ void c_close_game(cptr reason)
 		/* Exit */
 		if (k == ESCAPE || k == KTRL('X')) break;
 
+		/* Take a screenshot */
+		if (k == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Character screen */
-		if (k == '1' || k == 'C')
+		else if (k == '1' || k == 'C')
 		{
 			cmd_character();
 		}
@@ -3813,7 +3851,16 @@ void do_cmd_ping_stats(void)
 		if (k == ESCAPE || k == KTRL('X') || k == KTRL('I')) break;
 
 		switch (k) {
+			/* Take a screenshot */
+			case KTRL('T'):
+			{
+				xhtml_screenshot("screenshotXXXX");
+				break;
+			}
+
+			/* Enable or disable */
 			case '1':
+			{
 				if (!ping_stats_enabled) {
 					ping_stats_enabled = TRUE;
 					for (i = 0; i < 60; i++) {
@@ -3824,6 +3871,7 @@ void do_cmd_ping_stats(void)
 					ping_stats_enabled = FALSE;
 				}
 				break;
+			}
 		}
 	}
 

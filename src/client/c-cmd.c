@@ -516,7 +516,7 @@ void process_command()
 			break;
 
 		case KTRL('T'):
-			html_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshotXXXX");
 			break;
 
 		case KTRL('I'):
@@ -608,8 +608,14 @@ void cmd_map(char mode)
 		/* Wait for net input, or a key */
 		ch = inkey();
 
+		/* Take a screenshot */
+		if (ch == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Check for user abort */
-		if (ch == ESCAPE)
+		else if (ch == ESCAPE)
 			break;
 	}
 
@@ -642,6 +648,12 @@ void cmd_locate(void)
 
 			/* Check for cancel */
 			if (ch == ESCAPE) break;
+
+			/* Take a screenshot */
+			if (ch == KTRL('T'))
+			{
+				xhtml_screenshot("screenshotXXXX");
+			}
 
 			/* Extract direction */
 			dir = keymap_dirs[ch & 0x7F];
@@ -1251,6 +1263,12 @@ void cmd_character(void)
 			}
 		}
 
+		/* Take a screenshot */
+		if (ch == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Check for quit */
 		if (ch == 'q' || ch == 'Q' || ch == ESCAPE)
 		{
@@ -1412,6 +1430,9 @@ void cmd_check_misc(void)
 			case ESCAPE:
 			case KTRL('X'):
 				break;
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			default:
 				bell();
 		}
@@ -1439,12 +1460,12 @@ void cmd_message(void)
 			{
 				if (buf[i] == ' ')
 				{
-					html_screenshot(buf + i + 1);
+					xhtml_screenshot(buf + i + 1);
 					return;
 				}
 				else if (buf[i] == '\0') break;
 			}
-			html_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshotXXXX");
 			return;
 		}
 		/* ping command - mikaelh */
@@ -1516,6 +1537,12 @@ void cmd_party(void)
 
 		/* Leave */
 		if (i == ESCAPE || i == KTRL('X')) break;
+
+		/* Take a screenshot */
+		else if (i == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
 
 		/* Create party */
 		else if (i == '1')
@@ -1736,6 +1763,9 @@ static void cmd_house_chown(int dir)
 			case ESCAPE:
 			case KTRL('X'):
 				break;
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			default:
 				bell();
 		}
@@ -1802,6 +1832,9 @@ void cmd_purchase_house(void)
 			case ESCAPE:
 			case KTRL('X'):
 				break;
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			default:
 				bell();
 		}
@@ -1862,6 +1895,13 @@ static void cmd_master_aux_level(void)
 
 		/* Leave */
 		if (i == ESCAPE) break;
+
+		/* Take a screenshot */
+		else if (i == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+			break;
+		}
 
 		/* static the current level */
 		else if (i == '1')
@@ -1950,6 +1990,12 @@ static void cmd_master_aux_generate_vault(void)
 		/* Leave */
 		if (i == ESCAPE) break;
 
+		/* Take a screenshot */
+		if (i == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Generate by number */
 		else if (i == '1')
 		{
@@ -2012,6 +2058,12 @@ static void cmd_master_aux_generate(void)
 
 		/* Leave */
 		if (i == ESCAPE) break;
+
+		/* Take a screenshot */
+		else if (i == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
 
 		/* Generate a vault */
 		else if (i == '1')
@@ -2078,6 +2130,10 @@ static void cmd_master_aux_build(void)
 
 		switch (i)
 		{
+			/* Take a screenshot */
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			/* Granite mode on */
 			case '1': buf[0] = FEAT_WALL_EXTRA; break;
 			/* Perm mode on */
@@ -2163,6 +2219,9 @@ static char * cmd_master_aux_summon_orcs(void)
 		/* get the type of orc */
 		switch (i)
 		{
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1': strcpy(buf,"Snaga"); break;
 			case '2': strcpy(buf,"Cave orc"); break;
 			case '3': strcpy(buf,"Hill orc"); break;
@@ -2229,6 +2288,9 @@ static char * cmd_master_aux_summon_undead_low(void)
 		/* get the type of undead */
 		switch (i)
 		{
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1': strcpy(buf,"Poltergeist"); break;
 			case '2': strcpy(buf,"Green glutton ghost"); break;
 			case '3': strcpy(buf,"Loust soul"); break;
@@ -2304,6 +2366,9 @@ static char * cmd_master_aux_summon_undead_high(void)
 		/* get the type of undead */
 		switch (i)
 		{
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1': strcpy(buf,"Vampire"); break;
 			case '2': strcpy(buf,"Giant skeleton troll"); break;
 			case '3': strcpy(buf,"Lich"); break;
@@ -2374,6 +2439,12 @@ static void cmd_master_aux_summon(void)
 		/* get the type of monster to summon */
 		switch (i)
 		{
+			/* Take a screenshot */
+			case KTRL('T'):
+			{
+				xhtml_screenshot("screenshotXXXX");
+				break;
+			}
 			/* orc menu */
 			case '1':
 			{
@@ -2504,6 +2575,9 @@ static void cmd_master_aux_summon(void)
 			/* get the type of summoning */
 			switch (i)
 			{
+				case KTRL('T'):
+					xhtml_screenshot("screenshotXXXX");
+					break;
 				/* X here */
 				case '1':
 					buf[0] = 'x';
@@ -2563,6 +2637,9 @@ static void cmd_master_aux_player()
 		i = inkey();
 		buf[0]='\0';
 		switch(i){
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1':
 				buf[0]='E';
 				get_string("Enter player name:",&buf[1],15);
@@ -2671,6 +2748,9 @@ static void cmd_master_aux_system()
 		/* Get a key */
 		i = inkey();
 		switch(i){
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1':
 				/* Set the hook */
 				special_line_type = SPECIAL_FILE_LOG;
@@ -2746,6 +2826,9 @@ static void cmd_master(void)
 		i = inkey();
 
 		switch(i){
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
 			case '1':
 				cmd_master_aux_level();
 				break;

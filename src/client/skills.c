@@ -350,6 +350,12 @@ void do_cmd_skill()
 		/* Leave the skill screen */
 		if (c == ESCAPE || c == KTRL('X')) break;
 
+		/* Take a screenshot */
+		else if (c == KTRL('T'))
+		{
+			xhtml_screenshot("screenshotXXXX");
+		}
+
 		/* Expand / collapse list of skills */
 		else if (c == '\r')
 		{
@@ -542,6 +548,11 @@ static int do_cmd_activate_skill_aux()
 		{
 			ret = -1;
 			break;
+		}
+		else if (which == KTRL('T'))
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
 		}
 		else if (which == '*' || which == '?' || which == ' ')
 		{

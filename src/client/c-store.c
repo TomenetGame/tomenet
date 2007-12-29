@@ -458,6 +458,13 @@ static void store_process_command(void)
 			break;
 		}
 
+		case KTRL('T'):
+		{
+			/* Take a screenshot */
+			xhtml_screenshot("screenshotXXXX");
+			break;
+		}
+
 		/* Browse */
 		case ' ':
 		{

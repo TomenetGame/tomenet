@@ -368,6 +368,13 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				break;
 			}
 
+			case KTRL('T'):
+			{
+				/* Take a screenshot */
+				xhtml_screenshot("screenshotXXXX");
+				break;
+			}
+
 			case '*':
 			case '?':
 			case ' ':
