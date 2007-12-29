@@ -1735,11 +1735,11 @@ int Receive_message(void)
 
 	if (!topline_icky)
 	{
-		if (screen_icky) Term_switch(0);
+		if (screen_icky && !party_mode && !shopping) Term_switch(0);
 
                 c_msg_print(buf);
 
-		if (screen_icky) Term_switch(0);
+		if (screen_icky && !party_mode && !shopping) Term_switch(0);
 	}
 	else
                 if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
