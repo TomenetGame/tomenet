@@ -369,7 +369,12 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->number);
 	rd_s16b(&o_ptr->weight);
 
+#if 0
 	if (!older_than(4,3,1)) {
+#else
+	/* Fix: this was the previous version in CVS - mikaelh */
+	if (!older_than(4,3,3)) {
+#endif
 		rd_u16b(&o_ptr->name1);
 		rd_u16b(&o_ptr->name2);
 
@@ -456,7 +461,12 @@ static void rd_item(object_type *o_ptr)
 
 	rd_byte(&o_ptr->ident);
 
+#if 0
 	if (!older_than(4,3,1)) {
+#else
+	/* Fix: this was the previous version in CVS - mikaelh */
+	if (!older_than(4,3,3)) {
+#endif
 		rd_u16b(&o_ptr->name2b);
 	} else {
 		/* Increase portability with pointers to correct type - mikaelh */
@@ -1086,7 +1096,12 @@ static bool rd_extra(int Ind)
 	}
 
 	/* Divinity support in savefile now on all servers - mikaelh */
+#if 0
 	if (older_than(4, 3, 2)) {
+#else
+	/* Fix: this was the previous version in CVS - mikaelh */
+	if (older_than(4, 3, 3)) {
+#endif
 		p_ptr->divinity = DIVINE_UNDEF; /* which is simply 0 */
 	} else {
 		rd_byte(&p_ptr->divinity);
