@@ -652,7 +652,7 @@ struct player_type
 	
 	bool anti_magic;	/* Can the player resist magic */
 
-        s32b blood_bond; /* Norc is now happy :) */
+        player_list_type *blood_bond; /* Norc is now happy :) */
 
         byte mode; /* Difficulty MODE */
 
