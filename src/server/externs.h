@@ -344,7 +344,7 @@ extern bool (*ang_sort_comp)(int Ind, vptr u, vptr v, int a, int b);
 extern void (*ang_sort_swap)(int Ind, vptr u, vptr v, int a, int b);
 extern bool (*get_mon_num_hook)(int r_idx);
 extern bool (*get_mon_num2_hook)(int r_idx);
-extern bool (*get_obj_num_hook)(int k_idx);
+extern bool (*get_obj_num_hook)(int k_idx, u32b resf);
 extern bool (*master_move_hook)(int Ind, char * parms);
 
 extern int artifact_bias;
@@ -936,20 +936,20 @@ extern bool get_item(int Ind, int *cp, cptr pmt, bool equip, bool inven, bool fl
 extern void delete_object_idx(int i, bool unfound_art);
 extern void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art);
 extern void wipe_o_list(struct worldpos *wpos);
-extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf);
-extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf);
+extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
+extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
 extern void determine_level_req(int level, object_type *o_ptr);
-extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u16b resf, obj_theme theme, int luck, byte removal_marker);
-extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u16b resf);
-extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u16b resf, long int treshold);
+extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker);
+extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf);
+extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
 extern void place_gold(struct worldpos *wpos, int y, int x, int bonus);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
 extern s16b o_pop(void);
-extern errr get_obj_num_prep(void);
-extern errr get_obj_num_prep_tval(int tval); /* was written for create_reward(..) */
-extern s16b get_obj_num(int level);
+extern errr get_obj_num_prep(u32b resf);
+extern errr get_obj_num_prep_tval(int tval, u32b resf); /* was written for create_reward(..) */
+extern s16b get_obj_num(int level, u32b resf);
 extern void object_known(object_type *o_ptr);
 extern void object_aware(int Ind, object_type *o_ptr);
 extern void object_tried(int Ind, object_type *o_ptr);
@@ -969,11 +969,11 @@ extern s64b object_value_real(int Ind, object_type *o_ptr);
 
 extern void wipe_o_list_safely(struct worldpos *wpos);
 extern void excise_object_idx(int o_idx);
-extern bool kind_is_legal(int k_idx);
+extern bool kind_is_legal(int k_idx, u32b resf);
 extern void init_match_theme(obj_theme theme);
 
 extern void kill_objs(int id);
-extern u16b place_object_restrictor;
+extern u32b place_object_restrictor;
 
 extern void handle_art_d(int aidx);
 extern void handle_art_dnum(int aidx);
@@ -984,7 +984,7 @@ extern void handle_art_inumpara(int aidx);
 
 extern byte get_tval_from_attr(object_type *o_ptr);
 extern bool anti_undead(object_type *o_ptr);
-extern u16b make_resf(player_type *p_ptr);
+extern u32b make_resf(player_type *p_ptr);
 
 /* party.c */
 extern void account_check(int Ind);
@@ -1568,6 +1568,7 @@ extern void increase_skill(int Ind, int i);
 extern void init_skill(player_type *p_ptr, u32b value, s16b mod, int i);
 extern s16b get_skill(player_type *p_ptr, int skill);
 extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
+extern s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
 

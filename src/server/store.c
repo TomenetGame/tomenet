@@ -1108,6 +1108,9 @@ static bool black_market_crap(object_type *o_ptr)
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval > 50 && o_ptr->sval < 100) return (TRUE);
+	
+	/* no ethereal ammo */
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(TRUE);
 
 	/* No items that can be used by WINNERS_ONLY in the BM - C. Blue */
 	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) return (TRUE);
@@ -1230,7 +1233,7 @@ static int store_tval = 0, store_level = 0;
 /*
  * Hack -- determine if a template is "good"
  */
-static bool kind_is_storeok(int k_idx)
+static bool kind_is_storeok(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -1242,7 +1245,7 @@ static bool kind_is_storeok(int k_idx)
 	if (k_info[k_idx].flags3 & TR3_INSTA_ART)
 		return( FALSE );
 
-	if (!kind_is_legal(k_idx)) return FALSE;
+	if (!kind_is_legal(k_idx, resf)) return FALSE;
 
 	if (k_ptr->tval != store_tval) return (FALSE);
 	if (k_ptr->level < (store_level / 2)) return (FALSE);
@@ -1271,7 +1274,9 @@ static void store_create(store_type *st_ptr)
         object_kind *k_ptr;
 	ego_item_type *e_ptr, *e2_ptr;
 	bool good, great;
+	u32b resf = RESF_STORE;
 
+	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) resf = RESF_STOREBM;
 
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
@@ -1311,10 +1316,10 @@ static void store_create(store_type *st_ptr)
 				get_obj_num_hook = NULL;
 	
 				/* Prepare allocation table */
-				get_obj_num_prep();
+				get_obj_num_prep(resf);
 	
 				/* Random item (usually of given level) */
-				i = get_obj_num(level);
+				i = get_obj_num(level, resf);
     				
 				/* Handle failure */
 				if (!i) continue;
@@ -1357,10 +1362,10 @@ static void store_create(store_type *st_ptr)
 				else store_level = 0;
 
 				/* Prepare allocation table */
-				get_obj_num_prep();
+				get_obj_num_prep(resf);
 
 				/* Get it ! */
-				i = get_obj_num(level);
+				i = get_obj_num(level, resf);
 
 				/* Invalidate the cached allocation table */
 //				alloc_kind_table_valid = FALSE;
@@ -1377,7 +1382,7 @@ static void store_create(store_type *st_ptr)
 		else good = FALSE;
 		if (st_info[st_ptr->st_idx].flags1 & SF1_GREAT) great = TRUE;
 		else great = FALSE;
-		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE, FALSE);
+		apply_magic(&o_ptr->wpos, o_ptr, level, FALSE, good, great, FALSE, resf);
 
 		/* Hack -- Charge lite uniformly */
 		if (o_ptr->tval == TV_LITE)
@@ -2310,17 +2315,22 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr-
 		p_ptr->tim_blacklist += i;
 
 		/* watchlist - the more known a character is, the longer he remains on it */
-#if 0 /* use day/night cycles */
+#if 1
+//		p_ptr->tim_watchlist += i * 2;
+		p_ptr->tim_watchlist += i + 50; //300?
+#endif
+#if 0 /* use normal turns */
 		if (p_ptr->max_lev <= 20)
 		    i = 0;// seconds (fps % 60)
 		else if (p_ptr->max_lev <= 34)
-		    i = 2000;
+		    i = 250;
 		else if (p_ptr->max_lev <= 43)
-		    i = 4000;
+		    i = 500;
 		else
-		    i = 6000;
-		p_ptr->tim_watchlist += i; /* day/night periods for now */
-#else /* use normal turns */
+		    i = 750;
+		p_ptr->tim_watchlist += i;
+#endif
+#if 0 /* use day/night cycles */
 		if (p_ptr->max_lev <= 20)
 		    i = 0;
 		else if (p_ptr->max_lev <= 34)
@@ -2329,7 +2339,7 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr-
 		    i = 2;
 		else
 		    i = 3;
-		p_ptr->tim_watchlist += i; /* turns */
+		p_ptr->tim_watchlist += i;
 #endif
 		/* Of course :) */
 		store_kick(Ind, FALSE);

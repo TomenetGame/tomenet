@@ -787,7 +787,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				/* Otherwise drop an item */
 				else
 				{
-					place_object_restrictor = 0x000;
+					place_object_restrictor = RESF_NONE;
 					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
@@ -1725,7 +1725,7 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
 					if ((rand_int(100) < 10 + mining) && !istown(wpos))
 					{
-						place_object_restrictor = 0x000;
+						place_object_restrictor = RESF_NONE;
 						place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_LOW, 
 								default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 						if (player_can_see_bold(Ind, y, x))
@@ -2845,6 +2845,9 @@ int do_cmd_run(int Ind, int dir)
 			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_RUNNING_2) real_speed /= 4;
 		}
 	}
+
+	/* running over floor grids, or special grids that we couldn't run over without according ability? Used by see_wall !*/
+	p_ptr->running_on_floor = FALSE;
 #endif
 
 	/* Get a "repeated" direction */
@@ -2979,33 +2982,34 @@ int breakage_chance(object_type *o_ptr)
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_BOTTLE:
-		case TV_FOOD:
-		case TV_JUNK:
 		{
 			return (100);
 		}
 
 		/* Often break */
+		case TV_FOOD:
+		case TV_JUNK:
 		case TV_LITE:
-		case TV_SCROLL:
 		case TV_SKELETON:
 		{
 			return (50);
 		}
 
-		case TV_ARROW:
-		{
-			if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
-			else return (50);
-		}
-
 		/* Sometimes break */
+		case TV_SCROLL:
 		case TV_WAND:
 		case TV_SHOT:
 		case TV_BOLT:
 		case TV_SPIKE:
 		{
 			return (25);
+		}
+
+		case TV_ARROW:
+		{
+			if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
+			else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (0);
+			else return (20);
 		}
 
 		/* seldom break */
@@ -3186,7 +3190,7 @@ void do_cmd_fire(int Ind, int dir)
 	u32b f1, f1a, fx, esp;
 
 	char            o_name[160];
-	bool magic = FALSE, boomerang = FALSE;
+	bool magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3226,6 +3230,9 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	o_ptr = &(p_ptr->inventory[item]);
+
+	/* ethereal ammo? */
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) ethereal = TRUE;
 
 	if( check_guard_inscription( o_ptr->note, 'f' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -3349,9 +3356,9 @@ void do_cmd_fire(int Ind, int dir)
 	}
 #else	// 0
 	/* Sling mastery yields bullet ricochets */
-	if (archery == SKILL_SLING && !magic && !boomerang)
+	if (archery == SKILL_SLING && !magic && !boomerang && !ethereal)
 	{
-		num_ricochet = get_skill_scale(p_ptr, SKILL_SLING, 6);
+		num_ricochet = get_skill_scale_fine(p_ptr, SKILL_SLING, 6);
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
 		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_SLING, 50);
 	}
@@ -3394,20 +3401,28 @@ void do_cmd_fire(int Ind, int dir)
 	if (!boomerang)
 	{
 		/* C. Blue - Artifact ammo never runs out (similar to magic arrows:) */
-		if (artifact_p(o_ptr))
-		{
-			if (item >= 0)
-			{
+		if (artifact_p(o_ptr)) {
+#if 0 /* empty code? erase this */
+			if (item >= 0) {
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
-			}
-			else
-			{
+			} else {
 				floor_item_optimize(0 - item);
 			}
-		}
-		else if (!magic)
-		{
+#endif
+		} else if (ethereal) {
+			if (magik(10)) {
+				if (item >= 0) {
+					inven_item_increase(Ind, item, -1);
+//					inven_item_describe(Ind, item);
+					msg_format(Ind, "\377wThe %s fades away.", o_name);
+					inven_item_optimize(Ind, item);
+				} else {
+					floor_item_increase(0 - item, -1);
+					floor_item_optimize(0 - item);
+				}
+			}
+		} else if (!magic) {
 			if (item >= 0)
 			{
 				inven_item_increase(Ind, item, -1);
@@ -3421,9 +3436,7 @@ void do_cmd_fire(int Ind, int dir)
 				floor_item_increase(0 - item, -1);
 				floor_item_optimize(0 - item);
 			}
-		}
-		else
-		{
+		} else {
 #if 0 /* this stuff isn't needed anymore, since magic ammo always is +0,+0 now */
 			/* Magic Ammo are NOT allowed to be enchanted */
 			/* C. Blue - Except magic artifact ammo: */
@@ -3709,7 +3722,7 @@ void do_cmd_fire(int Ind, int dir)
 										&& p_ptr->bow_brand_t != BRAND_CONF) 
 									do_arrow_brand_effect(Ind, y, x);
 
-								if (!magic && o_ptr->pval) 
+								if (!magic && o_ptr->pval) /* maybe add && !ethereal here too? */
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
@@ -3936,7 +3949,7 @@ void do_cmd_fire(int Ind, int dir)
 					if (!boomerang && p_ptr->bow_brand_t) 
 						do_arrow_brand_effect(Ind, y, x);
 
-					if (!magic && o_ptr->pval) 
+					if (!magic && o_ptr->pval) /* maybe add && !ethereal here too? */
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
@@ -3948,22 +3961,25 @@ void do_cmd_fire(int Ind, int dir)
 		/* Extra (exploding) hack: */
 		/* Stopped by walls/doors ?*/
 		if (!cave_floor_bold(zcave, ny, nx)) {
-			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul); /* maybe add && !ethereal here too? */
 		}
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
 
 		/* Chance of breakage (during attacks) */
-		/* finer resolution to match reduced break rate of boomerangs - C. Blue */
-		j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
-		if (archery == SKILL_BOOMERANG)
+		if (archery == SKILL_BOOMERANG) {
+			/* finer resolution to match reduced break rate of boomerangs - C. Blue */
+			j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
 //			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
 			j = (j * (2500 - get_skill_scale(p_ptr, archery, 2450))) / 5000;
-		else
-			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100;
-
+		} else {
+			j = (hit_body ? breakage_chance(o_ptr) : breakage_chance(o_ptr) / 3) * 100;
+//			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
+			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
+		}
+	
 		/* Break ? */
-		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && (!magic || boomerang) && !artifact_p(o_ptr))
+		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && (!magic || boomerang) && !artifact_p(o_ptr) && !ethereal)
 		{
 			breakage = 100;
 			if (boomerang) /* change a large part of the break chance to actually
@@ -4122,7 +4138,7 @@ void do_cmd_fire(int Ind, int dir)
 #if 0 /* covered by STARTEQ_TREATMENT */
 #ifndef RPG_SERVER	/* Let's not... here at least... This is annoying. */
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if ((!magic &&
+	if ((!magic && !ethereal &&
 		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
@@ -4131,7 +4147,7 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
-	if ((!magic) && (!artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
+	if ((!magic) && (!ethereal) && (!artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
 
 	suppress_message = FALSE;
 }

@@ -2060,7 +2060,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	get_money(Ind);
 
 	/* special outfits for admin (pack overflows!) */
-	if (is_admin(p_ptr)) admin_outfit(Ind, 0);
+	if (is_admin(p_ptr)) {
+		admin_outfit(Ind, 0);
+		p_ptr->skill_points = 9999;
+	}
 	/* Hack -- outfit the player */
 	else player_outfit(Ind);
 

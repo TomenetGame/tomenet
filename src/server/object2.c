@@ -715,7 +715,7 @@ s16b o_pop(void)
 /*
  * Apply a "object restriction function" to the "object allocation table"
  */
-errr get_obj_num_prep(void)
+errr get_obj_num_prep(u32b resf)
 {
 	int i;
 
@@ -726,7 +726,7 @@ errr get_obj_num_prep(void)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Accept objects which pass the restriction, if any */
-		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index))
+		if (!get_obj_num_hook || (*get_obj_num_hook)(table[i].index, resf))
 		{
 			/* Accept this object */
 			table[i].prob2 = table[i].prob1;
@@ -750,7 +750,7 @@ errr get_obj_num_prep(void)
  * Apply a "object restriction function" to the "object allocation table"
  * This function only takes objects of a certain TVAL! - C. Blue
  */
-errr get_obj_num_prep_tval(int tval)
+errr get_obj_num_prep_tval(int tval, u32b resf)
 {
 	int i;
 
@@ -761,7 +761,7 @@ errr get_obj_num_prep_tval(int tval)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Accept objects which pass the restriction, if any */
-		if ((!get_obj_num_hook || (*get_obj_num_hook)(table[i].index)) &&
+		if ((!get_obj_num_hook || (*get_obj_num_hook)(table[i].index, resf)) &&
 		    k_info[table[i].index].tval == tval)
 		{
 			/* Accept this object */
@@ -797,7 +797,7 @@ errr get_obj_num_prep_tval(int tval)
  * Note that if no objects are "appropriate", then this function will
  * fail, and return zero, but this should *almost* never happen.
  */
-s16b get_obj_num(int level)
+s16b get_obj_num(int level, u32b resf)
 {
 	int			i, j, p;
 
@@ -2164,7 +2164,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_SHOT:
 		{
 			/* Require identical "bonuses" -
-			   except for ammunition which carries special inscription (will merge!) */
+			   except for ammunition which carries special inscription (will merge!) - C. Blue */
 			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
 			                    	    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
 			    ((o_ptr->tval != TV_BOLT && o_ptr->tval != TV_ARROW && o_ptr->tval != TV_SHOT) ||
@@ -2177,12 +2177,13 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			/* Require identical "pval" code */
 			if (o_ptr->pval != j_ptr->pval) return (FALSE);
 
-			/* Require identical "artifact" names */
+			/* Require identical "artifact" names <- this shouldnt happen right? */
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
-			/* Require identical "ego-item" names */
-			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
-			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+			/* Require identical "ego-item" names.
+			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon) */
+			if (o_ptr->name2 != j_ptr->name2 && o_ptr->name2 != j_ptr->name2b) return (FALSE);
+			if (o_ptr->name2b != j_ptr->name2 && o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Require identical random seeds */
 			if (o_ptr->name3 != j_ptr->name3) return (FALSE);
@@ -2533,7 +2534,7 @@ s16b m_bonus(int max, int level)
  *
  * Note -- see "make_artifact()" and "apply_magic()"
  */
-static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u16b resf)
+static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 {
 	int	i;
 	int	k_idx = 0;
@@ -2619,7 +2620,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u16
  *
  * Note -- see "make_artifact_special()" and "apply_magic()"
  */
-static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u16b resf)
+static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 {
 	int i, tries = 0;
 	artifact_type *a_ptr;
@@ -2697,7 +2698,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u16b resf)
 	{
 	        /* Randart ammo should be very rare! */
 	        if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
-	            (o_ptr->tval == TV_BOLT)) && (rand_int(100) < 95)) return(FALSE);
+	            (o_ptr->tval == TV_BOLT)) && magik(80)) return(FALSE); /* was 95 */
 
     		o_ptr->name1 = ART_RANDART;
 
@@ -2749,7 +2750,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u16b resf)
  *
  * This routine should only be called by "apply_magic()"
  */
-static bool make_ego_item(int level, object_type *o_ptr, bool good, u16b resf)
+static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 {
 	int i = 0, j;
 #if 0
@@ -2815,6 +2816,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u16b resf)
 
 		i = ok_ego[rand_int(ok_num)];
 		e_ptr = &e_info[i];
+		
+		if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
 
 		/* XXX XXX Enforce minimum "depth" (loosely) */
 		if (e_ptr->level > level)
@@ -2874,6 +2877,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u16b resf)
 
 			i = ok_ego[rand_int(ok_num)];
 			e_ptr = &e_info[i];
+
+			if (i == EGO_ETHEREAL && (resf & RESF_NOETHEREAL)) continue;
 
 			/* Cannot be a double ego of the same ego type */
 			if (i == o_ptr->name2) continue;
@@ -3068,7 +3073,7 @@ static void charge_staff(object_type *o_ptr)
  * Hack -- note special processing for weapon/digger
  * Hack -- note special rating boost for dragon scale mail
  */
-static void a_m_aux_1(object_type *o_ptr, int level, int power, u16b resf)
+static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 {
 	int tohit1 = randint(5) + m_bonus(5, level);
 	int todam1 = randint(5) + m_bonus(5, level);
@@ -3532,7 +3537,7 @@ tries = 100;
  * Hack -- note special processing for crown/helm
  * Hack -- note special processing for robe of permanence
  */
-static void a_m_aux_2(object_type *o_ptr, int level, int power, u16b resf)
+static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 {
 	int toac1 = randint(5) + m_bonus(5, level);
 
@@ -4207,7 +4212,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u16b resf)
  * Hack -- note special "pval boost" code for ring of speed
  * Hack -- note that some items must be cursed (or blessed)
  */
-static void a_m_aux_3(object_type *o_ptr, int level, int power, u16b resf)
+static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 {
 	//int tries;
 	artifact_bias = 0;
@@ -4267,9 +4272,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u16b resf)
 						to give found poly rings random levels to allow surprises :)
 						Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
 						if (r_info[i].level > 0) {
-							o_ptr->level = 15 + (1000 / ((2000 / r_info[i].level) + 10));
+							o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
 						} else {
-							o_ptr->level = 15;
+							o_ptr->level = 10;
 						}
 						/* Make the ring last only over a certain period of time >:) - C. Blue */
 						o_ptr->timeout = 3000 + rand_int(3001);
@@ -5140,7 +5145,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u16b resf)
  *
  * Hack -- note the special code for various items
  */
-static void a_m_aux_4(object_type *o_ptr, int level, int power, u16b resf)
+static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
 {
         u32b f1, f2, f3, f4, f5, esp;
 
@@ -5313,7 +5318,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u16b resf)
  * "verygreat" makes sure that ego items aren't just resist fire etc.
  * Has no influence on artifacts. - C. Blue
  */
-void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf)
+void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf)
 {
 	/* usually lev = dungeonlevel (sometimes more, if in vault) */
 	object_type forge_bak, forge_highest;
@@ -5849,7 +5854,7 @@ for (i = 0; i < 25; i++) {
  * This 'utter hack' function is to allow item-generation w/o specifing
  * worldpos.
  */
-void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf)
+void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf)
 {
 	worldpos wpos;
 
@@ -6261,7 +6266,7 @@ static bool kind_is_theme(int k_idx)
  * Determine if an object must not be generated.
  */
 int kind_is_legal_special = -1;
-bool kind_is_legal(int k_idx)
+bool kind_is_legal(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -6314,7 +6319,7 @@ bool kind_is_legal(int k_idx)
 /*
  * Hack -- determine if a template is "good"
  */
-static bool kind_is_good(int k_idx)
+static bool kind_is_good(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -6394,7 +6399,7 @@ static bool kind_is_good(int k_idx)
 s16b unique_quark = 0;
 
 /* Restrict the type of placed objects */
-u16b place_object_restrictor = 0x000;
+u32b place_object_restrictor = RESF_NONE;
 
 /*
  * Attempt to place an object (normal or good/great) at the given location.
@@ -6406,7 +6411,7 @@ u16b place_object_restrictor = 0x000;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u16b resf, obj_theme theme, int luck, byte removal_marker)
+void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker)
 {
 	int prob, base, tmp_luck, i;
 	int tries = 0, k_idx;
@@ -6477,7 +6482,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				get_obj_num_hook = kind_is_good;
 
 				/* Prepare allocation table */
-				get_obj_num_prep();
+				get_obj_num_prep(resf);
 			}
 			/* Normal objects */
 			else
@@ -6489,7 +6494,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				get_obj_num_hook = kind_is_legal;
 
 				/* Prepare allocation table */
-				get_obj_num_prep();
+				get_obj_num_prep(resf);
 
 				/* The table is synchronised */
 	//			alloc_kind_table_valid = TRUE;
@@ -6501,14 +6506,14 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			/* Added lines for the other magic ammos - the_sandman */
 			if (great)
 				for (i = 0; i < 20; i++) {
-					k_idx = get_obj_num(base);
+					k_idx = get_obj_num(base, resf);
 					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					break;
 				}
 			else
-				k_idx = get_obj_num(base);
+				k_idx = get_obj_num(base, resf);
 
 			/* Good objects */
 #if 0	// commented out for efficiency
@@ -6519,7 +6524,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				get_obj_num_hook = NULL;
 
 				/* Prepare allocation table */
-				get_obj_num_prep();
+				get_obj_num_prep(resf);
 			}
 #endif	// 0
 
@@ -6570,10 +6575,13 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			case TV_SHOT:
 			case TV_ARROW:
 			case TV_BOLT:
+				/* luck has influence on ammo stack size, heh */
 				if (luck >= 0)
-				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+					forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
 				else
-				forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+					forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+				/* Stacks of ethereal ammo are smaller */
+				if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= 4;
 				/* Ammo from acquirement scrolls comes in more generous numbers :) */
 				if (verygreat) forge.number *= 2;
 		}
@@ -6630,7 +6638,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u16b resf)
+void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf)
 {
 //	int        y, x, i, d;
 	cave_type **zcave;
@@ -6652,7 +6660,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 			/* Must have a clean grid */
 			if (!cave_clean_bold(zcave, y, x)) continue;
 			/* Place a good (or great) object */
-			place_object_restrictor = 0x000;
+			place_object_restrictor = RESF_NONE;
 			place_object(wpos, y, x, TRUE, great, verygreat, resf, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -6672,7 +6680,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 		}
 #else /* should work always, stacks to pile if required */
 		/* Place a good (or great) object */
-		place_object_restrictor = 0x000;
+		place_object_restrictor = RESF_NONE;
 		place_object(wpos, y1, x1, TRUE, great, verygreat, resf, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 		/* Notice */
 		note_spot_depth(wpos, y1, x1);
@@ -6826,7 +6834,7 @@ static int reward_misc_check(player_type *p_ptr) {
  *    currently, they are just averaged to form a 'base object level' for get_obj_num() though.
  * <treshold> is the skill treshold a player must have for a skill to be considered for choosing a reward. - C. Blue
  */
-void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u16b resf, long int treshold)
+void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold)
 {
 	player_type *p_ptr = Players[Ind];
 	bool good = TRUE;
@@ -6963,12 +6971,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (reward_tval != TV_AMULET && reward_tval != TV_RING) /* rings+amulets don't count as good so they won't be generated (see kind_is_good) */
 			{
 				get_obj_num_hook = kind_is_good;
-				get_obj_num_prep_tval(reward_tval);
+				get_obj_num_prep_tval(reward_tval, resf);
 			}
 			else
 			{
 				get_obj_num_hook = NULL;
-				get_obj_num_prep_tval(reward_tval);
+				get_obj_num_prep_tval(reward_tval, resf);
 			}
 
 			/* Pick a random object */
@@ -6976,19 +6984,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* Added lines for the other magic ammos - the_sandman */
 			if (great)
 				for (i = 0; i < 20; i++) {
-					k_idx = get_obj_num(base);
+					k_idx = get_obj_num(base, resf);
 					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					break;
 				}
 			else
-				k_idx = get_obj_num(base);
+				k_idx = get_obj_num(base, resf);
 
 			/* Prepare the object */
 			invcopy(o_ptr, k_idx);
 			reward_sval = o_ptr->sval;
-			
+
 			/* Note that in theory the item's weight might change depending on it's
 			   apply_magic_depth outcome, we're ignoring that here for now though. */
 
@@ -8834,9 +8842,9 @@ bool anti_undead(object_type *o_ptr) {
  * Generate default item-generation restriction flags for a given player - C. Blue
  * Note: RESF_WINNER has currently no effect.
  */
-u16b make_resf(player_type *p_ptr) {
-	u16b f = 0x0000;
-	if (p_ptr == NULL) return(0x0000);
+u32b make_resf(player_type *p_ptr) {
+	u32b f = RESF_NONE;
+	if (p_ptr == NULL) return(f);
 	
 	if (p_ptr->once_winner) f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once. */
 	if (p_ptr->total_winner) f |= RESF_NOTRUEART; /* player is a winner? Then don't find true arts! */

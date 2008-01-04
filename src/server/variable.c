@@ -600,7 +600,7 @@ bool (*get_mon_num2_hook)(int r_idx);
 /*
  * Hack -- function hook to restrict "get_obj_num_prep()" function
  */
-bool (*get_obj_num_hook)(int k_idx);
+bool (*get_obj_num_hook)(int k_idx, u32b resf);
 
 /* the dungeon master movement hook, is called whenever he moves
  * (to make building large buildings / summoning hoards of mosnters 

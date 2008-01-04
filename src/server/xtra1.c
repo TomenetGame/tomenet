@@ -1188,11 +1188,11 @@ void calc_mana(int Ind)
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
 	case CLASS_MIMIC:
+	case CLASS_ROGUE:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
 		break;
 	case CLASS_RANGER:
 	case CLASS_ADVENTURER:
-	case CLASS_ROGUE:
 	default:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
@@ -1221,16 +1221,16 @@ void calc_mana(int Ind)
 	/* Determine the weight allowance */
 //	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
 	switch (p_ptr->pclass) {
-	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_RANGER: max_wgt = 220 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_SHAMAN: max_wgt = 170 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_ROGUE: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_RUNEMASTER: max_wgt = 270 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
+	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_RANGER: max_wgt = 220 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_SHAMAN: max_wgt = 170 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_ROGUE: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_RUNEMASTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;/*was 270*/
+	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_WARRIOR:
 	case CLASS_ARCHER:
 	default: max_wgt = 1000; break;
@@ -3823,7 +3823,7 @@ void calc_bonuses(int Ind)
 	}
 
         /* At least +1, max. +3 */
-        if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power);
+        if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
 
 	/* Invulnerability */
 	if (p_ptr->invuln)
@@ -5078,6 +5078,8 @@ void calc_bonuses(int Ind)
 	p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
 #endif
 
+	/* Apply ranged to-hit penalty depending on armour weight */
+	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * 100) / (100 + armour_weight(p_ptr) / 10);
 
 
 

@@ -40,10 +40,10 @@
 
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-// #define WINTER_SEASON   2
+#define WINTER_SEASON   2
 
 /* Enable/disable New Year's Eve */
-// #define NEW_YEARS_EVE
+#define NEW_YEARS_EVE
 
 
 
@@ -96,7 +96,7 @@
 #define USE_PARRYING
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
 
-#if 0 //RPG_SERVER
+#ifdef RPG_SERVER
  #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
  #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
@@ -1840,6 +1840,11 @@ that keeps many algorithms happy.
 #define EGO_ESP			197	/* amulet of telepathic awareness, formerly ESP */
 #define EGO_GUINNESS		198
 #define EGO_PERFECTION		199
+#define EGO_MOONWOOD		200
+#define EGO_DRAGONBONE		201
+#define EGO_IMBUED		202
+#define EGO_TRANSFORMATION	203
+#define EGO_ETHEREAL		204
 
 
 
@@ -3575,18 +3580,31 @@ that keeps many algorithms happy.
 
 
 /* Item-generation restriction flags */
-#define RESF_WINNER		0x001	/* allow TR5_WINNERS_ONLY items */
-#define RESF_NOTRUEART		0x002	/* prevent true artifacts */
-#define RESF_NORANDART		0x004	/* prevent random artifacts */
-#define RESF_NODOUBLEEGO	0x008	/* prevent double ego items */
-#define RESF_NOHIDSM		0x010	/* prevent generation of high dragon scale mails */
-#define RESF_LOWSPEED		0x020	/* not more than +4 speed */
-#define RESF_NOHISPEED		0x040	/* not more than +6 speed */
-#define RESF_LOWVALUE		0x080	/* no items worth more than 35000 Au */
-#define RESF_NOHIVALUE		0x100	/* no items worth more than 100000 Au */
+#define RESF_NONE		0x00000000
+#define RESF_WINNER		0x00000001	/* allow TR5_WINNERS_ONLY items */
+#define RESF_NOTRUEART		0x00000002	/* prevent true artifacts */
+#define RESF_NORANDART		0x00000004	/* prevent random artifacts */
+#define RESF_NODOUBLEEGO	0x00000008	/* prevent double ego items */
+#define RESF_NOHIDSM		0x00000010	/* prevent generation of high dragon scale mails */
+#define RESF_LOWSPEED		0x00000020	/* not more than +4 speed */
+#define RESF_NOHISPEED		0x00000040	/* not more than +6 speed */
+#define RESF_LOWVALUE		0x00000080	/* no items worth more than 35000 Au */
+#define RESF_NOHIVALUE		0x00000100	/* no items worth more than 100000 Au */
+#define RESF_NOETHEREAL		0x00000200	/* no 'ethereal' ego power (ammo) */
+
+#define RESF_VALUE2500		0x00000400 /* these _VALUE... aren't used atm */
+#define RESF_VALUE5000		0x00000800
+#define RESF_VALUE10000		0x00001000
+#define RESF_VALUE20000		0x00002000
+#define RESF_VALUE40000		0x00004000
+#define RESF_VALUE80000		0x00008000
+
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED)	/* prevent generation of especially powerful items */
 #define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items */
 #define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
+#define RESF_WILD		RESF_NONE
+#define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
+#define RESF_STOREBM		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
 
 
 /* ESP defines */
@@ -4142,6 +4160,7 @@ that keeps many algorithms happy.
 #define RF0_S_HI_MONSTER	0x00000001
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
+#define RF0_ASTAR		0x00000008	/* monster uses A* pathfinding (use with care, might strain CPU) */
 
 #define RF0_PLAYER_SPELLS (0L)
 #define RF0_RADIUS_SPELLS (0L)
@@ -4818,20 +4837,23 @@ that keeps many algorithms happy.
 103 == FEAT_GLIT_WATER
 174 == FEAT_TAINTED_WATER
 187 == FEAT_DEEP_WATER
+
+97  == FEAT_MOUNTAIN
  */
 #define cave_running_bold(p_ptr,ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
-	((ZCAVE[Y][X].feat == 92 || ZCAVE[Y][X].feat == 96 || ZCAVE[Y][X].feat == 202) && p_ptr->pass_trees) || \
-	((ZCAVE[Y][X].feat == 84 || ZCAVE[Y][X].feat == 103 || ZCAVE[Y][X].feat == 174 || ZCAVE[Y][X].feat == 187) && p_ptr->can_swim))
+	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) && (p_ptr->pass_trees || p_ptr->fly)) || /* fly is redundant, covered a line above */ \
+	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim))
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
-#define cave_running_bold_floor(p_ptr,ZCAVE,Y,X) \
-	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
+#define cave_running_bold_notrees(p_ptr,ZCAVE,Y,X) \
+	( ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
-	((ZCAVE[Y][X].feat == 84 || ZCAVE[Y][X].feat == 103 || ZCAVE[Y][X].feat == 174 || ZCAVE[Y][X].feat == 187) && p_ptr->can_swim))
+	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim)) \
+	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) )
 /* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
-#define cave_running_bold_nofloor(p_ptr,ZCAVE,Y,X) \
-	((ZCAVE[Y][X].feat == 92 || ZCAVE[Y][X].feat == 96 || ZCAVE[Y][X].feat == 202) && (p_ptr->pass_trees || p_ptr->fly))
+#define cave_running_bold_trees(p_ptr,ZCAVE,Y,X) \
+	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) && (p_ptr->pass_trees || p_ptr->fly))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \

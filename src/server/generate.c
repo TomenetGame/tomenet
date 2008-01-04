@@ -10617,8 +10617,8 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
  
 void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 {
-	int i, num;
-	cave_type **zcave;
+	int i, num, y, x;
+	cave_type **zcave, *c_ptr;
 	struct worldpos twpos;
 
         wpcopy(&twpos, wpos);
@@ -10741,7 +10741,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 			/* Make a dungeon */
 			cave_gen(wpos, p_ptr);
 			/* Lift restrictions on placed objects again */
-			place_object_restrictor = 0x000;
+			place_object_restrictor = RESF_NONE;
 		}
 
 		/* Prevent object over-flow */
@@ -10785,6 +10785,19 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 		if (m_max >= MAX_M_IDX * 3 / 4)
 			compact_monsters(32, FALSE);
 	}
+
+#ifdef WINTER_SEASON
+        /* Turn some water into ice */
+	if (!wpos->wz)
+        for (y = 1; y < MAX_HGT - 1; y++)
+	for (x = 1; x < MAX_WID - 1; x++) {
+		c_ptr = &zcave[y][x];
+		if (c_ptr->feat == FEAT_SHAL_WATER ||
+		    c_ptr->feat == FEAT_TAINTED_WATER) {
+	    		c_ptr->feat = FEAT_ICE;
+		}
+	}
+#endif
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;

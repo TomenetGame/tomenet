@@ -3081,8 +3081,9 @@ bool detect_bounty(int Ind, int rad)
 			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Detect traps on chests */
-			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST) && (o_ptr->pval) 
-			    && magik(chance) && !object_known_p(Ind, o_ptr)) {
+			if ((c_ptr->o_idx) && (o_ptr->tval == TV_CHEST)
+			    && p_ptr->obj_vis[c_ptr->o_idx] && (o_ptr->pval) 
+			    && !object_known_p(Ind, o_ptr) && magik(chance)) {
 				/* Message =-p */
 				msg_print(Ind, "You have discovered a trap on the chest!");
 				/* Know the trap */
@@ -3568,6 +3569,9 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	
 	/* Artifacts cannot be enchanted. */
 	if (artifact_p(o_ptr)) return (FALSE);
+
+	/* Ethereal ammo cannot be enchanted */
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (FALSE);
 	
 	/* Large piles resist enchantment */
 	prob = o_ptr->number * 100;
@@ -6308,8 +6312,14 @@ bool cast_fireworks(worldpos *wpos, int x, int y)
 	case 6: typ = GF_FW_MULT; break;
 	}
 
+#if 0
 	project_interval = 4;
 	project_time = 5 + 5; /* X units to rise into the air, X units to explode */
+#else
+	/* Adjustments - mikaelh */
+	project_interval = 5;
+	project_time = 8 + 8; /* X units to rise into the air, X units to explode */
+#endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
 }

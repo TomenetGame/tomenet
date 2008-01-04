@@ -4094,7 +4094,10 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			else if (prefix(message, "/fireworks")) { /* toggle fireworks during NEW_YEARS_EVE */
-				if (fireworks == 1) fireworks = 0;
+				if (tk >= 1) {
+					fireworks = k;
+				}
+				else if (fireworks) fireworks = 0;
 				else fireworks = 1;
 				return;
 			}

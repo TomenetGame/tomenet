@@ -2697,8 +2697,8 @@ bool apply_disenchant(int Ind, int mode)
 	/* Unused */
 //	mode = mode;
 
-	if(!mode) mode = randint(8);
-	else if(mode < 1 || mode > 8) return (FALSE);
+	if(!mode) mode = randint(9);
+	else if(mode < 1 || mode > 9) return (FALSE);
 
 	/* Pick a random slot */
 	switch (mode)
@@ -2711,15 +2711,35 @@ bool apply_disenchant(int Ind, int mode)
 		case 6: t = INVEN_HEAD; break;
 		case 7: t = INVEN_HANDS; break;
 		case 8: t = INVEN_FEET; break;
+		case 9: t = INVEN_AMMO; break;
 	}
 
 	/* Get the item */
 	o_ptr = &p_ptr->inventory[t];
-	k_ptr = &k_info[o_ptr->k_idx];
-
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
+	k_ptr = &k_info[o_ptr->k_idx];
 
+	/* Describe the object */
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+	/* Special treatment for new ego-type: Ethereal (ammunition):
+	   Ethereal items don't get disenchanted, but rather disappear completely! */
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
+		int i = randint(o_ptr->number / 5);
+		if (!i) i = 1;
+		msg_format(Ind, "\377o%s of your %s (%c) %s away!",
+		    (o_ptr->number == i ? "All" : (i != 1 ? "Some" : "One")), o_name, index_to_label(t),
+		   ((o_ptr->number != 1) ? "fade" : "fades"));
+		inven_item_increase(Ind, t, -i);
+		inven_item_optimize(Ind, t);
+		/* Recalculate bonuses */
+		p_ptr->update |= (PU_BONUS);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		/* Notice */
+		return (TRUE);
+	}
 
 	/* Nothing to disenchant */
 	if ((o_ptr->to_h <= 0) && (o_ptr->to_d <= 0) && (o_ptr->to_a <= 0))
@@ -2727,10 +2747,6 @@ bool apply_disenchant(int Ind, int mode)
 		/* Nothing to notice */
 		return (FALSE);
 	}
-
-
-	/* Describe the object */
-	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
 	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
@@ -2747,7 +2763,6 @@ bool apply_disenchant(int Ind, int mode)
 		/* Notice */
 		return (TRUE);
 	}
-
 
 	/* Disenchant tohit */
 	if (o_ptr->to_h > k_ptr->to_h) {
@@ -3431,7 +3446,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					/* Place object */
 					if (!istown(wpos)) {
-						place_object_restrictor = 0x000;
+						place_object_restrictor = RESF_NONE;
 						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 					}
 				}

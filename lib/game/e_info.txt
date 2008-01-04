@@ -2318,6 +2318,7 @@ R:100
 F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
 F:NO_SEED
 
+#for runes
 N:203:Transformation
 T:104:4:4
 X:A:24:4
@@ -2334,6 +2335,22 @@ R:5
 F:SPEED
 R:10
 F:CHR | SUST_CHR
+
+#First prefix-egos for ammo, following Moltor's idea
+N:204:Ethereal
+T:16:2:255
+T:16:4:255
+T:17:0:2
+T:17:4:255
+T:18:2:255
+T:18:4:255
+X:B:37:2
+W:45:1:10:50
+C:0:0:0:0
+R:100
+F:IGNORE_FIRE | IGNORE_WATER | IGNORE_ACID
+F:NO_SEED
+
 
 
 ##N:(No.):(name)

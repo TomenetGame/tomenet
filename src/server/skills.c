@@ -94,6 +94,14 @@ s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale)
 #endif
 }
 
+/* Allow very rough resolution of skills into very small scaled values
+   (Added this for minus_... in dungeon.c - C. Blue) */
+s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale)
+{
+	return (((p_ptr->s_info[skill].value * scale) / SKILL_MAX) +
+		(magik(((p_ptr->s_info[skill].value * scale * 100) / SKILL_MAX) % 100) ? 1 : 0));
+}
+
 /* Will add, sub, .. */
 static s32b modify_aux(s32b a, s32b b, char mod)
 {

@@ -526,7 +526,7 @@ static cptr r_info_flags0[] =
 	"S_HI_MONSTER",
 	"S_HI_MONSTERS",
 	"S_HI_UNIQUE",
-	"X00000008",//4
+	"ASTAR",//4
 	"X00000010",
 	"X00000020",
 	"X00000040",
@@ -4704,7 +4704,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
 		if (streq(what, r_info_flags9[i]))
 		{
                         if (must) re_ptr->flags9 |= (1L << i);
-                        else re_ptr->hflags9 |= (1L << i);
+			else re_ptr->hflags9 |= (1L << i);
 			return (0);
 		}
 	}
@@ -7425,7 +7425,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				 */
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				// else
 				if (rand_int(100) < 25)
@@ -7445,25 +7445,25 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 //					object_level = quest[p_ptr->inside_quest].level + object_index;
 					object_level = getlevel(wpos) + object_index;
 					if (rand_int(100) < 75)
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else if (rand_int(100) < 80)
-						place_object(wpos, y, x, TRUE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, TRUE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					else
-						place_object(wpos, y, x, TRUE, TRUE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						place_object(wpos, y, x, TRUE, TRUE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 
 					object_level = level;
 				}
 				else if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else if (rand_int(100) < 80)
 				{
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, TRUE, FALSE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				else
 				{
-					place_object(wpos, y, x, TRUE, TRUE, FALSE, 0x000, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, TRUE, TRUE, FALSE, RESF_NONE, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 			}
 			/* Random trap */

@@ -234,7 +234,7 @@ function sind(name)
 end
 
 -- Toggle ghost flag of a player quickly.
-function tgh()
+function tg()
     if players(Ind).ghost == 1 then
 	players(Ind).ghost = 0
 	msg_print(Ind, "Player "..Ind.." is no ghost anymore")
@@ -245,7 +245,7 @@ function tgh()
 end
 
 -- Toggle king flag of a player quickly.
-function tki(i)
+function tk(i)
     if players(i).total_winner == 1 then
 	players(i).total_winner = 0
 	msg_print(Ind, "Player "..i.." is no king anymore")

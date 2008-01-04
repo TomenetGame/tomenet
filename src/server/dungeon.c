@@ -2462,8 +2462,9 @@ static bool process_player_end_aux(int Ind)
 	/* Unbelievers "resist" magic */
 	//		int minus = (p_ptr->anti_magic)?3:1;
 	int minus = 1;
-	int minus_magic = 1 + get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 2);/* was 3 before, trying slightly less harsh 2 now */
-	int minus_health = magik(get_skill_scale(p_ptr, SKILL_HEALTH, 100))?2:0;/* was 3, but then HEALTH didn't give HP.. */
+	int minus_magic = 1 + get_skill_scale_fine(p_ptr, SKILL_ANTIMAGIC, 3); /* was 3 before, trying slightly less harsh 2 now */
+	int minus_health = get_skill_scale_fine(p_ptr, SKILL_HEALTH, 2); /* was 3, but then HEALTH didn't give HP.. */
+	int minus_combat = get_skill_scale_fine(p_ptr, SKILL_COMBAT, 3);
 
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -3004,15 +3005,13 @@ static bool process_player_end_aux(int Ind)
 	/* Confusion */
 	if (p_ptr->confused)
 	{
-		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
-		(void)set_confused(Ind, p_ptr->confused - adjust - minus_health);
+		(void)set_confused(Ind, p_ptr->confused - minus - minus_combat - minus_health);
 	}
 
 	/* Afraid */
 	if (p_ptr->afraid)
 	{
-		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
-		(void)set_afraid(Ind, p_ptr->afraid - adjust);
+		(void)set_afraid(Ind, p_ptr->afraid - minus - minus_combat);
 	}
 
 	/* Fast */
@@ -3232,15 +3231,14 @@ static bool process_player_end_aux(int Ind)
 		(void)set_stun(Ind, p_ptr->stun - (adjust + minus_health) * (minus_health + 1));
 #endif
 #if 0
-		int adjust = minus + get_skill_scale(p_ptr, SKILL_COMBAT, 3);
+		int adjust = minus + minus_combat;
 		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++; /* '*= 2' would be a bit too fast w/ max combat I think */
 #endif
 #if 0
-		int adjust = get_skill_scale(p_ptr, SKILL_COMBAT, 3);
-		adjust = minus + adjust / 2 + ((adjust == 1 || adjust == 3) && magik(50) ? 1 : 0);
+		int adjust = minus + minus_combat / 2 + ((minus_combat == 1 || minus_combat == 3) && magik(50) ? 1 : 0);
 		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
 #endif
-		int adjust = minus + (magik(get_skill_scale(p_ptr, SKILL_COMBAT, 100)) ? 2 : 0);
+		int adjust = minus + get_skill_scale_fine(p_ptr, SKILL_COMBAT, 2);
 //		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = (adjust * 5) / 3;
 		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
 
@@ -5520,10 +5518,15 @@ if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
 			case 2:	fireworks_delay = 4; break;
 			case 3:	fireworks_delay = 8; break;
 			}
+
 			/* Fireworks in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-			/* "type" determines colour and explosion style */
-			cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
+
+			/* Launch multiple rockets ;) - mikaelh */
+			for (i = 0; i < fireworks; i++) {
+				/* "type" determines colour and explosion style */
+				cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
+			}
 		} else {
 			fireworks_delay--;
 		}

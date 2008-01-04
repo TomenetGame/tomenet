@@ -1029,7 +1029,7 @@ static bool wild_monst_aux_home_owner(int r_idx)
 	return FALSE;
 }
 
-static bool wild_obj_aux_bones(int k_idx)
+static bool wild_obj_aux_bones(int k_idx, u32b resf)
 {
 	object_kind *k_ptr = &k_info[k_idx];
 
@@ -1154,7 +1154,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		}
 		trys++;	
 	}
-	place_object_restrictor = 0x000;
+	place_object_restrictor = RESF_NONE;
 	
 	/* add the food */
 	
@@ -1188,7 +1188,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	trys = 0;
 	
 	get_obj_num_hook = wild_obj_aux_bones;
-	get_obj_num_prep();
+	get_obj_num_prep(RESF_WILD);
 	
 	while ((num_bones) && (trys < 100))
 	{
@@ -1198,7 +1198,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		if (cave_clean_bold(zcave,y,x))
 		{		
 			/* base of 500 feet for the bones */
-			k_idx = get_obj_num(10);
+			k_idx = get_obj_num(10, RESF_NONE);
 			invcopy(&forge, k_idx);
 			forge.marked2 = ITEM_REMOVAL_NEVER;
 			drop_near(&forge, -1, wpos, y, x);
@@ -1213,7 +1213,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 	/* hack -- restore the old object selection function */
 		
 	get_obj_num_hook = NULL;
-	get_obj_num_prep();
+	get_obj_num_prep(RESF_NONE);
 	
 	/* add the inhabitants */
 	
@@ -2951,7 +2951,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 
 	wild_add_uhouses(wpos);
 
-	/* C. Blue - turn single deep water fields to shallow (non-drownable) water: */
+	/* C. Blue - turn single deep water fields in wildernis to shallow (non-drownable) water: */
 	for (y = 1; y < MAX_HGT - 1; y++)
 	for (x = 1; x < MAX_WID - 1; x++) {
 		c_ptr = &zcave[y][x];
@@ -3074,7 +3074,8 @@ void wilderness_gen(struct worldpos *wpos)
 	   won't suddenly get stuck in lava or mountains - C. Blue */
 	for (x = 1; x < MAX_WID - 1; x++)
 	{
-		if ((wpos->wy < MAX_HGT - 1) && magik(30)) {
+		if ((wpos->wy < MAX_HGT - 1) && magik(30) &&
+		    wild_info[wpos->wy + 1][wpos->wx].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy + 1][wpos->wx];
 			c_ptr = &zcave[1][x];
 			/* Don't cover stairs - mikaelh */
@@ -3088,7 +3089,8 @@ void wilderness_gen(struct worldpos *wpos)
 			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
 			}
 		}
-		if ((wpos->wy > 0) && magik(30)) {
+		if ((wpos->wy > 0) && magik(30) &&
+		    wild_info[wpos->wy - 1][wpos->wx].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy - 1][wpos->wx];
 			c_ptr = &zcave[MAX_HGT-2][x];
 			/* Don't cover stairs - mikaelh */
@@ -3105,7 +3107,8 @@ void wilderness_gen(struct worldpos *wpos)
 	}
 	for (y = 1; y < MAX_HGT - 1; y++)
 	{
-		if ((wpos->wx < MAX_WID - 1) && magik(30)) {
+		if ((wpos->wx < MAX_WID - 1) && magik(30) &&
+		    wild_info[wpos->wy][wpos->wx + 1].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx + 1];
 			c_ptr = &zcave[y][MAX_WID-2];
 			/* Don't cover stairs - mikaelh */
@@ -3119,7 +3122,8 @@ void wilderness_gen(struct worldpos *wpos)
 			case WILD_MOUNTAIN: c_ptr->feat = FEAT_MOUNTAIN; break;
 			}
 		}
-		if ((wpos->wx > 0) && magik(30)) {
+		if ((wpos->wx > 0) && magik(30) &&
+		    wild_info[wpos->wy][wpos->wx - 1].type != w_ptr->type) {
 			w_ptr2 = &wild_info[wpos->wy][wpos->wx - 1];
 			c_ptr = &zcave[y][1];
 			/* Don't cover stairs - mikaelh */

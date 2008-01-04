@@ -4377,11 +4377,11 @@ void monster_death(int Ind, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object_restrictor = 0x000;
+				place_object_restrictor = RESF_NONE;
 				/* Morgoth never drops true artifacts; Winners never get true artifacts dropped */
 				allow_true_arts = !p_ptr->total_winner && !streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness");
 				/* well, basically a total_winner won't get loot from Morgoth anyway.. so part of the stuff is superfluous */
-				place_object(wpos, y, x, good, great, FALSE, (allow_true_arts?0x000:RESF_NOTRUEART) | (p_ptr->once_winner?RESF_WINNER:0x000), r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+				place_object(wpos, y, x, good, great, FALSE, (allow_true_arts?RESF_NONE:RESF_NOTRUEART) | (p_ptr->once_winner?RESF_WINNER:RESF_NONE), r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
 
@@ -6444,7 +6444,7 @@ void kill_quest(int Ind){
 		inven_carry(Ind, o_ptr);
 //		drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 #else
-		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, make_resf(p_ptr));
+		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, RESF_LOW);
 #endif
 		unique_quark = 0;
 	}
@@ -7088,7 +7088,7 @@ void monster_death_mon(int am_idx, int m_idx)
 			/* Place Object */
 			else
 			{
-				place_object_restrictor = 0x000;
+				place_object_restrictor = RESF_NONE;
 				place_object(wpos, ny, nx, good, great, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
 			}
 

@@ -4133,14 +4133,14 @@ int mon_will_run(int Ind, int m_idx)
  * being close enough to chase directly.  I have no idea what will
  * happen if you combine "smell" with low "aaf" values.
  */
-static bool get_moves_aux(int m_idx, int *yp, int *xp)
+static bool get_moves_aux(int Ind, int m_idx, int *yp, int *xp)
 {
 	int i, y, x, y1, x1, when = 0, cost = 999;
-
-	cave_type *c_ptr;
-
 	monster_type *m_ptr = &m_list[m_idx];
         monster_race *r_ptr = race_inf(m_ptr);
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave, *c_ptr;
+	if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
 
 	/* Monster flowing disabled */
 	if (!flow_by_sound && !flow_by_smell) return (FALSE);
@@ -4154,10 +4154,10 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	x1 = m_ptr->fx;
 
 	/* Monster grid */
-	c_ptr = &cave[y1][x1];
+	c_ptr = &zcave[y1][x1];
 
 	/* The player is not currently near the monster grid */
-	if (c_ptr->when < cave[py][px].when)
+	if (c_ptr->when < zcave[py][px]->when)
 	{
 		/* The player has never been near the monster grid */
 		if (!c_ptr->when) return (FALSE);
@@ -4171,7 +4171,7 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	if (c_ptr->cost > r_ptr->aaf) return (FALSE);
 
 	/* Hack -- Player can see us, run towards him */
-	if (player_has_los_bold(y1, x1)) return (FALSE);
+	if (player_has_los_bold(Ind, y1, x1)) return (FALSE);
 
 	/* Check nearby grids, diagonals first */
 	for (i = 7; i >= 0; i--)
@@ -4181,21 +4181,21 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 		x = x1 + ddx_ddd[i];
 
 		/* Ignore illegal locations */
-		if (!cave[y][x].when) continue;
+		if (!zcave[y][x].when) continue;
 
 		/* Ignore ancient locations */
-		if (cave[y][x].when < when) continue;
+		if (zcave[y][x].when < when) continue;
 
 		/* Ignore distant locations */
-		if (cave[y][x].cost > cost) continue;
+		if (zcave[y][x].cost > cost) continue;
 
 		/* Save the cost and time */
-		when = cave[y][x].when;
-		cost = cave[y][x].cost;
+		when = zcave[y][x].when;
+		cost = zcave[y][x].cost;
 
 		/* Hack -- Save the "twiddled" location */
-		(*yp) = py + 16 * ddy_ddd[i];
-		(*xp) = px + 16 * ddx_ddd[i];
+		(*yp) = p_ptr->py + 16 * ddy_ddd[i];
+		(*xp) = p_ptr->px + 16 * ddx_ddd[i];
 	}
 
 	/* No legal move (?) */
@@ -4205,6 +4205,63 @@ static bool get_moves_aux(int m_idx, int *yp, int *xp)
 	return (TRUE);
 }
 
+#endif
+
+
+#ifdef MONSTER_ASTAR
+/* Get monster moves for A* pathfinding */
+static bool get_moves_astar(int Ind, int m_idx, int *yp, int *xp) {
+	int i, y, x, y1, x1, cost = 999;
+	byte astarF = 0, astarG = 0, astarH = 0;
+	monster_type *m_ptr = &m_list[m_idx];
+        monster_race *r_ptr = race_inf(m_ptr);
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave, *c_ptr;
+	if(!(zcave=getcave(&m_ptr->wpos))) return FALSE;
+
+return (FALSE);
+
+	/* Monster can go through permanent rocks even? (Morgoth only) */
+	if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) return (FALSE);
+
+	/* Hack -- Player can see us, run towards him */
+	if (player_has_los_bold(Ind, y1, x1)) return (FALSE);
+
+	/* Monster location */
+	y1 = m_ptr->fy;
+	x1 = m_ptr->fx;
+
+	/* Monster grid */
+	c_ptr = &zcave[y1][x1];
+
+	/* Check nearby grids, diagonals first */
+	for (i = 7; i >= 0; i--)
+	{
+		/* Get the location */
+		y = y1 + ddy_ddd[i];
+		x = x1 + ddx_ddd[i];
+		if (!in_bounds(y, x)) continue;
+
+		/* Ignore distant locations */
+		if (zcave[y][x].astarF > cost) continue;
+
+		/* Save the cost and time */
+		cost = zcave[y][x].astarF;
+
+		/* Hack -- Save the "twiddled" location */
+		(*yp) = p_ptr->py + 16 * ddy_ddd[i];
+		(*xp) = p_ptr->px + 16 * ddx_ddd[i];
+	}
+
+	/* Monster is too far away to notice the player */
+	if (c_ptr->astarF > r_ptr->aaf) return (FALSE);
+
+	/* No legal move (?) */
+	if (!cost) return (FALSE);
+
+	/* Success */
+	return (TRUE);
+}
 #endif
 
 
@@ -4403,10 +4460,10 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 		if (flow_by_sound)
 		{
 			/* Ignore grids very far from the player */
-			if (cave[y][x].when < cave[py][px].when) continue;
+			if (zcave[y][x].when < zcave[py][px].when) continue;
 
 			/* Ignore too-distant grids */
-			if (cave[y][x].cost > cave[fy][fx].cost + 2 * d) continue;
+			if (zcave[y][x].cost > zcave[fy][fx].cost + 2 * d) continue;
 		}
 #endif
 		/* Remember if further than previous */
@@ -4891,8 +4948,13 @@ static void get_moves(int Ind, int m_idx, int *mm)
 	if (flow_by_sound)
 	{
 		/* Flow towards the player */
-		(void)get_moves_aux(m_idx, &y2, &x2);
+		(void)get_moves_aux(Ind, m_idx, &y2, &x2);
 	}
+#endif
+
+#ifdef MONSTER_ASTAR
+	/* Monster uses A* pathfinding algorithm? - C. Blue */
+	if (r_ptr->flags0 & RF0_ASTAR) (void)get_moves_astar(Ind, m_idx, &y2, &x2);
 #endif
 
 #if 0 /* moved to process_monsters */

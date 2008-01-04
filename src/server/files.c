@@ -2133,7 +2133,10 @@ void wipeout_needless_objects()
  */
 void exit_game_panic(void)
 {
-	int i = 1, dumppid, dumpstatus;
+	int i = 1;
+
+#if 0 /* new glibc breaks stack traces for some reason - mikaelh */
+	int dumppid, dumpstatus;
 
 	/* fork() a child process that will abort() - mikaelh */
 	dumppid = fork();
@@ -2151,6 +2154,7 @@ void exit_game_panic(void)
 		/* wait for the child */
 		waitpid(dumppid, &dumpstatus, 0);
 	}
+#endif
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");
@@ -2211,7 +2215,8 @@ void exit_game_panic(void)
 
 	if (!save_server_info()) quit("server panic info save failed!");
 
-#if 0 /* abort() done above in a child process */
+// #if 0 /* abort() done above in a child process */
+#if 1 /* enabled again */
 	/* make a core dump using abort() - mikaelh */
 # ifdef HANDLE_SIGNALS
 	signal(SIGABRT, SIG_IGN);

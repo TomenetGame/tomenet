@@ -2090,6 +2090,7 @@ struct player_type
 	bool find_openarea;
 	bool find_breakright;
 	bool find_breakleft;
+	bool running_on_floor;	/* Are we running on normal floor, or over grids that we have special abilities to actually pass */
 
 	bool resting;		/* Are we resting? */
 

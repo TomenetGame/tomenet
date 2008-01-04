@@ -1826,7 +1826,7 @@ D:wearer to see things not seen by all.
 N:134:'Lasher'
 I:21:2:3
 W:20:5:30:125000
-P:0:1d4:12:15:0
+P:0:3d4:12:15:0
 F:DEX | BLOWS | HIDE_TYPE | 
 F:SLAY_ANIMAL | SLAY_ORC | BRAND_POIS | VORPAL | 
 F:RES_POIS | FREE_ACT | ESP_ORC

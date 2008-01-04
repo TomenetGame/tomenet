@@ -2014,7 +2014,7 @@ if (o_ptr->tval == TV_RUNE2) {
 							if (p_ptr->confused) chance = chance / 2;
 
 							/* perc rod only: is it easy to use? */
-							if (i_ptr->tval == TV_ROD && (i_ptr->name2 == 179 /* of Simplicity */)) chance *= 2;
+							if (i_ptr->tval == TV_ROD && (i_ptr->name2 == EGO_RSIMPLICITY /* of Simplicity */)) chance *= 2;
 
 							/* High level objects are harder */
 							chance = chance - ((lev > 50) ? 50 : lev) - (p_ptr->antimagic * 2);
@@ -2044,9 +2044,9 @@ if (o_ptr->tval == TV_RUNE2) {
 							p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 							if (i_ptr->tval == TV_ROD) {
-								//Formula is taken from cm6.c
-								i_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
-								if (i_ptr->name2 == 135 /* of istari */ || i_ptr->name2 == 134 /* of charging */)
+								//Formula is taken from cmd6.c
+								i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+								if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
 									i_ptr->pval /= 3;
 							
 								//Unstack
@@ -2094,8 +2094,8 @@ if (o_ptr->tval == TV_RUNE2) {
 							}
 
 							/* consume a turn */
-							p_ptr->energy -= level_speed(&p_ptr->wpos);
-
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 							break; 
 						} else
 						/* ID scroll */
@@ -2119,7 +2119,8 @@ if (o_ptr->tval == TV_RUNE2) {
 							}
 
 							/* consume a turn */
-							p_ptr->energy -= level_speed(&p_ptr->wpos);
+/* taken out for now since carry() in move_player() doesnt need energy. mass-'g'-presses result in frozen char for a while
+							p_ptr->energy -= level_speed(&p_ptr->wpos);*/
 							break;
 						}
 					} 
@@ -5277,6 +5278,11 @@ int see_wall(int Ind, int dir, int y, int x)
 		return (FALSE);
 	}
 
+#if 1 //def NEW_RUNNING_FEAT
+	/* don't accept trees as open area? */
+	if (p_ptr->running_on_floor && (zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREES || zcave[y][x].feat == FEAT_SMALL_TREES)) return(TRUE);
+#endif
+
 	/* Must actually block motion */
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
 
@@ -5285,8 +5291,8 @@ int see_wall(int Ind, int dir, int y, int x)
 #if 1 /* NEW_RUNNING_FEAT */
 	/* hack - allow 'running' when flying over something */
 	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) return (FALSE);
-	/* hack - allow 'running' if player may pass trees - HARDCODED :( */
-	if ((zcave[y][x].feat == 92 || zcave[y][x].feat == 96 || zcave[y][x].feat == 202)
+	/* hack - allow 'running' if player may pass trees  */
+	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREES || zcave[y][x].feat == FEAT_SMALL_TREES)
 	     && p_ptr->pass_trees) return (FALSE);
 	/* hack - allow 'running' if player can swim - HARDCODED :( */
 	if ((zcave[y][x].feat == 84 || zcave[y][x].feat == 103 || zcave[y][x].feat == 174 || zcave[y][x].feat == 187)
@@ -5521,6 +5527,8 @@ static void run_init(int Ind, int dir)
 	int             row, col, deepleft, deepright;
 	int             i, shortleft, shortright;
 
+	cave_type **zcave;
+	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
 	/* Manual direction changes reset the corner counter
 	   (for safety reasons only, might be serious running
@@ -5549,6 +5557,12 @@ static void run_init(int Ind, int dir)
 
 	/* Extract cycle index */
 	i = chome[dir];
+
+#if 1 /* NEW_RUNNING_FEAT */
+	if (cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px) &&
+	    cave_running_bold_notrees(p_ptr, zcave, row, col))
+		p_ptr->running_on_floor = TRUE;
+#endif
 
 	/* Check for walls */
 	/* When in the town/wilderness, don't break left/right. -APD- */
@@ -5845,8 +5859,13 @@ static bool run_test(int Ind)
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */
-		if ((inv || cave_running_bold(p_ptr, zcave, row, col) || ((!in_bounds(row, col)) && (wpos->wz==0)) )
-		    && !(cave_running_bold_nofloor(p_ptr, zcave, p_ptr->py, p_ptr->px))) /* <- if player is running on non-floor grids, don't make him stop on "corners" */
+		if (inv || ((!in_bounds(row, col)) && (wpos->wz==0))  || 
+		    (cave_running_bold(p_ptr, zcave, row, col)
+		    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
+		    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
+			&& cave_running_bold_trees(p_ptr, zcave, row, col)) )
+		    
+		    )
 		{
 			/* Looking for open area */
 			if (p_ptr->find_openarea)
@@ -5924,7 +5943,12 @@ static bool run_test(int Ind)
 			col = p_ptr->px + ddx[new_dir];
 
 			/* Unknown grid or floor */
-			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || (cave_running_bold_floor(p_ptr, zcave, row, col)))
+			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
+			    (cave_running_bold(p_ptr, zcave, row, col)
+			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
+			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
+			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
+			    )
 			{
 				/* Looking to break right */
 				if (p_ptr->find_breakright)
@@ -5953,7 +5977,12 @@ static bool run_test(int Ind)
 			col = p_ptr->px + ddx[new_dir];
 
 			/* Unknown grid or floor */
-			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) || (cave_running_bold_floor(p_ptr, zcave, row, col)))
+			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
+			    (cave_running_bold(p_ptr, zcave, row, col)
+			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
+			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
+			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
+			    )
 			{
 				/* Looking to break left */
 				if (p_ptr->find_breakleft)

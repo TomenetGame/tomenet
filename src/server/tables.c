@@ -2410,7 +2410,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
                 {  1,  1, 2,  2,  0,  -2 },
 		//rangers: { 2, 2, -1, 1, 2, 0},
                 0, 0, 0,  0,  0, 0, 0, 0,
-                13,  300,
+                13,  500,
 //                1000, 250, /* 1000 is too big for a byte */
 		255, 250,
                 180, 20, 180, 20,
@@ -3978,7 +3978,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_DODGE,
                                 '+', 0,/*1000*/
-                                '+', 500,
+                                '+', 700, /*500, but motivating light armour hereby*/
                         },
                         {
                                 SKILL_ANTIMAGIC,

@@ -3171,7 +3171,7 @@ void do_cmd_use_staff(int Ind, int item)
 			if (unlite_area(Ind, 10, 3)) ident = TRUE;
 			if (!p_ptr->resist_blind && !p_ptr->resist_dark)
 			{
-				if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
+				if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
 			}
 			break;
 		}
@@ -4229,7 +4229,7 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			ident = TRUE;
 			if (!ident_spell(Ind)) use_charge = FALSE;
-			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4301,7 +4301,7 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
-			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
+			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			break;
 #endif
 		}
@@ -4543,7 +4543,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			ident = TRUE;
 			//o_ptr->pval = 9;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 9 - get_skill_scale(p_ptr, SKILL_DEVICE, 4);
+			o_ptr->pval = 9 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 4);
 			break;
 		}
 
@@ -4595,7 +4595,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			ident = TRUE;
 			//o_ptr->pval = 12;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 12 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			o_ptr->pval = 12 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
 			break;
 		}
 
@@ -4607,7 +4607,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			ident = TRUE;
 			//o_ptr->pval = 11;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 11 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->pval = 11 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4619,7 +4619,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			ident = TRUE;
 			//o_ptr->pval = 15;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
+			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			break;
 		}
 
@@ -4631,7 +4631,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			ident = TRUE;
 			//o_ptr->pval = 13;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 13 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
+			o_ptr->pval = 13 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 6);
 			break;
 		}
 
@@ -4709,7 +4709,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (!ident_spell(Ind)) use_charge = FALSE;
 			//o_ptr->pval = 10;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
 		}
 
@@ -4790,7 +4790,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0)) ident = TRUE;
-			o_ptr->pval = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 7);
+			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			break; 
 #endif
 		}
@@ -7551,7 +7551,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 			{
 				sprintf(p_ptr->attacker, " casts a stinking cloud for");
 //				fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 20), 3, p_ptr->attacker);
-				fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
+				fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7), 3, 4, 9, p_ptr->attacker);
 				o_ptr->timeout = rand_int(4) + 4;
 				break;
 			}
@@ -8001,7 +8001,7 @@ static int fletchery_items(int Ind)
 	object_aware(Ind, q_ptr); \
 	object_known(q_ptr); \
 	if (tlev > 50) q_ptr->ident |= ID_MENTAL; \
-	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE, FALSE, FALSE); \
+	apply_magic(&p_ptr->wpos, q_ptr, tlev, FALSE, get_skill(p_ptr, SKILL_ARCHERY) >= 20, (magik(tlev / 10))?TRUE:FALSE, FALSE, RESF_NOART); \
 	q_ptr->ident &= ~ID_CURSED; \
 	q_ptr->note = quark_add("Handmade"); \
 	q_ptr->discount = 50 + 25 * rand_int(3); \
@@ -8139,6 +8139,8 @@ void do_cmd_fletchery(int Ind)
 				q_ptr->number = (byte)rand_range(15,30);
 				do_fletchery_aux();
 
+				if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= 4;
+
 				(void)inven_carry(Ind, q_ptr);
 
 //				(void)wall_to_mud(Ind, dir);
@@ -8221,6 +8223,8 @@ void do_cmd_fletchery(int Ind)
 			floor_item_optimize(0 - item);
 		}
 
+		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= 4;
+
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
 			raw_amount -= 99;
@@ -8295,6 +8299,8 @@ void do_cmd_fletchery(int Ind)
 			floor_item_describe(0 - item);
 			floor_item_optimize(0 - item);
 		}
+
+		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= 4;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
@@ -8466,13 +8472,15 @@ void do_cmd_stance(int Ind, int stance) {
 			msg_print(Ind, "\377sYou already are in offensive stance!");
 			return;
 		}
-		if (!p_ptr->inventory[INVEN_WIELD].k_idx ||
-		    !(k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H | TR4_COULD2H)) ||
-		    p_ptr->inventory[INVEN_ARM].k_idx) {
-			msg_print(Ind, "\377yYou need to wield a weapon with both hands for offensive stances.");
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx || p_ptr->inventory[INVEN_ARM].k_idx) {
+			msg_print(Ind, "\377yYou need to wield one weapon with both your hands for offensive stances.");
 			return;
 		}
-		
+		if (!(k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H | TR4_COULD2H))) {
+			msg_print(Ind, "\377yYour weapon is too small to use it in offensive stance effectively.");
+			return;
+		}
+
 	    switch(p_ptr->pclass) {
 	    case CLASS_WARRIOR:
 		if (p_ptr->max_lev < 20) {
