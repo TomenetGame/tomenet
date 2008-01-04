@@ -40,10 +40,10 @@
 
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-#define WINTER_SEASON   2
+// #define WINTER_SEASON   2
 
 /* Enable/disable New Year's Eve */
-#define NEW_YEARS_EVE
+// #define NEW_YEARS_EVE
 
 
 
@@ -96,7 +96,7 @@
 #define USE_PARRYING
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
 
-#ifdef RPG_SERVER
+#if 0
  #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
  #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
