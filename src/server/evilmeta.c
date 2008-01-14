@@ -5,7 +5,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <sys/signal.h>
+// #include <sys/signal.h>
+/* signal.h should be included instead of sys/signal.h according to mux - mikaelh */
+#include <signal.h>
 #include <netinet/in.h>
 #include <netdb.h>
 
