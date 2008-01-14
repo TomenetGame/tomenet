@@ -15,11 +15,9 @@
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
 
 #ifdef HAVE_CRYPT
-#define _XOPEN_SOURCE 500
 #include <unistd.h>
 #endif	// HAVE_CRYPT
 
-extern char *crypt(char *inbuf, cptr salt);
 static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
 static void party_msg(int party_id, cptr msg);
