@@ -639,6 +639,9 @@ static int do_cmd_activate_skill_aux()
 	if (term_saved) Term_load();
 	topline_icky = FALSE;
 
+	/* Clear the prompt line */
+	prt("", 0, 0);
+
 	C_FREE(p, MAX_SKILLS, int);
 
 	return ret;
