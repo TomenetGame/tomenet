@@ -536,7 +536,13 @@ static int do_cmd_activate_skill_aux()
 	}
 */
 
-//	Term_save(); /* Not needed always */
+	/* Save the terminal if c_cfg.always_show_lists was on */
+	if (mode && !term_saved)
+	{
+		Term_save();
+		term_saved = TRUE;
+	}
+
 	topline_icky = TRUE;
 
 	while (1)
