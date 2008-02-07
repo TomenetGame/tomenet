@@ -83,7 +83,7 @@ cptr value_check_aux1(object_type *o_ptr)
 	switch (o_ptr->tval)
 	{
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_BOOTS:
@@ -211,7 +211,7 @@ cptr value_check_aux2(object_type *o_ptr)
 	switch (o_ptr->tval)
 	{
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_BOOTS:
@@ -383,7 +383,7 @@ static void sense_inventory(int Ind)
 		switch (o_ptr->tval)
 		{
 			case TV_DIGGING:
-			case TV_HAFTED:
+			case TV_BLUNT:
 			case TV_POLEARM:
 			case TV_SWORD:
 			case TV_BOOTS:
@@ -687,7 +687,7 @@ static void process_effects(void)
 		}
 		
 		/* check if it's time to process this effect now (depends on level_speed) */
-		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 3) continue;
+		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 0) continue;
 
 		/* Reduce duration */
 		e_ptr->time--;
@@ -725,6 +725,11 @@ static void process_effects(void)
 		
 		/* Snowflakes disappear if they reach end of traversed screen */
 		if ((e_ptr->flags & EFF_SNOWING) && e_ptr->cy == MAX_HGT - 2) {
+			erase_effects(k);
+			continue;
+		}
+		/* Raindrops disappear if they reach end of traversed screen */
+		if ((e_ptr->flags & EFF_RAINING) && e_ptr->cy == MAX_HGT - 2) {
 			erase_effects(k);
 			continue;
 		}
@@ -798,6 +803,11 @@ static void process_effects(void)
 					everyone_lite_spot(wpos, j, i);
 				}
 				else if ((e_ptr->flags & EFF_SNOWING))
+				{
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				}
+				else if ((e_ptr->flags & EFF_RAINING))
 				{
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
@@ -915,6 +925,22 @@ static void process_effects(void)
 		}
 		/* snowflakes */
 		else if (e_ptr->flags & EFF_SNOWING) {
+			e_ptr->cy++; /* for now just fall straight downwards */
+			/* gusts of wind */
+			if (wind_gust > 0) {
+				e_ptr->cx--;
+				if (e_ptr->cx < 1) e_ptr->cx = MAX_WID - 2;
+			}
+			if (wind_gust < 0) {
+				e_ptr->cx++;
+				if (e_ptr->cx >= MAX_WID - 1) e_ptr->cx = 1;
+			}
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			c_ptr->effect = k;
+			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+		}
+		/* raindrops */
+		else if (e_ptr->flags & EFF_RAINING) {
 			e_ptr->cy++; /* for now just fall straight downwards */
 			/* gusts of wind */
 			if (wind_gust > 0) {
@@ -1346,7 +1372,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 	{
 		/* weapon -- attack normally! */
 		case TV_MSTAFF:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
@@ -2304,7 +2330,7 @@ static void do_recall(int Ind, bool bypass)
 		/* Messages */
 		if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
 		{
-			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
+			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
@@ -2313,7 +2339,13 @@ static void do_recall(int Ind, bool bypass)
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH dungeons */
 			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
 #endif
-			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) ||
+#if 0
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) ||
+#else /* allow recalling into town dungeons every 1000 ft now? Adjusted Moltor's suggestion */
+			    (d_ptr->flags2 & (DF2_NO_RECALL_INTO)) ||
+			    ((d_ptr->flags2 & DF2_IRON) && wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].type != WILD_TOWN) ||
+			    ((d_ptr->flags2 & DF2_IRON) && ((p_ptr->recall_pos.wz + 1) % 20)) ||
+#endif
 			    (d_ptr->flags2 & DF2_NO_ENTRY_WOR))
 			{
 				if (!is_admin(p_ptr))
@@ -2343,7 +2375,7 @@ static void do_recall(int Ind, bool bypass)
 		}
 		else if(p_ptr->recall_pos.wz > 0 && w_ptr->flags & WILD_F_UP)
 		{
-			dungeon_type *d_ptr=wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
+			dungeon_type *d_ptr=wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].tower;
 
 			//if(d_ptr->baselevel-p_ptr->max_dlv>2){
 			if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 2) ||
@@ -2352,7 +2384,13 @@ static void do_recall(int Ind, bool bypass)
 #ifdef RPG_SERVER /* Prevent recalling into NO_DEATH towers */
 			    (d_ptr->flags2 & (DF2_NO_DEATH)) ||
 #endif
-			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) ||
+#if 0
+			    (d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) ||
+#else /* allow recalling into town dungeons every 1000 ft now? Adjusted Moltor's suggestion */
+			    (d_ptr->flags2 & (DF2_NO_RECALL_INTO)) ||
+			    ((d_ptr->flags2 & DF2_IRON) && wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].type != WILD_TOWN) ||
+			    ((d_ptr->flags2 & DF2_IRON) && ((p_ptr->recall_pos.wz - 1) % 20)) ||
+#endif
 			    (d_ptr->flags2 & DF2_NO_ENTRY_WOR))
 			{
 				if (!is_admin(p_ptr))
@@ -5025,6 +5063,7 @@ static void process_player_change_wpos(int Ind)
 
 	/* Update the player location */
 	zcave[y][x].m_idx = 0 - Ind;
+	cave_midx_debug(wpos, y, x, -Ind);
 
 	for (m_idx = m_top - 1; m_idx >= 0; m_idx--)
 	{
@@ -5480,6 +5519,14 @@ if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
 				weather_duration--;
 			}
 		}
+#else
+		if (weather) { /* it's currently raining */
+			if (weather_duration <= 0) { /* change weather? */
+				weather = 0; /* stop raining */
+				weather_duration = 0;
+			} else weather_duration--;
+		}
+#endif
 		if (wind_gust > 0) wind_gust--; /* gust from east */
 		if (wind_gust < 0) wind_gust++; /* gust from west */
 		if (!wind_gust_delay) { /* gust of wind coming up? */
@@ -5487,7 +5534,6 @@ if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
 			wind_gust = rand_int(60) + 5;
 			if (rand_int(2)) wind_gust = -wind_gust;
 		} else wind_gust_delay--;
-#endif
 
 #ifdef AUCTION_SYSTEM
 		/* Process auctions */
@@ -5505,6 +5551,15 @@ if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
 		/* Snow in Bree */
 		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
 		cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
+	}
+#else
+	/* if it's raining, create raindrops */
+	if (weather && !(turn % (cfg.fps / 60)) && !fireworks) {
+		worldpos wpos;
+		/* Rain in Bree */
+		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
+		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
 	}
 #endif
 

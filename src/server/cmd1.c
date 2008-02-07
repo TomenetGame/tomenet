@@ -257,7 +257,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 
 
 /*
- * Extract the "total damage" from a given object hitting a given monster.
+ * Brands (including slay mods) the given damage depending on object type, hitting a given monster.
  *
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
@@ -623,7 +623,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 /*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
@@ -913,7 +913,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 }
 
 /*
- * Extract the "total damage" from a given object hitting a given player.
+ * Brands (including slay mods) the given damage depending on object type, hitting a given player.
  *
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
@@ -1195,7 +1195,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 /*		case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
@@ -2583,7 +2583,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if (p_ptr->combat_stance == 2) {
 					int stun_effect, resist_stun;
 
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]]) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
 					resist_stun = adj_con_fix[q_ptr->stat_cur[A_CON]]; /* 0..9 */
@@ -2594,9 +2594,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 					switch(p_ptr->combat_stance_power) {
 					case 0: if (!magik(20 - resist_stun * 2)) stun_effect = 0; break;
-					case 1: if (!magik(30 - resist_stun * 2)) stun_effect = 0; break;
-					case 2: if (!magik(40 - resist_stun * 2)) stun_effect = 0; break;
-					case 3: if (!magik(50 - resist_stun * 2)) stun_effect = 0; break;
+					case 1: if (!magik(25 - resist_stun * 2)) stun_effect = 0; break;
+					case 2: if (!magik(30 - resist_stun * 2)) stun_effect = 0; break;
+					case 3: if (!magik(35 - resist_stun * 2)) stun_effect = 0; break;
 					}
 					msg_format(Ind, "\377y%^s is stunned.", q_ptr->name);
 					set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
@@ -2970,7 +2970,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool 		nolite, nolite2, martial = FALSE;
 	int 		block = 0, parry = 0;
 
-	bool            vorpal_cut = FALSE;
+	int             vorpal_cut = 0;
 	int             chaos_effect = 0;
 	bool            drain_msg = TRUE;
 	int             drain_result = 0, drain_heal = 0;
@@ -3027,6 +3027,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		m_ptr->fx = nx;
 		p_ptr->py = oy;
 		p_ptr->px = ox;
+		
+		cave_midx_debug(wpos, oy, ox, -Ind);
 
 		/* Update the monster (new location) */
 		update_mon(zcave[ny][nx].m_idx, TRUE);
@@ -3360,6 +3362,14 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				int stun_effect, resist_stun;
 #endif
 				k = damroll(o_ptr->dd, o_ptr->ds);
+
+                                if (f5 & TR5_VORPAL && (randint(6) == 1))
+				{
+//					k = o_ptr->dd * o_ptr->ds; /* full weapon efficiency */
+//					if (magik(25)) k *= 3; else k *= 2; /* multi dice! */
+					vorpal_cut = k; /* save dice */
+				} else vorpal_cut = FALSE;
+
 				/* weapons that inflict little damage, especially of only 1 damage dice,
 				   mostly don't cause earthquakes at all */
 				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
@@ -3375,7 +3385,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* apply stun from offensive combat stance */
 				if (p_ptr->combat_stance == 2) {
 
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]]) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
 					resist_stun = 6 - 300 / (50 + m_ptr->ac); /* 0..5 */
@@ -3397,7 +3407,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							/* nothing:
 							msg_format(Ind, "%^s is unaffected.", m_name);*/
 						}
-						else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
+//						else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
+//						else if (!magik(((r_ptr->level + 30) * 2) / 4 + resist_stun)) {
+//						else if (!magik((r_ptr->level + 100) / 3 + resist_stun)) {
+						else if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
 							m_ptr->stunned += (stun_effect);
 							if (m_ptr->stunned > 100)
 								msg_format(Ind, "\377o%^s is knocked out.", m_name);
@@ -3477,23 +3490,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else
 					drain_result = 0;
 
-                                if (f5 & TR5_VORPAL && (randint(6) == 1))
-                                        vorpal_cut = TRUE;
-				else vorpal_cut = FALSE;
-
 				if (chaos_effect == 2) do_quake = TRUE;
 
-				if (vorpal_cut)
-				{
-					int step_k = k;
-
-					msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
-					do
-					{
-						k += step_k;
-					}
-					while (randint(4) == 1);
-				}
+                                if (vorpal_cut)	msg_format(Ind, "Your weapon cuts deep into %s!", m_name);
 
 				k += o_ptr->to_d;
 				
@@ -3541,6 +3540,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor));
+
+				/* Vorpal bonus - multi-dice!
+				   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
+                                if (vorpal_cut) {
+					k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				}
 
 				/* Penalty for could-2H when having a shield */
 /* isn't that already in xtra1.c included, by reducing to_d_... and to_h_... boni?! */
@@ -4289,6 +4294,7 @@ void do_prob_travel(int Ind, int dir)
       /* Update the player indices */
       zcave[oy][ox].m_idx = 0;
       zcave[y][x].m_idx = 0 - Ind;
+      cave_midx_debug(wpos, y, x, -Ind);
 
       /* Redraw new spot */
       everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
@@ -4762,6 +4768,9 @@ void move_player(int Ind, int dir, int do_pickup)
 			p_ptr->py = y;
 			p_ptr->px = x;
 
+			cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
+			cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
+
 			/* Tell both of them */
 			/* Don't tell people they bumped into the Dungeon Master */
 			if (!q_ptr->admin_dm)
@@ -5088,6 +5097,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Update the player indices */
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
+		cave_midx_debug(wpos, y, x, -Ind);
 
 		/* Redraw new spot */
 		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
@@ -5275,6 +5285,7 @@ int see_wall(int Ind, int dir, int y, int x)
 		if (p_ptr->py >= MAX_HGT) p_ptr->py = MAX_HGT - 1;
 		/* Update the location's player index */
 		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
+		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 		return (FALSE);
 	}
 
@@ -6192,18 +6203,23 @@ int apply_dodge_chance(int Ind, int attack_level) {
 		attack_level -= 1000;
 		dodge /= 2;
 	}
-	
+
+/* --- Limits lower attacker level to slightly above half dodger level */
 	/* although this is a bit unfair, it keeps it somewhat sane (no perma-dodge vs lowbies). */
-	if (attack_level < plev / 2) attack_level = plev / 2;
+	if (attack_level < plev / 3) attack_level = plev / 3;
+	/* and keep super-high-level players somewhat in line with their dodging chances, since
+	   dodging is skill-dependant and shouldn't scale upwards too wildly with their level */
+	if (attack_level < plev) attack_level = plev - (((plev - attack_level) * 2) / 3);
+/* --- */
 
 	/* lower limit (townies & co), preventing calc bugs */
 	if (attack_level < 1) attack_level = 1;
 	
-	/* smooth out attack level a little bit if it's above our own level. */
-	if (attack_level > plev) attack_level = plev + (attack_level - plev) / 2;
-	
-	/* smooth out player level a little bit if it's above level 50, the cap for skill values. (might need adjusting) */
+	/* smooth out player level a little bit if it's above level 50, the cap for skill values,
+	   to provide a smoother base for the following reduction-calculation a line below. */
 	if (plev > 50) plev = 50 + (plev - 50) / 2;
+	/* reduce the dodge-chance-reduction the dodger experiences vs high level monsters. */
+	if (attack_level > plev) attack_level = plev + (attack_level - plev) / 3; /* was /2 */
 
 	/* give especially low dodge chance during the first 2 levels,
 	   because most chars start out with 1.000 dodging, and everyone
@@ -6216,7 +6232,9 @@ int apply_dodge_chance(int Ind, int attack_level) {
         dodge = (dodge * (skill > plev ? plev : skill)) / (plev >= 50 ? 50 : plev);
 
 	/* calculate real dodge chance from our dodge level, and relation of our level vs enemy level. */
-	chance = dodge * plev / (attack_level * 3);
+//	chance = (dodge * plev) / (attack_level * 3); /* 50vs50 -> 33%, 75vs75 -> 31%, 99vs100 -> 30%, 50vs100 -> 25%, 63 vs 127 -> 23%, 80 vs 50 -> 43% */
+	chance = (dodge * plev * 2) / (attack_level * 5); /* 50vs50 -> 40%, 75vs75 -> 37%, 99vs100 -> 36%, 50vs100 -> 30%, 63 vs 127 -> 29%, 80 vs 50 -> 52% */
+	/* with new lower-limit: 40vs20 -> 59%, 50vs50 -> 40%, 75vs75 -> 37%, 99vs100 -> 36%, 50vs100 -> 30%, 63 vs 127 -> 29%, 80 vs 50 -> 43% */
 
 #if 1 /* instead of capping... */
 	if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;

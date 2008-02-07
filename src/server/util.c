@@ -1585,6 +1585,21 @@ void msg_print_near_monster(int m_idx, cptr msg)
 	}
 }
 
+static char* dodge_diz(int chance) {
+	if (chance < 5)
+		return "almost no";
+	else if (chance < 14)
+		return "a slight";
+	else if (chance < 23)
+		return "a significant";
+	else if (chance < 30)
+		return "a good";
+	else if (chance < 40)
+		return "a very good";
+	else
+		return "a high";
+}
+
 /*
  * Dodge Chance Feedback.
  */
@@ -1629,7 +1644,7 @@ void use_ability_blade(int Ind)
 #else
 	int lev;
 	int chance;
-
+ #if 0
 	lev = p_ptr->lev;
 	chance = apply_dodge_chance(Ind, lev);
 	if (is_admin(p_ptr))
@@ -1648,7 +1663,7 @@ void use_ability_blade(int Ind)
 	else
 		msg_format(Ind, "You have a high chance of doding a level %d monster.", lev);
 
- #if 0
+  #if 0
 	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
 	chance = apply_dodge_chance(Ind, lev);
 	if (is_admin(p_ptr))
@@ -1666,6 +1681,23 @@ void use_ability_blade(int Ind)
 		msg_format(Ind, "You have a very good chance of dodging a level %d monster.", lev);
 	else
 		msg_format(Ind, "You have a high chance of doding a level %d monster.", lev);
+  #endif
+ #else
+	lev = p_ptr->lev * 2 < 127 ? p_ptr->lev * 2 : 127;
+	if (is_admin(p_ptr))
+		msg_format(Ind, "You have exactly %d%%/%d%% chance of dodging a level %d/%d monster.", 
+			apply_dodge_chance(Ind, p_ptr->lev), apply_dodge_chance(Ind, lev), p_ptr->lev, lev);
+
+/*	msg_format(Ind, "You have %s/%s chance of dodging a level %d/%d monster.", 
+		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), dodge_diz(apply_dodge_chance(Ind, lev)), 
+		p_ptr->lev, lev);
+*/
+	msg_format(Ind, "You have %s chance of dodging a level %d monster.", 
+		dodge_diz(apply_dodge_chance(Ind, p_ptr->lev)), p_ptr->lev);
+  #if 0
+	msg_format(Ind, "You have %s chance of dodging a level %d monster.", 
+		dodge_diz(apply_dodge_chance(Ind, lev)), lev);
+  #endif
  #endif
 #endif
 	return;

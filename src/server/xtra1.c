@@ -2366,8 +2366,8 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr)
 		if ((!skill) || (skill == SKILL_AXE)) skill = SKILL_AXE;
 		else skill = -1;
 		break;
-        case TV_HAFTED:
-                if ((!skill) || (skill == SKILL_HAFTED)) skill = SKILL_HAFTED;
+        case TV_BLUNT:
+                if ((!skill) || (skill == SKILL_BLUNT)) skill = SKILL_BLUNT;
                 else skill = -1;
                 break;
 //        case SKILL_POLEARM:
@@ -3904,6 +3904,11 @@ void calc_bonuses(int Ind)
                 p_ptr->dis_to_a -= 30;
 	}
 
+	if (p_ptr->combat_stance == 2) {
+		p_ptr->to_a -= 30;
+		p_ptr->dis_to_a -= 30;
+	}
+
 	/* Temporary "fast" */
 	if (p_ptr->fast)
 	{
@@ -5119,17 +5124,17 @@ void calc_bonuses(int Ind)
 #endif
 #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
 		if (p_ptr->combat_stance == 2) switch (p_ptr->combat_stance_power) {
-			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5) / 10;
+			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
+				p_ptr->dodge_level = (p_ptr->dodge_level * 2) / 10;
+				break;
+			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3) / 10;
+				p_ptr->dodge_level = (p_ptr->dodge_level * 3) / 10;
+				break;
+			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4) / 10;
+				p_ptr->dodge_level = (p_ptr->dodge_level * 4) / 10;
+				break;
+			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5) / 10;
 				p_ptr->dodge_level = (p_ptr->dodge_level * 5) / 10;
-				break;
-			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 6) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 6) / 10;
-				break;
-			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 7) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 7) / 10;
-				break;
-			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 8) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 8) / 10;
 				break;
 		}
 #endif
@@ -6130,7 +6135,8 @@ static void process_global_event(int ge_id)
 	bool timeout = FALSE;
 	worldpos wpos;
 	int participants = 0;
-	int i, j = 0, n, k; /* misc variables, used by the events */
+	int i, j = 0, n, k, x, y; /* misc variables, used by the events */
+	cave_type **zcave, *c_ptr;
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
 	time_t now;
@@ -6214,6 +6220,19 @@ static void process_global_event(int ge_id)
 				s_printf("EVENT_LAYOUT: Generating wild %d at %d,%d,%d\n", ge->extra[2], wpos.wx, wpos.wy, wpos.wz);
 				wild_info[wpos.wy][wpos.wx].type = ge->extra[2];
 				wilderness_gen(&wpos);
+				/* wipe obstacles away so ranged chars vs melee chars won't end in people waiting inside trees */
+				zcave = getcave(&wpos);
+				for (x = 1; x < MAX_WID - 1; x++)
+				for (y = 1; y < MAX_HGT - 1; y++) {
+					c_ptr = &zcave[y][x];
+					if (c_ptr->feat == FEAT_SMALL_TREES ||
+					    c_ptr->feat == FEAT_DEAD_TREE ||
+					    c_ptr->feat == FEAT_TREES)
+						switch (ge->extra[2]) {
+						case 0:	c_ptr->feat = FEAT_DIRT; break;
+						case 1: c_ptr->feat = FEAT_GRASS; break;
+						}
+				}
 				if (ge->extra[4]) {
 					/* Generate the level from fixed arena layout */
 					s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
@@ -6378,20 +6397,22 @@ static void process_global_event(int ge_id)
 				break;
 			case 4: /* deathmatch phase -- might add some random teleportation for more fun */
 				n = 0;
-				for (i = 1; i <= NumPlayers; i++)
-					if (!is_admin(Players[i]) && inarea(&Players[i]->wpos, &wpos)) {
+				for (i = 1; i <= NumPlayers; i++) {
+					if (is_admin(Players[i])) continue;
+					/* in case some player tries to go > again^^ */
+					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy && Players[i]->wpos.wz
+					    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
+						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
+						strcpy(Players[i]->died_from,"a mysterious accident");
+						Players[i]->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+						Players[i]->deathblow = 0;
+						player_death(i);
+					}
+					if (inarea(&Players[i]->wpos, &wpos)) {
 						n++;
 						j = i;
-
-						/* in case some player tries to go > again^^ */
-						if (Players[i]->wpos.wz) {
-							msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
-							strcpy(Players[i]->died_from,"a mysterious accident");
-							Players[i]->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
-							Players[i]->deathblow = 0;
-							player_death(i);
-						}
 					}
+				}
 				if (!n) ge->state[0] = 255; /* double kill or something? ew. */
 				if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
 					ge->state[0] = 5;

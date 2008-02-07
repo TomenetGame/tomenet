@@ -1022,26 +1022,28 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_BOOK, 50, 0 },
-		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 0 },
+		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
 		{ 255, 255, 0 },
 	},
 
 	{
 		/* Priest */
-		{ TV_HAFTED, SV_MACE, 0 },
+		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
 		{ TV_BOOK, SV_SPELLBOOK, 65 }, /* Spellbook of Healing */
-		{ TV_SOFT_ARMOR, SV_ROBE, 0},
+//		{ TV_SOFT_ARMOR, SV_ROBE, 0},
+		{ TV_SOFT_ARMOR, SV_FROCK, 0},
 		{ 255, 255, 0 },
 	},
 
 	{
 		/* Rogue */
 		{ TV_SWORD, SV_MAIN_GAUCHE, 0 },
+		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
-		{ 255, 255, 0 },
+//		{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
 	},
 
 	{
@@ -1064,7 +1066,7 @@ static byte player_init[MAX_CLASS][5][3] =
 
 	{
 		/* Paladin */
-		{ TV_HAFTED, SV_LUCERN_HAMMER, 0 },
+		{ TV_BLUNT, SV_WAR_HAMMER, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
 		{ TV_BOOK, SV_SPELLBOOK, 60 }, /* Spellbook of Blessing */
@@ -1121,13 +1123,13 @@ static byte bard_init[BARD_INIT_NUM][2] =
 
 	{ TV_HARD_ARMOR, SV_CHAIN_MAIL },
 	{ TV_SCROLL, SV_SCROLL_WORD_OF_RECALL },
-	{ TV_HAFTED, SV_MACE },
+	{ TV_BLUNT, SV_MACE },
 	{ TV_POTION, SV_POTION_HEALING },
 	{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL },
 
 	{ TV_SWORD, SV_LONG_SWORD },
 	{ TV_ARROW, SV_AMMO_MAGIC },
-	{ TV_HAFTED, SV_WHIP },
+	{ TV_BLUNT, SV_WHIP },
 	{ TV_LITE, SV_LITE_LANTERN },
 	{ TV_TOOL, SV_TOOL_FLINT },
 };
@@ -1666,6 +1668,7 @@ static void player_setup(int Ind, bool new)
 
 	/* Update the location's player index */
 	zcave[y][x].m_idx = 0 - Ind;
+	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Show him to everybody */
 	everyone_lite_spot(wpos, y, x);

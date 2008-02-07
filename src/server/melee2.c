@@ -7264,7 +7264,7 @@ static void process_monster(int Ind, int m_idx)
 				update_player(0 - c_ptr->m_idx);
 				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
 			}
-
+			cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 
 			/* Hack -- Update the new location */
 			c_ptr->m_idx = m_idx;
@@ -7936,7 +7936,7 @@ static void process_monster_pet(int Ind, int m_idx)
 
 			/* update the monster */
 			update_mon(m_idx, TRUE);
-
+cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 			/* redraw the old grid */
 			everyone_lite_spot(wpos, oy, ox);
 
@@ -8363,7 +8363,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 			/* Update the monster */
 			update_mon(m_idx, TRUE);
-
+cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 			/* Redraw the old grid */
 			everyone_lite_spot(wpos, oy, ox);
 
@@ -8492,14 +8492,19 @@ void process_monsters(void)
 
 		/* Obtain the energy boost */
 		e = extract_energy[m_ptr->mspeed];
-		
+
+#if 0 /* bugged here, moved downwards a couple of lines */		
 		/* Added for Valinor - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+#endif
 
 		/* Give this monster some energy */
 		m_ptr->energy += e * MONSTER_TURNS;
 
 		tmp = level_speed(&m_ptr->wpos);
+
+		/* Added for Valinor - C. Blue */
+		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
 
 		/* Not enough energy to move */
 		if (m_ptr->energy < tmp) continue;

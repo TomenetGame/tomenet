@@ -334,10 +334,6 @@ end
 function sinv(i, tolua_S)
     exec_lua(Ind, "players(Ind).inventory["..i.."]."..tolua_S)
 end
---quickly display own property
-function sgprop(tolua_S)
-    exec_lua(Ind, "msg_print(Ind, players(Ind)."..tolua_S.."..\"#\")")
-end
 --quickly get item
 function ginv(name, i, tolua_S)
     p = ind(name)
@@ -347,6 +343,10 @@ end
 function inv(name, i, tolua_S)
     p = ind(name)
     exec_lua(Ind, "players("..p..").inventory["..i.."]."..tolua_S)
+end
+--quickly display own property
+function sgprop(tolua_S)
+    exec_lua(Ind, "msg_print(Ind, players(Ind)."..tolua_S.."..\"#\")")
 end
 --quickly display property
 function gprop(name, tolua_S)

@@ -999,7 +999,7 @@ static cptr d_info_flags2[] =
 	"RANDOM",
 	"IRON",
 	"HELL",
-	"NO_RECALL_DOWN",
+	"NO_RECALL_INTO",
 //	"NOMAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
 	"XXX1",

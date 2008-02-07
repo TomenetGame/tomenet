@@ -498,7 +498,7 @@ static byte default_tval_to_attr(int tval)
 			return (TERM_SLATE);
 		}
 
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
@@ -1421,7 +1421,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_BOW:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
@@ -1505,7 +1505,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
-			if (aware) append_name = TRUE;
+			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
+//			if (aware) append_name = TRUE;
 			if (short_item_names)
 			basenm = aware ? "& Ring~" : "& # Ring~";
 			else
@@ -2135,7 +2136,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 				t = object_desc_str(t, " (exploding)");
 			/* No break, we want to continue the description */
 
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_DIGGING:
@@ -4072,7 +4073,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 
         switch(o_ptr->tval){
-        case TV_HAFTED:
+        case TV_BLUNT:
                 fprintf(fff, "It's a%s hafted weapon.\n", ca_ptr); break;
         case TV_POLEARM:
                 fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
@@ -6549,7 +6550,7 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 				return (INVEN_TOOL);
 		}
 
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:

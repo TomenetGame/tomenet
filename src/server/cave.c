@@ -13,6 +13,7 @@
  */
 #define MULTI_HUED_PROPER
 
+
 /*
  * Scans for cave_type array pointer.
  * Returns cave array relative to the dimensions
@@ -297,25 +298,25 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		struct dungeon_type *d_ptr;
 		struct dun_level *l_ptr;
 		if(wpos->wz>0)
-			d_ptr=wild_info[wpos->wy][wpos->wx].tower;
+			d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 		else
-			d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
+			d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 	
 		
-		l_ptr=&d_ptr->level[ABS(wpos->wz)-1];
+		l_ptr = &d_ptr->level[ABS(wpos->wz)-1];
 
 		l_ptr->ondepth=(inc?l_ptr->ondepth+value:value);
-		if(l_ptr->ondepth < 0) l_ptr->ondepth=0;
+		if (l_ptr->ondepth < 0) l_ptr->ondepth = 0;
 #if 1
-		if(!l_ptr->ondepth) l_ptr->lastused=0;
-		if(value>0) l_ptr->lastused=now;
+		if (!l_ptr->ondepth) l_ptr->lastused = 0;
+		if (value > 0) l_ptr->lastused = now;
 #endif
 /*		l_ptr->lastused=now; */
 	} else {
-		w_ptr->ondepth=(inc?w_ptr->ondepth+value:value);
-		if(w_ptr->ondepth < 0) w_ptr->ondepth=0;
-		if(!w_ptr->ondepth) w_ptr->lastused=0;
-		if(value>0) w_ptr->lastused=now;
+		w_ptr->ondepth = (inc?w_ptr->ondepth+value:value);
+		if (w_ptr->ondepth < 0) w_ptr->ondepth = 0;
+		if (!w_ptr->ondepth) w_ptr->lastused = 0;
+		if (value > 0) w_ptr->lastused = now;
 		/* remove 'deposited' true artefacts if last player leaves a level,
 		   and if true artefacts aren't allowed to be stored (in houses for example) */
 		if (!w_ptr->ondepth && cfg.anti_arts_wild) {
@@ -2413,7 +2414,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			    if (d_ptr->flags2 & DF2_IRON) (*ap) = TERM_L_DARK;
 			    if (d_ptr->flags2 & DF2_HELL) (*ap) = TERM_FIRE;
 			    if (d_ptr->flags2 & DF2_NO_DEATH) (*ap) = TERM_GREEN;
-			    if (d_ptr->flags2 & DF2_NO_RECALL_DOWN) (*ap) = TERM_YELLOW;
+			    if (d_ptr->flags2 & DF2_NO_RECALL_INTO) (*ap) = TERM_YELLOW;
 		    }
 		}
 #endif
@@ -2544,14 +2545,20 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 	}
 	
-#ifdef WINTER_SEASON
+	/* display blue raindrops */
+	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_RAINING)) {
+		(*ap) = TERM_BLUE;
+		if (wind_gust > 0) (*cp) = '/';
+		else if (wind_gust < 0) (*cp) = '\\';
+		else (*cp) = '|';
+	}
+	/* for WINTER_SEASON */
 	/* display white snowflakes */
 	if (c_ptr->effect && (effects[c_ptr->effect].flags & EFF_SNOWING)) {
 		(*ap) = TERM_WHITE;
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
-#endif
-#ifdef NEW_YEARS_EVE
+	/* for NEW_YEARS_EVE */
 	/* display fireworks */
 	if (c_ptr->effect && (effects[c_ptr->effect].flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3))) {
 		switch (effects[c_ptr->effect].type) {
@@ -2565,8 +2572,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
-#endif
-
 }
 
 
@@ -6534,4 +6539,40 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
         effects[i].who = who2;
 		wpcopy(&effects[i].wpos, wpos);
         return i;
+}
+
+bool allow_terraforming(struct worldpos *wpos, byte feat) {
+	bool town = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
+	bool valinor = (getlevel(wpos) == 200);
+	bool sector00 = (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation);
+
+	if (!town && !valinor && !sector00) return(TRUE);
+
+	switch (feat) {
+	case FEAT_MORE:
+	case FEAT_LESS:
+	case FEAT_WAY_MORE:
+	case FEAT_WAY_LESS:
+	case FEAT_BETWEEN:
+	case FEAT_BETWEEN2: return(FALSE);
+	case FEAT_TREES:
+	case FEAT_SMALL_TREES:
+	case FEAT_DEAD_TREE:
+	case FEAT_GLYPH: return(FALSE);
+	case FEAT_SHAL_WATER:
+	case FEAT_DEEP_WATER:
+	case FEAT_SHAL_LAVA:
+	case FEAT_DEEP_LAVA: if (!valinor && !sector00) return(FALSE);
+        case FEAT_NONE:
+    	case FEAT_FLOOR:
+        case FEAT_DIRT:
+        case FEAT_GRASS:
+        case FEAT_ICE:
+        case FEAT_SAND:
+        case FEAT_ASH:
+        case FEAT_MUD:
+        case FEAT_FLOWER: if (!valinor && !sector00) return(FALSE);
+	}
+
+	return (TRUE);
 }

@@ -4804,7 +4804,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (do_res_stat(Ind, A_DEX)) ident = TRUE;
 			if (do_res_stat(Ind, A_CON)) ident = TRUE;
 			if (do_res_stat(Ind, A_CHR)) ident = TRUE;
-			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 30);
+			o_ptr->pval = 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);//adjusted it here too..
 			break;
 		}
 

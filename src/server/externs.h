@@ -469,7 +469,7 @@ extern void disturb(int Ind, int stop_search, int flush_output);
 extern void update_players(void);
 
 extern int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags);
-
+extern bool allow_terraforming(struct worldpos *wpos, byte feat);
 
 /* cmd1.c */
 extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y);
@@ -1191,6 +1191,7 @@ extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacke
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
+extern bool cast_raindrop(worldpos *wpos, int x);
 extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);

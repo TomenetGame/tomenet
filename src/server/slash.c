@@ -2393,6 +2393,11 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
+			else if (prefix(message, "/shutcancel")) {
+				msg_print(Ind, "\377w* Shut down cancelled *");
+				cfg.runlevel = 6;
+				return;
+			}
 			else if (prefix(message, "/val")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
@@ -4089,8 +4094,12 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			else if (prefix(message, "/weather")) { /* toggle snowfall during WINTER_SEASON */
-				if (weather == 1) weather = 0;
-				else weather = 1;
+				if (tk >= 1) weather = k;
+				else if (weather == 1) weather = 0;
+				else {
+					weather = 1;
+					weather_duration = 60 * 4; /* 4 minutes */
+				}
 				return;
 			}
 			else if (prefix(message, "/fireworks")) { /* toggle fireworks during NEW_YEARS_EVE */

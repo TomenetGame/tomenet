@@ -3483,7 +3483,7 @@ void check_experience(int Ind)
 					p_ptr->s_info[SKILL_DIVINATION].mod = 0;
 					/* Yay */
 					p_ptr->s_info[SKILL_NATURE].mod *= 2.1;
-					p_ptr->s_info[SKILL_HAFTED].mod *= 2.1;
+					p_ptr->s_info[SKILL_BLUNT].mod *= 2.1;
 					p_ptr->s_info[SKILL_AXE].mod *= 2.1;
 					p_ptr->s_info[SKILL_MARTIAL_ARTS].mod *= 2.1;
 					p_ptr->s_info[SKILL_FIRE].mod *= 2.1;
@@ -4691,7 +4691,7 @@ if(cfg.unikill_format){
 			if (num) {
 
 			/* Mega-Hack -- Prepare to make "Grond" */
-			invcopy(&prize, lookup_kind(TV_HAFTED, SV_GROND));
+			invcopy(&prize, lookup_kind(TV_BLUNT, SV_GROND));
 
 			/* Mega-Hack -- Mark this item as "Grond" */
 			prize.name1 = ART_GROND;
@@ -4745,7 +4745,7 @@ if(cfg.unikill_format){
 			q_ptr = &forge;
 
 			/* Mega-Hack -- Prepare to make "Grond" */
-			invcopy(q_ptr, lookup_kind(TV_HAFTED, SV_GROND));
+			invcopy(q_ptr, lookup_kind(TV_BLUNT, SV_GROND));
 
 			/* Mega-Hack -- Mark this item as "Grond" */
 			q_ptr->name1 = ART_GROND;
@@ -4931,7 +4931,8 @@ if(cfg.unikill_format){
 			}
 			else if (strstr((r_name + r_ptr->name),"Eol, the Dark Elf"))
 			{
-				a_idx = ART_ANGUIREL;
+				if (magik(25)) a_idx = ART_ANGUIREL;
+				else a_idx = ART_EOL;
 				chance = 50;
 			}
 			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
@@ -6706,7 +6707,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		{
 			int factor = 100;
 			if (d_ptr2->flags1 & DF1_NO_UP)		factor += 5;
-			if (d_ptr2->flags2 & DF2_NO_RECALL_DOWN)factor += 5;
+			if (d_ptr2->flags2 & DF2_NO_RECALL_INTO)factor += 5;
 			if (d_ptr2->flags1 & DF1_NO_RECALL)	factor += 10;
 			if (d_ptr2->flags1 & DF1_FORCE_DOWN)	factor += 10;
 			if (d_ptr2->flags2 & DF2_IRON)		factor += 15;
@@ -8599,12 +8600,12 @@ void telekinesis_aux(int Ind, int item)
 		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos) && !is_admin(p_ptr)) {
 			dungeon_type *d_ptr;
 			d_ptr=getdungeon(&p_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) || (d_ptr->flags1 & DF1_NO_RECALL))){
+			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))){
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}
 			d_ptr=getdungeon(&p2_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_DOWN)) || (d_ptr->flags1 & DF1_NO_RECALL))){
+			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))){
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}

@@ -166,7 +166,7 @@ void do_cmd_go_up(int Ind)
 	if (tower) {
 		if(c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
 		    !p_ptr->ghost && ((wild_info[wpos->wy][wpos->wx].tower->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_DOWN))) {
+				      (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_RECALL_INTO))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating upwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -513,7 +513,7 @@ void do_cmd_go_down(int Ind)
 	} else {
 		if((c_ptr->feat != FEAT_MORE) && (c_ptr->feat != FEAT_WAY_MORE) &&
 		    (!p_ptr->ghost) && ((wild_info[wpos->wy][wpos->wx].dungeon->flags1 & DF1_NO_RECALL) ||
-				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_DOWN))) {
+				      (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_NO_RECALL_INTO))) {
 			msg_print(Ind,"\377rA magical force prevents you from floating downwards.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -5078,7 +5078,9 @@ void do_cmd_cloak(int Ind)
 #endif
 
         if (p_ptr->pclass != CLASS_ROGUE) return;
-
+#ifdef ARCADE_SERVER
+return;
+#endif
     if (!p_ptr->cloaked) {
 	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {
 		msg_format(Ind, "\377yYou need to be level %d to learn how to cloak yourself effectively.", LEARN_CLOAKING_LEVEL);

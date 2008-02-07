@@ -192,7 +192,7 @@ static s32b artifact_power (artifact_type *a_ptr)
 				else if (a_ptr->pval > 0)
 					p *= (2 * a_ptr->pval);
 			}
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
@@ -506,7 +506,7 @@ static void add_ability (artifact_type *a_ptr)
 				break;
 			}
 			case TV_DIGGING:
-			case TV_HAFTED:
+			case TV_BLUNT:
 			case TV_POLEARM:
 			case TV_SWORD:
 			case TV_AXE:
@@ -518,7 +518,7 @@ static void add_ability (artifact_type *a_ptr)
 					do_pval (a_ptr);
 					if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 					if (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM ||
-					    a_ptr->tval == TV_HAFTED || a_ptr->tval == TV_AXE)
+					    a_ptr->tval == TV_BLUNT || a_ptr->tval == TV_AXE)
 						a_ptr->flags3 |= TR3_BLESSED;
 				}
 				else if (r < 7)
@@ -1381,7 +1381,7 @@ artifact_type *randart_make(object_type *o_ptr)
 //	    (k_ptr->tval!=TV_TOOL) &&
 //	    (k_ptr->tval!=TV_INSTRUMENT) &&
 	    (k_ptr->tval != TV_SHOT) && (k_ptr->tval != TV_ARROW) && (k_ptr->tval != TV_BOLT) &&
-	    (k_ptr->tval!=TV_HAFTED) &&
+	    (k_ptr->tval!=TV_BLUNT) &&
 	    (k_ptr->tval!=TV_POLEARM) &&
 	    (k_ptr->tval!=TV_SWORD) &&
 	    (k_ptr->tval!=TV_BOOMERANG) &&
@@ -1515,7 +1515,7 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Ensure weapons have some bonus to hit & dam */
 	if ((a_ptr->tval==TV_DIGGING) ||
-	    (a_ptr->tval==TV_HAFTED) ||
+	    (a_ptr->tval==TV_BLUNT) ||
 	    (a_ptr->tval==TV_POLEARM) ||
 	    (a_ptr->tval==TV_SWORD) ||
 	    (a_ptr->tval==TV_AXE) ||
@@ -1768,10 +1768,13 @@ artifact_type *randart_make(object_type *o_ptr)
 	}
 	
 	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
+	/* Limit +LIFE to +2 under same circumstances */
 	if (k_ptr->tval == TV_SHIELD ||
-	    ((k_ptr->tval == TV_SWORD || k_ptr->tval == TV_HAFTED || k_ptr->tval == TV_AXE || k_ptr->tval == TV_POLEARM) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))))
-		if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
+	    ((k_ptr->tval == TV_SWORD || k_ptr->tval == TV_BLUNT || k_ptr->tval == TV_AXE || k_ptr->tval == TV_POLEARM) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)))) {
+	    	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
+		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+	}
 
 	/* Not more than +6 stealth */
 	if ((a_ptr->flags1 & TR1_STEALTH) && (a_ptr->pval > 5)) a_ptr->pval = 5;/* was 6, but I think that's too much Stealth in one item?.. */
@@ -2230,6 +2233,13 @@ try_an_other_ego:
 		a_ptr->pval = 3;
 	}
 
+	/* Limit +LIFE on 1-hand weapons and shields to +2 (balances both, dual-wiel and 2-handed weapons) */
+	if (o_ptr->tval == TV_SHIELD ||
+	    ((o_ptr->tval == TV_SWORD || o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_AXE || o_ptr->tval == TV_POLEARM) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)))) {
+		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+	}
+
 	/* Restore RNG */
 	Rand_quick = FALSE;
 
@@ -2408,7 +2418,10 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 			a_ptr->flags1 |= TR1_BRAND_POIS;
 		}
 /*		if (a_ptr->tval == TV_SWORD && (randint(4) == 1))*/
-		if ((a_ptr->tval != TV_HAFTED) && (randint(4) == 1))
+		if ((a_ptr->tval != TV_BLUNT) && 
+		    !(a_ptr->tval == TV_POLEARM &&
+			a_ptr->sval != 3 && a_ptr->sval != 6 && a_ptr->sval != 9 && a_ptr->sval != 13 && a_ptr->sval != 17 && a_ptr->sval != 30
+		    ) && (randint(3) == 1))
 		{
 			a_ptr->flags5 |= TR5_VORPAL;
 		}

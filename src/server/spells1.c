@@ -531,6 +531,7 @@ bool teleport_away(int m_idx, int dis)
 
 	/* Update the new location */
 	zcave[ny][nx].m_idx = m_idx;
+	cave_midx_debug(wpos, ny, nx, m_idx);
 
 	/* Update the old location */
 	zcave[oy][ox].m_idx = 0;
@@ -655,6 +656,7 @@ void teleport_to_player(int Ind, int m_idx)
 
 	/* Update the new location */
 	zcave[ny][nx].m_idx = m_idx;
+	cave_midx_debug(wpos, ny, nx, m_idx);
 
 	/* Update the old location */
 	zcave[oy][ox].m_idx = 0;
@@ -789,6 +791,7 @@ void teleport_player(int Ind, int dis)
 
 	/* The player is on his new spot */
 	zcave[y][x].m_idx = 0 - Ind;
+	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Redraw the old spot */
 	everyone_lite_spot(wpos, oy, ox);
@@ -940,6 +943,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 
 	/* The player is now here */
 	zcave[y][x].m_idx = 0 - Ind;
+	cave_midx_debug(wpos, y, x, -Ind);
 
 	/* Redraw the old spot */
 	everyone_lite_spot(wpos, oy, ox);
@@ -1611,7 +1615,7 @@ static bool hates_acid(object_type *o_ptr)
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_SWORD:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_AXE:
 		case TV_HELM:
@@ -1675,7 +1679,7 @@ static bool hates_elec(object_type *o_ptr)
 
 /*
  * Does a given object (usually) hate fire?
- * Hafted/Polearm weapons have wooden shafts.
+ * Blunt/Polearm weapons have wooden shafts.
  * Arrows/Bows are mostly wooden.
  */
 bool hates_fire(object_type *o_ptr)
@@ -1687,7 +1691,7 @@ bool hates_fire(object_type *o_ptr)
 		case TV_LITE:
 		case TV_ARROW:
 		case TV_BOW:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_AXE:
 		case TV_BOOTS:
@@ -1810,7 +1814,7 @@ static bool can_rust(object_type *o_ptr)
 		case TV_HELM:
 #endif
 		case TV_SWORD:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_AXE:
 		{

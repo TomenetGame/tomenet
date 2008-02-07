@@ -1,4 +1,5 @@
 /* $Id$ */
+
 /*
  * Support for the "party" system.
  */

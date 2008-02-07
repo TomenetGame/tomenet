@@ -1407,7 +1407,7 @@ void do_cmd_observe(int Ind, int item)
 		if (strlen(o_name) > 77) msg_format(Ind, "%s", o_name + 77);
 
 		switch(o_ptr->tval){
-		case TV_HAFTED:
+		case TV_BLUNT:
 			msg_print(Ind, "It's a hafted weapon."); break;
 		case TV_POLEARM:
 			msg_print(Ind, "It's a polearm."); break;

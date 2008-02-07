@@ -95,12 +95,12 @@
 #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
 #define USE_PARRYING
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
+#define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
+#define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
+#define ENABLE_STANCES		/* combat stances for warriors */
 
-#if 0
- #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
+#ifdef RPG_SERVER
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
- #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
- #define ENABLE_STANCES		/* combat stances for warriors */
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
  #define AUCTION_DEBUG
@@ -1367,6 +1367,7 @@ that keeps many algorithms happy.
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
+#define EFF_RAINING		0x08000000	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
 #define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
 #define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
 #define EFF_FIREWORKS3		0x40000000	/* For new year's eve too. */
@@ -1534,7 +1535,7 @@ that keeps many algorithms happy.
 /* The sword of the Dawn */
 #define ART_DAWN                	110
 
-/* Hafted */
+/* Blunt */
 #define ART_MELKOR                      18
 #define ART_HURIN                       33
 #define ART_GROND                       111
@@ -1885,7 +1886,7 @@ that keeps many algorithms happy.
 #define TV_BOLT         18      /* Ammo for x-bows */
 #define TV_BOW          19      /* Slings/Bows/Xbows */
 #define TV_DIGGING      20      /* Shovels/Picks */
-#define TV_HAFTED       21      /* Priest Weapons */
+#define TV_BLUNT       21      /* Priest Weapons */
 #define TV_POLEARM      22      /* Pikes/Glaives/Spears/etc. */
 #define TV_SWORD        23      /* Edged Weapons */
 #define TV_AXE          24      /* Axes/Cleavers */
@@ -2109,15 +2110,15 @@ that keeps many algorithms happy.
 #define SV_DWARVEN_PICK                  6
 #define SV_MATTOCK                       7
 
-/* The "sval" values for TV_HAFTED */
+/* The "sval" values for TV_BLUNT */
 #define SV_CLUB                          1	/* 1d4  */
 #define SV_WHIP                          2	/* 1d6  */
 #define SV_QUARTERSTAFF                  3	/* 1d9  */
 #define SV_NUNCHAKU                      4	/* 2d3  */
 #define SV_MACE                          5	/* 2d4  */
 #define SV_BALL_AND_CHAIN                6	/* 2d4  */
-#define SV_WAR_HAMMER                    8	/* 3d3  */
-#define SV_LUCERN_HAMMER                10	/* 2d5  */
+#define SV_WAR_MAUL			 8	/* 3d3  */
+#define SV_WAR_HAMMER			10	/* 2d5  */
 #define SV_THREE_PIECE_ROD              11	/* 3d3  */
 #define SV_MORNING_STAR                 12	/* 2d6  */
 #define SV_FLAIL                        13	/* 2d6  */
@@ -2237,10 +2238,15 @@ that keeps many algorithms happy.
 #define SV_PADDED_ARMOR                 10  /*  4 */
 #define SV_LEATHER_SCALE_MAIL           11
 #define SV_LEATHER_JACK                 12
+#define SV_WIRE_FLEECE			13
 #define SV_STONE_AND_HIDE_ARMOR         15  /* 15 */
 #define SV_DRAGONRIDER_SUIT             16
 #define SV_WYVERNHIDE_ARMOR             17
 #define SV_SHIRT             		18
+#define SV_FROCK			20
+#define SV_TUNIC			21
+#define SV_GOWN				22
+#define SV_LEATHER_FROCK		23
 
 /* The "sval" codes for TV_HARD_ARMOR */
 #define SV_RUSTY_CHAIN_MAIL              1  /* 14- */
@@ -3220,6 +3226,9 @@ that keeps many algorithms happy.
 #define GF_FW_SHDI	205
 #define GF_FW_SHDM	206
 #define GF_FW_MULT	207
+/* well, let's try to bring weather and seasons? */
+#define GF_RAINDROP	208
+
 
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -3599,8 +3608,8 @@ that keeps many algorithms happy.
 #define RESF_VALUE40000		0x00004000
 #define RESF_VALUE80000		0x00008000
 
-#define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED)	/* prevent generation of especially powerful items */
-#define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED)	/* prevent generation of especially powerful high-level items */
+#define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
+#define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
 #define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
 #define RESF_WILD		RESF_NONE
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
@@ -4314,7 +4323,7 @@ that keeps many algorithms happy.
 #define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
 /* DF2_NOMAP => DF1_FORGET */
 /*#define DF2_NOMAP		0x00000008L *//* player never gains level knowledge */
-#define DF2_NO_RECALL_DOWN	0x00000008L /* Player may not recall downwards into this dungeon /
+#define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon /
 					       upwards into this tower. Added it especially for Nether Realm - C. Blue */
 #define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
 #define DF2_NO_DEATH            0x00000080L /* death penalty is reduced */
@@ -5695,7 +5704,7 @@ extern int PlayerUID;
 #define SKILL_SWORD             3
 #define SKILL_CRITS             4
 #define SKILL_POLEARM           5
-#define SKILL_HAFTED            6
+#define SKILL_BLUNT            6
 #define SKILL_ARCHERY           7
 #define SKILL_SLING             8
 #define SKILL_BOW               9
@@ -5879,7 +5888,7 @@ extern int PlayerUID;
 
 /* The specialist shops - the_sandman */
 #define STORE_SPEC_AXE		38
-#define STORE_SPEC_HAFTED	39
+#define STORE_SPEC_BLUNT	39
 #define STORE_SPEC_POLE		40
 #define STORE_SPEC_SWORD	41
 #define STORE_SPEC_SCROLL	52
@@ -6242,3 +6251,20 @@ extern int PlayerUID;
 #define AUCTION_ERROR_INVALID_ACCOUNT		-15 /* Invalid account */
 
 #endif
+
+
+/* macro for debugging Doppelgaenger @s */
+#define cave_midx_debug(wpos, cy, cx, midx) { \
+    if (midx < 0) { \
+        if (-midx > NumPlayers) { s_printf("MIDX_DEBUG: out of range (%d of %d)\n", -midx, NumPlayers); } \
+        if (wpos->wx != Players[-midx]->wpos.wx) { s_printf("MIDX_DEBUG: wrong wpos wx (%d : %d)\n", wpos->wx, Players[-midx]->wpos.wx); } \
+        if (wpos->wy != Players[-midx]->wpos.wy) { s_printf("MIDX_DEBUG: wrong wpos wy (%d : %d)\n", wpos->wy, Players[-midx]->wpos.wy); } \
+        if (wpos->wz != Players[-midx]->wpos.wz) { s_printf("MIDX_DEBUG: wrong wpos wz (%d : %d)\n", wpos->wz, Players[-midx]->wpos.wz); } \
+        if (Players[-midx]->py == cy) { \
+            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x (%d : %d)\n", cx, Players[-midx]->px); } \
+        } else { \
+            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x,y (%d : %d, %d : %d)\n", cx, Players[-midx]->px, cy, Players[-midx]->py); } \
+            else { s_printf("MIDX_DEBUG: wrong y (%d : %d)\n", cy, Players[-midx]->py); } \
+        } \
+    } \
+}

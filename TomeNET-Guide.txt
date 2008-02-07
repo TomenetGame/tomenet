@@ -1,11 +1,11 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. December 2007; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.0e, http://www.tomenet.net/
-| for latest information about TomeNET see http://www.c-blue.de/rogue.html
+| Latest update: 7. February 2008; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.0e (www.tomenet.net, usually outdated though).
+| For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
-| or join discussion in the forum on http://www.tomenet.net/
+| or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -51,8 +51,6 @@ Contents
     (3.9a)  Creating a chat macro for your party
     (3.10)  Experience, level-ups and skill points
     (3.11)  Death, ghosts and looting
-    (3.12)  Malicious effects players can suffer
-    (3.13)  Malicious effects monsters can suffer
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.2)   Level and owner of items
@@ -64,6 +62,9 @@ Contents
     (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
+    (4.11)  Malicious effects players can suffer
+    (4.12)  Malicious effects monsters can suffer
+    (4.13)  Quests and Events
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
@@ -114,6 +115,7 @@ Contents
 
 (0) Quickstart
 ==============
+
 (0.1) Start & play
 ------------------
 If you are using Linux, you will find additional information about how to
@@ -379,13 +381,13 @@ _       drink from a fountain. You must stand on the fountain to do this.
         Void jump gates teleport you to their counterpart and vice versa.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
-CTRL+X  save your character & quit the game.
+CTRL+X  save your character & quit the game. (You should do this in town!)
 Q or CTRL+C or CTRL+K
         lets your character commit suicide (permanently deletes it!).
         Characters who suicide won't drop items except for artifacts (if the
         server has ANTI_ARTS_HOARD enabled then no item at all will be
         dropped), nor will they keep the level static as it happens on a
-        normal 'final death'.
+        normal 'final death' (see (3.11) for details about static levels).
 ?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
@@ -669,6 +671,10 @@ Static      A level that is static will not change if you leave it but stay
             the same, permanently until it is unstaticed.
             All levels remain static for a short period of time after the
             last player leaves them to prevent scumming.
+            Also, levels remain static if a player ghost-died (meaning he died
+            ultimatively without possibility of resurrection) for a longer
+            while depending on the dungeon level, see (3.11) for details about
+            static-by-death levels.
 Static Art  See 'Art' at the top of this section.
 True Art    See 'Art' at the top of this section.
 Unique      A monster that is named and exists only once (although it can
@@ -734,6 +740,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
 (1) Introduction
 ================
+
 (1.1) What is TomeNET? (Where can I get the latest sources?)
 ------------------------------------------------------------
 It's an extremely advanced online multiplayer rogue-like role-playing game,
@@ -744,14 +751,11 @@ TomeNET is to destroy the fallen god Melkor who is known by the name of
 Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
 Latest version and information also available at http://www.c-blue.de/rogue/ .
 
-The source code was hosted at http://sourceforge.net/projects/pernband,
-module pm. Access it straight via CVS, avoid any snapshot tarballs and stuff.
-Due to sourceforge's slowness TomeNET source is now accessible at a new
-repository at http://angband.oook.cz/, see below.
-The cvs command-line to download the latest sources and files for TomeNET is:
-For sourceforge.net CVS (old):
-cvs -d:pserver:anonymous@cvs.pernband.sourceforge.net:/cvsroot/pernband co pm
-For angband.oook.cz CVS:
+If you want to download the source code, you can get it via CVS, avoid any
+snapshot tarballs and stuff. The repository is at http://angband.oook.cz/.
+The cvs command-line to completely download the latest sources and files for
+TomeNET is:
+
 cvs -d:pserver:anonymous@t-o-m-e.net:/var/cvs/tome co tomenet
 
 You can browse the CVS with a normal web browser easily!
@@ -899,6 +903,7 @@ the mundane world.
 
 (2) Installation & setup
 ========================
+
 (2.1) Installing TomeNET
 ------------------------
 Go to http://www.c-blue.de/rogue.html , download the latest client (version
@@ -1022,6 +1027,7 @@ ask fellow players for it.
 
 (3) Creating a character & starting to play
 ===========================================
+
 (3.1) Creating a new character; character modes
 -----------------------------------------------
 First you may choose your gender. This will not have actual influence on your
@@ -1105,6 +1111,7 @@ standard is 3 lifes.
 all remaining resurrections will be lost and the next time he dies it will be
 permanent, like it is for unworldly characters.)
 
+
 'Everlasting':
 --------------
 Create an everlasting character for an infinite amount of resurrections.
@@ -1120,11 +1127,13 @@ killed Sauron and Morgoth yet and team up with him, because those two won't
 Since it was often asked: Non-everlasting and everlasting players can revive
 each other without problems.
 
+
 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard):
 -------------------------------------------------------
 Unworldly characters are like normal characters, but they have only one life.
 Unworldly as well as hellish characters (who are a combination of 'no-ghost'
 and 'hard') will be completely annihilated and deleted on death.
+
 
 'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
 -------------------------------------------------------------------
@@ -1136,6 +1145,7 @@ These are:
 -ESP only works within radius of 20 squares
 -any speed changes above or below +0 are reduced by 50%
 -max number of melee attacks per round is reduced by 1.
+
 
 'Fruit bat' (Batty):
 --------------------
@@ -1438,6 +1448,7 @@ your inventory is chosen. So in this example you'd first use up all CCW
 potions, then use the healing potions because CCW are located above healing
 potions in your inventory. You can uninscribe items with the '}' key.
 
+
 Loading macros automatically:
 -----------------------------
 If you save your macros to a filename that is the same as your character's
@@ -1470,6 +1481,7 @@ user-<operating system>.prf (loaded if under the specific operating system)
 
 It is recommended to use only race/class/account/character preference files.
 
+
 Command macros:  !WORKS DIFFERENT FROM MOST ROGUE-LIKES!
 ---------------
 Command macros are only executed if the game isn't currently waiting for a
@@ -1481,6 +1493,7 @@ It is recommended to make your most important macros normal macros or at least
 hybrid macros (for example a "panic key" macro). Command macros don't work
 in shops.
 
+
 Hybrid macros:
 --------------
 Use 'create hybrid macro' instead of 'create normal macro' and 'create command
@@ -1490,6 +1503,7 @@ prevent you from inscribing your word-of-recall scrolls).
 Hybrid macros still work within input requests such as "quaff which potion?",
 just not in STRING INPUT such as chat lines, polymorph-codes or money amounts.
 Hybrid macros don't work in shops.
+
 
 Identity macros:
 ----------------
@@ -1642,6 +1656,7 @@ you to teleport away since it's too dangerous, you couldn't press any key
 until the 30 shots are finished. The character is 'locked'.
 The ')' in the macro '\e)f*t' clears all previous keypresses and hence
 allows you to hammer the macro without fearing a lock.
+
 
 (3.7a) Ability codes
 --------------------
@@ -1862,6 +1877,7 @@ Miscellanous escape sequences:
                 adjust the delay to your personal latency, depending on your
                 internet connection and speed at which your character acts.
 
+
 (3.9a) Creating a chat macro for your party
 -------------------------------------------
 Using public chat for party coordination can prove annoying to other players
@@ -1992,8 +2008,59 @@ Also see (7.5) for suggestions about skill point distribution.
 
 (3.11) Death, ghosts and looting
 --------------------------------
+
+Death
+-----
+If a player dies, an automatic chardump is generated in /lib/user called
+'<charname>-death.txt' (see 8.2) which you can view with any text editor.
+
 Normal/everlasting characters will turn into ghosts if they die. When you
 become a ghost, your title will change to 'Ghost' until you get revived.
+Depending on the server configuration the number of times the ghost of a
+'normal mode' player can be resurrected is usually limited to 2 times, so
+he has 3 lives before permanently biting it.
+Unworldly/hellish characters don't have a ghost and are completely destroyed
+if they die.
+
+If a player ultimatively dies on a dungeon or tower floor, ie he didn't turn
+into a resurrectable ghost but got completely erased, then that particular
+floor he "perma-died" (also termed "ghost-died") on will remain static for
+a while, instead of being regenerated.
+This allows other players to go down there later and retrieve his items or
+money, however, whatever killed him/her will probably also still be down
+there!
+The time a level stays static is usually 3 minutes * dungeonlevel.
+Example: A player dies on -300 ft in The Orc Cave dungeon.
+         In The Orc Cave, the first floor at -50ft is alreay like -500ft ie
+         level 10 (compare (4.5)). The player died 5 floors deeper at -300
+         so we have to add 5 more floors to 10, so the player died at dungeon
+         level 15 in fact. 3 minutes times 15 = 45 minutes time for others to
+         go there and pickup his loot until the level randomly changes again.
+Levels below 9 (ie less than +/-450ft) are usually exempt from remaining
+static and will regenerate normally, meaning the loot is lost after a couple
+of seconds.
+Note: If a player enters a static-by-death floor, the floor timer will be
+      reset and start counting down the full duration again, prolonging its
+      staticness. This timer-reset happens the moment a player enters that
+      floor. How long he stays or when he leaves again has no effect.
+
+Be aware that some or even all equipment and inventory might be lost forever
+if you die in places which don't provide enough surrounding free room to drop
+all of your items, for example a dense forest (green tree fields) or mountain
+regions (brown ^ fields)!
+
+Last but not least, non-validated players and characters below level 5 don't
+drop their items on death, their loot will vanish forever.
+
+Hint: The same timing that applies for static-by-death floors is also valid
+      for static-by-save&exit floors, ie floors where a player logged out
+      instead of doing that in town.
+      So if you logged out because your character was stuck, make sure you
+      don't log on too early or you will reset the timer as mentioned above.
+
+
+Ghosts
+------
 You can continue playing as a ghost, getting a slight experience penalty,
 but that's not recommended. Instead, you should go for resurrection!
 
@@ -2019,10 +2086,6 @@ The ghost will return to the world of living under the cost of a lot of
 experience but at least the player can resume playing. If the ghost dies,
 the character will finally be erased permanently, watch out!
 
-Depending on the server configuration the number of times a ghost can be
-resurrected can be limited (usually to 3 lifes, meaning 2 resurrections).
-Unworldly/hellish characters don't have a ghost and are completely destroyed
-if they die.
 Ghosts slowly lose experience, if they go below 0 they will fade and the
 player will be erased completely.
 
@@ -2042,106 +2105,6 @@ Ghosts have some special abilities, these are
 Ghosts can access undead powers with 'U' (currently not available, sorry).
 Those powers drain your experience. If you use them too often and run out
 of experience you will fade away (your character is erased then).
-
-If a character dies totally (no ghost to be resurrected) the level will
-(depending on the server configuration) stay static for a while to allow other
-players to retrieve his loot. The deeper the dungeon level, the longer it will
-stay static. It may take a whole day for very deep levels to 'unstatice'.
-
-If a player dies, an automatic chardump is generated in /lib/user called
-'<charname>-death.txt' (see 8.2).
-
-Note that some or even all equipment and inventory might be lost forever if
-you die in places which don't provide enough surrounding free room to drop
-all of your items, for example a dense forest (green tree fields) or mountain
-regions (brown ^ fields)!
-Last but not least, non-validated players and characters below level 5 don't
-drop their items on death, their loot will vanish forever.
-
-
-
-(3.12)  Malicious effects players can suffer
---------------------------------------------
-The player can suffer from various effects caused by monsters, traps or
-himself. Against several of these effects the 'Saving Throw' ability helps
-to decide whether it will be resisted or not (especially true for effects
-that are cast by monsters on the player).
-The various effects are:
-
-For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
-
-Hunger  -Gorged         Your speed gets reduced by 10.
-        -Full           While being /afk in 'Full' state or in normal state
-                        (normal = no food state is displayed, the 'Full'
-                        disappeared), your digestion will be stopped, allowing
-                        you to remain afk as long as you wish.
-        -Hungry
-        -Weak (yellow)
-        -Weak (orange)
-        -Weak (red)     You lose hit points and get paralyzed even with FA.
-                        If you hit a bowel cramps trap, you instantly enter
-                        this nutrition state. 'Slow Digestion' will help to
-                        not get insta-paralyzed!
-
-Slowdown        Monsters can cast spells or breathe (inertia) to slow down
-                the player. This effect is temporary. 'Free Action' helps
-                a bit to reduce the effect from inertia breath.
-
-Stun    -Stun           Reduces to-hit and to-dam.
-                        Reduces your martial arts damage (because you cannot
-                        perform MA special styles while stunned).
-                        Reduces chance for successful spell-casting.
-                        Prevents you from intercepting a monster (see (6.2)
-                        'Interception' skill).
-        -Heavy stun     Greatly reduces to-hit and to-dam.
-                        Reduces your martial arts damage (because you cannot
-                        perform MA special styles while stunned).
-                        Greatly reduces chance for successful spell-casting.
-        -Knocked out    You cannot perform any action while knocked out,
-                        it leaves your character completely helpless.
-                        Beware! High AC helps to prevent it, see (5.11).
-                        Note that AC only helps against melee-based stun
-                        (most famous monster is probably "The Stormbringer"),
-                        while stun from sound attacks can only be prevented
-                        by having sound resistance.
-
-Cut                     Cuts will make you lose HP continuously.
-(Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
-
-Poison  -Poisoned       The player will continuously lose Hit Points.
-                        Resisting poison will prevent the player from getting
-                        poisoned (compare (5.6)).
-
-
-
-(3.13)  Malicious effects monsters can suffer
----------------------------------------------
-Monsters can be affected by similar effects as players.
-Those are:
-
-Fear, blindness, confusion, sleep, slowing, and stun.
-
-Fear is a temporary effect, causing the monster to flee. Many monsters turn
-        afraid if their hit points drop very low. Wears off after a while.
-Blindness and confusion are currently the same thing, resulting in erratic
-        movements and being unable to cast spells or attack. Usually only
-        low level monsters are prone to these.
-        They are temporary effects that wear off after a while.
-Sleep is especially nice if it's cast as an area effect. Gets you out of
-        trouble, although most higher monsters are immune to it.
-        Monsters will wake up after a while, depending on your stealth.
-        Sleep effects are NOT cumulative.
-Slowing on monsters is currently a permanent effect. Very effective, although
-        many higher monsters are immune to it. Also, it is currently
-        cumulative (subject to change) and can be applied several times,
-        although monsters might resist.
-Stun    Stun can be caused by special martial art attacks among other things.
-        Stunned monsters have a harder time to successfully cast spells or hit
-        you in melee combat. Also monsters cannot interfere with your actions
-        while they are stunned. Many monsters are immune to stun, but also
-        many monsters - even of high level - are not.
-        Monsters can also be heavily stunned or knocked out, same as players.
-        Stun is temporary and will wear off, if no new stun effect is applied.
 
 
 
@@ -2308,7 +2271,7 @@ There are different types of dungeons. The main five are:
  dungeon/tower will only work if both players are on the same dungeon floor.
  Ghosts of dead players can still float up/down.
  No-recall dungeons/towers are marked by a light red < or > symbol.
--NO_RECALL_DOWN. You may not recall into this dungeon/tower. You can use
+-NO_RECALL_INTO. You may not recall into this dungeon/tower. You can use
  recall to get out of it though. Probability travel works towards the surface
  but not the towards the dungeon bottom/tower top. To Telekinesis the same
  restrictions apply as for NO_RECALL. Ghosts may float freely.
@@ -2368,6 +2331,7 @@ Hellish       yes     yes       yes             yes         yes           +10%
 
 (4.4) Terrain
 -------------
+
 
 Terrain features in the main window:
 ------------------------------------
@@ -2609,8 +2573,10 @@ structure doesn't allow easy monster killing.
 
 (4.7) Traps & Trap sets
 -----------------------
-About traps:
 
+
+About traps:
+------------
 At the beginning you will encounter traps that can do little damage, some will
 decrease your stats temporarily, they are annoying but not a big danger.
 However, later on traps will become extremely nasty and you should either get
@@ -2631,6 +2597,7 @@ type appended to it in { } brackets. It looks like this:
 
 
 About trap sets (or trapkits):
+------------------------------
 The 'Trapping' skill allows a player to set up 'monster traps'.
 
 A monster trap consists of
@@ -2808,8 +2775,126 @@ Party/Guild access are currently disabled due to abuse, sorry :|.
 
 
 
+(4.11)  Malicious effects players can suffer
+--------------------------------------------
+The player can suffer from various effects caused by monsters, traps or
+himself. Against several of these effects the 'Saving Throw' ability helps
+to decide whether it will be resisted or not (especially true for effects
+that are cast by monsters on the player).
+The various effects are:
+
+For 'Fear', 'Blindness', 'Confusion' and 'Paralysis' - please see (5.6).
+
+Hunger  -Gorged         Your speed gets reduced by 10.
+        -Full           While being /afk in 'Full' state or in normal state
+                        (normal = no food state is displayed, the 'Full'
+                        disappeared), your digestion will be stopped, allowing
+                        you to remain afk as long as you wish.
+        -Hungry
+        -Weak (yellow)
+        -Weak (orange)
+        -Weak (red)     You lose hit points and get paralyzed even with FA.
+                        If you hit a bowel cramps trap, you instantly enter
+                        this nutrition state. 'Slow Digestion' will help to
+                        not get insta-paralyzed!
+
+Slowdown        Monsters can cast spells or breathe (inertia) to slow down
+                the player. This effect is temporary. 'Free Action' helps
+                a bit to reduce the effect from inertia breath.
+
+Stun    -Stun           Reduces to-hit and to-dam.
+                        Reduces your martial arts damage (because you cannot
+                        perform MA special styles while stunned).
+                        Reduces chance for successful spell-casting.
+                        Prevents you from intercepting a monster (see (6.2)
+                        'Interception' skill).
+        -Heavy stun     Greatly reduces to-hit and to-dam.
+                        Reduces your martial arts damage (because you cannot
+                        perform MA special styles while stunned).
+                        Greatly reduces chance for successful spell-casting.
+        -Knocked out    You cannot perform any action while knocked out,
+                        it leaves your character completely helpless.
+                        Beware! High AC helps to prevent it, see (5.11).
+                        Note that AC only helps against melee-based stun
+                        (most famous monster is probably "The Stormbringer"),
+                        while stun from sound attacks can only be prevented
+                        by having sound resistance.
+
+Cut                     Cuts will make you lose HP continuously.
+(Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
+
+Poison  -Poisoned       The player will continuously lose Hit Points.
+                        Resisting poison will prevent the player from getting
+                        poisoned (compare (5.6)).
+
+
+
+(4.12)  Malicious effects monsters can suffer
+---------------------------------------------
+Monsters can be affected by similar effects as players.
+Those are:
+
+Fear, blindness, confusion, sleep, slowing, and stun.
+
+Fear is a temporary effect, causing the monster to flee. Many monsters turn
+        afraid if their hit points drop very low. Wears off after a while.
+Blindness and confusion are currently the same thing, resulting in erratic
+        movements and being unable to cast spells or attack. Usually only
+        low level monsters are prone to these.
+        They are temporary effects that wear off after a while.
+Sleep is especially nice if it's cast as an area effect. Gets you out of
+        trouble, although most higher monsters are immune to it.
+        Monsters will wake up after a while, depending on your stealth.
+        Sleep effects are NOT cumulative.
+Slowing on monsters is currently a permanent effect. Very effective, although
+        many higher monsters are immune to it. Also, it is currently
+        cumulative (subject to change) and can be applied several times,
+        although monsters might resist.
+Stun    Stun can be caused by special martial art attacks among other things.
+        Stunned monsters have a harder time to successfully cast spells or hit
+        you in melee combat. Also monsters cannot interfere with your actions
+        while they are stunned. Many monsters are immune to stun, but also
+        many monsters - even of high level - are not.
+        Monsters can also be heavily stunned or knocked out, same as players.
+        Stun is temporary and will wear off, if no new stun effect is applied.
+
+
+
+(4.13) Quests and Events
+------------------------
+Your character will have uncounted opportunities to participate in quests and
+events. While some events might be run by server admins or even fellow players
+and depend on their mood and spare time, other events are created by the game
+independent of admin intervention.
+
+Here is a list of currently implemented automatic quests and events:
+
+Kill quest
+    To receive a kill quest, simply type "/quest" in the chat. There is a
+    certain time limit which is in most cases easily sufficient though.
+    If you fulfil the kill quest you received, you will be rewarded with a
+    good or great item, depending on the difficulty (monster level).
+
+Highlander Tournament
+    This is an event rather than a quest. When you see a message, announcing
+    a Highlander Tournament, type "/geinfo" in the chat to find out more, and
+    use "/gesign" followed by the event number to sign up for participation.
+    It's a deathmatch with 10 minutes of preparation time, and only newly
+    created characters with 0 experience may join it.
+    The winner will receive a deed that can be 'r'ead, and turned in at Bree's
+    Mayor Office for either an item that fits the needs of the character (it
+    checks which skills you have trained to determine the item), or the deed
+    can be turned in for a temporary luck boost. Usually you will want the
+    item. However, you can trade the deed to someone else, who can then go and
+    redeem it for luck for that character of his.
+    All losers will also receive a deed on the next character they log in with
+    which can be turned in for a small temporary luck bonus.
+
+
+
 (5) Item and monster details
 ============================
+
 (5.1) Melee weapons, brands
 ---------------------------
 One of TomeNET's features is the "auto-retaliator". This means, if an enemy
@@ -3123,6 +3208,7 @@ Flying Kick             41              35          5d8             -
 Dragon Fist             45              35          6d8         Stunning
 Crushing Blow           48              35          8d7         Stunning
 
+
 Depending on your MA skill, you have a fixed number of barehanded attacks
 per round, independent of your character class, your strength or your
 dexterity (unlike characters that use weapons):
@@ -3157,6 +3243,7 @@ martial artists. If you use martial arts, also see (5.4) for more information.
 Even if you're not using martial arts, there are certain types of encumberment
 which may affect your character:
 
+
 Weapon weight
 -------------
 If your melee weapon or ranged weapon is too heavy you will hardly be able
@@ -3190,6 +3277,7 @@ character's strength:
         35          18/20-18/29             100         18/210-18/219
         40          18/30-18/39             100         18/220+
 
+
 Armour weight (concerning magic)
 --------------------------------
 Wearing armour which is too bulky gives you this message:
@@ -3198,12 +3286,28 @@ That means your mana (Spell Points) will be (severely) reduced from the
 bulkiness of your armour. To counter this effect, train your 'Combat' skill.
 To cast freely, you may wear 15.0 to 30.0 lbs of armour (depending on your
 class and hence the type of magic you utilize) plus your combat skill (in
-0.5 lbs). So 50 points in 'Combat' would allow a paladin to wear 30.0 + 25.0 =
-55.0 lbs of armour parts without receiving mana penalty from being encumbered.
+0.3 lbs). Here is a table illustrating the values:
+
+Adventurer    21.0 lb
+Warrior       -
+Istar         15.0 lb
+Priest        25.0 lb
+Rogue         20.0 lb
+Mimic         28.0 lb
+Archer        -
+Paladin       30.0 lb
+Ranger        22.0 lb
+Druid         20.0 lb
+Shaman        17.0 lb
+Runemaster    23.0 lb
+
+So 50 points in 'Combat' would allow a paladin to wear 30.0 + 15.0 =
+45.0 lbs of armour parts without receiving mana penalty from being encumbered.
 In general, praying is the easiest-to-use form of magic, and weaving spells
 the most difficult one.
 Your total armour weight is the sum of the weight of any armour pieces worn
 on head (helmet), body, arm (a shield), hands, feet, and your cloak.
+
 
 Armour weight (concerning combat)
 ---------------------------------
@@ -3227,6 +3331,7 @@ If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
 The weight limit is 20.0 + (Combat skill / 10) lbs.
 
+
 Glove encumberment (concerning magic)
 -------------------------------------
 Wearing gloves as a sorceror may reduce your mana (Spell Points) if they are
@@ -3247,6 +3352,7 @@ Very heavy armour and/or heavy items in your inventory may also slow you down
 
 (5.6) Resistances & caps, Immunities, Susceptibilities
 ------------------------------------------------------
+
 
 Resistances & caps
 ------------------
@@ -3368,6 +3474,9 @@ Confusion       While confused you cannot move, shoot or fight straight.
                 Wounds will remove the confusion.
                 Resisting confusion or chaos will lower damage to 5/7..5/12.
                 Breath damage is monster HP/6. Confusion damage caps at 400.
+                Confusion resistance is covered by chaos resistance, so if you
+                already resist chaos then you don't need any more items that
+                give confusion resistance.
 Paralysis       Paralysis can be caused by bashing doors, lack of food and by
                 traps or enemies. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
@@ -3409,7 +3518,9 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                 -Teleport you towards the monster.
                 -Teleport you a dungeon level higher or lower.
                 -Swap two of your six stats randomly!
+                 ("Your body starts to scramble")
                 -Destroy items in your inventory.
+                 ("Your backpack starts to scramble")
                 Resistance will cut damage to 6/7..6/12.
                 Breath damage is monster HP/3. Nexus breath caps at 250.
 Chaos           Chaos attacks can also have nasty side-effects if you don't
@@ -3616,6 +3727,9 @@ you already *identified* the item or bought it from a shop.
 Items that are bought from a shop are always automatically *identified*.
 Some shops offer an *identify* service but they are quite expensive.
 
+If you want to look up what certain special items can/cannot do, see the
+spoiler files section (7.4) or further explanations in (5.8) and (5.9).
+
 If you sell an item to a shop the offer you will receive depends on
 the following:
 
@@ -3713,6 +3827,9 @@ Items display the following pseudo-id tags:
 
 Note that potions and scrolls don't have 'egos' or 'artifacts', but some of
 the pots/scrolls show similar pseudo-id tags.
+
+Again - if you want to look up what certain special items can/cannot do, see
+the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
 
 
 
@@ -3838,7 +3955,7 @@ For more information about items and especially ego items see (7.4).
 
 
 Weapons & Armour
---
+----------------
 Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 prevents the user from using magic items or casting spells,
                 but also has a chance to interrupt enemy spellcasters.
@@ -3872,7 +3989,7 @@ Elven Gloves    Regenerate hit points and spell points.
 
 
 Potions
---
+-------
 Boldness        Removes fear and keeps your heart boldened for a while.
 Heroism         Temporary effects: Increase CHP and MHP by 10. Removes fear.
                 +12 bonus to-hit.
@@ -3895,7 +4012,7 @@ Restore Mana    Restores 500 MP.
 *Restore Mana*  Full mana restoration.
 Curing          Heals some HP, removes blindness/confusion/stun, cures
                 poison/cuts/hallucinations, heals some insanity,
-                satisfies your hunger, restores all your stats (except exp).
+                cures being gorged, restores all your stats (except exp).
 Life            Heals 5000 HP, removes blindness/confusion/stun, cures
                 poison/cuts/hallucinations, cures Black Breath,
                 restores all your stats (except experience).
@@ -3931,7 +4048,7 @@ Learning        Gives you 1..3 (random) additional skill points to spend.
 
 
 Scrolls
---
+-------
 Rumour          Entertains the audience.
 Blessing/Holy Chant/Holy Prayer
                 Increases your AC by 10/15/20, also increases your to-hit
@@ -4040,11 +4157,11 @@ Parchments      These contain informations about the game, they won't
 
 
 Wands/Rods/Staves
---
+-----------------
 Genocide        See 'Scrolls'.
 *Destruction*   See 'Scrolls'.
 Wonder          Wands of wonder cast random magic spells.
-Curing          Satisfies hunger, removes blindness/confusion/stun,
+Curing          Cures being gorged, removes blindness/confusion/stun,
                 cures poison/cuts.
 Probing         Tells you hit points, melee attacks, speed and armour class of
                 monsters in your line of sight.
@@ -4070,7 +4187,7 @@ Havoc           Fires balls or beams of random type, the exact outcome is hard
 
 
 Jewelry
---
+-------
 Amulets of Adornment    They might be looking fancy, but they don't do
                         anything and have no effect on your character.
 Talisman (Amulet)       Increases your luck, helps you finding better loot.
@@ -4292,15 +4409,25 @@ you won't be affected at all and only take a physical part of the damage -
 if there is a physical part. This depends on the attack type.
 Here is a list of attack types and brands:
 
-Brand           Needed resistance       Type      Contact/Cut/Stun/Bypasses AC
--------------------------------------   --------------------------------------
-HURT            Only AC - raw damage.   HIT                            +/+/+/-
-Acd,Ele,Fir,Col according element.      PUNCH,KICK,BUTT,CRUSH          +/-/+/-
-POISON          poison.                 CLAW, BITE                     +/+/-/-
-BLIND           blindness.              TOUCH,STING,ENGULF,CHARGE,CRAWL+/-/-/-
-CONFUSE         confusion (or chaos).   SPIT,                          -/-/-/-
-TERRIFY         fear.                   GAZE,WAIL,SPORE,EXPLODE,BEG,   -/-/-/+
-PARALYZE        free action.            INSULT,MOAN,DROOL,SHOW,WHISPER -/-/-/+
+Type          Contact/Cut/Stun/Bypasses AC
+-------------------------------------------
+HIT                               + + + -
+PUNCH,KICK,BUTT,CRUSH             + - + -
+CLAW, BITE                        + + - -
+TOUCH,STING,ENGULF,CHARGE,CRAWL   + - - -
+SPIT,                             - - - -
+GAZE,WAIL,SPORE,EXPLODE,BEG,      - - - +
+INSULT,MOAN,DROOL,SHOW,WHISPER    - - - +
+
+Brand           Needed resistance
+------------------------------------------------------------------------------
+HURT            Only AC - raw damage.
+Acd,Ele,Fir,Col according element.
+POISON          poison.
+BLIND           blindness.
+CONFUSE         confusion (or chaos).
+TERRIFY         fear.
+PARALYZE        free action.
 EXP_xx          hold life.      
 LOSE_xxx        sustain stats.
 EAT_xxx         DEX,stealing skill.
@@ -4747,7 +4874,10 @@ Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
 
 +Combat                         Lets you wear heavier armour without spell
-                                point penalties.
+                                point penalties, or without losing dodge
+                                chance, or other roguish abilities like
+                                dodging, dual-wield, critical-strike,
+                                sneakiness (compare (5.5) for details).
                                 Ability to pseudo-ID items: You can sense
                                 if items are terrible, worthless, cursed,
                                 average, good, excellent or special.
@@ -4836,9 +4966,11 @@ Note that not every skill is available to every profession (class).
                                                  - intercept less often,
                                                  - deal less damage.
                                 Offensive stance - you can stun opponents
-                                                   (compare (3.13)),
+                                                   (compare (4.12)),
                                                  - intercept more often,
-                                                 - parry and dodge less often.
+                                                 - parry and dodge less often,
+                                                 - get an AC penalty same as
+                                                   for being in 'fury'.
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
     .Dual-Wield                 The ability to wield two weapons at once. This
@@ -5053,14 +5185,44 @@ Note that not every skill is available to every profession (class).
                                 mustn't be so heavy that you get a flexibility
                                 warning (compare (5.5)) and also you must not
                                 be using a shield.
-                                Apart from that, your actual chance to dodge
-                                an attack depends on the total weight you are
-                                carrying around with you, that is, inventory
-                                and equipment added up, your dodging skill,
-                                and the opponent's level.
+                                There are various attacks that can be dodged:
+                                Melee attacks mostly, bolts, arrows and the
+                                likes (both magical and physical) shot by
+                                enemies or traps at you. And it slightly helps
+                                to dodge rubble coming down during an
+                                earthquake.
+                                Your actual chance to dodge an attack depends
+                                on the total weight you are carrying around
+                                with you, where inventory usually weighs most
+                                and will encumber you the most.
+                                Your equipment also musn't be too heavy,
+                                although your weapons are allowed to weigh
+                                quite a bit, as long as your armour isn't too
+                                encumbering. However, for weapons, armour, and
+                                inventory always goes: The lighter, the higher
+                                your chances will be.
+                                And of course your dodging chance depends on
+                                your dodging skill, which (after penalized by
+                                the weight of all your stuff) is compared to
+                                the opponent's level or trap level.
+                                (For dodging monsters, the basic race level of
+                                that monster type is important. Any additional
+                                levels the monster may have gained due to
+                                dwelling deeper than usual will not affect
+                                your dodge chance.)
                                 You can check your average dodging chance
                                 against opponents of same level by pressing
-                                'm' and choosing "Check dodge chance".
+                                'm' and choosing "Check dodge chance":
+                                "Almost no chance" means less than 5%,
+                                "Slight chance" -> less than 14%,
+                                "Significant chance" -> less than 23%,
+                                "Good chance" -> less than 30%,
+                                "Very good chance" -> less than 40%,
+                                otherwise "High chance" (may occur in actual
+                                game play if opponent is much lower than you).
+                                Against monsters that have way higher level
+                                than you, you receive a minor penalty. You can
+                                still dodge them quite effectively though.
         .Calmness               Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
@@ -5096,7 +5258,7 @@ Note that not every skill is available to every profession (class).
                                 applied after all other penalties have been
                                 factored in, at the very end of calculation).
                                 Note: You aren't able to intercept a monster's
-                                action while you are stunned. (Compare (3.12))
+                                action while you are stunned. (Compare (4.11))
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and SP.
                                 Only works if you are able to see the target,
@@ -5314,12 +5476,14 @@ Human
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
     Humans get a bonus on 'Interception' and 'Climbing'.
+
 Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
-    They get bonus on 'Bows-Mastery' and 'Interception'.
+    They get bonus on 'Bow-Mastery' and 'Interception'.
+
 Elf
     Elves resist light effects intrinsically and see invisible creatures.
     Elves are better magicians then humans, but not as good at fighting.
@@ -5327,8 +5491,9 @@ Elf
     also have better wisdom.
     Elves are better at searching, disarming, perception, stealth, bows, and
     magic, but they are not as good at hand weapons.
-    Elves get bonus on 'Bows-Mastery', 'Magic', 'Stealth', 'Dodging',
+    Elves get bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Dodging',
     'Calmness' and 'Sneakiness'.
+
 Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
     from not wearing shoes! Hobbits, or Halflings, are very good at bows,
@@ -5338,6 +5503,7 @@ Hobbit
     at melee fighting. Halflings have fair infravision, so they can detect
     warm-blooded creatures at a distance. Hobbits resist black breath somewhat.
     They get bonus on 'Sling-Mastery', 'Stealth', 'Sneakiness' and 'Dodging'.
+
 Gnome
     Gnomes are intrinsically protected to paralysis effects. Gnomes are smaller
     than dwarves but larger than halflings. They, like the hobbits, live in the
@@ -5348,6 +5514,7 @@ Gnome
     so they can detect warm-blooded creatures at a distance.
     Gnomes receive bonus on 'Crossbow-Mastery', 'Magic', 'Dodging' and
     'Digging'.
+
 Dwarf
     Dwarves can never be blinded and at level 30 they learn to travel across
     even the highest mountain regions.
@@ -5362,6 +5529,7 @@ Dwarf
     challenges at nearby foes. In other words, dwarves have a miserable
     stealth.
     They receive bonus on 'Axe-Mastery' and 'Digging'.
+
 Half-Orc
     Because of their preference to living underground to on the surface,
     Half-orcs resist darkness intrinsically. They make excellent warriors and
@@ -5372,6 +5540,7 @@ Half-Orc
     have great constitutions and lots of hit points.
     They get bonus on 'Backstabbing', 'Disarming', 'Necromancy' and receive
     slight penalties on 'Magic' and 'Sorcery'.
+
 Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
     very stupid and slow. They make great warriors and iffy priests. They are
@@ -5381,12 +5550,14 @@ Half-Troll
     often.
     Half-Trolls get bonus on 'Hafted-Mastery', 'Health' and 'Swimming'. They
     receive larger penalties on 'Magic' and 'Sorcery'.
+
 Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
     men from the West. This elder race surpasses human abilities in every
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
     A Dunadan gets bonus on 'Combat', 'Magic' and 'Archery'.
+
 High-Elf
     High-elves can see the invisible and resist light and the flow of time
     intrinsically. They are a race of immortal beings dating from the
@@ -5394,8 +5565,9 @@ High-Elf
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Calmness',
-    'Sneakiness' and 'Dodging'.
+    High-Elves receive bonus on 'Bow-Mastery', 'Magic', 'Stealth', 'Calmness'
+    and 'Dodging'.
+
 Yeek
     Being weak and losing many childhood fights, they have learned the
     ability to float gently to the ground. They have intrinsic feather
@@ -5406,6 +5578,7 @@ Yeek
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
     Yeeks don't receive boni or mali on any skills.
+
 Goblin
     Goblins resist darkness intrinsically. Goblins have a decidedly
     mixed reputation. They are almost always grinning, and more often than
@@ -5414,6 +5587,7 @@ Goblin
     good fighters, rogues, and mimics. Being creatures of the night,
     Golbins have natural resistance to darkness.
     They receive bonus on 'Boomerang-Mastery' and 'Stealing'.
+
 Ent
     The Ents are a powerful race dating from the beginning of the world,
     eldest of all animals or plants who inhabit Arda. Spirits of the
@@ -5431,6 +5605,7 @@ Ent
     They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
     'Water' and they receive penalties on 'Fire' school, 'Axe-mastery' and a
     slight penalty on 'Sword-mastery'.
+
 Thunderlord (also known as Dragonrider)
     Thunderlords can eat firestones to temporarily boost their powers.
     They have an intrinsic telepathic vision of all nearby creatures, the
@@ -5442,6 +5617,7 @@ Thunderlord (also known as Dragonrider)
     feather falling (levitation) from birth. See (5.9) for firestone details.
     They receive bonus on 'Polearm-Mastery', 'Aura of Fear' and the magic
     schools 'Conveyance' and 'Fire'.
+
 Dark-elf
     Dark elves dwell below the surface in huge caverns of their underground
     city. The children are already drilled to become sworn enemies of most
@@ -5452,6 +5628,7 @@ Dark-elf
     Dark-elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
     They get bonus on 'Archery', 'Stealth', 'Dodging' and 'Sneakiness'.
+
 Vampire
     These powerful undead creatues move out in the night to hunt living prey
     and suck its blood to sustain themselves. Vampires resist darkness, but
@@ -5498,19 +5675,19 @@ Half-Troll  +4  -4  -2  -4  +3  -6       12     135%    30ft
             -5  -8  -8  -2   5  -1   20 -10
 Dunadan     +1  +2  +2  +2  +3  +2       10     180%     0ft
              4   5   5   2  13   3   15  10
-High-Elf    +1  +3  -1  +3  +1  +3       10     230%    40ft
+High-Elf    +1  +3  -1  +3  +1  +3       10     260%    40ft
              4  20  20   3  14   3   10  25
 Yeek        -5  -5  -5  -5  -5  -3        7      80%     0ft
              0   0   0   0  10   0    0   0
 Goblin       0  -1  -4  +4  +2  -5       10     120%    30ft
              2  -3  -3   0   8   2   12  -5
-Ent         +8  -4  +2  -4  +8  -4       14     300%    50ft
+Ent         +8  -4  +2  -4  +8  -4       14     320%    50ft
              5   0  20  -6   4   5   15   5
 Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft             
              6   0  10 -16  10  30   15   5
 Dark-elf     0  +2  +1  +3  +1  -6       10     140%    50ft
              0   3   6   2  10   6   15  15
-Vampire     +2   0  -3  -1   0  -6       11     250%   100ft
+Vampire     +2   0  -3  -1   0  -6       11     240%   100ft
             -4   0  20   2  13  -4   10 -10
 
 
@@ -5527,6 +5704,7 @@ Adventurer
     Adventurers can train nearly all skills, but are not very good in a
     specific one. Their magical power is basing on their intelligence as well
     as wisdom.
+
 Warrior
     A Warrior is a hack-and-slash character, who solves most of his problems
     by cutting them to pieces, but will occasionally fall back on the help of
@@ -5548,6 +5726,7 @@ Warrior
     them.
     Warriors can also become monk-like fighters, by training the Martial Arts.
     The warrior class is recommended for beginners.
+
 Istar (elvish word for Mage)
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
@@ -5559,6 +5738,7 @@ Istar (elvish word for Mage)
     An Istari has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
+
 Priest
     Priests use certain divine magic, uttered as prayers. Unless mages they
     have a fair fighting potential with hafted or blessed weapons. Priests
@@ -5576,6 +5756,7 @@ Priest
     Note that priests get a penalty for wielding non-hafted weapons, except
     for BLESSED weapons which priests can use without problems independently
     of their type.
+
 Rogue
     Rogues can backstab (works especially well in the dark) sleeping or
     fleeing monsters, and they can train stealing items from shops, creatures
@@ -5606,6 +5787,7 @@ Rogue
     breaks cloaking, again see (0.2) for details.
     Auto-retaliation is disabled while cloaked, except for the Stormbringer.
     A rogue's primary stats are Intelligence and Dexterity.
+
 Mimic
     Mimics can learn how to shapechange and use monsters' forms, thus
     inheriting nearly all of the monster's abilities. Mimics learn forms
@@ -5623,6 +5805,7 @@ Mimic
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
     want to use these forms.)
     To find out the special abilities of a monster form, see section (6.7).
+
 Archer
     Archers aren't good at fighting, but can deliever extremely high damage
     with their ranged weapons. They can die quickly too, however.
@@ -5630,6 +5813,7 @@ Archer
     around with any bow/xbow/sling, usually most familiar with bows.
     An Archer is very bad at melee, being only better than the Sorcerer.
     Archers can create ammunition from the bones of their opponents.
+
 Paladin
     Paladins are a combination of warrior and priest. Holy knights that
     fight the evil with hammers and swords as well as divine support.
@@ -5640,6 +5824,7 @@ Paladin
     with magical devices and have a decent saving throw due to divine
     protection. Their primary stats are strength and wisdom, although
     intelligence can slightly help too.
+
 Ranger
     Rangers are a combination of warrior and mage. They are also skilled
     trappers and devoted to nature. They cannot become Unbelievers.
@@ -5649,6 +5834,7 @@ Ranger
     jack-of-all-trades class who can find several different ways out of
     any situation. They use intelligence for spellcasting, same as mages.
     At level 20 rangers learn to find paths passing thick woods.
+
 Druid
     Druids are able to call upon the mystical powers of nature and very good
     at it. Their wisdom is of primary importance to determine their mana and
@@ -5665,6 +5851,7 @@ Druid
     (Special note (compare 6.7): If they wield a weapon while using a form
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
+
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
     whatever they deem most appropriate. Their mind is also trained in a very
@@ -6134,6 +6321,7 @@ players. However, the ways this is done differs from each other.
 Schools give certain permanent boni and abilities to the player, when trained
 to a certain extent. The boni are listed below each school.
 
+
 Istari schools:
 ---------------
 Earth
@@ -6213,7 +6401,10 @@ Mana
     Disruption Shield
                     Conjures a shield that protects you from taking damage.
                     Instead, the shield will consume your mana to absorb it.
-                    Only Istari are able to really get the most out of it.
+                    Only Istari are able to really get the most out of it -
+                    they get 1 spell point deducted for each absorbed point of
+                    damage. Other classes will instead get 2 spell points
+                    deducted for each damage point.
                     Required skill level for first spell level: 35.
   BONI:             Mana resistance at 40.
 Conveyance
@@ -6353,6 +6544,7 @@ Meta
                     Required skill level for first spell level: 15.
   BONI:             Improves saving throw, the further it's trained above 20.
 
+
 Priest schools:
 ---------------
 Holy Offense
@@ -6476,6 +6668,7 @@ Holy Support
                     Required skill level for first spell level: 31.
   BONI:             Keeps the hunger satisfied all the time at 40,
                     Suppresses effects of DG_CURSE and TY_CURSE at 50.
+
 
 Druid schools:
 --------------
@@ -6602,15 +6795,15 @@ calculated from a base ability depending on race/class, and the magic device
 skill in the skill screen ('G').
 The Magic Device ability is not limited to a maximum value, although the
 player won't be able to increase it unlimitedly. The scale is:
-0+  Bad
-12+ Poor
-18+ Fair
-30+ Good
-36+ Very good
-42+ Excellent
-54+ Superb
-84+ Heroic
-108+  Legendary
+  0+    Bad
+  12+   Poor
+  18+   Fair
+  30+   Good
+  36+   Very good
+  42+   Excellent
+  54+   Superb
+  84+   Heroic
+  108+  Legendary
 
 The magic device ability does this...
 -makes it easier to use wands, staves and rods and to activate items:
@@ -6631,14 +6824,16 @@ The magic device skill does the following...
 
 (7) Tactics & strategy
 ======================
+
 (7.1) Preparing the inventory for diving into the dungeon
 ---------------------------------------------------------
 Depending on your character level you will always want to stock up on certain
 items before entering the dungeon. Here are some guidelines for your
 inventory:
 
+
 Beginners (level 1)
----
+-------------------
 + Some Rations of Food, one or more Flask of Oil
   Know that there are traps that can empty your stomach or drain the fuel of
   your light. If you don't have supplies then you might be doomed.
@@ -6666,8 +6861,9 @@ Beginners (level 1)
   with all the loot without having to start an annoying search for the
   staircases leading upwards back to town.
 
+
 Low level character (up to 15)
----
+------------------------------
 + Several Rations of Food, Some Flasks of Oil
 + Some Potions of Heroism
 + Some Potions of Cure Serious Wounds / Critical Wounds
@@ -6678,8 +6874,9 @@ Low level character (up to 15)
 + Some Scrolls of Identify
   These will allow you to identify unknown items that you may find!
 
+
 Medium level character (up to 25)
----
+---------------------------------
 + Some Flasks of Oil. Replace rations of food with "Scrolls of Satisfy Hunger"
   These will always fully satisfy your hunger and they are not eaten by rot
   jellys ;) Lembas (elvish waybread) are also nice but very rare.
@@ -6718,8 +6915,9 @@ Medium level character (up to 25)
   trap/door destruction and maybe a wand of teleport other useful. However,
   that would be 3 more inventory slots less to pick up loot :)
 
+
 Higher characters (up to 35)
----
+----------------------------
 (If you came this far, good work!)
 + Some Scrolls of Satisfy Hunger or some Lembas if you can find enough. Some
   flasks of oil if your light source needs those.
@@ -6755,8 +6953,9 @@ Higher characters (up to 35)
   recall to town afterwards to eat a sprig. (See 1.5 for more information
   about Black Breath.)
 
+
 Very high characters (36 and above)
----
+-----------------------------------
 + Satisfy Hunger or Lembas
 + Lots of Potions of Cure Critical Wounds
   If you manage to get enough Potions of Healing then you won't need pots of
@@ -6784,8 +6983,9 @@ Very high characters (36 and above)
 Depending on your character level you will need to equip certain items before
 entering the dungeon. Here are some guidelines for your equipment:
 
+
 Beginners (level 1)
----
+-------------------
 + Lantern
   because it provides light within a radius of 2 fields instead of 1 field of
   a torch.
@@ -6805,8 +7005,9 @@ Beginners (level 1)
   low on strength, pay attention that you don't buy a weapon that is too heavy
   to use at all.
 
+
 Low level character (up to 15)
----
+------------------------------
 + Enchant the damage of your melee and/or ranged weapon a bit using "Scrolls
   of Enchant Weapon To-Dam"
 + Get some armor. Note that certain armor can decrease your dexterity or
@@ -6815,8 +7016,9 @@ Low level character (up to 15)
   cannot be used at all in conjunction with a shield. A fighter should have
   approx. 30..45 AC or more.
 
+
 Medium level character (up to 25)
----
+---------------------------------
 + Enchant your melee and ranged weapons to at least +8 to damage! Best would
   be (+9,+9) or maybe even (+10,+10)
   You might ask a very powerful priest or paladin to assist you, that way you
@@ -6836,8 +7038,9 @@ Medium level character (up to 25)
 + Consider buying a small house to store backup equipment or special items
   instead of carrying them around with you.
 
+
 Higher characters (up to 35)
----
+----------------------------
 + A fighter should have approx. 65..100 AC or more.
 + Try to get a lantern of Brightness or even *Brightness*, a Dwarven Lantern
   or a Feanorian Lamp. These provide more light and/or don't need to be fueled
@@ -6865,8 +7068,9 @@ Higher characters (up to 35)
   they give you 1 blow less per round than your normal weapon you should
   consider these.
 
+
 Very high characters (36 and above)
----
+-----------------------------------
 + A fighter should have at least 90 AC. He might also have already 130 AC at
   level 36 if he is lucky.
 + Get as many high resistances as you can.. You will want Nether, Nexus,
@@ -6893,13 +7097,14 @@ Very high characters (36 and above)
 (7.3) Surviving critical situations
 -----------------------------------
 
+
 Map structures:
 ---------------
 There are certain situations and constellations that will occur often in a
 very similar manner. Here are some of them, together with some advice how
 to manage it.
 
-- a pack of approaching monsters (here orcs), often orcs or trolls:
+-A pack of approaching monsters (here orcs), often orcs or trolls:
 
 #########   #  #
 #  ooooo#   #  #
@@ -6907,18 +7112,19 @@ to manage it.
 #   ooooo oo   #    As soon as three or four of them stand on adjacent fields
 #        o     #    move up one field to limit the attackers to 3 at a time.
 #############  #    Sometimes the AI is very smart and monsters will try to
-            #  #    surround you anyways. Phase door scrolls will help.
+            #  #    surround you anyways. Phase door scrolls will help you out
+                    then.
 
--sometimes packs of monsters, usually animals, retreat if you chase them in
+-Sometimes packs of monsters, usually animals, retreat if you chase them in
  hallways, and will only attack if you enter a room. If these monsters don't
  have ranged attacks, just take them out with a bow or another range weapon.
  If you decide to chase them to the next room make sure you have enough phase
  door scrolls and healing pots to win a fight where you are attacked from all
  sides at once.
 
--the range of your missile weapon (bow) is often greater than monsters' range
- of sight as well as your own range of sight, allowing you to take out some
- monsters by shooting into the dark.
+-The range of your missile weapon (slings, bows, crossbows, boomerangs) is
+ often greater than monsters' attack range as well as your own range of sight,
+ allowing you to take out some monsters by shooting into the dark.
 
 -If you open a door, especially doors to pits with unknown content, be very
  careful and open the door diagonally to have as little creatures as possible
@@ -6928,9 +7134,9 @@ to manage it.
  otherwise. Here is how to open the door:
 
 ###########
-#,jmmjj,ii#@ <- stand here and open diagonally
-#j,m,,mijm+  <- don't stand here or more monsters will see you from inside
-###########
+#,jmmjj,ii#@ <- stand here and open the door diagonally
+#j,m,,mijm+  <- don't stand here or more monsters will see and immediately
+###########     target you from inside
 
 Prepare to close the door again as quickly as possible, it might be needed. In
 general you should leave water pits and especially jelly pits alone!
@@ -6939,8 +7145,11 @@ Coin pits (lots of '$' inside) can also contain very powerful mimics!
 -If you fight monsters that can cast ball spells or breathe on you, be aware
  that they might target a field adjacent to you and hence still hit you even
  if they cannot target you directly!
+ Similar goes for monsters who can cast summoning spells.
 
--pack monsters can be very nasty if they can shoot or cast spells from behind.
+-Pack monsters can be very nasty if those farther away from you can still
+ shoot or cast spells over the heads of their comrades in the front line, from
+ behind.
  In that case you should make sure that only very few of them can see you at a
  time. If your health suddenly drops, teleport away at once.
 
@@ -6951,6 +7160,12 @@ Coin pits (lots of '$' inside) can also contain very powerful mimics!
  and try to get enough stat potions (potions that raise your six primary
  stats, STR INT WIS DEX CON CHR) until they have a considerably high amount
  of hit points and/or combat potential before they dive deeper!
+ 
+-If you fight a monster that is capable of casting powerful summoning spells,
+ teleport at once if any summoned monsters appear around you!
+ Don't hesitate for a split second, just to "check whether that was actually
+ a dangerous summon or whether you might just take on all of them".
+ Hesitating in order to do so may well be your death sentence.
 
 
 Some monsters that people often get killed by are:
@@ -7175,6 +7390,7 @@ every monster nearby early.
 
 (8) Miscellanous
 ================
+
 (8.1) 'The Art Not To Die'
 --------------------------
 You died. Hm, very annoying indeed. If you are a "No-ghost" or "Hellish"
@@ -7885,8 +8101,8 @@ SOLUTION B: If you are using X11, this problem may occur depending on your
 
 (9) End of this guide.
 ==============================================================================
-** If TomeNET experiences changes/improvements you can also expect this guide
-to become updated shortly afterwards. Anyways, no guarantees ;) **
-Please don't hesitate to send in suggestions, criticism or comments to
-mail@c-blue.de
+If TomeNET experiences changes/improvements you can also expect this guide to
+become updated shortly afterwards. Anyway, no guarantees ;)
+Please don't hesitate to send in bug reports or suggestions to mail@c-blue.de
+or (even better) use "/rfe" command in the game!
 ==============================================================================

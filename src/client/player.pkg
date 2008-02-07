@@ -23,7 +23,7 @@ typedef unsigned int u32b;
 #define SKILL_SWORD             3
 #define SKILL_CRITS             4
 #define SKILL_POLEARM           5
-#define SKILL_HAFTED            6
+#define SKILL_BLUNT             6
 #define SKILL_ARCHERY           7
 #define SKILL_SLING             8
 #define SKILL_BOW               9

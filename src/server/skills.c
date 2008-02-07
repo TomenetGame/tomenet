@@ -359,7 +359,7 @@ static void msg_gained_abilities(int Ind, int old_value, int i) {
                 }
                 break;
 #if 1
-	case SKILL_SWORD: case SKILL_AXE: case SKILL_HAFTED: case SKILL_POLEARM:
+	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
 		}

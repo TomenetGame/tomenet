@@ -41,6 +41,8 @@
 # Please avoid to renumber this file for the time being; that'll make
 # backporting from ToME harder.		- Jir -
 
+# C. Blue: Currently unused but good weapon names:
+# Lucerne Hammer, Lochaber Axe (both polearms)
 
 # Version stamp (required)
 
@@ -449,7 +451,7 @@ A:10/1
 P:0:1d11:0:0:10
 F:SHOW_MODS | MUST2H
 
-N:55:& War Hammer~
+N:55:& War Maul~
 G:\:D
 I:21:8:0
 W:5:0:140:225
@@ -473,7 +475,8 @@ A:80/5
 P:0:6d8:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS | MUST2H
 
-N:58:& Lucerne Hammer~
+#N:58:& Lucerne Hammer~ <- that's a polearm
+N:58:& War Hammer~
 G:\:B
 I:21:10:0
 W:10:0:120:376
@@ -512,7 +515,8 @@ G:/:s
 I:22:4:0
 W:10:0:160:340
 A:10/1
-P:0:1d12:0:0:0
+#P:0:1d12:0:0:0
+P:0:1d16:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:63:& Pike~
@@ -536,8 +540,9 @@ G:/:y
 I:22:5:0
 W:5:0:90:120
 A:5/1
-P:0:1d8:0:0:0
-F:SHOW_MODS | COULD2H
+#P:0:1d8:0:0:0
+P:0:1d12:0:0:0
+F:SHOW_MODS | SHOULD2H
 
 N:66:& Lance~
 G:/:s
@@ -1629,7 +1634,8 @@ G:?:d
 I:70:52:0
 W:70:0:5:500000
 #A:70/16
-A:70/32
+#A:70/32
+A:80/48
 F:IGNORE_FIRE | IGNORE_WATER
 
 N:206:Recharging
@@ -4042,7 +4048,7 @@ P:0:1d9:0:0:0
 F:SHOW_MODS | COULD2H
 
 #turned into polearm, for balancing reasons
-#N:544:& Khopesh~
+#N:544:& Khopesh~ (sword)
 #G:|:W
 N:544:& Rhomphaia~
 G:/:W
@@ -6725,6 +6731,14 @@ $ENABLE_DIVINE$W:50:0:30:800
 $ENABLE_DIVINE$A:20/30:40/65
 $ENABLE_DIVINE$P:0:1d1:0:0:0
 $ENABLE_DIVINE$F:FULL_NAME | EASY_KNOW | IGNORE_FIRE
+
+N:980:& Handbook~ of Shadows
+G:?:D
+I:111:57:0
+W:50:0:30:12000
+A:20/30:40/65
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
 
 #Catcarnage stuff:
 #N:220:Scroll of Teleport to Party

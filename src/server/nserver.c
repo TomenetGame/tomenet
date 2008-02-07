@@ -1414,12 +1414,14 @@ static void Delete_player(int Ind)
 	if (Ind != NumPlayers)
 	{
 		cave_type **zcave;
+		worldpos *wpos = &Players[NumPlayers]->wpos;
 		p_ptr			= Players[NumPlayers];
 		if((zcave=getcave(&p_ptr->wpos)))
 			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		Players[NumPlayers]	= Players[Ind];
 		Players[Ind]		= p_ptr;
 		p_ptr			= Players[NumPlayers];
+		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 	}
 
 	if (Conn[Players[Ind]->conn].id != -1)
@@ -2660,8 +2662,10 @@ int Net_input(void)
 			sprintf(msg, "timeout %02x", connp->state);
 			Destroy_connection(i, msg);
 
+#if 0
 			/* Very VERY bad hack :/ - C. Blue */
 	                save_game_panic();
+#endif
 
 			continue;
 		}
@@ -3380,8 +3384,10 @@ int Send_reliable(int ind)
 		plog(format("Cannot flush reliable data (%d)", num_written));
 		Destroy_connection(ind, "flush error");
 
+#if 0
 		/* Very bad hack :/ - C. Blue */
 		save_game_panic();
+#endif
 
 		return -1;
 	}

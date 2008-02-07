@@ -1500,7 +1500,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	        break;
 
 	case TV_DIGGING:
-	case TV_HAFTED:
+	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
 	case TV_AXE:
@@ -1555,7 +1555,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		case TV_AXE:
 		case TV_MSTAFF:
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_BOOTS:
@@ -1803,7 +1803,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		case TV_BOOMERANG:
 		case TV_AXE:
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_SWORD:
 		case TV_POLEARM:
 		case TV_MSTAFF:
@@ -2115,7 +2115,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
@@ -2181,9 +2181,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 			/* Require identical "ego-item" names.
-			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon) */
-			if (o_ptr->name2 != j_ptr->name2 && o_ptr->name2 != j_ptr->name2b) return (FALSE);
-			if (o_ptr->name2b != j_ptr->name2 && o_ptr->name2b != j_ptr->name2b) return (FALSE);
+			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
+			   Note: This code assumes there's no ego power which can be both prefix and postfix. */
+			if ((o_ptr->name2 != j_ptr->name2) && (o_ptr->name2 != j_ptr->name2b)) return (FALSE);
+			if ((o_ptr->name2b != j_ptr->name2) && (o_ptr->name2b != j_ptr->name2b)) return (FALSE);
 
 			/* Require identical random seeds */
 			if (o_ptr->name3 != j_ptr->name3) return (FALSE);
@@ -3267,14 +3268,14 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf)
 		}
 
 
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		{
 			/* Very Good */
 			if (power > 1)
 			{
-			  if ((o_ptr->tval == TV_HAFTED) && (o_ptr->sval == SV_MSTAFF))
+			  if ((o_ptr->tval == TV_BLUNT) && (o_ptr->sval == SV_MSTAFF))
 			    {
 			      o_ptr->name2 = EGO_MSTAFF_POWER;
 			      break;
@@ -5488,7 +5489,7 @@ for (i = 0; i < 25; i++) {
 	switch (o_ptr->tval)
 	{
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_BOW:
@@ -6211,7 +6212,7 @@ static bool kind_is_theme(int k_idx)
 		case TV_BOLT:           prob = match_theme.combat; break;
 		case TV_BOOMERANG:      prob = match_theme.combat; break;
 		case TV_BOW:            prob = match_theme.combat; break;
-		case TV_HAFTED:         prob = match_theme.combat; break;
+		case TV_BLUNT:         prob = match_theme.combat; break;
 		case TV_POLEARM:        prob = match_theme.combat; break;
 		case TV_SWORD:          prob = match_theme.combat; break;
 		case TV_AXE:            prob = match_theme.combat; break;
@@ -6344,7 +6345,7 @@ static bool kind_is_good(int k_idx, u32b resf)
 		/* Weapons -- Good unless damaged */
 		case TV_BOW:
 		case TV_SWORD:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_DIGGING:
 		case TV_AXE:
@@ -6697,16 +6698,16 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 static int reward_weapon_check(player_type *p_ptr) {
 	long int rnd_range, weapon_tval;
 	rnd_range = p_ptr->s_info[SKILL_SWORD].value;
-	rnd_range += p_ptr->s_info[SKILL_HAFTED].value;
+	rnd_range += p_ptr->s_info[SKILL_BLUNT].value;
 	rnd_range += p_ptr->s_info[SKILL_AXE].value;
 	rnd_range += p_ptr->s_info[SKILL_POLEARM].value;
 	rnd_range += p_ptr->s_info[SKILL_MARTIAL_ARTS].value;
 	rnd_result = randint(rnd_range);
 	if (!rnd_result) return 0;
 	if (rnd_result <= p_ptr->s_info[SKILL_SWORD].value) weapon_tval = TV_SWORD;
-	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value <= p_ptr->s_info[SKILL_HAFTED].value) weapon_tval = TV_HAFTED;
-	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value <= p_ptr->s_info[SKILL_AXE].value) weapon_tval = TV_AXE;
-	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_HAFTED].value - p_ptr->s_info[SKILL_AXE].value <= p_ptr->s_info[SKILL_POLEARM].value) weapon_tval = TV_POLEARM;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value <= p_ptr->s_info[SKILL_BLUNT].value) weapon_tval = TV_BLUNT;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_BLUNT].value <= p_ptr->s_info[SKILL_AXE].value) weapon_tval = TV_AXE;
+	else if (rnd_result - p_ptr->s_info[SKILL_SWORD].value - p_ptr->s_info[SKILL_BLUNT].value - p_ptr->s_info[SKILL_AXE].value <= p_ptr->s_info[SKILL_POLEARM].value) weapon_tval = TV_POLEARM;
 	else weapon_tval = -1; /* Martial Arts doesn't use weapons */
 	return (weapon_tval);
 }
@@ -6715,7 +6716,7 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 	long int rnd_result = 0, selection = 0;
 	long int choice1 = 0, choice2 = 0, choice3 = 0, choice4 = 0, choice5 = 0;
 	if (p_ptr->s_info[SKILL_SWORD].value >= treshold) choice1 = p_ptr->s_info[SKILL_SWORD].value;
-	if (p_ptr->s_info[SKILL_HAFTED].value >= treshold) choice2 = p_ptr->s_info[SKILL_HAFTED].value;
+	if (p_ptr->s_info[SKILL_BLUNT].value >= treshold) choice2 = p_ptr->s_info[SKILL_BLUNT].value;
 	if (p_ptr->s_info[SKILL_AXE].value >= treshold) choice3 = p_ptr->s_info[SKILL_AXE].value;
 	if (p_ptr->s_info[SKILL_POLEARM].value >= treshold) choice4 = p_ptr->s_info[SKILL_POLEARM].value;
 	if (p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= treshold) choice5 = p_ptr->s_info[SKILL_MARTIAL_ARTS].value;
@@ -6725,7 +6726,7 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 /* TV_MSTAFF	*/
 	if (!rnd_result) return 0;
 /*  TV_SWORD
-    TV_HAFTED
+    TV_BLUNT
     TV_AXE
     TV_POLEARM
     TV_SHIELD	*/
@@ -6738,6 +6739,7 @@ static int reward_melee_check(player_type *p_ptr, long int treshold) {
 
 /* Receive a shield instead of a weapon? Depends on actual weapon type! */
 	if (p_ptr->pclass == CLASS_ROGUE) return(selection); /* rogues dual-wield, shields are bad for them. */
+//Nope, they can!	if (p_ptr->pclass == CLASS_SHAMAN) return(selection); /* shamans cannot cast magic well with shield. */
 	switch (selection) {
 	case 1: if magik(50) selection = 6; break;
 	case 2: if magik(35) selection = 6; break;
@@ -6901,6 +6903,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case 8: maxweight_armor = 15; break;
 		}
 	}
+	if (p_ptr->s_info[SKILL_CRITS].value >= treshold) maxweight_melee = 100;
 
 	/* Choose between possible rewards we gathered from analyzing so far */
 	/* Priority: Weapon -> Ranged -> Armor -> Misc */
@@ -6918,7 +6921,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	case 1:  reward_maxweight = maxweight_melee;
 		switch (melee_choice) {
 		case 1: reward_tval = TV_SWORD; break;
-		case 2: reward_tval = TV_HAFTED; break;
+		case 2: reward_tval = TV_BLUNT; break;
 		case 3: reward_tval = TV_AXE; break;
 		case 4: reward_tval = TV_POLEARM; break;
 		/* 5 -> Martial Arts, handled above */
@@ -7004,7 +7007,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (k_info[k_idx].weight > reward_maxweight) continue;
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
-			if (reward_tval == TV_SWORD || reward_tval == TV_HAFTED || reward_tval == TV_AXE || reward_tval == TV_POLEARM) { /* melee weapon */
+			if (reward_tval == TV_SWORD || reward_tval == TV_BLUNT || reward_tval == TV_AXE || reward_tval == TV_POLEARM) { /* melee weapon */
 				if (p_ptr->inventory[INVEN_WIELD].k_idx) i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) j = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
 				if (j > i) i = j; /* for dual-wielders, use the faster one */
@@ -7080,10 +7083,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if ((o_ptr->name1 == ART_RANDART) && (resf & RESF_NORANDART)) continue;
 		if (o_ptr->name1 && (o_ptr->name1 != ART_RANDART) && (resf & RESF_NOTRUEART)) continue;
 		if ((o_ptr->name2 && o_ptr->name2b) && (resf & RESF_NODOUBLEEGO)) continue;
-		if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
-		if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
 		if ((resf & RESF_LOWSPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
 		if ((resf & RESF_NOHISPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
+		if (!(k_info[o_ptr->k_idx].flags1 & TR1_SPEED)) {
+			if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
+		} else {
+			if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 200000)) continue;
+			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 250000)) continue;
+		}
 
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;

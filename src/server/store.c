@@ -397,7 +397,7 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		case TV_CROWN:
 		case TV_SWORD:
 		case TV_POLEARM:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_DIGGING:
 		case TV_BOW:
 		case TV_BOOMERANG:
@@ -655,7 +655,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_ARROW:
 				case TV_BOW:
 				case TV_DIGGING:
-				case TV_HAFTED:
+				case TV_BLUNT:
 				case TV_POLEARM:
 				case TV_SWORD:
 				case TV_AXE:
@@ -678,7 +678,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_SCROLL:
 				case TV_POTION:
 				case TV_POTION2:
-				case TV_HAFTED:
+				case TV_BLUNT:
 				break;
 				default:
 				return (FALSE);
@@ -878,7 +878,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_ARROW:
 				case TV_BOW:
 				case TV_DIGGING:
-				case TV_HAFTED:
+				case TV_BLUNT:
 				case TV_POLEARM:
 				case TV_SWORD:
 				case TV_AXE:
@@ -2173,6 +2173,9 @@ void store_stole(int Ind, int item)
 		chance += 30;
 	else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL)
 		chance += 15;
+	
+	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
+	if (sell_obj.owner) chance += 30;
 
 	/* avoid div0 */
 	if (chance < 1) chance = 1;
@@ -2444,7 +2447,7 @@ void store_purchase(int Ind, int item, int amt)
 
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
 	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
-		msg_print(Ind, "You cannot take items of non-everlasting players!");
+		msg_print(Ind, "You cannot take items of everlasting players!");
 		return;
 	}
 	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
@@ -3163,7 +3166,7 @@ void store_examine(int Ind, int item)
 		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
 
                 switch(o_ptr->tval){
-	        case TV_HAFTED:
+	        case TV_BLUNT:
     		        msg_print(Ind, "It's a hafted weapon."); break;
                 case TV_POLEARM:
 	        	msg_print(Ind, "It's a polearm."); break;
@@ -4326,7 +4329,7 @@ void home_examine(int Ind, int item)
 		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
 
                 switch(o_ptr->tval){
-	        case TV_HAFTED:
+	        case TV_BLUNT:
     		        msg_print(Ind, "It's a hafted weapon."); break;
                 case TV_POLEARM:
 	        	msg_print(Ind, "It's a polearm."); break;

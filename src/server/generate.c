@@ -9375,7 +9375,7 @@ for(mx = 1; mx < 131; mx++) {
 									//Add specialist stores? - the_sandman
 									switch(randint(10)){
 /*									case 1: cs_ptr->sc.omni = STORE_SPEC_AXE;break;
-									case 2: cs_ptr->sc.omni = STORE_SPEC_HAFTED;break;
+									case 2: cs_ptr->sc.omni = STORE_SPEC_BLUNT;break;
 									case 3: cs_ptr->sc.omni = STORE_SPEC_POLE;break;
 									case 4: cs_ptr->sc.omni = STORE_SPEC_SWORD;break;*/
 									case 1: case 2:cs_ptr->sc.omni = STORE_SPEC_CLOSECOMBAT;break;

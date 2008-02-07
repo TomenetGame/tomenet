@@ -1815,7 +1815,7 @@ player_race race_info[MAX_RACES] =
                 20,
                 {
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '%', 120,
                         },
@@ -1888,7 +1888,7 @@ player_race race_info[MAX_RACES] =
                 "High-Elf",
                 {  1,  3, -1,  3,  1,  3 },
                 4,  20, 20,  3,  3, 14, 10, 25,
-                10,  230,
+                10,  260,
                 100, 30,
                 90, 10, 190, 20,
                 82, 10, 180, 15,
@@ -1928,11 +1928,13 @@ player_race race_info[MAX_RACES] =
                                 '+', 2000,
                                 '+', 150,
                         },
+#if 0 /* these guys don't sneak */
                         {
                                 SKILL_SNEAKINESS,
                                 '+', 2000,
                                 '+', 100,
                         },
+#endif
                         {
                                 SKILL_CLIMB,
                                 '+', 0,
@@ -2000,7 +2002,7 @@ player_race race_info[MAX_RACES] =
                 "Ent",
                 { 8, -4, +2, -4,  8, -4 },
                 5, 0, 20, -6, 5, 4, 15, 5,
-                14, 300,
+                14, 320,
                 255, 70,
                 72, 6, 100, 25,
                 66, 4, 100, 20,
@@ -2149,7 +2151,7 @@ player_race race_info[MAX_RACES] =
                 "Vampire",
                 {  2,  0, -3,  -1,  0,  -6 },
                 -4,  0, 20,  2,  -4, 13, 10, -10,
-                11,  250,
+                11,  240,
                 100, 30,
                 90, 10, 180, 20,
                 82, 10, 170, 15,
@@ -2160,7 +2162,7 @@ player_race race_info[MAX_RACES] =
                 125,
                 {
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '%', 0,
                         },
@@ -2276,7 +2278,7 @@ Here is the plan:
 - Level 1-20 skill tree plan:
   - Combat 1.0
     - Weap mastery 1.0
-      - sword/hafted/pole/axe 0.5
+      - sword/blunt/pole/axe 0.5
       - MA 0.0
     - Magic 1.0, all children off ?
   - Sneakiness 0.5
@@ -2301,7 +2303,7 @@ XXX      - extra AC per level (+1 per level past 20)
       - Conveyance skill unlocked (0.0, +0.4)
       - Udun skill unlocked (0.0, +5.0)
       - Necromany skills get massive boosting! (0.0, +1.5)
-      - Hafted skills get boosted (0.0, +0.4)
+      - Blunt skills get boosted (0.0, +0.4)
       - Axe skills get boosted (0.0, +0.4)
       - MA skills get boosted (0.0, +0.3)
       - Holy XXX are disabled!
@@ -2435,7 +2437,7 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
                                 '%', 70,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '%', 70,
                         },
@@ -2691,7 +2693,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 600,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 600,
                         },
@@ -3024,7 +3026,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 800,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 800,
                         },
@@ -3363,7 +3365,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 500,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 600,
                         },
@@ -3724,7 +3726,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 630,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 630,
                         },
@@ -3888,7 +3890,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 400,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 400,
                         },
@@ -4056,7 +4058,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 800,
                         },
@@ -4246,7 +4248,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 700,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 700,
                         },
@@ -4637,7 +4639,7 @@ player_class class_info[MAX_CLASS] =
                                 '+', 400,
                         },
                         {
-                                SKILL_HAFTED,
+                                SKILL_BLUNT,
                                 '+', 0,
                                 '+', 400,
                         },
@@ -4901,7 +4903,7 @@ player_class class_info[MAX_CLASS] =
 				'+', 800,
 			},
 			{
-				SKILL_HAFTED,
+				SKILL_BLUNT,
 				'+', 0,
 				'+', 800,
 			}, 

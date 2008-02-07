@@ -8158,7 +8158,8 @@ D:It is a towering inferno of flames.
 N:511:Cherub
 G:A:G
 I:120:100d10:30:68:255
-W:39:4:0:2700
+#W:39:4:0:2700
+W:39:4:0:2000
 E:1:1:1:2:1:1
 O:0:90:10:0
 B:HIT:HURT:4d3
@@ -8558,7 +8559,7 @@ D:A phantasmal apparition with no head.
 N:534:Dread
 G:G:o
 I:120:25d20:20:30:10
-W:35:2:0:600
+W:35:2:1000:600
 E:0:0:0:0:0:0
 O:0:50:50:0
 B:HIT:HURT:6d6
@@ -9385,7 +9386,7 @@ O:0:0:0:0
 B:TOUCH:TIME:3d4
 B:TOUCH:TIME:3d4
 F:PASS_WALL | IM_POIS | IM_FIRE | IM_ELEC | IM_FIRE | IM_ACID | CAN_FLY |
-F:NO_CONF | NO_SLEEP | EMPTY_MIND | KILL_ITEM | RAND_50 | 
+F:NO_CONF | NO_SLEEP | EMPTY_MIND | KILL_ITEM | RAND_50 | RES_TIME |
 F:ZANGBAND | NO_CUT
 S:1_IN_7
 S:SLOW | BR_TIME |
@@ -9867,7 +9868,8 @@ D:approaches.
 N:605:Seraph
 G:A:r
 I:120:150d10:30:68:255
-W:45:4:3100:5000
+#W:45:4:3100:5000
+W:45:4:3100:3000
 E:1:1:1:2:1:1
 O:0:30:70:0
 B:HIT:HURT:4d6
@@ -10772,7 +10774,8 @@ D:extending far out behind it."
 N:652:Fallen angel
 G:A:s
 I:130:100d25:30:90:255
-W:49:6:0:8000
+#W:49:6:0:8000
+W:49:6:0:4000
 E:1:1:1:2:1:1
 O:0:50:50:0
 B:GAZE:EXP_40:4d4
@@ -10966,7 +10969,8 @@ D:countenance glares at you in disdain.
 N:661:Archon
 G:A:y
 I:130:100d35:30:140:255
-W:55:5:3200:12000
+#W:55:5:3200:12000
+W:55:5:3200:5000
 E:1:1:1:2:1:1
 O:0:100:0:0
 B:GAZE:TERRIFY:4d4
@@ -13384,7 +13388,7 @@ D:of decay and rot.  They are despised even in the hells.
 N:774:Dreadlord
 G:G:r
 I:120:30d100:20:150:10
-W:62:2:0:20000
+W:62:2:1000:20000
 E:0:0:0:0:0:0
 O:10:10:60:10
 B:HIT:EXP_40:6d6
@@ -18449,7 +18453,7 @@ D:Offbreed of the Sandworm Queen, they are harmless alone...
 N:1032:Tik'srvzllat
 G:G:v
 I:142:180d100:200:170:0
-W:127:2:1000:350000
+W:127:2:0:350000
 E:1:1:1:2:1:1
 O:50:0:50:0
 B:GAZE:UN_BONUS:10d10
@@ -18925,7 +18929,8 @@ B:HIT:HURT:6d8
 B:HIT:HURT:6d8
 B:HIT:DISARM:6d8
 F:MALE | WILD_TOO |
-F:DROP_2D2 | DROP_SKELETON | DROP_CORPSE
+$ARCADE_SERVER!F:DROP_2D2 | DROP_SKELETON | DROP_CORPSE
+$ARCADE_SERVER$F:DROP_SKELETON | DROP_CORPSE
 F:OPEN_DOOR | BASH_DOOR
 F:NO_CONF | NO_SLEEP
 F:RES_FIRE | RES_COLD | RES_ELEC
@@ -18944,7 +18949,7 @@ B:HIT:DISARM:10d8
 B:HIT:DISARM:10d8
 F:MALE | 
 F:FORCE_MAXHP | DROP_CORPSE | DROP_SKELETON | 
-F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | 
+F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | WILD_TOO |
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | 
 F:RES_ACID | IM_FIRE | RES_COLD | IM_ELEC | RES_POIS | 
 F:NO_CONF | NO_SLEEP | RES_TELE
@@ -19170,15 +19175,11 @@ S:BR_DARK
 D:A large reptile in black scales, burning the earth with
 D:the touch of hell where it steps.
 
-#NOTE: All Blade-A must either be E:0:0:0:0:0:0 or they must
-#have RAND_25, otherwise the fine balance of mimicking the
-#high-end monsters of the major races P, D, U, W, L, V and A
-#will be severly disturbed. It is recommended to choose E:0
-#so they will remain posing a highest threat. - C. Blue
 N:1071:Sky Blade
 G:A:B
 I:130:200d35:100:160:255
-W:70:8:3200:15000
+#W:70:8:3200:15000
+W:70:8:3200:25000
 E:0:0:0:0:0:0
 O:0:70:30:0
 B:GAZE:TERRIFY:7d4
@@ -19201,7 +19202,8 @@ D:it!
 N:1072:Solar Blade
 G:A:y
 I:130:300d35:150:180:255
-W:80:8:3200:22500
+#W:80:8:3200:22500
+W:80:8:3200:30000
 E:0:0:0:0:0:0
 O:0:70:30:0
 B:GAZE:TERRIFY:10d4
@@ -19224,7 +19226,8 @@ D:fighting it!
 N:1073:Star Blade
 G:A:b
 I:130:400d35:200:200:255
-W:90:8:3200:30000
+#W:90:8:3200:30000
+W:90:8:3200:35000
 E:0:0:0:0:0:0
 O:0:70:30:0
 B:GAZE:TERRIFY:10d4
@@ -19513,7 +19516,7 @@ D:slowly turning around and around forever.
 N:1086:Great Pumpkin
 G:G:o
 I:120:100d100:15:20:20
-W:127:255:0:50
+W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
@@ -19539,7 +19542,7 @@ S:MOAN | SLOW | SCARE | HOLD | TPORT
 N:1087:Great Pumpkin
 G:G:o
 I:120:60d100:15:20:20
-W:127:255:0:50
+W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
@@ -19561,7 +19564,7 @@ S:MOAN | SLOW | SCARE | HOLD | TPORT
 N:1088:Great Pumpkin
 G:G:o
 I:120:30d100:15:20:20
-W:127:255:0:50
+W:127:255:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:PARALYZE
@@ -19796,7 +19799,8 @@ N:1101:Target dummy
 $WINTER_SEASON!G:p:D
 $WINTER_SEASON$G:p:W
 I:110:10d2:0:15:0
-W:0:255:500:0
+#W:0:255:500:0
+W:99:255:500:0
 E:1:1:1:2:1:1
 O:0:0:0:0
 F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD | 

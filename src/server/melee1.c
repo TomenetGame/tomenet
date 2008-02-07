@@ -2043,6 +2043,10 @@ bool make_attack_melee(int Ind, int m_idx)
 
 						p_ptr->update |= (PU_BONUS);
 						obvious = TRUE;
+						if (p_ptr->combat_stance) {
+//							msg_print(Ind, "\377sYou return to balanced combat stance.");
+							p_ptr->combat_stance = 0;
+						}
 					}
 					break;
 				}

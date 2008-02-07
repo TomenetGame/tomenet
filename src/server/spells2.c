@@ -3480,7 +3480,7 @@ static bool item_tester_hook_weapon(object_type *o_ptr)
 	switch (o_ptr->tval)
 	{
 		case TV_SWORD:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_DIGGING:
 		case TV_BOW:
@@ -5487,7 +5487,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				{
 					/* Message and damage */
 					damage = 300;
-					if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
+					if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 					/* Cap the damage - mikaelh */
 					if (damage + p_ptr->total_damage > 300)
 					{
@@ -5500,8 +5500,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				else
 				{
 					/* Calculate results */
-					switch (randint(3))
+					switch (randint(3) - (magik((p_ptr->dodge_level * 3) / 4) ? 1 : 0))
 					{
+						case 0:
 						case 1:
 						{
 							damage = 0;
@@ -5511,7 +5512,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case 2:
 						{
 							damage = damroll(10, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
+							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 							{
@@ -5527,7 +5528,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case 3:
 						{
 							damage = damroll(30, 4);
-							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 4;
+							if (get_skill(p_ptr, SKILL_EARTH) >= 45) damage /= 2;
 							/* Cap the damage - mikaelh */
 							if (damage + p_ptr->total_damage > 300)
 							{
@@ -5553,6 +5554,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 					/* Update the cave player indices */
 					zcave[oy][ox].m_idx = 0;
 					zcave[sy][sx].m_idx = 0 - Ind;
+					cave_midx_debug(wpos, sy, sx, -Ind);
 
 					/* Redraw the old spot */
 					everyone_lite_spot(wpos, oy, ox);
@@ -6262,9 +6264,25 @@ bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interv
 	return (fire_cloud(Ind, typ, dir, dam, rad, time, interval, pattacker));
 }
 
-#ifdef WINTER_SEASON
 /*
- * Let it snow, let it snow, let it snow...
+ * Singing in the rain :-o
+ */
+bool cast_raindrop(worldpos *wpos, int x)
+{
+	char pattacker[80];
+        strcpy(pattacker, "");
+
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	project_time_effect = EFF_RAINING;
+	project_interval = 3;
+	project_time = 20;//1 + randint(66 - 3);
+
+	return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
+}
+
+/*
+ * Let it snow, let it snow, let it snow... (WINTER_SEASON)
  */
 bool cast_snowflake(worldpos *wpos, int x, int interval) /* interval is movement speed */
 {
@@ -6279,10 +6297,9 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) /* interval is movement
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, 0, x, 0, GF_SNOWFLAKE, flg, pattacker));
 }
-#endif
-#ifdef NEW_YEARS_EVE
+
 /*
- * Fireworks!
+ * Fireworks! (NEW_YEARS_EVE)
  */
 bool cast_fireworks(worldpos *wpos, int x, int y)
 {
@@ -6323,7 +6340,6 @@ bool cast_fireworks(worldpos *wpos, int x, int y)
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, typ, flg, pattacker)); /* typ -> colour */
 }
-#endif
 
 
 /*
@@ -6363,6 +6379,7 @@ void swap_position(int Ind, int lty, int ltx){
 		/* Update the old location */
 		zcave[ty][tx].m_idx=0;
 		c_ptr->m_idx=0-Ind;
+		cave_midx_debug(wpos, lty, ltx, -Ind);
 
 		/* Redraw/remember old location */
 		note_spot_depth(wpos, ty, tx);
@@ -6382,6 +6399,7 @@ void swap_position(int Ind, int lty, int ltx){
 		
 		/* Update the new location */
 		c_ptr->m_idx=0-Ind;
+		cave_midx_debug(wpos, lty, ltx, -Ind);
 
 		/* Update monster (new location) */
 		update_mon(zcave[ty][tx].m_idx, TRUE);
@@ -6409,7 +6427,9 @@ void swap_position(int Ind, int lty, int ltx){
 
 		/* Update old player location */
 		c_ptr->m_idx = 0-Ind;
+		cave_midx_debug(wpos, lty, ltx, -Ind);
 		zcave[ty][tx].m_idx = 0-Ind2;
+		cave_midx_debug(wpos, ty, tx, -Ind2);
 
 		/* Redraw/remember old location */
 		note_spot_depth(wpos, ty, tx);

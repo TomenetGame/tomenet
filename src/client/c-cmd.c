@@ -128,7 +128,7 @@ static void cmd_all_in_one(void)
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_DIGGING:
-		case TV_HAFTED:
+		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
