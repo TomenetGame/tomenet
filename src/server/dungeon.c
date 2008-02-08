@@ -3984,6 +3984,9 @@ static bool stale_level(struct worldpos *wpos, int grace)
 	/* Hack -- towns are static for good. */
 //	if (istown(wpos)) return (FALSE);
 
+	/* Highlander Tournament sector00 is static while players are in dungeon! */
+	if (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation) return(FALSE);
+
 	now=time(&now);
 	if(wpos->wz)
 	{

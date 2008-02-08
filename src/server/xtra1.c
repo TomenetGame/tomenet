@@ -6213,13 +6213,16 @@ static void process_global_event(int ge_id)
 				wipe_m_list(&wpos); /* clear any (powerful) spawns */
 				wipe_o_list_safely(&wpos); /* and objects too */
 				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
-//				static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
-				new_players_on_depth(&wpos,1,FALSE);
-				ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
+
+				if (!getcave(&wpos)) alloc_dungeon_level(&wpos);
 				/* generate solid battleground, not oceans and stuff */
+				ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
 				s_printf("EVENT_LAYOUT: Generating wild %d at %d,%d,%d\n", ge->extra[2], wpos.wx, wpos.wy, wpos.wz);
 				wild_info[wpos.wy][wpos.wx].type = ge->extra[2];
 				wilderness_gen(&wpos);
+				/* make it static */
+//				static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
+				new_players_on_depth(&wpos, 1, FALSE);
 				/* wipe obstacles away so ranged chars vs melee chars won't end in people waiting inside trees */
 				zcave = getcave(&wpos);
 				for (x = 1; x < MAX_WID - 1; x++)
@@ -6229,8 +6232,9 @@ static void process_global_event(int ge_id)
 					    c_ptr->feat == FEAT_DEAD_TREE ||
 					    c_ptr->feat == FEAT_TREES)
 						switch (ge->extra[2]) {
-						case 0:	c_ptr->feat = FEAT_DIRT; break;
-						case 1: c_ptr->feat = FEAT_GRASS; break;
+						case WILD_WASTELAND: c_ptr->feat = FEAT_DIRT; break;
+						case WILD_GRASSLAND: 
+						default: c_ptr->feat = FEAT_GRASS; break;
 						}
 				}
 				if (ge->extra[4]) {
@@ -6238,6 +6242,7 @@ static void process_global_event(int ge_id)
 					s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
 			                process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 				}
+
 				for (i = 1; i <= NumPlayers; i++) 
 				for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
 				if (ge->participant[j] == Players[i]->id) {
