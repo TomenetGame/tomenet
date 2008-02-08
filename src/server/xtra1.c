@@ -4737,9 +4737,11 @@ void calc_bonuses(int Ind)
 			/* changed by C. Blue, so it's available to mimics too */
 			p_ptr->to_d_melee+=20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
 		}
-		
+
+#if 0 /* already done further above! */		
 		/* At least +1, max. +3 */
 		if (p_ptr->zeal) p_ptr->num_blow += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+#endif
 	}
 	else /* make cumber_armor have effect on to-hit for non-martial artists too - C. Blue */
 	{
