@@ -160,7 +160,7 @@ HMARTYR = add_spell
 	["stat"] =      A_WIS,
 	["spell"] = 	function()
 			if player.martyr_timeout > 0 then
-				msg_print(Ind, "The heavens are not ready yet to accept your martyrium.")
+				msg_print(Ind, "The heavens are not ready yet to accept your martyrdom.")
 			else
 				set_martyr(Ind, 15)
 			end
@@ -172,6 +172,6 @@ HMARTYR = add_spell
 			"Turns you into an holy martyr, blessed with immortality to fulfil",
 			"his work. When the holy fire ceases, you will be very close to",
 			"death (up to 30 HP left). It will take a while until the heavens",
-			"are ready to accept another martyrium (1000 turns timeout).",
+			"are ready to accept another martyrdom (1000 turns timeout).",
 	}
 }
