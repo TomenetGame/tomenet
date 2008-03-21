@@ -50,6 +50,7 @@
 #endif
 #else
 #include <netinet/in.h>			/* for sockaddr_in */
+#include <arpa/inet.h>			/* for in_addr */
 #ifdef UNIX_SOCKETS
 #include <sys/un.h>			/* for sockaddr_un */
 #endif
