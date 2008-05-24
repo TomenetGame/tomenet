@@ -228,7 +228,8 @@ static void Input_loop(void)
 		 * system calling usleep seems to have a 10 ms overhead
 		 * attached to it.
 		 */
-		SetTimeout(0, 1000);
+//		SetTimeout(0, 1000);
+		SetTimeout(0, next_frame());
 
 		/* Only take input if we got some */
 		if (SocketReadable(netfd))

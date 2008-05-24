@@ -206,8 +206,13 @@ static void sync_sleep(int milliseconds)
 
 		/* Flush the network output buffer */
 		Net_flush();
+
 		/* Wait for .001 sec, or until there is net input */
-		SetTimeout(0, 1000);
+//		SetTimeout(0, 1000);
+
+		/* Wait according to fps - mikaelh */
+		SetTimeout(0, next_frame());
+
 		if(c_quit) continue;
 
 		/* Parse net input if we got any */
@@ -305,7 +310,11 @@ static char inkey_aux(void)
 			Net_flush();
 
 			/* Wait for .001 sec, or until there is net input */
-			SetTimeout(0, 1000);
+//			SetTimeout(0, 1000);
+
+			/* Wait according to fps - mikaelh */
+			SetTimeout(0, next_frame());
+
 			if(c_quit) continue;
 
 			/* Parse net input if we got any */

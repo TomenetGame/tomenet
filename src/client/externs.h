@@ -464,6 +464,7 @@ extern int Net_fd(void);
 extern int Net_start(int sex, int race, int class);
 extern int Net_input(void);
 extern int Flush_queue(void);
+extern int next_frame(void);
 
 extern int Send_file_check(int ind, unsigned short id, char *fname);
 extern int Send_file_init(int ind, unsigned short id, char *fname);

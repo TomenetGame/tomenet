@@ -323,7 +323,10 @@ void do_cmd_skill()
 					Net_flush();
 
 					/* Wait for .001 sec, or until there is net input */
-					SetTimeout(0, 1000);
+//					SetTimeout(0, 1000);
+
+					/* Wait according to fps - mikaelh */
+					SetTimeout(0, next_frame());
 
 					/* Parse net input if we got any */
 					if (SocketReadable(net_fd))

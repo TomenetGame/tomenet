@@ -688,7 +688,8 @@ void display_store(void)
 			}
 
 			/* Set the timeout */
-			SetTimeout(0, 1000000 / Setup.frames_per_second);
+//			SetTimeout(0, 1000000 / Setup.frames_per_second);
+			SetTimeout(0, next_frame());
 
 			/* Only take input if we got some */
 			if (SocketReadable(Net_fd()))

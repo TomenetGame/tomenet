@@ -3736,3 +3736,24 @@ int Send_cloak(void) {
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLOAK)) <= 0) return n;
 	return 1;
 }
+
+/* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
+int next_frame() {
+	struct timeval tv;
+	int time_between_frames = (1000000 / Setup.frames_per_second);
+	int us;
+
+	if (gettimeofday(&tv, NULL) == -1) {
+		/* gettimeofday failed */
+		return time_between_frames;
+	}
+
+	us = time_between_frames - tv.tv_usec % time_between_frames;
+
+	/* 1 millisecond is just too short */
+	if (us <= 1000) {
+		us += time_between_frames;
+	}
+
+	return us;
+}
