@@ -2011,6 +2011,9 @@ int Receive_item(void)
 
 	if (!screen_icky && !topline_icky)
 	{
+		/* HACK - Queue the rest - mikaelh */
+		queue_rest();
+
 		c_msg_print(NULL);
 
 		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
@@ -2063,6 +2066,9 @@ int Receive_direction(void)
 
 	if (!screen_icky && !topline_icky && !shopping)
 	{
+		/* HACK - Queue the rest */
+		queue_rest();
+
 		/* Ask for a direction */
 		get_dir(&dir);
 
@@ -2242,6 +2248,9 @@ int Receive_special_other(void)
 	/* Set file perusal method to "other" */
 	special_line_type = SPECIAL_FILE_OTHER;
 
+	/* HACK - Queue the rest - mikaelh */
+	queue_rest();
+
 	/* Peruse the file we're about to get */
 	peruse_file();
 
@@ -2359,6 +2368,9 @@ int Receive_sell(void)
 		return n;
 	}
 
+	/* HACK - Queue the rest */
+	queue_rest();
+
 	/* Tell the user about the price */
 	if (store_num == 57) sprintf(buf, "Really donate it? ");
 	else sprintf(buf, "Accept %d gold? ", price);
@@ -2452,6 +2464,9 @@ int Receive_pickup_check(void)
 	{
 		return n;
 	}
+
+	/* HACK - Queue the rest - mikaelh */
+	queue_rest();
 
 	/* Get a check */
 	if (get_check(buf))
@@ -2570,6 +2585,9 @@ int Receive_pause(void)
 
 	/* Flush any pending keystrokes */
 	Term_flush();
+
+	/* HACK - Queue the rest - mikaelh */
+	queue_rest();
 
 	/* Wait */
 	inkey();
@@ -3734,6 +3752,21 @@ int Send_wield2(int item) {
 int Send_cloak(void) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLOAK)) <= 0) return n;
+	return 1;
+}
+
+/*
+ * Move the rest of the data in rbuf to qbuf for later processing
+ * Must be called before new input can be received inside a Receive_*() call
+ */
+int queue_rest() {
+	Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
+	if (Sockbuf_write(&qbuf, rbuf.ptr, rbuf.len) != rbuf.len)
+	{
+		plog("Can't copy reliable data to buffer");
+		return -1;
+	}
+	Sockbuf_clear(&rbuf);
 	return 1;
 }
 
