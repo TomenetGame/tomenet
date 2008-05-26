@@ -2541,8 +2541,21 @@ static errr macro_dump(cptr fname)
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
-	/* Append to the file */
-	fff = my_fopen(buf, "a");
+	/* Check if the file already exists */
+	fff = my_fopen(buf, "r");
+
+	if (fff) {
+		char buf2[1024];
+		fclose(fff);
+
+		/* Attempt to rename */
+		strcpy(buf2, buf);
+		strncat(buf2, ".bak", 1023);
+		rename(buf, buf2);
+	}
+
+	/* Write to the file */
+	fff = my_fopen(buf, "w");
 
 	/* Failure */
 	if (!fff) return (-1);
@@ -3227,8 +3240,20 @@ static errr options_dump(cptr fname)
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
 
-	/* Append to the file */
-	fff = my_fopen(buf, "a");
+	/* Check if the file already exists */
+	fff = my_fopen(buf, "r");
+
+	if (fff) {
+		char buf2[1024];
+		fclose(fff);
+
+		/* Attempt to rename */
+		strncat(buf2, ".bak", 1023);
+		rename(buf, buf2);
+	}
+
+	/* Write to the file */
+	fff = my_fopen(buf, "w");
 
 	/* Failure */
 	if (!fff) return (-1);
