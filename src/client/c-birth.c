@@ -497,10 +497,69 @@ static void choose_stat_order(void)
 			}
 			if (c == '\r' || c == '2') j = (j+1) % 6;
 			if (c == '8' || c == '\b') j = (j+5) % 6;
+			if (c == '\r' || c == '2' || c == '8' || c == '\b') {
+				switch (j) {
+				case 0:	c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
+					c_put_str(TERM_L_YELLOW, "  How much you can carry and wield.", 4, 30);
+					c_put_str(TERM_L_YELLOW, "  How much damage your strikes inflict.", 5, 30);
+					c_put_str(TERM_L_YELLOW, "  How quickly you can strike.", 6, 30);
+					c_put_str(TERM_L_YELLOW, "  How easily you can bash, throw and dig.", 7, 30);
+					c_put_str(TERM_L_YELLOW, "  Slightly helps you swimming.", 8, 30);
+					break;
+				case 1:	c_put_str(TERM_L_UMBER, "Intelligence -", 3, 30);
+					c_put_str(TERM_YELLOW, "  How well you can use magic", 4, 30);
+					c_put_str(TERM_YELLOW, "    (depending on your class and spells).", 5, 30);
+					c_put_str(TERM_YELLOW, "  How well you can use magic devices.", 6, 30);
+					c_put_str(TERM_YELLOW, "  Helps your disarming skill.", 7, 30);
+					c_put_str(TERM_YELLOW, "  Helps noticing attempts to steal from you.", 8, 30);
+					break;
+				case 2:	c_put_str(TERM_L_UMBER, "Wisdom -      ", 3, 30);
+					c_put_str(TERM_YELLOW, "  How well you can use prayers and magic", 4, 30);
+					c_put_str(TERM_YELLOW, "    (depending on your class and spells).", 5, 30);
+					c_put_str(TERM_YELLOW, "  How well can you resist malicious effects", 6, 30);
+					c_put_str(TERM_YELLOW, "    and influences on both body and mind.", 7, 30);
+					break;
+				case 3:	c_put_str(TERM_L_UMBER, "Dexterity -   ", 3, 30);
+					c_put_str(TERM_YELLOW, "  How quickly you can strike.", 4, 30);
+					c_put_str(TERM_YELLOW, "  Increases your chance to not miss.", 5, 30);
+					c_put_str(TERM_YELLOW, "  Opponents will miss very slightly more often.", 6, 30);
+					c_put_str(TERM_YELLOW, "  Helps your stealing skills (if any).", 7, 30);
+					c_put_str(TERM_YELLOW, "  Helps to prevent foes stealing from you.", 8, 30);
+					c_put_str(TERM_YELLOW, "  Helps keeping your balance after bashing.", 9, 30);
+					c_put_str(TERM_YELLOW, "  Helps your disarming skill.", 10, 30);
+					c_put_str(TERM_YELLOW, "  Slightly helps you swimming.", 11, 30);
+					break;
+				case 4:	c_put_str(TERM_L_UMBER, "Constitution -", 3, 30);
+					c_put_str(TERM_YELLOW, "  Determines your amout of HP", 4, 30);
+					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can", 5, 30);
+					c_put_str(TERM_YELLOW, "    take without dieing.", 6, 30);
+					c_put_str(TERM_YELLOW, "    Very high constitution might not show much", 7, 30);
+					c_put_str(TERM_YELLOW, "    effect until your character also reaches an", 8, 30);
+					c_put_str(TERM_YELLOW, "    appropriately high level.)", 9, 30);
+					c_put_str(TERM_YELLOW, "  Reduces the duration of poisonous effects.", 10, 30);
+					c_put_str(TERM_YELLOW, "  Helps your character not to drown easily.", 11, 30);
+					break;
+				case 5:	c_put_str(TERM_L_UMBER, "Charisma -    ", 3, 30);
+					c_put_str(TERM_YELLOW, "  Shops will offer you wares at better prices.", 4, 30);
+					c_put_str(TERM_YELLOW, "    (Note that shop keepers are also influenced", 5, 30);
+					c_put_str(TERM_YELLOW, "    by your character's race.)", 6, 30);
+					c_put_str(TERM_YELLOW, "  Helps you to resist seducing attacks.", 7, 30);
+					break;
+				}
+			}
 			if (c == '\e') break;
 			if (c == 'Q') quit(NULL);
 		}
 
+		c_put_str(TERM_L_UMBER, "              ", 3, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 4, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 5, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 6, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 7, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 8, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 9, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 10, 30);
+		c_put_str(TERM_YELLOW, "                                                ", 11, 30);
 		clear_from(14);
         }
 }
