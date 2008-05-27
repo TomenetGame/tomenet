@@ -500,11 +500,11 @@ static void choose_stat_order(void)
 			if (c == '\r' || c == '2' || c == '8' || c == '\b') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
-					c_put_str(TERM_L_YELLOW, "  How much you can carry and wield.", 4, 30);
-					c_put_str(TERM_L_YELLOW, "  How much damage your strikes inflict.", 5, 30);
-					c_put_str(TERM_L_YELLOW, "  How quickly you can strike.", 6, 30);
-					c_put_str(TERM_L_YELLOW, "  How easily you can bash, throw and dig.", 7, 30);
-					c_put_str(TERM_L_YELLOW, "  Slightly helps you swimming.", 8, 30);
+					c_put_str(TERM_YELLOW, "  How much you can carry and wield.", 4, 30);
+					c_put_str(TERM_YELLOW, "  How much damage your strikes inflict.", 5, 30);
+					c_put_str(TERM_YELLOW, "  How quickly you can strike.", 6, 30);
+					c_put_str(TERM_YELLOW, "  How easily you can bash, throw and dig.", 7, 30);
+					c_put_str(TERM_YELLOW, "  Slightly helps you swimming.", 8, 30);
 					break;
 				case 1:	c_put_str(TERM_L_UMBER, "Intelligence -", 3, 30);
 					c_put_str(TERM_YELLOW, "  How well you can use magic", 4, 30);
