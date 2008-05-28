@@ -415,9 +415,9 @@ static void choose_stat_order(void)
                 c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, 5);
 
 		c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
-		c_put_str(TERM_YELLOW, "  How much you can carry and wield.", 4, 30);
-		c_put_str(TERM_YELLOW, "  How much damage your strikes inflict.", 5, 30);
-		c_put_str(TERM_YELLOW, "  How quickly you can strike.", 6, 30);
+		c_put_str(TERM_YELLOW, "  How quickly you can strike.", 4, 30);
+		c_put_str(TERM_YELLOW, "  How much you can carry and wield.", 5, 30);
+		c_put_str(TERM_YELLOW, "  How much damage your strikes inflict.", 6, 30);
 		c_put_str(TERM_YELLOW, "  How easily you can bash, throw and dig.", 7, 30);
 		c_put_str(TERM_YELLOW, "  Slightly helps you swimming.", 8, 30);
 
@@ -507,9 +507,9 @@ static void choose_stat_order(void)
 			if (c == '\r' || c == '2' || c == '8' || c == '\b') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
-					c_put_str(TERM_YELLOW, "  How much you can carry and wield.            ", 4, 30);
-					c_put_str(TERM_YELLOW, "  How much damage your strikes inflict.        ", 5, 30);
-					c_put_str(TERM_YELLOW, "  How quickly you can strike.                  ", 6, 30);
+					c_put_str(TERM_YELLOW, "  How quickly you can strike.                  ", 4, 30);
+					c_put_str(TERM_YELLOW, "  How much you can carry and wield.            ", 5, 30);
+					c_put_str(TERM_YELLOW, "  How much damage your strikes inflict.        ", 6, 30);
 					c_put_str(TERM_YELLOW, "  How easily you can bash, throw and dig.      ", 7, 30);
 					c_put_str(TERM_YELLOW, "  Slightly helps you swimming.                 ", 8, 30);
 					c_put_str(TERM_YELLOW, "                                               ", 9, 30);
@@ -551,8 +551,8 @@ static void choose_stat_order(void)
 					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can    ", 5, 30);
 					c_put_str(TERM_YELLOW, "    take without dieing.                       ", 6, 30);
 					c_put_str(TERM_YELLOW, "    Very high constitution might not show much ", 7, 30);
-					c_put_str(TERM_YELLOW, "    effect until your character also reaches an", 8, 30);
-					c_put_str(TERM_YELLOW, "    appropriately high level.)                 ", 9, 30);
+					c_put_str(TERM_YELLOW, "    effect until your character also reaches   ", 8, 30);
+					c_put_str(TERM_YELLOW, "    an appropriate level.)                     ", 9, 30);
 					c_put_str(TERM_YELLOW, "  Reduces the duration of poisonous effects.   ", 10, 30);
 					c_put_str(TERM_YELLOW, "  Helps your character not to drown easily.    ", 11, 30);
 					break;
