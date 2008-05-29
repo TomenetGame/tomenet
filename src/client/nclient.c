@@ -2702,7 +2702,7 @@ int Receive_encumberment(void)
         byte awkward_armor;     /* Mana draining armor */
         byte cumber_glove;      /* Mana draining gloves */
         byte heavy_wield;       /* Heavy weapon */
-        byte heavy_shield;       /* Heavy weapon */
+        byte heavy_shield;      /* Heavy shield */
         byte heavy_shoot;       /* Heavy shooter */
         byte icky_wield;        /* Icky weapon */
         byte awkward_wield;     /* shield and COULD_2H weapon */
