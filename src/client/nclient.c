@@ -260,7 +260,8 @@ void Receive_login(void)
 
 	/* Check if the server wanted to destroy the connection - mikaelh */
 	if (rbuf.ptr[0] == PKT_QUIT) {
-		Receive_quit();
+		errno = 0;
+		quit(&rbuf.ptr[1]);
 		return;
 	}
 
@@ -678,6 +679,23 @@ unsigned char Net_login(){
 	{
 		quit("Can't send login packet");
 	}
+
+	/* Get a response from the server, don't let Packet_scanf get it in every case - mikaelh */
+	SetTimeout(5, 0);
+        if (!SocketReadable(rbuf.sock))
+        {
+                errno = 0;
+                quit("No login reply received.");
+        }
+	Sockbuf_read(&rbuf);
+
+	/* Check if the server wanted to destroy the connection - mikaelh */
+	if (rbuf.ptr[0] == PKT_QUIT) {
+		errno = 0;
+		quit(&rbuf.ptr[1]);
+		return -1;
+	}
+
 	Packet_scanf(&rbuf, "%c", &tc);
 	return(tc);
 }
@@ -763,7 +781,7 @@ int Net_start(int sex, int race, int class)
 	if (cbuf.ptr[0] == PKT_QUIT)
 	{
 		errno = 0;
-		quit(&rbuf.ptr[1]);
+		quit(&cbuf.ptr[1]);
 		return -1;
 	}
 	if (cbuf.ptr[0] != PKT_REPLY)
