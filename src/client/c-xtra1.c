@@ -694,21 +694,22 @@ void prt_AFK(byte afk)
 }
 
 /* Print encumberment status line */
-void prt_encumberment(byte cumber_armor,byte awkward_armor,byte cumber_glove,byte heavy_wield,byte heavy_shoot,
+void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
 {
 	put_str("           ", 7, 0);
-	if (cumber_armor) c_put_str(TERM_UMBER, "[", 7, 0);
+	if (cumber_armor) c_put_str(TERM_UMBER, "(", 7, 0);
 	if (heavy_wield) c_put_str(TERM_RED, "/", 7, 1);
 	if (icky_wield) c_put_str(TERM_ORANGE, "\\", 7, 2);
 	if (awkward_wield) c_put_str(TERM_YELLOW, "/", 7, 3);
 	if (easy_wield) c_put_str(TERM_GREEN, "|", 7, 4);
-	if (heavy_shoot) c_put_str(TERM_RED, "}", 7, 5);
-	if (awkward_shoot) c_put_str(TERM_YELLOW, "}", 7, 6);
-	if (cumber_weight) c_put_str(TERM_L_RED, "F", 7, 7);
-	if (monk_heavyarmor) c_put_str(TERM_YELLOW, "[", 7, 8);
-	if (awkward_armor) c_put_str(TERM_VIOLET, "[", 7, 9);
-	if (cumber_glove) c_put_str(TERM_VIOLET, "]", 7, 10);
+	if (heavy_shield) c_put_str(TERM_RED, "[", 7, 5);
+	if (heavy_shoot) c_put_str(TERM_RED, "}", 7, 6);
+	if (awkward_shoot) c_put_str(TERM_YELLOW, "}", 7, 7);
+	if (cumber_weight) c_put_str(TERM_L_RED, "F", 7, 8);
+	if (monk_heavyarmor) c_put_str(TERM_YELLOW, "(", 7, 9);
+	if (awkward_armor) c_put_str(TERM_VIOLET, "(", 7, 10);
+	if (cumber_glove) c_put_str(TERM_VIOLET, "]", 7, 11);
 }
 
 /*

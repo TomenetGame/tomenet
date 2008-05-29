@@ -532,6 +532,7 @@ struct player_type
 	bool cumber_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
 	bool heavy_wield;	/* Heavy weapon */
+	bool heavy_shield;	/* Heavy weapon */
 	bool heavy_shoot;	/* Heavy shooter */
 	bool icky_wield;	/* Icky weapon */
 	bool awkward_wield;	/* Icky weapon */

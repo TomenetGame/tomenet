@@ -436,7 +436,7 @@ extern void window_stuff(void);
 extern void prt_sane(byte attr, cptr buf);
 extern void cnv_stat(int val, char *out_val);
 extern void prt_AFK(byte afk);
-extern void prt_encumberment(byte cumber_armor,byte awkward_armor,byte cumber_glove,byte heavy_wield,byte heavy_shoot,
+extern void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
 			    byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot);
 
 /* c-xtra2.c */

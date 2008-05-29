@@ -2684,6 +2684,7 @@ int Receive_encumberment(void)
         byte awkward_armor;     /* Mana draining armor */
         byte cumber_glove;      /* Mana draining gloves */
         byte heavy_wield;       /* Heavy weapon */
+        byte heavy_shield;       /* Heavy weapon */
         byte heavy_shoot;       /* Heavy shooter */
         byte icky_wield;        /* Icky weapon */
         byte awkward_wield;     /* shield and COULD_2H weapon */
@@ -2692,7 +2693,7 @@ int Receive_encumberment(void)
         byte monk_heavyarmor;   /* Reduced MA power? */
         byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shoot,
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 	    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
 	{
 		return n;
@@ -2700,7 +2701,7 @@ int Receive_encumberment(void)
 
 	if (screen_icky) Term_switch(0);
 
-	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 
 	if (screen_icky) Term_switch(0);
