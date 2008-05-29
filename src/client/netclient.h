@@ -82,4 +82,4 @@ int Receive_AFK(void);
 int Receive_encumberment(void);
 int Receive_ping(void);
 
-void queue_rest(void);
+int queue_rest(void);
