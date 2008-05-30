@@ -2138,7 +2138,7 @@ static void cmd_master_aux_build(void)
 			/* Perm mode on */
 			case '2': buf[0] = FEAT_PERM_EXTRA; break;
 			/* Tree mode on */
-			case '3': buf[0] = FEAT_TREES; break;
+			case '3': buf[0] = magik(80)?FEAT_TREE:FEAT_BUSH; break;
 			/* Evil tree mode on */
 			case '4': buf[0] = FEAT_DEAD_TREE; break;
 			/* Grass mode on */
