@@ -79,6 +79,7 @@ bool character_loaded;          /* The character was loaded from a savefile */
 
 u32b seed_flavor;               /* Hack -- consistent object colors */
 u32b seed_town;                 /* Hack -- consistent town layout */
+u32b seed_wild_extra;		/* Hack -- random additional wilderness features (used in terrain_spot()) */
 
 s16b command_new;               /* Command chaining from inven/equip view */
 

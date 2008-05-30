@@ -1095,6 +1095,10 @@ static bool rd_extra(int Ind)
 	/* Class/Race/Gender/Party */
 	rd_byte(&p_ptr->prace);
         rd_byte(&p_ptr->pclass);
+	if (older_than(4, 3, 5)) { /* class order changed: warrior now first class, so newbies won't choose adventurer */
+		if (p_ptr->pclass == CLASS_WARRIOR) p_ptr->pclass = CLASS_ADVENTURER;
+		else if (p_ptr->pclass < CLASS_DRUID) p_ptr->pclass--;
+	}
 	rd_byte(&p_ptr->male);
 	if (older_than(4, 2, 4))
 	{

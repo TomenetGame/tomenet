@@ -15,32 +15,6 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN_RANGED 10	/* was 25 - note: this counts per shot, not per turn */
-#define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
-
-/* Reduce damage in PvP by this factor */
-#define PVP_SHOOT_DAM_REDUCTION 3
-/* Reduce damage in PvP by this factor */
-#define PVP_THROW_DAM_REDUCTION 3
-
-/* chance of walking in a random direction when confused and trying to climb,
- * in percent. [50]
- */
-#define STAIR_FAIL_IF_CONFUSED	50
-
-/* duration of GoI when climbing stairs.	[2] */
-#define STAIR_GOI_LENGTH	3
-
-/* max range of arrows in do_cmd_fire.
- * the aim is to prevent 'out-of-range attack' abuse.
- * [MAX_RANGE] */
-/* commented out due to monster AI improvements.
- * activate it if STUPID_MONSTER_SPELLS is defined!
- * */
-#define ARROW_DIST_LIMIT	MAX_RANGE
-
-/* when do rogues learn cloaking mode? */
-#define LEARN_CLOAKING_LEVEL 15
 
 /*
  * Go up one level                                      -RAK-
@@ -178,7 +152,7 @@ void do_cmd_go_up(int Ind)
 		}
 	}
 #endif
-
+#ifndef ARCADE_SERVER
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].tower;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -201,6 +175,7 @@ void do_cmd_go_up(int Ind)
 			}
 		}
 	}
+#endif
 	if(p_ptr->inval && p_ptr->wpos.wz>=10){
 		msg_print(Ind, "\377You may go no higher without a valid account.");
 		return;
@@ -519,6 +494,7 @@ void do_cmd_go_down(int Ind)
 		}
 	}
 #endif
+#ifndef ARCADE_SERVER
 	if(wpos->wz==0){
 		dungeon_type *d_ptr=wild_info[wpos->wy][wpos->wx].dungeon;
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
@@ -543,6 +519,7 @@ void do_cmd_go_down(int Ind)
 			}
 		}
 	}
+#endif
 	if(p_ptr->inval && p_ptr->wpos.wz<=-10){
 		msg_print(Ind, "\377You may go no lower without a valid account.");
 		return;
@@ -1751,7 +1728,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 			}
 			
-			else if (c_ptr->feat == FEAT_TREES)
+			else if (c_ptr->feat == FEAT_TREE)
 			{
 				/* mow down the vegetation */
 				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 400 */
@@ -1775,11 +1752,56 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 				break_cloaking(Ind);
 			}
-			
+			else if (c_ptr->feat == FEAT_BUSH)
+			{
+				/* mow down the vegetation */
+				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 400 */
+				{
+					/* Message */
+					msg_print(Ind, "You hack your way through the vegetation.");
+					if (p_ptr->prace == RACE_ENT)
+						msg_print(Ind, "You have a bad feeling about it.");
+					
+					/* Notice */
+					note_spot_depth(wpos, y, x);
+
+					/* Display */
+					everyone_lite_spot(wpos, y, x);
+				}
+				else
+				{
+					/* Message, keep digging */
+					msg_print(Ind, "You attempt to clear a path.");
+					more = TRUE;
+				}
+				break_cloaking(Ind);
+			}
+			else if (c_ptr->feat == FEAT_IVY)
+			{
+				/* mow down the vegetation */
+				if ((power > rand_int(200)) && twall(Ind, y, x)) /* 400 */
+				{
+					/* Message */
+					msg_print(Ind, "You hack your way through the vegetation.");
+					
+					/* Notice */
+					note_spot_depth(wpos, y, x);
+
+					/* Display */
+					everyone_lite_spot(wpos, y, x);
+				}
+				else
+				{
+					/* Message, keep digging */
+					msg_print(Ind, "You attempt to clear a path.");
+					more = TRUE;
+				}
+				break_cloaking(Ind);
+			}
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
 				/* mow down the vegetation */
-				if ((power > rand_int(600)) && twall(Ind, y, x)) /* 600 */
+				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 600 */
 				{
 					/* Message */
 					msg_print(Ind, "You hack your way through the vegetation.");
@@ -3187,6 +3209,8 @@ void do_cmd_fire(int Ind, int dir)
         bool            drain_msg = TRUE;
         int             drain_result = 0, drain_heal = 0;
         int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
+	bool		drainable = TRUE;
+	
 	u32b f1, f1a, fx, esp;
 
 	char            o_name[160];
@@ -3483,7 +3507,7 @@ void do_cmd_fire(int Ind, int dir)
 			mmove2(&ny, &nx, by, bx, ty, tx);
 
 			/* Stopped by walls/doors */
-			if (!cave_floor_bold(zcave, ny, nx)) break;
+			if (!cave_los(zcave, ny, nx)) break;
 
 			/* Advance the distance */
 			cur_dis++;
@@ -3741,6 +3765,11 @@ void do_cmd_fire(int Ind, int dir)
 
 				monster_type *m_ptr = &m_list[c_ptr->m_idx];
 				monster_race *r_ptr = race_inf(m_ptr);
+				drainable = !((r_ptr->flags3 & RF3_UNDEAD) ||
+					    /* (r_ptr->flags3 & RF3_DEMON) ||*/
+					    (r_ptr->flags3 & RF3_NONLIVING) ||
+					    (strchr("Egv", r_ptr->d_char)));
+
 				/* Do not hit pets - the_sandman */
 				if (m_ptr->pet) break;
 
@@ -3874,15 +3903,9 @@ void do_cmd_fire(int Ind, int dir)
 #endif	// 0
 
 					/* Vampiric drain  - Launcher or ammo can be vampiric!
-					   Should general p_ptr->vampiric help for ranged attacks?
-					   - for now vampiric from items (-1) helps a bit,
-					   - vampiric from vampire form (>0) doesn't (relies on melee-biting!) */
-					if ((((f1 | f1a) & TR1_VAMPIRIC) || 
-					    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE_RANGED))) &&
-					    !((r_ptr->flags3 & RF3_UNDEAD) ||
-/*          				    (r_ptr->flags3 & RF3_DEMON) ||*/
-					    (r_ptr->flags3 & RF3_NONLIVING) ||
-					    (strchr("Egv", r_ptr->d_char))))
+					   - for now vampiric from items helps a bit,
+					   - vampiric from vampire form doesn't (relies on melee-biting!) */
+					if ((magik(p_ptr->vampiric_ranged)) && drainable)
 						drain_result = m_ptr->hp;
 					else
 						drain_result = 0;
@@ -3960,7 +3983,7 @@ void do_cmd_fire(int Ind, int dir)
 
 		/* Extra (exploding) hack: */
 		/* Stopped by walls/doors ?*/
-		if (!cave_floor_bold(zcave, ny, nx)) {
+		if (!cave_los(zcave, ny, nx)) {
 			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul); /* maybe add && !ethereal here too? */
 		}
 
@@ -4077,7 +4100,7 @@ void do_cmd_fire(int Ind, int dir)
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
 			/* Stopped by walls/doors */
-			if (!cave_floor_bold(zcave, ny, nx)) break;
+			if (!cave_los(zcave, ny, nx)) break;
 
 			/* Advance the distance */
 			cur_dis++;
@@ -4186,8 +4209,9 @@ bool interfere(int Ind, int chance)
 			m_ptr = &m_list[i];
 			r_ptr = race_inf(m_ptr);
 //			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
-			if (r_ptr->flags1 & RF1_NEVER_MOVE)
-				continue;
+			/* monster doesn't act? */
+			if (r_ptr->flags1 & RF1_NEVER_MOVE) continue;
+			if (r_ptr->flags7 & RF7_NEVER_ACT) return(FALSE);
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;
@@ -4496,7 +4520,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 
 		/* Stopped by walls/doors */
-		if (!cave_floor_bold(zcave, ny, nx))
+		if (!cave_los(zcave, ny, nx))
 		{
 			hit_wall = TRUE;
 			break;

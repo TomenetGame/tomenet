@@ -183,6 +183,9 @@ int main(int argc, char *argv[])
 	/* Write PID */
 	writepid(buf);
 
+	/* Tell the scripts that the server is up now */
+	update_check_file();
+
 	/* Acquire the version strings */
 	version_build();
 

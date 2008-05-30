@@ -42,7 +42,8 @@ struct ft_data{
 	struct ft_data *next;	/* next in list */
 	unsigned short id;	/* unique xfer ID */
 	int ind;		/* server security - who has this transfer */
-	char fname[30];		/* actual filename */
+	char fname[256];	/* actual filename */
+	char tname[256];	/* temporary filename */
 	FILE* fp;		/* FILE pointer */
 	unsigned short state;	/* status of transfer */
 	char buffer[MAX_TNF_SEND];
@@ -138,7 +139,7 @@ int local_file_send(int ind, char *fname){
 	c_fd->ind=ind;
 	c_fd->id=new_fileid();	/* ALWAYS succeed */
 	c_fd->state=(FS_SEND|FS_NEW);
-	strncpy(c_fd->fname, fname, 30);
+	strncpy(c_fd->fname, fname, 255);
 	Send_file_init(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
@@ -151,7 +152,7 @@ int remote_update(int ind, char *fname){
 	c_fd->ind=ind;
 	c_fd->id=new_fileid();	/* ALWAYS succeed */
 	c_fd->state=(FS_CHECK);
-	strncpy(c_fd->fname, fname, 30);
+	strncpy(c_fd->fname, fname, 255);
 	Send_file_check(c_fd->ind, c_fd->id, c_fd->fname);
 	return(1);
 }
@@ -238,10 +239,17 @@ void do_xfers(){
 #ifdef WIN32
 int mkstemp(char *template)
 {
-	char f[30];	/* if it overflows, it overflows.. */
+	char f[256], *fp;	/* was 30 if it overflows, it overflows.. */
 	int fd;
 
+#ifndef __MINGW32__
 	if (!tmpnam(f)) return -1;
+#else /* on Windows, we'd just get files on C:\ from tmpnam. */
+//	if (!(fp = tempnam("./lib/temp", "L")) return -1; /* have files start with an L, like LUA ;) */
+	path_build(f, 1024, ANGBAND_DIR, "");
+	if (!(fp = tempnam(f, "tomenet_"))) return -1; /* have temporary files start with tomenet_ */
+	strcpy(f, fp);
+#endif
 	fd = open(f, O_RDWR | O_CREAT);
 	strcpy(template, f);	/* give back our filename */
 	return fd;
@@ -253,7 +261,7 @@ int mkstemp(char *template)
 int local_file_init(int ind, unsigned short fnum, char *fname){
 	struct ft_data *c_fd;
 	int fd;
-	char tname[30]="tomexfer.XXXXXX";
+	char tname[256] = "tomexfer.XXXXXX";
 	c_fd=getfile(ind, 0);		/* get empty space */
 	if(c_fd==(struct ft_data*)NULL) return(0);
 
@@ -264,10 +272,13 @@ int local_file_init(int ind, unsigned short fnum, char *fname){
 	c_fd->fp=fdopen(fd, "wb+");
 	c_fd->state=FS_READY;
 	if(c_fd->fp){
+#ifndef __MINGW32__
 		unlink(tname);		/* don't fill up /tmp */
+#endif
 		c_fd->id=fnum;
 		c_fd->ind=ind;	/* not really needed for client */
-		strncpy(c_fd->fname, fname, 30);
+		strncpy(c_fd->fname, fname, 255);
+		strncpy(c_fd->tname, tname, 255);
 		return(1);
 	}
 	remove_ft(c_fd);
@@ -310,6 +321,9 @@ int local_file_close(int ind, unsigned short fnum){
 		success=1;
 	}
 	fclose(c_fd->fp);	/* close & remove temp file */
+#ifdef __MINGW32__
+	unlink(c_fd->tname);	/* remove it on Windows OS */
+#endif
 	remove_ft(c_fd);
 	return(success);
 }

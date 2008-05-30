@@ -482,7 +482,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			if (!check_ignore(p, Ind)) Players[p]->paging = 3; /* Play 3 beeps quickly */
-			msg_format(Ind, "\377yPaged %s.", message3);
+			msg_format(Ind, "\377yPaged %s.", Players[p]->name);
 			msg_format(p, "\377y%s is paging you.", Players[Ind]->name);
 			return;
 		}
@@ -3347,11 +3347,11 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					return;
 				}
 				if (!j) return;
+			        msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
+			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
 				bypass_invuln = TRUE;
 			        take_hit(j, Players[j]->chp - 1, "", 0);
 				bypass_invuln = FALSE;
-			        msg_format_near(j, "\377y%s is hit by a bolt from the blue!", Players[j]->name);
-			        msg_print(j, "\377rYou are hit by a bolt from the blue!");
 			        msg_print(j, "\377rThat was close huh?!");
 				return;
 			}
@@ -3363,11 +3363,11 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
+			        msg_print(j, "\377rYou are slapped by something invisible!");
+			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
 				bypass_invuln = TRUE;
 			        take_hit(j, Players[j]->chp / 2, "", 0);
 				bypass_invuln = FALSE;
-			        msg_print(j, "\377rYou are slapped by something invisible!");
-			        msg_format_near(j, "\377y%s is slapped by something invisible!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
@@ -3392,6 +3392,18 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				if (!j) return;
 			        msg_print(j, "\377yYou are hugged by something invisible!");
 			        msg_format_near(j, "\377y%s is hugged by something invisible!", Players[j]->name);
+				return;
+			}
+			else if (prefix(message, "/applaud")) { /* Counterpart to /slap :-p */
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /applaud <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou hear someone invisible applauding!");
+			        msg_format_near(j, "\377yYou hear someone invisible applauding!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/deltown")){

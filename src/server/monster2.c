@@ -3316,7 +3316,10 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	cave_type **zcave;
 	int level=getlevel(wpos);
 	if(!(zcave=getcave(wpos))) return(FALSE);
-
+#ifdef ARCADE_SERVER
+if(wpos->wx == 32 && wpos->wy == 32 && wpos->wz > 0)
+return(FALSE);
+#endif
 	/* Do not allow breeders to spawn in the wilderness - the_sandman */
 	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
 

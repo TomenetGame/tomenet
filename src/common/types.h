@@ -2098,11 +2098,11 @@ struct player_type
 
 	int look_index;		/* Used for looking or targeting */
 
-  s32b current_char;
+	s32b current_char;
 	s16b current_spell;	/* Spell being cast */
 	s16b current_realm;	/* Realm of spell being cast */
-  s16b current_mind;	/* Power being use */
-  /* XXX XXX consider using union or sth */
+	s16b current_mind;	/* Power being use */
+	/* XXX XXX consider using union or sth */
 	s16b current_rod;	/* Rod being zapped */
 	s16b current_activation;/* Artifact (or dragon mail) being activated */
 	s16b current_enchant_h; /* Current enchantments */
@@ -2115,13 +2115,15 @@ struct player_type
 	s16b current_rune_dir; /* Current rune spell direction */
 	s16b current_rune1; /* Current rune1 index in bag */
 	s16b current_rune2; /* Current rune2 index in bag */
-  s16b current_artifact;
-  object_type *current_telekinesis;
+	s16b current_artifact;
+	object_type *current_telekinesis;
 	s16b current_curse;
 
 	s16b current_selling;
 	s16b current_sell_amt;
 	int current_sell_price;
+
+	int using_up_item;	/* Item being used up while enchanting, *ID*ing etc. */
 
 	int store_num;		/* What store this guy is in */
 
@@ -2418,6 +2420,7 @@ struct player_type
 	bool	afk;		/* player is afk */
 	char	afk_msg[80];	/* afk reason */
 	bool	use_r_gfx;	/* hack - client uses gfx? */
+	player_list_type	*afk_noticed; /* Only display AFK messages once in private conversations */
 
 	byte drain_exp;		/* Experience draining */
 	byte drain_life;        /* hp draining */
@@ -2458,7 +2461,8 @@ struct player_type
 	bool admin_wiz;		/* Is this char Wizard? */
 	bool admin_dm;		/* or Dungeon Master? */
 	bool stormbringer;	/* Attack friends? */
-	int vampiric;		/* Generally vampiric? */
+	int vampiric_melee;		/* vampiric in close combat? */
+	int vampiric_ranged;		/* shots have vampiric effects? */
 
 	bool ty_curse;		/* :-o */
 	bool dg_curse;
@@ -2503,7 +2507,7 @@ struct player_type
 	s16b team;			/* what team */
 
 	/* Moltor's arcade crap */
-
+        int a, b, c, d, e, f, g, h, i, j, k, l;
 	char firedir; 
 	char game;
 	int gametime;

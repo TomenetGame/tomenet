@@ -2075,8 +2075,14 @@ static void process_player_begin(int Ind)
 	}
 
 	/* Handle paralysis here */
+#ifndef ARCADE_SERVER
        	if (p_ptr->paralyzed || p_ptr->stun >= 100)
        		p_ptr->energy = 0;
+#else
+	if (p_ptr->paralyzed)
+		p_ptr->energy = 0;
+#endif
+
 
 	/* Hack -- semi-constant hallucination */
 	if (p_ptr->image && (randint(10) < 1)) p_ptr->redraw |= (PR_MAP);
@@ -2630,10 +2636,10 @@ static bool process_player_end_aux(int Ind)
 		if (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 		{
 			/* Player can walk through trees */
-			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREES))
+			//if ((PRACE_FLAG(PR1_PASS_TREE) || (get_skill(SKILL_DRUID) > 15)) && (cave[py][px].feat == FEAT_TREE))
 #if 0
 			if ((p_ptr->pass_trees || p_ptr->fly) &&
-					(c_ptr->feat == FEAT_TREES))
+					(c_ptr->feat == FEAT_TREE))
 #endif	// 0
 			if (player_can_enter(Ind, c_ptr->feat))
 			{
@@ -4582,7 +4588,7 @@ static void process_various(void)
 		purge_old();
 	}
 
-	if (!(turn % (cfg.fps * 30))) {
+	if (!(turn % (cfg.fps * 50))) {
 		/* Tell the scripts that we're alive */
 		update_check_file();
 	}
@@ -4751,7 +4757,7 @@ static void process_various(void)
 			if (c_ptr->o_idx) continue;
 
 			/* Grow a tree here */
-			c_ptr->feat = FEAT_TREE;
+			c_ptr->feat = (magik(80)?FEAT_TREE:FEAT_BUSH);
 
 			/* Show it */
 			everyone_lite_spot(0, y, x);
@@ -5204,9 +5210,10 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
-/* fires bigass machinegun, if applicable. -Molt */
+
 #ifdef ARCADE_SERVER
 if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
+if (NumPlayers > 0 && turn % (cfg.fps / 6) == 1) exec_lua(1, "tron()");
 #endif
 
 	int i;
@@ -5526,7 +5533,14 @@ if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
 		if (weather) { /* it's currently raining */
 			if (weather_duration <= 0) { /* change weather? */
 				weather = 0; /* stop raining */
-				weather_duration = 0;
+s_printf("WEATHER: Stopping rain.\n");
+				weather_duration = rand_int(1800) + 1800;
+			} else weather_duration--;
+		} else { /* not raining at the moment */
+			if (weather_duration <= 0) { /* change weather? */
+				weather = 1; /* start raining */
+s_printf("WEATHER: Starting rain.\n");
+				weather_duration = rand_int(540) + 60;
 			} else weather_duration--;
 		}
 #endif

@@ -1898,7 +1898,7 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 	}
-	
+#ifndef ARCADE_SERVER	
 	p_ptr->msgcnt++;
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
@@ -1926,7 +1926,7 @@ static void player_talk_aux(int Ind, char *message)
 		p_ptr->msgcnt=0;
 	}
 	if(p_ptr->spam > 1 || p_ptr->muted) return;
-
+#endif
 	process_hooks(HOOK_CHAT, "d", Ind);
 
 	if(++p_ptr->talk>10){
@@ -2036,7 +2036,12 @@ static void player_talk_aux(int Ind, char *message)
 		/* Also send back to sender */
 		msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
-		if (q_ptr->afk) msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
+		/* Only display this message once now - mikaelh */
+		if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id))
+		{
+			msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
+			player_list_add(&p_ptr->afk_noticed, q_ptr->id);
+		}
 
 		exec_lua(0, "chat_handler()");
 
@@ -2186,6 +2191,12 @@ void toggle_afk(int Ind, char *msg)
 				snprintf(afk, sizeof(afk), "\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = FALSE;
+
+		/* Clear everyone's afk_noticed */
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			player_list_del(&Players[i]->afk_noticed, p_ptr->id);
+		}
 	}
 	else
 	{
@@ -2413,6 +2424,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "mikaelh") 
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -2554,6 +2566,7 @@ static int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "mikaelh") 
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
 			/* Check name */
@@ -2894,4 +2907,95 @@ void bbs_erase(void)
 	int i;
         for (i = 0; i < BBS_LINES; i++)
                 strcpy(bbs_line[i], "");
+}
+
+/*
+ * Add a player id to a linked list.
+ * Doesn't check for duplicates
+ * Takes a double pointer to the list
+ */
+void player_list_add(player_list_type **list, s32b player)
+{
+	player_list_type *pl_ptr;
+
+	MAKE(pl_ptr, player_list_type);
+
+	pl_ptr->id = player;
+	pl_ptr->next = *list;
+	*list = pl_ptr;
+}
+
+/*
+ * Check if a list contains an id.
+ */
+bool player_list_find(player_list_type *list, s32b player)
+{
+	player_list_type *pl_ptr;
+
+	pl_ptr = list;
+
+	while (pl_ptr)
+	{
+		if (pl_ptr->id == player)
+		{
+			return TRUE;
+		}
+		pl_ptr = pl_ptr->next;
+	}
+
+	return FALSE;
+}
+
+/*
+ * Delete an id from a list.
+ * Takes a double pointer to the list
+ */
+bool player_list_del(player_list_type **list, s32b player)
+{
+	player_list_type *pl_ptr, *prev;
+
+	if (*list == NULL) return FALSE;
+
+	/* Check the first node */
+	if ((*list)->id == player)
+	{
+		*list = (*list)->next;
+		return TRUE;
+	}
+
+	pl_ptr = (*list)->next;
+	prev = *list;
+
+	/* Check the rest of the nodes */
+	while (pl_ptr)
+	{
+		if (pl_ptr->id == player)
+		{
+			prev->next = pl_ptr->next;
+			FREE(pl_ptr, player_list_type);
+			return TRUE;
+		}
+
+		prev = pl_ptr;
+		pl_ptr = pl_ptr->next;
+	}
+
+	return FALSE;
+}
+
+/*
+ * Free an entire list.
+ */
+void player_list_free(player_list_type *list)
+{
+	player_list_type *pl_ptr, *tmp;
+
+	pl_ptr = list;
+
+	while (pl_ptr)
+	{
+		tmp = pl_ptr;
+		pl_ptr = pl_ptr->next;
+		FREE(tmp, player_list_type);
+	}
 }

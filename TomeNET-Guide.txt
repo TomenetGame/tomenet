@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. February 2008; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.0e (www.tomenet.net, usually outdated though).
+| Latest update: 28. May 2008; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.0f (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -913,7 +913,9 @@ Extract it to a new directory, preserving the pathnames.
 
 Windows:
 --------
-You may edit the file "TomeNET.ini" and do some changes to your likings.
+You may edit the file "TomeNET.ini" and do some changes to your likings, like
+setting up window positions or choosing font size (look into lib/xtra/font
+directory to see available fonts).
 If it's not already disabled by default, it is recommended to turn off
 graphics ("GRAPHICS=0"). Further you can specify an account name and password
 of your own choice. That will relieve you from entering them every time
@@ -923,7 +925,9 @@ Linux:
 ------
 How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
-Make sure you have X11, ncurses, ncurses-devel and crypt libraries installed.
+Make sure you have the C-devel, X11-devel, ncurses, ncurses-devel and crypt
+libraries installed. The package names are usually:
+xorg-dev, libncurses5, libncurses5-dev, libgcrypt, libc6-dev.
 Enter these two lines:
 	make clean
 	make tomenet
@@ -4874,10 +4878,13 @@ Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
 
 +Combat                         Lets you wear heavier armour without spell
-                                point penalties, or without losing dodge
-                                chance, or other roguish abilities like
-                                dodging, dual-wield, critical-strike,
-                                sneakiness (compare (5.5) for details).
+                                point penalty.
+                                Lets you wear heavier armour without losing
+                                dodge chance, or other roguish abilities like
+                                dodging, dual-wield, critical-strike.
+                                Lets you wear heavier armour without getting
+                                a penalty to to-hit or sneakiness
+                                (See (5.5) for details about encumberment.)
                                 Ability to pseudo-ID items: You can sense
                                 if items are terrible, worthless, cursed,
                                 average, good, excellent or special.
@@ -5934,7 +5941,7 @@ Priest      -1  -3  +3  -1  +0  +2       +4      +20%       4
             25  30  32   2   8  16  48  35              poor     poor
 Rogue       +2  +1  -2  +3  +1  -1       +5      +25%       5
             45  32  28   5  32  24  60  66              superb   fair
-Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       4
+Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       5
             25  35  28   1  18  18  60  66              good     good
 Archer      +1  +0  +2  +3  +1  -1       +5      +15%       3
             30  32  28   2  20  24  56  82              fair     fair

@@ -1212,7 +1212,7 @@ DgramWrite(int fd, char *wbuf, int size)
 
 	/* if necessary, set errno */
 	if (retval == SOCKET_ERROR){
-		errno = WSAGetLastError();
+		errno == WSAGetLastError();
 		return -1;
 	}
 

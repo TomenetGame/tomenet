@@ -160,6 +160,7 @@ extern bool server_saved;
 extern bool character_loaded;
 extern u32b seed_flavor;
 extern u32b seed_town;
+extern u32b seed_wild_extra;
 extern s16b command_new;
 extern s16b choose_default;
 extern bool create_up_stair;
@@ -420,6 +421,7 @@ extern c_special *ReplaceCS(cave_type *c_ptr, byte type);
 extern void FreeCS(cave_type *c_ptr);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+extern int check_feat(worldpos *wpos, int y, int x);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
 extern bool can_go_down(struct worldpos *wpos, byte mode);
@@ -872,7 +874,7 @@ extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound);
 extern int Send_beep(int ind);
 extern int Send_AFK(int ind, byte afk);
-extern int Send_encumberment(int ind, byte cumber_armor,byte awkward_armor,byte cumber_glove,byte heavy_wield,byte heavy_shoot,
+extern int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot);
 extern int Send_special_line(int ind, int max, int line, byte attr, cptr buf);
 extern int Send_floor(int ind, char tval);
@@ -1041,6 +1043,7 @@ extern int newid(void);
 extern void scan_players(void);
 extern void erase_player_name(char *pname);
 extern void checkexpiry(int Ind, int days);
+extern void account_checkexpiry(int Ind);
 extern void party_check(int Ind);
 extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...);
 extern u16b lookup_player_type(int id);
@@ -1349,6 +1352,11 @@ extern bool in_banlist(char *addr);
 extern void bbs_add_line(cptr textline);
 extern void bbs_del_line(int entry);
 extern void bbs_erase(void);
+
+extern void player_list_add(player_list_type **list, s32b player);
+extern bool player_list_find(player_list_type *list, s32b player);
+extern bool player_list_del(player_list_type **list, s32b player);
+extern void player_list_free(player_list_type *list);
 
 
 /* xtra1.c */

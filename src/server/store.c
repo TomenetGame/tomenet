@@ -2184,7 +2184,9 @@ void store_stole(int Ind, int item)
 	/* 1% pfft. 5% and rising... */
 	if (rand_int(chance) <= 10 && !magik(5))
 	{
-s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
+s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
@@ -2287,7 +2289,8 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 
 	else
 	{
-s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+//s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
+s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance);
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\377y'Bastard\377L!!!'\377w - The angry shopkeeper throws you out!");

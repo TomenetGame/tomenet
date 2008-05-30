@@ -40,7 +40,7 @@
 
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-// #define WINTER_SEASON   2
+//#define WINTER_SEASON   2
 
 /* Enable/disable New Year's Eve */
 // #define NEW_YEARS_EVE
@@ -50,7 +50,7 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
-#define VERSION_PATCH   0
+#define VERSION_PATCH   1
 /* This value specifies the suffix to the version info sent to the metaserver.
  * (Currently it also affects version check vs connecting clients! Might need fixing.)
  *
@@ -59,18 +59,18 @@
  * 2 - "beta"
  * 3 - "development"
  */
-#define VERSION_EXTRA	3
+#define VERSION_EXTRA	0
 /* Server release version tag: Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG "" /* "e" */
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   4
+#define SF_VERSION_PATCH   5
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "e"
+#define CLIENT_VERSION_TAG ""
 
 /*
  * Base version strings of TomeNET (see version_build)
@@ -567,6 +567,53 @@
 #define MAGICAL_CAP		1600
 
 
+
+
+/* Various melee/ranged combat settings for cmd1.c and cmd2.c mostly */
+
+#define MAX_VAMPIRIC_DRAIN 50   /* was 25 - note: this counts per turn, not per blow */
+#define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
+
+#define MAX_VAMPIRIC_DRAIN_RANGED 10    /* was 25 - note: this counts per shot, not per turn */
+#define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
+
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ */
+#define ARROW_DIST_LIMIT        MAX_RANGE
+
+/* Reduce damage in PvP by this factor */
+#define PVP_MELEE_DAM_REDUCTION 3
+/* Reduce damage in PvP by this factor */
+#define PVP_SHOOT_DAM_REDUCTION 3
+/* Reduce damage in PvP by this factor */
+#define PVP_THROW_DAM_REDUCTION 3
+/* divide magical damage by this in PvP */
+#define PVP_SPELL_DAM_REDUCTION 5
+
+/*
+ * Allow wraith-formed player to pass through permawalls on the surface.
+ */
+/*
+ * TODO: wraithes should only pass townwalls of her/his own house
+ */
+#define WRAITH_THROUGH_TOWNWALL
+    
+/* chance of walking in a random direction when confused and trying to climb,
+ * in percent. [50]
+ */
+#define STAIR_FAIL_IF_CONFUSED  50
+      
+/* duration of GoI when climbing stairs.        [2] */
+#define STAIR_GOI_LENGTH        3
+      
+/* when do rogues learn cloaking mode? */
+#define LEARN_CLOAKING_LEVEL 15
+
+
 /* Should a mind-link also display shops and shop actions to the secondary player? */
 //#define MINDLINK_STORE
 
@@ -960,23 +1007,37 @@
 /*
  * Player class constants (hard-coded by save-files, arrays, etc)
  */
-#define CLASS_ADVENTURER	0
-#define CLASS_WARRIOR		1
-#define CLASS_MAGE		2
-#define CLASS_PRIEST		3
-#define CLASS_ROGUE		4
-#define CLASS_MIMIC		5
-#define CLASS_ARCHER		6
-#define CLASS_PALADIN		7
-#define CLASS_RANGER		8
+#define CLASS_WARRIOR		0
+#define CLASS_MAGE		1
+#define CLASS_PRIEST		2
+#define CLASS_ROGUE		3
+#define CLASS_MIMIC		4
+#define CLASS_ARCHER		5
+#define CLASS_PALADIN		6
+#define CLASS_RANGER		7
+#define CLASS_ADVENTURER	8
 //#define CLASS_BARD		9
 #define CLASS_DRUID		9	
 #define CLASS_SHAMAN		10
-
-//#ifdef RPG_SERVER
 #define CLASS_RUNEMASTER	11
-//#endif
-//#define CLASS_NONE		11
+/*
+ * Races' class flags, which races allow which classes for choice
+ * (must be same order as according CLASS_.. constants!)
+ */
+#define CFW	0x001	/* Warrior */
+#define CFI	0x002	/* Istar */
+#define CFP	0x004	/* Priest */
+#define CFR	0x008	/* Rogue */
+
+#define CFM	0x010	/* Mimic */
+#define CFA	0x020	/* Archer */
+#define CFL	0x040	/* Paladin */
+#define CFN	0x080	/* Ranger */
+
+#define CFX	0x100	/* Adventurer */
+#define CFD	0x200	/* Druid */
+#define CFS	0x400	/* Shaman */
+#define CFU	0x800	/* Runemaster */
 
 /*
  * Define the realms
@@ -1292,7 +1353,7 @@ that keeps many algorithms happy.
 #define FEAT_ASH                0x5D
 #define FEAT_MUD                0x5E
 #define FEAT_ICE_WALL           0x5F
-#define FEAT_TREES              0x60
+#define FEAT_TREE               0x60
 #define FEAT_MOUNTAIN           0x61
 #define FEAT_SANDWALL           0x62
 #define FEAT_SANDWALL_H         0x63
@@ -1339,16 +1400,17 @@ that keeps many algorithms happy.
 #define FEAT_FLOWER             0xC7 /* 199 */
 /* Feature 0xC8 -- cobblestone road */
 /* Feature 0xC9 -- cobblestone with outlet */
-#define FEAT_SMALL_TREES        0xCA /* 202 */
+#define FEAT_IVY         0xCA /* 202 */
 #define FEAT_TOWN               0xCB /* 203 */
 /* Feature 0xCC -- Underground Tunnel */
 #define FEAT_FIRE               0xCD /* 205 */
 /* Feature 0xCE -- pile of rubble (permanent) */
 
 /* Features 0xCF - 0xFF -- unused */
-
 #define FEAT_AGOAL	208
 #define FEAT_BGOAL	209
+
+#define FEAT_BUSH	219
 
 
 #define MAX_BETWEEN_EXITS       2
@@ -2198,11 +2260,16 @@ that keeps many algorithms happy.
 #define SV_SHIELD_OF_DEFLECTION         10
 
 /* The "sval" codes for TV_HELM */
+#define SV_CLOTH_CAP			 1
 #define SV_HARD_LEATHER_CAP              2
 #define SV_METAL_CAP                     3
 #define SV_IRON_HELM                     5
 #define SV_STEEL_HELM                    6
 #define SV_DRAGON_HELM                   7
+#define SV_MITHRIL_HELM			10
+#define SV_GOGGLES_DM			15 /* artifact goggles of the dungeon master */
+
+/* The "sval" codes for TV_CROWN */
 #define SV_IRON_CROWN                   10
 #define SV_GOLDEN_CROWN                 11
 #define SV_JEWELED_CROWN                12
@@ -2814,7 +2881,7 @@ that keeps many algorithms happy.
 #define CAVE_XTRA	0x0080 	/* misc flag */
 
 #define CAVE_NOPK	0x0100	/* no pkill (arena?, tavern) */
-#define CAVE_STCK	0x0200	/* sticky, not icky (prison?) */
+#define CAVE_STCK	0x0200	/* sticky (no-tele vault), not icky (prison?) */
 
 /* world surface at night */
 #define CAVE_DARKEN	0x0400	/* change colours to darker variants */
@@ -2822,6 +2889,8 @@ that keeps many algorithms happy.
 /* Field 'remembers' if it belongs to a perma-wall vault or normal vault */
 #define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
 #define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
+
+#define CAVE_NEST	0x2000	/* grid is part of a monster nest and target for monster placement */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
@@ -2847,6 +2916,10 @@ that keeps many algorithms happy.
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
  *   DUMY: Doesn't do anything at all, except for the visual effect (used for EFF_FIREWORKS...).
+ *   STAY: Create an 'effect' on the grid (cloud/wall/special fx)
+ *   SELF: Affect the projector too
+ *   DUMY: Don't affect anything or anybody (just visual fx)
+ *   GRAV: Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT)
  */
 #define PROJECT_JUMP	0x00000001
 #define PROJECT_BEAM	0x00000002
@@ -2856,7 +2929,11 @@ that keeps many algorithms happy.
 #define PROJECT_ITEM	0x00000020
 #define PROJECT_KILL	0x00000040
 #define PROJECT_HIDE	0x00000080
-#define PROJECT_DUMY	0x80000000
+#define PROJECT_STAY    0x00000100
+#define PROJECT_SELF	0x00000200
+#define PROJECT_DUMY	0x00000400
+#define PROJECT_GRAV	0x00000800
+
 
 /* ToME expansions */
 #if 0	/* soon */
@@ -2869,9 +2946,6 @@ that keeps many algorithms happy.
 #define PROJECT_MANA_PATH  0x00004000   /* Follow a mana path. */
 #define PROJECT_ABSORB_MANA 0x00008000   /* The spell increase in power as it absord grid's mana. */
 #endif	/* 0 */
-#define PROJECT_STAY       0x00010000
-
-#define PROJECT_SELF		0x80000000	/* Affect the projector too */
 
 
 /*
@@ -4266,7 +4340,8 @@ that keeps many algorithms happy.
 #define FF1_SLOW_SWIMMING_1	0x04000000L
 #define FF1_SLOW_SWIMMING_2	0x08000000L
 #define FF1_PROTECTED		0x10000000L	/* monsters cannot teleport to nor spawn on this grid */
-//#define FF1_BLOCK_LOS		0x20000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
+#define FF1_LOS			0x20000000L	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
+#define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 
 
 /*** Dungeon type flags -- DG ***/
@@ -4831,17 +4906,23 @@ that keeps many algorithms happy.
 #define cave_floor_bold(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
 
-/* #define cave_std_los(ZCAVE,Y,X) \
-	(!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)) */
+/* Adding FF1_LOS to have LOS across FEAT_DARK_PIT grids */
+#define cave_los(ZCAVE,Y,X) \
+	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
+	!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS))
+
+/*
+#define cave_block_los(ZCAVE,Y,X) \
+	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)*/
 
 /*
  * Determine if a "legal" grid is a "floor" grid or a passable grid
  * due to special abilities of a player, making it same to floor grid. (for run_test())
  * (NEW_RUNNING_FEAT)
 92  == FEAT_DEAD_TREE
-96  == FEAT_TREES
-202 == FEAT_SMALL_TREES
-
+96  == FEAT_TREE
+202 == FEAT_IVY
+219 == FEAT_BUSH
 84  == FEAT_SHAL_WATER
 103 == FEAT_GLIT_WATER
 174 == FEAT_TAINTED_WATER
@@ -4852,17 +4933,21 @@ that keeps many algorithms happy.
 #define cave_running_bold(p_ptr,ZCAVE,Y,X) \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
-	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) && (p_ptr->pass_trees || p_ptr->fly)) || /* fly is redundant, covered a line above */ \
+	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->fly)) || /* fly is redundant, covered a line above */ \
 	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim))
-/* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
+/* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
+   note last line, added for Paths of the Dead, allowing to run over pits */
 #define cave_running_bold_notrees(p_ptr,ZCAVE,Y,X) \
 	( ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR) || \
 	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_CAN_FLY) && p_ptr->fly) || \
 	((ZCAVE[Y][X].feat == FEAT_SHAL_WATER || ZCAVE[Y][X].feat == FEAT_GLIT_WATER || ZCAVE[Y][X].feat == FEAT_TAINTED_WATER || ZCAVE[Y][X].feat == FEAT_DEEP_WATER) && p_ptr->can_swim)) \
-	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) )
-/* adding this to prevent annoying stops when running in barrow-downs while tree-passing */
+	&& !(ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH || \
+	    ZCAVE[Y][X].feat == FEAT_DARK_PIT) )
+/* adding this to prevent annoying stops when running in barrow-downs while tree-passing --
+   note last line, added for Paths of the Dead, so players running through hallways don't stop at pits */
 #define cave_running_bold_trees(p_ptr,ZCAVE,Y,X) \
-	((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREES || ZCAVE[Y][X].feat == FEAT_SMALL_TREES) && (p_ptr->pass_trees || p_ptr->fly))
+	(((ZCAVE[Y][X].feat == FEAT_DEAD_TREE || ZCAVE[Y][X].feat == FEAT_TREE || ZCAVE[Y][X].feat == FEAT_BUSH) && (p_ptr->pass_trees || p_ptr->fly)) || \
+	((ZCAVE[Y][X].feat == FEAT_DARK_PIT) && p_ptr->fly))
 
 /* for summoning on mountains */
 #define cave_empty_mountain(ZCAVE,Y,X) \
@@ -4976,6 +5061,12 @@ that keeps many algorithms happy.
 #define cave_floor_grid(C) \
     (f_info[(C)->feat].flags1 & FF1_FLOOR)
 
+/*
+ * Grid based version of "cave_floor_bold()"
+ */
+#define cave_los_grid(C) \
+    (((f_info[(C)->feat].flags1 & FF1_FLOOR) || (f_info[(C)->feat].flags1 & FF1_LOS)) && \
+    !(f_info[(C)->feat].flags1 & FF1_BLOCK_LOS))
 
 /*
  * Grid based version of "cave_plain_floor_bold()"
@@ -5050,6 +5141,70 @@ that keeps many algorithms happy.
  */
 #define player_has_los_bold(IND,Y,X) \
     ((Players[IND]->cave_flag[Y][X] & CAVE_VIEW) != 0)
+
+
+
+
+/*
+ * Determine if a creature can enter a certain grid - C. Blue
+ * Every check that would return a "do_move = TRUE" is added below.
+ * The two checks that check whether do_move wouldn't be set to TRUE are left out for now,
+ * those will remain in the according places in melee2.c.
+ * One check that checks for an opposing player is also left out, since this function might
+ * be used for pets/golem monsters.
+ * Summary: This macro performs all checks which wouldn't do more than setting do_move = TRUE.
+ *          The checks that do more than that (like setting did_pass_wall) are excluded.
+ */
+
+#define creature_can_enter(R,C) \
+(cave_floor_grid(C) || /* Floor is open? */ \
+(((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
+/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+(((C)->feat==FEAT_DEAD_TREE || (C)->feat==FEAT_TREE || (C)->feat==FEAT_BUSH) && \
+(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+/* POWERFUL monsters can hack down trees */ \
+((R)->flags2 & RF2_POWERFUL))) || \
+/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+(((C)->feat==FEAT_MOUNTAIN) && \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
+
+//((C)->m_idx < 0)) /* Player ghost in wall XXX */
+// (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance? // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
+// ((m_ptr->ai_state & AI_STATE_EFFECT) || monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))) && /* Tainted grid? */
+
+/*
+ * Extended version of the above. This one is used in find_hiding and find_safety - C. Blue
+ * This version includes a full movement check of all possible grids, EXCEPT for
+ * shops, AI_STATE vs monster_is_safe, bashable/openable features (doors).
+ */
+
+#define creature_can_enter2(R,C) \
+(cave_floor_grid(C) || /* Floor is open? */ \
+(((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+((f_info[(C)->feat].flags1 & FF1_CAN_FLY) && ((R)->flags7 & RF7_CAN_FLY))) || \
+/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+(((C)->feat==FEAT_DEAD_TREE || (C)->feat==FEAT_TREE || (C)->feat==FEAT_BUSH) && \
+(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+/* POWERFUL monsters can hack down trees */ \
+((R)->flags2 & RF2_POWERFUL))) || \
+/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+(((C)->feat==FEAT_MOUNTAIN) && \
+(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))) || \
+/* Monster moves through walls (and doors) */ \
+/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+/*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
+((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
+/* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
+/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
+((C)->feat == FEAT_MON_TRAP)) /* Floor is trapped? */
 
 
 
@@ -5503,7 +5658,10 @@ extern int PlayerUID;
 #define TRAP_OF_HIDE_TRAPS	207
 #define TRAP_OF_RESPAWN		208
 #define TRAP_OF_JACK		209
-
+#define TRAP_OF_SPREAD 		210
+#define TRAP_OF_LASER 		211
+#define TRAP_OF_ROCKETS		212
+#define TRAP_OF_HEALING		213
 
 /*
  * Shield effect options
@@ -6041,6 +6199,11 @@ extern int PlayerUID;
 #define AT_VALINOR4	6
 #define AT_VALINOR5	7
 #define AT_VALINOR6	8
+
+
+/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. - C. Blue */
+#define player_sees_dm(I)	\
+	(Players[I]->inventory[INVEN_HEAD].tval == TV_HELM && Players[I]->inventory[INVEN_HEAD].sval == SV_GOGGLES_DM)
 
 
 /* Masks for restricted mimicry */

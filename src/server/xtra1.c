@@ -603,25 +603,27 @@ static void prt_encumberment(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-	byte cumber_armor = (p_ptr->cumber_armor || p_ptr->heavy_shield)?1:0; /* hack, just use it for both.. */
+	byte cumber_armor = p_ptr->cumber_armor?1:0;
 	byte awkward_armor = p_ptr->awkward_armor?1:0;
 	byte cumber_glove = p_ptr->cumber_glove?1:0;
 	byte heavy_wield = p_ptr->heavy_wield?1:0;
-//	byte heavy_shield = p_ptr->heavy_shield?1:0; /* missing from client display in current version (4.4.0d) */
+	byte heavy_shield = p_ptr->heavy_shield?1:0; /* added in 4.4.0f */
 	byte heavy_shoot = p_ptr->heavy_shoot?1:0;
 	byte icky_wield = p_ptr->icky_wield?1:0;
 	byte awkward_wield = p_ptr->awkward_wield?1:0;
 	byte easy_wield = p_ptr->easy_wield?1:0;
 	byte cumber_weight = p_ptr->cumber_weight?1:0;
-//	byte rogue_heavy_armor = p_ptr->rogue_heavyarmor?1:0;   see next line
-	byte monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0; /* hack - MA also gives dodging, which relies on rogue_heavy_armor anyway */
+	/* See next line. Also, we're already using all 12 spaces we have available for icons.
+	byte rogue_heavy_armor = p_ptr->rogue_heavyarmor?1:0; */
+	 /* Hack - MA also gives dodging, which relies on rogue_heavy_armor anyway. */
+	byte monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0;
 	byte awkward_shoot = p_ptr->awkward_shoot?1:0;
 
 	if (p_ptr->pclass != CLASS_WARRIOR && p_ptr->pclass != CLASS_ARCHER) {
 		awkward_armor = 0; /* they don't use magic or SP */
 	}
 
-	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 }
 
@@ -1919,15 +1921,15 @@ static void calc_body_bonus(int Ind)
 		{
 			p_ptr->feather_fall = TRUE;
 			/* Vampire bats are vampiric */
-			if (p_ptr->body_monster == 391) p_ptr->vampiric = 100;
+			if (p_ptr->body_monster == 391) p_ptr->vampiric_melee = 100;
 			break;
 		}
 		
 		case 365: /* Vampiric mist is vampiric */
-			p_ptr->vampiric = 100;
+			p_ptr->vampiric_melee = 100;
 			break;
 		case 927: /* Vampiric ixitxachitl is vampiric */
-			p_ptr->vampiric = 50;
+			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
 			break;
 
 		/* Elves get resist_lite, Dark-Elves get resist_dark */
@@ -2013,7 +2015,7 @@ static void calc_body_bonus(int Ind)
 		
 		/* Vampires have VAMPIRIC attacks */
 		case 432:	case 520:	case 521:	case 623:	case 989:
-			p_ptr->vampiric = 50;
+			if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50;
 			break;
 		
 		/* Angels resist light, blindness and poison (usually immunity) */
@@ -2454,7 +2456,8 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 #endif
 
 							/* Mimic */
-		case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
+//trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
+		case CLASS_MIMIC: num = 5; wgt = 35; mul = 4; break;//mul3
 
 							/* Archer */
 //		case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
@@ -2767,7 +2770,8 @@ void calc_bonuses(int Ind)
 	p_ptr->suscep_good = FALSE;
 	p_ptr->suscep_life = FALSE;
 	p_ptr->resist_continuum = FALSE;
-	p_ptr->vampiric = 0;
+	p_ptr->vampiric_melee = 0;
+	p_ptr->vampiric_ranged = 0;
 
 	/* nastiness */
 	p_ptr->ty_curse = FALSE;
@@ -2869,6 +2873,8 @@ void calc_bonuses(int Ind)
 
 		#ifdef ARCADE_SERVER
 		p_ptr->pspeed = 130;
+		if(p_ptr->stun > 0)
+		p_ptr->pspeed -= 3;
 		#endif
 
 		/* Bats get +10 speed ... they need it!*/
@@ -3020,7 +3026,7 @@ void calc_bonuses(int Ind)
                 p_ptr->resist_pois = TRUE;
                 p_ptr->resist_cold = TRUE;
                 p_ptr->hold_life = TRUE;
-                p_ptr->vampiric = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
+                if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING)) p_ptr->drain_life++;
@@ -3636,13 +3642,18 @@ void calc_bonuses(int Ind)
 				p_ptr->dis_to_a += o_ptr->to_a;
 		}
 
-		/* Hack -- do not apply "weapon" boni */
+
+
+		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
 		if (i == INVEN_WIELD) continue;
 		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD) continue; /*..and for dual-wield */
-		/* Hack -- do not apply "bow" boni */
-		if (i == INVEN_BOW) continue;
-		/* and no ammo boni ^^ */
-		if (i == INVEN_AMMO || i == INVEN_TOOL) continue;
+		if (i == INVEN_AMMO || i == INVEN_BOW) {
+			if (f1 & TR1_VAMPIRIC) p_ptr->vampiric_ranged = 100;
+			continue;
+		}
+		if (i == INVEN_TOOL) continue;
+
+
 
 		if (f1 & TR1_BLOWS) p_ptr->extra_blows += pval;
                 if (f5 & TR5_CRIT) p_ptr->xtra_crit += pval;
@@ -3651,7 +3662,10 @@ void calc_bonuses(int Ind)
 		if (f5 & TR5_IMPACT) p_ptr->impact = TRUE;
 
 		/* Generally vampiric? */
-		if (f1 & TR1_VAMPIRIC) p_ptr->vampiric = -1;
+		if (f1 & TR1_VAMPIRIC) {
+			if (p_ptr->vampiric_melee < NON_WEAPON_VAMPIRIC_CHANCE) p_ptr->vampiric_melee = NON_WEAPON_VAMPIRIC_CHANCE;
+			if (p_ptr->vampiric_ranged < NON_WEAPON_VAMPIRIC_CHANCE_RANGED) p_ptr->vampiric_ranged = NON_WEAPON_VAMPIRIC_CHANCE_RANGED;
+		}
 
 		/* Hack MHDSM: */
 		if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
@@ -6230,9 +6244,10 @@ static void process_global_event(int ge_id)
 				for (x = 1; x < MAX_WID - 1; x++)
 				for (y = 1; y < MAX_HGT - 1; y++) {
 					c_ptr = &zcave[y][x];
-					if (c_ptr->feat == FEAT_SMALL_TREES ||
+					if (c_ptr->feat == FEAT_IVY ||
+					    c_ptr->feat == FEAT_BUSH ||
 					    c_ptr->feat == FEAT_DEAD_TREE ||
-					    c_ptr->feat == FEAT_TREES)
+					    c_ptr->feat == FEAT_TREE)
 						switch (ge->extra[2]) {
 						case WILD_WASTELAND: c_ptr->feat = FEAT_DIRT; break;
 						case WILD_GRASSLAND: 
@@ -6534,7 +6549,9 @@ void process_global_events(void)
 }
 
 /*
- * Update the 'tomenet.check' file - mikaelh
+ * Update the 'tomenet.check' file
+ * Currently used by the hangcheck script
+ *  - mikaelh
  */
 void update_check_file(void)
 {
@@ -6583,6 +6600,8 @@ void update_current_items_move(int Ind, int slot, int new_slot)
 void clear_current(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
+
+	p_ptr->using_up_item = -1;
 
 	p_ptr->current_enchant_h = 0;
 	p_ptr->current_enchant_d = 0;

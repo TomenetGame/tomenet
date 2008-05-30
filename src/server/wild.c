@@ -1871,7 +1871,7 @@ struct terrain_type
 	int mud;
 	int water;
 	int tree;
-	int eviltree;
+	int deadtree;
 	int mountain;
 	int lava;
 	int dwelling;
@@ -1883,8 +1883,8 @@ struct terrain_type
 /* determines terrain composition. seperated from gen_wilderness_aux for bleed functions.*/
 static void init_terrain(terrain_type *t_ptr, int radius)
 {
-	/* not many terrain types have evil trees */
-	t_ptr->eviltree = t_ptr->mud = t_ptr->mountain = t_ptr->lava = 0;
+	/* not many terrain types have dead trees */
+	t_ptr->deadtree = t_ptr->mud = t_ptr->mountain = t_ptr->lava = 0;
 
 	switch (t_ptr->type)
 	{
@@ -1895,7 +1895,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->tree = 0;
 			t_ptr->water = 0;
 			t_ptr->dwelling = 0;
-			t_ptr->eviltree = rand_int(4);
+			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+450;
 			t_ptr->lava = rand_int(150)+800;
 			t_ptr->hotspot = rand_int(15) + 4;
@@ -1908,7 +1908,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->tree = rand_int(5);
 			t_ptr->water = 0;
 			t_ptr->dwelling = 0;
-			t_ptr->eviltree = rand_int(4);
+			t_ptr->deadtree = rand_int(4);
 			t_ptr->mountain = rand_int(100)+850;
 			t_ptr->lava = rand_int(150)+200;
 			t_ptr->hotspot = rand_int(15) + 4;
@@ -1921,7 +1921,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 			t_ptr->tree = 0;
 			t_ptr->water = 0;
 			t_ptr->dwelling = 0;
-			t_ptr->eviltree = rand_int(4);
+			t_ptr->deadtree = rand_int(4);
 			t_ptr->hotspot = rand_int(15) + 4;
 			t_ptr->monst_lev = 20 + (radius / 2); break;
 			break;
@@ -1931,7 +1931,7 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 		{
 			t_ptr->grass = rand_int(100)+850;
 			t_ptr->tree = rand_int(150)+600;
-			t_ptr->eviltree = rand_int(10)+5;
+			t_ptr->deadtree = rand_int(10)+5;
 			t_ptr->water = rand_int(15);
 			t_ptr->dwelling = 8;
 			t_ptr->hotspot = rand_int(15) +4;
@@ -2003,17 +2003,29 @@ static void init_terrain(terrain_type *t_ptr, int radius)
 
 static unsigned char terrain_spot(terrain_type * terrain)
 {
-	unsigned char feat;
-	
-	feat = FEAT_DIRT;
+	unsigned char feat = FEAT_DIRT;
+	u32b tmp_seed;
 
 	if (rand_int(1000) < terrain->grass) feat = FEAT_GRASS;
-	if (rand_int(1000) < terrain->tree) feat = FEAT_TREES;
-	if (rand_int(1000) < terrain->eviltree) feat = FEAT_DEAD_TREE;
+#if 1
+	if (rand_int(1000) < terrain->tree) {
+		/* actually it's cool that whether it's a grown tree or a small bush
+		   isn't determined by the consistent wilderness seed */
+		tmp_seed = Rand_value; /* save RNG */
+		Rand_value = seed_wild_extra;
+		feat = magik(80)?FEAT_TREE:FEAT_BUSH;
+		seed_wild_extra = Rand_value; /* don't reset but remember */
+		Rand_value = tmp_seed;
+	}
+#else
+	if (rand_int(1000) < terrain->tree) feat = FEAT_TREE;
+#endif
+	if (rand_int(1000) < terrain->deadtree) feat = FEAT_DEAD_TREE;
 	if (rand_int(1000) < terrain->water) feat = FEAT_DEEP_WATER;
 	if (rand_int(1000) < terrain->mud) feat = FEAT_MUD;
 	if (rand_int(1000) < terrain->mountain) feat = FEAT_MOUNTAIN;
 	if (rand_int(1000) < terrain->lava) feat = magik(30)?FEAT_DEEP_LAVA:FEAT_SHAL_LAVA;
+	
 	return(feat);
 }
 
@@ -2146,7 +2158,7 @@ static void wild_add_hotspot(struct worldpos *wpos)
 			init_terrain(&hot_terrain, w_ptr->radius);
 			break;
 			
-		default: hot_terrain.eviltree = rand_int(800)+100;
+		default: hot_terrain.deadtree = rand_int(800)+100;
 	}
 	
 	/* create the hotspot */
@@ -2342,7 +2354,7 @@ void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end
 			for (x = bleed_begin[y]; x < bleed_end[y]; x++)
 			{
 				cave_type *c_ptr = &cave[bleed_to][y][x];
-				c_ptr->feat = terrain_spot(&terrain);								
+				c_ptr->feat = terrain_spot(&terrain);
 			}
 		}	
 	}
@@ -2882,6 +2894,7 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 	Rand_quick = TRUE;
 
 	/* Hack -- Induce consistant wilderness */
+	seed_wild_extra = Rand_value; /* save for use in terrain_spot() */
 	Rand_value = seed_town + (wpos->wx+wpos->wy*MAX_WILD_X) * 600;
 
 	/* if not already set, determine the type of terrain */

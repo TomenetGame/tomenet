@@ -521,18 +521,18 @@ bool Report_to_meta(int flag)
                         }
                 }
 
+#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
+		strcat(buf_meta, "<game>TomeNET Smash Arcade</game>");
+#else
 #ifdef RPG_SERVER
 		strcat(buf_meta, "<game>TomeNET RPG (not for beginners)</game>");
 #else
- #ifdef FUN_SERVER
+#ifdef FUN_SERVER
 		strcat(buf_meta, "<game>TomeNET Fun</game>");
- #else
-  #ifdef ARCADE_SERVER
-		strcat(buf_meta, "<game>TomeNET Smash Arcade</game>");
-  #else
+#else
                 strcat(buf_meta, "<game>TomeNET</game>");
-  #endif
- #endif
+#endif
+#endif
 #endif
 
                 /* Append the version number */
@@ -629,14 +629,14 @@ void Start_evilmeta(void)
 		}
 		if (metapid == 0) {
 			char buf[80];
+#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
+			char *cmd = "./evilmeta.smash";
+#else
 #ifdef RPG_SERVER
 			char *cmd = "./evilmeta.rpg";
 #else
- #ifdef ARCADE_SERVER
-			char *cmd = "./evilmeta.smash";
- #else
 			char *cmd = "./evilmeta";
- #endif
+#endif
 #endif
 			char *args[] = {cmd, NULL};
 
@@ -1309,12 +1309,13 @@ static void Delete_player(int Ind)
 
 			tmp = pl_ptr;
 			pl_ptr = pl_ptr->next;
-			KILL(tmp, player_list_type);
+			FREE(tmp, player_list_type);
 		}
 #endif
 	}
 
 	/* Remove ignores - mikaelh */
+#if 0
 	if (p_ptr->ignore)
 	{
 		hostile_type *h_ptr, *tmp;
@@ -1325,9 +1326,25 @@ static void Delete_player(int Ind)
 		{
 			tmp = h_ptr;
 			h_ptr = h_ptr->next;
-			KILL(tmp, hostile_type);
+			FREE(tmp, hostile_type);
 		}
 	}
+#else
+	/* Make use of the new player_list_free */
+	player_list_free(p_ptr->ignore);
+#endif
+
+	/* Remove him from everyone's afk_noticed if he was AFK */
+	if (p_ptr->afk)
+	{
+		for (i = 1; i <= NumPlayers; i++)
+		{
+			player_list_del(&Players[i]->afk_noticed, p_ptr->id);
+		}
+	}
+
+	/* Free afk_noticed - mikaelh */
+	player_list_free(p_ptr->afk_noticed);
 
 	/* Try to save his character */
 	save_player(Ind);
@@ -2214,6 +2231,9 @@ static int Handle_login(int ind)
 			msg_format(NumPlayers, "\377bGuild Note: %s", guild_note[i]);
 		}
 	}
+
+	/* Warn the player if some of his/her characters are about to expire */
+	account_checkexpiry(NumPlayers);
 
 	/* Brand-new players get super-short instructions presented here: */
 #if 1
@@ -5097,7 +5117,7 @@ int Send_AFK(int ind, byte afk)
 	return Packet_printf(&connp->c, "%c%c", PKT_AFK, afk);
 }
 
-int Send_encumberment(int ind, byte cumber_armor,byte awkward_armor,byte cumber_glove,byte heavy_wield,byte heavy_shoot,
+int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
@@ -5123,11 +5143,11 @@ int Send_encumberment(int ind, byte cumber_armor,byte awkward_armor,byte cumber_
 		p_ptr2 = Players[Ind2];
 		connp2 = &Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+		Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 		                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shoot,
+	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 }
 		
@@ -9006,7 +9026,7 @@ static int Receive_raw_key(int ind)
 					break;
 				case '!':
 					/* Look at in-game bbs - C. Blue */
-					msg_print(player, "\377wBulletin board (type '/bbs' to write something) :");
+					msg_print(player, "\377wBulletin board (type '/bbs <text>' in chat to write something) :");
 					for (n = 0; n < BBS_LINES; n++)
 						if (strcmp(bbs_line[n], "")) {
 							msg_format(player, "\377s %s", bbs_line[n]);
@@ -9193,7 +9213,7 @@ static int Receive_BBS(int ind) {
 	}
 	if (connp->id != -1) {
 		/* Look at in-game bbs - C. Blue */
-		msg_print(player, "\377wBulletin board (type '/bbs' to write something):");
+		msg_print(player, "\377wBulletin board (type '/bbs <text>' in chat to write something):");
 		for (n = 0; n < BBS_LINES; n++)
 			if (strcmp(bbs_line[n], "")) {
 				msg_format(player, "\377s %s", bbs_line[n]);

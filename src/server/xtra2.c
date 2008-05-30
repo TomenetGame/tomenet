@@ -81,9 +81,6 @@
 #define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2) /* 5:2 */
 #define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 12 : 4) /* 16:4 */
 
-/* when do rogues learn cloaking mode? */
-#define LEARN_CLOAKING_LEVEL 15
-
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
    death_type: 0 - perma-death
@@ -1182,6 +1179,7 @@ bool set_tim_wraith(int Ind, int v)
 		}
 #if 0	// I can't remember what was it for..
 		// but for sure it's wrong
+//it was probably for the old hack to prevent wraithing in/around town and breaking into houses that way - C. Blue
 		else if(!p_ptr->wpos.wz && cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 			return(FALSE);
 #endif	// 0
@@ -2978,6 +2976,11 @@ bool set_food(int Ind, int v)
 	    p_ptr->food = PY_FOOD_FULL - 1;
 	    return (FALSE);
 	}
+	/* Warrior does not need food badly */
+#ifdef ARCADE_SERVER
+	p_ptr->food = PY_FOOD_FULL - 1;
+	return (FALSE);
+#endif
 
 	/* Hack -- Force good values */
 	v = (v > 20000) ? 20000 : (v < 0) ? 0 : v;
@@ -3837,7 +3840,7 @@ void check_experience(int Ind)
  */
 void gain_exp(int Ind, s64b amount)
 {
-	#ifdef ARCADE_SERVER
+#ifdef ARCADE_SERVER
 return;
 #endif
 	player_type *p_ptr = Players[Ind], *p_ptr2=NULL;
@@ -5352,11 +5355,11 @@ void player_death(int Ind)
 
 			/* Apply small penalty for death */
 
-			#ifndef ARCADE_SERVER
+#ifndef ARCADE_SERVER
 			p_ptr->au = p_ptr->au * 4 / 5;
 			p_ptr->max_exp = (p_ptr->max_exp * 4 + 1) / 5; /* never drop below 1! (Highlander Tournament exploit) */
 			p_ptr->exp = p_ptr->max_exp;
-			#endif
+#endif
 
 			p_ptr->safe_sane = TRUE;
 			check_experience(Ind);
@@ -5417,7 +5420,12 @@ void player_death(int Ind)
 	/* either instakill in sector 0,0... */
 	if (p_ptr->global_event_temp & 0x2) hell = TRUE;
 	/* or instead teleport them to surface */
-	if ((p_ptr->global_event_temp & 0x4) && (p_ptr->csane >= 0)) {
+	/* added wpos checks due to weirdness. -Molt */
+	if(p_ptr->wpos.wx != 0 && p_ptr->wpos.wy != 0 && p_ptr->global_event_temp & 0x4) {
+	s_printf("Somethin weird with %s. GET is %d", p_ptr->name, p_ptr->global_event_temp);
+	msg_broadcast(0, "Uh oh, somethin's not right here.");
+	}
+	if ((p_ptr->global_event_temp & 0x4) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == 0 && p_ptr->wpos.wy == 0) {
 s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
@@ -5431,7 +5439,7 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		recall_player(Ind, "");
 
-#if 0/* Making him hostile isnt wanted if he can go back downstairs, btw. */
+#if 0 /* Making him hostile isnt wanted if he can go back downstairs, btw. */
 #if 0
 		p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -6125,8 +6133,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		if (p_ptr->cut) (void)set_cut(Ind, 0);
 		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
 		/* if (p_ptr->food < PY_FOOD_FULL) */
-		if (!p_ptr->suscep_life)
-			(void)set_food(Ind, PY_FOOD_FULL - 1);
+		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Don't have 'vegetable' ghosts running around after equipment was dropped */
 		p_ptr->safe_sane = TRUE;
@@ -6677,8 +6684,41 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	/* It is dead now */
 	if (m_ptr->hp < 0)
 	{
-#ifdef ARCADE_SERVER
-		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172);
+#ifdef ARCADE_SERVER 
+		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
+		if(m_ptr->hp < -1000) {
+
+		object_type forge, *o_ptr;
+		o_ptr = &forge;
+int i, head, arm, leg, part, ok;
+head = arm = leg = part = 0;
+for(i=1; i < 5; i++) {
+		ok = 0;
+		while(ok == 0) {	
+			ok = 1;
+			part = randint(4);
+			if(part == 1 && head == 1)
+			ok = 0;
+			if(part == 2 && arm == 2)
+			ok = 0;
+			if(part == 4 && leg == 2)
+			ok = 0;
+		}
+		if(part == 1)
+		head++;
+		if(part == 2)
+		arm++;
+		if(part == 4)
+		leg++;
+		invcopy(o_ptr, lookup_kind(TV_SKELETON, part));
+		object_known(o_ptr);
+		o_ptr->owner = p_ptr->id;
+		o_ptr->owner_mode = p_ptr->mode;
+		o_ptr->level = 1;
+		o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+		(void)drop_near(o_ptr, 0, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+		}
+		}
 #endif
 		char m_name[80];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);

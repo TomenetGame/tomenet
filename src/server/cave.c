@@ -844,8 +844,8 @@ static bool is_wall(cave_type *c_ptr)
 	/* Exception #2: an illusion wall is not a wall but obstructs view */
 	if (feat == FEAT_ILLUS_WALL) return TRUE;
 
-	/* Exception #3: a small tree is a floor but obstructs view */
-	if (feat == FEAT_SMALL_TREES) return TRUE;
+	/* Exception #3: Ivy (formerly: a small tree) is a floor but obstructs view */
+	if (feat == FEAT_IVY) return TRUE;
 
 	/* Normal cases: use the WALL flag in f_info.txt */
 	return (f_info[feat].flags1 & FF1_WALL) ? TRUE : FALSE;
@@ -938,7 +938,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 + 1; ty < y2; ty++)
 			{
-				if (!cave_floor_bold(zcave, ty, x1)) return (FALSE);
+				if (!cave_los(zcave, ty, x1)) return (FALSE);
 			}
 		}
 
@@ -947,7 +947,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		{
 			for (ty = y1 - 1; ty > y2; ty--)
 			{
-				if (!cave_floor_bold(zcave, ty, x1)) return (FALSE);
+				if (!cave_los(zcave, ty, x1)) return (FALSE);
 			}
 		}
 
@@ -963,7 +963,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 + 1; tx < x2; tx++)
 			{
-				if (!cave_floor_bold(zcave, y1, tx)) return (FALSE);
+				if (!cave_los(zcave, y1, tx)) return (FALSE);
 			}
 		}
 
@@ -972,7 +972,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		{
 			for (tx = x1 - 1; tx > x2; tx--)
 			{
-				if (!cave_floor_bold(zcave, y1, tx)) return (FALSE);
+				if (!cave_los(zcave, y1, tx)) return (FALSE);
 			}
 		}
 
@@ -991,7 +991,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	{
 		if (ay == 2)
 		{
-			if (cave_floor_bold(zcave, y1 + sy, x1)) return (TRUE);
+			if (cave_los(zcave, y1 + sy, x1)) return (TRUE);
 		}
 	}
 
@@ -1000,7 +1000,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	{
 		if (ax == 2)
 		{
-			if (cave_floor_bold(zcave, y1, x1 + sx)) return (TRUE);
+			if (cave_los(zcave, y1, x1 + sx)) return (TRUE);
 		}
 	}
 
@@ -1036,7 +1036,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (x2 - tx)
 		{
-			if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+			if (!cave_los(zcave, ty, tx)) return (FALSE);
 
 			qy += m;
 
@@ -1047,7 +1047,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 			else if (qy > f2)
 			{
 				ty += sy;
-				if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+				if (!cave_los(zcave, ty, tx)) return (FALSE);
 				qy -= f1;
 				tx += sx;
 			}
@@ -1083,7 +1083,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 		/* the LOS exactly meets the corner of a tile. */
 		while (y2 - ty)
 		{
-			if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+			if (!cave_los(zcave, ty, tx)) return (FALSE);
 
 			qx += m;
 
@@ -1094,7 +1094,7 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 			else if (qx > f2)
 			{
 				tx += sx;
-				if (!cave_floor_bold(zcave, ty, tx)) return (FALSE);
+				if (!cave_los(zcave, ty, tx)) return (FALSE);
 				qx -= f1;
 				ty += sy;
 			}
@@ -1743,6 +1743,12 @@ static byte player_color(int Ind)
 			case 2:
 				pcolor = TERM_L_BLUE;
 				break;
+			case 3: 
+				pcolor = TERM_YELLOW;
+				break;
+			case 4:
+				pcolor = TERM_UMBER;
+				break;
 			default:
 				break;
 		}
@@ -1866,9 +1872,13 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 			}
 			
 			break;
-//		case FEAT_TREE:
-		case FEAT_TREES:
-		case FEAT_SMALL_TREES:
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (Rand_div(500)) color = TERM_WHITE;
+			else if (Rand_div(3) != 0) color = TERM_UMBER;
+			else color = TERM_GREEN;
+			break;
+		case FEAT_IVY:
 			if (Rand_div(500)) color = TERM_WHITE;
 			else if (Rand_div(3) != 0) color = TERM_UMBER;
 			else color = TERM_GREEN;
@@ -2941,7 +2951,7 @@ static byte priority_table[][2] =
 	{ FEAT_GRASS, 4 },
 
 	/* Tree */
-	{ FEAT_TREES, 5 },
+	{ FEAT_TREE, 5 },
 
 	/* Water */
 	{ FEAT_DEEP_WATER, 6 },
@@ -2980,7 +2990,8 @@ static byte priority_table[][2] =
 	{ FEAT_DIRT, 20 },
 	{ FEAT_GRASS, 20 },
 	{ FEAT_DARK_PIT, 20 },
-	{ FEAT_TREES, 20 },
+	{ FEAT_TREE, 20 },
+	{ FEAT_BUSH, 20 },
 	{ FEAT_MOUNTAIN, 20 },
 	{ FEAT_ICE, 20},
 	{ FEAT_SAND, 20},
@@ -4075,8 +4086,8 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 
 
 	/* Check for walls */
-	f1 = (cave_floor_grid(g1_c_ptr));
-	f2 = (cave_floor_grid(g2_c_ptr));
+	f1 = (cave_los_grid(g1_c_ptr));
+	f2 = (cave_los_grid(g2_c_ptr));
 
 	/* Totally blocked by physical walls */
 	if (!f1 && !f2) return (TRUE);
@@ -4096,7 +4107,7 @@ static bool update_view_aux(int Ind, int y, int x, int y1, int x1, int y2, int x
 
 
 	/* Check for walls */
-	wall = (!cave_floor_grid(c_ptr));
+	wall = (!cave_los_grid(c_ptr));
 
 
 	/* Check the "ease" of visibility */
@@ -4372,7 +4383,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y+d][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;             
+		if (!cave_los_grid(c_ptr)) break;             
 	}
 
 	/* Scan south-west */
@@ -4383,7 +4394,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y+d][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Scan north-east */
@@ -4394,7 +4405,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y-d][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Scan north-west */
@@ -4405,7 +4416,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y-d][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 
@@ -4419,7 +4430,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y+d][x];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Initialize the "south strips" */
@@ -4433,7 +4444,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y-d][x];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Initialize the "north strips" */
@@ -4446,7 +4457,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x+d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Initialize the "east strips" */
@@ -4459,7 +4470,7 @@ void update_view(int Ind)
 		w_ptr = &p_ptr->cave_flag[y][x-d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x-d);
-		if (!cave_floor_grid(c_ptr)) break;
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Initialize the "west strips" */
@@ -5363,7 +5374,7 @@ void update_view(int Ind)
 
 				/* Handle wall */
 /*				if (info & (CAVE_WALL)) */
-				if (!cave_floor_grid(c_ptr))
+				if (!cave_los_grid(c_ptr))
 				{
 					/* Clear bits */
 					bits0 &= ~(p->bits_0);
@@ -6048,8 +6059,18 @@ void wiz_dark(int Ind)
 }
 
 
+extern int check_feat(worldpos *wpos, int y, int x)
+{
+        cave_type **zcave;
+        cave_type *c_ptr;
 
+        if(!(zcave=getcave(wpos))) return(0);
 
+        if (!in_bounds(y, x)) return(0);
+
+        c_ptr = &zcave[y][x];
+	return(c_ptr->feat);
+}
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
  * (Adapted from PernAngband)
@@ -6063,15 +6084,15 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	int i;
 
 	if(!(zcave=getcave(wpos))) return;
-
 	if (!in_bounds(y, x)) return;
-
 	c_ptr = &zcave[y][x];
 
-	/* grow_trees sets FEAT_TREES via this function */
+#if 0 /* using allow_terraforming() checks in the specialized functions which call this one instead */
+	/* grow_trees sets FEAT_TREE via this function */
 	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
 	   without calling this function */
 	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
+#if 0
 	if ((feat == FEAT_GLYPH) && (
 	    (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) ||
 	    ((getlevel(wpos) == 200) && (wpos->wz == 1)) ||
@@ -6083,12 +6104,16 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_SAND) || 
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
-	    (c_ptr->feat == FEAT_FLOWER)))))
+	    (c_ptr->feat == FEAT_FLOWER)))))*/
 	    /* And no 'terraforming' in Bree or Valinor either (counting glyph spell to those) */
-	    
+#else
+	if (!allow_terraforming(wpos, feat))
+#endif	    
 	    return;
+#endif
 
 	/* Change the feature */
+	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = feat;
 
 	if (cave_set_quietly) return;
@@ -6231,7 +6256,7 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 	for (dist = 0; dist <= range; dist++)
 	{
 		/* Never pass through walls */
-		if (dist && !cave_floor_bold(zcave, y, x)) break;
+		if (dist && !cave_los(zcave, y, x)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
@@ -6261,7 +6286,7 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never go through walls */
-		if (dist && !cave_floor_bold(zcave, y, x)) break;
+		if (dist && !cave_los(zcave, y, x)) break;
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);
@@ -6542,36 +6567,49 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 }
 
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
-	bool town = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
-	bool valinor = (getlevel(wpos) == 200);
+	bool bree = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
+	bool town = istown(wpos);
 	bool sector00 = (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation);
+	bool valinor = (getlevel(wpos) == 200);
+	bool netherrealm = (getlevel(wpos) == 196);
 
-	if (!town && !valinor && !sector00) return(TRUE);
+	/* usually allow all changes (normal dungeons and town-unrelated world map) */
+	if (!bree && !town && !sector00 && !valinor && !netherrealm) return(TRUE);
 
 	switch (feat) {
+	/* allow only harmless as well as non-obstructing changes: */
+	case FEAT_WALL_EXTRA:
+	case FEAT_TREE:
+	case FEAT_BUSH:
+	case FEAT_IVY:
+	case FEAT_DEAD_TREE:
+	case FEAT_SHAL_LAVA:
+	case FEAT_DEEP_LAVA:
+	case FEAT_DEEP_WATER:
+        case FEAT_ICE:
+	case FEAT_GLYPH: if (bree || sector00 || valinor || netherrealm) return(FALSE);
+
+	/* don't allow any changes at all to preserve the visuals 100% */
+        case FEAT_NONE:
+    	case FEAT_FLOOR:
+        case FEAT_DIRT:
+        case FEAT_GRASS:
+        case FEAT_SAND:
+        case FEAT_ASH:
+        case FEAT_MUD:
+	case FEAT_SHAL_WATER:
+        case FEAT_FLOWER: if (valinor || netherrealm) return(FALSE);
+
+	/* generate.c uses these for staircases in towns */
 	case FEAT_MORE:
 	case FEAT_LESS:
 	case FEAT_WAY_MORE:
 	case FEAT_WAY_LESS:
 	case FEAT_BETWEEN:
-	case FEAT_BETWEEN2: return(FALSE);
-	case FEAT_TREES:
-	case FEAT_SMALL_TREES:
-	case FEAT_DEAD_TREE:
-	case FEAT_GLYPH: return(FALSE);
-	case FEAT_SHAL_WATER:
-	case FEAT_DEEP_WATER:
-	case FEAT_SHAL_LAVA:
-	case FEAT_DEEP_LAVA: if (!valinor && !sector00) return(FALSE);
-        case FEAT_NONE:
-    	case FEAT_FLOOR:
-        case FEAT_DIRT:
-        case FEAT_GRASS:
-        case FEAT_ICE:
-        case FEAT_SAND:
-        case FEAT_ASH:
-        case FEAT_MUD:
-        case FEAT_FLOWER: if (!valinor && !sector00) return(FALSE);
+	case FEAT_BETWEEN2:
+
+	/* forgot any? just paranoia */
+	default: ;
 	}
 
 	return (TRUE);

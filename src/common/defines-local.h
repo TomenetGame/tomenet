@@ -11,9 +11,11 @@
  * - dungeons are IRONMAN
  * - and many more things that are just a little bit different :)
  */
-/* #define RPG_SERVER */
+#define RPG_SERVER
+#define ENABLE_DIVINE
 
-/* Server is Moltor's Smash Arcade server? */
+/* Server is Moltor's Smash Arcade server?
+   (allows additional definition of RPG_SERVER if desired!) */
 /* #define ARCADE_SERVER */
 
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */

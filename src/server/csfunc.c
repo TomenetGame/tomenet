@@ -241,8 +241,10 @@ int thit(c_special *cs_ptr, int y, int x, int Ind){
 		else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
 					- UNAWARENESS(p_ptr)))
 		{
+#ifndef ARCADE_SERVER
 			msg_print(Ind, "You carefully avoid touching the trap.");
 			hit = FALSE;
+#endif
 		}
 
 		/* Hit the trap */

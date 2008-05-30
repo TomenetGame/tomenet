@@ -1263,6 +1263,21 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	for (i = istart; i <= iend; i++)
 	{
 		o_ptr = &p_ptr->inventory[i];
+
+
+	        /* Unenchantable items always fail */                                                                            
+	        if (f5 & TR5_NO_ENCHANT) continue;
+
+	        /* Dark Swords are unenchantable too */                                                                          
+	        if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) continue;
+
+	        /* Artifacts cannot be enchanted. */                                                                             
+	        if (artifact_p(o_ptr)) continue;                                                                           
+
+	        /* Ethereal ammo cannot be enchanted */                                                                          
+	        if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) continue;                               
+
+
 		if (ispecific > 0)
 		{
 			if (o_ptr->tval != ispecific)

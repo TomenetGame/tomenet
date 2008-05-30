@@ -898,7 +898,48 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 	switch(trap)
 	{
 		/* stat traps */
+#ifdef ARCADE_SERVER
+case TRAP_OF_SPREAD: {
+if(p_ptr->game == 1) 
+{
+p_ptr->a = 30;
+p_ptr->b = 1;
+msg_print(Ind, "Spread shot, w00t.");
+}
+else if (p_ptr->game == 3) 
+{
+p_ptr->b += 3;
+msg_print(Ind, "+3 Length!");
+}
+destroy_doors_touch(Ind, 0);
+break;
+}
 
+case TRAP_OF_LASER: {
+p_ptr->a = 30;
+p_ptr->b = 2;
+destroy_doors_touch(Ind, 0);
+msg_print(Ind, "You got a frickin laser beam!");
+break;
+}
+
+case TRAP_OF_ROCKETS: {
+p_ptr->a = 30;
+p_ptr->b = 3;
+p_ptr->c = 0;
+p_ptr->d = 1;
+
+destroy_doors_touch(Ind, 0);
+msg_print(Ind, "You're a rocket man.");
+break;
+}
+
+case TRAP_OF_HEALING: {
+destroy_doors_touch(Ind, 0);
+hp_player(Ind, p_ptr->mhp-p_ptr->chp);
+break;
+}
+#endif
 		case TRAP_OF_WEAKNESS_I:       ident=do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY); break;
 		case TRAP_OF_WEAKNESS_II:      ident=do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL); break;
 		case TRAP_OF_WEAKNESS_III:     ident=do_dec_stat(Ind, A_STR, STAT_DEC_PERMANENT); break;
@@ -1098,11 +1139,12 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "A wretched smelling gas cloud upsets your stomach.");
 			take_hit(Ind, 1, "bowel cramps", 0);
 			if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
-				(void)set_food(Ind, PY_FOOD_STARVE - 1);
+//				(void)set_food(Ind, PY_FOOD_STARVE - 1);
+				(void)set_food(Ind, PY_FOOD_STARVE + 20);
 			(void)set_poisoned(Ind, 0);
 			if (!p_ptr->free_act && !p_ptr->slow_digest)
 			{
-				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
+				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(3) + 3);
 			}
 			ident=TRUE;
 		    }
@@ -3136,7 +3178,9 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
-
+#ifdef ARCADE_SERVER
+	return;
+#endif
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */

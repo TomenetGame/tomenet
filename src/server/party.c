@@ -1,5 +1,4 @@
 /* $Id$ */
-
 /*
  * Support for the "party" system.
  */
@@ -2667,21 +2666,52 @@ void checkexpiry(int Ind, int days)
 	int slot, expire;
 	hash_entry *ptr;
 	time_t now;
-	now = time(&now);
+	now = time(NULL);
 	msg_format(Ind, "\377oPlayers that are about to expire in %d days:", days);
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		ptr = hash_table[slot];
 		while (ptr) {
-			if (ptr->laston && (now - ptr->laston > (7776000 - days * 86400))) {
-				expire = 7776000 - now + ptr->laston;
+			expire = 90 * 86400 - now + ptr->laston;
+			if (ptr->laston && expire < days * 86400) {
 				if (expire < 86400) {
 					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
 				}
-				else if (expire < 604800) {
+				else if (expire < 7 * 86400) {
 					msg_format(Ind, "\377yPlayer %s (accid %d) will expire in %d days!", ptr->name, ptr->account, (expire / 86400));
 				}
 				else {
 					msg_format(Ind, "\377gPlayer %s (accid %d) will expire in %d days.", ptr->name, ptr->account, (expire / 86400));
+				}
+			}
+			ptr = ptr->next;
+		}
+	}
+}
+
+/*
+ * Warn the player if other characters on his/her account will expire soon
+ *  - mikaelh
+ */
+void account_checkexpiry(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int slot, expire;
+	hash_entry *ptr;
+	time_t now;
+
+	now = time(NULL);
+	
+	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+		ptr = hash_table[slot];
+		while (ptr) {
+			if (p_ptr->id != ptr->id && p_ptr->account == ptr->account && ptr->laston) {
+				expire = 90 * 86400 - now + ptr->laston;
+
+				if (expire < 86400) {
+					msg_format(Ind, "\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
+				}
+				else if (expire < 30 * 86400) {
+					msg_format(Ind, "\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
 				}
 			}
 			ptr = ptr->next;
@@ -2749,6 +2779,11 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (ptr->mode != mode) {
 		s_printf("hash_entry: fixing mode of %s.\n", ptr->name);
 		ptr->mode = mode;
+	}
+	/* For savegame conversion 4.3.4 -> 4.3.5: */
+	if (ptr->class != class) {
+		s_printf("hash_entry: fixing class of %s.\n", ptr->name);
+		ptr->class = class;
 	}
 }
 

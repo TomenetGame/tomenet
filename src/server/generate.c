@@ -1610,9 +1610,14 @@ static void vault_traps(struct worldpos *wpos, int y, int x, int yd, int xd, int
  */
 static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 {
+
 	int          k, i, y, x;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+#ifdef ARCADE_SERVER
+if(wpos->wx == 32 && wpos->wy == 32 && wpos->wz > 0)
+return;
+#endif
 
 	/* Try to summon "num" monsters "near" the given location */
 	for (k = 0; k < num; k++)
@@ -2734,8 +2739,12 @@ static void build_type4(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		else
 		{
 #ifndef ARCADE_SERVER
-			place_random_stairs(wpos, yval, xval);
+                place_random_stairs(wpos, yval, xval);
+#else
+                if(wpos->wz < 0)
+                place_random_stairs(wpos, yval, xval);
 #endif
+        
 		}
 
 		/* Traps to protect the treasure */
@@ -3362,6 +3371,11 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		case 4: place_secret_door(wpos, yval, x2 + 1); break;
 	}
 
+	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
+	for (y = yval - 2; y <= yval + 2; y++)
+		for (x = xval - 9; x <= xval + 9; x++)
+			zcave[y][x].info |= CAVE_NEST;
+
 
 	/* Hack -- Choose a nest type */
 	tmp = randint(dun_level);
@@ -3498,7 +3512,6 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Prepare allocation table */
 	get_mon_num_prep();
-
 
 	/* Oops */
 	if (empty) return;
@@ -3652,6 +3665,12 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		case 3: place_secret_door(wpos, yval, x1 - 1); break;
 		case 4: place_secret_door(wpos, yval, x2 + 1); break;
 	}
+
+
+	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
+	for (y = yval - 2; y <= yval + 2; y++)
+		for (x = xval - 9; x <= xval + 9; x++)
+			zcave[y][x].info |= CAVE_NEST;
 
 
 	/* Choose a pit type */
@@ -8991,7 +9010,7 @@ if (!nether_bottom) {
 
 			for (i = 0; i < num; i++)
 			{
-				build_streamer2(wpos, FEAT_SMALL_TREES, 1);
+				build_streamer2(wpos, FEAT_IVY, 1);
 			}
 		}
 
@@ -9099,7 +9118,7 @@ if (!nether_bottom) {
 	{
 		(void)alloc_monster(wpos, 0, TRUE);
 	}
-
+#ifndef ARCADE_SERVER
 if (!nether_bottom) {
 	/* Place some traps in the dungeon */
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
@@ -9115,10 +9134,28 @@ if (!nether_bottom) {
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
 	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
 
-#if 0
-	/* Put some altars */	/* No god, no alter */
-	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_ALTAR, randnor(DUN_AMT_ALTAR, 3) * dun->ratio / 100 + 1, p_ptr);
-#endif
+	/* Put some between gates */
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
+
+	/* Put some fountains */
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
+}
+	/* It's done */
+#else
+if (!nether_bottom && wpos->wz < 0) {
+	/* Place some traps in the dungeon */
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_TRAP,
+			randint(k * (bonus ? 3 : 1)), p_ptr);
+
+	/* Put some rubble in corridors */
+	alloc_object(wpos, ALLOC_SET_CORR, ALLOC_TYP_RUBBLE, randint(k), p_ptr);
+
+	/* Put some objects in rooms */
+	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ROOM, 3) * dun->ratio / 100 + 1, p_ptr);
+
+	/* Put some objects/gold in the dungeon */
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_OBJECT, randnor(DUN_AMT_ITEM, 3) * dun->ratio / 100 + 1, p_ptr);
+	alloc_object(wpos, ALLOC_SET_BOTH, ALLOC_TYP_GOLD, randnor(DUN_AMT_GOLD, 3) * dun->ratio / 100 + 1, p_ptr);
 
 	/* Put some between gates */
 	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_BETWEEN, randnor(DUN_AMT_BETWEEN, 3) * dun->ratio / 100 + 1, p_ptr);
@@ -9127,38 +9164,47 @@ if (!nether_bottom) {
 	alloc_object(wpos, ALLOC_SET_ROOM, ALLOC_TYP_FOUNTAIN, randnor(DUN_AMT_FOUNTAIN, 3) * dun->ratio / 100 + 1, p_ptr);
 }
 	/* It's done */
+#endif
+
+#if 0
+	/* Put some altars */	/* No god, no alter */
+	alloc_object(ALLOC_SET_ROOM, ALLOC_TYP_ALTAR, randnor(DUN_AMT_ALTAR, 3) * dun->ratio / 100 + 1, p_ptr);
+#endif
+
 #ifdef ARCADE_SERVER
+if(wpos->wz > 0) {
 for(mx = 1; mx < 131; mx++) {
                 for(my = 1; my < 43; my++) {
                 cave_set_feat(wpos, my, mx, 1);
                 }
         }
+}
         if(wpos->wz > 0 && wpos->wz < 7) {
-        cave_set_feat(wpos, 20, 1, 209);
-        cave_set_feat(wpos, 21, 1, 209);
-        cave_set_feat(wpos, 22, 1, 209);
-        cave_set_feat(wpos, 23, 1, 209);
-        cave_set_feat(wpos, 24, 1, 209);
-        cave_set_feat(wpos, 25, 1, 209);
-        cave_set_feat(wpos, 20, 130, 209);
-        cave_set_feat(wpos, 21, 130, 209);
-        cave_set_feat(wpos, 22, 130, 209);
-        cave_set_feat(wpos, 23, 130, 209);
-        cave_set_feat(wpos, 24, 130, 209);
-        cave_set_feat(wpos, 25, 130, 209);
-        cave_set_feat(wpos, 1, 62, 209);
-	cave_set_feat(wpos, 1, 63, 209);
-        cave_set_feat(wpos, 1, 64, 209);
-        cave_set_feat(wpos, 1, 65, 209);
-        cave_set_feat(wpos, 1, 66, 209);
-        cave_set_feat(wpos, 1, 67, 209);
-        cave_set_feat(wpos, 42, 62, 209);
-        cave_set_feat(wpos, 42, 63, 209);
-        cave_set_feat(wpos, 42, 64, 209);
-        cave_set_feat(wpos, 42, 65, 209);
-	cave_set_feat(wpos, 42, 66, 209);
-        cave_set_feat(wpos, 42, 67, 209); }
-        else if (wpos->wz == 7) {
+
+		for(my = 1; my < 8; my++) {
+			for(mx = 63; mx < 70; mx++) {
+				 cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+		for(my = 36; my < 43; my++) {
+			for(mx = 63; mx < 70; mx++) {
+				 cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+ 		for(my = 19; my < 26; my++) {
+                        for(mx = 1; mx < 8; mx++) {
+                                 cave_set_feat(wpos, my, mx, 209);
+                        }
+                }
+                for(my = 19; my < 26; my++) {
+                        for(mx = 124; mx < 131; mx++) {
+                                 cave_set_feat(wpos, my, mx, 209);
+                        }
+                }
+	}	
+
+
+        if (wpos->wz == 7) {
                 for(mx = 1; mx<21; mx++) 
                 cave_set_feat(wpos, 11, mx, 61);
                 for(mx = 1; mx < 12; mx++)
@@ -9253,7 +9299,8 @@ for(mx = 1; mx < 131; mx++) {
 			    (csbm_ptr->feat == FEAT_MAGMA_K) ||
 			    (csbm_ptr->feat == FEAT_QUARTZ_K) ||
 			    (csbm_ptr->feat == FEAT_ICE_WALL) ||
-			    (csbm_ptr->feat == FEAT_TREES) ||
+			    (csbm_ptr->feat == FEAT_TREE) ||
+			    (csbm_ptr->feat == FEAT_BUSH) ||
 			    (csbm_ptr->feat == FEAT_DEAD_TREE) ||
 			    (csbm_ptr->feat == FEAT_MOUNTAIN) ||
 			    (csbm_ptr->feat == FEAT_SANDWALL) ||
@@ -9291,7 +9338,8 @@ for(mx = 1; mx < 131; mx++) {
 					    (cr_ptr->feat != FEAT_MAGMA_K) &&
 					    (cr_ptr->feat != FEAT_QUARTZ_K) &&
 					    (cr_ptr->feat != FEAT_ICE_WALL) &&
-					    (cr_ptr->feat != FEAT_TREES) &&      
+					    (cr_ptr->feat != FEAT_TREE) &&      
+					    (cr_ptr->feat != FEAT_BUSH) &&      
 					    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 					    (cr_ptr->feat != FEAT_MOUNTAIN) &&
 					    (cr_ptr->feat != FEAT_SANDWALL) &&
@@ -9336,7 +9384,7 @@ for(mx = 1; mx < 131; mx++) {
 						    (cr_ptr->feat != FEAT_MAGMA_K) &&
 						    (cr_ptr->feat != FEAT_QUARTZ_K) &&
 						    (cr_ptr->feat != FEAT_ICE_WALL) &&
-						    (cr_ptr->feat != FEAT_TREES) &&      
+						    (cr_ptr->feat != FEAT_TREE) &&      
 						    (cr_ptr->feat != FEAT_DEAD_TREE) &&
 						    (cr_ptr->feat != FEAT_MOUNTAIN) &&
 						    (cr_ptr->feat != FEAT_SANDWALL) &&
@@ -9561,7 +9609,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 			c_ptr = &zcave[y][x];
 
-			c_ptr->feat = FEAT_TREES;
+			c_ptr->feat = FEAT_TREE;
 		}
 
 		return;
@@ -9664,7 +9712,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 
 				/* Put some trees */
 				if (randint(100) < chance)
-					c_ptr->feat = FEAT_TREES;
+					c_ptr->feat = FEAT_TREE;
 			}
 		}
 
@@ -10062,7 +10110,7 @@ static void town_gen_hack(struct worldpos *wpos)
 
 			else if (rand_int(100) < 15)
 			{
-				c_ptr->feat = FEAT_TREES;
+				c_ptr->feat = FEAT_TREE; /* gotta add FEAT_BUSH without screwing up the rng seed */
 			}
 		}
 	}
@@ -10276,7 +10324,7 @@ static void town_gen(struct worldpos *wpos)
 				c_ptr = &zcave[y][x];
 
 				/* Clear previous contents, add forest */
-				//c_ptr->feat = magik(98) ? FEAT_TREES : FEAT_GRASS;
+				//c_ptr->feat = magik(98) ? FEAT_TREE : FEAT_GRASS;
 				c_ptr->feat = magik(town_profile[type].ratio) ? town_profile[type].feat1 : town_profile[type].feat2;
 			}
 		}
@@ -10617,8 +10665,12 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
  
 void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 {
-	int i, num, y, x;
-	cave_type **zcave, *c_ptr;
+	int i, num;
+	cave_type **zcave;
+#ifdef WINTER_SEASON
+	int y, x;
+	cave_type *c_ptr;
+#endif
 	struct worldpos twpos;
 
         wpcopy(&twpos, wpos);

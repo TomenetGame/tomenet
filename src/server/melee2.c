@@ -689,7 +689,7 @@ static bool clean_shot(worldpos *wpos, int y1, int x1, int y2, int x2, int range
 	for (dist = 0; dist <= range; dist++)
 	{
 		/* Never pass through walls */
-		if (dist && !cave_floor_bold(zcave, y, x)) break;
+		if (dist && !cave_los(zcave, y, x)) break;
 		
 		/* Never pass through monsters */
 		if (dist && zcave[y][x].m_idx > 0)
@@ -1521,7 +1521,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip locations in a wall */
-		if (!cave_floor_bold(zcave, y, x)) continue;
+		if (!cave_los(zcave, y, x)) continue;
 
 		/* Check if projectable */
 		if (projectable(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE) &&
@@ -1553,7 +1553,8 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 				if (!in_bounds(y, x)) continue;
 
 				/* Skip locations in a wall */
-				if (!cave_floor_bold(zcave, y, x)) continue;
+//				if (!cave_floor_bold(zcave, y, x)) continue;
+				if (!cave_los(zcave, y, x)) continue;
 
 				/* Check distance */
 				if (distance(y, x, py, px) != d) continue;
@@ -4447,10 +4448,14 @@ static bool find_noeffect(int m_idx, int *yp, int *xp)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip locations in a wall */
+#if 0
 		if (!cave_floor_bold(zcave, y, x) && 
 				!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
 					(r_ptr->flags2 & (RF2_KILL_WALL))))
 			continue;
+#else
+		if (!creature_can_enter2(r_ptr, &zcave[y][x])) continue;
+#endif
 
 		/* Check for absence of bad effect */
 		if (!monster_is_safe(m_idx, m_ptr, r_ptr, &zcave[y][x])) continue;
@@ -4632,7 +4637,11 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip locations in a wall */
+#if 0
 		if (!cave_floor_bold(zcave, y, x)) continue;
+#else
+		if (!creature_can_enter2(race_inf(m_ptr), &zcave[y][x])) continue;
+#endif
 
 #ifdef MONSTER_FLOW
 		/* Check for "availability" (if monsters can flow) */
@@ -4685,7 +4694,11 @@ static bool find_safety(int Ind, int m_idx, int *yp, int *xp)
 				if (!in_bounds(y, x)) continue;
 
 				/* Skip locations in a wall */
+#if 0
 				if (!cave_floor_bold(zcave, y, x)) continue;
+#else
+				if (!creature_can_enter2(race_inf(m_ptr), &zcave[y][x])) continue;
+#endif
 
 				/* Check distance */
 				if (distance(y, x, fy, fx) != d) continue;
@@ -4786,7 +4799,13 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 		if (!in_bounds(y, x)) continue;
 
 		/* Skip locations in a wall */
+#if 0
 		if (!cave_floor_bold(zcave, y, x)) continue;
+#else
+		/* The monster assumes that grids it cannot enter work for making a good hiding place.
+		   It might be surprised though if the player can indeed cross some of those grids ;) */
+		if (!creature_can_enter2(race_inf(m_ptr), &zcave[y][x])) continue;
+#endif
 
 		/* Check for hidden, available grid */
 		if (!player_can_see_bold(Ind, y, x) && clean_shot(&m_ptr->wpos, fy, fx, y, x, MAX_RANGE))
@@ -4828,7 +4847,8 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 				if (!in_bounds(y, x)) continue;
 
 				/* Skip locations in a wall */
-				if (!cave_floor_bold(zcave, y, x)) continue;
+//				if (!cave_floor_bold(zcave, y, x)) continue;
+				if (!creature_can_enter2(race_inf(m_ptr), &zcave[y][x])) continue;
 
 				/* Check distance */
 				if (distance(y, x, fy, fx) != d) continue;
@@ -4908,7 +4928,9 @@ static int digging_difficulty(byte feat)
 
 	if ((feat == FEAT_SANDWALL_H) || (feat == FEAT_SANDWALL_K)) return (25);
 	if (feat == FEAT_RUBBLE) return (30);
-	if (feat == FEAT_TREES) return (50);
+	if (feat == FEAT_TREE) return (50);
+	if (feat == FEAT_BUSH) return (35);
+	if (feat == FEAT_IVY) return (20);
 	if (feat == FEAT_DEAD_TREE) return (30);	/* hehe it's evil */
 	if (feat >= FEAT_WALL_EXTRA) return (200);
 	if (feat >= FEAT_MAGMA)
@@ -6635,6 +6657,7 @@ static void process_monster(int Ind, int m_idx)
 			/* Nothing */
 		}
 
+#if 0
 		/* Floor is open? */
 		else if (cave_floor_bold(zcave, ny, nx))
 		{
@@ -6652,8 +6675,8 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */
 		//else if ((c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
-		else if ((c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREES ||
-			c_ptr->feat==FEAT_SMALL_TREES) &&
+		else if ((c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREE ||
+			c_ptr->feat==FEAT_BUSH || c_ptr->feat==FEAT_IVY) &&
 			((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL) ||
 			/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */
 			(r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL) ||
@@ -6671,7 +6694,9 @@ static void process_monster(int Ind, int m_idx)
 			/* Pass through trees if monster lives in the woods >:) */
 			do_move = TRUE;
 		}
-
+#else
+		else if (creature_can_enter(r_ptr, c_ptr)) do_move = TRUE;
+#endif
 		/* Player ghost in wall XXX */
 		else if (c_ptr->m_idx < 0)
 		{
@@ -6721,8 +6746,8 @@ static void process_monster(int Ind, int m_idx)
 			/* POWERFUL monsters can hack down trees */
 			((r_ptr->flags2 & RF2_POWERFUL) &&
 			//c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE ||
-			(c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREES ||
-			c_ptr->feat==FEAT_SMALL_TREES)))
+			(c_ptr->feat==FEAT_DEAD_TREE || c_ptr->feat==FEAT_TREE ||
+			c_ptr->feat==FEAT_BUSH || c_ptr->feat==FEAT_IVY)))
 #endif
 		{
 			/* Eat through walls/doors/rubble */
@@ -7686,12 +7711,21 @@ static void process_monster_pet(int Ind, int m_idx)
 			do_move = TRUE;	
 		}
 
+#if 0
 		/* Floor is open? */
 		else if (cave_floor_bold(zcave, ny, nx))
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
+#else
+		/* Floor is open? */
+		else if (creature_can_enter(r_ptr, c_ptr))
+		{
+			/* Go ahead and move */
+			do_move = TRUE;
+		}
+#endif
 
 		/* Player ghost in wall XXX */
 		else if (c_ptr->m_idx < 0)
@@ -7714,14 +7748,14 @@ static void process_monster_pet(int Ind, int m_idx)
 			(c_ptr->feat == FEAT_HOME) ||
 			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
 			(c_ptr->feat == FEAT_ALTAR_TAIL)) && !(
-			(c_ptr->feat == FEAT_TREES) ||
-			(c_ptr->feat == FEAT_SMALL_TREES) ||
+			(c_ptr->feat == FEAT_TREE) ||
+			(c_ptr->feat == FEAT_BUSH) ||
 			(c_ptr->feat == FEAT_DEAD_TREE)))
 		{
 			/* Nothing */
 		}
-		else if ( (c_ptr->feat == FEAT_TREES) ||
-			(c_ptr->feat == FEAT_SMALL_TREES) ||
+		else if ( (c_ptr->feat == FEAT_TREE) ||
+			(c_ptr->feat == FEAT_BUSH) ||
 			(c_ptr->feat == FEAT_DEAD_TREE)) {
 			if (r_ptr->flags7 & RF7_CAN_FLY)
 				do_move = TRUE;
@@ -8133,13 +8167,20 @@ static void process_monster_golem(int Ind, int m_idx)
 			/* Nothing */
 		}
 
+#if 0
 		/* Floor is open? */
 		else if (cave_floor_bold(zcave, ny, nx))
 		{
 			/* Go ahead and move */
 			do_move = TRUE;
 		}
-
+#else
+		else if (creature_can_enter(r_ptr, c_ptr))
+		{
+			/* Go ahead and move */
+			do_move = TRUE;
+		}
+#endif
 		/* Player ghost in wall XXX */
 		else if (c_ptr->m_idx < 0)
 		{
@@ -8163,9 +8204,8 @@ static void process_monster_golem(int Ind, int m_idx)
 			(c_ptr->feat == FEAT_HOME) ||
 			(c_ptr->feat == FEAT_ALTAR_HEAD) ||
 			(c_ptr->feat == FEAT_ALTAR_TAIL)) && !(
-//			(c_ptr->feat == FEAT_TREE) ||
-			(c_ptr->feat == FEAT_TREES) ||
-			(c_ptr->feat == FEAT_SMALL_TREES) ||
+			(c_ptr->feat == FEAT_TREE) ||
+			(c_ptr->feat == FEAT_BUSH) ||
 //			(c_ptr->feat == FEAT_EVIL_TREE) ||
 			(c_ptr->feat == FEAT_DEAD_TREE)))
 		{

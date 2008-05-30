@@ -596,8 +596,13 @@ void wipe_o_list_safely(struct worldpos *wpos)
 
 /* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
 //		if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
+#if 0
 			/* Skip objects inside a house(or something) */
 			if(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
+#else
+			/* Skip objects inside a house but not in a vault in dungeon/tower */
+			if(!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
+#endif
 				continue;
 //		}
 
@@ -2183,8 +2188,18 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			/* Require identical "ego-item" names.
 			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
 			   Note: This code assumes there's no ego power which can be both prefix and postfix. */
+#if 0
+			/* This is buggy, it allows stacking of normal items with items that only have one ego power - mikaelh */
 			if ((o_ptr->name2 != j_ptr->name2) && (o_ptr->name2 != j_ptr->name2b)) return (FALSE);
 			if ((o_ptr->name2b != j_ptr->name2) && (o_ptr->name2b != j_ptr->name2b)) return (FALSE);
+#else
+			/* This one only allows name2 and name2b to be swapped */
+			if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2)))
+			{
+				if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+				if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
+			}
+#endif
 
 			/* Require identical random seeds */
 			if (o_ptr->name3 != j_ptr->name3) return (FALSE);

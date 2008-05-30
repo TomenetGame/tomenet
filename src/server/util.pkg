@@ -313,3 +313,5 @@ extern int wind_gust_delay;
 /* for controlling fireworks on NEW_YEARS_EVE */
 extern int fireworks;
 extern int fireworks_delay;
+
+extern cptr *ANGBAND_DIR;

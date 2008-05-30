@@ -2343,6 +2343,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				ident = TRUE;
 				(void)create_artifact(Ind);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				break;
 			}
 
@@ -2490,6 +2491,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				ident = TRUE;
 				(void)ident_spell(Ind);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				break;
 			}
 
@@ -2499,6 +2501,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				ident = TRUE;
 				(void)identify_fully(Ind);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				break;
 			}
 
@@ -2525,6 +2528,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				ident = TRUE;
 				(void)enchant_spell(Ind, 0, 0, 1, 0);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				break;
 			}
 
@@ -2533,6 +2537,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This is a scroll of enchant weapon to-hit.");
 				(void)enchant_spell(Ind, 1, 0, 0, 0);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				ident = TRUE;
 				break;
 			}
@@ -2542,6 +2547,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This is a scroll of enchant weapon to-dam.");
 				(void)enchant_spell(Ind, 0, 1, 0, 0);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				ident = TRUE;
 				break;
 			}
@@ -2551,6 +2557,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This is a scroll of *enchant armour*.");
 				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, 0);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				ident = TRUE;
 				break;
 			}
@@ -2560,6 +2567,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This is a scroll of *enchant weapon*.");
 				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, 0);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				ident = TRUE;
 				break;
 			}
@@ -2569,6 +2577,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				msg_print(Ind, "This is a scroll of recharging.");
 				(void)recharge(Ind, 60);
 				used_up = FALSE;
+				p_ptr->using_up_item = item;
 				ident = TRUE;
 				break;
 			}

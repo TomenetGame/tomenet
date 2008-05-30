@@ -16,9 +16,6 @@
 #include "angband.h"
 
 
-/* divide magical damage by this in PvP */
-#define PVP_SPELL_DAM_REDUCTION 5
-
 /* 1/x chance of reducing stats (for elemental attacks) */
 #define HURT_CHANCE 16
 
@@ -757,6 +754,8 @@ void teleport_player(int Ind, int dis)
 			if (zcave[y][x].info & CAVE_ICKY) continue;
 			/* This prevents teleporting into broken vaults where layouts overlap :/ annoying bug */
 			if (zcave[y][x].info & CAVE_STCK) continue;
+			/* No teleporting into monster nests (experimental, 2008-05-26) */
+			if (zcave[y][x].info & CAVE_NEST) continue;
 
 			/* Never break into st-anchor */
 			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return;
@@ -3057,13 +3056,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	{
 		/* Ignore most effects */
 		case GF_ACID:
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* nor Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
+#else
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+#endif
 			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREES)
+			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH)
 			{
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x))
@@ -3082,7 +3084,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Burn grass */
-			if (c_ptr->feat == FEAT_GRASS)
+			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
 			{
 				/* Destroy the grass */
 				c_ptr->feat = FEAT_DIRT;
@@ -3110,7 +3112,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
-			
+
+#if 0			
 			/* No terraforming in Bree. Newbies might spawn inside stone
 			   prisons without phase door etc. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
@@ -3118,14 +3121,18 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (getlevel(wpos) == 196) break; // >= 166
 			/* And not in Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
+#else
+			if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
+#endif
 
-			   		/* Beware of the houses in town */
-			   		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;
+	   		/* Beware of the houses in town */
+	   		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;
 
 			/* Not if it's an open house door - mikaelh */
 			if (c_ptr->feat == FEAT_HOME_OPEN) break;
 
-						/* Place a wall */
+			/* Place a wall */
+			if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST; /* clear teleport protection for nest grid if changed */
 			c_ptr->feat = FEAT_WALL_EXTRA;
 					
 			/* Notice */
@@ -3148,13 +3155,17 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_HELL_FIRE:
 		{
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* or in Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
+#else
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+#endif
 			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREES ||
+			if (c_ptr->feat == FEAT_TREE ||
+			    c_ptr->feat == FEAT_BUSH ||
 			    c_ptr->feat == FEAT_DEAD_TREE)
 			{
 				/* Hack -- special message */
@@ -3167,14 +3178,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the tree */
-				c_ptr->feat = FEAT_DIRT;
+				c_ptr->feat = FEAT_ASH;
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 			}
 
 			/* Burn grass */
-			if (c_ptr->feat == FEAT_GRASS)
+			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
 			{
 				/* Destroy the grass */
 				c_ptr->feat = FEAT_ASH;
@@ -3333,13 +3344,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
 		{
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* or Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
+#else
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+#endif
 			/* Non-walls (etc) */
-			if (cave_floor_bold(zcave, y, x)) break;
+			if (cave_los(zcave, y, x)) break;
 
 			/* Permanent walls */
 			if ((c_ptr->feat >= FEAT_PERM_EXTRA || c_ptr->feat == FEAT_PERM_CLEAR)
@@ -3502,13 +3516,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Make doors */
 		case GF_MAKE_DOOR:
 		{
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* And not on NR bottom */
 			if (getlevel(wpos) == 196) break; //>=166
 			/* And not in Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
+#else
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+#endif
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
 
@@ -3536,10 +3553,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Make traps */
 		case GF_MAKE_TRAP:
 		{
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* or Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
+#else
+			if (!allow_terraforming(wpos, FEAT_TREE)) break;
+#endif
 
 			/* Require a "naked" floor grid */
 			if ((zcave[y][x].feat!=FEAT_MORE && zcave[y][x].feat!=FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
@@ -3652,9 +3673,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 						if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
 
-						if (((c_ptr->feat == FEAT_TREES) || (c_ptr->feat == FEAT_SMALL_TREES) ||
-							(f_info[c_ptr->feat].flags1 & FF1_FLOOR)) &&
-							randint(100) < 30)
+						if (((c_ptr->feat == FEAT_TREE) || (c_ptr->feat == FEAT_BUSH) ||
+						    (c_ptr->feat == FEAT_DEAD_TREE) || (c_ptr->feat == FEAT_IVY) ||
+						    (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) && randint(100) < 30)
 						{
 								cave_set_feat(y, x, FEAT_ASH);
 						}				 
@@ -3667,12 +3688,16 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_WATER:
 		case GF_WATERPOISON:	//New druid stuff
 		{
+#if 0
 			/* no terraforming in Bree.. */
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
 			/* nor Valinor */
 			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
 			/* And not on NR bottom */
 			if (getlevel(wpos) == 196) break;//>=166
+#else
+			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
+#endif
 
 			int p1 = 0;
 			int p2 = 0;
@@ -7507,19 +7532,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Water -- stun/confuse */
 		case GF_WATER:
-		if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
-		{
-			dam = (dam + 3) / 4;
-		}
 		if (p_ptr->immune_water)
 		{
 			dam = 0;
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+			take_hit(Ind, dam, killer, -who);
 		}
 		else
 		{
-			if (p_ptr->resist_water)
+			if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+			{
+				dam = (dam + 3) / 4;
+			}
+			else if (p_ptr->resist_water)
 			{
 				dam = (dam + 2) / 3;
 			}
@@ -7894,10 +7920,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 				}
 				default: { // Water
-					if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
-					{
-						dam = (dam + 3) / 4;
-					}
 					if (p_ptr->immune_water)
 					{
 						dam = 0;
@@ -7906,7 +7928,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 					else
 					{
-						if (p_ptr->resist_water)
+						if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC))
+						{
+							dam = (dam + 3) / 4;
+						}
+						else if (p_ptr->resist_water)
 						{
 							dam = (dam + 2) / 3;
 						}
@@ -7920,8 +7946,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 							if (magik(50)) equip_damage(Ind, GF_WATER);
 							}
 						}
-						take_hit(Ind, dam, killer, -who);
 					}
+					take_hit(Ind, dam, killer, -who);
 				}
 			}
 			break;
@@ -8345,10 +8371,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				(void)set_cut(Ind, 0);
 				break;
 			case 2:
+				msg_print(Ind, "You feel a calming warmth touching your soul.");
 #if 1
 				if (p_ptr->suscep_life) take_hit(Ind, (p_ptr->chp / 3) * 2, killer, -who);
 #endif
-				msg_print(Ind, "You feel a calming warmth touching your soul.");
 				if (p_ptr->black_breath)
 				{
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -9147,6 +9173,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int y_saver, x_saver; /* For reflecting monsters */
 	int dist_hack = 0;
 	int			who_can_see[26], num_can_see = 0;
+	int	terrain_resistance = -1, terrain_damage = -1;
 	bool old_tacit = suppress_message;
 
 	/* Affected location(s) */
@@ -9314,8 +9341,39 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 
-		/* Never pass through walls */
-		if (dist && !cave_floor_bold(zcave, y, x)) break;
+
+		/* Analyze whether the projection can overcome terrain in its way - C. Blue */
+		/* Check: Fire vs Trees */
+		if (allow_terraforming(wpos, FEAT_TREE)) {
+			switch (c_ptr->feat) {
+			case FEAT_TREE: terrain_resistance = 50; break;
+			case FEAT_IVY: terrain_resistance = 0; break;
+			case FEAT_BUSH: terrain_resistance = 20; break;
+			case FEAT_DEAD_TREE: terrain_resistance = 30; break;
+			default: terrain_resistance = -1; break;
+			}
+			switch (typ) {
+			case GF_FIRE: terrain_damage = 100; break;
+			case GF_METEOR: terrain_damage = 150; break;
+			case GF_PLASMA: terrain_damage = 120; break;
+			case GF_HELL_FIRE: terrain_damage = 130; break;
+			default: terrain_damage = -1; break;
+			}
+		}
+
+		/* Accordingly, stop the projection or have it go on unhindered */		
+		if (terrain_damage >= 0 && terrain_resistance >= 0 &&
+		    magik(terrain_damage - terrain_resistance)) {
+			/* go on unhindered by terrain, destroy terrain even */
+		} else {
+			/* Never pass through walls */
+			if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
+				if (dist && !cave_floor_bold(zcave, y, x)) break;
+			} else { /* ..or rather flying through the air? */
+				if (dist && !cave_los(zcave, y, x)) break;
+			}
+		}
+
 
 		/* Check for arrival at "final target" (if desired) */
 		if (!(flg & PROJECT_THRU) && (x == x2) && (y == y2)) break;
@@ -9384,7 +9442,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		mmove2(&y9, &x9, y1, x1, y2, x2);
 
 		/* Hack -- Balls explode BEFORE reaching walls or doors */
-		if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
+		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
+			if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
+		} else { /* ..or rather flying through the air? */
+			if (!cave_los(zcave, y9, x9) && (rad > 0)) break;
+		}
 
 		/* Keep track of the distance traveled */
 		dist++;
@@ -9506,9 +9568,13 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 						(c_ptr2->feat != FEAT_DIRT) &&
 						(c_ptr2->feat != FEAT_HOME))
 					{
+#if 0
 						/* no terraforming in Bree.. */
 						if (!((wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) ||
 							((getlevel(wpos) == 200) && (wpos->wz == 1))))
+#else
+						if (allow_terraforming(wpos, FEAT_TREE))
+#endif
 						{
 							if (randint(2) == 1)
 								cave_set_feat(wpos, y, x, FEAT_FLOOR);

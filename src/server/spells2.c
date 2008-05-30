@@ -118,13 +118,16 @@ void grow_trees(int Ind, int rad)
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
 
+#if 0
 	/* No terraforming in Bree to avoid shut-in newbies. */
 	if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
 	/* Nor in Valinor */
 	if ((getlevel(&p_ptr->wpos) == 200) && (p_ptr->wpos.wz == 1)) return;
 	/* And not on NR bottom */
 	if (getlevel(&p_ptr->wpos) == 196) return;//>=166
-
+#else
+	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
+#endif
 	for (a = 0; a < rad * rad + 11; a++)
         {
                 cave_type **zcave = getcave(&p_ptr->wpos);
@@ -137,7 +140,7 @@ void grow_trees(int Ind, int rad)
 
 		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i) && (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
-			cave_set_feat(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, FEAT_TREES);
+			cave_set_feat(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
 		}
 	}
 }
@@ -151,7 +154,6 @@ bool create_garden(int Ind, int chance) {
 	int y, x;
 	player_type *p_ptr;	//Who(and where)?
         cave_type *c_ptr;
-	byte feat;		//Turn to what?
 	p_ptr = Players[Ind];
 
         struct c_special *cs_ptr;       /* for special key doors */
@@ -160,12 +162,13 @@ bool create_garden(int Ind, int chance) {
         cave_type **zcave;
         if(!(zcave=getcave(wpos))) return (FALSE);
 
-        /* Set to default */
-        feat = FEAT_TREES;
-
+#if 0
         /* Don't hurt the main town or surrounding areas */
         if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
                 return (FALSE);
+#else
+	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
+#endif
 
 	for (y = 0; y < MAX_HGT; y++) {
 		for (x = 0; x < MAX_WID; x++) {
@@ -191,7 +194,7 @@ bool create_garden(int Ind, int chance) {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
-					cave_set_feat(&p_ptr->wpos, y, x, feat);
+					cave_set_feat(&p_ptr->wpos, y, x, magik(50)?FEAT_TREE:FEAT_BUSH);
 					//c_ptr->feat = feat;
 				}
 			}
@@ -555,11 +558,14 @@ void warding_glyph(int Ind)
 	/* Require clean space */
 	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
+#if 0
         /* no terraforming in Bree.. */
         if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
 	/* ..nor in Valinor */
 	if ((getlevel(&p_ptr->wpos) == 200) && (p_ptr->wpos.wz == 1)) return;
-
+#else
+	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) return;
+#endif
 	/* Access the player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -2708,6 +2714,9 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 			p_ptr->mon_vis[i] = TRUE;
 			lite_spot(Ind, y, x);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			p_ptr->mon_vis[i] = FALSE;
 		}
 	}
 
@@ -2735,11 +2744,13 @@ bool detect_monsters_xxx(int Ind, u32b match_flag)
 		msg_format(Ind, "You sense the presence of %s!", desc_monsters);
 		//msg_print(NULL);
 
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
 		/* Wait */
 		Send_pause(Ind);
 
 		/* Mega-Hack -- Fix the monsters */
 		update_monsters(FALSE);
+#endif
 	}
 	else
 	{
@@ -2792,6 +2803,9 @@ bool detect_invisible(int Ind)
 			p_ptr->mon_vis[i] = TRUE;
 			lite_spot(Ind, fy, fx);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			p_ptr->mon_vis[i] = FALSE;
 		}
 	}
 
@@ -2810,7 +2824,7 @@ bool detect_invisible(int Ind)
 		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 
 		/* Skip the dungeon master */
-		if (q_ptr->admin_dm) continue;
+		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
 		/* Detect all invisible players but not the dungeon master */
 		if (panel_contains(py, px) && q_ptr->ghost) 
@@ -2819,6 +2833,9 @@ bool detect_invisible(int Ind)
 			p_ptr->play_vis[i] = TRUE;
 			lite_spot(Ind, py, px);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set play_vis to false but don't update the screen - mikaelh */
+			p_ptr->play_vis[i] = FALSE;
 		}
 	}
 
@@ -2829,12 +2846,14 @@ bool detect_invisible(int Ind)
 		msg_print(Ind, "You sense the presence of invisible creatures!");
 		msg_print(Ind, NULL);
 
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
 		/* Wait */
 		Send_pause(Ind);
 
 		/* Mega-Hack -- Fix the monsters and players */
 		update_monsters(FALSE);
 		update_players();
+#endif
 	}
 	else
 	{
@@ -2885,6 +2904,9 @@ bool detect_evil(int Ind)
 			p_ptr->mon_vis[i] = TRUE;
 			lite_spot(Ind, fy, fx);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			p_ptr->mon_vis[i] = FALSE;
 		}
 	}
 
@@ -2895,11 +2917,13 @@ bool detect_evil(int Ind)
 		msg_print(Ind, "You sense the presence of evil!");
 		msg_print(Ind, NULL);
 
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
 		/* Wait */
 		Send_pause(Ind);
 
 		/* Mega-Hack -- Fix the monsters */
 		update_monsters(FALSE);
+#endif
 	}
     else
     {
@@ -2955,6 +2979,9 @@ bool detect_creatures(int Ind)
 			p_ptr->mon_vis[i] = TRUE;
 			lite_spot(Ind, fy, fx);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+			p_ptr->mon_vis[i] = FALSE;
 		}
 	}
 
@@ -2970,7 +2997,7 @@ bool detect_creatures(int Ind)
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 
 		/* Never detect the dungeon master! */
-		if (q_ptr->admin_dm) continue;
+		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
 
 		/* Skip visible players */
 		if (p_ptr->play_vis[i]) continue;
@@ -2988,6 +3015,9 @@ bool detect_creatures(int Ind)
 			p_ptr->play_vis[i] = TRUE;
 			lite_spot(Ind, py, px);
 			flag = TRUE;
+
+			/* Mega-Mega-Hack -- set play_vis to false but don't update the screen - mikaelh */
+			p_ptr->play_vis[i] = FALSE;
 		}
 	}
 
@@ -2998,12 +3028,14 @@ bool detect_creatures(int Ind)
 		msg_print(Ind, "You sense the presence of creatures!");
 		msg_print(Ind, NULL);
 
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
 		/* Wait */
 		Send_pause(Ind);
 
 		/* Mega-Hack -- Fix the monsters and players */
 		update_monsters(FALSE);
 		update_players();
+#endif
 	}
 	else
 	{
@@ -3706,6 +3738,8 @@ bool create_artifact(int Ind)
 {
   player_type *p_ptr = Players[Ind];
 
+  clear_current(Ind);
+
   p_ptr->current_artifact = TRUE;
   get_item(Ind);
 
@@ -3845,6 +3879,14 @@ bool create_artifact_aux(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+	}
+
 	/* Art creation finished */
 	p_ptr->current_artifact = FALSE;
 
@@ -3858,6 +3900,7 @@ bool create_artifact_aux(int Ind, int item)
 
 bool curse_spell(int Ind){	// could be void
 	player_type *p_ptr=Players[Ind];
+	clear_current(Ind);
 	get_item(Ind);
 	p_ptr->current_curse=TRUE;	/* This is awful. I intend to change it */
 	return(TRUE);
@@ -3869,7 +3912,7 @@ bool curse_spell_aux(int Ind, int item)
 	object_type *o_ptr=&p_ptr->inventory[item];
 	char		o_name[160];
 
-	p_ptr->current_curse=FALSE;
+	p_ptr->current_curse = FALSE;
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 
@@ -3902,6 +3945,14 @@ bool curse_spell_aux(int Ind, int item)
 
 	if(o_ptr->name2){
 		o_ptr->pval=0-(randint(10)+1);	/* nasty */
+	}
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
 	}
 
 	/* Recalculate the bonuses - if stupid enough to curse worn item ;) */
@@ -4013,7 +4064,13 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 		}
 	}
 
-
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+	}
 
 	p_ptr->current_enchant_h = -1;
 	p_ptr->current_enchant_d = -1;
@@ -4100,6 +4157,14 @@ bool ident_spell_aux(int Ind, int item)
 	{
 		msg_format(Ind, "On the ground: %s.",
 		           o_name);
+	}
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not when IDing */
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
 	}
 
 	p_ptr->current_identify = 0;
@@ -4191,6 +4256,16 @@ bool identify_fully_item(int Ind, int item)
 
 	/* Describe it fully */
 	identify_fully_aux(Ind, o_ptr);
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+
+		p_ptr->window |= PW_INVEN;
+	}
 
 	/* We no longer have a *identify* in progress */
 	p_ptr->current_star_identify = 0;
@@ -4392,6 +4467,14 @@ bool recharge_aux(int Ind, int item, int num)
 			/* Hack -- we no longer think the item is empty */
 			o_ptr->ident &= ~ID_EMPTY;
 		}
+	}
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
 	}
 
 	/* Combine / Reorder the pack (later) */
@@ -5205,13 +5288,13 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Special key doors are protected -C. Blue */
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 
-			/* Lose room and vault */
+			/* Lose room and vault and nest */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
 			 * this will protect hosues outside town.
 			 */
 			if(wpos->wz)
 			{
-				c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+				c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST);
 			}
 
 			/* Lose light and knowledge */
@@ -5415,8 +5498,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			/* Special key doors are protected -C. Blue */
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 			
-			/* Lose room and vault */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
+			/* Lose room and vault and nest */
+			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST);
 
 			/* Lose light and knowledge */
 			c_ptr->info &= ~(CAVE_GLOW);
@@ -6420,6 +6503,11 @@ void swap_position(int Ind, int lty, int ltx){
 		if(q_ptr){
 			q_ptr->py=ty;
 			q_ptr->px=tx;
+			#ifdef ARCADE_SERVER
+			if(p_ptr->game == 3) {
+			p_ptr->c = q_ptr->c = 1;
+			p_ptr->d = Ind2; }
+			#endif
 		}
 		
 		p_ptr->px=ltx;
@@ -6533,7 +6621,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 
-	int flg = PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU;
+	int flg = PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_GRAV;
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam /= 2;

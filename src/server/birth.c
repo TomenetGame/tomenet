@@ -1000,15 +1000,6 @@ static void player_wipe(int Ind)
 static byte player_init[MAX_CLASS][5][3] =
 {
 	{
-		/* Adventurer */
-		{ TV_SWORD, SV_SHORT_SWORD, 0 },
-		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
-		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ TV_BOW, SV_SLING, 0 },
-		{ 255, 255, 0 },
-	},
-
-	{
 		/* Warrior */
 		{ TV_SWORD, SV_BROAD_SWORD, 0 },
 		{ TV_HARD_ARMOR, SV_CHAIN_MAIL, 0 },
@@ -1080,6 +1071,15 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_BOOK, 50, 0 },
 		{ TV_BOW, SV_LONG_BOW, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+	},
+
+	{
+		/* Adventurer */
+		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
+		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
+		{ TV_BOW, SV_SLING, 0 },
+		{ 255, 255, 0 },
 	},
 
 	{
@@ -1382,10 +1382,18 @@ static void player_outfit(int Ind)
 	o_ptr->number = 5;
 	o_ptr->discount = 100;
 	do_player_outfit();
+/* replacing phase scrolls with more $. Stacking issues annoy me. -Molt */
+#if 0
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR));
 	o_ptr->number = (p_ptr->pclass == CLASS_ARCHER) ? 10 : 5;
 	o_ptr->discount = 100;
 	do_player_outfit();
+#else
+	if(p_ptr->pclass == CLASS_ARCHER)
+	p_ptr->au+=100;
+	else
+	p_ptr->au+=50;
+#endif
 #endif
 
 	/* Hack -- Give the player newbie guide Parchment */
@@ -1714,6 +1722,9 @@ static void player_setup(int Ind, bool new)
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
+
+	/* No item being used up */
+	p_ptr->using_up_item = -1;
 
 	/* Set the player's "panel" information */
 	l_ptr = getfloor(wpos);

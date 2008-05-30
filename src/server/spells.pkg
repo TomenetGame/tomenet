@@ -184,7 +184,7 @@ typedef unsigned int u32b;
 
 /* cave.c */
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
-
+extern int check_feat(worldpos *wpos, int y, int x);
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x); 
 

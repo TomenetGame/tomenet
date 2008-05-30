@@ -680,6 +680,8 @@ struct player_type
 	long int idle;		/* player's been idle for <idle> seconds */
 	bool afk;		/* Player is afk */
 	byte drain_exp;		/* Experience draining */
+	byte drain_life;	/* HP draining */
+	byte drain_mana;	/* SP draining */
 
 	bool feather_fall;	/* No damage falling */
 	bool lite;		/* Permanent light */
@@ -776,8 +778,24 @@ struct player_type
 	s32b pstealing;
 
 	u16b team;
-	char pushed;
-	char pushdir;
+ /* Moltor's arcade crap */
+int a;
+int b;
+int c;
+int d;
+int e;
+int f;
+int g;
+int h;
+int i;
+int j;
+int k;
+int l;
+        char firedir;
+        char game;
+        int gametime;
+        char pushed;
+        char pushdir;
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 

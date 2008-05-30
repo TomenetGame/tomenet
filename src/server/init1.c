@@ -948,8 +948,8 @@ static cptr f_info_flags1[] =
 	"SLOW_SWIMMING_1",
 	"SLOW_SWIMMING_2",
 	"PROTECTED",	/* monsters cannot spawn on nor teleport to this grid */
-//	"BLOCK_LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
-	"XXX1",
+	"LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
+	"BLOCK_LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
 	"XXX1"
 };
 
@@ -1216,7 +1216,9 @@ static bool invalid_server_conditions(char *buf)
 		bool negation = FALSE;
 
 		/* read the tag between $...$ symbols */
-		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0') cc[ccn - 1] = buf[ccn++];
+		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0')
+			{ cc[ccn - 1] = buf[ccn]; ccn++; }
+
 		if (buf[ccn] == '\0') return TRUE; /* end of line reached, completely invalid */
 
 		/* inverted rule? means that tag is between $...! symbols */
@@ -7092,7 +7094,7 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 {
 	int i;
 
-	char *zz[33];
+	char *zz[33]; /* was 33 */
 
 	int dun_level = getlevel(wpos);
 	c_special *cs_ptr;

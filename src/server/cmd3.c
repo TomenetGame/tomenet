@@ -2507,7 +2507,8 @@ static bool do_cmd_look_accept(int Ind, int y, int x)
 	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx])
 	{
 		player_type *q_ptr=Players[0-c_ptr->m_idx];
-		if (!q_ptr->admin_dm && (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
+		if ((!q_ptr->admin_dm || player_sees_dm(Ind)) && 
+		    (player_has_los_bold(Ind, y, x) || p_ptr->telepathy))
 			return (TRUE);
 	}
 

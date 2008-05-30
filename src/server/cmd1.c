@@ -15,21 +15,6 @@
 
 #include "angband.h"
 
-#define MAX_VAMPIRIC_DRAIN 50	/* was 25 - note: this counts per turn, not per blow */
-#define NON_WEAPON_VAMPIRIC_CHANCE 67 /* chance to drain if VAMPIRIC is given be a non-weapon item */
-
-/* Reduce damage in PvP by this factor */
-#define PVP_MELEE_DAM_REDUCTION 3
-
-/*
- * Allow wraith-formed player to pass through permawalls on the surface.
- */
-/*
- * TODO: wraithes should only pass townwalls of her/his own house
- */
-#define WRAITH_THROUGH_TOWNWALL
-
-
 
 
 /* Anti-(nothing)-hack, following Tony Zeigler's (Ravyn) suggestion */
@@ -2975,6 +2960,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool            drain_msg = TRUE;
 	int             drain_result = 0, drain_heal = 0;
 	int             drain_left = MAX_VAMPIRIC_DRAIN;
+	bool		drainable = TRUE;
+
 
 	struct worldpos	*wpos=&p_ptr->wpos;
 	cave_type	**zcave;
@@ -2996,6 +2983,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
+	
+	if ((r_ptr->flags3 & RF3_UNDEAD) ||
+//	    (r_ptr->flags3 & RF3_DEMON) ||
+	    (r_ptr->flags3 & RF3_NONLIVING) ||
+            (strchr("Egv", r_ptr->d_char)))
+		drainable = FALSE;
 
 	nolite = !((c_ptr->info & (CAVE_LITE | CAVE_GLOW)) ||
 		(r_ptr->flags4 & RF4_BR_DARK) ||
@@ -3344,12 +3337,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Vampiric drain */
-				if (((p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
-				    magik(p_ptr->vampiric)) &&
-				    !((r_ptr->flags3 & RF3_UNDEAD) ||
-//		      		    (r_ptr->flags3 & RF3_DEMON) ||
-				    (r_ptr->flags3 & RF3_NONLIVING) ||
-	                            (strchr("Egv", r_ptr->d_char))))
+				if ((magik(p_ptr->vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3479,13 +3467,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				/* Vampiric drain */
-				if (((f1 & TR1_VAMPIRIC) || (chaos_effect == 1) || 
-				    (p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
-				    magik(p_ptr->vampiric)) &&
-				    !((r_ptr->flags3 & RF3_UNDEAD) ||
-/*		      		    (r_ptr->flags3 & RF3_DEMON) ||*/
-				    (r_ptr->flags3 & RF3_NONLIVING) ||
-	                            (strchr("Egv", r_ptr->d_char))))
+				if (((chaos_effect == 1) || 
+				    magik(p_ptr->vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3561,12 +3544,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Vampiric drain */
-				if (((p_ptr->vampiric == -1 && magik(NON_WEAPON_VAMPIRIC_CHANCE)) ||
-				    magik(p_ptr->vampiric)) &&
-				    !((r_ptr->flags3 & RF3_UNDEAD) ||
-//		      		    (r_ptr->flags3 & RF3_DEMON) ||
-				    (r_ptr->flags3 & RF3_NONLIVING) ||
-	                            (strchr("Egv", r_ptr->d_char))))
+				if ((magik(p_ptr->vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3633,7 +3611,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
 	            		/* Vampires feed off the life force! (if any) */
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
-	        		if (p_ptr->prace == RACE_VAMPIRE && drain_result) {
+	        		if (p_ptr->prace == RACE_VAMPIRE && drainable) {
 					int feed = m_ptr->maxhp + 100;
 //					feed = (4 - (300 / feed)) * 1000;//1000..4000
 					feed = (6 - (300 / feed)) * 100;//300..600
@@ -3832,8 +3810,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 //				no_extra = TRUE;
 			}
 
-			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
-					&& (randint(90) > m_ptr->level))
+/*			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
+					&& (randint(90) > m_ptr->level))*/
+			else if ((chaos_effect == 5) && (randint(90) > m_ptr->level))
 			{
 				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 							(r_ptr->flags4 & RF4_BR_CHAO) ))
@@ -4455,9 +4434,8 @@ bool player_can_enter(int Ind, byte feature)
 		case FEAT_DEAD_TREE:
 			if ((p_ptr->fly) || pass_wall)
 			    return (TRUE);
-		/* 	handled in default:
-		    case FEAT_SMALL_TREES: 	*/
-		case FEAT_TREES:
+		case FEAT_BUSH:
+		case FEAT_TREE:
 		{
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
 			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall)
@@ -4968,7 +4946,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 #if 0
 		/* Hack -- Exception for trees (in a bad way :-/) */
-		if (!myhome && c_ptr->feat == FEAT_TREES &&
+		if (!myhome && c_ptr->feat == FEAT_TREE &&
 				(p_ptr->fly || p_ptr->pass_trees))
 			myhome = TRUE;
 #endif	// 0
@@ -5007,9 +4985,17 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Tree */
-			else if (c_ptr->feat == FEAT_TREES || c_ptr->feat==FEAT_DEAD_TREE)
+			else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat==FEAT_BUSH)
 			{
 				msg_print(Ind, "\377GYou feel a tree blocking your way.");
+				*w_ptr |= CAVE_MARK;
+				everyone_lite_spot(wpos, y, x);
+			}
+
+			/* Dark Pit */
+			else if (c_ptr->feat == FEAT_DARK_PIT)
+			{
+				msg_print(Ind, "\377GYou don't feel any ground ahead of you.");
 				*w_ptr |= CAVE_MARK;
 				everyone_lite_spot(wpos, y, x);
 			}
@@ -5046,9 +5032,13 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_print(Ind, "There is rubble blocking your way.");
 				}
 				/* Tree */
-				else if (c_ptr->feat == FEAT_TREES || c_ptr->feat==FEAT_DEAD_TREE)
+				else if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat==FEAT_BUSH)
 				{
 					msg_print(Ind, "There is a tree blocking your way.");
+				}
+				else if (c_ptr->feat == FEAT_DARK_PIT)
+				{
+					msg_print(Ind, "There is a dark pit in your way.");
 				}
 				/* Wall (or secret door) */
 				else
@@ -5213,8 +5203,10 @@ void move_player(int Ind, int dir, int do_pickup)
 			else if (magik(get_skill_scale(p_ptr, SKILL_DISARM, 90)
 						- UNAWARENESS(p_ptr)))
 			{
+#ifndef ARCADE_SERVER
 				msg_print(Ind, "You carefully avoid touching the trap.");
 				hit = FALSE;
+#endif
 			}
 
 			/* Hit the trap */
@@ -5291,7 +5283,7 @@ int see_wall(int Ind, int dir, int y, int x)
 
 #if 1 //def NEW_RUNNING_FEAT
 	/* don't accept trees as open area? */
-	if (p_ptr->running_on_floor && (zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREES || zcave[y][x].feat == FEAT_SMALL_TREES)) return(TRUE);
+	if (p_ptr->running_on_floor && (zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)) return(TRUE);
 #endif
 
 	/* Must actually block motion */
@@ -5303,7 +5295,7 @@ int see_wall(int Ind, int dir, int y, int x)
 	/* hack - allow 'running' when flying over something */
 	if ((f_info[zcave[y][x].feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) return (FALSE);
 	/* hack - allow 'running' if player may pass trees  */
-	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREES || zcave[y][x].feat == FEAT_SMALL_TREES)
+	if ((zcave[y][x].feat == FEAT_DEAD_TREE || zcave[y][x].feat == FEAT_TREE || zcave[y][x].feat == FEAT_BUSH)
 	     && p_ptr->pass_trees) return (FALSE);
 	/* hack - allow 'running' if player can swim - HARDCODED :( */
 	if ((zcave[y][x].feat == 84 || zcave[y][x].feat == 103 || zcave[y][x].feat == 174 || zcave[y][x].feat == 187)
@@ -5764,7 +5756,7 @@ static bool run_test(int Ind)
 
 				/* Grass, trees, and dirt */
 				case FEAT_GRASS:
-				case FEAT_TREES:
+				case FEAT_TREE:
 				case FEAT_DIRT:
 
 				/* Walls */
