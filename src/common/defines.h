@@ -101,9 +101,11 @@
 
 #ifdef RPG_SERVER
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
- #define AUCTION_BETA		/* less restrictions while beta testing */
- #define AUCTION_SYSTEM
- #define AUCTION_DEBUG
+ #if 0 /* disabled in CVS for now - mikaelh */
+  #define AUCTION_BETA		/* less restrictions while beta testing */
+  #define AUCTION_SYSTEM
+  #define AUCTION_DEBUG
+ #endif
 #endif
 
 
