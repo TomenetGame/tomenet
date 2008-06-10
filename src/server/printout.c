@@ -61,9 +61,9 @@ extern int s_printf(const char *str, ...)
 	}
 
 	va_start(va, str);
+	vfprintf(fp,str,va);
 	va_end(va);
 	va_start(va, str);
-	vfprintf(fp,str,va);
 	if(!print_to_file)
 		vprintf(str,va);
 	va_end(va);
