@@ -464,8 +464,9 @@
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
  * Default: assume maximal memorization of 2048 total messages
+ * Doubled to 4096 - mikaelh
  */
-#define MESSAGE_MAX	2048
+#define MESSAGE_MAX	4096
 
 /*
  * OPTION: Maximum space for the message text buffer (see "io.c")
