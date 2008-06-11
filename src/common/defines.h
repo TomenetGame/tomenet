@@ -472,8 +472,9 @@
  * OPTION: Maximum space for the message text buffer (see "io.c")
  * Default: assume that each of the 2048 messages is repeated an
  * average of three times, and has an average length of 48
+ * Doubled to 65536 - mikaelh
  */
-#define MESSAGE_BUF	32768
+#define MESSAGE_BUF	65536
 
 
 /*
