@@ -23,11 +23,11 @@ static void init_arrays(void)
 	C_MAKE(macro__buf, 1024, char);
 
 	/* Message variables */
-	C_MAKE(message__ptr, MESSAGE_MAX, u16b);
+	C_MAKE(message__ptr, MESSAGE_MAX, u32b);
 	C_MAKE(message__buf, MESSAGE_BUF, char);
-	C_MAKE(message__ptr_chat, MESSAGE_MAX, u16b);
+	C_MAKE(message__ptr_chat, MESSAGE_MAX, u32b);
 	C_MAKE(message__buf_chat, MESSAGE_BUF, char);
-	C_MAKE(message__ptr_msgnochat, MESSAGE_MAX, u16b);
+	C_MAKE(message__ptr_msgnochat, MESSAGE_MAX, u32b);
 	C_MAKE(message__buf_msgnochat, MESSAGE_BUF, char);
 
 	/* Hack -- No messages yet */

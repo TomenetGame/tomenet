@@ -1476,10 +1476,10 @@ bool get_check(cptr prompt)
 /*
  * Recall the "text" of a saved message
  */
-cptr message_str(s16b age)
+cptr message_str(s32b age)
 {
-        s16b x;
-        s16b o;
+        s32b x;
+        s32b o;
         cptr s;
 
         /* Forgotten messages have no text */
@@ -1497,10 +1497,10 @@ cptr message_str(s16b age)
         /* Return the message text */
         return (s);
 }
-cptr message_str_chat(s16b age)
+cptr message_str_chat(s32b age)
 {
-        s16b x;
-        s16b o;
+        s32b x;
+        s32b o;
         cptr s;
 
         /* Forgotten messages have no text */
@@ -1518,10 +1518,10 @@ cptr message_str_chat(s16b age)
         /* Return the message text */
         return (s);
 }
-cptr message_str_msgnochat(s16b age)
+cptr message_str_msgnochat(s32b age)
 {
-        s16b x;
-        s16b o;
+        s32b x;
+        s32b o;
         cptr s;
 
         /* Forgotten messages have no text */
@@ -1544,7 +1544,7 @@ cptr message_str_msgnochat(s16b age)
 /*
  * How many messages are "available"?
  */
-s16b message_num(void)
+s32b message_num(void)
 {
         int last, next, n;
 
@@ -1561,7 +1561,7 @@ s16b message_num(void)
         /* Return the result */
         return (n);
 }
-s16b message_num_chat(void)
+s32b message_num_chat(void)
 {
         int last, next, n;
 
@@ -1578,7 +1578,7 @@ s16b message_num_chat(void)
         /* Return the result */
         return (n);
 }
-s16b message_num_msgnochat(void)
+s32b message_num_msgnochat(void)
 {
         int last, next, n;
 
@@ -1628,7 +1628,7 @@ void c_message_add(cptr str)
         /* Check the last few messages (if any to count) */
         for (i = message__next; k; k--)
         {
-                u16b q;
+                u32b q;
 
                 cptr old;
 
@@ -1810,7 +1810,7 @@ void c_message_add_chat(cptr str)
         /* Check the last few messages (if any to count) */
         for (i = message__next_chat; k; k--)
         {
-                u16b q;
+                u32b q;
 
                 cptr old;
 
@@ -1982,7 +1982,7 @@ void c_message_add_msgnochat(cptr str)
         /* Check the last few _msgnochatmessages (if any to count) */
         for (i = message__next; k; k--)
         {
-                u16b q;
+                u32b q;
 
                 cptr old;
 
