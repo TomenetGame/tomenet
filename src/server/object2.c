@@ -2822,7 +2822,13 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		ok_ego[ok_num++] = i;
 	}
 	
-	if (!ok_num) return(FALSE);
+	if (!ok_num)
+	{
+		/* Fix memory leak - mikaelh */
+		C_FREE(ok_ego, MAX_E_IDX, int);
+
+		return(FALSE);
+	}
 
 	/* Now test them a few times */
 //	for (i = 0; i < ok_num * 10; i++)	// I wonder.. 
