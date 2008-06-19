@@ -5,8 +5,6 @@
 -- <- dummy line to change checksum - C. Blue
 -- Create the schools
 
--- hack
-SKILL_ASTRAL = 77
 SCHOOL_CONVEYANCE = add_school
 {
 	["name"] = "Conveyance", 
@@ -126,12 +124,6 @@ SCHOOL_DRUID_PHYSICAL = add_school
 	["skill"] = SKILL_DRUID_PHYSICAL,
 }
 
-SCHOOL_ASTRAL = add_school
-{
-	["name"] = "Astral Knowledge",
-	["skill"] = SKILL_ASTRAL,
-}
-
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
@@ -153,8 +145,6 @@ pern_dofile(Ind, "p_support.lua")
 
 pern_dofile(Ind, "dr_arcane.lua") 
 pern_dofile(Ind, "dr_physical.lua")
-
-pern_dofile(Ind, "d_astral.lua")
 
 -- Create the crystal of mana (1-4)
 school_book[0] = {
@@ -189,7 +179,7 @@ school_book[5] = {
 
 -- Create the book of the tree * SUMMONANIMAL requires pets first (28-31)
 school_book[6] = {
-        GROWTREE, HEALING, RECOVERY, REGENERATION,
+        GROWTREE, HEALING, RECOVERY, REGENERATION, VERMINCONTROL,
 }
 
 -- Create the book of Knowledge (32-37)
@@ -287,12 +277,14 @@ school_book[55] = {
 	TIDALWAVE, HELLFIRE, FIREFLASH, STRIKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 }
 
--- Divine Race Tome
-school_book[56] = {
-	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY,
-}
+-- (56 is Astral Tome for Divine race)
 
 ---- Create the handbook for rogues (of shadows)
 school_book[57] = {
-	BLINK, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION
+        BLINK, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION
+}
+
+---- Create the handbook for dungeon masters & wizads (of dungeon keeping)
+school_book[58] = {
+        TELEKINESIS, DIG, GROWTREE, DISARM, VISION, MANATHRUST, DISEBOLT, FIREFLASH
 }
