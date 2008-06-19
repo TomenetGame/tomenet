@@ -1249,6 +1249,7 @@ extern void wizard_lock(int Ind, int dir);
 
 /* store.c */
 extern void alloc_stores(int townval);
+extern void dealloc_stores(int townval);
 extern void store_purchase(int Ind, int item, int amt);
 extern void store_sell(int Ind, int item, int amt);
 extern void store_confirm(int Ind);

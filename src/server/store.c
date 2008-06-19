@@ -203,6 +203,26 @@ void alloc_stores(int townval)
 	}
 }
 
+/* For containing memory leaks - mikaelh */
+void dealloc_stores(int townval)
+{
+	int i;
+
+	/* Check that stores exist */
+	if (!town[townval].townstore) return;
+
+	for (i = 0; i < max_st_idx; i++)
+	{
+		store_type *st_ptr = &town[townval].townstore[i];
+
+		/* Free stock */
+		C_KILL(st_ptr->stock, st_ptr->stock_size, object_type);
+	}
+
+	/* Free stores */
+	C_KILL(town[townval].townstore, max_st_idx, store_type);
+}
+
 /*
  * Determine the price of an item (qty one) in a store.
  *

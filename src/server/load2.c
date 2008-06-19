@@ -2340,7 +2340,11 @@ void rd_towns()
 	int i, j;
 	struct worldpos twpos;
 	twpos.wz=0;
+
+	/* Dealloc stores first - mikaelh */
+	for (i = 0; i < numtowns; i++) dealloc_stores(i);
 	C_KILL(town, numtowns, struct town_type); /* first is alloced */
+
 	rd_u16b(&numtowns);
 	C_MAKE(town, numtowns, struct town_type);
 	for(i=0; i<numtowns; i++){
