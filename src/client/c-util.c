@@ -2206,7 +2206,7 @@ void c_msg_print(cptr msg)
 
 	/* Keldon-Hack -- Always reset */
 	p = 0;
-	prt("", 0, 0);
+	if (!topline_icky) prt("", 0, 0);
 
 	/* Message length */
 	n = (msg ? strlen(msg) : 0);
@@ -2325,7 +2325,7 @@ void c_msg_print(cptr msg)
 
 
 	/* Display the tail of the message */
-	Term_putstr(p, 0, n, TERM_WHITE, t);
+	if (!topline_icky) Term_putstr(p, 0, n, TERM_WHITE, t);
 
 	/* Remember the message */
 	msg_flag = TRUE;

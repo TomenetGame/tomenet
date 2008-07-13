@@ -1751,7 +1751,12 @@ int Receive_message(void)
 		else strcpy(talk_pend, "");
 	}
 
+#if 0
 	if (!topline_icky)
+#else
+	/* Always receive messages */
+	if (1)
+#endif
 	{
 		if (screen_icky && !party_mode && !shopping) Term_switch(0);
 
