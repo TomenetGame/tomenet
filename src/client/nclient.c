@@ -1365,6 +1365,9 @@ int Receive_inven(void)
 		return n;
 	}
 
+	/* Check that the inventory slot is valid - mikaelh */
+	if (pos < 'a' || pos > 'x') return 0;
+
         /* Hack -- The color is stored in the sval, since we don't use it for anything else */
         /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
 		/* I'm one of those who really hate it .. Jir */
@@ -1376,13 +1379,31 @@ int Receive_inven(void)
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
 
-	strncpy(inventory_name[pos - 'a'], name, 79);
+	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
 	return 1;
 }
+
+/* Descriptions for equipment slots - mikaelh */
+char *equipment_slot_names[] = {
+	"(weapon)",
+	"(weapon / shield)",
+	"(shooter)",
+	"(ring)",
+	"(ring)",
+	"(amulet)",
+	"(light source)",
+	"(body armour)",
+	"(cloak)",
+	"(hat)",
+	"(gloves)",
+	"(boots)",
+	"(quiver)",
+	"(tool)"
+};
 
 int Receive_equip(void)
 {
@@ -1397,6 +1418,9 @@ int Receive_equip(void)
 		return n;
 	}
 
+	/* Check that the equipment slot is valid - mikaelh */
+	if (pos < 'a' || pos > 'n') return 0;
+
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
@@ -1404,8 +1428,10 @@ int Receive_equip(void)
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 
-
-	strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, 79);
+	if (!strcmp(name, "(nothing)"))
+		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
+	else
+		strncpy(inventory_name[pos - 'a' + INVEN_WIELD], name, MAX_CHARS - 1);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_EQUIP);
