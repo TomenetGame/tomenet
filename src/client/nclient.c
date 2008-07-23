@@ -2381,7 +2381,13 @@ int Receive_store_info(void)
 	strncpy(c_store.store_name, store_name, 40);
 
 	/* Only enter "display_store" if we're not already shopping */
-	if (!shopping) display_store();
+	if (!shopping)
+	{
+		/* HACK - Queue the rest */
+		queue_rest();
+
+		display_store();
+	}
 	else display_inventory(); /* Display the inventory */
 
 	return 1;
