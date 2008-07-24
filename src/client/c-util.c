@@ -2714,7 +2714,9 @@ void interact_macros(void)
 			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+//			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+			/* Use the character name by default - mikaelh */
+			sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -2733,7 +2735,9 @@ void interact_macros(void)
 			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
-			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+//			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
+			/* Use the character name by default - mikaelh */
+			sprintf(tmp, "%s.prf", cname);
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
