@@ -852,7 +852,7 @@ static void print_combatstances()
 
 static int get_combatstance(int *cs)
 {
-	int		i, num = 3; /* number of pre-defined stances here in this function */
+	int		i = 0, num = 3; /* number of pre-defined stances here in this function */
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
