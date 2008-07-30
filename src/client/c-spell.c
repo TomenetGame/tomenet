@@ -614,6 +614,11 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		sval = o_ptr->sval;
 		pval = o_ptr->pval;
 	}
+	else
+	{
+		/* Only books allowed */
+		return -1;
+	}
 	/* DGDGDG        else
 	   {
 	   sval = 255;
