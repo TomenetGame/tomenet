@@ -2060,8 +2060,8 @@ int Receive_item(void)
 
 	if (!screen_icky && !topline_icky)
 	{
-		/* HACK - Queue the rest - mikaelh */
-		queue_rest();
+		/* HACK - Move the rest - mikaelh */
+		move_rest();
 
 		c_msg_print(NULL);
 
@@ -2115,8 +2115,8 @@ int Receive_direction(void)
 
 	if (!screen_icky && !topline_icky && !shopping)
 	{
-		/* HACK - Queue the rest */
-		queue_rest();
+		/* HACK - Move the rest */
+		move_rest();
 
 		/* Ask for a direction */
 		get_dir(&dir);
@@ -2297,8 +2297,8 @@ int Receive_special_other(void)
 	/* Set file perusal method to "other" */
 	special_line_type = SPECIAL_FILE_OTHER;
 
-	/* HACK - Queue the rest - mikaelh */
-	queue_rest();
+	/* HACK - Move the rest - mikaelh */
+	move_rest();
 
 	/* Peruse the file we're about to get */
 	peruse_file();
@@ -2383,8 +2383,8 @@ int Receive_store_info(void)
 	/* Only enter "display_store" if we're not already shopping */
 	if (!shopping)
 	{
-		/* HACK - Queue the rest */
-		queue_rest();
+		/* HACK - Move the rest */
+		move_rest();
 
 		display_store();
 	}
@@ -2423,8 +2423,8 @@ int Receive_sell(void)
 		return n;
 	}
 
-	/* HACK - Queue the rest */
-	queue_rest();
+	/* HACK - Move the rest */
+	move_rest();
 
 	/* Tell the user about the price */
 	if (store_num == 57) sprintf(buf, "Really donate it? ");
@@ -2520,8 +2520,8 @@ int Receive_pickup_check(void)
 		return n;
 	}
 
-	/* HACK - Queue the rest - mikaelh */
-	queue_rest();
+	/* HACK - Move the rest - mikaelh */
+	move_rest();
 
 	/* Get a check */
 	if (get_check(buf))
@@ -2641,8 +2641,8 @@ int Receive_pause(void)
 	/* Flush any pending keystrokes */
 	Term_flush();
 
-	/* HACK - Queue the rest - mikaelh */
-	queue_rest();
+	/* HACK - Move the rest - mikaelh */
+	move_rest();
 
 	/* Wait */
 	inkey();
@@ -3812,14 +3812,17 @@ int Send_cloak(void) {
 }
 
 /*
- * Move the rest of the data in rbuf to qbuf for later processing
- * Must be called before new input can be received inside a Receive_*() call
+ * Move the rest of the data in rbuf to cbuf for later processing. By using
+ * cbuf to store we ensure that they're immediately processed in proper order.
+ * Must be called before new input can be received inside a Receive_*() call.
+ * Net_input will clear rbuf so the packets need to be moved to cbuf for later
+ * processing in Net_packet.
  */
-int queue_rest() {
+int move_rest() {
 	Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-	if (Sockbuf_write(&qbuf, rbuf.ptr, rbuf.len) != rbuf.len)
+	if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
 	{
-		plog("Can't copy reliable data to buffer");
+		plog("Can't copy data from rbuf to cbuf");
 		return -1;
 	}
 	Sockbuf_clear(&rbuf);
