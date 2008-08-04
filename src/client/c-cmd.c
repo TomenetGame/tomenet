@@ -2617,7 +2617,7 @@ static void cmd_master_aux_summon(void)
 static void cmd_master_aux_player()
 {
 	char i=0;
-	char buf[80];
+	static char buf[80];
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Player commands");
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Editor (offline)");
@@ -2634,7 +2634,7 @@ static void cmd_master_aux_player()
 	while(i!=ESCAPE){
 		/* Get a key */
 		i = inkey();
-		buf[0]='\0';
+		buf[0] = '\0';
 		switch(i){
 			case KTRL('T'):
 				xhtml_screenshot("screenshotXXXX");
