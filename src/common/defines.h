@@ -6435,3 +6435,9 @@ extern int PlayerUID;
         } \
     } \
 }
+
+
+/* Client chat modes */
+#define CHAT_MODE_NORMAL	0
+#define CHAT_MODE_PARTY		1
+#define CHAT_MODE_LEVEL		2

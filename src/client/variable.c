@@ -22,6 +22,8 @@ char message_history_chat[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd e
 char message_history_msgnochat[MSG_HISTORY_MAX][80];	/* history for chat, slash-cmd etc. */
 byte hist_end = 0;
 bool hist_looped = FALSE;
+byte hist_chat_end = 0;
+bool hist_chat_looped = FALSE;
 
 object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
 char inventory_name[INVEN_TOTAL][80];	/* The client-side copy of the inventory names */
@@ -176,3 +178,5 @@ int ping_times[60];
 bool ping_stats_enabled = FALSE;
 bool ping_stats_viewing = FALSE;
 
+/* Chat mode: normal, party or level */
+char chat_mode = CHAT_MODE_NORMAL;

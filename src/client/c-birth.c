@@ -45,7 +45,7 @@ static void choose_name(void)
 		strcpy(tmp, nick);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15, 0)) strcpy(nick, tmp);
+		if (askfor_aux(tmp, 15, 0, 0)) strcpy(nick, tmp);
 
 		/* All done */
 		break;
@@ -83,7 +83,7 @@ static void enter_password(void)
 		move_cursor(3, 15);
 
 		/* Get an input, ignore "Escape" */
-		if (askfor_aux(tmp, 15, 1)) strcpy(pass, tmp);
+		if (askfor_aux(tmp, 15, 1, 0)) strcpy(pass, tmp);
 
 		/* All done */
 		break;
@@ -777,7 +777,7 @@ static bool enter_server_name(void)
         strcpy(server_name, "62.210.141.11");
 
 	/* Ask for server name */
-	return askfor_aux(server_name, 80, 0);
+	return askfor_aux(server_name, 80, 0, 0);
 }
 
 /*

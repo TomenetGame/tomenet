@@ -82,6 +82,8 @@ extern char message_history_msgnochat[MSG_HISTORY_MAX][80];
 /*extern byte hist_start; */
 extern byte hist_end;
 extern bool hist_looped;
+extern byte hist_chat_end;
+extern bool hist_chat_looped;
 
 extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][80];
@@ -236,6 +238,9 @@ extern int ping_times[60];
 extern bool ping_stats_enabled;
 extern bool ping_stats_viewing;
 
+/* Chat mode: normal, party or level */
+extern char chat_mode;
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -377,7 +382,7 @@ extern void c_message_add_msgnochat(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...);
 extern s32b c_get_quantity(cptr prompt, int max);
-extern bool askfor_aux(char *buf, int len, char private);
+extern bool askfor_aux(char *buf, int len, char private, char chatting);
 extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);

@@ -399,7 +399,7 @@ void do_cmd_skill()
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", max), 23, 0);
 			strcpy(tmp, "1");
-			if (askfor_aux(tmp, 10, 0))
+			if (askfor_aux(tmp, 10, 0, 0))
 			{
 				sel = start = atoi(tmp) - 1;
 				if (sel >= max) sel = start = max - 1;

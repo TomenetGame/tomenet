@@ -1443,7 +1443,7 @@ void cmd_check_misc(void)
 
 void cmd_message(void)
 {
-	char buf[70];
+	char buf[80];
 	int i;
 
 	buf[0] = '\0';
