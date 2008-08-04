@@ -352,6 +352,7 @@ extern void move_cursor(int row, int col);
 extern void flush(void);
 extern void flush_now(void);
 extern void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag);
+extern bool macro_del(cptr pat);
 extern char inkey(void);
 extern void keymap_init(void);
 extern void bell(void);

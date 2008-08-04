@@ -151,6 +151,11 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
                         /* Save the hybrid flag */
                         macro__hyb[n] = hyb_flag;
 
+			/* Update the "trigger" char - mikaelh */
+			macro__use[(byte)(pat[0])] = MACRO_USE_STD;
+			if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
+			else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+
                         /* All done */
                         return;
                 }
@@ -181,6 +186,44 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
         else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
 }
 
+/*
+ * Try to delete a macro - mikaelh
+ */
+bool macro_del(cptr pat)
+{
+	int i, num = -1;
+
+	/* Find the macro */
+	for (i = 0; i < macro__num; i++)
+	{
+		if (streq(macro__pat[i], pat))
+		{
+			num = i;
+			break;
+		}
+	}
+
+	if (num == -1) return FALSE;
+
+	/* Free it */
+	string_free(macro__pat[num]);
+	string_free(macro__act[num]);
+
+	/* Remove it from every array */
+	for (i = num + 1; i < macro__num; i++)
+	{
+		macro__pat[i - 1] = macro__pat[i];
+		macro__act[i - 1] = macro__act[i];
+		macro__cmd[i - 1] = macro__cmd[i];
+		macro__hyb[i - 1] = macro__hyb[i];
+	}
+
+	macro__use[(byte)(pat[0])] = 0;
+
+	macro__num--;
+
+	return TRUE;
+}
 
 static void sync_sleep(int milliseconds)
 {
@@ -2685,7 +2728,8 @@ void interact_macros(void)
 		Term_putstr(5,  7, -1, TERM_SLATE, "(4) Create a normal macro");
 		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a hybrid macro    (recommended)");
 		Term_putstr(5,  9, -1, TERM_SLATE, "(6) Create a command macro");
-		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
+//		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
+		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Delete a macro");
 		Term_putstr(5, 11, -1, TERM_SLATE, "(8) Create an empty macro    (disables a key)");
 		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Query an existing macro");
 
@@ -2822,6 +2866,7 @@ void interact_macros(void)
 			c_msg_print("Created a new normal macro.");
 		}
 
+#if 0
 		/* Create an identity macro */
 		else if (i == '7')
 		{
@@ -2840,6 +2885,26 @@ void interact_macros(void)
 			/* Message */
 			c_msg_print("Created a new identity macro.");
 		}
+#else
+		/* Delete a macro */
+		else if (i == '7')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Delete a macro");
+
+			/* Prompt */
+			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+
+			/* Get a macro trigger */
+			get_macro_trigger(buf);
+
+			/* Delete the macro */
+			if (macro_del(buf))
+				c_msg_print("The macro was deleted.");
+			else
+				c_msg_print("No macro was found.");
+		}
+#endif
 
 		/* Create an empty macro */
 		else if (i == '8')
@@ -2872,7 +2937,7 @@ void interact_macros(void)
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Using i here shouldn't matter anymore */
+			/* Re-using 'i' here shouldn't matter anymore */
 			for (i = 0; i < macro__num; i++)
 			{
 				if (streq(macro__pat[i], buf))
@@ -2891,7 +2956,7 @@ void interact_macros(void)
 			if (i == macro__num)
 			{
 				/* Message */
-				c_msg_print("No macro found.");
+				c_msg_print("No macro was found.");
 			}
 		}
 
