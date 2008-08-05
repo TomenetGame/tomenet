@@ -51,15 +51,10 @@
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
-/* This value specifies the suffix to the version info sent to the metaserver.
- * (Currently it also affects version check vs connecting clients! Might need fixing.)
- *
- * 0 - nothing
- * 1 - "alpha"
- * 2 - "beta"
- * 3 - "development"
- */
 #define VERSION_EXTRA	0
+#define VERSION_BRANCH  0
+#define VERSION_BUILD   0
+
 /* Server release version tag: Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG "" /* "e" */
 
