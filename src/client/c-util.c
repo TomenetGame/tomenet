@@ -153,8 +153,8 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 
 			/* Update the "trigger" char - mikaelh */
 			macro__use[(byte)(pat[0])] = MACRO_USE_STD;
-			if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
-			else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+			if (hyb_flag) macro__use[(byte)(pat[0])] = MACRO_USE_HYB;
+			else if (cmd_flag) macro__use[(byte)(pat[0])] = MACRO_USE_CMD;
 
                         /* All done */
                         return;
@@ -179,11 +179,11 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 
 
         /* Hack -- Note the "trigger" char */
-        macro__use[(byte)(pat[0])] |= MACRO_USE_STD;
+        macro__use[(byte)(pat[0])] = MACRO_USE_STD;
 
         /* Hack -- Note the "trigger" char of command macros */
-        if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
-        else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+        if (hyb_flag) macro__use[(byte)(pat[0])] = MACRO_USE_HYB;
+        else if (cmd_flag) macro__use[(byte)(pat[0])] = MACRO_USE_CMD;
 }
 
 /*
