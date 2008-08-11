@@ -1724,7 +1724,7 @@ void cmd_load_pref(void)
 
 	buf[0] = '\0';
 
-	if (get_string("Action: ", buf, 79))
+	if (get_string("Load pref: ", buf, 79))
 		process_pref_file_aux(buf);
 }
 
