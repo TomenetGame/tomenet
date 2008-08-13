@@ -180,3 +180,9 @@ bool ping_stats_viewing = FALSE;
 
 /* Chat mode: normal, party or level */
 char chat_mode = CHAT_MODE_NORMAL;
+
+/* Protocol to be used for connecting a server
+ * 1 = traditional
+ * 2 = with extended version
+ */
+s32b server_protocol = 2;

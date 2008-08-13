@@ -304,6 +304,10 @@ int main(int argc, char **argv)
 			break;
 		}
 
+		case 'C':
+			server_protocol = 1;
+			break;
+
 		default:
 			modus = -1;
 			i = argc;
@@ -319,6 +323,7 @@ int main(int argc, char **argv)
 		puts("Example: tomenet -lMorgoth MorgyPass -p18348 TomeNET.net");
 		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
+		puts("  -C                 Compatibility mode for old servers");
 		puts("  -f                 specify rc File to read");
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");

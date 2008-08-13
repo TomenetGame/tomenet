@@ -241,6 +241,9 @@ extern bool ping_stats_viewing;
 /* Chat mode: normal, party or level */
 extern char chat_mode;
 
+/* Protocol to be used for connecting a server */
+extern s32b server_protocol;
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -629,4 +632,3 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
-

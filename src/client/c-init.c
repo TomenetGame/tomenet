@@ -407,10 +407,22 @@ void client_init(char *argv1, bool skip)
 	/* Clear it */
 	Sockbuf_clear(&ibuf);
 
+	/* Extended version */
+	if (server_protocol >= 2)
+	{
+		version = 0xFFFFU;
+	}
+
 	/* Put the contact info in it */
 	Packet_printf(&ibuf, "%u", magic);
 	Packet_printf(&ibuf, "%s%hu%c", real_name, GetPortNum(ibuf.sock), 0xFF);
 	Packet_printf(&ibuf, "%s%s%hu", nick, host_name, version);
+
+	/* Extended version */
+	if (server_protocol >= 2)
+	{
+		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
+	}
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS
