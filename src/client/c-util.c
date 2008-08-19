@@ -2668,11 +2668,12 @@ static void ascii_to_text(char *buf, cptr str)
 
 static errr macro_dump(cptr fname)
 {
-	int i;
+	int i, j, n;
 
 	FILE *fff;
 
 	char buf[1024];
+	char buf2[4096];
 
 
 	/* Build the filename */
@@ -2710,11 +2711,31 @@ static errr macro_dump(cptr fname)
 		/* Start the macro */
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
+#if 0
 		/* Extract the action */
 		ascii_to_text(buf, macro__act[i]);
 
 		/* Dump the macro */
 		fprintf(fff, "A:%s\n", buf);
+#else
+		/* Support really long macros - mikaelh */
+		fprintf(fff, "A:");
+
+		for (j = 0, n = strlen(macro__act[i]); j < n; j += 1023)
+		{
+			/* Take a piece of the action */
+			memcpy(buf, macro__act[i], 1023);
+			buf[1023] = '\0';
+
+			/* Convert it */
+			ascii_to_text(buf2, buf);
+
+			/* Dump it */
+			fprintf(fff, "%s", buf2);
+		}
+
+		fprintf(fff, "\n");
+#endif
 
 		/* Extract the action */
 		ascii_to_text(buf, macro__pat[i]);
@@ -3036,7 +3057,8 @@ void interact_macros(void)
 			{
 				if (streq(macro__pat[i], buf))
 				{
-					strcpy(macro__buf, macro__act[i]);
+					strncpy(macro__buf, macro__act[i], 159);
+					macro__buf[159] = '\0';
 
 					/* Message */
 					if (macro__hyb[i]) c_msg_print("A hybrid macro was found.");

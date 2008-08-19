@@ -423,6 +423,106 @@ errr my_fgets(FILE *fff, char *buf, huge n)
         return (1);
 }
 
+/*
+ * Does the same thing as my_fgets except that we allocate our own memory
+ * which means that there's no limit to the length of the line.
+ */
+errr my_fgets2(FILE *fff, char **line, int *n)
+{
+	int c;
+	int len = 0;
+	int alloc = 4096;
+	char *buf;
+
+	C_MAKE(buf, 4096, char);
+
+	while (1)
+	{
+		/* Get the next character */
+		c = fgetc(fff);
+
+		/* Handle EOF */
+		if (c == EOF)
+		{
+			/* Terminate */
+			buf[len] = '\0';
+
+			if (len == 0)
+			{
+				/* Nothing more to read */
+				C_FREE(buf, alloc, char);
+
+				*line = NULL;
+				*n = 0;
+
+				return 1;
+			}
+
+			/* Done */
+			break;
+		}
+		/* Handle newline */
+		else if (c == '\n' || c == '\r')
+		{
+			int c2;
+
+			/* Peek at the next character to eliminate a possible \n */
+			c2 = fgetc(fff);
+
+			if (c2 != '\n' && c2 != EOF)
+				ungetc(c2, fff);
+
+			/* Terminate */
+			buf[len] = '\0';
+
+			/* Done */
+			break;
+		}
+		/* Handle tabs */
+		else if (c == '\t')
+		{
+			int i;
+
+			/* Make sure that we have enough space */
+			if (len + 8 > alloc)
+			{
+				GROW(buf, alloc, alloc + 4096, char);
+				alloc += 4096;
+			}
+
+			/* Add 8 spaces */
+			for (i = 0; i < 8; i++)
+			{
+				buf[len++] = ' ';
+			}
+		}
+		/* Handle printables */
+		else if (isprint(c))
+		{
+			buf[len] = c;
+		}
+
+		len++;
+
+		/* Make sure we have enough space for at least one more byte */
+		if (len + 1 > alloc)
+		{
+			GROW(buf, alloc, alloc + 4096, char);
+			alloc += 4096;
+		}
+	}
+
+	/* Eliminate excess buffer space */
+	GROW(buf, alloc, len + 1, char);
+
+	/* Final result */
+	*line = buf;
+	*n = len + 1;
+
+	/* Success */
+	return 0;
+}
+
 
 /*
  * Find the default paths to all of our important sub-directories.
@@ -671,6 +771,8 @@ errr process_pref_file_aux(char *buf)
 
         char *zz[16];
 
+	/* We use our own macro__buf - mikaelh */
+	static char *macro__buf;
 
         /* Skip "empty" lines */
         if (!buf[0]) return (0);
@@ -783,6 +885,9 @@ errr process_pref_file_aux(char *buf)
         /* Process "A:<str>" -- save an "action" for later */
         else if (buf[0] == 'A')
         {
+		/* Allocate enough space for the ascii string - mikaelh */
+		C_MAKE(macro__buf, strlen(buf), char);
+
                 text_to_ascii(macro__buf, buf+2);
                 return (0);
         }
@@ -793,6 +898,10 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, FALSE, FALSE);
+
+		/* Free the action */
+		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
+
                 return (0);
         }
 
@@ -802,6 +911,10 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, FALSE, TRUE);
+
+		/* Free the action */
+		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
+
                 return (0);
         }
 
@@ -811,6 +924,10 @@ errr process_pref_file_aux(char *buf)
                 char tmp[1024];
                 text_to_ascii(tmp, buf+2);
                 macro_add(tmp, macro__buf, TRUE, FALSE);
+
+		/* Free the action */
+		C_FREE(macro__buf, strlen(macro__buf) + 1, char);
+
                 return (0);
         }
 
@@ -907,7 +1024,9 @@ errr process_pref_file(cptr name)
 {
         FILE *fp;
 
-        char buf[1024];
+	char buf[1024];
+        char *buf2;
+	int n;
 
         /* Build the filename */
         path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -919,14 +1038,16 @@ errr process_pref_file(cptr name)
         if (!fp) return (-1);
 
         /* Process the file */
-        while (0 == my_fgets(fp, buf, 1024))
+        while (0 == my_fgets2(fp, &buf2, &n))
         {
                 /* Process the line */
-                if (process_pref_file_aux(buf))
+                if (process_pref_file_aux(buf2))
                 {
                         /* Useful error message */
-                        printf("Error in '%s' parsing '%s'.\n", buf, name);
+                        printf("Error in '%s' parsing '%s'.\n", buf2, name);
                 }
+
+		C_FREE(buf2, n, char);
         }
 
         /* Close the file */
