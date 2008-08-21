@@ -84,6 +84,7 @@ function meta_display(xml_feed)
         	                tinsert(sorted[game.." "..version], {
                 	        	name = x[i].args.url,
                         		port = x[i].args.port,
+					protocol = x[i].args.protocol,
                                 	extra = extra,
 	                                players = get_players(x[i]),
         	                })
@@ -105,7 +106,7 @@ function meta_display(xml_feed)
         	        color_print(line, 4, e[i].players); line = line + 1
 
                         -- Store the info for retrieval
-                        meta_list[nb] = { e[i].name, e[i].port }
+                        meta_list[nb] = { e[i].name, e[i].port, e[i].protocol }
                         nb = nb + 1
                 end
         end
@@ -116,5 +117,8 @@ function meta_display(xml_feed)
 end
 
 function meta_get(xml_feed, pos)
+        -- protocol to be used when connecting the selected server - mikaelh
+        server_protocol = meta_list[pos][3]
+
         return meta_list[pos][1], meta_list[pos][2]
 end
