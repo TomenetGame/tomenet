@@ -320,7 +320,7 @@ int main(int argc, char **argv)
 		/* Dump usage information */
 		puts(longVersion);
 		puts("Usage  : tomenet [options] [servername]");
-		puts("Example: tomenet -lMorgoth MorgyPass -p18348 TomeNET.net");
+		puts("Example: tomenet -lMorgoth MorgyPass -p18348 Europe.TomeNET.net");
 		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -C                 Compatibility mode for old servers");
