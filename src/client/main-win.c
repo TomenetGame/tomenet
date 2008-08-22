@@ -3406,14 +3406,81 @@ static void init_stuff(void)
 }
 
 
+/*
+ * Get a number from command line
+ */
+static int cmd_get_number(char *str, int *number)
+{
+	int i, tmp = 0;
+
+	/* Skip any spaces */
+	for (i = 0; str[i] == ' ' && str[i] != '\0'; i++);
+
+	for (; str[i] != '\0'; i++)
+	{
+		/* Confirm number */
+		if ('0' <= str[i] && str[i] <= '9')
+		{
+			tmp *= 10;
+			tmp += str[i] - '0';
+		}
+		else break;
+	}
+
+	*number = tmp;
+
+	/* Find the next space */
+	for (; str[i] != ' ' && str[i] != '\0'; i++);
+
+	return i;
+}
+
+/*
+ * Get a string from command line.
+ * dest is the destination buffer and n is the size of that buffer.
+ */
+static int cmd_get_string(char *str, char *dest, int n)
+{
+	int start, end, len;
+
+	/* Skip any spaces */
+	for (start = 0; str[start] == ' ' && str[start] != '\0'; start++);
+
+	/* Check for a double quote */
+	if (str[start] == '"')
+	{
+		start++;
+
+		/* Find another double quote */
+		for (end = start; str[end] != '"' && str[end] != '\0'; end++);
+	}
+	else
+	{
+		/* Find the next space */
+		for (end = start + 1; str[end] != ' ' && str[end] != '\0'; end++);
+	}
+
+	len = end - start;
+
+	/* Make sure it doesn't overflow */
+	if (len > n - 1) len = n - 1;
+
+	if (len > 0)
+	{
+		strncpy(dest, &str[start], len);
+	}
+
+	/* Always terminate */
+	if (len >= 0)
+		dest[len] = '\0';
+
+	return end + 1;
+}
+
 
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
                        LPSTR lpCmdLine, int nCmdShow)
 {
-#ifdef USE_GRAPHICS
-	int i;
-#endif
-
 	WNDCLASS wc;
 	HDC      hdc;
 	MSG      msg;
@@ -3422,6 +3489,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	UINT     wTimerRes;
 
 	hInstance = hInst;  /* save in a global var */
+
+	int i, n;
+	bool done = FALSE;
 
 	/* make version strings. */
 	version_build();
@@ -3506,20 +3576,68 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* We are now initialized */
 	initialized = TRUE;
 
-	/* HACK - Latest Cygwin causes a space in beginning of lpCmdLine? - mikaelh */
-	if (lpCmdLine[0] == ' ') lpCmdLine++;
+	/* Process the command line */
+	for (i = 0, n = strlen(lpCmdLine); i < n; i++)
+	{
+		/* Check for an option */
+		if (lpCmdLine[i] == '-')
+		{
+			i++;
+
+			switch (lpCmdLine[i])
+			{
+				case 'C': /* compatibility mode */
+					server_protocol = 1;
+					break;
+				case 'h':
+					/* Attempt to print out some usage information */
+					puts(longVersion);
+					puts("Usage  : tomenet [options] [servername]");
+					puts("Example: tomenet -lMorgoth MorgyPass -p18348 Europe.TomeNET.net");
+					puts("  -C                 Compatibility mode for old servers");
+					puts("  -l <nick> <passwd> Login as");
+					puts("  -N <name>          character Name");
+					puts("  -p <num>           change game Port number");
+					puts("  -P <path>          set the lib directory Path");
+					quit(NULL);
+					break;
+				case 'l': /* account name & password */
+					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS);
+					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS);
+					done = TRUE;
+					break;
+				case 'N': /* character name */
+					i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS);
+					break;
+				case 'p': /* port */
+					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_game_port);
+					break;
+				case 'P': /* lib directory path */
+					i += cmd_get_string(&lpCmdLine[i + 1], path, 1024);
+					break;
+			}
+		}
+		else if (lpCmdLine[i] == ' ')
+		{
+			/* Ignore spaces */
+		}
+		else
+		{
+			/* Get a server name */
+			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS);
+		}
+	}
 
 	/* Do network initialization, etc. */
 	/* Add ability to specify cmdline to windows  -Zz*/
-	if (*lpCmdLine != NULL)
+	if (strlen(svname) > 0)
 	{
-		/* Initialize with given server name */
-		client_init(lpCmdLine, FALSE);
+		client_init(svname, done);	
 	}
 	else
 	{
 		/* Initialize and query metaserver */
-		client_init(NULL, FALSE);
+		client_init(NULL, done);
 	}
 
 	/* Process messages forever */
