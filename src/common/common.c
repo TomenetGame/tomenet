@@ -200,6 +200,7 @@ void version_build()
 	/* Append the version number */
 	sprintf(temp, "%s %d.%d.%d%s", TOMENET_VERSION_SHORT, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
 
+#if 0
 	/* Append the additional version info */
 	if (VERSION_EXTRA == 1)
 		strcat(temp, "-alpha");
@@ -209,6 +210,7 @@ void version_build()
 		strcat(temp, "-development");
 	else if (VERSION_EXTRA)
 		strcat(temp, format(".%d", VERSION_EXTRA));
+#endif
 
 	shortVersion = string_make(temp);
 
