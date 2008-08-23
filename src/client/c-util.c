@@ -1128,10 +1128,10 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 		switch (chat_mode)
 		{
 			case CHAT_MODE_PARTY:
-				prt("Party: ", 0, 0);
+				c_prt("Party: ", 0, 0, TERM_L_GREEN);
 				break;
 			case CHAT_MODE_LEVEL:
-				prt("Level: ", 0, 0);
+				c_prt("Level: ", 0, 0, TERM_YELLOW);
 				break;
 			default:
 				prt("Message: ", 0, 0);
@@ -1331,7 +1331,8 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 	}
 
 	/* Handle the additional chat modes */
-	if (chat_mode != CHAT_MODE_NORMAL)
+	/* Slash commands are an exception */
+	if (chat_mode != CHAT_MODE_NORMAL && buf[0] != '/')
 	{
 		for (i = k; i >= 0; i--)
 		{
