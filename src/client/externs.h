@@ -337,6 +337,7 @@ extern errr process_pref_file_aux(char *buf);
 extern void show_motd(int delay);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
+extern errr my_fgets2(FILE *fff, char **line, int *n);
 extern errr file_character(cptr name, bool full);
 extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
