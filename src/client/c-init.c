@@ -388,6 +388,12 @@ void client_init(char *argv1, bool skip)
 	/* Get character name and pass */
 	if (!skip) get_char_name();
 
+	if (server_protocol >= 2)
+	{
+		/* Use memfrob on the password */
+		my_memfrob(pass, strlen(pass));
+	}
+
         /* Capitalize the name */
 	nick[0] = toupper(nick[0]);
 

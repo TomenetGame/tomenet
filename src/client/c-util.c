@@ -4104,6 +4104,24 @@ void do_cmd_ping_stats(void)
 }
 
 
+/*
+ * Since only GNU libc has memfrob, we use our own.
+ */
+void my_memfrob(void *s, int n)
+{
+        int i;
+        char *str;
+
+        str = (char*) s;
+
+        for (i = 0; i < n; i++)
+        {
+                /* XOR every byte with 42 */
+                str[i] ^= 42;
+        }
+}
+
+
 
 #ifdef SET_UID
 
@@ -4160,5 +4178,3 @@ int usleep(long microSeconds)
 	return(0);
 }
 #endif /* WIN32 */
-
-

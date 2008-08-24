@@ -395,6 +395,7 @@ extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void show_ping_stats(void);
 extern void do_cmd_ping_stats(void);
+extern void my_memfrob(void *s, int n);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */
