@@ -3066,6 +3066,9 @@ void interact_macros(void)
 					else if (macro__cmd[i]) c_msg_print("A command macro was found.");
 					else c_msg_print("A normal macro was found.");
 
+					/* Update windows */
+					window_stuff();
+
 					break;
 				}
 			}
