@@ -186,3 +186,6 @@ char chat_mode = CHAT_MODE_NORMAL;
  * 2 = with extended version
  */
 s32b server_protocol = 2;
+
+/* Client fps used for polling keyboard input etc */
+int cfg_client_fps = 60;

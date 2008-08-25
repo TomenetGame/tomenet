@@ -270,6 +270,10 @@ int main(int argc, char **argv)
 		case 'p':
 			cfg_game_port = atoi(&argv[i][2]);
 			break;
+
+		case 'F':
+			cfg_client_fps = atoi(&argv[i][2]);
+			break;
 		
 		case 'P':
 			strcpy(path, argv[i]+2);
@@ -325,6 +329,7 @@ int main(int argc, char **argv)
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -C                 Compatibility mode for old servers");
 		puts("  -f                 specify rc File to read");
+		puts("  -F                 Client FPS");
 		puts("  -i                 Ignore .tomenetrc");
 		puts("  -l<nick> <passwd>  Login as");
 		puts("  -N<name>           character Name");

@@ -3589,12 +3589,16 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 				case 'C': /* compatibility mode */
 					server_protocol = 1;
 					break;
+				case 'F':
+					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
+					break;
 				case 'h':
 					/* Attempt to print out some usage information */
 					puts(longVersion);
 					puts("Usage  : tomenet [options] [servername]");
 					puts("Example: tomenet -lMorgoth MorgyPass -p18348 Europe.TomeNET.net");
 					puts("  -C                 Compatibility mode for old servers");
+					puts("  -F                 Client FPS");
 					puts("  -l <nick> <passwd> Login as");
 					puts("  -N <name>          character Name");
 					puts("  -p <num>           change game Port number");

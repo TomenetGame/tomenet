@@ -375,6 +375,12 @@ int Net_setup(void)
 					quit("Can't read setup info from reliable data buffer");
 				}
 
+				/* Make sure the client runs fast enough too - mikaelh */
+				if (Setup.frames_per_second > cfg_client_fps)
+				{
+					cfg_client_fps = Setup.frames_per_second;
+				}
+
 				/* allocate the arrays after loading */
 				C_MAKE(race_info, Setup.max_race, player_race);
 				C_MAKE(class_info, Setup.max_class, player_class);
@@ -3832,7 +3838,7 @@ int move_rest() {
 /* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
 int next_frame() {
 	struct timeval tv;
-	int time_between_frames = (1000000 / Setup.frames_per_second);
+	int time_between_frames = (1000000 / cfg_client_fps);
 	int us;
 
 	if (gettimeofday(&tv, NULL) == -1) {
@@ -3842,10 +3848,12 @@ int next_frame() {
 
 	us = time_between_frames - tv.tv_usec % time_between_frames;
 
+#if 0
 	/* 1 millisecond is just too short */
 	if (us <= 1000) {
 		us += time_between_frames;
 	}
+#endif
 
 	return us;
 }
