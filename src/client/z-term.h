@@ -149,10 +149,11 @@ struct term
 
 	char *key_queue;
 
-	u16b key_head;
-	u16b key_tail;
-	u16b key_xtra;
-	u16b key_size;
+	u32b key_head;
+	u32b key_tail;
+	u32b key_length;
+	u32b key_size;
+	u32b key_size_orig;
 
 	byte wid;
 	byte hgt;
