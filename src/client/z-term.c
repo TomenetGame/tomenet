@@ -2354,7 +2354,7 @@ errr Term_inkey(char *ch, bool wait, bool take)
 	Term->key_length--;
 
 	/* Check if we could decrease the queue size - mikaelh */
-	if (Term->key_length < Term->key_size / 2 && Term->key_size > Term->key_size_orig)
+	if (Term->key_length < Term->key_size / 4 && Term->key_size > Term->key_size_orig)
 		Term_decrease_queue();
 
 	/* If requested, advance the queue, wrap around if necessary */
