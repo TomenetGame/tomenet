@@ -2708,7 +2708,7 @@ errr term_init(term *t, int w, int h, int k)
 
 
 	/* Prepare the input queue */
-	t->key_head = t->key_tail = 0;
+	t->key_head = t->key_tail = t->key_length = 0;
 
 	/* Determine the input queue size */
 	t->key_size_orig = t->key_size = k;
