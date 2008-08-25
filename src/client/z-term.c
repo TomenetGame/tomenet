@@ -2350,15 +2350,23 @@ errr Term_inkey(char *ch, bool wait, bool take)
 	/* Extract the next keypress */
 	(*ch) = Term->key_queue[Term->key_tail];
 
-	/* Decrease queue length */
-	Term->key_length--;
+	/* If requested, advance the queue */
+	if (take)
+	{
+		Term->key_tail++;
 
-	/* Check if we could decrease the queue size - mikaelh */
-	if (Term->key_length < Term->key_size / 4 && Term->key_size > Term->key_size_orig)
-		Term_decrease_queue();
+		/* Decrease queue length */
+		Term->key_length--;
 
-	/* If requested, advance the queue, wrap around if necessary */
-	if (take && (++Term->key_tail == Term->key_size)) Term->key_tail = 0;
+		/* Check if we could decrease the queue size - mikaelh */
+		if (Term->key_length < Term->key_size / 4 && Term->key_size > Term->key_size_orig)
+			Term_decrease_queue();
+
+		/* Wrap around if necessary */
+		if (Term->key_tail == Term->key_size)
+			Term->key_tail = 0;
+	}
+
 
 	/* Success */
 	return (0);
