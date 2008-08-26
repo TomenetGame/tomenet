@@ -1450,6 +1450,8 @@ int Receive_char_info(void)
 	int	n;
 	char	ch;
 
+	static bool player_pref_files_loaded = FALSE;
+
 	/* Clear any old info */
 	race = class = sex = mode = 0;
 
@@ -1465,8 +1467,12 @@ int Receive_char_info(void)
 	p_ptr->male = sex;
 	p_ptr->mode = mode;
 
-	/* Load preferences */
-	initialize_player_pref_files();
+	/* Load preferences once */
+	if (!player_pref_files_loaded)
+	{
+		initialize_player_pref_files();
+		player_pref_files_loaded = TRUE;
+	}
 
 	if (screen_icky) Term_switch(0);
 
