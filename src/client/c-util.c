@@ -1037,6 +1037,10 @@ void keymap_init(void)
 
 	/* give a warning, in case we haven't saved macros, so we know
 	   that we just lost all unsaved keymap changes. */
+	/* actually this function itself has nothing to with the macros.
+	 * macros were reloaded before when a complete redraw was done,
+         * which isn't the case anymore - mikaelh
+	 */
 	c_msg_print("Keymap has been reinitialized.");
 }
 
@@ -2883,6 +2887,9 @@ void interact_macros(void)
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
+
+			/* Pref files may change settings, so reload the keymap - mikaelh */
+			keymap_init();
 		}
 
 		/* Save a 'macro' file */

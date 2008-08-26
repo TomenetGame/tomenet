@@ -1731,7 +1731,10 @@ void cmd_load_pref(void)
 void cmd_redraw(void)
 {
 	Send_redraw(0);
+
+#if 0 /* I think this is useless here - mikaelh */
 	keymap_init();
+#endif
 }
 
 static void cmd_house_chown(int dir)

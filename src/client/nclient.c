@@ -1472,6 +1472,9 @@ int Receive_char_info(void)
 	{
 		initialize_player_pref_files();
 		player_pref_files_loaded = TRUE;
+
+		/* Pref files may change settings, so reload the keymap - mikaelh */
+		keymap_init();
 	}
 
 	if (screen_icky) Term_switch(0);
