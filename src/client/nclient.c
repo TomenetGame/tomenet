@@ -3791,6 +3791,9 @@ void do_ping()
 	static int last_ping = 0;
 
 	if (ping_stats_enabled && (ticks - last_ping >= 10)) {
+		/* Update the screen just before sending a new ping */
+		show_ping_stats();
+
 		last_ping = ticks;
 		Send_ping();
 	}
