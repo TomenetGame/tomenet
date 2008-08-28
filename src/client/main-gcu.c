@@ -516,6 +516,9 @@ static void Term_init_gcu(term *t)
 
 	/* Game keymap */
 	keymap_game();
+
+	/* Tell select() to watch stdin - mikaelh */
+	x11_socket = 0;
 }
 
 
