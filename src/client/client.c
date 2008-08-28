@@ -124,6 +124,18 @@ static bool read_mangrc(cptr filename)
 				if (p) cfg_game_port = atoi(p);
 			}
 
+			/* fps line */
+			if (!strncmp(buf, "fps", 3))
+			{
+				char *p;
+
+				/* Extract fps */
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				if (p) cfg_client_fps = atoi(p);
+			}
+
 			/* Password line */
 			if (!strncmp(buf, "realname", 8))
 			{
