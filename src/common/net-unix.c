@@ -1112,9 +1112,12 @@ int	fd;
     max_fd = fd;
 
     /* Watch X11 socket - mikaelh */
-    FD_SET(x11_socket, &readfds);
-    if (x11_socket > max_fd)
-        max_fd = x11_socket;
+    if (x11_socket != -1)
+    {
+        FD_SET(x11_socket, &readfds);
+        if (x11_socket > max_fd)
+            max_fd = x11_socket;
+    }
 
     if (select(max_fd + 1, &readfds, NULL, NULL, &timeout) == -1)
 	return ((errno == EINTR) ? 0 : -1);
