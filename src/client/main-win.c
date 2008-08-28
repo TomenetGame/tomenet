@@ -3577,6 +3577,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* We are now initialized */
 	initialized = TRUE;
 
+	/* Check if we loaded some account name & password from the .ini file - mikaelh */
+	if (strlen(nick) && strcmp(nick, "PLAYER") && strlen(pass) && strcmp(pass, "passwd"))
+		done = TRUE;
+
 	/* Process the command line */
 	for (i = 0, n = strlen(lpCmdLine); i < n; i++)
 	{
