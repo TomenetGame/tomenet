@@ -3592,6 +3592,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 				case 'F':
 					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_client_fps);
 					break;
+#if 0
 				case 'h':
 					/* Attempt to print out some usage information */
 					puts(longVersion);
@@ -3605,6 +3606,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts("  -P <path>          set the lib directory Path");
 					quit(NULL);
 					break;
+#endif // 0
 				case 'l': /* account name & password */
 					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS);
 					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS);
