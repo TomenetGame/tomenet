@@ -60,7 +60,8 @@ extern int
     sl_timeout_s,
     sl_timeout_us,
     sl_default_retries,
-    sl_broadcast_enabled;
+    sl_broadcast_enabled,
+    x11_socket;
 #ifdef UNIX_SOCKETS
 extern struct sockaddr_un
 #else

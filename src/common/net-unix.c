@@ -137,6 +137,9 @@ struct sockaddr_in	sl_dgram_lastaddr;
 /* Global broadcast enable variable (super-user only), default disabled */
 int			sl_broadcast_enabled = 0;
 
+/* X11 socket connection number */
+int			x11_socket = -1;
+
 
 /*
  *******************************************************************************
@@ -1095,6 +1098,7 @@ int	fd;
 {
     fd_set		readfds;
     struct timeval	timeout;
+    int max_fd;
 
 #ifndef timerclear
 #define timerclear(tvp)   (tvp)->tv_sec = (tvp)->tv_usec = 0
@@ -1105,8 +1109,14 @@ int	fd;
 
     FD_ZERO(&readfds);
     FD_SET(fd, &readfds);
+    max_fd = fd;
 
-    if (select(fd + 1, &readfds, NULL, NULL, &timeout) == -1)
+    /* Watch X11 socket - mikaelh */
+    FD_SET(x11_socket, &readfds);
+    if (x11_socket > max_fd)
+        max_fd = x11_socket;
+
+    if (select(max_fd + 1, &readfds, NULL, NULL, &timeout) == -1)
 	return ((errno == EINTR) ? 0 : -1);
 
     if (FD_ISSET(fd, &readfds))

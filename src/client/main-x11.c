@@ -492,6 +492,9 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 	/* Extract the fd */
 	m->fd = ConnectionNumber(Metadpy->dpy);
 
+	/* Use the fd for select() - mikaelh */
+	x11_socket = m->fd;
+
 	/* Save the Size and Depth of the screen */
 	m->width = WidthOfScreen(m->screen);
 	m->height = HeightOfScreen(m->screen);
