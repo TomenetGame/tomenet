@@ -499,10 +499,8 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 		/* Handle printables */
 		else if (isprint(c))
 		{
-			buf[len] = c;
+			buf[len++] = c;
 		}
-
-		len++;
 
 		/* Make sure we have enough space for at least one more byte */
 		if (len + 1 > alloc)
