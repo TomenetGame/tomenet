@@ -1295,6 +1295,10 @@ errr init_xaw(void)
 	topLevel = XtAppInitialize (&appcon, "Angband", NULL, 0, &argc, argv,
 	                            fallback, NULL, 0);
 
+	/* Get the socket for select() - mikaelh */
+	x11_socket = ConnectionNumber(XtDisplay(topLevel));
+
+
 	/* Initialize the main window */
 	term_data_init (&screen, topLevel, 1024, "angband",
 	                angbandArgs, XtNumber(angbandArgs));
