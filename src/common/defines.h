@@ -1100,17 +1100,33 @@
 #define ROW_AC			15
 #define COL_AC			0	/* "Cur AC xxxxx" */
 
-#define ROW_MAXHP		16
-#define COL_MAXHP		0	/* "Max HP xxxxx" */
+#define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
 
-#define ROW_CURHP		17
-#define COL_CURHP		0	/* "Cur HP xxxxx" */
+#ifndef CONDENSED_HP_SP
+ #define ROW_MAXHP		16
+ #define COL_MAXHP		0	/* "Max HP xxxxx" */
 
-#define ROW_MAXSP		18
-#define COL_MAXSP		0	/* "Max SP xxxxx" */
+ #define ROW_CURHP		17
+ #define COL_CURHP		0	/* "Cur HP xxxxx" */
 
-#define ROW_CURSP		19
-#define COL_CURSP		0	/* "Cur SP xxxxx" */
+ #define ROW_MAXSP		18
+ #define COL_MAXSP		0	/* "Max SP xxxxx" */
+
+ #define ROW_CURSP		19
+ #define COL_CURSP		0	/* "Cur SP xxxxx" */
+#else
+ #define ROW_MAXHP		16
+ #define COL_MAXHP		0	/* "Max HP xxxxx" */
+
+ #define ROW_CURHP		16
+ #define COL_CURHP		7	/* "Cur HP xxxxx" */
+
+ #define ROW_MAXSP		17
+ #define COL_MAXSP		0	/* "Max SP xxxxx" */
+
+ #define ROW_CURSP		17
+ #define COL_CURSP		7	/* "Cur SP xxxxx" */
+#endif
 
 #define ROW_SANITY		14	/* "Sanity  100%" */
 #define COL_SANITY		0
