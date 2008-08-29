@@ -765,8 +765,8 @@ void cmd_inven(void)
 	show_inven();
 
 	ch = inkey();
-	if (ch >= 'a' && ch < 'a' + INVEN_PACK) {
-		c = ch - 'a';
+	if (ch >= 'A' && ch < 'Z' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+		c = ch - 'A';
 		if (inventory[c].tval) Send_msg(format("\377s%s", inventory_name[c]));
 	}
 
@@ -797,8 +797,8 @@ void cmd_equip(void)
 	item_tester_full = FALSE;
 
 	ch = inkey();
-	if (ch >= 'a' && ch < 'a' + (INVEN_TOTAL - INVEN_WIELD)) {
-		c = ch - 'a';
+	if (ch >= 'A' && ch < 'Z' + (INVEN_TOTAL - INVEN_WIELD)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+		c = ch - 'A';
 		if (inventory[INVEN_WIELD + c].tval) Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
 	}
 

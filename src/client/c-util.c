@@ -2513,7 +2513,7 @@ s32b c_get_quantity(cptr prompt, int max)
 	char buf[80];
 	
 	char bi1[80], bi2[6 + 1];
-	int n = 0, i = 0;
+	int n = 0, i = 0, j = 0;
 	s32b i1 = 0, i2 = 0, mul = 1;
 
 	/* Build a prompt if needed */
@@ -2546,10 +2546,20 @@ s32b c_get_quantity(cptr prompt, int max)
 	if (mul > 1) {
 		n++;
 		i = 0;
-		while(buf[n] >= '0' && buf[n] <= '9' && i <= 6) bi2[i++] = buf[n++];
-		
+		while(buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
+		bi2[i] = '\0';
+Send_msg(format("%s-%s", bi1, bi2));
+
 		i = 0;
-		while (bi2[i] == '\0' && i <= 6) bi2[i++] = '0';
+		while (i < 6) {
+			if (bi2[i] == '\0') {
+				j = i;
+				while (j < 6) bi2[j++] = '0';
+				break;
+			}
+			i++;
+		}
+Send_msg(format("%s-%d", bi2, mul));
 
 		if (mul == 1000) bi2[3] = '\0';
 		else if (mul == 1000000) bi2[6] = '\0';
