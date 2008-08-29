@@ -1112,7 +1112,10 @@ int	fd;
     max_fd = fd;
 
     /* Watch X11 socket - mikaelh */
-    if (x11_socket != -1)
+    /* Code in nclient.c assumes that if we return FALSE, we've timed out so
+     * I'm checking that the timeout is smaller than 1 sec. - mikaelh
+     */
+    if (x11_socket != -1 && sl_timeout_s == 0)
     {
         FD_SET(x11_socket, &readfds);
         if (x11_socket > max_fd)
