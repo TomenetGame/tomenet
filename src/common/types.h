@@ -824,6 +824,7 @@ struct object_type
 	byte marked2;			/* additional parameters */
 
 	u16b note;			/* Inscription index */
+	u16b note_priority;		/* Added for making pseudo-id overwrite unique loot tags */
 
 #if 0	/* from pernA.. consumes memory, but quick. shall we? */
         u16b art_name;      /* Artifact name (random artifacts) */
@@ -1363,7 +1364,7 @@ struct store_info_type
 	byte table_num;                 /* Number of items */
 	s16b max_obj;                   /* Number of items this store can hold */
 
-	u16b owners[4];                 /* List of owners(refers to ow_info) */
+	u16b owners[6];                 /* List of owners(refers to ow_info) */
 
 	u16b actions[6];                /* Actions(refers to ba_info) */
 
@@ -1802,6 +1803,17 @@ struct account{
 	char pass[20];	/* some crypts are not 13 */
 };
 
+typedef struct version_type version_type;
+
+struct version_type {		/* Extended version structure */
+	int major;
+	int minor;
+	int patch;
+	int extra;
+	int branch;
+	int build;
+};
+
 /*
  * Most of the "player" information goes here.
  *
@@ -1833,7 +1845,8 @@ struct player_type
 	char accountname[MAX_CHARS];
 	char hostname[MAX_CHARS];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
-	unsigned int version;		/* His version */
+//	unsigned int version;		/* His version */
+	version_type version;
 
 	s32b id;		/* Unique ID to each player */
 	u32b account;		/* account group id */
@@ -1870,6 +1883,11 @@ struct player_type
 
         skill_player s_info[MAX_SKILLS]; /* Player skills */
         s16b skill_points;      /* number of skills assignable */
+
+        /* Copies for /undoskills - mikaelh */
+        skill_player s_info_old[MAX_SKILLS]; /* Player skills */
+        s16b skill_points_old;  /* number of skills assignable */
+	bool reskill_possible;
 	
 	s16b class_extra;	/* Class extra info */
 
@@ -2136,7 +2154,9 @@ struct player_type
 	s16b afraid;		/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */
 	s16b poisoned;		/* Timed -- Poisoned */
+	int poisoned_attacker;	/* Who poisoned the player - used for blood bond */
 	s16b cut;			/* Timed -- Cut */
+	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
 
 	s16b xtrastat;		/* timed temp +stats */
@@ -2470,7 +2490,7 @@ struct player_type
 	u16b quest_id;		/* Quest number */
 	s16b quest_num;		/* Number of kills needed */
 
-	s16b xtra_crit;         /* % of increased crits */
+	s16b xtra_crit;         /* critical strike bonus from item */
 	s16b extra_blows;		/* Number of extra blows */
 
 	s16b to_l;                      /* Bonus to life */
@@ -2507,7 +2527,7 @@ struct player_type
 	s16b team;			/* what team */
 
 	/* Moltor's arcade crap */
-        int a, b, c, d, e, f, g, h, i, j, k, l;
+        int arc_a, arc_b, arc_c, arc_d, arc_e, arc_f, arc_g, arc_h, arc_i, arc_j, arc_k, arc_l;
 	char firedir; 
 	char game;
 	int gametime;
@@ -2546,10 +2566,10 @@ struct player_type
 	time_t global_event_started[MAX_GLOBAL_EVENTS];
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
 	s32b global_event_temp; /* not saved */
-	int rune_num_of_buffs;
 
 	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
 	 * and that number will affect mana usage */
+	int rune_num_of_buffs;
 #ifdef CLASS_RUNEMASTER
 	int rune_speed;
 	int rune_stealth;
@@ -2573,6 +2593,19 @@ struct player_type
 	/* combat stances */
 	int combat_stance; /* 0 = normal, 1 = def, 2 = off */
 	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
+	
+	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
+	   by specifying the spell name instead of a book and position - C. Blue */
+	char spell_name[100][20];
+	int spell_book[100], spell_pos[100];
+
+	bool aura[MAX_AURAS]; /* allow toggling auras for possibly more tactical utilization - C. Blue */
+	
+	/* for C_BLUE_AI, new thingy: Monsters that are able to ignore a "tank" player */
+	int heal_turn[20 + 1]; /* records the amount of healing the player received for each of 20 consecutive turns */
+	u32b heal_turn_20, heal_turn_10, heal_turn_5;
+	int dam_turn[20 + 1]; /* records the amount of damage the player dealt for each of 20 consecutive turns */
+	u32b dam_turn_20, dam_turn_10, dam_turn_5;
 };
 
 /* For Monk martial arts */

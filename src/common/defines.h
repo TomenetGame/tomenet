@@ -51,9 +51,9 @@
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
-#define VERSION_EXTRA	1
-#define VERSION_BRANCH  0
-#define VERSION_BUILD   0
+#define VERSION_EXTRA	0
+#define VERSION_BRANCH	0
+#define VERSION_BUILD	0
 
 /* Server release version tag: Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG "" /* "e" */
@@ -61,7 +61,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   5
+#define SF_VERSION_PATCH   6
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -96,11 +96,9 @@
 
 #ifdef RPG_SERVER
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
- #if 0 /* disabled in CVS for now - mikaelh */
-  #define AUCTION_BETA		/* less restrictions while beta testing */
-  #define AUCTION_SYSTEM
-  #define AUCTION_DEBUG
- #endif
+ #define AUCTION_BETA		/* less restrictions while beta testing */
+ #define AUCTION_SYSTEM
+ #define AUCTION_DEBUG
 #endif
 
 
@@ -373,6 +371,8 @@
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
 
+#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
+
 
 /*
  * Maximum array bounds for entity list arrays
@@ -418,7 +418,7 @@
 #define LITE_CAP 10 /* just a limiter */
 
 /* Maximum number of notes that the server will store */
-#define MAX_NOTES 100
+#define MAX_NOTES 200
 #define MAX_PARTYNOTES 30
 #define MAX_GUILDNOTES 10
 #define MAX_ADMINNOTES 10
@@ -566,6 +566,8 @@
 #define MAGICAL_CAP		1600
 
 
+/* Divide stack size of ethereal ammunition by this to make it rarer */
+#define ETHEREAL_AMMO_REDUCTION 2
 
 
 /* Various melee/ranged combat settings for cmd1.c and cmd2.c mostly */
@@ -612,10 +614,11 @@
 /* when do rogues learn cloaking mode? */
 #define LEARN_CLOAKING_LEVEL 15
 
-
 /* Should a mind-link also display shops and shop actions to the secondary player? */
 //#define MINDLINK_STORE
 
+/* At which % should a char turn into a number? (10 = always, -1 = never) default: [6] */
+#define TURN_CHAR_INTO_NUMBER	7
 
 
 /*
@@ -667,15 +670,16 @@
 /*
  * Methods of leaving a level
  */
-#define LEVEL_UP	0
-#define LEVEL_DOWN	1
-#define LEVEL_RAND	2
-#define LEVEL_GHOST	3
-#define	LEVEL_OUTSIDE   4
-#define LEVEL_OUTSIDE_RAND 5
-#define LEVEL_HOUSE 6
-#define LEVEL_RECALL_UP 7
-#define LEVEL_RECALL_DOWN 8
+#define LEVEL_UP		0
+#define LEVEL_DOWN		1
+#define LEVEL_RAND		2
+#define LEVEL_GHOST		3
+#define	LEVEL_OUTSIDE   	4
+#define LEVEL_OUTSIDE_RAND 	5
+#define LEVEL_HOUSE 		6
+#define LEVEL_RECALL_UP 	7
+#define LEVEL_RECALL_DOWN 	8
+#define LEVEL_PROB_TRAVEL	9
 
 /*
  * Pkill flags
@@ -1428,6 +1432,9 @@ that keeps many algorithms happy.
 #define EFF_WAVE                0x00000001      /* A circle whose radius increase */
 #define EFF_LAST                0x00000002      /* The wave lasts */
 #define EFF_STORM               0x00000004      /* The area follows the player */
+#define EFF_CROSSHAIR_A		0x00000008
+#define EFF_CROSSHAIR_B		0x00000010
+#define EFF_CROSSHAIR_C		0x00000020
 #define EFF_RAINING		0x08000000	/* New ideas for pushing the edge of Rogue-like gaming ^^ */
 #define EFF_FIREWORKS1		0x10000000	/* For NEW_YEARS_EVE =) - C. Blue*/
 #define EFF_FIREWORKS2		0x20000000	/* For new year's eve too. */
@@ -1701,6 +1708,7 @@ that keeps many algorithms happy.
 #define ART_SCARLETORDER	258
 #define ART_THINKINGCAP		259
 #define ART_MIRROROFGLORY	260
+#define ART_GOGGLES_DM		261
 /* #define ART_ANGTIRCALAD		*/
 
 
@@ -1847,7 +1855,7 @@ that keeps many algorithms happy.
 #define EGO_LETERNAL_EYE	143
 
 #define EGO_LFADING		145
-
+#define EGO_DWARVEN_ARMOR	146
 #define EGO_INDESTRUCTIBLE	147
 #define EGO_CURSED		148
 #define EGO_FIREPROOF		149
@@ -2204,6 +2212,7 @@ that keeps many algorithms happy.
 #define SV_THUNDER_AXE			33	/* 6d8 */
 
 /* The "sval" values for TV_POLEARM */
+#define SV_HUNTING_SPEAR		 1	/* 1d6 */
 #define SV_SPEAR                         2	/* 1d6 */
 #define SV_SICKLE                        3	/* 2d3 */
 #define SV_AWL_PIKE                      4	/* 1d8 */
@@ -3301,7 +3310,7 @@ that keeps many algorithms happy.
 #define GF_FW_MULT	207
 /* well, let's try to bring weather and seasons? */
 #define GF_RAINDROP	208
-
+#define GF_CROSSHAIR 	209
 
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -4341,6 +4350,7 @@ that keeps many algorithms happy.
 #define FF1_PROTECTED		0x10000000L	/* monsters cannot teleport to nor spawn on this grid */
 #define FF1_LOS			0x20000000L	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
 #define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
+#define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
 
 
 /*** Dungeon type flags -- DG ***/
@@ -5340,12 +5350,16 @@ extern int PlayerUID;
 #define CLIENT_NORMAL		0x0000
 #define CLIENT_PARTY		0x0001
 
-/* Diff mode */
-#define MODE_NORMAL		0x0000
-#define MODE_MALE		0x0001	/* Dummy */
-#define MODE_HELL		0x0002	/* Penalized */
-#define MODE_NO_GHOST		0x0004	/* traditional 'hellish' is 3 */
-#define MODE_IMMORTAL   	0x0008	/* No death counter */
+/* Diff mode (type is 'byte') */
+#define MODE_NORMAL		0x00
+#define MODE_MALE		0x01	/* Dummy */
+
+#define MODE_HARD		0x02	/* Penalized */
+#define MODE_NO_GHOST		0x04	/* traditional 'hellish' is 3 */
+#define MODE_EVERLASTING   	0x08	/* No death counter */
+#define MODE_PVP   		0x10	/* No death counter */
+
+#define MODE_FRUIT_BAT   	0x20	/* No death counter */
 
 /* Monk martial arts... */
 # define MAX_MA 17
@@ -5831,22 +5845,28 @@ extern int PlayerUID;
 /*
  * Mkeys are skill activations
  */
-#define MKEY_SORCERY            1
-#define MKEY_MAGERY             2
+#define MKEY_SORCERY            1	/* unused */
+#define MKEY_MAGERY             2	/* unused */
 #define MKEY_MIMICRY            3
-#define MKEY_SHADOW             4
-#define MKEY_FIGHTING           5
-#define MKEY_ARCHERING          6	/* Hunting. */
-#define MKEY_PRAY               7
+#define MKEY_SHADOW             4	/* unused */
+#define MKEY_FIGHTING           5	/* new fighter abilities */
+#define MKEY_ARCHERING          6	/* not "Hunting" anymore, but new archer abilities */
+#define MKEY_PRAY               7	/* unused */
 
 #define MKEY_DODGE              8
-#define MKEY_FLETCHERY			9
+#define MKEY_FLETCHERY		9	/* constant to be unused when fletchery becomes subskill of archer abilities */
 #define MKEY_TRAP               10
 #define MKEY_SCHOOL             11
 #define MKEY_RUNE		12
 
 #define MKEY_STANCE		13	/* combat stances for warriors - C. Blue */
+#define MKEY_PARRYBLOCK		14	/* check parry/block chance */
 
+#define MKEY_AURA_FEAR		15	/* Make auras toggleable for greater utilization! - C. Blue */
+#define MKEY_AURA_SHIVER	16
+#define MKEY_AURA_DEATH		17
+
+#define MAX_AURAS 		3
 
 /*
  * Skills
@@ -5971,9 +5991,10 @@ extern int PlayerUID;
 
 
 /* Skill points per level (xtra2.c) */
-#define SKILL_NB_BASE           5
 #ifdef ARCADE_SERVER
-#define SKILL_NB_BASE 0
+#define SKILL_NB_BASE		0
+#else
+#define SKILL_NB_BASE           5
 #endif
 
 
@@ -6017,6 +6038,8 @@ extern int PlayerUID;
 #define SF1_NO_STEAL   	      	0x08000000L     /* can't steal from this shop */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
 #define SF1_BUY50		0x20000000L	/* Shop buys for 50% of value (stacks with BUY67) */
+#define SF1_NO_DISCOUNT3	0x40000000L	/* no 75%+ off */
+#define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
 
 /*
  * Total number of stores (see "store.c", etc)
@@ -6210,9 +6233,10 @@ extern int PlayerUID;
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
 /*	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_info[ridx].d_char == 'O')) || \ */
 #define mimic_shaman(ridx)	\
-	(((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) && \
-	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
-	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx))
+	((((r_info[ridx].flags3 & (RF3_ANIMAL | RF3_DRAGON | RF3_GIANT | RF3_DRAGONRIDER)) || \
+	(r_info[ridx].d_char == 'H')) && \
+ 	!(r_info[ridx].flags3 & (RF3_UNDEAD | RF3_NONLIVING))) || \
+	(r_info[ridx].d_char == 'G') || mimic_shaman_E(ridx) || r_info[ridx].d_char == 'X')
 #define mimic_shaman_E(ridx)	\
 	((r_info[ridx].d_char == 'E') && !(ridx == 514 || ridx == 815 || ridx == 975))
 /*	Druid: Selected Animals and animal-similar creatures. */
@@ -6243,6 +6267,12 @@ extern int PlayerUID;
 #define GE_NONE			0	/* <disabled> ie no event running */
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
+
+
+/* modify the base crit bonus to make it less linear, remotely similar to LUCK */
+#define BOOST_CRIT(xtra_crit)	(65 - (975 / ((xtra_crit) + 15))) /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
+//xtra_crit = 60 - (600 / (xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
+
 
 /* Here comes the new rune master macros and what not */
 #ifdef CLASS_RUNEMASTER
@@ -6356,10 +6386,16 @@ extern int PlayerUID;
 #define AUCTION_MINIMUM_VALUE		1000
 #endif
 
+/* Auction fee in percents of the price */
+#define AUCTION_FEE			1
+
+/* Maximum amount of items per player */
+#define AUCTION_MAX_ITEMS_PLAYER	40
+
 /* Time limits */
 #ifdef AUCTION_BETA
 #define AUCTION_MINIMUM_DURATION	15	/* 15 seconds */
-#define AUCTION_MAXIMUM_DURATION	86400	/* 24 hours */
+#define AUCTION_MAXIMUM_DURATION	604800  /* 7 days */
 #else
 #define AUCTION_MINIMUM_DURATION	3600	/* 1 hour */
 #define AUCTION_MAXIMUM_DURATION	604800	/* 7 days */
@@ -6411,6 +6447,12 @@ extern int PlayerUID;
 #define AUCTION_ERROR_EVERLASTING_ITEM		-13 /* Non-everlasting / everlasting separation */
 #define AUCTION_ERROR_NONEVERLASTING_ITEM	-14 /* Non-everlasting / everlasting separation */
 #define AUCTION_ERROR_INVALID_ACCOUNT		-15 /* Invalid account */
+#define AUCTION_ERROR_INVALID_PRICE		-16 /* Invalid price */
+#define AUCTION_ERROR_INVALID_DURATION		-17 /* Invalid duration */
+#define AUCTION_ERROR_TOO_MANY			-18 /* Too many auctions */
+#define AUCTION_ERROR_NO_BIDDING		-19 /* No bidding */
+#define AUCTION_ERROR_NO_BUYOUT			-20 /* No buyout */
+#define AUCTION_ERROR_EITHER_BID_OR_BUYOUT	-21 /* Either bidding or buyout needs to be allowed */
 
 #endif
 
