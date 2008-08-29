@@ -602,17 +602,23 @@ static void choose_mode(void)
 	put_str("H) Hellish", 20, 60 + 2);
 	put_str("e) Everlasting", 21, 2);
 #else
-	put_str("n) Normal (3 lifes)", 16, 2);
-	put_str("g) No Ghost ('Unworldly' - One life only. The traditional rogue-like way.)", 17, 2);
-	put_str("e) Everlasting (You may resurrect infinite times, but cannot enter highscore.)", 18, 2);
-	put_str("h) Hard ('Purgatorial' - like normal, with nasty additional penalties.)", 19, 2);
-	put_str("H) Hellish (Combination of Hard + No Ghost.)", 20, 2);
-	put_str("p) PvP (Can't beat the game, instead special 'player vs player' rules apply.)", 21, 2);
+	put_str("n) Normal", 16, 2);
+	c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
+	put_str("g) No Ghost", 17, 2);
+	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
+	put_str("e) Everlasting", 18, 2);
+	c_put_str(TERM_SLATE, "(You may resurrect infinite times, but cannot enter highscore)", 18, 17);
+	put_str("h) Hard", 19, 2);
+	c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
+	put_str("H) Hellish", 20, 2);
+	c_put_str(TERM_SLATE, "(Combination of Hard + No Ghost)", 20, 13);
+	put_str("p) PvP", 21, 2);
+	c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
 #endif
 
 	while (1)
 	{
-		put_str("Choose a mode (* for random, Q to Quit): ", 15, 2);
+		c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to Quit): ", 15, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 #if 0
@@ -697,30 +703,31 @@ static void choose_mode(void)
 	clear_from(15);
 }
 
-/* Fruit bat is now a "modification" that can be applied to all "modes" - C. Blue */
-static void choose_modification(void)
+/* Fruit bat is now a "body modification" that can be applied to all "modes" - C. Blue */
+static void choose_body_modification(void)
 {
 	char        c='\0';
 	bool hazard = FALSE;
 
-	put_str("n) No modification", 20, 2);
-	put_str("f) Fruit bat (Bats are faster and vampiric, but can't wear certain items.)", 21, 2);
+	put_str("n) Normal body", 20, 2);
+	put_str("f) Fruit bat", 21, 2);
+	c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
 
 	while (1)
 	{
-		put_str("Choose a modification (* for random, Q to Quit): ", 19, 2);
+		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit): ", 19, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 
 		if (c == 'f')
 		{
 			sex += MODE_FRUIT_BAT;
-			c_put_str(TERM_L_BLUE, "Fruit Bat", 6, 15);
+			c_put_str(TERM_L_BLUE, "Fruit bat", 6, 15);
 			break;
 		}
 		else if (c == 'n')
 		{
-			c_put_str(TERM_L_BLUE, "none", 6, 15);
+			c_put_str(TERM_L_BLUE, "Normal body", 6, 15);
 			break;
 		}
 		else if (c == '?')
@@ -795,7 +802,7 @@ void get_char_info(void)
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
 	put_str("Race        :", 5, 1);
-	put_str("Modification:", 6, 1);
+	put_str("Body        :", 6, 1);
 	put_str("Class       :", 7, 1);
 	put_str("Mode        :", 9, 1);
 
@@ -810,8 +817,8 @@ void get_char_info(void)
         do {
                 /* Choose a race */
                 choose_race();
-		/* Choose character modification */
-		choose_modification();
+		/* Choose character's body modification */
+		choose_body_modification();
                 /* Choose a class */
         } while (!choose_class());
 
