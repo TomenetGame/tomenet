@@ -242,6 +242,15 @@ struct skill_player
 
 };
 
+struct version_type {   /* Extended version structure */
+        int major;
+        int minor;
+        int patch;
+        int extra;
+        int branch;
+        int build;
+};
+
 struct player_type
 {
 	int conn;			/* Connection number */
@@ -250,7 +259,8 @@ struct player_type
 	char realname[MAX_CHARS];	/* Userid */
 	char hostname[MAX_CHARS];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
-	unsigned int version;		/* His version */
+//	unsigned int version;		/* His version */
+	version_type version;
 
 	s32b id;		/* Unique ID to each player */
 	u32b dna;		/* DNA - psuedo unique to each player life */
