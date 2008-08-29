@@ -185,7 +185,7 @@ void prt_ac(int ac)
 
 	char tmp[32];
 
-	put_str("Cur AC ", ROW_AC, COL_AC);
+	put_str("Cur AC:", ROW_AC, COL_AC);
 	sprintf(tmp, "%5d", ac);
 	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
 }
@@ -223,6 +223,7 @@ void prt_hp(int max, int cur)
 	/* DEG Default to else since only 2 types for now */
 	else
 	{
+#ifndef CONDENSED_HP_SP
 		put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
 		sprintf(tmp, "%5d", max);
 		color = TERM_L_GREEN;
@@ -246,6 +247,17 @@ void prt_hp(int max, int cur)
 		}
 
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
+#else
+		put_str("HP:", ROW_MAXHP, COL_MAXHP);
+		sprintf(tmp, "%4d", max);
+		color = TERM_L_GREEN;
+		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP + 3);
+		sprintf(tmp, "/%4d", cur);
+		if (cur >= max)	color = TERM_L_GREEN;
+		else if (cur > max / 10) color = TERM_YELLOW;
+		else color = TERM_RED;
+		c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+#endif
 	}
 }
 /* DEG print party members hps to screen */
@@ -355,6 +367,7 @@ void prt_sp(int max, int cur)
 	}
 	else
 	{
+#ifndef CONDENSED_HP_SP
 		put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
 
 		sprintf(tmp, "%5d", max);
@@ -381,6 +394,17 @@ void prt_sp(int max, int cur)
 		}
 
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
+#else
+		put_str("SP:", ROW_MAXSP, COL_MAXSP);
+		sprintf(tmp, "%4d", max);
+		color = TERM_L_GREEN;
+		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 3);
+		sprintf(tmp, "/%4d", cur);
+		if (cur >= max) color = TERM_L_GREEN;
+		else if (cur > max / 10) color = TERM_YELLOW;
+		else color = TERM_RED;
+		c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+#endif
 	}
 }
 
