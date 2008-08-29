@@ -2506,13 +2506,15 @@ void c_msg_format(cptr fmt, ...)
  */
 s32b c_get_quantity(cptr prompt, int max)
 {
+	int amt;
+
 	char tmp[80];
 
 	char buf[80];
 	
 	char bi1[80], bi2[6 + 1];
 	int n = 0, i = 0;
-	s32b amt, i1 = 0, i2 = 0, mul = 1;
+	s32b i1 = 0, i2 = 0, mul = 1;
 
 	/* Build a prompt if needed */
 	if (!prompt)
@@ -2549,8 +2551,8 @@ s32b c_get_quantity(cptr prompt, int max)
 		i = 0;
 		while (bi2[i] == '\0' && i <= 6) bi2[i++] = '0';
 
-		if (mul = 1000) bi2[3] = '\0';
-		else if (mul = 1000000) bi2[6] = '\0';
+		if (mul == 1000) bi2[3] = '\0';
+		else if (mul == 1000000) bi2[6] = '\0';
 
 		i2 = atoi(bi2);
 		amt = i1 * mul + i2;

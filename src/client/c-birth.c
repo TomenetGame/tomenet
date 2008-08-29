@@ -603,7 +603,7 @@ static void choose_mode(void)
 	put_str("e) Everlasting", 21, 2);
 #else
 	put_str("n) Normal (3 lifes)", 16, 2);
-	put_str("g) No Ghost ('Unworldly' - One life only. The traditional rogue-like way.)", 17
+	put_str("g) No Ghost ('Unworldly' - One life only. The traditional rogue-like way.)", 17, 2);
 	put_str("e) Everlasting (You may resurrect infinite times, but cannot enter highscore.)", 18, 2);
 	put_str("h) Hard ('Purgatorial' - like normal, with nasty additional penalties.)", 19, 2);
 	put_str("H) Hellish (Combination of Hard + No Ghost.)", 20, 2);
@@ -643,19 +643,19 @@ static void choose_mode(void)
 		}
 		else if (c == 'h')
 		{
-			sex += (MODE_HELL);
+			sex += (MODE_HARD);
 			c_put_str(TERM_L_BLUE, "Hard", 9, 15);
 			break;
 		}
 		else if (c == 'H')
 		{
-			sex += (MODE_NO_GHOST + MODE_HELL);
+			sex += (MODE_NO_GHOST + MODE_HARD);
 			c_put_str(TERM_L_BLUE, "Hellish", 9, 15);
 			break;
 		}
 		else if (c == 'e')
 		{
-			sex += MODE_IMMORTAL;
+			sex += MODE_EVERLASTING;
 			c_put_str(TERM_L_BLUE, "Everlasting", 9, 15);
 			break;
 		}

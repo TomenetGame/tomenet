@@ -1452,13 +1452,13 @@ void display_player(int hist)
         c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
         c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);
         c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 6, 15);
-	if (p_ptr->mode & MODE_IMMORTAL)
+	if (p_ptr->mode & MODE_EVERLASTING)
 	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 7, 15);
-	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HELL))
+	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
 	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 7, 15);
 	else if (p_ptr->mode & MODE_NO_GHOST)
 	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 7, 15);
-        else if (p_ptr->mode & MODE_HELL)
+        else if (p_ptr->mode & MODE_HARD)
         	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 7, 15);
         else /*(p_ptr->mode == MODE_NORMAL)*/
 	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 7, 15);

@@ -767,7 +767,7 @@ void cmd_inven(void)
 	ch = inkey();
 	if (ch >= 'a' && ch < 'a' + INVEN_PACK) {
 		c = ch - 'a';
-		if (inventory[c].tval) Send_msg(format("\377s%s", inventory_name[c]);
+		if (inventory[c].tval) Send_msg(format("\377s%s", inventory_name[c]));
 	}
 
 	/* restore the screen */
@@ -799,7 +799,7 @@ void cmd_equip(void)
 	ch = inkey();
 	if (ch >= 'a' && ch < 'a' + (INVEN_TOTAL - INVEN_WIELD)) {
 		c = ch - 'a';
-		if (inventory[INVEN_WIELD + c].tval) Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]);
+		if (inventory[INVEN_WIELD + c].tval) Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]));
 	}
 
 	Term_load();
