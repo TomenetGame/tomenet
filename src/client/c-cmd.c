@@ -751,6 +751,10 @@ void cmd_disarm(void)
 
 void cmd_inven(void)
 {
+	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
+	int c;
+
+
 	/* First, erase our current location */
 
 	/* Then, save the screen */
@@ -760,7 +764,11 @@ void cmd_inven(void)
 
 	show_inven();
 
-	(void)inkey();
+	ch = inkey();
+	if (ch >= 'a' && ch < 'a' + INVEN_PACK) {
+		c = ch - 'a';
+		if (inventory[c].tval) Send_msg(format("\377s%s", inventory_name[c]);
+	}
 
 	/* restore the screen */
 	Term_load();
@@ -772,6 +780,10 @@ void cmd_inven(void)
 
 void cmd_equip(void)
 {
+	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
+	int c;
+
+
 	Term_save();
 
 	command_gap = 50;
@@ -784,7 +796,11 @@ void cmd_equip(void)
 	/* Undo the hack above */
 	item_tester_full = FALSE;
 
-	(void)inkey();
+	ch = inkey();
+	if (ch >= 'a' && ch < 'a' + (INVEN_TOTAL - INVEN_WIELD)) {
+		c = ch - 'a';
+		if (inventory[INVEN_WIELD + c].tval) Send_msg(format("\377s%s", inventory_name[INVEN_WIELD + c]);
+	}
 
 	Term_load();
 

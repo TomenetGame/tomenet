@@ -294,7 +294,7 @@ static bool choose_class(void)
 
 			class = j;
 			cp_ptr = &class_info[j];
-			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 6, 15);
+			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 7, 15);
 			break;
 		}
 		else if (c == '?')
@@ -328,6 +328,8 @@ static void choose_stat_order(void)
 
         /* Character stats are randomly rolled (1 time): */
         if (char_creation_flags == 0) {
+
+		put_str("Stat order  :", 11, 1);
 
 		/* All stats are initially available */
 		for (i = 0; i < 6; i++)
@@ -592,51 +594,69 @@ static void choose_mode(void)
 	char        c='\0';
 	bool hazard = FALSE;
 
+#if 0
 	put_str("n) Normal", 20, 2);
 	put_str("f) Fruit bat", 20, 15 + 2);
 	put_str("g) no Ghost", 20, 30 + 2);
 	put_str("h) Hard", 20, 45 + 2);
 	put_str("H) Hellish", 20, 60 + 2);
 	put_str("e) Everlasting", 21, 2);
+#else
+	put_str("n) Normal (3 lifes)", 16, 2);
+	put_str("g) No Ghost ('Unworldly' - One life only. The traditional rogue-like way.)", 17
+	put_str("e) Everlasting (You may resurrect infinite times, but cannot enter highscore.)", 18, 2);
+	put_str("h) Hard ('Purgatorial' - like normal, with nasty additional penalties.)", 19, 2);
+	put_str("H) Hellish (Combination of Hard + No Ghost.)", 20, 2);
+	put_str("p) PvP (Can't beat the game, instead special 'player vs player' rules apply.)", 21, 2);
+#endif
 
 	while (1)
 	{
-		put_str("Choose a mode (* for random, Q to Quit): ", 19, 2);
+		put_str("Choose a mode (* for random, Q to Quit): ", 15, 2);
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
+#if 0
 		if (c == 'f')
 		{
 			sex += 512;
-			c_put_str(TERM_L_BLUE, "Fruit Bat", 10, 15);
+			c_put_str(TERM_L_BLUE, "Fruit Bat", 9, 15);
 			break;
 		}
+#else
+		if (c == 'p')
+		{
+			sex += MODE_PVP;
+			c_put_str(TERM_L_BLUE, "PvP", 9, 15);
+			break;
+		}
+#endif
 		else if (c == 'n')
 		{
-			c_put_str(TERM_L_BLUE, "Normal", 10, 15);
+			c_put_str(TERM_L_BLUE, "Normal", 9, 15);
 			break;
 		}
 		else if (c == 'g')
 		{
 			sex += MODE_NO_GHOST;
-			c_put_str(TERM_L_BLUE, "No Ghost", 10, 15);
+			c_put_str(TERM_L_BLUE, "No Ghost", 9, 15);
 			break;
 		}
 		else if (c == 'h')
 		{
 			sex += (MODE_HELL);
-			c_put_str(TERM_L_BLUE, "Hard", 10, 15);
+			c_put_str(TERM_L_BLUE, "Hard", 9, 15);
 			break;
 		}
 		else if (c == 'H')
 		{
 			sex += (MODE_NO_GHOST + MODE_HELL);
-			c_put_str(TERM_L_BLUE, "Hellish", 10, 15);
+			c_put_str(TERM_L_BLUE, "Hellish", 9, 15);
 			break;
 		}
 		else if (c == 'e')
 		{
 			sex += MODE_IMMORTAL;
-			c_put_str(TERM_L_BLUE, "Everlasting", 10, 15);
+			c_put_str(TERM_L_BLUE, "Everlasting", 9, 15);
 			break;
 		}
 		else if (c == '?')
@@ -651,7 +671,7 @@ static void choose_mode(void)
 					c = 'n';
 					break;
 				case 1:
-					c = 'f';
+					c = 'p';
 					break;
 				case 2:
 					c = 'g';
@@ -663,7 +683,7 @@ static void choose_mode(void)
 					c = 'H';
 					break;
 				case 5:
-					c = 'i';
+					c = 'e';
 					break;
 			}
 			hazard = TRUE;
@@ -674,7 +694,59 @@ static void choose_mode(void)
 		}
 	}
 
-	clear_from(20);
+	clear_from(15);
+}
+
+/* Fruit bat is now a "modification" that can be applied to all "modes" - C. Blue */
+static void choose_modification(void)
+{
+	char        c='\0';
+	bool hazard = FALSE;
+
+	put_str("n) No modification", 20, 2);
+	put_str("f) Fruit bat (Bats are faster and vampiric, but can't wear certain items.)", 21, 2);
+
+	while (1)
+	{
+		put_str("Choose a modification (* for random, Q to Quit): ", 19, 2);
+		if (!hazard) c = inkey();
+		if (c == 'Q') quit(NULL);
+
+		if (c == 'f')
+		{
+			sex += MODE_FRUIT_BAT;
+			c_put_str(TERM_L_BLUE, "Fruit Bat", 6, 15);
+			break;
+		}
+		else if (c == 'n')
+		{
+			c_put_str(TERM_L_BLUE, "none", 6, 15);
+			break;
+		}
+		else if (c == '?')
+		{
+			/*do_cmd_help("help.hlp");*/
+		}
+		else if (c == '*')
+		{
+			switch (rand_int(2))
+			{
+				case 0:
+					c = 'n';
+					break;
+				case 1:
+					c = 'f';
+					break;
+			}
+			hazard = TRUE;
+		}
+		else
+		{
+			bell();
+		}
+	}
+
+	clear_from(19);
 }
 
 /*
@@ -723,9 +795,9 @@ void get_char_info(void)
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
 	put_str("Race        :", 5, 1);
-	put_str("Class       :", 6, 1);
-	put_str("Stat order  :", 8, 1);
-	put_str("Mode        :",10, 1);
+	put_str("Modification:", 6, 1);
+	put_str("Class       :", 7, 1);
+	put_str("Mode        :", 9, 1);
 
 	/* Clear bottom of screen */
 	clear_from(20);
@@ -738,6 +810,8 @@ void get_char_info(void)
         do {
                 /* Choose a race */
                 choose_race();
+		/* Choose character modification */
+		choose_modification();
                 /* Choose a class */
         } while (!choose_class());
 
@@ -746,11 +820,11 @@ void get_char_info(void)
 	/* Choose stat order */
 	choose_stat_order();
 
-	/* Choose form */
+	/* Choose character mode */
 	choose_mode();
-
+	
 	/* Clear */
-	clear_from(20);
+	clear_from(15);
 
 	/* Message */
 	put_str("Entering game...  [Hit any key]", 21, 1);
