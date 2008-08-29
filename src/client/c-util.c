@@ -2540,6 +2540,7 @@ s32b c_get_quantity(cptr prompt, int max)
 #if 1
 	/* new method for inputting amounts of gold:  1m35 = 1,350,000  - C. Blue */
 	while(buf[n] >= '0' && buf[n] <= '9') bi1[i++] = buf[n++];
+	bi1[n] = '\0';
 	i1 = atoi(bi1);
 	if (buf[n] == 'k' || buf[n] == 'K') mul = 1000;
 	else if (buf[n] == 'm' || buf[n] == 'M') mul = 1000000;
