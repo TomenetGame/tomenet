@@ -393,13 +393,13 @@ A:0/2:5/2
 P:0:1d2:-2:-4:0
 F:SHOW_MODS
 
-##### Hafted Weapons #####
+##### Blunt Weapons #####
 
 N:48:& Ball-and-Chain~
 G:\:D
 I:21:6:0
-W:20:0:130:200
-A:20/1
+W:10:0:130:200
+A:10/1
 P:0:2d4:0:0:0
 F:SHOW_MODS
 
@@ -416,14 +416,15 @@ G:\:D
 I:21:13:0
 W:10:0:140:353
 A:10/1
-P:0:2d7:0:0:0
+#P:0:2d7:0:0:0
+P:0:3d5:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:51:& Two-Handed Flail~
 G:\:y
 I:21:18:0
-W:45:0:280:740
-A:45/1
+W:35:0:280:740
+A:35/1
 P:0:4d6:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -440,7 +441,8 @@ G:\:D
 I:21:5:0
 W:5:0:130:130
 A:5/1
-P:0:2d4:0:0:0
+#P:0:2d4:0:0:0
+P:0:3d4:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:54:& Quarterstaff~
@@ -454,9 +456,10 @@ F:SHOW_MODS | MUST2H
 N:55:& War Maul~
 G:\:D
 I:21:8:0
-W:5:0:140:225
-A:5/1
-P:0:3d4:0:0:0
+W:10:0:140:225
+A:10/1
+#P:0:3d4:0:0:0
+P:0:3d5:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:56:& Lead-Filled Mace~
@@ -464,7 +467,8 @@ G:\:D
 I:21:15:0
 W:15:0:180:502
 A:15/1
-P:0:3d5:0:0:0
+#P:0:3d5:0:0:0
+P:0:3d6:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:57:& Mace~ of Disruption
@@ -473,11 +477,12 @@ I:21:20:0
 W:80:0:400:4300
 A:80/5
 P:0:6d8:0:0:0
+#P:0:7d6:0:0:0
 F:SLAY_UNDEAD | SHOW_MODS | MUST2H
 
 #N:58:& Lucerne Hammer~ <- that's a polearm
 N:58:& War Hammer~
-G:\:B
+G:\:s
 I:21:10:0
 W:10:0:120:376
 A:10/1
@@ -499,7 +504,8 @@ G:/:s
 I:22:13:0
 W:20:0:190:463
 A:20/1
-P:0:3d6:0:0:0
+#P:0:3d6:0:0:0
+P:0:3d7:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:61:& Halberd~
@@ -516,7 +522,8 @@ I:22:4:0
 W:10:0:160:340
 A:10/1
 #P:0:1d12:0:0:0
-P:0:1d16:0:0:0
+#P:0:1d16:0:0:0
+P:0:1d18:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:63:& Pike~
@@ -530,7 +537,7 @@ F:SHOW_MODS | MUST2H
 N:64:& Spear~
 G:/:s
 I:22:2:0
-W:5:0:50:36
+W:5:0:60:36
 A:5/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
@@ -541,7 +548,8 @@ I:22:5:0
 W:5:0:90:120
 A:5/1
 #P:0:1d8:0:0:0
-P:0:1d12:0:0:0
+#P:0:1d12:0:0:0
+P:0:1d14:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:66:& Lance~
@@ -565,15 +573,16 @@ G:/:s
 I:24:22:0
 W:15:0:170:434
 A:15/1
-P:0:2d9:0:0:0
+#P:0:2d9:0:0:0
+P:0:3d6:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 #N:69:& Lochaber Axe~
 N:69:& Heavy War Axe~
 G:/:D
 I:24:28:0
-W:45:0:250:750
-A:45/1
+W:25:0:250:750
+A:25/1
 P:0:3d7:0:0:0
 F:SHOW_MODS | SHOULD2H
 
@@ -588,8 +597,8 @@ F:SHOW_MODS | COULD2H
 N:71:& Scythe~
 G:/:s
 I:22:17:0
-W:45:0:250:800
-A:45/1
+W:25:0:250:800
+A:25/1
 P:0:6d3:0:0:0
 F:SHOW_MODS | SHOULD2H
 
@@ -599,7 +608,8 @@ I:22:30:0
 W:60:0:300:3500
 A:60/3
 P:0:10d4:0:0:0
-F:SHOW_MODS | MUST2H
+#P:0:9d5:0:0:0
+F:SHOW_MODS | MUST2H | SLAY_DRAGON | SLAY_ANIMAL
 #currently no effect | WOUNDING
 
 
@@ -968,7 +978,7 @@ I:37:30:0
 #W:75:0:270:20000
 W:75:0:250:20000
 A:75/4
-P:40:2d4:-4:0:0
+P:40:2d4:-4:0:10
 F:IGNORE_ACID | IGNORE_WATER
 
 N:119:Mithril Plate Mail~
@@ -978,7 +988,7 @@ I:37:25:0
 #W:60:0:250:15000
 W:60:0:200:15000
 A:60/3
-P:35:2d4:-3:0:0
+P:35:2d4:-3:0:10
 F:IGNORE_ACID | IGNORE_WATER
 
 N:120:Mithril Chain Mail~
@@ -988,7 +998,7 @@ I:37:20:0
 W:55:0:150:7000
 A:55/3
 #P:28:1d4:-1:0:0
-P:24:1d4:-1:0:0
+P:24:1d4:-1:0:10
 F:IGNORE_ACID | IGNORE_WATER
 
 N:121:Double Chain Mail~
@@ -1772,7 +1782,7 @@ F:FOUNTAIN
 N:225:Strength
 G:!:d
 I:71:48:0
-W:20:0:4:8000
+W:20:0:4:7999
 A:20/6:25/3:30/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -1796,7 +1806,7 @@ F:FOUNTAIN
 N:228:Intelligence
 G:!:d
 I:71:49:0
-W:20:0:4:8000
+W:20:0:4:7999
 A:20/6:25/3:30/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -1820,7 +1830,7 @@ F:FOUNTAIN
 N:231:Wisdom
 G:!:d
 I:71:50:0
-W:20:0:4:8000
+W:20:0:4:7999
 A:20/6:25/3:30/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -1921,7 +1931,7 @@ F:FOUNTAIN
 N:243:Constitution
 G:!:d
 I:71:52:0
-W:20:0:4:8000
+W:20:0:4:7999
 A:20/6:25/3:30/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -1985,7 +1995,7 @@ F:FOUNTAIN
 N:251:Dexterity
 G:!:d
 I:71:51:0
-W:20:0:4:8000
+W:20:0:4:7999
 A:20/6:25/3:30/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -2108,7 +2118,9 @@ F:FOUNTAIN
 N:266:Restore Mana
 G:!:d
 I:71:64:0
-W:25:0:4:350
+#W:25:0:4:350
+#soothsayer-situation increase
+W:25:0:4:450
 A:25/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -2968,29 +2980,37 @@ P:0:1d1:0:0:0
 
 ##### Skeletons #####
 
-N:391:& Broken Skull~
-G:~:w
+$ARCADE_SERVER!N:391:& Broken Skull~
+$ARCADE_SERVER$N:391:& Head~
+$ARCADE_SERVER!G:~:w
+$ARCADE_SERVER$G:':u
 I:1:1:0
 W:0:0:1:0
 A:0/1
 P:0:1d1:0:0:0
 
-N:392:& Broken Bone~
-G:~:w
+$ARCADE_SERVER!N:392:& Broken Bone~
+$ARCADE_SERVER$N:392:& Arm~
+$ARCADE_SERVER!G:~:w
+$ARCADE_SERVER$G:~:r
 I:1:2:0
 W:0:0:2:0
 A:0/1
 P:0:1d1:0:0:0
 
-N:393:& Canine Skeleton~
-G:~:w
+$ARCADE_SERVER!N:393:& Canine Skeleton~
+$ARCADE_SERVER$N:393:& Leg~
+$ARCADE_SERVER!G:~:w
+$ARCADE_SERVER$G:-:r
 I:1:4:0
 W:1:0:10:0
 A:1/1
 P:0:1d1:0:0:0
 
-N:394:& Rodent Skeleton~
-G:~:w
+$ARCADE_SERVER!N:394:& Rodent Skeleton~
+$ARCADE_SERVER$N:394:& Pile~ of Gore
+$ARCADE_SERVER!G:~:w
+$ARCADE_SERVER$G:%:R
 I:1:3:0
 W:1:0:10:0
 A:1/1
@@ -3029,8 +3049,8 @@ P:0:1d2:0:0:0
 N:399:& Great Hammer~
 G:\:D
 I:21:19:0
-W:45:0:300:750
-A:45/3
+W:40:0:300:750
+A:40/2
 P:0:5d6:0:0:0
 F:SHOW_MODS | MUST2H
 
@@ -3309,7 +3329,7 @@ F:FOUNTAIN
 N:420:Life
 G:!:d
 I:71:39:1000
-W:60:0:4:5000
+W:60:0:4:6500
 A:60/4:100/2
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -3426,8 +3446,10 @@ F:RES_DISEN | RES_POIS | HOLD_LIFE | FREE_ACT
 N:436:Extra Attacks
 G:=:d
 I:45:49:0
-W:50:0:2:20000
-A:50/3
+#W:50:0:2:20000
+#A:50/3
+W:40:0:2:7000
+A:40/2
 F:BLOWS
 
 N:437:Cure Light Wounds
@@ -3958,7 +3980,8 @@ G:\:u
 I:21:11:0
 W:20:0:90:350
 A:20/3
-P:0:3d3:0:0:0
+#P:0:3d3:0:0:0
+P:0:3d4:0:0:10
 F:SHOW_MODS | SHOULD2H
 
 # Feanorian Lamp
@@ -4111,7 +4134,8 @@ G:/:s
 I:22:6:0
 W:18:0:155:301
 A:18/2
-P:0:1d15:0:0:0
+#P:0:1d15:0:0:0
+P:0:1d18:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:552:& Guisarme~
@@ -4119,7 +4143,8 @@ G:/:s
 I:22:16:0
 W:21:0:180:380
 A:21/1
-P:0:2d9:0:0:0
+#P:0:2d9:0:0:0
+P:0:2d10:0:0:0
 F:SHOW_MODS | SHOULD2H
 
 N:553:& Heavy Lance~
@@ -4849,7 +4874,7 @@ F:INSTA_ART
 N:648:& small wooden Boomerang~
 G:{:y
 I:15:1:0
-W:5:0:60:80
+W:5:0:60:30
 A:5/1
 P:0:1d4:0:0:0
 F:IGNORE_WATER
@@ -4857,7 +4882,7 @@ F:IGNORE_WATER
 N:649:& wooden Boomerang~
 G:{:y
 I:15:2:0
-W:10:0:60:130
+W:10:0:60:45
 A:10/1
 P:0:1d9:0:0:0
 F:IGNORE_WATER
@@ -4865,7 +4890,7 @@ F:IGNORE_WATER
 N:650:& small metal Boomerang~
 G:{:y
 I:15:3:0
-W:15:0:60:100
+W:15:0:60:40
 A:15/1
 P:0:1d8:0:0:0
 F:IGNORE_FIRE
@@ -4873,7 +4898,7 @@ F:IGNORE_FIRE
 N:651:& metal Boomerang~
 G:{:y
 I:15:4:0
-W:20:0:60:160
+W:20:0:60:60
 A:20/1
 P:0:2d4:0:0:0
 F:IGNORE_FIRE
@@ -5451,7 +5476,8 @@ P:0:1d1:0:0:0
 N:755:Flying
 G:=:d
 I:45:54:0
-W:20:0:2:16000
+#W:20:0:2:16000
+W:20:0:2:5000
 A:20/3
 F:FLY | EASY_KNOW
 
@@ -5576,7 +5602,7 @@ P:0:3d5:4:0:0
 F:SHOW_MODS | VORPAL | IGNORE_WATER
 
 # Amulet
-N:779:the Serpents
+N:779:Serpents
 G:":G
 I:40:17:0
 #W:25:0:3:10000
@@ -5743,8 +5769,8 @@ F:SHOW_MODS
 N:804:& Light War Axe~
 G:/:s
 I:24:8:0
-W:16:0:140:300
-A:16/1
+W:12:0:140:300
+A:12/1
 P:0:2d5:0:0:0
 F:SHOW_MODS
 
@@ -5753,8 +5779,8 @@ F:SHOW_MODS
 N:805:& Slaughter Axe~
 G:/:G
 I:24:30:0
-W:70:0:300:1100
-A:60/6
+W:50:0:300:1100
+A:50/4
 P:0:5d7:0:0:0
 F:SLAY_ANIMAL | SHOW_MODS | MUST2H
 
@@ -6281,7 +6307,7 @@ W:10:0:10:1000
 A:10/3
 F:IGNORE_WATER
 
-N:905:& Device of Theft Prevention~
+N:905:& Device~ of Theft Prevention
 G:`:B
 I:12:4:0
 W:35:0:12:30000
@@ -6421,7 +6447,7 @@ I:24:33:0
 W:60:0:380:2900
 A:70/6
 P:0:6d8:0:0:0
-F:SHOW_MODS | MUST2H | SLAY_GIANT
+F:SHOW_MODS | MUST2H | SLAY_GIANT | BRAND_ELEC | RES_ELEC
 
 N:920:*Invincibility*
 G:":d
@@ -6773,53 +6799,59 @@ F:FULL_NAME | EASY_KNOW
 
 # stuff for the Nether Realm viability project ;)
 
-$RPG_SERVER$N:961:Heavy Mithril Scale Armour~
-$RPG_SERVER$G:[:B
-$RPG_SERVER$I:37:26:0
-$RPG_SERVER$W:90:0:300:20000
+N:961:Heavy Mithril Scale Armour~
+G:[:B
+I:37:26:0
+W:90:0:300:20000
 $RPG_SERVER$A:90/16
-$RPG_SERVER$P:65:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:90/255
+P:65:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
-$RPG_SERVER$N:962:Heavy Ribbed Mithril Armour~
-$RPG_SERVER$G:[:B
-$RPG_SERVER$I:37:27:0
-$RPG_SERVER$W:90:0:300:25000
+N:962:Heavy Mithril Plate Armour~
+G:[:B
+I:37:27:0
+W:90:0:320:25000
 $RPG_SERVER$A:90/16
-$RPG_SERVER$P:70:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:90/255
+P:70:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
-$RPG_SERVER$N:963:Heavy Mithril Plate Armour~
-$RPG_SERVER$G:[:B
-$RPG_SERVER$I:37:28:0
-$RPG_SERVER$W:110:0:340:30000
+N:963:Heavy Ribbed Mithril Armour~
+G:[:B
+I:37:28:0
+W:110:0:340:30000
 $RPG_SERVER$A:110/16
-$RPG_SERVER$P:75:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:110/255
+P:75:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
-$RPG_SERVER$N:964:Heavy Adamantite Scale Armour~
-$RPG_SERVER$G:[:G
-$RPG_SERVER$I:37:29:0
-$RPG_SERVER$W:95:0:310:25000
+N:964:Heavy Adamantite Scale Armour~
+G:[:G
+I:37:29:0
+W:95:0:310:25000
 $RPG_SERVER$A:95/24
-$RPG_SERVER$P:70:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:95/255
+P:70:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
-$RPG_SERVER$N:965:Heavy Ribbed Adamantite Armour~
-$RPG_SERVER$G:[:G
-$RPG_SERVER$I:37:31:0
-$RPG_SERVER$W:105:0:370:30000
+N:965:Heavy Adamantite Plate Armour~
+G:[:G
+I:37:31:0
+W:105:0:370:30000
 $RPG_SERVER$A:105/24
-$RPG_SERVER$P:75:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:105/255
+P:75:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
-$RPG_SERVER$N:966:Heavy Adamantite Plate Armour~
-$RPG_SERVER$G:[:G
-$RPG_SERVER$I:37:32:0
-$RPG_SERVER$W:120:0:400:35000
+N:966:Heavy Ribbed Adamantite Armour~
+G:[:G
+I:37:32:0
+W:120:0:400:35000
 $RPG_SERVER$A:120/24
-$RPG_SERVER$P:80:4d4:-3:0:10
-$RPG_SERVER$F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
+$RPG_SERVER!A:120/255
+P:80:4d4:-3:0:10
+F:IGNORE_ACID | IGNORE_WATER | WINNERS_ONLY
 
 N:967:& Mithril Helm~
 G:]:B
@@ -6827,7 +6859,7 @@ I:32:10:0
 W:80:0:50:8000
 A:80/12
 P:7:1d3:0:0:10
-#P:10:1d3:0:0:10
+#P:10:1d3:0:0:5
 F:IGNORE_ACID | IGNORE_WATER
 
 N:968:& Frock~
@@ -6916,6 +6948,49 @@ W:127:255:3:1
 A:127/255
 F:WIS | STR | INT | DEX | CON | CHR | LIFE | INFRA | SPEED | HIDE_TYPE |
 F:REGEN_MANA | REGEN | ESP_ALL | SEE_INVIS | FREE_ACT
+
+# Goggles that allow a player to spot hidden DMs (for testing purpose)
+#N:981:& Set~ of goggles
+N:981:Goggles
+G:]:v
+I:32:15:0
+W:127:255:5:0
+A:127/255
+P:0:0d0:0:0:0
+F:INSTA_ART | EASY_KNOW
+
+# Contains mostly spells that DM chars might find useful - C. Blue
+N:982:& Handbook~ of Dungeon Keeping
+G:?:L
+I:111:58:0
+W:127:255:30:0
+A:127/255
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+N:983:& Demon Hammer~
+G:\:r
+I:21:22:0
+W:65:0:360:4000
+A:60/12
+P:0:6d6:0:0:0
+F:SHOW_MODS | MUST2H | SLAY_DEMON
+
+N:984:& Scourge~ of Repentance
+G:\:o
+I:21:23:0
+W:40:0:80:3000
+A:40/8
+P:0:4d2:0:0:0
+F:SHOW_MODS | SLAY_UNDEAD
+
+N:985:& Hunting Spear~
+G:/:g
+I:22:1:0
+W:5:0:60:200
+A:5/5
+P:0:1d6:0:0:0
+F:SHOW_MODS | SLAY_ANIMAL
 
 
 

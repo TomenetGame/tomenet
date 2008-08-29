@@ -36,11 +36,13 @@ V:4.0.0
 N:1:Combat
 D:General ability to fight and to pseudo-id armours and weapons
 D:It also allows to use heavier armours without penalties
+A:14:Check parry/block chance
 I:1000:0
 
 N:2:Weaponmastery
-D:General ability to use melee weapons
+D:General ability to use melee weapons and fighting techniques
 I:1000:0
+#A:5:Fighting techniques
 
 N:3:Sword-mastery
 D:Ability to use swords
@@ -54,15 +56,16 @@ N:5:Polearm-mastery
 D:Ability to use polearms
 I:1000:0
 
-N:6:Hafted-mastery
-D:Ability to use hafted weapons
+N:6:Blunt-mastery
+D:Ability to use blunt weapons
 I:1000:0
 
 N:7:Archery
-D:General ability to use ranged weapons
+D:General ability to use ranged weapons and archer techniques
 D:It also allows you to evaluate/create ammo
-A:9:Create ammo
 I:1000:0
+#A:6:Archer techniques
+A:9:Create ammunition from bones or nearby rubble
 
 N:8:Sling-mastery
 D:Ability to use slings
@@ -86,9 +89,9 @@ N:12:Magic
 D:General ability to use magic. Also influence mana capacity
 I:1000:0
 
-N:13:Casting-speed
-D:Ability to cast sorcery spells faster than one turn
-I:1000:0
+#N:13:Casting-speed
+#D:Ability to cast sorcery spells faster than one turn
+#I:1000:0
 
 # This is like that of ToME2 now
 N:14:Sorcery
@@ -100,12 +103,12 @@ D:But the price to channel that much magic is your health
 #F:MKEY_SPELL | MKEY_TVAL
 I:1000:0
 
-N:15:Magery
-D:Ability to cast magery spells
-A:2:Cast magery spell
-I:1000:90
-F:MKEY_SPELL | MKEY_TVAL
-F:HIDDEN
+#N:15:Magery
+#D:Ability to cast magery spells
+#A:2:Cast magery spell
+#I:1000:90
+#F:MKEY_SPELL | MKEY_TVAL
+#F:HIDDEN
 
 N:16:Mimicry
 D:Ability to polymorph into slain monsters
@@ -118,21 +121,21 @@ D:Ability to use magic devices(wands, rods, staves, artifacts)
 D:Also increases their power
 I:1000:0
 
-N:18:Shadow
-D:Ability to cast shadow spells
-A:4:Cast shadow spell
-I:1000:94
-F:MKEY_SPELL | MKEY_TVAL
+#N:18:Shadow
+#D:Ability to cast shadow spells
+#A:4:Cast shadow spell
+#I:1000:94
+#F:MKEY_SPELL | MKEY_TVAL
 
-N:19:Prayer
-D:Ability to pray to your god(or use your own godly power if you are a god)
-A:7:Recite a prayer
-I:1000:91
-F:MKEY_SPELL | MKEY_TVAL
+#N:19:Prayer
+#D:Ability to pray to your god(or use your own godly power if you are a god)
+#A:7:Recite a prayer
+#I:1000:91
+#F:MKEY_SPELL | MKEY_TVAL
 
-N:20:Spell-duration
-D:Increases the duration of your shadow spells
-I:1000:0
+#N:20:Spell-duration
+#D:Increases the duration of your shadow spells
+#I:1000:0
 
 N:21:Sneakiness
 #D:General ability at your sneakiness skills, and improves perception
@@ -174,27 +177,32 @@ I:1000:0
 N:28:Aura of Fear
 D:Aura that surrounds you and strikes fear in monsters that melee you
 D:Making them run away
+A:15:Control your aura of fear
 I:1000:0
 
 N:29:Shivering Aura
 D:Aura that surrounds you and stuns monsters that melee you
+A:16:Control your shivering aura
 I:1000:0
 
 N:30:Aura of Death
 D:Aura that surrounds you and creates waves of plasma/ice when monsters melee you
+A:17:Control your aura of death
 I:1000:0
 
-N:31:Hunting Lore
-D:Ability to cast hunting spells
-A:6:Use an archery book
-I:1000:95
-F:MKEY_SPELL | MKEY_TVAL
+#now in Archery - C. Blue
+#N:31:Hunting Lore
+#D:Ability to cast hunting spells
+#A:6:Use an archery book
+#I:1000:95
+#F:MKEY_SPELL | MKEY_TVAL
 
-N:32:Fighting Technique
-D:Ability to perform special fighting techniquess
-A:5:Use a fighting technique
-I:1000:93
-F:MKEY_SPELL | MKEY_TVAL
+#now in Weaponmastery - C. Blue
+#N:32:Fighting Technique
+#D:Ability to perform special fighting techniquess
+#A:5:Use a fighting technique
+#I:1000:93
+#F:MKEY_SPELL | MKEY_TVAL
 
 N:33:Miscellaneous
 D:Not a real skill, it is only used to regroup some skills
@@ -218,11 +226,11 @@ N:37:Martial Arts
 D:Ability to combat bare-handed
 I:1000:0
 
-# DELETEME
-N:38:Ricochet
-D:Ability to harm more than one opponents using ricochets
-I:1000:0
-F:HIDDEN
+## DELETEME
+#N:38:Ricochet
+#D:Ability to harm more than one opponents using ricochets
+#I:1000:0
+#F:HIDDEN
 
 N:39:Boomerang-mastery
 D:Ability to use (and not to destroy) boomerangs
@@ -250,11 +258,11 @@ N:44:Digging
 D:Ability to dig a tunnel with suitable tools
 I:1000:0
 
-# DELETEME
-N:45:Revelation
-D:Affects how broad a revelation your prayer will bring
-I:1000:0
-F:HIDDEN
+## DELETEME
+#N:45:Revelation
+#D:Affects how broad a revelation your prayer will bring
+#I:1000:0
+#F:HIDDEN
 
 N:46:Trapping
 D:Ability to set monster traps
@@ -432,17 +440,27 @@ I:1000:0
 
 # Melee: Specific masteries improve generic mastery
 f:Critical-strike:Sword-mastery%5
-f:Sword-mastery:Weaponmastery%25
-f:Axe-mastery:Weaponmastery%25
-f:Polearm-mastery:Weaponmastery%25
-f:Hafted-mastery:Weaponmastery%25
+#new feature: weaponmastery gives special abilities. -> reducing synergies
+#f:Sword-mastery:Weaponmastery%25
+#f:Axe-mastery:Weaponmastery%25
+#f:Polearm-mastery:Weaponmastery%25
+#f:Blunt-mastery:Weaponmastery%25
+f:Sword-mastery:Weaponmastery%15
+f:Axe-mastery:Weaponmastery%15
+f:Polearm-mastery:Weaponmastery%15
+f:Blunt-mastery:Weaponmastery%15
 
 # Ranged: Specific masteries improve generic mastery
-f:Sling-mastery:Archery%25
-f:Bow-mastery:Archery%25
-f:Crossbow-mastery:Archery%25
-f:Boomerang-mastery:Archery%25
-f:Hunting Lore:Archery%5
+#new feature: archery gives special abilities. -> reducing synergies
+#f:Sling-mastery:Archery%25
+#f:Bow-mastery:Archery%25
+#f:Crossbow-mastery:Archery%25
+#f:Boomerang-mastery:Archery%25
+f:Sling-mastery:Archery%15
+f:Bow-mastery:Archery%15
+f:Crossbow-mastery:Archery%15
+f:Boomerang-mastery:Archery%15
+#f:Hunting Lore:Archery%5
 #f:Ricochet:Archery%15
 #f:Sling-mastery:Ricochet%25
 
@@ -451,7 +469,7 @@ f:Hunting Lore:Archery%5
 #f:Sword-mastery:Combat%15
 #f:Axe-mastery:Combat%15
 #f:Polearm-mastery:Combat%15
-#f:Hafted-mastery:Combat%15
+#f:Blunt-mastery:Combat%15
 #f:Archery:Combat%50
 #f:Sling-mastery:Combat%10
 #f:Bow-mastery:Combat%10
@@ -461,16 +479,16 @@ f:Weaponmastery:Combat%20
 f:Sword-mastery:Combat%20
 f:Axe-mastery:Combat%20
 f:Polearm-mastery:Combat%20
-f:Hafted-mastery:Combat%20
+f:Blunt-mastery:Combat%20
 f:Archery:Combat%15
 f:Sling-mastery:Combat%15
 f:Bow-mastery:Combat%15
 f:Crossbow-mastery:Combat%15
 f:Boomerang-mastery:Combat%15
-f:Hunting Lore:Combat%7
-#f:Ricochet:Combat%7
-f:Fighting Technique:Combat%25
 f:Martial Arts:Combat%20
+#f:Hunting Lore:Combat%7
+#f:Ricochet:Combat%7
+#f:Fighting Technique:Combat%25
 
 # Sorcery and Weaponmastery arent exactly friendly to each other
 O:Sorcery:Weaponmastery%100
@@ -498,23 +516,24 @@ f:Temporal:Magic%10
 f:Meta:Magic%10
 f:Mind:Magic%10
 f:Udun:Magic%10
+f:Mimicry:Magic%7
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
 #f:Runecraft:Magic%12
 #f:Thaumaturgy:Magic%6
-f:Casting-speed:Sorcery%10
-f:Casting-speed:Magic%7
-f:Magery:Magic%10
-f:Shadow:Magic%10
-f:Spell-duration:Shadow%10
-f:Mimicry:Magic%7
-f:Prayer:Magic%7
-f:Revelation:Prayer%10
-f:Revelation:Magic%5
+#f:Casting-speed:Sorcery%10
+#f:Casting-speed:Magic%7
+#f:Magery:Magic%10
+#f:Shadow:Magic%10
+#f:Spell-duration:Shadow%10
+#f:Prayer:Magic%7
+#f:Revelation:Prayer%10
+#f:Revelation:Magic%5
 
 
 # Antimagic exclude all magic
 E:Magic-device:Antimagic
+
 f:Spell-power:Magic%20
 E:Sorcery:Antimagic
 f:Mana:Magic%10
@@ -529,18 +548,20 @@ f:Temporal:Magic%10
 f:Meta:Magic%10
 f:Mind:Magic%10
 f:Udun:Magic%10
+
+E:Mimicry:Antimagic
+
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
 #f:Runecraft:Magic%12
 #f:Thaumaturgy:Magic%6
 ##E:Casting-speed:Antimagic
-E:Magery:Antimagic
-E:Shadow:Antimagic
+#E:Magery:Antimagic
+#E:Shadow:Antimagic
 ##E:Spell-length:Antimagic
-E:Mimicry:Antimagic
-E:Prayer:Antimagic
+#E:Prayer:Antimagic
 ##E:Revelation:Antimagic
-E:Hunting Lore:Antimagic
+#E:Hunting Lore:Antimagic
 
 f:Holy Offense:Magic%10
 f:Holy Defense:Magic%10
@@ -599,7 +620,7 @@ $DUAL_WIELD$T:Combat:Dual-Wield
 T:Weaponmastery:Sword-mastery
 T:Sword-mastery:Critical-strike
 T:Weaponmastery:Axe-mastery
-T:Weaponmastery:Hafted-mastery
+T:Weaponmastery:Blunt-mastery
 T:Weaponmastery:Polearm-mastery
 $ENABLE_STANCES$T:Weaponmastery:Combat Stances
 T:Combat:Archery
