@@ -2548,7 +2548,7 @@ s32b c_get_quantity(cptr prompt, int max)
 		i = 0;
 		while(buf[n] >= '0' && buf[n] <= '9' && i < 6) bi2[i++] = buf[n++];
 		bi2[i] = '\0';
-Send_msg(format("%s-%s", bi1, bi2));
+//Send_msg(format("%s-%s", bi1, bi2));
 
 		i = 0;
 		while (i < 6) {
@@ -2559,7 +2559,7 @@ Send_msg(format("%s-%s", bi1, bi2));
 			}
 			i++;
 		}
-Send_msg(format("%s-%d", bi2, mul));
+//Send_msg(format("%s-%d", bi2, mul));
 
 		if (mul == 1000) bi2[3] = '\0';
 		else if (mul == 1000000) bi2[6] = '\0';
