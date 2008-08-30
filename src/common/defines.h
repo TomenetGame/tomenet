@@ -2914,7 +2914,7 @@ that keeps many algorithms happy.
 #define CAVE_ICKY_PERMA	0x0800 	/* part of a perma-walled vault */
 #define CAVE_PROT	0x1000 	/* protected from monster-spawn + cannot be monster teleport destination */
 
-#define CAVE_NEST	0x2000	/* grid is part of a monster nest and target for monster placement */
+#define CAVE_NEST_PIT	0x2000	/* grid is part of a monster nest and target for monster placement */
 
 #if 0	/* for future expansion.. */
 /* To what extent shall we enlarge it?
