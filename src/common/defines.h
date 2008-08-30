@@ -1126,7 +1126,14 @@
 
  #define ROW_CURSP		17
  #define COL_CURSP		3	/* "Cur SP xxxxx" */
+ 
+ #define ROW_MAXED		18	/* current stamina */
+ #define COL_MAXED		8
+
+ #define ROW_CURED		18	/* current stamina */
+ #define COL_CURED		3
 #endif
+
 
 #define ROW_SANITY		14	/* "Sanity  100%" */
 #define COL_SANITY		0
