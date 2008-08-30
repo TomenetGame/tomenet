@@ -140,6 +140,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_ENCUMBERMENT]	= Receive_encumberment;
 	receive_tbl[PKT_KEEPALIVE]	= Receive_keepalive;
 	receive_tbl[PKT_PING]		= Receive_ping;
+	receive_tbl[PKT_STAMINA]	= Receive_stamina;
 }
 
 /* Head of file transfer system receive */
@@ -1326,6 +1327,32 @@ int Receive_hp(void)
 		if (c_cfg.ring_bell) bell();
 		c_msg_print("\377r*** LOW HITPOINT WARNING! ***");
 	}
+
+	if (screen_icky) Term_switch(0);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
+	return 1;
+}
+
+int Receive_stamina(void)
+{
+	int	n;
+	char 	ch;
+	s16b	max, cur;
+
+	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
+	{
+		return n;
+	}
+
+	p_ptr->mst = max;
+	p_ptr->cst = cur;
+
+	if (screen_icky) Term_switch(0);
+
+	prt_stamina(max, cur);
 
 	if (screen_icky) Term_switch(0);
 

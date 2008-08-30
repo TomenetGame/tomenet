@@ -428,6 +428,7 @@ extern void prt_level(int level, s32b max, s32b cur, s32b adv);
 extern void prt_gold(int gold);
 extern void prt_ac(int ac);
 extern void prt_hp(int max, int cur);
+extern void prt_hp(int max, int cur);
 extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
 extern void prt_sp(int max, int cur);
 extern void prt_depth(int x, int y, int z, bool town, int recall, cptr buf);
@@ -452,6 +453,7 @@ extern void cnv_stat(int val, char *out_val);
 extern void prt_AFK(byte afk);
 extern void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
 			    byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot);
+extern void prt_stamina(int max, int cur);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

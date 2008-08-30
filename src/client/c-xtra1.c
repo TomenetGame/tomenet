@@ -260,6 +260,23 @@ void prt_hp(int max, int cur)
 #endif
 	}
 }
+void prt_stamina(int max, int cur)
+{
+	char tmp[32];
+	byte color;
+
+#ifdef CONDENSED_HP_SP
+		put_str("ST:    /", ROW_MAXST, 0);
+		sprintf(tmp, "%4d", max);
+		color = TERM_L_GREEN;
+		c_put_str(color, tmp, ROW_MAXST, COL_MAXST);
+		sprintf(tmp, "%4d", cur);
+		if (cur >= max)	color = TERM_L_GREEN;
+		else if (cur > max / 10) color = TERM_YELLOW;
+		else color = TERM_RED;
+		c_put_str(color, tmp, ROW_CURST, COL_CURST);
+#endif
+}
 /* DEG print party members hps to screen */
 void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp)
 {
@@ -343,7 +360,7 @@ void prt_sp(int max, int cur)
 
 	if (client_mode == CLIENT_PARTY)
 	{
-		sprintf(tmp, "SP: %4d ", max);
+		sprintf(tmp, "MP: %4d ", max);
 		color = TERM_L_BLUE;
 		c_put_str(color, tmp, CLIENT_PARTY_ROWSP, CLIENT_PARTY_COLSP);
 
@@ -368,7 +385,7 @@ void prt_sp(int max, int cur)
 	else
 	{
 #ifndef CONDENSED_HP_SP
-		put_str("Max SP ", ROW_MAXSP, COL_MAXSP);
+		put_str("Max MP ", ROW_MAXSP, COL_MAXSP);
 
 		sprintf(tmp, "%5d", max);
 		color = TERM_L_GREEN;
@@ -376,7 +393,7 @@ void prt_sp(int max, int cur)
 		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 7);
 
 
-		put_str("Cur SP ", ROW_CURSP, COL_CURSP);
+		put_str("Cur MP ", ROW_CURSP, COL_CURSP);
 
 		sprintf(tmp, "%5d", cur);
 
@@ -395,7 +412,7 @@ void prt_sp(int max, int cur)
 
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 #else
-		put_str("SP:    /", ROW_MAXSP, 0);
+		put_str("MP:    /", ROW_MAXSP, 0);
 		sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
 		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
