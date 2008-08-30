@@ -45,7 +45,7 @@ static long		last_send_anything,
 			last_keyboard_change,
 			last_keyboard_ack,
 			reliable_offset;
-#if 0 /* unused */
+#if 0 /* old UDP networking stuff - mikaelh */
 static long		reliable_full_len,
 			latest_reliable;
 #endif
@@ -1072,6 +1072,7 @@ int Receive_magic(void)
 	return 1;
 }
 
+#if 0 /* old UDP networking stuff - mikaelh */
 int Send_ack(long rel_loops)
 {
 	int	n;
@@ -1087,8 +1088,9 @@ int Send_ack(long rel_loops)
 
 	return 1;
 }
+#endif
 
-#if 0 /* unused */
+#if 0 /* old UDP networking stuff - mikaelh */
 int old_Receive_reliable(void)
 {
 	int	n;
