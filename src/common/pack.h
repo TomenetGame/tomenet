@@ -164,19 +164,14 @@
 
 /* Page someone who is afk */
 #define PKT_BEEP		161
-
 /* Give the client some info about the server details. - C. Blue
    For example: Is it running 'RPG_SERVER' settings? or 'FUN_SERVER'? */
 #define PKT_SERVERDETAILS	162
-
 #define PKT_AFK                 163
 #define PKT_ENCUMBERMENT        164
-
-/* DEG Packet type for party member info */
-#define PKT_PARTY_STATS		165
-
-/* Ping packet */
-#define PKT_PING		166
+#define PKT_PARTY_STATS		165 /* DEG Packet type for party member info */
+#define PKT_PING		166 /* Ping packet */
+#define PKT_ENDURANCE		167
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
