@@ -3094,6 +3094,7 @@ that keeps many algorithms happy.
 #define PR_SKILLS	0x10000000L	/* Display Skills */
 #define PR_SANITY	0x20000000L     /* Display Sanity */
 #define PR_ENCUMBERMENT	0x40000000L	/* Display Encumberment status line */
+#define PR_STAMINA	0x80000000L	/* Display Stamina */
 /* xxx */
 /* xxx */
 /* xxx */
