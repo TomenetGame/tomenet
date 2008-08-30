@@ -138,6 +138,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_BEEP]		= Receive_beep;
 	receive_tbl[PKT_AFK]		= Receive_AFK;
 	receive_tbl[PKT_ENCUMBERMENT]	= Receive_encumberment;
+	receive_tbl[PKT_KEEPALIVE]	= Receive_keepalive;
 	receive_tbl[PKT_PING]		= Receive_ping;
 }
 
@@ -2775,6 +2776,19 @@ int Receive_encumberment(void)
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 
 	if (screen_icky) Term_switch(0);
+
+	return 1;
+}
+
+int Receive_keepalive(void)
+{
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
+	{
+		return n;
+	}
 
 	return 1;
 }
