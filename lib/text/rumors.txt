@@ -6,8 +6,10 @@
 
 # You should manually write the total # of rumous (lines - 10).
 
+#might confuse people- {b[C. Blue] {BDid you download the latest scripts!?
+
 N:*:Default
-958
+1019
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -166,7 +168,6 @@ Appearance is only the frosting, not the cake!
 A feeling of Death flows through your body.
 Violence is no solution.
 Boots of Speed (+50) are no myth!
-You will need to Restore the Constitution if the Anarchists strike.
 Drain you of your sanity: Face the Thing That Should Not Be!
 Since by curse it came to me, accursed be this Ring!
 Each shall itch to possess the Ring, but none in it shall find pleasure!
@@ -308,7 +309,7 @@ Ever seen a God or Goddess player?
 {B[Evileye] hehe
 {B[Jir] {y:)
 {B[Mihi] May the source be with you! *^-')b
-{b[C. Blue] {BDid you download the latest scripts!?
+{b[C.Blue]{B o_O
 {D[Magnet] {BLet's slay evil !
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
@@ -329,7 +330,6 @@ They say that act as a fool and you'll be treated as a fool.
 They say that be harsh to others and you'll be treated in a similar way.
 Beware! Cave spiders are MUCH more powerful here!
 Never slam the door!
-YOU'VE JUST WON THE FORTUNE-COOKIE LOTTERY! REPORT IT TO THE FORUM NOW!
 They say that One of the easiest way to find PoAS is to play an unbeliever.
 They say that alchemist never stocks restore potions of the kind you need. 
 Segmentation fault - core dumped.
@@ -760,7 +760,7 @@ If there is a God, he is like me
 I hear footsteps closing in...
 I recognize them from my early days..
 Time changes, images stay the same
-I dont know who you are, but I'm with you
+I don't know who you are, but I'm with you.
 Undead promises... The Night awaits
 I feel the lips on my cheek...
 Haunts me once again
@@ -966,3 +966,66 @@ Dude, where's my car?
 The technological singularity is coming!
 O fortuna! Velut luna!
 Never feed a gremlin after midnight.
+This l00t's not gonna l00t itself!
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+Taxation is theft.
+No man's life, liberty, or property are safe while the legislature is in session.
+Every decent man is ashamed of the government he lives under.
+The power to tax is the power to destroy.
+A nation of sheep will beget a government of wolves.
+Give me liberty or give me death!
+He that hath no sword, let him sell his garment and buy one.
+More laws, less justice.
+There never was a good war or a bad peace.
+Democracy is a pathetic belief in the collective wisdom of individual ignorance.
+Government does not solve problems; it subsidizes them.
+The right to be let alone is indeed the begining of all freedom.
+Equality of opportunity is freedom, but equality of outcome is repression
+Petty laws breed great crimes.
+The course of history shows that as a government grows, liberty decreases
+Let him who would move the world, first move himself.
+That government is best which governs least.
+The limitation of tyrants is the endurance of those they oppose.
+The cure for evil and disorder is more liberty, not suppression.
+It is better to die on your feet than live on your knees.
+Men are more apt to believe what they least understand.
+An armed society is a polite society.
+... thou shall not steal, even by majority vote...
+Man is born free, yet he is everywhere in chains.
+Everything government touches turns to crap.
+The era of big government is over.
+Bad laws are the worst sort of tyranny.
+A government is not legitimate merely because it exists.
+The voice of the majority is no proof of justice.
+You can't get rid of poverty by giving people money.
+Fire, water, and government know nothing of mercy.
+The free market punishes irresponsibility. Government rewards it.
+We have no unchosen positive obligations.
+We lie to our children while telling them that lying is wrong.
+We tell our children to be good, but we have no idea what goodness is.
+Patriotism is the hijacking of the achievements of others.
+Demanding respect is like hijacking an aircraft.
+The size and shape of your prison is not important. That you are in prison is.
+Doubt is the midwife of curiosity, and curiosity breeds wisdom.
+Fantasy is a circle of nothingness, forever eating its own tail.
+Why do people demand trust? To rob others.
+The people who claim to love us make this claim in order to control us.
+We are inevitably led to invert rational moral standards.
+Moral rules must be consistent for all mankind.
+Culture is the scar tissue of child abuse.
+The world chokes on imaginary knowledge.
+This administration is really beginning to test my apathy.
+People won't admit they don't know shit.
+There's a gun in the room.
+Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
+What it do?
+You will need to Restore the Constitution if the Anarchists strike.
