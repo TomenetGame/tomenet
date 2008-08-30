@@ -65,7 +65,7 @@
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG ""
+#define CLIENT_VERSION_TAG "a"
 
 /*
  * Base version strings of TomeNET (see version_build)
