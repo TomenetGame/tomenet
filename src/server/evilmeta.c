@@ -93,6 +93,10 @@ int connsocket(int port, char *host) {
 	he = gethostbyname(host);
 	if (he == (struct hostent*)NULL) {
 		fprintf(stderr, "Couldnt convert %s\n", host);
+
+		/* Close the socket - mikaelh */
+		close(ss);
+
 		return (-1);
 	}
 	memcpy(&s_in.sin_addr, he->h_addr_list[0], sizeof(struct in_addr));
@@ -103,6 +107,10 @@ int connsocket(int port, char *host) {
 	}
 	fprintf(stderr, "Couldnt connect to %s, %d\n", host, port);
 	fprintf(stderr, "errno: %d\n", errno);
+
+	/* Close the socket - mikaelh */
+	close(ss);
+
 	if (errno == 4) return (-2);
 	return (-1);
 }
