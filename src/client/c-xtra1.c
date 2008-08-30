@@ -248,11 +248,11 @@ void prt_hp(int max, int cur)
 
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
 #else
-		put_str("HP:", ROW_MAXHP, COL_MAXHP);
+		put_str("HP:    /", ROW_MAXHP, 0);
 		sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
-		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP + 3);
-		sprintf(tmp, "/%4d", cur);
+		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP);
+		sprintf(tmp, "%4d", cur);
 		if (cur >= max)	color = TERM_L_GREEN;
 		else if (cur > max / 10) color = TERM_YELLOW;
 		else color = TERM_RED;
@@ -395,11 +395,11 @@ void prt_sp(int max, int cur)
 
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 #else
-		put_str("SP:", ROW_MAXSP, COL_MAXSP);
+		put_str("SP:    /", ROW_MAXSP, 0);
 		sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
-		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP + 3);
-		sprintf(tmp, "/%4d", cur);
+		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
+		sprintf(tmp, "%4d", cur);
 		if (cur >= max) color = TERM_L_GREEN;
 		else if (cur > max / 10) color = TERM_YELLOW;
 		else color = TERM_RED;

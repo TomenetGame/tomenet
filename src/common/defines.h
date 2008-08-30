@@ -1116,16 +1116,16 @@
  #define COL_CURSP		0	/* "Cur SP xxxxx" */
 #else
  #define ROW_MAXHP		16
- #define COL_MAXHP		0	/* "Max HP xxxxx" */
+ #define COL_MAXHP		8	/* "Max HP xxxxx" */
 
  #define ROW_CURHP		16
- #define COL_CURHP		7	/* "Cur HP xxxxx" */
+ #define COL_CURHP		3	/* "Cur HP xxxxx" */
 
  #define ROW_MAXSP		17
- #define COL_MAXSP		0	/* "Max SP xxxxx" */
+ #define COL_MAXSP		8	/* "Max SP xxxxx" */
 
  #define ROW_CURSP		17
- #define COL_CURSP		7	/* "Cur SP xxxxx" */
+ #define COL_CURSP		3	/* "Cur SP xxxxx" */
 #endif
 
 #define ROW_SANITY		14	/* "Sanity  100%" */
