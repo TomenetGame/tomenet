@@ -1927,6 +1927,9 @@ struct player_type
 	s16b csp;			/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
+	s16b mst;			/* Max stamina pts */
+	s16b cst;			/* Cur stamina pts */
+
 	object_type *inventory;	/* Player's inventory */
 
 	s32b total_weight;	/* Total weight being carried */
