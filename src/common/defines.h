@@ -1713,7 +1713,7 @@ that keeps many algorithms happy.
 #define ART_MISERICORDIA	247
 #define ART_HOPEDAWN		248
 #define ART_IMPALER		249
-#define ART_SLICING		250
+#define ART_KRONOS		250
 #define ART_TARNKAPPE		251
 #define ART_AMBER		252
 #define ART_SLEEPING		253
@@ -3658,8 +3658,12 @@ that keeps many algorithms happy.
 #define TR5_LUCK                0x00000200L     /* Luck += pval */
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
 #define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
-/* XXX */
-/*#define TR5_LIFE                0x04000000L */
+/* XXX 				0x00001000L	*/
+/* XXX 				0x00002000L	*/
+/* XXX 				0x00004000L	*/
+/* XXX 				0x00008000L	*/
+/* XXX 				0x00001000L	*/
+#define TR5_IGNORE_MANA		0x00020000L	/* Item ignores Mana Damage */
 #define TR5_IGNORE_WATER	0x00040000L	/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
 #define TR5_RES_MANA		0x00100000L
@@ -5369,6 +5373,8 @@ extern int PlayerUID;
 /* Diff mode (type is 'byte') */
 #define MODE_NORMAL		0x00
 #define MODE_MALE		0x01	/* Dummy */
+
+#define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */ 
 
 #define MODE_HARD		0x02	/* Penalized */
 #define MODE_NO_GHOST		0x04	/* traditional 'hellish' is 3 */
