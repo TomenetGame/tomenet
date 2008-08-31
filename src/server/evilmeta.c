@@ -15,7 +15,7 @@
 
 #define PORT 8800
 // #define HOST "meta.tomenet.net"
-#define HOST "localhost"
+#define HOST "the-key.enix.org"
 
 void callup(int val);
 int connsocket(int port, char *host);
