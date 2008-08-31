@@ -282,6 +282,15 @@ struct skill_player
 
 };
 
+struct version_type {	/* Extended version structure */
+	int major;
+	int minor;
+	int patch;
+	int extra;
+	int branch;
+	int build;
+};
+
 struct player_type
 {
 	int conn;		/* Connection number */
@@ -290,7 +299,8 @@ struct player_type
 	const char *realname;	/* Userid */
 	const char *hostname;	/* His hostname */
 	const char *addr;	/* His IP address */
-	unsigned int version;	/* His version */
+//	unsigned int version;	/* His version */
+	version_type version;
 
 	s32b id;		/* Unique ID to each player */
 	u32b account;           /* account group id */
@@ -321,6 +331,11 @@ struct player_type
 
 	skill_player s_info[MAX_SKILLS]; /* Player skills */
 	s16b skill_points;      /* number of skills assignable */
+
+	/* Copies for /undoskills - mikaelh */
+	skill_player s_info_old[MAX_SKILLS]; /* Player skills */
+	s16b skill_points_old;  /* number of skills assignable */
+	bool reskill_possible;
 	
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
@@ -524,7 +539,9 @@ struct player_type
 	s16b afraid;		/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */
 	s16b poisoned;		/* Timed -- Poisoned */
+	int poisoned_attacker;	/* Who poisoned the player - used for blood bond */
 	s16b cut;			/* Timed -- Cut */
+	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
 
 	s16b xtrastat;		/* Timed temp +stats */
@@ -779,18 +796,18 @@ struct player_type
 
 	u16b team;
  /* Moltor's arcade crap */
-int a;
-int b;
-int c;
-int d;
-int e;
-int f;
-int g;
-int h;
-int i;
-int j;
-int k;
-int l;
+int arc_a;
+int arc_b;
+int arc_c;
+int arc_d;
+int arc_e;
+int arc_f;
+int arc_g;
+int arc_h;
+int arc_i;
+int arc_j;
+int arc_k;
+int arc_l;
         char firedir;
         char game;
         int gametime;

@@ -1421,6 +1421,64 @@ void msg_format(int Ind, cptr fmt, ...)
 	msg_print(Ind, buf);
 }
 
+/*
+ * Send a message to everyone on a floor.
+ */
+static void floor_msg(struct worldpos *wpos, cptr msg) {
+	int i;
+//system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+        	if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Check this guy */
+		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
+	}
+}
+/*
+ * Send a formatted message to everyone on a floor. (currently unused)
+ */
+void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
+	va_list vp;
+	char buf[1024];
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+	/* End the Varargs Stuff */
+	va_end(vp);
+	/* Display */
+	floor_msg(wpos, buf);
+}
+/*
+ * Send a message to everyone on a floor, considering ignorance.
+ */
+static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
+        int i;
+	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
+        /* Check for this guy */
+        for (i = 1; i <= NumPlayers; i++) {
+                if (Players[i]->conn == NOT_CONNECTED) continue;
+                if (check_ignore(i, sender)) continue;
+	        /* Check this guy */
+	        if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
+	}
+}
+/*
+ * Send a formatted message to everyone on a floor, considering ignorance.
+ */
+static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fmt, ...) {
+	va_list vp;
+	char buf[1024];
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+	/* End the Varargs Stuff */
+	va_end(vp);
+	/* Display */
+	floor_msg_ignoring(sender, wpos, buf);
+}
+
 
 /*
  * Display a message to everyone who is in sight on another player.
@@ -1705,6 +1763,52 @@ void use_ability_blade(int Ind)
 
 
 
+void check_parryblock(int Ind)
+{
+#ifdef ENABLE_NEW_MELEE
+	player_type *p_ptr = Players[Ind];
+	if (is_admin(p_ptr)) {
+		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.", 
+			p_ptr->weapon_parry, p_ptr->shield_deflect);
+		msg_format(Ind, "You have exactly %d%%/%d%% real chances of parrying/blocking.", 
+			apply_parry_chance(p_ptr, p_ptr->weapon_parry), apply_block_chance(p_ptr, p_ptr->shield_deflect));
+	} else {
+		if (!p_ptr->weapon_parry)
+			msg_print(Ind, "You cannot parry at the moment.");
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5) 
+			msg_print(Ind, "You have almost no chance of parrying.");
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 10) 
+			msg_print(Ind, "You have a slight chance of parrying.");
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 20) 
+			msg_print(Ind, "You have a significant chance of parrying.");
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 30) 
+			msg_print(Ind, "You have a good chance of parrying.");
+		else
+			msg_print(Ind, "You have a very good chance of parrying.");
+
+		if (!apply_block_chance(p_ptr, p_ptr->shield_deflect))
+			msg_print(Ind, "You cannot block at the moment.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 5) 
+			msg_print(Ind, "You have almost no chance of blocking.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 14) 
+			msg_print(Ind, "You have a slight chance of blocking.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 23) 
+			msg_print(Ind, "You have a significant chance of blocking.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 30) 
+			msg_print(Ind, "You have a good chance of blocking.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 40) 
+			msg_print(Ind, "You have a very good chance of blocking.");
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 65)
+			msg_print(Ind, "You have an excellent chance of blocking.");
+		else
+			msg_print(Ind, "You have a superb chance of blocking.");
+	}
+#endif
+	return;
+}
+
+
+
 static int checkallow(char *buff, int pos){
 	if(!pos) return(0);
 	if(pos==1) return(buff[0]==' ' ? 0 : 1); /* allow things like brass lantern */
@@ -1813,12 +1917,12 @@ static void player_talk_aux(int Ind, char *message)
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
 			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* >:) -> evil smiley */
-			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (*(colon - 1) != '!') && (*(colon - 1) != '#'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
 			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* here especially important: '-' often is for numbers/recall depth */
-			    ((message == colon - 1) && (*(colon - 1) != '!'))) /* <- party names must be at least 2 chars then */
+			    ((message == colon - 1) && (*(colon - 1) != '!') && (*(colon - 1) != '#'))) /* <- party names must be at least 2 chars then */
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
@@ -1839,7 +1943,7 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
 			   and if it's appearently meant to be a smiley. */
-			if ((colon - message == 1) && (*(colon - 1)=='!'))
+			if ((colon - message == 1) && (*(colon - 1)=='!' || *(colon - 1)=='#'))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':
@@ -1879,7 +1983,8 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* no big brother */
-	if(cfg.log_u && !colon){ // && message[0] != '/'){
+//	if(cfg.log_u && (!colon || message[0] != '#' || message[0] != '/')){ /* message[0] != '#' || message[0] != '/' is always true -> big brother mode - mikaelh */
+	if (cfg.log_u && (!colon)) {
 		s_printf("[%s] %s\n", sender, message);
 	}
 	/* Special - shutdown command (for compatibility) */
@@ -1939,7 +2044,7 @@ static void player_talk_aux(int Ind, char *message)
 		Players[i]->talk=0;
 	}
 
-	/* Special function '::' at beginning of message sends to own party - sorry for hack, C. Blue */
+	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
 //	if ((strlen(message) >= 1) && (message[0] == ':') && (!colon) && (p_ptr->party))
 	if ((strlen(message) >= 2) && (message[0] == '!') && (message[1] == ':') && (colon) && (p_ptr->party))
 	{
@@ -1954,6 +2059,28 @@ static void player_talk_aux(int Ind, char *message)
 		if (p_ptr->mutedchat < 2)
 			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 2);
 //			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 1);
+		/* Done */
+		return;
+	}
+
+	/* '#:' at beginning of message sends to dungeon level - C. Blue */
+	if ((strlen(message) >= 2) && (message[0] == '#') && (message[1] == ':') && (colon))
+	{
+#if 1 /* No private chat for invalid accounts ? */
+		if(p_ptr->inval){
+			msg_print(Ind, "Your account is not valid! Ask an admin to validate it.");
+			return;
+		}
+#endif
+
+		if (!p_ptr->wpos.wz) {
+			msg_print(Ind, "You aren't in a dungeon or tower.");
+			return;
+		}
+
+		/* Send message to target party */
+		if (p_ptr->mutedchat < 2)
+			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\377y[%s] %s", sender, message + 2);
 		/* Done */
 		return;
 	}
@@ -2025,28 +2152,40 @@ static void player_talk_aux(int Ind, char *message)
 	}
 
 	/* Send to appropriate player */
-	if ((len && target > 0) && (!check_ignore(target, Ind)))
+	if (len && target > 0)
 	{
-		/* Set target player */
-		q_ptr = Players[target];
-
-		/* Send message to target */
-		msg_format(target, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
-
-		/* Also send back to sender */
-		msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
-
-		/* Only display this message once now - mikaelh */
-		if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id))
+		if (!check_ignore(target, Ind))
 		{
-			msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
-			player_list_add(&p_ptr->afk_noticed, q_ptr->id);
+			/* Set target player */
+			q_ptr = Players[target];
+
+			/* Send message to target */
+			msg_format(target, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
+
+			/* Also send back to sender */
+			if (target != Ind)
+				msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
+
+			/* Only display this message once now - mikaelh */
+			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id))
+			{
+				msg_format(Ind, "\377o%s seems to be Away From Keyboard.", q_ptr->name);
+				player_list_add(&p_ptr->afk_noticed, q_ptr->id);
+			}
+
+			exec_lua(0, "chat_handler()");
+
+			/* Done */
+			return;
 		}
+		else
+		{
+			/* Tell the sender */
+			msg_print(Ind, "(That player has ignored you)");
 
-		exec_lua(0, "chat_handler()");
-
-		/* Done */
-		return;
+			/* Done */
+			return;
+		}
 	}
 
 	/* Send to appropriate party */
@@ -2076,9 +2215,9 @@ static void player_talk_aux(int Ind, char *message)
 	else if (mycolor) c = *(message + 1);
 	else
 	{
-		if (p_ptr->mode & MODE_IMMORTAL) c = 'B';
+		if (p_ptr->mode & MODE_EVERLASTING) c = 'B';
 		else c = 'W';
-		if (p_ptr->mode & MODE_HELL) c = 's';
+		if (p_ptr->mode & MODE_HARD) c = 's';
 		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
 		if (p_ptr->total_winner) c = 'v';
 		else if (p_ptr->ghost) c = 'r';
@@ -2888,7 +3027,7 @@ void bbs_add_line(cptr textline)
 	        for (j = 0; j < BBS_LINES - 1; j++)
 	                strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* write the line to the bbs */
-	strncpy(bbs_line[j], textline, 77); /* lines get one leading spaces on outputting, so it's 78-1 */
+	strncpy(bbs_line[j], textline, 140 - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
 }
 
 void bbs_del_line(int entry)
@@ -2899,7 +3038,7 @@ void bbs_del_line(int entry)
         for (j = entry; j < BBS_LINES - 1; j++)
                 strcpy(bbs_line[j], bbs_line[j + 1]);
 	/* erase last line */
-	strcpy(bbs_line[BBS_LINES], "");
+	strcpy(bbs_line[BBS_LINES - 1], "");
 }
 
 void bbs_erase(void)
@@ -2997,5 +3136,59 @@ void player_list_free(player_list_type *list)
 		tmp = pl_ptr;
 		pl_ptr = pl_ptr->next;
 		FREE(tmp, player_list_type);
+	}
+}
+
+/*
+ * Check if the client version fills the requirements.
+ *
+ * Branch has to be an exact match.
+ */
+bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
+{
+	if (version->major < major)
+		return FALSE; /* very old */
+	else if (version->major > major)
+		return TRUE; /* very new */
+	else if (version->minor < minor)
+		return FALSE; /* pretty old */
+	else if (version->minor > minor)
+		return TRUE; /* pretty new */
+	else if (version->patch < patch)
+		return FALSE; /* somewhat old */
+	else if (version->patch > patch)
+		return TRUE; /* somewhat new */
+	else if (version->extra < extra)
+		return FALSE; /* a little older */
+	else if (version->extra > extra)
+		return TRUE; /* a little newer */
+	/* Check that the branch is an exact match */
+	else if (version->branch == branch)
+	{
+		/* Now check the build */
+		if (version->build < build)
+			return FALSE;
+		else if (version->build > build)
+			return TRUE;
+	}
+	
+	/* Default */
+	return FALSE;
+}
+
+/*
+ * Since only GNU libc has memfrob, we use our own.
+ */
+void my_memfrob(void *s, int n)
+{
+	int i;
+	char *str;
+
+	str = (char*) s;
+
+	for (i = 0; i < n; i++)
+	{
+		/* XOR every byte with 42 */
+		str[i] ^= 42;
 	}
 }

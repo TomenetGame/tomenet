@@ -128,6 +128,9 @@ void do_cmd_eat_food(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -180,7 +183,7 @@ void do_cmd_eat_food(int Ind, int item)
 			{
 				if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 				{
-					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10))
+					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10, Ind))
 					{
 						ident = TRUE;
 					}
@@ -300,7 +303,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_CURE_POISON:
 			{
-				if (set_poisoned(Ind, 0)) ident = TRUE;
+				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 				break;
 			}
 
@@ -328,8 +331,8 @@ void do_cmd_eat_food(int Ind, int item)
 			{
 				if (set_blind(Ind, 0)) ident = TRUE;
 				if (set_confused(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
-//				(void)set_poisoned(Ind, 0);
+				if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
+//				(void)set_poisoned(Ind, 0, 0);
 //				(void)set_image(Ind, 0);	// ok?
 				if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
 				break;
@@ -379,9 +382,9 @@ void do_cmd_eat_food(int Ind, int item)
 			case SV_FOOD_ATHELAS:
 			{
 				msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
-				ident = set_poisoned(Ind, 0) |
+				ident = set_poisoned(Ind, 0, 0) |
 					set_stun(Ind, 0) |
-					set_cut(Ind, 0);
+					set_cut(Ind, 0, 0);
 				if (p_ptr->black_breath)
 				{
 					msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -398,7 +401,7 @@ void do_cmd_eat_food(int Ind, int item)
 				if (magik(10))
 				{
 					msg_print(Ind, "Yuk, that food tasted awful.");
-					gain_exp(Ind, 1);
+					if (p_ptr->max_lev < 3) gain_exp(Ind, 1);
 					break;
 				}
 				/* Fall through */
@@ -417,7 +420,7 @@ void do_cmd_eat_food(int Ind, int item)
 			{
 			    if (!p_ptr->suscep_life) {
 				msg_print(Ind, "That tastes very good.");
-				(void)set_poisoned(Ind, 0);
+				(void)set_poisoned(Ind, 0, 0);
 				(void)set_image(Ind, 0);	// ok?
 				(void)hp_player(Ind, damroll(5, 8));
 				set_food(Ind, PY_FOOD_MAX - 1);
@@ -491,7 +494,7 @@ void do_cmd_eat_food(int Ind, int item)
 						msg_format_near(Ind, "%s vomits!", p_ptr->name);
 						/* made salt water less deadly -APD */
 						(void)set_food(Ind, (p_ptr->food/2));
-						(void)set_poisoned(Ind, 0);
+						(void)set_poisoned(Ind, 0, 0);
 						(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 					}
 					if (magik(o_ptr->name2? 2 : 3))
@@ -720,7 +723,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
 					/* made salt water less deadly -APD */
 					(void)set_food(Ind, (p_ptr->food/2)-400);
-					(void)set_poisoned(Ind, 0);
+					(void)set_poisoned(Ind, 0, 0);
 					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 				    } else {
 					msg_print(Ind, "That potion tastes awful.");
@@ -733,7 +736,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
 					{
-						if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10))
+						if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0))
 						{
 							ident = TRUE;
 						}
@@ -849,7 +852,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					msg_format_near(Ind, "%s blows up!", p_ptr->name);
 					take_hit(Ind, damroll(50, 20), "a potion of Detonation", 0);
 					(void)set_stun(Ind, p_ptr->stun + 75);
-					(void)set_cut(Ind, p_ptr->cut + 5000);
+					(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
 					ident = TRUE;
 					break;
 				}
@@ -898,13 +901,13 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_SLOW_POISON:
 				{
-					if (set_poisoned(Ind, p_ptr->poisoned / 2)) ident = TRUE;
+					if (set_poisoned(Ind, p_ptr->poisoned / 2, p_ptr->poisoned_attacker)) ident = TRUE;
 					break;
 				}
 
 			case SV_POTION_CURE_POISON:
 				{
-					if (set_poisoned(Ind, 0)) ident = TRUE;
+					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 					break;
 				}
 
@@ -968,7 +971,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (hp_player(Ind, damroll(2, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, p_ptr->cut - 10)) ident = TRUE;
+					if (set_cut(Ind, p_ptr->cut - 10, p_ptr->cut_attacker)) ident = TRUE;
 					break;
 				}
 
@@ -977,7 +980,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					if (hp_player(Ind, damroll(5, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
+					if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
 					break;
 				}
 
@@ -986,9 +989,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					if (hp_player(Ind, damroll(14, 8))) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
-					//			if (set_poisoned(Ind, 0)) ident = TRUE;	/* use specialized pots */
+					//			if (set_poisoned(Ind, 0, 0)) ident = TRUE;	/* use specialized pots */
 					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0)) ident = TRUE;
+					if (set_cut(Ind, 0, 0)) ident = TRUE;
 					break;
 				}
 
@@ -997,9 +1000,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					if (hp_player(Ind, 300)) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0)) ident = TRUE;
+					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0)) ident = TRUE;
+					if (set_cut(Ind, 0, 0)) ident = TRUE;
 					break;
 				}
 
@@ -1008,9 +1011,9 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					if (hp_player(Ind, 700)) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0)) ident = TRUE;
+					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0)) ident = TRUE;
+					if (set_cut(Ind, 0, 0)) ident = TRUE;
 					break;
 				}
 
@@ -1018,19 +1021,20 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					msg_print(Ind, "\377GYou feel life flow through your body!");
 					restore_level(Ind);
-					hp_player(Ind, 5000);
-					(void)set_poisoned(Ind, 0);
+					hp_player(Ind, 700);
+					(void)set_poisoned(Ind, 0, 0);
 					(void)set_blind(Ind, 0);
 					(void)set_confused(Ind, 0);
 					(void)set_image(Ind, 0);
 					(void)set_stun(Ind, 0);
-					(void)set_cut(Ind, 0);
+					(void)set_cut(Ind, 0, 0);
 					(void)do_res_stat(Ind, A_STR);
 					(void)do_res_stat(Ind, A_CON);
 					(void)do_res_stat(Ind, A_DEX);
 					(void)do_res_stat(Ind, A_WIS);
 					(void)do_res_stat(Ind, A_INT);
 					(void)do_res_stat(Ind, A_CHR);
+					(void)restore_level(Ind);
 					if (p_ptr->black_breath)
 					{
 						msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -1057,8 +1061,13 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (p_ptr->csp < p_ptr->msp)
 					{
+#if 0
 						p_ptr->csp = p_ptr->msp;
 						p_ptr->csp_frac = 0;
+#else
+						p_ptr->csp += 1000;
+						if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+#endif
 						msg_print(Ind, "You feel your head clearing!");
 						p_ptr->redraw |= (PR_MANA);
 						p_ptr->window |= (PW_PLAYER);
@@ -1211,10 +1220,10 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (hp_player(Ind, 50)) ident = TRUE;
 					if (set_blind(Ind, 0)) ident = TRUE;
-					if (set_poisoned(Ind, 0)) ident = TRUE;
+					if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 					if (set_confused(Ind, 0)) ident = TRUE;
 					if (set_stun(Ind, 0)) ident = TRUE;
-					if (set_cut(Ind, 0)) ident = TRUE;
+					if (set_cut(Ind, 0, 0)) ident = TRUE;
 					if (set_image(Ind, 0)) ident = TRUE;
 					if (heal_insanity(Ind, 40)) ident = TRUE;
 		                        if (p_ptr->food >= PY_FOOD_MAX)
@@ -1349,6 +1358,9 @@ void do_cmd_quaff_potion(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -2233,6 +2245,9 @@ void do_cmd_read_scroll(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -2380,7 +2395,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_SUMMON_MONSTER:
 			{
 				if(!check_self_summon(p_ptr)) break;
-
+				s_printf("SUMMON_MONSTER: %s\n", p_ptr->name);
 				for (k = 0; k < randint(3); k++)
 				{
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0, 1, 0))
@@ -2440,7 +2455,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			case SV_SCROLL_SUMMON_UNDEAD:
 			{
 				if(!check_self_summon(p_ptr)) break;
-
+				s_printf("SUMMON_UNDEAD: %s\n", p_ptr->name);
 				for (k = 0; k < randint(3); k++)
 				{
 					if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, SUMMON_UNDEAD, 1, 0))
@@ -3084,6 +3099,9 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -3200,7 +3218,7 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_SUMMONING:
 		{
 			if(!check_self_summon(p_ptr)) break;
-
+			s_printf("SUMMON_SPECIFIC: %s\n", p_ptr->name);
 			for (k = 0; k < randint(4); k++)
 			{
 				if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 0, 0, 1, 0))
@@ -3310,7 +3328,7 @@ void do_cmd_use_staff(int Ind, int item)
 			/* Turned it into 'Cure Serious Wounds' - C. Blue */
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, (p_ptr->cut / 2) - 50)) ident = TRUE;
+			if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
 			if (hp_player(Ind, damroll(5 + get_skill_scale(p_ptr, SKILL_DEVICE, 10), 8))) ident = TRUE;
 			break;
 		}
@@ -3318,10 +3336,10 @@ void do_cmd_use_staff(int Ind, int item)
 		case SV_STAFF_CURING:
 		{
 			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
                         if (p_ptr->food >= PY_FOOD_MAX)
                 	if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			break;
@@ -3331,7 +3349,7 @@ void do_cmd_use_staff(int Ind, int item)
 		{
 			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			break;
 		}
 
@@ -3409,11 +3427,11 @@ void do_cmd_use_staff(int Ind, int item)
 			} else {
 				k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 				if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
-				if (set_poisoned(Ind, 0)) ident = TRUE;
+				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 				if (set_afraid(Ind, 0)) ident = TRUE;
 				if (hp_player(Ind, 50)) ident = TRUE;
 				if (set_stun(Ind, 0)) ident = TRUE;
-				if (set_cut(Ind, 0)) ident = TRUE;
+				if (set_cut(Ind, 0, 0)) ident = TRUE;
 			}
 			break;
 		}
@@ -3586,6 +3604,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'a' )) {
@@ -4125,6 +4146,9 @@ void do_cmd_zap_rod(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'z' )) {
@@ -4287,10 +4311,10 @@ void do_cmd_zap_rod(int Ind, int item)
 		case SV_ROD_CURING:
 		{
 			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
                         if (p_ptr->food >= PY_FOOD_MAX)
                         if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			//o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -4304,12 +4328,12 @@ void do_cmd_zap_rod(int Ind, int item)
 #if 0
 			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 #else
 			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			break;
 #endif
@@ -4438,6 +4462,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 	if( check_guard_inscription( o_ptr->note, 'z' )) {
@@ -4777,10 +4804,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		case SV_ROD_CURING:
 		{
 			if (set_blind(Ind, 0)) ident = TRUE;
-			if (set_poisoned(Ind, 0)) ident = TRUE;
+			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			if (p_ptr->food >= PY_FOOD_MAX)
 			if (set_food(Ind, PY_FOOD_MAX - 1)) ident = TRUE;
 			o_ptr->pval = 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 20);
@@ -4792,13 +4819,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 #if 0
 			if (hp_player(Ind, 700)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
 #else // how about...
 			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
-			if (set_cut(Ind, 0)) ident = TRUE;
+			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
 			break; 
 #endif
@@ -5103,6 +5130,9 @@ void do_cmd_activate(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -5473,7 +5503,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				(void)set_afraid(Ind, 0);
 				/* Stay bold for some turns */
 		                p_ptr->res_fear_temp = 5;
-				(void)set_poisoned(Ind, 0);
+				(void)set_poisoned(Ind, 0, 0);
 				o_ptr->timeout = 5;
 				break;
 			}
@@ -5591,7 +5621,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "Your battle axe radiates deep purple...");
 				hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
-				(void)set_cut(Ind, (p_ptr->cut / 2) - 50);
+				(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
 				o_ptr->timeout = rand_int(3) + 3;
 				break;
 			}
@@ -5632,7 +5662,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				msg_print(Ind, "Your armour glows a bright white...");
 				msg_print(Ind, "\377GYou feel much better...");
 				(void)hp_player(Ind, 1000);
-				(void)set_cut(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
 				o_ptr->timeout = 888;
 				break;
 			}
@@ -5769,7 +5799,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "\377GYou feel a warm tingling inside...");
 				(void)hp_player(Ind, 500);
-				(void)set_cut(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -5958,7 +5988,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				(void)set_afraid(Ind, 0);
 				/* Stay bold for some turns */
 		                p_ptr->res_fear_temp = 5;
-				(void)set_poisoned(Ind, 0);
+				(void)set_poisoned(Ind, 0, 0);
 				o_ptr->timeout = 5;
 				break;
 			}
@@ -6076,7 +6106,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "Your battle axe radiates deep purple...");
 				hp_player(Ind, damroll(4, 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 20)));
-				(void)set_cut(Ind, (p_ptr->cut / 2) - 50);
+				(void)set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker);
 				o_ptr->timeout = rand_int(3) + 3;
 				break;
 			}
@@ -6117,7 +6147,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				msg_print(Ind, "Your armour glows a bright white...");
 				msg_print(Ind, "\377GYou feel much better...");
 				(void)hp_player(Ind, 1000);
-				(void)set_cut(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
 				o_ptr->timeout = 888;
 				break;
 			}
@@ -6254,7 +6284,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 				msg_print(Ind, "\377GYou feel a warm tingling inside...");
 				(void)hp_player(Ind, 500);
-				(void)set_cut(Ind, 0);
+				(void)set_cut(Ind, 0, 0);
 				o_ptr->timeout = 500;
 				break;
 			}
@@ -6673,10 +6703,10 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				hp_player(Ind, 7000);
 				heal_insanity(Ind, 50);
 				set_blind(Ind, 0);
-				set_poisoned(Ind, 0);
+				set_poisoned(Ind, 0, 0);
 				set_confused(Ind, 0);
 				set_stun(Ind, 0);
-				set_cut(Ind, 0);
+				set_cut(Ind, 0, 0);
 				set_image(Ind, 0);
 				o_ptr->timeout = 500;
 				break;
@@ -7329,6 +7359,9 @@ void do_cmd_activate_dir(int Ind, int dir)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -8148,7 +8181,7 @@ void do_cmd_fletchery(int Ind)
 				q_ptr->number = (byte)rand_range(15,30);
 				do_fletchery_aux();
 
-				if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= 4;
+				if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= ETHEREAL_AMMO_REDUCTION;
 
 				(void)inven_carry(Ind, q_ptr);
 
@@ -8198,6 +8231,10 @@ void do_cmd_fletchery(int Ind)
 		{
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
+
+//			if (-item >= o_max)
+//				return; /* item doesn't exist */
+
 //			q_ptr = &o_list[0 - item];
 		}
 
@@ -8232,7 +8269,7 @@ void do_cmd_fletchery(int Ind)
 			floor_item_optimize(0 - item);
 		}
 
-		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= 4;
+		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
@@ -8275,6 +8312,10 @@ void do_cmd_fletchery(int Ind)
 		{
 			msg_print(Ind, "You don't have appropriate materials.");
 			return;
+
+//			if (-item >= o_max)
+//				return; /* item doesn't exist */
+
 //			q_ptr = &o_list[0 - item];
 		}
 
@@ -8309,7 +8350,7 @@ void do_cmd_fletchery(int Ind)
 			floor_item_optimize(0 - item);
 		}
 
-		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= 4;
+		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;

@@ -249,7 +249,7 @@ void relay(struct wpacket *wpk, struct client *talker){
 		if (ccl != talker) {
 			/* Check the packet relay mask for authed servers - mikaelh */
 			if (ccl->authed > 0) {
-				if (!(slist[ccl->authed - 1].rflags & (1 << wpk->type))) {
+				if (!(slist[ccl->authed - 1].rflags & (1 << (wpk->type - 1)))) {
 					continue; /* don't relay */
 				}
 

@@ -115,7 +115,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 
 		i = (weight + ((p_ptr->to_h + plus) * 5) +
 				get_skill_scale(p_ptr, SKILL_ARCHERY, 150));
-		i += 50 * p_ptr->xtra_crit;
+		i += 50 * BOOST_CRIT(p_ptr->xtra_crit);
 	}
 	else i = weight;
 
@@ -126,7 +126,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
 		
 		if (Ind > 0)
 		{
-			k += get_skill_scale(p_ptr, SKILL_ARCHERY, 100) + randint(600 - (12000 / (p_ptr->xtra_crit + 20)));
+			k += get_skill_scale(p_ptr, SKILL_ARCHERY, 100) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
 		}
 
 		if (k < 350)
@@ -166,7 +166,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam)
  *
  * Factor in weapon weight, total plusses, player level.
  */
-s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit)
+s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crit, int o_crit)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -192,7 +192,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	if (w < 10) w = 10; /* shouldn't happen anyways */
 	i = (w * 2) + ((p_ptr->to_h + plus) * 5) + get_skill_scale(p_ptr, SKILL_MASTERY, 150);
 #endif
-        i += 50 * p_ptr->xtra_crit;
+        i += 50 * BOOST_CRIT(p_ptr->xtra_crit + o_crit);
         if (allow_skill_crit)
         {
                 i += get_skill_scale(p_ptr, SKILL_CRITS, 40 * 50);
@@ -203,7 +203,7 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
 	{
 		/* _If_ a critical hit is scored then it will deal
 		more damage if the weapon is heavier */
-		k = weight + randint(700) + 500 - (10000 / (p_ptr->xtra_crit + 20));
+		k = weight + randint(700) + 500 - (10000 / (BOOST_CRIT(p_ptr->xtra_crit + o_crit) + 20));
                 if (allow_skill_crit)
                 {
                         k += randint(get_skill_scale(p_ptr, SKILL_CRITS, 900));
@@ -1452,7 +1452,7 @@ void carry(int Ind, int pickup, int confirm)
 {
 	object_type *o_ptr;
 
-	char    o_name[160];
+	char    o_name[160], o_name_real[160];
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type *c_ptr;
@@ -1487,7 +1487,11 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	object_desc(0, o_name_real, o_ptr, TRUE, 3);
 
+
+/* log the encounters of players with special heavy armour, just for informative purpose */
+//if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("FOUND_WINNERS_ONLY: %s (%d) %s\n", p_ptr->name, p_ptr->wpos.wz, o_name_real);
 
 	/* moved the object_felt_p() code downwards */
 
@@ -1563,13 +1567,13 @@ if (o_ptr->tval == TV_RUNE2) {
 
 		if ((cfg.charmode_trading_restrictions > 0) &&
 		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
+		    (o_ptr->owner_mode & MODE_EVERLASTING) && !(p_ptr->mode & MODE_EVERLASTING)) {
 			msg_print(Ind, "You cannot take money of everlasting players.");
 			if (!is_admin(p_ptr)) return;
 		}
 		if ((cfg.charmode_trading_restrictions > 1) &&
 		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL)) {
+		    !(o_ptr->owner_mode & MODE_EVERLASTING) && (p_ptr->mode & MODE_EVERLASTING)) {
 			msg_print(Ind, "You cannot take money of non-everlasting players.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -1674,7 +1678,7 @@ if (o_ptr->tval == TV_RUNE2) {
 
 		if ((cfg.charmode_trading_restrictions > 0) &&
 		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_IMMORTAL) && !(p_ptr->mode & MODE_IMMORTAL)) {
+		    (o_ptr->owner_mode & MODE_EVERLASTING) && !(p_ptr->mode & MODE_EVERLASTING)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
@@ -1697,6 +1701,11 @@ if (o_ptr->tval == TV_RUNE2) {
 			// the one with esp
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
 				o_ptr->owner_mode = p_ptr->mode;
+			// Why not share ale? -Molt
+			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
+				o_ptr->owner_mode = p_ptr->mode;
+   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
+                                o_ptr->owner_mode = p_ptr->mode;
 			} else {
 				msg_print(Ind, "You cannot take items of everlasting players.");
 				if (!is_admin(p_ptr)) return;
@@ -1704,7 +1713,7 @@ if (o_ptr->tval == TV_RUNE2) {
 		}
 		if ((cfg.charmode_trading_restrictions > 1) &&
 		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_IMMORTAL) && (p_ptr->mode & MODE_IMMORTAL)) {
+		    !(o_ptr->owner_mode & MODE_EVERLASTING) && (p_ptr->mode & MODE_EVERLASTING)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
@@ -1727,6 +1736,11 @@ if (o_ptr->tval == TV_RUNE2) {
 			// the one with esp
     			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
 				o_ptr->owner_mode = p_ptr->mode;
+			// Why not share ale? -Molt
+			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
+				o_ptr->owner_mode = p_ptr->mode;
+   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
+                                o_ptr->owner_mode = p_ptr->mode;
 			} else {
 				msg_print(Ind, "You cannot take items of non-everlasting players.");
 				if (!is_admin(p_ptr)) return;
@@ -1928,9 +1942,12 @@ if (o_ptr->tval == TV_RUNE2) {
 					o_ptr->owner_mode = p_ptr->mode;
 #if CHEEZELOG_LEVEL > 2
 					if (true_artifact_p(o_ptr)) s_printf("Artifact %d found by %s(lv %d) at %d,%d,%d: %s\n",
-									    o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
+									    o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name_real);
 					else if (o_ptr->name1 == ART_RANDART) s_printf("Randart found by %s(lv %d) at %d,%d,%d: %s\n",
-									    p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name);
+									    p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name_real);
+/* log the encounters of players with special heavy armour, just for informative purpose */
+if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY && !o_ptr->owner) s_printf("FOUND_WINNERS_ONLY: %s (%d) %s\n", p_ptr->name, p_ptr->wpos.wz, o_name_real);
+
 #endif	// CHEEZELOG_LEVEL
 				}
 
@@ -2350,6 +2367,11 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		/* Make hostile */
 		if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+
+		/* Log it if no blood bond - mikaelh */
+		if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
+			s_printf("%s attacked %s.\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name);
+		}
 	}
 	/* Hack -- divided turn for auto-retaliator */
 	if (!old)
@@ -2448,7 +2470,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
 			   has been left out, since if you want max block, you'll have to take off your weapon!) */
 			if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
-				if (magik(q_ptr->shield_deflect + 15)) { /* boost for PvP! */
+				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 					msg_format(Ind, "%s blocks your attack!", p_name);
 					msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
 					continue; 
@@ -2457,10 +2479,10 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 #endif
 #ifdef USE_PARRYING
 			if (q_ptr->weapon_parry) {
-				if (magik(q_ptr->weapon_parry +
+				if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry +
 				     /* boost for PvP!:  Note: No need to check second hand, because 2h cannot be dual-wielded.
 				        this implies that 2h-weapons always go into INVEN_WIELD though. */
-				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10)) {
+				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10))) {
 					msg_format(Ind, "%s parries your attack!", p_name);
 					msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
 					continue; 
@@ -2537,7 +2559,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
-				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -2597,7 +2619,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 				/* Apply the player damage bonuses */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
-				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor));
+				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 			}
 			/* handle bare fists/bat/ghost */
 			else
@@ -2713,7 +2735,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 						else
 		                                {
 							msg_format(Ind, "%^s suffers from disease.", p_name);
-				                        set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5);
+				                        set_poisoned(0 - c_ptr->m_idx, q_ptr->poisoned + randint(p_ptr->lev) + 5, Ind);
 						}
 						break;
 					case RBE_BLIND:
@@ -3291,7 +3313,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
-				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE);
+				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
@@ -3522,7 +3544,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
-				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor));
+				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 
 				/* Vorpal bonus - multi-dice!
 				   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
@@ -4724,10 +4746,12 @@ void move_player(int Ind, int dir, int do_pickup)
 				 !q_ptr->store_num) )||
 				(q_ptr->admin_dm) )
 #else
-		else if ((!p_ptr->ghost && !q_ptr->ghost &&
+		else if (((!p_ptr->ghost && !q_ptr->ghost &&
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
-			 (ddx[q_ptr->last_dir] == (-ddx[dir]))) ||
+			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
+			 !p_ptr->afk && !q_ptr->afk) ||
 			(q_ptr->admin_dm))
+			&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
 #endif	// 0
 
 		{
@@ -4790,6 +4814,11 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Hack -- quickly update the view, to reduce perceived lag */
 		redraw_stuff(Ind);
 		window_stuff(Ind);
+#endif
+#if 0 /* replace suppressed switching by bumping */
+		    } else if ((p_ptr->afk || q_ptr->afk) && 
+			((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
+		    {
 #endif
 		    } else {
 			    disturb(Ind, 1, 0); /* turn off running, so player won't be un-AFK'ed automatically */
@@ -6186,6 +6215,8 @@ int apply_dodge_chance(int Ind, int attack_level) {
 	int dodge = Players[Ind]->dodge_level;
 	int chance;
 
+	if (Players[Ind]->paralyzed || Players[Ind]->stun >= 100) return(0);
+
 	/* Dodging doesn't work with a shield */
 	if (Players[Ind]->inventory[INVEN_ARM].k_idx && Players[Ind]->inventory[INVEN_ARM].tval == TV_SHIELD) return(1);
 	
@@ -6234,8 +6265,39 @@ int apply_dodge_chance(int Ind, int attack_level) {
         chance = (chance * DODGE_MAX_CHANCE) / 100;
 #endif
 
+	/* New- some malicious effects */
+	if (Players[Ind]->confused) chance *= 7;
+	if (Players[Ind]->blind) chance *= 2;
+	if (Players[Ind]->image) chance *= 8;
+	if (Players[Ind]->stun) chance *= 7;
+	if (Players[Ind]->stun > 50) chance *= 5;
+
 	/* always slight chance to actually evade an enemy attack, no matter whether skilled or not :) */
 	if (chance < 1) chance = 1;
 
 	return(chance);
+}
+
+int apply_block_chance(player_type *p_ptr, long int n) { /* n can already be modified chance */
+	if (!p_ptr->shield_deflect || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
+	if (p_ptr->confused) n *= 5;
+	if (p_ptr->blind) n *= 3;
+	if (p_ptr->image) n *= 5;
+	if (p_ptr->stun) n *= 8;
+	if (p_ptr->stun > 50) n *= 8;
+	n /= 100000;
+	if (!n) n = 1;
+	return (n);
+}
+
+int apply_parry_chance(player_type *p_ptr, long int n) { /* n can already be modified chance */
+	if (!p_ptr->weapon_parry || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
+	if (p_ptr->confused) n *= 6;
+	if (p_ptr->blind) n *= 1;
+	if (p_ptr->image) n *= 8;
+	if (p_ptr->stun) n *= 8;
+	if (p_ptr->stun > 50) n *= 8;
+	n /= 100000;
+	if (!n) n = 1;
+	return (n);
 }

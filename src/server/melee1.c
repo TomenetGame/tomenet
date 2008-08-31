@@ -429,7 +429,7 @@ static bool do_seduce(int Ind, int m_idx)
 			case 2:
 				msg_print(Ind, "Darn, you've got a disease!");
 				/* bypass resistance */
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40);
+				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40, 0);
 				done = TRUE;
 				break;
 
@@ -500,7 +500,7 @@ bool make_attack_melee(int Ind, int m_idx)
 	int      	ap_cnt;
 	int		mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int             i, j, k, tmp, ac, rlev;
+	int             i, j, k, tmp, ac, rlev, chance;
 	int             do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
 	int 		player_aura_dam;
 
@@ -557,9 +557,13 @@ bool make_attack_melee(int Ind, int m_idx)
 		bool visible = FALSE;
 		bool obvious = FALSE;
 		bool bypass_ac = FALSE;
+		bool bypass_shield = FALSE;
+		bool bypass_weapon = FALSE;
 
 		int power = 0;
 		int damage = 0, dam_ele = 0;
+		
+		bool attempt_block = FALSE, attempt_parry = FALSE;
 
 		cptr act = NULL;
 
@@ -631,10 +635,14 @@ bool make_attack_melee(int Ind, int m_idx)
 			case RBM_BEG:
 			case RBM_INSULT:
 			case RBM_MOAN:
-			case RBM_EXPLODE:
 			case RBM_SHOW:
 			case RBM_WHISPER:
-				bypass_ac = TRUE;
+				bypass_shield = TRUE; /* can't be blocked */
+			case RBM_EXPLODE:
+				bypass_ac = TRUE; /* means it always hits and can't be dodged or parried either.
+						     Damage can still be reduced though (if RBE_HURT eg). */
+			case RBM_DROOL:
+				bypass_weapon = TRUE; /* can't be parried */
 				break;
 		}
 
@@ -643,81 +651,6 @@ bool make_attack_melee(int Ind, int m_idx)
 		{
 			/* Always disturbing */
 			disturb(Ind, 1, 0);
-#ifndef NEW_DODGING
-			int chance = p_ptr->dodge_level - ((rlev * 5) / 6);
-//						- UNAWARENESS(p_ptr) * 2;
-			/* always 10% chance to hit */
-			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
-			if ((chance > 0) && !bypass_ac && magik(chance))
-			{
-				msg_format(Ind, "You dodge %s's attack!", m_name);
-				continue;
-			}
-#else
-			if (!bypass_ac && magik(apply_dodge_chance(Ind, rlev))) {
-				msg_format(Ind, "You dodge %s's attack!", m_name);
-				continue;
-			}
-#endif
-
-			/* Hack -- Apply "protection from evil" */
-#if 0
-			if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-				(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
-			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
-				(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
-				(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
-			    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
-				(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
-#else
-			prot = FALSE;
-			if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
-				if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-					prot = TRUE;
-			} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
-				if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-					prot = TRUE;
-			} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
-				if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
-					prot = TRUE;
-			} else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
-				(((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
-				 ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
-					prot = TRUE;
-			}
-			if (prot)
-#endif
-			{
-				/* Remember the Evil-ness */
-				if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
-
-				/* Message */
-				msg_format(Ind, "%^s is repelled.", m_name);
-
-				/* Hack -- Next attack */
-				continue;
-			}
-
-#ifdef USE_BLOCKING
-			/* Parry/Block - belongs to new-NR-viability changes */
-			/* choose whether to attempt to block or to parry (can't do both at once),
-			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
-			   has been left out, since if you want max block, you'll have to take off your weapon!) */
-			if (p_ptr->shield_deflect && 
-			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
-				if (magik(p_ptr->shield_deflect)) {
-					msg_format(Ind, "You block %^s's attack.", m_name);
-					if (randint(mon_acid + mon_fire) > mon_acid) {
-						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
-					} else if (mon_acid + mon_fire) {
-						if (magik(10)) shield_takes_damage(Ind, GF_ACID);
-					}
-					continue;
-				}
-			}
-#endif
-
 			/* Assume no cut or stun */
 			do_cut = do_stun = 0;
 
@@ -928,10 +861,87 @@ bool make_attack_melee(int Ind, int m_idx)
 
 			}
 
-#ifdef USE_PARRYING
+			/* Hack -- Apply "protection from evil" */
+			if (touched) {
+#if 0
+				if (((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+					(p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) ||
+				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD) &&
+					(p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON) &&
+					(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)) ||
+				    ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL) &&
+					(p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev)))
+#else
+				prot = FALSE;
+				if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 30) && (r_ptr->flags3 & RF3_UNDEAD)) {
+					if ((p_ptr->lev * 2 >= rlev) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 40) && (r_ptr->flags3 & RF3_DEMON)) {
+					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
+					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
+						prot = TRUE;
+				} else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+				    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
+				     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
+					prot = TRUE;
+				}
+				if (prot)
+#endif
+				{
+					/* Remember the Evil-ness */
+					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
+
+					/* Message */
+					msg_format(Ind, "%^s is repelled.", m_name);
+
+					/* Hack -- Next attack */
+					continue;
+				}
+			}
+
+#ifndef NEW_DODGING
+			chance = p_ptr->dodge_level - ((rlev * 5) / 6);
+//						- UNAWARENESS(p_ptr) * 2;
+			/* always 10% chance to hit */
+			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
+			if ((chance > 0) && !bypass_ac && magik(chance))
+			{
+				msg_format(Ind, "You dodge %s's attack!", m_name);
+				continue;
+			}
+#else
+			if (!bypass_ac && magik(apply_dodge_chance(Ind, rlev))) {
+				msg_format(Ind, "You dodge %s's attack!", m_name);
+				continue;
+			}
+#endif
+
+#if 0 /* let's make it more effective */
+ #ifdef USE_BLOCKING
+			/* Parry/Block - belongs to new-NR-viability changes */
+			/* choose whether to attempt to block or to parry (can't do both at once),
+			   50% chance each, except for if weapon is missing (anti-retaliate-inscription
+			   has been left out, since if you want max block, you'll have to take off your weapon!) */
+			if (p_ptr->shield_deflect && !bypass_shield && 
+			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
+				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
+					msg_format(Ind, "You block %^s's attack.", m_name);
+					if (randint(mon_acid + mon_fire) > mon_acid) {
+						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
+					} else if (mon_acid + mon_fire) {
+						if (magik(10)) shield_takes_damage(Ind, GF_ACID);
+					}
+					continue;
+				}
+			}
+ #endif
+ #ifdef USE_PARRYING
 			/* parrying */
-			if (p_ptr->weapon_parry && touched) {
-				if (magik(p_ptr->weapon_parry)) {
+			if (p_ptr->weapon_parry && !bypass_weapon) {
+				if (magik(apply_parry_chance(p_ptr, p_ptr->weapon_parry))) {
 					int slot = INVEN_WIELD;
 					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 						slot = INVEN_ARM;
@@ -944,6 +954,45 @@ bool make_attack_melee(int Ind, int m_idx)
 					continue;
 				}
 			}
+ #endif
+#else
+			/* first, choose preferred defense: parry or block, what we can do better */
+			if (p_ptr->shield_deflect && !bypass_shield && p_ptr->shield_deflect >= p_ptr->weapon_parry) {
+				if (magik(75) || /* sometimes you're just not in position to use the preferred method */
+				    !p_ptr->inventory[INVEN_WIELD].k_idx) /* if you don't wield a weapon, you get easier opportunity to swing the shield around you */
+					attempt_block = TRUE;
+				else if (p_ptr->weapon_parry && !bypass_weapon) attempt_parry = TRUE;
+			} else if (p_ptr->weapon_parry && !bypass_weapon) {
+				if (magik(75) || /* sometimes you're just not in position to use the preferred method */
+				    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) /* if you don't wield a shield (1 weapon or dual-wield), you get easier opportunity to swing the shield around you */
+					attempt_parry = TRUE;
+				else if (p_ptr->shield_deflect && !bypass_shield) attempt_block = TRUE;
+			}
+ #ifdef USE_BLOCKING
+			if (attempt_block && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
+				msg_format(Ind, "You block %^s's attack.", m_name);
+				if (randint(mon_acid + mon_fire) > mon_acid) {
+					if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
+				} else if (mon_acid + mon_fire) {
+					if (magik(10)) shield_takes_damage(Ind, GF_ACID);
+				}
+				continue;
+			}
+ #endif
+ #ifdef USE_PARRYING
+			if (attempt_parry && magik(apply_parry_chance(p_ptr, p_ptr->weapon_parry))) {
+				int slot = INVEN_WIELD;
+				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
+					slot = INVEN_ARM;
+				msg_format(Ind, "You parry %^s's attack.", m_name);
+				if (randint(mon_acid + mon_fire) > mon_acid) {
+					if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
+				} else if (mon_acid + mon_fire) {
+					if (magik(10)) weapon_takes_damage(Ind, GF_ACID, slot);
+				}
+				continue;
+			}
+ #endif
 #endif
 
 			/* Roll out the damage */
@@ -1069,7 +1118,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 					{
-						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5))
+						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
 						{
 							obvious = TRUE;
 						}
@@ -1848,7 +1897,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 					{
-						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5))
+						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
 						{
 							obvious = TRUE;
 						}
@@ -1983,7 +2032,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Bare-handed? oh.. */
 					if (!o_ptr->k_idx) {
 						msg_format(Ind, "\377o%^s cuts deep in your arms and hands", m_name);
-						(void)set_cut(Ind, p_ptr->cut + 100);
+						(void)set_cut(Ind, p_ptr->cut + 100, 0);
 						break;
 					}
 
@@ -2123,7 +2172,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(Ind, p_ptr->cut + k);
+				if (k) (void)set_cut(Ind, p_ptr->cut + k, 0);
 			}
 #ifndef SUPPRESS_MONSTER_STUN // HERESY !
 		/* That's overdone;
@@ -2283,7 +2332,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				 * Apply the necromantic auras
 				 */
 				/* Aura of fear is NOT affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+				if (get_skill(p_ptr, SKILL_AURA_FEAR) && (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING)) && (!(r_ptr->flags1 & RF1_UNIQUE)) && p_ptr->aura[0])
 				{
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 1;
 
@@ -2295,7 +2344,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				/* Shivering Aura is affected by the monster level */
-				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)))
+				if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (!(r_ptr->flags1 & RF1_UNIQUE)) && p_ptr->aura[1])
 				{
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 20) + 1;
 
@@ -2316,7 +2365,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				}
 
 				/* Aura of death is NOT affected by monster level*/
-				if (get_skill(p_ptr, SKILL_AURA_DEATH))
+				if (get_skill(p_ptr, SKILL_AURA_DEATH) && p_ptr->aura[2])
 				{
 					int chance = get_skill_scale(p_ptr, SKILL_AURA_DEATH, 50);
 

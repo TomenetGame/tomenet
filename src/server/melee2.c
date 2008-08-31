@@ -2829,7 +2829,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				{
 					//					take_hit(Ind, damroll(15, 15), ddesc, 0);
 					take_hit(Ind, damroll(power / 4, 15), ddesc, 0);
-					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
+					(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
 				}
 				break;
 			}
@@ -2906,7 +2906,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else
 			{
 				take_hit(Ind, damroll(15, 15), ddesc, 0);
-				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10));
+				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
 			}
 			break;
 		}
@@ -3580,7 +3580,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "%^s mumbles, and then cackles evilly.", m_name);
+			if (blind) msg_format(Ind, "%^s mumbles and cackles evilly.", m_name);
 			else msg_format(Ind, "%^s casts a spell and cackles evilly.", m_name);
 			(void)trap_creation(Ind, 3, magik(rlev) ? (magik(30) ? 3 : 2) : 1);
 			break;
@@ -5513,6 +5513,200 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		break;
 	}
 }
+
+#ifdef ARCADE_SERVER
+static void get_moves_arc(int targy, int targx, int m_idx, int *mm)
+{
+
+	monster_type *m_ptr = &m_list[m_idx];
+        monster_race *r_ptr = race_inf(m_ptr);
+
+	int y, ay, x, ax;
+
+	int move_val = 0;
+
+        int y2 = targy;
+        int x2 = targx;
+	bool done = FALSE, c_blue_ai_done = FALSE;	// not used fully (FIXME)
+
+
+	/* Extract the "pseudo-direction" */
+	y = m_ptr->fy - y2;
+	x = m_ptr->fx - x2;
+
+	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
+		done = TRUE;
+		m_ptr->last_target = 0;
+	}
+
+
+	/* Extract the "absolute distances" */
+	ax = ABS(x);
+	ay = ABS(y);
+
+
+	/* Do something weird */
+	if (y < 0) move_val += 8;
+	if (x > 0) move_val += 4;
+
+	/* Prevent the diamond maneuvre */
+	if (ay > (ax << 1))
+	{
+		move_val++;
+		move_val++;
+	}
+	else if (ax > (ay << 1))
+	{
+		move_val++;
+	}
+
+	/* Extract some directions */
+	switch (move_val)
+	{
+		case 0:
+		mm[0] = 9;
+		if (ay > ax)
+		{
+			mm[1] = 8;
+			mm[2] = 6;
+			mm[3] = 7;
+			mm[4] = 3;
+		}
+		else
+		{
+			mm[1] = 6;
+			mm[2] = 8;
+			mm[3] = 3;
+			mm[4] = 7;
+		}
+		break;
+		case 1:
+		case 9:
+		mm[0] = 6;
+		if (y < 0)
+		{
+			mm[1] = 3;
+			mm[2] = 9;
+			mm[3] = 2;
+			mm[4] = 8;
+		}
+		else
+		{
+			mm[1] = 9;
+			mm[2] = 3;
+			mm[3] = 8;
+			mm[4] = 2;
+		}
+		break;
+		case 2:
+		case 6:
+		mm[0] = 8;
+		if (x < 0)
+		{
+			mm[1] = 9;
+			mm[2] = 7;
+			mm[3] = 6;
+			mm[4] = 4;
+		}
+		else
+		{
+			mm[1] = 7;
+			mm[2] = 9;
+			mm[3] = 4;
+			mm[4] = 6;
+		}
+		break;
+		case 4:
+		mm[0] = 7;
+		if (ay > ax)
+		{
+			mm[1] = 8;
+			mm[2] = 4;
+			mm[3] = 9;
+			mm[4] = 1;
+		}
+		else
+		{
+			mm[1] = 4;
+			mm[2] = 8;
+			mm[3] = 1;
+			mm[4] = 9;
+		}
+		break;
+		case 5:
+		case 13:
+		mm[0] = 4;
+		if (y < 0)
+		{
+			mm[1] = 1;
+			mm[2] = 7;
+			mm[3] = 2;
+			mm[4] = 8;
+		}
+		else
+		{
+			mm[1] = 7;
+			mm[2] = 1;
+			mm[3] = 8;
+			mm[4] = 2;
+		}
+		break;
+		case 8:
+		mm[0] = 3;
+		if (ay > ax)
+		{
+			mm[1] = 2;
+			mm[2] = 6;
+			mm[3] = 1;
+			mm[4] = 9;
+		}
+		else
+		{
+			mm[1] = 6;
+			mm[2] = 2;
+			mm[3] = 9;
+			mm[4] = 1;
+		}
+		break;
+		case 10:
+		case 14:
+		mm[0] = 2;
+		if (x < 0)
+		{
+			mm[1] = 3;
+			mm[2] = 1;
+			mm[3] = 6;
+			mm[4] = 4;
+		}
+		else
+		{
+			mm[1] = 1;
+			mm[2] = 3;
+			mm[3] = 4;
+			mm[4] = 6;
+		}
+		break;
+		case 12:
+		mm[0] = 1;
+		if (ay > ax)
+		{
+			mm[1] = 2;
+			mm[2] = 4;
+			mm[3] = 3;
+			mm[4] = 7;
+		}
+		else
+		{
+			mm[1] = 4;
+			mm[2] = 2;
+			mm[3] = 7;
+			mm[4] = 3;
+		}
+		break;
+	}
+}
+#endif
+
 #ifdef RPG_SERVER
 /*
  * Choose "logical" directions for pet movement
@@ -6186,6 +6380,9 @@ static void process_monster(int Ind, int m_idx)
         monster_race    *r_ptr = race_inf(m_ptr);// = &r_info[r_idx];
 
 	int			i, d, oy, ox, ny, nx;
+#ifdef ARCADE_SERVER
+        int n;
+#endif
 
 	int			mm[8];
 
@@ -6602,7 +6799,25 @@ static void process_monster(int Ind, int m_idx)
 	else
 	{
 		/* Logical moves */
+#ifndef ARCADE_SERVER
 		get_moves(Ind, m_idx, mm);
+#else
+                if ((m_ptr->r_idx > 1114) && (m_ptr->r_idx < 1125))
+                {
+                        for(n = 1; n <= NumPlayers; n++)
+                        {
+                                player_type *p_ptr = Players[n];
+                                if(p_ptr->game == 4 && p_ptr->team == 5)
+                                {
+                                get_moves_arc(p_ptr->arc_b, p_ptr->arc_a, m_idx, mm);
+                                n = NumPlayers + 1;
+                                }
+                        }
+                }
+                else
+		get_moves(Ind, m_idx, mm);
+
+#endif
 	}
 
 

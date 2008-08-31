@@ -179,7 +179,7 @@ extern int p_printf(char *str, ...)
 
 	va_list va;
 
-	if(initc == FALSE)   /* in case we don't start her up properly */
+	if(initp == FALSE)   /* in case we don't start her up properly */
 	{
 		fpp = fopen(path,"a+");
 		initp = TRUE;

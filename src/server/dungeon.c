@@ -336,22 +336,50 @@ static void sense_inventory(int Ind)
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
+#if 0 /* no more linear ;) */
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
-	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) ok_magic = TRUE;
+	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) {
+		ok_magic = TRUE;
+		ok_curse = TRUE;
+	}
 	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_PRAY, 130))) ok_curse = TRUE;
+#else
+     /* instead, allow more use at lower SKILL_COMBAT levels already,
+	otherwise huge stacks of ID scrolls will remain mandatory for maybe too long a time - C. Blue */
+//	if (!rand_int(399 / (get_skill_scale(p_ptr, SKILL_COMBAT, 97) + 3))) ok_combat = TRUE;
+//	if (!rand_int(2 * (101 - (get_skill_scale(p_ptr, SKILL_COMBAT, 70) + 30)))) ok_combat = TRUE;
+//	if (!rand_int(102 - (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20))) ok_combat = TRUE;
+//	if (!rand_int(102 - (get_skill_scale(p_ptr, SKILL_COMBAT, 70) + 30))) ok_combat = TRUE;
+//	if (!rand_int(2000 / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 18)) ok_combat = TRUE;
+	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
+	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
+	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) {
+		ok_magic = TRUE;
+		ok_curse = TRUE;
+	}
+	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
+#endif
 	if (!ok_combat && !ok_magic && !ok_archery) return;
+
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
 	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 31)
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 31) {
+#if 0 /* not more often, still only apply 33% chance (see further down) */
+	    ok_archery = TRUE;
+#else /* but allow more distinctive feelings */
 	    heavy_archery = TRUE;
+#endif
+	}
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 41)
-	    heavy_magic = TRUE;
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 41) {
+	    ok_magic = TRUE;
+	    ok_curse = TRUE;
+	}
 
 
 	/*** Sense everything ***/
@@ -496,7 +524,14 @@ static void sense_inventory(int Ind)
 		}
 
 		/* Inscribe it textually */
-		if (!o_ptr->note) o_ptr->note = quark_add(feel);
+		if (!o_ptr->note || o_ptr->note_priority) o_ptr->note = quark_add(feel);
+		/* Still add an inscription, so unique loot doesn't cause major annoyances - C. Blue */
+		else {
+			strcpy(o_name, feel); /* just abusing o_name for this since it's not needed anymore anyway */
+			strcat(o_name, "-");
+			strcat(o_name, quark_str(o_ptr->note));
+			o_ptr->note = quark_add(o_name);
+		}
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -685,6 +720,46 @@ static void process_effects(void)
 			/* TODO - excise it */
 			continue;
 		}
+
+//#ifdef ARCADE_SERVER
+#if 0
+                if(e_ptr->flags & EFF_CROSSHAIR_A || e_ptr->flags & EFF_CROSSHAIR_B || e_ptr->flags & EFF_CROSSHAIR_C)
+                {
+
+                        /* e_ptr->interval is player who controls it */
+                        if(e_ptr->interval >= NumPlayers)
+                        {
+                                p_ptr = Players[e_ptr->interval];
+                                if(k == p_ptr->e)
+                                {
+                                        if(e_ptr->cy != p_ptr->arc_b || e_ptr->cx != p_ptr->arc_a)
+                                        {
+                                                if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+                                                c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+                                                c_ptr->effect = 0;
+                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+                                                e_ptr->cy = p_ptr->arc_b;
+                                                e_ptr->cx = p_ptr->arc_a;
+                                                if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
+                                                c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+                                                c_ptr->effect = k;
+                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);                                                
+                                        }
+
+                                }
+                                else
+                                {
+                                erase_effects(k);
+                                }
+                        }
+                        else
+                        {
+                        erase_effects(k);
+                        }
+                continue;
+                }
+#endif
+
 		
 		/* check if it's time to process this effect now (depends on level_speed) */
 		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 0) continue;
@@ -831,7 +906,7 @@ static void process_effects(void)
 				}
 			}
 
-			/* Generate fireworks effects */
+                        /* Generate fireworks effects */
 			if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 				int semi = (e_ptr->time + e_ptr->rad) / 2;
 				/* until half-time (or half-radius) the fireworks rise into the air */
@@ -1523,6 +1598,9 @@ static int auto_retaliate(int Ind)
 			}
 			else
 			{
+				/* Target dummy should always be the last one to get attacked - mikaelh */
+				if (m_ptr->r_idx == 1101) continue;
+
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
 
@@ -1943,10 +2021,25 @@ static void process_player_begin(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	/* for AT_VALINOR: */
-	int x, y, xstart = 0, ystart = 0, ox, oy;
+	int i, x, y, xstart = 0, ystart = 0, ox, oy;
 	dungeon_type *d_ptr;
         cave_type **zcave;
 	dun_level *l_ptr;
+
+	p_ptr->heal_turn_20 +=  p_ptr->heal_turn[0] - p_ptr->heal_turn[20];
+	p_ptr->heal_turn_10 +=  p_ptr->heal_turn[0] - p_ptr->heal_turn[10];
+	p_ptr->heal_turn_5 +=  p_ptr->heal_turn[0] - p_ptr->heal_turn[5];
+	p_ptr->dam_turn_20 = p_ptr->dam_turn[0] - p_ptr->dam_turn[20];
+	p_ptr->dam_turn_10 = p_ptr->dam_turn[0] - p_ptr->dam_turn[10];
+	p_ptr->dam_turn_5 = p_ptr->dam_turn[0] - p_ptr->dam_turn[5];
+	for (i = 20; i > 0; i--) {
+	/* move internal heal/turn register for C_BLUE_AI */
+		p_ptr->heal_turn[i] = p_ptr->heal_turn[i - 1];
+	/* move internal dam/turn register for C_BLUE_AI */
+		p_ptr->dam_turn[i] = p_ptr->dam_turn[i - 1];
+	}
+	p_ptr->heal_turn[0] = 0; /* prepared to store healing that might happen */
+	p_ptr->dam_turn[0] = 0; /* prepared to store damage dealing that might happen */
 
 	/* Perform pending automatic transportation */
 	switch (p_ptr->auto_transport) {
@@ -2524,7 +2617,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->poisoned)
 	{
 		/* Take damage */
-		take_hit(Ind, 1, "poison", 0);
+		take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
 	}
 
 	/* Misc. terrain effects */
@@ -2685,7 +2778,7 @@ static bool process_player_end_aux(int Ind)
 		}
 
 		/* Take damage */
-		take_hit(Ind, i, "a fatal wound", 0);
+		take_hit(Ind, i, "a fatal wound", p_ptr->cut_attacker);
 	}
 
 	/*** Check the Food, and Regenerate ***/
@@ -3261,8 +3354,8 @@ static bool process_player_end_aux(int Ind)
 		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
 
 		/* Apply some healing */
-		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2);
-		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1));
+		//(void)set_poisoned(Ind, p_ptr->poisoned - adjust - minus_health * 2, p_ptr->poisoned_attacker);
+		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
 	}
 
 	/* Stun */
@@ -3304,9 +3397,9 @@ static bool process_player_end_aux(int Ind)
 
 
 		/* Apply some healing */
-		//(void)set_cut(Ind, p_ptr->cut - adjust - minus_health * 2);
-//		(void)set_cut(Ind, p_ptr->cut - (adjust + minus_health) * (minus_health + 1));
-		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1));
+		//(void)set_cut(Ind, p_ptr->cut - adjust - minus_health * 2, p_ptr->cut_attacker);
+//		(void)set_cut(Ind, p_ptr->cut - (adjust + minus_health) * (minus_health + 1), p_ptr->cut_attacker);
+		(void)set_cut(Ind, p_ptr->cut - adjust * (minus_health + 1), p_ptr->cut_attacker);
 	}
 
 	/* Temporary blessing of luck */
@@ -3468,7 +3561,7 @@ static bool process_player_end_aux(int Ind)
 				if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 					if (p_ptr->food > PY_FOOD_FAINT - 1)
 					        (void)set_food(Ind, PY_FOOD_FAINT - 1);
-				(void)set_poisoned(Ind, 0);
+				(void)set_poisoned(Ind, 0, 0);
 				if (!p_ptr->free_act && !p_ptr->slow_digest)
 				        (void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);
 			    }
@@ -4544,6 +4637,7 @@ static void process_various(void)
 	if (!(turn % (cfg.fps * 3600)))
 		exec_lua(0, format("cron_1h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
 #else
+#ifndef ARCADE_SERVER
 	if (!(turn % (cfg.fps * 10))) { /* call every 10 seconds instead of every 10 turns, to save some CPU time (yeah well...)*/
 		/* Extra LUA function in custom.lua */
 		time(&now);
@@ -4556,6 +4650,7 @@ static void process_various(void)
 			cron_1h_last_hour = h;
 		}
 	}
+#endif
 #endif
 
 	/* daily maintenance */
@@ -4588,10 +4683,12 @@ static void process_various(void)
 		purge_old();
 	}
 
+#if 0 /* disable for now - mikaelh */
 	if (!(turn % (cfg.fps * 50))) {
 		/* Tell the scripts that we're alive */
 		update_check_file();
 	}
+#endif
 
 	/* Handle certain things once a minute */
 	if (!(turn % (cfg.fps * 60)))
@@ -4600,6 +4697,7 @@ static void process_various(void)
 
 		check_quests();		/* It's enough with 'once a minute', none? -Jir */
 
+		Check_evilmeta();	/* check that evilmeta is still up */
 		check_banlist();	/* unban some players */
 		scan_objs();		/* scan objects and houses */
 
@@ -4645,52 +4743,55 @@ static void process_various(void)
 				}
 			}
 
-			/* Reswpan for kings' joy  -Jir- */
-			/* Update the unique respawn timers */
-			for (j = 1; j <= NumPlayers; j++)
+		}
+
+		/* Reswpan for kings' joy  -Jir- */
+		/* Update the unique respawn timers */
+		/* I moved this out of the loop above so this may need some
+                 * tuning now - mikaelh */
+		for (j = 1; j <= NumPlayers; j++)
+		{
+			p_ptr = Players[j];
+			if (!p_ptr->total_winner) continue;
+
+			/* Hack -- never Maggot and his dogs :) */
+			i = rand_range(60,MAX_R_IDX-2);
+			r_ptr = &r_info[i];
+
+			/* Make sure we are looking at a dead unique */
+			if (!(r_ptr->flags1 & RF1_UNIQUE))
 			{
-				p_ptr = Players[j];
-				if (!p_ptr->total_winner) continue;
-
-				/* Hack -- never Maggot and his dogs :) */
-				i = rand_range(60,MAX_R_IDX-2);
-				r_ptr = &r_info[i];
-
-				/* Make sure we are looking at a dead unique */
-				if (!(r_ptr->flags1 & RF1_UNIQUE))
-				{
-					j--;
-					continue;
-				}
-
-				if (!p_ptr->r_killed[i]) continue;
-
-				/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
-				   --- QUESTOR is currently NOT used!! - C. Blue */
-				if (r_ptr->flags1 & RF1_QUESTOR) continue;
-				/* ..hardcoding them instead: */
-//				if (i == 860 || i == 862 || i == 1032 || i == 1067 || i == 1085 || i == 1097) continue;
-				if (r_ptr->level >= 98) continue; /* Not Michael either */
-
-				if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
-
-				/* Special-dropping uniques too! */
-				/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
-
-				//				if (r_ptr->max_num > 0) continue;
-				if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
-					continue;
-
-				/* "Ressurect" the unique */
-				p_ptr->r_killed[i] = 0;
-				// 				r_ptr->max_num = 1;
-				//				r_ptr->respawn_timer = -1;
-
-				/* Tell the player */
-				/* the_sandman: added colour */
-				msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
-				//				msg_broadcast(0,buf); 
+				j--;
+				continue;
 			}
+
+			if (!p_ptr->r_killed[i]) continue;
+
+			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
+			   --- QUESTOR is currently NOT used!! - C. Blue */
+			if (r_ptr->flags1 & RF1_QUESTOR) continue;
+			/* ..hardcoding them instead: */
+//			if (i == 860 || i == 862 || i == 1032 || i == 1067 || i == 1085 || i == 1097) continue;
+			if (r_ptr->level >= 98) continue; /* Not Michael either */
+
+			if (r_ptr->flags7 & RF7_NAZGUL) continue; /* No nazguls */
+
+			/* Special-dropping uniques too! */
+			/* if (r_ptr->flags1 & RF1_DROP_CHOSEN) continue; */
+
+			//				if (r_ptr->max_num > 0) continue;
+			if (rand_int(cfg.unique_respawn_time * (r_ptr->level + 1)) > 9)
+				continue;
+
+			/* "Ressurect" the unique */
+			p_ptr->r_killed[i] = 0;
+			// 				r_ptr->max_num = 1;
+			//				r_ptr->respawn_timer = -1;
+
+			/* Tell the player */
+			/* the_sandman: added colour */
+			msg_format(j,"\377v%s rises from the dead!",(r_name + r_ptr->name));
+			//				msg_broadcast(0,buf); 
 		}
 
 #if 0 /* No more reswpan */
@@ -4973,7 +5074,8 @@ static void process_player_change_wpos(int Ind)
 						break;
 
 		/* Used ghostly travel */
-		case LEVEL_GHOST: starty = p_ptr->py;
+		case LEVEL_PROB_TRAVEL:
+		case LEVEL_GHOST: 		starty = p_ptr->py;
 						startx = p_ptr->px;
 						break;
 
@@ -5036,10 +5138,11 @@ static void process_player_change_wpos(int Ind)
 			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method==LEVEL_HOUSE)) continue;
 		}
 
-		/* Prevent recalling into no-tele vaults! - C. Blue */
-	        if((zcave[y][x].info & CAVE_STCK) &&
+		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
+	        if((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
 		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
-		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND))
+		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
+		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL))
 			continue;
 
 		/* Must be inside the level borders - mikaelh */
@@ -5212,8 +5315,8 @@ void dungeon(void)
 {
 
 #ifdef ARCADE_SERVER
-if (NumPlayers > 0 && turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
-if (NumPlayers > 0 && turn % (cfg.fps / 6) == 1) exec_lua(1, "tron()");
+        if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
+        if (turn % tron_speed == 1) exec_lua(1, "tron()");
 #endif
 
 	int i;
@@ -5283,6 +5386,23 @@ if (NumPlayers > 0 && turn % (cfg.fps / 6) == 1) exec_lua(1, "tron()");
 
 	///*** BEGIN NEW TURN ***///
 	turn++;
+
+	/* Check for overflow - mikaelh */
+	if (turn < 0)
+	{
+		/* Reset the turn counter */
+		/* This will cause some weird things */
+		/* Players will probably timeout */
+		turn = 1;
+
+		/* Log it */
+		s_printf("%s: TURN COUNTER RESET\n", showtime());
+
+		/* Reset empty party creation times */
+		for (i = 1; i < MAX_PARTIES; i++) {
+			if (parties[i].members == 0) parties[i].created = 0;
+		}
+	}
 
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i < NumPlayers + 1; i++)

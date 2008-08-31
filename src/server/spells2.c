@@ -128,6 +128,7 @@ void grow_trees(int Ind, int rad)
 #else
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 #endif
+
 	for (a = 0; a < rad * rad + 11; a++)
         {
                 cave_type **zcave = getcave(&p_ptr->wpos);
@@ -420,7 +421,7 @@ bool hp_player(int Ind, int num)
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HELL) && (num > 3))
+	if ((p_ptr->mode & MODE_HARD) && (num > 3))
 	  {
             num = num * 3 / 4;
 	  }
@@ -429,6 +430,9 @@ bool hp_player(int Ind, int num)
 
 	if (p_ptr->chp < p_ptr->mhp)
 	{
+		/* data collection for C_BLUE_AI: add up healing happening during current turn */
+		p_ptr->heal_turn[0] += (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+
 		p_ptr->chp += num;
 
 		if (p_ptr->chp > p_ptr->mhp)
@@ -501,7 +505,7 @@ bool hp_player_quiet(int Ind, int num)
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HELL) && (num > 3))
+	if ((p_ptr->mode & MODE_HARD) && (num > 3))
 	  {
             num = num * 3 / 4;
 	  }
@@ -510,6 +514,9 @@ bool hp_player_quiet(int Ind, int num)
 
 	if (p_ptr->chp < p_ptr->mhp)
 	{
+		/* data collection for C_BLUE_AI: add up healing happening during current turn */
+		p_ptr->heal_turn[0] += (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+
 		p_ptr->chp += num;
 
 		if (p_ptr->chp > p_ptr->mhp)
@@ -554,11 +561,11 @@ void warding_glyph(int Ind)
 	cave_type *c_ptr;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-
+#if 0
+#if 0
 	/* Require clean space */
 	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
-#if 0
         /* no terraforming in Bree.. */
         if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
 	/* ..nor in Valinor */
@@ -571,6 +578,9 @@ void warding_glyph(int Ind)
 
 	/* Create a glyph of warding */
 	c_ptr->feat = FEAT_GLYPH;
+#else
+	cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
+#endif
 }
 
 
@@ -1336,32 +1346,32 @@ void self_knowledge(int Ind)
 
 	}
 #ifdef USE_BLOCKING
-	if (p_ptr->shield_deflect)
+	if (apply_block_chance(p_ptr, p_ptr->shield_deflect))
 	{
-		if (p_ptr->shield_deflect >= 50)
+		if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 50)
 			fprintf(fff, "You are extremely good at blocking with your shield.\n");
-		else if (p_ptr->shield_deflect >= 30)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 30)
 			fprintf(fff, "You are very good at blocking with your shield.\n");
-		else if (p_ptr->shield_deflect >= 20)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 20)
 			fprintf(fff, "You are fairly good at blocking with your shield.\n");
-		else if (p_ptr->shield_deflect >= 15)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) >= 15)
 			fprintf(fff, "You aren't that good at blocking with your shield.\n");
-		else if (p_ptr->shield_deflect > 0)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) > 0)
 			fprintf(fff, "You are rather bad at blocking with your shield.\n");
 	}
 #endif
 #ifdef USE_PARRING
 	if (p_ptr->weapon_parry)
 	{
-		if (p_ptr->weapon_parry >= 30)
+		if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 30)
 			fprintf(fff, "You are extremely good at parrying with your weapon.\n");
-		else if (p_ptr->weapon_parry >= 25)
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 25)
 			fprintf(fff, "You are very good at parrying with your weapon\n");
-		else if (p_ptr->weapon_parry >= 20)
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 20)
 			fprintf(fff, "You are fairly good at parrying with your weapon.\n");
-		else if (p_ptr->weapon_parry >= 10)
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) >= 10)
 			fprintf(fff, "You aren't that good at parrying with your weapon.\n");
-		else if (p_ptr->weapon_parry > 0)
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) > 0)
 			fprintf(fff, "You are rather bad at parrying with your weapon.\n");
 	}
 #endif
@@ -3879,14 +3889,6 @@ bool create_artifact_aux(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-	/* Did we use up an item? */
-	if (p_ptr->using_up_item >= 0)
-	{
-		inven_item_describe(Ind, p_ptr->using_up_item);
-		inven_item_optimize(Ind, p_ptr->using_up_item);
-		p_ptr->using_up_item = -1;
-	}
-
 	/* Art creation finished */
 	p_ptr->current_artifact = FALSE;
 
@@ -3894,6 +3896,14 @@ bool create_artifact_aux(int Ind, int item)
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 	s_printf("%s: ART_CREATION succeeded: %s\n", showtime(), o_name);
+
+	/* Did we use up an item? (minus 1 art scroll) */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+	}
 
 	return TRUE;
 }
@@ -5294,7 +5304,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			 */
 			if(wpos->wz)
 			{
-				c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST);
+				c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT);
 			}
 
 			/* Lose light and knowledge */
@@ -5499,11 +5509,14 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 			
 			/* Lose room and vault and nest */
-			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST);
+			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT);
 
-			/* Lose light and knowledge */
+			/* Lose light */
 			c_ptr->info &= ~(CAVE_GLOW);
-			everyone_forget_spot(wpos, y, x);
+
+			/* This can be really annoying and frustrating - mikaelh */
+//			everyone_forget_spot(wpos, y, x);
+			everyone_lite_spot(wpos, y, x);
 
 			/* Skip the epicenter */
 			if (!dx && !dy) continue;
@@ -6505,8 +6518,8 @@ void swap_position(int Ind, int lty, int ltx){
 			q_ptr->px=tx;
 			#ifdef ARCADE_SERVER
 			if(p_ptr->game == 3) {
-			p_ptr->c = q_ptr->c = 1;
-			p_ptr->d = Ind2; }
+			p_ptr->arc_c = q_ptr->arc_c = 1;
+			p_ptr->arc_d = Ind2; }
 			#endif
 		}
 		

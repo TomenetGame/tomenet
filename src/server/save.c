@@ -967,6 +967,13 @@ static void wr_store(store_type *st_ptr)
 	}
 }
 
+static void wr_bbs() {
+	int i;
+	wr_s16b(BBS_LINES);
+	for (i = 0; i < BBS_LINES; i++)
+		wr_string(bbs_line[i]);
+}
+
 static void wr_quests(){
 	int i;
 	wr_s16b(questid);
@@ -2447,6 +2454,8 @@ static bool wr_server_savefile()
 	wr_u32b(account_id);
 	wr_s32b(player_id);
 	wr_s32b(turn);
+
+	wr_bbs();
 
 	/* Error in save */
 	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;

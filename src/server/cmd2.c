@@ -78,7 +78,7 @@ void do_cmd_go_up(int Ind)
 	/* Verify stairs if not a ghost, or admin wizard */
 	if (!is_admin(p_ptr) &&
 		c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_WAY_LESS &&
-		!p_ptr->prob_travel)
+		(!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
@@ -255,13 +255,14 @@ void do_cmd_go_up(int Ind)
 	{
 #ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
-        forget_view(Ind); //the_sandman
+    		forget_view(Ind); //the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else if (wpos->wz == -1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else msg_print(Ind, "You float upwards.");
-		p_ptr->new_level_method = LEVEL_GHOST;
+		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
+		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 	}
 	/* A player has left this depth */
 	new_players_on_depth(wpos,-1,TRUE);
@@ -412,7 +413,7 @@ void do_cmd_go_down(int Ind)
 //		|| c_ptr->feat == FEAT_BETWEEN2)
 	{
 		/* Check interference */
-		if (interfere(Ind, 20)) return;
+		if (interfere(Ind, 20)) return; /* between gate interference chance */
 		
 		if (between_effect(Ind, c_ptr)) return;
 		/* not jumped? strange.. */
@@ -423,7 +424,7 @@ void do_cmd_go_down(int Ind)
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
 	if (!is_admin(p_ptr) &&
 		c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_WAY_MORE &&
-		!p_ptr->prob_travel)
+		(!p_ptr->prob_travel || (c_ptr->info & CAVE_STCK)))
 	{
 		struct worldpos twpos;
 		wpcopy(&twpos, wpos);
@@ -597,13 +598,14 @@ void do_cmd_go_down(int Ind)
 	{
 #ifdef RPG_SERVER	/* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
-        forget_view(Ind);//the_sandman
+	        forget_view(Ind);//the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else if (wpos->wz == 1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else msg_print(Ind, "You float downwards.");
-		p_ptr->new_level_method = LEVEL_GHOST;
+		if (p_ptr->ghost) p_ptr->new_level_method = LEVEL_GHOST;
+		else p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 	}
 	/* A player has left this depth */
 	new_players_on_depth(wpos,-1,TRUE);
@@ -906,8 +908,8 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 				return (FALSE);
 			}
 			
-			if ((Players[i]->mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)) {
-				if (p_ptr->mode & MODE_IMMORTAL) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
+			if ((Players[i]->mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)) {
+				if (p_ptr->mode & MODE_EVERLASTING) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
 				else msg_print(Ind, "You cannot transfer houses to everlasting players!");
 				return(FALSE);
 			}
@@ -2504,7 +2506,7 @@ void do_cmd_bash(int Ind, int dir)
 					return;
 				}
 
-				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx);
+				do_cmd_throw(Ind, dir, 0 - c_ptr->o_idx, TRUE);
 
 				/* Set off trap (Hack -- handle like door trap) */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -3020,17 +3022,19 @@ int breakage_chance(object_type *o_ptr)
 		/* Sometimes break */
 		case TV_SCROLL:
 		case TV_WAND:
-		case TV_SHOT:
-		case TV_BOLT:
 		case TV_SPIKE:
 		{
 			return (25);
 		}
 
+		case TV_SHOT:
+		case TV_BOLT:
 		case TV_ARROW:
 		{
 			if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return (0);
-			else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (0);
+			else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (10);
+			else if (o_ptr->tval == TV_SHOT) return (10);
+			else if (o_ptr->tval == TV_BOLT) return (15);
 			else return (20);
 		}
 
@@ -3211,10 +3215,12 @@ void do_cmd_fire(int Ind, int dir)
         int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
 	bool		drainable = TRUE;
 	
+	int		break_chance;
+	
 	u32b f1, f1a, fx, esp;
 
 	char            o_name[160];
-	bool magic = FALSE, boomerang = FALSE, ethereal = FALSE;
+	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3256,7 +3262,10 @@ void do_cmd_fire(int Ind, int dir)
 	o_ptr = &(p_ptr->inventory[item]);
 
 	/* ethereal ammo? */
-	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) ethereal = TRUE;
+	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
+		returning = TRUE;
+		ethereal = TRUE;
+	}
 
 	if( check_guard_inscription( o_ptr->note, 'f' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -3301,7 +3310,7 @@ void do_cmd_fire(int Ind, int dir)
 		tmul = 1;
 
 		/* Hack -- sorta magic */
-		magic = TRUE;
+		returning = TRUE;
 	}
 
 	/* Get extra "power" from "extra might" */
@@ -3329,9 +3338,9 @@ void do_cmd_fire(int Ind, int dir)
 //  if (interfere(Ind, cfg.spell_interfere * 3)) return;
 	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
 	if (archery == SKILL_BOOMERANG) {
-		if (interfere(Ind, 25)) return;
+		if (interfere(Ind, 25)) return; /* boomerang interference chance */
 	} else {
-		if (interfere(Ind, 50)) return;
+		if (interfere(Ind, 50)) return; /* shooting interference chance */
 	}
 
 	if (!boomerang && cursed_p(o_ptr) && magik(50))
@@ -3364,11 +3373,19 @@ void do_cmd_fire(int Ind, int dir)
 	/* Hack -- suppress messages */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
-	/* Is this Magic Arrow? */
-	/* or magic shots or magic bolts? */
-	if (((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
-	     && o_ptr->sval == SV_AMMO_MAGIC) && (!cursed_p(o_ptr) || artifact_p(o_ptr)))
+	/* Is this magic Arrow or magic shots or magic bolts? */
+	if ((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
+	     && o_ptr->sval == SV_AMMO_MAGIC) {
 	        magic = TRUE;
+		if (!cursed_p(o_ptr)) returning = TRUE;
+	}
+	/* Artifact ammo doesn't drop to floor */
+	if (artifact_p(o_ptr)) {
+		returning = TRUE;
+
+		/* making art ammo less reusable over the history of many chars, increasing demand.. */
+//		o_ptr->level = 0;
+	}
 
 	/* Ricochets ? */
 #if 0 // DG - no
@@ -3380,11 +3397,11 @@ void do_cmd_fire(int Ind, int dir)
 	}
 #else	// 0
 	/* Sling mastery yields bullet ricochets */
-	if (archery == SKILL_SLING && !magic && !boomerang && !ethereal)
+	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal)
 	{
-		num_ricochet = get_skill_scale_fine(p_ptr, SKILL_SLING, 6);
+		num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));//6
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
-		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_SLING, 50);
+		ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);//45+(50)
 	}
 #endif
 	/* Create a "local missile object" */
@@ -3419,6 +3436,7 @@ void do_cmd_fire(int Ind, int dir)
 		ty = p_ptr->target_row;
 	}
 	
+	break_chance = breakage_chance(o_ptr);
 	break_cloaking(Ind);
 
 	/* Reduce and describe inventory */
@@ -3435,7 +3453,7 @@ void do_cmd_fire(int Ind, int dir)
 			}
 #endif
 		} else if (ethereal) {
-			if (magik(10)) {
+			if (cursed_p(o_ptr) ? TRUE : break_chance) {
 				if (item >= 0) {
 					inven_item_increase(Ind, item, -1);
 //					inven_item_describe(Ind, item);
@@ -3508,6 +3526,9 @@ void do_cmd_fire(int Ind, int dir)
 
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
+
+			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 			/* Advance the distance */
 			cur_dis++;
@@ -3642,7 +3663,7 @@ void do_cmd_fire(int Ind, int dir)
 				                    	   has been left out, since if you want max block, you'll have to take off your weapon!) */
 				                	if (q_ptr->shield_deflect &&
 							    (!q_ptr->inventory[INVEN_WIELD].k_idx || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
-								if (magik(q_ptr->shield_deflect + 15)) { /* boost for PvP! */
+								if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
 									if (visible) msg_format(Ind, "%s blocks %s!", p_name, o_name);
 									msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
 									continue;
@@ -3651,7 +3672,7 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 #ifdef USE_PARRYING
 							if (q_ptr->weapon_parry) {
-								if (magik(q_ptr->weapon_parry + 5)) { /* boost for PvP! */
+								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
 									if (visible) msg_format(Ind, "%s parries %s!", p_name, o_name);
 									msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
 									continue;
@@ -3727,6 +3748,11 @@ void do_cmd_fire(int Ind, int dir)
 									{
 										if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
 										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+
+										/* Log it if no blood bond - mikaelh */
+										if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
+											s_printf("%s attacked %s.\n", p_ptr->name, Players[0 - c_ptr->m_idx]->name);
+										}
 									}
 								}
 //less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
@@ -3746,7 +3772,7 @@ void do_cmd_fire(int Ind, int dir)
 										&& p_ptr->bow_brand_t != BRAND_CONF) 
 									do_arrow_brand_effect(Ind, y, x);
 
-								if (!magic && o_ptr->pval) /* maybe add && !ethereal here too? */
+								if (!boomerang && !magic && o_ptr->pval)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
@@ -3804,8 +3830,9 @@ void do_cmd_fire(int Ind, int dir)
 					}
 
 
-					/* Handle reflection - it's back, though weaker - C. Blue */
-					if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
+					/* Handle reflection - it's back, though weaker -
+					   New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
+					if ((r_ptr->flags2 & RF2_REFLECTING) && !boomerang && !o_ptr->pval && magik(50)) {
 						msg_format(Ind, "The %s was deflected.", o_name);
 						num_ricochet = 1;
 						hit_body = 1;
@@ -3972,7 +3999,7 @@ void do_cmd_fire(int Ind, int dir)
 					if (!boomerang && p_ptr->bow_brand_t) 
 						do_arrow_brand_effect(Ind, y, x);
 
-					if (!magic && o_ptr->pval) /* maybe add && !ethereal here too? */
+					if (!boomerang && !magic && o_ptr->pval)
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
@@ -3984,7 +4011,7 @@ void do_cmd_fire(int Ind, int dir)
 		/* Extra (exploding) hack: */
 		/* Stopped by walls/doors ?*/
 		if (!cave_los(zcave, ny, nx)) {
-			if (!magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul); /* maybe add && !ethereal here too? */
+			if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 		}
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
@@ -3992,17 +4019,17 @@ void do_cmd_fire(int Ind, int dir)
 		/* Chance of breakage (during attacks) */
 		if (archery == SKILL_BOOMERANG) {
 			/* finer resolution to match reduced break rate of boomerangs - C. Blue */
-			j = (hit_body ? breakage_chance(o_ptr) : 0) * 100;
+			j = (hit_body ? break_chance : 0) * 100;
 //			j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
 			j = (j * (2500 - get_skill_scale(p_ptr, archery, 2450))) / 5000;
 		} else {
-			j = (hit_body ? breakage_chance(o_ptr) : breakage_chance(o_ptr) / 3) * 100;
+			j = (hit_body ? break_chance : break_chance / 3) * 100;
 //			j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 	
 		/* Break ? */
-		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && (!magic || boomerang) && !artifact_p(o_ptr) && !ethereal)
+		if((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j)) && !magic && !ethereal && !artifact_p(o_ptr))
 		{
 			breakage = 100;
 			if (boomerang) /* change a large part of the break chance to actually
@@ -4033,7 +4060,7 @@ void do_cmd_fire(int Ind, int dir)
 				p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 				/* Redraw */
-				p_ptr->redraw |= (PR_PLUSSES);
+				p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
 
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -4101,6 +4128,9 @@ void do_cmd_fire(int Ind, int dir)
 
 			/* Stopped by walls/doors */
 			if (!cave_los(zcave, ny, nx)) break;
+
+			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
 			/* Advance the distance */
 			cur_dis++;
@@ -4170,7 +4200,7 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
-	if ((!magic) && (!ethereal) && (!artifact_p(o_ptr))) drop_near(o_ptr, breakage, wpos, y, x);
+	if (!returning) drop_near(o_ptr, breakage, wpos, y, x);
 
 	suppress_message = FALSE;
 }
@@ -4318,7 +4348,7 @@ bool interfere(int Ind, int chance)
  * to hit bonus of the weapon to have an effect?  Should it ever cause
  * the item to be destroyed?  Should it do any damage at all?
  */
-void do_cmd_throw(int Ind, int dir, int item)
+void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos=&p_ptr->wpos;
@@ -4372,24 +4402,30 @@ void do_cmd_throw(int Ind, int dir, int item)
 	}
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
 	if(o_ptr->tval==0){
-		msg_print(Ind, "\377rYou cannot throw that.");
+		if (!bashing) msg_print(Ind, "\377rYou cannot throw that.");
+		else msg_print(Ind, "\377rYou cannot bash that.");
 		return;
 	}
 
-	/* Handle the newbies_cannot_drop option */
+	if (!bashing) {
+		/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
-	if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
-	{
-/*		msg_format(Ind, "Please don't litter the %s.",
-			istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
-		msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
-		return;
-	}
+		if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
+		{
+/*			msg_format(Ind, "Please don't litter the %s.",
+			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
+			msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
+			return;
+		}
 #endif
+	}
 
 	if( check_guard_inscription( o_ptr->note, 'v' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
@@ -4399,7 +4435,7 @@ void do_cmd_throw(int Ind, int dir, int item)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
-	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0)
+	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0 && !bashing)
 	{
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to throw it.");
@@ -4408,17 +4444,19 @@ void do_cmd_throw(int Ind, int dir, int item)
 		return;
 	}
 
+	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
-        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-                o_ptr->level = 0;
+	        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+    		    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+            		o_ptr->level = 0;
 #endif
+	}
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
 
 	/* Handle rugby ball */
-	if(o_ptr->tval==1 && o_ptr->sval==9){
+	if(o_ptr->tval==1 && o_ptr->sval==9 && !bashing){
 		msg_print(Ind, "\377yYou pass the ball");
 		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
@@ -5080,7 +5118,7 @@ void do_cmd_own(int Ind)
 	}
 	wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own = p_ptr->id;
 	
-	if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
+	if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
 		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"Emperor":"Empress", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);
 	} else {
 		snprintf(buf, sizeof(buf), "%s %s now owns (%d,%d).", (p_ptr->male)?"King":"Queen", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy);

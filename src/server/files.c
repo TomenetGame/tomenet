@@ -490,6 +490,8 @@ static void display_player_middle(int Ind)
 	Send_hp(Ind, p_ptr->mhp, p_ptr->chp);
 
 	Send_sp(Ind, p_ptr->msp, p_ptr->csp);
+
+	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
 }
 
 
@@ -1021,7 +1023,7 @@ long total_points(int Ind)
 	{
 		bonusm += 25;
 	}
-	if (p_ptr->mode & MODE_HELL)
+	if (p_ptr->mode & MODE_HARD)
 	{
 		bonusm += 25;
 	}
@@ -1058,7 +1060,7 @@ long total_points(int Ind)
 #if 0
 	/* Maggot bonus.. beware, r_idx is hard-coded! */
 	int i = p_ptr->r_killed[8]? 50 : 100;
-	if (p_ptr->mode & MODE_HELL) i = i * 5 / 4;
+	if (p_ptr->mode & MODE_HARD) i = i * 5 / 4;
 
 	if (p_ptr->mode & MODE_NO_GHOST) return (((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4 / 3)*i/100);
 	else return ((p_ptr->max_exp + (100 * p_ptr->max_dlv) + p_ptr->au)*i/100);
@@ -1421,9 +1423,9 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		for (gold = the_score.gold; isspace(*gold); gold++) /* loop */;
 		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
 
-		modebuf = the_score.mode[0];
+		modebuf = (the_score.mode[0] & MODE_MASK);
 		switch (modebuf) {
-                case MODE_HELL:
+                case MODE_HARD:
 			strcpy(modestr, "purgatorial ");
 			strcpy(modecol, "");
 	    	        break;
@@ -1431,7 +1433,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			strcpy(modestr, "unworldly ");
 			strcpy(modecol, "\377D");
 	                break;
-		case (MODE_HELL + MODE_NO_GHOST):
+		case (MODE_HARD + MODE_NO_GHOST):
 			strcpy(modestr, "hellish ");
 			strcpy(modecol, "\377D");
 			break;
@@ -2383,8 +2385,13 @@ static void handle_signal_abort(int sig)
 	/* Disable handler */
 	(void)signal(sig, SIG_IGN);
 
+	s_printf("Received signal %d.\n", sig);
+
 	/* Nothing to save, just quit */
 	if (!server_generated || server_saved) quit(NULL);
+
+	/* Tell the metaserver that we're going down */
+	Report_to_meta(META_DIE);
 
 	/* Save everybody and quit */
 	exit_game_panic();

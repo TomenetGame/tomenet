@@ -242,19 +242,24 @@ static void prt_sanity(int Ind)
 	{
 //		attr = TERM_RED;
 		attr = TERM_MULTI;
-		strcpy(buf, "      Mad");
+		strcpy(buf, "      MAD");
 	}
 	else if (ratio < 25)
 	{
-		attr = TERM_ORANGE;
+		attr = TERM_SHIELDI;
 		strcpy(buf, "   Insane");
 	}
 	else if (ratio < 50)
 	{
+		attr = TERM_ORANGE;
+		strcpy(buf, "   Crazy");
+	}
+	else if (ratio < 75)
+	{
 		attr = TERM_YELLOW;
 		strcpy(buf, "    Weird");
 	}
-	else if (ratio < 75)
+	else if (ratio < 90)
 	{
 		attr = TERM_GREEN;
 		strcpy(buf, "     Sane");
@@ -301,6 +306,16 @@ static void prt_hp(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	Send_hp(Ind, p_ptr->mhp, p_ptr->chp);
+}
+
+/*
+ * Prints Cur/Max stamina points
+ */
+static void prt_stamina(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+//	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
 }
 
 /*
@@ -468,7 +483,7 @@ static void prt_speed(int Ind)
 #if 0	/* methinks we'd better tell it to players.. - Jir - */
 	/* Hack -- Visually "undo" the Search Mode Slowdown */
 	/* And this formula can be wrong for hellish */
-//	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HELL ? 5 : 10);
+//	if (p_ptr->searching) i+=(p_ptr->mode&MODE_HARD ? 5 : 10);
 	if (p_ptr->searching) i += 10;
 #endif	// 0
 
@@ -619,8 +634,10 @@ static void prt_encumberment(int Ind)
 	byte monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0;
 	byte awkward_shoot = p_ptr->awkward_shoot?1:0;
 
-	if (p_ptr->pclass != CLASS_WARRIOR && p_ptr->pclass != CLASS_ARCHER) {
+	if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) {
 		awkward_armor = 0; /* they don't use magic or SP */
+/* todo: make cumber_glove and awkward_armor either both get checked here, or in xtra1.c,
+   not one here, one in xtra1.c .. (cleaning-up measurements) */
 	}
 
 	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
@@ -842,6 +859,9 @@ static void prt_frame_basic(int Ind)
 
 	/* Spellpoints */
 	prt_sp(Ind);
+
+	/* Stamina */
+	prt_stamina(Ind);
 
 	/* Gold */
 	prt_gold(Ind);
@@ -1390,7 +1410,7 @@ void calc_hitpoints(int Ind)
 //	object_type *o_ptr;
 //	u32b f1, f2, f3, f4, f5, esp;
 
-	int bonus, Ind2 = 0;
+	int bonus, Ind2 = 0, cr_mhp = p_ptr->cp_ptr->c_mhp + p_ptr->rp_ptr->r_mhp;
 	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
 	int bonus_cap;
@@ -1450,7 +1470,7 @@ void calc_hitpoints(int Ind)
    Istari could still be instakilled (max. sorcery skill) if the boost is diminished,
    so only Yeek Mimics whose HP greatly reduces the low hitdice effect should be affected,
    as well as Adventurer-Mimics.. since it cannot be skill-based (might change anytime) nor
-   class-based, we just punish all Yeeks, that's why they're for after all >;) */
+   class-based, we just punish all Yeeks, that's what they're for after all >;) */
 #if 0 /* Reduced boost? */
 		if (p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK)
 			weakling_boost = ((p_ptr->lev < 50) ?
@@ -1462,6 +1482,7 @@ void calc_hitpoints(int Ind)
 					((50 * (6 - p_ptr->cp_ptr->c_mhp * 2)) / 3)); /* Don't grow further above level 50 */
 #endif
 #if 1 /* Slowly diminishing boost? */
+    #if 0
 		weakling_boost = ((p_ptr->lev < 50) ?
 				(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
 /*					(p_ptr->pclass == CLASS_MAGE || p_ptr->prace != RACE_YEEK) ?*/
@@ -1470,6 +1491,18 @@ void calc_hitpoints(int Ind)
 					(50 * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20 : /* <- full bonus */
 					((100 - p_ptr->lev) * ((100 - p_ptr->cp_ptr->c_mhp * p_ptr->cp_ptr->c_mhp) + 20)) / 20)); /* <- full bonus, slowly diminishing */
 					/* Note that the diminishing ends at level 100 ;) So it's not that bad */
+    #else /* new (July 2008): take class+race hit dice into account, not just class hit dice */
+		weakling_boost = (p_ptr->lev <= 50) ?
+				(((p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2500) * ((576 - cr_mhp * cr_mhp) + 105)) / 105 : /* <- full bonus */
+	#if 1
+				/* this #if 1 is needed, because otherwise hdice differences would be too big in end-game :/
+				In fact this is but a bad hack - what should be done is adjusting hdice tables for races/classes instead. */
+				(50 * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- keep (!) full bonus for the rest of career up to level 99 */
+	#else
+				/* currently discrepancies between yeek/human priest and ent warrior would be TOO big at end-game (>> level 50) */
+				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 */
+	#endif
+    #endif
 #endif
 
 		/* Help very weak characters close to level 50 to avoid instakill on trying to win */
@@ -2560,6 +2593,34 @@ int calc_blows_weapons(int Ind)
 	return num_blow;
 }
 
+int calc_crit_obj(int Ind, object_type *o_ptr)
+{
+	artifact_type *a_ptr;
+	int xcrit = 0;
+	u32b f1, f2, f3, f4, f5, esp;
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
+
+	if (f5 & (TR5_CRIT)) xcrit = o_ptr->bpval;
+	/* check for either.. */
+	if (o_ptr->name2) {
+		/* additional crits from an ego power, or.. */
+		a_ptr = ego_make(o_ptr);
+		f5 &= ~(k_info[o_ptr->k_idx].flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+	}
+	if (o_ptr->name1 == ART_RANDART) {
+		/* additional crits from a randart power. */
+		a_ptr = randart_make(o_ptr);
+		f5 &= ~(k_info[o_ptr->k_idx].flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+	}
+	if ((f5 & TR5_CRIT)
+#if 0 /* this appearently works */
+	    && o_ptr->pval > xcrit) xcrit = o_ptr->pval;
+#else /* this is how it's done in xtra1.c though */
+		) xcrit += o_ptr->pval; /* no intrinsic +CRIT items in k_info.txt at the moment anyway, so it doesn't matter which way we choose */
+#endif
+	return (xcrit);
+}
+
 
 /*
  * Calculate the players current "state", taking into account
@@ -2871,11 +2932,10 @@ void calc_bonuses(int Ind)
 		/* Start with "normal" speed */
 		p_ptr->pspeed = 110;
 
-		#ifdef ARCADE_SERVER
+#ifdef ARCADE_SERVER
 		p_ptr->pspeed = 130;
-		if(p_ptr->stun > 0)
-		p_ptr->pspeed -= 3;
-		#endif
+		if(p_ptr->stun > 0) p_ptr->pspeed -= 3;
+#endif
 
 		/* Bats get +10 speed ... they need it!*/
 		if (p_ptr->fruit_bat){
@@ -3131,7 +3191,7 @@ void calc_bonuses(int Ind)
 	}
 
        	/* Apply the racial modifiers */
-	if (p_ptr->mode & MODE_HELL)
+	if (p_ptr->mode & MODE_HARD)
 	{
 		for (i = 0; i < 6; i++)
 		{
@@ -3694,7 +3754,7 @@ void calc_bonuses(int Ind)
 	else if (p_ptr->to_l < to_life) p_ptr->to_l = to_life;
 
 	/* Hard/Hellish mode also gives mana penalty */
-	if (p_ptr->mode & MODE_HELL) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
+	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
 
 	/* Check for temporary blessings */
 	if (p_ptr->bless_temp_luck) p_ptr->luck_cur += p_ptr->bless_temp_luck_power;
@@ -4378,7 +4438,7 @@ void calc_bonuses(int Ind)
 		(((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
 	}
 
-	if (p_ptr->mode & MODE_HELL)
+	if (p_ptr->mode & MODE_HARD)
 	{
 		if (p_ptr->dis_to_a > 0) p_ptr->dis_to_a = (p_ptr->dis_to_a * 2) / 3;
 		if (p_ptr->to_a > 0) p_ptr->to_a = (p_ptr->to_a * 2) / 3;
@@ -4578,8 +4638,8 @@ void calc_bonuses(int Ind)
 		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		}
 
-		if (p_ptr->confused || p_ptr->blind) p_ptr->shield_deflect /= 2;
-		if (p_ptr->paralyzed) p_ptr->shield_deflect = 0;
+//		if (p_ptr->confused || p_ptr->blind) p_ptr->shield_deflect /= 2;
+//		if (p_ptr->paralyzed) p_ptr->shield_deflect = 0;
 	}
 #endif
 
@@ -4774,7 +4834,7 @@ void calc_bonuses(int Ind)
 	p_ptr->see_infra += p_ptr->rune_IV;
 	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
 #endif
-	if (p_ptr->mode & MODE_HELL && p_ptr->pspeed > 110)
+	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110)
 	{
 		int speed = p_ptr->pspeed - 110;
 
@@ -4788,7 +4848,7 @@ void calc_bonuses(int Ind)
 
 
 	/* Hell mode is HARD */
-	if ((p_ptr->mode & MODE_HELL) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
+	if ((p_ptr->mode & MODE_HARD) && (p_ptr->num_blow > 1)) p_ptr->num_blow--;
 
 	/* A perma_cursed weapon stays even in weapon-less body form, reduce blows for that: */
 	if ((p_ptr->inventory[INVEN_WIELD].k_idx ||
@@ -4968,7 +5028,7 @@ void calc_bonuses(int Ind)
 	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 	{
 		/* can't aim well while carrying a shield on the arm! */
-		p_ptr->to_h_ranged /= 2;
+		p_ptr->to_h_ranged /= 4;
 		p_ptr->awkward_shoot = TRUE;
 	}
 
@@ -5457,9 +5517,6 @@ void calc_bonuses(int Ind)
 
 	/* Limit critical hits bonus */
         if ((p_ptr->xtra_crit > 50) && !is_admin(p_ptr)) p_ptr->xtra_crit = 50;
-	/* Map critical hits bonus to a curve, similar to LUCK */
-//	p_ptr->xtra_crit = 60 - (600 / (p_ptr->xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
-	p_ptr->xtra_crit = 65 - (975 / (p_ptr->xtra_crit + 15)); /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
 
 	/* Limit speed penalty from total_weight */
 	if ((p_ptr->pspeed < 10) && !is_admin(p_ptr)) p_ptr->pspeed = 10;
@@ -5735,6 +5792,12 @@ void redraw_stuff(int Ind)
 	{
 		p_ptr->redraw &= ~(PR_HP);
 		prt_hp(Ind);
+	}
+
+	if (p_ptr->redraw & PR_STAMINA)
+	{
+		p_ptr->redraw &= ~(PR_STAMINA);
+		prt_stamina(Ind);
 	}
 
 	if(p_ptr->redraw & PR_SANITY)

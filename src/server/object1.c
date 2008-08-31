@@ -1891,13 +1891,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
                         if (!e_ptr->before && o_ptr->name2)
                         {
-                                t = object_desc_chr(t, ' ');
+				if (strlen(e_name + e_ptr->name)) t = object_desc_chr(t, ' ');
                                 t = object_desc_str(t, (e_name + e_ptr->name));
+
                         }
 #if 1
                         else if (!e2_ptr->before && o_ptr->name2b)
                         {
-                                t = object_desc_chr(t, ' ');
+				if (strlen(e_name + e2_ptr->name)) t = object_desc_chr(t, ' ');
                                 t = object_desc_str(t, (e_name + e2_ptr->name));
 //                                ego = e2_ptr->name + e_name;
 						}
@@ -3120,7 +3121,7 @@ cptr item_activation(object_type *o_ptr)
 		}
 		case ART_NIGHT:
 		{
-			return "vampiric drain (3*100) every 250 turns";
+			return "drain life (3*100) every 250 turns";
 		}
 		case ART_NATUREBANE:
 		{
@@ -3537,7 +3538,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_VAMPIRE_1:
 			{
-				return "vampiric drain (3*50) every 400 turns";
+				return "drain life (3*50) every 400 turns";
 			}
 			case ACT_BO_MISS_2:
 			{
@@ -3557,7 +3558,7 @@ cptr item_activation(object_type *o_ptr)
 			}
 			case ACT_VAMPIRE_2:
 			{
-				return "vampiric drain (3*100) every 400 turns";
+				return "drain life (3*100) every 400 turns";
 			}
 			case ACT_CALL_CHAOS:
 			{
@@ -4074,7 +4075,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
         switch(o_ptr->tval){
         case TV_BLUNT:
-                fprintf(fff, "It's a%s hafted weapon.\n", ca_ptr); break;
+                fprintf(fff, "It's a%s blunt weapon.\n", ca_ptr); break;
         case TV_POLEARM:
                 fprintf(fff, "It's a%s polearm.\n", ca_ptr); break;
         case TV_SWORD:
@@ -4880,17 +4881,17 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f5 & (TR5_DRAIN_MANA))
 	{
-		fprintf(fff, "It drains mana.\n");
+		fprintf(fff, "It drains your magic.\n");
 	}
 
 	if (f5 & (TR5_DRAIN_HP))
 	{
-		fprintf(fff, "It drains your life.\n");
+		fprintf(fff, "It drains your health.\n");
 	}
 
 	if (f3 & (TR3_DRAIN_EXP))
 	{
-		fprintf(fff, "It drains your experience.\n");
+		fprintf(fff, "It drains your life force.\n");
 	}
 	if (f3 & (TR3_TELEPORT))
 	{
@@ -5454,7 +5455,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 	if (f3 & TR3_DRAIN_EXP)
 	{
-		info[i++] = "It drains experience.";
+		info[i++] = "It drains your life force.";
 	}
 	if (f3 & TR3_TELEPORT)
 	{
@@ -6320,17 +6321,17 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
         if (f5 & (TR5_DRAIN_MANA))
 	{
-                info[i++] = "It drains mana.";
+                info[i++] = "It drains your magic.";
 	}
 
         if (f5 & (TR5_DRAIN_HP))
 	{
-                info[i++] = "It drains your life.";
+                info[i++] = "It drains your health.";
 	}
 
 	if (f3 & (TR3_DRAIN_EXP))
 	{
-		info[i++] = "It drains your experience.";
+		info[i++] = "It drains your life force.";
 	}
 	if (f3 & (TR3_TELEPORT))
 	{
@@ -6928,10 +6929,10 @@ bool can_use(int Ind, object_type *o_ptr)
 
 	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
-	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_IMMORTAL)) && (o_ptr->owner_mode & MODE_IMMORTAL))
+	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_EVERLASTING)) && (o_ptr->owner_mode & MODE_EVERLASTING))
                 return FALSE;
 	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) &&
-	    (p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))
+	    (p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))
 		return FALSE;
 
 	/* Hack -- convert if available */
@@ -6964,14 +6965,14 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		return (FALSE);
 	}
 
-	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_IMMORTAL)) && (o_ptr->owner_mode & MODE_IMMORTAL))
+	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_EVERLASTING)) && (o_ptr->owner_mode & MODE_EVERLASTING))
 	{
 		msg_print(Ind, "You cannot use things that belong to everlasting players.");
                 return FALSE;
 	}
 
 	if ((cfg.charmode_trading_restrictions > 1) &&
-	    (o_ptr->owner) && (p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))
+	    (o_ptr->owner) && (p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))
 	{
 		msg_print(Ind, "You cannot use things that belong to non-everlasting players.");
                 return FALSE;

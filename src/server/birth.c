@@ -1137,10 +1137,10 @@ static byte bard_init[BARD_INIT_NUM][2] =
 #define do_admin_outfit()	\
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
-	o_ptr->discount = 100; \
+/*	o_ptr->discount = 100; */ /* was annoying text-wise */ \
 	o_ptr->ident |= ID_MENTAL; \
-	o_ptr->owner = p_ptr->id; \
-        o_ptr->owner_mode = p_ptr->mode; \
+/*	o_ptr->owner = p_ptr->id; */ \
+/*	o_ptr->owner_mode = p_ptr->mode; */ \
 	o_ptr->level = 1; \
 	(void)inven_carry(Ind, o_ptr);
 
@@ -1176,6 +1176,10 @@ void admin_outfit(int Ind, int realm)
 		do_admin_outfit();
 	}
 #endif
+
+	invcopy(o_ptr, lookup_kind(TV_BOOK, 58)); /* Handbook of Dungeon Keeping */
+	o_ptr->number = 1;
+	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
@@ -1214,6 +1218,12 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 3;
 	o_ptr->name2 = EGO_RISTARI;
 	o_ptr->pval = 0;
+	do_admin_outfit();
+
+	invcopy(o_ptr, lookup_kind(TV_HELM, SV_GOGGLES_DM));
+	o_ptr->name1 = ART_GOGGLES_DM;
+//	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
 	do_admin_outfit();
 }
 
@@ -1660,8 +1670,10 @@ static void player_setup(int Ind, bool new)
 	{
 		for (i = 0; i < 3000; i++)
 		{
-			d = (i + 4) / 10;
-			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
+			d = (i + 9) / 10;
+//			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
+			/* Don't require LOS anymore - mikaelh */
+			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 1);
 
 			if (!in_bounds(y, x) || !cave_empty_bold(zcave, y, x)) continue;
 			else
@@ -2014,12 +2026,26 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->team=0;
 
 	/* Set info */
+
+#if 1 /* keep for now to stay compatible, doesn't hurt us */
 	if (sex > 511)
 	{
 		sex -= 512;
 		p_ptr->fruit_bat = 1;
+		p_ptr->mode |= MODE_FRUIT_BAT;
 	}
-	p_ptr->mode = sex & ~MODE_MALE;
+#endif
+#if 1 /* don't allow yet, until it's done getting implemented.. */
+	p_ptr->mode &= ~MODE_PVP;
+#endif
+
+	p_ptr->mode |= sex & ~MODE_MALE;
+
+	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
+	
+	/* fix potential exploits */
+	if (p_ptr->mode & MODE_EVERLASTING) p_ptr->mode &= ~(MODE_HARD | MODE_NO_GHOST);
+	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST);
 
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
@@ -2039,7 +2065,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 #ifdef RPG_SERVER /* Make characters always NO_GHOST */
 	p_ptr->mode |= MODE_NO_GHOST;
-	p_ptr->mode &= ~MODE_IMMORTAL;
+	p_ptr->mode &= ~MODE_EVERLASTING;
 #endif
 
 	/* Set his ID */

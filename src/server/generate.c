@@ -400,6 +400,19 @@ static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
 	}
 }
 
+extern void arcade_wipe(worldpos *wpos)
+{
+    cave_type **zcave;
+	cave_type *c_ptr;
+	if(!(zcave=getcave(wpos))) return;
+int my, mx;
+for(mx = 1; mx < 131; mx++) {
+        for(my = 1; my < 43; my++) {
+                cave_set_feat(wpos, my, mx, 1);
+                }
+        }
+return;
+}
 
 /*
  * Pick a random direction
@@ -881,6 +894,9 @@ static void alloc_stairs(struct worldpos *wpos, int feat, int num, int walls)
 
 				/* Require "naked" floor grid */
 				if (!cave_naked_bold(zcave, y, x)) continue;
+				
+				/* No stairs that lead into nests/pits */
+				if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
 				/* Require a certain number of adjacent walls */
 				if (next_to_walls(wpos, y, x) < walls) continue;
@@ -3271,9 +3287,11 @@ static bool vault_aux_demon(int r_idx)
  * "appropriate" non-unique monsters for the nest.
  *
  * Currently, a monster nest is one of
- *   a nest of "jelly" monsters   (Dungeon level 5 and deeper)
- *   a nest of "animal" monsters  (Dungeon level 30 and deeper)
- *   a nest of "undead" monsters  (Dungeon level 50 and deeper)
+ *   a nest of one monster symbol (Dungeon level 0 and deeper)
+ *   a nest of "jelly"/"treasure" monsters   (Dungeon level 5 and deeper)
+ *   a nest of one monster index  (Dungeon level 25 and deeper)
+ *   a nest of "animal"/"kennel" monsters  (Dungeon level 30 and deeper)
+ *   a nest of "chapel"/"undead" monsters  (Dungeon level 50 and deeper)
  *
  * Note that the "get_mon_num()" function may (rarely) fail, in which
  * case the nest will be empty, and will not affect the level rating.
@@ -3374,7 +3392,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
 	for (y = yval - 2; y <= yval + 2; y++)
 		for (x = xval - 9; x <= xval + 9; x++)
-			zcave[y][x].info |= CAVE_NEST;
+			zcave[y][x].info |= CAVE_NEST_PIT;
 
 
 	/* Hack -- Choose a nest type */
@@ -3399,11 +3417,13 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 		if ((dun_level >= (25 + randint(15))) && (rand_int(2) != 0))
 		{
+			/* monster nest (same r_info symbol) */
 			name = "symbol clone";
 			get_mon_num_hook = vault_aux_symbol;
 		}
 		else
 		{
+			/* monster nest (same r_idx) */
 			name = "clone";
 			get_mon_num_hook = vault_aux_clone;
 		}
@@ -3538,9 +3558,14 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
  * a "collection" of monsters of a given type organized in the room.
  *
  * Monster types in the pit
+ *   aquatic pit	(Dungeon Level 0 and deeper)
  *   orc pit	(Dungeon Level 5 and deeper)
  *   troll pit	(Dungeon Level 20 and deeper)
+ *   orc/ogre pit	(Dungeon Level 30 and deeper)
+ *   man pit (h/p)	(Dungeon Level 20 and deeper)
  *   giant pit	(Dungeon Level 40 and deeper)
+ *   same r_info symbol pit	(Dungeon Level 5 and deeper)
+ *   chapel pit	(Dungeon Level 5 and deeper)
  *   dragon pit	(Dungeon Level 60 and deeper)
  *   demon pit	(Dungeon Level 80 and deeper)
  *
@@ -3670,7 +3695,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	/* Prevent teleportation into the nest (experimental, 2008-05-26) */
 	for (y = yval - 2; y <= yval + 2; y++)
 		for (x = xval - 9; x <= xval + 9; x++)
-			zcave[y][x].info |= CAVE_NEST;
+			zcave[y][x].info |= CAVE_NEST_PIT;
 
 
 	/* Choose a pit type */

@@ -2033,10 +2033,10 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_STAR_HEAL:
 		{
 			hp_player(Ind, 200);
-			set_poisoned(Ind, 0);
+			set_poisoned(Ind, 0, 0);
 			set_blind(Ind, 0);
 			set_confused(Ind, 0);
-			set_cut(Ind, 0);
+			set_cut(Ind, 0, 0);
 			set_stun(Ind, 0);
 			if (p_ptr->black_breath)
 			{
@@ -2051,10 +2051,10 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 		case BACT_HEALING:
 		{
 			hp_player(Ind, 200);
-			set_poisoned(Ind, 0);
+			set_poisoned(Ind, 0, 0);
 			set_blind(Ind, 0);
 			set_confused(Ind, 0);
-			set_cut(Ind, 0);
+			set_cut(Ind, 0, 0);
 			set_stun(Ind, 0);
 			paid = TRUE;
 			break;

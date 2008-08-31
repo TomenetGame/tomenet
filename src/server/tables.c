@@ -2840,11 +2840,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 1200,
                         },
+#if 0
                         {
                                 SKILL_CALMNESS,
                                 '+', 0,
                                 '+', 600,
                         },
+#endif
                         {
                                 SKILL_INTERCEPT,
                                 '+', 1000,
@@ -3230,11 +3232,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 450,
                         },
+#if 0
                         {
                                 SKILL_HUNTING,
                                 '+', 0,
                                 '+', 400,
                         },
+#endif
                         {
                                 SKILL_MARTIAL_ARTS,
                                 '+', 0,
@@ -3385,7 +3389,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 1, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
-		5, 40,//3, 40,//4, 25
+		6, 40,//3, 40,//4, 25
 //		8, 40,
                 {
                         {
@@ -3614,11 +3618,13 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 700,
                         },
+#if 0
                         {
                                 SKILL_HUNTING,
                                 '+', 1000,
                                 '+', 800,
                         },
+#endif
                         {
                                 SKILL_DEVICE,
                                 '+', 1000,
@@ -4609,6 +4615,11 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 1000,
                         },
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 800,
+                        },
 			/* Health tree */
                         {
                                 SKILL_HEALTH,
@@ -4645,13 +4656,13 @@ player_class class_info[MAX_CLASS] =
 		10, 30, 30,  5, 20, 30, 45, 20,
 		 0, 11, 10,  0,  3,  5, 20,  5,
 //		4, 45,
-		5, 30,
+		4, 30,
                 {
                         /* Combat tree */
                         {
                                 SKILL_COMBAT,
                                 '+', 2000,
-                                '+', 900,//not nerfed, although priests=750,istari=300, bc shamans are also fighters(?)
+                                '+', 900,//900: not nerfed, although priests=750,istari=300, bc shamans are also fighters(?)
                         },
                         {
                                 SKILL_MASTERY,
@@ -5184,7 +5195,7 @@ cptr player_title[MAX_CLASS][11][4] =
 /*		{"Major","Major",},
 		{"Colonel","Colonel",}, these two we took out again since they are from modern age, not fitting this theme */
 		{"Champion", "Champion", "Champion", "Champion", },
-                {"Hero", "Hero", "Hero", "Hero", },//heh they are back :)
+                {"Hero", "Heroine", "Hero", "Heroine", },//heh they are back :)
 		{"General", "General", "General", "General", },
 		{"Baron", "Baroness", "Baron", "Baroness", },
 		{"Duke", "Duchess", "Duke", "Duchess", },
@@ -5377,8 +5388,8 @@ cptr player_title_special[MAX_CLASS][5][4] =
 		{"Overlord", "Overlord", "Overlord", "Overlord", },
 //                {"Hero", "Hero", }, hero is back in the normal warrior ranks!
                 {"Destroyer", "Destroyess", "Destroyer", "Destroyess", },
-                {"Titan", "Titan", "Titan", "Titan", },
                 {"Annihilator", "Annihilatress", "Annihilator", "Annihilatrss", },
+                {"Titan", "Titan", "Titan", "Titan", },
 #else
 		{"Admiral", "Admiral", },
 		{"Bombardier", "Bombardier", },

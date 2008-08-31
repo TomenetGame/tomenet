@@ -426,10 +426,10 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	/* Print a message */
 #if 0
 	fprintf(fff, "  %s the %s%s %s (%s%sLv %d, %s)",
-			q_ptr->name, (q_ptr->mode == MODE_HELL)?"hellish ":"",
+			q_ptr->name, (q_ptr->mode == MODE_HARD)?"hellish ":"",
 			race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title,
 			(q_ptr->total_winner)?
-			    ((p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))?
+			    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
 				((q_ptr->male)?"Emperor":"Empress"):
 				((q_ptr->male)?"King, ":"Queen, ")):
 			    ((q_ptr->male)?"Male, ":"Female, "),
@@ -443,20 +443,20 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	case 1:	fprintf(fff, "wussy "); break;
 	case 2: fprintf(fff, "silyl "); break;
 	default:
-		switch (q_ptr->mode)	// TODO: give better modifiers
+		switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 		{
     			case MODE_NORMAL:
 				break;
-			case MODE_HELL:
+			case MODE_HARD:
 				fprintf(fff, "purgatorial ");
 				break;
 			case MODE_NO_GHOST:
 				fprintf(fff, "unworldly ");
 				break;
-			case MODE_IMMORTAL:
+			case MODE_EVERLASTING:
 				fprintf(fff, "everlasting ");
 				break;
-	    		case (MODE_HELL + MODE_NO_GHOST):
+	    		case (MODE_HARD + MODE_NO_GHOST):
 				fprintf(fff, "hellish ");
 				break;
 		}
@@ -480,20 +480,20 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 
 #else
 #if 0
-	switch (q_ptr->mode)	// TODO: give better modifiers
+	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 	{
 		case MODE_NORMAL:
 			break;
-		case MODE_HELL:
+		case MODE_HARD:
 			fprintf(fff, "\377s");
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\377D");
 			break;
-		case MODE_IMMORTAL:
+		case MODE_EVERLASTING:
 			fprintf(fff, "\377B");
 			break;
-		case (MODE_HELL + MODE_NO_GHOST):
+		case (MODE_HARD + MODE_NO_GHOST):
 			fprintf(fff, "\377s");
 			break;
 	}
@@ -576,24 +576,24 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	else
 		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
 #endif
-	switch (q_ptr->mode)	// TODO: give better modifiers
+	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 	{
 		case MODE_NORMAL:
 			fprintf(fff, "\n\377W  *%s\377U ", info_chars);
 			break;
-		case MODE_HELL:
+		case MODE_EVERLASTING:
+			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
+			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
+			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
+			break;
+		case MODE_HARD:
 			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
 			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
-			break;
-		case MODE_IMMORTAL:
-			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
-			break;
-		case (MODE_HELL + MODE_NO_GHOST):
-			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
-			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
 			break;
 	}
 #else
@@ -610,7 +610,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		break; //Server Admin
 	default: fprintf(fff, "%s",
 		(q_ptr->total_winner)?
-		    ((q_ptr->mode & (MODE_HELL | MODE_NO_GHOST))?
+		    ((q_ptr->mode & (MODE_HARD | MODE_NO_GHOST))?
 			((q_ptr->male)?"\377vEmperor\377U ":"\377vEmpress\377U "):
 		        ((q_ptr->male)?"\377vKing\377U ":"\377vQueen\377U ")):
 		((q_ptr->male)?"Male ":"Female ")); 

@@ -500,7 +500,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
 	/* Different modes cannot be stacked */
-	if ((o_ptr->owner_mode & MODE_IMMORTAL) != (j_ptr->owner_mode & MODE_IMMORTAL))
+	if ((o_ptr->owner_mode & MODE_EVERLASTING) != (j_ptr->owner_mode & MODE_EVERLASTING))
 		return (0);
 
 	/* Different charges (etc) cannot be stacked */
@@ -679,7 +679,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 				case TV_POLEARM:
 				case TV_SWORD:
 				case TV_AXE:
-				case TV_MSTAFF:
+//				case TV_MSTAFF:
 				case TV_BOOMERANG:
 				break;
 				default:
@@ -1238,9 +1238,10 @@ static int return_level(store_type *st_ptr)
 
 //	if (sti_ptr->flags1 & SF1_DEPEND_LEVEL) level += dun_level;
 
+	/* used for rare dungeon stores */
 	if (sti_ptr->flags1 & SF1_SHALLOW_LEVEL) level += 5 + rand_int(5);
 	if (sti_ptr->flags1 & SF1_MEDIUM_LEVEL) level += 25 + rand_int(25);
-	if (sti_ptr->flags1 & SF1_DEEP_LEVEL) level += 45 + rand_int(45);
+	if (sti_ptr->flags1 & SF1_DEEP_LEVEL) level += 45 + rand_int(45); /* if < 50 will prevent tomes in XBM, but occurs only rarely */
 
 //	if (sti_ptr->flags1 & SF1_ALL_ITEM) level += p_ptr->lev;
 
@@ -1295,37 +1296,67 @@ static void store_create(store_type *st_ptr)
 	ego_item_type *e_ptr, *e2_ptr;
 	bool good, great;
 	u32b resf = RESF_STORE;
-
-	if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) resf = RESF_STOREBM;
-
+	obj_theme theme;
+	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
+	if (black_market) resf = RESF_STOREBM;
 
-	/* Hack -- consider up to four items */
-	for (tries = 0; tries < 4; tries++)
+	/* Hack -- consider up to n items */
+	for (tries = 0; tries < (black_market ? 20 : 4); tries++) /*
+	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 	{
 		/* Black Market */
 
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) 
+		if (black_market) 
 		{
 			/* Hack -- Pick an item to sell */
 			item = rand_int(st_info[st_ptr->st_idx].table_num);
 			i = st_info[st_ptr->st_idx].table[item][0];
 			chance = st_info[st_ptr->st_idx].table[item][1];
 
-			/* Hack -- fake level for apply_magic() */
-			level = return_level(st_ptr);
-
 			/* Does it pass the rarity check ? */
+#if 0
 			/* Balancing check for other items!!! */
 			if (!magik(chance) || magik(60)) i=0;
+#else
+			if (!magik(chance)) i=0;
+#endif
 			else {
 				/* Hack -- mass-produce for black-market promised items */
-				if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+				if (black_market)
 				{
 					force_num = rand_range(2, 5);//was 3,9
 				}
+			}
+
+			/* Hack -- fake level for apply_magic() */
+			level = return_level(st_ptr); /* note: it's margin is random! */
+
+			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
+			if (i > 10000)
+			{
+				store_tval = i - 10000;
+
+				/* Do we forbid too shallow items ? */
+				if (st_info[st_ptr->st_idx].flags1 & SF1_FORCE_LEVEL) store_level = level;
+				else store_level = 0;
+				/* Hack -- for later, in case of getting only a tval, but no sval */
+				/* No themes */
+				theme.treasure = 100;
+				theme.combat = 100;
+				theme.magic = 100;
+				theme.tools = 100;
+				init_match_theme(theme);
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_storeok;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+
+				/* Get it ! */
+				i = get_obj_num(level, resf);
 			}
 
 			if(!i){
@@ -1358,28 +1389,26 @@ static void store_create(store_type *st_ptr)
 			if (!magik(chance)) continue;
 
 			/* Hack -- fake level for apply_magic() */
-			level = return_level(st_ptr);
+			level = return_level(st_ptr); /* note: it's margin is random!
+			    note: if this is moved into the i > 10000 part, book stores will mass-produce pval=0 books (manathrust) */
 
 			/* Hack -- i > 10000 means it's a tval and all svals are allowed */
-			/* NOTE: no store uses this */
 			if (i > 10000)
 			{
-				obj_theme theme;
+				store_tval = i - 10000;
 
+				/* Do we forbid too shallow items ? */
+				if (st_info[st_ptr->st_idx].flags1 & SF1_FORCE_LEVEL) store_level = level;
+				else store_level = 0;
+				/* Hack -- for later, in case of getting only a tval, but no sval */
 				/* No themes */
 				theme.treasure = 100;
 				theme.combat = 100;
 				theme.magic = 100;
 				theme.tools = 100;
 				init_match_theme(theme);
-
 				/* Activate restriction */
 				get_obj_num_hook = kind_is_storeok;
-				store_tval = i - 10000;
-
-				/* Do we forbid too shallow items ? */
-				if (st_info[st_ptr->st_idx].flags1 & SF1_FORCE_LEVEL) store_level = level;
-				else store_level = 0;
 
 				/* Prepare allocation table */
 				get_obj_num_prep(resf);
@@ -1429,7 +1458,7 @@ static void store_create(store_type *st_ptr)
 		if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) continue;
 
 		/* Prune the black market */
-		if (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM)
+		if (black_market)
 	    	{
 			/* Hack -- No "crappy" items */
 			if (black_market_crap(o_ptr)) continue;
@@ -1568,6 +1597,15 @@ let's depend on SF1*RARE flags here.. */
 		/* Mass produce and/or Apply discount */
 		mass_produce(o_ptr, st_ptr);
 
+		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT3) {
+		    /* Reduce discount */
+		    if (o_ptr->discount == 10) o_ptr->discount = 10;
+		    if (o_ptr->discount == 25) o_ptr->discount = 20;
+		    if (o_ptr->discount == 50) o_ptr->discount = 30;
+		    if (o_ptr->discount == 75) o_ptr->discount = 40;
+		    if (o_ptr->discount == 90) o_ptr->discount = 50;
+		    if (o_ptr->discount == 100) o_ptr->discount = 50;
+		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
 		    /* Reduce discount */
 		    if (o_ptr->discount == 10) o_ptr->discount = 0;
@@ -1603,8 +1641,7 @@ let's depend on SF1*RARE flags here.. */
 			o_ptr->number = force_num;
 		}
 
-		/* Nether Realm store items are always level 0 (or 99?) */
-		if (st_ptr->st_idx == STORE_BTSUPPLY) o_ptr->level = 0;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_ZEROLEVEL) o_ptr->level = 0;
 
 #if 0 // the lamps are already handled in determine_level_req now
 		/* Mining equipment store shouldn't have powerful low level items */
@@ -1739,10 +1776,10 @@ static void display_entry(int Ind, int pos)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
-		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL))
+		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
 			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
 		if ((cfg.charmode_trading_restrictions == 2) &&
-		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)))
+		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
 			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
 
 		/* Only show the weight of an individual item */
@@ -1775,10 +1812,10 @@ static void display_entry(int Ind, int pos)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
-		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_IMMORTAL) && (p_ptr->mode != MODE_IMMORTAL))
+		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
 			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
 		if ((cfg.charmode_trading_restrictions == 2) &&
-		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_IMMORTAL) != (p_ptr->mode & MODE_IMMORTAL)))
+		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
 			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
 
 		/* Only show the weight of an individual item */
@@ -1982,7 +2019,9 @@ static bool retire_owner_p(store_type *st_ptr)
 
 	if ((sti_ptr->owners[0] == sti_ptr->owners[1]) &&
 	    (sti_ptr->owners[0] == sti_ptr->owners[2]) &&
-	    (sti_ptr->owners[0] == sti_ptr->owners[3]))
+	    (sti_ptr->owners[0] == sti_ptr->owners[3]) &&
+	    (sti_ptr->owners[0] == sti_ptr->owners[4]) &&
+	    (sti_ptr->owners[0] == sti_ptr->owners[5])) /* MAX_STORE_OWNERS */
 	{
 		/* there is no other owner */
 		return FALSE;
@@ -2039,6 +2078,10 @@ void store_stole(int Ind, int item)
 	/* Store in which town? Or in the dungeon? */
 	st_ptr = &town[i].townstore[st];
 
+	/* Sanity check - mikaelh */
+	if (item < 0 || item >= st_ptr->stock_size)
+		return;
+
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
 
@@ -2049,12 +2092,12 @@ void store_stole(int Ind, int item)
 	}
 
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of everlasting players!");
 		return;
 	}
 	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of non-everlasting players!");
 		return;
 	}
@@ -2465,16 +2508,20 @@ void store_purchase(int Ind, int item, int amt)
 	if (!get_stock(&item, out_val, 0, i-1)) return;
 #endif
 
+	/* Sanity check - mikaelh */
+	if (item < 0 || item >= st_ptr->stock_size)
+		return;
+
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
 
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of everlasting players!");
 		return;
 	}
 	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of non-everlasting players!");
 		return;
 	}
@@ -3169,6 +3216,10 @@ void store_examine(int Ind, int item)
 		return;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item < 0 || item >= st_ptr->stock_size)
+		return;
+
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
 
@@ -3185,30 +3236,30 @@ void store_examine(int Ind, int item)
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
 		/* Describe */
-		msg_format(Ind, "%s\n", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
+		msg_format(Ind, "\377s%s:\n", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:\n", o_name + 77);
 
                 switch(o_ptr->tval){
 	        case TV_BLUNT:
-    		        msg_print(Ind, "It's a hafted weapon."); break;
+    		        msg_print(Ind, "\377s  It's a blunt weapon."); break;
                 case TV_POLEARM:
-	        	msg_print(Ind, "It's a polearm."); break;
+	        	msg_print(Ind, "\377s  It's a polearm."); break;
     	        case TV_SWORD:
-        	        msg_print(Ind, "It's a sword-type weapon."); break;
+        	        msg_print(Ind, "\377s  It's a sword-type weapon."); break;
                 case TV_AXE:
-	                msg_print(Ind, "It's an axe-type weapon."); break;
+	                msg_print(Ind, "\377s  It's an axe-type weapon."); break;
         	default:
-	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
         	        break;
 	        }
  		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
-		else msg_print(Ind, "You have no special knowledge about that item.");
+		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 		return;
 	}
 
@@ -3455,7 +3506,7 @@ void store_shuffle(store_type *st_ptr)
 	for (j = st_ptr->owner; j == st_ptr->owner; )
 	{	  
 //		st_ptr->owner = rand_int(MAX_OWNERS);
-		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(4)];
+		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 		if ((!(--tries))) break;
 	}
 
@@ -4154,17 +4205,20 @@ void home_purchase(int Ind, int item, int amt)
 		return;
 	}
 
+        /* Sanity check - mikaelh */
+        if (item < 0 || item >= h_ptr->stock_size)
+                return;
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
 
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_IMMORTAL) && (o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of everlasting players!");
 		return;
 	}
 	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL))) {
+	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of non-everlasting players!");
 		return;
 	}
@@ -4332,6 +4386,10 @@ void home_examine(int Ind, int item)
 		return;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item < 0 || item >= h_ptr->stock_size)
+		return;
+
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
 
@@ -4348,30 +4406,30 @@ void home_examine(int Ind, int item)
 	if (!(o_ptr->ident & (ID_MENTAL)))
 	{
 		/* Describe */
-		msg_format(Ind, "%s\n", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "%s\n", o_name + 77);
+		msg_format(Ind, "\377s%s:\n", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:\n", o_name + 77);
 
                 switch(o_ptr->tval){
 	        case TV_BLUNT:
-    		        msg_print(Ind, "It's a hafted weapon."); break;
+    		        msg_print(Ind, "\377s  It's a blunt weapon."); break;
                 case TV_POLEARM:
-	        	msg_print(Ind, "It's a polearm."); break;
+	        	msg_print(Ind, "\377s  It's a polearm."); break;
     	        case TV_SWORD:
-        	        msg_print(Ind, "It's a sword-type weapon."); break;
+        	        msg_print(Ind, "\377s  It's a sword-type weapon."); break;
                 case TV_AXE:
-	                msg_print(Ind, "It's an axe-type weapon."); break;
+	                msg_print(Ind, "\377s  It's an axe-type weapon."); break;
         	default:
-	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+	                if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
         	        break;
 	        }
 		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
-		else msg_print(Ind, "You have no special knowledge about that item.");
+		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 		return;
 	}
 

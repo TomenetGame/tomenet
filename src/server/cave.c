@@ -2504,8 +2504,28 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		int Ind2 = 0 - c_ptr->m_idx;
 		player_type *p2_ptr = Players[Ind2];
 
+		if (!p2_ptr)
+		{
+			/* Clear invalid players, I'm tired of crashes - mikaelh */
+			c_ptr->m_idx = 0;
+
+			/* Log it */
+			s_printf("MIDX_FIX: Cleared invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+		}
+
+		/* Check for doppelgangers - mikaelh */
+		else if (memcmp(&p_ptr->wpos, &p2_ptr->wpos, sizeof(struct worldpos)) != 0 || x != p2_ptr->px || y != p2_ptr->py)
+		{
+			/* Clear doppelgangers */
+			c_ptr->m_idx = 0;
+
+			/* Log it */
+			s_printf("MIDX_FIX: Cleared a doppelganger (ind = %d, \"%s\") (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, Players[Ind2]->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+                        /* nice try, doppelganger */
+		}
+
 		/* Is that player visible? */
-		if (p_ptr->play_vis[Ind2])
+		else if (p_ptr->play_vis[Ind2])
 		{
 			/* part 'A' now here (experimental, see below) */
 			a = player_color(Ind2);
@@ -2518,7 +2538,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* TERM_BNW if blood bonded - mikaelh */
 			if (check_blood_bond(Ind, Ind2)) a |= TERM_BNW;
 
-			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) >= 7)
+			if((( p2_ptr->chp * 95) / (p2_ptr->mhp*10)) > TURN_CHAR_INTO_NUMBER)
 			{
 				/* part 'A' used to be here */
 			}
@@ -2582,6 +2602,17 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		}
 		(*cp) = '*'; /* a little bit large maybe, but '.' won't be noticed on the other hand? */
 	}
+/* #ifdef ARCADE_SERVER
+        if(c_ptr->effect)
+        {
+                if(effects[c_ptr->effect].flags & EFF_CROSSHAIR_A || effects[c_ptr->effect].flags & EFF_CROSSHAIR_B || effects[c_ptr->effect].flags & EFF_CROSSHAIR_C)
+                {
+                (*ap) = TERM_L_UMBER;
+                (*cp) = '+';
+                }
+        }
+#endif */
+                
 }
 
 
@@ -2811,22 +2842,20 @@ void lite_spot(int Ind, int y, int x)
 			if (p_ptr->fruit_bat && !p_ptr->body_monster) c = 'b';
 			if(p_ptr->chp<0) c='-';
 			else if (!p_ptr->tim_manashield) {
-				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) 
+				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) 
 				{
 					int num;
 					num=(p_ptr->chp*95) / (p_ptr->mhp*10);
 					c = '0'+num;
 				}
 			} else if (p_ptr->msp > 0) {
-				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) < 7) 
+				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) <= TURN_CHAR_INTO_NUMBER) 
 				{
 					int num;
 					num=(p_ptr->csp*95) / (p_ptr->msp*10);
 					c = '0'+num;
 				}
 			}
-			/*if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) < 7) c = '4';*/
-
 		}
 
 		/* Normal */
@@ -3133,7 +3162,7 @@ void display_map(int Ind, int *cy, int *cx)
 
 				if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
-				else if((( p_ptr->chp * 95)/ (p_ptr->mhp*10)) >= 7) tc = '@';
+				else if((( p_ptr->chp * 95)/ (p_ptr->mhp*10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
 				else 
 				{
 					if(p_ptr->chp<0) tc='-';
@@ -3829,7 +3858,9 @@ void update_lite(int Ind)
 	if (p_ptr->cur_lite >= 2 || p_ptr->cur_vlite >= 2)
 	{
 		/* South of the player */
-		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
+//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px))
+		/* cave_los includes dark pits */
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px))
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px);
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+1);
@@ -3837,7 +3868,8 @@ void update_lite(int Ind)
 		}
 
 		/* North of the player */
-		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
+//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px))
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px))
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px);
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+1);
@@ -3845,7 +3877,8 @@ void update_lite(int Ind)
 		}
 
 		/* East of the player */
-		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
+//		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px+1))
+		if (cave_los(zcave, p_ptr->py, p_ptr->px+1))
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px+2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px+2);
@@ -3853,7 +3886,8 @@ void update_lite(int Ind)
 		}
 
 		/* West of the player */
-		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
+//		if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px-1))
+		if (cave_los(zcave, p_ptr->py, p_ptr->px-1))
 		{
 			cave_lite_hack(p_ptr->py, p_ptr->px-2);
 			cave_lite_hack(p_ptr->py+1, p_ptr->px-2);
@@ -3874,25 +3908,29 @@ void update_lite(int Ind)
 		if (p > LITE_CAP) p = LITE_CAP;
 
 		/* South-East of the player */
-		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
+//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px+1))
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px+1))
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px+2);
 		}
 
 		/* South-West of the player */
-		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
+//		if (cave_floor_bold(zcave, p_ptr->py+1, p_ptr->px-1))
+		if (cave_los(zcave, p_ptr->py+1, p_ptr->px-1))
 		{
 			cave_lite_hack(p_ptr->py+2, p_ptr->px-2);
 		}
 
 		/* North-East of the player */
-		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
+//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px+1))
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px+1))
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px+2);
 		}
 
 		/* North-West of the player */
-		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
+//		if (cave_floor_bold(zcave, p_ptr->py-1, p_ptr->px-1))
+		if (cave_los(zcave, p_ptr->py-1, p_ptr->px-1))
 		{
 			cave_lite_hack(p_ptr->py-2, p_ptr->px-2);
 		}
@@ -6086,34 +6124,34 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
-
-#if 0 /* using allow_terraforming() checks in the specialized functions which call this one instead */
+#if 0
+	/* using allow_terraforming() checks in the specialized functions which call this one instead */
 	/* grow_trees sets FEAT_TREE via this function */
 	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
 	   without calling this function */
-	/* No runes of protection / glyphs of warding on non-empty grids!!- C. Blue */
-#if 0
-	if ((feat == FEAT_GLYPH) && (
-	    (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) ||
-	    ((getlevel(wpos) == 200) && (wpos->wz == 1)) ||
-	    (!((c_ptr->feat == FEAT_NONE) || 
+
+	if (!allow_terraforming(wpos, feat))
+		return;
+#endif
+	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
+	if ((feat == FEAT_GLYPH) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
+	    ((c_ptr->feat == FEAT_NONE) || 
 	    (c_ptr->feat == FEAT_FLOOR) || 
 	    (c_ptr->feat == FEAT_DIRT) || 
+	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* what's this actually? */
 	    (c_ptr->feat == FEAT_GRASS) || 
 	    (c_ptr->feat == FEAT_ICE) || 
 	    (c_ptr->feat == FEAT_SAND) || 
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
-	    (c_ptr->feat == FEAT_FLOWER)))))*/
-	    /* And no 'terraforming' in Bree or Valinor either (counting glyph spell to those) */
-#else
-	if (!allow_terraforming(wpos, feat))
-#endif	    
-	    return;
-#endif
+	    (c_ptr->feat == FEAT_FLOWER))))
+		return;
 
+	/* Don't mess with inns please! */
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+	    
 	/* Change the feature */
-	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST; /* clear teleport protection for nest grid if it gets changed */
+	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = feat;
 
 	if (cave_set_quietly) return;
@@ -6258,6 +6296,9 @@ bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int rang
 		/* Never pass through walls */
 		if (dist && !cave_los(zcave, y, x)) break;
 
+		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+                if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
 
@@ -6282,6 +6323,9 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	/* See "project()" */
 	for (dist = 0; dist <= range; dist++)
 	{
+		/* Protected grids prevent targetting */
+		if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+	
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return (TRUE);
 
@@ -6315,7 +6359,9 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m)
 {
 	int nx, ny;
-	long tries = 100000;
+//	long tries = 100000;
+	/* Reduced to 10k to lessen lockups - mikaelh */
+	long tries = 10000;
 	
         cave_type **zcave;
         if(!(zcave=getcave(wpos))) {
@@ -6563,6 +6609,23 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
         effects[i].rad = rad;
         effects[i].who = who2;
 		wpcopy(&effects[i].wpos, wpos);
+#ifdef ARCADE_SERVER
+if(type == 209)
+{
+msg_broadcast(0, "mh");
+if(flags > 0)
+msg_broadcast(0, "some flags");
+else
+msg_broadcast(0, "no flags");
+}
+/*        if((flags & EFF_CROSSHAIR_A) || (flags & EFF_CROSSHAIR_B) || (flags & EFF_CROSSHAIR_C))
+        {
+        msg_broadcast(0, "making an effect");
+        player_type *pfft_ptr = Players[interval];
+        pfft_ptr->e = i;
+        } */
+#endif 
+
         return i;
 }
 
@@ -6585,6 +6648,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_DEAD_TREE:
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
+	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
         case FEAT_ICE:
 	case FEAT_GLYPH: if (bree || sector00 || valinor || netherrealm) return(FALSE);
@@ -6597,7 +6661,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
         case FEAT_SAND:
         case FEAT_ASH:
         case FEAT_MUD:
-	case FEAT_SHAL_WATER:
+/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
         case FEAT_FLOWER: if (valinor || netherrealm) return(FALSE);
 
 	/* generate.c uses these for staircases in towns */

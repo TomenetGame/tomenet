@@ -14,6 +14,9 @@
 
 #include "angband.h"
 
+/* how many chars someone may enter (used for /bbs) */
+#define MAX_SLASH_LINE_LEN	140
+
 static void do_slash_brief_help(int Ind);
 char pet_creation(int Ind);
 //static int lInd = 0;
@@ -314,7 +317,9 @@ void do_slash_cmd(int Ind, char *message)
 	int i = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
- 	char *colon, *token[9], message2[80], message3[80];
+ 	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];/* was [80], [80] */
+	char message4[MAX_SLASH_LINE_LEN];
+
 	worldpos wp;
 	bool admin = is_admin(p_ptr);
 
@@ -601,6 +606,7 @@ void do_slash_cmd(int Ind, char *message)
 
 			return;
 		}
+#if 0 /* new '/cast' version below this one - C. Blue */
 		/* '/cast' code is written by Asclep(DEG). thx! */
 		else if (prefix(message, "/cast"))
 		{
@@ -740,6 +746,20 @@ void do_slash_cmd(int Ind, char *message)
 #endif
                         return;
 		}
+#else
+		/* cast a spell by name, instead of book/position */
+		else if (prefix(message, "/cast"))
+		{
+			int i;
+			for (i = 0; i < 100; i++) {
+				if (!strncmp(p_ptr->spell_name[i], message3, strlen(message3))) {
+//					cast_school_spell(Ind, p_ptr->spell_book[i], p_ptr->spell_pos[i], dir, item, aux);
+					break;
+				}
+			}
+                        return;
+		}
+#endif
 		/* Take everything off */
 		else if ((prefix(message, "/bed")) ||
 				prefix(message, "/naked"))
@@ -857,6 +877,9 @@ void do_slash_cmd(int Ind, char *message)
 				}
 			}
 #endif
+			if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
+			if (get_skill(p_ptr, SKILL_AURA_SHIVER)) check_aura(Ind, 1);
+			if (get_skill(p_ptr, SKILL_AURA_DEATH)) check_aura(Ind, 2);
 
 //			do_cmd_knowledge_dungeons(Ind);
 			if (p_ptr->depth_in_feet) msg_format(Ind, "The deepest point you've reached: \377G-%d\377wft", p_ptr->max_dlv * 50);
@@ -1387,7 +1410,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		else if (prefix(message, "/house") ||
-				prefix(message, "/ho"))
+				prefix(message, "/hou"))
 		{
 			do_cmd_show_houses(Ind);
 			return;
@@ -1580,6 +1603,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/notep"))
 		{
 			int p = -1, i, j = 0;
+#if 0 /* allow only a party owner to write the note */
 			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 				if(!strcmp(parties[i].owner, p_ptr->name)) p = i;
 			}
@@ -1587,6 +1611,12 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oYou aren't a party owner.");
 				return;
 			}
+#else /* allow every party member to change the note */
+			if (!p_ptr->party) {
+				msg_print(Ind, "\377oYou are not in a party.");
+				return;
+			}
+#endif
 			if (tk == 0)	/* Erase party note */
 			{
 				for (i = 0; i < MAX_PARTYNOTES; i++) {
@@ -1648,6 +1678,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/noteg"))
 		{
 			int p = -1, i, j = 0;
+#if 0 /* only allow the guild master to write the note */
 			for (i = 0; i < MAX_GUILDS; i++) {
 				if(guilds[i].master == p_ptr->id) p = i;
 			}
@@ -1655,6 +1686,12 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377oYou aren't a guild master.");
 				return;
 			}
+#else /* allow all guild members to write the note */
+			if (!p_ptr->guild) {
+				msg_print(Ind, "\377oYou are not in a guild.");
+				return;
+			}
+#endif
 			if (tk == 0)	/* Erase guild note */
 			{
 				for (i = 0; i < MAX_GUILDNOTES; i++) {
@@ -1807,8 +1844,8 @@ void do_slash_cmd(int Ind, char *message)
 			for (i = 0; i < MAX_NOTES; i++) {
 				if (!strcmp(priv_note_sender[i], p_ptr->name)) notes++;
 			}
-			if ((notes >= 3) && !is_admin(p_ptr)) {
-				msg_print(Ind, "\377oYou have already reached the maximum of 3 pending notes per player.");
+			if ((notes >= 4) && !is_admin(p_ptr)) {
+				msg_print(Ind, "\377oYou have already reached the maximum of 4 pending notes per player.");
 				return;
 			}
 
@@ -2301,6 +2338,39 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 
+		/* Allow players to undo some of their skills - mikaelh */
+		else if (prefix(message, "/undoskills") ||
+				prefix(message, "/undos"))
+		{
+			/* Skill points gained */
+			int gain = p_ptr->skill_points_old - p_ptr->skill_points;
+
+			if (gain && p_ptr->reskill_possible)
+			{
+				memcpy(p_ptr->s_info, p_ptr->s_info_old, MAX_SKILLS * sizeof(skill_player));
+				p_ptr->skill_points = p_ptr->skill_points_old;
+
+				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
+
+				/* Update all skills */
+				for (i = 1; i < MAX_SKILLS; i++)
+				{
+					Send_skill_info(Ind, i);
+				}
+
+				p_ptr->update |= (PU_SKILL_MOD | PU_BONUS);
+				p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
+
+				/* No more reskills */
+				p_ptr->reskill_possible = FALSE;
+			}
+			else
+			{
+				msg_print(Ind, "\377yNo skills could be undone.");
+			}
+			return;
+		}
+
 
 		/*
 		 * Admin commands
@@ -2421,17 +2491,17 @@ void do_slash_cmd(int Ind, char *message)
 					int j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
 					{
-						char kickmsg[80];
+						char kickmsg[MAX_SLASH_LINE_LEN];
 						/* Success maybe :) */
 						add_banlist(j, (tk>1 ? atoi(token[2]) : 5));
 						if (tk < 3)
 						{
 							msg_format(Ind, "Banning %s for %d minutes...", Players[j]->name, atoi(token[2]));
-							snprintf(kickmsg, 80, "banned for %d minutes", atoi(token[2]));
+							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "banned for %d minutes", atoi(token[2]));
 							Destroy_connection(Players[j]->conn, kickmsg);
 						} else {
 							msg_format(Ind, "Banning %s for %d minutes (%s)...", Players[j]->name, atoi(token[2]), token[3]);
-							snprintf(kickmsg, 80, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
+							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "Banned for %d minutes (%s)", atoi(token[2]), token[3]);
 							Destroy_connection(Players[j]->conn, kickmsg);
 						}
 						/* Kick him */
@@ -2467,7 +2537,7 @@ void do_slash_cmd(int Ind, char *message)
 					int j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
 					{
-						char kickmsg[80];
+						char kickmsg[MAX_SLASH_LINE_LEN];
 						/* Success maybe :) */
 						if (tk < 2)
 						{
@@ -2475,7 +2545,7 @@ void do_slash_cmd(int Ind, char *message)
 							Destroy_connection(Players[j]->conn, "kicked out");
 						} else {
 							msg_format(Ind, "Kicking %s out (%s)...", Players[j]->name, token[2]);
-							snprintf(kickmsg, 80, "kicked out (%s)", token[2]);
+							snprintf(kickmsg, MAX_SLASH_LINE_LEN, "kicked out (%s)", token[2]);
 							Destroy_connection(Players[j]->conn, kickmsg);
 						}
 						/* Kick him */
@@ -2860,6 +2930,10 @@ void do_slash_cmd(int Ind, char *message)
 						/* It's ego or randarts */
 						o_ptr->name2 = 0 - nom;
 						if (tk > 5) o_ptr->name2b = 0 - atoi(token[6]);
+
+						/* Piece together a 32-bit random seed */
+						o_ptr->name3 = rand_int(0xFFFF) << 16;
+						o_ptr->name3 += rand_int(0xFFFF);
 					}
 				}
 				else
@@ -3250,7 +3324,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted note´%d.", notes);
+						msg_format(Ind, "\377oDeleted noteï¿½%d.", notes);
 					}
 				}
 				return;
@@ -3663,9 +3737,9 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
-						if (tmpm & MODE_IMMORTAL) strcpy(colour_sequence, "\377g");
+						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-						else if (tmpm & MODE_HELL) strcpy(colour_sequence, "\377W");
+						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
 						else strcpy(colour_sequence, "\377w");
 						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
@@ -3711,12 +3785,12 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 
 						if (!o_ptr->k_idx || o_ptr->k_idx == 1)
 						{
-							msg_format(Ind, "Monster #%d is holding an invalid item (#%d) (k_idx=%d)!", i, m_ptr->hold_o_idx, o_ptr->k_idx);
+							msg_format(Ind, "Monster #%d is holding an invalid item (o_idx=%d) (k_idx=%d)!", i, m_ptr->hold_o_idx, o_ptr->k_idx);
 						}
 
 						if (o_ptr->held_m_idx != i)
 						{
-							msg_format(Ind, "Item #%d has wrong held_m_idx! (is %d, should be %d)", this_o_idx, i);
+							msg_format(Ind, "Item (o_idx=%d) has wrong held_m_idx! (is %d, should be %d)", this_o_idx, i);
 						}
 
 						next_o_idx = o_ptr->next_o_idx;
@@ -3752,7 +3826,6 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 			   see process_events() in xtra1.c for details - C. Blue */
 			else if (prefix(message, "/gestart"))
 			{
-				char message4[80];
 				int err, msgpos = 0;
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /gestart <predefined type> [parameters...]");
@@ -3954,7 +4027,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			/* check o_list for invalid items - mikaelh */
-			else if (prefix(message, "/nothingcheck")) {
+			else if (prefix(message, "/olistcheck")) {
 				object_type *o_ptr;
 				int i;
 				msg_print(Ind, "Check o_list for invalid items...");
@@ -3963,10 +4036,10 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 
 					if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 						if (o_ptr->held_m_idx) {
-							msg_format(Ind, "Invalid item #%d (k_idx=%d) held by monster %d", i, o_ptr->k_idx, o_ptr->held_m_idx);
+							msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) held by monster %d", i, o_ptr->k_idx, o_ptr->held_m_idx);
 						}
 						else {
-							msg_format(Ind, "Invalid item #%d (k_idx=%d) found at (%d,%d,%d) (x=%d,y=%d)", i, o_ptr->k_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+							msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) found at (%d,%d,%d) (x=%d,y=%d)", i, o_ptr->k_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
 						}
 					}
 				}
@@ -4000,38 +4073,107 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 						o_idx = c_ptr->o_idx;
 						if (o_idx) {
 							if (o_idx > o_max) {
-								msg_format(Ind, "Non-existent object #%d found at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+								msg_format(Ind, "Non-existent object (o_idx > o_max) (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
 								continue;
 							}
 							o_ptr = &o_list[o_idx];
+							if (memcmp(&o_ptr->wpos, &wpos, sizeof(struct worldpos)) != 0 || x != o_ptr->ix || y != o_ptr->iy) {
+								msg_format(Ind, "Invalid reference found! Item (o_idx=%d) that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+								msg_format(Ind, "Invalid reference is located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+							}
 							/* k_idx = 1 is something weird... */
 							if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
-								msg_format(Ind, "Invalid item #%d (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
-							}
-							if (o_ptr->wpos.wx != wpos.wx || o_ptr->wpos.wy != wpos.wy || o_ptr->wpos.wz != wpos.wz) {
-								msg_format(Ind, "WORMHOLE! Found item #%d that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
-								msg_format(Ind, "Wormhole located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+								msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
 							}
 							/* more objects on this grid? */
 							while (o_ptr->next_o_idx) {
 								o_idx = o_ptr->next_o_idx;
 								if (o_idx > o_max) {
-									msg_format(Ind, "Non-existent object #%d found under a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+									msg_format(Ind, "Non-existent object (o_idx > o_max) (o_idx=%d) found under a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
 									break;
 								}
 								o_ptr = &o_list[o_idx];
-								if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
-									msg_format(Ind, "Invalid item #%d (k_idx=%d) found under a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
+								if (memcmp(&o_ptr->wpos, &wpos, sizeof(struct worldpos)) != 0 || x != o_ptr->ix || y != o_ptr->iy) {
+									msg_format(Ind, "Invalid reference found! Item (o_idx=%d) that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+									msg_format(Ind, "Invalid reference is located under a pile at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
 								}
-								if (o_ptr->wpos.wx != wpos.wx || o_ptr->wpos.wy != wpos.wy || o_ptr->wpos.wz != wpos.wz) {
-									msg_format(Ind, "WORMHOLE! Found item #%d that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
-									msg_format(Ind, "Wormhole located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+								if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+									msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) found under a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
 								}
 							}
 						}
 					}
 				}
 				msg_print(Ind, "Check complete.");
+				return;
+			}
+			/* attempt to remove problematic items - mikaelh */
+			else if (prefix(message, "/floorfix")) {
+				struct worldpos wpos;
+				cave_type **zcave, *c_ptr;
+				object_type *o_ptr, *prev_o_ptr;
+				int y, x, o_idx;
+				if (tk > 1) {
+					wpos.wx = atoi(token[1]);
+					wpos.wy = atoi(token[2]);
+					if (tk > 2) wpos.wz = atoi(token[3]);
+					else wpos.wz = 0;
+				}
+				else {
+					wpcopy(&wpos, &p_ptr->wpos);
+				}
+				msg_format(Ind, "Fixing (%d,%d,%d)...", wpos.wx, wpos.wy, wpos.wz);
+				zcave = getcave(&wpos);
+				if (!zcave) {
+					msg_print(Ind, "Couldn't getcave().");
+					return;
+				}
+				for (y = 1; y < MAX_HGT - 1; y++) {
+					for (x = 1; x < MAX_WID - 1; x++) {
+						c_ptr = &zcave[y][x];
+						o_idx = c_ptr->o_idx;
+						if (o_idx) {
+							if (o_idx > o_max) {
+								msg_format(Ind, "Erased reference to a non-existent (o_idx > o_max) object (o_idx=%d, o_max=%d) found at (x=%d,y=%d)", c_ptr->o_idx, o_max, x, y);
+								c_ptr->o_idx = 0;
+								continue;
+							}
+							o_ptr = &o_list[o_idx];
+							if (memcmp(&o_ptr->wpos, &wpos, sizeof(struct worldpos)) != 0 || x != o_ptr->ix || y != o_ptr->iy) {
+								msg_format(Ind, "Invalid reference erased! Found item (o_idx=%d) that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+								msg_format(Ind, "Invalid reference was located at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+								c_ptr->o_idx = 0;
+							}
+							/* k_idx = 1 is something weird... */
+							else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+								msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
+								delete_object_idx(o_idx, FALSE);
+							}
+							prev_o_ptr = NULL;
+							/* more objects on this grid? */
+							while (o_ptr->next_o_idx) {
+								o_idx = o_ptr->next_o_idx;
+								if (o_idx > o_max) {
+									msg_format(Ind, "Erased an invalid reference (o_idx > o_max) (o_idx=%d) from a pile at (x=%d,y=%d)", c_ptr->o_idx, x, y);
+									o_ptr->next_o_idx = 0;
+									break;
+								}
+								prev_o_ptr = o_ptr;
+								o_ptr = &o_list[o_idx];
+								if (memcmp(&o_ptr->wpos, &wpos, sizeof(struct worldpos)) != 0 || x != o_ptr->ix || y != o_ptr->iy) {
+									msg_format(Ind, "Invalid reference erased! Found item (o_idx=%d) that should be at (%d, %d, %d) (x=%d, y=%d)", o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
+									msg_format(Ind, "Invalid reference was located under a pile at (%d, %d, %d) (x=%d, y=%d)", wpos.wx, wpos.wy, wpos.wz, x, y);
+									if (prev_o_ptr) prev_o_ptr->next_o_idx = o_ptr->next_o_idx;
+								}
+								else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
+									msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) from a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
+									delete_object_idx(o_idx, FALSE);
+								}
+							}
+						}
+					}
+				}
+				msg_print(Ind, "Everything fixed.");
 				return;
 			}
 			/* delete a line from bbs */
@@ -4120,6 +4262,27 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				}
 				else if (fireworks) fireworks = 0;
 				else fireworks = 1;
+				return;
+			}
+			else if (prefix(message, "/hostilities")) {
+				player_list_type *ptr;
+
+				for (i = 1; i <= NumPlayers; i++) {
+					ptr = Players[i]->hostile;
+
+					while (ptr) {
+						if (player_list_find(Players[i]->blood_bond, ptr->id)) {
+							msg_format(Ind, "%s is hostile towards %s. (blood bond)", p_ptr->name, lookup_player_name(ptr->id));
+						}
+						else {
+							msg_format(Ind, "%s is hostile towards %s.", p_ptr->name, lookup_player_name(ptr->id));
+						}
+					}
+
+					ptr = ptr->next;
+				}
+
+				msg_print(Ind, "\377sEnd of hostility list.");
 				return;
 			}
 		}

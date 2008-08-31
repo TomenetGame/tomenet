@@ -486,23 +486,23 @@ static void rd_item(object_type *o_ptr)
 		int i = 2, tries = 100; /* give 2 random immunities */
 		while (i && tries) {
 			switch(rand_int(5)){
-			case 0:if (!(o_ptr->xtra2 & 0x01)){
+			case 0:if (!(o_ptr->xtra2 & 0x01)){ /* fire */
 					o_ptr->xtra2 |= 0x01;
 					i--;}
 					break;
-			case 1:if (!(o_ptr->xtra2 & 0x02)){
+			case 1:if (!(o_ptr->xtra2 & 0x02)){ /* cold */
 					o_ptr->xtra2 |= 0x02;
 					i--;}
 					break;
 			case 2:if (!(o_ptr->xtra2 & 0x04)){
-					o_ptr->xtra2 |= 0x04;
+					o_ptr->xtra2 |= 0x04; /* elec */
 					i--;}
 					break;
-			case 3:if (!(o_ptr->xtra2 & 0x08)){
+			case 3:if (!(o_ptr->xtra2 & 0x08)){ /* acid */
 					o_ptr->xtra2 |= 0x08;
 					i--;}
 					break;
-			case 4:if (!(o_ptr->xtra2 & 0x10)){
+			case 4:if (!(o_ptr->xtra2 & 0x10)){ /* pois */
 					o_ptr->xtra2 |= 0x10;
 					i--;}
 					break;
@@ -888,6 +888,13 @@ static errr rd_store(store_type *st_ptr)
 	return (0);
 }
 
+static void rd_bbs() {
+        int i, saved_lines;
+        rd_s16b(&saved_lines);
+        for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
+                rd_string(bbs_line[i], 140);
+}
+
 static void rd_quests(){
 	int i;
 	rd_s16b(&questid);
@@ -1148,6 +1155,10 @@ static bool rd_extra(int Ind)
 		}
 		rd_s16b(&p_ptr->skill_points);
 	}
+
+	/* Make a copy of the skills - mikaelh */
+	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+	p_ptr->skill_points_old = p_ptr->skill_points;
 
 	rd_s32b(&p_ptr->id);
 
@@ -1429,6 +1440,11 @@ if (p_ptr->updated_savegame == 0) {
 		rd_s16b(&p_ptr->combat_stance_power);
 	}
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
+
+	/* auto-enable for now (MAX_AURAS) */
+	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
+	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
+	if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
 
 	/* Success */
 	return FALSE;
@@ -2265,6 +2281,8 @@ errr rd_server_savefile()
 	rd_s32b(&player_id);
 
 	rd_s32b(&turn);
+	
+	if (!older_than(4, 3, 6)) rd_bbs();
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;

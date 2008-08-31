@@ -185,7 +185,9 @@ typedef unsigned int u32b;
 /* cave.c */
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern int check_feat(worldpos *wpos, int y, int x);
+
 /* generate.c */
+extern void arcade_wipe(worldpos *wpos);
 extern void place_up_stairs(worldpos *wpos, int y, int x); 
 
 /* spells1.c */
@@ -229,7 +231,7 @@ extern bool set_oppose_fire(int Ind, int v);
 extern bool set_oppose_cold(int Ind, int v);
 extern bool set_oppose_pois(int Ind, int v);
 extern bool set_stun(int Ind, int v);
-extern bool set_cut(int Ind, int v);
+extern bool set_cut(int Ind, int v, int attacker);
 extern bool set_food(int Ind, int v);
 extern bool set_invuln_short(int Ind, int v);
 extern bool set_biofeedback(int Ind, int v);
@@ -246,7 +248,7 @@ extern bool set_tim_meditation(int Ind, int v);
 extern bool set_tim_wraith(int Ind, int v);
 extern bool set_blind(int Ind, int v);
 extern bool set_confused(int Ind, int v);
-extern bool set_poisoned(int Ind, int v);
+extern bool set_poisoned(int Ind, int v, int attacker);
 extern bool set_afraid(int Ind, int v);
 extern bool set_paralyzed(int Ind, int v);
 extern bool set_image(int Ind, int v);
@@ -432,6 +434,7 @@ extern void teleport_player_level(int Ind);
 /* This could have some good uses */
 extern s16b project_interval;
 extern s16b project_time;
+extern s32b project_time_effect;
 /* extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker); */
 
 /* lua_bind.c */

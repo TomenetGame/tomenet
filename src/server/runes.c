@@ -22,7 +22,7 @@ void transform_level(int Ind, byte feat, int chance) {
 	if(!(zcave=getcave(wpos))) return; 
 
 	/* Don't hurt the main town or surrounding areas */
-	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3)) {
+	if(!allow_terraforming(wpos, feat) || istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3)) {
 		msg_print(Ind, "\377rYou can't do that here!"); 
 		return;
 	}

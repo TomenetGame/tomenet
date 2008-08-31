@@ -289,9 +289,9 @@ static s32b artifact_power (artifact_type *a_ptr)
 
 	/* Other abilities are evaluated independent of the object type. */
 	p += (a_ptr->to_a + 3 * sign (a_ptr->to_a)) / 4;
-	if (a_ptr->to_a > 20) p += (a_ptr->to_a - 19) / 2;
-	if (a_ptr->to_a > 30) p += (a_ptr->to_a - 29) / 2;
-	if (a_ptr->to_a > 40) p += 20000;	/* inhibit */
+	if (a_ptr->to_a > 20) p += (a_ptr->to_a - 20) / 2;
+	if (a_ptr->to_a > 30) p += (a_ptr->to_a - 30) / 2;
+	if (a_ptr->to_a > 35) p += 20000;	/* inhibit */
 
 	if (a_ptr->pval > 0)
 	{
@@ -668,7 +668,9 @@ static void add_ability (artifact_type *a_ptr)
 					a_ptr->to_d += 2 + rand_int (10);
 					a_ptr->to_h += 2 + rand_int (10);
 				}
-				else if (r < 90) a_ptr->to_a += 3 + rand_int (3);
+				else if (r < 90) {
+					a_ptr->to_a += 3 + rand_int (3);
+				}
 				else if (r < 93)
 				{
 					a_ptr->flags5 |= TR5_CRIT;
@@ -976,6 +978,54 @@ static void add_ability (artifact_type *a_ptr)
 				break;
 			}
 			case TV_HELM:
+			{
+				if (r < 2)
+				{
+					a_ptr->flags1 |= TR1_LIFE;
+					do_pval (a_ptr);
+					if (a_ptr->pval > 3) a_ptr->pval = 3;
+				}
+				else if (r < 12) a_ptr->flags2 |= TR2_RES_BLIND;
+				else if (r < 17) {
+					a_ptr->flags1 |= TR1_INFRA;
+					if (a_ptr->pval == 0) a_ptr->pval = randint(2);
+				}
+				else if (r < 25)
+				{
+					a_ptr->flags4 |= TR4_AUTO_ID;
+				}
+				else if (r < 30)
+				{
+					a_ptr->flags1 |= TR1_WIS;
+					do_pval (a_ptr);
+				}
+//				else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
+//				else if (r < 45) a_ptr->esp |= (ESP_ALL);
+				else if (r < 31) a_ptr->esp |= (ESP_ORC);
+				else if (r < 32) a_ptr->esp |= (ESP_TROLL);
+				else if (r < 33) a_ptr->esp |= (ESP_DRAGON);
+				else if (r < 34) a_ptr->esp |= (ESP_GIANT);
+				else if (r < 35) a_ptr->esp |= (ESP_DEMON);
+				else if (r < 36) a_ptr->esp |= (ESP_UNDEAD);
+				else if (r < 37) a_ptr->esp |= (ESP_EVIL);
+				else if (r < 38) a_ptr->esp |= (ESP_ANIMAL);
+				else if (r < 39) a_ptr->esp |= (ESP_DRAGONRIDER);
+				else if (r < 40) a_ptr->esp |= (ESP_GOOD);
+				else if (r < 41) a_ptr->esp |= (ESP_NONLIVING);
+				else if (r < 42) a_ptr->esp |= (ESP_UNIQUE);
+				else if (r < 43) a_ptr->esp |= (ESP_SPIDER);
+				else if (r < 44) a_ptr->esp |= (ESP_ALL);
+				else if (r < 54) a_ptr->flags3 |= TR3_SEE_INVIS;
+				else if (r < 63)
+				{
+					a_ptr->flags1 |= TR1_INT;
+					do_pval (a_ptr);
+				}
+				else if (r < 70) a_ptr->flags2 |= TR2_RES_CONF;
+				else if (r < 75) a_ptr->flags2 |= TR2_RES_FEAR;
+				else a_ptr->to_a += 3 + rand_int (5);
+				break;
+			}
 			case TV_CROWN:
 			{
 				if (r < 2)
@@ -1032,22 +1082,31 @@ static void add_ability (artifact_type *a_ptr)
 			}
 			case TV_SHIELD:
 			{
+#ifndef USE_NEW_SHIELDS
 				if (r < 18) a_ptr->flags2 |= TR2_RES_ACID;
 				else if (r < 36) a_ptr->flags2 |= TR2_RES_ELEC;
 				else if (r < 54) a_ptr->flags2 |= TR2_RES_FIRE;
 				else if (r < 72) a_ptr->flags2 |= TR2_RES_COLD;
 				else if (r < 80) a_ptr->flags5 |= TR5_REFLECT;
 				else a_ptr->to_a += 3 + rand_int (5);
+#else
+				if (r < 20) a_ptr->flags2 |= TR2_RES_ACID;
+				else if (r < 40) a_ptr->flags2 |= TR2_RES_ELEC;
+				else if (r < 60) a_ptr->flags2 |= TR2_RES_FIRE;
+				else if (r < 80) a_ptr->flags2 |= TR2_RES_COLD;
+				else if (r < 90) a_ptr->flags5 |= TR5_REFLECT;
+				else a_ptr->weight = (a_ptr->weight * 9) / 10;
+#endif
 				break;
 			}
 			case TV_CLOAK:
 			{
-				if (r < 20)
+				if (r < 15)
 				{
 					a_ptr->flags3 |= TR3_FEATHER;
 					do_pval (a_ptr);
 				}
-				else if (r < 28)//30
+				else if (r < 21)//30
 				{
 					if (!(a_ptr->flags3 & TR3_SH_FIRE || a_ptr->flags3 & TR3_SH_ELEC))
 					{
@@ -1060,20 +1119,28 @@ static void add_ability (artifact_type *a_ptr)
 						}
 					}
 				}
-				else if (r < 31) a_ptr->flags5 |= TR5_INVIS;//33
-				else if (r < 53)//55
+				else if (r < 24) a_ptr->flags5 |= TR5_INVIS;//33
+				else if (r < 39)//55
 				{
 					a_ptr->flags1 |= TR1_STEALTH;
 					do_pval (a_ptr);
 				}
-				else if (r < 63)
+				else if (r < 45)
 				{
 					a_ptr->flags2 |= TR2_RES_SHARDS;
 				}
-				else if (r < 70)
+				else if (r < 50)
 				{
 					a_ptr->flags4 |= TR4_FLY;
 				}
+				else if (r < 55)
+				{
+					a_ptr->flags2 |= TR2_HOLD_LIFE;
+				}
+				else if (r < 61) a_ptr->flags2 |= TR2_RES_FIRE;
+				else if (r < 68) a_ptr->flags2 |= TR2_RES_COLD;
+				else if (r < 71) a_ptr->flags2 |= TR2_RES_ACID;
+				else if (r < 75) a_ptr->flags2 |= TR2_RES_ELEC;
 				else a_ptr->to_a += 3 + rand_int(3);
 				break;
 			}
@@ -1567,13 +1634,21 @@ artifact_type *randart_make(object_type *o_ptr)
 	    (k_ptr->tval==TV_GLOVES) ||
 	    (k_ptr->tval==TV_HELM) ||
 	    (k_ptr->tval==TV_CROWN) ||
+#ifndef USE_NEW_SHIELDS
 	    (k_ptr->tval==TV_SHIELD) ||
+#endif
 	    (k_ptr->tval==TV_CLOAK) ||
 	    (k_ptr->tval==TV_SOFT_ARMOR) ||
-	    (k_ptr->tval==TV_DRAG_ARMOR) ||
 	    (k_ptr->tval==TV_HARD_ARMOR))
 	{
-		a_ptr->to_a += 1 + rand_int(17);
+/*		a_ptr->to_a += 1 + rand_int(17); */
+		a_ptr->to_a = 10 + rand_int(6); /* Fixed bonus to avoid useless randarts - C. Blue */
+	}
+#ifdef USE_NEW_SHIELDS
+	if (k_ptr->tval == TV_SHIELD) a_ptr->to_a = 15; /* Always maximum */
+#endif
+	if (k_ptr->tval==TV_DRAG_ARMOR) {
+		a_ptr->to_a = 15 + rand_int(6);
 	}
 		
 	/* First draft: add two abilities, then curse it three times. */
@@ -1837,7 +1912,8 @@ artifact_type *randart_make(object_type *o_ptr)
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_BOOTS:
-		if (a_ptr->to_a > 50) a_ptr->to_a = 50;
+//		if (a_ptr->to_a > 50) a_ptr->to_a = 50;
+		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
 		break;
 	case TV_BOW:
 	case TV_BOOMERANG:
@@ -2211,7 +2287,8 @@ try_an_other_ego:
 #endif
 	case TV_SOFT_ARMOR: case TV_HARD_ARMOR: case TV_DRAG_ARMOR:
 	case TV_CLOAK: case TV_HELM: case TV_CROWN: case TV_GLOVES: case TV_BOOTS:
-		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+//		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
 		break;
 	case TV_BOW:
 	case TV_BOOMERANG:

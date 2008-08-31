@@ -359,6 +359,7 @@ static bool do_player_trap_call_out(int Ind)
         bool          ident = FALSE;
         cave_type **zcave;
         zcave=getcave(&p_ptr->wpos);
+	int           old_x, old_y;
 
         if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
 
@@ -397,15 +398,21 @@ static bool do_player_trap_call_out(int Ind)
                 if (rand_int(sn) > 0) continue;
                 zcave[cy][cx].m_idx=h_index;
                 zcave[m_ptr->fy][m_ptr->fx].m_idx=0;
+		old_x = m_ptr->fx;
+		old_y = m_ptr->fy;
                 m_ptr->fx = cx;
                 m_ptr->fy = cy;
                 /* we do not change the sublevel! */
                 ident=TRUE;
 
-		/* Pretend it wasn't visible before to make sure update_mon() redraws it - mikaelh */
-		p_ptr->mon_vis[h_index] = FALSE;
+		/* Gone from previous location - mikaelh */
+		everyone_lite_spot(&p_ptr->wpos, old_y, old_x);
 
                 update_mon(h_index, TRUE);
+
+		/* Make sure everyone sees it now - mikaelh */
+		everyone_lite_spot(&p_ptr->wpos, cy, cx);
+
                 monster_desc(Ind, m_name, h_index, 0x08);
                 msg_format(Ind, "You hear a rapid-shifting wail, and %s appears!",m_name);
                 break;
@@ -759,7 +766,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 			msg_print(Ind, "You deflect the attack!");
 			continue;
 		}
-		if (magik(p_ptr->shield_deflect + 15))
+		if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect + 15)))
 		{
 			deflect++;
 			msg_print(Ind, "You deflect the attack!");
@@ -778,7 +785,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		{
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 			{
-				(void)set_poisoned(Ind, p_ptr->poisoned + pdam);
+				(void)set_poisoned(Ind, p_ptr->poisoned + pdam, 0);
 			}
 		}
 	}
@@ -902,13 +909,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 case TRAP_OF_SPREAD: {
 if(p_ptr->game == 1) 
 {
-p_ptr->a = 30;
-p_ptr->b = 1;
+p_ptr->arc_a = 30;
+p_ptr->arc_b = 1;
 msg_print(Ind, "Spread shot, w00t.");
 }
 else if (p_ptr->game == 3) 
 {
-p_ptr->b += 3;
+p_ptr->arc_b += 3;
 msg_print(Ind, "+3 Length!");
 }
 destroy_doors_touch(Ind, 0);
@@ -916,18 +923,18 @@ break;
 }
 
 case TRAP_OF_LASER: {
-p_ptr->a = 30;
-p_ptr->b = 2;
+p_ptr->arc_a = 30;
+p_ptr->arc_b = 2;
 destroy_doors_touch(Ind, 0);
 msg_print(Ind, "You got a frickin laser beam!");
 break;
 }
 
 case TRAP_OF_ROCKETS: {
-p_ptr->a = 30;
-p_ptr->b = 3;
-p_ptr->c = 0;
-p_ptr->d = 1;
+p_ptr->arc_a = 30;
+p_ptr->arc_b = 3;
+p_ptr->arc_c = 0;
+p_ptr->arc_d = 1;
 
 destroy_doors_touch(Ind, 0);
 msg_print(Ind, "You're a rocket man.");
@@ -1004,7 +1011,7 @@ break;
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 			{
 				msg_print(Ind, "You prick yourself on a poisoned needle.");
-				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10);
+				(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0);
 				ident=TRUE;
 			}
 			else
@@ -1141,7 +1148,7 @@ break;
 			if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
 //				(void)set_food(Ind, PY_FOOD_STARVE - 1);
 				(void)set_food(Ind, PY_FOOD_STARVE + 20);
-			(void)set_poisoned(Ind, 0);
+			(void)set_poisoned(Ind, 0, 0);
 			if (!p_ptr->free_act && !p_ptr->slow_digest)
 			{
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(3) + 3);
@@ -1562,8 +1569,9 @@ break;
 								if ((cx==index_x[i]) || (cy==index_y[i])) continue;
 								if (!cave_valid_bold(zcave, cy, cx) || zcave[cy][cx].o_idx!=0) continue;
 
-								/* don't put anything in vaults */
+								/* don't put anything in vaults/nests/pits */
 								if (zcave[cy][cx].info & CAVE_ICKY) continue;
+								if (zcave[cy][cx].info & CAVE_NEST_PIT) continue;
 
 								tmpf = zcave[cy][cx].feat;
 								tmps = zcave[cy][cx].info;
@@ -2391,12 +2399,12 @@ break;
 				if (glev > 29)
 				{
 					msg_print(Ind, "You are pierced by the spikes!");
-					(void)set_cut(Ind, p_ptr->cut + randint(glev * 2) + 30);
+					(void)set_cut(Ind, p_ptr->cut + randint(glev * 2) + 30, 0);
 
 					if (glev > 49 && !p_ptr->resist_pois && !p_ptr->oppose_pois && !p_ptr->immune_poison)
 					{
 						msg_print(Ind, "The spikes were poisoned!");
-						(void)set_poisoned(Ind, p_ptr->poisoned + randint(glev * 2) + 50);
+						(void)set_poisoned(Ind, p_ptr->poisoned + randint(glev * 2) + 50, 0);
 					}
 				}
 
@@ -2929,7 +2937,7 @@ break;
 		{
 			msg_print(Ind, "Ouch! You get your finger caught!");
 			trap_hit(Ind, trap);
-			(void)set_cut(Ind, p_ptr->cut + randint(glev) + 5);
+			(void)set_cut(Ind, p_ptr->cut + randint(glev) + 5, 0);
 			if (magik(50))
 			{
 				msg_print(Ind, "Your dominant hand gets hurt!");
@@ -2987,9 +2995,9 @@ break;
 				if (q_ptr->conn == NOT_CONNECTED) continue;
 				if (k == Ind) continue;
 				/* No transfer between everlasting and non-everlasting */
-				if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL)) {
-					if ((p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 0)) continue;
-					if (!(p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 1)) continue;
+				if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING)) {
+					if ((p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 0)) continue;
+					if (!(p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 1)) continue;
 				}
 
 //				if (!inarea(wpos, &q_ptr->wpos)) continue;
@@ -3751,7 +3759,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 
 	/* Check interference */
 	/* Basically it's not so good idea to set traps next to the enemy */
-	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30)))
+	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
 		return;
 
 	/* Get local object */

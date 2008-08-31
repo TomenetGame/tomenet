@@ -91,7 +91,11 @@ s16b object_level;              /* Current object creation level */
 s16b monster_level;             /* Current monster creation level */
 
 s32b turn;                      /* Current game turn */
-
+/*yo molt, here we have a lua prob: pkg files appearently dont know #if, so util.pkg always has tron_speed
+  which means rpg/pm will also need it here, otherwise the util.pkg won't be compatible if it's "missing" here*/
+//#ifdef ARCADE_SERVER
+char tron_speed = 9;
+//#endif
 s32b player_id;                 /* Current player ID */
 u32b account_id;		/* Current account ID */
 
@@ -155,7 +159,7 @@ server_opts cfg =
 	8,		// min_unstatic_level
 	-1,18348,18349,18400,	// retire_timer, game_port, console_port, gw_port
 
-	0,200,		// spell_interfere, spell_stack_limit
+	10,200,		// spell_interfere, spell_stack_limit
 	/* s16b */
 	60,5,5,		// fps, newbies_cannot_drop, running_speed,
 
@@ -766,7 +770,7 @@ char guild_note[MAX_GUILDNOTES][80], guild_note_target[MAX_GUILDNOTES][80];
 char admin_note[MAX_ADMINNOTES][80];
 
 /* in-game bbs :) - C. Blue */
-char bbs_line[BBS_LINES][80];
+char bbs_line[BBS_LINES][140];
 
 int global_luck = 0;
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue

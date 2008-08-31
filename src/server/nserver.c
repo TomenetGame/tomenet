@@ -127,7 +127,7 @@ static long		Id;
 int			NumPlayers;
 
 
-pid_t		metapid=0;
+pid_t		metapid = 0;
 int		MetaSocket = -1;
 
 #ifdef NEW_SERVER_CONSOLE
@@ -207,17 +207,17 @@ static void Init_receive(void)
 	}
 
 	drain_receive[PKT_QUIT]			= Receive_quit;
-	drain_receive[PKT_ACK]			= Receive_ack;
+//	drain_receive[PKT_ACK]			= Receive_ack;
 	drain_receive[PKT_VERIFY]		= Receive_discard;
 	drain_receive[PKT_PLAY]			= Receive_discard;
 
 	login_receive[PKT_PLAY]			= Receive_play;
 	login_receive[PKT_QUIT]			= Receive_quit;
-	login_receive[PKT_ACK]			= Receive_ack;
+//	login_receive[PKT_ACK]			= Receive_ack;
 	login_receive[PKT_VERIFY]		= Receive_discard;
 	login_receive[PKT_LOGIN]		= Receive_login;
 	
-	playing_receive[PKT_ACK]		= Receive_ack;
+//	playing_receive[PKT_ACK]		= Receive_ack;
 	playing_receive[PKT_VERIFY]		= Receive_discard;
 	playing_receive[PKT_QUIT]		= Receive_quit;
 	playing_receive[PKT_PLAY]		= Receive_play;
@@ -391,10 +391,6 @@ bool Report_to_meta(int flag)
 	int i, sock;
 	char temp[100];
 	bool hidden_dungeon_master = 0;
-#ifdef EVIL_METACLIENT
-	int status;
-#endif
-
 
         /* Abort if the user doesn't want to report */
 	if (!cfg.report_to_meta || cfg.runlevel<4 || ((cfg.runlevel > 1023) && (cfg.runlevel < 2045)))
@@ -444,6 +440,10 @@ bool Report_to_meta(int flag)
 //	sprintf(temp, "%s", cfg.server_notes);
 //	strcat(buf_meta, temp);
 	strcat(buf_meta, "\"");
+
+	/* Tell everyone that we can receive extended version packets */
+	strcat(buf_meta, " protocol=\"2\"");
+
 	if (flag & META_DIE)
 	{
 		strcat(buf_meta, " death=\"true\"></server>");
@@ -539,7 +539,7 @@ bool Report_to_meta(int flag)
                 sprintf(temp, "<version>%d.%d.%d%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
                 strcat(buf_meta, temp);
 
-#if 1 /* spam - C. Blue */
+#if 0 /* old stuff - mikaelh */
                 /* Append the additional version info */
 //		if (VERSION_EXTRA > 0) strcat(buf_meta, " ");
                 if (VERSION_EXTRA == 1)
@@ -592,17 +592,7 @@ bool Report_to_meta(int flag)
                 close(sock);
 	}
 #ifdef EVIL_METACLIENT
-	/* find out what has happened to evilmeta - mikaelh */
-	if (metapid == 0 || waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
-	{
-		if (WIFEXITED(status) || WIFSIGNALED(status))
-		{
-			/* evilmeta is dead, restart it */
-			s_printf("evilmeta is dead, restarting it\n");
-			metapid = 0;
-			Start_evilmeta();
-		}
-	}
+	Check_evilmeta();
 
 	/* kill it or update it */
 	if (metapid) {
@@ -651,6 +641,29 @@ void Start_evilmeta(void)
 	}
 #endif
 }
+
+void Check_evilmeta(void)
+{
+	int status;
+
+	if (metapid == 0)
+	{
+		Start_evilmeta();
+	}
+
+	/* find out what has happened to evilmeta - mikaelh */
+	else if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
+	{
+		if (WIFEXITED(status) || WIFSIGNALED(status))
+		{
+			/* evilmeta is dead, restart it */
+//			s_printf("evilmeta is dead, restarting it\n");
+			metapid = 0;
+			Start_evilmeta();
+		}
+	}
+}
+
 
 /*
  * Initialize the connection structures.
@@ -1047,6 +1060,7 @@ static void Contact(int fd, int arg)
 		host_name[MAX_CHARS],
 		host_addr[24],
 		reply_to, status;
+	version_type version_ext;
 
 	/* Create a TCP socket for communication with whoever contacted us */
 	/* Hack -- check if this data has arrived on the contact socket or not.
@@ -1122,6 +1136,24 @@ static void Contact(int fd, int arg)
 		plog(format("Incomplete login from %s", host_addr));
 		return;
 	}
+	if (version == 0xFFFFU)
+	{
+		/* Extended version support */
+		if (Packet_scanf(&ibuf, "%d%d%d%d%d%d", &version_ext.major, &version_ext.minor, &version_ext.patch, &version_ext.extra, &version_ext.branch, &version_ext.build) <= 0)
+		{
+			plog(format("Incomplete extended version from %s", host_addr));
+			return;
+		}
+	}
+	else
+	{
+		version_ext.major = version >> 12;
+		version_ext.minor = (version >> 8) & 0xF;
+		version_ext.patch = (version >> 4) & 0xF;
+		version_ext.extra = version & 0xF;
+		version_ext.branch = 0;
+		version_ext.build = 0;
+	}
 
 	nick_name[sizeof(nick_name) - 1] = '\0';
 	host_name[sizeof(host_name) - 1] = '\0';
@@ -1137,7 +1169,7 @@ static void Contact(int fd, int arg)
 	validatestring(host_name);
 
 	status = Enter_player(real_name, nick_name, host_addr, host_name,
-				version, port, &login_port, fd);
+				&version_ext, port, &login_port, fd);
 
 #if DEBUG_LEVEL > 0
 	if (status && status != E_NEED_INFO)
@@ -1161,7 +1193,7 @@ static void Contact(int fd, int arg)
 }
 
 static int Enter_player(char *real, char *nick, char *addr, char *host,
-				unsigned version, int port, int *login_port, int fd)
+				version_type *version, int port, int *login_port, int fd)
 {
 	//int status;
 
@@ -1190,10 +1222,26 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	}
 #endif
 
+#if 0
 	if (version < MY_VERSION)
 		return E_VERSION_OLD;
 	if (version > MY_VERSION)
 		return E_VERSION_UNKNOWN;
+#else
+	/* Extended version support */
+	if (version->major < VERSION_MAJOR)
+		return E_VERSION_OLD;
+	else if (version->major > VERSION_MAJOR)
+		return E_VERSION_UNKNOWN;
+	else if (version->minor < VERSION_MINOR)
+		return E_VERSION_OLD;
+	else if (version->minor > VERSION_MINOR)
+		return E_VERSION_UNKNOWN;
+	else if (version->patch < VERSION_PATCH)
+		return E_VERSION_OLD;
+	else if (version->patch > VERSION_PATCH)
+		return E_VERSION_UNKNOWN;
+#endif
 
 	if(!player_allowed(nick))
 		return E_INVITE;
@@ -1358,7 +1406,7 @@ static void Delete_player(int Ind)
 			cptr title = "";
 			if (p_ptr->total_winner)
     			{
-				if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
+				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 				{
 					title = (p_ptr->male)?"Emperor ":"Empress ";
 				}
@@ -1604,7 +1652,7 @@ int Check_connection(char *real, char *nick, char *addr)
  * client connection is still in the CONN_LISTENING state.
  */
 int Setup_connection(char *real, char *nick, char *addr, char *host,
-			unsigned version, int fd)
+			version_type *version, int fd)
 {
 	int i, free_conn_index = max_connections, my_port, sock;
 	connection_t *connp;
@@ -1675,11 +1723,17 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 	connp->nick = strdup(nick);
 	connp->addr = strdup(addr);
 	connp->host = strdup(host);
+#if 0
 	connp->version = version;
+#else
+	/* Extended version support */
+	memcpy(&connp->version, version, sizeof(version_type));
+#endif
 	connp->start = turn;
 	connp->magic = rand() + my_port + sock + turn;
 	connp->id = -1;
 	connp->timeout = LISTEN_TIMEOUT;
+/* - not used - mikaelh
 	connp->reliable_offset = 0;
 	connp->reliable_unsent = 0;
 	connp->last_send_loops = 0;
@@ -1688,6 +1742,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 	connp->rtt_smoothed = 0;
 	connp->rtt_dev = 0;
 	connp->rtt_timeouts = 0;
+*/
 	connp->acks = 0;
 	connp->setup = 0;
 	connp->password_verified = FALSE;
@@ -1879,6 +1934,7 @@ static int Handle_listening(int ind)
 	unsigned char type;
 	int  n, oldlen;
 	char nick[MAX_CHARS], real[MAX_CHARS], pass[MAX_CHARS];
+	version_type *version = &connp->version;
 
 	if (connp->state != CONN_LISTENING)
 	{
@@ -1937,8 +1993,13 @@ static int Handle_listening(int ind)
 	/* Log the players connection */
 	s_printf("%s: Welcome %s=%s@%s (%s/%d)", showtime(), connp->nick,
 		connp->real, connp->host, connp->addr, connp->his_port);
+#if 0
 	if (connp->version != MY_VERSION)
 		s_printf(" (version %04x)", connp->version);
+#else
+	/* Extended version support */
+	s_printf(" (version %d.%d.%d.%d branch %d build %d)", version->major, version->minor, version->patch, version->extra, version->branch, version->build);
+#endif
 	s_printf("\n");
 
 	if (strcmp(real, connp->real))
@@ -2080,7 +2141,7 @@ static int Handle_login(int ind)
 	strncpy(p_ptr->hostname, connp->host, 25); /* cap ridiculously long hostnames - C. Blue */
 	strcpy(p_ptr->accountname, connp->nick);
 	strcpy(p_ptr->addr, connp->addr);
-	p_ptr->version = connp->version;
+	p_ptr->version = connp->version; /* this actually copies the extended version structure */
 
 	/* Copy the client preferences to the player struct */
 	for (i = 0; i < OPT_MAX; i++)
@@ -2236,7 +2297,7 @@ static int Handle_login(int ind)
 	account_checkexpiry(NumPlayers);
 
 	/* Brand-new players get super-short instructions presented here: */
-#if 1
+#ifndef ARCADE_SERVER
 	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. */
 		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
 		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
@@ -2318,7 +2379,7 @@ static int Handle_login(int ind)
 			continue;
 		if (p_ptr->total_winner)
 		  {
-			if (p_ptr->mode & (MODE_HELL | MODE_NO_GHOST))
+			if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 		      {
 			title = (p_ptr->male)?"Emperor ":"Empress ";
 		      }
@@ -2346,7 +2407,7 @@ static int Handle_login(int ind)
 	}
 
 	if(!(p_ptr->mode & MODE_NO_GHOST) &&
-	    !(p_ptr->mode & MODE_IMMORTAL) &&
+	    !(p_ptr->mode & MODE_EVERLASTING) &&
 	    !cfg.no_ghost && cfg.lifes)
 	{
 		/* if total_winner char was loaded from old save game that
@@ -2671,7 +2732,7 @@ int Net_input(void)
 
 		if (connp->state == CONN_FREE)
 			continue;
-		if (connp->start + connp->timeout * cfg.fps < turn)
+		if (connp->timeout && (connp->start + connp->timeout * cfg.fps < turn))
 		{
 			if (connp->state & (CONN_PLAYING | CONN_READY))
 			{
@@ -2963,6 +3024,13 @@ static int Receive_login(int ind){
 			Destroy_connection(ind, "The server didn't like your nickname, realname or hostname");
 			return(-1);
 		}
+
+		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0))
+		{
+			/* Use memfrob for the password - mikaelh */
+			my_memfrob(connp->pass, strlen(connp->pass));
+		}
+
 		if (connp->pass && (l_acc = GetAccount(connp->nick, connp->pass, FALSE))) {
 			int *id_list, i;
 			byte tmpm;
@@ -2985,9 +3053,9 @@ static int Receive_login(int ind){
 				u16b ptype = lookup_player_type(id_list[i]);
 				/* do not change protocol here */
 				tmpm = lookup_player_mode(id_list[i]);
-				if (tmpm & MODE_IMMORTAL) strcpy(colour_sequence, "\377g");
+				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
 				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-				else if (tmpm & MODE_HELL) strcpy(colour_sequence, "\377W");
+				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
 				else strcpy(colour_sequence, "\377w");
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
 			}
@@ -3415,7 +3483,7 @@ int Send_reliable(int ind)
 	return num_written;
 }
 
-#if 0 /* CURRENTLY not used */
+#if 0 /* old UDP networking stuff - mikaelh */
 int Send_reliable_old(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -3510,6 +3578,7 @@ int Send_reliable_old(int ind)
 }
 #endif
 
+#if 0 /* old UDP networking stuff - mikaelh */
 static int Receive_ack(int ind)
 {
 	connection_t *connp = &Conn[ind];
@@ -3584,6 +3653,7 @@ static int Receive_ack(int ind)
 
 	return 1;
 }
+#endif
  
 static int Receive_discard(int ind)
 {
@@ -3603,8 +3673,13 @@ static int Receive_undefined(int ind)
 
 	errno = 0;
 	plog(format("Unknown packet type (%d,%02x)", connp->r.ptr[0], connp->state));
+
 	/* Dont destroy connection. Ignore the invalid packet */
 	/*Destroy_connection(ind, "undefined packet");*/
+
+	/* Discard everything - mikaelh */
+	connp->r.ptr = connp->r.buf + connp->r.len;
+
 	return -1;	/* Crash if not (evil) */
 	/*return 0;*/
 }
@@ -3912,6 +3987,38 @@ int Send_sp(int ind, int msp, int csp)
 	      }
 	  }
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SP, msp, csp);
+}
+
+int Send_stamina(int ind, int mst, int cst)
+{
+	connection_t *connp = &Conn[Players[ind]->conn];
+
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for hp (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = &Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 }
 
 int Send_char_info(int ind, int race, int class, int sex, int mode)
@@ -4577,6 +4684,24 @@ int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
 	return Packet_printf(&connp->c, "%c%ld%ld%ld%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
 
+/* Implementing fighting/shooting techniques, but I think using a lua 'school' file would be better instead - C. Blue */
+int Send_techniques_info(int ind)
+{
+#if 0
+	connection_t *connp = &Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for techniques info (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	return Packet_printf(&connp->c, "%c%ld%ld", PKT_TECHNIQUES_INFO, p_ptr->techniques[0], p_ptr->techniques[1]);
+#endif
+return(0);
+}
 
 int Send_item_request(int ind)
 {
@@ -5480,8 +5605,8 @@ static int Receive_keepalive(int ind)
 		Ind = GetInd[connp->id];
 		p_ptr = Players[Ind];
 
-		p_ptr->idle++;
-		p_ptr->idle_char++;
+		p_ptr->idle += 2;
+		p_ptr->idle_char += 2;
 
 		/* Kick a starving player */
 		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > 15)
@@ -5794,6 +5919,10 @@ static int Receive_aim_wand(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_aim_wand(player, item, dir);
@@ -5843,6 +5972,10 @@ static int Receive_drop(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -5948,6 +6081,10 @@ static int Receive_observe(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1)
 		do_cmd_observe(player, item);
 
@@ -6034,6 +6171,10 @@ static int Receive_destroy(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6132,6 +6273,10 @@ static int Receive_activate_skill(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	/* Not by class nor by item; by skill */
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6175,6 +6320,11 @@ static int Receive_activate_skill(int ind)
 				do_cmd_stance(player, book);
 				break;
 #endif
+#ifdef ENABLE_NEW_MELEE
+			case MKEY_PARRYBLOCK:
+				check_parryblock(player);
+				break;
+#endif
 			case MKEY_TRAP:
 				do_cmd_set_trap(player, book, spell);
 				break;
@@ -6187,6 +6337,15 @@ static int Receive_activate_skill(int ind)
 				cast_rune_spell_header(player, book, spell); 
 				break;
 #endif
+			case MKEY_AURA_FEAR:
+				toggle_aura(player, 0);
+				break;
+			case MKEY_AURA_SHIVER:
+				toggle_aura(player, 1);
+				break;
+			case MKEY_AURA_DEATH:
+				toggle_aura(player, 2);
+				break;
 		}
 		return 2;
 	}
@@ -6435,6 +6594,10 @@ static int Receive_quaff(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_quaff_potion(player, item);
@@ -6484,6 +6647,10 @@ static int Receive_read(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6595,6 +6762,10 @@ static int Receive_take_off(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_takeoff(player, item);
@@ -6644,6 +6815,10 @@ static int Receive_use(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6695,9 +6870,13 @@ static int Receive_throw(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
-		do_cmd_throw(player, dir, item);
+		do_cmd_throw(player, dir, item, FALSE);
 		return 2;
 	}
 	else if (player)
@@ -6745,6 +6924,10 @@ static int Receive_wield(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6795,6 +6978,10 @@ static int Receive_zap(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -6934,6 +7121,10 @@ static int Receive_inscribe(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1)
 		do_cmd_inscribe(player, item, inscription);
 
@@ -6978,6 +7169,10 @@ static int Receive_uninscribe(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1)
 		do_cmd_uninscribe(player, item);
 
@@ -7020,6 +7215,10 @@ static int Receive_activate(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -7237,6 +7436,10 @@ static int Receive_fill(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -7636,6 +7839,10 @@ static int Receive_item(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
 
 	if (connp->id != -1)
 		Handle_item(player, item);
@@ -9080,6 +9287,9 @@ static int Receive_ping(int ind) {
 			Ind = GetInd[connp->id];
 			p_ptr = Players[Ind];
 
+			p_ptr->idle++;
+			p_ptr->idle_char++;
+
 			/* Kick a starving player */
 			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > 30)
 			{
@@ -9251,6 +9461,11 @@ static int Receive_wield2(int ind) {
 		if (n == -1) Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check - mikaelh */
+	if (item > INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		do_cmd_wield(player, item, 0x2);
 		return 2;

@@ -574,7 +574,7 @@ int party_create(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral"))
+	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#"))
 	{
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
@@ -669,7 +669,7 @@ int party_create_ironteam(int Ind, cptr name)
 	}
 
 	/* Prevent abuse */
-	if (streq(name, "Neutral"))
+	if (streq(name, "Neutral") || streq(name, "!") || streq(name, "#"))
 	{
 		msg_print(Ind, "\377yThat's not a legal party name.");
 		return FALSE;
@@ -856,7 +856,7 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Everlasting and other chars cannot be in the same party */
-	if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL))
+	if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING))
 	{
 		msg_print(adder, "\377yEverlasting characters and other characters can't be in the same party.");
 		return FALSE;
@@ -1253,25 +1253,6 @@ static void guild_msg(int guild_id, cptr msg)
 
 
 /*
- * Send a message to everyone in a party.
- */
-static void party_msg(int party_id, cptr msg)
-{
-	int i;
-
-	/* Check for this guy */
-	for (i = 1; i <= NumPlayers; i++)
-	{
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-
-		/* Check this guy */
-		if (player_in_party(party_id, i))
-			msg_print(i, msg);
-	}
-}
-
-/*
  * Send a formatted message to a guild.
  */
 void guild_msg_format(int guild_id, cptr fmt, ...)
@@ -1290,6 +1271,25 @@ void guild_msg_format(int guild_id, cptr fmt, ...)
 
 	/* Display */
 	guild_msg(guild_id, buf);
+}
+
+/*
+ * Send a message to everyone in a party.
+ */
+static void party_msg(int party_id, cptr msg)
+{
+	int i;
+
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* Check this guy */
+		if (player_in_party(party_id, i))
+			msg_print(i, msg);
+	}
 }
 
 /*
@@ -1404,10 +1404,11 @@ static bool players_in_level(int Ind, int Ind2)
 void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc)
 {
 	player_type *p_ptr;
-	int i;
+	int i, eff_henc;
 	struct worldpos *wpos=&Players[Ind]->wpos;
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
 	s64b modified_level, req_lvl;
+	int dlev;
 
 	/* Iron Teams only get exp if the whole team is on the same floor! */
 	if (parties[party_id].mode == PA_IRONTEAM)
@@ -1450,6 +1451,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		p_ptr = Players[i];
+		dlev = getlevel(&p_ptr->wpos);
 
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
@@ -1494,13 +1496,25 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			}
 
 			/* Higher characters who farm monsters on low levels compared to
-			    their clvl will gain less exp */
+			    their clvl will gain less exp.
+			    (note: this formula also occurs in mon_take_hit) */
+#if 0 /* prevent exp cheeze */
 			if (p_ptr->lev >= 20) {
 				if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
 				else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
 				else req_lvl = (p_ptr->lev * 2);
-				if (getlevel(&p_ptr->wpos) < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
+				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
 			}
+#else
+			if (henc > p_ptr->lev) eff_henc = henc;
+			else eff_henc = p_ptr->lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
+			if (eff_henc >= 20) {
+				if (eff_henc < 30) req_lvl = 375 / (45 - eff_henc);
+				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);
+				else req_lvl = (eff_henc * 2);
+				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
+			}
+#endif
 
 			/* Never get too much exp off a monster
             		   due to high level difference,
@@ -2517,7 +2531,7 @@ void scan_players(){
 		pptr=NULL;
 		ptr=hash_table[slot];
 		while(ptr){
-			if(ptr->laston && (now - ptr->laston > 7776000)){
+			if(ptr->laston && (now - ptr->laston > 15552000)){/*7776000 = 90 days at 60fps*/
 				int i,j;
 				hash_entry *dptr;
 
@@ -2541,6 +2555,10 @@ void scan_players(){
 				rem_quest(ptr->quest);
 				/* Added this one.. should work well? */
 				kill_objs(ptr->id);
+
+#ifdef AUCTION_SYSTEM
+				auction_player_death(ptr->id);
+#endif
 
 				/* Wipe Artifacts (s)he had  -C. Blue */
 				for (i = 0; i < o_max; i++)
@@ -2618,6 +2636,10 @@ void erase_player_name(char *pname){
 				rem_quest(ptr->quest);
 				/* Added this one.. should work well? */
 				kill_objs(ptr->id);
+
+#ifdef AUCTION_SYSTEM
+				auction_player_death(ptr->id);
+#endif
 
 				/* Wipe Artifacts (s)he had  -C. Blue */
 				for (i = 0; i < o_max; i++)

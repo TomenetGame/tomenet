@@ -16,13 +16,15 @@
 #define SETUP_TIMEOUT           150
 #define LOGIN_TIMEOUT           600
 #define READY_TIMEOUT           30
-#define IDLE_TIMEOUT            15
+#define IDLE_TIMEOUT            20 /* was 15, but quitting in dungeon should take 20 seconds */
 
+#if 0 /* old UDP networking stuff - mikaelh */
 #define MAX_RTT			(2 * FPS)
 
 #define MIN_RETRANSMIT		(FPS / 8 + 1)
 #define MAX_RETRANSMIT		(2 * FPS)
 #define DEFAULT_RETRANSMIT	(FPS / 2)
+#endif
 
 #define MAX_NAME_LEN		20
 
@@ -36,6 +38,7 @@ typedef struct {
 	sockbuf_t	q;
 	long		start;
 	long		timeout;
+/* - old UDP networking stuff - mikaelh
 	long		last_send_loops;
 	long		reliable_offset;
 	long		reliable_unsent;
@@ -44,13 +47,15 @@ typedef struct {
 	int		rtt_dev;
 	int		rtt_retransmit;
 	int		rtt_timeouts;
+*/
 	int		acks;
 	int		setup;
 	int		client_setup;
 	int		my_port;
 	int		his_port;
 	int		id;
-	unsigned	version;
+//	unsigned	version;
+	version_type version;
 	char		*real;
 	char 		*nick;
 	char		*c_name;
@@ -71,7 +76,7 @@ typedef struct {
 static void Contact(int fd, int arg);
 //static void Console(int fd, int arg);
 static int Enter_player(char *real, char *name, char *addr, char *host,
-				unsigned version, int port, int *login_port, int fd);
+				version_type *version, int port, int *login_port, int fd);
 
 static int Handle_listening(int ind);
 static int Handle_setup(int ind);
@@ -82,7 +87,7 @@ void do_quit(int ind, bool tellclient);
 static int Receive_quit(int ind);
 static int Receive_play(int ind);
 static int Receive_login(int ind);
-static int Receive_ack(int ind);
+// static int Receive_ack(int ind);
 static int Receive_discard(int ind);
 static int Receive_undefined(int ind);
 
@@ -173,7 +178,7 @@ static void Handle_item(int Ind, int item);
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);
 int Check_connection(char *real, char *nick, char *addr);
-int Setup_connection(char *real, char *nick, char *addr, char *host, unsigned version, int fd);
+int Setup_connection(char *real, char *nick, char *addr, char *host, version_type *version, int fd);
 int Input(void);
 int Send_reply(int ind, int replyto, int result);
 int Send_leave(int ind, int id);

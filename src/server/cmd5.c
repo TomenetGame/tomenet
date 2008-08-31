@@ -572,7 +572,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 //	chance = spell_chance(Ind, REALM_MAGERY, s_ptr);
 	chance = spell_chance(Ind, REALM_MIMIC, s_ptr);
 
-	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return;
+	if (j >= 32 && interfere(Ind, cfg.spell_interfere)) return; /* mimic spells interference chance */
 
 	/* Failed spell */
 	if (rand_int(100) < chance)
@@ -1732,6 +1732,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		msg_print(Ind, "Your anti-magic field disrupts any magic attempts.");
 		return;
 	}
+
+	/* Disruption shield prevents interfering! */
+	if (!p_ptr->tim_manashield && interfere(Ind, cfg.spell_interfere)) return; /* school spell casting interference chance */
 
 	/* TODO: use energy */
 

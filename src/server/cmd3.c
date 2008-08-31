@@ -636,6 +636,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -963,7 +966,7 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Redraw */
-	p_ptr->redraw |= (PR_PLUSSES);
+	p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -1001,6 +1004,9 @@ void do_cmd_takeoff(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1050,6 +1056,9 @@ void do_cmd_drop(int Ind, int item, int quantity)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1228,6 +1237,9 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1390,6 +1402,9 @@ void do_cmd_observe(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1403,31 +1418,31 @@ void do_cmd_observe(int Ind, int item)
 	if (!(o_ptr->ident & ID_MENTAL))
 	{
 		/* Describe */
-		msg_format(Ind, "%s", o_name);
-		if (strlen(o_name) > 77) msg_format(Ind, "%s", o_name + 77);
+		msg_format(Ind, "\377s%s:", o_name);
+		if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
 
 		switch(o_ptr->tval){
 		case TV_BLUNT:
-			msg_print(Ind, "It's a hafted weapon."); break;
+			msg_print(Ind, "\377s  It's a blunt weapon."); break;
 		case TV_POLEARM:
-			msg_print(Ind, "It's a polearm."); break;
+			msg_print(Ind, "\377s  It's a polearm."); break;
 		case TV_SWORD:
-			msg_print(Ind, "It's a sword-type weapon."); break;
+			msg_print(Ind, "\377s  It's a sword-type weapon."); break;
 		case TV_AXE:
-			msg_print(Ind, "It's an axe-type weapon."); break;
+			msg_print(Ind, "\377s  It's an axe-type weapon."); break;
 		default:
-			if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "You have no special knowledge about that item.");
+			if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
 			break;
 		}
 
-    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "It can be wielded two-handed.");
-	        if (f4 & TR4_MUST2H) msg_print(Ind, "It must be wielded two-handed.");
-    		if (f4 & TR4_COULD2H) msg_print(Ind, "It may be wielded two-handed.");
+    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It can be wielded two-handed.");
+	        if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
+    		if (f4 & TR4_COULD2H) msg_print(Ind, "\377s  It may be wielded two-handed.");
 
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
 			int blows = calc_blows_obj(Ind, o_ptr);
-			msg_format(Ind, "With it, you can usually attack %d time%s/turn.",
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
 		return;
@@ -1459,6 +1474,9 @@ void do_cmd_uninscribe(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1510,6 +1528,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -1821,12 +1842,12 @@ void do_cmd_steal(int Ind, int dir)
 	q_ptr = Players[0 - c_ptr->m_idx];
 
 	/* No transactions from different mode */
-	if ((p_ptr->mode & MODE_IMMORTAL) != (q_ptr->mode & MODE_IMMORTAL)) {
-		if ((p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 1)) {
+	if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING)) {
+		if ((p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 1)) {
 			msg_print(Ind, "You can only steal from everlasting players.");
 			return;
 		}
-		else if (!(p_ptr->mode & MODE_IMMORTAL) && (cfg.charmode_trading_restrictions > 0)) {
+		else if (!(p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 0)) {
 			msg_print(Ind, "You cannot steal from everlasting players.");
 			return;
 		}
@@ -2152,6 +2173,8 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 	object_type *o_ptr;
 	object_type *j_ptr;
+	
+	long int used_fuel = 0, spilled_fuel = 0, available_fuel = 0;
 
 
 	/* Restrict the choices */
@@ -2166,6 +2189,9 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -2182,6 +2208,12 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
+	if (o_ptr->tval != TV_FLASK && o_ptr->timeout == 0)
+	{
+		msg_print(Ind, "That item has no fuel left!");
+		return;
+	}
+
 	/* Let's not end afk for this. - C. Blue */
 /*	un_afk_idle(Ind); */
 
@@ -2192,8 +2224,14 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	j_ptr = &(p_ptr->inventory[INVEN_LITE]);
 
 	/* Refuel */
-	j_ptr->timeout += (o_ptr->tval == TV_FLASK)?o_ptr->pval:o_ptr->timeout;
-//	j_ptr->timeout += o_ptr->timeout;
+	used_fuel = j_ptr->timeout;
+	if (o_ptr->tval == TV_FLASK) {
+		j_ptr->timeout += o_ptr->pval;
+	} else {
+		spilled_fuel = (o_ptr->timeout * randint(20)) / 100; /* spill some 1..20% */
+		available_fuel = o_ptr->timeout - spilled_fuel;
+		j_ptr->timeout += available_fuel;
+	}
 
 	/* Message */
 	msg_print(Ind, "You fuel your lamp.");
@@ -2204,25 +2242,35 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		j_ptr->timeout = FUEL_LAMP;
 		msg_print(Ind, "Your lamp is full.");
 	}
+	used_fuel = j_ptr->timeout - used_fuel;
 
-	/* Decrease the item (from the pack) */
-	if (item >= 0)
-	{
-		inven_item_increase(Ind, item, -1);
-		inven_item_describe(Ind, item);
-		inven_item_optimize(Ind, item);
-	}
+	if (o_ptr->tval == TV_FLASK || item <= 0) { /* just dispose of for now, if it was from the ground */
+		/* Decrease the item (from the pack) */
+		if (item >= 0)
+		{
+			inven_item_increase(Ind, item, -1);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		}
 
-	/* Decrease the item (from the floor) */
-	else
-	{
-		floor_item_increase(0 - item, -1);
-		floor_item_describe(0 - item);
-		floor_item_optimize(0 - item);
+		/* Decrease the item (from the floor) */
+		else
+		{
+			floor_item_increase(0 - item, -1);
+			floor_item_describe(0 - item);
+			floor_item_optimize(0 - item);
+		}
+	} else {
+		/* big numbers (*1000) to fix rounding errors: */
+		o_ptr->timeout -= ((used_fuel * 100000) / (100000 - ((100000 * spilled_fuel) / o_ptr->timeout)));
+		/* quick hack to hopefully fix rounding errors: */
+		if (o_ptr->timeout == 1) o_ptr->timeout = 0;
+//		inven_item_describe(Ind, item);
 	}
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 
@@ -2266,6 +2314,9 @@ static void do_cmd_refill_torch(int Ind, int item)
 	/* Get the item (on the floor) */
 	else
 	{
+		if (-item >= o_max)
+			return; /* item doesn't exist */
+
 		o_ptr = &o_list[0 - item];
 	}
 
@@ -2328,6 +2379,7 @@ static void do_cmd_refill_torch(int Ind, int item)
 
 	/* Recalculate torch */
 	p_ptr->update |= (PU_TORCH);
+	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 }
 
 
@@ -2724,7 +2776,8 @@ void do_cmd_look(int Ind, int dir)
 	if(!(zcave=getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
 
-	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] && !Players[0-c_ptr->m_idx]->admin_dm)
+	if (c_ptr->m_idx < 0 && p_ptr->play_vis[0-c_ptr->m_idx] &&
+	    (!Players[0-c_ptr->m_idx]->admin_dm || player_sees_dm(Ind)))
 	{
 		q_ptr = Players[0 - c_ptr->m_idx];
 
@@ -3038,7 +3091,7 @@ static cptr ident_info[] =
 	"Y:Yeti",
 	"Z:Zephyr Hound",
 	"[:Hard armour",
-	"\\:A hafted weapon (mace/whip/etc)",
+	"\\:A blunt weapon (mace/whip/etc)",
 	"]:Misc. armour",
 	"^:A trap",
 	"_:A staff",

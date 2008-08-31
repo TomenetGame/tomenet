@@ -802,7 +802,7 @@ errr get_obj_num_prep_tval(int tval, u32b resf)
  * Note that if no objects are "appropriate", then this function will
  * fail, and return zero, but this should *almost* never happen.
  */
-s16b get_obj_num(int level, u32b resf)
+s16b get_obj_num(int max_level, u32b resf)
 {
 	int			i, j, p;
 
@@ -816,13 +816,13 @@ s16b get_obj_num(int level, u32b resf)
 
 
 	/* Boost level */
-	if (level > 0)
+	if (max_level > 0)
 	{
 		/* Occasional "boost" */
 		if (rand_int(GREAT_OBJ) == 0)
 		{
 			/* What a bizarre calculation */
-                        level = 1 + (level * MAX_DEPTH_OBJ / randint(MAX_DEPTH_OBJ));
+                        max_level = 1 + (max_level * MAX_DEPTH_OBJ / randint(MAX_DEPTH_OBJ));
 		}
 	}
 
@@ -834,7 +834,7 @@ s16b get_obj_num(int level, u32b resf)
 	for (i = 0; i < alloc_kind_size; i++)
 	{
 		/* Objects are sorted by depth */
-		if (table[i].level > level) break;
+		if (table[i].level > max_level) break;
 
 		/* Default */
 		table[i].prob3 = 0;
@@ -1643,7 +1643,7 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				/* Give credit for stealth and searching */
 //				if (f1 & TR1_STEALTH) value += (PRICE_BOOST(pval, 3, 1) * 100L);
 				if (f1 & TR1_STEALTH) value += pval * pval * 250L;//100
-				if (f1 & TR1_SEARCH) value += pval * pval * 500L;//200
+				if (f1 & TR1_SEARCH) value += pval * pval * 200L;//200
 				if (f5 & TR5_DISARM) value += pval * pval * 100L;
 
 				/* Give credit for infra-vision and tunneling */
@@ -1651,7 +1651,11 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				if (f1 & TR1_TUNNEL) value += pval * pval * 175L;//50
 
 				/* Give credit for extra attacks */
-				if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+				if (o_ptr->tval == TV_RING) {
+					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
+				} else {
+					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+				}
 
 				/* Give credit for extra casting */
 				if (f1 & TR1_SPELL) value += (PRICE_BOOST(pval, 0, 1) * 4000L);
@@ -2010,9 +2014,9 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
-		if (!(Players[Ind]->mode & MODE_IMMORTAL)) {
-			if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
-			    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
+		if (!(Players[Ind]->mode & MODE_EVERLASTING)) {
+			if (((o_ptr->owner_mode & MODE_EVERLASTING) && !(j_ptr->owner_mode & MODE_EVERLASTING)) ||
+			    ((j_ptr->owner_mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING)))
 				return(0);
 		}
 	}
@@ -2021,8 +2025,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		if (o_ptr->owner != j_ptr->owner) return (0);
 		/* no stacks of unowned everlasting items in shops after a now-dead
 		   everlasting player sold an item to the shop before he died :) */
-		if (((o_ptr->owner_mode & MODE_IMMORTAL) && !(j_ptr->owner_mode & MODE_IMMORTAL)) ||
-		    ((j_ptr->owner_mode & MODE_IMMORTAL) && !(o_ptr->owner_mode & MODE_IMMORTAL)))
+		if (((o_ptr->owner_mode & MODE_EVERLASTING) && !(j_ptr->owner_mode & MODE_EVERLASTING)) ||
+		    ((j_ptr->owner_mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING)))
 			return(0);
 	}
 
@@ -2270,11 +2274,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	   (especially new items bought in the shops) and convert them all to everlasting */
-	if (Ind && (p_ptr->mode & MODE_IMMORTAL)) {
-/*		if ((o_ptr->owner_mode & MODE_IMMORTAL) || (j_ptr->owner_mode & MODE_IMMORTAL))*/
+	if (Ind && (p_ptr->mode & MODE_EVERLASTING)) {
+/*		if ((o_ptr->owner_mode & MODE_EVERLASTING) || (j_ptr->owner_mode & MODE_EVERLASTING))*/
 		{
-			o_ptr->owner_mode = MODE_IMMORTAL;
-			j_ptr->owner_mode = MODE_IMMORTAL;
+			o_ptr->owner_mode = MODE_EVERLASTING;
+			j_ptr->owner_mode = MODE_EVERLASTING;
 		}
 	}
 
@@ -2930,8 +2934,14 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 			
 			/* Don't allow silyl combinations (elven armour of resist xxxx) */
 			switch (o_ptr->name2) {
-			case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
-			case EGO_RESIST_ELEC:	case EGO_RESIST_ACID:
+			case EGO_RESIST_FIRE:
+				if (i == EGO_DWARVEN_ARMOR) {
+					o_ptr->name2 = EGO_DWARVEN_ARMOR;
+					continue;
+				}
+			case EGO_RESIST_COLD:
+			case EGO_RESIST_ELEC:
+			case EGO_RESIST_ACID:
 				if (i == EGO_ELVENKIND) {
 					o_ptr->name2 = EGO_ELVENKIND;
 					continue;
@@ -2941,6 +2951,12 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 				switch (i) {
 				case EGO_RESIST_FIRE:	case EGO_RESIST_COLD:
 				case EGO_RESIST_ELEC:	case EGO_RESIST_ACID:
+					continue;
+				}
+				break;
+			case EGO_DWARVEN_ARMOR:
+				switch (i) {
+				case EGO_RESIST_FIRE:
 					continue;
 				}
 				break;
@@ -4220,7 +4236,8 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 	} else
 #endif
 	{
-		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+//		if (o_ptr->to_a > 50) o_ptr->to_a = 50;
+		if (o_ptr->to_a > 35) o_ptr->to_a = 35;
 	}
 }
 
@@ -5386,6 +5403,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Assume "good" */
 		power = 1;
 
+		/* Double chance2 for super heavy armours are already very rare */
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) chance2 += 20;
+
 		/* Roll for "great" */
 		if (great || magik(chance2)) power = 2;
 	}
@@ -5580,7 +5600,7 @@ for (i = 0; i < 25; i++) {
 		}
 		
 		case TV_CHEST:
-	                /* Traps (placed in a_m_aux4) won't be placed on a level 0 object */
+	                /* Traps (placed in a_m_aux_4) won't be placed on a level 0 object */
 	                determine_level_req(lev, o_ptr); /* usually lev == dungeonlevel (+ x for vaults) */
 			a_m_aux_4(o_ptr, lev, power, resf);
 			/* that's it already */
@@ -6142,7 +6162,9 @@ void determine_level_req(int level, object_type *o_ptr)
 		o_ptr->level = 51 + rand_int(2);
 
 	/* Fix cheap but high +dam weaponry: */
-	if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
+//	if ((o_ptr->to_d * 12) / 10) { /* provided it's greater 0 - PARANOIA */
+		if (o_ptr->level * 10 < o_ptr->to_d * 12) o_ptr->level = (o_ptr->to_d * 12) / 10;
+//	}
 }
 
 
@@ -6603,13 +6625,16 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				else
 					forge.number = damroll(6, (forge.sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
 				/* Stacks of ethereal ammo are smaller */
-				if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= 4;
+				if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= ETHEREAL_AMMO_REDUCTION;
 				/* Ammo from acquirement scrolls comes in more generous numbers :) */
 				if (verygreat) forge.number *= 2;
 		}
 
 	/* Hack -- inscribe items that a unique drops */
-	if (unique_quark) forge.note = unique_quark;
+	if (unique_quark) {
+		forge.note = unique_quark;
+//		forge.note_priority = 1; currently correct erasing of this isn't implemented
+	}
 
 	forge.marked2 = removal_marker;
 	drop_near(&forge, -1, wpos, y, x);
@@ -6655,6 +6680,188 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 #endif	// 0
 }
 
+/* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
+static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck)
+{
+	int prob, base, tmp_luck, i;
+	int tries = 0, k_idx;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Hack - No l00t in Valinor */
+	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+
+	/* place_object_restrictor overrides resf */
+	resf |= place_object_restrictor;
+
+	/* Check luck */
+	luck += global_luck;
+	if (luck < -10) luck = -10;
+	if (luck > 40) luck = 40;
+
+	if (luck > 0) {
+		/* max luck = 40 */
+		tmp_luck = 200 - (8000 / (luck + 40));//+4 luck -> tmp_luck == 19
+		if (!good && !great && magik(tmp_luck / 6)) good = TRUE;//was tmp_luck / 2
+		else if (good && !great && magik(tmp_luck / 20)) {great = TRUE; good = TRUE;}//was tmp_luck / 15
+	} else if (luck < 0) {
+		/* min luck = -10 */
+		tmp_luck = 200 - (2000 / (-luck + 10));
+		if (great && magik(tmp_luck / 3)) {great = FALSE; good = TRUE;}
+		else if (!great && good && magik(tmp_luck / 2)) good = FALSE;
+	}
+
+	/* Chance of "special object" */
+	prob = (good || great ? 10 : 1000);
+
+	/* Base level for the object */
+	base = (good || great ? (object_level + 10) : object_level);
+
+
+	/* Hack -- clear out the forgery */
+	invwipe(o_ptr);
+
+	/* Generate a special object, or a normal object */
+	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, o_ptr, resf))
+	{
+	
+		/* Check global variable, if some base types are forbidden */
+		do {
+			tries++;
+			k_idx = 0;
+
+			/* Good objects */
+			if (good)
+			{
+				/* Activate restriction */
+				get_obj_num_hook = kind_is_good;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+			}
+			/* Normal objects */
+			else
+			{
+				/* Select items based on "theme" */
+				init_match_theme(theme);
+
+				/* Activate normal restriction */
+				get_obj_num_hook = kind_is_legal;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+
+				/* The table is synchronised */
+	//			alloc_kind_table_valid = TRUE;
+			}
+
+
+			/* Pick a random object */
+			/* Magic arrows from DROP_GREAT monsters are annoying.. - C. Blue */
+			/* Added lines for the other magic ammos - the_sandman */
+			if (great)
+				for (i = 0; i < 20; i++) {
+					k_idx = get_obj_num(base, resf);
+					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					break;
+				}
+			else
+				k_idx = get_obj_num(base, resf);
+
+			/* Good objects */
+#if 0	// commented out for efficiency
+
+			if (good)
+			{
+				/* Clear restriction */
+				get_obj_num_hook = NULL;
+
+				/* Prepare allocation table */
+				get_obj_num_prep(resf);
+			}
+#endif	// 0
+
+			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
+			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
+			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
+			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
+			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
+			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+				continue;
+			
+			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
+			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
+			
+			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
+
+			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
+
+			/* Allow all other items here - mikaelh */
+			break;
+		} while(tries < 1000);
+
+		/* Note that if we run out of 'tries', the last tested object WILL be used,
+		   except if we clear k_idx now. */
+		if (tries == 1000) k_idx = 0;
+
+		/* Handle failure */
+#if 0
+		if (!k_idx) {
+//s_printf("k_idx abort.");
+			return;
+		}
+//		if (!k_idx) break; /* always give a quest reward item */
+#else
+		if (!k_idx) { /* always generate a reward. in case of failure, make a lamp for now.. */
+			switch (rand_int(3)){
+			case 0:	k_idx = 527; /* everburning torch */
+			case 1:	k_idx = 525; /* dwarven lantern */
+			case 2:	k_idx = 530; /* feanorian lamp */
+			}
+		}
+#endif
+		/* Prepare the object */
+		invcopy(o_ptr, k_idx);
+	}
+
+	/* Apply magic (allow artifacts) */
+	apply_magic(wpos, o_ptr, object_level, TRUE, good, great, verygreat, resf);
+
+	/* Hack -- generate multiple spikes/missiles */
+	if (!o_ptr->name1)
+		switch (o_ptr->tval)
+		{
+			case TV_SPIKE:
+				o_ptr->number = damroll(6, 7);
+				break;
+			case TV_SHOT:
+			case TV_ARROW:
+			case TV_BOLT:
+				/* luck has influence on ammo stack size, heh */
+				if (luck >= 0)
+					o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (40 + randint(luck)) / 40));
+				else
+					o_ptr->number = damroll(6, (o_ptr->sval == SV_AMMO_MAGIC) ? 2 : (7 * (20 - randint(-luck)) / 20));
+				/* Stacks of ethereal ammo are smaller */
+				if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) o_ptr->number /= ETHEREAL_AMMO_REDUCTION;
+				/* Ammo from acquirement scrolls comes in more generous numbers :) */
+				if (verygreat) o_ptr->number *= 2;
+		}
+
+	/* Hack -- inscribe items that a unique drops */
+	if (unique_quark) {
+		o_ptr->note = unique_quark;
+//		o_ptr->note_priority = 1; currently correct erasing of this isn't implemented
+	}
+//s_printf("object generated %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+}
 
 
 /*
@@ -6710,6 +6917,20 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 		everyone_lite_spot(wpos, y1, x1);
 #endif
 	}
+}
+/*
+ * Same as acquirement, except it doesn't drop the item to the floor. Creates one "great" object.
+ */
+void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf)
+{
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+
+	/* Place a good (or great) object */
+	place_object_restrictor = RESF_NONE;
+//s_printf("generating object...");
+	generate_object(o_ptr, wpos, TRUE, great, verygreat, resf, default_obj_theme, 0);
+//s_printf("object acquired %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 }
 
 
@@ -8368,6 +8589,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		/* The object recurse itself ! */
 		if (!(o_ptr->ident & ID_CURSED)) {
 			o_ptr->ident |= ID_CURSED;
+			o_ptr->ident |= ID_SENSE;
 			o_ptr->note = quark_add("cursed");
 		}
 	}
@@ -8875,9 +9097,14 @@ u32b make_resf(player_type *p_ptr) {
 	u32b f = RESF_NONE;
 	if (p_ptr == NULL) return(f);
 	
-	if (p_ptr->once_winner) f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once. */
-	if (p_ptr->total_winner) f |= RESF_NOTRUEART; /* player is a winner? Then don't find true arts! */
-	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* winners aren't restricted to finding randarts? */
+	if (p_ptr->once_winner) {
+		f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once. */
+		if (cfg.fallenkings_etiquette) f |= RESF_NOTRUEART; /* player is a fallen winner? Then don't find true arts! */
+	}
+	if (p_ptr->total_winner) {
+		if (cfg.kings_etiquette) f |= RESF_NOTRUEART; /* player is currently a winner? Then don't find true arts! */
+	}
+	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* monsters killed by [fallen] winners can drop no true arts but randarts only instead? */
 
 	return (f);
 }

@@ -2174,7 +2174,7 @@ void update_mon(int m_idx, bool dist)
 				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
 
 //				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
-				if (see && (p_ptr->mode & MODE_HELL) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
+				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
 //				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
 				if (drsee && !see){
 //					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see=TRUE;
@@ -2447,8 +2447,8 @@ void update_player(int Ind)
 			{
 			  bool see = FALSE;
 
-			  if (!(p_ptr->mode & MODE_HELL)) see = TRUE;
-			  if ((p_ptr->mode & MODE_HELL) && (dis < MAX_SIGHT)) see = TRUE;
+			  if (!(p_ptr->mode & MODE_HARD)) see = TRUE;
+			  if ((p_ptr->mode & MODE_HARD) && (dis < MAX_SIGHT)) see = TRUE;
 			  if (!(p_ptr->telepathy&ESP_ALL) && (p_ptr->prace == RACE_DRIDER) && (p_ptr->lev<6 || (dis > (5+p_ptr->lev / 2)))) see = FALSE;
 
 			  if (see)
@@ -2471,7 +2471,7 @@ void update_player(int Ind)
 			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
 
 			/* hack -- dungeon masters are invisible */
-			if (q_ptr->admin_dm) flag = FALSE;
+			if (q_ptr->admin_dm && !player_sees_dm(i)) flag = FALSE;
 			/* Dungeon masters can see invisible players */
 			if (p_ptr->admin_dm) flag = TRUE;
 
@@ -2615,6 +2615,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
  * XXX XXX XXX Actually, do something similar for artifacts, to simplify
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
+	/* lots of hard-coded stuff in here -C. Blue */
 static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
 {
 	int                     i, Ind, j, m_idx;
@@ -2672,6 +2673,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 /* override all validity checks! (for summoning done by dungeon master) */
 if (!summon_override_check_all) {
 
+	/* No live spawns after initial spawn allowed on NR bottom */
+	if (getlevel(wpos) == (166 + 30) && !cave_set_quietly) return(FALSE);
+
 	/* Special hack - bottom of NR is empty except for Zu-Aon */
 	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
 
@@ -2680,7 +2684,6 @@ if (!summon_override_check_all) {
 	    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
 		return(FALSE);
 
-	/* hard-coded -C. Blue */
 	/* Wight-King of the Barrow-downs might not occur anywhere else */
 	if ((r_idx == 971) && ((wpos->wx != cfg.town_x) || (wpos->wy != cfg.town_y))) return (FALSE);
 	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
@@ -2691,7 +2694,7 @@ if (!summon_override_check_all) {
 	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
 	    (getlevel(wpos) < 166)) return (FALSE);
 	/* Zu-Aon guards the bottom of the Nether Realm now */
-	if ((r_idx == 1097) && (getlevel(wpos) < (166 + 30))) return (FALSE);
+	if ((r_idx == 1097) && (getlevel(wpos) != (166 + 30))) return (FALSE);
 	/* On Nether Realm bottom no Nether Guards but only Zu-Aon may spawn */
 	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1097;
 

@@ -175,8 +175,13 @@ struct server_opts
 };
 
 extern s32b turn;
+extern char tron_speed;
 extern server_opts cfg;
 extern s32b player_exp[101];
+
+extern const u32b seed_flavor;		/* Hack -- consistent object colors */
+extern const u32b seed_town;		/* Hack -- consistent town layout */
+extern const u32b seed_wild_extra;	/* Hack -- random additional wilderness features (used in terrain_spot()) */
 
 $extern s32b intMod(s32b a, s32b b);
 $extern s32b intAnd(s32b a, s32b b);
@@ -315,3 +320,17 @@ extern int fireworks;
 extern int fireworks_delay;
 
 extern cptr *ANGBAND_DIR;
+
+#define CLASS_WARRIOR		0
+#define CLASS_MAGE              1                                               
+#define CLASS_PRIEST            2                                               
+#define CLASS_ROGUE             3                                               
+#define CLASS_MIMIC             4                                               
+#define CLASS_ARCHER            5                                               
+#define CLASS_PALADIN           6                                               
+#define CLASS_RANGER            7                                               
+#define CLASS_ADVENTURER        8                                               
+/* #define CLASS_BARD            9 */
+#define CLASS_DRUID             9                                               
+#define CLASS_SHAMAN            10                                              
+#define CLASS_RUNEMASTER        11                                              

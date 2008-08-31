@@ -78,8 +78,13 @@
  * Thresholds for scrolling.	[3,8] [2,4]
  * XXX They should be client-side numerical options.	- Jir -
  */
-#define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2) /* 5:2 */
-#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 12 : 4) /* 16:4 */
+#ifndef ARCADE_SERVER
+	#define	SCROLL_MARGIN_ROW	(p_ptr->wide_scroll_margin ? 5 : 2) /* 5:2 */
+	#define	SCROLL_MARGIN_COL	(p_ptr->wide_scroll_margin ? 12 : 4) /* 16:4 */
+#else
+	#define SCROLL_MARGIN_ROW 8
+	#define SCROLL_MARGIN_COL 20
+#endif
 
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
@@ -1401,7 +1406,7 @@ return;
 /*
  * Set "p_ptr->poisoned", notice observable changes
  */
-bool set_poisoned(int Ind, int v)
+bool set_poisoned(int Ind, int v, int attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -1420,6 +1425,9 @@ bool set_poisoned(int Ind, int v)
 		{
 			msg_print(Ind, "You are poisoned!");
 			notice = TRUE;
+
+			/* Remember who did it - mikaelh */
+			p_ptr->poisoned_attacker = attacker;
 		}
 	}
 
@@ -1430,6 +1438,9 @@ bool set_poisoned(int Ind, int v)
 		{
 			msg_print(Ind, "You are no longer poisoned.");
 			notice = TRUE;
+
+			/* Forget who did it - mikaelh */
+			p_ptr->poisoned_attacker = 0;
 		}
 	}
 
@@ -2737,7 +2748,7 @@ bool set_stun(int Ind, int v)
  *
  * Note the special code to only notice "range" changes.
  */
-bool set_cut(int Ind, int v)
+bool set_cut(int Ind, int v, int attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2910,6 +2921,7 @@ bool set_cut(int Ind, int v)
 			case 0:
 			msg_print(Ind, "You are no longer bleeding.");
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+			p_ptr->cut_attacker = 0;
 			break;
 		}
 
@@ -2919,6 +2931,9 @@ bool set_cut(int Ind, int v)
 
 	/* Use the value */
 	p_ptr->cut = v;
+
+	/* Remember who did it - mikaelh */
+	p_ptr->cut_attacker = attacker;
 
 	/* No change */
 	if (!notice) return (FALSE);
@@ -3392,6 +3407,13 @@ void check_experience(int Ind)
 			check_training(Ind);
 		}
 
+		/* Make a new copy of the skills - mikaelh */
+		memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
+		p_ptr->skill_points_old = p_ptr->skill_points;
+
+		/* Reskilling is now possible */
+		p_ptr->reskill_possible = TRUE;
+
 		/* Sound */
 		sound(Ind, SOUND_LEVEL);
 
@@ -3687,7 +3709,7 @@ void check_experience(int Ind)
 		switch (p_ptr->pclass) {
 		case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
-			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) msg_print(Ind, "\377GYou learn how to cloak yourself to pass unnoticed.");
+			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL) msg_print(Ind, "\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
 #endif
 			break;
 		case CLASS_RANGER:
@@ -4097,7 +4119,8 @@ void monster_death(int Ind, int m_idx)
 	int a_idx, chance, I_kind;
 	artifact_type *a_ptr;
 
-	bool henc_cheezed = FALSE, allow_true_arts = FALSE;
+	bool henc_cheezed = FALSE;
+	u32b resf_tmp = RESF_NONE;
 
 #ifdef RPG_SERVER
 	/* Pet death. Update and inform the owner -the_sandman */
@@ -4381,10 +4404,18 @@ void monster_death(int Ind, int m_idx)
 			else
 			{
 				place_object_restrictor = RESF_NONE;
+#if 0
 				/* Morgoth never drops true artifacts; Winners never get true artifacts dropped */
 				allow_true_arts = !p_ptr->total_winner && !streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness");
 				/* well, basically a total_winner won't get loot from Morgoth anyway.. so part of the stuff is superfluous */
 				place_object(wpos, y, x, good, great, FALSE, (allow_true_arts?RESF_NONE:RESF_NOTRUEART) | (p_ptr->once_winner?RESF_WINNER:RESF_NONE), r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+#else
+				/* Morgoth never drops true artifacts */
+				resf_tmp = make_resf(p_ptr);
+				if (!strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) resf_tmp |= RESF_NOTRUEART;
+				place_object(wpos, y, x, good, great, FALSE, resf_tmp, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+#endif
+
 //				if (player_can_see_bold(Ind, ny, nx)) dump_item++;
 			}
 
@@ -4599,7 +4630,7 @@ if(cfg.unikill_format){
 
 							/* Congratulations */
 							msg_print(Ind2, "\377G*** CONGRATULATIONS ***");
-							if (p_ptr2->mode & (MODE_HELL | MODE_NO_GHOST)) {
+							if (p_ptr2->mode & (MODE_HARD | MODE_NO_GHOST)) {
 								msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s'!", (p_ptr2->male)?"Emperor":"Empress");
 								if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
 							} else {
@@ -4619,7 +4650,7 @@ if(cfg.unikill_format){
 #if 0
 							/* Turn him into pseudo-noghost mode */
 							if (cfg.lifes && (p_ptr2->lives >= 1+1) &&
-					    		    !(p_ptr2->mode & MODE_IMMORTAL) &&
+					    		    !(p_ptr2->mode & MODE_EVERLASTING) &&
 							    !(p_ptr2->mode & MODE_NO_GHOST))
 							{
 	        						msg_print(Ind2, "\377yTake care! As a winner, you have no more resurrections left!");
@@ -4641,7 +4672,7 @@ if(cfg.unikill_format){
 
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");
-					if (q_ptr->mode & (MODE_HELL | MODE_NO_GHOST)) {
+					if (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
 						msg_format(i, "\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male)?"Emperor":"Empress");
 						msg_broadcast_format(i, "\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name);
 #ifdef TOMENET_WORLDS
@@ -4667,7 +4698,7 @@ if(cfg.unikill_format){
 #if 0					
 					/* Turn him into pseudo-noghost mode */
 					if (cfg.lifes && (q_ptr->lives >= 1+1) &&
-			    		    !(q_ptr->mode & MODE_IMMORTAL) &&
+			    		    !(q_ptr->mode & MODE_EVERLASTING) &&
 					    !(q_ptr->mode & MODE_NO_GHOST))
 					{
 						msg_print(i, "\377yTake care! As a winner, you have no more resurrections left!");
@@ -4937,6 +4968,11 @@ if(cfg.unikill_format){
 				if (magik(25)) a_idx = ART_ANGUIREL;
 				else a_idx = ART_EOL;
 				chance = 50;
+			}
+			else if (strstr((r_name + r_ptr->name),"Kronos, Lord of Titans"))
+			{
+				a_idx = ART_KRONOS;
+				chance = 75;
 			}
 			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
 			{
@@ -5328,9 +5364,9 @@ void player_death(int Ind)
 		if (p_ptr->blind) (void)set_blind(Ind, 0);
 		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
 		if (p_ptr->confused) (void)set_confused(Ind, 0);
-		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
+		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		/* if (p_ptr->food < PY_FOOD_ALERT) */
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
@@ -5427,8 +5463,8 @@ void player_death(int Ind)
 	}
 	if ((p_ptr->global_event_temp & 0x4) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == 0 && p_ptr->wpos.wy == 0) {
 s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
-		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0);
+		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
@@ -5477,11 +5513,11 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 /*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
 	    (streq(p_ptr->died_from, "Insanity")) ||
 	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
-	    !(p_ptr->mode && MODE_IMMORTAL)))
+	    !(p_ptr->mode && MODE_EVERLASTING)))
 */	if ((((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat!=-1) ||
 	    (streq(p_ptr->died_from, "Insanity")) ||
 	    ((p_ptr->lives == 1+1) && cfg.lifes && p_ptr->alive &&
-	    !(p_ptr->mode && MODE_IMMORTAL))) &&
+	    !(p_ptr->mode && MODE_EVERLASTING))) &&
 	    !streq(p_ptr->died_from, "a potion of Chauve-Souris"))
 	{
 		/* Tell players */
@@ -5751,7 +5787,7 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 								<= 0 ? TRUE : FALSE;
 						} else {
 							object_desc(Ind, o_name, o_ptr, TRUE, 3);
-							if (object_value_real(0, o_ptr) >= 10000)
+//							if (object_value_real(0, o_ptr) >= 10000)
 							s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
 							if (true_artifact_p(o_ptr)) {
 								/* set the artifact as unfound */
@@ -5795,7 +5831,7 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 		p_ptr->death=TRUE;
 
 #ifdef AUCTION_SYSTEM
-		auction_player_death(Ind);
+		auction_player_death(p_ptr->id);
 #endif
 		
     		/* Remove him from his party */
@@ -5821,8 +5857,8 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 		delete_player_name(p_ptr->name);
 
 		/* Put him on the high score list */
-//		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
-		if(!p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
+//		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
+		if(!p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
 			add_high_score(Ind);
 
 		/* Format string */
@@ -6025,7 +6061,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 							<= 0 ? TRUE : FALSE;
 					} else {
 						object_desc(Ind, o_name, o_ptr, TRUE, 3);
-						if (object_value_real(0, o_ptr) >= 10000)
+//						if (object_value_real(0, o_ptr) >= 10000)
 						s_printf("item_lost: %s (slot %d)\n", o_name, real_pos);
 						if (true_artifact_p(o_ptr)) {
 							/* set the artifact as unfound */
@@ -6068,6 +6104,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 			rem_quest(p_ptr->quest_id);
 			kill_objs(p_ptr->id);
 
+#ifdef AUCTION_SYSTEM
+			auction_player_death(p_ptr->id);
+#endif
+
 			/* Remove him from his party */
 			if (p_ptr->party)
 			{
@@ -6093,8 +6133,8 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 			delete_player_name(p_ptr->name);
 
 			/* Put him on the high score list */
-//			if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
-			if(!p_ptr->noscore && !(p_ptr->mode & MODE_IMMORTAL))
+//			if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
+			if(!p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
 				add_high_score(Ind);
 
 #ifdef TOMENET_WORLDS
@@ -6128,9 +6168,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		if (p_ptr->blind) (void)set_blind(Ind, 0);
 		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
 		if (p_ptr->confused) (void)set_confused(Ind, 0);
-		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0);
+		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, 0);
+		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		//	if (p_ptr->fruit_bat != -1) (void)set_food(Ind, PY_FOOD_MAX - 1);
 		/* if (p_ptr->food < PY_FOOD_FULL) */
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
@@ -6302,7 +6342,7 @@ void resurrect_player(int Ind, int loss_reduction)
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
 	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
-	if (!(p_ptr->mode & MODE_IMMORTAL))
+	if (!(p_ptr->mode & MODE_EVERLASTING))
 	{
 		if (p_ptr->lives > 1+1) p_ptr->lives--;
 		if (cfg.lifes)
@@ -6420,9 +6460,9 @@ void kill_quest(int Ind){
 		}
 	}
 	else{
-#ifdef RPG_SERVER
+//#ifdef RPG_SERVER
                 object_type forge, *o_ptr = &forge;
-#endif
+//#endif
 		int avg = ((r_info[quests[pos].type].level * 2) + (p_ptr->lev * 4)) / 2;
 		avg = avg > 100 ? 100 : avg;
 		msg_format(Ind, "\377yYou have won the %s quest!", r_name+r_info[quests[pos].type].name);
@@ -6449,10 +6489,14 @@ void kill_quest(int Ind){
 		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, RESF_LOW, 3000);
 //		o_ptr->discount = 100;
 		o_ptr->note = quark_add(temp);
+//		o_ptr->note_priority = 1; currently correct erasing of this isn't implemented
 		inven_carry(Ind, o_ptr);
 //		drop_near(o_ptr, -1, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 #else
-		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, RESF_LOW);
+//		acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, great, verygreat, RESF_LOW);
+		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, RESF_LOW);
+//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+		inven_carry(Ind, o_ptr);
 #endif
 		unique_quark = 0;
 	}
@@ -6680,6 +6724,9 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	/* Hurt it */
 	m_ptr->hp -= dam;
+	
+	/* record the data for use in C_BLUE_AI */
+	p_ptr->dam_turn[0] += (m_ptr->hp < dam) ? m_ptr->hp : dam;
 
 	/* It is dead now */
 	if (m_ptr->hp < 0)
@@ -6849,7 +6896,8 @@ for(i=1; i < 5; i++) {
 			}
 
 			/* Higher characters who farm monsters on low levels compared to
-			   their clvl will gain less exp */
+			   their clvl will gain less exp.
+			   (note: this formula also occurs in party_gain_exp) */
 			if (p_ptr->lev >= 20) {
 				if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
 				else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
@@ -6955,7 +7003,7 @@ for(i=1; i < 5; i++) {
 				if(p_ptr->quest_id && quests[i].id==p_ptr->quest_id){
 					if(m_ptr->r_idx==quests[i].type){
 						p_ptr->quest_num--;
-						if(p_ptr->quest_num<=0){ //there's a panic save bug after very_great apply magic, q_n = -1 after
+						if(p_ptr->quest_num<=0){ //there's a panic save bug after verygreat apply magic, q_n = -1 after
 							kill_quest(Ind);
 						}
 						else
@@ -8568,14 +8616,14 @@ void telekinesis_aux(int Ind, int item)
 	}
 
 	if (cfg.charmode_trading_restrictions > 0 && !is_admin(p_ptr)) {
-		if ((p_ptr->mode & MODE_IMMORTAL) && !(p2_ptr->mode & MODE_IMMORTAL))
+		if ((p_ptr->mode & MODE_EVERLASTING) && !(p2_ptr->mode & MODE_EVERLASTING))
 		{
 		    msg_print(Ind, "You can only contact everlasting beings!");
 		    return;
 		}
 	}
 	if (cfg.charmode_trading_restrictions > 1 && !is_admin(p_ptr)) {
-		if (!(p_ptr->mode & MODE_IMMORTAL) && (p2_ptr->mode & MODE_IMMORTAL))
+		if (!(p_ptr->mode & MODE_EVERLASTING) && (p2_ptr->mode & MODE_EVERLASTING))
 		{
 		    msg_print(Ind, "You can only contact non-everlasting beings!");
 		    return;
@@ -8920,9 +8968,9 @@ void blood_bond(int Ind, object_type *o_ptr)
 #endif
 
 	s_printf("BLOOD_BOND: %s blood bonds with %s\n", p_ptr->name, p2_ptr->name);
-	msg_format(Ind, "You blood bond with %s.", p2_ptr->name);
+	msg_format(Ind, "\377cYou blood bond with %s.", p2_ptr->name);
 	msg_format(Ind2, "%s blood bonds with you.", p_ptr->name);
-	msg_broadcast(Ind, format("%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
+	msg_broadcast(Ind, format("\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
 }
 
 bool check_blood_bond(int Ind, int Ind2)
@@ -9953,3 +10001,32 @@ bool check_esp_link_type(int Ind, int Ind2, u16b flags)
 	else return FALSE;
 }
 #endif
+
+void toggle_aura(int Ind, int aura) {
+	char buf[80];
+	Players[Ind]->aura[aura] = !Players[Ind]->aura[aura];
+	strcpy(buf, "\377sYour ");
+	switch (aura) { /* up to MAX_AURAS */
+	case 0: strcat(buf, "aura of fear"); break;
+	case 1: strcat(buf, "shivering aura"); break;
+	case 2: strcat(buf, "aura of death"); break;
+	}
+	strcat(buf, " is now ");
+	if (Players[Ind]->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
+	strcat(buf, "!");
+	msg_print(Ind, buf);
+}
+
+void check_aura(int Ind, int aura) {
+	char buf[80];
+	strcpy(buf, "\377sYour ");
+	switch (aura) { /* up to MAX_AURAS */
+	case 0: strcat(buf, "aura of fear"); break;
+	case 1: strcat(buf, "shivering aura"); break;
+	case 2: strcat(buf, "aura of death"); break;
+	}
+	strcat(buf, " is currently ");
+	if (Players[Ind]->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
+	strcat(buf, ".");
+	msg_print(Ind, buf);
+}

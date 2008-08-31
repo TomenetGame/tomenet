@@ -817,7 +817,7 @@ static cptr k_info_flags5[] =
 	"XXX8X02",
 	"XXX8X02",
 	"XXX8X02",
-	"XXX8X17",
+	"IGNORE_MANA",
 	"IGNORE_WATER",
 	"RES_TIME",
 	"RES_MANA",
@@ -826,9 +826,8 @@ static cptr k_info_flags5[] =
 	"RES_WATER",
 	"REGEN_MANA",	// "XXX8X24",
 	"DISARM",	// "XXX8X25",
-	"NO_ENCHANT",	// "XXX8X25",
-//	"LIFE",		//"XXX8X27",
-	"CHAOTIC",	//"XXX8X26",
+	"NO_ENCHANT",	// "XXX8X26",
+	"CHAOTIC",	//"XXX8X27",
 	"INVIS",	//"XXX8X28",
 	"REFLECT",	//"XXX8X29",
 	"PASS_WATER",	// "NORM_ART" is already in TR3
@@ -950,7 +949,7 @@ static cptr f_info_flags1[] =
 	"PROTECTED",	/* monsters cannot spawn on nor teleport to this grid */
 	"LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
 	"BLOCK_LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
-	"XXX1"
+	"BLOCK_CONTACT"	/* like BLOCK_LOS, but allows the player to actually see across it */
 };
 
 #if 1	// flags from ToME, for next expansion
@@ -1194,9 +1193,8 @@ static cptr st_info_flags1[] =
 	"NO_STEAL",
 	"BUY67",
 	"BUY50",
-	"XXX",
-	"XXX"
-//	"XXX1",
+	"NO_DISCOUNT3",
+	"ZEROLEVEL"
 };
 
 /*** Initialize from ascii template files ***/
@@ -1204,7 +1202,12 @@ static cptr st_info_flags1[] =
 
 
 /* New: Parse for conditioned comments depending on compilation definitions - C. Blue
-   Example: $RPG_SERVER$N:158:The Secret Weapon */
+   Example: $RPG_SERVER$N:158:The Secret Weapon
+   Usage: '$'/'%' <condition> '$'/'!'
+	a leading '$' prepares a condition test
+	a leading '%' ignores <condition> ("commented out")
+	a final '$' tests for <condition>,
+	a final '!' tests for NOT<condition> */
 static bool invalid_server_conditions(char *buf)
 {
 	char cc[1024 + 1], m[20];
@@ -1212,8 +1215,8 @@ static bool invalid_server_conditions(char *buf)
 	bool invalid = FALSE;
 
 	/* while loop to allow multiple macros appended to each other in the same line! */
-	while (buf[0] == '$') {
-		bool negation = FALSE;
+	while (buf[0] == '$' || buf[0] == '%') {
+		bool negation = FALSE, ignore = (buf[0] == '%');
 
 		/* read the tag between $...$ symbols */
 		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0')
@@ -1231,7 +1234,10 @@ static bool invalid_server_conditions(char *buf)
 		   already prepare it by cutting away the leading $...$ tag. */
 		strcpy(cc, buf + ccn + 1);
 		strcpy(buf, cc);
-		
+
+		/* Test for leading '%' meaning this condition is currently commented out */
+		if (ignore) continue;
+
 		/* info:
 		   'MAIN_SERVER' isn't defined in the actual program.
 		   It's just a switch that means
@@ -1307,7 +1313,7 @@ static bool invalid_server_conditions(char *buf)
 		    strcmp(m, "ENABLE_STANCES"))
 			invalid = TRUE;
 	}
-
+	
 	return invalid; /* only pass if none of our tests proves to be invalid */
 }
 
@@ -3558,8 +3564,12 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			/* Nuke the colon, advance to the name */
 			*s++ = '\0';
 
+#if 0 /* removed for Amulet of Telepathic Awareness */
 			/* Paranoia -- require a name */
 			if (!*s) return (1);
+#else
+			if (!*s) s--;
+#endif
 
 			/* Get the index */
 			i = atoi(buf+2);
@@ -6569,17 +6579,19 @@ errr init_st_info_txt(FILE *fp, char *buf)
 		/* Process 'O' for "Owners" (one line only) */
 		if (buf[0] == 'O')
 		{
-			int a1, a2, a3, a4;
+			int a1, a2, a3, a4, a5, a6;
 
 			/* Scan for the values */
-			if (4 != sscanf(buf+2, "%d:%d:%d:%d",
-				&a1, &a2, &a3, &a4)) return (1);
+			if (MAX_STORE_OWNERS != sscanf(buf+2, "%d:%d:%d:%d:%d:%d",
+				&a1, &a2, &a3, &a4, &a5, &a6)) return (1);
 
 			/* Save the values */
 			st_ptr->owners[0] = a1;
 			st_ptr->owners[1] = a2;
 			st_ptr->owners[2] = a3;
 			st_ptr->owners[3] = a4;
+			st_ptr->owners[4] = a5;
+			st_ptr->owners[5] = a6; /* MAX_STORE_OWNERS */
 
 			/* Next... */
 			continue;

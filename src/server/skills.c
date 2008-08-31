@@ -358,7 +358,6 @@ static void msg_gained_abilities(int Ind, int old_value, int i) {
                         msg_print(Ind, "\377GYou feel superior to ancient curses.");
                 }
                 break;
-#if 1
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
 			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
@@ -415,24 +414,11 @@ static void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 #endif //ALTERNATE_DMG
 #endif //CLASS_RUNEMASTER
-	}
 
-#else
+	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
+	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
+	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
 	}
-	if (i == ws) {
-		switch (new_value) {
-		case 25: case 50:
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-			break;
-		}
-	} else if (i == as) {
-		switch (new_value) {
-		case 16: case 32: case 48:
-			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
-			break;
-		}
-	}
-#endif
 }
 
 /* Hrm this can be nasty for Sorcery/Antimagic */
@@ -494,6 +480,7 @@ void increase_skill(int Ind, int i)
 	player_type *p_ptr = Players[Ind];
 	int old_value;
 //	int as, ws, new_value;
+	int can_regain;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)
@@ -1305,7 +1292,7 @@ int do_cmd_activate_skill_aux()
 	return ret;
 }
 
-/* Ask & execute a skill */
+/* Ask & execute a skill -- currently unused (all if 0'ed). Check Receive_activate_skill instead */
 void do_cmd_activate_skill()
 {
 	int x_idx;
@@ -1399,6 +1386,9 @@ void do_cmd_activate_skill()
 			break;
 		case MKEY_DODGE:
 			use_ability_blade();
+			break;
+		case MKEY_PARRYBLOCK:
+			check_parryblock();
 			break;
 		case MKEY_SCHOOL:
 			cast_school_spell();
