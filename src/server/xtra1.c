@@ -4637,9 +4637,6 @@ void calc_bonuses(int Ind)
 		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		}
-
-//		if (p_ptr->confused || p_ptr->blind) p_ptr->shield_deflect /= 2;
-//		if (p_ptr->paralyzed) p_ptr->shield_deflect = 0;
 	}
 #endif
 
@@ -4656,7 +4653,7 @@ void calc_bonuses(int Ind)
 	p_ptr->heavy_wield = FALSE;
 #ifdef USE_PARRYING
 	/* Do we have a weapon equipped at all? */
-	if (o_ptr->k_idx && !p_ptr->confused && !p_ptr->blind && !p_ptr->paralyzed) {
+	if (o_ptr->k_idx) {
 #if 0 /* instead of making it completely SKILL_MASTERY dependant,...*/
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 30);
