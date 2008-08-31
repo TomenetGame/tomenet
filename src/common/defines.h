@@ -56,7 +56,7 @@
 #define VERSION_BUILD	0
 
 /* Server release version tag: Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG "" /* "e" */
+#define SERVER_VERSION_TAG "a" /* "e" */
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
