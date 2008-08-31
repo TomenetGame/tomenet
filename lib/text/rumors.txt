@@ -6,10 +6,8 @@
 
 # You should manually write the total # of rumous (lines - 10).
 
-#might confuse people- {b[C. Blue] {BDid you download the latest scripts!?
-
 N:*:Default
-1019
+1018
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -309,7 +307,7 @@ Ever seen a God or Goddess player?
 {B[Evileye] hehe
 {B[Jir] {y:)
 {B[Mihi] May the source be with you! *^-')b
-{b[C.Blue]{B o_O
+{b[C. Blue] {BDid you download the latest scripts!?
 {D[Magnet] {BLet's slay evil !
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
@@ -1028,4 +1026,3 @@ People won't admit they don't know shit.
 There's a gun in the room.
 Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
 What it do?
-You will need to Restore the Constitution if the Anarchists strike.
