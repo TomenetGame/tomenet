@@ -61,10 +61,10 @@ RECOVERY = add_spell
         ["mana_max"] = 	25,
         ["fail"] = 	20,
         ["spell"] = 	function()
-        		set_poisoned(Ind, player.poisoned / 2)
+        		set_poisoned(Ind, player.poisoned / 2, player.poisoned_attacker)
                         if get_level(Ind, RECOVERY, 50) >= 10 then
-                        	set_poisoned(Ind, 0)
-                                set_cut(Ind, 0)
+                        	set_poisoned(Ind, 0, 0)
+                                set_cut(Ind, 0, 0)
 	                        if player.spell_project > 0 then
         	                        fire_ball(Ind, GF_CURECUT_PLAYER, 0, 1, player.spell_project, "")
         	                        fire_ball(Ind, GF_CUREPOISON_PLAYER, 0, 1, player.spell_project, "")

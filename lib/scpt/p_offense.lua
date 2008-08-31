@@ -206,9 +206,9 @@ HHOLYWORD = add_spell
 	["spell"] =	function(args)
 			hp_player(Ind, 1000)
 			set_afraid(Ind, 0)
-			set_poisoned(Ind, 0)
-			set_stun(Ind, 0)
-			set_cut(Ind, 0)
+			set_poisoned(Ind, 0, 0)
+			set_stun(Ind, 0, 0)
+			set_cut(Ind, 0, 0)
 			end,
 	["info"] =	function()
 			return "Dispels & heals."

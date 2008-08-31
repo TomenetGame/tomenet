@@ -16,8 +16,8 @@ function cureall(name)
     p = ind(name)
     set_afraid(p, 0)
     set_image(p, 0)
-    set_poisoned(p, 0)
-    set_cut(p, 0)
+    set_poisoned(p, 0, 0)
+    set_cut(p, 0, 0)
     set_stun(p, 0)
     set_blind(p, 0)
     set_confused(p, 0)
@@ -218,11 +218,55 @@ function resist(name)
     msg_print(Ind, "\255USustenances:\255u  "..susstr.." "..susint.." "..suswis.." "..susdex.." "..suscon.." "..suschr)
 end
 
+-- Displays attribute values of a player
+function attr(name)
+    local p, astr, aint, awis, adex, acon, achr
+    p = ind(name)
+    if players(p).stat_use[1] == players(p).stat_top[1] then
+	astr = "\255U"
+    else
+	astr = "\255y"
+    end
+    if players(p).stat_use[2] == players(p).stat_top[2] then
+	aint = "\255U"
+    else
+	aint = "\255y"
+    end
+    if players(p).stat_use[3] == players(p).stat_top[3] then
+	awis = "\255U"
+    else
+	awis = "\255y"
+    end
+    if players(p).stat_use[4] == players(p).stat_top[4] then
+	adex = "\255U"
+    else
+	adex = "\255y"
+    end
+    if players(p).stat_use[5] == players(p).stat_top[5] then
+	acon = "\255U"
+    else
+	acon = "\255y"
+    end
+    if players(p).stat_use[6] == players(p).stat_top[6] then
+	achr = "\255U"
+    else
+	achr = "\255y"
+    end
+    astr = astr.."ST:\255s"..players(p).stat_use[1].."/"..players(p).stat_top[1]
+    aint = aint.." IN:\255s"..players(p).stat_use[2].."/"..players(p).stat_top[2]
+    awis = awis.." WI:\255s"..players(p).stat_use[3].."/"..players(p).stat_top[3]
+    adex = adex.." DE:\255s"..players(p).stat_use[4].."/"..players(p).stat_top[4]
+    acon = acon.." CO:\255s"..players(p).stat_use[5].."/"..players(p).stat_top[5]
+    achr = achr.." CH:\255s"..players(p).stat_use[6].."/"..players(p).stat_top[6]
+    msg_print(Ind, astr..aint..awis..adex..acon..achr)
+end
+
 -- "Detail" - Displays status(name) and resist(name)
 function det(name)
     msg_print(Ind, " ".." ")
     status(name)
     resist(name)
+    attr(name)
     msg_print(Ind, " ".." ")
 end
 
@@ -393,6 +437,7 @@ function mf(name, minlev)
 end
 
 --display amount of points spent into a skill
+--careful, doesn't take into account synergies from sub-skills!!!
 function ssp(name, skill0)
     local skill, p, v, m, s
     skill = skill0 + 1
@@ -408,6 +453,7 @@ function ssp(name, skill0)
 end
 
 --erase a skill and give player the points back
+--careful, doesn't take into account synergies from sub-skills!!!
 function rsp(name, skill0)
     p = ind(name)
     local skill, p, v, m, s
@@ -453,12 +499,21 @@ end
 --automatically fix old chars for DUAL_WIELD / SKILL_DUAL
 function fix_dual_wield(p)
     if players(p).pclass == 1 then
-        players(p).s_info[78 + 1].value = 1000
+        players(p).s_info[78 + 1].value = 0
     end
     if players(p).pclass == 4 then
-        players(p).s_info[78 + 1].value = 1000
+        players(p).s_info[78 + 1].value = 0
     end
     if players(p).pclass == 8 then
+        players(p).s_info[78 + 1].value = 0
+    end
+    if players(p).pclass == CLASS_WARRIOR then
+        players(p).s_info[78 + 1].value = 1000
+    end
+    if players(p).pclass == CLASS_ROGUE then
+        players(p).s_info[78 + 1].value = 1000
+    end
+    if players(p).pclass == CLASS_RANGER then
         players(p).s_info[78 + 1].value = 1000
     end
 end
@@ -471,21 +526,30 @@ function fix_stance(p)
 	l = 50000
     end
     if players(p).pclass == 1 then
-	if players(p).s_info[79 + 1].value == 0 then
-            players(p).s_info[79 + 1].value = l
-	end
+	players(p).s_info[79 + 1].value = 0
     end
     if players(p).pclass == 5 then
-	if players(p).s_info[79 + 1].value == 0 then
-            players(p).s_info[79 + 1].value = l
-	end
-    end
-    if players(p).pclass == 7 then
-	if players(p).s_info[79 + 1].value == 0 then
-            players(p).s_info[79 + 1].value = l
-	end
+	players(p).s_info[79 + 1].value = 0
     end
     if players(p).pclass == 8 then
+	players(p).s_info[79 + 1].value = 0
+    end
+    if players(p).pclass == CLASS_WARRIOR then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == CLASS_MIMIC then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == CLASS_PALADIN then
+	if players(p).s_info[79 + 1].value == 0 then
+            players(p).s_info[79 + 1].value = l
+	end
+    end
+    if players(p).pclass == CLASS_RANGER then
 	if players(p).s_info[79 + 1].value == 0 then
             players(p).s_info[79 + 1].value = l
 	end

@@ -73,7 +73,7 @@ DISPERSEMAGIC = add_spell
                         if get_level(Ind, DISPERSEMAGIC, 50) >= 15 then
 	                        set_stun(Ind, 0)
 	                        -- set_meditation(Ind, 0)
-	                        set_cut(Ind, 0)
+	                        set_cut(Ind, 0, 0)
                         end
                         if get_level(Ind, DISPERSEMAGIC, 50) >= 20 then
 	                        set_hero(Ind, 0)

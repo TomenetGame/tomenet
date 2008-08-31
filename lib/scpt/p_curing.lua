@@ -99,10 +99,10 @@ HCURING = add_spell
 	["fail"] =      20,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
-	        	set_poisoned(Ind, player.poisoned / 2)
+	        	set_poisoned(Ind, player.poisoned / 2, player.poisoned_attacker)
 	                if get_level(Ind, HCURING, 50) >= 10 then
-		                set_poisoned(Ind, 0)
-		                set_cut(Ind, 0)
+		                set_poisoned(Ind, 0, 0)
+		                set_cut(Ind, 0, 0)
 				set_stun(Ind, 0)
 	                        fire_ball(Ind, GF_CURE_PLAYER, 0, 1, 1, " concentrates on your maladies.")
 			end

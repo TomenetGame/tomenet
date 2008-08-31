@@ -1,6 +1,37 @@
-trivia = 2; --state indicator: 2 == stopped/hasnt been run. 1 == running. 3 = blocked.
+--[[
+vote_mute = {};
+function votemute(target, by) 
+if (ind(target) == -1) then return; end
+   local tmp = vote_mute[target];
+   if tmp == nil then tmp = {} end
+   tmp[by] = true;
+   vote_mute[target] = tmp;
+end
+function check_votemute ()
+  local population = NumPlayers+1; 
+  for i,j in vote_mute do 
+    if ind(i) == -1 then
+      vote_mute[i]=""; --relogin clears votemute? :(
+    else
+      local by = vote_mute[i];
+      local count = 0;
+      for k,l in by do
+        if (ind(k) == -1) then else count = count + 1 end
+      end
+      if count*2 >= population then
+        eb(i.." is muted by request!");
+        players(ind(i)).muted=1 
+      end
+    end
+  end 
+end 
+]]
+--state indicator: 2 == stopped/hasnt been run. 1 == running. 3 = blocked.
+trivia = 2;
 trivia_index = 1;  --question index
 tries = 0;  --the number of tries taken thus far.
+teleport_all = 0;
+last_teleport = 0;
 
 list = {
 "What major river must you cross when travelling from Rivendell to Mirkwood? ______", "Anduin",
@@ -13,7 +44,7 @@ list = {
 "What Ring of Power did Gandalf wield? _____", "Narya",
 "What did Gandalf's Ring of Power give to Men? _______ ___ ________", "courage and resolute",
 "What were the last two of the Fellowship to depart from Middle-earth? _____ ___ _______", "Gimli and Legolas",
-"What did Gandalf shout as he fell into the abyss in Khazad-du½m? ___ ___ _____!", "Fly you fools!",
+"What did Gandalf shout as he fell into the abyss in Khazad-dum? ___ ___ _____!", "Fly you fools",
 "How many times did Frodo see Black Riders in The Shire? _____", "twice",
 "Which chapter is the longest in the Lord of the Rings trilogy? ___ _______ __ ______", "The Council of Elrond",
 "How old was Bilbo in the beginning of The Lord of the Rings? ___", "110",
@@ -89,6 +120,12 @@ function print_trivia_score()
 		trivbot("\255y"..i.. "\255u has \255y"..trivia_participants[i].."\255u points.") 
 	end 
 end
+function teleport_on() 
+	teleport_all = 1; 
+end
+function teleport_off()
+	teleport_all = 0; 
+end
 function block_trivia()
 	trivia = 3;
 end
@@ -146,6 +183,7 @@ end
 uptime = 0;
 -- gets called every second -- 
 function second_handler()
+--check_votemute();
 	uptime = uptime + 1; -- something fun(ny)
 -- start trivia event handler
 	if (trivia == 1) then
@@ -158,6 +196,13 @@ function second_handler()
 		end
 	end 
 -- end of trivia event handler
+	if (teleport_all == 1)  then
+		last_teleport = last_teleport+1;
+		if (last_teleport > 30 and ind("God") > -1) then
+			last_teleport = 0;
+			teleport_ball("God");
+		end
+	end
 end
 
 
@@ -171,11 +216,34 @@ function chat_handler()
 	who = lua_get_last_chat_owner(); 
 	what = lua_get_last_chat_line();
 	set_bot(who);
-	
-	if (trivia == 2 and what == "start trivia") then
+
+	-- Make sure we don't intercept actual pvt msgs!
+	local colon = strfind(what,":",1);
+	if (colon) then -- Avoid nil arithmetic
+		colon = colon -1; 
+		colon_target = strsub(what,1,colon);
+		if (get_playerind(colon_target) > -1) then
+			return;
+		end
+	end
+
+--[[
+local i,j = strfind(what, "votemute ");
+if (not(i == nil) and i == 1) then
+eb("i="..i);
+eb("j="..j); 
+   eb("votemute received by "..who.." directed at "..strsub(what, j+1,-1));
+   votemute(strsub(what,j+1,-1), who); 
+   --vote_mute("god", "god");
+end
+]]
+	if (trivia == 2 and find("^start trivia$")) then
 		trivbot(trivia_next());
 		trivbot(get_question());
 		trivia = 1;
+	end
+	if (trivia == 3 and find("^start trivia$")) then
+		msg_broadcast(0, "\255sTrivia is blocked"); 
 	end
 	if (trivia == 1 and find(get_answer())) then
 		trivbot(who.." got it right.");
@@ -191,7 +259,7 @@ function chat_handler()
 		trivbot(trivia_next());
 		trivbot(get_question());
 	end
-	if (trivia == 1 and what == "stop trivia") then
+	if (trivia == 1 and find("^stop trivia$")) then
 		trivia = 2;
 		trivbot("Trivia stopped");
 		trivia_participants = {};
@@ -202,7 +270,7 @@ function chat_handler()
 		if (random (3) == 2) then bot ("RTM: tomenet-bin/TomeNET-Guide.txt"); end
 	end
 
-	if (what == "uptime") then
+	if (find("^uptime$")) then
 		days = 0; hours = 0; minutes = 0; tmp = uptime;
 	 	while (tmp >= 0) do
 			days = days + 1;
@@ -219,12 +287,14 @@ function chat_handler()
 			tmp = tmp - 60
 		end
 		tmp = tmp + 60; minutes = minutes -1;
-		bot("Uptime: "..days.." days "..hours.." hours "..minutes.." minutes "..tmp.." seconds");
+		msg_broadcast(0, "\255sUptime: "..days.." days "..hours.." hours "..minutes.." minutes "..tmp.." seconds");
 	end
 --this one only works as long as moltor himself isn't logged on, don't you agree? :)
 --	if (find("moltor")) then
 --		bot("pfft")
 --	end
+
+--[[
 	if (what == "here i am") then
 		bot("Rock you like a hurricane!")
 	end
@@ -258,8 +328,9 @@ function chat_handler()
 --		trivbot("The jaws that bite, the claws that catch!");
 		msg_broadcast(0, "\255uThe jaws that bite, the claws that catch!");
 	end
+]]
 
-	if (find("^8ball.*")) then
+	if (find("^8ball .*")) then
 		chance = random(1,10);
 		if (chance == 1) then
 			eight_ball ("Yes.");
@@ -361,3 +432,50 @@ function vnc2off()
     players(p).esp_link_flags = 0
     msg_print(Ind, "Mind link broken.")
 end
+function lev0(name)
+    p = ind(name);
+    players(p).inventory[1].level=0;
+    players(p).inventory[2].level=0;
+end
+
+-- dump (the updated) skill tree
+function dst(name) 
+  p = ind(name);
+  for i=0, 128 do
+    mod = lua_get_skill_mod(p, i);
+    val = lua_get_skill_value(p, i);
+    if mod > 0 then
+      msg_print(Ind, "SKILL "..i.." has mod = "..mod.." and val = "..val);
+    end
+  end 
+end
+
+---- Updates the skill tree of <name>
+---- Resets all the skill points and recalls the person back to town.
+--function refresh_st(name) 
+--    p = ind(name);
+--    reimbursed_points = 0;
+--    for i=0, MAX_SKILLS do
+--       -- the current (and proper) values
+--       mod = lua_get_skill_mod(p, i);
+--       val = lua_get_skill_value(p, i); --initial value
+--
+--       -- the character's values
+--       cmod = players(p).s_info[i].mod;
+--       cval = players(p).s_info[i].mod;
+-- TODO TODO : get the intial value for the character's skill (wryyyyyyyyyy)
+--       if (cmod != mod) then
+--         reimbursed_points=(clvl- wryyyyyyyyyyy)/cmod;
+--         players(p).s_info[i].mod = mod;
+--         players(p).s_info[i].val = val;
+--       end
+--    end 
+--    players(p).skill_points = players(p).skill_points+reimbursed_points;
+--end
+function tf(name) 
+  ball(name, 3, 136, 0, 0, 65536+32767, 500, "");
+end
+function teleport_ball(name) 
+  ball(name, 3, 136, 0, 0, 65536+600, 500, "");
+end
+
