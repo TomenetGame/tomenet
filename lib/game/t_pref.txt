@@ -29,6 +29,9 @@ F:.:1:3
 # Trees
 F:T:96:3
 
+# Bushes
+F:t:219:3
+
 # Deep water
 F:W:187:3
 
@@ -65,7 +68,7 @@ F:s:193:3
 # Brick Roof Top
 F:S:194:3
 # Brick Roof Chimney
-F:t:195:3
+F:c:195:3
 
 # Grass Roof
 F:X:190:3

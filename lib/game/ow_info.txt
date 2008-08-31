@@ -141,7 +141,7 @@ L:Human | Dunadan
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:20:Hjolgar(Barbarian)
-I:5000:210:115:6:6
+I:10000:210:115:6:6
 C:120:100:80
 #L:Warrior | 
 H:Vampire
@@ -257,9 +257,11 @@ L:High-Elf | Half-Elf | Elf
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
 
 N:38:Gary Gygaz(Half-Troll)
-I:20000:250:150:10:5
+#I:30000:250:150:10:5
+I:30000:200:120:10:5
 C:120:100:80
 #L:Rogue
+L:Half-Orc | Half-Troll | Goblin
 H:Gnome | Dwarf | Human | Elf | Half-Elf | High-Elf
 
 N:39:Histor the Goblin(Goblin)

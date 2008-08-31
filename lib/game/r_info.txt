@@ -6600,7 +6600,7 @@ D:It walks on four legs, but mostly resembles a slug-shaped jelly.
 D:It even has two disgusting antennae in its head. Yecch! 
 
 N:423:Creeping adamantite coins
-G:$:G
+G:$:v
 I:120:20d25:5:50:10
 W:27:3:0:60
 E:0:0:0:0:0:0
@@ -18894,7 +18894,7 @@ D:Small winged jolly annoying chatterbox, actually he is a descendant
 D:of dispersed minimite race.
 
 N:1052:Adamantite
-G:$:G
+G:$:v
 I:110:10d15:15:50:10
 W:55:6:0:60
 E:0:0:0:0:0:0
@@ -18907,12 +18907,13 @@ F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 D:It is a pile of coins made of precious adamant... containing explosives.
 
 N:1053:Creeping adamantite coins
-G:$:G
+G:$:v
 I:120:20d25:5:50:10
 W:50:6:0:60
 E:0:0:0:0:0:0
 O:0:0:0:0
-B:EXPLODE:HURT:100d4
+#B:EXPLODE:HURT:100d4
+B:EXPLODE:HURT:100d3
 F:ONLY_GOLD | DROP_90 | DROP_2D2 | RES_MANA | REFLECTING | 
 F:COLD_BLOOD | BASH_DOOR | CHAR_MULTI | 
 F:IM_ELEC | IM_ACID | IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
@@ -19194,7 +19195,7 @@ S:BA_NETH | HEAL | TELE_TO
 #S:BA_NETH | HEAL | TPORT | TELE_LEVEL | TELE_TO
 D:Bound to guard the nether realm that no mortal would set foot in it,
 D:The smooth polished-looking green skin of this tall humanoid creature
-D:is hard as black ore, its four arms end in plasma blades glowing blueish,
+D:is hard as adamantine, its four arms end in plasma blades glowing blueish,
 D:while three widely opened green and lidless eyes seem to surveye everything.
 
 N:1069:Gorm

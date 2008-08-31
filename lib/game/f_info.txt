@@ -522,7 +522,7 @@ F:FLOOR | REMEMBER | NOTICE
 N:74:Building
 G:1:U
 F:FLOOR | PERMANENT | REMEMBER | NOTICE | CAN_RUN
-#F:BLOCK_LOS
+F:BLOCK_CONTACT
 
 # 75 --> 78 Quests index
 
@@ -558,19 +558,23 @@ F:DONT_NOTICE_RUNNING
 # -1 = player level
 N:85:pool of deep lava
 G:~:R
+S:r:R:R:R:y:o:R
 E:8d4:4:FIRE
+F:ATTR_MULTI
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava BURNS you.
 
 N:86:stream of shallow lava
 G:.:r
+S:r:R:R:R:R:R:r
 E:4d4:4:FIRE
+F:ATTR_MULTI
 F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava burns you.
 
 N:87:dark pit
 G:#:D
-F:CAN_LEVITATE | CAN_FLY
+F:CAN_LEVITATE | CAN_FLY | LOS
 F:NO_WALK | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 D:0:Ohhh, it is dark and deep.
@@ -858,7 +862,7 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # brick roof chimney
 N:195:brick roof chimney
-G:#:r
+G:":r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
 
 # window
@@ -891,7 +895,7 @@ N:201:cobblestone with outlet
 G:.:w
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
-N:202:small tree
+N:202:ivy
 G:#:g
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT | REMEMBER
 F:NO_VISION | SLOW_RUNNING_1
@@ -944,3 +948,89 @@ N:210:Protected
 G:.:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | PROTECTED
+
+# Some decoration grids, made for Gondolin entrance to prevent people from getting stuck in there - C. Blue
+N:211:Decorative Shallow Water
+G:~:B
+S:B:B:B:B:B:B:b
+F:ATTR_MULTI
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
+
+N:212:Decorative Violet Crystal
+G:*:v
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:213:Decorative Blue Crystal
+G:*:b
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:214:Decorative Green Crystal
+G:*:G
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:215:Decorative Yellow Crystal
+G:*:y
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:216:Decorative Orange Crystal
+G:*:o
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:217:Decorative Red Crystal
+G:*:r
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
+
+N:218:Decorative Deep Lava
+G:~:R
+S:R:R:r:R:R:o:y
+F:ATTR_MULTI
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
+
+N:219:bush
+G:*:G
+F:CAN_FLY | SUPPORT_LIGHT | SLOW_RUNNING_1 | SLOW_FLYING_1
+# SLOW_RUNNING_2 - speed can go down to 0 -> stuck - mikaelh
+F:WALL | NO_WALK | NO_VISION
+F:DONT_NOTICE_RUNNING
+F:TUNNELABLE
+D:1:You chop away at the bush.
+D:2:a bush blocking your way
+
+N:220:Player 1 Trail
+G:#:R
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
+N:221:Player 2 Trail
+G:#:b
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
+N:222:Player 3 Trail
+G:#:y
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+
+N:223:Player 4 Trail
+G:#:u
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+

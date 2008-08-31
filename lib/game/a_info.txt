@@ -1355,10 +1355,10 @@ D:The mighty spear of Gil-galad, famed as "Snow-point" in the songs of
 D:Elves, against which all the foul corruptions of Sauron dashed in vain.
 
 
-# The Spear of Orome
+# The Hunting Spear of Orome
 
 N:98:of Orome
-I:22:2:4
+I:22:1:4
 W:15:45:50:177777
 P:0:4d5:15:15:0
 F:INT | WIS | SPEED | TUNNEL | INFRA | HIDE_TYPE | SEARCH |
@@ -1366,7 +1366,7 @@ F:BRAND_FIRE |
 F:SLAY_GIANT | SLAY_EVIL | KILL_DEMON | KILL_UNDEAD | KILL_DRAGON |
 F:IM_FIRE | RES_LITE | HOLD_LIFE | RES_FEAR | RES_CONF | 
 F:FEATHER | ESP_GIANT |
-F:SEE_INVIS | 
+F:SEE_INVIS | SLAY_ANIMAL | 
 F:ACTIVATE | BLESSED | SHOW_MODS
 D:The thrusting spear of wise Orome the Vala, strong against giants of frost, 
 D:which can melt rock or flesh with ease.
@@ -1648,14 +1648,17 @@ D:Named for a fiery star and set with gems of great worth binding mystic
 D:virtues of protection and thought.
 
 
-# The Quarterstaff 'Eriril'
+# The Mage Staff 'Eriril'
 
 N:119:'Eriril'
-I:21:3:4
+#I:6:1:4
+I:6:1:3
 W:16:18:140:50000
-P:0:1d11:9:8:10
-F:INT | WIS | HIDE_TYPE | ESP_EVIL |
-F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT
+#P:0:1d11:9:8:10
+P:0:1d4:0:0:0
+F:INT | WIS | HIDE_TYPE | ESP_EVIL | 
+F:SLAY_EVIL | RES_LITE | SEE_INVIS | ACTIVATE | SHOW_MODS | FREE_ACT | 
+F:MANA | REGEN_MANA
 D:The radiant golden staff of an Istari of legend, this wizard's companion 
 D:grants keen sight and the knowledge of many hidden things.
 
@@ -1693,12 +1696,13 @@ D:magic activate around you.  You wield the Fear of Dragons and the Despair
 D:of the Undead!
 
 
-# The Lucerne Hammer 'Turmil'
+# The War Maul 'Turmil'
 
 N:122:'Turmil'
-I:21:10:4
+#I:21:10:4
+I:21:8:4
 W:6:15:120:40000
-P:0:2d5:10:8:8
+P:0:3d5:10:8:8
 F:WIS | INFRA | HIDE_TYPE | 
 F:BRAND_COLD | SLAY_ORC | RES_COLD | RES_LITE | REGEN | 
 F:ACTIVATE | SHOW_MODS | ESP_ORC | ESP_TROLL | ESP_GIANT | RES_SHARDS
@@ -2734,7 +2738,7 @@ F:STR | DEX | CON | INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH |
 F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER | 
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK | RES_TIME |
 F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA |
-F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | PASS_WATER | 
+F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | PASS_WATER | CLIMB |
 F:REGEN_MANA | REGEN | ESP_ALL | SPECIAL_GENE
 #F:INVIS | LUCK | LIFE | WRAITH
 D:Not to be found by players. (C. Blue)
@@ -2785,7 +2789,7 @@ N:222:'Ripper'
 I:16:1:0
 W:20:5:4:15000
 P:0:3d4:0:0:0
-D:Made of alloy of iron and black ore, a *hard* material.
+D:Made of alloy of iron and ebonite, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
 
 
@@ -2796,7 +2800,7 @@ I:22:30:-10
 W:90:70:300:500000
 P:0:15d4:50:0:0
 F:DRAIN_MANA | DRAIN_EXP | DRAIN_HP | CURSED | HEAVY_CURSE | AGGRAVATE |
-F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC | CHR | 
+F:SHOW_MODS | HIDE_TYPE | KILL_UNDEAD | SLAY_EVIL | VAMPIRIC | CHR | VORPAL |
 F:IM_COLD | RES_DARK | RES_NETHER | RES_CHAOS | RES_DISEN | RES_TIME
 D:Not supposed to be used by mortals as a weapon but as a tool for the
 D:Grim Reaper himself to cut souls from the dying bodies this terrible
@@ -2847,15 +2851,15 @@ F:MANA
 D:Noone knows who once forgot those rags, but they surely endured ages.
 
 
-# The Ribbed Plate Armour of Black Ore
+# The Ribbed Plate Armour of Ebonite
 
-N:227:of Black Ore
+N:227:of Ebonite
 I:37:18:0
 W:65:40:400:100000
 P:60:0d0:0:0:0
 F:RES_MANA | NO_MAGIC | 
 F:RES_ACID | IM_ELEC | RES_DISEN
-D:Made of black ore this mighty armour has an extraordinarily hard surface.
+D:Made of this rare black ore this mighty armour has an extraordinarily hard surface.
 D:It seems to absorb any form of energy.
 
 
@@ -3118,14 +3122,14 @@ F:SHOW_MODS | RES_FEAR | ESP_UNIQUE | RES_COLD | BRAND_COLD
 D:Driving right through the chest, piercing strongest armour.
 
 
-# Sickle of Slicing
+# Sickle of Slicing, renaming to Chronus' Sickle now - C. Blue
 
-N:250:of Slicing
+N:250:of Kronos
 I:22:3:5
-W:20:20:50:40000
-P:0:5d3:20:15:0
+W:80:20:50:70000
+P:0:5d3:111:15:0
 F:SHOW_MODS | VORPAL | INFRA | REGEN | SLAY_ANIMAL |
-F:BRAND_ACID | RES_ACID | DRAIN_MANA
+F:BRAND_ACID | RES_ACID | DRAIN_MANA | SPECIAL_GENE
 D:A small sickle gleaming with unmatched sharpness.
 
 
@@ -3230,11 +3234,47 @@ D:allowing him to discover new ideas.
 # Artifacts for the nether realm viability project - C. Blue
 
 # The Heavy Mithril Scale Armour 'Mirror Of Glory'
-$RPG_SERVER$N:260:'Mirror Of Glory'
-$RPG_SERVER$I:37:26:5
-$RPG_SERVER$W:90:40:300:200000
-$RPG_SERVER$P:65:4d4:-3:0:20
-$RPG_SERVER$F:WINNERS_ONLY | REGEN | IM_ACID | RES_FIRE | RES_ELEC | STR | CON | CHR
+N:260:'Mirror Of Glory'
+I:37:26:5
+W:97:40:300:200000
+P:65:4d4:-3:0:20
+F:WINNERS_ONLY | REGEN | IM_ACID | RES_FIRE | RES_ELEC | STR | CON | CHR
+D:An armor of thick gleaming scales forged from finest Mithril, without a
+D:single dent in it. Powerful engraved runes ornate arm and leg protectors.
+
+
+# Goggles that allow a player to spot hidden DMs (for testing purpose)
+
+#N:261:& Set~ of goggles
+N:261:of the Dungeon Master
+I:32:15:0
+W:127:255:5:0
+P:0:0d0:0:0:0
+F:INSTA_ART | HIDE_TYPE
+D:Sees the things that can't be seen.
+
+
+# The Demon Hammer 'Ars Numenis'
+
+N:262:'Ars Numenis'
+I:21:22:6
+W:50:40:380:100000
+P:0:6d7:20:25:0
+F:SHOW_MODS | STR | KILL_DEMON | ESP_DEMON | BLESSED
+D:This hammer carries divine will to purge the unclean.
+
+
+# The Scourge of Repentance 'Soulcaller'
+
+N:263:'Soulcaller'
+I:21:23:3
+W:30:15:70:60000
+P:0:4d3:15:18:0
+F:WIS | HIDE_TYPE | ESP_EVIL | SLAY_EVIL | KILL_UNDEAD
+F:LITE1 | FREE_ACT | SHOW_MODS
+D:Calling lost souls to redemption, this scourge drives
+D:out evil spirits.
+
 
 
 

@@ -112,7 +112,7 @@ I:1000:0
 
 N:16:Mimicry
 D:Ability to polymorph into slain monsters
-A:3:Cast monster spell
+A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
 

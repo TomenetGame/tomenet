@@ -2671,7 +2671,7 @@ F:NO_PENETR | NO_DESTROY | NO_GENO | NO_ROTATE | NO_MAGIC_MAP | FORCE_FLAGS
 # these vaults are borrowed from PernAngband.
 # 
 
-N:114:L.ss.r vault (checker.oard)
+N:114:Lesser vault (checkerboard)
 X:7:5:13:21
 D:%%%%%%%%%%%%%%%%%%%%%
 D:%XXXXXXXXXXXXXXXXXXX%
