@@ -60,7 +60,8 @@ SERV_SRCS = \
   server/sched.c server/generate.c server/wild.c server/dungeon.c \
   server/init1.c server/init2.c server/nserver.c server/printout.c \
   server/main.c server/traps.c server/csfunc.c server/skills.c server/bldg.c \
-  common/files.c common/w_z_pack.c server/world.c server/slash.c server/runes.c
+  common/files.c common/w_z_pack.c server/world.c server/slash.c \
+  server/runes.c server/auction.c
 
 SERV_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -75,7 +76,8 @@ SERV_OBJS = \
   server/sched.o server/generate.o server/wild.o server/dungeon.o \
   server/init1.o server/init2.o server/nserver.o server/printout.o \
   server/main.o server/traps.o server/csfunc.o server/skills.o server/bldg.o \
-  common/files.o common/w_z_pack.o server/world.o server/slash.o server/runes.o
+  common/files.o common/w_z_pack.o server/world.o server/slash.o \
+  server/runes.o server/auction.o
 
 
 CLI_SRCS = \
