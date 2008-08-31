@@ -496,8 +496,8 @@ extern int see_wall(int Ind, int dir, int y, int x);
 extern bool player_can_enter(int Ind, byte feature);
 extern void hit_trap(int Ind);
 extern int apply_dodge_chance(int Ind, int attack_level);
-extern int apply_block_chance(player_type *p_ptr, long int n);
-extern int apply_parry_chance(player_type *p_ptr, long int n);
+extern int apply_block_chance(player_type *p_ptr, int n);
+extern int apply_parry_chance(player_type *p_ptr, int n);
 
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);

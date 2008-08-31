@@ -6266,11 +6266,11 @@ int apply_dodge_chance(int Ind, int attack_level) {
 #endif
 
 	/* New- some malicious effects */
-	if (Players[Ind]->confused) chance *= 7;
-	if (Players[Ind]->blind) chance *= 2;
-	if (Players[Ind]->image) chance *= 8;
-	if (Players[Ind]->stun) chance *= 7;
-	if (Players[Ind]->stun > 50) chance *= 5;
+	if (Players[Ind]->confused) chance = (chance * 7) / 10;
+	if (Players[Ind]->blind) chance = (chance * 2) / 10;
+	if (Players[Ind]->image) chance = (chance * 8) / 10;
+	if (Players[Ind]->stun) chance = (chance * 7) / 10;
+	if (Players[Ind]->stun > 50) chance = (chance * 5) / 10;
 
 	/* always slight chance to actually evade an enemy attack, no matter whether skilled or not :) */
 	if (chance < 1) chance = 1;
@@ -6278,26 +6278,24 @@ int apply_dodge_chance(int Ind, int attack_level) {
 	return(chance);
 }
 
-int apply_block_chance(player_type *p_ptr, long int n) { /* n can already be modified chance */
+int apply_block_chance(player_type *p_ptr, int n) { /* n can already be modified chance */
 	if (!p_ptr->shield_deflect || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
-	if (p_ptr->confused) n *= 5;
-	if (p_ptr->blind) n *= 3;
-	if (p_ptr->image) n *= 5;
-	if (p_ptr->stun) n *= 8;
-	if (p_ptr->stun > 50) n *= 8;
-	n /= 100000;
+	if (p_ptr->confused) n = (n * 5) / 10;
+	if (p_ptr->blind) n = (n * 3) / 10;
+	if (p_ptr->image) n = (n * 5) / 10;
+	if (p_ptr->stun) n = (n * 8) / 10;
+	if (p_ptr->stun > 50) n = (n * 8) / 10;
 	if (!n) n = 1;
 	return (n);
 }
 
-int apply_parry_chance(player_type *p_ptr, long int n) { /* n can already be modified chance */
+int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified chance */
 	if (!p_ptr->weapon_parry || n <= 0 || p_ptr->paralyzed || p_ptr->stun >= 100) return(0);
-	if (p_ptr->confused) n *= 6;
-	if (p_ptr->blind) n *= 1;
-	if (p_ptr->image) n *= 8;
-	if (p_ptr->stun) n *= 8;
-	if (p_ptr->stun > 50) n *= 8;
-	n /= 100000;
+	if (p_ptr->confused) n = (n * 6) / 10;
+	if (p_ptr->blind) n = (n * 1) / 10;
+	if (p_ptr->image) n = (n * 8) / 10;
+	if (p_ptr->stun) n = (n * 8) / 10;
+	if (p_ptr->stun > 50) n = (n * 8) / 10;
 	if (!n) n = 1;
 	return (n);
 }
