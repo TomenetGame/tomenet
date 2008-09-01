@@ -3266,7 +3266,7 @@ static void hook_quit(cptr str)
 	}
 
 	/* Give a warning */
-	if (str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
+	if (str && strlen(str)) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
 
 
 	/* Save the preferences */
