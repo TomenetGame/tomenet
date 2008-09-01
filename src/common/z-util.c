@@ -229,7 +229,7 @@ void quit(cptr str)
 		strcpy(buf, "");
 
 	/* Attempt to use the aux function */
-	if (quit_aux) (*quit_aux)(buf);
+	if (quit_aux) (*quit_aux)(str ? buf : NULL);
 
 	/* Success */
 	if (!str) (void)(exit(0));
