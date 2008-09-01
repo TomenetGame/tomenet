@@ -350,7 +350,7 @@ void client_init(char *argv1, bool skip)
 	GetLocalHostName(host_name, 80);
 
 	/* Set the "quit hook" */
-	quit_aux = quit_hook;
+	if (!quit_aux) quit_aux = quit_hook;
 
 #ifndef UNIX_SOCKETS
 	/* Check whether we should query the metaserver */
