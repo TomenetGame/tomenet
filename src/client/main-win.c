@@ -3273,13 +3273,13 @@ static void hook_quit(cptr str)
 	save_prefs();
 
 	/* Nuke each term */
-	for (j = 8 - 1; j >= 0; j--)
+	for (i = 8 - 1; i >= 0; i--)
 	{
 		/* Unused */
-		if (!ang_term[j]) continue;
+		if (!ang_term[i]) continue;
 
 		/* Nuke it */
-		term_nuke(ang_term[j]);
+		term_nuke(ang_term[i]);
 	}
 
 	/* Sub-Windows */
