@@ -3571,6 +3571,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* Prepare the windows */
 	init_windows();
 
+	/* Activate hooks */
+	plog_aux = hook_plog;
+	quit_aux = hook_quit;
+	core_aux = hook_quit;
+
 	/* Set the system suffix */
 	ANGBAND_SYS = "win";
 
