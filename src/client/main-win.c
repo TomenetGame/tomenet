@@ -3248,6 +3248,22 @@ static void hook_quit(cptr str)
 {
 	int i;
 
+	/* Copied from quit_hook in c-init.c - mikaelh */
+	Net_cleanup();
+	c_quit=1;
+	if(message_num() && get_check("Save chatlog?")){
+		FILE *fp;
+		char buf[80]="tome_chat.txt";
+		i=message_num();
+		get_string("Filename:", buf, 80);
+		/* maybe one day we'll get a Mac client */
+		FILE_TYPE(FILE_TYPE_TEXT);
+		fp=my_fopen(buf, "w");
+		if(fp!=(FILE*)NULL){
+			dump_messages_aux(fp, i, 1, FALSE);
+			fclose(fp);
+		}
+	}
 
 	/* Give a warning */
 	if (str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
@@ -3255,6 +3271,16 @@ static void hook_quit(cptr str)
 
 	/* Save the preferences */
 	save_prefs();
+
+	/* Nuke each term */
+	for (j = 8 - 1; j >= 0; j--)
+	{
+		/* Unused */
+		if (!ang_term[j]) continue;
+
+		/* Nuke it */
+		term_nuke(ang_term[j]);
+	}
 
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
