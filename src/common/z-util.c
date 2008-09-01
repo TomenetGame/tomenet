@@ -222,6 +222,9 @@ void quit(cptr str)
 	/* Save exit string */
 	if (str)
 		strncpy(buf, str, 1024);
+		buf[1023] = '\0';
+	else
+		strcpy(buf, "");
 
 	/* Attempt to use the aux function */
 	if (quit_aux) (*quit_aux)(buf);
