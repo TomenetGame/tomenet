@@ -46,7 +46,7 @@ static void print_spells(object_type *o_ptr)
 
 static void print_mimic_spells()
 {
-	int	i, col, j = 2;
+	int	i, col, j = 3;
 	char buf[90];
 
 	/* Print column */
@@ -57,10 +57,13 @@ static void print_mimic_spells()
 	put_str("Name", 1, col + 5);
 
 	prt("", j, col);
-	put_str("a) Polymorph Self", j++, col);
+	put_str("a) Polymorph Self into next known form", j++, col);
 
 	prt("", j, col);
-	put_str("b) Polymorph Self into..", j++, col);
+	put_str("b) Polymorph Self into next known form with same extremities", j++, col);
+
+	prt("", j, col);
+	put_str("c) Polymorph Self into..", j++, col);
 
 	/* Dump the spells */
 	for (i = 0; i < 32; i++)
@@ -70,7 +73,7 @@ static void print_mimic_spells()
 		  continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells4[i]);
+		sprintf(buf, "%c) %s", I2A(j - 3), monster_spells4[i]);
 		prt(buf, j++, col);
 	}
 	for (i = 0; i < 32; i++)
@@ -80,7 +83,7 @@ static void print_mimic_spells()
 			continue;
 
  		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells5[i]);
+		sprintf(buf, "%c) %s", I2A(j - 3), monster_spells5[i]);
 		prt(buf, j++, col);
 	}
 	for (i = 0; i < 32; i++)
@@ -90,7 +93,7 @@ static void print_mimic_spells()
 			continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells6[i]);
+		sprintf(buf, "%c) %s", I2A(j - 3), monster_spells6[i]);
 		prt(buf, j++, col);
 	}
 
@@ -291,7 +294,7 @@ void show_browse(object_type *o_ptr)
 
 static int get_mimic_spell(int *sn)
 {
-	int		i, num = 2; /* 2 polymorph self spells */
+	int		i, num = 3; /* 3 polymorph self spells */
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
@@ -302,8 +305,10 @@ static int get_mimic_spell(int *sn)
 
 	/* Init the Polymorph power */
 	corresp[0] = 0;
-	/* Init the Polymorph into.. <#> power */
+	/* Init the Polymorph into fitting */
 	corresp[1] = 1;
+	/* Init the Polymorph into.. <#> power */
+	corresp[2] = 2;
 
 	/* Check for "okay" spells */
 	for (i = 0; i < 32; i++)
@@ -311,7 +316,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[0] & (1L << i))
 		{
-		  corresp[num] = i + 2;
+		  corresp[num] = i + 3;
 		  num++;
 		}
 	}
@@ -320,7 +325,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[1] & (1L << i))
 		{
-		  corresp[num] = i + 32 + 2;
+		  corresp[num] = i + 32 + 3;
 		  num++;
 		}
 	}
@@ -329,7 +334,7 @@ static int get_mimic_spell(int *sn)
 		/* Look for "okay" spells */
 		if (p_ptr->innate_spells[2] & (1L << i))
 		{
-		  corresp[num] = i + 64 + 2;
+		  corresp[num] = i + 64 + 3;
 		  num++;
 		}
 	}
@@ -869,7 +874,7 @@ static int get_combatstance(int *cs)
 	/* No redraw yet */
 	redraw = FALSE;
 
-	/* Build a prompt (accept all spells) */
+	/* Build a prompt (accept all stances) */
 	strnfmt(out_val, 78, "(Stances %c-%c, *=List, ESC=exit) enter which stance? ",
 		I2A(0), I2A(num - 1));
 
@@ -879,11 +884,11 @@ static int get_combatstance(int *cs)
 		redraw = TRUE;
 		/* Save the screen */
 		Term_save();
-		/* Display a list of spells */
+		/* Display a list of stances */
 		print_combatstances();
 	}
 
-	/* Get a spell from the user */
+	/* Get a stance from the user */
 	while (!flag && get_com(out_val, &choice))
 	{
 		/* Request redraw */
@@ -896,7 +901,7 @@ static int get_combatstance(int *cs)
 				redraw = TRUE;
 				/* Save the screen */
 				Term_save();
-				/* Display a list of spells */
+				/* Display a list of stances */
 				print_combatstances();
 			}
 
@@ -953,7 +958,312 @@ static int get_combatstance(int *cs)
 void do_stance()
 {
 	int stance;
-	/* Ask for the spell */
+	/* Ask for the stance */
 	if(!get_combatstance(&stance)) return;
 	Send_activate_skill(MKEY_STANCE, stance, 0, 0, 0, 0);
+}
+
+
+static void print_melee_techniques()
+{
+	int	i, col, j = 0;
+	char buf[90];
+	/* Print column */
+	col = 20;
+	/* Title the list */
+	prt("", 1, col);
+	put_str("Name", 1, col + 5);
+	/* Dump the techniques */
+	for (i = 0; i < 16; i++)
+	{
+		/* Check for accessible technique */
+	        if (!(p_ptr->melee_techniques & (1L << i)))
+		  continue;
+		/* Dump the info */
+		sprintf(buf, "%c) %s", I2A(j), melee_technique[i]);
+		prt(buf, j++, col);
+	}
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static int get_melee_technique(int *sn)
+{
+	int		i, num = 0;
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	int             corresp[32];
+
+	/* Assume no techniques available */
+	(*sn) = -2;
+
+	/* Check for accessible techniques */
+	for (i = 0; i < 32; i++)
+	{
+		/* Look for accessible techniques */
+		if (p_ptr->melee_techniques & (1L << i))
+		{
+		  corresp[num] = i;
+		  num++;
+		}
+	}
+
+	/* Assume cancelled */
+	(*sn) = -1;
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all techniques) */
+	strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		I2A(0), I2A(num - 1));
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of techniques */
+		print_melee_techniques();
+	}
+
+	/* Get a technique from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+
+				/* Save the screen */
+				Term_save();
+
+				/* Display a list of techniques */
+				print_melee_techniques();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+	      	if (i >= num) i = -1;
+
+		/* Totally Illegal */
+		if (i < 0)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+
+		/* Flush any events */
+		Flush_queue();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	(*sn) = corresp[i];
+
+	/* Success */
+	return (TRUE);
+}
+
+void do_melee_technique()
+{
+  int technique, j;
+  char out_val[6];
+
+  /* Ask for the technique */
+  if(!get_melee_technique(&technique)) return;
+
+  Send_activate_skill(MKEY_MELEE, 0, technique, 0, 0, 0);
+}
+
+static void print ranged_techniques()
+{
+	int	i, col, j = 0;
+	char buf[90];
+	/* Print column */
+	col = 20;
+	/* Title the list */
+	prt("", 1, col);
+	put_str("Name", 1, col + 5);
+	/* Dump the techniques */
+	for (i = 0; i < 16; i++)
+	{
+		/* Check for accessible technique */
+	        if (!(p_ptr->ranged_techniques & (1L << i)))
+		  continue;
+		/* Dump the info */
+		sprintf(buf, "%c) %s", I2A(j), ranged_technique[i]);
+		prt(buf, j++, col);
+	}
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static int get_ranged_technique(int *sn)
+{
+	int		i, num = 0;
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	int             corresp[32];
+
+	/* Assume no techniques available */
+	(*sn) = -2;
+
+	/* Check for accessible techniques */
+	for (i = 0; i < 32; i++)
+	{
+		/* Look for accessible techniques */
+		if (p_ptr->ranged_techniques & (1L << i))
+		{
+		  corresp[num] = i;
+		  num++;
+		}
+	}
+
+	/* Assume cancelled */
+	(*sn) = -1;
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all techniques) */
+	strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		I2A(0), I2A(num - 1));
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of techniques */
+		print_ranged_techniques();
+	}
+
+	/* Get a technique from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+
+				/* Save the screen */
+				Term_save();
+
+				/* Display a list of techniques */
+				print_ranged_techniques();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+	      	if (i >= num) i = -1;
+
+		/* Totally Illegal */
+		if (i < 0)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+
+		/* Flush any events */
+		Flush_queue();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	(*sn) = corresp[i];
+
+	/* Success */
+	return (TRUE);
+}
+
+void do_ranged_technique()
+{
+  int technique, j;
+  char out_val[6];
+
+  /* Ask for the technique */
+  if(!get_ranged_technique(&technique)) return;
+
+  Send_activate_skill(MKEY_RANGED, 0, technique, 0, 0, 0);
 }

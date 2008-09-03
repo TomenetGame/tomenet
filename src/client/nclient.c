@@ -141,6 +141,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_KEEPALIVE]	= Receive_keepalive;
 	receive_tbl[PKT_PING]		= Receive_ping;
 	receive_tbl[PKT_STAMINA]	= Receive_stamina;
+	receive_tbl[PKT_TECHNIQUE_INFO]	= Receive_technique_info;
 }
 
 /* Head of file transfer system receive */
@@ -2144,6 +2145,24 @@ int Receive_spell_info(void)
 	p_ptr->innate_spells[0] = spells[0];
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];
+
+	return 1;
+}
+
+int Receive_technique_info(void)
+{
+	char	ch;
+	int	n;
+	s32b    melee, ranged;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &melee, &ranged)) <= 0)
+	{
+		return n;
+	}
+
+	/* Save the info */
+	p_ptr->melee_technique = melee;
+	p_ptr->ranged_technique = ranged;
 
 	return 1;
 }

@@ -61,7 +61,8 @@ extern cptr window_flag_desc[32];
 extern cptr monster_spells4[32];
 extern cptr monster_spells5[32];
 extern cptr monster_spells6[32];
-
+extern cptr melee_techniques[16];
+extern cptr ranged_techniques[16];
 
 
 /* variable.c */

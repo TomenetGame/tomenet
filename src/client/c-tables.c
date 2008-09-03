@@ -845,3 +845,51 @@ cptr monster_spells6[32] =
   "XXX",
   /* Summons follow, but players can't summon */
 };
+
+
+
+cptr melee_techniques[16] =
+{
+  "Sprint",
+  "Taunt",
+  "Spin",
+  "Berserk",
+
+  "Stab",
+  "Slice",
+  "Quake",
+  "Sweep",
+
+  "Bash",
+  "Knock-back",
+  "Jump",
+  "Charge",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+};
+
+cptr ranged_techniques[16] =
+{
+  "Flare missile",
+  "Precision shot",
+  "Dual-shot",
+  "Barrage",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+};
