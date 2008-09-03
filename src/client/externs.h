@@ -414,6 +414,8 @@ extern void do_fight(int book);
 extern void do_ghost(void);
 extern void do_mimic(void);
 extern void do_stance(void);
+extern void do_melee_technique(void);
+extern void do_ranged_technique(void);
 
 /* c-store.c */
 extern bool leave_store;

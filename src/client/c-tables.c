@@ -873,12 +873,13 @@ cptr melee_techniques[16] =
 
 cptr ranged_techniques[16] =
 {
+
   "Flare missile",
   "Precision shot",
-  "Dual-shot",
-  "Barrage",
+  "Craft some ammunition",
+  "Double-shot",
 
-  "XXX",
+  "Barrage",
   "XXX",
   "XXX",
   "XXX",

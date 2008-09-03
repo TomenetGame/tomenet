@@ -966,7 +966,7 @@ void do_stance()
 
 static void print_melee_techniques()
 {
-	int	i, col, j = 0;
+	int	i, col, j = 2;
 	char buf[90];
 	/* Print column */
 	col = 20;
@@ -980,7 +980,7 @@ static void print_melee_techniques()
 	        if (!(p_ptr->melee_techniques & (1L << i)))
 		  continue;
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j), melee_technique[i]);
+		sprintf(buf, "%c) %s", I2A(j), melee_techniques[i]);
 		prt(buf, j++, col);
 	}
 	/* Clear the bottom line */
@@ -1107,8 +1107,7 @@ static int get_melee_technique(int *sn)
 
 void do_melee_technique()
 {
-  int technique, j;
-  char out_val[6];
+  int technique;
 
   /* Ask for the technique */
   if(!get_melee_technique(&technique)) return;
@@ -1116,9 +1115,9 @@ void do_melee_technique()
   Send_activate_skill(MKEY_MELEE, 0, technique, 0, 0, 0);
 }
 
-static void print ranged_techniques()
+static void print_ranged_techniques()
 {
-	int	i, col, j = 0;
+	int	i, col, j = 2;
 	char buf[90];
 	/* Print column */
 	col = 20;
@@ -1132,7 +1131,7 @@ static void print ranged_techniques()
 	        if (!(p_ptr->ranged_techniques & (1L << i)))
 		  continue;
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j), ranged_technique[i]);
+		sprintf(buf, "%c) %s", I2A(j), ranged_techniques[i]);
 		prt(buf, j++, col);
 	}
 	/* Clear the bottom line */
@@ -1259,8 +1258,7 @@ static int get_ranged_technique(int *sn)
 
 void do_ranged_technique()
 {
-  int technique, j;
-  char out_val[6];
+  int technique;
 
   /* Ask for the technique */
   if(!get_ranged_technique(&technique)) return;
