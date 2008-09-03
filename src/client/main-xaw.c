@@ -928,7 +928,10 @@ static void react_keypress(XKeyEvent *ev)
 	mc = (ev->state & ControlMask) ? TRUE : FALSE;
 	ms = (ev->state & ShiftMask) ? TRUE : FALSE;
 	mo = (ev->state & Mod1Mask) ? TRUE : FALSE;
-	mx = (ev->state & Mod2Mask) ? TRUE : FALSE;
+
+	/* This is the NumLock state and usually it only causes problems - mikaelh */
+//	mx = (ev->state & Mod2Mask) ? TRUE : FALSE;
+	mx = FALSE;
 
 	/* Hack -- Ignore "modifier keys" */
 	if (IsModifierKey(ks)) return;
