@@ -3,7 +3,7 @@
 
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
-#define MACRO_USE_HYB	0x03
+#define MACRO_USE_HYB	0x04
 
 #define NR_OPTIONS_SHOWN	20
 
@@ -152,9 +152,9 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
                         macro__hyb[n] = hyb_flag;
 
 			/* Update the "trigger" char - mikaelh */
-			macro__use[(byte)(pat[0])] = MACRO_USE_STD;
-			if (hyb_flag) macro__use[(byte)(pat[0])] = MACRO_USE_HYB;
-			else if (cmd_flag) macro__use[(byte)(pat[0])] = MACRO_USE_CMD;
+			if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
+			else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+			else macro__use[(byte)(pat[0])] |= MACRO_USE_STD;
 
                         /* All done */
                         return;
@@ -179,11 +179,10 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 
 
         /* Hack -- Note the "trigger" char */
-        macro__use[(byte)(pat[0])] = MACRO_USE_STD;
+        if (hyb_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_HYB;
+        else if (cmd_flag) macro__use[(byte)(pat[0])] |= MACRO_USE_CMD;
+	macro__use[(byte)(pat[0])] |= MACRO_USE_STD;
 
-        /* Hack -- Note the "trigger" char of command macros */
-        if (hyb_flag) macro__use[(byte)(pat[0])] = MACRO_USE_HYB;
-        else if (cmd_flag) macro__use[(byte)(pat[0])] = MACRO_USE_CMD;
 }
 
 /*
@@ -218,7 +217,9 @@ bool macro_del(cptr pat)
 		macro__hyb[i - 1] = macro__hyb[i];
 	}
 
+#if 0 /* this can actually disable multiple keys if their macro patterns begin with the same byte - mikaelh */
 	macro__use[(byte)(pat[0])] = 0;
+#endif
 
 	macro__num--;
 
