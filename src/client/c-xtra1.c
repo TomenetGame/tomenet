@@ -185,7 +185,7 @@ void prt_ac(int ac)
 
 	char tmp[32];
 
-	put_str("Cur AC:", ROW_AC, COL_AC);
+	put_str("AC:", ROW_AC, COL_AC);
 	sprintf(tmp, "%5d", ac);
 	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
 }
