@@ -2586,6 +2586,8 @@ s32b c_get_quantity(cptr prompt, int max)
 
 	/* A letter means "all" */
 	if (isalpha(buf[0])) amt = max;
+	/* hack for drop gold: - C. Blue */
+	if (buf[0] == '*') amt = 100000000; /* 1 more than you could actually type :) (8 chars limit) */
 
 	/* Enforce the maximum, if maximum is defined */
 	if ((max >= 0) && (amt > max)) amt = max;
