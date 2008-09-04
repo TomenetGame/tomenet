@@ -2182,6 +2182,7 @@ struct player_type
 	s16b invuln;		/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
+	s16b berserk;			/* Timed -- Berserk #2 */
 	s16b fury;			/* Timed -- Furry */
 	s16b tim_thunder;   	/* Timed thunderstorm */
 	s16b tim_thunder_p1;	/* Timed thunderstorm */
@@ -2405,6 +2406,8 @@ struct player_type
 	
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
+	s32b melee_techniques; /* melee techniques */
+	s32b ranged_techniques; /* ranged techniques */
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
 	
@@ -2568,7 +2571,10 @@ struct player_type
 	time_t global_event_signup[MAX_GLOBAL_EVENTS];
 	time_t global_event_started[MAX_GLOBAL_EVENTS];
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
-	s32b global_event_temp; /* not saved */
+	s32b global_event_temp; /* not saved. values:
+		1: pass through sector00separation;
+            	2: die permanently in the tournament;
+                4: don't die while still in 0,0 dungeon, but teleport to 0,0,0 */
 
 	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
 	 * and that number will affect mana usage */
@@ -2596,7 +2602,11 @@ struct player_type
 	/* combat stances */
 	int combat_stance; /* 0 = normal, 1 = def, 2 = off */
 	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
-	
+
+	/* more techniques */	
+	s16b melee_sprint;
+	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
+
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
 	   by specifying the spell name instead of a book and position - C. Blue */
 	char spell_name[100][20];
@@ -3006,13 +3016,17 @@ struct global_event_type
     s32b participant[MAX_GE_PARTICIPANTS];	/* player IDs */
     s32b creator;       	/* Player ID or 0L */
     long int announcement_time;	/* for how many seconds the event will be announced until it actually starts */
+    long int signup_time;	/* for how many seconds the event will allow signing up:
+				   -1 = this event doesn't allow signing up at all!
+				   0 = same as announcement_time, ie during the announcement phase
+				   >0 = designated time instead of announcement_time. */
     bool first_announcement;	/* just keep track of first advertisement, and add additional info that time */
     s32b start_turn;          	/* quest started */
     s32b end_turn;		/* quest will end */
     time_t started;		/* quest started */
     time_t ending;		/* quest will end */
     char title[64];		/* short title of this event (used for /gesign <n> player command) */
-    char description[6][72];	/* longer event description */
+    char description[10][78];	/* longer event description */
     bool hidden;		/* hidden from the players? */
     int min_participants;	/* minimum amount of participants */
     int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */

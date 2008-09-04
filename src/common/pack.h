@@ -171,7 +171,7 @@
 #define PKT_ENCUMBERMENT        164
 #define PKT_PARTY_STATS		165 /* DEG Packet type for party member info */
 #define PKT_PING		166 /* Ping packet */
-#define PKT_STAMINA		167
+/* 167+ are further below.. */
 
 /* HACK -- used for SKILL_INIT */
 #define PKT_SKILL_INIT_NAME     0
@@ -194,6 +194,9 @@
 #define PKT_BBS			169
 #define PKT_WIELD2		170
 #define PKT_CLOAK		171
+
+#define PKT_STAMINA		172
+#define PKT_TECHNIQUE_INFO	173
 
 
 /*

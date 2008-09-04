@@ -61,7 +61,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   6
+#define SF_VERSION_PATCH   7
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -555,6 +555,11 @@
 /* Reduce the effect of aggravating equipment on the player
    and especially fellow players? - C. Blue */
 #define REDUCED_AGGRAVATION
+
+/* How do polymorph rings work? - C. Blue    [1]
+   0 = wear ring to keep the form, ring has timeout until it desintegrates
+   1 = ring gets destroyed on activation and effect is timed */
+#define POLY_RING_METHOD 1
 
 
 /* Approximate cap of a monster's average raw melee damage output per turn
@@ -2741,7 +2746,7 @@ that keeps many algorithms happy.
 #define SV_POTION_RESIST_HEAT           30
 #define SV_POTION_RESIST_COLD           31
 #define SV_POTION_HEROISM               32
-#define SV_POTION_BESERK_STRENGTH       33
+#define SV_POTION_BERSERK_STRENGTH       33
 #define SV_POTION_CURE_LIGHT            34
 #define SV_POTION_CURE_SERIOUS          35
 #define SV_POTION_CURE_CRITICAL         36
@@ -3666,7 +3671,7 @@ that keeps many algorithms happy.
 #define TR5_LUCK                0x00000200L     /* Luck += pval */
 #define TR5_IMMOVABLE           0x00000400L     /* Cannot move */
 #define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
-/* XXX 				0x00001000L	*/
+#define TR5_FORCE_DEPTH		0x00001000L	/* Can only occur on depth >= its k_info level */
 /* XXX 				0x00002000L	*/
 /* XXX 				0x00004000L	*/
 /* XXX 				0x00008000L	*/
@@ -4492,18 +4497,26 @@ that keeps many algorithms happy.
 
 
 /* vault flags for v_info */
-#define VF1_FORCE_FLAGS			0x00000001L
+#define VF1_FORCE_FLAGS		0x00000001L
 #define VF1_NO_TELEPORT         0x00000002L
 #define VF1_NO_GENO             0x00000004L
-#define VF1_NOMAP				0x00000008L	/* player never gains level knowledge */
-#define VF1_NO_MAGIC_MAP		0x00000010L	/* player never does magic mapping */
+#define VF1_NOMAP		0x00000008L	/* player never gains level knowledge */
+#define VF1_NO_MAGIC_MAP	0x00000010L	/* player never does magic mapping */
 #define VF1_NO_DESTROY          0x00000020L
-#define VF1_NO_MAGIC			0x00000040L /* very nasty */
+#define VF1_NO_MAGIC		0x00000040L /* very nasty */
 
-#define VF1_NO_PENETR			0x10000000L /* river/lava never penetrates vault */
-#define VF1_HIVES				0x20000000L /* put same vaults like beehives */
-#define VF1_NO_MIRROR			0x40000000L /* not suitable for mirroring */
-#define VF1_NO_ROTATE			0x80000000L /* not suitable for rotation */
+#define VF1_NO_EASY_TRUEARTS	0x001000000L /* on shallow levels, this vault won't contain any truearts */
+#define VF1_NO_EASY_RANDARTS	0x002000000L /* on shallow levels, this vault won't contain any randarts */
+#define VF1_RARE_TRUEARTS	0x004000000L /* reduced chance to contain truearts */
+#define VF1_RARE_RANDARTS	0x008000000L /* reduced chance to contain randarts */
+
+#define VF1_NO_TRUEARTS		0x01000000L /* this vault won't contain any truearts (except if a monster drops one) */
+#define VF1_NO_RANDARTS		0x02000000L /* this vault won't contain any randarts (except if a monster drops one) */
+
+#define VF1_NO_PENETR		0x10000000L /* river/lava never penetrates vault */
+#define VF1_HIVES		0x20000000L /* put same vaults like beehives */
+#define VF1_NO_MIRROR		0x40000000L /* not suitable for mirroring */
+#define VF1_NO_ROTATE		0x80000000L /* not suitable for rotation */
 
 /*
  * Possible flags for the future:
@@ -5295,10 +5308,11 @@ extern int PlayerUID;
 #define TERM_SHAR	24
 #define TERM_LITE	25
 #define TERM_DARKNESS	26
-#define TERM_HALF	31	/* only the brighter colours */
 
 #define TERM_SHIELDM	27	/* 64: mana shield */
 #define TERM_SHIELDI	28	/* 128: invulnerability */
+
+#define TERM_HALF	31	/* only the brighter colours */
 
 #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
 
@@ -5382,8 +5396,6 @@ extern int PlayerUID;
 #define MODE_NORMAL		0x00
 #define MODE_MALE		0x01	/* Dummy */
 
-#define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */ 
-
 #define MODE_HARD		0x02	/* Penalized */
 #define MODE_NO_GHOST		0x04	/* traditional 'hellish' is 3 */
 #define MODE_EVERLASTING   	0x08	/* No death counter */
@@ -5391,10 +5403,14 @@ extern int PlayerUID;
 
 #define MODE_FRUIT_BAT   	0x20	/* No death counter */
 
+#define MODE_MASK       (MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* real character modes */ 
+
 /* Monk martial arts... */
-# define MAX_MA 17
-# define MA_KNEE 1
-# define MA_SLOW 2
+#define MAX_NONWINNER_MA 17 /* total_winners can use more techniques, see next line.. */
+#define MAX_MA 19 /* total_winners have access to all techniques */
+#define MA_KNEE 1
+#define MA_SLOW 2
+#define MA_ROYAL_SLOW 3
 
 /* Mental links */
 #define LINK_NONE 0
@@ -5879,8 +5895,8 @@ extern int PlayerUID;
 #define MKEY_MAGERY             2	/* unused */
 #define MKEY_MIMICRY            3
 #define MKEY_SHADOW             4	/* unused */
-#define MKEY_FIGHTING           5	/* new fighter abilities */
-#define MKEY_ARCHERING          6	/* not "Hunting" anymore, but new archer abilities */
+#define MKEY_MELEE              5	/* new fighter abilities */
+#define MKEY_RANGED             6	/* not "Hunting" anymore, but new archer abilities */
 #define MKEY_PRAY               7	/* unused */
 
 #define MKEY_DODGE              8
@@ -6297,6 +6313,7 @@ extern int PlayerUID;
 #define GE_NONE			0	/* <disabled> ie no event running */
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
+#define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
 
 
 /* modify the base crit bonus to make it less linear, remotely similar to LUCK */
