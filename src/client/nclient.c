@@ -1657,9 +1657,9 @@ int Receive_skill_info(void)
 	int	n;
         char	ch;
         s32b    val;
-	int	i, mod, dev, hidden;
+	int	i, mod, dev, hidden, mkey;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey)) <= 0)
 	{
 		return n;
 	}
@@ -1668,6 +1668,7 @@ int Receive_skill_info(void)
         p_ptr->s_info[i].mod = mod;
         p_ptr->s_info[i].dev = dev;
         p_ptr->s_info[i].hidden = hidden;
+        s_info[i].action_mkey = mkey;
 
         /* Tell the skill screen we got the info we needed */
         hack_do_cmd_skill_wait = FALSE;

@@ -966,7 +966,7 @@ void do_stance()
 
 static void print_melee_techniques()
 {
-	int	i, col, j = 2;
+	int	i, col, j = 0;
 	char buf[90];
 	/* Print column */
 	col = 20;
@@ -981,10 +981,10 @@ static void print_melee_techniques()
 		  continue;
 		/* Dump the info */
 		sprintf(buf, "%c) %s", I2A(j), melee_techniques[i]);
-		prt(buf, j++, col);
+		prt(buf, 2 + j++, col);
 	}
 	/* Clear the bottom line */
-	prt("", j++, col);
+	prt("", 2 + j++, col);
 }
 
 static int get_melee_technique(int *sn)
@@ -1117,7 +1117,7 @@ void do_melee_technique()
 
 static void print_ranged_techniques()
 {
-	int	i, col, j = 2;
+	int	i, col, j = 0;
 	char buf[90];
 	/* Print column */
 	col = 20;
@@ -1132,10 +1132,10 @@ static void print_ranged_techniques()
 		  continue;
 		/* Dump the info */
 		sprintf(buf, "%c) %s", I2A(j), ranged_techniques[i]);
-		prt(buf, j++, col);
+		prt(buf, 2 + j++, col);
 	}
 	/* Clear the bottom line */
-	prt("", j++, col);
+	prt("", 2 + j++, col);
 }
 
 static int get_ranged_technique(int *sn)
