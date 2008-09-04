@@ -1044,8 +1044,10 @@ void show_inven(void)
 	{
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
-		else
+		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
+		else
+			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
@@ -1164,8 +1166,10 @@ void show_equip(void)
 	{
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
-		else
+		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
+		else
+			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
