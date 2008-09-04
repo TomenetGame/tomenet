@@ -2734,7 +2734,6 @@ static errr macro_dump(cptr fname)
 	fff = my_fopen(buf, "r");
 
 	if (fff) {
-		char buf2[1024];
 		fclose(fff);
 
 		/* Attempt to rename */
