@@ -797,6 +797,12 @@ void do_activate_skill(int x_idx, int item)
 			case MKEY_STANCE:
 				do_stance();
 				break;
+			case MKEY_MELEE:
+				do_melee_technique();
+				break;
+			case MKEY_RANGED:
+				do_ranged_technique();
+				break;
 			default:
 				c_msg_print("Very sorry, you need more recent client.");
 				break;
