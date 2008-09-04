@@ -62,8 +62,8 @@ static void display_entry(int pos)
                 if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
-                        int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3d.%d lb", wgt / 10, wgt % 10);
+                        long int wgt = o_ptr->weight;
+                        (void)sprintf(out_val, "%3ld.%ld lb", wgt / 10, wgt % 10);
                         put_str(out_val, i+6, 68);
                 }
         }
@@ -85,8 +85,8 @@ static void display_entry(int pos)
                 if (c_cfg.show_weights)
                 {
                         /* Only show the weight of an individual item */
-                        int wgt = o_ptr->weight;
-                        (void)sprintf(out_val, "%3d.%d", wgt / 10, wgt % 10);
+                        long int wgt = o_ptr->weight;
+                        (void)sprintf(out_val, "%3ld.%ld", wgt / 10, wgt % 10);
                         put_str(out_val, i+6, 61);
                 }
 

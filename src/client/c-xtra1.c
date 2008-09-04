@@ -782,7 +782,7 @@ void health_redraw(int num, byte attr)
 static void display_inven(void)
 {
 	int	i, n, z = 0;
-	int	wgt;
+	long int	wgt;
 
 	object_type *o_ptr;
 
@@ -840,8 +840,11 @@ static void display_inven(void)
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight)
 		{
-			wgt = o_ptr->weight;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			wgt = o_ptr->weight * o_ptr->number;
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			Term_putstr(71, i, -1, TERM_WHITE, tmp_val);
 		}
 	}
@@ -861,7 +864,7 @@ static void display_inven(void)
 static void display_equip(void)
 {
 	int	i, n;
-	int	wgt;
+	long int	wgt;
 
 	object_type *o_ptr;
 
@@ -905,8 +908,11 @@ static void display_equip(void)
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight)
 		{
-			wgt = o_ptr->weight;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			wgt = o_ptr->weight * o_ptr->number;
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			Term_putstr(71, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
 		}
 	}
@@ -928,7 +934,8 @@ static void display_equip(void)
 void show_inven(void)
 {
 	int	i, j, k, l, z = 0;
-	int	col, len, lim, wgt, totalwgt = 0;
+	int	col, len, lim;
+	long int wgt, totalwgt = 0;
 
 	object_type *o_ptr;
 
@@ -1022,8 +1029,11 @@ void show_inven(void)
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight)
 		{
-			wgt = o_ptr->weight;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			wgt = o_ptr->weight * o_ptr->number;
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			put_str(tmp_val, j + 1, 71);
 			totalwgt += wgt;
 		}
@@ -1032,7 +1042,10 @@ void show_inven(void)
 	/* Display the weight if needed */
 	if (c_cfg.show_weights && totalwgt)
 	{
-		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
+		if (totalwgt < 10000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
+		else
+			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
@@ -1050,7 +1063,8 @@ void show_inven(void)
 void show_equip(void)
 {
 	int	i, j, k, l;
-	int	col, len, lim, wgt, totalwgt = 0;
+	int	col, len, lim;
+	long int wgt, totalwgt = 0;
 
 	object_type *o_ptr;
 
@@ -1135,8 +1149,11 @@ void show_equip(void)
 		/* Display the weight if needed */
 		if (c_cfg.show_weights && o_ptr->weight)
 		{
-			wgt = o_ptr->weight;//multiplied server-side: * o_ptr->number;
-			(void)sprintf(tmp_val, "%3d.%1d lb", wgt / 10, wgt % 10);
+			wgt = o_ptr->weight * o_ptr->number;
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
 			put_str(tmp_val, j + 1, 71);
 			totalwgt += wgt;
 		}
@@ -1145,7 +1162,10 @@ void show_equip(void)
 	/* Display the weight if needed */
 	if (c_cfg.show_weights && totalwgt)
 	{
-		(void)sprintf(tmp_val, "Total: %3d.%1d lb", totalwgt / 10, totalwgt % 10);
+		if (totalwgt < 10000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
+		else
+			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
 		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
 	}
 
