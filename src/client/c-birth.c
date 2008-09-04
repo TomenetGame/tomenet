@@ -767,6 +767,8 @@ void get_char_name(void)
 	/* Title everything */
 	put_str("Name        :", 2, 1);
 	put_str("Password    :", 3, 1);
+	c_put_str(TERM_SLATE, "If TomeNET quits with a login failure, check account name and password", 4, 3);
+	c_put_str(TERM_SLATE, "for upper/lower case! If you are a new player, try a different name.", 5, 3);
 
 	/* Dump the default name */
 	c_put_str(TERM_L_BLUE, nick, 2, 15);
