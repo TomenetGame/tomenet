@@ -51,7 +51,7 @@
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
-#define VERSION_EXTRA	2
+#define VERSION_EXTRA	3
 #define VERSION_BRANCH	0
 #define VERSION_BUILD	0
 
@@ -65,7 +65,7 @@
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
+#define CLIENT_VERSION_TAG "b"
 
 /*
  * Base version strings of TomeNET (see version_build)
