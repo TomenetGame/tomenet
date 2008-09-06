@@ -456,7 +456,7 @@ void do_mimic()
 
   /* later on maybe this can moved to server side, then no need for '20000 hack'.
   Btw, 30000, the more logical one, doesnt work, dont ask me why */
-  if(spell == 1){
+  if(spell == 2){
     strcpy(out_val,"");
     get_string("Which form (0 for player) ? ", out_val, 4);
     if(strlen(out_val) == 0) return;
