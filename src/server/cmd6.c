@@ -959,7 +959,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					break;
 				}
 
-			case SV_POTION_BESERK_STRENGTH:
+			case SV_POTION_BERSERK_STRENGTH:
 				{
 					if (hp_player(Ind, 30)) ident = TRUE;
 					if (set_afraid(Ind, 0)) ident = TRUE;

@@ -4661,7 +4661,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 				dam = damroll(5, 10);
 				break;
 			case SV_POTION_HEROISM:
-			case SV_POTION_BESERK_STRENGTH:
+			case SV_POTION_BERSERK_STRENGTH:
 /*				if (m_ptr->monfear) msg_print_near_monster(m_idx, "recovers the courage");
 				m_ptr->monfear = 0;
 				typ = GF_OLD_HEAL;*/

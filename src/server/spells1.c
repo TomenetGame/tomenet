@@ -204,7 +204,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval)
 			ident = TRUE;
 			break;
 		case SV_POTION_HEROISM:
-		case SV_POTION_BESERK_STRENGTH:
+		case SV_POTION_BERSERK_STRENGTH:
 			radius = 1;
 			dt = GF_HERO_MONSTER;
 			dam = damroll(2, 10);
