@@ -46,7 +46,7 @@ static void print_spells(object_type *o_ptr)
 
 static void print_mimic_spells()
 {
-	int	i, col, j = 3;
+	int	i, col, j = 2;
 	char buf[90];
 
 	/* Print column */
