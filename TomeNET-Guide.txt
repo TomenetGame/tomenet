@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. May 2008; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.0f (www.tomenet.net, usually outdated though).
+| Latest update: 6. September 2008; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.1b (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -97,6 +97,8 @@ Contents
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
+    (6.11)  Parrying and blocking
+    (6.12)  Fighting/shooting techniques
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -243,7 +245,7 @@ f       t       fire.
 v       v       throw.
 b       (P)     browse (peruse) a book.
 m       m       activate a skill (ie cast a magic spell, lay a trap, use an
-                ability, create ammunition, polymorph into a monster form or
+                ability, use a technique, polymorph into a monster form or
                 back to normal, cast a monster-spell while polymorphed,
                 enter a combat stance).
 a       z       use (aim) a magic wand.
@@ -330,7 +332,7 @@ P               party screen. Form/disband/modify a party with other players
         The number shown in round brackets before each monster name is the
         number they have to enter for their 'Polymorph self into..' ability!
 X       quickly swap between two equippable items. They must be inscribed
-        '@w0'.
+        '@w0'. (It's basically just the macro 'w0' bound to shift+x key.)
 {       inscribe an item.
 }       remove inscription from an item.
 _       drink from a fountain. You must stand on the fountain to do this.
@@ -877,18 +879,19 @@ several possibilities to cure Black Breath, for example Sprigs of Athelas.
 (1.6) How to encounter the final boss: Morgoth, The Lord Of Darkness
 --------------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
--He won't show up until you killed Sauron, The Sorceror (at dungeon level 99).
+-He won't show up until you killed Sauron, The Sorceror (who usually appears
+ at dungeon level 99).
 -Morgoth and Sauron do not neccessarily spawn on each fitting dungeon level,
-sometimes you have to look a bit for him, like for all other monsters/uniques.
+ sometimes you have to search for him, like for all other monsters/uniques.
 -If a player who hasn't killed Sauron yet or who has already beaten Morgoth
-enters a dungeon level where Morgoth is currently on, Morgoth will instantly
-teleport to a different dungeon level.
+ enters a dungeon level where Morgoth is currently on, Morgoth will instantly
+ teleport to a different dungeon level.
 -If there's already another player on that level who has beaten Sauron but
-hasn't acquired the title of a King or Queen yet, the 'intruder' player will
-be teleported to town instead and Morgoth will remain on the level.
--If a party of players encounters him he will be a bit thougher than
-he appears to a solo player, depending on the size of the party.
--There are hardly any walls that can hold Morgoth back for long.
+ hasn't acquired the title of a King or Queen yet, the 'intruder' player will
+ be teleported to town instead and Morgoth will remain on the level.
+-If more than one player is on his floor, he will be a bit thougher than he
+ appears to a solo player, depending on the number of players facing him.
+-There are no obstacles that can hold Morgoth back for long.
 
 See (1.5) for more information about Morgoth.
 
@@ -1500,10 +1503,10 @@ in shops.
 
 Hybrid macros:
 --------------
-Use 'create hybrid macro' instead of 'create normal macro' and 'create command
-macro' in case you don't want the macro to appear on hitting the corresponding
-key in a normal chat message (for example useful for '-' key so it won't
-prevent you from inscribing your word-of-recall scrolls).
+Use 'create hybrid macro' instead of 'create normal macro' in case you don't
+want the macro to appear on hitting the corresponding key in a normal chat
+message (for example useful for '-' key so it won't prevent you from
+inscribing your word-of-recall scrolls).
 Hybrid macros still work within input requests such as "quaff which potion?",
 just not in STRING INPUT such as chat lines, polymorph-codes or money amounts.
 Hybrid macros don't work in shops.
@@ -1532,7 +1535,7 @@ For..
 a) casting a magical spell
     Press 'm' to see your choices of casting magical spells. Let's assume you
     see this menu then:
-        a) create ammo
+        a) check dodge chance
         b) cast a spell
     Now we want 'b'. Press it to see a list of your magical books in your
     inventory. Let's assume you have learned spell 'a)' from book 'b)' in
@@ -1671,20 +1674,24 @@ Now you would have to rewrite your macros each time you gain another ability.
 Example:
 You are an adventurer who can cast magic spells, so if you press 'm' you
 are asked which spell you want to cast.
-Now you train in archery, learning the ability to create ammunition from
-junk items. If you press 'm' now, a menu will appear, asking you if you
-want to create ammunition or cast a magic spell instead. So you of your
+Now you train dodging, learning the ability to dodge
+If you press 'm' now, a menu will appear, asking you if you want to check your
+dodge chance or cast a magic spell instead. So your spell-casting
 macros need to be rewritten to take account of this question.
 To avoid this, you can directly choose which skill (ie spell-casting) you
 want to use in your macros, by specifying the "ability code"!
 
 Here is a list of all available ability codes:
-9       Create ammunition (for archery skill)
-3       Cast monster spell (for mimicry-users)
+3       Use innate power (for mimicry-users)
+5       Fighting techniques (see (6.12))
+6       Shooting techniques (see (6.12))
 8       Check your dodge chance (for dodging skill)
+(included in '6' now: 9       Create ammunition (for archery skill))
 10      Set a monster trap (for trapping skill)
 11      Cast a magic spell / recite a holy prayer
 13      Change combat stance (for combat stances skill)
+14      Check your chances of parrying and blocking (for melee fighters,
+        see (6.11) for details about these abilities)
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
@@ -1950,6 +1957,7 @@ found decent items and maxed out your vital stats.
         28                           22
         30                           25
         35                           30
+        38                           36
         40                           40
         41                           43
         42                           46
@@ -3000,10 +3008,11 @@ shield has magical reflection ability, you won't be able to utilize it.
 Depending on your server settings, your character might have a chance to parry
 attacks with his weapon and block attacks with his shield, provided he uses
 one. For more details about class-specific ability to utilize weapons and
-shields for parrying and blocking, see (6.5). In general, the bigger a weapon
-the more you may parry, while the bigger a shield the more you will block!
+shields for parrying and blocking, see (6.5), for more details see (6.11).
+In general, the bigger a weapon the more you may parry, while the bigger a
+shield the more you will block!
 Last but not least, training "Weaponmastery" skill will also increase your
-block chance a good deal.
+parry chance a good deal.
 
 
 
@@ -3101,8 +3110,8 @@ The "auto-retaliator" (see 5.1) also works if you fight bare-handed.
 
 Training Martial Arts will give you..
 -a bonus to-hit and to-dam.
--special combat techniques which your character will use automatically.
- These techniques do a lot of extra damage and often additionally stun or slow
+-special combat moves which your character will use automatically.
+ These moves do a lot of extra damage and often additionally stun or slow
  your opponent.
 -special abilities and resistances (like Free Action, see (6.2) for details).
 -extra speed and stealth bonus.
@@ -3173,7 +3182,7 @@ Any shield           |                        0                    0
 Heavy shield/weapons |                                 0
 
 
-Martial Arts special combat techniques have certain dice, similar to normal
+Martial Arts special combat moves have certain dice, similar to normal
 weapons. These dice are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 1/3.
 Example: Ring of Acid will usually add 2x your base damage.
@@ -3181,16 +3190,16 @@ For MA it will add 2/3x of your base damage, so multiply your base damage
 by 1.67 instead of by 3 to get your total damage output.
 See (5.3) to get an easy overview.
 
-You cannot use special techniques while stunned or confused.
+You cannot use special moves while stunned or confused.
 
-Here is a list of Martial Arts special techniques:
-A technique is picked randomly, then used if random(1..MA_Skill)>chance.
-If the chance fails, another technique is picked.
-There are MA_Skill / 7 tries to find a technique, otherwise you will hit
-without a special technique. There is always at least 1 try to pick a
-technique.
+Here is a list of Martial Arts special moves:
+A move is picked randomly, then used if random(1..MA_Skill)>chance.
+If the chance fails, another move is picked.
+There are MA_Skill / 7 tries to find a move, otherwise you will hit
+without a special move. There is always at least 1 try to pick a
+move.
 
-Technique       |   Min.level   |   Chance  |   Damage dice |   Effects
+Move             |   Min.level   |   Chance  |   Damage dice |   Effects
 ---------------------------------------------------------------------------
 Punch                    1               0          1d4             -
 Kick                     2               0          1d6             -
@@ -3327,7 +3336,7 @@ find your str_hold). So the top weight limit is
 Some special abilities depend on armour weight too. Those are..
 -dodge chance from 'Dodging' skill.
 -critical hit bonus from 'Critical-strike' skill.
--extra parry bonus from dual-wielding two weapons.
+-extra parry bonus from dual-wielding two weapons. (Also see (6.11).)
 -extra blow/round bonus from dual-wielding two weapons.
 -area searching for the 'Rogue' class (exclusive ability).
 -cloaking mode for the 'Rogue' class (exclusive ability).
@@ -3485,7 +3494,9 @@ Paralysis       Paralysis can be caused by bashing doors, lack of food and by
                 traps or enemies. Against the latter two effects you can
                 become immune by equipping a 'Free Action' item. You should
                 become immune to paralysis before descending below 1000 ft.
-Hold Life       This will provide some protection against experience drain.
+Hold Life       This will provide some protection against experience drain;
+                it won't help against experience drain inflicted by items you
+                equipped though.
 
 Further, there are several high resistances. Those are
 Water           Water resistance is rare. Water attacks can stun and confuse
@@ -3912,20 +3923,14 @@ WOUNDING ('It is very sharp and makes your foes bleed.')
 Weapons of Spinning
         Spin around on activation, hitting every monster around you in a
         radius of 1.
-CAPACITY (of Capacity) ('It can hold more mana.')
-        No effect currently.
-CHEAPNESS (of Cheapness) ('It can cast spells for a lesser mana cost.')
-        No effect currently. Traps of cheapness have halved timeout duration.
 EASY_USE (of Simplicity)
         You have a much higher chance of succeeding to use the magic device.
         Also see (6.10) for more information about the 'Magic Device' skill.
 CHARGING (of Charging) ('It regenerates its mana faster.')
-        This magic device (rod) will take only 1/3 of the usual time to
+        This magic device (rod) will take only 1/2 of the usual time to
         fully recharge.
-FAST_CAST (of Quickness) ('It can cast spells faster')
-        Using this magic device will only consume HALF a turn of your time.
 Istari (of the Istari)
-        Combination of CAPACITY, CHARGING, CHEAPNESS and FAST_CAST.
+        Combination of EASY_USE and CHARGING.
 FUEL_LITE ('It provides light radius when fueled')
         A light source that needs to be fueled, otherwise it runs out.
 (NO_SEED 
@@ -4012,14 +4017,14 @@ Cure Critical Wounds
                 Cures blindness, cuts, confusion, stun; heals 14d8 HP.
 Healing         Cures blindness, cuts, confusion, stun, poison; heals 300 HP.
 *Healing*       Cures blindness, cuts, confusion, stun, poison; heals 700 HP.
-Restore Mana    Restores 500 MP.
-*Restore Mana*  Full mana restoration.
+Restore Mana    Restores 500 SP.
+*Restore Mana*  Restores 1000 SP.
 Curing          Heals some HP, removes blindness/confusion/stun, cures
                 poison/cuts/hallucinations, heals some insanity,
                 cures being gorged, restores all your stats (except exp).
-Life            Heals 5000 HP, removes blindness/confusion/stun, cures
+Life            Heals 700 HP, removes blindness/confusion/stun, cures
                 poison/cuts/hallucinations, cures Black Breath,
-                restores all your stats (except experience).
+                restores all your stats and experience.
 Experience      Gives you additionally half your current experience plus 10,
                 but only up to a maximum of +100,000 points. So you'll get the
                 most out of it if you quaff it when you reached 200,000 exp.
@@ -4209,7 +4214,7 @@ Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
 Rings of Sustain Brilliance     sustain intelligence and wisdom.
 Rings/Amulets of Slow Digestion will slow your food digestion so you have to
                         eat less often. Also prevents instant paralysation if
-                        you hit a bowel cramps trap.
+                        your food state hits red 'weak'.
 Amulet of Anti-Magic    See '5.7 NO_MAGIC'
 Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 teleport, phase or recall the wearer,
@@ -4655,9 +4660,10 @@ There are some abilities which are not flags although they might look like it.
 In fact, they add up / stack. Those are:
 -Extra shots (concerning ranged weapons)
 -Extra might (concerning ranged weapons)
--Drain mana (note that 'mana regeneration' does NOT stack. So it can cancel
- out the effect of only ONE item that drains mana, not of any more.)
--Drain hit points ('Drains your life'. note that 'regeneration' does NOT
+-Drain mana ('Drains your magic'. Note that 'mana regeneration' does NOT
+ stack. So it can cancel out the effect of only ONE item that drains mana, not
+ of any more.)
+-Drain hit points ('Drains your health'. note that 'regeneration' does NOT
  stack, so it can cancel out the effect of only ONE item that drains hit
  points, not of any more. However, the 'Health' skill is able to further
  increase your regeneration rate.)
@@ -4894,11 +4900,11 @@ Note that not every skill is available to every profession (class).
                                 more distinctive feelings about melee weapons
                                 and armour.
                                 A powerful combattant (combat 31) senses the
-                                use of ranged weapons and ammunition much
-                                better, even if (s)he's not comfortable with
-                                archery.
-                                A very powerful one (combat 41) can also sense
-                                the use of magical items much better.
+                                usefulness of ranged weapons and ammunition
+                                more distinctively, even if (s)he's not
+                                knowledgeable in archery otherwise.
+                                A very powerful one (combat 41) can also
+                                roughly estimate usefulness of magical items.
                                 The further you train Combat, the faster you
                                 will pseudo-id items.
                                 Increases Fear/Stun/Confuse duration of the
@@ -4907,13 +4913,17 @@ Note that not every skill is available to every profession (class).
                                 suffer from.
                                 Slightly increases melee and ranged to-hit
                                 bonus, and melee to-damage bonus.
+                                If your Combat skill isn't zero, then you can
+                                press 'm' to check your base chance of
+                                parrying (weapon) and blocking (shield), see
+                                (6.11) for more details about parry/block.
     +Weaponmastery              Improves your Fighting ability.
                                 Slightly increases melee to-dam and to-hit for
                                 armed combat. Increases your chance to score
                                 critical hits in armed combat.
                                 If your server has parrying enabled,
                                 Weaponmastery will also increase your parry
-                                chance a good deal.
+                                chance a good deal (see (6.11) for details).
         +Sword-mastery          Greatly improves to-dam/to-hit with swords.
                                 At 25 and 50 you will get +1 blow per round
                                 while having a sword equipped.
@@ -4959,6 +4969,9 @@ Note that not every skill is available to every profession (class).
         .Combat Stances         This ability cannot be trained, but it is
                                 increased automatically each time your
                                 character gains a level.
+                                It will cap at 49. In order to get it to 50,
+                                you must attain the status of King, Queen,
+                                Emperor or Empress.
                                 Only warriors, mimics, paladins and rangers
                                 can learn certain stances.
                                 On certain skill levels, you will learn a new
@@ -4980,10 +4993,14 @@ Note that not every skill is available to every profession (class).
                                                    for being in 'fury'.
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
+                                Depending on your class you will more or less
+                                quickly also learn some fighting techiques,
+                                accessible via 'm' - for details see (6.12).
     .Dual-Wield                 The ability to wield two weapons at once. This
                                 ability cannot be trained (it's a switch).
                                 Dual-wielding will give you additional parry
-                                chance as well as a blows/round bonus.
+                                chance as well as a blows/round bonus
+                                (see (6.11) for details about parrying).
                                 You won't receive these boni if your armour is
                                 too heavy (see (5.5)). By dual-wielding, your
                                 character gains all magical abilities of both
@@ -5001,6 +5018,8 @@ Note that not every skill is available to every profession (class).
                                 numbers, due to the loss on rounding them.
                                 Example: 4bpr & 5bpr = 4.5bpr rounded to 4bpr.
     +Archery                    Improves ranged to-damage bonus.
+                                Allows you to learn some shooting techniques,
+                                accessible via 'm', see (6.12) for details.
                                 Increases your chance to score critical hits.
                                 At 10 you may create ammunition from bones,
                                 skeletons and rubble on the floor (press 'm').
@@ -5010,7 +5029,11 @@ Note that not every skill is available to every profession (class).
                                 appropriate ranged weapon before you try:
                                 Bow/crossbow for bones, slings for rubble.
                                 Lets you pseudo-id ranged weapons and
-                                ammunition easier if raised to at least 11.
+                                ammunition more often the higher the skill.
+                                If increased to at least 11, pseudo-id will
+                                give you much more distinctive feelings about
+                                the items. Before that, you can only
+                                distinguish between cursed and good.
                                 At 20 the quality of your handmade ammunition
                                 becomes remarkably better.
                                 50 in archery grants +1 'extra might',
@@ -5021,8 +5044,17 @@ Note that not every skill is available to every profession (class).
                                 At 10,20,30,40,50 you will get +1 additional
                                 shot per round each (while using a sling).
                                 Also reduces the chance of your ammunition to
-                                shatter from 50% at skill 0 down to 10% at 50
+                                shatter by up to 90% at 50. (Example:
+                                a shot that usually has 10% chance of breaking
+                                will only have a 1% chance of breaking if your
+                                skill is at 50.000.)
                                 (only concerns ammo for slings).
+                                Adds chance for your shots to ricochet, even
+                                multiple times, hitting multiple enemies.
+                                Note that magic and ethereal ammo fades away
+                                the moment it hits, and never ricochets.
+                                Note that exploding ammo cannot be deflected
+                                by "reflecting" monsters.
                                 Artifact ammunition never breaks.
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
@@ -5030,11 +5062,13 @@ Note that not every skill is available to every profession (class).
         .Crossbow-mastery       At 25 and 50 you will get +1 extra shot AND
                                 +1 extra-might-bonus each.
                                 Same as Sling-mastery regarding ammunition.
-        .Boomerang-mastery      At 16.6, 33.3 and 50 you get +1 extra throw
+    .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw
                                 each. Boomerang-mastery Also increases ranged
                                 to-damage bonus while using a boomerang, and
                                 reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
+                                Boomerangs cannot be deflected by "reflecting"
+                                monsters.
                                 Artifact boomerangs never break or fall down.
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises you character speed.
@@ -5053,7 +5087,7 @@ Note that not every skill is available to every profession (class).
                                 technique of flying!
                                 Under certain conditions MA abilities cannot
                                 be used and lose their effect, see (5.4)!
-                                The dice of martial arts special techniques
+                                The dice of martial arts special moves
                                 (which your character will use automatically
                                 depending on your MA skill) are affected by
                                 elemental brands, but slightly less than
@@ -5067,7 +5101,10 @@ Note that not every skill is available to every profession (class).
 +Magic                          Improves your spellcasting abilities and
                                 increases your mana capacity.
                                 Lets you pseudo-id magic items, potions and
-                                scrolls easier if raised to at least 11.
+                                scrolls faster the higher your skill is.
+                                If 'Magic' is at least at 11 points, you will
+                                get more distinctive feelings from pseudo-id,
+                                before that you only sense 'good' or 'cursed'.
     .Mimicry                    Ability to shapechange into a monster!
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
@@ -5148,7 +5185,7 @@ Note that not every skill is available to every profession (class).
                                 See (4.7) for details about monster traps.
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works best if the opponent is
-                                sleeping.
+                                sleeping. Requires sword-type weapons.
     .Stealing                   Ability to steal (from shops)! Very nasty >:)
                                 If you get caught, you will be on the
                                 'blacklist of merchants' for some minutes up
@@ -5219,7 +5256,7 @@ Note that not every skill is available to every profession (class).
                                 your dodge chance.)
                                 You can check your average dodging chance
                                 against opponents of same level by pressing
-                                'm' and choosing "Check dodge chance":
+                                'm' and choosing "Check dodge chance".
                                 "Almost no chance" means less than 5%,
                                 "Slight chance" -> less than 14%,
                                 "Significant chance" -> less than 23%,
@@ -5230,6 +5267,8 @@ Note that not every skill is available to every profession (class).
                                 Against monsters that have way higher level
                                 than you, you receive a minor penalty. You can
                                 still dodge them quite effectively though.
+                                Dodging also gets slightly increased when you
+                                put points into "Martial Arts" skill.
         .Calmness               Ability to not get hindered by enemies.
                                 Adjacent foes can interfere if you try to..
                                 -shoot with ranged weapons,
@@ -5652,8 +5691,8 @@ Vampire
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
-    creatures. Vampires dislike hafted weapons, but receive a bonus on all
-    necromancy skills. They become able to turn into a bat at level 20.
+    creatures. Vampires dislike blunt ('hafted') weapons, but receive a bonus
+    on all necromancy skills. They become able to turn into a bat at level 20.
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -5916,14 +5955,7 @@ Note that these blow/round limits don't count for Martial Arts users (as long
 as they fight barehanded). See (5.4) for a table of MA attacks.
 Parrying and blocking only has effect if your server has enabled the ability
 to parry or block (using weapon or shield) enemy attacks.
-In general parrying works better with larger weapons, while blocking works
-better with larger shields. So 2-hand weapons parry better than 1.5-handed,
-and those better than 1-handed. If you wield a 1-hand weapon WITHOUT a shield
-which feels especially easy to swing that way, you'll also get a parry bonus.
-Many effects that normal armour usually doesn't protect from can actually be
-blocked, for example your character may quickly duck behind his shield just in
-time when an eye tries to gaze in your eyes to paralyze you.
-"Weaponmastery" skill will further increase your parry chance a good deal.
+See (6.11) for details about parry and block.
 
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
@@ -5941,7 +5973,7 @@ Priest      -1  -3  +3  -1  +0  +2       +4      +20%       4
             25  30  32   2   8  16  48  35              poor     poor
 Rogue       +2  +1  -2  +3  +1  -1       +5      +25%       5
             45  32  28   5  32  24  60  66              superb   fair
-Mimic       +1  +0  +0  +1  +1  -4       +5      +40%       5
+Mimic       +1  +0  +0  +1  +1  -4       +6      +40%       5
             25  35  28   1  18  18  60  66              good     good
 Archer      +1  +0  +2  +3  +1  -1       +5      +15%       3
             30  32  28   2  20  24  56  82              fair     fair
@@ -5951,7 +5983,7 @@ Ranger      +2  +2  -1  +1  +2  +0       +7      +35%       5
             34  32  30   5  30  30  50  60              good     fair
 Druid       +1   0  +2  -2  -2  +1       +5      +50%       4
             30  40  30   5  25  25  50  60              fair     fair
-Shaman       0  +1  +2  -2   0   0       +5      +30%       4
+Shaman       0  +1  +2  -2   0   0       +4      +30%       4
             10  13  30   5  30  20  45  20              poor     poor
 Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
             10  20  20   0  30  20  45  20              fair     fair
@@ -6795,7 +6827,7 @@ Here you can..
 
 
 
-(6.10)  Magic Device skill/ability details
+(6.10) Magic Device skill/ability details
 ------------------------------------------
 The player's "Magic Device" ability in the character overview screen is
 calculated from a base ability depending on race/class, and the magic device
@@ -6826,6 +6858,132 @@ The magic device skill does the following...
 -helps to reduce effects of UN_POWER attacks,
 -helps to increase the power of forged polymorph-rings.
 -increases the power of magic devices.
+-makes it easier to recharge items provided you don't use scrolls to do that,
+ but a real magic device (some artifacts can be activated for recharging).
+
+
+
+(6.11) Parrying and blocking
+-----------------------------
+There are a couple of ways to reduce damage taken. One is simply to have high
+armour class (see (5.11) for details), another one is 'Dodging' skill (see
+(6.2) for details).
+For melee fighters that use weapons or shields, two more abilities can help:
+Parrying enemy attacks with a weapon, and blocking attacks with a shield.
+Press 'm' and choose 'Check block/parry chance' to see your actual ability
+to block or parry. In order to have this option appear in your 'm' menu, you
+need a combat skill of at least 1.000.
+The result will map to the following numbers:
+
+"You cannot parry at the moment."               You aren't wielding a weapon.
+"You have almost no chance of parrying."        Below 5% chance.
+"You have a slight chance of parrying."         Below 10% chance.
+"You have a significant chance of parrying."    Below 20% chance.
+"You have a good chance of parrying."           Below 30% chance.
+"You have a very good chance of parrying."      30% chance or better.
+
+"You cannot block at the moment."               You aren't wielding a shield.
+"You have almost no chance of blocking."        Below 5% chance.
+"You have a slight chance of blocking."         Below 14% chance.
+"You have a significant chance of blocking."    Below 23% chance
+"You have a good chance of blocking."           Below 30% chance.
+"You have a very good chance of blocking."      Below 40% chance.
+"You have an excellent chance of blocking."     Below 65% chance.
+"You have a superb chance of blocking."         65% chance or better; can only
+                                                be achieved by entering an
+                                                appropriate combat stance.
+
+Important: Classes do differently well at parrying and blocking. To find out
+           more, see the class overview table at the end of section (6.5).
+
+Parrying
+--------
+The larger a weapon, the more you can parry. Without a weapon, you cannot
+parry at all.
+A 1-handed weapon will parry less often than a 1 1/2-hander (SHOULD2H), and
+that one less often than a 2-handed weapon (MUST2H).
+If you wield a 1-hand weapon WITHOUT a shield which "feels especially easy to
+swing" (COULD2H), you'll also get an extra parry bonus.
+Increasing weaponmastery improves your parry chance; dual-wielding improves it
+too, provided that you aren't 'flexibility-encumbered' (compare (5.5)).
+
+Blocking
+--------
+Many effects that normal armour usually doesn't protect from can actually be
+blocked, for example your character may quickly duck behind his shield just in
+time when an eye tries to gaze in your eyes to paralyze you.
+The bigger a shield, the more you can block. Depending on server settings,
+the actual block base chance will usually be displayed as a percentage in []
+brackets behind the shield's name, where AC is located for other types of
+armour.
+This base chance in many cases applies as is to standard melee combat, but is
+often modified depending on the type of an incoming attack, so it's not to be
+taken as your character's total overall block chance. For example shots,
+balls, breaths are all blocked at higher probability, and in PvP combat
+blocking receives an additional overall boost.
+
+Parrying and blocking can both be affected by combat stances - see (6.2) for
+"Combat Stances" skill.
+
+
+
+(6.12) Fighting/shooting techniques
+-----------------------------------
+Depending on your class, your character is able to gain access to certain
+fighting techniques that cost 'Stamina' to use. These are available to all
+fighter classes that have access to combat stances.
+
+Similarly, by training archery your character will gain access to a couple of
+shooting techniques.
+
+The skill required to learn a certain technique varies, depending on your
+class. The order in which they are learnt is the same though.
+
+The techniques are as follows:
+
+    Fighting techniques:
+    --------------------
+    Sprint							6 stamina
+        Your character will be able to move faster even with monsters in view.
+        Normal running isn't affected.
+    Taunt               2 stamina
+        Attempts to draw attention of humanoid mobs, causing them to attack
+        you.
+    Spin                8 stamina
+        A sweep that hits all adjacent monsters and may stun them, basing on
+        your number of blows/round.
+    Berserk             10 stamina
+        Similar to potions of berserk strength, also giving you +1 blow/round.
+
+    Shooting techniques:
+    --------------------
+    Flare missile       2 stamina
+        Prepares an oil-drenched shot for the next time you shoot, which will
+        burn brightly, lighting up the area where it lands or hits a wall.
+        This technique consumes 1 flask of oil.
+    Precision shot      7 stamina
+        You aim your next shot carefully, costing you a turn. The next shot
+        you fire however will receive a great damage bonus, even more so
+        against fleeing opponents. Useful opener against sleeping monsters.
+        Aiming will be interrupted by most actions, including walking.
+    Create ammunition   -
+        Create ammunition for your currently equipped ranged weapon from
+        bones in your inventory or rubble (':') next to your character.
+    Double-shot         1 stamina/turn while using it actively
+        Toggle, making you enter or leave double-shot mode. While active, you
+        will fire 2 projectiles at once on each shot, dealing way less damage
+        than a single shot though. Useful to eradicate weak critters.
+        Note: If your stamina drops below 1 you will continue to fire
+              normally, but not leave double-shot mode. That means as soon as
+              you get stamina back you'll start firing double-shots again.
+              To permanently leave double-shot mode, you have to toggle it
+              explicitely in the 'm' menu.
+    Barrage             9 stamina
+        Prepares to fire a powerful multi-shot which will cost you a whole
+        turn. It stuns the target.
+
+Stamina regenerates slowly over time, faster while resting. Your CONstitution
+stat and 'Health' skill will further improve regeneration speed.
 
 
 
@@ -7245,7 +7403,7 @@ The most powerful representant of each class:
 -Old sorcerors are able to summon ancient dragonkind and wyrms, beware!
 -(Grand) Swordsmasters, most skilled swordsmen that will disarm you easily.
 -(Grand) Master mystics, most powerful martial artists. With their special
- techniques they can manage to stun you easily. Best remedy is high AC so
+ moves they can manage to stun you easily. Best remedy is high AC so
  they won't hit you in the first place. Alternatively you can quaff potions
  to remove any stun effect.
 -(Grand) Master thieves, very fast and stealthy they steal your possessions!
@@ -7310,7 +7468,7 @@ Mistakes / Carelessness:
 
 -Quaff potions of cure critical wounds or healing if you get (heavily) stunned
  to prevent a lethal knockout in the next round! Further you can't use martial
- arts special techniques while stunned, cutting your damage a lot.
+ arts special moves while stunned, cutting your damage a lot.
  Get sound resistance to not waste potions to cure stun effects from
  water/sound/gravity/ice/plasma attacks.
 
@@ -7589,6 +7747,9 @@ There is always a 10% chance that the resulting randart will be 'cursed'.
 Cursed randarts cannot be sold to shops even if the curse is broken. They gain
 only very few abilities, which are accompanied by different types of curses.
 
+All armour-type randarts will have at least +10 to AC bonus (except if they
+happen to be cursed), and dragon scale mails will even have at least +15.
+
 Possible mods that randarts may get depend on its base type.
 Further, there are general mods that may appear on all items regardless of its
 type. For each applied mod there is a chance of 50% to be picked from either
@@ -7667,9 +7828,21 @@ Gloves
         One of the elemental brands (acid/elec/fire/cold/poison) or SLAY mods
         Vampiric life leech
         Hit point bonus (+LIFE)   (*)
-        Extra +AC bonus
+        Extra +AC bonus (less common than on other items)
         +hit and +dam bonus
-Caps, helms and crowns
+Caps and helms
+        Resist blindness
+        Auto-ID
+        All possible ESP mods (including ESP_ALL)
+        See invisible
+        Intelligence bonus
+        Wisdom bonus (less common than on crowns)
+        Extra +AC bonus (somewhat more common than on other items)
+        Infra-vision
+        Resist confusion
+        Resist fear
+        Hit point bonus (+LIFE)   (*)
+Crowns
         Resist blindness
         Auto-ID
         All possible ESP mods (including ESP_ALL)
@@ -7686,15 +7859,17 @@ Caps, helms and crowns
 Shields
         All basic resistances (acid/elec/fire/cold)
         Reflection
-        Extra +AC bonus
+        Reduced weight
 Cloaks
         Stealth
         Feather falling (levitation)
         Flying
+        Fire/cold/acid/lightning resistances
         Chance for either lightning or fire aura and corresponding resistance
         Chance for shard resistance
+        Hold life
         Invisibility
-        Extra +AC bonus
+        Extra +AC bonus (somewhat more common than on other items)
 Body Armour (except for Dragon Scale Mails)
         Stealth
         Hold life
@@ -7732,14 +7907,13 @@ General mods:
         Sustenances on any stats (has chance to include bonus for that stat)
         Stealth
         Searching
-        Infra-Vision
         Speed
         Any base immunities (acid/elec/fire/cold)
         Free action
         Hold life
         Any base resistances (acid/elec/fire/cold)
         Any of these resistances:
-                Poison, Light, Dark, Blindness, Confusion, Shound,
+                Poison, Light, Dark, Blindness, Confusion, Sound,
                 Shards, Nether, Nexus, Chaos, Disenchantment
         Feather falling
         Glowing (+1 light radius)
