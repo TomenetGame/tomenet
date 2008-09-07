@@ -73,7 +73,7 @@ static void print_mimic_spells()
 		  continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 3), monster_spells4[i]);
+		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells4[i]);
 		prt(buf, j++, col);
 	}
 	for (i = 0; i < 32; i++)
