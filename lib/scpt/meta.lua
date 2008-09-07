@@ -61,8 +61,8 @@ end
 meta_list = {}
 function meta_display(xml_feed)
         local x = xml:collect(xml_feed)
-        local i, nb, e, k, line
-        local sorted = {}
+        local i, nb, e, k, line, cat_slot
+        local categories = {}
         local meta_name = "Unknown metaserver"
         local nb_servers = 0
 
@@ -70,24 +70,39 @@ function meta_display(xml_feed)
                 if type(x[i]) == 'table' then
                         if x[i].label == "server" then
 	                        local game, version = get_game_version(x[i])
-        	                if not sorted[game.." "..version] then
-	        	                sorted[game.." "..version] = {}
-                        	end
-				local server_notes
+				local cat_name = game .. " " .. version
+
+				cat_slot = 0
+				for k, e in categories do
+					if e.name == cat_name then
+						cat_slot = k
+						break
+					end
+				end
+
+				if cat_slot == 0 then
+					cat_slot = getn(categories) + 1
+					categories[cat_slot] = { name = cat_name, servers = {} }
+				end
+
+--				local server_notes
 --				server_notes = get_server_notes(x[i])
+
 	                        local extra
         	                if get_players_count(x[i]) == 1 then
-	        	        	extra = "\255b"..get_players_count(x[i]).." player"
+	        	        	extra = "\255b" .. get_players_count(x[i]) .. " player"
                         	else
-	                		extra = "\255b"..get_players_count(x[i]).." players"
+	                		extra = "\255b" .. get_players_count(x[i]) .. " players"
 	                        end
-        	                tinsert(sorted[game.." "..version], {
+
+        	                tinsert(categories[cat_slot].servers, {
                 	        	name = x[i].args.url,
                         		port = x[i].args.port,
 					protocol = x[i].args.protocol,
                                 	extra = extra,
 	                                players = get_players(x[i]),
         	                })
+
                                 nb_servers = nb_servers + 1
                         elseif x[i].label == "meta" then
                                 meta_name = x[i][1]
@@ -97,11 +112,13 @@ function meta_display(xml_feed)
 
         line = 0
         nb = 0
-        color_print(line, 0, "\255y"..meta_name.." \255Wwith "..nb_servers.." connected servers"); line = line + 1; line = line + 1
-        for k, e in sorted do
-                color_print(line, 0, "\255o"..k.." :"); line = line + 1
+        color_print(line, 0, "\255y" .. meta_name .. " \255Wwith " .. nb_servers .. " connected servers"); line = line + 1; line = line + 1
+        for k, e in categories do
+                color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
+
+		e = e.servers
                 for i = 1, getn(e) do
-        	        color_print(line, 2, "\255G"..strchar(nb + strbyte('a'))..") \255w"..e[i].name)
+        	        color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name)
         	        color_print(line, 50, e[i].extra); line = line + 1
         	        color_print(line, 4, e[i].players); line = line + 1
 
