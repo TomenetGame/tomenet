@@ -865,10 +865,10 @@ cptr melee_techniques[16] =
   "Jump",
   "Charge",
 
+  "Flash bomb",
+  "Shadow jump",
   "XXX",
-  "XXX",
-  "XXX",
-  "XXX",
+  "Instant cloak",
 };
 
 cptr ranged_techniques[16] =
