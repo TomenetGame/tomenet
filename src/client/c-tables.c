@@ -865,9 +865,9 @@ cptr melee_techniques[16] =
   "Jump",
   "Charge",
 
+  "Distract",
   "Flash bomb",
   "Shadow jump",
-  "XXX",
   "Instant cloak",
 };
 
