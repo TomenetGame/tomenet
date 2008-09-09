@@ -249,10 +249,12 @@ void prt_hp(int max, int cur)
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
 #else
 		put_str("HP:    /", ROW_MAXHP, 0);
-		sprintf(tmp, "%4d", max);
+		if (max == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
+		else sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
 		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP);
-		sprintf(tmp, "%4d", cur);
+		if (cur == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
+		else sprintf(tmp, "%4d", cur);
 		if (cur >= max)	color = TERM_L_GREEN;
 		else if (cur > max / 10) color = TERM_YELLOW;
 		else color = TERM_RED;
@@ -267,10 +269,12 @@ void prt_stamina(int max, int cur)
 
 #ifdef CONDENSED_HP_SP
 		put_str("ST:    /", ROW_MAXST, 0);
-		sprintf(tmp, "%4d", max);
+		if (max == -9999) sprintf(tmp, "   -");
+		else sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
 		c_put_str(color, tmp, ROW_MAXST, COL_MAXST);
-		sprintf(tmp, "%4d", cur);
+		if (cur == -9999) sprintf(tmp, "   -");
+		else sprintf(tmp, "%4d", cur);
 		if (cur >= max)	color = TERM_L_GREEN;
 		else if (cur > max / 10) color = TERM_YELLOW;
 		else color = TERM_RED;
@@ -413,10 +417,12 @@ void prt_sp(int max, int cur)
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 #else
 		put_str("MP:    /", ROW_MAXSP, 0);
-		sprintf(tmp, "%4d", max);
+		if (max == -9999) sprintf(tmp, "   -");
+		else sprintf(tmp, "%4d", max);
 		color = TERM_L_GREEN;
 		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
-		sprintf(tmp, "%4d", cur);
+		if (cur == -9999) sprintf(tmp, "   -");
+		else sprintf(tmp, "%4d", cur);
 		if (cur >= max) color = TERM_L_GREEN;
 		else if (cur > max / 10) color = TERM_YELLOW;
 		else color = TERM_RED;
