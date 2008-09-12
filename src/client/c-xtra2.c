@@ -344,7 +344,10 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_inven_destroyx = "were destroyed!";*/
 	cptr msg_nopkfight = "You have beaten";
 	cptr msg_nopkfight2 = "has beaten you";
-	cptr msg_bloodbond = "blood bond";
+	cptr msg_bloodbond = "blood bonds";
+	cptr msg_bloodbond2 = "won the blood bond";
+	cptr msg_challenge = "challenges";
+	cptr msg_defeat = "has defeated";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
         cptr msg_afk1 = "seems to be AFK now";
@@ -376,7 +379,9 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) || \
 /*		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \ */
 		    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
-		    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+		    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) ||
+		    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) ||
+		    (strstr(msg, msg_retire) != NULL) ||
 		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '['))
 		{
@@ -623,8 +628,8 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr msg_deadB = "You die";
 	cptr msg_unique = "was slain by";
 	cptr msg_killed = "was killed by";
-        cptr msg_killed2 = "was annihilated ";
-        cptr msg_killed3 = "was vaporized ";
+  cptr msg_killed2 = "was annihilated ";
+  cptr msg_killed3 = "was vaporized ";
 //	cptr msg_destroyed = "ghost was destroyed by";
 	cptr msg_destroyed = "was destroyed by";
 	cptr msg_suicide = "committed suicide.";

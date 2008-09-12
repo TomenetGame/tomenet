@@ -2334,7 +2334,10 @@ void c_msg_print(cptr msg)
         cptr msg_inven_destroyx = "were destroyed!";*/
 	cptr msg_nopkfight = "You have beaten";
 	cptr msg_nopkfight2 = "has beaten you";
-	cptr msg_bloodbond = "blood bond";
+	cptr msg_bloodbond = "blood bonds";
+	cptr msg_bloodbond2 = "won the blood bond";
+	cptr msg_challenge = "challenges";
+	cptr msg_defeat = "has defeated";
 	cptr msg_retire = "has retired";
 	cptr msg_fruitbat = "turned into a fruit bat";
 	cptr msg_afk1 = "seems to be AFK now";
@@ -2403,7 +2406,9 @@ void c_msg_print(cptr msg)
 //	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
 */
 	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
-	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_retire) != NULL) ||
+	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) || 
+	    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) || 
+	    (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') || (msg[0] == '~')) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
