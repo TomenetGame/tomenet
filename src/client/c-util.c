@@ -2320,6 +2320,8 @@ void c_msg_print(cptr msg)
 	cptr msg_suicide = "committed suicide.";
 	cptr msg_entered = "has entered the game.";
 	cptr msg_left = "has left the game.";
+	cptr msg_event = " wins ";
+	cptr msg_winner = "is henceforth known as";
 	cptr msg_quest = "has won the";
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
@@ -2397,6 +2399,7 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_killedF) != NULL) || \
 	    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) || \
 	    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) || \
+	    (strstr(msg, msg_event) != NULL) || (strstr(msg, msg_winner) != NULL) || \
 	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
 	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
 	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
