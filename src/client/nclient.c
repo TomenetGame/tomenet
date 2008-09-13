@@ -2156,7 +2156,7 @@ int Receive_technique_info(void)
 	int	n;
 	s32b    melee, ranged;
 
-	if ((n = Packet_scanf(&rbuf, "%c%ld%ld", &ch, &melee, &ranged)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &melee, &ranged)) <= 0)
 	{
 		return n;
 	}
