@@ -34,7 +34,7 @@ X:disturb_other
 X:alert_hitpoint
 X:alert_failure
 
-X:auto_afk
+Y:auto_afk
 X:newb_suicide
 Y:stack_allow_items
 Y:stack_allow_wands
@@ -79,7 +79,7 @@ X:limit_chat
 Y:thin_down_flush
 X:auto_target
 X:autooff_retaliator
-X:wide_scroll_margin
+Y:wide_scroll_margin
 X:fail_no_melee
 X:always_show_lists
 X:target_history
