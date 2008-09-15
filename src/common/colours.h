@@ -1,0 +1,51 @@
+
+/* Purpose: Define colour schemes and unify colour usage easily. - C. Blue */
+
+/* Anti-magic interruption messages */
+#if 0
+#define COLOUR_AM_OWN          'w'
+#define COLOUR_AM_PLY          'o'
+#define COLOUR_AM_MON          'o'
+#define COLOUR_AM_GOOD         'y'
+#define COLOUR_AM_NEAR         'w'
+#endif
+#if 1 /* alternative scheme (makes more sense) */
+#define COLOUR_AM_OWN          'w'
+#define COLOUR_AM_PLY          's'
+#define COLOUR_AM_MON          's'
+#define COLOUR_AM_GOOD         'W'
+#define COLOUR_AM_NEAR         'w'
+#endif
+
+/* Interception/interference messages */
+#if 0
+#define COLOUR_IC_PLY          'o'     /* <- currently unused (!) */
+#define COLOUR_IC_MON          'o'
+#define COLOUR_IC_GOOD         'y'
+#define COLOUR_IC_NEAR         'w'
+#endif
+#if 1 /* alternative scheme (makes less sense but looks better?) */
+#define COLOUR_IC_PLY          'y'     /* <- currently unused (!) */
+#define COLOUR_IC_MON          'y'
+#define COLOUR_IC_GOOD         'W'
+#define COLOUR_IC_NEAR         'w'
+#endif
+
+/* Dodging messages */	
+#define COLOUR_DODGE_MON       'y'     /* <- currently unused (!) */
+#define COLOUR_DODGE_PLY       'y'
+#define COLOUR_DODGE_GOOD      'W'
+#define COLOUR_DODGE_NEAR      'w'
+
+/* Shield-block messages */    
+#define COLOUR_BLOCK_PLY       'y'
+#define COLOUR_BLOCK_MON       'y'
+#define COLOUR_BLOCK_GOOD      'W'
+#define COLOUR_BLOCK_NEAR      'w'
+
+/* Parry messags */	
+#define COLOUR_PARRY_PLY       'y'
+#define COLOUR_PARRY_MON       'y'
+#define COLOUR_PARRY_GOOD      'W'
+#define COLOUR_PARRY_NEAR      'w'
+
