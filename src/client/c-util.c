@@ -2326,6 +2326,7 @@ void c_msg_print(cptr msg)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
+	cptr msg_gained_ability = "\377G*";
 /* don't flood the 5th chat-only window with destroy-msgs,
    ctrl+o in main window should be sufficient */
 /*	cptr msg_inven_destroy1 = "\377oYour ";
@@ -2337,7 +2338,8 @@ void c_msg_print(cptr msg)
 	cptr msg_nopkfight = "You have beaten";
 	cptr msg_nopkfight2 = "has beaten you";
 	cptr msg_bloodbond = "blood bonds";
-	cptr msg_bloodbond2 = "won the blood bond";
+	cptr msg_bloodbond2 = "ou blood bond";
+	cptr msg_bloodbond3 = "won the blood bond";
 	cptr msg_challenge = "challenges";
 	cptr msg_defeat = "has defeated";
 	cptr msg_retire = "has retired";
@@ -2393,23 +2395,26 @@ void c_msg_print(cptr msg)
 
 	/* Memorize the message */
 #if 1
-	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') || \
-	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) || \
-	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) || \
-	    (strstr(msg, msg_killedF) != NULL) || \
-	    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) || \
-	    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) || \
-	    (strstr(msg, msg_event) != NULL) || (strstr(msg, msg_winner) != NULL) || \
-	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) || \
-	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) || \
-	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) || \
+	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
+	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
+	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
+	    (strstr(msg, msg_killedF) != NULL) ||
+	    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) ||
+	    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) ||
+	    (strstr(msg, msg_event) != NULL) || (strstr(msg, msg_winner) != NULL) ||
+	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) ||
+	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) ||
+	    (strstr(msg, msg_gained_ability) != NULL) ||
+	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) ||
 /* don't flood the 5th window with destroy-msgs */
-/*	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) || \
-	    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) || \
-//	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || \
+/*	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) ||
+	    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) ||
+//	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) ||
+	    (strstr(msg, msg_inven_steal1) != NULL) || (strstr(msg, msg_inven_steal2) != NULL) ||
 */
-	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) || \
-	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) || 
+	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) ||
+	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) ||
+	    (strstr(msg, msg_bloodbond3) != NULL) ||
 	    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) || 
 	    (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
