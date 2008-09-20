@@ -3,6 +3,13 @@
 
 #include "angband.h"
 
+/* Note: These only serve for a bad hack here, condition to work is
+   that no non-chat must begin its first line (if it's multi-lined)
+   on a space char ' '. Should maybe be done by adding another array
+   to message__buf that is set in c-util.c and is a flag to keep track
+   of chat-buffer or non-chat-buffer property of each message - C. Blue */
+static bool was_ctrlo_buffer = FALSE;
+
 /*
  * Show previous messages to the user   -BEN-
  *
@@ -366,7 +373,8 @@ void do_cmd_messages_chatonly(void)
 	nn = 0;  /* number of new messages */
 
 	/* Filter message buffer for "important messages" add to message_chat*/
-	for (i = 0; i < n; i++)
+//	for (i = 0; i < n; i++)
+	for (i = n - 1; i >= 0; i--) /* traverse from oldest to newest message, for was_ctrlo_buf */
 	{
 		cptr msg = message_str(i);
 
@@ -390,10 +398,14 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) ||
 		    (strstr(msg, msg_retire) != NULL) ||
 		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
-		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') || (msg[0] == ' '))
+		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
+		    (msg[0] == ' ' && was_ctrlo_buffer))
 		{
+			was_ctrlo_buffer = TRUE;
 			message_chat[nn] = msg;
 			nn++;
+		} else {
+			was_ctrlo_buffer = FALSE;
 		}
 	}
 
@@ -419,7 +431,8 @@ void do_cmd_messages_chatonly(void)
 		for (j = 0; (j < 20) && (i + j < n); j++)
 		{
 			byte a = TERM_WHITE;
-			cptr msg = message_chat[i+j];
+			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
+//			cptr msg = message_chat[i+j];
 
 			/* Apply horizontal scroll */
 			msg = (strlen(msg) >= q) ? (msg + q) : "";
@@ -525,7 +538,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\n') || (k == '\r') || k=='k')
+		if ((k == '8') || (k == '\b') || k=='k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -561,7 +574,7 @@ void do_cmd_messages_chatonly(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k=='j')
+		if (k == '2' || k=='j' || (k == '\n') || (k == '\r'))
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
