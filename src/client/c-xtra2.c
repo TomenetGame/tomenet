@@ -3,13 +3,6 @@
 
 #include "angband.h"
 
-/* Note: These only serve for a bad hack here, condition to work is
-   that no non-chat must begin its first line (if it's multi-lined)
-   on a space char ' '. Should maybe be done by adding another array
-   to message__buf that is set in c-util.c and is a flag to keep track
-   of chat-buffer or non-chat-buffer property of each message - C. Blue */
-static bool was_ctrlo_buffer = FALSE;
-
 /*
  * Show previous messages to the user   -BEN-
  *
@@ -314,6 +307,14 @@ void do_cmd_messages(void)
 /* Show buffer of "important events" only via the CTRL-O command -Zz */
 void do_cmd_messages_chatonly(void)
 {
+
+/* Note: This only serves for a bad hack here, condition to work is
+   that no non-chat must begin its first line (if it's multi-lined)
+   on a space char ' '. Should maybe be done by adding another array
+   to message__buf that is set in c-util.c and is a flag to keep track
+   of chat-buffer or non-chat-buffer property of each message - C. Blue */
+	bool was_ctrlo_buffer = FALSE;
+
 	int i, j, k, n, nn, q;
 
 	char shower[80] = "";
