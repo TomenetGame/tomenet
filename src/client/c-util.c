@@ -21,6 +21,9 @@ static bool flush_later = FALSE;
 
 static byte macro__use[256];
 
+static bool was_chat_buffer = FALSE;
+static bool was_real_chat = FALSE;
+
 static char octify(uint i)
 {
 	return (hexsym[i%8]);
@@ -2418,13 +2421,23 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) || 
 	    (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
-	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') || (msg[0] == '~')) {
+	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
+	    (msg[0] == '~' && was_chat_buffer)) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
+		if (msg[2] == '[') was_real_chat = TRUE;
+		else if (msg[0] != '~') was_real_chat = FALSE;
+
 		if (msg[0] == '~') buf[0] = ' ';
 		c_message_add_chat(buf);
+
+		was_chat_buffer = TRUE;
+	} else {
+		was_real_chat = FALSE;
+		was_chat_buffer = FALSE;
 	}
 /*#if 0*/
-	if ((msg[2] != '[') && (msg[0] != '~')) {
+	if (!was_real_chat) {
+		if (msg[0] == '~') buf[0] = ' ';
 		c_message_add_msgnochat(buf);
 	}
 #endif

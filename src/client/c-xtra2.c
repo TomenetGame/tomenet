@@ -222,7 +222,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 older message */
-		if ((k == '8') || (k == '\n') || (k == '\r') || k=='k')
+		if ((k == '8') || (k == '\b') || k=='k')
 		{
 			/* Go newer if legal */
 			if (i + 1 < n) i += 1;
@@ -257,7 +257,7 @@ void do_cmd_messages(void)
 		}
 
 		/* Recall 1 newer messages */
-		if (k == '2' || k=='j')
+		if (k == '2' || k=='j' || (k == '\n') || (k == '\r'))
 		{
 			/* Go newer (if able) */
 			i = (i >= 1) ? (i - 1) : 0;
