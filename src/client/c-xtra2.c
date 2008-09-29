@@ -332,6 +332,7 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_deadA = "You have been killed";
 	cptr msg_deadB = "You die";
 	cptr msg_unique = "was slain by ";
+	cptr msg_winner = "is henceforth known as";
 	cptr msg_killed = "was killed ";
 	cptr msg_killed2 = "was annihilated ";
 	cptr msg_killed3 = "was vaporized ";
@@ -383,7 +384,8 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
 		    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
 		    (strstr(msg, msg_killedF) != NULL) ||
-		    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) ||
+		    (strstr(msg, msg_unique) != NULL) || 
+		    (strstr(msg, msg_winner) != NULL) || (strstr(msg, msg_suicide) != NULL) ||
 		    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) ||
 		    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) ||
 		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) ||
