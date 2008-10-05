@@ -313,7 +313,7 @@ void wild_spawn_towns()
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
-		for (j = 1; j < 6; j++)
+		for (j = 0; j < 5; j++)
 		{
 			if (distance(y, x, town[j].y, town[j].x) < 3)
 			{
@@ -452,7 +452,7 @@ void wild_apply_night(struct worldpos *wpos)
 				c_ptr->info &= ~CAVE_GLOW;
 			}
 
-			if (c_ptr->feat == FEAT_SHOP)
+			if (c_ptr->feat == FEAT_SHOP && stores < 255)
 			{
 				sx[stores] = x;
 				sy[stores] = y;

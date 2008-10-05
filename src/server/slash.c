@@ -339,7 +339,7 @@ void do_slash_cmd(int Ind, char *message)
 
 	/* hack -- non-token ones first */
 	if ((prefix(message, "/script") ||
-			prefix(message, "/scr") ||
+//			prefix(message, "/scr") || used for /scream now
 			prefix(message, "/ ") ||	// use with care!
 			prefix(message, "//") ||	// use with care!
 			prefix(message, "/lua")) && admin)
@@ -373,7 +373,7 @@ void do_slash_cmd(int Ind, char *message)
 	else if (prefix(message, "/shout") ||
 			prefix(message, "/sho"))
 	{
-		aggravate_monsters(Ind, 1);
+		break_cloaking(Ind);
 		if (colon)
 		{
 			msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, colon);
@@ -384,7 +384,24 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
 			msg_format(Ind, "\377BYou shout!", colon);
 		}
+		wakeup_monsters(Ind, 1);
+		return;
+	}
+	else if (prefix(message, "/scream") ||
+			prefix(message, "/scr"))
+	{
 		break_cloaking(Ind);
+		if (colon)
+		{
+			msg_format_near(Ind, "\377B%^s screams:%s", p_ptr->name, colon);
+			msg_format(Ind, "\377BYou scream:%s", colon);
+		}
+		else
+		{
+			msg_format_near(Ind, "\377BYou hear %s scream!", p_ptr->name);
+			msg_format(Ind, "\377BYou scream!", colon);
+		}
+		aggravate_monsters(Ind, 1);
 		return;
 	}
 	/* RPG-style talking to people who are nearby, instead of global chat. - C. Blue */
@@ -910,7 +927,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "You can %s use weapons.", r_ptr->body_parts[BODY_WEAPON] ? "" : "not");
 				msg_format(Ind, "You can %s wear %s.", r_ptr->body_parts[BODY_FINGER] ? "" : "not", r_ptr->body_parts[BODY_FINGER] == 1 ? "a ring" : "rings");
 				msg_format(Ind, "You %shave a torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
-				msg_format(Ind, "You %shave legs suitable for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
+				msg_format(Ind, "You %shave legs/suitable feet for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
 			} else if (p_ptr->fruit_bat) {
 				msg_format(Ind, "You have a head.");
 				msg_format(Ind, "You can wear rings.");
@@ -1602,8 +1619,9 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/notep"))
 		{
-			int p = -1, i, j = 0;
+			int i, j = 0;
 #if 0 /* allow only a party owner to write the note */
+			int p = -1;
 			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
 				if(!strcmp(parties[i].owner, p_ptr->name)) p = i;
 			}
@@ -1677,8 +1695,9 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/noteg"))
 		{
-			int p = -1, i, j = 0;
+			int i, j = 0;
 #if 0 /* only allow the guild master to write the note */
+			int p = -1;
 			for (i = 0; i < MAX_GUILDS; i++) {
 				if(guilds[i].master == p_ptr->id) p = i;
 			}
@@ -2009,7 +2028,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			} else {
 				msg_format(Ind, "\377sInfo on event #%d '\377s%s\377s':", k, global_event[k-1].title);
-				for (i = 0; i<6; i++) if (strcmp(global_event[k-1].description[i], ""))
+				for (i = 0; i < 10; i++) if (strcmp(global_event[k-1].description[i], ""))
 					msg_print(Ind, global_event[k-1].description[i]);
 //				msg_print(Ind, "\377d ");
 				if ((global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps) >= 120) {
@@ -2039,16 +2058,22 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/gesign")) /* sign up for a global event */
 		{
-//			int i, notes = 0; /* not needed */
-			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS)) {
-				msg_format(Ind, "Usage: /gesign 1..%d", MAX_GLOBAL_EVENTS);
-			} else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin)) {
+			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
+				msg_format(Ind, "Usage: /gesign 1..%d [options..]", MAX_GLOBAL_EVENTS);
+			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
-			} else if (!global_event[k-1].announcement_time ||
-				    (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)) {
+			else if (global_event[k-1].signup_time == -1)
+				msg_print(Ind, "\377yThat event doesn't offer to sign up.");
+			else if (!global_event[k-1].signup_time &&
+				    (!global_event[k-1].announcement_time ||
+				    (global_event[k-1].announcement_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0)))
 				msg_print(Ind, "\377yThat event has already started.");
-			} else {
-				global_event_signup(Ind, k-1);
+			else if (global_event[k-1].signup_time &&
+				    (global_event[k-1].signup_time - (turn - global_event[k-1].start_turn) / cfg.fps <= 0))
+				msg_print(Ind, "\377yThat event does not allow signing up anymore now.");
+			else {
+				if (tk < 2) global_event_signup(Ind, k-1, NULL);
+				else global_event_signup(Ind, k-1, message3 + 1 + strlen(format("%d", k)));
 			}
 			return;
 		}
@@ -2064,6 +2089,7 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /bbs <line of text for others to read>");
 				return;
 			}
+			msg_broadcast(0, format("\377s[%s->BBS] %s", p_ptr->name, message3));
 			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			return;
 		}
@@ -2351,8 +2377,9 @@ void do_slash_cmd(int Ind, char *message)
 				p_ptr->skill_points = p_ptr->skill_points_old;
 
 				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
-
+				
 				/* Update all skills */
+				calc_techniques(Ind);
 				for (i = 1; i < MAX_SKILLS; i++)
 				{
 					Send_skill_info(Ind, i);
@@ -3385,7 +3412,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					msg_print(Ind, "\377oInvalid inventory slot.");
 					return;
 				}
-				o_ptr = &p_ptr->inventory[atoi(token[1])];
+				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
 				if (o_ptr->name1 != ART_RANDART) {
 					msg_print(Ind, "\377oNot a randart.");
 					return;
@@ -3468,7 +3495,33 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 			        msg_format_near(j, "\377y%s is hugged by something invisible!", Players[j]->name);
 				return;
 			}
-			else if (prefix(message, "/applaud")) { /* Counterpart to /slap :-p */
+			else if (prefix(message, "/poke")) {
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /poke <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou are poked by something invisible!");
+			        msg_format_near(j, "\377y%s is being poked by something invisible!", Players[j]->name);
+				return;
+			}
+			else if (prefix(message, "/cheer")) {
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /cheer <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377ySomething invisible is cheering for you!");
+			        msg_format_near(j, "\377yYou hear something invisible cheering for %s!", Players[j]->name);
+				Players[j]->blessed_power = 10;
+				set_blessed(j, randint(5) + 15);
+				return;
+			}
+			else if (prefix(message, "/applaud")) {
 				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /applaud <player name>");
@@ -3476,8 +3529,21 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou hear someone invisible applauding!");
-			        msg_format_near(j, "\377yYou hear someone invisible applauding!", Players[j]->name);
+			        msg_print(j, "\377ySomeone invisible is applauding for you!");
+			        msg_format_near(j, "\377yYou hear someone invisible applauding for %s!", Players[j]->name);
+				set_hero(j, randint(5) + 15);
+				return;
+			}
+			else if (prefix(message, "/presence")) {
+				int j;
+				if (!tk) {
+					msg_print(Ind, "Usage: /presence <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou feel an invisible presence watching you!");
+			        msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/deltown")){

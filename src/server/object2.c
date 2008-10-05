@@ -37,6 +37,8 @@ void excise_object_idx(int o_idx)
 	u16b this_o_idx, next_o_idx = 0;
 
 	u16b prev_o_idx = 0;
+	
+	int i;
 
 
 	/* Object */
@@ -154,6 +156,13 @@ void excise_object_idx(int o_idx)
 			/* Save prev_o_idx */
 			prev_o_idx = this_o_idx;
 		}
+		
+	        /* Fix visibility of item pile - C. Blue
+		   If object was visible to a player, then the top object of that pile becomes visible now! */
+		if (c_ptr->o_idx) /* any object left at all? */
+	    		for (i = 1; i <= NumPlayers; i++) /* FIX_PILE_VISIBILITY_DEBUG */
+	    			if (Players[i]->obj_vis[o_idx])
+					Players[i]->obj_vis[c_ptr->o_idx] = TRUE;
 	}
 }
 
@@ -5403,8 +5412,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		/* Assume "good" */
 		power = 1;
 
+#if 0
 		/* Double chance2 for super heavy armours are already very rare */
 		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) chance2 += 20;
+#else
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) chance2 += 10;
+#endif
 
 		/* Roll for "great" */
 		if (great || magik(chance2)) power = 2;
@@ -5428,7 +5441,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	if (power >= 2) rolls = 1;
 
 	/* Hack -- Get four rolls if forced great */
-	if (great) rolls = 4;
+	if (great) rolls = 2; // 4
 
 	/* Hack -- Get no rolls if not allowed */
 	if (!okay || o_ptr->name1) rolls = 0;
@@ -6142,15 +6155,28 @@ void determine_level_req(int level, object_type *o_ptr)
 		o_ptr->level = 30 + o_ptr->bpval - 1 + rand_int(3);
 	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
-	/* tone down deep randarts a bit to allow winner-trading */
-	if (o_ptr->name1 == ART_RANDART) {
-		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
-	}
+	if (o_ptr->tval == TV_LITE) {
+	        switch (o_ptr->sval) {
+	        case SV_LITE_DWARVEN: if (o_ptr->level < 20) o_ptr->level = 20; break;
+	        case SV_LITE_FEANORIAN: if (o_ptr->level < 32) o_ptr->level = 32; break;
+		}
+        }
+
 	/* Slightly reduce high levels */
 	if (o_ptr->level > 55) o_ptr->level--;
 	if (o_ptr->level > 50) o_ptr->level--;
 	if (o_ptr->level > 45) o_ptr->level--;
 	if (o_ptr->level > 40) o_ptr->level--;
+
+	/* tone down deep randarts a bit to allow winner-trading */
+	if (o_ptr->name1 == ART_RANDART) {
+		if (o_ptr->level > 51) o_ptr->level = 51 + ((o_ptr->level - 51) / 3);
+	}
+
+	/* tone down deep winners_only items to allow winner-trading */
+	if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) {
+		if (o_ptr->level > 51) o_ptr->level -= ((o_ptr->level - 51) / 2);
+	}
 
 	/* Special limit for +LIFE randarts */
 	if ((o_ptr->name1 == ART_RANDART) &&
@@ -6159,7 +6185,7 @@ void determine_level_req(int level, object_type *o_ptr)
 
 	/* Special limit for WINNERS_ONLY items */
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
-		o_ptr->level = 51 + rand_int(2);
+		o_ptr->level = 51 + rand_int(5);
 
 	/* Fix cheap but high +dam weaponry: */
 //	if ((o_ptr->to_d * 12) / 10) { /* provided it's greater 0 - PARANOIA */
@@ -6403,6 +6429,7 @@ static bool kind_is_good(int k_idx, u32b resf)
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:	/* are Shots bad? */
+			if (k_ptr->sval == SV_AMMO_CHARRED) return (FALSE);
 		case TV_MSTAFF:
 		{
 			return (TRUE);
@@ -6471,6 +6498,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack - No l00t in Valinor */
 	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
 
+#ifdef RPG_SERVER /* no objects are generated in Training Tower */                                        
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
+#endif 
+
 	/* Require clean floor space */
 //	if (!cave_clean_bold(zcave, y, x)) return;
 
@@ -6501,7 +6532,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	/* Chance of "special object" */
-	prob = (good || great ? 10 : 1000);
+	prob = (good || great ? 30 : 1000); // 10 : 1000
 
 	/* Base level for the object */
 	base = (good || great ? (object_level + 10) : object_level);
@@ -6590,6 +6621,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
 			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
+			
+			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && getlevel(wpos) < k_info[k_idx].level) continue;
 
 			/* Allow all other items here - mikaelh */
 			break;
@@ -6628,6 +6661,8 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				if (forge.name2 == EGO_ETHEREAL || forge.name2b == EGO_ETHEREAL) forge.number /= ETHEREAL_AMMO_REDUCTION;
 				/* Ammo from acquirement scrolls comes in more generous numbers :) */
 				if (verygreat) forge.number *= 2;
+				if (forge.sval == SV_AMMO_CHARRED) forge.number = randint(6);
+				break;
 		}
 
 	/* Hack -- inscribe items that a unique drops */
@@ -6713,7 +6748,7 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 	}
 
 	/* Chance of "special object" */
-	prob = (good || great ? 10 : 1000);
+	prob = (good || great ? 30 : 1000); // 10 : 1000
 
 	/* Base level for the object */
 	base = (good || great ? (object_level + 10) : object_level);
@@ -6853,6 +6888,8 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 				if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) o_ptr->number /= ETHEREAL_AMMO_REDUCTION;
 				/* Ammo from acquirement scrolls comes in more generous numbers :) */
 				if (verygreat) o_ptr->number *= 2;
+				if (o_ptr->sval == SV_AMMO_CHARRED) o_ptr->number = randint(6);
+				break;
 		}
 
 	/* Hack -- inscribe items that a unique drops */
@@ -7545,6 +7582,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 	u16b this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
+
 	if(!(zcave=getcave(wpos))) return(-1);
 
 	/* Handle normal "breakage" */
@@ -7565,7 +7603,6 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 #if 0
 	/* Start at the drop point */
 	ny = y1 = y;  nx = x1 = x;
-
 	/* See if the object "survives" the fall */
 //	if (artifact_p(o_ptr) || (rand_int(100) >= chance))
 	{

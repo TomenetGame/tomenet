@@ -360,6 +360,10 @@ struct player_type
 	s16b csp;		/* Cur mana pts */
 	u16b csp_frac;		/* Cur mana frac (times 2^16) */
 
+        s16b mst;                       /* Max stamina pts */
+        s16b cst;                       /* Cur stamina pts */
+        s16b cst_frac;                  /* 1/10000 */
+
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
 
 	s32b total_weight;	/* Total weight being carried */
@@ -766,6 +770,8 @@ struct player_type
 	
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
+	s32b melee_techniques; /* for weaponmastery */
+	s32b ranged_techniques; /* for archery */
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
 	
@@ -811,8 +817,8 @@ int arc_l;
         char firedir;
         char game;
         int gametime;
-        char pushed;
-        char pushdir;
+	char pushed;
+	char pushdir;
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 

@@ -66,8 +66,9 @@ extern artifact_type *ego_make(object_type *o_ptr);
 extern artifact_type *randart_make(object_type *o_ptr);
 extern void randart_name(object_type *o_ptr, char *buffer);
 extern void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b dun_level, object_type *o_ptr);
-extern void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific);
-extern void dragon_resist(artifact_type * a_ptr);
+extern void random_resistance (artifact_type *a_ptr, bool is_scroll, int specific);
+extern void dragon_resist(artifact_type *a_ptr);
+extern s32b artifact_power (artifact_type *a_ptr);
 
 /* tables.c */
 extern s16b ddd[9];
@@ -168,6 +169,7 @@ extern bool create_down_stair;
 extern s16b num_repro;
 extern s16b object_level;
 extern s16b monster_level;
+extern s16b monster_level_min;
 extern byte level_up_x(struct worldpos *wpos);
 extern byte level_up_y(struct worldpos *wpos);
 extern byte level_down_x(struct worldpos *wpos);
@@ -485,6 +487,7 @@ extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_typ
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm);
 extern void py_attack(int Ind, int y, int x, bool old);
+extern void spin_attack(int Ind);
 extern void touch_zap_player(int Ind, int m_idx);
 extern void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot);
 extern void set_black_breath(int Ind);
@@ -532,6 +535,8 @@ extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y,
 extern bool retaliating_cmd;
 extern void break_cloaking(int Ind);
 extern void stop_cloaking(int Ind);
+extern void stop_precision(int Ind);
+extern void stop_shooting_till_kill(int Ind);
 
 
 /* cmd3.c */
@@ -620,6 +625,8 @@ extern void do_cmd_fill_bottle(int Ind);
 extern void do_cmd_empty_potion(int Ind, int slot);
 extern void do_cmd_fletchery(int Ind);
 extern void do_cmd_stance(int Ind, int stance);
+extern void do_cmd_melee_technique(int Ind, int technique);
+extern void do_cmd_ranged_technique(int Ind, int technique);
 
 
 /* control.c */
@@ -865,7 +872,7 @@ extern int Send_direction(int Ind);
 extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
 extern int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val);
-extern int Send_techniques_info(int Ind); /* for MKEY_FIGHTING and MKEY_SHOOTING */
+extern int Send_technique_info(int Ind); /* for MKEY_MELEE and MKEY_RANGED */
 extern int Send_item_request(int Ind);
 extern int Send_state(int Ind, bool paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
@@ -1177,9 +1184,11 @@ extern bool slow_monsters(int Ind);
 extern bool sleep_monsters(int Ind);
 extern bool fear_monsters(int Ind);
 extern bool stun_monsters(int Ind);
+extern void wakeup_monsters(int Ind, int who);
 extern void aggravate_monsters(int Ind, int who);
 extern void aggravate_monsters_floorpos(worldpos *wpos, int x, int y);
 extern void wake_minions(int Ind, int who);
+extern void taunt_monsters(int Ind);
 extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
@@ -1304,6 +1313,7 @@ extern char last_chat_owner[20]; /* Who said it */
 
 extern void use_ability_blade(int Ind);
 extern void check_parryblock(int Ind);
+extern void toggle_shoot_till_kill(int Ind);
 extern bool show_floor_feeling(int Ind);
 extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, u16b party);
@@ -1395,12 +1405,14 @@ extern int start_global_event(int Ind, int getype, char *parm);
 extern void stop_global_event(int Ind, int n);
 extern void announce_global_event(int ge_id);
 extern void process_global_events(void);
-extern void global_event_signup(int Ind, int n);
+extern void global_event_signup(int Ind, int n, cptr parm);
 
 extern void update_check_file(void);
 extern void update_current_items_slide(int Ind, int start, int mod, int end);
 extern void update_current_items_move(int Ind, int slot, int new_slot);
 extern void clear_current(int Ind);
+
+extern void calc_techniques(int Ind);
 
 
 /* xtra2.c */
@@ -1439,6 +1451,8 @@ extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
 extern bool set_blessed(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
+extern bool set_berserk(int Ind, int v);
+extern bool set_melee_sprint(int Ind, int v);
 extern bool set_protevil(int Ind, int v);
 extern bool set_zeal(int Ind, int p, int v);
 extern bool set_martyr(int Ind, int v);
@@ -1597,6 +1611,7 @@ extern s16b get_skill_scale(player_type *p_ptr, int skill, u32b scale);
 extern s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
+extern void msg_gained_abilities(int Ind, int old_value, int i);
 
 /* hooks.c */
 extern bool process_hooks(int h_idx, char *fmt, ...);
@@ -1654,10 +1669,11 @@ extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool watch_nr;
 extern bool watch_morgoth;
 extern int cron_1h_last_hour; /* manage cron_1h calls */
+extern int regen_boost_stamina;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
-extern int sector00separation; /* see variable.c */
+extern int sector00separation, ge_training_tower; /* see variable.c */
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
 

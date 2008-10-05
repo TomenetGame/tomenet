@@ -117,8 +117,14 @@ void do_cmd_go_up(int Ind)
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
 	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
-		msg_print(Ind,"\377sOnly ruins of a former tower remain at this place..");
+		msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
+ #if 0 /* needed for 'Arena Monster Challenge' again, instead, NO_DEATH are now simply empty */
 		if (!is_admin(p_ptr)) return;
+ #else
+		if (!is_admin(p_ptr) &&
+		    !(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y))
+			return;
+ #endif
 	}
 #endif
 
@@ -2820,7 +2826,8 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		move_player(Ind, dir, pickup);
 
 		/* Take a turn */
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		if (!p_ptr->melee_sprint) p_ptr->energy -= level_speed(&p_ptr->wpos);
+		else p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 
 		/* Allow more walking */
 		more = TRUE;
@@ -3214,6 +3221,8 @@ void do_cmd_fire(int Ind, int dir)
         int             drain_result = 0, drain_heal = 0;
         int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
 	bool		drainable = TRUE;
+	bool		tmp, ranged_double_real = FALSE, ranged_flare_body = FALSE;
+
 	
 	int		break_chance;
 	
@@ -3222,6 +3231,12 @@ void do_cmd_fire(int Ind, int dir)
 	char            o_name[160];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
 	cave_type **zcave;
+
+	if (p_ptr->shooting_till_kill) { /* we were shooting till kill last turn? */
+		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
+		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
+	}
+
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Break goi/manashield */
@@ -3279,7 +3294,7 @@ void do_cmd_fire(int Ind, int dir)
 		msg_print(Ind, "Your quiver is empty!");
 		return;
 	}
-
+	
 	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang)
 	{
 		msg_print(Ind, "You cannot fire that!");
@@ -3295,7 +3310,8 @@ void do_cmd_fire(int Ind, int dir)
 	if (!boomerang)
 	{
 		/* Actually "fire" the object */
-		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h + j_ptr->to_h);
+		bonus = (p_ptr->to_h + p_ptr->to_h_ranged * (p_ptr->ranged_precision ? 2 : 1)
+			+ o_ptr->to_h + j_ptr->to_h);
 		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
 
     		tmul = get_shooter_mult(j_ptr);
@@ -3313,66 +3329,6 @@ void do_cmd_fire(int Ind, int dir)
 		returning = TRUE;
 	}
 
-	/* Get extra "power" from "extra might" */
-//	if (p_ptr->xtra_might) tmul++;
-	if (!boomerang) tmul += p_ptr->xtra_might;
-
-	/* Base range */
-	tdis = 9 + 3 * tmul;
-	if (boomerang) tdis = 15;
-
-	/* Play fairly */
-#ifdef ARROW_DIST_LIMIT
-	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
-#endif	// ARROW_DIST_LIMIT
-
-	/* Only fire in direction 5 if we have a target */
-	/* Also only fire at all at a desired target, if we're actually within shooting range - C. Blue */
-	if (dir == 5) {
-		if (!target_okay(Ind)) return;
-		/* some minor launchers cannot achieve required range for the specified target - C. Blue */
-		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
-	}
-
-	/* Check if monsters around him/her hinder this */
-//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
-	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
-	if (archery == SKILL_BOOMERANG) {
-		if (interfere(Ind, 25)) return; /* boomerang interference chance */
-	} else {
-		if (interfere(Ind, 50)) return; /* shooting interference chance */
-	}
-
-	if (!boomerang && cursed_p(o_ptr) && magik(50))
-	{
-		msg_print(Ind, "You somehow failed to fire!");
-		return;
-	}
-
-#if (STARTEQ_TREATMENT > 1)
-        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
-            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
-                o_ptr->level = 0;
-#endif
-
-	/* Use the proper number of shots */
-//	thits = boomerang? 1 : p_ptr->num_fire;
-	thits = p_ptr->num_fire;
-
-	/* S(he) is no longer afk */
-	if (p_ptr->afk && !retaliating_cmd) un_afk_idle(Ind);
-	retaliating_cmd = FALSE;
-
-	/* Take a (partial) turn */
-	p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
-
-	/* Adjust VAMPIRIC draining to shooting speed, since
-	   do_cmd_fire only handles ONE shot :/ */
-	drain_left /= thits;
-
-	/* Hack -- suppress messages */
-	if (p_ptr->taciturn_messages) suppress_message = TRUE;
-
 	/* Is this magic Arrow or magic shots or magic bolts? */
 	if ((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
 	     && o_ptr->sval == SV_AMMO_MAGIC) {
@@ -3387,9 +3343,147 @@ void do_cmd_fire(int Ind, int dir)
 //		o_ptr->level = 0;
 	}
 
+	/* Get extra "power" from "extra might" */
+//	if (p_ptr->xtra_might) tmul++;
+	if (!boomerang) tmul += p_ptr->xtra_might;
+
+	/* Base range */
+	tdis = 9 + 3 * tmul;
+	if (boomerang) tdis = 15;
+
+
+	/* Check if monsters around him/her hinder this */
+//  if (interfere(Ind, cfg.spell_interfere * 3)) return;
+	/* boomerang is harder to intercept since it can just be swung as weapon :> - C. Blue */
+	if (archery == SKILL_BOOMERANG) {
+		if (interfere(Ind, 25)) return; /* boomerang interference chance */
+	} else {
+		if (interfere(Ind, 50)) return; /* shooting interference chance */
+	}
+
+	/* Only fire in direction 5 if we have a target */
+	/* Also only fire at all at a desired target, if we're actually within shooting range - C. Blue */
+	if (dir == 5) {
+		if (!target_okay(Ind)) return;
+		/* some minor launchers cannot achieve required range for the specified target - C. Blue */
+		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, tdis)) return;
+	}
+
+
+	if (p_ptr->ranged_flare) {
+		if (boomerang) {
+			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			p_ptr->ranged_flare = FALSE;
+		} else if (p_ptr->cst < 2) {
+			msg_print(Ind, "Not enough stamina for a flare missile.");
+			p_ptr->ranged_flare = FALSE;
+		} else {
+			p_ptr->cst -= 2;
+			msg_format_near(Ind, "%s fires a flare missile.", p_ptr->name);
+		}
+	}
+	if (p_ptr->ranged_precision) {
+		if (boomerang) {
+			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			p_ptr->ranged_precision = FALSE;
+		} else if (p_ptr->cst < 7) {
+			msg_print(Ind, "Not enough stamina for a precision shot.");
+			p_ptr->ranged_precision = FALSE;
+		} else p_ptr->cst -= 7;
+	}
+        if (p_ptr->ranged_double) {
+		if (boomerang) {
+			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			p_ptr->ranged_double = FALSE;
+		} else if (o_ptr->number < 2) {
+			msg_print(Ind, "You need at least 2 projectiles for a double-shot!");
+			p_ptr->ranged_double = FALSE;
+		}
+		else if (p_ptr->cst >= 1) { /* don't toggle off even if we reach 0 stamina */
+			ranged_double_real = TRUE;
+		}
+	}
+	if (p_ptr->ranged_barrage) {
+		if (boomerang) {
+			msg_print(Ind, "You cannot use ranged techniques with a boomerang!");
+			p_ptr->ranged_barrage = FALSE;
+		} else if (o_ptr->number < 6) { /* && !returning) {  :-p */
+			msg_print(Ind, "You need at least 6 projectiles for a barrage!");
+			p_ptr->ranged_barrage = FALSE;
+		} else if (p_ptr->cst < 9) {
+			msg_print(Ind, "Not enough stamina for barrage.");
+			p_ptr->ranged_barrage = FALSE;
+		} else {
+			p_ptr->cst -= 9;
+			msg_format_near(Ind, "%s fires a multi-shot barrage!", p_ptr->name);
+		}
+	}
+	p_ptr->redraw |= PR_STAMINA;
+
+	/* silent fail */
+	if (returning) p_ptr->ranged_flare = FALSE;
+
+	/* Use the proper number of shots */
+//	thits = boomerang? 1 : p_ptr->num_fire;
+	thits = p_ptr->num_fire;
+	if (ranged_double_real) {
+		thits *= 2;
+
+		/* prevent possible exploit (fire 4 rounds with a 5bpr shooter, then switch to 2bpr shooter)
+		   although hardly someone will use that =-p */
+		if (p_ptr->ranged_double_used >= thits) p_ptr->ranged_double_used = 0;
+	
+		if (!p_ptr->ranged_double_used) {
+			p_ptr->cst--;
+			p_ptr->redraw |= PR_STAMINA;
+			p_ptr->ranged_double_used = thits;
+		}
+		p_ptr->ranged_double_used--;
+	}
+
+
+	if (p_ptr->ranged_barrage)
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+	else
+		/* Take a (partial) turn */
+		p_ptr->energy -= (level_speed(&p_ptr->wpos) / thits);
+
+	/* if we intended to shoot till kill, then we did succeed now,
+	   passed all tests that might return() instead, and ARE shooting
+	   to kill. Note: Cursed arrow failure is exempt a.t.m. - C. Blue */
+	if (p_ptr->shooty_till_kill) p_ptr->shooting_till_kill = TRUE;
+
+	/* Play fairly */
+#ifdef ARROW_DIST_LIMIT
+	if (tdis > ARROW_DIST_LIMIT) tdis = ARROW_DIST_LIMIT;
+#endif	// ARROW_DIST_LIMIT
+
+	if (!boomerang && cursed_p(o_ptr) && magik(50))
+	{
+		msg_print(Ind, "You somehow failed to fire!");
+		return;
+	}
+
+#if (STARTEQ_TREATMENT > 1)
+        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+            !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
+                o_ptr->level = 0;
+#endif
+
+	/* S(he) is no longer afk */
+	if (p_ptr->afk && !retaliating_cmd) un_afk_idle(Ind);
+	retaliating_cmd = FALSE;
+
+	/* Adjust VAMPIRIC draining to shooting speed, since
+	   do_cmd_fire only handles ONE shot :/ */
+	drain_left /= thits;
+
+	/* Hack -- suppress messages */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
 	/* Ricochets ? */
 #if 0 // DG - no
-	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang)
+	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang && !p_ptr->ranged_barrage)
 	{
 		num_ricochet = get_skill_scale(p_ptr, SKILL_RICOCHET, 6);
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
@@ -3397,7 +3491,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 #else	// 0
 	/* Sling mastery yields bullet ricochets */
-	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal)
+	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage)
 	{
 		num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));//6
 		num_ricochet = (num_ricochet < 0)?0:num_ricochet;
@@ -3406,7 +3500,7 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
-	throw_obj.number = 1;
+	throw_obj.number = p_ptr->ranged_barrage ? 6 : 1; /* doesn't work anyway for boomerangs since it tested for 6 items */
 
 	/* Use the missile object */
 	o_ptr = &throw_obj;
@@ -3437,7 +3531,9 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	
 	break_chance = breakage_chance(o_ptr);
+	tmp = p_ptr->ranged_precision;
 	break_cloaking(Ind);
+	p_ptr->ranged_precision = tmp;
 
 	/* Reduce and describe inventory */
 	if (!boomerang)
@@ -3452,8 +3548,8 @@ void do_cmd_fire(int Ind, int dir)
 				floor_item_optimize(0 - item);
 			}
 #endif
-		} else if (ethereal) {
-			if (cursed_p(o_ptr) ? TRUE : break_chance) {
+		} else if (ethereal) { /* being nice in regards to ranged_barrage break_chance */
+			if (cursed_p(o_ptr) ? TRUE : break_chance * (p_ptr->ranged_barrage ? 3 : 1)) {
 				if (item >= 0) {
 					inven_item_increase(Ind, item, -1);
 //					inven_item_describe(Ind, item);
@@ -3467,7 +3563,7 @@ void do_cmd_fire(int Ind, int dir)
 		} else if (!magic) {
 			if (item >= 0)
 			{
-				inven_item_increase(Ind, item, -1);
+				inven_item_increase(Ind, item, p_ptr->ranged_barrage ? -6 : -1);
 				inven_item_describe(Ind, item);
 				inven_item_optimize(Ind, item);
 			}
@@ -3475,7 +3571,7 @@ void do_cmd_fire(int Ind, int dir)
 			/* Reduce and describe floor item */
 			else
 			{
-				floor_item_increase(0 - item, -1);
+				floor_item_increase(0 - item, p_ptr->ranged_barrage ? -6 : -1);
 				floor_item_optimize(0 - item);
 			}
 		} else {
@@ -3641,18 +3737,18 @@ void do_cmd_fire(int Ind, int dir)
 								if ((chance > 0) && magik(chance))
 								{
 									//				msg_print(Ind, "You dodge a magical attack!");
-									msg_print(0 - c_ptr->m_idx, "You dodge the projectile!");
-									if (visible) msg_format(Ind, "%s dodges %s.", p_name, o_name);
+									msg_format(0 - c_ptr->m_idx, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
+									if (visible) msg_format(Ind, "\377%c%s dodges %s.", COLOUR_DODGE_NEAR, p_name, o_name);
 									dodged = TRUE;
 /* gotta remove the dodged=TRUE stuff etc, we simply continue!*/	continue;
 								}
 							}
 #else
 //							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3 + 1000))) { /* hack - more difficult to dodge ranged attacks */
-							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3))) {
+							if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev + get_skill(p_ptr, archery) / 3)) && (!p_ptr->ranged_barrage || magik(50))) {
 								// msg_print(Ind, "You dodge a magical attack!");
-								msg_print(0 - c_ptr->m_idx, "You dodge the projectile!");
-								if (visible) msg_format(Ind, "%s dodges %s.", p_name, o_name);
+								msg_format(0 - c_ptr->m_idx, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
+								if (visible) msg_format(Ind, "\377%c%s dodges %s.", COLOUR_DODGE_NEAR, p_name, o_name);
 								continue;
 							}
 #endif
@@ -3664,17 +3760,17 @@ void do_cmd_fire(int Ind, int dir)
 				                	if (q_ptr->shield_deflect &&
 							    (!q_ptr->inventory[INVEN_WIELD].k_idx || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 								if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
-									if (visible) msg_format(Ind, "%s blocks %s!", p_name, o_name);
-									msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
+									if (visible) msg_format(Ind, "\377%c%s blocks %s!", COLOUR_BLOCK_PLY, p_name, o_name);
+									msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 									continue;
 								}
 							}
 #endif
 #ifdef USE_PARRYING
 							if (q_ptr->weapon_parry) {
-								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
-									if (visible) msg_format(Ind, "%s parries %s!", p_name, o_name);
-									msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
+								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5)) && !p_ptr->ranged_barrage) { /* boost for PvP! */
+									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
+									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
 									continue;
 								}
 							}
@@ -3686,6 +3782,7 @@ void do_cmd_fire(int Ind, int dir)
 								{
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
+									if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
 									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 									tdam += o_ptr->to_d;
@@ -3699,6 +3796,7 @@ void do_cmd_fire(int Ind, int dir)
 									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
 								}
+								ranged_flare_body = TRUE;
 
 								/* Boost the damage */
 								tdam *= tmul;
@@ -3709,11 +3807,19 @@ void do_cmd_fire(int Ind, int dir)
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
 
-								/* No negative damage */
-								if (tdam < 0) tdam = 0;
-
 								/* XXX Reduce damage by 1/3 */
 								tdam = (tdam + PVP_SHOOT_DAM_REDUCTION - 1) / PVP_SHOOT_DAM_REDUCTION;
+								
+								if (ranged_double_real) tdam = (tdam * 35) / 100;
+								if (p_ptr->ranged_precision) {
+									if (q_ptr->afraid) tdam *= 5;
+									else tdam *= 3;
+									p_ptr->ranged_precision = FALSE;
+								}
+								if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
+
+								/* No negative damage */
+								if (tdam < 0) tdam = 0;
 
 						                /* can't attack while in WRAITHFORM (explosion still works) */
 							        if (p_ptr->tim_wraith && !q_ptr->tim_wraith) tdam = 0;
@@ -3759,7 +3865,11 @@ void do_cmd_fire(int Ind, int dir)
 
 								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CONF)) && !q_ptr->resist_conf && !boomerang)
 								{
-									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + q_ptr->lev);
+									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
+								}
+								
+								if (p_ptr->ranged_barrage) {
+									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35);
 								}
 
 
@@ -3863,6 +3973,7 @@ void do_cmd_fire(int Ind, int dir)
 					{
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
+						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
 						tdam += o_ptr->to_d;
@@ -3876,6 +3987,7 @@ void do_cmd_fire(int Ind, int dir)
 						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
 					}
+					ranged_flare_body = TRUE;
 
 //less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -3885,13 +3997,22 @@ void do_cmd_fire(int Ind, int dir)
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam);
 
-					/* No negative damage */
-					if (tdam < 0) tdam = 0;
+					if (ranged_double_real) tdam = (tdam * 35) / 100;
+					if (p_ptr->ranged_precision) {
+						if (m_ptr->monfear) tdam *= 5;
+						else tdam *= 3;
+						p_ptr->ranged_precision = FALSE;
+					}
+					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
 			                /* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith && 
 					    ((r_ptr->flags2 & RF2_KILL_WALL) || !(r_ptr->flags2 & RF2_PASS_WALL))) tdam = 0;
+
+					/* No negative damage */
+					if (tdam < 0) tdam = 0;
+
 #if 0
 					/* XXX consider using project() with GF_CONF */
 					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CONF)) &&
@@ -3941,6 +4062,7 @@ void do_cmd_fire(int Ind, int dir)
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
 					{
 						/* Dead monster */
+				    		p_ptr->shooting_till_kill = FALSE;
 					}
 
 					/* No death */
@@ -3974,6 +4096,16 @@ void do_cmd_fire(int Ind, int dir)
 									hp_player_quiet(Ind, drain_heal);
 									/* We get to keep some of it! */
 								}
+							}
+						}
+						
+						if (p_ptr->ranged_barrage) {
+							if (!(r_ptr->flags3 & RF3_NO_STUN)) {
+								if (!m_ptr->stunned) msg_format(Ind, "\377o%^s is stunned.", m_name);
+								else msg_format(Ind, "\377o%^s appears more stunned.", m_name);
+								m_ptr->stunned = m_ptr->stunned + 20;
+							} else {
+								msg_format(Ind, "\377o%^s resists the effect.", m_name);
 							}
 						}
 
@@ -4070,9 +4202,8 @@ void do_cmd_fire(int Ind, int dir)
 
 		/* If no break and if Archer, the ammo can ricochet */
 //		if((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
-
 //		if((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
-		if((num_ricochet) && (hit_body) && (magik(ricochet_chance)))
+		if((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage)
 		{
 			/* Some players do not want ricocheting shots as to not wake up other
 			 * monsters. How about we remove ricocheting shots for slingers, but
@@ -4198,6 +4329,26 @@ void do_cmd_fire(int Ind, int dir)
 	}
 #endif
 #endif
+
+	if (p_ptr->ranged_flare && !boomerang) {
+		if (!hit_body && !ranged_flare_body) {
+			object_type forge;
+			(void)project(0 - Ind, 2, wpos, y, x, damroll(2, 6), GF_LITE_WEAK, PROJECT_GRID | PROJECT_KILL, "");
+			lite_room(Ind, wpos, y, x);
+			breakage = 0;
+			invcopy(&forge, lookup_kind(o_ptr->tval, SV_AMMO_CHARRED));
+			forge.to_h = -rand_int(10);
+			forge.to_d = -rand_int(10);
+			*o_ptr = forge;
+			o_ptr->ident |= ID_KNOWN;
+		} else {
+			breakage = 101; /* projectile gets destroyed by burning brightly + hitting someone */
+		}
+	}
+
+	p_ptr->ranged_flare = FALSE;
+	p_ptr->ranged_barrage = FALSE; /* whether we hit a monster or fired into empty air (ie missed).. */
+
 	/* Drop (or break) near that location */
 	/* by C. Blue - Now art ammo never drops, since it doesn't run out */
 	if (!returning) drop_near(o_ptr, breakage, wpos, y, x);
@@ -4290,7 +4441,7 @@ bool interfere(int Ind, int chance)
 				/* fixed :) */
 				player_desc(Ind, m_name, -i, 0);
 			}
-			msg_format(Ind, "\377o%^s interferes with your attempt!", m_name);
+			msg_format(Ind, "\377%c%^s interferes with your attempt!", COLOUR_IC_MON, m_name);
 			return TRUE;
 		}
 	}
@@ -4328,7 +4479,7 @@ bool interfere(int Ind, int chance)
 					/* even not visible... :( */
 					strcpy(m_name, Players[-i]->name);
 				}
-				msg_format(Ind, "\377o%^s interferes with your attempt!", m_name);
+				msg_format(Ind, "\377%c%^s interferes with your attempt!", COLOUR_IC_MON, m_name);
 				return TRUE;
 			}
 		}
@@ -5223,6 +5374,9 @@ void break_cloaking(int Ind) {
 		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
 		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 	}
+	
+	/* secondary use now: */
+	stop_precision(Ind);
 }
 
 /* stop cloaking preparations */
@@ -5233,4 +5387,20 @@ void stop_cloaking(int Ind) {
 		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
 		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 	}
+}
+
+/* stop ranged technique 'barrage' preparation */
+void stop_precision(int Ind) {
+	if (Players[Ind]->ranged_precision) {
+		Players[Ind]->ranged_precision = FALSE;
+		msg_print(Ind, "\377yYou stop aiming.");
+	}
+
+	/* secondary use now: */
+	stop_shooting_till_kill(Ind);
+}
+
+/* stop shooting-till-kill */
+void stop_shooting_till_kill(int Ind) {
+	Players[Ind]->shooting_till_kill = FALSE;
 }

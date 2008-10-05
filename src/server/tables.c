@@ -4171,7 +4171,7 @@ player_class class_info[MAX_CLASS] =
                         /* Combat tree */
                         {
                                 SKILL_COMBAT,
-                                '+', 2000,
+                                '+', 1000,
                                 '+', 900,
                         },
                         {
@@ -4506,7 +4506,7 @@ player_class class_info[MAX_CLASS] =
                 {
                         {
                                 SKILL_COMBAT,
-                                '+', 1500,
+                                '+', 1000,
                                 '+', 1000,//nerfed from 1300
                         },
 #if 0
@@ -4661,7 +4661,7 @@ player_class class_info[MAX_CLASS] =
                         /* Combat tree */
                         {
                                 SKILL_COMBAT,
-                                '+', 2000,
+                                '+', 0,
                                 '+', 900,//900: not nerfed, although priests=750,istari=300, bc shamans are also fighters(?)
                         },
                         {
@@ -5705,6 +5705,7 @@ magic_type innate_powers[96] =
 };
 
 
+/* desc, min_lv, chance, dd, ds, effect */
 martial_arts ma_blows[MAX_MA] =
 {
 	{ "You punch %s.",                          1, 0, 1, 4, 0 },
@@ -5716,14 +5717,17 @@ martial_arts ma_blows[MAX_MA] =
 	{ "You kick %s.",                           11, 10, 2, 5, MA_SLOW },
 	{ "You uppercut %s.",                       13, 12, 4, 3, 4 },
 	{ "You double-kick %s.",                    16, 15, 4, 4, 0 },
-	{ "You hit %s with a Cat's Claw.",          20, 20, 6, 3, 0 },
+	{ "You strike %s with a Cat's Claw.",       20, 20, 6, 3, 0 },
 	{ "You hit %s with a jump kick.",           25, 25, 3, 9, 6 },
-	{ "You hit %s with an Eagle's Claw.",       29, 25, 7, 4, 0 },
+	{ "You strike %s with an Eagle's Claw.",    29, 25, 7, 4, 0 },
 	{ "You hit %s with a circle kick.",         33, 30, 4, 9, 0 },
-	{ "You hit %s with an Iron Fist.",          37, 35, 6, 6, 8 },
+	{ "You punch %s with an Iron Fist.",        37, 35, 6, 6, 8 },
 	{ "You hit %s with a flying kick.",         41, 35, 5, 8, 0 },
-	{ "You hit %s with a Dragon Fist.",         45, 35, 6, 8, 10 },
+	{ "You punch %s with a Dragon Fist.",       45, 35, 6, 8, 10 },
 	{ "You hit %s with a Crushing Blow.",       48, 35, 8, 7, 12 },
+	/* Kings only (for NR:) */
+	{ "You bash %s with a Titan's Fist.",       48, 50, 8, 5, 20 },
+	{ "You strike %s with a Phoenix Claw.",     48, 50, 5, 9, MA_ROYAL_SLOW },
 };
 
 /*

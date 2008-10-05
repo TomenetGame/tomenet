@@ -220,6 +220,7 @@ static void reset_tim_flags()
 	p_ptr->invuln = 0;          /* Timed -- Invulnerable */
 	p_ptr->hero = 0;            /* Timed -- Heroism */
 	p_ptr->shero = 0;           /* Timed -- Super Heroism */
+	p_ptr->berserk = 0;           /* Timed -- Berserk #2 */
 	p_ptr->shield = 0;          /* Timed -- Shield Spell */
 	p_ptr->blessed = 0;         /* Timed -- Blessed */
 	p_ptr->tim_invis = 0;       /* Timed -- Invisibility */

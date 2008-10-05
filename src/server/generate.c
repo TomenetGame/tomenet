@@ -972,6 +972,10 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+#ifdef RPG_SERVER /* no objects are generated in Training Tower */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
+#endif
+
 	/* Place some objects */
 	for (k = 0; k < num; k++)
 	{
@@ -4202,10 +4206,16 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	int ymax = v_ptr->hgt, xmax = v_ptr->wid;
 	char *data = v_text + v_ptr->text;
 
+	u32b resf = make_resf(p_ptr), eff_resf;
+
 	if(!(zcave=getcave(wpos))) return;
 
 	if (v_ptr->flags1 & VF1_NO_PENETR) dun->no_penetr = TRUE;
 	if (v_ptr->flags1 & VF1_HIVES) hives = TRUE;
+	if (v_ptr->flags1 & VF1_NO_TRUEARTS) resf |= RESF_NOTRUEART;
+	if (v_ptr->flags1 & VF1_NO_RANDARTS) resf |= RESF_NORANDART;
+	if ((v_ptr->flags1 & VF1_NO_EASY_TRUEARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NOTRUEART;
+	if ((v_ptr->flags1 & VF1_NO_EASY_RANDARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
 
 	if (!hives)	/* Hack -- avoid ugly results */
 	{
@@ -4248,6 +4258,10 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	{
 		for (dx = 0; dx < xmax; dx++, t++)
 		{
+			eff_resf = resf;
+			if ((v_ptr->flags1 & VF1_RARE_TRUEARTS) && magik(80)) eff_resf |= RESF_NOTRUEART;
+			if ((v_ptr->flags1 & VF1_RARE_RANDARTS) && magik(80)) eff_resf |= RESF_NORANDART;
+
 			/* Extract the location */
 /*			x = xval - (xmax / 2) + dx;
 			y = yval - (ymax / 2) + dy;	*/
@@ -4296,7 +4310,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				case '*':
 				if (rand_int(100) < 75)
 				{
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				}
 				if (rand_int(100) < 40)
 				{
@@ -4328,28 +4342,34 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				/* Meaner monster */
 				case '@':
 				monster_level = lev + 11;
+				monster_level_min = -1;
 				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
 				monster_level = lev;
 				break;
 
 				/* Meaner monster, plus treasure */
 				case '9':
 				monster_level = lev + 9;
+				monster_level_min = -1;
 				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
 				monster_level = lev;
 				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				place_object(wpos, y, x, TRUE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
 
-				/* Nasty monster and treasure */
+				/* Nasty (meanest) monster and treasure */
 				case '8':
 				monster_level = lev + 40;
+				monster_level_min = -1;
 				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
 				monster_level = lev;
 				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				place_object(wpos, y, x, TRUE, TRUE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				break;
@@ -4365,7 +4385,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				if (magik(50))
 				{
 					object_level = lev + 7;
-					place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = lev;
 				}
 				if (magik(50)) place_trap(wpos, y, x, 0);
@@ -5450,7 +5470,9 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 				{
 					/* Meanest monster + treasure */
 					monster_level = dun_level + 40;
+					monster_level_min = -1;
 					place_monster(wpos, y, x, TRUE, TRUE);
+					monster_level_min = 0;
 					monster_level = dun_level;
 					object_level = dun_level + 20;
 					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
@@ -8501,10 +8523,20 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		dun->l_ptr->wid = MAX_WID;
 		dun->l_ptr->hgt = MAX_HGT;
 	}
+
+	/* not too big levels for 'Arena Monster Challenge' event */
+	if (ge_training_tower &&
+	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 &&
+	    wpos->wz == d_ptr->maxdepth) {
+		dun->l_ptr->wid = MAX_WID  / 2;
+		dun->l_ptr->hgt = MAX_HGT  / 2;
+	}
+
 #ifdef ARCADE_SERVER
 	dun->l_ptr->hgt = SCREEN_HGT*2;
 	dun->l_ptr->wid = SCREEN_WID*2;
 #endif
+
 //	if ((dun->l_ptr->wid <= SCREEN_WID) && (dun->l_ptr->hgt <= SCREEN_HGT)) tiny_level = TRUE;
 
 	/* So as not to generate too 'crowded' levels */

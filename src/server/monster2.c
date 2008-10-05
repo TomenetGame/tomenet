@@ -1059,6 +1059,10 @@ static bool restrict_monster_to_dungeon(int r_idx, int dun_type)
  * things up.
  *
  * This function is kind of a mess right now.
+ *
+ * C. Blue: Added check of 'monster_level_min', for
+ *          micro cell vaults (cross-shaped) actually:
+ *    -1 = auto, 0 = disabled, >0 = use specific value.
  */
 
 //s16b get_mon_num(int level)
@@ -1110,7 +1114,7 @@ s16b get_mon_num(int level, int dun_type)
 		if (rand_int(NASTY_MON) == 0)
 		{
 			if (level < 15) level += (2 + level/2 + randint(3));
-			else level += (10 + level/4 + randint(level / 4));
+			else level += (10 + level/4 + randint(level / 4)); /* can be quite nasty, but serves well so far >;-) */
 		}
 #endif
 	}       
@@ -1143,6 +1147,18 @@ s16b get_mon_num(int level, int dun_type)
 
 		/* Default */
 		table[i].prob3 = 0;
+
+#if 0 /* temporarily disabled until empty spots bug has been figured out */
+		if (monster_level_min == -1) { /* let this function choose, basing on 'level' */
+			if (level >= 98) {
+				if (table[i].level < 69) continue; /* 64..69 somewhere is a good start for nasty stuff - C. Blue */
+			} else {
+				if (table[i].level < (level * 2) / 3) continue;
+			}
+		} else if (monster_level_min) { /* picked a value outside of this function already */
+			if (table[i].level < monster_level_min) continue;
+		}
+#endif
 
 		/* Hack -- No town monsters in the dungeon */
 		if ((level > 0) && (table[i].level <= 0)) continue;
@@ -2635,6 +2651,10 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	if (!in_bounds(y, x)) return (FALSE);
 	/* Require empty space */
 	if (!cave_empty_bold(zcave, y, x)) return (FALSE);
+	/* Paranoia */
+	if (!r_idx) return (FALSE);
+	/* Paranoia */
+	if (!r_ptr->name) return (FALSE);
 
 /* override all validity checks! (for summoning done by dungeon master) */
 if (!summon_override_check_all) {
@@ -2661,17 +2681,22 @@ if (!summon_override_check_all) {
 
 } /* summon_override_check_all */
 
-	/* Paranoia */
-	if (!r_idx) return (FALSE);
-
-	/* Paranoia */
-	if (!r_ptr->name) return (FALSE);
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 #endif
 
 /* override all validity checks! (for summoning done by dungeon master) */
 if (!summon_override_check_all) {
+
+#ifdef RPG_SERVER /* no spawns in Training Tower at all */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
+#endif
+
+	/* No live spawns allowed in training tower during global event */
+	if (ge_training_tower &&
+	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && 
+	    wpos->wz == wild_info[cfg.town_y][cfg.town_x].tower->maxdepth)
+		return(FALSE);
 
 	/* No live spawns after initial spawn allowed on NR bottom */
 	if (getlevel(wpos) == (166 + 30) && !cave_set_quietly) return(FALSE);
@@ -2691,6 +2716,7 @@ if (!summon_override_check_all) {
 	if ((r_idx == 1067) && (getlevel(wpos) < (166 + 1))) return (FALSE);
 	/* Dor may not occur on 'easier' (lol) NR levels */
 	if ((r_idx == 1085) && (getlevel(wpos) < (166 + 9))) return (FALSE);
+	/* Couple of Nether Realm-only monsters hardcoded here */
 	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
 	    (getlevel(wpos) < 166)) return (FALSE);
 	/* Zu-Aon guards the bottom of the Nether Realm now */
@@ -3019,8 +3045,13 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	}
 
 
+#if 0
 	/* Give a random starting energy */
 	m_ptr->energy = rand_int(100);
+#else /* make nether realm summons less deadly (hounds) */
+//	m_ptr->energy = -rand_int(level_speed(wpos) * 2 - 750);
+	m_ptr->energy = -rand_int(level_speed(wpos) - 375);
+#endif
 
 	/* Hack -- Reduce risk of "instant death by breath weapons" */
 	if (r_ptr->flags1 & RF1_FORCE_SLEEP)
@@ -3049,9 +3080,11 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (m_ptr->clone > 100) m_ptr->clone = 100;
 	/* Don't let it overflow over time.. (well, not very realistic) */
 	if (m_ptr->clone_summoning - cfg.clone_summoning > 4) m_ptr->clone_summoning = 4 + cfg.clone_summoning;
-        
+    
 	/* Hack - Unique monsters are never clones - C. Blue */
-	if (r_ptr->flags1 & RF1_UNIQUE) m_ptr->clone = 0;
+	if (r_ptr->flags1 & RF1_UNIQUE)
+		/* hack for global event "Arena Monster Challenge" - C. Blue */
+		if (clone_summoning != 1000) m_ptr->clone = 0;
 
 	for (Ind = 1; Ind < NumPlayers + 1; Ind++)
 	{
@@ -3425,30 +3458,30 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 
 #ifdef HALLOWEEN
 	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
-#ifndef RPG_SERVER
+ #ifndef RPG_SERVER
 	if (!great_pumpkin_timer && (l < 40) && (wpos->wz != 0)) {
- #if 0
+  #if 0
 		r_idx = 1086 + rand_int(2);
- #else
+  #else
 		r_idx = 1088;//3k HP, smallest version
 		if (magik(25)) r_idx = 1087; /* sometimes tougher */
 		if (l > 20) r_idx = 1087;//6k HP
 		if (magik(25)) r_idx = 1088; /* sometimes tougher */
 		if (l > 33) r_idx = 1088;//10k HP
- #endif
-#else
+  #endif
+ #else
 	if ((great_pumpkin_timer == 0) && (l < 50) && (wpos->wz != 0) &&
 	    !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
- #if 0
+  #if 0
 		r_idx = 1086 + rand_int(2);
- #else
+  #else
 		r_idx = 1088;//3k HP, smallest version
 		if (magik(15)) r_idx = 1087; /* sometimes tougher */
 		if (l > 30) r_idx = 1087;//6k HP
 		if (magik(15)) r_idx = 1088; /* sometimes tougher */
 		if (l > 40) r_idx = 1088;//10k HP
+  #endif
  #endif
-#endif
 		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
 //			great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
 			/* log */
@@ -4122,7 +4155,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return (FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone, 0))
+		if (!place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
 			return (FALSE);
 
 	}

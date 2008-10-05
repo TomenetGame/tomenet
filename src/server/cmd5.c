@@ -156,8 +156,8 @@ bool check_antimagic(int Ind)
 		/* Got disrupted ? */
 		if (magik(antichance))
 		{
-			if (i == Ind) msg_print(Ind, "Your own anti-magic field disrupts your attempts.");
-			else msg_format(Ind, "%s's anti-magic field disrupts your attempts.", q_ptr->name);
+			if (i == Ind) msg_format(Ind, "\377%cYour own anti-magic field disrupts your attempts.", COLOUR_AM_OWN);
+			else msg_format(Ind, "\377%c%s's anti-magic field disrupts your attempts.", COLOUR_AM_PLY, q_ptr->name);
 			return TRUE;
 		}
 	}
@@ -198,11 +198,11 @@ bool check_antimagic(int Ind)
 			{
 				char m_name[80];
 				monster_desc(Ind, m_name, m_idx, 0);
-				msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
+				msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 			}
 			else
 			{
-				msg_print(Ind, "An anti-magic field disrupts your attempts.");
+				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 			}
 			return TRUE;
 		}
@@ -243,11 +243,11 @@ bool check_antimagic(int Ind)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
+					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic field disrupts your attempts.");
+					msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 				}
 				return TRUE;
 			}
@@ -1481,12 +1481,12 @@ void do_mimic_change(int Ind, int r_idx, bool force)
         /* No magic */
 	if (p_ptr->anti_magic && !force)
 	{
-	        msg_print(Ind, "Your anti-magic shell disrupts your attempt.");
+	        msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 	        return;
 	}
 	if (p_ptr->antimagic && !force)
 	{
-	        msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+	        msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 	        return;
 	}
 	/* Not when confused */
@@ -1529,6 +1529,12 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	
+#if POLY_RING_METHOD == 1
+	/* clear temporary mimicking from polymorph ring */
+	p_ptr->tim_mimic = 0;
+	p_ptr->tim_mimic_what = 0;
+#endif
 }
 
 void do_cmd_mimic(int Ind, int spell, int dir)
@@ -1548,11 +1554,11 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 
 	/* No anti-magic fields around ? */
 	/* Innate powers aren't hindered */
-	if ((!spell || spell - 2 >= 32) && check_antimagic(Ind)) { /* -2 -> 2 polymorph powers */
+	if ((!spell || spell - 3 >= 32) && check_antimagic(Ind)) { /* -3 -> 3 polymorph powers */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
-	if (spell == 0){
+	if (spell == 0 || spell == 1){
 		j = p_ptr->body_monster;
 		k = 0;
 
@@ -1595,8 +1601,32 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
 			if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) continue;
 
-			/* Don't accidentally poly into a form that suppresses polymorphing */
+			/* Don't accidentally poly into a form that suppresses polymorphing,
+			   to do so you need to use 'Polymorph into...' */
 			if (r_info[j].flags7 & RF7_DISBELIEVE) continue;
+			
+			if (spell == 1) { /* check for extremities matching? */
+				if ((p_ptr->inventory[INVEN_HEAD].tval || p_ptr->inventory[INVEN_NECK].tval)
+				    && !r_info[j].body_parts[BODY_HEAD]) continue;
+				if ((p_ptr->inventory[INVEN_ARM].tval || p_ptr->inventory[INVEN_HANDS].tval)
+				    && !r_info[j].body_parts[BODY_ARMS]) continue;
+				if ((p_ptr->inventory[INVEN_WIELD].tval || p_ptr->inventory[INVEN_BOW].tval)
+				    && !r_info[j].body_parts[BODY_WEAPON]) continue;
+				if (p_ptr->inventory[INVEN_RIGHT].tval
+				    && !r_info[j].body_parts[BODY_FINGER]) continue;
+				if (p_ptr->inventory[INVEN_LEFT].tval
+				    && r_info[j].body_parts[BODY_FINGER] < 2) continue;
+				if ((p_ptr->inventory[INVEN_BODY].tval || p_ptr->inventory[INVEN_OUTER].tval || p_ptr->inventory[INVEN_AMMO].tval)
+				    && !r_info[j].body_parts[BODY_TORSO]) continue;
+				if (p_ptr->inventory[INVEN_FEET].tval
+				    && !r_info[j].body_parts[BODY_LEGS]) continue;
+				/* combined stuff */
+				if (p_ptr->inventory[INVEN_TOOL].tval && !(
+				    r_info[j].body_parts[BODY_ARMS] || r_info[j].body_parts[BODY_WEAPON])) continue;
+				if (p_ptr->inventory[INVEN_LITE].tval && !(
+				    r_info[j].body_parts[BODY_ARMS] || r_info[j].body_parts[BODY_WEAPON] ||
+				    r_info[j].body_parts[BODY_FINGER] || r_info[j].body_parts[BODY_HEAD])) continue;
+			}
 
 			/* Ok we found */
 			break;
@@ -1680,7 +1710,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 		/* (S)he is no longer afk */
 		un_afk_idle(Ind);
 
-		do_mimic_power(Ind, spell - 2, dir); /* 2 polymorph self abilities *///w0t0w
+		do_mimic_power(Ind, spell - 3, dir); /* 3 polymorph self abilities *///w0t0w
 	}
 }
 
@@ -1724,12 +1754,12 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	/* No magic */
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts any magic attempts.");
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}
 	if (p_ptr->antimagic)
 	{
-		msg_print(Ind, "Your anti-magic field disrupts any magic attempts.");
+		msg_format(Ind, "\377%cYour anti-magic field disrupts any magic attempts.", COLOUR_AM_OWN);
 		return;
 	}
 

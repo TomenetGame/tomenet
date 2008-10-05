@@ -56,12 +56,12 @@
 #define VERSION_BUILD	0
 
 /* Server release version tag: Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG "a" /* "e" */
+#define SERVER_VERSION_TAG "" /* "e" */
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   6
+#define SF_VERSION_PATCH   8
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -86,7 +86,13 @@
 #include "defines-local.h"
 
 
+/* Add colour schemes - C. Blue */
+#include "colours.h"
+
+
 /* Allow a bunch of latest experimental changes to be compiled into this build? */
+#define ENABLE_TECHNIQUES
+
 #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
 #define USE_PARRYING
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
@@ -561,6 +567,22 @@
    1 = ring gets destroyed on activation and effect is timed */
 #define POLY_RING_METHOD 1
 
+/* SLAY and KILL (ie *SLAY*) multiplier */
+#if 0 /* from old times when 2-handed weapons had very low dice */
+ #define FACTOR_HURT 2 /* slay animal/evil */
+ #define FACTOR_SLAY 3
+ #define FACTOR_KILL 5
+ #define FACTOR_BRAND_RES 2
+ #define FACTOR_BRAND 3
+ #define FACTOR_BRAND_SUSC 6
+#else /* adjusted for modern weapon dice to prevent insane output */
+ #define FACTOR_HURT 2 /* slay animal/evil */
+ #define FACTOR_SLAY 2
+ #define FACTOR_KILL 3
+ #define FACTOR_BRAND_RES 2
+ #define FACTOR_BRAND 2
+ #define FACTOR_BRAND_SUSC 4
+#endif
 
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
@@ -607,7 +629,7 @@
  * TODO: wraithes should only pass townwalls of her/his own house
  */
 #define WRAITH_THROUGH_TOWNWALL
-    
+
 /* chance of walking in a random direction when confused and trying to climb,
  * in percent. [50]
  */
@@ -1224,7 +1246,7 @@
 #define FEAT_HOME_TAIL	0x2F
 
 /* adding various wilderness features here.
-feat_perm is used for an "invisible" outside wall
+FEAT_PERM_CLEAR is used for an "invisible" outside wall
 that keeps many algorithms happy.
 -APD- */
 
@@ -2167,6 +2189,7 @@ that keeps many algorithms happy.
 /* (pernM ammo) */
 #define SV_AMMO_MAGIC		3	/* seeker arrows and bolts */
 #define SV_AMMO_SILVER		4	/* silver arrows and bolts */
+#define SV_AMMO_CHARRED		5	/* burnt ammo (used for flare missile skill) */
 
 /* The "sval" codes for TV_INSTRUMENT */
 #define SV_FLUTE                         1
@@ -4843,7 +4866,6 @@ that keeps many algorithms happy.
 
 #define object_char(T) \
     (p_ptr->k_char[(T)->k_idx])
-
 #endif
 
 #define object_char(T) \
@@ -5797,8 +5819,15 @@ extern int PlayerUID;
 
 /* replacement of helper functions in cave.c */
 /* prolly compilers will do this job anyway..? */
+#if 0
+#define level_speed(wpos) ((wpos)->wz ? level_speeds[getlevel(wpos)] * 5 : level_speeds[0] * 5)
+#else /* NR = +20%..+37% slower than dlvl 127 (200 level_speed base) */
 #define level_speed(wpos) \
-	((wpos)->wz ? level_speeds[getlevel(wpos)] * 5 : level_speeds[0] * 5)
+	((wpos)->wz ? (getlevel(wpos) <= 127 ? \
+	    level_speeds[getlevel(wpos)] * 5 : \
+	    (level_speeds[getlevel(wpos)] * (getlevel(wpos) + 60)) / 37) \
+	: level_speeds[0] * 5)
+#endif
 
 #define inarea(apos, bpos) \
 	((apos)->wx==(bpos)->wx && (apos)->wy==(bpos)->wy && (apos)->wz==(bpos)->wz)
@@ -5891,13 +5920,17 @@ extern int PlayerUID;
 /*
  * Mkeys are skill activations
  */
+#if 0
 #define MKEY_SORCERY            1	/* unused */
 #define MKEY_MAGERY             2	/* unused */
-#define MKEY_MIMICRY            3
 #define MKEY_SHADOW             4	/* unused */
+#define MKEY_PRAY               7	/* unused */
+#endif
+
+#define MKEY_MIMICRY            3
+#define MKEY_SHOOT_TILL_KILL	4	/* toggle this firing mode */
 #define MKEY_MELEE              5	/* new fighter abilities */
 #define MKEY_RANGED             6	/* not "Hunting" anymore, but new archer abilities */
-#define MKEY_PRAY               7	/* unused */
 
 #define MKEY_DODGE              8
 #define MKEY_FLETCHERY		9	/* constant to be unused when fletchery becomes subskill of archer abilities */

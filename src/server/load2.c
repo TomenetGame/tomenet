@@ -1196,6 +1196,14 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->chp);
 	rd_u16b(&p_ptr->chp_frac);
 
+	if (!older_than(4, 3, 8)) {
+		rd_s16b(&p_ptr->mst);
+		rd_s16b(&p_ptr->cst);
+		rd_s16b(&p_ptr->cst_frac);
+	}
+/* hack for old chars */
+if (p_ptr->mst != 10) p_ptr->mst = 10;
+
 	rd_s16b(&p_ptr->msp);
 	rd_s16b(&p_ptr->csp);
 	rd_u16b(&p_ptr->csp_frac);
@@ -1261,6 +1269,7 @@ static bool rd_extra(int Ind)
 	rd_s16b(&p_ptr->invuln);
 	rd_s16b(&p_ptr->hero);
 	rd_s16b(&p_ptr->shero);
+	if (!older_than(4, 3, 7)) rd_s16b(&p_ptr->berserk);
 	rd_s16b(&p_ptr->shield);
         if (!older_than(4, 0, 4))
         {
@@ -1371,7 +1380,7 @@ if (p_ptr->updated_savegame == 0) {
     }
     p_ptr->exp = p_ptr->max_exp;
     if (p_ptr->lev > p_ptr->max_lev) p_ptr->lev = p_ptr->max_lev;
-    p_ptr->updated_savegame = 3;//set to = 2 for artifact reset
+    p_ptr->updated_savegame = 3;
 }
 #endif
 

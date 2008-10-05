@@ -4070,7 +4070,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	if (artifact_p(o_ptr))
 	{
 		if (true_artifact_p(o_ptr)) ca_ptr = "n artifact";
-		else ca_ptr = " random artifact";
+		else {
+			if (!is_admin(p_ptr)) ca_ptr = " random artifact";
+			else ca_ptr = format(" random artifact (ap = %d)", artifact_power(randart_make(o_ptr)));
+		}
 	}
 
         switch(o_ptr->tval){
@@ -6859,7 +6862,7 @@ void display_inven(int Ind)
 		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the weight if needed */
-		wgt = o_ptr->weight * o_ptr->number;
+		wgt = o_ptr->weight; //* o_ptr->number;
 
 		/* Send the info to the client */
 		//Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
@@ -6911,7 +6914,7 @@ void display_equip(int Ind)
 		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the weight (if needed) */
-		wgt = o_ptr->weight * o_ptr->number;
+		wgt = o_ptr->weight;// * o_ptr->number;
 //		wgt = o_ptr->weight; <- shows wrongly for ammunition!
 
 		/* Send the info off */

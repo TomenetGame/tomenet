@@ -1809,6 +1809,21 @@ void check_parryblock(int Ind)
 
 
 
+void toggle_shoot_till_kill(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->shoot_till_kill) {
+		msg_print(Ind, "\377wShoot-till-kill mode now off.");
+		p_ptr->shooting_till_kill = FALSE;
+	} else {
+		msg_print(Ind, "\377wShoot-till-kill mode now on!");
+	}
+	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
+	return;
+}
+
+
+
 static int checkallow(char *buff, int pos){
 	if(!pos) return(0);
 	if(pos==1) return(buff[0]==' ' ? 0 : 1); /* allow things like brass lantern */

@@ -1341,8 +1341,8 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 			if (i == Ind) msg_format(Ind, "\377yYou grab %s back from teleportation!", m_name);
 			else msg_format(Ind, "%s grabs %s back from teleportation!", q_ptr->name, m_name);
 #else	// 0
-			msg_format(i, "\377yYou intercept %s's attempt to %s!", m_name, desc);
-			msg_format_near(i, "%s intercepts %s's attempt to %s!", q_ptr->name, m_name, desc);
+			msg_format(i, "\377%cYou intercept %s's attempt to %s!", COLOUR_IC_GOOD, m_name, desc);
+			msg_format_near(i, "\377%c%s intercepts %s's attempt to %s!", COLOUR_IC_NEAR, q_ptr->name, m_name, desc);
 #endif	// 0
 			return TRUE;
 		}
@@ -1410,12 +1410,12 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 
 //		    msg_format(Ind, "\377o%^s fails to cast a spell.", m_name);
 #if 0
-		if (i == anti_Ind) msg_format(anti_Ind, "\377oYour anti-magic field disrupts %s's attempts.", m_name);
-		else msg_format(anti_Ind, "%s's anti-magic field disrupts %s's attempts.", Players[anti_Ind]->name, m_name);
+		if (i == anti_Ind) msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+		else msg_format(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
 #else	// 0
 		if (Players[anti_Ind]->mon_vis[m_idx])
-			msg_format(anti_Ind, "\377oYour anti-magic field disrupts %s's attempts.", m_name);
-		msg_format_near(anti_Ind, "%s's anti-magic field disrupts %s's attempts.", Players[anti_Ind]->name, m_name);
+			msg_format(anti_Ind, "\377%cYour anti-magic field disrupts %s's attempts.", COLOUR_AM_GOOD, m_name);
+		msg_format_near(anti_Ind, "\377%c%s's anti-magic field disrupts %s's attempts.", COLOUR_AM_NEAR, Players[anti_Ind]->name, m_name);
 #endif	// 0
 
 		return TRUE;
@@ -1460,11 +1460,11 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 				{
 					char m_name[80];
 					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s's anti-magic field disrupts your attempts.", m_name);
+					msg_format(Ind, "\377%c%^s's anti-magic field disrupts your attempts.", COLOUR_AM_MON, m_name);
 				}
 				else
 				{
-					msg_print(Ind, "An anti-magic field disrupts your attempts.");
+					msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 				}
 				return TRUE;
 			}
@@ -1687,6 +1687,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
 
+	int eff_m_hp;
 
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
 	cave_type **zcave;
@@ -1746,15 +1747,15 @@ bool make_attack_spell(int Ind, int m_idx)
 	 * some spells (like teleport) under such situations.
 	 * -- arrow range has been limited by now. leaving this as it is though. --
 	 */
-#ifndef	STUPID_MONSTER_SPELLS // see MAX_SIGHT in process_monsters
+#ifndef	STUPID_MONSTER_SPELLS /* see MAX_SIGHT in process_monsters */
 	if (m_ptr->cdis > MAX_RANGE)
 	{
 		if (!los(wpos, y, x, m_ptr->fy, m_ptr->fx)) return (FALSE);
 
-		f4 &= (RF4_INDIRECT_MASK | RF4_SUMMON_MASK);
-		f5 &= (RF5_INDIRECT_MASK | RF5_SUMMON_MASK);
-		f6 &= (RF6_INDIRECT_MASK | RF6_SUMMON_MASK);
-		f0 &= (RF0_INDIRECT_MASK | RF0_SUMMON_MASK);
+		f4 &= (RF4_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF4_SUMMON_MASK : 0));
+		f5 &= (RF5_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF5_SUMMON_MASK : 0));
+		f6 &= (RF6_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF6_SUMMON_MASK : 0));
+		f0 &= (RF0_INDIRECT_MASK | (m_ptr->cdis <= MAX_RANGE + 12 ? RF0_SUMMON_MASK : 0));
 
 		/* No spells left */
 		if (!f4 && !f5 && !f6 && !f0) return (FALSE);
@@ -1768,9 +1769,9 @@ bool make_attack_spell(int Ind, int m_idx)
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 	}
-#else	// STUPID_MONSTER_SPELLS
+#else	/* STUPID_MONSTER_SPELLS */
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
-#endif	// STUPID_MONSTER_SPELLS
+#endif	/* STUPID_MONSTER_SPELLS */
 
 	/* Hack -- require projectable player */
 	if (normal)
@@ -1973,6 +1974,13 @@ bool make_attack_spell(int Ind, int m_idx)
 		if (monst_check_grab(m_idx, 75, "cast")) return (TRUE);
 	}
 #endif	// STUPID_MONSTER_SPELLS
+
+#if 0 /* instead we added an energy reduction for summoned monsters! - C. Blue */
+	/* Hack: Prevent overkill from monsters who gained lots of HP from levelling up
+	   compared to their r_info version (hounds in Nether Realm) - C. Blue */
+	if (r_ptr->d_char == 'Z' && m_ptr->hp > r_ptr->hdice * r_ptr->hside) eff_m_hp = r_ptr->hdice * r_ptr->hside;
+	else eff_m_hp = m_ptr->hp;
+#endif
 
 	/* Get the monster possessive ("his"/"her"/"its") */
 	monster_desc(Ind, m_poss, m_idx, 0x22);
@@ -5041,7 +5049,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 
 
 	/* Tease the player */
-	else if (r_ptr->flags7 & RF7_AI_ANNOY)
+	else if ((r_ptr->flags7 & RF7_AI_ANNOY) && !m_ptr->taunted)
 	{
 		if (distance(m_ptr->fy, m_ptr->fx, y2, x2) < ANNOY_DISTANCE)
 		{
@@ -6649,6 +6657,9 @@ static void process_monster(int Ind, int m_idx)
 		}
 	}
 
+	/* Handle "taunted" */
+	if (m_ptr->taunted) m_ptr->taunted--;
+
 	/* Get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
@@ -7176,7 +7187,7 @@ static void process_monster(int Ind, int m_idx)
 
 			/* get all adjacent players */
 			for (i = 0; i < 8; i++) {
-				c_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
+				cd_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
 
 				/* found a player? */
 				if (cd_ptr->m_idx < 0) {
@@ -7311,7 +7322,7 @@ static void process_monster(int Ind, int m_idx)
 			/* connect to outside world */
 			p_idx_target = p_idx_chosen;
 		    }
-#endif
+#endif /* C_BLUE_AI_MELEE */
 
 
 			q_ptr = Players[p_idx_target];
@@ -7503,6 +7514,8 @@ static void process_monster(int Ind, int m_idx)
 				/* Update the old monster */
 				update_player(0 - c_ptr->m_idx);
 				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
+				
+				stop_precision(0 - c_ptr->m_idx);
 			}
 			cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 

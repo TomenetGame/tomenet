@@ -2249,7 +2249,7 @@ void store_stole(int Ind, int item)
 	{
 //s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 /* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
-s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance);
+s_printf("%s Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", showtime(), p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
@@ -2353,7 +2353,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 	else
 	{
 //s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
-s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance);
+s_printf("%s Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", showtime(), p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\377y'Bastard\377L!!!'\377w - The angry shopkeeper throws you out!");
@@ -2544,7 +2544,7 @@ void store_purchase(int Ind, int item, int amt)
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
 	    && !p_ptr->total_winner) { /* <- obsolete. Added that one just for testing when admin char sets .total_winner=1 */
                 msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-                return;
+                if (!is_admin(p_ptr)) return;
 	}
 
 	/* Assume the player wants just one of them */
@@ -3451,6 +3451,14 @@ void do_cmd_store(int Ind)
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
 
+	/* Display the store before the blacklist or watchlist messages
+	 * (requires 441a) - this was Sav's request - mikaelh */
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0))
+	{
+		/* Display the store */
+		display_store(Ind);
+	}
+
 	if (p_ptr->tim_blacklist > 7000)
 		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
 	else if (p_ptr->tim_blacklist > 5000)
@@ -3464,8 +3472,11 @@ void do_cmd_store(int Ind)
 	else if (p_ptr->tim_watchlist)
 		msg_print(Ind, "The owner keeps a sharp eye on you.");
 
-	/* Display the store */
-	display_store(Ind);
+	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0))
+	{
+		/* Display the store */
+		display_store(Ind);
+	}
 
 	/* Do not leave */
 	leave_store = FALSE;
@@ -4241,7 +4252,7 @@ void home_purchase(int Ind, int item, int amt)
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
 	    && !p_ptr->total_winner) { /* <- Obsolete. Added that one just for testing when admin char sets .total_winner=1 */
                 msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-                return;
+                if (!is_admin(p_ptr)) return;
 	}
 
 	/* Assume the player wants just one of them */

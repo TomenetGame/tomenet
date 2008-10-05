@@ -173,12 +173,12 @@ static bool do_eat_gold(int Ind, int m_idx)
 	else if (p_ptr->au)
 	{
 		msg_print(Ind, "Your purse feels lighter.");
-		msg_format(Ind, "%ld coins were stolen!", (long int)gold);
+		msg_format(Ind, "\377o%ld coins were stolen!", (long int)gold);
 	}
 	else
 	{
 		msg_print(Ind, "Your purse feels lighter.");
-		msg_print(Ind, "All of your coins were stolen!");
+		msg_print(Ind, "\377oAll of your coins were stolen!");
 	}
 
 	/* Hack -- Consume some */
@@ -260,7 +260,7 @@ static bool do_eat_item(int Ind, int m_idx)
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 		/* Message */
-		msg_format(Ind, "%sour %s (%c) was stolen!",
+		msg_format(Ind, "\377o%sour %s (%c) was stolen!",
 				((o_ptr->number > 1) ? "One of y" : "Y"),
 				o_name, index_to_label(i));
 
@@ -500,7 +500,10 @@ bool make_attack_melee(int Ind, int m_idx)
 	int      	ap_cnt;
 	int		mon_acid = 0, mon_fire = 0, blows_total = 0;
 
-	int             i, j, k, tmp, ac, rlev, chance;
+	int             i, j, k, tmp, ac, rlev;
+#ifndef NEW_DODGING /* actually 'chance' is used a lot in this function -> FIXME */
+	int chance;
+#endif
 	int             do_cut, do_stun, factor = 100;// blockchance, parrychance, malus;
 	int 		player_aura_dam;
 
@@ -909,12 +912,12 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
 			if ((chance > 0) && !bypass_ac && magik(chance))
 			{
-				msg_format(Ind, "You dodge %s's attack!", m_name);
+				msg_format(Ind, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, m_name);
 				continue;
 			}
 #else
 			if (!bypass_ac && magik(apply_dodge_chance(Ind, rlev))) {
-				msg_format(Ind, "You dodge %s's attack!", m_name);
+				msg_format(Ind, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, m_name);
 				continue;
 			}
 #endif
@@ -928,7 +931,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (p_ptr->shield_deflect && !bypass_shield && 
 			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-					msg_format(Ind, "You block %^s's attack.", m_name);
+					msg_format(Ind, "\377%cYou block %^s's attack.", COLOUR_BLOCK_GOOD, m_name);
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
 					} else if (mon_acid + mon_fire) {
@@ -945,7 +948,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					int slot = INVEN_WIELD;
 					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 						slot = INVEN_ARM;
-					msg_format(Ind, "You parry %^s's attack.", m_name);
+					msg_format(Ind, "\377%cYou parry %^s's attack.", COLOUR_PARRY_GOOD, m_name);
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
 					} else if (mon_acid + mon_fire) {
@@ -970,7 +973,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			}
  #ifdef USE_BLOCKING
 			if (attempt_block && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-				msg_format(Ind, "You block %^s's attack.", m_name);
+				msg_format(Ind, "\377%cYou block %^s's attack.", COLOUR_BLOCK_GOOD, m_name);
 				if (randint(mon_acid + mon_fire) > mon_acid) {
 					if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
 				} else if (mon_acid + mon_fire) {
@@ -984,7 +987,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				int slot = INVEN_WIELD;
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 					slot = INVEN_ARM;
-				msg_format(Ind, "You parry %^s's attack.", m_name);
+				msg_format(Ind, "\377%cYou parry %^s's attack.", COLOUR_PARRY_GOOD, m_name);
 				if (randint(mon_acid + mon_fire) > mon_acid) {
 					if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
 				} else if (mon_acid + mon_fire) {

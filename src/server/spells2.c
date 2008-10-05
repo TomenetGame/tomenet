@@ -558,11 +558,13 @@ void warding_glyph(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
+#if 0
 	cave_type *c_ptr;
+#endif
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 #if 0
-#if 0
+ #if 0
 	/* Require clean space */
 	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
@@ -570,9 +572,9 @@ void warding_glyph(int Ind)
         if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
 	/* ..nor in Valinor */
 	if ((getlevel(&p_ptr->wpos) == 200) && (p_ptr->wpos.wz == 1)) return;
-#else
+ #else
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) return;
-#endif
+ #endif
 	/* Access the player grid */
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -1201,6 +1203,14 @@ void self_knowledge(int Ind)
 	if (p_ptr->shero)
 	{
 		fprintf(fff, "You are in a battle rage.\n");
+	}
+	if (p_ptr->fury)
+	{
+		fprintf(fff, "You are in a wild fury.\n");
+	}
+	if (p_ptr->berserk)
+	{
+		fprintf(fff, "You are going berserk.\n");
 	}
 	if (p_ptr->protevil)
 	{
@@ -1916,6 +1926,14 @@ void self_knowledge(int Ind)
 	if (p_ptr->shero)
 	{
 		info[i++] = "You are in a battle rage.";
+	}
+	if (p_ptr->fury)
+	{
+		info[i++] = "You are in a wild fury.";
+	}
+	if (p_ptr->berserk)
+	{
+		info[i++] = "You are going berserk.";
 	}
 	if (p_ptr->protevil)
 	{
@@ -4760,6 +4778,152 @@ void aggravate_monsters(int Ind, int who)
 	}
 }
 
+/*
+ * Wake up all monsters
+ */
+void wakeup_monsters(int Ind, int who)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int i;
+
+	bool sleep = FALSE;
+
+	/* Aggravate everyone nearby */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type	*m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		/* Skip aggravating monster (or player) */
+		if (i == who) continue;
+
+		/* Wake up nearby sleeping monsters */
+		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+#if 0
+		if (m_ptr->cdis < MAX_SIGHT * 2)
+#endif
+		{
+			/* Wake up */
+			if (m_ptr->csleep)
+			{
+				/* Wake up */
+				m_ptr->csleep = 0;
+				sleep = TRUE;
+			}
+		}
+	}
+
+	/* Messages */
+	/* the_sandman: added _near so other players can hear too */
+	if (sleep) {
+		msg_print(Ind, "You hear a sudden stirring in the distance!");
+		msg_print_near(Ind, "You hear a sudden stirring in the distance!");
+	}
+}
+
+void taunt_monsters(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type	*m_ptr;
+	monster_race *r_ptr;
+
+	int i;
+	bool sleep = FALSE, tauntable;
+
+        msg_print(Ind, "You call out a taunt!");
+        msg_format_near(Ind, "%s calls out a taunt!", p_ptr->name);
+	break_cloaking(Ind);
+
+	for (i = 1; i < m_max; i++)
+	{
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
+            	    (strchr("hHkpt", r_ptr->d_char))) tauntable = TRUE;
+		else tauntable = FALSE;
+		
+		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			if (r_ptr->flags2 & RF2_POWERFUL) {
+				if (magik(75)) tauntable = FALSE; /* powerful unique monsters prefer to stay alive */
+			} else {
+				if (magik(50)) tauntable = FALSE; /* unique monsters resist more often */
+			}
+		}
+		else if (magik(25)) tauntable = FALSE; /* all monsters sometimes resist taunt */
+//		else if (magik(r_ptr->level / 3)) tauntable = FALSE; /* all monsters sometimes resist taunt */
+
+#if 0 /*actually, being POWERFUL doesn't really protect.. */
+		if (r_ptr->flags2 & RF2_POWERFUL) tauntable = FALSE;
+#endif
+#if 0 /* shamans -_- and not only that, way too many monsters are SMART, so commented out for now */
+		if (r_ptr->flags2 & RF2_SMART) tauntable = FALSE; /* smart monsters don't fall for taunts */
+#endif
+		if (r_ptr->flags3 & RF3_NONLIVING) tauntable = FALSE; /* nonliving monsters can't perceive taunts */
+		if (r_ptr->flags2 & RF2_EMPTY_MIND) tauntable = FALSE; /* empty-minded monsters can't perceive taunts */
+		if ((r_ptr->flags2 & RF2_WEIRD_MIND) && magik(50)) tauntable = FALSE; /* weird-minded monsters are hard to predict */
+		/* RF2_CAN_SPEAK ?? */
+
+		/* some egos aren't tauntable possibly */
+		switch(m_ptr->ego) {
+		case 10: case 13: case 23: /* archers */
+		case 9: case 30: /* mages */
+			tauntable = FALSE;
+			break;
+		default: ;
+		}
+
+		/* some monsters (hard-coded ;() aren't tauntable */
+		switch(m_ptr->r_idx) {
+		case 46: case 93: case 240: case 449: case 638: case 738: /* p mages */
+		case 178: case 281: case 375: case 657: /* h mages */
+		case 539: /* h archers */
+			tauntable = FALSE;
+			break;
+		default: ;
+		}
+
+		if (!tauntable) continue;
+
+		if (player_has_los_bold(Ind, m_ptr->fy, m_ptr->fx))
+		{
+#if 0
+			/* wake up */
+			if (m_ptr->csleep) {
+				m_ptr->csleep = 0;
+				sleep = TRUE;
+			}
+#endif
+
+			/* taunt */
+			m_ptr->monfear = 0;
+			m_ptr->taunted = 5; /* number of turns staying taunted */
+		}
+
+		/* monster stands right next to this player? */
+		if (ABS(m_ptr->fy - p_ptr->py) <= 1 && ABS(m_ptr->fx - p_ptr->px) <= 1)
+		{
+			m_ptr->last_target_melee = Ind;
+		}
+	}
+
+	if (sleep) {
+		msg_print(Ind, "You hear a sudden stirring in the distance!");
+		msg_print_near(Ind, "You hear a sudden stirring in the distance!");
+	}
+}
+
 /* Need it for detonation pots in potion_smash_effect - C. Blue */
 void aggravate_monsters_floorpos(worldpos *wpos, int x, int y)
 {
@@ -5602,7 +5766,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						case 1:
 						{
 							damage = 0;
-							msg_print(Ind, "You nimbly dodge the blast and take no damage!");
+							msg_format(Ind, "\377%cYou nimbly dodge the blast and take no damage!", COLOUR_DODGE_GOOD);
 							break;
 						}
 						case 2:

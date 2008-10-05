@@ -315,7 +315,7 @@ static void prt_stamina(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-//	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
+	Send_stamina(Ind, p_ptr->mst, p_ptr->cst);
 }
 
 /*
@@ -1583,9 +1583,11 @@ void calc_hitpoints(int Ind)
 
 	/* Factor in the hero / superhero settings */
 	if (p_ptr->hero) mhp += 10;
-	if (p_ptr->shero) mhp += 30;
-
-	if (p_ptr->fury) mhp += 40;
+	if (p_ptr->shero) mhp += 20;
+#if 1 /* hmm */
+	if (p_ptr->fury) mhp += 20;
+	if (p_ptr->berserk) mhp += 20;
+#endif
 	
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
@@ -1730,7 +1732,7 @@ static void calc_torch(int Ind)
 /*
  * Computes current weight limit.
  */
-static int weight_limit(int Ind)
+static int weight_limit(int Ind) /* max. 3000 atm */
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -2464,7 +2466,8 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 	if ((!p_ptr->inventory[INVEN_ARM].k_idx || /* don't forget dual-wield.. weapon might be in the other hand! */
 	    (!p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
 	    (k_info[o_ptr->k_idx].flags4 & (TR4_SHOULD2H | TR4_MUST2H | TR4_COULD2H)))
-		eff_weight = (eff_weight * 2) / 3;
+		eff_weight = (eff_weight * 2) / 3; /* probably more sensible, but..see the line below :/ */
+//too easy!	eff_weight = (eff_weight * 1) / 2; /* get 2bpr with 18/30 str even with broad axe starting weapon */
 
 	/* Analyze the class */
 	switch (p_ptr->pclass)
@@ -2560,9 +2563,10 @@ otherwise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
 		f1 &= ~(k_info[o_ptr->k_idx].flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 	}
 	if ((f1 & TR1_BLOWS)
-#if 0 /* this appearently works */
+#if 1 /* this appearently works */
 	    && o_ptr->pval > xblow) xblow = o_ptr->pval;
 #else /* this is how it's done in xtra1.c though */
+      /* this allows shadow blade of ea (+2) (+n) to give +2+n EA */
 		) xblow += o_ptr->pval;
 #endif
 	num_blow += xblow;
@@ -2653,8 +2657,8 @@ void calc_bonuses(int Ind)
         cave_type **zcave;
         if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	int			i, j, hold, minus, am_bonus = 0, am_temp, to_life = 0;
-	long			w;
+	int			j, hold, minus, am_bonus = 0, am_temp, to_life = 0;
+	long			w, i;
 
 	int			old_speed;
 
@@ -2680,7 +2684,6 @@ void calc_bonuses(int Ind)
 
 	    u32b f1, f2, f3, f4, f5, esp;
 		s16b pval;
-
 
 	/* Save the old speed */
 	old_speed = p_ptr->pspeed;
@@ -2907,12 +2910,15 @@ void calc_bonuses(int Ind)
          need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
 	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
         p_ptr->to_hp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
+
 #ifdef ENABLE_DIVINE
 	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity==DIVINE_DEMON)) { 
 		p_ptr->to_hp += (p_ptr->lev-20)*2;
 	}
 #endif
 #endif
+
+
 
 	/* Calc bonus body */
 	if(p_ptr->body_monster)
@@ -3087,9 +3093,6 @@ void calc_bonuses(int Ind)
                 p_ptr->resist_cold = TRUE;
                 p_ptr->hold_life = TRUE;
                 if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
-		/* damage from sun light */
-		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
-		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING)) p_ptr->drain_life++;
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
 //		if (p_ptr->lev >= 30) p_ptr->fly = TRUE; can poly into bat instead
@@ -3317,8 +3320,14 @@ void calc_bonuses(int Ind)
     	        	/* Affect life capacity */
         	        if (f1 & (TR1_LIFE))
 				if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 				    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
-				    (p_ptr->lev >= o_ptr->level)) p_ptr->to_l += o_ptr->bpval;
+				    (p_ptr->lev >= o_ptr->level))
+#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
+				    (p_ptr->once_winner && cfg.fallenkings_etiquette))
+#endif
+					p_ptr->to_l += o_ptr->bpval;
+
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK)
@@ -3339,8 +3348,12 @@ void calc_bonuses(int Ind)
 /*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)*/
 		if (f1 & (TR1_LIFE))
 			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
 			    (p_ptr->lev >= o_ptr->level))
+#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
+			    (p_ptr->once_winner && cfg.fallenkings_etiquette))
+#endif
 		{
 /*			if ((o_ptr->pval < 0 && o_ptr->bpval > 0) ||
 			    (o_ptr->pval > 0 && o_ptr->bpval < 0)) {*/
@@ -3434,8 +3447,12 @@ void calc_bonuses(int Ind)
                 /* Affect life capacity */
                 if (f1 & (TR1_LIFE))
 			if ((o_ptr->name1 != ART_RANDART) || p_ptr->total_winner ||
+#if 0 /* changed, didn't seem to make that much sense? - C. Blue */
 			    (p_ptr->once_winner && cfg.fallenkings_etiquette && p_ptr->lev >= 50) ||
 			    (p_ptr->lev >= o_ptr->level))
+#else /* a bit different, hopefully doing better, also catching badly mutated +life arts after randart.c changes! */
+			    (p_ptr->once_winner && cfg.fallenkings_etiquette))
+#endif
 				p_ptr->to_l += o_ptr->pval;
 
 		/* Affect stealth */
@@ -3763,6 +3780,14 @@ void calc_bonuses(int Ind)
 	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		/* damage from sun light */
+		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
+		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
+		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) &&
+		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED))
+			p_ptr->drain_life++;
+	}
 
 	/* Calculate stats */
 	for (i = 0; i < 6; i++)
@@ -3893,7 +3918,7 @@ void calc_bonuses(int Ind)
 		}
 		if (p_ptr->adrenaline & 2) p_ptr->extra_blows++;
 		p_ptr->to_a -= 20;
-		p_ptr->dis_to_a -= 10;
+		p_ptr->dis_to_a -= 20;
 	}
 
         /* At least +1, max. +3 */
@@ -3966,6 +3991,18 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_a -= 10;//10
 	}
 
+	/* Temporary "Berserk" */
+	if (p_ptr->berserk)
+	{
+		p_ptr->to_h -=5;
+		p_ptr->dis_to_h -=5;
+                p_ptr->to_d += 15;
+                p_ptr->dis_to_d += 15;
+		p_ptr->to_a -= 10;
+		p_ptr->dis_to_a -= 10;
+		p_ptr->extra_blows++;
+	}
+
 	/* Temporary "Fury" */
 	if (p_ptr->fury)
 	{
@@ -3973,7 +4010,7 @@ void calc_bonuses(int Ind)
 		p_ptr->dis_to_h -= 10;
                 p_ptr->to_d += 20;
                 p_ptr->dis_to_d += 20;
-		p_ptr->pspeed += 10;
+		p_ptr->pspeed += 5;
                 p_ptr->to_a -= 30;
                 p_ptr->dis_to_a -= 30;
 	}
@@ -4024,7 +4061,7 @@ void calc_bonuses(int Ind)
 	}
 
 	/* Hack -- Hero/Shero -> Res fear */
-	if (p_ptr->hero || p_ptr->shero)
+	if (p_ptr->hero || p_ptr->shero || p_ptr->fury || p_ptr->berserk)
 	{
 		p_ptr->resist_fear = TRUE;
 	}
@@ -4056,7 +4093,12 @@ void calc_bonuses(int Ind)
 	i = weight_limit(Ind);
 
 	/* XXX XXX XXX Apply "encumbrance" from weight */
-	if (w > i/2) p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
+	if (w > i/2) {
+		/* protect pspeed from uberflow O_o */
+//		if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
+		if (w > 70000) p_ptr->pspeed = 10; /* roughly ;-p */
+		else p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
+	}
 
 	/* Bloating slows the player down (a little) */
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
@@ -4183,7 +4225,7 @@ void calc_bonuses(int Ind)
 	}
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !monk_heavy_armor(p_ptr))
 	{
-		int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 5), w = 0;
+		long int k = get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 5), w = 0;
 
 		if (k)
 		{
@@ -4918,7 +4960,7 @@ void calc_bonuses(int Ind)
 		/* rules here: backpack grows exponentially; non-weapons grow exponentially; weapons grow linear;
 		               also special is that although backpack and non-weapons grow similar, they grow separately! */
 		/* note: rings, amulet, light source and tool are simplifiedly counted to "weapons" here */
-		int e = equip_weight(p_ptr), w = e - armour_weight(p_ptr), i = p_ptr->total_weight - e;
+		long int e = equip_weight(p_ptr), w = e - armour_weight(p_ptr), i = p_ptr->total_weight - e;
 		e = e - w;
 
 		/* prevent any weird overflows if 'someone' collects gronds */
@@ -5019,13 +5061,44 @@ void calc_bonuses(int Ind)
 		}
 	}
 
+	/* Equipment weight affects shooting */
+#if 0 /* adj_weight_tohr not yet implemented and maybe too distinct steps */
+	i = armour_weight(p_ptr) / 200;
+	if (i > 25) i = 25;
+	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * adj_weight_tohr[i]) / 100;
+#endif
+#if 0
+	i = armour_weight(p_ptr) / 100;
+	i = (i * i * i) / 1000; /* 1500 */
+	if (i > 100) i = 100;
+	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * (100 - i)) / 100;
+#endif
+#if 1 /* allow malus even */
+	i = armour_weight(p_ptr) / 100;
+	i = (i * i * i) / 2000;
+	if (i > 50) i = 50; /* reached at 470.0 lbs */
+	p_ptr->to_h_ranged -= i;
+#endif
+
 	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
 	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_ARM].k_idx
 	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
 	{
 		/* can't aim well while carrying a shield on the arm! */
-		p_ptr->to_h_ranged /= 4;
+#if 0 /* the following part only punishes the +hit/+dam from trained skill - C. Blue */
+		p_ptr->to_h_ranged = 0;/* /= 4; need more severeness, it was nothing */
+		p_ptr->to_d_ranged = 0;/* bam */
+#else
+		/* the following part punishes all +hit/+dam for ranged weapons;
+        	   trained fighters suffer more than untrained ones! - C. Blue */
+		if (p_ptr->to_h_ranged >= 25) p_ptr->to_h_ranged = 0;
+		else p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
+ #if 0 /* Moltor agrees it's a bit too harsh probably */
+		if (p_ptr->to_d_ranged >= 15) p_ptr->to_d_ranged = 0;
+		else p_ptr->to_d_ranged -= 5 + (p_ptr->to_d_ranged * 2) / 3;
+ #endif
+#endif
 		p_ptr->awkward_shoot = TRUE;
 	}
 
@@ -5517,6 +5590,7 @@ void calc_bonuses(int Ind)
 
 	/* Limit speed penalty from total_weight */
 	if ((p_ptr->pspeed < 10) && !is_admin(p_ptr)) p_ptr->pspeed = 10;
+	if (p_ptr->pspeed < 100 && is_admin(p_ptr)) p_ptr->pspeed = 100;
 	
 	/* Limit speed */
 	if ((p_ptr->pspeed > 210) && !is_admin(p_ptr)) p_ptr->pspeed = 210;
@@ -5578,6 +5652,8 @@ void update_stuff(int Ind)
 	if (p_ptr->update & PU_SKILL_INFO)
         {
                 int i;
+
+		calc_techniques(Ind);
 
 		p_ptr->update &= ~(PU_SKILL_INFO);
                 for (i = 1; i < MAX_SKILLS; i++)
@@ -5733,7 +5809,7 @@ void redraw_stuff(int Ind)
 		p_ptr->redraw &= ~(PR_BASIC);
 		p_ptr->redraw &= ~(PR_MISC | PR_TITLE | PR_STATS);
 		p_ptr->redraw &= ~(PR_LEV | PR_EXP | PR_GOLD);
-		p_ptr->redraw &= ~(PR_ARMOR | PR_HP | PR_MANA);
+		p_ptr->redraw &= ~(PR_ARMOR | PR_HP | PR_MANA | PR_STAMINA);
 		p_ptr->redraw &= ~(PR_DEPTH | PR_HEALTH);
 		prt_frame_basic(Ind);
 	}
@@ -6031,6 +6107,7 @@ int start_global_event(int Ind, int getype, char *parm)
 	ge->creator = 0;
 	if (Ind) ge->creator = p_ptr->id;
 	ge->announcement_time = 1800; /* time until event finally starts, announced every 15 mins */
+	ge->signup_time = 0; /* 0 = during announcement time */
 	ge->first_announcement = TRUE; /* first announcement will also display available commands */
 	ge->start_turn = turn;
 //	ge->start_turn = turn + 1; /* +1 is a small hack, to prevent double-announcement */
@@ -6079,6 +6156,31 @@ int start_global_event(int Ind, int getype, char *parm)
 			if (atoi(parm)) ge->announcement_time = atoi(parm);
 			ge->min_participants = 2;
 			break;
+	case GE_ARENA_MONSTER:	/* 'Arena Monster Challenge' [<announcement time>] */
+			strcpy(ge->title, "Arena Monster Challenge");
+			strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
+			strcpy(ge->description[1], format(" '/gesign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
+			strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
+			strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
+			strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
+			strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
+			strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
+			strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
+			ge->end_turn = turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
+#if 0
+			switch(rand_int(2)) { /* Determine terrain type! */
+			case 0: ge->extra[2] = WILD_WASTELAND; break;
+//			case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
+			case 1: ge->extra[2] = WILD_GRASSLAND; break;
+			}
+			switch(rand_int(3)) { /* Load premade layout? (Arenas) */
+			case 0: ge->extra[4] = 1; break;
+			}
+#endif
+			ge->announcement_time = 0;
+			ge->signup_time = 1800;
+			ge->min_participants = 0;
+			break;
 	}
 
 	/* Fix limits */
@@ -6115,13 +6217,17 @@ int start_global_event(int Ind, int getype, char *parm)
  * Stop a global event :(
  */
 void stop_global_event(int Ind, int n){
-	int i;
 	global_event_type *ge = &global_event[n];
 	msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
 	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n+1, ge->getype);
 	if (ge->getype) msg_broadcast(0, format("\377y[Event '%s' (%d) was cancelled.]", ge->title, n+1));
+#if 0
 	ge->getype = GE_NONE;
 	for (i = 1; i <= NumPlayers; i++) Players[i]->global_event_type[n] = GE_NONE;
+#else /* we really need to call the clean-up instead of just GE_NONEing it: */
+	ge->announcement_time = -1; /* enter the processing phase, */
+	ge->state[0] = 255; /* ..and process clean-up! */
+#endif
 	return;
 }
 
@@ -6144,10 +6250,12 @@ void announce_global_event(int ge_id) {
 /*
  * A player signs on for a global_event - C. Blue
  */
-void global_event_signup(int Ind, int n){
-	int i, p, max_p;
+void global_event_signup(int Ind, int n, cptr parm){
+	int i, p, max_p, r_found = 0, r_found_len = 99;
+	bool r_impossible = FALSE, fake_signup = FALSE;
 	global_event_type *ge = &global_event[n];
 	player_type *p_ptr = Players[Ind];
+	char c[80], parm2[80], *cp, *p2p = parm2;
 
 	/* Still room for more participants? */
 	max_p = MAX_GE_PARTICIPANTS;
@@ -6163,36 +6271,103 @@ void global_event_signup(int Ind, int n){
 		return;
 	}
 
+	if (p_ptr->inval) {
+		msg_print(Ind, "\377ySorry, only validated accounts may participate.");
+		return;
+	}
+
 	/* check individual event restrictions against player */
-	if (!is_admin(p_ptr))
 	switch (ge->getype) {
 	case GE_HIGHLANDER:	/* Highlander Tournament */
-			if (p_ptr->inval) {
-				msg_print(Ind, "\377ySorry, only validated accounts may participate.");
-				return;
+		if (p_ptr->max_exp > 0) {
+			msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (p_ptr->fruit_bat == 1) { /* 1 = native bat, 2 = from chauve-souris */
+			msg_print(Ind, "\377ySorry, native fruit bats are not eligible to join this event.");
+			if (!is_admin(p_ptr)) return;
+		}
+		break;
+	case GE_ARENA_MONSTER:	/* Arena Monster Challenge */
+		if (ge->state[0] != 1) { /* in case we do add an announcement time.. */
+			msg_print(Ind, "\377yYou have to wait until it starts to sign up for this event!");
+			return;
+		}
+		if (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0) {
+			msg_print(Ind, "\377yYou have to be in Bree in order to sign up for this event!");
+			return;
+		}
+		if (parm == NULL) {
+			msg_format(Ind, "\377yYou have to specify a monster name:  /gesign %d monstername", n+1);
+			return;
+		}
+		strcpy(parm2, parm);
+		while (*p2p) {*p2p = tolower(*p2p); p2p++;}
+	        /* Scan the monster races */
+	        for (i = 1; i < MAX_R_IDX; i++) {
+			strcpy(c, r_info[i].name + r_name);
+			cp = c;
+			while (*cp) {*cp = tolower(*cp); cp++;}
+#if 0 /* problem: Skeleton Ettin vs Ettin.. oops! */
+	                if (strstr(c, parm2)) {
+				if ((r_info[i].flags1 & RF1_UNIQUE) ||
+				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
+				    (r_info[i].flags7 & RF7_PET) ||
+				    (r_info[i].flags7 & RF7_NEUTRAL) ||
+				    (r_info[i].flags7 & RF7_FRIENDLY) ||
+				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
+				    (r_info[i].rarity == 255)) {
+					msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
+					return;
+				} else {
+					monster_race_desc(0, c, i, 0x88);
+					msg_broadcast(0, format("\377c** %s challenges %s! **", p_ptr->name, c));
+					ge->extra[1] = i;
+					return;
+				}
 			}
-			if (p_ptr->max_exp > 0) {
-				msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
-				return;
+#else
+	                if (strstr(c, parm2)) {
+				if (!((r_info[i].flags1 & RF1_UNIQUE) ||
+				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
+				    (r_info[i].flags7 & RF7_PET) ||
+				    (r_info[i].flags7 & RF7_NEUTRAL) ||
+				    (r_info[i].flags7 & RF7_FRIENDLY) ||
+				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
+				    (r_info[i].rarity == 255))) {
+					if (r_found_len > strlen(c)) {
+						r_found_len = strlen(c);
+						r_found = i;
+					}
+				} else r_impossible = TRUE;
 			}
-			if (p_ptr->fruit_bat == 1) { /* 1 = native bat, 2 = from chauve-souris */
-				msg_print(Ind, "\377ySorry, native fruit bats are not eligible to join this event.");
-				return;
-			}
+#endif
+		}
+#if 1
+		if (r_found) {
+			monster_race_desc(0, c, r_found, 0x88);
+			msg_broadcast(0, format("\377c** %s challenges %s! **", p_ptr->name, c));
+			ge->extra[1] = r_found;
+			fake_signup = TRUE;
 			break;
+		} else if (r_impossible) {
+			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
+			return;
+		}
+#endif
+		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
+		return;
 	}
+
+	if (parm) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm);
+	else s_printf("%s EVENT_SIGNUP: %d (%s): %s.\n", showtime(), n + 1, ge->title, p_ptr->name);
+	if (fake_signup) return;
 
 	/* currently no warning/error/solution if you try to sign on for multiple events at the same time :|
 	   However, player_type has MAX_GLOBAL_EVENTS sized data arrays for each event, so a player *could*
-	   theoretically participate in all events at this time.. */
+	   theoretically participate in all events at once at this time.. */
 	msg_format(Ind, "\377c>>You signed up for %s!<<", ge->title);
-//	msg_print(Ind, "\377d ");
-#if 1
 	msg_broadcast(Ind, format("\377s%s signed up for %s", p_ptr->name, ge->title));
-#else
-	for (i = 1; i <= NumPlayers; i++) if (is_admin(Players[i])) msg_format(i, "Event %d (%s): %s signed up.", n + 1, ge->title, p_ptr->name);
-#endif
-	s_printf("%s EVENT_SIGNUP: %d (%s): %s.\n", showtime(), n + 1, ge->title, p_ptr->name);
 	ge->participant[p] = p_ptr->id;
 	p_ptr->global_event_type[n] = ge->getype;
 	time(&p_ptr->global_event_signup[n]);
@@ -6210,6 +6385,8 @@ static void process_global_event(int ge_id)
 	object_type forge, *o_ptr = &forge; /* for creating a reward, for example */
 	bool timeout = FALSE;
 	worldpos wpos;
+        struct wilderness_type *wild;
+	struct dungeon_type *d_ptr;
 	int participants = 0;
 	int i, j = 0, n, k, x, y; /* misc variables, used by the events */
 	cave_type **zcave, *c_ptr;
@@ -6255,7 +6432,7 @@ static void process_global_event(int ge_id)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					msg_broadcast(0, format("\377W>>%s starts now!<<", ge->title));
+					msg_broadcast(0, format("\377W[>>%s starts now!<<]", ge->title));
 				}
 			}
 		} else {
@@ -6283,309 +6460,372 @@ static void process_global_event(int ge_id)
 	switch(ge->getype){
 	/* Highlander Tournament */
 	case GE_HIGHLANDER:
-			switch(ge->state[0]){
-			case 0: /* prepare level, gather everyone, start exp'ing */
-				sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
-				wipe_m_list(&wpos); /* clear any (powerful) spawns */
-				wipe_o_list_safely(&wpos); /* and objects too */
-				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+		switch(ge->state[0]){
+		case 0: /* prepare level, gather everyone, start exp'ing */
+			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
+			wipe_m_list(&wpos); /* clear any (powerful) spawns */
+			wipe_o_list_safely(&wpos); /* and objects too */
+			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
 
-				if (!getcave(&wpos)) alloc_dungeon_level(&wpos);
-				/* generate solid battleground, not oceans and stuff */
-				ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
-				s_printf("EVENT_LAYOUT: Generating wild %d at %d,%d,%d\n", ge->extra[2], wpos.wx, wpos.wy, wpos.wz);
-				wild_info[wpos.wy][wpos.wx].type = ge->extra[2];
-				wilderness_gen(&wpos);
-				/* make it static */
-//				static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
-				new_players_on_depth(&wpos, 1, FALSE);
-				/* wipe obstacles away so ranged chars vs melee chars won't end in people waiting inside trees */
-				zcave = getcave(&wpos);
-				for (x = 1; x < MAX_WID - 1; x++)
-				for (y = 1; y < MAX_HGT - 1; y++) {
-					c_ptr = &zcave[y][x];
-					if (c_ptr->feat == FEAT_IVY ||
-					    c_ptr->feat == FEAT_BUSH ||
-					    c_ptr->feat == FEAT_DEAD_TREE ||
-					    c_ptr->feat == FEAT_TREE)
-						switch (ge->extra[2]) {
-						case WILD_WASTELAND: c_ptr->feat = FEAT_DIRT; break;
-						case WILD_GRASSLAND: 
-						default: c_ptr->feat = FEAT_GRASS; break;
-						}
-				}
-				if (ge->extra[4]) {
-					/* Generate the level from fixed arena layout */
-					s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
-			                process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
-				}
+			if (!getcave(&wpos)) alloc_dungeon_level(&wpos);
+			/* generate solid battleground, not oceans and stuff */
+			ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
+			s_printf("EVENT_LAYOUT: Generating wild %d at %d,%d,%d\n", ge->extra[2], wpos.wx, wpos.wy, wpos.wz);
+			wild_info[wpos.wy][wpos.wx].type = ge->extra[2];
+			wilderness_gen(&wpos);
+			/* make it static */
+//			static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
+			new_players_on_depth(&wpos, 1, FALSE);
+			/* wipe obstacles away so ranged chars vs melee chars won't end in people waiting inside trees */
+			zcave = getcave(&wpos);
+			for (x = 1; x < MAX_WID - 1; x++)
+			for (y = 1; y < MAX_HGT - 1; y++) {
+				c_ptr = &zcave[y][x];
+				if (c_ptr->feat == FEAT_IVY ||
+				    c_ptr->feat == FEAT_BUSH ||
+				    c_ptr->feat == FEAT_DEAD_TREE ||
+				    c_ptr->feat == FEAT_TREE)
+					switch (ge->extra[2]) {
+					case WILD_WASTELAND: c_ptr->feat = FEAT_DIRT; break;
+					case WILD_GRASSLAND: 
+					default: c_ptr->feat = FEAT_GRASS; break;
+					}
+			}
+			if (ge->extra[4]) {
+				/* Generate the level from fixed arena layout */
+				s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
+		                process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+			}
 
-				for (i = 1; i <= NumPlayers; i++) 
-				for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
-				if (ge->participant[j] == Players[i]->id) {
-					p_ptr = Players[i];
-					if (p_ptr->max_exp && !is_admin(p_ptr)) {
-						msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
-						ge->participant[j] = 0;
-						p_ptr->global_event_type[ge_id] = GE_NONE;
-						continue;
-					}
-					if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
-						p_ptr->recall_pos.wx = 0;
-						p_ptr->recall_pos.wy = 0;
-						p_ptr->recall_pos.wz = -1;
-						p_ptr->global_event_temp = 0x7;  /* 1: pass through sector00separation;
-										    2: die permanently in the tournament;
-										    4: don't die while still in dungeon; */
-	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					        recall_player(i, "");
-					}
-					/* Give him the amulet of the highlands */
-					invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
-				        o_ptr->number = 1;
-					o_ptr->level = 0;
-				        o_ptr->discount = 0;
-				        o_ptr->ident |= ID_MENTAL;
-				        o_ptr->owner = p_ptr->id;
-				        o_ptr->owner_mode = p_ptr->mode;
-				        object_aware(i, o_ptr);
-			        	object_known(o_ptr);
-					inven_carry(i, o_ptr);
-					/* give some safe time for exp'ing */
-					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-						p_ptr->pkill &= ~PKILL_KILLABLE;
-					}
-					p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
+			for (i = 1; i <= NumPlayers; i++) 
+			for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
+			if (ge->participant[j] == Players[i]->id) {
+				p_ptr = Players[i];
+				if (p_ptr->max_exp && !is_admin(p_ptr)) {
+					msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
+					ge->participant[j] = 0;
+					p_ptr->global_event_type[ge_id] = GE_NONE;
+					continue;
 				}
+				if (p_ptr->wpos.wx || p_ptr->wpos.wy) {
+					p_ptr->recall_pos.wx = 0;
+					p_ptr->recall_pos.wy = 0;
+					p_ptr->recall_pos.wz = -1;
+					p_ptr->global_event_temp = 0x7;  /* 1: pass through sector00separation;
+									    2: die permanently in the tournament;
+									    4: don't die while still in dungeon; */
+	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				        recall_player(i, "");
+				}
+				/* Give him the amulet of the highlands */
+				invcopy(o_ptr, lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS));
+			        o_ptr->number = 1;
+				o_ptr->level = 0;
+			        o_ptr->discount = 0;
+			        o_ptr->ident |= ID_MENTAL;
+			        o_ptr->owner = p_ptr->id;
+			        o_ptr->owner_mode = p_ptr->mode;
+			        object_aware(i, o_ptr);
+		        	object_known(o_ptr);
+				inven_carry(i, o_ptr);
+				/* give some safe time for exp'ing */
+				if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+					p_ptr->pkill &= ~PKILL_KILLABLE;
+				}
+				p_ptr->global_event_progress[ge_id][0] = 1; /* now in 0,0,0-dungeon! */
+			}
 
-				ge->state[0] = 1;
-				break;
-			case 1: /* exp phase */
-				n = 0;
-				for (i = 1; i <= NumPlayers; i++)
-					if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
-						n++;
-						j = i;
-					}
-				if (!n) {
-					ge->state[0] = 255; /* double kill or something? ew. */
-					break;
+			ge->state[0] = 1;
+			break;
+		case 1: /* exp phase */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++)
+				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+					n++;
+					j = i;
 				}
-				if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
-					ge->state[0] = 5;
-					ge->extra[3] = j;
-					break;
-				}
-
-				if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
-					for (i = 1; i <= NumPlayers; i++)
-					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377f[The slaughter will begin soon!]");
-					ge->state[0] = 2;
-				}
-				break;
-			case 2: /* exp phase // get people out of the dungeon and make them fight each other properly */
-				n = 0;
-				for (i = 1; i <= NumPlayers; i++)
-					if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
-						n++;
-						j = i;
-					}
-				if (!n) {
-					ge->state[0] = 255; /* double kill or something? ew. */
-					break;
-				}
-				if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
-					ge->state[0] = 5;
-					ge->extra[3] = j;
-					break;
-				}
-
-				if (elapsed - ge->announcement_time >= 600) {
-					for (i = 1; i <= NumPlayers; i++) {
-						p_ptr = Players[i];
-						if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
-#if 0
-						p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
-						if (cfg.use_pk_rules == PK_RULES_DECLARE)
-						{
-							p_ptr->pkill|=PKILL_KILLABLE;
-							if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill & PKILL_SET))
-								set_pkill(i, 1);
-						}
-#else
-						for (j = 1; j <= NumPlayers; j++) {
-							if (j == i) continue;
-							if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
-							/* leave party */
-							if (Players[j]->party == p_ptr->party) {
-								party_leave(i);
-							}
-							/* become hostile */
-							add_hostility(i, Players[j]->name);
-						}
-						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-							p_ptr->pkill |= PKILL_KILLABLE;
-							p_ptr->pkill |= PKILL_KILLER;/* for ranged targetting */
-							p_ptr->pkill |= PKILL_SET;
-							p_ptr->stormbringer = TRUE;/* for melee */
-						}
-#endif
-						/* change "normal" Highlands amulet to v2 with ESP? */
-						for (j = INVEN_TOTAL - 1; j >= 0; j--)
-							if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
-								invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
-							        p_ptr->inventory[j].number = 1;
-								p_ptr->inventory[j].level = 0;
-							        p_ptr->inventory[j].discount = 0;
-							        p_ptr->inventory[j].ident |= ID_MENTAL;
-							        p_ptr->inventory[j].owner = p_ptr->id;
-							        p_ptr->inventory[j].owner_mode = p_ptr->mode;
-							        object_aware(i, &p_ptr->inventory[j]);
-						        	object_known(&p_ptr->inventory[j]);
-							}
-					        p_ptr->update |= (PU_BONUS | PU_VIEW);
-						p_ptr->window |= (PW_INVEN | PW_EQUIP);
-						handle_stuff(i);
-
-						p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
-						p_ptr->recall_pos.wx = 0;
-						p_ptr->recall_pos.wy = 0;
-						p_ptr->recall_pos.wz = 0;
-						p_ptr->global_event_temp |= 0x1; /* pass through sector00separation; */
-	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					        recall_player(i, "");
-						p_ptr->global_event_progress[ge_id][0] = 2; /* now before deathmatch */
-					}
-					ge->state[0] = 3;
-				}
-				break;
-			case 3: /* teleport them around first */
-				for (i = 1; i <= NumPlayers; i++)
-					if (inarea(&Players[i]->wpos, &wpos)) {
-						p_ptr = Players[i];
-						wiz_lite(i); /* no tourneys at night, chars with low IV lose */
-						teleport_player(i, 200);
-						/* in case some player waited in a NO_TELE vault..!: */
-						if (p_ptr->wpos.wz && !is_admin(p_ptr)) {
-							msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
-							strcpy(p_ptr->died_from,"a mysterious accident");
-							p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
-							p_ptr->deathblow = 0;
-							player_death(i);
-						}
-						p_ptr->global_event_progress[ge_id][0] = 3; /* now in deathmatch */
-					}
-				ge->state[0] = 4;
-				break;
-			case 4: /* deathmatch phase -- might add some random teleportation for more fun */
-				n = 0;
-				for (i = 1; i <= NumPlayers; i++) {
-					if (is_admin(Players[i])) continue;
-					/* in case some player tries to go > again^^ */
-					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy && Players[i]->wpos.wz
-					    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
-						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
-						strcpy(Players[i]->died_from,"a mysterious accident");
-						Players[i]->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
-						Players[i]->deathblow = 0;
-						player_death(i);
-					}
-					if (inarea(&Players[i]->wpos, &wpos)) {
-						n++;
-						j = i;
-					}
-				}
-				if (!n) ge->state[0] = 255; /* double kill or something? ew. */
-				if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
-					ge->state[0] = 5;
-					ge->extra[3] = j;
-				}
-				break;
-			case 5: /* we have a winner! */
-				j = ge->extra[3];
-				if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
-				    p_ptr = Players[j];
-				    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
-					msg_broadcast(0, format("\377a>>%s wins %s!<<", p_ptr->name, ge->title));
-					if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
-
-					/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
-					k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
-				        invcopy(o_ptr, k);
-				        o_ptr->number = 1;
-				        object_aware(j, o_ptr);
-			        	object_known(o_ptr);
-				        o_ptr->discount = 0;
-				        o_ptr->level = 0;
-				        o_ptr->ident |= ID_MENTAL;
-					o_ptr->note = quark_add("Tournament reward");
-					inven_carry(j, o_ptr);
-
-					s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
-
-					ge->state[0] = 6;
-					ge->state[1] = elapsed;
-				    } else {
-					ge->state[0] = 255; /* no winner, d'oh */
-				    }
-				} else {
-					ge->state[0] = 255; /* no winner, d'oh */
-				}
-			case 6: /* chill out (or get killed -- but now there aren't monster spawns anymore) */
-				if (elapsed - ge->state[1] >= 5) {
-					ge->state[0] = 255;
-				}
-				break;
-			case 255: /* clean-up */
-				for (i = 1; i <= NumPlayers; i++) {
-					p_ptr = Players[i];
-					if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) {
-						for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
-							if (p_ptr->inventory[j].tval == TV_AMULET &&
-							    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
-							    (p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS2))) {
-    				                                inven_item_increase(i, j, -p_ptr->inventory[j].number);
-			        	                        inven_item_optimize(i, j);
-							}
-#if 0
-						p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
-						if (cfg.use_pk_rules == PK_RULES_DECLARE)
-						{
-							if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
-								set_pkill(i, 1);
-						}
-#else
-						if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-							p_ptr->pkill &= ~PKILL_KILLABLE;
-							p_ptr->pkill &= ~PKILL_KILLER;/* for ranged targetting */
-							p_ptr->pkill &= ~PKILL_SET;
-							p_ptr->stormbringer = FALSE;/* for melee */
-						}
-						for (j = 1; j <= NumPlayers; j++) {
-							if (j == i) continue;
-//							if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
-							/* become peaceful again */
-							remove_hostility(i, Players[j]->name);
-						}
-#endif
-						p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer participant */
-						p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
-//						set_recall_timer(i, is_admin(p_ptr)?1:3+randint(15));
-						p_ptr->recall_pos.wx = cfg.town_x;
-						p_ptr->recall_pos.wy = cfg.town_y;
-						p_ptr->recall_pos.wz = 0;
-	                            		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-					        recall_player(i, "");
-					}
-				}
-				sector00separation--;
-				wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
-				wipe_m_list(&wpos); /* clear any (powerful) spawns */
-				wipe_o_list_safely(&wpos); /* and objects too */
-				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
-				ge->getype = GE_NONE; /* end of event */
+			if (!n) {
+				ge->state[0] = 255; /* double kill or something? ew. */
 				break;
 			}
+			if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+				ge->state[0] = 5;
+				ge->extra[3] = j;
+				break;
+			}
+
+			if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
+				for (i = 1; i <= NumPlayers; i++)
+				if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377f[The slaughter will begin soon!]");
+				ge->state[0] = 2;
+			}
+			break;
+		case 2: /* exp phase // get people out of the dungeon and make them fight each other properly */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++)
+				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
+					n++;
+					j = i;
+				}
+			if (!n) {
+				ge->state[0] = 255; /* double kill or something? ew. */
+				break;
+			}
+			if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+				ge->state[0] = 5;
+				ge->extra[3] = j;
+				break;
+			}
+
+			if (elapsed - ge->announcement_time >= 600) {
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
+#if 0
+					p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
+					if (cfg.use_pk_rules == PK_RULES_DECLARE)
+					{
+						p_ptr->pkill|=PKILL_KILLABLE;
+						if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill & PKILL_SET))
+							set_pkill(i, 1);
+					}
+#else
+					for (j = 1; j <= NumPlayers; j++) {
+						if (j == i) continue;
+						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
+						/* leave party */
+						if (Players[j]->party == p_ptr->party) {
+							party_leave(i);
+						}
+						/* become hostile */
+						add_hostility(i, Players[j]->name);
+					}
+					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+						p_ptr->pkill |= PKILL_KILLABLE;
+						p_ptr->pkill |= PKILL_KILLER;/* for ranged targetting */
+						p_ptr->pkill |= PKILL_SET;
+						p_ptr->stormbringer = TRUE;/* for melee */
+					}
+#endif
+					/* change "normal" Highlands amulet to v2 with ESP? */
+					for (j = INVEN_TOTAL - 1; j >= 0; j--)
+						if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
+							invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
+						        p_ptr->inventory[j].number = 1;
+							p_ptr->inventory[j].level = 0;
+						        p_ptr->inventory[j].discount = 0;
+						        p_ptr->inventory[j].ident |= ID_MENTAL;
+						        p_ptr->inventory[j].owner = p_ptr->id;
+						        p_ptr->inventory[j].owner_mode = p_ptr->mode;
+						        object_aware(i, &p_ptr->inventory[j]);
+					        	object_known(&p_ptr->inventory[j]);
+						}
+				        p_ptr->update |= (PU_BONUS | PU_VIEW);
+					p_ptr->window |= (PW_INVEN | PW_EQUIP);
+					handle_stuff(i);
+
+					p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
+					p_ptr->recall_pos.wx = 0;
+					p_ptr->recall_pos.wy = 0;
+					p_ptr->recall_pos.wz = 0;
+					p_ptr->global_event_temp |= 0x1; /* pass through sector00separation; */
+	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				        recall_player(i, "");
+					p_ptr->global_event_progress[ge_id][0] = 2; /* now before deathmatch */
+				}
+				ge->state[0] = 3;
+			}
+			break;
+		case 3: /* teleport them around first */
+			for (i = 1; i <= NumPlayers; i++)
+				if (inarea(&Players[i]->wpos, &wpos)) {
+					p_ptr = Players[i];
+					wiz_lite(i); /* no tourneys at night, chars with low IV lose */
+					teleport_player(i, 200);
+					/* in case some player waited in a NO_TELE vault..!: */
+					if (p_ptr->wpos.wz && !is_admin(p_ptr)) {
+						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
+						strcpy(p_ptr->died_from,"a mysterious accident");
+						p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+						p_ptr->deathblow = 0;
+						player_death(i);
+					}
+					p_ptr->global_event_progress[ge_id][0] = 3; /* now in deathmatch */
+				}
+			ge->state[0] = 4;
+			break;
+		case 4: /* deathmatch phase -- might add some random teleportation for more fun */
+			n = 0;
+			for (i = 1; i <= NumPlayers; i++) {
+				if (is_admin(Players[i])) continue;
+				/* in case some player tries to go > again^^ */
+				if (!Players[i]->wpos.wx && !Players[i]->wpos.wy && Players[i]->wpos.wz
+				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
+					msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
+					strcpy(Players[i]->died_from,"a mysterious accident");
+					Players[i]->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+					Players[i]->deathblow = 0;
+					player_death(i);
+				}
+				if (inarea(&Players[i]->wpos, &wpos)) {
+					n++;
+					j = i;
+				}
+			}
+			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
+			if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
+				ge->state[0] = 5;
+				ge->extra[3] = j;
+			}
+			break;
+		case 5: /* we have a winner! */
+			j = ge->extra[3];
+			if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
+			    p_ptr = Players[j];
+			    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
+				msg_broadcast(0, format("\377a>>%s wins %s!<<", p_ptr->name, ge->title));
+				if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
+
+				/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
+				k = lookup_kind(TV_PARCHMENT, SV_DEED_HIGHLANDER);
+			        invcopy(o_ptr, k);
+			        o_ptr->number = 1;
+			        object_aware(j, o_ptr);
+		        	object_known(o_ptr);
+			        o_ptr->discount = 0;
+			        o_ptr->level = 0;
+			        o_ptr->ident |= ID_MENTAL;
+				o_ptr->note = quark_add("Tournament reward");
+				inven_carry(j, o_ptr);
+
+				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
+
+				ge->state[0] = 6;
+				ge->state[1] = elapsed;
+			    } else {
+				ge->state[0] = 255; /* no winner, d'oh */
+			    }
+			} else {
+				ge->state[0] = 255; /* no winner, d'oh */
+			}
+		case 6: /* chill out (or get killed -- but now there aren't monster spawns anymore) */
+			if (elapsed - ge->state[1] >= 5) {
+				ge->state[0] = 255;
+			}
+			break;
+		case 255: /* clean-up */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) {
+					for (j = INVEN_TOTAL; j >= 0; j--) /* Erase the highlander amulets */
+						if (p_ptr->inventory[j].tval == TV_AMULET &&
+						    ((p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) ||
+						    (p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS2))) {
+    			                                inven_item_increase(i, j, -p_ptr->inventory[j].number);
+		        	                        inven_item_optimize(i, j);
+						}
+#if 0
+					p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
+					if (cfg.use_pk_rules == PK_RULES_DECLARE)
+					{
+						if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
+							set_pkill(i, 1);
+					}
+#else
+					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+						p_ptr->pkill &= ~PKILL_KILLABLE;
+						p_ptr->pkill &= ~PKILL_KILLER;/* for ranged targetting */
+						p_ptr->pkill &= ~PKILL_SET;
+						p_ptr->stormbringer = FALSE;/* for melee */
+					}
+					for (j = 1; j <= NumPlayers; j++) {
+						if (j == i) continue;
+//						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
+						/* become peaceful again */
+						remove_hostility(i, Players[j]->name);
+					}
+#endif
+					p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer participant */
+					p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+//					set_recall_timer(i, is_admin(p_ptr)?1:3+randint(15));
+					p_ptr->recall_pos.wx = cfg.town_x;
+					p_ptr->recall_pos.wy = cfg.town_y;
+					p_ptr->recall_pos.wz = 0;
+	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				        recall_player(i, "");
+				}
+			}
+			sector00separation--;
+			wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
+			wipe_m_list(&wpos); /* clear any (powerful) spawns */
+			wipe_o_list_safely(&wpos); /* and objects too */
+			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+			ge->getype = GE_NONE; /* end of event */
+			break;
+		}
+		break;
+
+	/* Arena Monster Challenge */
+	case GE_ARENA_MONSTER:
+		wpos.wx = cfg.town_x;
+		wpos.wy = cfg.town_y;
+		wild=&wild_info[wpos.wy][wpos.wx];
+		d_ptr = wild->tower;
+		wpos.wz = d_ptr->maxdepth;
+
+		switch(ge->state[0]){
+		case 0: /* prepare */
+#if 0 /* disabled unstaticing for now since it might unstatice the whole 32,32 sector on all depths? dunno */
+			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+#endif
+			if (!getcave(&wpos)) {
+				alloc_dungeon_level(&wpos);
+				generate_cave(&wpos, NULL); /* should work =p (see make_resf) */
+			}
+			new_players_on_depth(&wpos, 1, TRUE); /* make it static */
+			wipe_m_list(&wpos); /* clear any (powerful) spawns */
+			wipe_o_list_safely(&wpos); /* and objects too */
+			ge->state[0] = 1;
+			ge_training_tower++;
+			msg_broadcast(0, format("\377WUse '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
+			break;
+		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
+			if (ge->extra[1]) { /* new challenge to process? */
+				if (!getcave(&wpos)) { /* in case nobody was there for a long enough time to unstatice, no idea when/if though.. */
+					alloc_dungeon_level(&wpos);
+					generate_cave(&wpos, NULL); /* should work =p (see make_resf) */
+					new_players_on_depth(&wpos, 1, FALSE); /* make it static */
+				}
+				wipe_m_list(&wpos); /* get rid of previous monster */
+				summon_override_check_all = TRUE;
+				summon_specific_race_somewhere(&wpos, ge->extra[1], 100, 1); /* summon new monster */
+				summon_override_check_all = FALSE;
+				ge->extra[2] = ge->extra[1]; /* remember it for result announcement later */
+				ge->extra[1] = 0;
+			}
+			break;
+		case 255: /* clean-up */
+			if (getcave(&wpos)) {
+				wipe_m_list(&wpos); /* clear any (powerful) spawns */
+				wipe_o_list_safely(&wpos); /* and objects too */
+#if 0 /* disabled unstaticing for now since it might unstatice the whole 32,32 sector on all depths? dunno */
+				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+#else
+				new_players_on_depth(&wpos, -1, TRUE); /* remove forced staticness */
+#endif /* so if if0'ed, we just have to wait for normal unstaticing routine to take care of stale level :/ */
+			}
+			ge->getype = GE_NONE; /* end of event */
+			ge_training_tower--;
+			break;
+		}
+		break;
+
+	default: /* generic clean-up routine for untitled events */
+		switch (ge->state[0]) {
+		case 255: /* remove an untitled event that has been stopped */
+			ge->getype = GE_NONE;
+			break;
+		}
 	}
 	
 	/* Check for end of event */
@@ -6674,4 +6914,39 @@ void clear_current(int Ind)
 	p_ptr->current_curse = 0;
 
 	p_ptr->current_telekinesis = NULL;
+}
+
+void calc_techniques(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int m;
+
+	p_ptr->melee_techniques = 0x0000;
+	p_ptr->ranged_techniques = 0x0000;
+
+	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
+	switch (p_ptr->pclass) {
+	case CLASS_ROGUE:
+		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
+		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
+		Send_technique_info(Ind);
+		return;	
+	case CLASS_WARRIOR: m = 0; break;
+	case CLASS_RANGER: m = 5; break;
+	case CLASS_PALADIN: m = 8; break;
+	case CLASS_MIMIC: m = 15; break;
+	default: m = 20; break;
+	}
+
+	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= 0x0001; /* Sprint */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 9 + m) p_ptr->melee_techniques |= 0x0002; /* Taunt */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= 0x0004; /* Spin */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 25 + m) p_ptr->melee_techniques |= 0x0008; /* Berserk */
+
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= 0x0001; /* Flare missile */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= 0x0002; /* Precision shot */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 10) p_ptr->ranged_techniques |= 0x0004; /* Craft some ammunition */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 16) p_ptr->ranged_techniques |= 0x0008; /* Double-shot */
+	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= 0x0010; /* Barrage */
+
+	Send_technique_info(Ind);
 }

@@ -966,6 +966,7 @@ struct monster_type
       towards that player, so low players who get powerful help
       will get less exp out of it. */
    byte backstabbed;	/* has this monster been backstabbed from cloaking mode already? prevent exploit */
+   byte taunted;	/* has this monster been taunted (melee technique)? */
 };
 
 typedef struct monster_ego monster_ego;
@@ -1929,6 +1930,7 @@ struct player_type
 
 	s16b mst;			/* Max stamina pts */
 	s16b cst;			/* Cur stamina pts */
+	s16b cst_frac;			/* 1/10000 */
 
 	object_type *inventory;	/* Player's inventory */
 
@@ -2406,7 +2408,9 @@ struct player_type
 	
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
 
+	s32b melee_techniques_old; /* melee techniques before last skill point update */
 	s32b melee_techniques; /* melee techniques */
+	s32b ranged_techniques_old; /* ranged techniques before last skill point update */
 	s32b ranged_techniques; /* ranged techniques */
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
@@ -2604,8 +2608,10 @@ struct player_type
 	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
 
 	/* more techniques */	
-	s16b melee_sprint;
+	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
+	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
+	int shoot_till_kill_book, shoot_till_kill_spell;
 
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
 	   by specifying the spell name instead of a book and position - C. Blue */

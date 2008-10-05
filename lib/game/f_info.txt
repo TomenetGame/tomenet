@@ -160,6 +160,9 @@ F:WALL | NO_WALK | CAN_PASS | NO_VISION | NOTICE | SUPPORT_LIGHT
 N:22:permanent wall
 #G: :w
 G: :w
+#added all of those flags to allow running wilderness transitions - C. Blue:
+#removed this one too and added a hack in run_step..  F:DONT_NOTICE_RUNNING
+#removed these again, see cmd1.c / see_wall():   | CAN_RUN | FLOOR
 
 # logs, used for log cabin
 N:23:logs

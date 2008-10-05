@@ -41,8 +41,9 @@ I:1000:0
 
 N:2:Weaponmastery
 D:General ability to use melee weapons and fighting techniques
+A:5:Fighting techniques
 I:1000:0
-#A:5:Fighting techniques
+F:MKEY_HARDCODE
 
 N:3:Sword-mastery
 D:Ability to use swords
@@ -63,21 +64,25 @@ I:1000:0
 N:7:Archery
 D:General ability to use ranged weapons and archer techniques
 D:It also allows you to evaluate/create ammo
+A:6:Shooting techniques
 I:1000:0
-#A:6:Archer techniques
-A:9:Create ammunition from bones or nearby rubble
+F:MKEY_HARDCODE
+#A:9:Create ammunition from bones or nearby rubble <- absorbed by 'Archer techniques'
 
 N:8:Sling-mastery
 D:Ability to use slings
 D:Bullets can recochet and harm more than one foes
+A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:9:Bow-mastery
 D:Ability to use bows
+A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:10:Crossbow-mastery
 D:Ability to use crossbows
+A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:11:Backstabbing
@@ -87,6 +92,7 @@ I:1000:0
 
 N:12:Magic
 D:General ability to use magic. Also influence mana capacity
+A:4:Toggle fire-till-kill mode
 I:1000:0
 
 #N:13:Casting-speed
@@ -234,6 +240,7 @@ I:1000:0
 
 N:39:Boomerang-mastery
 D:Ability to use (and not to destroy) boomerangs
+A:4:Toggle fire-till-kill mode
 I:1000:0
 
 #N:40:Training
@@ -459,7 +466,7 @@ f:Blunt-mastery:Weaponmastery%15
 f:Sling-mastery:Archery%15
 f:Bow-mastery:Archery%15
 f:Crossbow-mastery:Archery%15
-f:Boomerang-mastery:Archery%15
+#f:Boomerang-mastery:Archery%15
 #f:Hunting Lore:Archery%5
 #f:Ricochet:Archery%15
 #f:Sling-mastery:Ricochet%25
@@ -627,7 +634,8 @@ T:Combat:Archery
 T:Archery:Sling-mastery
 T:Archery:Bow-mastery
 T:Archery:Crossbow-mastery
-T:Archery:Boomerang-mastery
+#T:Archery:Boomerang-mastery
+T:Combat:Boomerang-mastery
 T:Combat:Martial Arts
 
 T:Main:Magic

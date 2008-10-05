@@ -621,7 +621,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
-				if (mult < 2) mult = 2;
+				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
 			}
 
 			/* Slay Evil */
@@ -633,7 +633,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
 
-				if (mult < 2) mult = 2;
+				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
 			}
 
 			/* Slay Undead */
@@ -642,7 +642,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Demon */
@@ -651,7 +651,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Orc */
@@ -660,7 +660,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Troll */
@@ -669,7 +669,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Giant */
@@ -678,7 +678,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Slay Dragon  */
@@ -687,7 +687,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 
-				if (mult < 3) mult = 3;
+				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 			}
 
 			/* Execute Dragon */
@@ -696,7 +696,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 
-				if (mult < 5) mult = 5;
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 			/* Execute Undead */
@@ -705,7 +705,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
 
-				if (mult < 5) mult = 5;
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 			/* Execute Undead */
@@ -714,7 +714,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			{
 				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
 
-				if (mult < 5) mult = 5;
+				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 			}
 
 
@@ -735,17 +735,17 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
 					}
 #endif	// 0
-					if (mult < 6) mult = 6;
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_ACID)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 
 				/* Otherwise, take the damage */
 				else
 				{
-					if(mult < 3) mult = 3;
+					if(mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -767,17 +767,17 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
 					}
 #endif	// 0
-					if (mult < 6) mult = 6;
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_ELEC)
 				{
-				    if (mult < 2) mult = 2;
+				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -798,17 +798,17 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
 					}
 #endif	// 0
-					if (mult < 6) mult = 6;
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
 				{
-				    if (mult < 2) mult = 2;
+				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -829,17 +829,17 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
 					}
 #endif	// 0
-					if (mult < 6) mult = 6;
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_COLD)
 				{
-				    if (mult < 2) mult = 2;
+				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -862,18 +862,18 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 						r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
 					}
 #endif	// 0
-					if (mult < 6) mult = 6;
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 //					if (magik(95)) *special |= SPEC_POIS;
 				}
 				else if (r_ptr->flags9 & RF9_RES_POIS)
 				{
-				    if (mult < 2) mult = 2;
+				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -1197,12 +1197,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 				else if (q_ptr->resist_acid)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -1216,12 +1216,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 				else if (q_ptr->resist_elec)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -1235,12 +1235,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 				else if (q_ptr->resist_fire)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -1254,12 +1254,12 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 				else if (q_ptr->resist_cold)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
 				else
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 
@@ -1272,11 +1272,11 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 				}
 				else if (q_ptr->resist_pois)
 				{
-					if (mult < 2) mult = 2;
+					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
 				{
-					if (mult < 3) mult = 3;
+					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 				}
 			}
 			break;
@@ -1495,51 +1495,6 @@ void carry(int Ind, int pickup, int confirm)
 
 	/* moved the object_felt_p() code downwards */
 
-
-/* TEMPORARY ANTI-CHEEZE HACKS */
-if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
-	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-	determine_level_req(70, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
-	s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-	determine_level_req(80, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
-	s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-	determine_level_req(20, o_ptr);
-	s_printf("%d.\n", o_ptr->level);
-}
-if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
-	s_printf("HACK-STORMBRINGER.\n");
-	o_ptr->level = 0;
-}
-/* Fix high quality runes levels */
-if (o_ptr->tval == TV_RUNE1) {
-	s_printf("HACK-RUNE.\n");
-	switch (o_ptr->sval) {
-		case SV_RUNE1_CLOUD:
-			o_ptr->level=35;
-			break;
-		default:
-			break;
-	} 
-}
-if (o_ptr->tval == TV_RUNE2) {
-	s_printf("HACK-RUNE.\n");
-	switch (o_ptr->sval) {
-		case SV_RUNE2_STONE:
-			o_ptr->level=35;
-			break;
-		case SV_RUNE2_ARMAGEDDON:
-			o_ptr->level=40;
-			break;
-		default:
-			break;
-	} 
-}
 
 	/* Pick up gold */
 	if (o_ptr->tval == TV_GOLD)
@@ -1780,7 +1735,7 @@ if (o_ptr->tval == TV_RUNE2) {
 		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && !p_ptr->once_winner
 		    && !p_ptr->total_winner) { /* <- added this just for testing when admin char sets .total_winner=1 */
 			msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
-			return;
+			if (!is_admin(p_ptr)) return;
 		}
 #if 1
 		/* Try to add to the quiver */
@@ -1935,20 +1890,66 @@ if (o_ptr->tval == TV_RUNE2) {
 			{
 				int slot;
 
+/* TEMPORARY ANTI-CHEEZE HACKS */
+if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
+	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
+	determine_level_req(70, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
+	s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+	determine_level_req(80, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
+	s_printf("HACK-STATPOT: %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
+	determine_level_req(20, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
+	s_printf("HACK-STORMBRINGER.\n");
+	o_ptr->level = 0;
+}
+/* Fix high quality runes levels */
+if (o_ptr->tval == TV_RUNE1) {
+	s_printf("HACK-RUNE.\n");
+	switch (o_ptr->sval) {
+		case SV_RUNE1_CLOUD:
+			o_ptr->level=35;
+			break;
+		default:
+			break;
+	} 
+}
+if (o_ptr->tval == TV_RUNE2) {
+	s_printf("HACK-RUNE.\n");
+	switch (o_ptr->sval) {
+		case SV_RUNE2_STONE:
+			o_ptr->level=35;
+			break;
+		case SV_RUNE2_ARMAGEDDON:
+			o_ptr->level=40;
+			break;
+		default:
+			break;
+	} 
+}
+
 				/* Own it */
 				if (!o_ptr->owner)
 				{
 					o_ptr->owner = p_ptr->id;
 					o_ptr->owner_mode = p_ptr->mode;
+
 #if CHEEZELOG_LEVEL > 2
-					if (true_artifact_p(o_ptr)) s_printf("Artifact %d found by %s(lv %d) at %d,%d,%d: %s\n",
-									    o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name_real);
-					else if (o_ptr->name1 == ART_RANDART) s_printf("Randart found by %s(lv %d) at %d,%d,%d: %s\n",
-									    p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, o_name_real);
-/* log the encounters of players with special heavy armour, just for informative purpose */
-if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY && !o_ptr->owner) s_printf("FOUND_WINNERS_ONLY: %s (%d) %s\n", p_ptr->name, p_ptr->wpos.wz, o_name_real);
+					if (true_artifact_p(o_ptr)) s_printf("%s Artifact %d found by %s(lv %d) at %d,%d,%d%s%s: %s\n",
+									    showtime(), o_ptr->name1, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
+									    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 
 #endif	// CHEEZELOG_LEVEL
+					/* log the encounters of players with special heavy armour, just for informative purpose */
+					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
 				}
 
 #if CHEEZELOG_LEVEL > 2
@@ -2002,7 +2003,7 @@ if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY && !o_ptr->owner) s_printf("F
 						    ((i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY && !i_ptr->pval) || 
 						    (i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY && i_ptr->pval > 0))) {
 							if (p_ptr->antimagic || get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-								msg_print(Ind, "Your antimagic skills disallow you to do that...");
+								msg_format(Ind, "\377%cYour antimagic prevents you from using your magic device.", COLOUR_AM_OWN);
 								continue; // find the scrolls =/
 							}
 
@@ -2049,7 +2050,7 @@ if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY && !o_ptr->owner) s_printf("F
 								//Formula is taken from cmd6.c
 								i_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 								if (i_ptr->name2 == EGO_RISTARI /* of istari */ || i_ptr->name2 == EGO_RCHARGING /* of charging */)
-									i_ptr->pval /= 3;
+									i_ptr->pval /= 2;
 							
 								//Unstack
 								if (i_ptr->number > 1) {
@@ -2448,15 +2449,15 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			int dodge_chance = q_ptr->dodge_level - p_ptr->lev*19/10;
 			if (dodge_chance > DODGE_MAX_CHANCE) dodge_chance = DODGE_MAX_CHANCE;
 			if ((dodge_chance > 0) && magik(dodge_chance)) {
-				msg_format(Ind, "%s dodges your attack!", p_name);
-				msg_format(0 - c_ptr->m_idx, "You dodge %s's attack!", p_ptr->name); 
+				msg_format(Ind, "\377c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
+				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name); 
 				continue; 
 			}
  #endif
 #else /* :-o */
 			if (magik(apply_dodge_chance(0 - c_ptr->m_idx, p_ptr->lev))) {
-				msg_format(Ind, "%s dodges your attack!", p_name);
-				msg_format(0 - c_ptr->m_idx, "You dodge %s's attack!", p_ptr->name); 
+				msg_format(Ind, "\377%c%s dodges your attack!", COLOUR_DODGE_PLY, p_name);
+				msg_format(0 - c_ptr->m_idx, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, p_ptr->name);
 				continue; 
 			}
 #endif
@@ -2471,8 +2472,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			   has been left out, since if you want max block, you'll have to take off your weapon!) */
 			if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 15))) { /* boost for PvP! */
-					msg_format(Ind, "%s blocks your attack!", p_name);
-					msg_format(0 - c_ptr->m_idx, "You block %s's attack!", p_ptr->name);
+					msg_format(Ind, "\377%c%s blocks your attack!", COLOUR_BLOCK_PLY, p_name);
+					msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 					continue; 
 				}
 			}
@@ -2483,8 +2484,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				     /* boost for PvP!:  Note: No need to check second hand, because 2h cannot be dual-wielded.
 				        this implies that 2h-weapons always go into INVEN_WIELD though. */
 				    (k_info[q_ptr->inventory[INVEN_WIELD].k_idx].flags4 & TR4_MUST2H) ? 20 : 10))) {
-					msg_format(Ind, "%s parries your attack!", p_name);
-					msg_format(0 - c_ptr->m_idx, "You parry %s's attack!", p_ptr->name);
+					msg_format(Ind, "\377%c%s parries your attack!", COLOUR_PARRY_PLY, p_name);
+					msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 					continue; 
 				}
 			}
@@ -2518,13 +2519,13 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				{
 					do
 					{
-						ma_ptr = &ma_blows[rand_int(MAX_MA)];
+						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
 					    || (randint(marts)<ma_ptr->chance));
 
 					/* keep the highest level attack available we found */
-					if ((ma_ptr->min_level > old_ptr->min_level) &&
+					if ((ma_ptr->min_level >= old_ptr->min_level) &&
 					    !(p_ptr->stun || p_ptr->confused))
 					{
 						old_ptr = ma_ptr;
@@ -3262,13 +3263,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					do
 					{
-						ma_ptr = &ma_blows[(randint(MAX_MA))-1];
+						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
 					    || (randint(marts)<ma_ptr->chance));
 
 					/* keep the highest level attack available we found */
-					if ((ma_ptr->min_level > old_ptr->min_level) &&
+					if ((ma_ptr->min_level >= old_ptr->min_level) &&
 					    !(p_ptr->stun || p_ptr->confused))
 					{
 						old_ptr = ma_ptr;
@@ -3295,9 +3296,18 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else if (ma_ptr->effect == MA_SLOW)
 				{
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
-					    || strchr("UjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
+					    || strchr("ANUjmeEv$,DdsbBFIJQSXclnw!=?", r_ptr->d_char)))
 					{
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
+						special_effect = MA_SLOW;
+					}
+					else msg_format(Ind, ma_ptr->desc, m_name);
+				}
+				else if (ma_ptr->effect == MA_ROYAL_SLOW)
+				{
+					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
+					    || strchr("ANjmeEv$,sbBFIJQSXlw!=?", r_ptr->d_char)))
+					{
 						special_effect = MA_SLOW;
 					}
 					else msg_format(Ind, ma_ptr->desc, m_name);
@@ -3325,11 +3335,12 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else if ((special_effect == MA_SLOW) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
 				{
 					if (!(r_ptr->flags1 & RF1_UNIQUE) &&
+					    !((r_ptr->flags2 & RF2_POWERFUL) && (r_ptr->flags8 & RF8_NO_CUT)) &&
 					    (randint(marts * 2) > r_ptr->level) &&
-					    m_ptr->mspeed > 60)
+					    m_ptr->mspeed > m_ptr->speed - 20)
 					{
 						msg_format(Ind, "\377o%^s starts limping slower.", m_name);
-						m_ptr->mspeed -= 10;
+						m_ptr->mspeed -= 3 + rand_int(3);
 					}
 				}
 
@@ -3950,9 +3961,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 			/* Message */
 			if (magik(block))
-				msg_format(Ind, "%s blocks.", m_name);
+				msg_format(Ind, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 			else if (magik(parry))
-				msg_format(Ind, "%s parries.", m_name);
+				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
 			else
 				msg_format(Ind, "You miss %s.", m_name);
 		}
@@ -4035,6 +4046,58 @@ void py_attack(int Ind, int y, int x, bool old)
 	/* Check for player */
 	else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER)
 		py_attack_player(Ind, y, x, old);
+}
+
+void spin_attack(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave;
+	cave_type *c_ptr;
+	int i, j, x, y;
+	struct worldpos *wpos=&p_ptr->wpos;
+	if(!(zcave=getcave(wpos))) return;
+
+	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
+			|| !p_ptr->num_blow) return;
+
+	if (!p_ptr->num_blow) return; /* paranoia */
+
+        msg_print(Ind, "You spin around in a mighty sweep!");
+        msg_format_near(Ind, "%s spins around in a mighty sweep!", p_ptr->name);
+				
+	/* Break goi/manashield */
+#if 0
+	if (p_ptr->invuln)
+	{
+		set_invuln(Ind, 0);
+	}
+	if (p_ptr->tim_manashield)
+	{
+		set_tim_manashield(Ind, 0);
+	}
+	if (p_ptr->tim_wraith)
+	{
+		set_tim_wraith(Ind, 0);
+	}
+#endif	// 0
+
+	j = rand_int(8);
+        for (i = 1; i <= p_ptr->num_blow + 8; i++) {
+	        if ((j + i) % 9 + 1 == 5) continue;
+                x = p_ptr->px + ddx[(j + i) % 9 + 1];
+                y = p_ptr->py + ddy[(j + i) % 9 + 1];
+	        if (!in_bounds(y, x)) continue;
+		c_ptr=&zcave[y][x];
+
+		/* Check for monster */
+		if (c_ptr->m_idx > 0) {
+			p_ptr->stunning = TRUE;
+			p_ptr->energy += level_speed(&p_ptr->wpos) / p_ptr->num_blow;
+			py_attack_mon(Ind, y, x, FALSE); /* only 1 attack */
+		}
+		/* Check for player */
+//		else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER) py_attack_player(Ind, y, x, old);
+	}
 }
 
 /* PernAngband addition */
@@ -4545,6 +4608,8 @@ void move_player(int Ind, int dir, int do_pickup)
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
 	int csmove=TRUE;
+	
+	bool old_grid_sunlit = FALSE, new_grid_sunlit = FALSE; /* for vampires */
 
 	if(!(zcave=getcave(wpos))) return;
 
@@ -4558,6 +4623,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		msg_print(Ind, "You cannot move by nature.");
 		return;
 	}
+	
+	stop_precision(Ind); /* aimed precision shot gets interrupted by moving around */
 
 	/* Find the result of moving */
 	/* -C. Blue- I toned down monster RAND_50 and RAND_25 for a mimicking player,
@@ -4583,8 +4650,10 @@ void move_player(int Ind, int dir, int do_pickup)
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 	}
-
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
+	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
+		old_grid_sunlit = TRUE;
 	if ((c_ptr->feat == FEAT_ICE) && (!p_ptr->feather_fall && !p_ptr->fly))
 	{
 		if (magik(70 - p_ptr->lev))
@@ -4712,6 +4781,11 @@ void move_player(int Ind, int dir, int do_pickup)
 
 	/* Examine the destination */
 	c_ptr = &zcave[y][x];
+
+	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
+	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
+		new_grid_sunlit = TRUE;
+
 	w_ptr = &p_ptr->cave_flag[y][x];
 
 	/* Get the object */
@@ -4766,9 +4840,11 @@ void move_player(int Ind, int dir, int do_pickup)
 
 			q_ptr->py = p_ptr->py;
 			q_ptr->px = p_ptr->px;
+			calc_bonuses(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
 
 			p_ptr->py = y;
 			p_ptr->px = x;
+			if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
 
 			cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 			cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
@@ -4790,6 +4866,7 @@ void move_player(int Ind, int dir, int do_pickup)
 					msg_format(Ind2, "You switch places with it.");
 
 				black_breath_infection(Ind, Ind2);
+				stop_precision(Ind2);
 			}
 
 			/* Disturb both of them */
@@ -4894,6 +4971,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* update player location */
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
+			if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
 			/* update monster location */
 			m_list[c_ptr->m_idx].fx = oldx;
 			m_list[c_ptr->m_idx].fy = oldy;
@@ -4917,7 +4995,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		return;
 	}
 
-	/* now this is temp while i redesign!!! - do not change */
+	/* now this is temp while i redesign!!! - do not change  <- ok and who wrote this and when? =p */
 	cs_ptr=c_ptr->special;
 	while(cs_ptr){
 		int tcv;
@@ -5104,6 +5182,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Move the player */
 		p_ptr->py = y;
 		p_ptr->px = x;
+		if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
 
 		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK))
 			msg_print(Ind, "\377DThe air in here feels very still.");
@@ -5288,20 +5367,15 @@ int see_wall(int Ind, int dir, int y, int x)
 	y += ddy[dir];
 	x += ddx[dir];
 
-	/* Ghosts run right through everything */
-	if ((p_ptr->ghost || p_ptr->tim_wraith)) return (FALSE);
-
-	/* Do wilderness hack, keep running from one outside level to another */
-	if ( (!in_bounds(y, x)) && (wpos->wz==0) ) return FALSE;
-
 	/* Illegal grids are blank */
 	/* XXX this should be blocked by permawalls, hopefully. */
 	/* Had a crash occuring in cave_floor_bold check, y = 1, x = -1, 32,32,-500
 	   So I'm trying an ugly hack - C. Blue */
-	if (!in_bounds2(wpos, y, x)) {
+//	if (!in_bounds2(wpos, y, x)) { /* RUNNING_FIX_DEBUG */
+	if (!in_bounds_array(y, x)) {
 		/* Hack be sure the player is inbounds */
-		if (p_ptr->px < 1) p_ptr->px = 1;
-		if (p_ptr->py < 1) p_ptr->py = 1;
+		if (p_ptr->px < 0) p_ptr->px = 0;
+		if (p_ptr->py < 0) p_ptr->py = 0;
 		if (p_ptr->px >= MAX_WID) p_ptr->px = MAX_WID - 1;
 		if (p_ptr->py >= MAX_HGT) p_ptr->py = MAX_HGT - 1;
 		/* Update the location's player index */
@@ -5309,6 +5383,35 @@ int see_wall(int Ind, int dir, int y, int x)
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 		return (FALSE);
 	}
+
+	/* Ghosts run right through everything */
+	if ((p_ptr->ghost || p_ptr->tim_wraith)) return (FALSE);
+
+#if 0
+	/* Do wilderness hack, keep running from one outside level to another */
+	if ((!in_bounds(y, x)) && (wpos->wz==0)) return FALSE;
+#else
+	/* replacing the above hack by simply using DONT_NOTICE_RUNNING | FLOOR | CAN_RUN
+	   flags in f_info for feat FEAT_PERM_CLEAR (0x16, the invisible level border).
+	   However, when changing direction while running on px=1 sometimes panics,
+	   debugging atm.. - C. Blue */
+	/* it seems to crash in update_view, because 'cave_los_grid' usually stops at the
+	   level borders, preventing the game from trying to update cave grids outside of
+	   the valid array. Seems adding those flags mentioned above breaks the cave_los_grid
+	   check. Checking.. */
+	/* too bad, removing FLOOR flag prevents running along gondo walls. appearently the
+	   grids are treated in 2 different ways (when starting to run as walls due to missing
+	   FLOOR flag, while running as floor-like open area). correcting that would probably
+	   the cleanest way, if that assumption was correct. */
+	/* Gonna add an in_bounds_array check to update_view instead, easy as that? */
+	/* Pft, it works, but update_lite also relies on the missing FLOOR, lol.
+	   Ok, really gonna try and fix the root instead, ie the different treatment by
+	   run-initialization in comparison to continue-running-testing.. */
+	if (zcave[y][x].feat == FEAT_PERM_CLEAR) return (FALSE); /* here goes part 1.. */
+	/* appearently run_init() works ok, ie treats them as open area thanks to calling see_wall().
+	   checking run_test() now.. done. Added FEAT_PERM_CLEAR checks there too. Seems working fine now!
+	   (Appearently those grids aren't CAVE_MARK'ed.) */
+#endif
 
 #if 1 //def NEW_RUNNING_FEAT
 	/* don't accept trees as open area? */
@@ -5723,6 +5826,11 @@ static bool run_test(int Ind)
 		row = p_ptr->py + ddy[new_dir];
 		col = p_ptr->px + ddx[new_dir];
 
+//		if (!in_bounds(row, col)) continue; /* RUNNING_FIX_DEBUG */
+/* next line is actually doing the trick (allow running transitions of wilderness levels)
+   but it's a bad hack, so just for debugging: */
+//		if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+
 		c_ptr = &zcave[row][col];
 		w_ptr = &p_ptr->cave_flag[row][col];
 
@@ -5874,6 +5982,11 @@ static bool run_test(int Ind)
 					/* Done */
 					break;
 				}
+				
+				/* allow to run through wilderness transitions - C. Blue (compare see_wall comments) */
+				case FEAT_PERM_CLEAR:
+					notice = FALSE;
+					break;
 			}
 
 			/* Check the "don't notice running" flag */
@@ -5974,8 +6087,11 @@ static bool run_test(int Ind)
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
+//			if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+
 			/* Unknown grid or floor */
-			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
+			if  (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
+			    (zcave[row][col].feat == FEAT_PERM_CLEAR) || /* allow running next to level border - C. Blue */
 			    (cave_running_bold(p_ptr, zcave, row, col)
 			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
@@ -6008,8 +6124,11 @@ static bool run_test(int Ind)
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
+//			if ((!in_bounds(row, col)) && (wpos->wz==0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+
 			/* Unknown grid or floor */
 			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
+			    (zcave[row][col].feat == FEAT_PERM_CLEAR) || /* allow running next to level border - C. Blue */
 			    (cave_running_bold(p_ptr, zcave, row, col)
 			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)

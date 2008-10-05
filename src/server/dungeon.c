@@ -369,16 +369,19 @@ static void sense_inventory(int Ind)
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
 	if (get_skill(p_ptr, SKILL_COMBAT) >= 31) {
-#if 0 /* not more often, still only apply 33% chance (see further down) */
-	    ok_archery = TRUE;
-#else /* but allow more distinctive feelings */
-	    heavy_archery = TRUE;
+#if 1 /* (apply 33% chance, see below) - allow basic feelings */
+		ok_archery = TRUE;
+#else /* (apply 33% chance, see below) - allow more distinctive feelings */
+		heavy_archery = TRUE;
 #endif
 	}
+
 	/* A very powerful warrior can even distinguish magic items */
 	if (get_skill(p_ptr, SKILL_COMBAT) >= 41) {
-	    ok_magic = TRUE;
-	    ok_curse = TRUE;
+#if 0 /* too much? */
+		ok_magic = TRUE;
+#endif
+		ok_curse = TRUE;
 	}
 
 
@@ -1095,6 +1098,195 @@ static void regen_monsters(void)
 
 
 
+/* turn an allocated wpos to dark night */
+static void world_surface_day(struct worldpos *wpos) {
+	cave_type **zcave = getcave(wpos), *c_ptr;
+	int y, x;
+
+	/* Hack -- Scan the level */
+	for (y = 0; y < MAX_HGT; y++)
+	for (x = 0; x < MAX_WID; x++) {
+		/* Get the cave grid */
+		c_ptr = &zcave[y][x];
+
+		/* Assume lit */
+		c_ptr->info |= CAVE_GLOW;
+		c_ptr->info &= ~CAVE_DARKEN;
+	}
+}
+
+/* turn an allocated wpos to bright day */
+static void world_surface_night(struct worldpos *wpos) {
+	cave_type **zcave = getcave(wpos), *c_ptr;
+	int y, x;
+	int stores = 0, y1, x1, i;
+	byte sx[255], sy[255];
+
+	/* Hack -- Scan the level */
+	for (y = 0; y < MAX_HGT; y++)
+	for (x = 0; x < MAX_WID; x++) {
+		/* Get the cave grid */
+		c_ptr = &zcave[y][x];
+
+		/* darken all */
+		c_ptr->info &= ~CAVE_GLOW;
+		c_ptr->info |= CAVE_DARKEN;
+
+		if (c_ptr->feat == FEAT_SHOP) {
+			sx[stores] = x;
+			sy[stores] = y;
+			stores++;
+		}
+	}
+
+	/* Hack -- illuminate the stores */
+	for (i = 0; i < stores; i++) {
+		x = sx[i];
+		y = sy[i];
+
+		for (y1 = y - 1; y1 <= y + 1; y1++)
+		for (x1 = x - 1; x1 <= x + 1; x1++) {
+			/* Get the grid */
+			c_ptr = &zcave[y1][x1];
+
+			/* Illuminate the store */
+//			c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
+			c_ptr->info |= CAVE_GLOW;
+		}
+	}
+}
+
+/* take care of day/night changes */
+static void process_day_and_night() {
+
+return; /* DEBUG */
+
+	/*** Handle the "town" (stores and sunshine) ***/
+	/* Hack -- Daybreak/Nighfall in town */
+	bool dawn;
+	struct worldpos wrpos;
+	int wx, wy;
+	
+	/* Check for dawn */
+	dawn = (!(turn % (10L * DAY)));
+
+	wrpos.wz = 0;
+
+#ifndef HALLOWEEN
+	/* Day breaks */
+	if (dawn && !fireworks) /* remain night during NEW_YEARS_EVE !*/
+#else
+	/* not during Halloween {>_>} */
+	if (FALSE)
+#endif
+	{
+		night_surface = FALSE;
+		
+		/* scan through all currently allocated world surface levels */
+		for (wx = 0; wx <= 63; wx++)
+		for (wy = 0; wy <= 63; wy++) {
+			wrpos.wx = wx;
+			wrpos.wy = wy;
+			if (!getcave(&wrpos)) continue;
+			world_surface_day(&wrpos);
+		}
+	}
+		/* Night falls - but only if it was actually day so far:
+		   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
+	else if (!dawn && !night_surface) {
+		night_surface = TRUE;
+
+		/* scan through all currently allocated world surface levels */
+		for (wx = 0; wx <= 63; wx++)
+		for (wy = 0; wy <= 63; wy++) {
+			wrpos.wx = wx;
+			wrpos.wy = wy;
+			if (!getcave(&wrpos)) continue;
+			world_surface_night(&wrpos);
+		}
+	}
+}
+
+/* update a particular player's view according to day/night status of the level (must be on world surface) */
+static void player_day_and_night(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type **zcave, *c_ptr;
+	byte *w_ptr;
+	int x, y;
+
+	/* Only valid if in town or wilderness, ie on world surface */
+	if (wpos->wz) return;
+
+	/* get player's level; the if-check is paranoia */
+	if(!(zcave=getcave(wpos))) return;
+
+	if (night_surface) {
+				/* Message */
+//				msg_print(Ind, "The sun has risen.");
+//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* daylight */
+		
+				/* Hack -- Scan the level */
+				for (y = 0; y < MAX_HGT; y++)
+				{
+					for (x = 0; x < MAX_WID; x++)
+					{
+						/* Get the cave grid */
+						c_ptr = &zcave[y][x];
+						w_ptr = &p_ptr->cave_flag[y][x];
+
+						/* Hack -- Memorize lit grids if allowed */
+						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
+
+						/* Hack -- Notice spot */
+						/* XXX it's slow (sunrise/sunset lag) */
+						note_spot(Ind, y, x);						
+					}			
+				}
+
+			/* Night falls - but only if it was actually day so far:
+			   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
+	} else {
+				/* Message  */
+//				msg_print(Ind, "The sun has fallen.");
+//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* no more daylight */
+
+				/* Hack -- Scan the level */
+				for (y = 0; y < MAX_HGT; y++)
+				{
+					for (x = 0; x < MAX_WID; x++)
+					{
+						/*  Get the cave grid */
+						c_ptr = &zcave[y][x];
+						w_ptr = &p_ptr->cave_flag[y][x];
+
+						/*  Darken "boring" features */
+						if (cave_plain_floor_grid(c_ptr) && !(c_ptr->info & CAVE_ROOM))
+						{
+							/* Forget the grid */ 
+							*w_ptr &= ~CAVE_MARK;
+						}
+
+						/* Hack -- Notice spot */
+						note_spot(Ind, y, x);
+
+					}
+				}
+	}
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+}
+
+
 /*
  * Handle certain things once every 50 game turns
  */
@@ -1110,6 +1302,8 @@ static void process_world(int Ind)
 	cave_type		*c_ptr;
 	byte			*w_ptr;
 
+
+#if 1 /* now in 'process_day_and_night' and 'check_day_and_night' */
 	/*** Handle the "town" (stores and sunshine) ***/
 
 	/* While in town or wilderness */
@@ -1251,6 +1445,7 @@ static void process_world(int Ind)
 		/*  Don't do this for each player.  In fact, this might be */
 		/*  taken out entirely for now --KLJ-- */
 	}
+#endif
 
 
 	/*** Process the monsters ***/
@@ -1470,6 +1665,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 
 				retaliating_cmd = TRUE;
 				do_cmd_fire(Ind, 5);
+				if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
 				return TRUE;
 			}
 			break;
@@ -2269,6 +2465,8 @@ void recall_player(int Ind, char *message){
 	if(!p_ptr) return;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
 
+	break_cloaking(Ind);
+
 	/* One less person here */
 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 
@@ -2425,7 +2623,8 @@ static void do_recall(int Ind, bool bypass)
 	/* even at runlevel 2048 players may still recall..for now */
 	else if((cfg.runlevel>4) && (cfg.runlevel <= 2048))
 	{
-		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
+//		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
 		if(p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN)
 		{
@@ -2955,8 +3154,23 @@ static bool process_player_end_aux(int Ind)
 		regenhp(Ind, regen_amount);
 	}
 
+	/* Regenerate depleted Stamina */
+	if (p_ptr->cst < p_ptr->mst)
+	{
+//		int s = 2 * (76 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
+		int s = regen_boost_stamina * (54 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
+		if (p_ptr->resting && !p_ptr->searching) s *= 2;
+		p_ptr->cst_frac += s;
+		if (p_ptr->cst_frac >= 10000) {
+			p_ptr->cst_frac -= 10000;
+			p_ptr->cst++;
+			if (p_ptr->cst == p_ptr->mst) p_ptr->cst_frac = 0;
+			p_ptr->redraw |= (PR_STAMINA);
+		}
+	}
+
 	/* Disturb if we are done resting */
-	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp))
+	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp) && (p_ptr->cst == p_ptr->mst))
 	{
 		disturb(Ind, 0, 0);
 	}
@@ -3241,6 +3455,18 @@ static bool process_player_end_aux(int Ind)
 		(void)set_fury(Ind, p_ptr->fury - 1);
 	}
 
+	/* Berserk #2 */
+	if (p_ptr->berserk)
+	{
+		(void)set_berserk(Ind, p_ptr->berserk - 1);
+	}
+
+	/* Sprint? melee technique */
+	if (p_ptr->melee_sprint)
+	{
+		(void)set_melee_sprint(Ind, p_ptr->melee_sprint - 1);
+	}
+
 	/* Blessed */
 	if (p_ptr->blessed)
 	{
@@ -3412,7 +3638,7 @@ static bool process_player_end_aux(int Ind)
 		if (!p_ptr->support_timer) p_ptr->supported_by = 0;
 	}
 
-
+#if POLY_RING_METHOD == 0
 	/* Check polymorph rings with timeouts */
 	for (i = INVEN_LEFT; i <= INVEN_RIGHT; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -3457,7 +3683,7 @@ static bool process_player_end_aux(int Ind)
 			}
 		}
 	}
-
+#endif
 
 	/*** Process Light ***/
 
@@ -3578,7 +3804,7 @@ static bool process_player_end_aux(int Ind)
    idea: allow classes who lack a *remove curse* spell to make more use of the rings. */
 //	if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 25) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 //		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
@@ -3684,7 +3910,7 @@ static bool process_player_end_aux(int Ind)
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life)
 	{
-		int drain = p_ptr->drain_life + rand_int(p_ptr->mhp / 100);
+		int drain = p_ptr->drain_life * (rand_int(p_ptr->mhp / 100) + 1);
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
 #if 0
 		p_ptr->chp -= (drain < p_ptr->chp ? drain : p_ptr->chp);
@@ -4014,6 +4240,12 @@ static void process_player_end(int Ind)
 			 !p_ptr->invuln))
 #endif
 	{
+		if (p_ptr->shooting_till_kill && !p_ptr->shoot_till_kill_book && !p_ptr->shoot_till_kill_spell) { /* did we shoot till kill last turn, and used bow-type item? */
+	                do_cmd_fire(Ind, 5);
+    	        	if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
+			p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
+		}
+
 		/* Check for nearby monsters and try to kill them */
 		/* If auto_retaliate returns nonzero than we attacked
 		 * something and so should use energy.
@@ -4026,7 +4258,9 @@ static void process_player_end(int Ind)
 		} else {
 			p_ptr->auto_retaliating = FALSE;
 		}
-	} else p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
+	} else {
+		p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
+	}
 
 	/* ('Handle running' from above was originally at this place) */
 	/* Handle running -- 5 times the speed of walking */
@@ -4050,7 +4284,7 @@ static void process_player_end(int Ind)
 	/* This used to be processed every 10 turns, but I am changing it to be
 	 * processed once every 5/6 of a "dungeon turn". This will make healing
 	 * and poison faster with respect to real time < 1750 feet and slower >
-	 * 1750 feet.
+	 * 1750 feet. - C. Blue
 	 */
 	if (!(turn%(level_speed(&p_ptr->wpos)/12)))
 	{
@@ -4082,9 +4316,6 @@ static bool stale_level(struct worldpos *wpos, int grace)
 
 	/* Hack -- towns are static for good. */
 //	if (istown(wpos)) return (FALSE);
-
-	/* Highlander Tournament sector00 is static while players are in dungeon! */
-	if (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation) return(FALSE);
 
 	now=time(&now);
 	if(wpos->wz)
@@ -4129,6 +4360,17 @@ static void do_unstat(struct worldpos *wpos)
 	int num_on_depth = 0;
 	int j;
 	player_type *p_ptr;
+
+
+	/* Highlander Tournament sector00 is static while players are in dungeon! */
+	if (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation) return;
+
+	/* Arena Monster Challenge */
+	if (ge_training_tower &&
+	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y &&
+	    wpos->wz == wild_info[cfg.town_y][cfg.town_y].tower->maxdepth) return;
+
+
 	// Count the number of players actually in game on this depth
 	for (j = 1; j < NumPlayers + 1; j++)
 	{
@@ -5597,6 +5839,9 @@ void dungeon(void)
 		/* Hack -- Regenerate the monsters every hundred game turns */
 		if (!(turn % 100)) regen_monsters();
 	}
+	
+	/* Process day/night changes on world_surface */
+	if (!(turn % ((10L * DAY) / 2))) process_day_and_night();
 	
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++)

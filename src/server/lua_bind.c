@@ -449,6 +449,9 @@ static bool lua_mon_hook_bounty(int r_idx)
 	/* Reject friendly creatures */
 	if (r_ptr->flags7 & RF7_FRIENDLY) return (FALSE);
 
+	/* Reject neutral creatures */
+	if (r_ptr->flags7 & RF7_NEUTRAL) return (FALSE);
+
         /* Accept only monsters that are not breeders */
         if (r_ptr->flags4 & RF4_MULTIPLY) return (FALSE);
 

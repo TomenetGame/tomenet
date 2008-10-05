@@ -777,6 +777,8 @@ void teleport_player(int Ind, int dis)
 	/* No empty field on this map o_O */
 	if (tries >= 3000) return;
 
+	break_cloaking(Ind);
+
 	/* Save the old location */
 	oy = p_ptr->py;
 	ox = p_ptr->px;
@@ -1426,15 +1428,23 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
-        /* Amulet of Immortality */
+
+	/* For 'Arena Monster Challenge' event: */
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+	if (d_ptr && ge_training_tower &&
+	    (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y &&
+    	    p_ptr->wpos.wz == d_ptr->maxdepth && p_ptr->wpos.wz > 0)) { /* are we in town and in a tower and on top floor? */
+		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
+		return;
+	}
+
+
+        /* Amulet of Immortality/Invincibility for Dungeon Masters */
         object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
-        /* Skip empty items */
-        if (o_ptr->k_idx)
-        {
-                if (o_ptr->tval == TV_AMULET &&
-                    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-	                return;
-        }
+        if (o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
+    	    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
+	        return;
+
 
 	/* Paranoia */
 	if (p_ptr->death) return;
@@ -7158,7 +7168,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if ((chance > 0) && magik(chance))
 			{
 //				msg_print(Ind, "You dodge a magical attack!");
-				msg_print(Ind, "You dodge the projectile!");
+				msg_format(Ind, "\377%cYou dodge the projectile!", COLOUR_DODGE_GOOD);
 				return (TRUE);
 			}
 		}
@@ -7170,7 +7180,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if ((chance > 0) && magik(chance))
 			{
-				msg_print(Ind, "You dodge a magical attack!");
+				msg_format(Ind, "\377%cYou dodge a magical attack!", COLOUR_DODGE_GOOD);
 				return (TRUE);
 			}
 		}
@@ -7180,12 +7190,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
 	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
-			msg_format(Ind, "You dodge %s's projectile!", m_name);
+			msg_format(Ind, "\377%cYou dodge %s's projectile!", COLOUR_DODGE_GOOD, m_name);
 			return (TRUE);
 		}
 		/* MEGAHACK -- allow to dodge 'bolt' traps */
 		else if ((rad < 2) && (who == PROJECTOR_TRAP)) {
-			msg_format(Ind, "You dodge %s's magical attack!", m_name);
+			msg_format(Ind, "\377%cYou dodge %s's magical attack!", COLOUR_DODGE_GOOD, m_name);
 			return (TRUE);
 		}
 	}
@@ -7293,8 +7303,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (flg & PROJECT_KILL) && (flg & PROJECT_GRID) && !((flg & PROJECT_JUMP) || (flg & PROJECT_STAY)) &&
 	    (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect)))) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
-		if (blind) msg_print(Ind, "Something hurls along your shield!");
-		else msg_format(Ind, "You cover before %s's attack!", m_name);
+		if (blind) msg_format(Ind, "\377%cSomething hurls along your shield!", COLOUR_BLOCK_GOOD);
+		else msg_format(Ind, "\377%cYou cover before %s's attack!", COLOUR_BLOCK_GOOD, m_name);
 
 		/* if we hid behind the shield from an acidic attack, damage the shield probably! */
 		if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
@@ -7312,7 +7322,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Psionics */
 		case GF_PSI:
 		if (rand_int(100) < p_ptr->skill_sav) psi_resists++;
-		if ((p_ptr->shero) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
+		if ((p_ptr->shero || p_ptr->berserk) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
 		if (p_ptr->confused) psi_resists--;
 		if (p_ptr->image) psi_resists--;
 		if (p_ptr->stun) psi_resists--;

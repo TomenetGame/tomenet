@@ -16,7 +16,7 @@
 #define SETUP_TIMEOUT           150
 #define LOGIN_TIMEOUT           600
 #define READY_TIMEOUT           30
-#define IDLE_TIMEOUT            20 /* was 15, but quitting in dungeon should take 20 seconds */
+#define IDLE_TIMEOUT            25 /* 20; was 15, but quitting in dungeon should take 20 seconds */
 
 #if 0 /* old UDP networking stuff - mikaelh */
 #define MAX_RTT			(2 * FPS)

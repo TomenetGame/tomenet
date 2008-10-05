@@ -255,7 +255,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_WEAKNESS:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -263,7 +263,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_SICKNESS:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(6, 6), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -271,7 +271,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_STUPIDITY:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -279,7 +279,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_NAIVETY:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(8, 8), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -287,7 +287,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_UNHEALTH:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -295,7 +295,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 			case SV_FOOD_DISEASE:
 			{
-				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food.", 0);
+				if (!p_ptr->suscep_life) take_hit(Ind, damroll(10, 10), "poisonous food", 0);
 				(void)do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL);
 				ident = TRUE;
 				break;
@@ -401,7 +401,7 @@ void do_cmd_eat_food(int Ind, int item)
 				if (magik(10))
 				{
 					msg_print(Ind, "Yuk, that food tasted awful.");
-					if (p_ptr->max_lev < 3) gain_exp(Ind, 1);
+					if (p_ptr->max_lev < 2) gain_exp(Ind, 1);
 					break;
 				}
 				/* Fall through */
@@ -2014,10 +2014,15 @@ static bool do_cancellation(int Ind, int flags)
 		if (o_ptr->tval==TV_KEY) continue;
 		if (o_ptr->tval==TV_FOOD) continue;
 		if (o_ptr->tval==TV_FLASK) continue;
-		if (o_ptr->name2 || o_ptr->name2b)
+		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED)
 		{
 			ident = TRUE;
-			o_ptr->name2 = o_ptr->name2b = 0;
+			o_ptr->name2 = 0;
+		}
+		if (o_ptr->name2b && o_ptr->name2b != EGO_SHATTERED && o_ptr->name2b != EGO_BLASTED)
+		{
+			ident = TRUE;
+			o_ptr->name2b = 0;
 		}
 		if (o_ptr->timeout)
 		{
@@ -2713,8 +2718,12 @@ void do_cmd_read_scroll(int Ind, int item)
 				//if (p_ptr->prace == RACE_VAMPIRE) {
 					take_hit(Ind, damroll(10, 3), "a scroll of protection from evil", 0);
 				} else {
+#if 0 /* o_O */
 					k = 3 * p_ptr->lev;
 					if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
+#else
+					if (set_protevil(Ind, randint(15) + 30)) ident = TRUE; /* removed stacking */
+#endif
 				}
 				break;
 			}
@@ -3072,18 +3081,18 @@ void do_cmd_use_staff(int Ind, int item)
 #if 1
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
 		return;
 	}
 #endif
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		msg_print(Ind, "You don't believe in magic.");	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5))
         {
-                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 
@@ -3425,8 +3434,8 @@ void do_cmd_use_staff(int Ind, int item)
 				take_hit(Ind, damroll(50, 3), "a staff of holiness", 0);
 				ident = TRUE;
 			} else {
-				k = get_skill_scale(p_ptr, SKILL_DEVICE, 150);
-				if (set_protevil(Ind, randint(25) + k)) ident = TRUE; /* removed stacking */
+				k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
+				if (set_protevil(Ind, randint(15) + 30 + k)) ident = TRUE; /* removed stacking */
 				if (set_poisoned(Ind, 0, 0)) ident = TRUE;
 				if (set_afraid(Ind, 0)) ident = TRUE;
 				if (hp_player(Ind, 50)) ident = TRUE;
@@ -3577,18 +3586,18 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
 		return;
 	}
 #endif	// 0
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		msg_print(Ind, "You don't believe in magic.");	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5))
         {
-                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 
@@ -4119,18 +4128,18 @@ void do_cmd_zap_rod(int Ind, int item)
 #if 1
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 #endif	// 0
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		msg_print(Ind, "You don't believe in magic.");	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5))
         {
-                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 
@@ -4331,10 +4340,12 @@ void do_cmd_zap_rod(int Ind, int item)
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 #else
-			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+//scale moar?		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+//a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break;
 #endif
 		}
@@ -4379,7 +4390,7 @@ void do_cmd_zap_rod(int Ind, int item)
 			return;
 		}
 	}
-	if(f4 & TR4_CHARGING) o_ptr->pval/=3;
+	if(f4 & TR4_CHARGING) o_ptr->pval /= 2;
 
 	break_cloaking(Ind);
 
@@ -4822,11 +4833,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			o_ptr->pval = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			break;
-#else // how about...
-			if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+#else /* how about... */
+//scale moar!		if (hp_player(Ind, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 50))) ident = TRUE;
+			if (hp_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 250))) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
-			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+//a bit too much?	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 7);
+			o_ptr->pval = 15 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
 			break; 
 #endif
 		}
@@ -5139,17 +5152,17 @@ void do_cmd_activate(int Ind, int item)
 if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);	
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		msg_print(Ind, "You don't believe in magic.");	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);	
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5))
         {
-                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 }
@@ -5230,7 +5243,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
         }
 	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_WRAITH && !p_ptr->total_winner) {
 		msg_print(Ind, "Only royalties may activate this Ring!");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 
 	/* Give everyone a (slight) chance */
@@ -5872,8 +5885,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_CARLAMMAS:
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
+#if 0 /* o_O */
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
+#else
+				(void)set_protevil(Ind, randint(15) + 35); /* removed stacking */
+#endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -6357,8 +6374,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_CARLAMMAS:
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
+#if 0
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
+#else
+				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+#endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -6552,8 +6573,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_HIMRING:
 			{
+#if 0
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
+#else
+				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+#endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -7130,9 +7155,21 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 			case SV_RING_POLYMORPH:
 			{
-				/* Mimics only */
+#if 0				/* Mimics only */
 //				if (!get_skill(p_ptr, SKILL_MIMIC)) return;
-				if (p_ptr->pclass != CLASS_MIMIC) return;
+				if (p_ptr->pclass != CLASS_MIMIC) {
+					msg_print(Ind, "The ring starts to glow brightly, then fades again");
+					return;
+				}
+#else
+				if (!get_skill(p_ptr, SKILL_MIMIC) ||
+                		    (p_ptr->pclass == CLASS_DRUID) ||
+		                    (p_ptr->prace == RACE_VAMPIRE) ||
+		                    (p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(o_ptr->pval))) {
+					msg_print(Ind, "The ring starts to glow brightly, then fades again");
+					return;
+				}
+#endif
 
 				if(!(item==INVEN_LEFT || item==INVEN_RIGHT)){
 					msg_print(Ind, "You must be wearing the ring!");
@@ -7147,7 +7184,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))
 						msg_print(Ind, "Nothing happens");
 					else if (r_info[p_ptr->body_monster].level == 0)
-						msg_print(Ind, "The ring starts to glow but fades");
+						msg_print(Ind, "The ring starts to glow brightly, then fades again");
 					else{
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
@@ -7192,32 +7229,33 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				/* activate the ring to change into its form! */
 				{
 					/* Need skill; no need of killing count */
-					if (r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
+					if (r_info[o_ptr->pval].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 					{
 						msg_print(Ind, "Your mimicry is not powerful enough yet.");
 						return;
 					}
-					
+
+#if POLY_RING_METHOD == 0
 					/* Poly first, break then :) */
 					/* reversed again since you need need to keep wearing the ring
 					   or you will polymorph back */
-#if 0
+ #if 0
 					/* If-clause for poly-first-break-then */
-					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
-					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
+//a)					if (rand_int(100) < (11 + (1000 / ((1010 / (r_info[p_ptr->body_monster].level + 1)) + 10 +
+//					    (get_skill(p_ptr, SKILL_MIMIC) * get_skill(p_ptr, SKILL_MIMIC) / 30)))))
 					
 					/* If-clause for non-timeouted ring & break-first-poly-then */
-					if (rand_int(100) < 40 + (r_info[p_ptr->body_monster].level / 3) - get_skill_scale(p_ptr, SKILL_MIMIC, 10))
+//b)					if (rand_int(100) < 40 + (r_info[p_ptr->body_monster].level / 3) - get_skill_scale(p_ptr, SKILL_MIMIC, 10))
 
 					/* If-clause for timeouted ring & break-first-poly-then (low%, ~20..25 (15..20+ ..) */
-					if (rand_int(100) < 20 + (r_info[p_ptr->body_monster].level / 4) - get_skill_scale(p_ptr, SKILL_MIMIC, 20))
-#else
+//c)					if (rand_int(100) < 20 + (r_info[p_ptr->body_monster].level / 4) - get_skill_scale(p_ptr, SKILL_MIMIC, 20))
+ #else
 					/* Take toll ('overhead energy') for activating */
 					if (o_ptr->timeout >= 1000) o_ptr->timeout -= 500; /* 500 are approx. 5 minutes */
 					else if (o_ptr->timeout > 1) o_ptr->timeout /= 2;
 
 					if (FALSE)
-#endif
+ #endif
 					{
 						msg_print(Ind, "There is a bright flash of light.");
 
@@ -7239,10 +7277,20 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 						return;
 					}
 
-					do_mimic_change(Ind, o_ptr->pval, FALSE);
-#if 0
-					monster_race *r_ptr = &r_info[o_ptr->pval];
+					do_mimic_change(Ind, o_ptr->pval, TRUE);
+#endif
 
+#if POLY_RING_METHOD == 1
+					msg_print(Ind, "\377yThe ring disintegrates, releasing a powerful magic wave!");
+					do_mimic_change(Ind, o_ptr->pval, TRUE);
+					p_ptr->tim_mimic = o_ptr->timeout;
+					p_ptr->tim_mimic_what = o_ptr->pval;
+				        inven_item_increase(Ind, item, -1);
+		    		        inven_item_optimize(Ind, item);
+#endif
+
+#if 0 /* ancient method, long outdated */
+					monster_race *r_ptr = &r_info[o_ptr->pval];
 					if ((r_ptr->level > p_ptr->lev * 2) || (p_ptr->r_killed[o_ptr->pval] < r_ptr->level))
 					{
 						msg_print(Ind, "You dont match the ring yet.");
@@ -7254,10 +7302,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					p_ptr->body_changed = TRUE;
 
 					p_ptr->update |= (PU_BONUS);
-
 					/* Recalculate mana */
 					p_ptr->update |= (PU_MANA | PU_HP);
-
 					/* Window stuff */
 					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 #endif
@@ -7336,17 +7382,17 @@ void do_cmd_activate_dir(int Ind, int dir)
 
 	if (p_ptr->anti_magic)
 	{
-		msg_print(Ind, "Your anti-magic shell disrupts your attempt.");	
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
-		msg_print(Ind, "You don't believe in magic.");	
+		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
 		return;
 	}
         if (magik((p_ptr->antimagic * 8) / 5))
         {
-                msg_print(Ind, "Your anti-magic field disrupts your attempt.");
+                msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
                 return;
         }
 
@@ -8601,4 +8647,151 @@ void do_cmd_stance(int Ind, int stance) {
 	p_ptr->update |= (PU_BONUS);
 	p_ptr->redraw |= (PR_PLUSSES);
 //	handle_stuff();
+}
+
+void do_cmd_melee_technique(int Ind, int technique) {
+	player_type *p_ptr = Players[Ind];
+/*	it's superflous, and rogues now get techniques too but don't have stances..
+	if (!get_skill(p_ptr, SKILL_STANCE)) return;
+*/
+
+	switch (technique) {
+	case 0:	if (!p_ptr->melee_techniques & 0x001) return; /* Sprint */
+		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 7;
+		un_afk_idle(Ind);
+		set_melee_sprint(Ind, 10); /* number of turns it lasts */
+//s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
+		break;
+	case 1:	if (!p_ptr->melee_techniques & 0x002) return; /* Taunt */
+		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		p_ptr->cst -= 2;
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 4; /* doing it while fighting no prob */
+		un_afk_idle(Ind);
+		taunt_monsters(Ind);
+//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+		break;
+	case 2:	if (!p_ptr->melee_techniques & 0x004) return; /* Spin */
+		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
+    		if (p_ptr->afraid) {                                                                                           
+			msg_print(Ind, "You are too afraid to attack!");                        
+			return;                                                                             
+		}                                                                                           
+		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		p_ptr->cst -= 8;
+		un_afk_idle(Ind);
+		spin_attack(Ind);
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+//s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
+		break;
+	case 3:	if (!p_ptr->melee_techniques & 0x008) return; /* Berserk */
+		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 10;
+		un_afk_idle(Ind);
+                set_berserk(Ind, randint(5) + 20);
+//s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
+		break;
+	}
+
+	p_ptr->redraw |= (PR_STAMINA);
+	redraw_stuff(Ind);
+}
+
+void do_cmd_ranged_technique(int Ind, int technique) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	if (!get_skill(p_ptr, SKILL_ARCHERY)) return; /* paranoia */
+
+	if (technique != 3 || !p_ptr->ranged_double) { /* just toggling that one off? */
+		if (!p_ptr->inventory[INVEN_AMMO].tval) {
+			msg_print(Ind, "You have no ammunition equipped.");
+			return;
+		}
+		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) {
+			msg_print(Ind, "You cannot use techniques with a boomerang.");
+			return;
+		}
+	}
+
+	disturb(Ind, 1, 0); /* stop things like running, resting.. */
+
+	switch (technique) {
+	case 0:	if (!p_ptr->ranged_techniques & 0x001) return; /* Flare missile */
+		if (p_ptr->ranged_flare) {
+			msg_print(Ind, "You dispose of the flare missile.");
+			p_ptr->ranged_flare = FALSE;
+			return;
+		}
+		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		for (i = 0; i < INVEN_WIELD; i++)
+			if (p_ptr->inventory[i].tval == TV_FLASK) { /* oil */
+//				p_ptr->cst -= 2;
+				p_ptr->ranged_flare = TRUE;
+				inven_item_increase(Ind, i, -1);
+				inven_item_describe(Ind, i);
+				inven_item_optimize(Ind, i);
+				break;
+			}
+		if (!p_ptr->ranged_flare) {
+			msg_print(Ind, "You are missing a flask of oil.");
+			return;
+		}
+		p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
+		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
+		msg_print(Ind, "You prepare an oil-drenched shot..");
+//s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
+		break;
+	case 1:	if (!p_ptr->ranged_techniques & 0x002) return; /* Precision shot */
+		if (p_ptr->ranged_precision) {
+			msg_print(Ind, "You stop aiming overly precisely.");
+			p_ptr->ranged_precision = FALSE;
+			return;
+		}
+		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
+//		p_ptr->cst -= 7;
+		p_ptr->ranged_flare = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
+		p_ptr->ranged_precision = TRUE;
+		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) */
+		msg_print(Ind, "You aim carefully for a precise shot..");
+//s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
+		break;
+	case 2:	if (!p_ptr->ranged_techniques & 0x004) return; /* Craft some ammunition */
+//s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
+		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
+		return;
+	case 3:	if (!p_ptr->ranged_techniques & 0x008) return; /* Double-shot */
+		if (!p_ptr->ranged_double) {
+			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
+				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!"); 
+				return;
+			}
+			p_ptr->ranged_double_used = 0;
+			p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_barrage = FALSE;
+		}
+		p_ptr->ranged_double = !p_ptr->ranged_double; /* toggle */
+		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double-shots.");
+		else msg_print(Ind, "You stop using double-shots.");
+//s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
+		break;
+	case 4:	if (!p_ptr->ranged_techniques & 0x010) return; /* Barrage */
+		if (p_ptr->ranged_barrage) {
+			msg_print(Ind, "You cancel preparations for barrage.");
+			p_ptr->ranged_barrage = FALSE;
+			return;
+		}
+		if (p_ptr->cst < 9) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
+			msg_print(Ind, "You need at least 6 projectiles for a barrage!"); 
+			return;
+		}
+//		p_ptr->cst -= 9;
+		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
+		p_ptr->ranged_barrage = TRUE;
+		msg_print(Ind, "You prepare a powerful multi-shot barrage...");
+//s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
+		break;
+	}
 }

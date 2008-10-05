@@ -2254,7 +2254,7 @@ static int Handle_login(int ind)
 	num_logins++;
 
 	save_server_info();
-
+	
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth();
 
@@ -3025,6 +3025,7 @@ static int Receive_login(int ind){
 			return(-1);
 		}
 
+		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
 		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0))
 		{
 			/* Use memfrob for the password - mikaelh */
@@ -3773,6 +3774,7 @@ int Send_skill_init(int ind, u16b i)
 	connection_t *connp = &Conn[Players[ind]->conn];
 
 	char *tmp;
+	int mkey;
 	
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3782,13 +3784,18 @@ int Send_skill_init(int ind, u16b i)
 		return 0;
 	}
 
-	tmp=s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
+	tmp = s_info[i].action_desc ? s_text + s_info[i].action_desc : "";
+	mkey = s_info[i].action_mkey;
+	
+	/* hack for fighting/shooting techniques */
+	if (mkey == MKEY_MELEE && Players[ind]->melee_techniques == 0x0000) mkey = 0;
+	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
 
 	/* Note: %hd is 2 bytes - use this for x16b.
 	   We can use %c for bytes. */
 	return( Packet_printf(&connp->c, "%c%hd%hd%hd%hd%ld%c%S%S%S",
 		PKT_SKILL_INIT, i,
-		s_info[i].father, s_info[i].order, s_info[i].action_mkey,
+		s_info[i].father, s_info[i].order, mkey,
 		s_info[i].flags1, s_info[i].tval, s_name+s_info[i].name,
 		s_text+s_info[i].desc, tmp ? tmp : "" ) );
 
@@ -3812,6 +3819,7 @@ int Send_skill_info(int ind, int i)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
+	int mkey;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3820,7 +3828,17 @@ int Send_skill_info(int ind, int i)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+
+	mkey = s_info[i].action_mkey;
+	/* hack for fighting/shooting techniques */
+	if (mkey == MKEY_MELEE && Players[ind]->melee_techniques == 0x0000) mkey = 0;
+	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
+
+	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
+	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+	else {
+	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey);
+	}
 }
 
 int Send_gold(int ind, s32b au, s32b balance)
@@ -3963,6 +3981,14 @@ int Send_sp(int ind, int msp, int csp)
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
+#if 1 /* can we use mana at all? */
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
+	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER)) {
+		msp = -9999;
+		csp = -9999;
+	}
+#endif
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
 		errno = 0;
@@ -3991,9 +4017,24 @@ int Send_sp(int ind, int msp, int csp)
 
 int Send_stamina(int ind, int mst, int cst)
 {
+#ifndef ENABLE_TECHNIQUES
+	return(0); /* disabled until client can handle it */
+#endif
+
 	connection_t *connp = &Conn[Players[ind]->conn];
+	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
 	player_type *p_ptr = Players[ind];
+
+#if 1 /* can we use stamina at all? */
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
+	    !(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER ||
+	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
+	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE)) {
+		mst = -9999;
+		cst = -9999;
+	}
+#endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4684,11 +4725,15 @@ int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
 	return Packet_printf(&connp->c, "%c%ld%ld%ld%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
 
-/* Implementing fighting/shooting techniques, but I think using a lua 'school' file would be better instead - C. Blue */
-int Send_techniques_info(int ind)
+/* Implementing fighting/shooting techniques, but maybe using a lua 'school' file would be better instead - C. Blue */
+int Send_technique_info(int ind)
 {
-#if 0
+#ifndef ENABLE_TECHNIQUES
+	return(0); /* disabled until client can handle it */
+#endif
 	connection_t *connp = &Conn[Players[ind]->conn];
+	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
+
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4698,9 +4743,7 @@ int Send_techniques_info(int ind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%ld%ld", PKT_TECHNIQUES_INFO, p_ptr->techniques[0], p_ptr->techniques[1]);
-#endif
-return(0);
+	return Packet_printf(&connp->c, "%c%ld%ld", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
 }
 
 int Send_item_request(int ind)
@@ -5617,7 +5660,7 @@ static int Receive_keepalive(int ind)
 		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > 30)	/* dont oscillate ;) */
 		{
 			/* auto AFK timer (>1 min) */
-			toggle_afk(Ind, "");
+			if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
 		}
 	}
 
@@ -6043,8 +6086,11 @@ static int Receive_fire(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)/p_ptr->num_fire)
 	{
+		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 //		do_cmd_fire(player, dir, item);
 		do_cmd_fire(player, dir);
+		if (p_ptr->ranged_double) do_cmd_fire(player, dir);
+		p_ptr->shooty_till_kill = FALSE;
 		return 2;
 	}
 	else if (player)
@@ -6329,7 +6375,12 @@ static int Receive_activate_skill(int ind)
 				do_cmd_set_trap(player, book, spell);
 				break;
 			case MKEY_SCHOOL:
+//uncommented since more coding is needed to save the actual spell type,
+//also nearby auto_retaliate check, there needs to be distinguishment
+//between magic and bow fire_till_kill!
+//				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE; 
 				cast_school_spell(player, book, spell, dir, item, aux);
+//				p_ptr->shooty_till_kill = FALSE;
 				break; 
 
 #ifdef CLASS_RUNEMASTER
@@ -6346,6 +6397,16 @@ static int Receive_activate_skill(int ind)
 			case MKEY_AURA_DEATH:
 				toggle_aura(player, 2);
 				break;
+
+			case MKEY_MELEE:
+				do_cmd_melee_technique(player, spell);
+				break;
+			case MKEY_RANGED:
+				do_cmd_ranged_technique(player, spell);
+				break;
+			case MKEY_SHOOT_TILL_KILL:
+				toggle_shoot_till_kill(player);
+				break; 
 		}
 		return 2;
 	}
@@ -8474,9 +8535,11 @@ static int Receive_rest(int ind)
 			return 2;
 		}
 
-		/* Don't rest if we are poisoned or at max hit points and max spell points */
+		/* Don't rest if we are poisoned or at max hit points and max spell points
+		   and max stamina */
 		if ((p_ptr->poisoned) || ((p_ptr->chp == p_ptr->mhp) &&
-					(p_ptr->csp == p_ptr->msp)))
+					(p_ptr->csp == p_ptr->msp) &&
+					(p_ptr->cst == p_ptr->mst)))
 		{
 			return 2;
 		}
@@ -9299,7 +9362,7 @@ static int Receive_ping(int ind) {
 			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > 60)	/* dont oscillate ;) */
 			{
 				/* auto AFK timer (>1 min) */
-				toggle_afk(Ind, "");
+				if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
 			}
 		}
 

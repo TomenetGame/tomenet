@@ -1199,6 +1199,10 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->chp);
 	wr_u16b(p_ptr->chp_frac);
 
+	wr_s16b(p_ptr->mst);
+	wr_s16b(p_ptr->cst);
+	wr_s16b(p_ptr->cst_frac);
+
 	wr_s16b(p_ptr->msp);
 	wr_s16b(p_ptr->csp);
 	wr_u16b(p_ptr->csp_frac);
@@ -1246,6 +1250,7 @@ static void wr_extra(int Ind)
 	wr_s16b(p_ptr->invuln);
 	wr_s16b(p_ptr->hero);
 	wr_s16b(p_ptr->shero);
+	wr_s16b(p_ptr->berserk);
         wr_s16b(p_ptr->shield);
         wr_s16b(p_ptr->shield_power);
         wr_s16b(p_ptr->shield_opt);

@@ -89,6 +89,7 @@ bool create_down_stair;         /* Auto-create "down stairs" */
 s16b num_repro;                 /* Current reproducer count */
 s16b object_level;              /* Current object creation level */
 s16b monster_level;             /* Current monster creation level */
+s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto, 0 = none */
 
 s32b turn;                      /* Current game turn */
 /*yo molt, here we have a lua prob: pkg files appearently dont know #if, so util.pkg always has tron_speed
@@ -773,6 +774,7 @@ char admin_note[MAX_ADMINNOTES][80];
 char bbs_line[BBS_LINES][140];
 
 int global_luck = 0;
+int regen_boost_stamina = 4;
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
@@ -791,6 +793,7 @@ int cron_1h_last_hour = -1; /* -1 to call immediately after server restart */
 global_event_type global_event[MAX_GLOBAL_EVENTS];
 int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
+int ge_training_tower = 0; /* use training tower for global events */
 u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
 int ge_contender_buffer_deed[128]; /* contender's deeds on different characters (Highlander Tournament!) */
 

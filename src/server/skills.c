@@ -167,218 +167,369 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 
 /* Display messages to the player, telling him about newly gained abilities
    from increasing a skill */
-static void msg_gained_abilities(int Ind, int old_value, int i) {
+void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
 	int new_value = get_skill_scale(p_ptr, i, 500);
+	int m;
+
 //	int as = get_archery_skill(p_ptr);
 //	int ws = get_weaponmastery_skill(p_ptr);
 
 	/* Tell the player about new abilities that he gained from the skill increase */
 	if (old_value == new_value) return;
 	switch(i) {
-	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to climb mountains!");;
+	case SKILL_CLIMB:	if (new_value == 10) msg_print(Ind, "\377G* You learn how to climb mountains! *");
 				break;
-	case SKILL_FLY: 	if (new_value == 10) msg_print(Ind, "\377GYou learn how to fly!");;
+	case SKILL_FLY: 	if (new_value == 10) msg_print(Ind, "\377G* You learn how to fly! *");
 				break;
-	case SKILL_FREEACT:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");;
+	case SKILL_FREEACT:	if (new_value == 10) msg_print(Ind, "\377G* You learn how to resist paralysis and move freely! *");
 				break;
-	case SKILL_RESCONF:	if (new_value == 10) msg_print(Ind, "\377GYou learn how to keep a focussed mind and avoid confusion!");;
+	case SKILL_RESCONF:	if (new_value == 10) msg_print(Ind, "\377G* You learn how to keep a focussed mind and avoid confusion! *");
 				break;
 	case SKILL_DODGE:
 		if (old_value == 0 && new_value > 0 &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
+			msg_print(Ind, "\377oYou cannot dodge attacks while wielding a shield!");
 		break;
 	case SKILL_MARTIAL_ARTS:
 		if (old_value == 0 && new_value > 0 &&
 		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)
-			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");
+			msg_print(Ind, "\377oYou cannot use special martial art styles with a shield!");
 		if (old_value < 10 && new_value >= 10) { /* the_sandman */
-//			msg_print(Ind, "\377GYou feel as if you could take on the world!");
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 100 && new_value >= 100) {
-			msg_print(Ind, "\377GYou learn how to fall safely!");
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 150 && new_value >= 150) {
-			msg_print(Ind, "\377GYou learn how to tame your fear!");
-		} if (old_value < 200 && new_value >= 200) {
-			msg_print(Ind, "\377GYou learn how to keep your mind focussed and avoid confusion!");
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 250 && new_value >= 250) {
-			msg_print(Ind, "\377GYou learn how to resist paralysis and move freely!");
-		} if (old_value < 300 && new_value >= 300) {
-			msg_print(Ind, "\377GYou learn how to swim easily!");
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+//			msg_print(Ind, "\377G* You feel as if you could take on the world! *");
+			msg_print(Ind, "\377G* You learn to use punching techniques. *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 20 && new_value >= 20)
+			msg_print(Ind, "\377G* You get the hang of using kicks. *");
+		if (old_value < 30 && new_value >= 30)
+			msg_print(Ind, "\377G* You get the hang of using hand side strikes. *");
+		if (old_value < 50 && new_value >= 50)
+			msg_print(Ind, "\377G* You get the hang of knee-based attacks. *");
+		if (old_value < 70 && new_value >= 70)
+			msg_print(Ind, "\377G* You get the hang of elbow-based attacks. *");
+		if (old_value < 90 && new_value >= 90)
+			msg_print(Ind, "\377G* You get the hang of butting techniques. *");
+		if (old_value < 100 && new_value >= 100) {
+			msg_print(Ind, "\377G* You learn how to fall safely! *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 110 && new_value >= 110)
+			msg_print(Ind, "\377G* Your kicks have improved. *");
+		if (old_value < 130 && new_value >= 130)
+			msg_print(Ind, "\377G* You get the hang of well-timed uppercuts. *");
+		if (old_value < 150 && new_value >= 150)
+			msg_print(Ind, "\377G* You learn how to tame your fear! *");
+		if (old_value < 160 && new_value >= 160)
+			msg_print(Ind, "\377G* You get the hang of difficult double-kicks. *");
+		if (old_value < 200 && new_value >= 200) {
+			msg_print(Ind, "\377G* You learn to use the Cat's Claw technique. *");
+			msg_print(Ind, "\377G* You learn how to keep your mind focussed and avoid confusion! *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 250 && new_value >= 250) {
+			msg_print(Ind, "\377G* You learn to use jump kicks effectively. *");
+			msg_print(Ind, "\377G* You learn how to resist paralysis and move freely! *");
+		}
+		if (old_value < 290 && new_value >= 290)
+			msg_print(Ind, "\377G* You learn to use the Eagle's Claw technique. *");
+		if (old_value < 300 && new_value >= 300) {
+			msg_print(Ind, "\377G* You learn how to swim easily! *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 330 && new_value >= 330) {
+			msg_print(Ind, "\377G* You get the hang of circle kicks. *");
+		}
 /*		} if (old_value < 350 && new_value >= 350) {  <- this one is now at skill 1.000 already
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!"); */
-		} if (old_value < 400 && new_value >= 400) {
-			msg_print(Ind, "\377GYou learn how to climb mountains!");
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 450 && new_value >= 450) {
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
-		} if (old_value < 500 && new_value >= 500) {
-			msg_print(Ind, "\377GYou learn the technique of flying!");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *"); */
+		if (old_value < 370 && new_value >= 370)
+			msg_print(Ind, "\377G* You learn the Iron Fist technique. *");
+		if (old_value < 400 && new_value >= 400) {
+			msg_print(Ind, "\377G* You learn how to climb mountains! *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 410 && new_value >= 410)
+			msg_print(Ind, "\377G* You get the hang of difficult flying kicks. *");
+		if (old_value < 450 && new_value >= 450) {
+			msg_print(Ind, "\377G* You learn the Dragon Fist technique. *");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
+		}
+		if (old_value < 480 && new_value >= 480) {
+			msg_print(Ind, "\377G* You get the hang of effective Crushing Blows. *");
+			if (p_ptr->total_winner) {
+				msg_print(Ind, "\377G* You learn the Royal Titan's Fist technique. *");
+				msg_print(Ind, "\377G* You learn the Royal Phoenix Claw technique. *");
+			}
+		}
+		if (old_value < 500 && new_value >= 500) {
+			msg_print(Ind, "\377G* You learn the technique of flying! *");
 		/* The final +ea has been moved down from lvl 50 to lvl 1 to boost MA a little - the_sandman - moved it to 350 - C. Blue */
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
 		}
 		break;
-	case SKILL_ARCHERY:
-		if (old_value < 100 && new_value >= 100) {
-			msg_print(Ind, "\377GYou learn how to create ammunition from bones and rubble!");
-		} if (old_value < 110 && new_value >= 110) {
-			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons!");
-		} if (old_value < 200 && new_value >= 200) {
-			msg_print(Ind, "\377GYour ability to create ammunition improved remarkably!");
-		} if (old_value < 500 && new_value >= 500) {
-			msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+	case SKILL_STANCE:
+		/* automatically upgrade currently taken stance power */
+		switch (p_ptr->pclass) {
+		case CLASS_WARRIOR:
+			m = 0;
+		        if (old_value < 50 && new_value >= 50) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
+		        if (old_value < 150 && new_value >= 150) {
+	    	        	msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
+	        	        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
+		        }
+			if (old_value < 350 && new_value >= 350) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank III. *");
+		    	    if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
+			}
+			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\377G* You learn how to enter an offensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 200) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank II. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 400 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank III. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
+			}
+			break;
+		case CLASS_MIMIC:
+			m = 15;
+			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 200) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 400 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank III. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
+			}
+			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\377G* You learn how to enter an offensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 250) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank II. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 400 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank III. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
+			}
+			break;
+		case CLASS_PALADIN:
+			m = 8;
+			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 200) {
+    				msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 350 && new_value >= 350) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank III. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
+			}
+			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\377G* You learn how to enter an offensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 250) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank II. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 400 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank III. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
+			}
+			break;
+		case CLASS_RANGER:
+			m = 5;
+			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
+			if (old_value < 150 && new_value >= 200) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 350 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank III. *");
+			        if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
+			}
+			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\377G* You learn how to enter an offensive stance (rank I). *");
+			if (old_value < 200 && new_value >= 250) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank II. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
+			}
+			if (old_value < 400 && new_value >= 400) {
+			        msg_print(Ind, "\377G* You learn how to enter offensive stance rank III. *");
+			        if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
+			}
+			break;
+		default:
+			m = 20; /* (for all other classes in theory, if they could learn this skill) */
 		}
+		if (old_value < 40 + m * 10 && new_value >= 40 + m * 10)
+			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+		if (old_value < 90 + m * 10 && new_value >= 90 + m * 10)
+			msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+		if (old_value < 160 + m * 10 && new_value >= 160 + m * 10)
+			msg_print(Ind, "\377G* You learn the fighting technique 'Spin'! *");
+		if (old_value < 250 + m * 10 && new_value >= 250 + m * 10)
+			msg_print(Ind, "\377G* You learn the fighting technique 'Berserk'! *");
+		break;
+	case SKILL_ARCHERY:
+		if (old_value < 40 && new_value >= 40)
+			msg_print(Ind, "\377G* You learn the shooting technique 'Flare'! *");
+		if (old_value < 80 && new_value >= 80)
+			msg_print(Ind, "\377G* You learn the shooting technique 'Precision shot'! *");
+		if (old_value < 100 && new_value >= 100)
+			msg_print(Ind, "\377G* You learn how to create ammunition from bones and rubble! *");
+		if (old_value < 110 && new_value >= 110)
+			msg_print(Ind, "\377G* You got better at recognizing the power of unknown ranged weapons! *");
+		if (old_value < 160 && new_value >= 160)
+			msg_print(Ind, "\377G* You learn the shooting technique 'Double-shot'! *");
+		if (old_value < 200 && new_value >= 200)
+			msg_print(Ind, "\377G* Your ability to create ammunition improved remarkably! *");
+		if (old_value < 250 && new_value >= 250)
+			msg_print(Ind, "\377G* You learn the shooting technique 'Barrage'! *");
+		if (old_value < 500 && new_value >= 500)
+			msg_print(Ind, "\377G* Your general shooting power gains extra might due to your training! *");
 		break;
 	case SKILL_COMBAT:
 		if (old_value < 110 && new_value >= 110) {
-			msg_print(Ind, "\377GYou got better at recognizing the power of unknown weapons.");
+			msg_print(Ind, "\377G* You got better at recognizing the power of unknown weapons. *");
 		} if (old_value < 310 && new_value >= 310) {
-			msg_print(Ind, "\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
+			msg_print(Ind, "\377G* You got better at recognizing the power of unknown ranged weapons and ammo. *");
 		} if (old_value < 410 && new_value >= 410) {
-			msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+			msg_print(Ind, "\377G* You got better at recognizing the power of unknown magical items. *");
 		}
 		break;
 	case SKILL_MAGIC:
-		if (old_value < 110 && new_value >= 110) msg_print(Ind, "\377GYou got better at recognizing the power of unknown magical items.");
+		if (old_value < 110 && new_value >= 110) msg_print(Ind, "\377G* You got better at recognizing the power of unknown magical items. *");
 		break;
 	case SKILL_EARTH:
 		if (old_value < 300 && new_value >= 300) {
-			msg_print(Ind, "\377GYou feel able to prevent shards of rock from striking you.");
+			msg_print(Ind, "\377G* You feel able to prevent shards of rock from striking you. *");
 		} if (old_value < 450 && new_value >= 450) {
-			msg_print(Ind, "\377GYou feel able to prevent large masses of rock from striking you.");
+			msg_print(Ind, "\377G* You feel able to prevent large masses of rock from striking you. *");
 		}
 		break;
 	case SKILL_AIR:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou feel light as a feather.");
+                        msg_print(Ind, "\377G* You feel light as a feather. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou feel able to breathe within poisoned air.");
+                        msg_print(Ind, "\377G* You feel able to breathe within poisoned air. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feel flying is easy.");
+                        msg_print(Ind, "\377G* You feel flying is easy. *");
                 }
                 break;
 	case SKILL_WATER:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou feel able to prevent water streams from striking you.");
+                        msg_print(Ind, "\377G* You feel able to prevent water streams from striking you. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou feel able to move through water easily.");
+                        msg_print(Ind, "\377G* You feel able to move through water easily. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feel able to prevent tidal waves from striking you.");
+                        msg_print(Ind, "\377G* You feel able to prevent tidal waves from striking you. *");
                 }
                 break;
 	case SKILL_FIRE:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou feel able to resist fire easily.");
+                        msg_print(Ind, "\377G* You feel able to resist fire easily. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feel that fire cannot harm you anymore.");
+                        msg_print(Ind, "\377G* You feel that fire cannot harm you anymore. *");
                 }
                 break;
 	case SKILL_MANA:
                 if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou feel able to defend from mana attacks easily.");
+                        msg_print(Ind, "\377G* You feel able to defend from mana attacks easily. *");
                 }
                 break;
 	case SKILL_CONVEYANCE:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
+                        msg_print(Ind, "\377G* You laugh about feeble teleportation attacks. *");
                 }
                 break;
 	case SKILL_DIVINATION:
                 if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou find identifying items ridiculously easy.");
+                        msg_print(Ind, "\377G* You find identifying items ridiculously easy. *");
                 }
                 break;
 	case SKILL_NATURE:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYour magic allows you to pass trees and forests easily.");
+                        msg_print(Ind, "\377G* Your magic allows you to pass trees and forests easily. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYour magic allows you to pass water easily.");
+                        msg_print(Ind, "\377G* Your magic allows you to pass water easily. *");
                 }
 		/* + continuous effect */
                 break;
 	case SKILL_MIND:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou feels strong against confusion and hallucinations.");
+                        msg_print(Ind, "\377G* You feels strong against confusion and hallucinations. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou feels strong against insanity attacks.");
+                        msg_print(Ind, "\377G* You feels strong against insanity attacks. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feels very strong against insanity attacks.");
+                        msg_print(Ind, "\377G* You feels very strong against insanity attacks. *");
                 }
                 break;
 	case SKILL_TEMPORAL:
                 if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou don't fear time attacks as much anymore.");
+                        msg_print(Ind, "\377G* You don't fear time attacks as much anymore. *");
                 }
                 break;
 	case SKILL_UDUN:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou laugh about feeble teleportation attacks.");
+                        msg_print(Ind, "\377G* You laugh about feeble teleportation attacks. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou have strong control over your life force.");
+                        msg_print(Ind, "\377G* You have strong control over your life force. *");
                 }
                 break;
 	case SKILL_META: /* + continuous effect */
                 break;
 	case SKILL_HOFFENSE:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou fight against undead with holy wrath.");
+                        msg_print(Ind, "\377G* You fight against undead with holy wrath. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou fight against demons with holy wrath.");
+                        msg_print(Ind, "\377G* You fight against demons with holy wrath. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou fight against evil with holy fury.");
+                        msg_print(Ind, "\377G* You fight against evil with holy fury. *");
                 }
                 break;
 	case SKILL_HDEFENSE:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou stand fast against undead.");
+                        msg_print(Ind, "\377G* You stand fast against undead. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou stand fast against demons.");
+                        msg_print(Ind, "\377G* You stand fast against demons. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou stand fast against evil.");
+                        msg_print(Ind, "\377G* You stand fast against evil. *");
                 }
                 break;
 	case SKILL_HCURING:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377GYou feel strong against blindness and poison.");
+                        msg_print(Ind, "\377G* You feel strong against blindness and poison. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou feel strong against stun and cuts.");
+                        msg_print(Ind, "\377G* You feel strong against stun and cuts. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feel strong against hallucination and black breath.");
+                        msg_print(Ind, "\377G* You feel strong against hallucination and black breath. *");
                 }
 		/* + continuous effect */
                 break;
 	case SKILL_HSUPPORT:
                 if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377GYou don't feel hunger for worldly food anymore.");
+                        msg_print(Ind, "\377G* You don't feel hunger for worldly food anymore. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377GYou feel superior to ancient curses.");
+                        msg_print(Ind, "\377G* You feel superior to ancient curses. *");
                 }
                 break;
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\377GYour attack speed has become faster due to your training!");
+			msg_print(Ind, "\377G* Your attack speed has become faster due to your training! *");
 		}
 		break;
 	case SKILL_SLING:
 		if ((old_value < 100 && new_value >= 100) || (old_value < 200 && new_value >= 200) ||
 		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\377G* Your shooting speed has become faster due to your training! *");
 		}
 		break;
 	case SKILL_BOW:
 		if ((old_value < 125 && new_value >= 125) || (old_value < 250 && new_value >= 250) ||
 		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\377G* Your shooting speed has become faster due to your training! *");
 		}
 		break;
 	case SKILL_XBOW:
 		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
-			msg_print(Ind, "\377GYour general shooting power gains extra might due to your training!");
+			msg_print(Ind, "\377G* Your shooting speed has become faster due to your training! *");
+			msg_print(Ind, "\377G* Your general shooting power gains extra might due to your training! *");
 		}
 		break;
 /*	case SKILL_SLING:
@@ -387,34 +538,26 @@ static void msg_gained_abilities(int Ind, int old_value, int i) {
 */	case SKILL_BOOMERANG:
 		if ((old_value < 166 && new_value >= 166) || (old_value < 333 && new_value >= 333) ||
 		    (old_value < 500 && new_value >= 500)) {
-			msg_print(Ind, "\377GYour shooting speed has become faster due to your training!");
+			msg_print(Ind, "\377G* Your shooting speed has become faster due to your training! *");
 		}
 		break; 
-	case SKILL_HEALTH:
-		if ((old_value < 300) && new_value >= 300) msg_print(Ind, "\377GYou feel healthy.");
-		if ((old_value < 400) && new_value >= 400) msg_print(Ind, "\377GYou feel healthy.");
-		if ((old_value < 500) && new_value >= 500) msg_print(Ind, "\377GYou feel healthy.");
-		break;
 #ifdef CLASS_RUNEMASTER
 	case SKILL_RUNEMASTERY:
 		if (old_value < RSAFE_BOLT*10 && new_value >= RSAFE_BOLT*10) {
-		    msg_print(Ind, "\377GYou are able to cast bolt rune spells without breaking the runes!");
+		    msg_print(Ind, "\377G* You are able to cast bolt rune spells without breaking the runes! *");
 		} else if (old_value < RSAFE_BEAM*10 && new_value >= RSAFE_BEAM*10) {
-		    msg_print(Ind, "\377GYou are able to cast beam rune spells without breaking the runes!");
+		    msg_print(Ind, "\377G* You are able to cast beam rune spells without breaking the runes! *");
 		} else if (old_value < RSAFE_BALL*10 && new_value >= RSAFE_BALL*10) {
-		    msg_print(Ind, "\377GYou are able to cast ball rune spells without breaking the runes!");
+		    msg_print(Ind, "\377G* You are able to cast ball rune spells without breaking the runes! *");
 		} else if (old_value < RSAFE_CLOUD*10 && new_value >= RSAFE_CLOUD*10) {
-		    msg_print(Ind, "\377GYou are able to cast cloud rune spells without breaking the runes!");
+		    msg_print(Ind, "\377G* You are able to cast cloud rune spells without breaking the runes! *");
 		}
-
-
-#ifdef ALTERNATE_DMG
+ #ifdef ALTERNATE_DMG
 		if (old_value < RBARRIER*10 && new_value >= RBARRIER*10) {
-		    msg_print(Ind, "\377GYou feel your potential unleashed.");
+		    msg_print(Ind, "\377G* You feel your potential unleashed. *");
 		}
-#endif //ALTERNATE_DMG
-#endif //CLASS_RUNEMASTER
-
+ #endif /*ALTERNATE_DMG*/
+#endif /*CLASS_RUNEMASTER*/
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
@@ -459,8 +602,9 @@ static void increase_related_skills(int Ind, int i)
 
 			/* Save the modified value */
 			p_ptr->s_info[j].value = val;
-
+			
 			/* Update the client */
+			calc_techniques(Ind);
 			Send_skill_info(Ind, j);
 			
 			/* Take care of gained abilities */
@@ -538,6 +682,7 @@ void increase_skill(int Ind, int i)
 	increase_related_skills(Ind, i);
 
 	/* Update the client */
+	calc_techniques(Ind);
 	Send_skill_info(Ind, i);
 
 	/* XXX updating is delayed till player leaves the skill screen */

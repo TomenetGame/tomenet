@@ -1442,6 +1442,9 @@ static void player_setup(int Ind, bool new)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 
+        struct wilderness_type *wild;
+	struct dungeon_type *d_ptr;
+	
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
@@ -1504,6 +1507,19 @@ static void player_setup(int Ind, bool new)
                                 p_ptr->stormbringer = FALSE;/* for melee */
 #endif
 			}
+		}
+	}
+	/* If he's in the training tower of Bree, check for running global events accordingly */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
+	        wild = &wild_info[wpos->wy][wpos->wx];
+    		d_ptr = wild->tower;
+		if (wpos->wz == d_ptr->maxdepth)
+		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
+		if (p_ptr->global_event_type[d] != GE_NONE)
+		switch (p_ptr->global_event_type[d]) {
+		case GE_ARENA_MONSTER:
+			wpos->wz = 0;
+			break;
 		}
 	}
 
@@ -2026,6 +2042,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->team=0;
 
 	/* Set info */
+	p_ptr->mode |= sex & ~MODE_MALE;
+#if 1 /* don't allow yet, until it's done getting implemented.. */
+	p_ptr->mode &= ~MODE_PVP;
+#endif
 
 #if 1 /* keep for now to stay compatible, doesn't hurt us */
 	if (sex > 511)
@@ -2035,12 +2055,6 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->mode |= MODE_FRUIT_BAT;
 	}
 #endif
-#if 1 /* don't allow yet, until it's done getting implemented.. */
-	p_ptr->mode &= ~MODE_PVP;
-#endif
-
-	p_ptr->mode |= sex & ~MODE_MALE;
-
 	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
 	
 	/* fix potential exploits */
@@ -2154,6 +2168,10 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* msp is only calculated in calc_mana which is only in update_stuff though.. */
 	calc_mana(Ind);
 	p_ptr->csp = p_ptr->msp;
+
+	/* Start with full stamina */
+	p_ptr->cst = 10;
+	p_ptr->mst = 10;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

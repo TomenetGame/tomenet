@@ -147,6 +147,8 @@ void inven_takeoff(int Ind, int item, int amt)
 		}*/
 	}
 #endif
+
+#if POLY_RING_METHOD == 0
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
@@ -160,6 +162,7 @@ void inven_takeoff(int Ind, int item, int amt)
 			do_mimic_change(Ind, 0, TRUE);
 		}
 	}
+#endif
 
 	/* Check if item gave WRAITH form */
 	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
@@ -357,6 +360,8 @@ void inven_drop(int Ind, int item, int amt)
 		}*/
 	}
 #endif
+
+#if POLY_RING_METHOD == 0
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
 	if ((item == INVEN_LEFT || item == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH))
@@ -366,13 +371,14 @@ void inven_drop(int Ind, int item, int amt)
 		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level)))
 		{
 			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
-#if 1
+ #if 1
 			msg_print(Ind, "You polymorph back to your normal form.");
 			do_mimic_change(Ind, 0, TRUE);
-#endif
+ #endif
 			s_printf("DROP_EXPLOIT (poly): %s dropped %s\n", p_ptr->name, o_name);
 		}
 	}
+#endif
 
 	/* Check if item gave WRAITH form */
 	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
@@ -723,12 +729,28 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	if ((f4 & TR4_MUST2H) &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx != 0))
 	{
+#if 1 /* a) either give error msg, or.. */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		if (get_skill(p_ptr, SKILL_DUAL))
 			msg_format(Ind, "You cannot wield your %s with a shield or a secondary weapon.", o_name);
 		else
 			msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
 		return;
+#else /* b) take off the left-hand item too */
+/* important note: can't enable this like this, because it's NOT FINISHED:
+   after taking off the shield/2nd weapon, item letters in inventory will
+   CHANGE and the WRONG item will be equipped. - C. Blue */
+return;
+		if( check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 'T' )) {
+			msg_print(Ind, "Your second equipped item's inscription prevents taking it off.");
+			return;
+		};
+		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
+			msg_print(Ind, "Hmmm, the second item you're wielding seems to be cursed.");
+			return;
+		}
+		inven_takeoff(Ind, INVEN_ARM, 255);
+#endif
 	}
 	if ((f4 & TR4_SHOULD2H) &&
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) /* dual-wield not with 1.5h */
@@ -1158,12 +1180,14 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	
 
 	/* Error checks */
-	if (amt <= 0) return;
 	if (amt > p_ptr->au)
 	{
-		msg_print(Ind, "You do not have that much gold.");
+		amt = p_ptr->au;
+/*		msg_print(Ind, "You do not have that much gold.");
 		return;
+*/
 	}
+	if (amt <= 0) return;
 
 	/* Setup the object */
 	/* XXX Use "gold" object kind */
@@ -1719,7 +1743,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			m_ptr->csleep = 0;
 
 			/* Speed up because monsters are ANGRY when you try to thief them */
-			m_ptr->mspeed += 5;
+			m_ptr->mspeed += 5; m_ptr->speed += 5;
 			screen_load();
 			break_cloaking(Ind);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
@@ -2228,7 +2252,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	if (o_ptr->tval == TV_FLASK) {
 		j_ptr->timeout += o_ptr->pval;
 	} else {
-		spilled_fuel = (o_ptr->timeout * randint(20)) / 100; /* spill some 1..20% */
+		spilled_fuel = (o_ptr->timeout * (randint(5) + (130 - adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 2)) / 100; /* spill some */
 		available_fuel = o_ptr->timeout - spilled_fuel;
 		j_ptr->timeout += available_fuel;
 	}

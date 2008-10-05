@@ -384,10 +384,11 @@ static bool do_player_trap_call_out(int Ind)
         m_ptr = &m_list[h_index];
 
         sn = 0;
-        for (i = 0; i < 8; i++)
+        for (i = 1; i <= 9; i++)
         {
                 cx = p_ptr->px + ddx[i];
                 cy = p_ptr->py + ddy[i];
+		if (!in_bounds(cy, cx)) continue;
                 /* Skip non-empty grids */
                 if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
 		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
@@ -774,7 +775,7 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		}
 		if ((dodge > 0) && magik(dodge))
 		{
-			msg_print(Ind, "You dodge the attack!");
+			msg_format(Ind, "\377%cYou dodge the attack!", COLOUR_DODGE_GOOD);
 			continue;
 		}
 
@@ -1235,7 +1236,7 @@ break;
 				object_desc(Ind, i_name, j_ptr, FALSE, 3);
 
 				/* Message */
-				msg_format(Ind, "%sour %s (%c) was stolen!",
+				msg_format(Ind, "\377o%sour %s (%c) was stolen!",
 						((j_ptr->number > 1) ? "One of y" : "Y"),
 						i_name, index_to_label(i));
 
@@ -1342,13 +1343,13 @@ break;
 			else if (p_ptr->au)
 			{
 				msg_print(Ind, "Your purse feels lighter.");
-				msg_format(Ind, "%ld coins were stolen!", (long int)gold);
+				msg_format(Ind, "\377o%ld coins were stolen!", (long int)gold);
 				ident=TRUE;
 			}
 			else
 			{
 				msg_print(Ind, "Your purse feels empty.");
-				msg_print(Ind, "All of your coins were stolen!");
+				msg_print(Ind, "\377oAll of your coins were stolen!");
 				ident=TRUE;
 			}
 			p_ptr->redraw |= (PR_GOLD);

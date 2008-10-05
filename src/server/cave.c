@@ -281,7 +281,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (admin_p(i)) continue;
 			p_ptr = Players[i];
-			if (inarea(&p_ptr->wpos, wpos)) s_printf("(%s) VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
+			if (inarea(&p_ptr->wpos, wpos)) s_printf("%s VALINOR: Player %s is here.\n", showtime(), p_ptr->name);
 		}
 	}
 
@@ -1731,7 +1731,7 @@ static byte player_color(int Ind)
 	that should be fine. (C. Blue)
 	if (p_ptr->fruit_bat) return TERM_ORANGE; */
 	
-	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
+//	if (p_ptr->tim_mimic) pcolor = p_ptr->tim_mimic_what;
 
 	if(p_ptr->team){
 		/* may have multiteam */
@@ -4416,17 +4416,19 @@ void update_view(int Ind)
 	/* Scan south-east */
 	for (d = 1; d <= z; d++)
 	{
+//superfluous		if (!in_bounds_array(y+d, x+d)) break;
 		if (y + d > 65) break;
 		c_ptr = &zcave[y+d][x+d];
 		w_ptr = &p_ptr->cave_flag[y+d][x+d];
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x+d);
-		if (!cave_los_grid(c_ptr)) break;             
+		if (!cave_los_grid(c_ptr)) break;
 	}
 
 	/* Scan south-west */
 	for (d = 1; d <= z; d++)
 	{
+//superfluous		if (!in_bounds_array(y+d, x-d)) break;
 		if (y + d > 65) break;
 		c_ptr = &zcave[y+d][x-d];
 		w_ptr = &p_ptr->cave_flag[y+d][x-d];
@@ -4438,6 +4440,7 @@ void update_view(int Ind)
 	/* Scan north-east */
 	for (d = 1; d <= z; d++)
 	{
+//superfluous		if (!in_bounds_array(y-d, x+d)) break;
 		if (d > y) break;
 		c_ptr = &zcave[y-d][x+d];
 		w_ptr = &p_ptr->cave_flag[y-d][x+d];
@@ -4449,6 +4452,7 @@ void update_view(int Ind)
 	/* Scan north-west */
 	for (d = 1; d <= z; d++)
 	{
+//superfluous		if (!in_bounds_array(y-d, x-d)) break;
 		if (d > y) break;
 		c_ptr = &zcave[y-d][x-d];
 		w_ptr = &p_ptr->cave_flag[y-d][x-d];
@@ -4469,6 +4473,7 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y+d, x);
 		if (!cave_los_grid(c_ptr)) break;
+//superfluous		if (!in_bounds_array(y+d+1, x)) break;
 	}
 
 	/* Initialize the "south strips" */
@@ -4483,6 +4488,7 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y-d, x);
 		if (!cave_los_grid(c_ptr)) break;
+//superfluous		if (!in_bounds_array(y-d-1, x)) break;
 	}
 
 	/* Initialize the "north strips" */
@@ -4496,6 +4502,7 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x+d);
 		if (!cave_los_grid(c_ptr)) break;
+//superfluous		if (!in_bounds_array(y, x+d+1)) break;
 	}
 
 	/* Initialize the "east strips" */
@@ -4509,6 +4516,7 @@ void update_view(int Ind)
 		c_ptr->info |= CAVE_XTRA;
 		cave_view_hack(w_ptr, y, x-d);
 		if (!cave_los_grid(c_ptr)) break;
+//superfluous		if (!in_bounds_array(y, x-d-1)) break;
 	}
 
 	/* Initialize the "west strips" */
