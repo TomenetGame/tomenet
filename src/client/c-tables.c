@@ -855,6 +855,7 @@ cptr melee_techniques[16] =
   "Spin",
   "Berserk",
 
+#if 0
   "Stab",
   "Slice",
   "Quake",
@@ -869,6 +870,24 @@ cptr melee_techniques[16] =
   "Flash bomb",
   "Shadow jump",
   "Instant cloak",
+
+#else
+
+  "Bash",
+  "Knock-back",
+  "Jump",
+  "Charge",
+
+  "Distract",
+  "Flash bomb",
+  "Cloak",
+  "",
+
+  "",
+  "Shadow jump",
+  "Shadow run",
+  "Instant cloak",
+#endif
 };
 
 cptr ranged_techniques[16] =
