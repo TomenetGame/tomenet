@@ -122,15 +122,23 @@ void prt_title(cptr title)
 /*
  * Prints level and experience
  */
-void prt_level(int level, s32b max, s32b cur, s32b adv)
+void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv)
 {
 	char tmp[32];
-
-	sprintf(tmp, "%6d", level);
+	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
 
 	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
-	Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
 
+	sprintf(tmp, "%2d", level);
+
+	if (max_lev == max_plv) {
+		Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, colour, "    ");
+		Term_putstr(COL_LEVEL + 10, ROW_LEVEL, -1, colour, tmp);
+	} else {
+		Term_putstr(COL_LEVEL + 6, ROW_LEVEL, -1, colour, tmp);
+		sprintf(tmp, "(%2d)", max_plv);
+		Term_putstr(COL_LEVEL + 8, ROW_LEVEL, -1, TERM_L_GREEN, tmp);
+	}
 
 	if (!c_cfg.exp_need)
 	{

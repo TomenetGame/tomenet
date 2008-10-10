@@ -1578,21 +1578,23 @@ int Receive_experience(void)
 	int	n;
 	char	ch;
 	s32b	max, cur, adv;
-	s16b	lev;
+	s16b	lev, max_lev, max_plv;
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%d%d%d", &ch, &lev, &max, &cur, &adv)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%d%d%d", &ch, &lev, &max_lev, &max_plv, &max, &cur, &adv)) <= 0)
 	{
 		return n;
 	}
 
 	p_ptr->lev = lev;
+	p_ptr->max_lev = max_lev;
+	p_ptr->max_plv = max_plv;
 	p_ptr->max_exp = max;
 	p_ptr->exp = cur;
 	exp_adv = adv;
 
 	if (screen_icky) Term_switch(0);
 
-	prt_level(lev, max, cur, adv);
+	prt_level(lev, max_lev, max_plv, max, cur, adv);
 
 	if (screen_icky) Term_switch(0);
 
