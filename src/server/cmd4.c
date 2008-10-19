@@ -1130,7 +1130,7 @@ void do_cmd_check_server_settings(int Ind)
 	case 3:
 		fprintf(fff, "Non-sleeping monsters adjust to highest player within their awareness area.\n");
 	case 2:
-		fprintf(fff, "Level of a player casting support spells on you affects exp for %ld turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
+		fprintf(fff, "Level of a player casting support spells on you affects exp for %d turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
 	case 1:
 		fprintf(fff, "Monsters' exp value is affected by highest attacking or targetted player.\n");
 		break;
@@ -1473,8 +1473,8 @@ void do_cmd_show_houses(int Ind)
 			else fprintf(fff, "  Dead's. ID: %d", dna->creator);
 #endif	// 0
 			name = lookup_player_name(houses[i].dna->owner);
-			if (name) fprintf(fff, "  ID: %ld  Owner: %s", dna->owner, name);
-			else fprintf(fff, "  ID: %ld", dna->owner);
+			if (name) fprintf(fff, "  ID: %d  Owner: %s", dna->owner, name);
+			else fprintf(fff, "  ID: %d", dna->owner);
 		}
 
 #if 1

@@ -25,9 +25,9 @@ void SGWHit(int read_fd, int arg){
 			int i;
 			time(&now);
 			size+=sprintf(sdb,"runtime=%ld\n", now-cfg.runtime);
-			size+=sprintf(&sdb[size], "turn=%ld\n", turn);
+			size+=sprintf(&sdb[size], "turn=%d\n", turn);
 			size+=sprintf(&sdb[size], "day=%d\n", DAY);	/* day const */
-			size+=sprintf(&sdb[size], "year=%ld\n", bst(YEAR, turn) + START_YEAR);	/* starting year const */
+			size+=sprintf(&sdb[size], "year=%d\n", bst(YEAR, turn) + START_YEAR);	/* starting year const */
 			/* let the script count or we'll give away
 			   the dungeon masters. */
 			/* size+=sprintf(&sdb[size],"num=%d\n", NumPlayers);*/
@@ -36,7 +36,7 @@ void SGWHit(int read_fd, int arg){
 				size+=sprintf(&sdb[size], "player=%s\n", Players[i]->name);
 				size+=sprintf(&sdb[size], "level=%d\n", Players[i]->lev);
 				size+=sprintf(&sdb[size], "race=%s\n", race_info[Players[i]->prace].title);
-				size+=sprintf(&sdb[size], "born=%ld\n", Players[i]->turn);
+				size+=sprintf(&sdb[size], "born=%d\n", Players[i]->turn);
 			}
 			size+=highscore_send(&sdb[size], 4096-size);
 			DgramWrite(newsock, sdb, size);

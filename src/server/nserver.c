@@ -434,7 +434,7 @@ bool Report_to_meta(int flag)
 	strcpy(buf_meta, "<server url=\"");
 	strcat(buf_meta, local_name);
 	strcat(buf_meta, "\" port=\"");
-	sprintf(temp, "%ld", cfg.game_port);
+	sprintf(temp, "%d", cfg.game_port);
 	strcat(buf_meta, temp);
 //	strcat(buf_meta, "\" notes=\"");
 //	sprintf(temp, "%s", cfg.server_notes);
@@ -5446,7 +5446,7 @@ int Send_party(int ind)
 	if (p_ptr->party > 0)
 	{
 		strcpy(bufm, "Members: ");
-		snprintf(buf, 10, "%ld", parties[p_ptr->party].members);
+		snprintf(buf, 10, "%d", parties[p_ptr->party].members);
 		strcat(bufm, buf);
 
 		strcpy(bufo, "Owner  : ");

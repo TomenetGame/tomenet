@@ -1517,7 +1517,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 			case RF4_BR_LITE:
 				return(TERM_LITE);
 			default:
-				printf("fla: %lx\n", r_ptr->flags4&0x3fffff00);
+				printf("fla: %x\n", r_ptr->flags4&0x3fffff00);
 		}
 		allowed_attrs[stored_colors] = second_color;
 		stored_colors++;
