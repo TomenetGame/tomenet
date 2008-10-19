@@ -181,7 +181,7 @@ void dump_skills(FILE *fff)
 			strcat(buf, format(" - %s", s_info[i].name));
 		}
 
-		fprintf(fff, "%-50s%02ld.%03ld [%01d.%03d]",
+		fprintf(fff, "%-50s%02d.%03d [%0d.%03d]",
 		        buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
 		        p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
 	}

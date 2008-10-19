@@ -142,7 +142,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 	if (!c_cfg.exp_need)
 	{
-		sprintf(tmp, "%9ld", (long)cur);
+		sprintf(tmp, "%9d", cur);
 	}
 	else
 	{
@@ -153,7 +153,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		else
 		{
 			/* Hack -- display in minus (to avoid confusion chez player) */
-			(void)sprintf(tmp, "%9ld", cur - adv);
+			(void)sprintf(tmp, "%9d", cur - adv);
 		}
 	}
 
