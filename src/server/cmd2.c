@@ -117,14 +117,11 @@ void do_cmd_go_up(int Ind)
 
 #ifdef RPG_SERVER /* Exclude NO_DEATH dungeons from the gameplay */
 	if ((wpos->wz==0) && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_NO_DEATH)) {
-		msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
- #if 0 /* needed for 'Arena Monster Challenge' again, instead, NO_DEATH are now simply empty */
-		if (!is_admin(p_ptr)) return;
- #else
-		if (!is_admin(p_ptr) &&
-		    !(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y))
+		/* needed for 'Arena Monster Challenge' again, NO_DEATH are now simply empty (no items/monsters) */
+		if (!(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) && !is_admin(p_ptr)) {
+			msg_print(Ind,"\377sOnly ivy-clad ruins of a former tower remain at this place..");
 			return;
- #endif
+		}
 	}
 #endif
 
@@ -1167,9 +1164,12 @@ void do_cmd_open(int Ind, int dir)
 			/* Allowed to open */
 			if (flag)
 			{
-				break_cloaking(Ind);
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
+
+				break_cloaking(Ind);
+				break_shadow_running(Ind); 
+
 				/* Some traps might destroy the chest on setting off */
 				if (o_ptr)
 					/* Let the Chest drop items */
@@ -1221,6 +1221,7 @@ void do_cmd_open(int Ind, int dir)
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
 				break_cloaking(Ind);
+				break_shadow_running(Ind); 
 
 				/* Set off trap */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -1268,6 +1269,7 @@ void do_cmd_open(int Ind, int dir)
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
 					break_cloaking(Ind);
+					break_shadow_running(Ind); 
 
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1304,23 +1306,25 @@ void do_cmd_open(int Ind, int dir)
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
+						break_cloaking(Ind);
+						break_shadow_running(Ind); 
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
-						break_cloaking(Ind);
 						return;
 					} else if (is_admin(p_ptr)) {
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
+						break_cloaking(Ind);
+						break_shadow_running(Ind); 
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
-						break_cloaking(Ind);
 						return;
 					}
 				}
@@ -1331,12 +1335,14 @@ void do_cmd_open(int Ind, int dir)
 		/* Closed door */
 		else
 		{
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
 			/* Set off trap */
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
-			/* S(he) is no longer afk */
-			un_afk_idle(Ind);
 			break_cloaking(Ind);
+			break_shadow_running(Ind); 
 
 			/* Take half a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1436,12 +1442,14 @@ void do_cmd_close(int Ind, int dir)
 		/* House door, close it */
 		else if (c_ptr->feat == FEAT_HOME_OPEN)
 		{
+			/* S(he) is no longer afk */
+			un_afk_idle(Ind);
+
 			/* Find this house */
 			i = pick_house(wpos, y, x);
 
-			/* S(he) is no longer afk */
-			un_afk_idle(Ind);
 			break_cloaking(Ind);
+			break_shadow_running(Ind); 
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1468,6 +1476,7 @@ void do_cmd_close(int Ind, int dir)
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 			break_cloaking(Ind);
+			break_shadow_running(Ind); 
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1688,9 +1697,10 @@ void do_cmd_tunnel(int Ind, int dir)
 			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
 				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind); 
 				/* Message */
 				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
-				break_cloaking(Ind);
 
 				/* Nope */
 				return;
@@ -1704,6 +1714,8 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Remove the rubble */
 				if ((power > rand_int(200)) && twall(Ind, y, x))
 				{
+					break_cloaking(Ind);
+					break_shadow_running(Ind); 
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 
@@ -1718,7 +1730,6 @@ void do_cmd_tunnel(int Ind, int dir)
 							msg_print(Ind, "You have found something!");
 						}
 					}
-					break_cloaking(Ind);
 
 					/* Notice */
 					note_spot_depth(wpos, y, x);
@@ -1730,14 +1741,18 @@ void do_cmd_tunnel(int Ind, int dir)
 				else
 				{
 					/* Message, keep digging */
-					msg_print(Ind, "You dig in the rubble.");
 					break_cloaking(Ind);
+					break_shadow_running(Ind); 
+					msg_print(Ind, "You dig in the rubble.");
 					more = TRUE;
 				}
 			}
 			
 			else if (c_ptr->feat == FEAT_TREE)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* mow down the vegetation */
 				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 400 */
 				{
@@ -1758,10 +1773,12 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 			else if (c_ptr->feat == FEAT_BUSH)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* mow down the vegetation */
 				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 400 */
 				{
@@ -1782,10 +1799,12 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 			else if (c_ptr->feat == FEAT_IVY)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* mow down the vegetation */
 				if ((power > rand_int(200)) && twall(Ind, y, x)) /* 400 */
 				{
@@ -1804,10 +1823,12 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* mow down the vegetation */
 				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 600 */
 				{
@@ -1826,7 +1847,6 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You attempt to clear a path.");
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 
 			/* Quartz / Magma */
@@ -1874,6 +1894,9 @@ void do_cmd_tunnel(int Ind, int dir)
 					okay = (power > 10 + rand_int(400)); /* 400 */
 				}
 				if (istown(wpos)) gold = FALSE;
+
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
 
 				/* Success */
 				if (okay && twall(Ind, y, x))
@@ -1929,19 +1952,20 @@ void do_cmd_tunnel(int Ind, int dir)
 					more = TRUE;
 				}
 #endif	/* 0 */
-				break_cloaking(Ind);
 			}
 
 			/* Default to secret doors */
 			else if (c_ptr->feat == FEAT_SECRET)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
 				more = TRUE;
 
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
-				break_cloaking(Ind);
 
 				/* Hack -- Search */
 				search(Ind);
@@ -1949,6 +1973,9 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Granite */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* Tunnel */
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
 				{
@@ -1962,12 +1989,14 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, "You tunnel into the granite wall.");
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 
 			/* Doors */
 			else
 			{
+				break_cloaking(Ind);
+				break_shadow_running(Ind);
+
 				/* Tunnel */
 				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x))
 				{
@@ -1981,7 +2010,6 @@ void do_cmd_tunnel(int Ind, int dir)
 					msg_print(Ind, f_text + f_ptr->tunnel);
 					more = TRUE;
 				}
-				break_cloaking(Ind);
 			}
 
 		}
@@ -2078,6 +2106,8 @@ void do_cmd_disarm(int Ind, int dir)
 
 		return;
 	}
+
+	break_shadow_running(Ind);
 
 	/* Get a direction (or abort) */
 	if (dir)
@@ -2509,6 +2539,7 @@ void do_cmd_bash(int Ind, int dir)
 					floor_item_optimize(item);
 
 					break_cloaking(Ind);
+					break_shadow_running(Ind);
 					return;
 				}
 
@@ -2605,6 +2636,7 @@ void do_cmd_bash(int Ind, int dir)
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
 			}
 			break_cloaking(Ind);
+			break_shadow_running(Ind);
 		}
 	}
 
@@ -2861,14 +2893,21 @@ int do_cmd_run(int Ind, int dir)
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
+			/* Allow level 50+ druids to run at full speed */
+			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+			}
 		}
     		/* or running-swimming? */
 	        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-    	        	if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-        	        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			/* Allow Aquatic players run/swim at full speed */
+			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			}
 	        }
 		/* or just normally running? */
 		else {
@@ -3533,6 +3572,7 @@ void do_cmd_fire(int Ind, int dir)
 	break_chance = breakage_chance(o_ptr);
 	tmp = p_ptr->ranged_precision;
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 	p_ptr->ranged_precision = tmp;
 
 	/* Reduce and describe inventory */
@@ -3560,7 +3600,7 @@ void do_cmd_fire(int Ind, int dir)
 					floor_item_optimize(0 - item);
 				}
 			}
-		} else if (!magic) {
+		} else if (!magic || cursed_p(o_ptr)) {
 			if (item >= 0)
 			{
 				inven_item_increase(Ind, item, p_ptr->ranged_barrage ? -6 : -1);
@@ -4613,6 +4653,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	}
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
@@ -5354,6 +5395,7 @@ return;
 		msg_print(Ind, "\377WYou uncloak yourself.");
 		p_ptr->cloaked = 0;
 	} else {
+		break_shadow_running(Ind);
 		/* stop other actions like running.. */
 		disturb(Ind, 1, 0);
 		/* prepare to cloak.. */
@@ -5403,4 +5445,83 @@ void stop_precision(int Ind) {
 /* stop shooting-till-kill */
 void stop_shooting_till_kill(int Ind) {
 	Players[Ind]->shooting_till_kill = FALSE;
+}
+
+/*
+ * Rogue special ability - shadow running mode - C. Blue
+ */
+void shadow_run(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+
+        if (p_ptr->shadow_running) {
+		p_ptr->shadow_running = FALSE;
+                msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
+                msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", p_ptr->name, p_ptr->male ? "his" : "her");
+	        p_ptr->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
+	        p_ptr->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
+	        /* update so everyone sees the colour animation */
+	        everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		return;
+        }
+
+	if (p_ptr->rogue_heavyarmor) {
+		msg_print(Ind, "\377yYour armour is too heavy for effective shadow running.");
+		return;
+	}
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+		msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
+		return;
+	}
+	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+		msg_print(Ind, "\377yYou cannot shadow run effectively while carrying a shield.");
+		return;
+	}
+	if (p_ptr->stormbringer) {
+		msg_print(Ind, "\377yYou cannot shadow run while wielding the Stormbringer!");
+		return;
+	}
+	if (p_ptr->ghost) {
+		msg_print(Ind, "\377yYou cannot shadow run while you are dead!");
+		return;
+	}
+	if (p_ptr->blind) {
+		msg_print(Ind, "\377yYou cannot shadow run while blind.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "\377yYou cannot shadow run while confused.");
+		return;
+	}
+	if (p_ptr->stun) {
+		msg_print(Ind, "\377yYou cannot start shadow running while stunned.");
+		return;
+	}
+
+        if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
+
+        p_ptr->cst -= 10;                                                             
+        un_afk_idle(Ind);
+
+        break_cloaking(Ind);
+        p_ptr->shadow_running = TRUE;
+	msg_print(Ind, "Your silhouette turns shadowy and your movements become lightning-fast!");
+        msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");
+        p_ptr->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
+        p_ptr->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
+        /* update so everyone sees the colour animation */
+        everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+}
+
+/* break shadow running */
+void break_shadow_running(int Ind) {
+	if (Players[Ind]->shadow_running) {
+	        msg_print(Ind, "Your silhouette stabilizes and your movements return to normal.");
+    		msg_format_near(Ind, "%s silhouette stabilizes and %s movements return to normal.", Players[Ind]->name, Players[Ind]->male ? "his" : "her");
+		Players[Ind]->shadow_running = FALSE;
+	        Players[Ind]->update |= (PU_BONUS | PU_VIEW);                                                                                                                                                          
+    		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);                                                                                                                                                                   
+		/* update so everyone sees the colour animation */                                                                                                                                        
+                everyone_lite_spot(&Players[Ind]->wpos, Players[Ind]->py, Players[Ind]->px); 
+	}
 }

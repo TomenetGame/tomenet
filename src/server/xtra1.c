@@ -3386,6 +3386,7 @@ void calc_bonuses(int Ind)
 			{
 				p_ptr->stormbringer = TRUE;
 				break_cloaking(Ind);
+				break_shadow_running(Ind);
 				if (cfg.use_pk_rules == PK_RULES_DECLARE)
 				{
 					p_ptr->pkill|=PKILL_KILLABLE;
@@ -4141,6 +4142,9 @@ void calc_bonuses(int Ind)
 		p_ptr->skill_srh = p_ptr->skill_srh + 10;
 	}
 
+	if (p_ptr->shadow_running) {
+		p_ptr->pspeed += 10;
+	}
 
         /* Assume player not encumbered by armor */
         p_ptr->cumber_armor = FALSE;
@@ -4172,6 +4176,8 @@ void calc_bonuses(int Ind)
 	if (p_ptr->old_rogue_heavyarmor != p_ptr->rogue_heavyarmor) {
 		if (p_ptr->rogue_heavyarmor) {
 			msg_print(Ind, "\377oThe weight of your armour strains your flexibility and awareness.");
+			break_cloaking(Ind);
+			break_shadow_running(Ind);
 		}
 		/* do we still wear armour, and are still rogue or dual-wielding? */
 		else if (armour_weight(p_ptr)) {
@@ -4188,6 +4194,43 @@ void calc_bonuses(int Ind)
 			msg_print(Ind, "\377gYou feel comfortable again.");
 		}
 		p_ptr->old_rogue_heavyarmor = p_ptr->rogue_heavyarmor;
+	}
+
+	if (p_ptr->stormbringer) {
+		if (p_ptr->cloaked) {
+			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding the stormbringer!");
+			break_cloaking(Ind);
+		}
+		if (p_ptr->shadow_running) {
+			msg_print(Ind, "\377yThe stormbringer hinders effective shadow running!");
+			break_shadow_running(Ind);
+		}
+	}
+	if (p_ptr->aggravate) {
+		if (p_ptr->cloaked) {
+			msg_print(Ind, "\377yYou cannot remain cloaked effectively while using aggravating items!");
+			break_cloaking(Ind);
+		}
+	}
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+		if (p_ptr->cloaked) {
+			msg_print(Ind, "\377yYour weapon is too large to remain cloaked effectively.");
+			break_cloaking(Ind);
+		}
+		if (p_ptr->shadow_running) {
+			msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
+			break_shadow_running(Ind);
+		}
+	}
+	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+		if (p_ptr->cloaked) {
+			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding a shield.");
+			break_cloaking(Ind);
+		}
+		if (p_ptr->shadow_running) {
+			msg_print(Ind, "\377yYour shield hinders effective shadow running.");
+			break_shadow_running(Ind);
+		}
 	}
 
 #if 0 // DGDGDGDG -- skill powa !
@@ -6242,7 +6285,7 @@ void announce_global_event(int ge_id) {
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast(0, format("\377WUse '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
+		msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
 		ge->first_announcement = FALSE;
 	}
 }
@@ -6787,7 +6830,7 @@ static void process_global_event(int ge_id)
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
 			ge_training_tower++;
-			msg_broadcast(0, format("\377WUse '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
+			msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */
@@ -6918,23 +6961,28 @@ void clear_current(int Ind)
 
 void calc_techniques(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int m;
+	int m = 20; /* default, actually unused since no other classes have SKILL_STANCE */
 
 	p_ptr->melee_techniques = 0x0000;
 	p_ptr->ranged_techniques = 0x0000;
 
 	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
 	switch (p_ptr->pclass) {
+	case CLASS_ADVENTURER:
+		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001;
+		break;
 	case CLASS_ROGUE:
 		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
+		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0100; /* Distract */
+		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0200; /* Flash bomb */
+		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
 		Send_technique_info(Ind);
 		return;	
 	case CLASS_WARRIOR: m = 0; break;
-	case CLASS_RANGER: m = 5; break;
-	case CLASS_PALADIN: m = 8; break;
-	case CLASS_MIMIC: m = 15; break;
-	default: m = 20; break;
+	case CLASS_RANGER: m = 4; break;
+	case CLASS_PALADIN: m = 7; break;
+	case CLASS_MIMIC: m = 11; break;
 	}
 
 	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= 0x0001; /* Sprint */

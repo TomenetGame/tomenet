@@ -1438,8 +1438,13 @@ if (p_ptr->updated_savegame == 0) {
         if (!older_than(4, 2, 8)) {
 		for (i = 0; i <	MAX_GLOBAL_EVENTS; i++) {
 			rd_s16b(&p_ptr->global_event_type[i]);
-			rd_u32b(&p_ptr->global_event_signup[i]);
-			rd_u32b(&p_ptr->global_event_started[i]);
+			if (!older_than(4, 3, 9)) {
+				rd_s32b(&p_ptr->global_event_signup[i]);
+				rd_s32b(&p_ptr->global_event_started[i]);
+			} else {
+				rd_u32b(&p_ptr->global_event_signup[i]);
+				rd_u32b(&p_ptr->global_event_started[i]);
+			}
 			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
 		}
 	}
@@ -1449,6 +1454,8 @@ if (p_ptr->updated_savegame == 0) {
 		rd_s16b(&p_ptr->combat_stance_power);
 	}
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
+	if (!older_than(4, 3, 9)) rd_byte(&p_ptr->cloaked);
+	if (!older_than(4, 3, 10)) rd_byte(&p_ptr->shoot_till_kill);
 
 	/* auto-enable for now (MAX_AURAS) */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;

@@ -1489,12 +1489,6 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			                * 0x10000L ) / (average_lev * num_members * p_ptr->lev)) + p_ptr->exp_frac;
 			*/
 
-			/* Don't allow cheap support from super-high level characters */
-			if (cfg.henc_strictness && !p_ptr->total_winner) {
-				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
-			}
-
 			/* Higher characters who farm monsters on low levels compared to
 			    their clvl will gain less exp.
 			    (note: this formula also occurs in mon_take_hit) */
@@ -1505,7 +1499,14 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 				else req_lvl = (p_ptr->lev * 2);
 				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
 			}
-#else
+
+			/* Don't allow cheap support from super-high level characters */
+			if (cfg.henc_strictness && !p_ptr->total_winner) {
+				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			}
+#endif
+#if 0
 			if (henc > p_ptr->lev) eff_henc = henc;
 			else eff_henc = p_ptr->lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
 			if (eff_henc >= 20) {
@@ -1513,6 +1514,29 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);
 				else req_lvl = (eff_henc * 2);
 				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
+			}
+
+			/* Don't allow cheap support from super-high level characters */
+			if (cfg.henc_strictness && !p_ptr->total_winner) {
+				if (henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+			}
+#endif
+#if 1 /* more exploitage.. */
+			if (henc > p_ptr->max_lev) eff_henc = henc;
+			else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
+			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* get high items/skills, go to TT, lose lvls, boost party exploit */
+			if (eff_henc >= 20) {
+				if (eff_henc < 30) req_lvl = 375 / (45 - eff_henc);
+				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);
+				else req_lvl = (eff_henc * 2);
+				if (dlev < req_lvl) new_amount = new_amount * 2 / (2 + req_lvl - dlev);
+			}
+
+			/* Don't allow cheap support from super-high level characters */
+			if (cfg.henc_strictness && !p_ptr->total_winner) {
+				if (eff_henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
+				if (p_ptr->supported_by - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) new_amount = 0; /* zonk */
 			}
 #endif
 

@@ -1300,8 +1300,12 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 	p_ptr->deathblow = damage;
-	
-	break_cloaking(Ind);
+
+	/* for cloaking as well as shadow running:
+	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */	
+//both ifs should work properly.
+	if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind);
+//	if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind);
 
 	/* Update health bars */
 	update_health(0 - Ind);
@@ -6883,6 +6887,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Player has already been hit, return - mikaelh */
 	if (p_ptr->got_hit) return (FALSE);
 
+	/* shadow running protects from taking ranged damage - C. Blue
+	   note: currently thereby also affecting friendly effects' 'damage'. */
+	if (p_ptr->shadow_running) dam /= 3;
+
 	blind = (p_ptr->blind ? TRUE : FALSE);
 
 	/* Player is not here */
@@ -6996,12 +7004,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(killer, "something weird");
 		sprintf(m_name, "something");
 	}
-#if 0
+#if 1
 	else if (who == PROJECTOR_TERRAIN)
 	{
 		/* TODO: implement me! */
-		sprintf(killer, "a terrain effect");
-		sprintf(m_name, "a terrain effect");
+		sprintf(killer, "hazardous environment");
+		sprintf(m_name, "hazardous environment");
 	}
 #endif	// 0
 	else if (self)
@@ -7091,8 +7099,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* If it's a support spell (friendly), remember the caster's level for highest_encounter anti-cheeze
 		   to prevent him from getting exp until the supporting effects surely have run out: */
 		} else if (typ != GF_OLD_POLY) {
+#if 0 /* more exploit */
 			if (p_ptr->supported_by < Players[0 - who]->max_lev)
 				p_ptr->supported_by = Players[0 - who]->max_lev;
+#else
+			if (p_ptr->supported_by < Players[0 - who]->max_plv)
+				p_ptr->supported_by = Players[0 - who]->max_plv;
+#endif
 			p_ptr->support_timer = cfg.spell_stack_limit ? cfg.spell_stack_limit : 200;
 
 			friendly_player = TRUE;
@@ -8834,7 +8847,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_print(Ind, "You are unaffected!");
 				}
 				/* Attempt a saving throw */
-				//else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+				//else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
 				else if (rand_int(100) < p_ptr->skill_sav)
 				{
 					msg_print(Ind, "You resist the effect!");
@@ -8860,7 +8873,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_print(Ind, "You are unaffected!");
 				}
 				else if (rand_int(100) < p_ptr->skill_sav)
-//				else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
+//				else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)
 				{
 					msg_print(Ind, "You resist the effect!");
 				} else {
@@ -8885,7 +8898,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You are unaffected!");
 			}
 			else if (rand_int(100) < p_ptr->skill_sav)
-//			else if (p_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
+//			else if (p_ptr->lev > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10))
 			{
 				msg_print(Ind, "You resist the effect!");
 			}

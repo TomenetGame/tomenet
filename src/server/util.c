@@ -1819,6 +1819,7 @@ void toggle_shoot_till_kill(int Ind)
 		msg_print(Ind, "\377wShoot-till-kill mode now on!");
 	}
 	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
+s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
 	return;
 }
 

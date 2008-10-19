@@ -1756,7 +1756,7 @@ static int auto_retaliate(int Ind)
 
 	if (p_ptr->new_level_flag) return 0;
 	
-	if (p_ptr->cloaked && !p_ptr->stormbringer) return 0;
+	if ((p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer) return 0;
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
@@ -4203,14 +4203,21 @@ static void process_player_end(int Ind)
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
+			/* Allow level 50 druids to run at full speed */
+			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+			}
 		}
     	    /* or running-swimming? */
 		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-		        if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-	    	    if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			/* Allow Aquatic players run/swim at full speed */
+			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			}
 	        }
 		/* or just normally running? */
 		else {
@@ -5740,7 +5747,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if(!i && (n <= 5)) {
+			if(!i && (n <= 6)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -5764,7 +5771,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if(!i && (n <= 2)) {
+			if(!i && (n <= 3)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}

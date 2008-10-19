@@ -1806,7 +1806,7 @@ static byte player_color(int Ind)
 #endif
 	/* Holy Martyr */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->martyr || p_ptr->admin_wiz) pcolor += TERM_BNW;
+	if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) pcolor += TERM_BNW;
 
 	/* Color is based off of class */
 	return pcolor;
@@ -2820,7 +2820,7 @@ void lite_spot(int Ind, int y, int x)
 
 		        /* Holy Martyr */
 		        /* Admin wizards sometimes flicker black & white (TERM_BNW) */
-		        if (p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
+		        if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz) a += TERM_BNW;
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */

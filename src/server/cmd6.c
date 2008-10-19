@@ -2992,6 +2992,7 @@ void do_cmd_read_scroll(int Ind, int item)
 	}
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3495,6 +3496,7 @@ void do_cmd_use_staff(int Ind, int item)
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
@@ -4031,6 +4033,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Mark it as tried */
 	object_tried(Ind, o_ptr);
@@ -4393,6 +4396,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	if(f4 & TR4_CHARGING) o_ptr->pval /= 2;
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4902,6 +4906,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 	}
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Clear the current rod */
 	p_ptr->current_rod = -1;
@@ -8411,6 +8416,7 @@ void do_cmd_fletchery(int Ind)
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 }
 
 /*
@@ -8481,7 +8487,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 35) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter defensive stance rank III");
 		} else {
@@ -8496,7 +8502,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter defensive stance rank III");
 		} else {
@@ -8511,7 +8517,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 35) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter defensive stance rank III");
 		} else {
@@ -8526,7 +8532,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter defensive stance rank III");
 		} else {
@@ -8585,7 +8591,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter offensive stance rank III");
 		} else {
@@ -8600,7 +8606,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter offensive stance rank III");
 		} else {
@@ -8615,7 +8621,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter offensive stance rank III");
 		} else {
@@ -8630,7 +8636,7 @@ void do_cmd_stance(int Ind, int stance) {
 		} else if (p_ptr->max_lev < 40) {
 			power = 1;
 			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner) {
+		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
 			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
 			msg_print(Ind, "\377sYou enter offensive stance rank III");
 		} else {
@@ -8651,28 +8657,34 @@ void do_cmd_stance(int Ind, int stance) {
 
 void do_cmd_melee_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use techniques as a ghost.");
+		return;
+	}
 /*	it's superflous, and rogues now get techniques too but don't have stances..
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 */
 
 	switch (technique) {
-	case 0:	if (!p_ptr->melee_techniques & 0x001) return; /* Sprint */
+	case 0:	if (!p_ptr->melee_techniques & 0x0001) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
 		set_melee_sprint(Ind, 10); /* number of turns it lasts */
 //s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		break;
-	case 1:	if (!p_ptr->melee_techniques & 0x002) return; /* Taunt */
+	case 1:	if (!p_ptr->melee_techniques & 0x0002) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
-		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+//		if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
+		if (p_ptr->energy <= 0) return;
 		p_ptr->cst -= 2;
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 4; /* doing it while fighting no prob */
 		un_afk_idle(Ind);
 		taunt_monsters(Ind);
 //s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		break;
-	case 2:	if (!p_ptr->melee_techniques & 0x004) return; /* Spin */
+	case 2:	if (!p_ptr->melee_techniques & 0x0004) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
     		if (p_ptr->afraid) {                                                                                           
 			msg_print(Ind, "You are too afraid to attack!");                        
@@ -8685,12 +8697,33 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 //s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		break;
-	case 3:	if (!p_ptr->melee_techniques & 0x008) return; /* Berserk */
+	case 3:	if (!p_ptr->melee_techniques & 0x0008) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
                 set_berserk(Ind, randint(5) + 20);
 //s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
+		break;
+	case 8:	if (!p_ptr->melee_techniques & 0x0100) return; /* Distract */
+		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 1;
+		un_afk_idle(Ind);
+		distract_monsters(Ind);
+//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+		break;
+	case 9:	if (!p_ptr->melee_techniques & 0x0200) return; /* Flash bomb */
+		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
+//		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		if (p_ptr->energy <= 0) return;
+		p_ptr->cst -= 4;
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		un_afk_idle(Ind);
+		flash_bomb(Ind);
+//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+		break;
+	case 14:if (!p_ptr->melee_techniques & 0x4000) return; /* Shadow Run */
+		shadow_run(Ind);
+//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		break;
 	}
 
@@ -8702,6 +8735,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use techniques as a ghost.");
+		return;
+	}
 	if (!get_skill(p_ptr, SKILL_ARCHERY)) return; /* paranoia */
 
 	if (technique != 3 || !p_ptr->ranged_double) { /* just toggling that one off? */
@@ -8718,7 +8755,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	disturb(Ind, 1, 0); /* stop things like running, resting.. */
 
 	switch (technique) {
-	case 0:	if (!p_ptr->ranged_techniques & 0x001) return; /* Flare missile */
+	case 0:	if (!p_ptr->ranged_techniques & 0x0001) return; /* Flare missile */
 		if (p_ptr->ranged_flare) {
 			msg_print(Ind, "You dispose of the flare missile.");
 			p_ptr->ranged_flare = FALSE;
@@ -8743,7 +8780,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		msg_print(Ind, "You prepare an oil-drenched shot..");
 //s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
 		break;
-	case 1:	if (!p_ptr->ranged_techniques & 0x002) return; /* Precision shot */
+	case 1:	if (!p_ptr->ranged_techniques & 0x0002) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
 			msg_print(Ind, "You stop aiming overly precisely.");
 			p_ptr->ranged_precision = FALSE;
@@ -8757,11 +8794,11 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		msg_print(Ind, "You aim carefully for a precise shot..");
 //s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
 		break;
-	case 2:	if (!p_ptr->ranged_techniques & 0x004) return; /* Craft some ammunition */
+	case 2:	if (!p_ptr->ranged_techniques & 0x0004) return; /* Craft some ammunition */
 //s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
-	case 3:	if (!p_ptr->ranged_techniques & 0x008) return; /* Double-shot */
+	case 3:	if (!p_ptr->ranged_techniques & 0x0008) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
 			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
@@ -8776,7 +8813,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		else msg_print(Ind, "You stop using double-shots.");
 //s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		break;
-	case 4:	if (!p_ptr->ranged_techniques & 0x010) return; /* Barrage */
+	case 4:	if (!p_ptr->ranged_techniques & 0x0100) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
 			msg_print(Ind, "You cancel preparations for barrage.");
 			p_ptr->ranged_barrage = FALSE;

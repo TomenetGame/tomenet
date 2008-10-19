@@ -958,6 +958,7 @@ struct monster_type
    u16b ai_state;		/* What special behaviour this monster takes now? */
    s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */
    s16b last_target_melee;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
+   s16b switch_target;		/* For distract_monsters(), implemented within C_BLUE_AI_MELEE in melee2.c */
 
    s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
       This keeps track of the highest player which the monster
@@ -965,6 +966,7 @@ struct monster_type
       by different #defines) and adjusts its own experience value
       towards that player, so low players who get powerful help
       will get less exp out of it. */
+//   s16b highest_encounter_mlvl;	/* lol.. */
    byte backstabbed;	/* has this monster been backstabbed from cloaking mode already? prevent exploit */
    byte taunted;	/* has this monster been taunted (melee technique)? */
 };
@@ -2249,7 +2251,6 @@ struct player_type
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
 	byte searching;		/* Currently searching */
-	byte cloaked;		/* Cloaking mode enabled */
 
 	bool old_cumber_armor;
 	bool old_awkward_armor;
@@ -2608,10 +2609,12 @@ struct player_type
 	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
 
 	/* more techniques */	
+	byte cloaked;		/* Cloaking mode enabled */
 	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
 	int shoot_till_kill_book, shoot_till_kill_spell;
+	bool shadow_running;
 
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
 	   by specifying the spell name instead of a book and position - C. Blue */

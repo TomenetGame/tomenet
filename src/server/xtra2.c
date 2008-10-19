@@ -1293,6 +1293,8 @@ bool set_blind(int Ind, int v)
 			msg_print(Ind, "You are blind!");
 			notice = TRUE;
 		}
+		
+		break_shadow_running(Ind);
 	}
 
 	/* Shut */
@@ -1364,6 +1366,9 @@ bool set_confused(int Ind, int v)
 			msg_print(Ind, "You are confused!");
 			notice = TRUE;
 		}
+
+		break_cloaking(Ind);
+		break_shadow_running(Ind);
 	}
 
 	/* Shut */
@@ -2786,7 +2791,7 @@ bool set_stun(int Ind, int v)
 		new_aux = 0;
 	}
 
-	/* Increase cut */
+	/* Increase stun */
 	if (new_aux > old_aux)
 	{
 		/* Describe the state */
@@ -2810,6 +2815,8 @@ bool set_stun(int Ind, int v)
 			msg_print(Ind, "You have been knocked out.");
 			break;
 		}
+		
+		break_shadow_running(Ind);
 
 		/* Notice */
 		notice = TRUE;
@@ -3820,6 +3827,13 @@ void check_experience(int Ind)
 
 		/* those that depend on a class */
 		switch (p_ptr->pclass) {
+		case CLASS_ADVENTURER:
+		        if (old_lev < 6 && p_ptr->lev >= 6)
+            			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+                        /* Also update the client's 'm' menu for fighting techniques */
+                        calc_techniques(Ind);
+                        Send_skill_info(Ind, SKILL_MASTERY);
+			break;
 		case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
 			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL)
@@ -3829,9 +3843,15 @@ void check_experience(int Ind)
             			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
 			if (old_lev < 6 && p_ptr->lev >= 6)
 		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
-                        /* Also update the client's 'm' menu for fighting techniques */                                                                                                                           
-                        calc_techniques(Ind);                                                                                                                                                                     
-                        Send_skill_info(Ind, SKILL_MASTERY);                                                                                                                                                      
+			if (old_lev < 9 && p_ptr->lev >= 9)
+		        	msg_print(Ind, "\377G* You learn the fighting technique 'Distract' *");
+			if (old_lev < 12 && p_ptr->lev >= 12)
+		        	msg_print(Ind, "\377G* You learn the fighting technique 'Flash Bomb' *");
+			if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
+		        	msg_print(Ind, "\377G* You learn the royal fighting technique 'Shadow Run' *");
+                        /* Also update the client's 'm' menu for fighting techniques */
+                        calc_techniques(Ind);
+                        Send_skill_info(Ind, SKILL_MASTERY);
       			break;
 		case CLASS_RANGER:
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn how to move through dense forests easily. *");
@@ -3849,8 +3869,8 @@ void check_experience(int Ind)
 			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482) *");
 			if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\377G* You learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726) *");
 			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\377G* You learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740) *");
-			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\377G* You learn how to change into a Maulotaur (#723), Winged Horror (#704) and Behemoth (#716) *");
-			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377G* You learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Leviathan (#782) *");
+			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\377G* You learn how to change into a Maulotaur (#723) and Winged Horror (#704) *");// and Behemoth (#716) *");
+			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377G* You learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775) *");//Leviathan (#782) *");
 			break;
 
 		case CLASS_SHAMAN:
@@ -3861,9 +3881,18 @@ void check_experience(int Ind)
 
 #ifdef ENABLE_STANCES
 		/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
-		if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) { /* don't increase above maximum */
-			/*p_ptr->s_info[SKILL_STANCE].value += 1000; <- won't take into account multiple level gains at once, oops */
+#if 0
+		if (get_skill(p_ptr, SKILL_STANCE) && 
+		    p_ptr->lev <= (p_ptr->total_winner ? 50 : 49)) { /* don't increase above maximum */
+			if (old_lev < 45 && p_ptr->lev >= 45 && p_ptr->total_winner) {
+				p_ptr->s_info[SKILL_STANCE].value = 50000;
+			} else {
+				p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
+			}
+#else
+		if (get_skill(p_ptr, SKILL_STANCE) && p_ptr->lev <= 50) {
 			p_ptr->s_info[SKILL_STANCE].value = p_ptr->lev * 1000;
+#endif
 			/* Update the client */
 			Send_skill_info(Ind, SKILL_STANCE);
 			/* Also update the client's 'm' menu for fighting techniques */
@@ -4759,21 +4788,35 @@ if(cfg.unikill_format){
 
 #ifdef ENABLE_STANCES
 					/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
-					if (get_skill(p_ptr, SKILL_STANCE)) {
+					if (get_skill(p_ptr, SKILL_STANCE) >= 45000) {
+#if 0
 						p_ptr->s_info[SKILL_STANCE].value = 50000; /* set to final value, cant increase above this */
 						/* Update the client */
 						Send_skill_info(Ind, SKILL_STANCE);
+						/* Also update the client's 'm' menu for fighting techniques */
+						calc_techniques(Ind);
+						Send_skill_info(Ind, SKILL_MASTERY);
 						/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-						msg_print(Ind, "\377GYou learn how to enter Royal Rank combat stances.");
+					        /* take care of message about fighting techniques too: */
+						msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
+#endif
+						/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
+						msg_print(Ind, "\377G* You learn how to enter Royal Rank combat stances. *");
 						/* automatically upgrade currently taken stance power */
 						if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 					}
 #endif
 
 					if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= 48) {
-	                            		msg_print(Ind, "\377GYou learn the Royal Titan's Fist technique.");
-				                msg_print(Ind, "\377GYou learn the Royal Phoenix Claw technique.");
+	                            		msg_print(Ind, "\377G* You learn the Royal Titan's Fist technique. *");
+				                msg_print(Ind, "\377G* You learn the Royal Phoenix Claw technique. *");
 		                        }
+					
+					if (p_ptr->lev >= 50 && p_ptr->pclass == CLASS_ROGUE) {
+						msg_print(Ind, "\377G* You learn the royal fighting technique 'Shadow Run' *");
+						calc_techniques(Ind);
+						Send_skill_info(Ind, SKILL_MASTERY);
+					}
 				}
 			}	
 
@@ -5008,19 +5051,19 @@ if(cfg.unikill_format){
 			else if (strstr((r_name + r_ptr->name),"Mardra, rider of the Gold Loranth"))
 			{
 				a_idx = ART_MARDA;
-				chance = 50;
+				chance = 75;
 			}
 			else if (strstr((r_name + r_ptr->name),"Saruman of Many Colours"))
 			{
 				a_idx = ART_ELENDIL;
 				chance = 30;
 			}
-			else if (strstr((r_name + r_ptr->name),"Hagen, son of Alberich"))
+			else if (strstr((r_name + r_ptr->name),"Hagen, son of Alberich")) /* not in the game */
 			{
 				a_idx = ART_NIMLOTH;
 				chance = 66;
 			}
-			else if (strstr((r_name + r_ptr->name),"Muar, the Balrog"))
+			else if (strstr((r_name + r_ptr->name),"Muar, the Balrog")) /* not in the game */
 			{
 				a_idx = ART_CALRIS;
 				chance = 60;
@@ -5028,18 +5071,18 @@ if(cfg.unikill_format){
 			else if (strstr((r_name + r_ptr->name),"Gothmog, the High Captain of Balrogs"))
 			{
 				a_idx = ART_GOTHMOG;
-				chance = 50;
+				chance = 80;
 			}
 			else if (strstr((r_name + r_ptr->name),"Eol, the Dark Elf"))
 			{
 				if (magik(25)) a_idx = ART_ANGUIREL;
 				else a_idx = ART_EOL;
-				chance = 50;
+				chance = 65;
 			}
 			else if (strstr((r_name + r_ptr->name),"Kronos, Lord of Titans"))
 			{
 				a_idx = ART_KRONOS;
-				chance = 75;
+				chance = 90;
 			}
 			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
 			{
@@ -5404,6 +5447,7 @@ void player_death(int Ind)
         }
 	
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* very very rare case, but this can happen(eg. starvation) */
 	if (p_ptr->store_num > -1)
@@ -8822,7 +8866,12 @@ void telekinesis_aux(int Ind, int item)
 /* TEMPORARY ANTI-CHEEZE HACKS */
 if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30 && (q_ptr->bpval > 0)) {
         s_printf("HACK-SPEEDREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
-        determine_level_req(70, q_ptr);
+        determine_level_req(75, q_ptr);
+        s_printf("%d.\n", q_ptr->level);
+}
+if (q_ptr->tval == TV_RING && q_ptr->sval >= SV_RING_MIGHT && q_ptr->sval <= SV_RING_CUNNINGNESS && q_ptr->level < q_ptr->bpval * 3 + 15) {   
+        s_printf("HACK-STATSREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
+        determine_level_req(25, q_ptr);
         s_printf("%d.\n", q_ptr->level);
 }
 if (q_ptr->tval == TV_POTION && q_ptr->sval >= SV_POTION_INC_STR && q_ptr->sval <= SV_POTION_INC_CHR && q_ptr->level < 28) {

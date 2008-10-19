@@ -538,6 +538,8 @@ static void get_extra(int Ind)
 
 	/* Level one (never zero!) */
 	p_ptr->lev = 1;
+	p_ptr->max_lev = 1;
+	p_ptr->max_plv = 1;
 
 	/* Experience factor */
 /* This one is too harsh for TLs and too easy on yeeks
@@ -889,13 +891,14 @@ static void get_money(int Ind)
 	{
 		/* the admin wizard can basically do what he wants */
 		p_ptr->au = 50000000;
-		p_ptr->lev = 100;
+		p_ptr->lev = 99;
+		p_ptr->max_lev = 99;
+		p_ptr->max_plv = 99;
 		p_ptr->exp = 999999999;
 //		p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
 		p_ptr->max_dlv = 200;
-		p_ptr->max_plv = 99;
 
 		/* use res_uni instead; it messes the unique list */
 //		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
@@ -903,13 +906,14 @@ static void get_money(int Ind)
 	else if (p_ptr->admin_dm)
 	{
 		p_ptr->au = 50000000;
-		p_ptr->lev = 100;
+		p_ptr->lev = 99;
+		p_ptr->max_lev = 99;
+		p_ptr->max_plv = 99;
 		p_ptr->exp = 999999999;
 		p_ptr->invuln = -1;
 		p_ptr->ghost = 1;
 //		p_ptr->noscore = 1;
 		p_ptr->max_dlv = 200;
-		p_ptr->max_plv = 99;
 	}
 	
 }
@@ -1044,6 +1048,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
 		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
 		{ 255, 255, 0 },
+//		{ TV_RING, SV_RING_POLYMORPH, 0 },
 	},
 
 	{
@@ -1333,6 +1338,7 @@ static void player_outfit(int Ind)
 		sv = player_init[p_ptr->pclass][i][1];
 		pv = player_init[p_ptr->pclass][i][2];
 
+#if 0
 		/* ugly hack: give warriors different weapons - C. Blue */
 		if (p_ptr->pclass == CLASS_WARRIOR && i == 0) {
 			switch (p_ptr->prace) {
@@ -1345,6 +1351,52 @@ static void player_outfit(int Ind)
 				tv = 22; sv = 5; break;//trident
 			}
 		}
+#else /* improved for more classes */
+		if (tv == TV_SWORD) {
+			switch (sv) {
+			case SV_BROAD_SWORD:/* warrior */
+				switch (p_ptr->prace) {
+				case RACE_HALF_TROLL:
+				case RACE_ENT:
+					tv = TV_BLUNT; sv = SV_MACE; break;
+				case RACE_DWARF:
+					tv = TV_AXE; sv = SV_BROAD_AXE; break;
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_TRIDENT; break;
+				} break;
+			case SV_TULWAR:/* mimic */
+				switch (p_ptr->prace) {
+				case RACE_HALF_TROLL:
+				case RACE_ENT:
+					tv = TV_BLUNT; sv = SV_BALL_AND_CHAIN; break;
+				case RACE_DWARF:
+					tv = TV_AXE; sv = SV_CLEAVER; break;
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_BROAD_SPEAR; break;
+				} break;
+			case SV_LONG_SWORD:/* ranger */
+				switch (p_ptr->prace) {
+				case RACE_HALF_TROLL:
+				case RACE_ENT:
+					tv = TV_BLUNT; sv = SV_BALL_AND_CHAIN; break;
+				case RACE_DWARF:
+					tv = TV_AXE; sv = SV_LIGHT_WAR_AXE; break;
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_SICKLE; break;
+				} break;
+			case SV_SHORT_SWORD:/* adventurer */
+				switch (p_ptr->prace) {
+				case RACE_HALF_TROLL:
+				case RACE_ENT:
+					tv = TV_BLUNT; sv = SV_CLUB; break;
+				case RACE_DWARF:
+					tv = TV_AXE; sv = SV_HATCHET; break;
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_SPEAR; break;
+				} break;
+			}
+		}
+#endif		
 
 #if 0		
 		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
@@ -1373,8 +1425,7 @@ static void player_outfit(int Ind)
 	}
 
 	/* Lantern of Brightness for Archers */
-	if (p_ptr->pclass == CLASS_ARCHER)
-	{
+	if (p_ptr->pclass == CLASS_ARCHER) {
 		u32b f1,f2,f3,f4,f5,f6;
 		do {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
@@ -1386,6 +1437,36 @@ static void player_outfit(int Ind)
 		} while (f2 & TR2_RES_DARK);
 		do_player_outfit();
 	}
+	/* hack for mimics: pick a type of poly ring - C. Blue */
+#if 0 /* disabled for now */
+	if (p_ptr->pclass == CLASS_MIMIC) {
+		invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_POLYMORPH));
+		o_ptr->number = 1;
+		o_ptr->discount = 100;
+#if 0 /* random */
+		apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+#else /* predefined, or else people might reroll like crazy.... */
+		switch (randint(7)) {
+		case 1: pv = 125; break;//z (rotting corpse)
+		case 2: pv = 194; break;//u (tengu)
+		case 3: pv = 313; break;//o (uruk)
+		case 4: pv = 288; break;//P (fire giant)
+		case 5: pv = 343; break;//Y (sasquatch)
+		case 6: pv = 178; break;//h (dark elven mage)
+		case 7: pv = 370; break;//p (jade monk)
+		}
+		o_ptr->pval = pv;
+                if (r_info[pv].level > 0) {
+			o_ptr->level = 10 + (1000 / ((2000 / r_info[pv].level) + 10));
+		} else {
+                        o_ptr->level = 10;
+		}
+		/* Make the ring last only a certain period of time >:) - C. Blue */ 
+        	o_ptr->timeout = 3000 + rand_int(3001);                                   
+#endif
+		do_player_outfit();
+	}
+#endif
 
 #ifdef RPG_SERVER /* give extra startup survival kit - so unaffected by very low CHR! */
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS));

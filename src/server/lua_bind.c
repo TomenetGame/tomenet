@@ -720,9 +720,9 @@ long lua_player_exp(int level, int expfact)
 	s64b adv;
 	if ((level > 1) && (level < 100))
 #ifndef ALT_EXPRATIO
-	        adv = ((s64b)player_exp[level - 1] * (s64b)expfact / 100L);
+	        adv = ((s64b)player_exp[level - 2] * (s64b)expfact / 100L);
 #else
-	        adv = (s64b)player_exp[level - 1];
+	        adv = (s64b)player_exp[level - 2];
 #endif
 	else
 		adv = 0;

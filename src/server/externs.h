@@ -527,6 +527,7 @@ extern void do_cmd_purchase_house(int Ind, int dir);
 extern int pick_house(struct worldpos *wpos, int y, int x);
 extern void house_admin(int Ind, int dir, char *args);
 extern void do_cmd_cloak(int Ind);
+extern void shadow_run(int Ind);
 extern bool twall(int Ind, int y, int x);
 extern int breakage_chance(object_type *o_ptr);
 extern int get_shooter_mult(object_type *o_ptr);
@@ -534,6 +535,7 @@ extern bool get_something_tval(int Ind, int tval, int *ip);
 extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might);
 extern bool retaliating_cmd;
 extern void break_cloaking(int Ind);
+extern void break_shadow_running(int Ind);
 extern void stop_cloaking(int Ind);
 extern void stop_precision(int Ind);
 extern void stop_shooting_till_kill(int Ind);
@@ -768,6 +770,7 @@ extern void process_npcs(void);
 /* monster.c */
 /* monster1.c monster2.c */
 extern bool mon_allowed(monster_race *r_ptr);
+extern bool mon_allowed_chance(monster_race *r_ptr);
 extern bool mon_allowed_view(monster_race *r_ptr);
 extern void heal_m_list(struct worldpos *wpos);
 extern cptr r_name_get(monster_type *m_ptr);
@@ -1147,6 +1150,7 @@ extern char pet_creation(int Ind);
 extern bool hp_player(int Ind, int num);
 extern bool hp_player_quiet(int Ind, int num);
 extern void warding_glyph(int Ind);
+extern void flash_bomb(int Ind);
 extern bool do_dec_stat(int Ind, int stat, int mode);
 extern bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reduction_mode, bool msg);
 extern bool do_res_stat(int Ind, int stat);
@@ -1189,6 +1193,7 @@ extern void aggravate_monsters(int Ind, int who);
 extern void aggravate_monsters_floorpos(worldpos *wpos, int x, int y);
 extern void wake_minions(int Ind, int who);
 extern void taunt_monsters(int Ind);
+extern void distract_monsters(int Ind);
 extern bool genocide_aux(int Ind, worldpos *wpos, char typ);
 extern bool genocide(int Ind);
 extern bool mass_genocide(int Ind);
@@ -1247,15 +1252,12 @@ extern void house_creation(int Ind, bool floor, bool jail);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool do_vermin_control(int Ind);
 
-
-/* Druidry */
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
 extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
 extern void divine_vengeance(int Ind, int power);
-
 
 extern bool do_res_stat_temp(int Ind, int stat);
 extern void swap_position(int Ind, int lty, int ltx);

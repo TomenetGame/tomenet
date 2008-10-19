@@ -1304,7 +1304,7 @@ static void store_create(store_type *st_ptr)
 	if (black_market) resf = RESF_STOREBM;
 
 	/* Hack -- consider up to n items */
-	for (tries = 0; tries < (black_market ? 20 : 4); tries++) /*
+	for (tries = 0; tries < (black_market ? 40 : 4); tries++) /* 20:4
 	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 	{
 		/* Black Market */
@@ -1558,7 +1558,7 @@ static void store_create(store_type *st_ptr)
 			continue;
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS3) && (object_value(0, o_ptr) < 15000))//PRICY_ITEMS2
 			continue;
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 20000))
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 25000))//20000
 			continue;
 
 		/* Further store flag checks */
@@ -1569,20 +1569,29 @@ static void store_create(store_type *st_ptr)
 		/* Interesting numbers: 3+, 6+, 8+, 16+ */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_VERY_RARE))
 		{
-	    		if ((k_ptr->chance[0] < 8) && (k_ptr->chance[1] < 8) &&
-    			    (k_ptr->chance[2] < 8) && (k_ptr->chance[3] < 8))
+	    		if ((k_ptr->chance[0] && k_ptr->chance[0] < 8) ||
+			    (k_ptr->chance[1] && k_ptr->chance[1] < 8) ||
+    			    (k_ptr->chance[2] && k_ptr->chance[2] < 8) ||
+			    (k_ptr->chance[3] && k_ptr->chance[3] < 8))
 				continue;
+			/* hack - also no low/mid DSMs */
+			if (k_ptr->tval == TV_DRAG_ARMOR &&
+			    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
+				continue;
+			/* hack - no tomes, pretty pointless for SBM to offer those */
+			if (k_ptr->tval == TV_BOOK) continue;
 		}
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE))
 		{
-    			if ((k_ptr->chance[0] < 3) && (k_ptr->chance[1] < 3) &&
-    			    (k_ptr->chance[2] < 3) && (k_ptr->chance[3] < 3))
+    			if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
+			    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
+    			    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
+			    (k_ptr->chance[3] && k_ptr->chance[3] < 3))
 				continue;
 		}
 
 #if 0
-/* MEDIUM_LEVEL and DEEP_LEVEL are already checked in apply_magic,
-let's depend on SF1*RARE flags here.. */
+/* MEDIUM_LEVEL and DEEP_LEVEL are used in return_level() */
 		/* Deep enough? */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_DEEP_LEVEL) &&
 		    ((k_ptr->locale[0] < 50) && (k_ptr->locale[1] < 50) &&
@@ -3419,6 +3428,7 @@ void do_cmd_store(int Ind)
 	}
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 	handle_stuff(Ind); /* update stealth/search display now */
 
 	/* Set the timer */

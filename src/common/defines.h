@@ -61,7 +61,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   8
+#define SF_VERSION_PATCH   10
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -2415,6 +2415,13 @@ that keeps many algorithms happy.
 #define SV_DRAGON_SKY			44
 #define SV_DRAGON_SILVER                45
 
+#define sv_dsm_low(sv) \
+        (sv == SV_DRAGON_BLUE || sv == SV_DRAGON_WHITE || sv == SV_DRAGON_BLACK || \
+	sv == SV_DRAGON_RED || sv == SV_DRAGON_GREEN)
+#define sv_dsm_mid(sv) \
+        (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
+	sv == SV_DRAGON_PSEUDO)
+
 /* The sval codes for TV_LITE */
 #define SV_LITE_TORCH                    0
 #define SV_LITE_LANTERN                  1
@@ -2475,12 +2482,12 @@ that keeps many algorithms happy.
 #define SV_RING_FEATHER_FALL             7
 #define SV_RING_RESIST_FIRE              8
 #define SV_RING_RESIST_COLD              9
-#define SV_RING_SUSTAIN_STR             10
-#define SV_RING_SUSTAIN_INT             11
-#define SV_RING_SUSTAIN_WIS             12
-#define SV_RING_SUSTAIN_DEX             13
-#define SV_RING_SUSTAIN_CON             14
-#define SV_RING_SUSTAIN_CHR             15
+#define SV_RING_SUSTAIN_MIGHT		10
+#define SV_RING_SUSTAIN_BRILLIANCE	11
+#define SV_RING_SUSTAIN_ABILITY		12
+#define SV_RING_SUSTAIN_READYWIT	13
+#define SV_RING_SUSTAIN_STEADINESS	14
+#define SV_RING_SUSTAIN_CUNNINGNESS	15
 #define SV_RING_PROTECTION              16
 #define SV_RING_ACID                    17
 #define SV_RING_FLAMES                  18
@@ -2489,10 +2496,10 @@ that keeps many algorithms happy.
 #define SV_RING_FREE_ACTION             21
 #define SV_RING_SEE_INVIS               22
 #define SV_RING_SEARCHING               23
-#define SV_RING_STR                     24
-#define SV_RING_INT                     25
-#define SV_RING_DEX                     26
-#define SV_RING_CON                     27
+#define SV_RING_MIGHT                   24
+#define SV_RING_READYWIT		25
+#define SV_RING_TOUGHNESS		26
+#define SV_RING_CUNNINGNESS             27
 #define SV_RING_ACCURACY                28
 #define SV_RING_DAMAGE                  29
 #define SV_RING_SLAYING                 30
@@ -6328,8 +6335,8 @@ extern int PlayerUID;
 	(plv >= 30 && (ridx == 440 || ridx == 641 || ridx == 482)) || \
 	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
 	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
-	(plv >= 45 && (ridx == 723 || ridx == 704 || ridx == 716)) || \
-	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 782)))
+	(plv >= 45 && (ridx == 723 || ridx == 704)) || /* || ridx == 716)) || \ */ \
+	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 775))) /* 782 */
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
 #define mimic_vampire(ridx, plv)	\
 	(plv >= 20 && ridx == 391)

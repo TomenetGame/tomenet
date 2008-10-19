@@ -879,6 +879,30 @@ bool mon_allowed(monster_race *r_ptr)
 
 	return(TRUE);
 }
+/* added this one for monster_level_min implementation - C. Blue */
+bool mon_allowed_chance(monster_race *r_ptr) {
+	/* Pet/neutral monsters allowed? */
+	if(r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)) return(cfg.pet_monsters);
+
+	/* C. Blue's monsters allowed ? or not ? */
+	if(r_ptr->flags8 & RF8_BLUEBAND) return(cfg.cblue_monsters);
+	/* Joke monsters allowed ? or not ? */
+	if (r_ptr->flags8 & RF8_JOKEANGBAND) return(cfg.joke_monsters);
+
+	/* Lovercraftian monsters allowed ? or not ? */
+	if(r_ptr->flags8 & RF8_CTHANGBAND) return(cfg.cth_monsters);
+
+	/* Zangbandish monsters allowed ? or not ? */
+	if(r_ptr->flags8 & RF8_ZANGBAND) return(cfg.zang_monsters);
+
+	/* Pernian monsters allowed ? or not ? */
+	if(r_ptr->flags8 & RF8_PERNANGBAND) return(cfg.pern_monsters);
+
+	/* Base monsters allowed ? or not ? */
+	if (r_ptr->flags8 & RF8_ANGBAND) return(cfg.vanilla_monsters);
+
+	return(100); /* or 0? =p */
+}
 
 /* Similar to mon_allowed, but determine the result by TELL_MONSTER_ABOVE. */
 bool mon_allowed_view(monster_race *r_ptr)
@@ -1069,14 +1093,11 @@ static bool restrict_monster_to_dungeon(int r_idx, int dun_type)
 s16b get_mon_num(int level, int dun_type)
 {
 	int                     i, j, p; //, d1 = 0, d2 = 0;
-
 	int                     r_idx;
-
 	long            value, total;
-
 	monster_race    *r_ptr;
-
 	alloc_entry             *table = alloc_race_table;
+	int hack_prob = 100;
 
 #if 0	// removed, but not disabled.. please see place_monster_one
 	/* Warp level around */
@@ -1148,18 +1169,6 @@ s16b get_mon_num(int level, int dun_type)
 		/* Default */
 		table[i].prob3 = 0;
 
-#if 0 /* temporarily disabled until empty spots bug has been figured out */
-		if (monster_level_min == -1) { /* let this function choose, basing on 'level' */
-			if (level >= 98) {
-				if (table[i].level < 69) continue; /* 64..69 somewhere is a good start for nasty stuff - C. Blue */
-			} else {
-				if (table[i].level < (level * 2) / 3) continue;
-			}
-		} else if (monster_level_min) { /* picked a value outside of this function already */
-			if (table[i].level < monster_level_min) continue;
-		}
-#endif
-
 		/* Hack -- No town monsters in the dungeon */
 		if ((level > 0) && (table[i].level <= 0)) continue;
 
@@ -1192,6 +1201,34 @@ s16b get_mon_num(int level, int dun_type)
 			continue;
 		}
 
+#if 0
+/* temporarily disabled until empty spots bug has been figured out,
+   probably happening because of mon_allowed checks for _BAND flavour probabilities */
+		if (monster_level_min == -1) { /* let this function choose, basing on 'level' */
+			if (level >= 98) {
+				if (table[i].level < 69) continue; /* 64..69 somewhere is a good start for nasty stuff - C. Blue */
+			} else {
+				if (table[i].level < (level * 2) / 3) continue;
+			}
+		} else if (monster_level_min) { /* picked a value outside of this function already */
+			if (table[i].level < monster_level_min) continue;
+		}
+#endif
+#if 1 /* new attempt ^^ with new mon_allowed_chance to fix above problem */
+		if (monster_level_min == -1) { /* let this function choose, basing on 'level' */
+			if (level >= 98) {
+				if (table[i].level < 69) continue; /* 64..69 somewhere is a good start for nasty stuff - C. Blue */
+			} else {
+				if (table[i].level < (level * 2) / 3) continue;
+			}
+		} else if (monster_level_min) { /* picked a value outside of this function already */
+			if (table[i].level < monster_level_min) continue;
+		}
+
+		hack_prob = mon_allowed_chance(r_ptr);
+		if (FALSE) /* neutralize the following mon_allowed check! */
+#endif
+
 		if(!mon_allowed(r_ptr)) continue;
 
 		/* Some dungeon types restrict the possible monsters */
@@ -1200,7 +1237,7 @@ s16b get_mon_num(int level, int dun_type)
 
 
 		/* Accept */
-		table[i].prob3 = table[i].prob2;
+		table[i].prob3 = (table[i].prob2 * hack_prob) / 100; /* hack_prob belongs to monster_level_min implementation in this function */
 
 		/* Total */
 		total += table[i].prob3;
@@ -3352,10 +3389,11 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	cave_type **zcave;
 	int level=getlevel(wpos);
 	if(!(zcave=getcave(wpos))) return(FALSE);
+
 #ifdef ARCADE_SERVER
-if(wpos->wx == 32 && wpos->wy == 32 && wpos->wz > 0)
-return(FALSE);
+	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
 #endif
+
 	/* Do not allow breeders to spawn in the wilderness - the_sandman */
 	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
 

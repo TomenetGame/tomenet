@@ -1284,7 +1284,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-		if (q_ptr->cloaked) continue;
+		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
 			continue;
@@ -1662,9 +1662,17 @@ bool make_attack_spell(int Ind, int m_idx)
 	/* Target location */
 	int x = p_ptr->px;
 	int y = p_ptr->py;
+	/* for shadow running */
+	int xs = x;
+	int ys = y;
 
 	/* Summon count */
 	int count = 0;
+
+	/* scatter summoning target location if player is shadow running, ie hard to pin down */
+	if (p_ptr->shadow_running) {
+		scatter(wpos, &ys, &xs, y, x, 5, 0); 
+	}
 
 	/* Extract the blind-ness */
 	bool blind = (p_ptr->blind ? TRUE : FALSE);
@@ -1764,8 +1772,8 @@ bool make_attack_spell(int Ind, int m_idx)
 		direct = FALSE;
 
 		/* Hack -- summon around itself */
-		y = m_ptr->fy;
-		x = m_ptr->fx;
+		y = ys = m_ptr->fy;
+		x = xs = m_ptr->fx;
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
 	}
@@ -1884,7 +1892,7 @@ bool make_attack_spell(int Ind, int m_idx)
 //	if (rad > 3 ||
 	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
 		(summon && !stupid &&
-		!(summon_possible(wpos, y, x))))	// <= we can omit this now?
+		!(summon_possible(wpos, ys, xs))))	// <= we can omit this now?
 	{
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
@@ -2041,7 +2049,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons an animal!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
 				m_ptr->clone_summoning = clone_summoning;
 			}
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3366,7 +3374,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically summons some animals!", m_name);
 			for (k = 0; k < 4; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3447,7 +3455,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some software bugs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_BUG, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3564,7 +3572,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			else msg_format(Ind, "%^s magically codes some RNGs.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_RNG, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3622,7 +3630,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			//else msg_format(Ind, "%^s magically summons a Thunderlord!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3645,7 +3653,7 @@ bool make_attack_spell(int Ind, int m_idx)
 
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_KIN, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_KIN, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3673,7 +3681,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -3692,7 +3700,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, 0, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, 0, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3708,7 +3716,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, 0, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, 0, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3724,7 +3732,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons ants.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANT, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANT, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3740,7 +3748,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons spiders.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_SPIDER, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_SPIDER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3756,7 +3764,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons hounds.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HOUND, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HOUND, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3772,7 +3780,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons hydras.", m_name);
 			for (k = 0; k < 6; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HYDRA, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HYDRA, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3788,7 +3796,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons an angel!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3804,7 +3812,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons a hellish adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3820,7 +3828,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons an undead adversary!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3836,7 +3844,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons a dragon!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3852,7 +3860,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons greater undead!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -3871,7 +3879,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons ancient dragons!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -3890,12 +3898,12 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons mighty undead opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_WRAITH, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_WRAITH, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -3914,12 +3922,12 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_UNIQUE, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNIQUE, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -3938,7 +3946,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons help!", m_name);
 			for (k = 0; k < 1; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear something appear nearby.");
@@ -3954,7 +3962,7 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons monsters!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count) msg_print(Ind, "You hear many things appear nearby.");
@@ -3970,12 +3978,12 @@ if (streq(m_name, "Oremorj, the Cyberdemon Lord")) {
 			else msg_format(Ind, "%^s magically summons special opponents!", m_name);
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNIQUE, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNIQUE, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			for (k = 0; k < 8; k++)
 			{
-				count += summon_specific(wpos, y, x, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
+				count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_UNDEAD, 1, clone_summoning);
 			}
 			m_ptr->clone_summoning = clone_summoning;
 			if (blind && count)
@@ -7184,64 +7192,72 @@ static void process_monster(int Ind, int m_idx)
 			int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
 			cave_type *cd_ptr;
 			player_type pd_ptr;
+			int p_idx_non_distracting[9], non_distracting_targets = 0;
 
 			/* get all adjacent players */
 			for (i = 0; i < 8; i++) {
 				cd_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
 
-				/* found a player? */
-				if (cd_ptr->m_idx < 0) {
-					pd_ptr = Players[-cd_ptr->m_idx];
+				/* found not a player? */
+				if (cd_ptr->m_idx >= 0) continue;
+				
+				pd_ptr = Players[-cd_ptr->m_idx];
 
-					/* did we choose this player for target in our previous turn?
-					   then lets stick with it and not change targets again */
-					if (-cd_ptr->m_idx == m_ptr->last_target_melee) {
-						keeping_previous_target = TRUE;
+				/* get him if allowed */
+				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
+				    /* Invincible players can't be atacked! */
+				    ((pd_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
+		    		    (pd_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)))
+					continue;
+
+				/* did we choose this player for target in our previous turn?
+				   then lets stick with it and not change targets again */
+				if (-cd_ptr->m_idx == m_ptr->last_target_melee &&
+				    -cd_ptr->m_idx != m_ptr->switch_target) {
+					keeping_previous_target = TRUE;
+					break;
+				}
+
+				targets++;
+		    		p_idx[targets] = -cd_ptr->m_idx;
+
+				/* did that player NOT use a 'distract' (ie detaunting) ability? */
+				if (-cd_ptr->m_idx != m_ptr->switch_target) {
+					non_distracting_targets++;
+					p_idx_non_distracting[non_distracting_targets] = -cd_ptr->m_idx;
+
+					/* remember whether player's class is vulnerable or tough */
+					switch (pd_ptr->pclass) {
+					case CLASS_WARRIOR:
+					case CLASS_PALADIN:
+					case CLASS_DRUID:
+
+					case CLASS_ROGUE:
+					case CLASS_MIMIC:
+					case CLASS_RANGER:
+						strong_targets++;
+						p_idx_strong[strong_targets] = -cd_ptr->m_idx;
+						break;
+
+					case CLASS_ARCHER:
+
+					case CLASS_ADVENTURER:
+					case CLASS_SHAMAN:
+					case CLASS_RUNEMASTER:
+						medium_targets++;
+						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
+						break;
+					case CLASS_MAGE:
+					case CLASS_PRIEST:
+						weak_targets++;
+						p_idx_weak[weak_targets] = -cd_ptr->m_idx;
 						break;
 					}
-							
-					/* get him if allowed */
-					if ((m_ptr->owner != pd_ptr->id) && /* Don't attack your master! */
-					    /* Invincible players can't be atacked! */
-					    !((pd_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
-			    		    (pd_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY))) {
-
-						targets++;
-				    		p_idx[targets] = -cd_ptr->m_idx;
-
-						/* remember whether player's class is vulnerable or tough */
-						switch (pd_ptr->pclass) {
-						case CLASS_WARRIOR:
-						case CLASS_PALADIN:
-						case CLASS_DRUID:
-
-						case CLASS_ROGUE:
-						case CLASS_MIMIC:
-						case CLASS_RANGER:
-							strong_targets++;
-							p_idx_strong[strong_targets] = -cd_ptr->m_idx;
-							break;
-
-						case CLASS_ARCHER:
-
-						case CLASS_ADVENTURER:
-						case CLASS_SHAMAN:
-						case CLASS_RUNEMASTER:
-							medium_targets++;
-							p_idx_medium[medium_targets] = -cd_ptr->m_idx;
-							break;
-						case CLASS_MAGE:
-						case CLASS_PRIEST:
-							weak_targets++;
-							p_idx_weak[weak_targets] = -cd_ptr->m_idx;
-							break;
-						}
-
-						/* remember lowest and highest victim level */
-						if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
-						if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
-					}
 				}
+
+				/* remember lowest and highest victim level */
+				if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
+				if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
 			}
 
 		    if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
@@ -7277,21 +7293,23 @@ static void process_monster(int Ind, int m_idx)
 			/* generate behaviour based on selected rule */
 			switch (reason) {
 			case 0: /* random */
-				p_idx_chosen = p_idx[randint(targets)];
+				if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				else p_idx_chosen = p_idx[randint(targets)];
 				break;
 			case 1: /* at low level choose weaker classes first */
 				if (lowest_player_level < 30) {
 					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
 					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 					else p_idx_chosen = p_idx[randint(targets)];
-				} else {
-					p_idx_chosen = p_idx[randint(targets)];
-				}
+				} else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				else p_idx_chosen = p_idx[randint(targets)];
 				break;
 			case 2: /* like (1), but more sophisticated */
-				if (highest_player_level < 30 && lowest_target_level + 5> highest_target_level) {
+				if (highest_player_level < 30 && lowest_target_level + 5 > highest_target_level) {
 					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
 					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 					else p_idx_chosen = p_idx[randint(targets)];
 				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
 					/* check which targets have a significantly lower level than others */
@@ -7309,7 +7327,9 @@ static void process_monster(int Ind, int m_idx)
 				break;
 			}
  #else
-			p_idx_chosen = p_idx[randint(targets)];
+			/* not sure whether STUPID_MONSTERS should really keep distracting possible */
+			if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+			else p_idx_chosen = p_idx[randint(targets)];
  #endif
 			/* Remember this target, so we won't switch to a different one
 			   in case this player has a levelup or something during our fighting,

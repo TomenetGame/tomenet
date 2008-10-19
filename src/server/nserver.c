@@ -3761,8 +3761,10 @@ int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, 
-			max, cur, adv);
+	if (is_newer_than(&Players[ind]->version, 4, 4, 1, 3, 0, 0))
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[ind]->max_lev, Players[ind]->max_plv, max, cur, adv);
+	else
+		return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, max, cur, adv);
 }
 
 #if 0
@@ -4030,7 +4032,8 @@ int Send_stamina(int ind, int mst, int cst)
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    !(p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER ||
 	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
-	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE)) {
+	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
+	    p_ptr->pclass == CLASS_ADVENTURER)) {
 		mst = -9999;
 		cst = -9999;
 	}

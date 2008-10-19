@@ -1504,7 +1504,7 @@ void carry(int Ind, int pickup, int confirm)
 
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
-		if (p_ptr->cloaked == 1 && !pickup) {
+		if ((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) {
 			if (p_ptr->blind || no_lite(Ind))
 				msg_format(Ind, "You feel %s%s here.", o_name, 
 						o_ptr->next_o_idx ? " on a pile" : "");
@@ -1893,12 +1893,17 @@ void carry(int Ind, int pickup, int confirm)
 /* TEMPORARY ANTI-CHEEZE HACKS */
 if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
 	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
-	determine_level_req(70, o_ptr);
+	determine_level_req(75, o_ptr);
+	s_printf("%d.\n", o_ptr->level);
+}
+if (o_ptr->tval == TV_RING && o_ptr->sval >= SV_RING_MIGHT && o_ptr->sval <= SV_RING_CUNNINGNESS && o_ptr->level < o_ptr->bpval * 3 + 15) {
+	s_printf("HACK-STATSREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
+	determine_level_req(25, o_ptr);
 	s_printf("%d.\n", o_ptr->level);
 }
 if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && (o_ptr->level < 45)) {
 	s_printf("HACK-PDSM: %s(%d) : %d -> ", p_ptr->name, p_ptr->lev, o_ptr->level);
-	determine_level_req(80, o_ptr);
+	determine_level_req(100, o_ptr);
 	s_printf("%d.\n", o_ptr->level);
 }
 if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval <= SV_POTION_INC_CHR && o_ptr->level < 28) {
@@ -2400,6 +2405,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	}
 	
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
@@ -2969,7 +2975,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	int 		fear_chance;
 
 	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
-	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1); /* can player backstab the monster? */
+	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1 || p_ptr->shadow_running); /* can player backstab the monster? */
 	bool            backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
@@ -3143,6 +3149,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind);
+	break_shadow_running(Ind); 
 	/* Disturb the monster */
 	m_ptr->csleep = 0;
 
@@ -6261,14 +6268,21 @@ void run_step(int Ind, int dir)
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
-		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+		//if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN)) && p_ptr->fly) {
+		if ((f_info[c_ptr->feat].flags1 & (FF1_CAN_FLY | FF1_CAN_RUN))) {
+			/* Allow level 50 druids to run at full speed */
+			if (!(p_ptr->pclass == CLASS_DRUID &&  p_ptr->lev >= 50)) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_FLYING_2) real_speed /= 4;
+ 			}
 		}
 		/* or running-swimming? */
 		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
-			if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			/* Allow Aquatic players run/swim at full speed */
+			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
+				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
+			}
 		}
 		/* or just normally running? */
 		else {

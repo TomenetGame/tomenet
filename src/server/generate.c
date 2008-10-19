@@ -1634,9 +1634,9 @@ static void vault_monsters(struct worldpos *wpos, int y1, int x1, int num)
 	int          k, i, y, x;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
 #ifdef ARCADE_SERVER
-if(wpos->wx == 32 && wpos->wy == 32 && wpos->wz > 0)
-return;
+	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return;
 #endif
 
 	/* Try to summon "num" monsters "near" the given location */
@@ -10683,10 +10683,16 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	for(i=0;i<numtowns;i++)
 		if(town[i].x==wpos->wx && town[i].y==wpos->wy) {
 			found_town = TRUE;
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y)
+			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
+				/* exempt training tower, since it's empty anyway
+				   (ie monster/item spawn is prevented) and we
+				   need it for "arena monster challenge" event - C. Blue */
+				if (tower) continue;
+
 				d_ptr->flags2 |= DF2_IRON;
-			else
+			} else {
 				d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2;
+			}
 		}
 	if (!found_town) {
 		d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1;

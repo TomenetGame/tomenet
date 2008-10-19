@@ -1362,14 +1362,16 @@ static void wr_extra(int Ind)
 
         for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {
                 wr_s16b(p_ptr->global_event_type[i]);
-                wr_u32b(p_ptr->global_event_signup[i]);
-                wr_u32b(p_ptr->global_event_started[i]);
+                wr_s32b(p_ptr->global_event_signup[i]);
+                wr_s32b(p_ptr->global_event_started[i]);
                 for (j = 0; j < 4; j++) wr_u32b(p_ptr->global_event_progress[i][j]);
         }
 
         wr_s16b(p_ptr->combat_stance);
         wr_s16b(p_ptr->combat_stance_power);
 	wr_byte(p_ptr->cloaked);
+	wr_byte(p_ptr->shadow_running);
+	wr_byte(p_ptr->shoot_till_kill);
 }
 
 /*

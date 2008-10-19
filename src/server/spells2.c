@@ -190,7 +190,8 @@ bool create_garden(int Ind, int chance) {
 			(c_ptr->feat == FEAT_WALL_EXTRA) || 
 			(c_ptr->feat == FEAT_WALL_INNER) || 
 			(c_ptr->feat == FEAT_WALL_OUTER) || 
-			(c_ptr->feat == FEAT_WALL_SOLID))*/)
+			(c_ptr->feat == FEAT_WALL_SOLID))*/
+			&& !cave_floor_bold(zcave, y, x))
                         {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
@@ -549,6 +550,13 @@ bool hp_player_quiet(int Ind, int num)
 }
 
 
+void flash_bomb(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	msg_print(Ind, "You throw down a blinding flash bomb!");
+	msg_format_near(Ind, "%s throws a blinding flash bomb!", p_ptr->name);
+	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
+}
 
 
 /*
@@ -1260,10 +1268,16 @@ void self_knowledge(int Ind)
 	{
 		fprintf(fff, "You are invisible.\n");
 	}
+#if 0 /* really not required to tell the player this stuff, it'd be just spam */
 	if (p_ptr->cloaked)
 	{
 		fprintf(fff, "You are cloaked.\n");
 	}
+	if (p_ptr->shadow_running)
+	{
+		fprintf(fff, "You are shadow_running.\n");
+	}
+#endif
 	if (p_ptr->see_inv)
 	{
 		fprintf(fff, "You can see invisible creatures.\n");
@@ -4827,6 +4841,69 @@ void wakeup_monsters(int Ind, int who)
 	}
 }
 
+void distract_monsters(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	monster_type	*m_ptr;
+	monster_race *r_ptr;
+
+	int i;
+	bool tauntable;
+
+        msg_print(Ind, "You make yourself look less threatening than your team mates.");
+        msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
+	break_cloaking(Ind);
+	break_shadow_running(Ind);
+
+	for (i = 1; i < m_max; i++)
+	{
+		m_ptr = &m_list[i];
+		r_ptr = race_inf(m_ptr);
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
+            	    (strchr("hHkpt", r_ptr->d_char))) tauntable = TRUE;
+		else tauntable = FALSE;
+		
+		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+#if 0 /* still distractable, hence if 0'ed */
+			if (r_ptr->flags2 & RF2_POWERFUL) {
+				if (magik(75)) tauntable = FALSE; /* powerful unique monsters prefer to stay alive */
+			} else 
+#endif
+				{
+				if (magik(50)) tauntable = FALSE; /* unique monsters resist more often */
+			}
+		}
+		else if (magik(25)) tauntable = FALSE; /* all monsters sometimes resist taunt */
+//		else if (magik(r_ptr->level / 3)) tauntable = FALSE; /* all monsters sometimes resist taunt */
+
+#if 0 /*actually, being POWERFUL doesn't really protect.. */
+		if (r_ptr->flags2 & RF2_POWERFUL) tauntable = FALSE;
+#endif
+#if 1 /* shamans -_- and not only that, way too many monsters are SMART, so commented out for now */
+		if (r_ptr->flags2 & RF2_SMART) tauntable = FALSE; /* smart monsters don't fall for taunts */
+#endif
+		if (r_ptr->flags3 & RF3_NONLIVING) tauntable = FALSE; /* nonliving monsters can't perceive taunts */
+		if (r_ptr->flags2 & RF2_EMPTY_MIND) tauntable = FALSE; /* empty-minded monsters can't perceive taunts */
+		if ((r_ptr->flags2 & RF2_WEIRD_MIND) && magik(50)) tauntable = FALSE; /* weird-minded monsters are hard to predict */
+		/* RF2_CAN_SPEAK ?? */
+
+		if (!tauntable) continue;
+
+		/* monster stands right next to this player? */
+		if (ABS(m_ptr->fy - p_ptr->py) <= 1 && ABS(m_ptr->fx - p_ptr->px) <= 1 &&
+		    m_ptr->last_target_melee == Ind) {
+			/* set another (adjacent) player as target */
+			m_ptr->switch_target = Ind;
+		}
+	}
+}
+
 void taunt_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -5760,8 +5837,9 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				else
 				{
 					/* Calculate results */
-					switch (randint(3) - (magik((p_ptr->dodge_level * 3) / 4) ? 1 : 0))
+					switch (randint(3) - (magik((p_ptr->dodge_level * 3) / 4) ? 1 : 0) - (p_ptr->shadow_running ? 1 : 0))
 					{
+						case -1:
 						case 0:
 						case 1:
 						{

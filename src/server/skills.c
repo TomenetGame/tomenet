@@ -292,7 +292,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_MIMIC:
-			m = 15;
+			m = 11;
 			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
 			if (old_value < 200 && new_value >= 200) {
 			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
@@ -313,7 +313,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_PALADIN:
-			m = 8;
+			m = 7;
 			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
 			if (old_value < 200 && new_value >= 200) {
     				msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
@@ -334,7 +334,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_RANGER:
-			m = 5;
+			m = 4;
 			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\377G* You learn how to enter a defensive stance (rank I). *");
 			if (old_value < 150 && new_value >= 200) {
 			        msg_print(Ind, "\377G* You learn how to enter defensive stance rank II. *");
@@ -356,6 +356,10 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			break;
 		default:
 			m = 20; /* (for all other classes in theory, if they could learn this skill) */
+		}
+		if (old_value < 450 && new_value >= 450 && p_ptr->total_winner) {
+			msg_print(Ind, "\377G* You learn how to enter Royal Rank combat stances. *"); 
+		        if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 		}
 		if (old_value < 40 + m * 10 && new_value >= 40 + m * 10)
 			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");

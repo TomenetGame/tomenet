@@ -967,9 +967,9 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 25) msg_print(Ind, "\377GYou know how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
 				if (lev >= 30) msg_print(Ind, "\377GYou know how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
 				if (lev >= 35) msg_print(Ind, "\377GYou know how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
-				if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
-				if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723), Winged Horror (#704) and Behemoth (#716)");
-				if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Leviathan (#782)");
+				if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
+				if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
+				if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
 			}
 			
 			if (p_ptr->prace == RACE_VAMPIRE) {
@@ -3234,72 +3234,78 @@ void do_slash_cmd(int Ind, char *message)
 				struct worldpos *tpos = &p_ptr->wpos;
 				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
 
-/* more mad code to change RPG_SERVER dungeon flags.. */
-for(x=0;x<(tk?64:1);x++)
-for(y=0;y<(tk?64:1);y++) {
-if (!tk) {tpos=&p_ptr->wpos;} else {tpos->wx=x;tpos->wy=y;tpos->wz=0;}
-wild=&wild_info[tpos->wy][tpos->wx];
+				/* more mad code to change RPG_SERVER dungeon flags.. */
+				for(x=0;x<(tk?64:1);x++)
+				for(y=0;y<(tk?64:1);y++) {
+					if (!tk) {tpos=&p_ptr->wpos;} else {tpos->wx=x;tpos->wy=y;tpos->wz=0;}
+					wild=&wild_info[tpos->wy][tpos->wx];
 
-				if ((d_ptr = wild->tower)) {
-					type = d_ptr->type;
+					if ((d_ptr = wild->tower)) {
+						type = d_ptr->type;
 
-					d_ptr->flags1 = d_info[type].flags1;
-					d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+						d_ptr->flags1 = d_info[type].flags1;
+						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
 
 #ifdef RPG_SERVER /* Make towers harder */
-//					d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
+//						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
 //							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
-//					if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
-if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
-					found_town = FALSE;
-				        for(i=0;i<numtowns;i++) {
-	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
-							found_town = TRUE;
-							if (tpos->wx == 32 && tpos->wy == 32)
-								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
-							else
-								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
+//						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
+						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
+							found_town = FALSE;
+						        for(i=0;i<numtowns;i++) {
+	    	        					if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
+									found_town = TRUE;
+									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
+										/* exempt training tower since it's needed for arena monster challenge event */
+										continue;
+							
+										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
+									} else {
+										d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
+									}
+								}
+							}
+							if (!found_town) {
+								d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
+//								d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
+							}
 						}
-					}
-					if (!found_town) {
-						d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
-//						d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
-					}
-}
 #endif
-if(tk)					msg_print(Ind, "Tower flags updated.");
-				}
-				if ((d_ptr = wild->dungeon)) {
-					type = d_ptr->type;
+						if(tk) msg_print(Ind, "Tower flags updated.");
+					}
 
-					d_ptr->flags1 = d_info[type].flags1;
-					d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
+					if ((d_ptr = wild->dungeon)) {
+						type = d_ptr->type;
+
+						d_ptr->flags1 = d_info[type].flags1;
+						d_ptr->flags2 = d_info[type].flags2 | DF2_RANDOM;
 
 #ifdef RPG_SERVER /* Make dungeons harder */
-//					d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
+//						d_ptr->flags2 &= ~(DF2_IRON || DF2_IRONFIX1 || DF2_IRONFIX2 || DF2_IRONFIX3 || DF2_IRONFIX4 || 
 //							    DF2_IRONRND1 || DF2_IRONRND2 || DF2_IRONRND3 || DF2_IRONRND4) ; /* Reset flags first */
-//					if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
-if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
-					found_town = FALSE;
-				        for(i=0;i<numtowns;i++) {
-	    	        			if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
-							found_town = TRUE;
-							if (tpos->wx == 32 && tpos->wy == 32)
-								d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
-							else
-								d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
+//						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
+						if (!(d_ptr->flags2 & DF2_NO_DEATH)) {
+							found_town = FALSE;
+						        for(i=0;i<numtowns;i++) {
+	    	        					if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
+									found_town = TRUE;
+									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
+										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
+									} else {
+										d_ptr->flags2 |= DF2_IRON | DF2_IRONFIX2; /* Other towns */
+									}
+								}
+							}
+							if (!found_town) {
+								d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
+		//						d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
+							}
 						}
-					}
-					if (!found_town) {
-						d_ptr->flags2 |= DF2_IRON | DF2_IRONRND1; /* Wilderness dungeons */
-//						d_ptr->flags1 |= DF1_NO_UP; /* Wilderness dungeons */
-					}
-}
 #endif
-if(tk)					msg_print(Ind, "Dungeon flags updated.");
+						if (tk) msg_print(Ind, "Dungeon flags updated.");
+					}
 				}
-}
-if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
+				if(!tk)	msg_print(Ind, "Dungeon/tower flags updated.");
 				return;
 			}
 			else if (prefix(message, "/debug-pos")){
@@ -3387,7 +3393,7 @@ if(!tk)					msg_print(Ind, "Dungeon/tower flags updated.");
 					/* Add admin note */
 					strcpy(admin_note[i], &message2[j]);
 					msg_print(Ind, "\377yNote has been stored.");
-				} else {
+				} else {	
 					msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending admin notes.", MAX_ADMINNOTES);
 				}
 				return;

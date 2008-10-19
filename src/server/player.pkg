@@ -715,6 +715,7 @@ struct player_type
         bool immune_water;      /* Water Immunity, would also let you breathe under water. */
 	bool resist_water;	/* Resist Water */
 	bool resist_plasma;     /* Resist Plasma */
+	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
 	bool telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
@@ -817,8 +818,8 @@ int arc_l;
         char firedir;
         char game;
         int gametime;
-	char pushed;
-	char pushdir;
+        char pushed;
+        char pushdir;
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 

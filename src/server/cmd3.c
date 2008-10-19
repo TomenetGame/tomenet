@@ -427,6 +427,7 @@ void inven_drop(int Ind, int item, int amt)
 	inven_item_optimize(Ind, item);
 	
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 }
 
 /*
@@ -1223,6 +1224,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 		s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", amt, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);
@@ -1401,6 +1403,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
 }
 
 
@@ -1746,6 +1749,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			m_ptr->mspeed += 5; m_ptr->speed += 5;
 			screen_load();
 			break_cloaking(Ind);
+			break_shadow_running(Ind);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
 			return;
 		}
@@ -2089,6 +2093,7 @@ void do_cmd_steal(int Ind, int dir)
 	}
 
 	if (caught) break_cloaking(Ind);
+	break_shadow_running(Ind);
 
 #if 0 /* now turned off */
 	/* Counter blow! */

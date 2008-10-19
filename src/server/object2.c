@@ -1634,10 +1634,10 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				
 				/* hack for double-stat rings - C. Blue */
 				if ((o_ptr->tval == TV_RING) && (
-				    (o_ptr->sval == SV_RING_STR) ||
-				    (o_ptr->sval == SV_RING_INT) ||
-				    (o_ptr->sval == SV_RING_DEX) ||
-				    (o_ptr->sval == SV_RING_CON))
+				    (o_ptr->sval == SV_RING_MIGHT) ||
+				    (o_ptr->sval == SV_RING_READYWIT) ||
+				    (o_ptr->sval == SV_RING_TOUGHNESS) ||
+				    (o_ptr->sval == SV_RING_CUNNINGNESS))
 				    )	{
 					count /= 2;
 					if (count) value += count * PRICE_BOOST((count + pval), 2, 1)* 300L;
@@ -4262,7 +4262,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
  */
 static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 {
-	//int tries;
+	int tries = 0;
 	artifact_bias = 0;
 
         /* Very good */
@@ -4303,7 +4303,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 						int i;
 						monster_race *r_ptr;
 
-						while (TRUE)
+						while (tries++ != 1000)
 						{
 							i = rand_int(MAX_R_IDX - 1);
 							r_ptr = &r_info[i];
@@ -4311,7 +4311,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 							if (!r_ptr->name) continue;
 							if (r_ptr->flags1 & RF1_UNIQUE) continue;
 							if (r_ptr->level >= level + (power * 5)) continue;
-							if (!mon_allowed(r_ptr)) continue;
+//							if (!mon_allowed(r_ptr)) continue;
+							if (!mon_allowed_chance(r_ptr)) continue;
 
 							break;
 						}
@@ -4372,10 +4373,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 				}
 
 
-				case SV_RING_STR:
-				case SV_RING_CON:
-				case SV_RING_DEX:
-				case SV_RING_INT:
+				case SV_RING_MIGHT:
+				case SV_RING_READYWIT:
+				case SV_RING_TOUGHNESS:
+				case SV_RING_CUNNINGNESS:
 				{
 					/* Stat bonus */
 					o_ptr->bpval = 1 + m_bonus(4, level); /* (5, level) for single-stat rings (traditional) */
@@ -4840,10 +4841,10 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 			  }
 
 				/* Strength, Constitution, Dexterity, Intelligence */
-				case SV_RING_STR:
-				case SV_RING_CON:
-				case SV_RING_DEX:
-				case SV_RING_INT:
+				case SV_RING_MIGHT:
+				case SV_RING_READYWIT:
+				case SV_RING_TOUGHNESS:
+				case SV_RING_CUNNINGNESS:
 				{
 					/* Stat bonus */
 					o_ptr->pval = 1 + m_bonus(4, level); /* (5, level) for single-stat rings (traditional) */
@@ -6017,6 +6018,12 @@ void determine_level_req(int level, object_type *o_ptr)
 		case SV_RING_ATTACKS:
 			base += o_ptr->bpval * 5;
 			break;
+		case SV_RING_MIGHT:
+		case SV_RING_READYWIT:
+		case SV_RING_TOUGHNESS:
+		case SV_RING_CUNNINGNESS:
+			base += o_ptr->bpval * 6;
+			break;
 		}
 	}
 
@@ -6604,15 +6611,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 #endif	// 0
 
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
-			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
-			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
 			
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
@@ -6820,15 +6819,7 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 #endif	// 0
 
 			if ((resf & RESF_NOHIDSM) && (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
-			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
-			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
 			
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
@@ -7298,15 +7289,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			if ((resf & RESF_NOHIDSM) &&
 			    (k_info[k_idx].tval == TV_DRAG_ARMOR) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLUE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_WHITE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BLACK) &&
-			    (k_info[k_idx].sval != SV_DRAGON_RED) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GREEN) &&
-			    (k_info[k_idx].sval != SV_DRAGON_BRONZE) &&
-			    (k_info[k_idx].sval != SV_DRAGON_SILVER) &&
-			    (k_info[k_idx].sval != SV_DRAGON_GOLD) &&
-			    (k_info[k_idx].sval != SV_DRAGON_PSEUDO))
+			    !sv_dsm_low(k_info[k_idx].sval) && !sv_dsm_mid(k_info[k_idx].sval))
 				continue;
 				
 			break;
