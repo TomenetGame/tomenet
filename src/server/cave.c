@@ -1695,8 +1695,16 @@ static byte player_color(int Ind)
 	byte pcolor = p_ptr->pclass;
 	char dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
-	cave_type *c_ptr = c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	cave_type *c_ptr;
 	pcolor = p_ptr->cp_ptr->color;
+
+	/* Check that zcave isn't NULL - mikaelh */
+	if (!zcave) {
+		s_printf("DEBUG: zcave was NULL in player_color\n");
+		return TERM_L_DARK;
+	}
+
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	/* Ghosts are black */
 	if (p_ptr->ghost)
