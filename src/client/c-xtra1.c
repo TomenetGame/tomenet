@@ -1705,9 +1705,17 @@ void display_player(int hist)
 
 	prt_lnum("Gold       ", p_ptr->au, 13, 28, TERM_L_GREEN);
 
-	prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
+	if (p_ptr->mhp == -9999) {
+		put_str("Max Hit Points         ", 9, 52);
+		c_put_str(TERM_L_GREEN, "-", 9, 75);
+	} else {
+		prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
+	}
 
-	if (p_ptr->chp >= p_ptr->mhp)
+	if (p_ptr->chp == -9999) {
+		put_str("Cur Hit Points         ", 10, 52);
+		c_put_str(TERM_L_GREEN, "-", 10, 75);
+	} else if (p_ptr->chp >= p_ptr->mhp)
 	{
 		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_L_GREEN);
 	}
@@ -1720,19 +1728,27 @@ void display_player(int hist)
 		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_RED);
 	}
 
-	prt_num("Max SP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
+	if (p_ptr->msp == -9999) {
+		put_str("Max MP (Mana)          ", 11, 52);
+		c_put_str(TERM_L_GREEN, "-", 11, 75);
+	} else {
+		prt_num("Max MP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
+	}
 
-	if (p_ptr->csp >= p_ptr->msp)
+    	if (p_ptr->csp == -9999) {
+		put_str("Cur MP (Mana)          ", 12, 52);
+		c_put_str(TERM_L_GREEN, "-", 12, 75);
+	} else if (p_ptr->csp >= p_ptr->msp)
 	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
 	}
 	else if (p_ptr->csp > (p_ptr->msp) / 10)
 	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
 	}
 	else
 	{
-		prt_num("Cur SP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
 	}
 #ifdef SHOW_SANITY
 	put_str("Cur Sanity", 13, 52);
