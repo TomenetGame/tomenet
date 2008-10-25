@@ -4,6 +4,8 @@
  * Purpose: Auction system - mikaelh
  */
 
+/* NOTE: This is still buggy and far from ready */
+
 #include "angband.h"
 
 #ifdef AUCTION_SYSTEM
@@ -42,7 +44,7 @@ void process_auctions()
 		{
 			case AUCTION_STATUS_BIDDING:
 				/* Check the time limit */
-				if (auc_ptr->start + auc_ptr->duration >= now)
+				if (auc_ptr->start + auc_ptr->duration < now)
 				{
 					/* Auction has expired */
 					if (auc_ptr->bids_cnt)
@@ -289,10 +291,16 @@ bool auction_parse_time(cptr s, time_t *amount)
 			len += value * 86400;
 			value = 0;
 		}
+		/* h for minutes */
+		else if (c == 'h' || c == 'H')
+		{
+			len += value * 3600;
+			value = 0;
+		}
 		/* m for minutes */
 		else if (c == 'm' || c == 'M')
 		{
-			len += value * 3600;
+			len += value * 60;
 			value = 0;
 		}
 		/* s for seconds */
@@ -411,35 +419,51 @@ void auction_add_bid(int auction_id, s32b bid, s32b bidder)
 	auction_type *auc_ptr = &auctions[auction_id];
 	bid_type *bid_ptr;
 	int i, j;
+	bool placed;
 
 	if (!auc_ptr->bids)
 	{
 		/* MAKE a bid */
 		MAKE(auc_ptr->bids, bid_type);
+
+		bid_ptr = auc_ptr->bids;
+		auc_ptr->bids_cnt = 1;
 	}
 	else
 	{
 		/* Add a bid */
 		GROW(auc_ptr->bids, auc_ptr->bids_cnt, auc_ptr->bids_cnt + 1, bid_type);
-	}
-	auc_ptr->bids_cnt++;
-	
-	/* Keep the bids sorted, lowest bid is first */
-	for (i = 0; i < auc_ptr->bids_cnt - 1; i++)
-	{
-		bid_ptr = &auc_ptr->bids[i];
-		if (bid_ptr->bid > bid)
+
+		auc_ptr->bids_cnt++;
+
+		placed = FALSE;
+		
+		/* Keep the bids sorted, lowest bid is first */
+		for (i = 0; i < auc_ptr->bids_cnt - 1; i++)
 		{
-			/* Slide rest of the bids down */
-			for (j = i + 1; j < auc_ptr->bids_cnt; j++)
+			bid_ptr = &auc_ptr->bids[i];
+			if (bid_ptr->bid > bid)
 			{
-				COPY(&auc_ptr->bids[j], &auc_ptr->bids[j - 1], bid_type);
+				/* Slide rest of the bids down */
+				for (j = i + 1; j < auc_ptr->bids_cnt; j++)
+				{
+					COPY(&auc_ptr->bids[j], &auc_ptr->bids[j - 1], bid_type);
+				}
+
+				/* Add the bid here */
+				placed = TRUE;
+				break;
 			}
-			bid_ptr->bid = bid;
-			bid_ptr->bidder = bidder;
-			break;
+		}
+
+		if (!placed) {
+			/* Add the bid to the end */
+			bid_ptr = &auc_ptr->bids[auc_ptr->bids_cnt - 1];
 		}
 	}
+
+	bid_ptr->bid = bid;
+	bid_ptr->bidder = bidder;
 }
 
 void auction_remove_bid(int auction_id, int bid_id)
@@ -702,6 +726,7 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	player_type *p_ptr = Players[Ind];
 	time_t duration;
 	time_t now = time(NULL);
+	char *time_string;
 
 	/* Verify slot */
 	if (slot < 0 || slot >= INVEN_PACK)
@@ -904,6 +929,17 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	C_MAKE(auc_ptr->desc, 160, char);
 	object_desc(Ind, auc_ptr->desc, o_ptr, TRUE, 3);
 
+	msg_format(Ind, "\377B[@] \377wAuction item #%d:", auction_id);
+	msg_format(Ind, "\377B[@]   \377w%s", auc_ptr->desc);
+	if (auc_ptr->buyout_price) msg_format(Ind, "\377B[@] \377wBuyout price: %d", auc_ptr->buyout_price);
+	if (auc_ptr->starting_price) msg_format(Ind, "\377B[@] \377yStarting price: %d", auc_ptr->starting_price);
+
+	time_string = auction_format_time(auc_ptr->duration);
+	msg_format(Ind, "\377B[@] \377wDuration: %s", time_string);
+	msg_print(Ind, "\377B[@] ");
+	msg_print(Ind, "\377B[@] \377wIf you want to start this auction, type \377G/auction start");
+	msg_print(Ind, "\377B[@] \377wIf not, type \377G/auction cancel");
+
 	return 0;
 }
 
@@ -923,6 +959,8 @@ int auction_start(int Ind)
 			/* Log it */
 			s_printf("AUCTION: %s started auction for item #%d:\n", p_ptr->name, p_ptr->current_auction);
 			s_printf("AUCTION:   %s\n", auc_ptr->desc);
+
+			msg_print(Ind, "\377B[@] \377GAuction has been started!");
 
 			p_ptr->current_auction = 0;
 		}
@@ -963,6 +1001,8 @@ int auction_cancel(int Ind, int auction_id)
 			if (auc_ptr->owner == p_ptr->id)
 			{
 				auc_ptr->status = AUCTION_STATUS_CANCELLED;
+				msg_print(Ind, "\377B[@] \377GAuction has been cancelled!");
+				msg_print(Ind, "\377B[@] \377wYou can retrieve the item by typing \377G/auction retrieve");
 				p_ptr->current_auction = 0;
 			}
 			else
@@ -981,6 +1021,9 @@ int auction_cancel(int Ind, int auction_id)
 				/* Log it */
 				s_printf("AUCTION: %s has cancelled bidding for his/her item #%d:\n", p_ptr->name, auction_id);
 				s_printf("AUCTION:   %s\n", auc_ptr->desc);
+
+				msg_format(Ind, "\377B[@] \377GYou have cancelled bidding for your item #%d.", auction_id);
+				msg_format(Ind, "\377B[@]  \377w%s", auc_ptr->desc);
 
 				/* Notify bidders */
 				for (i = 0; i < auc_ptr->bids_cnt; i++)
@@ -1007,6 +1050,9 @@ int auction_cancel(int Ind, int auction_id)
 				/* Log it */
 				s_printf("AUCTION: Admin (%s) cancelled bidding for item #%d (owned by %s):\n", p_ptr->name, auction_id, lookup_player_name(auc_ptr->owner));
 				s_printf("AUCTION:   %s\n", auc_ptr->desc);
+
+				msg_format(Ind, "\377B[@] \377GYou have cancelled bidding for item #%d.", auction_id);
+				msg_format(Ind, "\377B[@]  \377w%s", auc_ptr->desc);
 
 				for (i = 1; i <= NumPlayers; i++)
 				{
@@ -1035,20 +1081,24 @@ int auction_cancel(int Ind, int auction_id)
 			}
 			else
 			{
+				/* Lastly: Try to remove any bid (s)he may have placed */
 				for (i = 0; i < auc_ptr->bids_cnt; i++)
 				{
 					bid_ptr = &auc_ptr->bids[i];
 					if (bid_ptr->bidder == p_ptr->id)
 					{
+						msg_format(Ind, "\377B[@] \377GYour bid of %d on item #%d has been cancelled.", bid_ptr->bid, auction_id);
+						msg_format(Ind, "\377B[@]  \377w%s", auc_ptr->desc);
+
 						/* Remove bid */
 						auction_remove_bid(auction_id, i);
 
 						return 0;
 					}
-
-					/* No bid found */
-					return AUCTION_ERROR_NOT_SUPPORTED;
 				}
+
+				/* No bid found, (s)he cannot do anything */
+				return AUCTION_ERROR_NOT_SUPPORTED;
 			}
 			break;
 		default:
@@ -1149,6 +1199,9 @@ int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 	}
 
 	auction_add_bid(auction_id, bid, p_ptr->id);
+
+	msg_format(Ind, "\377B[@] \377GYour bid of %d on item #%d has been placed.", bid, auction_id);
+	msg_format(Ind, "\377B[@]  \377w%s", auc_ptr->desc);
 
 	return 0;
 }
@@ -1270,11 +1323,11 @@ void auction_list_print_item(int Ind, int auction_id)
 	msg_format(Ind, "\377B[@] %d: %s", auction_id, auc_ptr->desc);
 	if (auc_ptr->bids_cnt)
 	{
-		msg_format(Ind, "\377B[@] - Highest bid: %8d    - Buyout price: %8d");
+		msg_format(Ind, "\377B[@] - Highest bid: %8d    - Buyout price: %8d", auc_ptr->bids[auc_ptr->bids_cnt - 1], auc_ptr->buyout_price);
 	}
 	else
 	{
-		msg_format(Ind, "\377B[@] - Starting price: %8d - Buyout price: %8d");
+		msg_format(Ind, "\377B[@] - Starting price: %8d - Buyout price: %8d", auc_ptr->starting_price, auc_ptr->buyout_price);
 	}
 }
 
@@ -1283,6 +1336,8 @@ void auction_list(int Ind)
 {
 	auction_type *auc_ptr;
 	int i;
+
+	int printed = 0;
 
 	msg_print(Ind, "\377B[@] \377GAuctions in progress:");
 
@@ -1293,8 +1348,11 @@ void auction_list(int Ind)
 		if ((auc_ptr->status == AUCTION_STATUS_BIDDING) && auction_mode_check(Ind, i))
 		{
 			auction_list_print_item(Ind, i);
+			printed++;
 		}
 	}
+
+	if (!printed) msg_print(Ind, "\377B[@]  \377w<none>");
 }
 
 cptr strcasestr(cptr haystack, cptr needle)
@@ -1319,8 +1377,9 @@ void auction_search(int Ind, cptr search)
 {
 	auction_type *auc_ptr;
 	int i;
+	int found = 0;
 
-	msg_format(Ind, "\377B[@] \377GAuction items containing \"%s\", search");
+	msg_format(Ind, "\377B[@] \377GAuction items containing \"%s\"", search);
 
 	for (i = 1; i < auction_alloc; i++)
 	{
@@ -1331,9 +1390,12 @@ void auction_search(int Ind, cptr search)
 			if (strcasestr(auc_ptr->desc, search))
 			{
 				auction_list_print_item(Ind, i);
+				found++;
 			}
 		}
 	}
+
+	if (!found) msg_print(Ind, "\377B[@]  \377w<none>");
 }
 
 /* Retrieve won items and items from cancelled auctions */
@@ -1345,7 +1407,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 	bid_type *bid_ptr;
 	int i;
 
-	retrieved = unretrieved = 0;
+	*retrieved = *unretrieved = 0;
 
 	for (i = 1; i < auction_alloc; i++)
 	{
@@ -1363,7 +1425,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 						o_ptr->owner = p_ptr->id;
 						o_ptr->owner_mode = p_ptr->mode;
 						inven_carry(Ind, o_ptr);
-						retrieved++;
+						(*retrieved)++;
 						WIPE(o_ptr, object_type);
 
 						/* Check if we're done with this auction now */
@@ -1374,7 +1436,7 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 					}
 					else
 					{
-						unretrieved++;
+						(*unretrieved)++;
 					}
 				}
 				break;
@@ -1386,13 +1448,13 @@ void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved)
 					{
 						o_ptr->owner = p_ptr->id;
 						inven_carry(Ind, o_ptr);
-						retrieved++;
+						(*retrieved)++;
 						auction_clear(i);
 					}
 				}
 				else
 				{
-					unretrieved++;
+					(*unretrieved)++;
 				}
 				break;
 		}
@@ -1409,6 +1471,12 @@ int auction_show(int Ind, int auction_id)
 	char *time_string;
 
 	if (auction_id <= 0 || auction_id >= auction_alloc)
+	{
+		/* Invalid id */
+		return AUCTION_ERROR_INVALID_ID;
+	}
+
+	if (auctions[auction_id].status == AUCTION_STATUS_EMPTY)
 	{
 		/* Invalid id */
 		return AUCTION_ERROR_INVALID_ID;
@@ -1451,6 +1519,12 @@ int auction_examine(int Ind, int auction_id)
 	auction_type *auc_ptr;
 
 	if (auction_id <= 0 || auction_id >= auction_alloc)
+	{
+		/* Invalid id */
+		return AUCTION_ERROR_INVALID_ID;
+	}
+
+	if (auctions[auction_id].status == AUCTION_STATUS_EMPTY)
 	{
 		/* Invalid id */
 		return AUCTION_ERROR_INVALID_ID;

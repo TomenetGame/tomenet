@@ -2100,12 +2100,20 @@ void do_slash_cmd(int Ind, char *message)
 #ifdef AUCTION_SYSTEM
 		else if (prefix(message, "/auc")) {
 			int n;
-			if (!p_ptr->wpos.wz && !is_admin(p_ptr))
+
+			if (p_ptr->inval) {
+				msg_print(Ind, "\377oYou must be validated to use the auction system.");
+				return;
+			}
+
+			if (p_ptr->wpos.wz && !is_admin(p_ptr))
 			{
 				if (p_ptr->wpos.wz < 0) msg_print(Ind, "\377B[@] \377rYou can't use the auction system while in a dungeon!");
 				else msg_print(Ind, "\377B[@] \377rYou can't use the auction system while in a tower!");
+				return;
 			}
-			else if ((tk < 1) || ((tk < 2) && (!strcmp("help", token[1]))))
+
+			if ((tk < 1) || ((tk < 2) && (!strcmp("help", token[1]))))
 			{
 				msg_print(Ind, "\377B[@] \377wTomeNET Auction system");
 				msg_print(Ind, "\377B[@] \377oUsage: /auction <subcommand> ...");
@@ -2318,7 +2326,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				else
 				{
-					n = auction_set(Ind, token[2][0], token[3], token[4], token[5]);
+					n = auction_set(Ind, token[2][0] - 'a', token[3], token[4], token[5]);
 					if (n)
 					{
 						auction_print_error(Ind, n);
