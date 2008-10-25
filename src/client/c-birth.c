@@ -246,6 +246,9 @@ static bool choose_class(void)
         m = 22 - (Setup.max_class - 1) / 5;
         n = m - 1;
 
+	c_put_str(TERM_SLATE, "--- Classes NOT recommended for beginners are: ---", n - 3, 2);
+	c_put_str(TERM_SLATE, "Istar, Priest, (Archer,) Adventurer, Shaman, Runemaster", n - 2, 2);
+
         put_str("                                                                             ", 18, l);
         put_str("                                                                             ", 19, l);
         put_str("                                                                             ", 20, l);
@@ -307,7 +310,7 @@ static bool choose_class(void)
 		}
 	}
 
-	clear_from(n);
+	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */
 	return TRUE;
 }
 
