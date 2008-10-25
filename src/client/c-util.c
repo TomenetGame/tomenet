@@ -2800,7 +2800,7 @@ static errr macro_dump(cptr fname)
 		for (j = 0, n = strlen(macro__act[i]); j < n; j += 1023)
 		{
 			/* Take a piece of the action */
-			memcpy(buf, macro__act[i], 1023);
+			strncpy(buf, &macro__act[i][j], 1023);
 			buf[1023] = '\0';
 
 			/* Convert it */
