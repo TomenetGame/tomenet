@@ -1660,10 +1660,10 @@ void display_player(int hist)
 
 		put_str("Shots/Round:", 17, 55);
 		put_str(format("%d", p_ptr->num_fire), 17, 69);
-
+#if 0
 		put_str("Spells/Round:", 18, 55);
 		put_str(format("%d", p_ptr->num_spell), 18, 69);
-
+#endif
 		put_str("Infra-Vision:", 19, 55);
 		put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
 	}
