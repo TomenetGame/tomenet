@@ -1519,34 +1519,34 @@ void display_player(int hist)
 	clear_from(0);
 
         /* Name, Sex, Race, Class */
-        put_str("Name        :", 2, 1);
-        put_str("Sex         :", 3, 1);
-        put_str("Race        :", 4, 1);
-        put_str("Class       :", 5, 1);
-        put_str("Body        :", 6, 1);
-	put_str("Mode        :", 7, 1);
+        put_str("Name        :", 1, 1);
+        put_str("Sex         :", 2, 1);
+        put_str("Race        :", 3, 1);
+        put_str("Class       :", 4, 1);
+        put_str("Body        :", 5, 1);
+	put_str("Mode        :", 6, 1);
 
-        c_put_str(TERM_L_BLUE, cname, 2, 15);
-        c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 3, 15);
-        c_put_str(TERM_L_BLUE, race_info[race].title, 4, 15);
-        c_put_str(TERM_L_BLUE, class_info[class].title, 5, 15);
-        c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 6, 15);
+        c_put_str(TERM_L_BLUE, cname, 1, 15);
+        c_put_str(TERM_L_BLUE, (p_ptr->male ? "Male" : "Female"), 2, 15);
+        c_put_str(TERM_L_BLUE, race_info[race].title, 3, 15);
+        c_put_str(TERM_L_BLUE, class_info[class].title, 4, 15);
+        c_put_str(TERM_L_BLUE, c_p_ptr->body_name, 5, 15);
 	if (p_ptr->mode & MODE_EVERLASTING)
-	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 7, 15);
+	    	c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", 6, 15);
 	else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
-	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 7, 15);
+	    	c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", 6, 15);
 	else if (p_ptr->mode & MODE_NO_GHOST)
-	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 7, 15);
+	    	c_put_str(TERM_L_BLUE, "Unworldly (one life)", 6, 15);
         else if (p_ptr->mode & MODE_HARD)
-        	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 7, 15);
+        	c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", 6, 15);
         else /*(p_ptr->mode == MODE_NORMAL)*/
-	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 7, 15);
+	    	c_put_str(TERM_L_BLUE, "Normal (3 lives)", 6, 15);
 
         /* Age, Height, Weight, Social */
-        prt_num("Age          ", (int)p_ptr->age, 2, 32, TERM_L_BLUE);
-        prt_num("Height       ", (int)p_ptr->ht, 3, 32, TERM_L_BLUE);
-        prt_num("Weight       ", (int)p_ptr->wt, 4, 32, TERM_L_BLUE);
-        prt_num("Social Class ", (int)p_ptr->sc, 5, 32, TERM_L_BLUE);
+        prt_num("Age          ", (int)p_ptr->age, 1, 32, TERM_L_BLUE);
+        prt_num("Height       ", (int)p_ptr->ht, 2, 32, TERM_L_BLUE);
+        prt_num("Weight       ", (int)p_ptr->wt, 3, 32, TERM_L_BLUE);
+        prt_num("Social Class ", (int)p_ptr->sc, 4, 32, TERM_L_BLUE);
 
         /* Display the stats */
         for (i = 0; i < 6; i++)
@@ -1557,7 +1557,7 @@ void display_player(int hist)
                         int value;
 
                         /* Use lowercase stat name */
-                        put_str(stat_names_reduced[i], 2 + i, 61);
+                        put_str(stat_names_reduced[i], 1 + i, 61);
 
                         /* Get the current stat */
                         value = p_ptr->stat_use[i];
@@ -1566,7 +1566,7 @@ void display_player(int hist)
                         cnv_stat(value, buf);
 
                         /* Display the current stat (modified) */
-                        c_put_str(TERM_YELLOW, buf, 2 + i, 66);
+                        c_put_str(TERM_YELLOW, buf, 1 + i, 66);
 
                         /* Acquire the max stat */
                         value = p_ptr->stat_top[i];
@@ -1577,11 +1577,11 @@ void display_player(int hist)
                         /* Display the maximum stat (modified) */
 			if(p_ptr->stat_cur[i] < (18 + 100))
 			{
-                    		c_put_str(TERM_L_GREEN, buf, 2 + i, 73);
+                    		c_put_str(TERM_L_GREEN, buf, 1 + i, 73);
 			}
 			else
 			{
-                    		c_put_str(TERM_L_UMBER, buf, 2 + i, 73);
+                    		c_put_str(TERM_L_UMBER, buf, 1 + i, 73);
 			}
                 }
 
@@ -1589,7 +1589,7 @@ void display_player(int hist)
                 else
                 {
                         /* Assume uppercase stat name */
-                        put_str(stat_names[i], 2 + i, 61);
+                        put_str(stat_names[i], 1 + i, 61);
 
                         /* Obtain the current stat (modified) */
                         cnv_stat(p_ptr->stat_use[i], buf);
@@ -1597,11 +1597,11 @@ void display_player(int hist)
                         /* Display the current stat (modified) */
 			if(p_ptr->stat_cur[i] < (18 + 100))
 			{
-    		                c_put_str(TERM_L_GREEN, buf, 2 + i, 66);
+    		                c_put_str(TERM_L_GREEN, buf, 1 + i, 66);
 			}
 			else
 			{
-    		                c_put_str(TERM_L_UMBER, buf, 2 + i, 66);
+    		                c_put_str(TERM_L_UMBER, buf, 1 + i, 66);
 			}
                 }
         }
@@ -1609,160 +1609,158 @@ void display_player(int hist)
 	/* Check for history */
 	if (hist)
 	{
-		put_str("(Character Background)", 15, 25);
+		put_str("(Character Background)", 14, 25);
 
 		for (i = 0; i < 4; i++)
 		{
-			put_str(p_ptr->history[i], i + 16, 10);
+			put_str(p_ptr->history[i], i + 15, 10);
 		}
 	}
 	else
 	{
-		put_str("(Miscellaneous Abilities)", 15, 25);
+		put_str("(Miscellaneous Abilities)", 14, 25);
 
 		/* Display "skills" */
-		put_str("Fighting    :", 16, 1);
+		put_str("Fighting    :", 15, 1);
 		desc = likert(p_ptr->skill_thn, 120, 0);
+		c_put_str(likert_color, desc, 15, 15);
+
+		put_str("Bows/Throw  :", 16, 1);
+		desc = likert(p_ptr->skill_thb, 120, 0);
 		c_put_str(likert_color, desc, 16, 15);
 
-		put_str("Bows/Throw  :", 17, 1);
-		desc = likert(p_ptr->skill_thb, 120, 0);
+		put_str("Saving Throw:", 17, 1);
+		desc = likert(p_ptr->skill_sav, 52, 95);	/*was 6.0 before x10 increase */
 		c_put_str(likert_color, desc, 17, 15);
 
-		put_str("Saving Throw:", 18, 1);
-		desc = likert(p_ptr->skill_sav, 52, 95);	/*was 6.0 before x10 increase */
+		put_str("Stealth     :", 18, 1);
+		desc = likert(p_ptr->skill_stl, 10, 30);
 		c_put_str(likert_color, desc, 18, 15);
 
-		put_str("Stealth     :", 19, 1);
-		desc = likert(p_ptr->skill_stl, 10, 30);
-		c_put_str(likert_color, desc, 19, 15);
 
-
-		put_str("Perception  :", 16, 28);
+		put_str("Perception  :", 15, 28);
 		desc = likert(p_ptr->skill_fos, 40, 75);
+		c_put_str(likert_color, desc, 15, 42);
+
+		put_str("Searching   :", 16, 28);
+		desc = likert(p_ptr->skill_srh, 60, 100);
 		c_put_str(likert_color, desc, 16, 42);
 
-		put_str("Searching   :", 17, 28);
-		desc = likert(p_ptr->skill_srh, 60, 100);
+		put_str("Disarming   :", 17, 28);
+		desc = likert(p_ptr->skill_dis, 80, 100);
 		c_put_str(likert_color, desc, 17, 42);
 
-		put_str("Disarming   :", 18, 28);
-		desc = likert(p_ptr->skill_dis, 80, 100);
+		put_str("Magic Device:", 18, 28);
+		desc = likert(p_ptr->skill_dev, 60, 0);
 		c_put_str(likert_color, desc, 18, 42);
 
-		put_str("Magic Device:", 19, 28);
-		desc = likert(p_ptr->skill_dev, 60, 0);
-		c_put_str(likert_color, desc, 19, 42);
 
+		put_str("Blows/Round:", 15, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_blow), 15, 69);
 
-		put_str("Blows/Round:", 16, 55);
-		put_str(format("%d", p_ptr->num_blow), 16, 69);
-
-		put_str("Shots/Round:", 17, 55);
-		put_str(format("%d", p_ptr->num_fire), 17, 69);
+		put_str("Shots/Round:", 16, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_fire), 16, 69);
 #if 0
-		put_str("Spells/Round:", 18, 55);
-		put_str(format("%d", p_ptr->num_spell), 18, 69);
+		put_str("Spells/Round:", 17, 55);
+		c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_spell), 17, 69);
 #endif
-		put_str("Infra-Vision:", 19, 55);
-		put_str(format("%d feet", p_ptr->see_infra * 10), 19, 69);
+		put_str("Infra-Vision:", 18, 55);
+		c_put_str(TERM_L_BLUE, format("%d feet", p_ptr->see_infra * 10), 18, 69);
 	}
 
 	/* Dump the bonuses to hit/dam */
-	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 9, 1, TERM_L_BLUE);
-	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 10, 1, TERM_L_BLUE);
-	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 11, 1, TERM_L_BLUE);
-	prt_num("+To RDamage ", p_ptr->to_d_ranged, 12, 1, TERM_L_BLUE);
-
+	prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, 8, 1, TERM_L_BLUE);
+	prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, 9, 1, TERM_L_BLUE);
+	prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, 10, 1, TERM_L_BLUE);
+	prt_num("+To RDamage ", p_ptr->to_d_ranged, 11, 1, TERM_L_BLUE);
 	/* Dump the armor class bonus */
-	prt_num("+ To AC     ", p_ptr->dis_to_a, 13, 1, TERM_L_BLUE);
-
+	prt_num("+ To AC     ", p_ptr->dis_to_a, 12, 1, TERM_L_BLUE);
 	/* Dump the total armor class */
-	prt_num("  Base AC   ", p_ptr->dis_ac, 14, 1, TERM_L_BLUE);
+	prt_num("  Base AC   ", p_ptr->dis_ac, 13, 1, TERM_L_BLUE);
 
-	prt_num("Level      ", (int)p_ptr->lev, 9, 28, TERM_L_GREEN);
-
+	prt_num("Level      ", (int)p_ptr->lev, 8, 28, TERM_L_GREEN);
 	if (p_ptr->exp >= p_ptr->max_exp)
 	{
-		prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_L_GREEN);
+		prt_lnum("Experience ", p_ptr->exp, 9, 28, TERM_L_GREEN);
 	}
 	else
 	{
-		prt_lnum("Experience ", p_ptr->exp, 10, 28, TERM_YELLOW);
+		prt_lnum("Experience ", p_ptr->exp, 9, 28, TERM_YELLOW);
 	}
-
-	prt_lnum("Max Exp    ", p_ptr->max_exp, 11, 28, TERM_L_GREEN);
-
+	prt_lnum("Max Exp    ", p_ptr->max_exp, 10, 28, TERM_L_GREEN);
 	if (p_ptr->lev >= PY_MAX_LEVEL)
 	{
-		put_str("Exp to Adv.", 12, 28);
-		c_put_str(TERM_L_GREEN, "    *****", 12, 28+11);
+		put_str("Exp to Adv.", 11, 28);
+		c_put_str(TERM_L_GREEN, "    *****", 11, 28+11);
 	}
 	else
 	{
-		prt_lnum("Exp to Adv.", exp_adv, 12, 28, TERM_L_GREEN);
+		prt_lnum("Exp to Adv.", exp_adv, 11, 28, TERM_L_GREEN);
 	}
-
-	prt_lnum("Gold       ", p_ptr->au, 13, 28, TERM_L_GREEN);
+	prt_lnum("Gold       ", p_ptr->au, 12, 28, TERM_L_GREEN);
 
 	if (p_ptr->mhp == -9999) {
-		put_str("Max Hit Points         ", 9, 52);
-		c_put_str(TERM_L_GREEN, "-", 9, 75);
+		put_str("Max Hit Points         ", 8, 52);
+		c_put_str(TERM_L_GREEN, "-", 8, 75);
 	} else {
-		prt_num("Max Hit Points ", p_ptr->mhp, 9, 52, TERM_L_GREEN);
+		prt_num("Max Hit Points ", p_ptr->mhp, 8, 52, TERM_L_GREEN);
 	}
 
 	if (p_ptr->chp == -9999) {
-		put_str("Cur Hit Points         ", 10, 52);
-		c_put_str(TERM_L_GREEN, "-", 10, 75);
+		put_str("Cur Hit Points         ", 9, 52);
+		c_put_str(TERM_L_GREEN, "-", 9, 75);
 	} else if (p_ptr->chp >= p_ptr->mhp)
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_L_GREEN);
+		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_L_GREEN);
 	}
 	else if (p_ptr->chp > (p_ptr->mhp) / 10)
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_YELLOW);
+		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_YELLOW);
 	}
 	else
 	{
-		prt_num("Cur Hit Points ", p_ptr->chp, 10, 52, TERM_RED);
+		prt_num("Cur Hit Points ", p_ptr->chp, 9, 52, TERM_RED);
 	}
 
 	if (p_ptr->msp == -9999) {
-		put_str("Max MP (Mana)          ", 11, 52);
-		c_put_str(TERM_L_GREEN, "-", 11, 75);
+		put_str("Max MP (Mana)          ", 10, 52);
+		c_put_str(TERM_L_GREEN, "-", 10, 75);
 	} else {
-		prt_num("Max MP (Mana)  ", p_ptr->msp, 11, 52, TERM_L_GREEN);
+		prt_num("Max MP (Mana)  ", p_ptr->msp, 10, 52, TERM_L_GREEN);
 	}
 
     	if (p_ptr->csp == -9999) {
-		put_str("Cur MP (Mana)          ", 12, 52);
-		c_put_str(TERM_L_GREEN, "-", 12, 75);
+		put_str("Cur MP (Mana)          ", 11, 52);
+		c_put_str(TERM_L_GREEN, "-", 11, 75);
 	} else if (p_ptr->csp >= p_ptr->msp)
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_L_GREEN);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_L_GREEN);
 	}
 	else if (p_ptr->csp > (p_ptr->msp) / 10)
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_YELLOW);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_YELLOW);
 	}
 	else
 	{
-		prt_num("Cur MP (Mana)  ", p_ptr->csp, 12, 52, TERM_RED);
+		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_RED);
 	}
 #ifdef SHOW_SANITY
-	put_str("Cur Sanity", 13, 52);
+	put_str("Cur Sanity", 12, 52);
 
-	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 13, 67);
+	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 12, 67);
 #endif	/* SHOW_SANITY */
 
 
 	/* Show location (better description needed XXX) */
 	if (c_cfg.depth_in_feet)
-		put_str(format("You are at %dft of (%d, %d).", p_ptr->wpos.wz * 50,
+		put_str(format("You are at %s%d ft%s of world map sector %d,%d.", 
+					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz * 50,
+					p_ptr->wpos.wz ? "" : ")",
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 	else
-		put_str(format("You are at level %d of (%d, %d).", p_ptr->wpos.wz,
+		put_str(format("You are at %slevel %d%s of world map sector %d,%d.",
+					p_ptr->wpos.wz ? "" : "surface (", p_ptr->wpos.wz,
+					p_ptr->wpos.wz ? "" : ")",
 					p_ptr->wpos.wx, p_ptr->wpos.wy), 20, hist ? 10 : 1);
 }
 
