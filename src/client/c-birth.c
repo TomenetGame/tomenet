@@ -246,8 +246,9 @@ static bool choose_class(void)
         m = 22 - (Setup.max_class - 1) / 5;
         n = m - 1;
 
-	c_put_str(TERM_SLATE, "--- Classes NOT recommended for beginners are: ---", n - 3, 2);
-	c_put_str(TERM_SLATE, "Istar, Priest, (Archer,) Adventurer, Shaman, Runemaster", n - 2, 2);
+	c_put_str(TERM_SLATE, "--- Important: For beginners, classes easy to play are... ---", n - 3, 2);
+	c_put_str(TERM_YELLOW, "Important", n - 3, 6);
+	c_put_str(TERM_SLATE, "Warrior, Rogue, Paladin, Druid, and possibly Mimic, Archer, Ranger.", n - 2, 2);
 
         put_str("                                                                             ", 18, l);
         put_str("                                                                             ", 19, l);
