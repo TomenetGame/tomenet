@@ -15,6 +15,8 @@
 
 #include "angband.h"
 
+/* Cut down on some of the walls of text hitting the player during login process? */
+#define SIMPLE_LOGIN
 
 /*
  * Choose the character's name
@@ -24,6 +26,7 @@ static void choose_name(void)
 	char tmp[23];
 
 	/* Prompt and ask */
+#ifndef SIMPLE_LOGIN
 	c_put_str(TERM_SLATE, "If you are new to TomeNET, read this:", 7, 2);
 	prt("http://www.c-blue.de/rogue/tomenet-guide.txt", 8, 2);
 	c_put_str(TERM_SLATE, "*** Logging in with an account ***", 12, 2);
@@ -33,14 +36,26 @@ static void choose_name(void)
 	prt("that you remember its name and password. Each player should have not more", 17, 2);
 	prt("than 1 account. Ask a server administrator to 'validate' your account!", 18, 2);
 	prt("If an account is not validated, it has certain restrictions to prevent abuse.", 19, 2);
+#else
+	c_put_str(TERM_SLATE, "Welcome! In order to play, you need to create an account.", 1, 2);
+	c_put_str(TERM_SLATE, "If you don't have an account yet, just enter one of your choice, and don't", 2, 2);
+	c_put_str(TERM_SLATE, "forget name and password. Players may only own one account each at a time.", 3, 2);
+	c_put_str(TERM_SLATE, "If you are new to TomeNET, this guide may prove useful:", 14, 2);
+	prt("http://www.c-blue.de/rogue/tomenet-guide.txt", 15, 2);
+#endif
+#ifndef SIMPLE_LOGIN
 	prt("Enter your account name above.", 21, 2);
+#endif
 
 	/* Ask until happy */
 	while (1)
 	{
 		/* Go to the "name" area */
+#ifndef SIMPLE_LOGIN
 		move_cursor(2, 15);
-
+#else
+		move_cursor(5, 15);
+#endif
 		/* Save the player name */
 		strcpy(tmp, nick);
 
@@ -55,7 +70,11 @@ static void choose_name(void)
 	sprintf(tmp, "%-15.15s", nick);
 
 	/* Re-Draw the name (in light blue) */
+#ifndef SIMPLE_LOGIN
 	c_put_str(TERM_L_BLUE, tmp, 2, 15);
+#else
+	c_put_str(TERM_L_BLUE, tmp, 5, 15);
+#endif
 
 	/* Erase the prompt, etc */
 	clear_from(20);
@@ -70,8 +89,10 @@ static void enter_password(void)
 	int c;
 	char tmp[23];
 
+#ifndef SIMPLE_LOGIN
 	/* Prompt and ask */
 	prt("Enter your password above.", 21, 2);
+#endif
 
 	/* Default */
 	strcpy(tmp, pass);
@@ -80,7 +101,11 @@ static void enter_password(void)
 	while (1)
 	{
 		/* Go to the "name" area */
+#ifndef SIMPLE_LOGIN
 		move_cursor(3, 15);
+#else
+		move_cursor(6, 15);
+#endif
 
 		/* Get an input, ignore "Escape" */
 		if (askfor_aux(tmp, 15, 1, 0)) strcpy(pass, tmp);
@@ -92,9 +117,13 @@ static void enter_password(void)
 	/* Pad the name (to clear junk)
 	sprintf(tmp, "%-15.15s", pass); */
 
-	 /* Re-Draw the name (in light blue) */
+	 /* Re-Draw the password as 'x's (in light blue) */
 	for (c = 0; c < strlen(pass); c++)
+#ifndef SIMPLE_LOGIN
 		Term_putch(15+c, 3, TERM_L_BLUE, 'x');
+#else
+		Term_putch(15+c, 6, TERM_L_BLUE, 'x');
+#endif
 
 	/* Erase the prompt, etc */
 	clear_from(20);
@@ -769,13 +798,24 @@ void get_char_name(void)
 	Term_clear();
 
 	/* Title everything */
+#ifndef SIMPLE_LOGIN
 	put_str("Name        :", 2, 1);
 	put_str("Password    :", 3, 1);
 	c_put_str(TERM_SLATE, "If TomeNET quits with a login failure, check account name and password", 4, 3);
 	c_put_str(TERM_SLATE, "for upper/lower case! If you are a new player, try a different name.", 5, 3);
-
+#else
+	put_str("Name        :", 5, 1);
+	put_str("Password    :", 6, 1);
+	c_put_str(TERM_SLATE, "If TomeNET quits with a login failure and you are a new player, it means", 8, 3);
+	c_put_str(TERM_SLATE, "the account name you picked is already in use. Try a different name!", 9, 3);
+	c_put_str(TERM_SLATE, "If you're not a new player, check name and password for upper/lower case!", 10, 3);
+#endif
 	/* Dump the default name */
+#ifndef SIMPLE_LOGIN
 	c_put_str(TERM_L_BLUE, nick, 2, 15);
+#else
+	c_put_str(TERM_L_BLUE, nick, 5, 15);
+#endif
 
 
 	/* Display some helpful information XXX XXX XXX */
