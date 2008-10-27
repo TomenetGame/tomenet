@@ -1340,7 +1340,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 
 	/* Handle the additional chat modes */
 	/* Slash commands are an exception */
-	if (chat_mode != CHAT_MODE_NORMAL && buf[0] != '/')
+	if (chatting && chat_mode != CHAT_MODE_NORMAL && buf[0] != '/')
 	{
 		for (i = k; i >= 0; i--)
 		{
