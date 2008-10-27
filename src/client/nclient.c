@@ -1914,6 +1914,9 @@ int Receive_depth(void)
 
 	if (screen_icky) Term_switch(0);
 
+	/* Window stuff */
+	p_ptr->window |= (PW_PLAYER);
+
 	return 1;
 }
 
