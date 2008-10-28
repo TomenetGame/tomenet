@@ -1831,10 +1831,12 @@ void cmd_purchase_house(void)
 		i=inkey();
 		switch(i){
 			case '1':
-
-				/* Send it */
-				Send_purchase_house(dir);
-				i=ESCAPE;
+				/* Confirm */
+				if (get_check("Are you sure you really want to sell the house?")) {
+					/* Send it */
+					Send_purchase_house(dir);
+					i=ESCAPE;
+				}
 				break;
 			case '2':
 				cmd_house_chown(dir);
