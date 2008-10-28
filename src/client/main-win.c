@@ -752,12 +752,16 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 	GetWindowRect(td->w, &rc);
 
 	/* Current position (x) */
-	wsprintf(buf, "%d", rc.left);
-	WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
+	if (rc.left >= 0) {
+		wsprintf(buf, "%d", rc.left);
+		WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
+	}
 
 	/* Current position (y) */
-	wsprintf(buf, "%d", rc.top);
-	WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
+	if (rc.top >= 0) {
+		wsprintf(buf, "%d", rc.top);
+		WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
+	}
 }
 
 
