@@ -1,8 +1,8 @@
-.=========================+==--.
+s.=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. September 2008; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.1b (www.tomenet.net, usually outdated though).
+| Latest update: 7. November 2008; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.1c (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -68,6 +68,7 @@ Contents
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
+    (5.2a)  Shoot-till-kill mode
     (5.3)   Slaying vs brands
     (5.4)   Martial Arts, brands
     (5.5)   Weight of weapons and armour
@@ -393,6 +394,8 @@ Q or CTRL+C or CTRL+K
 ?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
+CTRL+T  take a screen shot.
+ (/screenshot, /shot)
 TAB or CTRL+I
         Displays lag-o-meter.
 !       Look at the in-game bulletin board. Players can write lines of text to
@@ -484,12 +487,15 @@ They all start with a slash '/':
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
 /shout <text>
-            Shout <text> loudly, will wake up and aggravate nearby monsters.
-            (Same effect as scroll of aggravate monsters, see (5.9)).
+            Shout <text> loudly, will wake up monsters.
+/scream <text>
+            Same as /shout, but also aggravates monsters in your current
+            line of sight. (Same effect as scroll of aggravate monsters,
+            see (5.9)).
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
-            writes to 'screenshot.html' by default.
+            writes to 'screenshot.html' by default. You may also use CTRL+T.
 /sip        drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
@@ -1683,6 +1689,7 @@ want to use in your macros, by specifying the "ability code"!
 
 Here is a list of all available ability codes:
 3       Use innate power (for mimicry-users)
+4       Toggle shoot-till-kill mode, usable by anyone. See (5.2a).
 5       Fighting techniques (see (6.12))
 6       Shooting techniques (see (6.12))
 8       Check your dodge chance (for dodging skill)
@@ -1692,6 +1699,9 @@ Here is a list of all available ability codes:
 13      Change combat stance (for combat stances skill)
 14      Check your chances of parrying and blocking (for melee fighters,
         see (6.11) for details about these abilities)
+15      Toggle 'Aura of Fear' if you have trained the according skill.
+16      Toggle 'Shivering Aura' if you have trained the according skill.
+17      Toggle 'Aura of Death' if you have trained the according skill.
 
 After the ability code has been entered you need to press Enter to confirm it.
 In a macro, this is done by '\r' (one of the so-called escape sequences).
@@ -3051,7 +3061,7 @@ on an adjacent field, so it's pretty useless :)
 
 The dice of ammunition are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 2/5.
-Example: Ring of Acid will usually add 2x your melee base damage.
+Example: Ring of Acid will usually add 2x your melee base damage (dice).
 For ranged weapons it will add 2*2/5x of your base damage, so multiply your
 base damage by 1.8 instead of by 3 to get your total damage output.
 See (5.3) to get an easy overview.
@@ -3062,6 +3072,17 @@ message:
 "You have trouble wielding such a heavy bow".
 That means you'll get neither any benefits from your 'Archery' skill nor from
 any particular ranged mastery (extra shots!) at all when using that weapon.
+
+
+(5.2a)  Shoot-till-kill mode
+----------------------------
+Accessible via 'm' key, you can switch 'shoot-till-kill' mode on or off.
+While enabled, your character will keep firing a ranged weapon once you
+initiated the first shot until the target either dies or direct firing at it
+becomes impossible/obstructed for any reason.
+The main use besides making ranged weapon usage more relaxed is that you are
+able to single out enemies you want to kill of big monster packs such as
+escorts.
 
 
 
@@ -3220,6 +3241,9 @@ Iron Fist               37              35          6d6         Stunning
 Flying Kick             41              35          5d8             -
 Dragon Fist             45              35          6d8         Stunning
 Crushing Blow           48              35          8d7         Stunning
+For winners, ie kings/queens only:
+Titan's Fist            48              50          8d5         Stunning
+Phoenix Claw            48              50          5d9         Slowing (PvM)
 
 
 Depending on your MA skill, you have a fixed number of barehanded attacks
@@ -3319,7 +3343,8 @@ So 50 points in 'Combat' would allow a paladin to wear 30.0 + 15.0 =
 In general, praying is the easiest-to-use form of magic, and weaving spells
 the most difficult one.
 Your total armour weight is the sum of the weight of any armour pieces worn
-on head (helmet), body, arm (a shield), hands, feet, and your cloak.
+on head (helmet), body, hands, feet, and your cloak. Note that the weight of
+a possibly equipped shield does not matter here (experimental).
 
 
 Armour weight (concerning combat)
@@ -4993,9 +5018,6 @@ Note that not every skill is available to every profession (class).
                                                    for being in 'fury'.
                                 (A higher ranked stance features more of its
                                 benefits and/or less of its drawbacks.)
-                                Depending on your class you will more or less
-                                quickly also learn some fighting techiques,
-                                accessible via 'm' - for details see (6.12).
     .Dual-Wield                 The ability to wield two weapons at once. This
                                 ability cannot be trained (it's a switch).
                                 Dual-wielding will give you additional parry
@@ -6357,6 +6379,14 @@ players. However, the ways this is done differs from each other.
   The prayers and druid spells which are projected on others are marked by a
   '(auto-project)' tag at the end of the spell description below. 
 
+Shared school spells:
+Some spells are shared between different schools, occuring possibly but not
+necessarily in both of the schools. When a spell is shared between two schools
+it means that training in one of those schools will increase the spell level
+by only half that amount. So if you want to increase a shared spell by say 5
+points, you either have to increase both of its schools by 5, or one of them
+by 10.
+
 Schools give certain permanent boni and abilities to the player, when trained
 to a certain extent. The boni are listed below each school.
 
@@ -6384,7 +6414,8 @@ Air
                     Required skill level for first spell level: 3.
     Wings of Wind   Grants levitation (feather falling).
                     Lv16: Lets you fly.
-                    Required skill level for first spell level: 22.
+                    Shared spell (see above): Air, Conveyance.
+                    Required skill level for first spell level: 16.
     Invisibility    Turns you invisible.
                     Required skill level for first spell level: 30.
     Poison Blood    Gives temporary poison resistance.
@@ -6491,6 +6522,7 @@ Divination
 Nature
     Grow Trees      Grows trees quickly around you.
                     Required skill level for first spell level: 6.
+                    Shared spell (see above): Nature, Temporal.
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 10.
     Recovery        Reduces poison duration.
@@ -6522,6 +6554,7 @@ Mind
                     again as soon as the desired telekinesis transaction is
                     done. Example inscription: @PGandalf
                     Required skill level for first spell level: 30.
+                    Shared spell (see above): Mind, Conveyance.
   BONI:             Reduces confusion and hallucination at 30,
                     Reduce insanity influence at 40 and especially at 50.
 Temporal
@@ -6538,6 +6571,7 @@ Temporal
     Banishment      Teleports away all monsters within sight.
                     Lv15: Locks monsters in stasis for a while.
                     Required skill level for first spell level: 30.
+                    Shared spell (see above): Temporal, Conveyance.
   BONI:             Time resistance at 50.
 Udun
     Genocide        Genocides all monsters of a race on the level.
@@ -6591,9 +6625,7 @@ Holy Offense
                     Lv3: Damages monsters.
                     Lv15: Calls a more powerful kind of light.
                     Required skill level for first spell level: 1.
-                    Note that this is a spell shared between offense and
-                    support school, meaning that increases in one of those
-                    school will increase the spell level by only half as much.
+                    Shared spell (see above): H.Offense, H.Support.
     Curse           Causes randomly slowness or confusion or damage.
                     Lv15: Turns from bolt into beam, passing through the
                           target and also hitting those behind.
@@ -6930,13 +6962,15 @@ Parrying and blocking can both be affected by combat stances - see (6.2) for
 (6.12) Fighting/shooting techniques
 -----------------------------------
 Depending on your class, your character is able to gain access to certain
-fighting techniques that cost 'Stamina' to use. These are available to all
-fighter classes that have access to combat stances.
-
+fighting techniques that cost 'Stamina' to use. Warriors, rangers, paladins
+and mimics will learn all of them eventually, while rogues may learn sprint
+and taunt, and some rogue-specific techniques.
 Similarly, by training archery your character will gain access to a couple of
 shooting techniques.
 
-The skill required to learn a certain technique varies, depending on your
+All techniques are accessable via 'm' key, also see (3.7a).
+
+The time your character learns a certain technique varies, depending on your
 class. The order in which they are learnt is the same though.
 
 The techniques are as follows:
@@ -6954,6 +6988,25 @@ The techniques are as follows:
         your number of blows/round.
     Berserk             10 stamina
         Similar to potions of berserk strength, also giving you +1 blow/round.
+
+    Rogue-specific fighting techniques:
+    -----------------------------------
+    Distract
+        Your character will attempt to appear wimpy to adjacent monsters, in
+        hope of making them attack another player standing next to you
+        instead of you. Not all monsters can be fooled all the time though.
+    Flash bomb
+        You throw down a flash bomb that causes a flash of light, blinding
+        your opponents for a short time, giving you opportunity to escape or
+        kill them off while they are running around in confused state.
+    Shadow run (Kings/Queens only!)
+        You will move at blinding speed, your silhouette turning shadowy.
+        Ranged attacks will hardly be able to pin you down, and you will move
+        at increased speed. You can even perform a backstab opening attack
+        out of this state. Performing actions that require calm movements or
+        anything that distracts or disrupts your attention from focussing on
+        keeping up your movement, as well as attacking someone will break
+        shadow running.
 
     Shooting techniques:
     --------------------
@@ -6981,6 +7034,9 @@ The techniques are as follows:
     Barrage             9 stamina
         Prepares to fire a powerful multi-shot which will cost you a whole
         turn. It stuns the target.
+
+    Note: The technique 'Shoot-till-kill' is available to any class, and
+    does appear directly under 'm'. See (5.2a) for details.
 
 Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
@@ -7770,7 +7826,7 @@ Bows, crossbows, slings
 Weapons
         Blessed (usable for priests without penalty)
         Hit point bonus (+LIFE)   (*)
-Weapons, (diggers,) boomerangs
+Weapons, boomerangs
         Acid/elec/fire/cold brands
         Increased damage dice
         All SLAY mods (also have a chance to add the corresponding ESP)
@@ -7781,6 +7837,7 @@ Weapons, (diggers,) boomerangs
         Extra +AC bonus
         Critical hit bonus
         Vampiric life leech
+        Chaotic (same as ego power)
         Reduced weight
 Mage staves
         Sustain wisdom
@@ -7788,8 +7845,6 @@ Mage staves
         See invisible
         Random ESP
         Extra +mana capacity bonus
-(Diggers
-        Increased digging power)
 Boomerangs (also see 'Weapons' above) 
         Extra shots
 Dark swords
