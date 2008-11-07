@@ -469,7 +469,7 @@ void prt_depth(int x, int y, int z, bool town, int recall, cptr name)
 	c_put_str(TERM_L_GREEN, depths, ROW_XYPOS, COL_XYPOS);
 
 	if(town)
-		sprintf(depths, name);
+		strcpy(depths, name);
 	else if (c_cfg.depth_in_feet)
 		sprintf(depths, "%dft", z*50);
 	else
