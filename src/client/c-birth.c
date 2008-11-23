@@ -949,17 +949,19 @@ bool get_server_name(void)
 		socket = CreateClientSocket(META_ADDRESS, 8801);
 	}
 
+#ifdef META_ADDRESS_2
 	/* Check for failure */
 	if (socket == -1)
 	{
 		/* Hack -- Connect to metaserver #2 */
 		socket = CreateClientSocket(META_ADDRESS_2, 8801);
+	}
+#endif
 
-		/* Check for failure */
-		if (socket == -1)
-		{
-			return enter_server_name();
-		}
+	/* Check for failure */
+	if (socket == -1)
+	{
+		return enter_server_name();
 	}
 
 	/* Read */
