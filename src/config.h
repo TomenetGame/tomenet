@@ -220,8 +220,10 @@
  * bad design.
  */
 
-#define	META_ADDRESS "metaserver.servegame.com"
-// #define	META_ADDRESS_2 "europe.tomenet.net"
+// #if 0 /* moved to tomenet.cfg long ago - C. Blue */
+#define	META_ADDRESS "62.210.141.11"
+#define	META_ADDRESS_2 "europe.tomenet.net"
+// #endif
 
 /*
  * Server gateway: Provide raw data for applications

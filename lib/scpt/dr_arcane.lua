@@ -11,10 +11,10 @@ NATURESCALL = add_spell
         ["stat"] =      A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			grow_trees(Ind, 1 + get_level(Ind, NATURESCALL, 9))
+			grow_trees(Ind, 1 + get_level(Ind, NATURESCALL, 8))
 			end,
 	["info"] = 	function()
-			return "rad " .. (get_level(Ind, NATURESCALL, 9) + 1)
+			return "rad " .. (get_level(Ind, NATURESCALL, 8) + 1)
 			end,
 	["desc"] = 	{ "Boosts the growth of the saplings around you.",
 			  "Surrounding you with green-goodness!",}

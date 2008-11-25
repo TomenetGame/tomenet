@@ -1514,6 +1514,8 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 
 	break_cloaking(Ind); /* can't happen, adding it anyways :-p */
 	break_shadow_running(Ind); /* also can't happen..wth */
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	note_spot(Ind, p_ptr->py, p_ptr->px);
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -1754,6 +1756,8 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* No magic */
 	if (p_ptr->anti_magic)

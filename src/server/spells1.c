@@ -698,8 +698,14 @@ void teleport_player(int Ind, int dis)
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death)
 	{
-		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) return;
-		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
+			s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
+			return;
+		}
+		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+			s_printf("%s TELEPORT_FAIL: Cave-Stck for %s.\n", showtime(), p_ptr->name);
+			return;
+		}
 //		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 		/* Hack -- on the wilderness one cannot teleport very far */
 		/* Double death isnt nice */
@@ -775,9 +781,14 @@ void teleport_player(int Ind, int dis)
 	}
 
 	/* No empty field on this map o_O */
-	if (tries >= 3000) return;
+	if (tries >= 3000) {
+		s_printf("%s TELEPORT_FAIL: No empty field found for %s.\n", showtime(), p_ptr->name);
+		return;
+	}
 
 	break_cloaking(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Save the old location */
 	oy = p_ptr->py;
@@ -1082,8 +1093,6 @@ void teleport_player_level(int Ind)
 	new_players_on_depth(wpos,1,TRUE);
 
 	p_ptr->new_level_flag = TRUE;
-
-	check_Morgoth();
 }
 
 static byte mh_attr(int max)
@@ -1507,6 +1516,9 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 
 		/* Dead */
 		break_cloaking(Ind);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
 		return;
 	}
 
@@ -1514,22 +1526,25 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	if (p_ptr->csane < p_ptr->msane / 8)
 	{
 		/* Message */
-		msg_print(Ind, "\377rYou can hardly suppress screaming out insane laughters!");
+		msg_print(Ind, "\377fYou can hardly suppress screaming out insane laughters!");
 		msg_print(Ind, NULL);
+		break_cloaking(Ind);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
 	}
 	else if (p_ptr->csane < p_ptr->msane / 4)
 	{
 		/* Message */
-		msg_print(Ind, "\377yYou feel severly disturbed and paranoid..");
+		msg_print(Ind, "\377RYou feel severly disturbed and paranoid..");
 		msg_print(Ind, NULL);
+		stop_precision(Ind);
 	}
 	else if (p_ptr->csane < p_ptr->msane / 2)
 	{
 		/* Message */
-		msg_print(Ind, "\377yYou feel insanity creep into your mind..");
+		msg_print(Ind, "\377rYou feel insanity creep into your mind..");
 		msg_print(Ind, NULL);
 	}
-	break_cloaking(Ind);
 }
 
 /* Decrease player's exp. This is another copy of the function above.
@@ -1598,6 +1613,9 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 
 		/* Dead */
 		break_cloaking(Ind);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
 		return;
 	}
 	break_cloaking(Ind);

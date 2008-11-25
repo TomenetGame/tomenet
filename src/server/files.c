@@ -855,7 +855,7 @@ bool process_player_name(int Ind, bool sf)
 		if (isalpha(c) || isdigit(c)) p_ptr->basename[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(". _", c)) p_ptr->basename[k++] = '_';
+		else if (strchr(":!?\\/()\"@. _", c)) p_ptr->basename[k++] = '_';
 	}
 
 #endif

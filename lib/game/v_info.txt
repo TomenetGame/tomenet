@@ -417,7 +417,7 @@ D:%X#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%X&#8#&#8#&#8#&#8#&#8#&#8#&#8#&#8#&#&+%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+F:NO_EASY_TRUEARTS | RARE_TRUEARTS | NO_RANDARTS
 
 N:21:Greater vault (large)
 X:8:35:18:40

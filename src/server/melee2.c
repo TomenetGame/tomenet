@@ -6868,7 +6868,10 @@ static void process_monster(int Ind, int m_idx)
 		/* Get the destination */
 		ny = oy + ddy[d];
 		nx = ox + ddx[d];			
-		
+
+		/* panic saves during halloween, adding this for now */
+//let's not suppress symptoms for now, so we find the root		if (!in_bounds(ny, nx)) continue;
+
 		/* Access that cave grid */
 		c_ptr = &zcave[ny][nx];
 
@@ -7536,6 +7539,7 @@ static void process_monster(int Ind, int m_idx)
 				msg_format(0 - c_ptr->m_idx, "\377o%^s switches place with you!", m_name);
 				
 				stop_precision(0 - c_ptr->m_idx);
+				stop_shooting_till_kill(0 - c_ptr->m_idx);
 			}
 			cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 

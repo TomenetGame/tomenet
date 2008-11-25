@@ -344,7 +344,6 @@ static void do_player_trap_change_depth(int Ind, int dis)
 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
 	p_ptr->wpos.wz += dis;
 	new_players_on_depth(&p_ptr->wpos,1,TRUE);
-	check_Morgoth();
 }
 
 static bool do_player_trap_call_out(int Ind)
@@ -2666,8 +2665,8 @@ break;
 
 			msg_print(Ind, "Suddenly you felt something really splendid just happened to you!");
 
-                        /* 0 - 11 = Tomes */
-			invcopy(o_ptr, lookup_kind(TV_BOOK, rand_range(0, 11)));
+                        /* 0 - 17 = Tomes */
+			invcopy(o_ptr, lookup_kind(TV_BOOK, rand_range(0, 17)));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
@@ -3720,7 +3719,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	}
 
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if (p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval)
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 		j_ptr->level = 0;

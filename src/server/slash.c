@@ -477,6 +477,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/page"))
 		{
 			int p;
+			s_printf("(%s) SLASH_PAGE: %s:%s.\n", showtime(), p_ptr->name, message3);
 			if(!tk) {
 				msg_print(Ind, "\377oUsage: /page <playername>");
 				msg_print(Ind, "\377oAllows you to send a 'beep' sound to someone who is currently afk.");
@@ -1768,6 +1769,14 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377yNote has been stored.");
 				return;
 			}
+		}
+		else if (prefix(message, "/snotes")) { /* same as /anotes for admins basically */
+	    		for (i = 0; i < MAX_ADMINNOTES; i++) {
+		                if (strcmp(admin_note[i], "")) {
+			        	msg_format(Ind, "\377sServer Note: %s", admin_note[i]);
+			        }
+		        }
+			return;
 		}
 		else if (prefix(message, "/notes"))
 		{
@@ -3365,7 +3374,7 @@ void do_slash_cmd(int Ind, char *message)
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted noteï¿½%d.", notes);
+						msg_format(Ind, "\377oDeleted note´%d.", notes);
 					}
 				}
 				return;
@@ -3422,7 +3431,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oUsage: /reart <inventory-slot>");
 					return;
 				}
-				if (atoi(token[1]) < 1 || atoi(token[1]) > INVEN_TOTAL) {
+				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
 					msg_print(Ind, "\377oInvalid inventory slot.");
 					return;
 				}
@@ -3450,6 +3459,33 @@ void do_slash_cmd(int Ind, char *message)
 		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
 
 				msg_format(Ind, "Re-rolled randart in inventory slot %d!", atoi(token[1]));
+				/* Window stuff */
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				return;
+			}
+			else if (prefix(message, "/reego")) /* re-roll an ego item */
+			{
+				object_type *o_ptr;
+				if (tk < 1)
+				{
+					msg_print(Ind, "\377oUsage: /reego <inventory-slot>");
+					return;
+				}
+				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
+					msg_print(Ind, "\377oInvalid inventory slot.");
+					return;
+				}
+				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+				if (!o_ptr->name2) {
+					msg_print(Ind, "\377oNot an ego item.");
+					return;
+				}
+
+			        o_ptr->timeout=0;
+				return;/* see create_reward for proper loop */
+		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, TRUE, TRUE, TRUE, FALSE, FALSE);
+
+				msg_format(Ind, "Re-rolled ego in inventory slot %d!", atoi(token[1]));
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
@@ -3493,8 +3529,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are patted by something invisible!");
-			        msg_format_near(j, "\377y%s is patted by something invisible!", Players[j]->name);
+			        msg_print(j, "\377yYou are patted by something invisible.");
+			        msg_format_near(j, "\377y%s is patted by something invisible.", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
@@ -3505,8 +3541,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are hugged by something invisible!");
-			        msg_format_near(j, "\377y%s is hugged by something invisible!", Players[j]->name);
+			        msg_print(j, "\377yYou are hugged by something invisible.");
+			        msg_format_near(j, "\377y%s is hugged by something invisible.", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/poke")) {
@@ -3517,8 +3553,8 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
-			        msg_print(j, "\377yYou are poked by something invisible!");
-			        msg_format_near(j, "\377y%s is being poked by something invisible!", Players[j]->name);
+			        msg_print(j, "\377yYou are poked by something invisible.");
+			        msg_format_near(j, "\377y%s is being poked by something invisible.", Players[j]->name);
 				return;
 			}
 			else if (prefix(message, "/cheer")) {
@@ -3888,6 +3924,17 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				msg_format(Ind, "Erasing character %s.", message3);
 				erase_player_name(message3);
+				return;
+			}
+			/* rename a certain player character file */
+			else if (prefix(message, "/renamechar"))
+			{
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /renamechar <character name>:<new name>");
+					return;
+				}
+				msg_format(Ind, "Renaming character %s.", message3);
+				rename_player_name(message3);
 				return;
 			}
 			/* list of players about to expire - mikaelh */

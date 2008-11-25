@@ -36,7 +36,7 @@
 
 /* Enable/disable Halloween Event Mode- by C. Blue :) -
    also see r_info.txt for 'Pumpkin' and follow instructions there. */
-// #define HALLOWEEN
+//#define HALLOWEEN
 
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
@@ -1811,6 +1811,7 @@ that keeps many algorithms happy.
 #define EGO_ENVELOPING		45
 #define EGO_VULNERABILITY	46
 #define EGO_IRRITATION		47
+#define EGO_AURA_ELEC           48
 #define EGO_FREE_ACTION         49
 #define EGO_SLAYING             50
 #define EGO_AGILITY		51
@@ -1965,6 +1966,7 @@ that keeps many algorithms happy.
 #define EGO_IMBUED		202
 #define EGO_TRANSFORMATION	203
 #define EGO_ETHEREAL		204
+#define EGO_AURA_COLD           213
 
 
 
@@ -3369,7 +3371,13 @@ that keeps many algorithms happy.
 #define GF_FW_MULT	207
 /* well, let's try to bring weather and seasons? */
 #define GF_RAINDROP	208
-#define GF_CROSSHAIR 	209
+#define GF_LEAF		209 /* unused, just added here for inspiration - C. Blue */
+/* full-screen warnings or other important notifications that players oughtn't overlook - C. Blue */
+//ugly though, since they are wpos-bound -..
+// #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
+
+#define GF_CROSSHAIR 	250 /* what's this for? appearently unused; moved it to 250 */
+
 
 #if 0	/* Let's implement one by one.. */
 #define GF_DISP_DEMON   70      /* New types for Zangband begin here... */
@@ -3412,7 +3420,7 @@ that keeps many algorithms happy.
 
 /* Increased it (from 152) to 153 - the_sandman*/
 /* Increaing it again by ... 3-- to 156 :-) - the_sandman */
-#define MAX_GF          156
+#define MAX_GF          156	/* appearently unused, if 0'ed */
 
 
 #endif	/* 0 */
@@ -3704,8 +3712,8 @@ that keeps many algorithms happy.
 #define TR5_FORCE_DEPTH		0x00001000L	/* Can only occur on depth >= its k_info level */
 /* XXX 				0x00002000L	*/
 /* XXX 				0x00004000L	*/
-/* XXX 				0x00008000L	*/
-/* XXX 				0x00001000L	*/
+#define TR5_RES_TELE            0x00008000L     /* For Sky Dragon Scale Mail */
+#define TR5_SH_COLD             0x00010000L     /* Winter's might/Snow grasp/Frostweaving (Cold aura) */
 #define TR5_IGNORE_MANA		0x00020000L	/* Item ignores Mana Damage */
 #define TR5_IGNORE_WATER	0x00040000L	/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
@@ -3826,22 +3834,23 @@ that keeps many algorithms happy.
 #define ETR4_PVAL_M2           0x00001000L     /* Item has +(up to 2) to pval */
 #define ETR4_PVAL_M3           0x00002000L     /* Item has +(up to 3) to pval */
 #define ETR4_PVAL_M5           0x00004000L     /* Item has +(up to 5) to pval */
+#define ETR4_AC_M5             0x00008000L     /* Item has +(up to 5) to AC */
+#if 0
 #define ETR4_AC_M1             0x00008000L     /* Item has +1 to AC */
 #define ETR4_AC_M2             0x00010000L     /* Item has +(up to 2) to AC */
 #define ETR4_AC_M3             0x00020000L     /* Item has +(up to 3) to AC */
-#define ETR4_AC_M5             0x00040000L     /* Item has +(up to 5) to AC */
 #define ETR4_TH_M1             0x00080000L     /* Item has +1 to hit */
 #define ETR4_TH_M2             0x00100000L     /* Item has +(up to 2) to hit */
 #define ETR4_TH_M3             0x00200000L     /* Item has +(up to 3) to hit */
 #define ETR4_TH_M5             0x00400000L     /* Item has +(up to 5) to hit */
-#if 0
 #define ETR4_TD_M1             0x00800000L     /* Item has +1 to dam */
 #define ETR4_TD_M2             0x01000000L     /* Item has +(up to 2) to dam */
-#endif	/* 0 */
-#define ETR4_R_ESP             0x00800000L     /* Item has a random ESP */
-#define ETR4_NO_SEED           0x01000000L     /* Item doesn't have random seed */
 #define ETR4_TD_M3             0x02000000L     /* Item has +(up to 3) to dam */
 #define ETR4_TD_M5             0x04000000L     /* Item has +(up to 5) to dam */
+#endif
+#define ETR4_R_ESP             0x01000000L     /* Item has a random ESP */
+#define ETR4_NO_SEED           0x02000000L     /* Item doesn't have random seed */
+#define ETR4_LOW_ABILITY       0x04000000L     /* like ABILITY without top esp */
 #define ETR4_R_P_ABILITY       0x08000000L     /* Item has a random pval-affected ability */
 #define ETR4_R_STAT            0x10000000L     /* Item affects a random stat */
 #define ETR4_R_STAT_SUST       0x20000000L     /* Item affects a random stat & sustains it */
@@ -4414,6 +4423,10 @@ that keeps many algorithms happy.
 #define FF1_LOS			0x20000000L	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
 #define FF1_BLOCK_LOS		0x40000000L	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 #define FF1_BLOCK_CONTACT	0x80000000L	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
+
+/* for switching places with another player: */
+#define FF1_SWITCH_MASK \
+	(FF1_FLOOR | FF1_CAN_LEVITATE | FF1_CAN_FLY | FF1_CAN_RUN | FF1_CAN_CLIMB)
 
 
 /*** Dungeon type flags -- DG ***/
@@ -5252,7 +5265,7 @@ that keeps many algorithms happy.
 (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO))))
 
 //((C)->m_idx < 0)) /* Player ghost in wall XXX */
-// (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance? // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
+// (((c_ptr->feat != FEAT_SHOP) && /* Tavern entrance?(need GetCS to check that) // if (c_ptr->feat == FEAT_SHOP_TAIL - 1) */
 // ((m_ptr->ai_state & AI_STATE_EFFECT) || monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))) && /* Tainted grid? */
 
 /*
@@ -5783,6 +5796,7 @@ extern int PlayerUID;
 		p_ptr->inventory[INVEN_TOOL].tval == TV_TOOL ? \
 		p_ptr->inventory[INVEN_TOOL].sval : -1)
 
+/* complete weight of all equipment parts */
 #define equip_weight(p_ptr) \
 	(p_ptr->inventory[INVEN_WIELD].weight \
 	+ p_ptr->inventory[INVEN_ARM].weight \
@@ -5799,6 +5813,7 @@ extern int PlayerUID;
 	+ p_ptr->inventory[INVEN_AMMO].weight \
 	+ p_ptr->inventory[INVEN_TOOL].weight)
 
+/* armour weight of all armour items + shield currently equipped */
 #define armour_weight(p_ptr) \
 	( p_ptr->inventory[INVEN_BODY].weight \
 	+ p_ptr->inventory[INVEN_HEAD].weight \
@@ -5808,11 +5823,21 @@ extern int PlayerUID;
 	+ p_ptr->inventory[INVEN_HANDS].weight \
 	+ p_ptr->inventory[INVEN_FEET].weight)
 
+/* armour weight without the shield (if any) */
+#define worn_armour_weight(p_ptr) \
+	( p_ptr->inventory[INVEN_BODY].weight \
+	+ p_ptr->inventory[INVEN_HEAD].weight \
+	+ p_ptr->inventory[INVEN_OUTER].weight \
+	+ p_ptr->inventory[INVEN_HANDS].weight \
+	+ p_ptr->inventory[INVEN_FEET].weight)
+
+/* encumberment check for martial arts skill */
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
 	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 200))
 
+/* encumberment check for rogueish skill, abilities and techniques */
 #define rogue_heavy_armor(p_ptr) \
 	((p_ptr->pclass == CLASS_ROGUE || \
 	  (get_skill(p_ptr, SKILL_DUAL) && \
@@ -5974,7 +5999,8 @@ extern int PlayerUID;
 #define SKILL_XBOW              10
 #define SKILL_BACKSTAB          11
 #define SKILL_MAGIC             12
-#define SKILL_CASTSPEED         13
+//#define SKILL_CASTSPEED         13
+#define SKILL_SHOOT_TILL_KILL	13
 #define SKILL_SORCERY           14
 #define SKILL_MAGERY            15
 #define SKILL_MIMIC             16

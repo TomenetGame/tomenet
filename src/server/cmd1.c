@@ -2221,6 +2221,8 @@ if (o_ptr->tval == TV_RUNE2) {
 	}
 
 	break_cloaking(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 }
 
 #if 0
@@ -2395,7 +2397,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		return;
 	}
 
-	if (q_ptr->store_num == 7)
+	if (q_ptr->store_num == STORE_HOME)
 	{
 		/* Message */
 //		msg_format(Ind, "You are too afraid to attack %s!", p_name);
@@ -2406,6 +2408,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
@@ -2958,6 +2962,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
  * Player attacks a (poor, defenseless) creature        -RAK-
  *
  * If no "weapon" is available, then "punch" the monster one time.
+ *
+ * Note: old == TRUE if not auto-retaliating actually
+ *       (important for dual-backstab treatment) - C. Blue
  */
 static void py_attack_mon(int Ind, int y, int x, bool old)
 {
@@ -2975,7 +2982,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	int 		fear_chance;
 
 	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
-	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1 || p_ptr->shadow_running); /* can player backstab the monster? */
+	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool            backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
@@ -3144,12 +3151,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* check whether monster can be backstabbed */
 	if (!m_ptr->csleep /*&& m_ptr->ml*/) sleep_stab = FALSE;
-	if (m_ptr->backstabbed) cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped */
-	if (!sleep_stab && !cloaked_stab) dual_stab = 0;
+	if (m_ptr->backstabbed) {
+		cloaked_stab = FALSE; /* a monster can only be backstabbed once, except if it gets resleeped or stabbed while fleeing */
+		shadow_stab = FALSE; /* assume monster doesn't fall twice for it */
+	}
+	if (!sleep_stab && !cloaked_stab && !shadow_stab) dual_stab = 0;
 
 	/* cloaking mode stuff */
 	break_cloaking(Ind);
 	break_shadow_running(Ind); 
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 	/* Disturb the monster */
 	m_ptr->csleep = 0;
 
@@ -3162,16 +3174,16 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	        if (dual_wield) {
 			switch (dual_stab) {
-			case 0: if (magik(50)) slot = INVEN_ARM; break;
-			case 1:	if (magik(50)) {
+			case 0: if (magik(50)) slot = INVEN_ARM; break; /* not in a situation to dual-stab */
+			case 1:	if (magik(50)) { /* we may dual-stab, randomly pick 1st or 2nd weapon.. */
 					slot = INVEN_ARM;
 					dual_stab = 3;
 				} else {
 					dual_stab = 2;
 				}
 				break;
-			case 2: slot = INVEN_ARM;
-			case 3: dual_stab = 0; break;
+			case 2: slot = INVEN_ARM; /* and switch to opposite weapon in the second attack.. */
+			case 3: dual_stab = 4; break; /* becomes 0 at end of attack, disabling further dual-stabs */
 			}
 		}
 
@@ -3180,14 +3192,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		/* Manage backstabbing and 'flee-stabbing' */
 		if (stab_skill && (o_ptr->tval == TV_SWORD)) /* Need TV_SWORD type weapon to backstab */
 		{
-			if (sleep_stab || cloaked_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
+			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
 				m_ptr->backstabbed = 1;
 			} else if (m_ptr->monfear /*&& m_ptr->ml)*/) {
 				stab_fleeing = TRUE;
 			}
 		}
-		if (!dual_stab) sleep_stab = cloaked_stab = FALSE;
 
 		u32b f1=0, f2=0, f3=0, f4=0, f5=0, esp=0;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -3470,8 +3481,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				{
 					/* The old fleeing stab formula is fine - the_sandman */
 //					k += (k * (nolite2 ? 2 : 1) *
-					k += (k * 1 *
-					get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
+					k += (k * 1 * get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
 					stab_fleeing = FALSE;
 				}
 #endif
@@ -3598,7 +3608,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			if (backstab || stab_fleeing) {
 				int bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 400);
 				k *= (100 + bs_multiplier);
-				k /= (dual_wield ? 150 : 100);
+				k /= (dual_stab ? 150 : 100);
 				k += m_ptr->hp / 33; /**0.03; <- floats are evil */
 			}
 
@@ -3628,13 +3638,13 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 /*				msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377e%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You landed a %s hit on the fleeing %s's back for \377g%d \377wdamage.", nolite2 ? "terrible" : "bitter", r_name_get(m_ptr), k);
 */				msg_format(Ind, "You strike the back of %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You strike the back of %s for \377g%d \377wdamage.", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
 			   } else {
 				if (r_ptr->flags1 & RF1_UNIQUE)
 /*				msg_format(Ind, "You %s the fleeing %s for \377e%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 				else msg_format(Ind, "You %s the fleeing %s for \377g%d \377wdamage.", nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr), k);
 */				msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", r_name_get(m_ptr), k);
-				else msg_format(Ind, "You backstab the fleeing %s for \377g%d \377wdamage.", r_name_get(m_ptr), k);
+				else msg_format(Ind, "You backstab the fleeing %s for \377p%d \377wdamage.", r_name_get(m_ptr), k);
 			   }
 			}
 //			else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
@@ -3660,7 +3670,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					set_food(Ind, p_ptr->food + feed);
 					if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
 	            		}
-				break;
+				break; /* monster is dead */
 			}
 
 
@@ -3973,6 +3983,16 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
 			else
 				msg_format(Ind, "You miss %s.", m_name);
+		}
+
+		/* hack for dual-backstabbing: get a free b.p.r.
+		   (needed as workaround for sleep-dual-stabbing executed
+		   by auto-retaliator, where old-check below would otherwise break) - C. Blue */
+		if (dual_stab == 4) dual_stab = 0;
+		if (!dual_stab) sleep_stab = cloaked_stab = shadow_stab = FALSE;
+		if (dual_stab) {
+			num--;
+			continue;
 		}
 
 		/* Hack -- divided turn for auto-retaliator */
@@ -4632,6 +4652,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 	
 	stop_precision(Ind); /* aimed precision shot gets interrupted by moving around */
+	stop_shooting_till_kill(Ind);
 
 	/* Find the result of moving */
 	/* -C. Blue- I toned down monster RAND_50 and RAND_25 for a mimicking player,
@@ -4762,7 +4783,6 @@ void move_player(int Ind, int dir, int do_pickup)
 			
 			/* A player has left this depth */
 			new_players_on_depth(wpos,-1,TRUE);
-			check_Morgoth();
 
 			p_ptr->wpos.wx = nwpos.wx;
 			p_ptr->wpos.wy = nwpos.wy;
@@ -4772,15 +4792,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)/8] |= (1<<((p_ptr->wpos.wx + p_ptr->wpos.wy*MAX_WILD_X)%8));
 			
 			new_players_on_depth(wpos,1,TRUE);
-			check_Morgoth();
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
-#if 0	// it's done in process_player_change_wpos
-			if(istown(&p_ptr->wpos)){
-				p_ptr->town_x=p_ptr->wpos.wx;
-				p_ptr->town_y=p_ptr->wpos.wy;
-			}
-#endif	// 0
 
 			return;
 		}
@@ -4805,10 +4818,24 @@ void move_player(int Ind, int dir, int do_pickup)
 	p_ptr->last_dir = dir;
 
 	/* Bump into other players */
-	if (c_ptr->m_idx < 0)
+	if ((c_ptr->m_idx < 0) /* mountains for example are FF1_PERMANENT too! */
+	    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 	{
 		player_type *q_ptr = Players[0 - c_ptr->m_idx];
 		int Ind2 = 0 - c_ptr->m_idx;
+		bool blocks_important_feat = FALSE; /* does the player block an important feature, like staircases in towns? - C. Blue
+						       always make them 'switch places' instead of bumping. */
+
+		switch(c_ptr->feat) {
+		case FEAT_SHOP: if (GetCS(c_ptr, CS_SHOP)->sc.omni != 7) break; /* Inn entrance */
+		case FEAT_WAY_MORE:
+		case FEAT_WAY_LESS:
+		case FEAT_MORE:
+		case FEAT_LESS:
+			if (q_ptr->afk || !q_ptr->wpos.wz) blocks_important_feat = TRUE; 
+			break;
+		default: break;
+		}
 
 		/* Check for an attack */
 		if (cfg.use_pk_rules != PK_RULES_NEVER &&
@@ -4832,14 +4859,16 @@ void move_player(int Ind, int dir, int do_pickup)
 			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
 			 !p_ptr->afk && !q_ptr->afk) ||
 			(q_ptr->admin_dm))
-			&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
+//moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
+			|| blocks_important_feat)
 #endif	// 0
 
 		{
 /*		    if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
 		    /* switch places only if BOTH have WRAITHFORM or NONE has it */
-		    if (!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
+		    if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
 			((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
+			|| blocks_important_feat)
 		    {
 
 			c_ptr->m_idx = 0 - Ind;
@@ -4874,6 +4903,7 @@ void move_player(int Ind, int dir, int do_pickup)
 
 				black_breath_infection(Ind, Ind2);
 				stop_precision(Ind2);
+				stop_shooting_till_kill(Ind);
 			}
 
 			/* Disturb both of them */

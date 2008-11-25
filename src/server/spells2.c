@@ -185,14 +185,27 @@ bool create_garden(int Ind, int chance) {
 	
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 			
-			if (cave_valid_bold(zcave, y, x)/* && (
-			(c_ptr->feat == FEAT_QUARTZ) || 
-			(c_ptr->feat == FEAT_WALL_EXTRA) || 
-			(c_ptr->feat == FEAT_WALL_INNER) || 
-			(c_ptr->feat == FEAT_WALL_OUTER) || 
-			(c_ptr->feat == FEAT_WALL_SOLID))*/
-			&& !cave_floor_bold(zcave, y, x))
-                        {
+			if (cave_valid_bold(zcave, y, x) && ( /* <- destroyable, no art on grid, not FF1_PERMANENT */
+//				(c_ptr->feat == FEAT_QUARTZ) ||
+//				(c_ptr->feat == FEAT_MAGMA) || 
+//				(c_ptr->feat == FEAT_QUARTZ_H) || 
+//				(c_ptr->feat == FEAT_MAGMA_H) || 
+//				(c_ptr->feat == FEAT_QUARTZ_K) || 
+//				(c_ptr->feat == FEAT_MAGMA_K) || 
+//				(c_ptr->feat == FEAT_SAND_WALL) || 
+//				(c_ptr->feat == FEAT_SAND_WALL_H) || 
+//				(c_ptr->feat == FEAT_SAND_WALL_K) || 
+//				(c_ptr->feat == FEAT_ICE_WALL) || 
+//				(c_ptr->feat == FEAT_GLASS_WALL) || 
+//				(c_ptr->feat == FEAT_ILLUS_WALL) || 
+				(c_ptr->feat == FEAT_WALL_EXTRA) || /* granite walls: */
+				(c_ptr->feat == FEAT_WALL_INNER) || 
+				(c_ptr->feat == FEAT_WALL_OUTER) || 
+				(c_ptr->feat == FEAT_WALL_SOLID))
+//				&& !cave_floor_bold(zcave, y, x) /* don't convert empty floor! */
+//				&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)
+			    )
+            		{
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
@@ -4854,6 +4867,8 @@ void distract_monsters(int Ind)
         msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	for (i = 1; i < m_max; i++)
 	{
@@ -4916,6 +4931,7 @@ void taunt_monsters(int Ind)
         msg_print(Ind, "You call out a taunt!");
         msg_format_near(Ind, "%s calls out a taunt!", p_ptr->name);
 	break_cloaking(Ind);
+	stop_precision(Ind);
 
 	for (i = 1; i < m_max; i++)
 	{

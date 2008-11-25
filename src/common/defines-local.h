@@ -12,7 +12,6 @@
  * - and many more things that are just a little bit different :)
  */
 /* #define RPG_SERVER */
-/* #define ENABLE_DIVINE */
 
 /* Server is Moltor's Smash Arcade server?
    (allows additional definition of RPG_SERVER if desired!) */

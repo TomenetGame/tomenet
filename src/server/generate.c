@@ -4207,15 +4207,25 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	char *data = v_text + v_ptr->text;
 
 	u32b resf = make_resf(p_ptr), eff_resf;
+	int eff_forbid_true = 0, eff_forbid_rand = 0;
 
 	if(!(zcave=getcave(wpos))) return;
 
 	if (v_ptr->flags1 & VF1_NO_PENETR) dun->no_penetr = TRUE;
 	if (v_ptr->flags1 & VF1_HIVES) hives = TRUE;
+
+	/* artificially add random-artifact restrictions: */
+	if (getlevel(wpos) < 55 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
+	if (getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) eff_forbid_rand = 80;
+//	if (!(v_ptr->flags1 & VF1_NO_TELE)) eff_forbid_rand = 50; /* maybe too harsh, depends on amount of '8's in deep tele-ok-vaults */
+
 	if (v_ptr->flags1 & VF1_NO_TRUEARTS) resf |= RESF_NOTRUEART;
 	if (v_ptr->flags1 & VF1_NO_RANDARTS) resf |= RESF_NORANDART;
 	if ((v_ptr->flags1 & VF1_NO_EASY_TRUEARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NOTRUEART;
 	if ((v_ptr->flags1 & VF1_NO_EASY_RANDARTS) && getlevel(wpos) < 75 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
+
+	if (v_ptr->flags1 & VF1_RARE_TRUEARTS) eff_forbid_true = 80;
+	if (v_ptr->flags1 & VF1_RARE_RANDARTS) eff_forbid_rand = 80;
 
 	if (!hives)	/* Hack -- avoid ugly results */
 	{
@@ -4259,8 +4269,8 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 		for (dx = 0; dx < xmax; dx++, t++)
 		{
 			eff_resf = resf;
-			if ((v_ptr->flags1 & VF1_RARE_TRUEARTS) && magik(80)) eff_resf |= RESF_NOTRUEART;
-			if ((v_ptr->flags1 & VF1_RARE_RANDARTS) && magik(80)) eff_resf |= RESF_NORANDART;
+			if (magik(eff_forbid_true)) eff_resf |= RESF_NOTRUEART;
+			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
 
 			/* Extract the location */
 /*			x = xval - (xmax / 2) + dx;
@@ -9571,7 +9581,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- make building 8's larger */
-	if (n == 7)
+	if (n == STORE_HOME)
 	{
 		y1 = y0 - 1 - randint(2);
 		y2 = y0 + 1 + randint(2);
@@ -9614,7 +9624,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx)
 	}
 
 	/* Hack -- Make store "8" (the old home) empty */
-	if (n == 7)
+	if (n == STORE_HOME)
 	{
 		for (y = y1 + 1; y < y2; y++)
 		{

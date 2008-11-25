@@ -279,9 +279,7 @@ void do_cmd_go_up(int Ind)
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
 	/* Create a way back */
-	create_down_stair = TRUE;
-
-	check_Morgoth();
+	create_down_stair = TRUE; /* appearently unused */
 }
 
 /*
@@ -622,9 +620,7 @@ void do_cmd_go_down(int Ind)
 	set_invuln_short(Ind, STAIR_GOI_LENGTH);
 
 	/* Create a way back */
-	create_up_stair = TRUE;
-
-	check_Morgoth();
+	create_up_stair = TRUE; /* appearently unused */
 }
 
 
@@ -1169,6 +1165,8 @@ void do_cmd_open(int Ind, int dir)
 
 				break_cloaking(Ind);
 				break_shadow_running(Ind); 
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Some traps might destroy the chest on setting off */
 				if (o_ptr)
@@ -1222,6 +1220,8 @@ void do_cmd_open(int Ind, int dir)
 				msg_print(Ind, "You have picked the lock.");
 				break_cloaking(Ind);
 				break_shadow_running(Ind); 
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Set off trap */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
@@ -1270,6 +1270,8 @@ void do_cmd_open(int Ind, int dir)
 					un_afk_idle(Ind);
 					break_cloaking(Ind);
 					break_shadow_running(Ind); 
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
 
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1308,6 +1310,8 @@ void do_cmd_open(int Ind, int dir)
 						un_afk_idle(Ind);
 						break_cloaking(Ind);
 						break_shadow_running(Ind); 
+						stop_precision(Ind);
+						stop_shooting_till_kill(Ind);
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
@@ -1320,6 +1324,8 @@ void do_cmd_open(int Ind, int dir)
 						un_afk_idle(Ind);
 						break_cloaking(Ind);
 						break_shadow_running(Ind); 
+						stop_precision(Ind);
+						stop_shooting_till_kill(Ind);
 						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
@@ -1343,6 +1349,8 @@ void do_cmd_open(int Ind, int dir)
 
 			break_cloaking(Ind);
 			break_shadow_running(Ind); 
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 
 			/* Take half a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos)/2;
@@ -1450,6 +1458,8 @@ void do_cmd_close(int Ind, int dir)
 
 			break_cloaking(Ind);
 			break_shadow_running(Ind); 
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1477,6 +1487,8 @@ void do_cmd_close(int Ind, int dir)
 			un_afk_idle(Ind);
 			break_cloaking(Ind);
 			break_shadow_running(Ind); 
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1699,6 +1711,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind); 
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 				/* Message */
 				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
 
@@ -1716,6 +1730,8 @@ void do_cmd_tunnel(int Ind, int dir)
 				{
 					break_cloaking(Ind);
 					break_shadow_running(Ind); 
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
 					/* Message */
 					msg_print(Ind, "You have removed the rubble.");
 
@@ -1743,6 +1759,8 @@ void do_cmd_tunnel(int Ind, int dir)
 					/* Message, keep digging */
 					break_cloaking(Ind);
 					break_shadow_running(Ind); 
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
 					msg_print(Ind, "You dig in the rubble.");
 					more = TRUE;
 				}
@@ -1752,6 +1770,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* mow down the vegetation */
 				if ((power > rand_int(400)) && twall(Ind, y, x)) /* 400 */
@@ -1778,6 +1798,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* mow down the vegetation */
 				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 400 */
@@ -1804,6 +1826,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* mow down the vegetation */
 				if ((power > rand_int(200)) && twall(Ind, y, x)) /* 400 */
@@ -1828,6 +1852,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* mow down the vegetation */
 				if ((power > rand_int(300)) && twall(Ind, y, x)) /* 600 */
@@ -1897,6 +1923,8 @@ void do_cmd_tunnel(int Ind, int dir)
 
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Success */
 				if (okay && twall(Ind, y, x))
@@ -1959,6 +1987,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
@@ -1975,6 +2005,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Tunnel */
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x))        /* 1600 */
@@ -1996,6 +2028,8 @@ void do_cmd_tunnel(int Ind, int dir)
 			{
 				break_cloaking(Ind);
 				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 
 				/* Tunnel */
 				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x))
@@ -2029,6 +2063,8 @@ void do_cmd_tunnel(int Ind, int dir)
 		if (!check_guard_inscription(o_ptr->note, 'E' )) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
 			break_cloaking(Ind); /* redundant, done above already */
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 		}
 	}
 
@@ -2220,6 +2256,10 @@ void do_cmd_disarm(int Ind, int dir)
 				more = TRUE;
 				done = TRUE;
 				msg_print(Ind, "You failed to disarm the chest.");
+				
+				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 			}
 
 			/* Failure -- Set off the trap */
@@ -2231,6 +2271,9 @@ void do_cmd_disarm(int Ind, int dir)
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 				break_cloaking(Ind);
+				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 				done = TRUE;
 			}
 
@@ -2247,16 +2290,25 @@ void do_cmd_disarm(int Ind, int dir)
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
+
 			msg_print(Ind, "You disarm the monster trap.");
 			do_cmd_disarm_mon_trap_aux(wpos, y, x);
 			more = FALSE;
 			done = TRUE;
+
 		}
 
 		/* Disarm a trap */
 		if(!done && (t_idx && cs_ptr->sc.trap.found))
 		{
 			cptr name;
+
+			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 
 			/* Access trap name */
 			if (p_ptr->trap_ident[t_idx])
@@ -2387,6 +2439,10 @@ void do_cmd_disarm(int Ind, int dir)
 			/* Failure -- Keep trying */
 			else if ((i > 5) && (randint(i) > 5))
 			{
+				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
+
 				/* Message */
 				msg_format(Ind, "You failed to disarm the %s.", name);
 
@@ -2404,6 +2460,9 @@ void do_cmd_disarm(int Ind, int dir)
 				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
 				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
 				break_cloaking(Ind);
+				break_shadow_running(Ind);
+				stop_precision(Ind);
+				stop_shooting_till_kill(Ind);
 			}
 
 			/* only aesthetic */
@@ -2508,6 +2567,9 @@ void do_cmd_bash(int Ind, int dir)
 
 					msg_print(Ind, "Splash!");
 					break_cloaking(Ind);
+					break_shadow_running(Ind);
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
 					return;
 				}
 
@@ -2540,6 +2602,8 @@ void do_cmd_bash(int Ind, int dir)
 
 					break_cloaking(Ind);
 					break_shadow_running(Ind);
+					stop_precision(Ind);
+					stop_shooting_till_kill(Ind);
 					return;
 				}
 
@@ -2637,6 +2701,8 @@ void do_cmd_bash(int Ind, int dir)
 			}
 			break_cloaking(Ind);
 			break_shadow_running(Ind);
+			stop_precision(Ind);
+			stop_shooting_till_kill(Ind);
 		}
 	}
 
@@ -3260,8 +3326,7 @@ void do_cmd_fire(int Ind, int dir)
         int             drain_result = 0, drain_heal = 0;
         int             drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
 	bool		drainable = TRUE;
-	bool		tmp, ranged_double_real = FALSE, ranged_flare_body = FALSE;
-
+	bool		ranged_double_real = FALSE, ranged_flare_body = FALSE;
 	
 	int		break_chance;
 	
@@ -3275,6 +3340,16 @@ void do_cmd_fire(int Ind, int dir)
 		p_ptr->shooting_till_kill = FALSE; /* well, gotta re-test for another success now.. */
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
 	}
+	
+	/* To continue shooting_till_kill, require clean LOS to target
+	   with no other monsters in the way, so we won't wake up more monsters accidentally. */
+	if (p_ptr->shooty_till_kill) {
+		if (!projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) {
+			return;
+		}
+	}
+
+
 
 	if(!(zcave=getcave(wpos))) return;
 
@@ -3460,7 +3535,12 @@ void do_cmd_fire(int Ind, int dir)
 	p_ptr->redraw |= PR_STAMINA;
 
 	/* silent fail */
-	if (returning) p_ptr->ranged_flare = FALSE;
+	if (returning) {
+		/* hack - allow use of magic ammo for flare now,
+		   but in that case make it non-returning since it burns on the floor,
+		   serving as light source, as normal ammo would */
+		if (!magic) p_ptr->ranged_flare = FALSE;
+	}
 
 	/* Use the proper number of shots */
 //	thits = boomerang? 1 : p_ptr->num_fire;
@@ -3504,7 +3584,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 #if (STARTEQ_TREATMENT > 1)
-        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+        if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
             !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
                 o_ptr->level = 0;
 #endif
@@ -3570,10 +3650,9 @@ void do_cmd_fire(int Ind, int dir)
 	}
 	
 	break_chance = breakage_chance(o_ptr);
-	tmp = p_ptr->ranged_precision;
+
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
-	p_ptr->ranged_precision = tmp;
 
 	/* Reduce and describe inventory */
 	if (!boomerang)
@@ -4101,8 +4180,13 @@ void do_cmd_fire(int Ind, int dir)
 					/* Hit the monster, check for death */
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies))
 					{
-						/* Dead monster */
-				    		p_ptr->shooting_till_kill = FALSE;
+						/* note: if the monster we hit wasn't the one targetted, then continue shooting.
+						         It can only mean that this monster was invisible to us, hence the
+							 character couldn't have control over avoiding to target it. */
+						if ((dir == 5) && ((y == ty) && (x == tx))) {
+							/* Dead targetted monster */
+					    		p_ptr->shooting_till_kill = FALSE;
+						}
 					}
 
 					/* No death */
@@ -4354,7 +4438,7 @@ void do_cmd_fire(int Ind, int dir)
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
 	if(check_guard_inscription(o_ptr->note, 'g') )
-//			|| p_ptr->lev < cfg.newbies_cannot_drop)
+//			|| p_ptr->max_plv < cfg.newbies_cannot_drop)
 	{
 		breakage = 101;
 	}
@@ -4363,7 +4447,7 @@ void do_cmd_fire(int Ind, int dir)
 #ifndef RPG_SERVER	/* Let's not... here at least... This is annoying. */
 	/* Hack -- yet another anti-cheeze(yaac) */
 	if ((!magic && !ethereal &&
-		(p_ptr->lev < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
+		(p_ptr->max_plv < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
 	}
@@ -4381,6 +4465,14 @@ void do_cmd_fire(int Ind, int dir)
 			forge.to_d = -rand_int(10);
 			*o_ptr = forge;
 			o_ptr->ident |= ID_KNOWN;
+
+			if (magic) { /* hack: the one exception where magic ammo doesn't return */
+				inven_item_increase(Ind, item, -1);
+				inven_item_describe(Ind, item);
+				inven_item_optimize(Ind, item);
+				/* Window stuff */
+//				p_ptr->window |= (PW_EQUIP);
+			}
 		} else {
 			breakage = 101; /* projectile gets destroyed by burning brightly + hitting someone */
 		}
@@ -4394,6 +4486,9 @@ void do_cmd_fire(int Ind, int dir)
 	if (!returning) drop_near(o_ptr, breakage, wpos, y, x);
 
 	suppress_message = FALSE;
+	
+	/* hack for auto-retaliator hack in dungeon.c fire_till_kill-related call of do_cmd_fire() */
+	p_ptr->auto_retaliating = FALSE;
 }
 
 /*
@@ -4608,7 +4703,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	if (!bashing) {
 		/* Handle the newbies_cannot_drop option */
 #if (STARTEQ_TREATMENT == 1)
-		if ((p_ptr->lev < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
+		if ((p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) && !is_admin(p_ptr) && !(o_ptr->tval==1 && o_ptr->sval>=9 /* rugby ball, chess pieces */)) // && (object_value(0, o_ptr) > 0))
 		{
 /*			msg_format(Ind, "Please don't litter the %s.",
 			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
@@ -4637,7 +4732,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
-	        if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	        if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
     		    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
             		o_ptr->level = 0;
 #endif
@@ -4654,6 +4749,8 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
@@ -5396,6 +5493,8 @@ return;
 		p_ptr->cloaked = 0;
 	} else {
 		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
 		/* stop other actions like running.. */
 		disturb(Ind, 1, 0);
 		/* prepare to cloak.. */
@@ -5416,9 +5515,6 @@ void break_cloaking(int Ind) {
 		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
 		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
 	}
-	
-	/* secondary use now: */
-	stop_precision(Ind);
 }
 
 /* stop cloaking preparations */
@@ -5437,9 +5533,6 @@ void stop_precision(int Ind) {
 		Players[Ind]->ranged_precision = FALSE;
 		msg_print(Ind, "\377yYou stop aiming.");
 	}
-
-	/* secondary use now: */
-	stop_shooting_till_kill(Ind);
 }
 
 /* stop shooting-till-kill */
@@ -5504,6 +5597,8 @@ void shadow_run(int Ind)
         un_afk_idle(Ind);
 
         break_cloaking(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
         p_ptr->shadow_running = TRUE;
 	msg_print(Ind, "Your silhouette turns shadowy and your movements become lightning-fast!");
         msg_format_near(Ind, "%s's silhouette turns shadowy and %s movements become lightning-fast!", p_ptr->name, p_ptr->male ? "his" : "her");

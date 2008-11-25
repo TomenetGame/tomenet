@@ -34,8 +34,10 @@ NOXIOUSCLOUD = add_spell
 AIRWINGS = add_spell
 {
 	["name"] = 	"Wings of Winds",
+--note: is dual-school, but doesn't occur in conveyance school (still ok i think, maybe reduce level req slightly) - C. Blue
         ["school"] = 	{SCHOOL_AIR, SCHOOL_CONVEYANCE},
-        ["level"] = 	22,
+--        ["level"] = 	22,
+        ["level"] = 	16,
         ["mana"] = 	30,
         ["mana_max"] = 	40,
         ["fail"] = 	70,
@@ -97,11 +99,13 @@ POISONBLOOD = add_spell
 THUNDERSTORM = add_spell
 {
 	["name"] = 	"Thunderstorm",
-        ["school"] = 	{SCHOOL_AIR, SCHOOL_NATURE},
+--was dual-school, but doesn't occur in Tree tome/nature school! so making it single-school for now (C. Blue) - SCHOOL_NATURE},
+        ["school"] = 	{SCHOOL_AIR},
         ["level"] = 	25,
         ["mana"] = 	40,
         ["mana_max"] = 	60,
-        ["fail"] = 	70,
+-- DEBUG- Eddio claimed this was way too high, I dunno, just changing it like that - C. Blue        ["fail"] = 	70,
+        ["fail"] = 	50,
         ["spell"] = 	function()
 			set_tim_thunder(Ind, randint(10) + 10 + get_level(Ind, THUNDERSTORM, 25), 5 + get_level(Ind, THUNDERSTORM, 10), 10 + get_level(Ind, THUNDERSTORM, 25))
        	end,

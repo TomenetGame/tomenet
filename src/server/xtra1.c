@@ -1238,7 +1238,7 @@ void calc_mana(int Ind)
 	p_ptr->awkward_armor = FALSE;
 
 	/* Weigh the armor */
-	cur_wgt = armour_weight(p_ptr);
+	cur_wgt = worn_armour_weight(p_ptr);
 
 	/* Determine the weight allowance */
 //	max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
@@ -1747,7 +1747,6 @@ static int weight_limit(int Ind) /* max. 3000 atm */
 
 
 /* Should be called by every calc_bonus call */
-/* TODO: allow ego form */
 static void calc_body_bonus(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -1834,7 +1833,7 @@ static void calc_body_bonus(int Ind)
 		    (((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
 		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
 #endif
-#if 0
+#if 0 /* moved to calc_bonuses() */
 	/* Evaluate monster AC (if skin or armor etc) */
 	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
 		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
@@ -3618,6 +3617,7 @@ void calc_bonuses(int Ind)
 		if (f2 & TR2_RES_DISEN) p_ptr->resist_disen = TRUE;
 		if (f2 & TR2_RES_SHARDS) p_ptr->resist_shard = TRUE;
 		if (f2 & TR2_RES_NEXUS) p_ptr->resist_nexus = TRUE;
+		if (f5 & TR5_RES_TELE) p_ptr->res_tele = TRUE;
 		if (f2 & TR2_RES_BLIND) p_ptr->resist_blind = TRUE;
 		if (f2 & TR2_RES_NETHER) p_ptr->resist_neth = TRUE;
 //		if (f2 & TR2_ANTI_MAGIC) p_ptr->anti_magic = TRUE;
@@ -3658,8 +3658,8 @@ void calc_bonuses(int Ind)
 			if (o_ptr->tval != TV_SHIELD || !p_ptr->heavy_shield)
 				p_ptr->reflect = TRUE;
 		if (f3 & (TR3_SH_FIRE)) p_ptr->sh_fire = TRUE;
+		if (f5 & (TR5_SH_COLD)) p_ptr->sh_cold = TRUE;
 		if (f3 & (TR3_SH_ELEC)) p_ptr->sh_elec = TRUE;
-/*not implemented yet:	if (f3 & (TR3_SH_COLD)) p_ptr->sh_cold = TRUE;*/
 		if (f3 & (TR3_NO_MAGIC)) p_ptr->anti_magic = TRUE;
 		if (f3 & (TR3_NO_TELE)) p_ptr->anti_tele = TRUE;
 
@@ -4978,7 +4978,7 @@ void calc_bonuses(int Ind)
 		/* use a long var temporarily to handle v.high total_weight */
 		long temp_chance;
 		/* Get the armor weight */
-		int cur_wgt = armour_weight(p_ptr);
+		int cur_wgt = armour_weight(p_ptr); /* change to worn_armour_weight if ever reactivated, and possibly adjust values */
 		/* Base dodge chance */
 		temp_chance = get_skill_scale(p_ptr, SKILL_DODGE, 150);
 		/* Armor weight bonus/penalty */
@@ -5003,7 +5003,7 @@ void calc_bonuses(int Ind)
 		/* rules here: backpack grows exponentially; non-weapons grow exponentially; weapons grow linear;
 		               also special is that although backpack and non-weapons grow similar, they grow separately! */
 		/* note: rings, amulet, light source and tool are simplifiedly counted to "weapons" here */
-		long int e = equip_weight(p_ptr), w = e - armour_weight(p_ptr), i = p_ptr->total_weight - e;
+		long int e = equip_weight(p_ptr), w = e - armour_weight(p_ptr), i = p_ptr->total_weight - e; /* possibly change to worn_armour_weight, but not really much difference/needed imho - C. Blue */
 		e = e - w;
 
 		/* prevent any weird overflows if 'someone' collects gronds */
@@ -5116,12 +5116,28 @@ void calc_bonuses(int Ind)
 	if (i > 100) i = 100;
 	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * (100 - i)) / 100;
 #endif
-#if 1 /* allow malus even */
+#if 0 /* was used a lot, but somehow allows way too high weight? x10 factor? */
+	/* allow malus even */
+	/* examples: 200.0: -4, 300.0: -13, 400.0: -32 */
 	i = armour_weight(p_ptr) / 100;
 	i = (i * i * i) / 2000;
 	if (i > 50) i = 50; /* reached at 470.0 lbs */
 	p_ptr->to_h_ranged -= i;
 #endif
+#if 1
+	/* allow malus even */
+	/* examples: 10.0: 0, 20.0: -4, 30.0: -13, 40.0: -32, 47.0: -50 cap */
+	i = armour_weight(p_ptr) / 10;
+	i = (i * i * i) / 2000;
+	if (i > 50) i = 50; /* reached at 470.0 lbs */
+	p_ptr->to_h_ranged -= i;
+#endif
+#if 0 /* or.. other possibility (somewhat older): */
+	/* Apply ranged to-hit penalty depending on armour weight */
+	/* examples: 10.0: -10%, 20.0: -20%, 30.0: -30%, 40.0: -40%, 50.0: -50% */
+	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * 100) / (100 + armour_weight(p_ptr) / 10);
+#endif
+
 
 	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
@@ -5271,9 +5287,6 @@ void calc_bonuses(int Ind)
 #else /* multiplication (percent) */
 	p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
 #endif
-
-	/* Apply ranged to-hit penalty depending on armour weight */
-	p_ptr->to_h_ranged = (p_ptr->to_h_ranged * 100) / (100 + armour_weight(p_ptr) / 10);
 
 
 
@@ -5602,6 +5615,35 @@ void calc_bonuses(int Ind)
 	if(p_ptr->resist_lite) p_ptr->suscep_lite=FALSE;
 
 
+#if 0 /* in the making.. */
+	/* reduce speeds, so high-level players can duel each other even in Bree - C. Blue */
+	if (p_ptr->blood_bond && (Ind2 = find_player(p_ptr->blood_bond))) {
+		int factor1 = 10, factor2 = 10, reduction;
+		if (p_ptr->pspeed < 110) {
+			factor2 = (factor2 * (10 + (110 - p_ptr->pspeed))) / 10;
+		} else {
+			factor1 = (factor1 * (10 + (p_ptr->pspeed - 110))) / 10;
+		}
+		if (Players[Ind2]->pspeed < 110) {
+			factor1 = (factor1 * (10 + (110 - Players[Ind2]->pspeed))) / 10;
+		} else {
+			factor2 = (factor2 * (10 + (Players[Ind2]->pspeed - 110))) / 10;
+		}
+		if (factor1 >= factor2) { /* player 1 is faster or equal speed */
+			if (p_ptr->pspeed > 120) /* top (cur atm) speed for moving during blood bond */
+				p_ptr->pspeed = 120;
+//				reduction = p_ptr->pspeed - 120;
+			if (factor1 >= (p_ptr->pspeed - 110) + 10) {
+				factor1 = (factor * 10) / (p_ptr->pspeed - 110) + 10;
+				Players[Ind2]->pspeed = 110 - factor1 + 10;
+			}
+		} else { /* player 2 is faster or equal speed */
+			if (Players[Ind2]->pspeed > 120) /* top (cur atm) speed for moving during blood bond */
+				Players[Ind2]->pspeed = 120;
+//				reduction = Players[Ind2]->pspeed - 120;
+		}
+	}
+#endif
 
 
 #ifdef FUNSERVER
@@ -6285,7 +6327,7 @@ void announce_global_event(int ge_id) {
 
 	/* display additional commands on first advertisement */
 	if (ge->first_announcement) {
-		msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
+		msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1));
 		ge->first_announcement = FALSE;
 	}
 }
@@ -6818,6 +6860,7 @@ static void process_global_event(int ge_id)
 
 		switch(ge->state[0]){
 		case 0: /* prepare */
+			ge_training_tower++;
 #if 0 /* disabled unstaticing for now since it might unstatice the whole 32,32 sector on all depths? dunno */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
 #endif
@@ -6829,8 +6872,7 @@ static void process_global_event(int ge_id)
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
-			ge_training_tower++;
-			msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to subscribe.", ge_id+1, ge_id+1));
+			msg_broadcast(0, format("\377WType '/geinfo %d' and '/gesign %d' to learn more or to sign up.", ge_id+1, ge_id+1));
 			break;
 		case 1: /* running - not much to do here actually :) it's all handled by global_event_signup */
 			if (ge->extra[1]) { /* new challenge to process? */

@@ -399,13 +399,21 @@ void check_Pumpkin(void)
 				p_ptr = Players[i];
 				if (is_admin(p_ptr)) continue;
 				if (inarea(&p_ptr->wpos, wpos) &&
-#ifndef RPG_SERVER
+#if 0
+ #ifndef RPG_SERVER
 				    (p_ptr->max_lev > 30))
-#else
+ #else
 				    (p_ptr->max_lev > 40))
+ #endif
+#else
+ #ifndef RPG_SERVER
+				    (p_ptr->max_lev > 35))
+ #else
+				    (p_ptr->max_lev > 40))
+ #endif
 #endif
 				{
-					sprintf(msg, "\377sL ghostly force drives you out of this dungeon!");
+					sprintf(msg, "\377oA ghostly force drives you out of this dungeon!");
 					/* log */
 #ifndef RPG_SERVER
 					s_printf("Great Pumpkin recalled player>30 %s\n", p_ptr->name);
@@ -464,7 +472,7 @@ void check_Morgoth(void)
 		        continue;
 		}
 
-#if 0
+#if 0 /* moved to check_Pumpkin() */
 #ifdef HALLOWEEN
 		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
 		/* search for Great Pumpkins */
@@ -6347,6 +6355,55 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 
 		/* Never go through walls */
 		if (dist && !cave_los(zcave, y, x)) break;
+
+		/* Calculate the new location */
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+
+	/* Assume obstruction */
+	return (FALSE);
+}
+
+/*
+ * Created for shoot_till_kill mode in do_cmd_fire().
+ * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
+ * at the final destination, and if no monster/hostile player is in the way. - C. Blue
+ * Note: Only sleeping monsters are tested for!
+ * Note: The hostile-player part is commented out for efficiency atm.
+ *
+ */
+bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range)
+{
+	int dist, y, x;
+	cave_type **zcave;
+	if(!(zcave=getcave(&Players[Ind]->wpos))) return FALSE;
+
+	/* Start at the initial location */
+	y = y1, x = x1;
+
+	/* See "project()" */
+	for (dist = 0; dist <= range; dist++)
+	{
+		/* Never pass through walls */
+		if (dist && !cave_los(zcave, y, x)) break;
+
+		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+                if (f_info[zcave[y][x].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
+
+		/* Never pass through SLEEPING monsters */
+                if (dist && target_able(Ind, zcave[y][x].m_idx)
+		    && m_list[zcave[y][x].m_idx].csleep) break;
+
+#if 0
+		/* Never pass through hostile player */
+                if (dist && zcave[y][x].m_idx < 0) {
+			if (check_hostile(Ind, -zcave[y][x].m_idx)) break;
+		}
+#endif
 
 		/* Calculate the new location */
 		mmove2(&y, &x, y1, x1, y2, x2);

@@ -72,17 +72,17 @@ F:MKEY_HARDCODE
 N:8:Sling-mastery
 D:Ability to use slings
 D:Bullets can recochet and harm more than one foes
-A:4:Toggle fire-till-kill mode
+#A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:9:Bow-mastery
 D:Ability to use bows
-A:4:Toggle fire-till-kill mode
+#A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:10:Crossbow-mastery
 D:Ability to use crossbows
-A:4:Toggle fire-till-kill mode
+#A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:11:Backstabbing
@@ -92,12 +92,18 @@ I:1000:0
 
 N:12:Magic
 D:General ability to use magic. Also influence mana capacity
-A:4:Toggle fire-till-kill mode
+#A:4:Toggle fire-till-kill mode
 I:1000:0
 
 #N:13:Casting-speed
 #D:Ability to cast sorcery spells faster than one turn
 #I:1000:0
+
+N:13:Fire-Till-Kill
+D:Hidden ability for all characters.
+A:4:Toggle fire-till-kill mode
+I:1000:0
+F:HIDDEN
 
 # This is like that of ToME2 now
 N:14:Sorcery
@@ -240,7 +246,7 @@ I:1000:0
 
 N:39:Boomerang-mastery
 D:Ability to use (and not to destroy) boomerangs
-A:4:Toggle fire-till-kill mode
+#A:4:Toggle fire-till-kill mode
 I:1000:0
 
 #N:40:Training

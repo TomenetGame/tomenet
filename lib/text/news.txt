@@ -1,24 +1,14 @@
-{G                       {W ~ ~~~   ~~~    (       {G 
-{G   ======/   =====     {W      ~~ ) ~~   )       {G    ===  ===       ===
-{G  /  //     /  __ \    {W        )~ {r,.{W~ (   ({G      //   ||   \\   //   
-{G    //     |  |  | |   {W       _{r,-"##`-^  {W  ) {G   ||    ||   ||   ||==:
-{G    ||     |  |  | |   {W     ,{D#####{r`W='{D#{W`.{W () {G   ||    ||   ||   ||       
-{G     \\_//  \  -- /    {W    ,{D###########{D#{W:{r,=.  @{G  ||   ||  ||    \\===
-{G      \_/    =====     {W   /.{D#{W,".{D##{W,".{D#####{r"{W##\  {G {ov4.0.0 {G      
-{W {U@{W,-.   _,-= /"._ {g@,-. {w ,"   {W   `:'   `:{D##{W[JW] ,.  {G  
-{W,"   `,"    `=._ `"   -{w; {G  The         {W\{D##{W;"' V  \{W            __,-.     ,-=.
-{W     /        " `-. {w  /  {GTroubles of   {W `"       `-.{W__,-""._,"     "--,"    >-=-
-{W  ,-"`.            {w _'   {G Middle Earth Multiplayer{w "._      {W`       _/
-                {G@{w_,"      {y           __        {w       "=.".   {v@{w
-         {v@{w    _,"         {y        _,'  `-.     {w           `._,=-._   {R@{w_,-.      
-  _._   ,"._," {G===     ===  ======/{y,'Y`-. `.    {w                "-."    \,-.  
--"   `-"     {G||   \\ //    /  //{y / ,'   `.  \   {w                              `-
-             {G||   || ||==:   //{y / /       \  \  {w One Ring to rule them all,
-             {G||   || ||      ||{y  f         l  l {w  One Ring to find them.
-             {G||  ||  \\===   \\_//{y         j  j {w                           
-Maintained by DarkGod        {G \_/{y \       /  /   {wOne Ring to bring them all     
- {o darkgod@t-o-m-e.net     {y     \ \ \._   /  /{w and in the Darkness bind them.
- {ohttp://www.t-o-m-e.net  {y     `_`-._J-'  /         
-                           {y       `-.___,-'        
-        In the Land of Mordor, where the Shadows lie. [J.R.R. Tolkien]
-.
+
+
+
+{R			TomeNET server - v4.4.1d
+  
+{r			"Tales of Middle Earth"
+
+
+
+{w		 http://koti.mbnet.fi/mikaelh/tomenet/
+{w		      http://www.c-blue.de/rogue/
+
+
+{y	Documentation at http://www.c-blue.de/rogue/TomeNET-Guide.txt

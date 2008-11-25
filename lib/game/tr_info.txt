@@ -1030,6 +1030,26 @@ D:Surprise!
 F:CHEST
 F:SPECIAL_GENE
 
+N:210:Trap of Spread
+I:10:0:0:10:24:0d0:B:20
+D:Spread shot!
+F:FLOOR | DOOR
+
+N:211:Trap of Laser
+I:10:0:0:10:24:0d0:y:20
+D:ZOMG LASER
+F:FLOOR | DOOR
+
+N:212:Trap of Rockets
+I:10:0:0:10:24:0d0:o:20
+D:Rocketage.
+F:FLOOR | DOOR
+
+N:213:Trap of Healing
+I:10:0:0:10:24:0d0:G:20
+D:Makes you not hurt anymore.
+F:FLOOR | DOOR
+
 # N:type:name
 # I:diff:prob:another:pval:minlevel:damage:color
 # I:diff:prob:            :minlevel:      :color:vanish

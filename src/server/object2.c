@@ -1215,6 +1215,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 	if (f2 & TR2_RES_CHAOS) total += 15000;
 	if (f2 & TR2_RES_DISEN) total += 20000;
 	if (f3 & TR3_SH_FIRE) total += 3000;
+	if (f5 & TR5_SH_COLD) total += 3000;
 	if (f3 & TR3_SH_ELEC) total += 3000;
         if (f3 & TR3_DECAY) total += 0;
 	if (f3 & TR3_NO_TELE) total += 2500;
@@ -2754,7 +2755,8 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			a_ptr = randart_make(o_ptr);
 			/* hack - we use 'RESF_NOTRUEART' to actually check for
 			   '!p_ptr->total_winner' (which we're unable to access) here: */
-			if ((resf & RESF_NOTRUEART) || !(a_ptr->flags1 & TR1_LIFE)) break;
+//			if ((resf & RESF_NOTRUEART) || !(a_ptr->flags1 & TR1_LIFE)) break;
+			if ((resf & RESF_WINNER) || !(a_ptr->flags1 & TR1_LIFE)) break;
 		}
 		
 		return (TRUE);
@@ -6010,7 +6012,7 @@ void determine_level_req(int level, object_type *o_ptr)
 		}
 	}
 	/* Certain items harder to cheeze-transfer */
-	if (o_ptr->tval == TV_RING) {
+	if ((o_ptr->tval == TV_RING) && (o_ptr->bpval > 0)) {
 		switch(o_ptr->sval) {
 		case SV_RING_SPEED:
 			base += o_ptr->bpval * 2;
@@ -6022,7 +6024,7 @@ void determine_level_req(int level, object_type *o_ptr)
 		case SV_RING_READYWIT:
 		case SV_RING_TOUGHNESS:
 		case SV_RING_CUNNINGNESS:
-			base += o_ptr->bpval * 6;
+			base += o_ptr->bpval * 9;
 			break;
 		}
 	}
@@ -6153,7 +6155,10 @@ void determine_level_req(int level, object_type *o_ptr)
 	o_ptr->level = (j < 100) ? ((j > 1) ? j : 1) : 100;
 
 	/* Anti-cheeze hacks */
-	if ((o_ptr->tval == TV_POTION) && (o_ptr->sval == SV_POTION_EXPERIENCE)) o_ptr->level = 0;
+	if ((o_ptr->tval == TV_POTION) && ( /* potions that mustn't be transferred, otherwise resulting in 1 out-of-line char */
+	    (o_ptr->sval == SV_POTION_EXPERIENCE) ||
+	    (o_ptr->sval == SV_POTION_LEARNING) ||
+	    (o_ptr->sval == SV_POTION_INVULNERABILITY))) o_ptr->level = 0;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_TRAP_CREATION) && (o_ptr->level < 20)) o_ptr->level = 20;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_FIRE) && (o_ptr->level < 30)) o_ptr->level = 30;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_ICE) && (o_ptr->level < 30)) o_ptr->level = 30;

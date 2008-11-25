@@ -2,7 +2,7 @@ s.=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 7. November 2008; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.1c (www.tomenet.net, usually outdated though).
+| for TomeNET version v4.4.1d (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -6414,8 +6414,8 @@ Air
                     Required skill level for first spell level: 3.
     Wings of Wind   Grants levitation (feather falling).
                     Lv16: Lets you fly.
-                    Shared spell (see above): Air, Conveyance.
                     Required skill level for first spell level: 16.
+                    Shared spell (see above): Air, Conveyance.
     Invisibility    Turns you invisible.
                     Required skill level for first spell level: 30.
     Poison Blood    Gives temporary poison resistance.

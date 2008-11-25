@@ -890,7 +890,7 @@ static bool forbidden_name(char *name){
 static void Trim_name(char *nick_name)
 {
 	char *ptr;
-	/* spaces at the beginning are impossible thanks to check_names */
+	/* spaces at the beginning are impossible thanks to Check_names */
 	/* remove spaces at the end */
 	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
 	{
@@ -901,6 +901,7 @@ static void Trim_name(char *nick_name)
 	/* remove special chars that are used for parsing purpose */
 	for (ptr = &nick_name[strlen(nick_name)]; ptr-- > nick_name; )
 	{
+#if 0
 		switch (*ptr) {
 		case ':':
 		case '(':
@@ -910,8 +911,16 @@ static void Trim_name(char *nick_name)
 		case '!':
 		case '?':
 		case '=':
+//		case '@':
 			*ptr = '_';
 		}
+#else
+		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
+		    (*ptr >= 'a' && *ptr <= 'z') ||
+		    (*ptr >= '0' && *ptr <= '9') ||
+		    strchr(" .,_-&'`'#$%~", *ptr))) /* allowed chars, for sake of not too silly names */
+			*ptr = '_';
+#endif
 	}
 }
 
@@ -1573,13 +1582,13 @@ bool Destroy_connection(int ind, char *reason_orig)
 #endif
 	}
 
-	s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\")\n",
+	s_printf("%s: Goodbye %s(%s)=%s@%s (\"%s\") (ind=%d)\n",
 		showtime(),
 		connp->c_name ? connp->c_name : "",
 		connp->nick ? connp->nick : "",
 		connp->real ? connp->real : "",
 		connp->host ? connp->host : "",
-		reason);
+		reason, ind);
 
 	Conn_set_state(connp, CONN_FREE, CONN_FREE);
 
@@ -1752,7 +1761,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 		|| connp->addr == NULL || connp->host == NULL)
 	{
 		plog("Not enough memory for connection");
-		Destroy_connection(free_conn_index, "no memory");
+		Destroy_connection(free_conn_index, "Server is out of memory.");
 		return -1;
 	}
 	
@@ -1991,8 +2000,8 @@ static int Handle_listening(int ind)
 	 */
 
 	/* Log the players connection */
-	s_printf("%s: Welcome %s=%s@%s (%s/%d)", showtime(), connp->nick,
-		connp->real, connp->host, connp->addr, connp->his_port);
+	s_printf("%s: Welcome %s=%s@%s (%s/%d) (ind=%d)", showtime(), connp->nick,
+		connp->real, connp->host, connp->addr, connp->his_port, ind);
 #if 0
 	if (connp->version != MY_VERSION)
 		s_printf(" (version %04x)", connp->version);
@@ -2304,6 +2313,11 @@ static int Handle_login(int ind)
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 	}
 #endif
+
+	/* Give a more visible message about outdated client usage - C. Blue */
+	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0)) {
+		
+	}
 
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
@@ -3066,7 +3080,7 @@ static int Receive_login(int ind){
 		}
 		else{
 			/* fail login here */
-			Destroy_connection(ind, "login failure");
+			Destroy_connection(ind, "Wrong password or name already in use.");
 		}
 		Sockbuf_flush(&connp->w);
 		return(0);
@@ -3097,7 +3111,8 @@ static int Receive_login(int ind){
 				if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
 				    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
 					/* Fail login */
-					Destroy_connection(ind, "Name already owned");
+					Destroy_connection(ind, "Character name already in use.");
+					s_printf("(Prevented simultaneous creation of same character.)\n");
 					return(-1);
 				}
 			}
@@ -3114,7 +3129,7 @@ static int Receive_login(int ind){
 		}
 		else{
 			/* fail login here */
-			Destroy_connection(ind, "Name already owned");
+			Destroy_connection(ind, "Character name already in use.");
 			return(-1);
 		}
 	} else {
@@ -5966,7 +5981,7 @@ static int Receive_aim_wand(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6020,7 +6035,7 @@ static int Receive_drop(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6092,7 +6107,9 @@ static int Receive_fire(int ind)
 		if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 //		do_cmd_fire(player, dir, item);
 		do_cmd_fire(player, dir);
-		if (p_ptr->ranged_double) do_cmd_fire(player, dir);
+		if (!(p_ptr->shoot_till_kill && dir == 5 && !p_ptr->shooting_till_kill)) {
+			if (p_ptr->ranged_double) do_cmd_fire(player, dir);
+		}
 		p_ptr->shooty_till_kill = FALSE;
 		return 2;
 	}
@@ -6131,7 +6148,7 @@ static int Receive_observe(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1)
@@ -6222,7 +6239,7 @@ static int Receive_destroy(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6323,7 +6340,7 @@ static int Receive_activate_skill(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	/* Not by class nor by item; by skill */
@@ -6659,7 +6676,7 @@ static int Receive_quaff(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6713,7 +6730,7 @@ static int Receive_read(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6827,7 +6844,7 @@ static int Receive_take_off(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6881,7 +6898,7 @@ static int Receive_use(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6935,7 +6952,7 @@ static int Receive_throw(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6990,7 +7007,7 @@ static int Receive_wield(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -7044,7 +7061,7 @@ static int Receive_zap(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -7186,7 +7203,7 @@ static int Receive_inscribe(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1)
@@ -7234,7 +7251,7 @@ static int Receive_uninscribe(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1)
@@ -7281,7 +7298,7 @@ static int Receive_activate(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -7502,7 +7519,7 @@ static int Receive_fill(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -7905,7 +7922,7 @@ static int Receive_item(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1)
@@ -9529,7 +9546,7 @@ static int Receive_wield2(int ind) {
 	}
 
 	/* Sanity check - mikaelh */
-	if (item > INVEN_TOTAL)
+	if (item >= INVEN_TOTAL)
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {

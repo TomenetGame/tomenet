@@ -1,20 +1,20 @@
             /---------------------------------------------+
            /     ToME-NET Gazette                         |
-           |                          issued 22/Jun/2002  /
+           |                          issued 11/Nov/2008  /
            +---------------------------------------------/
 
+For a full manual on the game, read the file 'TomeNET-Guide.txt'
+in your TomeNET folder, or read online at www.c-blue.de/rogue
 
-This gazette (Parchment) contains the latest news the administrator should
-tell you, so please check it sometimes. This is not a TomeNET manual.
-You can find the manual at http://www.c-blue.de/rogue/TomeNET-Guide.txt.
+Press : to chat with other players.
+Press SHIFT+direction to run swiftly (numlock must be off).
+Press SHIFT+P to form a party with a friend.
 
 ----------------------------------------------------------------
 
-If you noticed a bug, please send a report to:
-    mail@c-blue.de
-
-    Administrator of this server is C. Blue (http://www.c-blue.de/).
-    If you find a bug, report it to mail@c-blue.de
-    If you need your account become validated, write to mail@c-blue.de
+    Administrators are Moltor, God/Sandman, Mikael and C. Blue.
+    If you find a bug, report it via /bug command.
+    If you have any questions, check TomNET-Guide.txt first, and
+    don't hesitate to ask your fellow players if you need any help.
 
 Thank you.

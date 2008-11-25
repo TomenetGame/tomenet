@@ -15,12 +15,11 @@
 #include "externs.h"
 
 /* chance of townie respawning like other monsters, in % [50] */
-#ifndef HALLOWEEN
  /* Default */
- #define TOWNIE_RESPAWN_CHANCE	250
-#else
+#define TOWNIE_RESPAWN_CHANCE	250
+#ifdef HALLOWEEN
  /* better for Halloween event */
- #define TOWNIE_RESPAWN_CHANCE	50
+ #define HALLOWEEN_TOWNIE_RESPAWN_CHANCE	125
 #endif
 
 /* if defined, player ghost loses exp slowly. [10000]
@@ -1456,7 +1455,12 @@ static void process_world(int Ind)
 
 	/* Check for creature generation */
 	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
+#ifndef HALLOWEEN
 	    (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0)))
+#else
+	    (istown(&p_ptr->wpos) && (rand_int((p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
+	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0)))
+#endif
 	{
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Should we disallow those with MULTIPLY flags to spawn on surface? */
@@ -2466,6 +2470,9 @@ void recall_player(int Ind, char *message){
 	if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
 
 	break_cloaking(Ind);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* One less person here */
 	new_players_on_depth(&p_ptr->wpos,-1,TRUE);
@@ -2495,16 +2502,8 @@ void recall_player(int Ind, char *message){
 	/* He'll be safe for some turns */
 	set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
 
-	check_Morgoth();
-
 	/* cancel any user recalls */
 	p_ptr->word_recall=0;
-
-        /* Did we enter a no-tele vault? */
-#if 0 /* moved to process_player_change_wpos */
-        if(!(zcave=getcave(&p_ptr->wpos))) return;
-        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) msg_print(Ind, "\377DThe air in here feels very still.");
-#endif
 }
 
 
@@ -2737,34 +2736,6 @@ static void do_recall(int Ind, bool bypass)
 		/* back into here */
 		wpcopy(&p_ptr->recall_pos, &new_pos);
 		recall_player(Ind, message);
-#if 0
-		cave_type **zcave;
-		if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
-
-		/* One less person here */
-		new_players_on_depth(&p_ptr->wpos,-1,TRUE);
-
-		/* Remove the player */
-		zcave[p_ptr->py][p_ptr->px].m_idx = 0;
-		/* Show everyone that he's left */
-		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-
-		/* Forget his lite and view */
-		forget_lite(Ind);
-		forget_view(Ind);
-
-		wpcopy(&p_ptr->wpos, &new_pos);
-
-		/* One more person here */
-		new_players_on_depth(&p_ptr->wpos,1,TRUE);
-
-		p_ptr->new_level_flag = TRUE;
-
-		/* He'll be safe for some turns */
-		set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
-		
-		check_Morgoth();
-#endif
 	}
 }
 
@@ -4243,13 +4214,18 @@ static void process_player_end(int Ind)
 			 !(p_ptr->invuln || p_ptr->tim_manashield)))
 #else
 	if ((p_ptr->energy >= level_speed(&p_ptr->wpos)) && !p_ptr->confused &&
-			(!p_ptr->autooff_retaliator ||
+			(!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
 			 !p_ptr->invuln))
 #endif
 	{
+		/* assume nothing will happen here */
+		p_ptr->auto_retaliating = FALSE;
+
 		if (p_ptr->shooting_till_kill && !p_ptr->shoot_till_kill_book && !p_ptr->shoot_till_kill_spell) { /* did we shoot till kill last turn, and used bow-type item? */
+			p_ptr->auto_retaliating = TRUE;
 	                do_cmd_fire(Ind, 5);
-    	        	if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
+			p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
+//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
 			p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
 		}
 
@@ -4257,13 +4233,12 @@ static void process_player_end(int Ind)
 		/* If auto_retaliate returns nonzero than we attacked
 		 * something and so should use energy.
 		 */
-		if ((attackstatus = auto_retaliate(Ind)))
+		if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
+		    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
 		{
 			p_ptr->auto_retaliating = TRUE;
 			/* Use energy */
 //			p_ptr->energy -= level_speed(p_ptr->dun_depth);
-		} else {
-			p_ptr->auto_retaliating = FALSE;
 		}
 	} else {
 		p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
@@ -5547,6 +5522,17 @@ static void process_player_change_wpos(int Ind)
 	
 	/* daylight problems for vampires */
 	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind);
+	
+	/* moved here, in hope that move fixes panic saves,
+	   since it simplifies the wpos-changing process and
+	   should keep it highly consistent and linear.
+	   Note: Basically every case that sets p_ptr->new_level_flag = TRUE
+	   can and should be stripped of immediate check_Morgoth() call and
+	   instead rely on its occurance here. Also, there should actually be
+	   no existing case of check_Morgoth() that went without setting said flag,
+	   with the only exception of server join/leave in nserver.c and Morgoth
+	   live spawn (ie not on level generation time) in monster2.c. - C. Blue */
+	check_Morgoth();
 }
 
 

@@ -691,6 +691,7 @@ S:v:R:r:v:R:r:D
 E:4d4:8:NETHER
 F:ATTR_MULTI
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+D:0:The nether mist engulfs you
 
 N:103:glittering water
 G:~:B

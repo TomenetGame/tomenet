@@ -2533,7 +2533,7 @@ void sf_delete(const char *name){
 		if (isalpha(c) || isdigit(c)) temp[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(". _", c)) temp[k++] = '_';
+		else if (strchr(":!?\\/()\"@. _", c)) temp[k++] = '_';
 	}
 	temp[k] = '\0';
 	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
@@ -2591,7 +2591,7 @@ void scan_players(){
 			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
 						delete_object_idx(i, TRUE);
     				}
-
+#if 0 /* if 0'ed since priv notes nowadays are sent to accout names, not char names */
     				/* remove pending notes to this player -C. Blue */
 			        for (i = 0; i < MAX_NOTES; i++) {
 			                if (!strcmp(priv_note_target[i], ptr->name)) {
@@ -2600,6 +2600,7 @@ void scan_players(){
 			                        strcpy(priv_note[i], "");
 			                }
 			        }
+#endif
 
 				sf_delete(ptr->name);	/* a sad day ;( */
 				if(!pptr)
@@ -2622,6 +2623,59 @@ void scan_players(){
 		}
 	}
 	s_printf("Finished player inactivity check\n");
+}
+
+/* Rename a player's char savegame as well as the name inside */
+void rename_player_name(char *pnames){
+	int slot;
+	hash_entry *ptr;
+	object_type *o_ptr;
+	char pname[40], nname[40];
+	int pos, i;
+
+	int Ind;
+
+return; /* not completely implemented yet! (load_player lacks infos what to load, ie names) */
+
+	Ind = ++NumPlayers;
+	player_type *p_ptr;
+        /* Allocate memory for him */
+        MAKE(Players[Ind], player_type);
+        C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+	p_ptr = Players[Ind];
+
+
+	if (!(strchr(pnames, ':'))) return;
+	pos = strchr(pnames, ':') - pnames;
+	strncpy(pname, pnames, pos);
+	strcpy(nname, pnames + pos + 1);
+	s_printf("Renaming player: %s to %s\n", pname, nname);
+
+	for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
+		ptr=hash_table[slot];
+		while(ptr){
+			if(!strcmp(ptr->name, pname)){
+				load_player(Ind);
+
+				for(i=1; i<MAX_PARTIES; i++){ /* was i = 0 but real parties start from i = 1 - mikaelh */
+					if(streq(parties[i].owner, ptr->name)){
+						s_printf("Renaming owner of party: %s\n",parties[i].name);
+						strcpy(parties[i].owner, nname);
+						break;
+					}
+				}
+				strcpy(ptr->name, nname);
+				strcpy(p_ptr->name, nname);
+
+				save_player(Ind);
+			}
+			ptr=ptr->next;
+		}
+	}
+	/* free temporary player */
+        C_KILL(Players[Ind]->inventory, INVEN_TOTAL, object_type);
+        KILL(Players[Ind], player_type);
+	NumPlayers--;
 }
 
 /*
@@ -2672,7 +2726,7 @@ void erase_player_name(char *pname){
 			                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
 						delete_object_idx(i, TRUE);
     				}
-
+#if 0 /* if 0'ed since priv notes nowadays go to account names, not char names */
     				/* remove pending notes to this player */
 			        for (i = 0; i < MAX_NOTES; i++) {
 			                if (!strcmp(priv_note_target[i], ptr->name)) {
@@ -2681,6 +2735,7 @@ void erase_player_name(char *pname){
 			                        strcpy(priv_note[i], "");
 			                }
 			        }
+#endif
 
 				sf_delete(ptr->name);	/* a sad day ;( */
 				if(!pptr)

@@ -762,7 +762,8 @@ F:RARE
 W:12
 
 N:48:Expensive Black Market
-T:10:111:256
+T:2:111:256
+T:5:70:256
 #T:5:111:0..17 now replaced by 111 / 256 (-> +10000 hack) above
 A:0:0:1:2:3:4
 O:39:40:41:39:40:41
@@ -904,7 +905,8 @@ G:7:U
 F:ALL_ITEM | VERY_RARE | DEEP_LEVEL | NO_DISCOUNT | 
 F:PRICE16 | PRICY_ITEMS4 | VHARD_STEAL
 #W:13
-W:24
+#W:24 --increasing it in hope to see ART scrolls more often..
+W:36
 
 N:61:Bordertravel supplies
 T:95:71:29

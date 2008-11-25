@@ -428,6 +428,8 @@ void inven_drop(int Ind, int item, int amt)
 	
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 }
 
 /*
@@ -1089,7 +1091,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)
-	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 	{
 		msg_print(Ind, "You are not experienced enough to drop items. (Sell/destroy it instead.)");
@@ -1145,7 +1147,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 /* 	un_afk_idle(Ind); */
 
 #if (STARTEQ_TREATMENT > 1)
-	if (p_ptr->lev < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 		o_ptr->level = 0;
 #endif
@@ -1168,7 +1170,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	object_type tmp_obj;
 
 	/* Handle the newbies_cannot_drop option */
-	if ((p_ptr->lev < cfg.newbies_cannot_drop) && !is_admin(p_ptr))
+	if ((p_ptr->max_plv < cfg.newbies_cannot_drop) && !is_admin(p_ptr))
 	{
 		msg_print(Ind, "You are not experienced enough to drop gold.");
 		return;
@@ -1225,6 +1227,8 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Redraw gold */
 	p_ptr->redraw |= (PR_GOLD);
@@ -1404,6 +1408,8 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 }
 
 
@@ -1638,6 +1644,10 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
 	/* There were no non-gold items */
 	if (!m_ptr->hold_o_idx)
 	{
@@ -1749,7 +1759,6 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			m_ptr->mspeed += 5; m_ptr->speed += 5;
 			screen_load();
 			break_cloaking(Ind);
-			break_shadow_running(Ind);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
 			return;
 		}
@@ -1930,6 +1939,10 @@ void do_cmd_steal(int Ind, int dir)
 		return;
 	}
 
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
 #if 1 /* maybe rework this */
 	/* Compute chance of success */
 	success = 3 * (adj_dex_safe[p_ptr->stat_ind[A_DEX]] - adj_dex_safe[q_ptr->stat_ind[A_DEX]]);
@@ -2093,7 +2106,6 @@ void do_cmd_steal(int Ind, int dir)
 	}
 
 	if (caught) break_cloaking(Ind);
-	break_shadow_running(Ind);
 
 #if 0 /* now turned off */
 	/* Counter blow! */

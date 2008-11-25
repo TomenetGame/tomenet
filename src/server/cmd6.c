@@ -1040,6 +1040,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 						msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					}
 					p_ptr->black_breath = FALSE;
+					if (p_ptr->suscep_life) take_hit(Ind, 500, "a potion of life", 0);
 					ident = TRUE;
 					break;
 				}
@@ -2230,11 +2231,13 @@ void do_cmd_read_scroll(int Ind, int item)
 	if (p_ptr->blind)
 	{
 		msg_print(Ind, "You can't see anything.");
+		s_printf("%s EFFECT: Blind prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 	if (p_ptr->confused)
 	{
 		msg_print(Ind, "You are too confused!");
+		s_printf("%s EFFECT: Confusion prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 
@@ -2259,11 +2262,13 @@ void do_cmd_read_scroll(int Ind, int item)
 	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_PARCHMENT_DEATH)))
 	{
 		msg_print(Ind, "You have no light to read by.");
+		s_printf("%s EFFECT: No-light prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'r' )) {
 		msg_print(Ind, "The item's inscription prevents it");
+		s_printf("%s EFFECT: Inscription prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	};
 
@@ -2993,6 +2998,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -3497,6 +3504,8 @@ void do_cmd_use_staff(int Ind, int item)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Hack -- some uses are "free" */
 	if (!use_charge) return;
@@ -4034,6 +4043,8 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Mark it as tried */
 	object_tried(Ind, o_ptr);
@@ -4397,6 +4408,8 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4907,6 +4920,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* Clear the current rod */
 	p_ptr->current_rod = -1;
@@ -5277,6 +5292,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	msg_print(Ind, "You activate it...");
 
 	break_cloaking(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 #if 0
 	/* Hack -- Book of the Dead is activatable for Ghosts */
@@ -7118,13 +7135,62 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		/* Done */
 		return;
 	}
-	/* Hack -- Amulet of the Serpents can be activated as well */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT))
+	else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
 	{
-		/* Get a direction for breathing (or abort) */
-		p_ptr->current_activation = item;
-		get_aim_dir(Ind);
+		msg_print(Ind, "Your cloak flashes many colors...");
+		(void)set_oppose_acid(Ind, randint(40) + 40); /* removed stacking */
+		(void)set_oppose_elec(Ind, randint(40) + 40);
+		(void)set_oppose_fire(Ind, randint(40) + 40);
+		(void)set_oppose_cold(Ind, randint(40) + 40);
+		(void)set_oppose_pois(Ind, randint(40) + 40);
+		o_ptr->timeout = rand_int(50) + 150;
 		return;
+	}
+	else if (is_ego_p(o_ptr, EGO_AURA_FIRE))
+	{
+		msg_print(Ind, "Your cloak flashes in flames...");
+		(void)set_oppose_fire(Ind, randint(40) + 40);
+		o_ptr->timeout = rand_int(50) + 150;
+		return;
+	}
+	else if (is_ego_p(o_ptr, EGO_AURA_ELEC))
+	{
+		msg_print(Ind, "Your cloak sparkles with lightning...");
+		(void)set_oppose_elec(Ind, randint(40) + 40);
+		o_ptr->timeout = rand_int(50) + 150;
+		return;
+	}
+	else if (is_ego_p(o_ptr, EGO_AURA_COLD))
+	{
+		msg_print(Ind, "Your cloak shines with frost...");
+		(void)set_oppose_cold(Ind, randint(40) + 40);
+		o_ptr->timeout = rand_int(50) + 150;
+		return;
+	}
+
+	/* Hack -- Amulet of the Serpents can be activated as well */
+	if (o_ptr->tval == TV_AMULET) {
+		switch (o_ptr->sval) {
+		case SV_AMULET_SERPENT:
+			/* Get a direction for breathing (or abort) */
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
+		/* Amulets of the moon can be activated for sleep monster */
+		case SV_AMULET_THE_MOON:
+			msg_print(Ind, "Your amulet glows a deep blue...");
+			sleep_monsters(Ind);
+			o_ptr->timeout = rand_int(100) + 100;
+			return;
+		/* Amulets of rage can be activated for berserk strength */
+		case SV_AMULET_RAGE:
+			msg_print(Ind, "Your amulet sparkles bright red...");
+    	                set_afraid(Ind, 0);
+		        set_fury(Ind, randint(10) + 15); /* removed stacking */
+	                hp_player(Ind, 40);
+			o_ptr->timeout = rand_int(150) + 250;
+			return;
+		}
 	}
 
 
@@ -7324,52 +7390,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		return;
 
 	}
-#if 1
-	/* Some ego items can be activated */
-	else if (o_ptr->name2)
-	{
-		switch (o_ptr->name2)
-		{
-			case EGO_CLOAK_LORDLY_RES:
-				{
-					msg_print(Ind, "Your cloak flashes many colors...");
-
-					(void)set_oppose_acid(Ind, randint(40) + 40); /* removed stacking */
-					(void)set_oppose_elec(Ind, randint(40) + 40);
-					(void)set_oppose_fire(Ind, randint(40) + 40);
-					(void)set_oppose_cold(Ind, randint(40) + 40);
-					(void)set_oppose_pois(Ind, randint(40) + 40);
-
-					o_ptr->timeout = rand_int(50) + 150;
-					break;
-				}
-		}
-		/* Done ego item activation */
-		return;
-	}
-
-	/* Amulets of the moon can be activated for sleep monster */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_THE_MOON))
-	{
-		msg_print(Ind, "Your amulet glows a deep blue...");
-		sleep_monsters(Ind);
-
-		o_ptr->timeout = rand_int(100) + 100;
-		return;
-	}
-	/* Amulets of rage can be activated for berserk strength */
-	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_RAGE))
-	{
-		msg_print(Ind, "Your amulet sparkles bright red...");
-
-                set_afraid(Ind, 0);
-                set_fury(Ind, randint(10) + 15); /* removed stacking */
-                hp_player(Ind, 40);
-
-		o_ptr->timeout = rand_int(150) + 250;
-		return;
-	}
-#endif	// 0
 
 	/* Mistake */
 	msg_print(Ind, "That object cannot be activated.");
@@ -7431,6 +7451,8 @@ void do_cmd_activate_dir(int Ind, int dir)
         if (!can_use_verbose(Ind, o_ptr)) return;
 	
 	break_cloaking(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY && !o_ptr->name1)
 	{
@@ -8010,9 +8032,11 @@ bool unmagic(int Ind)
  */
 void fortune(int Ind, bool broadcast)
 {
-	char Rumor[80];
-
+	char Rumor[80], Broadcast[80];
+	
+	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
+	
 //	switch(randint(20))
 	switch(randint(80))
 	{
@@ -8028,7 +8052,11 @@ void fortune(int Ind, bool broadcast)
 			get_rnd_line("death.txt",0 , Rumor);
 			break;
 		default:
-			get_rnd_line("rumors.txt",0 , Rumor);
+			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor);
+			else {
+				strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
+				get_rnd_line("hints.txt",0 , Rumor);
+			}
 	}
 	bracer_ff(Rumor);
 //	msg_format(Ind, "%s", Rumor);
@@ -8037,7 +8065,7 @@ void fortune(int Ind, bool broadcast)
 
 	if (broadcast)
 	{
-		msg_broadcast(Ind, "Suddenly a thought comes to your mind:");
+		msg_broadcast(Ind, Broadcast);
 		msg_broadcast(Ind, Rumor);
 	}
 
@@ -8417,6 +8445,8 @@ void do_cmd_fletchery(int Ind)
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 }
 
 /*
@@ -8666,6 +8696,12 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 */
 
+	if ((p_ptr->pclass == CLASS_ROGUE) &&
+	    p_ptr->rogue_heavyarmor) {
+		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
+		return;
+	}
+
 	switch (technique) {
 	case 0:	if (!p_ptr->melee_techniques & 0x0001) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8742,9 +8778,11 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	if (!get_skill(p_ptr, SKILL_ARCHERY)) return; /* paranoia */
 
 	if (technique != 3 || !p_ptr->ranged_double) { /* just toggling that one off? */
-		if (!p_ptr->inventory[INVEN_AMMO].tval) {
-			msg_print(Ind, "You have no ammunition equipped.");
-			return;
+		if (technique != 2) {
+			if (!p_ptr->inventory[INVEN_AMMO].tval) {
+				msg_print(Ind, "You have no ammunition equipped.");
+				return;
+			}
 		}
 		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) {
 			msg_print(Ind, "You cannot use techniques with a boomerang.");

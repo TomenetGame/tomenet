@@ -184,10 +184,8 @@ typedef unsigned int u32b;
 
 /* cave.c */
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
-extern int check_feat(worldpos *wpos, int y, int x);
 
 /* generate.c */
-extern void arcade_wipe(worldpos *wpos);
 extern void place_up_stairs(worldpos *wpos, int y, int x); 
 
 /* spells1.c */
@@ -434,7 +432,6 @@ extern void teleport_player_level(int Ind);
 /* This could have some good uses */
 extern s16b project_interval;
 extern s16b project_time;
-extern s32b project_time_effect;
 /* extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker); */
 
 /* lua_bind.c */

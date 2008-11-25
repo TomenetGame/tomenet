@@ -58,7 +58,8 @@ typedef unsigned int u32b;
 #define SKILL_XBOW              10
 #define SKILL_BACKSTAB          11
 #define SKILL_MAGIC             12
-#define SKILL_CASTSPEED         13
+//#define SKILL_CASTSPEED         13
+#define SKILL_SHOOT_TILL_KILL	13
 #define SKILL_SORCERY           14
 #define SKILL_MAGERY            15
 #define SKILL_MIMIC             16
@@ -715,7 +716,6 @@ struct player_type
         bool immune_water;      /* Water Immunity, would also let you breathe under water. */
 	bool resist_water;	/* Resist Water */
 	bool resist_plasma;     /* Resist Plasma */
-	bool regen_mana;	/* Regenerate mana */
 	bool hold_life;		/* Resist life draining */
 	bool telepathy;		/* Telepathy */
 	bool slow_digest;	/* Slower digestion */
@@ -802,24 +802,8 @@ struct player_type
 	s32b pstealing;
 
 	u16b team;
- /* Moltor's arcade crap */
-int arc_a;
-int arc_b;
-int arc_c;
-int arc_d;
-int arc_e;
-int arc_f;
-int arc_g;
-int arc_h;
-int arc_i;
-int arc_j;
-int arc_k;
-int arc_l;
-        char firedir;
-        char game;
-        int gametime;
-        char pushed;
-        char pushdir;
+	char pushed;
+	char pushdir;
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
@@ -854,6 +838,12 @@ int arc_l;
 
 	int combat_stance;
 	int combat_stance_power;
+
+	bool shoot_till_kill;
+	bool shooty_till_kill;
+	bool shooting_till_kill;
+        int shoot_till_kill_book;
+	int shoot_till_kill_spell;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

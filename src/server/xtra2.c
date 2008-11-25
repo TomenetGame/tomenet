@@ -86,6 +86,12 @@
 	#define SCROLL_MARGIN_COL 20
 #endif
 
+/* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
+   by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
+#define PRE_OWN_DROP_CHOSEN
+
+
+
 /* If during certain events, remember his/her account ID, for handing out a reward
    to a different character which he chooses on next login! - C. Blue
    death_type: 0 - perma-death
@@ -1369,6 +1375,8 @@ bool set_confused(int Ind, int v)
 
 		break_cloaking(Ind);
 		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
 	}
 
 	/* Shut */
@@ -1548,6 +1556,7 @@ bool set_paralyzed(int Ind, int v)
 			msg_format_near(Ind, "%s becomes rigid!", p_ptr->name);
 			msg_print(Ind, "You are paralyzed!");
 			notice = TRUE;
+			s_printf("%s EFFECT: Paralyzed %s.\n", showtime(), p_ptr->name);
 		}
 	}
 
@@ -1735,6 +1744,7 @@ bool set_slow(int Ind, int v)
 			msg_format_near(Ind, "%s begins moving slower!", p_ptr->name);
 			msg_print(Ind, "You feel yourself moving slower!");
 			notice = TRUE;
+			s_printf("%s EFFECT: Slowed %s.\n", showtime(), p_ptr->name);
 		}
 	}
 
@@ -2813,6 +2823,7 @@ bool set_stun(int Ind, int v)
 			case 3:
 			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
 			msg_print(Ind, "You have been knocked out.");
+			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
 			break;
 		}
 		
@@ -5003,6 +5014,11 @@ if(cfg.unikill_format){
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 
 			/* Drop it in the dungeon */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->owner_mode = p_ptr->mode;
+#endif
 			drop_near(qq_ptr, -1, wpos, y, x);
 		}
 		else if (r_ptr->flags7 & RF7_NAZGUL)
@@ -5033,6 +5049,12 @@ if(cfg.unikill_format){
 			qq_ptr->bpval=m_ptr->r_idx;
 
 			/* Drop it in the dungeon */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->owner_mode = p_ptr->mode;
+#endif
+
 			drop_near(qq_ptr, -1, wpos, y, x);
 		}
 		else
@@ -5105,6 +5127,11 @@ if(cfg.unikill_format){
 				qq_ptr->note = local_quark;
 				apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, FALSE);
 				/* Drop it in the dungeon */
+#ifdef PRE_OWN_DROP_CHOSEN
+				qq_ptr->level = 0;
+				qq_ptr->owner = p_ptr->id;
+				qq_ptr->owner_mode = p_ptr->mode;
+#endif
 				drop_near(qq_ptr, -1, wpos, y, x);
 
 				if (a_info[a_idx].cur_num == 0) {
@@ -5168,6 +5195,11 @@ if(cfg.unikill_format){
 					}
 
 					/* Drop the artifact from heaven */
+#ifdef PRE_OWN_DROP_CHOSEN
+					qq_ptr->level = 0;
+					qq_ptr->owner = p_ptr->id;
+					qq_ptr->owner_mode = p_ptr->mode;
+#endif
 					drop_near(qq_ptr, -1, wpos, y, x);
 				}
 			}
@@ -5228,6 +5260,11 @@ if(cfg.unikill_format){
 
 			a_info[a_idx].cur_num++;
 			/* Drop the artifact from heaven */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->owner_mode = p_ptr->mode;
+#endif
 			drop_near(qq_ptr, -1, wpos, y, x);
 		}
 #endif
@@ -5448,6 +5485,8 @@ void player_death(int Ind)
 	
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* very very rare case, but this can happen(eg. starvation) */
 	if (p_ptr->store_num > -1)
@@ -9134,6 +9173,9 @@ void blood_bond(int Ind, object_type *o_ptr)
 	msg_format(Ind, "\377cYou blood bond with %s.", p2_ptr->name);
 	msg_format(Ind2, "%s blood bonds with you.", p_ptr->name);
 	msg_broadcast(Ind, format("\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
+	
+	p_ptr->update |= PU_BONUS;
+	p2_ptr->update |= PU_BONUS;
 }
 
 bool check_blood_bond(int Ind, int Ind2)
@@ -9877,7 +9919,6 @@ bool imprison(int Ind, u16b time, char *reason){
 			p_ptr->tim_jail=time+p_ptr->tim_susp;
 			p_ptr->tim_susp=0;
 			
-			check_Morgoth();//not needed but adding it for paranoia
 			return(TRUE);
 		}
 	}

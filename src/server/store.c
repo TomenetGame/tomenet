@@ -1304,7 +1304,7 @@ static void store_create(store_type *st_ptr)
 	if (black_market) resf = RESF_STOREBM;
 
 	/* Hack -- consider up to n items */
-	for (tries = 0; tries < (black_market ? 40 : 4); tries++) /* 20:4
+	for (tries = 0; tries < (black_market ? 100 : 4); tries++) /* 20:4, 40:4, 60:4
 	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 	{
 		/* Black Market */
@@ -1588,6 +1588,10 @@ static void store_create(store_type *st_ptr)
     			    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
 			    (k_ptr->chance[3] && k_ptr->chance[3] < 3))
 				continue;
+			/* hack - also no low/mid DSMs */
+			if (k_ptr->tval == TV_DRAG_ARMOR &&
+			    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
+				continue;
 		}
 
 #if 0
@@ -1664,6 +1668,14 @@ static void store_create(store_type *st_ptr)
 
 		/* Attempt to carry the (known) item */
 		(void)store_carry(st_ptr, o_ptr);
+
+		/* Log occurances of special items */
+		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
+		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER)) {
+			char o_name[160];
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("%s: STORE_CARRY: %d, %s\n", showtime(), st_ptr->st_idx, o_name);
+		}
 
 		/* Definitely done */
 		break;
@@ -1764,7 +1776,7 @@ static void display_entry(int Ind, int pos)
 #endif
 
 	/* Describe an item in the home */
-	if (p_ptr->store_num == 7)
+	if (p_ptr->store_num == STORE_HOME)
 	{
 		maxwid = 75;
 
@@ -1908,7 +1920,7 @@ static void display_store(int Ind)
 	display_inventory(Ind);
 
 	/* The "Home" is special */
-	if (p_ptr->store_num == 7)	/* This shouldn't happen */
+	if (p_ptr->store_num == STORE_HOME)	/* This shouldn't happen */
 	{
 		/* Send the store info */
 //		Send_store_info(Ind, p_ptr->store_num, 0, st_ptr->stock_num);
@@ -2094,7 +2106,10 @@ void store_stole(int Ind, int item)
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
 
-	if (p_ptr->store_num == 7)
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
+
+	if (p_ptr->store_num == STORE_HOME)
 	{
 		msg_print(Ind, "You don't steal from your home!");
 		return;
@@ -2209,6 +2224,9 @@ void store_stole(int Ind, int item)
 	tcadd = 100;
 	tbest = object_value(Ind, o_ptr);/* Note- object_value_real would not take
 					    into account the discount of the item */
+	if (tbest < 1) tbest = 1; /* shops shouldn't offer items worth less,
+				     but maybe this object_value call returns <= 0,
+				     at least we had a panic save in ../tbest somewhere below */
 
 	if (tbest > 10000000) tbest = 10000000;
 	tccompare = 10;
@@ -2461,7 +2479,7 @@ void store_purchase(int Ind, int item, int amt)
 	}
 
 	if (p_ptr->store_num == STORE_HOME) /* in defines.h */
-	//if (p_ptr->store_num == 7)
+	//if (p_ptr->store_num == STORE_HOME)
 	{
 		home_purchase(Ind, item, amt);
 		return;
@@ -2490,7 +2508,7 @@ void store_purchase(int Ind, int item, int amt)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is empty.");
+		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
 	}
@@ -2504,7 +2522,7 @@ void store_purchase(int Ind, int item, int amt)
 	if (i > 12) i = 12;
 
 	/* Prompt */
-	if (p_ptr->store_num == 7)
+	if (p_ptr->store_num == STORE_HOME)
 	{
 		snprintf(out_val, sizeof(out_val), "Which item do you want to take? ");
 	}
@@ -2523,6 +2541,9 @@ void store_purchase(int Ind, int item, int amt)
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
+
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
 
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
 	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
@@ -2841,7 +2862,7 @@ void store_sell(int Ind, int item, int amt)
 		return;
 	}
 
-	if (p_ptr->store_num == 7)
+	if (p_ptr->store_num == STORE_HOME)
 	{
 		home_sell(Ind, item, amt);
 		return;
@@ -2863,6 +2884,10 @@ void store_sell(int Ind, int item, int amt)
 	/* Get the item (in the pack) */
 	if (item >= 0)
 	{
+		/* Sanity check - mikaelh */
+		if (item < 0 || item >= INVEN_TOTAL)
+			return;
+
 		o_ptr = &p_ptr->inventory[item];
 	}
 
@@ -2871,6 +2896,9 @@ void store_sell(int Ind, int item, int amt)
 	{
 		o_ptr = &o_list[0 - item];
 	}
+
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
 
 	/* Check for validity of sale */
 	if (!store_will_buy(Ind, o_ptr))
@@ -2917,14 +2945,14 @@ void store_sell(int Ind, int item, int amt)
 	{
 	if (!store_check_num(&town[gettown(Ind)].townstore[p_ptr->store_num], &sold_obj))
 	{
-		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
+		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
 		else msg_print(Ind, "I have not the room in my store to keep it.");
 		return;
 	}
 	}else{
 	if (!store_check_num(&town[0].townstore[p_ptr->store_num], &sold_obj))
 	{
-		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is full.");
+		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is full.");
 		else msg_print(Ind, "I have not the room in my store to keep it.");
 		return;
 	}
@@ -3197,7 +3225,7 @@ void store_examine(int Ind, int item)
 
 	char		o_name[160];
 
-	if (p_ptr->store_num == 7)
+	if (p_ptr->store_num == STORE_HOME)
 	{
 		home_examine(Ind, item);
 		return;
@@ -3220,7 +3248,7 @@ void store_examine(int Ind, int item)
 	/* Empty? */
 	if (st_ptr->stock_num <= 0)
 	{
-		if (p_ptr->store_num == 7) msg_print(Ind, "Your home is empty.");
+		if (p_ptr->store_num == STORE_HOME) msg_print(Ind, "Your home is empty.");
 		else msg_print(Ind, "I am currently out of stock.");
 		return;
 	}
@@ -3231,6 +3259,9 @@ void store_examine(int Ind, int item)
 
 	/* Get the actual item */
 	o_ptr = &st_ptr->stock[item];
+
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/
@@ -3367,7 +3398,7 @@ void do_cmd_store(int Ind)
 	}
 
 	/* Hack -- Ignore the home */
-	if (which == 7)	/* XXX It'll change */
+	if (which == STORE_HOME)	/* XXX It'll change */
 	{
 		/* msg_print(Ind, "The doors are locked."); */
 		return;
@@ -3429,6 +3460,8 @@ void do_cmd_store(int Ind)
 
 	break_cloaking(Ind);
 	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 	handle_stuff(Ind); /* update stealth/search display now */
 
 	/* Set the timer */
@@ -3505,7 +3538,7 @@ void store_shuffle(store_type *st_ptr)
 
 #if 0
 	/* Ignore home */
-	if (which == 7) return;
+	if (which == STORE_HOME) return;
 #endif
 
 	/* Make sure no one is in the store */
@@ -3591,7 +3624,7 @@ void store_maint(store_type *st_ptr)
 
 #if 0
 	/* Ignore home */
-	if (which == 7) return;
+	if (which == STORE_HOME) return;
 #endif
 
 	/* Make sure no one is in the store */
@@ -3799,6 +3832,12 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	//if (!store_attest_command(p_ptr->store_num, action)) return;
 	if (!store_attest_command(p_ptr->store_num, ba_info[action].action))
 		return;
+
+#if 0	/* Sanity checks - not possible since item could be
+	   either from player or from store inventory - C. Blue */
+	if (item < 0 || item >= st_ptr->stock_size) return;
+	if (!st_ptr->stock[item].tval) return;
+#endif
 
 	bldg_process_command(Ind, st_ptr, action, item, item2, amt, gold);
 }
@@ -4233,6 +4272,9 @@ void home_purchase(int Ind, int item, int amt)
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
 
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
+
 	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
 	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
 		msg_print(Ind, "You cannot take items of everlasting players!");
@@ -4413,6 +4455,9 @@ void home_examine(int Ind, int item)
 
 	/* Get the actual item */
 	o_ptr = &h_ptr->stock[item];
+
+	/* Check that it's a real item - mikaelh */
+	if (!o_ptr->tval) return;
 
 	/* Assume the player wants just one of them */
 	/*amt = 1;*/

@@ -465,6 +465,7 @@ extern void wiz_dark(int Ind);
 extern void mmove2(int *y, int *x, int y1, int x1, int y2, int x2);
 extern bool projectable(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
 extern bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range);
+extern bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range);
 extern void scatter(struct worldpos *wpos, int *yp, int *xp, int y, int x, int d, int m);
 extern bool is_quest(struct worldpos *wpos);
 extern void health_track(int Ind, int m_idx);
@@ -1060,6 +1061,7 @@ extern int newid(void);
 
 extern void scan_players(void);
 extern void erase_player_name(char *pname);
+extern void rename_player_name(char *pnames);
 extern void checkexpiry(int Ind, int days);
 extern void account_checkexpiry(int Ind);
 extern void party_check(int Ind);

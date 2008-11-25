@@ -11,7 +11,7 @@ function knowall(name)
 end
 
 -- Cures all maladies of a player.
-function cureall(name)
+function cure(name)
     local p, t
     p = ind(name)
     set_afraid(p, 0)
@@ -37,6 +37,8 @@ function cureall(name)
     t = players(p).mhp
     players(p).chp = t
     players(p).chp_frac = 0
+    t = players(p).mst
+    players(p).cst = t
 end
 
 -- Prepares a character for testing purposes.
@@ -81,6 +83,7 @@ function setlev(name, l)
     local p
     p = ind(name)
     players(p).lev = l
+    players(p).max_lev = l
     players(p).max_plv = l
     if l == 1 then
 	players(p).exp = 0
@@ -172,7 +175,7 @@ function status(name)
     end
 
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Index "..p..", id "..players(p).id..")")
-    msg_print(Ind, "HP: "..players(p).chp.." / "..players(p).mhp.."    SP: "..players(p).csp.." / "..players(p).msp.."    San: "..players(p).csane.." / "..players(p).msane)
+    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst)
     msg_print(Ind, "Base Spd: "..players(p).pspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
     msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv)
     msg_print(Ind, "Body: "..rs)
@@ -192,13 +195,14 @@ function resist(name)
     local p
     local susstr, susint, suswis, susdex, suscon, suschr
     p = ind(name)
-    msg_print(Ind, "\255UResistances for "..name.." (Index "..p..")")
+    msg_print(Ind, "\255UResistances for "..players(p).name.." (Index "..p..")")
     msg_print(Ind, "  \255bElec: "..players(p).resist_elec.."  \255wFrost: "..players(p).resist_cold.."  \255sAcid: "..players(p).resist_acid.."  \255rFire: "..players(p).resist_fire.."  \255gPoison: "..players(p).resist_pois.."  \255BWater: "..players(p).resist_water)
     msg_print(Ind, "  \255bELEC: "..players(p).immune_elec.."  \255wFROST: "..players(p).immune_cold.."  \255sACID: "..players(p).immune_acid.."  \255rFIRE: "..players(p).immune_fire.."  \255gPOISON: "..players(p).immune_poison.."  \255BWATER: "..players(p).immune_water)
 --.."\255W-  \255gNETHER: "..players(p).immune_neth)
 --    msg_print(Ind, "  \255belec: "..players(p).sensible_elec.."  \255wfrost: "..players(p).sensible_cold.."  \255sacid: "..players(p).sensible_acid.."  \255rfire:  "..players(p).sensible_fire.."  \255gpoison:  "..players(p).sensible_pois)
     msg_print(Ind, "  \255sNeth: "..players(p).resist_neth.."  \255vChaos: "..players(p).resist_chaos.."  \255vNexu: "..players(p).resist_nexus.."  \255oDise: "..players(p).resist_disen.."  \255uShards: "..players(p).resist_shard.."  \255ySound: "..players(p).resist_sound)
-    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time)
+--    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255vRM \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255v"..players(p).regen_mana.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
+    msg_print(Ind, "  \255DDark: "..players(p).resist_dark.."  \255WLight: "..players(p).resist_lite.."  \255vMana: "..players(p).resist_mana.."  \255BTime: "..players(p).resist_time.."  \255rRH \255rDH \255vDM \255oDX \255w: \255r"..players(p).regenerate.." \255r"..players(p).drain_life.." \255v"..players(p).drain_mana.." \255o"..players(p).drain_exp)
 --.."  \255RPlasma: "..players(p).resist_plasma)
     msg_print(Ind, "  \255sFear: "..players(p).resist_fear.."  \255BConfusion: "..players(p).resist_conf.."  \255bFeather Falling: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).resist_blind)
 --    msg_print(Ind, "  \255yReflect: "..players(p).reflect.."  \255uNo-cut: "..players(p).no_cut.."  \255oRes.Tele.: "..players(p).feather_fall.."  \255rFA:  "..players(p).free_act.."  \255gBlind: "..players(p).res_tele)
@@ -252,13 +256,121 @@ function attr(name)
     else
 	achr = "\255y"
     end
-    astr = astr.."ST:\255s"..players(p).stat_use[1].."/"..players(p).stat_top[1]
-    aint = aint.." IN:\255s"..players(p).stat_use[2].."/"..players(p).stat_top[2]
-    awis = awis.." WI:\255s"..players(p).stat_use[3].."/"..players(p).stat_top[3]
-    adex = adex.." DE:\255s"..players(p).stat_use[4].."/"..players(p).stat_top[4]
-    acon = acon.." CO:\255s"..players(p).stat_use[5].."/"..players(p).stat_top[5]
-    achr = achr.." CH:\255s"..players(p).stat_use[6].."/"..players(p).stat_top[6]
+    astr = astr.."S:\255s"..players(p).stat_use[1].."/"..players(p).stat_top[1]
+    aint = aint.." I:\255s"..players(p).stat_use[2].."/"..players(p).stat_top[2]
+    awis = awis.." W:\255s"..players(p).stat_use[3].."/"..players(p).stat_top[3]
+    adex = adex.." D:\255s"..players(p).stat_use[4].."/"..players(p).stat_top[4]
+    acon = acon.." C:\255s"..players(p).stat_use[5].."/"..players(p).stat_top[5]
+    achr = achr.." H:\255s"..players(p).stat_use[6].."/"..players(p).stat_top[6]
     msg_print(Ind, astr..aint..awis..adex..acon..achr)
+end
+
+-- "Encumberments" displays encumberment details of a player
+function encum(name)
+    local p = ind(name)
+    combo = " "
+    if players(p).cumber_armor == TRUE then
+	ca = "\255u("
+    else
+	ca = " "
+    end
+    if players(p).heavy_wield == TRUE then
+	hw = "\255r/"
+    else
+	hw = " "
+    end
+    if players(p).icky_wield == TRUE then
+	iw = "\255o\\"
+    else
+	iw = " "
+    end
+    if players(p).awkward_wield == TRUE then
+	aw = "\255y/"
+    else
+	aw = " "
+    end
+    if players(p).easy_wield == TRUE then
+	ew = "\255g|"
+    else
+	ew = " "
+    end
+    if players(p).heavy_shield == TRUE then
+	hs = "\255r["
+    else
+	hs = " "
+    end
+    if players(p).heavy_shoot == TRUE then
+	hst = "\255r}"
+    else
+	hst = " "
+    end
+    if players(p).awkward_shoot == TRUE then
+	as = "\255y}"
+    else
+	as = " "
+    end
+    if players(p).cumber_weight == TRUE then
+	cw = "\255RF"
+    else
+	cw = " "
+    end
+    if players(p).rogue_heavyarmor == TRUE then
+	rh = "\255y("
+	combo = "\255y("
+    else
+	rh = " "
+    end
+    if players(p).monk_heavyarmor == TRUE then
+	mh = "\255y("
+	combo = "\255y("
+    else
+	mh = " "
+    end
+    if players(p).awkward_armor == TRUE then
+	aa = "\255v("
+    else
+	aa = " "
+    end
+    if players(p).cumber_glove == TRUE then
+	cg = "\255v]"
+    else
+	cg = " "
+    end
+
+--[[
+--also add fly,climb,swim,invis?
+--no need i think (also not implemented in player.pkg)
+    if players(p).fly == TRUE then
+	fly = "FLY "
+    else
+	fly = "    "
+    end
+    if players(p).climb == TRUE then
+	fly = "CLM "
+    else
+	fly = "    "
+    end
+    if players(p).swim == TRUE then
+	fly = "SWM "
+    else
+	fly = "    "
+    end
+    if players(p).invis == TRUE then
+	fly = "INV "
+    else
+	fly = "    "
+    end
+
+    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg.."  \255UExtra: "..fly..climb..swim..inv)
+]]
+
+    if players(p).black_breath == TRUE then
+	bb = " \255DBlack Breath"
+    else
+	bb = "             "
+    end
+
+    msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
 end
 
 -- "Detail" - Displays status(name) and resist(name)
@@ -267,6 +379,7 @@ function det(name)
     status(name)
     resist(name)
     attr(name)
+    encum(name)
     msg_print(Ind, " ".." ")
 end
 

@@ -118,6 +118,11 @@ function init()
 	pern_dofile(Ind, "jir.lua")
 	pern_dofile(Ind, "it.lua")
 	pern_dofile(Ind, "mikaelh.lua")
+
+	pern_dofile(Ind, "custom.lua")
+	pern_dofile(Ind, "player-info.lua")
+
+--	how about adding all the updatable luas here? we'd just need to include an erase-all function for schools etc.
 end
 
 -- get all the skills (cept antimagic)

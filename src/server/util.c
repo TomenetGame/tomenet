@@ -1202,7 +1202,7 @@ bool suppress_message = FALSE;
 
 void msg_print(int Ind, cptr msg)
 {
-	int line_len = 72 + 1; /* maximum length of a text line to be displayed
+	int line_len = 79 + 1; /* maximum length of a text line to be displayed
 			      (72, or client produces garbage sometimes;
 			      for example Itangast getting slain by a legendary adventurer of name length 12) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
@@ -1813,10 +1813,10 @@ void toggle_shoot_till_kill(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	if (p_ptr->shoot_till_kill) {
-		msg_print(Ind, "\377wShoot-till-kill mode now off.");
+		msg_print(Ind, "\377wFire-till-kill mode now off.");
 		p_ptr->shooting_till_kill = FALSE;
 	} else {
-		msg_print(Ind, "\377wShoot-till-kill mode now on!");
+		msg_print(Ind, "\377wFire-till-kill mode now on!");
 	}
 	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
 s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");

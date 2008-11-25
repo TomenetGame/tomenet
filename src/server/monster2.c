@@ -2792,9 +2792,9 @@ if (!summon_override_check_all) {
 		   initialization (cave_gen in generate.c) ? */
 		if (!cave_set_quietly) {
 			/* No, it's a live spawn! (!cave_set_quietly) */
-#if DEBUG_LEVEL > 2
+ #if DEBUG_LEVEL > 2
 		        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
-#endif
+ #endif
 			/* Prevent that. */
 			return (FALSE);
 		} else {
@@ -2807,7 +2807,7 @@ if (!summon_override_check_all) {
 			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
 			{
 			        /* log */
-#if DEBUG_LEVEL > 2
+ #if DEBUG_LEVEL > 2
 				if (cave_set_quietly) {
 					if (p_ptr->total_winner) {
 			    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
@@ -2821,7 +2821,7 @@ if (!summon_override_check_all) {
 					        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
 					}
 				}
-#endif
+ #endif
 				return (FALSE);
 			}
 		}
@@ -3202,14 +3202,12 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 862) {
 		dun_level *l_ptr;
 		s_printf("Morgoth was created on %d\n", getlevel(wpos));
-//		check_Morgoth(); /* was he allowed to spawn!? */
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= LF1_NO_GHOST;
 #endif
 #ifdef MORGOTH_DANGEROUS_LEVEL
 		/* make it even harder? */
-//		l_ptr->flags1 |= LF1_NO_DESTROY;
 		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 #endif
 		/* Page all dungeon masters to notify them of a possible Morgoth-fight >:) - C. Blue */
@@ -3220,6 +3218,8 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 				continue;
 			if (Players[Ind]->admin_dm && !(Players[Ind]->afk && !streq(Players[Ind]->afk_msg, "watch"))) Players[Ind]->paging = 4;
 		}
+		/* if it was a live spawn, adjust his power according to amount of players on his floor */
+		if (!cave_set_quietly) check_Morgoth();
 	}
 	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
 	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
@@ -3497,15 +3497,15 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 #ifdef HALLOWEEN
 	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
  #ifndef RPG_SERVER
-	if (!great_pumpkin_timer && (l < 40) && (wpos->wz != 0)) {
+	if ((great_pumpkin_timer == 0) && (l < 40) && (wpos->wz != 0)) {
   #if 0
 		r_idx = 1086 + rand_int(2);
   #else
 		r_idx = 1088;//3k HP, smallest version
 		if (magik(25)) r_idx = 1087; /* sometimes tougher */
-		if (l > 20) r_idx = 1087;//6k HP
-		if (magik(25)) r_idx = 1088; /* sometimes tougher */
-		if (l > 33) r_idx = 1088;//10k HP
+		if (l > 10) r_idx = 1087;//6k HP
+		if (magik(25)) r_idx = 1086; /* sometimes tougher */
+		if (l > 20) r_idx = 1086;//10k HP
   #endif
  #else
 	if ((great_pumpkin_timer == 0) && (l < 50) && (wpos->wz != 0) &&
@@ -3515,15 +3515,15 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
   #else
 		r_idx = 1088;//3k HP, smallest version
 		if (magik(15)) r_idx = 1087; /* sometimes tougher */
-		if (l > 30) r_idx = 1087;//6k HP
-		if (magik(15)) r_idx = 1088; /* sometimes tougher */
-		if (l > 40) r_idx = 1088;//10k HP
+		if (l > 15) r_idx = 1087;//6k HP
+		if (magik(15)) r_idx = 1086; /* sometimes tougher */
+		if (l > 30) r_idx = 1086;//10k HP
   #endif
  #endif
 		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
 //			great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
 			/* log */
-			s_printf("%s Generated Great Pumpkin on %d,%d,%d (lev %d)\n", showtime(), wpos->wx, wpos->wy, wpos->wz, l);
+			s_printf("%s Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, l);
 			great_pumpkin_timer = -1; /* put generation on hold */
 			check_Pumpkin(); /* recall high-level players off this floor! */
 			return (TRUE);
@@ -4311,6 +4311,10 @@ void message_pain(int Ind, int m_idx, int dam)
         monster_race            *r_ptr = race_inf(m_ptr);
 
 	char                    m_name[80];
+
+
+	/* some monsters don't react at all (Target Dummy) */
+	if (r_ptr->flags7 & RF7_NEVER_ACT) return;
 
 
 	/* Get the monster name */

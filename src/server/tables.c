@@ -1542,6 +1542,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 50,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1573,6 +1578,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -1632,6 +1642,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1677,6 +1692,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1720,6 +1740,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1752,6 +1777,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 60,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -1804,6 +1834,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1853,6 +1888,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1889,6 +1929,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -1950,6 +1995,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
 
@@ -1971,6 +2021,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
 		},
         },
@@ -2006,6 +2061,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -2067,6 +2127,11 @@ player_race race_info[MAX_RACES] =
                                 '+', 0,
                                 '+', 40,
                         },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
+                        },
                 },
         },
         {
@@ -2110,6 +2175,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -2158,6 +2228,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -2265,6 +2340,11 @@ player_race race_info[MAX_RACES] =
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },
@@ -2589,6 +2669,11 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
                                 SKILL_CLIMB,
                                 '+', 0,
                                 '+', 40,
+                        },
+                        {
+                                SKILL_SHOOT_TILL_KILL,
+                                '+', 1000,
+                                '+', 0,
                         },
                 },
         },

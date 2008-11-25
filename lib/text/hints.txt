@@ -19,4 +19,4 @@ If you die and want to keep your items, just ask other players for help!
 Keep in mind that true artifacts cannot be dropped in houses but will vanish!
 Press shift+G to spend skill points you gain on each level-up!
 Type /que in chat to get a random kill quest!
-If you die and want to keep your items, ask other players for help!
+You can also bind macros to SHIFT+key or CTRL+key, for multiple use of a key.

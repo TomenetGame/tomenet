@@ -837,7 +837,7 @@ static bool inn_comm(int Ind, int cmd)
 		case BACT_RUMORS: /* Listen for rumors */
 		{
 			char rumor[80];
-
+#if 0 /* why this RNG stuff? also, it doesn't work (always same val) */
 			/* Set the RNG seed. */
 //			Rand_value = turn / (HOUR * 10);
 			Rand_value = time(NULL) / 600;
@@ -850,7 +850,11 @@ static bool inn_comm(int Ind, int cmd)
 
 			/* Restore RNG */
 			Rand_quick = FALSE;
-
+#else
+			get_rnd_line("rumors.txt", 0, rumor);
+			bracer_ff(rumor);	/* colour it */
+			msg_format(Ind, "%s", rumor);
+#endif
 			break;
 		}
 	}
@@ -1014,72 +1018,82 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
 
 	if (f1 & (TR1_SLAY_ANIMAL))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 2, "Animals:",
-		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_EVIL))
-	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 2, "Evil:",
-		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_UNDEAD))
-	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Undead:",
-		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_DEMON))
-	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Demons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Animals:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_ORC))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Orcs:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Orcs:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_TROLL))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Trolls:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Trolls:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_SLAY_GIANT))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Giants:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Giants:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
-	if (f1 & (TR1_SLAY_DRAGON))
+	if (f1 & (TR1_SLAY_EVIL))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Dragons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, "Evil:",
+		                    f1, f2, f3, TERM_YELLOW);
+	}
+	if (f1 & (TR1_KILL_UNDEAD))
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Undead:",
+		                    f1, f2, f3, TERM_YELLOW);
+	}
+	else if (f1 & (TR1_SLAY_UNDEAD))
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Undead:",
+		                    f1, f2, f3, TERM_YELLOW);
+	}
+	if (f1 & (TR1_KILL_DEMON))
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Demons:",
+		                    f1, f2, f3, TERM_YELLOW);
+	}
+	else if (f1 & (TR1_SLAY_DEMON))
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_KILL_DRAGON))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 5, "Dragons:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, "Dragons:",
+		                    f1, f2, f3, TERM_YELLOW);
+	}
+	else if (f1 & (TR1_SLAY_DRAGON))
+	{
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
 	}
 	if (f1 & (TR1_BRAND_ACID))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Acid:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Acid:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_ELEC))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Elec:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Elec:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_FIRE))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Fire:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Fire:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_COLD))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Cold:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Cold:",
 		                    f1, f2, f3, TERM_RED);
 	}
 	if (f1 & (TR1_BRAND_POIS))
 	{
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, 3, "Poison:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, "Poison:",
 		                    f1, f2, f3, TERM_RED);
 	}
 }
@@ -1759,22 +1773,14 @@ bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item,
 {
 	player_type *p_ptr = Players[Ind];
 	//object_type *q_ptr, forge;
-
 //	store_action_type *ba_ptr = &ba_info[st_info[s_ptr->st_idx].actions[i]];
 	store_action_type *ba_ptr = &ba_info[action];
-
 	int bact = ba_ptr->action;
-
 	int bcost;
-
 	bool paid = FALSE;
-
 	bool set_reward = FALSE;
-
 	bool recreate = FALSE;
-
 //	int amt;
-
 
 	if (is_state(Ind, s_ptr, STORE_LIKED))
 	{

@@ -1057,7 +1057,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOW, SV_LONG_BOW, 0 },
-		{ 255, 255, 0 },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 	},
 
 	{
@@ -1102,7 +1102,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_SOFT_ARMOR, SV_ROBE, 0 },
 		{ TV_AMULET, SV_AMULET_INFRA, 3 },
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
-		{ 255, 255, 0 },
+		{ TV_SWORD, SV_SHADOW_BLADE, 0 }, /* just a placeholder! */
 	},
 #ifdef CLASS_RUNEMASTER
 	{
@@ -1186,7 +1186,8 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->number = 1;
 	do_admin_outfit();
 
-	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
+//	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_FEANORIAN));
+	invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_DWARVEN)); /* more subtile ;) */
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
@@ -1372,7 +1373,7 @@ static void player_outfit(int Ind)
 				case RACE_DWARF:
 					tv = TV_AXE; sv = SV_CLEAVER; break;
 				case RACE_DRIDER:
-					tv = TV_POLEARM; sv = SV_BROAD_SPEAR; break;
+					tv = TV_POLEARM; sv = SV_RHOMPHAIA; break;
 				} break;
 			case SV_LONG_SWORD:/* ranger */
 				switch (p_ptr->prace) {
@@ -1393,6 +1394,15 @@ static void player_outfit(int Ind)
 					tv = TV_AXE; sv = SV_HATCHET; break;
 				case RACE_DRIDER:
 					tv = TV_POLEARM; sv = SV_SPEAR; break;
+				} break;
+			case SV_SHADOW_BLADE:/* shaman, shadow blade is just a placeholder */
+				tv = TV_AXE; sv = SV_HATCHET;
+				switch (p_ptr->prace) {
+				case RACE_HALF_TROLL:
+				case RACE_ENT:
+					tv = TV_BLUNT; sv = SV_QUARTERSTAFF; break;
+				case RACE_DRIDER:
+					tv = TV_POLEARM; sv = SV_BROAD_SPEAR; break;
 				} break;
 			}
 		}
@@ -1488,7 +1498,8 @@ static void player_outfit(int Ind)
 #endif
 
 	/* Hack -- Give the player newbie guide Parchment */
-	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWBIE));
+//	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWBIE));
+	invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_NEWS));
 	o_ptr->number = 1;
 	do_player_outfit();
 }
@@ -2024,6 +2035,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	strcpy(p_ptr->name, name);
 	p_ptr->conn = conn;
 
+	/* Verify his name and create a savefile name */
+	if (!process_player_name(Ind, TRUE)) return FALSE;
+
 	c_acc = GetAccount(accname, NULL, FALSE);
 	if (c_acc) {
 		p_ptr->account = c_acc->id;
@@ -2045,9 +2059,6 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
 		return FALSE;
 	}
-
-	/* Verify his name and create a savefile name */
-	if (!process_player_name(Ind, TRUE)) return FALSE;
 
 	/* Attempt to load from a savefile */
 	character_loaded = FALSE;
