@@ -30,7 +30,8 @@ typedef unsigned int u32b;
 #define SKILL_XBOW              10
 #define SKILL_BACKSTAB          11
 #define SKILL_MAGIC             12
-#define SKILL_CASTSPEED         13
+//#define SKILL_CASTSPEED         13
+#define SKILL_SHOOT_TILL_KILL   13
 #define SKILL_SORCERY           14
 #define SKILL_MAGERY            15
 #define SKILL_MIMIC             16
