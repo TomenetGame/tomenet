@@ -1693,11 +1693,16 @@ void cmd_browse(void)
 	int item;
 	object_type *o_ptr;
 
+/* commented out because first, admins are usually ghosts;
+   second, we might want a 'ghost' tome or something later,
+   kind of to bring back 'undead powers' :) - C. Blue */
+#if 0
 	if (p_ptr->ghost)
 	{
 		show_browse(NULL);
 		return;
 	}
+#endif
 
 	item_tester_hook = item_tester_browsable;
 
