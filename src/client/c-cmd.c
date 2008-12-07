@@ -1837,7 +1837,7 @@ void cmd_purchase_house(void)
 		switch(i){
 			case '1':
 				/* Confirm */
-				if (get_check("Are you sure you really want to sell the house?")) {
+				if (get_check("Are you sure you really want to buy or sell the house?")) {
 					/* Send it */
 					Send_purchase_house(dir);
 					i=ESCAPE;
