@@ -245,6 +245,9 @@ extern char chat_mode;
 /* Protocol to be used for connecting a server */
 extern s32b server_protocol;
 
+/* Server version */
+extern version_type server_version;
+
 /* Client fps used for polling keyboard input etc */
 extern int cfg_client_fps;
 

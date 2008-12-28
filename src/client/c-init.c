@@ -463,6 +463,26 @@ void client_init(char *argv1, bool skip)
 		/* Hack -- set the login port correctly */
 		login_port = (int) temp;
 
+		/* Hack - Receive server version - mikaelh */
+		if (char_creation_flags & 0x02)
+		{
+			Packet_scanf(&ibuf, "%d%d%d%d%d%d", &server_version.major, &server_version.minor,
+			    &server_version.patch, &server_version.extra, &server_version.branch, &server_version.build);
+
+			/* Remove the flag */
+			char_creation_flags ^= 0x02;
+		}
+		else
+		{
+			/* Assume that the server is old */
+			server_version.major = VERSION_MAJOR;
+			server_version.minor = VERSION_MINOR;
+			server_version.patch = VERSION_PATCH;
+			server_version.extra = 0;
+			server_version.branch = 0;
+			server_version.build = 0;
+		}
+
 		break;
 	}
 
