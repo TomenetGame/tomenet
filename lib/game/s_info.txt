@@ -109,7 +109,8 @@ F:HIDDEN
 N:14:Sorcery
 #D:Ability to cast sorcery spells, beware it reduces hp
 D:Ability to use all the magic schools as if their skill was sorcery
-D:But the price to channel that much magic is your health
+D:(You won't get any of the schools' fixed bonus abilities though.)
+#D:But the price to channel that much magic is your health
 #A:1:Cast sorcery spell
 #I:1000:92
 #F:MKEY_SPELL | MKEY_TVAL
