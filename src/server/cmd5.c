@@ -1508,12 +1508,12 @@ void do_mimic_change(int Ind, int r_idx, bool force)
 		msg_format(Ind, "You polymorph into a %s!", r_info[r_idx].name + r_name);
 		msg_format_near(Ind, "%s polymorphs into a %s!", p_ptr->name, r_info[r_idx].name + r_name);
 	} else {
-		msg_format(Ind, "You polymorph back to normal form.");
+		msg_print(Ind, "You polymorph back to normal form.");
 		msg_format_near(Ind, "%s polymorphs back to normal form.", p_ptr->name);
 	}
 
-	break_cloaking(Ind); /* can't happen, adding it anyways :-p */
-	break_shadow_running(Ind); /* also can't happen..wth */
+	break_cloaking(Ind, 0); /* can happen, if vampire rogue! */
+	break_shadow_running(Ind); /* can happen, if vampire rogue! */
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
@@ -1544,6 +1544,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 	int j, k;
+	bool using_free_mimic = FALSE;
 
 	/* should it..? */
 //	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
@@ -1673,42 +1674,52 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			msg_print(Ind, "That form does not exist in the realm!");
 			return;
 		}
-		if (k == j){
+		else if (k == j){
 			msg_print(Ind, "You are already using that form!");
 			return;
 		}
-		if (r_info[j].flags1 & RF1_UNIQUE){
+		else if (r_info[j].flags1 & RF1_UNIQUE){
 			msg_print(Ind, "That form is unique!");
 			return;
 		}
-		if (p_ptr->r_killed[j] < r_info[j].level){
-			msg_print(Ind, "You have not yet learned that form!");
-			return;
-		};
-		if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)){
-			msg_print(Ind, "You are not powerful enough to change into that form!");
-			return;
+		else if (j && p_ptr->r_killed[j] < 1){
+			if (!p_ptr->free_mimic) {
+				msg_print(Ind, "You have no experience with that form at all!");
+				return;
+			} else {
+				p_ptr->free_mimic--;
+				using_free_mimic = TRUE;
+			}
 		}
-		if (p_ptr->r_killed[j] < 1 && j){
-			msg_print(Ind, "You have no experience with that form at all!");
-			return;
+		else if (p_ptr->r_killed[j] < r_info[j].level){
+			if (!p_ptr->free_mimic) {
+				msg_print(Ind, "You have not yet learned that form!");
+				return;
+			} else {
+				p_ptr->free_mimic--;
+				using_free_mimic = TRUE;
+			}
 		}
 		if (strlen(r_info[j].name + r_name) <= 1){	/* <- ??? */
 			msg_print(Ind, "You cannot use that form!");
 			return;
 		}
 //		if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
-		if (!mon_allowed_chance(&r_info[j])){	/* ! - C. Blue */
+		else if (!mon_allowed_chance(&r_info[j])){	/* ! - C. Blue */
 			msg_print(Ind, "You cannot use that form!");
 			return;
 		}
-		if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))){
+		else if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))){
 			msg_print(Ind, "You cannot use that form!");
+			return;
+		}
+		else if (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)){
+			msg_print(Ind, "You are not powerful enough to change into that form!");
 			return;
 		}
 
 		/* Ok we found */
-		do_mimic_change(Ind, j, FALSE);
+		do_mimic_change(Ind, j, using_free_mimic);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 	    }
 	} else {
@@ -1754,7 +1765,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 		}
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);

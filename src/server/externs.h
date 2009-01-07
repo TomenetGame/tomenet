@@ -103,7 +103,7 @@ extern byte adj_dex_safe[];
 extern byte adj_con_fix[];
 extern byte adj_con_mhp[];
 extern byte blows_table[12][12];
-extern owner_type owners[MAX_STORES][MAX_OWNERS];
+extern owner_type owners[MAX_STORES][MAX_STORE_OWNERS];
 extern byte extract_energy[256];
 extern byte level_speeds[501];
 extern s32b player_exp[PY_MAX_LEVEL + 1];
@@ -168,6 +168,7 @@ extern bool create_up_stair;
 extern bool create_down_stair;
 extern s16b num_repro;
 extern s16b object_level;
+extern s16b object_discount;
 extern s16b monster_level;
 extern s16b monster_level_min;
 extern byte level_up_x(struct worldpos *wpos);
@@ -506,6 +507,7 @@ extern int apply_parry_chance(player_type *p_ptr, int n);
 /* cmd2.c */
 extern cptr get_house_owner(struct c_special *cs_ptr);
 extern bool access_door(int Ind, struct dna_type *dna);
+extern int access_door_colour(int Ind, struct dna_type *dna);
 extern void do_cmd_own(int Ind);
 extern void do_cmd_go_up(int Ind);
 extern void do_cmd_go_down(int Ind);
@@ -535,7 +537,7 @@ extern int get_shooter_mult(object_type *o_ptr);
 extern bool get_something_tval(int Ind, int tval, int *ip);
 extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might);
 extern bool retaliating_cmd;
-extern void break_cloaking(int Ind);
+extern void break_cloaking(int Ind, int discovered);
 extern void break_shadow_running(int Ind);
 extern void stop_cloaking(int Ind);
 extern void stop_precision(int Ind);
@@ -801,6 +803,7 @@ extern bool alloc_monster(struct worldpos *wpos, int dis, int slp);
 extern bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning);
 extern bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char num);
 extern bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char num);
+extern int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone);
 extern bool multiply_monster(int m_idx);
 extern void update_smart_learn(int m_idx, int what);
 extern void setup_monsters(void);
@@ -815,7 +818,7 @@ extern void set_mon_num2_hook(worldpos *wpos, int y, int x);
 extern void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr);
 extern void player_desc(int Ind, char *desc, int Ind2, int mode);
 extern int monster_check_experience(int m_idx, bool silent);
-
+extern bool mego_ok(int r_idx, int ego);
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h
@@ -908,6 +911,7 @@ extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);
 extern char *showtime(void);
 extern void init_players(void);
+extern int is_inactive(int Ind);
 
 
 
@@ -1023,6 +1027,7 @@ extern int party_create_ironteam(int Ind, cptr name);
 extern int party_add(int adder, cptr name);
 extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind);
+extern void party_msg(int party_id, cptr msg);
 extern void party_msg_format(int party_id, cptr fmt, ...);
 extern void floor_msg_format(struct worldpos *wpos, cptr fmt, ...);
 extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc);
@@ -1030,6 +1035,7 @@ extern int guild_create(int Ind, cptr name);
 extern int guild_add(int adder, cptr name);
 extern int guild_remove(int remover, cptr name);
 extern void guild_leave(int Ind);
+extern void guild_msg(int guild_id, cptr msg);
 extern void guild_msg_format(int guild_id, cptr fmt, ...);
 extern bool add_hostility(int Ind, cptr name);
 extern bool remove_hostility(int Ind, cptr name);
@@ -1150,7 +1156,7 @@ extern void golem_creation(int Ind, int max);
 extern char pet_creation(int Ind);
 #endif
 extern bool hp_player(int Ind, int num);
-extern bool hp_player_quiet(int Ind, int num);
+extern bool hp_player_quiet(int Ind, int num, bool autoeffect);
 extern void warding_glyph(int Ind);
 extern void flash_bomb(int Ind);
 extern bool do_dec_stat(int Ind, int stat, int mode);
@@ -1269,6 +1275,9 @@ extern void wizard_lock(int Ind, int dir);
 
 
 /* store.c */
+extern int store_debug_mode;
+extern void store_debug_stock();
+
 extern void alloc_stores(int townval);
 extern void dealloc_stores(int townval);
 extern void store_purchase(int Ind, int item, int amt);
@@ -1321,6 +1330,7 @@ extern void toggle_shoot_till_kill(int Ind);
 extern bool show_floor_feeling(int Ind);
 extern void msg_admin(cptr fmt, ...);
 extern int name_lookup_loose(int Ind, cptr name, u16b party);
+extern int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 extern errr path_parse(char *buf, int max, cptr file);
 extern errr path_temp(char *buf, int max);
 extern FILE *my_fopen(cptr file, cptr mode);
@@ -1350,6 +1360,7 @@ extern s16b quark_add(cptr str);
 extern bool check_guard_inscription( s16b quark, char what);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
+extern void msg_admins(int Ind, cptr msg);
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_format_near(int Ind, cptr fmt, ...);
@@ -1384,6 +1395,10 @@ extern void player_list_free(player_list_type *list);
 
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern void my_memfrob(void *s, int n);
+
+extern cptr compat_pmode(int Ind1, int Ind2);
+extern cptr compat_pomode(int Ind, object_type *o_ptr);
+extern cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr);
 
 
 /* xtra1.c */
@@ -1680,6 +1695,8 @@ extern global_event_type global_event[MAX_GLOBAL_EVENTS];
 extern int sector00separation, ge_training_tower; /* see variable.c */
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
+extern u32b achievement_buffer_ID[128];
+extern int achievement_buffer_deed[128];
 
 /* for temporary disabling all validity checks when a dungeon master/wizard summons something - C. Blue */
 extern bool summon_override_check_all;

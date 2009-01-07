@@ -102,8 +102,10 @@
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 {
 	int i,j;
+#if 0 /* why should this be enabled, hmm */
 	for (i = 0; i < 128; i++)
 		if (ge_contender_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
+#endif
 	for (i = 0; i < 128; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
 	if (i == 128) return; /* no free buffer entries anymore, sorry! */
@@ -121,6 +123,29 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 			break;
 		}
 	ge_contender_buffer_ID[i] = 0; /* didn't find any event where player participated */
+}
+
+static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievement)
+{
+	int i;
+#if 0 /* why should this be enabled, hmm */
+	for (i = 0; i < 128; i++)
+		if (achievement_buffer_ID[i] == p_ptr->account) return; /* player already has a buffer entry */
+#endif
+	for (i = 0; i < 128; i++)
+		if (achievement_buffer_ID[i] == 0) break;
+	if (i == 128) return; /* no free buffer entries anymore, sorry! */
+	achievement_buffer_ID[i] = p_ptr->account;
+	switch (achievement) {
+	case ACHV_PVP_TOP:
+		achievement_buffer_deed[i] = SV_DEED_PVP_TOP;
+		break;
+	case ACHV_PVP_MASS:
+		achievement_buffer_deed[i] = SV_DEED_PVP_MASS;
+		break;
+	default:
+		break;
+	}
 }
 
 /*
@@ -1182,7 +1207,7 @@ bool set_tim_wraith(int Ind, int v)
 			if ((zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) ||
 			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
 			{
-				msg_format(Ind, "You feel different for a moment");
+				msg_print(Ind, "You feel different for a moment");
 				v=0;
 			}
 			else{
@@ -1373,7 +1398,7 @@ bool set_confused(int Ind, int v)
 			notice = TRUE;
 		}
 
-		break_cloaking(Ind);
+		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
@@ -2232,7 +2257,7 @@ bool set_martyr(int Ind, int v)
 		if (!p_ptr->martyr)
 		{
 			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
-			hp_player_quiet(Ind, 5000); /* fully heal */
+			hp_player_quiet(Ind, 5000, FALSE); /* fully heal */
 			p_ptr->martyr_timeout = 1000;
 			notice = TRUE;
 		}
@@ -3587,7 +3612,7 @@ void check_experience(int Ind)
 		char str[160];
 		/* Message */
 		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
-		
+
 		/* Introduce newly learned abilities (that depend on char level) */
 		/* those that depend on a race */
 		switch (p_ptr->prace) {
@@ -3926,6 +3951,21 @@ void check_experience(int Ind)
 		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\377G* You can't gain more levels until you defeat Morgoth, Lord of Darkness! *");
 #endif
 
+		/* pvp mode cant go higher, but receives a reward maybe */
+		if(p_ptr->mode & MODE_PVP) {
+			if (get_skill(p_ptr, SKILL_MIMIC) && !p_ptr->pclass == CLASS_DRUID
+			    && !p_ptr->prace == RACE_VAMPIRE) {
+				msg_print(Ind, "\377G* You gain one free mimicry transformation of your choice! *");
+				p_ptr->free_mimic = 1;
+			}
+			if(p_ptr->lev == MAX_PVP_LEVEL) {
+				msg_print(Ind, "\377G* You have reached the highest level available to PvP characters! *");
+				msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
+				msg_print(Ind, "\377G*   on the next character you log in with. *");
+				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_TOP);
+			}
+		}
+
 		snprintf(str, 160, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
@@ -3994,6 +4034,27 @@ return;
 		amount = 21240000 - p_ptr->exp;
 	}
 #endif
+
+	/* PvP-mode players have a level limit */
+	if (p_ptr->mode & MODE_PVP) {
+#ifndef ALT_EXPRATIO
+	        if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+    	                                       (s64b)p_ptr->expfact / 100L))) {
+			if (p_ptr->exp + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+            	                               (s64b)p_ptr->expfact / 100L)))
+        			return;
+			amount = ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+			amount--;
+		}		
+#else
+    		if (p_ptr->exp + amount + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1])) {
+			if (p_ptr->exp + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1]))
+        			return;
+			amount = ((s64b)player_exp[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
+			amount--;
+		}		
+#endif
+	}
 
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
 	{
@@ -4202,7 +4263,7 @@ void monster_death(int Ind, int m_idx)
 	int a_idx, chance, I_kind;
 	artifact_type *a_ptr;
 
-	bool henc_cheezed = FALSE;
+	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	u32b resf_tmp = RESF_NONE;
 
 
@@ -4240,6 +4301,7 @@ void monster_death(int Ind, int m_idx)
 	    wpos->wz == wild_info[wpos->wy][wpos->wx].tower->maxdepth && wpos->wz > 0) { /* are we in town and in a tower and on top floor? */
 		monster_desc(0, m_name, m_idx, 0x00);
 		msg_broadcast(0, format("\377S** %s has defeated %s! **", p_ptr->name, m_name));
+		s_printf("EVENT_RESULT: %s has defeated %s.\n", p_ptr->name, m_name);
 	}
  
 	/* get monster name for damage deal description */
@@ -4251,47 +4313,18 @@ void monster_death(int Ind, int m_idx)
 	/* let everyone know, so they are prepared.. >:) */
 	if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
 		msg_broadcast(0, format("\377o%s has defeated a tasty halloween spirit!", p_ptr->name));
+		s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
 		great_pumpkin_timer = 15 + rand_int(45);
 	}
 #endif
 
 
-	/* PernAngband additions */
-
-	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
-	if (strstr((r_name + r_ptr->name),"Stormbringer") && !henc_cheezed)
-	{
-		/* Get local object */
-		qq_ptr = &forge;
-
-		/* Prepare to make the Stormbringer */
-		invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
-
-		/* Megahack -- specify the ego */
-		qq_ptr->name2 = EGO_STORMBRINGER;
-
-		/* Piece together a 32-bit random seed */
-		qq_ptr->name3 = rand_int(0xFFFF) << 16;
-		qq_ptr->name3 += rand_int(0xFFFF);
-
-		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
-		qq_ptr->level = 0;
-
-		qq_ptr->ident |= ID_CURSED;
-
-		/* hack for a good result */
-		qq_ptr->to_h = 17 + rand_int(14);
-		qq_ptr->to_d = 17 + rand_int(14);
-
-		/* Drop it in the dungeon */
-		drop_near(qq_ptr, -1, wpos, y, x);
-	}
 
 	/*
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
 	 * spawn another in the fallen one's place!
 	 */
-	else if (strstr((r_name + r_ptr->name),"the Dawn"))
+	if (strstr((r_name + r_ptr->name),"the Dawn"))
 	{
 		if (!(randint(20)==13))
 		{
@@ -4333,20 +4366,6 @@ void monster_death(int Ind, int m_idx)
 	{
 		int flg = PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 		(void)project(m_idx, 6, wpos, y, x, 150, GF_CHAOS, flg, "The Unmaker explodes for");
-	}
-
-        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
-//        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
-        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(2)) && !henc_cheezed)
-	{
-		/* Get local object */
-		qq_ptr = &forge;
-
-                /* Prepare to make a Raal's Tome of Destruction */
-                invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
-
-		/* Drop it in the dungeon */
-                drop_near(qq_ptr, -1, wpos, y, x);
 	}
 
 	/* Pink horrors are replaced with 2 Blue horrors */
@@ -4436,6 +4455,8 @@ void monster_death(int Ind, int m_idx)
 	if (henc_cheezed &&
 		!streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness") &&
 		!streq(r_name_get(m_ptr), "Great Pumpkin")) return; /* allow a mixed hunting group */
+
+
 
 	/* Determine how much we can drop */
 	if ((r_ptr->flags1 & RF1_DROP_60) && (rand_int(100) < 60)) number++;
@@ -4565,11 +4586,16 @@ void monster_death(int Ind, int m_idx)
 				p_ptr->r_killed[m_ptr->r_idx] += 2;
 		}
 #else
-		p_ptr->r_killed[m_ptr->r_idx]++;
+		if (p_ptr->mode & MODE_PVP) {
+			/* PvP mode chars learn forms very fast-pace! */
+			p_ptr->r_killed[m_ptr->r_idx] += 3;
+		} else {
+			p_ptr->r_killed[m_ptr->r_idx]++;
 
-		/* Shamans have a chance to learn E forms very quickly */
-		if (p_ptr->pclass == CLASS_SHAMAN && mimic_shaman_E(m_ptr->r_idx))
-			p_ptr->r_killed[m_ptr->r_idx] += 2;
+			/* Shamans have a chance to learn E forms very quickly */
+			if (p_ptr->pclass == CLASS_SHAMAN && mimic_shaman_E(m_ptr->r_idx))
+				p_ptr->r_killed[m_ptr->r_idx] += 2;
+		}
 #endif
 
 		if (i && i >= r_info[m_ptr->r_idx].level &&
@@ -4586,7 +4612,7 @@ void monster_death(int Ind, int m_idx)
 	}
 
 	/* Take note of the killer */
-	if (r_ptr->flags1 & RF1_UNIQUE)
+	if ((r_ptr->flags1 & RF1_UNIQUE) && !pvp)
 	{
 	        int Ind2 = 0;
 		player_type *p_ptr2=NULL;
@@ -4676,10 +4702,10 @@ if(cfg.unikill_format){
 	}
 
 
-	/* Mega-Hack -- drop "winner" treasures */
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN))
 	{
-		if (strstr((r_name + r_ptr->name),"Morgoth, Lord of Darkness"))
+		/* Mega-Hack -- drop "winner" treasures */
+		if (strstr((r_name + r_ptr->name),"Morgoth, Lord of Darkness") && !pvp)
 		{
 			/* Hack -- an "object holder" */
 			object_type prize;
@@ -4742,6 +4768,7 @@ if(cfg.unikill_format){
 							/* Turn him into pseudo-noghost mode */
 							if (cfg.lifes && (p_ptr2->lives >= 1+1) &&
 					    		    !(p_ptr2->mode & MODE_EVERLASTING) &&
+					    		    !(p_ptr2->mode & MODE_PVP) &&
 							    !(p_ptr2->mode & MODE_NO_GHOST))
 							{
 	        						msg_print(Ind2, "\377yTake care! As a winner, you have no more resurrections left!");
@@ -5057,7 +5084,7 @@ if(cfg.unikill_format){
 
 			drop_near(qq_ptr, -1, wpos, y, x);
 		}
-		else
+		else if (!pvp)
 		{
 			a_idx = 0;
 			chance = 0;
@@ -5213,8 +5240,7 @@ if(cfg.unikill_format){
 		qq_ptr = &forge;
 
 		/* Prepare to make some Firestone */
-		if (magik(10)) ;
-		else if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
+		if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
 		else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
 		qq_ptr->number = (byte)rand_range(1,12);
 
@@ -5222,8 +5248,53 @@ if(cfg.unikill_format){
 		drop_near(qq_ptr, -1, wpos, y, x);
 	}
 
+	/* PernAngband additions */
+	/* Mega^2-hack -- destroying the Stormbringer gives it us! */
+	else if (strstr((r_name + r_ptr->name),"Stormbringer"))
+	{
+		/* Get local object */
+		qq_ptr = &forge;
+
+		/* Prepare to make the Stormbringer */
+		invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_BLADE_OF_CHAOS));
+
+		/* Megahack -- specify the ego */
+		qq_ptr->name2 = EGO_STORMBRINGER;
+
+		/* Piece together a 32-bit random seed */
+		qq_ptr->name3 = rand_int(0xFFFF) << 16;
+		qq_ptr->name3 += rand_int(0xFFFF);
+
+		apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
+		qq_ptr->level = 0;
+
+		qq_ptr->ident |= ID_CURSED;
+
+		/* hack for a good result */
+		qq_ptr->to_h = 17 + rand_int(14);
+		qq_ptr->to_d = 17 + rand_int(14);
+
+		/* Drop it in the dungeon */
+		drop_near(qq_ptr, -1, wpos, y, x);
+	}
+        /* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
+//        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
+        else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1)))
+	{
+		/* Get local object */
+		qq_ptr = &forge;
+
+                /* Prepare to make a Raal's Tome of Destruction */
+//                invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
+		/* Make a Tome of the Hellflame (Udun) */
+                invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
+
+		/* Drop it in the dungeon */
+                drop_near(qq_ptr, -1, wpos, y, x);
+	}
+
 	/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
-	else if (r_ptr->flags3 & RF3_DRAGON)
+	else if ((r_ptr->flags3 & RF3_DRAGON) & !pvp)
 	{
 		bool pfft = TRUE;
 		a_idx = ART_AMUGROM;
@@ -5448,10 +5519,10 @@ void player_death(int Ind)
 	monster_type *m_ptr;
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
-	char buf[1024], o_name[160], m_name_extra[80];
-	int i, inventory_loss = 0, equipment_loss = 0, k;
+	char buf[1024], o_name[160], m_name_extra[80], msg_layout = 'a';
+	int i, inventory_loss = 0, equipment_loss = 0, k, j;
 	//wilderness_type *wild;
-	bool hell=TRUE, secure = FALSE, ge_secure = FALSE;
+	bool hell=TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 //	int inven_sort_map[INVEN_TOTAL];
@@ -5483,7 +5554,7 @@ void player_death(int Ind)
 	        return;
         }
 	
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -5502,6 +5573,11 @@ void player_death(int Ind)
 	    p_ptr->wpos.wz == d_ptr->maxdepth && p_ptr->wpos.wz > 0)) { /* are we in town and in a tower and on top floor? */
 		secure = TRUE;
 		ge_secure = TRUE; /* extra security for global events */
+	}
+	
+	if (pvp) {
+		secure = FALSE;
+		msg_layout = 'y';
 	}
 
 	/* Hack -- amulet of life saving */
@@ -5553,17 +5629,23 @@ void player_death(int Ind)
 			                m_ptr = &m_list[i];
 					if (m_ptr->wpos.wx == p_ptr->wpos.wx && m_ptr->wpos.wy == p_ptr->wpos.wy && m_ptr->wpos.wz == p_ptr->wpos.wz) {
 						k = m_ptr->r_idx;
+						j = m_ptr->ego;
 						monster_desc(0, m_name_extra, i, 0x00);
 						m_name_extra[0] = toupper(m_name_extra[0]);
 						wipe_m_list(&p_ptr->wpos);
-						summon_override_check_all = TRUE; 
+						summon_override_check_all = TRUE;
+#if 1 /* GE_ARENA_ALLOW_EGO */
+						(void)summon_detailed_one_somewhere(&p_ptr->wpos, k, j, FALSE, 101);
+#else
 						summon_specific_race_somewhere(&p_ptr->wpos, k, 100, 1);
+#endif
 						summon_override_check_all = FALSE;
 						break;
 					}
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
 				msg_broadcast(0, format("\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
+				s_printf("EVENT_RESULT: %s has defeated %s.\n", m_name_extra, p_ptr->name);
 			}
 			else recall_player(Ind, "\377oYou die.. but your life was secured here!");
 
@@ -5597,7 +5679,7 @@ void player_death(int Ind)
 		return;
 	}
 
-	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost){
+	if((!(p_ptr->mode & MODE_NO_GHOST)) && !cfg.no_ghost && !pvp){
 #if 0
 		struct dungeon_type *dungeon;
 		wild=&wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
@@ -5705,14 +5787,14 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 			/* Tell him */
 			msg_print(Ind, "\377RYou die.");
 	//		msg_print(Ind, NULL);
-			msg_format(Ind, "\377a**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377a**");
+			msg_format(Ind, "\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
 
 s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 
 			if (cfg.unikill_format)
-			snprintf(buf, sizeof(buf), "\377a**\377r%s %s (%d) was destroyed by \377m%s\377r.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			else
-			snprintf(buf, sizeof(buf), "\377a**\377r%s (%d) was destroyed by \377m%s\377r.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			s_printf("%s (%d) was destroyed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -5777,38 +5859,38 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 				case 4:strcpy(funky_msg,"torn up");break;
 				case 5:strcpy(funky_msg,"crushed");break; /* again :) */
 				}
-				msg_format(Ind, "\377a**\377rYou have been %s by %s.\377a**", funky_msg, p_ptr->died_from);
+				msg_format(Ind, "\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
 				if (cfg.unikill_format) {
-					snprintf(buf, sizeof(buf), "\377a**\377r%s %s (%d) was %s by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				} else {
-					snprintf(buf, sizeof(buf), "\377a**\377r%s (%d) was %s and destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was %s and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				}
 			} else {
 #endif
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-    				msg_format(Ind, "\377a**\377rYou have been killed by %s.\377a**", p_ptr->died_from);
+    				msg_format(Ind, "\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-				msg_format(Ind, "\377a**\377rYou have been annihilated by %s.\377a**", p_ptr->died_from);
+				msg_format(Ind, "\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 			else {
-				msg_format(Ind, "\377a**\377rYou have been vaporized by %s.\377a**", p_ptr->died_from);
+				msg_format(Ind, "\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 
 			if (cfg.unikill_format) {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\377a**\377r%s %s (%d) was killed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\377a**\377r%s %s (%d) was annihilated by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else
-					snprintf(buf, sizeof(buf), "\377a**\377r%s %s (%d) was vaporized by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			} else {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\377a**\377r%s (%d) was killed and destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\377a**\377r%s (%d) was annihilated and destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else
-					snprintf(buf, sizeof(buf), "\377a**\377r%s (%d) was vaporized and destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was vaporized and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			}
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
@@ -5843,6 +5925,37 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
 			msg_broadcast(Ind, buf);
+		}
+
+		/* Reward the killer if it was a PvP-mode char */
+		if (pvp) {
+			int killer = name_lookup_loose_quiet(Ind, p_ptr->really_died_from, FALSE);
+			if (killer) {
+				/* get victim's kills credited as own ones >:) */
+				Players[killer]->kills += p_ptr->kills;
+				Players[killer]->kills_lower += p_ptr->kills_lower;
+				Players[killer]->kills_equal += p_ptr->kills_equal;
+				Players[killer]->kills_higher += p_ptr->kills_higher;
+
+				Players[killer]->kills++;
+				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
+				else {
+					if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
+					else Players[killer]->kills_equal++;
+					/* note how expfact isn't multiplied, so a difference between the races remains :) */
+					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+				}
+				
+				/* reward top gladiators */
+				if (Players[killer]->kills >= 20) {
+					Players[killer]->kills = 0; /* reset! */
+					msg_broadcast_format(Ind, "\377y*** %s vanquished 20 opponents and is entitled to great reward! ***", Players[killer]->name);
+					msg_print(Ind, "\377G* Gratulations, you killed 20 opposing gladiators!");
+					msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
+					msg_print(Ind, "\377G*   on the next character you log in with. *");
+					buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MASS);
+				}
+			}
 		}
 
 #if 0
@@ -6003,7 +6116,6 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 			}
 	
 //		}
-		/* SORRY FOR THE HACK - C. Blue */
 
 		kill_houses(p_ptr->id, OT_PLAYER);
 		rem_quest(p_ptr->quest_id);
@@ -6038,7 +6150,7 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 
 		/* Put him on the high score list */
 //		if(!is_admin(p_ptr) && !p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
-		if(!p_ptr->noscore && !(p_ptr->mode & MODE_EVERLASTING))
+		if(!p_ptr->noscore && !(p_ptr->mode & (MODE_PVP | MODE_EVERLASTING)))
 			add_high_score(Ind);
 
 		/* Format string */
@@ -6522,13 +6634,14 @@ void resurrect_player(int Ind, int loss_reduction)
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
 	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
-	if (!(p_ptr->mode & MODE_EVERLASTING))
+	if (!(p_ptr->mode & MODE_EVERLASTING)
+	    && !(p_ptr->mode & MODE_PVP))
 	{
 		if (p_ptr->lives > 1+1) p_ptr->lives--;
 		if (cfg.lifes)
 		{
 			if (p_ptr->lives == 1+1)
-				msg_format(Ind, "\377GYou have no more resurrections left!");
+				msg_print(Ind, "\377GYou have no more resurrections left!");
 			else
 				msg_format(Ind, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 		}
@@ -6626,7 +6739,7 @@ void kill_quest(int Ind){
 	if(quests[i].flags&QUEST_GUILD){
 		hash_entry *temphash;
 		if((temphash=lookup_player(quests[i].creator)) && temphash->guild){
-			guild_msg_format(temphash->guild ,temp);
+			guild_msg(temphash->guild ,temp);
 			if(!p_ptr->guild){
 				guild_msg_format(temphash->guild, "%s is now a guild member!", p_ptr->name);
 				guilds[temphash->guild].members++;
@@ -6665,7 +6778,8 @@ void kill_quest(int Ind){
 //		avg /= 2; avg = 540 / (58 - avg) + 20; /* same as exp calculation ;) */
 		avg /= 2; avg = 540 / (57 - avg) + 5; /* same as exp calculation ;) phew, Heureka.. */
 		if (great) verygreat = magik(avg);
-#ifdef RPG_SERVER
+#if 0 /* needs more care, otherwise acquirement could even be BETTER than create_reward, depending on RESF.. */
+//#ifdef RPG_SERVER
 		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, RESF_LOW, 3000);
 //		o_ptr->discount = 100;
 		o_ptr->note = quark_add(temp);
@@ -7126,7 +7240,7 @@ for(i=1; i < 5; i++) {
 
 			/* Gain experience */
 			if((new_exp*(100-m_ptr->clone))/100){
-				gain_exp(Ind, (new_exp*(100-m_ptr->clone))/100);
+				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (new_exp*(100-m_ptr->clone))/100);
 			}
 		}
 		else
@@ -7138,7 +7252,7 @@ for(i=1; i < 5; i++) {
 			   I see ne problem with kings sharing exp.
 			   Otherwise Nether Realm parties are punished.. */
 //			if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100);
-			party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100, r_ptr->mexp, m_ptr->highest_encounter);
+			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, (tmp_exp*(100-m_ptr->clone))/100, r_ptr->mexp, m_ptr->highest_encounter);
 		}
 
 		/*
@@ -7185,7 +7299,7 @@ for(i=1; i < 5; i++) {
 
 			if ((p_ptr->chp < p_ptr->mhp) || (p_ptr->csp < p_ptr->msp)) {
 				msg_print(Ind, "You absorb the energy of the dying soul.");
-				hp_player_quiet(Ind, gain);
+				hp_player_quiet(Ind, gain, TRUE);
 				p_ptr->csp += gain_sp;
 	                        if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 				p_ptr->redraw |= (PR_MANA);
@@ -8808,23 +8922,13 @@ void telekinesis_aux(int Ind, int item)
 
 	if (p2_ptr->ghost && !is_admin(p_ptr))
 	{
-	    msg_print(Ind, "You cannot send items to ghosts!");
-	    return;
+		msg_print(Ind, "You cannot send items to ghosts!");
+		return;
 	}
 
-	if (cfg.charmode_trading_restrictions > 0 && !is_admin(p_ptr)) {
-		if ((p_ptr->mode & MODE_EVERLASTING) && !(p2_ptr->mode & MODE_EVERLASTING))
-		{
-		    msg_print(Ind, "You can only contact everlasting beings!");
-		    return;
-		}
-	}
-	if (cfg.charmode_trading_restrictions > 1 && !is_admin(p_ptr)) {
-		if (!(p_ptr->mode & MODE_EVERLASTING) && (p2_ptr->mode & MODE_EVERLASTING))
-		{
-		    msg_print(Ind, "You can only contact non-everlasting beings!");
-		    return;
-		}
+	if (compat_pmode(Ind, Ind2)) {
+		msg_format(Ind, "You cannot contact %s beings!", compat_pmode(Ind, Ind2));
+		return;
 	}
 
 	/* the_sandman: item lvl restrictions are disabled in rpg */
@@ -9968,7 +10072,7 @@ bool master_player(int Ind, char *parms){
 				player_type *p_ptr2 = Players[Ind2];
 				acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, !p_ptr2->total_winner);
 				msg_format(Ind, "%s is granted an item.", p_ptr2->name);
-				msg_format(Ind2, "You feel a divine favor!");
+				msg_print(Ind2, "You feel a divine favor!");
 				return(FALSE);
 			}
 //			msg_print(Ind, "That player is not in the game.");

@@ -457,7 +457,7 @@ static bool do_seduce(int Ind, int m_idx)
 
 			case 6:
 				msg_print(Ind, "You feel it was not so bad an experience.");
-				gain_exp(Ind, r_ptr->mexp);
+				gain_exp(Ind, r_ptr->mexp / 2);
 				done = TRUE;
 				break;
 
@@ -1059,8 +1059,10 @@ bool make_attack_melee(int Ind, int m_idx)
 
 			{
 				/* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
-				if ((m_ptr->r_idx != 1086) && (m_ptr->r_idx != 1087) && (m_ptr->r_idx != 1088))
-				set_black_breath(Ind);
+				if (((m_ptr->r_idx != 1086) && (m_ptr->r_idx != 1087) && (m_ptr->r_idx != 1088)) &&
+    				    !(ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y &&
+		            	    p_ptr->wpos.wz > 0))
+					set_black_breath(Ind);
 			}
 
 
@@ -2041,7 +2043,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					msg_format(Ind, "\377o%^s tries to disarm you.", m_name);
 					
-					if (artifact_p(o_ptr))	if (magik(50)) break;
+					if (artifact_p(o_ptr) && magik(50)) break;
 					
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 					
@@ -2050,8 +2052,8 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					/* do we hold one weapon with two hands? very safe */
 					if (!p_ptr->heavy_wield && !shield && !p_ptr->dual_wield && (
-					    magik(50) ||
-					    ((f4 & TR4_MUST2H) && magik(90)) ||	((f4 & TR4_SHOULD2H) && magik(80)) || ((f4 & TR4_COULD2H) && magik(50))
+					    ((f4 & TR4_MUST2H) && magik(90)) ||	((f4 & TR4_SHOULD2H) && magik(85)) || ((f4 & TR4_COULD2H) && magik(75)) ||
+					    (!(f4 & (TR4_MUST2H & TR4_SHOULD2H & TR4_COULD2H)) && magik(15)) /* we catch it with our spare hand ;) */
 					    ))
 						break;
 					
@@ -2059,7 +2061,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
 							< (rlev + damage + UNAWARENESS(p_ptr)))
 					{
-						if (!p_ptr->dual_wield || magik(80)) {
+						if (!p_ptr->dual_wield || magik(90)) {
 							msg_print(Ind, "\377rYou lose the grip of your weapon!");
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
@@ -2647,9 +2649,10 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 				char monster_name[80];
 				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
 				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
-				gain_exp(find_player(m_ptr->owner), (unsigned int)(tr_ptr->mexp/2));
+				if (!(Players[find_player(m_ptr->owner)]->mode & MODE_PVP))
+					gain_exp(find_player(m_ptr->owner), (unsigned int)(tr_ptr->mexp/2));
 				if (monster_gain_exp(m_idx,(unsigned int)(tr_ptr->mexp/2), FALSE) > 0) {
-					msg_format(find_player(m_ptr->owner), "\377GYour pet looks more experienced!");
+					msg_print(find_player(m_ptr->owner), "\377GYour pet looks more experienced!");
 				}
 			}
 #endif			

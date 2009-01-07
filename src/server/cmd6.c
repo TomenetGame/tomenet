@@ -437,7 +437,7 @@ void do_cmd_eat_food(int Ind, int item)
 			    if (!p_ptr->suscep_life) {
 				/* Let's make this usable... - the_sandman */
 				if (o_ptr->name1 == ART_DWARVEN_ALE) {
-					msg_format(Ind, "\377gYou drank the liquior of the gods");
+					msg_print(Ind, "\377gYou drank the liquior of the gods");
 					msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
 					switch (randint(10)) {
 						case 1: 
@@ -2782,8 +2782,10 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
+				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
 				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+				object_discount = 0;
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2793,8 +2795,10 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				int obj_tmp = object_level;
 				object_level = getlevel(&p_ptr->wpos);
+				if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
 				acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+				object_discount = 0;
 				object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 				ident = TRUE;
 				break;
@@ -2996,7 +3000,7 @@ void do_cmd_read_scroll(int Ind, int item)
 		}
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -3502,7 +3506,7 @@ void do_cmd_use_staff(int Ind, int item)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 4);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -4041,7 +4045,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -4406,7 +4410,7 @@ void do_cmd_zap_rod(int Ind, int item)
 	}
 	if(f4 & TR4_CHARGING) o_ptr->pval /= 2;
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -4918,7 +4922,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 		}
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 3);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -5291,7 +5295,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	/* Wonder Twin Powers... Activate! */
 	msg_print(Ind, "You activate it...");
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
@@ -7450,7 +7454,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 
         if (!can_use_verbose(Ind, o_ptr)) return;
 	
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
@@ -8443,7 +8447,7 @@ void do_cmd_fletchery(int Ind)
 	}
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -8839,7 +8843,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	case 3:	if (!p_ptr->ranged_techniques & 0x0008) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
 			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
-			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
+			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
 				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!"); 
 				return;
 			}

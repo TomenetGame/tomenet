@@ -527,8 +527,8 @@ static cptr r_info_flags0[] =
 	"S_HI_MONSTERS",
 	"S_HI_UNIQUE",
 	"ASTAR",//4
-	"X00000010",
-	"X00000020",
+	"NO_ESCORT",
+	"NO_NEST",
 	"X00000040",
 	"X00000080",//8
 	"X00000100",
@@ -814,7 +814,7 @@ static cptr k_info_flags5[] =
         "LEVELS",
 	"FORCE_DEPTH",
 	"XXX8X02",
-	"XXX8X02",
+	"IGNORE_DISEN",
 	"RES_TELE",
 	"SH_COLD",
 	"IGNORE_MANA",

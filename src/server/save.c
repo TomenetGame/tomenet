@@ -1372,6 +1372,12 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->cloaked);
 	wr_byte(p_ptr->shadow_running);
 	wr_byte(p_ptr->shoot_till_kill);
+
+        wr_s16b(p_ptr->kills);
+        wr_s16b(p_ptr->kills_lower);
+        wr_s16b(p_ptr->kills_higher);
+        wr_s16b(p_ptr->kills_equal);
+        wr_s16b(p_ptr->free_mimic);
 }
 
 /*

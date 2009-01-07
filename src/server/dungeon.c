@@ -65,8 +65,7 @@ cptr value_check_aux1(object_type *o_ptr)
 
 		/* Normal */
 		/* exploding ammo is excellent */
-		if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
-		    (o_ptr->tval == TV_BOLT)) && (o_ptr->pval != 0)) return "excellent";
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) return "excellent";
 		
 		if (object_value(0, o_ptr) < 4000) return "good";
 		return "excellent";
@@ -561,7 +560,7 @@ static void regenhp(int Ind, int percent)
 	/* Extract the new hitpoints */
 	new_chp = ((s32b)p_ptr->mhp) * percent + PY_REGEN_HPBASE;
 	/* Apply the healing */
-	hp_player_quiet(Ind, new_chp >> 16);
+	hp_player_quiet(Ind, new_chp >> 16, TRUE);
 	//p_ptr->chp += new_chp >> 16;   /* div 65536 */
 
 	/* check for overflow -- this is probably unneccecary */
@@ -571,7 +570,7 @@ static void regenhp(int Ind, int percent)
 	new_chp_frac = (new_chp & 0xFFFF) + p_ptr->chp_frac;	/* mod 65536 */
 	if (new_chp_frac >= 0x10000L)
 	{
-		hp_player_quiet(Ind, 1);
+		hp_player_quiet(Ind, 1, TRUE);
 		p_ptr->chp_frac = new_chp_frac - 0x10000L;
 	}
 	else
@@ -1128,8 +1127,10 @@ static void world_surface_night(struct worldpos *wpos) {
 		c_ptr = &zcave[y][x];
 
 		/* darken all */
-		c_ptr->info &= ~CAVE_GLOW;
-		c_ptr->info |= CAVE_DARKEN;
+		if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
+			c_ptr->info &= ~CAVE_GLOW;
+			c_ptr->info |= CAVE_DARKEN;
+		}
 
 		if (c_ptr->feat == FEAT_SHOP) {
 			sx[stores] = x;
@@ -1388,7 +1389,8 @@ static void process_world(int Ind)
 							*w_ptr &= ~CAVE_MARK;
 						}
 						/* darken all */
-						c_ptr->info &= ~CAVE_GLOW;
+						if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
+							c_ptr->info &= ~CAVE_GLOW;
 
 						/* Hack -- Notice spot */
 						note_spot(Ind, y, x);
@@ -2298,7 +2300,7 @@ static void process_player_begin(int Ind)
 		/* Regenerate the level from fixed layout */
 		process_dungeon_file("t_valinor.txt", &p_ptr->wpos, &ystart, &xstart, 21, 67, TRUE);
 		/* Some lil hacks */
-		msg_format(Ind, "\377uYou enter the shores of Valinor..");
+		msg_print(Ind, "\377uYou enter the shores of Valinor..");
 		wiz_lite(Ind);
 		/* Move @ to designated starting position (level_rand_x/y()) and redraw */
 		oy = p_ptr->py;
@@ -2469,7 +2471,7 @@ void recall_player(int Ind, char *message){
 	if(!p_ptr) return;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;	// eww
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -2720,8 +2722,16 @@ static void do_recall(int Ind, bool bypass)
 			p_ptr->recall_pos.wz = 0;
 		}
 
-		new_pos.wx = p_ptr->wpos.wx;
-		new_pos.wy = p_ptr->wpos.wy;
+		/* prevent 'cross-recalling' except for admins (ie change of x,y and z at once) */
+		if (p_ptr->recall_pos.wz && !is_admin(p_ptr) &&
+		    (p_ptr->wpos.wx != p_ptr->recall_pos.wx || p_ptr->wpos.wy != p_ptr->recall_pos.wy)) {
+			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+			p_ptr->recall_pos.wz = 0;
+		}
+
+		new_pos.wx = p_ptr->recall_pos.wx;
+		new_pos.wy = p_ptr->recall_pos.wy;
 		new_pos.wz = p_ptr->recall_pos.wz;
 		if (p_ptr->recall_pos.wz == 0)
 		{
@@ -2729,6 +2739,12 @@ static void do_recall(int Ind, bool bypass)
 			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		}
 		else p_ptr->new_level_method = LEVEL_RAND;
+	}
+	else
+	{
+		/* new_pos isn't set so recalling shouldn't be allowed - mikaelh */
+		recall_ok = FALSE;
+		p_ptr->redraw |= (PR_DEPTH);
 	}
 
 	if(recall_ok)
@@ -3092,7 +3108,7 @@ static bool process_player_end_aux(int Ind)
 #endif
 	if (p_ptr->csp < p_ptr->msp)
 	{
-		regenmana(Ind, (regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1) / 3);
+		regenmana(Ind, ((regen_amount * 5) * ((p_ptr->regen_mana || (p_ptr->mode & MODE_PVP)) ? 2 : 1)) / 3);
 	}
 
 	/* Regeneration ability */
@@ -3125,8 +3141,17 @@ static bool process_player_end_aux(int Ind)
 		regenhp(Ind, regen_amount);
 	}
 
+	/* Undiminish healing penalty in PVP mode */
+	if (p_ptr->heal_effect) {
+		p_ptr->heal_effect -= (p_ptr->mhp + p_ptr->lev * 6) / 30;
+		if (p_ptr->heal_effect < 0) p_ptr->heal_effect = 0;
+	}
+
+	/* Countdown no-teleport rule in PVP mode */
+	if (p_ptr->prevent_tele) p_ptr->prevent_tele--;
+
 	/* Regenerate depleted Stamina */
-	if (p_ptr->cst < p_ptr->mst)
+	if ((p_ptr->cst < p_ptr->mst) && !p_ptr->shadow_running)
 	{
 //		int s = 2 * (76 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
 		int s = regen_boost_stamina * (54 + (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus_health) * 3);
@@ -3386,6 +3411,7 @@ static bool process_player_end_aux(int Ind)
 		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
 	}
 
+	if (p_ptr->cloak_neutralized) p_ptr->cloak_neutralized--;
 	if (p_ptr->cloaked > 1) {
 #if 0 /* done in un_afk_idle now */
 		if (!p_ptr->idle_char) stop_cloaking(Ind); /* stop preparations if we perform any action */
@@ -4109,13 +4135,13 @@ static void process_games(int Ind){
 				if(p_ptr->team==1 && c_ptr->feat==FEAT_BGOAL){
 					teamscore[0]++;
 					msg_format_near(Ind, "\377R%s scored a goal!!!", p_ptr->name);
-					msg_format(Ind, "\377rYou scored a goal!!!");
+					msg_print(Ind, "\377rYou scored a goal!!!");
 					score=1;
 				}
 				if(p_ptr->team==2 && c_ptr->feat==FEAT_AGOAL){
 					teamscore[1]++;
 					msg_format_near(Ind, "\377B%s scored a goal!!!", p_ptr->name);
-					msg_format(Ind, "\377gYou scored a goal!!!");
+					msg_print(Ind, "\377gYou scored a goal!!!");
 					score=1;
 				}
 				if(score){
@@ -5131,7 +5157,7 @@ static void process_player_change_wpos(int Ind)
 	cave_type **zcave;
 	//worldpos twpos;
 	dun_level *l_ptr;
-	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx;
+	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y;
 	byte *w_ptr;
 	cave_type *c_ptr;
 
@@ -5200,6 +5226,13 @@ static void process_player_change_wpos(int Ind)
 
 		/* Generate a dungeon level there */
 		generate_cave(wpos, p_ptr);
+
+#if 0 /* arena monster challenge - paranoia (should be generated in xtra1.c, and permanently static really) */
+//copy/pasted code, non-functional as is, just put it here for later maybe
+    		new_players_on_depth(&wpos, 1, TRUE); /* make it static */                               
+	        s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);  
+	        process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE); 
+#endif
 	}
 
 	zcave = getcave(wpos);
@@ -5234,6 +5267,11 @@ static void process_player_change_wpos(int Ind)
 		if(istown(wpos)){
 			p_ptr->town_x = wpos->wx;
 			p_ptr->town_y = wpos->wy;
+			
+			/* for PVP-mode, reset diminishing healing */
+			p_ptr->heal_effect = 0;
+			/* and anti-fleeing teleport prevention */
+			p_ptr->prevent_tele = 0;
 		}
 
 		/* Memorize the town for this player (if daytime) */
@@ -5280,66 +5318,86 @@ static void process_player_change_wpos(int Ind)
 	/* Determine starting location */
 	switch (p_ptr->new_level_method)
 	{
-		/* Climbed down */
-		case LEVEL_RECALL_DOWN:
-		case LEVEL_DOWN:  		starty = level_down_y(wpos);
-						startx = level_down_x(wpos);
-						break;
+	/* Climbed down */
+	case LEVEL_RECALL_DOWN:
+	case LEVEL_DOWN:  		starty = level_down_y(wpos);
+					startx = level_down_x(wpos);
+					break;
 
-		/* Climbed up */
-		case LEVEL_RECALL_UP:
-		case LEVEL_UP:    		starty = level_up_y(wpos);
-						startx = level_up_x(wpos);
-						break;
+	/* Climbed up */
+	case LEVEL_RECALL_UP:
+	case LEVEL_UP:    		starty = level_up_y(wpos);
+					startx = level_up_x(wpos);
+					break;
 
-		/* Teleported level */
-		case LEVEL_RAND:  		starty = level_rand_y(wpos);
-						startx = level_rand_x(wpos);
-						break;
+	/* Teleported level */
+	case LEVEL_RAND:  		starty = level_rand_y(wpos);
+					startx = level_rand_x(wpos);
+					break;
 
-		/* Used ghostly travel */
-		case LEVEL_PROB_TRAVEL:
-		case LEVEL_GHOST: 		starty = p_ptr->py;
-						startx = p_ptr->px;
-						break;
+	/* Used ghostly travel */
+	case LEVEL_PROB_TRAVEL:
+	case LEVEL_GHOST: 		starty = p_ptr->py;
+					startx = p_ptr->px;
+					break;
 
-		/* Over the river and through the woods */
-		case LEVEL_OUTSIDE:
-		case LEVEL_HOUSE:
-						starty = p_ptr->py;
-						startx = p_ptr->px;
-						break;
-						/* this is used instead of extending the level_rand_y/x
-							into the negative direction to prevent us from
-							alocing so many starting locations.  Although this does
-							not make players teleport to simmilar locations, this
-							could be achieved by seeding the RNG with the depth.
-							*/
-		case LEVEL_OUTSIDE_RAND:
+	/* Over the river and through the woods */
+	case LEVEL_OUTSIDE:
+	case LEVEL_HOUSE:
+					starty = p_ptr->py;
+					startx = p_ptr->px;
+					break;
 
-						/* make sure we aren't in an "icky" location */
-						do
-						{
-							starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
-							startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
-						}
-						while (  (zcave[starty][startx].info & CAVE_ICKY)
-								|| (zcave[starty][startx].feat==FEAT_DEEP_WATER)
-								|| (!cave_floor_bold(zcave, starty, startx)) );
-						break;
+		/* this is used instead of extending the level_rand_y/x
+		into the negative direction to prevent us from
+		alocing so many starting locations.  Although this does
+		not make players teleport to simmilar locations, this
+		could be achieved by seeding the RNG with the depth. */
+
+	case LEVEL_OUTSIDE_RAND:
+		/* make sure we aren't in an "icky" location */
+		emergency_x = 0; emergency_y = 0; tries = 0;
+		do
+		{
+			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
+			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
+			if (cave_floor_bold(zcave, starty, startx)) {
+				emergency_x = startx;
+				emergency_y = starty;
+			}
+		}
+		while (  ((zcave[starty][startx].info & CAVE_ICKY)
+			|| (zcave[starty][startx].feat==FEAT_DEEP_WATER)
+			|| (!cave_floor_bold(zcave, starty, startx)))
+			&& (++tries < 10000) );
+		if (tries == 10000 && emergency_x) {
+			startx = emergency_x;
+			starty = emergency_y;
+		}
+		break;
 	}
 
 	/* Hack -- handle smaller floors */
 	if (l_ptr && (starty > l_ptr->hgt || startx > l_ptr->wid))
 	{
 		/* make sure we aren't in an "icky" location */
+		emergency_x = 0; emergency_y = 0; tries = 0;
 		do
 		{
 			starty = rand_int(l_ptr->hgt-3)+1;
 			startx = rand_int(l_ptr->wid-3)+1;
+			if (cave_floor_bold(zcave, starty, startx)) {
+				emergency_x = startx;
+				emergency_y = starty;
+			}
 		}
-		while (  (zcave[starty][startx].info & CAVE_ICKY)
-				|| (!cave_floor_bold(zcave, starty, startx)) );
+		while (  ((zcave[starty][startx].info & CAVE_ICKY)
+			|| (!cave_floor_bold(zcave, starty, startx)))
+			&& (++tries < 10000) );
+		if (tries == 10000 && emergency_x) {
+			startx = emergency_x;
+			starty = emergency_y;
+		}
 	}
 
 	//printf("finding area (%d,%d)\n",startx,starty);
@@ -5533,6 +5591,30 @@ static void process_player_change_wpos(int Ind)
 	   with the only exception of server join/leave in nserver.c and Morgoth
 	   live spawn (ie not on level generation time) in monster2.c. - C. Blue */
 	check_Morgoth();
+
+	/* Brightly lit Arena Monster Challenge */
+	if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x &&
+	    p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+		wiz_lite(Ind);
+
+	/* PvP-Mode anti-chicken: Don't allow a high player to 'chase' a very low player */
+	if ((p_ptr->mode & MODE_PVP) && p_ptr->wpos.wz) {
+		for (j = 1; j < NumPlayers; j++) {
+			if (Players[j]->conn == NOT_CONNECTED) continue;
+			if (is_admin(Players[j])) continue;
+			if (!(Players[j]->mode & MODE_PVP)) continue;
+			if (!inarea(&Players[j]->wpos, &p_ptr->wpos)) continue;
+			if (Players[j]->max_plv < p_ptr->max_plv - 5) {
+				p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
+				p_ptr->recall_pos.wz = 0;
+				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+//				set_recall_timer(Ind, 1);
+				p_ptr->word_recall = 1;
+				msg_print(Ind, "\377yYou have sudden visions of a gawking chicken while being recalled!");
+			}
+		}
+	}
 }
 
 
@@ -5548,15 +5630,15 @@ static void process_player_change_wpos(int Ind)
 
 void dungeon(void)
 {
+	int i;
+
+	/* Return if no one is playing */
+	/* if (!NumPlayers) return; */
 
 #ifdef ARCADE_SERVER
         if (turn % (cfg.fps / 3) == 1) exec_lua(1, "firin()");
         if (turn % tron_speed == 1) exec_lua(1, "tron()");
 #endif
-
-	int i;
-	/* Return if no one is playing */
-	/* if (!NumPlayers) return; */
 
 	/* Check for death.  Go backwards (very important!) */
 	for (i = NumPlayers; i > 0; i--)
@@ -5748,6 +5830,7 @@ void dungeon(void)
 				if(admin_p(i)) continue;
 				/* count players */
 				n++;
+
 				/* Ignore characters that are afk and not in a dungeon/tower */
 //				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
 				/* Ignore characters that are not in a dungeon/tower */
@@ -5774,6 +5857,35 @@ void dungeon(void)
 				n++;
 			}
 			if(!n) {
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				cfg.runlevel = 2049;
+			}
+		}
+		if(cfg.runlevel == 2044)
+		{
+			int n = 0;
+			for(i = NumPlayers; i > 0 ;i--)
+			{
+				if(Players[i]->conn==NOT_CONNECTED) continue;
+				/* Ignore admins that are loged in */
+				if(admin_p(i)) continue;
+				/* Ignore perma-afk players! */
+				//if (Players[i]->afk && 
+				if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
+					continue;
+				/* count players */
+				n++;
+
+				/* Ignore characters that are afk and not in a dungeon/tower */
+//				if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+				/* Ignore characters that are not in a dungeon/tower */
+				if(Players[i]->wpos.wz == 0) {
+					/* Don't interrupt events though */
+					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+				}
+				break;
+			}
+			if(!i && (n <= 3)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -5963,6 +6075,10 @@ s_printf("WEATHER: Starting rain.\n");
 	}
 #endif
 
+	/* process debugging/helper functions - C. Blue */
+	if (store_debug_mode && (!(turn % ((10 * cfg.store_turns) / store_debug_mode))))
+		store_debug_stock();
+
 	/* Send any information over the network */
 	Net_output();
 }
@@ -6003,6 +6119,7 @@ void set_runlevel(int val)
 			meta=FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2044:
 		case 2045:
 		case 2046:
 		case 2047:

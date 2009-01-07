@@ -918,7 +918,7 @@ static void Trim_name(char *nick_name)
 		if (!((*ptr >= 'A' && *ptr <= 'Z') ||
 		    (*ptr >= 'a' && *ptr <= 'z') ||
 		    (*ptr >= '0' && *ptr <= '9') ||
-		    strchr(" .,_-&'`'#$%~", *ptr))) /* allowed chars, for sake of not too silly names */
+		    strchr(" .,-'`'&_$%~#<>", *ptr))) /* allowed chars, for sake of not too silly names */
 			*ptr = '_';
 #endif
 	}
@@ -1190,7 +1190,14 @@ static void Contact(int fd, int arg)
 
 	/* s_printf("Sending login port %d, status %d.\n", login_port, status); */
 
-        Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
+	if (is_newer_than(&version_ext, 4, 4, 1, 5, 0, 0)) {
+		/* Hack - Send server version too - mikaelh */
+		Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS | 0x02);
+		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD);
+	}
+	else {
+	        Packet_printf(&ibuf, "%c%c%d%d", reply_to, status, login_port, CHAR_CREATION_FLAGS);
+	}
 
 /* -- DGDGDGDG it would be NEAT to have classes sent to the cleint at conenciton, sadly Im too clumpsy at network code ..
         for (i = 0; i < MAX_CLASS; i++)
@@ -1238,18 +1245,21 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 		return E_VERSION_UNKNOWN;
 #else
 	/* Extended version support */
-	if (version->major < VERSION_MAJOR)
+	if (version->major < MIN_VERSION_MAJOR)
 		return E_VERSION_OLD;
 	else if (version->major > VERSION_MAJOR)
 		return E_VERSION_UNKNOWN;
-	else if (version->minor < VERSION_MINOR)
+	else if (version->minor < MIN_VERSION_MINOR)
 		return E_VERSION_OLD;
 	else if (version->minor > VERSION_MINOR)
 		return E_VERSION_UNKNOWN;
-	else if (version->patch < VERSION_PATCH)
+	else if (version->patch < MIN_VERSION_PATCH)
 		return E_VERSION_OLD;
 	else if (version->patch > VERSION_PATCH)
 		return E_VERSION_UNKNOWN;
+	else if (version->extra < MIN_VERSION_EXTRA)
+		return E_VERSION_OLD;
+	/* Note: Clients with newer extra value are allowed */
 #endif
 
 	if(!player_allowed(nick))
@@ -2328,6 +2338,8 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\377y* VeryLow-server-shutdown command pending *");
 	if (p_ptr->admin_dm && (cfg.runlevel == 2045))
 		msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
+	if (p_ptr->admin_dm && (cfg.runlevel == 2044))
+		msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
 
 	/* Execute custom script if player joins the server */
 	if (first_player_joined) {
@@ -2346,23 +2358,6 @@ static int Handle_login(int ind)
 	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
-
-	/* receive previously buffered global-event-contender-deed from other character of her/his account */
-	for (i = 0; i < 128; i++)
-		if (ge_contender_buffer_ID[i] == p_ptr->account) {
-			ge_contender_buffer_ID[i] = 0;
-			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
-			invcopy(o_ptr, i);
-			o_ptr->number = 1;
-			object_aware(NumPlayers, o_ptr);
-			object_known(o_ptr);
-			o_ptr->discount = 0;
-			o_ptr->level = 0;
-			o_ptr->ident |= ID_MENTAL;
-			inven_carry(NumPlayers, o_ptr);
-			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
-			break;
-		}
 
 	/* Handle the cfg_secret_dungeon_master option */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
@@ -2422,23 +2417,28 @@ static int Handle_login(int ind)
 
 	if(!(p_ptr->mode & MODE_NO_GHOST) &&
 	    !(p_ptr->mode & MODE_EVERLASTING) &&
+	    !(p_ptr->mode & MODE_PVP) &&
 	    !cfg.no_ghost && cfg.lifes)
 	{
+#if 0
 		/* if total_winner char was loaded from old save game that
 		   didn't reduce his/her lifes to 1 on winning, do that now: */
 		if (p_ptr->total_winner && (p_ptr->lives > 1+1)) {
-			msg_format(NumPlayers, "\377yTake care! As winner, you have no more resurrections left!");
+			msg_print(NumPlayers, "\377yTake care! As a winner, you have no more resurrections left!");
 			p_ptr->lives = 1+1;
 		}
-
+#endif
 		if (p_ptr->lives-1 == 1)
-    			msg_format(NumPlayers, "\377GYou have no more resurrections left!");
+    			msg_print(NumPlayers, "\377GYou have no more resurrections left!");
 	        else
 			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
 	}
 	
+	/* for PvP mode chars */
+	if (p_ptr->free_mimic) msg_format(NumPlayers, "\377GYou have %d free mimicry transformation left.", p_ptr->free_mimic);
+
 	/* receive previously buffered global-event-contender-deed from other character of her/his account */
-	for (i = 0; i < 128; i++)
+	for (i = 0; i < 128; i++) {
 		if (ge_contender_buffer_ID[i] == p_ptr->account) {
 			ge_contender_buffer_ID[i] = 0;
 			i = lookup_kind(TV_PARCHMENT, ge_contender_buffer_deed[i]);
@@ -2451,8 +2451,24 @@ static int Handle_login(int ind)
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
 			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
-			break;
+//			break;
 		}
+		if (achievement_buffer_ID[i] == p_ptr->account) {
+			achievement_buffer_ID[i] = 0;
+			i = lookup_kind(TV_PARCHMENT, achievement_buffer_deed[i]);
+			invcopy(o_ptr, i);
+			o_ptr->number = 1;
+			object_aware(NumPlayers, o_ptr);
+			object_known(o_ptr);
+			o_ptr->discount = 0;
+			o_ptr->level = 0;
+			o_ptr->ident |= ID_MENTAL;
+			inven_carry(NumPlayers, o_ptr);
+			msg_print(NumPlayers, "\377GFor your achievements, you have received a deed!");
+//			break;
+		}
+	}
+
 
 #ifdef AUCTION_SYSTEM
 	auction_player_joined(NumPlayers);
@@ -2462,6 +2478,11 @@ static int Handle_login(int ind)
 	Report_to_meta(META_UPDATE);
 
 	return 0;
+}
+
+/* wrapper function for local 'Conn' - C. Blue */
+int is_inactive(int Ind) {
+	return (Conn[Players[Ind]->conn].inactive_keepalive);
 }
 
 /* Actually execute commands from the client command queue */
@@ -3069,6 +3090,7 @@ static int Receive_login(int ind){
 				/* do not change protocol here */
 				tmpm = lookup_player_mode(id_list[i]);
 				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
+				else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
 				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
 				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
 				else strcpy(colour_sequence, "\377w");

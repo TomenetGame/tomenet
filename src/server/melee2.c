@@ -1284,6 +1284,12 @@ bool monst_check_grab(int m_idx, int mod, cptr desc)
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, wpos)) continue;
 
+		/* Skip dungeon masters */
+		if (q_ptr->admin_dm) continue;
+
+		/* Ghosts cannot intercept */
+		if (q_ptr->ghost) continue;
+
 		if (q_ptr->cloaked || q_ptr->shadow_running) continue;
 
 		if (q_ptr->confused || q_ptr->stun || q_ptr->afraid || q_ptr->paralyzed)
@@ -2061,7 +2067,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			disturb(Ind, 1, 0);
 //			if (blind) msg_format(Ind, "%^s shoots something.", m_name);
-			if (blind) msg_format(Ind, "You hear a dull, heavy sound.");
+			if (blind) msg_print(Ind, "You hear a dull, heavy sound.");
 //			else msg_format(Ind, "%^s fires a rocket.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a rocket for", m_name);
 			breath(Ind, m_idx, GF_ROCKET,
@@ -2075,7 +2081,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+4:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires an arrow.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(1, 6));
@@ -2086,7 +2092,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+5:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires an arrow!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(3, 6));
@@ -2108,7 +2114,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+7:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a missile!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(7, 6));
@@ -2133,7 +2139,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (monst_check_grab(m_idx, 100, "fire")) break;
 			for (k = 0; k < fois; k++)
 			{
-				if (blind) msg_format(Ind, "You hear a whizzing noise.", m_name);
+				if (blind) msg_print(Ind, "You hear a whizzing noise.");
 //				else msg_format(Ind, "%^s fires an arrow.", m_name);
 				snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires an arrow for", m_name);
 				bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
@@ -2155,7 +2161,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #endif
 
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a shot.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a shot for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
@@ -2173,7 +2179,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #endif
 
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a bolt for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
@@ -2191,7 +2197,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #endif
 
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear a strange noise.", m_name);
+			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
@@ -2202,7 +2208,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+8:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes acid.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes acid for", m_name);
 			breath(Ind, m_idx, GF_ACID,
@@ -2215,7 +2221,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+9:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes lightning.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes lightning for", m_name);
 			breath(Ind, m_idx, GF_ELEC,
@@ -2228,7 +2234,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+10:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes fire.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes fire for", m_name);
 			breath(Ind, m_idx, GF_FIRE,
@@ -2241,7 +2247,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+11:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes frost.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes frost for", m_name);
 			breath(Ind, m_idx, GF_COLD,
@@ -2254,7 +2260,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+12:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes gas.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gas for", m_name);
 			breath(Ind, m_idx, GF_POIS,
@@ -2267,7 +2273,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+13:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes nether.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nether for", m_name);
 			breath(Ind, m_idx, GF_NETHER,
@@ -2280,7 +2286,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+14:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes light.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes light for", m_name);
 			breath(Ind, m_idx, GF_LITE,
@@ -2293,7 +2299,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+15:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes darkness.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes darkness for", m_name);
 			breath(Ind, m_idx, GF_DARK,
@@ -2306,7 +2312,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+16:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes confusion.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes confusion for", m_name);
 			breath(Ind, m_idx, GF_CONFUSION,
@@ -2319,7 +2325,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+17:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes sound.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes sound for", m_name);
 			breath(Ind, m_idx, GF_SOUND,
@@ -2332,7 +2338,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+18:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes chaos.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes chaos for", m_name);
 			breath(Ind, m_idx, GF_CHAOS,
@@ -2345,7 +2351,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+19:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes disenchantment.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disenchantment for", m_name);
 			breath(Ind, m_idx, GF_DISENCHANT,
@@ -2358,7 +2364,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+20:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes nexus.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nexus for", m_name);
 			breath(Ind, m_idx, GF_NEXUS,
@@ -2371,7 +2377,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+21:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes time.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes time for", m_name);
 			breath(Ind, m_idx, GF_TIME,
@@ -2383,7 +2389,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+22:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes inertia.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes inertia for", m_name);
 			breath(Ind, m_idx, GF_INERTIA,
@@ -2395,7 +2401,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+23:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes gravity.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gravity for", m_name);
 			breath(Ind, m_idx, GF_GRAVITY,
@@ -2407,7 +2413,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+24:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes shards.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes shards for", m_name);
 			breath(Ind, m_idx, GF_SHARDS,
@@ -2420,7 +2426,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+25:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes plasma.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes plasma for", m_name);
 			breath(Ind, m_idx, GF_PLASMA,
@@ -2432,7 +2438,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+26:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes force.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes force for", m_name);
 			breath(Ind, m_idx, GF_FORCE,
@@ -2444,7 +2450,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+27:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes magical energy.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy", m_name);
 			breath(Ind, m_idx, GF_MANA,
@@ -2457,7 +2463,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+28:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes disintegration.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
 			breath(Ind, m_idx, GF_DISINTEGRATE,
@@ -2470,7 +2476,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+29:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something breathes.", m_name);
+			if (blind) msg_print(Ind, "Something breathes.");
 //			else msg_format(Ind, "%^s breathes toxic waste.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes toxic waste for", m_name);
 			breath(Ind, m_idx, GF_NUKE,
@@ -2510,7 +2516,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		case RF4_OFFSET+31:
 		{
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear something grunt with exertion.", m_name);
+			if (blind) msg_print(Ind, "You hear something grunt with exertion.");
 //			else msg_format(Ind, "%^s hurls a boulder at you!", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s hurls a boulder at you for", m_name);
 			bolt(Ind, m_idx, GF_ARROW, damroll(1 + r_ptr->level / 7, 12));
@@ -2526,7 +2532,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts an acid ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an acid ball of", m_name);
 			breath(Ind, m_idx, GF_ACID,
@@ -2540,7 +2546,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a lightning ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a lightning ball of", m_name);
 			breath(Ind, m_idx, GF_ELEC,
@@ -2554,7 +2560,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a fire ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a fire ball of", m_name);
 			breath(Ind, m_idx, GF_FIRE,
@@ -2568,7 +2574,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a frost ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a frost ball of", m_name);
 			breath(Ind, m_idx, GF_COLD,
@@ -2582,7 +2588,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a stinking cloud.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a stinking cloud for", m_name);
 			breath(Ind, m_idx, GF_POIS, damroll(12, 2), y, x, srad);
@@ -2595,7 +2601,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a nether ball.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an nether ball of", m_name);
 			breath(Ind, m_idx, GF_NETHER, (50 + damroll(10, 10) + rlev * 4), y, x, srad);
@@ -2608,7 +2614,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 			msg_format(Ind, "%^s gestures fluidly.", m_name);
 //			msg_print(Ind, "You are engulfed in a whirlpool.");
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "You are engulfed in a whirlpool for");
@@ -2622,7 +2628,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles powerfully.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles powerfully.");
 //			else msg_format(Ind, "%^s invokes a mana storm.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a mana storm for", m_name);
 			breath(Ind, m_idx, GF_MANA,
@@ -2635,7 +2641,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles powerfully.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles powerfully.");
 //			else msg_format(Ind, "%^s invokes a darkness storm.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a darkness storm for", m_name);
 			breath(Ind, m_idx, GF_DARK,
@@ -2939,7 +2945,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a ball of radiation.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a ball of radiation of", m_name);
 			breath(Ind, m_idx, GF_NUKE, (rlev * 3 + damroll(10, 6)), y, x, 2);
@@ -2952,7 +2958,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles frighteningly.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles frighteningly.");
 //			else msg_format(Ind, "%^s invokes a raw chaos.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s invokes a raw chaos for", m_name);
 			breath(Ind, m_idx, GF_CHAOS, (rlev * 4) + damroll(10, 10), y, x, 4);
@@ -2965,7 +2971,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a acid bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an acid bolt of", m_name);
 			bolt(Ind, m_idx, GF_ACID,
@@ -2979,7 +2985,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a lightning bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a lightning bolt of", m_name);
 			bolt(Ind, m_idx, GF_ELEC,
@@ -2993,7 +2999,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a fire bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a fire bolt of", m_name);
 			bolt(Ind, m_idx, GF_FIRE,
@@ -3007,7 +3013,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a frost bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a frost bolt of", m_name);
 			bolt(Ind, m_idx, GF_COLD,
@@ -3028,7 +3034,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a nether bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a nether bolt of", m_name);
 			bolt(Ind, m_idx, GF_NETHER,
@@ -3042,7 +3048,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a water bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a water bolt of", m_name);
 			bolt(Ind, m_idx, GF_WATER,
@@ -3055,7 +3061,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a mana bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a mana bolt of", m_name);
 			bolt(Ind, m_idx, GF_MANA,
@@ -3068,7 +3074,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a plasma bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a plasma bolt of", m_name);
 			bolt(Ind, m_idx, GF_PLASMA,
@@ -3081,7 +3087,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts an ice bolt.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts an ice bolt of", m_name);
 			bolt(Ind, m_idx, GF_ICE,
@@ -3095,7 +3101,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 //			else msg_format(Ind, "%^s casts a magic missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a magic missile of", m_name);
 			bolt(Ind, m_idx, GF_MISSILE,
@@ -3108,7 +3114,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "You hear scary noises.", m_name);
+			if (blind) msg_print(Ind, "You hear scary noises.");
 			else msg_format(Ind, "%^s casts a fearful illusion.", m_name);
 			if (p_ptr->resist_fear)
 			{
@@ -3131,7 +3137,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		{
 			if (monst_check_antimagic(Ind, m_idx)) break;
 			disturb(Ind, 1, 0);
-			if (blind) msg_format(Ind, "Something mumbles.", m_name);
+			if (blind) msg_print(Ind, "Something mumbles.");
 			else msg_format(Ind, "%^s casts a spell, burning your eyes!", m_name);
 			if (p_ptr->resist_blind)
 			{
@@ -3207,7 +3213,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			}
 			else if (rand_int(100) < p_ptr->skill_sav)
 			{
-				msg_format(Ind, "You resist the effects!");
+				msg_print(Ind, "You resist the effects!");
 			}
 			else
 			{
@@ -3262,7 +3268,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			msg_format(Ind, "%^s invokes the Hand of Doom!", m_name);
 			if (rand_int(100) < p_ptr->skill_sav)
 			{
-				msg_format(Ind, "You resist the effects!");
+				msg_print(Ind, "You resist the effects!");
 			}
 			else
 			{
@@ -6702,7 +6708,8 @@ static void process_monster(int Ind, int m_idx)
 			int k, y, x;
 			dun_level *l_ptr = getfloor(wpos);
 
-			if (!(l_ptr && l_ptr->flags1 & LF1_NO_MULTIPLY))
+			if (!(l_ptr && l_ptr->flags1 & LF1_NO_MULTIPLY) ||
+			    (r_ptr->flags3 & RF3_NONLIVING)) /* vermin control has no effect on non-living creatures */
 			{
 				/* Count the adjacent monsters */
 				for (k = 0, y = oy - 1; y <= oy + 1; y++)
@@ -6995,7 +7002,8 @@ static void process_monster(int Ind, int m_idx)
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
-			c_ptr->feat = twall_erosion(wpos, ny, nx);
+			//c_ptr->feat = twall_erosion(wpos, ny, nx);
+			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -7161,7 +7169,7 @@ static void process_monster(int Ind, int m_idx)
 #endif	// 0
 
 				/* Break the rune */
-				c_ptr->feat = FEAT_FLOOR;
+				cave_set_feat(wpos, ny, nx, FEAT_FLOOR);
 
 				/* Allow movement */
 				do_move = TRUE;
@@ -8033,7 +8041,7 @@ static void process_monster_pet(int Ind, int m_idx)
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
-			c_ptr->feat = twall_erosion(wpos, ny, nx);
+			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -8485,7 +8493,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
-			c_ptr->feat = twall_erosion(wpos, ny, nx);
+			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -8874,7 +8882,7 @@ void process_monsters(void)
 				continue;
 			
 			/* can spot/uncloak cloaked player? */
-			if (p_ptr->cloaked == 1) {
+			if (p_ptr->cloaked == 1 && !p_ptr->cloak_neutralized) {
 				if (strchr("eAN", r_ptr->d_char) ||
 				    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
 				    (r_ptr->flags7 & RF7_NAZGUL)
@@ -8882,11 +8890,18 @@ void process_monsters(void)
 #if 0 /* no reason to go this far I think, just attacking the player as usual should be enough - C. Blue */
 					monster_desc(pl, m_name, i, 0);
 				    	msg_format(pl, "\377r%^s reveals your presence!", m_name);
-					break_cloaking(pl);
+					break_cloaking(pl, 0);
 #endif
 				} else /* can't see cloaked player? */
 					continue;
 			}
+#if 0 /* maybe doesn't make sense that spotting an action drops camouflage */
+			else if (p_ptr->cloaked == 1 && new_los && !m_ptr->csleep && !strchr(",ijlmrsvwzFIQ", r_ptr->d_char) {
+				monster_desc(pl, m_name, i, 0);
+			    	msg_format(pl, "\377o%^s spots your actions!", m_name);
+				break_cloaking(pl, 0); /* monster reveals our presence */
+			}
+#endif
 
 			/* Remember this player */ 
 			blos = new_los; 

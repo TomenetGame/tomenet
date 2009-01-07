@@ -907,9 +907,8 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 				return (FALSE);
 			}
 			
-			if ((Players[i]->mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)) {
-				if (p_ptr->mode & MODE_EVERLASTING) msg_print(Ind, "You cannot transfer houses to non-everlasting players!");
-				else msg_print(Ind, "You cannot transfer houses to everlasting players!");
+			if (compat_pmode(Ind, i)) {
+				msg_format(Ind, "You cannot transfer houses to %s players!", compat_pmode(Ind, i));
 				return(FALSE);
 			}
 			
@@ -951,7 +950,6 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args){
 
 					Players[i]->houses_owned++;
 					p_ptr->houses_owned--;
-
 					return(TRUE);
 				}
 			}
@@ -1005,6 +1003,62 @@ bool access_door(int Ind, struct dna_type *dna){
 	return(FALSE);
 }
 
+/* Note: these colours will be affected by nightly darkening, so shades
+   shouldn't be used but completely different colours only - C. Blue */
+int access_door_colour(int Ind, struct dna_type *dna){
+	int cl = TERM_YELLOW;
+	player_type *p_ptr=Players[Ind];
+	if (!dna->owner) return(TERM_L_UMBER); /* house doesn't belong to anybody */
+	switch(dna->owner_type){
+		case OT_PLAYER:
+			/* new doors in new server different */
+			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
+				return(TERM_L_GREEN);
+			if(dna->a_flags & ACF_PARTY){
+				if(!p_ptr->party) return(TERM_L_DARK);
+				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
+					if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+					return(TERM_L_BLUE);
+				}
+			}
+			if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass==(dna->creator&0xff))) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_WHITE);
+			}
+			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==((dna->creator>>8)&0xff))) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_L_WHITE);
+			}
+			break;
+		case OT_PARTY:
+			if(!p_ptr->party) return(TERM_L_DARK);
+			if(player_in_party(dna->owner, Ind)) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_L_BLUE);
+			}
+			break;
+		case OT_CLASS:
+			if(p_ptr->pclass==dna->owner) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_WHITE);
+			}
+			break;
+		case OT_RACE:
+			if(p_ptr->prace==dna->owner) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_L_WHITE);
+			}
+			break;
+		case OT_GUILD:
+			if(!p_ptr->guild) return(TERM_L_DARK);
+			if(p_ptr->guild==dna->owner) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_VIOLET);
+			}
+			break;
+	}
+	return(TERM_L_DARK);
+}
 
 cptr get_house_owner(struct c_special *cs_ptr)
 {
@@ -1163,7 +1217,7 @@ void do_cmd_open(int Ind, int dir)
 				/* Apply chest traps, if any */
 				chest_trap(Ind, y, x, c_ptr->o_idx);
 
-				break_cloaking(Ind);
+				break_cloaking(Ind, 3);
 				break_shadow_running(Ind); 
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1218,7 +1272,7 @@ void do_cmd_open(int Ind, int dir)
 			{
 				/* Message */
 				msg_print(Ind, "You have picked the lock.");
-				break_cloaking(Ind);
+				break_cloaking(Ind, 3);
 				break_shadow_running(Ind); 
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1268,7 +1322,7 @@ void do_cmd_open(int Ind, int dir)
 #endif	// USE_MANG_HOUSE
 					/* S(he) is no longer afk */
 					un_afk_idle(Ind);
-					break_cloaking(Ind);
+					break_cloaking(Ind, 3);
 					break_shadow_running(Ind); 
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
@@ -1308,7 +1362,7 @@ void do_cmd_open(int Ind, int dir)
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
-						break_cloaking(Ind);
+						break_cloaking(Ind, 3);
 						break_shadow_running(Ind); 
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
@@ -1322,7 +1376,7 @@ void do_cmd_open(int Ind, int dir)
 						c_ptr->feat=FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
-						break_cloaking(Ind);
+						break_cloaking(Ind, 3);
 						break_shadow_running(Ind); 
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
@@ -1347,7 +1401,7 @@ void do_cmd_open(int Ind, int dir)
 			/* Set off trap */
 			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
-			break_cloaking(Ind);
+			break_cloaking(Ind, 3);
 			break_shadow_running(Ind); 
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
@@ -1456,7 +1510,7 @@ void do_cmd_close(int Ind, int dir)
 			/* Find this house */
 			i = pick_house(wpos, y, x);
 
-			break_cloaking(Ind);
+			break_cloaking(Ind, 2);
 			break_shadow_running(Ind); 
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
@@ -1480,15 +1534,15 @@ void do_cmd_close(int Ind, int dir)
 		/* Close the door */
 		else
 		{
-			/* Set off trap */
-			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
-
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-			break_cloaking(Ind);
+			break_cloaking(Ind, 2);
 			break_shadow_running(Ind); 
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
+
+			/* Set off trap */
+			if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1569,7 +1623,8 @@ bool twall(int Ind, int y, int x)
 
 	/* Remove the feature */
 //	c_ptr->feat = FEAT_FLOOR;
-	c_ptr->feat = twall_erosion(wpos, y, x);
+//	c_ptr->feat = twall_erosion(wpos, y, x);
+	cave_set_feat(wpos, y, x, twall_erosion(wpos, y, x));
 
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
@@ -1709,7 +1764,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
 				(f_info[c_ptr->feat].flags1 & FF1_PERMANENT))
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind); 
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1728,7 +1783,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				/* Remove the rubble */
 				if ((power > rand_int(200)) && twall(Ind, y, x))
 				{
-					break_cloaking(Ind);
+					break_cloaking(Ind, 0);
 					break_shadow_running(Ind); 
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
@@ -1757,7 +1812,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				else
 				{
 					/* Message, keep digging */
-					break_cloaking(Ind);
+					break_cloaking(Ind, 0);
 					break_shadow_running(Ind); 
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
@@ -1768,7 +1823,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			
 			else if (c_ptr->feat == FEAT_TREE)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1796,7 +1851,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			}
 			else if (c_ptr->feat == FEAT_BUSH)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1824,7 +1879,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			}
 			else if (c_ptr->feat == FEAT_IVY)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1850,7 +1905,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			}
 			else if (c_ptr->feat == FEAT_DEAD_TREE)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1921,7 +1976,7 @@ void do_cmd_tunnel(int Ind, int dir)
 				}
 				if (istown(wpos)) gold = FALSE;
 
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -1985,7 +2040,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Default to secret doors */
 			else if (c_ptr->feat == FEAT_SECRET)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2003,7 +2058,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Granite */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA)
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2026,7 +2081,7 @@ void do_cmd_tunnel(int Ind, int dir)
 			/* Doors */
 			else
 			{
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2062,7 +2117,7 @@ void do_cmd_tunnel(int Ind, int dir)
 	    (randint(200) < power) && magik(50)) {
 		if (!check_guard_inscription(o_ptr->note, 'E' )) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 10);
-			break_cloaking(Ind); /* redundant, done above already */
+			break_cloaking(Ind, 0); /* redundant, done above already */
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 		}
@@ -2270,7 +2325,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 				msg_print(Ind, "You set off a trap!");
 				chest_trap(Ind, y, x, c_ptr->o_idx);
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2407,7 +2462,7 @@ void do_cmd_disarm(int Ind, int dir)
 					yay->number=1;
 					yay->level=p_ptr->lev;
 					drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
-					msg_format(Ind, "You have discovered a trapkit!");
+					msg_print(Ind, "You have discovered a trapkit!");
 				}
 				
 				
@@ -2459,7 +2514,7 @@ void do_cmd_disarm(int Ind, int dir)
 				/* Move the player onto the trap */
 				if (dir != 5) move_player(Ind, dir, FALSE); /* moving doesn't 100% imply setting it off */
 				else hit_trap(Ind); /* but we can allow this weakness, assuming that you are less likely to get hit if you stand besides the trap instead of right on it */
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				stop_precision(Ind);
 				stop_shooting_till_kill(Ind);
@@ -2566,7 +2621,7 @@ void do_cmd_bash(int Ind, int dir)
 					p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 					msg_print(Ind, "Splash!");
-					break_cloaking(Ind);
+					break_cloaking(Ind, 0);
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
@@ -2600,7 +2655,7 @@ void do_cmd_bash(int Ind, int dir)
 					floor_item_increase(item, -1);
 					floor_item_optimize(item);
 
-					break_cloaking(Ind);
+					break_cloaking(Ind, 0);
 					break_shadow_running(Ind);
 					stop_precision(Ind);
 					stop_shooting_till_kill(Ind);
@@ -2699,7 +2754,7 @@ void do_cmd_bash(int Ind, int dir)
 				/* Hack -- Lose balance ala paralysis */
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
 			}
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 			break_shadow_running(Ind);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
@@ -2924,8 +2979,17 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 		move_player(Ind, dir, pickup);
 
 		/* Take a turn */
-		if (!p_ptr->melee_sprint) p_ptr->energy -= level_speed(&p_ptr->wpos);
-		else p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		if (!p_ptr->melee_sprint) {
+			if (p_ptr->mode & MODE_PVP)
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+			else
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+		} else {
+			if (p_ptr->mode & MODE_PVP)
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 4;
+			else
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		}
 
 		/* Allow more walking */
 		more = TRUE;
@@ -3444,8 +3508,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	/* Is this magic Arrow or magic shots or magic bolts? */
-	if ((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT)
-	     && o_ptr->sval == SV_AMMO_MAGIC) {
+	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) {
 	        magic = TRUE;
 		if (!cursed_p(o_ptr)) returning = TRUE;
 	}
@@ -3651,7 +3714,7 @@ void do_cmd_fire(int Ind, int dir)
 	
 	break_chance = breakage_chance(o_ptr);
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 
 	/* Reduce and describe inventory */
@@ -4217,7 +4280,7 @@ void do_cmd_fire(int Ind, int dir)
 									        drain_msg = FALSE;
 									}
 
-									hp_player_quiet(Ind, drain_heal);
+									hp_player_quiet(Ind, drain_heal, TRUE);
 									/* We get to keep some of it! */
 								}
 							}
@@ -4747,7 +4810,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -5199,7 +5262,7 @@ void house_admin(int Ind, int dir, char *args){
 		x = p_ptr->px + ddx[dir];
 		/* Get requested grid */
 		c_ptr = &zcave[y][x];
-		if(c_ptr->feat==FEAT_HOME)
+		if(c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)
 		{
 			struct c_special *cs_ptr;
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
@@ -5217,11 +5280,13 @@ void house_admin(int Ind, int dir, char *args){
 							return;
 					}
 					if(success){
-						msg_format(Ind,"\377gDoor change successful");
+						msg_print(Ind,"\377gDoor change successful");
+						/* take note of door colour change */
+						everyone_lite_spot(wpos, y, x);
 					}
-					else msg_format(Ind,"\377yDoor change failed");
+					else msg_print(Ind,"\377yDoor change failed");
 				}
-				else msg_format(Ind,"\377oDoor change not permitted.");
+				else msg_print(Ind,"\377oDoor change not permitted.");
 			}
 			else msg_print(Ind,"\377rYou cant modify that door");
 		}
@@ -5282,10 +5347,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 		if (in_bounds2(wpos, y, x)) c_ptr = &zcave[y][x];
 
 		/* Check for a house */
-		if (!(c_ptr && c_ptr->feat==FEAT_HOME && (cs_ptr=GetCS(c_ptr, CS_DNADOOR))))
+		if (!(c_ptr && (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) && (cs_ptr = GetCS(c_ptr, CS_DNADOOR))))
 		{
 			/* No house, message */
-			msg_print(Ind, "You see nothing to buy there.");
+			msg_print(Ind, "You see nothing to buy/sell there.");
 			return;
 		}
 
@@ -5326,6 +5391,10 @@ void do_cmd_purchase_house(int Ind, int dir)
 				for (i = 0; i < num_houses; i++)
 					if (houses[i].dx == x && houses[i].dy == y && inarea(&houses[i].wpos, &p_ptr->wpos))
 						kill_house_contents(&houses[i]);
+
+				/* take note of door colour change */
+				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
+				everyone_lite_spot(wpos, y, x);
 				return;
 			}
 			msg_print(Ind,"That house does not belong to you!");
@@ -5358,6 +5427,9 @@ void do_cmd_purchase_house(int Ind, int dir)
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_GOLD);
+
+		/* take note of door colour change */
+		everyone_lite_spot(wpos, y, x);
 	}
 }
 
@@ -5375,24 +5447,24 @@ void do_cmd_own(int Ind)
 
 	if (!p_ptr->own1.wx && !p_ptr->own2.wx && !p_ptr->own1.wy && !p_ptr->own2.wy && !p_ptr->own1.wz && !p_ptr->own2.wz)
 	{
-		msg_format(Ind, "You can't own more than 2 terrains.");
+		msg_print(Ind, "You can't own more than 2 terrains.");
 		return;
 	}
 	
 	if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].own)
 	{
-		msg_format(Ind, "Sorry this land is owned by someone else.");
+		msg_print(Ind, "Sorry this land is owned by someone else.");
 		return;
 	}
 	if(p_ptr->wpos.wz)
 	{
-		msg_format(Ind, "Sorry you can't own the dungeon");
+		msg_print(Ind, "Sorry you can't own the dungeon");
 		return;
 	}
 	
 	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<4))
 	{
-		msg_format(Ind, "Sorry this land is owned by the town.");
+		msg_print(Ind, "Sorry this land is owned by the town.");
 		return;
 	}
 	
@@ -5435,6 +5507,10 @@ return;
     if (!p_ptr->cloaked) {
 	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {
 		msg_format(Ind, "\377yYou need to be level %d to learn how to cloak yourself effectively.", LEARN_CLOAKING_LEVEL);
+		return;
+	}
+	if (p_ptr->body_monster) { /* in case of vampire bat, for vampire rogue! */
+		msg_print(Ind, "\377yYou cannot cloak yourself while in bat form.");
 		return;
 	}
 	if (p_ptr->rogue_heavyarmor) {
@@ -5506,15 +5582,24 @@ return;
 	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 }
 
-/* break cloaking */
-void break_cloaking(int Ind) {
-	if (Players[Ind]->cloaked) {
-		msg_print(Ind, "\377oYour camouflage drops!");
-		if (Players[Ind]->cloaked == 1) msg_format_near(Ind, "%s appears before your eyes.", Players[Ind]->name);
-		Players[Ind]->cloaked = 0;
-		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
-		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+/* break cloaking -
+   'discovered=0' means that the character just cannot keep himself cloaked,
+   while 'discovered > 0' stands for a suspicious action that might have been
+   noted by an observing monster and hence neutralizes his disguise for n turns. - C. Blue */
+void break_cloaking(int Ind, int discovered) {
+	if (!discovered) {
+		if (Players[Ind]->cloaked) {
+			msg_print(Ind, "\377oYour camouflage drops!");
+			if (Players[Ind]->cloaked == 1) msg_format_near(Ind, "%s appears before your eyes.", Players[Ind]->name);
+			Players[Ind]->cloaked = 0;
+			Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+			Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+		}
 	}
+	/* neutralize cloak effect for a number of <discovered> turns,
+	   due to a suspicious action we performed that might have been
+	   noticed by a monster */
+	if (discovered > Players[Ind]->cloak_neutralized) Players[Ind]->cloak_neutralized = discovered;
 }
 
 /* stop cloaking preparations */
@@ -5596,7 +5681,7 @@ void shadow_run(int Ind)
         p_ptr->cst -= 10;                                                             
         un_afk_idle(Ind);
 
-        break_cloaking(Ind);
+        break_cloaking(Ind, 0);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
         p_ptr->shadow_running = TRUE;

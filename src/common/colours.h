@@ -1,6 +1,12 @@
 
 /* Purpose: Define colour schemes and unify colour usage easily. - C. Blue */
 
+/* AFK messages / status change / indicator [was o] */
+#define COLOUR_AFK		'o'
+
+/* new character mode colours */
+#define COLOUR_MODE_PVP		'y'
+
 /* Anti-magic interruption messages */
 #if 0
 #define COLOUR_AM_OWN          'w'

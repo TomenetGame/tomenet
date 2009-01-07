@@ -41,8 +41,9 @@
 
 /* Macro to test in project_p() whether we are hurt by a PvP
    (player vs player) or a normal PvM (player vs monster) attack */
-#define PVP	(who < 0 && who > -MAX_PLAYERS)
-#define PLAYER(i)	(i > 0 && i < MAX_PLAYERS)
+#define IS_PVP	(who < 0 && who >= -MAX_PLAYERS)
+/* similar purpose macro (also for take_hit) */
+#define IS_PLAYER(i)	(i > 0 && i <= MAX_PLAYERS)
 
 
  /*
@@ -698,6 +699,11 @@ void teleport_player(int Ind, int dis)
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death)
 	{
+		if ((p_ptr->mode & MODE_PVP) && p_ptr->prevent_tele) {
+			msg_print(Ind, "\377yThere's no easy way out of this fight!");
+			s_printf("%s TELEPORT_FAIL: prevent_tele for %s.\n", showtime(), p_ptr->name);
+			return;
+		}
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
 			s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
 			return;
@@ -786,7 +792,7 @@ void teleport_player(int Ind, int dis)
 		return;
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 7);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 
@@ -1214,9 +1220,15 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 	/* Heavenly invulnerability? */
 	if (p_ptr->martyr && !bypass_invuln) {
-		break_cloaking(Ind); /* still notice! paranoia though, rogues can't use martyr */
+		break_cloaking(Ind, 0); /* still notice! paranoia though, rogues can't use martyr */
 		return;
 	}
+
+	/* towns are safe-zones from ALL hostile actions */
+        if (IS_PLAYER(Ind_attacker)) {
+		if (istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) return;
+		p_ptr->prevent_tele = 30; /* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
+        }
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
@@ -1253,7 +1265,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		if (magik(40))
 		{
 			msg_print(Ind, "The attack is fully deflected by the magic shield.");
-			break_cloaking(Ind);
+			if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
 			return;
 		}
 
@@ -1313,8 +1325,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* for cloaking as well as shadow running:
 	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */	
 //both ifs should work properly.
-	if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind);
-//	if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind);
+	if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+//	if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind, 0);
 
 	/* Update health bars */
 	update_health(0 - Ind);
@@ -1364,7 +1376,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 			Players[Ind2]->redraw |= (PR_HP);
 
 			s_printf("BLOOD_BOND: %s won the blood bond against %s\n", Players[Ind2]->name, p_ptr->name);
-			msg_broadcast(0, format("\377c*** %s won the blood bond against %s. ***", Players[Ind2]->name, p_ptr->name));
+			msg_broadcast_format(0, "\377c*** %s won the blood bond against %s. ***", Players[Ind2]->name, p_ptr->name);
 
 			p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
 			remove_hostility(Ind, Players[Ind2]->name);
@@ -1378,7 +1390,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 			return;
 		}
 #else
-		if (PLAYER(Ind_attacker))
+		if (IS_PLAYER(Ind_attacker))
 		{
 			if (check_blood_bond(Ind, Ind_attacker))
 			{
@@ -1389,7 +1401,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 				p2_ptr->redraw |= PR_HP;
 
 				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
-				msg_broadcast(0, format("\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name));
+				msg_broadcast_format(0, "\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
 
 				remove_blood_bond(Ind, Ind_attacker);
 				remove_blood_bond(Ind_attacker, Ind);
@@ -1411,7 +1423,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		   of death, use died_from_list.  To preserve the original
 		   depth, use died_from_depth. */
 
-		(void)strcpy(p_ptr->died_from, hit_from);
+		(void)strcpy(p_ptr->died_from, hit_from); /* todo: blindness/no esp (fuzzy like for spell hits) */
+		(void)strcpy(p_ptr->really_died_from, hit_from);
 		if (!p_ptr->ghost) 
 		{	strcpy(p_ptr->died_from_list, hit_from);
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -1515,7 +1528,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 //		ptr->ghost = TRUE;
 
 		/* Dead */
-		break_cloaking(Ind);
+		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
@@ -1528,7 +1541,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 		/* Message */
 		msg_print(Ind, "\377fYou can hardly suppress screaming out insane laughters!");
 		msg_print(Ind, NULL);
-		break_cloaking(Ind);
+		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 	}
@@ -1612,13 +1625,13 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 		p_ptr->deathblow = 0;
 
 		/* Dead */
-		break_cloaking(Ind);
+		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 		return;
 	}
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 }
 
 
@@ -2282,7 +2295,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (PLAYER(Ind_attacker)) {
+	if (IS_PLAYER(Ind_attacker)) {
 #if 0
 		player_type *p2 = Players[Ind_attacker];
 
@@ -2331,7 +2344,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (PLAYER(Ind_attacker)) {
+	if (IS_PLAYER(Ind_attacker)) {
 #if 0
 		player_type *p2 = Players[Ind_attacker];
 
@@ -2383,7 +2396,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (PLAYER(Ind_attacker)) {
+	if (IS_PLAYER(Ind_attacker)) {
 #if 0
 		player_type *p2 = Players[Ind_attacker];
 
@@ -2433,7 +2446,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
-	if (PLAYER(Ind_attacker)) {
+	if (IS_PLAYER(Ind_attacker)) {
 #if 0
 		player_type *p2 = Players[Ind_attacker];
 
@@ -2728,6 +2741,7 @@ bool apply_disenchant(int Ind, int mode)
 
 	char		o_name[160];
 
+	u32b f1, f2, f3, f4, f5, esp;
 
 	/* Unused */
 //	mode = mode;
@@ -2751,9 +2765,13 @@ bool apply_disenchant(int Ind, int mode)
 
 	/* Get the item */
 	o_ptr = &p_ptr->inventory[t];
+
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return (FALSE);
+
 	k_ptr = &k_info[o_ptr->k_idx];
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -2783,11 +2801,20 @@ bool apply_disenchant(int Ind, int mode)
 		return (FALSE);
 	}
 
+	if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ||
+	    (f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN))
+	{
+		msg_format(Ind, "Your %s (%c) %s unaffected!",
+				   o_name, index_to_label(t),
+				   ((o_ptr->number != 1) ? "are" : "is"));
+		/* Notice */
+		return (TRUE);
+	}
 
 	/* Artifacts have 70%(randart) or 80%(trueart) chance to resist */
 	if ((artifact_p(o_ptr) && (rand_int(100) < 70)) ||
-		(true_artifact_p(o_ptr) && (rand_int(100) < 80)) ||
-		((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))
+	    (true_artifact_p(o_ptr) && (rand_int(100) < 80)))
+//		((o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))
 /*		(artifact_p(o_ptr) && (o_ptr->tval == TV_SWORD) && (o_ptr->sval == SV_DARK_SWORD)))*/
 	{
 		/* Message */
@@ -3109,7 +3136,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the tree */
-				c_ptr->feat = FEAT_DEAD_TREE;
+				cave_set_feat(wpos, y, x, FEAT_DEAD_TREE);
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
@@ -3119,7 +3146,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
 			{
 				/* Destroy the grass */
-				c_ptr->feat = FEAT_DIRT;
+				cave_set_feat(wpos, y, x, FEAT_DIRT);
 			}
 
 			break;
@@ -3165,7 +3192,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Place a wall */
 			if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
-			c_ptr->feat = FEAT_WALL_EXTRA;
+			cave_set_feat(wpos, y, x, FEAT_WALL_EXTRA);
 					
 			/* Notice */
 			if (!quiet) note_spot(Ind, y, x);
@@ -3210,7 +3237,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the tree */
-				c_ptr->feat = FEAT_ASH;
+				cave_set_feat(wpos, y, x, FEAT_ASH);
 
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
@@ -3220,7 +3247,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY)
 			{
 				/* Destroy the grass */
-				c_ptr->feat = FEAT_ASH;
+				cave_set_feat(wpos, y, x, FEAT_ASH);
 			}
 
 			break;
@@ -3325,7 +3352,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				c_ptr->feat = FEAT_FLOOR;
+				cave_set_feat(wpos, y, x, FEAT_FLOOR);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -3352,7 +3379,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				c_ptr->feat = FEAT_FLOOR;
+				cave_set_feat(wpos, y, x, FEAT_FLOOR);
 
 				/* Forget the wall */
 				everyone_forget_spot(wpos, y, x);
@@ -3405,7 +3432,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				c_ptr->feat = FEAT_SAND;
+				cave_set_feat(wpos, y, x, FEAT_SAND);
 			}
 			/* Sandwall with treasure */
 			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K)
@@ -3419,7 +3446,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				c_ptr->feat = FEAT_SAND;
+				cave_set_feat(wpos, y, x, FEAT_SAND);
 
 				/* Place some gold */
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
@@ -3437,7 +3464,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Destroy the wall */
 				feat = twall_erosion(wpos, y, x);
-				c_ptr->feat = (feat == FEAT_FLOOR) ? FEAT_DIRT : feat;
+				cave_set_feat(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 			}
 			/* Quartz / Magma with treasure */
 			else if (c_ptr->feat >= FEAT_MAGMA_H)
@@ -3451,7 +3478,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				c_ptr->feat = FEAT_DIRT;
+				cave_set_feat(wpos, y, x, FEAT_DIRT);
 
 				/* Place some gold */
 				if (!istown(wpos)) place_gold(wpos, y, x, 0);
@@ -3468,7 +3495,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the wall */
-				c_ptr->feat = FEAT_DIRT;
+				cave_set_feat(wpos, y, x, FEAT_DIRT);
 			}
 
 			/* Rubble */
@@ -3482,7 +3509,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the rubble */
-				c_ptr->feat = FEAT_DIRT;
+				cave_set_feat(wpos, y, x, FEAT_DIRT);
 
 				/* Hack -- place an object */
 				if (rand_int(100) < 10)
@@ -3524,7 +3551,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 
 				/* Destroy the feature */
-				c_ptr->feat = FEAT_DIRT;
+				cave_set_feat(wpos, y, x, FEAT_DIRT);
 			}
 
 			/* Forget the wall */
@@ -5273,17 +5300,19 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else
 				dam = (m_ptr->hp * dam) / 100;
 
+			p_ptr->ret_dam = dam;
+
 			/* the_sandman: return 15% of the damage to player. This is special
 			   since (we're not using the upto 35% rule because for the spell 
 			   (drain cloud) it will be too much) we aim for balance 
 			   HACK: the priest_spell variable is defined above. 
 			*/
 			if (priest_spell) {
-				p_ptr->chp += dam*.15;
+				p_ptr->chp += (dam * 15) / 100;
 				if (p_ptr->chp > p_ptr->mhp) p_ptr->chp = p_ptr->mhp;
+				p_ptr->ret_dam = 0;
 			}
 
-			p_ptr->ret_dam = dam;
 			if ((r_ptr->flags3 & RF3_UNDEAD) ||
 //				(r_ptr->flags3 & RF3_DEMON) ||
 				(r_ptr->flags3 & RF3_NONLIVING) ||
@@ -6536,7 +6565,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 
 	/* Check for death */
-	if (dam > m_ptr->hp)
+	if ((dam > m_ptr->hp) &&
+	    /* Some mosnters are immune to death */
+	    !(r_ptr->flags7 & RF7_NO_DEATH))
 	{
 		/* Extract method of death */
 		note = note_dies;
@@ -7439,7 +7470,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			take_hit(Ind, dam, killer, -who);
 			if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
 				/* don't poison for too long in pvp */
-				if (PVP) {
+				if (IS_PVP) {
 					if (p_ptr->poisoned < 10) (void)set_poisoned(Ind, p_ptr->poisoned + rand_int(4), -who);
 				} else {
 					(void)set_poisoned(Ind, p_ptr->poisoned + rand_int(dam) + 10, -who);
@@ -7542,7 +7573,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Don't kill inventory in bloodbond... */
 		int breakable = 1;
-		if (PVP) {
+		if (IS_PVP) {
 #if 0
 			player_type *p2 = Players[-who];
 
@@ -7626,7 +7657,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!p_ptr->resist_water || magik(50)) {
 					/* Don't kill inventory in bloodbond... */
 					int breakable = 1;
-					if (PVP) {
+					if (IS_PVP) {
 #if 0
 						player_type *p2 = Players[-who];
 
@@ -7647,7 +7678,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			{
 					if (!p_ptr->resist_sound)
 				{
-					if (PVP) {
+					if (IS_PVP) {
 						(void)set_stun(Ind, p_ptr->stun + randint(10));
 					} else { /* pvm */
 						(void)set_stun(Ind, p_ptr->stun + randint(40));
@@ -7655,7 +7686,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 				if (!p_ptr->resist_conf)
 				{
-					if (PVP) {
+					if (IS_PVP) {
 //						(void)set_confused(Ind, p_ptr->confused + randint(2));
 					} else { /* pvm */
 						(void)set_confused(Ind, p_ptr->confused + randint(5) + 5);
@@ -8105,7 +8136,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_CURSE: {
 			int curse = randint(3);
 			if (curse == 1) { //Slow
-				if (fuzzy) msg_format(Ind, "Your body seems difficult to move!");
+				if (fuzzy) msg_print(Ind, "Your body seems difficult to move!");
 				else msg_format(Ind, "%s curses at you, slowing your movements!", killer);
 				if (p_ptr->pspeed <= 100) {
 					/* unaffected */
@@ -8128,7 +8159,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 				take_hit(Ind, dam, killer, -who);
 			} else { //Blind
-				if (fuzzy) msg_format(Ind, "Your eyes suddenly burn!");
+				if (fuzzy) msg_print(Ind, "Your eyes suddenly burn!");
 				else msg_format(Ind, "%s casts a spell, burning your eyes!", killer);
 				if (!blind && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + randint(5) + 2);
 				dam = 0;
@@ -8343,7 +8374,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				{
 						/* Healed */
 						msg_format(Ind, "\377gYou are healed for %d points.", dam);
-						hp_player_quiet(Ind, dam);
+						hp_player_quiet(Ind, dam, FALSE);
 						dam = 0;
 				}
 			break;
@@ -8649,7 +8680,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					{
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
-						if (PVP) {
+						if (IS_PVP) {
 #if 0
 							player_type *p2 = Players[-who];
 
@@ -8756,7 +8787,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (rand_int(100) < p_ptr->skill_sav)
 			{
-				msg_format(Ind, "You resist the effects!");
+				msg_print(Ind, "You resist the effects!");
 			}
 			else
 			{
@@ -9643,6 +9674,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 						//(c_ptr2->feat != FEAT_ASH) &&
 						(c_ptr2->feat != FEAT_MUD) &&
 						(c_ptr2->feat != FEAT_DIRT) &&
+						(c_ptr2->feat != FEAT_HOME_OPEN) &&
 						(c_ptr2->feat != FEAT_HOME))
 					{
 #if 0

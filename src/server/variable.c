@@ -88,6 +88,7 @@ bool create_down_stair;         /* Auto-create "down stairs" */
 
 s16b num_repro;                 /* Current reproducer count */
 s16b object_level;              /* Current object creation level */
+s16b object_discount = 0;	/* for resulting items of a stolen acquirement scroll (!) */
 s16b monster_level;             /* Current monster creation level */
 s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto, 0 = none */
 
@@ -201,7 +202,7 @@ server_opts cfg =
 				    (and summon -if they can do that- more clones themselves).*/
 	3,		/* henc_strictness - how easily monsters adjust their exp to their highest player encounter */
 	1,		/* bonus_calc_type - how HP are calculated (0 = old, 1 = new way) */
-	2,		/* charmode_trading_restrictions - how restricted is trading? 0 = allow all, 1 = no ever->nonever, 2 = no exchange */
+	6,		/* charmode_trading_restrictions FLAGS: how restricted is trading? 0 = no exchange, +1 = ever can take (nonever&&nonpvp) items (bad idea), +2 = pvp can take ever, +4 = pvp can take nonever (double-edged) */
 	0,		/* item_awareness - how easily the player becomes aware of sofar un-identified items
 					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop */
 	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
@@ -796,6 +797,8 @@ int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 int ge_training_tower = 0; /* use training tower for global events */
 u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
 int ge_contender_buffer_deed[128]; /* contender's deeds on different characters (Highlander Tournament!) */
+u32b achievement_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
+int achievement_buffer_deed[128]; /* an achievement deeds on different characters (PvP Mode) */
 
 /* for dungeon master/wizard summoning, to override all validity checks and
    definitely summon what his/her heart desires! - C. Blue */
@@ -821,3 +824,5 @@ char last_chat_owner[20]; /* Who said it */
 auction_type *auctions;
 int auction_alloc;
 #endif
+
+int store_debug_mode = 0;

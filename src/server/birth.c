@@ -536,11 +536,6 @@ static void get_extra(int Ind)
 	int             i, j, min_value, max_value;
 	int tries = 300;
 
-	/* Level one (never zero!) */
-	p_ptr->lev = 1;
-	p_ptr->max_lev = 1;
-	p_ptr->max_plv = 1;
-
 	/* Experience factor */
 /* This one is too harsh for TLs and too easy on yeeks
 	p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
@@ -886,36 +881,6 @@ static void get_money(int Ind)
 	/* Since it's not a king/queen */
 	p_ptr->own1.wx=p_ptr->own1.wy=p_ptr->own1.wz=0;
 	wpcopy(&p_ptr->own2, &p_ptr->own1);
-		
-	if (p_ptr->admin_wiz)
-	{
-		/* the admin wizard can basically do what he wants */
-		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
-		p_ptr->max_lev = 99;
-		p_ptr->max_plv = 99;
-		p_ptr->exp = 999999999;
-//		p_ptr->noscore = 1;
-		/* permanent invulnerability */
-		p_ptr->total_winner = TRUE;
-		p_ptr->max_dlv = 200;
-
-		/* use res_uni instead; it messes the unique list */
-//		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
-	}
-	else if (p_ptr->admin_dm)
-	{
-		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
-		p_ptr->max_lev = 99;
-		p_ptr->max_plv = 99;
-		p_ptr->exp = 999999999;
-		p_ptr->invuln = -1;
-		p_ptr->ghost = 1;
-//		p_ptr->noscore = 1;
-		p_ptr->max_dlv = 200;
-	}
-	
 }
 
 
@@ -2133,26 +2098,25 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* player is not in a game */
 	p_ptr->team=0;
 
+	/* paranoia? */
+	p_ptr->skill_points = 0;
+
 	/* Set info */
 	p_ptr->mode |= sex & ~MODE_MALE;
-#if 1 /* don't allow yet, until it's done getting implemented.. */
-	p_ptr->mode &= ~MODE_PVP;
-#endif
 
 #if 1 /* keep for now to stay compatible, doesn't hurt us */
 	if (sex > 511)
 	{
 		sex -= 512;
-		p_ptr->fruit_bat = 1;
 		p_ptr->mode |= MODE_FRUIT_BAT;
 	}
 #endif
-	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
 	
 	/* fix potential exploits */
 	if (p_ptr->mode & MODE_EVERLASTING) p_ptr->mode &= ~(MODE_HARD | MODE_NO_GHOST);
-	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST);
+	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_FRUIT_BAT);
 
+	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = sex & 1;
@@ -2172,10 +2136,14 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 #ifdef RPG_SERVER /* Make characters always NO_GHOST */
 	p_ptr->mode |= MODE_NO_GHOST;
 	p_ptr->mode &= ~MODE_EVERLASTING;
+	p_ptr->mode &= ~MODE_PVP;
 #endif
 
 	/* Set his ID */
 	p_ptr->id = newid();
+
+	/* Level one (never zero!) */
+	p_ptr->lev = 1;
 
 	/* Actually Generate */
 	p_ptr->maximize = cfg.maximize?TRUE:FALSE;
@@ -2186,16 +2154,6 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Roll for base hitpoints */
 	get_extra(Ind);
 
-	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
-	   (Can be used for different purpose, usually in conjuction with custom.lua) */
-	/* An artifact reset can be done by changing just custom.lua. */
-#ifdef RPG_SERVER
-	p_ptr->updated_savegame = 0;
-#endif
-#ifndef RPG_SERVER
-	p_ptr->updated_savegame = 0;
-#endif
-
 	/* Roll for age/height/weight */
 	get_ahw(Ind);
 
@@ -2205,20 +2163,61 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Roll for gold */
 	get_money(Ind);
 
+	/* set level and skill, execute hacks */
+	if (p_ptr->mode & MODE_PVP) {
+		p_ptr->lev = 10;
+#ifndef ALT_EXPRATIO
+		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
+#else
+                p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
+#endif
+		p_ptr->skill_points = (p_ptr->lev - 1) * 5;
+		p_ptr->au = 9950 + rand_int(101);
+		
+		/* give her/him a free mimic transformation for starting out */
+		if ((p_ptr->pclass == CLASS_ADVENTURER) ||
+		    (p_ptr->pclass == CLASS_MIMIC) ||
+		    (p_ptr->pclass == CLASS_SHAMAN))
+			p_ptr->free_mimic = 1;
+	}
+
+	/* admin hacks */
+	if (p_ptr->admin_wiz)
+	{
+		/* the admin wizard can basically do what he wants */
+
+		/* use res_uni instead; it messes the unique list */
+//		for (i = 1; i < MAX_R_IDX; i++) p_ptr->r_killed[i] = r_info[i].level;
+	}
+	else if (p_ptr->admin_dm)
+	{
+		p_ptr->invuln = -1;
+		p_ptr->ghost = 1;
+//		p_ptr->noscore = 1;
+	}
+	
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
+		p_ptr->au = 50000000;
+		p_ptr->lev = 99;
+		p_ptr->exp = 999999999;
 		p_ptr->skill_points = 9999;
+//		p_ptr->noscore = 1;
+		/* permanent invulnerability */
+		p_ptr->total_winner = TRUE;
+		p_ptr->max_dlv = 200;
 	}
 	/* Hack -- outfit the player */
 	else player_outfit(Ind);
 
+	p_ptr->max_lev = p_ptr->max_plv = p_ptr->lev;
+	p_ptr->max_exp = p_ptr->exp;
 
 	/* Set his location, panel, etc. */
 	player_setup(Ind, TRUE);
 
 	/* Set up the skills */
-	p_ptr->skill_points = 0;
 //	p_ptr->skill_last_level = 1;	/* max_plv will do maybe..? */
 	for (i = 1; i < MAX_SKILLS; i++)
 		p_ptr->s_info[i].dev = FALSE;
@@ -2264,6 +2263,17 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Start with full stamina */
 	p_ptr->cst = 10;
 	p_ptr->mst = 10;
+
+
+	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
+	   (Can be used for different purpose, usually in conjuction with custom.lua) */
+	/* An artifact reset can be done by changing just custom.lua. */
+#ifdef RPG_SERVER
+	p_ptr->updated_savegame = 0;
+#endif
+#ifndef RPG_SERVER
+	p_ptr->updated_savegame = 0;
+#endif
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

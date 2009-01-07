@@ -347,8 +347,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 #endif
 #if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
-		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
-		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
         	/* If monster is fighting without weapons, the player gets the brand(s) only if
@@ -356,11 +355,11 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
+		    is_weapon(o_ptr->tval))
 			if (o_ptr->k_idx) apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
-		if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+		if (is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
 		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
@@ -434,7 +433,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	}
 
 	/* Extra melee branding */
-	if (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))) {
+	if (!is_ammo(o_ptr->tval)) {
 		/* Apply brands from (powerful) auras! */
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
@@ -886,7 +885,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
 
 	/* Ranged weapons get less benefit from brands */
-	if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+	if (is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
 
 	/* Martial Arts styles get less benefit from brands */
@@ -955,8 +954,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 #endif
 #if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
-		if ((!pr_ptr->flags4 & RF4_ARROW_1) &&
-		    ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT)))
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
         	/* If monster is fighting without weapons, the player gets the brand(s) only if
@@ -964,11 +962,11 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    (!((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))))
-			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+		    is_weapon(o_ptr->tval))
+			apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
-		if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+		if (is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
 		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
@@ -1288,7 +1286,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
 
 	/* Ranged weapons get less benefit from brands */
-	if ((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) || (o_ptr->tval == TV_BOLT))
+	if (is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
 
 	/* Martial Arts styles get less benefit from brands */
@@ -1520,17 +1518,9 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if ((cfg.charmode_trading_restrictions > 0) &&
-		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_EVERLASTING) && !(p_ptr->mode & MODE_EVERLASTING)) {
-			msg_print(Ind, "You cannot take money of everlasting players.");
-			if (!is_admin(p_ptr)) return;
-		}
-		if ((cfg.charmode_trading_restrictions > 1) &&
-		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_EVERLASTING) && (p_ptr->mode & MODE_EVERLASTING)) {
-			msg_print(Ind, "You cannot take money of non-everlasting players.");
-			if (!is_admin(p_ptr)) return;
+		if (compat_pomode(Ind, o_ptr)) {
+			msg_format(Ind, "You cannot take money of %s players.", compat_pomode(Ind, o_ptr));
+			return;
 		}
 
 		/* Message */
@@ -1631,9 +1621,7 @@ void carry(int Ind, int pickup, int confirm)
 			return;
 		}
 
-		if ((cfg.charmode_trading_restrictions > 0) &&
-		    (o_ptr->owner) &&
-		    (o_ptr->owner_mode & MODE_EVERLASTING) && !(p_ptr->mode & MODE_EVERLASTING)) {
+		if (compat_pomode(Ind, o_ptr)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
 			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
 			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
@@ -1662,43 +1650,8 @@ void carry(int Ind, int pickup, int confirm)
    			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
                                 o_ptr->owner_mode = p_ptr->mode;
 			} else {
-				msg_print(Ind, "You cannot take items of everlasting players.");
-				if (!is_admin(p_ptr)) return;
-			}
-		}
-		if ((cfg.charmode_trading_restrictions > 1) &&
-		    (o_ptr->owner) &&
-		    !(o_ptr->owner_mode & MODE_EVERLASTING) && (p_ptr->mode & MODE_EVERLASTING)) {
-			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
-			if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_WORD_OF_RECALL) ||
-			    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
-			    (o_ptr->tval == TV_FOOD)) {
-//				o_ptr->number = 1;
-				o_ptr->discount = 100;
-				if (o_ptr->level <= p_ptr->lev) {
-//					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
-				}
-			/* Game pieces are free to be used */
-			} else if ((o_ptr->tval == TV_SKELETON) && (o_ptr->sval >= 9)) {
-				if (o_ptr->level <= p_ptr->lev) {
-//					o_ptr->owner = p_ptr->id;
-					o_ptr->owner_mode = p_ptr->mode;
-				}
-		        /* exception for amulet of the highlands for tournaments */
-    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
-				o_ptr->owner_mode = p_ptr->mode;
-			// the one with esp
-    			} else if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS2) {
-				o_ptr->owner_mode = p_ptr->mode;
-			// Why not share ale? -Molt
-			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_ALE) {
-				o_ptr->owner_mode = p_ptr->mode;
-   			} else if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_PINT_OF_WINE) {
-                                o_ptr->owner_mode = p_ptr->mode;
-			} else {
-				msg_print(Ind, "You cannot take items of non-everlasting players.");
-				if (!is_admin(p_ptr)) return;
+				msg_format(Ind, "You cannot take items of %s players.", compat_pomode(Ind, o_ptr));
+				return;
 			}
 		}
 
@@ -2220,7 +2173,7 @@ if (o_ptr->tval == TV_RUNE2) {
 		equip_damage(Ind, GF_WATER);
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
 }
@@ -2308,7 +2261,7 @@ void hit_trap(int Ind)
  * NOTE: New attacking features from PernAngband are not
  * implemented yet for pvp!! (FIXME)		- Jir -
  */
-/* TODO: p_ptr->name should be replaced by strings made by player_desc */
+/* TODO: q_ptr/p_ptr->name should be replaced by strings made by player_desc */
 static void py_attack_player(int Ind, int y, int x, bool old)
 {
 	player_type *p_ptr = Players[Ind];
@@ -2317,7 +2270,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 	object_type *o_ptr = NULL;
 
-	char p_name[80], brand_msg[80] = { '\0' };
+	char p_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
 
 	bool do_quake = FALSE;
 
@@ -2406,7 +2359,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 		return;
 	}
 	
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -2501,6 +2454,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			}
 #endif
 
+			sprintf(hit_desc, "You hit %s", p_name);
+
 			/* Hack -- bare hands do one damage */
 			k = 1;
 
@@ -2552,11 +2507,12 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				{
 					if (q_ptr->male)
 					{
-						msg_format(Ind, "You hit %s in the groin with your knee!", q_ptr->name);
+						msg_format(Ind, "You hit %s in the groin with your knee!", p_name);
 						special_effect = MA_KNEE;
 					}
 					else
-						msg_format(Ind, ma_ptr->desc, q_ptr->name);
+						sprintf(hit_desc, ma_ptr->desc, p_name);
+//						msg_format(Ind, ma_ptr->desc, p_name);
 				}
 
 				else
@@ -2566,7 +2522,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
 					}
 
-					msg_format(Ind, ma_ptr->desc, q_ptr->name);
+					sprintf(hit_desc, ma_ptr->desc, p_name);
+//					msg_format(Ind, ma_ptr->desc, p_name);
 				}
 
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
@@ -2577,7 +2534,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
 				{
-					msg_format(Ind, "%^s moans in agony!", q_ptr->name);
+					msg_format(Ind, "%^s moans in agony!", p_name);
 					stun_effect = 3 + randint(3);
 					resist_stun /= 3;
 				}
@@ -2586,7 +2543,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				{
 					if (marts > randint((q_ptr->lev * 2) + resist_stun + 10))
 					{
-						msg_format(Ind, "\377y%^s is stunned.", q_ptr->name);
+						msg_format(Ind, "\377y%^s is stunned.", p_name);
 
 						set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 					}
@@ -2616,7 +2573,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 					case 2: if (!magik(30 - resist_stun * 2)) stun_effect = 0; break;
 					case 3: if (!magik(35 - resist_stun * 2)) stun_effect = 0; break;
 					}
-					msg_format(Ind, "\377y%^s is stunned.", q_ptr->name);
+					msg_format(Ind, "\377y%^s is stunned.", p_name);
 					set_stun(0 - c_ptr->m_idx, q_ptr->stun + stun_effect);
 				}
 #endif
@@ -2656,7 +2613,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if(k>q_ptr->chp) k-=q_ptr->chp;
 
 				/* Messages */
-				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
+				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -2671,7 +2628,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			else
 			{
 				/* Messages */
-				msg_format(Ind, "You hit %s for \377y%d \377wdamage.", p_name, k);
+				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -2922,7 +2879,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if (k < leech) leech = k;
 				leech /= 10;
 			
-				hp_player(Ind, rand_int(leech));
+				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 		}
 
@@ -2974,7 +2931,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
         object_type     *o_ptr = NULL;
 	bool            do_quake = FALSE;
 
-	char            m_name[80], brand_msg[80] = { '\0' };
+	char            m_name[80], brand_msg[80] = { '\0' }, hit_desc[80];
 	monster_type	*m_ptr;
 	monster_race    *r_ptr;
 
@@ -3158,7 +3115,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	if (!sleep_stab && !cloaked_stab && !shadow_stab) dual_stab = 0;
 
 	/* cloaking mode stuff */
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind); 
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -3229,6 +3186,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				msg_format(Ind, "You %s the fleeing %s!",
 						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
 			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k); */
+
+			sprintf(hit_desc, "You hit %s", m_name);
 			
 			/* Hack -- bare hands do one damage */
 			k = 1;
@@ -3308,7 +3267,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						special_effect = MA_KNEE;
 					}
 					else
-						msg_format(Ind, ma_ptr->desc, m_name);
+						sprintf(hit_desc, ma_ptr->desc, m_name);
+//						msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
 				else if (ma_ptr->effect == MA_SLOW)
@@ -3319,7 +3279,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						msg_format(Ind, "You kick %s in the ankle.", m_name);
 						special_effect = MA_SLOW;
 					}
-					else msg_format(Ind, ma_ptr->desc, m_name);
+					else
+						sprintf(hit_desc, ma_ptr->desc, m_name);
+//						msg_format(Ind, ma_ptr->desc, m_name);
 				}
 				else if (ma_ptr->effect == MA_ROYAL_SLOW)
 				{
@@ -3328,7 +3290,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					{
 						special_effect = MA_SLOW;
 					}
-					else msg_format(Ind, ma_ptr->desc, m_name);
+					else
+						sprintf(hit_desc, ma_ptr->desc, m_name);
+//						msg_format(Ind, ma_ptr->desc, m_name);
 				}
 				else
 				{
@@ -3337,7 +3301,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
 					}
 
-					msg_format(Ind, ma_ptr->desc, m_name);
+					sprintf(hit_desc, ma_ptr->desc, m_name);
+//					msg_format(Ind, ma_ptr->desc, m_name);
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
@@ -3652,8 +3617,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			else
 			{
 				if (r_ptr->flags1 & RF1_UNIQUE)
-				msg_format(Ind, "You hit %s for \377e%d \377wdamage.", m_name, k);
-				else msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
+				msg_format(Ind, "%s for \377e%d \377wdamage.", hit_desc, k);
+				else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
 			}
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
@@ -3818,7 +3783,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 							drain_msg = FALSE;
 						}
 
-						hp_player_quiet(Ind, drain_heal);
+						hp_player_quiet(Ind, drain_heal, TRUE);
 						/* We get to keep some of it! */
 					}
 				}
@@ -3954,7 +3919,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				if (k < leech) leech = k;
 				leech /= 10;
 			
-				hp_player(Ind, rand_int(leech));
+				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 		}
 
@@ -4328,7 +4293,7 @@ void set_black_breath(int Ind)
 void do_prob_travel(int Ind, int dir)
 {
   player_type *p_ptr = Players[Ind];
-  int x = p_ptr->px, y = p_ptr->py;
+  int x = p_ptr->px, y = p_ptr->py, tries = 0;
   bool do_move = TRUE;
   struct worldpos *wpos=&p_ptr->wpos;
   cave_type **zcave;
@@ -4348,7 +4313,7 @@ void do_prob_travel(int Ind, int dir)
   x += ddx[dir];
   y += ddy[dir];
 
-  while (TRUE)
+  while (++tries < 1000)
     {
       /* Do not get out of the level */
       if (!in_bounds(y, x))
@@ -4369,6 +4334,7 @@ void do_prob_travel(int Ind, int dir)
       do_move = TRUE;
       break;
     }
+  if (tries == 1000) return; /* fail */
 
   if (do_move)
     {
@@ -4818,8 +4784,8 @@ void move_player(int Ind, int dir, int do_pickup)
 	p_ptr->last_dir = dir;
 
 	/* Bump into other players */
-	if ((c_ptr->m_idx < 0) /* mountains for example are FF1_PERMANENT too! */
-	    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
+	if (c_ptr->m_idx < 0) /* mountains for example are FF1_PERMANENT too! */
+//	    && (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 	{
 		player_type *q_ptr = Players[0 - c_ptr->m_idx];
 		int Ind2 = 0 - c_ptr->m_idx;
@@ -4854,13 +4820,14 @@ void move_player(int Ind, int dir, int do_pickup)
 				 !q_ptr->store_num) )||
 				(q_ptr->admin_dm) )
 #else
-		else if (((!p_ptr->ghost && !q_ptr->ghost &&
+		else if ((((!p_ptr->ghost && !q_ptr->ghost &&
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
 			 !p_ptr->afk && !q_ptr->afk) ||
 			(q_ptr->admin_dm))
-//moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
 			|| blocks_important_feat)
+//moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
+			&& (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 #endif	// 0
 
 		{
@@ -4893,13 +4860,13 @@ void move_player(int Ind, int dir, int do_pickup)
 				if (p_ptr->play_vis[Ind2])                              
 					msg_format(Ind, "You switch places with %s.", q_ptr->name);
 				else
-					msg_format(Ind, "You switch places with it.");
+					msg_print(Ind, "You switch places with it.");
 				
 				/* Hack if invisible */
 				if (q_ptr->play_vis[Ind])
 					msg_format(Ind2, "You switch places with %s.", p_ptr->name);
 				else
-					msg_format(Ind2, "You switch places with it.");
+					msg_print(Ind2, "You switch places with it.");
 
 				black_breath_infection(Ind, Ind2);
 				stop_precision(Ind2);
@@ -4919,15 +4886,15 @@ void move_player(int Ind, int dir, int do_pickup)
 			q_ptr->update |= PU_LITE;
 			q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 #if 0
-		/* Check for new panel (redraw map) */
-		verify_panel(Ind);
-		/* Update the monsters */
-		p_ptr->update |= (PU_DISTANCE);
-		/* Window stuff */
-		p_ptr->window |= (PW_OVERHEAD);
-		/* Hack -- quickly update the view, to reduce perceived lag */
-		redraw_stuff(Ind);
-		window_stuff(Ind);
+			/* Check for new panel (redraw map) */
+			verify_panel(Ind);
+			/* Update the monsters */
+			p_ptr->update |= (PU_DISTANCE);
+			/* Window stuff */
+			p_ptr->window |= (PW_OVERHEAD);
+			/* Hack -- quickly update the view, to reduce perceived lag */
+			redraw_stuff(Ind);
+			window_stuff(Ind);
 #endif
 #if 0 /* replace suppressed switching by bumping */
 		    } else if ((p_ptr->afk || q_ptr->afk) && 
@@ -4935,7 +4902,9 @@ void move_player(int Ind, int dir, int do_pickup)
 		    {
 #endif
 		    } else {
+			    black_breath_infection(Ind, Ind2); /* =p */
 			    disturb(Ind, 1, 0); /* turn off running, so player won't be un-AFK'ed automatically */
+			    return;
 		    }
 		}
 
@@ -4978,13 +4947,13 @@ void move_player(int Ind, int dir, int do_pickup)
 				if (p_ptr->play_vis[Ind2])
 					msg_format(Ind, "You bump into %s.", q_ptr->name);
 				else
-					msg_format(Ind, "You bump into it.");
+					msg_print(Ind, "You bump into it.");
 			
 				/* Hack if invisible */
 				if (q_ptr->play_vis[Ind])
 					msg_format(Ind2, "%s bumps into you.", p_ptr->name);
 				else
-					msg_format(Ind2, "It bumps into you.");
+					msg_print(Ind2, "It bumps into you.");
 			}
 
 			black_breath_infection(Ind, Ind2);

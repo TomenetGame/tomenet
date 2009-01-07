@@ -40,10 +40,10 @@
 
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-//#define WINTER_SEASON   2
+#define WINTER_SEASON   2
 
 /* Enable/disable New Year's Eve */
-// #define NEW_YEARS_EVE
+//#define NEW_YEARS_EVE
 
 
 
@@ -58,10 +58,16 @@
 /* Server release version tag: Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG "" /* "e" */
 
+/* Minimum client version required */
+#define MIN_VERSION_MAJOR	4
+#define MIN_VERSION_MINOR	4
+#define MIN_VERSION_PATCH	1
+#define MIN_VERSION_EXTRA	0
+
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   10
+#define SF_VERSION_PATCH   12
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -192,6 +198,7 @@
 /* What kind of character creation method does the server use? - C. Blue
    currently (since 4.2.0):     0 = traditional random rolling (1 try)
                         	1 = player can set his stats manually */
+/* I'm using 0x02 for sending the server version - mikaelh */
 #define CHAR_CREATION_FLAGS     1
 
 
@@ -298,7 +305,7 @@
 /*
  * Total number of owners per store (see "store.c", etc)
  */
-#define MAX_OWNERS	4
+#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
 
 /*
  * Maximum number of player "race" types (see "table.c", etc)
@@ -376,8 +383,6 @@
 #define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
-
-#define MAX_STORE_OWNERS 6 /* Max size for st_ptr->owners[] */
 
 
 /*
@@ -648,6 +653,10 @@
 #define TURN_CHAR_INTO_NUMBER	7
 
 
+/* for PvP mode: */
+#define MAX_PVP_LEVEL	30
+
+
 /*
  * Party commands
  */
@@ -769,7 +778,7 @@
 #define STORE_INVEN_MAX	48		/* Max number of discrete objs in inven [48] */
 #define STORE_CHOICES	56 /*34*/	/* Number of items to choose stock from */
 #define STORE_OBJ_LEVEL	5		/* Magic Level for normal stores */
-#define STORE_TURNOVER	9		/* Normal shop turnover, per day */
+#define STORE_TURNOVER_DIV 3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
 #if 0
 #define STORE_MIN_KEEP	10		/* Min slots to "always" keep full */
 #define STORE_MAX_KEEP	42		/* Max slots to "always" keep full */
@@ -2042,6 +2051,23 @@ that keeps many algorithms happy.
 #define TV_RUNE1        104      /* Base runes */
 #define TV_RUNE2        105      /* Modifier runes */
 
+/* some masks (originally just is_armour for XBM control) - C. Blue */
+#define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
+#define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
+#define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
+#define is_common_armour(tval) \
+	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
+	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
+	((tval) == TV_SHIELD) || ((tval) == TV_CLOAK) || \
+	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR))
+#define is_armour(tval)	(is_common_armour(tval) || ((tval) == TV_DRAG_ARMOR))
+#define is_rare_armour(tval,sval) ( \
+	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM)) || \
+	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION))) \
+	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
+	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_SCALE_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) )
+/* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
+
 //Here comes the base runes (k_info.txt);
 #define SV_RUNE1_BOLT   1
 #define SV_RUNE1_BEAM   2
@@ -2128,7 +2154,6 @@ that keeps many algorithms happy.
 #define SV_AMULET_THE_MAGI		8
 */
 #define SV_SET_OF_ELVEN_GLOVES		4
-#define SV_ORCISH_SHIELD                7
 #define SV_KOLLA                        7
 #define SV_PAIR_OF_WITAN_BOOTS          8
 #define SV_AMULET_TERKEN		30
@@ -2318,6 +2343,7 @@ that keeps many algorithms happy.
 #define SV_LARGE_LEATHER_SHIELD          4
 #define SV_LARGE_METAL_SHIELD            5
 #define SV_DRAGON_SHIELD                 6
+#define SV_ORCISH_SHIELD		 7
 #define SV_SHIELD_OF_DEFLECTION         10
 
 /* The "sval" codes for TV_HELM */
@@ -2923,6 +2949,8 @@ that keeps many algorithms happy.
 
 #define SV_DEED_HIGHLANDER	60 /* for winner */
 #define SV_DEED2_HIGHLANDER	61 /* for participant */
+#define SV_DEED_PVP_TOP		62 /* reaching top level in pvp mode */
+#define SV_DEED_PVP_MASS	63 /* killing a lot of opponents in pvp mode */
 
 /* for TV_BOOK */
 #define SV_SPELLBOOK		255
@@ -3711,7 +3739,7 @@ that keeps many algorithms happy.
 #define TR5_LEVELS              0x00000800L     /* Can gain exp/exp levels !! */
 #define TR5_FORCE_DEPTH		0x00001000L	/* Can only occur on depth >= its k_info level */
 /* XXX 				0x00002000L	*/
-/* XXX 				0x00004000L	*/
+#define TR5_IGNORE_DISEN	0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
 #define TR5_RES_TELE            0x00008000L     /* For Sky Dragon Scale Mail */
 #define TR5_SH_COLD             0x00010000L     /* Winter's might/Snow grasp/Frostweaving (Cold aura) */
 #define TR5_IGNORE_MANA		0x00020000L	/* Item ignores Mana Damage */
@@ -3738,6 +3766,7 @@ that keeps many algorithms happy.
 #define TR6_SENS_COLD		0x00000001L
 #define TR6_SENS_ACID		0x00000002L
 #define TR6_SENS_ELEC		0x00000004L
+Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 */
 
 
@@ -3751,17 +3780,18 @@ that keeps many algorithms happy.
 #define RESF_LOWSPEED		0x00000020	/* not more than +4 speed */
 #define RESF_NOHISPEED		0x00000040	/* not more than +6 speed */
 #define RESF_LOWVALUE		0x00000080	/* no items worth more than 35000 Au */
-#define RESF_NOHIVALUE		0x00000100	/* no items worth more than 100000 Au */
-#define RESF_NOETHEREAL		0x00000200	/* no 'ethereal' ego power (ammo) */
+#define RESF_MIDVALUE		0x00000100	/* no items worth more than 50000 Au */
+#define RESF_NOHIVALUE		0x00000200	/* no items worth more than 100000 Au */
 
-#define RESF_VALUE2500		0x00000400 /* these _VALUE... aren't used atm */
-#define RESF_VALUE5000		0x00000800
-#define RESF_VALUE10000		0x00001000
-#define RESF_VALUE20000		0x00002000
-#define RESF_VALUE40000		0x00004000
-#define RESF_VALUE80000		0x00008000
+#define RESF_NOETHEREAL		0x00000400	/* no 'ethereal' ego power (ammo) */
+#define RESF_KINDMID		0x00000800	/* k_info value of 500..10000 */
+#define RESF_KINDHI		0x00001000	/* k_info value of 10000.. */
+#define RESF_EGOLOW		0x00002000	/* e_info value of ..1000 */
+#define RESF_EGOMID		0x00004000	/* e_info value of 1000..9000 */
+#define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
+#define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
 #define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
 #define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
 #define RESF_WILD		RESF_NONE
@@ -4324,6 +4354,10 @@ that keeps many algorithms happy.
 #define RF0_S_HI_MONSTERS	0x00000002
 #define RF0_S_HI_UNIQUE		0x00000004
 #define RF0_ASTAR		0x00000008	/* monster uses A* pathfinding (use with care, might strain CPU) */
+#define RF0_NO_ESCORT		0x00000010	/* monster will never occur in groups, like escorts or nests/pits */
+#define RF0_NO_NEST		0x00000020	/* monster will never occur in groups, like escorts or nests/pits */
+
+#define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
 
 #define RF0_PLAYER_SPELLS (0L)
 #define RF0_RADIUS_SPELLS (0L)
@@ -6380,6 +6414,11 @@ extern int PlayerUID;
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
+
+
+/* for achievements (top PvP mode rank) - C. Blue */
+#define ACHV_PVP_TOP		1
+#define ACHV_PVP_MASS		2
 
 
 /* modify the base crit bonus to make it less linear, remotely similar to LUCK */

@@ -16,6 +16,10 @@
 #include "angband.h"
 
 
+/* use character class titles more often when describing a character? */
+#define ABUNDANT_TITLES
+
+
 /*
  * Check the status of "artifacts"
  *
@@ -436,8 +440,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			q_ptr->fruit_bat ? "Fruit bat, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
 #else	// 0
-#define MORE_TITLE_USAGE_PLX
-#ifndef MORE_TITLE_USAGE_PLX
+ #ifndef ABUNDANT_TITLES
 	fprintf(fff, "  %s the ", q_ptr->name);
 	switch(modify_number){
 	case 1:	fprintf(fff, "wussy "); break;
@@ -478,8 +481,9 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		fprintf(fff, "%s", class_info[q_ptr->pclass].title); break;
 	}
 
-#else
-#if 0
+	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
+ #else
+  #if 0
 	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 	{
 		case MODE_NORMAL:
@@ -493,29 +497,33 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 		case MODE_EVERLASTING:
 			fprintf(fff, "\377B");
 			break;
-		case (MODE_HARD + MODE_NO_GHOST):
+		case MODE_PVP:
+			fprintf(fff, "\377%c", COLOUR_MODE_PVP);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
 			fprintf(fff, "\377s");
 			break;
 	}
 	fprintf(fff, "  %s\377%c the ", q_ptr->name, attr);
-#else
+  #else
 	fprintf(fff, "  %s the ", q_ptr->name);
-#endif
+  #endif
 	//e.g., God the Human Grand Runemistress =P
-#ifdef ENABLE_DIVINE
+  #ifdef ENABLE_DIVINE
 	if (q_ptr->prace == RACE_DIVINE && q_ptr->lev >= 20) {
 		if (q_ptr->divinity==DIVINE_ANGEL)
-			fprintf(fff, "%s %s ", "Angelic", p);
+			fprintf(fff, "%s %s", "Angelic", p);
 		else if (q_ptr->divinity==DIVINE_DEMON)
-			fprintf(fff, "%s %s ", "Demonic", p);
+			fprintf(fff, "%s %s", "Demonic", p);
 
 	}
 	else
-#endif
+  #endif
 	{
-		fprintf(fff, "%s %s ", special_prace_lookup[q_ptr->prace],  p); 
+		fprintf(fff, "%s %s", special_prace_lookup[q_ptr->prace],  p); 
 	}
-#endif
+ #endif
+	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
@@ -567,15 +575,15 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	if (text_pk || text_silent || text_afk || text_ignoring_chat) fprintf(fff, ")");
 
 	/* Line break here, it's getting too long with all that mods -C. Blue */
-#ifdef MORE_TITLE_USAGE_PLX
-#if 0
+ #ifdef ABUNDANT_TITLES
+  #if 0
 	strcpy(info_chars, " "));
-#else
+  #else
 	if (q_ptr->fruit_bat == 1)
 		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
 	else
 		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
-#endif
+  #endif
 	switch (q_ptr->mode & MODE_MASK)	// TODO: give better modifiers
 	{
 		case MODE_NORMAL:
@@ -583,6 +591,9 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			break;
 		case MODE_EVERLASTING:
 			fprintf(fff, "\n\377B  *%s\377U ", info_chars);
+			break;
+		case MODE_PVP:
+			fprintf(fff, "\n\377%c  *%s\377U ", COLOUR_MODE_PVP, info_chars);
 			break;
 		case (MODE_HARD | MODE_NO_GHOST):
 			//fprintf(fff, "\n\377s  *%s\377U ", info_chars);
@@ -596,9 +607,9 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
 			break;
 	}
-#else
-	fprintf(fff, "\n*\377U     ");
-#endif
+ #else
+	fprintf(fff, "\n\377U     ");
+ #endif
 
 	switch(modify_number){
 	case 3: fprintf(fff, "\377rJudge\377U "); break; //Judge for Highlander games
@@ -678,6 +689,9 @@ void do_cmd_check_players(int Ind, int line)
 		/* Print self in green */
 		if (Ind == k) attr = 'G';
 
+		/* Print other PvP-mode chars in orange */
+		else if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) attr = COLOUR_MODE_PVP;
+
 		/* Print party members in blue */
 		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
 
@@ -705,12 +719,18 @@ void do_cmd_check_players(int Ind, int line)
 #if 0 /* show local system username? */
 		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->realname, q_ptr->hostname);
 #else /* show account name instead? */
-		fprintf(fff, " %s %s@%s", q_ptr->inval ? "(I)" : "   ", q_ptr->accountname, q_ptr->hostname);
+		fprintf(fff, " %s %s@%s", q_ptr->inval ? "\377y(I)\377U" : /* invalid? */
+		    !is_newer_than(&q_ptr->version, VERSION_MAJOR, VERSION_MINOR,
+		    VERSION_PATCH, VERSION_EXTRA - 1, 0, 0) ? "\377D(O)\377U" : /* outdated? */
+		    "   ", q_ptr->accountname, q_ptr->hostname);
 #endif
-
+		/* Print location if both players are PvP-Mode */
+		if (((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) && !admin) {
+			fprintf(fff, "  {[%d,%d] %s}", q_ptr->panel_row, q_ptr->panel_col, wpos_format(-Ind, &q_ptr->wpos));
+		}
 		/* Print extra info if these people are in the same party */
 		/* Hack -- always show extra info to dungeon master */
-		if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin)
+		else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin)
 		{
 			/* maybe too kind? */
 //			fprintf(fff, "   {[%d,%d] of %dft(%d,%d)}", q_ptr->panel_row, q_ptr->panel_col, q_ptr->wpos.wz*50, q_ptr->wpos.wx, q_ptr->wpos.wy);
@@ -852,7 +872,10 @@ void do_cmd_check_player_equip(int Ind, int line)
 			char o_name[160];
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
-				fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
+				if (admin && i < INVEN_WIELD)
+					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD? 'o' : 'w', 97 + i, o_name);
+				else
+					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD? 'o' : 'w', o_name);
 			}
 		}
 		/* Covered by a mummy wrapping? */

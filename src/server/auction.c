@@ -102,9 +102,17 @@ void process_auctions()
 							C_KILL(auc_ptr->bids, auc_ptr->bids_cnt, bid_type);
 							auc_ptr->bids_cnt = 0;
 
-							msg_format(auc_ptr->owner, "\377B[@] \377yAuction for item #%d has ended but no one could pay his/her bid.", i);
-							msg_print(auc_ptr->owner, "\377B[@] \377GYou can \377gretrieve \377Gthe following item:");
-							msg_format(auc_ptr->owner, "\377B[@]   \377w%s", auc_ptr->desc);
+							/* Check if (s)he is online */
+							for (j = 1; j <= NumPlayers; j++)
+							{
+								if (Players[j]->id == auc_ptr->owner)
+								{
+									msg_format(j, "\377B[@] \377yAuction for item #%d has ended but no one could pay his/her bid.", i);
+									msg_print(j, "\377B[@] \377GYou can \377gretrieve \377Gthe following item:");
+									msg_format(j, "\377B[@]   \377w%s", auc_ptr->desc);
+									break;
+								}
+							}
 						}
 						else
 						{
@@ -136,6 +144,7 @@ void process_auctions()
 									msg_format(j, "\377B[@] \377GYou have won item #%d and can now \377gretrieve \377Git!", i);
 									msg_format(j, "\377B[@]   \377w%s", auc_ptr->desc);
 									msg_format(j, "\377B[@] \377G%d gold has been automatically withdrawn.", bid_ptr->bid);
+									break;
 								}
 							}
 
@@ -155,7 +164,7 @@ void process_auctions()
 										msg_format(j, "\377B[@]   \377w%s", auc_ptr->desc);
 										msg_format(j, "\377B[@] \377GThe winning bid was %d by %s.", bid_ptr->bid, lookup_player_name(bid_ptr->bidder));
 										msg_format(j, "\377B[@] \377GYou received %d.", amount);
-										
+										break;
 									}
 								}
 							}
@@ -492,8 +501,9 @@ void auction_remove_bid(int auction_id, int bid_id)
 
 bool auction_mode_check(int Ind, int auction_id)
 {
-	player_type *p_ptr = Players[Ind];
 	auction_type *auc_ptr = &auctions[auction_id];
+#if 0 /* I took the liberty of messing around ;) - C. Blue */
+	player_type *p_ptr = Players[Ind];
 
 	if ((auc_ptr->mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
 		return FALSE; /* covers charmode_trading_restrictions 0 and 1 */
@@ -502,6 +512,16 @@ bool auction_mode_check(int Ind, int auction_id)
 		return FALSE; /* added check for charmode_trading_restrictions level 2 */
 
 	return TRUE;
+
+#else
+
+	object_type forge_dummy;
+
+	forge_dummy.owner = auc_ptr->owner; /* assuming auction_type.owner is same kind of 'id' value
+					    as o_ptr->owner here; correct me if wrong please - C. Blue */
+	forge_dummy.owner_mode = auc_ptr->mode;
+	return (compat_pomode(Ind, &forge_dummy) == NULL);
+#endif
 }
 
 void auction_print_error(int Ind, int n)
@@ -1491,7 +1511,7 @@ int auction_show(int Ind, int auction_id)
 	{
 		if (auc_ptr->bids_cnt)
 		{
-			msg_format(Ind, "\377B[@] \377GBids:");
+			msg_print(Ind, "\377B[@] \377GBids:");
 			for (i = auc_ptr->bids_cnt - 1; i >= 0; i--)
 			{
 				bid_ptr = &auc_ptr->bids[i];

@@ -25,6 +25,10 @@
 /* Announce global events every 900 seconds */
 #define GE_ANNOUNCE_INTERVAL 900
 
+/* Allow ego monsters in Arena Challenge global event? */
+#define GE_ARENA_ALLOW_EGO
+
+
 /*
  * Converts stat num into a six-char (right justified) string
  */
@@ -3042,7 +3046,7 @@ void calc_bonuses(int Ind)
 			p_ptr->pspeed -= 2;
 			p_ptr->can_swim = TRUE; /* wood? */
 			p_ptr->pass_trees = TRUE;
-		}
+		} else p_ptr->pspeed -= 1; /* it's cost of ent's power, isn't it? */
 
 		if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE;
 
@@ -3384,7 +3388,7 @@ void calc_bonuses(int Ind)
 			if (o_ptr->name2 == EGO_STORMBRINGER)
 			{
 				p_ptr->stormbringer = TRUE;
-				break_cloaking(Ind);
+				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
 				if (cfg.use_pk_rules == PK_RULES_DECLARE)
 				{
@@ -3508,7 +3512,7 @@ void calc_bonuses(int Ind)
 		/* Various flags */
 		if (f3 & TR3_AGGRAVATE) {
 			p_ptr->aggravate = TRUE;
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 		}
 //		if (f3 & TR3_TELEPORT) p_ptr->teleport = TRUE;
 		if (f3 & TR3_TELEPORT){
@@ -4131,7 +4135,7 @@ void calc_bonuses(int Ind)
 #if 0 /* for now, light is simply dimmed in cloaking mode, instead of breaking it. */
 	/*  might need to give rogues a special ability to see in the dark like vampires. or not, pft. - C. Blue */
 	/* cannot be cloaked if wielding a (real, not vampire vision) light source */
-		if (p_ptr->cur_lite) break_cloaking(Ind);
+		if (p_ptr->cur_lite) break_cloaking(Ind, 0);
 #else
 		if (p_ptr->cur_lite) p_ptr->cur_lite = 1; /* dim it */
 #endif
@@ -4176,7 +4180,7 @@ void calc_bonuses(int Ind)
 	if (p_ptr->old_rogue_heavyarmor != p_ptr->rogue_heavyarmor) {
 		if (p_ptr->rogue_heavyarmor) {
 			msg_print(Ind, "\377oThe weight of your armour strains your flexibility and awareness.");
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 			break_shadow_running(Ind);
 		}
 		/* do we still wear armour, and are still rogue or dual-wielding? */
@@ -4199,7 +4203,7 @@ void calc_bonuses(int Ind)
 	if (p_ptr->stormbringer) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding the stormbringer!");
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 		}
 		if (p_ptr->shadow_running) {
 			msg_print(Ind, "\377yThe stormbringer hinders effective shadow running!");
@@ -4209,13 +4213,13 @@ void calc_bonuses(int Ind)
 	if (p_ptr->aggravate) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while using aggravating items!");
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 		}
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYour weapon is too large to remain cloaked effectively.");
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 		}
 		if (p_ptr->shadow_running) {
 			msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
@@ -4225,7 +4229,7 @@ void calc_bonuses(int Ind)
 	if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 		if (p_ptr->cloaked) {
 			msg_print(Ind, "\377yYou cannot remain cloaked effectively while wielding a shield.");
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 		}
 		if (p_ptr->shadow_running) {
 			msg_print(Ind, "\377yYour shield hinders effective shadow running.");
@@ -6226,7 +6230,7 @@ int start_global_event(int Ind, int getype, char *parm)
 			strcpy(ge->description[3], " Add amulets of defeated opponents to yours to increase its power!     ");
 			strcpy(ge->description[4], " HINT: Buy your equipment BEFORE it starts. Or you'll go naked.        ");
 			strcpy(ge->description[5], " HINT: Make sure that you don't gain any experience until it starts.   ");
-			ge->end_turn = turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
+			ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
 									most of the time is just for announcing it
 									so players will sign on via /gesign <n> */
 			switch(rand_int(2)) { /* Determine terrain type! */
@@ -6250,8 +6254,9 @@ int start_global_event(int Ind, int getype, char *parm)
 			strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
 			strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
 			strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
-			strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-			ge->end_turn = turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
+//			strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
+			strcpy(ge->description[7], format(" (Example: '/gesign %d black orc vet' gets you a veteran archer!)", n+1));
+			ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
 			switch(rand_int(2)) { /* Determine terrain type! */
 			case 0: ge->extra[2] = WILD_WASTELAND; break;
@@ -6340,7 +6345,15 @@ void global_event_signup(int Ind, int n, cptr parm){
 	bool r_impossible = FALSE, fake_signup = FALSE;
 	global_event_type *ge = &global_event[n];
 	player_type *p_ptr = Players[Ind];
-	char c[80], parm2[80], *cp, *p2p = parm2;
+	char c[80], parm2[80], *cp, *p2p = parm2, parm2e[80];
+	/* for ego monsters: */
+	int re_found = 0, re_found_len = 99;
+	bool re_impossible = FALSE;
+	char ce[80], *cep;
+	char parm_log[60];
+#ifdef GE_ARENA_ALLOW_EGO
+	r_found_len = 0; /* check must go the other way round */
+#endif
 
 	/* Still room for more participants? */
 	max_p = MAX_GE_PARTICIPANTS;
@@ -6382,37 +6395,26 @@ void global_event_signup(int Ind, int n, cptr parm){
 			msg_print(Ind, "\377yYou have to be in Bree in order to sign up for this event!");
 			return;
 		}
-		if (parm == NULL) {
+		if ((parm == NULL) || !strlen(parm)) {
 			msg_format(Ind, "\377yYou have to specify a monster name:  /gesign %d monstername", n+1);
 			return;
 		}
 		strcpy(parm2, parm);
+		p2p = parm2;
 		while (*p2p) {*p2p = tolower(*p2p); p2p++;}
+
 	        /* Scan the monster races */
 	        for (i = 1; i < MAX_R_IDX; i++) {
 			strcpy(c, r_info[i].name + r_name);
 			cp = c;
 			while (*cp) {*cp = tolower(*cp); cp++;}
-#if 0 /* problem: Skeleton Ettin vs Ettin.. oops! */
+			if (!strlen(c)) continue;
+
+#ifdef GE_ARENA_ALLOW_EGO /* parse-strategy: egos w/ non pre-scanning require exact monster name input */
+	                if (strstr(parm2, c)) {
+#else /* old tolerant way, without allowing egos */
 	                if (strstr(c, parm2)) {
-				if ((r_info[i].flags1 & RF1_UNIQUE) ||
-				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
-				    (r_info[i].flags7 & RF7_PET) ||
-				    (r_info[i].flags7 & RF7_NEUTRAL) ||
-				    (r_info[i].flags7 & RF7_FRIENDLY) ||
-				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
-				    (r_info[i].rarity == 255)) {
-					msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
-					return;
-				} else {
-					monster_race_desc(0, c, i, 0x88);
-					msg_broadcast(0, format("\377c** %s challenges %s! **", p_ptr->name, c));
-					ge->extra[1] = i;
-					return;
-				}
-			}
-#else
-	                if (strstr(c, parm2)) {
+#endif
 				if (!((r_info[i].flags1 & RF1_UNIQUE) ||
 				    (r_info[i].flags7 & RF7_NEVER_ACT) ||
 				    (r_info[i].flags7 & RF7_PET) ||
@@ -6420,31 +6422,94 @@ void global_event_signup(int Ind, int n, cptr parm){
 				    (r_info[i].flags7 & RF7_FRIENDLY) ||
 				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
 				    (r_info[i].rarity == 255))) {
+#ifdef GE_ARENA_ALLOW_EGO
+					if (r_found_len < strlen(c)) {
+#else
 					if (r_found_len > strlen(c)) {
+#endif
 						r_found_len = strlen(c);
 						r_found = i;
 					}
 				} else r_impossible = TRUE;
 			}
-#endif
 		}
-#if 1
+
 		if (r_found) {
+			/* also scan for ego monster? */
+#ifdef GE_ARENA_ALLOW_EGO
+			/* cut out the monster race name before ego processing (eg 'sorceror' -> potential probs) */
+			strcpy(c, r_info[r_found].name + r_name);
+			cp = c;
+			while (*cp) {*cp = tolower(*cp); cp++;}
+			strncpy(parm2e, parm2, strstr(parm2, c) - parm2);
+			/* weirdness, required to fix string termination like this: - C. Blue */
+			parm2e[strstr(parm2, c) - parm2] = 0;
+			strcat(parm2e, strstr(parm2, c) + strlen(c));
+			/* trim spaces just to be sure */
+			while (parm2e[0] == 32) strcpy(parm2e, parm2e + 1); /* at beginning (left side) */
+			while (parm2e[strlen(parm2e) - 1] == 32) parm2e[strlen(parm2e) - 1] = 0; /* at the end */
+
+			if (strlen(parm2e))
+		        for (i = 1; i < MAX_RE_IDX; i++) {
+				strcpy(ce, re_info[i].name + re_name);
+				cep = ce;
+				while (*cep) {*cep = tolower(*cep); cep++;}
+#if 1
+		                if (strstr(ce, parm2e)) {
+#else /* make it more precise instead? */
+/* note that this needs you to inverse re_found_len < > 0/99 check! */
+		                if (strstr(parm2e, ce)) {
+#endif
+					if (mego_ok(r_found, i)) {
+						if (re_found_len > strlen(ce)) {
+							re_found_len = strlen(ce);
+							re_found = i;
+						}
+					} else re_impossible = TRUE;
+				}
+			}
+
+			if (re_found) {
+				/* do nothing (announcing will be done in actual event processing) */
+			} else if (re_impossible) {
+				msg_print(Ind, "\377ySorry, that ego creature is beyond the wizards' abilities.");
+				return;
+			}
+			if (!re_found && strlen(parm2e)) {
+				msg_print(Ind, "\377yCouldn't find fitting ego power, going with normal monster..");
+			}
+#endif
+
+			ge->extra[1] = r_found;
+#ifndef GE_ARENA_ALLOW_EGO
 			monster_race_desc(0, c, r_found, 0x88);
 			msg_broadcast(0, format("\377c** %s challenges %s! **", p_ptr->name, c));
-			ge->extra[1] = r_found;
+#else
+			ge->extra[3] = re_found;
+			ge->extra[5] = Ind;
+#endif
+
+			/* rebuild parm from definite ego+monster name */
+			if (re_found) {
+				strcpy(parm_log, re_name + re_info[re_found].name);
+				strcat(parm_log, " ");
+				strcat(parm_log, r_name + r_info[r_found].name);
+			} else {
+				strcpy(parm_log, r_name + r_info[r_found].name);
+			}
+
 			fake_signup = TRUE;
 			break;
 		} else if (r_impossible) {
 			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
 			return;
 		}
-#endif
+
 		msg_format(Ind, "\377yCouldn't find that monster, do upper/lowercase letters match?", n);
 		return;
 	}
 
-	if (parm) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm);
+	if (parm_log) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm_log);
 	else s_printf("%s EVENT_SIGNUP: %d (%s): %s.\n", showtime(), n + 1, ge->title, p_ptr->name);
 	if (fake_signup) return;
 
@@ -6477,7 +6542,10 @@ static void process_global_event(int ge_id)
 	cave_type **zcave, *c_ptr;
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
+	char m_name[80];
+	int m_idx;
 	time_t now;
+
 	time(&now);
         /* real timer will sometimes fail when using in a function which isn't sync'ed against it but instead relies
 	    on the game's FPS for timining ..strange tho :s */
@@ -6537,8 +6605,8 @@ static void process_global_event(int ge_id)
 	/* Note: paused turns will be added to the running time, IF the event end is given in "turns" */
 	if ((ge->end_turn && ge->end_turn - ge->start_turn - ge->paused_turns > 600 * cfg.fps && turn - ge->paused_turns == ge->end_turn - 300 * cfg.fps) ||
 	    /* However, paused turns will be ignored if the event end is given as absolute time! */
-	    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 300)) {
-		msg_broadcast(0, format("\377y[%s comes to an end in 5 more minutes!]", ge->title));
+	    (!ge->end_turn && ge->ending && ge->ending - ge->started > 600 && now == ge->ending - 360)) {
+		msg_broadcast(0, format("\377y[%s comes to an end in 6 more minutes!]", ge->title));
 	}
 
 	/* Event is running! Process its stages... */
@@ -6856,19 +6924,37 @@ static void process_global_event(int ge_id)
 		wpos.wy = cfg.town_y;
 		wild=&wild_info[wpos.wy][wpos.wx];
 		d_ptr = wild->tower;
+		if (!d_ptr) {
+			s_printf("FATAL_ERROR: global_event 'Arena Monster Challenge': Bree has no Training Tower.\n");
+			return; /* paranoia, Bree should *always* have 'The Training Tower' */
+		}
 		wpos.wz = d_ptr->maxdepth;
 
 		switch(ge->state[0]){
 		case 0: /* prepare */
-			ge_training_tower++;
 #if 0 /* disabled unstaticing for now since it might unstatice the whole 32,32 sector on all depths? dunno */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+#else
+			for (i = 1; i <= NumPlayers; i++)
+				if (inarea(&Players[i]->wpos, &wpos)) {
+					Players[i]->recall_pos.wx = wpos.wx;
+					Players[i]->recall_pos.wy = wpos.wy;
+					Players[i]->recall_pos.wz = 0;
+					recall_player(i, "\377yThe arena wizards teleport you out of here!");
+				}
 #endif
+
+			ge_training_tower++;
+
 			if (!getcave(&wpos)) {
 				alloc_dungeon_level(&wpos);
 				generate_cave(&wpos, NULL); /* should work =p (see make_resf) */
 			}
+
 			new_players_on_depth(&wpos, 1, TRUE); /* make it static */
+			s_printf("EVENT_LAYOUT: Generating arena_tt at %d,%d,%d\n", wpos.wx, wpos.wy, wpos.wz);
+			process_dungeon_file("t_arena_tt.txt", &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			ge->state[0] = 1;
@@ -6881,11 +6967,22 @@ static void process_global_event(int ge_id)
 					generate_cave(&wpos, NULL); /* should work =p (see make_resf) */
 					new_players_on_depth(&wpos, 1, FALSE); /* make it static */
 				}
+
 				wipe_m_list(&wpos); /* get rid of previous monster */
 				summon_override_check_all = TRUE;
+#ifndef GE_ARENA_ALLOW_EGO
 				summon_specific_race_somewhere(&wpos, ge->extra[1], 100, 1); /* summon new monster */
+#else
+				m_idx = summon_detailed_one_somewhere(&wpos, ge->extra[1], ge->extra[3], FALSE, 101);
+				monster_desc(0, m_name, m_idx, 0x08);
+				msg_broadcast(0, format("\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
+#endif
 				summon_override_check_all = FALSE;
+
 				ge->extra[2] = ge->extra[1]; /* remember it for result announcement later */
+#ifdef GE_ARENA_ALLOW_EGO
+				ge->extra[4] = ge->extra[3]; /* remember it for result announcement later */
+#endif
 				ge->extra[1] = 0;
 			}
 			break;

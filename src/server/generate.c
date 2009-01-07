@@ -3060,8 +3060,11 @@ static bool vault_aux_lesser_chapel(int r_idx)
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
 
+	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
+
 	/* Require "priest" or Angel */
-	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
+//	if (!((r_ptr->d_char == 'A' && (r_ptr->level <= 70)) ||
+	if (!((r_ptr->d_char == 'A') ||
 		strstr((r_name + r_ptr->name),"riest") || 
 		strstr((r_name + r_ptr->name),"aladin") ||
 		strstr((r_name + r_ptr->name),"emplar")))
@@ -3083,6 +3086,20 @@ static bool vault_aux_kennel(int r_idx)
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Require a Zephyr Hound or a dog */
+	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
+
+}
+static bool vault_aux_lesser_kennel(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+
+	/* Not too many Black Dogs */
+	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
 
 	/* Require a Zephyr Hound or a dog */
 	return ((r_ptr->d_char == 'Z') || (r_ptr->d_char == 'C'));
@@ -3218,6 +3235,21 @@ static bool vault_aux_giant(int r_idx)
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+
+	/* Hack -- Require "P" monsters */
+	if (!strchr("P", r_ptr->d_char)) return (FALSE);
+
+	/* Okay */
+	return (TRUE);
+}
+static bool vault_aux_lesser_giant(int r_idx)
+{
+	monster_race *r_ptr = &r_info[r_idx];
+
+	/* Decline unique monsters */
+	if (r_ptr->flags1 & RF1_UNIQUE) return (FALSE);
+
+	if (r_ptr->flags0 & RF0_NO_NEST) return (FALSE);
 
 	/* Hack -- Require "P" monsters */
 	if (!strchr("P", r_ptr->d_char)) return (FALSE);
@@ -3454,7 +3486,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		if (rand_int(3) == 0)
 		{
 			name = "kennel";
-			get_mon_num_hook = vault_aux_kennel;
+			get_mon_num_hook = vault_aux_lesser_kennel;
 		}
 		else
 		{
@@ -3763,7 +3795,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 		name = "giant";
 
 		/* Restrict monster selection */
-		get_mon_num_hook = vault_aux_giant;
+		get_mon_num_hook = vault_aux_lesser_giant;
 	}
 
 	else if (tmp < 70)
@@ -3967,6 +3999,7 @@ s_printf("EMPTY\n");
 		if (chosen_type == vault_aux_symbol ||	/* All dangerous nests get weakened here.. */
 		    chosen_type == vault_aux_clone ||
 		    chosen_type == vault_aux_kennel ||
+		    chosen_type == vault_aux_lesser_kennel ||
 		    chosen_type == vault_aux_animal ||
 		    chosen_type == vault_aux_undead ||
 		    chosen_type == vault_aux_dragon ||
@@ -9470,9 +9503,11 @@ for(mx = 1; mx < 131; mx++) {
 					if (r >= 3)
 					{
 						/* Ok, create a secret store! */
-						csbm_ptr->feat = FEAT_SHOP;        /* TODO: put CS_SHOP */
-						csbm_ptr->info |= CAVE_NOPK;
 						if((cs_ptr=AddCS(csbm_ptr, CS_SHOP))){
+							csbm_ptr->feat = FEAT_SHOP;
+							csbm_ptr->info |= CAVE_NOPK;
+				    			/* Declare this to be a room & illuminate */
+		    					csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
 							if (!nether_level) {
 								if (build_special_store == 1) {
 									if (cfg.dungeon_shop_type == 999){
@@ -9501,18 +9536,13 @@ for(mx = 1; mx < 131; mx++) {
 									default: cs_ptr->sc.omni = STORE_STRADER; break;
 
 									}
-									/*
-s_printf("STRADE\n");
-									cs_ptr->sc.omni = STORE_STRADER;
-									*/
 								}
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}
+s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz);
+							return;
 						}
-			    			/* Declare this to be a room & illuminate */
-	    					csbm_ptr->info |= CAVE_ROOM | CAVE_GLOW;
-						return;
 					}
 				}
 			}

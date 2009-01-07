@@ -1457,6 +1457,14 @@ if (p_ptr->updated_savegame == 0) {
 	if (!older_than(4, 3, 9)) rd_byte(&p_ptr->cloaked);
 	if (!older_than(4, 3, 10)) rd_byte(&p_ptr->shoot_till_kill);
 
+	if (!older_than(4, 3, 11)) {
+		rd_s16b(&p_ptr->kills);
+		rd_s16b(&p_ptr->kills_lower);
+		rd_s16b(&p_ptr->kills_higher);
+		rd_s16b(&p_ptr->kills_equal);
+	}
+	if (!older_than(4, 3, 12)) rd_s16b(&p_ptr->free_mimic);
+
 	/* auto-enable for now (MAX_AURAS) */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
 	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;

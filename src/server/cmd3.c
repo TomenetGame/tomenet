@@ -426,7 +426,7 @@ void inven_drop(int Ind, int item, int amt)
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 	
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1225,7 +1225,7 @@ void do_cmd_drop_gold(int Ind, s32b amt)
 	if (amt >= 10000)
 		s_printf("Gold dropped (%ld by %s at %d,%d,%d).\n", amt, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1406,7 +1406,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		floor_item_optimize(0 - item);
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 5);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1468,7 +1468,7 @@ void do_cmd_observe(int Ind, int item)
 			break;
 		}
 
-    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It can be wielded two-handed.");
+    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
 	        if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
     		if (f4 & TR4_COULD2H) msg_print(Ind, "\377s  It may be wielded two-handed.");
 
@@ -1758,7 +1758,7 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			/* Speed up because monsters are ANGRY when you try to thief them */
 			m_ptr->mspeed += 5; m_ptr->speed += 5;
 			screen_load();
-			break_cloaking(Ind);
+			break_cloaking(Ind, 0);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
 			return;
 		}
@@ -1879,15 +1879,9 @@ void do_cmd_steal(int Ind, int dir)
 	q_ptr = Players[0 - c_ptr->m_idx];
 
 	/* No transactions from different mode */
-	if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING)) {
-		if ((p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 1)) {
-			msg_print(Ind, "You can only steal from everlasting players.");
-			return;
-		}
-		else if (!(p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 0)) {
-			msg_print(Ind, "You cannot steal from everlasting players.");
-			return;
-		}
+	if (compat_pmode(Ind, 0 - c_ptr->m_idx)) {
+		msg_format(Ind, "You cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx));
+		return;
 	}
 
         /* Small delay to prevent crazy steal-spam */
@@ -2105,7 +2099,7 @@ void do_cmd_steal(int Ind, int dir)
 		}
 	}
 
-	if (caught) break_cloaking(Ind);
+	if (caught) break_cloaking(Ind, 0);
 
 #if 0 /* now turned off */
 	/* Counter blow! */

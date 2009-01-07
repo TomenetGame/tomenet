@@ -123,7 +123,7 @@ int monster_check_experience(int m_idx, bool silent)
 			int i;
 			for(i=1; i<=NumPlayers; i++){
 				if(Players[i]->id==m_ptr->owner){
-					msg_format(i, "\377UYour pet looks more experienced!");
+					msg_print(i, "\377UYour pet looks more experienced!");
 				}
 			}
 		}
@@ -362,7 +362,7 @@ void delete_monster_idx(int i, bool unfound_arts)
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
 #ifdef RPG_SERVER
 		if (Players[Ind]->id == m_ptr->owner && m_ptr->pet) {
-			msg_format(Ind, "\377RYour pet has died! You feel sad.");
+			msg_print(Ind, "\377RYour pet has died! You feel sad.");
 			Players[Ind]->has_pet=0;
 		}
 #endif 
@@ -2237,37 +2237,41 @@ void update_mon(int m_idx, bool dist)
 
 				if (see)
 				{
-				/* Empty mind, no telepathy */
-				if (r_ptr->flags2 & RF2_EMPTY_MIND)
-				{
-					do_empty_mind = TRUE;
-				}
+					/* Empty mind, no telepathy */
+					if (r_ptr->flags2 & RF2_EMPTY_MIND)
+					{
+						do_empty_mind = TRUE;
+					}
 	
-				/* Weird mind, occasional telepathy */
-				else if (r_ptr->flags2 & RF2_WEIRD_MIND)
-				{
-					do_weird_mind = TRUE;
-					if (rand_int(100) < 10) hard = flag = TRUE;
-				}
+					/* Weird mind, occasional telepathy */
+					else if (r_ptr->flags2 & RF2_WEIRD_MIND)
+					{
+						do_weird_mind = TRUE;
+						if (rand_int(100) < 10) hard = flag = TRUE;
+					}
 
-				/* Normal mind, allow telepathy */
-				else
-				{
-					hard = flag = TRUE;
-				}
+					/* Normal mind, allow telepathy */
+					else
+					{
+						hard = flag = TRUE;
+					}
 
-				/* Apply telepathy */
-				if (hard)
-				{
-					/* Hack -- Memorize mental flags */
-					if (r_ptr->flags2 & RF2_SMART) r_ptr->r_flags2 |= RF2_SMART;
-					if (r_ptr->flags2 & RF2_STUPID) r_ptr->r_flags2 |= RF2_STUPID;
-				}
+					/* Apply telepathy */
+					if (hard)
+					{
+						/* Hack -- Memorize mental flags */
+						if (r_ptr->flags2 & RF2_SMART) r_ptr->r_flags2 |= RF2_SMART;
+						if (r_ptr->flags2 & RF2_STUPID) r_ptr->r_flags2 |= RF2_STUPID;
+					}
 				}
 			}
 
 			/* Hack -- Wizards have "perfect telepathy" */
 			if (p_ptr->admin_dm) flag = TRUE;
+			
+			/* Arena Monster Challenge event provides wizard-esp too */
+			if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+				flag = TRUE;
 		}
 
 
@@ -2523,11 +2527,18 @@ void update_player(int Ind)
 			}
 			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
 
-			/* hack -- dungeon masters are invisible */
-			if (q_ptr->admin_dm && !player_sees_dm(i)) flag = FALSE;
 			/* Dungeon masters can see invisible players */
 			if (p_ptr->admin_dm) flag = TRUE;
 
+			/* Arena Monster Challenge event provides wizard-esp too */
+			if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+				flag = TRUE;
+			
+			/* hack: PvP-mode players can ESP each other */
+			if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) flag = TRUE;
+
+			/* hack -- dungeon masters are invisible */
+			if (q_ptr->admin_dm && !player_sees_dm(i)) flag = FALSE;
 		}
 
 		/* Player is now visible */
@@ -3339,7 +3350,7 @@ static int place_monster_idx = 0;
 /*
  * Hack -- help pick an escort type
  */
-static bool place_monster_okay(int r_idx)
+static bool place_monster_okay_escort(int r_idx)
 {
 	monster_race *r_ptr = &r_info[place_monster_idx];
 
@@ -3350,6 +3361,9 @@ static bool place_monster_okay(int r_idx)
 
 	/* Skip more advanced monsters */
 	if (z_ptr->level > r_ptr->level) return (FALSE);
+
+	/* Skip Black Dogs */
+	if (z_ptr->flags0 & RF0_NO_GROUP_MASK) return (FALSE);
 
 	/* Skip unique monsters */
 	if (z_ptr->flags1 & RF1_UNIQUE) return (FALSE);
@@ -3439,7 +3453,7 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 			place_monster_idx = r_idx;
 
 			/* Set the escort hook */
-			get_mon_num_hook = place_monster_okay;
+			get_mon_num_hook = place_monster_okay_escort;
 
 			/* Prepare allocation table */
 			get_mon_num_prep();
@@ -4239,6 +4253,51 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 	return (FALSE);
 }
 
+/* summon a single monster in every detail in a random location */
+int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone)
+{
+	int                     y, x;
+	int                     tries = 0;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+
+	/* Find a legal, distant, unoccupied, space */
+	while (tries < 50)
+	{
+		/* Increase the counter */
+		tries++;
+
+		/* Pick a location */
+		y = rand_int(getlevel(wpos) ? MAX_HGT : MAX_HGT);
+		x = rand_int(getlevel(wpos) ? MAX_WID : MAX_WID);
+
+		/* Require "naked" floor grid */
+		if (!cave_naked_bold(zcave, y, x)) continue;
+
+
+		/* these two possibly superfluous? */
+		/* Require "empty" floor grid */
+		if (!cave_empty_bold(zcave, y, x)) continue;
+		/* Hack -- no summon on glyph of warding */
+		if (zcave[y][x].feat == FEAT_GLYPH) continue;
+
+
+		/* Abort */
+		if (tries >= 50)
+			return (FALSE);
+
+		/* We have a valid location */
+		break;
+	}
+
+	if (!place_monster_one(wpos, y, x, r_idx, ego, FALSE, slp, s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))
+		return (FALSE);
+
+	/* Success */
+	return (zcave[y][x].m_idx);
+}
+
 
 
 
@@ -4313,12 +4372,19 @@ void message_pain(int Ind, int m_idx, int dam)
 	char                    m_name[80];
 
 
-	/* some monsters don't react at all (Target Dummy) */
-	if (r_ptr->flags7 & RF7_NEVER_ACT) return;
-
-
 	/* Get the monster name */
 	monster_desc(Ind, m_name, m_idx, 0);
+
+
+	/* some monsters don't react at all (Target Dummy) */
+	if (r_ptr->flags7 & RF7_NEVER_ACT) {
+		if (r_ptr->flags1 & RF1_UNIQUE)
+			msg_format(Ind, "%^s reels from \377e%d \377wdamage.", m_name, dam);
+		else
+			msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+		return;
+	}
+
 
 	/* Notice non-damage */
 	if (dam == 0)
@@ -4733,7 +4799,7 @@ static s32b modify_aux(s32b a, s32b b, char mod)
 #define MODIFY(o, n, min) MODIFY_AUX(o, n); (o) = ((o) < (min))?(min):(o)
 
 /* Is this ego ok for this monster ? */
-static bool mego_ok(int r_idx, int ego)
+bool mego_ok(int r_idx, int ego)
 {
         monster_ego *re_ptr = &re_info[ego];
         monster_race *r_ptr = &r_info[r_idx];

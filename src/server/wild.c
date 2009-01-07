@@ -172,6 +172,9 @@ void addtown(int y, int x, int base, u16b flags, int type)
 //	for (n = 0; n < MAX_STORES; n++)
 	for (n = 0; n < max_st_idx; n++)
 	{
+		/* make shop remember the town its in - C. Blue */
+		town[numtowns].townstore[n].town = numtowns;
+
 		//int i;
 		/* Initialize */
 		store_init(&town[numtowns].townstore[n]);

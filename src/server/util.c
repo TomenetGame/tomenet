@@ -9,7 +9,7 @@
 #include "angband.h"
 #include "../world/world.h"
 
-static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
+//static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 
 #ifndef HAS_MEMSET
 
@@ -1341,6 +1341,30 @@ void msg_broadcast(int Ind, cptr msg)
 	 }
 }
 
+void msg_admins(int Ind, cptr msg)
+{
+	int i;
+	
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+			
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+		
+		/* Skip non-admins */
+		if (!is_admin(Players[i]))
+			continue;
+			
+		/* Tell this one */
+		msg_print(i, msg);
+	 }
+}
+
 void msg_broadcast_format(int Ind, cptr fmt, ...)
 {
 //	int i;
@@ -2019,8 +2043,8 @@ static void player_talk_aux(int Ind, char *message)
 			return;
 		}
 	}
-#ifndef ARCADE_SERVER	
-	p_ptr->msgcnt++;
+#ifndef ARCADE_SERVER
+	if (!colon) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
 	if(p_ptr->msgcnt>12){
 		time_t last=p_ptr->msg;
 		time(&p_ptr->msg);
@@ -2231,14 +2255,15 @@ static void player_talk_aux(int Ind, char *message)
 	else if (mycolor) c = *(message + 1);
 	else
 	{
-		if (p_ptr->mode & MODE_EVERLASTING) c = 'B';
-		else c = 'W';
-		if (p_ptr->mode & MODE_HARD) c = 's';
-		if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
-		if (p_ptr->total_winner) c = 'v';
-		else if (p_ptr->ghost) c = 'r';
 		/* Dungeon Master / Dungeon Wizard have their own colour now :) */
 		if (is_admin(p_ptr)) c = 'b';
+		else if (p_ptr->total_winner) c = 'v';
+		else if (p_ptr->ghost) c = 'r';
+		else if (p_ptr->mode & MODE_EVERLASTING) c = 'B';
+		else if (p_ptr->mode & MODE_PVP) c = COLOUR_MODE_PVP;
+		else if (p_ptr->mode & MODE_NO_GHOST) c = 'D';
+		else if (p_ptr->mode & MODE_HARD) c = 's';
+		else c = 'W';
 	}
 
 	/* Admins have exclusive colour - the_sandman */
@@ -2341,9 +2366,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377o%s has returned from AFK.", p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377o%s has returned from AFK. (%s)", p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = FALSE;
 
@@ -2380,9 +2405,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377o%s seems to be AFK now.", p_ptr->name);
+				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377o%s seems to be AFK now. (%s)", p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = TRUE;
 
@@ -2635,7 +2660,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 }
 
 /* same as name_lookup_loose, but without warning message if no name was found */
-static int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
+int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 {
 	int i, j, len, target = 0;
 	player_type *q_ptr, *p_ptr;
@@ -3207,4 +3232,77 @@ void my_memfrob(void *s, int n)
 		/* XOR every byte with 42 */
 		str[i] ^= 42;
 	}
+}
+
+/* compare player mode compatibility - C. Blue
+   Note: returns NULL if compatible. */
+cptr compat_pmode(int Ind1, int Ind2) {
+	if (Players[Ind1]->mode & MODE_PVP) {
+		if (!(Players[Ind2]->mode & MODE_PVP)) {
+			return "non-pvp";
+		}
+	} else if (Players[Ind1]->mode & MODE_EVERLASTING) {
+		if (!(Players[Ind2]->mode & MODE_EVERLASTING)) {
+			return "non-everlasting";
+		}
+	} else if (Players[Ind2]->mode & MODE_PVP) {
+		return "pvp";
+	} else if (Players[Ind2]->mode & MODE_EVERLASTING) {
+		return "everlasting";
+	}
+	return NULL; /* means "is compatible" */
+}
+
+/* compare object and player mode compatibility - C. Blue
+   Note: returns NULL if compatible. */
+cptr compat_pomode(int Ind, object_type *o_ptr) {
+	if (!o_ptr->owner || is_admin(Players[Ind])) return NULL; /* always compatible */
+	if (Players[Ind]->mode & MODE_PVP) {
+		if (!(o_ptr->owner_mode & MODE_PVP)) {
+			if (o_ptr->owner_mode & MODE_EVERLASTING) {
+				if (!(cfg.charmode_trading_restrictions & 2)) {
+					return "non-pvp";
+				}
+			} else if (!(cfg.charmode_trading_restrictions & 4)) {
+				return "non-pvp";
+			}
+		}
+	} else if (Players[Ind]->mode & MODE_EVERLASTING) {
+		if (o_ptr->owner_mode & MODE_PVP) {
+			return "pvp";
+		} else if (!(o_ptr->owner_mode & MODE_EVERLASTING)) {
+			if (!(cfg.charmode_trading_restrictions & 1)) return "non-everlasting";
+		}
+	} else if (o_ptr->owner_mode & MODE_PVP) {
+		return "pvp";
+	} else if (o_ptr->owner_mode & MODE_EVERLASTING) {
+		return "everlasting";
+	}
+	return NULL; /* means "is compatible" */
+}
+
+/* compare two objects' mode compatibility for stacking/absorbing - C. Blue
+   Note: returns NULL if compatible. */
+cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
+	/* ownership given for both items? */
+	if (!o1_ptr->owner) {
+		if (!o2_ptr->owner) return NULL; /* always compatible */
+		else return "owned";
+	} else if (!o2_ptr->owner) return "owned";
+
+	/* both are owned. so compare actual modes */
+	if (o1_ptr->owner_mode & MODE_PVP) {
+		if (!(o2_ptr->owner_mode & MODE_PVP)) {
+			return "non-pvp";
+		}
+	} else if (o1_ptr->owner_mode & MODE_EVERLASTING) {
+		if (!(o2_ptr->owner_mode & MODE_EVERLASTING)) {
+			return "non-everlasting";
+		}
+	} else if (o2_ptr->owner_mode & MODE_PVP) {
+		return "pvp";
+	} else if (o2_ptr->owner_mode & MODE_EVERLASTING) {
+		return "everlasting";
+	}
+	return NULL; /* means "is compatible" */
 }

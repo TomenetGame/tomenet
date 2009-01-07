@@ -373,7 +373,7 @@ void do_slash_cmd(int Ind, char *message)
 	else if (prefix(message, "/shout") ||
 			prefix(message, "/sho"))
 	{
-		break_cloaking(Ind);
+		break_cloaking(Ind, 4);
 		if (colon)
 		{
 			msg_format_near(Ind, "\377B%^s shouts:%s", p_ptr->name, colon);
@@ -382,7 +382,7 @@ void do_slash_cmd(int Ind, char *message)
 		else
 		{
 			msg_format_near(Ind, "\377BYou hear %s shout!", p_ptr->name);
-			msg_format(Ind, "\377BYou shout!", colon);
+			msg_print(Ind, "\377BYou shout!");
 		}
 		wakeup_monsters(Ind, 1);
 		return;
@@ -390,7 +390,7 @@ void do_slash_cmd(int Ind, char *message)
 	else if (prefix(message, "/scream") ||
 			prefix(message, "/scr"))
 	{
-		break_cloaking(Ind);
+		break_cloaking(Ind, 6);
 		if (colon)
 		{
 			msg_format_near(Ind, "\377B%^s screams:%s", p_ptr->name, colon);
@@ -399,7 +399,7 @@ void do_slash_cmd(int Ind, char *message)
 		else
 		{
 			msg_format_near(Ind, "\377BYou hear %s scream!", p_ptr->name);
-			msg_format(Ind, "\377BYou scream!", colon);
+			msg_print(Ind, "\377BYou scream!");
 		}
 		aggravate_monsters(Ind, 1);
 		return;
@@ -415,10 +415,10 @@ void do_slash_cmd(int Ind, char *message)
 		else
 		{
 			msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
-			msg_format(Ind, "\377BYou clear your throat.", colon);
+			msg_print(Ind, "\377BYou clear your throat.");
 		}
 		return;
-// :)		break_cloaking(Ind);
+// :)		break_cloaking(Ind, 3);
 	}
 
 	else
@@ -496,7 +496,7 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 #if 0 /* no need to tell him, same as for chat messages.. */
 			if (check_ignore(p, Ind)) {
-				msg_format(Ind, "\377yThat player is currently ignoring you.");
+				msg_print(Ind, "\377yThat player is currently ignoring you.");
 				return;
 			}
 #endif
@@ -930,9 +930,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "You %shave a torso.", r_ptr->body_parts[BODY_TORSO] ? "" : "don't ");
 				msg_format(Ind, "You %shave legs/suitable feet for shoes.", r_ptr->body_parts[BODY_LEGS] ? "" : "don't ");
 			} else if (p_ptr->fruit_bat) {
-				msg_format(Ind, "You have a head.");
-				msg_format(Ind, "You can wear rings.");
-				msg_format(Ind, "You don't have a torso, but you can wear cloaks.");
+				msg_print(Ind, "You have a head.");
+				msg_print(Ind, "You can wear rings.");
+				msg_print(Ind, "You don't have a torso, but you can wear cloaks.");
 			}
 
 			if (admin)
@@ -981,11 +981,11 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "\377BYour rune mastery rating is %d.", RUNE_DMG);
 #ifdef ALTERNATE_DMG
 				if (get_skill_scale(p_ptr, SKILL_RUNEMASTERY, 50) < 25) {
-					msg_format(Ind, "\377yYou do not use the full SP mentioned here.");
-					msg_format(Ind, "\377yYou do not do the full damage mentioned here.");
+					msg_print(Ind, "\377yYou do not use the full SP mentioned here.");
+					msg_print(Ind, "\377yYou do not do the full damage mentioned here.");
 				}
 #endif
-				msg_format(Ind, "\377B|  Type  |   Damage   | Cost (base, medium, adv)");
+				msg_print(Ind,  "\377B|  Type  |   Damage   | Cost (base, medium, adv)");
 				msg_format(Ind, "\377B|  Bolt  | %2dd%2.0d + 3  | %4.0f, %4.0f, %4.0f", 
 					(int)(1 + RUNE_DMG), (int)(1 + RUNE_DMG/2),
 					(RUNE_DMG*RBASIC_COST*RBOLT_BASE),
@@ -1019,7 +1019,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 35) msg_print(Ind, "\377BYou have perfect ball casting.");
 				if (lev >= 50) msg_print(Ind, "\377BYou have perfect cloud casting."); //omg wtf woot ^_^"
 #else
-				msg_print(Ind, "\377BFailure rate: 0.1%%"); 
+				msg_print(Ind, "\377BFailure rate: 0.1%");
 #endif
 				lev = p_ptr->lev; //restore ^^"
 			}
@@ -1530,23 +1530,23 @@ void do_slash_cmd(int Ind, char *message)
 #endif 
                 else if (prefix(message, "/pet")) {
 			if (strcmp(Players[Ind]->accountname, "The_sandman")) {
-				msg_format(Ind, "\377rPet system is disabled.");
+				msg_print(Ind, "\377rPet system is disabled.");
 				return;
 			}
 			if (Players[Ind]->has_pet == 2) {
-				msg_format(Ind, "\377rYou cannot have anymore pets!");
+				msg_print(Ind, "\377rYou cannot have anymore pets!");
 				return;
 			}
                         if (pet_creation(Ind))
-				msg_format(Ind, "\377USummoning a pet.");
+				msg_print(Ind, "\377USummoning a pet.");
 			else 
-				msg_format(Ind, "\377rYou already have a pet!");
+				msg_print(Ind, "\377rYou already have a pet!");
 			return;
                 }
 #endif
                 else if (prefix(message, "/unpet")) {
 			#ifdef RPG_SERVER
-			msg_format(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
+			msg_print(Ind, "\377RYou abandon your pet! You cannot have anymore pets!");
 			if (strcmp(Players[Ind]->accountname, "The_sandman")) return;
 //			if (Players[Ind]->wpos.wz != 0) {
 				for (i = m_top-1; i >= 0; i--) {
@@ -1560,7 +1560,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				} 
 //			} else {
-//				msg_format(Ind, "\377yYou cannot abandon your pet while the whole town is looking!");
+//				msg_print(Ind, "\377yYou cannot abandon your pet while the whole town is looking!");
 //			}
 			#endif
 			return;
@@ -1749,7 +1749,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (i < MAX_GUILDNOTES) {
 					/* change existing guild note to new text */
 					strcpy(guild_note[i], &message2[j]);
-					msg_format(Ind, "\377yNote has been stored.");
+					msg_print(Ind, "\377yNote has been stored.");
 					return;
 				}
 				
@@ -1766,7 +1766,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				strcpy(guild_note_target[i], guilds[p_ptr->guild].name);
 				strcpy(guild_note[i], &message2[j]);
-				msg_format(Ind, "\377yNote has been stored.");
+				msg_print(Ind, "\377yNote has been stored.");
 				return;
 			}
 		}
@@ -1789,7 +1789,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 			}
 			if (notes > 0) msg_format(Ind, "\377oYou wrote %d currently pending notes:", notes);
-			else msg_format(Ind, "\377oYou didn't write any pending notes.");
+			else msg_print(Ind, "\377oYou didn't write any pending notes.");
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
 				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
@@ -2020,7 +2020,7 @@ void do_slash_cmd(int Ind, char *message)
 				for (i = 0; i<MAX_GLOBAL_EVENTS; i++) if ((global_event[i].getype != GE_NONE) && (global_event[i].hidden==FALSE || admin)) {
 					n++;
 					if (n == 1) {
-						msg_print(Ind, "\377sCurrently ongoing events:");
+						msg_print(Ind, "\377sCurrently ongoing events (use /gesign to participate):");
 						msg_print(Ind, "\377sUse command '/geinfo <number>' to get information on a specific event.");
 					}
 					/* Event still in announcement phase? */
@@ -2068,7 +2068,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/gesign")) /* sign up for a global event */
 		{
 			if ((tk < 1) || (k < 1) || (k > MAX_GLOBAL_EVENTS))
-				msg_format(Ind, "Usage: /gesign 1..%d [options..]", MAX_GLOBAL_EVENTS);
+				msg_format(Ind, "Usage: /gesign 1..%d [options..]    -- Also try: /geinfo", MAX_GLOBAL_EVENTS);
 			else if ((global_event[k-1].getype == GE_NONE) && (global_event[k-1].hidden==FALSE || admin))
 				msg_print(Ind, "\377yThere is currently no running event of that number.");
 			else if (global_event[k-1].signup_time == -1)
@@ -2481,34 +2481,39 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/shutempty")) {
-				msg_print(Ind, "\377y* Shutting down as soon as dungeons are empty *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty *");
 				cfg.runlevel = 2048;
 				return;
 			}
 			else if (prefix(message, "/shutlow")) {
-				msg_print(Ind, "\377y* Shutting down as soon as dungeons are empty and few players are on *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and few players are on *");
 				cfg.runlevel = 2047;
 				return;
 			}
 			else if (prefix(message, "/shutvlow")) {
-				msg_print(Ind, "\377y* Shutting down as soon as dungeons are empty and very few players are on *");
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few players are on *");
 				cfg.runlevel = 2046;
 				return;
 			}
 			else if (prefix(message, "/shutnone")) {
-				msg_print(Ind, "\377y* Shutting down as soon as no players are on anymore *");
+				msg_admins(0, "\377y* Shutting down as soon as no players are on anymore *");
 				cfg.runlevel = 2045;
+				return;
+			}
+			else if (prefix(message, "/shutactivevlow")) {
+				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few players are active *");
+				cfg.runlevel = 2044;
 				return;
 			}
 #if 0	/* not implemented yet - /shutempty is currently working this way */
 			else if (prefix(message, "/shutsurface")) {
-				msg_print(Ind, "\377y* Shutting down as soon as noone is inside a dungeon/tower *");
+				msg_admins(0, "\377y* Shutting down as soon as noone is inside a dungeon/tower *");
 				cfg.runlevel = 2050;
 				return;
 			}
 #endif
 			else if (prefix(message, "/shutcancel")) {
-				msg_print(Ind, "\377w* Shut down cancelled *");
+				msg_admins(0, "\377w* Shut down cancelled *");
 				cfg.runlevel = 6;
 				return;
 			}
@@ -2832,7 +2837,7 @@ void do_slash_cmd(int Ind, char *message)
 						a_info[i].cur_num = 0;
 						a_info[i].known = FALSE;
 					}
-					msg_format(Ind, "All the artifacts are \377rfindable\377w!", k);
+					msg_print(Ind, "All the artifacts are \377rfindable\377w!");
 				}
 				else if (tk > 0 && prefix(token[1], "ban!"))
 				{
@@ -2841,7 +2846,7 @@ void do_slash_cmd(int Ind, char *message)
 						a_info[i].cur_num = 1;
 						a_info[i].known = TRUE;
 					}
-					msg_format(Ind, "All the artifacts are \377runfindable\377w!", k);
+					msg_print(Ind, "All the artifacts are \377runfindable\377w!");
 				}
 				else
 				{
@@ -3344,7 +3349,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 				if (notes > 0) msg_format(Ind, "\377oAdmins wrote %d currently pending notes:", notes);
-				else msg_format(Ind, "\377oNo admin wrote any pending note.");
+				else msg_print(Ind, "\377oNo admin wrote any pending note.");
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
 					/* search for pending admin notes */
 					if (strcmp(admin_note[i], "")) {
@@ -3374,7 +3379,7 @@ void do_slash_cmd(int Ind, char *message)
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted note´%d.", notes);
+						msg_format(Ind, "\377oDeleted noteï¿½%d.", notes);
 					}
 				}
 				return;
@@ -3854,6 +3859,7 @@ void do_slash_cmd(int Ind, char *message)
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
 						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377g");
+						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
 						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377W");
 						else strcpy(colour_sequence, "\377w");
@@ -3972,7 +3978,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
-					msg_format(Ind, "no such event.");
+					msg_print(Ind, "No such event.");
 					return;
 				}
 				stop_global_event(Ind, k-1);
@@ -3985,7 +3991,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
-					msg_format(Ind, "no such event.");
+					msg_print(Ind, "No such event.");
 					return;
 				}
 				if (global_event[k-1].paused == FALSE) {
@@ -4005,7 +4011,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (global_event[k-1].getype == GE_NONE) {
-					msg_format(Ind, "no such event.");
+					msg_print(Ind, "No such event.");
 					return;
 				}
 				if (tk == 2) t = atoi(token[2]);
@@ -4331,7 +4337,7 @@ void do_slash_cmd(int Ind, char *message)
 			        msg_print(j, "\377GYou have been rewarded by the gods!");
 
 //				create_reward(Ind, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
-                                create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW, 5000);
+                                create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 5000);
                                 object_aware(Ind, o_ptr);
                                 object_known(o_ptr);
                                 o_ptr->discount = 100;
@@ -4410,6 +4416,19 @@ void do_slash_cmd(int Ind, char *message)
 				}
 
 				msg_print(Ind, "\377sEnd of hostility list.");
+				return;
+			}
+			else if (prefix(message, "/debugstore")) {
+#if 0
+				if (store_debug_mode == 0) {
+					store_debug_mode = 1;
+				} else {
+					store_debug_mode = 0;
+				}
+#else
+				if (tk > 0) store_debug_mode = k;
+#endif
+				msg_format(Ind, "store_debug_mode = %d", store_debug_mode);
 				return;
 			}
 		}

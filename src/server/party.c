@@ -20,9 +20,7 @@
 
 static char *t_crypt(char *inbuf, cptr salt);
 static void del_party(int id);
-static void party_msg(int party_id, cptr msg);
 static void del_guild(int id);
-static void guild_msg(int guild_id, cptr msg);
 static u32b new_accid(void);
 
 /* The hash table itself */
@@ -35,6 +33,7 @@ bool WriteAccount(struct account *r_acc, bool new){
 	short found=0;
 	struct account c_acc;
 	long delpos=-1L;
+	size_t retval;
 
 #ifdef NETBSD
 	fd=open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK);
@@ -48,7 +47,8 @@ bool WriteAccount(struct account *r_acc, bool new){
 	fp=fdopen(fd, "r+");
 	if(fp!=(FILE*)NULL){
 		while(!feof(fp) && !found){
-			fread(&c_acc, sizeof(struct account), 1, fp);
+			retval = fread(&c_acc, sizeof(struct account), 1, fp);
+			if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
 			if(c_acc.flags & ACC_DELD){
 				if(delpos==-1L) delpos=(ftell(fp)-sizeof(struct account));
 				if(new) break;
@@ -315,6 +315,7 @@ static u32b new_accid(){
 	fp=fopen("tomenet.acc", "r");
 	if(fp==(FILE*)NULL) return(0L);
 	t_map=malloc(MAX_ACCOUNTS/8);
+	memset(t_map, 0, MAX_ACCOUNTS/8); /* wipe the memory - mikaelh */
 	while(!feof(fp)){
 		if(fread(&t_acc, sizeof(struct account), 1, fp))
 			t_map[t_acc.id/8]|=(1<<(t_acc.id%8));
@@ -856,9 +857,9 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Everlasting and other chars cannot be in the same party */
-	if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING))
+	if (compat_pmode(adder, Ind))
 	{
-		msg_print(adder, "\377yEverlasting characters and other characters can't be in the same party.");
+		msg_format(adder, "\377yYou cannot form a party with %s characters.", compat_pmode(adder, Ind));
 		return FALSE;
 	}
 
@@ -1174,7 +1175,7 @@ void guild_leave(int Ind){
 	/* If he's the guildmaster, set master to zero */
 	if (p_ptr->id==guilds[guild_id].master)
 	{
-		guild_msg_format(guild_id, "\377yThe guild is currently leaderless");
+		guild_msg(guild_id, "\377yThe guild is currently leaderless");
 		guilds[guild_id].master=0;
 	}
 
@@ -1235,7 +1236,7 @@ void party_leave(int Ind)
 /*
  * Send a message to everyone in a party.
  */
-static void guild_msg(int guild_id, cptr msg)
+void guild_msg(int guild_id, cptr msg)
 {
 	int i;
 
@@ -1276,7 +1277,7 @@ void guild_msg_format(int guild_id, cptr fmt, ...)
 /*
  * Send a message to everyone in a party.
  */
-static void party_msg(int party_id, cptr msg)
+void party_msg(int party_id, cptr msg)
 {
 	int i;
 
@@ -1668,7 +1669,8 @@ bool add_hostility(int Ind, cptr name)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);
+		msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
+		msg_format(i, "\377R* Player %s declared war on you! *", p_ptr->name);
 
 		/* Success */
 		return TRUE;
@@ -1702,7 +1704,8 @@ bool add_hostility(int Ind, cptr name)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377oYou are now hostile toward party '%s'.", parties[i].name);
+		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
+		msg_broadcast_format(Ind, "\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
 
 		/* Success */
 		return TRUE;
@@ -1759,14 +1762,15 @@ bool add_hostility(int Ind, cptr name)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377oYou are now hostile toward %s.", q_ptr->name);
+		msg_format(Ind, "\377RYou are now hostile toward %s.", q_ptr->name);
+		msg_format(i, "\377R* Player %s declared war on you! *", p_ptr->name);
 
 		/* Warn if not blood bonded */
-#if 0
+ #if 0
 		if (p_ptr->blood_bond != q_ptr->id)
-#else
+ #else
 		if (!check_blood_bond(Ind, i))
-#endif
+ #endif
 		{
 			msg_format(Ind, "\377yWarning: You are NOT blood bonded with %s.", q_ptr->name);
 		}
@@ -1802,7 +1806,8 @@ bool add_hostility(int Ind, cptr name)
 		p_ptr->hostile = h_ptr;
 
 		/* Message */
-		msg_format(Ind, "\377oYou are now hostile toward party '%s'.", parties[i].name);
+		msg_format(Ind, "\377RYou are now hostile toward party '%s'.", parties[i].name);
+		msg_broadcast_format(Ind, "\377R* %s declares war on party '%s'. *", p_ptr->name, parties[i].name);
 
 		/* Success */
 		return TRUE;
@@ -1878,6 +1883,7 @@ bool remove_hostility(int Ind, cptr name)
 
 				/* Message */
 				msg_format(Ind, "\377GNo longer hostile toward %s.", p);
+				msg_format(i, "\377G%s is no longer hostile toward you.", p_ptr->name);
 
 				/* Delete node */
 				KILL(h_ptr, hostile_type);
@@ -1909,6 +1915,7 @@ bool remove_hostility(int Ind, cptr name)
 
 				/* Message */
 				msg_format(Ind, "\377GNo longer hostile toward party '%s'.", parties[0 - i].name);
+				msg_broadcast_format(Ind, "\377G%s is no longer hostile toward party '%s'.", p_ptr->name, parties[0 - i].name);
 
 				/* Delete node */
 				KILL(h_ptr, hostile_type);
@@ -1928,6 +1935,21 @@ bool check_hostile(int attacker, int target)
 {
 	player_type *p_ptr = Players[attacker];
 	hostile_type *h_ptr;
+
+#if 0	/* towns are safe-zones from PvP-mode slaughter */
+	if (Players[target]->mode & MODE_PVP) {
+		if ((Players[attacker]->mode & MODE_PVP) &&
+		    istown(&Players[target]->wpos)) return(FALSE);
+		/* outside of towns, PvP-mode means auto-hostility! */
+		if (Players[attacker]->mode & MODE_PVP) return(TRUE);
+	}
+#else	/* towns are safe-zones for ALL players */
+	if (istown(&Players[target]->wpos) ||
+	    istown(&Players[attacker]->wpos)) return(FALSE);
+	/* outside of towns, PvP-mode means auto-hostility! */
+	else if ((Players[target]->mode & MODE_PVP) &&
+	    (Players[attacker]->mode & MODE_PVP)) return(TRUE);
+#endif
 
 	/* Scan list */
 	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)

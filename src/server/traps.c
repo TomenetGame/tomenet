@@ -2793,7 +2793,7 @@ break;
 			msg_print(Ind, "As you touch the trap, the ground starts to shake.");
 			destroy_chest(i_ptr); 
 			destroy_area(wpos, y, x, 10, TRUE, FEAT_DEEP_WATER);
-			if (c_ptr) c_ptr->feat = FEAT_DEEP_WATER;
+			if (c_ptr) cave_set_feat(wpos, y, x, FEAT_DEEP_WATER);
 			break;
 		}
 		/* why not? :) */
@@ -2994,11 +2994,8 @@ break;
 				q_ptr = Players[k];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
 				if (k == Ind) continue;
-				/* No transfer between everlasting and non-everlasting */
-				if ((p_ptr->mode & MODE_EVERLASTING) != (q_ptr->mode & MODE_EVERLASTING)) {
-					if ((p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 0)) continue;
-					if (!(p_ptr->mode & MODE_EVERLASTING) && (cfg.charmode_trading_restrictions > 1)) continue;
-				}
+				/* No transfer between everlasting and non-everlasting? */
+				if (compat_pmode(Ind, k)) continue;
 
 //				if (!inarea(wpos, &q_ptr->wpos)) continue;
 
@@ -3508,9 +3505,7 @@ void wiz_place_trap(int Ind, int trap)
  */
 static bool item_tester_hook_device(object_type *o_ptr)
 {
-        if ((o_ptr->tval == TV_ROD) ||
-            (o_ptr->tval == TV_STAFF) ||
-            (o_ptr->tval == TV_WAND)) return (TRUE);
+        if (is_magic_device(o_ptr->tval)) return (TRUE);
 
 	/* Assume not */
 	return (FALSE);

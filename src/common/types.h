@@ -1176,6 +1176,8 @@ struct store_type
 	byte stock_num;			/* Stock -- Number of entries */
 	s16b stock_size;		/* Stock -- Total Size of Array */
 	object_type *stock;		/* Stock -- Actual stock items */
+	
+	s16b town;			/* residence town of this store. Just added for debugging purposes - C. Blue */
 };
 
 /*
@@ -2609,7 +2611,7 @@ struct player_type
 	int combat_stance_power; /* 1,2,3, and 4 = royal (for NR balanced) */
 
 	/* more techniques */	
-	byte cloaked;		/* Cloaking mode enabled */
+	byte cloaked, cloak_neutralized; /* Cloaking mode enabled; suspicious action was spotted */
 	s16b melee_sprint, ranged_double_used;
 	bool ranged_flare, ranged_precision, ranged_double, ranged_barrage;
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
@@ -2628,6 +2630,11 @@ struct player_type
 	u32b heal_turn_20, heal_turn_10, heal_turn_5;
 	int dam_turn[20 + 1]; /* records the amount of damage the player dealt for each of 20 consecutive turns */
 	u32b dam_turn_20, dam_turn_10, dam_turn_5;
+	
+	/* for PvP mode: keep track of kills/progress for adding a reward or something - C. Blue */
+	int kills, kills_lower, kills_higher, kills_equal;
+	int free_mimic, prevent_tele;
+	long heal_effect;
 };
 
 /* For Monk martial arts */

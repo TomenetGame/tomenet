@@ -194,6 +194,9 @@ void alloc_stores(int townval)
 
 		/* sett store type */
 		st_ptr->st_idx = i;
+		
+		/* remember town assignment */
+		st_ptr->town = townval;
 
 		/* Assume full stock */
 		st_ptr->stock_size = sti_ptr->max_obj;
@@ -252,8 +255,9 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	s64b    price;
 	int i;
 
-	i=gettown(Ind);
-	if(i==-1) i = 0;
+	i = gettown(Ind);
+	/* hack: non-town stores (ie dungeon, but could also be wild) are borrowed from town #0 - C. Blue */
+	if (i == -1) i = 0;
 
 	st_ptr = &town[i].townstore[p_ptr->store_num];
 	ot_ptr = &ow_info[st_ptr->owner];
@@ -500,8 +504,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
 	/* Different modes cannot be stacked */
-	if ((o_ptr->owner_mode & MODE_EVERLASTING) != (j_ptr->owner_mode & MODE_EVERLASTING))
-		return (0);
+	if (compat_omode(o_ptr, j_ptr)) return (0);
 
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval && o_ptr->tval != TV_WAND) return (0);
@@ -524,6 +527,9 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 	/* Require identical "ego-item" names */
 	if (o_ptr->name2 != j_ptr->name2) return (0);
 	if (o_ptr->name2b != j_ptr->name2b) return (0);
+	
+	/* require same seed */
+	if (o_ptr->name3 != j_ptr->name3) return (0);
 
 	/* Hack -- Never stack "powerful" items */
 	if (o_ptr->xtra1 || j_ptr->xtra1) return (0);
@@ -1119,8 +1125,7 @@ static bool black_market_crap(object_type *o_ptr)
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
 
 	/* No magic ammos either =) the_sandman */
-	if ((o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_SHOT) &&
-		o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
+	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
 
 	/* No runes at all, actually... */
 	if ((o_ptr->tval == TV_RUNE1 || o_ptr->tval == TV_RUNE2))
@@ -1298,13 +1303,14 @@ static void store_create(store_type *st_ptr)
 	u32b resf = RESF_STORE;
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
+	bool carry_ok;
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
 	if (black_market) resf = RESF_STOREBM;
 
 	/* Hack -- consider up to n items */
-	for (tries = 0; tries < (black_market ? 100 : 4); tries++) /* 20:4, 40:4, 60:4
+	for (tries = 0; tries < (black_market ? 60 : 4); tries++) /* 20:4, 40:4, 60:4, 100:4 !
 	    for some reason using the higher number instead of 4 for normal stores will result in many times more ego items! ew */
 	{
 		/* Black Market */
@@ -1569,29 +1575,73 @@ static void store_create(store_type *st_ptr)
 		/* Interesting numbers: 3+, 6+, 8+, 16+ */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_VERY_RARE))
 		{
-	    		if ((k_ptr->chance[0] && k_ptr->chance[0] < 8) ||
-			    (k_ptr->chance[1] && k_ptr->chance[1] < 8) ||
-    			    (k_ptr->chance[2] && k_ptr->chance[2] < 8) ||
-			    (k_ptr->chance[3] && k_ptr->chance[3] < 8))
-				continue;
-			/* hack - also no low/mid DSMs */
-			if (k_ptr->tval == TV_DRAG_ARMOR &&
-			    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
-				continue;
-			/* hack - no tomes, pretty pointless for SBM to offer those */
-			if (k_ptr->tval == TV_BOOK) continue;
+			if (magik(99)) { /* just for some diversification, no real reason though unlike for SF1_RARE flag */
+		    		if ((k_ptr->chance[0] && k_ptr->chance[0] < 8) ||
+				    (k_ptr->chance[1] && k_ptr->chance[1] < 8) ||
+    				    (k_ptr->chance[2] && k_ptr->chance[2] < 8) ||
+				    (k_ptr->chance[3] && k_ptr->chance[3] < 8))
+					continue;
+				
+				if (black_market) {
+					/* hack - also no low/mid DSMs */
+					if (k_ptr->tval == TV_DRAG_ARMOR &&
+					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
+						continue;
+					/* hack - no tomes, pretty pointless for SBM to offer those */
+					if (k_ptr->tval == TV_BOOK) continue;
+					/* quite artificial hack - less amulet of weaponmastery spam */
+#if 0 /* btw, these 3 have same prob, but diff lvl */
+					if (k_ptr->tval == TV_AMULET) {
+						if (k_ptr->sval == SV_AMULET_ESP && magik(80)) continue;
+						if (k_ptr->sval == SV_AMULET_WEAPONMASTERY && magik(80)) continue;//80
+						if (k_ptr->sval == SV_AMULET_RAGE && magik(80)) continue;//50
+					}
+#else
+					/* no amulet spam, we have a secret jewelry for that */
+					if (k_ptr->tval == TV_AMULET && magik(90)) continue;
+#endif
+					/* make uber rods harder to get */
+					if (k_ptr->tval == TV_ROD) continue;
+				}
+			}
 		}
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE))
 		{
-    			if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
-			    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
-    			    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
-			    (k_ptr->chance[3] && k_ptr->chance[3] < 3))
-				continue;
-			/* hack - also no low/mid DSMs */
-			if (k_ptr->tval == TV_DRAG_ARMOR &&
-			    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
-				continue;
+			/* experimental: allow the SF1_RARE flag to 'not kick in' periodically! - C. Blue
+			   explanation: top-class ego armour was easily obtainable here..too easily!
+					the whole point of actually finding l00t was partially nullified by this,
+					however, completely preventing top armour to show up in a black market
+					cannot be the solution. so this store now sometimes acts as "normal bm",
+					allowing any kind of top armour, while in most cases tries hard to
+					_additionally_ generate the RARE stuff that we expect/want from it.
+					note that these 'normal bm' fits still profit from all other shop flags,
+					that normal bms don't have, so cheap/low items won't appear. :D */
+			if (magik(95)) {
+        			if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
+				    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
+    				    (k_ptr->chance[2] && k_ptr->chance[2] < 3) ||
+				    (k_ptr->chance[3] && k_ptr->chance[3] < 3))
+					continue;
+
+				if (black_market) {
+					/* hack - also no/less low/mid DSMs */
+					if (k_ptr->tval == TV_DRAG_ARMOR &&
+					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval))) {
+						if (magik(67)) continue;
+/*					} else if (is_rare_armour(k_ptr->tval)) { // <- was enabled when SF1_RARE flag was static
+						if (magik(95)) continue;*/
+					} else if (is_armour(k_ptr->tval)) { // <- is enabled now where SF1_RARE flag is periodic
+						/*if (magik(100))*/ continue;
+					} else if (is_weapon(k_ptr->tval)) { // <- otherwise the rare weapons occur too often with nice ego powers for too low price
+						/*if (magik(100))*/ continue;
+					} else if (k_ptr->tval == TV_AMULET || k_ptr->tval == TV_RING) {
+						/*if (magik(100))*/ continue; /* don't make rare jewelry store unemployed */
+					/* make uber rods harder to get */
+					} else if (k_ptr->tval == TV_ROD) {
+						continue;
+					}
+				}
+			}
 		}
 
 #if 0
@@ -1633,8 +1683,7 @@ static void store_create(store_type *st_ptr)
 		    o_ptr->discount = 0;
 		}
 
-		if ((force_num) && (o_ptr->tval != TV_SHOT) &&
-		    (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT))
+		if ((force_num) && !is_ammo(o_ptr->tval))
 		{
 			switch (o_ptr->tval) {
 			case TV_DRAG_ARMOR:
@@ -1667,14 +1716,19 @@ static void store_create(store_type *st_ptr)
 #endif
 
 		/* Attempt to carry the (known) item */
-		(void)store_carry(st_ptr, o_ptr);
+		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
 		/* Log occurances of special items */
-		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
-		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER)) {
+		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
+		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
+		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
 			char o_name[160];
+			cptr s_name;
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("%s: STORE_CARRY: %d, %s\n", showtime(), st_ptr->st_idx, o_name);
+			s_name = st_name + st_info[st_ptr->st_idx].name;
+			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
+			if (carry_ok) s_printf(" OK.\n");
+			else s_printf(" FAILED.\n");
 		}
 
 		/* Definitely done */
@@ -1797,11 +1851,7 @@ static void display_entry(int Ind, int pos)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
-		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
-			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
-		if ((cfg.charmode_trading_restrictions == 2) &&
-		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
-			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
+		if (compat_pomode(Ind, o_ptr)) attr = TERM_L_DARK;
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -1833,11 +1883,7 @@ static void display_entry(int Ind, int pos)
 			attr = TERM_L_DARK;
 
 		/* grey out if mode doesn't meet */
-		if ((o_ptr->owner) && (o_ptr->owner_mode == MODE_EVERLASTING) && (p_ptr->mode != MODE_EVERLASTING))
-			attr = TERM_L_DARK; /* covers charmode_trading_restrictions 0 and 1 */
-		if ((cfg.charmode_trading_restrictions == 2) &&
-		    ((o_ptr->owner) && (o_ptr->owner_mode & MODE_EVERLASTING) != (p_ptr->mode & MODE_EVERLASTING)))
-			attr = TERM_L_DARK; /* added check for charmode_trading_restrictions level 2 */
+		if (compat_pomode(Ind, o_ptr)) attr = TERM_L_DARK;
 
 		/* Only show the weight of an individual item */
 		wgt = o_ptr->weight;
@@ -2115,14 +2161,8 @@ void store_stole(int Ind, int item)
 		return;
 	}
 
-	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of everlasting players!");
-		return;
-	}
-	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of non-everlasting players!");
+	if (compat_pomode(Ind, o_ptr)) {
+		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
 	}
 
@@ -2545,14 +2585,8 @@ void store_purchase(int Ind, int item, int amt)
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
-	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of everlasting players!");
-		return;
-	}
-	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of non-everlasting players!");
+	if (compat_pomode(Ind, o_ptr)) {
+		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
 	}
 
@@ -3362,7 +3396,8 @@ void do_cmd_store(int Ind)
 
 	i=gettown(Ind);
 //	if(i==-1) return;	//DUNGEON STORES
-	if(i == -1) i = 0;	// INITIATING MAD HACK >:) (C. Blue)
+	/* hack: non-town stores are borrowed from town #0 - C. Blue */
+	if(i == -1) i = 0;
 
 	/* Verify a store */
 #if 0
@@ -3458,7 +3493,7 @@ void do_cmd_store(int Ind)
 		}
 	}
 
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -3559,7 +3594,7 @@ void store_shuffle(store_type *st_ptr)
 	/* Pick a new owner */
 	for (j = st_ptr->owner; j == st_ptr->owner; )
 	{	  
-//		st_ptr->owner = rand_int(MAX_OWNERS);
+//		st_ptr->owner = rand_int(MAX_STORE_OWNERS);
 		st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 		if ((!(--tries))) break;
 	}
@@ -3627,6 +3662,27 @@ void store_maint(store_type *st_ptr)
 	if (which == STORE_HOME) return;
 #endif
 
+#if 1 /* bug: somehow xbm in minas anor on pm didn't refresh stock anymore! */
+	/* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
+	switch (st_ptr->st_idx) {
+	/* unused stores that would just waste cpu time: */
+	case 50:
+		return;
+	/* non-town stores (which are borrowd from town #0 exclusively): */
+	case 52: case 53: case 55:
+	case 61: case 62: case 63: case 64: case 65:
+	case 42: case 45: case 60:
+		if (st_ptr->town != 0) return; else break;
+	/* stores that don't occur in every town */
+	case 57: case 58: if (town[st_ptr->town].type != 1) return; else break;//bree
+	case 59: if (town[st_ptr->town].type != 5) return; else break;//khazad
+	case 48: if (town[st_ptr->town].type != 3) return; else break;//minas anor - but it's town 0, type 1?!
+	}
+#endif
+
+	/* Ignore Museum */
+	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return;
+
 	/* Make sure no one is in the store */
 #if 0 /* not used (cf.st_ptr->last_visit) */
 	for (i = 1; i <= NumPlayers; i++)
@@ -3651,9 +3707,6 @@ void store_maint(store_type *st_ptr)
 			}
 	}
 #endif	// 0
-
-	/* Ignore Museum */
-	if (st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM) return;
 
 	/* Activate the owner */
 //	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
@@ -3688,7 +3741,7 @@ void store_maint(store_type *st_ptr)
 	j = st_ptr->stock_num;
 
 	/* Sell a few items */
-	j = j - randint(STORE_TURNOVER);
+	j = j - randint(1 + st_ptr->stock_size / STORE_TURNOVER_DIV);
 
 #if 0 /* making it dependant on shop size instead - C. Blue */
 	/* Never keep more than "STORE_MAX_KEEP" slots */
@@ -3714,7 +3767,7 @@ void store_maint(store_type *st_ptr)
 	j = st_ptr->stock_num;
 
 	/* Buy some more items */
-	j = j + randint(STORE_TURNOVER);
+	j = j + randint(1 + st_ptr->stock_size / STORE_TURNOVER_DIV);
 
 #if 0 /* making it dependant on shop size instead - C. Blue */
 	/* Never keep more than "STORE_MAX_KEEP" slots */
@@ -3754,8 +3807,8 @@ void store_init(store_type *st_ptr)
 
 
 	/* Pick an owner */
-//	st_ptr->owner = rand_int(MAX_OWNERS);
-	st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(4)];
+//	st_ptr->owner = rand_int(MAX_STORE_OWNERS);
+	st_ptr->owner = st_info[st_ptr->st_idx].owners[rand_int(MAX_STORE_OWNERS)];
 
 	/* Activate the new owner */
 //	ot_ptr = &owners[st_ptr->st_idx][st_ptr->owner];
@@ -4275,14 +4328,8 @@ void home_purchase(int Ind, int item, int amt)
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
 
-	if ((cfg.charmode_trading_restrictions > 0) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    (!(p_ptr->mode & MODE_EVERLASTING) && (o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of everlasting players!");
-		return;
-	}
-	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) && !is_admin(p_ptr) &&
-	    ((p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))) {
-		msg_print(Ind, "You cannot take items of non-everlasting players!");
+	if (compat_pomode(Ind, o_ptr)) {
+		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
 	}
 
@@ -4801,7 +4848,7 @@ void reward_deed_item(int Ind, int item)
 	
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW, 3000); /* 95 is default depth for highlander tournament */
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000); /* 95 is default depth for highlander tournament */
                 object_aware(Ind, o_ptr);
                 object_known(o_ptr);
                 o_ptr->discount = 100;
@@ -4815,6 +4862,28 @@ void reward_deed_item(int Ind, int item)
 		msg_print(Ind, "\377yAfter examining the deed, the mayor tells you that they don't have any");
 		msg_print(Ind, "\377yitems for rewards, but he suggests that you get a blessing instead!");
 		return;
+	case SV_DEED_PVP_TOP:
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000); /* 95 is default depth for highlander tournament */
+                object_aware(Ind, o_ptr);
+                object_known(o_ptr);
+                o_ptr->discount = 100;
+                o_ptr->level = 0;
+                o_ptr->ident |= ID_MENTAL;
+		o_ptr->note = quark_add("PvP reward");
+		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		break;
+	case SV_DEED_PVP_MASS:
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000); /* 95 is default depth for highlander tournament */
+                object_aware(Ind, o_ptr);
+                object_known(o_ptr);
+                o_ptr->discount = 100;
+                o_ptr->level = 0;
+                o_ptr->ident |= ID_MENTAL;
+		o_ptr->note = quark_add("PvP reward");
+		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		break;
 	default:
 		msg_print(Ind, "\377oAfter examining the deed, the mayor tells you that they don't have any");
 		msg_print(Ind, "\377oappropriate rewards. With a sorry gesture, he returns the deed to you.");
@@ -4887,4 +4956,26 @@ void reward_deed_blessing(int Ind, int item)
 
         /* Handle stuff */
 	handle_stuff(Ind);
+}
+
+/* Set store_debugging_mode and put stores into a special mode that helps debugging their stocks - C. Blue
+   note: may be called every 10 turns (since cfg.store_turns is multiplied by 10). */
+void store_debug_stock()
+{
+	int i, n;
+
+	/* Calculate the number of store maintainances since the last visit */
+	if (turn % ((10L * cfg.store_turns) / store_debug_mode)) return;
+
+        for(i=0;i<numtowns;i++) {
+    		for (n = 0; n < max_st_idx; n++) {
+			/* hack: fix old stores' <town> value, which would still be zero otherwise */
+			town[i].townstore[n].town = i;
+
+			store_maint(&town[i].townstore[n]);
+
+			if (retire_owner_p(&town[i].townstore[n]))
+				store_shuffle(&town[i].townstore[n]);
+		}
+	}
 }

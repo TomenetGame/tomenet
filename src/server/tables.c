@@ -2260,7 +2260,7 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_DIVINATION,
                                 '+', 0,
-                                '%', 0,
+                                '%', 75,
                         },
                         {
                                 SKILL_WATER,
@@ -5793,26 +5793,26 @@ magic_type innate_powers[96] =
 /* desc, min_lv, chance, dd, ds, effect */
 martial_arts ma_blows[MAX_MA] =
 {
-	{ "You punch %s.",                          1, 0, 1, 4, 0 },
-	{ "You kick %s.",                           2, 0, 1, 6, 0 },
-	{ "You strike %s.",                         3, 0, 1, 7, 0 },
-	{ "You hit %s with your knee.",             5, 5, 2, 3, MA_KNEE },
-	{ "You hit %s with your elbow.",            7, 5, 1, 8, 0 },
-	{ "You butt %s.",                           9, 10, 2, 5, 0 },
-	{ "You kick %s.",                           11, 10, 2, 5, MA_SLOW },
-	{ "You uppercut %s.",                       13, 12, 4, 3, 4 },
-	{ "You double-kick %s.",                    16, 15, 4, 4, 0 },
-	{ "You strike %s with a Cat's Claw.",       20, 20, 6, 3, 0 },
-	{ "You hit %s with a jump kick.",           25, 25, 3, 9, 6 },
-	{ "You strike %s with an Eagle's Claw.",    29, 25, 7, 4, 0 },
-	{ "You hit %s with a circle kick.",         33, 30, 4, 9, 0 },
-	{ "You punch %s with an Iron Fist.",        37, 35, 6, 6, 8 },
-	{ "You hit %s with a flying kick.",         41, 35, 5, 8, 0 },
-	{ "You punch %s with a Dragon Fist.",       45, 35, 6, 8, 10 },
-	{ "You hit %s with a Crushing Blow.",       48, 35, 8, 7, 12 },
+	{ "You punch %s",                          1, 0, 1, 4, 0 },
+	{ "You kick %s",                           2, 0, 1, 6, 0 },
+	{ "You strike %s",                         3, 0, 1, 7, 0 },
+	{ "You ram %s with your knee",             5, 5, 2, 3, MA_KNEE },
+	{ "You strike %s with your elbow",            7, 5, 1, 8, 0 },
+	{ "You butt %s",                           9, 10, 2, 5, 0 },
+	{ "You kick %s",                           11, 10, 2, 5, MA_SLOW },
+	{ "You uppercut %s",                       13, 12, 4, 3, 4 },
+	{ "You double-kick %s",                    16, 15, 4, 4, 0 },
+	{ "You strike %s with a Cat's Claw",       20, 20, 6, 3, 0 },
+	{ "You hit %s with a jump kick",           25, 25, 3, 9, 6 },
+	{ "You strike %s with an Eagle's Claw",    29, 25, 7, 4, 0 },
+	{ "You hit %s with a circle kick",         33, 30, 4, 9, 0 },
+	{ "You punch %s with an Iron Fist",        37, 35, 6, 6, 8 },
+	{ "You hit %s with a flying kick",         41, 35, 5, 8, 0 },
+	{ "You punch %s with a Dragon Fist",       45, 35, 6, 8, 10 },
+	{ "You hit %s with a Crushing Blow",       48, 35, 8, 7, 12 },
 	/* Kings only (for NR:) */
-	{ "You bash %s with a Titan's Fist.",       48, 50, 8, 5, 20 },
-	{ "You strike %s with a Phoenix Claw.",     48, 50, 5, 9, MA_ROYAL_SLOW },
+	{ "You bash %s with a Titan's Fist",       48, 50, 8, 5, 20 },
+	{ "You strike %s with a Phoenix Claw",     48, 50, 5, 9, MA_ROYAL_SLOW },
 };
 
 /*

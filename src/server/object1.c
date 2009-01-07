@@ -5026,8 +5026,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	}
 
 	/* exploding ammo */
-        if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
-            (o_ptr->tval == TV_BOLT)) && (o_ptr->pval != 0))
+        if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0))
 		switch (o_ptr->pval) {
 		case GF_ELEC: fprintf(fff, "It explodes with lightning.\n"); break;
 		case GF_POIS: fprintf(fff, "It explodes with poison.\n"); break;
@@ -5523,8 +5522,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		info[i++] = "It cannot be harmed by cold.";
 	}
 	/* exploding ammo */
-        if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
-            (o_ptr->tval == TV_BOLT)) && (o_ptr->pval != 0))
+        if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0))
 		switch (o_ptr->pval) {
 		case GF_ELEC: info[i++] = "It explodes with lightning."; break;
 		case GF_POIS: info[i++] = "It explodes with poison."; break;
@@ -6942,11 +6940,7 @@ bool can_use(int Ind, object_type *o_ptr)
 
 	if (o_ptr->level < 1 && o_ptr->owner) return (FALSE);
 
-	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_EVERLASTING)) && (o_ptr->owner_mode & MODE_EVERLASTING))
-                return FALSE;
-	if ((cfg.charmode_trading_restrictions > 1) && (o_ptr->owner) &&
-	    (p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))
-		return FALSE;
+	if (compat_pomode(Ind, o_ptr)) return FALSE;
 
 	/* Hack -- convert if available */
 	if (p_ptr->lev >= o_ptr->level && !p_ptr->admin_dm)
@@ -6978,16 +6972,9 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 		return (FALSE);
 	}
 
-	if ((o_ptr->owner) && (!(p_ptr->mode & MODE_EVERLASTING)) && (o_ptr->owner_mode & MODE_EVERLASTING))
+	if (compat_pomode(Ind, o_ptr))
 	{
-		msg_print(Ind, "You cannot use things that belong to everlasting players.");
-                return FALSE;
-	}
-
-	if ((cfg.charmode_trading_restrictions > 1) &&
-	    (o_ptr->owner) && (p_ptr->mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING))
-	{
-		msg_print(Ind, "You cannot use things that belong to non-everlasting players.");
+		msg_format(Ind, "You cannot use things that belong to %s players.", compat_pomode(Ind, o_ptr));
                 return FALSE;
 	}
 

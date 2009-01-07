@@ -508,8 +508,8 @@ static void add_ability (artifact_type *a_ptr)
 	r = rand_int (100);
 	if ((a_ptr->tval == TV_BOOMERANG) || (a_ptr->tval == TV_BOW)) r -= 2;
 	/* if r < 50 -> Pick something dependent on item type. */
-	if ((r < 50) || ((r < 67) && (a_ptr->tval == TV_DRAG_ARMOR)) ||
-	    (a_ptr->tval == TV_SHOT) || (a_ptr->tval == TV_ARROW) || (a_ptr->tval == TV_BOLT))
+	if (is_ammo(a_ptr->tval) || (r < 50) ||
+	    ((r < 67) && (a_ptr->tval == TV_DRAG_ARMOR)))
 	{
 		r = rand_int (100);
 		switch (a_ptr->tval)
@@ -549,8 +549,7 @@ static void add_ability (artifact_type *a_ptr)
 					if (rand_int (2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 					/* chaotic and blessed are exclusive atm */
 					if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
-					    (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM ||
-					    a_ptr->tval == TV_BLUNT || a_ptr->tval == TV_AXE))
+					    is_weapon(a_ptr->tval))
 						a_ptr->flags3 |= TR3_BLESSED;
 				}
 				else if (r < 7)
@@ -1545,7 +1544,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
-	if (a_ptr->flags1 & TR1_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if ((a_ptr->flags1 & TR1_MANA)  && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
 /* -------------------------------------- Flag-killing limits -------------------------------------- */
 
@@ -1554,7 +1553,8 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if (a_ptr->flags1 & TR1_STEALTH) {
 		if (k_ptr->tval != TV_CLOAK) {
 			if (a_ptr->pval > 5) {
-				if ((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+				if (((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+				    && !(k_ptr->flags1 & TR1_STEALTH))
 					a_ptr->flags1 &= ~TR1_STEALTH;
 				else
 					a_ptr->pval = 5;
@@ -1565,7 +1565,8 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 	/* Not more than +4 searching, but remove searching if it blocks highly valued flags instead */
 	if ((a_ptr->flags1 & TR1_SEARCH) && (a_ptr->pval > 4)) {
-		if ((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+		if (((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+		    && !(k_ptr->flags1 & TR1_SEARCH))
 			a_ptr->flags1 &= ~TR1_SEARCH;
 		else
 			a_ptr->pval = 4;
@@ -1686,8 +1687,8 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
 	if (k_ptr->tval == TV_SHIELD ||
-	    ((k_ptr->tval == TV_SWORD || k_ptr->tval == TV_BLUNT || k_ptr->tval == TV_AXE || k_ptr->tval == TV_POLEARM) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)))) {
+	    (is_weapon(k_ptr->tval) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
 	    	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
 	}
@@ -1698,12 +1699,9 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if ((a_ptr->flags5 & TR5_LUCK) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 
 	/* Not more than +3 disarming ability (randart picklocks aren't allowed anyways) */
-	if (a_ptr->flags5 & TR5_DISARM) {
-#if 1
-		if (a_ptr->pval > 3) a_ptr->pval = 3;
-#else
-		a_ptr->flags5 ~= TR5_DISARM; /* not cool to get picklock without disarming oO */
-#endif
+	if ((a_ptr->flags5 & TR5_DISARM) && (a_ptr->pval > 3)) {
+		if (!(k_ptr->flags5 & TR5_DISARM)) a_ptr->flags5 &= ~TR5_DISARM;
+		else a_ptr->pval = 3;
 	}
 
 /* -------------------------------------- Misc unaffecting boni/limits -------------------------------------- */
@@ -1782,7 +1780,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
-	if (a_ptr->flags1 & TR1_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
 /* -------------------------------------- Flag-killing limits -------------------------------------- */
 
@@ -1791,7 +1789,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if (a_ptr->flags1 & TR1_STEALTH) {
 		if (k_ptr->tval != TV_CLOAK) {
 			if (a_ptr->pval > 5) {
-				if ((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+				if (((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+				    && !(k_ptr->flags1 & TR1_STEALTH))
 					a_ptr->flags1 &= ~TR1_STEALTH;
 				else
 					a_ptr->pval = 5;
@@ -1802,7 +1801,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* Not more than +4 searching, but remove searching if it blocks highly valued flags instead */
 	if ((a_ptr->flags1 & TR1_SEARCH) && (a_ptr->pval > 4)) {
-		if ((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+		if (((a_ptr->flags1 & TR1_SPEED) || (a_ptr->flags5 & TR5_CRIT) || (a_ptr->flags1 & TR1_MANA))
+		    && !(k_ptr->flags1 & TR1_SEARCH))
 			a_ptr->flags1 &= ~TR1_SEARCH;
 		else
 			a_ptr->pval = 4;
@@ -1933,8 +1933,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	/* Limit speed on 1-hand weapons and shields to +5 (balances both, dual-wiel and 2-handed weapons) */
 	/* Limit +LIFE to +2 under same circumstances */
 	if (k_ptr->tval == TV_SHIELD ||
-	    ((k_ptr->tval == TV_SWORD || k_ptr->tval == TV_BLUNT || k_ptr->tval == TV_AXE || k_ptr->tval == TV_POLEARM) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)))) {
+	    (is_weapon(k_ptr->tval) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
 	    	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
 	}
@@ -1945,12 +1945,9 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if ((a_ptr->flags5 & TR5_LUCK) && (a_ptr->pval > 5)) a_ptr->pval = 5;
 
 	/* Not more than +3 disarming ability (randart picklocks aren't allowed anyways) */
-	if (a_ptr->flags5 & TR5_DISARM) {
-#if 1
-		if (a_ptr->pval > 3) a_ptr->pval = 3;
-#else
-		a_ptr->flags5 ~= TR5_DISARM; /* not cool to get picklock without disarming oO */
-#endif
+	if ((a_ptr->flags5 & TR5_DISARM) && (a_ptr->pval > 3)) {
+		if (!(k_ptr->flags5 & TR5_DISARM)) a_ptr->flags5 &= ~TR5_DISARM;
+		else a_ptr->pval = 3;
 	}
 
 /* -------------------------------------- Misc unaffecting boni/limits -------------------------------------- */
@@ -2060,37 +2057,25 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Screen for disallowed TVALS */
 	if ((k_ptr->tval != TV_BOW) &&
+	    (k_ptr->tval != TV_BOOMERANG) &&
+	    !is_ammo(k_ptr->tval) &&
+	    !is_weapon(k_ptr->tval) &&
+	    !is_armour(k_ptr->tval) &&
+	    (k_ptr->tval != TV_MSTAFF) &&
+	    (k_ptr->tval != TV_LITE) &&
+	    (k_ptr->tval != TV_RING) &&
+	    (k_ptr->tval != TV_AMULET) &&
 //	    (k_ptr->tval != TV_DIGGING) &&	 /* better ban it? */
 //	    (k_ptr->tval != TV_TOOL) &&
 //	    (k_ptr->tval != TV_INSTRUMENT) &&
-	    (k_ptr->tval != TV_SHOT) && (k_ptr->tval != TV_ARROW) && (k_ptr->tval != TV_BOLT) &&
-	    (k_ptr->tval != TV_BLUNT) &&
-	    (k_ptr->tval != TV_POLEARM) &&
-	    (k_ptr->tval != TV_SWORD) &&
-	    (k_ptr->tval != TV_BOOMERANG) &&
-	    (k_ptr->tval != TV_AXE) &&
-	    (k_ptr->tval != TV_MSTAFF) &&
-	    (k_ptr->tval != TV_BOOTS) &&
-	    (k_ptr->tval != TV_GLOVES) &&
-	    (k_ptr->tval != TV_HELM) &&
-	    (k_ptr->tval != TV_CROWN) &&
-	    (k_ptr->tval != TV_SHIELD) &&
-	    (k_ptr->tval != TV_CLOAK) &&
-	    (k_ptr->tval != TV_SOFT_ARMOR) &&
-	    (k_ptr->tval != TV_DRAG_ARMOR) &&
-	    (k_ptr->tval != TV_HARD_ARMOR) &&
-	    (k_ptr->tval != TV_RING) &&
-	    (k_ptr->tval != TV_LITE) &&
-	    (k_ptr->tval != TV_AMULET)
-	    && (k_ptr->tval != TV_SEAL)) /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
+	    (k_ptr->tval != TV_SEAL)) /* <- forgot this one, else panic save if randart becomes seal, since a_ptr becomes NULL! - C. Blue */
 	{
 		/* Not an allowed type */
 		return(NULL);
 	}
 
         /* Randart ammo doesn't keep (exploding) from normal item */
-        if ((k_ptr->tval == TV_SHOT) || (k_ptr->tval == TV_ARROW) ||
-            (k_ptr->tval == TV_BOLT)) k_ptr->pval = 0;
+        if (is_ammo(k_ptr->tval)) k_ptr->pval = 0;
 
 	/* Mega Hack -- forbig randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
@@ -2141,9 +2126,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 	}
 	
-	if ((k_ptr->tval == TV_SHOT) ||
-	    (k_ptr->tval == TV_ARROW) ||
-	    (k_ptr->tval == TV_BOLT)) {
+	if (is_ammo(k_ptr->tval)) {
 		aggravate_me = FALSE;
 //		power /= 3;
 	}
@@ -2198,11 +2181,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->flags5 |= TR5_IGNORE_WATER;
 
 	/* Ensure weapons have some bonus to hit & dam */
-	if ((a_ptr->tval == TV_DIGGING) ||
-	    (a_ptr->tval == TV_BLUNT) ||
-	    (a_ptr->tval == TV_POLEARM) ||
-	    (a_ptr->tval == TV_SWORD) ||
-	    (a_ptr->tval == TV_AXE) ||
+	if ((a_ptr->tval == TV_DIGGING) || is_weapon(a_ptr->tval) ||
 	    (a_ptr->tval == TV_BOW))
 	{
 		a_ptr->to_d += 1 + rand_int(20);
@@ -2210,9 +2189,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	}
 
 	/* Ammo doesn't get large bonus */
-	if ((a_ptr->tval == TV_SHOT) ||
-	    (a_ptr->tval == TV_ARROW) ||
-	    (a_ptr->tval == TV_BOLT))
+	if (is_ammo(a_ptr->tval))
 	{
 		/* exploding art ammo is very rare */
 		if (magik(10)) {
@@ -2281,9 +2258,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		ap = artifact_power(a_ptr);
 	}
 
-	else if ((k_ptr->tval == TV_SHOT) ||
-	    (k_ptr->tval == TV_ARROW) ||
-	    (k_ptr->tval == TV_BOLT)) {
+	else if (is_ammo(k_ptr->tval)) {
 		add_ability (a_ptr);
 		if (magik(50)) add_ability(a_ptr);
 		if (magik(25)) add_ability(a_ptr);
@@ -2698,8 +2673,8 @@ try_an_other_ego:
 
 	/* Limit +LIFE on 1-hand weapons and shields to +2 (balances both, dual-wiel and 2-handed weapons) */
 	if (o_ptr->tval == TV_SHIELD ||
-	    ((o_ptr->tval == TV_SWORD || o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_AXE || o_ptr->tval == TV_POLEARM) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)))) {
+	    (is_weapon(o_ptr->tval) &&
+	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
 		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
 	}
 

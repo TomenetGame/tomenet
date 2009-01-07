@@ -559,7 +559,7 @@ void check_Morgoth(void)
 			if (is_admin(p_ptr)) continue;
 
 			if (inarea(&p_ptr->wpos, wpos) &&
-			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
+			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
 			{
 				/* Tell everyone related to Morgy's depth */
 				if (num_on_depth > 1)
@@ -572,6 +572,10 @@ void check_Morgoth(void)
 							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
 							/* log */
 							s_printf("Morgoth recalled winner %s\n", p_ptr->name);
+						} else if (p_ptr->mode & MODE_PVP) {
+							sprintf(msg, "\377sA hellish force drives you out of this dungeon!");
+							/* log */
+							s_printf("Morgoth recalled MODE_PVP %s\n", p_ptr->name);
 						} else {
 							sprintf(msg, "\377sYou hear Sauron's laughter as his spell drives you out of the dungeon!");
 							/* log */
@@ -1726,7 +1730,7 @@ static byte player_color(int Ind)
 
 	/* Covered by a mummy wrapping? */
 	if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_WRAPPING) pcolor = TERM_L_DARK;
-	if (p_ptr->cloaked == 1) pcolor = TERM_L_DARK;
+	if (p_ptr->cloaked == 1) pcolor = TERM_L_DARK; /* ignore cloak_neutralized for now */
 
 	/* Mimicing a monster */
 	/* TODO: handle 'ATTR_MULTI', 'ATTR_CLEAR' */
@@ -2144,12 +2148,18 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					}
 				}
 			}
+
 			/* Quick Hack -- shop */
-			if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			else if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
 			{
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
 			}
+
+			/* apply colour to OPEN house doors (which have FF1_FLOOR,
+			   are hence separated from close house doors - C. Blue */
+			else if((cs_ptr=GetCS(c_ptr, CS_DNADOOR)))
+				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
 			/* Special lighting effects */
 			else if (p_ptr->view_special_lite && (a == TERM_WHITE))
@@ -2288,6 +2298,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 			/* Hack -- gee it's great to be back home */
 			if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){
+#if 0
 				if(access_door(Ind, cs_ptr->sc.ptr))
 				{
 					a = TERM_L_GREEN;
@@ -2298,6 +2309,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 					if (dna->owner && dna->owner_type)
 						a = TERM_L_DARK;
 				}
+#else
+				a = access_door_colour(Ind, cs_ptr->sc.ptr);
+#endif
 			}
 
 			/* Special lighting effects */
@@ -2806,7 +2820,8 @@ void lite_spot(int Ind, int y, int x)
 				a=TERM_VIOLET;
 			}
 			if (p_ptr->cloaked == 1) {
-				a=TERM_L_DARK;
+				if (p_ptr->cloak_neutralized) a=TERM_SLATE;
+				else a=TERM_L_DARK;
 			}
 			/* Mana Shield and GOI also flicker */
 			if ((p_ptr->tim_manashield > 10) && (randint(2)==1)){
@@ -6173,6 +6188,24 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 
 	/* Don't mess with inns please! */
 	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+
+	/* in Nether Realm, floor is always nether mist (or lava)! */
+	if (getlevel(wpos) >= 166) switch (feat) {
+		case FEAT_IVY:
+		case FEAT_SHAL_WATER:
+		case FEAT_DEEP_WATER:
+    		case FEAT_ICE:
+	    	case FEAT_FLOOR:
+    		case FEAT_DIRT:
+	        case FEAT_GRASS:
+    		case FEAT_SAND:
+	        case FEAT_ASH:
+	        case FEAT_MUD:
+	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+	        case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+	}
+	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
+	   maybe add d_info flags for this stuff instead of hard-coding here */
 	    
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
@@ -6707,10 +6740,10 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool town = istown(wpos);
 	bool sector00 = (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation);
 	bool valinor = (getlevel(wpos) == 200);
-	bool netherrealm = (getlevel(wpos) == 196);
+	bool netherrealm_bottom = (getlevel(wpos) == 196);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!bree && !town && !sector00 && !valinor && !netherrealm) return(TRUE);
+	if (!bree && !town && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
 
 	switch (feat) {
 	/* allow only harmless as well as non-obstructing changes: */
@@ -6724,7 +6757,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
         case FEAT_ICE:
-	case FEAT_GLYPH: if (bree || sector00 || valinor || netherrealm) return(FALSE);
+	case FEAT_GLYPH: if (bree || sector00 || valinor || netherrealm_bottom) return(FALSE);
 
 	/* don't allow any changes at all to preserve the visuals 100% */
         case FEAT_NONE:
@@ -6735,7 +6768,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
         case FEAT_ASH:
         case FEAT_MUD:
 /*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
-        case FEAT_FLOWER: if (valinor || netherrealm) return(FALSE);
+        case FEAT_FLOWER: if (valinor || netherrealm_bottom) return(FALSE);
 
 	/* generate.c uses these for staircases in towns */
 	case FEAT_MORE:

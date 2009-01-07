@@ -425,7 +425,10 @@ bool hp_player(int Ind, int num)
 {
 	player_type *p_ptr = Players[Ind];
 
+	// The "number" that the character is displayed as before healing
 	int old_num, new_num; 
+	int eff_num; /* actual amount of HP gain */
+	long e = 3 * (p_ptr->mhp + p_ptr->lev * 6); /* for PVP mode diminishing healing calc */
 
 	// The "number" that the character is displayed as before healing
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
@@ -435,20 +438,29 @@ bool hp_player(int Ind, int num)
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HARD) && (num > 3))
-	  {
-            num = num * 3 / 4;
-	  }
+	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
 
-	if(!num) return(FALSE);
+	eff_num = (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+	
+	/* PVP mode uses diminishing healing - C. Blue */
+	if (p_ptr->mode & MODE_PVP) {
+		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
+				    (e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3));
+		eff_num /= 100;
+	}
+
+	if (!eff_num) return(FALSE);
 
 	if (p_ptr->chp < p_ptr->mhp)
 	{
+		/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
+		p_ptr->heal_effect += eff_num;
+
 		/* data collection for C_BLUE_AI: add up healing happening during current turn */
-		p_ptr->heal_turn[0] += (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+		p_ptr->heal_turn[0] += eff_num;
 
+		/* refill HP, note that we can't use eff_num here due to chp_frac check */
 		p_ptr->chp += num;
-
 		if (p_ptr->chp > p_ptr->mhp)
 		{
 			p_ptr->chp = p_ptr->mhp;
@@ -504,13 +516,17 @@ bool hp_player(int Ind, int num)
 
 /*
  * Increase players hit points, notice effects, and don't tell the player it.
+ * autoeffect stands for non-'intended' healing, that applies automatically,
+ * such as necromancy, vampiric items, standard body regeneration.
  */
-bool hp_player_quiet(int Ind, int num)
+bool hp_player_quiet(int Ind, int num, bool autoeffect)
 {
 	player_type *p_ptr = Players[Ind];
 
 	// The "number" that the character is displayed as before healing
-	int old_num, new_num; 
+	int old_num, new_num;
+	int eff_num; /* actual amount of HP gain */
+	long e = 3 * (p_ptr->mhp + p_ptr->lev * 6); /* for PVP mode diminishing healing calc */
 
 	old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
 	if (old_num >= 7) old_num = 10;
@@ -519,20 +535,30 @@ bool hp_player_quiet(int Ind, int num)
 	if (p_ptr->martyr && !bypass_invuln) return(FALSE);
 
 	/* Hell mode is .. hard */
-	if ((p_ptr->mode & MODE_HARD) && (num > 3))
-	  {
-            num = num * 3 / 4;
-	  }
+	if ((p_ptr->mode & MODE_HARD) && (num > 3)) num = num * 3 / 4;
 
-	if(!num) return(FALSE);
+	eff_num = (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+
+	/* PVP mode uses diminishing healing - C. Blue */
+	if (!autoeffect && (p_ptr->mode & MODE_PVP)) {
+		eff_num = eff_num * (p_ptr->heal_effect < e ? 100 :
+				    (e * 100) / ((p_ptr->heal_effect - (e * 2) / 3) * 3));
+		eff_num /= 100;
+	}
+
+	if (!eff_num) return(FALSE);
 
 	if (p_ptr->chp < p_ptr->mhp)
 	{
+		if (!autoeffect) {
+			/* data collection for PVP mode: weaken continous healing over time to prevent silliness (who stacks more pots) - C. Blue */
+			p_ptr->heal_effect += eff_num;
+		}
 		/* data collection for C_BLUE_AI: add up healing happening during current turn */
-		p_ptr->heal_turn[0] += (p_ptr->mhp - p_ptr->chp < num) ? (p_ptr->mhp - p_ptr->chp) : num;
+		p_ptr->heal_turn[0] += eff_num;
 
+		/* refill HP, note that we can't use eff_num here due to chp_frac check */
 		p_ptr->chp += num;
-
 		if (p_ptr->chp > p_ptr->mhp)
 		{
 			p_ptr->chp = p_ptr->mhp;
@@ -2698,7 +2724,7 @@ bool detect_magic(int Ind, int rad)
 			/* Artifacts, misc magic items, or enchanted wearables */
 			if (artifact_p(o_ptr) || ego_item_p(o_ptr) ||
 			    (tv == TV_AMULET) || (tv == TV_RING) ||
-			    (tv == TV_STAFF) || (tv == TV_WAND) || (tv == TV_ROD) ||
+			    is_magic_device(tv) ||
 			    (tv == TV_SCROLL) || (tv == TV_POTION) ||
 			    ((o_ptr->to_a > 0) || (o_ptr->to_h + o_ptr->to_d > 0)))
 			{
@@ -3664,9 +3690,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	prob = o_ptr->number * 100;
 
 	/* Missiles are easy to enchant */
-	if ((o_ptr->tval == TV_BOLT) ||
-	    (o_ptr->tval == TV_ARROW) ||
-	    (o_ptr->tval == TV_SHOT))
+	if (is_ammo(o_ptr->tval))
 	{
 		prob = prob / 20;
 	}
@@ -3830,25 +3854,25 @@ bool create_artifact_aux(int Ind, int item)
 	s_printf("%s: ART_CREATION by player %s: %s\n", showtime(), p_ptr->name, o_name);
 
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
-		msg_format(Ind, "The item appears unchanged!");
+		msg_print(Ind, "The item appears unchanged!");
 		return FALSE;
 	}
 	if (o_ptr->name1) {
-		msg_format(Ind, "The creation fails due to the powerful magic of the target object!");
+		msg_print(Ind, "The creation fails due to the powerful magic of the target object!");
 		return FALSE;
 	}
 	if (o_ptr->name2 || o_ptr->name2b) {
-		msg_format(Ind, "The creation fails due to the strong magic of the target object!");
+		msg_print(Ind, "The creation fails due to the strong magic of the target object!");
 		return FALSE;
 		o_ptr->name2 = 0;
 		o_ptr->name2b = 0;
-		msg_format(Ind, "The strong magic of that object dissolves!");
+		msg_print(Ind, "The strong magic of that object dissolves!");
 	}
 	if (o_ptr->number > 1) {
-/*		msg_format(Ind, "The creation fails because the magic is split to multiple targets!");
+/*		msg_print(Ind, "The creation fails because the magic is split to multiple targets!");
 		return FALSE;*/
 		o_ptr->number = 1;
-		msg_format(Ind, "The stack of objects magically dissolves, leaving only a single item!");
+		msg_print(Ind, "The stack of objects magically dissolves, leaving only a single item!");
 	}
 
 	/* Describe */
@@ -3972,7 +3996,7 @@ bool curse_spell_aux(int Ind, int item)
 
 
 	if(artifact_p(o_ptr) && (randint(10)<8)){
-		msg_format(Ind,"The artifact resists your attempts.");
+		msg_print(Ind,"The artifact resists your attempts.");
 		return(FALSE);
 	}
 	if(item_tester_hook_weapon(o_ptr)){
@@ -3986,7 +4010,7 @@ bool curse_spell_aux(int Ind, int item)
 		switch(o_ptr->tval){
 			case TV_RING:
 			default:
-				msg_format(Ind,"You cannot curse that item!");
+				msg_print(Ind,"You cannot curse that item!");
 				return(FALSE);
 		}
 	}
@@ -4343,14 +4367,8 @@ bool item_tester_hook_recharge(object_type *o_ptr)
 	/* Some objects cannot be recharged */
 	if (f4 & TR4_NO_RECHARGE) return (FALSE);
 
-	/* Recharge staffs */
-	if (o_ptr->tval == TV_STAFF) return (TRUE);
-
-	/* Recharge wands */
-	if (o_ptr->tval == TV_WAND) return (TRUE);
-
-	/* Hack -- Recharge rods */
-	if (o_ptr->tval == TV_ROD) return (TRUE);
+	/* Recharge staffs/wands/rods */
+	if (is_magic_device(o_ptr->tval)) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
@@ -4865,7 +4883,7 @@ void distract_monsters(int Ind)
 
         msg_print(Ind, "You make yourself look less threatening than your team mates.");
         msg_format_near(Ind, "%s pretends you're more threatening than him.", p_ptr->name);
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -4930,7 +4948,7 @@ void taunt_monsters(int Ind)
 
         msg_print(Ind, "You call out a taunt!");
         msg_format_near(Ind, "%s calls out a taunt!", p_ptr->name);
-	break_cloaking(Ind);
+	break_cloaking(Ind, 0);
 	stop_precision(Ind);
 
 	for (i = 1; i < m_max; i++)
@@ -5639,28 +5657,28 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				if (t < 20)
 				{
 					/* Create granite wall */
-					c_ptr->feat = FEAT_WALL_EXTRA;
+					cave_set_feat(wpos, y, x, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					c_ptr->feat = FEAT_QUARTZ;
+					cave_set_feat(wpos, y, x, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					c_ptr->feat = FEAT_MAGMA;
+					cave_set_feat(wpos, y, x, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor or whatever specified */
-					c_ptr->feat = feat;
+					cave_set_feat(wpos, y, x, feat);
 				}
 			}
 		}
@@ -6103,28 +6121,28 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				if (t < 20)
 				{
 					/* Create granite wall */
-					c_ptr->feat = FEAT_WALL_EXTRA;
+					cave_set_feat(wpos, yy, xx, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					c_ptr->feat = FEAT_QUARTZ;
+					cave_set_feat(wpos, yy, xx, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					c_ptr->feat = FEAT_MAGMA;
+					cave_set_feat(wpos, yy, xx, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor */
-					c_ptr->feat = FEAT_FLOOR;
+					cave_set_feat(wpos, yy, xx, FEAT_FLOOR);
 				}
 			}
 		}
@@ -6173,7 +6191,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 			
 			/* Turn into basic floor */
-			c_ptr->feat = FEAT_FLOOR;
+			cave_set_feat(wpos, yy, xx, FEAT_FLOOR);
 			
 			/* Delete monsters */
 			if (c_ptr->m_idx > 0)

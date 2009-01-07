@@ -1365,9 +1365,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 #endif	// 0
 
 	/* Hack -- ammos shouldn't be that expensive */
-	if (o_ptr->tval == TV_ARROW ||
-		o_ptr->tval == TV_SHOT ||
-		o_ptr->tval == TV_BOLT)
+	if (is_ammo(o_ptr->tval))
 		total >>= 2;
 
 	return total;
@@ -2024,20 +2022,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
-		if (!(Players[Ind]->mode & MODE_EVERLASTING)) {
-			if (((o_ptr->owner_mode & MODE_EVERLASTING) && !(j_ptr->owner_mode & MODE_EVERLASTING)) ||
-			    ((j_ptr->owner_mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING)))
-				return(0);
-		}
+		if (compat_pomode(Ind, j_ptr)) return(0);
 	}
 	else
 	{
 		if (o_ptr->owner != j_ptr->owner) return (0);
 		/* no stacks of unowned everlasting items in shops after a now-dead
 		   everlasting player sold an item to the shop before he died :) */
-		if (((o_ptr->owner_mode & MODE_EVERLASTING) && !(j_ptr->owner_mode & MODE_EVERLASTING)) ||
-		    ((j_ptr->owner_mode & MODE_EVERLASTING) && !(o_ptr->owner_mode & MODE_EVERLASTING)))
-			return(0);
+		if (compat_omode(o_ptr, j_ptr)) return(0);
 	}
 
 	/* Analyze the items */
@@ -2186,7 +2178,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			   except for ammunition which carries special inscription (will merge!) - C. Blue */
 			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
 			                    	    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
-			    ((o_ptr->tval != TV_BOLT && o_ptr->tval != TV_ARROW && o_ptr->tval != TV_SHOT) ||
+			    (!is_ammo(o_ptr->tval) ||
 			    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M')))) {
 				if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
 				if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
@@ -2285,11 +2277,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	   (especially new items bought in the shops) and convert them all to everlasting */
 	if (Ind && (p_ptr->mode & MODE_EVERLASTING)) {
-/*		if ((o_ptr->owner_mode & MODE_EVERLASTING) || (j_ptr->owner_mode & MODE_EVERLASTING))*/
-		{
-			o_ptr->owner_mode = MODE_EVERLASTING;
-			j_ptr->owner_mode = MODE_EVERLASTING;
-		}
+		o_ptr->owner_mode = MODE_EVERLASTING;
+		j_ptr->owner_mode = MODE_EVERLASTING;
+	}
+
+	/* A PvP-player will get his items convert to pvp-mode */
+	if (Ind && (p_ptr->mode & MODE_PVP)) {
+		o_ptr->owner_mode = MODE_PVP;
+		j_ptr->owner_mode = MODE_PVP;
 	}
 
 	/* They match, so they must be similar */
@@ -2307,8 +2302,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr)
         /* Prepare ammo for possible combining */
 //	int o_to_h, o_to_d;
 	bool merge_inscriptions = check_guard_inscription(o_ptr->note, 'M') || check_guard_inscription(j_ptr->note, 'M');
-	bool merge_ammo = ((o_ptr->tval == TV_BOLT || o_ptr->tval == TV_ARROW || o_ptr->tval == TV_SHOT) &&
-			    merge_inscriptions);
+	bool merge_ammo = (is_ammo(o_ptr->tval) && merge_inscriptions);
 
 	/* Combine ammo even of different enchantment grade! - C. Blue */
 	if (merge_ammo) {
@@ -2727,8 +2721,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 	if (!rand_int(RANDART_RARITY))
 	{
 	        /* Randart ammo should be very rare! */
-	        if (((o_ptr->tval == TV_SHOT) || (o_ptr->tval == TV_ARROW) ||
-	            (o_ptr->tval == TV_BOLT)) && magik(80)) return(FALSE); /* was 95 */
+	        if (is_ammo(o_ptr->tval) && magik(80)) return(FALSE); /* was 95 */
 
     		o_ptr->name1 = ART_RANDART;
 
@@ -4300,6 +4293,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 
 					/* Be sure to be a player */
 					o_ptr->pval = 0;
+
 					if (magik(45))
 					{
 						int i;
@@ -4315,22 +4309,26 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 							if (r_ptr->level >= level + (power * 5)) continue;
 //							if (!mon_allowed(r_ptr)) continue;
 							if (!mon_allowed_chance(r_ptr)) continue;
+							if (r_ptr->rarity == 255) continue;
 
 							break;
 						}
-						o_ptr->pval = i;
-						/* Let's have the following level req code commented out
-						to give found poly rings random levels to allow surprises :)
-						Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
-						if (r_info[i].level > 0) {
-							o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
-						} else {
-							o_ptr->level = 10;
-						}
-						/* Make the ring last only over a certain period of time >:) - C. Blue */
-						o_ptr->timeout = 3000 + rand_int(3001);
+						if (tries < 1000) {
+							o_ptr->pval = i;
+							/* Let's have the following level req code commented out
+							to give found poly rings random levels to allow surprises :)
+							Nah my idea was too cheezy, Blue DR at 21 -C. Blue */
+							if (r_info[i].level > 0) {
+								o_ptr->level = 10 + (1000 / ((2000 / r_info[i].level) + 10));
+							} else {
+								o_ptr->level = 10;
+							}
+							/* Make the ring last only over a certain period of time >:) - C. Blue */
+							o_ptr->timeout = 3000 + rand_int(3001);
+						} else o_ptr->level=1;
 					}
 					else o_ptr->level=1;
+
 					break;
 				}
 
@@ -5536,8 +5534,8 @@ if (verygreat) s_printf("verygreat apply_magic:\n");
 	object_copy(o_ptr_bak, o_ptr);
 	object_copy(o_ptr_highest, o_ptr);
 	depth_value = (depth < 60 ? depth * 150 : 9000) + randint(depth) * 100;
-//  for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 7 : 4 + depth / 5); i++) {
-//  for (i = 0; i < (((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) ? 2 + depth / 5 : 4 + depth / 5); i++) {
+//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 7 : 4 + depth / 5); i++) {
+//  for (i = 0; i < (!is_ammo(o_ptr->tval) ? 2 + depth / 5 : 4 + depth / 5); i++) {
 for (i = 0; i < 25; i++) {
 	object_copy(o_ptr, o_ptr_bak);
 
@@ -5869,6 +5867,7 @@ for (i = 0; i < 25; i++) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 	if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+	if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
 	if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
 	if ((resf & RESF_LOWSPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 4 || o_ptr->pval > 4)) continue;
 	if ((resf & RESF_NOHISPEED) && (f1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
@@ -5893,7 +5892,7 @@ for (i = 0; i < 25; i++) {
 	s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
 		depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
 
-	if ((o_ptr->tval != TV_SHOT) && (o_ptr->tval != TV_ARROW) && (o_ptr->tval != TV_BOLT)) {
+	if (!is_ammo(o_ptr->tval)) {
 		if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
 		    (object_value_real(0, o_ptr) >= depth * 300)) break;
 	} else {
@@ -6594,9 +6593,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			if (great)
 				for (i = 0; i < 20; i++) {
 					k_idx = get_obj_num(base, resf);
-					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (is_ammo(k_info[k_idx].tval) && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					break;
 				}
 			else
@@ -6620,6 +6617,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 				continue;
 			
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
+			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
 			
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
@@ -6676,6 +6674,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 	forge.marked2 = removal_marker;
+	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
 	drop_near(&forge, -1, wpos, y, x);
 
 #if 0
@@ -6717,6 +6716,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		}
 	}
 #endif	// 0
+
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
@@ -6802,9 +6802,7 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 			if (great)
 				for (i = 0; i < 20; i++) {
 					k_idx = get_obj_num(base, resf);
-					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (is_ammo(k_info[k_idx].tval) && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					break;
 				}
 			else
@@ -6828,6 +6826,7 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 				continue;
 			
 			if ((resf & RESF_LOWVALUE) && (k_info[k_idx].cost > 35000)) continue;
+			if ((resf & RESF_MIDVALUE) && (k_info[k_idx].cost > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (k_info[k_idx].cost > 100000)) continue;
 			
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
@@ -7263,9 +7262,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (great)
 				for (i = 0; i < 20; i++) {
 					k_idx = get_obj_num(base, resf);
-					if (k_info[k_idx].tval == TV_ARROW && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_SHOT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
-					if (k_info[k_idx].tval == TV_BOLT && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
+					if (is_ammo(k_info[k_idx].tval) && k_info[k_idx].sval == SV_AMMO_MAGIC) continue;
 					break;
 				}
 			else
@@ -7282,7 +7279,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (k_info[k_idx].weight > reward_maxweight) continue;
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
-			if (reward_tval == TV_SWORD || reward_tval == TV_BLUNT || reward_tval == TV_AXE || reward_tval == TV_POLEARM) { /* melee weapon */
+			if (is_weapon(reward_tval)) { /* melee weapon */
 				if (p_ptr->inventory[INVEN_WIELD].k_idx) i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) j = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
 				if (j > i) i = j; /* for dual-wielders, use the faster one */
@@ -7354,9 +7351,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if ((resf & RESF_NOHISPEED) && (k_info[o_ptr->k_idx].flags1 & TR1_SPEED) && (o_ptr->bpval > 6 || o_ptr->pval > 6)) continue;
 		if (!(k_info[o_ptr->k_idx].flags1 & TR1_SPEED)) {
 			if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
+			if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 100000)) continue;
 		} else {
 			if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 200000)) continue;
+			if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 200000)) continue;
 			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 250000)) continue;
 		}
 
@@ -7420,6 +7419,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
+		
+		/* Don't generate (possibly expensive, hence passed up till here) crap */
+		switch (o_ptr->name2) {
+		case EGO_BEAUTY:
+		case EGO_CHARMING: continue;
+		default: break;
+		}
+		if (object_value_real(0, o_ptr) < 5000) continue; /* a reward should have some value */
 
 		break;
 	} while (tries < 20);
@@ -8384,10 +8391,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 #endif	// 0
 
 	/* auto-pickup inscription for ammo */
-	if ((o_ptr->tval == TV_ARROW ||
-		o_ptr->tval == TV_BOLT ||
-		o_ptr->tval == TV_SHOT) &&
-		object_known_p(Ind, o_ptr))
+	if (is_ammo(o_ptr->tval) && object_known_p(Ind, o_ptr))
 	{
 		o_ptr->note = quark_add("!=");
 		return;
@@ -9116,7 +9120,6 @@ bool anti_undead(object_type *o_ptr) {
 
 /* 
  * Generate default item-generation restriction flags for a given player - C. Blue
- * Note: RESF_WINNER has currently no effect.
  */
 u32b make_resf(player_type *p_ptr) {
 	u32b f = RESF_NONE;
@@ -9130,6 +9133,8 @@ u32b make_resf(player_type *p_ptr) {
 		if (cfg.kings_etiquette) f |= RESF_NOTRUEART; /* player is currently a winner? Then don't find true arts! */
 	}
 	if (!cfg.winners_find_randarts) f |= ~RESF_NOTRUEART; /* monsters killed by [fallen] winners can drop no true arts but randarts only instead? */
+
+	if (p_ptr->mode & MODE_PVP) f |= RESF_NOTRUEART; /* PvP mode chars can't use true arts, since true arts are for kinging! */
 
 	return (f);
 }
