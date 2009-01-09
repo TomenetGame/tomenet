@@ -1377,7 +1377,8 @@ void cmd_check_misc(void)
 	Term_putstr(5, second + 5, -1, TERM_WHITE, "(f) News (login message)");
 	Term_putstr(5, second + 6, -1, TERM_WHITE, "(g) Message history");
 	Term_putstr(5, second + 7, -1, TERM_WHITE, "(h) Chat history");
-	Term_putstr(5, second + 8, -1, TERM_WHITE, "(?) Help");
+	Term_putstr(5, second + 8, -1, TERM_WHITE, "(l) Lag-o-meter");
+	Term_putstr(5, second + 9, -1, TERM_WHITE, "(?) Help");
 
 	while(i!=ESCAPE){
 		i=inkey();
@@ -1436,6 +1437,9 @@ void cmd_check_misc(void)
 				break;
 			case 'g':
 				do_cmd_messages();
+				break;
+			case 'l':
+				do_cmd_ping_stats();
 				break;
 			case 'h':
 				do_cmd_messages_chatonly();
