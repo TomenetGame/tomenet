@@ -752,7 +752,7 @@ void prt_AFK(byte afk)
 void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
 {
-	put_str("           ", 7, 0);
+	put_str("            ", 7, 0);
 	if (cumber_armor) c_put_str(TERM_UMBER, "(", 7, 0);
 	if (heavy_wield) c_put_str(TERM_RED, "/", 7, 1);
 	if (icky_wield) c_put_str(TERM_ORANGE, "\\", 7, 2);
