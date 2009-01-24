@@ -821,6 +821,10 @@ static void display_inven(void)
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
+		/* Terminate - Term_putstr could otherwise read past the end of the buffer
+		 * when it looks for a color code (valgrind complained about that). - mikaelh */
+		tmp_val[3] = '\0';
+
 		/* Prepare an "index" */
 		tmp_val[0] = index_to_label(i);
 

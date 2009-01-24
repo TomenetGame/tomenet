@@ -1466,7 +1466,8 @@ void cmd_message(void)
 	char buf[80];
 	int i;
 
-	buf[0] = '\0';
+	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
+	C_WIPE(buf, 80, char);
 
 	inkey_msg = TRUE;
 
