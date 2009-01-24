@@ -948,61 +948,66 @@ G:.:b
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
-N:210:Protected
+N:210:protected
 G:.:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | PROTECTED
 
 # Some decoration grids, made for Gondolin entrance to prevent people from getting stuck in there - C. Blue
-N:211:Decorative Shallow Water
+
+# for Gondolin's fountain in town centre
+N:211:decorative shallow water
 G:~:B
 S:B:B:B:B:B:B:b
 F:ATTR_MULTI
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
 
-N:212:Decorative Violet Crystal
+# for Gondolin's entrance area
+N:212:decorative violet crystal
 G:*:v
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:213:Decorative Blue Crystal
+# for Gondolin's entrance area
+N:213:decorative blue crystal
 G:*:b
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:214:Decorative Green Crystal
+# for Gondolin's entrance area
+N:214:decorative green crystal
 G:*:G
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:215:Decorative Yellow Crystal
+N:215:decorative yellow crystal
 G:*:y
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:216:Decorative Orange Crystal
+N:216:decorative orange crystal
 G:*:o
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:217:Decorative Red Crystal
+N:217:decorative red crystal
 G:*:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
-N:218:Decorative Deep Lava
+N:218:decorative deep lava
 G:~:R
 S:R:R:r:R:R:o:y
 F:ATTR_MULTI
@@ -1018,23 +1023,50 @@ F:TUNNELABLE
 D:1:You chop away at the bush.
 D:2:a bush blocking your way
 
+# for Smash Arcade:
 N:220:Player 1 Trail
 G:#:R
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
+# for Smash Arcade:
 N:221:Player 2 Trail
 G:#:b
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
+# for Smash Arcade:
 N:222:Player 3 Trail
 G:#:y
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
+# for Smash Arcade:
 N:223:Player 4 Trail
 G:#:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
 
+#Special doors for PvP-Arena
+N:224:sealed door
+G:+:r
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+D:1:You bash the boor but it doesn't seem to move.
+D:2:A hideous looking ornate door is blocking your way.
+
+N:225:unsealed door
+G:':r
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+
+
+# generic scheme (all lines are unique except
+# where it's mentioned otherwise) - C. Blue
+# N:<number>:<name>
+# G:<char>:<colour>
+# S:<shimmer colour sequence of 7 colours separated by ':'>
+# M:<feature # to mimic, for example secret door seeming to be granite wall>
+# E (up to 4 lines):<effect damage in format 'xdy'>:<effect rarity>:<effect damage type, eg 'ELEC'>
+# F (any # of lines):<flags|...>
+# D:1:<descriptive text for tunneling xor bashing>
+# D:2:<descriptive text for getting one's movement blocked by it>

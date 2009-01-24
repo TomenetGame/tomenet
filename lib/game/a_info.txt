@@ -3294,6 +3294,15 @@ D:out evil spirits.
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(depth):(rarity[arts only]):(weight):(price)
+#C. Blue - some current details about depth and rarity:
+#	depth is minimum dlev. however, 'ood' (ie on easier dlevs) is possible.
+#	rarity roll succeeds at chance 1/rarity.
+#	note: rarity should be choosen for gameplay purpose (so arts dont become
+#             too super-rare) somewhat lower in case the k_info base type has
+#             already a very high rarity (this was already mentioned in randart.c).
+#	note: for make_artifact_special (INSTA_ART) the global variable object_level
+#	      is also tested as a minimum for the arts k_info base object level
+#	      (ood possible here too, ie higher insta art despite lower object level).
 #A:(depth)/(chance[1/value])   [multiple definitions are possible]
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC?)
 #F:(attribute)|...

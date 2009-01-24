@@ -1,7 +1,7 @@
 #$Id$
 
 # Town Name: Shores of Valinor
-# Created for ToMENet by C. Blue (mail@c-blue.de)
+# Created for ToMENet by C. Blue
 #
 
 %:t_pref.txt
