@@ -118,16 +118,7 @@ void grow_trees(int Ind, int rad)
 	player_type *p_ptr = Players[Ind];
 	int a, i, j;
 
-#if 0
-	/* No terraforming in Bree to avoid shut-in newbies. */
-	if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
-	/* Nor in Valinor */
-	if ((getlevel(&p_ptr->wpos) == 200) && (p_ptr->wpos.wz == 1)) return;
-	/* And not on NR bottom */
-	if (getlevel(&p_ptr->wpos) == 196) return;//>=166
-#else
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
-#endif
 
 	for (a = 0; a < rad * rad + 11; a++)
         {
@@ -163,13 +154,7 @@ bool create_garden(int Ind, int chance) {
         cave_type **zcave;
         if(!(zcave=getcave(wpos))) return (FALSE);
 
-#if 0
-        /* Don't hurt the main town or surrounding areas */
-        if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
-                return (FALSE);
-#else
 	if (!allow_terraforming(wpos, FEAT_TREE)) return(FALSE);
-#endif
 
 	for (y = 0; y < MAX_HGT; y++) {
 		for (x = 0; x < MAX_WID; x++) {
@@ -605,31 +590,10 @@ void warding_glyph(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 
-#if 0
-	cave_type *c_ptr;
-#endif
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
-#if 0
- #if 0
-	/* Require clean space */
-	if (!cave_clean_bold(zcave, p_ptr->py, p_ptr->px)) return;
 
-        /* no terraforming in Bree.. */
-        if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 0) return;
-	/* ..nor in Valinor */
-	if ((getlevel(&p_ptr->wpos) == 200) && (p_ptr->wpos.wz == 1)) return;
- #else
-	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) return;
- #endif
-	/* Access the player grid */
-	c_ptr = &zcave[p_ptr->py][p_ptr->px];
-
-	/* Create a glyph of warding */
-	c_ptr->feat = FEAT_GLYPH;
-#else
 	cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
-#endif
 }
 
 
@@ -3128,6 +3092,40 @@ bool detect_creatures(int Ind)
 	return (flag);
 }
 
+/*
+ * Display all monsters on the current panel
+ */
+void detect_monsters_forced(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	int	i;
+
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type *m_ptr = &m_list[i];
+//		monster_race *r_ptr = race_inf(m_ptr);
+
+		int fy = m_ptr->fy;
+		int fx = m_ptr->fx;
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip visible monsters */
+		if (p_ptr->mon_vis[i]) continue;
+
+		/* Skip monsters not on this depth */
+		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		/* Mega-Hack -- Show the monster */
+		p_ptr->mon_vis[i] = TRUE;
+		lite_spot(Ind, fy, fx);
+
+		/* Mega-Mega-Hack -- set mon_vis to false but don't update the screen - mikaelh */
+		p_ptr->mon_vis[i] = FALSE;
+	}
+}
+
 
 /*
  * Detect everything
@@ -5252,7 +5250,7 @@ bool genocide_aux(int Ind, worldpos *wpos, char typ)
 			handle_stuff(Ind);
 
 			/* Delay */
-			Send_flush(Ind);
+//			Send_flush(Ind); /* I don't think a delay is really necessary - mikaelh */
 		}
 
 		/* Take note */
@@ -5414,7 +5412,7 @@ bool mass_genocide(int Ind)
 		handle_stuff(Ind);
 
 		/* Delay */
-		Send_flush(Ind);
+//		Send_flush(Ind); /* I don't think a delay is really necessary - mikaelh */
 
 		/* Note effect */
 		result = TRUE;
@@ -5550,6 +5548,9 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
 		return;
 
+	/* Can't trigger within Vault? - note: this prevents exploit as well as death-_trap_ at once :) */
+	if (zcave[y1][x1].info & CAVE_ICKY) return;
+
 	/* Big area of affect */
 	for (y = (y1 - r); y <= (y1 + r); y++)
 	{
@@ -5573,13 +5574,14 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Special key doors are protected -C. Blue */
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
 
-			/* Lose room and vault and nest */
+			/* Lose room and nest */
 			/* Hack -- don't do this to houses/rooms outside the dungeon,
 			 * this will protect hosues outside town.
 			 */
 			if(wpos->wz)
 			{
-				c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT);
+				/* Lose room and nest */
+				c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
 			}
 
 			/* Lose light and knowledge */
@@ -5782,9 +5784,24 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 
 			/* Special key doors are protected -C. Blue */
 			if((cs_ptr=GetCS(c_ptr, CS_KEYDOOR))) continue;
-			
+
+#if 0 /* noticed this at 10.jan 2009, if'0ed it, and added below else branch,
+	since it allows teleportation within vaults!  - C. Blue */
+/* note: this miiiight be ok for non-no_tele vaults, or if no_tele is also removed, and if
+   additionally the vault wasn't build from perma-walls, so the walls actually got quaked away too;
+   for that, also check 'cave_valid_bold' check used to actually destroy grids (further below). */
+
 			/* Lose room and vault and nest */
 			c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY | CAVE_NEST_PIT);
+
+#else /* keep preventing teleport from targetting a space inside the (quaked) vault */
+			/* Lose room and nest */
+			c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
+
+ #if 0 /* addition mentioned above, but maybe bad idea? */
+			if (!(c_ptr->info & (CAVE_ICKY_PERMA | CAVE_STCK))) c_ptr->info &= ~CAVE_ICKY;
+ #endif
+#endif
 
 			/* Lose light */
 			c_ptr->info &= ~(CAVE_GLOW);

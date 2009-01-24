@@ -2451,9 +2451,19 @@ static int Handle_login(int ind)
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
 			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
-//			break;
 		}
+	}
+	/* receive previously buffered achievement deed (pvp) from other character of her/his account */
+	for (i = 0; i < 128; i++) {
 		if (achievement_buffer_ID[i] == p_ptr->account) {
+			switch (achievement_buffer_deed[i]) {
+			case SV_DEED_PVP_MAX: /* this one is transferrable to non-pvp char */
+				break;
+			case SV_DEED_PVP_MID:
+			case SV_DEED_PVP_MASS:
+				if (!(p_ptr->mode & MODE_PVP)) continue;
+				break;
+			}
 			achievement_buffer_ID[i] = 0;
 			i = lookup_kind(TV_PARCHMENT, achievement_buffer_deed[i]);
 			invcopy(o_ptr, i);
@@ -2465,7 +2475,6 @@ static int Handle_login(int ind)
 			o_ptr->ident |= ID_MENTAL;
 			inven_carry(NumPlayers, o_ptr);
 			msg_print(NumPlayers, "\377GFor your achievements, you have received a deed!");
-//			break;
 		}
 	}
 
@@ -4261,7 +4270,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 {
 	connection_t *connp = &Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
-	bool ville = istown(wpos);
+	bool ville = istown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
 	
 	/* XXX this kinda thing should be done *before* calling Send_*
@@ -4288,9 +4297,14 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 
 	/* Hack for Valinor */
-	if (getlevel(wpos) == 200 && wpos->wz == 1) {
+	if (getlevel(wpos) == 200) {
 		ville = TRUE;
 		desc = "Valinor";
+	}
+	/* Hack for PvP Arena */
+	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) {
+		ville = TRUE;
+		desc = "Arena";
 	}
 	
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))

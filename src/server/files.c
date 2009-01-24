@@ -941,7 +941,7 @@ void do_cmd_suicide(int Ind)
 
 	if (p_ptr->total_winner) kingly(Ind);
 	/* Retirement in Valinor? - C. Blue :) */
-	if (getlevel(&p_ptr->wpos) == 200 && (p_ptr->wpos.wz == 1)) kingly2(Ind);
+	if (getlevel(&p_ptr->wpos) == 200) kingly2(Ind);
 
 	/* Kill him */
 	p_ptr->deathblow = 0;
@@ -1839,7 +1839,7 @@ void close_game(void)
 			/* Handle retirement */
 			if (p_ptr->total_winner) kingly(i);
 		        /* Retirement in Valinor? - C. Blue :) */
-	    		if (getlevel(&p_ptr->wpos) == 200 && (p_ptr->wpos.wz == 1)) kingly2(i);
+	    		if (getlevel(&p_ptr->wpos) == 200) kingly2(i);
 
 			/* Save memories */
 			if (!save_player(i)) msg_print(i, "death save failed!");

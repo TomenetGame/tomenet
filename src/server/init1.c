@@ -358,7 +358,7 @@ static cptr r_info_flags6[] =
 	"S_ANIMALS",	// "XXX2X6",
 	"BLINK",
 	"TPORT",
-	"ANIM_DEAD",	// "XXX3X6",
+	"RAISE_DEAD",	// "XXX3X6",
         "S_BUG",	// "XXX4X6",
 	"TELE_TO",
 	"TELE_AWAY",
@@ -386,8 +386,8 @@ static cptr r_info_flags6[] =
 	"S_UNIQUE"
 };
 
-#if 0	// flags6
-	"ANIM_DEAD", /* ToDo: Implement ANIM_DEAD */
+#if 0	/* flags6 */
+	"RAISE_DEAD", /* ToDo: Implement RAISE_DEAD */
         "S_BUG",
         "S_RNG",
         "S_DRAGONRIDER",  /* DG : Summon DragonRider */
@@ -1027,8 +1027,8 @@ static cptr d_info_flags2[] =
 	"NO_EXIT_WOR",
 	"NO_EXIT_PROB",
 	"NO_EXIT_FLOAT",
-	"NO_TRAVEL_UP",
-	"NO_TRAVEL_DOWN",
+	"NO_STAIRS_UP",
+	"NO_STAIRS_DOWN",
 	"",
 	"",
 	"ADJUST_LEVEL_1_2",
@@ -4468,6 +4468,19 @@ errr init_r_info_txt(FILE *fp, char *buf)
 		if ((r_info[i].flags8 & RF8_WILD_EASY) &&
 				!(r_info[i].flags8 & RF8_WILD_EASY_MASK))
 			r_info[i].flags8 |= RF8_WILD_EASY_MASK;
+		
+		/* clear flags that we want to be 'disabled' in defines.h for the time being,
+		   for example RF6_RAISE_DEAD isn't implemented fully! - C. Blue */
+		r_info[i].flags1 &= ~RF1_DISABLE_MASK;
+		r_info[i].flags2 &= ~RF2_DISABLE_MASK;
+		r_info[i].flags3 &= ~RF3_DISABLE_MASK;
+		r_info[i].flags4 &= ~RF4_DISABLE_MASK;
+		r_info[i].flags5 &= ~RF5_DISABLE_MASK;
+		r_info[i].flags6 &= ~RF6_DISABLE_MASK;
+		r_info[i].flags7 &= ~RF7_DISABLE_MASK;
+		r_info[i].flags8 &= ~RF8_DISABLE_MASK;
+		r_info[i].flags9 &= ~RF9_DISABLE_MASK;
+		r_info[i].flags0 &= ~RF0_DISABLE_MASK;
 	}
 
 
@@ -7376,6 +7389,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			int object_index = letter[idx].object;
 #if 0
 			int monster_index = letter[idx].monster;
+#else /* rudimentary support till actual code (see further below what i mean) has been looked at, too lazy atm - C. Blue */
+			int monster_index = letter[idx].monster;
 #endif // 0
 			int random = letter[idx].random;
 			int artifact_index = letter[idx].artifact;
@@ -7429,6 +7444,14 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 				m_allow_special[monster_index] = TRUE;
 				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY, 0);
 				m_allow_special[monster_index] = FALSE;
+			}
+#else /* rudimentary support till above code has been looked at, too lazy atm - C. Blue */
+			else if (monster_index)
+			{
+				summon_override_checks = 1; /* disable all checks */
+				place_monster_aux(wpos, y, x, monster_index, FALSE, FALSE, 0, 0);
+//				place_monster_one(wpos, y, x, monster_index, 0, 0, FALSE, 0, 0);
+				summon_override_checks = 0; /* re-enable default */
 			}
 #endif	// 0
 

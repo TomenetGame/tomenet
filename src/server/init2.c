@@ -2587,6 +2587,10 @@ static errr init_other(void)
 	auction_alloc = 16;
 #endif
 
+	/*** alloc for the lite later array ***/
+	C_MAKE(lite_later, 16, struct worldspot);
+	lite_later_alloc = 16;
+
 	/*** Pre-allocate the basic "auto-inscriptions" ***/
 
 	/* The "basic" feelings */

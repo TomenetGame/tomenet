@@ -41,9 +41,9 @@
 
 /* Macro to test in project_p() whether we are hurt by a PvP
    (player vs player) or a normal PvM (player vs monster) attack */
-#define IS_PVP	(who < 0 && who >= -MAX_PLAYERS)
+#define IS_PVP	(who < 0 && who >= -NumPlayers)
 /* similar purpose macro (also for take_hit) */
-#define IS_PLAYER(i)	(i > 0 && i <= MAX_PLAYERS)
+#define IS_PLAYER(i)	(i > 0 && i <= NumPlayers)
 
 
  /*
@@ -680,7 +680,7 @@ void teleport_to_player(int Ind, int m_idx)
  * If no such spaces are readily available, the distance may increase.
  * Try very hard to move the player at least a quarter that distance.
  */
-void teleport_player(int Ind, int dis)
+bool teleport_player(int Ind, int dis, bool ignore_pvp)
 {
 	player_type *p_ptr = Players[Ind];
 
@@ -693,24 +693,24 @@ void teleport_player(int Ind, int dis)
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave=getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
 
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death)
 	{
-		if ((p_ptr->mode & MODE_PVP) && p_ptr->prevent_tele) {
+		if (!ignore_pvp && (p_ptr->mode & MODE_PVP) && p_ptr->prevent_tele) {
 			msg_print(Ind, "\377yThere's no easy way out of this fight!");
 			s_printf("%s TELEPORT_FAIL: prevent_tele for %s.\n", showtime(), p_ptr->name);
-			return;
+			return FALSE;
 		}
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
 			s_printf("%s TELEPORT_FAIL: Anti-Tele for %s.\n", showtime(), p_ptr->name);
-			return;
+			return FALSE;
 		}
 		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 			s_printf("%s TELEPORT_FAIL: Cave-Stck for %s.\n", showtime(), p_ptr->name);
-			return;
+			return FALSE;
 		}
 //		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 		/* Hack -- on the wilderness one cannot teleport very far */
@@ -770,7 +770,7 @@ void teleport_player(int Ind, int dis)
 			if (zcave[y][x].info & CAVE_NEST_PIT) continue;
 
 			/* Never break into st-anchor */
-			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return;
+			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return FALSE;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -789,7 +789,7 @@ void teleport_player(int Ind, int dis)
 	/* No empty field on this map o_O */
 	if (tries >= 3000) {
 		s_printf("%s TELEPORT_FAIL: No empty field found for %s.\n", showtime(), p_ptr->name);
-		return;
+		return FALSE;
 	}
 
 	break_cloaking(Ind, 7);
@@ -866,6 +866,8 @@ void teleport_player(int Ind, int dis)
 
 	/* Handle stuff XXX XXX XXX */
 	if (!p_ptr->death) handle_stuff(Ind);
+	
+	return TRUE;
 }
 
 
@@ -882,7 +884,7 @@ void teleport_player_force(int Ind, int dis)
 	anti_tele = p_ptr->anti_tele;
 	p_ptr->anti_tele = 0;
 
-	teleport_player(Ind, dis);
+	teleport_player(Ind, dis, TRUE);
 
 	/* Restore anti-tele */
 	p_ptr->anti_tele = anti_tele;
@@ -1227,8 +1229,12 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* towns are safe-zones from ALL hostile actions */
         if (IS_PLAYER(Ind_attacker)) {
 		if (istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) return;
-		p_ptr->prevent_tele = 30; /* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
         }
+	
+	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
+	if (IS_PLAYER(Ind_attacker) ||
+	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1))
+		p_ptr->prevent_tele = 30;
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
@@ -1385,7 +1391,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 			target_set(Ind, 0);
 			target_set(Ind2, 0);
 
-			teleport_player(Ind, 400);
+			teleport_player(Ind, 400, TRUE);
 
 			return;
 		}
@@ -1411,7 +1417,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 				target_set(Ind, 0);
 				target_set(Ind_attacker, 0);
 
-				teleport_player(Ind, 400);
+				teleport_player(Ind, 400, TRUE);
 
 				return;
 			}
@@ -1458,8 +1464,8 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	/* For 'Arena Monster Challenge' event: */
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	if (d_ptr && ge_training_tower &&
-	    (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y &&
-    	    p_ptr->wpos.wz == d_ptr->maxdepth && p_ptr->wpos.wz > 0)) { /* are we in town and in a tower and on top floor? */
+	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
+    	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
 		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
 		return;
 	}
@@ -2357,7 +2363,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	}
 
 	/* Inventory damage */
-	if (!(p_ptr->oppose_elec && p_ptr->resist_elec))
+	if (!(p_ptr->oppose_elec && p_ptr->resist_elec) && breakable)
 		inven_damage(Ind, set_elec_destroy, inv);
 
 	return(dam);
@@ -2783,7 +2789,7 @@ bool apply_disenchant(int Ind, int mode)
 		if (!i) i = 1;
 		msg_format(Ind, "\377o%s of your %s (%c) %s away!",
 		    (o_ptr->number == i ? "All" : (i != 1 ? "Some" : "One")), o_name, index_to_label(t),
-		   ((o_ptr->number != 1) ? "fade" : "fades"));
+		    ((i != 1) ? "fade" : "fades"));
 		inven_item_increase(Ind, t, -i);
 		inven_item_optimize(Ind, t);
 		/* Recalculate bonuses */
@@ -2861,6 +2867,160 @@ bool apply_disenchant(int Ind, int mode)
 
 
 /*
+ * Apply 'discharging' ie electricity damage to the player's stuff - C. Blue
+ * the reason for adding this is, to bring electricity on par with other base elements.
+ *
+ * Return "TRUE" if the player notices anything
+ */
+bool apply_discharge(int Ind, int dam)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int	i, chance = 95;
+	bool	damaged_any = FALSE, damaged;
+	object_type *o_ptr;
+	char	o_name[160];
+
+	if ((p_ptr->oppose_elec && p_ptr->resist_elec) ||
+	    p_ptr->immune_elec) return(FALSE);
+
+	/* note: used same values as in elec_dam */
+	if (dam >= 30) chance -= 10;
+	if (dam >= 60) chance -= 10;
+
+	/* Scan through the slots backwards */
+//	for (i = 0; i < INVEN_PACK; i++)
+	for (i = 0; i < INVEN_TOTAL; i++)	/* Let's see what will happen.. */
+	{
+		/* Hack -- equipments are harder to be harmed */
+		if (i >= INVEN_PACK && i != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE))
+			continue;
+
+		/* Get the item */
+		o_ptr = &p_ptr->inventory[i];
+		/* No item, nothing happens */
+		if (!o_ptr->k_idx) return (FALSE);
+
+		if (magik(chance)) continue;
+//		if (o_ptr->tval == TV_AMULET && magik(50)) continue; /* further reduce chance? */
+		
+		/* Hack -- for now, skip artifacts */
+		if (artifact_p(o_ptr) ||
+		    (k_info[o_ptr->k_idx].flags3 & TR3_IGNORE_ELEC) ||
+		    (k_info[o_ptr->k_idx].flags2 & TR2_IM_ELEC) ||
+		    (k_info[o_ptr->k_idx].flags2 & TR2_RES_ELEC)) continue;
+
+		damaged = FALSE;
+
+		/* Get the item in that slot */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Describe the object */
+		object_desc(Ind, o_name, o_ptr, FALSE, 0);
+
+		/* damage it */
+		if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE) {
+			if (o_ptr->timeout) damaged = TRUE;
+			if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
+			else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);
+			else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
+			else if (o_ptr->timeout) o_ptr->timeout--;
+		} else if (o_ptr->tval == TV_ROD) {
+			if (o_ptr->pval < 30000) o_ptr->pval += 5;
+			damaged = TRUE;
+		}
+
+		if (o_ptr->pval) switch (o_ptr->tval) {
+		case TV_AMULET: if (o_ptr->pval < 2) break; /* stop at +1 */
+		case TV_STAFF:
+		case TV_WAND:
+			o_ptr->pval--;
+			damaged = TRUE;
+			break;
+		} else if (o_ptr->bpval > 1 && o_ptr->tval == TV_AMULET) {
+			o_ptr->bpval--;
+			damaged = TRUE;
+		}
+
+		/* Special treatment for new ego-type: Ethereal (ammunition): */
+		if (is_ammo(o_ptr->tval) && (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)) {
+			msg_format(Ind, "\377o%s %s (%c) fades away!",
+			    o_ptr->number == 1 ? "Your" : "One of your", o_name, index_to_label(i));
+			inven_item_increase(Ind, i, -1);
+			inven_item_optimize(Ind, i);
+			p_ptr->update |= (PU_BONUS);
+			damaged_any = TRUE;
+		}
+		/* Message */
+		else if (damaged) {
+			msg_format(Ind, "\377oYour %s (%c) %s discharged!",
+			    o_name, index_to_label(i), ((o_ptr->number != 1) ? "were" : "was"));
+			damaged_any = TRUE;
+		}
+	}
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+	return (damaged_any);
+}
+bool apply_discharge_item(int o_idx, int dam)
+{
+	int	chance = 95;
+	bool	damaged = FALSE;
+	object_type *o_ptr = &o_list[o_idx];
+
+	/* No item, nothing happens */
+	if (!o_ptr->k_idx) return (FALSE);
+
+	/* note: used same values as in elec_dam */
+	if (dam >= 30) chance -= 10;
+	if (dam >= 60) chance -= 10;
+
+	if (magik(chance)) return(FALSE);
+//	if (o_ptr->tval == TV_AMULET && magik(50)) return(FALSE); /* further reduce chance? */
+
+	/* Hack -- for now, skip artifacts */
+	if (artifact_p(o_ptr) ||
+	    (k_info[o_ptr->k_idx].flags3 & TR3_IGNORE_ELEC) ||
+	    (k_info[o_ptr->k_idx].flags2 & TR2_IM_ELEC) ||
+	    (k_info[o_ptr->k_idx].flags2 & TR2_RES_ELEC)) return(FALSE);
+
+	/* damage it */
+	if (o_ptr->tval != TV_ROD && o_ptr->tval != TV_LITE) {
+		if (o_ptr->timeout) damaged = TRUE;
+		if (o_ptr->timeout > 1000) o_ptr->timeout -= 80 + rand_int(41);
+		else if (o_ptr->timeout > 100) o_ptr->timeout -= 15 + rand_int(11);
+		else if (o_ptr->timeout > 10) o_ptr->timeout -= 3 + rand_int(3);
+		else if (o_ptr->timeout) o_ptr->timeout--;
+	} else if (o_ptr->tval == TV_ROD) {
+		if (o_ptr->pval < 30000) o_ptr->pval += 5;
+		damaged = TRUE;
+	}
+
+	if (o_ptr->pval) switch (o_ptr->tval) {
+	case TV_AMULET: if (o_ptr->pval < 2) break; /* stop at +1 */
+	case TV_STAFF:
+	case TV_WAND:
+		o_ptr->pval--;
+		damaged = TRUE;
+		break;
+	} else if (o_ptr->bpval > 1 && o_ptr->tval == TV_AMULET) {
+		o_ptr->bpval--;
+		damaged = TRUE;
+	}
+
+	/* Special treatment for new ego-type: Ethereal (ammunition): */
+	if (is_ammo(o_ptr->tval) && (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)) {
+		if (o_ptr->number == 1) delete_object_idx(o_idx, FALSE);
+		else o_ptr->number--;
+		damaged = TRUE;
+	}
+	return (damaged);
+}
+
+
+/*
  * Apply Nexus
  */
 static void apply_nexus(int Ind, monster_type *m_ptr)
@@ -2882,7 +3042,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 			if (m_ptr)
 				teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 			else
-				teleport_player(Ind, 200);
+				teleport_player(Ind, 200, TRUE);
 			break;
 		}
 
@@ -2894,7 +3054,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 				break;
 			}
 
-			teleport_player(Ind, 200);
+			teleport_player(Ind, 200, TRUE);
 			break;
 		}
 
@@ -3115,14 +3275,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	{
 		/* Ignore most effects */
 		case GF_ACID:
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* nor Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-#endif
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH)
 			{
@@ -3172,17 +3325,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
 
-#if 0			
-			/* No terraforming in Bree. Newbies might spawn inside stone
-			   prisons without phase door etc. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* And not on NR bottom */
-			if (getlevel(wpos) == 196) break; // >= 166
-			/* And not in Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
-#endif
 
 	   		/* Beware of the houses in town */
 	   		if ((wpos->wz==0) && (zcave[y][x].info & CAVE_ICKY)) break;
@@ -3214,14 +3357,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_HELL_FIRE:
 		{
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* or in Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-#endif
 			/* Destroy trees */
 			if (c_ptr->feat == FEAT_TREE ||
 			    c_ptr->feat == FEAT_BUSH ||
@@ -3403,14 +3539,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Destroy walls (and doors) */
 		case GF_KILL_WALL:
 		{
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* or Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-#endif
 			/* Non-walls (etc) */
 			if (cave_los(zcave, y, x)) break;
 
@@ -3575,16 +3704,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Make doors */
 		case GF_MAKE_DOOR:
 		{
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* And not on NR bottom */
-			if (getlevel(wpos) == 196) break; //>=166
-			/* And not in Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-#endif
 			/* Require a "naked" floor grid */
 			if (!cave_naked_bold(zcave, y, x)) break;
 
@@ -3612,14 +3732,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Make traps */
 		case GF_MAKE_TRAP:
 		{
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* or Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-#else
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-#endif
 
 			/* Require a "naked" floor grid */
 			if ((zcave[y][x].feat!=FEAT_MORE && zcave[y][x].feat!=FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
@@ -3648,9 +3761,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (!quiet)
 			{
-
 				/* Notice */
 				note_spot_depth(wpos, y, x);
+
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 
@@ -3707,56 +3820,20 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #if 0
 		case GF_MAKE_GLYPH:
 		{
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* or Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
 			/* Require a "naked" floor grid */
-						if (!cave_clean_bold(y, x)) break;
-
-//						if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-
+			if (!cave_clean_bold(y, x)) break;
+			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
 			cave_set_feat(&p_ptr->wpos, y, x, FEAT_GLYPH);
-
 			break;
 		}
-  
-		case GF_ROCKET:
-				case GF_DISINTEGRATE:
-				{
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* nor Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-
-						if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-
-						if (((c_ptr->feat == FEAT_TREE) || (c_ptr->feat == FEAT_BUSH) ||
-						    (c_ptr->feat == FEAT_DEAD_TREE) || (c_ptr->feat == FEAT_IVY) ||
-						    (f_info[c_ptr->feat].flags1 & FF1_FLOOR)) && randint(100) < 30)
-						{
-								cave_set_feat(y, x, FEAT_ASH);
-						}				 
-						break;
-				}
-
-#endif	// 0
+#endif
+		// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
 		case GF_WAVE:
 		case GF_WATER:
 		case GF_WATERPOISON:	//New druid stuff
 		{
-#if 0
-			/* no terraforming in Bree.. */
-			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) break;
-			/* nor Valinor */
-			if ((getlevel(wpos) == 200) && (wpos->wz == 1)) break;
-			/* And not on NR bottom */
-			if (getlevel(wpos) == 196) break;//>=166
-#else
 			if (!allow_terraforming(wpos, FEAT_SHAL_WATER)) break;
-#endif
 
 			int p1 = 0;
 			int p2 = 0;
@@ -3792,6 +3869,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* 15% chance to convert it to normal floor */
 				p1 = 15; f1 = FEAT_FLOOR;
 			}
+#if 0 /* too easy to turn floor to DEEP_WATER in the end, for unlimited usage of kraken forms */
 			else if (c_ptr->feat == FEAT_DEEP_LAVA)
 			{
 				/* 10% chance to convert it to shallow lava */
@@ -3800,13 +3878,14 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* 5% chance to convert it to normal floor */
 				p2 = 15; f2 = FEAT_FLOOR;
 			}
-			else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
-					 (c_ptr->feat == FEAT_DARK_PIT))
+//			else if ((c_ptr->feat == FEAT_SHAL_WATER) ||
+			else if (c_ptr->feat == FEAT_DARK_PIT)
 			{
 				/* 10% chance to convert it to deep water */
 				p1 = 10; f1 = FEAT_DEEP_WATER;
 			}
-#endif	// 0
+#endif // 0
+#endif	// 1
 
 			k = rand_int(100);
 
@@ -3967,7 +4046,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Elec -- Rings and Wands */
+		/* Elec -- Rings and Wands, and now much more to make IM_ELEC better, and elec less laughed at */
 		case GF_ELEC:
 		{
 			if (hates_elec(o_ptr))
@@ -3976,6 +4055,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
 			}
+			else apply_discharge_item(this_o_idx, dam);
 			break;
 		}
 
@@ -4028,6 +4108,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
+
 			if (hates_elec(o_ptr))
 			{
 				ignore = FALSE;
@@ -4035,6 +4116,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				if (f3 & TR3_IGNORE_ELEC) ignore = TRUE;
 			}
+			else apply_discharge_item(this_o_idx, dam / 2);
+
 			break;
 		}
 
@@ -4267,6 +4350,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (!quiet)
 			{
+
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 			}
@@ -7447,6 +7531,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Standard damage -- hurts inventory too */
 		case GF_ELEC:
 		dam = elec_dam(Ind, dam, killer, -who);
+		apply_discharge(Ind, dam);
 		if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
@@ -7960,7 +8045,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_format(Ind, "You are hit by something strange for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			msg_print(Ind, "Gravity warps around you.");
-			teleport_player(Ind, 5);
+			teleport_player(Ind, 5, TRUE);
 			(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 3);
 			if (!p_ptr->resist_sound)
 			{
@@ -8172,7 +8257,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			if (fuzzy) msg_print(Ind, "You feel you are somewhere else.");
 			else msg_format(Ind, "%^s teleports you away.", killer);
-			teleport_player(Ind, 200);
+			teleport_player(Ind, 200, TRUE);
 			break;
 		}
 
@@ -8435,7 +8520,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_print(Ind, "You feel translocated!");
 			else msg_format(Ind, "%^s teleports you!", killer);
 
-						teleport_player(Ind, dam);
+						teleport_player(Ind, dam, TRUE);
 			break;
 				}
 		case GF_RECALL_PLAYER:
@@ -8814,7 +8899,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			else if (p_ptr->lev+50 < randint(150))
 			else if (rand_int(100) < p_ptr->skill_sav)
 			{
-				teleport_player(Ind, dam);
+				teleport_player(Ind, dam, TRUE);
 			}
 			else
 			{
@@ -8841,7 +8926,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			else if (p_ptr->lev+50 < randint(150))
 			else if (rand_int(100) < p_ptr->skill_sav)
 			{
-				teleport_player(Ind, dam);
+				teleport_player(Ind, dam, TRUE);
 			}
 			else
 			{
@@ -8869,7 +8954,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			else if (p_ptr->lev+50 < randint(150))
 			else if (rand_int(100) < p_ptr->skill_sav)
 			{
-				teleport_player(Ind, dam);
+				teleport_player(Ind, dam, TRUE);
 			}
 			else
 			{
@@ -9283,6 +9368,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	int			who_can_see[26], num_can_see = 0;
 	int	terrain_resistance = -1, terrain_damage = -1;
 	bool old_tacit = suppress_message;
+#ifdef OPTIMIZED_ANIMATIONS
+	int path_y[MAX_RANGE];
+	int path_x[MAX_RANGE];
+	int path_num = 0;
+#endif
 
 	/* Affected location(s) */
 	cave_type *c_ptr, *c_ptr2;
@@ -9564,10 +9654,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 		/* Only do visual effects (and delay) if requested */
 		if (!(flg & PROJECT_HIDE))
-#ifdef PROJECTION_FLUSH_LIMIT
+#ifndef OPTIMIZED_ANIMATIONS
 			if (count_project < PROJECTION_FLUSH_LIMIT)
 #endif	// PROJECTION_FLUSH_LIMIT
 		{
+#ifdef PROJECTION_FLUSH_LIMIT
 			for (j = 1; j < NumPlayers + 1; j++)
 			{
 				player_type *p_ptr = Players[j];
@@ -9604,6 +9695,15 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				/* Hack -- Show bolt char */
 				if (dist % 2) Send_flush(j);
 			}
+#else /* OPTIMIZED_ANIMATIONS */
+			/* Save the path */
+			if (path_num < MAX_RANGE)
+			{
+				path_y[path_num] = y9;
+				path_x[path_num] = x9;
+				path_num++;
+			}
+#endif /* OPTIMIZED_ANIMATIONS */
 		}
 
 		/* Clean up */
@@ -9614,6 +9714,51 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		x = x9;
 	}
 
+#ifdef OPTIMIZED_ANIMATIONS
+	if (path_num) {
+		/* Pick a random spot along the path */
+		i = rand_int(path_num);
+		y9 = path_y[i];
+		x9 = path_x[i];
+
+		for (j = 1; j < NumPlayers + 1; j++)
+		{
+			player_type *p_ptr = Players[j];
+			int dispy, dispx;
+			char ch;
+			byte attr;
+
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
+
+			if (!inarea(&p_ptr->wpos, wpos))
+				continue;
+
+			if (p_ptr->blind)
+				continue;
+
+			if (!panel_contains(y9, x9))
+				continue;
+
+			if (!player_has_los_bold(j, y9, x9))
+				continue;
+
+			dispx = x9 - p_ptr->panel_col_prt;
+			dispy = y9 - p_ptr->panel_row_prt;
+
+			ch = bolt_char(y, x, y9, x9);
+			attr = spell_color(typ);
+
+			p_ptr->scr_info[dispy][dispx].c = ch;
+			p_ptr->scr_info[dispy][dispx].a = attr;
+
+			Send_char(j, dispx, dispy, attr, ch);
+		}
+
+		/* Redraw later */
+		everyone_lite_later_spot(wpos, y9, x9);
+	}
+#endif /* OPTIMIZED_ANIMATIONS */
 
 	/* Save the "blast epicenter" */
 	y2 = y;
@@ -9677,13 +9822,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 						(c_ptr2->feat != FEAT_HOME_OPEN) &&
 						(c_ptr2->feat != FEAT_HOME))
 					{
-#if 0
-						/* no terraforming in Bree.. */
-						if (!((wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) ||
-							((getlevel(wpos) == 200) && (wpos->wz == 1))))
-#else
 						if (allow_terraforming(wpos, FEAT_TREE))
-#endif
 						{
 							if (randint(2) == 1)
 								cave_set_feat(wpos, y, x, FEAT_FLOOR);
@@ -9757,6 +9896,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	/* Speed -- ignore "non-explosions" */
 	if (!grids) return (FALSE);
 
+#ifndef OPTIMIZED_ANIMATIONS
 	/* Display the "blast area" */
 	if (!(flg & PROJECT_HIDE))
 #ifdef PROJECTION_FLUSH_LIMIT
@@ -9852,6 +9992,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 	}
+#endif
 
 
 	/* Check features */
@@ -9916,7 +10057,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			/* Effect ? */
 			if (flg & PROJECT_STAY)
 			{
-				if (effect != -1) /* not out of effects - mikaelh */
+				if (effect != -1) /* check that we're not out of effects - mikaelh */
 				{
 					zcave[y][x].effect = effect;
 					everyone_lite_spot(wpos, y, x);
@@ -10070,6 +10211,90 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, attacker)) notice = TRUE;
 		}
 	}
+
+#ifdef OPTIMIZED_ANIMATIONS
+	/* Display the "blast area" */
+	if (!(flg & PROJECT_HIDE))
+#ifdef PROJECTION_FLUSH_LIMIT
+			if (count_project < PROJECTION_FLUSH_LIMIT)
+#endif	// PROJECTION_FLUSH_LIMIT
+	{
+		/* Then do the "blast", from inside out */
+		for (t = 0; t <= rad; t++)
+		{
+			/* Reset who can see */
+			num_can_see = 0;
+
+			/* Dump everything with this radius */
+			for (i = gm[t]; i < gm[t+1]; i++)
+			{
+				/* Extract the location */
+				y = gy[i];
+				x = gx[i];
+
+				for (j = 1; j < NumPlayers + 1; j++)
+				{
+					player_type *p_ptr = Players[j];
+					int dispy, dispx;
+					byte attr;
+					int k;
+					bool flag = TRUE;
+
+					if (p_ptr->conn == NOT_CONNECTED)
+						continue;
+
+					if (!inarea(&p_ptr->wpos, wpos))
+						continue;
+
+					if (p_ptr->blind)
+						continue;
+
+					if (!panel_contains(y, x))
+						continue;
+
+					if (!player_has_los_bold(j, y, x))
+						continue;
+
+					attr = spell_color(typ);
+
+					dispx = x - p_ptr->panel_col_prt;
+					dispy = y - p_ptr->panel_row_prt;
+
+					p_ptr->scr_info[dispy][dispx].c = '*';
+					p_ptr->scr_info[dispy][dispx].a = attr;
+
+					Send_char(j, dispx, dispy, attr, '*');
+
+					drawn = TRUE;
+
+					for (k = 0; k < num_can_see; k++)
+					{
+						if (who_can_see[k] == j)
+							flag = FALSE;
+					}
+							
+					if (flag)
+						who_can_see[num_can_see++] = j;
+				}
+			}
+		}
+
+		/* Flush the erasing */
+		if (drawn)
+		{
+			/* Erase the explosion drawn above */
+			for (i = 0; i < grids; i++)
+			{
+				/* Extract the location */
+				y = gy[i];
+				x = gx[i];
+
+				/* Erase a bit later */
+				everyone_lite_later_spot(wpos, y, x);
+			}
+		}
+	}
+#endif
 
 	/* Return "something was noticed" */
 	return (notice);

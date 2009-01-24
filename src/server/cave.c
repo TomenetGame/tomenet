@@ -185,13 +185,14 @@ bool can_go_up(struct worldpos *wpos, byte mode)
 
         struct dungeon_type *d_ptr = wild->tower;
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
+
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_UP)?TRUE:FALSE); /* you MAY create 'empty' staircase */
 
 	if (mode & 0x1) {
 		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
 		if (wpos->wz == -1 && (d_ptr->flags2 & DF2_NO_EXIT_STAIR)) return(FALSE);
-		if (wpos->wz && (d_ptr->flags2 & DF2_NO_TRAVEL_UP)) return(FALSE);
+		if (wpos->wz && (d_ptr->flags2 & DF2_NO_STAIRS_UP)) return(FALSE);
 	}
 
 	if(wpos->wz<0) {
@@ -212,13 +213,14 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 
         struct dungeon_type *d_ptr = wild->dungeon;
         if (wpos->wz > 0) d_ptr = wild->tower;
+
 	/* Check for empty staircase without any connected dungeon/tower! */
 	if (!d_ptr) return((wild->flags&WILD_F_DOWN)?TRUE:FALSE); /* you MAY create 'empty' staircase */
 
 	if (mode & 0x1) {
 		if (!wpos->wz && (d_ptr->flags2 & DF2_NO_ENTRY_STAIR)) return(FALSE);
 		if (wpos->wz == 1 && (d_ptr->flags2 & DF2_NO_EXIT_STAIR)) return(FALSE);
-		if (wpos->wz && (d_ptr->flags2 & DF2_NO_TRAVEL_DOWN)) return(FALSE);
+		if (wpos->wz && (d_ptr->flags2 & DF2_NO_STAIRS_DOWN)) return(FALSE);
 	}
 
 	if(wpos->wz>0) {
@@ -322,9 +324,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 		if (!w_ptr->ondepth && cfg.anti_arts_wild) {
 			for(i = 0; i < o_max; i++){
 				o_ptr = &o_list[i];
-				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) && true_artifact_p(o_ptr)) {
+				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
+				    true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr)) {
 					object_desc(0, o_name, o_ptr, FALSE, 0);
-					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n", o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n",
+					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
 					handle_art_d(o_ptr->name1);
 					if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
 						zcave[o_ptr->iy][o_ptr->ix].o_idx=0;
@@ -2150,7 +2154,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			}
 
 			/* Quick Hack -- shop */
-			else if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+			if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
 			{
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
@@ -3593,6 +3597,7 @@ void do_cmd_view_map(int Ind, char mode)
  *
  * A grid may be marked as "CAVE_ICKY" which means it is part of a "vault",
  * and should be unavailable for "teleportation" destinations.
+ * Note that CAVE_ICKY is also used for other purposes like houses. - C. Blue
  *
  *
  * The "view_perma_grids" allows the player to "memorize" every perma-lit grid
@@ -6163,15 +6168,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
-#if 0
-	/* using allow_terraforming() checks in the specialized functions which call this one instead */
-	/* grow_trees sets FEAT_TREE via this function */
-	/* GF_STONE_WALL is projected by Stone Prison and sets FEAT_WALL_EXTRA
-	   without calling this function */
 
-	if (!allow_terraforming(wpos, feat))
-		return;
-#endif
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
 	if ((feat == FEAT_GLYPH) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
 	    ((c_ptr->feat == FEAT_NONE) || 
@@ -6183,7 +6180,9 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	    (c_ptr->feat == FEAT_SAND) || 
 	    (c_ptr->feat == FEAT_ASH) || 
 	    (c_ptr->feat == FEAT_MUD) || 
-	    (c_ptr->feat == FEAT_FLOWER))))
+	    (c_ptr->feat == FEAT_FLOWER) ||
+//	    (c_ptr->feat == FEAT_SHAL_LAVA) || maybe required, waiting for player input (2009/1/14) - C. Blue
+	    (c_ptr->feat == FEAT_NETHER_MIST))))
 		return;
 
 	/* Don't mess with inns please! */
@@ -6738,14 +6737,22 @@ msg_broadcast(0, "no flags");
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool bree = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
 	bool town = istown(wpos);
-	bool sector00 = (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation);
+	bool sector00 = (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation);
 	bool valinor = (getlevel(wpos) == 200);
-	bool netherrealm_bottom = (getlevel(wpos) == 196);
+	bool netherrealm_bottom = (getlevel(wpos) == 166 + 30);
+	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!bree && !town && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
+	if (!arena_pvp && !bree && !town && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
+
+	/* preserve arena, and disallow trees for balancing */	
+	if (arena_pvp) return(FALSE);
 
 	switch (feat) {
+	/* water is annoying in all towns - mikaelh */
+	case FEAT_SHAL_WATER:
+	case FEAT_DEEP_WATER: if (town) return(FALSE);
+
 	/* allow only harmless as well as non-obstructing changes: */
 	case FEAT_WALL_EXTRA:
 	case FEAT_TREE:
@@ -6754,8 +6761,6 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_DEAD_TREE:
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
-	case FEAT_SHAL_WATER:
-	case FEAT_DEEP_WATER:
         case FEAT_ICE:
 	case FEAT_GLYPH: if (bree || sector00 || valinor || netherrealm_bottom) return(FALSE);
 
@@ -6783,4 +6788,26 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	}
 
 	return (TRUE);
+}
+
+/*
+ * Queues a spot for redrawing at the beginning of the next turn.
+ * Can be used for leaving temporary effects on the screen for one turn.
+ */
+void everyone_lite_later_spot(struct worldpos *wpos, int y, int x) {
+	struct worldspot *wspot;
+
+	if (lite_later_num >= lite_later_alloc) {
+		/* Grow the array to meet the demand */
+		GROW(lite_later, lite_later_alloc, lite_later_alloc * 2, struct worldspot);
+		lite_later_alloc *= 2;
+	}
+
+	/* Add a new spot to the array */
+	wspot = &lite_later[lite_later_num];
+	lite_later_num++;
+
+	wpcopy(&wspot->wpos, wpos);
+	wspot->x = x;
+	wspot->y = y;
 }

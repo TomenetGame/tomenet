@@ -100,7 +100,7 @@ int ListAccounts(int fpos){
 	int quit=0;
 	char ch;
 	int ifpos=0;	/* internal file (LIST TOP) position */
-	int i, x;
+	int i=0, x;
 	short reload=1;
 	short redraw=0;
 	struct account c_acc;
@@ -377,14 +377,14 @@ void editor(){
 		mvwprintw(mainwin, 0, 4, "%-30s   ID: %.10d", c_acc.name, c_acc.id);
 		mvwprintw(mainwin, 1, 4, "%-20s", c_acc.pass);
 		mvwprintw(mainwin, 3, 4, "Trial (inval): %-4s", c_acc.flags & ACC_TRIAL ? "Yes " : "No  ");
-		mvwprintw(mainwin, 4, 4, "Administrator: %-4s", c_acc.flags & ACC_ADMIN ? "Yes " : "No  ");
+		mvwprintw(mainwin, 4, 4, "Administrator: %-4s", c_acc.flags & ACC_ADMIN ? "*** Yes *** " : "No          ");
 		mvwprintw(mainwin, 5, 4, "Scoreboard:    %-4s", c_acc.flags & ACC_NOSCORE ? "No  " : "Yes ");
 		mvwprintw(mainwin, 6, 4, "Multi-login:   %-4s", c_acc.flags & ACC_MULTI ? "Yes " : "No  ");
 		mvwprintw(mainwin, 7, 4, "Restricted:    %-4s", c_acc.flags & ACC_VRESTRICTED ? "Very" : c_acc.flags & ACC_RESTRICTED ? "Yes " : "No  ");
 		mvwprintw(mainwin, 8, 4, "Privileged:    %-3s", c_acc.flags & ACC_VPRIVILEGED ? "Very" : c_acc.flags & ACC_PRIVILEGED ? "Yes " : "No  ");
 		mvwprintw(mainwin, 9, 4, "May pkill:     %-3s", c_acc.flags & ACC_PVP ? "Yes " : c_acc.flags & ACC_ANOPVP ? "_NO_" : c_acc.flags & ACC_NOPVP ? "No  " : "std.");
 		mvwprintw(mainwin, 10, 4, "Muted chat:    %-3s", c_acc.flags & ACC_VQUIET ? "Very" : c_acc.flags & ACC_QUIET ? "Yes " : "No  ");
-		mvwprintw(mainwin, 11, 4, "Banned:        %-3s", c_acc.flags & ACC_BANNED ? "Yes " : "No  ");
+		mvwprintw(mainwin, 11, 4, "Banned:        %-3s", c_acc.flags & ACC_BANNED ? "** Yes ** " : "No        ");
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do{

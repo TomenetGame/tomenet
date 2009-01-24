@@ -2106,6 +2106,70 @@ void do_slash_cmd(int Ind, char *message)
 			msg_format(Ind, "Current server time is %s", showtime());
 			return;
 		}
+		else if (prefix(message, "/pvp")) { /* enter pvp-arena (for MODE_PVP) */
+			struct worldpos apos;
+			int ystart = 0, xstart = 0;
+			bool fresh_arena = FALSE;
+			
+			/* transport out of arena? */
+			if (!p_ptr->wpos.wx && !p_ptr->wpos.wy &&
+			    p_ptr->wpos.wz == 1) {
+				if (p_ptr->prevent_tele) {
+					msg_print(Ind, "\377oThere is no easy way out of this fight!");
+					if (!is_admin(p_ptr)) return;
+				}
+	                	p_ptr->recall_pos.wx = cfg.town_x;
+		                p_ptr->recall_pos.wy = cfg.town_y;
+				p_ptr->recall_pos.wz = 0;
+                		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+				recall_player(Ind, "");
+				msg_print(Ind, "\377uYou leave the arena again.");
+				return;
+			}
+
+			/* can't get in if not PvP mode */
+			if (!(p_ptr->mode & MODE_PVP)) {
+				msg_print(Ind, "\377yYour character is not PvP mode.");
+				if (!is_admin(p_ptr)) return;
+			}
+
+			/* prevent exploit */
+			if (!istown(&p_ptr->wpos)) {
+				msg_print(Ind, "\377yYou need to be in town to enter the arena!");
+				if (!is_admin(p_ptr)) return;
+			}
+
+			msg_print(Ind, "\377fYou enter the arena to fight as Gladiator!");
+			
+			/* actually create temporary Arena tower at reserved wilderness sector 0,0! */
+			apos.wx = 0; apos.wy = 0; apos.wz = 0;
+			if (!wild_info[apos.wy][apos.wx].tower) {
+				adddungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, TRUE, 0);
+				fresh_arena = TRUE;
+			}
+			apos.wz = 1;
+			if (!getcave(&apos)) {
+				alloc_dungeon_level(&apos);
+				fresh_arena = TRUE;
+			}
+			if (fresh_arena) generate_cave(&apos, p_ptr); /* <- required or panic save: py,px will be far negative (haven't checked why) */
+
+                	p_ptr->recall_pos = apos;
+                	p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+			recall_player(Ind, "");
+
+			if (fresh_arena) {
+				wipe_m_list(&apos);
+				wipe_o_list_safely(&apos);
+				process_dungeon_file("t_arena_pvp.txt", &apos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+
+				timer_pvparena1 = 1; /* (hack: generate 1st cycle) // seconds countdown */
+				timer_pvparena2 = 1; /* start with releasing 1st monster */
+				timer_pvparena3 = 0; /* 'basic monsters' cycle active */
+			}
+			return;
+		}
 #ifdef AUCTION_SYSTEM
 		else if (prefix(message, "/auc")) {
 			int n;
@@ -3756,7 +3820,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
-				teleport_player(p, 10);
+				teleport_player(p, 10, TRUE);
 				msg_print(Ind, "Phased that player.");
 				return;
 			}
@@ -3769,7 +3833,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
-				teleport_player(p, 100);
+				teleport_player(p, 100, TRUE);
 				msg_print(Ind, "Teleported that player.");
 				return;
 			}
@@ -4337,12 +4401,7 @@ void do_slash_cmd(int Ind, char *message)
 			        msg_print(j, "\377GYou have been rewarded by the gods!");
 
 //				create_reward(Ind, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
-                                create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 5000);
-                                object_aware(Ind, o_ptr);
-                                object_known(o_ptr);
-                                o_ptr->discount = 100;
-                                o_ptr->ident |= ID_MENTAL;
-                                inven_carry(Ind, o_ptr);
+				give_reward(Ind, RESF_LOW2, NULL, 0, 100);
 				return;
 			}
 			else if (prefix(message, "/debug1")) { /* debug an issue at hand */

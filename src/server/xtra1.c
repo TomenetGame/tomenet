@@ -147,7 +147,7 @@ static void prt_title(int Ind)
 		if (p_ptr->lev < 60)
 		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10][3 - p_ptr->male];
 		else
-		p = player_title_special[p_ptr->pclass][(p_ptr->lev < 99)? (p_ptr->lev - 60)/10 : 4][3 - p_ptr->male];
+		p = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_LEVEL)? (p_ptr->lev - 60)/10 : 4][3 - p_ptr->male];
 	}
 
 	/* Ghost */
@@ -1391,7 +1391,7 @@ void calc_mana(int Ind)
 	}
 	
 	/* refresh encumberment status line */
-//	p_ptr->redraw |= PR_ENCUMBERMENT; <- causes bad packet bugs when shopping
+//	p_ptr->redraw |= PR_ENCUMBERMENT;// <- causes bad packet bugs when shopping
 }
 
 
@@ -1504,7 +1504,7 @@ void calc_hitpoints(int Ind)
 				(50 * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- keep (!) full bonus for the rest of career up to level 99 */
 	#else
 				/* currently discrepancies between yeek/human priest and ent warrior would be TOO big at end-game (>> level 50) */
-				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 */
+				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 (PY_MAX_LEVEL) */
 	#endif
     #endif
 #endif
@@ -2810,12 +2810,8 @@ void calc_bonuses(int Ind)
 	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
 		p_ptr->dual_wield = TRUE;
 
-#if 1 /* just using PKILL_ flags now instead */
-	/* hack for global events (highlander tournament) */
-	if (!(p_ptr->global_event_temp & 0x2)) p_ptr->stormbringer = FALSE;/* for melee */
-#else
 	p_ptr->stormbringer = FALSE;
-#endif
+
 	/* Invisibility */
 	p_ptr->invis = 0;
 	if (!p_ptr->tim_invisibility) p_ptr->tim_invis_power = 0;
@@ -3399,20 +3395,6 @@ void calc_bonuses(int Ind)
 				}
 			}
 		}
-
-#if 0 /* now done in xtra1.c, process_global_event() */
-		/* HACK - Amulet of Highlands activates pkill - mikaelh */
-		if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_HIGHLANDS) {
-			p_ptr->stormbringer = TRUE; /* let's make it similiar to Stormbringer */
-			if (cfg.use_pk_rules == PK_RULES_DECLARE)
-			{
-				p_ptr->pkill|=PKILL_KILLABLE;
-				if (!(p_ptr->pkill & PKILL_KILLER) &&
-							!(p_ptr->pkill & PKILL_SET))
-						set_pkill(Ind, 50);
-			}
-		}
-#endif
 
 		if (o_ptr->name1 == ART_RANDART)
 		{
@@ -6391,8 +6373,9 @@ void global_event_signup(int Ind, int n, cptr parm){
 			msg_print(Ind, "\377yYou have to wait until it starts to sign up for this event!");
 			return;
 		}
-		if (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz < 0) {
-			msg_print(Ind, "\377yYou have to be in Bree in order to sign up for this event!");
+		if ((p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz != 0) &&
+		    (p_ptr->wpos.wx != WPOS_ARENA_X || p_ptr->wpos.wy != WPOS_ARENA_Y || p_ptr->wpos.wz != WPOS_ARENA_Z)) {
+			msg_print(Ind, "\377yYou have to be in Bree or in the arena to sign up for this event!");
 			return;
 		}
 		if ((parm == NULL) || !strlen(parm)) {
@@ -6543,7 +6526,7 @@ static void process_global_event(int ge_id)
 	int xstart = 0, ystart = 0; /* for arena generation */
 	long elapsed, elapsed_turns; /* amounts of seconds elapsed since the event was started (created) */
 	char m_name[80];
-	int m_idx;
+	int m_idx, tries = 0;
 	time_t now;
 
 	time(&now);
@@ -6649,6 +6632,11 @@ static void process_global_event(int ge_id)
 				s_printf("EVENT_LAYOUT: Generating arena %d at %d,%d,%d\n", ge->extra[4], wpos.wx, wpos.wy, wpos.wz);
 		                process_dungeon_file(format("t_arena%d.txt", ge->extra[4]), &wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 			}
+			
+			/* actually create temporary Highlander dungeon! */
+			if (!wild_info[wpos.wy][wpos.wx].dungeon)
+				adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
 
 			for (i = 1; i <= NumPlayers; i++) 
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
@@ -6664,9 +6652,8 @@ static void process_global_event(int ge_id)
 					p_ptr->recall_pos.wx = 0;
 					p_ptr->recall_pos.wy = 0;
 					p_ptr->recall_pos.wz = -1;
-					p_ptr->global_event_temp = 0x7;  /* 1: pass through sector00separation;
-									    2: die permanently in the tournament;
-									    4: don't die while still in dungeon; */
+					p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
+					    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
 	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				        recall_player(i, "");
 				}
@@ -6698,7 +6685,7 @@ static void process_global_event(int ge_id)
 					j = i;
 				}
 			if (!n) {
-				ge->state[0] = 255; /* double kill or something? ew. */
+				ge->state[0] = 255; /* double kill by monsters or something? ew. */
 				break;
 			}
 			if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
@@ -6734,15 +6721,7 @@ static void process_global_event(int ge_id)
 				for (i = 1; i <= NumPlayers; i++) {
 					p_ptr = Players[i];
 					if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
-#if 0
-					p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
-					if (cfg.use_pk_rules == PK_RULES_DECLARE)
-					{
-						p_ptr->pkill|=PKILL_KILLABLE;
-						if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill & PKILL_SET))
-							set_pkill(i, 1);
-					}
-#else
+
 					for (j = 1; j <= NumPlayers; j++) {
 						if (j == i) continue;
 						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
@@ -6750,16 +6729,8 @@ static void process_global_event(int ge_id)
 						if (Players[j]->party == p_ptr->party) {
 							party_leave(i);
 						}
-						/* become hostile */
-						add_hostility(i, Players[j]->name);
 					}
-					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-						p_ptr->pkill |= PKILL_KILLABLE;
-						p_ptr->pkill |= PKILL_KILLER;/* for ranged targetting */
-						p_ptr->pkill |= PKILL_SET;
-						p_ptr->stormbringer = TRUE;/* for melee */
-					}
-#endif
+
 					/* change "normal" Highlands amulet to v2 with ESP? */
 					for (j = INVEN_TOTAL - 1; j >= 0; j--)
 						if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
@@ -6777,11 +6748,11 @@ static void process_global_event(int ge_id)
 					p_ptr->window |= (PW_INVEN | PW_EQUIP);
 					handle_stuff(i);
 
-					p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
 					p_ptr->recall_pos.wx = 0;
 					p_ptr->recall_pos.wy = 0;
 					p_ptr->recall_pos.wz = 0;
-					p_ptr->global_event_temp |= 0x1; /* pass through sector00separation; */
+					p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
+					p_ptr->global_event_temp |= PEVF_AUTOPVP_00;
 	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				        recall_player(i, "");
 					p_ptr->global_event_progress[ge_id][0] = 2; /* now before deathmatch */
@@ -6794,12 +6765,12 @@ static void process_global_event(int ge_id)
 				if (inarea(&Players[i]->wpos, &wpos)) {
 					p_ptr = Players[i];
 					wiz_lite(i); /* no tourneys at night, chars with low IV lose */
-					teleport_player(i, 200);
+					teleport_player(i, 200, TRUE);
 					/* in case some player waited in a NO_TELE vault..!: */
 					if (p_ptr->wpos.wz && !is_admin(p_ptr)) {
 						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 						strcpy(p_ptr->died_from,"a mysterious accident");
-						p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+						p_ptr->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 						p_ptr->deathblow = 0;
 						player_death(i);
 					}
@@ -6816,7 +6787,7 @@ static void process_global_event(int ge_id)
 				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
 					msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 					strcpy(Players[i]->died_from,"a mysterious accident");
-					Players[i]->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
+					Players[i]->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 					Players[i]->deathblow = 0;
 					player_death(i);
 				}
@@ -6877,42 +6848,27 @@ static void process_global_event(int ge_id)
     			                                inven_item_increase(i, j, -p_ptr->inventory[j].number);
 		        	                        inven_item_optimize(i, j);
 						}
-#if 0
-					p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
-					if (cfg.use_pk_rules == PK_RULES_DECLARE)
-					{
-						if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
-							set_pkill(i, 1);
-					}
-#else
-					if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-						p_ptr->pkill &= ~PKILL_KILLABLE;
-						p_ptr->pkill &= ~PKILL_KILLER;/* for ranged targetting */
-						p_ptr->pkill &= ~PKILL_SET;
-						p_ptr->stormbringer = FALSE;/* for melee */
-					}
-					for (j = 1; j <= NumPlayers; j++) {
-						if (j == i) continue;
-//						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
-						/* become peaceful again */
-						remove_hostility(i, Players[j]->name);
-					}
-#endif
 					p_ptr->global_event_type[ge_id] = GE_NONE; /* no longer participant */
-					p_ptr->global_event_temp = 0; /* clear no-WoR/perma-death/no-death flags */
-//					set_recall_timer(i, is_admin(p_ptr)?1:3+randint(15));
 					p_ptr->recall_pos.wx = cfg.town_x;
 					p_ptr->recall_pos.wy = cfg.town_y;
 					p_ptr->recall_pos.wz = 0;
 	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					p_ptr->global_event_temp = PEVF_PASS_00; /* clear all other flags, allow a final recall out */
 				        recall_player(i, "");
 				}
 			}
+
 			sector00separation--;
+
+			/* remove temporary Highlander dungeon! */
+			if (wild_info[wpos.wy][wpos.wx].dungeon)
+				remdungeon(&wpos, FALSE);
+
 			wild_info[wpos.wy][wpos.wx].type = ge->extra[1];
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
+
 			ge->getype = GE_NONE; /* end of event */
 			break;
 		}
@@ -6942,6 +6898,9 @@ static void process_global_event(int ge_id)
 					Players[i]->recall_pos.wz = 0;
 					recall_player(i, "\377yThe arena wizards teleport you out of here!");
 				}
+			if (getcave(&wpos)) { /* check that the level is allocated - mikaelh */
+				dealloc_dungeon_level(&wpos);
+			}
 #endif
 
 			ge_training_tower++;
@@ -6969,15 +6928,17 @@ static void process_global_event(int ge_id)
 				}
 
 				wipe_m_list(&wpos); /* get rid of previous monster */
-				summon_override_check_all = TRUE;
+				summon_override_checks = 2;
 #ifndef GE_ARENA_ALLOW_EGO
-				summon_specific_race_somewhere(&wpos, ge->extra[1], 100, 1); /* summon new monster */
+				while (!summon_specific_race_somewhere(&wpos, ge->extra[1], 100, 1) /* summon new monster */
+				    && (++tries < 1000));
 #else
-				m_idx = summon_detailed_one_somewhere(&wpos, ge->extra[1], ge->extra[3], FALSE, 101);
+				while (!(m_idx = summon_detailed_one_somewhere(&wpos, ge->extra[1], ge->extra[3], FALSE, 101))
+				    && (++tries < 1000));
 				monster_desc(0, m_name, m_idx, 0x08);
 				msg_broadcast(0, format("\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
 #endif
-				summon_override_check_all = FALSE;
+				summon_override_checks = 0;
 
 				ge->extra[2] = ge->extra[1]; /* remember it for result announcement later */
 #ifdef GE_ARENA_ALLOW_EGO
@@ -7108,8 +7069,10 @@ void calc_techniques(int Ind) {
 	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
 	switch (p_ptr->pclass) {
 	case CLASS_ADVENTURER:
-		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001;
-		break;
+		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001; /* Sprint */
+		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
+		Send_technique_info(Ind);
+		return;	
 	case CLASS_ROGUE:
 		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */

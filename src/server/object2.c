@@ -831,7 +831,7 @@ s16b get_obj_num(int max_level, u32b resf)
 		if (rand_int(GREAT_OBJ) == 0)
 		{
 			/* What a bizarre calculation */
-                        max_level = 1 + (max_level * MAX_DEPTH_OBJ / randint(MAX_DEPTH_OBJ));
+                        max_level = 1 + ((max_level * MAX_DEPTH_OBJ) / randint(MAX_DEPTH_OBJ));
 		}
 	}
 
@@ -1259,7 +1259,7 @@ static s32b flag_cost(object_type * o_ptr, int plusses)
 		else
 			total += 500;
 	}
-	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
+//	if (f3 & TR3_AGGRAVATE) total -= 10000; /* penalty 1 of 2 */
 	if (f3 & TR3_BLESSED) total += 750;
 	if (f3 & TR3_CURSED) total -= 5000;
 	if (f3 & TR3_HEAVY_CURSE) total -= 12500;
@@ -1899,8 +1899,10 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	/* hack against those 500k randarts */
 	if (o_ptr->name1 == ART_RANDART) {
 		value >>= 1; /* general randart value nerf */
-		if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
+//		if (f3 & TR3_AGGRAVATE) value >>= 1; /* aggravate penalty 2 of 2 */
 	}
+
+	if (f3 & TR3_AGGRAVATE) value >>= 1; /* one generic aggravate penalty fits it all */
 
 	/* Return the value */
 	return (value);
@@ -5475,6 +5477,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				a_m_aux_3(o_ptr, lev, power, resf);
 			}
 
+		         /* Clear any previous curse on our o_ptr, except for nazgul rings.     
+	    		     (Jewelry can be cursed from a_m_aux_3.)
+		             Curse is reapplied down below at check for TR3_CURSED.
+	            	     (note: this also clears previous curse for /reart admin command) */ 
+		        if (cursed_p(o_ptr)) o_ptr->ident &= ~ID_CURSED;                       
+
 			a_ptr =	randart_make(o_ptr);
 		}
 		/* Normal artifacts */
@@ -6507,7 +6515,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if (!in_bounds(y, x)) return;
 	
 	/* Hack - No l00t in Valinor */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+	if (getlevel(wpos) == 200) return;
 
 #ifdef RPG_SERVER /* no objects are generated in Training Tower */                                        
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 && cave_set_quietly) return;
@@ -6729,7 +6737,7 @@ static void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Hack - No l00t in Valinor */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+	if (getlevel(wpos) == 200) return;
 
 	/* place_object_restrictor overrides resf */
 	resf |= place_object_restrictor;
@@ -7420,13 +7428,22 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
 		
-		/* Don't generate (possibly expensive, hence passed up till here) crap */
+		/* Don't generate (possibly expensive due to high bpval, hence passed up till here) crap */
 		switch (o_ptr->name2) {
+		case EGO_INFRAVISION:
 		case EGO_BEAUTY:
 		case EGO_CHARMING: continue;
 		default: break;
 		}
-		if (object_value_real(0, o_ptr) < 5000) continue; /* a reward should have some value */
+		/* a reward should have some value: */
+		if (object_value_real(0, o_ptr) < 5000) continue;
+		if (o_ptr->name2) { /* should always be true actually! just paranoia */
+			if (e_info[o_ptr->name2].cost <= 2000) {
+				if (o_ptr->name2b) {
+					if (e_info[o_ptr->name2b].cost <= 2000) continue;
+				} else continue;
+			}
+		}
 
 		break;
 	} while (tries < 20);
@@ -7439,6 +7456,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 /*	inven_carry(Ind, o_ptr); <- not neccessarily >;) */
 }
 
+/* shorten the process of creating a standard-parm reward */
+void give_reward(int Ind, u32b resf, cptr quark, int level, int discount)
+{
+	object_type forge, *o_ptr = &forge;
+        create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
+	object_aware(Ind, o_ptr);
+	object_known(o_ptr);
+	o_ptr->discount = discount;
+	o_ptr->level = level;
+	o_ptr->ident |= ID_MENTAL;
+	if (quark) o_ptr->note = quark_add(quark);
+	inven_carry(Ind, o_ptr);
+}
 
 /*
  * Places a random trap at the given location.
@@ -7502,7 +7532,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus)
 	if (!in_bounds(y, x)) return;
 	
 	/* not in Valinor */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+	if (getlevel(wpos) == 200) return;
 
 	/* Require clean floor grid */
 //	if (!cave_clean_bold(zcave, y, x)) return;
@@ -7850,11 +7880,11 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
 				for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
 					if ((bx == nx) && (by == ny)) inside_house = TRUE;
-	if (true_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house)
+	if (true_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house && !multiple_artifact_p(o_ptr))
 	{
-		//char	o_name[160];
-		//object_desc(Ind, o_name, o_ptr, TRUE, 0);
-		//msg_format(Ind, "%s fades into the air!", o_name);
+//		char	o_name[160];
+//		object_desc(Ind, o_name, o_ptr, TRUE, 0);
+//		msg_format(Ind, "%s fades into the air!", o_name);
 		handle_art_d(o_ptr->name1);
 		return (-1);
 	}
@@ -7986,7 +8016,7 @@ s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *
 	/* Artifact always disappears, depending on tomenet.cfg flags */
 	/* hm for now we also allow ring of phasing to be traded between winners. not needed though. */
 	if (true_artifact_p(o_ptr) && !is_admin(p_ptr) && (cfg.anti_arts_hoard || p_ptr->total_winner) &&
-	    o_ptr->name1 != ART_MORGOTH && o_ptr->name1 != ART_GROND && o_ptr->name1 != ART_PHASING)
+	    !multiple_artifact_p(o_ptr) && (o_ptr->name1 != ART_PHASING))
 	    //(cfg.anti_arts_hoard || (cfg.anti_arts_house && 0)) would be cleaner sometime in the future..
 	{
 		char	o_name[160];

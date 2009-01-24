@@ -1480,7 +1480,11 @@ bool make_attack_melee(int Ind, int m_idx)
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
+
+					if (apply_discharge(Ind, dam_ele)) obvious = TRUE;
+
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
+
 					take_hit(Ind, damage, ddesc, 0);
 
 					/* Learn about the player */

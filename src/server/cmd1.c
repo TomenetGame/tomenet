@@ -2620,7 +2620,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if(q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
-					teleport_player(0 - c_ptr->m_idx, 400);
+					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
@@ -2635,7 +2635,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				if(cfg.use_pk_rules==PK_RULES_NEVER && q_ptr->chp<5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
-					teleport_player(0 - c_ptr->m_idx, 400);
+					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
 				take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
@@ -4666,15 +4666,6 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif	// 0
 	}
 
-#if 0 /* simpler hack below - mikaelh */
-	/* hack for sector00separation (Highlander Tournament): Players can't enter 0,0 anymore! */
-	if (sector00separation && !wpos->wz && !is_admin(p_ptr) && (
-	    (wpos->wx==1 && x<1 && wpos->wy==0 && y>0) ||
-	    (wpos->wy==1 && y>64 && wpos->wx==0 && x<197) ||
-	    (wpos->wx==1 && x<1 && wpos->wy==1 && y>64)))
-		return;
-#endif // 0
-
 	/* Update wilderness positions */
 	if(wpos->wz==0)
 	{
@@ -4689,7 +4680,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		if (!in_bounds(y, x))
 		{
 			/* Hack: Nobody leaves (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && wpos->wx == 0 && wpos->wy == 0 && !is_admin(p_ptr)) {
+			if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
 				return;
 			}
 
@@ -4728,7 +4719,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 
 			/* Hack: Nobody enters (0, 0) while sector00separation is on - mikaelh */
-			if (sector00separation && nwpos.wx == 0 && nwpos.wy == 0 && !is_admin(p_ptr)) {
+			if (sector00separation && nwpos.wx == WPOS_SECTOR00_X && nwpos.wy == WPOS_SECTOR00_Y && !is_admin(p_ptr)) {
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
 				return;
@@ -4798,7 +4789,8 @@ void move_player(int Ind, int dir, int do_pickup)
 		case FEAT_WAY_LESS:
 		case FEAT_MORE:
 		case FEAT_LESS:
-			if (q_ptr->afk || !q_ptr->wpos.wz) blocks_important_feat = TRUE; 
+//			if (q_ptr->afk || !q_ptr->wpos.wz) blocks_important_feat = TRUE; 
+			if (!q_ptr->wpos.wz) blocks_important_feat = TRUE; 
 			break;
 		default: break;
 		}
@@ -4820,12 +4812,11 @@ void move_player(int Ind, int dir, int do_pickup)
 				 !q_ptr->store_num) )||
 				(q_ptr->admin_dm) )
 #else
-		else if ((((!p_ptr->ghost && !q_ptr->ghost &&
+		else if (((!p_ptr->ghost && !q_ptr->ghost &&
 			 (ddy[q_ptr->last_dir] == -(ddy[dir])) &&
 			 (ddx[q_ptr->last_dir] == (-ddx[dir])) &&
 			 !p_ptr->afk && !q_ptr->afk) ||
-			(q_ptr->admin_dm))
-			|| blocks_important_feat)
+			q_ptr->admin_dm	|| blocks_important_feat)
 //moved above		&& !(f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) /* never swich places into perma wall (only case possible: if target player is admin) */
 			&& (f_info[c_ptr->feat].flags1 & FF1_SWITCH_MASK)) /* never swich places into perma wall */
 #endif	// 0

@@ -358,7 +358,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 	{
 		case 0:
 		{
-			teleport_player(Ind, 10);
+			teleport_player(Ind, 10, TRUE);
 			break;
 		}
 		case 1:
@@ -375,7 +375,7 @@ void do_cmd_ghost_power(int Ind, int ability)
 		}
 		case 3:
 		{
-			teleport_player(Ind, plev * 8);
+			teleport_player(Ind, plev * 8, TRUE);
 			break;
 		}
 		case 4:
@@ -971,11 +971,11 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
       break;
 // RF6_BLINK			0x00000010	/* Teleport Short */
     case 68:
-      teleport_player(Ind, 10);
+      teleport_player(Ind, 10, TRUE);
       break;
 // RF6_TPORT			0x00000020	/* Teleport Long */
     case 69:
-      teleport_player(Ind, 200);
+	teleport_player(Ind, 200, FALSE);
       break;
 // RF6_XXX3			0x00000040	/* Move to Player (?) */
     case 70:

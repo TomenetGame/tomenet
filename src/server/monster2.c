@@ -717,6 +717,22 @@ void wipe_m_list_chance(struct worldpos *wpos, int chance)
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
 }
+/* only wipes monsters not on CAVE_ICKY (for pvp arena) */
+void wipe_m_list_roaming(struct worldpos *wpos)
+{
+	int i;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return;
+	for (i = m_max - 1; i >= 1; i--) {
+		monster_type *m_ptr = &m_list[i];
+		if (inarea(&m_ptr->wpos,wpos)) {
+			if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
+			delete_monster_idx(i, TRUE);
+		}
+	}
+	/* Compact the monster list */
+	compact_monsters(0, FALSE);
+}
 
 /* 
  * Heal up every monster on the depth, so that a player
@@ -2533,7 +2549,10 @@ void update_player(int Ind)
 			/* Arena Monster Challenge event provides wizard-esp too */
 			if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
 				flag = TRUE;
-			
+
+			/* PvP-Arena provides wizard-esp too */
+			if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1) flag = TRUE;
+
 			/* hack: PvP-mode players can ESP each other */
 			if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) flag = TRUE;
 
@@ -2680,7 +2699,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
  * the "preserve" mode, and to make the "what artifacts" flag more useful.
  */
 	/* lots of hard-coded stuff in here -C. Blue */
-static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
+bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
 {
 	int                     i, Ind, j, m_idx;
 	bool			already_on_level = FALSE;
@@ -2704,9 +2723,7 @@ static bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, in
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 
-/* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_check_all) {
-
+if (summon_override_checks != 1) {
 	/* require non-protected field. - C. Blue
 	    Note that there are two ways (technically) to protect a field:
 	    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
@@ -2714,6 +2731,10 @@ if (!summon_override_check_all) {
 	*/
 	if (zcave[y][x].info & CAVE_PROT) return (FALSE);
 	if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
+}
+
+/* override all validity checks! (for summoning done by dungeon master) */
+if (!summon_override_checks) {
 
 #if 0
 	if (!(cave_empty_bold(zcave, y, x) || 
@@ -2727,14 +2748,14 @@ if (!summon_override_check_all) {
 
 	if(((!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10) || istown(wpos)) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
 
-} /* summon_override_check_all */
+} /* summon_override_checks == 0 */
 
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
 #endif
 
 /* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_check_all) {
+if (!summon_override_checks) {
 
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
@@ -2746,14 +2767,24 @@ if (!summon_override_check_all) {
 	    wpos->wz == wild_info[cfg.town_y][cfg.town_x].tower->maxdepth)
 		return(FALSE);
 
+	/* No spawns in 0,0 pvp arena tower */
+	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return(FALSE);
+
 	/* No live spawns after initial spawn allowed on NR bottom */
 	if (getlevel(wpos) == (166 + 30) && !cave_set_quietly) return(FALSE);
+
+	/* No monster pre-spawns on staircases, to avoid 'pushing off' a player when he goes up/down. */
+	if (cave_set_quietly && (
+	    zcave[y][x].feat == FEAT_WAY_LESS ||
+	    zcave[y][x].feat == FEAT_WAY_MORE ||
+	    zcave[y][x].feat == FEAT_LESS ||
+	    zcave[y][x].feat == FEAT_MORE)) return(FALSE);
 
 	/* Special hack - bottom of NR is empty except for Zu-Aon */
 	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
 
 	/* Another special hack - No monster spawn in Valinor, except for.. */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1) &&
+	if ((getlevel(wpos) == 200) &&
 	    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
 		return(FALSE);
 
@@ -2943,7 +2974,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 #endif
 
-} /* summon_override_check_all */
+} /* summon_override_checks */
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
@@ -2993,7 +3024,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 #endif	// 0
 
 /* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_check_all) {
+if (!summon_override_checks) {
 
 	/* This usually shouldn't happen */
 	/* but can happen when monsters group */
@@ -3005,7 +3036,7 @@ if (!summon_override_check_all) {
 		return FALSE;
 	}
 
-} /* summon_override_check_all */
+} /* summon_override_checks */
 
 #ifdef DEBUG1
 if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 7\n");
@@ -3243,7 +3274,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 
-summon_override_check_all = FALSE; /* reset admin summoning override flags */
+summon_override_checks = 0; /* reset admin summoning override flags */
 
 	return (TRUE);
 }
@@ -3408,9 +3439,10 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
 #endif
 
+if (!summon_override_checks) {
 	/* Do not allow breeders to spawn in the wilderness - the_sandman */
 	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
-
+}
 	/* Place one monster, or fail */
 	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) return (FALSE);
 
@@ -4676,7 +4708,7 @@ void setup_monsters(void)
 	int i;
 	monster_type *r_ptr;
 	cave_type **zcave;
-	
+
 	for (i = 0; i < m_max; i++)
 	{
 		r_ptr = &m_list[i];

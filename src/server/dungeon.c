@@ -40,6 +40,8 @@
 /* duration of GoI when getting recalled.        [2] */
 #define RECALL_GOI_LENGTH        3
 
+
+
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
  */
@@ -1045,6 +1047,28 @@ static void process_effects(void)
 }
 
 #endif /* pelpel */
+
+
+
+/*
+ * Queued drawing at the beginning of a new turn.
+ */
+static void process_lite_later(void)
+{
+	int i;
+	struct worldspot *wspot;
+
+	for (i = 0; i < lite_later_num; i++)
+	{
+		wspot = &lite_later[i];
+
+		/* Draw now */
+		everyone_lite_spot(&wspot->wpos, wspot->y, wspot->x);
+	}
+
+	/* All done */
+	lite_later_num = 0;
+}
 
 
 
@@ -2388,7 +2412,7 @@ static void process_player_begin(int Ind)
 	    && (p_ptr->wpos.wx || p_ptr->wpos.wy || !sector00separation))
 	{
 		/* Teleport player */
-		teleport_player(Ind, 40);
+		teleport_player(Ind, 40, FALSE);
 	}
 
 }
@@ -2528,8 +2552,8 @@ static void do_recall(int Ind, bool bypass)
 	if (sector00separation && !is_admin(p_ptr) && (
 	    (!p_ptr->recall_pos.wx && !p_ptr->recall_pos.wy) ||
 	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy))) {
-		if (p_ptr->global_event_temp & 0x1) {
-			p_ptr->global_event_temp &= ~0x1;
+		if (p_ptr->global_event_temp & PEVF_PASS_00) {
+			p_ptr->global_event_temp &= ~PEVF_PASS_00;
 		} else {
 			msg_print(Ind, "A tension leaves the air around you...");
 			p_ptr->redraw |= (PR_DEPTH);
@@ -2876,31 +2900,40 @@ static bool process_player_end_aux(int Ind)
 			}
 		}
 		/* Aquatic anoxia */
-		else if (c_ptr->feat!=FEAT_SHAL_WATER)
+		else if((p_ptr->body_monster) &&
+		    ((r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) &&
+		    !(r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD))
+		    && ((c_ptr->feat != FEAT_SHAL_WATER) ||
+		    r_info[p_ptr->body_monster].weight > 700))
 		{
-			/* Take damage */
-			if((p_ptr->body_monster) && (
-						(r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) &&
-						!(r_info[p_ptr->body_monster].flags3&RF3_UNDEAD) ))
-			{
-				long hit = p_ptr->mhp>>6;
-				hit += randint(p_ptr->chp>>5);
-				if(!hit) hit=1;
+			long hit = p_ptr->mhp>>6; /* Take damage */
+			hit += randint(p_ptr->chp>>5);
+			/* Take CON into consideration(max 30%) */
+			hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
+			if(!hit) hit=1;
 
-				/* Take CON into consideration(max 30%) */
-				hit = (hit * (80 - adj_str_wgt[p_ptr->stat_ind[A_CON]])) / 75;
-				if (hit) msg_print(Ind,"\377rYou cannot breathe air!");
-
-				if(randint(1000)<10)
-				{
-					msg_print(Ind,"\377rYou find it hard to stir!");
-					//					do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
-					dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
-				}
-/*				if (p_ptr->stun < 20) set_stun(Ind, 20);
-				else set_stun(Ind, p_ptr->stun + 5);
-*/				take_hit(Ind, hit, "anoxia", 0);
+			if (hit) {
+				if (c_ptr->feat != FEAT_SHAL_WATER)
+					msg_print(Ind,"\377rYou cannot breathe air!");
+				else
+					msg_print(Ind,"\377rThere's not enough water to breathe!");
 			}
+
+			if(randint(1000)<10)
+			{
+				msg_print(Ind,"\377rYou find it hard to stir!");
+//				do_dec_stat(Ind, A_DEX, STAT_DEC_TEMPORARY);
+				dec_stat(Ind, A_DEX, 10, STAT_DEC_TEMPORARY);
+			}
+
+			/* very important to actually enforce it, otherwise
+			   it won't matter at all, because during a fight
+			   you quaff healing potions anyway.
+			   if you change the amount, compare it with continuous
+			   stun reduction so it won't get neutralized by high combat skill. */
+			if (p_ptr->stun < 20) set_stun(Ind, p_ptr->stun + 5);
+
+			take_hit(Ind, hit, "anoxia", 0);
 		}
 
 		/* Spectres -- take damage when moving through walls */
@@ -4371,7 +4404,7 @@ static void do_unstat(struct worldpos *wpos)
 
 
 	/* Highlander Tournament sector00 is static while players are in dungeon! */
-	if (!wpos->wx && !wpos->wy && !wpos->wz && sector00separation) return;
+	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation) return;
 
 	/* Arena Monster Challenge */
 	if (ge_training_tower &&
@@ -4840,7 +4873,8 @@ void store_turnover()
 /* called only every 10 turns
 */
 /* WARNING: Every if-check in here that tests for turns % cfg.fps
-   should also multiply the cfg.fps by a multiple of 10, otherwise
+   should instead check for turns % cfg.fps*10, because this function
+   is only called every 10 turns as stated above, otherwise
    depending on cfg.fps it might be skipped sometimes, which may or
    may not be critical depending on what it does! - C. Blue */
 static void process_various(void)
@@ -4887,7 +4921,7 @@ static void process_various(void)
 	if (!(turn % (cfg.fps * 3600)))
 		exec_lua(0, format("cron_1h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
 #else
-#ifndef ARCADE_SERVER
+ #ifndef ARCADE_SERVER
 	if (!(turn % (cfg.fps * 10))) { /* call every 10 seconds instead of every 10 turns, to save some CPU time (yeah well...)*/
 		/* Extra LUA function in custom.lua */
 		time(&now);
@@ -4900,7 +4934,7 @@ static void process_various(void)
 			cron_1h_last_hour = h;
 		}
 	}
-#endif
+ #endif
 #endif
 
 	/* daily maintenance */
@@ -4908,6 +4942,7 @@ static void process_various(void)
 	{
 		s_printf("24 hours maintenance cycle\n");
 		scan_players();
+		scan_accounts();
 		scan_houses();
 		if (cfg.auto_purge)
 		{
@@ -5198,7 +5233,7 @@ static void process_player_change_wpos(int Ind)
 				}
 			}
 
-			if (o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING ||
+			if (multiple_artifact_p(o_ptr) || o_ptr->name1 == ART_PHASING ||
 			    k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)
 				continue;
 
@@ -5597,8 +5632,18 @@ static void process_player_change_wpos(int Ind)
 	    p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
 		wiz_lite(Ind);
 
-	/* PvP-Mode anti-chicken: Don't allow a high player to 'chase' a very low player */
-	if ((p_ptr->mode & MODE_PVP) && p_ptr->wpos.wz) {
+	if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1) {
+		/* teleport after entering [the PvP arena],
+		   so stairs won't be camped */
+		teleport_player(Ind, 200, TRUE);
+		/* Brightly lit PvP Arena */
+		wiz_lite(Ind);
+	}
+
+	/* PvP-Mode specialties: */
+	if ((p_ptr->mode & MODE_PVP) && p_ptr->wpos.wz &&
+	    !(p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z)) { /* <- not in the pvp arena actually */
+		/* anti-chicken: Don't allow a high player to 'chase' a very low player */
 		for (j = 1; j < NumPlayers; j++) {
 			if (Players[j]->conn == NOT_CONNECTED) continue;
 			if (is_admin(Players[j])) continue;
@@ -5721,6 +5766,9 @@ void dungeon(void)
 		}
 	}
 
+	/* Do some queued drawing */
+	process_lite_later();
+
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i < NumPlayers + 1; i++)
 	{
@@ -5787,7 +5835,7 @@ void dungeon(void)
 				/* Ignore characters that are not in a dungeon/tower */
 				if(Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -5811,7 +5859,7 @@ void dungeon(void)
 				/* Ignore characters that are not in a dungeon/tower */
 				if(Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -5836,7 +5884,7 @@ void dungeon(void)
 				/* Ignore characters that are not in a dungeon/tower */
 				if(Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -5881,7 +5929,7 @@ void dungeon(void)
 				/* Ignore characters that are not in a dungeon/tower */
 				if(Players[i]->wpos.wz == 0) {
 					/* Don't interrupt events though */
-					if (Players[i]->wpos.wx || Players[i]->wpos.wy || !sector00separation) continue;
+					if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
 				}
 				break;
 			}
@@ -6026,6 +6074,9 @@ s_printf("WEATHER: Starting rain.\n");
 		/* Process auctions */
 		process_auctions();
 #endif
+
+		/* process special event timers */
+		process_timers();
 
 		/* Call a specific lua function every second */
 		exec_lua(0, "second_handler()");
@@ -6288,6 +6339,7 @@ void play_game(bool new_game)
 
 	/* scan for inactive players */
 	scan_players();
+	scan_accounts();
 	scan_houses();
 
 	cfg.runlevel=6;		/* Server is running */
@@ -6398,4 +6450,118 @@ void pack_overflow(int Ind)
 		inven_item_increase(Ind, i, -amt);
 		inven_item_optimize(Ind, i);
 	}
+}
+
+/* Handle special timed events that don't fit in /
+   aren't related to 'Global Events' routines - C. Blue
+   (To be called every second.) */
+void process_timers() {
+	struct worldpos wpos;
+	cave_type **zcave;
+	int y, x, i;
+
+	/* PvP Arena in 0,0 - Release monsters: */
+	if (timer_pvparena1) {
+		/* check for existance of arena */
+		wpos.wx = 0; wpos.wy = 0; wpos.wz = 1;
+		if (!(zcave = getcave(&wpos))) return;
+
+		timer_pvparena1--;
+		if (!timer_pvparena1) {
+			/* start next countdown */
+			timer_pvparena1 = 45;
+
+			if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
+				/* clear old monsters and items */
+				wipe_m_list(&wpos);                             
+			        wipe_o_list_safely(&wpos);
+				/* close all doors */
+				for (i = 1; i <= 6; i++) {
+					y = 2;
+					x = (i * 10) - 3;
+					zcave[y][x].feat = FEAT_SEALED_DOOR;
+					everyone_lite_spot(&wpos, y, x);
+				}
+			}
+
+			if (timer_pvparena3 == 0) { /* prepare first cycle */
+				y = 1;
+				x = (1 * 10) - 3;
+				summon_override_checks = 1;//866 elite uruk, 563 young red dragon
+//				place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
+				x = (2 * 10) - 3;
+				summon_override_checks = 1;//487 storm giant
+//				place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
+				x = (3 * 10) - 3;
+				summon_override_checks = 1;//609 baron of hell
+//				place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
+				x = (4 * 10) - 3;
+				summon_override_checks = 1;//590 mature gold d
+//				place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
+				x = (5 * 10) - 3;
+				summon_override_checks = 1;//995 marilith, 558 colossus
+//				place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
+				x = (6 * 10) - 3;
+				summon_override_checks = 1;//602 bronze D, 720 barbazu
+//				place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
+				place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
+				summon_override_checks = 0;
+				timer_pvparena3++; /* start releasing cycle */
+				return;
+			} else if (timer_pvparena3 == 2) { /* prepare second cycle */
+				for (i = 1; i <= 6; i++) {
+					y = 1;
+					x = (i * 10) - 3;
+					summon_override_checks = 1;
+					//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
+					//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
+//					place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
+					everyone_lite_spot(&wpos, y, x);
+				}
+				summon_override_checks = 0;
+				timer_pvparena3++; /* start releasing cycle */
+				return;
+			}
+
+			/* clear previous monster */
+			wipe_m_list_roaming(&wpos);
+			if (timer_pvparena2 > 1) {
+				/* erase monster that didn't come out of its chamber */
+				y = 1;
+				x = ((timer_pvparena2 - 1) * 10) - 3;
+				if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
+				/* erase monster that stopped on its chamber door */
+				y = 2;
+				if (zcave[y][x].m_idx > 0) delete_monster_idx(zcave[y][x].m_idx, TRUE);
+			}
+
+			/* open current door to release monster */
+			y = 2;
+			x = (timer_pvparena2 * 10) - 3;
+			zcave[y][x].feat = FEAT_UNSEALED_DOOR;
+			everyone_lite_spot(&wpos, y, x);
+
+			/* after 6th monster, take a break and switch wave cycle */
+			if (timer_pvparena2 == 6) {
+				/* prepare next cycle next time */
+				timer_pvparena3++;
+				/* max number of cycles? */
+				timer_pvparena3 = timer_pvparena3 % 4;
+
+				/* next time, begin at monster #1 again */
+				timer_pvparena2 = 1;
+				return;
+			}
+
+			/* next time, release next monster */
+			timer_pvparena2++;
+		}
+	}
+
 }

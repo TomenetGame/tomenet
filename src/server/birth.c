@@ -1168,7 +1168,7 @@ void admin_outfit(int Ind, int realm)
 	do_admin_outfit();
 
 	invcopy(o_ptr, lookup_kind(TV_CLOAK, SV_SHADOW_CLOAK));
-	o_ptr->name1 = ART_DUNGEON_WIZARD;
+	o_ptr->name1 = ART_CLOAK_DM;
 	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
@@ -1208,6 +1208,18 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->level = 1; \
 	(void)inven_carry(Ind, o_ptr);
 #else
+ #if STARTEQ_TREATMENT == 3
+    #define do_player_outfit()	\
+	object_aware(Ind, o_ptr); \
+	object_known(o_ptr); \
+	o_ptr->ident |= ID_MENTAL; \
+	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner_mode = p_ptr->mode; \
+	o_ptr->level = 0; \
+	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
+	o_ptr->note = quark_add(""); /* hack to hide '100% off' tag */ \
+	(void)inven_carry(Ind, o_ptr);
+ #else
     #define do_player_outfit()	\
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
@@ -1216,7 +1228,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->owner_mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	(void)inven_carry(Ind, o_ptr);
-/*	o_ptr->discount = 100; \ <- replaced this by making level-0-items unsellable in general */
+ #endif
 #endif
 
 /*
@@ -1272,7 +1284,7 @@ static void player_outfit(int Ind)
 	}
 
 	/* Hack -- Give the player some torches */
-	if (p_ptr->prace != RACE_VAMPIRE) {
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != CLASS_ARCHER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 		o_ptr->number = rand_range(3, 7);
 		o_ptr->timeout = rand_range(3, 7) * 500;
@@ -1411,6 +1423,10 @@ static void player_outfit(int Ind)
 			object_flags(o_ptr,&f1,&f2,&f3,&f4,&f5,&f6);
 		} while (f2 & TR2_RES_DARK);
 		do_player_outfit();
+
+		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
+		o_ptr->number = 5;
+		do_player_outfit();
 	}
 	/* hack for mimics: pick a type of poly ring - C. Blue */
 #if 0 /* disabled for now */
@@ -1506,8 +1522,8 @@ static void player_setup(int Ind, bool new)
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
         /* Ultra-hack bugfix for recall-crash, thanks to Chris for the idea :) */
-	if ((wpos->wx > 63) || (wpos->wy > 63) || (wpos->wz > 255) ||
-	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -255)) {
+	if ((wpos->wx >= MAX_WILD_X) || (wpos->wy >= MAX_WILD_Y) || (wpos->wz > MAX_DEPTH) ||
+	    (wpos->wx < 0) || (wpos->wy < 0) || (wpos->wz < -MAX_DEPTH)) {
 		s_printf("Ultra-hack executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 		wpos->wx = cfg.town_x;
                 wpos->wy = cfg.town_y;
@@ -1515,8 +1531,8 @@ static void player_setup(int Ind, bool new)
 	}
 	/* If dungeon existances changed, restore players who saved
            within a now-invalid dungeon - C. Blue */
-	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == 0)) ||
-	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == 0))) {
+	if (((wpos->wz > 0) && (wild_info[wpos->wy][wpos->wx].tower == NULL)) ||
+	    ((wpos->wz < 0) && (wild_info[wpos->wy][wpos->wx].dungeon == NULL))) {
 		s_printf("Ultra-hack #2 executed for %s. wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
 		wpos->wx = cfg.town_x;
                 wpos->wy = cfg.town_y;
@@ -1528,14 +1544,19 @@ static void player_setup(int Ind, bool new)
 	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
 	   with a certain character during highlander tourneys and continue to level it up
 	   infinitely! :) So, who gets disconnected will be removed from the event! */
-//	if (sector00separation && !wpos->wx && !wpos->wy) {
-	if (!wpos->wx && !wpos->wy) {
+//	if (sector00separation && ...) {
+	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) {
 		/* Teleport him out of the event area */
+#if 0
 		switch rand_int(3){
-		case 0:	wpos->wx = 1;
-		case 1:	wpos->wy = 1; break;
-		case 2: wpos->wx = 1;
+		case 0:	wpos->wx = WPOS_SECTOR00_ADJAC_X;
+		case 1:	wpos->wy = WPOS_SECTOR00_ADJAC_Y; break;
+		case 2: wpos->wx = WPOS_SECTOR00_ADJAC_X;
 		}
+#else
+		wpos->wx = cfg.town_x;
+                wpos->wy = cfg.town_y;
+#endif
 		wpos->wz = 0;
 		/* Remove him from the event and strip quest items off him */
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
@@ -1543,29 +1564,17 @@ static void player_setup(int Ind, bool new)
 			switch (p_ptr->global_event_type[d]) {
 			case GE_HIGHLANDER:
 				p_ptr->global_event_type[d] = GE_NONE;
-				p_ptr->global_event_temp = 0;
+				p_ptr->global_event_temp = PEVF_NONE;
 				for (i = 0; i < INVEN_TOTAL; i++) /* Erase the highlander amulets */
                     			if (p_ptr->inventory[i].tval == TV_AMULET && 
 					    (p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS || p_ptr->inventory[i].sval == SV_AMULET_HIGHLANDS2)) {
 					        inven_item_increase(Ind, i, -p_ptr->inventory[i].number);
 					        inven_item_optimize(Ind, i);
     		                	}
-#if 0
-//                                p_ptr->stormbringer = FALSE; /* undo the auto-hostility */
-                                if (cfg.use_pk_rules == PK_RULES_DECLARE)
-                                {
-                                        if ((p_ptr->pkill & PKILL_KILLER) && (p_ptr->pkill & PKILL_SET))
-                                        set_pkill(i, 1);
-                                }
-#else
-				p_ptr->pkill &= ~PKILL_SET;
-				p_ptr->pkill &= ~PKILL_KILLER;/* for ranged targetting */
-				p_ptr->pkill &= ~PKILL_KILLABLE;
-                                p_ptr->stormbringer = FALSE;/* for melee */
-#endif
 			}
 		}
 	}
+
 	/* If he's in the training tower of Bree, check for running global events accordingly */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
 	        wild = &wild_info[wpos->wy][wpos->wx];
@@ -1611,7 +1620,7 @@ static void player_setup(int Ind, bool new)
 	p_ptr->spam=0;
 
 	/* Default location if just starting */
-//	if(wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && p_ptr->py==0 && p_ptr->px==0){
+//	if(wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py==0 && p_ptr->px==0){
 	if (new) {
 		p_ptr->wpos.wx=cfg.town_x;
 		p_ptr->wpos.wy=cfg.town_y;
@@ -2165,7 +2174,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* set level and skill, execute hacks */
 	if (p_ptr->mode & MODE_PVP) {
-		p_ptr->lev = 10;
+		object_type forge, *o_ptr = &forge;
+
+		p_ptr->lev = MIN_PVP_LEVEL;
 #ifndef ALT_EXPRATIO
 		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
 #else
@@ -2179,6 +2190,21 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		    (p_ptr->pclass == CLASS_MIMIC) ||
 		    (p_ptr->pclass == CLASS_SHAMAN))
 			p_ptr->free_mimic = 1;
+			
+		/* a good starter item since we're not going from level 1 */
+#if 0
+		give_reward(Ind, RESF_LOW2, "", 1, 0);
+#else
+                i = lookup_kind(TV_PARCHMENT, SV_DEED_PVP_START);
+                invcopy(o_ptr, i);
+                o_ptr->number = 1;
+                object_aware(Ind, o_ptr);
+                object_known(o_ptr);
+                o_ptr->discount = 0;
+                o_ptr->level = 0;
+                o_ptr->ident |= ID_MENTAL;
+                inven_carry(Ind, o_ptr);
+#endif
 	}
 
 	/* admin hacks */

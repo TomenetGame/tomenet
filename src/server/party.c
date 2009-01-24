@@ -1933,23 +1933,21 @@ bool remove_hostility(int Ind, cptr name)
  */
 bool check_hostile(int attacker, int target)
 {
-	player_type *p_ptr = Players[attacker];
+	player_type *p_ptr = Players[attacker], *q_ptr = Players[target];
 	hostile_type *h_ptr;
-
-#if 0	/* towns are safe-zones from PvP-mode slaughter */
-	if (Players[target]->mode & MODE_PVP) {
-		if ((Players[attacker]->mode & MODE_PVP) &&
-		    istown(&Players[target]->wpos)) return(FALSE);
-		/* outside of towns, PvP-mode means auto-hostility! */
-		if (Players[attacker]->mode & MODE_PVP) return(TRUE);
+	
+	/* Highlander Tournament is a fight to death */
+	if ((p_ptr->global_event_temp & PEVF_AUTOPVP_00) &&
+	    (q_ptr->global_event_temp & PEVF_AUTOPVP_00)) {
+		return(TRUE);
 	}
-#else	/* towns are safe-zones for ALL players */
-	if (istown(&Players[target]->wpos) ||
-	    istown(&Players[attacker]->wpos)) return(FALSE);
+
+	/* towns are safe-zones for ALL players */
+	if (istown(&q_ptr->wpos) ||
+	    istown(&p_ptr->wpos)) return(FALSE);
 	/* outside of towns, PvP-mode means auto-hostility! */
-	else if ((Players[target]->mode & MODE_PVP) &&
-	    (Players[attacker]->mode & MODE_PVP)) return(TRUE);
-#endif
+	else if ((q_ptr->mode & MODE_PVP) &&
+	    (p_ptr->mode & MODE_PVP)) return(TRUE);
 
 	/* Scan list */
 	for (h_ptr = p_ptr->hostile; h_ptr; h_ptr = h_ptr->next)
@@ -1958,13 +1956,13 @@ bool check_hostile(int attacker, int target)
 		if (h_ptr->id > 0)
 		{
 			/* Identical ID's yield hostility */
-			if (h_ptr->id == Players[target]->id)
+			if (h_ptr->id == q_ptr->id)
 				return TRUE;
 		}
 		else
 		{
 			/* Check if target belongs to hostile party */
-			if (Players[target]->party == 0 - h_ptr->id)
+			if (q_ptr->party == 0 - h_ptr->id)
 				return TRUE;
 		}
 	}
@@ -2646,6 +2644,18 @@ void scan_players(){
 	}
 	s_printf("Finished player inactivity check\n");
 }
+/*
+ *  Called once every 24 hours. Deletes unused Account IDs.
+ *  It's called straight after scan_players, usually.
+ *  Unused means that there aren't any characters on it,
+ *  and it's not been used to log in with for a certain amount of time.
+ */
+void scan_accounts(){
+
+	s_printf("Starting account inactivity check\n");
+
+	s_printf("Finished account inactivity check\n");
+}
 
 /* Rename a player's char savegame as well as the name inside */
 void rename_player_name(char *pnames){
@@ -3185,7 +3195,7 @@ void strip_true_arts_from_hashed_players(){
 	        {
 	                o_ptr = &o_list[i];
 	                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id) &&
-                            !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+                            !(multiple_artifact_p(o_ptr) || o_ptr->name1 == ART_PHASING))
 #if 1 /* set 0 to not change cur_num */
 	                    	    delete_object_idx(i, TRUE);
 #else

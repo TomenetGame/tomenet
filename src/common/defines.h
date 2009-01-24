@@ -111,6 +111,7 @@
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
  #define AUCTION_DEBUG
+ #define OPTIMIZED_ANIMATIONS	/* testing */
 #endif
 
 
@@ -186,7 +187,8 @@
    0 = like any item
    1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel 5
    2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel 5
-   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel 5 */
+   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel 5
+   Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners. */
 #define STARTEQ_TREATMENT 3
 
 
@@ -417,8 +419,8 @@
 #define MAX_WILD_Y	64
 #define MAX_WILD	(MAX_WILD_X*MAX_WILD_Y)
 #define MAX_WILD_8	((MAX_WILD_X*MAX_WILD_Y)/8)
-#define MAX_DEPTH_OBJ   128
-
+#define MAX_DEPTH_OBJ   128 /* must be <= 128 */
+#define MAX_DEPTH	255 /* should be <= 255? (Valinor at 200 is deepest level) */
 
 /*
  * Maximum size of the "lite" array (see "cave.c")
@@ -654,6 +656,8 @@
 
 
 /* for PvP mode: */
+#define MIN_PVP_LEVEL	10
+#define MID_PVP_LEVEL	20
 #define MAX_PVP_LEVEL	30
 
 
@@ -905,7 +909,7 @@
 #define PY_MAX_EXP	999999999L	/* Maximum exp */
 //#define PY_MAX_EXP	4899999996L	/* Maximum exp (Thunderlord Mimic 3.5*1.4) */
 //#define PY_MAX_EXP	3899999997L	/* Maximum exp (Thunderlord Mimic 3.5+0.4) */
-#define PY_MAX_GOLD	999999999L	/* Maximum gold */
+#define PY_MAX_GOLD	999999999L	/* Maximum gold: 999 M */
 #define PY_MAX_LEVEL	100		/* Maximum level */
 
 /*
@@ -1468,13 +1472,17 @@ that keeps many algorithms happy.
 #define FEAT_FIRE               0xCD /* 205 */
 /* Feature 0xCE -- pile of rubble (permanent) */
 
-/* Features 0xCF - 0xFF -- unused */
+/* Features 0xCF - 0xFF */
 #define FEAT_AGOAL	208
 #define FEAT_BGOAL	209
 
 #define FEAT_BUSH	219
 
+#define FEAT_SEALED_DOOR	224	/* for pvp-arena, like Andur suggested */
+#define FEAT_UNSEALED_DOOR	225
 
+
+/* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS       2
 
 /* former Dirty Hack (XXX this can overlook spiked door!) */
@@ -1724,7 +1732,7 @@ that keeps many algorithms happy.
 
 /* C. Blue (arts > 216) */
 #define ART_OCEAN_SOUL		217
-#define ART_DUNGEON_WIZARD	218
+#define ART_CLOAK_DM		218
 #define ART_IRONFOOT		219
 #define ART_HELM_DURIN		220
 #define ART_MOONSTONE		221
@@ -2214,7 +2222,7 @@ that keeps many algorithms happy.
 #define SV_AMMO_NORMAL                   1	/* shots, arrows, bolts */
 #define SV_AMMO_HEAVY                    2	/* seeker arrows and bolts, mithril shots */
 /* (pernM ammo) */
-#define SV_AMMO_MAGIC		3	/* seeker arrows and bolts */
+#define SV_AMMO_MAGIC		3	/* magic arrows, bolts, shots */
 #define SV_AMMO_SILVER		4	/* silver arrows and bolts */
 #define SV_AMMO_CHARRED		5	/* burnt ammo (used for flare missile skill) */
 
@@ -2872,6 +2880,11 @@ that keeps many algorithms happy.
 
 #define SV_POTION2_LAST                 21
 
+/* sval for TV_FLASK */
+/* note: there is only 1 flask, ie flask of oil.
+   this might be assumed in lots of places in the code.*/
+#define SV_FLASK_OIL			0
+
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON                   0
 #define SV_FOOD_BLINDNESS                1
@@ -2949,8 +2962,10 @@ that keeps many algorithms happy.
 
 #define SV_DEED_HIGHLANDER	60 /* for winner */
 #define SV_DEED2_HIGHLANDER	61 /* for participant */
-#define SV_DEED_PVP_TOP		62 /* reaching top level in pvp mode */
-#define SV_DEED_PVP_MASS	63 /* killing a lot of opponents in pvp mode */
+#define SV_DEED_PVP_MAX		62 /* reaching top level in pvp mode */
+#define SV_DEED_PVP_MID		63 /* reaching top level in pvp mode */
+#define SV_DEED_PVP_MASS	64 /* killing a lot of opponents in pvp mode */
+#define SV_DEED_PVP_START	65 /* birth item for pvp mode chars */
 
 /* for TV_BOOK */
 #define SV_SPELLBOOK		255
@@ -3314,16 +3329,7 @@ that keeps many algorithms happy.
 #define GF_HELL_FIRE    82 /* was HOLY_ORB */
 
 #define GF_MAKE_GLYPH   85
-/* For the new priest spell I'm conjuring - the_sandman */
-#define GF_CURSE	153
-/* Here comes the druid items - the_sandman */
-#define GF_HEALINGCLOUD 154
-#define GF_WATERPOISON  155
-#define GF_ICEPOISON    156
-#define GF_EXTRA_STATS  157
-#define GF_EXTRA_SPR	158
 
-#define GF_PUSH 	159 /* Moltor */
 #define GF_ROCKET       91
 
 /* for traps.h :) - C. Blue */
@@ -3386,6 +3392,17 @@ that keeps many algorithms happy.
 #define GF_TELE_TO	150
 #define GF_HAND_DOOM	151
 #define GF_STASIS       152
+
+/* For the new priest spell I'm conjuring - the_sandman */
+#define GF_CURSE	153
+/* Here comes the druid items - the_sandman */
+#define GF_HEALINGCLOUD 154
+#define GF_WATERPOISON  155
+#define GF_ICEPOISON    156
+#define GF_EXTRA_STATS  157
+#define GF_EXTRA_SPR	158
+
+#define GF_PUSH 	159 /* Moltor */
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE	200
@@ -3793,6 +3810,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
 #define RESF_MID		(RESF_NOTRUEART | RESF_NORANDART | RESF_NOHIDSM | RESF_NOHISPEED | RESF_NOHIVALUE)	/* prevent generation of especially powerful high-level items */
+#define RESF_HIGH		RESF_NOART /* alias */
 #define RESF_NOART		(RESF_NOTRUEART | RESF_NORANDART)	/* prevent generation of any artefacts */
 #define RESF_WILD		RESF_NONE
 #define RESF_STORE		(RESF_NOART | RESF_NOETHEREAL) /* not fully implemented yet (see get_obj_num... and kind_is..) */
@@ -4363,6 +4381,21 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF0_RADIUS_SPELLS (0L)
 
 
+/* currently disabled r_info.txt flags */
+#define RF1_DISABLE_MASK	(0x0)
+#define RF2_DISABLE_MASK	(0x0)
+#define RF3_DISABLE_MASK	(0x0)
+#define RF4_DISABLE_MASK	(0x0)
+
+#define RF5_DISABLE_MASK	(RF5_BO_POIS)
+#define RF6_DISABLE_MASK	(RF6_RAISE_DEAD | RF6_HAND_DOOM)
+#define RF7_DISABLE_MASK	(0x0)
+
+#define RF8_DISABLE_MASK	(0x0)
+#define RF9_DISABLE_MASK	(0x0)
+
+#define RF0_DISABLE_MASK	(0x0)
+
 
 /* 
 	Different types of terrain, used for the wilderness.
@@ -4495,7 +4528,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF1_EVOLVE              0x08000000L	/* Evolving, pulsing levels like Heart of the Earth */
 #define DF1_ADJUST_LEVEL_1      0x10000000L	/* Minimum monster level will be equal to dungeon level */
 #define DF1_ADJUST_LEVEL_2      0x20000000L	/* Minimum monster level will be double the dungeon level */
-#define DF1_NO_RECALL           0x40000000L	/* No recall allowed */
+#define DF1_NO_RECALL           0x40000000L	/* No recall allowed \
+					           Note: this also prevents probability travel while inside! */
 #define DF1_NO_STREAMERS        0x80000000L	/* No streamers */
 
 /* dungeon flags for dungeon_type 
@@ -4504,11 +4538,6 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* XXX One problem - master-command from client can only handle flags
  * from 0x01 to 0x80!  FIXME
  */
-#if 0
-#define DF2_ADJUST_LEVEL_1_2    0x00000001L	/* Minimum monster level will be half the dungeon level */
-#define DF2_NO_SHAFT            0x00000002L	/* No shafts */
-#define DF2_ADJUST_LEVEL_PLAYER 0x00000004L	/* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
-#else	/* 0 */
 
 /* Maybe better DF2_PRELOADED? */
 #define DF2_RANDOM              0x00000001L /* random dungeon - not preloaded */
@@ -4517,8 +4546,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_HELL                0x00000004L /* hellish dungeon - forces hellish mode on all */
 /* DF2_NOMAP => DF1_FORGET */
 /*#define DF2_NOMAP		0x00000008L *//* player never gains level knowledge */
-#define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon /
-					       upwards into this tower. Added it especially for Nether Realm - C. Blue */
+#define DF2_NO_RECALL_INTO	0x00000008L /* Player may not recall downwards into this dungeon \
+					       upwards into this tower. Added it especially for Nether Realm - C. Blue \
+					       Note: this also prevents probability travel while inside! */
 #define DF2_NO_MAGIC_MAP        0x00000010L /* non magic-mappable */
 #define DF2_NO_DEATH            0x00000080L /* death penalty is reduced */
 
@@ -4541,16 +4571,17 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define DF2_NO_EXIT_PROB      	0x00400000L /* Can't be exited by probability travel */
 #define DF2_NO_EXIT_FLOAT      	0x00800000L /* Can't be exited by floating */
 
-#define DF2_NO_TRAVEL_UP      	0x01000000L /* Can't be exited by probability travel */
-#define DF2_NO_TRAVEL_DOWN     	0x02000000L /* Can't be exited by floating */
+#define DF2_NO_STAIRS_UP      	0x01000000L /* no '<' staircases inside */
+#define DF2_NO_STAIRS_DOWN     	0x02000000L /* no '>' staircases inside */
 
 #define DF2_ADJUST_LEVEL_1_2    0x10000000L /* Minimum monster level will be half the dungeon level */
 #define DF2_NO_SHAFT            0x20000000L /* No shafts */
 #define DF2_ADJUST_LEVEL_PLAYER 0x40000000L /* Uses player level*2 instead of dungeon level for other ADJUST_LEVEL flags */
 
 #define DF2_DELETED             0x80000000L /* Deleted, but not yet removed */
-#endif	/* 0 */
 
+#define DF2_NO_ENTRY_MASK       (DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
+#define DF2_NO_EXIT_MASK        (DF2_NO_EXIT_STAIR | DF2_NO_EXIT_WOR | DF2_NO_EXIT_PROB | DF2_NO_EXIT_FLOAT)
 
 
 /* level flags for dun_level */
@@ -4937,6 +4968,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 #define true_artifact_p(T) \
         (artifact_p(T) && (T)->name1 != ART_RANDART ? TRUE : FALSE)
+
+/* artifacts that can occur multiple times legally */
+#define multiple_artifact_p(T) \
+        ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
+	(T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM)
 
 /*
  * Ego-Items use the "name2" field
@@ -6409,16 +6445,25 @@ extern int PlayerUID;
 /* for global_event - C. Blue */
 #define MAX_GLOBAL_EVENTS	16
 #define MAX_GE_PARTICIPANTS	64
+
 /* types of global events: */
 #define GE_NONE			0	/* <disabled> ie no event running */
 #define GE_HIGHLANDER		1	/* Highlander Tournament */
 #define GE_HIGHLANDER_NEW	2	/* not yet implemented (with highlander town and set-up cash+items etc) */
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
 
+/* player flags while participating in global events (p_ptr->global_event_temp) */
+#define PEVF_NONE		0
+#define PEVF_PASS_00		0x00000001 /* may enter/leave sector 0,0 */
+#define PEVF_NOGHOST_00		0x00000002 /* will permanently die in sector 0,0 */
+#define PEVF_SAFEDUN_00		0x00000004 /* won't die in dungeon/tower in 0,0 */
+#define PEVF_AUTOPVP_00		0x00000008 /* will always be hostile to others in 0,0 */
+#define PEVF_SEPDUN_00		0x00000010 /* unable to leave/enter dungeon or tower in 0,0 */
 
 /* for achievements (top PvP mode rank) - C. Blue */
-#define ACHV_PVP_TOP		1
-#define ACHV_PVP_MASS		2
+#define ACHV_PVP_MAX		1
+#define ACHV_PVP_MID		2
+#define ACHV_PVP_MASS		3
 
 
 /* modify the base crit bonus to make it less linear, remotely similar to LUCK */
@@ -6630,3 +6675,27 @@ extern int PlayerUID;
 #define CHAT_MODE_NORMAL	0
 #define CHAT_MODE_PARTY		1
 #define CHAT_MODE_LEVEL		2
+
+
+/* Hard-coded coordinates keeping track of special worldmap locations */
+#define WPOS_SECTOR00_X         0       /* location of our protected and used-for-special-cases sector 'sector00' */
+#define WPOS_SECTOR00_Y         0
+#define WPOS_SECTOR00_Z         0
+#define WPOS_SECTOR00_ADJAC_X   1       /* if we want to get out of sector00, what coord can be used for x? */
+#define WPOS_SECTOR00_ADJAC_Y   1       /* if we want to get out of sector00, what coord can be used for y? */
+
+#define WPOS_HIGHLANDER_X       0       /* deathmatch location of global event 'Highlander Tournament' */
+#define WPOS_HIGHLANDER_Y       0
+#define WPOS_HIGHLANDER_Z       0
+#define WPOS_HIGHLANDER_DUN_X   0       /* dungeon location of global event 'Highlander Tournament' */
+#define WPOS_HIGHLANDER_DUN_Y   0
+#define WPOS_HIGHLANDER_DUN_Z   -1
+
+/* important: note connection of WPOS_ARENA_ and 'ge_training_tower' */
+#define WPOS_ARENA_X            cfg.town_x      /* location of global event 'Arena Monster Challenge' */
+#define WPOS_ARENA_Y            cfg.town_y
+#define WPOS_ARENA_Z            2
+
+#define WPOS_PVPARENA_X         0       /* location of pvp arena for MODE_PVP players */
+#define WPOS_PVPARENA_Y         0
+#define WPOS_PVPARENA_Z		1

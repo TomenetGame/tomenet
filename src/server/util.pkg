@@ -336,3 +336,7 @@ extern cptr *ANGBAND_DIR;
 #define CLASS_DRUID             9                                               
 #define CLASS_SHAMAN            10                                              
 #define CLASS_RUNEMASTER        11                                              
+
+/* timers for special events */
+extern int timer_pvparena1;
+extern int timer_pvparena2;

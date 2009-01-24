@@ -117,6 +117,16 @@ struct worldpos
 	s16b wz;	/* deep to sky */
 };
 
+/* worldspot adds exact x and y coordinates */
+typedef struct worldspot worldspot;
+
+struct worldspot
+{
+	struct worldpos wpos;
+	int x;
+	int y;
+};
+
 #if 0
 /*
  * Following are rough sketches for versions(maybe v5) to come.	- Jir -
@@ -2578,7 +2588,7 @@ struct player_type
 	time_t global_event_signup[MAX_GLOBAL_EVENTS];
 	time_t global_event_started[MAX_GLOBAL_EVENTS];
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
-	s32b global_event_temp; /* not saved. values:
+	u32b global_event_temp; /* not saved. values:
 		1: pass through sector00separation;
             	2: die permanently in the tournament;
                 4: don't die while still in 0,0 dungeon, but teleport to 0,0,0 */

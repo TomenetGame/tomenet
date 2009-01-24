@@ -537,6 +537,7 @@ struct player_type
 	int store_num;		/* What store this guy is in */
 
 	s16b fast;			/* Timed -- Fast */
+	s16b fast_mod;			/* Timed -- Fast */
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;		/* Timed -- Paralysis */
@@ -845,6 +846,11 @@ struct player_type
 	bool shooting_till_kill;
         int shoot_till_kill_book;
 	int shoot_till_kill_spell;
+	
+	int kills;
+	int kills_lower;
+	int kills_higher;
+	int kills_equal;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

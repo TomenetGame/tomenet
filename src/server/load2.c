@@ -436,6 +436,9 @@ static void rd_item(object_type *o_ptr)
 				break;
 		} 
 	}
+	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
+	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
+
 	if (o_ptr->tval == TV_RUNE2) {
 		switch (o_ptr->sval) {
 			case SV_RUNE2_STONE:

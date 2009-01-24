@@ -1494,11 +1494,12 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
 
 	825000000L,//      380000000L,
 	880000000L,//      400000000L,
-	938000000L,//      420000000L,
-	999000000L,//      440000000L,//100
-	999999998L,//      460000000L,
+//	938000000L,//      420000000L,//99, PY_MAX_LEVEL
+	940000000L,//      420000000L,//99, PY_MAX_LEVEL
+	999000000L,//      440000000L,//100 (PY_MAX_LEVEL + 1 is required for some reason, I think)
+	999999998L,//      460000000L,//<-not sure why 101 and the 'dummy' one for 102 are needed tho
 
-      999999999L	// dummy
+	999999999L // dummy, == PY_MAX_EXP
 };
 
 

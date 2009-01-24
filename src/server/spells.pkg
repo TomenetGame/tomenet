@@ -200,7 +200,7 @@ extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
 extern void swap_position(int Ind, int lty, int ltx);
 extern bool teleport_away(int m_idx, int dis);
-extern void teleport_player(int Ind, int dis);
+extern void teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
 extern bool bypass_invuln;
@@ -213,6 +213,8 @@ extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int mode);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
+extern bool apply_discharge(int Ind, int dam);
+extern bool apply_discharge_item(int o_idx, int dam);
 extern bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker);
 extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
 //extern bool lua_project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
@@ -427,9 +429,10 @@ struct school_type
         s16b skill;                     /* Skill used for that school */
 };
 
-extern void teleport_player(int Ind, int dis);
-extern void teleport_player_to(int Ind, int ny, int nx);
-extern void teleport_player_level(int Ind);
+//duplicate declarations (see above):
+//extern void teleport_player(int Ind, int dis, bool ignore_pvp);
+//extern void teleport_player_to(int Ind, int ny, int nx);
+//extern void teleport_player_level(int Ind);
 
 /* This could have some good uses */
 extern s16b project_interval;

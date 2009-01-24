@@ -3446,7 +3446,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		}
 
 		/* RF6_XXX3X6 */
-		/* RF6_ANIM_DEAD */
+		/* RF6_RAISE_DEAD */
 		case RF6_OFFSET+6:
 		{
 			break;
@@ -3528,7 +3528,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				break;
 			}
 			msg_format(Ind, "%^s teleports you away.", m_name);
-			teleport_player(Ind, 100);
+			teleport_player(Ind, 100, TRUE);
 			break;
 		}
 
@@ -7629,7 +7629,9 @@ static void process_monster(int Ind, int m_idx)
 				}
 
 				/* Pick up the item */
-				else if (r_ptr->flags2 & RF2_TAKE_ITEM)
+				else if ((r_ptr->flags2 & RF2_TAKE_ITEM)
+				    /* idea: don't carry valuable loot ouf ot no-tele vaults for the player's delight */
+				    && !(zcave[ny][nx].info & CAVE_STCK))
 				{
 					s16b this_o_idx = 0;
 
@@ -7688,7 +7690,7 @@ static void process_monster(int Ind, int m_idx)
 				}
 
 				/* Destroy the item */
-				else
+				else if (r_ptr->flags2 & RF2_KILL_ITEM)
 				{
 					/* Take note */
 					did_kill_item = TRUE;

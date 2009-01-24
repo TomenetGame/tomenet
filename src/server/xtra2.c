@@ -115,7 +115,6 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 		case GE_HIGHLANDER:
 			if (p_ptr->global_event_progress[j][0] < 3) break; /* only rewarded if already in deathmatch phase! */
 			if (death_type >= 3) break; /* no reward for suiciding! */
-//			if (!(p_ptr->global_event_temp & 0x2)) break;
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
 		case GE_NONE:
@@ -137,8 +136,11 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 	if (i == 128) return; /* no free buffer entries anymore, sorry! */
 	achievement_buffer_ID[i] = p_ptr->account;
 	switch (achievement) {
-	case ACHV_PVP_TOP:
-		achievement_buffer_deed[i] = SV_DEED_PVP_TOP;
+	case ACHV_PVP_MAX:
+		achievement_buffer_deed[i] = SV_DEED_PVP_MAX;
+		break;
+	case ACHV_PVP_MID:
+		achievement_buffer_deed[i] = SV_DEED_PVP_MID;
 		break;
 	case ACHV_PVP_MASS:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MASS;
@@ -3958,11 +3960,18 @@ void check_experience(int Ind)
 				msg_print(Ind, "\377G* You gain one free mimicry transformation of your choice! *");
 				p_ptr->free_mimic = 1;
 			}
+			if(p_ptr->lev == MID_PVP_LEVEL) {
+				msg_print(Ind, "\377G* You have raised quite a bit in ranks of PvP characters! *");
+				msg_print(Ind, "\377G*   For that, you just received a reward, and if you die you will *");
+				msg_print(Ind, "\377G*   also receive a deed on the next character you log in with.    *");
+		                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+			}
 			if(p_ptr->lev == MAX_PVP_LEVEL) {
 				msg_print(Ind, "\377G* You have reached the highest level available to PvP characters! *");
-				msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
-				msg_print(Ind, "\377G*   on the next character you log in with. *");
-				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_TOP);
+				msg_print(Ind, "\377G*   For that, you just received a reward, and if you die you will *");
+				msg_print(Ind, "\377G*   also receive a deed on the next character you log in with.    *");
+//				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
+		                give_reward(Ind, RESF_HIGH, "Gladiator's reward", 1, 0);
 			}
 		}
 
@@ -4297,8 +4306,8 @@ void monster_death(int Ind, int m_idx)
 
 	if (ge_training_tower && /* training tower event running? and we are there? */
 	    wild_info[wpos->wy][wpos->wx].tower && 
-	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y &&
-	    wpos->wz == wild_info[wpos->wy][wpos->wx].tower->maxdepth && wpos->wz > 0) { /* are we in town and in a tower and on top floor? */
+	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
+	    wpos->wz == WPOS_ARENA_Z) {
 		monster_desc(0, m_name, m_idx, 0x00);
 		msg_broadcast(0, format("\377S** %s has defeated %s! **", p_ptr->name, m_name));
 		s_printf("EVENT_RESULT: %s has defeated %s.\n", p_ptr->name, m_name);
@@ -4568,6 +4577,7 @@ void monster_death(int Ind, int m_idx)
 
 	if (p_ptr->r_killed[m_ptr->r_idx] < 1000)
 	{
+		int before = p_ptr->r_killed[m_ptr->r_idx];
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 	
 #ifdef RPG_SERVER
@@ -4598,10 +4608,15 @@ void monster_death(int Ind, int m_idx)
 		}
 #endif
 
+		if (p_ptr->r_killed[m_ptr->r_idx] > 1000)
+			p_ptr->r_killed[m_ptr->r_idx] = 1000;
+
 		if (i && i >= r_info[m_ptr->r_idx].level &&
-		    ((p_ptr->r_killed[m_ptr->r_idx] == r_info[m_ptr->r_idx].level) ||
+		    (before == 0 || /* <- for level 0 townspeople */
+		     before < r_info[m_ptr->r_idx].level) &&
+		    (p_ptr->r_killed[m_ptr->r_idx] >= r_info[m_ptr->r_idx].level ||
 		    /* for level 0 townspeople: */
-		    (p_ptr->r_killed[m_ptr->r_idx] == 1 && r_info[m_ptr->r_idx].level == 0)))
+		    r_info[m_ptr->r_idx].level == 0))
 		{
 			if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) || 
 			    ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(m_ptr->r_idx)) ||
@@ -4643,7 +4658,7 @@ if(cfg.unikill_format){
 		if (q_ptr->lev < 60)
 		titlebuf = player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male];
 		else
-		titlebuf = player_title_special[q_ptr->pclass][(q_ptr->lev < 99)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
+		titlebuf = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
 		if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
 		{
@@ -4826,7 +4841,7 @@ if(cfg.unikill_format){
 
 #ifdef ENABLE_STANCES
 					/* increase SKILL_STANCE by +1 automatically (just for show :-p) if we actually have that skill */
-					if (get_skill(p_ptr, SKILL_STANCE) >= 45000) {
+					if (get_skill(p_ptr, SKILL_STANCE) >= 45) {
 #if 0
 						p_ptr->s_info[SKILL_STANCE].value = 50000; /* set to final value, cant increase above this */
 						/* Update the client */
@@ -5501,6 +5516,33 @@ static void check_roller(Ind)
 }
 
 
+static void check_killing_reward(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+#if 0 /* mad cheeze incoming */
+	/* reward top gladiators */
+	if (p_ptr->kills >= 20) {
+		p_ptr->kills -= 20; /* reset! */
+		msg_broadcast_format(Ind, "\377y*** %s vanquished 20 opponents and is entitled to great reward! ***", p_ptr->name);
+		msg_print(Ind, "\377G* Gratulations, you killed 20 opposing gladiators!");
+		msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
+		msg_print(Ind, "\377G*   on the next character you log in with. *");
+		buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MASS);
+	}
+#endif
+
+#if 1
+	/* reward top gladiators */
+	if (p_ptr->kills >= 10) {
+		p_ptr->kills -= 10; /* reset! */
+		msg_broadcast_format(Ind, "\377y** %s vanquished 10 opponents! **", p_ptr->name);
+		msg_print(Ind, "\377G* Another 10 aggressors have fallen by your hands! *");
+		msg_print(Ind, "\377G* You received a reward! *");
+                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
+	}
+#endif
+}
+
 /*
  * Handle the death of a player and drop their stuff.
  */
@@ -5520,12 +5562,12 @@ void player_death(int Ind)
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	char buf[1024], o_name[160], m_name_extra[80], msg_layout = 'a';
-	int i, inventory_loss = 0, equipment_loss = 0, k, j;
+	int i, inventory_loss = 0, equipment_loss = 0, k, j, tries = 0;
+//	int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
 	bool hell=TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
-//	int inven_sort_map[INVEN_TOTAL];
 #ifdef RPG_SERVER
 	if (p_ptr->wpos.wz != 0) {
 		for (i = m_top-1; i >= 0; i--) {
@@ -5542,7 +5584,7 @@ void player_death(int Ind)
 	if (p_ptr->lev < 60)
 	titlebuf = player_title[p_ptr->pclass][((p_ptr->lev)/5 < 10)?(p_ptr->lev)/5 : 10][1 - p_ptr->male];
         else
-	titlebuf = player_title_special[p_ptr->pclass][(p_ptr->lev < 99)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
+	titlebuf = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_LEVEL)? (p_ptr->lev - 60)/10 : 4][1 - p_ptr->male];
 
         /* Amulet of immortality relieves from eating */
         o_ptr = &p_ptr->inventory[INVEN_NECK];
@@ -5568,16 +5610,16 @@ void player_death(int Ind)
 
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH) && !p_ptr->ghost) secure = TRUE;
 	
-	if (d_ptr && ge_training_tower &&
-	    (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y &&
-	    p_ptr->wpos.wz == d_ptr->maxdepth && p_ptr->wpos.wz > 0)) { /* are we in town and in a tower and on top floor? */
+	if (ge_training_tower &&
+	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
+	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
 		secure = TRUE;
 		ge_secure = TRUE; /* extra security for global events */
 	}
 	
 	if (pvp) {
 		secure = FALSE;
-		msg_layout = 'y';
+		msg_layout = 'L';
 	}
 
 	/* Hack -- amulet of life saving */
@@ -5607,7 +5649,7 @@ void player_death(int Ind)
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		/* Teleport him */
-		teleport_player(Ind, 200);
+		teleport_player(Ind, 200, TRUE);
 
 		/* Remove the death flag */
 		p_ptr->death = 0;
@@ -5624,6 +5666,7 @@ void player_death(int Ind)
 			p_ptr->recall_pos.wy=p_ptr->wpos.wy;
 			p_ptr->recall_pos.wz=0;
 			if (ge_secure) {
+				k = 0;
 				/* reset the monster :D */
 			        for (i = 1; i < m_max; i++) {
 			                m_ptr = &m_list[i];
@@ -5633,19 +5676,26 @@ void player_death(int Ind)
 						monster_desc(0, m_name_extra, i, 0x00);
 						m_name_extra[0] = toupper(m_name_extra[0]);
 						wipe_m_list(&p_ptr->wpos);
-						summon_override_check_all = TRUE;
+						summon_override_checks = 2;
 #if 1 /* GE_ARENA_ALLOW_EGO */
-						(void)summon_detailed_one_somewhere(&p_ptr->wpos, k, j, FALSE, 101);
+						while (!summon_detailed_one_somewhere(&p_ptr->wpos, k, j, FALSE, 101)
+						    && (++tries < 1000));
 #else
-						summon_specific_race_somewhere(&p_ptr->wpos, k, 100, 1);
+						while (!summon_specific_race_somewhere(&p_ptr->wpos, k, 100, 1)
+						    && (++tries < 1000));
 #endif
-						summon_override_check_all = FALSE;
+						summon_override_checks = 0;
 						break;
 					}
 				}
+				if (k) { /* usual */
+					msg_broadcast(0, format("\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
+					s_printf("EVENT_RESULT: %s has defeated %s.\n", m_name_extra, p_ptr->name);
+				} else { /* can happen if monster dies first, then player dies to monster DoT */
+					msg_broadcast(0, format("\377A** %s didn't survive! **", p_ptr->name));
+					s_printf("EVENT_RESULT: %s was defeated.\n", p_ptr->name);
+				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
-				msg_broadcast(0, format("\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
-				s_printf("EVENT_RESULT: %s has defeated %s.\n", m_name_extra, p_ptr->name);
 			}
 			else recall_player(Ind, "\377oYou die.. but your life was secured here!");
 
@@ -5716,47 +5766,29 @@ void player_death(int Ind)
 	
 	/* For global events (Highlander Tournament) */
 	/* either instakill in sector 0,0... */
-	if (p_ptr->global_event_temp & 0x2) hell = TRUE;
+	if (p_ptr->global_event_temp & PEVF_NOGHOST_00) hell = TRUE;
 	/* or instead teleport them to surface */
 	/* added wpos checks due to weirdness. -Molt */
-	if(p_ptr->wpos.wx != 0 && p_ptr->wpos.wy != 0 && p_ptr->global_event_temp & 0x4) {
+	if(p_ptr->wpos.wx != WPOS_SECTOR00_X && p_ptr->wpos.wy != WPOS_SECTOR00_Y && p_ptr->global_event_temp & PEVF_SAFEDUN_00) {
 		s_printf("Somethin weird with %s. GET is %d", p_ptr->name, p_ptr->global_event_temp);
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
-	if ((p_ptr->global_event_temp & 0x4) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == 0 && p_ptr->wpos.wy == 0) {
+	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y) {
 s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
-		p_ptr->global_event_temp &= ~0x4; /* no longer safe from death */
+		p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
 		p_ptr->recall_pos.wx = 0;
 		p_ptr->recall_pos.wy = 0;
 		p_ptr->recall_pos.wz = 0;
-		p_ptr->global_event_temp |= 0x1; /* pass through sector00separation */
+		p_ptr->global_event_temp |= PEVF_PASS_00; /* pass through sector00separation */
 		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 		recall_player(Ind, "");
 
-#if 0 /* Making him hostile isnt wanted if he can go back downstairs, btw. */
-#if 0
-		p_ptr->stormbringer = TRUE; /* let's make it similar to Stormbringer */
-		if (cfg.use_pk_rules == PK_RULES_DECLARE)
-		{
-			p_ptr->pkill|=PKILL_KILLABLE;
-			if (!(p_ptr->pkill & PKILL_KILLER) && !(p_ptr->pkill & PKILL_SET))
-				set_pkill(Ind, 1);
-		}
-#else
-		if (cfg.use_pk_rules == PK_RULES_DECLARE) {
-			p_ptr->pkill|=PKILL_KILLABLE;
-			p_ptr->pkill|=PKILL_KILLER;/* for ranged targetting */
-			p_ptr->pkill|=PKILL_SET;
-			p_ptr->stormbringer = TRUE;/* for melee */
-		}
-#endif
-#endif
 		/* Teleport him */
-		teleport_player(Ind, 200);
+		teleport_player(Ind, 200, TRUE);
 		/* Remove the death flag */
 		p_ptr->death = 0;
 		p_ptr->ghost = 0;
@@ -5899,7 +5931,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
+s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PVP ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 
 #if CHATTERBOX_LEVEL > 2
 			if (p_ptr->last_words)
@@ -5930,7 +5962,34 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 		/* Reward the killer if it was a PvP-mode char */
 		if (pvp) {
 			int killer = name_lookup_loose_quiet(Ind, p_ptr->really_died_from, FALSE);
+
+			/* reward him again, making restarting easier */
+			if (p_ptr->max_plv == MID_PVP_LEVEL)
+				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MID);
+			if (p_ptr->max_plv == MAX_PVP_LEVEL)
+				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
+
 			if (killer) {
+				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
+				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
+				else Players[killer]->kills_equal++;
+
+#if 0 /* only reward exp for killing same level or higher players */
+				if (Players[killer]->max_plv <= p_ptr->max_plv) {
+					/* note how expfact isn't multiplied, so a difference between the races remains :) */
+					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+				}
+#else /* reward exp for all player-kills, but less for killing lower level chars */
+				if (Players[killer]->max_plv <= p_ptr->max_plv) {
+					/* note how expfact isn't multiplied, so a difference between the races/classes remains, as usual */
+					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+				} else {
+					/* get less exp if player was lower than killer, dropping rapidly */
+					k = 2 + Players[killer]->lev - p_ptr->max_plv;//2+k; k*k+0; *12/
+					gain_exp(killer, ((player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * 10) / ((k * k) - 2));
+				}
+#endif
+
 				/* get victim's kills credited as own ones >:) */
 				Players[killer]->kills += p_ptr->kills;
 				Players[killer]->kills_lower += p_ptr->kills_lower;
@@ -5938,22 +5997,37 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 				Players[killer]->kills_higher += p_ptr->kills_higher;
 
 				Players[killer]->kills++;
-				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
-				else {
-					if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
-					else Players[killer]->kills_equal++;
-					/* note how expfact isn't multiplied, so a difference between the races remains :) */
-					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+				check_killing_reward(killer);
+			} else { /* killed by monster/trap? still reward nearby pvp players! */
+				int players_in_area = 0, avg_kills;
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (is_admin(Players[i])) continue;
+					if (Players[i]->conn == NOT_CONNECTED) continue;
+					if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+					if (!(Players[i]->mode & MODE_PVP)) continue;
+					players_in_area++;
 				}
+				if (players_in_area) {
 				
-				/* reward top gladiators */
-				if (Players[killer]->kills >= 20) {
-					Players[killer]->kills = 0; /* reset! */
-					msg_broadcast_format(Ind, "\377y*** %s vanquished 20 opponents and is entitled to great reward! ***", Players[killer]->name);
-					msg_print(Ind, "\377G* Gratulations, you killed 20 opposing gladiators!");
-					msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
-					msg_print(Ind, "\377G*   on the next character you log in with. *");
-					buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MASS);
+					/* give everyone a 'share' of the kills */
+#if 0 /* round downwards */
+					avg_kills = p_ptr->kills / players_in_area;
+					/* at least give 1 kill if player had one */
+					if (!avg_kills && p_ptr->kills) avg_kills = 1;
+#else /* round upwards! generous */
+					avg_kills = (p_ptr->kills + players_in_area - 1) / players_in_area;
+#endif
+					/* get victim's kills credited as own ones >:) */
+					for (i = 1; i <= NumPlayers; i++) {
+						if (i == Ind) continue;
+						if (is_admin(Players[i])) continue;
+						if (Players[i]->conn == NOT_CONNECTED) continue;
+						if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+						if (!(Players[i]->mode & MODE_PVP)) continue;
+						Players[i]->kills += avg_kills;
+						check_killing_reward(i);
+					}
 				}
 			}
 		}
@@ -6035,7 +6109,7 @@ s_printf("CHARACTER_TERMINATION: NOGHOST race=%s ; class=%s\n", race_info[p_ptr-
 	
 					/* Artifacts cannot be dropped after all */	
 					/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-					if (cfg.anti_arts_hoard || (getlevel(&p_ptr->wpos) == 200 && p_ptr->wpos.wz == 1))
+					if (cfg.anti_arts_hoard || (getlevel(&p_ptr->wpos) == 200))
     					{
 						/* set the artifact as unfound */
 						handle_art_d(o_ptr->name1);
@@ -6193,7 +6267,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	} else {
-		if (getlevel(&p_ptr->wpos) == 200 && p_ptr->wpos.wz == 1)
+		if (getlevel(&p_ptr->wpos) == 200)
 			snprintf(buf, sizeof(buf), "\377vThe unbeatable %s has retired to the shores of valinor.", p_ptr->name);
 		else
 			snprintf(buf, sizeof(buf), "\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
@@ -6305,7 +6379,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 				/* Artifacts cannot be dropped after all */	
 				/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-				if ((cfg.anti_arts_hoard) || (getlevel(&p_ptr->wpos) == 200 && p_ptr->wpos.wz == 1))
+				if ((cfg.anti_arts_hoard) || (getlevel(&p_ptr->wpos) == 200))
 				{
 					/* set the artifact as unfound */
 					handle_art_d(o_ptr->name1);
@@ -6528,7 +6602,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 		/* Teleport him */
 		/* XXX p_ptr->death allows teleportation even when NO_TELE etc. */
-		teleport_player(Ind, 200);
+		teleport_player(Ind, 200, TRUE);
 
 		/* Hack -- Give him/her the newbie death guide */
 //		if (p_ptr->max_plv < 20)	/* Now it's for everyone */
@@ -7000,7 +7074,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	update_health(m_idx);
 
 	/* Change monster's highest player encounter - mode 1+ : a player targetted this monster */
-	if (m_ptr->wpos.wx != 32 || m_ptr->wpos.wy != 32 || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
+	if (m_ptr->wpos.wx != cfg.town_x || m_ptr->wpos.wy != cfg.town_y || m_ptr->wpos.wz != 0) { /* not in Bree, because of Halloween :) */
 		if (m_ptr->highest_encounter < p_ptr->max_lev) m_ptr->highest_encounter = p_ptr->max_lev;
 	}
 
@@ -8340,10 +8414,6 @@ bool target_set(int Ind, int dir)
 
 			/* Ignore players we aren't hostile to */
 			if (!check_hostile(Ind, i)) {
-#if 0 /* bug, this should be removed, check_hostile is enough - C. Blue */
-			/* For Highlander Tournament: Don't ignore any players if we're PKILLERs! - C. Blue */
-				if (!((p_ptr->pkill & PKILL_KILLER) && (q_ptr->pkill & PKILL_KILLABLE)))
-#endif
 					continue;
 			}
 			/* Ignore "unreasonable" players */
@@ -9521,17 +9591,30 @@ bool master_level(int Ind, char * parms)
 		}
 		case 'R':
 		{
-			cave_type **zcave;
 			/* Remove dungeon (here) if it exists */
-			if((zcave=getcave(&p_ptr->wpos))){
+			cave_type **zcave;
+			if(!(zcave=getcave(&p_ptr->wpos))) break;
+
+			/* either remove the dungeon we're currently in */
+			if (p_ptr->wpos.wz) {
+				if (p_ptr->wpos.wz < 0) {
+					p_ptr->recall_pos.wz = 0;
+					recall_player(Ind, "");
+					remdungeon(&p_ptr->wpos, 0);
+				} else {
+					p_ptr->recall_pos.wz = 0;
+					recall_player(Ind, "");
+					remdungeon(&p_ptr->wpos, 1);
+				}
+			} else { /* or the one whose entrance staircase we're standing on */
 				switch(zcave[p_ptr->py][p_ptr->px].feat){
 					case FEAT_MORE:
 						remdungeon(&p_ptr->wpos, 0);
-						zcave[p_ptr->py][p_ptr->px].feat=FEAT_GRASS;
+						zcave[p_ptr->py][p_ptr->px].feat = FEAT_GRASS;
 						break;
 					case FEAT_LESS:
 						remdungeon(&p_ptr->wpos, 1);
-						zcave[p_ptr->py][p_ptr->px].feat=FEAT_GRASS;
+						zcave[p_ptr->py][p_ptr->px].feat = FEAT_GRASS;
 						break;
 					default:
 						msg_print(Ind, "There is no dungeon here");
@@ -9870,7 +9953,7 @@ bool master_summon(int Ind, char * parms)
 
 	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return FALSE;
 
-summon_override_check_all = TRUE; /* set admin summoning flag for overriding all validity checks */
+summon_override_checks = 1; /* set admin summoning flag for overriding all validity checks */
 
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms)
@@ -9962,7 +10045,7 @@ summon_override_check_all = TRUE; /* set admin summoning flag for overriding all
 		}
 	}
 
-summon_override_check_all = FALSE; /* clear all override flags (paranoia? dunno) */
+summon_override_checks = 0; /* clear all override flags (paranoia? dunno) */
 
 	return TRUE;
 }

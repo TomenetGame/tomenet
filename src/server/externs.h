@@ -391,6 +391,11 @@ extern auction_type *auctions;
 extern int auction_alloc;
 #endif
 
+/* Array used by everyone_lite_later_spot */
+struct worldspot *lite_later;
+int lite_later_alloc;
+int lite_later_num;
+
 /*
  * The spell list of schools
  */
@@ -477,6 +482,8 @@ extern void update_players(void);
 
 extern int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags);
 extern bool allow_terraforming(struct worldpos *wpos, byte feat);
+extern void everyone_lite_later_spot(struct worldpos *wpos, int y, int x);
+
 
 /* cmd1.c */
 extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y);
@@ -662,6 +669,9 @@ extern cptr value_check_aux2(object_type *o_ptr);
 extern cptr value_check_aux1_magic(object_type *o_ptr);
 extern cptr value_check_aux2_magic(object_type *o_ptr);
 
+extern void process_timers(void);
+extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
+
 /* files.c */
 extern int highscore_send(char *buffer, int max);
 extern s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2);
@@ -782,6 +792,7 @@ extern void delete_monster_idx(int i, bool unfound_art);
 extern void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_art);
 extern void wipe_m_list(struct worldpos *wpos);
 extern void wipe_m_list_chance(struct worldpos *wpos, int chance);
+extern void wipe_m_list_roaming(struct worldpos *wpos);
 extern void compact_monsters(int size, bool purge);
 extern s16b m_pop(void);
 extern errr get_mon_num_prep(void);
@@ -795,6 +806,7 @@ extern void update_monsters(bool dist);
 extern void update_player(int Ind);
 extern void update_players(void);
 extern bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning);
+extern bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning);
 extern bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp);
 #ifdef RPG_SERVER
 extern bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
@@ -966,6 +978,7 @@ extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool gr
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf);
 extern void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf);
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
+extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
 extern void place_gold(struct worldpos *wpos, int y, int x, int bonus);
 extern s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
@@ -1066,6 +1079,7 @@ extern void clockin(int Ind, int type);
 extern int newid(void);
 
 extern void scan_players(void);
+extern void scan_accounts(void);
 extern void erase_player_name(char *pname);
 extern void rename_player_name(char *pnames);
 extern void checkexpiry(int Ind, int days);
@@ -1112,7 +1126,7 @@ extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
 extern bool teleport_away(int m_idx, int dis);
-extern void teleport_player(int Ind, int dis);
+extern bool teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_force(int Ind, int dis);
 extern void teleport_player_to(int Ind, int ny, int nx);
 extern void teleport_player_level(int Ind);
@@ -1127,6 +1141,8 @@ extern bool inc_stat(int Ind, int stat);
 extern bool dec_stat(int Ind, int stat, int amount, int mode);
 extern bool res_stat(int Ind, int stat);
 extern bool apply_disenchant(int Ind, int mode);
+extern bool apply_discharge(int Ind, int dam);
+extern bool apply_discharge_item(int o_idx, int dam);
 extern bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker);
 extern bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int typ, int flg, char *attacker);
 extern int set_all_destroy(object_type *o_ptr);
@@ -1176,6 +1192,7 @@ extern bool detect_magic(int Ind, int rad);
 extern bool detect_invisible(int Ind);
 extern bool detect_evil(int Ind);
 extern bool detect_creatures(int Ind);
+extern void detect_monsters_forced(int Ind);
 extern bool detection(int Ind, int rad);
 extern bool detect_bounty(int Ind, int rad);
 extern bool detect_object(int Ind, int rad);
@@ -1699,7 +1716,7 @@ extern u32b achievement_buffer_ID[128];
 extern int achievement_buffer_deed[128];
 
 /* for temporary disabling all validity checks when a dungeon master/wizard summons something - C. Blue */
-extern bool summon_override_check_all;
+extern int summon_override_checks;
 /* Morgoth may override the no-destroy flag (other monsters too, if needed) */
 extern bool override_LF1_NO_DESTROY;
 

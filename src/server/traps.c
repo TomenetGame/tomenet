@@ -1048,7 +1048,7 @@ break;
 		{
 			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || (p_ptr->res_tele && (rand_int(100) < 67))) break;
 			msg_print(Ind, "The world whirls around you.");
-			teleport_player(Ind, RATIO*67);
+			teleport_player(Ind, RATIO*67, TRUE);
 			ident=TRUE;
 			break;
 		}
@@ -3189,7 +3189,7 @@ void place_trap(struct worldpos *wpos, int y, int x, int mod)
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+	if (getlevel(wpos) == 200) return;
 
 	/* No traps over traps/house doors etc */
 	/* TODO: allow traps on jumpgates/fountains etc */
@@ -3282,7 +3282,7 @@ void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found
 	/* No traps in Bree - C. Blue */
 	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0) return;
 	/* Nor in Valinor */
-	if ((getlevel(wpos) == 200) && (wpos->wz == 1)) return;
+	if (getlevel(wpos) == 200) return;
 
 	/* No traps over traps/house doors etc */
 	/* TODO: allow traps on jumpgates/fountains etc */

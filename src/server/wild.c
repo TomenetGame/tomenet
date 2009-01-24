@@ -313,6 +313,10 @@ void wild_spawn_towns()
 
 		wpos.wy = y;
 		wpos.wx = x;
+		
+		/* reserve sector 0,0 for special occasions, such as
+		   Highlander Tournament dungeon and PvP Arena tower - C. Blue */
+		if (!y && !x) retry = TRUE; /* ((sector00separation)) */
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
@@ -739,7 +743,7 @@ void wild_add_monster(struct worldpos *wpos)
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
-	if (sector00separation && !wpos->wx && !wpos->wy) return;
+	if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y) return;
 
 	/* reset the monster sorting function */	
 	switch(wild_info[wpos->wy][wpos->wx].type)
@@ -3055,9 +3059,9 @@ void wilderness_gen(struct worldpos *wpos)
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
 	if((w_ptr->flags & WILD_F_UP) && can_go_up(wpos, 0x1))
-		zcave[w_ptr->dn_y][w_ptr->dn_x].feat=FEAT_LESS;
+		zcave[w_ptr->dn_y][w_ptr->dn_x].feat = FEAT_LESS;
 	if((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1))
-		zcave[w_ptr->up_y][w_ptr->up_x].feat=FEAT_MORE;
+		zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
 	/* TODO: add 'inscription' to the dungeon/tower entrances */
 
 	/* Day Light */

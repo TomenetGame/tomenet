@@ -8567,23 +8567,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		dun->l_ptr->hgt = MAX_HGT;
 	}
 
-	/* not too big levels for 'Arena Monster Challenge' event */
-	if (ge_training_tower &&
-	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0 &&
-	    wpos->wz == d_ptr->maxdepth) {
-		dun->l_ptr->wid = MAX_WID  / 2;
-		dun->l_ptr->hgt = MAX_HGT  / 2;
-	}
-
 #ifdef ARCADE_SERVER
 	dun->l_ptr->hgt = SCREEN_HGT*2;
 	dun->l_ptr->wid = SCREEN_WID*2;
 #endif
-
-//	if ((dun->l_ptr->wid <= SCREEN_WID) && (dun->l_ptr->hgt <= SCREEN_HGT)) tiny_level = TRUE;
-
-	/* So as not to generate too 'crowded' levels */
-	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 
 	dun->l_ptr->flags1 = 0;
 	if (dun_level < 100 && magik(NO_MAGIC_CHANCE)) dun->l_ptr->flags1 |= LF1_NO_MAGIC;
@@ -8616,6 +8603,20 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	    ((d_ptr->flags2 & DF2_IRONFIX3) && !(wpos->wz % 15)) ||
 	    ((d_ptr->flags2 & DF2_IRONFIX4) && !(wpos->wz % 20))))
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
+
+	/* not too big levels for 'Arena Monster Challenge' event */
+	if (ge_training_tower &&
+	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
+		dun->l_ptr->wid = MAX_WID  / 2;
+		dun->l_ptr->hgt = MAX_HGT  / 2;
+		dun->l_ptr->flags1 &= ~(LF1_NO_MAGIC | LF1_NO_GENO | LF1_NOMAP | LF1_NO_MAGIC_MAP);
+		dun->l_ptr->flags1 |= LF1_NO_DESTROY;
+	}
+
+//	if ((dun->l_ptr->wid <= SCREEN_WID) && (dun->l_ptr->hgt <= SCREEN_HGT)) tiny_level = TRUE;
+
+	/* So as not to generate too 'crowded' levels */
+	dun->ratio = 100 * dun->l_ptr->wid * dun->l_ptr->hgt / MAX_HGT / MAX_WID;
 
 	/* Possible cavern */
 	if (rand_int(dun_level) > DUN_CAVERN && magik(DUN_CAVERN2))
@@ -9078,7 +9079,7 @@ if (!nether_bottom) {
 		}
 
 		/* Hack -- add *more* downstairs for Highlander Tournament event */
-		if (sector00separation && !wpos->wz && !wpos->wy && dun_level > COMFORT_PASSAGE_DEPTH)
+		if (sector00separation && wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz < 0 && dun_level > COMFORT_PASSAGE_DEPTH)
 		{
 			/* Place 3 or 4 down stairs near some walls */
 			alloc_stairs(wpos, (d_ptr->flags1 & DF1_FLAT) ? FEAT_WAY_MORE : FEAT_MORE, rand_range(2, 4), 2);
@@ -9372,7 +9373,7 @@ for(mx = 1; mx < 131; mx++) {
 		if (build_special_store == 2)
 			dungeon_store2_timer = 2 + rand_int(cfg.dungeon_shop_timeout); /* reset timeout (in minutes) */
 	/* build only one special shop in the Nether Realm */
-	} else if (((dun_level - 166) % 5 != 0) || (dun_level == 196)) return;
+	} else if (((dun_level - 166) % 5 != 0) || (dun_level == 166 + 30)) return;
 	/* Try to create a dungeon store */
 	if ((rand_int(1000) < cfg.dungeon_shop_chance) || nether_level || (build_special_store == 3))
 	{
@@ -10590,14 +10591,18 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 		save_guildhalls(wpos);	/* has to be done here */
 
                 /* remove 'deposited' true artefacts from wilderness */
-		for(i = 0; i < o_max; i++){
-			o_ptr = &o_list[i];
-                        if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) && true_artifact_p(o_ptr)) {
-			        object_desc(0, o_name, o_ptr, FALSE, 0);
-				s_printf("WILD_ART_DEALLOC: %s of %s erased at (%d, %d, %d)\n", o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
-                        	handle_art_d(o_ptr->name1);
-				WIPE(o_ptr, object_type);
-    	    		}
+		if (cfg.anti_arts_wild) {
+			for(i = 0; i < o_max; i++){
+				o_ptr = &o_list[i];
+	                        if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
+				    true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr)) {
+				        object_desc(0, o_name, o_ptr, FALSE, 0);
+					s_printf("WILD_ART_DEALLOC: %s of %s erased at (%d, %d, %d)\n",
+					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+	                        	handle_art_d(o_ptr->name1);
+					WIPE(o_ptr, object_type);
+    	    			}
+			}
 	        }
 	}
 

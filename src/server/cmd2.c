@@ -67,7 +67,7 @@ void do_cmd_go_up(int Ind)
 	}
 
 	/* not for some global events (Highlander Tournament) */
-	if ((p_ptr->global_event_temp & 0x2) && (p_ptr->wpos.wz == -1)) {
+	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == -1)) {
 		msg_print(Ind, "The staircase is blocked.");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -126,7 +126,8 @@ void do_cmd_go_up(int Ind)
 #endif
 
 	/* For Highlander Tournament */
-	if (wpos->wz==0 && wpos->wy==0 && wpos->wx==0 && !(p_ptr->global_event_temp & 0x1)) { /* not while passing sector00separation */
+	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
+	    && !(p_ptr->global_event_temp & PEVF_SEPDUN_00)) { /* not while passing sector00separation */
 		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -363,9 +364,10 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-#if 0 //let's give them another chance
+#if 0  // outdated code, just remove probably
+    //let's give them another chance
 	/* not for some global events (Highlander Tournament) */
-	if ((p_ptr->global_event_temp & 0x2) && (p_ptr->wpos.wz == 0)) {
+	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == 0)) {
 		msg_print(Ind, "The staircase is blocked.");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -471,6 +473,12 @@ void do_cmd_go_down(int Ind)
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
+
+	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
+	    && !(p_ptr->global_event_temp & PEVF_SEPDUN_00)) { /* not while passing sector00separation */
+		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
+		if (!is_admin(p_ptr)) return;
+	}
 
 /*	if(wpos->wz>0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
 	if(wpos->wz>0 && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
@@ -3262,14 +3270,18 @@ static void do_arrow_brand_effect(int Ind, int y, int x)
 void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might)
 {
 //	player_type *p_ptr = Players[Ind];
-	int rad = 0, dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
+	int rad = 0;
+//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 2 * ((might/3)+1);
+//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + o_ptr->to_d) * 4;
+//	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 5) * 3 + o_ptr->to_d;
+	int dam = (damroll(o_ptr->dd, o_ptr->ds) + 10) * 2 + o_ptr->to_d;
 	int flag = PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_JUMP;
 
 	switch(o_ptr->sval)
 	{
-		case SV_AMMO_LIGHT: rad = 2; dam /= 2; break;
+		case SV_AMMO_LIGHT: rad = 2;; break;
 		case SV_AMMO_NORMAL: rad = 3; break;
-		case SV_AMMO_HEAVY: rad = 4; dam *= 2; break;
+		case SV_AMMO_HEAVY: rad = 4; break;
 		//case SV_AMMO_MAGIC <- magic arrows only, don't explode
 		case SV_AMMO_SILVER: rad = 3; break;
 	}
@@ -3383,6 +3395,13 @@ void do_cmd_fire(int Ind, int dir)
 
 	int                     missile_attr;
 	int                     missile_char;
+
+#ifdef OPTIMIZED_ANIMATIONS
+	/* Projectile path */
+	int path_y[MAX_RANGE];
+	int path_x[MAX_RANGE];
+	int path_num = 0;
+#endif
 	
 	char brand_msg[80] = { '\0' };
 
@@ -3602,7 +3621,9 @@ void do_cmd_fire(int Ind, int dir)
 		/* hack - allow use of magic ammo for flare now,
 		   but in that case make it non-returning since it burns on the floor,
 		   serving as light source, as normal ammo would */
-		if (!magic) p_ptr->ranged_flare = FALSE;
+		/* make sure artifact magic ammo doesn't work for 'flare'
+		   because we don't want arts to get destroyed */
+		if (!magic || artifact_p(o_ptr)) p_ptr->ranged_flare = FALSE;
 	}
 
 	/* Use the proper number of shots */
@@ -3815,6 +3836,7 @@ void do_cmd_fire(int Ind, int dir)
 			x = nx;
 			y = ny;
 
+#ifndef OPTIMIZED_ANIMATIONS
 			/* Save the old "player pointer" */
 			q_ptr = p_ptr;
 
@@ -3858,6 +3880,17 @@ void do_cmd_fire(int Ind, int dir)
 
 			/* Restore the player pointer */
 			p_ptr = q_ptr;
+
+#else /* OPTIMIZED_ANIMATIONS */
+
+			/* Save the projectile path */
+			if (path_num < MAX_RANGE)
+			{
+				path_y[path_num] = y;
+				path_x[path_num] = x;
+				path_num++;
+			}
+#endif /* OPTIMIZED_ANIMATIONS */
 
 			/* Player here, hit him */
 			if (zcave[y][x].m_idx < 0)
@@ -4425,6 +4458,7 @@ void do_cmd_fire(int Ind, int dir)
 		else break;
 	}
 
+#ifndef OPTIMIZED_ANIMATIONS
 	/* Back in the U.S.S.R */
 	if (boomerang && !breakage)
 	{
@@ -4498,6 +4532,57 @@ void do_cmd_fire(int Ind, int dir)
 		/* Restore the player pointer */
 		p_ptr = q_ptr;
 	}
+#endif /* OPTMIZED_ANIMATIONS */
+
+#ifdef OPTIMIZED_ANIMATIONS
+	if (path_num) {
+		/* Pick a random spot along the path */
+		j = rand_int(path_num);
+		ny = path_y[j];
+		nx = path_x[j];
+
+		/* Save the old "player pointer" */
+		q_ptr = p_ptr;
+
+		/* Draw a projectile here for everyone */
+		for (i = 1; i < NumPlayers + 1; i++)
+		{
+			int dispx, dispy;
+
+			/* Use this player */
+			p_ptr = Players[i];
+
+			/* If he's not playing, skip him */
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
+
+			/* If he's not here, skip him */
+			if(!inarea(&p_ptr->wpos, wpos))
+				continue;
+
+			/* The player can see the (on screen) missile */
+			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx))
+			{
+				/* Draw */
+				dispy = ny - p_ptr->panel_row_prt;
+				dispx = nx - p_ptr->panel_col_prt;
+
+				/* Remember the projectile */
+				p_ptr->scr_info[dispy][dispx].c = missile_char;
+				p_ptr->scr_info[dispy][dispx].a = missile_attr;
+
+				/* Tell the client */
+				Send_char(i, dispx, dispy, missile_attr, missile_char);
+			}
+
+			/* Restore later */
+			everyone_lite_later_spot(wpos, ny, nx);
+		}
+
+		/* Restore the player pointer */
+		p_ptr = q_ptr;
+	}
+#endif /* OPTIMIZED_ANIMATIONS */
 
 	/* Hack -- "Never litter the floor" inscription {!g} */
 	if(check_guard_inscription(o_ptr->note, 'g') )
@@ -4717,6 +4802,13 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 	int                     missile_attr;
 	int                     missile_char;
 
+#ifdef OPTIMIZED_ANIMATIONS
+	/* Projectile path */
+	int path_y[MAX_RANGE];
+	int path_x[MAX_RANGE];
+	int path_num = 0;
+#endif
+
 	char            o_name[160];
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -4924,7 +5016,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 		x = nx;
 		y = ny;
 
-
+#ifndef OPTIMIZED_ANIMATIONS
 		/* Save the old "player pointer" */
 		q_ptr = p_ptr;
 
@@ -4969,6 +5061,16 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 		/* Restore the player pointer */
 		p_ptr = q_ptr;
 
+#else /* OPTIMIZED_ANIMATIONS */
+
+		/* Save the projectile path */
+		if (path_num < MAX_RANGE)
+		{
+			path_y[path_num] = y;
+			path_x[path_num] = x;
+			path_num++;
+		}
+#endif /* OPTIMIZED_ANIMATIONS */
 
 		/* Player here, try to hit him */
 		if (zcave[y][x].m_idx < 0)
@@ -5166,6 +5268,56 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 			}
 		}
 	}
+
+#ifdef OPTIMIZED_ANIMATIONS
+	if (path_num) {
+		/* Pick a random spot along the path */
+		j = rand_int(path_num);
+		ny = path_y[j];
+		nx = path_x[j];
+
+		/* Save the old "player pointer" */
+		q_ptr = p_ptr;
+
+		/* Draw a projectile here for everyone */
+		for (i = 1; i < NumPlayers + 1; i++)
+		{
+			/* Use this player */
+			p_ptr = Players[i];
+
+			/* If he's not playing, skip him */
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
+
+			/* If he's not here, skip him */
+			if(!inarea(&p_ptr->wpos, wpos))
+				continue;
+
+			/* The player can see the (on screen) missile */
+			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx))
+			{
+				int dispx, dispy;
+
+				/* Draw */
+				dispy = ny - p_ptr->panel_row_prt;
+				dispx = nx - p_ptr->panel_col_prt;
+
+				/* Remember the projectile */
+				p_ptr->scr_info[dispy][dispx].c = missile_char;
+				p_ptr->scr_info[dispy][dispx].a = missile_attr;
+
+				/* Tell the client */
+				Send_char(i, dispx, dispy, missile_attr, missile_char);
+			}
+
+			/* Restore later */
+			everyone_lite_later_spot(wpos, y, x);
+		}
+
+		/* Restore the player pointer */
+		p_ptr = q_ptr;
+	}
+#endif /* OPTIMIZED_ANIMATIONS */
 
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);

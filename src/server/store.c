@@ -953,11 +953,17 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 	if (o_ptr->tval == TV_KEY) return (FALSE);
 
 	/* This prevents suicide-cheeze */
-#if STARTEQ_TREATMENT == 3
+#if 0 /* changed to allow selling own level 0 rewards that weren't discounted */
+ #if STARTEQ_TREATMENT == 3
 	if (o_ptr->level < 1) return (FALSE);
-#endif
-#if STARTEQ_TREATMENT == 2
+ #endif
+ #if STARTEQ_TREATMENT == 2
 	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return (FALSE);
+ #endif
+#else
+ #if STARTEQ_TREATMENT > 1
+	if ((o_ptr->level < 1) && (o_ptr->owner != p_ptr->id)) return (FALSE);
+ #endif
 #endif
 	/* Assume okay */
 	return (TRUE);
@@ -2316,6 +2322,7 @@ void store_stole(int Ind, int item)
 	{
 //s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 /* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
+//if (chance > 10)
 s_printf("%s Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", showtime(), p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
@@ -4189,7 +4196,7 @@ void home_sell(int Ind, int item, int amt)
 
 #endif
 
-	if (cfg.anti_arts_house && true_artifact_p(o_ptr))
+	if (cfg.anti_arts_house && true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr))
 	{
 		/* Oops */
 		msg_print(Ind, "You cannot stock artifacts.");
@@ -4835,13 +4842,16 @@ void reward_deed_item(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;
 	object_type *o2_ptr = &p_ptr->inventory[item];
+	int lev = 0, dis = 100;
+
 	WIPE(o_ptr, object_type);
 
 	if (o2_ptr->tval != TV_PARCHMENT || o2_ptr->sval < SV_DEED_HIGHLANDER) {
 		msg_print(Ind, "That's not a deed.");
 		return;
 	}
-	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+//	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+	if (o2_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "\377oYou can only redeem your own deeds for items.");
 		return;
 	}
@@ -4849,11 +4859,6 @@ void reward_deed_item(int Ind, int item)
 	switch (o2_ptr->sval) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000); /* 95 is default depth for highlander tournament */
-                object_aware(Ind, o_ptr);
-                object_known(o_ptr);
-                o_ptr->discount = 100;
-                o_ptr->level = 0;
-                o_ptr->ident |= ID_MENTAL;
 		o_ptr->note = quark_add("Highlander reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
@@ -4862,27 +4867,32 @@ void reward_deed_item(int Ind, int item)
 		msg_print(Ind, "\377yAfter examining the deed, the mayor tells you that they don't have any");
 		msg_print(Ind, "\377yitems for rewards, but he suggests that you get a blessing instead!");
 		return;
-	case SV_DEED_PVP_TOP:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000); /* 95 is default depth for highlander tournament */
-                object_aware(Ind, o_ptr);
-                object_known(o_ptr);
-                o_ptr->discount = 100;
-                o_ptr->level = 0;
-                o_ptr->ident |= ID_MENTAL;
+	case SV_DEED_PVP_MAX:
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_HIGH, 3000);
 		o_ptr->note = quark_add("PvP reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		dis = 0;
+		break;
+	case SV_DEED_PVP_MID:
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000);
+		o_ptr->note = quark_add("PvP reward");
+		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
+		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		dis = 0;
 		break;
 	case SV_DEED_PVP_MASS:
-		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000); /* 95 is default depth for highlander tournament */
-                object_aware(Ind, o_ptr);
-                object_known(o_ptr);
-                o_ptr->discount = 100;
-                o_ptr->level = 0;
-                o_ptr->ident |= ID_MENTAL;
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MID, 3000);
 		o_ptr->note = quark_add("PvP reward");
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applaudes!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
+		dis = 0;
+		break;
+	case SV_DEED_PVP_START:
+		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_LOW2, 3000);
+		o_ptr->note = quark_add("");
+		msg_print(Ind, "\377GThe mayor's secretary hands you an item and gives you a supportive pat.");
+		lev = 1; dis = 0;
 		break;
 	default:
 		msg_print(Ind, "\377oAfter examining the deed, the mayor tells you that they don't have any");
@@ -4895,7 +4905,13 @@ void reward_deed_item(int Ind, int item)
         inven_item_describe(Ind, item);
         inven_item_optimize(Ind, item);
 
-	/* give him the reward item after taking the deed */
+	/* finalize reward */
+        object_aware(Ind, o_ptr);
+        object_known(o_ptr);
+        o_ptr->discount = dis;
+        o_ptr->level = lev;
+        o_ptr->ident |= ID_MENTAL;
+	/* give him the reward item after taking the deed(!) */
 	if (o_ptr->k_idx) inven_carry(Ind, o_ptr);
 
         /* Handle stuff */
@@ -4911,7 +4927,8 @@ void reward_deed_blessing(int Ind, int item)
 		msg_print(Ind, "That's not a deed.");
 		return;
 	}
-	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+//	if (!o2_ptr->level && o2_ptr->owner != p_ptr->id) {
+	if (o2_ptr->owner != p_ptr->id) {
 		switch (o2_ptr->sval) {
 		/* all contender's deeds: */
 		case SV_DEED2_HIGHLANDER:

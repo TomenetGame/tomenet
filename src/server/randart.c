@@ -112,19 +112,21 @@ static void do_curse (artifact_type *a_ptr)
 {
 	/* Some chance of picking up these flags */
 	if (rand_int (3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
-	if (rand_int (5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
-	if (rand_int (8) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
-	if (rand_int (11) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
-	if (rand_int (7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
+	if (!is_ammo(a_ptr->tval)) {
+		if (rand_int (5) == 0) a_ptr->flags3 |= TR3_DRAIN_EXP;
+		if (rand_int (8) == 0) a_ptr->flags5 |= TR5_DRAIN_MANA;
+		if (rand_int (11) == 0) a_ptr->flags5 |= TR5_DRAIN_HP;
+		if (rand_int (7) == 0) a_ptr->flags3 |= TR3_TELEPORT;
+	}
 
 	/* Some chance or reversing good bonuses */
-	if ((a_ptr->pval > 0) && (rand_int (2) == 0)) a_ptr->pval = -a_ptr->pval;
+	if (!is_ammo(a_ptr->tval) && (a_ptr->pval > 0) && (rand_int (2) == 0)) a_ptr->pval = -a_ptr->pval;
 	if ((a_ptr->to_a > 0) && (rand_int (2) == 0)) a_ptr->to_a = -a_ptr->to_a;
 	if ((a_ptr->to_h > 0) && (rand_int (2) == 0)) a_ptr->to_h = -a_ptr->to_h;
 	if ((a_ptr->to_d > 0) && (rand_int (4) == 0)) a_ptr->to_d = -a_ptr->to_d;
 
 	/* Some chance of making bad bonuses worse */
-	if ((a_ptr->pval < 0) && (rand_int (2) == 0)) a_ptr->pval -= rand_int(2);
+	if (!is_ammo(a_ptr->tval) && (a_ptr->pval < 0) && (rand_int (2) == 0)) a_ptr->pval -= rand_int(2);
 	if ((a_ptr->to_a < 0) && (rand_int (2) == 0)) a_ptr->to_a -= 3 + rand_int(10);
 	if ((a_ptr->to_h < 0) && (rand_int (2) == 0)) a_ptr->to_h -= 3 + rand_int(6);
 	if ((a_ptr->to_d < 0) && (rand_int (4) == 0)) a_ptr->to_d -= 3 + rand_int(6);
@@ -139,9 +141,6 @@ static void do_curse (artifact_type *a_ptr)
 
 	/* Always light curse the item */
 	a_ptr->flags3 |= TR3_CURSED;
-
-	/* Chance of heavy curse */
-	if (rand_int (4) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
 }
 
 /* 
@@ -149,8 +148,9 @@ static void do_curse (artifact_type *a_ptr)
  */
 s32b artifact_power (artifact_type *a_ptr)
 {
+	object_kind 	*k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
 	s32b p = 0;
-	int immunities = 0, i;
+	int immunities = 0, i, mult;
 
 	/* Start with a "power" rating derived from the base item's level. */
 	p = (k_ptr->level + 7) / 8;
@@ -160,8 +160,6 @@ s32b artifact_power (artifact_type *a_ptr)
 	{
 		case TV_BOW:
 		{
-			int mult;
-
 			p += (a_ptr->to_d + sign (a_ptr->to_d)) / 2;
 			mult = bow_multiplier (a_ptr->sval);
 			if (a_ptr->flags3 & TR3_XTRA_MIGHT)
@@ -278,6 +276,7 @@ s32b artifact_power (artifact_type *a_ptr)
 			if (a_ptr->flags1 & TR1_BRAND_FIRE) p += 11;
 			if (a_ptr->flags1 & TR1_BRAND_COLD) p += 10;
 
+			/* allow base ac to factor in somewhat */
 			p += (a_ptr->ac + 4 * sign (a_ptr->ac)) / 5;
 			p += (a_ptr->to_h + sign (a_ptr->to_h)) / 2;
 			p += (a_ptr->to_d + sign (a_ptr->to_d)) / 2;
@@ -290,7 +289,7 @@ s32b artifact_power (artifact_type *a_ptr)
 //			p += 35;
 			p += 25;
 			if ((a_ptr->flags4 & ~TR4_FUEL_LITE) &&
-			    (k_info[lookup_kind(a_ptr->tval, a_ptr->sval)].flags4 & TR4_FUEL_LITE))
+			    (k_ptr->flags4 & TR4_FUEL_LITE))
 				p += 10;
 			break;
 		}
@@ -305,9 +304,10 @@ s32b artifact_power (artifact_type *a_ptr)
 	}
 
 	/* Other abilities are evaluated independent of the object type. */
-	p += (a_ptr->to_a + 3 * sign (a_ptr->to_a)) / 4;
-	if (a_ptr->to_a > 20) p += (a_ptr->to_a - 20) / 2;
-	if (a_ptr->to_a > 30) p += (a_ptr->to_a - 30) / 2;
+	i = a_ptr->to_a - k_ptr->to_a;
+	p += (i + 3 * sign (i)) / 4;
+	if (i > 20) p += (i - 20) / 2;
+	if (a_ptr->to_a > 30) p += (a_ptr->to_a - 30) / 2; /* always costly */
 	if (a_ptr->to_a > 35) p += 20000;	/* inhibit */
 
 	if (a_ptr->pval > 0)
@@ -332,6 +332,7 @@ s32b artifact_power (artifact_type *a_ptr)
 	}
 	if (a_ptr->flags1 & TR1_CHR) p += a_ptr->pval;
 	if (a_ptr->flags1 & TR1_INFRA) p += (a_ptr->pval + sign (a_ptr->pval)) / 2;
+
 	i = ((a_ptr->pval + 6) / 3);
 //	i = i * i;
 //	i = (i * 5) / 2;
@@ -1473,7 +1474,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 /* -------------------------------------- Initial min/max limit -------------------------------------- */
 
 	/* Never have more than +11 bonus */
-	if (a_ptr->pval > 11) a_ptr->pval = 11;
+	if (!is_ammo(a_ptr->tval) && a_ptr->pval > 11) a_ptr->pval = 11;
 
 	/* Ensure a bonus for certain items whose base types always have a (b)pval */
 	if (((k_ptr->flags1 & TR1_PVAL_MASK) || (k_ptr->flags5 & TR5_PVAL_MASK)) && !a_ptr->pval) {
@@ -1715,7 +1716,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 /* -------------------------------------- Initial min/max limit -------------------------------------- */
 
 	/* Never have more than +11 bonus */
-	if (a_ptr->pval > 11) a_ptr->pval = 11;
+	if (!is_ammo(a_ptr->tval) && a_ptr->pval > 11) a_ptr->pval = 11;
 
 	/* Ensure a bonus for certain items whose base types always have a (b)pval */
 	if (((k_ptr->flags1 & TR1_PVAL_MASK) || (k_ptr->flags5 & TR5_PVAL_MASK)) && !a_ptr->pval) {
@@ -2112,7 +2113,7 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* 10% are cursed */
 	else
 	{
-		power = rand_int(40) - (2*RANDART_QUALITY);
+		power = rand_int(40) - (2 * RANDART_QUALITY);
 	}
 	
 	if (power < 0) curse_me = TRUE;
@@ -2131,7 +2132,6 @@ artifact_type *randart_make(object_type *o_ptr)
 //		power /= 3;
 	}
 
-
 	/* Default values */
 	a_ptr->cur_num = 0;
 	a_ptr->max_num = 1;
@@ -2143,18 +2143,23 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* Alright, changed it so it only works for rings/amulets!
 	   Reason is: All other items keep their base-type abilties,
 	   and those abilties only count as bpval.
-	   Jewelry however has only 1 base ability (and never ego powers)
-	   which is supposed to be influenced by exactly 1 perameter.
+	   Jewelry however has only 1 base ability (and never ego powers, except telepathy ammy)
+	   which is supposed to be influenced by exactly 1 parameter.
 	   It would be silly to have a randart ring of strength with
 	   bpval +6 to STR and pval +6 getting STR as general mod accidentally.
 	   -- Unfortunately we need it for all items :/ Kolla +2 +6 ..lol.
 	   Someone rewrite the item system!! */
+
+	/* merge item's base pval and bpval to a single pval value */
 	if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
 		if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
 		o_ptr->bpval = 0;
 	}
 
+	/* light sources don't keep their pval but get it zero'ed,
+	   because pval is for fueled lights the amount of turns left */
 	if (k_ptr->tval == TV_LITE) a_ptr->pval = 0;
+
 	/* Amulets and Rings keep their (+hit,+dam)[+AC] instead of having it
 	   reset to (+0,+0)[+0] (since those boni are hard-coded for jewelry) */
 	if ((a_ptr->tval == TV_AMULET) || (a_ptr->tval == TV_RING))
@@ -2167,6 +2172,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->to_d = k_ptr->to_d;
 		a_ptr->to_a = k_ptr->to_a;
 	}
+
+	/* keep all other base attributes */
 	a_ptr->ac = k_ptr->ac;
 	a_ptr->dd = k_ptr->dd;
 	a_ptr->ds = k_ptr->ds;
@@ -2188,23 +2195,29 @@ artifact_type *randart_make(object_type *o_ptr)
 		a_ptr->to_h += 1 + rand_int(20);
 	}
 
-	/* Ammo doesn't get large bonus */
-	if (is_ammo(a_ptr->tval))
+	/* Ensure armour has some decent bonus to ac - C. Blue */
+	if (is_armour(k_ptr->tval))
 	{
-		/* exploding art ammo is very rare */
-		if (magik(10)) {
-			int power[28]={GF_ELEC, GF_POIS, GF_ACID,
-			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
-			GF_DARK, GF_SHARDS, GF_SOUND,
-			GF_CONFUSION, GF_FORCE, GF_INERTIA,
-			GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
-			GF_NETHER, GF_NEXUS, GF_TIME,
-			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-			GF_TURN_ALL, GF_NUKE, GF_STUN,
-			GF_DISINTEGRATE, GF_HELL_FIRE};
-			a_ptr->pval = power[rand_int(28)];
-		}
+		/* Fixed bonus to avoid useless randarts */
+		a_ptr->to_a = 10 + rand_int(6);
 
+		/* pay respect to k_info +ac bonus */
+		a_ptr->to_a += k_ptr->to_a / 2;
+		
+		/* higher level armour will get additional bonus :-o */
+		a_ptr->to_a += k_ptr->level / 20;
+
+		/* fix limit */
+		if (a_ptr->to_a > 35) a_ptr->to_a = 35;
+	}
+
+#ifdef USE_NEW_SHIELDS
+	/* Shields always get maximum of 15 */
+	if (k_ptr->tval == TV_SHIELD) a_ptr->to_a = 15;
+#endif
+
+	/* Art ammo doesn't get great hit/dam in general. */
+	if (is_ammo(a_ptr->tval)) {
 		a_ptr->to_d = 0;
 		a_ptr->to_h = 0;
 		if (magik(50)) {
@@ -2221,30 +2234,22 @@ artifact_type *randart_make(object_type *o_ptr)
 		}
 		if (magik(20)) a_ptr->ds += 1;
 		else if (magik(20)) a_ptr->dd += 1;
+
+		/* exploding art ammo is very rare */
+		if (magik(10)) {
+			int power[28]={GF_ELEC, GF_POIS, GF_ACID,
+			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
+			GF_DARK, GF_SHARDS, GF_SOUND,
+			GF_CONFUSION, GF_FORCE, GF_INERTIA,
+			GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
+			GF_NETHER, GF_NEXUS, GF_TIME,
+			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
+			GF_TURN_ALL, GF_NUKE, GF_STUN,
+			GF_DISINTEGRATE, GF_HELL_FIRE};
+			a_ptr->pval = power[rand_int(28)];
+		}
 	}
-	
-	/* Ensure armour has some bonus to ac */
-	if ((k_ptr->tval == TV_BOOTS) ||
-	    (k_ptr->tval == TV_GLOVES) ||
-	    (k_ptr->tval == TV_HELM) ||
-	    (k_ptr->tval == TV_CROWN) ||
-#ifndef USE_NEW_SHIELDS
-	    (k_ptr->tval==TV_SHIELD) ||
-#endif
-	    (k_ptr->tval == TV_CLOAK) ||
-	    (k_ptr->tval == TV_SOFT_ARMOR) ||
-	    (k_ptr->tval == TV_HARD_ARMOR))
-	{
-/*		a_ptr->to_a += 1 + rand_int(17); */
-		a_ptr->to_a = 10 + rand_int(6); /* Fixed bonus to avoid useless randarts - C. Blue */
-	}
-#ifdef USE_NEW_SHIELDS
-	if (k_ptr->tval == TV_SHIELD) a_ptr->to_a = 15; /* Always maximum */
-#endif
-	if (k_ptr->tval == TV_DRAG_ARMOR) {
-		a_ptr->to_a = 15 + rand_int(6);
-	}
-		
+
 	/* First draft: add two abilities, then curse it three times. */
 	if (curse_me)
 	{
@@ -2257,8 +2262,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		remove_redundant_esp(a_ptr);
 		ap = artifact_power(a_ptr);
 	}
-
-	else if (is_ammo(k_ptr->tval)) {
+	else if (is_ammo(k_ptr->tval))
+	{
 		add_ability (a_ptr);
 		if (magik(50)) add_ability(a_ptr);
 		if (magik(25)) add_ability(a_ptr);
@@ -2267,7 +2272,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		remove_redundant_esp(a_ptr);
 		ap = artifact_power(a_ptr) + RANDART_QUALITY + 15; /* in general ~5k+(40-40)+15k value */
 	}
-	else
+	else /* neither cursed, nor ammo: */
 	{
 		/* Select a random set of abilities which roughly matches the
 		   original's in terms of overall power/usefulness. */
@@ -2304,12 +2309,6 @@ artifact_type *randart_make(object_type *o_ptr)
 				break;
 			}
 		}		/* end of power selection */
-
-		/* jewelry can be cursed from a_m_aux_3, fix that by overriding
-		   that apply_magic curse chance by the randart-cursed-chance: */
-		if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
-			if (cursed_p(o_ptr)) o_ptr->ident &= ~ID_CURSED;
-		}
 
 		if (aggravate_me)
 		{

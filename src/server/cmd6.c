@@ -144,7 +144,7 @@ void do_cmd_eat_food(int Ind, int item)
 
 	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
 		return;
 	}
 
@@ -1384,7 +1384,7 @@ void do_cmd_quaff_potion(int Ind, int item)
 	if ((o_ptr->tval != TV_POTION) &&
 		(o_ptr->tval != TV_POTION2))
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to quaff non-potion!");
 		return;
 	}
 
@@ -2274,7 +2274,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 	if (o_ptr->tval != TV_SCROLL && o_ptr->tval != TV_PARCHMENT)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to read non-scroll!");
 		return;
 	}
 
@@ -2357,7 +2357,8 @@ void do_cmd_read_scroll(int Ind, int item)
 
 				msg_print(Ind, "This is a blood bond scroll.");
 				ident = TRUE;
-				blood_bond(Ind, o_ptr);
+				if (!(p_ptr->mode & MODE_PVP)) blood_bond(Ind, o_ptr);
+				else msg_print(Ind, "True gladiators must fight to the death!");
 				break;
 			}
 
@@ -2484,18 +2485,17 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_PHASE_DOOR:
 			{
-				teleport_player(Ind, 10);
+				teleport_player(Ind, 10, TRUE);
 				ident = TRUE;
 				break;
 			}
 
 			case SV_SCROLL_TELEPORT:
 			{
-				teleport_player(Ind, 100);
+				teleport_player(Ind, 100, FALSE);
 				ident = TRUE;
 				break;
 			}
-
 			case SV_SCROLL_TELEPORT_LEVEL:
 			{
 				teleport_player_level(Ind);
@@ -3133,7 +3133,7 @@ void do_cmd_use_staff(int Ind, int item)
 
 	if (o_ptr->tval != TV_STAFF)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
 		return;
 	}
 
@@ -3252,8 +3252,8 @@ void do_cmd_use_staff(int Ind, int item)
 
 		case SV_STAFF_TELEPORTATION:
 		{
-			msg_format_near(Ind, "%s teleports away!", p_ptr->name);
-			teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100));
+			if (teleport_player(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 100), FALSE))
+				msg_format_near(Ind, "%s teleports away!", p_ptr->name);
 			ident = TRUE;
 			break;
 		}
@@ -3640,7 +3640,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir)
 
 	if (o_ptr->tval != TV_WAND)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-wand!");
 		return;
 	}
 
@@ -4186,7 +4186,7 @@ void do_cmd_zap_rod(int Ind, int item)
 
 	if (o_ptr->tval != TV_ROD)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		return;
 	}
 
@@ -4506,7 +4506,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 
 	if (o_ptr->tval != TV_ROD)
 	{
-		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
+//(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
 		return;
 	}
 
@@ -5708,7 +5708,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_BELEGENNON:
 			{
-				teleport_player(Ind, 10);
+				teleport_player(Ind, 10, TRUE);
 				o_ptr->timeout = 2;
 				break;
 			}
@@ -5765,7 +5765,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_COLANNON:
 			{
-				teleport_player(Ind, 100);
+				teleport_player(Ind, 100, FALSE);
 				o_ptr->timeout = 45;
 				break;
 			}
@@ -6197,7 +6197,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_BELEGENNON:
 			{
-				teleport_player(Ind, 10);
+				teleport_player(Ind, 10, TRUE);
 				o_ptr->timeout = 2;
 				break;
 			}
@@ -6254,7 +6254,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 			case ART_COLANNON:
 			{
-				teleport_player(Ind, 100);
+				teleport_player(Ind, 100, FALSE);
 				o_ptr->timeout = 45;
 				break;
 			}
@@ -6623,7 +6623,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				{
 					msg_print(Ind, "You fail to exit the between correctly!");
 					p_ptr->energy -= 100;
-					teleport_player(10);
+					teleport_player(Ind, 10, TRUE);
 				}
 				else teleport_player_to(ij,ii);
 				o_ptr->timeout = 100;
@@ -6717,10 +6717,10 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 				switch(randint(13))
 				{
 					case 1: case 2: case 3: case 4: case 5:
-						teleport_player(Ind, 10);
+						teleport_player(Ind, 10, TRUE);
 						break;
 					case 6: case 7: case 8: case 9: case 10:
-						teleport_player(Ind, 222);
+						teleport_player(Ind, 222, FALSE);
 						break;
 					case 11: case 12:
 					default:
@@ -7067,7 +7067,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	/* ego activation etc */
 	else if (is_ego_p(o_ptr, EGO_DRAGON))
 	{
-		teleport_player(Ind, 100);
+		teleport_player(Ind, 100, FALSE);
 		o_ptr->timeout = 50 + randint(50);
 
 		/* Window stuff */
@@ -7078,7 +7078,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 	else if (is_ego_p(o_ptr, EGO_JUMP))
 	{
-		teleport_player(Ind, 10);
+		teleport_player(Ind, 10, TRUE);
 		o_ptr->timeout = 10 + randint(10);
 
 		/* Window stuff */
@@ -7219,7 +7219,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			{
 //				if(!get_check("This will destroy the ring, do you want to continue ?")) break;
 				msg_print(Ind, "The ring explode into a space distorsion.");
-				teleport_player(Ind, 200);
+				teleport_player(Ind, 200, FALSE);
 
 				/* It explodes, doesnt it ? */
 				take_hit(Ind, damroll(2, 10), "an exploding ring", 0);
@@ -8474,6 +8474,7 @@ void do_cmd_stance(int Ind, int stance) {
 			return;
 		}
 		msg_print(Ind, "\377sYou enter a balanced stance!");
+s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 	break;
 	case 1:
 	    switch(p_ptr->pclass) {
@@ -8575,6 +8576,7 @@ void do_cmd_stance(int Ind, int stance) {
 		}
 	    break;
 	    }
+s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 	break;
 	case 2:
 	    switch(p_ptr->pclass) {
@@ -8679,6 +8681,7 @@ void do_cmd_stance(int Ind, int stance) {
 		}
 	    break;
 	    }
+s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
 	break;
 	}
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -8696,7 +8699,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		msg_print(Ind, "You cannot use techniques as a ghost.");
 		return;
 	}
-/*	it's superflous, and rogues now get techniques too but don't have stances..
+/*	it's superfluous, and rogues now get techniques too but don't have stances..
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 */
 
@@ -8712,7 +8715,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
 		set_melee_sprint(Ind, 10); /* number of turns it lasts */
-//s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		break;
 	case 1:	if (!p_ptr->melee_techniques & 0x0002) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8722,7 +8725,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 4; /* doing it while fighting no prob */
 		un_afk_idle(Ind);
 		taunt_monsters(Ind);
-//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		break;
 	case 2:	if (!p_ptr->melee_techniques & 0x0004) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8735,21 +8738,21 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		un_afk_idle(Ind);
 		spin_attack(Ind);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
-//s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		break;
 	case 3:	if (!p_ptr->melee_techniques & 0x0008) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
-                set_berserk(Ind, randint(5) + 20);
-//s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
+                set_berserk(Ind, randint(5) + 15);
+s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		break;
 	case 8:	if (!p_ptr->melee_techniques & 0x0100) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;
 		un_afk_idle(Ind);
 		distract_monsters(Ind);
-//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		break;
 	case 9:	if (!p_ptr->melee_techniques & 0x0200) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -8759,11 +8762,11 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		un_afk_idle(Ind);
 		flash_bomb(Ind);
-//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		break;
 	case 14:if (!p_ptr->melee_techniques & 0x4000) return; /* Shadow Run */
 		shadow_run(Ind);
-//s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
+s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		break;
 	}
 
@@ -8820,7 +8823,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		msg_print(Ind, "You prepare an oil-drenched shot..");
-//s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
 		break;
 	case 1:	if (!p_ptr->ranged_techniques & 0x0002) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
@@ -8834,10 +8837,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_precision = TRUE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) */
 		msg_print(Ind, "You aim carefully for a precise shot..");
-//s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
 		break;
 	case 2:	if (!p_ptr->ranged_techniques & 0x0004) return; /* Craft some ammunition */
-//s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
 	case 3:	if (!p_ptr->ranged_techniques & 0x0008) return; /* Double-shot */
@@ -8853,7 +8856,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_double = !p_ptr->ranged_double; /* toggle */
 		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double-shots.");
 		else msg_print(Ind, "You stop using double-shots.");
-//s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		break;
 	case 4:	if (!p_ptr->ranged_techniques & 0x0100) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
@@ -8870,7 +8873,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
 		p_ptr->ranged_barrage = TRUE;
 		msg_print(Ind, "You prepare a powerful multi-shot barrage...");
-//s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
+s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 		break;
 	}
 }

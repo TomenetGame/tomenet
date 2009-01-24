@@ -802,7 +802,7 @@ int achievement_buffer_deed[128]; /* an achievement deeds on different character
 
 /* for dungeon master/wizard summoning, to override all validity checks and
    definitely summon what his/her heart desires! - C. Blue */
-bool summon_override_check_all = FALSE;
+int summon_override_checks = 0;
 /* Morgoth may override no-destroy, with his shattering hits */
 bool override_LF1_NO_DESTROY = FALSE;
 
@@ -826,3 +826,11 @@ int auction_alloc;
 #endif
 
 int store_debug_mode = 0;
+
+/* Array used by everyone_lite_later_spot */
+struct worldspot *lite_later;
+int lite_later_alloc;
+int lite_later_num;
+
+/* Timers for specific events - C. Blue */
+int timer_pvparena1 = 1, timer_pvparena2 = 1, timer_pvparena3 = 0; /* defaults */

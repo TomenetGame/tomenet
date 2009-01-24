@@ -1794,7 +1794,7 @@ void check_parryblock(int Ind)
 	if (is_admin(p_ptr)) {
 		msg_format(Ind, "You have exactly %d%%/%d%% base chance of parrying/blocking.", 
 			p_ptr->weapon_parry, p_ptr->shield_deflect);
-		msg_format(Ind, "You have exactly %d%%/%d%% real chances of parrying/blocking.", 
+		msg_format(Ind, "You have exactly %d%%/%d%% real chance of parrying/blocking.", 
 			apply_parry_chance(p_ptr, p_ptr->weapon_parry), apply_block_chance(p_ptr, p_ptr->shield_deflect));
 	} else {
 		if (!p_ptr->weapon_parry)
@@ -2604,6 +2604,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "faith") 
 			    && strcasecmp(p_ptr->accountname, "mikaelh") 
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
@@ -2746,6 +2747,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 
+			    && strcasecmp(p_ptr->accountname, "faith") 
 			    && strcasecmp(p_ptr->accountname, "mikaelh") 
 			    && strcasecmp(p_ptr->accountname, "c. blue")) continue;
 			
@@ -2894,7 +2896,7 @@ bool show_floor_feeling(int Ind)
 	bool felt = FALSE;
 
 	/* Hack for Valinor - C. Blue */
-	if ((getlevel(wpos) == 200) && (p_ptr->wpos.wz == 1)) {
+	if (getlevel(wpos) == 200) {
 		msg_print(Ind, "\377gYou have a wonderful feeling of peace...");
 		return TRUE;
 	}
