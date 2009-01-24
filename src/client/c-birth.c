@@ -964,6 +964,9 @@ bool get_server_name(void)
 		return enter_server_name();
 	}
 
+	/* Wipe the buffer so valgrind doesn't complain - mikaelh */
+	C_WIPE(buf, 80192, char);
+
 	/* Read */
 	bytes = SocketRead(socket, buf, 80192);
 
