@@ -1420,6 +1420,34 @@ static void fix_message(void)
         }
 }
 
+static void fix_lagometer(void) {
+	int j;
+
+	/* Scan windows */
+	for (j = 0; j < 8; j++)
+	{
+		term *old = Term;
+
+		/* No window */
+		if (!ang_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & PW_LAGOMETER)) continue;
+
+		/* Activate */
+		Term_activate(ang_term[j]);
+
+		/* Display lag-o-meter */
+		display_lagometer(FALSE);
+
+		/* Fresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+}
+
 /*
  * Hack -- pass color info around this file
  */
@@ -1512,6 +1540,119 @@ static cptr likert(int x, int y, int max)
 	}
 }
 
+/*
+ * Draws the lag-o-meter.
+ */
+void display_lagometer(bool display_commands)
+{
+	int i, cnt, sum, cur, min, max, avg, x, y, packet_loss, height;
+	char tmp[80];
+	char graph[16][61];
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Why are we here */
+	prt("The Lag-o-meter", 1, 30);
+
+	/* Find min and max and calculate avg */
+	packet_loss = cnt = sum = 0;
+	min = max = -1;
+	for (i = 0; i < 60; i++) {
+		if (ping_times[i] > 0) {
+			if (min == -1) min = ping_times[i];
+			else if (ping_times[i] < min) min = ping_times[i];
+
+			if (max == -1) max = ping_times[i];
+			else if (ping_times[i] > max) max = ping_times[i];
+
+			cnt++;
+			sum += ping_times[i];
+		}
+		else if (ping_times[i] == -1) {
+			packet_loss++;
+		}
+	}
+
+	if (cnt) avg = sum / cnt;
+	else avg = -1;
+
+	/* Latest ping might not be lost yet */
+	if (ping_times[0] == -1) {
+		packet_loss--;
+		cur = ping_times[1];
+	}
+	else cur = ping_times[0];
+
+	/* Clear the graph */
+	for (y = 0; y < 16; y++) {
+		for (x = 0; x < 60; x++) {
+			graph[y][x] = ' ';
+		}
+		graph[y][60] = '\0';
+	}
+
+	/* Create the graph */
+	for (i = 0; i < 60; i++) {
+		/* Calculate the height */
+		height = (16 * ping_times[i] + max / 2) / max;
+
+		for (y = 0; y < height; y++) {
+			graph[15 - y][59 - i] = '*';
+		}
+	}
+
+	/* Draw the graph */
+	for (y = 0; y < 16; y++) {
+		prt(graph[y], 4 + y, 10);
+	}
+
+	prt("Cur:", 19, 2);
+	if (cur != -1) sprintf(tmp, "%5dms", cur);
+	else tmp[0] = '\0';
+	prt(tmp, 19, 7);
+
+	prt("Avg:", 19, 17);
+	if (avg != -1) sprintf(tmp, "%5dms", avg);
+	else tmp[0] = '\0';
+	prt(tmp, 19, 22);
+
+	prt("Min:", 19, 32);
+	if (min != -1) sprintf(tmp, "%5dms", min);
+	else tmp[0] = '\0';
+	prt(tmp, 19, 37);
+
+	prt("Max:", 19, 47);
+	if (max != -1) sprintf(tmp, "%5dms", max);
+	else tmp[0] = '\0';
+	prt(tmp, 19, 52);
+
+	prt("Packet Loss:", 19, 62);
+	sprintf(tmp, "%2d", packet_loss);
+	prt(tmp, 19, 75);
+
+	if (display_commands) {
+		if (lagometer_enabled) {
+			prt("(2) Disable lag-o-meter", 21, 4);
+		}
+		else {
+			prt("(1) Enable lag-o-meter", 21, 4);
+		}
+
+		prt("Command: ", 22, 2);
+	}
+}
+
+/*
+ * Update the lag-o-meter if it's open.
+ */
+void update_lagometer() {
+	if (lagometer_open) display_lagometer(TRUE);
+
+	/* Update any other windows */
+	p_ptr->window |= PW_LAGOMETER;
+	window_stuff();
+}
 
 void display_player(int hist)
 {
@@ -1802,6 +1943,13 @@ void window_stuff(void)
 	{
 		p_ptr->window &= (~(PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT));
 		fix_message();
+	}
+
+	/* Display the lag-o-meter */
+	if (p_ptr->window & (PW_LAGOMETER))
+	{
+		p_ptr->window &= (~PW_LAGOMETER);
+		fix_lagometer();
 	}
 }
 

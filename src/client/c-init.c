@@ -580,6 +580,9 @@ void client_init(char *argv1, bool skip)
 	/* Hack -- flush the key buffer */
 	Term_flush();
 
+	/* Turn the lag-o-meter on after we've logged in */
+	lagometer_enabled = TRUE;
+
 	/* Main loop */
 	Input_loop();
 

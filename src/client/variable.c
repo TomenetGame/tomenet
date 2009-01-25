@@ -175,8 +175,8 @@ school_type *schools;
 /* Server ping statistics */
 int ping_id = 0;
 int ping_times[60];
-bool ping_stats_enabled = FALSE;
-bool ping_stats_viewing = FALSE;
+bool lagometer_enabled = FALSE; /* Must be disabled during login */
+bool lagometer_open = FALSE;
 
 /* Chat mode: normal, party or level */
 char chat_mode = CHAT_MODE_NORMAL;

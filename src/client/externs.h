@@ -236,8 +236,8 @@ extern school_type *schools;
 /* Server ping statistics */
 extern int ping_id;
 extern int ping_times[60];
-extern bool ping_stats_enabled;
-extern bool ping_stats_viewing;
+extern bool lagometer_enabled;
+extern bool lagometer_open;
 
 /* Chat mode: normal, party or level */
 extern char chat_mode;
@@ -333,6 +333,7 @@ extern void cmd_sip(void);
 extern void cmd_BBS(void);
 extern void cmd_telekinesis(void);
 extern void cmd_cloak(void);
+extern void cmd_lagometer(void);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);
@@ -400,8 +401,6 @@ extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
-extern void show_ping_stats(void);
-extern void do_cmd_ping_stats(void);
 extern void my_memfrob(void *s, int n);
 
 /* c-spell.c */
@@ -460,6 +459,8 @@ extern void prt_AFK(byte afk);
 extern void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
 			    byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot);
 extern void prt_stamina(int max, int cur);
+extern void display_lagometer(bool display_commands);
+extern void update_lagometer(void);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

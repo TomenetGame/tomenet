@@ -3185,7 +3185,7 @@ that keeps many algorithms happy.
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
 #define PW_PLAYER	0x00000008L	/* Display character */
-/* xxx */
+#define PW_LAGOMETER	0x00000010L	/* Display the lag-o-meter */
 /* xxx */
 #define PW_MESSAGE	0x00000040L	/* Display messages */
 #define PW_OVERHEAD	0x00000080L	/* Display overhead view */

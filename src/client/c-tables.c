@@ -425,7 +425,7 @@ cptr window_flag_desc[32] =
 	"Display equip/inven",
 	"Display spell list",
 	"Display character",
-	NULL,
+	"Display lag-o-meter",
 	NULL,
 	"Display messages",
 	"Display overhead view",

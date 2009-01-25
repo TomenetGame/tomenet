@@ -520,7 +520,7 @@ void process_command()
 			break;
 
 		case KTRL('I'):
-			do_cmd_ping_stats();
+			cmd_lagometer();
 			break;
 
 		case '!':
@@ -1439,7 +1439,7 @@ void cmd_check_misc(void)
 				do_cmd_messages();
 				break;
 			case 'l':
-				do_cmd_ping_stats();
+				cmd_lagometer();
 				break;
 			case 'h':
 				do_cmd_messages_chatonly();
@@ -2941,4 +2941,50 @@ void cmd_telekinesis() {
 
 void cmd_cloak() {
 	Send_cloak();
+}
+
+void cmd_lagometer(void)
+{
+	int k, i;
+
+	/* Save the screen */
+	Term_save();
+
+	lagometer_open = TRUE;
+
+	/* Interact */
+	while (1)
+	{
+		display_lagometer(TRUE);
+
+		/* Get command */
+		k = inkey();
+
+		/* Exit */
+		if (k == ESCAPE || k == KTRL('X') || k == KTRL('I')) break;
+
+		switch (k) {
+			/* Take a screenshot */
+			case KTRL('T'):
+				xhtml_screenshot("screenshotXXXX");
+				break;
+
+			/* Enable */
+			case '1':
+				lagometer_enabled = TRUE;
+				break;
+
+			/* Disable */
+			case '2':
+				lagometer_enabled = FALSE;
+				break;
+		}
+	}
+
+	lagometer_open = FALSE;
+
+	/* Restore the screen */
+	Term_load();
+
+	Flush_queue();
 }
