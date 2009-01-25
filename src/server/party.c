@@ -42,7 +42,10 @@ bool WriteAccount(struct account *r_acc, bool new){
 #endif
 	if(fd<0) return(FALSE);
 #if (!defined(NETBSD)) && (!defined(WIN32))
-	if((flock(fd, LOCK_EX))!=0) return(FALSE);
+	if((flock(fd, LOCK_EX)) != 0) {
+		close(fd);
+		return(FALSE);
+	}
 #endif
 	fp=fdopen(fd, "r+");
 	if(fp!=(FILE*)NULL){
@@ -201,6 +204,7 @@ struct account *Admin_GetAccount(cptr name){
 			return(c_acc);
 		}
 	}
+	fclose(fp);
 	KILL(c_acc, struct account);
 	return(NULL);
 }
@@ -223,6 +227,7 @@ cptr lookup_accountname(int p_id){
 			return(c_acc->name);
 		}
 	}
+	fclose(fp);
 	return(NULL);
 }
 
