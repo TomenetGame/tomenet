@@ -1895,11 +1895,11 @@ int Receive_depth(void)
 {
 	int	n;
 	char	ch;
-	s16b	x,y,z,recall;
+	s16b	x,y,z,colour;
 	bool town;
 	char buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &recall, buf)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &colour, buf)) <= 0)
 	{
 		return n;
 	}
@@ -1910,7 +1910,7 @@ int Receive_depth(void)
 	p_ptr->wpos.wy = y;
 	p_ptr->wpos.wz = z;
 	strncpy(c_p_ptr->location_name, buf, 20);
-	prt_depth(x, y, z, town, recall, buf);
+	prt_depth(x, y, z, town, colour, buf);
 
 	if (screen_icky) Term_switch(0);
 
