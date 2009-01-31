@@ -2945,7 +2945,7 @@ void cmd_cloak() {
 
 void cmd_lagometer(void)
 {
-	int k, i;
+	int k;
 
 	/* Save the screen */
 	Term_save();
