@@ -4107,3 +4107,41 @@ int usleep(long microSeconds)
 	return(0);
 }
 #endif /* WIN32 */
+
+/*
+ * Check if the server version fills the requirements.
+ * Copied from the server code.
+ *
+ * Branch has to be an exact match.
+ */
+bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build)
+{
+	if (version->major < major)
+		return FALSE; /* very old */
+	else if (version->major > major)
+		return TRUE; /* very new */
+	else if (version->minor < minor)
+		return FALSE; /* pretty old */
+	else if (version->minor > minor)
+		return TRUE; /* pretty new */
+	else if (version->patch < patch)
+		return FALSE; /* somewhat old */
+	else if (version->patch > patch)
+		return TRUE; /* somewhat new */
+	else if (version->extra < extra)
+		return FALSE; /* a little older */
+	else if (version->extra > extra)
+		return TRUE; /* a little newer */
+	/* Check that the branch is an exact match */
+	else if (version->branch == branch)
+	{
+		/* Now check the build */
+		if (version->build < build)
+			return FALSE;
+		else if (version->build > build)
+			return TRUE;
+	}
+	
+	/* Default */
+	return FALSE;
+}

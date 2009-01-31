@@ -1904,6 +1904,12 @@ int Receive_depth(void)
 		return n;
 	}
 
+	/* Compatibility with older servers - mikaelh */
+	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0)) {
+		if (colour) colour = TERM_ORANGE;
+		else TERM_WHITE;
+	}
+
 	if (screen_icky) Term_switch(0);
 
 	p_ptr->wpos.wx = x;
