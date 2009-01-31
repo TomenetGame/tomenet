@@ -402,6 +402,7 @@ extern void interact_macros(void);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void my_memfrob(void *s, int n);
+extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 
 /* c-spell.c */
 /*extern void show_browse(int book); */
