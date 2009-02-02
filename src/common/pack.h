@@ -198,6 +198,8 @@
 #define PKT_STAMINA		172
 #define PKT_TECHNIQUE_INFO	173
 
+#define PKT_EXTRA_STATUS	174
+
 
 /*
  * Possible error codes returned
