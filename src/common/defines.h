@@ -1154,6 +1154,9 @@
 
  #define ROW_CURSP		19
  #define COL_CURSP		0	/* "Cur SP xxxxx" */
+
+ #define ROW_EXSTA		-1	/* extra status, requires CONDENSED_HP_SP ! */
+ #define COL_EXSTA		-1
 #else
  #define ROW_MAXHP		16
  #define COL_MAXHP		8	/* "Max HP xxxxx" */
@@ -1172,6 +1175,9 @@
 
  #define ROW_CURST		18	/* current stamina */
  #define COL_CURST		3
+
+ #define ROW_EXSTA		19	/* extra status, requires CONDENSED_HP_SP ! */
+ #define COL_EXSTA		0
 #endif
 
 

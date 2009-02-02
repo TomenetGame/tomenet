@@ -768,7 +768,8 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 
 void prt_extra_status(cptr status)
 {
-	c_put_str(TERM_SLATE, status, 19, 0);
+	if (ROW_EXSTA != -1) /* just in case it's new client without CONDENSED_HP_SP for some odd reason */
+	c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);
 }
 
 /*
