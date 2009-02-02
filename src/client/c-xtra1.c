@@ -766,9 +766,9 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 	if (cumber_glove) c_put_str(TERM_VIOLET, "]", 7, 11);
 }
 
-void prt_extra_status(byte attr, cptr status)
+void prt_extra_status(cptr status)
 {
-	c_put_str(attr, status, 19, 0);
+	c_put_str(TERM_SLATE, status, 19, 0);
 }
 
 /*

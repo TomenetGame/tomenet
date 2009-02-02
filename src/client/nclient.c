@@ -2845,17 +2845,17 @@ int Receive_extra_status(void)
 {
 	int	n;
 	char	ch;
-	byte	attr;
-	cptr	status;
+	char    status[12 + 24]; /* 24 for potential colour codes in the future,
+            unusable now though since we just use c_put_str */
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, &status)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &status)) <= 0)
 	{
 		return n;
 	}
 
 	if (screen_icky) Term_switch(0);
 
-	prt_extra_status(attr, status);
+	prt_extra_status(status);
 
 	if (screen_icky) Term_switch(0);
 
