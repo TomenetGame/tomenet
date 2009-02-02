@@ -142,6 +142,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_PING]		= Receive_ping;
 	receive_tbl[PKT_STAMINA]	= Receive_stamina;
 	receive_tbl[PKT_TECHNIQUE_INFO]	= Receive_technique_info;
+	receive_tbl[PKT_EXTRA_STATUS]	= Receive_extra_status;
 }
 
 /* Head of file transfer system receive */
@@ -2834,6 +2835,27 @@ int Receive_encumberment(void)
 
 	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+
+	if (screen_icky) Term_switch(0);
+
+	return 1;
+}
+
+int Receive_extra_status(void)
+{
+	int	n;
+	char	ch;
+	byte	attr;
+	cptr	status;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%s", &ch, &attr, &status)) <= 0)
+	{
+		return n;
+	}
+
+	if (screen_icky) Term_switch(0);
+
+	prt_extra_status(attr, status);
 
 	if (screen_icky) Term_switch(0);
 

@@ -84,5 +84,6 @@ int Receive_AFK(void);
 int Receive_encumberment(void);
 int Receive_keepalive(void);
 int Receive_ping(void);
+int Receive_extra_status(void);
 
 int move_rest(void);
