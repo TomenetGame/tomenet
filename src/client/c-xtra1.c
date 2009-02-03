@@ -1652,7 +1652,12 @@ void display_lagometer(bool display_commands)
  * Update the lag-o-meter if it's open.
  */
 void update_lagometer() {
-	if (lagometer_open) display_lagometer(TRUE);
+	if (lagometer_open) {
+		display_lagometer(TRUE);
+
+		/* Fresh in case there's no net input */
+		Term_fresh();
+	}
 
 	/* Update any other windows */
 	p_ptr->window |= PW_LAGOMETER;
