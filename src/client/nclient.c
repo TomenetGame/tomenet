@@ -2896,6 +2896,7 @@ int Receive_ping(void)
 		utim_now = tv.tv_usec;
 
 		rtt = (tim_now - tim) * 1000 + (utim_now - utim) / 1000;
+		if (rtt == 0) rtt = 1;
 
 		index = ping_id - id;
 		if (index >= 0 && index < 60) {
