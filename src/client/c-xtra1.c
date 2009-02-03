@@ -1614,7 +1614,7 @@ void display_lagometer(bool display_commands)
 
 	/* Draw the graph */
 	for (y = 0; y < 16; y++) {
-		prt(graph[y], 4 + y, 10);
+		prt(graph[y], 3 + y, 10);
 	}
 
 	prt("Cur:", 19, 2);
