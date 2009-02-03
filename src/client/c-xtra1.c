@@ -1605,6 +1605,11 @@ void display_lagometer(bool display_commands)
 		for (y = 0; y < height; y++) {
 			graph[15 - y][59 - i] = '*';
 		}
+
+		/* Draw an underscore if a reply was received but it wouldn't be visible */
+		if (height == 0 && ping_times[i] > 0) {
+			graph[15][59 - i] = '_';
+		}
 	}
 
 	/* Draw the graph */
