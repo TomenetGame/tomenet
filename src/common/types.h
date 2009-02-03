@@ -1664,6 +1664,10 @@ struct house_type{
 #define ACF_RACE 0x04
 #define ACF_LEVEL 0x08
 
+#define ACF_WINNER 0x10
+#define ACF_FALLENWINNER 0x20
+#define ACF_NOGHOST 0x40
+
 struct dna_type{
 	u32b creator;		/* Unique ID of creator/house admin */
 	u32b owner;		/* Player/Party/Class/Race ID */
