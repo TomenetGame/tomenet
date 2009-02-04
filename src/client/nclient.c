@@ -1906,7 +1906,12 @@ int Receive_depth(void)
 	}
 
 	/* Compatibility with older servers - mikaelh */
-	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0)) {
+#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 1 && VERSION_EXTRA > 5) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 1) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
+	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0))
+#endif
+	{
 		if (colour) colour = TERM_ORANGE;
 		else TERM_WHITE;
 	}
