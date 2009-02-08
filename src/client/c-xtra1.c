@@ -461,12 +461,12 @@ void prt_sane(byte attr, cptr buf)
 /*
  * Prints depth into the dungeon
  */
-void prt_depth(int x, int y, int z, bool town, int colour, cptr name)
+void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr name)
 {
 	char depths[32];
 
 	sprintf(depths, "(%-2d,%-2d)",x,y);
-	c_put_str(TERM_L_GREEN, depths, ROW_XYPOS, COL_XYPOS);
+	c_put_str(colour_sector, depths, ROW_XYPOS, COL_XYPOS);
 
 	if(town)
 		strcpy(depths, name);

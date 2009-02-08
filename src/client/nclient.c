@@ -1900,13 +1900,23 @@ int Receive_depth(void)
 {
 	int	n;
 	char	ch;
-	s16b	x,y,z,colour;
-	bool town;
-	char buf[MAX_CHARS];
+	s16b	x, y, z, colour, colour_sector;
+	bool	town;
+	char	buf[MAX_CHARS];
 
-	if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &colour, buf)) <= 0)
+	/* Compatibility with older servers */
+#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 1 && VERSION_EXTRA > 6) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 1) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
+	if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf)) <= 0)
+			return n;
+	} else
+#endif
 	{
-		return n;
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &colour, buf)) <= 0)
+			return n;
+		colour_sector = TERM_L_GREEN;
 	}
 
 	/* Compatibility with older servers - mikaelh */
@@ -1926,7 +1936,7 @@ int Receive_depth(void)
 	p_ptr->wpos.wy = y;
 	p_ptr->wpos.wz = z;
 	strncpy(c_p_ptr->location_name, buf, 20);
-	prt_depth(x, y, z, town, colour, buf);
+	prt_depth(x, y, z, town, colour, colour_sector, buf);
 
 	if (screen_icky) Term_switch(0);
 

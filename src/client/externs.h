@@ -437,7 +437,7 @@ extern void prt_hp(int max, int cur);
 extern void prt_hp(int max, int cur);
 extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
 extern void prt_sp(int max, int cur);
-extern void prt_depth(int x, int y, int z, bool town, int recall, cptr buf);
+extern void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr buf);
 extern void prt_hunger(int food);
 extern void prt_blind(bool blind);
 extern void prt_confused(bool confused);
