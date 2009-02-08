@@ -282,8 +282,9 @@ void Receive_login(void)
 
 	Term_clear();
 
+	if (s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
 	if (s_RPG) {
-		c_put_str(TERM_SLATE, "The server is running 'RPG_SERVER' settings.", 21, 10);
+		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'RPG_SERVER' settings.", 21, 10);
 		max_cpa = 1;
 	}
 	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 10);
