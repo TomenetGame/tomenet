@@ -271,11 +271,13 @@ void Receive_login(void)
 
 	/* Read server detail flags for informational purpose - C. Blue */
 	s32b sflag3, sflag2, sflag1, sflag0;
-	bool s_RPG = FALSE, s_FUN = FALSE, s_PARTY = FALSE;
+	bool s_RPG = FALSE, s_FUN = FALSE, s_PARTY = FALSE, s_ARCADE = FALSE, s_TEST = FALSE;
 	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
-	if (sflag0 & 0x1) s_RPG = TRUE;
-	if (sflag0 & 0x2) s_FUN = TRUE;
-	if (sflag0 & 0x4) s_PARTY = TRUE;
+	if (sflag0 & SFLG_RPG) s_RPG = TRUE;
+	if (sflag0 & SFLG_FUN) s_FUN = TRUE;
+	if (sflag0 & SFLG_PARTY) s_PARTY = TRUE;
+	if (sflag0 & SFLG_ARCADE) s_ARCADE = TRUE;
+	if (sflag0 & SFLG_TEST) s_TEST = TRUE;
 	client_mode = sflag1;
 
 	Term_clear();
@@ -284,7 +286,8 @@ void Receive_login(void)
 		c_put_str(TERM_SLATE, "The server is running 'RPG_SERVER' settings.", 21, 10);
 		max_cpa = 1;
 	}
-	if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
+	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 10);
+	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 10);
 	if (s_PARTY) c_put_str(TERM_SLATE, "This server is running 'PARTY_SERVER' settings.", 23, 10);
 
 	c_put_str(TERM_L_BLUE, "Character Overview", 0, 30);
