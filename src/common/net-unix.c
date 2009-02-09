@@ -474,7 +474,7 @@ int	fd;
  * Called By
  *	User applications
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -574,7 +574,7 @@ int	port;
     peer.sin_family = AF_INET;
     peer.sin_port   = htons(port);
     peer.sin_addr.s_addr = inet_addr(host);
-    if (peer.sin_addr.s_addr == (int)-1)
+    if (peer.sin_addr.s_addr == (unsigned int)-1)
     {
 	hp = gethostbyname(host);
 	if (hp == NULL)
@@ -734,7 +734,7 @@ int	fd;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -778,7 +778,7 @@ int	size;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -822,7 +822,7 @@ int	size;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 #ifdef TCP_NODELAY
 int
@@ -873,7 +873,7 @@ int	flag;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -992,7 +992,7 @@ int	flag;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -1036,7 +1036,7 @@ int	flag;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -1688,7 +1688,7 @@ int	port;
  * Called By
  *	User applications.
  *
- * Originally coded by Bert Gï¿½sbers
+ * Originally coded by Bert Gÿsbers
  */
 int
 #ifdef __STDC__
@@ -1714,7 +1714,7 @@ int	port;
     addr_in.sin_family          = AF_INET;
     addr_in.sin_port            = htons(port);
     /**/addr_in.sin_addr.s_addr 	= inet_addr(host);
-    if (addr_in.sin_addr.s_addr == (unsigned long)-1)
+    if (addr_in.sin_addr.s_addr == (unsigned int)-1)
     {
 #ifdef SERVER 
 	printf("DgramConnect called with hostname %s.\n", host);
@@ -1816,7 +1816,7 @@ char	*host, *sbuf;
     else
     {
 	the_addr.sin_addr.s_addr 	= inet_addr(host);
-	if (the_addr.sin_addr.s_addr == (int)-1)
+	if (the_addr.sin_addr.s_addr == (unsigned int)-1)
 	{
 #ifdef SERVER
 	    printf("DgramSend called with host %s\n", host);
@@ -1949,7 +1949,7 @@ char	*rbuf;
     struct sockaddr_in	tmp_addr;
 
     tmp_addr.sin_addr.s_addr = inet_addr(from);
-    if (tmp_addr.sin_addr.s_addr == (int)-1)
+    if (tmp_addr.sin_addr.s_addr == (unsigned int)-1)
     {
 #ifdef SERVER
 	printf("DgramReceive called with host %s.\n", from);
