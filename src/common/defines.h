@@ -51,7 +51,7 @@
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
-#define VERSION_EXTRA	5
+#define VERSION_EXTRA	7
 #define VERSION_BRANCH	0
 #define VERSION_BUILD	0
 
@@ -71,13 +71,21 @@
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "d"
+#define CLIENT_VERSION_TAG "e"
 
 /*
  * Base version strings of TomeNET (see version_build)
  */
 #define TOMENET_VERSION_SHORT		"TomeNET"
 
+
+/* Main server flags */
+#define SFLG_NORMAL	0x00
+#define SFLG_RPG	0x01
+#define SFLG_FUN	0x02
+#define SFLG_PARTY	0x04
+#define SFLG_ARCADE	0x08
+#define SFLG_TEST	0x10
 
 
 /*
@@ -1447,7 +1455,7 @@ that keeps many algorithms happy.
 /* Feature 0xAD -- Underground Tunnel */
 #define FEAT_TAINTED_WATER      0xAE /* 174 */
 #define FEAT_MON_TRAP           0xAF /* 175 */
-#define FEAT_BETWEEN2           0xB0 /* 176 */
+#define FEAT_BETWEEN2           0xB0 /* 176, appearently mostly unused (unlike 160) */
 /* Feature 0xB1 -- lava wall */
 #define FEAT_GREAT_FIRE         0xB2 /* 178 */
 #define FEAT_WAY_MORE           0xB3 /* 179 */
@@ -6663,15 +6671,15 @@ extern int PlayerUID;
 /* macro for debugging Doppelgaenger @s */
 #define cave_midx_debug(wpos, cy, cx, midx) { \
     if (midx < 0) { \
-        if (-midx > NumPlayers) { s_printf("MIDX_DEBUG: out of range (%d of %d)\n", -midx, NumPlayers); } \
-        if (wpos->wx != Players[-midx]->wpos.wx) { s_printf("MIDX_DEBUG: wrong wpos wx (%d : %d)\n", wpos->wx, Players[-midx]->wpos.wx); } \
-        if (wpos->wy != Players[-midx]->wpos.wy) { s_printf("MIDX_DEBUG: wrong wpos wy (%d : %d)\n", wpos->wy, Players[-midx]->wpos.wy); } \
-        if (wpos->wz != Players[-midx]->wpos.wz) { s_printf("MIDX_DEBUG: wrong wpos wz (%d : %d)\n", wpos->wz, Players[-midx]->wpos.wz); } \
+        if (-midx > NumPlayers) { s_printf("MIDX_DEBUG: out of range (%d of %d) (%s:%d)\n", -midx, NumPlayers, __FILE__, __LINE__); } \
+        if (wpos->wx != Players[-midx]->wpos.wx) { s_printf("MIDX_DEBUG: wrong wpos wx (%d : %d) (%s:%d)\n", wpos->wx, Players[-midx]->wpos.wx, __FILE__, __LINE__); } \
+        if (wpos->wy != Players[-midx]->wpos.wy) { s_printf("MIDX_DEBUG: wrong wpos wy (%d : %d) (%s:%d)\n", wpos->wy, Players[-midx]->wpos.wy, __FILE__, __LINE__); } \
+        if (wpos->wz != Players[-midx]->wpos.wz) { s_printf("MIDX_DEBUG: wrong wpos wz (%d : %d) (%s:%d)\n", wpos->wz, Players[-midx]->wpos.wz, __FILE__, __LINE__); } \
         if (Players[-midx]->py == cy) { \
-            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x (%d : %d)\n", cx, Players[-midx]->px); } \
+            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x (%d : %d) (%s:%d)\n", cx, Players[-midx]->px, __FILE__, __LINE__); } \
         } else { \
-            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x,y (%d : %d, %d : %d)\n", cx, Players[-midx]->px, cy, Players[-midx]->py); } \
-            else { s_printf("MIDX_DEBUG: wrong y (%d : %d)\n", cy, Players[-midx]->py); } \
+            if (Players[-midx]->px != cx) { s_printf("MIDX_DEBUG: wrong x,y (%d : %d, %d : %d) (%s:%d)\n", cx, Players[-midx]->px, cy, Players[-midx]->py, __FILE__, __LINE__); } \
+            else { s_printf("MIDX_DEBUG: wrong y (%d : %d) (%s:%d)\n", cy, Players[-midx]->py, __FILE__, __LINE__); } \
         } \
     } \
 }
@@ -6697,7 +6705,7 @@ extern int PlayerUID;
 #define WPOS_HIGHLANDER_DUN_Y   0
 #define WPOS_HIGHLANDER_DUN_Z   -1
 
-/* important: note connection of WPOS_ARENA_ and 'ge_training_tower' */
+/* important: note connection of WPOS_ARENA_ and 'ge_special_sector' */
 #define WPOS_ARENA_X            cfg.town_x      /* location of global event 'Arena Monster Challenge' */
 #define WPOS_ARENA_Y            cfg.town_y
 #define WPOS_ARENA_Z            2
