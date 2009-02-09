@@ -198,8 +198,7 @@
 #define PKT_STAMINA		172
 #define PKT_TECHNIQUE_INFO	173
 
-#define PKT_EXTRA_STATUS	174
-
+#define PKT_EXTRA_STATUS	174 /* combat stance, fire mode, etc */
 
 /*
  * Possible error codes returned
