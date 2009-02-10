@@ -772,6 +772,7 @@ N:176:Void Jumpgate
 G:+:v
 F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
 D:0:A dark rift opens to the void here.
+#appearently mostly unused, unlike 160
 
 N:177:lava wall
 G:#:R
@@ -1058,6 +1059,11 @@ D:2:A hideous looking ornate door is blocking your way.
 N:225:unsealed door
 G:':r
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+
+N:226:highly protected
+G:.:U
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
 
 
 # generic scheme (all lines are unique except

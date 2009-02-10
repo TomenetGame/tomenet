@@ -34,64 +34,68 @@ V:4.0.0
 #
 
 N:1:Combat
-D:General ability to fight and to pseudo-id armours and weapons
-D:It also allows to use heavier armours without penalties
+D:General ability to fight and to pseudo-id unknown items.
+D:Also allows wearing heavier armour without receiving penalties.
 A:14:Check parry/block chance
 I:1000:0
 
 N:2:Weaponmastery
-D:General ability to use melee weapons and fighting techniques
+D:Improves your abilities with melee weapons.
+D:Increases your chance to parry attacks.
 A:5:Fighting techniques
 I:1000:0
 F:MKEY_HARDCODE
 
 N:3:Sword-mastery
-D:Ability to use swords
+D:Allows more skillful use of sword-type weapons.
 I:1000:0
 
 N:4:Critical-strike
-D:Ability to land more critial hits with light swords
+D:Increases chance to land high-damage critical strikes.
+D:Only applies to sword-type weapons weighing up to 10.0 lbs.
 I:1000:0
 
 N:5:Polearm-mastery
-D:Ability to use polearms
+D:Allows more skillful use of polearm-type weapons.
 I:1000:0
 
 N:6:Blunt-mastery
-D:Ability to use blunt weapons
+D:Allows more skillful use of weapons regarded as blunt.
 I:1000:0
 
 N:7:Archery
-D:General ability to use ranged weapons and archer techniques
-D:It also allows you to evaluate/create ammo
+D:Improves your skill with ranged weapons and provides special techniques.
+D:It also allows you to evaluate and create ammunition.
 A:6:Shooting techniques
 I:1000:0
 F:MKEY_HARDCODE
 #A:9:Create ammunition from bones or nearby rubble <- absorbed by 'Archer techniques'
 
 N:8:Sling-mastery
-D:Ability to use slings
-D:Bullets can recochet and harm more than one foes
+D:Allows more skillful use of slings and reduces break chance of shots.
+D:Bullets can ricochet and harm more than just one foe.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:9:Bow-mastery
-D:Ability to use bows
+D:Allows more skillful use of bows and reduces break chance of arrows.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:10:Crossbow-mastery
-D:Ability to use crossbows
+D:Allows more skillful use of crossbows and reduces break chance of bolts.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
 N:11:Backstabbing
-D:Ability to backstab sleeping and fleeing monsters
+D:Ability to backstab sleeping and fleeing monsters.
 D:Much more effective in the dark
 I:1000:0
 
 N:12:Magic
-D:General ability to use magic. Also influence mana capacity
+D:Increases your mana points.
+#outdated (pre-lua): and spell-casting chance.
+D:Allows you to pseudo-id magical items easily.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
@@ -108,8 +112,8 @@ F:HIDDEN
 # This is like that of ToME2 now
 N:14:Sorcery
 #D:Ability to cast sorcery spells, beware it reduces hp
-D:Ability to use all the magic schools as if their skill was sorcery
-D:(You won't get any of the schools' fixed bonus abilities though.)
+D:Ability to use all the magic schools as if their skill was sorcery,
+D:but you won't receive any bonus abilities/resistances of the schools.
 #D:But the price to channel that much magic is your health
 #A:1:Cast sorcery spell
 #I:1000:92
@@ -124,14 +128,14 @@ I:1000:0
 #F:HIDDEN
 
 N:16:Mimicry
-D:Ability to polymorph into slain monsters
+D:Ability to polymorph into slain monsters.
 A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
 
 N:17:Magic-device
-D:Ability to use magic devices(wands, rods, staves, artifacts)
-D:Also increases their power
+D:Increases chance to successfully use magic devices such as
+D:wands, rods, staves, artifacts. Also increases their power.
 I:1000:0
 
 #N:18:Shadow
@@ -152,54 +156,60 @@ I:1000:0
 
 N:21:Sneakiness
 #D:General ability at your sneakiness skills, and improves perception
-D:General ability at your sneakiness skills
-D:It allows to act carefully and somewhat quickly
+#D:General ability at your sneakiness skills
+#D:It allows to act carefully and somewhat quickly
+D:Allows you to move faster and be more aware.
+D:Slightly reduces speed penalty while searching or being cloaked.
 I:1000:0
 
 N:22:Disarming
-D:Ability to disarm various traps and crack locks
-D:The trap lore also saves you from activating already-found traps
+D:Ability to disarm various traps and pick locks.
+#D:The trap lore also saves you from activating already-found traps
 I:1000:0
 
 N:23:Stealth
-D:Ability to move without waking up monsters
+D:Ability to move without waking up monsters.
 I:1000:0
 
 N:24:Stealing
-D:Ability to steal objects or money from other people
-D:This knowledge also protects you from robbery
+D:Ability to steal objects from stores, or objects and money from
+D:other people. This knowledge also protects you from robbery.
 I:1000:0
 
 N:25:Necromancy
 #D:General ability at necromantic skills. Provides life drain on monster death
-D:Drains spiritual energy on opponents' death, replenishing your life and mana
+D:Drains spiritual energy from the death of your opponents, provided you
+D:can actually see them, replenishing your hit points and mana.
 I:1000:0
 
 N:26:Antimagic
-D:Aura that surrounds you and prevents monsters from casting spells
-D:Beware, you won't make an exception!
+D:A field surrounding you, preventing any creature from casting spells.
+D:Permanently renders you unable to use magic or magic devices!
 I:1000:0
 
 #N:27:Aura power
 #D:Increases you auras power
 #I:1000:0
 N:27:Traumaturgy
-D:Drains spiritual energy from your opponent when you attack him
+D:Drains spiritual energy from visible opponents when you attack,
+D:replenishing your mana. Requires living creatures who feel pain.
 I:1000:0
 
 N:28:Aura of Fear
-D:Aura that surrounds you and strikes fear in monsters that melee you
-D:Making them run away
+D:Aura that surrounds you and strikes fear in monsters that
+D:strike you in close combat, making them run away.
 A:15:Control your aura of fear
 I:1000:0
 
 N:29:Shivering Aura
-D:Aura that surrounds you and stuns monsters that melee you
+D:Aura that surrounds you and stuns monsters that strike you
+D:in close combat.
 A:16:Control your shivering aura
 I:1000:0
 
 N:30:Aura of Death
-D:Aura that surrounds you and creates waves of plasma/ice when monsters melee you
+D:Aura that surrounds you and creates alternating waves of plasma
+D:and ice when monsters strike you in close combat.
 A:17:Control your aura of death
 I:1000:0
 
@@ -228,15 +238,17 @@ I:1000:0
 F:HIDDEN
 
 N:35:Calmness
-D:Ability to stay calm and act freely when surrounded by enemies
+D:Reduces chances of opponents to interfere with some of your actions
+D:most notably such as shooting or entering void gates and staircases.
 I:1000:0
 
 N:36:Swimming
-D:Ability to cross water area without drowning
+D:Ability to cross water without drowning even under heavier load.
 I:1000:0
 
 N:37:Martial Arts
-D:Ability to combat bare-handed
+D:Ability to fight bare-handed. Also provides various special abilities.
+D:You mustn't use weapons or heavy armour, or various penalties may apply.
 I:1000:0
 
 ## DELETEME
@@ -246,7 +258,8 @@ I:1000:0
 #F:HIDDEN
 
 N:39:Boomerang-mastery
-D:Ability to use (and not to destroy) boomerangs
+D:Allows more skillful use of boomerangs.
+D:Reduces chance of boomerangs to break or to not return.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
@@ -255,21 +268,23 @@ I:1000:0
 #I:1000:0
 
 N:41:Interception
-D:Ability to hinder the opponents around you
+D:Ability to interfere with certain actions of opponents next to you,
+D:such as casting spells or running away.
 I:1000:0
 
 N:42:Dodging
-D:Ability to dodge blows and bolts
-D:You cannot dodge very well with heavy armour!
+D:Ability to dodge various types of attacks. Requires light armour. The
+D:less your equipment and especially backpack weighs, the better it works.
 A:8:Check dodge chance
 I:1000:0
 
 N:43:Health
-D:General ability to control and cure your body
+D:Increases your hit points, speeds your regeneration and recovery from
+D:malicious effects. Also allows you to check your sanity in more detail.
 I:1000:0
 
 N:44:Digging
-D:Ability to dig a tunnel with suitable tools
+D:Allows you to tunnel through walls and obstacles faster.
 I:1000:0
 
 ## DELETEME
@@ -279,114 +294,115 @@ I:1000:0
 #F:HIDDEN
 
 N:46:Trapping
-D:Ability to set monster traps
+D:Ability to set monster traps. Increases your chance to lay a trap
+D:while monsters are around and improves the quality of your traps.
 A:10:Set trap
 I:1000:46
 F:MKEY_HARDCODE
 
 N:47:Axe-mastery
-D:Ability to use axes
+D:Allows more skillful use of axe-type weapons.
 I:1000:0
 
 N:48:Conveyance
-D:Ability to learn and use spells from the Conveyance school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Conveyance school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:49:Spell-power
-D:Ability to Increase the power of known spells
+D:Further increases the power (and cost) of known spells.
 I:1000:0
 
 N:50:Mana
-D:Ability to learn and use spells from the Mana school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Mana school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:51:Fire
-D:Ability to learn and use spells from the Fire school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Fire school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:52:Air
-D:Ability to learn and use spells from the Air school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Air school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:53:Water
-D:Ability to learn and use spells from the Water school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Water school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:54:Nature
-D:Ability to learn and use spells from the Nature school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Nature school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:55:Earth
-D:Ability to learn and use spells from the Earth school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Earth school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:56:Divination
-D:Ability to learn and use spells from the Divination school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Divination school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:57:Temporal
-D:Ability to learn and use spells from the Temporal school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Temporal school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:58:Meta
-D:Ability to learn and use spells from the Meta school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Meta school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:59:Mind
-D:Ability to learn and use spells from the Mind school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Mind school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 N:60:Udun
-D:Ability to learn and use spells from the Udun school
-D:Spells use the intelligence stat
+D:Ability to learn and use spells from the Udun school.
+D:Spells use the intelligence stat.
 A:11:Cast a spell
 I:1000:111
 
 # priest
 
 N:70:Holy Offense
-D:Ability to learn and use holy prayers for attacking
-D:Spells use the wisdom stat
+D:Ability to learn and use holy prayers for attacking.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
 N:71:Holy Defense
-D:Ability to learn and use holy prayers for defending
-D:Spells use the wisdom stat
+D:Ability to learn and use holy prayers for defending.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
 N:72:Holy Curing
-D:Ability to learn and use holy prayers for curing purpose
-D:Spells use the wisdom stat
+D:Ability to learn and use holy prayers for curing purpose.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
 N:73:Holy Support
-D:Ability to learn and use miscellanous supporting prayers
-D:Spells use the wisdom stat
+D:Ability to learn and use miscellanous supporting prayers.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
@@ -398,17 +414,20 @@ I:1000:111
 #I:1000:111
 
 N:74:Arcane Lore
-D:Access to the Druid's Arcane Realm
+D:Access to the Druid's Arcane Realm.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
 N:75:Physical Lore
-D:Access to the Druid's Physical Realm
+D:Access to the Druid's Physical Realm.
+D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
 N:76:Runemastery
 D:Access to the Runic knowledge
+D:Intelligence and dexterity will affect the power.
 A:12:Draw a rune
 I:1000:0
 F:MKEY_HARDCODE
@@ -419,11 +438,12 @@ $ENABLE_DIVINE$A:11:Cast a spell
 $ENABLE_DIVINE$I:1000:0
 
 $DUAL_WIELD$N:78:Dual-Wield
-$DUAL_WIELD$D:Ability to wield two one-handed weapons at once
+$DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
+$DUAL_WIELD$D:This won't work well if your armour is too heavy.
 $DUAL_WIELD$I:1000:0
 
 $ENABLE_STANCES$N:79:Combat Stances
-$ENABLE_STANCES$D:Ability to use different stances in armed melee combat
+$ENABLE_STANCES$D:Ability to use different stances in armed melee combat.
 $ENABLE_STANCES$A:13:Change combat stance
 $ENABLE_STANCES$I:1000:0
 $ENABLE_STANCES$F:MKEY_HARDCODE
@@ -431,7 +451,7 @@ $ENABLE_STANCES$F:MKEY_HARDCODE
 # additional ones
 
 N:90:Climbing
-D:Ability to climb highest mountains withouth problems
+D:Ability to climb highest mountains withouth problems (Requires 1.000).
 I:1000:0
 
 #N:91:Flying

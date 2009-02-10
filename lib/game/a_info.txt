@@ -3235,6 +3235,7 @@ D:allowing him to discover new ideas.
 
 # Artifacts for the nether realm viability project - C. Blue
 
+# +++note+++ currently not findable due to set RESF_NOTRUEART from total_winner status! +++
 # The Heavy Mithril Scale Armour 'Mirror Of Glory'
 N:260:'Mirror Of Glory'
 I:37:26:5

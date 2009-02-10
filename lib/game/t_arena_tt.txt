@@ -4,12 +4,13 @@
 
 # default floor 1
 F: :1:3
+F:P:226:3
 
 D:##################################################################################################
 D:#pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp#
-D:#pppppp##                                        >                                       ##pppppp#
-D:#pppppp##                                      ####                                      ##pppppp#
-D:#pppppp#                                      ######                                      #pppppp#
+D:#pPPPPP##                                        >                                       ##PPPPPp#
+D:#pPPPPP##                                      ####                                      ##PPPPPp#
+D:#pPPPPP#                                      ######                                      #PPPPPp#
 D:#p######                                      ######                                      ######p#
 D:#p##                                           ####                                           ##p#
 D:#p                                                                                              p#
@@ -32,9 +33,9 @@ D:#p                                                                            
 D:#p                                                                                              p#
 D:#p##                                           ####                                           ##p#
 D:#p######                                      ######                                      ######p#
-D:#pppppp#                                      ######                                      #pppppp#
-D:#pppppp##                                      ####                                      ##pppppp#
-D:#pppppp##                                       >                                        ##pppppp#
+D:#pPPPPP#                                      ######                                      #PPPPPp#
+D:#pPPPPP##                                      ####                                      ##PPPPPp#
+D:#pPPPPP##                                       >                                        ##PPPPPp#
 D:#pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp#
 D:##################################################################################################
 D:##################################################################################################

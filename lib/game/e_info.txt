@@ -1173,8 +1173,9 @@ R:12
 F:LOW_ABILITY
 R:10
 F:REGEN_MANA
-R:2
-F:R_P_ABILITY | PVAL_M3 | LIMIT_BLOWS
+#note- this may give +speed/+EA, way too much and badly positioned for non-artifacts
+#R:2
+#F:R_P_ABILITY | PVAL_M3 | LIMIT_BLOWS
 
 N:100:of Gondolin
 T:15:0:255
@@ -1999,7 +2000,7 @@ C:8:11:-10:2
 T:31:2:99
 R:100
 F:STR | CON | SHOW_MODS | HIDE_TYPE | IGNORE_ACID | RES_FEAR | IGNORE_WATER | 
-F:DRAIN_HP
+#F:DRAIN_HP
 R:50
 F:BLOWS | AGGRAVATE
 
@@ -2210,17 +2211,18 @@ C:0:0:0:0
 R:100
 F:NO_SEED
 
-N:190:of Mistrust
-X:A:31:15
-W:0:1:30:4000
-C:0:0:12:0
-T:35:0:255
-R:100
-F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
-R:100
-F:R_LOW | HOLD_LIFE
-R:33
-F:OLD_RESIST
+#makes no sense. (originally was used for AM cloak.)
+#N:190:of Mistrust
+#X:A:31:15
+#W:0:1:30:4000
+#C:0:0:12:0
+#T:35:0:255
+#R:100
+#F:IGNORE_ACID | IGNORE_ELEC | IGNORE_FIRE | IGNORE_COLD | IGNORE_WATER
+#R:100
+#F:R_LOW | HOLD_LIFE
+#R:33
+#F:OLD_RESIST
 
 # Wooden shields only
 N:191:of Insulation

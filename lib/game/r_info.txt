@@ -1619,13 +1619,14 @@ F:EMPTY_MIND | BASEANGBAND
 D:It is a smallish, slimy, icky, nasty creature. 
 
 N:104:Disenchanter eye
-G:e:v
+G:e:I
 I:100:7d8:2:10:10
 W:5:2:500:20
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:UN_BONUS
-F:ATTR_MULTI | ATTR_ANY | RES_DISE | DROP_CORPSE | 
+#F:ATTR_MULTI | 
+F:ATTR_ANY | RES_DISE | DROP_CORPSE | 
 F:NEVER_MOVE | CAN_FLY | 
 F:HURT_LITE | NO_FEAR | BASEANGBAND
 S:1_IN_9 | 
@@ -2925,16 +2926,16 @@ F:MORTAL | BASEANGBAND
 D:A huge, beastly bear, more savage than most of its kind. 
 
 N:192:Disenchanter mold
-G:m:v
+G:m:I
 I:110:16d8:2:20:0
 W:10:1:40:40
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:SPORE:UN_BONUS:1d6
+#F:ATTR_MULTI
 F:NEVER_MOVE | 
 F:STUPID | EMPTY_MIND | RES_DISE |
 F:IM_POIS | CAN_SWIM |
-F:ATTR_MULTI
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT
 S:1_IN_11 | 
 S:DRAIN_MANA | UNMAGIC
@@ -6215,7 +6216,7 @@ S:SLOW | CONF | BO_ACID
 D:A stumpy figure carved from stone, with glittering eyes. 
 
 N:399:Disenchanter beast
-G:q:v
+G:q:I
 I:110:30d30:12:60:12
 W:25:2:2000:250
 E:0:1:0:2:1:0
@@ -6224,7 +6225,8 @@ B:TOUCH:UN_BONUS:1d10
 B:TOUCH:UN_BONUS:1d10
 B:TOUCH:UN_BONUS:1d10
 B:TOUCH:UN_BONUS:1d10
-F:STUPID | WEIRD_MIND | RES_DISE | DROP_CORPSE | ATTR_MULTI | 
+F:STUPID | WEIRD_MIND | RES_DISE | DROP_CORPSE |
+# ATTR_MULTI | 
 F:RES_ACID | RES_POIS | 
 F:NO_CONF | ZANGBAND
 D:It looks like an anteater, and there is a static feeling 
@@ -6324,14 +6326,15 @@ F:ANIMAL | CAN_FLY | MORTAL | BASEANGBAND
 D:A giant beetle with poisonous mandibles. 
 
 N:406:Disenchanter bat
-G:b:v
+G:b:I
 I:130:6d8:12:28:30
 W:26:4:50:75
 E:0:1:1:0:1:0
 O:0:0:0:0
 B:HIT:UN_BONUS
 B:HIT:UN_BONUS
-F:FORCE_SLEEP | RAND_50 | ANIMAL | MORTAL | ATTR_MULTI | 
+F:FORCE_SLEEP | RAND_50 | ANIMAL | MORTAL | 
+#ATTR_MULTI | 
 F:DROP_CORPSE | AI_ANNOY | CAN_FLY | BASEANGBAND | WEIRD_MIND
 D:A giant bat which feeds on raw magical energy. 
 
@@ -10400,14 +10403,15 @@ F:EVIL | TROLL | IM_POIS | NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 D:A massive troll, equipped with a scimitar and heavy armour. 
 
 N:632:Disenchanter worm mass
-G:w:v
+G:w:I
 #I:100:10d8:7:5:10
 I:100:10d8:28:5:10
 W:40:3:50:30
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:CRAWL:UN_BONUS:1d4
-F:RAND_50 | RES_DISE | ATTR_MULTI | CAN_SWIM |
+F:RAND_50 | RES_DISE | CAN_SWIM |
+#ATTR_MULTI | 
 F:STUPID | WEIRD_MIND | BASH_DOOR | 
 F:ANIMAL | HURT_LITE | NO_FEAR | BASEANGBAND | NO_CUT
 F:MULTIPLY
@@ -18508,8 +18512,7 @@ B:CLAW:HURT:3d3
 B:CLAW:HURT:3d3
 B:BITE:HURT:3d5
 F:RAND_50 | RAND_25
-#| ATTR_MULTI | 
-F:DROP_60 | ONLY_GOLD | DROP_CORPSE | 
+F:DROP_60 | ONLY_GOLD | DROP_CORPSE | ATTR_MULTI | 
 F:OPEN_DOOR | BASH_DOOR | 
 F:EVIL | DRAGON | RES_ELEC | RES_FIRE | RES_ACID | RES_COLD | RES_POIS | 
 F:MORTAL | BASEANGBAND
@@ -19424,6 +19427,7 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR | REGENERATE |
 F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | 
 F:NO_CONF | NO_SLEEP | RES_TELE | NO_FEAR | NO_STUN | 
 F:MORTAL | BLUEBAND | HAS_LITE | ATTR_ANY | CAN_FLY | WILD_TOO
+S:1_IN_6 | TELE_TO
 D:Founder of the Yagyu school, maybe the greatest swordsman ever.
 D:His left eye is covered by a patch, but there is no sign of any
 D:weakness on this fighter.
