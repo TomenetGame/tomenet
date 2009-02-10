@@ -143,19 +143,19 @@ HZEAL = add_spell
 	["name"] =      "Zeal",
 	["school"] =    SCHOOL_HSUPPORT,
 	["level"] =     31,
-	["mana"] =      30,
-	["mana_max"] =  100,
+	["mana"] =      50,
+	["mana_max"] =  150,
 	["fail"] =      5,
 	["stat"] =      A_WIS,
 	["spell"] =     function()
 		local d, p
-		d = 14 + randint(5)
+		d = 9 + randint(5)
 		p = get_zeal_power()
 		set_zeal(Ind, p, d)
 		fire_ball(Ind, GF_ZEAL_PLAYER, 0, (p * 4) / 3, 3, "")
 	end,
 	["info"] =      function()
-			return "dur 14+d5, "..(get_zeal_power() / 10).." EA"
+			return "dur 9+d5, "..(get_zeal_power() / 10).." EA"
 	end,
 	["desc"] =      {
 		"Increases your melee attacks per round by up to +3 for 14+d5 turns.",

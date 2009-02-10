@@ -151,7 +151,7 @@ HRUNEPROT = add_spell
 
 HMARTYR = add_spell
 {
-	["name"] =	"Eternal Martyr",
+	["name"] =	"Martyrdom",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["level"] =	40,
 	["mana"]=	50,

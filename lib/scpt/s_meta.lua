@@ -37,6 +37,7 @@ PROJECT_SPELLS = add_spell
                                 player.spell_project = 0
                                 msg_print(Ind, "Your utility spells will now only affect yourself.")
                         end
+			player.redraw = bor(player.redraw, 1048576)
 	end,
 	["info"] = 	function()
                 	return "base rad "..(1 + get_level(Ind, PROJECT_SPELLS, 6, 0))

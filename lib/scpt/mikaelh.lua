@@ -23,10 +23,11 @@ SKILL_STANCE = 79
 
 -- Neat list of player skills
 function showskills(name)
-	local p
+	local p, f
 	p = ind(name)
 	if (p == -1) then return -1 end
-	msg_print(Ind, "\255BSkills of player " .. p)
+	f = players(p).skill_points
+	msg_print(Ind, "\255BSkills of player " .. p .." (".. f .." points available)")
 	if get_skill_value(p, SKILL_COMBAT) > 0 then		msg_print(Ind, " - Combat                         " .. get_skill_formatted(p, SKILL_COMBAT)) end
 	if get_skill_value(p, SKILL_MASTERY) > 0 then		msg_print(Ind, "     - Weaponmastery              " .. get_skill_formatted(p, SKILL_MASTERY)) end
 	if get_skill_value(p, SKILL_SWORD) > 0 then		msg_print(Ind, "         - Sword-mastery          " .. get_skill_formatted(p, SKILL_SWORD)) end

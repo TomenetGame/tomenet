@@ -177,64 +177,64 @@ school_book[5] = {
         DISARM, BLINK, TELEPORT, TELEAWAY, RECALL, PROBABILITY_TRAVEL,
 }
 
--- Create the book of the tree * SUMMONANIMAL requires pets first (28-31)
+-- Create the book of the tree * SUMMONANIMAL requires pets first (28-32)
 school_book[6] = {
         GROWTREE, HEALING, RECOVERY, REGENERATION, VERMINCONTROL,
 }
 
--- Create the book of Knowledge (32-37)
+-- Create the book of Knowledge (33-38)
 school_book[7] = {
         SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
 }
 
--- Create the book of the Time (38-41)
+-- Create the book of the Time (39-42)
 school_book[8] = {
         MAGELOCK, SLOWMONSTER, ESSENSESPEED, BANISHMENT,
 }
 
--- Create the book of meta spells (42-44)
+-- Create the book of meta spells (43-45)
 school_book[9] = {
         RECHARGE, PROJECT_SPELLS, DISPERSEMAGIC,
 }
 
--- Create the book of the mind * CHARM requires pets first (45-47)
+-- Create the book of the mind * CHARM requires pets first (46-48)
 school_book[10] = {
         CONFUSE, STUN, TELEKINESIS,
 }
 
--- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (48-52)
+-- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
 school_book[11] = {
         GENOCIDE, WRAITHFORM, DISEBOLT, HELLFIRE, STOPWRAITH,
 }
 
 -- Priests / Paladins:
 
--- Create the book of Holy Offense (53-59)
+-- Create the book of Holy Offense (54-60)
 school_book[12] = {
         HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD,
 }
 
--- Create the book of Holy Defense (60-64)
+-- Create the book of Holy Defense (61-65)
 school_book[13] = {
 	HBLESSING, HRESISTS, HPROTEVIL, HRUNEPROT, HMARTYR,
 }
 
--- Create the book of Holy Curing (65-71)
+-- Create the book of Holy Curing (66-72)
 school_book[14] = {
 	HHEALING, HDELCURSES, HHEALING2, HCURING, HSANITY, HRESURRECT, HDELBB,
 }
 
--- Create the book of Holy Support (72-78)
+-- Create the book of Holy Support (73-79)
 school_book[15] = {
 	HDELFEAR, HGLOBELIGHT, HSENSEMON, HSANCTUARY, HSATISFYHUNGER, HSENSE,  HZEAL,
 }
 
--- Create the book of druidism: Arcane Lore (79-83)
+-- Create the book of druidism: Arcane Lore (80-84)
 school_book[16] = {
 	NATURESCALL, WATERPOISON, BAGIDENTIFY, REPLACEWALL, BANISHANIMALS,
 }
 
--- Create the book of druidism: Physical Lore (84-88)
+-- Create the book of druidism: Physical Lore (85-89)
 school_book[17] = {
 	HEALINGCLOUD, QUICKFEET, HERBALTEA, EXTRASTATS, FOCUSSHOT,
 }
@@ -281,10 +281,10 @@ school_book[55] = {
 
 ---- Create the handbook for rogues (of shadows)
 school_book[57] = {
-        BLINK, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION
+	BLINK, DISARM, NOXIOUSCLOUD, SENSEHIDDEN, REVEALWAYS, VISION, INVISIBILITY
 }
 
 ---- Create the handbook for dungeon masters & wizads (of dungeon keeping)
 school_book[58] = {
-        TELEKINESIS, DIG, GROWTREE, DISARM, VISION, MANATHRUST, DISEBOLT, FIREFLASH
+        TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION, STARIDENTIFY, MANATHRUST, DISEBOLT, FIREFLASH
 }

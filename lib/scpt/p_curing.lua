@@ -1,14 +1,25 @@
 -- handle the holy curing school
 
-function get_healing_power2()
-        local pow
-        pow = player.mhp * (25 + get_level(Ind, HHEALING, 31)) / 100
-	if pow > get_level(Ind, HHEALING, 417) then
-		pow = get_level(Ind, HHEALING, 417)
+function get_healing_percents()
+	return 25 + get_level(Ind, HHEALING, 31)
+end
+
+function get_healing_cap()
+	local pow
+	pow = get_level(Ind, HHEALING, 417)
+	if pow > 400 then
+		pow = 400
 	end
-        if pow > 400 then
-                pow = 400
-        end
+	return pow
+end
+
+function get_healing_power2()
+        local pow, cap
+        pow = player.mhp * get_healing_percents() / 100
+	cap = get_healing_cap()
+	if pow > cap then
+		pow = cap
+	end
         return pow
 end
 
@@ -35,10 +46,11 @@ HHEALING = add_spell
 		fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), 1, " points at your wounds.")
 	end,
 	["info"] =      function()
-			return "heal "..(15 + get_level(Ind, HHEALING, 43)).."%="..get_healing_power2().."/"..((get_healing_power2() * 3) / 4).."hp"
+			return "heal "..get_healing_percents().."% or "..get_healing_cap().." = "..get_healing_power2()
 	end,
 	["desc"] =      {
-		"Heals a percent of hitpoints up to a maximum of 400 points healed",
+		"Heals a percent of hitpoints up to a spell level-dependent cap",
+		"The final cap is 400",
 		"Projecting it will heal 3/4 of that amount on other players",
 		"***Automatically projecting***",
 	}
@@ -70,7 +82,7 @@ HDELCURSES = add_spell
 
 HHEALING2 = add_spell
 {
-        ["name"] =      "Cleansing Cloud",
+        ["name"] =      "Cleansing Light",
         ["school"] =    {SCHOOL_HCURING},
         ["level"] =     18,
         ["mana"] =      1,

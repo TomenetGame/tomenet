@@ -10,7 +10,7 @@ BLINK = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
                 	local dist = 10 + get_level(Ind, BLINK, 8)
-			teleport_player(Ind, dist)
+			teleport_player(Ind, dist, TRUE);
 --                        if player.spell_project > 0 then
 --                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
 --                        end
@@ -53,7 +53,7 @@ TELEPORT = add_spell
         ["fail"] = 	50,
         ["spell"] = 	function()
                         local dist = 100 + get_level(Ind, TELEPORT, 100)
-			teleport_player(Ind, dist)
+			teleport_player(Ind, dist, FALSE)
 --                        if player.spell_project > 0 then
 --                                fire_ball(Ind, GF_TELEPORT_PLAYER, 0, dist, player.spell_project, "")
 --                        end

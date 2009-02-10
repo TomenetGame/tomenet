@@ -99,7 +99,8 @@ end
 function maxskills(name)
     local p, i
     p = ind(name)
-    for i = 0, (MAX_SKILLS - 1) do
+--    for i = 0, (MAX_SKILLS - 1) do
+    for i = 1, (MAX_SKILLS - 0) do
 	players(p).s_info[i].value = 50000
     end
 end
@@ -173,10 +174,11 @@ function status(name)
     else
 	bspeed = 0
     end
+    bspeed = players(p).pspeed - bspeed
 
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Index "..p..", id "..players(p).id..")")
     msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst)
-    msg_print(Ind, "Base Spd: "..players(p).pspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
+    msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
     msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv)
     msg_print(Ind, "Body: "..rs)
     msg_print(Ind, "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
@@ -185,7 +187,11 @@ function status(name)
     msg_print(Ind, "BpR: "..players(p).num_blow.."   SpR: "..players(p).num_fire.."   CpR: "..players(p).num_spell.."   Au : "..players(p).au.."   Bank:  "..players(p).balance)
     if players(p).lev < 100 then
 --        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev] / 100 * players(p).expfact))
-        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
+	if players(p).mode ~= 16 then
+            msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
+	else
+            msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]).."   Kills: "..players(p).kills)
+	end
     end
     msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
 end

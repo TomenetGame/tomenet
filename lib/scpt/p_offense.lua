@@ -160,7 +160,7 @@ HRELSOULS = add_spell
 
 HDRAINCLOUD = add_spell
 {
-        ["name"] =      "Cloud of Draining",
+        ["name"] =      "Doomed Grounds",
         ["school"] =    {SCHOOL_HOFFENSE},
         ["level"] =     40,     -- pointless for crap with low lvl anyway
         ["mana"] =      50,
@@ -186,9 +186,8 @@ HDRAINCLOUD = add_spell
                         return "dam ".."var".." rad 3 dur "..(8 + get_level(Ind, HDRAINCLOUD, 10))
         end,
         ["desc"] =      {
-                        "Creates an area of draining",
-                        "The cloud will persist for a short while. During its duration, it will drain the",
-			"life of the monsters inside and give 15% of the damage back to the caster's hp."
+                        "Curses an area temporarily, sucking life force of those walking it.",
+                        "15% of the damage is fed back to the caster's hit points."
         }
 }
 
