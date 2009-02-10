@@ -4,7 +4,7 @@
 # can choose to display useful hints more often than those random rumours.
 
 N:*:Default
-15
+16
 Press shift+P to form a party and share experience within 7 levels!
 Somewhat experienced rogues may use shift+V to become nigh invisible!
 Most fighter classes will learn special techniques they can use with 'm'!
@@ -20,3 +20,4 @@ Keep in mind that true artifacts cannot be dropped in houses but will vanish!
 Press shift+G to spend skill points you gain on each level-up!
 Type /que in chat to get a random kill quest!
 You can also bind macros to SHIFT+key or CTRL+key, for multiple use of a key.
+Creating ammo from a larger stack of raw materials results in more ammo!

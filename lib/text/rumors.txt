@@ -4,10 +4,10 @@
 # You can colour the rumours with '{' tag. Use '{{' to write literal '{'.
 # Any lines above 'N:' will be ignored.
 
-# You should manually write the total # of rumous (lines - 10).
+# You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-1018
+1009
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -307,7 +307,7 @@ Ever seen a God or Goddess player?
 {B[Evileye] hehe
 {B[Jir] {y:)
 {B[Mihi] May the source be with you! *^-')b
-{b[C. Blue] {BDid you download the latest scripts!?
+{b[C.Blue]{B o_O
 {D[Magnet] {BLet's slay evil !
 You are hit by a bolt from the blue!
 They say that there once was a poor batman who found both Ringil and Feanor.
@@ -536,7 +536,7 @@ They say that levitation never allows you to leave the ground.
 They say that not all the antimagic devices have the same effect.
 They say that you should never ask 'What does ... do?'
 They say that a weakest being often has a toughest friend.
-Ever dropped a piece of {Gadamantite{w?
+Ever dropped a piece of {vadamantite{w?
 They say that DarkGod has hired some body-guards.
 They say that 'Moldoux' is French word that means 'protected like hell'.
 They say that not all the men on a dragon's back are DragonRiders.
@@ -966,16 +966,6 @@ O fortuna! Velut luna!
 Never feed a gremlin after midnight.
 This l00t's not gonna l00t itself!
 Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
-Taxation is theft.
 No man's life, liberty, or property are safe while the legislature is in session.
 Every decent man is ashamed of the government he lives under.
 The power to tax is the power to destroy.
@@ -1026,3 +1016,4 @@ People won't admit they don't know shit.
 There's a gun in the room.
 Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
 What it do?
+You will need to Restore the Constitution if the Anarchists strike.
