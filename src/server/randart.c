@@ -419,8 +419,8 @@ s32b artifact_power (artifact_type *a_ptr)
 	if (a_ptr->esp & (ESP_NONLIVING)) p += 2;
 	if (a_ptr->esp & (ESP_UNIQUE)) p += 8;
 	if (a_ptr->esp & (ESP_SPIDER)) p += 2;
-	if (a_ptr->esp & ESP_ALL) p += 40; //p += 22;
-        if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;
+	if (a_ptr->esp & ESP_ALL) p += 40; //note: this should probably be even higher, maybe 50
+        if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;//maybe even higher, like 30
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
 	if (a_ptr->flags5 & TR5_REGEN_MANA) p += 8;
@@ -2235,8 +2235,8 @@ artifact_type *randart_make(object_type *o_ptr)
 		if (magik(20)) a_ptr->ds += 1;
 		else if (magik(20)) a_ptr->dd += 1;
 
-		/* exploding art ammo is very rare */
-		if (magik(10)) {
+		/* exploding art ammo is very rare - note: magic ammo can't explode */
+		if (magik(10) && (a_ptr->sval != SV_AMMO_MAGIC)) {
 			int power[28]={GF_ELEC, GF_POIS, GF_ACID,
 			GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
 			GF_DARK, GF_SHARDS, GF_SOUND,
@@ -2323,6 +2323,10 @@ artifact_type *randart_make(object_type *o_ptr)
 	artifact_fix_limits_afterwards(a_ptr, k_ptr, o_ptr);
 
 	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
+	
+	/* todo:
+	a_ptr->cost += flag_cost(o_ptr) / 5;
+	*/
 
 	/* NOTE: a_ptr->level is only the base level. Apply_magic as well as
 	   create_artifact_aux execute a 'determine_level_req' on randarts
@@ -2877,10 +2881,10 @@ void add_random_ego_flag(artifact_type *a_ptr, int fego, bool *limit_blows, s16b
 		{
 			a_ptr->flags1 |= TR1_BRAND_POIS;
 		}
-/*		if (a_ptr->tval == TV_SWORD && (randint(4) == 1))*/
-		if ((a_ptr->tval != TV_BLUNT) && 
-		    !(a_ptr->tval == TV_POLEARM &&
-			a_ptr->sval != 3 && a_ptr->sval != 6 && a_ptr->sval != 9 && a_ptr->sval != 13 && a_ptr->sval != 17 && a_ptr->sval != 30
+/*		if (k_ptr->tval == TV_SWORD && (randint(4) == 1))*/
+		if ((k_ptr->tval != TV_BLUNT) && 
+		    !(k_ptr->tval == TV_POLEARM &&
+			k_ptr->sval != 3 && k_ptr->sval != 6 && k_ptr->sval != 9 && k_ptr->sval != 13 && k_ptr->sval != 17 && k_ptr->sval != 30
 		    ) && (randint(3) == 1))
 		{
 			a_ptr->flags5 |= TR5_VORPAL;

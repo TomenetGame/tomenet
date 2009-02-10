@@ -1338,7 +1338,7 @@ static cptr r_name_garbled_get()
 {
 	int r_idx;
 
-	while (1)
+	while (TRUE)
 	{
 		r_idx = rand_int(MAX_R_IDX);
 		if (!r_info[r_idx].name) continue;
@@ -2286,7 +2286,7 @@ void update_mon(int m_idx, bool dist)
 			if (p_ptr->admin_dm) flag = TRUE;
 			
 			/* Arena Monster Challenge event provides wizard-esp too */
-			if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
 				flag = TRUE;
 		}
 
@@ -2547,11 +2547,11 @@ void update_player(int Ind)
 			if (p_ptr->admin_dm) flag = TRUE;
 
 			/* Arena Monster Challenge event provides wizard-esp too */
-			if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
 				flag = TRUE;
 
 			/* PvP-Arena provides wizard-esp too */
-			if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1) flag = TRUE;
+			if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) flag = TRUE;
 
 			/* hack: PvP-mode players can ESP each other */
 			if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) flag = TRUE;
@@ -2762,9 +2762,9 @@ if (!summon_override_checks) {
 #endif
 
 	/* No live spawns allowed in training tower during global event */
-	if (ge_training_tower &&
-	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && 
-	    wpos->wz == wild_info[cfg.town_y][cfg.town_x].tower->maxdepth)
+	if (ge_special_sector &&
+	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && 
+	    wpos->wz == WPOS_ARENA_Z)
 		return(FALSE);
 
 	/* No spawns in 0,0 pvp arena tower */
@@ -3282,7 +3282,7 @@ summon_override_checks = 0; /* reset admin summoning override flags */
 /*
  * Maximum size of a group of monsters
  */
-#define GROUP_MAX       32
+#define GROUP_MAX       32 /* 20 would be nice for hounds maybe - C. Blue */
 
 
 /*

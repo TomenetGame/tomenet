@@ -2436,6 +2436,7 @@ break;
 				ok_ptr = &k_info[o_ptr->k_idx];
 				if (ok_ptr->cost > 150) continue;
 				//cure crits cost 100, WoR 150, so it still poses a decent threat.
+				if (is_ammo(o_ptr->tval)) continue; /* ammo is too important for archers, and hard to collect! */
 
 				if (j > 8) j -= j >> 3;
 
@@ -2994,6 +2995,7 @@ break;
 				q_ptr = Players[k];
 				if (q_ptr->conn == NOT_CONNECTED) continue;
 				if (k == Ind) continue;
+				if (is_admin(q_ptr)) continue; /* admins are invisible and have high levels */
 				/* No transfer between everlasting and non-everlasting? */
 				if (compat_pmode(Ind, k)) continue;
 

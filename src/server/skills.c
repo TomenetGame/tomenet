@@ -457,11 +457,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
                 break;
 	case SKILL_MIND:
                 if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377G* You feels strong against confusion and hallucinations. *");
+                        msg_print(Ind, "\377G* You feel strong against confusion and hallucinations. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377G* You feels strong against insanity attacks. *");
+                        msg_print(Ind, "\377G* You feel strong against insanity attacks. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377G* You feels very strong against insanity attacks. *");
+                        msg_print(Ind, "\377G* You feel very strong against insanity attacks. *");
                 }
                 break;
 	case SKILL_TEMPORAL:
@@ -1364,7 +1364,7 @@ int do_cmd_activate_skill_aux()
 	character_icky = TRUE;
 	Term_save();
 
-	while (1)
+	while (TRUE)
 	{
 		print_skill_batch(p, start, max, mode);
 		which = inkey();

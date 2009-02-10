@@ -4935,6 +4935,7 @@ void distract_monsters(int Ind)
 	}
 }
 
+/* attempts to make certain types of AI_ANNOY monsters approach the player for a while */
 void taunt_monsters(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4970,7 +4971,7 @@ void taunt_monsters(int Ind)
 				if (magik(50)) tauntable = FALSE; /* unique monsters resist more often */
 			}
 		}
-		else if (magik(25)) tauntable = FALSE; /* all monsters sometimes resist taunt */
+		else if (magik(20)) tauntable = FALSE; /* all monsters sometimes resist taunt */
 //		else if (magik(r_ptr->level / 3)) tauntable = FALSE; /* all monsters sometimes resist taunt */
 
 #if 0 /*actually, being POWERFUL doesn't really protect.. */
@@ -5017,7 +5018,8 @@ void taunt_monsters(int Ind)
 
 			/* taunt */
 			m_ptr->monfear = 0;
-			m_ptr->taunted = 5; /* number of turns staying taunted */
+			m_ptr->taunted = 7; /* number of monster moves staying taunted */
+			//was 5
 		}
 
 		/* monster stands right next to this player? */

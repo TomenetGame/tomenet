@@ -4407,9 +4407,9 @@ static void do_unstat(struct worldpos *wpos)
 	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation) return;
 
 	/* Arena Monster Challenge */
-	if (ge_training_tower &&
-	    wpos->wx == cfg.town_x && wpos->wy == cfg.town_y &&
-	    wpos->wz == wild_info[cfg.town_y][cfg.town_y].tower->maxdepth) return;
+	if (ge_special_sector &&
+	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
+	    wpos->wz == WPOS_ARENA_Z) return;
 
 
 	// Count the number of players actually in game on this depth
@@ -5605,8 +5605,10 @@ static void process_player_change_wpos(int Ind)
 	p_ptr->new_level_flag = FALSE;
 
 	/* Did we enter a no-tele vault? */
-        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)
+        if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 		msg_print(Ind, "\377DThe air in here feels very still.");
+		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+	}
 
 	/* Hack -- jail her/him */
 	if(!p_ptr->wpos.wz && p_ptr->tim_susp){
@@ -5628,11 +5630,11 @@ static void process_player_change_wpos(int Ind)
 	check_Morgoth();
 
 	/* Brightly lit Arena Monster Challenge */
-	if (ge_training_tower && p_ptr->wpos.wx == cfg.town_x &&
-	    p_ptr->wpos.wy == cfg.town_y && p_ptr->wpos.wz == 2)
+	if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
+	    p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
 		wiz_lite(Ind);
 
-	if (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1) {
+	if (p_ptr->wpos.wx == WPOS_PVPARENA_X && p_ptr->wpos.wy == WPOS_PVPARENA_Y && p_ptr->wpos.wz == WPOS_PVPARENA_Z) {
 		/* teleport after entering [the PvP arena],
 		   so stairs won't be camped */
 		teleport_player(Ind, 200, TRUE);
@@ -6127,7 +6129,9 @@ s_printf("WEATHER: Starting rain.\n");
 #endif
 
 	/* process debugging/helper functions - C. Blue */
-	if (store_debug_mode && (!(turn % ((10 * cfg.store_turns) / store_debug_mode))))
+	if (store_debug_mode &&
+	    /* '/ 10 ' stands for quick motion, ie time * 10 */
+	    (!(turn % ((store_debug_mode * (10L * cfg.store_turns)) / store_debug_quickmotion))))
 		store_debug_stock();
 
 	/* Send any information over the network */

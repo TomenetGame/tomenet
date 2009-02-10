@@ -1843,7 +1843,7 @@ void carry(int Ind, int pickup, int confirm)
 			{
 				int slot;
 
-/* TEMPORARY ANTI-CHEEZE HACKS */
+/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req() 
 if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED && (o_ptr->level < 30) && (o_ptr->bpval > 0)) {
 	s_printf("HACK-SPEEDREQ: %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, o_ptr->bpval, o_ptr->level);
 	determine_level_req(75, o_ptr);
@@ -1867,6 +1867,10 @@ if (o_ptr->tval == TV_POTION && o_ptr->sval >= SV_POTION_INC_STR && o_ptr->sval 
 if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_BLADE_OF_CHAOS && o_ptr->name2 == EGO_STORMBRINGER) {
 	s_printf("HACK-STORMBRINGER.\n");
 	o_ptr->level = 0;
+}
+if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+    && (o_ptr->name2 == EGO_LIFE || o_ptr->name2b == EGO_LIFE) && (o_ptr->pval > 2)) {
+        o_ptr->pval = 2;
 }
 /* Fix high quality runes levels */
 if (o_ptr->tval == TV_RUNE1) {
@@ -4797,8 +4801,10 @@ void move_player(int Ind, int dir, int do_pickup)
 
 		/* Check for an attack */
 		if (cfg.use_pk_rules != PK_RULES_NEVER &&
-			check_hostile(Ind, Ind2))
+		    check_hostile(Ind, Ind2)) {
 			py_attack(Ind, y, x, TRUE);
+			return;
+		}
 
 		/* If both want to switch, do it */
 #if 0
@@ -4822,138 +4828,146 @@ void move_player(int Ind, int dir, int do_pickup)
 #endif	// 0
 
 		{
-/*		    if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
-		    /* switch places only if BOTH have WRAITHFORM or NONE has it */
-		    if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
-			((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
-			|| blocks_important_feat)
-		    {
-
-			c_ptr->m_idx = 0 - Ind;
-			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind2;
-
-			q_ptr->py = p_ptr->py;
-			q_ptr->px = p_ptr->px;
-			calc_bonuses(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
-
-			p_ptr->py = y;
-			p_ptr->px = x;
-			if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
-
-			cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
-			cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
-
-			/* Tell both of them */
-			/* Don't tell people they bumped into the Dungeon Master */
-			if (!q_ptr->admin_dm)
+/*		    	if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
+			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
+			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
+			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
+			    || blocks_important_feat || q_ptr->admin_dm)
 			{
-				/* Hack if invisible */
-				if (p_ptr->play_vis[Ind2])                              
-					msg_format(Ind, "You switch places with %s.", q_ptr->name);
-				else
-					msg_print(Ind, "You switch places with it.");
+
+				c_ptr->m_idx = 0 - Ind;
+				zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind2;
+
+				q_ptr->py = p_ptr->py;
+				q_ptr->px = p_ptr->px;
+				calc_bonuses(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
+
+				p_ptr->py = y;
+				p_ptr->px = x;
+				if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
+
+				cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
+				cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
+
+				/* Tell both of them */
+				/* Don't tell people they bumped into the Dungeon Master */
+				if (!q_ptr->admin_dm)
+				{
+					/* Hack if invisible */
+					if (p_ptr->play_vis[Ind2])                              
+						msg_format(Ind, "You switch places with %s.", q_ptr->name);
+					else
+						msg_print(Ind, "You switch places with it.");
 				
-				/* Hack if invisible */
-				if (q_ptr->play_vis[Ind])
-					msg_format(Ind2, "You switch places with %s.", p_ptr->name);
-				else
-					msg_print(Ind2, "You switch places with it.");
+					/* Hack if invisible */
+					if (q_ptr->play_vis[Ind])
+						msg_format(Ind2, "You switch places with %s.", p_ptr->name);
+					else
+						msg_print(Ind2, "You switch places with it.");
 
-				black_breath_infection(Ind, Ind2);
-				stop_precision(Ind2);
-				stop_shooting_till_kill(Ind);
-			}
+					black_breath_infection(Ind, Ind2);
+					stop_precision(Ind2);
+					stop_shooting_till_kill(Ind);
 
-			/* Disturb both of them */
-			disturb(Ind, 1, 0);
-			disturb(Ind2, 1, 0);
+					/* Disturb both of them */
+					disturb(Ind, 1, 0);
+					disturb(Ind2, 1, 0);
+				}
 
-			/* Re-show both grids */
-			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
-			everyone_lite_spot(wpos, q_ptr->py, q_ptr->px);
+				/* Re-show both grids */
+				everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+				everyone_lite_spot(wpos, q_ptr->py, q_ptr->px);
 
-			p_ptr->update |= PU_LITE;
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
-			q_ptr->update |= PU_LITE;
-			q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+				p_ptr->update |= PU_LITE;
+				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
+				q_ptr->update |= PU_LITE;
+				q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
 #if 0
-			/* Check for new panel (redraw map) */
-			verify_panel(Ind);
-			/* Update the monsters */
-			p_ptr->update |= (PU_DISTANCE);
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD);
-			/* Hack -- quickly update the view, to reduce perceived lag */
-			redraw_stuff(Ind);
-			window_stuff(Ind);
+				/* Check for new panel (redraw map) */
+				verify_panel(Ind);
+				/* Update the monsters */
+				p_ptr->update |= (PU_DISTANCE);
+				/* Window stuff */
+				p_ptr->window |= (PW_OVERHEAD);
+				/* Hack -- quickly update the view, to reduce perceived lag */
+				redraw_stuff(Ind);
+				window_stuff(Ind);
 #endif
 #if 0 /* replace suppressed switching by bumping */
-		    } else if ((p_ptr->afk || q_ptr->afk) && 
-			((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
-		    {
+			} else if ((p_ptr->afk || q_ptr->afk) && 
+			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
+			{
 #endif
-		    } else {
-			    black_breath_infection(Ind, Ind2); /* =p */
-			    disturb(Ind, 1, 0); /* turn off running, so player won't be un-AFK'ed automatically */
-			    return;
-		    }
+			} else {
+				black_breath_infection(Ind, Ind2); /* =p */
+				disturb(Ind, 1, 0); /* turn off running, so player won't be un-AFK'ed automatically */
+//was here->			return;
+			}
+			return;//<- moved it here, so switching gets terminated too
 		}
 
 		/* Hack -- the Dungeon Master cannot bump people */
 		else if (!p_ptr->admin_dm)
 		{
-			/* Tell both about it */
-			/* Hack if invisible */
-			int ball=has_ball(q_ptr);
-			if(p_ptr->team && ball!=-1 && q_ptr->team!=p_ptr->team){
-				object_type *o_ptr=&q_ptr->inventory[ball];
-				object_type tmp_obj;
-				int tackle;
-				tackle=randint(20);
-				if(tackle>10){
-					tmp_obj=*o_ptr;
-					if(tackle<18){
-						msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
-						msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
-						tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
-						drop_near(&tmp_obj, -1, wpos, y, x);
+			/* Don't tell people they bumped into the Dungeon Master */
+			if (!q_ptr->admin_dm) {
+				/* Tell both about it */
+				/* Hack if invisible */
+				int ball=has_ball(q_ptr);
+				if(p_ptr->team && ball!=-1 && q_ptr->team!=p_ptr->team){
+					object_type *o_ptr=&q_ptr->inventory[ball];
+					object_type tmp_obj;
+					int tackle;
+					tackle=randint(20);
+					if(tackle>10){
+						tmp_obj=*o_ptr;
+						if(tackle<18){
+							msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
+							msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
+							tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
+							drop_near(&tmp_obj, -1, wpos, y, x);
+						}
+						else{
+							msg_format_near(Ind2, "\377v%s gets the ball from %s", p_ptr->name, q_ptr->name);
+							msg_format(Ind2, "\377v%s gets the ball from you", p_ptr->name);
+							inven_carry(Ind, o_ptr);
+						} /*the_sandman: added violet colour for successful tackles
+							and red for attempts*/
+						inven_item_increase(Ind2, ball, -1);
+						inven_item_describe(Ind2, ball);
+						inven_item_optimize(Ind2, ball);
+						q_ptr->energy=0;
 					}
 					else{
-						msg_format_near(Ind2, "\377v%s gets the ball from %s", p_ptr->name, q_ptr->name);
-						msg_format(Ind2, "\377v%s gets the ball from you", p_ptr->name);
-						inven_carry(Ind, o_ptr);
-					} /*the_sandman: added violet colour for successful tackles
-						and red for attempts*/
-					inven_item_increase(Ind2, ball, -1);
-					inven_item_describe(Ind2, ball);
-					inven_item_optimize(Ind2, ball);
-					q_ptr->energy=0;
+						msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
+						msg_format(Ind, "\377rYou fail to tackle %s", q_ptr->name);
+					}
 				}
 				else{
-					msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
-					msg_format(Ind, "\377rYou fail to tackle %s", q_ptr->name);
-				}
-			}
-			else{
-				if (p_ptr->play_vis[Ind2])
-					msg_format(Ind, "You bump into %s.", q_ptr->name);
-				else
-					msg_print(Ind, "You bump into it.");
+					if (p_ptr->play_vis[Ind2])
+						msg_format(Ind, "You bump into %s.", q_ptr->name);
+					else
+						msg_print(Ind, "You bump into it.");
 			
-				/* Hack if invisible */
-				if (q_ptr->play_vis[Ind])
-					msg_format(Ind2, "%s bumps into you.", p_ptr->name);
-				else
-					msg_print(Ind2, "It bumps into you.");
+					/* Hack if invisible */
+					if (q_ptr->play_vis[Ind])
+						msg_format(Ind2, "%s bumps into you.", p_ptr->name);
+					else
+						msg_print(Ind2, "It bumps into you.");
+				}
+
+				black_breath_infection(Ind, Ind2);
+
+				/* Disturb both parties */
+				disturb(Ind, 1, 0);
+				disturb(Ind2, 1, 0);
+
+				return;
 			}
-
-			black_breath_infection(Ind, Ind2);
-
-			/* Disturb both parties */
-			disturb(Ind, 1, 0);
-			disturb(Ind2, 1, 0);
+		} else { /* is admin: */
+			/* admin just does nothing instead of bumping into someone */
+			return;
 		}
-		return;
 	}
 
 	/* Hack -- attack monsters */
@@ -5181,11 +5195,14 @@ void move_player(int Ind, int dir, int do_pickup)
 		p_ptr->px = x;
 		if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
 
-		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK))
+		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");
+			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+		}
 		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK))
 		{
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
+			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
 			/* Automatically re-enable permanent wraith form */
 			p_ptr->update |= PU_BONUS;
 		}

@@ -115,7 +115,7 @@ static bool validstring(char *nick);
 #endif
 void validatestring(char *string);
 
-connection_t	*Conn = NULL;
+connection_t	**Conn = NULL;
 static int		max_connections = 0;
 static setup_t		Setup;
 static int		(*playing_receive[256])(int ind),
@@ -172,7 +172,7 @@ void add_banlist(int Ind, int time){
 
 	ptr->next=banlist;
 	ptr->time=time;
-	strcpy(ptr->ip, Conn[Players[Ind]->conn].addr);
+	strcpy(ptr->ip, Conn[Players[Ind]->conn]->addr);
 	s_printf("Banned connections from %s for %d minutes\n", ptr->ip, time);
 	banlist=ptr;
 }
@@ -367,7 +367,7 @@ static int Init_setup(void)
 }
 	
 void init_players(){
-	max_connections = MAX_SELECT_FD - 5;
+	max_connections = MAX_SELECT_FD - 23;
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */
 	/* we need only allocate the player_type for it */
@@ -521,18 +521,22 @@ bool Report_to_meta(int flag)
                         }
                 }
 
-#ifdef ARCADE_SERVER /* made this one top priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
+#ifdef TEST_SERVER
+		strcat(buf_meta, "<game>TomeNET TEST-ONLY</game>");
+#else
+ #ifdef ARCADE_SERVER /* made this one higher priority since using RPG_SERVER as an "ARCADE-addon" might be desired :) */
 		strcat(buf_meta, "<game>TomeNET Smash Arcade</game>");
-#else
-#ifdef RPG_SERVER
+ #else
+  #ifdef RPG_SERVER
 		strcat(buf_meta, "<game>TomeNET RPG (not for beginners)</game>");
-#else
-#ifdef FUN_SERVER
+  #else
+   #ifdef FUN_SERVER
 		strcat(buf_meta, "<game>TomeNET Fun</game>");
-#else
+   #else
                 strcat(buf_meta, "<game>TomeNET</game>");
-#endif
-#endif
+   #endif
+  #endif
+ #endif
 #endif
 
                 /* Append the version number */
@@ -685,7 +689,7 @@ int Setup_net_server(void)
 	 */
 
 	size = max_connections * sizeof(*Conn);
-	if ((Conn = (connection_t *) malloc(size)) == NULL)
+	if ((Conn = (connection_t **) malloc(size)) == NULL)
 		quit("Cannot allocate memory for connections");
 
 	memset(Conn, 0, size);
@@ -701,6 +705,8 @@ int Setup_net_server(void)
 	strcpy(serverStartupTime, showtime());
 	s_printf("Current time is %s\n", serverStartupTime);
 	time(&cfg.runtime);
+	s_printf("Session startup turn is: %d\n", turn);
+	session_turn = turn;
 
 	return 0;
 }
@@ -1508,10 +1514,10 @@ static void Delete_player(int Ind)
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 	}
 
-	if (Conn[Players[Ind]->conn].id != -1)
-		GetInd[Conn[Players[Ind]->conn].id] = Ind;
-	if (Conn[Players[NumPlayers]->conn].id != -1)
-		GetInd[Conn[Players[NumPlayers]->conn].id] = NumPlayers;
+	if (Conn[Players[Ind]->conn]->id != -1)
+		GetInd[Conn[Players[Ind]->conn]->id] = Ind;
+	if (Conn[Players[NumPlayers]->conn]->id != -1)
+		GetInd[Conn[Players[NumPlayers]->conn]->id] = NumPlayers;
 
 	/* Recalculate player-player visibility */
 	update_players();
@@ -1542,7 +1548,7 @@ static void Delete_player(int Ind)
  */
 bool Destroy_connection(int ind, char *reason_orig)
 {
-	connection_t		*connp = &Conn[ind];
+	connection_t		*connp = Conn[ind];
 	int			id, len, sock;
 	char			pkt[MAX_CHARS];
 	char			*reason;
@@ -1555,7 +1561,7 @@ bool Destroy_connection(int ind, char *reason_orig)
 	kill_xfers(ind);	/* don't waste time sending to a dead
 				   connection ( or crash! ) */
 
-	if (connp->state == CONN_FREE)
+	if (!connp || connp->state == CONN_FREE)
 	{
 		errno = 0;
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
@@ -1630,6 +1636,10 @@ bool Destroy_connection(int ind, char *reason_orig)
 	Sockbuf_cleanup(&connp->q);
 	memset(connp, 0, sizeof(*connp));
 
+	/* Free the connection_t structure - mikaelh */
+	KILL(Conn[ind], connection_t);
+	connp = NULL;
+
 	num_logouts++;
 
 	if (sock != -1)
@@ -1649,8 +1659,8 @@ int Check_connection(char *real, char *nick, char *addr)
 
 	for (i = 0; i < max_connections; i++)
 	{
-		connp = &Conn[i];
-		if (connp->state == CONN_LISTENING)
+		connp = Conn[i];
+		if (connp && connp->state == CONN_LISTENING)
 			if (strcasecmp(connp->nick, nick) == 0)
 			{
 				if (!strcmp(real, connp->real)
@@ -1678,8 +1688,8 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 
 	for (i = 0; i < max_connections; i++)
 	{
-		connp = &Conn[i];
-		if (connp->state == CONN_FREE)
+		connp = Conn[i];
+		if (!connp || connp->state == CONN_FREE)
 		{
 			if (free_conn_index == max_connections)
 				free_conn_index = i;
@@ -1706,7 +1716,18 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 		s_printf("Full house for %s(%s)@%s\n", real, nick, host);
 		return -1;
 	}
-	connp = &Conn[free_conn_index];
+
+	/* Allocate the connection_t structure - mikaelh */
+	MAKE(Conn[free_conn_index], connection_t);
+
+	connp = Conn[free_conn_index];
+
+	if (connp == NULL)
+	{
+		plog("Not enough memory for connection");
+		Destroy_connection(free_conn_index, "Server is out of memory.");
+		return -1;
+	}
 
 	// A TCP connection already exists with the client, use it.
 	sock = fd;
@@ -1785,7 +1806,7 @@ int Setup_connection(char *real, char *nick, char *addr, char *host,
 
 static int Handle_setup(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char *buf;
 	int n, len, i;
 	char b1, b2, b3, b4, b5, b6;
@@ -1949,7 +1970,7 @@ void validatestring(char *string) {
  */
 static int Handle_listening(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	unsigned char type;
 	int  n, oldlen;
 	char nick[MAX_CHARS], real[MAX_CHARS], pass[MAX_CHARS];
@@ -2116,7 +2137,7 @@ static void sync_options(int Ind, bool *options)
  */
 static int Handle_login(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
 	int i;
@@ -2326,7 +2347,7 @@ static int Handle_login(int ind)
 
 	/* Give a more visible message about outdated client usage - C. Blue */
 	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0)) {
-		
+		/* currently done by '(O)' in @ list */
 	}
 
 	/* Admin messages */
@@ -2491,14 +2512,14 @@ static int Handle_login(int ind)
 
 /* wrapper function for local 'Conn' - C. Blue */
 int is_inactive(int Ind) {
-	return (Conn[Players[Ind]->conn].inactive_keepalive);
+	return (Conn[Players[Ind]->conn]->inactive_keepalive);
 }
 
 /* Actually execute commands from the client command queue */
 void process_pending_commands(int ind)
 {
-	connection_t *connp = &Conn[ind];
-	player_type *p_ptr = NULL;	
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
 	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
 
@@ -2555,6 +2576,12 @@ void process_pending_commands(int ind)
 			if (connp->id != -1) p_ptr->idle = 0;
 		}
 		result = (*receive_tbl[type])(ind);
+
+		/* Check that the player wasn't disconnected - mikaelh */
+		if (!Conn[ind]) {
+			return;
+		}
+
 		if(connp->r.ptr==foo){ /* thx for the warning, evileye */
 			break;
 		}
@@ -2622,10 +2649,13 @@ void process_pending_commands(int ind)
 void Handle_input(int fd, int arg)
 {
 	int ind = arg, player = -1, old_numplayers = NumPlayers;
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	//int type, result, (**receive_tbl)(int ind);
 	int (**receive_tbl)(int ind);
+
+	/* Check that the pointer is valid - mikaelh */
+	if (!connp) return;
 
 	if (connp->state & (CONN_PLAYING | CONN_READY))
 		receive_tbl = &playing_receive[0];
@@ -2713,6 +2743,11 @@ void Handle_input(int fd, int arg)
 	// Execute any new commands immediatly if possobile
 	process_pending_commands(ind);
 
+	/* Check that the player wasn't disconnected - mikaelh */
+	if (!Conn[ind]) {
+		return;
+	}
+
 	/* Experimental hack -- to reduce perceived latency, flush our network
 	 * info right now so the player sees the results of his actions as soon
 	 * as possobile.  Everyone else will see him move at most one game turn
@@ -2772,9 +2807,9 @@ int Net_input(void)
 
 	for (i = 0; i < max_connections; i++)
 	{
-		connp = &Conn[i];
+		connp = Conn[i];
 
-		if (connp->state == CONN_FREE)
+		if (!connp || connp->state == CONN_FREE)
 			continue;
 		if (connp->timeout && (connp->start + connp->timeout * cfg.fps < turn))
 		{
@@ -2821,7 +2856,7 @@ int Net_input(void)
 	for (i = 0; i < num_reliable; i++)
 	{
 		ind = input_reliable[i];
-		connp = &Conn[ind];
+		connp = Conn[ind];
 		if (connp->state & (CONN_DRAIN | CONN_READY | CONN_SETUP
 			| CONN_LOGIN | CONN_PLAYING))
 		{
@@ -2851,7 +2886,7 @@ int Net_output(void)
 
 		if (p_ptr->new_level_flag) continue;
 
-		connp = &Conn[p_ptr->conn];
+		connp = Conn[p_ptr->conn];
 
 		/* XXX XXX XXX Mega-Hack -- Redraw player's spot every time */
 		/* This keeps the network connection "active" even if nothing is */
@@ -2927,7 +2962,7 @@ int Net_output1(int i)
 	p_ptr = Players[i];
 	if (p_ptr->conn == NOT_CONNECTED) return 0;
 	if (p_ptr->new_level_flag) return 2;
-	connp = &Conn[p_ptr->conn];
+	connp = Conn[p_ptr->conn];
 
 	if (connp->c.len > 0)
 	{
@@ -2949,7 +2984,7 @@ int Net_output1(int i)
  */
 int Send_reply(int ind, int replyto, int result)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int n;
 
 	n = Packet_printf(&connp->c, "%c%c%c", PKT_REPLY, replyto, result);
@@ -2964,7 +2999,7 @@ int Send_reply(int ind, int replyto, int result)
 
 int Send_leave(int ind, int id)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -2985,7 +3020,7 @@ void do_quit(int ind, bool tellclient)
 {
 	int player = -1;
 	player_type *p_ptr = NULL;
-	connection_t * connp = &Conn[ind];
+	connection_t * connp = Conn[ind];
 
 	if (connp->id != -1) 
 	{
@@ -3017,7 +3052,7 @@ void do_quit(int ind, bool tellclient)
 static int Receive_quit(int ind)
 {
 	int player = -1, n;
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char ch;
 
 	if (connp->id != -1) 
@@ -3037,7 +3072,7 @@ static int Receive_quit(int ind)
 }
 
 static int Receive_login(int ind){
-	connection_t *connp=&Conn[ind], *connp2 = NULL;
+	connection_t *connp=Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
 	int i, n;
 	char choice[MAX_CHARS];
@@ -3082,10 +3117,19 @@ static int Receive_login(int ind){
 			char colour_sequence[3];
 			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
 #ifdef RPG_SERVER
-			if (!(l_acc->flags & ACC_ADMIN)) sflg0 |= 0x1; /* Allow multiple chars per account for admins! */
+			if (!(l_acc->flags & ACC_ADMIN)) sflg0 |= SFLG_RPG; /* Allow multiple chars per account for admins! */
 #endif
 #ifdef FUN_SERVER
-			sflg0 |= 0x2;
+			sflg0 |= SFLG_FUN;
+#endif
+#ifdef PARTY_SERVER
+			sflg0 |= SFLG_PARTY;
+#endif
+#ifdef ARCADE_SERVER
+			sflg0 |= SFLG_ARCADE;
+#endif
+#ifdef TEST_SERVER
+			sflg0 |= SFLG_TEST;
 #endif
 			Packet_printf(&connp->c, "%c%d%d%d%d", PKT_SERVERDETAILS, sflg3, sflg2, sflg1, sflg0);
 
@@ -3137,8 +3181,8 @@ static int Receive_login(int ind){
 		if(check_account(connp->nick, choice)){
 			/* Check that no one else is creating a char with the same name - mikaelh */
 			for (i = 0; i < max_connections; i++) {
-				connp2 = &Conn[i];
-				if (connp2->state == CONN_FREE) continue;
+				connp2 = Conn[i];
+				if (!connp2 || connp2->state == CONN_FREE) continue;
 				if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
 				    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
 					/* Fail login */
@@ -3178,7 +3222,7 @@ static int Receive_login(int ind){
 //#define STRICT_RECEIVE_PLAY
 static int Receive_play(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	unsigned char ch;
 	int i, n;
 	s16b sex, race, class;
@@ -3394,7 +3438,7 @@ static int Receive_file(int ind){
 	unsigned short len;
 	unsigned long csum;
 	int n;
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int Ind;
 
@@ -3465,26 +3509,26 @@ static int Receive_file(int ind){
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	memcpy(buffer, connp->r.ptr, len);
 	connp->r.ptr+=len;
 	return(1);
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return(1);
 }
 
 int Send_file_init(int ind, unsigned short id, char *fname){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return(1);
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&connp->c, buf, len) != len){
 		printf("failed sending file data\n");
@@ -3493,14 +3537,14 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 }
 
 int Send_file_end(int ind, unsigned short id){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
 	return(1);
 }
 
 int Send_reliable(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int num_written;
 
 	/* Hack -- make sure we have a valid socket to write to.  -1 is used to
@@ -3533,7 +3577,7 @@ int Send_reliable(int ind)
 #if 0 /* old UDP networking stuff - mikaelh */
 int Send_reliable_old(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char *read_buf;
 	int i, n, len, todo, max_todo;
 	long rel_off;
@@ -3628,7 +3672,7 @@ int Send_reliable_old(int ind)
 #if 0 /* old UDP networking stuff - mikaelh */
 static int Receive_ack(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int n;
 	unsigned char ch;
 	long rel, rtt, diff, delta, rel_loops;
@@ -3704,7 +3748,7 @@ static int Receive_ack(int ind)
  
 static int Receive_discard(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	errno = 0;
 	plog(format("Discarding packet %d while in state %02x",
@@ -3716,7 +3760,7 @@ static int Receive_discard(int ind)
 
 static int Receive_undefined(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	errno = 0;
 	plog(format("Unknown packet type (%d,%02x)", connp->r.ptr[0], connp->state));
@@ -3733,7 +3777,7 @@ static int Receive_undefined(int ind)
 
 int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -3755,7 +3799,7 @@ int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 	      }
@@ -3767,7 +3811,7 @@ int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 
 int Send_ac(int ind, int base, int plus)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -3788,7 +3832,7 @@ int Send_ac(int ind, int base, int plus)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_AC, base, plus);
 	      }
@@ -3798,7 +3842,7 @@ int Send_ac(int ind, int base, int plus)
 
 int Send_experience(int ind, int lev, s32b max, s32b cur, s32b adv)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3819,7 +3863,7 @@ int Send_skill_init(int ind, int type, int i)
 int Send_skill_init(int ind, u16b i)
 #endif
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	char *tmp;
 	int mkey;
@@ -3850,7 +3894,7 @@ int Send_skill_init(int ind, u16b i)
 }
 
 int Send_skill_points(int ind){
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -3865,7 +3909,7 @@ int Send_skill_points(int ind){
 
 int Send_skill_info(int ind, int i)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 	int mkey;
 
@@ -3891,7 +3935,7 @@ int Send_skill_info(int ind, int i)
 
 int Send_gold(int ind, s32b au, s32b balance)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -3912,7 +3956,7 @@ int Send_gold(int ind, s32b au, s32b balance)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%d%d", PKT_GOLD, au, balance);
 	      }
@@ -3924,7 +3968,7 @@ int Send_gold(int ind, s32b au, s32b balance)
 int Send_sanity(int ind, int msane, int csane)
 {
 #ifdef SHOW_SANITY
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	player_type *p_ptr = Players[ind];
 //	printf("sanity send!\n");
@@ -3947,7 +3991,7 @@ int Send_sanity(int ind, int msane, int csane)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SANITY, msane, csane);
 	      }
@@ -3959,7 +4003,7 @@ int Send_sanity(int ind, int msane, int csane)
 int Send_sanity(int ind, byte attr, cptr msg)
 {
 #ifdef SHOW_SANITY
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	player_type *p_ptr = Players[ind];
 //	printf("sanity send!\n");
@@ -3982,7 +4026,7 @@ int Send_sanity(int ind, byte attr, cptr msg)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
 	      }
@@ -3994,7 +4038,7 @@ int Send_sanity(int ind, byte attr, cptr msg)
 
 int Send_hp(int ind, int mhp, int chp)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	player_type *p_ptr = Players[ind];
 
@@ -4016,7 +4060,7 @@ int Send_hp(int ind, int mhp, int chp)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_HP, mhp, chp);
 	      }
@@ -4026,7 +4070,7 @@ int Send_hp(int ind, int mhp, int chp)
 
 int Send_sp(int ind, int msp, int csp)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 #if 1 /* can we use mana at all? */
@@ -4055,7 +4099,7 @@ int Send_sp(int ind, int msp, int csp)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SP, msp, csp);
 	      }
@@ -4069,7 +4113,7 @@ int Send_stamina(int ind, int mst, int cst)
 	return(0); /* disabled until client can handle it */
 #endif
 
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
 	player_type *p_ptr = Players[ind];
@@ -4103,7 +4147,7 @@ int Send_stamina(int ind, int mst, int cst)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 	      }
@@ -4113,7 +4157,7 @@ int Send_stamina(int ind, int mst, int cst)
 
 int Send_char_info(int ind, int race, int class, int sex, int mode)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4127,7 +4171,7 @@ int Send_char_info(int ind, int race, int class, int sex, int mode)
 
 int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4141,7 +4185,7 @@ int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 
 int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4163,7 +4207,7 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
 	      }
@@ -4174,7 +4218,7 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 
 int Send_history(int ind, int line, cptr hist)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4191,7 +4235,7 @@ int Send_history(int ind, int line, cptr hist)
  */
 int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4212,7 +4256,7 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
 	      }
@@ -4223,7 +4267,7 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
 int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4244,7 +4288,7 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
 	      }
@@ -4254,7 +4298,7 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 
 int Send_title(int ind, cptr title)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4266,12 +4310,44 @@ int Send_title(int ind, cptr title)
 	return Packet_printf(&connp->c, "%c%s", PKT_TITLE, title);
 }
 
+int Send_extra_status(int ind, cptr status)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for extra status (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%s", PKT_EXTRA_STATUS, status);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%s", PKT_EXTRA_STATUS, status);
+}
+
 int Send_depth(int ind, struct worldpos *wpos)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 	bool ville = istown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
+	int colour, colour2, colour_sector, colour2_sector;
 	
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
@@ -4318,19 +4394,61 @@ int Send_depth(int ind, struct worldpos *wpos)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, p_ptr2->word_recall, desc);
+		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
+			/* pending recall? */
+			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
+			/* in a town? ignore town level */
+			else if (ville) colour2 = TERM_WHITE;
+			/* way too low to get good exp? */
+			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
+			/* too low to get 100% exp? */
+			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
+			/* normal exp depth or deeper (default) */
+			else colour2 = TERM_WHITE;
+		} else {
+			colour2 = p_ptr2->word_recall;
+		}
+
+		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
+			colour2_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, colour2_sector, desc);
+		} else {
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, desc);
+		}
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, p_ptr->word_recall, desc);
+
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
+		/* pending recall? */
+		if (p_ptr->word_recall) colour = TERM_ORANGE;
+		/* in a town? ignore town level */
+		else if (ville) colour = TERM_WHITE;
+		/* way too low to get good exp? */
+		else if (getlevel(wpos) < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		/* too low to get 100% exp? */
+		else if (getlevel(wpos) < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
+		/* normal exp depth or deeper (default) */
+		else colour = TERM_WHITE;
+	} else {
+		colour = p_ptr->word_recall;
+	}
+
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
+		colour_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
+	} else {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+	}
 }
 
 /* added for Valinor */
 int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
+	int colour, colour2, colour_sector, colour2_sector;
 	
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4350,17 +4468,58 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
-		Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr2->word_recall, desc);
+		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
+			/* pending recall? */
+			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
+			/* in a town? ignore town level */
+			else if (town) colour2 = TERM_WHITE;
+			/* way too low to get good exp? */
+			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
+			/* too low to get 100% exp? */
+			else if (getlevel(wpos) < det_exp_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
+			/* normal exp depth or deeper (default) */
+			else colour2 = TERM_WHITE;
+		} else {
+			colour2 = p_ptr2->word_recall;
+		}
+
+		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
+			colour2_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, colour2_sector, desc);
+		} else {
+			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, desc);
+		}
 	      }
 	  }
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr->word_recall, desc);
+
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
+		/* pending recall? */
+		if (p_ptr->word_recall) colour = TERM_ORANGE;
+		/* in a town? ignore town level */
+		else if (town) colour = TERM_WHITE;
+		/* way too low to get good exp? */
+		else if (getlevel(wpos) < det_exp_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		/* too low to get 100% exp? */
+		else if (getlevel(wpos) < det_exp_level(p_ptr->lev)) colour = TERM_YELLOW;
+		/* normal exp depth or deeper (default) */
+		else colour = TERM_WHITE;
+	} else {
+		colour = p_ptr->word_recall;
+	}
+	
+	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
+		colour_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour, colour_sector, desc);
+	} else {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr->word_recall, desc);
+	}
 }
 
 int Send_food(int ind, int food)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4381,7 +4540,7 @@ int Send_food(int ind, int food)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hu", PKT_FOOD, food);
 	      }
@@ -4391,7 +4550,7 @@ int Send_food(int ind, int food)
 
 int Send_blind(int ind, bool blind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4412,7 +4571,7 @@ int Send_blind(int ind, bool blind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c", PKT_BLIND, blind);
 	      }
@@ -4422,7 +4581,7 @@ int Send_blind(int ind, bool blind)
 
 int Send_confused(int ind, bool confused)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4443,7 +4602,7 @@ int Send_confused(int ind, bool confused)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c", PKT_CONFUSED, confused);
 	      }
@@ -4453,7 +4612,7 @@ int Send_confused(int ind, bool confused)
 
 int Send_fear(int ind, bool fear)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4474,7 +4633,7 @@ int Send_fear(int ind, bool fear)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c", PKT_FEAR, fear);
 	      }
@@ -4484,7 +4643,7 @@ int Send_fear(int ind, bool fear)
 
 int Send_poison(int ind, bool poisoned)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4505,7 +4664,7 @@ int Send_poison(int ind, bool poisoned)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c", PKT_POISON, poisoned);
 	      }
@@ -4515,7 +4674,7 @@ int Send_poison(int ind, bool poisoned)
 
 int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4536,7 +4695,7 @@ int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting);
 	      }
@@ -4546,7 +4705,7 @@ int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 
 int Send_speed(int ind, int speed)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4567,7 +4726,7 @@ int Send_speed(int ind, int speed)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hd", PKT_SPEED, speed);
 	      }
@@ -4577,7 +4736,7 @@ int Send_speed(int ind, int speed)
 
 int Send_study(int ind, bool study)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4591,7 +4750,7 @@ int Send_study(int ind, bool study)
 
 int Send_cut(int ind, int cut)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4612,7 +4771,7 @@ int Send_cut(int ind, int cut)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hu", PKT_CUT, cut);
 	      }
@@ -4622,7 +4781,7 @@ int Send_cut(int ind, int cut)
 
 int Send_stun(int ind, int stun)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4643,7 +4802,7 @@ int Send_stun(int ind, int stun)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%hu", PKT_STUN, stun);
 	      }
@@ -4653,7 +4812,7 @@ int Send_stun(int ind, int stun)
 
 int Send_direction(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4674,7 +4833,7 @@ int Send_direction(int ind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION);
 	      }
@@ -4686,7 +4845,7 @@ static bool hack_message = FALSE;
 
 int Send_message(int ind, cptr msg)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 	char buf[80 +80]; // for +80 see below, at 'Clip end of msg'..
 
@@ -4724,7 +4883,7 @@ int Send_message(int ind, cptr msg)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		if (!BIT(connp2->state, CONN_PLAYING | CONN_READY))
 		  {
@@ -4741,7 +4900,7 @@ int Send_char(int ind, int x, int y, byte a, char c)
 {
         player_type *p_ptr = Players[ind];
 
-	if (!BIT(Conn[Players[ind]->conn].state, CONN_PLAYING | CONN_READY))
+	if (!BIT(Conn[Players[ind]->conn]->state, CONN_PLAYING | CONN_READY))
 		return 0;
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
@@ -4754,19 +4913,19 @@ int Send_char(int ind, int x, int y, byte a, char c)
 	      end_mind(ind, TRUE);
 	    else
 	      {
-		if (BIT(Conn[Players[Ind2]->conn].state, CONN_PLAYING | CONN_READY))
+		if (BIT(Conn[Players[Ind2]->conn]->state, CONN_PLAYING | CONN_READY))
 		  {
-		    Packet_printf(&Conn[Players[Ind2]->conn].c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+		    Packet_printf(&Conn[Players[Ind2]->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
 		  }
 	      }
 	  }
 
-	return Packet_printf(&Conn[Players[ind]->conn].c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+	return Packet_printf(&Conn[Players[ind]->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
 }
 
 int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4785,7 +4944,7 @@ int Send_technique_info(int ind)
 #ifndef ENABLE_TECHNIQUES
 	return(0); /* disabled until client can handle it */
 #endif
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
 
 	player_type *p_ptr = Players[ind];
@@ -4802,7 +4961,7 @@ int Send_technique_info(int ind)
 
 int Send_item_request(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4823,7 +4982,7 @@ int Send_item_request(int ind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c", PKT_ITEM);
 	      }
@@ -4833,7 +4992,7 @@ int Send_item_request(int ind)
 
 int Send_flush(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	//player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4855,7 +5014,7 @@ int Send_flush(int ind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c", PKT_FLUSH);
 	      }
@@ -4873,7 +5032,7 @@ int Send_flush(int ind)
 int Send_line_info(int ind, int y)
 {
 	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
-	connection_t *connp = &Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
 	char c;
 	byte a;
@@ -4903,7 +5062,7 @@ int Send_line_info(int ind, int y)
 	
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
-	if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%hd", PKT_LINE_INFO, y);
+	if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%hd", PKT_LINE_INFO, y);
 
 	/* Each column */
 	for (x = 0; x < 80; x++)
@@ -4935,7 +5094,7 @@ int Send_line_info(int ind, int y)
 
 			/* Output the info */
 			Packet_printf(&connp->c, "%c%c%c", c, a, n);
-			if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%c%c", c, a, n);
+			if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a, n);
 
 			/* Start again after the run */
 			x = x1 - 1;
@@ -4944,7 +5103,7 @@ int Send_line_info(int ind, int y)
 		{
 			/* Normal, single grid */
 			Packet_printf(&connp->c, "%c%c", c, a); 
-			if (Ind2) Packet_printf(&Conn[p_ptr2->conn].c, "%c%c", c, a);
+			if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
 		}
 	}
 
@@ -4957,7 +5116,7 @@ int Send_line_info(int ind, int y)
 int Send_mini_map(int ind, int y)
 {
 	player_type *p_ptr = Players[ind];
-	connection_t *connp = &Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
 	char c;
 	byte a;
@@ -4984,7 +5143,7 @@ int Send_mini_map(int ind, int y)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 	      }
 	  }
 	
@@ -5044,7 +5203,7 @@ int Send_mini_map(int ind, int y)
 //int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name)
 int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
 #endif
@@ -5072,7 +5231,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 	      }
@@ -5090,7 +5249,7 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse)
 //int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
 #endif
@@ -5115,7 +5274,7 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 		else
 		{
 			p_ptr2 = Players[Ind2];
-			connp2 = &Conn[p_ptr2->conn];
+			connp2 = Conn[p_ptr2->conn];
 
 //			Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
 //			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c", PKT_STORE_INFO, num, store, owner, items, purse, num_actions);
@@ -5130,7 +5289,7 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 
 int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
 #endif
@@ -5155,7 +5314,7 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 		else
 		{
 			p_ptr2 = Players[Ind2];
-			connp2 = &Conn[p_ptr2->conn];
+			connp2 = Conn[p_ptr2->conn];
 
 			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
 		}
@@ -5167,7 +5326,7 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 
 int Send_store_sell(int ind, int price)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
 #endif
@@ -5192,7 +5351,7 @@ int Send_store_sell(int ind, int price)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%d", PKT_SELL, price);
 	      }
@@ -5204,7 +5363,7 @@ int Send_store_sell(int ind, int price)
 
 int Send_store_kick(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
 	player_type *p_ptr = Players[ind];
 #endif
@@ -5229,7 +5388,7 @@ int Send_store_kick(int ind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE);
 	      }
@@ -5241,7 +5400,7 @@ int Send_store_kick(int ind)
 
 int Send_target_info(int ind, int x, int y, cptr str)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	char buf[80];
 	player_type *p_ptr = Players[ind];
 
@@ -5270,7 +5429,7 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 	      }
@@ -5280,7 +5439,7 @@ int Send_target_info(int ind, int x, int y, cptr str)
 
 int Send_sound(int ind, int sound)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5295,7 +5454,7 @@ int Send_sound(int ind, int sound)
 
 int Send_beep(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5310,7 +5469,7 @@ int Send_beep(int ind)
 
 int Send_AFK(int ind, byte afk)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5331,7 +5490,7 @@ int Send_AFK(int ind, byte afk)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c", PKT_AFK, afk);
 	      }
@@ -5342,7 +5501,7 @@ int Send_AFK(int ind, byte afk)
 int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5363,7 +5522,7 @@ int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumbe
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
 		                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
@@ -5376,7 +5535,7 @@ int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumbe
 
 int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	char temp[80], xattr = 'w', temp2[100];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5434,7 +5593,7 @@ int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 
 int Send_floor(int ind, char tval)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5449,7 +5608,7 @@ int Send_floor(int ind, char tval)
 
 int Send_pickup_check(int ind, cptr buf)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5473,7 +5632,7 @@ int Send_party(int ind)
     for (i = 1; i <= NumPlayers; i++)
     {
 	player_type *p_ptr = Players[i];
-	connection_t *connp = &Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 	char bufn[90], bufm[20], bufo[50], buf[10];
 
 	if (Players[i]->party != Players[ind]->party) continue;
@@ -5511,7 +5670,7 @@ int Send_party(int ind)
 
 int Send_special_other(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5527,7 +5686,7 @@ int Send_special_other(int ind)
 int Send_skills(int ind)
 {
 	player_type *p_ptr = Players[ind];
-	connection_t *connp = &Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 	s16b skills[12];
 	int i, tmp = 0;
 	object_type *o_ptr;
@@ -5586,7 +5745,7 @@ int Send_skills(int ind)
 
 int Send_pause(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5603,7 +5762,7 @@ int Send_pause(int ind)
 
 int Send_monster_health(int ind, int num, byte attr)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5624,7 +5783,7 @@ int Send_monster_health(int ind, int num, byte attr)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 	      }
@@ -5635,7 +5794,7 @@ int Send_monster_health(int ind, int num, byte attr)
 
 int Send_chardump(int ind)
 {
-	connection_t *connp = &Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn];
 	//player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5657,7 +5816,7 @@ int Send_chardump(int ind)
 	    else
 	      {
 		p_ptr2 = Players[Ind2];
-		connp2 = &Conn[p_ptr2->conn];
+		connp2 = Conn[p_ptr2->conn];
 
 		Packet_printf(&connp2->c, "%c", PKT_FLUSH);
 	      }
@@ -5682,7 +5841,7 @@ int Send_chardump(int ind)
 static int Receive_keepalive(int ind)
 {
 	int n, Ind;
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char ch;
 	player_type *p_ptr;
 
@@ -5709,6 +5868,7 @@ static int Receive_keepalive(int ind)
 		if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > 15)
 		{
 			Destroy_connection(ind, "starving auto-kick");
+			return 2;
 		}
 
 		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > 30)	/* dont oscillate ;) */
@@ -5723,7 +5883,7 @@ static int Receive_keepalive(int ind)
 
 static int Receive_walk(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -5805,7 +5965,7 @@ static int Receive_walk(int ind)
 
 static int Receive_run(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -5920,7 +6080,7 @@ static int Receive_run(int ind)
 
 static int Receive_tunnel(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
 
 	char ch, dir;
@@ -5982,7 +6142,7 @@ static int Receive_tunnel(int ind)
 
 static int Receive_aim_wand(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -6036,7 +6196,7 @@ static int Receive_aim_wand(int ind)
 
 static int Receive_drop(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6090,7 +6250,7 @@ static int Receive_drop(int ind)
 
 static int Receive_fire(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir = 5;
@@ -6161,7 +6321,7 @@ static int Receive_fire(int ind)
 
 static int Receive_observe(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6195,7 +6355,7 @@ static int Receive_observe(int ind)
 
 static int Receive_stand(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = Players[ind];
 
 	char ch;
@@ -6239,7 +6399,7 @@ static int Receive_stand(int ind)
 
 static int Receive_destroy(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6294,7 +6454,7 @@ static int Receive_destroy(int ind)
 
 static int Receive_look(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -6339,7 +6499,7 @@ static int Receive_look(int ind)
  */
 static int Receive_activate_skill(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, mkey, dir;
@@ -6480,7 +6640,7 @@ static int Receive_activate_skill(int ind)
 
 static int Receive_open(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
 
 	char ch, dir;
@@ -6539,7 +6699,7 @@ static int Receive_open(int ind)
 
 static int Receive_mind(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL, *p_ptr2 = NULL;
 
 	char ch;
@@ -6639,7 +6799,7 @@ static int Receive_mind(int ind)
 
 static int Receive_ghost(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6677,7 +6837,7 @@ static int Receive_ghost(int ind)
 
 static int Receive_quaff(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6731,7 +6891,7 @@ static int Receive_quaff(int ind)
 
 static int Receive_read(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6785,7 +6945,7 @@ static int Receive_read(int ind)
 
 static int Receive_search(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
 
 	char ch;
@@ -6844,7 +7004,7 @@ static int Receive_search(int ind)
 
 static int Receive_take_off(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6899,7 +7059,7 @@ static int Receive_take_off(int ind)
 
 static int Receive_use(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -6953,7 +7113,7 @@ static int Receive_use(int ind)
 
 static int Receive_throw(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -7007,7 +7167,7 @@ static int Receive_throw(int ind)
 
 static int Receive_wield(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7062,7 +7222,7 @@ static int Receive_wield(int ind)
 
 static int Receive_zap(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7116,7 +7276,7 @@ static int Receive_zap(int ind)
 
 static int Receive_target(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7158,7 +7318,7 @@ static int Receive_target(int ind)
 
 static int Receive_target_friendly(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7201,7 +7361,7 @@ static int Receive_target_friendly(int ind)
 
 static int Receive_inscribe(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7250,7 +7410,7 @@ static int Receive_inscribe(int ind)
 
 static int Receive_uninscribe(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch;
 
@@ -7298,7 +7458,7 @@ static int Receive_uninscribe(int ind)
 
 static int Receive_activate(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7353,7 +7513,7 @@ static int Receive_activate(int ind)
 
 static int Receive_bash(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
 
 	char ch, dir;
@@ -7411,7 +7571,7 @@ static int Receive_bash(int ind)
 
 static int Receive_disarm(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
 
 	char ch, dir;
@@ -7469,7 +7629,7 @@ static int Receive_disarm(int ind)
 
 static int Receive_eat(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7520,7 +7680,7 @@ static int Receive_eat(int ind)
 		
 static int Receive_fill(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7574,7 +7734,7 @@ static int Receive_fill(int ind)
 
 static int Receive_locate(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -7615,7 +7775,7 @@ static int Receive_locate(int ind)
 
 static int Receive_map(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch, mode;
 
@@ -7657,7 +7817,7 @@ static int Receive_map(int ind)
 
 static int Receive_search_mode(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch;
 
@@ -7699,7 +7859,7 @@ static int Receive_search_mode(int ind)
 
 static int Receive_close(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -7748,7 +7908,7 @@ static int Receive_close(int ind)
 
 static int Receive_skill_mod(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7778,7 +7938,7 @@ static int Receive_skill_mod(int ind)
 
 static int Receive_go_up(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7827,7 +7987,7 @@ static int Receive_go_up(int ind)
 
 static int Receive_go_down(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -7877,7 +8037,7 @@ static int Receive_go_down(int ind)
 
 static int Receive_direction(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch, dir;
 
@@ -7920,7 +8080,7 @@ static int Receive_direction(int ind)
 
 static int Receive_item(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch;
 
@@ -7970,7 +8130,7 @@ static int Receive_item(int ind)
 
 static int Receive_message(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch, buf[MSG_LEN];
 
@@ -7991,7 +8151,7 @@ static int Receive_message(int ind)
 }
 	
 static int Receive_admin_house(int ind){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char ch, dir;
 	int n,player = -1;
 	char buf[MAX_CHARS];
@@ -8029,7 +8189,7 @@ static int Receive_admin_house(int ind){
 
 static int Receive_purchase(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -8073,7 +8233,7 @@ static int Receive_purchase(int ind)
 
 static int Receive_sell(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 
 	char ch;
 	int n, player = -1;
@@ -8115,7 +8275,7 @@ static int Receive_sell(int ind)
 
 static int Receive_store_leave(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
 #endif
@@ -8141,7 +8301,7 @@ static int Receive_store_leave(int ind)
 			player = Ind2;
 			p_ptr = Players[Ind2];
 
-		        connp2 = &Conn[p_ptr->conn];
+		        connp2 = Conn[p_ptr->conn];
 		        Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE); /* not working */
 		      }
 		  }
@@ -8192,7 +8352,7 @@ static int Receive_store_leave(int ind)
 
 static int Receive_store_confirm(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char ch;
 	int n, player = -1;
 	player_type *p_ptr = NULL;
@@ -8236,7 +8396,7 @@ static int Receive_store_confirm(int ind)
  */
 static int Receive_store_examine(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -8278,7 +8438,7 @@ static int Receive_store_examine(int ind)
 
 static int Receive_store_command(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -8321,7 +8481,7 @@ static int Receive_store_command(int ind)
 
 static int Receive_drop_gold(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
@@ -8369,7 +8529,7 @@ static int Receive_drop_gold(int ind)
 
 static int Receive_steal(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -8419,7 +8579,7 @@ static int Receive_steal(int ind)
 
 static int Receive_King(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	byte type;
@@ -8476,7 +8636,7 @@ static int Receive_King(int ind)
 	
 static int Receive_redraw(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch, mode;
@@ -8524,7 +8684,7 @@ static int Receive_redraw(int ind)
 		if (mode)
 		{
 			/* Tell the server to redraw the player's display */
-			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
+			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS | PR_STATE;
 			p_ptr->redraw |= PR_PLUSSES;
 			p_ptr->redraw |= PR_STUDY;
 
@@ -8547,7 +8707,7 @@ static int Receive_redraw(int ind)
 
 static int Receive_rest(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch;
@@ -8645,7 +8805,7 @@ static int Receive_rest(int ind)
 void Handle_clear_buffer(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	connection_t *connp = &Conn[p_ptr->conn];
+	connection_t *connp = Conn[p_ptr->conn];
 
 	/* Clear the buffer */
 
@@ -8661,7 +8821,7 @@ void Handle_clear_buffer(int Ind)
 
 static int Receive_clear_buffer(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, n;
 	char ch;
@@ -8700,7 +8860,7 @@ static int Receive_clear_buffer(int ind)
 
 static int Receive_special_line(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, type;
 	s16b line;
@@ -8789,7 +8949,7 @@ static int Receive_special_line(int ind)
 
 static int Receive_options(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	int player = -1, i, n;
 	char ch;
@@ -8835,7 +8995,7 @@ static int Receive_options(int ind)
 
 static int Receive_suicide(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch;
 
@@ -8858,7 +9018,7 @@ static int Receive_suicide(int ind)
 
 static int Receive_party(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
@@ -8930,7 +9090,7 @@ static int Receive_party(int ind)
 }
 
 static int Receive_guild(int ind){
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
@@ -9082,7 +9242,7 @@ bool player_is_king(int Ind)
 /* receive a dungeon master command */
 static int Receive_master(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
@@ -9187,7 +9347,7 @@ static int Receive_master(int ind)
 static int Receive_autophase(int ind)
 {
 	player_type *p_ptr = NULL;
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	object_type *o_ptr;
 	int player = -1, n;
 
@@ -9234,7 +9394,7 @@ void end_mind(int Ind, bool update)
 
 static int Receive_spike(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, dir;
@@ -9286,7 +9446,7 @@ static int Receive_spike(int ind)
  */
 static int Receive_raw_key(int ind)
 {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch, key;
@@ -9386,7 +9546,7 @@ static int Receive_raw_key(int ind)
 
 /* Reply to ping packets - mikaelh */
 static int Receive_ping(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	char ch, pong, buf[MSG_LEN];
 	int n, id, tim, utim, Ind;
 	player_type *p_ptr;
@@ -9413,6 +9573,7 @@ static int Receive_ping(int ind) {
 			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > 30)
 			{
 				Destroy_connection(ind, "starving auto-kick");
+				return 2;
 			}
 
 			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > 60)	/* dont oscillate ;) */
@@ -9439,7 +9600,7 @@ static int Receive_ping(int ind) {
 }
 
 static int Receive_sip(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
@@ -9473,7 +9634,7 @@ static int Receive_sip(int ind) {
 }
 
 static int Receive_telekinesis(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
@@ -9516,7 +9677,7 @@ static int Receive_telekinesis(int ind) {
 }
 
 static int Receive_BBS(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;
@@ -9558,7 +9719,7 @@ static int Receive_BBS(int ind) {
 }
 
 static int Receive_wield2(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 
 	char ch;
@@ -9596,7 +9757,7 @@ static int Receive_wield2(int ind) {
 }
 
 static int Receive_cloak(int ind) {
-	connection_t *connp = &Conn[ind];
+	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
 	int n, player = -1;

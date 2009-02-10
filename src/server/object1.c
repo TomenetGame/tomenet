@@ -758,7 +758,7 @@ void flavor_init(void)
 			buf[0] = '\0';
 
 			/* Collect words until done */
-			while (1)
+			while (TRUE)
 			{
 				int q, s;
 

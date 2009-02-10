@@ -17,10 +17,14 @@
 
 /* Minimal benefit a store should obtain via transaction,
  * in percent.	[10] */
-#define STORE_BENEFIT	10
+#define STORE_BENEFIT		10
 
 /* Extra check for ego item generation in store, in percent.	[50] */
 #define STORE_EGO_CHANCE	50
+
+/* Maximum amount of maintenances to perform if a shop was unvisited for too long a period of time [10]
+   Adjusting it to balance art scroll rarity in EBM - C. Blue (see EBM in st_info.txt for more) */
+#define MAX_MAINTENANCES	10
 
 static int gettown(int Ind);
 
@@ -1158,16 +1162,27 @@ static bool black_market_crap(object_type *o_ptr)
 	for(i=0; i<max_st_idx; i++){
 		if (st_info[i].flags1 & SF1_ALL_ITEM){
 			for(j=0; j<st_info[i].table_num; j++){
-				if(o_ptr->k_idx==st_info[i].table[j][0])
-					return(FALSE);
+				if (st_info[i].table[j][0] >= 10000) {
+					if(o_ptr->tval == st_info[i].table[j][0] - 10000)
+						return(FALSE);
+				} else {
+					if(o_ptr->k_idx == st_info[i].table[j][0])
+						return(FALSE);
+				}
 			}
 		}
 	}
 
+#if 1 /* note: ego items are never bm crap (see above), so checking all base stores at all does make sense */
 	for(k = 0; k < numtowns; k++){
 		st_ptr=town[k].townstore;
+#if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
 		/* Check the other "normal" stores */
 		for (i = 0; i < max_st_idx; i++)
+#else /* using light-weight version that shouldn't pose problems */
+		/* Check the other basic normal stores */
+		for (i = 0; i < 6; i++)
+#endif
 		{
 			/* Don't compare other BMs */
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
@@ -1178,10 +1193,11 @@ static bool black_market_crap(object_type *o_ptr)
 				object_type *j_ptr = &st_ptr[i].stock[j];
 
 				/* Duplicate item "type", assume crappy */
-				if (o_ptr->k_idx == j_ptr->k_idx) return (TRUE);
+				if (!j_ptr->owner && o_ptr->k_idx == j_ptr->k_idx) return (TRUE);
 			}
 		}
 	}
+#endif
 
 	/* Assume okay */
 	return (FALSE);
@@ -1517,6 +1533,7 @@ static void store_create(store_type *st_ptr)
 			    !(st_info[st_ptr->st_idx].flags1 & SF1_EGO))
 				continue;
 		}
+
 		/* Let's not allow 'Cure * Insanity', 'Augmentation', 'Learning', 'Experience',
 		 * and 'Invulnerability' potions - the_sandman */
 		if (st_ptr->st_idx == STORE_SPEC_POTION) {
@@ -1608,6 +1625,8 @@ static void store_create(store_type *st_ptr)
 #endif
 					/* make uber rods harder to get */
 					if (k_ptr->tval == TV_ROD) continue;
+					/* no easy golem parts */
+					if (k_ptr->tval == TV_GOLEM) continue;
 				}
 			}
 		}
@@ -1721,12 +1740,19 @@ static void store_create(store_type *st_ptr)
 			}
 #endif
 
+#ifdef TEST_SERVER
+		o_ptr->xtra1 = 222; /* hack: 'mark' this item (for store_debug_stock) */
+#endif
+
 		/* Attempt to carry the (known) item */
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
 		/* Log occurances of special items */
 		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
+#if 0
+		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
+#endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
 			char o_name[160];
 			cptr s_name;
@@ -1997,8 +2023,13 @@ static void display_store(int Ind)
 			for (i=0;i<st_ptr->stock_num;i++) {
 				if (cfg.item_awareness == 1) {
 					for (j=0;j<st_info[st_ptr->st_idx].table_num;j++)
-					 if (st_ptr->stock[i].k_idx == st_info[st_ptr->st_idx].table[j][0])
-					  object_aware(Ind, &st_ptr->stock[i]);
+					if (st_info[st_ptr->st_idx].table[j][0] >= 10000) {
+						if (k_info[st_ptr->stock[i].k_idx].tval == st_info[st_ptr->st_idx].table[j][0] - 10000)
+							object_aware(Ind, &st_ptr->stock[i]);
+					} else {
+						if (st_ptr->stock[i].k_idx == st_info[st_ptr->st_idx].table[j][0])
+							object_aware(Ind, &st_ptr->stock[i]);
+					}
 				} else {
 			    		object_aware(Ind, &st_ptr->stock[i]);
 				}
@@ -2744,7 +2775,7 @@ void store_purchase(int Ind, int item, int amt)
 				/* Message */
 				msg_format(Ind, "You bought %s for %ld gold.", o_name, (long int)price);
 if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
-	s_printf("ARTSCROLL bought by %s for %ld gold.\n", p_ptr->name, (long int)price);
+	s_printf("ARTSCROLL bought by %s for %ld gold (#=%d).\n", p_ptr->name, (long int)price, sell_obj.number);
 
 				/* Let the player carry it (as if he picked it up) */
 				item_new = inven_carry(Ind, &sell_obj);
@@ -3512,15 +3543,22 @@ void do_cmd_store(int Ind)
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L * cfg.store_turns);
 
-	/* Maintain the store max. 10 times */
-	if (maintain_num > 10) maintain_num = 10;
+	/* Maintain the store max. 10 times.
+	   Note: this value could probably be reduced down to 4, with
+	   current values for STORE_TURNOVER_DIV and max/min turnover;
+	   changing it down from 10 might be required in order to balance
+	   item rarities for scummers, with eye on scumming periods which
+	   could go from 1-maintenance-period up to this max value: It
+	   shouldn't be too easy for the 1-period-scummer, nor too hard
+	   for the max-period-scummer. The higher maintain_num's cap is,
+	   the bigger the difference in scumming difficulty for rare items. - C. Blue */
+	if (maintain_num > MAX_MAINTENANCES) maintain_num = MAX_MAINTENANCES;
 
 	if (maintain_num)
 	{
 		/* Maintain the store */
 		for (i = 0; i < maintain_num; i++)
 		{
-//			store_maint(p_ptr->town_num, which);
 			store_maint(st_ptr);
 			if (retire_owner_p(st_ptr)) store_shuffle(st_ptr);
 		}
@@ -3669,8 +3707,7 @@ void store_maint(store_type *st_ptr)
 	if (which == STORE_HOME) return;
 #endif
 
-#if 1 /* bug: somehow xbm in minas anor on pm didn't refresh stock anymore! */
-	/* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
+#if 1 /* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
 	switch (st_ptr->st_idx) {
 	/* unused stores that would just waste cpu time: */
 	case 50:
@@ -4979,20 +5016,75 @@ void reward_deed_blessing(int Ind, int item)
    note: may be called every 10 turns (since cfg.store_turns is multiplied by 10). */
 void store_debug_stock()
 {
-	int i, n;
+	int i, j, n, maintain_num, what;
+	store_type *st_ptr;
+	object_type *o_ptr;
+	char o_name[160];
+	cptr s_name;
 
-	/* Calculate the number of store maintainances since the last visit */
-	if (turn % ((10L * cfg.store_turns) / store_debug_mode)) return;
+	/* process all stores in all towns */
 
-        for(i=0;i<numtowns;i++) {
-    		for (n = 0; n < max_st_idx; n++) {
-			/* hack: fix old stores' <town> value, which would still be zero otherwise */
-			town[i].townstore[n].town = i;
+        for (i = 0; i < numtowns; i++)
+    	for (n = 0; n < max_st_idx; n++) {
 
-			store_maint(&town[i].townstore[n]);
+		/* process each store */
+		st_ptr = &town[i].townstore[n];
 
-			if (retire_owner_p(&town[i].townstore[n]))
-				store_shuffle(&town[i].townstore[n]);
+		/* hack: fix old stores' <town> value, which would still be zero otherwise */
+		st_ptr->town = i;
+
+#if 1		/* HACK: Ignore non-occuring stores (dungeon stores outside of hack-town-index '0' - C. Blue */
+		switch (st_ptr->st_idx) {
+		/* unused stores that would just waste cpu time: */
+		case 50:
+			continue;
+		/* non-town stores (which are borrowd from town #0 exclusively): */
+		case 52: case 53: case 55:
+		case 61: case 62: case 63: case 64: case 65:
+		case 42: case 45: case 60:
+			if (st_ptr->town != 0) continue; else break;
+		/* stores that don't occur in every town */
+		case 57: case 58: if (town[st_ptr->town].type != 1) continue; else break;//bree
+		case 59: if (town[st_ptr->town].type != 5) continue; else break;//khazad
+		case 48: if (town[st_ptr->town].type != 3) continue; else break;//minas anor - but it's town 0, type 1?!
+		}
+#endif
+		/* Calculate the number of store maintainances since the last visit */
+		maintain_num = (turn - st_ptr->last_visit) / ((10L * cfg.store_turns) / store_debug_quickmotion);
+
+		/* Maintain the store max. 10 times */
+		if (maintain_num > MAX_MAINTENANCES) maintain_num = MAX_MAINTENANCES;
+
+		if (maintain_num) {
+			/* Maintain the store */
+			for (j = 0; j < maintain_num; j++) {
+				store_maint(st_ptr);
+				if (retire_owner_p(st_ptr)) store_shuffle(st_ptr);
+			}
+
+			/* Save the visit */
+			st_ptr->last_visit = turn;
+
+			/* cycle through items in stock now */
+			for (what = 0; what < st_ptr->stock_num; what++) {
+				o_ptr = &st_ptr->stock[what];
+
+				/* hack: mention items only once, after they were generated for this store */			
+				if (o_ptr->xtra1 != 222) continue;
+				o_ptr->xtra1 = 0;
+
+				/* Log occurances of special items */
+				if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
+				    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
+#if 0
+				    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
+#endif
+				    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
+					object_desc(0, o_name, o_ptr, TRUE, 3);
+					s_name = st_name + st_info[st_ptr->st_idx].name;
+					s_printf("%s: REAL_STORE_CARRY: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
+				}
+			}
 		}
 	}
 }

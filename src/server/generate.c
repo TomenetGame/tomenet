@@ -433,17 +433,20 @@ static void rand_dir(int *rdir, int *cdir)
  */
 static void new_player_spot(struct worldpos *wpos)
 {
-	int        y, x;
+	int        y, x, tries = 5000;
 
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
 	/* Place the player */
-	while (1)
+	while (TRUE)
 	{
 		/* Pick a legal spot */
 		y = rand_range(1, dun->l_ptr->hgt - 2);
 		x = rand_range(1, dun->l_ptr->wid - 2);
+		
+		/* prevent infinite loop (not sure about exact circumstances yet) */
+		if (!--tries) break;
 
 		/* Must be a "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) continue;
@@ -453,6 +456,17 @@ static void new_player_spot(struct worldpos *wpos)
 
 		/* Done */
 		break;
+	}
+	
+	/* emergency procedure: avoid no-tele vaults */
+	if ((!tries) && (zcave[y][x].info & CAVE_STCK)) {
+		for (x = 1; x < dun->l_ptr->wid - 2; x++)
+		for (y = 1; y < dun->l_ptr->hgt - 2; y++) {
+			if (!(zcave[y][x].info & CAVE_STCK)) break;
+		}
+		/* This shouldn't happen: Whole level is filled with CAVE_STCK spots, exclusively! */
+		y = rand_range(1, dun->l_ptr->hgt - 2);
+		x = rand_range(1, dun->l_ptr->wid - 2);
 	}
 
 	/* Save the new grid */
@@ -636,7 +650,7 @@ static void place_between(struct worldpos *wpos, int y, int x)
 	/* No between-gate over traps/house doors etc */
 	if (c_ptr->special) return;
 
-	while(TRUE)	/* TODO: add a counter to prevent infinite-loop */
+	while (TRUE)	/* TODO: add a counter to prevent infinite-loop */
 	{
 		/* Location */
 		/* XXX if you call it from outside of cave-generation code,
@@ -1130,7 +1144,7 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			int d = DUN_STR_RNG;
 
 			/* Pick a nearby grid */
-			while (1)
+			while (TRUE)
 			{
 				ty = rand_spread(y, d);
 				tx = rand_spread(x, d);
@@ -1240,7 +1254,7 @@ static void build_streamer2(worldpos *wpos, int feat, int killwall)
 				int d = DUN_STR_WLW;
 
 				/* Pick a nearby grid */
-				while (1)
+				while (TRUE)
 				{
 					ty = rand_spread(y, d);
 					tx = rand_spread(x, d);
@@ -1551,7 +1565,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 		for (i = 0; i < 11; ++i)
 		{
 			/* Pick a random location */
-			while (1)
+			while (TRUE)
 			{
 				j = rand_spread(y, 2);
 				k = rand_spread(x, 3);
@@ -1594,7 +1608,7 @@ static void vault_trap_aux(struct worldpos *wpos, int y, int x, int yd, int xd)
 	for (count = 0; count <= 5; count++)
 	{
 		/* Get a location */
-		while (1)
+		while (TRUE)
 		{
 			y1 = rand_spread(y, yd);
 			x1 = rand_spread(x, xd);
@@ -3436,7 +3450,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	if ((tmp < 25) && (rand_int(5) != 0))
 	{
-		while (1)
+		while (TRUE)
 		{
 			template_race = randint(MAX_R_IDX - 2);
 
@@ -4486,7 +4500,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				}
 			}
 
-			if (c_ptr->m_idx) {
+			if (c_ptr->m_idx > 0) {
 				/* Check if Morgoth was just placed inside */
 			        /* Acquire monster pointer */
 			        m_ptr = &m_list[c_ptr->m_idx];
@@ -8511,6 +8525,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	dun_data dun_body;
 
+	/* Wipe the dun_data structure - mikaelh */
+	WIPE(&dun_body, dun_data);
+
 	cave_type **zcave;
 	dungeon_type    *d_ptr = getdungeon(wpos);
 	wilderness_type *wild;
@@ -8545,7 +8562,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 
 	/* Note that Ultra-small levels (1/2 x 1/2 panel) actually result
 	   from the rand_int in 'Small level', not from 'Very small'! - C. Blue */
-	/* Very small (1 x 1 panel) level - currently never occurs(!) (DF1_SMALLEST unused) */
+
+	/* Very small (1 x 1 panel) level */
 	if (!(d_ptr->flags1 & DF1_BIG) && (d_ptr->flags1 & DF1_SMALLEST))
 	{
 		dun->l_ptr->hgt = SCREEN_HGT;
@@ -8554,11 +8572,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	/* Small level */
 	else if (!(d_ptr->flags1 & DF1_BIG) && ( (d_ptr->flags1 & DF1_SMALL) || (!rand_int(SMALL_LEVEL))))
 	{
-//		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
-//		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);*/
-/*		No more ultra-small levels for now (1/2 x 1/2 panel), and no max size here either :) - C. Blue*/
+#if 0 /* No more ultra-small levels for now (1/2 x 1/2 panel), and no max size here either :) - C. Blue*/
+		dun->l_ptr->wid = MAX_WID - rand_int(MAX_WID / SCREEN_WID * 2) * (SCREEN_WID / 2);
+		dun->l_ptr->hgt = MAX_HGT - rand_int(MAX_HGT / SCREEN_HGT * 2 - 1) * (SCREEN_HGT / 2);*/
+#else
 		dun->l_ptr->wid = MAX_WID - randint(MAX_WID / SCREEN_WID * 2 - 2) * (SCREEN_WID / 2);
 		dun->l_ptr->hgt = MAX_HGT - randint(MAX_HGT / SCREEN_HGT * 2 - 2) * (SCREEN_HGT / 2);
+#endif
 	}
 	/* Normal level */
 	else
@@ -8605,7 +8625,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 
 	/* not too big levels for 'Arena Monster Challenge' event */
-	if (ge_training_tower &&
+	if (ge_special_sector &&
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && wpos->wz == WPOS_ARENA_Z) {
 		dun->l_ptr->wid = MAX_WID  / 2;
 		dun->l_ptr->hgt = MAX_HGT  / 2;

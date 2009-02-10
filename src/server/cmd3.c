@@ -205,6 +205,7 @@ void inven_takeoff(int Ind, int item, int amt)
 	    (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
+		p_ptr->redraw |= PR_STATE;
 	}
 #endif
 
@@ -412,6 +413,7 @@ void inven_drop(int Ind, int item, int amt)
             (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
                 msg_print(Ind, "\377sYou return to balanced combat stance.");
                 p_ptr->combat_stance = 0;
+		p_ptr->redraw |= PR_STATE;
         }
 #endif
 
@@ -970,6 +972,7 @@ return;
 	if (slot == INVEN_ARM && p_ptr->combat_stance == 2) {
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
+		p_ptr->redraw |= PR_STATE;
 	}
 #endif
 
@@ -2829,11 +2832,18 @@ void do_cmd_look(int Ind, int dir)
 		}
 		else
 		{
+#if 0 /* use normal race_info.title */
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 			//, class_info[q_ptr->pclass].title
+#else /* use special_prace_lookup */
+			if (q_ptr->lev < 60)
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
+			else
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+#endif
 		}
 	}
 	else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx])	/* TODO: handle monster mimics */

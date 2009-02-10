@@ -92,7 +92,7 @@ s16b object_discount = 0;	/* for resulting items of a stolen acquirement scroll 
 s16b monster_level;             /* Current monster creation level */
 s16b monster_level_min = 0;	/* Current monster creation minimum level, -1 = auto, 0 = none */
 
-s32b turn;                      /* Current game turn */
+s32b turn, session_turn;	/* Current game turn; session_turn is the turn this server went online, ie start of current session */
 /*yo molt, here we have a lua prob: pkg files appearently dont know #if, so util.pkg always has tron_speed
   which means rpg/pm will also need it here, otherwise the util.pkg won't be compatible if it's "missing" here*/
 //#ifdef ARCADE_SERVER
@@ -794,7 +794,8 @@ int cron_1h_last_hour = -1; /* -1 to call immediately after server restart */
 global_event_type global_event[MAX_GLOBAL_EVENTS];
 int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
-int ge_training_tower = 0; /* use training tower for global events */
+int ge_special_sector = 0; /* to make it known that a certain sector (or multiple sectors, given in
+			    defines.h as WPOS_ constants) are now in special use for global events. */
 u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
 int ge_contender_buffer_deed[128]; /* contender's deeds on different characters (Highlander Tournament!) */
 u32b achievement_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
@@ -825,7 +826,7 @@ auction_type *auctions;
 int auction_alloc;
 #endif
 
-int store_debug_mode = 0;
+int store_debug_mode = 0, store_debug_quickmotion = 10, store_debug_startturn = 0;
 
 /* Array used by everyone_lite_later_spot */
 struct worldspot *lite_later;

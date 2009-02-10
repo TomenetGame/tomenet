@@ -3597,7 +3597,9 @@ void check_experience(int Ind)
 		p_ptr->update |= (PU_BONUS | PU_HP | PU_MANA | PU_SANITY);
 
 		/* Redraw some stuff */
-		p_ptr->redraw |= (PR_LEV | PR_TITLE);
+		p_ptr->redraw |= (PR_LEV | PR_TITLE | PR_DEPTH | PR_STATE);
+			/* PR_STATE is only needed if player can unlearn 
+			    techniques by dropping in levels */
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -4168,6 +4170,8 @@ void lose_exp(int Ind, s32b amount)
 	                return;
         }
 
+	if (safe_area(Ind)) return;
+
 	/* Never drop below zero experience */
 	if (amount > p_ptr->exp) amount = p_ptr->exp - 1;
 
@@ -4304,8 +4308,7 @@ void monster_death(int Ind, int m_idx)
 	wpos=&m_ptr->wpos;
 	if(!(zcave=getcave(wpos))) return;
 
-	if (ge_training_tower && /* training tower event running? and we are there? */
-	    wild_info[wpos->wy][wpos->wx].tower && 
+	if (ge_special_sector && /* training tower event running? and we are there? */
 	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
 	    wpos->wz == WPOS_ARENA_Z) {
 		monster_desc(0, m_name, m_idx, 0x00);
@@ -5610,7 +5613,7 @@ void player_death(int Ind)
 
 	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH) && !p_ptr->ghost) secure = TRUE;
 	
-	if (ge_training_tower &&
+	if (ge_special_sector &&
 	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
 	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
 		secure = TRUE;
@@ -7264,9 +7267,7 @@ for(i=1; i < 5; i++) {
 			/* Punishment for goofing off: */
 			if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 10 / (10 + req_lvl - getlevel(&p_ptr->wpos));
 #endif
-			if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
-			else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
-			else req_lvl = (p_ptr->lev * 2);
+			req_lvl = det_exp_level(p_ptr->lev);
 			if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
 		}
 #endif
@@ -7283,12 +7284,8 @@ for(i=1; i < 5; i++) {
 			/* Higher characters who farm monsters on low levels compared to
 			   their clvl will gain less exp.
 			   (note: this formula also occurs in party_gain_exp) */
-			if (p_ptr->lev >= 20) {
-				if (p_ptr->lev < 30) req_lvl = 375 / (45 - p_ptr->lev);
-				else if (p_ptr->lev < 50) req_lvl = 650 / (56 - p_ptr->lev);
-				else req_lvl = (p_ptr->lev * 2);
-				if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
-			}
+			req_lvl = det_exp_level(p_ptr->lev);
+			if (getlevel(&p_ptr->wpos) < req_lvl) tmp_exp = tmp_exp * 2 / (2 + req_lvl - getlevel(&p_ptr->wpos));
 
 			/* Give some experience */
 			new_exp = tmp_exp / p_ptr->lev;
@@ -9076,7 +9073,7 @@ void telekinesis_aux(int Ind, int item)
 		}
 
 
-/* TEMPORARY ANTI-CHEEZE HACKS */
+/* TEMPORARY ANTI-CHEEZE HACKS */  // todo: move to verify_level_req()
 if (q_ptr->tval == TV_RING && q_ptr->sval == SV_RING_SPEED && q_ptr->level < 30 && (q_ptr->bpval > 0)) {
         s_printf("HACK-SPEEDREQ (Tele): %s(%d) ring (+%d): %d -> ", p_ptr->name, p_ptr->lev, q_ptr->bpval, q_ptr->level);
         determine_level_req(75, q_ptr);
@@ -9091,6 +9088,10 @@ if (q_ptr->tval == TV_POTION && q_ptr->sval >= SV_POTION_INC_STR && q_ptr->sval 
         s_printf("HACK-STATPOT (Tele): %s(%d) potion: %d -> ", p_ptr->name, p_ptr->lev, q_ptr->level);
         determine_level_req(20, q_ptr);
         s_printf("%d.\n", q_ptr->level);
+}
+if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+    && (q_ptr->name2 == EGO_LIFE || q_ptr->name2b == EGO_LIFE) && (q_ptr->pval > 2)) {
+	q_ptr->pval = 2;
 }
 
 		/* Log it - mikaelh */
@@ -10420,4 +10421,11 @@ void check_aura(int Ind, int aura) {
 	if (Players[Ind]->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
 	strcat(buf, ".");
 	msg_print(Ind, buf);
+}
+
+int det_exp_level(int lev) {
+	if (lev < 20) return(0);
+        else if (lev < 30) return(375 / (45 - lev));
+        else if (lev < 50) return(650 / (56 - lev));
+        else return(lev * 2);
 }

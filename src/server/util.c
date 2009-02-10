@@ -1844,6 +1844,7 @@ void toggle_shoot_till_kill(int Ind)
 	}
 	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
 s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
+	p_ptr->redraw |= PR_STATE;
 	return;
 }
 
@@ -3003,7 +3004,7 @@ cptr get_month_name(int day, bool full, bool compact)
 		{
 			char buf2[20];
 
-			snprintf(buf2, 20, get_day(day + 1));
+			snprintf(buf2, 20, "%s", get_day(day + 1));
 			if (full) snprintf(buf, 40, "%s (%s day)", month_name[i], buf2);
 			else snprintf(buf, 40, "%s", month_name[i]);
 			break;
@@ -3014,8 +3015,8 @@ cptr get_month_name(int day, bool full, bool compact)
 			char buf2[20];
 			char buf3[20];
 
-			snprintf(buf2, 20, get_day(day + 1 - month_day[i]));
-			snprintf(buf3, 20, get_day(day + 1));
+			snprintf(buf2, 20, "%s", get_day(day + 1 - month_day[i]));
+			snprintf(buf3, 20, "%s", get_day(day + 1));
 
 			if (full) snprintf(buf, 40, "%s day of %s (%s day)", buf2, month_name[i], buf3);
 			else if (compact) snprintf(buf, 40, "%s day of %s", buf2, month_name[i]);

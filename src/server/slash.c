@@ -314,7 +314,7 @@ static void do_cmd_refresh(int Ind)
 
 void do_slash_cmd(int Ind, char *message)
 {
-	int i = 0;
+	int i = 0, j = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
  	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];/* was [80], [80] */
@@ -768,7 +768,6 @@ void do_slash_cmd(int Ind, char *message)
 		/* cast a spell by name, instead of book/position */
 		else if (prefix(message, "/cast"))
 		{
-			int i;
 			for (i = 0; i < 100; i++) {
 				if (!strncmp(p_ptr->spell_name[i], message3, strlen(message3))) {
 //					cast_school_spell(Ind, p_ptr->spell_book[i], p_ptr->spell_pos[i], dir, item, aux);
@@ -816,7 +815,6 @@ void do_slash_cmd(int Ind, char *message)
 				prefix(message, "/dr"))
 		{
 			object_type		*o_ptr;
-			int j;
 			bool gauche = FALSE;
 
 			/* Paralyzed? */
@@ -1024,6 +1022,8 @@ void do_slash_cmd(int Ind, char *message)
 				lev = p_ptr->lev; //restore ^^"
 			}
 #endif
+			/* display PvP kills */
+			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
 
 			return;
 		}
@@ -1236,7 +1236,7 @@ void do_slash_cmd(int Ind, char *message)
 		else if(prefix(message, "/quest") ||
 				prefix(message, "/que"))	/* /quIt */
 		{
-			int i, j=Ind; //k=0;
+			j = Ind; //k=0;
 			u16b r, num;
 			int lev;
 			u16b flags=(QUEST_MONSTER|QUEST_RANDOM);
@@ -1620,7 +1620,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/notep"))
 		{
-			int i, j = 0;
+			j = 0;
 #if 0 /* allow only a party owner to write the note */
 			int p = -1;
 			for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
@@ -1696,7 +1696,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/noteg"))
 		{
-			int i, j = 0;
+			j = 0;
 #if 0 /* only allow the guild master to write the note */
 			int p = -1;
 			for (i = 0; i < MAX_GUILDS; i++) {
@@ -1780,7 +1780,7 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/notes"))
 		{
-			int i, notes = 0;
+			int notes = 0;
 			for (i = 0; i < MAX_NOTES; i++) {
 				/* search for pending notes of this player */
 				if (!strcmp(priv_note_sender[i], p_ptr->name)) {
@@ -1801,7 +1801,8 @@ void do_slash_cmd(int Ind, char *message)
 		}
 		else if (prefix(message, "/note"))
 		{
-			int i, notes = 0, found_note=MAX_NOTES, j = 0;
+			int notes = 0, found_note=MAX_NOTES;
+			j = 0;
 			bool colon = FALSE;
 			char tname[80]; /* target's account name */
 			struct account *c_acc;
@@ -2012,7 +2013,7 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 		else if (prefix(message, "/geinfo")) /* get info on a global event */
 		{
-			int i, n=0, j;
+			int n = 0;
 			char ppl[75];
 			bool found = FALSE;
 			if (tk < 1) {
@@ -2601,7 +2602,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				if (tk)
 				{
-					int j = name_lookup_loose(Ind, token[1], FALSE);
+					j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
 					{
 						char kickmsg[MAX_SLASH_LINE_LEN];
@@ -2647,7 +2648,7 @@ void do_slash_cmd(int Ind, char *message)
 			{
 				if (tk)
 				{
-					int j = name_lookup_loose(Ind, token[1], FALSE);
+					j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
 					{
 						char kickmsg[MAX_SLASH_LINE_LEN];
@@ -2676,7 +2677,7 @@ void do_slash_cmd(int Ind, char *message)
                         {
                                 if (tk)
                                 {
-                                        int j = name_lookup_loose(Ind, token[1], FALSE);
+                                        j = name_lookup_loose(Ind, token[1], FALSE);
                                         if (j)
                                         {
                                                 Players[j]->muted = TRUE;
@@ -2690,7 +2691,7 @@ void do_slash_cmd(int Ind, char *message)
                         {
                                 if (tk)
                                 {
-                                        int j = name_lookup_loose(Ind, token[1], FALSE);
+                                        j = name_lookup_loose(Ind, token[1], FALSE);
                                         if (j)
                                         {
                                                 Players[j]->muted = FALSE;
@@ -3314,7 +3315,6 @@ void do_slash_cmd(int Ind, char *message)
 				int type, x, y;
 #ifdef RPG_SERVER
 				bool found_town = FALSE;
-				int i;
 #endif
 				struct dungeon_type *d_ptr;
 				struct worldpos *tpos = &p_ptr->wpos;
@@ -3342,7 +3342,7 @@ void do_slash_cmd(int Ind, char *message)
 	    	        					if(town[i].x==tpos->wx && town[i].y==tpos->wy) {
 									found_town = TRUE;
 									if (tpos->wx == cfg.town_x && tpos->wy == cfg.town_y) {
-										/* exempt training tower since it's needed for arena monster challenge event */
+										/* exempt training tower since it might be needed for global events */
 										continue;
 							
 										d_ptr->flags2 |= DF2_IRON; /* Barrow-downs only */
@@ -3404,7 +3404,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/anotes"))
 			{
-				int i, notes = 0;
+				int notes = 0;
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
 					/* search for pending notes of this player */
 					if (strcmp(admin_note[i], "")) {
@@ -3425,7 +3425,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/danote")) /* Delete a global admin note to everyone */
 			{
-				int i, notes = 0;
+				int notes = 0;
 				if ((tk < 1) || (strlen(message2) < 8)) /* Explain command usage */
 				{
 					msg_print(Ind, "\377oUse /danote <message index> to delete a message.");
@@ -3450,7 +3450,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/anote")) /* Send a global admin note to everyone */
 			{
-				int i, j = 0;
+				j = 0;
 				if (tk < 1)	/* Explain command usage */
 				{
 					msg_print(Ind, "\377oUsage: /anote <text>");
@@ -3486,7 +3486,6 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/broadcast-anotes")) /* Display all admin notes to all players NOW! :) */
 			{
-				int i;
 				for (i = 0; i < MAX_ADMINNOTES; i++)
 					if (strcmp(admin_note[i], ""))
 						msg_broadcast(0, format("\377sGlobal Admin Note: %s", admin_note[i]));
@@ -3561,7 +3560,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* very dangerous if player is poisoned, very weak, or has hp draining */
 			else if (prefix(message, "/threaten") || prefix(message, "/thr")) { /* Nearly kill someone, as threat >:) */
-				int j = name_lookup_loose(Ind, token[1], FALSE);
+				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!tk) {
 					msg_print(Ind, "Usage: /threaten <player name>");
 					return;
@@ -3576,7 +3575,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/slap")) { /* Slap someone around, as threat :-o */
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /slap <player name>");
 					return;
@@ -3591,7 +3589,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /pat <player name>");
 					return;
@@ -3603,7 +3600,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/hug")) { /* Counterpart to /slap :-p */
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /hug <player name>");
 					return;
@@ -3615,7 +3611,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/poke")) {
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /poke <player name>");
 					return;
@@ -3627,7 +3622,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/cheer")) {
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /cheer <player name>");
 					return;
@@ -3641,7 +3635,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/applaud")) {
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /applaud <player name>");
 					return;
@@ -3654,7 +3647,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/presence")) {
-				int j;
 				if (!tk) {
 					msg_print(Ind, "Usage: /presence <player name>");
 					return;
@@ -3707,7 +3699,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Assign all houses of a <party> or <guild> to a <player> instead (chown) - C. BLue */
 			else if (prefix(message, "/citychown")) {
-				int i, c = 0;
+				int c = 0;
 #if 0
 				int p; - after 'return': p = name_lookup_loose(Ind, token[2], FALSE);
 				if (tk < 2) {
@@ -3752,7 +3744,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* This one is to fix houses which were changed by an outdated version of /citychown =p */
 			else if (prefix(message, "/fixchown")) {
-				int i, c = 0;
+				int c = 0;
 				int p;
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /fixchown <player>");
@@ -3775,7 +3767,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			/* Check house number */
 			else if (prefix(message, "/listhouses")) {
-				int i, cp = 0, cy = 0, cg = 0;
+				int cp = 0, cy = 0, cg = 0;
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /listhouses <owner-name>");
 					return;
@@ -3892,7 +3884,6 @@ void do_slash_cmd(int Ind, char *message)
 				/* Debug store size - C. Blue */
 				store_type *st_ptr;
 		                store_info_type *sti_ptr;
-				int i;
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /debug-store <store#>");
 					return;
@@ -4226,7 +4217,6 @@ void do_slash_cmd(int Ind, char *message)
 			/* check o_list for invalid items - mikaelh */
 			else if (prefix(message, "/olistcheck")) {
 				object_type *o_ptr;
-				int i;
 				msg_print(Ind, "Check o_list for invalid items...");
 				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
@@ -4388,10 +4378,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/reward")) { /* for testing purpose - C. Blue */
-				int j;
-				object_type reward_forge;
-				object_type *o_ptr = &reward_forge;
-
 				if (!tk) {
 					msg_print(Ind, "Usage: /reward <player name>");
 					return;
@@ -4405,7 +4391,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/debug1")) { /* debug an issue at hand */
-				int j;
 				for (j = INVEN_TOTAL; j >= 0; j--)
 	                                if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS)
     		                                invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
@@ -4415,7 +4400,6 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/debug2")) { /* debug an issue at hand */
-				int j;
 				for (j = INVEN_TOTAL - 1; j >= 0; j--)
 	                                if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
     		                                invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
@@ -4477,17 +4461,40 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "\377sEnd of hostility list.");
 				return;
 			}
-			else if (prefix(message, "/debugstore")) {
-#if 0
-				if (store_debug_mode == 0) {
-					store_debug_mode = 1;
-				} else {
-					store_debug_mode = 0;
+			else if (prefix(message, "/debugstore")) { /* parameter is # of maintenance runs to perform at once (1..10) */
+				if (tk > 0) {
+					if (!store_debug_mode) store_debug_startturn = turn;
+
+					/* reset maintenance-timer for cleanness */
+    					for (i = 0; i < numtowns; i++)
+	    				for (j = 0; j < max_st_idx; j++)
+				                town[i].townstore[j].last_visit = turn;
+
+ 					store_debug_mode = k;
+					
+					if (tk > 1) store_debug_quickmotion = atoi(token[2]);
+					else store_debug_quickmotion = 10;
+
+					s_printf("STORE_DEBUG_MODE: freq %d, time x%d at %s (%d).\n", store_debug_mode, store_debug_quickmotion, showtime(), turn - store_debug_startturn);
 				}
-#else
-				if (tk > 0) store_debug_mode = k;
-#endif
-				msg_format(Ind, "store_debug_mode = %d", store_debug_mode);
+				msg_format(Ind, "store_debug_mode: freq %d, time x%d.", store_debug_mode, store_debug_quickmotion);
+				return;
+			}
+			else if (prefix(message, "/flagcost")) { /* show 'flag_cost(o_ptr)' */
+			/* -note: currently returns object_value_real instead of flag_cost */
+				object_type *o_ptr;
+				if (tk < 1)
+				{
+					msg_print(Ind, "\377oUsage: /flagcost <inventory-slot>");
+					return;
+				}
+				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
+					msg_print(Ind, "\377oInvalid inventory slot.");
+					return;
+				}
+				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
+
+				msg_format(Ind, "Flag cost of item in slot %d: %d", atoi(token[1]), object_value_real(0, o_ptr));
 				return;
 			}
 		}

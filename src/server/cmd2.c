@@ -3279,12 +3279,23 @@ void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x,
 
 	switch(o_ptr->sval)
 	{
-		case SV_AMMO_LIGHT: rad = 2;; break;
-		case SV_AMMO_NORMAL: rad = 3; break;
-		case SV_AMMO_HEAVY: rad = 4; break;
+		case SV_AMMO_LIGHT: rad = 1; break;
+		case SV_AMMO_NORMAL: rad = 2; break;
+		case SV_AMMO_HEAVY: rad = 3; break;
 		//case SV_AMMO_MAGIC <- magic arrows only, don't explode
-		case SV_AMMO_SILVER: rad = 3; break;
+		case SV_AMMO_SILVER: rad = 2; break;
 	}
+	
+	if ((rad > 2) && (
+	    (o_ptr->pval == GF_KILL_WALL) ||
+	    (o_ptr->pval == GF_DISINTEGRATE) ||
+	    (o_ptr->pval == GF_AWAY_ALL) ||
+	    (o_ptr->pval == GF_TURN_ALL) ||
+	    (o_ptr->pval == GF_NEXUS) ||
+	    (o_ptr->pval == GF_GRAVITY) ||
+	    (o_ptr->pval == GF_TIME) ||
+	    (o_ptr->pval == GF_STUN)))
+		rad = 2;
 
 	project(0 - Ind, rad, wpos, y, x, dam, o_ptr->pval, flag, "");
 }
@@ -3472,6 +3483,19 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 	o_ptr = &(p_ptr->inventory[item]);
+
+	/* if quiver is empty, try auto-reloading with items
+	   inscribed '!L' in inventory - C. Blue */
+	if (!o_ptr->tval || !o_ptr->number)
+	{
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (is_ammo(p_ptr->inventory[i].tval) &&
+			    check_guard_inscription(p_ptr->inventory[i].note, 'L')) {
+				do_cmd_wield(Ind, i, 0x0);
+				break;
+			}
+		}
+	}
 
 	/* ethereal ammo? */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
@@ -3797,12 +3821,12 @@ void do_cmd_fire(int Ind, int dir)
 			}
 		}
 	}
-
+	
 	/* Hack -- Handle stuff */
 	handle_stuff(Ind);
 
 
-	while(TRUE)
+	while (TRUE)
 	{
 		/* Travel until stopped */
 #if 0 /* I think it travelled once too far, since it's mmove2'ed in the very beginning of every for-pass, */
@@ -4445,7 +4469,7 @@ void do_cmd_fire(int Ind, int dir)
 			bx = x;
 
 			/* New target location */
-			while(TRUE)
+			while (TRUE)
 			{
 				d = rand_int(10);
 				if(d != 5) break;
@@ -4573,6 +4597,9 @@ void do_cmd_fire(int Ind, int dir)
 
 				/* Tell the client */
 				Send_char(i, dispx, dispy, missile_attr, missile_char);
+
+				/* Flush once */
+				Send_flush(i);
 			}
 
 			/* Restore later */
@@ -5308,6 +5335,9 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 				/* Tell the client */
 				Send_char(i, dispx, dispy, missile_attr, missile_char);
+
+				/* Flush once */
+				Send_flush(i);
 			}
 
 			/* Restore later */

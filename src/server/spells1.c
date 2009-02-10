@@ -487,7 +487,7 @@ bool teleport_away(int m_idx, int dis)
 		for (i = 0; i < 500; i++)
 		{
 			/* Pick a (possibly illegal) location */
-			while (1)
+			while (TRUE)
 			{
 				ny = rand_spread(oy, dis);
 				nx = rand_spread(ox, dis);
@@ -603,7 +603,7 @@ void teleport_to_player(int Ind, int m_idx)
 		for (i = 0; i < 500; i++)
 		{
 			/* Pick a (possibly illegal) location */
-			while (1)
+			while (TRUE)
 			{
 				ny = rand_spread(p_ptr->py, dis);
 				nx = rand_spread(p_ptr->px, dis);
@@ -743,7 +743,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 			if (tries == 3000) break;
 
 			/* Pick a (possibly illegal) location */
-			while (1)
+			while (TRUE)
 			{
 				y = rand_spread(p_ptr->py, dis);
 				x = rand_spread(p_ptr->px, dis);
@@ -924,7 +924,7 @@ void teleport_player_to(int Ind, int ny, int nx)
 	while (tries--)
 	{
 		/* Pick a nearby legal location */
-		while (1)
+		while (TRUE)
 		{
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
@@ -1138,46 +1138,47 @@ byte spell_color(int type)
 	/* Analyze */
 	switch (type)	/* colourful ToME ones :) */
 	{
-		case GF_MISSILE:		return (TERM_SLATE);
-		case GF_ACID:		   return (TERM_ACID);
-		case GF_ELEC:		   return (TERM_ELEC);
-		case GF_FIRE:		   return (TERM_FIRE);
-		case GF_COLD:		   return (TERM_COLD);
-		case GF_POIS:		   return (TERM_POIS);
-		case GF_UNBREATH:	   return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+		case GF_MISSILE:	return (TERM_SLATE);
+		case GF_ACID:		return (TERM_ACID);
+		case GF_ELEC:		return (TERM_ELEC);
+		case GF_FIRE:		return (TERM_FIRE);
+		case GF_COLD:		return (TERM_COLD);
+		case GF_POIS:		return (TERM_POIS);
+		case GF_UNBREATH:	return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
 //		case GF_HOLY_ORB:	return (TERM_L_DARK);
 		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
-		case GF_HOLY_FIRE:	  return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
-		case GF_HELL_FIRE:	  return (randint(6)==1?TERM_RED:TERM_L_DARK);
-		case GF_MANA:		   return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
-		case GF_ARROW:		  return (TERM_L_UMBER);
-		case GF_WATER:		  return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_WAVE:		   return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
-		case GF_NETHER:		 return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
-		case GF_CHAOS:		  return (TERM_MULTI);
-		case GF_DISENCHANT:	 return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
-		case GF_NEXUS:		  return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
-		case GF_CONFUSION:	  return (mh_attr(4));
-		case GF_SOUND:		  return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
-		case GF_SHARDS:		 return (randint(5)<3?TERM_UMBER:TERM_SLATE);
-		case GF_FORCE:		  return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
-		case GF_INERTIA:		return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
-		case GF_GRAVITY:		return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
-		case GF_TIME:		   return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
-		case GF_LITE_WEAK:	  return (TERM_LITE);
-		case GF_LITE:		   return (TERM_LITE);
-		case GF_DARK_WEAK:	  return (TERM_DARKNESS);
-		case GF_DARK:		   return (TERM_DARKNESS);
-		case GF_PLASMA:		 return (randint(5)==1?TERM_RED:TERM_L_RED);
-		case GF_METEOR:		 return (randint(3)==1?TERM_RED:TERM_UMBER);
-		case GF_ICE:			return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
-		case GF_ROCKET:		 return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
-		case GF_NUKE:		   return (mh_attr(2));
+		case GF_HOLY_FIRE:	return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
+		case GF_HELL_FIRE:	return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_MANA:		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case GF_ARROW:		return (TERM_L_UMBER);
+		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_NETHER:		return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_CHAOS:		return (TERM_MULTI);
+		case GF_DISENCHANT:	return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
+		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case GF_CONFUSION:	return (mh_attr(4));
+		case GF_SOUND:		return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
+		case GF_SHARDS:		return (randint(5)<3?TERM_UMBER:TERM_SLATE);
+		case GF_FORCE:		return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+		case GF_INERTIA:	return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+		case GF_GRAVITY:	return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+		case GF_TIME:		return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
+		case GF_LITE_WEAK:	return (TERM_LITE);
+		case GF_LITE:		return (TERM_LITE);
+		case GF_DARK_WEAK:	return (TERM_DARKNESS);
+		case GF_DARK:		return (TERM_DARKNESS);
+		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
+		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
+		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+		case GF_NUKE:		return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
 		case GF_PSI:
 			return (randint(3)!=1?TERM_L_BLUE:TERM_WHITE);
 		/* new spell - the_sandman */
 		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case GF_OLD_DRAIN:	return (TERM_DARKNESS);
 		/* Druids stuff */
 		case GF_HEALINGCLOUD:	return (TERM_LITE);//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
 		case GF_WATERPOISON:	return (TERM_COLD);return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
@@ -1462,10 +1463,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 
 
 	/* For 'Arena Monster Challenge' event: */
-	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-	if (d_ptr && ge_training_tower &&
-	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y &&
-    	    p_ptr->wpos.wz == WPOS_ARENA_Z)) {
+	if (safe_area(Ind)) {
 		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
 		return;
 	}
@@ -1589,6 +1587,9 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal)
 
 	/* Paranoia */
 	if (p_ptr->death) return;
+
+	/* arena is safe, although this may be doubtful */
+	if (safe_area(Ind)) return;
 
 	/* Disturb */
 //	disturb(Ind, 1, 0);
@@ -2103,6 +2104,8 @@ int equip_damage(int Ind, int typ)
 	object_type		*o_ptr = NULL;
 	char		o_name[160];
 
+	if (safe_area(Ind)) return(FALSE);
+
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6))
 	{
@@ -2157,6 +2160,8 @@ int shield_takes_damage(int Ind, int typ)
 	player_type *p_ptr = Players[Ind];
 	object_type		*o_ptr = &p_ptr->inventory[INVEN_ARM];
 	char		o_name[160];
+
+	if (safe_area(Ind)) return(FALSE);
 
 	/* Nothing to damage */
 	if (!o_ptr->k_idx) return (FALSE);
@@ -2217,6 +2222,8 @@ int weapon_takes_damage(int Ind, int typ, int slot)
 	if (!o_ptr->k_idx) return (FALSE);
 #endif
 
+	if (safe_area(Ind)) return(FALSE);
+
 	switch (typ) {
 	case GF_WATER:
 		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
@@ -2265,11 +2272,10 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
-		int inv, hurt_eq;
+	int inv, hurt_eq;
 
-		dam -= p_ptr->reduc_acid * dam / 100;
-
-		inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	dam -= p_ptr->reduc_acid * dam / 100;
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* this is SO much softer than MAngband, heh. I think it's good tho - C. Blue */
 	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
@@ -2311,7 +2317,8 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 #endif
 			breakable = 0;
 		}
-	} 
+	}
+	if (safe_area(Ind)) breakable = 0;
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable)
 		inven_damage(Ind, set_acid_destroy, inv);
@@ -2327,11 +2334,10 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
-		int inv;
+	int inv;
 
-		dam -= p_ptr->reduc_elec * dam / 100;
-
-		inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	dam -= p_ptr->reduc_elec * dam / 100;
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	/* Total immunity */
 	if (p_ptr->immune_elec || (dam <= 0)) return(0);
@@ -2361,6 +2367,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 			breakable = 0;
 		}
 	}
+	if (safe_area(Ind)) breakable = 0;
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec) && breakable)
@@ -2413,6 +2420,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 			breakable = 0;
 		}
 	}
+	if (safe_area(Ind)) breakable = 0;
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && breakable)
@@ -2463,6 +2471,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 			breakable = 0;
 		}
 	}
+	if (safe_area(Ind)) breakable = 0;
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold) && breakable)
@@ -2565,6 +2574,7 @@ bool dec_stat(int Ind, int stat, int amount, int mode)
 
 	int cur, max, loss = 0, same, res = FALSE;
 
+	if (safe_area(Ind)) return(FALSE);
 
 	/* Acquire current value */
 	cur = p_ptr->stat_cur[stat];
@@ -2749,6 +2759,9 @@ bool apply_disenchant(int Ind, int mode)
 
 	u32b f1, f2, f3, f4, f5, esp;
 
+
+	if (safe_area(Ind)) return(FALSE);
+
 	/* Unused */
 //	mode = mode;
 
@@ -2880,6 +2893,8 @@ bool apply_discharge(int Ind, int dam)
 	bool	damaged_any = FALSE, damaged;
 	object_type *o_ptr;
 	char	o_name[160];
+
+	if (safe_area(Ind)) return(FALSE);
 
 	if ((p_ptr->oppose_elec && p_ptr->resist_elec) ||
 	    p_ptr->immune_elec) return(FALSE);
@@ -3431,6 +3446,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Unlock the door */
 				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+				/* Clear mimic feature */
+				if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
+				{
+					cs_erase(c_ptr, cs_ptr);
+				}
 
 				if (!quiet)
 				{
@@ -8375,7 +8396,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_ZEAL_PLAYER:
 		{
-			(void)set_zeal(Ind, dam, 14 + randint(5));
+			(void)set_zeal(Ind, dam, 9 + randint(5));
 			break;
 		}
 		case GF_SEEMAP_PLAYER:
@@ -8580,6 +8601,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->ghost) resurrect_player(Ind, dam);
 			break;
 		case GF_SANITY_PLAYER:
+			msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
 			(void)set_image(Ind, 0);
 			if (dam > 0) {
 #if 1
@@ -9482,7 +9504,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	dist = 0;
 
 	/* Project until done */
-	while (1)
+	while (TRUE)
 	{
 		/* Gather beam grids */
 		if (flg & PROJECT_BEAM)
@@ -9753,6 +9775,9 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			p_ptr->scr_info[dispy][dispx].a = attr;
 
 			Send_char(j, dispx, dispy, attr, ch);
+
+			/* Flush once */
+			Send_flush(j);
 		}
 
 		/* Redraw later */
@@ -9835,7 +9860,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 //				p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 				}
 			}
-#endif	/* 0 */
+#endif	/* 1 */
 			/* else */ /* HERE!!!!*/
 			/* Ball explosions are stopped by walls */
 			if (!los(wpos, y2, x2, y, x)) continue;
@@ -10279,6 +10304,13 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 
+		/* Flush the whole thing */
+		for (j = 0; j < num_can_see; j++)
+		{
+			/* Show this radius and delay */
+			Send_flush(who_can_see[j]);
+		}
+
 		/* Flush the erasing */
 		if (drawn)
 		{
@@ -10298,4 +10330,20 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	/* Return "something was noticed" */
 	return (notice);
+}
+
+/* Check whether player is actually in an area that offers unusual safety from various
+   attacks and effects. This is used for special events like Arena Monster Challenge - C. Blue */
+int safe_area(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+//	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+
+	/* For 'Arena Monster Challenge' event: */
+	if (ge_special_sector &&
+	    (p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z))
+		return 1;
+
+	/* default: usual situation - not safe */
+	return 0;
 }

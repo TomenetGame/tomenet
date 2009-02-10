@@ -6941,11 +6941,16 @@ static void process_monster(int Ind, int m_idx)
 #else
 		else if (creature_can_enter(r_ptr, c_ptr)) do_move = TRUE;
 #endif
-		/* Player ghost in wall XXX */
+		/* Player ghost in wall or on FF1_PROTECTED grid: Monster may attack in melee anyway */
 		else if (c_ptr->m_idx < 0)
 		{
 			/* Move into player */
 			do_move = TRUE;
+		}
+
+		/* protected grid? - todo: test behaviour in arena */
+		else if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+			/* nothing */
 		}
 
 		/* Let monsters pass permanent but passable walls if they have PASS_WALL! */
@@ -7593,6 +7598,7 @@ static void process_monster(int Ind, int m_idx)
 			     (r_ptr->flags2 & RF2_KILL_ITEM)))
 			{
 				char m_name[80];
+				char m_name_real[80];
 				char o_name[160];
 
 				/* Check the grid */
@@ -7604,9 +7610,12 @@ static void process_monster(int Ind, int m_idx)
 				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0x04);
 
+				/* Real name for logging */
+				monster_desc(Ind, m_name_real, m_idx, 0x80);
+
 				/* Prevent monsters from 'exploiting' (nothing)s */
 				if (nothing_test(o_ptr, p_ptr, wpos, nx, ny)) {
-//					s_printf("NOTHINGHACK: monster %s doesn't meet item %s at wpos %d,%d,%d.\n", m_name, o_name, wpos->wx, wpos->wy, wpos->wz);
+//					s_printf("NOTHINGHACK: monster %s doesn't meet item %s at wpos %d,%d,%d.\n", m_name_real, o_name, wpos->wx, wpos->wy, wpos->wz);
 				}
 
 				/* The object cannot be picked up by the monster */
@@ -7641,7 +7650,7 @@ static void process_monster(int Ind, int m_idx)
 					/* the_sandman - logs monsters pick_up? :S (to track items going poof
 					 * without any explanation(s)... To reduce the amount of spammage, lets
 					 * just log the owned items... All the housed items are owned anyway */
-					if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name);
+					if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name_real);
 
 					/* Describe observable situations */
 					if (player_has_los_bold(Ind, ny, nx))
@@ -7696,7 +7705,7 @@ static void process_monster(int Ind, int m_idx)
 					did_kill_item = TRUE;
 
 					/* C. Blue - added logging for KILL_ITEM monsters (see above TAKE_ITEM) */
-					if (o_ptr->owner) s_printf("ITEM_KILLED: %s by %s\n", o_name, m_name);
+					if (o_ptr->owner) s_printf("ITEM_KILLED: %s by %s\n", o_name, m_name_real);
 
 					/* Describe observable situations */
 					if (player_has_los_bold(Ind, ny, nx))

@@ -160,6 +160,7 @@ static bool do_eat_gold(int Ind, int m_idx)
 #endif	// 0
 	s32b            gold;
 
+	if (safe_area(Ind)) return TRUE;
 
 	gold = (p_ptr->au / 10) + randint(25);
 	if (gold < 2) gold = 2;
@@ -237,6 +238,8 @@ static bool do_eat_item(int Ind, int m_idx)
                     (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
 	                return FALSE;
         }
+
+	if (safe_area(Ind)) return TRUE;
 
 	/* Find an item */
 	for (k = 0; k < 10; k++)
@@ -1060,8 +1063,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			{
 				/* The Great Pumpkin of Halloween event shouldn't give BB, lol. -C. Blue */
 				if (((m_ptr->r_idx != 1086) && (m_ptr->r_idx != 1087) && (m_ptr->r_idx != 1088)) &&
-    				    !(ge_training_tower && p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y &&
-		            	    p_ptr->wpos.wz > 0))
+				    !safe_area(Ind))
 					set_black_breath(Ind);
 			}
 
@@ -2104,6 +2106,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						if (p_ptr->combat_stance) {
 //							msg_print(Ind, "\377sYou return to balanced combat stance.");
 							p_ptr->combat_stance = 0;
+							p_ptr->redraw |= PR_STATE;
 						}
 					}
 					break;

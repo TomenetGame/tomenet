@@ -183,7 +183,7 @@ extern void new_level_down_x(struct worldpos *wpos, int x);
 extern void new_level_down_y(struct worldpos *wpos, int y);
 extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
-extern s32b turn;
+extern s32b turn, session_turn;
 extern char tron_speed;
 extern s32b player_id;
 extern u32b account_id;
@@ -925,6 +925,8 @@ extern char *showtime(void);
 extern void init_players(void);
 extern int is_inactive(int Ind);
 
+extern int Send_extra_status(int Ind, cptr status);
+
 
 
 
@@ -974,6 +976,7 @@ extern void wipe_o_list(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
 extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
 extern void determine_level_req(int level, object_type *o_ptr);
+extern void verify_level_req(object_type *o_ptr);
 extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker);
 extern void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf);
 extern void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf);
@@ -1160,6 +1163,8 @@ extern void teleport_to_player(int Ind, int m_idx);
 extern bool hates_fire(object_type *o_ptr);
 extern bool hates_water(object_type *o_ptr);
 
+extern int safe_area(int Ind);
+
 /* spells2.c */
 extern void summon_pet(int Ind, int max);
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
@@ -1292,7 +1297,7 @@ extern void wizard_lock(int Ind, int dir);
 
 
 /* store.c */
-extern int store_debug_mode;
+extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
 extern void store_debug_stock();
 
 extern void alloc_stores(int townval);
@@ -1572,6 +1577,8 @@ extern void check_quests(void);
 extern bool master_level_specific(int Ind, struct worldpos *wpos, char * parms);
 extern void unstatic_level(struct worldpos *wpos);
 
+extern int det_exp_level(int lev);
+
 /*
  * Hack -- conditional (or "bizarre") externs
  */
@@ -1709,7 +1716,7 @@ extern int regen_boost_stamina;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
-extern int sector00separation, ge_training_tower; /* see variable.c */
+extern int sector00separation, ge_special_sector; /* see variable.c */
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
 extern u32b achievement_buffer_ID[128];

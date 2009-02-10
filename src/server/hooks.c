@@ -78,7 +78,7 @@ hooks_chain* add_hook(int h_idx, cptr script, cptr name)
 	if (c == NULL)
 	{
 		MAKE(new, hooks_chain);
-		sprintf(new->name, name);
+		sprintf(new->name, "%s", name);
                 sprintf(new->script, "%s", script);
 		new->next = hooks_heads[h_idx];
 		hooks_heads[h_idx] = new;

@@ -1515,9 +1515,6 @@ static void player_setup(int Ind, bool new)
 	struct worldpos *wpos=&p_ptr->wpos;
 	cave_type **zcave;
 
-        struct wilderness_type *wild;
-	struct dungeon_type *d_ptr;
-	
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
@@ -1575,19 +1572,20 @@ static void player_setup(int Ind, bool new)
 		}
 	}
 
+#if 0 /* not really useful? */
 	/* If he's in the training tower of Bree, check for running global events accordingly */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
-	        wild = &wild_info[wpos->wy][wpos->wx];
-    		d_ptr = wild->tower;
-		if (wpos->wz == d_ptr->maxdepth)
+	if (wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&  wpos->wz == WPOS_ARENA_Z) {
 		for (d = 0; d < MAX_GLOBAL_EVENTS; d++)
 		if (p_ptr->global_event_type[d] != GE_NONE)
 		switch (p_ptr->global_event_type[d]) {
 		case GE_ARENA_MONSTER:
+			wpos->wx = cfg.town_x;
+		        wpos->wy = cfg.town_y;
 			wpos->wz = 0;
 			break;
 		}
 	}
+#endif
 
 	/* If the player encountered a server crash last time he was saved (panic save),
 	   carry him out of that dungeon to make sure he doesn't die to the crash. */
@@ -1770,7 +1768,9 @@ static void player_setup(int Ind, bool new)
 
 	/* Update the location's player index */
 	zcave[y][x].m_idx = 0 - Ind;
+	NumPlayers++; // increase temporarily to get rid of the out of range warnings from cave_midx_debug - mikaelh
 	cave_midx_debug(wpos, y, x, -Ind);
+	NumPlayers--;
 
 	/* Show him to everybody */
 	everyone_lite_spot(wpos, y, x);
@@ -1860,7 +1860,7 @@ static void player_setup(int Ind, bool new)
 
 	/* Tell the server to redraw the player's display */
 	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
-	p_ptr->redraw |= PR_PLUSSES;
+	p_ptr->redraw |= PR_PLUSSES | PR_STATE;
 
 	/* Update his view, light, bonuses, and torch radius */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_BONUS | PU_TORCH | PU_DISTANCE | PU_SKILL_INFO | PU_SKILL_MOD | PU_LUA);

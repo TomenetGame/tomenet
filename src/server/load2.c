@@ -524,6 +524,9 @@ static void rd_item(object_type *o_ptr)
 	rd_u16b(&o_ptr->next_o_idx);
 	rd_u16b(&o_ptr->held_m_idx);
 
+/* hack: mistrust cloaks were removed, and existing ones become aman cloaks */
+if (o_ptr->name2 == EGO_MISTRUST) o_ptr->name2 = EGO_AMAN;
+if (o_ptr->name2b == EGO_MISTRUST) o_ptr->name2b = EGO_AMAN;
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
@@ -1507,7 +1510,7 @@ static errr rd_inventory(int Ind)
 	p_ptr->equip_cnt = 0;
 
 	/* Read until done */
-	while (1)
+	while (TRUE)
 	{
 		u16b n;
 
@@ -1739,7 +1742,7 @@ static errr rd_dungeon(void)
 	{
 		struct c_special *cs_ptr;
 		byte n;
-		while (1)
+		while (TRUE)
 		{
 			rd_byte(&x);
 			rd_byte(&y);

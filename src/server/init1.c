@@ -929,31 +929,38 @@ static cptr f_info_flags1[] =
 	"NO_VISION",
 	"CAN_LEVITATE",
 	"CAN_PASS",
+
 	"FLOOR",
 	"WALL",
 	"PERMANENT",
 	"CAN_FLY",
+
 	"REMEMBER",
 	"NOTICE",
 	"DONT_NOTICE_RUNNING",
 	"CAN_RUN",
+
 	"DOOR",
 	"SUPPORT_LIGHT",
 	"CAN_CLIMB",
 	"TUNNELABLE",
+
 	"WEB",
 	"ATTR_MULTI",
 	"SLOW_RUNNING_1",
 	"SLOW_RUNNING_2",
+
 	"SLOW_FLYING_1",
 	"SLOW_FLYING_2",
 	"SLOW_CLIMBING_1",
 	"SLOW_CLIMBING_2",
+
 	"SLOW_WALKING_1",
 	"SLOW_WALKING_2",
 	"SLOW_SWIMMING_1",
 	"SLOW_SWIMMING_2",
-	"PROTECTED",	/* monsters cannot spawn on nor teleport to this grid */
+
+	"PROTECTED",	/* monsters cannot spawn on nor teleport to this grid. Addition for monster challenge arena: can't move onto it either! */
 	"LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
 	"BLOCK_LOS",	/* cannot target/shoot/cast through this one, but may be able to walk through it ('easy door') */
 	"BLOCK_CONTACT"	/* like BLOCK_LOS, but allows the player to actually see across it */

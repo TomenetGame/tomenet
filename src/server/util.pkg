@@ -304,7 +304,7 @@ extern int regen_boost_stamina;
 /* Stuff for global events */
 /* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
 extern int sector00separation;
-extern int ge_training_tower;
+extern int ge_special_sector;
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
 

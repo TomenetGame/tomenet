@@ -6163,6 +6163,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	player_type *p_ptr;
 	cave_type **zcave;
 	cave_type *c_ptr;
+        struct c_special *cs_ptr;
 	int i;
 
 	if(!(zcave=getcave(wpos))) return;
@@ -6205,6 +6206,12 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	}
 	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
 	   maybe add d_info flags for this stuff instead of hard-coding here */
+
+	/* Clear mimic feature left by a secret door - mikaelh */
+	if((cs_ptr=GetCS(c_ptr, CS_MIMIC)))
+	{
+		cs_erase(c_ptr, cs_ptr);
+	}
 	    
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
@@ -6427,7 +6434,8 @@ bool projectable_real(int Ind, int y1, int x1, int y2, int x2, int range)
 		if ((x == x2) && (y == y2)) return (TRUE);
 
 		/* Never pass through SLEEPING monsters */
-                if (dist && target_able(Ind, zcave[y][x].m_idx)
+                if (dist && (zcave[y][x].m_idx > 0)
+		    && target_able(Ind, zcave[y][x].m_idx)
 		    && m_list[zcave[y][x].m_idx].csleep) break;
 
 #if 0

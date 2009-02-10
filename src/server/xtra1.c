@@ -648,6 +648,41 @@ static void prt_encumberment(int Ind)
 	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
 }
 
+static void prt_extra_status(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	char status[12 + 24]; /* 24 for potential colours */
+
+	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) return;
+
+	/* add combat stance indicator */
+	if (get_skill(p_ptr, SKILL_STANCE)) {
+		switch(p_ptr->combat_stance) {
+		case 0: strcpy(status, "\377sBal ");
+			break;
+		case 1: strcpy(status, "\377uDef ");
+			break;
+		case 2: strcpy(status, "\377oOff ");
+			break;
+		}
+	} else {
+		strcpy(status, "    ");
+	}
+
+	/* add fire-till-kill indicator */
+	if (p_ptr->shoot_till_kill)
+		strcat(status, "\377sFTK ");
+	else
+		strcat(status, "    ");
+
+	/* add project-spells indicator */
+	if (p_ptr->spell_project)
+		strcat(status, "\377sPrj ");
+	else
+		strcat(status, "    ");
+
+	Send_extra_status(Ind, status);
+}
 
 
 /*
@@ -6009,6 +6044,7 @@ void redraw_stuff(int Ind)
 		p_ptr->redraw &= ~(PR_AFRAID | PR_POISONED);
 		p_ptr->redraw &= ~(PR_STATE | PR_SPEED | PR_STUDY);
 		prt_frame_extra(Ind);
+		prt_extra_status(Ind);
 	}
 
 	if (p_ptr->redraw & PR_CUT)
@@ -6057,6 +6093,7 @@ void redraw_stuff(int Ind)
 	{
 		p_ptr->redraw &= ~(PR_STATE);
 		prt_state(Ind);
+		prt_extra_status(Ind);
 	}
 
 	if (p_ptr->redraw & PR_SPEED)
@@ -6903,7 +6940,7 @@ static void process_global_event(int ge_id)
 			}
 #endif
 
-			ge_training_tower++;
+			ge_special_sector++;
 
 			if (!getcave(&wpos)) {
 				alloc_dungeon_level(&wpos);
@@ -6958,7 +6995,7 @@ static void process_global_event(int ge_id)
 #endif /* so if if0'ed, we just have to wait for normal unstaticing routine to take care of stale level :/ */
 			}
 			ge->getype = GE_NONE; /* end of event */
-			ge_training_tower--;
+			ge_special_sector--;
 			break;
 		}
 		break;

@@ -8688,7 +8688,7 @@ s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
 	p_ptr->combat_stance = stance;
 	p_ptr->combat_stance_power = power;
 	p_ptr->update |= (PU_BONUS);
-	p_ptr->redraw |= (PR_PLUSSES);
+	p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
 //	handle_stuff();
 }
 
@@ -8714,7 +8714,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
-		set_melee_sprint(Ind, 10); /* number of turns it lasts */
+		set_melee_sprint(Ind, 9 + rand_int(3)); /* number of turns it lasts */
 s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		break;
 	case 1:	if (!p_ptr->melee_techniques & 0x0002) return; /* Taunt */
