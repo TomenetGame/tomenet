@@ -3,6 +3,7 @@
 
 -- Run automatically on server starting up:
 function server_startup(timestamp)
+--	lua_add_anote("A server note.")
 end
 
 -- Run additionally when 1st player joins since starting up: (character fully loaded at this point)
@@ -35,8 +36,18 @@ end
 
 -- Run once every hour:
 function cron_1h(timestamp, h, m, s)
+--	lua_s_print(timestamp.."_CRON1H_"..h..":"..m..":"..s.."\n")
+
+-- Highlander tournament
+--	lua_start_global_event(0, 1, "")
+
+-- Arena monster challenge
+--	if mod(h,3)==0 then
+--		lua_start_global_event(0, 3, "")
+--	end
 end
 
 -- Run once every 24 hours:
 function cron_24h(timestamp, h, m, s)
+--	lua_s_print(timestamp.."_CRON24H_"..h..":"..m..":"..s.."\n")
 end
