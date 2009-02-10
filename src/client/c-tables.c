@@ -706,28 +706,31 @@ option_type option_info[OPT_MAX] =
 	{ &c_cfg.thin_down_flush,		TRUE,	5,	9, 68,
 	"thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 
-	{ &c_cfg.auto_target,			FALSE,	5,	9, 69,
+	{ &c_cfg.disable_flush,			FALSE,	5,	9, 69,
+	"disable_flush",		"Disable delays from flush signals" },
+
+	{ &c_cfg.auto_target,			FALSE,	5,	9, 70,
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
-	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 70,
+	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 71,
 	"autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
 
-	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71,
+	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 72,
 	"wide_scroll_margin",	"Scroll the screen more frequently" },
 
-	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 72,
+	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 73,
 	"fail_no_melee",		"Stay still when item-retaliation fails" },
 
-	{ &c_cfg.always_show_lists,		FALSE,	5,	9, 73,
+	{ &c_cfg.always_show_lists,		FALSE,	5,	9, 74,
 	"always_show_lists",	"Always show lists in item/skill selection" },
 
-	{ &c_cfg.target_history,		FALSE,	5,	9, 74,
+	{ &c_cfg.target_history,		FALSE,	5,	9, 75,
 	"target_history",		"Add target informations to the message history" },
 
-	{ &c_cfg.linear_stats,			FALSE,	5,	9, 75,
+	{ &c_cfg.linear_stats,			FALSE,	5,	9, 76,
 	"linear_stats",			"Stats are represented in a linear way" },
 
-	{ &c_cfg.exp_need,				FALSE,  5,  9, 76,
+	{ &c_cfg.exp_need,				FALSE,  5,  9, 77,
 	"exp_need",				"Show the experience needed for next level" },
 
 #if 0
@@ -735,7 +738,7 @@ option_type option_info[OPT_MAX] =
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
 #endif	/* 0 */
 
-	{ &c_cfg.short_item_names,      FALSE, 1, 	0, 77,
+	{ &c_cfg.short_item_names,      FALSE, 1, 	0, 78,
         "short_item_names", 		"Don't display 'flavours' in item names" },
 
 	/*** End of Table ***/

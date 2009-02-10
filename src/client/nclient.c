@@ -2245,6 +2245,12 @@ int Receive_flush(void)
 	/* Flush the terminal */
 	Term_fresh();
 
+	/* Disable the delays altogether? */
+	if (c_cfg.disable_flush)
+	{
+		return 1;
+	}
+
 	/* Wait */
 	/*
 	 * NOTE: this is very what makes the server freeze when a pack of

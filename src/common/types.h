@@ -2949,6 +2949,7 @@ struct client_opts
 	bool last_words;
 	bool limit_chat;
 	bool thin_down_flush;
+	bool disable_flush;
 	bool auto_target;
 	bool autooff_retaliator;
 	bool wide_scroll_margin;
