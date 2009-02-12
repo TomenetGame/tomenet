@@ -2701,7 +2701,7 @@ return; /* not completely implemented yet! (load_player lacks infos what to load
 						break;
 					}
 				}
-				strcpy(ptr->name, nname);
+				strcpy((char *) ptr->name, nname);
 				strcpy(p_ptr->name, nname);
 
 				save_player(Ind);
