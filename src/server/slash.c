@@ -1355,8 +1355,16 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/feeling") ||
 				prefix(message, "/fe"))
 		{
-			if (!show_floor_feeling(Ind))
+			cave_type **zcave = getcave(&p_ptr->wpos);
+			bool no_tele = FALSE;
+			if (zcave)
+				no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
+
+			if (!show_floor_feeling(Ind) && !no_tele)
 				msg_print(Ind, "You feel nothing special.");
+
+			if (no_tele)
+				msg_print(Ind, "\377DThe air in here feels very still.");
 			return;
 		}
 		else if (prefix(message, "/monster") ||
