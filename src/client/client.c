@@ -49,7 +49,7 @@ static bool read_mangrc(cptr filename)
 		while (!feof(config))
 		{
 			/* Get a line */
-			fgets(buf, 1024, config);
+			if (!fgets(buf, 1024, config)) break;
 
 			/* Skip comments, empty lines */
 			if (buf[0] == '\n' || buf[0] == '#')
