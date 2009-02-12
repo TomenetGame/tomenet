@@ -1080,7 +1080,7 @@ struct alloc_entry
 	byte prob2;		/* Probability, pass 2 */
 	byte prob3;		/* Probability, pass 3 */
 
-	u16b total;		/* Unused for now */
+//	u16b total;		/* Unused for now */
 };
 
 
@@ -1728,7 +1728,7 @@ struct player_list_type
 /* remotely ignore players */
 struct remote_ignore
 {
-	unsigned long int id;		/* player unique id */
+	unsigned int id;		/* player unique id */
 	short serverid;
 	struct remote_ignore *next;	/* Next in list */
 };
