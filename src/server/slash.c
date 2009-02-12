@@ -291,7 +291,7 @@ static void do_cmd_refresh(int Ind)
 	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
 
 	/* Redraw */
-	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS;
+	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_HISTORY | PR_VARIOUS | PR_STATE;
 	p_ptr->redraw |= (PR_HP | PR_GOLD | PR_BASIC | PR_PLUSSES);
 
 	/* Notice */
