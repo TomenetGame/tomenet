@@ -2258,7 +2258,7 @@ artifact_type *randart_make(object_type *o_ptr)
 		do_curse(a_ptr);
 		do_curse(a_ptr);
 		do_curse(a_ptr);
-		remove_contradictory(a_ptr, (a_ptr->flags3 & TR3_AGGRAVATE));
+		remove_contradictory(a_ptr, (a_ptr->flags3 & TR3_AGGRAVATE) != 0);
 		remove_redundant_esp(a_ptr);
 		ap = artifact_power(a_ptr);
 	}
@@ -2551,7 +2551,7 @@ try_an_other_ego:
 	if (e_ptr->max_pval < 0) a_ptr->pval -= (granted_pval + randint(-e_ptr->max_pval - granted_pval));
 
 	/* Remove redundant ESP and contradictory flags */
-	remove_contradictory(a_ptr, (a_ptr->flags3 & TR3_AGGRAVATE));
+	remove_contradictory(a_ptr, (a_ptr->flags3 & TR3_AGGRAVATE) != 0);
 	remove_redundant_esp(a_ptr);
 
 	/* Hack -- apply rating bonus(it's done in apply_magic) */
