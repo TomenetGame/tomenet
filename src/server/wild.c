@@ -1316,6 +1316,10 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 	wilderness_type *w_ptr=&wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
+
+	/* Initialize drawbridge_x and drawbridge_y to make gcc happy */
+	drawbridge_x[0] = drawbridge_x[1] = drawbridge_x[2] = 0;
+	drawbridge_y[0] = drawbridge_y[1] = drawbridge_y[2] = 0;
 	
 	/* Hack -- Use the "simple" RNG */
 	Rand_quick = TRUE;
