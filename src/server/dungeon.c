@@ -5955,7 +5955,7 @@ void dungeon(void)
 		{
 			char buf[20];
 
-			snprintf(buf, 20, get_day(bst(YEAR, turn) + START_YEAR));
+			snprintf(buf, 20, "%s", get_day(bst(YEAR, turn) + START_YEAR));
 			msg_broadcast_format(0,
 					"\377GToday it is %s of the %s year of the third age.",
 					get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
