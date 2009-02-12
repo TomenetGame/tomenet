@@ -677,12 +677,15 @@ if (o_ptr->tval == TV_SEAL) {
  */
 static void rd_monster_race(monster_race *r_ptr)
 {
+	byte tmpbyte;
 	int i;
 
 	rd_u16b(&r_ptr->name);
 	rd_u16b(&r_ptr->text);
-	rd_byte(&r_ptr->hdice);
-	rd_byte(&r_ptr->hside);
+	rd_byte(&tmpbyte);
+	r_ptr->hdice = tmpbyte;
+	rd_byte(&tmpbyte);
+	r_ptr->hside = tmpbyte;
 	rd_s16b(&r_ptr->ac);
 	rd_s16b(&r_ptr->sleep);
 	rd_byte(&r_ptr->aaf);
@@ -895,7 +898,8 @@ static errr rd_store(store_type *st_ptr)
 }
 
 static void rd_bbs() {
-        int i, saved_lines;
+        int i;
+	s16b saved_lines;
         rd_s16b(&saved_lines);
         for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
                 rd_string(bbs_line[i], 140);
@@ -1073,6 +1077,9 @@ static bool rd_extra(int Ind)
 
 	byte tmp8u;
 	u16b tmp16b, panic;
+	s16b tmp16s;
+	u32b tmp32b;
+	s32b tmp32s;
 
 	/* 'Savegame filename character conversion' exploit fix - C. Blue */
 	strcpy(login_char_name, p_ptr->name);
@@ -1443,33 +1450,47 @@ if (p_ptr->updated_savegame == 0) {
 
         if (!older_than(4, 2, 8)) {
 		for (i = 0; i <	MAX_GLOBAL_EVENTS; i++) {
-			rd_s16b(&p_ptr->global_event_type[i]);
+			rd_s16b(&tmp16s);
+			p_ptr->global_event_type[i] = tmp16s;
 			if (!older_than(4, 3, 9)) {
-				rd_s32b(&p_ptr->global_event_signup[i]);
-				rd_s32b(&p_ptr->global_event_started[i]);
+				rd_s32b(&tmp32s);
+				p_ptr->global_event_signup[i] = tmp32s;
+				rd_s32b(&tmp32s);
+				p_ptr->global_event_started[i] = tmp32s;
 			} else {
-				rd_u32b(&p_ptr->global_event_signup[i]);
-				rd_u32b(&p_ptr->global_event_started[i]);
+				rd_u32b(&tmp32b);
+				p_ptr->global_event_signup[i] = tmp32b;
+				rd_u32b(&tmp32b);
+				p_ptr->global_event_started[i] = tmp32b;
 			}
 			for (j = 0; j < 4; j++) rd_u32b(&p_ptr->global_event_progress[i][j]);
 		}
 	}
 	
 	if (!older_than(4, 3, 3)) {
-		rd_s16b(&p_ptr->combat_stance);
-		rd_s16b(&p_ptr->combat_stance_power);
+		rd_s16b(&tmp16s);
+		p_ptr->combat_stance = tmp16s;
+		rd_s16b(&tmp16s);
+		p_ptr->combat_stance_power = tmp16s;
 	}
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
-	if (!older_than(4, 3, 9)) rd_byte(&p_ptr->cloaked);
-	if (!older_than(4, 3, 10)) rd_byte(&p_ptr->shoot_till_kill);
+	if (!older_than(4, 3, 9)) rd_byte((byte *) &p_ptr->shadow_running);
+	if (!older_than(4, 3, 10)) rd_byte((byte *) &p_ptr->shoot_till_kill);
 
 	if (!older_than(4, 3, 11)) {
-		rd_s16b(&p_ptr->kills);
-		rd_s16b(&p_ptr->kills_lower);
-		rd_s16b(&p_ptr->kills_higher);
-		rd_s16b(&p_ptr->kills_equal);
+		rd_s16b(&tmp16s);
+		p_ptr->kills = tmp16s;
+		rd_s16b(&tmp16s);
+		p_ptr->kills_lower = tmp16s;
+		rd_s16b(&tmp16s);
+		p_ptr->kills_higher = tmp16s;
+		rd_s16b(&tmp16s);
+		p_ptr->kills_equal = tmp16s;
 	}
-	if (!older_than(4, 3, 12)) rd_s16b(&p_ptr->free_mimic);
+	if (!older_than(4, 3, 12)) {
+		rd_s16b(&tmp16s);
+		p_ptr->free_mimic = tmp16s;
+	}
 
 	/* auto-enable for now (MAX_AURAS) */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
@@ -2273,7 +2294,7 @@ errr rd_server_savefile()
 		/* Read the available records */
 		for (i = 0; i < tmp32u; i++)
 		{
-			time_t laston;
+			s32b laston;
 
 			/* Read the ID */
 			rd_s32b(&tmp32s);
