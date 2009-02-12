@@ -2021,6 +2021,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 
 	char	o_name[160];
 
+	if (safe_area(Ind)) return(FALSE);
 
 	/* Count the casualties */
 	k = 0;
