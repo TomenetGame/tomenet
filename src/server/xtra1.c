@@ -6369,7 +6369,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 	int re_found = 0, re_found_len = 99;
 	bool re_impossible = FALSE;
 	char ce[80], *cep;
-	char parm_log[60];
+	char parm_log[60] = "";
 #ifdef GE_ARENA_ALLOW_EGO
 	r_found_len = 0; /* check must go the other way round */
 #endif
@@ -6529,7 +6529,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 		return;
 	}
 
-	if (parm_log) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm_log);
+	if (parm_log[0]) s_printf("%s EVENT_SIGNUP: %d (%s): %s (%s).\n", showtime(), n + 1, ge->title, p_ptr->name, parm_log);
 	else s_printf("%s EVENT_SIGNUP: %d (%s): %s.\n", showtime(), n + 1, ge->title, p_ptr->name);
 	if (fake_signup) return;
 
