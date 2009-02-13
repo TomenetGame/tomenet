@@ -141,23 +141,23 @@ extern bool *macro__cmd;
 extern bool *macro__hyb;
 extern char *macro__buf;
 
-extern u32b message__next;
-extern u32b message__last;
-extern u32b message__head;
-extern u32b message__tail;
-extern u32b *message__ptr;
+extern s32b message__next;
+extern s32b message__last;
+extern s32b message__head;
+extern s32b message__tail;
+extern s32b *message__ptr;
 extern char *message__buf;
-extern u32b message__next_chat;
-extern u32b message__last_chat;
-extern u32b message__head_chat;
-extern u32b message__tail_chat;
-extern u32b *message__ptr_chat;
+extern s32b message__next_chat;
+extern s32b message__last_chat;
+extern s32b message__head_chat;
+extern s32b message__tail_chat;
+extern s32b *message__ptr_chat;
 extern char *message__buf_chat;
-extern u32b message__next_msgnochat;
-extern u32b message__last_msgnochat;
-extern u32b message__head_msgnochat;
-extern u32b message__tail_msgnochat;
-extern u32b *message__ptr_msgnochat;
+extern s32b message__next_msgnochat;
+extern s32b message__last_msgnochat;
+extern s32b message__head_msgnochat;
+extern s32b message__tail_msgnochat;
+extern s32b *message__ptr_msgnochat;
 extern char *message__buf_msgnochat;
 
 

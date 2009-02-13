@@ -110,7 +110,7 @@ void do_cmd_messages(void)
 			}
 
 			/* Apply horizontal scroll */
-			msg = (strlen(msg) >= q) ? (msg + q) : "";
+			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
@@ -438,7 +438,7 @@ void do_cmd_messages_chatonly(void)
 //			cptr msg = message_chat[i+j];
 
 			/* Apply horizontal scroll */
-			msg = (strlen(msg) >= q) ? (msg + q) : "";
+			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
@@ -745,7 +745,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		if (k) break;
 
 		q=0;
-		for(t=0; t<strlen(msg); t++){
+		for(t=0; t<(int)strlen(msg); t++){
                         if(msg[t]=='\377'){
                                 if (!ignore_color)
                                         buf[q++]='{';

@@ -82,23 +82,23 @@ bool *macro__cmd;
 bool *macro__hyb;
 char *macro__buf;
 
-u32b message__next;
-u32b message__last;
-u32b message__head;
-u32b message__tail;
-u32b *message__ptr;
+s32b message__next;
+s32b message__last;
+s32b message__head;
+s32b message__tail;
+s32b *message__ptr;
 char *message__buf;
-u32b message__next_chat;
-u32b message__last_chat;
-u32b message__head_chat;
-u32b message__tail_chat;
-u32b *message__ptr_chat;
+s32b message__next_chat;
+s32b message__last_chat;
+s32b message__head_chat;
+s32b message__tail_chat;
+s32b *message__ptr_chat;
 char *message__buf_chat;
-u32b message__next_msgnochat;
-u32b message__last_msgnochat;
-u32b message__head_msgnochat;
-u32b message__tail_msgnochat;
-u32b *message__ptr_msgnochat;
+s32b message__next_msgnochat;
+s32b message__last_msgnochat;
+s32b message__head_msgnochat;
+s32b message__tail_msgnochat;
+s32b *message__ptr_msgnochat;
 char *message__buf_msgnochat;
 
 

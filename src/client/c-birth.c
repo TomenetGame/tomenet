@@ -86,7 +86,7 @@ static void choose_name(void)
  */
 static void enter_password(void)
 {
-	int c;
+	size_t c;
 	char tmp[23];
 
 #ifndef SIMPLE_LOGIN

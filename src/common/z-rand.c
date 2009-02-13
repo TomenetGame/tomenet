@@ -177,7 +177,7 @@ s32b Rand_div(s32b m)
 			r = (r >> 4) / n;
 
 			/* Done */
-			if (r < m) break;
+			if (r < (u32b) m) break;
 		}
 	}
 
@@ -203,7 +203,7 @@ s32b Rand_div(s32b m)
 			Rand_place = j;
 
 			/* Done */
-			if (r < m) break;
+			if (r < (u32b) m) break;
 		}
 	}
 
