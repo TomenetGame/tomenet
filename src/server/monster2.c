@@ -107,7 +107,7 @@ int pick_ego_monster(int r_idx, int Level);
 /* Monster gain a few levels ? */
 int monster_check_experience(int m_idx, bool silent)
 {
-	int		i, try;
+	u32b		i, try;
 	u32b		levels_gained = 0, levels_gained_tmp = 0, levels_gained_melee = 0, tmp_dice, tmp;
         monster_type    *m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);

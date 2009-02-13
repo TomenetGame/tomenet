@@ -279,8 +279,8 @@ extern party_type parties[MAX_PARTIES];
 extern struct guild_type guilds[MAX_GUILDS];
 extern struct quest_type quests[20];	/* server quest data */
 extern house_type *houses;
-extern u32b num_houses;
-extern u32b house_alloc;
+extern s32b num_houses;
+extern s32b house_alloc;
 extern long GetInd[];
 extern s16b quark__num;
 extern cptr *quark__str;
@@ -1567,7 +1567,7 @@ extern bool master_generate(int Ind, char * parms);
 extern bool master_acquire(int Ind, char * parms);
 extern bool master_player(int Ind, char * parms);
 
-extern void kill_houses(int id, int type);
+extern void kill_houses(int id, byte type);
 extern void kill_house_contents(house_type *h_ptr);
 
 /*extern bool get_rep_dir(int *dp);*/

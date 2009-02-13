@@ -1087,7 +1087,7 @@ static void wr_house(house_type *house)
 	wr_byte(house->dx);
 	wr_byte(house->dy);
 	wr_u32b(house->dna->creator);
-	wr_u32b(house->dna->owner);
+	wr_s32b(house->dna->owner);
 	wr_byte(house->dna->owner_type);
 	wr_byte(house->dna->a_flags);
 	wr_u16b(house->dna->min_level);
@@ -1584,7 +1584,7 @@ static void wr_dungeon(struct worldpos *wpos)
 }
 
 /* Write a players memory of a cave, simmilar to the above function. */
-static void wr_cave_memory(Ind)
+static void wr_cave_memory(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int y,x;
@@ -1784,7 +1784,7 @@ static bool wr_savefile_new(int Ind)
 	/* write the wilderness map */
 	tmp32u = MAX_WILD_8;
 	wr_u32b(tmp32u);
-	for (i = 0; i < tmp32u; i++)
+	for (i = 0; i < MAX_WILD_8; i++)
 	{
 		wr_byte(p_ptr->wild_map[i]);
 	}
@@ -2286,8 +2286,8 @@ static void wr_player_names(void)
 	hash_entry *ptr;
 
 	/*int i, num, *id_list;*/
-	int i,  *id_list;
-	u32b num;
+	s32b *id_list;
+	u32b i, num;
 
 	/* Get the list of player ID's */
 	num = player_id_list(&id_list, 0L);
@@ -2431,7 +2431,7 @@ static bool wr_server_savefile()
 	tmp32u = m_max;
 	wr_u32b(tmp32u);
 	/* Dump the monsters */
-	for (i = 0; i < tmp32u; i++) wr_monster(&m_list[i]);
+	for (i = 0; i < m_max; i++) wr_monster(&m_list[i]);
 
 	/* Prepare to write the objects */
 	compact_objects(0, FALSE);
@@ -2447,7 +2447,7 @@ static bool wr_server_savefile()
 	}
 
 	/* Note the number of houses */
-	wr_u32b(tmp32u);
+	wr_s32b(tmp32u);
 
 	/* Dump the houses */
 	for (i = 0; i < num_houses; i++){
@@ -2546,7 +2546,7 @@ static void new_wr_dungeons(){
 				struct dungeon_type *d_ptr=w_ptr->dungeon;
 				for(z=1;z<=d_ptr->maxdepth;z++){
 					cwpos.wz=-z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave);
+					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wr_dungeon(&cwpos);
 				}
 			}
@@ -2554,7 +2554,7 @@ static void new_wr_dungeons(){
 				struct dungeon_type *d_ptr=w_ptr->tower;
 				for(z=1;z<=d_ptr->maxdepth;z++){
 					cwpos.wz=z;
-					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave);
+					if(d_ptr->level[z-1].ondepth && d_ptr->level[z-1].cave)
 						wr_dungeon(&cwpos);
 				}
 			}

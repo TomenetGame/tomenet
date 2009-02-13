@@ -1854,7 +1854,7 @@ void do_cmd_knowledge_traps(int Ind)
 /*
  * Display the time and date
  */
-void do_cmd_time(Ind)
+void do_cmd_time(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 

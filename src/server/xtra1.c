@@ -2700,7 +2700,7 @@ void calc_bonuses(int Ind)
 
 	int			old_speed;
 
-	int			old_telepathy;
+	u32b			old_telepathy;
 	int			old_see_inv;
 
 	int			old_dis_ac;
@@ -6443,9 +6443,9 @@ void global_event_signup(int Ind, int n, cptr parm){
 				    (r_info[i].flags8 & RF8_JOKEANGBAND) ||
 				    (r_info[i].rarity == 255))) {
 #ifdef GE_ARENA_ALLOW_EGO
-					if (r_found_len < strlen(c)) {
+					if (r_found_len < (int)strlen(c)) {
 #else
-					if (r_found_len > strlen(c)) {
+					if (r_found_len > (int)strlen(c)) {
 #endif
 						r_found_len = strlen(c);
 						r_found = i;
@@ -6481,7 +6481,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 		                if (strstr(parm2e, ce)) {
 #endif
 					if (mego_ok(r_found, i)) {
-						if (re_found_len > strlen(ce)) {
+						if (re_found_len > (int)strlen(ce)) {
 							re_found_len = strlen(ce);
 							re_found = i;
 						}

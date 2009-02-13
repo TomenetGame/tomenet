@@ -5493,7 +5493,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	int factor;
 //	int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
 //	s64b price;
-	u32b price;
+	s32b price;
 
 	cave_type *c_ptr = NULL;
 	struct dna_type *dna;

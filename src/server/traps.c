@@ -1332,7 +1332,7 @@ break;
 
 			if (gold < 2) gold = 2;
 			if (gold > 5000) gold = (p_ptr->au / 20) + randint(3000);
-			if (gold > p_ptr->au) gold = p_ptr->au;
+			if (gold > (u32b) p_ptr->au) gold = p_ptr->au;
 			p_ptr->au -= gold;
 			if ((gold <= 0) ||
 					(TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(100)) )
@@ -2959,9 +2959,9 @@ break;
 			amt = (p_ptr->au / price);
 
 			if (amt > 20) amt = 20;
-			if (amt > glev / 3) amt = glev / 3;
+			if (amt > (u32b) glev / 3) amt = glev / 3;
 
-			for (k = 0; k < amt; k++)
+			for (k = 0; k < (int) amt; k++)
 			{
 				if (summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE5, 1, 0))
 				{
@@ -3003,7 +3003,7 @@ break;
 
 				amt = q_ptr->lev * 100;
 				if (q_ptr->lev > 20) amt *= q_ptr->lev - 20;
-				if (amt > p_ptr->au) amt = p_ptr->au / 2;
+				if (amt > (unsigned int) p_ptr->au) amt = p_ptr->au / 2;
 				if (amt < 100) continue;
 
 				p_ptr->au -= amt;

@@ -1670,7 +1670,7 @@ struct house_type{
 
 struct dna_type{
 	u32b creator;		/* Unique ID of creator/house admin */
-	u32b owner;		/* Player/Party/Class/Race ID */
+	s32b owner;		/* Player/Party/Class/Race ID */
 	byte owner_type;	/* OT_xxxx */
 	byte a_flags;		/* Combination of ACF_xxxx */
 	u16b min_level;		/* minimum level - no higher than admin level */

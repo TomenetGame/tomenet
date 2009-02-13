@@ -670,7 +670,7 @@ errr fd_lock(int fd, int what)
  */
 errr fd_seek(int fd, huge n)
 {
-	long p;
+	huge p;
 
 	/* Verify fd */
 	if (fd < 0) return (-1);
@@ -679,7 +679,7 @@ errr fd_seek(int fd, huge n)
 	p = lseek(fd, n, SEEK_SET);
 
 	/* Failure */
-	if (p < 0) return (1);
+	if (p == (huge) -1) return (1);
 
 	/* Failure */
 	if (p != n) return (1);
@@ -736,7 +736,7 @@ errr fd_read(int fd, char *buf, huge n)
 #endif
 
 	/* Read the final piece */
-	if (read(fd, buf, n) != n) return (1);
+	if ((huge) read(fd, buf, n) != n) return (1);
 
 	/* Success */
 	return (0);
@@ -769,7 +769,7 @@ errr fd_write(int fd, cptr buf, huge n)
 #endif
 
 	/* Write the final piece */
-	if (write(fd, buf, n) != n) return (1);
+	if ((huge) write(fd, buf, n) != n) return (1);
 
 	/* Success */
 	return (0);
@@ -1870,7 +1870,7 @@ static int censor(char *line){
 		if((word=strstr(lcopy, swear[i].word))){
 			if(checkallow(lcopy, word-lcopy)) continue;
 			word=(&line[(word-lcopy)]);
-			for(j=0; j<strlen(swear[i].word); j++){
+			for(j=0; j<(int)strlen(swear[i].word); j++){
 				word[j]='*';
 			}
 			level=MAX(level, swear[i].level);
@@ -2578,7 +2578,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 					}
 
 					/* Check for exact match */
-					if (len == strlen(parties[i].name))
+					if (len == (int)strlen(parties[i].name))
 					{
 						/* Never a problem */
 						target = 0 - i;
@@ -2624,7 +2624,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 				}
 
 				/* Check for exact match */
-				if (len == strlen(q_ptr->name))
+				if (len == (int)strlen(q_ptr->name))
 				{
 					/* Never a problem */
 					target = i;
@@ -2721,7 +2721,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 					}
 
 					/* Check for exact match */
-					if (len == strlen(parties[i].name))
+					if (len == (int)strlen(parties[i].name))
 					{
 						/* Never a problem */
 						target = 0 - i;
@@ -2767,7 +2767,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 				}
 
 				/* Check for exact match */
-				if (len == strlen(q_ptr->name))
+				if (len == (int)strlen(q_ptr->name))
 				{
 					/* Never a problem */
 					target = i;

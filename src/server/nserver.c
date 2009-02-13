@@ -9035,7 +9035,7 @@ static int Receive_party(int ind)
 	
 	/* sanitize input - C. Blue */
 	if (strlen(buf) > 40) *(buf + 40) = 0;
-	for (n = 0; n < strlen(buf); n++)
+	for (n = 0; n < (int)strlen(buf); n++)
 		if (*(buf + n) < 32) *(buf + n) = '_';
 
 	if (player)

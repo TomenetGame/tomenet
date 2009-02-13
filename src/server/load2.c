@@ -990,7 +990,7 @@ static void rd_house(int n)
 	rd_byte(&house_ptr->dy);
 	MAKE(house_ptr->dna, struct dna_type);
 	rd_u32b(&house_ptr->dna->creator);
-	rd_u32b(&house_ptr->dna->owner);
+	rd_s32b(&house_ptr->dna->owner);
 	rd_byte(&house_ptr->dna->owner_type);
 	rd_byte(&house_ptr->dna->a_flags);
 	rd_u16b(&house_ptr->dna->min_level);
@@ -1979,7 +1979,7 @@ static errr rd_savefile_new_aux(int Ind)
 		}
 
 		/* read in the map */
-		for (i = 0; i < tmp32u; i++)
+		for (i = 0; i < (int) tmp32u; i++)
 		{
 			rd_byte(&p_ptr->wild_map[i]);
 		}
@@ -2092,7 +2092,7 @@ errr rd_savefile_new(int Ind)
 
 errr rd_server_savefile()
 {
-	int i;
+	unsigned int i;
 
 	errr err = 0;
 
@@ -2259,7 +2259,7 @@ errr rd_server_savefile()
 	o_max = tmp16u;
 
 	/* Read house info if new enough */
-	rd_u32b(&num_houses);
+	rd_s32b(&num_houses);
 
 	while(house_alloc<num_houses){
 		GROW(houses, house_alloc, house_alloc+512, house_type);
@@ -2274,7 +2274,7 @@ errr rd_server_savefile()
 	}
 
 	/* Read the available records */
-	for (i = 0; i < num_houses; i++)
+	for (i = 0; i < (unsigned int) num_houses; i++)
 	{
 		rd_house(i);
 		if(!(houses[i].flags&HF_STOCK))

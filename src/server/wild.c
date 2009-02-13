@@ -2190,6 +2190,8 @@ static void wild_add_hotspot(struct worldpos *wpos)
 	if (add_dwelling) wild_add_dwelling(wpos, x_cen, y_cen );
 }
 
+#ifdef NEW_DUNGEON
+#else
 
 /* helper function to wild_gen_bleedmap */
 static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
@@ -2230,7 +2232,6 @@ static void wild_gen_bleedmap_aux(int *bleedmap, int span, char dir)
 
 }
 
-#if 0 /* not used? - mikaelh */
 /* using a simple fractal algorithm, generates the bleedmap used by the function below. */
 /* hack -- for this algorithm to work nicely, an initial span of a power of 2 is required. */
 static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
@@ -2287,7 +2288,6 @@ static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
 	}
 
 }
-#endif // 0
 
 /* this function "bleeds" the terrain type of bleed_from to the side of bleed_to
    specified by dir.
@@ -2304,10 +2304,8 @@ static void wild_gen_bleedmap(int *bleedmap, char dir, int start, int end)
    Such as ponds near shoreline to make it more interesting and
    groves of trees near the edges of forest.
 */
-#ifdef NEW_DUNGEON
-#else
 
-void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end)
+static void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end)
 {
 	int x, y, c;
 	int bleedmap[256+1], bleed_begin[MAX_WID], bleed_end[MAX_WID];
@@ -2376,12 +2374,12 @@ void wild_bleed_level(int bleed_to, int bleed_from, char dir, int start, int end
 			for (y = bleed_begin[x]; y < bleed_end[x]; y++)
 			{
 				cave_type *c_ptr = &cave[bleed_to][y][x];
-				c_ptr->feat = terrain_spot(&terrain);								
+				c_ptr->feat = terrain_spot(&terrain);
 			}
 		}	
 	}
 }
-#endif
+#endif /* NEW_DUNGEON */
 
 /* determines whether or not to bleed from a given depth in a given direction.
    useful for initial determination, as well as shared bleed points.

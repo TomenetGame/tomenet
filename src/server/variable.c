@@ -246,8 +246,8 @@ struct quest_type quests[20];	/* server quest data */
 
 /* The information about houses */
 house_type *houses;
-u32b num_houses = 0;
-u32b house_alloc = 0;
+s32b num_houses = 0;
+s32b house_alloc = 0;
 
 /* An array to access a Player's ID */
 long GetInd[MAX_ID];

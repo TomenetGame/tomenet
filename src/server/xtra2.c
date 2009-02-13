@@ -5456,7 +5456,7 @@ void kill_house_contents(house_type *h_ptr){
 #endif	// USE_MANG_HOUSE_ONLY
 }
 
-void kill_houses(int id, int type){
+void kill_houses(int id, byte type){
 	int i;
 	for(i=0;i<num_houses;i++){
 		struct dna_type *dna=houses[i].dna;
@@ -5492,7 +5492,7 @@ void kill_objs(int id){
 
 /* This function prevents DoS attack using suicide */
 /* ;) DoS... its just annoying. hehe */
-static void check_roller(Ind)
+static void check_roller(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	time_t now = time(&now);

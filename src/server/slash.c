@@ -328,7 +328,7 @@ void do_slash_cmd(int Ind, char *message)
 
 	/* message3 contains all tokens but not the command: */
 	strcpy(message3, "");
-	for (i = 0; i < strlen(message); i++)
+	for (i = 0; i < (int)strlen(message); i++)
 		if (message[i] == ' ') {
 			strcpy(message3, message + i + 1);
 			break;
@@ -1662,9 +1662,9 @@ void do_slash_cmd(int Ind, char *message)
 			if (tk > 0)	/* Set new party note */
 			{
 				/* Search for begin of parms ( == text of the note) */
-				for (i = 6; i < strlen(message2); i++)
+				for (i = 6; i < (int)strlen(message2); i++)
 					if (message2[i] == ' ')
-						for (j = i; j < strlen(message2); j++)
+						for (j = i; j < (int)strlen(message2); j++)
 							if (message2[j] != ' ')	{
 								/* save start pos in j for latter use */
 								i = strlen(message2);
@@ -1738,9 +1738,9 @@ void do_slash_cmd(int Ind, char *message)
 			if (tk > 0)	/* Set new Guild note */
 			{
 				/* Search for begin of parms ( == text of the note) */
-				for (i = 6; i < strlen(message2); i++)
+				for (i = 6; i < (int)strlen(message2); i++)
 					if (message2[i] == ' ')
-						for (j = i; j < strlen(message2); j++)
+						for (j = i; j < (int)strlen(message2); j++)
 							if (message2[j] != ' ')	{
 								/* save start pos in j for latter use */
 								i = strlen(message2);
@@ -1823,15 +1823,15 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			/* Does a colon appear? */
-			for (i = 0; i < strlen(message2); i++)
+			for (i = 0; i < (int)strlen(message2); i++)
 				if (message2[i] == ':') colon = TRUE;
 			/* Depending on colon existance, extract the target name */
-			for (i = 5; i < strlen(message2); i++)
+			for (i = 5; i < (int)strlen(message2); i++)
 				if (message2[i] == ' ') {
-					for (j = i; j < strlen(message2); j++)
+					for (j = i; j < (int)strlen(message2); j++)
 						/* find where target name starts, save pos in j */
 						if (message2[j] != ' ')	{
-							for (i = j; i < strlen(message2); i++) {
+							for (i = j; i < (int)strlen(message2); i++) {
 								/* find ':' which terminates target name, save pos in i */
 								if (message2[i] == ':') {
 									/* extract target name up to the ':' */
@@ -1842,7 +1842,7 @@ void do_slash_cmd(int Ind, char *message)
 									break;
 								}
 							}
-							if (i == strlen(message2)) {
+							if (i == (int)strlen(message2)) {
 								/* extract name till end of line (it's the only parm) */
 								strcpy(tname, message2 + j);
 							}
@@ -3451,7 +3451,7 @@ void do_slash_cmd(int Ind, char *message)
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted note %d.", notes);
+						msg_format(Ind, "\377oDeleted note�%d.", notes);
 					}
 				}
 				return;
@@ -3467,9 +3467,9 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				/* Search for begin of parms ( == text of the note) */
-				for (i = 6; i < strlen(message2); i++)
+				for (i = 6; i < (int)strlen(message2); i++)
 					if (message2[i] == ' ')
-						for (j = i; j < strlen(message2); j++)
+						for (j = i; j < (int)strlen(message2); j++)
 							if (message2[j] != ' ')	{
 								/* save start pos in j for latter use */
 								i = strlen(message2);

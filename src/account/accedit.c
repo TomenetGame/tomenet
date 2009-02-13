@@ -43,7 +43,7 @@ char *crypass;
 
 int tfpos;
 
-int main(int argc, char *argv[]){
+int main(){
 	fp=fopen(fname, "r");
 	if(fp==(FILE*)NULL){
 		fprintf(stderr, "Cannot open %s\n", fname);
@@ -413,7 +413,7 @@ void editor(){
 				case 'L':
 					/* Short list of accounts */
 					fpos=ListAccounts(fpos);
-					if(fpos==-1){
+					if(fpos==(unsigned long)-1){
 						quit=1;
 						break;
 					}
@@ -649,6 +649,12 @@ void getstring(const char *prompt, char *string, int max){
 		else{
 			string[i++]=ch;
 			addch(ch);
+			if(i==max){
+				string[i]='\0';
+				move(LINES-1, 0);
+				clrtoeol();
+				return;
+			}
 		}
 	} while(1);
 }

@@ -1523,7 +1523,7 @@ errr init_v_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= v_head->info_num) return (2);
+			if (i >= (int) v_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -1732,7 +1732,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= f_head->info_num) return (2);
+			if (i >= (int) f_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -1980,7 +1980,7 @@ errr init_f_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= f_head->info_num) return (2);
+			if (i >= (int) f_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -2410,7 +2410,7 @@ errr init_k_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= k_head->info_num) return (2);
+			if (i >= (int) k_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -2813,7 +2813,7 @@ errr init_a_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= a_head->info_num) return (2);
+			if (i >= (int) a_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -3236,7 +3236,7 @@ errr init_s_info_txt(FILE *fp, char *buf)
 			i = atoi(buf+2);
 
 			/* Verify information */
-			if (i >= s_head->info_num) return (2);
+			if (i >= (int) s_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -3592,7 +3592,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= e_head->info_num) return (2);
+			if (i >= (int) e_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -4102,7 +4102,7 @@ errr init_r_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= r_head->info_num) return (2);
+			if (i >= (int) r_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -4846,7 +4846,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-                        if (i >= re_head->info_num) return (2);
+                        if (i >= (int) re_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -5411,7 +5411,7 @@ errr init_t_info_txt(FILE *fp, char *buf)
 			if (i <= error_idx) return (4);
 
 			/* Verify information */
-			if (i >= t_head->info_num) return (2);
+			if (i >= (int) t_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -5810,7 +5810,7 @@ errr init_d_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= d_head->info_num) return (2);
+			if (i >= (int) d_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6454,7 +6454,7 @@ errr init_st_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= st_head->info_num) return (2);
+			if (i >= (int) st_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6761,7 +6761,7 @@ errr init_ba_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= ba_head->info_num) return (2);
+			if (i >= (int) ba_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
@@ -6939,7 +6939,7 @@ errr init_ow_info_txt(FILE *fp, char *buf)
 			if (i < error_idx) return (4);
 
 			/* Verify information */
-			if (i >= ow_head->info_num) return (2);
+			if (i >= (int) ow_head->info_num) return (2);
 
 			/* Save the index */
 			error_idx = i;
