@@ -3451,7 +3451,7 @@ void do_slash_cmd(int Ind, char *message)
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted note�%d.", notes);
+						msg_format(Ind, "\377oDeleted note %d.", notes);
 					}
 				}
 				return;
