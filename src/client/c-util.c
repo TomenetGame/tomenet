@@ -1038,14 +1038,6 @@ void keymap_init(void)
 		/* Save the direction */
 		keymap_dirs[i] = hack_dir;
 	}
-
-	/* give a warning, in case we haven't saved macros, so we know
-	   that we just lost all unsaved keymap changes. */
-	/* actually this function itself has nothing to with the macros.
-	 * macros were reloaded before when a complete redraw was done,
-         * which isn't the case anymore - mikaelh
-	 */
-	c_msg_print("Keymap has been reinitialized.");
 }
 
 
