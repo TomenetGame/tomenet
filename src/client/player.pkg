@@ -88,17 +88,26 @@ typedef unsigned int u32b;
 #define SKILL_HSUPPORT			73
 
 /* Druids */
-#define SKILL_DRUID_ARCANE		74
+#define SKILL_DRUID_ARCANE	74
 #define SKILL_DRUID_PHYSICAL	75
-#define SKILL_DRUID_EXTRA   	76
-#define SKILL_DRUID_EXTRA2		77
 
-/* Shamans */
-#define SKILL_SHAMAN			78
-#define SKILL_SHAMAN2			79
-#define SKILL_SHAMAN3			80
-#define SKILL_SHAMAN4			81
-#define SKILL_SHAMAN5			82
+/* Runemasters */
+#define SKILL_RUNEMASTERY   	76
+
+/* Divine race */
+/* ENABLE_DIVINE */
+#define SKILL_ASTRAL		77
+#define DIVINE_UNDEF		0x00
+#define DIVINE_ANGEL		0x01
+#define DIVINE_DEMON		0x10
+
+#define SKILL_DUAL		78
+#define SKILL_STANCE		79
+
+/* Mindcrafters */
+#define SKILL_PPOWER		80
+#define SKILL_TCONTACT		81
+#define SKILL_MINTRUSION	82
 
 /* additional ones */
 #define SKILL_CLIMB             90
