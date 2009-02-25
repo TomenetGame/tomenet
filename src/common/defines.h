@@ -6141,26 +6141,18 @@ extern int PlayerUID;
 #define SKILL_HCURING           72
 #define SKILL_HSUPPORT          73
 
-#define SKILL_DRUID		74		/* <- obsolete entry as soon as 3.4.6 is out */
-#define SKILL_DRUID_ARCANE		74 
-#define SKILL_DRUID_PHYSICAL		75
+#define SKILL_DRUID_ARCANE	74 
+#define SKILL_DRUID_PHYSICAL	75
 
-#define SKILL_RUNEMASTERY		76
-#ifdef ENABLE_DIVINE
- #define SKILL_ASTRAL			77
-#endif
-
-#define SKILL_DRUID_EXTRA		76
-#define SKILL_DRUID_EXTRA2		77
+#define SKILL_RUNEMASTERY	76
+#define SKILL_ASTRAL		77
 
 #define SKILL_DUAL		78 /* dual-wield for rogues */
 #define SKILL_STANCE		79 /* combat stances for warriors */
 
-#define SKILL_SHAMAN		78
-#define SKILL_SHAMAN2		79
-#define SKILL_SHAMAN3		80
-#define SKILL_SHAMAN4		81
-#define SKILL_SHAMAN5		82
+#define SKILL_PPOWER		80 /* the new mindcrafter skills */
+#define SKILL_TCONTACT		81 /* the new mindcrafter skills */
+#define SKILL_MINTRUSION	82 /* the new mindcrafter skills */
 
 /* additional ones */
 #define SKILL_CLIMB		90
