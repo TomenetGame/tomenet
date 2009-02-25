@@ -1927,7 +1927,7 @@ int Receive_depth(void)
 #endif
 	{
 		if (colour) colour = TERM_ORANGE;
-		else TERM_WHITE;
+		else colour = TERM_WHITE;
 	}
 
 	if (screen_icky) Term_switch(0);
@@ -2804,7 +2804,8 @@ int Receive_beep(void)
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 #ifdef WIN32
-	Beep(880,200);
+//	Beep(880,200);
+	MessageBeep(MB_OK);
 #else
 	fprintf(stderr, "\007");
 	fflush(stderr);
