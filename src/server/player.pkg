@@ -117,10 +117,8 @@ typedef unsigned int u32b;
 #define SKILL_HSUPPORT          73
 
 /* Druids */
-#define SKILL_DRUID		74	/* <- obsolete when 4.3.6 is released */
 #define SKILL_DRUID_ARCANE	74
 #define SKILL_DRUID_PHYSICAL	75
-#define SKILL_DRUID_EXTRA	76
 
 /* Runemasters */
 #define SKILL_RUNEMASTERY	76
