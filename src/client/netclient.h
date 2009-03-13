@@ -27,6 +27,7 @@ int Receive_hp(void);
 int Receive_stamina(void);
 int Receive_ac(void);
 int Receive_inven(void);
+int Receive_inven_wide(void);
 int Receive_equip(void);
 int Receive_char_info(void);
 int Receive_various(void);

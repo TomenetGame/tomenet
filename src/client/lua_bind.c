@@ -282,3 +282,21 @@ int lua_get_new_bounty_monster(int lev)
 }
 
 #endif
+
+int get_inven_sval(int Ind, int inven_slot) {
+	return (inventory[inven_slot].sval);
+}
+int get_inven_xtra(int Ind, int inven_slot, int n) {
+	switch (n) {
+	case 1: return (inventory[inven_slot].xtra1);
+	case 2: return (inventory[inven_slot].xtra2);
+	case 3: return (inventory[inven_slot].xtra3);
+	case 4: return (inventory[inven_slot].xtra4);
+	case 5: return (inventory[inven_slot].xtra5);
+	case 6: return (inventory[inven_slot].xtra6);
+	case 7: return (inventory[inven_slot].xtra7);
+	case 8: return (inventory[inven_slot].xtra8);
+	case 9: return (inventory[inven_slot].xtra9);
+	default: return (0); //failure
+	}
+}

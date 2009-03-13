@@ -143,6 +143,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_STAMINA]	= Receive_stamina;
 	receive_tbl[PKT_TECHNIQUE_INFO]	= Receive_technique_info;
 	receive_tbl[PKT_EXTRA_STATUS]	= Receive_extra_status;
+	receive_tbl[PKT_INVEN_WIDE]	= Receive_inven_wide;
 }
 
 /* Head of file transfer system receive */
@@ -1417,9 +1418,57 @@ int Receive_inven(void)
 	inventory[pos - 'a'].sval = sval;
 	inventory[pos - 'a'].tval = tval;
 	inventory[pos - 'a'].pval = pval;
-	inventory[pos - 'a'].xtra1 = attr;
+	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
+
+	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
+
+	return 1;
+}
+
+/* Receive xtra data of an item. Added for customizable spell tomes - C. Blue */
+int Receive_inven_wide(void)
+{
+	int	n;
+	char	ch;
+	char pos, attr, tval, sval;
+	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+	s16b wgt, amt, pval;
+	char name[MAX_CHARS];
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
+	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
+	{
+		return n;
+	}
+
+	/* Check that the inventory slot is valid - mikaelh */
+	if (pos < 'a' || pos > 'x') return 0;
+
+        /* Hack -- The color is stored in the sval, since we don't use it for anything else */
+        /* Hack -- gotta ahck to work around the previous hackl .. damn I hate that */
+		/* I'm one of those who really hate it .. Jir */
+		/* I hated it too much I swapped them	- Jir - */
+	inventory[pos - 'a'].sval = sval;
+	inventory[pos - 'a'].tval = tval;
+	inventory[pos - 'a'].pval = pval;
+	inventory[pos - 'a'].attr = attr;
+	inventory[pos - 'a'].weight = wgt;
+	inventory[pos - 'a'].number = amt;
+
+	inventory[pos - 'a'].xtra1 = xtra1;
+	inventory[pos - 'a'].xtra2 = xtra2;
+	inventory[pos - 'a'].xtra3 = xtra3;
+	inventory[pos - 'a'].xtra4 = xtra4;
+	inventory[pos - 'a'].xtra5 = xtra5;
+	inventory[pos - 'a'].xtra6 = xtra6;
+	inventory[pos - 'a'].xtra7 = xtra7;
+	inventory[pos - 'a'].xtra8 = xtra8;
+	inventory[pos - 'a'].xtra9 = xtra9;
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
@@ -1466,7 +1515,7 @@ int Receive_equip(void)
 	inventory[pos - 'a' + INVEN_WIELD].sval = sval;
 	inventory[pos - 'a' + INVEN_WIELD].tval = tval;
 	inventory[pos - 'a' + INVEN_WIELD].pval = pval;
-	inventory[pos - 'a' + INVEN_WIELD].xtra1 = attr;
+	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 
@@ -2454,7 +2503,7 @@ int Receive_store(void)
 	store_prices[(int) pos] = price;
 	strncpy(store_names[(int) pos], name, 80);
 	store.stock[(int)pos].tval = tval;
-	store.stock[(int)pos].xtra1 = attr;
+	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
 
 	/* Make sure that we're in a store */

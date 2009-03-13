@@ -56,7 +56,7 @@ static void display_entry(int pos)
                 /* Describe the object */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->xtra1, o_name, i+6, 3);
+                c_put_str(o_ptr->attr, o_name, i+6, 3);
 
                 /* Show weights */
                 if (c_cfg.show_weights)
@@ -79,7 +79,7 @@ static void display_entry(int pos)
                 /* Describe the object (fully) */
 		strcpy(o_name, store_names[pos]);
                 o_name[maxwid] = '\0';
-                c_put_str(o_ptr->xtra1, o_name, i+6, 3);
+                c_put_str(o_ptr->attr, o_name, i+6, 3);
 
                 /* Show weights */
                 if (c_cfg.show_weights)
@@ -233,7 +233,7 @@ static void store_examine(void)
 	/* Tell the server */
 	if (is_book(o_ptr)) show_browse(o_ptr);
 	else if (o_ptr->tval == TV_BOOK)
-		browse_school_spell(o_ptr->sval, o_ptr->pval);
+		browse_school_spell(-1, o_ptr->sval, o_ptr->pval);
 	else Send_store_examine(item);
 }
 

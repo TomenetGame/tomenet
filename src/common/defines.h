@@ -33,15 +33,18 @@
  */
 
 
-
+//note to note: r_info monsters are dependant, so server restart will still be required :/
+//NOTE: SUPERFLUOUS. INSTEAD, USE 'season_halloween' in variable.c or lua!
 /* Enable/disable Halloween Event Mode- by C. Blue :) -
    also see r_info.txt for 'Pumpkin' and follow instructions there. */
 //#define HALLOWEEN
 
+//NOTE: SUPERFLUOUS. INSTEAD, USE 'season' in variable.c or lua!
 /* Enable/disable Winter season
    Also defines how snowy the weather is: 0 (never snowing) .. 4 (always snowing) */
-#define WINTER_SEASON   2
+//#define WINTER_SEASON   2
 
+//NOTE: SUPERFLUOUS. INSTEAD, USE 'season_newyearseve' in variable.c or lua!
 /* Enable/disable New Year's Eve */
 //#define NEW_YEARS_EVE
 
@@ -51,12 +54,12 @@
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
 #define VERSION_PATCH   1
-#define VERSION_EXTRA	7
+#define VERSION_EXTRA	8
 #define VERSION_BRANCH	0
 #define VERSION_BUILD	0
 
 /* Server release version tag: Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG "" /* "e" */
+#define SERVER_VERSION_TAG ""
 
 /* Minimum client version required */
 #define MIN_VERSION_MAJOR	4
@@ -67,7 +70,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   12
+#define SF_VERSION_PATCH   16
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -104,23 +107,39 @@
 #include "colours.h"
 
 
-/* Allow a bunch of latest experimental changes to be compiled into this build? */
-#define ENABLE_TECHNIQUES
 
+/* --------------------------------------------------------------------------*/
+/* Allow a bunch of latest experimental changes to be compiled into this build? */
+
+#define ENABLE_RUNEMASTER
+
+#define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
 #define DUAL_WIELD		/* rogues may dual-wield 1-hand weapons */
-#define USE_PARRYING
+#define ENABLE_STANCES		/* combat stances for warriors */
+#define ALLOW_SHIELDLESS_DEFENSIVE_STANCE	/* Always allow defensive stance (less effective than with shield though) */
+
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
 #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
-#define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
-#define ENABLE_STANCES		/* combat stances for warriors */
+
+#define ENABLE_TECHNIQUES
+
+#define NEW_HISCORE		/* extended high score options for tomenet.cfg - C. Blue */
 
 #ifdef RPG_SERVER
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
+
  #define AUCTION_BETA		/* less restrictions while beta testing */
  #define AUCTION_SYSTEM
  #define AUCTION_DEBUG
+
  #define OPTIMIZED_ANIMATIONS	/* testing */
+
+ #define ENABLE_MCRAFT		/* enable old-new 'mindcrafter' class - C. Blue */
+ #define NEW_TOMES		/* enable player-crafted tomes as Adam suggested - C. Blue */
 #endif
+
+/* --------------------------------------------------------------------------*/
+
 
 
 /* Use new shields with block/deflect values instead of traditional ac/+ac ? */
@@ -184,6 +203,15 @@
   #define MONSTER_FLOW
  #endif
 #endif
+
+
+
+/* The four seasons - C. Blue */
+#define SEASON_SPRING 0
+#define SEASON_SUMMER 1
+#define SEASON_AUTUMN 2
+#define SEASON_WINTER 3
+
 
 
 /* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
@@ -330,8 +358,8 @@
 /*
  * Maximum number of player "class" types (see "table.c", etc)
  */
-#define MAX_CLASS       13	/* 11 if there're Druids. 10 o/w. */
-				// 12 => shaman; 13 => runemaster
+#define MAX_CLASS       14	/* 11 if there're Druids. 10 o/w. */
+				// 12 => shaman; 13 => runemaster; 14 mindcrafter
 
 /*
  * Maximum NPC robots to allow.
@@ -584,19 +612,22 @@
 
 /* SLAY and KILL (ie *SLAY*) multiplier */
 #if 0 /* from old times when 2-handed weapons had very low dice */
- #define FACTOR_HURT 2 /* slay animal/evil */
+ #define FACTOR_MULT 1	/* multiplier for actual FACTOR_ values, for finer resolution */
+ #define FACTOR_HURT 2	/* slay animal/evil */
  #define FACTOR_SLAY 3
  #define FACTOR_KILL 5
  #define FACTOR_BRAND_RES 2
  #define FACTOR_BRAND 3
  #define FACTOR_BRAND_SUSC 6
 #else /* adjusted for modern weapon dice to prevent insane output */
- #define FACTOR_HURT 2 /* slay animal/evil */
- #define FACTOR_SLAY 2
- #define FACTOR_KILL 3
- #define FACTOR_BRAND_RES 2
- #define FACTOR_BRAND 2
- #define FACTOR_BRAND_SUSC 4
+ #define FACTOR_MULT 10	/* multiplier for actual FACTOR_ values, for finer resolution */
+ #define FACTOR_HURT 15	/* slay animal/evil */
+ #define FACTOR_SLAY 20
+ #define FACTOR_KILL 30
+ #define FACTOR_BRAND_RES 15
+ #define FACTOR_BRAND 20
+ #define FACTOR_BRAND_SUSC 40
+ 
 #endif
 
 /* Approximate cap of a monster's average raw melee damage output per turn
@@ -1068,27 +1099,31 @@
 #define CLASS_RANGER		7
 #define CLASS_ADVENTURER	8
 //#define CLASS_BARD		9
-#define CLASS_DRUID		9	
+#define CLASS_DRUID		9
 #define CLASS_SHAMAN		10
 #define CLASS_RUNEMASTER	11
+#define CLASS_MINDCRAFTER	12
+
 /*
  * Races' class flags, which races allow which classes for choice
  * (must be same order as according CLASS_.. constants!)
  */
-#define CFW	0x001	/* Warrior */
-#define CFI	0x002	/* Istar */
-#define CFP	0x004	/* Priest */
-#define CFR	0x008	/* Rogue */
+#define CFW	0x0001	/* Warrior */
+#define CFI	0x0002	/* Istar */
+#define CFP	0x0004	/* Priest */
+#define CFR	0x0008	/* Rogue */
 
-#define CFM	0x010	/* Mimic */
-#define CFA	0x020	/* Archer */
-#define CFL	0x040	/* Paladin */
-#define CFN	0x080	/* Ranger */
+#define CFM	0x0010	/* Mimic */
+#define CFA	0x0020	/* Archer */
+#define CFL	0x0040	/* Paladin */
+#define CFN	0x0080	/* Ranger */
 
-#define CFX	0x100	/* Adventurer */
-#define CFD	0x200	/* Druid */
-#define CFS	0x400	/* Shaman */
-#define CFU	0x800	/* Runemaster */
+#define CFX	0x0100	/* Adventurer */
+#define CFD	0x0200	/* Druid */
+#define CFS	0x0400	/* Shaman */
+#define CFU	0x0800	/* Runemaster */
+
+#define CFC	0x1000	/* Mindcrafter */
 
 /*
  * Define the realms
@@ -1163,7 +1198,7 @@
  #define ROW_CURSP		19
  #define COL_CURSP		0	/* "Cur SP xxxxx" */
 
- #define ROW_EXSTA		-1	/* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA              -1      /* extra status, requires CONDENSED_HP_SP ! */
  #define COL_EXSTA		-1
 #else
  #define ROW_MAXHP		16
@@ -1184,7 +1219,7 @@
  #define ROW_CURST		18	/* current stamina */
  #define COL_CURST		3
 
- #define ROW_EXSTA		19	/* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA              19      /* extra status, requires CONDENSED_HP_SP ! */
  #define COL_EXSTA		0
 #endif
 
@@ -2077,17 +2112,32 @@ that keeps many algorithms happy.
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
-#define is_common_armour(tval) \
+#define is_armour(tval)	\
 	(((tval) == TV_BOOTS) || ((tval) == TV_GLOVES) || \
 	((tval) == TV_HELM) || ((tval) == TV_CROWN) || \
 	((tval) == TV_SHIELD) || ((tval) == TV_CLOAK) || \
-	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR))
-#define is_armour(tval)	(is_common_armour(tval) || ((tval) == TV_DRAG_ARMOR))
+	((tval) == TV_SOFT_ARMOR) || ((tval) == TV_HARD_ARMOR) || \
+	((tval) == TV_DRAG_ARMOR))
 #define is_rare_armour(tval,sval) ( \
 	(((tval) == TV_HELM) && ((sval) == SV_DRAGON_HELM || (sval) == SV_MITHRIL_HELM)) || \
-	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION))) \
+	(((tval) == TV_SHIELD) && (((sval) == SV_ORCISH_SHIELD) || ((sval) == SV_DRAGON_SHIELD) || ((sval) == SV_SHIELD_OF_DEFLECTION))) || \
 	(((tval) == TV_CLOAK) && ((sval) == SV_KOLLA)) || \
-	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_SCALE_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) )
+	(((tval) == TV_HARD_ARMOR) && (((sval) == SV_MITHRIL_CHAIN_MAIL) || ((sval) == SV_MITHRIL_PLATE_MAIL) || ((sval) == SV_ADAMANTITE_PLATE_MAIL))) || \
+	((tval) == TV_DRAG_ARMOR) )
+#define is_top_armour(tval,sval) \
+	(((tval) == TV_DRAG_ARMOR) && \
+	((sval) == SV_DRAGON_POWER || (sval) == SV_DRAGON_SKY || \
+	(sval) == SV_DRAGON_DEATH || (sval) == SV_DRAGON_SHINING || \
+	(sval) == SV_DRAGON_MULTIHUED || (sval) == SV_DRAGON_BALANCE))
+	/* ...and possibly all winners_only armour */
+#define is_common_armour(tval,sval) \
+	(is_armour(tval) && !is_rare_armour(tval,sval))
+#define sv_dsm_low(sv) \
+        (sv == SV_DRAGON_BLUE || sv == SV_DRAGON_WHITE || sv == SV_DRAGON_BLACK || \
+	sv == SV_DRAGON_RED || sv == SV_DRAGON_GREEN)
+#define sv_dsm_mid(sv) \
+        (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
+	sv == SV_DRAGON_PSEUDO)
 /* more possibilities: is_potion, is_rune, is_jewelry, is_rare_armour(tval,sval) */
 
 //Here comes the base runes (k_info.txt);
@@ -2464,13 +2514,6 @@ that keeps many algorithms happy.
 #define SV_DRAGON_DRACOLISK		43
 #define SV_DRAGON_SKY			44
 #define SV_DRAGON_SILVER                45
-
-#define sv_dsm_low(sv) \
-        (sv == SV_DRAGON_BLUE || sv == SV_DRAGON_WHITE || sv == SV_DRAGON_BLACK || \
-	sv == SV_DRAGON_RED || sv == SV_DRAGON_GREEN)
-#define sv_dsm_mid(sv) \
-        (sv == SV_DRAGON_BRONZE || sv == SV_DRAGON_SILVER || sv == SV_DRAGON_GOLD || \
-	sv == SV_DRAGON_PSEUDO)
 
 /* The sval codes for TV_LITE */
 #define SV_LITE_TORCH                    0
@@ -2982,8 +3025,12 @@ that keeps many algorithms happy.
 #define SV_DEED_PVP_START	65 /* birth item for pvp mode chars */
 
 /* for TV_BOOK */
+/* 0..49 are school tomes */
+#define SV_BOOK_COMBO		50 /* 50..99 are handbooks, 50 is beginner cantrips */
 #define SV_SPELLBOOK		255
-#define SV_BOOK_COMBO		50
+#define SV_CUSTOM_TOME_1	100 /* player-made personalized tomes */
+#define SV_CUSTOM_TOME_2	101
+#define SV_CUSTOM_TOME_3	102
 
 
 /* for invalid items */
@@ -3040,10 +3087,9 @@ that keeps many algorithms happy.
  *   ITEM: Affect each object in the "blast area" in some way
  *   KILL: Affect each monster in the "blast area" in some way
  *   HIDE: Hack -- disable "visual" feedback from projection
- *   DUMY: Doesn't do anything at all, except for the visual effect (used for EFF_FIREWORKS...).
  *   STAY: Create an 'effect' on the grid (cloud/wall/special fx)
  *   SELF: Affect the projector too
- *   DUMY: Don't affect anything or anybody (just visual fx)
+ *   DUMY: Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.)
  *   GRAV: Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT)
  */
 #define PROJECT_JUMP	0x00000001
@@ -3417,6 +3463,8 @@ that keeps many algorithms happy.
 #define GF_EXTRA_SPR	158
 
 #define GF_PUSH 	159 /* Moltor */
+
+#define GF_SILENCE	160 /* for new mindcrafters */
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE	200
@@ -4199,6 +4247,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF5_CAUSE_3			0x00004000	/* Cause Critical Wound */
 #define RF5_CAUSE_4			0x00008000	/* Cause Mortal Wound */
 #endif
+//FREE FLAGS HOLE
 #define RF5_BA_NUKE                     0x00004000  /* TY: Nuke Ball */
 #define RF5_BA_CHAO                     0x00008000  /* Chaos Ball */
 #define RF5_BO_ACID			0x00010000	/* Acid Bolt */
@@ -4288,6 +4337,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF7_NO_THEFT            0x00040000  /* Monster is neutral */
 
 #define RF7_NEVER_ACT           0x00080000  /* Monster is neutral */
+#define RF7_NO_ESP		0x00100000	/* monster isn't ESPable */
+
+//FREE FLAGS HOLE
 
 #define RF7_S_LOWEXP		0x08000000  /* Summons/Clones give little exp */
 #define RF7_S_NOEXP		0x10000000  /* Summons/Clones don't give exp */
@@ -4318,6 +4370,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF8_JOKEANGBAND         0x00008000
 #define RF8_ANGBAND             0x00010000
 #define RF8_BLUEBAND		0x00020000	/* C. Blue's bestiary */
+
+//FREE FLAGS HOLE
+
 #define RF8_CLIMB		0x20000000	/* NOT YET IMPLEMENTED: Can walk over mountain fields */
 #define RF8_WILD_SWAMP		0x40000000	/* ToDo: Implement Swamp */
 #define RF8_WILD_TOO            0x80000000
@@ -5427,13 +5482,13 @@ extern int PlayerUID;
 #define TERM_POIS	17	/* I Love this ;) */
 #define TERM_FIRE	18	/* fireball */
 #define TERM_COLD	19	/* cold */
-#define TERM_ACID	20	/* acid */
+#define TERM_ACID	20	/* acid, similar to darkness */
 #define TERM_ELEC	21	/* elec */
-#define TERM_CONF	22
-#define TERM_SOUN	23
-#define TERM_SHAR	24
-#define TERM_LITE	25
-#define TERM_DARKNESS	26
+#define TERM_CONF	22	/* umber/lumber */
+#define TERM_SOUN	23	/* similar to lite */
+#define TERM_SHAR	24	/* umber/slate */
+#define TERM_LITE	25	/* similar to sound */
+#define TERM_DARKNESS	26	/* similar to acid */
 
 #define TERM_SHIELDM	27	/* 64: mana shield */
 #define TERM_SHIELDI	28	/* 128: invulnerability */
@@ -6076,7 +6131,7 @@ extern int PlayerUID;
 #define SKILL_SWORD             3
 #define SKILL_CRITS             4
 #define SKILL_POLEARM           5
-#define SKILL_BLUNT            6
+#define SKILL_BLUNT		6
 #define SKILL_ARCHERY           7
 #define SKILL_SLING             8
 #define SKILL_BOW               9
@@ -6103,27 +6158,27 @@ extern int PlayerUID;
 #define SKILL_AURA_FEAR         28
 #define SKILL_AURA_SHIVER       29
 #define SKILL_AURA_DEATH        30
-#define SKILL_HUNTING			31
-#define SKILL_TECHNIC			32
+#define SKILL_HUNTING		31
+#define SKILL_TECHNIC		32
 #define SKILL_MISC              33
-#define SKILL_AGILITY			34
-#define SKILL_CALMNESS			35
-#define SKILL_SWIM				36
-#define SKILL_MARTIAL_ARTS		37
-#define SKILL_RICOCHET			38
-#define SKILL_BOOMERANG			39
-#define SKILL_TRAINING			40
-#define SKILL_INTERCEPT			41
-#define SKILL_DODGE				42
-#define SKILL_HEALTH			43
-#define SKILL_DIG				44
-#define SKILL_SPELLRAD			45
+#define SKILL_AGILITY		34
+#define SKILL_CALMNESS		35
+#define SKILL_SWIM		36
+#define SKILL_MARTIAL_ARTS	37
+#define SKILL_RICOCHET		38
+#define SKILL_BOOMERANG		39
+#define SKILL_TRAINING		40
+#define SKILL_INTERCEPT		41
+#define SKILL_DODGE		42
+#define SKILL_HEALTH		43
+#define SKILL_DIG		44
+#define SKILL_SPELLRAD		45
 #define SKILL_TRAPPING          46
-#define SKILL_AXE				47	/* hrm, bad order */
+#define SKILL_AXE		47	/* hrm, bad order */
 
 /* School skills */
 #define SKILL_CONVEYANCE        48
-#define SKILL_SPELL				49
+#define SKILL_SPELL		49
 #define SKILL_MANA              50
 #define SKILL_FIRE              51
 #define SKILL_AIR               52
@@ -6438,7 +6493,11 @@ extern int PlayerUID;
 	(plv >= 35 && (ridx == 614 || ridx == 726 || ridx == 964)) || \
 	(plv >= 40 && (ridx == 688 || ridx == 640 || ridx == 740)) || \
 	(plv >= 45 && (ridx == 723 || ridx == 704)) || /* || ridx == 716)) || \ */ \
-	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 775))) /* 782 */
+	(plv >= 50 && (ridx == 705 || ridx == 778 || ridx == 775)) || /* 782 */ \
+	(plv >= 60 && (ridx == 1127)))
+	/* possible postking additions - guiding ideas:
+	   fire immunity for NR; very maybe pass wall for comfort.
+	    1127 fire bird, 739 ethereal hound? */
 /* for vampires, who learn to transform into a vampire bat and back for transportation - C. Blue */
 #define mimic_vampire(ridx, plv)	\
 	(plv >= 20 && ridx == 391)
@@ -6478,7 +6537,7 @@ extern int PlayerUID;
 
 
 /* Here comes the new rune master macros and what not */
-#ifdef CLASS_RUNEMASTER
+#ifdef ENABLE_RUNEMASTER
 /* Here is how the rune spell damage gets calculated... 
  * I'll try to keep the latest table of dmg values updated @ 
  *    http://72.58.254.71/meow/rune_damage.txt
@@ -6488,7 +6547,7 @@ extern int PlayerUID;
  #define rball_dmg(x) (3 + damroll(1 + (x), 1 + (x)/3))
 
 // Halved dmg/sp if runemastery < 25
- #define ALTERNATE_DMG	
+ #define ALTERNATE_DMG
  #define RBARRIER 25
 
 //By comparison, Nox does 76 damage per turn with no spell power.
@@ -6593,7 +6652,7 @@ extern int PlayerUID;
 #define AUCTION_FEE			1
 
 /* Maximum amount of items per player */
-#define AUCTION_MAX_ITEMS_PLAYER	40
+#define AUCTION_MAX_ITEMS_PLAYER	48
 
 /* Time limits */
 #ifdef AUCTION_BETA
@@ -6604,24 +6663,17 @@ extern int PlayerUID;
 #define AUCTION_MAXIMUM_DURATION	604800	/* 7 days */
 #endif
 
-#ifdef AUCTION_BETA
-#define AUCTION_MINIMUM_STARTING_PRICE	50
-#define AUCTION_MAXIMUM_STARTING_PRICE	150
-#define AUCTION_MINIMUM_BUYOUT_PRICE	100
-#define AUCTION_MAXIMUM_BUYOUT_PRICE	1000
-#else
 /* Minimum starting price (in percents of the real value) */
-#define AUCTION_MINIMUM_STARTING_PRICE	66
+#define AUCTION_MINIMUM_STARTING_PRICE	100
 
 /* Maximum starting price (in percents of the real value) */
-#define AUCTION_MAXIMUM_STARTING_PRICE	150
+#define AUCTION_MAXIMUM_STARTING_PRICE	1000
 
 /* Minimum buyout price (in percents of the real value) */
-#define AUCTION_MINIMUM_BUYOUT_PRICE	150
+#define AUCTION_MINIMUM_BUYOUT_PRICE	100
 
 /* Maximum buyout price (in percents of the real value) */
-#define AUCTION_MAXIMUM_BUYOUT_PRICE	1000
-#endif
+#define AUCTION_MAXIMUM_BUYOUT_PRICE	2000
 
 /* Status codes */
 #define AUCTION_STATUS_EMPTY		0

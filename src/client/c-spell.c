@@ -632,7 +632,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 
 	//        if (hack_force_spell == -1)
 	{
-		num = exec_lua(0, format("return book_spells_num(%d)", sval));
+		num = exec_lua(0, format("return book_spells_num(%d, %d)", item, sval));
 
 		/* Build a prompt (accept all spells) */
 		strnfmt(out_val, 78, "(Spells %c-%c, Descs %c-%c, *=List, ESC=exit) %^s which spell? ",
@@ -647,7 +647,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 			Term_save();
 
 			/* Display a list of spells */
-			where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
+			where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
 		}
 
 		/* Get a spell from the user */
@@ -666,7 +666,7 @@ s32b get_school_spell(cptr do_what, int *item_book)
 					Term_save();
 
 					/* Display a list of spells */
-					where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
+					where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
 				}
 
 				/* Hide the list */
@@ -723,13 +723,13 @@ s32b get_school_spell(cptr do_what, int *item_book)
 #endif
 
 				/* Display a list of spells */
-				where = exec_lua(0, format("return print_book(0, %d, %d)", sval, pval));
-				exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d), %d)", sval, pval, i, where));
+				where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
+				exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d, %d), %d)", item, sval, pval, i, where));
 			}
 			else
 			{
 				/* Save the spell index */
-				spell = exec_lua(0, format("return spell_x(%d, %d, %d)", sval, pval, i));
+				spell = exec_lua(0, format("return spell_x(%d, %d, %d, %d)", item, sval, pval, i));
 
 				/* Require "okay" spells */
 				if (!exec_lua(0, format("return is_ok_spell(0, %d)", spell)))
@@ -779,15 +779,16 @@ s32b get_school_spell(cptr do_what, int *item_book)
 }
 
 /* TODO: handle blindness */
-void browse_school_spell(int book, int pval)
+void browse_school_spell(int item, int book, int pval)
 {
 	int i;
 	int num = 0, where = 1;
 	int ask;
 	char choice;
 	char out_val[160];
+	int sval = book;
 
-        num = exec_lua(0, format("return book_spells_num(%d)", book));
+        num = exec_lua(0, format("return book_spells_num(%d, %d)", item, sval));
 
 	/* Build a prompt (accept all spells) */
 	strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
@@ -797,13 +798,13 @@ void browse_school_spell(int book, int pval)
 	Term_save();
 
 	/* Display a list of spells */
-	where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
+	where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
 
 	/* Get a spell from the user */
 	while (get_com(out_val, &choice))
 	{
 		/* Display a list of spells */
-		where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
+		where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
 
 		/* Note verify */
 		ask = (isupper(choice));
@@ -825,8 +826,8 @@ void browse_school_spell(int book, int pval)
                 /* Term_load(); */
 
                 /* Display a list of spells */
-                where = exec_lua(0, format("return print_book(0, %d, %d)", book, pval));
-                exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d), %d)", book, pval, i, where));
+                where = exec_lua(0, format("return print_book(0, %d, %d, %d)", item, sval, pval));
+                exec_lua(0, format("print_spell_desc(spell_x(%d, %d, %d, %d), %d)", item, sval, pval, i, where));
 	}
 
 

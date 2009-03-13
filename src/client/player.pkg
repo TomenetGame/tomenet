@@ -219,8 +219,18 @@ struct object_type
 	byte name1;			/* Artifact type, if any */
 	byte name2;			/* Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
+
+	byte attr;
+
 	byte xtra1;			/* Extra info type */
 	byte xtra2;			/* Extra info index */
+	byte xtra3;			/* Extra info type */
+	byte xtra4;			/* Extra info type */
+	byte xtra5;			/* Extra info index */
+	byte xtra6;			/* Extra info type */
+	byte xtra7;			/* Extra info index */
+	byte xtra8;			/* Extra info type */
+	byte xtra9;			/* Extra info index */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
@@ -700,3 +710,7 @@ extern player_type Players[2] @ Players_real;
  */
 extern bool c_get_item @ get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 extern void lua_set_item_tester(int tval, char *fct);
+
+
+extern int get_inven_sval(int Ind, int inven_slot);
+extern int get_inven_xtra(int Ind, int inven_slot, int n);

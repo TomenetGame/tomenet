@@ -794,11 +794,11 @@ struct object_type
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
-#if 1
+#if 1 /* existing but currently not in use */
 	s32b pval2;			/* Item extra-parameter for some special items */
 	s32b pval3;			/* Item extra-parameter for some special items */
 #endif
-#if 1
+#if 1 /* don't exist in the code at all, except load/save */
 	s32b pval4;			/* Item extra-parameter for some special items */
 	s32b pval5;			/* Item extra-parameter for some special items */
 #endif
@@ -813,10 +813,19 @@ struct object_type
 	u16b name2;			/* Ego-Item type, if any */
 	u16b name2b;			/* 2e Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
-						/* now it's common with ego-items -Jir-*/
+						/* now it's common with ego-items -Jir-*/	
+	byte attr;			/* colour in inventory (for client) */
 
-	byte xtra1;			/* Extra info type (ego only? -Jir-) */
+	byte xtra1;			/* Extra info type, for various purpose */
 	byte xtra2;			/* Extra info index */
+	/* more info added for self-made spellbook feature Adam suggested - C. Blue */
+	byte xtra3;			/* Extra info */
+	byte xtra4;			/* Extra info */
+	byte xtra5;			/* Extra info */
+	byte xtra6;			/* Extra info */
+	byte xtra7;			/* Extra info */
+	byte xtra8;			/* Extra info */
+	byte xtra9;			/* Extra info */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
@@ -917,14 +926,14 @@ struct monster_type
 
    s16b energy;		/* Monster "energy" */
 
-   byte stunned;		/* Monster is stunned */
-   byte confused;		/* Monster is confused */
    byte monfear;		/* Monster is afraid */
-
-   #if 0
-   s16b bleeding;          /* Monster is bleeding */
-   s16b poisoned;          /* Monster is poisoned */
-   #endif
+   byte confused;		/* Monster is confused */
+   byte stunned;		/* Monster is stunned */
+   byte paralyzed;		/* Monster is paralyzed (unused) */
+   byte bleeding;		/* Monster is bleeding (unused) */
+   byte poisoned;		/* Monster is poisoned (unused) */
+   byte blinded;		/* monster appears confused (unused: wrapped as confusion currently) */
+   byte silenced;		/* monster can't cast spells for a short time (for new mindcrafters) */
 
    u16b hold_o_idx;	/* Object being held (if any) */
 
@@ -1188,6 +1197,9 @@ struct store_type
 	object_type *stock;		/* Stock -- Actual stock items */
 	
 	s16b town;			/* residence town of this store. Just added for debugging purposes - C. Blue */
+	
+	s16b tim_watch;			/* store owner watching out for thieves? */
+	s32b last_theft;		/* Turn of the last occurred theft that was noticed by the owner */
 };
 
 /*
@@ -1658,7 +1670,10 @@ struct house_type{
 #define OT_RACE 4
 #define OT_GUILD 5
 
+
+/* house flags */
 #define ACF_NONE 0x00
+
 #define ACF_PARTY 0x01
 #define ACF_CLASS 0x02
 #define ACF_RACE 0x04
@@ -1667,6 +1682,8 @@ struct house_type{
 #define ACF_WINNER 0x10
 #define ACF_FALLENWINNER 0x20
 #define ACF_NOGHOST 0x40
+#define ACF_STORE 0x80		/* player-owned store similar to MAngband - C. Blue */
+
 
 struct dna_type{
 	u32b creator;		/* Unique ID of creator/house admin */
@@ -2159,6 +2176,7 @@ struct player_type
 	s16b current_artifact;
 	object_type *current_telekinesis;
 	s16b current_curse;
+	s16b current_tome_creation; /* adding a spell scroll to a custom tome - C. Blue */
 
 	s16b current_selling;
 	s16b current_sell_amt;
@@ -2586,6 +2604,8 @@ struct player_type
 	byte has_pet; 
 	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */
 	bool auto_retaliating;
+	bool auto_retaliaty; /* TRUE for code-wise duration of autorataliation
+				actions, to prevent going un-AFK from them! */
 	
 	/* Global events participant? */
 	int global_event_type[MAX_GLOBAL_EVENTS]; /* 0 means 'not participating' */
@@ -2600,7 +2620,7 @@ struct player_type
 	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
 	 * and that number will affect mana usage */
 	int rune_num_of_buffs;
-#ifdef CLASS_RUNEMASTER
+#ifdef ENABLE_RUNEMASTER
 	int rune_speed;
 	int rune_stealth;
 	int rune_IV;

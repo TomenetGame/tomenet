@@ -409,7 +409,7 @@ extern bool is_newer_than(version_type *version, int major, int minor, int patch
 s32b get_school_spell(cptr do_what, int *item_book);
 extern int get_spell(s32b *sn, cptr prompt, int book, bool known);
 extern void show_browse(object_type *o_ptr);
-extern void browse_school_spell(int book, int pval);
+extern void browse_school_spell(int item, int book, int pval);
 extern void do_study(int book);
 extern void do_cast(int book);
 extern void do_pray(int book);
@@ -600,7 +600,8 @@ extern spell_type *grab_spell_type(s16b num);
 extern school_type *grab_school_type(s16b num);
 extern s32b lua_get_level(int Ind, s32b s, s32b lvl, s32b max, s32b min, s32b bonus);
 extern s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, int cur_mana, int stat);
-
+extern int get_inven_sval(int Ind, int inven_slot);
+extern int get_inven_xtra(int Ind, int inven_slot, int n);
 
 /* common/common.c */
 extern errr path_build(char *buf, int max, cptr path, cptr file);

@@ -1721,7 +1721,7 @@ void cmd_browse(void)
 
 	if (o_ptr->tval == TV_BOOK)
 	{
-		browse_school_spell(o_ptr->sval, o_ptr->pval);
+		browse_school_spell(item, o_ptr->sval, o_ptr->pval);
 		return;
 	}
 
