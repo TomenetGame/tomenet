@@ -1108,7 +1108,7 @@ bool askfor_aux(char *buf, int len, char private, char chatting)
 	int k = 0;
 
 	bool done = FALSE;
-
+	
 	/* Hack -- if short, don't use history */
 	bool nohist = private || len < 20;
 	byte cur_hist;
@@ -2877,7 +2877,7 @@ void interact_macros(void)
 {
 	int i;
 
-	char tmp[160], buf[1024];
+	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
 
 	/* Save screen */
 	Term_save();
@@ -2892,11 +2892,11 @@ void interact_macros(void)
 		Term_clear();
 
 		/* Describe */
-		Term_putstr(0, 2, -1, TERM_WHITE, "Interact with Macros");
+		Term_putstr(0, 1, -1, TERM_L_GREEN, "Interact with Macros");
 
 
 		/* Describe that action */
-		Term_putstr(0, 19, -1, TERM_WHITE, "Current action (if any) shown below:");
+		Term_putstr(0, 19, -1, TERM_L_GREEN, "Current action (if any) shown below:");
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
@@ -2905,19 +2905,21 @@ void interact_macros(void)
 		Term_putstr(0, 21, -1, TERM_WHITE, buf);
 
 		/* Selections */
-		Term_putstr(5,  4, -1, TERM_WHITE, "(1) Load a user pref file");
-		Term_putstr(5,  5, -1, TERM_WHITE, "(2) Dump macros");
-		Term_putstr(5,  6, -1, TERM_WHITE, "(3) Enter a new action");
-		Term_putstr(5,  7, -1, TERM_SLATE, "(4) Create a normal macro");
-		Term_putstr(5,  8, -1, TERM_WHITE, "(5) Create a hybrid macro    (recommended)");
-		Term_putstr(5,  9, -1, TERM_SLATE, "(6) Create a command macro");
-//		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
-		Term_putstr(5, 10, -1, TERM_SLATE, "(7) Delete a macro");
-		Term_putstr(5, 11, -1, TERM_SLATE, "(8) Create an empty macro    (disables a key)");
-		Term_putstr(5, 12, -1, TERM_WHITE, "(9) Query an existing macro");
+		Term_putstr(5,  3, -1, TERM_WHITE, "(1) Load macros from a pref file");
+		Term_putstr(5,  4, -1, TERM_WHITE, "(2) Save macros to a pref file");
+		Term_putstr(5,  5, -1, TERM_WHITE, "(3) Enter a new macro action");
+		Term_putstr(5,  6, -1, TERM_SLATE, "(4) Create a normal macro       (persists everywhere)");
+		Term_putstr(5,  7, -1, TERM_WHITE, "(5) Create a hybrid macro       (recommended for most cases)");
+		Term_putstr(5,  8, -1, TERM_SLATE, "(6) Create a command macro      (eg for using / and * key)");
+//		Term_putstr(5,  9, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
+		Term_putstr(5,  9, -1, TERM_SLATE, "(7) Delete a macro from a key");
+		Term_putstr(5, 10, -1, TERM_SLATE, "(8) Create an empty macro       (completely disables a key)");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(9) Query an existing macro on a key");
+		Term_putstr(5, 12, -1, TERM_SLATE, "(q/Q) Enter and create a 'quick & dirty' macro / set preferences"),
+//TODO		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
 
 		/* Prompt */
-		Term_putstr(0, 15, -1, TERM_WHITE, "Command: ");
+		Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -2935,7 +2937,7 @@ void interact_macros(void)
 		else if (i == '1')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Load a user pref file");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
@@ -2959,7 +2961,7 @@ void interact_macros(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Save a macro file");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Save a macro file");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
@@ -2980,7 +2982,7 @@ void interact_macros(void)
 		else if (i == '3')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Enter a new action");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Enter a new action");
 
 			/* Go to the correct location */
 			Term_gotoxy(0, 21);
@@ -2999,26 +3001,31 @@ void interact_macros(void)
 		else if (i == '6')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create a command macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a command macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
-
-			/* Link the macro */
-			macro_add(buf, macro__buf, TRUE, FALSE);
-
-			/* Message */
-			c_msg_print("Created a new command macro.");
+			
+			/* Some keys aren't allowed to prevent the user 
+			   from locking himself out accidentally */
+			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+			} else {
+				/* Link the macro */
+				macro_add(buf, macro__buf, TRUE, FALSE);
+				/* Message */
+				c_msg_print("Created a new command macro.");
+			}
 		}
 
 		/* Create a hybrid macro */
 		else if (i == '5')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create a hybrid macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3026,18 +3033,23 @@ void interact_macros(void)
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Link the macro */
-			macro_add(buf, macro__buf, FALSE, TRUE);
-
-			/* Message */
-			c_msg_print("Created a new hybrid macro.");
+			/* Some keys aren't allowed to prevent the user 
+			   from locking himself out accidentally */
+			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+			} else {
+				/* Link the macro */
+				macro_add(buf, macro__buf, FALSE, TRUE);
+				/* Message */
+				c_msg_print("Created a new hybrid macro.");
+			}
 		}
 
 		/* Create a normal macro */
 		else if (i == '4')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create a normal macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a normal macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3045,11 +3057,16 @@ void interact_macros(void)
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Link the macro */
-			macro_add(buf, macro__buf, FALSE, FALSE);
-
-			/* Message */
-			c_msg_print("Created a new normal macro.");
+			/* Some keys aren't allowed to prevent the user 
+			   from locking himself out accidentally */
+			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+			} else {
+				/* Link the macro */
+				macro_add(buf, macro__buf, FALSE, FALSE);
+				/* Message */
+				c_msg_print("Created a new normal macro.");
+			}
 		}
 
 #if 0
@@ -3057,7 +3074,7 @@ void interact_macros(void)
 		else if (i == '7')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create an identity macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create an identity macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3076,7 +3093,7 @@ void interact_macros(void)
 		else if (i == '7')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Delete a macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Delete a macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3096,7 +3113,7 @@ void interact_macros(void)
 		else if (i == '8')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Create an empty macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create an empty macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3104,18 +3121,23 @@ void interact_macros(void)
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
 
-			/* Link the macro */
-			macro_add(buf, "", FALSE, FALSE);
-
-			/* Message */
-			c_msg_print("Created a new empty macro.");
+			/* Some keys aren't allowed to prevent the user 
+			   from locking himself out accidentally */
+			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+			} else {
+				/* Link the macro */
+				macro_add(buf, "", FALSE, FALSE);
+				/* Message */
+				c_msg_print("Created a new empty macro.");
+			}
 		}
 
 		/* Query a macro */
 		else if (i == '9')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_WHITE, "Command: Query a macro");
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Query a macro");
 
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
@@ -3148,6 +3170,123 @@ void interact_macros(void)
 				/* Message */
 				c_msg_print("No macro was found.");
 			}
+		}
+
+		/* Enter a 'quick & dirty' macro */
+		else if (i == 'q')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
+
+			/* Go to the correct location */
+			Term_gotoxy(0, 21);
+
+			/* Hack -- limit the value */
+			tmp[80] = '\0';
+
+			/* Get an encoded action */
+			if (!askfor_aux(buf, 80, 0, 0)) continue;
+			
+			/* Fix it up quick and dirty: Ability code short-cutting */
+			buf2[0] = '\\'; //note: should in theory be ')e\',
+			buf2[1] = 'e'; //      but doesn't work due to prompt behaviour 
+			buf2[2] = ')'; //      (\e will then get ignored)
+			bptr = buf;
+			b2ptr = buf2 + 3;
+			while (*bptr) {
+				switch (*bptr) {
+				case 'M': /* use innate mimic power */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 'F': /* employ fighting technique */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '5'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 'S': /* employ shooting technique */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '6'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 'p': /* set a trap */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '0'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 'm': /* cast a spell */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case 's': /* change stance */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
+				case '*': /* set a target */
+					*b2ptr++ = '*'; *b2ptr++ = 't';
+					bptr++;	break;
+				default:
+					*b2ptr++ = *bptr++;
+				}
+			}
+			/* terminate anyway */
+			*b2ptr = '\0';
+
+			/* Display the current action */
+        		Term_putstr(0, 21, -1, TERM_WHITE, buf2);
+
+			/* Extract an action */
+			text_to_ascii(macro__buf, buf2);
+			
+			/* Prompt */
+			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+
+			/* Get a macro trigger */
+			get_macro_trigger(buf);
+
+			/* Some keys aren't allowed to prevent the user 
+			   from locking himself out accidentally */
+			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
+				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+			} else {
+				/* Automatically choose usually best fitting macro type,
+				   depending on chosen trigger key! */
+				//[normal macros: F-keys (only keys that aren't used for any text input)]
+				//command macros: / * a..w (all keys that are used in important standard prompts)
+				//hybrid macros: all others, maybe even also normal-macro-keys
+				if (!strcmp(buf, "/") || !strcmp(buf, "*") || (*buf >= 'a' && *buf <= 'w')) {
+					/* make it a command macro */
+					/* Link the macro */
+					macro_add(buf, macro__buf, TRUE, FALSE);
+					/* Message */
+					c_msg_print("Created a new command macro.");
+				} else {
+					/* make it a hybrid macro */
+					/* Link the macro */
+					macro_add(buf, macro__buf, FALSE, TRUE);
+					/* Message */
+					c_msg_print("Created a new hybrid macro.");
+				}
+			}
+			
+		}
+		/* Configure 'quick & dirty' macro functionality */
+		else if (i == 'Q')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
+			
+			/* TODO:
+			   config auto-prefix '\e)' */
+		}
+
+		/* Start recording a macro */
+		else if (i == 'r')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Record a macro");
+			
+			/* TODO: implement ^^ */
+
+		}
+		/* Configure macro recording functionality */
+		else if (i == 'R')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
+
+			/* TODO: implement */
 		}
 
 		/* Oops */
