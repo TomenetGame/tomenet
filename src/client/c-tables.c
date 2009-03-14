@@ -752,36 +752,43 @@ cptr monster_spells4[32] =
 {
   "Shriek",
   "Negate magic",
-  "XXX3",
-  "Rocket",
-  "Arrow",
-  "Bolt",
-  "XXX7",
-  "XXX8",
-  "Breath Acid",
-  "Breath Lightning",
-  "Breath Fire",
-  "Breath Cold",
-  "Breath Poison",
-  "Breath Nether",
-  "Breath Lite",
-  "Breath Darkness",
-  "Breath Confusion",
-  "Breath Sound",
-  "Breath Chaos",
-  "Breath Disenchantment",
-  "Breath Nexus",
-  "Breath Time",
-  "Breath Inertia",
-  "Breath Gravity",
-  "Breath Shards",
-  "Breath Plasma",
-  "Breath Force",
-  "Breath Mana",
-  "Breath Disintegration",
-  "Breath Toxic Waste",
   "XXX",
-  "Boulder",	/* "XXX", */
+  "Fire Rocket",
+
+  "Arrow",
+  "Shot",
+  "Bolt",
+  "Missile",
+
+  "Breathe Acid",
+  "Breathe Lightning",
+  "Breathe Fire",
+  "Breathe Cold",
+
+  "Breathe Poison",
+  "Breathe Nether",
+  "Breathe Lite",
+  "Breathe Darkness",
+
+  "Breathe Confusion",
+  "Breathe Sound",
+  "Breathe Chaos",
+  "Breathe Disenchantment",
+
+  "Breathe Nexus",
+  "Breathe Time",
+  "Breathe Inertia",
+  "Breathe Gravity",
+
+  "Breathe Shards",
+  "Breathe Plasma",
+  "Breathe Force",
+  "Breathe Mana",
+
+  "Breathe Disintegration",
+  "Breathe Toxic Waste",
+  "Ghastly Moan",
+  "Throw Boulder",	/* "XXX", */
 };
 
 /*
@@ -789,34 +796,41 @@ cptr monster_spells4[32] =
  */
 cptr monster_spells5[32] =
 {
-  "Ball of Acid",
-  "Ball of Lightning",
-  "Ball of Fire",
-  "Ball of Cold",
-  "Ball of Poison",
-  "Ball of Nether",
-  "Ball of Water",
-  "Ball of Mana",
-  "Ball of Darkness",
+  "Acid Ball",
+  "Lightning Ball",
+  "Fire Ball",
+  "Cold Ball",
+
+  "Poison Ball",
+  "Nether Ball",
+  "Water Ball",
+  "Mana Storm",
+
+  "Darkness Storm",
   "Drain Mana",
   "Mind Blast",
   "Brain Smash",
+
   "Cause Wounds",
   "XXX",
-  "Ball of Toxic Waste",
-  "Ball of Chaos",
-  "Bolt of Acid",
-  "Bolt of Lightning",
-  "Bolt of Fire",
-  "Bolt of Cold",
-  "Bolt of Poison",
-  "Bolt of Nether",
-  "Bolt of Water",
-  "Bolt of Mana",
-  "Bolt of Plasma",
-  "Bolt of Ice",
+  "Ball Toxic Waste",
+  "Raw Chaos",
+
+  "Acid Bolt",
+  "Lightning Bolt",
+  "Fire Bolt",
+  "Cold Bolt",
+
+  "Poison Bolt",
+  "Nether Bolt",
+  "Water Bolt",
+  "Mana Bolt",
+
+  "Plasma Bolt",
+  "Ice Bolt",
   "Magic Missile",
   "Scare",
+
   "Blind",
   "Confusion",
   "Slow",
@@ -828,25 +842,46 @@ cptr monster_spells5[32] =
  */
 cptr monster_spells6[32] =
 {
-  "Speed",
+  "Haste Self",
   "Hand of Doom",
   "Heal",
   "XXX",
+
   "Blink",
   "Teleport",
   "XXX",
   "XXX",
+
   "Teleport To",
   "Teleport Away",
   "Teleport Level",
   "XXX",
+
   "Darkness",
-  "Traps",
-  "Forget",
-  "XXX",
-  "XXX",
-  "XXX",
+  "Trap Creation",
+  "Cause Amnesia",
   /* Summons follow, but players can't summon */
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
+
+  "XXX",
+  "XXX",
+  "XXX",
+  "XXX",
 };
 
 
