@@ -3210,6 +3210,9 @@ void interact_macros(void)
 				case 'm': /* cast a spell */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
+				case 'n': /* draw a rune */
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+					bptr++;	break;
 				case 's': /* change stance */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
