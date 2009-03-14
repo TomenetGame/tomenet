@@ -1369,6 +1369,10 @@ bool get_string(cptr prompt, char *buf, int len)
 {
 	bool res;
 	bool chatting = FALSE;
+	
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
 
 	/* Display prompt */
 	prt(prompt, 0, 0);
@@ -1381,6 +1385,9 @@ bool get_string(cptr prompt, char *buf, int len)
 
 	/* Clear prompt */
 	prt("", 0, 0);
+
+	/* restore responsiveness to hybrid macros */
+	inkey_msg = inkey_msg_old;
 
 	/* Result */
 	return (res);
