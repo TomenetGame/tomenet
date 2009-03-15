@@ -13,6 +13,9 @@
 extern client_opts c_cfg;
 extern short screen_icky;
 
+extern bool recording_macro;
+extern char recorded_macro[160];
+
 static char get_shimmer_color(void);
 byte flick_colour(byte attr);
 
@@ -2365,8 +2368,18 @@ errr Term_inkey(char *ch, bool wait, bool take)
 		/* Wrap around if necessary */
 		if (Term->key_tail == Term->key_size)
 			Term->key_tail = 0;
-	}
 
+		/* record keypress for macro? */
+		if (recording_macro) {
+			if (strlen(recorded_macro) < 159) {
+				/* still below maximum recording length (160-1 bytes)? */
+				strcat(recorded_macro, format("%c", *ch));
+			} else {
+				/* ensure termination */
+				recorded_macro[159] = '\0';
+			}
+		}
+	}
 
 	/* Success */
 	return (0);

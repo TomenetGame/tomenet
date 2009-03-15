@@ -2886,11 +2886,27 @@ void interact_macros(void)
 
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
 
+	char fff[1024], t_key[10];
+	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
+	
+	bool were_recording = FALSE;
+
 	/* Save screen */
 	Term_save();
 
 	/* No macros should work within the macro menu itself */
 	inkey_interact_macros = TRUE;
+
+	/* Did we just finish recording a macro by entering this menu? */
+	if (recording_macro) {
+		/* stop recording */
+		were_recording = TRUE;
+		recording_macro = FALSE;
+		/* cut off the last key which was '%' to bring us back here */
+		recorded_macro[strlen(recorded_macro) - 1] = '\0';
+		/* use the recorded macro */
+		strcpy(macro__buf, recorded_macro);
+	}
 
 	/* Process requests until done */
 	while (1)
@@ -2899,7 +2915,7 @@ void interact_macros(void)
 		Term_clear();
 
 		/* Describe */
-		Term_putstr(0, 1, -1, TERM_L_GREEN, "Interact with Macros");
+		Term_putstr(0, 0, -1, TERM_L_GREEN, "Interact with Macros");
 
 
 		/* Describe that action */
@@ -2912,18 +2928,19 @@ void interact_macros(void)
 		Term_putstr(0, 21, -1, TERM_WHITE, buf);
 
 		/* Selections */
-		Term_putstr(5,  3, -1, TERM_WHITE, "(1) Load macros from a pref file");
-		Term_putstr(5,  4, -1, TERM_WHITE, "(2) Save macros to a pref file");
-		Term_putstr(5,  5, -1, TERM_WHITE, "(3) Enter a new macro action");
-		Term_putstr(5,  6, -1, TERM_SLATE, "(4) Create a normal macro       (persists everywhere)");
-		Term_putstr(5,  7, -1, TERM_WHITE, "(5) Create a hybrid macro       (recommended for most cases)");
-		Term_putstr(5,  8, -1, TERM_SLATE, "(6) Create a command macro      (eg for using / and * key)");
-//		Term_putstr(5,  9, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
-		Term_putstr(5,  9, -1, TERM_SLATE, "(7) Delete a macro from a key");
-		Term_putstr(5, 10, -1, TERM_SLATE, "(8) Create an empty macro       (completely disables a key)");
-		Term_putstr(5, 11, -1, TERM_WHITE, "(9) Query an existing macro on a key");
+		Term_putstr(5,  2, -1, TERM_WHITE, "(1) Load macros from a pref file");
+		Term_putstr(5,  3, -1, TERM_WHITE, "(2) Save macros to a pref file");
+		Term_putstr(5,  4, -1, TERM_WHITE, "(3) Enter a new macro action");
+		Term_putstr(5,  5, -1, TERM_SLATE, "(4) Create a normal macro       (persists everywhere)");
+		Term_putstr(5,  6, -1, TERM_WHITE, "(5) Create a hybrid macro       (recommended for most cases)");
+		Term_putstr(5,  7, -1, TERM_SLATE, "(6) Create a command macro      (eg for using / and * key)");
+//		Term_putstr(5,  8, -1, TERM_SLATE, "(7) Create a identity macro  (erases a macro)");
+		Term_putstr(5,  8, -1, TERM_SLATE, "(7) Delete a macro from a key");
+		Term_putstr(5,  9, -1, TERM_SLATE, "(8) Create an empty macro       (completely disables a key)");
+		Term_putstr(5, 10, -1, TERM_WHITE, "(9) Query an existing macro on a key");
+		Term_putstr(5, 11, -1, TERM_WHITE, "(l) List all macros");
 		Term_putstr(5, 12, -1, TERM_SLATE, "(q/Q) Enter and create a 'quick & dirty' macro / set preferences"),
-//TODO		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
 
 		/* Prompt */
 		Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: ");
@@ -3019,7 +3036,7 @@ void interact_macros(void)
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 			} else {
 				/* Link the macro */
 				macro_add(buf, macro__buf, TRUE, FALSE);
@@ -3043,7 +3060,7 @@ void interact_macros(void)
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 			} else {
 				/* Link the macro */
 				macro_add(buf, macro__buf, FALSE, TRUE);
@@ -3067,7 +3084,7 @@ void interact_macros(void)
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 			} else {
 				/* Link the macro */
 				macro_add(buf, macro__buf, FALSE, FALSE);
@@ -3131,7 +3148,7 @@ void interact_macros(void)
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 			} else {
 				/* Link the macro */
 				macro_add(buf, "", FALSE, FALSE);
@@ -3177,6 +3194,83 @@ void interact_macros(void)
 				/* Message */
 				c_msg_print("No macro was found.");
 			}
+		}
+
+		/* List all macros */
+		else if (i == 'l')
+		{
+			/* Prompt */
+			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: List all macros");
+
+			/* Re-using 'i' here shouldn't matter anymore */
+			for (i = 0; i < macro__num; i++)
+			{
+				if (i % 20 == 0) {
+					/* Clear screen */
+					Term_clear();
+
+					/* Describe */
+					Term_putstr(0, 1, -1, TERM_L_UMBER, format("  *** Current Macro List (Entry %d-%d) ***", i + 1, i + 20 > macro__num ? macro__num : i + 20));
+					Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press any key to continue, ESC to exit]");
+				}
+
+				/* Get trigger in parsable format */
+				ascii_to_text(buf, macro__pat[i]);
+
+				/* Get macro in parsable format */
+				strncpy(macro__buf, macro__act[i], 159);
+				macro__buf[159] = '\0';
+				ascii_to_text(buf2, macro__buf);
+
+				/* Make the trigger human-readable */
+				m_ctrl = m_alt = m_shift = FALSE;
+				if (strlen(buf) == 1) {
+					/* just a simple key */
+					sprintf(t_key, "%c        ", buf[0]);
+				} else if (strlen(buf) == 2) {
+					/* '^%c' : ctrl + a simple key */
+					m_ctrl = TRUE; /* not testing for the '^' actually, we assume it must be there.. */
+					sprintf(t_key, "%c        ", buf[1]);
+				} else {
+					/* special key, possibly with shift and/or ctrl */
+					bptr = buf + 2;
+					if (*bptr == 'N') { m_ctrl = TRUE; bptr++; }
+					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
+					if (*bptr == 'O') { m_alt = TRUE; bptr++; }
+					bptr++;
+					sprintf(t_key, "%-9.9s", bptr);
+					/* ensure termination (in paranoid case of overflow) */
+					t_key[9] = '\0';
+				}
+
+				/* determine trigger type */
+				t_hyb = t_com = FALSE;
+				if (macro__hyb[i]) t_hyb = TRUE;
+				else if (macro__cmd[i]) t_com = TRUE;
+
+				/* build a whole line */
+				sprintf(fff, "%s %s %s %s [%s]  %-49.49s", m_shift ? "SHF" : "   ", m_ctrl ? "CTL" : "   ", m_alt ? "ALT" : "   ",
+				    t_key, t_hyb ? "HY" : t_com ? "C " : "  ", buf2);
+
+				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
+				
+				/* Wait for keypress before displaying more */
+				if (i % 20 == 19) {
+					if (inkey() == ESCAPE) {
+						i = -1; /* hack to prevent the other inkey() call below */
+						break;
+					}
+				}
+			}
+
+			if (i == 0)
+			{
+				/* Message */
+				c_msg_print("No macro was found.");
+			}
+
+			/* Wait for keypress before returning to macro menu */
+			if (i % 20 > 0) inkey();
 		}
 
 		/* Enter a 'quick & dirty' macro */
@@ -3248,7 +3342,7 @@ void interact_macros(void)
 			/* Some keys aren't allowed to prevent the user 
 			   from locking himself out accidentally */
 			if (!strcmp(buf, "\e") || !strcmp(buf, "%")) {
-				c_msg_print("Keys <ESC> and '%' aren't allowed to carry a macro.");
+				c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 			} else {
 				/* Automatically choose usually best fitting macro type,
 				   depending on chosen trigger key! */
@@ -3287,8 +3381,40 @@ void interact_macros(void)
 			/* Prompt */
 			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Record a macro");
 			
-			/* TODO: implement ^^ */
+			/* Clear screen */
+			Term_clear();
 
+			/* Describe */
+			Term_putstr(25, 4, -1, TERM_L_RED, "*** Recording a macro ***");
+			Term_putstr(8, 8, -1, TERM_WHITE, "As soon as you press any key, the macro recorder will begin to");
+			Term_putstr(15, 9, -1, TERM_WHITE, "record all further key presses you will perform.");
+			Term_putstr(5, 11, -1, TERM_WHITE, "These can afterwards be saved to a macro, that you can bind to a key.");
+			Term_putstr(5, 13, -1, TERM_WHITE, "To stop the recording process, just press '%' key to enter the macro");
+			Term_putstr(5, 14, -1, TERM_WHITE, "menu again. You'll then be able to create a normal, command or hybrid");
+			Term_putstr(4, 15, -1, TERM_WHITE, "macro from the whole recorded action by choosing the usual menu points");
+			Term_putstr(16, 16, -1, TERM_WHITE, "for the different macro types: 4), 5) or 6).");
+			Term_putstr(19, 20, -1, TERM_L_RED, ">>>Press any key to start recording<<<");
+			
+			/* Wait for confirming keypress to finally start recording */
+			inkey();
+
+			/* Reload screen */
+			Term_load();
+
+			/* Flush the queue */
+			Flush_queue();
+
+			/* leave macro menu */
+			inkey_interact_macros = FALSE;
+			/* hack: Display recording status */
+			Send_redraw(0);
+
+			/* enter recording mode */
+			strcpy(recorded_macro, "");
+			recording_macro = TRUE;
+
+			/* leave the macro menu */
+			return;
 		}
 		/* Configure macro recording functionality */
 		else if (i == 'R')
@@ -3314,6 +3440,10 @@ void interact_macros(void)
 	Flush_queue();
 
 	inkey_interact_macros = FALSE;
+	
+	/* in case we entered this menu from recording a macro,
+	   we might have to update the '*recording*' status line */
+	if (were_recording) Send_redraw(0);
 }
 
 

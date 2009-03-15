@@ -768,8 +768,14 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 
 void prt_extra_status(cptr status)
 {
-	if (ROW_EXSTA != -1) /* just in case it's new client without CONDENSED_HP_SP for some odd reason */
-	c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);
+	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client 
+				  without CONDENSED_HP_SP for some odd reason */
+		if (!recording_macro)
+			c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);
+		else
+			/* hack: 'abuse' this line to display that we're in recording mode */
+			c_put_str(TERM_L_RED, "*RECORDING*", ROW_EXSTA, COL_EXSTA);
+	}
 }
 
 /*

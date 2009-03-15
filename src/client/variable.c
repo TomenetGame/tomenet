@@ -82,6 +82,9 @@ bool *macro__cmd;
 bool *macro__hyb;
 char *macro__buf;
 
+char recorded_macro[160];
+bool recording_macro = FALSE;
+
 s32b message__next;
 s32b message__last;
 s32b message__head;

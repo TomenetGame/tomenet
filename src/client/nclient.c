@@ -2920,8 +2920,7 @@ int Receive_extra_status(void)
 {
 	int	n;
 	char	ch;
-	char    status[12 + 24]; /* 24 for potential colour codes in the future,
-            unusable now though since we just use c_put_str */
+	char    status[12 + 24];
 
 	if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &status)) <= 0)
 	{

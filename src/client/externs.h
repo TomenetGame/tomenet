@@ -141,6 +141,9 @@ extern bool *macro__cmd;
 extern bool *macro__hyb;
 extern char *macro__buf;
 
+extern char recorded_macro[160];
+extern bool recording_macro;
+
 extern s32b message__next;
 extern s32b message__last;
 extern s32b message__head;
