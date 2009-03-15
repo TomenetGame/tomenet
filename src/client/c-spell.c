@@ -163,8 +163,11 @@ int get_spell(s32b *sn, cptr prompt, int book, bool known)
 	redraw = FALSE;
 
 	/* Build a prompt (accept all spells) */
-	strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) %^s which %s? ",
-		p, I2A(0), I2A(num - 1), prompt, p);
+	if (num)
+		strnfmt(out_val, 78, "(%^ss %c-%c, *=List, ESC=exit) %^s which %s? ",
+		    p, I2A(0), I2A(num - 1), prompt, p);
+	else
+		strnfmt(out_val, 78, "No %^ss available - ESC=exit", p);
 
 	if (c_cfg.always_show_lists)
 	{
@@ -635,8 +638,11 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		num = exec_lua(0, format("return book_spells_num2(%d, %d)", item, sval));
 
 		/* Build a prompt (accept all spells) */
-		strnfmt(out_val, 78, "(Spells %c-%c, Descs %c-%c, *=List, ESC=exit) %^s which spell? ",
-				I2A(0), I2A(num - 1), I2A(0) - 'a' + 'A', I2A(num - 1) - 'a' + 'A',  do_what);
+		if (num)
+			strnfmt(out_val, 78, "(Spells %c-%c, Descs %c-%c, *=List, ESC=exit) %^s which spell? ",
+			    I2A(0), I2A(num - 1), I2A(0) - 'a' + 'A', I2A(num - 1) - 'a' + 'A',  do_what);
+		else
+			strnfmt(out_val, 78, "No spells available - ESC=exit");
 
 		if (c_cfg.always_show_lists)
 		{
@@ -791,8 +797,11 @@ void browse_school_spell(int item, int book, int pval)
         num = exec_lua(0, format("return book_spells_num2(%d, %d)", item, sval));
 
 	/* Build a prompt (accept all spells) */
-	strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
-	        I2A(0), I2A(num - 1));
+	if (num)
+		strnfmt(out_val, 78, "(Spells %c-%c, ESC=exit) cast which spell? ",
+	    	    I2A(0), I2A(num - 1));
+	else
+		strnfmt(out_val, 78, "No spells available - ESC=exit");
 
 	/* Save the screen */
 	Term_save();
@@ -1020,8 +1029,11 @@ static int get_melee_technique(int *sn)
 	redraw = FALSE;
 
 	/* Build a prompt (accept all techniques) */
-	strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
-		I2A(0), I2A(num - 1));
+	if (num)
+		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		    I2A(0), I2A(num - 1));
+	else
+		strnfmt(out_val, 78, "No techniques available - ESC=exit");
 
 	if (c_cfg.always_show_lists)
 	{
@@ -1171,8 +1183,11 @@ static int get_ranged_technique(int *sn)
 	redraw = FALSE;
 
 	/* Build a prompt (accept all techniques) */
-	strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
-		I2A(0), I2A(num - 1));
+	if (num)
+		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		    I2A(0), I2A(num - 1));
+	else
+		strnfmt(out_val, 78, "No techniques available - ESC=exit");
 
 	if (c_cfg.always_show_lists)
 	{
