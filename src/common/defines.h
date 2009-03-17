@@ -6230,15 +6230,13 @@ extern int PlayerUID;
 
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
-#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */ 
-#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */ 
 
-#define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
-#define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
-#define SKF1_MKEY_SPELL		0x10000000	/* mkey is realm spell type */
-#define SKF1_MKEY_TVAL		0x20000000	/* mkey uses specific tval(not used) */
-#define SKF1_MKEY_ITEM		0x40000000	/* mkey requires an item */
-#define SKF1_MKEY_DIRECTION	0x80000000	/* mkey requires direction */
+#define SKF1_MKEY_SCHOOL		0x04000000	/* mkey is school type */
+#define SKF1_MKEY_HARDCODE		0x08000000	/* mkey uses hard-coded routine */
+#define SKF1_MKEY_SPELL			0x10000000	/* mkey is realm spell type */
+#define SKF1_MKEY_TVAL			0x20000000	/* mkey uses specific tval(not used) */
+#define SKF1_MKEY_ITEM			0x40000000	/* mkey requires an item */
+#define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */
 
 
 /* Skill points per level (xtra2.c) */
