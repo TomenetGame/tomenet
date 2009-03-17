@@ -1166,6 +1166,7 @@ struct option_type
 
 	byte	o_set;
 	byte	o_bit;
+	byte	o_enabled;
 
 	cptr	o_text;
 	cptr	o_desc;

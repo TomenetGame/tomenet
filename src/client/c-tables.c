@@ -488,263 +488,262 @@ option_type option_info[OPT_MAX] =
 {
 	/*** User-Interface ***/
 
-	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0,
-	"rogue_like_commands",	"Rogue-like commands" },
+	{ &c_cfg.rogue_like_commands,	FALSE,	1,	0, 0, TRUE,
+	"rogue_like_commands",		"Rogue-like commands" },
 
-	{ &c_cfg.quick_messages,	 	FALSE,	1,	0, 1,
+	{ &c_cfg.quick_messages,	FALSE,	1,	0, 1, TRUE,
 	"quick_messages",		"Activate quick messages (skill etc)" },
 
-	{ &c_cfg.other_query_flag,	FALSE,	1,	0, 2,
+	{ &c_cfg.other_query_flag,	FALSE,	1,	0, 2, TRUE,
 	"other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
-	{ &c_cfg.carry_query_flag,	FALSE,	1,	0, 3,
+	{ &c_cfg.carry_query_flag,	FALSE,	1,	0, 3, FALSE,
 	"carry_query_flag",		"(broken) Prompt before picking things up" },
 
-	{ &c_cfg.use_old_target,		FALSE,	1,	0, 4,
+	{ &c_cfg.use_old_target,	FALSE,	1,	0, 4, TRUE,
 	"use_old_target",		"Use old target by default" },
 
-	{ &c_cfg.always_pickup,		TRUE,	1,	0, 5,
+	{ &c_cfg.always_pickup,		TRUE,	1,	0, 5, TRUE,
 	"always_pickup",		"Pick things up by default" },
 
-	{ &c_cfg.always_repeat,		TRUE,	1,	0, 6,
+	{ &c_cfg.always_repeat,		TRUE,	1,	0, 6, TRUE,
 	"always_repeat",		"Repeat obvious commands" },
 
-	{ &c_cfg.depth_in_feet,		TRUE,	1,	0, 7,
+	{ &c_cfg.depth_in_feet,		TRUE,	1,	0, 7, TRUE,
 	"depth_in_feet",		"Show dungeon level in feet" },
 
-	{ &c_cfg.stack_force_notes,	FALSE,	1,	0, 8,
-	"stack_force_notes",	"Merge inscriptions when stacking" },
+	{ &c_cfg.stack_force_notes,	FALSE,	1,	0, 8, TRUE,
+	"stack_force_notes",		"Merge inscriptions when stacking" },
 
-	{ &c_cfg.stack_force_costs,	FALSE,	1,	0, 9,
-	"stack_force_costs",	"Merge discounts when stacking" },
+	{ &c_cfg.stack_force_costs,	FALSE,	1,	0, 9, TRUE,
+	"stack_force_costs",		"Merge discounts when stacking" },
 
-	{ &c_cfg.show_labels,			TRUE,	1,	0, 10,
+	{ &c_cfg.show_labels,		TRUE,	1,	0, 10, FALSE,
 	"show_labels",			"(broken) Show labels in object listings" },
 
-	{ &c_cfg.show_weights,		FALSE,	1,	0, 11,
+	{ &c_cfg.show_weights,		FALSE,	1,	0, 11, TRUE,
 	"show_weights",			"Show weights in object listings" },
 
-	{ &c_cfg.show_choices,		FALSE,	1,	0, 12,
+	{ &c_cfg.show_choices,		FALSE,	1,	0, 12, FALSE,
 	"show_choices",			"(broken) Show choices in certain sub-windows" },
 
-	{ &c_cfg.show_details,		FALSE,	1,	0, 13,
+	{ &c_cfg.show_details,		FALSE,	1,	0, 13, FALSE,
 	"show_details",			"(broken) Show details in certain sub-windows" },
 
-	{ &c_cfg.ring_bell,			TRUE,	1,	0, 14,
+	{ &c_cfg.ring_bell,		TRUE,	1,	0, 14, TRUE,
 	"ring_bell",			"Audible bell (on errors, etc)" },
 
-	{ &c_cfg.use_color,			TRUE,	1,	0, 15,
+	{ &c_cfg.use_color,		TRUE,	1,	0, 15, TRUE,
 	"use_color",			"Use color if possible (slow)" },
 
 	/*** Disturbance ***/
 
-	{ &c_cfg.find_ignore_stairs,	TRUE,	2,	0, 16,
-	"find_ignore_stairs",	"Run past stairs" },
+	{ &c_cfg.find_ignore_stairs,	TRUE,	2,	0, 16, TRUE,
+	"find_ignore_stairs",		"Run past stairs" },
 
-	{ &c_cfg.find_ignore_doors,	TRUE,	2,	0, 17,
-	"find_ignore_doors",	"Run through open doors" },
+	{ &c_cfg.find_ignore_doors,	TRUE,	2,	0, 17, TRUE,
+	"find_ignore_doors",		"Run through open doors" },
 
-	{ &c_cfg.find_cut,			TRUE,	2,	0, 18,
-	"find_cut",				"Run past known corners" },
+	{ &c_cfg.find_cut,		TRUE,	2,	0, 18, TRUE,
+	"find_cut",			"Run past known corners" },
 
-	{ &c_cfg.find_examine,		TRUE,	2,	0, 19,
+	{ &c_cfg.find_examine,		TRUE,	2,	0, 19, TRUE,
 	"find_examine",			"Run into potential corners" },
 
-	{ &c_cfg.disturb_move,		TRUE,	2,	0, 20,
+	{ &c_cfg.disturb_move,		TRUE,	2,	0, 20, TRUE,
 	"disturb_move",			"Disturb whenever any monster moves" },
 
-	{ &c_cfg.disturb_near,		TRUE,	2,	0, 21,
+	{ &c_cfg.disturb_near,		TRUE,	2,	0, 21, TRUE,
 	"disturb_near",			"Disturb whenever viewable monster moves" },
 
-	{ &c_cfg.disturb_panel,		TRUE,	2,	0, 22,
+	{ &c_cfg.disturb_panel,		TRUE,	2,	0, 22, TRUE,
 	"disturb_panel",		"Disturb whenever map panel changes" },
 
-	{ &c_cfg.disturb_state,		TRUE,	2,	0, 23,
+	{ &c_cfg.disturb_state,		TRUE,	2,	0, 23, TRUE,
 	"disturb_state",		"Disturb whenever player state changes" },
 
-	{ &c_cfg.disturb_minor,		TRUE,	2,	0, 24,
+	{ &c_cfg.disturb_minor,		TRUE,	2,	0, 24, TRUE,
 	"disturb_minor",		"Disturb whenever boring things happen" },
 
-	{ &c_cfg.disturb_other,		TRUE,	2,	0, 25,
+	{ &c_cfg.disturb_other,		TRUE,	2,	0, 25, TRUE,
 	"disturb_other",		"Disturb whenever various things happen" },
 
-	{ &c_cfg.alert_hitpoint,		FALSE,	2,	0, 26,
+	{ &c_cfg.alert_hitpoint,	FALSE,	2,	0, 26, TRUE,
 	"alert_hitpoint",		"Alert user to critical hitpoints/sanity" },
 
-	{ &c_cfg.alert_failure,		FALSE,	2,	0, 27,
+	{ &c_cfg.alert_failure,		FALSE,	2,	0, 27, FALSE,
 	"alert_failure",		"(broken) Alert user to various failures" },
 
 
 	/*** Game-Play ***/
 
-	{ &c_cfg.auto_afk,			FALSE,	3,	1, 0,	/* former auto_haggle */
-	"auto_afk",				"Set 'AFK mode' automatically" },
+	{ &c_cfg.auto_afk,		FALSE,	3,	1, 0, TRUE,	/* former auto_haggle */
+	"auto_afk",			"Set 'AFK mode' automatically" },
 
-	{ &c_cfg.newb_suicide,			FALSE,	3,	1, 1,	/* former auto_scum */
+	{ &c_cfg.newb_suicide,		FALSE,	3,	1, 1, TRUE,	/* former auto_scum */
 	"newb_suicide",			"Display newbie suicides" },
 
-	{ &c_cfg.stack_allow_items,	TRUE,	3,	1, 2,
-	"stack_allow_items",	"Allow weapons and armor to stack" },
+	{ &c_cfg.stack_allow_items,	TRUE,	3,	1, 2, TRUE,
+	"stack_allow_items",		"Allow weapons and armor to stack" },
 
-	{ &c_cfg.stack_allow_wands,	TRUE,	3,	1, 3,
-	"stack_allow_wands",	"Allow wands/staffs/rods to stack" },
+	{ &c_cfg.stack_allow_wands,	TRUE,	3,	1, 3, TRUE,
+	"stack_allow_wands",		"Allow wands/staffs/rods to stack" },
 
-	{ &c_cfg.expand_look,			FALSE,	3,	1, 4,
+	{ &c_cfg.expand_look,		FALSE,	3,	1, 4, FALSE,
 	"expand_look",			"(broken) Expand the power of the look command" },
 
-	{ &c_cfg.expand_list,			FALSE,	3,	1, 5,
+	{ &c_cfg.expand_list,		FALSE,	3,	1, 5, FALSE,
 	"expand_list",			"(broken) Expand the power of the list commands" },
 
-	{ &c_cfg.view_perma_grids,	TRUE,	3,	1, 6,
+	{ &c_cfg.view_perma_grids,	TRUE,	3,	1, 6, TRUE,
 	"view_perma_grids",		"Map remembers all perma-lit grids" },
 
-	{ &c_cfg.view_torch_grids,	FALSE,	3,	1, 7,
+	{ &c_cfg.view_torch_grids,	FALSE,	3,	1, 7, TRUE,
 	"view_torch_grids",		"Map remembers all torch-lit grids" },
 
-	{ &c_cfg.dungeon_align,		TRUE,	3,	1, 8,
+	{ &c_cfg.dungeon_align,		TRUE,	3,	1, 8, FALSE,
 	"dungeon_align",		"(obsolete) Generate dungeons with aligned rooms" },
 
-	{ &c_cfg.dungeon_stair,		TRUE,	3,	1, 9,
+	{ &c_cfg.dungeon_stair,		TRUE,	3,	1, 9, FALSE,
 	"dungeon_stair",		"(obsolete) Generate dungeons with connected stairs" },
 
-	{ &c_cfg.recall_flicker,		FALSE,	3,	1, 10,
+	{ &c_cfg.recall_flicker,	FALSE,	3,	1, 10, TRUE,
 	"recall_flicker",		"Flicker messages in recall" },
 
-	{ &c_cfg.flow_by_smell,		FALSE,	3,	1, 11,
+	{ &c_cfg.flow_by_smell,		FALSE,	3,	1, 11, FALSE,
 	"flow_by_smell",		"(obsolete) Monsters chase recent locations (v.slow)" },
 
-	{ &c_cfg.track_follow,		FALSE,	3,	1, 12,
+	{ &c_cfg.track_follow,		FALSE,	3,	1, 12, FALSE,
 	"track_follow",			"(obsolete) Monsters follow the player (broken)" },
 
-	{ &c_cfg.track_target,		FALSE,	3,	1, 13,
+	{ &c_cfg.track_target,		FALSE,	3,	1, 13, FALSE,
 	"track_target",			"(obsolete) Monsters target the player (broken)" },
 
-	{ &c_cfg.smart_learn,			FALSE,	3,	1, 14,
+	{ &c_cfg.smart_learn,		FALSE,	3,	1, 14, FALSE,
 	"smart_learn",			"(obsolete) Monsters learn from their mistakes" },
 
-	{ &c_cfg.smart_cheat,			FALSE,	3,	1, 15,
+	{ &c_cfg.smart_cheat,		FALSE,	3,	1, 15, FALSE,
 	"smart_cheat",			"(obsolete) Monsters exploit players weaknesses" },
 
 
 	/*** Efficiency ***/
 
-	{ &c_cfg.view_reduce_lite,	FALSE,	4,	1, 16,	/* (44) */
+	{ &c_cfg.view_reduce_lite,	FALSE,	4,	1, 16, TRUE,	/* (44) */
 	"view_reduce_lite",		"Reduce lite-radius when running" },
 
-	{ &c_cfg.view_reduce_view,	FALSE,	4,	1, 17,
+	{ &c_cfg.view_reduce_view,	FALSE,	4,	1, 17, TRUE,
 	"view_reduce_view",		"Reduce view-radius in town" },
 
-	{ &c_cfg.avoid_abort,			FALSE,	4,	1, 18,
+	{ &c_cfg.avoid_abort,		FALSE,	4,	1, 18, FALSE,
 	"avoid_abort",			"(obsolete) Avoid checking for user abort" },
 
-	{ &c_cfg.avoid_other,			FALSE,	4,	1, 19,
+	{ &c_cfg.avoid_other,		FALSE,	4,	1, 19, FALSE,
 	"avoid_other",			"(broken) Avoid processing special colors" },
 
-	{ &c_cfg.flush_failure,		TRUE,	4,	1, 20, /* (resurrect me?) */
+	{ &c_cfg.flush_failure,		TRUE,	4,	1, 20, FALSE, /* (resurrect me?) */
 	"flush_failure",		"(broken) Flush input on various failures" },
 
-	{ &c_cfg.flush_disturb,		FALSE,	4,	1, 21,
+	{ &c_cfg.flush_disturb,		FALSE,	4,	1, 21, FALSE,
 	"flush_disturb",		"(broken) Flush input whenever disturbed" },
 
-	{ &c_cfg.flush_command,		FALSE,	4,	1, 22,
+	{ &c_cfg.flush_command,		FALSE,	4,	1, 22, FALSE,
 	"flush_command",		"(obsolete) Flush input before every command" },
 
-	{ &c_cfg.fresh_before,		TRUE,	4,	1, 23,
+	{ &c_cfg.fresh_before,		TRUE,	4,	1, 23, FALSE,
 	"fresh_before",			"(obsolete) Flush output before every command" },
 
-	{ &c_cfg.fresh_after,			FALSE,	4,	1, 24,
+	{ &c_cfg.fresh_after,		FALSE,	4,	1, 24, FALSE,
 	"fresh_after",			"(obsolete) Flush output after every command" },
 
-	{ &c_cfg.fresh_message,		FALSE,	4,	1, 25,
+	{ &c_cfg.fresh_message,		FALSE,	4,	1, 25, FALSE,
 	"fresh_message",		"(obsolete) Flush output after every message" },
 
-	{ &c_cfg.compress_savefile,	TRUE,	4,	1, 26,
-	"compress_savefile",	"(broken) Compress messages in savefiles" },
+	{ &c_cfg.compress_savefile,	TRUE,	4,	1, 26, FALSE,
+	"compress_savefile",		"(broken) Compress messages in savefiles" },
 
-	{ &c_cfg.hilite_player,		FALSE,	4,	1, 27, /* (resurrect me) */
+	{ &c_cfg.hilite_player,		FALSE,	4,	1, 27, FALSE, /* (resurrect me) */
 	"hilite_player",		"(broken) Hilite the player with the cursor" },
 
-	{ &c_cfg.view_yellow_lite,	FALSE,	4,	1, 28,
+	{ &c_cfg.view_yellow_lite,	FALSE,	4,	1, 28, TRUE,
 	"view_yellow_lite",		"Use special colors for torch-lit grids" },
 
-	{ &c_cfg.view_bright_lite,	FALSE,	4,	1, 29,
+	{ &c_cfg.view_bright_lite,	FALSE,	4,	1, 29, TRUE,
 	"view_bright_lite",		"Use special colors for 'viewable' grids" },
 
-	{ &c_cfg.view_granite_lite,	FALSE,	4,	1, 30,
-	"view_granite_lite",	"Use special colors for wall grids (slow)" },
+	{ &c_cfg.view_granite_lite,	FALSE,	4,	1, 30, TRUE,
+	"view_granite_lite",		"Use special colors for wall grids (slow)" },
 
-	{ &c_cfg.view_special_lite,	FALSE,	4,	1, 31,	/* (59) */
-	"view_special_lite",	"Use special colors for floor grids (slow)" },
+	{ &c_cfg.view_special_lite,	FALSE,	4,	1, 31, TRUE,	/* (59) */
+	"view_special_lite",		"Use special colors for floor grids (slow)" },
 
 
 	/*** TomeNET additions ***/
 
-	{ &c_cfg.easy_open,			TRUE,	5,	9, 60,
+	{ &c_cfg.easy_open,		TRUE,	5,	9, 60, TRUE,
 	"easy_open",			"Automatically open doors" },
 
-	{ &c_cfg.easy_disarm,			FALSE,	5,	9, 61,
+	{ &c_cfg.easy_disarm,		FALSE,	5,	9, 61, TRUE,
 	"easy_disarm",			"Automatically disarm traps" },
 
-	{ &c_cfg.easy_tunnel,			FALSE,	5,	9, 62,
+	{ &c_cfg.easy_tunnel,		FALSE,	5,	9, 62, TRUE,
 	"easy_tunnel",			"Automatically tunnel walls" },
 
-	{ &c_cfg.auto_destroy,		FALSE,	5,	9, 63,
+	{ &c_cfg.auto_destroy,		FALSE,	5,	9, 63, FALSE,
 	"auto_destroy",			"(broken) No query to destroy known junks" },
 
-	{ &c_cfg.auto_inscribe,		FALSE,	5,	9, 64,
+	{ &c_cfg.auto_inscribe,		FALSE,	5,	9, 64, TRUE,
 	"auto_inscribe",		"Automatically inscribe books and so on" },
 
-	{ &c_cfg.taciturn_messages,	FALSE,	5,	9, 65,
-	"taciturn_messages",	"Suppress server messages as far as possible" },
+	{ &c_cfg.taciturn_messages,	FALSE,	5,	9, 65, TRUE,
+	"taciturn_messages",		"Suppress server messages as far as possible" },
 
-	{ &c_cfg.last_words,			TRUE,	5,	9, 66,
+	{ &c_cfg.last_words,		TRUE,	5,	9, 66, TRUE,
 	"last_words",			"Get last words when the character dies" },
 
-	{ &c_cfg.limit_chat,			FALSE,	5,	9, 67,
+	{ &c_cfg.limit_chat,		FALSE,	5,	9, 67, TRUE,
 	"limit_chat",			"Chat only with players on the same floor" },
 
-	{ &c_cfg.thin_down_flush,		TRUE,	5,	9, 68,
+	{ &c_cfg.thin_down_flush,	TRUE,	5,	9, 68, TRUE,
 	"thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 
-	{ &c_cfg.auto_target,			FALSE,	5,	9, 69,
+	{ &c_cfg.auto_target,		FALSE,	5,	9, 69, TRUE,
 	"auto_target",			"Automatically set target to the nearest enemy" },
 
-	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 70,
-	"autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
+	{ &c_cfg.autooff_retaliator,	FALSE,	5,	9, 70, TRUE,
+	"autooff_retaliator",		"Stop the retaliator when protected by GoI etc" },
 
-	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71,
-	"wide_scroll_margin",	"Scroll the screen more frequently" },
+	{ &c_cfg.wide_scroll_margin,	FALSE,	5,	9, 71, TRUE,
+	"wide_scroll_margin",		"Scroll the screen more frequently" },
 
-	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 72,
+	{ &c_cfg.fail_no_melee,		FALSE,	5,	9, 72, TRUE,
 	"fail_no_melee",		"Stay still when item-retaliation fails" },
 
-	{ &c_cfg.always_show_lists,		FALSE,	5,	9, 73,
-	"always_show_lists",	"Always show lists in item/skill selection" },
+	{ &c_cfg.always_show_lists,	FALSE,	5,	9, 73, TRUE,
+	"always_show_lists",		"Always show lists in item/skill selection" },
 
-	{ &c_cfg.target_history,		FALSE,	5,	9, 74,
+	{ &c_cfg.target_history,	FALSE,	5,	9, 74, TRUE,
 	"target_history",		"Add target informations to the message history" },
 
-	{ &c_cfg.linear_stats,			FALSE,	5,	9, 75,
+	{ &c_cfg.linear_stats,		FALSE,	5,	9, 75, TRUE,
 	"linear_stats",			"Stats are represented in a linear way" },
 
-	{ &c_cfg.exp_need,				FALSE,  5,  9, 76,
-	"exp_need",				"Show the experience needed for next level" },
+	{ &c_cfg.exp_need,		FALSE,  5,  9, 76, TRUE,
+	"exp_need",			"Show the experience needed for next level" },
 
-#if 0
-	{ &c_cfg.speak_unique,                TRUE,   2,      13,
-	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
-#endif	/* 0 */
-
-	{ &c_cfg.short_item_names,      FALSE, 1, 	0, 77,
+	{ &c_cfg.short_item_names,      FALSE, 1, 	0, 77, TRUE,
         "short_item_names", 		"Don't display 'flavours' in item names" },
 
-	{ &c_cfg.disable_flush,			FALSE,	5,	9, 78,
+	{ &c_cfg.disable_flush,		FALSE,	5,	9, 78, TRUE,
 	"disable_flush",		"Disable delays from flush signals" },
 
 	/*** End of Table ***/
-
-	{ NULL,			0, 0, 0, 0,
+#if 0
+	{ &c_cfg.speak_unique,		TRUE,   2,      13, TRUE, TRUE,
+	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
+#else
+	{ NULL,			0, 0, 0, 0, 0,
 	NULL,			NULL }
+#endif	/* 0 */
 };
 
 /* XXX XXX they should be sent from server like other spells! */
