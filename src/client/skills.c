@@ -109,6 +109,18 @@ static bool has_child(int sel)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
+		if (s_info[i].father == sel)
+			return (TRUE);
+	}
+	return (FALSE);
+}
+
+static bool has_active_child(int sel)
+{
+	int i;
+
+	for (i = 1; i < MAX_SKILLS; i++)
+	{
 		if ((s_info[i].father == sel) && ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value)))
 			return (TRUE);
 	}
@@ -176,6 +188,10 @@ void dump_skills(FILE *fff)
 		{
 			strcat(buf, format(" . %s", s_info[i].name));
 		}
+		else if (!has_active_child(i))
+		{
+			strcat(buf, format(" o %s", s_info[i].name));
+		}
 		else
 		{
 			strcat(buf, format(" - %s", s_info[i].name));
@@ -241,6 +257,11 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 		if (!has_child(i))
 		{
 			c_prt(color, format("%c.%c%s", deb, end, s_info[i].name),
+			      j + 4 - start, table[j][1] * 4);
+		}
+		else if (!has_active_child(i))
+		{
+			c_prt(color, format("%co%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
 		else if (p_ptr->s_info[i].dev)
