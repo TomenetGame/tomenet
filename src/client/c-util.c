@@ -3498,6 +3498,10 @@ static void do_cmd_options_aux(int page, cptr info)
 			/* Color current option */
 			if (i == k) a = TERM_L_BLUE;
 
+			/* Color disabled options */
+			if (!option_info[opt[i]].o_enabled)
+				a = (a == TERM_L_BLUE) ? TERM_SLATE : TERM_L_DARK;
+
 			/* Display the option text */
 			sprintf(buf, "%-48s: %s  (%s)",
 			        option_info[opt[i]].o_desc,
