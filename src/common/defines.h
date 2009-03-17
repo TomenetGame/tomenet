@@ -70,7 +70,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR   4
 #define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   16
+#define SF_VERSION_PATCH   17
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
@@ -6209,6 +6209,12 @@ extern int PlayerUID;
 #define SKILL_TCONTACT		81 /* the new mindcrafter skills */
 #define SKILL_MINTRUSION	82 /* the new mindcrafter skills */
 
+/* Just to make the mass of schools appear more ordered - C. Blue */
+#define SKILL_SCHOOL_MAGIC	83
+#define SKILL_SCHOOL_PRAYING	84
+#define SKILL_SCHOOL_DRUIDISM	85
+#define SKILL_SCHOOL_MINDCRAFT	86
+
 /* additional ones */
 #define SKILL_CLIMB		90
 #define SKILL_FLY		91
@@ -6224,13 +6230,15 @@ extern int PlayerUID;
 
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
+#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */ 
+#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */ 
 
-#define SKF1_MKEY_SCHOOL		0x04000000	/* mkey is school type */
-#define SKF1_MKEY_HARDCODE		0x08000000	/* mkey uses hard-coded routine */
-#define SKF1_MKEY_SPELL			0x10000000	/* mkey is realm spell type */
-#define SKF1_MKEY_TVAL			0x20000000	/* mkey uses specific tval(not used) */
-#define SKF1_MKEY_ITEM			0x40000000	/* mkey requires an item */
-#define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */
+#define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
+#define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
+#define SKF1_MKEY_SPELL		0x10000000	/* mkey is realm spell type */
+#define SKF1_MKEY_TVAL		0x20000000	/* mkey uses specific tval(not used) */
+#define SKF1_MKEY_ITEM		0x40000000	/* mkey requires an item */
+#define SKF1_MKEY_DIRECTION	0x80000000	/* mkey requires direction */
 
 
 /* Skill points per level (xtra2.c) */

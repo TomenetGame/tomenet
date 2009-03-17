@@ -73,36 +73,6 @@ static int get_idx(int i)
 }
 
 
-/*
- *
- */
-static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev,
-	bool full)
-{
-	int j, i;
-
-	for (j = 1; j < MAX_SKILLS; j++)
-	{
-		i = get_idx(j);
-
-		if (s_info[i].father != father) continue;
-		if (p_ptr->s_info[i].hidden) continue;
-
-		table[*idx][0] = i;
-		table[*idx][1] = lev;
-		(*idx)++;
-		if (p_ptr->s_info[i].dev || full) init_table_aux(table, idx, i, lev + 1, full);
-	}
-}
-
-
-static void init_table(int table[MAX_SKILLS][2], int *max, bool full)
-{
-	*max = 0;
-	init_table_aux(table, max, -1, 0, full);
-}
-
-
 static bool has_child(int sel)
 {
 	int i;
@@ -121,11 +91,47 @@ static bool has_active_child(int sel)
 
 	for (i = 1; i < MAX_SKILLS; i++)
 	{
-		if ((s_info[i].father == sel) && ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value)))
+		if ((s_info[i].father == sel) &&
+		    ((p_ptr->s_info[i].mod) || (p_ptr->s_info[i].value) ||
+		    has_active_child(i)))
 			return (TRUE);
 	}
 	return (FALSE);
 }
+
+/*
+ *
+ */
+static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int lev, bool full)
+{
+	int j, i;
+
+	for (j = 1; j < MAX_SKILLS; j++)
+	{
+		i = get_idx(j);
+
+		if (s_info[i].father != father) continue;
+		if (p_ptr->s_info[i].hidden) continue;
+
+		/* new option: hide all completely unusable skill branches - C. Blue */
+/*		if (!p_ptr->s_info[i].mod && !p_ptr->s_info[i].value &&
+		    !has_active_child(i))
+			continue;
+*/
+		table[*idx][0] = i;
+		table[*idx][1] = lev;
+		(*idx)++;
+		if (p_ptr->s_info[i].dev || full) init_table_aux(table, idx, i, lev + 1, full);
+	}
+}
+
+
+static void init_table(int table[MAX_SKILLS][2], int *max, bool full)
+{
+	*max = 0;
+	init_table_aux(table, max, -1, 0, full);
+}
+
 
 static void print_desc_aux(cptr txt, int y, int xx)
 {
@@ -197,9 +203,10 @@ void dump_skills(FILE *fff)
 			strcat(buf, format(" - %s", s_info[i].name));
 		}
 
-		fprintf(fff, "%-50s%02d.%03d [%0d.%03d]",
-		        buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
-		        p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
+		if (!p_ptr->s_info[i].dummy)
+			fprintf(fff, "%-50s%02d.%03d [%0d.%03d]",
+		    	    buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
+		    	    p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
 	}
 	fprintf(fff, "\n");
 }
@@ -248,6 +255,8 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			(i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
 			color = TERM_L_BLUE;
 		if (p_ptr->s_info[i].hidden) color = TERM_L_RED;
+		if (p_ptr->s_info[i].dummy) color = TERM_SLATE;
+
 		if (j == sel)
 		{
 			color = TERM_L_GREEN;
@@ -274,11 +283,13 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			c_prt(color, format("%c+%c%s", deb, end, s_info[i].name),
 			      j + 4 - start, table[j][1] * 4);
 		}
-		c_prt(color,
-		      format("%02ld.%03ld [%01d.%03d]",
+		
+		if (!p_ptr->s_info[i].dummy)
+			c_prt(color,
+			      format("%02ld.%03ld [%01d.%03d]",
 			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
 			         p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000),
-			  j + 4 - start, 60);
+				 j + 4 - start, 60);
 	}
 }
 

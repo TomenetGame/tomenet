@@ -1808,6 +1808,7 @@ struct skill_player
 	bool dev;                               /* Is the branch developped ? */
         bool hidden;                            /* Innactive */
 	bool touched;				/* need refresh? */
+	bool dummy;				/* Just for structuring the skill chart visually? */
 
 };
 

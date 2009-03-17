@@ -109,6 +109,12 @@ typedef unsigned int u32b;
 #define SKILL_TCONTACT		81
 #define SKILL_MINTRUSION	82
 
+/* Visual ordering */
+#define SKILL_SCHOOL_MAGIC	83
+#define SKILL_SCHOOL_PRAYING	84
+#define SKILL_SCHOOL_DRUIDISM	85
+#define SKILL_SCHOOL_MINDCRAFT	86
+
 /* additional ones */
 #define SKILL_CLIMB             90
 #define SKILL_FLY               91
@@ -259,7 +265,7 @@ struct skill_player
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
         bool hidden;                            /* Innactive */
-
+	bool dummy;				/* Just for visuals */
 };
 
 struct version_type {   /* Extended version structure */
