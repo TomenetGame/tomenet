@@ -2954,7 +2954,7 @@ void interact_macros(void)
 		/* Take a screenshot */
 		else if (i == KTRL('T'))
 		{
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* Load a pref file */
@@ -3528,7 +3528,7 @@ static void do_cmd_options_aux(int page, cptr info)
 			case KTRL('T'):
 			{
 				/* Take a screenshot */
-				xhtml_screenshot("screenshotXXXX");
+				xhtml_screenshot("screenshot????");
 				break;
 			}
 
@@ -3693,7 +3693,7 @@ static void do_cmd_options_win(void)
 			case KTRL('T'):
 			{
 				/* Take a screenshot */
-				xhtml_screenshot("screenshotXXXX");
+				xhtml_screenshot("screenshot????");
 				break;
 			}
 
@@ -3933,7 +3933,7 @@ void do_cmd_options(void)
 		/* Take a screenshot */
 		if (k == KTRL('T'))
 		{
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* General Options */
@@ -4210,7 +4210,7 @@ void c_close_game(cptr reason)
 		else if (k == KTRL('T'))
 		{
 			/* Take a screenshot */
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* Dump */
@@ -4263,7 +4263,7 @@ void c_close_game(cptr reason)
 		/* Take a screenshot */
 		if (k == KTRL('T'))
 		{
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* Character screen */

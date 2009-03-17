@@ -371,7 +371,7 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 			case KTRL('T'):
 			{
 				/* Take a screenshot */
-				xhtml_screenshot("screenshotXXXX");
+				xhtml_screenshot("screenshot????");
 				break;
 			}
 

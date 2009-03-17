@@ -461,7 +461,7 @@ static void store_process_command(void)
 		case KTRL('T'):
 		{
 			/* Take a screenshot */
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 			break;
 		}
 

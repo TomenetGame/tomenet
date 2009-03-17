@@ -1188,7 +1188,7 @@ void peruse_file(void)
 		if (k == KTRL('T'))
 		{
 			/* Take a screenshot */
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* Exit on escape */
@@ -1417,8 +1417,8 @@ void xhtml_screenshot(cptr name)
 
 	x = strlen(name) - 4;
 
-	/* Replace "XXXX" in the end with numbers */
-	if (!strcmp("XXXX", &name[x]))
+	/* Replace "????" in the end with numbers */
+	if (!strcmp("????", &name[x]))
 	{
 		char tmp[5];
 		if (x > 244) x = 244;

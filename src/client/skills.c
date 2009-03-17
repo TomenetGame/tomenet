@@ -389,7 +389,7 @@ void do_cmd_skill()
 		/* Take a screenshot */
 		else if (c == KTRL('T'))
 		{
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 
 		/* Expand / collapse list of skills */
@@ -594,7 +594,7 @@ static int do_cmd_activate_skill_aux()
 		else if (which == KTRL('T'))
 		{
 			/* Take a screenshot */
-			xhtml_screenshot("screenshotXXXX");
+			xhtml_screenshot("screenshot????");
 		}
 		else if (which == '*' || which == '?' || which == ' ')
 		{

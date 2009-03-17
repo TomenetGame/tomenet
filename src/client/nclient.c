@@ -2838,9 +2838,11 @@ int Receive_chardump(void)
 		return n;
 	}
 
+	/* additionally do a screenshot of the death scene */
+	xhtml_screenshot(format("%s-death-screenshot", cname));
+
 	strnfmt(tmp, 160, "%s-death.txt", cname);
 	file_character(tmp, FALSE);
-
 
 	return 1;
 }
