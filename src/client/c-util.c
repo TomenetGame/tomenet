@@ -3211,7 +3211,7 @@ void interact_macros(void)
 
 					/* Describe */
 					Term_putstr(0, 1, -1, TERM_L_UMBER, format("  *** Current Macro List (Entry %d-%d) ***", i + 1, i + 20 > macro__num ? macro__num : i + 20));
-					Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press any key to continue, ESC to exit]");
+					Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press any key to continue, 'p' for previous, ESC to exit]");
 				}
 
 				/* Get trigger in parsable format */
@@ -3255,12 +3255,23 @@ void interact_macros(void)
 				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
 				
 				/* Wait for keypress before displaying more */
-				if (i % 20 == 19) {
-					if (inkey() == ESCAPE) {
-						i = -1; /* hack to prevent the other inkey() call below */
+				if ((i % 20 == 19) || (i == macro__num - 1)) switch (inkey()) {
+					case ESCAPE:
+						i = -2; /* hack to leave for loop */
 						break;
-					}
+					case 'p':
+						if (i >= 39) {
+							/* show previous 20 entries */
+							i -= 20 + (i % 20) + 1;
+						} else { /* wrap around */
+							i = macro__num - (macro__num % 20) - 1;
+						}
+						break;
+					default:
+						/* show next 20 entries */
+						if (i == macro__num - 1) i = -1; /* restart list at 1st macro again */
 				}
+				if (i == -2) break;
 			}
 
 			if (i == 0)
@@ -3268,9 +3279,6 @@ void interact_macros(void)
 				/* Message */
 				c_msg_print("No macro was found.");
 			}
-
-			/* Wait for keypress before returning to macro menu */
-			if (i % 20 > 0) inkey();
 		}
 
 		/* Enter a 'quick & dirty' macro */
