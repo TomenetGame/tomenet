@@ -2838,6 +2838,10 @@ int Receive_chardump(void)
 		return n;
 	}
 
+	/* Leave menus which we were possibly viewing while dying
+	   in the background.. o_O */
+        Term_load();
+
 	/* additionally do a screenshot of the death scene */
 	xhtml_screenshot(format("%s-death-screenshot", cname));
 
