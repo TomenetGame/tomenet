@@ -3267,6 +3267,12 @@ void interact_macros(void)
 							i = macro__num - (macro__num % 20) - 1;
 						}
 						break;
+					case KTRL('T'):
+						/* Take a screenshot */
+						xhtml_screenshot("screenshot????");
+						/* keep current list */
+						i -= (i % 20) + 1;
+						break;
 					default:
 						/* show next 20 entries */
 						if (i == macro__num - 1) i = -1; /* restart list at 1st macro again */
