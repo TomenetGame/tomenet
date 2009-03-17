@@ -2913,6 +2913,7 @@ struct client_opts
 	bool ring_bell;
 	bool use_color;
 	bool short_item_names;
+	bool hide_unusable_skills;
 
 	bool find_ignore_stairs;
 	bool find_ignore_doors;

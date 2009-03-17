@@ -114,10 +114,11 @@ static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int l
 		if (p_ptr->s_info[i].hidden) continue;
 
 		/* new option: hide all completely unusable skill branches - C. Blue */
-/*		if (!p_ptr->s_info[i].mod && !p_ptr->s_info[i].value &&
+		if (c_cfg.hide_unusable_skills &&
+		    !p_ptr->s_info[i].mod && !p_ptr->s_info[i].value &&
 		    !has_active_child(i))
 			continue;
-*/
+
 		table[*idx][0] = i;
 		table[*idx][1] = lev;
 		(*idx)++;

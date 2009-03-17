@@ -740,10 +740,13 @@ option_type option_info[OPT_MAX] =
 #if 0
 	{ &c_cfg.speak_unique,		TRUE,   2,      13, TRUE, TRUE,
 	"speak_unique",                 "Allow shopkeepers and uniques to speak" },
-#else
+#endif
+#if 0
 	{ NULL,			0, 0, 0, 0, 0,
 	NULL,			NULL }
 #endif	/* 0 */
+	{ &c_cfg.hide_unusable_skills,	FALSE,	1,	0, 79, TRUE,
+	"hide_unusable_skills",		"Hide unusable skills" },
 };
 
 /* XXX XXX they should be sent from server like other spells! */
