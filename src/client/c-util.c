@@ -309,16 +309,14 @@ static void sync_sleep(int milliseconds)
 static char inkey_aux(void)
 {
 	int	k = 0, n, p = 0, w = 0;
-
 	char	ch = 0;
-
 	cptr	pat, act;
-
 	char	buf[1024];
-
 	char	buf_atoi[3];
-
+	bool	inkey_max_line_set;
 	int net_fd;
+	
+	inkey_max_line_set = inkey_max_line;
 
 	/* Acquire and save maximum file descriptor */
 	net_fd = Net_fd();
@@ -344,6 +342,14 @@ static char inkey_aux(void)
 
 			/* If we got a key, break */
 			if (ch) break;
+			
+			/* If we received a 'max_line' value from the net,
+			   break if inkey_max_line flag was set */
+			if (inkey_max_line != inkey_max_line_set) {
+				/* hack: */
+				ch = 1;
+				break;
+			}
 
 			/* Update our timer and if neccecary send a keepalive packet
 			 */
@@ -825,7 +831,7 @@ char inkey(void)
 
 
 	/* Cancel the various "global parameters" */
-	inkey_base = inkey_scan = inkey_flag = FALSE;
+	inkey_base = inkey_scan = inkey_flag = inkey_max_line = FALSE;
 
 
 	/* Return the keypress */

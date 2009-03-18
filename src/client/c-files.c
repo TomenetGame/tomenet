@@ -1101,7 +1101,8 @@ void show_motd(int delay)
  */
 void peruse_file(void)
 {
-	char k;
+	char k = 0;
+	int max_line_old = 0;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1113,7 +1114,9 @@ void peruse_file(void)
 	while (TRUE)
 	{
 		/* Clear the screen */
-		Term_clear();
+		/* hack: no need for full tearm clearing if we only updated 'max_line'.
+		   purpose: avoid the extra flickering when 'max_line' arrives over the network. */
+		if (k != 1) Term_clear();
 
 		/* Send the command */
 		Send_special_line(special_line_type, cur_line);
@@ -1126,10 +1129,13 @@ void peruse_file(void)
 
 		/* Prompt */
 		prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d/%d)",
-					cur_line, max_line), 23, 0);
-
-		/* Get a keypress */
+		    cur_line, max_line), 23, 0);
+		/* Get a keypress -
+		   hack: update max_line to its real value as soon as possible */
+		if (!max_line) inkey_max_line = TRUE;
 		k = inkey();
+		if (k == 1) continue;
+
 
 		/* Hack -- go to a specific line */
 		if (k == '#')
@@ -1147,12 +1153,22 @@ void peruse_file(void)
 		if (k == '-')
 		{
 			cur_line -= 10;
+#if 1 /* take a break at beginning of list before wrapping around */
+			if (cur_line < 0 &&
+			    cur_line > -10)
+				cur_line = 0;
+#endif
 		}
 
 		/* Hack -- Allow backing up ala 'less' */
 		if (k == 'b' || k == 'p' || k == KTRL('U'))
 		{
 			cur_line -= 20;
+#if 1 /* take a break at beginning of list before wrapping around */
+			if (cur_line < 0 &&
+			    cur_line > -20)
+				cur_line = 0;
+#endif
 		}
 
 		/* Hack -- Advance one line */
@@ -1161,8 +1177,8 @@ void peruse_file(void)
 			cur_line++;
 		}
 
-		/* Hack -- backing up one line */
-		if (k == 'k' || k == '8')
+		/* Hack -- backing up one line (octal 010 = BACKSPACE) */
+		if (k == 'k' || k == '8' || k == '\010')
 		{
 			cur_line--;
 		}
@@ -1171,6 +1187,11 @@ void peruse_file(void)
 		if (k == ' ' || k == KTRL('D'))
 		{
 			cur_line += 20;
+#if 1 /* take a break at end of list before wrapping around */
+			if (cur_line > max_line - 20 &&
+			    cur_line < max_line)
+				cur_line = max_line - 20;
+#endif
 		}
 
 		/* Hack -- back to the top */
@@ -1195,8 +1216,17 @@ void peruse_file(void)
 		if (k == ESCAPE || k == KTRL('X')) break;
 
 		/* Check maximum line */
-		if (cur_line > max_line || cur_line < 0)
+#if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */
+		if (cur_line > max_line - 20)
+#else
+		if (cur_line >= max_line)
+#endif
 			cur_line = 0;
+		/* ..and wrap around backwards too */
+		else if (cur_line < 0) {
+			cur_line = max_line - 20;
+			if (cur_line < 0) cur_line = 0;
+		}
 	}
 
 	/* Tell the server we're done looking */
@@ -1204,6 +1234,10 @@ void peruse_file(void)
 
 	/* No longer using file perusal */
 	special_line_type = 0;
+	
+	/* Forget the length of this file, since the next file
+	   we peruse might be completely different */
+	max_line = 0;
 
 	/* Reload the old screen */
 	Term_load();

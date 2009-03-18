@@ -2658,6 +2658,9 @@ int Receive_special_line(void)
 	/* Maximum */
 	max_line = max;
 
+	/* Cause inkey() to break, if inkey_max_line flag was set */	
+	inkey_max_line = FALSE;
+
 	/* Print out the info */
 	if(special_line_type)	/* If we have quit already, dont */
 		c_put_str(attr, buf, line + 2, 0);

@@ -130,6 +130,7 @@ extern int special_line_type;
 
 extern bool inkey_base;
 extern bool inkey_scan;
+extern bool inkey_max_line; /* Make inkey() exit if we receive a 'max_line' value */
 extern bool inkey_flag; /* We're currently reading keyboard input (via inkey()) */
 extern bool inkey_interact_macros; /* In macro menu, no macros may act */
 extern bool inkey_msg;/* A chat message is currently being entered */
