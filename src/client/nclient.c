@@ -2860,12 +2860,13 @@ int Receive_chardump(void)
 		return n;
 	}
 
-	/* Leave menus which we were possibly viewing while dying
-	   in the background.. o_O */
-        Term_load();
+	/* Access the main view */
+        if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the death scene */
 	xhtml_screenshot(format("%s-death-screenshot", cname));
+
+	if (screen_icky) Term_switch(0);
 
 	strnfmt(tmp, 160, "%s-death.txt", cname);
 	file_character(tmp, FALSE);
