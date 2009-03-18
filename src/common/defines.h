@@ -421,6 +421,9 @@
 #define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
+/* Client-side unique list */
+#define MAX_UNIQUES		300
+
 
 
 /*
@@ -6230,13 +6233,15 @@ extern int PlayerUID;
 
 /* SKill flags */
 #define SKF1_HIDDEN             0x00000001      /* Starts hidden */
+#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */ 
+#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */ 
 
-#define SKF1_MKEY_SCHOOL		0x04000000	/* mkey is school type */
-#define SKF1_MKEY_HARDCODE		0x08000000	/* mkey uses hard-coded routine */
-#define SKF1_MKEY_SPELL			0x10000000	/* mkey is realm spell type */
-#define SKF1_MKEY_TVAL			0x20000000	/* mkey uses specific tval(not used) */
-#define SKF1_MKEY_ITEM			0x40000000	/* mkey requires an item */
-#define SKF1_MKEY_DIRECTION		0x80000000	/* mkey requires direction */
+#define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
+#define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
+#define SKF1_MKEY_SPELL		0x10000000	/* mkey is realm spell type */
+#define SKF1_MKEY_TVAL		0x20000000	/* mkey uses specific tval(not used) */
+#define SKF1_MKEY_ITEM		0x40000000	/* mkey requires an item */
+#define SKF1_MKEY_DIRECTION	0x80000000	/* mkey requires direction */
 
 
 /* Skill points per level (xtra2.c) */
@@ -6740,6 +6745,9 @@ extern int PlayerUID;
 #define CHAT_MODE_PARTY		1
 #define CHAT_MODE_LEVEL		2
 
+
+/* Client unique list */
+#define MAX_UNIQUES		300
 
 /* Hard-coded coordinates keeping track of special worldmap locations */
 #define WPOS_SECTOR00_X         0       /* location of our protected and used-for-special-cases sector 'sector00' */
