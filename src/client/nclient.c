@@ -144,6 +144,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_TECHNIQUE_INFO]	= Receive_technique_info;
 	receive_tbl[PKT_EXTRA_STATUS]	= Receive_extra_status;
 	receive_tbl[PKT_INVEN_WIDE]	= Receive_inven_wide;
+	receive_tbl[PKT_UNIQUE_MONSTER]	= Receive_unique_monster;
 }
 
 /* Head of file transfer system receive */
@@ -1475,6 +1476,24 @@ int Receive_inven_wide(void)
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
+	return 1;
+}
+
+/* Receive some unique list info for client-side processing - C. Blue */
+int Receive_unique_monster(void)
+{
+	int	n;
+	char	ch;
+	int	u_idx, killed;
+	char name[60];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%s", &ch, &u_idx, &killed, name)) <= 0)
+	{
+		return n;
+	}
+	
+	r_unique[u_idx] = killed;
+	strcpy(r_unique_name[u_idx], name);
 	return 1;
 }
 

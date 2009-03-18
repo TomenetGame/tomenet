@@ -195,3 +195,8 @@ version_type server_version;
 
 /* Client fps used for polling keyboard input etc */
 int cfg_client_fps = 60;
+
+
+/* For unique list in char dump - C. Blue */
+byte r_unique[MAX_UNIQUES];
+char r_unique_name[MAX_UNIQUES][60];

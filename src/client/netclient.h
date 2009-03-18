@@ -86,5 +86,6 @@ int Receive_encumberment(void);
 int Receive_keepalive(void);
 int Receive_ping(void);
 int Receive_extra_status(void);
+int Receive_unique_monster(void);
 
 int move_rest(void);

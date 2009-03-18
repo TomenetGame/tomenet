@@ -6746,9 +6746,6 @@ extern int PlayerUID;
 #define CHAT_MODE_LEVEL		2
 
 
-/* Client unique list */
-#define MAX_UNIQUES		300
-
 /* Hard-coded coordinates keeping track of special worldmap locations */
 #define WPOS_SECTOR00_X         0       /* location of our protected and used-for-special-cases sector 'sector00' */
 #define WPOS_SECTOR00_Y         0

@@ -1304,46 +1304,6 @@ errr file_character(cptr name, bool full)
 	/* Dump skills */
 	dump_skills(fff);
 
-#if 0 /* DGDGDG - make me work */
-	/* Well, sorry, that'd be hard. We should put new 'connection-status'
-	 * for tombscreen maybe..	- Jir */
-
-	/* Monsters slain */
-	{
-		int k;
-		s32b Total = 0;
-
-		for (k = 1; k < max_r_idx-1; k++)
-		{
-			monster_race *r_ptr = &r_info[k];
-
-			if (r_ptr->flags1 & (RF1_UNIQUE))
-			{
-				bool dead = (r_ptr->max_num == 0);
-				if (dead)
-				{
-					Total++;
-				}
-			}
-			else
-			{
-				s16b This = r_ptr->r_pkills;
-				if (This > 0)
-				{
-					Total += This;
-				}
-			}
-		}
-
-		if (Total < 1)
-			fprintf(fff,"\n You have defeated no enemies yet.\n");
-		else if (Total == 1)
-			fprintf(fff,"\n You have defeated one enemy.\n");
-		else
-			fprintf(fff,"\n You have defeated %lu enemies.\n", Total);
-	}
-#endif
-
 	/* Skip some lines */
 	fprintf(fff, "\n\n");
 
@@ -1366,13 +1326,30 @@ errr file_character(cptr name, bool full)
 				index_to_label(i), paren, inventory_name[i]);
 	}
 	fprintf(fff, "\n\n");
+
 	/* Dump the last messages */
 	fprintf(fff, "  [Last Messages]\n\n");
 	dump_messages_aux(fff, 50, 0, TRUE);
 	fprintf(fff, "\n\n");
+
+ 	/* Unique monsters slain/helped with - C. Blue */
+	fprintf(fff, "  [Unique Monsters]\n\n");
+	/* 1st pass - determine category existance: kill vs assist */
+	x = 0; /* count killing blows */
+	for (i = 0; i < MAX_UNIQUES; i++) if (r_unique[i] == 1) x++;
+	if (!x) fprintf(fff,"You have not slain any unique monsters yourself.\n");
+	/* 2nd pass - list killed and assisted with monsters */
+	for (i = 0; i < MAX_UNIQUES; i++) {
+		if (r_unique[i] == 1) {
+			fprintf(fff,"You have slain %s.\n", r_unique_name[i]);
+		} else if (r_unique[i] == 2) {
+			fprintf(fff,"You have assisted in slaying %s.\n", r_unique_name[i]);
+		}
+	}
+	fprintf(fff, "\n\n");
+
 	/* Close it */
 	my_fclose(fff);
-
 
 	/* Message */
 	c_msg_print("Character dump successful.");

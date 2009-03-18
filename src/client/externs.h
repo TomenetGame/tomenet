@@ -254,6 +254,11 @@ extern version_type server_version;
 /* Client fps used for polling keyboard input etc */
 extern int cfg_client_fps;
 
+/* Client-side tracking of unique kills */
+extern byte r_unique[MAX_UNIQUES];
+extern char r_unique_name[MAX_UNIQUES][60];
+
+
 
 /*
  * Not-so-Automatically generated "function declarations"
