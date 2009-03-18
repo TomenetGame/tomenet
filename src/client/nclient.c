@@ -1734,7 +1734,7 @@ int Receive_skill_info(void)
         s32b    val;
 	int	i, mod, dev, hidden, mkey, dummy;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%ld%ld%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey, &dummy)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey, &dummy)) <= 0)
 	{
 		return n;
 	}
