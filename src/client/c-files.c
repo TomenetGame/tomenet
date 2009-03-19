@@ -1102,7 +1102,6 @@ void show_motd(int delay)
 void peruse_file(void)
 {
 	char k = 0;
-	int max_line_old = 0;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1336,6 +1335,7 @@ errr file_character(cptr name, bool full)
 	}
 
 	/* Dump skills */
+	fprintf(fff, "  [Skill Chart]\n"); /* one less \n, dump_skills() adds one */
 	dump_skills(fff);
 
 	/* Skip some lines */
@@ -1364,6 +1364,22 @@ errr file_character(cptr name, bool full)
 	/* Dump the last messages */
 	fprintf(fff, "  [Last Messages]\n\n");
 	dump_messages_aux(fff, 50, 0, TRUE);
+	fprintf(fff, "\n"); /* one less newline, since dump_messages_aux already adds */
+
+	/* Dump a simple monochrome 'screenshot' of the level too, in
+	   addition to the xhtml real screenshot output (on death dump) */
+	fprintf(fff, "  [Surroundings]\n\n");
+	if (screen_icky) Term_switch(0);
+	/* skip top line, already in 'last messages' if any at all */
+	for (y = 1; y < 24; y++) {
+		for (x = 0; x < 79; x++) {
+			(void)(Term_what(x, y, &a, &c));
+			buf[x] = c;
+		}
+		buf[x] = '\0';
+		fprintf(fff, "%s\n", buf);
+	}	
+	if (screen_icky) Term_switch(0);
 	fprintf(fff, "\n\n");
 
  	/* Unique monsters slain/helped with - C. Blue */
