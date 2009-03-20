@@ -1127,8 +1127,8 @@ void peruse_file(void)
 
 
 		/* Prompt */
-		prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d/%d)",
-		    cur_line, max_line), 23, 0);
+		prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+		    cur_line + 1, cur_line + 20, max_line), 23, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
 		if (!max_line) inkey_max_line = TRUE;
