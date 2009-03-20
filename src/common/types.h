@@ -577,6 +577,8 @@ struct monster_race
 	u32b r_flags0;			/* Observed racial flags */
 #endif
 	obj_theme drops;		/* The drops type */
+	
+	int u_idx;			/* Counter for sorted unique positioning */
 };
 
 
@@ -813,7 +815,7 @@ struct object_type
 	u16b name2;			/* Ego-Item type, if any */
 	u16b name2b;			/* 2e Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
-						/* now it's common with ego-items -Jir-*/	
+						/* now it's common with ego-items -Jir-*/
 	byte attr;			/* colour in inventory (for client) */
 
 	byte xtra1;			/* Extra info type, for various purpose */
@@ -839,7 +841,7 @@ struct object_type
 
 	byte ident;			/* Special flags  */
 
-	byte marked;			/* Object is marked */
+	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */
 
 	u16b note;			/* Inscription index */
@@ -913,8 +915,8 @@ struct monster_type
    s16b level;                     /* Level of the monster */
 
    monster_blow blow[4];        /* Up to four blows per round */
-   byte speed;			/* CURRENT Monster "speed" (needs fixing all across the code) */
-   byte mspeed;			/* ORIGINAL Monster "speed" (needs fixing all across the code) */
+   byte speed;			/* ORIGINAL Monster "speed" (gets copied from r_ptr->speed on monster placement) */
+   byte mspeed;			/* CURRENT Monster "speed" (is set to 'speed' initially on monster placement) */
    s16b ac;                     /* Armour Class */
    s16b org_ac;               	/* Armour Class */
 
@@ -1808,8 +1810,7 @@ struct skill_player
 	bool dev;                               /* Is the branch developped ? */
         bool hidden;                            /* Innactive */
 	bool touched;				/* need refresh? */
-	bool dummy;				/* Just for structuring the skill chart visually? */
-
+	bool dummy;                             /* Just for structuring the skill chart visually? */
 };
 
 /* account flags */
@@ -2265,6 +2266,9 @@ struct player_type
         s16b tim_esp;           /* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
+	s16b mindboost;
+	s16b mindboost_power;
+
 	s16b auto_tunnel;
 	s16b body_monster;
 	bool dual_wield;	/* Currently wielding 2 one-handers at once */
@@ -2291,6 +2295,7 @@ struct player_type
 	bool old_cumber_armor;
 	bool old_awkward_armor;
 	bool old_cumber_glove;
+	bool old_cumber_helm;
 	bool old_heavy_wield;
 	bool old_heavy_shield;
 	bool old_heavy_shoot;
@@ -2312,6 +2317,7 @@ struct player_type
 	bool cumber_armor;	/* Encumbering armor (tohit/sneakiness) */
 	bool awkward_armor;	/* Mana draining armor */
 	bool cumber_glove;	/* Mana draining gloves */
+	bool cumber_helm;	/* Mana draining headgear */
 	bool heavy_wield;	/* Heavy weapon */
 	bool heavy_shield;	/* Heavy shield */
 	bool heavy_shoot;	/* Heavy shooter */
@@ -2913,7 +2919,6 @@ struct client_opts
 	bool ring_bell;
 	bool use_color;
 	bool short_item_names;
-	bool hide_unusable_skills;
 
 	bool find_ignore_stairs;
 	bool find_ignore_doors;

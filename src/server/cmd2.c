@@ -976,7 +976,7 @@ bool access_door(int Ind, struct dna_type *dna){
 /*	if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
-	if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator)
+	if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator)
 		return(FALSE); /* defies logic a bit, but for speed */
 	switch(dna->owner_type){
 		case OT_PLAYER:
@@ -1016,7 +1016,7 @@ bool access_door(int Ind, struct dna_type *dna){
 int access_door_colour(int Ind, struct dna_type *dna){
 	int cl = TERM_YELLOW;
 	player_type *p_ptr=Players[Ind];
-	if (!dna->owner) return(TERM_L_UMBER); /* house doesn't belong to anybody */
+	if (!dna->owner) return(TERM_UMBER); /* house doesn't belong to anybody */
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
@@ -1025,46 +1025,47 @@ int access_door_colour(int Ind, struct dna_type *dna){
 			if(dna->a_flags & ACF_PARTY){
 				if(!p_ptr->party) return(TERM_L_DARK);
 				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
-					if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+					if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
 					return(TERM_L_BLUE);
 				}
 			}
 			if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass==(dna->creator&0xff))) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
 				return(TERM_WHITE);
 			}
 			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==((dna->creator>>8)&0xff))) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
-				return(TERM_L_WHITE);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_WHITE);
 			}
 			break;
 		case OT_PARTY:
 			if(!p_ptr->party) return(TERM_L_DARK);
 			if(player_in_party(dna->owner, Ind)) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
 				return(TERM_L_BLUE);
 			}
 			break;
 		case OT_CLASS:
 			if(p_ptr->pclass==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
 				return(TERM_WHITE);
 			}
 			break;
 		case OT_RACE:
 			if(p_ptr->prace==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
-				return(TERM_L_WHITE);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				return(TERM_WHITE);
 			}
 			break;
 		case OT_GUILD:
 			if(!p_ptr->guild) return(TERM_L_DARK);
 			if(p_ptr->guild==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->lev<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
 				return(TERM_VIOLET);
 			}
 			break;
 	}
+	if(dna->a_flags & ACF_STORE) return(TERM_RED); /* player store? */
 	return(TERM_L_DARK);
 }
 
@@ -1598,7 +1599,8 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 		c_ptr=&zcave[ty][tx];
 		if (c_ptr->feat == FEAT_DEEP_WATER)
 		{
-			feat = FEAT_DEEP_WATER;
+//			feat = FEAT_DEEP_WATER; /* <- only if it's also terraformable in turn (see cave_set_feat) */
+			feat = FEAT_SHAL_WATER; /* <- if deep water is NOT terraformable (see cave_set_feat) */
 			break;
 		}
 	}
@@ -1632,7 +1634,7 @@ bool twall(int Ind, int y, int x)
 	/* Remove the feature */
 //	c_ptr->feat = FEAT_FLOOR;
 //	c_ptr->feat = twall_erosion(wpos, y, x);
-	cave_set_feat(wpos, y, x, twall_erosion(wpos, y, x));
+	cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x));
 
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
@@ -2414,37 +2416,37 @@ void do_cmd_disarm(int Ind, int dir)
 
 
 				/* A chance to drop a trapkit! - the_sandman */
-				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value/1000);
+				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value / 1000);
 				if (randint(100) < sdis) {
 					object_type forge;
 					object_type* yay = &forge;
 					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
 					if (randint(2) == 1) {	/* chance for non 00 */
-						yay->to_h=randint((int)(p_ptr->lev)/2);
-						yay->to_d=randint((int)(p_ptr->lev)/2);
+						yay->to_h = randint((int)(p_ptr->lev) / 2);
+						yay->to_d = randint((int)(p_ptr->lev) / 2);
 					}
-					if (randint(15-(int)(sdis/5)) == 1) { /* chance for ego! */
+					if (randint(15 - (int)(sdis / 5)) == 1) { /* chance for ego! */
 						int egokind = randint(12);
-						yay->name2 = 150+egokind;	// NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
+						yay->name2 = 150 + egokind;	// NOTE NOTE 151-162 _must_ be ego-trap-flags in e_info
 						switch (egokind) {
 							case 1: 
 							case 2: 	// ES or EM
-								yay->to_h=randint(20);
-								yay->to_d=randint(20);
-								yay->pval=randint(2);
-								if (sdis>25) yay->pval++;
+								yay->to_h = randint(20);
+								yay->to_d = randint(20);
+								yay->pval = randint(2);
+								if (sdis > 25) yay->pval++;
 								break;
 							case 3:		// Auto
 							case 4:		// Full auto
-								yay->to_h=randint(10);
-								yay->to_d=randint(10);
+								yay->to_h = randint(10);
+								yay->to_d = randint(10);
 								break;
 							case 5:		// Well-hidden
-								yay->pval=randint(12);
-								yay->to_a=randint(5);
+								yay->pval = randint(12);
+								yay->to_a = randint(5);
 								break;
 							case 6:		// Complex
-								yay->pval=randint(30);
+								yay->pval = randint(30);
 								break;
 							case 7: 	// Obvious (cursed)
 								yay->to_h = 0 - yay->to_h;
@@ -2467,8 +2469,8 @@ void do_cmd_disarm(int Ind, int dir)
 						}
 							
 					}
-					yay->number=1;
-					yay->level=p_ptr->lev;
+					yay->number = 1;
+					yay->level = p_ptr->lev;
 					drop_near(yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 					msg_print(Ind, "You have discovered a trapkit!");
 				}
@@ -3692,7 +3694,7 @@ void do_cmd_fire(int Ind, int dir)
 	}
 
 #if (STARTEQ_TREATMENT > 1)
-        if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+        if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
             !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
                 o_ptr->level = 0;
 #endif
@@ -4007,7 +4009,8 @@ void do_cmd_fire(int Ind, int dir)
 #endif
 #ifdef USE_PARRYING
 							if (q_ptr->weapon_parry) {
-								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5)) && !p_ptr->ranged_barrage) { /* boost for PvP! */
+								// && !p_ptr->ranged_barrage etc, any prepared bow stance?
+								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
 									msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									if (visible) msg_format(Ind, "\377%c%s parries %s!", COLOUR_PARRY_PLY, p_name, o_name);
 									continue;
@@ -4621,7 +4624,7 @@ void do_cmd_fire(int Ind, int dir)
 #if 0 /* covered by STARTEQ_TREATMENT */
 #ifndef RPG_SERVER	/* Let's not... here at least... This is annoying. */
 	/* Hack -- yet another anti-cheeze(yaac) */
-	if ((!magic && !ethereal &&
+	if ((!magic && !ethereal && o_ptr->owner == p_ptr->id && 
 		(p_ptr->max_plv < cfg.newbies_cannot_drop || true_artifact_p(o_ptr))) || p_ptr->inval)
 	{
 		o_ptr->level = 0;
@@ -4914,7 +4917,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 
 	if (!bashing) {
 #if (STARTEQ_TREATMENT > 1)
-	        if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	        if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
     		    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
             		o_ptr->level = 0;
 #endif
@@ -5341,7 +5344,7 @@ void do_cmd_throw(int Ind, int dir, int item, bool bashing)
 			}
 
 			/* Restore later */
-			everyone_lite_later_spot(wpos, y, x);
+			everyone_lite_later_spot(wpos, ny, nx);
 		}
 
 		/* Restore the player pointer */
@@ -5672,20 +5675,44 @@ void do_cmd_own(int Ind)
 
 
 
+/* mental fusion - mindcrafter special ability */
+void do_cmd_fusion(int Ind) {
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	cave_type **zcave, *c_ptr;
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
+
+	/* search grids adjacent to player for someone with open mind to fuse */
+	
+}
+
 /*
  * Rogue special ability - enter cloaking (stealth+search+special invisibility) mode - C. Blue
  */
 void do_cmd_cloak(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-#ifndef ENABLE_CLOAKING
-	return;
+
+#ifdef ENABLE_MCRAFT
+ #if 0 /* instead via spell schools atm */
+	/* hack: also use the key for fusion, 
+	   a new mindcrafter special ability - C. Blue */
+	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+		do_cmd_fusion(Ind);
+		return;
+	}
+ #endif
 #endif
 
-        if (p_ptr->pclass != CLASS_ROGUE) return;
 #ifdef ARCADE_SERVER
 return;
 #endif
+
+#ifndef ENABLE_CLOAKING
+	return;
+#endif
+        if (p_ptr->pclass != CLASS_ROGUE) return;
+
     if (!p_ptr->cloaked) {
 	if (p_ptr->lev < LEARN_CLOAKING_LEVEL) {
 		msg_format(Ind, "\377yYou need to be level %d to learn how to cloak yourself effectively.", LEARN_CLOAKING_LEVEL);

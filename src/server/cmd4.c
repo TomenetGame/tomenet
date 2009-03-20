@@ -172,10 +172,14 @@ void do_cmd_check_artifacts(int Ind, int line)
  * the colour for each letter!	- Jir - */
 void do_cmd_check_uniques(int Ind, int line)
 {
-	//player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr;
 
-	int k, l, total = 0;
+	int i, j;
+	byte ok;
+	bool full;
+
+	int k, l, total = 0, own_highest = 0, own_highest_level = 0;
+	byte attr;
 
 	FILE *fff;
 
@@ -184,6 +188,9 @@ void do_cmd_check_uniques(int Ind, int line)
 	player_type *q_ptr = Players[Ind];
 	bool admin = is_admin(q_ptr);
 	s16b idx[MAX_R_IDX];
+	
+	char buf[17];
+
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -191,97 +198,7 @@ void do_cmd_check_uniques(int Ind, int line)
 	/* Open a new file */
 	fff = my_fopen(file_name, "w");
 
-#if 0
-	/* Scan the monster races */
-	for (k = 1; k < MAX_R_IDX-1; k++)
-	{
-		monster_race *r_ptr = &r_info[k];
-
-		/* Only print Uniques */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
-			/* Only display known uniques */
-//			if (r_ptr->r_sights && mon_allowed(r_ptr))
-			if (r_ptr->r_sights)
-			{
-				int i, j = 0;
-				byte ok = FALSE;
-				bool full = FALSE;
-
-				/* Output color byte */
-				fprintf(fff, "\377%c", 'w');
-
-				/* Hack -- Show the ID for admin */
-				if (admin) fprintf(fff, "(%4d) ", k);
-				/* don't display dungeon master to players */
-				else if (q_ptr->admin_dm) continue;
-
-				/* Format message */
-//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
-				fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
-
-				for (i = 1; i <= NumPlayers; i++)
-				{
-					player_type *q_ptr = Players[i];
-					
-					/* skip dungeon master */
-					if (q_ptr->admin_dm) continue;
-
-					if (q_ptr->r_killed[k])
-					{
-//						byte attr = 'U';
-//						fprintf(fff, "        %s\n", q_ptr->name);
-						if (!ok)
-						{
-							fprintf(fff, ":\n");
-							fprintf(fff, "\377%c", 'B');
-							ok = TRUE;
-						}
-#if 0
-						/* Print self in green */
-						if (Ind == k) attr = 'G';
-
-						/* Print party members in blue */
-						else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
-
-						/* Print hostile players in red */
-						else if (check_hostile(Ind, i)) attr = 'r';
-
-						/* Output color byte */
-						fprintf(fff, "\377%c", attr);
-#endif
-
-						fprintf(fff, "  %-16.16s", q_ptr->name);
-						j++;
-						full = FALSE;
-						if (j == 4)
-						{
-							fprintf(fff, "\n");
-							fprintf(fff, "\377%c", 'B');
-							j = 0;
-							full = TRUE;
-						}
-					}
-				}
-//				if (!ok) fprintf(fff, "       Nobody\n");
-				if (!ok)
-				{
-					/* Output color byte */
-//					fprintf(fff, "%c", 'y');
-
-					if (r_ptr->r_tkills) fprintf(fff, " Somebody.");
-					else fprintf(fff, " Nobody.");
-				}
-				/* Terminate line */
-				/*                              fprintf(fff, "\n");*/
-				if (!full) fprintf(fff, "\n");
-			}
-
-		}
-	}
-#endif	// 0
-
-	fprintf(fff, "\377U======== Unique Monster List ========\n");
+	fprintf(fff, "\377U============== Unique Monster List ==============\n");
 
 	/* Scan the monster races */
 	for (k = 1; k < MAX_R_IDX-1; k++)
@@ -297,11 +214,16 @@ void do_cmd_check_uniques(int Ind, int line)
 			{
 				idx[total++] = k;
 			}
+
+			/* remember highest unique the viewing player actually killed */
+			if ((q_ptr->r_killed[k] == 1) && (own_highest_level < r_ptr->level)) {
+				own_highest = k;
+				own_highest_level = r_ptr->level;
+			}
 		}
 	}
 
-	if (total)
-	{
+	if (total) {
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_mon_lev;
 		ang_sort_swap = ang_sort_swap_s16b;
@@ -310,39 +232,44 @@ void do_cmd_check_uniques(int Ind, int line)
 		ang_sort(Ind, &idx, NULL, total);
 
 		/* for each unique */
-		for (l = total - 1; l >= 0; l--)
-		{
-			int i, j = 0;
-			byte ok = FALSE;
-			bool full = FALSE;
+		for (l = total - 1; l >= 0; l--) {
+			j = 0;
+			ok = FALSE;
+			full = FALSE;
 
 			k = idx[l];
 			r_ptr = &r_info[k];
 
+			/* extra marker line to show where our glory ends for the moment */
+			if (own_highest && (own_highest_level < r_ptr->level)) {
+				fprintf(fff, "\377U  (strongest unique monster you killed)\n");
+				/* only display this marker once */
+				own_highest = 0;
+			}
+
 			/* Output color byte */
 			fprintf(fff, "\377w");
-
+#ifndef TEST_SERVER
 			/* Hack -- Show the ID for admin */
 			if (admin) fprintf(fff, "(%4d) ", k);
-
+#endif
 			/* Format message */
-			//				fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
+//			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
-			if (r_ptr->level > 100)	fprintf(fff, "\377s%s has been killed by", r_name + r_ptr->name);
-			else if (r_ptr->level == 100) fprintf(fff, "\377v%s has been killed by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
-			else fprintf(fff, "%s has been killed by", r_name + r_ptr->name);
+			if (r_ptr->level > 100)	fprintf(fff, "\377s%s was slain by", r_name + r_ptr->name);
+			else if (r_ptr->level == 100) fprintf(fff, "\377v%s was slain by", r_name + r_ptr->name); /* only Morgoth is level 100 ! */
+			else fprintf(fff, "%s was slain by", r_name + r_ptr->name);
 
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				player_type *q_ptr = Players[i];
+			for (i = 1; i <= NumPlayers; i++) {
+				q_ptr = Players[i];
 
 				/* don't display dungeon master to players */
 				if (q_ptr->admin_dm && !Players[Ind]->admin_dm) continue;
 
-				if (q_ptr->r_killed[k])
-				{
-					byte attr = 'B';
+				if (q_ptr->r_killed[k] == 1) {
+					/* killed it himself */
 
+					attr = 'B';
 					/* Print self in green */
 					if (Ind == i) attr = 'G';
 
@@ -352,45 +279,71 @@ void do_cmd_check_uniques(int Ind, int line)
 					/* Print hostile players in red */
 //					else if (check_hostile(Ind, i)) attr = 'r';
 
-					if (!ok)
-					{
-
+					/* first player name entry for this unique? add ':' and go to next line */
+					if (!ok) {
 						fprintf(fff, ":\n");
 						ok = TRUE;
 					}
 
+					/* add this player name as entry */
 					fprintf(fff, "\377%c", attr);
 					fprintf(fff, "  %-16.16s", q_ptr->name);
+					
+					/* after 4 entries per line go to next line */
 					j++;
 					full = FALSE;
-					if (j == 4)
-					{
+					if (j == 4) {
+						fprintf(fff, "\n");
+						j = 0;
+						full = TRUE;
+					}
+				}
+//				else if (Ind == i && q_ptr->r_killed[k] == 2) {
+//					/* helped killing it - only shown to the player who helped */
+				else if (q_ptr->r_killed[k] == 2) {
+					/* helped killing it */
+
+					attr = 'D';
+					if (Ind == i) attr = 's';
+
+					/* first player name entry for this unique? add ':' and go to next line */
+					if (!ok) {
+						fprintf(fff, ":\n");
+						ok = TRUE;
+					}
+
+					/* add this player name as entry */
+					fprintf(fff, "\377%c", attr);
+					sprintf(buf, "(%.14s)", q_ptr->name);
+					fprintf(fff, "  %-16.16s", buf);
+					
+					/* after 4 entries per line go to next line */
+					j++;
+					full = FALSE;
+					if (j == 4) {
 						fprintf(fff, "\n");
 						j = 0;
 						full = TRUE;
 					}
 				}
 			}
-			//				if (!ok) fprintf(fff, "       Nobody\n");
-			if (!ok)
-			{
-				/* Output color byte */
-				//					fprintf(fff, "%c", 'y');
 
-				if (r_ptr->r_tkills) fprintf(fff, " Somebody.");
-				else fprintf(fff, " Nobody.");
+			/* not killed by anybody yet? */
+			if (!ok) {
+				if (r_ptr->r_tkills) fprintf(fff, " somebody.");
+				else fprintf(fff, " \377Dnobody.");
 			}
+
 			/* Terminate line */
-			/*                              fprintf(fff, "\n");*/
 			if (!full) fprintf(fff, "\n");
 		}
-	}
-	else
-	{
+	} else {
 		fprintf(fff, "\377w");
-		fprintf(fff, "No uniques are witnessed so far.\n");
+		fprintf(fff, "No uniques were witnessed so far.\n");
 	}
 
+	/* finally.. */
+	fprintf(fff, "\377U========== End of Unique Monster List ==========\n");
 
 	/* Close the file */
 	my_fclose(fff);
@@ -650,7 +603,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
  */
 void do_cmd_check_players(int Ind, int line)
 {
-	int k;
+	int k, lines = 0;
 	bool i;
 
 	FILE *fff;
@@ -673,7 +626,11 @@ void do_cmd_check_players(int Ind, int line)
 	for (k = 1; k < NumPlayers + 1; k++)
 	{
 		q_ptr = Players[k];
-		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA - 1, 0, 0);
+#if 0 /* real current version */
+		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA - 1, 0, 0);
+#else /* official current version */
+		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, 0, 0);
+#endif
 
 		byte attr = 'w';
 
@@ -706,7 +663,7 @@ void do_cmd_check_players(int Ind, int line)
 
 		/* Print a message */
 //		if(Ind!=k) i=TRUE; else i=FALSE;
-		i=TRUE;
+		i = TRUE;
 		do_write_others_attributes(fff, q_ptr, i, attr);
 		/* Colour might have changed due to Iron Team party name,
 		   so print the closing ')' in the original colour again: */
@@ -748,10 +705,20 @@ void do_cmd_check_players(int Ind, int line)
 			fprintf(fff, "\n\n");
 		else
 			fprintf(fff, "\n     \377U(%s)\n", q_ptr->afk_msg);
+
+		lines += 4;
 	}
+
 #ifdef TOMENET_WORLDS
-	if (cfg.worldd_plist) world_remote_players(fff);
+	if (cfg.worldd_plist) {
+		k = world_remote_players(fff);
+		if (k) lines += k + 3;
+	}
 #endif
+
+	/* add blank lines for more aesthetic browsing */
+	lines = ((20 - (lines % 20)) % 20);
+	for (k = 1; k <= lines; k++) fprintf(fff, "\n");
 
 	/* Close the file */
 	my_fclose(fff);
@@ -1093,12 +1060,21 @@ void do_cmd_check_server_settings(int Ind)
 	if ((k=cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);
 
-	if (cfg.replace_hiscore == 0)
-		fprintf(fff, "High-score entries are added to the high-score table.\n");
-	if (cfg.replace_hiscore == 1)
-		fprintf(fff, "Newer high-score entries replace old entries.\n");
-	if (cfg.replace_hiscore == 2)
-		fprintf(fff, "Only higher & newer high-score entries replace old entries.\n(Otherwise the new entry is ignored).\n");
+	switch (cfg.replace_hiscore & 0x7) {
+	case 0: fprintf(fff, "High-score entries are added to the high-score table.\n"); break;
+	case 1: fprintf(fff, "Instead of getting added, newer score replaces older entries.\n"); break;
+	case 2: fprintf(fff, "Instead of getting added, higher scores replace old entries.\n"); break;
+	case 3: fprintf(fff, "Instead of getting added, higher scores replace old entries\nand one account may get a maximum of 2 scoreboard entries.\n"); break;
+	case 4: fprintf(fff, "Instead of getting added, higher scores replace old entries\nand one account may get a maximum of 3 scoreboard entries.\n"); break;
+	}
+	if (cfg.replace_hiscore & 0x08)
+		fprintf(fff, "..if ALSO the character name is the same.\n");
+	if (cfg.replace_hiscore & 0x10)
+		fprintf(fff, "..if ALSO the character is from same player account.\n");
+	if (cfg.replace_hiscore & 0x20)
+		fprintf(fff, "..if ALSO the character is of same class.\n");
+	if (cfg.replace_hiscore & 0x40)
+		fprintf(fff, "..if ALSO the character is of same race.\n");
 
 	/* Several restrictions */
 	if (!cfg.maximize)
@@ -1462,7 +1438,7 @@ void do_cmd_show_houses(int Ind)
 
 	fprintf(fff, "======== House List ========\n");
 
-	for(i=0;i<num_houses;i++)
+	for(i = 0; i < num_houses; i++)
 	{
 		//				if(!houses[i].dna->owner) continue;
 		//				if(!admin && houses[i].dna->owner != p_ptr->id) continue;

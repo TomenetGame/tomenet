@@ -143,6 +143,7 @@ int monster_check_experience(int m_idx, bool silent)
 		if (magik(50))//30
 		{
 			int speed = randint(2);
+			/* adjust cur and base speed */
 			m_ptr->speed += speed;
 			m_ptr->mspeed += speed;
 
@@ -686,9 +687,9 @@ void wipe_m_list(struct worldpos *wpos)
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos)) {
-#ifdef HALLOWEEN                                                                                                                                                       
-                        if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
-#endif                                                                                                                                                                 
+                        if (season_halloween &&
+                	    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+                        	great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */ 
 			delete_monster_idx(i, TRUE);
 		}
 	}
@@ -700,16 +701,17 @@ void wipe_m_list_chance(struct worldpos *wpos, int chance)
 {
 	int i;
 
-	/* Delete all the monsters, except for target dummies (1101), because those are
-	   usually in town, and this function is called periodically for town! */
+	/* Delete all the monsters, except for target dummies (1101, 1126) and santa (1102),
+	   because those are usually in town, and this function is called periodically for town! */
 	for (i = m_max - 1; i >= 1; i--)
 	{
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos) && magik(chance) && (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1102)) { /* hardcoded -_- */
-#ifdef HALLOWEEN
-			if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-#endif	
+		if (inarea(&m_ptr->wpos,wpos) && magik(chance) &&  /* hardcoded -_- */
+		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) && (m_ptr->r_idx != 1102)) {
+			if (season_halloween &&
+			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
+				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 			delete_monster_idx(i, TRUE);
 		}
 	}
@@ -823,7 +825,7 @@ s16b m_pop(void)
 
 
 	/* Warn the player */
-	if (server_dungeon) s_printf("Too many monsters!");
+	if (server_dungeon) s_printf("Too many monsters!\n");
 
 	/* Try not to crash */
 	return (0);
@@ -2126,6 +2128,7 @@ void update_mon(int m_idx, bool dist)
 	bool hard = FALSE;
 
 	/* Various extra flags */
+	bool do_no_esp = FALSE;
 	bool do_empty_mind = FALSE;
 	bool do_weird_mind = FALSE;
 	bool do_invisible = FALSE;
@@ -2222,7 +2225,7 @@ void update_mon(int m_idx, bool dist)
 			/* Telepathy can see all "nearby" monsters with "minds" */
 			if (p_ptr->telepathy || (p_ptr->prace == RACE_DRIDER))
 			{
-				bool see = FALSE, drsee=FALSE;
+				bool see = FALSE, drsee = FALSE;
 
 				/* Different ESP */
 				if (p_ptr->prace==RACE_DRIDER) drsee = TRUE;
@@ -2245,10 +2248,10 @@ void update_mon(int m_idx, bool dist)
 //				if (p_ptr->mode == MODE_NORMAL) see = TRUE;
 				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
 //				if (see && !p_ptr->telepathy && (p_ptr->prace == RACE_DRIDER) && (m_ptr->cdis > (p_ptr->lev / 2))) see = FALSE;
-				if (drsee && !see){
-//					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see=TRUE;
+				if (drsee && !see) {
+//					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/2)) see = TRUE;
 					/* They receive 'fly' instead */
-					if(p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/3)) see=TRUE;
+					if (p_ptr->lev>=6 && m_ptr->cdis<=(5+p_ptr->lev/3)) see = TRUE;
 				}
 
 				if (see)
@@ -2258,7 +2261,10 @@ void update_mon(int m_idx, bool dist)
 					{
 						do_empty_mind = TRUE;
 					}
-	
+					else if (r_ptr->flags7 & RF7_NO_ESP) {
+						do_no_esp = TRUE;
+					}
+
 					/* Weird mind, occasional telepathy */
 					else if (r_ptr->flags2 & RF2_WEIRD_MIND)
 					{
@@ -2317,6 +2323,7 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Memorize various observable flags */
+			if (do_no_esp) r_ptr->flags7 |= RF7_NO_ESP;
 			if (do_empty_mind) r_ptr->r_flags2 |= RF2_EMPTY_MIND;
 			if (do_weird_mind) r_ptr->r_flags2 |= RF2_WEIRD_MIND;
 			if (do_cold_blood) r_ptr->r_flags2 |= RF2_COLD_BLOOD;
@@ -2671,7 +2678,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 		player_type *p_ptr = Players[i];
 
 		/* Is the player on the level and did he killed the unique already ? */
-		if (!p_ptr->r_killed[r_idx] && (inarea(wpos, &p_ptr->wpos)))
+		if (p_ptr->r_killed[r_idx] != 1 && (inarea(wpos, &p_ptr->wpos)))
 		{
 			/* One is enough */
 			return (TRUE);
@@ -2846,7 +2853,7 @@ if (!summon_override_checks) {
 			p_ptr = Players[i];
 			if (is_admin(p_ptr)) continue;
 			if (inarea(&p_ptr->wpos, wpos) &&
-			    (p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
+			    (p_ptr->total_winner || (p_ptr->r_killed[860] != 1)))
 			{
 			        /* log */
  #if DEBUG_LEVEL > 2
@@ -2957,7 +2964,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
 				else on_level++;
 
 				/* Count how many of them have killed this unique monster */
-				if (Players[i]->r_killed[r_idx]) {
+				if (Players[i]->r_killed[r_idx] == 1) {
 					if (Players[i]->admin_dm) admin_who_killed++;
 					else who_killed++;
 				}
@@ -3091,6 +3098,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 
 	/* Extract the monster base speed */
 	m_ptr->speed = r_ptr->speed;
+	/* Set monster cur speed to normal base speed */
 	m_ptr->mspeed = m_ptr->speed;
 
 	/* Extract base ac and  other things */
@@ -3532,15 +3540,13 @@ if (!summon_override_checks) {
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
 	int r_idx;
-#ifdef HALLOWEEN
-	int l = getlevel(wpos);
-#endif
+	int l = getlevel(wpos); /* HALLOWEEN */
 	struct dungeon_type *d_ptr;
 
 	d_ptr=getdungeon(wpos);
 
 
-#ifdef HALLOWEEN
+if (season_halloween) {
 	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
  #ifndef RPG_SERVER
 	if ((great_pumpkin_timer == 0) && (l < 40) && (wpos->wz != 0)) {
@@ -3578,7 +3584,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 //		great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
 		return (FALSE);
 	}
-#endif
+}
 
 
 	/* Specific filter - should be made more useful */
@@ -4408,12 +4414,16 @@ void message_pain(int Ind, int m_idx, int dam)
 	monster_desc(Ind, m_name, m_idx, 0);
 
 
-	/* some monsters don't react at all (Target Dummy) */
-	if (r_ptr->flags7 & RF7_NEVER_ACT) {
+	/* Target Dummy */
+	if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) {
+		msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+		return;
+	/* some monsters don't react at all */
+	} else if (r_ptr->flags7 & RF7_NEVER_ACT) {
 		if (r_ptr->flags1 & RF1_UNIQUE)
-			msg_format(Ind, "%^s reels from \377e%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s remains unmoving and takes \377e%d \377wdamage.", m_name, dam);
 		else
-			msg_format(Ind, "%^s reels from \377g%d \377wdamage.", m_name, dam);
+			msg_format(Ind, "%^s remains unmoving and takes \377e%d \377wdamage.", m_name, dam);
 		return;
 	}
 
@@ -4822,7 +4832,7 @@ static s32b modify_aux(s32b a, s32b b, char mod)
                         return (a * b / 100);
                         break;
                 default:
-                        s_printf("WARNING, unmatching MEGO(%d).", mod);
+                        s_printf("WARNING, unmatching MEGO(%d).\n", mod);
                         return (0);
         }
 }
@@ -4895,10 +4905,8 @@ int pick_ego_monster(int r_idx, int Level)
         /* No townspeople ego */
         if (!r_info[r_idx].level) return 0;
 	
-#ifdef HALLOWEEN
-	/* No Great Pumpkin ego */
+	/* No Great Pumpkin ego (HALLOWEEN) */
 	if (r_idx == 1086 || r_idx == 1087 || r_idx == 1088) return 0;
-#endif
 
         /* First are we allowed to find an ego */
         if (!magik(MEGO_CHANCE)) return 0;

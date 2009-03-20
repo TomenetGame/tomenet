@@ -45,7 +45,11 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i)
 		p_ptr->s_info[i].hidden = TRUE;
         else
 		p_ptr->s_info[i].hidden = FALSE;
-	p_ptr->s_info[i].touched=TRUE;
+	p_ptr->s_info[i].touched = TRUE;
+        if (s_info[i].flags1 & SKF1_DUMMY)
+		p_ptr->s_info[i].dummy = TRUE;
+        else
+		p_ptr->s_info[i].dummy = FALSE;
 }
 
 /*
@@ -117,7 +121,7 @@ static s32b modify_aux(s32b a, s32b b, char mod)
 			return (b);
 			break;
 		case '%':
-			return (a * b / 100);
+			return ((a * b) / 100);
 			break;
 		default:
 			return (0);
@@ -391,10 +395,17 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_COMBAT:
 		if (old_value < 110 && new_value >= 110) {
 			msg_print(Ind, "\377G* You got better at recognizing the power of unknown weapons. *");
+#if 0
 		} if (old_value < 310 && new_value >= 310) {
 			msg_print(Ind, "\377G* You got better at recognizing the power of unknown ranged weapons and ammo. *");
 		} if (old_value < 410 && new_value >= 410) {
 			msg_print(Ind, "\377G* You got better at recognizing the power of unknown magical items. *");
+#else /* more true messages: */
+		} if (old_value < 310 && new_value >= 310) {
+			msg_print(Ind, "\377G* You somewhat recognize the usefulness of unknown ranged weapons and ammo. *");
+		} if (old_value < 410 && new_value >= 410) {
+			msg_print(Ind, "\377G* You are able to feel curses on magical items. *");
+#endif
 		}
 		break;
 	case SKILL_MAGIC:
@@ -438,8 +449,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
                 }
                 break;
 	case SKILL_CONVEYANCE:
-                if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377G* You laugh about feeble teleportation attacks. *");
+                if (old_value < 300 && new_value >= 300 &&
+            	    get_skill(p_ptr, SKILL_UDUN) < 30) {
+                        msg_print(Ind, "\377G* You are impervious to feeble teleportation attacks. *");
                 }
                 break;
 	case SKILL_DIVINATION:
@@ -470,8 +482,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
                 }
                 break;
 	case SKILL_UDUN:
-                if (old_value < 300 && new_value >= 300) {
-                        msg_print(Ind, "\377G* You laugh about feeble teleportation attacks. *");
+                if (old_value < 300 && new_value >= 300 &&
+            	    get_skill(p_ptr, SKILL_CONVEYANCE) < 30) {
+                        msg_print(Ind, "\377G* You are impervious to feeble teleportation attacks. *");
                 } if (old_value < 400 && new_value >= 400) {
                         msg_print(Ind, "\377G* You have strong control over your life force. *");
                 }
@@ -545,7 +558,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\377G* Your shooting speed has become faster due to your training! *");
 		}
 		break; 
-#ifdef CLASS_RUNEMASTER
+#ifdef ENABLE_RUNEMASTER
 	case SKILL_RUNEMASTERY:
 		if (old_value < RSAFE_BOLT*10 && new_value >= RSAFE_BOLT*10) {
 		    msg_print(Ind, "\377G* You are able to cast bolt rune spells without breaking the runes! *");
@@ -561,7 +574,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		    msg_print(Ind, "\377G* You feel your potential unleashed. *");
 		}
  #endif /*ALTERNATE_DMG*/
-#endif /*CLASS_RUNEMASTER*/
+#endif
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0) p_ptr->aura[2] = TRUE; break;
@@ -1668,3 +1681,184 @@ void do_get_new_skill()
         recalc_skills(FALSE);
 }
 #endif /*0*/
+
+/* return value by which a skill was auto-modified by related skills
+   instead of real point distribution by the player */
+static s32b modified_by_related(player_type *p_ptr, int i) {
+	int j, points;
+	s32b val = 0, jv, jm;
+	
+	for (j = 1; j < MAX_SKILLS; j++)
+	{
+		/* Ignore self */
+		if (j == i) continue;
+
+		/* Ignore skills that aren't modified by related skills */
+		if ((s_info[j].action[i] != SKILL_EXCLUSIVE) &&
+		    s_info[j].action[i] &&
+		    /* hack against oscillation: only take care of increase atm '> 0': */
+		    (s_info[j].action[i] > 0)) { 
+			/* calc 'manual increase' of the increasing skill by excluding base value 'jv' */
+			jv = 0; jm = 0;
+			compute_skills(p_ptr, &jv, &jm, j);
+			/* calc amount of points the user spent into the increasing skill */
+			if (jm)
+				points = (p_ptr->s_info[j].value - jv - modified_by_related(p_ptr, j)) / jm;
+			else
+				points = 0;
+			/* calc and stack up amount of the increase that skill 'i' experienced by that */
+			val += ((p_ptr->s_info[i].mod * s_info[j].action[i] / 100) * points);
+
+			/* Skill value cannot be negative */
+			if (val < 0) val = 0;
+			/* It cannot exceed SKILL_MAX */
+			if (val > SKILL_MAX) val = SKILL_MAX;
+		}
+	}
+
+	return (val);
+}
+
+/* Free all points spent into a certain skill and make them available again.
+   Note that it is actually impossible under current skill functionality
+   to reconstruct the exact points the user spent on all skills in all cases.
+   Reasons:
+    - If the skill in question for example is a skill that gets
+    increased as a result of increasing another skill, we won't
+    know how many points the player actually invested into it if
+    the skill is maxed out.
+    - Similarly, we wont know how many points to subtract from
+    related skills when we erase a specific skill, if that related
+    skill is maxed, because the player might have spent more points
+    into it than would be required to max it.
+    - Even if we start analyzing all skills, we won't know which one
+    got more 'overspent' points as soon as there are two ore more
+    maximized skills in question.
+   For a complete respec function see respec_skills() below.
+   This function is still possible though, if we agree that it may
+   'optimize' the skill point spending for the users. It can't return
+   more points than the user actually could spend in an 'ideal skill chart'.
+   So it wouldn't hurt really, if we allow this to correct any waste
+   of skill points the user did. - C. Blue */
+void respec_skill(int Ind, int i) {
+	player_type *p_ptr = Players[Ind];
+	int j;
+	s32b v = 0, m = 0; /* base starting skill value, skill modifier */
+	s32b jv, jm;
+	s32b real_user_increase = 0, val;
+	int spent_points;
+
+	compute_skills(p_ptr, &v, &m, i);
+
+	/* Calculate amount of 'manual increase' to this skill.
+	   Manual meaning either direct increases or indirect
+	   increases from related skills. */
+	real_user_increase = p_ptr->s_info[i].value - v;
+	/* Now get rid of amount of indirect increases we got
+	   from related skills. */
+	real_user_increase = real_user_increase - modified_by_related(p_ptr, i); /* recursive */
+	/* catch overflow cap (example: skill starts at 1.000,
+	   but is modified by a theoretical total of 50.000 from
+	   various other skills -> would end at -1.000) */
+	if (real_user_increase < 0) real_user_increase = 0;
+	/* calculate skill points spent into this skill */
+	spent_points = real_user_increase / m;
+
+	/* modify related skills */
+	for (j = 1; j < MAX_SKILLS; j++)
+	{
+		/* Ignore self */
+		if (j == i) continue;
+
+		/* Exclusive skills */
+		if (s_info[i].action[j] == SKILL_EXCLUSIVE)
+		{
+			jv = 0; jm = 0;
+			compute_skills(p_ptr, &jv, &jm, j);
+			/* Turn it on again (!) */
+			p_ptr->s_info[j].value = jv;
+		} else { /* Non-exclusive skills */
+			/* Decrease with a % */
+			val = p_ptr->s_info[j].value -
+			    ((p_ptr->s_info[j].mod * s_info[i].action[j] / 100) * spent_points);
+
+			/* Skill value cannot be negative */
+			if (val < 0) val = 0;
+			/* It cannot exceed SKILL_MAX */
+			if (val > SKILL_MAX) val = SKILL_MAX;
+
+			/* Save the modified value */
+			p_ptr->s_info[j].value = val;
+			
+			/* Update the client */
+			Send_skill_info(Ind, j);
+		}
+	}
+
+	/* Remove the points, ie set skill to its starting base value again
+	   and just add synergy points it got from other related skills */
+	p_ptr->s_info[i].value -= real_user_increase;
+	/* Free the points, making them available */
+	p_ptr->skill_points += spent_points;
+
+	/* Update the client */
+	calc_techniques(Ind);
+	Send_skill_info(Ind, i);
+	/* XXX updating is delayed till player leaves the skill screen */
+	p_ptr->update |= (PU_SKILL_MOD);
+	/* also update 'C' character screen live! */
+	p_ptr->update |= (PU_BONUS);
+	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
+}
+
+/* Complete skill-chart reset (full respec) - C. Blue */
+void respec_skills(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+	s32b v, m; /* base starting skill value, skill modifier */
+
+	/* Remove the points, ie set skills to its starting base values again */
+	for (i = 1; i < MAX_SKILLS; i++) {
+		v = 0; m = 0;
+		compute_skills(p_ptr, &v, &m, i);
+		p_ptr->s_info[i].value = v;
+		p_ptr->s_info[i].mod = m;
+		/* Update the client */
+		Send_skill_info(Ind, i);
+	}
+
+	/* Calculate amount of skill points that should be
+	    available to the player depending on his level */
+	p_ptr->skill_points = (p_ptr->max_plv - 1) * 5;
+
+	/* Update the client */
+	calc_techniques(Ind);
+	/* XXX updating is delayed till player leaves the skill screen */
+	p_ptr->update |= (PU_SKILL_MOD);
+	/* also update 'C' character screen live! */
+	p_ptr->update |= (PU_BONUS);
+	p_ptr->redraw |= (PR_SKILLS | PR_PLUSSES);
+}
+
+/* return amount of points that were invested into a skill */
+int invested_skill_points(int Ind, int i) {
+	player_type *p_ptr = Players[Ind];
+	s32b v = 0, m = 0; /* base starting skill value, skill modifier */
+	s32b real_user_increase = 0;
+
+	compute_skills(p_ptr, &v, &m, i);
+
+	/* Calculate amount of 'manual increase' to this skill.
+	   Manual meaning either direct increases or indirect
+	   increases from related skills. */
+	real_user_increase = p_ptr->s_info[i].value - v;
+	/* Now get rid of amount of indirect increases we got
+	   from related skills. */
+	real_user_increase = real_user_increase - modified_by_related(p_ptr, i); /* recursive */
+	/* catch overflow cap (example: skill starts at 1.000,
+	   but is modified by a theoretical total of 50.000 from
+	   various other skills -> would end at -1.000) */
+	if (real_user_increase < 0) real_user_increase = 0;
+	/* calculate skill points spent into this skill */
+	return(real_user_increase / m);
+}

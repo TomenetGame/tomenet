@@ -1202,9 +1202,8 @@ bool suppress_message = FALSE;
 
 void msg_print(int Ind, cptr msg)
 {
-	int line_len = 79 + 1; /* maximum length of a text line to be displayed
-			      (72, or client produces garbage sometimes;
-			      for example Itangast getting slain by a legendary adventurer of name length 12) */
+	int line_len = 72 + 1; /* maximum length of a text line to be displayed;
+		     this is client-dependant, compare c_msg_print (c-util.c) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0;
@@ -1725,8 +1724,8 @@ void use_ability_blade(int Ind)
 	}
 #else
 	int lev;
-	int chance;
  #if 0
+	int chance;
 	lev = p_ptr->lev;
 	chance = apply_dodge_chance(Ind, lev);
 	if (is_admin(p_ptr))
@@ -2018,7 +2017,9 @@ static void player_talk_aux(int Ind, char *message)
 			break;
 		case '\0':
 			/* if colon is last char in the line, it's not a priv/party msg. */
+#if 0 /* disabled this 'feature', might be more convenient - C. Blue */
 			colon = NULL;
+#endif
 			break;
 		}
 	}
@@ -2115,7 +2116,17 @@ static void player_talk_aux(int Ind, char *message)
 #endif
 
 		if (!p_ptr->wpos.wz) {
+#if 0
 			msg_print(Ind, "You aren't in a dungeon or tower.");
+#else /* Darkie's idea: */
+			if (*(message + 2)) {
+				msg_format_near(Ind, "\377B%^s says: %s", p_ptr->name, message + 2);
+    	        		msg_format(Ind, "\377BYou say: %s", message + 2);
+			} else {
+				msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
+        			msg_print(Ind, "\377BYou clear your throat.");
+			}
+#endif
 			return;
 		}
 
@@ -2356,6 +2367,10 @@ void toggle_afk(int Ind, char *msg)
 	player_type *p_ptr = Players[Ind];
 	char afk[160];
 	int i;
+
+	/* don't go un-AFK from auto-retaliation */
+	if (p_ptr->auto_retaliaty) return; 
+
 	strcpy(afk, "");
 
 	if (p_ptr->afk)
@@ -2383,7 +2398,8 @@ void toggle_afk(int Ind, char *msg)
 	{
 #if 1		
 		/* stop every major action */
-		disturb(Ind, 1, 0);
+//		disturb(Ind, 1, 0);
+		disturb(Ind, 1, 1); /* ,1) = keep resting! */
 #else
 	        /* Stop searching */
 	        if (p_ptr->searching)
@@ -3308,4 +3324,131 @@ cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr) {
 		return "everlasting";
 	}
 	return NULL; /* means "is compatible" */
+}
+
+/* cut out pseudo-id inscriptions from a string (a note ie inscription usually),
+   save resulting string in s2,
+   save highest found pseudo-id string in psid. - C. Blue */
+void note_crop_pseudoid(char *s2, char *psid, cptr s) {
+	char *p, s0[80];
+	strcpy(s2, s);
+	int id = 0; /* assume no pseudo-id inscription */
+
+	while (TRUE) {
+		strcpy(s0, s2);
+		strcpy(s2, "");
+
+		if ((p = strstr(s0, "terrible-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 1) id = 1;
+		} else if ((p = strstr(s0, "terrible"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 1) id = 1;
+		} else if ((p = strstr(s0, "cursed-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 2) id = 2;
+		} else if ((p = strstr(s0, "cursed"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 6);
+			if (id < 2) id = 2;
+#if 0 /* disabled for practical reasons, probably more comfortable */
+		} else if ((p = strstr(s0, "bad-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 4);
+			if (id < 3) id = 3;
+		} else if ((p = strstr(s0, "bad"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 3);
+			if (id < 3) id = 3;
+#endif
+		} else if ((p = strstr(s0, "worthless-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 10);
+			if (id < 4) id = 4;
+		} else if ((p = strstr(s0, "worthless"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 4) id = 4;
+		} else if ((p = strstr(s0, "broken-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 5) id = 5;
+		} else if ((p = strstr(s0, "broken"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 6);
+			if (id < 5) id = 5;
+		} else if ((p = strstr(s0, "average-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 6) id = 6;
+		} else if ((p = strstr(s0, "average"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 6) id = 6;
+		} else if ((p = strstr(s0, "good-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 5);
+			if (id < 7) id = 7;
+		} else if ((p = strstr(s0, "good"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 4);
+			if (id < 7) id = 7;
+		} else if ((p = strstr(s0, "excellent-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 10);
+			if (id < 8) id = 8;
+		} else if ((p = strstr(s0, "excellent"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 9);
+			if (id < 8) id = 8;
+		} else if ((p = strstr(s0, "special-"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 8);
+			if (id < 9) id = 9;
+		} else if ((p = strstr(s0, "special"))) {
+			strncpy(s2, s0, p - s0);
+			s2[p - s0] = '\0';
+			strcat(s2, p + 7);
+			if (id < 9) id = 9;
+		} else {
+			/* no further replacements to make */
+			break;
+		}
+	}
+
+	strcpy(s2, s0);
+
+	switch (id) {
+	case 1: strcpy(psid, "terrible"); break;
+	case 2: strcpy(psid, "cursed"); break;
+	case 3: strcpy(psid, "bad"); break;
+	case 4: strcpy(psid, "worthless"); break;
+	case 5: strcpy(psid, "broken"); break;
+	case 6: strcpy(psid, "average"); break;
+	case 7: strcpy(psid, "good"); break;
+	case 8: strcpy(psid, "excellent"); break;
+	case 9: strcpy(psid, "special"); break;
+	default:
+		strcpy(psid, "");
+	}
 }

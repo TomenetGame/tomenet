@@ -1828,12 +1828,25 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			/* Add a plural if needed */
 			if (o_ptr->number != 1)
 			{
-				char k = t[-1];
+				char k = t[-1], k2 = t[-2];
 
 				/* XXX XXX XXX Mega-Hack */
 
-				/* Hack -- "Cutlass-es" and "Torch-es" */
-				if ((k == 's') || (k == 'h')) *t++ = 'e';
+				/* Hack -- "Cutlass-es" and "Torch-es" and theoretically "Topaz-es" */
+				if ((k == 's') || (k == 'h') || (k == 'z')) *t++ = 'e';
+				
+				/* Hack -- ""Cod/ex -> Cod/ices" */
+				if (k == 'x') {
+					if (k2 == 'e') {
+						t -= 2;
+						*t++ = 'i';
+						*t++ = 'c';
+						*t++ = 'e';
+					} else {
+					    /* and "Suffix" -> "Suffixes", theoretically.. >_> */
+					    *t++ = 'e';
+					}
+				}
 
 				/* Add an 's' */
 				*t++ = 's';
@@ -1913,7 +1926,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			t = object_desc_chr(t, ' ');
 
-			if(o_ptr->tval==TV_RING && o_ptr->sval==SV_RING_SPECIAL){
+			if(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL){
 				monster_race *r_ptr=&r_info[o_ptr->bpval];
 				t=object_desc_str(t, "of ");
 				if(!(r_ptr->flags7 & RF7_NAZGUL)){
@@ -3796,7 +3809,7 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	player_type *p_ptr = Players[Ind];
 	int dam;
 
-	dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5 * mult;
+	dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult) / FACTOR_MULT;
 	dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
 	dam *= p_ptr->num_blow;
 	if (dam > 0)
@@ -3813,7 +3826,7 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 	if (mult2)
 	{
 		fprintf(fff, "\n");
-		dam = (o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5 * mult2;
+		dam = ((o_ptr->dd + (o_ptr->dd * o_ptr->ds)) * 5L * mult2) / FACTOR_MULT;
 		dam += (o_ptr->to_d + p_ptr->to_d + p_ptr->to_d_melee) * 10;
 		dam *= p_ptr->num_blow;
 		if (dam > 0)
@@ -3837,7 +3850,7 @@ static void output_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mul
 static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 {
 	player_type *p_ptr = Players[Ind];
-	object_type forge, *old_ptr = &forge;
+	object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
 	u32b f1, f2, f3, f4, f5, esp;
 	bool first = TRUE;
 
@@ -3847,18 +3860,37 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+	/* this stuff doesn't take into account dual-wield or shield(lessness) directly,
+	   but the player actually has to take care of unequipping/reequipping his
+	   secondary weapon slot before calling this accordingly to the results he wants
+	   to get! We can just take care of forced cases which are..
+	   - unequipping a shield or secondary weapon if weapon is MUST2H here.
+	   - unequipping a secondary weapon if weapon is weapon is SHOULD2H - C. Blue */
+
 	/* Ok now the hackish stuff, we replace the current weapon with this one */
 	/* XXX this hack can be even worse under TomeNET, dunno :p */
-	/* this stuff doesn't take into account dual-wield at all, might cause really bugged results */
 	object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 	object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+
+	/* handle secondary weapon or shield */
+	object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
+	/* take care of MUST2H if player still has a shield or secondary weapon equipped */
+	if (f4 & TR4_MUST2H) {
+		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
+	}
+	/* take care of SHOULD2H if player is dual-wielding */
+	else if ((f4 & TR4_SHOULD2H) && (is_weapon(p_ptr->inventory[INVEN_ARM].tval))) {
+		p_ptr->inventory[INVEN_ARM].k_idx = 0; /* temporarily delete */
+	}
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
 	calc_bonuses(Ind);
 
 	fprintf(fff, "\n");
-	fprintf(fff, "Using it you would have %d blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
+//	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
+//	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
+	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
@@ -3878,10 +3910,12 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	if (f1 & TR1_BRAND_ACID) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
 	if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
 
-	output_dam(Ind, fff, o_ptr, 1, 0, (first) ? "all monsters" : "other monsters", NULL);
+	output_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
 
 	fprintf(fff, "\n");
 
+	/* restore secondary weapon or shield */
+	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
 	calc_bonuses(Ind);
@@ -3899,7 +3933,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, int mult2, cptr against, cptr against2)
 {
 	player_type *p_ptr = Players[Ind];
-	int dam;
+	long dam;
 	object_type *b_ptr = &p_ptr->inventory[INVEN_BOW];
 	int tmul = get_shooter_mult(o_ptr);
 	tmul += p_ptr->xtra_might;
@@ -3909,12 +3943,13 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 	dam *= tmul;
 	dam += (p_ptr->to_d_ranged) * 10;
 	dam *= mult;
+	dam /= FACTOR_MULT;
 	if (dam > 0)
 	{
 		if (dam % 10)
-			fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+			fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
 		else
-			fprintf(fff, "    %d", dam / 10);
+			fprintf(fff, "    %ld", dam / 10);
 	}
 	else
 		fprintf(fff, "    0");
@@ -3928,12 +3963,13 @@ static void output_ammo_dam(int Ind, FILE *fff, object_type *o_ptr, int mult, in
 		dam *= tmul;
 		dam += (p_ptr->to_d_ranged) * 10;
 		dam *= mult2;
+		dam /= FACTOR_MULT;
 		if (dam > 0)
 		{
 			if (dam % 10)
-				fprintf(fff, "    %d.%d", dam / 10, dam % 10);
+				fprintf(fff, "    %ld.%ld", dam / 10, dam % 10);
 			else
-				fprintf(fff, "    %d", dam / 10);
+				fprintf(fff, "    %ld", dam / 10);
 		}
 		else
 			fprintf(fff, "    0");
@@ -3987,7 +4023,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non acid resistant creatures", "acid susceptible creatures");
 	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, "non poison resistant creatures", "poison susceptible creatures");
 
-	output_ammo_dam(Ind, fff, o_ptr, 1, 0, (first) ? "all monsters" : "other monsters", NULL);
+	output_ammo_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, (first) ? "all monsters" : "other monsters", NULL);
 	fprintf(fff, "\n");
 
 #if 0
@@ -4026,7 +4062,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	player_type *p_ptr = Players[Ind];
 //	cptr		*info = p_ptr->info;
 
-	int j, am;
+	int j, am, hold;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -4277,13 +4313,27 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 
 #endif
 	if (f4 & TR4_SHOULD2H) fprintf(fff, "It should be wielded two-handed.\n");
-	if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
-	if (f4 & TR4_COULD2H) fprintf(fff, "It may be wielded two-handed.\n");
+	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
+	else if (f4 & TR4_COULD2H) fprintf(fff, "It may be wielded two-handed or dual.\n");
+	else if (is_weapon(o_ptr->tval)) fprintf(fff, "It may be dual-wielded.\n");
 
+	/* Kings/Queens only warning */
+	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
 	/* Morgoth crown hardcoded note to give a warning!- C. Blue */
-	if (o_ptr->name1 == ART_MORGOTH)
+	else if (o_ptr->name1 == ART_MORGOTH)
 	{
-		fprintf(fff, "It may only be worn by kings and queens!\n");
+		fprintf(fff, "\377vIt may only be worn by kings and queens!\377w\n");
+	}
+	
+	/* Check for weapons, shields and shooters whether they are too heavy to use
+	   and give warning, so player won't buy something he can't use. */
+	hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
+	if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
+	    (hold < o_ptr->weight / 10)) {
+		fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively!\377w\n");
+	}
+	else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
+		fprintf(fff, "\377rThis shield is currently too heavy for you to use effectively!\377w\n");
 	}
 
 	/* Mega Hack^3 -- describe the amulet of life saving */
@@ -5204,6 +5254,7 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		{
 			if (o_ptr->sval == SV_RUNE1_SELF && o_ptr->name2) 
 				return (INVEN_TOOL);
+			return (-1);
 		}
 
 		case TV_BLUNT:
@@ -5517,8 +5568,18 @@ void display_inven(int Ind)
 		wgt = o_ptr->weight; //* o_ptr->number;
 
 		/* Send the info to the client */
-		//Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
-		Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, (o_ptr->tval == TV_BOOK) ? o_ptr->pval : 0, o_name);
+		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
+			if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+				Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, (o_ptr->tval == TV_BOOK) ? o_ptr->pval : 0, o_name);
+			} else {
+				Send_inven_wide(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, (o_ptr->tval == TV_BOOK) ? o_ptr->pval : 0,
+				    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, 
+				    o_name);
+			}
+		} else {
+			//Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
+			Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, (o_ptr->tval == TV_BOOK) ? o_ptr->pval : 0, o_name);
+		}
 	}
 }
 
@@ -5650,14 +5711,24 @@ bool can_use_verbose(int Ind, object_type *o_ptr)
 byte get_book_name_color(int Ind, object_type *o_ptr)
 {
 	//player_type *p_ptr = Players[Ind];
-	if (o_ptr->sval == SV_SPELLBOOK)
-	{
+	if (o_ptr->sval == SV_SPELLBOOK) {
 		return (byte)exec_lua(Ind, format("return get_spellbook_name_colour(%d)", o_ptr->pval));
-	}
-	else
-	{
+	} else if (o_ptr->sval >= SV_CUSTOM_TOME_1) {
+		/* first annotated spell decides */
+		if (o_ptr->xtra1)
+			return (byte)exec_lua(Ind, format("return get_spellbook_name_colour(%d)", o_ptr->xtra1 - 1));
+		else
+			return TERM_WHITE; /* unused custom book */
+	} else {
+		/* priests */
 		if (o_ptr->sval >= 12 && o_ptr->sval <= 15) return TERM_GREEN;
+		/* druids */
 		else if (o_ptr->sval >= 16 && o_ptr->sval <= 17) return TERM_L_GREEN;
+		/* astral tome */
+		else if (o_ptr->sval == 18) return TERM_ORANGE;
+		/* mindcrafters */
+		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
+		/* mages (default) */
 		else return TERM_L_BLUE;
 	}
 }

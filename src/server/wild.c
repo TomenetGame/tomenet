@@ -998,8 +998,8 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 					}
 					/* Hack -- only drop food the first time */
 					food.marked2 = ITEM_REMOVAL_NEVER;
-					if (!(w_ptr->flags & WILD_F_GENERATED)) drop_near(&food, -1, wpos, y, x);
-				}				
+					if (!(w_ptr->flags & WILD_F_GARDENS)) drop_near(&food, -1, wpos, y, x);
+				}
 			}
 		}
 	}
@@ -1113,20 +1113,24 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			}
 			break;
 	}
-	
+
+
+#if 0 /* replaced this generalization by more distinct flags, see below - C. Blue */
 	/* Hack -- if we have created this level before, do not add
 	   anything to it.
 	*/
 	if (w_ptr->flags & WILD_F_GENERATED) 
 	{
 		/* hack -- restore the RNG */
-		Rand_value = old_seed;	
+		Rand_value = old_seed;
 		return;
 	}
-	
+#endif
+
+
 	/* add the cash */
 	
-	if (cash)
+	if (!(w_ptr->flags & WILD_F_CASH) && cash)
 	{	
 		/* try to place the cash */
 		while (trys < 50)
@@ -1141,125 +1145,126 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				break;
 			}
 		trys++;
-		}		
+		}
 	}
 	
 	/* add the objects */
-	
-	trys = 0;
-	place_object_restrictor = RESF_NOHIDSM;
-	while ((num_objects) && (trys < 300))
-	{
-		x = rand_range(x1,x2);
-		y = rand_range(y1,y2);
-		
-		if (cave_clean_bold(zcave,y,x))
-		{			
-			object_level = w_ptr->radius/2 +1;
-			place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
-			num_objects--;
+	if (!(w_ptr->flags & WILD_F_OBJECTS)) {
+		trys = 0;
+		place_object_restrictor = RESF_NOHIDSM;
+		while ((num_objects) && (trys < 300))
+		{
+			x = rand_range(x1,x2);
+			y = rand_range(y1,y2);
+
+			if (cave_clean_bold(zcave,y,x))
+			{
+				object_level = w_ptr->radius/2 +1;
+				place_object(wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				num_objects--;
+			}
+			trys++;	
 		}
-		trys++;	
+		place_object_restrictor = RESF_NONE;
 	}
-	place_object_restrictor = RESF_NONE;
-	
+
 	/* add the food */
-	
-	trys = 0;
-	
-	while ((num_food) && (trys < 100))
-	{
-		x = rand_range(x1,x2);
-		y = rand_range(y1,y2);
-		
-		if (cave_clean_bold(zcave,y,x))
-		{		
-			food_sval = SV_FOOD_MIN_FOOD+rand_int(12);
-			/* hack -- currently no food svals between 25 and 32 */
-			if (food_sval > 25) food_sval += 6;
-			/* hack -- currently no sval 34 */
-			if (food_sval > 33) food_sval++;
-			
-			k_idx = lookup_kind(TV_FOOD,food_sval);
-			invcopy(&forge, k_idx);
-			forge.marked2 = ITEM_REMOVAL_NEVER;
-			drop_near(&forge, -1, wpos, y, x);
-			
-			num_food--;
+	if (!(w_ptr->flags & WILD_F_FOOD)) {
+		trys = 0;
+		while ((num_food) && (trys < 100))
+		{
+			x = rand_range(x1,x2);
+			y = rand_range(y1,y2);
+
+			if (cave_clean_bold(zcave,y,x))
+			{
+				food_sval = SV_FOOD_MIN_FOOD+rand_int(12);
+				/* hack -- currently no food svals between 25 and 32 */
+				if (food_sval > 25) food_sval += 6;
+				/* hack -- currently no sval 34 */
+				if (food_sval > 33) food_sval++;
+
+				k_idx = lookup_kind(TV_FOOD,food_sval);
+				invcopy(&forge, k_idx);
+				forge.marked2 = ITEM_REMOVAL_NEVER;
+				drop_near(&forge, -1, wpos, y, x);
+
+				num_food--;
+			}
+			trys++;	
 		}
-		trys++;	
 	}
 	
 	/* add the bones */
+	if (!(w_ptr->flags & WILD_F_BONES)) {
+		trys = 0;
+		get_obj_num_hook = wild_obj_aux_bones;
+		get_obj_num_prep(RESF_WILD);
 	
-	trys = 0;
-	
-	get_obj_num_hook = wild_obj_aux_bones;
-	get_obj_num_prep(RESF_WILD);
-	
-	while ((num_bones) && (trys < 100))
-	{
-		x = rand_range(x1,x2);
-		y = rand_range(y1,y2);
-		
-		if (cave_clean_bold(zcave,y,x))
-		{		
-			/* base of 500 feet for the bones */
-			k_idx = get_obj_num(10, RESF_NONE);
-			invcopy(&forge, k_idx);
-			forge.marked2 = ITEM_REMOVAL_NEVER;
-			drop_near(&forge, -1, wpos, y, x);
-			
-			num_bones--;
+		while ((num_bones) && (trys < 100))
+		{
+			x = rand_range(x1,x2);
+			y = rand_range(y1,y2);
+
+			if (cave_clean_bold(zcave,y,x))
+			{
+				/* base of 500 feet for the bones */
+				k_idx = get_obj_num(10, RESF_NONE);
+				invcopy(&forge, k_idx);
+				forge.marked2 = ITEM_REMOVAL_NEVER;
+				drop_near(&forge, -1, wpos, y, x);
+
+				num_bones--;
+			}
+			trys++;	
 		}
-		trys++;	
-		
 	}
 
 
 	/* hack -- restore the old object selection function */
-		
 	get_obj_num_hook = NULL;
 	get_obj_num_prep(RESF_NONE);
 	
 	/* add the inhabitants */
-	
-	if (at_home)
-	{
-		/* determine the home owners species*/
-		get_mon_num_hook = wild_monst_aux_home_owner;
-		get_mon_num_prep();		
-		/* homeowners can be tough */
-		r_idx = get_mon_num(w_ptr->radius, 0);
-		
-		/* get the owners location */
-		x = rand_range(x1,x2)+rand_int(40)-20;
-		y = rand_range(y1,y2)+rand_int(16)-8;
-		
-		/* place the owner */
-		
-		place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
-	}
-	
-	
-	/* add the invaders */	
-	if (taken_over)
-	{	
-		/* determine the invaders species*/
-		get_mon_num_hook = wild_monst_aux_invaders;
-		get_mon_num_prep();	 
-		r_idx = get_mon_num((w_ptr->radius/2)+1, 0);
-	
-		/* add the monsters */
-		for (y = y1; y <= y2; y++)
+	if (!(w_ptr->flags & WILD_F_HOME_OWNERS)) {
+		if (at_home)
 		{
-			for (x = x1; x <= x2; x++)
+			/* determine the home owners species*/
+			get_mon_num_hook = wild_monst_aux_home_owner;
+			get_mon_num_prep();
+			/* homeowners can be tough */
+			r_idx = get_mon_num(w_ptr->radius, 0);
+
+			/* get the owners location */
+			x = rand_range(x1,x2)+rand_int(40)-20;
+			y = rand_range(y1,y2)+rand_int(16)-8;
+
+			/* place the owner */
+			place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+		}
+	}
+
+	/* add the invaders */	
+	if (!(w_ptr->flags & WILD_F_INVADERS)) {
+		if (taken_over)
+		{
+			/* determine the invaders species*/
+			get_mon_num_hook = wild_monst_aux_invaders;
+			get_mon_num_prep();	 
+			r_idx = get_mon_num((w_ptr->radius/2)+1, 0);
+
+			/* add the monsters */
+			for (y = y1; y <= y2; y++)
 			{
-				place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+				for (x = x1; x <= x2; x++)
+				{
+					place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+				}
 			}
 		}
 	}
-	
+
+
 	/* hack -- restore the RNG */
 	Rand_value = old_seed;
 }
@@ -2024,7 +2029,7 @@ static unsigned char terrain_spot(terrain_type * terrain)
 		   isn't determined by the consistent wilderness seed */
 		tmp_seed = Rand_value; /* save RNG */
 		Rand_value = seed_wild_extra;
-		feat = magik(80)?FEAT_TREE:FEAT_BUSH;
+		feat = get_seasonal_tree();
 		seed_wild_extra = Rand_value; /* don't reset but remember */
 		Rand_value = tmp_seed;
 	}
@@ -2983,6 +2988,10 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 			for (x2 = x-1; x2 <= x+1; x2++) {
 				c2_ptr = &zcave[y2][x2];
 				if (y2 == y && x2 == x) continue;
+				if (!in_bounds(y2, x2)) {
+					found_more_water++; /* hack */
+					continue;
+				}
 				if (c2_ptr->feat == FEAT_SHAL_WATER ||
 //				    c2_ptr->feat == FEAT_WATER ||
 				    c2_ptr->feat == FEAT_TAINTED_WATER ||
@@ -2990,7 +2999,11 @@ static void wilderness_gen_hack(struct worldpos *wpos)
 					found_more_water++;
 				}
 			}
-			if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
+//			if (!found_more_water) c_ptr->feat = FEAT_SHAL_WATER;
+			/* also important for SEASON_WINTER, to turn lake border into ice */
+			if (found_more_water < 8) {
+				c_ptr->feat = FEAT_SHAL_WATER;
+			}
 		}
 	}
 	
@@ -3015,7 +3028,9 @@ void wilderness_gen(struct worldpos *wpos)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 
+
 	process_hooks(HOOK_WILD_GEN, "d", wpos);
+
 
 	/* Perma-walls -- North/South*/
 	for (x = 0; x < MAX_WID; x++)
@@ -3056,7 +3071,7 @@ void wilderness_gen(struct worldpos *wpos)
 		/* Illuminate and memorize the walls 
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
-	
+
 
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
@@ -3066,15 +3081,18 @@ void wilderness_gen(struct worldpos *wpos)
 		zcave[w_ptr->up_y][w_ptr->up_x].feat = FEAT_MORE;
 	/* TODO: add 'inscription' to the dungeon/tower entrances */
 
+
 	/* Day Light */
-	
-	if (IS_DAY) 
+	if (IS_DAY)
 	{
 		wild_apply_day(wpos);	
 
 		/* Make some day-time residents */
-		if (!(w_ptr->flags & WILD_F_INHABITED))
-			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
+		if (!(w_ptr->flags & WILD_F_INHABITED)) {
+//			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
+			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
+			w_ptr->flags |= WILD_F_INHABITED;
+		}
 	}
 
 	/* Night Time */
@@ -3082,14 +3100,12 @@ void wilderness_gen(struct worldpos *wpos)
 	{
 		/* Make some night-time residents */
 		
-		if (!(w_ptr->flags & WILD_F_INHABITED))
-			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
-		
+		if (!(w_ptr->flags & WILD_F_INHABITED)) {
+//			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
+			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
+			w_ptr->flags |= WILD_F_INHABITED;
+		}
 	}
-	
-	/* Set if we have generated the level before, to determine
-	   whether or not to respawn objects and monsters */
-	w_ptr->flags |= (WILD_F_GENERATED | WILD_F_INHABITED);
 
 
 	/* Indicate certain adjacent wilderness terrain types, so players
@@ -3160,6 +3176,14 @@ void wilderness_gen(struct worldpos *wpos)
 			}
 		}
 	}
+
+	/* Set if we have generated the level before (unused now though, that
+	   whether or not to respawn objects and monsters is decided by distinct
+	   flags of their own - C. Blue) */
+	w_ptr->flags |= WILD_F_GENERATED;
+
+	/* set all those flags */
+	w_ptr->flags |= WILD_F_INVADERS | WILD_F_HOME_OWNERS | WILD_F_BONES | WILD_F_FOOD | WILD_F_OBJECTS | WILD_F_CASH | WILD_F_GARDENS;
 }
 
 
@@ -3604,4 +3628,22 @@ void wild_add_new_dungeons() {
 
 		tries = 100;
 	}
+}
+
+/* manipulate flag of the player's wilderness level;
+   accessible from lua */
+void wild_flags(int Ind, u32b flags) {
+	/* -1 = just display flags */
+	if (flags == -1) {
+		msg_format(Ind, "Current flags: %d (0x%X).",
+		    wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags,
+		    wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags);
+		return;
+	}
+
+	msg_format(Ind, "Old flags: %d (0x%X). New flags: %d (0x%X).",
+	    wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags,
+	    wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags,
+	    flags, flags);
+	wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags = flags;
 }

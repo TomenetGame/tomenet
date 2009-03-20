@@ -882,14 +882,14 @@ static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num)
 	
 	int i;
 	
-#if 0
+ #if 0
 	/* Stupid monsters choose randomly */
 	if (r_ptr->flags2 & (RF2_STUPID))
 	{
 		/* Pick at random */
 		return (spells[rand_int(num)]);
 	}
-#endif	// 0
+ #endif	// 0
 	
 	/* Categorize spells */
 	for (i = 0; i < num; i++)
@@ -1182,7 +1182,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 		if (f0 & (1L << i)) spells[num++] = i + RF0_OFFSET;
 	}
 
-#ifdef HALLOWEEN
+if (season_halloween) {
 	/* Halloween event hack: The Great Pumpkin -C. Blue */
 	//if (!strcmp(r_ptr->name,"The Great Pumpkin"))
 	if ((m_ptr->r_idx == 1086) || (m_ptr->r_idx == 1087) || (m_ptr->r_idx == 1088))
@@ -1248,7 +1248,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 			break;
 		}
 	}
-#endif
+}
 
 	/* Paranoia */
 	if (num == 0) return 0;
@@ -1372,6 +1372,12 @@ static bool monst_check_antimagic(int Ind, int m_idx)
 	int antichance = 0, highest_antichance = 0, anti_Ind = 0;	// , dis, antidis;
 
 	if (!(zcave=getcave(wpos))) return(FALSE);
+
+	/* bad hack: Also abuse this function to check for silence-effect - C. Blue */
+	if (m_ptr->silenced > 0 && magik(60)) {
+		/* no message, just 'no mana to cast' ;) */
+		return(TRUE);
+	}
 
 	/* Multiple AM fields don't stack; only the strongest has effect - C. Blue */
 	for (i = 1; i <= NumPlayers; i++)
@@ -2488,7 +2494,7 @@ bool make_attack_spell(int Ind, int m_idx)
 		/* RF4_XXX7X4 */
 		case RF4_OFFSET+30:
 		{
-#ifdef HALLOWEEN
+if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
 
 			disturb(Ind, 1, 0);
@@ -2508,7 +2514,7 @@ bool make_attack_spell(int Ind, int m_idx)
 				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
 				break;
 			}
-#endif
+}
 			break;
 		}
 
@@ -3166,7 +3172,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				msg_print(Ind, "You disbelieve the feeble spell.");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (rand_int(100) < p_ptr->skill_sav ||
+			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You disbelieve the feeble spell.");
 			}
@@ -3188,7 +3195,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				msg_print(Ind, "You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (rand_int(100) < p_ptr->skill_sav ||
+			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You resist the effects!");
 			}
@@ -3211,7 +3219,8 @@ bool make_attack_spell(int Ind, int m_idx)
 			{
 				msg_print(Ind, "You are unaffected!");
 			}
-			else if (rand_int(100) < p_ptr->skill_sav)
+			else if (rand_int(100) < p_ptr->skill_sav ||
+			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You resist the effects!");
 			}
@@ -5107,6 +5116,8 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* If there's los we can just cast a spell -
 		   this assumes the monster can cast damaging spells, might need fixing */
 //EXPERIMENTALLY COMMENTED OUT		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+		/* EMPTY_MINDed skeleton, zombie, spectral egos don't care anymore */
+		(m_ptr->ego != 1 && m_ptr->ego != 2 && m_ptr->ego != 4) &&
 		/* Only stay back if the player moved away from us -
 		   this assumes the monster didn't perform a RAND_ turn, might need fixing */
 		(m_ptr->last_target == p_ptr->id)) {
@@ -5342,6 +5353,8 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		/* If there's los we can just cast a spell -
 		   this assumes the monster can cast damaging spells, might need fixing */
 //EXPERIMENTALLY COMMENTED OUT		!los(&p_ptr->wpos, y2, x2, m_ptr->fy, m_ptr->fx) &&
+		/* EMPTY_MINDed skeleton, zombie, spectral egos don't care anymore */
+		(m_ptr->ego != 1 && m_ptr->ego != 2 && m_ptr->ego != 4) &&
 		/* Only stay back if the player moved away from us -
 		   this assumes the monster didn't perform a RAND_ turn, might need fixing */
 		(m_ptr->last_target == p_ptr->id))
@@ -6674,6 +6687,10 @@ static void process_monster(int Ind, int m_idx)
 	/* Handle "taunted" */
 	if (m_ptr->taunted) m_ptr->taunted--;
 
+	/* Handle "silenced" */
+	if (m_ptr->silenced > 0) m_ptr->silenced--;
+	else if (m_ptr->silenced < 0) m_ptr->silenced++;
+
 	/* Get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
@@ -6894,6 +6911,15 @@ static void process_monster(int Ind, int m_idx)
 		{
 			/* Nothing */
 		}
+
+		/* "protected" grid without player on it => cannot enter!  - C. Blue
+		   - todo: test behaviour in arena.
+		   Note: If player was on it, monster will be able to attack him at least :) */
+		else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
+		    (c_ptr->m_idx >= 0)) {
+			/* nothing */
+		}
+
 		/* Tainted grid? */
 		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
 				!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
@@ -6946,11 +6972,6 @@ static void process_monster(int Ind, int m_idx)
 		{
 			/* Move into player */
 			do_move = TRUE;
-		}
-
-		/* protected grid? - todo: test behaviour in arena */
-		else if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
-			/* nothing */
 		}
 
 		/* Let monsters pass permanent but passable walls if they have PASS_WALL! */
@@ -7008,7 +7029,7 @@ static void process_monster(int Ind, int m_idx)
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
 			//c_ptr->feat = twall_erosion(wpos, ny, nx);
-			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -7174,7 +7195,7 @@ static void process_monster(int Ind, int m_idx)
 #endif	// 0
 
 				/* Break the rune */
-				cave_set_feat(wpos, ny, nx, FEAT_FLOOR);
+				cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
 
 				/* Allow movement */
 				do_move = TRUE;
@@ -7260,6 +7281,7 @@ static void process_monster(int Ind, int m_idx)
 					case CLASS_ADVENTURER:
 					case CLASS_SHAMAN:
 					case CLASS_RUNEMASTER:
+					case CLASS_MINDCRAFTER:
 						medium_targets++;
 						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
 						break;
@@ -7301,7 +7323,7 @@ static void process_monster(int Ind, int m_idx)
 			if (r_ptr->flags3 & RF3_GIANT) reason = 0;
 			if (r_ptr->flags3 & RF3_ANIMAL) reason = 0;
 			if (r_ptr->flags2 & RF2_STUPID) reason = 0;
-			if (r_ptr->flags2 & (RF2_WEIRD_MIND | RF2_EMPTY_MIND) reason = 0;
+			if (r_ptr->flags2 & (RF2_WEIRD_MIND | RF2_EMPTY_MIND)) reason = 0;
 			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0;
 			if (strchr("AD", r_ptr->d_char)) reason = 0;
 
@@ -7678,7 +7700,7 @@ static void process_monster(int Ind, int m_idx)
 						excise_object_idx(this_o_idx);
 
 						/* Forget mark */
-						//					o_ptr->marked = FALSE;
+//						o_ptr->marked = FALSE;
 
 						/* Forget location */
 						o_ptr->iy = o_ptr->ix = 0;
@@ -8052,7 +8074,7 @@ static void process_monster_pet(int Ind, int m_idx)
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
-			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -8504,7 +8526,7 @@ static void process_monster_golem(int Ind, int m_idx)
 
 			/* Create floor */
 //			c_ptr->feat = FEAT_FLOOR;
-			cave_set_feat(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);

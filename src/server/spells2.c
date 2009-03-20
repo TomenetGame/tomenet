@@ -59,6 +59,9 @@ void divine_vengeance(int Ind, int power) {
 			/* Skip players not on this depth */
 			if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
 
+			/* Skip DM if not DM himself */
+			if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+
 			/* Skip players not in the same party */
 			if (q_ptr->party == 0 || p_ptr->party == 0) continue;
 			if (p_ptr->party != q_ptr->party) continue;
@@ -71,6 +74,10 @@ void divine_vengeance(int Ind, int power) {
 		dispel_monsters(Ind, power);
 	//	project_hack(Ind, GF_DISP_ALL, power, " commands leave");
 	}
+}
+#else //lol, shared .pkg
+void divine_vengeance(int Ind, int power) {
+    return;
 }
 #endif
 
@@ -110,6 +117,44 @@ void divine_gateway(int Ind) {
 }
 
 #endif
+
+/* for mindcrafters: teleport to friendly player with open mind - C. Blue */
+void do_autokinesis_to(int Ind, int dis) { 
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	int i;
+
+	if (p_ptr->party == 0) {
+		msg_print(Ind, "You can only teleport to party members.");
+		return;
+	}
+
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip self */
+		if (i == Ind) continue;
+		q_ptr = Players[i];
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		/* Skip DM if not DM himself */
+		if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+		/* Skip players not on this depth */
+		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
+		/* Skip players not in the same party */
+		if (q_ptr->party == 0 || p_ptr->party != q_ptr->party) continue;
+		/* Skip players who haven't opened their mind */
+		if (!(q_ptr->esp_link_flags & LINKF_TELEKIN)) continue;
+		/* Skip targets too far away */
+		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > dis) continue;
+
+		/* success */
+		msg_print(Ind, "You reach an allied mind!");
+		teleport_player_to(Ind, q_ptr->py, q_ptr->px);
+		return;
+	}
+
+	/* fail */
+	msg_print(Ind, "You couldn't make out any destination within your mental reach.");
+}
+
 /*
  * Grow trees
  */
@@ -132,7 +177,7 @@ void grow_trees(int Ind, int rad)
 
 		if (cave_clean_bold(zcave, p_ptr->py + j, p_ptr->px + i) && (zcave[p_ptr->py + j][p_ptr->px + i].feat != FEAT_HOME_OPEN)) /* HACK - not on open house door - mikaelh */
 		{
-			cave_set_feat(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
+			cave_set_feat_live(&p_ptr->wpos, p_ptr->py + j, p_ptr->px + i, magik(50)?FEAT_TREE:FEAT_BUSH);
 		}
 	}
 }
@@ -194,7 +239,7 @@ bool create_garden(int Ind, int chance) {
 				if (randint(100) < chance) {
 					/* Delete the object (if any) */
 					delete_object(wpos, y, x, TRUE);
-					cave_set_feat(&p_ptr->wpos, y, x, magik(50)?FEAT_TREE:FEAT_BUSH);
+					cave_set_feat_live(&p_ptr->wpos, y, x, magik(50)?FEAT_TREE:FEAT_BUSH);
 					//c_ptr->feat = feat;
 				}
 			}
@@ -593,7 +638,7 @@ void warding_glyph(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
-	cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
+	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
 }
 
 
@@ -3849,7 +3894,7 @@ bool create_artifact_aux(int Ind, int item)
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
-	s_printf("%s: ART_CREATION by player %s: %s\n", showtime(), p_ptr->name, o_name);
+	s_printf("ART_CREATION by player %s: %s\n", p_ptr->name, o_name);
 
 	if (o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT && !is_admin(p_ptr)) {
 		msg_print(Ind, "The item appears unchanged!");
@@ -3962,7 +4007,7 @@ bool create_artifact_aux(int Ind, int item)
 	/* Log it (security) */
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
-	s_printf("%s: ART_CREATION succeeded: %s\n", showtime(), o_name);
+	s_printf("ART_CREATION succeeded: %s\n", o_name);
 
 	/* Did we use up an item? (minus 1 art scroll) */
 	if (p_ptr->using_up_item >= 0)
@@ -4013,7 +4058,8 @@ bool curse_spell_aux(int Ind, int item)
 		}
 	}
 
-	msg_format(Ind,"A terrible black aura surrounds your %s",o_name,o_ptr->number>1 ? "" : "s");
+	msg_format(Ind,"A terrible black aura surrounds your %s",
+	    o_name, o_ptr->number > 1 ? "" : "s");
 	/* except it doesnt actually get cursed properly yet. */
 	o_ptr->name1=0;
 	o_ptr->name3=0;
@@ -4209,6 +4255,9 @@ bool ident_spell_aux(int Ind, int item)
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
+	
+	/* redraw to-hit/to-dam */
+	p_ptr->redraw |= (PR_PLUSSES);
 
 	/* Combine / Reorder the pack (later) */
 	p_ptr->notice |= (PN_COMBINE | PN_REORDER);
@@ -4896,7 +4945,7 @@ void distract_monsters(int Ind)
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-            	    (strchr("hHkpt", r_ptr->d_char))) tauntable = TRUE;
+            	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 		
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -4916,7 +4965,7 @@ void distract_monsters(int Ind)
 #if 0 /*actually, being POWERFUL doesn't really protect.. */
 		if (r_ptr->flags2 & RF2_POWERFUL) tauntable = FALSE;
 #endif
-#if 1 /* shamans -_- and not only that, way too many monsters are SMART, so commented out for now */
+#if 0 /* shamans -_- and not only that, way too many monsters are SMART, so commented out for now */
 		if (r_ptr->flags2 & RF2_SMART) tauntable = FALSE; /* smart monsters don't fall for taunts */
 #endif
 		if (r_ptr->flags3 & RF3_NONLIVING) tauntable = FALSE; /* nonliving monsters can't perceive taunts */
@@ -4960,7 +5009,7 @@ void taunt_monsters(int Ind)
 		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 
 		if ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT | RF3_DEMON)) ||
-            	    (strchr("hHkpt", r_ptr->d_char))) tauntable = TRUE;
+            	    (strchr("hHkptn", r_ptr->d_char))) tauntable = TRUE;
 		else tauntable = FALSE;
 		
 		if (r_ptr->level >= 98) tauntable = FALSE; /* end-game specialties are exempt */
@@ -5489,9 +5538,9 @@ bool probing(int Ind)
 
 			/* Describe the monster */
 			if (r_ptr->flags7 & RF7_NO_DEATH)
-	                        msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->speed);
+	                        msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed);
 			else
-    	                	msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->speed);
+	                	msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed);
                         msg_format(Ind, "%^s (%d) %s.", m_name, m_ptr->level, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
@@ -5661,28 +5710,28 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				if (t < 20)
 				{
 					/* Create granite wall */
-					cave_set_feat(wpos, y, x, FEAT_WALL_EXTRA);
+					cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					cave_set_feat(wpos, y, x, FEAT_QUARTZ);
+					cave_set_feat_live(wpos, y, x, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					cave_set_feat(wpos, y, x, FEAT_MAGMA);
+					cave_set_feat_live(wpos, y, x, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor or whatever specified */
-					cave_set_feat(wpos, y, x, feat);
+					cave_set_feat_live(wpos, y, x, feat);
 				}
 			}
 		}
@@ -6140,28 +6189,28 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				if (t < 20)
 				{
 					/* Create granite wall */
-					cave_set_feat(wpos, yy, xx, FEAT_WALL_EXTRA);
+					cave_set_feat_live(wpos, yy, xx, FEAT_WALL_EXTRA);
 				}
 
 				/* Quartz */
 				else if (t < 70)
 				{
 					/* Create quartz vein */
-					cave_set_feat(wpos, yy, xx, FEAT_QUARTZ);
+					cave_set_feat_live(wpos, yy, xx, FEAT_QUARTZ);
 				}
 
 				/* Magma */
 				else if (t < 100)
 				{
 					/* Create magma vein */
-					cave_set_feat(wpos, yy, xx, FEAT_MAGMA);
+					cave_set_feat_live(wpos, yy, xx, FEAT_MAGMA);
 				}
 
 				/* Floor */
 				else
 				{
 					/* Create floor */
-					cave_set_feat(wpos, yy, xx, FEAT_FLOOR);
+					cave_set_feat_live(wpos, yy, xx, FEAT_FLOOR);
 				}
 			}
 		}
@@ -6662,14 +6711,21 @@ bool cast_raindrop(worldpos *wpos, int x)
 {
 	char pattacker[80];
         strcpy(pattacker, "");
+        int pseudo_y_start;
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
 	project_time_effect = EFF_RAINING;
 	project_interval = 3;
-	project_time = 20;//1 + randint(66 - 3);
+	/* let more drops appear at top line, simulating that they were
+	   created 'above' the screen, so we don't get quite empty top lines */
+	pseudo_y_start = rand_int(66 - 1 + 20) - 20;
+	project_time = pseudo_y_start < 0 ? 20 + pseudo_y_start : 20;
+	if (pseudo_y_start < 0) pseudo_y_start = 0;
+	return (project(PROJECTOR_EFFECT, 0, wpos, pseudo_y_start, x, 0, GF_RAINDROP, flg, pattacker));
 
-	return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
+//	project_time = 20;//1 + randint(66 - 3);
+//	return (project(PROJECTOR_EFFECT, 0, wpos, 1 + randint(66 - 3), x, 0, GF_RAINDROP, flg, pattacker));
 }
 
 /*
@@ -6964,6 +7020,66 @@ bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attac
 	{
 		return (fire_bolt(Ind, typ, dir, dam, attacker));
 	}
+}
+
+/* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid.
+   Added for new mindcrafter spells.
+   It kind of manually fakes a PROJECT_JUMP. - C. Blue */
+bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	char pattacker[80];
+	int tx, ty;
+
+	int flg = PROJECT_HIDE | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam /= 2;
+
+	/* Use the given direction */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		flg &= ~PROJECT_STOP;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+}
+
+/* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid.
+   Added for new mindcrafter spells. This one is for floor/item feats eg traps.
+   It kind of manually fakes a PROJECT_JUMP. - C. Blue */
+bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	char pattacker[80];
+	int tx, ty;
+
+	int flg = PROJECT_HIDE | PROJECT_BEAM | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam /= 2;
+
+	/* Use the given direction */
+	tx = p_ptr->px + 99 * ddx[dir];
+	ty = p_ptr->py + 99 * ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind))
+	{
+		flg &= ~PROJECT_STOP;
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
 
 
@@ -7447,6 +7563,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 	/* Extract the monster base speed */
 	m_ptr->speed = r_ptr->speed;
+	/* set cur speed to base speed */
 	m_ptr->mspeed = m_ptr->speed;
 
 	/* Extract base ac and  other things */
@@ -7614,6 +7731,7 @@ bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx)
 
 	/* Extract the monster base speed */
 	m_ptr->speed = r_ptr->speed;
+	/* set cur speed to base speed */
 	m_ptr->mspeed = m_ptr->speed;
 
 	/* Extract base ac and  other things */
@@ -7959,7 +8077,9 @@ void golem_creation(int Ind, int max)
 		}
 	}
 	//#endif
+	/* extract base speed */
 	m_ptr->speed = r_ptr->speed;
+	/* set cur speed to base speed */
 	m_ptr->mspeed = m_ptr->speed;
 	m_ptr->ac = r_ptr->ac;
 	m_ptr->maxhp = maxroll(r_ptr->hdice, r_ptr->hside);
@@ -8115,4 +8235,163 @@ bool do_vermin_control(int Ind) {
                 return TRUE;
         }
         return FALSE;
+}
+
+/* see create_custom_tome_aux() below */
+void tome_creation(int Ind) {
+  player_type *p_ptr = Players[Ind];
+
+  clear_current(Ind);
+
+  p_ptr->current_tome_creation = TRUE;
+  get_item(Ind);
+
+  return;
+}
+
+/* add a spell scroll to the player's custom-made tome - C. Blue
+   Note: pval must be incremented by 1, because first spell
+   (MANATHRUST) starts at 0, but we use 0 for <not used>
+   because xtra1..9 are of type 'byte' so we can't use -1. */
+void tome_creation_aux(int Ind, int item) {
+	player_type	*p_ptr = Players[Ind];
+	bool		okay = TRUE;
+	object_type	*o_ptr, *o2_ptr;
+	char		o_name[160];
+
+	/* Get the item (in the pack) */
+	if (item >= 0) o_ptr = &p_ptr->inventory[item];
+	/* Get the item (on the floor) */
+	else o_ptr = &o_list[0 - item];
+	/* Get the item (in the pack) */
+	if (p_ptr->using_up_item >= 0) o2_ptr = &p_ptr->inventory[p_ptr->using_up_item];
+	/* Get the item (on the floor) */
+	else o2_ptr = &o_list[0 - p_ptr->using_up_item];
+
+	/* severe error: custom book no longer there */
+	if (o_ptr->tval != TV_BOOK || o_ptr->sval == SV_SPELLBOOK ||
+	    o_ptr->sval < SV_CUSTOM_TOME_1)
+	{
+		/* completely start from scratch (have to re-'activate') */
+		msg_print(Ind, "A book's inventory location was changed, please retry!");
+		clear_current(Ind); /* <- not required actually */
+		return;
+	}
+
+#if 1 /* done in do_cmd_activate already. double-check */
+	/* free space left? */
+	/* k_info-pval dependant */ 
+	switch (o_ptr->bpval) {
+	case 0: okay = FALSE; break;
+	case 1: if (o_ptr->xtra1) okay = FALSE; break;
+	case 2: if (o_ptr->xtra2) okay = FALSE; break;
+	case 3: if (o_ptr->xtra3) okay = FALSE; break;
+	case 4: if (o_ptr->xtra4) okay = FALSE; break;
+	case 5: if (o_ptr->xtra5) okay = FALSE; break;
+	case 6: if (o_ptr->xtra6) okay = FALSE; break;
+	case 7: if (o_ptr->xtra7) okay = FALSE; break;
+	case 8: if (o_ptr->xtra8) okay = FALSE; break;
+	default: if (o_ptr->xtra9) okay = FALSE; break;
+	}
+	if (!okay) {
+		/* completely start from scratch (have to re-'activate') */
+		msg_print(Ind, "That book has no blank pages left!");
+		clear_current(Ind); /* <- not required actually */
+		return;
+	}
+#endif
+
+	if (o2_ptr->tval != TV_BOOK || o2_ptr->sval != SV_SPELLBOOK)
+	{
+		msg_print(Ind, "You can only transcribe a spell scroll!");
+		/* restore silyl hack.. */
+		p_ptr->using_up_item = item;
+		/* try again */
+		get_item(Ind);
+		return;
+	}
+
+	/* need to actually be able to cast the spell in order to transcribe it! */
+	if (exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, o2_ptr->pval)) < 1) {
+		msg_print(Ind, "Your knowledge of that spell is insufficient!");
+		/* restore silyl hack.. */
+		p_ptr->using_up_item = item;
+		/* try again */
+		get_item(Ind);
+		return;
+	}
+
+	/* check for duplicate entry -> prevent it */
+	if (o_ptr->xtra1 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra2 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra3 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra4 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra5 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra6 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra7 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra8 == o2_ptr->pval + 1 ||
+	    o_ptr->xtra9 == o2_ptr->pval + 1) {
+		msg_print(Ind, "The book already contains that spell!");
+		/* restore silyl hack.. */
+		p_ptr->using_up_item = item;
+		/* try again */
+		get_item(Ind);
+		return;
+	}
+
+	/* - Success finally - */
+
+	/* transcribe (add it)! */
+	if (!o_ptr->xtra1) o_ptr->xtra1 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra2) o_ptr->xtra2 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra3) o_ptr->xtra3 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra4) o_ptr->xtra4 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra5) o_ptr->xtra5 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra6) o_ptr->xtra6 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra7) o_ptr->xtra7 = o2_ptr->pval + 1;
+	else if (!o_ptr->xtra8) o_ptr->xtra8 = o2_ptr->pval + 1;
+	else o_ptr->xtra9 = o2_ptr->pval + 1;
+
+	/* Description */
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+	/* Describe */
+	msg_format(Ind, "%s %s glow%s brightly!",
+	           ((item >= 0) ? "Your" : "The"), o_name,
+	           ((o_ptr->number > 1) ? "" : "s"));
+
+	/* Did we use up an item? */
+	if (p_ptr->using_up_item >= 0)
+	{
+		inven_item_increase(Ind, p_ptr->using_up_item, -1);
+		inven_item_describe(Ind, p_ptr->using_up_item);
+		inven_item_optimize(Ind, p_ptr->using_up_item);
+		p_ptr->using_up_item = -1;
+	}
+
+	/* unstack if our custom book was originally in a pile */
+        if ((item >= 0) && (o_ptr->number > 1))
+        {
+                /* Make a fake item */
+                object_type tmp_obj;
+                tmp_obj = *o_ptr;
+                tmp_obj.number = 1;
+
+		/* Restore remaining 'untouched' stack of books */
+		o_ptr->xtra1 = 0;
+
+                /* Message */
+                msg_print(Ind, "You unstack your book.");
+
+                /* Unstack the used item */
+                o_ptr->number--;
+                p_ptr->total_weight -= tmp_obj.weight;
+                item = inven_carry(Ind, &tmp_obj);
+        }
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN);
+	p_ptr->notice |= (PN_REORDER);
+
+	/* Something happened */
+	return;
 }

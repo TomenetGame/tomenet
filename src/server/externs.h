@@ -22,7 +22,7 @@ extern int WorldSocket;
 extern void world_msg(char *text);
 extern void world_player(unsigned long id, char *name, unsigned short enter, byte quiet);
 extern void world_chat(unsigned long id, char *text);
-extern void world_remote_players(FILE *fff);
+extern int world_remote_players(FILE *fff);
 struct rplist *world_find_player(char *pname, short server);
 void world_pmsg_send(unsigned long id, char *name, char *pname, char *text);
 #endif
@@ -430,6 +430,7 @@ extern c_special *ReplaceCS(cave_type *c_ptr, byte type);
 extern void FreeCS(cave_type *c_ptr);
 extern dun_level *getfloor(struct worldpos *wpos);
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern int check_feat(worldpos *wpos, int y, int x);
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
 extern bool can_go_up(struct worldpos *wpos, byte mode);
@@ -477,12 +478,15 @@ extern bool is_quest(struct worldpos *wpos);
 extern void health_track(int Ind, int m_idx);
 extern void update_health(int m_idx);
 extern void recent_track(int r_idx);
-extern void disturb(int Ind, int stop_search, int flush_output);
+extern void disturb(int Ind, int stop_search, int keep_resting);
 extern void update_players(void);
 
 extern int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags);
 extern bool allow_terraforming(struct worldpos *wpos, byte feat);
 extern void everyone_lite_later_spot(struct worldpos *wpos, int y, int x);
+
+extern void season_change(int s, bool force);
+extern void lively_wild(u32b flags);
 
 
 /* cmd1.c */
@@ -549,6 +553,7 @@ extern void break_shadow_running(int Ind);
 extern void stop_cloaking(int Ind);
 extern void stop_precision(int Ind);
 extern void stop_shooting_till_kill(int Ind);
+extern void do_cmd_fusion(int Ind);
 
 
 /* cmd3.c */
@@ -669,6 +674,9 @@ extern cptr value_check_aux2(object_type *o_ptr);
 extern cptr value_check_aux1_magic(object_type *o_ptr);
 extern cptr value_check_aux2_magic(object_type *o_ptr);
 
+extern void world_surface_day(struct worldpos *wpos);
+extern void world_surface_night(struct worldpos *wpos);
+
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
 
@@ -702,6 +710,9 @@ extern void kingly(int Ind);
 extern void kingly2(int Ind);
 extern errr get_rnd_line(cptr file_name, int entry, char *output);
 extern void wipeout_needless_objects(void);
+extern bool highscore_reset(int Ind);
+extern bool highscore_remove(int Ind, int slot);
+extern bool highscore_file_convert(int Ind);
 
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x); 
@@ -716,6 +727,7 @@ extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 extern void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 
 extern void place_floor(worldpos *wpos, int y, int x);
+extern int get_seasonal_tree(void);
 
 
 /* wild.c */
@@ -734,6 +746,13 @@ extern void wild_add_uhouse(house_type *h_ptr);
 extern void wild_add_uhouses(struct worldpos *wpos);
 extern bool reveal_wilderness_around_player(int Ind, int y, int x, int h, int w);
 extern void wild_add_new_dungeons(void);
+
+extern void initwild(void);
+extern void genwild(void);
+extern void wild_spawn_towns(void);
+extern void init_wild_info_aux(int x, int y);
+
+extern void wild_flags(int Ind, u32b flags);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -869,7 +888,9 @@ extern int Send_char_info(int Ind, int race, int class, int sex, int mode);
 extern int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body);
 extern int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int cur_base);
 extern int Send_history(int Ind, int line, cptr hist);
-extern int Send_inven(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
+extern int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
+extern int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval,
+    byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9, cptr name);
 extern int Send_equip(int Ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name);
 extern int Send_title(int Ind, cptr title);
 /*extern int Send_level(int Ind, int max, int cur);*/
@@ -917,11 +938,14 @@ extern int Send_skills(int ind);
 extern int Send_pause(int ind);
 extern int Send_monster_health(int ind, int num, byte attr);
 extern int Send_chardump(int ind);
+extern int Send_unique_monster(int ind, int r_idx);
 
 extern void Handle_direction(int Ind, int dir);
 extern void Handle_clear_buffer(int Ind);
 extern int Send_sanity(int ind, byte attr, cptr msg);
 extern char *showtime(void);
+extern char *showdate(void);
+extern void get_date(int *weekday, int *day, int *month, int *year);
 extern void init_players(void);
 extern int is_inactive(int Ind);
 
@@ -1030,6 +1054,7 @@ extern u32b make_resf(player_type *p_ptr);
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
 extern int validate(char *name);
+extern int invalidate(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
 extern struct account *GetAccountID(u32b id);
@@ -1252,6 +1277,8 @@ extern bool cast_fireworks(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
+extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool lite_line(int Ind, int dir);
 extern bool drain_life(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
@@ -1281,6 +1308,8 @@ extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool do_vermin_control(int Ind);
+extern void tome_creation(int Ind);
+extern void tome_creation_aux(int Ind, int item);
 
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
@@ -1288,6 +1317,8 @@ extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
 extern void divine_vengeance(int Ind, int power);
+
+extern void do_autokinesis_to(int Ind, int dis);
 
 extern bool do_res_stat_temp(int Ind, int stat);
 extern void swap_position(int Ind, int lty, int ltx);
@@ -1379,7 +1410,8 @@ extern void keymap_init(void);
 extern char inkey(void);
 extern cptr quark_str(s16b num);
 extern s16b quark_add(cptr str);
-extern bool check_guard_inscription( s16b quark, char what);
+extern void note_crop_pseudoid(char *s2, char *psid, cptr s);
+extern bool check_guard_inscription(s16b quark, char what);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
 extern void msg_admins(int Ind, cptr msg);
@@ -1507,6 +1539,7 @@ extern bool set_oppose_cold(int Ind, int v);
 extern bool set_oppose_pois(int Ind, int v);
 extern bool set_stun(int Ind, int v);
 extern bool set_cut(int Ind, int v, int attacker);
+extern bool set_mindboost(int Ind, int p, int v);
 extern bool set_food(int Ind, int v);
 extern int get_player(int Ind, object_type *o_ptr);
 extern int get_monster(int Ind, object_type *o_ptr);
@@ -1635,12 +1668,6 @@ extern bool mon_hit_trap(int m_idx);
 
 extern void wiz_place_trap(int Ind, int trap);
 
-/* wild.c */
-extern void initwild(void);
-extern void genwild(void);
-extern void wild_spawn_towns(void);
-extern void init_wild_info_aux(int x, int y);
-
 
 extern char	*longVersion;
 extern char	*shortVersion;
@@ -1655,6 +1682,9 @@ extern s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale);
 extern void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i);
 extern s16b find_skill(cptr name);
 extern void msg_gained_abilities(int Ind, int old_value, int i);
+extern void respec_skill(int Ind, int i);
+extern void respec_skills(int Ind);
+extern int invested_skill_points(int Ind, int i);
 
 /* hooks.c */
 extern bool process_hooks(int h_idx, char *fmt, ...);
@@ -1686,8 +1716,8 @@ void lua_strip_true_arts_from_floors(void);
 void lua_check_player_for_true_arts(int Ind);
 int lua_get_mon_lev(int r_idx);
 char *lua_get_mon_name(int r_idx);
-char* lua_get_last_chat_owner();
-char* lua_get_last_chat_line();
+char *lua_get_last_chat_owner();
+char *lua_get_last_chat_line();
 extern bool first_player_joined;
 void lua_towns_treset(void);
 long lua_player_exp(int level, int expfact);
@@ -1701,6 +1731,9 @@ extern void lua_set_floor_flags(int Ind, u32b flags);
 extern s32b lua_get_skill_mod(int Ind, int i);
 extern s32b lua_get_skill_value(int Ind, int i);
 extern void lua_fix_equip_slots(int Ind);
+extern int get_inven_sval(int Ind, int inven_slot);
+extern int get_inven_xtra(int Ind, int inven_slot, int n);
+extern void lua_fix_skill_chart(int Ind);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
@@ -1713,6 +1746,13 @@ extern bool watch_nr;
 extern bool watch_morgoth;
 extern int cron_1h_last_hour; /* manage cron_1h calls */
 extern int regen_boost_stamina;
+
+/* default 'updated_savegame' value for newly created chars [0].
+   usually modified by lua (server_startup()) instead of here. */
+extern int updated_savegame_birth;
+/* Like 'updated_savegame' is for players, this is for (lua) server state [0]
+   usually modified by lua (server_startup()) instead of here. */
+extern int updated_server;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
@@ -1727,11 +1767,20 @@ extern int summon_override_checks;
 /* Morgoth may override the no-destroy flag (other monsters too, if needed) */
 extern bool override_LF1_NO_DESTROY;
 
+/* the four seasons */
+extern void lua_season_change(int s, int force);
+extern byte season;
 /* for snowfall during WINTER_SEASON mainly */
 extern int weather;
 extern int weather_duration;
+extern byte weather_frequency;
 extern int wind_gust;
 extern int wind_gust_delay;
+
+/* special seasons */
+extern int season_halloween;
+extern int season_newyearseve;
+
 /* for controlling fireworks on NEW_YEARS_EVE */
 extern int fireworks;
 extern int fireworks_delay;

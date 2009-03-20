@@ -1528,7 +1528,7 @@ player_race race_info[MAX_RACES] =
                 66,  4, 150, 20,
                 0,
 //                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 100,
                 {
                         /* HUMAN POWER!! */
@@ -1561,7 +1561,7 @@ player_race race_info[MAX_RACES] =
                 62,  6, 100, 10,
                 2,
 //                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 110,
                 {
                         {
@@ -1600,7 +1600,7 @@ player_race race_info[MAX_RACES] =
 //  111011101101 -> 101101110111
 // 0xB77 -> EED
 //		0xB77,
-		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU,
+		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU+CFC,
                 120,
                 {
                         {
@@ -1713,7 +1713,7 @@ player_race race_info[MAX_RACES] =
 //                0xC77, 110001110111 -> 111011100011
 //		0xEE3,
 //		0xC77,
-		CFW+CFI+CFR+CFM+CFA+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFR+CFM+CFA+CFX+CFD+CFS+CFU+CFC,
                 120,
                 {
                         {
@@ -1907,7 +1907,7 @@ player_race race_info[MAX_RACES] =
                 78,  6, 180, 15,
                 0,
 //                0xFFFFFFFF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 105,
                 {
                         /* Dunadan makes good generalist */
@@ -1951,7 +1951,7 @@ player_race race_info[MAX_RACES] =
 //                0xF77, 101101110111 -> 111011101101
 //		0xEEF,
 //		0xB77,
-		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU,
+		CFW+CFI+CFR+CFM+CFA+CFN+CFX+CFD+CFU+CFC,
                 125,
                 {
                         {
@@ -2014,7 +2014,7 @@ player_race race_info[MAX_RACES] =
                 66,  4, 150, 20,
                 0,
 //                0x7FF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFC,
                 50,
 //                {{ 0 }},
 		{
@@ -2043,7 +2043,7 @@ player_race race_info[MAX_RACES] =
 //                0x673,  011001110011 -> 110011100110
 //		0xCE6,
 //		0xB73,
-		CFW+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
                 70,
                 {
                         /* Never ask me the reason why, I love boomerang :) */
@@ -2148,7 +2148,7 @@ player_race race_info[MAX_RACES] =
                 0,
 //                0xF6F,  111101101111 -> 111101101111
 //		0xF6F,
-		CFW+CFI+CFP+CFM+CFA+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
                 95,
                 {
                         {
@@ -2197,7 +2197,7 @@ player_race race_info[MAX_RACES] =
 //                0xF77, 111101110111 -> 111011101111
 //		0xEEF,
 //		0xF7F,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
                 115,
                 {
                         {
@@ -2250,7 +2250,7 @@ player_race race_info[MAX_RACES] =
 //                0xF77, 111101110111 -> 111011101111
 //		0xEEF,
 //		0x857,
-		CFW+CFI+CFR+CFA+CFX+CFU,
+		CFW+CFI+CFR+CFA+CFX+CFU+CFC,
                 125,
                 {
                         {
@@ -2448,7 +2448,7 @@ SPELLS: ({ythanks, dg)
 			60: Divine Wrath			cost = playerlevel*3	1500 dmg to all creature in LoS, irresistable. 75% dmg vs all unique, x2 vs demons/undead
 			65: +1 spd per 2 level
 			70: Wraith,unwraith, Divine Barrier	cost = 100%SP. all creatures summoned within barrier radius have 25% original HP. barrier radius = light radius. dur=30turn 700 turn cool down.
-			75: Polymorph into blades 		with full equipment		Duration = 2500 turns, 3000 turns cool down.
+			75: lol. "Objection!" - Polymorph into blades 		with full equipment		Duration = 2500 turns, 3000 turns cool down.
 		Demon:
 			5: Fire resistance
 			10: DarkBolt				same as angel's manabolt
@@ -2463,7 +2463,7 @@ SPELLS: ({ythanks, dg)
 			60: Rocket				dmg = (playerhp/3) + 250 rocket dmg
 			65: Gate Creation, Gate Destruction	creates/destroys a speical void gate, allows players to access with >, Even out of no teleport vaults!  need an exit and entrance. cost 100% max SP. Only 2 gates allowed at once.  
 		        70: Soul Reaver				cost = 100% max SP, 750 dmg to all creature.  (3%+criticalchance) instant kill lvl 110 or lower, living, non-unique creatures in LoS(count as kill) (3%+critchance) chance of lowering unique's hp by 40%. 700 turn cool down. 
-			75: Polymorph into Nether Guard 	with full equip			Duration = 2500 turns, 3000 turns cool down.
+			75: lawl. btw N aren't evil :( - Polymorph into Nether Guard 	with full equip			Duration = 2500 turns, 3000 turns cool down.
 (real) spells:
 (plan is to have only 1 skill and a generically named spells that have different effect depending on the caster's alignment!  
 level is determined runemastery style =P (player_level + skill_level)/2 (or we could set cap to 70... too much work here though i think)
@@ -2509,7 +2509,8 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
                 {  1,  1, 2,  2,  0,  -2 },
 		//rangers: { 2, 2, -1, 1, 2, 0},
                 0, 0, 0,  0,  0, 0, 0, 0,
-                13,  500,
+		13, 200,//dunadain get 180 and these have 200? their powers are, like, basically equal?
+//                13,  500, //lol @ 1000 below. wtf is that? hitdice? ^^ anyway; nerfing the XP
 //                1000, 250, /* 1000 is too big for a byte */
 		255, 250,
                 180, 20, 180, 20,
@@ -2518,7 +2519,7 @@ Nothing here that truly heals/buffs people (those bonus are to self only). They 
 		/* Plan is to disable warrior and archer since they do not have SP */
 //                0xFFFFFFFF, //All classess for now
 //		0x00000F99,
-		CFP+CFR+CFL+CFN+CFX+CFD+CFS+CFU,
+		CFP+CFR+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 125,
                 {
 /* The plan is to have a skill tree that is updated as the player level.
@@ -2529,26 +2530,6 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 				'+', 1000,
 				'+', 1000,
 			},
-                        {
-                                SKILL_SWORD,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_BLUNT,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_AXE,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_POLEARM,
-                                '+', 0,
-                                '%', 70,
-                        },
 #if 0
                         {
                                 SKILL_SLING,
@@ -2571,46 +2552,6 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
                                 '%', 70,
                         },
 #endif
-                        {
-                                SKILL_MARTIAL_ARTS,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_CONVEYANCE,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_DIVINATION,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_NATURE,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_AIR,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_MANA,
-                                '+', 0,
-                                '%', 70,
-                        },
-                        {
-                                SKILL_FIRE,
-                                '+', 0,
-                                '%', 70,
-                        },
-			{
-				SKILL_UDUN,
-				'+', 0,
-				'%', 70,
-			},
                         {
                                 SKILL_HOFFENSE,
                                 '+', 0,
@@ -2762,7 +2703,7 @@ player_class class_info[MAX_CLASS] =
                 "Warrior",
                 TERM_UMBER,
 		{ 5, -2, -2, 2, 2, -1},
-		25, 18, 18, 1,  14, 2, 70, 55,
+		20, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
 		10, 0,//6,  10,//9, 10,
 //		11, 0,
@@ -3807,7 +3748,7 @@ player_class class_info[MAX_CLASS] =
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 29,
+		10, 21, 54, 1,  13, 16, 60, 45, //was c_thb 29
 		2, 4,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
 //		10, 30,
@@ -4201,7 +4142,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 700,
+                                '+', 800,
                         },
                         {
                                 SKILL_TRAPPING,
@@ -4249,7 +4190,7 @@ player_class class_info[MAX_CLASS] =
                 "Adventurer",
                 TERM_VIOLET,
 		{ 0, 0, 0, 0, 0, 0},
-		20, 20, 20, 2,  15, 15, 50, 50,
+		30, 20, 20, 2,  15, 15, 50, 50,
 		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
 		6, 10, //3,  0,//5,0,
 //		8, 10,
@@ -4466,6 +4407,26 @@ player_class class_info[MAX_CLASS] =
 			},
 #endif
                         {
+                                SKILL_PPOWER,
+                                '+', 0,
+				'+', 500,
+			},
+			{
+                                SKILL_TCONTACT,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MINTRUSION,
+                                '+', 0,
+                                '+', 500,
+                        },
+			{ 
+				SKILL_RUNEMASTERY,
+				'+', 0,
+				'+', 400,
+			},
+                        {
                                 SKILL_MIMIC,
                                 '+', 0,
                                 '+', 400,	/* 300 was 'safer' */
@@ -4497,7 +4458,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 1000,
-                                '+', 700,
+                                '+', 900,
                         },
                         {
                                 SKILL_STEALING,
@@ -4699,7 +4660,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_STEALTH,
                                 '+', 0,
-                                '+', 1000,
+                                '+', 900,
                         },
                         {
                                 SKILL_CALMNESS,
@@ -4987,7 +4948,7 @@ player_class class_info[MAX_CLASS] =
 
                 }
 	},
-#ifdef CLASS_RUNEMASTER
+#ifdef ENABLE_RUNEMASTER
 	{
                 "Runemaster",
                 TERM_L_BLUE, 
@@ -5145,6 +5106,194 @@ player_class class_info[MAX_CLASS] =
                 }
 	},
 #endif
+
+#ifdef ENABLE_MCRAFT
+	{
+                "Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue */
+                TERM_SLATE,
+		{ -1, 3, 0, -1, -1, 1},
+/*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
+ *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
+ *   HD, Exp*/
+		30, 30, 36,  2, 35, 14, 45, 35,
+		 0,  5,  5,  0,  3,  3, 20,  5,
+		4, 35,
+                {
+                        /* Combat tree */
+                        {
+                                SKILL_COMBAT,
+                                '+', 0,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 1000,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_SWORD,
+                                '+', 0,
+                                '+', 650,
+                        },
+#if 1 /* gory and brutal axes distract their mind..well, or maybe not? */
+                        {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 600,
+                        },
+#endif
+                        {
+                                SKILL_BLUNT,
+                                '+', 0,
+                                '+', 650,
+                        },
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 650,
+			},
+                        {
+                                /* let's keep it low for now - offbalancing */
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 600,
+                        },
+		/*ranged weapon skills shouldnt be better than "Mimic" class. more like "Istar" which has none at all.*/
+                        {
+                                SKILL_SLING,
+                                '+', 1000,
+                                '+', 250,
+                        },
+#if 0
+                        {
+                                SKILL_BOW,
+                                '+', 0,
+                                '+', 300,
+                        },
+                        {
+                                SKILL_XBOW,
+                                '+', 0,
+                                '+', 300,
+                        },
+#endif
+                        {
+                                SKILL_BOOMERANG,
+                                '+', 1000,
+                                '+', 250,
+                        },
+
+                        /* Magic tree */
+                        {
+                                SKILL_MAGIC,
+                                '+', 1000,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_PPOWER,
+                                '+', 0,
+				'+', 1500,
+			},
+			{
+                                SKILL_TCONTACT,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_MINTRUSION,
+                                '+', 1000,
+                                '+', 1500,
+                        },
+
+                        /* Sneakiness tree */
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 900, /* high stealth- yoda-style *wave hands* maybe add as a buff spell! */
+                        },
+			{
+				SKILL_DISARM,
+				'+', 0,
+				'+', 700,
+			},
+			{
+				SKILL_DODGE,
+				'+', 0,
+				'+', 400,
+			},
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 0,
+                                '+', 500,
+                        },
+
+                        /* Necromancy tree - disturb the mindcrafter slightly maybe*/
+                        {
+                                SKILL_NECROMANCY,
+                                '+', 0,
+                                '+', 700,
+                        },
+                        {
+                                SKILL_TRAUMATURGY,
+                                '+', 0,
+                                '+', 800,
+                        },
+                        {
+                                SKILL_AURA_FEAR,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_AURA_SHIVER,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_AURA_DEATH,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        /* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 900,
+                        },
+#if 0
+                        {
+                                SKILL_TRAINING,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+#endif
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 700,
+                        },
+                }
+	}
+#endif
+
 
 };
 /*
@@ -5442,7 +5591,6 @@ cptr player_title[MAX_CLASS][11][4] =
                 {"Elder Shaman", "Elder Shaman", "Elder Shaman", "Elder Shaman", },
                 {"Shaman King", "Shaman Queen", "Shaman King", "Shaman Queen", },
         },
-#ifdef CLASS_RUNEMASTER
 	/* Runemaster */
         {
                 {"Digger", "Digger", "Digger", "Digger", },
@@ -5457,7 +5605,24 @@ cptr player_title[MAX_CLASS][11][4] =
                 {"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
                 {"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
         },
-#endif
+	/* Mindcrafter */
+        {
+//		{"Simple-minded", "Simple-minded", "Simple-mind", "Simple-mind", },
+//		{"Reflector", "Reflectress", "Reflector", "Reflectress", },
+//		{"Paranoid", "Paranoid", "Paranoid", "Paranoid", },
+//		{"Aware", "Aware", "Aware", "Aware", },
+		{"Wary", "Wary", "Wary", "Wary", },
+		{"Fathomer", "Fathomer", "Fathomer", "Fathomer", },
+		{"Thinker", "Thinker", "Thinker", "Thinker", },
+		{"Biaser", "Biaser", "Biaser", "Biaser", },
+		{"Convincer", "Convincer", "Convincer", "Convincer", },
+		{"Warper", "Warper", "Warper", "Warper", },
+		{"Psychic", "Psychic", "Psychic", "Psychic", },
+		{"Mindcrafter", "Mindcraftress", "Mindcrafter", "Mindcraftrs.", },
+		{"Manipulator", "Manipulatress", "Manipulator", "Manipulatrs.", },
+		{"Controller", "Controller", "Controller", "Controller", },
+		{"Master Mindcrafter", "Master Mindcraftress", "M-Mindcrftr.", "M-Mindcrftr.", },
+        },
 };
 
 /*
@@ -5587,7 +5752,6 @@ cptr player_title_special[MAX_CLASS][5][4] =
                 {"Realm Master", "Realm Mistress", "Realm Master", "Realm Mistr.", },
                 {"Presence", "Presence", "Presence", "Presence", },
         },
-#ifdef CLASS_RUNEMASTER
         /* Runemaster */
         {
                 {"Force Master", "Force Mistress", "Force Master", "Force Mistr.", },
@@ -5596,7 +5760,15 @@ cptr player_title_special[MAX_CLASS][5][4] =
                 {"Elemental Channelist", "Elemental Channelist", "E-Channelist", "E-Channelist", },
                 {"Elemental Vortex", "Elemental Vortex", "Elemn.Vortex", "Elemn.Vortex", },
         },
-#endif
+        /* Mindcrafter */
+        {
+                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
+                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
+                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
+                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
+                {"ESP Controller", "ESP Controller", "ESP Contrlr.", "ESP Contrlr.", },
+//                {"ESP Controller", "ESP Controlless", "ESP Contrlr.", "ESP Contrls.", },
+        },
 };
 
 /*

@@ -1264,7 +1264,8 @@ break;
 			if (ident)
 			{
 				msg_print(Ind, "You suddenly have company.");
-				(void)set_slow(Ind, p_ptr->slow + randint(25) + 15);
+				if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+					(void)set_slow(Ind, p_ptr->slow + randint(25) + 15);
 			}
 			break;
 		}
@@ -3090,7 +3091,7 @@ break;
 		default:
 		{
 			/* XXX LUA hook here maybe? */
-			s_printf("Executing unknown trap %d", trap);
+			s_printf("Executing unknown trap %d\n", trap);
 		}
 	}
 
@@ -3743,6 +3744,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 		/* Ask for number of items to use */
 		num = get_quantity(c, num);
 #endif	// 0
+
 	}
 
 	/* Canceled */
@@ -3816,7 +3818,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load)
 	cs_ptr->sc.montrap.feat = c_ptr->feat;
 
 	/* Actually set the trap */
-	cave_set_feat(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
+	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 }
 
 /*
@@ -4988,20 +4990,20 @@ bool mon_hit_trap(int m_idx)
 				while (shots-- && !dead)
 				{
 					/* Total base damage */
-					dam = damroll(load_o_ptr->dd, load_o_ptr->ds) + load_o_ptr->to_d + kit_o_ptr->to_d;
+					dam = damroll(load_o_ptr->dd, load_o_ptr->ds) + (load_o_ptr->to_d + kit_o_ptr->to_d + 10) / 2;
 
 					/* Total hit probability */
 					chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
 
 					/* Damage multiplier */
-					if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 3;
-					if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 4;
-					if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 2;
-					if (f3 & TR3_XTRA_MIGHT) mul += kit_o_ptr->pval;
+					if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 25;
+					if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 30;
+					if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 35;
+					if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
 					if (mul < 0) mul = 0;
 
 					/* Multiply damage */
-					dam *= mul;
+					dam = (dam * mul) / 10;
 
 					/* Trapping skill influences damage - C. Blue */
 //a little bit toned down here O_o	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty); dam /= 50;
@@ -5146,7 +5148,7 @@ bool mon_hit_trap(int m_idx)
 						}
 
 						/* Drop (or break) near that location */
-						if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);				
+						if (!load_o_ptr->pval) drop_near(j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 					}
 
 				}
@@ -5309,7 +5311,7 @@ bool mon_hit_trap(int m_idx)
 		/* Non-automatic traps are removed */
 		if (!(f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)))
 		{
-			remove = TRUE;	
+			remove = TRUE;
 		}
 		else if (f2 & TRAP2_AUTOMATIC_5) remove = (randint(5) == 1);
 

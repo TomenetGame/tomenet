@@ -316,7 +316,9 @@ static void rd_item(object_type *o_ptr)
 
 	u32b f1, f2, f3, f4, f5, esp;
 
+	byte tmpbyte;
 	u16b tmp16u;
+	s32b tmp32s;
 
 	object_kind *k_ptr;
 
@@ -369,7 +371,7 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&o_ptr->number);
 	rd_s16b(&o_ptr->weight);
 
-	if (!older_than(4,3,1)) {
+	if (!older_than(4, 3, 1)) {
 		rd_u16b(&o_ptr->name1);
 		rd_u16b(&o_ptr->name2);
 
@@ -459,7 +461,7 @@ static void rd_item(object_type *o_ptr)
 
 	rd_byte(&o_ptr->ident);
 
-	if (!older_than(4,3,1)) {
+	if (!older_than(4, 3, 1)) {
 		rd_u16b(&o_ptr->name2b);
 	} else {
 		/* Increase portability with pointers to correct type - mikaelh */
@@ -467,17 +469,27 @@ static void rd_item(object_type *o_ptr)
 		rd_byte(&old_name2b);
 		o_ptr->name2b = old_name2b;
 	}
-	/*rd_byte(&o_ptr->marked);*/
 
-	/* Old flags */
-	strip_bytes(12);
-
-	/* Unused */
-	rd_u16b(&tmp16u);
+	if (older_than(4, 3, 20)) {
+		/* Old flags */
+		strip_bytes(12);
+		/* Unused */
+		rd_u16b(&tmp16u);
+	}
 
 	/* Special powers */
 	rd_byte(&o_ptr->xtra1);
 	rd_byte(&o_ptr->xtra2);
+	/* more special powers (for self-made spellbook feature) */
+	if (!older_than(4, 3, 16)) {
+		rd_byte(&o_ptr->xtra3);
+		rd_byte(&o_ptr->xtra4);
+		rd_byte(&o_ptr->xtra5);
+		rd_byte(&o_ptr->xtra6);
+		rd_byte(&o_ptr->xtra7);
+		rd_byte(&o_ptr->xtra8);
+		rd_byte(&o_ptr->xtra9);
+	}
 
 #if 0 /*buggy?*/
 	/* Give old Multi-Hued Dragon Scale Mails random immunities */
@@ -515,11 +527,25 @@ static void rd_item(object_type *o_ptr)
 	}
 #endif
 
+	if (!older_than(4, 3, 20)) {
+		if (!older_than(4, 3, 21)) {
+			rd_s32b(&tmp32s);
+			o_ptr->marked = tmp32s;
+		} else {
+			rd_byte(&tmpbyte);
+			o_ptr->marked = tmpbyte;
+		}
+		rd_byte(&o_ptr->marked2);
+	}
+
 	/* Inscription */
 	rd_string(note, 128);
 
 	/* Save the inscription */
 	if (note[0]) o_ptr->note = quark_add(note);
+	/* hack: 'empty' inscription (startup items) cannot
+	   be saved this way, so we try to restore it now.. */
+	else if (o_ptr->discount == 100 && o_ptr->level == 0) o_ptr->note = quark_add("");
 
 	rd_u16b(&o_ptr->next_o_idx);
 	rd_u16b(&o_ptr->held_m_idx);
@@ -527,6 +553,9 @@ static void rd_item(object_type *o_ptr)
 /* hack: mistrust cloaks were removed, and existing ones become aman cloaks */
 if (o_ptr->name2 == EGO_MISTRUST) o_ptr->name2 = EGO_AMAN;
 if (o_ptr->name2b == EGO_MISTRUST) o_ptr->name2b = EGO_AMAN;
+
+/* hack: remove (due to bug) created explodingness from magic ammo */
+if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC && !o_ptr->name1) o_ptr->pval = 0;
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */
@@ -726,7 +755,7 @@ static void rd_monster(monster_type *m_ptr)
 
 	/* Hack -- wipe */
 	WIPE(m_ptr, monster_type);
-	if (older_than(4,2,7)) {
+	if (older_than(4, 2, 7)) {
 		m_ptr->pet = 0;
 	} else {
 		rd_byte(&m_ptr->pet);
@@ -766,6 +795,13 @@ static void rd_monster(monster_type *m_ptr)
 	rd_byte(&m_ptr->stunned);
 	rd_byte(&m_ptr->confused);
 	rd_byte(&m_ptr->monfear);
+	if (!older_than(4, 3, 15)) {
+		rd_byte(&m_ptr->paralyzed);
+		rd_byte(&m_ptr->bleeding);
+		rd_byte(&m_ptr->poisoned);
+		rd_byte(&m_ptr->blinded);
+		rd_byte(&m_ptr->silenced);
+	}
 
 	rd_u16b(&m_ptr->hold_o_idx);
 	rd_u16b(&m_ptr->clone);
@@ -883,7 +919,7 @@ static errr rd_store(store_type *st_ptr)
 		rd_item(&forge);
 
 		/* Hack -- verify item */
-		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).");
+		if (!forge.k_idx) s_printf("Warning! Non-existing item detected(erased).\n");
 
 		/* Acquire valid items */
 		else if (st_ptr->stock_num < STORE_INVEN_MAX)
@@ -900,9 +936,59 @@ static errr rd_store(store_type *st_ptr)
 static void rd_bbs() {
         int i;
 	s16b saved_lines;
+	char dummy[140];
+
         rd_s16b(&saved_lines);
+#if 0
         for (i = 0; ((i < BBS_LINES) && (i < saved_lines)); i++)
                 rd_string(bbs_line[i], 140);
+#else
+        for (i = 0; i < saved_lines; i++)
+		if (i >= BBS_LINES) rd_string(dummy, 140);
+		else rd_string(bbs_line[i], 140);
+#endif
+}
+
+static void rd_notes() {
+        int i;
+        s16b j;
+        char dummy[80];
+
+        rd_s16b(&j);
+        for (i = 0; i < j; i++) {
+	        if (i >= MAX_NOTES) {
+			rd_string(dummy, 80);
+			rd_string(dummy, 80);
+			rd_string(dummy, 80);
+			continue;
+	        }
+                rd_string(priv_note[i], 80);
+                rd_string(priv_note_sender[i], 80);
+                rd_string(priv_note_target[i], 80);
+        }
+
+        rd_s16b(&j);
+        for (i = 0; i < j; i++) {
+	        if (i >= MAX_PARTYNOTES) {
+			rd_string(dummy, 80);
+			rd_string(dummy, 80);
+			continue;
+	        }
+                rd_string(party_note[i], 80);
+                rd_string(party_note_target[i], 80);
+        }
+
+        rd_s16b(&j);
+        for (i = 0; i < j; i++) {
+	        if (i >= MAX_GUILDNOTES) {
+			rd_string(dummy, 80);
+			rd_string(dummy, 80);
+			continue;
+	        }
+                rd_string(guild_note[i], 80);
+                rd_string(guild_note_target[i], 80);
+        }
+        //omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
 static void rd_quests(){
@@ -957,7 +1043,7 @@ static void rd_party(int n)
 	rd_s32b(&party_ptr->created);
 	
 	/* Party type and members */
-	if (!s_older_than(4,1,7))
+	if (!s_older_than(4, 1, 7))
 		rd_byte(&party_ptr->mode);
 	else
 		party_ptr->mode = 0;
@@ -1161,10 +1247,16 @@ static bool rd_extra(int Ind)
 			rd_s32b(&p_ptr->s_info[i].value);
 			rd_u16b(&p_ptr->s_info[i].mod);
 			rd_byte(&tmp8u);
-			p_ptr->s_info[i].dev=tmp8u;
+			p_ptr->s_info[i].dev = tmp8u;
 			rd_byte(&tmp8u);
-			p_ptr->s_info[i].hidden=tmp8u;
-			p_ptr->s_info[i].touched=TRUE;
+			p_ptr->s_info[i].hidden = tmp8u;
+			p_ptr->s_info[i].touched = TRUE;
+			if (!older_than(4, 3, 17)) {
+				rd_byte(&tmp8u);
+				p_ptr->s_info[i].dummy = (tmp8u) ? TRUE : FALSE;
+			} else {
+				p_ptr->s_info[i].dummy = FALSE;
+			}
 		}
 		rd_s16b(&p_ptr->skill_points);
 	}
@@ -1351,7 +1443,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	/* Incompatible save files */
 	if (tmp16b > MAX_R_IDX)
 	{
-		s_printf("Too many (%u) monster races!", tmp16b);
+		s_printf("Too many (%u) monster races!\n", tmp16b);
 		return (22);
 	}
 	for (i = 0; i < tmp16b; i++)
@@ -1547,7 +1639,7 @@ static errr rd_inventory(int Ind)
 		/* Hack -- verify item */
 		if (!forge.k_idx)
 		{
-			s_printf("Warning! Non-existing item detected(erased).");
+			s_printf("Warning! Non-existing item detected(erased).\n");
 			continue;
 		}
 
@@ -1582,7 +1674,7 @@ if (p_ptr->updated_savegame == 3) { // <- another megahack, see lua_arts_fix()
 		/* Warning -- backpack is full */
 		else if (p_ptr->inven_cnt == INVEN_PACK)
 		{
-			s_printf("Too many items in the inventory!");
+			s_printf("Too many items in the inventory!\n");
 
 			/* Fail */
 			return (54);
@@ -1893,7 +1985,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > MAX_K_IDX)
 	{
-		s_printf(format("Too many (%u) object kinds!", tmp16u));
+		s_printf(format("Too many (%u) object kinds!\n", tmp16u));
 		return (22);
 	}
 
@@ -1916,7 +2008,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Incompatible save files */
 	if (tmp16u > MAX_T_IDX)
 	{
-		s_printf(format("Too many (%u) trap kinds!", tmp16u));
+		s_printf(format("Too many (%u) trap kinds!\n", tmp16u));
 		return (22);
 	}
 
@@ -1954,7 +2046,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Read the inventory */
 	if (rd_inventory(Ind))
 	{
-		s_printf("Unable to read inventory");
+		s_printf("Unable to read inventory\n");
 		return (21);
 	}
 
@@ -2024,7 +2116,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Verify */
 	if (o_v_check != n_v_check)
 	{
-		s_printf("Invalid checksum");
+		s_printf("Invalid checksum\n");
 		return (11);
 	}
 
@@ -2039,7 +2131,7 @@ static errr rd_savefile_new_aux(int Ind)
 	/* Verify */
 	if (o_x_check != n_x_check)
 	{
-		s_printf("Invalid encoded checksum");
+		s_printf("Invalid encoded checksum\n");
 		return (11);
 	}
 
@@ -2100,6 +2192,7 @@ errr rd_server_savefile()
 
 	byte tmp8u, panic = 0;
 	u16b tmp16u;
+	s16b tmp16s;
 	u32b tmp32u;
 	s32b tmp32s;
 
@@ -2147,6 +2240,12 @@ errr rd_server_savefile()
 	if (!older_than(4, 2, 2)) rd_byte(&panic); /* no further use yet */
 	if (panic) s_printf("Last server shutdown was a panic save.\n");
 
+	/* read server state regarding any updates (for lua) - C. Blue */
+	if (!older_than(4, 3, 19)) {
+		rd_s16b(&tmp16s);
+		updated_server = tmp16s;
+	}
+
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
 
@@ -2159,7 +2258,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_R_IDX)
 	{
-		s_printf(format("Too many (%u) monster races!", tmp16u));
+		s_printf(format("Too many (%u) monster races!\n", tmp16u));
 		return (21);
 	}
 
@@ -2181,7 +2280,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_A_IDX)
 	{
-		s_printf(format("Too many (%u) artifacts!", tmp16u));
+		s_printf(format("Too many (%u) artifacts!\n", tmp16u));
 		return (24);
 	}
 	/* Read the artifact flags */
@@ -2200,7 +2299,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_PARTIES)
 	{
-		s_printf(format("Too many (%u) parties!", tmp16u));
+		s_printf(format("Too many (%u) parties!\n", tmp16u));
 		return (25);
 	}
 
@@ -2230,7 +2329,7 @@ errr rd_server_savefile()
 	rd_u32b(&tmp32u);
 	if (tmp32u > MAX_M_IDX)
 	{
-		s_printf(format("Too many (%u) monsters!", tmp16u));
+		s_printf(format("Too many (%u) monsters!\n", tmp16u));
 		return (29);
 	}
 	/* load the monsters */
@@ -2245,7 +2344,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (tmp16u > MAX_O_IDX)
 	{
-		s_printf(format("Too many (%u) objects!", tmp16u));
+		s_printf(format("Too many (%u) objects!\n", tmp16u));
 		return (26);
 	}
 
@@ -2269,7 +2368,7 @@ errr rd_server_savefile()
 	/* Incompatible save files */
 	if (num_houses > MAX_HOUSES)
 	{
-		s_printf(format("Too many (%u) houses!", num_houses));
+		s_printf(format("Too many (%u) houses!\n", num_houses));
 		return (27);
 	}
 
@@ -2333,7 +2432,11 @@ errr rd_server_savefile()
 
 	rd_s32b(&turn);
 	
+	if (!older_than(4, 3, 18)) rd_notes();
 	if (!older_than(4, 3, 6)) rd_bbs();
+	
+	if (!older_than(4, 3, 13)) rd_byte(&season);
+	if (!older_than(4, 3, 14)) rd_byte(&weather_frequency);
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;

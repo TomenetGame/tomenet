@@ -836,24 +836,25 @@ static void get_money(int Ind)
         case CLASS_MAGE:        p_ptr->au += 850; break;
         case CLASS_PRIEST:      p_ptr->au += 600; break;
 	case CLASS_SHAMAN:	p_ptr->au += 550; break;
-	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
+	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
+	case CLASS_MINDCRAFTER:	p_ptr->au += 500; break;
 	case CLASS_ROGUE:	p_ptr->au += 400; break;
 	case CLASS_ARCHER:	p_ptr->au += 400; break;
+	case CLASS_ADVENTURER:	p_ptr->au += 300; break;
         case CLASS_RANGER:      p_ptr->au += 200; break;
         case CLASS_PALADIN:     p_ptr->au += 200; break;
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
 	case CLASS_WARRIOR:	p_ptr->au += 0; break;// they can sell their eq.
-   #ifdef CLASS_RUNEMASTER
-	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
-   #endif
         default:                ;
         }
   #else
         switch(p_ptr->pclass){
         case CLASS_MAGE:        p_ptr->au +=1000; break;
 	case CLASS_SHAMAN:	p_ptr->au +=1000; break;
+	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
         case CLASS_PRIEST:      p_ptr->au += 800; break;
+	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
 	case CLASS_DRUID:	p_ptr->au += 600; break;
         case CLASS_RANGER:      p_ptr->au += 600; break;
@@ -862,9 +863,6 @@ static void get_money(int Ind)
 	case CLASS_MIMIC:	p_ptr->au += 600; break;
 	case CLASS_WARRIOR:	p_ptr->au += 600; break;
 	case CLASS_ARCHER:	p_ptr->au += 400; break; /* gets ammo, bow, lantern, extra phases! */
-   #ifdef CLASS_RUNEMASTER
-	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
-   #endif
         default:                ;
         }
   #endif
@@ -990,7 +988,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		/* Priest */
 		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, 65 }, /* Spellbook of Healing */
+		{ TV_BOOK, SV_SPELLBOOK, 66 }, /* Spellbook of Healing */
 //		{ TV_SOFT_ARMOR, SV_ROBE, 0},
 		{ TV_SOFT_ARMOR, SV_FROCK, 0},
 		{ 255, 255, 0 },
@@ -1030,7 +1028,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_BLUNT, SV_WAR_HAMMER, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, 60 }, /* Spellbook of Blessing */
+		{ TV_BOOK, SV_SPELLBOOK, 61 }, /* Spellbook of Blessing */
 		{ 255, 255, 0 },
 	},
 
@@ -1069,7 +1067,6 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
 		{ TV_SWORD, SV_SHADOW_BLADE, 0 }, /* just a placeholder! */
 	},
-#ifdef CLASS_RUNEMASTER
 	{
 		/* Runemaster */
 		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
@@ -1078,7 +1075,15 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ 255, 255, 0 },
 		{ 255, 255, 0 },
 	},
-#endif
+	{
+		/* Mindcrafter */
+//		{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, 111 },/* MSCARE */
+		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
+		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
+		{ 255, 255, 0 },
+	},
 };
 
 
@@ -1196,6 +1201,12 @@ void admin_outfit(int Ind, int realm)
 //	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
+
+#ifdef TEST_SERVER
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
+	o_ptr->number = 1;
+	do_admin_outfit();
+#endif
 }
 
 #if STARTEQ_TREATMENT == 0
@@ -1306,6 +1317,18 @@ static void player_outfit(int Ind)
 		o_ptr->ident |= ID_MENTAL;
 		(void)inven_carry(Ind, o_ptr);
 	}
+
+#ifdef TEST_SERVER
+	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
+	o_ptr->discount = 100;
+	o_ptr->owner = p_ptr->id;
+        o_ptr->owner_mode = p_ptr->mode;
+	o_ptr->level = 0;
+	object_known(o_ptr);
+	object_aware(Ind, o_ptr);
+	o_ptr->ident |= ID_MENTAL;
+	(void)inven_carry(Ind, o_ptr);
+#endif
 
 	//admin_outfit(Ind);
 
@@ -1801,7 +1824,6 @@ static void player_setup(int Ind, bool new)
 
 	/* Set his "current activities" variables */
 	p_ptr->current_spell = p_ptr->current_rod = p_ptr->current_activation = -1;
-#ifdef CLASS_RUNEMASTER
 	p_ptr->current_rune_dir = -1;
 	p_ptr->current_rune1 = -1;
 	p_ptr->current_rune2 = -1;
@@ -1809,7 +1831,6 @@ static void player_setup(int Ind, bool new)
 	p_ptr->rune_num_of_buffs = 0;
 	p_ptr->rune_IV = 0;
 	p_ptr->rune_stealth = 0;
-#endif
 	p_ptr->current_mind = -1;
 	p_ptr->current_selling = p_ptr->store_num = -1;
 	p_ptr->current_char = 0;
@@ -2226,7 +2247,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
 		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
+		p_ptr->lev = 100;
 		p_ptr->exp = 999999999;
 		p_ptr->skill_points = 9999;
 //		p_ptr->noscore = 1;
@@ -2294,12 +2315,8 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Can be used for different purpose, usually in conjuction with custom.lua) */
 	/* An artifact reset can be done by changing just custom.lua. */
-#ifdef RPG_SERVER
-	p_ptr->updated_savegame = 0;
-#endif
-#ifndef RPG_SERVER
-	p_ptr->updated_savegame = 0;
-#endif
+	/* Set updated_savegame_birth via lua (server_startup()). */
+	p_ptr->updated_savegame = updated_savegame_birth;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

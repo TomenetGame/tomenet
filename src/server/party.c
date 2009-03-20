@@ -101,6 +101,22 @@ int validate(char *name){
 	return(TRUE);
 }
 
+/* invalidate - opposite to validate() */
+int invalidate(char *name){
+	struct account *c_acc;
+	int i;
+	c_acc = GetAccount(name, NULL, 1);
+	if (!c_acc) return(FALSE);
+	c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
+	WriteAccount(c_acc, FALSE);
+	memset((char *)c_acc->pass, 0, 20);
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->account == c_acc->id) Players[i]->inval = 1;
+	}
+	KILL(c_acc, struct account);
+	return(TRUE);
+}
+
 /*
  return player account information (by name)
  */
@@ -1605,6 +1621,9 @@ bool add_hostility(int Ind, cptr name)
 		msg_print(Ind, "\377yYou cannot be hostile toward yourself.");
 		return FALSE;
 	}
+	
+	/* log any attempts */
+	s_printf("HOSTILITY: %s attempts to declare war.\n", p_ptr->name);
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{

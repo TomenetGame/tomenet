@@ -425,7 +425,7 @@ static cptr r_info_flags7[] =
 		"AI_PLAYER",
 		"NO_THEFT",
 	"NEVER_ACT",
-	"XXX7X20",
+	"NO_ESP",
 	"XXX7X21",
 	"XXX7X22",
 	"XXX7X23",
@@ -488,30 +488,37 @@ static cptr r_info_flags9[] =
 	"DROP_SKELETON",
         "HAS_LITE",
         "MIMIC",
+
         "HAS_EGG",
         "IMPRESED",
         "SUSCEP_ACID",
         "SUSCEP_ELEC",
+
         "SUSCEP_POIS",
         "KILL_TREES",
         "WYRM_PROTECT",
         "DOPPLEGANGER",
+
         "ONLY_DEPTH",
         "SPECIAL_GENE",
         "NEVER_GENE",
 	"RES_ACID",
+
 	"RES_ELEC",
 	"RES_FIRE",
 	"RES_COLD",
 	"RES_POIS",
+
 	"RES_LITE",
 	"RES_DARK",
 	"RES_BLIND",
 	"RES_SOUND",
+
 	"RES_SHARDS",
 	"RES_CHAOS",
 	"RES_TIME",
 	"RES_MANA",
+
 	"IM_WATER",
 	"IM_TELE",
 	"IM_PSI",
@@ -1088,32 +1095,39 @@ static cptr s_info_flags1[] =
 {
         "HIDDEN",
         "AUTO_HIDE",
+	"DUMMY",
+	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
-	"XXX1",
-	"XXX1",
+
 	"XXX1",
 	"XXX1",
 	"MKEY_SCHOOL",		/* Below are Client flags */
 	"MKEY_HARDCODE",
+
 	"MKEY_SPELL",		/* Realm spells */
 	"MKEY_TVAL",
 	"MKEY_ITEM",
@@ -1278,21 +1292,30 @@ static bool invalid_server_conditions(char *buf)
 #endif
 
 		/* special flags that can occur additionally to server types */
-#ifndef HALLOWEEN
+//#ifndef HALLOWEEN
+if (!season_halloween) {
 		if (streq(m, "HALLOWEEN") && !negation) invalid = TRUE;
-#else
+//#else
+} else {
 		if (streq(m, "HALLOWEEN") && negation) invalid = TRUE;
-#endif
-#ifndef WINTER_SEASON
+//#endif
+}
+//#ifndef WINTER_SEASON
+if (season != SEASON_WINTER) {
 		if (streq(m, "WINTER_SEASON") && !negation) invalid = TRUE;
-#else
+//#else
+} else {
 		if (streq(m, "WINTER_SEASON") && negation) invalid = TRUE;
-#endif
-#ifndef NEW_YEARS_EVE
+//#endif
+}
+//#ifndef NEW_YEARS_EVE
+if (!season_newyearseve) {
 		if (streq(m, "NEW_YEARS_EVE") && !negation) invalid = TRUE;
-#else
+//#else
+} else {
 		if (streq(m, "NEW_YEARS_EVE") && negation) invalid = TRUE;
-#endif
+//#endif
+}
 #ifndef ENABLE_DIVINE
 		if (streq(m, "ENABLE_DIVINE") && !negation) invalid = TRUE;
 #else
@@ -1313,6 +1336,16 @@ static bool invalid_server_conditions(char *buf)
 #else
 		if (streq(m, "ENABLE_STANCES") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_MCRAFT
+		if (streq(m, "ENABLE_MCRAFT") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_MCRAFT") && negation) invalid = TRUE;
+#endif
+#ifndef NEW_TOMES
+		if (streq(m, "NEW_TOMES") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "NEW_TOMES") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1324,7 +1357,9 @@ static bool invalid_server_conditions(char *buf)
 		    strcmp(m, "ENABLE_DIVINE") &&
 		    strcmp(m, "USE_NEW_SHIELDS") &&
 		    strcmp(m, "DUAL_WIELD") &&
-		    strcmp(m, "ENABLE_STANCES"))
+		    strcmp(m, "ENABLE_STANCES") &&
+		    strcmp(m, "ENABLE_MCRAFT") &&
+		    strcmp(m, "NEW_TOMES"))
 			invalid = TRUE;
 	}
 	
@@ -1867,7 +1902,7 @@ static errr grab_one_feature_flag(feature_type *f_ptr, cptr what)
 	}
 
 	/* Oops */
-	s_printf("Unknown object flag '%s'.", what);
+	s_printf("Unknown object flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -2307,7 +2342,7 @@ static errr grab_one_kind_flag(object_kind *k_ptr, cptr what)
 	}
 
 	/* Oops */
-	s_printf("Unknown object flag '%s'.", what);
+	s_printf("Unknown object flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -2716,7 +2751,7 @@ static errr grab_one_artifact_flag(artifact_type *a_ptr, cptr what)
 	}
 
 	/* Oops */
-	s_printf("Unknown artifact flag '%s'.", what);
+	s_printf("Unknown artifact flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -3020,7 +3055,7 @@ static errr grab_one_skill_flag(u32b *f1, cptr what)
 	}
 
 	/* Oops */
-	s_printf("(2)Unknown skill flag '%s'.", what);
+	s_printf("(2)Unknown skill flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -3490,7 +3525,7 @@ static bool grab_one_ego_item_flag(ego_item_type *e_ptr, cptr what, int n)
 	}
 #endif	// 0
 	/* Oops */
-	s_printf("Unknown ego-item flag '%s'.", what);
+	s_printf("Unknown ego-item flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -3933,7 +3968,7 @@ static errr grab_one_basic_flag(monster_race *r_ptr, cptr what)
 	}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.", what);
+	s_printf("Unknown monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -3989,7 +4024,7 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 
 	/* For Halloween Event we need new MOAN in RF8 -C. Blue */
 	/* Scan flags8 */
-#ifdef HALLOWEEN
+if (season_halloween) {
 	for (i = 0; i < 32; i++)
 	{
 		if (streq(what, r_info_flags8[i]))
@@ -3998,10 +4033,10 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what)
 			return (0);
 		}
 	}
-#endif
+}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.", what);
+	s_printf("Unknown monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4585,7 +4620,7 @@ static errr grab_one_basic_ego_flag(monster_ego *re_ptr, cptr what, bool add)
 	}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.", what);
+	s_printf("Unknown monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4652,7 +4687,7 @@ static errr grab_one_spell_ego_flag(monster_ego *re_ptr, cptr what, bool add)
 	}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.", what);
+	s_printf("Unknown monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4670,7 +4705,7 @@ static byte monster_ego_modify(char c)
                 case '%': return MEGO_PRC;
                 default:
                 {
-                        s_printf("Unknown monster ego value modifier %c.", c);
+                        s_printf("Unknown monster ego value modifier %c.\n", c);
                         return MEGO_ADD;
                 }
         }
@@ -4749,7 +4784,7 @@ static errr grab_one_ego_flag(monster_ego *re_ptr, cptr what, bool must)
 	}
 
 	/* Oops */
-	s_printf("Unknown monster flag '%s'.", what);
+	s_printf("Unknown monster flag '%s'.\n", what);
 
 	/* Failure */
 	return (1);
@@ -4972,7 +5007,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			/* Oops, no more slots */
                         if (blow_num == 4)
 						{
-							s_printf("no more slots!");
+							s_printf("no more slots!\n");
 							return (1);
 						}
 
@@ -4991,7 +5026,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			/* Invalid method */
 			if (!r_info_blow_method[n1])
 			{
-				s_printf("invalid method!");
+				s_printf("invalid method!\n");
 				return (1);
 			}
 
@@ -5010,7 +5045,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
 			/* Invalid effect */
 			if (!r_info_blow_effect[n2])
 			{
-				s_printf("invalid effect!");
+				s_printf("invalid effect!\n");
 				return (1);
 			}
 
@@ -5024,7 +5059,7 @@ errr init_re_info_txt(FILE *fp, char *buf)
                         if (4 != sscanf(t, "%c%dd%c%d",
                                 &mdice, &dice, &mside, &side))
 						{
-							s_printf("strange dice!");
+							s_printf("strange dice!\n");
 							return (1);
 						}
 
@@ -5313,7 +5348,7 @@ static errr grab_one_trap_type_flag(trap_kind *t_ptr, cptr what)
 		}
 	}
 	/* Oops */
-	s_printf("Unknown trap_type flag '%s'.", what);
+	s_printf("Unknown trap_type flag '%s'.\n", what);
 
 	/* Error */
 	return (1);
@@ -7132,7 +7167,6 @@ bool process_dungeon_file_full = FALSE;
 static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *xval, int xvalstart, int ymax, int xmax)
 {
 	int i;
-
 	char *zz[33]; /* was 33 */
 
 	int dun_level = getlevel(wpos);
@@ -7415,7 +7449,16 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			/* Lay down a floor */
 //			c_ptr->mimic = letter[idx].mimic;
-			cave_set_feat(wpos, y, x, letter[idx].feature);
+
+			/* seasons hack: replace trees/bushes on world surface according to season! - C. Blue */
+			if ((letter[idx].feature == FEAT_TREE || letter[idx].feature == FEAT_BUSH) &&
+			    !wpos->wz) {
+				cave_set_feat(wpos, y, x, get_seasonal_tree());
+//				c_ptr->feat = get_seasonal_tree();
+			} else {
+				cave_set_feat(wpos, y, x, letter[idx].feature);
+//				c_ptr->feat = letter[idx].feature;
+			}
 
 			/* TERAHACK -- memorize stair locations XXX XXX */
 			if (c_ptr->feat == FEAT_LESS)	// '<'
@@ -8401,6 +8444,12 @@ errr process_dungeon_file(cptr name, worldpos *wpos, int *yval, int *xval, int y
 
 	/* Close the file */
 	my_fclose(fp);
+
+	/* update player maps */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Only for players on the level */
+		if (inarea(wpos, &Players[i]->wpos)) Players[i]->redraw |= PR_MAP;
+	}
 
 	/* Result */
 	return (err);

@@ -192,7 +192,7 @@ server_opts cfg =
 	TRUE,TRUE,TRUE,	// maximize, kings_etiquette, fallenkings_etiquette
 
 	FALSE,FALSE,	// public_rfe, auto_purge
-	FALSE,2,0,	// log_u, replace_hiscore, unikill_format
+	FALSE,114,0,	// log_u, replace_hiscore, unikill_format
 	"",		// server notes for meta list
 	FALSE,		// artifact creation disabled for maintenance reasons? (arts_disabled)
 	TRUE,		// total winners may not find true arts anymore? (winners_find_randarts)
@@ -776,6 +776,14 @@ char bbs_line[BBS_LINES][140];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;
+
+/* default 'updated_savegame' value for newly created chars [0].
+   usually modified by lua (server_startup()) instead of here. */
+int updated_savegame_birth = 0;
+/* like 'updated_savegame' is for players, this is for (lua) server state [0].
+   usually modified by lua (server_startup()) instead of here. */
+int updated_server = 0;
+
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
@@ -807,11 +815,27 @@ int summon_override_checks = 0;
 /* Morgoth may override no-destroy, with his shattering hits */
 bool override_LF1_NO_DESTROY = FALSE;
 
+/* the four seasons */
+#ifdef WINTER_SEASON /* backward code compatibility till seasons have finished being implemented...*/
+byte season = SEASON_WINTER;
+#else
+byte season = SEASON_SPRING; /* default is spring on server startup */
+#endif
 /* for snowfall during WINTER_SEASON mainly */
 int weather = 0;
 int weather_duration = 0;
+#ifdef WINTER_SEASON /* backward code compatibility till seasons have finished being implemented...*/
+byte weather_frequency = WINTER_SEASON;
+#else
+byte weather_frequency = 2; /* <never rain/snow> 0..4 <always rain/snow> ; [2] */
+#endif
 int wind_gust = 0;
 int wind_gust_delay = 0;
+
+/* special seasons */
+int season_halloween = 0;
+int season_newyearseve = 0;
+
 /* for controlling fireworks on NEW_YEARS_EVE */
 int fireworks = 0;
 int fireworks_delay = 0;

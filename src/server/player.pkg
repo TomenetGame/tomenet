@@ -125,10 +125,24 @@ typedef unsigned int u32b;
 
 /* Divine race */
 /* ENABLE_DIVINE */
-/* #define SKILL_ASTRAL		77*/
+#define SKILL_ASTRAL		77
 #define DIVINE_UNDEF		0x00
 #define DIVINE_ANGEL 		0x01
 #define DIVINE_DEMON 		0x10
+
+#define SKILL_DUAL		78
+#define SKILL_STANCE		79
+
+/* Mindcrafters */
+#define SKILL_PPOWER		80
+#define SKILL_TCONTACT		81
+#define SKILL_MINTRUSION	82
+
+/* Visual sorting */
+#define SKILL_SCHOOL_MAGIC	83
+#define SKILL_SCHOOL_PRAYING	84
+#define SKILL_SCHOOL_DRUIDISM	85
+#define SKILL_SCHOOL_MINDCRAFT	86
 
 /* additional ones */
 #define SKILL_CLIMB             90
@@ -248,8 +262,18 @@ struct object_type
 	byte name2;			/* Ego-Item type, if any */
 	byte name2b;			/* Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
+
+	byte attr;			/* colour in inventory (for client) */
+
 	byte xtra1;			/* Extra info type */
-	byte xtra2;			/* Extra info index */
+	byte xtra2;			/* Extra info type */
+	byte xtra3;			/* Extra info type */
+	byte xtra4;			/* Extra info type */
+	byte xtra5;			/* Extra info type */
+	byte xtra6;			/* Extra info type */
+	byte xtra7;			/* Extra info type */
+	byte xtra8;			/* Extra info type */
+	byte xtra9;			/* Extra info type */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
@@ -278,7 +302,7 @@ struct skill_player
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
         bool hidden;                            /* Innactive */
-
+	bool dummy;                             /* Just for visuals */
 };
 
 struct version_type {	/* Extended version structure */
@@ -583,6 +607,8 @@ struct player_type
         s16b tim_esp;           /* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
+	s16b mindboost;
+	s16b mindboost_power;
 
 	s16b auto_tunnel;
 	s16b body_monster;

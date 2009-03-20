@@ -179,7 +179,7 @@ void delete_object_idx(int o_idx, bool unfound_art)
 	int y = o_ptr->iy;
 	int x = o_ptr->ix;
 	//cave_type **zcave;
-	struct worldpos *wpos=&o_ptr->wpos;
+	struct worldpos *wpos = &o_ptr->wpos;
 
 	//cave_type *c_ptr;
 
@@ -350,12 +350,12 @@ void compact_objects(int size, bool purge)
 			/* Hack -- only compact artifacts in emergencies */
 			if (artifact_p(o_ptr) && (cnt < 1000)) chance = 100;
 
-			/* Hack -- only compact items in houses in emergencies */
+			/* Hack -- only compact items in houses or vaults in emergencies */
 			if (!o_ptr->wpos.wz)
 			{
 				cave_type **zcave;
 				zcave=getcave(&o_ptr->wpos);
-				if (zcave[y][x].info&CAVE_ICKY)
+				if (zcave[y][x].info & CAVE_ICKY)
 				{
 					/* Grant immunity except in emergencies */
 					if (cnt < 1000) chance = 100;
@@ -459,6 +459,9 @@ void compact_objects(int size, bool purge)
 			}
 		}
 #endif	/* MONSTER_INVENTORY */
+
+		/* update cave grid object indices to still point to
+		   the correct objects in our newly resorted o_list */
 		for (i = 1; i < o_max; i++) {
 			o_ptr = &o_list[i];
 			wpos = &o_ptr->wpos;
@@ -718,7 +721,7 @@ s16b o_pop(void)
 
 
 	/* Warn the player */
-	if (server_dungeon) s_printf("Too many objects!");
+	if (server_dungeon) s_printf("Too many objects!\n");
 
 	/* Oops */
 	return (0);
@@ -1430,11 +1433,28 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		if (o_ptr->name1 == ART_RANDART)
 		{
 			a_ptr = randart_make(o_ptr);
+#if 0
 			value = a_ptr->cost;
 
 			if (value && !star) value = (object_value_base(Ind, o_ptr) << 3) + 10000;
 			if (value > a_ptr->cost) value = a_ptr->cost;
 			if (star) value += flag_cost(o_ptr, o_ptr->pval);
+#else
+			if ((a_ptr->flags4 & TR4_CURSE_NO_DROP) || (a_ptr->flags3 & TR3_AUTO_CURSE)) {
+				value = 0;
+			} else {
+				value = object_value_base(0, o_ptr) << 1; /* at the end, randart prices are halved, so compensate here */
+//				if (star) value += a_ptr->cost;
+				if (star) value += flag_cost(o_ptr, o_ptr->pval);
+				value += 10000 + o_ptr->level * 200;
+
+				/* maybe todo (see function below):
+				value = artifact_value_real(a_ptr);
+				*/
+			}
+
+			if (value < 0) value = 0;
+#endif
 		}
 		else
 		{	
@@ -1662,7 +1682,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				if (o_ptr->tval == TV_RING) {
 					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 2000L);//1500
 				} else {
-					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+//					if (f1 & TR1_BLOWS) value += (PRICE_BOOST(pval, 0, 1) * 3000L);
+					if (f1 & TR1_BLOWS) value += 10000 + pval * 20000L;
 				}
 
 				/* Give credit for extra casting */
@@ -1703,9 +1724,11 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 					/* Give credit for speed bonus */
 					//				if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 50000L);
 					if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+//					if (f1 & TR1_SPEED) value += pval * pval * 7000L;
 				}
-				//			else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
-				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+//				else if (f1 & TR1_SPEED) value += (PRICE_BOOST(pval, 0, 4) * 100000L);
+//				else if (f1 & TR1_SPEED) value += pval * pval * 10000L;
+				else if (f1 & TR1_SPEED) value += (pval + 1) * (pval + 1) * 7000L;
 
 				pval = o_ptr->pval;
 
@@ -1730,11 +1753,21 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 		{
 			if (o_ptr->sval == SV_SPELLBOOK)
 			{
+#if 0 /* hm, level 5 book (Autokinesis I) is too expensive like this */
+				/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
 				int sl = school_spells[o_ptr->pval].skill_level + 2;
 				/* override k_info.txt to have easier handling of possible changes here */
 				value = 15;
 				/* Pay extra for the spell */
 				value = value * (sl * sl);
+#else
+				/*  */
+				int sl = school_spells[o_ptr->pval].skill_level + 5;
+				/* override k_info.txt to have easier handling of possible changes here */
+				value = 4;
+				/* Pay extra for the spell */
+				value = value * (sl * sl);
+#endif
 			}
 			/* Done */
 			break;
@@ -1908,6 +1941,15 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 	return (value);
 }
 
+//todo: currently just COPY/PASTE of above function, needs correct implementation!
+#if 0 //0ing it for now, until it's needed/implemented really, to get rid of warning
+/* Return a sensible pricing for randarts, which
+   gets added to k_info base item price - C. Blue */
+static s64b artifact_value_real(int Ind, object_type *o_ptr)
+{
+}
+#endif//0
+
 
 /*
  * Return the price of an item including plusses (and charges)
@@ -2004,34 +2046,34 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 //	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);
 
 	/* Require identical object types */
-	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
+	if (o_ptr->k_idx != j_ptr->k_idx) return (FALSE);
 
 	/* Level 0 items and other items won't merge, since level 0 can't be sold to shops */
-	if ((!o_ptr->level || !j_ptr->level) && (o_ptr->level != j_ptr->level)) return (0);
+	if ((!o_ptr->level || !j_ptr->level) && (o_ptr->level != j_ptr->level)) return (FALSE);
 
 		/* Require same owner or convertable to same owner */
 //
-/*		if (o_ptr->owner != j_ptr->owner) return (0); */
+/*		if (o_ptr->owner != j_ptr->owner) return (FALSE); */
 	if (Ind)
 	{
 		p_ptr = Players[Ind];
 		if (((o_ptr->owner != j_ptr->owner)
 			&& ((p_ptr->lev < j_ptr->level)
 			|| (j_ptr->level < 1)))
-			&& (j_ptr->owner)) return (0);
+			&& (j_ptr->owner)) return (FALSE);
 		if ((o_ptr->owner != p_ptr->id)
-			&& (o_ptr->owner != j_ptr->owner)) return (0);
+			&& (o_ptr->owner != j_ptr->owner)) return (FALSE);
 
 		/* Require objects from the same modus! */
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
-		if (compat_pomode(Ind, j_ptr)) return(0);
+		if (compat_pomode(Ind, j_ptr)) return(FALSE);
 	}
 	else
 	{
-		if (o_ptr->owner != j_ptr->owner) return (0);
+		if (o_ptr->owner != j_ptr->owner) return (FALSE);
 		/* no stacks of unowned everlasting items in shops after a now-dead
 		   everlasting player sold an item to the shop before he died :) */
-		if (compat_omode(o_ptr, j_ptr)) return(0);
+		if (compat_omode(o_ptr, j_ptr)) return(FALSE);
 	}
 
 	/* Analyze the items */
@@ -2042,7 +2084,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_CHEST:
 		{
 			/* Never okay */
-			return (0);
+			return (FALSE);
 		}
 
 		/* Food and Potions and Scrolls */
@@ -2052,8 +2094,8 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_SCROLL:
 		{
 			/* Hack for ego foods :) */
-			if (o_ptr->name2 != j_ptr->name2) return (0);
-			if (o_ptr->name2b != j_ptr->name2b) return (0);
+			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Assume okay */
 			break;
@@ -2066,19 +2108,19 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if ((!(o_ptr->ident & (ID_EMPTY)) && 
 				!object_known_p(Ind, o_ptr)) || 
 				(!(j_ptr->ident & (ID_EMPTY)) && 
-				!object_known_p(Ind, j_ptr))) return(0);
+				!object_known_p(Ind, j_ptr))) return(FALSE);
 
 			/* Beware artifatcs should not combine with "lesser" thing */
-			if (o_ptr->name1 != j_ptr->name1) return (0);
+			if (o_ptr->name1 != j_ptr->name1) return (FALSE);
 
 			/* Do not combine recharged ones with non recharged ones. */
-//			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (0);
+//			if ((f4 & TR4_RECHARGED) != (f14 & TR4_RECHARGED)) return (FALSE);
 
 			/* Do not combine different ego or normal ones */
-			if (o_ptr->name2 != j_ptr->name2) return (0);
+			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 
 			/* Do not combine different ego or normal ones */
-			if (o_ptr->name2b != j_ptr->name2b) return (0);
+			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Assume okay */
 			break;
@@ -2087,15 +2129,15 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_STAFF:
 		{
 			/* Require knowledge */
-			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (0);
+			if (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr)) return (FALSE);
 
-			if (!Ind || !p_ptr->stack_allow_wands) return (0);
+			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
 			/* Require identical charges */
-			if (o_ptr->pval != j_ptr->pval) return (0);
+			if (o_ptr->pval != j_ptr->pval) return (FALSE);
 			
-			if (o_ptr->name2 != j_ptr->name2) return (0);
-			if (o_ptr->name2b != j_ptr->name2b) return (0);
+			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Probably okay */
 			break;
@@ -2108,23 +2150,23 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_ROD:
 		{
 			/* Overpoweredness, Hello! - the_sandman */
-			if (o_ptr->sval == SV_ROD_HAVOC) return (0);
+			if (o_ptr->sval == SV_ROD_HAVOC) return (FALSE);
 
 			/* Require permission */
-			if (!Ind || !p_ptr->stack_allow_wands) return (0);
+			if (!Ind || !p_ptr->stack_allow_wands) return (FALSE);
 
 			/* this is only for rods... the_sandman */
-			if (o_ptr->pval == 0 && j_ptr->pval != 0) return (0); //lol :)
+			if (o_ptr->pval == 0 && j_ptr->pval != 0) return (FALSE); //lol :)
 			
-			if (o_ptr->name2 != j_ptr->name2) return (0);
-			if (o_ptr->name2b != j_ptr->name2b) return (0);
+			if (o_ptr->name2 != j_ptr->name2) return (FALSE);
+			if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 
 			/* Probably okay */
 			break;
 		}
 
 		/* Weapons and Armor */
-		case TV_DRAG_ARMOR:	return(0);
+		case TV_DRAG_ARMOR:	return(FALSE);
 		case TV_BOW:
 		case TV_BOOMERANG:
 		case TV_DIGGING:
@@ -2144,11 +2186,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_TRAPKIT: /* so they don't stack carelessly - the_sandman */
 		{
 			/* Require permission */
-			if (!Ind || !p_ptr->stack_allow_items) return (0);
+			if (!Ind || !p_ptr->stack_allow_items) return (FALSE);
 
 			/* XXX XXX XXX Require identical "sense" status */
 			/* if ((o_ptr->ident & ID_SENSE) != */
-			/*     (j_ptr->ident & ID_SENSE)) return (0); */
+			/*     (j_ptr->ident & ID_SENSE)) return (FALSE); */
 
 			/* Fall through */
 		}
@@ -2162,10 +2204,24 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_TOOL:
 		case TV_BOOK:	/* Books can be 'fireproof' */
 		{
+			/* hack: 'used' custom tomes can't be stacked */
+			if (o_ptr->tval == TV_BOOK &&
+			    o_ptr->sval >= SV_CUSTOM_TOME_1 &&
+			    o_ptr->sval < SV_SPELLBOOK &&
+			    o_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
+				return(FALSE);
+			if (j_ptr->tval == TV_BOOK &&
+			    j_ptr->sval >= SV_CUSTOM_TOME_1 &&
+			    j_ptr->sval < SV_SPELLBOOK &&
+			    j_ptr->xtra1) /* not 'empty' anymore, ie already written into? */
+				return(FALSE);
 			/* Require full knowledge of both items */
 			if (!Ind || !object_known_p(Ind, o_ptr) ||
-//					!object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (0);
-					!object_known_p(Ind, j_ptr)) return (FALSE);
+//			    !object_known_p(Ind, j_ptr) || (o_ptr->name3)) return (FALSE);
+			    !object_known_p(Ind, j_ptr))
+				return (FALSE);
+
+			/* different bpval? */
 			if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
 
 			/* Fall through */
@@ -2242,7 +2298,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		{
 			/* Require knowledge */
 			if (Ind && (!object_known_p(Ind, o_ptr) ||
-					!object_known_p(Ind, j_ptr))) return (0);
+					!object_known_p(Ind, j_ptr))) return (FALSE);
 
 			/* Probably okay */
 			break;
@@ -2251,10 +2307,10 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 
 
 	/* Hack -- Require identical "cursed" status */
-	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return (0);
+	if ((o_ptr->ident & ID_CURSED) != (j_ptr->ident & ID_CURSED)) return (FALSE);
 
 	/* Hack -- Require identical "broken" status */
-	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return (0);
+	if ((o_ptr->ident & ID_BROKEN) != (j_ptr->ident & ID_BROKEN)) return (FALSE);
 
 
 	/* Hack -- require semi-matching "inscriptions" */
@@ -2264,17 +2320,17 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		&& strcmp(quark_str(j_ptr->note), "on sale")
 		&& !is_book(o_ptr)
 		&& !check_guard_inscription(o_ptr->note, 'M')
-		&& !check_guard_inscription(j_ptr->note, 'M')) return (0);
+		&& !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
 
 	/* Hack -- normally require matching "inscriptions" */
-	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (0);
+	if ((!Ind || !p_ptr->stack_force_notes) && (o_ptr->note != j_ptr->note)) return (FALSE);
 
 	/* Hack -- normally require matching "discounts" */
-	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (0);
+	if ((!Ind || !p_ptr->stack_force_costs) && (o_ptr->discount != j_ptr->discount)) return (FALSE);
 
 
 	/* Maximal "stacking" limit */
-	if (total >= MAX_STACK_SIZE) return (0);
+	if (total >= MAX_STACK_SIZE) return (FALSE);
 
 	/* An everlasting player will have _his_ items stack w/ non-everlasting stuff
 	   (especially new items bought in the shops) and convert them all to everlasting */
@@ -2396,7 +2452,7 @@ s16b lookup_kind(int tval, int sval)
 
 	/* Oops */
 #if DEBUG_LEVEL > 2
-	s_printf("No object (%d,%d)", tval, sval);
+	s_printf("No object (%d,%d)\n", tval, sval);
 #endif	// DEBUG_LEVEL
 
 	/* Oops */
@@ -2434,9 +2490,9 @@ void invcopy(object_type *o_ptr, int k_idx)
 	/* Default "pval" */
 //	o_ptr->pval = k_ptr->pval;
 	if (o_ptr->tval == TV_POTION ||
-		o_ptr->tval == TV_POTION2 ||
-		o_ptr->tval == TV_FLASK ||
-		o_ptr->tval == TV_FOOD)
+	    o_ptr->tval == TV_POTION2 ||
+	    o_ptr->tval == TV_FLASK ||
+	    o_ptr->tval == TV_FOOD)
 		o_ptr->pval = k_ptr->pval;
 	else if (o_ptr->tval == TV_LITE)
 		o_ptr->timeout = k_ptr->pval;
@@ -2606,7 +2662,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		}
 
 		/* Artifact "rarity roll" */
-		if (rand_int(a_ptr->rarity) != 0) return (0);
+		if (rand_int(a_ptr->rarity) != 0) return (FALSE);
 
 		/* Find the base object */
 		k_idx = lookup_kind(a_ptr->tval, a_ptr->sval);
@@ -4755,10 +4811,13 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf)
 				/* Amulet of speed */
 				case SV_AMULET_SPEED:
 				{
+#if 0 /* a bit too useless maybe? */
 					// Amulets of speed can't give very
 					// much, and are rarely +5.
 					o_ptr->bpval = randint(randint(5)); 
-
+#else
+					o_ptr->bpval = randint(5);
+#endif
 					/* Cursed */
 					if (power < 0)
 					{
@@ -7703,6 +7762,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
 		case CLASS_RUNEMASTER:
+		case CLASS_MINDCRAFTER:
 			if (o_ptr->name2 == EGO_WISDOM || o_ptr->name2b == EGO_WISDOM) continue;
 			break;
 		case CLASS_PRIEST:
@@ -8063,7 +8123,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 
 		/* Hack -- no stacking inside houses */
 		/* XXX this can cause 'arts crashes arts' */
-		crash = (!wpos->wz && k > 1 && !comb && (c_ptr->info&CAVE_ICKY));
+		crash = (!wpos->wz && k > 1 && !comb && (c_ptr->info & CAVE_ICKY));
 		if (!arts && crash) continue;
 
 		/* Paranoia */
@@ -8237,15 +8297,29 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			/* Locate */
 			o_ptr->iy = ny;
 			o_ptr->ix = nx;
-			wpcopy(&o_ptr->wpos,wpos);
+			wpcopy(&o_ptr->wpos, wpos);
 
 			/* reset scan_objs timer */
 			o_ptr->marked = 0;
-			//o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-			
+
 			/* Keep game pieces from disappearing */
 			if ((o_ptr->tval == 1) && (o_ptr->sval >= 9))
 				o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+
+			/* items dropped into a house (well or a vault
+			   on surface if such exists) are marked to not
+			   get removed by timeout check, allowing us to
+			   additionally check and delete objects on
+			   unallocated levels - C. Blue */
+			if (o_ptr->marked2 != ITEM_REMOVAL_NEVER) {
+				if (!wpos->wz && (c_ptr->info & CAVE_ICKY)) {
+					/* mark as 'inside a house' */
+					o_ptr->marked2 = ITEM_REMOVAL_HOUSE;
+				} else {
+					/* clear possible previous ITEM_REMOVAL_HOUSE mark */
+					o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+				}
+			}
 
 			/* No monster */
 			o_ptr->held_m_idx = 0;

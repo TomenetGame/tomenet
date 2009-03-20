@@ -999,8 +999,8 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, 
 
 	c_put_str(color,attr,r,c);
 	strnfmt(tmp_str, 80, "Attack: %d-%d damage",
-	        numblows * ((o_ptr->dd * mult) + o_ptr->to_d),
-	        numblows * ((o_ptr->ds * o_ptr->dd * mult) + o_ptr->to_d));
+	        numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d),
+	        numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d));
 	put_str(tmp_str,r,c+8);
 	r++;
 }

@@ -441,9 +441,9 @@ static errr init_f_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'f_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'f_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'f_info.txt' file.");
@@ -530,9 +530,9 @@ static errr init_k_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'k_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'k_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'k_info.txt' file.");
@@ -620,9 +620,9 @@ static errr init_a_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'a_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'a_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'a_info.txt' file.");
@@ -770,9 +770,9 @@ static errr init_s_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 's_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 's_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 's_info.txt' file.");
@@ -946,9 +946,9 @@ static errr init_e_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'e_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'e_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'e_info.txt' file.");
@@ -967,6 +967,9 @@ static errr init_e_info(void)
 static errr init_r_info(void)
 {
 	errr err;
+
+	s16b idx[MAX_R_IDX];
+	int i, j, total = 0, tmp;
 
 	FILE *fp;
 
@@ -1033,13 +1036,34 @@ static errr init_r_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'r_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'r_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'r_info.txt' file.");
 	}
+
+
+	/* Sort uniques for client-side list on chardump - C. Blue */
+	for (i = 0; i < MAX_R_IDX; i++) {
+		if (!(r_info[i].flags1 & RF1_UNIQUE)) continue;
+		idx[total++] = i;
+	}
+	/* bubble me up */
+	for (i = 0; i < total - 1; i++)
+	for (j = i + 1; j < total; j++)
+	if (r_info[idx[j]].level < r_info[idx[i]].level) {
+		tmp = idx[i];
+		idx[i] = idx[j];
+		idx[j] = tmp;
+	}
+	/* write back result */
+	for (i = 0; i < total; i++) {
+		r_info[idx[i]].u_idx = i;
+//s_printf("UNI #%d r_idx %d (lev %d)\n", i, idx[i], r_info[idx[i]].level);
+	}
+
 
 	/* Success */
 	return (0);
@@ -1125,10 +1149,9 @@ static errr init_re_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-                s_printf("Error %d at line %d of 're_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
-//		s_printf(NULL);
+                s_printf("Error %d at line %d of 're_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
                 quit("Error in 're_info.txt' file.");
@@ -1283,7 +1306,6 @@ static errr init_d_info(void)
 		s_printf("Error %d at line %d df 'd_info.txt'.\n", err, error_line);
 		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
 		s_printf("Parsing '%s'.\n", buf);
-		//msg_print(NULL);
 
 		/* Quit */
 		quit("Error in 'd_info.txt' file.");
@@ -1465,9 +1487,9 @@ static errr init_t_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'tr_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'tr_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'tr_info.txt' file.");
@@ -1557,9 +1579,9 @@ static errr init_v_info(void)
 		oops = (((err > 0) && (err < 8)) ? err_str[err] : "unknown");
 
 		/* Oops */
-		s_printf("Error %d at line %d of 'v_info.txt'.", err, error_line);
-		s_printf("Record %d contains a '%s' error.", error_idx, oops);
-		s_printf("Parsing '%s'.", buf);
+		s_printf("Error %d at line %d of 'v_info.txt'.\n", err, error_line);
+		s_printf("Record %d contains a '%s' error.\n", error_idx, oops);
+		s_printf("Parsing '%s'.\n", buf);
 
 		/* Quit */
 		quit("Error in 'v_info.txt' file.");

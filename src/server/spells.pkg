@@ -130,6 +130,7 @@ typedef unsigned int u32b;
 #define GF_ZEAL_PLAYER          142
 #define GF_DISP_DEMON   143
 #define GF_SOULCURE_PLAYER	144
+#define GF_MINDBOOST_PLAYER  145
 
 /* Zangband changes */
 #define GF_TELE_TO		150
@@ -145,6 +146,9 @@ typedef unsigned int u32b;
 #define GF_EXTRA_SPR	158
 
 #define GF_PUSH 	159 	/* Moltor */
+
+#define GF_SILENCE	160
+
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
 #define PROJECTOR_TRAP		-1001
@@ -184,7 +188,11 @@ typedef unsigned int u32b;
 
 /* cave.c */
 extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern int check_feat(worldpos *wpos, int y, int x);
+
+/* cmd2.c */
+extern void do_cmd_fusion(int Ind);
 
 /* generate.c */
 extern void arcade_wipe(worldpos *wpos);
@@ -281,6 +289,7 @@ extern bool set_martyr(int Ind, int v);
 extern bool set_invuln(int Ind, int v);
 extern bool set_tim_invis(int Ind, int v);
 extern bool set_tim_infra(int Ind, int v);
+extern bool set_mindboost(int Ind, int p, int v);
 extern bool identify_fully(int Ind);
 extern void self_knowledge(int Ind);
 extern bool ident_spell(int Ind);
@@ -359,6 +368,8 @@ extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker);
+extern bool fire_grid_bolt(int Ind, int typ, int dir, int dam, char *attacker);
+extern bool fire_grid_beam(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool lite_line(int Ind, int dir);
 extern bool drain_life(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
@@ -388,6 +399,7 @@ extern bool curse_spell(int Ind);
 extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 extern bool do_vermin_control(int Ind);
+extern void do_autokinesis_to(int Ind, int dis);
 
 /* traps.c */
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
@@ -400,7 +412,7 @@ extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
 /* ENABLE_DIVINE */
-/*extern void divine_vengeance(int Ind, int power);*/
+extern void divine_vengeance(int Ind, int power);
 
 extern void set_recall_depth(player_type * p_ptr, object_type * o_ptr);
 extern bool set_recall_timer(int Ind, int v);
@@ -473,3 +485,7 @@ extern void lua_set_floor_flags(int Ind, u32b flags);
 extern s32b lua_get_skill_mod(int Ind, int i);
 extern s32b lua_get_skill_value(int Ind, int i);
 extern void lua_fix_equip_slots(int Ind);
+extern void lua_fix_skill_chart(int Ind);
+
+/* wild.c */
+extern void wild_flags(int Ind, u32b flags);

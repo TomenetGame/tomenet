@@ -38,7 +38,7 @@ void transform_level(int Ind, byte feat, int chance) {
 			if (magik(chance)) {
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x, TRUE);
-				cave_set_feat(&p_ptr->wpos, y, x, feat);
+				cave_set_feat_live(&p_ptr->wpos, y, x, feat);
 			}
 		}
 	} /* width */ } /* height */

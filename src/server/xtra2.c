@@ -3112,6 +3112,56 @@ bool set_cut(int Ind, int v, int attacker)
 	return (TRUE);
 }
 
+bool set_mindboost(int Ind, int p, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* set EA */
+	p_ptr->mindboost_power = p;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->mindboost)
+		{
+			msg_print(Ind, "Your mind overflows!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->mindboost)
+		{
+			msg_print(Ind, "The mind returns to normal.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->mindboost = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Redraw the Blows/Round if any */
+	p_ptr->update |= PU_BONUS;
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
 
 /*
  * Set "p_ptr->food", notice observable changes
@@ -3650,31 +3700,30 @@ void check_experience(int Ind)
 			break;
 #ifdef ENABLE_DIVINE
 		case RACE_DIVINE:
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* Your future requires you to slay The Candlebearer or The Darkling! *");
-			if (old_lev < 18 && p_ptr->lev >= 18) msg_print(Ind, "\377G* You must decide to slay The Candlebearer or The Darkling! *");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* We all have to pick our own path some time... *");
+			if (old_lev < 18 && p_ptr->lev >= 18) msg_print(Ind, "\377G* You are thirsty for blood: be it good or evil *");
 			if (old_lev < 20 && p_ptr->lev >= 20) {
+				/* New: reset skill tree and teleport them (hopefully to a safe location...) */
+				/* Do this before since respec_skills reinit from tables.c */
+				respec_skills(Ind);	
+				teleport_player(Ind, 200, TRUE);
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER]!=0 && p_ptr->r_killed[MONSTER_RIDX_DARKLING]==0) {
 					//A demon appears!
 					msg_print(Ind, "\377GYou have fallen from amongst your kind...");
 					msg_print(Ind, "\377DYou are not worthy of redemption!");
 					p_ptr->divinity=DIVINE_DEMON;
-					//TODO: SKILL TREE TRANSFORMATION
 					/* Doh! */
 					p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
 					p_ptr->s_info[SKILL_HCURING].mod = 0;
 					p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
 					p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
-					p_ptr->s_info[SKILL_MANA].mod = 0;
-					p_ptr->s_info[SKILL_DIVINATION].mod = 0;
 					/* Yay */
-					p_ptr->s_info[SKILL_NATURE].mod *= 2.1;
-					p_ptr->s_info[SKILL_BLUNT].mod *= 2.1;
-					p_ptr->s_info[SKILL_AXE].mod *= 2.1;
-					p_ptr->s_info[SKILL_MARTIAL_ARTS].mod *= 2.1;
-					p_ptr->s_info[SKILL_FIRE].mod *= 2.1;
-					p_ptr->s_info[SKILL_AIR].mod *= 2.1;
-					p_ptr->s_info[SKILL_CONVEYANCE].mod *= 2.1;
-					p_ptr->s_info[SKILL_UDUN].mod *= 2.5;
+					p_ptr->s_info[SKILL_AXE].mod *= 1.5;
+					p_ptr->s_info[SKILL_SORCERY].mod *= 2.1;
+					p_ptr->s_info[SKILL_FIRE].mod *= 1.7;
+					p_ptr->s_info[SKILL_AIR].mod *= 1.7;
+					p_ptr->s_info[SKILL_CONVEYANCE].mod *= 1.7;
+					p_ptr->s_info[SKILL_UDUN].mod *= 2.0;
 					p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 3;
 					p_ptr->s_info[SKILL_NECROMANCY].mod *= 3;
 					p_ptr->s_info[SKILL_AURA_FEAR].mod *= 3;
@@ -3685,19 +3734,22 @@ void check_experience(int Ind)
 					//An angel appears!
 					msg_print(Ind, "\377sYou have proven your goodness.");
 					p_ptr->divinity=DIVINE_ANGEL;
-					//TODO: SKILL TREE TRANSFORMATION
-					p_ptr->s_info[SKILL_HOFFENSE].mod *= 2.1;
-					p_ptr->s_info[SKILL_HCURING].mod *= 2.1;
-					p_ptr->s_info[SKILL_HDEFENSE].mod *= 2.1;
-					p_ptr->s_info[SKILL_HSUPPORT].mod *= 2.1;
-					p_ptr->s_info[SKILL_MANA].mod *= 2.1;
-					p_ptr->s_info[SKILL_DIVINATION].mod *= 2.1;
-					p_ptr->s_info[SKILL_NATURE].mod *= 2.1;
-					p_ptr->s_info[SKILL_SWORD].mod *= 2.1;
-					p_ptr->s_info[SKILL_POLEARM].mod *= 2.1;
+					/* Doh! */
+					p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 0;
+					p_ptr->s_info[SKILL_NECROMANCY].mod *= 0;
+					p_ptr->s_info[SKILL_AURA_DEATH].mod *= 0;
+					/* Yay */
+					p_ptr->s_info[SKILL_AURA_FEAR].mod *= 2.1;
+					p_ptr->s_info[SKILL_AURA_SHIVER].mod *= 2.1;
+					p_ptr->s_info[SKILL_HOFFENSE].mod *= 2.4;
+					p_ptr->s_info[SKILL_HCURING].mod *= 2.4;
+					p_ptr->s_info[SKILL_HDEFENSE].mod *= 2.4;
+					p_ptr->s_info[SKILL_HSUPPORT].mod *= 2.4;
+					p_ptr->s_info[SKILL_SWORD].mod *= 1.5;
+					p_ptr->s_info[SKILL_BLUNT].mod *= 1.5;
+					p_ptr->s_info[SKILL_POLEARM].mod *= 1.5;
 					p_ptr->s_info[SKILL_SNEAKINESS].mod *= 2.1;
 					p_ptr->s_info[SKILL_STEALTH].mod *= 2.1;
-					p_ptr->s_info[SKILL_UDUN].mod = 0;
 					p_ptr->redraw |= (PR_SKILLS);
 				} else  { //die!
 					msg_print(Ind, "\377RYou don't deserve to live.");
@@ -3705,6 +3757,7 @@ void check_experience(int Ind)
 					p_ptr->deathblow = 0;
 					p_ptr->death = 1;
 				} 
+				
 			}
 			break;
 #endif
@@ -3911,6 +3964,7 @@ void check_experience(int Ind)
 			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\377G* You learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740) *");
 			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\377G* You learn how to change into a Maulotaur (#723) and Winged Horror (#704) *");// and Behemoth (#716) *");
 			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377G* You learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775) *");//Leviathan (#782) *");
+			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\377G* You learn how to change into a Fire Bird (#1127) *");
 			break;
 
 		case CLASS_SHAMAN:
@@ -4321,14 +4375,14 @@ void monster_death(int Ind, int m_idx)
 	
 	process_hooks(HOOK_MONSTER_DEATH, "d", Ind);
 
-#ifdef HALLOWEEN
+if (season_halloween) {
 	/* let everyone know, so they are prepared.. >:) */
 	if (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088) {
 		msg_broadcast(0, format("\377o%s has defeated a tasty halloween spirit!", p_ptr->name));
 		s_printf("HALLOWEEN: %s has defeated %s.\n", p_ptr->name, m_name);
 		great_pumpkin_timer = 15 + rand_int(45);
 	}
-#endif
+}
 
 
 
@@ -4578,11 +4632,31 @@ void monster_death(int Ind, int m_idx)
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
 
-	if (p_ptr->r_killed[m_ptr->r_idx] < 1000)
-	{
+	if (r_ptr->flags1 & RF1_UNIQUE) {
+		/* Set unique monster to 'killed' for this player */
+		p_ptr->r_killed[m_ptr->r_idx] = 1;
+		Send_unique_monster(Ind, m_ptr->r_idx);
+		/* Set unique monster to 'helped with' for all other nearby players
+		   who haven't explicitely killed it yet - C. Blue */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (i == Ind) continue;
+//for testing		if (is_admin(Players[i])) continue;
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* it's sufficient to just be on the same dungeon floor to get credit */
+			if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
+			/* must be in the same party though */
+			if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
+
+			/* Hack: '2' means 'helped' instead of 'killed' */
+			if (!Players[i]->r_killed[m_ptr->r_idx]) {
+				Players[i]->r_killed[m_ptr->r_idx] = 2;
+				Send_unique_monster(i, m_ptr->r_idx);
+			}
+		}
+	} else if (p_ptr->r_killed[m_ptr->r_idx] < 1000) {
 		int before = p_ptr->r_killed[m_ptr->r_idx];
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
-	
+
 #ifdef RPG_SERVER
 		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away 
 		 * to make it easier (at least statistically) getting forms in the iron server. Plus,
@@ -4646,7 +4720,12 @@ void monster_death(int Ind, int m_idx)
 				p_ptr2 = Players[Ind2];
 
 				/* Remember */
-				p_ptr2->r_killed[m_ptr->r_idx]++;
+				if (r_ptr->flags1 & RF1_UNIQUE) {
+					p_ptr2->r_killed[m_ptr->r_idx] = 1;
+					Send_unique_monster(Ind2, m_ptr->r_idx);
+				} else if (p_ptr2->r_killed[m_ptr->r_idx] < 1000) {
+					p_ptr2->r_killed[m_ptr->r_idx]++;
+				}
 			}
 		}
 		/*the_sandman prints a rumour */
@@ -4892,7 +4971,8 @@ if(cfg.unikill_format){
 			prize.level = 45;
 
 			/* Drop it in the dungeon */
-			prize.marked2 = ITEM_REMOVAL_NEVER;
+			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
+			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
 			drop_near(&prize, -1, wpos, y, x);
 
 			/* Mega-Hack -- Prepare to make "Morgoth" */
@@ -4908,7 +4988,8 @@ if(cfg.unikill_format){
 			prize.level = 45;
 
 			/* Drop it in the dungeon */
-			prize.marked2 = ITEM_REMOVAL_NEVER;
+			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
+			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
 			drop_near(&prize, -1, wpos, y, x);
 
 			} /* Paranoia tag */
@@ -5014,7 +5095,9 @@ if(cfg.unikill_format){
 
 			invcopy(qq_ptr, lookup_kind(TV_RUNE2, SV_RUNE2_STONE));
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, FALSE);
-			qq_ptr->number = 1; qq_ptr->level  = 35; qq_ptr->note   = local_quark; 
+			qq_ptr->number = 1;
+			qq_ptr->level = 35;
+			qq_ptr->note = local_quark; 
 
 			//And some armageddon
 			/* Drop it in the dungeon */
@@ -5025,7 +5108,9 @@ if(cfg.unikill_format){
 
 			invcopy(qq_ptr, lookup_kind(TV_RUNE2, SV_RUNE2_ARMAGEDDON));
 			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, FALSE, FALSE, FALSE);
-			qq_ptr->number = 1; qq_ptr->level  = 40; qq_ptr->note   = local_quark; 
+			qq_ptr->number = 1;
+			qq_ptr->level = 40;
+			qq_ptr->note = local_quark; 
 
 			/* Drop it in the dungeon */
 			drop_near(qq_ptr, -1, wpos, y, x);
@@ -5149,7 +5234,7 @@ if(cfg.unikill_format){
 			else if (strstr((r_name + r_ptr->name),"Kronos, Lord of Titans"))
 			{
 				a_idx = ART_KRONOS;
-				chance = 90;
+				chance = 80;
 			}
 			else if (strstr((r_name + r_ptr->name),"Zu-Aon, The Cosmic Border Guard"))
 			{
@@ -5773,7 +5858,7 @@ void player_death(int Ind)
 	/* or instead teleport them to surface */
 	/* added wpos checks due to weirdness. -Molt */
 	if(p_ptr->wpos.wx != WPOS_SECTOR00_X && p_ptr->wpos.wy != WPOS_SECTOR00_Y && p_ptr->global_event_temp & PEVF_SAFEDUN_00) {
-		s_printf("Somethin weird with %s. GET is %d", p_ptr->name, p_ptr->global_event_temp);
+		s_printf("Somethin weird with %s. GET is %d\n", p_ptr->name, p_ptr->global_event_temp);
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
 	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y) {
@@ -6148,9 +6233,9 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 #endif	/* DEATH_ITEM_SCATTER */
 					{
 						if (!item_lost) {
-							//* omg BUG! :) begone.. p_ptr->inventory[i].marked=3; /* LONG timeout */
-							/* try this instead: */
-							o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+							if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+							else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+							else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 
 							/* Drop this one */
 				    			away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
@@ -6177,7 +6262,9 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 								y1 = rand_int(p_ptr->cur_hgt);
 	
 								if (!cave_clean_bold(zcave, y1, x1)) continue;
-								o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+								if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+								else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+								else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 								o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
 							}
 					}
@@ -6418,13 +6505,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 #endif	/* DEATH_ITEM_SCATTER */
 				{
 					if (!item_lost) {
-						// not again :) p_ptr->inventory[i].marked=3; /* LONG timeout */
-#if 0
-						p_ptr->inventory[i].marked=3;
-#else
-						/* here we go: */
-						o_ptr->marked2 = ITEM_REMOVAL_NEVER;
-#endif
+						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
+
 						/* Drop this one */
 						away = drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
 							<= 0 ? TRUE : FALSE;
@@ -6450,7 +6534,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 							y1 = rand_int(p_ptr->cur_hgt);
 
 							if (!cave_clean_bold(zcave, y1, x1)) continue;
-							o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+							if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+							else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+							else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 							o_idx = drop_near(o_ptr, 0, &p_ptr->wpos, y1, x1);
 						}
 				}
@@ -6594,8 +6680,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 			o_ptr->note = quark_add(format("# of %s", p_ptr->name));
 			/* o_ptr->note = quark_add(format("#of %s", p_ptr->name));
 			the_sandman: removed the auto-space-padding on {# inscs */
-			
-			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;/* NEVER would be nicer, but leads to littered towns - C. Blue */
+
+			if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
+			else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
+			else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 			(void)drop_near(o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 
@@ -7230,7 +7318,7 @@ for(i=1; i < 5; i++) {
 		}
 
 		/* Check if it's cloned unique */
-		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx])
+		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
 		{
 			m_ptr->clone = 90;
 		}
@@ -9099,6 +9187,7 @@ if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
 		/* Actually teleport the object to the player inventory */
+		can_use(Ind2, q_ptr); /* change owner */
 		inven_carry(Ind2, q_ptr);
 
 		/* Combine the pack */

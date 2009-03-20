@@ -2322,11 +2322,16 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* Fixing final limits */
 	artifact_fix_limits_afterwards(a_ptr, k_ptr, o_ptr);
 
+#if 0
 	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
-	
-	/* todo:
-	a_ptr->cost += flag_cost(o_ptr) / 5;
-	*/
+#else
+	a_ptr->cost = (ap - RANDART_QUALITY + 50);
+	if (a_ptr->cost < 0) {
+		a_ptr->cost = 0;
+	} else {
+		a_ptr->cost = (ap * ap * ap) / 15;
+	}
+#endif
 
 	/* NOTE: a_ptr->level is only the base level. Apply_magic as well as
 	   create_artifact_aux execute a 'determine_level_req' on randarts
@@ -2567,7 +2572,7 @@ try_an_other_ego:
 
         /* Fix some limits */
         /* Never have more than +15 bonus */
-        if (a_ptr->pval > 15) a_ptr->pval = 15;
+        if (!is_ammo(a_ptr->tval) && a_ptr->pval > 15) a_ptr->pval = 15;
 	/* Mage Staves don't have NO_MAGIC */
 	if (o_ptr->tval == TV_MSTAFF) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 	/* Dark Swords don't have MANA (or SPELL) flag */
@@ -3445,4 +3450,3 @@ void dragon_resist(artifact_type * a_ptr)
 	}
 	while (randint(2)==1);
 }
-

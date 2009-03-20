@@ -711,17 +711,21 @@ static void wr_item(object_type *o_ptr)
 
 	wr_byte(o_ptr->ident);
 
-//	wr_byte(0);
 	wr_u16b(o_ptr->name2b);
-
-	wr_u32b(0L);
-	wr_u32b(0L);
-	wr_u32b(0L);
-
-	wr_u16b(0);
 
 	wr_byte(o_ptr->xtra1);
 	wr_byte(o_ptr->xtra2);
+	/* more info, originally for self-made spellbook feature */
+	wr_byte(o_ptr->xtra3);
+	wr_byte(o_ptr->xtra4);
+	wr_byte(o_ptr->xtra5);
+	wr_byte(o_ptr->xtra6);
+	wr_byte(o_ptr->xtra7);
+	wr_byte(o_ptr->xtra8);
+	wr_byte(o_ptr->xtra9);
+
+	wr_s32b(o_ptr->marked);
+	wr_byte(o_ptr->marked2);
 
 	/* Save the inscription (if any) */
 	if (o_ptr->note)
@@ -831,6 +835,11 @@ static void wr_monster(monster_type *m_ptr)
 	wr_byte(m_ptr->stunned);
 	wr_byte(m_ptr->confused);
 	wr_byte(m_ptr->monfear);
+	wr_byte(m_ptr->paralyzed);
+	wr_byte(m_ptr->bleeding);
+	wr_byte(m_ptr->poisoned);
+	wr_byte(m_ptr->blinded);
+	wr_byte(m_ptr->silenced);
 	wr_u16b(m_ptr->hold_o_idx);
 	wr_u16b(m_ptr->clone);
 	wr_s16b(m_ptr->mind);
@@ -972,6 +981,30 @@ static void wr_bbs() {
 	wr_s16b(BBS_LINES);
 	for (i = 0; i < BBS_LINES; i++)
 		wr_string(bbs_line[i]);
+}
+
+static void wr_notes() {
+	int i;
+
+	wr_s16b(MAX_NOTES);
+	for (i = 0; i < MAX_NOTES; i++) {
+		wr_string(priv_note[i]);
+		wr_string(priv_note_sender[i]);
+		wr_string(priv_note_target[i]);
+	}
+
+	wr_s16b(MAX_PARTYNOTES);
+	for (i = 0; i < MAX_PARTYNOTES; i++) {
+		wr_string(party_note[i]);
+		wr_string(party_note_target[i]);
+	}
+
+	wr_s16b(MAX_GUILDNOTES);
+	for (i = 0; i < MAX_GUILDNOTES; i++) {
+		wr_string(guild_note[i]);
+		wr_string(guild_note_target[i]);
+	}
+	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
 static void wr_quests(){
@@ -1177,6 +1210,7 @@ static void wr_extra(int Ind)
                 wr_u16b(p_ptr->s_info[i].mod);
                 wr_byte(p_ptr->s_info[i].dev);
                 wr_byte(p_ptr->s_info[i].hidden);
+                wr_byte(p_ptr->s_info[i].dummy);
         }
 	wr_s16b(p_ptr->skill_points);
 //	wr_s16b(p_ptr->skill_last_level);
@@ -2379,6 +2413,8 @@ static bool wr_server_savefile()
 	/* Is this a panic save? - C. Blue */
         if (panic_save) wr_byte(1); else wr_byte(0);
 
+        /* save server state regarding updates (lua) */
+	wr_s16b(updated_server);
 
 	/* Space */
 	wr_u32b(0L);
@@ -2468,7 +2504,11 @@ static bool wr_server_savefile()
 	wr_s32b(player_id);
 	wr_s32b(turn);
 
+	wr_notes();
 	wr_bbs();
+
+	wr_byte(season);
+	wr_byte(weather_frequency);
 
 	/* Error in save */
 	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;
@@ -2723,7 +2763,7 @@ bool load_server_info(void)
 	}
 
 	/* Message */
-	s_printf("Error (%s) reading a %d.%d.%d server savefile.", what, sf_major, sf_minor, sf_patch);
+	s_printf("Error (%s) reading a %d.%d.%d server savefile.\n", what, sf_major, sf_minor, sf_patch);
 
 	return (FALSE);
 }

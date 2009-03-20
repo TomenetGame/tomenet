@@ -502,6 +502,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir)
 #endif	// 0
 }
 
+/* old spinning, now unused. Added spin_attack() to replace it - C. Blue */
 void do_spin(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
@@ -588,369 +589,166 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
   switch(j)
     {
+
+
+/* RF_4 ------------------------------------------------------------------------------------------------- */
+
+//#define RF4_SHRIEK                      0x00000001      /* Shriek for help */ 
     case 0:
       msg_print(Ind, "You emit a high pitched humming noise.");
       aggravate_monsters(Ind, 1);
       break;
+//#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
     case 1:
       break;
+//#define RF4_S_ANIMAL                    0x00000004  /* Summon animals */ 
     case 2:
       break;
+//#define RF4_ROCKET                      0x00000008  /* TY: Rocket */
     case 3:
-      break;
 //#define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
     case 4:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
     case 5:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_ARROW_3			0x00000040	/* Fire a bolt (heavy) */
     case 6:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_ARROW_4			0x00000080	/* Generic missile */
     case 7:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
     case 9:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
-      get_aim_dir(Ind);//w0t0w
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
     case 11:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
     case 12:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
     case 13:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_LITE			0x00004000	/* Breathe Lite */
     case 14:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_DARK			0x00008000	/* Breathe Dark */
     case 15:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_CONF			0x00010000	/* Breathe Confusion */
     case 16:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_SOUN			0x00020000	/* Breathe Sound */
     case 17:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_CHAO			0x00040000	/* Breathe Chaos */
     case 18:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_DISE			0x00080000	/* Breathe Disenchant */
     case 19:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_NEXU			0x00100000	/* Breathe Nexus */
     case 20:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_TIME			0x00200000	/* Breathe Time */
     case 21:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_INER			0x00400000	/* Breathe Inertia */
     case 22:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_GRAV			0x00800000	/* Breathe Gravity */
     case 23:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_SHAR			0x01000000	/* Breathe Shards */
     case 24:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
     case 25:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_WALL			0x04000000	/* Breathe Force */
     case 26:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 //#define RF4_BR_MANA			0x08000000	/* Breathe Mana */
     case 27:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
-//#define RF4_XXX5			0x10000000
+//#define RF4_BR_DISI                     0x10000000  /* Breathe Disintegration */ 
     case 28:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
-//#define RF4_XXX6			0x20000000
+//#define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */ 
     case 29:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
-//#define RF4_XXX7			0x40000000
+//#define RF4_MOAN                        0x40000000      /* For Halloween event :) -C. Blue */ 
     case 30:
       break;
 // #define RF4_BOULDER			0x80000000
     case 31:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
 
-/* RF5 */
+
+/* RF_5 ------------------------------------------------------------------------------------------------- */
 
 // RF5_BA_ACID			0x00000001	/* Acid Ball */
     case 32:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_ELEC			0x00000002	/* Elec Ball */
     case 33:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_FIRE			0x00000004	/* Fire Ball */
     case 34:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_COLD			0x00000008	/* Cold Ball */
     case 35:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_POIS			0x00000010	/* Poison Ball */
     case 36:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_NETH			0x00000020	/* Nether Ball */
     case 37:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_WATE			0x00000040	/* Water Ball */
     case 38:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_MANA			0x00000080	/* Mana Storm */
     case 39:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BA_DARK			0x00000100	/* Darkness Storm */
     case 40:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_DRAIN_MANA		0x00000200	/* Drain Mana */
     case 41:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //      msg_print(Ind, "Haha, you wish ... :)");
-      break;
 // RF5_MIND_BLAST		0x00000400	/* Blast Mind */
     case 42:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
     case 43:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
-// RF5_CAUSE_1			0x00001000	/* Cause Light Wound */
+//#define RF5_CURSE                       0x00001000      /* Cause Wound */
     case 44:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
-// RF5_CAUSE_2			0x00002000	/* Cause Serious Wound */
+//UNUSED
     case 45:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
-// RF5_BA_NUKE			0x00004000	/* Cause Critical Wound */
+	break;
+//#define RF5_BA_NUKE                     0x00004000  /* TY: Nuke Ball */
     case 46:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
-// RF5_BA_CHAO			0x00008000	/* Cause Mortal Wound */
+//#define RF5_BA_CHAO                     0x00008000  /* Chaos Ball */
     case 47:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_ACID			0x00010000	/* Acid Bolt */
     case 48:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_ELEC			0x00020000	/* Elec Bolt (unused) */
     case 49:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_FIRE			0x00040000	/* Fire Bolt */
     case 50:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
     case 51:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_POIS			0x00100000	/* Poison Bolt (unused) */
     case 52:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
     case 53:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_WATE			0x00400000	/* Water Bolt */
     case 54:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_MANA			0x00800000	/* Mana Bolt */
     case 55:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_PLAS			0x01000000	/* Plasma Bolt */
     case 56:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BO_ICEE			0x02000000	/* Ice Bolt */
     case 57:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_MISSILE			0x04000000	/* Magic Missile */
     case 58:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_SCARE			0x08000000	/* Frighten Player */
     case 59:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_BLIND			0x10000000	/* Blind Player */
     case 60:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
 //      msg_print(Ind, "Haha, you wish ... :)");
-      break;
 // RF5_CONF			0x20000000	/* Confuse Player */
     case 61:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_SLOW			0x40000000	/* Slow Player */
     case 62:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
+
+
+/* RF_6 ------------------------------------------------------------------------------------------------- */
 
 // RF6_HASTE			0x00000001	/* Speed self */
     case 64:
@@ -958,15 +756,14 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
       break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
 // RF6_HEAL			0x00000004	/* Heal self */
     case 66:
       hp_player(Ind, rlev * 2);
       break;
-// RF6_XXX2			0x00000008	/* Heal a lot (?) */
+//#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */ 
     case 67:
       break;
 // RF6_BLINK			0x00000010	/* Teleport Short */
@@ -977,29 +774,25 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
     case 69:
 	teleport_player(Ind, 200, FALSE);
       break;
-// RF6_XXX3			0x00000040	/* Move to Player (?) */
+//#define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */ 
     case 70:
       break;
-// RF6_XXX4			0x00000080	/* Move to Monster (?) */
+//#define RF6_S_BUG                       0x00000080      /* Summon Software bug */ 
     case 71:
       break;
-// RF6_TELE_TO			0x00000100	/* Move player to monster */
+//#define RF6_TELE_TO                     0x00000100      /* Move player to monster */ 
     case 72:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
       break;
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
-      break;
 // RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
     case 74:
-      teleport_player_level(Ind);	/* wrong way, but useful */
+    //Disabled to sync with scrolls.      teleport_player_level(Ind);	/* wrong way, but useful */
       break;
-// RF6_XXX5			0x00000800	/* Move player (?) */
+//#define RF6_S_RNG                       0x00000800      /* Summon RNG */
     case 75:
       break;
 // RF6_DARKNESS		0x00001000	/* Create Darkness */
@@ -1008,18 +801,15 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
       break;
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:
-      get_aim_dir(Ind);
-      p_ptr->current_spell = j;
-      return;
-      break;
 // RF6_FORGET			0x00004000	/* Cause amnesia */
     case 78:
-      get_aim_dir(Ind);
       p_ptr->current_spell = j;
+      get_aim_dir(Ind);
       return;
 //      msg_print(Ind, "Haha, you wish ... :)");
       break;
 
+//following flags are just RF6_S_... summoning spells */
     default:
       msg_format(Ind, "Bad innate power %d.", power);
       break;
@@ -1079,19 +869,16 @@ void do_mimic_power_aux(int Ind, int dir)
 	rad = (r_ptr->flags2 & RF2_POWERFUL) ? 3 : 2;
 
 	/* Only fire in direction 5 if we have a target */
-#if 0 //temporarily - testing aiming (C. Blue)
 	if ((dir == 5) && !target_okay(Ind))
 	{
 		/* Reset current spell */
 		p_ptr->current_spell = -1;
-
 		/* Done */
 		return;
 	}
-#endif
+
 	/* We assume that the spell can be cast, and so forth */
-	switch(p_ptr->current_spell)
-	{
+	switch(p_ptr->current_spell) {
 //#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) (light) */
 		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
 		 * remove this 'innate' power? (see calc_body_bonus) */
@@ -1758,10 +1545,16 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	}
 	else
 	{
-		if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
-		{
-			msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
-			return;
+		if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+			if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
+				msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+				return;
+			}
+		} else {
+			if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", book, o_ptr->sval, spell)) == FALSE) {
+				msg_print(Ind, "Ahah dont try to hack your client please :) :: sval != 255");
+				return;
+			}
 		}
 	}
 

@@ -294,7 +294,7 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 	if (flip)
 	{
 		/* Adjust for greed */
-		adjust = 100 + (300 - (greed + factor));
+		adjust = 100 + (300 - (greed + factor));//greed+factor: 150..250 (flip=TRUE)
 
 		/* Hack -- Shopkeepers hate higher level-requirement */
 		adjust += (20 - o_ptr->level) / 2 ;
@@ -404,7 +404,11 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr)
 		{
 			if (cost <= 60L) size += mass_roll(3, 5);
 			if (cost <= 240L) size += mass_roll(1, 5);
-			if (st_ptr->st_idx == STORE_BTSUPPLY && (o_ptr->sval == SV_POTION_STAR_HEALING || o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */)) size += mass_roll(3, 5);
+			if (st_ptr->st_idx == STORE_BTSUPPLY &&
+			    (o_ptr->sval == SV_POTION_STAR_HEALING ||
+			    o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */
+			    ))
+				size += mass_roll(3, 5);
 			break;
 		}
 
@@ -550,6 +554,14 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr)
 
 	/* Hack -- Never stack chests */
 	if (o_ptr->tval == TV_CHEST) return (0);
+
+	/* Hack -- Never stack 'used' custom tomes */
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
+	    o_ptr->sval < SV_SPELLBOOK && o_ptr->xtra1)
+		return(0);
+	if (j_ptr->tval == TV_BOOK && j_ptr->sval >= SV_CUSTOM_TOME_1 &&
+	    j_ptr->sval < SV_SPELLBOOK && j_ptr->xtra1)
+		return(0);
 
 	/* Require matching discounts */
 	if (o_ptr->discount != j_ptr->discount) return (0);
@@ -779,7 +791,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-#ifndef CLASS_RUNEMASTER /* Are we using this space...? */
+#ifndef ENABLE_RUNEMASTER /* Are we using this space...? */
 				case TV_EGG:
 #else
 				case TV_RUNE1:
@@ -1015,6 +1027,11 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 		/* Can the existing items be incremented? */
 		if (store_object_similar(j_ptr, o_ptr))
 		{
+			/* Hack: Can't have more than 1 of certain items at a time!
+			   Added for Artifact Creation - C. Blue */
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
+				return (-1);
+
 			/* Hack -- extra items disappear */
 			store_object_absorb(j_ptr, o_ptr);
 
@@ -1142,7 +1159,7 @@ static bool black_market_crap(object_type *o_ptr)
 		return (TRUE);
 
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
-	if (o_ptr->tval == TV_BOOK && o_ptr->sval > 50 && o_ptr->sval < 100) return (TRUE);
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
 	
 	/* no ethereal ammo */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(TRUE);
@@ -1214,6 +1231,9 @@ static void store_delete(store_type *st_ptr)
 	int what, num;
 	object_type *o_ptr;
 
+	char o_name[160];
+	cptr s_name;
+
 	/* Pick a random slot */
 	what = rand_int(st_ptr->stock_num);
 
@@ -1246,6 +1266,14 @@ static void store_delete(store_type *st_ptr)
 		{
 			(void)divide_charged_item(o_ptr, num);
 		}
+	}
+
+	/* keep track of artifact creation scrolls in log */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
+	    && o_ptr->number == num) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_name = st_name + st_info[st_ptr->st_idx].name;
+		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 	}
 
 	/* Actually destroy (part of) the item */
@@ -1326,6 +1354,10 @@ static void store_create(store_type *st_ptr)
 	obj_theme theme;
 	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
 	bool carry_ok;
+
+	char o_name[160];
+	cptr s_name;
+
 	/* Paranoia -- no room left */
 	if (st_ptr->stock_num >= st_ptr->stock_size) return;
 
@@ -1606,12 +1638,19 @@ static void store_create(store_type *st_ptr)
 					continue;
 				
 				if (black_market) {
+/* Note that armour generated in the non-magik(99)-case will still profit from the shop flags. */
+#if 0 /* offer easy high-level armour? */
 					/* hack - also no low/mid DSMs */
 					if (k_ptr->tval == TV_DRAG_ARMOR &&
 					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval)))
 						continue;
 					/* hack - no tomes, pretty pointless for SBM to offer those */
 					if (k_ptr->tval == TV_BOOK) continue;
+#else /* no. let's require players to actually find their items! Allowing weapons though. */
+					if (is_rare_armour(k_ptr->tval, k_ptr->sval))
+						continue;
+					/* keep offering books though */
+#endif
 					/* quite artificial hack - less amulet of weaponmastery spam */
 #if 0 /* btw, these 3 have same prob, but diff lvl */
 					if (k_ptr->tval == TV_AMULET) {
@@ -1649,20 +1688,30 @@ static void store_create(store_type *st_ptr)
 					continue;
 
 				if (black_market) {
+/* Note that armour generated in the non-magik(99)-case will still profit from the shop flags. */
+#if 0 /* offer easy high-level armour? */
 					/* hack - also no/less low/mid DSMs */
 					if (k_ptr->tval == TV_DRAG_ARMOR &&
 					    (sv_dsm_low(k_ptr->sval) || sv_dsm_mid(k_ptr->sval))) {
 						if (magik(67)) continue;
-/*					} else if (is_rare_armour(k_ptr->tval)) { // <- was enabled when SF1_RARE flag was static
+/*					} else if (is_rare_armour(k_ptr->tval, k_ptr->sval)) { // <- was enabled when SF1_RARE flag was static
 						if (magik(95)) continue;*/
 					} else if (is_armour(k_ptr->tval)) { // <- is enabled now where SF1_RARE flag is periodic
 						/*if (magik(100))*/ continue;
+#else /* no. let's require players to actually find their items! Allowing weapons though */
+					if (is_armour(k_ptr->tval)) {
+						continue;
+#endif
 					} else if (is_weapon(k_ptr->tval)) { // <- otherwise the rare weapons occur too often with nice ego powers for too low price
 						/*if (magik(100))*/ continue;
 					} else if (k_ptr->tval == TV_AMULET || k_ptr->tval == TV_RING) {
 						/*if (magik(100))*/ continue; /* don't make rare jewelry store unemployed */
 					/* make uber rods harder to get */
 					} else if (k_ptr->tval == TV_ROD) {
+						continue;
+					/* reduced frequency of art scrolls. (Base is ~ 1/30min max-scum, 1/90min min-scum) */
+					} else if (k_ptr->tval == TV_SCROLL && k_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
+					    && magik(50)) {
 						continue;
 					}
 				}
@@ -1741,7 +1790,8 @@ static void store_create(store_type *st_ptr)
 #endif
 
 #ifdef TEST_SERVER
-		o_ptr->xtra1 = 222; /* hack: 'mark' this item (for store_debug_stock) */
+		/* custom tomes require xtra1, don't mess it up here */
+		if (o_ptr->tval != TV_BOOK) o_ptr->xtra1 = 222; /* hack: 'mark' this item (for store_debug_stock) */
 #endif
 
 		/* Attempt to carry the (known) item */
@@ -1754,8 +1804,6 @@ static void store_create(store_type *st_ptr)
 		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
 #endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
-			char o_name[160];
-			cptr s_name;
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;
 			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
@@ -2229,7 +2277,7 @@ void store_stole(int Ind, int item)
 
 	/* I'm not saying this is the way to go, but they
 	   can cheeze by attempting repeatedly */
-	if(p_ptr->tim_blacklist || p_ptr->tim_watchlist){
+	if(p_ptr->tim_blacklist || p_ptr->tim_watchlist || st_ptr->tim_watch){
 		msg_print(Ind, "Bastard Thief! Get out of my shop!!!");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the shop!", p_ptr->name);
@@ -2237,6 +2285,11 @@ void store_stole(int Ind, int item)
 			p_ptr->tim_blacklist += 1000;	/* add a little */
 //			p_ptr->tim_watchlist += 1;	/* add a little (a day/night period) */
 			p_ptr->tim_watchlist += 1000;
+
+#if 0
+			st_ptr->tim_watch += 100;
+			if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
+#endif
 		store_kick(Ind, FALSE);
 		return;
 	}
@@ -2335,17 +2388,20 @@ void store_stole(int Ind, int item)
 	chance = (chance * (100 - (p_ptr->invis > 0 ? 10 : 0))) / 100;
 	chance = (chance * (115 - ((p_ptr->skill_stl * 3) / 4))) / 100;
 
-	/* shopkeepers in special shops are often especially careful */
-	if (st_info[st_ptr->st_idx].flags1 & SF1_VHARD_STEAL)
-		chance += 30;
-	else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL)
-		chance += 15;
-	
-	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
-	if (sell_obj.owner) chance += 30;
-
 	/* avoid div0 */
 	if (chance < 1) chance = 1;
+
+	/* shopkeepers in special shops are often especially careful */
+	if (st_info[st_ptr->st_idx].flags1 & SF1_VHARD_STEAL) {
+		if (chance < 10) chance = 10;
+		chance = chance * 2 + 20;
+	} else if (st_info[st_ptr->st_idx].flags1 & SF1_HARD_STEAL) {
+		if (chance < 10) chance = 10;
+		chance *= 2;
+	}
+
+	/* limit steal-back cheeze for loot that you (or someone else) sold previously */
+	if (sell_obj.owner) chance = chance * 2 + 20;
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising... */
@@ -2354,7 +2410,7 @@ void store_stole(int Ind, int item)
 //s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 /* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
 //if (chance > 10)
-s_printf("%s Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", showtime(), p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+s_printf("Stealing: %s (%d) succ. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Hack -- buying an item makes you aware of it */
 		object_aware(Ind, &sell_obj);
 
@@ -2458,7 +2514,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 	else
 	{
 //s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
-s_printf("%s Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", showtime(), p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
 		msg_print(Ind, "\377y'Bastard\377L!!!'\377w - The angry shopkeeper throws you out!");
@@ -2515,6 +2571,13 @@ s_printf("%s Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", showti
 		    i = 3;
 		p_ptr->tim_watchlist += i;
 #endif
+
+		/* store owner is more careful from now on, for a while */
+		i = tcadd * 8 + 1000;
+		st_ptr->tim_watch += i / 20;
+		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
+		st_ptr->last_theft = turn;
+
 		/* Of course :) */
 		store_kick(Ind, FALSE);
 	}
@@ -3537,6 +3600,14 @@ void do_cmd_store(int Ind)
 	stop_shooting_till_kill(Ind);
 	handle_stuff(Ind); /* update stealth/search display now */
 
+	/* process theft watch list of the store owner */
+	if (st_ptr->tim_watch) {
+		if ((turn - st_ptr->last_theft) / cfg.fps > st_ptr->tim_watch)
+			st_ptr->tim_watch = 0;
+		else
+			st_ptr->tim_watch -= (turn - st_ptr->last_theft) / cfg.fps;
+	}
+
 	/* Set the timer */
 	p_ptr->tim_store = STORE_TURNOUT;
 
@@ -3594,6 +3665,8 @@ void do_cmd_store(int Ind)
 		msg_print(Ind, "As you enter, the owner gives you a cool glance.");
 	else if (p_ptr->tim_watchlist)
 		msg_print(Ind, "The owner keeps a sharp eye on you.");
+	else if (st_ptr->tim_watch)
+		msg_print(Ind, "The owner seems especially attentive right now.");
 
 	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 1, 0, 0))
 	{
@@ -3678,9 +3751,7 @@ void store_shuffle(store_type *st_ptr)
 		        o_ptr->discount = 0;
 		}
 		else if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT2) {
-			o_ptr->discount = 15;
-		        /* Mega-Hack -- Note that the item is "on sale" */
-			o_ptr->note = quark_add("15% off");
+			o_ptr->discount = 15; /* 'on sale' */
 		}
 		else {
 			/* Mega-Hack -- Note that the item is "on sale" */

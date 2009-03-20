@@ -201,8 +201,15 @@ void inven_takeoff(int Ind, int item, int amt)
 
 #ifdef ENABLE_STANCES
 	/* take care of combat stances */
+ #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 	if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
 	    (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+ #else
+	if (p_ptr->combat_stance &&
+	    ((item == INVEN_ARM && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
+	    (item == INVEN_WIELD && (
+	    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->combat_stance == 2)))) {
+ #endif
 		msg_print(Ind, "\377sYou return to balanced combat stance.");
 		p_ptr->combat_stance = 0;
 		p_ptr->redraw |= PR_STATE;
@@ -409,8 +416,15 @@ void inven_drop(int Ind, int item, int amt)
 
 #ifdef ENABLE_STANCES
         /* take care of combat stances */
+ #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
         if ((item == INVEN_ARM && p_ptr->combat_stance == 1) ||
             (item == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+ #else
+	if (p_ptr->combat_stance &&
+	    ((item == INVEN_ARM && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
+	    (item == INVEN_WIELD && (
+	    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->combat_stance == 2)))) {
+ #endif
                 msg_print(Ind, "\377sYou return to balanced combat stance.");
                 p_ptr->combat_stance = 0;
 		p_ptr->redraw |= PR_STATE;
@@ -690,7 +704,12 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 			slot = INVEN_ARM;
 	}
 
+	/* to allow only right ring -> only right ring: */
 	if (slot == INVEN_LEFT && (alt_slots & 0x2)) slot = INVEN_RIGHT;
+	/* to allow no rings -> left ring: */
+	else if (slot == INVEN_RIGHT && (alt_slots & 0x2)) slot = INVEN_LEFT;
+
+	/* use the first fitting slot found? (unused) */
 	if (slot == INVEN_RIGHT && (alt_slots & 0x1)) slot = INVEN_LEFT;
 
 	if ((alt_slots & 0x4) && p_ptr->inventory[slot].k_idx) {
@@ -982,6 +1001,23 @@ return;
 			msg_print(Ind, "\377yYou cannot dodge attacks while wielding a shield.");
 		if (get_skill(p_ptr, SKILL_MARTIAL_ARTS))
 			msg_print(Ind, "\377yYou cannot use special martial art styles with a shield.");
+		/* cannot use ranged techniques with a shield equipped */
+		if (p_ptr->ranged_flare) {
+			p_ptr->ranged_flare = 0;
+			msg_print(Ind, "You dispose of the flare missile.");
+		}
+		if (p_ptr->ranged_precision) {
+			p_ptr->ranged_precision = 0;
+			msg_print(Ind, "You stop aiming overly precisely.");
+		}
+		if (p_ptr->ranged_double) {
+			p_ptr->ranged_double = 0;
+			msg_print(Ind, "You stop using double-shots.");
+		}
+		if (p_ptr->ranged_barrage) {
+			p_ptr->ranged_barrage = 0;
+			msg_print(Ind, "You stop preparations for barrage.");
+		}
 	}
 
 	/* Recalculate bonuses */
@@ -1150,7 +1186,7 @@ void do_cmd_drop(int Ind, int item, int quantity)
 /* 	un_afk_idle(Ind); */
 
 #if (STARTEQ_TREATMENT > 1)
-	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
+	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
 	    !((o_ptr->tval == 1) && (o_ptr->sval >= 9)))
 		o_ptr->level = 0;
 #endif
@@ -1422,12 +1458,10 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 void do_cmd_observe(int Ind, int item)
 {
 	player_type *p_ptr = Players[Ind];
-
 	object_type		*o_ptr;
-
 	char		o_name[160];
-	
         u32b f1, f2, f3, f4, f5, esp;
+        int hold;
 						      
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -1466,14 +1500,23 @@ void do_cmd_observe(int Ind, int item)
 			msg_print(Ind, "\377s  It's a sword-type weapon."); break;
 		case TV_AXE:
 			msg_print(Ind, "\377s  It's an axe-type weapon."); break;
-		default:
-			if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
-			break;
 		}
 
     		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
-	        if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
-    		if (f4 & TR4_COULD2H) msg_print(Ind, "\377s  It may be wielded two-handed.");
+	        else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
+    		else if (f4 & TR4_COULD2H) msg_print(Ind, "\377s  It may be wielded two-handed or dual.");
+    		else if (is_weapon(o_ptr->tval)) msg_print(Ind, "\377s  It may be dual-wielded.");
+
+	        /* Check for weapons, shields and shooters whether they are too heavy to use
+	           and give warning, so player won't buy something he can't use. */
+	        hold = adj_str_hold[p_ptr->stat_ind[A_STR]];
+	        if ((o_ptr->tval == TV_BOW || is_weapon(o_ptr->tval)) &&
+	            (hold < o_ptr->weight / 10)) {
+			msg_print(Ind, "\377s  This weapon currently seems too heavy for you to use effectively!");
+	        }
+	        else if (o_ptr->tval == TV_SHIELD && (hold < (o_ptr->weight/10 - 4) * 7)) {
+	                msg_print(Ind, "\377s  This shield currently seems too heavy for you to use effectively!");
+	        }
 
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
@@ -1481,6 +1524,9 @@ void do_cmd_observe(int Ind, int item)
 			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
 		}
+
+		if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
+
 		return;
 	}
 
@@ -1759,7 +1805,8 @@ void do_cmd_steal_from_monster(int Ind, int dir)
 			m_ptr->csleep = 0;
 
 			/* Speed up because monsters are ANGRY when you try to thief them */
-			m_ptr->mspeed += 5; m_ptr->speed += 5;
+			if (m_ptr->mspeed < m_ptr->speed + 15)
+				m_ptr->mspeed += 5; m_ptr->speed += 5;
 			screen_load();
 			break_cloaking(Ind, 0);
 			msg_print("Oops ! The monster is now really *ANGRY*.");
@@ -1990,7 +2037,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
-				s_printf("Stealing: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
+				s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
 			/* Transfer gold */
@@ -2006,7 +2053,7 @@ void do_cmd_steal(int Ind, int dir)
 
 				/* Tell thief */
 				msg_format(Ind, "You steal %ld gold.", amt);
-				s_printf("Stealing: %s steals %d gold from %s (chance %d%%).\n", p_ptr->name, amt, q_ptr->name, success);
+				s_printf("StealingPvP: %s steals %d gold from %s (chance %d%%).\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
 			/* Always small chance to be noticed */
@@ -2039,7 +2086,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
 				notice += 50;
-				s_printf("Stealing: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
 
 			/* True artifact is HARD to steal */
@@ -2047,7 +2094,7 @@ void do_cmd_steal(int Ind, int dir)
 				&& ((q_ptr->exp > p_ptr->exp) || (rand_int(500) > success )))
 			{
 				msg_print(Ind, "The object itself seems to evade your hand!");
-				s_printf("Stealing: %s fails to steal from %s (chance %d%%): true artifact.\n", p_ptr->name, q_ptr->name, success);
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): true artifact.\n", p_ptr->name, q_ptr->name, success);
 			}
 			else
 			{
@@ -2063,7 +2110,7 @@ void do_cmd_steal(int Ind, int dir)
 				/* Tell thief what he got */
 				object_desc(Ind, o_name, &forge, TRUE, 3);
 				msg_format(Ind, "You stole %s.", o_name);
-				s_printf("Stealing: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
+				s_printf("StealingPvP: %s steals item %s from %s (chance %d%%).\n", p_ptr->name, o_name, q_ptr->name, success);
 			}
 
 			/* Easier to notice heavier objects */
@@ -2087,7 +2134,7 @@ void do_cmd_steal(int Ind, int dir)
 	{
 		/* Message */
 		msg_print(Ind, "You fail to steal anything.");
-		s_printf("Stealing: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
+		s_printf("StealingPvP: %s fails to steal from %s.\n", p_ptr->name, q_ptr->name);
 
 		/* Always small chance to be noticed */
 		if (notice < 5) notice = 5;

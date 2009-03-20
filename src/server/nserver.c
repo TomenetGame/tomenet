@@ -163,6 +163,30 @@ char *showtime(void)
 	return buf;
 }
 
+/* added for the BBS - C. Blue */
+char *showdate(void)
+{
+	time_t		now;
+	struct tm	*tmp;
+	static char	buf[80];
+	time(&now);
+	tmp = localtime(&now);
+	sprintf(buf, "%02d-%02d", tmp->tm_mon + 1, tmp->tm_mday);
+	return buf;
+}
+
+/* added for changing seasons via lua cron_24h() - C. Blue */
+void get_date(int *weekday, int *day, int *month, int *year) {
+        time_t		now;
+        struct tm	*tmp;
+        time(&now);
+        tmp = localtime(&now);
+        *weekday = tmp->tm_wday;
+        *day = tmp->tm_mday;
+        *month = tmp->tm_mon + 1;
+	*year = tmp->tm_year + 1900;
+}
+
 void add_banlist(int Ind, int time){
 	struct ip_ban *ptr;
 	if(!time) return;
@@ -315,7 +339,23 @@ static int Init_setup(void)
 
 	Setup.frames_per_second = cfg.fps;
 	Setup.max_race = MAX_RACES;
+#if 1
+ #ifdef ENABLE_RUNEMASTER
+  #ifdef ENABLE_MCRAFT
 	Setup.max_class = MAX_CLASS;
+  #else
+	Setup.max_class = MAX_CLASS - 1;
+  #endif
+ #else
+  #ifdef ENABLE_MCRAFT
+	Setup.max_class = MAX_CLASS - 1;
+  #else
+	Setup.max_class = MAX_CLASS - 2;
+  #endif
+ #endif
+#else
+	Setup.max_class = MAX_CLASS;
+#endif
 	Setup.motd_len = 23 * 120; /*80;*/	/* colour codes extra */
 	Setup.setup_size = sizeof(setup_t);
 
@@ -2044,7 +2084,7 @@ static int Handle_listening(int ind)
 
 	if (strcmp(real, connp->real))
 	{
-		s_printf("Client verified incorrectly (%s, %s)(%s, %s)",
+		s_printf("Client verified incorrectly (%s, %s)(%s, %s)\n",
 			real, nick, connp->real, connp->nick);
 		Send_reply(ind, PKT_VERIFY, PKT_FAILURE);
 		Send_reliable(ind);
@@ -2294,9 +2334,18 @@ static int Handle_login(int ind)
 	num_logins++;
 
 	save_server_info();
-	
-	/* Check Morgoth, if player had saved a level where he was generated */
-	check_Morgoth();
+
+	/* Execute custom script if player joins the server */
+	if (first_player_joined) {
+		first_player_joined = FALSE;
+		exec_lua(NumPlayers, format("first_player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	}
+	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
+	strcpy(traffic, "");
+	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
+		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
+	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
 
 	/* check pending notes to this player -C. Blue */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
@@ -2345,10 +2394,12 @@ static int Handle_login(int ind)
 	}
 #endif
 
+#if 0
 	/* Give a more visible message about outdated client usage - C. Blue */
 	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0)) {
 		/* currently done by '(O)' in @ list */
 	}
+#endif
 
 	/* Admin messages */
 	if (p_ptr->admin_dm && (cfg.runlevel == 2048))
@@ -2361,71 +2412,6 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
 	if (p_ptr->admin_dm && (cfg.runlevel == 2044))
 		msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
-
-	/* Execute custom script if player joins the server */
-	if (first_player_joined) {
-		first_player_joined = FALSE;
-		exec_lua(NumPlayers, format("first_player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
-	}
-	if (NumPlayers == 1) exec_lua(NumPlayers, format("player_has_joined_empty_server(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
-	exec_lua(NumPlayers, format("player_has_joined(%d, %d, \"%/s\", \"%s\")", NumPlayers, p_ptr->id, p_ptr->name, showtime()));
-	strcpy(traffic, "");
-	for (i = 1; (i <= NumPlayers) && (i < 50); i++)
-		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
-	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
-
-#if 0 /* not here, but below instead. Or admins will be shown in the list! */
-#ifdef TOMENET_WORLDS
-	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
-#endif
-#endif
-
-	/* Handle the cfg_secret_dungeon_master option */
-	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
-		/* Tell other secret dungeon masters about our new player */
-		for (i = 1; i < NumPlayers; i++)
-    		{
-			title = "";
-			if (Players[i]->conn == NOT_CONNECTED)
-				continue;
-			if (!(Players[i]->admin_dm || Players[i]->admin_wiz))
-				continue;
-			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
-			msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
-		}
-		return 0;
-	}
-
-#ifdef TOMENET_WORLDS
-	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
-#endif
-
-	/* Tell everyone about our new player */
-	for (i = 1; i < NumPlayers; i++)
-	{
-		title = "";
-		if (Players[i]->conn == NOT_CONNECTED)
-			continue;
-		if (p_ptr->total_winner)
-		  {
-			if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
-		      {
-			title = (p_ptr->male)?"Emperor ":"Empress ";
-		      }
-		    else
-		      {
-			title = (p_ptr->male)?"King ":"Queen ";
-		      }
-		  }
-		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
-		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
-		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
-	}
-
-#ifdef TOMENET_WORLDS
-	if (cfg.worldd_pjoin) world_msg(format("\377U%s%s has entered the game.", title, p_ptr->name));
-#endif
 
 	if(p_ptr->quest_id){
 		for(i=0; i<20; i++){
@@ -2499,9 +2485,70 @@ static int Handle_login(int ind)
 		}
 	}
 
+	/* Check Morgoth, if player had saved a level where he was generated */
+	check_Morgoth();
 
 #ifdef AUCTION_SYSTEM
 	auction_player_joined(NumPlayers);
+#endif
+
+	/* Initialize the client's unique list;
+	it will become further updated each time he kills another unique */
+	for (i = 0; i < MAX_R_IDX; i++)
+		if (r_info[i].flags1 & RF1_UNIQUE)
+			Send_unique_monster(NumPlayers, i);
+
+#if 0 /* not here, but below instead. Or admins will be shown in the list! */
+ #ifdef TOMENET_WORLDS
+	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+ #endif
+#endif
+
+	/* Handle the cfg_secret_dungeon_master option */
+	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
+		/* Tell other secret dungeon masters about our new player */
+		for (i = 1; i < NumPlayers; i++)
+    		{
+			title = "";
+			if (Players[i]->conn == NOT_CONNECTED)
+				continue;
+			if (!(Players[i]->admin_dm || Players[i]->admin_wiz))
+				continue;
+			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+			msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
+		}
+		return 0;
+	}
+
+#ifdef TOMENET_WORLDS
+	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+#endif
+
+	/* Tell everyone about our new player */
+	for (i = 1; i < NumPlayers; i++)
+	{
+		title = "";
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+		if (p_ptr->total_winner)
+		  {
+			if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
+		      {
+			title = (p_ptr->male)?"Emperor ":"Empress ";
+		      }
+		    else
+		      {
+			title = (p_ptr->male)?"King ":"Queen ";
+		      }
+		  }
+		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
+		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
+		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
+	}
+
+#ifdef TOMENET_WORLDS
+	if (cfg.worldd_pjoin) world_msg(format("\377U%s%s has entered the game.", title, p_ptr->name));
 #endif
 
 	/* Tell the meta server about the new player */
@@ -3072,7 +3119,7 @@ static int Receive_quit(int ind)
 }
 
 static int Receive_login(int ind){
-	connection_t *connp=Conn[ind], *connp2 = NULL;
+	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
 	int i, n;
 	char choice[MAX_CHARS];
@@ -3928,8 +3975,10 @@ int Send_skill_info(int ind, int i)
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
 	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
-	else {
+	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
 	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey);
+	} else {
+	        return Packet_printf(&connp->c, "%c%d%ld%ld%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey, p_ptr->s_info[i].dummy);
 	}
 }
 
@@ -4264,6 +4313,56 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
 }
 
+/* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
+ * otherwise you can use badly-cracked client :)	- Jir -
+ */
+int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval,
+    byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9,
+    cptr name)
+//int Send_inven_wide(int Ind, char pos, byte attr, int wgt, int amt, cptr name)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+#if 0
+	byte tval = p_ptr->inventory[pos].tval;
+	byte sval = p_ptr->inventory[pos].sval;
+	s16b pval = p_ptr->inventory[pos].pval;
+	byte xtra1 = p_ptr->inventory[pos].xtra1;
+	byte xtra2 = p_ptr->inventory[pos].xtra2;
+	byte xtra3 = p_ptr->inventory[pos].xtra3;
+	byte xtra4 = p_ptr->inventory[pos].xtra4;
+	byte xtra5 = p_ptr->inventory[pos].xtra5;
+	byte xtra6 = p_ptr->inventory[pos].xtra6;
+	byte xtra7 = p_ptr->inventory[pos].xtra7;
+	byte xtra8 = p_ptr->inventory[pos].xtra8;
+	byte xtra9 = p_ptr->inventory[pos].xtra9;
+#endif
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for inven (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
+	  {
+	    int Ind2 = find_player(p_ptr->esp_link);
+	    player_type *p_ptr2;
+	    connection_t *connp2;
+
+	    if (!Ind2)
+	      end_mind(ind, TRUE);
+	    else
+	      {
+		p_ptr2 = Players[Ind2];
+		connp2 = Conn[p_ptr2->conn];
+
+		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+	      }
+	  }
+	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
+}
+
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
 int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
@@ -4347,8 +4446,11 @@ int Send_depth(int ind, struct worldpos *wpos)
 	player_type *p_ptr = Players[ind];
 	bool ville = istown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
-	int colour, colour2, colour_sector, colour2_sector;
-	
+	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN;
+	cave_type **zcave;
+	bool no_tele = FALSE;
+	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
+
 	/* XXX this kinda thing should be done *before* calling Send_*
 	 * in general, of course..	- Jir - */
 	if (ville)
@@ -4412,7 +4514,10 @@ int Send_depth(int ind, struct worldpos *wpos)
 		}
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
-			colour2_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+			if (no_tele) {
+				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
+				colour2_sector = TERM_L_DARK;
+			}
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, colour2_sector, desc);
 		} else {
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, desc);
@@ -4436,7 +4541,10 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		colour_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+		if (no_tele) {
+			Send_cut(ind, 0); /* hack: clear the field shared between cut and depth */
+			colour_sector = TERM_L_DARK;
+		}
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 	} else {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
@@ -4448,7 +4556,10 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 	player_type *p_ptr = Players[ind];
-	int colour, colour2, colour_sector, colour2_sector;
+	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN;
+	cave_type **zcave;
+	bool no_tele = FALSE;
+	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
 	
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4486,7 +4597,10 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 		}
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
-			colour2_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+			if (no_tele) {
+				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
+				colour2_sector = TERM_L_DARK;
+			}
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, colour2_sector, desc);
 		} else {
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, desc);
@@ -4510,7 +4624,10 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 	}
 	
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		colour_sector = (getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px].info & CAVE_STCK) ? TERM_L_DARK : TERM_L_GREEN;
+		if (no_tele) {
+			Send_cut(ind, 0); /* hack: clear the field shared between cut and depth */
+			colour_sector = TERM_L_DARK;
+		}
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour, colour_sector, desc);
 	} else {
 		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr->word_recall, desc);
@@ -4760,6 +4877,7 @@ int Send_cut(int ind, int cut)
 			ind, connp->state, connp->id));
 		return 0;
 	}
+	
 	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
 	  {
 	    int Ind2 = find_player(p_ptr->esp_link);
@@ -5795,7 +5913,6 @@ int Send_monster_health(int ind, int num, byte attr)
 int Send_chardump(int ind)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
-	//player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5822,7 +5939,32 @@ int Send_chardump(int ind)
 	      }
 	  }
 #endif
+
+#if 0 /* This works, but won't help non-death char dumps that are taken manually */
+	/* hack: Quickly update the client's unique list first */
+	for (i = 0; i < MAX_R_IDX; i++)
+		if (r_info[i].flags1 & RF1_UNIQUE)
+			Send_unique_monster(ind, i);
+#endif
+
 	return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
+}
+
+int Send_unique_monster(int ind, int r_idx)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) return(0);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for unique monster (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+	return Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name);
 }
 
 /*
@@ -5874,7 +6016,8 @@ static int Receive_keepalive(int ind)
 		else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_keepalive > 30)	/* dont oscillate ;) */
 		{
 			/* auto AFK timer (>1 min) */
-			if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
+//			if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
+			toggle_afk(Ind, "");
 		}
 	}
 
@@ -6599,11 +6742,9 @@ static int Receive_activate_skill(int ind)
 //				p_ptr->shooty_till_kill = FALSE;
 				break; 
 
-#ifdef CLASS_RUNEMASTER
 			case MKEY_RUNE:
 				cast_rune_spell_header(player, book, spell); 
 				break;
-#endif
 			case MKEY_AURA_FEAR:
 				toggle_aura(player, 0);
 				break;
@@ -9172,11 +9313,9 @@ void Handle_direction(int Ind, int dir)
 			do_mimic_power_aux(Ind, dir);
 		else p_ptr->current_spell = -1;
 	}
-#ifdef CLASS_RUNEMASTER
 	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1) {
 		cast_rune_spell(Ind, dir);
 	}
-#endif
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)
@@ -9219,7 +9358,16 @@ void Handle_item(int Ind, int item)
 	{
 		curse_spell_aux(Ind, item);
 	}
+	else if (p_ptr->current_tome_creation)
+	{
+		/* swap-hack: activating a custom tome uses up
+		   the TARGET item, not the tome, of course */
+		i = p_ptr->using_up_item;
+		p_ptr->using_up_item = item;
+		tome_creation_aux(Ind, i);
+	}
 
+	/* to be safe, clean up; just in case our item was used up */
 	for (i = 0; i < INVEN_PACK; i++) inven_item_optimize(Ind, i);
 }
 
@@ -9579,7 +9727,8 @@ static int Receive_ping(int ind) {
 			else if (!p_ptr->afk && p_ptr->auto_afk && connp->inactive_ping > 60)	/* dont oscillate ;) */
 			{
 				/* auto AFK timer (>1 min) */
-				if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
+//				if (!p_ptr->resting) toggle_afk(Ind, ""); /* resting can take quite long sometimes */
+				toggle_afk(Ind, "");
 			}
 		}
 

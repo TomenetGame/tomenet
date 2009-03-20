@@ -116,20 +116,20 @@ static cptr desc_insult[] =
 /*
  * Hack -- possible "moan" messages
  */
-/* The else branch is used for Halloween event :) -C. Blue */
 static cptr desc_moan[] =
 {
-#ifndef HALLOWEEN
 	"seems sad about something.",
 	"asks if you have seen his dogs.",
 	"tells you to get off his land.",
 	"mumbles something about mushrooms."
-#else
+};
+/* for the Great Pumpkin on Halloween - C. Blue >:) */
+static cptr desc_moan_halloween[] =
+{
 	"screams: Trick or treat!",
 	"says: Happy Halloween!",
 	"moans loudly.",
 	"says: Have you seen The Great Pumpkin?"
-#endif
 };
 
 
@@ -513,7 +513,7 @@ bool make_attack_melee(int Ind, int m_idx)
 	object_type     *o_ptr;
 
 	char            o_name[160];
-	char            m_name[80];
+	char            m_name[80], m_name_gen[80];
 	char            ddesc[80];
 	char		dam_msg[80] = { '\0' };
 
@@ -539,6 +539,7 @@ bool make_attack_melee(int Ind, int m_idx)
 
 	/* Get the monster name (or "it") */
 	monster_desc(Ind, m_name, m_idx, 0);
+	monster_desc(Ind, m_name_gen, m_idx, 0x02);
 
 	/* Get the "died from" information (i.e. "a kobold") */
 	monster_desc(Ind, ddesc, m_idx, 0x0188);
@@ -837,7 +838,10 @@ bool make_attack_melee(int Ind, int m_idx)
 
 				case RBM_MOAN:
 				{
-					act = desc_moan[rand_int(4)];
+					if (!season_halloween)
+						act = desc_moan[rand_int(4)];
+					else
+						act = desc_moan_halloween[rand_int(4)];
 					break;
 				}
 
@@ -915,12 +919,12 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (chance > DODGE_MAX_CHANCE) chance = DODGE_MAX_CHANCE;
 			if ((chance > 0) && !bypass_ac && magik(chance))
 			{
-				msg_format(Ind, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, m_name);
+				msg_format(Ind, "\377%cYou dodge %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
 				continue;
 			}
 #else
 			if (!bypass_ac && magik(apply_dodge_chance(Ind, rlev))) {
-				msg_format(Ind, "\377%cYou dodge %s's attack!", COLOUR_DODGE_GOOD, m_name);
+				msg_format(Ind, "\377%cYou dodge %s attack!", COLOUR_DODGE_GOOD, m_name_gen);
 				continue;
 			}
 #endif
@@ -934,7 +938,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			if (p_ptr->shield_deflect && !bypass_shield && 
 			    (!p_ptr->inventory[INVEN_WIELD].k_idx || magik(p_ptr->combat_stance == 1 ? 75 : 50))) {
 				if (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-					msg_format(Ind, "\377%cYou block %^s's attack.", COLOUR_BLOCK_GOOD, m_name);
+					msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
 					} else if (mon_acid + mon_fire) {
@@ -951,7 +955,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					int slot = INVEN_WIELD;
 					if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 						slot = INVEN_ARM;
-					msg_format(Ind, "\377%cYou parry %^s's attack.", COLOUR_PARRY_GOOD, m_name);
+					msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 					if (randint(mon_acid + mon_fire) > mon_acid) {
 						if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
 					} else if (mon_acid + mon_fire) {
@@ -976,7 +980,7 @@ bool make_attack_melee(int Ind, int m_idx)
 			}
  #ifdef USE_BLOCKING
 			if (attempt_block && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect))) {
-				msg_format(Ind, "\377%cYou block %^s's attack.", COLOUR_BLOCK_GOOD, m_name);
+				msg_format(Ind, "\377%cYou block %^s attack.", COLOUR_BLOCK_GOOD, m_name_gen);
 				if (randint(mon_acid + mon_fire) > mon_acid) {
 					if (magik(5)) shield_takes_damage(Ind, GF_FIRE);
 				} else if (mon_acid + mon_fire) {
@@ -990,7 +994,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				int slot = INVEN_WIELD;
 				if (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD && magik(50)) /* dual-wield? */
 					slot = INVEN_ARM;
-				msg_format(Ind, "\377%cYou parry %^s's attack.", COLOUR_PARRY_GOOD, m_name);
+				msg_format(Ind, "\377%cYou parry %^s attack.", COLOUR_PARRY_GOOD, m_name_gen);
 				if (randint(mon_acid + mon_fire) > mon_acid) {
 					if (magik(5)) weapon_takes_damage(Ind, GF_FIRE, slot);
 				} else if (mon_acid + mon_fire) {
@@ -1014,13 +1018,11 @@ bool make_attack_melee(int Ind, int m_idx)
 			
 			if ((act) && (damage < 1))
 			{
-#ifdef HALLOWEEN
 				/* Colour change for ranged MOAN for Halloween event -C. Blue */
-				if (method == RBM_MOAN)
+				if (season_halloween && method == RBM_MOAN)
 					msg_format(Ind, "\377o%^s %s.", m_name, act);
 				else
-#endif
-				msg_format(Ind, "%^s %s.", m_name, act);
+					msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
 			}
 			else if ((act) && (r_ptr->flags1 & (RF1_UNIQUE)))
@@ -1161,6 +1163,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
+
+					if (safe_area(Ind)) break;
 
 					/* Saving throw by Magic Device skill (9%..99%) */
 					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
@@ -1355,6 +1359,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
+					if (safe_area(Ind)) break;
+
 					/* Steal some food */
 					for (k = 0; k < 10; k++)
 					{
@@ -1397,6 +1403,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
+
+					if (safe_area(Ind)) break;
 
 					/* Access the lite */
 					o_ptr = &p_ptr->inventory[INVEN_LITE];
@@ -2018,12 +2026,13 @@ bool make_attack_melee(int Ind, int m_idx)
 					break;
 				}
 
-				case RBE_DISARM:
+				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
 				{
 					int slot = INVEN_WIELD;
 					u32b f1, f2, f3, f4, f5, esp;
 					object_type *o_ptr;
 					bool shield = FALSE, secondary = FALSE;
+					bool dis_sec = FALSE;
 
 					if (p_ptr->inventory[INVEN_ARM].k_idx) {
 						shield = p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD ? TRUE : FALSE;
@@ -2082,6 +2091,7 @@ bool make_attack_melee(int Ind, int m_idx)
 								inven_item_increase(Ind, slot, -p_ptr->inventory[slot].number);
 								inven_item_optimize(Ind, slot);
 #endif
+								if (slot == INVEN_ARM) dis_sec = TRUE;
 							}
 						} else { /* dual-wield "feature".. get dual-disarmed :-p */
 							msg_print(Ind, "\377rYou lose the grip of your weapons!");
@@ -2089,22 +2099,29 @@ bool make_attack_melee(int Ind, int m_idx)
 							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, slot, 1);
+								inven_takeoff(Ind, INVEN_WIELD, 1);
 							} else {
-								inven_drop(Ind, slot, 1);
+								inven_drop(Ind, INVEN_WIELD, 1);
 							}
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
-								inven_takeoff(Ind, slot, 1);
+								inven_takeoff(Ind, INVEN_ARM, 1);
 							} else {
-								inven_drop(Ind, slot, 1);
+								inven_drop(Ind, INVEN_ARM, 1);
 							}
+							dis_sec = TRUE;
 						}
 
 						p_ptr->update |= (PU_BONUS);
 						obvious = TRUE;
-						if (p_ptr->combat_stance) {
-//							msg_print(Ind, "\377sYou return to balanced combat stance.");
+#ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
+						if ((p_ptr->combat_stance == 1 &&
+						    dis_sec && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
+						    p_ptr->combat_stance == 2) {
+#else
+						if (p_ptr->combat_stance == 2) {
+#endif
+							msg_print(Ind, "\377sYou return to balanced combat stance.");
 							p_ptr->combat_stance = 0;
 							p_ptr->redraw |= PR_STATE;
 						}

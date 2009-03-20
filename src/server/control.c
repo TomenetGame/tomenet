@@ -201,7 +201,7 @@ static void console_uniques()
 				{
 					player_type *q_ptr = Players[i];
 				
-					if (q_ptr->r_killed[k])
+					if (q_ptr->r_killed[k] == 1)
 					{
 						sprintf(buf, "        %s\n", q_ptr->name);
 						ok = TRUE;

@@ -12,6 +12,7 @@
 
 /* 
  * TODO:
+ * - Saving and loading
  * - Debugging
  */
 
@@ -47,7 +48,7 @@ void process_auctions()
 				if (auc_ptr->start + auc_ptr->duration < now)
 				{
 					/* Auction has expired */
-					if (auc_ptr->bids_cnt)
+					if (auc_ptr->starting_price && auc_ptr->bids_cnt)
 					{
 						/* Find the highest bidder who can actually afford the item right now */
 						auc_ptr->winning_bid = -1;
@@ -176,7 +177,8 @@ void process_auctions()
 						auc_ptr->status = AUCTION_STATUS_CANCELLED;
 
 						/* Log it */
-						s_printf("AUCTION: No bids for item #%d\n", i);
+						if (auc_ptr->starting_price)
+							s_printf("AUCTION: No bids for item #%d\n", i);
 
 						/* Find the owner and notify him/her */
 						for (j = 1; j <= NumPlayers; j++)
@@ -184,7 +186,10 @@ void process_auctions()
 							p_ptr = Players[j];
 							if (p_ptr->id == auc_ptr->owner)
 							{
-								msg_format(j, "\377B[@] \377yAuction for item #%d has ended but there were no bids.", i);
+								if (auc_ptr->starting_price)
+									msg_format(j, "\377B[@] \377yAuction for item #%d has ended but there were no bids.", i);
+								else /* buyout-only */
+									msg_format(j, "\377B[@] \377yAuction for item #%d has ended but nobody bought it.", i);
 								msg_print(j, "\377B[@] \377GYou can \377gretrieve \377Gthe following item:");
 								msg_format(j, "\377B[@]   \377w%s", auc_ptr->desc);
 								break;
@@ -200,11 +205,15 @@ void process_auctions()
 int new_auction()
 {
 	int i;
+	time_t now;
+
+	now = time(NULL);
 
 	/* Look for an empty auction slot */
 	for (i = 1; i < auction_alloc; i++)
 	{
-		if (auctions[i].status == AUCTION_STATUS_EMPTY)
+		if (auctions[i].status == AUCTION_STATUS_EMPTY &&
+		    auctions[i].start + 3600 < now)
 		{
 			return i;
 		}
@@ -421,6 +430,8 @@ void auction_clear(int auction_id)
 	}
 
 	WIPE(auc_ptr, auction_type);
+	auc_ptr->status = AUCTION_STATUS_EMPTY;
+	auc_ptr->start = time(NULL); /* store the time in the start field */
 }
 
 void auction_add_bid(int auction_id, s32b bid, s32b bidder)
@@ -623,7 +634,7 @@ void auction_player_joined(int Ind)
 					{
 						if (auc_ptr->item.k_idx)
 						{
-							msg_format(Ind, "\377B[@] \377yYou haven't yet \377Gretriev\377yed the following item #%d:", i);
+							msg_format(Ind, "\377B[@] \377yYou haven't yet \377Gretrieve\377yd the following item #%d:", i);
 							msg_format(Ind, "\377B[@]   \377w%s", auc_ptr->desc);
 						}
 					}
@@ -791,10 +802,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	real_value = object_value_real(0, o_ptr);
 
 #ifdef AUCTION_MINIMUM_VALUE
-	#ifdef AUCTION_DEBUG
-		#warning Minimum item value enabled
-	#endif
-
 	if (real_value < AUCTION_MINIMUM_VALUE)
 	{
 		/* Return the item */
@@ -834,10 +841,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	/* Apply restrictions to the prices */
 
 #ifdef AUCTION_MINIMUM_STARTING_PRICE
-	#ifdef AUCTION_DEBUG
-		#warning Minimum starting price enabled
-	#endif
-
 	if (starting_price && starting_price < AUCTION_MINIMUM_STARTING_PRICE * real_value / 100)
 	{
 		starting_price = AUCTION_MINIMUM_STARTING_PRICE * real_value / 100;
@@ -845,10 +848,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 #endif
 
 #ifdef AUCTION_MAXIMUM_STARTING_PRICE
-	#ifdef AUCTION_DEBUG
-		#warning Maximum starting price enabled
-	#endif
-
 	if (starting_price > AUCTION_MAXIMUM_STARTING_PRICE * real_value / 100)
 	{
 		starting_price = AUCTION_MAXIMUM_STARTING_PRICE * real_value / 100;
@@ -856,9 +855,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 #endif
 
 #ifdef AUCTION_MINIMUM_BUYOUT_PRICE
-	#ifdef AUCTION_DEBUG
-		#warning Minimum buyout price enabled
-	#endif
 	if (buyout_price && buyout_price < AUCTION_MINIMUM_BUYOUT_PRICE * real_value / 100)
 	{
 		buyout_price = AUCTION_MINIMUM_BUYOUT_PRICE * real_value / 100;
@@ -866,9 +862,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 #endif
 
 #ifdef AUCTION_MAXIMUM_BUYOUT_PRICE
-	#ifdef AUCTION_DEBUG
-		#warning Maximum buyout price
-	#endif
 	if (buyout_price > AUCTION_MAXIMUM_BUYOUT_PRICE * real_value / 100)
 	{
 		buyout_price = AUCTION_MAXIMUM_BUYOUT_PRICE * real_value / 100;
@@ -908,9 +901,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 	/* Duration restrictions */
 
 #ifdef AUCTION_MINIMUM_DURATION
-	#ifdef AUCTION_DEBUG
-		#warning Minimum duration enabled
-	#endif
 	if (duration < AUCTION_MINIMUM_DURATION)
 	{
 		duration = AUCTION_MINIMUM_DURATION;
@@ -918,9 +908,6 @@ int auction_set(int Ind, int slot, cptr starting_price_string, cptr buyout_price
 #endif
 
 #ifdef AUCTION_MAXIMUM_DURATION
-	#ifdef AUCTION_DEBUG
-		#warning Maximum duration enabled
-	#endif
 	if (duration > AUCTION_MAXIMUM_DURATION)
 	{
 		duration = AUCTION_MAXIMUM_DURATION;
@@ -980,7 +967,7 @@ int auction_start(int Ind)
 			s_printf("AUCTION: %s started auction for item #%d:\n", p_ptr->name, p_ptr->current_auction);
 			s_printf("AUCTION:   %s\n", auc_ptr->desc);
 
-			msg_print(Ind, "\377B[@] \377GAuction has been started!");
+			msg_format(Ind, "\377B[@] \377GAuction #%d has been started!", p_ptr->current_auction);
 
 			p_ptr->current_auction = 0;
 		}

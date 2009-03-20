@@ -222,8 +222,10 @@ struct rplist *world_find_player(char *pname, short server){
 	return(NULL);
 }
 
-/* proper data will come with merge */
-void world_remote_players(FILE *fff){
+/* proper data will come with merge.
+   Returns number of remote players. */
+int world_remote_players(FILE *fff){
+	int num = 0;
 	struct list *lp, *slp;
 	struct rplist *c_pl;
 	struct svlist *c_sv;
@@ -247,8 +249,10 @@ void world_remote_players(FILE *fff){
 		
 //		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
 		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
+		num++;
 		lp=lp->next;
 	}
+	return (num);
 }
 
 /* When a server logs in, we get information about it */

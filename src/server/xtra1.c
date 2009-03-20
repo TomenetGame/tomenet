@@ -152,7 +152,7 @@ static void prt_title(int Ind)
 
 	/* Ghost */
 	if (p_ptr->ghost)
-		p = "Ghost";
+		p = "\377rGhost (dead)";
 
 	Send_title(Ind, p);
 }
@@ -513,11 +513,15 @@ static void prt_study(int Ind)
 static void prt_cut(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
+	cave_type **zcave;
 	int c = p_ptr->cut;
 
 	/* Cut status and wpos coordinated occupy the same line in the client,
 	   so send the wpos when the player isn't stunned - mikaelh */
+
+	/* hack: no-tele indicator takes priority. */
+	if ((zcave = getcave(&p_ptr->wpos)))
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	Send_cut(Ind, c); /* need to send this always since the client doesn't clear the whole field */
 	if (!c) Send_depth(Ind, &p_ptr->wpos);
@@ -624,7 +628,9 @@ static void prt_encumberment(int Ind)
 
 	byte cumber_armor = p_ptr->cumber_armor?1:0;
 	byte awkward_armor = p_ptr->awkward_armor?1:0;
-	byte cumber_glove = p_ptr->cumber_glove?1:0;
+	/* Hack - For mindcrafters, it's the helmet, not the gloves,
+	   but they fortunately use the same item symbol :) */
+	byte cumber_glove = p_ptr->cumber_glove || p_ptr->cumber_helm?1:0;
 	byte heavy_wield = p_ptr->heavy_wield?1:0;
 	byte heavy_shield = p_ptr->heavy_shield?1:0; /* added in 4.4.0f */
 	byte heavy_shoot = p_ptr->heavy_shoot?1:0;
@@ -1157,7 +1163,6 @@ void calc_mana(int Ind)
 #endif
 		break; 
 	/* Need a lot of SP for the spells. Reducing bonus to 1 tho. 2 seems excessive */
-#ifdef CLASS_RUNEMASTER
 #define RUNEMASTER_SP_CALC_BONUS	1 /* 2 */
 	case CLASS_RUNEMASTER: 
 		//2 SP per 1 point in SKILL_MAGIC
@@ -1166,6 +1171,21 @@ void calc_mana(int Ind)
 		//A different system, really ... See runes.c
 		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_INT]]) * levels / (2) +
 		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_DEX]]) * levels / (2) ;
+		break;
+
+	case CLASS_MINDCRAFTER:
+		/* much Int, some Chr (yeah!), little Wis */
+#if 0 /* too much CHR drastically reduced the amount of viable races, basically only humans and elves remained */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + /* <- disabled maybe even, in tables.c? */
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 75 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 20 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels / (400));
+		break;
+#else
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) + /* <- seems this might be important actually */
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_CHR]] * 10 * levels / (400)) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 5 * levels / (400));
 		break;
 #endif
 
@@ -1207,6 +1227,29 @@ void calc_mana(int Ind)
 			new_mana = (3 * new_mana) / 4;
 		}
 	}
+
+	/* Mindcrafting is obstructed by heavy helmets (even non-tin foil) */
+	/* Get the helm */
+	o_ptr = &p_ptr->inventory[INVEN_HEAD];
+
+	/* Only mindcraft-users are affected */
+	if (get_skill(p_ptr, SKILL_PPOWER) ||
+	    get_skill(p_ptr, SKILL_TCONTACT) ||
+	    get_skill(p_ptr, SKILL_MINTRUSION))
+	{
+		/* Assume player is not encumbered by helm */
+		p_ptr->cumber_helm = FALSE;
+
+		/* too heavy helm? */
+		if (o_ptr->weight > 40) {
+			/* Encumbered */
+			p_ptr->cumber_helm = TRUE;
+
+			/* Reduce mana */
+			new_mana = (3 * new_mana) / 4;
+		}
+	}
+
 #if 0 // C. Blue - Taken out again since polymorphing ability of DSMs was
 // removed instead. Mimics and mimic-sorcs were punished too much.
 	/* Forms that don't have proper 'hands' (arms) have mana penalty.
@@ -1246,8 +1289,11 @@ void calc_mana(int Ind)
 	case CLASS_MAGE:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
+	/* in theory these actually don't use 'magic mana' at all?: */
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
+	case CLASS_MINDCRAFTER:
+	/* fall through */
 	case CLASS_MIMIC:
 	case CLASS_ROGUE:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
@@ -1292,6 +1338,7 @@ void calc_mana(int Ind)
 	case CLASS_RUNEMASTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;/*was 270*/
 	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_MINDCRAFTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_WARRIOR:
 	case CLASS_ARCHER:
 	default: max_wgt = 1000; break;
@@ -1404,6 +1451,23 @@ void calc_mana(int Ind)
 
 		/* Save it */
 		p_ptr->old_cumber_glove = p_ptr->cumber_glove;
+	}
+
+	/* Take note when "helm state" changes */
+	if (p_ptr->old_cumber_helm != p_ptr->cumber_helm)
+	{
+		/* Message */
+		if (p_ptr->cumber_helm)
+		{
+			msg_print(Ind, "\377oYour heavy headgear feels unsuitable for mindcrafting.");
+		}
+		else
+		{
+			msg_print(Ind, "\377gYour headgear feels more suitable for mindcrafting.");
+		}
+
+		/* Save it */
+		p_ptr->old_cumber_helm = p_ptr->cumber_helm;
 	}
 
 
@@ -2524,11 +2588,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 //was num = 5; ; 
 							/* Rogue */
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
-		/* I'm a rogue like :-o */
-#ifdef CLASS_RUNEMASTER
-		case CLASS_RUNEMASTER: num = 4; wgt = 40; mul = 4; break; 
-#endif
 
+		/* I'm a rogue like :-o */
+		case CLASS_RUNEMASTER: num = 4; wgt = 30; mul = 4; break;//was wgt = 40
 							/* Mimic */
 //trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
 		case CLASS_MIMIC: num = 5; wgt = 35; mul = 4; break;//mul3
@@ -2546,9 +2608,12 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 
 		case CLASS_DRUID: num = 4; wgt = 35; mul = 4; break; 
 
-/* if he is to become a spellcaster, necro working on spell-kills:		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
+/* if he is to become a spellcaster, necro working on spell-kills:
+		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
     however, then Martial Arts would require massive nerfing too for this class (or being removed even).
 otherwise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
+
+		case CLASS_MINDCRAFTER: num = 4; wgt = 30; mul = 4; break;//was 30,4
 
 /*		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
 	}
@@ -2946,7 +3011,7 @@ void calc_bonuses(int Ind)
         p_ptr->to_hp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
 
 #ifdef ENABLE_DIVINE
-	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity==DIVINE_DEMON)) { 
+	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity==DIVINE_DEMON)) {
 		p_ptr->to_hp += (p_ptr->lev-20)*2;
 	}
 #endif
@@ -3136,7 +3201,7 @@ void calc_bonuses(int Ind)
 //		if (p_ptr->lev<20) {
 			//Help em out a little..
 			p_ptr->telepathy |= ESP_DEMON;
-			p_ptr->telepathy |= ESP_GOOD; 
+			p_ptr->telepathy |= ESP_GOOD;
 //		}
 		if (p_ptr->divinity==DIVINE_ANGEL) {
 			p_ptr->cur_lite += 1 + (p_ptr->lev-20) / 4; //REAL light!
@@ -3706,6 +3771,12 @@ void calc_bonuses(int Ind)
 
 //		if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 
+		/* note: TR1_VAMPIRIC isn't directly applied for melee
+		   weapons here, but instead in the py_attack... functions
+		   in cmd1.c. Reason is that dual-wielding might hit with
+		   a vampiric or a non-vampiric weapon randomly - C. Blue */
+
+
 
 		/* Modify the base armor class */
 #ifdef USE_NEW_SHIELDS
@@ -3945,6 +4016,7 @@ void calc_bonuses(int Ind)
 
         /* At least +1, max. +3 */
         if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+        else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
 
 	/* Invulnerability */
 	if (p_ptr->invuln)
@@ -3993,14 +4065,11 @@ void calc_bonuses(int Ind)
 	}
 
 	/* Temporary "Hero" */
-	if (p_ptr->hero)
+	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5))
 	{
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
 	}
-
-	/* Heart is boldened */
-	if (p_ptr->res_fear_temp) p_ptr->resist_fear = TRUE;
 
 	/* Temporary "Berserk" */
 	if (p_ptr->shero)
@@ -4082,8 +4151,9 @@ void calc_bonuses(int Ind)
 		p_ptr->resist_conf = TRUE;
 	}
 
-	/* Hack -- Hero/Shero -> Res fear */
-	if (p_ptr->hero || p_ptr->shero || p_ptr->fury || p_ptr->berserk)
+	/* Heart is boldened */
+	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero ||
+	    p_ptr->fury || p_ptr->berserk || p_ptr->mindboost)
 	{
 		p_ptr->resist_fear = TRUE;
 	}
@@ -4107,20 +4177,6 @@ void calc_bonuses(int Ind)
 		p_ptr->anti_tele = TRUE;
 	}
 
-
-	/* Extract the current weight (in tenth pounds) */
-	w = p_ptr->total_weight;
-
-	/* Extract the "weight limit" (in tenth pounds) */
-	i = weight_limit(Ind);
-
-	/* XXX XXX XXX Apply "encumbrance" from weight */
-	if (w > i/2) {
-		/* protect pspeed from uberflow O_o */
-//		if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
-		if (w > 70000) p_ptr->pspeed = 10; /* roughly ;-p */
-		else p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
-	}
 
 	/* Bloating slows the player down (a little) */
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
@@ -4718,15 +4774,15 @@ void calc_bonuses(int Ind)
 #ifdef USE_BLOCKING
 	if (o_ptr->k_idx && o_ptr->tval == TV_SHIELD) { /* might be dual-wielder */
 		int malus;
-#ifdef USE_NEW_SHIELDS
+ #ifdef USE_NEW_SHIELDS
 		p_ptr->shield_deflect = o_ptr->ac * 10; /* add a figure by multiplying by _10_ for more accuracy */
-#else
+ #else
 		p_ptr->shield_deflect = 20 * (o_ptr->ac + 3); /* add a figure by multiplying by 2*_10_ for more accuracy */
-#endif
+ #endif
 		malus = (o_ptr->weight/10 - 4) * 7 - hold;
 		p_ptr->shield_deflect /= malus > 0 ? 10 + (malus + 4) / 3 : 10;
 
-		/* adjust class-dependant! */
+		/* adjust class-dependantly! */
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		case CLASS_WARRIOR: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 0) / 2; break;
@@ -4742,6 +4798,7 @@ void calc_bonuses(int Ind)
 		case CLASS_SHAMAN: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 2) / 4; break;
 		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
+		case CLASS_MINDCRAFTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 2) / 4; break;
 		}
 	}
 #endif
@@ -4760,7 +4817,7 @@ void calc_bonuses(int Ind)
 #ifdef USE_PARRYING
 	/* Do we have a weapon equipped at all? */
 	if (o_ptr->k_idx) {
-#if 0 /* instead of making it completely SKILL_MASTERY dependant,...*/
+ #if 0 /* instead of making it completely SKILL_MASTERY dependant,...*/
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = get_skill_scale(p_ptr, SKILL_MASTERY, 30);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
@@ -4776,7 +4833,7 @@ void calc_bonuses(int Ind)
 		if ((p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) &&
 		    !p_ptr->rogue_heavyarmor)
 			p_ptr->weapon_parry += get_skill_scale(p_ptr, SKILL_MASTERY, 10);
-#else /*..we add some base chance too (mainly for PvP!) */
+ #else /*..we add some base chance too (mainly for PvP!) */
 		if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H) {
 			p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 20);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
@@ -4792,8 +4849,8 @@ void calc_bonuses(int Ind)
 		/* for dual-wielders, get a parry bonus for second weapon: */
 		if (p_ptr->dual_wield && !p_ptr->rogue_heavyarmor)
 			p_ptr->weapon_parry += get_skill_scale(p_ptr, SKILL_MASTERY, 10);
-#endif
-		/* adjust class-dependant! */
+ #endif
+		/* adjust class-dependantly! */
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
 		case CLASS_WARRIOR: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 0) / 2; break;
@@ -4808,6 +4865,7 @@ void calc_bonuses(int Ind)
 		case CLASS_SHAMAN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 2) / 4; break;
 		case CLASS_DRUID: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
 		case CLASS_RUNEMASTER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
+		case CLASS_MINDCRAFTER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
 		}
 	}
 #endif
@@ -4930,13 +4988,12 @@ void calc_bonuses(int Ind)
 	if (p_ptr->cumber_armor) p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
 	else p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 7);
 
-#ifdef CLASS_RUNEMASTER
 	/* Add the buffs bonuses here */
 	p_ptr->pspeed += p_ptr->rune_speed; 
 	p_ptr->skill_stl += p_ptr->rune_stealth;
 	p_ptr->see_infra += p_ptr->rune_IV;
 	p_ptr->redraw |= (PR_SPEED|PR_EXTRA) ;
-#endif
+
 	if (p_ptr->mode & MODE_HARD && p_ptr->pspeed > 110)
 	{
 		int speed = p_ptr->pspeed - 110;
@@ -4945,9 +5002,6 @@ void calc_bonuses(int Ind)
 
 		p_ptr->pspeed = speed + 110;
 	}
-
-	/* Display the speed (if needed) */
-	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
 
 
 	/* Hell mode is HARD */
@@ -5316,8 +5370,9 @@ void calc_bonuses(int Ind)
 	   but does affect to_h and to_d. This would cause odd balance, so this way neither
 	   shield_deflect nor to_h/to_d are affected. Might need fixing/adjusting later. - C. Blue */
 #ifdef ENABLE_STANCES
-#ifdef USE_BLOCKING /* need blocking to make use of defensive stance */
-		if (p_ptr->combat_stance == 1) switch (p_ptr->combat_stance_power) {
+ #ifdef USE_BLOCKING /* need blocking to make use of defensive stance */
+		if ((p_ptr->combat_stance == 1) &&
+		    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) switch (p_ptr->combat_stance_power) {
 			/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
 			case 0: p_ptr->shield_deflect = (p_ptr->shield_deflect * 11) / 10;
 				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
@@ -5344,8 +5399,8 @@ void calc_bonuses(int Ind)
 				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
 				break;
 		}
-#endif
-#ifdef USE_PARRYING /* need parrying to make use of offensive stance */
+ #endif
+ #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
 		if (p_ptr->combat_stance == 2) switch (p_ptr->combat_stance_power) {
 			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
 				p_ptr->dodge_level = (p_ptr->dodge_level * 2) / 10;
@@ -5360,7 +5415,36 @@ void calc_bonuses(int Ind)
 				p_ptr->dodge_level = (p_ptr->dodge_level * 5) / 10;
 				break;
 		}
-#endif
+  #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
+		else if ((p_ptr->combat_stance == 1) &&
+		    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) switch (p_ptr->combat_stance_power) {
+			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 11) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 5) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 5) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 5) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 12) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 6) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 17) / 10;
+				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
+				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
+				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
+				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+				break;
+		}
+  #endif
+ #endif
 #endif
 
 
@@ -5667,6 +5751,27 @@ void calc_bonuses(int Ind)
 #endif
 
 
+	/* Extract the current weight (in tenth pounds) */
+	w = p_ptr->total_weight;
+
+	/* Extract the "weight limit" (in tenth pounds) */
+	i = weight_limit(Ind);
+
+	/* XXX XXX XXX Apply "encumbrance" from weight */
+	if (w > i/2) {
+		/* protect pspeed from uberflow O_o */
+//		if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
+		if (w > 70000) p_ptr->pspeed = 10; /* roughly ;-p */
+		else p_ptr->pspeed -= ((w - (i/2)) / (i / 10));
+	}
+
+	/* Display the speed (if needed) */
+	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
+
+
+
+/* -------------------- Limits -------------------- */
+
 #ifdef FUNSERVER
 	/* Limit AC?.. */
 	if (!is_admin(p_ptr)) {
@@ -5706,6 +5811,7 @@ void calc_bonuses(int Ind)
 	if ((p_ptr->num_blow > 20) && !is_admin(p_ptr)) p_ptr->num_blow = 20;
 	/* ghost-dive limit to not destroy the real gameplay */
 	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
+
 
 
 	/* XXX - Always resend skills */
@@ -6287,7 +6393,7 @@ int start_global_event(int Ind, int getype, char *parm)
 			}
 #endif
 			ge->announcement_time = 0;
-			ge->signup_time = 1800;
+			ge->signup_time = 60 * 30;
 			ge->min_participants = 0;
 			break;
 	}
@@ -6605,7 +6711,7 @@ static void process_global_event(int ge_id)
 							Players[j]->global_event_type[ge_id] = GE_NONE;
 					ge->getype = GE_NONE;
 				} else {
-					msg_broadcast(0, format("\377W[>>%s starts now!<<]", ge->title));
+					msg_broadcast(0, format("\377C[>>%s starts now!<<]", ge->title));
 				}
 			}
 		} else {
@@ -6992,6 +7098,17 @@ static void process_global_event(int ge_id)
 				unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
 #else
 				new_players_on_depth(&wpos, -1, TRUE); /* remove forced staticness */
+
+				for (i = 1; i <= NumPlayers; i++)
+					if (inarea(&Players[i]->wpos, &wpos)) {
+						Players[i]->recall_pos.wx = wpos.wx;
+						Players[i]->recall_pos.wy = wpos.wy;
+						Players[i]->recall_pos.wz = 0;
+						recall_player(i, "\377yThe arena wizards teleport you out of here!");
+					}
+				if (getcave(&wpos)) { /* check that the level is allocated - mikaelh */
+					dealloc_dungeon_level(&wpos);
+				}
 #endif /* so if if0'ed, we just have to wait for normal unstaticing routine to take care of stale level :/ */
 			}
 			ge->getype = GE_NONE; /* end of event */
@@ -7092,6 +7209,7 @@ void clear_current(int Ind)
 	p_ptr->current_recharge = 0;
 	p_ptr->current_artifact = 0;
 	p_ptr->current_curse = 0;
+	p_ptr->current_tome_creation = 0;
 
 	p_ptr->current_telekinesis = NULL;
 }

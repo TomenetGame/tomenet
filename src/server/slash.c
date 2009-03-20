@@ -314,7 +314,7 @@ static void do_cmd_refresh(int Ind)
 
 void do_slash_cmd(int Ind, char *message)
 {
-	int i = 0, j = 0;
+	int i = 0, j = 0, h = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
  	char *colon, *token[9], message2[MAX_SLASH_LINE_LEN], message3[MAX_SLASH_LINE_LEN];/* was [80], [80] */
@@ -521,7 +521,14 @@ void do_slash_cmd(int Ind, char *message)
 			disturb(Ind, 1, 0);
 
 			/* only tagged ones? */
-			if (tk > 0 && prefix(token[1], "a")) nontag = TRUE;
+			if (tk > 0) {
+				if (prefix(token[1], "a")) {
+					nontag = TRUE;
+				} else {
+					msg_print(Ind, "\377oUsage: /dis [a]");
+					return;
+				}
+			}
 
 			for(i = 0; i < INVEN_PACK; i++)
 			{
@@ -534,37 +541,38 @@ void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				/* skip non-matching tags */
 				if (o_ptr->note && 
-					strcmp(quark_str(o_ptr->note), "terrible") &&
-					strcmp(quark_str(o_ptr->note), "cursed") &&
-					strcmp(quark_str(o_ptr->note), "uncursed") &&
-					strcmp(quark_str(o_ptr->note), "broken") &&
-					strcmp(quark_str(o_ptr->note), "average") &&
-					strcmp(quark_str(o_ptr->note), "good") &&
-//					strcmp(quark_str(o_ptr->note), "excellent"))
-					strcmp(quark_str(o_ptr->note), "worthless"))
+				    strcmp(quark_str(o_ptr->note), "terrible") &&
+				    strcmp(quark_str(o_ptr->note), "cursed") &&
+				    strcmp(quark_str(o_ptr->note), "uncursed") &&
+				    strcmp(quark_str(o_ptr->note), "broken") &&
+				    strcmp(quark_str(o_ptr->note), "average") &&
+				    strcmp(quark_str(o_ptr->note), "good") &&
+//				    strcmp(quark_str(o_ptr->note), "excellent"))
+				    strcmp(quark_str(o_ptr->note), "worthless"))
 					continue;
 
-				if (!nontag && !o_ptr->note && !k &&
-					!(cursed_p(o_ptr) &&	/* Handle {cursed} */
-						(object_known_p(Ind, o_ptr) ||
-						 (o_ptr->ident & ID_SENSE))))
+				/* destroy non-inscribed items too? */
+				if (!nontag && !o_ptr->note &&
+				    !(cursed_p(o_ptr) && /* Handle {cursed} */
+				    (object_known_p(Ind, o_ptr) ||
+				    (o_ptr->ident & ID_SENSE))))
 					continue;
 
 				/* Player might wish to identify it first */
 				if (k_info[o_ptr->k_idx].has_flavor &&
-						!p_ptr->obj_aware[o_ptr->k_idx])
+				    !p_ptr->obj_aware[o_ptr->k_idx])
 					continue;
 
 				/* Hrm, this cannot be destroyed */
 				if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
-						artifact_p(o_ptr))
+				    artifact_p(o_ptr))
 					resist = TRUE;
-
+#if 0 /* too easy! */		
 				/* Hack -- filter by value */
 				if (k && (!object_known_p(Ind, o_ptr) ||
-							object_value_real(Ind, o_ptr) > k))
+				    object_value_real(Ind, o_ptr) > k))
 					continue;
-
+#endif
 				do_cmd_destroy(Ind, i, o_ptr->number);
 				if (!resist) i--;
 
@@ -579,8 +587,21 @@ void do_slash_cmd(int Ind, char *message)
 		/* add inscription to everything */
 		else if (prefix(message, "/tag"))
 		{
-			object_type		*o_ptr;
-			for(i = 0; i < INVEN_PACK; i++)
+			object_type *o_ptr;
+			
+			if (tk && (token[1][0] != '*')) {
+				h = (token[1][0]) - 'a';
+				j = h;
+				if (h < 0 || h > 22 || token[1][1]) {
+					msg_print(Ind, "\377oUsage: /tag [a..w|* [<inscription>]]");
+					return;
+				}
+			} else {
+				h = 0;
+				j = INVEN_PACK - 1;
+			}
+
+			for(i = h; i <= j; i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
 				if (!o_ptr->tval) break;
@@ -588,7 +609,7 @@ void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				if (o_ptr->note) continue;
 
-				o_ptr->note = quark_add(token[1] ? token[1] : "!k");
+				o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -601,6 +622,7 @@ void do_slash_cmd(int Ind, char *message)
 			object_type		*o_ptr;
 //			cptr	*ax = token[1] ? token[1] : "!k";
 			cptr	ax = token[1] ? token[1] : "!k";
+			char note2[80], noteid[10];
 
 			for(i = 0; i < INVEN_PACK; i++)
 			{
@@ -610,10 +632,19 @@ void do_slash_cmd(int Ind, char *message)
 				/* skip inscribed items */
 				if (!o_ptr->note) continue;
 
-				/* skip non-matching tags */
-				if (strcmp(quark_str(o_ptr->note), ax)) continue;
+				/* ignore pseudo-id inscriptions */
+				note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
 
-				o_ptr->note = 0;
+				/* skip non-matching tags */
+				if (strcmp(note2, ax)) continue;
+
+				if (!noteid[0]) {
+					/* tag removed, no more inscription */
+					o_ptr->note = 0;
+				} else {
+					/* tag removed, keeping pseudo-id inscription */
+					o_ptr->note = quark_add(noteid);
+				}
 			}
 
 			/* Combine the pack */
@@ -629,10 +660,10 @@ void do_slash_cmd(int Ind, char *message)
 		else if (prefix(message, "/cast"))
 		{
 			msg_print(Ind, "\377oSorry, /cast is not available for the time being.");
-#if 0 // TODO: make that work without dependance on CLASS_
+ #if 0 // TODO: make that work without dependance on CLASS_
                         int book, whichplayer, whichspell;
 			bool ami = FALSE;
-#if 0
+  #if 0
 			token[0]=strtok(message," ");
 			if (token[0]==NULL)
 			{
@@ -646,7 +677,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (token[i]==NULL)
 					break;
 			}
-#endif
+  #endif
 
 			/* at least 2 arguments required */
 			if (tk < 2)
@@ -761,7 +792,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 
 //			msg_format(Ind,"Book = %ld, Spell = %ld, PlayerName = %s, PlayerID = %ld",book,whichspell,token[3],whichplayer); 
-#endif
+ #endif
                         return;
 		}
 #else
@@ -969,12 +1000,12 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
 				if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
 				if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
+				if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Fire Bird (#1127)");
 			}
 			
 			if (p_ptr->prace == RACE_VAMPIRE) {
 				if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
 			}
-#ifdef CLASS_RUNEMASTER
 			if (p_ptr->pclass == CLASS_RUNEMASTER) {
 				msg_format(Ind, "\377BYour rune mastery rating is %d.", RUNE_DMG);
 #ifdef ALTERNATE_DMG
@@ -1021,7 +1052,6 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 				lev = p_ptr->lev; //restore ^^"
 			}
-#endif
 			/* display PvP kills */
 			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
 
@@ -1134,10 +1164,16 @@ void do_slash_cmd(int Ind, char *message)
 							}
 							else
 							{
-								if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE)
-								{
-									msg_print(Ind, "\377oRecall spell not found in this book.");
-									return;
+								if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+									if (exec_lua(Ind, format("return spell_in_book(%d, %d)", o_ptr->sval, spell)) == FALSE) {
+										msg_print(Ind, "\377oRecall spell not found in this book.");
+										return;
+									}
+								} else {
+									if (exec_lua(Ind, format("return spell_in_book2(%d, %d, %d)", item, o_ptr->sval, spell)) == FALSE) {
+										msg_print(Ind, "\377oRecall spell not found in this book.");
+										return;
+									}
 								}
 							}
 							cast_school_spell(Ind, item, spell, -1, -1, 0);
@@ -1307,13 +1343,13 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			
 			/* don't start too early -C. Blue */
-#ifndef RPG_SERVER
+ #ifndef RPG_SERVER
 			if (Players[j]->lev < 5) {
 				msg_print(Ind, "\377oYou need to be level 5 or higher to receive a quest!");
-#else /* for ironman there's no harm in allowing early quests */
+ #else /* for ironman there's no harm in allowing early quests */
 			if (Players[j]->lev < 3) {
 				msg_print(Ind, "\377oYou need to be level 3 or higher to receive a quest!");
-#endif
+ #endif
 				return;
 			}
 			
@@ -1338,16 +1374,16 @@ void do_slash_cmd(int Ind, char *message)
 					(r_info[r].flags1 & RF1_UNIQUE) || 
 					(r_info[r].flags7 & RF7_MULTIPLY) || 
 					!(r_info[r].level > 2)); /* no Training Tower quests */
-#ifndef RPG_SERVER
+ #ifndef RPG_SERVER
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
-#else /* very hard in the beginning in ironman dungeons */
+ #else /* very hard in the beginning in ironman dungeons */
 			if (lev < 40) {
 				if (r_info[r].flags1 & RF1_FRIENDS) i = i * 2;
 				else i = (i + 1) / 2;
 			} else {
 				if (r_info[r].flags1 & RF1_FRIENDS) i = i + 11 + randint(7);
 			}
-#endif
+ #endif
 #endif /* if 0 */
 			add_quest(Ind, j, r, num, flags);
 			return;
@@ -1396,7 +1432,11 @@ void do_slash_cmd(int Ind, char *message)
 			r_ptr = &r_info[r_idx];
 			num = p_ptr->r_killed[r_idx];
 
-			if (get_skill(p_ptr, SKILL_MIMIC) &&
+			if (r_ptr->flags1 & RF1_UNIQUE) {
+				if (!num) msg_format(Ind, "%s : not slain.", r_name + r_ptr->name);
+				else if (num == 1) msg_format(Ind, "%s : slain.", r_name + r_ptr->name);
+				else msg_format(Ind, "%s : assisted in slaying.", r_name + r_ptr->name);
+			} else if (get_skill(p_ptr, SKILL_MIMIC) &&
 			    !((p_ptr->pclass == CLASS_DRUID) && !mimic_druid(r_idx, p_ptr->lev)) &&
 			    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(r_idx, p_ptr->lev)) &&
 			    !((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(r_idx)))
@@ -1817,7 +1857,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (tk < 1)	/* Explain command usage */
 			{
 				msg_print(Ind, "\377oUsage: /note <player-account>[:<text>]");
-				msg_print(Ind, "\377oExample: /note El Hazard:Hiho!");
+				msg_print(Ind, "\377oExample: /note Mithrandir:Hiho!");
 				msg_print(Ind, "\377oNot specifiying any text will remove pending notes to that account.");
 				msg_print(Ind, "\377oTo clear all pending notes of yours, type: /note *");
 				return;
@@ -1897,6 +1937,12 @@ void do_slash_cmd(int Ind, char *message)
 			if (found_note == MAX_NOTES) {
 				msg_format(Ind, "\377oSorry, the server reached the maximum of %d pending notes.", MAX_NOTES);
 				return;
+			}
+
+			/* Check whether target is actually online by now :) */
+			if ((i = name_lookup_loose(Ind, tname, FALSE))) {
+				msg_format(i, "\377bNote from %s: %s", p_ptr->name, message2 + j + 1);
+//				return; //so double-msg him just to be safe he sees it
 			}
 
 			strcpy(priv_note_sender[found_note], p_ptr->name);
@@ -2107,8 +2153,9 @@ void do_slash_cmd(int Ind, char *message)
 				msg_print(Ind, "Usage: /bbs <line of text for others to read>");
 				return;
 			}
-			msg_broadcast(0, format("\377s[%s->BBS] %s", p_ptr->name, message3));
-			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
+			msg_broadcast(0, format("\377s[%s->BBS] \377W%s", p_ptr->name, message3));
+//			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
+			bbs_add_line(format("\377s%s %s: \377W%s",showdate(), p_ptr->name, message3));
 			return;
 		}
 		else if (prefix(message, "/time")) { /* show time / date */
@@ -2270,12 +2317,12 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 #ifdef AUCTION_MINIMUM_DURATION
 					time_string = auction_format_time(AUCTION_MINIMUM_DURATION);
-					msg_format(Ind, "\377B[@] \377wShortest duration allowed is %d seconds.", time_string);
+					msg_format(Ind, "\377B[@] \377wShortest duration allowed is %s.", time_string);
 					C_KILL(time_string, strlen(time_string), char);
 #endif
 #ifdef AUCTION_MAXIMUM_DURATION
-					time_string = auction_format_time(AUCTION_MINIMUM_DURATION);
-					msg_format(Ind, "\377B[@] \377wLongest duration allowed is %d seconds.", AUCTION_MAXIMUM_DURATION);
+					time_string = auction_format_time(AUCTION_MAXIMUM_DURATION);
+					msg_format(Ind, "\377B[@] \377wLongest duration allowed is %s.", time_string);
 					C_KILL(time_string, strlen(time_string), char);
 #endif
 				}
@@ -2290,7 +2337,7 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377B[@] \377ySee \"\377G/auction help\377y\" for list of valid subcommands.");
 				}
 			}
-			else if (!strcmp("bid", token[1]))
+			else if (!strncmp("bid", token[1], 3))
 			{
 				if (tk < 3)
 				{
@@ -2306,7 +2353,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("buyout", token[1]))
+			else if (!strncmp("buyout", token[1], 3))
 			{
 				if (tk < 2)
 				{
@@ -2322,7 +2369,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("cancel", token[1]))
+			else if (!strncmp("cancel", token[1], 3))
 			{
 				if (tk < 2)
 				{
@@ -2346,7 +2393,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("examine", token[1]))
+			else if (!strncmp("examine", token[1], 3))
 			{
 				if (tk < 2)
 				{
@@ -2362,18 +2409,18 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("list", token[1]))
+			else if (!strncmp("list", token[1], 3))
 			{
 				auction_list(Ind);
 			}
-			else if (!strcmp("retrieve", token[1]))
+			else if (!strncmp("retrieve", token[1], 3))
 			{
 				int retrieved, unretrieved;
 				auction_retrieve_items(Ind, &retrieved, &unretrieved);
 				if (!unretrieved) msg_format(Ind, "\377B[@] \377wRetrieved %d item(s).", retrieved);
 				else msg_format(Ind, "\377B[@] \377wRetrieved %d items, you didn't have room for %d more item(s).", retrieved, unretrieved);
 			}
-			else if (!strcmp("search", token[1]))
+			else if (!strncmp("search", token[1], 3))
 			{
 				if (tk < 2)
 				{
@@ -2384,7 +2431,7 @@ void do_slash_cmd(int Ind, char *message)
 					auction_search(Ind, message3 + 7);
 				}
 			}
-			else if (!strcmp("show", token[1]))
+			else if (!strncmp("show", token[1], 3))
 			{
 				if (tk < 2)
 				{
@@ -2400,7 +2447,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("set", token[1]))
+			else if (!strncmp("set", token[1], 3))
 			{
 				if (tk < 5)
 				{
@@ -2415,7 +2462,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 			}
-			else if (!strcmp("start", token[1]))
+			else if (!strncmp("start", token[1], 3))
 			{
 				if (!p_ptr->current_auction)
 				{
@@ -2423,7 +2470,7 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				else
 				{
-					n = auction_start(p_ptr->current_auction);
+					n = auction_start(Ind);
 					if (n)
 					{
 						auction_print_error(Ind, n);
@@ -2605,6 +2652,17 @@ void do_slash_cmd(int Ind, char *message)
 					validate(token[tk]);
 				}while(--tk);
 */				return;
+			}
+			else if (prefix(message, "/inval")){
+				if(!tk) return;
+				/* added checking for account existance - mikaelh */
+				if (invalidate(message3)) {
+					msg_format(Ind, "\377GInvalidating %s", message3);
+				}
+				else {
+					msg_format(Ind, "\377rAccount %s not found", message3);
+				}
+				return;
 			}
 			else if (prefix(message, "/ban"))
 			{
@@ -3139,7 +3197,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			/* do a wilderness cleanup */
-			else if (prefix(message, "/purge")) 
+			else if (prefix(message, "/purgewild")) 
 			{
 				msg_format(Ind, "previous server status: m_max(%d) o_max(%d)",
 						m_max, o_max);
@@ -4084,6 +4142,32 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/gefforward")) /* skip some running time - C. Blue */
+			/* (use negative parameter to go back in time) */
+			{
+				int t = 60;
+				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
+					msg_format(Ind, "Usage: /gefforward 1..%d [<new T-x>]", MAX_GLOBAL_EVENTS);
+					return;
+				}
+				if (global_event[k-1].getype == GE_NONE) {
+					msg_print(Ind, "No such event.");
+					return;
+				}
+				if (tk == 2) t = atoi(token[2]);
+
+				/* fix time overflow if set beyond actual end time */
+				if (global_event[k-1].end_turn &&
+				    (turn + t * cfg.fps >= global_event[k-1].end_turn)) { /* end at 1 turn before actual end for safety */
+					t = global_event[k-1].end_turn - turn - 1;
+				}
+
+				/* dance the timewarp */
+				global_event[k-1].start_turn = global_event[k-1].start_turn - cfg.fps * t;
+				if (global_event[k-1].end_turn)
+					global_event[k-1].end_turn = global_event[k-1].end_turn - cfg.fps * t;
+				return;
+			}
 			else if (prefix(message, "/partydebug"))
 			{
 				FILE *fp;
@@ -4126,40 +4210,28 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			/* delete current highscore completely */
+			else if (prefix(message, "/highscorereset")) {
+				(void)highscore_reset(Ind);
+				return;
+			}
 			/*
 			 * remove an entry from the high score file
 			 * required for restored chars that were lost to bugs - C. Blue :/
 			*/
-#if 0 //not working since actual erasing is missing
-			else if (prefix(message, "/hiscorerm"))
-			{
-				int                     i, slot;
-				bool            done = FALSE;
-				high_score              the_score, tmpscore;
-
+			else if (prefix(message, "/highscorerm")) {
 				if (tk < 1 || k < 1 || k > MAX_HISCORES) {
 					msg_format(Ind, "Usage: /hiscorerm 1..%d", MAX_HISCORES);
 					return;
 				}
-		    		/* Paranoia -- it may not have opened */
-				if (highscore_fd < 0) return (-1);
-
-				/* Hack -- prepare to dump the new score */
-				the_score = (*score);
-
-				for (i = k; !done && (i < MAX_HISCORES); i++) {
-					/* Read the old guy, note errors */
-					if (highscore_seek(i + 1)) return;
-					if (highscore_read(&tmpscore)) done = TRUE;
-
-					/* Back up and dump the score we were holding */
-					if (highscore_seek(i)) return;
-					if (highscore_write(&the_score)) return;
-				}
-				/* Erase the last slot */
-				//.......
+				(void)highscore_remove(Ind, k - 1);
+				return;
 			}
-#endif
+			/* convert current highscore file to new format */
+			else if (prefix(message, "/highscorecv")) {
+				(void)highscore_file_convert(Ind);
+				return;
+			}
 		        else if (prefix(message, "/rem")) {     /* write a remark (comment) to log file, for bookmarking - C. Blue */
 	            		char *rem = "-";
 				if (tk) rem = message3;
@@ -4431,6 +4503,17 @@ void do_slash_cmd(int Ind, char *message)
 				turn += ((10L * DAY) / 2) - t - 1;
 				return;
 			}
+			else if (prefix(message, "/season")) { /* switch through 4 seasons */
+				if (tk >= 1) {
+					if (k < 0 || k > 3) {
+						msg_print(Ind, "Usage: /season [0..3]");
+						return;
+					}
+					season_change(k, FALSE);
+				}
+				else season_change((season + 1) % 4, FALSE);
+				return;
+			}
 			else if (prefix(message, "/weather")) { /* toggle snowfall during WINTER_SEASON */
 				if (tk >= 1) weather = k;
 				else if (weather == 1) weather = 0;
@@ -4503,6 +4586,145 @@ void do_slash_cmd(int Ind, char *message)
 				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
 
 				msg_format(Ind, "Flag cost of item in slot %d: %d", atoi(token[1]), object_value_real(0, o_ptr));
+				return;
+			}
+			/* just calls cron_24h as if it was time to do so */
+			else if (prefix(message, "/debugdate")) {
+				int dwd, dd, dm, dy;
+				get_date(&dwd, &dd, &dm, &dy);
+				exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), 0, 0, 0, dwd, dd, dm, dy));
+				return;
+			}
+			/* copy an object from someone's inventory into own inventory */
+			else if (prefix(message, "/ocopy")) {
+				object_type forge, *o_ptr = &forge;
+				if (tk < 2) return;
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+				object_copy(o_ptr, &Players[j]->inventory[atoi(token[2])]);
+				/* skip true arts to prevent counter probs */
+				if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) return;
+				inven_carry(Ind, o_ptr);
+				return;
+			}
+			/* re-initialize the skill chart */
+			else if (prefix(message, "/fixskills")) {
+				if (tk < 1) return;
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (j < 1) return;
+				lua_fix_skill_chart(j);
+				return;
+			}
+			/* debug-hack: set all items within houses to ITEM_REMOVAL_HOUSE - C. Blue
+			   warning: can cause a pause of serious duration >:) */
+			else if (prefix(message, "/debugitemremovalhouse")) {
+				cave_type **zcave;
+				object_type *o_ptr;
+				j = 0;
+				bool sj;
+				/* go through all items (well except for player inventories
+				   or tradehouses, but that's not needed anyway) */
+				for(i = 0; i < o_max; i++){
+					o_ptr = &o_list[i];
+					/* check unprotected items on the world's surface in CAVE_ICKY locations, ie houses */
+					if(o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NORMAL && !o_ptr->wpos.wz) {
+						/* make sure object's floor is currently allocated so we can test for CAVE_ICKY flag */
+						h = 0;
+						if (!getcave(&o_ptr->wpos)) {
+							alloc_dungeon_level(&o_ptr->wpos);
+							h = 1;
+							/* relink c_ptr->o_idx with objects */
+							wilderness_gen(&o_ptr->wpos);
+						}
+						if ((zcave = getcave(&o_ptr->wpos))) { /* paranoia? */
+							/* monster traps hack */
+							sj = FALSE;
+							if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+							    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+								sj = TRUE;
+								o_ptr->iy = 255 - o_ptr->iy;
+							}
+							/* in a house (or vault, theoretically) */
+							if (zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) {
+								/* mark item as 'inside house' */
+								o_ptr->marked2 = ITEM_REMOVAL_HOUSE;
+								/* count for fun */
+								j++;
+							}
+							/* restore monster traps hack */
+							if(sj) o_ptr->iy = 255 - o_ptr->iy;
+							/* remove our exclusively allocated level again */
+							if (h) dealloc_dungeon_level(&o_ptr->wpos);
+						} else {
+							/* display warning! */
+							msg_format(Ind, "WARNING: Couldn't allocate %d,%d,%d.",
+							    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+							s_printf("Debugging ITEM_REMOVAL_HOUSE couldn't allocate %d,%d,%d.\n",
+							    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+						}
+					}
+				}
+				/* give msg and quit */
+				msg_format(Ind, "Set %d items to ITEM_REMOVAL_HOUSE.", j);
+				s_printf("Set %d items to ITEM_REMOVAL_HOUSE.\n", j);
+				return;
+			}
+			/* debug-hack: un-perma all death loot or other ITEM_REMOVAL_NEVER
+			   items in wilderness, to clean 'lost items' off the object list - C. Blue
+			   warning: can cause a pause of serious duration >:)
+			   note: also un-permas 'game pieces' and generated items such as
+			         cabbage etc. :/ */
+			else if (prefix(message, "/purgeitemremovalnever")) {
+				cave_type **zcave;
+				object_type *o_ptr;
+				j = 0;
+				bool sj;
+				/* go through all items (well except for player inventories
+				   or tradehouses, but that's not needed anyway) */
+				for(i = 0; i < o_max; i++){
+					o_ptr = &o_list[i];
+					/* check ITEM_REMOVAL_NEVER items on the world's surface that aren't inside houses */
+					if(o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NEVER && !o_ptr->wpos.wz) {
+						/* make sure object's floor is currently allocated so we can test for CAVE_ICKY flag;
+						   this is neccessary for server-generated public house contents for example */
+						h = 0;
+						if (!getcave(&o_ptr->wpos)) {
+							alloc_dungeon_level(&o_ptr->wpos);
+							h = 1;
+							/* relink c_ptr->o_idx with objects */
+							wilderness_gen(&o_ptr->wpos);
+						}
+						if ((zcave = getcave(&o_ptr->wpos))) { /* paranoia? */
+							/* monster traps hack */
+							sj = FALSE;
+							if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+							    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+								sj = TRUE;
+								o_ptr->iy = 255 - o_ptr->iy;
+							}
+							/* not in a house (or vault, theoretically) */
+							if (!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)) {
+								/* remove permanence */
+								o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+								/* count for fun */
+								j++;
+							}
+							/* restore monster traps hack */
+							if(sj) o_ptr->iy = 255 - o_ptr->iy;
+							/* remove our exclusively allocated level again */
+							if (h) dealloc_dungeon_level(&o_ptr->wpos);
+						} else {
+							/* display warning! */
+							msg_format(Ind, "WARNING: Couldn't allocate %d,%d,%d.",
+							    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+							s_printf("Purging ITEM_REMOVAL_NEVER couldn't allocate %d,%d%d.\n",
+							    o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
+						}
+					}
+				}
+				/* give msg and quit */
+				msg_format(Ind, "Set %d items to ITEM_REMOVAL_NORMAL.", j);
+				s_printf("Purged ITEM_REMOVAL_NEVER off %d items.\n", j);
 				return;
 			}
 		}

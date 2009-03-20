@@ -371,7 +371,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 
 void check_Pumpkin(void)
 {
-#ifdef HALLOWEEN
+if (season_halloween) {
 	int k, i, m_idx;
 	struct worldpos *wpos;
 	char msg[80];
@@ -435,7 +435,7 @@ void check_Pumpkin(void)
 			}
 		}
 	}
-#endif
+}
 }
 
 /* This lets Morgoth become stronger, weaker or teleport himself away if
@@ -452,9 +452,7 @@ void check_Morgoth(void)
 	monster_type *m_ptr;
 
 
-#ifdef HALLOWEEN
-	check_Pumpkin();
-#endif
+	if (season_halloween) check_Pumpkin();
 
 
 	/* Let Morgoth, Lord of Darkness gain additional power
@@ -477,7 +475,7 @@ void check_Morgoth(void)
 		}
 
 #if 0 /* moved to check_Pumpkin() */
-#ifdef HALLOWEEN
+if (season_halloween) {
 		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
 		/* search for Great Pumpkins */
 		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
@@ -510,7 +508,7 @@ void check_Morgoth(void)
 				}
 			}
 		}
-#endif
+}
 #endif
 
 		/* search for Morgy */
@@ -563,7 +561,7 @@ void check_Morgoth(void)
 			if (is_admin(p_ptr)) continue;
 
 			if (inarea(&p_ptr->wpos, wpos) &&
-			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[860] == 0)))
+			    ((p_ptr->mode & MODE_PVP) || p_ptr->total_winner || (p_ptr->r_killed[860] != 1)))
 			{
 				/* Tell everyone related to Morgy's depth */
 				if (num_on_depth > 1)
@@ -623,7 +621,7 @@ void check_Morgoth(void)
 
 #if 0
 		/* More players here than Morgy has power for? */
-    		if (((m_ptr->speed - r_ptr->speed + 6) / 6) < num_on_depth)
+		if (((m_ptr->mspeed - r_ptr->speed + 6) / 6) < num_on_depth)
 		{
 			/* tmphp is actually the base hp, from r_info.txt */
 			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 2) * 2));
@@ -632,7 +630,7 @@ void check_Morgoth(void)
 				m_ptr->hp += tmphp * 2 / 3;
 				m_ptr->maxhp += tmphp * 2 / 3;
 			}
-			m_ptr->speed = (r_ptr->speed - 6) + (6 * num_on_depth);
+			m_ptr->mspeed = (r_ptr->speed - 6) + (6 * num_on_depth);
 			
 			/* Anti-cheeze: Fully heal!
 			   Otherwise 2 players could bring him down and the 3rd one
@@ -646,7 +644,7 @@ void check_Morgoth(void)
 			return;
 		}
 		/* Less players here than Morgy has power for? */
-		else if (((m_ptr->speed - r_ptr->speed + 6) / 6) > num_on_depth)
+		else if (((m_ptr->mspeed - r_ptr->speed + 6) / 6) > num_on_depth)
 		{
 			/* tmphp is actually the base hp, from r_info.txt */
 			tmphp = m_ptr->maxhp * 3 / (3 + ((num_on_depth - 0) * 2));
@@ -656,7 +654,7 @@ void check_Morgoth(void)
 				m_ptr->hp -= tmphp * 2 / 3;
 			}
 			m_ptr->maxhp -= tmphp * 2 / 3;
-			m_ptr->speed = (r_ptr->speed - 6) + (6 * num_on_depth);
+			m_ptr->mspeed = (r_ptr->speed - 6) + (6 * num_on_depth);
 
 			/* Sanity check */
 			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
@@ -673,7 +671,8 @@ void check_Morgoth(void)
     		if (m_ptr->maxhp < tmphp)
 		{
 			m_ptr->maxhp = tmphp;
-			m_ptr->speed += 6;
+			m_ptr->mspeed += 6;
+			m_ptr->speed += 6; /* also adjust base speed, only important for aggr-haste */
 			/* Anti-cheeze: Fully heal!
 			   Otherwise 2 players could bring him down and the 3rd one
 			   just joins for the last 'few' HP.. */
@@ -695,7 +694,8 @@ void check_Morgoth(void)
 			}
 			m_ptr->maxhp = tmphp;
 			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp; 
-			m_ptr->speed -= 6;
+			m_ptr->mspeed -= 6;
+			m_ptr->speed -= 6; /* also adjust base speed, only important for aggr-haste */
 
 			/* log */
 			s_printf("Morgoth weakens\n");
@@ -1843,49 +1843,56 @@ static byte player_color(int Ind)
 static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y, int color)
 {
 	u32b tmp_seed = Rand_value; /* save RNG */
+	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
-#ifdef WINTER_SEASON
-	/* Replace green trees and grass by white =-} */
-	if (!wpos->wz) { /* only on the world surface */
-		/* Sometimes display a feat still as green, sometimes brown.
-		   To use always the same feats for this everytime the player
-		   enters a worldmap sector, we seed the RNG with that particular
-		   worldmap coords. */
+	/* To use always the same feats for this everytime the player
+	   enters a worldmap sector, we seed the RNG with that particular
+	   worldmap coords. */
 #if 0
-		Rand_quick = TRUE;
-		Rand_value = wpos->wy +	wpos->wx + y + x;
+	Rand_quick = TRUE;
+	Rand_value = wpos->wy +	wpos->wx + y + x;
 #endif
 #if 0
-		Rand_quick = TRUE;
-		Rand_value = wpos->wy * (MAX_WILD_X * 64 + 1) * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
-			wpos->wx * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
-			y * (MAX_WID * 2 + 2) +
-			x;
+	Rand_quick = TRUE;
+	Rand_value = wpos->wy * (MAX_WILD_X * 64 + 1) * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
+		wpos->wx * (MAX_HGT * 8 + 2) * (MAX_WID * 2 + 2) +
+		y * (MAX_WID * 2 + 2) +
+		x;
 #endif
 #if 0
-		Rand_quick = FALSE;
-		Rand_place = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-			y * (MAX_WID + 2) +
-			x;
+	Rand_quick = FALSE;
+	Rand_place = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+		y * (MAX_WID + 2) +
+		x;
 #endif
 #if 0
-		Rand_quick = FALSE;
-		Rand_state_init(wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-			y * (MAX_WID + 2) +
-			x);
+	Rand_quick = FALSE;
+	Rand_state_init(wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+		y * (MAX_WID + 2) +
+		x);
+#endif
+#if 0
+	Rand_quick = TRUE;
+	Rand_value = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
+		wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
+		y * (MAX_WID + 2) +
+		x;
 #endif
 #if 1
-		Rand_quick = TRUE;
-		Rand_value = wpos->wy * (MAX_WILD_X + 1) * (MAX_HGT + 2) * (MAX_WID + 2) +
-			wpos->wx * (MAX_HGT + 2) * (MAX_WID + 2) +
-			y * (MAX_WID + 2) +
-			x;
+	Rand_quick = TRUE;
+	/* My attempt to create something chaotic - mikaelh */
+	Rand_value = (3623 * wpos->wy + 29753) * (2843 * wpos->wx + 48869) +
+		(1741 * y + 22109) * y * x + (x + 96779) * x + 42;
 #endif
 
+if (season == SEASON_WINTER) {
+	/* Replace green trees and grass by white =-} - using live information of original finnish winter */
+	if (!wpos->wz && w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_MOUNTAIN) { /* only on the world surface */
+		/* Sometimes display a feat still as green, sometimes brown. */
 		switch (c_ptr->feat) {
-		case FEAT_GRASS:
+		case FEAT_DIRT:
 			switch (Rand_div(7)) {
 			case 0: case 1: case 2: case 3: case 4:
 				color = TERM_L_WHITE; break;
@@ -1894,22 +1901,128 @@ static int manipulate_cave_color(cave_type *c_ptr, worldpos *wpos, int x, int y,
 				break;
 			case 6: color = TERM_SLATE; break;
 			}
+			break;
+		case FEAT_GRASS:
+			switch (Rand_div(7)) {
+			case 0: case 1: case 2: case 3: case 4:
+				color = TERM_L_WHITE; break;
+			case 5: case 6:
+				if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER; 
+				else color = TERM_UMBER;
+				break;
+//			case 7:	color = TERM_GREEN; break;
+			}
 			
 			break;
 		case FEAT_TREE:
 		case FEAT_BUSH:
-			if (Rand_div(500)) color = TERM_WHITE;
-			else if (Rand_div(3) != 0) color = TERM_UMBER;
+			if (Rand_div(50)) color = TERM_WHITE;
+			else if (Rand_div(3)) color = TERM_UMBER;
 			else color = TERM_GREEN;
 			break;
 		case FEAT_IVY:
-			if (Rand_div(500)) color = TERM_WHITE;
-			else if (Rand_div(3) != 0) color = TERM_UMBER;
+			if (Rand_div(50)) color = TERM_WHITE;
+			else if (Rand_div(3)) color = TERM_UMBER;
 			else color = TERM_GREEN;
 			break;
 		}
 	}
-#endif
+}
+if (season == SEASON_SPRING) {
+	/* More saplings and all green goodness in spring time, yay */
+	if (!wpos->wz && w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_MOUNTAIN) { /* only on the world surface */
+		switch (c_ptr->feat) {
+		case FEAT_GRASS:
+			switch (Rand_div(7)) {
+			case 0: case 1: case 2: case 3: case 4:
+				color = TERM_L_GREEN; break;
+			case 5:	if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER; 
+				else color = TERM_UMBER;
+				break;
+			case 6: color = TERM_GREEN; break;
+			}
+			break;
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (Rand_div(300)) color = TERM_L_GREEN;
+			else if (Rand_div(3)) color = TERM_L_UMBER;
+			else color = TERM_UMBER;
+			break;
+		case FEAT_IVY:
+			if (Rand_div(500)) color = TERM_GREEN;
+			else if (Rand_div(3)) color = TERM_GREEN;
+			else color = TERM_UMBER;
+			break;
+		}
+	}
+}
+if (season == SEASON_SUMMER) {
+	/* Mostly grown trees, some bushes, all saturated green, some light green and yellow/light umber */
+	if (!wpos->wz && w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_MOUNTAIN) { /* only on the world surface */
+		switch (c_ptr->feat) {
+		case FEAT_GRASS:
+			switch (Rand_div(6)) {
+			case 0:
+				color = TERM_L_GREEN; break;
+			case 1: case 2:
+				if (c_ptr->info & CAVE_LITE) color = TERM_YELLOW; 
+				else color = TERM_L_UMBER;
+				break;
+			case 3: case 4:
+				color = TERM_GREEN; break;
+			case 5:
+				color = TERM_YELLOW; break;
+			}
+			break;
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (Rand_div(4)) color = TERM_GREEN;
+			else if (Rand_div(10)) color = TERM_L_GREEN;
+			else color = TERM_L_UMBER;
+			break;
+		case FEAT_IVY:
+			if (Rand_div(3)) color = TERM_GREEN;
+			else if (Rand_div(3)) color = TERM_L_UMBER;
+			else color = TERM_UMBER;
+			break;
+		}
+	}
+}
+if (season == SEASON_AUTUMN) {
+	/* Rarely saplings, very colourful trees, turning to other tones than green */
+	if (!wpos->wz && w_ptr->type != WILD_VOLCANO && w_ptr->type != WILD_MOUNTAIN) { /* only on the world surface */
+		switch (c_ptr->feat) {
+		case FEAT_GRASS:
+			switch (Rand_div(7)) {
+			case 0: case 1: case 2:
+				color = TERM_GREEN; break;
+			case 3: case 4:
+				if (c_ptr->info & CAVE_LITE) color = TERM_L_UMBER; 
+				else color = TERM_UMBER;
+				break;
+			case 5: case 6:
+				color = TERM_YELLOW; break;
+			}
+			break;
+		case FEAT_TREE:
+		case FEAT_BUSH:
+			if (Rand_div(50))
+			switch (Rand_div(10)) {
+			case 0: case 1: color = TERM_GREEN; break;
+			case 2: case 3: case 4: color = TERM_YELLOW; break;
+			case 5: case 6: case 7: color = TERM_L_UMBER; break;
+			case 8: case 9: color = TERM_UMBER; break;
+			}
+			else color = TERM_RED;
+			break;
+		case FEAT_IVY:
+			if (Rand_div(3)) color = TERM_GREEN;
+			else if (Rand_div(3)) color = TERM_L_UMBER;
+			else color = TERM_UMBER;
+			break;
+		}
+	}
+}
 
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (!wpos->wz && night_surface && !(c_ptr->info & (CAVE_GLOW | CAVE_LITE)))
@@ -2495,6 +2608,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 				(*ap) = TERM_L_BLUE;
 
+			/* hack: custom books' colour depends on their content! - C. Blue */
+			if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_CUSTOM_TOME_1 &&
+			    o_ptr->sval < SV_SPELLBOOK)
+				(*ap) = get_book_name_color(Ind, o_ptr);
+
 			/* Abnormal attr */
 /*                        if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
 			if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
@@ -2875,20 +2993,20 @@ void lite_spot(int Ind, int y, int x)
 
 			/* bugfix on MASSIVE deaths (det/death) */
 			if (p_ptr->fruit_bat && !p_ptr->body_monster) c = 'b';
-			if(p_ptr->chp<0) c='-';
+			if(p_ptr->chp < 0) c = '-';
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) 
 				{
 					int num;
-					num=(p_ptr->chp*95) / (p_ptr->mhp*10);
+					num=(p_ptr->chp * 95) / (p_ptr->mhp * 10);
 					c = '0'+num;
 				}
 			} else if (p_ptr->msp > 0) {
-				if (((p_ptr->csp * 95) / (p_ptr->msp*10)) <= TURN_CHAR_INTO_NUMBER) 
+				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) 
 				{
 					int num;
-					num=(p_ptr->csp*95) / (p_ptr->msp*10);
-					c = '0'+num;
+					num=(p_ptr->csp * 95) / (p_ptr->msp * 10);
+					c = '0' + num;
 				}
 			}
 		}
@@ -2916,7 +3034,7 @@ void lite_spot(int Ind, int y, int x)
 			p_ptr->scr_info[dispy][dispx].a = a;
 			/* Tell client to redraw this grid */
 			(void)Send_char(Ind, dispx, dispy, a, c);
-    	} 
+		}
 	}
 }
 
@@ -3197,14 +3315,14 @@ void display_map(int Ind, int *cy, int *cx)
 
 				if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
-				else if((( p_ptr->chp * 95)/ (p_ptr->mhp*10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
+				else if((( p_ptr->chp * 95)/ (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
 				else 
 				{
-					if(p_ptr->chp<0) tc='-';
-					else{
+					if(p_ptr->chp < 0) tc = '-';
+					else {
 						int num;
-						num=(p_ptr->chp*95) / (p_ptr->mhp*10);
-						tc = '0'+num;
+						num=(p_ptr->chp * 95) / (p_ptr->mhp * 10);
+						tc = '0' + num;
 					}
 				}                       
 			}
@@ -6153,6 +6271,7 @@ extern int check_feat(worldpos *wpos, int y, int x)
         c_ptr = &zcave[y][x];
 	return(c_ptr->feat);
 }
+
 /*
  * Change the "feat" flag for a grid, and notice/redraw the grid
  * (Adapted from PernAngband)
@@ -6169,6 +6288,85 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
 	c_ptr = &zcave[y][x];
+
+	/* Trees in greater fire become dead trees at once */
+	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
+	    (c_ptr->feat == FEAT_SHAL_LAVA ||
+	    c_ptr->feat == FEAT_FIRE ||
+	    c_ptr->feat == FEAT_GREAT_FIRE))
+		feat = FEAT_DEAD_TREE;
+
+	/* Don't mess with inns please! */
+	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) return;
+
+	/* in Nether Realm, floor is always nether mist (or lava)! */
+	if (getlevel(wpos) >= 166) switch (feat) {
+		case FEAT_IVY:
+		case FEAT_SHAL_WATER:
+		case FEAT_DEEP_WATER:
+    		case FEAT_ICE:
+	    	case FEAT_FLOOR:
+    		case FEAT_DIRT:
+	        case FEAT_GRASS:
+    		case FEAT_SAND:
+	        case FEAT_ASH:
+	        case FEAT_MUD:
+	/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+	        case FEAT_FLOWER: feat = FEAT_NETHER_MIST;
+	}
+	/* todo: submerged ruins/small water cave only water floor, grinding ice only ice floor.
+	   maybe add d_info flags for this stuff instead of hard-coding here */
+
+	/* Change the feature */
+	c_ptr->feat = feat;
+
+	if (cave_set_quietly) return;
+
+	/* XXX it's not needed when called from generate.c */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		p_ptr = Players[i];
+		
+		/* Only works for players on the level */
+		if (!inarea(wpos, &p_ptr->wpos)) continue;
+		
+		/* Notice */
+		note_spot(i, y, x);
+
+		/* Redraw */
+		lite_spot(i, y, x);
+	}
+}
+
+/*
+ * This is a copy of cave_set_feat that is used for "live" changes to the world
+ * by players and monsters. More specific restrictions can be placed here.
+ */
+void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
+{
+	player_type *p_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
+        struct c_special *cs_ptr;
+	int i;
+
+	if(!(zcave=getcave(wpos))) return;
+	if (!in_bounds(y, x)) return;
+	c_ptr = &zcave[y][x];
+
+	/* No terraforming on impossible ground -
+	   compare twall_erosion() for consistency */
+	if ((feat == FEAT_TREE || feat == FEAT_BUSH || feat == FEAT_WALL_EXTRA) &&
+	    (c_ptr->feat == FEAT_DEEP_LAVA ||
+	    c_ptr->feat == FEAT_DEEP_WATER))
+		return;
+	
+	/* Trees in greater fire become dead trees at once */
+	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
+	    (c_ptr->feat == FEAT_SHAL_LAVA ||
+	    c_ptr->feat == FEAT_FIRE ||
+	    c_ptr->feat == FEAT_GREAT_FIRE))
+		feat = FEAT_DEAD_TREE;
 
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
 	if ((feat == FEAT_GLYPH) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
@@ -6212,12 +6410,10 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 	{
 		cs_erase(c_ptr, cs_ptr);
 	}
-	    
+
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = feat;
-
-	if (cave_set_quietly) return;
 
 	/* XXX it's not needed when called from generate.c */
 	for (i = 1; i <= NumPlayers; i++)
@@ -6587,15 +6783,12 @@ void recent_track(int r_idx)
  *
  * All disturbance cancels repeated commands, resting, and running.
  */
-void disturb(int Ind, int stop_search, int unused_flag)
+void disturb(int Ind, int stop_search, int keep_resting)
 {
 	player_type *p_ptr = Players[Ind];
 
 	/* Calm down from silly running */
 	p_ptr->corner_turn = 0;
-
-	/* Unused */
-	unused_flag = unused_flag;
 
 	/* Cancel auto-commands */
 	/* command_new = 0; */
@@ -6614,7 +6807,7 @@ void disturb(int Ind, int stop_search, int unused_flag)
 	}
 
 	/* Cancel Resting */
-	if (p_ptr->resting)
+	if (!keep_resting && p_ptr->resting)
 	{
 		/* Cancel */
 		p_ptr->resting = 0;
@@ -6818,4 +7011,83 @@ void everyone_lite_later_spot(struct worldpos *wpos, int y, int x) {
 	wpcopy(&wspot->wpos, wpos);
 	wspot->x = x;
 	wspot->y = y;
+}
+
+/* change between the four seasons - C. Blue
+    s:		the season (0..3 -> spring,summer,autumn,winter)
+    force:	true -> force redrawing all sectors
+		even if season didn't change. */
+void season_change(int s, bool force) {
+	int x, y;
+	struct worldpos wpos;
+
+	if ((season == s) && !force) return;
+	season = s;
+	
+	/* make wilderness more lively again */
+	lively_wild(0);
+
+	/* rebuild wilderness + town layout everywhere! */
+	wpos.wz = 0;
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		wpos.wx = x;
+		wpos.wy = y;
+		/* note: NULL is illegal and only works if a surface
+		   floor is being generated (ie wz = 0): */
+		if (getcave(&wpos)) generate_cave(&wpos, NULL);
+	}
+
+	s_printf("(%s) SEASON_CHANGE: %d", showtime(), s);
+	if (s == SEASON_SPRING) s_printf(" (spring)");
+	if (s == SEASON_SUMMER) s_printf(" (summer)");
+	if (s == SEASON_AUTUMN) s_printf(" (autumn)");
+	if (s == SEASON_WINTER) s_printf(" (winter)");
+	s_printf("\n");
+
+	/* adjust weather somewhat according to season! */
+	switch (s) {
+	case SEASON_SPRING: /* rain relatively often */
+		weather_frequency = 2; break;
+	case SEASON_SUMMER: /* rain rarely */
+		weather_frequency = 1; break;
+	case SEASON_AUTUMN: /* rain very often */
+		weather_frequency = 3; break;
+	case SEASON_WINTER: /* snow relatively often */
+		weather_frequency = 2; break;
+	}
+
+	/* redraw map for all players */
+	for (x = 1; x <= NumPlayers; x++) Players[x]->redraw |= PR_MAP;
+}
+
+/* make wilderness more lively again - C. Blue
+   flags values:
+   0 -- season-dependant
+   other than 0 -- clear flags in all wilderness (wildflags & ~flags)
+*/
+void lively_wild(u32b flags) {
+	int x, y;
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		/* specific value? */
+		if (flags) {
+			wild_info[y][x].flags &= ~flags;
+			continue;
+		}
+
+		/* season-dependant? */
+		/* except for winter, regrow gardens.
+		   Maybe not very realistic timing, but looks nice.. */
+		if (season != SEASON_WINTER) wild_info[y][x].flags &= ~WILD_F_GARDENS;
+		/* much to eat from harvesting */
+		if (season == SEASON_AUTUMN) wild_info[y][x].flags &= ~WILD_F_FOOD;
+		/* bones from last winter o_O - also new people arrive */
+		if (season == SEASON_SPRING) wild_info[y][x].flags &= ~(WILD_F_BONES | WILD_F_HOME_OWNERS | WILD_F_OBJECTS | WILD_F_CASH);
+		/* they return home and are stocking up for winter */
+		if (season == SEASON_WINTER) wild_info[y][x].flags &= ~(WILD_F_HOME_OWNERS | WILD_F_OBJECTS | WILD_F_CASH);
+		/* now they come ^^ */
+//		if (season == SEASON_SUMMER) wild_info[y][x].flags |= WILD_F_INVADERS;
+		wild_info[y][x].flags &= ~WILD_F_INVADERS; /* every time? */
+	}
 }

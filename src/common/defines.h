@@ -51,35 +51,50 @@
 
 
 /* MAJOR/MINOR/PATCH version should be 0-15. */
-#define VERSION_MAJOR   4
-#define VERSION_MINOR   4
-#define VERSION_PATCH   2
-#define VERSION_EXTRA	0
-#define VERSION_BRANCH	0
-#define VERSION_BUILD	0
+#define VERSION_MAJOR		4
+#define VERSION_MINOR		4
+#define VERSION_PATCH		2
+#define VERSION_EXTRA		0
+#define VERSION_BRANCH		0
+#define VERSION_BUILD		0
 
-/* Server release version tag: Minimum client version tag required to "play 100%". */
+/* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
+#define VERSION_MAJOR_OUTDATED	4
+#define VERSION_MINOR_OUTDATED	4
+#define VERSION_PATCH_OUTDATED	1
+#define VERSION_EXTRA_OUTDATED	8
+
+/* Server release version tag (such as "a", "b" etc):
+   Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG ""
 
-/* Minimum client version required */
+/* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
 #define MIN_VERSION_MINOR	4
 #define MIN_VERSION_PATCH	1
 #define MIN_VERSION_EXTRA	0
 
-/* For savefile purpose only */
-#define SF_VERSION_MAJOR   4
-#define SF_VERSION_MINOR   3
-#define SF_VERSION_PATCH   17
-#define SF_VERSION_EXTRA   0
 
-/* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
+
+/* For savefile purpose only */
+#define SF_VERSION_MAJOR	4
+#define SF_VERSION_MINOR	3
+#define SF_VERSION_PATCH	21
+#define SF_VERSION_EXTRA	0
+
+
+
+/* Client-side only: Client release version tag
+   (such as "a", "b" etc) used in window title and file dumps */
 #define CLIENT_VERSION_TAG ""
+
+
 
 /*
  * Base version strings of TomeNET (see version_build)
  */
 #define TOMENET_VERSION_SHORT		"TomeNET"
+
 
 
 /* Main server flags */
@@ -89,6 +104,7 @@
 #define SFLG_PARTY	0x04
 #define SFLG_ARCADE	0x08
 #define SFLG_TEST	0x10
+
 
 
 /*
@@ -120,10 +136,14 @@
 
 #define ENABLE_CLOAKING		/* cloaking mode for rogues */
 #define NEW_DODGING		/* reworked dodging formulas to allow more armour weight while aligning it to rogues, keeping your ideas though, Adam ;) - C. Blue */
-
 #define ENABLE_TECHNIQUES
+#define NEW_HISCORE		/* extended high score options for tomenet.cfg */
 
-#define NEW_HISCORE		/* extended high score options for tomenet.cfg - C. Blue */
+#define ENABLE_MCRAFT		/* 'Mindcrafter' class - C. Blue */
+#define NEW_TOMES		/* customizable spellbooks */
+
+
+/* ------------- Server-type dependant features ------------- */
 
 #ifdef RPG_SERVER
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
@@ -133,9 +153,19 @@
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
+#endif
 
- #define ENABLE_MCRAFT		/* enable old-new 'mindcrafter' class - C. Blue */
- #define NEW_TOMES		/* enable player-crafted tomes as Adam suggested - C. Blue */
+#ifdef TEST_SERVER
+ #define ENABLE_DIVINE		/* enable RACE_DIVINE */
+
+ #define AUCTION_BETA		/* less restrictions while beta testing */
+ #define AUCTION_SYSTEM
+ #define AUCTION_DEBUG
+
+ #define OPTIMIZED_ANIMATIONS	/* testing */
+
+ #define ENABLE_MCRAFT		/* 'Mindcrafter' class - C. Blue */
+ #define NEW_TOMES		/* customizable spellbooks */
 #endif
 
 /* --------------------------------------------------------------------------*/
@@ -422,7 +452,7 @@
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
 /* Client-side unique list */
-#define MAX_UNIQUES		300
+#define MAX_UNIQUES             300
 
 
 
@@ -3450,6 +3480,7 @@ that keeps many algorithms happy.
 #define GF_ZEAL_PLAYER 		142
 #define GF_DISP_DEMON   	143
 #define GF_SOULCURE_PLAYER	144
+#define GF_MINDBOOST_PLAYER	145
 
 /* Zangband changes */
 #define GF_TELE_TO	150
@@ -4434,9 +4465,9 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  * but the code for them already exists in our code..
  * Let's consider of recycling them :)		- Jir -
  */
-#define RF9_IM_TELE                     0x20000000      /* Resist teleportation */
-#define RF9_IM_PSI			0x40000000	/* Immune to (?) */
-#define RF9_RES_PSI			0x80000000	/* Resist (?) */
+#define RF9_IM_TELE             0x20000000      /* Resist teleportation */
+#define RF9_IM_PSI		0x40000000	/* Immune to (?) */
+#define RF9_RES_PSI		0x80000000	/* Resist (?) */
 
 
 /* New monster attack spells and stuff - C. Blue */
@@ -4519,14 +4550,24 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define		DIR_WEST		3
 
 /* wilderness flags */
+/* flags belonging to (+) family may be cleared to cause the according
+   effect when desired, any time in the code, it's harmless ;)
+   (the wilderness generation function will set them again after processing.) */
+#define	WILD_F_GENERATED	0x00000001	/* wilderness has been generated once - actually unused now after splitting it up into more detailed flags below, which are marked (+) - C. Blue */
+#define	WILD_F_INHABITED	0x00000002	/* if unset, add some monsters on day/night change (part of the (+) flag family actually, semantically) */
+#define	WILD_F_IN_MEMORY	0x00000004
+#define	WILD_F_UP		0x00000008	/* these are to show dungeons etc. */
+#define	WILD_F_DOWN		0x00000010
+#define WILD_F_LOCKUP		0x00000020	/* lock to prevent creation */
+#define WILD_F_LOCKDOWN		0x00000040
 
-#define	WILD_F_GENERATED	1
-#define	WILD_F_INHABITED	2
-#define	WILD_F_IN_MEMORY	4
-#define	WILD_F_UP		8	/* these are to show dungeons etc. */
-#define	WILD_F_DOWN		16
-#define WILD_F_LOCKUP		32	/* lock to prevent creation */
-#define WILD_F_LOCKDOWN		64
+#define WILD_F_INVADERS		0x00000080	/* (+) if unset, spawn some invaders */
+#define WILD_F_HOME_OWNERS	0x00000100	/* (+) if unset, respawn home-owners */
+#define WILD_F_BONES		0x00000200	/* (+) if unset, spawn some bones */
+#define WILD_F_FOOD		0x00000400	/* (+) if unset, spawn some food (not regrowing gardens, see below for that one) */
+#define WILD_F_OBJECTS		0x00000800	/* (+) if unset, spawn some objects */
+#define WILD_F_CASH		0x00001000	/* (+) if unset, spawn some cash */
+#define WILD_F_GARDENS		0x00002000	/* (+) if unset, regrow gardens */
 
 
 /*** Features flags -- DG ***/
@@ -4989,15 +5030,15 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
  * Default to the "base" attr for unaware items
  */
 #if 0
-#define object_attr(T) \
+ #define object_attr(T) \
     ((k_info[(T)->k_idx].aware) ? \
      (k_info[(T)->k_idx].x_attr) : \
      (k_info[(T)->k_idx].d_attr))
 
-#define object_attr(T) \
+ #define object_attr(T) \
     (k_info[(T)->k_idx].x_attr)
 
-#define object_attr(T) \
+ #define object_attr(T) \
     (p_ptr->k_attr[(T)->k_idx])
 
 #endif
@@ -6232,9 +6273,9 @@ extern int PlayerUID;
 #define MAX_SKILLS              128
 
 /* SKill flags */
-#define SKF1_HIDDEN             0x00000001      /* Starts hidden */
-#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */ 
-#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */ 
+#define SKF1_HIDDEN             0x00000001	/* Starts hidden */
+#define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */
+#define SKF1_DUMMY		0x00000004	/* Just for visual ordering */
 
 #define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
 #define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */
@@ -6462,7 +6503,10 @@ extern int PlayerUID;
 
 /* erase items on the floor? */
 #define ITEM_REMOVAL_NORMAL	0	/* this must always be 0 (assumed as default if not set to a different value) */
-#define ITEM_REMOVAL_NEVER	1
+#define ITEM_REMOVAL_NEVER	1	/* Item will never 'timeout' */
+#define ITEM_REMOVAL_HOUSE	2	/* Item is inside a house and because of that will never 'timeout' */
+#define ITEM_REMOVAL_DEATH_WILD	3	/* Items are death loot, but not in dungeon (would be ITEM_REMOVAL_NEVER) but in the wilderness */
+#define ITEM_REMOVAL_LONG_WILD	4	/* Item times out even much slower than from ITEM_REMOVAL_DEATH_WILD */
 
 
 /* C. Blue - Automatic transport sequences for characters

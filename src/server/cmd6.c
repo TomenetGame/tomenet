@@ -5277,7 +5277,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE))
+	if (((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) &&
+	    !o_ptr->tval == TV_BOOK) /* hack: blank books can always be 'activated' */
 	{
 		msg_print(Ind, "You failed to activate it properly.");
 		return;
@@ -5292,8 +5293,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
 
-	/* Wonder Twin Powers... Activate! */
-	msg_print(Ind, "You activate it...");
+	if (o_ptr->tval != TV_BOOK) {
+		/* Wonder Twin Powers... Activate! */
+		msg_print(Ind, "You activate it...");
+	} else {
+		msg_print(Ind, "You open the book to add another new spell..");
+	}
 
 	break_cloaking(Ind, 0);
 	stop_precision(Ind);
@@ -5318,7 +5323,7 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 
 	/* Hack -- Dragon Scale Mail can be activated as well */
 	/* Yikes, hard-coded r_idx.. */
-	if (o_ptr->tval == TV_DRAG_ARMOR && item==INVEN_BODY)
+	if (o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY)
 	{
 		/* Breath activation */
                 p_ptr->current_activation = item;
@@ -5911,12 +5916,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			case ART_CARLAMMAS:
 			{
 				msg_print(Ind, "The amulet lets out a shrill wail...");
-#if 0 /* o_O */
+ #if 0 /* o_O */
 				k = 3 * p_ptr->lev;
 				(void)set_protevil(Ind, randint(25) + k); /* removed stacking */
-#else
+ #else
 				(void)set_protevil(Ind, randint(15) + 35); /* removed stacking */
-#endif
+ #endif
 				o_ptr->timeout = rand_int(225) + 225;
 				break;
 			}
@@ -7089,7 +7094,8 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	}
 	else if (is_ego_p(o_ptr, EGO_SPINNING))
 	{
-		do_spin(Ind);
+//		do_spin(Ind);
+		spin_attack(Ind); /* this one is nicer than do_spin */
 		o_ptr->timeout = 50 + randint(25);
 
 		/* Window stuff */
@@ -7196,7 +7202,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			return;
 		}
 	}
-
 
 	if (o_ptr->tval == TV_RING)
 	{
@@ -7386,7 +7391,6 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 			}
 		}
 
-
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
@@ -7394,6 +7398,36 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		return;
 
 	}
+
+	/* add a single spell to the player's customizable tome */
+	if (o_ptr->tval == TV_BOOK) {
+	        /* free space left? */
+	        i = 1;
+		/* k_info-pval dependant */
+		if (o_ptr->sval >= SV_CUSTOM_TOME_1 && o_ptr->sval < SV_SPELLBOOK) {
+	                switch (o_ptr->bpval) {
+			case 0: i = 0; break;
+			case 1: if (o_ptr->xtra1) i = 0; break;
+			case 2: if (o_ptr->xtra2) i = 0; break;
+			case 3: if (o_ptr->xtra3) i = 0; break;
+			case 4: if (o_ptr->xtra4) i = 0; break;
+			case 5: if (o_ptr->xtra5) i = 0; break;
+			case 6: if (o_ptr->xtra6) i = 0; break;
+			case 7: if (o_ptr->xtra7) i = 0; break;
+			case 8: if (o_ptr->xtra8) i = 0; break;
+			default: if (o_ptr->xtra9) i = 0; break;
+			}
+		}
+                if (!i) {
+                	msg_print(Ind, "That book has no blank pages left!");
+                        return;
+                }
+
+		tome_creation(Ind);
+		p_ptr->using_up_item = item; /* hack - gets swapped later */
+		return;
+	}
+
 
 	/* Mistake */
 	msg_print(Ind, "That object cannot be activated.");
@@ -7889,7 +7923,7 @@ void do_cmd_activate_dir(int Ind, int dir)
 			}
                         case ART_NAIN:
                         {
-								wall_to_mud(Ind, dir);
+				wall_to_mud(Ind, dir);
                                 o_ptr->timeout = rand_int(5) + 7;
                                 break;
                         }
@@ -8018,7 +8052,8 @@ bool unmagic(int Ind)
 			set_oppose_fire(Ind, 0) |
 			set_oppose_cold(Ind, 0) |
 			set_oppose_pois(Ind, 0) |
-			set_zeal(Ind, 0, 0)
+			set_zeal(Ind, 0, 0) |
+			set_mindboost(Ind, 0, 0)
 //			set_martyr(Ind, 0)
 			) ident = TRUE;
 
@@ -8454,7 +8489,7 @@ void do_cmd_fletchery(int Ind)
 }
 
 /*
- * Use a combat stance for armed melee combat (warriors only atm) - C. Blue
+ * Use a combat stance for armed melee combat - C. Blue
  * Note: SKILL_STANCE is increased automatically by +1.000 every 5 levels!
  * Players start out with 1.000 skill. The skill number is just for show though ;)
  */
@@ -8477,134 +8512,137 @@ void do_cmd_stance(int Ind, int stance) {
 s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 	break;
 	case 1:
-	    switch(p_ptr->pclass) {
-	    case CLASS_WARRIOR:
-		if (p_ptr->max_lev < 5) {
-			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
-			return;
+		switch(p_ptr->pclass) {
+		case CLASS_WARRIOR:
+			if (p_ptr->max_lev < 5) {
+				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+				return;
+			}
+		break;
+		case CLASS_MIMIC:
+			if (p_ptr->max_lev < 10) {
+				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+				return;
+			}
+		break;
+		case CLASS_PALADIN:
+			if (p_ptr->max_lev < 5) {
+				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+				return;
+			}
+		break;
+		case CLASS_RANGER:
+			if (p_ptr->max_lev < 10) {
+				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
+				return;
+			}
+		break;
 		}
-	    break;
-	    case CLASS_MIMIC:
-		if (p_ptr->max_lev < 10) {
-			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
-			return;
-		}
-	    break;
-	    case CLASS_PALADIN:
-		if (p_ptr->max_lev < 5) {
-			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
-			return;
-		}
-	    break;
-	    case CLASS_RANGER:
-		if (p_ptr->max_lev < 10) {
-			msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
-			return;
-		}
-	    break;
-	    }
 
 		if (p_ptr->combat_stance == 1) {
 			msg_print(Ind, "\377sYou already are in defensive stance!");
 			return;
 		}
+#ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
 		if (!p_ptr->inventory[INVEN_ARM].k_idx ||
 		    p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) { /* not dual-wielding? */
 			msg_print(Ind, "\377yYou cannot enter defensive stance without wielding a shield.");
 			return;
 		}
+#endif
 		
-	    switch(p_ptr->pclass) {
-	    case CLASS_WARRIOR:
-		if (p_ptr->max_lev < 15) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter defensive stance rank I");
-		} else if (p_ptr->max_lev < 35) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter defensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+		switch(p_ptr->pclass) {
+		case CLASS_WARRIOR:
+			if (p_ptr->max_lev < 15) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter defensive stance rank I");
+			} else if (p_ptr->max_lev < 35) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter defensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter defensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+			}
+			break;
+		case CLASS_MIMIC:
+			if (p_ptr->max_lev < 20) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter defensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter defensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter defensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+			}
+			break;
+		case CLASS_PALADIN:
+			if (p_ptr->max_lev < 20) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter defensive stance rank I");
+			} else if (p_ptr->max_lev < 35) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter defensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter defensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+			}
+			break;
+		case CLASS_RANGER:
+			if (p_ptr->max_lev < 20) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter defensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter defensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter defensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
+			}
+			break;
 		}
-	    break;
-	    case CLASS_MIMIC:
-		if (p_ptr->max_lev < 20) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter defensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter defensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
-		}
-	    break;
-	    case CLASS_PALADIN:
-		if (p_ptr->max_lev < 20) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter defensive stance rank I");
-		} else if (p_ptr->max_lev < 35) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter defensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
-		}
-	    break;
-	    case CLASS_RANGER:
-		if (p_ptr->max_lev < 20) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter defensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter defensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter defensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank defensive stance");
-		}
-	    break;
-	    }
 s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
-	break;
+		break;
+
 	case 2:
-	    switch(p_ptr->pclass) {
-	    case CLASS_WARRIOR:
-		if (p_ptr->max_lev < 10) {
-			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
-			return;
+		switch(p_ptr->pclass) {
+		case CLASS_WARRIOR:
+			if (p_ptr->max_lev < 10) {
+				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+				return;
+			}
+			break;
+		case CLASS_MIMIC:
+			if (p_ptr->max_lev < 15) {
+				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+				return;
+			}
+			break;
+		case CLASS_PALADIN:
+			if (p_ptr->max_lev < 15) {
+				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+				return;
+			}
+			break;
+		case CLASS_RANGER:
+			if (p_ptr->max_lev < 15) {
+				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
+				return;
+			}
+			break;
 		}
-	    break;
-	    case CLASS_MIMIC:
-		if (p_ptr->max_lev < 15) {
-			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
-			return;
-		}
-	    break;
-	    case CLASS_PALADIN:
-		if (p_ptr->max_lev < 15) {
-			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
-			return;
-		}
-	    break;
-	    case CLASS_RANGER:
-		if (p_ptr->max_lev < 15) {
-			msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
-			return;
-		}
-	    break;
-	    }
 
 		if (p_ptr->combat_stance == 2) {
 			msg_print(Ind, "\377sYou already are in offensive stance!");
@@ -8619,71 +8657,72 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 			return;
 		}
 
-	    switch(p_ptr->pclass) {
-	    case CLASS_WARRIOR:
-		if (p_ptr->max_lev < 20) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter offensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter offensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+		switch(p_ptr->pclass) {
+		case CLASS_WARRIOR:
+			if (p_ptr->max_lev < 20) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter offensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter offensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter offensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+			}
+			break;
+		case CLASS_MIMIC:
+			if (p_ptr->max_lev < 25) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter offensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter offensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter offensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+			}
+			break;
+		case CLASS_PALADIN:
+			if (p_ptr->max_lev < 25) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter offensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter offensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter offensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+			}
+			break;
+		case CLASS_RANGER:
+			if (p_ptr->max_lev < 25) {
+				power = 0;
+				msg_print(Ind, "\377sYou enter offensive stance rank I");
+			} else if (p_ptr->max_lev < 40) {
+				power = 1;
+				msg_print(Ind, "\377sYou enter offensive stance rank II");
+			} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
+				power = 2; /* up to level 50, and highest rank for non-totalwinners! */
+				msg_print(Ind, "\377sYou enter offensive stance rank III");
+			} else {
+				power = 3; /* royal rank */
+				msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
+			}
+			break;
 		}
-	    break;
-	    case CLASS_MIMIC:
-		if (p_ptr->max_lev < 25) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter offensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter offensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
-		}
-	    break;
-	    case CLASS_PALADIN:
-		if (p_ptr->max_lev < 25) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter offensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter offensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
-		}
-	    break;
-	    case CLASS_RANGER:
-		if (p_ptr->max_lev < 25) {
-			power = 0;
-			msg_print(Ind, "\377sYou enter offensive stance rank I");
-		} else if (p_ptr->max_lev < 40) {
-			power = 1;
-			msg_print(Ind, "\377sYou enter offensive stance rank II");
-		} else if (!p_ptr->total_winner || p_ptr->max_lev < 45) {
-			power = 2; /* up to level 50, and highest rank for non-totalwinners! */
-			msg_print(Ind, "\377sYou enter offensive stance rank III");
-		} else {
-			power = 3; /* royal rank */
-			msg_print(Ind, "\377sYou enter Royal Rank offensive stance");
-		}
-	    break;
-	    }
 s_printf("SWITCH_STANCE: %s - offensive\n", p_ptr->name);
-	break;
+		break;
 	}
+
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 	p_ptr->combat_stance = stance;
 	p_ptr->combat_stance_power = power;
@@ -8795,6 +8834,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			msg_print(Ind, "You cannot use techniques with a boomerang.");
 			return;
 		}
+		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+			msg_print(Ind, "You cannot use techniques with a shield equipped.");
+			return;
+		}
 	}
 
 	disturb(Ind, 1, 0); /* stop things like running, resting.. */
@@ -8845,7 +8888,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		return;
 	case 3:	if (!p_ptr->ranged_techniques & 0x0008) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
-			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+//			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
 				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!"); 
 				return;

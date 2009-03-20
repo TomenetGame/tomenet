@@ -585,6 +585,7 @@ void lua_determine_level_req(int Ind, int item) {
 	return;
 }
 
+/* the essential function for art reset */
 void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
@@ -642,7 +643,8 @@ void lua_strip_true_arts_from_absent_players(void) {
 	strip_true_arts_from_hashed_players();
 }
 
-/* Remove all true artifacts lying on the floor anywhere in the world */
+/* Remove all true artifacts lying on the (mang-house) floor
+   anywhere in the world. Not processing traditional houses atm. */
 void lua_strip_true_arts_from_floors(void) {
 	int i, cnt=0, dcnt=0;
 	object_type *o_ptr;
@@ -736,15 +738,32 @@ long lua_player_exp(int level, int expfact)
  * - mikaelh */
 void lua_fix_spellbooks(int spell, int mod)
 {
-	int i;
+	int i, j;
 	object_type *o_ptr;
+	house_type *h_ptr;
 
+#ifndef USE_MANG_HOUSE_ONLY
+	/* scan world (includes MAngband-style houses) */
 	for (i = 0; i < o_max; i++)
 	{
 		o_ptr = &o_list[i];
 		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell)
 		{
 			o_ptr->pval += mod;
+		}
+	}
+#endif
+
+	/* scan traditional (vanilla) houses */
+	for (j = 0; j < num_houses; j++) {
+		h_ptr = &houses[j];
+		for (i = 0; i < h_ptr->stock_num; i++) {
+			o_ptr = &h_ptr->stock[i];
+	                if(!o_ptr->k_idx) continue;
+			if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval >= spell)
+			{
+				o_ptr->pval += mod;
+			}
 		}
 	}
 }
@@ -785,10 +804,10 @@ void lua_apply_item_changes(int Ind, int changes) {
 	house_type *h_ptr;
 
 	if (!Ind) {
-    /* scan world/houses */
+	/* scan world/houses */
 #ifndef USE_MANG_HOUSE_ONLY
-	/* scan traditional (vanilla) houses */
-		for(j=0;j<num_houses;j++){
+		/* scan traditional (vanilla) houses */
+		for(j = 0; j < num_houses; j++){
 			h_ptr = &houses[j];
 			for (i = 0; i < h_ptr->stock_num; i++){
 				o_ptr = &h_ptr->stock[i];
@@ -796,50 +815,23 @@ void lua_apply_item_changes(int Ind, int changes) {
 				lua_apply_item_changes_aux(o_ptr, changes);
 			}
 		}
-		s_printf("LUA_APPLY_ITEM_CHANGES done to traditional houses.\n");
 #endif
-	/* scan world (includes MAngband-style houses) */
+		/* scan world (includes MAngband-style houses) */
 	        for(i = 0; i < o_max; i++) {
     	        	o_ptr = &o_list[i];
         	        if(!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);
     		}
-		s_printf("LUA_APPLY_ITEM_CHANGES done to world/mang-style houses.\n");
 	} else {
-    /* scan a player's inventory/equipment */
+		/* scan a player's inventory/equipment */
 		for (i = 0; i < INVEN_TOTAL; i++){
 			o_ptr = &Players[Ind]->inventory[i];
     		        if(!o_ptr->k_idx) continue;
 			lua_apply_item_changes_aux(o_ptr, changes);
 		}
-		s_printf("LUA_APPLY_ITEM_CHANGES done to player %s\n", Players[Ind]->name);
 	}
 }
 void lua_apply_item_changes_aux(object_type *o_ptr, int changes) {
-#if 0
-	/* swap *healing* and healing */
-	if (o_ptr->tval == TV_POTION) {
-		if (o_ptr->sval == SV_POTION_HEALING) o_ptr->sval = SV_POTION_STAR_HEALING;
-		else if (o_ptr->sval == SV_POTION_STAR_HEALING) o_ptr->sval = SV_POTION_HEALING;
-		if (o_ptr->sval == SV_POTION_RESTORE_MANA) o_ptr->sval = SV_POTION_STAR_RESTORE_MANA;
-		else if (o_ptr->sval == SV_POTION_STAR_RESTORE_MANA) o_ptr->sval = SV_POTION_RESTORE_MANA;
-		o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
-	}
-#endif
-	switch (changes) {
-	case 1:
-		/* remove stone skin book */
-		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK && o_ptr->pval > 17) o_ptr->pval--;
-		break;
-	case 2: /* more than 254 artifacts now!! */
-		if (o_ptr->name1 == 255) o_ptr->name1 = ART_RANDART;
-		break;
-	case 3:
-		/* add vermin control book */
-		if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK &&
-		    o_ptr->pval >= exec_lua(0, "return(VERMINCONTROL)")) o_ptr->pval++;
-		break;
-	}
 }
 
 /* sets LFx_ flags on the dungeon master's floor to specific values */
@@ -876,7 +868,9 @@ void lua_fix_equip_slots(int Ind) {
 			 * This prevents the ring in the right hand from being taken off
 			 * - mikaelh
 			 */
-			if (i == INVEN_RIGHT && p_ptr->inventory[i].tval == TV_RING) continue;
+			if ((i == INVEN_RIGHT || i == INVEN_LEFT) &&
+			    p_ptr->inventory[i].tval == TV_RING)
+				continue;
 
 		    	bypass_inscrption = TRUE;
 			inven_takeoff(Ind, i, 255);
@@ -899,4 +893,81 @@ void lua_fix_equip_slots(int Ind) {
 		}
 		p_ptr->inven_cnt++;
 	}
+}
+
+void lua_season_change(int s, int force) {
+	season_change(s, (force != 0) ? TRUE : FALSE);
+}
+
+#if 0 /* no pointer support / dangerous ? */
+/* added for changing seasons via lua cron_24h() - C. Blue */
+void lua_get_date(int *weekday, int *day, int *month, int *year)
+{
+        time_t		now;
+        struct tm	*tmp;
+        time(&now);
+        tmp = localtime(&now);
+        *weekday = tmp->tm_wday;
+        *day = tmp->tm_mday;
+        *month = tmp->tm_mon + 1;
+        *year = tmp->tm_mday;
+}
+#endif
+
+/* for Player-Customizable Tomes feature - C. Blue */
+int get_inven_sval(int Ind, int inven_slot) {
+        return (Players[Ind]->inventory[inven_slot].sval);
+}
+int get_inven_xtra(int Ind, int inven_slot, int n) {
+	switch (n) {
+	case 1: return (Players[Ind]->inventory[inven_slot].xtra1);
+	case 2: return (Players[Ind]->inventory[inven_slot].xtra2);
+	case 3: return (Players[Ind]->inventory[inven_slot].xtra3);
+	case 4: return (Players[Ind]->inventory[inven_slot].xtra4);
+	case 5: return (Players[Ind]->inventory[inven_slot].xtra5);
+	case 6: return (Players[Ind]->inventory[inven_slot].xtra6);
+	case 7: return (Players[Ind]->inventory[inven_slot].xtra7);
+	case 8: return (Players[Ind]->inventory[inven_slot].xtra8);
+	case 9: return (Players[Ind]->inventory[inven_slot].xtra9);
+	default: return (0); //failure
+	}
+}
+
+/* re-initialize the skill chart, keeping all values though */
+void lua_fix_skill_chart(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i, j;
+
+        for (i = 1; i < MAX_SKILLS; i++)
+        	p_ptr->s_info[i].dev = FALSE;
+        for (i = 1; i < MAX_SKILLS; i++) {
+//		s32b value = 0, mod = 0;
+                /* Make sure all are touched */
+                p_ptr->s_info[i].touched = TRUE;
+//	        compute_skills(p_ptr, &value, &mod, i);
+//	        init_skill(p_ptr, value, mod, i);
+		/* pseudo-init-skill */
+	        if (s_info[i].flags1 & SKF1_HIDDEN) {
+		        p_ptr->s_info[i].hidden = TRUE;
+	        } else {
+	                p_ptr->s_info[i].hidden = FALSE;
+	        }
+	        if (s_info[i].flags1 & SKF1_DUMMY) {
+	                p_ptr->s_info[i].dummy = TRUE;
+	        } else {
+	                p_ptr->s_info[i].dummy = FALSE;
+	        }
+                /* Develop only revelant branches */
+                if (p_ptr->s_info[i].value || p_ptr->s_info[i].mod) {
+                        j = s_info[i].father;
+                        while (j != -1) {
+                                p_ptr->s_info[j].dev = TRUE;
+                                j = s_info[j].father;
+                                if (j == 0) break;
+                        }
+                }
+        }
+
+        p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+        update_stuff(Ind);
 }

@@ -255,7 +255,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 {
 //	player_type *p_ptr = Players[Ind];
 
-	int mult = 1;
+	int mult = FACTOR_MULT;
 
 	monster_race *r_ptr = race_inf(m_ptr);
 
@@ -733,7 +733,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					{
 						r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
 					}
-#endif	// 0
+#endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_ACID)
@@ -765,7 +765,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					{
 						r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
 					}
-#endif	// 0
+#endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_ELEC)
@@ -796,7 +796,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					{
 						r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
 					}
-#endif	// 0
+#endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_FIRE)
@@ -827,7 +827,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					{
 						r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
 					}
-#endif	// 0
+#endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 				}
 				else if (r_ptr->flags9 & RF9_RES_COLD)
@@ -860,7 +860,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					{
 						r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
 					}
-#endif	// 0
+#endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 //					if (magik(95)) *special |= SPEC_POIS;
 				}
@@ -882,18 +882,18 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
+	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Ranged weapons get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
+		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
-		return ((tdam * (((mult - 1) * 10) / 3 + 10)) / 10);
+		return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Return the total damage */
-	return (tdam * mult);
+	return ((tdam * mult) / FACTOR_MULT);
 }
 
 /*
@@ -904,7 +904,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
  */
 s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown)
 {
-	int mult = 1;
+	int mult = FACTOR_MULT;
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -1283,18 +1283,18 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - 1) * 10) / 4 + 10)) / 10);
+	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Ranged weapons get less benefit from brands */
 	if (is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - 1) * 20) / 5 + 10)) / 10);
+		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Martial Arts styles get less benefit from brands */
 	if (!o_ptr->k_idx)
-		return ((tdam * (((mult - 1) * 10) / 3 + 10)) / 10);
+		return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));
 
 	/* Return the total damage */
-	return (tdam * mult);
+	return ((tdam * mult) / FACTOR_MULT);
 }
 
 /*
@@ -1658,7 +1658,7 @@ void carry(int Ind, int pickup, int confirm)
 /*#ifdef RPG_SERVER -- let's do this also for normal server */
 #if 1
 		/* Turn level 0 food into level 1 food - mikaelh */
-		if (o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id && o_ptr->level == 0 &&
 		    ((o_ptr->tval == TV_FOOD && o_ptr->sval >= SV_FOOD_MIN_FOOD && o_ptr->sval <= SV_FOOD_MAX_FOOD) ||
 		    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER)))
 		{
@@ -2954,6 +2954,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	int             vorpal_cut = 0;
 	int             chaos_effect = 0;
+	int		vampiric_melee;
 	bool            drain_msg = TRUE;
 	int             drain_result = 0, drain_heal = 0;
 	int             drain_left = MAX_VAMPIRIC_DRAIN;
@@ -3070,10 +3071,17 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / p_ptr->num_blow;
 		/* -C. Blue- We're only executing ONE blow and will break out then,
 		   so adjust the maximum drain accordingly: */
+#if 0
 		k = drain_left / p_ptr->num_blow;
 		/* ..and make up for rounding errors :) */
 		drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);
+#endif
 	}
+#if 1
+	k = drain_left / p_ptr->num_blow;
+	/* ..and make up for rounding errors :) */
+	drain_left = k + (magik(((drain_left - (k * p_ptr->num_blow)) * 100) / p_ptr->num_blow) ? 1 : 0);
+#endif
 
 	/* Handle player fear */
 	if (p_ptr->afraid)
@@ -3149,7 +3157,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		}
 
 		o_ptr = &p_ptr->inventory[slot];
-
+		
 		/* Manage backstabbing and 'flee-stabbing' */
 		if (stab_skill && (o_ptr->tval == TV_SWORD)) /* Need TV_SWORD type weapon to backstab */
 		{
@@ -3170,7 +3178,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			msg_print(Ind, "You can't attack with that weapon.");
 			break;
 		}
-		
+
+		/* check whether this weapon or we in general, are vampiric */
+		if (f1 & TR1_VAMPIRIC) vampiric_melee = 100; /* weapon chance is always 100% */
+		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
+
 		/* Calculate the "attack quality" */
 		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
@@ -3357,7 +3369,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Vampiric drain */
-				if ((magik(p_ptr->vampiric_melee)) && drainable)
+				if ((magik(vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3455,39 +3467,47 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 #endif
 
-				/* Select a chaotic effect (50% chance) */
-				if ((f5 & TR5_CHAOTIC) && (randint(2)==1))
+				/* Select a chaotic effect (10% chance) */
+//				if ((f5 & TR5_CHAOTIC) && (randint(2)==1)) <- 50%
+				if ((f5 & TR5_CHAOTIC) && (randint(10)==1))
 				{
 					if (randint(5) < 3)
 					{
-						/* Vampiric (20%) */
+						/* Vampiric (60%) */
 						chaos_effect = 1;
 					}
-					else if (randint(250) == 1)
+					else if (randint(1000) == 1)
 					{
-						/* Quake (0.12%) */
+						/* Quake (0.04%) */
 						chaos_effect = 2;
 					}
 					else if (randint(10) != 1)
 					{
-						/* Confusion (26.892%) */
+						/* Confusion (36%) */
 						chaos_effect = 3;
 					}
-					else if (randint(2) == 1)
+//					else if (randint(2) == 1) -> (1.494%)
+					else if (randint(10) == 1)
 					{
-						/* Teleport away (1.494%) */
+						/* Teleport away (0.4%) */
 						chaos_effect = 4;
 					}
-					else
+//					else -> (1.494%)
+					else if (randint(10) == 1)
 					{
-						/* Polymorph (1.494%) */
+						/* Polymorph (0.36%) */
 						chaos_effect = 5;
+					}
+					else if (randint(100) == 1)
+					{
+						/* New: Clone^^ (0.0324%) */
+						chaos_effect = 6;
 					}
 				}
 
 				/* Vampiric drain */
 				if (((chaos_effect == 1) || 
-				    magik(p_ptr->vampiric_melee)) && drainable)
+				    magik(vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3525,9 +3545,10 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				/* May it clone the monster ? */
-				if ((f4 & TR4_CLONE) && magik(10))
+				if (((f4 & TR4_CLONE) && randint(1000) == 1)
+				    || chaos_effect == 6)
 				{
-					msg_format(Ind, "Oh no ! Your weapon clones %^s!", m_name);
+					msg_format(Ind, "Your weapon clones %^s!", m_name);
 					multiply_monster(c_ptr->m_idx);
 				}
 
@@ -3563,7 +3584,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Vampiric drain */
-				if ((magik(p_ptr->vampiric_melee)) && drainable)
+				if ((magik(vampiric_melee)) && drainable)
 					drain_result = m_ptr->hp;
 				else
 					drain_result = 0;
@@ -3763,12 +3784,16 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					{
 						if (drain_heal < drain_left)
 						{
+#if 0
 							drain_left -= drain_heal;
+#endif
 						}
 						else
 						{
 							drain_heal = drain_left;
+#if 0
 							drain_left = 0;
+#endif
 						}
 
 						if (drain_msg)
@@ -3784,7 +3809,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 								else
 								msg_format(Ind, "Your weapon drains life from %s!", m_name);
 							}
+#if 0
 							drain_msg = FALSE;
+#endif
 						}
 
 						hp_player_quiet(Ind, drain_heal, TRUE);
@@ -3831,10 +3858,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 /*			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
 					&& (randint(90) > m_ptr->level))*/
-			else if ((chaos_effect == 5) && (randint(90) > m_ptr->level))
+			else if ((chaos_effect == 5) && (randint(150) > m_ptr->level))
 			{
 				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
-							(r_ptr->flags4 & RF4_BR_CHAO) ))
+				    (r_ptr->flags4 & RF4_BR_CHAO) ||
+				    (r_ptr->flags9 & RF9_RES_CHAOS) ))
 //						|| (m_ptr->mflag & MFLAG_QUEST)))
 				{
 					int tmp = poly_r_idx(m_ptr->r_idx);

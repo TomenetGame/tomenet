@@ -1079,8 +1079,37 @@ long total_points(int Ind)
  */
 
 typedef struct high_score high_score;
-
 struct high_score
+{
+	char what[8];           /* Version info (string) */
+
+	char pts[11];           /* Total Score (number) */
+
+	char gold[11];          /* Total Gold (number) */
+
+	char turns[11];         /* Turns Taken (number) */
+
+	char day[11];           /* Time stamp (string) */
+
+	char who[16];           /* Player Name (string) */
+	char whose[16];		/* Account Name (string) */
+
+	char sex[2];            /* Player Sex (string) */
+	char p_r[3];            /* Player Race (number) */
+	char p_c[3];            /* Player Class (number) */
+
+	char cur_lev[4];                /* Current Player Level (number) */
+	char cur_dun[4];                /* Current Dungeon Level (number) */
+	char max_lev[4];                /* Max Player Level (number) */
+	char max_dun[4];                /* Max Dungeon Level (number) */
+	
+	char how[50];           /* Method of death (string) */
+
+	char mode[1];		/* Difficulty/character mode */
+};
+
+typedef struct high_score_old high_score_old;
+struct high_score_old
 {
 	char what[8];           /* Version info (string) */
 
@@ -1093,6 +1122,7 @@ struct high_score
 	char day[10];           /* Time stamp (string) */
 
 	char who[16];           /* Player Name (string) */
+	char whose[16];		/* Account Name (string) */
 
 	char sex[2];            /* Player Sex (string) */
 	char p_r[3];            /* Player Race (number) */
@@ -1117,7 +1147,7 @@ int highscore_send(char *buffer, int max){
 	hsp=fopen(buf, "r");
 	if(hsp==(FILE*)NULL) return(0);
 	while(fread(&score, sizeof(struct high_score), 1, hsp) && (len+sizeof(struct high_score))<max){
-		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nhow=%s\nsrace=%s\nslevel=%s\nmode=%s\n", score.pts, score.who, score.how, race_info[atoi(score.p_r)].title, score.cur_lev, score.mode);
+		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nwhose=%s\nhow=%s\nsrace=%s\nslevel=%s\nmode=%s\n", score.pts, score.who, score.whose, score.how, race_info[atoi(score.p_r)].title, score.cur_lev, score.mode);
 	}
 	fclose(hsp);
 	return(len);
@@ -1158,6 +1188,16 @@ static int highscore_write(high_score *score)
 	return (fd_write(highscore_fd, (char*)(score), sizeof(high_score)));
 }
 
+static int highscore_seek_old(int i)
+{
+	/* Seek for the requested record */
+	return (fd_seek(highscore_fd, (huge)(i) * sizeof(high_score_old)));
+}
+static errr highscore_read_old(high_score_old *score)
+{
+	/* Read the record, note failure */
+	return (fd_read(highscore_fd, (char*)(score), sizeof(high_score_old)));
+}
 
 
 
@@ -1165,10 +1205,21 @@ static int highscore_write(high_score *score)
  * Just determine where a new score *would* be placed
  * Return the location (0 is best) or -1 on failure
  */
+#ifndef NEW_HISCORE
 static int highscore_where(high_score *score, bool *move_up, bool *move_down)
+#else
+static int highscore_where(high_score *score, int *erased_slot)
+#endif
 {
-	int                     i, slot_pts = -1, slot_name = -1, slot_ret = -1;
-	high_score              the_score;
+	int             i, slot_ret = -1;
+	high_score      the_score;
+#ifndef NEW_HISCORE
+	int		slot_pts = -1, slot_name = -1, slot_account = -1;
+#else
+	bool		flag_char, flag_acc, flag_c, flag_r;
+	int		slot_old = -1;
+	int		entries_from_same_account = 0;
+#endif
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return (-1);
@@ -1176,6 +1227,8 @@ static int highscore_where(high_score *score, bool *move_up, bool *move_down)
 	/* Go to the start of the highscore file */
 	if (highscore_seek(0)) return (-1);
 
+
+#ifndef NEW_HISCORE /*restructuring with new hex flags, see #else branch - C. Blue */
 	/* Read until we get to a higher score
 	   or appropriate rules are met -C. Blue */
 	for (i = 0; i < MAX_HISCORES; i++)
@@ -1186,9 +1239,11 @@ static int highscore_where(high_score *score, bool *move_up, bool *move_down)
 			break;
 		}
 		if ((strcmp(the_score.pts, score->pts) < 0) && (slot_pts == -1))
-			slot_pts = i;
+    			slot_pts = i;
 		if ((!strcmp(the_score.who, score->who)) && (slot_name == -1))
 			slot_name = i;
+		if ((!strcmp(the_score.whose, score->whose)) && (slot_account == -1))
+			slot_account = i;
 	}
 
 	/* Insert score right before any higher score */
@@ -1227,6 +1282,165 @@ static int highscore_where(high_score *score, bool *move_up, bool *move_down)
 
 	/* The "last" entry is always usable */
 	return (MAX_HISCORES - 1);
+#else
+	/* Read entries until we find a slot with lower score or arrive at the end */
+	for (i = 0; i < MAX_HISCORES; i++) {
+		if (highscore_read(&the_score)) {
+			/* arrived at the end of entries -> take this one then */
+			slot_ret = i;
+			break;
+		}
+		/* always valid rule: sort in after next-highest score */
+		if (strcmp(the_score.pts, score->pts) < 0) {
+			slot_ret = i;
+			break;
+		}
+	}
+	/* hack: last entry is always 'available' (effectively unused though!)  */
+	if (slot_ret == -1) slot_ret = MAX_HISCORES - 1;
+
+ #if 0 /* don't start after the appropriate slot, but check all slots */
+	/* Go to next position in highscore file, if available. Otherwise, skip the for loop: */
+	if (!highscore_seek(slot_ret + 1))
+	/* now check previous entries before adding this one, if required
+	   according to our custom extended rule set from tomenet.cfg */
+	for (i = slot_ret + 1; i < MAX_HISCORES; i++) {
+ #else
+	/* Go to the start of the highscore file */
+	if (highscore_seek(0)) return (-1);
+	/* now check previous entries before adding this one, if required
+	   according to our custom extended rule set from tomenet.cfg,
+	   whether we find an entry we have to actually replace with the
+	   new one.. */
+	for (i = 0; i < MAX_HISCORES; i++) {
+ #endif
+		if (highscore_read(&the_score)) {
+			/* arrived at the end of entries -> nothing to replace */
+			break;
+		}
+		/* first, prepare flag test results */
+		flag_char = flag_acc = flag_c = flag_r = TRUE;
+		/* check for same char name */
+		if (cfg.replace_hiscore & 0x08) {
+			if (strcmp(the_score.who, score->who)) flag_char = FALSE;
+		}
+		/* check for same acc name */
+		if (strcmp(the_score.whose, score->whose)) {
+			if (cfg.replace_hiscore & 0x10) flag_acc = FALSE;
+		} else { /* for cfg.replace_hiscore & 0x7 > 2 */
+			entries_from_same_account++;
+		}
+		/* check for same class */
+		if (cfg.replace_hiscore & 0x20) {
+			if (strcmp(the_score.p_c, score->p_c)) flag_c = FALSE;
+		}
+		/* check for same race */
+		if (cfg.replace_hiscore & 0x40) {
+			if (strcmp(the_score.p_r, score->p_r)) flag_r = FALSE;
+		}
+
+		/* now test special modes in combination with flag results */
+		if ((cfg.replace_hiscore & 0x7) == 1) {
+			/* replace older entries by newer entries */
+			if (flag_char && flag_acc && flag_c && flag_r) {
+				slot_old = i;
+				break;
+			}
+		}
+		if ((cfg.replace_hiscore & 0x7) == 2) {
+			/* replace lower entries by higher entries */
+			if (flag_char && flag_acc && flag_c && flag_r) {
+				if (strcmp(the_score.pts, score->pts) < 0) {
+					slot_old = i;
+					break;
+				} else {
+					/* hack for display_scores_aux later:
+					   show that this entry is our 'goal' (use another colour) */
+					slot_old = -2 -i; /* <= -2 -> 'there exists a slot, but we can't reach it yet' */
+				}
+			}
+		}
+		if ((cfg.replace_hiscore & 0x7) == 3) {
+			/* replace lowest entry of this account which matches the flags */
+			if (flag_char && flag_acc && flag_c && flag_r) {
+				if (strcmp(the_score.pts, score->pts) < 0) {
+					slot_old = i;
+				} else {
+					/* hack for display_scores_aux later:
+					   show that this entry is our 'goal' (use another colour) */
+					slot_old = -2 -i; /* <= -2 -> 'there exists a slot, but we can't reach it yet' */
+				}
+			/* replace last entry of this account anyway due to limitation of this mode? */
+			} else if (entries_from_same_account == 2) {
+				if (strcmp(the_score.pts, score->pts) < 0) {
+					slot_old = i;
+					break;
+				} else {
+					/* hack for display_scores_aux later:
+					   show that this entry is our 'goal' (use another colour) */
+					slot_old = -2 -i; /* <= -2 -> 'there exists a slot, but we can't reach it yet' */
+				}
+			}
+		}
+		if ((cfg.replace_hiscore & 0x7) == 4) {
+			/* replace lowest entry of this account which matches the flags */
+			if (flag_char && flag_acc && flag_c && flag_r) {
+				if (strcmp(the_score.pts, score->pts) < 0) {
+					slot_old = i;
+				} else {
+					/* hack for display_scores_aux later:
+					   show that this entry is our 'goal' (use another colour) */
+					slot_old = -2 -i; /* <= -2 -> 'there exists a slot, but we can't reach it yet' */
+				}
+			/* replace last entry of this account anyway due to limitation of this mode? */
+			} else if (entries_from_same_account == 3) {
+				if (strcmp(the_score.pts, score->pts) < 0) {
+					slot_old = i;
+					break;
+				} else {
+					/* hack for display_scores_aux later:
+					   show that this entry is our 'goal' (use another colour) */
+					slot_old = -2 -i; /* <= -2 -> 'there exists a slot, but we can't reach it yet' */
+				}
+			}
+		}
+	}
+
+ #if 0 /* basic version without -2 -i slot_old hack for display_scores_aux */
+	/* If this char is already on high-score list,
+	   and replace_hiscore is set to values other than 0,
+	   - resulting in 'slot_old != -1' - then replace it! */
+	(*erased_slot) = -1;
+	/* found an old entry to remove? */
+	if (slot_old > -1) {
+		/* if the old entry is on last position, it'll be overwritten anyway */
+		if (slot_old < MAX_HISCORES - 1) {
+			(*erased_slot) = slot_old;
+		}
+	}
+	/* Nothing to replace, although we're in replace mode,
+	   ie we theoretically made it into the high score, but
+	   our previous entry was too good to be replaced, and
+	   thereby our new entry is to be discarded? */
+	else if ((cfg.replace_hiscore & 0x7) != 0)
+		slot_ret = -1; /* hack: 'ignore the new score' */
+ #else /* hacked for display_scores_aux best possible display */
+	/* If this char is already on high-score list,
+	   and replace_hiscore is set to values other than 0,
+	   - resulting in 'slot_old > -1' - then replace it! */
+	(*erased_slot) = slot_old;
+	/* Nothing to replace, although we're in replace mode
+	   AND we found a previous matching entry (slot_old < -1):
+	   ie we theoretically made it into the high score, but
+	   our previous entry was too good to be replaced, and
+	   thereby our new entry is to be discarded? */
+	if (((cfg.replace_hiscore & 0x7) != 0) && slot_old < -1)
+		slot_ret = -2 - slot_ret; /* hack: 'ignore the new score'
+					     hack: useful display for display_scores_aux */
+ #endif
+
+	return (slot_ret);
+#endif
 }
 
 
@@ -1236,24 +1450,32 @@ static int highscore_where(high_score *score, bool *move_up, bool *move_down)
  */
 static int highscore_add(high_score *score)
 {
-	int                     i, slot;
-	bool            done = FALSE, move_up, move_down;
-
-	high_score              the_score, tmpscore;
-
+	int             i, slot;
+	high_score      the_score, tmpscore;
+	bool            done = FALSE;
+#ifndef NEW_HISCORE
+	bool            move_up, move_down;
+#else
+	int		erased_slot, cur_slots = MAX_HISCORES;
+#endif
 
 	/* Paranoia -- it may not have opened */
 	if (highscore_fd < 0) return (-1);
 
 	/* Determine where the score should go */
+#ifndef NEW_HISCORE
 	slot = highscore_where(score, &move_up, &move_down);
-
-	/* Hack -- Not on the list */
+#else
+	slot = highscore_where(score, &erased_slot);
+#endif
+	/* Hack -- Not on the list
+	   (ie didn't match conditions to replace previous score) */
 	if (slot < 0) return (-1);
 
 	/* Hack -- prepare to dump the new score */
 	the_score = (*score);
 
+#ifndef NEW_HISCORE
 	if (!move_down) {
 	/* Slide all the scores down one */
 	for (i = slot; !done && (i < MAX_HISCORES); i++)
@@ -1297,6 +1519,43 @@ static int highscore_add(high_score *score)
 		the_score = tmpscore;
 	}
 	}
+#else
+	/* Erase one old entry first? */
+	if (erased_slot > -1) {
+		cur_slots = erased_slot + 1; /* how many used slots does the high score table currently have? */
+		for (i = erased_slot; i < MAX_HISCORES; i++) {
+			/* Read the following entry, if any */
+			if (highscore_seek(i + 1)) break;
+			if (highscore_read(&tmpscore)) break;
+			/* do log file entry: */
+//			if (i == erased_slot) s_printf("HISCORE_DEL: #%d %s\n", i, tmpscore.who);
+			/* hack: count high score table slots in use: */
+			cur_slots++;
+			/* Overwrite current entry with it */
+			if (highscore_seek(i)) return(-1);
+			if (highscore_write(&tmpscore)) return(-1);
+		}
+		/* take note if the newly inserted slot has to be moved
+		   because its actually below the erased slot */
+		if (slot > erased_slot) slot--;
+	}
+	/* Insert new entry - Just slide all the scores down one */
+	/* note ('for' destination: if we previously erased one entry,
+	   then it means the last entry has become obsolete, so we
+	   skip it when we shift downwards again, otherwise we'd
+	   duplicate it. */
+//	for (i = slot; !done && (i < (erased_slot > -1 ? MAX_HISCORES - 1 : MAX_HISCORES)); i++) {
+	for (i = slot; !done && (i < cur_slots); i++) {
+		/* Read the old guy, note errors */
+		if (highscore_seek(i)) return (-1);
+		if (highscore_read(&tmpscore)) done = TRUE;
+		/* Back up and dump the score we were holding */
+		if (highscore_seek(i)) return (-1);
+		if (highscore_write(&the_score)) return (-1);
+		/* Hack -- Save the old score, for the next pass */
+		the_score = tmpscore;
+	}
+#endif
 
 	/* Return location used */
 	return (slot);
@@ -1311,7 +1570,11 @@ static int highscore_add(high_score *score)
  *
  * Mega-Hack -- allow "fake" entry at the given position.
  */
+#ifndef NEW_HISCORE
 static void display_scores_aux(int Ind, int line, int note, high_score *score)
+#else
+static void display_scores_aux(int Ind, int line, int note, int erased_slot, high_score *score)
+#endif
 {
 	int             i, j, from, to, attr, place;
 	char attrc[3];
@@ -1357,12 +1620,16 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		if (highscore_read(&the_score)) break;
 	}
 
+#ifndef NEW_HISCORE
 	/* Hack -- allow "fake" entry to be last */
 	if ((note == i) && score) i++;
+#else
+	if (note < -1) note = -(note + 2); /* unwrap display hack */
+	if (score) i++; /* hack: insert fake entry */
+#endif
 
 	/* Forget about the last entries */
 	if (i > to) i = to;
-
 
 	/* Show 5 per page, until "done" */
 	for (j = from, place = j+1; j < i; j++, place++)
@@ -1393,6 +1660,15 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		else
 		{
 			sprintf(attrc, "\377w");
+#ifdef NEW_HISCORE
+			/* unwrap display hack part 2 */
+			if (erased_slot < -1 && -(erased_slot + 2) == j)
+				/* indicate our 'goal' character we're chasing, score-wise, for replacing him */
+				sprintf(attrc, "\377B");
+			else if (erased_slot > -1 && erased_slot == j)
+				/* indicate our ex-goal which we now seem to have reached, just for fun */
+				sprintf(attrc, "\377B");
+#endif
 			/* Read the proper record */
 			if (highscore_seek(j)) break;
 			if (highscore_read(&the_score)) break;
@@ -1424,10 +1700,12 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 		for (aged = the_score.turns; isspace(*aged); aged++) /* loop */;
 
 		modebuf = (the_score.mode[0] & MODE_MASK);
+		strcpy(modestr, "");
+		strcpy(modecol, "");
 		switch (modebuf) {
                 case MODE_HARD:
 			strcpy(modestr, "purgatorial ");
-			strcpy(modecol, "");
+//			strcpy(modecol, "\377s");
 	    	        break;
                 case MODE_NO_GHOST:
 			strcpy(modestr, "unworldly ");
@@ -1438,10 +1716,7 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			strcpy(modecol, "\377D");
 			break;
                 case MODE_NORMAL:
-//			strcpy(modecol, "\377W");
-		default:
-			strcpy(modestr, "");
-			strcpy(modecol, "");
+//			strcpy(modecol, "\377w");
                         break;
 		}
 		
@@ -1506,8 +1781,10 @@ static void display_scores_aux(int Ind, int line, int note, high_score *score)
 			when, gold, aged);
 		fprintf(fff, "%s\n", out_val);
 
+#if 0 /* bad formatting in > 4.4.1.7, better without this */
 		/* Print newline if this isn't the last one */
 		if (j < i - 1)
+#endif
 			fprintf(fff, "\n");
 	}
 
@@ -1587,11 +1864,15 @@ static errr top_twenty(int Ind)
 	sprintf(the_score.day, "%-.6s %-.2s", ctime(&ct) + 4, ctime(&ct) + 22);
 #else
 	/* Save the date in standard form (8 chars) */
-	strftime(the_score.day, 9, "%m/%d/%y", localtime(&ct));
+//	strftime(the_score.day, 9, "%m/%d/%y", localtime(&ct));
+	/* Save the date in real standard form (10 chars) */
+	strftime(the_score.day, 11, "%Y/%m/%d", localtime(&ct));
 #endif
 
 	/* Save the player name (15 chars) */
 	sprintf(the_score.who, "%-.15s", p_ptr->name);
+	/* Save the player account name (15 chars) */
+	sprintf(the_score.whose, "%-.15s", p_ptr->accountname);
 
 	/* Save the player info */
 	sprintf(the_score.sex, "%c", (p_ptr->male ? 'm' : 'f'));
@@ -1649,10 +1930,13 @@ static errr top_twenty(int Ind)
 static errr predict_score(int Ind, int line)
 {
 	player_type *p_ptr = Players[Ind];
-	int          j;
-	bool	move_up, move_down;
-	high_score   the_score;
-
+	int		j;
+	high_score	the_score;
+#ifndef NEW_HISCORE
+	bool		move_up, move_down;
+#else
+	int		erased_slot;
+#endif
 
 	/* No score file */
 	if (highscore_fd < 0)
@@ -1680,6 +1964,8 @@ static errr predict_score(int Ind, int line)
 
 	/* Save the player name (15 chars) */
 	sprintf(the_score.who, "%-.15s", p_ptr->name);
+	/* Save the player name (15 chars) */
+	sprintf(the_score.whose, "%-.15s", p_ptr->accountname);
 
 	/* Save the player info */
 	sprintf(the_score.sex, "%c", (p_ptr->male ? 'm' : 'f'));
@@ -1699,6 +1985,7 @@ static errr predict_score(int Ind, int line)
 	the_score.mode[0] = p_ptr->mode;
 
 	/* See where the entry would be placed */
+#ifndef NEW_HISCORE
 	j = highscore_where(&the_score, &move_up, &move_down);
 
 	/* Hack -- Display the top fifteen scores */
@@ -1712,6 +1999,10 @@ static errr predict_score(int Ind, int line)
 	{
 		display_scores_aux(Ind, line, SCORES_SHOWN - 1, &the_score);  /* -1, NULL */
 	}
+#else
+	j = highscore_where(&the_score, &erased_slot);
+	display_scores_aux(Ind, line, j, erased_slot, &the_score);
+#endif
 
 
 	/* Success */
@@ -2678,3 +2969,175 @@ off_t vseek(int fd, off_t offset, int whence) {
 }
 
 #endif // 0
+
+/* Erase the current highscore completely - C. Blue */
+bool highscore_reset(int Ind) {
+        char buf[1024];
+
+        /* Build the filename */
+        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+
+	/* bam (delete file, simply) */
+        highscore_fd = fd_open(buf, O_TRUNC);
+        (void)fd_close(highscore_fd);
+
+        /* Forget the high score fd */
+	highscore_fd = -1;
+        return(TRUE);
+}
+
+/* remove one specific entry from the highscore - C. Blue */
+bool highscore_remove(int Ind, int slot) {
+	int	i;
+	high_score	tmpscore;
+        char buf[1024];
+
+        /* Build the filename */
+        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+
+        /* Open the binary high score file, for reading */
+        highscore_fd = fd_open(buf, O_RDWR);
+        /* Paranoia -- No score file */
+        if (highscore_fd < 0) {
+                if (Ind) msg_print(Ind, "Score file unavailable!");
+                return(FALSE);
+        }
+        /* Lock (for writing) the highscore file, or fail */
+        if (fd_lock(highscore_fd, F_WRLCK)) {
+                if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
+                return(FALSE);
+        }
+
+	for (i = slot; i < MAX_HISCORES; i++) {
+		/* Read the following entry, if any */
+		if (highscore_seek(i + 1)) break;
+		if (highscore_read(&tmpscore)) break;
+		/* Overwrite current entry with it */
+		if (highscore_seek(i)) return(FALSE);
+		if (highscore_write(&tmpscore)) return(FALSE);
+	}
+
+	/* zero final entry */
+	WIPE(&tmpscore, sizeof(high_score));
+	strcpy(tmpscore.who, "(nobody)"); /* hack: erase name instead of 0 */
+	if (highscore_seek(i)) return(FALSE);
+	if (highscore_write(&tmpscore)) return(FALSE);
+
+        /* Unlock the highscore file, or fail */
+        if (fd_lock(highscore_fd, F_UNLCK)) {
+                if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
+                return(FALSE);
+        }
+        /* Shut the high score file */
+        (void)fd_close(highscore_fd);
+
+        /* Forget the high score fd */
+	highscore_fd = -1;
+
+	return(TRUE);
+}
+
+/* Hack: Update old high score file to new format - C. Blue */
+bool highscore_file_convert(int Ind) {
+	int	i;
+	high_score_old	oldscore[MAX_HISCORES];
+	high_score	newscore[MAX_HISCORES];
+        char buf[1024], mod[80];
+
+        /* Build the filename */
+        path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
+
+        /* Open the binary high score file, for reading */
+        highscore_fd = fd_open(buf, O_RDWR);
+        /* Paranoia -- No score file */
+        if (highscore_fd < 0) {
+                if (Ind) msg_print(Ind, "Score file unavailable!");
+                return(FALSE);
+        }
+
+	for (i = 0; i < MAX_HISCORES; i++) {
+		/* Read old entries */
+		if (highscore_seek_old(i)) break;
+		if (highscore_read_old(&oldscore[i])) break;
+	}
+
+        /* Shut the high score file */
+        (void)fd_close(highscore_fd);
+
+	/* convert entries */
+	for (i = 0; i < MAX_HISCORES; i++) {
+		strcpy(newscore[i].what, oldscore[i].what);
+		strcpy(newscore[i].pts, oldscore[i].pts);
+		strcpy(newscore[i].gold, oldscore[i].gold);
+		strcpy(newscore[i].turns, oldscore[i].turns);
+
+		/* convert date format */
+		mod[0] = '2';
+		mod[1] = '0';
+		mod[2] = oldscore[i].day[6];
+		mod[3] = oldscore[i].day[7];
+		mod[4] = '/';
+		mod[5] = oldscore[i].day[0];
+		mod[6] = oldscore[i].day[1];
+		mod[7] = '/';
+		mod[8] = oldscore[i].day[3];
+		mod[9] = oldscore[i].day[4];
+		mod[10] = '\0';
+
+		strcpy(newscore[i].day, mod);
+
+		strcpy(newscore[i].who, oldscore[i].who);
+		strcpy(newscore[i].whose, oldscore[i].whose);
+
+		strcpy(newscore[i].sex, oldscore[i].sex);
+		strcpy(newscore[i].p_r, oldscore[i].p_r);
+		strcpy(newscore[i].p_c, oldscore[i].p_c);
+
+		strcpy(newscore[i].cur_lev, oldscore[i].cur_lev);
+		strcpy(newscore[i].cur_dun, oldscore[i].cur_dun);
+		strcpy(newscore[i].max_lev, oldscore[i].max_lev);
+		strcpy(newscore[i].max_dun, oldscore[i].max_dun);
+
+		strcpy(newscore[i].how, oldscore[i].how);
+		strcpy(newscore[i].mode, oldscore[i].mode);
+	}
+
+	/* bam (delete file, simply) */
+        highscore_fd = fd_open(buf, O_TRUNC);
+        (void)fd_close(highscore_fd);
+
+        /* Open the binary high score file, for writing */
+        highscore_fd = fd_open(buf, O_RDWR);
+        /* Paranoia -- No score file */
+        if (highscore_fd < 0) {
+                if (Ind) msg_print(Ind, "Score file unavailable!");
+                return(FALSE);
+        }
+
+        /* Lock (for writing) the highscore file, or fail */
+        if (fd_lock(highscore_fd, F_WRLCK)) {
+                if (Ind) msg_print(Ind, "Couldn't lock highscore file for writing!");
+                return(FALSE);
+        }
+
+	for (i = 0; i < MAX_HISCORES; i++)
+	{
+		/* Skip to end */
+		if (highscore_seek(i)) return (-1);
+		/* add new entry */
+		if (highscore_write(&newscore[i])) return (-1);
+	}
+
+        /* Unlock the highscore file, or fail */
+        if (fd_lock(highscore_fd, F_UNLCK)) {
+                if (Ind) msg_print(Ind, "Couldn't unlock highscore file from writing!");
+                return(FALSE);
+        }
+        /* Shut the high score file */
+        (void)fd_close(highscore_fd);
+
+        /* Forget the high score fd */
+	highscore_fd = -1;
+
+	return(TRUE);
+}

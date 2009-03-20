@@ -17,10 +17,8 @@
 /* chance of townie respawning like other monsters, in % [50] */
  /* Default */
 #define TOWNIE_RESPAWN_CHANCE	250
-#ifdef HALLOWEEN
- /* better for Halloween event */
- #define HALLOWEEN_TOWNIE_RESPAWN_CHANCE	125
-#endif
+/* better for Halloween event */
+#define HALLOWEEN_TOWNIE_RESPAWN_CHANCE	125
 
 /* if defined, player ghost loses exp slowly. [10000]
  * see GHOST_XP_CASHBACK in xtra2.c also.
@@ -466,7 +464,7 @@ static void sense_inventory(int Ind)
 			case TV_BOW:
 			case TV_BOOMERANG:
 			{
-				if (ok_archery || (ok_combat && magik(33)))
+				if (ok_archery || (ok_combat && magik(25)))
 					feel = (heavy_archery ? value_check_aux1(o_ptr) :
 							value_check_aux2(o_ptr));
 				if (heavy_archery) felt_heavy = TRUE;
@@ -724,8 +722,8 @@ static void process_effects(void)
 			continue;
 		}
 
-//#ifdef ARCADE_SERVER
-#if 0
+#ifdef ARCADE_SERVER
+ #if 0
                 if(e_ptr->flags & EFF_CROSSHAIR_A || e_ptr->flags & EFF_CROSSHAIR_B || e_ptr->flags & EFF_CROSSHAIR_C)
                 {
 
@@ -761,6 +759,7 @@ static void process_effects(void)
                         }
                 continue;
                 }
+ #endif
 #endif
 
 		
@@ -1120,8 +1119,8 @@ static void regen_monsters(void)
 
 
 
-/* turn an allocated wpos to dark night */
-static void world_surface_day(struct worldpos *wpos) {
+/* turn an allocated wpos to bright day */
+void world_surface_day(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
 	int y, x;
 
@@ -1137,8 +1136,8 @@ static void world_surface_day(struct worldpos *wpos) {
 	}
 }
 
-/* turn an allocated wpos to bright day */
-static void world_surface_night(struct worldpos *wpos) {
+/* turn an allocated wpos to dark night */
+void world_surface_night(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
 	int y, x;
 	int stores = 0, y1, x1, i;
@@ -1196,13 +1195,8 @@ return; /* DEBUG */
 
 	wrpos.wz = 0;
 
-#ifndef HALLOWEEN
-	/* Day breaks */
-	if (dawn && !fireworks) /* remain night during NEW_YEARS_EVE !*/
-#else
-	/* not during Halloween {>_>} */
-	if (FALSE)
-#endif
+	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! */
+	if (dawn && !fireworks && !season_halloween)
 	{
 		night_surface = FALSE;
 		
@@ -1344,13 +1338,8 @@ static void process_world(int Ind)
 			/* Check for dawn */
 			dawn = (!(turn % (10L * DAY)));
 
-#ifndef HALLOWEEN
-			/* Day breaks */
-			if (dawn && !fireworks) /* remain night during NEW_YEARS_EVE !*/
-#else
-			/* not during Halloween {>_>} */
-			if (FALSE)
-#endif
+			/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks) !*/
+			if (dawn && !fireworks && !season_halloween)
 			{
 				night_surface = FALSE;
 
@@ -1390,6 +1379,15 @@ static void process_world(int Ind)
 				byte sx[255], sy[255];
 
 				night_surface = TRUE;
+
+				/* add nightly inhabitants! */
+				for (x = 0; x < MAX_WILD_X; x++)
+				for (y = 0; y < MAX_WILD_Y; y++) {
+					/* hack to make it sane until 'process_day_and_night'
+					   is finally completed and has taken over -_- */
+					if (rand_int(NumPlayers * 2 + 3) == 0)
+						wild_info[y][x].flags &= ~WILD_F_INHABITED;
+				}
 
 				/* Message  */
 				msg_print(Ind, "The sun has fallen.");
@@ -1479,14 +1477,22 @@ static void process_world(int Ind)
 	 * deeper in the dungeon.
 	 */
 
+#if 0 //see below o_O
 	/* Check for creature generation */
 	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
-#ifndef HALLOWEEN
+ #ifndef HALLOWEEN
 	    (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0)))
-#else
+ #else
 	    (istown(&p_ptr->wpos) && (rand_int((p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
 	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0)))
-#endif
+ #endif
+#endif//0
+
+	/* Check for creature generation */
+	if ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
+	    (!season_halloween && (istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE * ((3 / NumPlayers) + 1)) == 0))) ||
+	    (season_halloween && (istown(&p_ptr->wpos) && (rand_int((p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y ?
+		HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) * ((3 / NumPlayers) + 1)) == 0))))
 	{
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		/* Should we disallow those with MULTIPLY flags to spawn on surface? */
@@ -1723,7 +1729,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				/* It's a tome */
 
 				/* Get the spell */
-				spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
+				if (MY_VERSION < (4 << 12 | 4 << 8 | 1 << 4 | 8)) {
+					spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
+				} else {
+					spell = exec_lua(Ind, format("return spell_x2(%d, %d, %d, %d)", item, o_ptr->sval, o_ptr->pval, choice));
+				}
 			}
 
 			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
@@ -1825,7 +1835,7 @@ static int auto_retaliate(int Ind)
 			else
 			{
 				/* Target dummy should always be the last one to get attacked - mikaelh */
-				if (m_ptr->r_idx == 1101) continue;
+				if (m_ptr->r_idx == 1101 || m_ptr->r_idx == 1126) continue;
 
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
@@ -2529,7 +2539,7 @@ void recall_player(int Ind, char *message){
 	set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
 
 	/* cancel any user recalls */
-	p_ptr->word_recall=0;
+	p_ptr->word_recall = 0;
 }
 
 
@@ -2890,7 +2900,7 @@ static bool process_player_end_aux(int Ind)
 
 						if(randint(1000-factor)<10)
 						{
-							msg_print(Ind,"\377rYou are weakened by the exertion of swimming!");
+							msg_print(Ind,"\377oYou are weakened by the exertion of swimming!");
 							//							do_dec_stat(Ind, A_STR, STAT_DEC_TEMPORARY);
 							dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 						}
@@ -3444,6 +3454,12 @@ static bool process_player_end_aux(int Ind)
 		if (!p_ptr->martyr_timeout) msg_print(Ind, "The heavens are ready to accept your martyrium.");
 	}
 
+	/* Mindcrafters' Willpower */
+	if (p_ptr->mindboost)
+	{
+		(void)set_mindboost(Ind, p_ptr->mindboost_power, p_ptr->mindboost - 1);
+	}
+
 	if (p_ptr->cloak_neutralized) p_ptr->cloak_neutralized--;
 	if (p_ptr->cloaked > 1) {
 #if 0 /* done in un_afk_idle now */
@@ -3862,7 +3878,8 @@ static bool process_player_end_aux(int Ind)
 
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
-	if (p_ptr->ty_curse && (rand_int(30) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50)) {
+	if (p_ptr->ty_curse && (rand_int(30) == 0) &&
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
 		if (rand_int(2))
@@ -3875,7 +3892,8 @@ static bool process_player_end_aux(int Ind)
 #endif
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(60) == 0) && (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && !istown(&p_ptr->wpos)) {
+	if (p_ptr->dg_curse && (rand_int(60) == 0) && !istown(&p_ptr->wpos) &&
+	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
 		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev * 2, 100, 0, 0, 0);
 	}
@@ -4292,6 +4310,7 @@ static void process_player_end(int Ind)
 		/* If auto_retaliate returns nonzero than we attacked
 		 * something and so should use energy.
 		 */
+		p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
 		if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
 		    && (attackstatus = auto_retaliate(Ind))) /* attackstatus seems to be unused! */
 		{
@@ -4299,6 +4318,7 @@ static void process_player_end(int Ind)
 			/* Use energy */
 //			p_ptr->energy -= level_speed(p_ptr->dun_depth);
 		}
+		p_ptr->auto_retaliaty = FALSE;
 	} else {
 		p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 	}
@@ -4557,18 +4577,18 @@ void cheeze(object_type *o_ptr){
 #if CHEEZELOG_LEVEL > 3
 	int j;
 	/* check for inside a house */
-	for(j=0;j<num_houses;j++){
+	for(j = 0;j < num_houses; j++){
 		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
 			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
-				if(houses[j].dna->owner_type==OT_PLAYER){
+				if(houses[j].dna->owner_type == OT_PLAYER){
 					if(o_ptr->owner != houses[j].dna->owner){
 						if(o_ptr->level > lookup_player_level(houses[j].dna->owner))
 							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), lookup_player_name(houses[j].dna->owner), o_ptr->level, lookup_player_level(houses[j].dna->owner));
 					}
 				}
-				else if(houses[j].dna->owner_type==OT_PARTY){
+				else if(houses[j].dna->owner_type == OT_PARTY){
 					int owner;
-					if((owner=lookup_player_id(parties[houses[j].dna->owner].owner))){
+					if((owner = lookup_player_id(parties[houses[j].dna->owner].owner))){
 						if(o_ptr->owner != owner){
 							if(o_ptr->level > lookup_player_level(owner))
 								s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), parties[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
@@ -4593,10 +4613,10 @@ void cheeze_trad_house()
 	object_type *o_ptr;
 
 	/* check for inside a house */
-	for(j=0;j<num_houses;j++)
+	for(j = 0;j < num_houses; j++)
 	{
 		h_ptr = &houses[j];
-		if(h_ptr->dna->owner_type==OT_PLAYER)
+		if(h_ptr->dna->owner_type == OT_PLAYER)
 		{
 			for (i = 0; i < h_ptr->stock_num; i++)
 			{
@@ -4613,10 +4633,10 @@ void cheeze_trad_house()
 				}
 			}
 		}
-		else if(h_ptr->dna->owner_type==OT_PARTY)
+		else if(h_ptr->dna->owner_type == OT_PARTY)
 		{
 			int owner;
-			if((owner=lookup_player_id(parties[h_ptr->dna->owner].owner)))
+			if((owner = lookup_player_id(parties[h_ptr->dna->owner].owner)))
 			{
 				for (i = 0; i < h_ptr->stock_num; i++)
 				{
@@ -4644,15 +4664,15 @@ void house_contents_chmod(object_type *o_ptr){
 #if CHEEZELOG_LEVEL > 3
 	int j;
 	/* check for inside a house */
-	for(j=0;j<num_houses;j++){
+	for(j = 0; j < num_houses; j++){
 		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
 			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
-				if(houses[j].dna->owner_type==OT_PLAYER){
+				if(houses[j].dna->owner_type == OT_PLAYER){
 					o_ptr->owner_mode = lookup_player_mode(houses[j].dna->owner));
 				}
-				else if(houses[j].dna->owner_type==OT_PARTY){
+				else if(houses[j].dna->owner_type == OT_PARTY){
 					int owner;
-					if((owner=lookup_player_id(parties[houses[j].dna->owner].owner))){
+					if((owner = lookup_player_id(parties[houses[j].dna->owner].owner))){
 						o_ptr->owner_mode = lookup_player_mode(owner));
 					}
 				}
@@ -4674,10 +4694,10 @@ void tradhouse_contents_chmod()
 	object_type *o_ptr;
 
 	/* check for inside a house */
-	for(j=0;j<num_houses;j++)
+	for(j = 0; j < num_houses; j++)
 	{
 		h_ptr = &houses[j];
-		if(h_ptr->dna->owner_type==OT_PLAYER)
+		if(h_ptr->dna->owner_type == OT_PLAYER)
 		{
 			for (i = 0; i < h_ptr->stock_num; i++)
 			{
@@ -4685,10 +4705,10 @@ void tradhouse_contents_chmod()
 				o_ptr->owner_mode = lookup_player_mode(houses[j].dna->owner));
 			}
 		}
-		else if(h_ptr->dna->owner_type==OT_PARTY)
+		else if(h_ptr->dna->owner_type == OT_PARTY)
 		{
 			int owner;
-			if((owner=lookup_player_id(parties[h_ptr->dna->owner].owner)))
+			if((owner = lookup_player_id(parties[h_ptr->dna->owner].owner)))
 			{
 				for (i = 0; i < h_ptr->stock_num; i++)
 				{
@@ -4724,104 +4744,218 @@ void tradhouse_contents_chmod()
  * - maybe rename this function (scan_objects and scan_objs...)
  */
 static void scan_objs(){
-	int i, cnt=0, dcnt=0;
+	int i, cnt = 0, dcnt = 0;
+	bool sj;
 	object_type *o_ptr;
+
+
+/* new code in #else, which is supposed to also clean objects on _currently unallocated_ levels!
+   however, before activating we'll need to set all current items inside houses to ITEM_REMOVAL_HOUSE
+   (a helper slash function will do that) or there'll be big p00f :) - C. Blue */
+//#ifndef TEST_SERVER
+//#ifndef RPG_SERVER
+#if 0 /* completely activate new code in #else below */
+	/*--------------------------------------------------------------------------------*/
+
 	cave_type **zcave;
+
+	/* objects time-outing disabled? */
 	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
-	for(i=0; i<o_max; i++){
-		o_ptr=&o_list[i];
+
+	for(i = 0; i < o_max; i++){
+		o_ptr = &o_list[i];
 		if(o_ptr->k_idx){
-			bool sj=FALSE;
+			sj = FALSE;
 			/* not dropped on player death or generated on the floor? (or special stuff) */
 			if (o_ptr->marked2 == ITEM_REMOVAL_NEVER) continue;
 
 			/* check items on the world's surface */
-			if(!o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos)) && cfg.surface_item_removal) {
-				/* XXX noisy warning, eh? */
-				/* This is unsatisfactory. */
+			if(!o_ptr->wpos.wz && (zcave = getcave(&o_ptr->wpos)) && cfg.surface_item_removal) {
+				/* hack for monster trap items */
+				/* XXX noisy warning, eh? */ /* This is unsatisfactory. */
 				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
 				    /* There was an old woman who swallowed a fly... */
 				    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
-					sj=TRUE;
+					sj = TRUE;
 					o_ptr->iy = 255 - o_ptr->iy;
 				}
-				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) // monster trap?
-				{
-					/* ick suggests a store, so leave) */
-					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
+
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
+					/* icky suggests a store, so leave) */
+					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)) {
 						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
-#if 1
-						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
+						if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
-#else
-						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
-						    o_ptr->note)?
-						    cfg.surface_item_removal * 3 : cfg.surface_item_removal))
-#endif
-						{
+						    cfg.surface_item_removal * 3 : cfg.surface_item_removal)) {
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
 						}
 					}
 				}
-	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
+
+				/* Also perform a 'cheeze check' */
 #if CHEEZELOG_LEVEL > 1
 				else
-#if CHEEZELOG_LEVEL < 4
-					if (!(turn % (cfg.fps * 3600)))
-#endif	/* CHEEZELOG_LEVEL (4) */
-						cheeze(o_ptr);
+ #if CHEEZELOG_LEVEL < 4
+				/* ..only once an hour. (logs would fill the hd otherwise ;( */
+				if (!(turn % (cfg.fps * 3600)))
+ #endif	/* CHEEZELOG_LEVEL (4) */
+				cheeze(o_ptr);
 #endif	/* CHEEZELOG_LEVEL (1) */
+
+				/* count amount of items that were checked */
 				cnt++;
 			}
+
 			/* check items on dungeon/tower floors */
-			else if(o_ptr->wpos.wz && (zcave=getcave(&o_ptr->wpos)) && cfg.dungeon_item_removal) {
+			else if(o_ptr->wpos.wz && (zcave = getcave(&o_ptr->wpos)) && cfg.dungeon_item_removal) {
+				/* hack for monster trap items */
 				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
 					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
-					sj=TRUE;
+					sj = TRUE;
 					o_ptr->iy = 255 - o_ptr->iy;
 				}
-				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) // monster trap?
-				{
-					/* ick suggests a store, so leave) */
-					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)){
+
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
+					/* icky suggests a store, so leave) */
+					if(!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)) {
 						/* Artifacts and objects that were inscribed and dropped by
 						the dungeon master or by unique monsters on their death
 						stay n times as long as cfg.surface_item_removal specifies */
-#if 1
-						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
+						if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
 						    (o_ptr->note && !o_ptr->owner))?
-						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
-#else
-						if(++o_ptr->marked>=((artifact_p(o_ptr) ||
-						    o_ptr->note)?
-						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal))
-#endif
-						{
+						    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
 							delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
 							dcnt++;
 						}
 					}
 				}
-	/* Once hourly cheeze check. (logs would fill the hd otherwise ;( */
+
+				/* Also perform a 'cheeze check' */
 #if CHEEZELOG_LEVEL > 1
 				else
 #if CHEEZELOG_LEVEL < 4
-					if (!(turn % (cfg.fps * 3600)))
+				/* ..only once an hour. (logs would fill the hd otherwise ;( */
+				if (!(turn % (cfg.fps * 3600)))
 #endif	/* CHEEZELOG_LEVEL (4) */
-						cheeze(o_ptr);
+				cheeze(o_ptr);
 #endif	/* CHEEZELOG_LEVEL (1) */
+
+				/* count amount of items that were checked */
 				cnt++;
 			}
-			if(sj) o_ptr->iy = 255 - o_ptr->iy;
+
+			/* restore monster trap hack */
+			if(sj) o_ptr->iy = 255 - o_ptr->iy; /* mega-hack: never inbounds */
 		}
 	}
+
+
+#else /*--------------------------------------------------------------------------------*/
+
+	/* objects time-outing disabled? */
+	if (!cfg.surface_item_removal && !cfg.dungeon_item_removal) return;
+
+	for(i = 0; i < o_max; i++){
+		o_ptr = &o_list[i];
+		if(o_ptr->k_idx){
+			sj = FALSE;
+			/* not dropped on player death or generated on the floor? (or special stuff) */
+			if (o_ptr->marked2 == ITEM_REMOVAL_NEVER ||
+			    o_ptr->marked2 == ITEM_REMOVAL_HOUSE)
+				continue;
+
+			/* check items on the world's surface */
+			if(!o_ptr->wpos.wz && cfg.surface_item_removal) {
+				/* hack for monster trap items */
+				/* XXX noisy warning, eh? */ /* This is unsatisfactory. */
+				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+				    /* There was an old woman who swallowed a fly... */
+				    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
+					sj = TRUE;
+					o_ptr->iy = 255 - o_ptr->iy;
+				}
+
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
+					/* Artifacts and objects that were inscribed and dropped by
+					the dungeon master or by unique monsters on their death
+					stay n times as long as cfg.surface_item_removal specifies */
+					if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
+					    (o_ptr->note && !o_ptr->owner))?
+					    cfg.surface_item_removal * 3 : cfg.surface_item_removal)
+					    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? 1440 : 0)
+					    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? 20160 : 0)
+					    ) {
+						delete_object_idx(i, TRUE);
+						dcnt++;
+					}
+				}
+
+				/* Also perform a 'cheeze check' */
+#if CHEEZELOG_LEVEL > 1
+				else
+ #if CHEEZELOG_LEVEL < 4
+				/* ..only once an hour. (logs would fill the hd otherwise ;( */
+				if (!(turn % (cfg.fps * 3600)))
+ #endif	/* CHEEZELOG_LEVEL (4) */
+				cheeze(o_ptr);
+#endif	/* CHEEZELOG_LEVEL (1) */
+
+				/* count amount of items that were checked */
+				cnt++;
+			}
+
+			/* check items on dungeon/tower floors */
+			else if(o_ptr->wpos.wz && cfg.dungeon_item_removal) {
+				/* hack for monster trap items */
+				if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
+					in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
+					sj = TRUE;
+					o_ptr->iy = 255 - o_ptr->iy;
+				}
+
+				if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { // monster trap?
+					/* Artifacts and objects that were inscribed and dropped by
+					the dungeon master or by unique monsters on their death
+					stay n times as long as cfg.surface_item_removal specifies */
+					if(++o_ptr->marked >= ((artifact_p(o_ptr) ||
+					    (o_ptr->note && !o_ptr->owner))?
+					    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
+						delete_object_idx(i, TRUE);
+						dcnt++;
+					}
+				}
+
+				/* Also perform a 'cheeze check' */
+#if CHEEZELOG_LEVEL > 1
+				else
+#if CHEEZELOG_LEVEL < 4
+				/* ..only once an hour. (logs would fill the hd otherwise ;( */
+				if (!(turn % (cfg.fps * 3600)))
+#endif	/* CHEEZELOG_LEVEL (4) */
+				cheeze(o_ptr);
+#endif	/* CHEEZELOG_LEVEL (1) */
+
+				/* count amount of items that were checked */
+				cnt++;
+			}
+
+			/* restore monster trap hack */
+			if(sj) o_ptr->iy = 255 - o_ptr->iy; /* mega-hack: never inbounds */
+		}
+	}
+
+
+#endif /*--------------------------------------------------------------------------------*/
+
+
+	/* log result */
 	if(dcnt) s_printf("Scanned %d objects. Removed %d.\n", cnt, dcnt);
 
 #ifndef USE_MANG_HOUSE_ONLY
+	/* Additional cheeze check for all those items inside of mangband-style houses */
 #if CHEEZELOG_LEVEL > 1
 #if CHEEZELOG_LEVEL < 4
 	if (!(turn % (cfg.fps * 3600)))
@@ -4880,7 +5014,7 @@ void store_turnover()
 static void process_various(void)
 {
 	int i, j;
-	int h = 0, m = 0, s = 0;
+	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
 	//cave_type *c_ptr;
@@ -4959,7 +5093,8 @@ static void process_various(void)
 				m_max, o_max);
 #endif
 		s_printf("Finished maintenance\n");
-		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d)", showtime(), h, m, s));
+		get_date(&dwd, &dd, &dm, &dy);
+		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 		
 /*		bbs_add_line("--- new day line ---"); */
 	}
@@ -4988,9 +5123,7 @@ static void process_various(void)
 
 		if (dungeon_store_timer) dungeon_store_timer--; /* Timeout */
 		if (dungeon_store2_timer) dungeon_store2_timer--; /* Timeout */
-#ifdef HALLOWEEN
-		if (great_pumpkin_timer > 0) great_pumpkin_timer--;
-#endif
+		if (great_pumpkin_timer > 0) great_pumpkin_timer--; /* HALLOWEEN */
 
 		/* Update the player retirement timers */
 		for (i = 1; i <= NumPlayers; i++)
@@ -5050,7 +5183,7 @@ static void process_various(void)
 				continue;
 			}
 
-			if (!p_ptr->r_killed[i]) continue;
+			if (p_ptr->r_killed[i] != 1) continue;
 
 			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
 			   --- QUESTOR is currently NOT used!! - C. Blue */
@@ -5070,6 +5203,7 @@ static void process_various(void)
 
 			/* "Ressurect" the unique */
 			p_ptr->r_killed[i] = 0;
+			Send_unique_monster(j, i);
 			// 				r_ptr->max_num = 1;
 			//				r_ptr->respawn_timer = -1;
 
@@ -5143,7 +5277,7 @@ static void process_various(void)
 			if (c_ptr->o_idx) continue;
 
 			/* Grow a tree here */
-			c_ptr->feat = (magik(80)?FEAT_TREE:FEAT_BUSH);
+			c_ptr->feat = get_seasonal_tree();
 
 			/* Show it */
 			everyone_lite_spot(0, y, x);
@@ -5979,7 +6113,8 @@ void dungeon(void)
 	}
 
 	/* Clean up Bree regularly to prevent too dangerous towns in which weaker characters cant move around */
-	if (!(turn % 650000)) { /* 650k ~ 3hours */
+//	if (!(turn % 650000)) { /* 650k ~ 3hours */
+	if (!(turn % (cfg.fps * 3600))) { /* 1 h */
 		worldpos wp;
 		wp.wx=cfg.town_x;wp.wy=cfg.town_y;wp.wz=0;
 		wipe_m_list_chance(&wp, 70);
@@ -6033,37 +6168,39 @@ void dungeon(void)
 		/* Process global_events each second */
 		process_global_events();
 		
-#ifdef WINTER_SEASON
+if (season == SEASON_WINTER) {
 		if (!weather) { /* not snowing? */
-			if (weather_duration <= 0 && WINTER_SEASON > 0) { /* change weather? */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
 				weather = 1; /* snowing now */
-				weather_duration = WINTER_SEASON * 60 * 4;
+				weather_duration = weather_frequency * 60 * 4;
 			} else if (weather_duration > 0) {
 				weather_duration--;
 			}
 		} else { /* it's currently snowing */
-			if (weather_duration <= 0 && (4 - WINTER_SEASON) > 0) { /* change weather? */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
 				weather = 0; /* stop snowing */
-				weather_duration = (4 - WINTER_SEASON) * 60 * 4;
+				weather_duration = (4 - weather_frequency) * 60 * 4;
 			} else if (weather_duration > 0) {
 				weather_duration--;
 			}
 		}
-#else
+} else {
 		if (weather) { /* it's currently raining */
-			if (weather_duration <= 0) { /* change weather? */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
 				weather = 0; /* stop raining */
-s_printf("WEATHER: Stopping rain.\n");
-				weather_duration = rand_int(1800) + 1800;
+//s_printf("WEATHER: Stopping rain.\n");
+				weather_duration = rand_int(60 * 30 / weather_frequency) + 60 * 30 / weather_frequency;
 			} else weather_duration--;
 		} else { /* not raining at the moment */
-			if (weather_duration <= 0) { /* change weather? */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
 				weather = 1; /* start raining */
-s_printf("WEATHER: Starting rain.\n");
-				weather_duration = rand_int(540) + 60;
-			} else weather_duration--;
+//s_printf("WEATHER: Starting rain.\n");
+				weather_duration = rand_int(60 * 9) + 60 * weather_frequency;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
 		}
-#endif
+}
 		if (wind_gust > 0) wind_gust--; /* gust from east */
 		if (wind_gust < 0) wind_gust++; /* gust from west */
 		if (!wind_gust_delay) { /* gust of wind coming up? */
@@ -6084,7 +6221,7 @@ s_printf("WEATHER: Starting rain.\n");
 		exec_lua(0, "second_handler()");
 	}
 
-#ifdef WINTER_SEASON
+if (season == SEASON_WINTER) {
 	/* if it's snowing, create snowflakes */
 	if (weather && !(turn % (cfg.fps / 30)) && !fireworks) {
 		worldpos wpos;
@@ -6092,7 +6229,7 @@ s_printf("WEATHER: Starting rain.\n");
 		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
 		cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
 	}
-#else
+} else {
 	/* if it's raining, create raindrops */
 	if (weather && !(turn % (cfg.fps / 60)) && !fireworks) {
 		worldpos wpos;
@@ -6101,9 +6238,9 @@ s_printf("WEATHER: Starting rain.\n");
 		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
 		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
 	}
-#endif
+}
 
-#ifdef NEW_YEARS_EVE
+if (season_newyearseve) {
 	if (fireworks && !(turn % (cfg.fps / 4))) {
 		if (!fireworks_delay) { /* fire! */
 			worldpos wpos;
@@ -6126,7 +6263,7 @@ s_printf("WEATHER: Starting rain.\n");
 			fireworks_delay--;
 		}
 	}
-#endif
+}
 
 	/* process debugging/helper functions - C. Blue */
 	if (store_debug_mode &&
@@ -6208,6 +6345,9 @@ void set_runlevel(int val)
  */
 void play_game(bool new_game)
 {
+	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
+	time_t now;
+	struct tm *tmp;
 	//int i, n;
 
 	/*** Init the wild_info array... for more information see wilderness.c ***/
@@ -6324,7 +6464,7 @@ void play_game(bool new_game)
 		/* Actually generate the town */
 		generate_cave(&twpos, NULL);
 	}
-
+	
 	/* Finish initializing dungeon monsters */
 	setup_monsters();
 
@@ -6352,7 +6492,13 @@ void play_game(bool new_game)
 	install_timer_tick(dungeon, cfg.fps);
 
 	/* Execute custom startup script - C. Blue */
-	exec_lua(0, format("server_startup(\"%s\")", showtime()));
+	time(&now);
+	tmp = localtime(&now);
+	h = tmp->tm_hour;
+	m = tmp->tm_min;
+	s = tmp->tm_sec;
+	get_date(&dwd, &dd, &dm, &dy);
+	exec_lua(0, format("server_startup(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 
 	/* Loop forever */
 	sched();
@@ -6386,7 +6532,7 @@ void shutdown_server(void)
 		if (!save_player(1)) Destroy_connection(p_ptr->conn, "Server shutdown (save failed)");
 
 		/* Successful save */
-		Destroy_connection(p_ptr->conn, "Server shutdown (save succeeded)");
+		Destroy_connection(p_ptr->conn, "Server has been updated, please login again."); /* was "Server shutdown (save succeeded)" */
 	}
 
 	/* Stop the timer */

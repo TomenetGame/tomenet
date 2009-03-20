@@ -403,7 +403,7 @@ static void correct_dir(int *rdir, int *cdir, int y1, int x1, int y2, int x2)
 extern void arcade_wipe(worldpos *wpos)
 {
     cave_type **zcave;
-	cave_type *c_ptr;
+//	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return;
 int my, mx;
 for(mx = 1; mx < 131; mx++) {
@@ -3152,6 +3152,9 @@ static bool vault_aux_treasure(int r_idx)
  */
 static bool vault_aux_clone(int r_idx)
 {
+/* unsure - blades shouldn't happen, but should titans?
+if (r_info[r_idx].flags0 & RF0_NO_NEST) return (FALSE); */
+
 	return (r_idx == template_race);
 }
 
@@ -3163,6 +3166,7 @@ static bool vault_aux_symbol(int r_idx)
 {
 	return ((r_info[r_idx].d_char == (r_info[template_race].d_char))
 		&& !(r_info[r_idx].flags1 & RF1_UNIQUE)
+		&& !(r_info[r_idx].flags0 & RF0_NO_NEST)
 		&& !(r_info[r_idx].d_char == 'A' && r_info[r_idx].level > 70));
 }
 
@@ -4310,6 +4314,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	{
 		bwy[i] = bwx[i] = 9999;
 	}
+
 	/* Place dungeon features and objects */
 	for (t = data, dy = 0; dy < ymax; dy++)
 	{
@@ -4389,6 +4394,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				place_trap(wpos, y, x, 0);
 				break;
 
+#if 0 /* done later in 2nd pass - mikaelh */
 				/* Monster */
 				case '&':
 				monster_level = lev + 5;
@@ -4447,6 +4453,7 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				}
 				if (magik(50)) place_trap(wpos, y, x, 0);
 				break;
+#endif
 
 				/* Between gates */
 				case '0':
@@ -4498,6 +4505,97 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 					}
 					break;
 				}
+			}
+		}
+	}
+
+	/* Another pass for monsters */
+	for (t = data, dy = 0; dy < ymax; dy++)
+	{
+		for (dx = 0; dx < xmax; dx++, t++)
+		{
+			eff_resf = resf;
+			if (magik(eff_forbid_true)) eff_resf |= RESF_NOTRUEART;
+			if (magik(eff_forbid_rand)) eff_resf |= RESF_NORANDART;
+
+			/* Extract the location */
+/*			x = xval - (xmax / 2) + dx;
+			y = yval - (ymax / 2) + dy;	*/
+			x = cx + (rotate?dy:dx) * (mirrorlr?-1:1);
+			y = cy + (rotate?dx:dy) * (mirrorud?-1:1);
+
+			/* FIXME - find a better solution */
+			/* Is this any better? */
+			if(!in_bounds4(l_ptr,y,x))
+				continue;
+
+			/* Hack -- skip "non-grids" */
+			if (*t == ' ') continue;
+			
+			/* Access the grid */
+			c_ptr = &zcave[y][x];
+
+			/* Analyze the grid */
+			switch (*t)
+			{
+				/* Monster */
+				case '&':
+				monster_level = lev + 5;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level = lev;
+				break;
+
+				/* Meaner monster */
+				case '@':
+				monster_level = lev + 11;
+				monster_level_min = -1;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
+				monster_level = lev;
+				break;
+
+				/* Meaner monster, plus treasure */
+				case '9':
+				monster_level = lev + 9;
+				monster_level_min = -1;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
+				monster_level = lev;
+				object_level = lev + 7;
+				place_object(wpos, y, x, TRUE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				object_level = lev;
+				if (magik(40)) place_trap(wpos, y, x, 0);
+				break;
+
+				/* Nasty (meanest) monster and treasure */
+				case '8':
+				monster_level = lev + 40;
+				monster_level_min = -1;
+				place_monster(wpos, y, x, TRUE, TRUE);
+				monster_level_min = 0;
+				monster_level = lev;
+				object_level = lev + 20;
+				place_object(wpos, y, x, TRUE, TRUE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				object_level = lev;
+				if (magik(80)) place_trap(wpos, y, x, 0);
+				break;
+
+				/* Monster and/or object */
+				case ',':
+				if (magik(50))
+				{
+					monster_level = lev + 3;
+					place_monster(wpos, y, x, TRUE, TRUE);
+					monster_level = lev;
+				}
+				if (magik(50))
+				{
+					object_level = lev + 7;
+					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					object_level = lev;
+				}
+				if (magik(50)) place_trap(wpos, y, x, 0);
+				break;
 			}
 
 			if (c_ptr->m_idx > 0) {
@@ -8613,10 +8711,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr)
 	    (wpos->wz>0 && wild_info[wpos->wy][wpos->wx].tower->maxdepth==wpos->wz)))
 		dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 	/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
-	if(d_ptr && (getlevel(wpos) >= 30) &&
+	if(d_ptr && (getlevel(wpos) >= 20) && /* was 30 */
 	    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
-	    ((d_ptr->flags2 & DF2_IRONRND2) && magik(10)) ||
-	    ((d_ptr->flags2 & DF2_IRONRND3) && magik(7)) ||
+	    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
+	    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
 	    ((d_ptr->flags2 & DF2_IRONRND4) && magik(5)) ||
 	    ((d_ptr->flags2 & DF2_IRONFIX1) && !(wpos->wz % 5)) ||
 	    ((d_ptr->flags2 & DF2_IRONFIX2) && !(wpos->wz % 10))||
@@ -10443,7 +10541,11 @@ static void town_gen(struct worldpos *wpos)
 
 				/* Clear previous contents, add forest */
 				//c_ptr->feat = magik(98) ? FEAT_TREE : FEAT_GRASS;
-				c_ptr->feat = magik(town_profile[type].ratio) ? town_profile[type].feat1 : town_profile[type].feat2;
+				i = magik(town_profile[type].ratio) ? town_profile[type].feat1 : town_profile[type].feat2;
+				/* hack: swap trees and bushes depending on season on world surface */
+				if ((i == FEAT_TREE || i == FEAT_BUSH) && !wpos->wz)
+					i = get_seasonal_tree();
+				c_ptr->feat = i;
 			}
 		}
 
@@ -10533,7 +10635,7 @@ static void town_gen(struct worldpos *wpos)
 				MAX_HGT, MAX_WID, TRUE);
 #endif	/* 0 */
 
-
+#if 0
 	/* Day Light */
 	if (IS_DAY)
 	{	
@@ -10549,6 +10651,13 @@ static void town_gen(struct worldpos *wpos)
 			}
 		}
 	}
+#else
+	/* apply nightly darkening or daylight */
+	if (!wpos->wz) {
+		if (IS_DAY) world_surface_day(wpos);
+		else world_surface_night(wpos);
+	}
+#endif
 }
 
 
@@ -10795,11 +10904,12 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 {
 	int i, num;
 	cave_type **zcave;
-#ifdef WINTER_SEASON
+	struct worldpos twpos;
+
+	/* and for the four seasons: */
 	int y, x;
 	cave_type *c_ptr;
-#endif
-	struct worldpos twpos;
+
 
         wpcopy(&twpos, wpos);
 	zcave=getcave(wpos);
@@ -10873,7 +10983,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 				}
 				if (retval < 0)
 				{
-					s_printf("adddungeon failed in generate_cave!! %s", wpos_format(0, wpos));
+					s_printf("adddungeon failed in generate_cave!! %s\n", wpos_format(0, wpos));
 					return;	/* This should never.. */
 				}
 				type = town[retval].type;
@@ -10966,7 +11076,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 			compact_monsters(32, FALSE);
 	}
 
-#ifdef WINTER_SEASON
+if (season == SEASON_WINTER) {
         /* Turn some water into ice */
 	if (!wpos->wz)
         for (y = 1; y < MAX_HGT - 1; y++)
@@ -10977,8 +11087,20 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr)
 	    		c_ptr->feat = FEAT_ICE;
 		}
 	}
-#endif
+}
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;
+}
+
+/* determine whether a feature should be a tree or a
+   bush, depending on the season - C. Blue */
+int get_seasonal_tree(void) {
+	switch (season) {
+	case SEASON_SPRING: return (magik(70) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_SUMMER: return (magik(90) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_AUTUMN: return (magik(90) ? FEAT_TREE : FEAT_BUSH); break;
+	case SEASON_WINTER: return (magik(95) ? FEAT_TREE : FEAT_BUSH); break;
+	}
+	return (FEAT_HIGH_MOUNTAIN); /* just to clear compiler warning */
 }
