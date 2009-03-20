@@ -53,8 +53,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR   4
 #define VERSION_MINOR   4
-#define VERSION_PATCH   1
-#define VERSION_EXTRA	8
+#define VERSION_PATCH   2
+#define VERSION_EXTRA	0
 #define VERSION_BRANCH	0
 #define VERSION_BUILD	0
 
@@ -74,7 +74,7 @@
 #define SF_VERSION_EXTRA   0
 
 /* Client release version tag (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "e"
+#define CLIENT_VERSION_TAG ""
 
 /*
  * Base version strings of TomeNET (see version_build)
