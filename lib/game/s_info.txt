@@ -448,6 +448,41 @@ $ENABLE_STANCES$A:13:Change combat stance
 $ENABLE_STANCES$I:1000:0
 $ENABLE_STANCES$F:MKEY_HARDCODE
 
+$ENABLE_MCRAFT$N:80:Psycho-Power
+$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$A:11:Cast a spell
+$ENABLE_MCRAFT$I:1000:0
+
+$ENABLE_MCRAFT$N:81:Thought Contact
+$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$A:11:Cast a spell
+$ENABLE_MCRAFT$I:1000:0
+
+$ENABLE_MCRAFT$N:82:Mental Intrusion
+$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$A:11:Cast a spell
+$ENABLE_MCRAFT$I:1000:0
+
+N:83:Magic Schools
+D:
+I:1000:0
+F:DUMMY
+
+N:84:Prayer Schools
+D:
+I:1000:0
+F:DUMMY
+
+N:85:Druidic Schools
+D:
+I:1000:0
+F:DUMMY
+
+$ENABLE_MCRAFT$N:86:Mindcraft Schools
+$ENABLE_MCRAFT$D:
+$ENABLE_MCRAFT$I:1000:0
+$ENABLE_MCRAFT$F:DUMMY
+
 # additional ones
 
 N:90:Climbing
@@ -532,8 +567,6 @@ O:Weaponmastery:Sorcery%100
 O:Archery:Sorcery%100
 O:Martial Arts:Sorcery%100
 
-
-
 # All magic skills affect magic skill
 f:Magic-device:Magic%7
 f:Spell-power:Magic%20
@@ -564,31 +597,11 @@ f:Mimicry:Magic%7
 #f:Revelation:Prayer%10
 #f:Revelation:Magic%5
 
-
 # Antimagic exclude all magic
 E:Magic-device:Antimagic
-
-f:Spell-power:Magic%20
 E:Sorcery:Antimagic
-f:Mana:Magic%10
-f:Fire:Magic%10
-f:Air:Magic%10
-f:Water:Magic%10
-f:Earth:Magic%10
-E:Conveyance:Antimagic
-f:Divination:Magic%10
-f:Nature:Magic%10
-f:Temporal:Magic%10
-f:Meta:Magic%10
-f:Mind:Magic%10
-f:Udun:Magic%10
-
 E:Mimicry:Antimagic
 
-#f:Demonology:Magic%10
-#f:Necromancy:Magic%4
-#f:Runecraft:Magic%12
-#f:Thaumaturgy:Magic%6
 ##E:Casting-speed:Antimagic
 #E:Magery:Antimagic
 #E:Shadow:Antimagic
@@ -607,6 +620,11 @@ f:Arcane Lore:Magic%10
 f:Physical Lore:Magic%10
 
 $ENABLE_DIVINE$f:Astral Knowledge:Magic%10
+
+#%5 wasn't enough, big lack of MP
+$ENABLE_MCRAFT$f:Psycho-Power:Magic%10
+$ENABLE_MCRAFT$f:Thought Contact:Magic%10
+$ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
@@ -666,36 +684,51 @@ T:Combat:Boomerang-mastery
 T:Combat:Martial Arts
 
 T:Main:Magic
-T:Magic:Mimicry
 T:Magic:Magic-device
+T:Magic:Mimicry
+T:Magic:Runemastery
 #T:Magic:Spell-learning
 T:Magic:Spell-power
-T:Magic:Sorcery
-T:Magic:Mana
-T:Magic:Fire
-T:Magic:Water
-T:Magic:Air
-T:Magic:Earth
-T:Magic:Meta
-T:Magic:Conveyance
-T:Magic:Divination
-T:Magic:Temporal
-T:Magic:Mind
-T:Magic:Nature
-T:Magic:Udun
+
+T:Magic:Magic Schools
+T:Magic:Prayer Schools
+T:Magic:Druidic Schools
+$ENABLE_MCRAFT$T:Magic:Mindcraft Schools
+
+T:Magic Schools:Sorcery
+T:Magic Schools:Mana
+T:Magic Schools:Fire
+T:Magic Schools:Water
+T:Magic Schools:Air
+T:Magic Schools:Earth
+T:Magic Schools:Meta
+T:Magic Schools:Conveyance
+T:Magic Schools:Divination
+T:Magic Schools:Temporal
+T:Magic Schools:Mind
+T:Magic Schools:Nature
+T:Magic Schools:Udun
+
 #T:Magic:Demonology
 #T:Magic:Necromancy
 #T:Magic:Runecraft
 #T:Magic:Thaumaturgy
 #T:Magic:Alchemy
-T:Magic:Holy Offense
-T:Magic:Holy Defense
-T:Magic:Holy Curing
-T:Magic:Holy Support
-#T:Magic:Druidry
-T:Magic:Arcane Lore
-T:Magic:Physical Lore
+
+T:Prayer Schools:Holy Offense
+T:Prayer Schools:Holy Defense
+T:Prayer Schools:Holy Curing
+T:Prayer Schools:Holy Support
+
+#T:Druidic Schools:Druidry
+T:Druidic Schools:Arcane Lore
+T:Druidic Schools:Physical Lore
+
 $ENABLE_DIVINE$T:Magic:Astral Knowledge
+
+$ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
+$ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
+$ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer
@@ -709,8 +742,6 @@ $ENABLE_DIVINE$T:Magic:Astral Knowledge
 #T:Monster-lore:Possession
 #T:Monster-lore:Symbiosis
 #T:Monster-lore:Mimicry
-
-T:Main:Runemastery
 
 T:Main:Sneakiness
 T:Sneakiness:Stealth

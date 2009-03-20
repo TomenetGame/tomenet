@@ -610,7 +610,8 @@ D:awareness.
 
 N:41:of Gorlim
 I:32:5:-4
-W:20:5:75:0
+#W:20:5:75:0 <- was maybe too spammy
+W:20:10:75:0
 P:5:1d3:25:25:10
 F:INT | WIS | SEARCH | HIDE_TYPE | SHOW_MODS |
 F:SEE_INVIS | NO_MAGIC | HEAVY_CURSE | TY_CURSE | 
@@ -656,7 +657,7 @@ D:nature and magnitude of the task.
 
 N:44:'Colluin'
 I:35:3:0
-W:20:45:10:50000
+W:20:25:10:50000
 P:3:0d0:0:0:20
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_POIS | ACTIVATE | ESP_GOOD
 D:A cape worn by a hero from Valinor, a land utterly beyond the strife 
@@ -718,7 +719,7 @@ D:trouble.
 
 N:49:of Luthien
 I:35:6:2
-W:30:40:5:90000
+W:30:20:5:90000
 P:6:0d0:0:0:25
 F:INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | INVIS | LUCK |
 F:RES_ACID | RES_FIRE | RES_COLD | SPECIAL_GENE | ACTIVATE
@@ -733,7 +734,7 @@ D:being that ever knew death.
 
 N:50:of Tuor
 I:35:6:4
-W:20:40:5:105000
+W:20:30:5:105000
 P:6:0d0:0:0:22
 F:STEALTH | DEX | HIDE_TYPE | INVIS | RES_LITE | RES_DARK |
 F:FREE_ACT | IM_ACID | SEE_INVIS | CLIMB
@@ -1459,7 +1460,7 @@ D:allows rapid recovery from their blows.
 
 N:105:of the Dwarves
 I:24:28:10
-W:30:12:250:50000
+W:30:20:250:50000
 P:0:3d7:12:17:0
 F:SLAY_EVIL | TUNNEL | INFRA | SEARCH | SLAY_GIANT | SLAY_EVIL | 
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_FEAR |
@@ -1732,7 +1733,7 @@ D:known for never having lost in combat.
 
 N:124:'Belthronding'
 I:19:13:5
-W:40:20:40:100000
+W:40:30:40:100000
 P:0:0d0:20:25:0
 F:DEX | STEALTH | HIDE_TYPE | 
 F:RES_DISEN | XTRA_SHOTS | SHOW_MODS | XTRA_MIGHT
@@ -1745,7 +1746,7 @@ D:faintly shines a pale clear gold.
 
 N:125:of Bard
 I:19:13:2
-W:60:25:40:100000
+W:60:35:40:100000
 P:0:0d0:27:24:0
 F:DEX | HIDE_TYPE | ESP_DRAGON | LUCK | KILL_DRAGON | 
 F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS
@@ -1759,7 +1760,7 @@ N:126:'Cubragol'
 #I:19:23:10
 I:19:23:6
 #W:50:25:110:300000
-W:50:25:110:100000
+W:50:35:110:100000
 P:0:0d0:10:14:0
 F:SPEED | HIDE_TYPE | 
 F:RES_FIRE | BRAND_FIRE | ACTIVATE | SHOW_MODS
@@ -1803,7 +1804,7 @@ D:and as hard to harm.
 
 N:129:'Glimdrir'
 I:15:4:3
-W:40:20:20:50000
+W:40:25:20:50000
 P:0:5d5:15:16:0
 F:DEX | SPEED | FREE_ACT | BRAND_POIS | SLAY_EVIL | SLAY_UNDEAD | REGEN |
 F:RES_ACID | RES_ELEC | RES_FIRE | RES_COLD | RES_SOUND | NO_TELE | CURSED
@@ -1844,7 +1845,7 @@ D:and is said to go "snicker snack".
 
 N:135:'Bullseye'
 I:17:2:0
-W:40:1:3:70000
+W:40:30:3:70000
 P:0:3d5:30:0:0
 F:SLAY_EVIL | KILL_DEMON | SLAY_DRAGON
 #F:SLAY_UNDEAD | SLAY_ORC | SLAY_TROLL | SLAY_GIANT | SLAY_DRAGON | KILL_DEMON | 
@@ -1857,7 +1858,7 @@ D:A powerful arrow that is feared by even the mightiest demons.
 N:136:'Travak'
 #I:16:0:0
 I:18:1:0
-W:5:1:3:25000
+W:5:20:3:25000
 P:0:2d5:8:3:0
 F:BRAND_ACID | BRAND_ELEC | BRAND_FIRE | BRAND_COLD | BRAND_POIS
 D:A bolt imbued with the powers of the elements.  
@@ -2157,7 +2158,7 @@ D:delivers a chill of death to its victims.
 
 N:160:of Knowledge
 I:32:5:-3
-W:20:5:75:77000
+W:20:50:75:77000
 P:6:1d3:0:0:20
 F:LITE1 | HIDE_TYPE | SPECIAL_GENE | LUCK
 F:AUTO_ID | ACTIVATE
@@ -2598,7 +2599,7 @@ D:destruction of all others who would gaze into it.
 # The Magic Arrow 'Giver of Sleep'
 N:209:'Giver of Sleep'
 I:17:3:0
-W:20:10:2:35000
+W:20:20:2:35000
 P:0:2d4:0:0:0
 F:SLAY_UNDEAD | VAMPIRIC
 
@@ -2788,7 +2789,7 @@ D:A mysterious shard that fell down from heaven.
 
 N:222:'Ripper'
 I:16:1:0
-W:20:5:4:15000
+W:20:15:4:15000
 P:0:3d4:0:0:0
 D:Made of alloy of iron and ebonite, a *hard* material.
 D:Strange enough, noone managed to enchant it yet.
@@ -2817,7 +2818,7 @@ D:you scream out in terror.
 
 N:224:of the Guardian
 I:22:15:0
-W:35:20:220:130000
+W:35:30:220:130000
 P:0:5d8:20:20:0
 F:RES_FEAR | FREE_ACT | ESP_EVIL | SLAY_EVIL | SLOW_DIGEST |
 F:RES_COLD | RES_ELEC | RES_DARK | RES_DISEN
@@ -2828,7 +2829,7 @@ D:The guard on duty's best friend.
 
 N:225:of the Abyss Rider
 I:22:29:-3
-W:50:23:400:100000
+W:50:43:400:100000
 P:0:6d8:0:13:0
 F:CHR | HIDE_TYPE | RES_FEAR | SLAY_ANIMAL | SLAY_DRAGON | KILL_DEMON |
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SEE_INVIS | SHOW_MODS |
@@ -2903,7 +2904,7 @@ D:A black crossbow that shimmers white here and then.
 N:231:of Domination
 I:19:13:0
 #W:90:65:60:270000//removed nether resistance, way too much for a launcher item
-W:90:65:60:150000
+W:90:75:60:150000
 P:0:0d0:30:30:0
 F:HIDE_TYPE | ESP_EVIL | KILL_DRAGON | KILL_DEMON | SLAY_EVIL | KILL_UNDEAD | 
 F:FREE_ACT | XTRA_MIGHT | SHOW_MODS | XTRA_SHOTS | RES_DISEN | RES_FEAR
@@ -2912,9 +2913,9 @@ D:fire, showing the mad will within it to dominate all beasts that hell
 D:could possibly bear.
 
 
-# The Set of Leather Gloves 'Soul Cure'
+# The Set of Leather Gloves 'Soul Grip' (renamed from Soul Cure)
 
-N:232:'Soul Cure'
+N:232:'Soul Grip'
 I:31:1:4
 W:40:30:5:50000
 P:1:1d1:0:0:19
@@ -2938,7 +2939,7 @@ D:to him.
 
 N:234:'Wrath Verge'
 I:31:5:2
-W:40:30:40:100000
+W:40:50:40:100000
 P:5:1d1:5:5:20
 F:BLOWS | HIDE_TYPE | STR | FREE_ACT | RES_FEAR | SHOW_MODS
 D:Gauntlets that convert the wielder's anger to strength in combat.
@@ -3036,7 +3037,7 @@ D:screaming for more living flesh.
 N:242:'Quietus'
 I:21:19:10
 W:50:50:400:150000
-P:0:8d6:25:25:20
+P:0:8d6:25:25:10
 F:SHOW_MODS | STR | TUNNEL | HOLD_LIFE | FREE_ACT |
 F:SLAY_EVIL | SLAY_UNDEAD | SLAY_DEMON
 D:Where Quietus hits, silence follows.
@@ -3101,7 +3102,7 @@ F:SLAY_EVIL | KILL_UNDEAD | SLAY_DEMON
 D:This spear never misses when it comes to giving the final blow.
 
 
-# Thunder Axe 'Hope Dawn'
+# Thunder Axe 'Dawn of Hope'
 
 N:248:'Dawn of Hope'
 I:24:33:4
@@ -3124,11 +3125,11 @@ F:SHOW_MODS | RES_FEAR | ESP_UNIQUE | RES_COLD | BRAND_COLD
 D:Driving right through the chest, piercing strongest armour.
 
 
-# Sickle of Slicing, renaming to Chronus' Sickle now - C. Blue
+# Sickle of Slicing, renaming to Kronos' Sickle now - C. Blue
 
 N:250:of Kronos
 I:22:3:5
-W:80:20:50:70000
+W:80:60:50:70000
 P:0:5d3:111:15:0
 F:SHOW_MODS | VORPAL | INFRA | REGEN | SLAY_ANIMAL |
 F:BRAND_ACID | RES_ACID | DRAIN_MANA | SPECIAL_GENE
@@ -3139,7 +3140,7 @@ D:A small sickle gleaming with unmatched sharpness.
 
 N:251:'Tarnkappe'
 I:32:2:4
-W:30:5:15:75000
+W:30:15:15:75000
 P:2:0d0:0:0:10
 F:STEALTH | HIDE_TYPE | 
 F:INVIS | RES_BLIND | RES_DARK | FREE_ACT
@@ -3167,7 +3168,7 @@ D:A unappearent leather cap with surprising abilities.
 
 N:254:'Stormshield'
 I:34:6:3
-W:70:40:200:120000
+W:70:30:200:90000
 $USE_NEW_SHIELDS!P:8:1d3:0:0:40
 $USE_NEW_SHIELDS$P:23:1d3:0:0:15
 F:STR | CON | RES_SOUND | RES_COLD | IM_ELEC
@@ -3190,7 +3191,7 @@ D:while serving repentance.
 
 N:256:of the Winds
 I:36:21:2
-W:40:60:20:60000
+W:40:50:20:60000
 P:2:0d0:0:0:19
 F:HIDE_TYPE | DEX | SUST_DEX | FLY | ESP_ANIMAL | SPEED
 F:IM_COLD | RES_SOUND | RES_FEAR | FREE_ACT | RES_CONF
@@ -3225,7 +3226,7 @@ D:aids every zealot in his struggle against the unholy forces.
 
 N:259:'Thinking Cap'
 I:32:1:4
-W:40:20:10:40000
+W:40:25:10:40000
 P:1:0d0:0:0:13
 F:INT | WIS | REGEN_MANA | HIDE_TYPE | 
 F:RES_BLIND | RES_CONF | FREE_ACT | ESP_UNIQUE
@@ -3261,7 +3262,7 @@ D:Sees the things that can't be seen.
 
 N:262:'Ars Numenis'
 I:21:22:6
-W:50:40:380:100000
+W:50:25:380:100000
 P:0:6d7:20:25:0
 F:SHOW_MODS | STR | KILL_DEMON | ESP_DEMON | BLESSED | SLAY_EVIL
 D:This hammer carries divine will to purge the unclean.
@@ -3277,6 +3278,19 @@ F:WIS | HIDE_TYPE | ESP_EVIL | SLAY_EVIL | KILL_UNDEAD
 F:LITE1 | FREE_ACT | SHOW_MODS
 D:Calling lost souls to redemption, this scourge drives
 D:out evil spirits.
+
+
+# The Adamantite Helm 'Veridis Quo'
+
+N:264:'Veridis Quo'
+I:32:11:3
+W:90:30:75:100000
+P:8:1d3:0:0:17
+F:RES_FEAR | RES_CONF | RES_CHAOS | SEE_INVIS |
+F:SUST_INT | SUST_WIS | SUST_CHR | INT | WIS |
+F:AUTO_ID | SEARCH | LITE1 | IGNORE_MANA
+D:This radiating and impervious head gear will ensure
+D:that its wearer will see nothing but the very truth.
 
 
 

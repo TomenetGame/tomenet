@@ -105,7 +105,10 @@ N:5:Mount Doom
 D:MDm:a way to the top of the Mount Doom.
 W:85:100:38:0:14:160
 L:86:90:205:10:1:0
-A:177:100:0:0:0:0:85:87
+#eek! pits with essentially no walls? - adam
+#A:177:100:0:0:0:0:85:87
+#changed to sandwall instead
+A:177:100:0:0:0:0:85:99
 O:10:10:30:30
 E:2d10:10:FIRE
 F:CAVE | LAVA_RIVER | NO_RECALL | NO_STREAMERS
