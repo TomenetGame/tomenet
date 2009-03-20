@@ -149,10 +149,11 @@ struct term
 
 	char *key_queue;
 
-	u16b key_head;
-	u16b key_tail;
-	u16b key_xtra;
-	u16b key_size;
+	s32b key_head;
+	s32b key_tail;
+	s32b key_length;
+	s32b key_size;
+	s32b key_size_orig;
 
 	byte wid;
 	byte hgt;
@@ -166,8 +167,8 @@ struct term
 	term_win *old;
 	term_win *scr;
 
-	term_win *tmp;
-	term_win *mem;
+//	term_win *tmp;
+	term_win *mem[4];
 
 	void (*init_hook)(term *t);
 	void (*nuke_hook)(term *t);
@@ -243,7 +244,7 @@ extern errr Term_draw(int x, int y, byte a, char c);
 extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);
-extern errr Term_putstr(int x, int y, int n, byte a, cptr s);
+extern errr Term_putstr(int x, int y, int n, byte a, char *s);
 extern errr Term_erase(int x, int y, int n);
 extern errr Term_clear(void);
 extern errr Term_redraw(void);
@@ -260,6 +261,7 @@ extern errr Term_inkey(char *ch, bool wait, bool take);
 
 extern errr Term_save(void);
 extern errr Term_load(void);
+extern errr Term_switch(int screen);
 
 extern errr Term_resize(int w, int h);
 
@@ -267,6 +269,9 @@ extern errr Term_activate(term *t);
 
 extern errr term_nuke(term *t);
 extern errr term_init(term *t, int w, int h, int k);
+
+extern byte flick_colour(byte attr);
+extern void flicker(void);
 
 
 #endif

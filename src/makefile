@@ -104,7 +104,7 @@ CLI_OBJS = \
 CONS_SRCS = \
   common/z-util.c common/z-virt.c common/z-form.c common/net-unix.c \
   common/sockbuf.c common/net-ibm.c common/common.c \
-  client/z-term.c common/z-rand.c \
+  console/z-term.c common/z-rand.c \
   client/main-ibm.c client/main-cap.c client/main-gcu.c \
   client/main-x11.c client/main-xaw.c \
   console/variable.c console/c-util.c console/console.c console/c-init.c
@@ -112,7 +112,7 @@ CONS_SRCS = \
 CONS_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/net-unix.o \
   common/sockbuf.o common/net-ibm.o common/common.o \
-  client/z-term.o common/z-rand.o \
+  console/z-term.o common/z-rand.o \
   client/main-ibm.o client/main-cap.o client/main-gcu.o \
   client/main-x11.o client/main-xaw.o \
   console/variable.o console/c-util.o console/console.o console/c-init.o
