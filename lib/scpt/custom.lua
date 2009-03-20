@@ -150,8 +150,8 @@ function server_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 --	lua_add_anote("Made stances also available to mimics, paladins, rangers.");
 --	lua_add_anote("New dodging formulas implemented!");
 --	lua_add_anote("{GMake sure you use client version 4.4.0e to avoid crashing!");
-	lua_add_anote("Recalling into town dungeons possible every 1000+50 ft!");
-	lua_add_anote(" Eg: -50ft, -1050ft, -2050ft..");
+--	lua_add_anote("Recalling into town dungeons possible every 1000+50 ft!");
+--	lua_add_anote(" Eg: -50ft, -1050ft, -2050ft..");
 --	lua_add_anote("Starting phase scrolls replaced with au. Buy your own.");
 --	lua_add_anote("/undoskills will restore skill points you spent after lvup.");
 --	lua_add_anote("Sorry guys, there was a major flaw in randart routine.");
@@ -170,9 +170,9 @@ function server_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 --      lua_add_anote("{H server move! Also contains couple of important fixes!");
 --	lua_add_anote("{vClient 4.4.1d is out. Update very important.");
 --	lua_add_anote("{v- - - - Client 4.4.1e released! - - -");
-	lua_add_anote("Reduced min floor level for allowing recall from 30 to 20.");
+--	lua_add_anote("Reduced min floor level for allowing recall from 30 to 20.");
 	lua_add_anote("Mindcrafter class stats: INT primary, CHR 2nd, WIS 3rd.");
-	lua_add_anote("Mindcrafter spells can be viewed in Bree's Mathom-House.");
+--	lua_add_anote("Mindcrafter spells can be viewed in Bree's Mathom-House.");
 	lua_add_anote("Divine's skill reset at lvl 20 should work now. You will");
 	lua_add_anote(" get teleported once.");
 	lua_add_anote("{v---- Client 4.4.2 released (see forum)! ----");
