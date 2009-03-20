@@ -3266,6 +3266,7 @@ void interact_macros(void)
 						i = -2; /* hack to leave for loop */
 						break;
 					case 'p':
+					case '\010': /* backspace */
 						if (i >= 39) {
 							/* show previous 20 entries */
 							i -= 20 + (i % 20) + 1;
