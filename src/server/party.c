@@ -2828,7 +2828,7 @@ void checkexpiry(int Ind, int days)
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		ptr = hash_table[slot];
 		while (ptr) {
-			expire = 90 * 86400 - now + ptr->laston;
+			expire = 180 * 86400 - now + ptr->laston;
 			if (ptr->laston && expire < days * 86400) {
 				if (expire < 86400) {
 					msg_format(Ind, "\377rPlayer %s (accid %d) will expire in less than a day!", ptr->name, ptr->account);
