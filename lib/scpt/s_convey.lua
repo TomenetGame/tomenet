@@ -62,7 +62,7 @@ TELEPORT = add_spell
         		return ""
 	end,
         ["desc"] =	{
-        		"Teleports you around the level. The casting time decreases with level",
+        		"Teleports you around the level.",
 --                        "***Affected by the Meta spell: Project Spell***",
         }
 }

@@ -150,34 +150,26 @@ REVEALWAYS = add_spell
         }
 }
 
-SENSEMONSTERS = add_spell
+DETECTMONSTERS = add_spell
 {
-	["name"] = 	"Sense Monsters",
+	["name"] = 	"Detect Monsters",
         ["school"] = 	{SCHOOL_DIVINATION},
         ["level"] = 	1,
-        ["mana"] =      1,
-        ["mana_max"] =  20,
+        ["mana"] =      3,
+        ["mana_max"] =  3,
         ["fail"] = 	10,
---        ["stat"] =      A_WIS,
         ["spell"] = 	function()
                         detect_creatures(Ind)
                         if player.spell_project > 0 then
                                 fire_ball(Ind, GF_DETECTCREATURE_PLAYER, 0, 1, player.spell_project, "")
                         end
-        		if get_level(Ind, SENSEMONSTERS, 50) >= 30 then
-                        	set_tim_esp(Ind, 10 + randint(10) + get_level(Ind, SENSEMONSTERS, 20))
-                        end
 	end,
 	["info"] = 	function()
-        		if get_level(Ind, SENSEMONSTERS, 50) >= 30 then
-                                return "rad "..(10 + get_level(Ind, SENSEMONSTERS, 40)).." dur "..(10 + get_level(Ind, SENSEMONSTERS, 20)).."+d10"
-			else
-                                return "rad "..(10 + get_level(Ind, SENSEMONSTERS, 40))
-                        end
+--                        return "rad "..(10 + get_level(Ind, DETECTMONSTERS, 40))
+			return ""
 	end,
         ["desc"] =	{
-        		"Detects all monsters near you",
-                        "At level 30 it allows you to sense monster minds for a while",
+        		"Detects all monsters near you.",
                         "***Affected by the Meta spell: Project Spell***",
         }
 }

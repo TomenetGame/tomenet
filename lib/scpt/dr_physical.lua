@@ -68,7 +68,8 @@ HERBALTEA = add_spell
 	["spell"] = 	function()
 			local lvl
 			lvl = get_level(Ind, HERBALTEA, 50)
-				set_food(Ind, PY_FOOD_MAX - 1)
+			set_food(Ind, PY_FOOD_MAX - 1)
+			fire_ball(Ind, GF_SATHUNGER_PLAYER, 0, 1, 1, "");
 
 			if lvl >= 20 then
 				restore_level(Ind)

@@ -20,7 +20,7 @@ MAGELOCK = add_spell
                                 	y = player.py
                                         x = player.px
 --                                end
-                        	cave_set_feat(player.wpos, y, x, 3)
+                        	cave_set_feat_live(player.wpos, y, x, 3)
                         else
                                 wizard_lock(Ind, args.dir)
                         end

@@ -5,6 +5,15 @@
 -- <- dummy line to change checksum - C. Blue
 -- Create the schools
 
+
+--hack: these lines are required till next client version is out,
+--      which has these defined in player.pkg+defines.h correctly.
+SKILL_ASTRAL = 77
+SKILL_PPOWER = 80
+SKILL_TCONTACT = 81
+SKILL_MINTRUSION = 82
+
+
 SCHOOL_CONVEYANCE = add_school
 {
 	["name"] = "Conveyance", 
@@ -124,6 +133,30 @@ SCHOOL_DRUID_PHYSICAL = add_school
 	["skill"] = SKILL_DRUID_PHYSICAL,
 }
 
+SCHOOL_ASTRAL = add_school
+{
+	["name"] = "Astral Knowledge",
+	["skill"] = SKILL_ASTRAL,
+}
+
+SCHOOL_PPOWER = add_school
+{
+	["name"] = "Psycho-power",
+	["skill"] = SKILL_PPOWER,
+}
+
+SCHOOL_TCONTACT = add_school
+{
+	["name"] = "Thought contact",
+	["skill"] = SKILL_TCONTACT,
+}
+
+SCHOOL_MINTRUSION = add_school
+{
+	["name"] = "Mental intrusion",
+	["skill"] = SKILL_MINTRUSION,
+}
+
 -- Put some spells
 pern_dofile(Ind, "s_mana.lua")
 pern_dofile(Ind, "s_fire.lua")
@@ -145,6 +178,12 @@ pern_dofile(Ind, "p_support.lua")
 
 pern_dofile(Ind, "dr_arcane.lua") 
 pern_dofile(Ind, "dr_physical.lua")
+
+pern_dofile(Ind, "d_astral.lua")
+
+pern_dofile(Ind, "m_ppower.lua")
+pern_dofile(Ind, "m_tcontact.lua")
+pern_dofile(Ind, "m_mintrusion.lua")
 
 -- Create the crystal of mana (1-4)
 school_book[0] = {
@@ -184,7 +223,7 @@ school_book[6] = {
 
 -- Create the book of Knowledge (33-38)
 school_book[7] = {
-        SENSEMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
+        DETECTMONSTERS, SENSEHIDDEN, REVEALWAYS, IDENTIFY, VISION, STARIDENTIFY,
 }
 
 -- Create the book of the Time (39-42)
@@ -199,7 +238,7 @@ school_book[9] = {
 
 -- Create the book of the mind * CHARM requires pets first (46-48)
 school_book[10] = {
-        CONFUSE, STUN, TELEKINESIS,
+        CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS,
 }
 
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
@@ -239,9 +278,29 @@ school_book[17] = {
 	HEALINGCLOUD, QUICKFEET, HERBALTEA, EXTRASTATS, FOCUSSHOT,
 }
 
+-- Divine Race Tome
+school_book[18] = {
+	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, POWERCLOUD,
+}
+
+-- Create the book of mindcrafting: Psycho-power (-)
+school_book[19] = {
+	MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY,
+}
+
+-- Create the book of mindcrafting: Thought contact (-)
+school_book[20] = {
+	MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MSANITY, MTELEKINESIS,
+}
+
+-- Create the book of mindcrafting: Mental intrusion (-)
+school_book[21] = {
+	MMINDBLAST, MSCARE, MCONFUSE, MSLEEP, MSLOWMONSTER, MSILENCE,
+}
+
 -- Create the book of beginner's cantrip
 school_book[50] = {
-        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, SENSEMONSTERS, SENSEHIDDEN,
+        MANATHRUST, GLOBELIGHT, ENTPOTION, BLINK, DETECTMONSTERS, SENSEHIDDEN,
 }
 
 -- Create the elementalist's handbook
@@ -276,8 +335,6 @@ school_book[55] = {
 --	ICESTORM, HELLFIRE, FIREFLASH, SHAKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 	TIDALWAVE, HELLFIRE, FIREFLASH, STRIKE, DISEBOLT, THUNDERSTORM, HORBDRAIN, HDRAINCLOUD
 }
-
--- (56 is Astral Tome for Divine race)
 
 ---- Create the handbook for rogues (of shadows)
 school_book[57] = {

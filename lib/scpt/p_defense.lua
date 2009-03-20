@@ -139,7 +139,7 @@ HRUNEPROT = add_spell
                         local x, y
                         y = player.py
                         x = player.px
-                        cave_set_feat(player.wpos, y, x, 3)
+                        cave_set_feat_live(player.wpos, y, x, 3)
 			end,
 	["info"] = 	function()
 			return ""

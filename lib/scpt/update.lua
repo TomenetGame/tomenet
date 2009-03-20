@@ -26,6 +26,12 @@ __update_table =
 	"scpt/dr_arcane.lua",
 	"scpt/dr_physical.lua",
 
+	"scpt/d_astral.lua",
+
+	"scpt/m_ppower.lua",
+	"scpt/m_tcontact.lua",
+	"scpt/m_mintrusion.lua",
+
 	"scpt/powers.lua",
         "scpt/meta.lua",
 	"scpt/xml.lua",

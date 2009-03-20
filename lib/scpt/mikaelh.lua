@@ -67,6 +67,10 @@ function showskills(name)
 	if get_skill_value(p, SKILL_HSUPPORT) > 0 then		msg_print(Ind, "     . Holy Support               " .. get_skill_formatted(p, SKILL_HSUPPORT)) end
 	if get_skill_value(p, SKILL_DRUID_ARCANE) > 0 then	msg_print(Ind, "     . Arcane Lore                " .. get_skill_formatted(p, SKILL_DRUID_ARCANE)) end
 	if get_skill_value(p, SKILL_DRUID_PHYSICAL) > 0 then	msg_print(Ind, "     . Physical Lore              " .. get_skill_formatted(p, SKILL_DRUID_PHYSICAL)) end
+	if get_skill_value(p, SKILL_ASTRAL) > 0 then		msg_print(Ind, "     . Astral Knowledge           " .. get_skill_formatted(p, SKILL_ASTRAL)) end
+	if get_skill_value(p, SKILL_PPOWER) > 0 then		msg_print(Ind, "     . Psychic Power              " .. get_skill_formatted(p, SKILL_PPOWER)) end
+	if get_skill_value(p, SKILL_TCONTACT) > 0 then		msg_print(Ind, "     . Thought Contact            " .. get_skill_formatted(p, SKILL_TCONTACT)) end
+	if get_skill_value(p, SKILL_MINTRUSION) > 0 then	msg_print(Ind, "     . Mental Intrusion           " .. get_skill_formatted(p, SKILL_MINTRUSION)) end
 	if get_skill_value(p, SKILL_RUNEMASTERY ) > 0 then	msg_print(Ind, " . Runemastery                    " .. get_skill_formatted(p, SKILL_RUNEMASTERY)) end
 	if get_skill_value(p, SKILL_SNEAKINESS) > 0 then	msg_print(Ind, " - Sneakiness                     " .. get_skill_formatted(p, SKILL_SNEAKINESS)) end
 	if get_skill_value(p, SKILL_STEALTH) > 0 then		msg_print(Ind, "     . Stealth                    " .. get_skill_formatted(p, SKILL_STEALTH)) end
@@ -132,7 +136,7 @@ end
 -- Usage: fix_spellbooks(<player name>, <new spell number>, 1)
 -- Example, after adding the Stop Wraithform spell:
 -- fix_spellbooks("Pfft", STOPWRAITH, 1)
---[[
+
 function fix_spellbooks(name, start, mod)
 	local i, p
 	p = ind(name)
@@ -143,7 +147,7 @@ function fix_spellbooks(name, start, mod)
 		end
 	end
 end
-]]
+
 
 -- Fix for the stop wraithform spell
 --[[

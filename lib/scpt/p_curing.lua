@@ -187,7 +187,7 @@ HSANITY = add_spell
 -- increased max_mana from 100 to 150
 HSANITY = add_spell
 {
-	["name"] =      "Mind Focus",
+	["name"] =      "Faithful Focus",
 	["school"] =    {SCHOOL_HCURING},
 	["level"] =     21,
 	["mana"] =      50,

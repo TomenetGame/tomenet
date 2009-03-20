@@ -223,16 +223,148 @@ function print_book(i, book, spl)
 	local x, y, index, sch, size, s
 
 	x = 0
+	y = 2
+	size = 0
+
+	-- Hack if the book is 255 it is a random book
+	if book == 255 then
+		school_book[book] = {spl}
+	end
+
+	-- Parse all spells
+	for index, s in school_book[book] do
+		local color = TERM_L_DARK
+		local lvl = get_level(i, s, 50, -50)
+		local xx, sch_str
+
+		if is_ok_spell(i, s) then
+			if get_mana(i, s) > get_power(i, s) then color = TERM_ORANGE
+			else color = TERM_L_GREEN end
+		end
+
+		xx = nil
+		sch_str = ""
+
+		for index, sch in __spell_school[s] do
+			if xx then
+				sch_str = sch_str.."/"..school(sch).name
+			else
+				xx = 1
+				sch_str = sch_str..school(sch).name
+			end
+		end
+
+		c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+		y = y + 1
+		size = size + 1
+	end
+
+	prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
+	return y
+end
+
+
+-- Print the book and the spells
+-- XXX client only
+function print_book2(i, inven_slot, sval, spl)
+	local x, y, index, sch, size, s, book
+
+	x = 0
+	y = 2
+	size = 0
+
+	if inven_slot ~= -1 then
+	    --from inventory
+	    book = get_inven_sval(Ind, inven_slot)
+	else
+	    --browsing within a store!
+	    book = sval
+	end
+
+	-- Hack for custom tomes
+	if book == 100 or book == 101 or book == 102 then
+		return print_custom_tome(i, inven_slot)
+	end
+
+	-- Hack if the book is 255 it is a random book
+	if book == 255 then
+		school_book[book] = {spl}
+	end
+
+	-- Parse all spells
+	for index, s in school_book[book] do
+        	local color = TERM_L_DARK
+                local lvl = get_level(i, s, 50, -50)
+        	local xx, sch_str
+
+                if is_ok_spell(i, s) then
+                	if get_mana(i, s) > get_power(i, s) then color = TERM_ORANGE
+                        else color = TERM_L_GREEN end
+                end
+
+                xx = nil
+                sch_str = ""
+
+		for index, sch in __spell_school[s] do
+                	if xx then
+		                sch_str = sch_str.."/"..school(sch).name
+                	else
+		                xx = 1
+		                sch_str = sch_str..school(sch).name
+	                end
+                end
+
+                c_prt(color, format("%c) %-20s%-16s   %3d %4s %3d%s %s", size + strbyte("a"), spell(s).name, sch_str, lvl, get_mana(i, s), spell_chance(i, s), "%", __spell_info[s]()), y, x)
+		y = y + 1
+                size = size + 1
+        end
+
+        prt(format("   %-20s%-16s Level Cost Fail Info", "Name", "School"), 1, x)
+        return y
+end
+
+function print_custom_tome(i, inven_slot)
+	local x, y, index, sch, size, s, custom_book
+
+	x = 0
         y = 2
         size = 0
 
-        -- Hack if the book is 255 it is a random book
-        if book == 255 then
-                school_book[book] = {spl}
-        end
+--HACK/problem: can't browse custom tomes in shops!:
+	if inven_slot == -1 then return 0 end
+
+	custom_book = {}
+
+	if get_inven_xtra(Ind, inven_slot, 1) ~= 0 then
+		custom_book[1] = get_inven_xtra(Ind, inven_slot, 1) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 2) ~= 0 then
+		custom_book[2] = get_inven_xtra(Ind, inven_slot, 2) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 3) ~= 0 then
+		custom_book[3] = get_inven_xtra(Ind, inven_slot, 3) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 4) ~= 0 then
+		custom_book[4] = get_inven_xtra(Ind, inven_slot, 4) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 5) ~= 0 then
+		custom_book[5] = get_inven_xtra(Ind, inven_slot, 5) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 6) ~= 0 then
+		custom_book[6] = get_inven_xtra(Ind, inven_slot, 6) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 7) ~= 0 then
+		custom_book[7] = get_inven_xtra(Ind, inven_slot, 7) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 8) ~= 0 then
+		custom_book[8] = get_inven_xtra(Ind, inven_slot, 8) - 1
+	end
+	if get_inven_xtra(Ind, inven_slot, 9) ~= 0 then
+		custom_book[9] = get_inven_xtra(Ind, inven_slot, 9) - 1
+	end
 
         -- Parse all spells
-	for index, s in school_book[book] do
+	for index, s in custom_book do
         	local color = TERM_L_DARK
                 local lvl = get_level(i, s, 50, -50)
         	local xx, sch_str
@@ -296,9 +428,69 @@ function book_spells_num(book)
         size = 0
 
         -- Hack if the book is 255 it is a random book
+	if book == 255 then
+                return 1
+        end
+
+        -- Parse all spells
+        for index, s in school_book[book] do
+		size = size + 1
+        end
+
+        return size
+end
+
+function book_spells_num2(inven_slot, sval)
+	local size, index, sch, book
+
+        size = 0
+
+        if inven_slot ~= -1 then
+	    book = get_inven_sval(Ind, inven_slot)
+        else
+    	    book = sval
+        end
+
+        -- Hack if the book is 255 it is a random book
         if book == 255 then
                 return 1
         end
+
+        -- Hacks for custom tomes
+        if book == 100 or book == 101 or book == 102 then
+--HACK/problem: can't browse custom tomes in shops!:
+		if inven_slot == -1 then return 0 end
+
+    		if get_inven_xtra(Ind, inven_slot, 9) ~= 0 then
+    			return 9
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 8) ~= 0 then
+    			return 8
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 7) ~= 0 then
+    			return 7
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 6) ~= 0 then
+    			return 6
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 5) ~= 0 then
+    			return 5
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 4) ~= 0 then
+    			return 4
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 3) ~= 0 then
+    			return 3
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 2) ~= 0 then
+    			return 2
+    		end
+    		if get_inven_xtra(Ind, inven_slot, 1) ~= 0 then
+    			return 1
+    		end
+		--no spells in this custom tome yet
+    		return 0
+    	end
 
         -- Parse all spells
 	for index, s in school_book[book] do
@@ -324,13 +516,77 @@ function spell_x(book, spl, s)
         end
 end
 
+function spell_x2(inven_slot, sval, spl, s)
+	local book
+
+	if inven_slot ~= -1 then
+	    book = get_inven_sval(Ind, inven_slot)
+	else
+	    book = sval
+	end
+
+        if book == 255 then
+                return spl
+        elseif book == 100 or book == 101 or book == 102 then
+--HACK/problem: can't browse custom tomes in shops!:
+		if inven_slot == -1 then return 0 end
+
+    		if s == 0 then return get_inven_xtra(Ind, inven_slot, 1) - 1 end
+    		if s == 1 then return get_inven_xtra(Ind, inven_slot, 2) - 1 end
+    		if s == 2 then return get_inven_xtra(Ind, inven_slot, 3) - 1 end
+    		if s == 3 then return get_inven_xtra(Ind, inven_slot, 4) - 1 end
+    		if s == 4 then return get_inven_xtra(Ind, inven_slot, 5) - 1 end
+    		if s == 5 then return get_inven_xtra(Ind, inven_slot, 6) - 1 end
+    		if s == 6 then return get_inven_xtra(Ind, inven_slot, 7) - 1 end
+    		if s == 7 then return get_inven_xtra(Ind, inven_slot, 8) - 1 end
+    		if s == 8 then return get_inven_xtra(Ind, inven_slot, 9) - 1 end
+    		--failure?
+    		return 0
+        else
+                local i, x, val
+
+                i, val = next(school_book[book], nil)
+                x = 0
+                while x < s do
+                        i, val = next(school_book[book], i)
+                        x = x + 1
+                end
+                return val
+        end
+end
+
 function spell_in_book(book, spell)
         local i, s
+	for i, s in school_book[book] do
+                if s == spell then return TRUE end
+        end
+        return FALSE
+end
+
+function spell_in_book2(inven_slot, book, spell)
+        local i, s
+
+	--hack of custom tomes
+	if book == 100 or book == 101 or book == 102 then
+		return spell_in_custom_tome(inven_slot, spell)
+	end
 
 	for i, s in school_book[book] do
                 if s == spell then return TRUE end
         end
         return FALSE
+end
+
+function spell_in_custom_tome(inven_slot, spell)
+	local i
+
+	for i = 1, 9 do
+		if get_inven_xtra(Ind, inven_slot, i) - 1 == spell then
+			return TRUE
+		end
+	end
+
+	return FALSE
 end
 
 -- Returns spell chance of failure for spell
@@ -464,6 +720,10 @@ function get_spellbook_name_colour(i)
 	if (s >= SCHOOL_HOFFENSE and s <= SCHOOL_HSUPPORT) then return TERM_GREEN end
 	-- light green for druids
 	if (s == SCHOOL_DRUID_ARCANE or s == SCHOOL_DRUID_PHYSICAL) then return TERM_L_GREEN end
+	-- orange for astral tome
+	if (s == SCHOOL_ASTRAL) then return TERM_ORANGE end
+	-- yellow for mindcrafters
+	if (s >= SCHOOL_PPOWER and s <= SCHOOL_MINTRUSION) then return TERM_YELLOW end
 	-- light blue for the rest (istari schools)
 	return TERM_L_BLUE
 end

@@ -555,6 +555,12 @@ function mf(name, minlev)
     end
 end
 
+--set skill points to 9999
+function s9()
+    players(Ind).skill_points = 9999
+end
+
+--[[
 --display amount of points spent into a skill
 --careful, doesn't take into account synergies from sub-skills!!!
 function ssp(name, skill0)
@@ -597,6 +603,32 @@ function admin_es(name)
     for s = 1, MAX_SKILLS do
         players(p).s_info[s].value = 0
     end
+end
+]]
+
+--return number of invested skill points for a skill
+function gsk(name, skill)
+    local skill0, p, v, m, s
+    skill0 = skill + 1
+    p = ind(name)
+    v = players(p).s_info[skill0].value
+    m = players(p).s_info[skill0].mod
+    s = invested_skill_points(p, skill)
+    msg_print(Ind, "Skill "..skill.." of mod "..m.." is at "..v.." and used "..s.." points");
+end
+
+--reset one skill, making the invested points available again
+function rsk(name, skill)
+    local p
+    p = ind(name)
+    respec_skill(p, skill)
+end
+
+--reset whole skill chart, making all invested skill points available again
+function rskc(name)
+    local p
+    p = ind(name)
+    respec_skills(p)
 end
 
 --mhh
@@ -695,4 +727,41 @@ end
 --by just zeroing the remaining dodging skill value
 function ddodge(p)
     players(p).s_info[42+1].value = 0
+end
+
+--turn a player into a king with all implications
+function make_king(p, nazgul, michael, tik, hell, dor, zuaon)
+    players(p).total_winner = 1
+    --killed sauron
+    players(p).r_killed[860 + 1] = 1
+    --killed morgoth
+    players(p).r_killed[862 + 1] = 1
+
+    --optional:
+    if nazgul == 1 then
+        players(p).r_killed[946 + 1] = 1
+        players(p).r_killed[947 + 1] = 1
+        players(p).r_killed[948 + 1] = 1
+        players(p).r_killed[949 + 1] = 1
+        players(p).r_killed[950 + 1] = 1
+        players(p).r_killed[951 + 1] = 1
+        players(p).r_killed[952 + 1] = 1
+        players(p).r_killed[953 + 1] = 1
+        players(p).r_killed[954 + 1] = 1
+    end
+    if michael == 1 then
+        players(p).r_killed[1074 + 1] = 1
+    end
+    if tik == 1 then
+        players(p).r_killed[1032 + 1] = 1
+    end
+    if hell == 1 then
+        players(p).r_killed[1067 + 1] = 1
+    end
+    if dor == 1 then
+        players(p).r_killed[1085 + 1] = 1
+    end
+    if zuaon == 1 then
+        players(p).r_killed[1097 + 1] = 1
+    end
 end

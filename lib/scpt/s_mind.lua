@@ -118,3 +118,22 @@ TELEKINESIS = add_spell
                         "be in the Universe",
         }
 }
+
+SENSEMONSTERS = add_spell
+{
+	["name"] = "Sense Monsters",
+        ["school"] = {SCHOOL_MIND},
+	["level"] = 30,
+	["mana"] = 15,
+        ["mana_max"] = 20,
+        ["fail"] = -15,
+        ["spell"] = function()
+	        set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))
+		end,
+	["info"] = function()
+		return "dur "..(22 + get_level(Ind, SENSEMONSTERS, 28)).."+d10"
+		end,
+	["desc"] = {
+		"Sense all monsters' minds for a while.",
+	}
+}
