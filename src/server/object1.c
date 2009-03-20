@@ -1633,7 +1633,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		case TV_BOOK:
 		{                        
 //			basenm = k_name + k_ptr->name;
-			if (o_ptr->sval == SV_SPELLBOOK) modstr = school_spells[o_ptr->pval].name;
+			if (o_ptr->sval == SV_SPELLBOOK) {
+				if (school_spells[o_ptr->pval].name)
+					modstr = school_spells[o_ptr->pval].name;
+				else modstr = "Unknown spell";
+			}
 			break;
 		}
 		case TV_RUNE1:
