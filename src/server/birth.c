@@ -1078,7 +1078,11 @@ static byte player_init[MAX_CLASS][5][3] =
 	{
 		/* Mindcrafter */
 //		{ TV_BOOK, 50, 0 },
+#ifdef ENABLE_DIVINE
 		{ TV_BOOK, SV_SPELLBOOK, 111 },/* MSCARE */
+#else
+		{ TV_BOOK, SV_SPELLBOOK, 103 },/* MSCARE */
+#endif
 		{ TV_SWORD, SV_SHORT_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
