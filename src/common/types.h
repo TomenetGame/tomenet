@@ -2063,6 +2063,7 @@ struct player_type
 	bool stack_force_notes;
 	bool stack_force_costs;
 	bool short_item_names;
+	bool hide_unusable_skills;
 
 	bool find_ignore_stairs;
 	bool find_ignore_doors;
