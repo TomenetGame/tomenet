@@ -1,8 +1,8 @@
-s.=========================+==--.
+.=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. November 2008; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.1d (www.tomenet.net, usually outdated though).
+| Latest update: 20. March 2009; written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -46,6 +46,7 @@ Contents
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
     (3.7a)  Ability codes [contained within (3.7)]
+    (3.7b)  Quick'n'dirty macros
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
@@ -68,7 +69,7 @@ Contents
 (5) Item and monster details
     (5.1)   Melee weapons, brands
     (5.2)   Ranged weapons, brands
-    (5.2a)  Shoot-till-kill mode
+    (5.2a)  Fire-till-kill mode
     (5.3)   Slaying vs brands
     (5.4)   Martial Arts, brands
     (5.5)   Weight of weapons and armour
@@ -100,6 +101,7 @@ Contents
     (6.10)  Magic Device skill/ability details
     (6.11)  Parrying and blocking
     (6.12)  Fighting/shooting techniques
+    (6.13)  PvP mode
 (7) Tactics & strategy
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
@@ -186,6 +188,11 @@ compile the game under '(2.1) Installing TomeNET'.
  he is online (Admin's names are displayed in dark blue in the chat).
  The e-mail address is usually mentioned in the server's intro screen or just
  ask fellow players for it.
+-Press '@' key to see a list of players who're currently online. Note that a
+ yellow '(I)' before a name stands for 'invalid', and means that this player
+ is still awaiting account validation by an admin.
+ Also, if a grey '(O)' is in front of a player name, it means that player is
+ using an outdated client. It's very important to keep your client up to date!
 
 It is strongly recommended that you don't stop reading here, but continue at
 (3.2) now >;)
@@ -378,6 +385,11 @@ _       drink from a fountain. You must stand on the fountain to do this.
         There is also a /say command for talking to players nearby, and a
         /shout command for waking up monsters! See further below.
 @       displays a list of players currently on the server.
+        Note that a yellow '(I)' before a name stands for 'invalid', and means
+        that this player is still awaiting account validation by an admin.
+        Also, if a grey '(O)' is in front of a player name, it means that
+        player is using an outdated client. It's very important to keep your
+        client up to date!
 '       lets you peek at the equipment of party members or players within
         sight.
 <,>     go upstairs/downstairs. Press '>' to use a void gate (violet '+').
@@ -425,10 +437,15 @@ They all start with a slash '/':
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
-/dis        DESTROYS every item in your inventory that has one of these
- (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
+/dis        DESTROYS every item in your inventory that has none or one of
+ (/dispose) these inscriptions: terrible, cursed, uncursed, broken, worthless,
             average, good. Works only on items that actually can be destroyed.
-/dis a      DESTROYS every item in your inventory that lacks an inscription!
+            Skips 'flavoured' items that are not known to you yet (example:
+            'a blue potion {+,?}' or 'a malachite ring {+,?}').
+            Also see /tag and /untag.
+/dis a      DESTROYS items like /dis, and additionally destroys all items that
+            have no inscription at all.
+            Also see /tag and /untag.
 /dr         Wields all items in your inventory that are: not cursed,
  (/dress)   not {worthless}, not {terrible}, known to you.
 (The /empty function is currently disabled)
@@ -501,8 +518,22 @@ They all start with a slash '/':
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
             Also see '_' above, for additional information.)
+/tag [a..w] Tags all uninscribed items in your backpack by adding a '!k'
+            inscription. Helpful for looting in conjunction with /dis command.
+            If a slot (a..w) is specified, it only tags the item in that
+            particular inventory slot (if not yet inscribed already).
+/untag [<inscription>]
+            If <inscription is omitted, it removes all inscriptions from items
+            in your backpack which are exactly '!k' (as done by /tag command).
+            Ohterwise it removes inscriptions of all items which are exactly
+            inscribed as specified by <inscription>.
 /time       Tells you the current date and time (of the server, not of your
             local timezone). Useful to compare with bbs time stamps.
+/undoskills Allows you to undo the skill points you assigned in 'G' menu last
+            time. Use this to correct points you accidentally put into a wrong
+            skill.
+/pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
+            chars. See (6.13) for details about PvP mode.
 
 
 
@@ -573,7 +604,7 @@ Weapons:
 
 Ranged weapons:
     @O          Auto-retaliate with it (shooting ammo). ('O' is the letter)
-                NOTE: @O must be on your ammunition, not on the bow!
+                (Note: @O can either be on your ammunition or on the bow.)
 
 Spellbooks:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
@@ -590,6 +621,9 @@ Ammunition:
                 will be averaged and rounded downwards. (Doesn't work for
                 cursed or artefact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
+    !L          inscribe stacks of ammo in your inventory !L to make them be
+                automatically reloaded into your quiver as soon as the ammo
+                you're currently using runs out.
 
 Weapons that ricochet (sling ammo):
     !R          Prevents ricochetting.
@@ -665,6 +699,11 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
             Pseudo-id intensity and speed depend on the 'Combat' skill.
+PvP         Player vs player. Describes the act of player characters fighting
+            each other. If you want to fight other players to death, create a
+            new 'pvp-mode' character. It's an option during the character
+            creation process, much like 'everlasting mode' or 'normal mode'.
+            For more information about pvp mode, see (6.13).
 Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             also called 'Static arts' from the file a_info.txt. See 'Art'
             at the top of this section for more information.
@@ -704,7 +743,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 (0.5) Rumours, missing features, technical warnings (READ!)
 -----------------------------------------------------------
 -Usually characters expire (that means they are automatically deleted!)
- after 90 days of inactivity.
+ after 180 days of inactivity.
 -Items on the ground (especially in towns) often disappear automatically after
  a few minutes. So don't use the town to 'store' loot.
 -If you press CTRL+X to save&exit the game, you should do that in a safe town.
@@ -717,32 +756,15 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  20 seconds.
 -The items you find don't depend on your race or class but on monster level
  and depth and luck.
--Spells/round is always 1, even if the number displayed is higher (raised by
- items that effect your 'Spell power' via SPELL flag).
 -Don't drop artifacts inside houses if the server doesn't allow artifacts to
  be dropped inside player houses, or you will simply lose the artifact!
 -Items on the floor within a house don't form piles! If you drop too many
  items and space in the house runs out the dropped item may just disappear!
 -The massive iron crown of Morgoth must not be worn by non-Kings/Queens!
--Sometimes if you pick up an item from a pile, the next item below doesn't
- become visible on the map. You still 'feel' it if you step on the pile
- though. So if you died and were revived, scan your loot piles on the ground
- carefully to not miss one of your items at the bottom of a pile.
--Scrolls of House Creation don't work at this time and have been removed from
- the game since they had no effect except for generating cash by being sold
- to a shop.
 -Undead powers (for players' ghosts) are not available at the moment.
--Several shops' features have not yet been implemented.
+-Some shops' features have not yet been implemented.
 -Stealing from monsters is not possible.
 -'LEVELS' and 'ULTIMATE' flag on unique items currently don't do anything.
--Two types of crashes might occur:
- a) Everyone is recalled to town. After a crash all levels will stay static
-    for a short while, so you can recall back and grab loot or whatever.
- b) Players are not recalled. After you logged in again and find yourself in
-    the dungeon, it is highly recommended to recall instantly. When another
-    player enters that level, it can change its layouts/monsters completely
-    even while you're still on it and you might find yourself in big trouble
-    and sometimes unable to move. (In such cases rejoin and recall instantly.)
 
 
 
@@ -856,8 +878,6 @@ the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
 If you rely on melee weapons you must try to get your hands on an artifact
 since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
-Dark Swords and ego weapons also have a certain chance to resist destruction,
-ego Dark Swords are the best non-artifact weapons against Nazgul.
 If your weapon gets destroyed you'll receive a warning message:
 "Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed !"
 (The permanently cursed weapon 'Mighty Hammer of Grond' cannot be destroyed.)
@@ -1387,18 +1407,21 @@ And if you still have spare money (this one costs a lot) a
 (3.6) Creating basic macros & inscribing items
 ----------------------------------------------
 Macros are absolutely obligatory, you _will_ need them, so read this
-carefully and if something isn't explained well, ask a fellow player
-or send me a mail (mail@c-blue.de) :).
+carefully and if something isn't explained well, ask your fellow players to
+clarify.
+
 In turn-based single-player rogue-like games you always have enough time to
 press "q" (quaff a potion) followed by the according inventory slot, for
 example b) (if there is a potion of cure critical wounds in the second
 inventory slot).
+
 However, TomeNET is multiplayer and real-time. This means you don't have
 enough time to look at your inventory and search the correct letters for items
 which you might need *this instance* to avoid certain death. Often situations
 get hectic, for example if all of a sudden a dark elven warlock comes around
 the corner while you are engaging a pack of wolves, then you need kind of a
 panic button that quickly transports you out of trouble.
+
 To comply with this need, a macro system has been implemented, allowing you to
 program freely choosable keys of your keyboard to perform a series of other
 keypresses or commands when pressed. These macros can also interact with
@@ -1412,13 +1435,15 @@ Before: d) an Elven Cord Armor [6,+20] (+1) {+,10}
 After:  d) an Elven Cord Armor [6,+20] (+1) {+,10} {resists poison!}
 Inscriptions don't just help you to remember the abilities of certain items,
 they can also interact with the macro system and other aspects of the game.
+
 Usually if you want to quaff your potion of Heroism or read a scroll of Phase
-Door, you would press qc (q for quaff, then c for third inventory slot for
-example) or rd (r for read, then d for the fourth inventory slot, if your
-scroll resides here).
+Door, you would press keys 'q' 'c', q for quaff, then c for third inventory
+slot for example, or 'r' 'd' (r for read, then d for the fourth inventory
+slot, if your scroll resides here).
 However, if you just picked up another potion, your inventory order might be
 changed and you had to remember the new positions of your vital potion and
 scroll.
+
 Now we are going to create three macros that will instantly quaff the potions
 or read a scroll of recall, no matter where in the inventory they exactly are,
 on a single keypress! Inscribe the potion of Heroism "@q1", the scroll of
@@ -1427,16 +1452,19 @@ It should look like this now:
 b) a potion of Heroism {+,1} {@q1}
 c) a potion of Cure Light Wounds {+,1} {@q2}
 d) a scroll of Phase Door {+,1} {@r1}
+
 Now we will create macros that make use of these items. Invoke the macro menu
-by pressing '%' key. Then choose "(3) Enter a new action" and enter the two
-characters and press Enter:
+by pressing '%' key. Then choose "(3) Enter a new action" and enter the
+following two characters and press Enter:
 q1
 Now choose "(5) Create a normal macro", then press the F1 key.
 Now enter a new action, this time q2 instead of q1. Create another macro, this
 time hit F2. Then Enter the third macro, r1, and choose F3 key.
 Have your TomeNET client save the macros to a file on your hard disk, in your
-TomeNET directory at \lib\user by choosing "(2) Dump macros" and entering a
-filename, for example "warrior" or "firstmacros".
+TomeNET directory at \lib\user by choosing "(2) Save macros" and entering a
+filename, or simply confirming the shown default file name which is the same
+as your character (recommended!).
+
 Now if you press F1 you will automatically quaff the potion of Heroism, F2 for
 Cure Light Wounds and F3 to read the scroll. You are ready to enter the
 dungeon now. If you still have some spare money, buy a flask of oil to fuel
@@ -1444,11 +1472,23 @@ your lantern if it runs out, as well as some rations of food in case you get
 hungry.
 The next time you log on, you may load your previously saved macro file by
 invoking the macro menu again ('%'), choosing "(1) Load a user pref file" and
-entering the filename.
+entering the filename. If you saved the macros to the same name as your
+character, they will be automatically loaded, saving you that hassle.
 
-Note that while it looks like overkill to create macro hotkeys for all lesser
-items that aren't of importance during combat, inscribing them can still be
-helpful, allowing to easily access them.
+
+The macro recorder:
+-------------------
+Note that instead of entering an action string (such as 'q1' or 'r5'), the
+macro menu also provides a 'macro recorder', which when invoked will record
+all your key presses until you enter the macro menu again. Then the keys
+you pressed will be the default action that you can directly bind to a trigger
+key by choosing normal, command, or hybrid macro.
+
+
+Note that while it is probably overkill to create macro hotkeys for items
+which aren't as important as healing or teleportation, inscribing them can
+still be helpful because it allows you to easily access them.
+
 Example: You inscribed your flasks of oil @F1 . Now if your lantern is running
 low on oil you just type the keys 'F' (to fill) and '1' instead of having to
 search your inventory for the correct slot letter the oil flasks reside at.
@@ -1530,6 +1570,10 @@ the key 'r' which is used to read a scroll, you can reset the key by
 
 (3.7) Creating macros for ranged attacks & abilities (spells)
 -------------------------------------------------------------
+Note: This section is becoming pretty advanced. If you want to try an easier
+method but miss a nice fundamental explanation on the way macros work, you
+may just jump to (3.7b) now!
+
 Those macros basically consist of three parts.
 1. Clearing the keyboard buffer (to avoid your character locking up in
    an attack queue if you hammer the trigger button for a ranged attack).
@@ -1689,7 +1733,7 @@ want to use in your macros, by specifying the "ability code"!
 
 Here is a list of all available ability codes:
 3       Use innate power (for mimicry-users)
-4       Toggle shoot-till-kill mode, usable by anyone. See (5.2a).
+4       Toggle Fire-till-kill mode, usable by anyone. See (5.2a).
 5       Fighting techniques (see (6.12))
 6       Shooting techniques (see (6.12))
 8       Check your dodge chance (for dodging skill)
@@ -1729,6 +1773,33 @@ a   ->  cast spell "a)" (Manathrust)
 mb2a*t
 ..assumed that entry 'b)' in the ability menu (invoked by 'm') is
 'b) Cast a spell'. Except for escaping and clearing the keyboard buffer.)
+
+
+(3.7b) Quick'n'dirty macros
+---------------------------
+Macro actions can be complex and hence time-consuming to enter and prone to
+errors furthermore.
+To allow you to quickly hack in macro actions, there's the Quick'n'Dirty
+option in the macro menu, which will accept short cut characters instead of
+the usual full macro.
+
+On entering the macro action, those characters will be automatically expanded
+to their real functionality. They are:
+  M for using a mimic's innate power
+  F for employing a fighting technique
+  S for employing a shooting technique
+  m for casting a spell
+  n for drawing a rune
+  p for setting up a trap
+  s for changing a stance 
+  * for targetting the nearest monster
+Also, '\e)' is automatically prefixed, and the most fitting macro type
+automatically chosen (depending on the trigger key).
+
+Example: Assumed your book is inscribed @m1 as usual, and you want to cast
+spell a). What you can simply enter in the q'n'd field is:
+  m1a*
+and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
 
 
 
@@ -1943,6 +2014,7 @@ which types   :!:   for you on a single key press automatically:
 --------------------------------------------
 By killing monsters your character gains experience. In general, harder
 monsters on deeper dungeon levels give more experience than easy kills.
+
 Hanging out on easy dungeon levels compared to your character level (for
 example a high level 50 character on an (to him) easy dungeon level like 60)
 may result in diminishing returns of experience points for killed monsters,
@@ -1951,11 +2023,26 @@ challenge to the player, and whose levels are far above the player
 character's level, will be very rewarding in terms of experience and loot.
 Experience is shared automatically in 'parties', see (6.9).
 
+
 Recommended minimum depths for optimal experience gain
-Note: Always the deeper is the better! These are only _minimum_ recommended
-depths. Also, your character might not always be strong enough to survive on
-these depths. In that case better move to easier dungeon levels until you
-found decent items and maxed out your vital stats.
+
+Note: In general, the deeper the better! These are only _minimum_ recommended
+depths above which your experience gain will receive a quite severe reduction.
+Also, your character might not always be strong enough to survive on
+these depths. In that case, despite the experience penalty, you should
+consider moving to easier dungeon levels anway until you found decent items
+and maxed out your vital stats (constitution, etc).
+
+Note: Your depth display in the bottom right screen corner will indicate the
+appropriateness of your current depth by its colour:
+If you're far above your minimum depth, it'll be dark grey, indicating that
+you cannot expect any good experience gain at all here.
+If you're not more than a couple of levels above your minimum "good" depth,
+it'll turn yellow, to tell you that you're getting close to the depth required
+for best results.
+On the minimum required depth or deeper, it's white.
+(On a side note, while word-of-recall is pending, it'll turn orange, since
+it's also used as a word-of-recall indicator this way.)
 
     Character level     |     Dungeon level
 -------------------------------------------------
@@ -2735,6 +2822,11 @@ feeling as soon as you are about to enter the vault:
                                         recall while inside the vault. Beware!
                                         Further, Wraith Form and probability
                                         travel won't work either!
+                                        The fact that you are standing within
+                                        a no-tele area is also indicated by
+                                        your (xx, yy) position display on the
+                                        lower left area of the main window
+                                        turning from light green to dark grey!
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
 "Fresh air greets you as you leave the vault."
 
@@ -2784,16 +2876,22 @@ giving all your party members access to it). You need to stand directly next
 to the house door to do this.
 The house doors can have different colours to you: 
 -a green house door indicates that you have access to it,
--a brown house door indicates that the house is currently unowned
- (so you may buy it)
+-a light brown house door indicates that the house is currently unowned
+ (so you may buy it).
 -a grey door indicates that this house is owned by someone and you don't have
  access to it.
+-a light blue door indicates that you may access this house because it's set
+ to party access for your party.
+-a white door indicates that you may access this house because your race or
+ class is matching an according race/class access rule.
+-an orange door indicates that you will have party access to this house, as
+ soon as your level matches the door level set by its owner.
+-a violet door indicates that you may access this house because you're in the
+ same guild as the owner, ie the house is set to 'guild access'.
 If you forgot which houses you own, type ~6 to see a list of your houses.
 
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
-
-Party/Guild access are currently disabled due to abuse, sorry :|.
 
 
 
@@ -2912,6 +3010,17 @@ Highlander Tournament
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus.
 
+Arena Monster Challenge
+    The wizards of Arena Monster Challenge (tm) have prepared a spectacular
+    even on the top floor of Bree's training tower, which will allow any Joe
+    and Jane to experience top-notch fights against creatures that usually
+    pose leathal threat. In this illusonary arena, players will experience
+    a fight that seems absolutely real, but they won't suffer any
+    consequences if they lose, ie 'die'. Test your might against any foe you
+    always wanted to challenge but never dared in real dungeoneer's life!
+    It's also possible to challenge ego monsters (such as veteran archers or
+    holy animals). The arena corners are safe zones and allow for spectating.
+
 
 
 (5) Item and monster details
@@ -2968,7 +3077,7 @@ be added to the dice result.
 
 If you manage to get your hands on an item that imbues your melee weapon with
 an elemental brand (like a Ring Of Ice for example), the dice of your weapon
-will be multiplied by 3 if the target doesn't resist that brand.
+will be multiplied by 2 if the target doesn't resist that brand.
 See (5.3) to get an easy overview.
 
 Characters using weapons have a limited number of melee attacks per round,
@@ -3055,15 +3164,15 @@ remember currently selected target.
 To automatically pick up your arrows simply inscribe them:  !=
 Ranged weapons can also auto-retaliate, that means you will fire automatically
 at targets on sight. To make your ranged weapon behave like that, inscribe the
-_ammunition_ (not the bow):  @O  (the letter 'O').
+bow or ammunition:  @O  (the letter 'O').
 However, auto-retaliating with a ranged weapon works only if the enemy stands
-on an adjacent field, so it's pretty useless :)
+on an adjacent field, so use 'fire-till-kill' mode in general!
 
 The dice of ammunition are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 2/5.
-Example: Ring of Acid will usually add 2x your melee base damage (dice).
-For ranged weapons it will add 2*2/5x of your base damage, so multiply your
-base damage by 1.8 instead of by 3 to get your total damage output.
+Example: Ring of Acid will usually add 1x your melee base damage (dice).
+For ranged weapons it will add 1*2/5x of your base damage, so multiply your
+base damage by 1.4 instead of by 3 to get your total damage output.
 See (5.3) to get an easy overview.
 
 If you try to wield a ranged weapon that is too heavy for your character,
@@ -3074,9 +3183,9 @@ That means you'll get neither any benefits from your 'Archery' skill nor from
 any particular ranged mastery (extra shots!) at all when using that weapon.
 
 
-(5.2a)  Shoot-till-kill mode
+(5.2a)  Fire-till-kill mode
 ----------------------------
-Accessible via 'm' key, you can switch 'shoot-till-kill' mode on or off.
+Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
 While enabled, your character will keep firing a ranged weapon once you
 initiated the first shot until the target either dies or direct firing at it
 becomes impossible/obstructed for any reason.
@@ -3088,36 +3197,36 @@ escorts.
 
 (5.3) Slaying vs brands
 -----------------------
-If you use a weapon that slays trolls, that means its dice will be tripled if
+If you use a weapon that slays trolls, that means its dice will be doubled if
 you hit a troll ('T'). If you have an item that gives fire brand, the dice
-would also be tripled by the brand. Slaying and brands are not cumulative.
-That means you will get a total dice multiplier of 3 here.
+would also be doubled by the brand. Slaying and brands are not cumulative.
+That means you will get a total dice multiplier of 2 here.
 Brands don't stack. The best one is taken. So if you wear a ring of fire and
-your weapon does cold damage the dice will be multiplied by 3 if the target
+your weapon does cold damage the dice will be multiplied by 2 if the target
 doesn't resist both heat and cold. If the target is susceptible to one of
-those the dice are multiplied by 6. Same goes for SLAY flags.
+those the dice are multiplied by 4. Same goes for SLAY flags.
 
 Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
             | ..is immune   | ..resists | ..doesn't resist  | ..is susceptible
 ------------|-----------------------------------------------------------------
-Melee Weapon|       1             2               3                   6
-Ranged Weap.|       1             1.4             1.8                 3
-Martial Arts|       1             1.33            1.67                2.67
+Melee Weapon|       1             2               2                   4
+Ranged Weap.|       1             1.4             1.4                 2.2
+Martial Arts|       1             1.33            1.33                2
 
 Slaying     | Dice multiplier | Description
 ------------|-----------------------------------------------------------------
 Slay Animal |       2         | It is esp. deadly against natural creatures.
-Slay Giant  |       3         | It is especially deadly against giants.
-Slay Undead |       3         | It strikes at undead with holy wrath.
-Slay Troll  |       3         | It is especially deadly against trolls.
-Slay Orc    |       3         | It is especially deadly against orcs.
-Slay Dragon |       3         | It is especially deadly against dragons.
-Slay Demon  |       3         | It strikes at undead with holy wrath.
+Slay Giant  |       2         | It is especially deadly against giants.
+Slay Undead |       2         | It strikes at undead with holy wrath.
+Slay Troll  |       2         | It is especially deadly against trolls.
+Slay Orc    |       2         | It is especially deadly against orcs.
+Slay Dragon |       2         | It is especially deadly against dragons.
+Slay Demon  |       2         | It strikes at undead with holy wrath.
 Slay Evil   |       2         | It fights against evil with holy fury.
-Kill Undead |       5         | It is a great bane of undead.
-Kill Dragon |       5         | It is a great bane of dragons.
-Kill Demon  |       5         | It is a great bane of demons.
+Kill Undead |       3         | It is a great bane of undead.
+Kill Dragon |       3         | It is a great bane of dragons.
+Kill Demon  |       3         | It is a great bane of demons.
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
@@ -3206,9 +3315,9 @@ Heavy shield/weapons |                                 0
 Martial Arts special combat moves have certain dice, similar to normal
 weapons. These dice are also effected by brands and slays same as normal 
 weapons but the additional damage is reduced to 1/3.
-Example: Ring of Acid will usually add 2x your base damage.
-For MA it will add 2/3x of your base damage, so multiply your base damage
-by 1.67 instead of by 3 to get your total damage output.
+Example: Ring of Acid will usually add 1x your base damage.
+For MA it will add 1/3x of your base damage, so multiply your base damage
+by 1.33 instead of by 2 to get your total damage output.
 See (5.3) to get an easy overview.
 
 You cannot use special moves while stunned or confused.
@@ -3458,7 +3567,8 @@ Frost/Cold              These attacks can shatter potions.
                         Cold breaths do HP / 3 damage, capping at 1200.
                         Immunity or double resistance protects items in your
                         inventory and equipment from getting harmed (5.10).
-Lightning/Electricity   These attacks can destroy rings and amulets.
+Lightning/Electricity   These attacks can destroy rings, damage amulets and
+                        discharge magic devices, draining their charges.
                         Without resistance it can reduce your dexterity.
                         Lightning bolts do (level/3)+(4d8) damage.
                         Lightning balls do (level*3/2)+8 damage.
@@ -3685,8 +3795,8 @@ hounds are susceptible against cold attacks.
 Physical attacks vs monsters:
 Susceptibility of a monster will result in a doubled multiplier for
 branded attacks. Example: If the player hits a Cold Hound with a
-fiery broad sword (2d6) the Cold Hound will receive 2d6 * 6 damage
-instead of 2d6 * 3 (usual brand multiplier for melee weapons).
+fiery broad sword (2d6) the Cold Hound will receive 2d6 * 4 damage
+instead of 2d6 * 2 (usual brand multiplier for melee weapons).
 Also see (5.3) for a table of brand multipliers.
 
 Magical attacks vs monsters:
@@ -5075,8 +5185,8 @@ Note that not every skill is available to every profession (class).
                                 multiple times, hitting multiple enemies.
                                 Note that magic and ethereal ammo fades away
                                 the moment it hits, and never ricochets.
-                                Note that exploding ammo cannot be deflected
-                                by "reflecting" monsters.
+                                Note that the explosion of exploding ammo will
+                                still hit "reflecting" monsters.
                                 Artifact ammunition never breaks.
         .Bow-mastery            At 12.5, 25, 37.5, 50 you will get +1 extra
                                 shot per round each.
@@ -5165,6 +5275,9 @@ Note that not every skill is available to every profession (class).
     .Holy Support               Learn prayers of the Holy Support branch.
     .Arcane Lore                Learn druid magic tought by arcane lore.
     .Physical Lore              Learn druid magic tought by physical lore.
+    .Psycho-Power               Learn mindcrafter spells of psycho-power.
+    .Thought Contact            Learn mindcrafter spells of tought contact.
+    .Mental Intrusion           Learn mindcrafter spells of mental intrusion.
 .Runemastery                    Determines how skillful you are in handling
                                 magical symbols aka 'Runes'.
                                 At 15, it gives perfect bolt casting
@@ -5706,15 +5819,16 @@ Vampire
     their close surroundings even in complete darkness. This ability grows
     when the vampire rises in character-levels.
     Vampires are good fighters and decent mages. However, they are unable to
-    utilize magic of water, nature or divination school. Neither can they make
-    use of mimicry techniques or holy spells. They are unable to try and
-    suppress magic, but can make use of items that provide antimagic effects.
+    utilize magic of water or nature school. Neither can they make use of
+    mimicry techniques or holy spells. They are unable to try and suppress
+    magic, but can make use of items that provide antimagic effects.
     They resist darkness, nether, poison and cold and it's hard to drain their
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
-    creatures. Vampires dislike blunt ('hafted') weapons, but receive a bonus
-    on all necromancy skills. They become able to turn into a bat at level 20.
+    creatures. Vampires dislike blunt ('hafted') weapons, get a small penalty
+    on divination magic, but receive a bonus on all necromancy skills.
+    They become able to turn into a bat at level 20.
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
@@ -5960,6 +6074,27 @@ Runemaster
     and hence only available to quite intelligent races.
     For more information about runes, see '(5.20) Runes & Runemastery'.
 
+Mindcrafter
+    Mindcrafters are a fair melee fighters who specialize in use of telepathy
+    to unleash spells formed by their psychic powers. They have a lot of
+    possibilities to positively or negatively influence the minds of others,
+    and will have reduced repertoire if they are up against creatures of
+    little or no intelligence. Their primary stat attribute is intelligence,
+    which determines their spell fail rates as well as the most part of their
+    mana pool. Also somewhat affecting the mana pool are their secondary and
+    tertiary attributes charisma and wisdom, although especially wisdom is
+    hardly of any importance to become an able telepathy user.
+    Despite being focussed on sharpening their mind, they don't lack stealth
+    or close combat potential. Except that wearing very heavy head gear might
+    negatively impact their amount of psychic energy.
+    Some of the mindcrafter's spells that interact with friendly targets,
+    mostly his team mates, will require those to prepare and open their mind
+    to become especially sensitive to telepathic contact. This is done by
+    pressing 'p'. Pressing it again will return one's mind to normal.
+    The effects of some necromancy skills are somewhat distracting to
+    mindcrafters, so training them may require a slightly more effort.
+
+
 If you raise in levels, you will get new titles. These are displayed between
 your class name and your character level in the main window. If you die and
 become a ghost, the title will change to 'Ghost' until you get revived.
@@ -6009,6 +6144,8 @@ Shaman       0  +1  +2  -2   0   0       +4      +30%       4
             10  13  30   5  30  20  45  20              poor     poor
 Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
             10  20  20   0  30  20  45  20              fair     fair
+Mindcrafter -1  +3   0  -1  -1  +1       +4      +25%       4
+            30  30  36   2  35  14  45  35              fair     poor
 
 
 
@@ -6782,6 +6919,76 @@ Physical Lore
                     Required skill level for first spell level: 1.
 
 
+Mindcraft schools:
+------------------
+Psycho-Power
+    Psychokinesis   Destroys traps by psychokinetic manipulation.
+                    Required skill level for first spell level: 3.
+    Autokinesis I   Teleports you within a small range.
+                    Required skill level for first spell level: 5.
+    Autokinesis II  Teleports you over a long range.
+                    Required skill level for first spell level: 16.
+    Autokinesis III Teleports you towards a party member with opened mind.
+                    Required skill level for first spell level: 24.
+    Pyrokinesis     Causes a severe inflammation to burn your opponent.
+                    Required skill level for first spell level: 20.
+    Cryokinesis     Causes a dramatic temperature drop on your opponent.
+                    Required skill level for first spell level: 24.
+    Psychic Warp    Attempts to teleport away your opponent.
+                    Required skill level for first spell level: 30.
+Thought Contact
+    Clear Mind      Removes fear, confusion and hallucination. (auto-project)
+                    Required skill level for first spell level: 3.
+    Willpower       Boosts your willpower to unleash hidden potential,
+                    improving both your performance and resilience.
+                    Gives heroism and fear resistance, and chance to resist
+                    confusion, paralysis and slowness.
+                    Later on gives +1 extra attack.            (auto-project)
+                    Required skill level for first spell level: 3.
+    Self-Reflection Find out more about yourself.
+                    Required skill level for first spell level: 15.
+    Accelerate Nerves
+                    Speeds you up.
+                    Required skill level for first spell level: 20.
+    Telepathy       Senses the minds of creatures.
+                    Required skill level for first spell level: 20.
+    Stabilize Thoughts
+                    Cures some insanity and removes effects.   (auto-project)
+                    Required skill level for first spell level: 25.
+    Telekinesis     Inscribe your book @P<Playername>, cast it, select an
+                    item that you wish to teleport to the player's inventory.
+                    The target player needs to concentrate by opening her/his
+                    mind, see (0.2). It's dangerous to have the mind opened,
+                    since everyone can send you any items, so better close it
+                    again as soon as the desired telekinesis transaction is
+                    done. Example inscription: @PGandalf
+                    Required skill level for first spell level: 30.
+
+Mental Intrusion
+    Psionic Blast   Blasts the target's mind with psionic energy.
+                    Possibly causing various additional effects.
+                    Required skill level for first spell level: 1.
+    Scare           Infuses your target's mind with fear.
+                    Lv10: Becomes a ball effect.
+                    Lv20: Affects all monsters in LoS.
+                    Required skill level for first spell level: 1.
+    Confuse         Infuses your target's mind with confusion.
+                    Lv15: Becomes a ball effect.
+                    Lv30: Affects all monsters in LoS.
+                    Required skill level for first spell level: 3.
+    Sleep           Puts your target's mind to sleep.
+                    Lv20: Affects all monsters in LoS.
+                    Required skill level for first spell level: 5.
+    Drain Strength  Slows your target down, draining power from its muscles.
+                    Lv10: Becomes a ball effect.
+                    Lv20: Affects all monsters in LoS.
+                    Required skill level for first spell level: 7.
+    Psychic Suppression
+                    Drains the target's psychic energy, impacting its ability
+                    to cast spells temporarily.
+                    Required skill level for first spell level: 10.
+
+
 
 (6.9) Parties, Iron Teams, Guilds
 ----------------------------------
@@ -6977,7 +7184,7 @@ The techniques are as follows:
 
     Fighting techniques:
     --------------------
-    Sprint							6 stamina
+    Sprint							7 stamina
         Your character will be able to move faster even with monsters in view.
         Normal running isn't affected.
     Taunt               2 stamina
@@ -6991,15 +7198,15 @@ The techniques are as follows:
 
     Rogue-specific fighting techniques:
     -----------------------------------
-    Distract
+    Distract            1 stamina
         Your character will attempt to appear wimpy to adjacent monsters, in
         hope of making them attack another player standing next to you
         instead of you. Not all monsters can be fooled all the time though.
-    Flash bomb
+    Flash bomb          4 stamina
         You throw down a flash bomb that causes a flash of light, blinding
         your opponents for a short time, giving you opportunity to escape or
         kill them off while they are running around in confused state.
-    Shadow run (Kings/Queens only!)
+    Shadow run          10 stamina, kings/queens only!
         You will move at blinding speed, your silhouette turning shadowy.
         Ranged attacks will hardly be able to pin you down, and you will move
         at increased speed. You can even perform a backstab opening attack
@@ -7035,11 +7242,73 @@ The techniques are as follows:
         Prepares to fire a powerful multi-shot which will cost you a whole
         turn. It stuns the target.
 
-    Note: The technique 'Shoot-till-kill' is available to any class, and
+    Note: The technique 'fire-till-kill' is available to any class, and
     does appear directly under 'm'. See (5.2a) for details.
 
 Stamina regenerates slowly over time, faster while resting. Your CONstitution
 stat and 'Health' skill will further improve regeneration speed.
+
+
+
+(6.13) PvP mode
+---------------
+
+PvP stands for "Player vs player". This describes the act of player characters
+fighting each other, usually to death. In that regard, it is quite different
+to the 'blood bond' duel, which always ends without anyone getting hurt.
+
+If you want to fight other players to death in a real pvp match, create a
+'pvp-mode' character. It's an option during the character creation process,
+much like 'everlasting mode' or 'normal mode'.
+
+PvP-mode characters use the /pvp command to enter/leave the pvp arena. This
+arena also releases monsters from time to time. The entry point of a player is
+random, because he gets teleported on arrival.
+
+PvP-mode characters are called 'Gladiators' and use special rulesets that make
+it easier to rise in levels and less of a hassle when you get actually killed
+by an opponent! The special rules that apply are as follows:
+
+
+-PVP chars have only one life and no ghost, ie are erased on death same as
+ no-ghost chars. However, they play more fast-paced and are quickly brought up
+ again. The purpose of PVP chars is to fight other players to the death
+ without remorse, which would otherwise be an unacceptable loss if done with
+ regular characters (who can at least use Blood Bond scrolls for friendly duels
+ though).
+-yellow name in chat, yellow * marker in @-list, completely yellow entry
+ in @-list if viewed by another PVP mode char.
+-start at level 10 and with about 10000 Au.
+-reach level 30 at most.
+-gain no exp from monsters, no credit for killing uniques (hence cannot become
+ king/queen), cannot use static artifacts, can gain loot and money from
+ killing monsters though.
+-cannot team up or exchange goods with non-PVP chars.
+-will automatically be hostile to all other PVP chars, except for towns which
+ are safe zones!
+-will always ESP all other PVP chars as well as see their location in @-list.
+-gains exp (enough for advancing up to 2 levels at once even!) from killing
+ another PVP char. Lower level opponents will give less exp than equal/higher.
+-if a pvp char dies to a monster or trap, all nearby pvp chars will receive a
+ share of his kill count, which currently even gets rounded up(!).
+-gets number of kills of a victim credited as his own kills :) (useful for
+ reward, see below).
+-walk faster by default, similar to 'sprint' fighting technique.
+-cannot chase PVP chars _much_ lower then himself by entering their dungeon
+ level, because he will get auto-recalled then (anti-chicken).
+-will get rewards (similar to highlander tournament) for reaching high/top
+ level or killing an amount of opposing gladiators (other PVP chars).
+-will get deed when killed at high level for his next PVP character, which can
+ be exchanged for an extra item. Highest level deed can be received by non-pvp
+ char.
+-mimicry users gain one free transformation of their choice on (multiple)
+ levelup, and also learn forms 3x as fast as regular characters.
+-diminishing effect on healing: if you spam heal pots, the effect will lessen
+ more and more. over time, it returns to normal. entering a town will reset it
+ too.
+-teleportation will be suppressed during combat, phase door is allowed though.
+-while in a fight with another pvp-char, you cannot teleport away easily
+ (takes about 30 seconds to wear off, or just enter a town to reset).
 
 
 
@@ -7499,7 +7768,6 @@ The most powerful representant of each class:
  it @Ox before fighting a Nazgul to avoid auto-retaliation and then use
  spells or whatever to destroy it. If you rely on melee weapons get an
  artifact since these resist Nazgul greatly!
- Dark Swords and ego weapons also have a certain chance to resist destruction.
  (Compare (1.5).)
 
 -Unique 'P' are often very dangerous, some say the most dangerous next to
@@ -7804,7 +8072,9 @@ Cursed randarts cannot be sold to shops even if the curse is broken. They gain
 only very few abilities, which are accompanied by different types of curses.
 
 All armour-type randarts will have at least +10 to AC bonus (except if they
-happen to be cursed), and dragon scale mails will even have at least +15.
+happen to be cursed), usually much more, dragon scale mails especially.
+Also, the higher level the base type of an armour, the more +AC it can expect
+as a randart.
 
 Possible mods that randarts may get depend on its base type.
 Further, there are general mods that may appear on all items regardless of its
@@ -7915,6 +8185,7 @@ Shields
         All basic resistances (acid/elec/fire/cold)
         Reflection
         Reduced weight
+        Always the maximum of +15 AC, if the server uses block-percentages
 Cloaks
         Stealth
         Feather falling (levitation)
