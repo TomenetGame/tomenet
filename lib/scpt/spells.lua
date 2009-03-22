@@ -6,8 +6,7 @@
 -- Create the schools
 
 
---hack: these lines are required till next client version is out,
---      which has these defined in player.pkg+defines.h correctly.
+--hack until next client version:
 SKILL_ASTRAL = 77
 SKILL_PPOWER = 80
 SKILL_TCONTACT = 81
@@ -179,8 +178,6 @@ pern_dofile(Ind, "p_support.lua")
 pern_dofile(Ind, "dr_arcane.lua") 
 pern_dofile(Ind, "dr_physical.lua")
 
-pern_dofile(Ind, "d_astral.lua")
-
 pern_dofile(Ind, "m_ppower.lua")
 pern_dofile(Ind, "m_tcontact.lua")
 pern_dofile(Ind, "m_mintrusion.lua")
@@ -238,7 +235,7 @@ school_book[9] = {
 
 -- Create the book of the mind * CHARM requires pets first (46-48)
 school_book[10] = {
-        CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS,
+	CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS
 }
 
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
@@ -279,9 +276,9 @@ school_book[17] = {
 }
 
 -- Divine Race Tome
-school_book[18] = {
-	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, POWERCLOUD,
-}
+--school_book[18] = {
+--	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY,
+--}
 
 -- Create the book of mindcrafting: Psycho-power (-)
 school_book[19] = {

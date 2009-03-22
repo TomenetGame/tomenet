@@ -3,7 +3,7 @@
 
 MSELFKNOW = add_spell
 {
-	["name"] = 	"Self-Reflexion",
+	["name"] = 	"Self-Reflection",
         ["school"] = 	{SCHOOL_TCONTACT},
         ["level"] = 	15,
         ["mana"] = 	15,
@@ -39,6 +39,7 @@ MBOOST = add_spell
 			"Boosts your willpower to unleash hidden potential,",
 			"improving both your performance and resilience",
 			"***Automatically projecting***",
+-- what it infact does: tohit, res.fear, %res.conf, %res.para, %res.slow, +1 ea (later)
 	}
 }
 
