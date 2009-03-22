@@ -6356,11 +6356,17 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 
 	/* No terraforming on impossible ground -
 	   compare twall_erosion() for consistency */
-	if ((feat == FEAT_TREE || feat == FEAT_BUSH || feat == FEAT_WALL_EXTRA) &&
+#if 0
+	if ((feat == FEAT_TREE || feat == FEAT_BUSH || feat == FEAT_FLOOR ||
+	    feat == FEAT_WALL_EXTRA || feat == FEAT_QUARTZ || feat == FEAT_MAGMA) &&
+	    feat_mud, feat_dirt, etc.... just #else maybe easier?..
 	    (c_ptr->feat == FEAT_DEEP_LAVA ||
 	    c_ptr->feat == FEAT_DEEP_WATER))
+#else
+	if (c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+#endif
 		return;
-	
+
 	/* Trees in greater fire become dead trees at once */
 	if ((feat == FEAT_TREE || feat == FEAT_BUSH) &&
 	    (c_ptr->feat == FEAT_SHAL_LAVA ||

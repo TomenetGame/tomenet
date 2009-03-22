@@ -3127,6 +3127,7 @@ if (season_halloween) {
 				msg_print(Ind, "You refuse to be frightened.");
 			}
 			else if (rand_int(100) < p_ptr->skill_sav)
+//already gives res_fear --			|| (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			{
 				msg_print(Ind, "You refuse to be frightened.");
 			}

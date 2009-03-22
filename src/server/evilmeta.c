@@ -15,7 +15,7 @@
 
 #define PORT 8800
 // #define HOST "meta.tomenet.net"
-#define HOST "metaserver.servegame.com"
+#define HOST "localhost"
 
 void callup(int val);
 int connsocket(int port, char *host);

@@ -2640,27 +2640,24 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/val")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
-				if (validate(message3)) {
-					msg_format(Ind, "\377GValidating %s", message3);
+				switch(validate(message3)) {
+				case -1: msg_format(Ind, "\377GValidating %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377rAccount %s already completely valid", message3);
 				}
-				else {
-					msg_format(Ind, "\377rAccount %s not found", message3);
-				}
-					
-/*				do{
-					msg_format(Ind, "\377GValidating %s", token[tk]);
-					validate(token[tk]);
-				}while(--tk);
-*/				return;
+				return;
 			}
 			else if (prefix(message, "/inval")){
 				if(!tk) return;
 				/* added checking for account existance - mikaelh */
-				if (invalidate(message3)) {
-					msg_format(Ind, "\377GInvalidating %s", message3);
-				}
-				else {
-					msg_format(Ind, "\377rAccount %s not found", message3);
+				switch(invalidate(message3)) {
+				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
 				}
 				return;
 			}

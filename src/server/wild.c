@@ -1589,7 +1589,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y)
 			c_ptr->feat = FEAT_FLOOR;
 
 			/* Make it "icky" */
-			c_ptr->info |= CAVE_ICKY;			
+			c_ptr->info |= CAVE_ICKY;
 		}
 	}
 		

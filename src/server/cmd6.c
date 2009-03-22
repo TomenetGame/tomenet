@@ -8850,6 +8850,10 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			return;
 		}
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k')) {
+			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare.");
+			return;
+		}
 		for (i = 0; i < INVEN_WIELD; i++)
 			if (p_ptr->inventory[i].tval == TV_FLASK) { /* oil */
 //				p_ptr->cst -= 2;

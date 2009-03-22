@@ -1582,7 +1582,7 @@ void do_cmd_close(int Ind, int dir)
 byte twall_erosion(worldpos *wpos, int y, int x)
 {
 	int tx, ty, d;
-	byte feat = FEAT_FLOOR;
+	byte feat = FEAT_FLOOR; /* todo: use something like 'place_floor'*/
 	cave_type **zcave;
 	cave_type *c_ptr;
 	if(!(zcave=getcave(wpos))) return(FALSE);
@@ -1599,8 +1599,8 @@ byte twall_erosion(worldpos *wpos, int y, int x)
 		c_ptr=&zcave[ty][tx];
 		if (c_ptr->feat == FEAT_DEEP_WATER)
 		{
-//			feat = FEAT_DEEP_WATER; /* <- only if it's also terraformable in turn (see cave_set_feat) */
-			feat = FEAT_SHAL_WATER; /* <- if deep water is NOT terraformable (see cave_set_feat) */
+//			feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
+			feat = FEAT_SHAL_WATER; /* <- this should be used otherwise */
 			break;
 		}
 	}
@@ -4182,12 +4182,19 @@ void do_cmd_fire(int Ind, int dir)
 					}
 
 
-					/* Handle reflection - it's back, though weaker -
-					   New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
+					/* Handle reflection - it's back, though weaker */
+#if 0 /* hm doesn't make sense, but is pretty unbalanced even :/ */
+					/* New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
 					if ((r_ptr->flags2 & RF2_REFLECTING) && !boomerang && !o_ptr->pval && magik(50)) {
+#else
+					if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
+#endif
 						msg_format(Ind, "The %s was deflected.", o_name);
 						num_ricochet = 1;
 						hit_body = 1;
+
+						if (!boomerang && !magic && o_ptr->pval)
+							do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 						break;
 					}
 					

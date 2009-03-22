@@ -223,6 +223,9 @@ void do_cmd_check_uniques(int Ind, int line)
 		}
 	}
 
+	if (!own_highest)
+		fprintf(fff, "\377U  (you haven't killed any unique monster so far)\n");
+
 	if (total) {
 		/* Setup the sorter */
 		ang_sort_comp = ang_sort_comp_mon_lev;
@@ -240,12 +243,8 @@ void do_cmd_check_uniques(int Ind, int line)
 			k = idx[l];
 			r_ptr = &r_info[k];
 
-			/* extra marker line to show where our glory ends for the moment */
-			if (own_highest && (own_highest_level < r_ptr->level)) {
-				fprintf(fff, "\377U  (strongest unique monster you killed)\n");
-				/* only display this marker once */
-				own_highest = 0;
-			}
+#if 0 //buggy, see below
+#endif
 
 			/* Output color byte */
 			fprintf(fff, "\377w");
@@ -336,6 +335,13 @@ void do_cmd_check_uniques(int Ind, int line)
 
 			/* Terminate line */
 			if (!full) fprintf(fff, "\n");
+
+			/* extra marker line to show where our glory ends for the moment */
+			if (own_highest && own_highest == k) {
+				fprintf(fff, "\377U  (strongest unique monster you killed)\n");
+				/* only display this marker once */
+				own_highest = 0;
+			}
 		}
 	} else {
 		fprintf(fff, "\377w");

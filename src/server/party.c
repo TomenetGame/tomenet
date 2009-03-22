@@ -85,36 +85,56 @@ bool WriteAccount(struct account *r_acc, bool new){
  Modified to return TRUE on success and FALSE if account can't
  be found - mikaelh
  Makes the player valid now too - mikaelh
+ Modified to return 0 if not found, 1 if found but already 100% validated,
+ and -1 if found and there was still something invalid about it - C. Blue
  */
 int validate(char *name){
 	struct account *c_acc;
 	int i;
+	bool effect = FALSE;
+
 	c_acc = GetAccount(name, NULL, 1);
-	if (!c_acc) return(FALSE);
+	if (!c_acc) return(0);
+
+	if (c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
 	c_acc->flags &= ~(ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) Players[i]->inval = 0;
+		if (Players[i]->account == c_acc->id) {
+			if (Players[i]->inval) effect = TRUE;
+			Players[i]->inval = 0;
+		}
 	}
+
 	KILL(c_acc, struct account);
-	return(TRUE);
+	if (effect) return(-1);
+	return(1);
 }
 
 /* invalidate - opposite to validate() */
 int invalidate(char *name){
 	struct account *c_acc;
 	int i;
+	bool effect = FALSE;
+
 	c_acc = GetAccount(name, NULL, 1);
-	if (!c_acc) return(FALSE);
+	if (!c_acc) return(0);
+
+	if (!c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
 	c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == c_acc->id) Players[i]->inval = 1;
+		if (Players[i]->account == c_acc->id) {
+			if (!Players[i]->inval) effect = TRUE;
+			Players[i]->inval = 1;
+		}
 	}
+
 	KILL(c_acc, struct account);
-	return(TRUE);
+	if (effect) return(-1);
+	return(1);
 }
 
 /*

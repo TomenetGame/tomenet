@@ -60,6 +60,9 @@ cptr value_check_aux1(object_type *o_ptr)
 	/* Ego-Items */
 	if (ego_item_p(o_ptr))
 	{
+		/* Hack for Stormbringer, so it doesn't show as "worthless" */
+		if (o_ptr->name2 == EGO_STORMBRINGER) return "terrible";
+
 		/* Cursed/Broken */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) return "worthless";
 

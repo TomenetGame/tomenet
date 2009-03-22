@@ -1232,7 +1232,7 @@ void admin_outfit(int Ind, int realm)
 	o_ptr->owner_mode = p_ptr->mode; \
 	o_ptr->level = 0; \
 	o_ptr->discount = 100; /* <- replaced this by making level-0-items unsellable in general */ \
-	o_ptr->note = quark_add(""); /* hack to hide '100% off' tag */ \
+	if (!o_ptr->note) o_ptr->note = quark_add(""); /* hack to hide '100% off' tag */ \
 	(void)inven_carry(Ind, o_ptr);
  #else
     #define do_player_outfit()	\
@@ -1410,9 +1410,9 @@ static void player_outfit(int Ind)
 				} break;
 			}
 		}
-#endif		
+#endif
 
-#if 0		
+#if 0
 		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
 			if (pv == 60) pv = exec_lua(0, "return(HBLESSING)");
 //			if (pv != 255) pv = 60;
@@ -1433,6 +1433,11 @@ static void player_outfit(int Ind)
 				invcopy(o_ptr, k_idx);
 				o_ptr->pval = pv;
 				o_ptr->number = 1;
+
+				/* hack: prevent newbie archers from wasting their
+				   only arrow by a flare missile technique */
+				if (is_ammo(tv)) o_ptr->note = quark_add("!k");
+
 				do_player_outfit();
 			}
 		}
@@ -1461,9 +1466,9 @@ static void player_outfit(int Ind)
 		invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_POLYMORPH));
 		o_ptr->number = 1;
 		o_ptr->discount = 100;
-#if 0 /* random */
+ #if 0 /* random */
 		apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, FALSE);
-#else /* predefined, or else people might reroll like crazy.... */
+ #else /* predefined, or else people might reroll like crazy.... */
 		switch (randint(7)) {
 		case 1: pv = 125; break;//z (rotting corpse)
 		case 2: pv = 194; break;//u (tengu)
@@ -1481,7 +1486,7 @@ static void player_outfit(int Ind)
 		}
 		/* Make the ring last only a certain period of time >:) - C. Blue */ 
         	o_ptr->timeout = 3000 + rand_int(3001);                                   
-#endif
+ #endif
 		do_player_outfit();
 	}
 #endif

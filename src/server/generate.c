@@ -1412,7 +1412,7 @@ static void lake_level(struct worldpos *wpos)
 
 #if 0
 				/* Delete the monster (if any) */
-				delete_monster(wpos, y, x);
+				delete_monster(wpos, y, x, TRUE);
 #endif
 
 				/* Destroy valid grids */
@@ -1696,6 +1696,10 @@ static void place_filler(worldpos *wpos, int y, int x)
 void place_floor(worldpos *wpos, int y, int x)
 {
 	cave_set_feat(wpos, y, x, floor_type[rand_int(100)]);
+}
+void place_floor_live(worldpos *wpos, int y, int x)
+{
+	cave_set_feat_live(wpos, y, x, floor_type[rand_int(100)]);
 }
 
 /*
@@ -4343,6 +4347,9 @@ void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 
 			/* Lay down a floor */
 			place_floor(wpos, y, x);
+
+			/* Remove previous monsters - mikaelh */
+			delete_monster(wpos, y, x, TRUE);
 
 			/* Part of a vault */
 			c_ptr->info |= (CAVE_ROOM | CAVE_ICKY);

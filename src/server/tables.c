@@ -4250,7 +4250,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_SLING,
                                 '+', 1000,
-                                '+', 450,
+                                '+', 350,
                         },
                         {
                                 SKILL_BOW,
@@ -5117,7 +5117,7 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		30, 30, 36,  2, 35, 14, 45, 35,
 		 0,  5,  5,  0,  3,  3, 20,  5,
-		4, 35,
+		4, 25,
                 {
                         /* Combat tree */
                         {

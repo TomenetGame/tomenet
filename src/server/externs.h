@@ -727,6 +727,7 @@ extern void generate_cave(struct worldpos *wpos, player_type *p_ptr);
 extern void build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, player_type *p_ptr);
 
 extern void place_floor(worldpos *wpos, int y, int x);
+extern void place_floor_live(worldpos *wpos, int y, int x);
 extern int get_seasonal_tree(void);
 
 

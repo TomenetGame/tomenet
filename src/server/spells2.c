@@ -6210,6 +6210,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 				else
 				{
 					/* Create floor */
+//uses static array set in generate.c, fix!	place_floor_live(wpos, yy, xx);
 					cave_set_feat_live(wpos, yy, xx, FEAT_FLOOR);
 				}
 			}

@@ -1272,8 +1272,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 	/* XXX make sure it doesn't "leak"! */
 	if (p_ptr->store_num > -1) return;
 
-	/* Disturb */
-	if (strcmp(hit_from, "life draining")) disturb(Ind, 1, 0);
+	/* Disturb - except when in PvP! */
+	if (strcmp(hit_from, "life draining") &&
+	    !IS_PLAYER(Ind_attacker))
+		disturb(Ind, 1, 0);
 
 	/* Mega-Hack -- Apply "invulnerability" */
 	if (p_ptr->invuln && (!bypass_invuln))
@@ -3913,7 +3915,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* 15% chance to convert it to normal floor */
 				p1 = 15; f1 = FEAT_FLOOR;
 			}
-#if 0 /* too easy to turn floor to DEEP_WATER in the end, for unlimited usage of kraken forms */
+ #if 0 /* too easy to turn floor to DEEP_WATER in the end, for unlimited usage of kraken forms */
 			else if (c_ptr->feat == FEAT_DEEP_LAVA)
 			{
 				/* 10% chance to convert it to shallow lava */
@@ -3928,7 +3930,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* 10% chance to convert it to deep water */
 				p1 = 10; f1 = FEAT_DEEP_WATER;
 			}
-#endif // 0
+ #endif // 0
 #endif	// 1
 
 			k = rand_int(100);
@@ -3938,8 +3940,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (f)
 			{
-				if (f == FEAT_FLOOR) place_floor(wpos, y, x);
-				else cave_set_feat_live(wpos, y, x, f);
+//uses static array set in generate.c, fix!	if (f == FEAT_FLOOR) place_floor_live(wpos, y, x);
+//				else
+				cave_set_feat_live(wpos, y, x, f);
 
 				/* Notice */
 				if (!quiet) note_spot(Ind, y, x);
@@ -10049,7 +10052,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 					/* Enforce a "circular" explosion */
 					if (distance(y2, x2, y, x) != dist) continue;
 
-#if 0
+ #if 0
 					if (typ == GF_DISINTEGRATE)
 					{
 						if (cave_valid_bold(y,x) &&
@@ -10060,7 +10063,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 						/* Update some things -- similar to GF_KILL_WALL */
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 					}
-#endif	/* 0 */
+ #endif	/* 0 */
 					/* else */ /* HERE!!!!*/
 					/* Ball explosions are stopped by walls */
 					if (!los(wpos, y2, x2, y, x)) continue;

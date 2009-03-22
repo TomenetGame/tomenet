@@ -7554,7 +7554,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	switch (final_choice) {
 	case 1:  reward_maxweight = maxweight_melee;
 		switch (melee_choice) {
-		case 1: reward_tval = TV_SWORD; break;
+		case 1: reward_tval = TV_SWORD;
+			/* Antimagic-users with Sword-skill? Let's be nice and generate a Dark Sword :/ */
+			if (get_skill(p_ptr, SKILL_ANTIMAGIC)) reward_sval = SV_DARK_SWORD;
+			break;
 		case 2: reward_tval = TV_BLUNT; break;
 		case 3: reward_tval = TV_AXE; break;
 		case 4: reward_tval = TV_POLEARM; break;

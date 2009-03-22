@@ -828,8 +828,25 @@ struct player_type
 	s32b pstealing;
 
 	u16b team;
+	/* Moltor's arcade crap */
+	int arc_a;
+	int arc_b;
+	int arc_c;
+	int arc_d;
+	int arc_e;
+	int arc_f;
+	int arc_g;
+	int arc_h;
+	int arc_i;
+	int arc_j;
+	int arc_k;
+	int arc_l;
+        char firedir;
+        char game;
+        int gametime;
         char pushed;
         char pushdir;
+
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
@@ -892,3 +909,9 @@ extern bool interfere(int Ind, int chance);
 extern void telekinesis_aux(int Ind, int item);
 extern void recall_player(int Ind, char *message);
 extern int apply_dodge_chance(int Ind, int attack_level);
+extern void respec_skill(int Ind, int i);
+extern void respec_skills(int Ind);
+extern int invested_skill_points(int Ind, int i);
+
+extern int get_inven_sval(int Ind, int inven_slot);
+extern int get_inven_xtra(int Ind, int inven_slot, int n);
