@@ -1947,7 +1947,8 @@ N:244:Experience
 G:!:d
 I:71:59:0
 W:65:0:4:25000
-A:65/1
+#A:65/1
+A:65/50
 P:0:1d1:0:0:0
 
 N:245:Sleep
@@ -7175,7 +7176,6 @@ A:127/255
 P:0:1d1:0:0:0
 
 #self-made tome, low capacity
-#$NEW_TOMES$N:1001:& Booklet~
 $NEW_TOMES$N:1001:& Codex~
 $NEW_TOMES$G:?:W
 $NEW_TOMES$I:111:100:3
@@ -7185,7 +7185,6 @@ $NEW_TOMES$P:0:1d1:0:0:0
 $NEW_TOMES$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | ACTIVATE
 
 #self-made tome, medium capacity
-#$NEW_TOMES$N:1002:& Book~
 $NEW_TOMES$N:1002:& Spellbook~
 $NEW_TOMES$G:?:W
 $NEW_TOMES$I:111:101:4
@@ -7196,7 +7195,6 @@ $NEW_TOMES$P:0:1d1:0:0:0
 $NEW_TOMES$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | ACTIVATE
 
 #self-made tome, high capacity
-#$NEW_TOMES$N:1003:& Tome~
 $NEW_TOMES$N:1003:& Grimoire~
 $NEW_TOMES$G:?:W
 $NEW_TOMES$I:111:102:5
