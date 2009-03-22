@@ -163,9 +163,6 @@
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
-
- #define ENABLE_MCRAFT		/* 'Mindcrafter' class - C. Blue */
- #define NEW_TOMES		/* customizable spellbooks */
 #endif
 
 /* --------------------------------------------------------------------------*/
