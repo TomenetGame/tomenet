@@ -4756,7 +4756,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (resist) {
 				note = " resists";
 				dam /= 2;
-				if (!(r_ptr->flags3 & RF3_NO_CONF) && !randint(10)) do_conf = randint(8);
+				if (!(r_ptr->flags3 & RF3_NO_CONF) && !rand_int(10)) do_conf = randint(8);
 			} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
 				if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(6);
 				if (!(r_ptr->flags3 & RF3_NO_CONF)) do_conf = randint(20);
