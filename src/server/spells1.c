@@ -4727,6 +4727,18 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 //			if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
 
 			/* Check susceptibility */
+#if 0
+/* vs f-im evil: similar dam to ood, somewhat more than (holy) ff (at 0 s.pow).
+   however: max mana cost is only 15 instead of 25(ff:30). */
+	/* note: could be && !(uni && powerful), but some hi-lv
+	   uniques might need powerful flag, strangely lacking it:
+	   nodens, mephistopheles, kronos, mouth of sauron */
+			if ((r_ptr->flags2 & RF2_SMART) &&
+			    !(r_ptr->flags1 & RF1_UNIQUE)) {
+			if ((r_ptr->flags2 & RF2_SMART) &&
+			    !((r_ptr->flags1 & RF1_UNIQUE) &&
+			    (r_ptr->flags2 & RF2_POWERFUL))) {
+#endif /* fine for now maybe: */
 			if (r_ptr->flags2 & RF2_SMART) {
 				if (!resist) {
 					note = " is hit hard";
@@ -4744,12 +4756,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (resist) {
 				note = " resists";
 				dam /= 2;
-				if (randint(100) < 10) do_conf = randint(8);
+				if (!(r_ptr->flags3 & RF3_NO_CONF) && !randint(10)) do_conf = randint(8);
 			} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
-				do_stun = randint(6);
-				do_conf = randint(20);
-				do_sleep = rand_int(2) ? randint(randint(90)) : 0;
-				do_fear = randint(15);
+				if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(6);
+				if (!(r_ptr->flags3 & RF3_NO_CONF)) do_conf = randint(20);
+				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? randint(randint(90)) : 0;
+				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 			}
   			break;
 		}
