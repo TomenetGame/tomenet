@@ -102,7 +102,7 @@ MSLEEP = add_spell
 	["mana_max"] =	30,
 	["fail"] =	10,
         ["direction"] = function() if get_level(Ind, MSLEEP, 50) >= 20 then return FALSE else return TRUE end end,
-	["spell"] =	function()
+	["spell"] =	function(args)
 			if get_level(Ind, MSLEEP, 50) < 20 then
 				fire_grid_bolt(Ind, GF_OLD_SLEEP, args.dir, 3 + get_level(Ind, MSLEEP, 25), "mumbles softly")
 --				project(0 - Ind, get_level(Ind, MSLEEP, 10), player.wpos, player.py, player.px, (3 + get_level(Ind, MSLEEP, 30)) * 2, GF_OLD_SLEEP, 64+16+8, "mumbles softly")
