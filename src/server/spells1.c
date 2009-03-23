@@ -944,12 +944,13 @@ void teleport_player_to(int Ind, int ny, int nx)
 		/* Cant telep in houses */
 		if (((wpos->wz==0) && !(zcave[y][x].info & CAVE_ICKY)) || (wpos->wz))
 		{
-			if (cave_naked_bold(zcave, y, x))
+			/* No tele-to into no-tele vaults */
+			if (cave_naked_bold(zcave, y, x) &&
+			    !(zcave[y][x].info & CAVE_STCK))
 			{
 				/* Never break into st-anchor */
 				if (!check_st_anchor(wpos, y, x)) break;
 			}
-
 		}
 
 		/* Occasionally advance the distance */
@@ -6171,21 +6172,20 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note = " is unaffected!";
 					resists_tele = TRUE;
 				}
-								else if (m_ptr->level > randint(100))
+				else if (m_ptr->level > randint(100))
 				{
 					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
 					note = " resists!";
 					resists_tele = TRUE;
 				}
-			}
 
-			if (!resists_tele)
-			{
-				/* Obvious */
-				if (seen) obvious = TRUE;
-
-				/* Prepare to teleport */
-				do_dist = dam;
+				if (!resists_tele)
+				{
+					/* Obvious */
+					if (seen) obvious = TRUE;
+					/* Prepare to teleport */
+					do_dist = dam;
+				}
 			}
 
 			/* No "real" damage */
