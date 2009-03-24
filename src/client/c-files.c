@@ -1283,6 +1283,8 @@ errr file_character(cptr name, bool full)
 		return (-1);
 	}
 
+	/* Save the old screen */
+	Term_save();
 
 	/* Begin dump */
 	fprintf(fff, "  [TomeNET %d.%d.%d%s @ %s Character Dump]\n\n",
@@ -1400,6 +1402,9 @@ errr file_character(cptr name, bool full)
 
 	/* Close it */
 	my_fclose(fff);
+
+	/* Reload the old screen */
+	Term_load();
 
 	/* Message */
 	c_msg_print("Character dump successful.");
