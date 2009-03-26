@@ -6,6 +6,9 @@
 
 #include "angband.h"
 
+#include <sys/types.h>
+#include <dirent.h>
+
 static int MACRO_WAIT = 96;
 
 /*
@@ -1443,15 +1446,18 @@ void xhtml_screenshot(cptr name)
 	byte *scr_aa;
 	char *scr_cc;
 	byte cur_attr;
-	int i, x, y;
+	int i, x, y, max;
 	char buf[1024];
 	char real_name[256];
+	DIR *dp;
+	struct dirent *entry;
 
 	x = strlen(name) - 4;
 
 	/* Replace "????" in the end with numbers */
 	if (!strcmp("????", &name[x]))
 	{
+#if 0
 		char tmp[5];
 		if (x > 244) x = 244;
 		memcpy(real_name, name, x);
@@ -1479,6 +1485,35 @@ void xhtml_screenshot(cptr name)
 			/* Oops */
 			return;
 		}
+#else
+		/* Better implementation that isn't slowed down by anti-virus */
+		dp = opendir(ANGBAND_DIR_USER);
+
+		if (!dp) {
+			c_msg_print("Couldn't open the user directory.");
+			return;
+		}
+
+		max = 0;
+
+		while ((entry = readdir(dp))) {
+			/* Check that the name matches the pattern */
+			if (strncmp(name, entry->d_name, x) == 0 && isdigit(entry->d_name[x])) {
+				i = atoi(&entry->d_name[x]);
+				if (i > max) max = i;
+			}
+		}
+
+		if (x > 245) x = 245;
+
+		/* Next name */
+		strncpy(buf, name, x);
+		buf[x] = '\0';
+		snprintf(real_name, 255, "%s%04d.xhtml", buf, max + 1);
+		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+		closedir(dp);
+#endif
 	}
 	else
 	{
