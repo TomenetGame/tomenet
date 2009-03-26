@@ -2853,22 +2853,28 @@ int Receive_chardump(void)
 {
 	char	ch;
 	int	n;
-	char tmp[100];
+	char tmp[160], tmp2[20];
+	
+	strcpy(tmp2, "-death");
 
-	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
-	{
-		return n;
-	}
+#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 2 && VERSION_EXTRA > 0) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 2) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
+	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &tmp2)) <= 0) return n;
+	} else
+#endif
+	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Access the main view */
         if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the death scene */
-	xhtml_screenshot(format("%s-death-screenshot", cname));
+	xhtml_screenshot(format("%s%s-screenshot", cname, tmp2));
 
 	if (screen_icky) Term_switch(0);
 
-	strnfmt(tmp, 160, "%s-death.txt", cname);
+	strnfmt(tmp, 160, "%s%s.txt", cname, tmp2);
 	file_character(tmp, FALSE);
 
 	return 1;
