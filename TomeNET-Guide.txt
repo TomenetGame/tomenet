@@ -4366,6 +4366,26 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
 
 Misc
 --
+Codex, Spellbook, Grimoire
+                    These are magic books that may contain magic spells of any
+                    type and school, be it for mages, priests, druids or
+                    mindcrafters.
+                    However, these books start out empty, devoid of any spells
+                    and it's up to the player to add spells of his choice to
+                    them.
+                    To do so, he needs to find or buy spell scrolls in the
+                    library (store '9'), then press 'A' to activate the Codex,
+                    Spellbook or Grimoire, then choose the spell scroll he
+                    wants to transcribe into the book. The scroll will vanish
+                    and the spell will be permanently and irreversibly added
+                    to the book.
+                    Condition for this to work is that the book still has free
+                    space left, and that the player has actually learned the
+                    spell he wants to transcribe.
+                    Codices can carry the least amount of spells, while
+                    Grimoires have the most space.
+                    (Note that you cannot use these books if your game client
+                    version is below 4.4.2!)
 (Small) Firestones  These can be eaten by Thunderlords and have various
                     random effects (small firestones have reduced duration):
                     - If the player is currently in dragon form he will just
@@ -5085,10 +5105,12 @@ Note that not every skill is available to every profession (class).
                                 small though, if you don't have +critical hit
                                 items or this skill to help out. Critical hit
                                 bonus on items counts slightly more than the
-                                skill, and it is applied to melee AND ranged
-                                attacks!
-                                For ALL weapon users the weight of their
-                                weapon affects their critical hits:
+                                skill.
+                                Crit boni on weapons only apply to the weapon
+                                itself, while bonus on other items such as
+                                gloves or rings count for all kind of attacks.
+                                For weapon users, the weight of their weapon
+                                affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
                                 chances to score a critical hit will further
                                 increase.
