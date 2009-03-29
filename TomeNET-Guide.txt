@@ -5941,11 +5941,11 @@ Priest
     of their type.
 
 Rogue
-    Rogues can backstab (works especially well in the dark) sleeping or
-    fleeing monsters, and they can train stealing items from shops, creatures
-    or players. Due to their high dexterity they can often hit several
-    times per round with light weapons. Also, rogues are especially fond of
-    dual-wielding two light one-handed weapons at once.
+    Rogues can backstab sleeping or fleeing monsters, and they can train
+    stealing items from shops, creatures or players. Due to their high
+    dexterity they can often hit several times per round with light weapons.
+    Also, rogues are especially fond of dual-wielding two light one-handed
+    weapons at once.
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome. A rogue will learn to set many
