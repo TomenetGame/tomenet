@@ -6660,6 +6660,8 @@ Conveyance
                     Required skill level for first spell level: 35.
   BONI:             Resistance to teleportation attacks at 30.
 Divination
+    Detect Monsters Detects all monsters nearby.                    (project)
+                    Required skill level for first spell level: 1.
     Identify        Identifies items.
                     Lv17: Identifies all items that you carry/wear.
                     Lv27: Also identifies all items on the floor around you.
@@ -6675,9 +6677,6 @@ Divination
                     Required skill level for first spell level: 5.
     Reveal Ways     Detects doors/stairs/ways within a radius.      (project)
                     Required skill level for first spell level: 9.
-    Sense Monsters  Detects all monsters nearby.                    (project)
-                    Lv30: Gives you temporary ESP.
-                    Required skill level for first spell level: 1.
   BONI:             Automatic identification at 50.
 Nature
     Grow Trees      Grows trees quickly around you.
@@ -6706,6 +6705,9 @@ Mind
     Stun            Stunds a monster.
                     Lv25: Turns into a ball.
                     Required skill level for first spell level: 15.
+    Sense Monsters  Detects all monsters nearby.                    (project)
+                    Lv30: Gives you temporary ESP.
+                    Required skill level for first spell level: 1.
     Telekinesis     Inscribe your book @P<Playername>, cast it, select an
                     item that you wish to teleport to the player's inventory.
                     The target player needs to concentrate by opening her/his
