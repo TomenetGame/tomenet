@@ -95,9 +95,23 @@ end
 function cron_1h(timestamp, h, m, s)
 	lua_s_print(timestamp.."_CRON1H_"..h..":"..m..":"..s.."\n")
 
-	lua_start_global_event(0, 1, "")
+	if mod(h-1, 3) == 0 then
+		lua_start_global_event(0, 1, "")
+	end
 
-	if mod(h,3)==0 then
+	if h == 19 then
+		lua_start_global_event(0, 3, "")
+	end
+	if h == 23 then
+		lua_start_global_event(0, 3, "")
+	end
+	if h == 2 then
+		lua_start_global_event(0, 3, "")
+	end
+	if h == 7 then
+		lua_start_global_event(0, 3, "")
+	end
+	if h == 13 then
 		lua_start_global_event(0, 3, "")
 	end
 end
