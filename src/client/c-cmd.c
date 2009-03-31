@@ -2979,6 +2979,9 @@ void cmd_lagometer(void)
 
 			/* Disable */
 			case '2':
+				/* disable mini lag-o-meter too */
+				prt_lagometer(-1);
+
 				lagometer_enabled = FALSE;
 				break;
 		}

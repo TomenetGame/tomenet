@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		2
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -86,7 +86,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG ""
+#define CLIENT_VERSION_TAG "a"
 
 
 
@@ -1207,10 +1207,10 @@
 #define ROW_GOLD		6
 #define COL_GOLD		0	/* "AU xxxxxxxxx" */
 
-#define ROW_STAT		8
+#define ROW_STAT		9
 #define COL_STAT		0	/* "xxx   xxxxxx" */
 
-#define ROW_AC			15
+#define ROW_AC			16
 #define COL_AC			0	/* "Cur AC xxxxx" */
 
 #define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
@@ -1231,42 +1231,42 @@
  #define ROW_EXSTA              -1      /* extra status, requires CONDENSED_HP_SP ! */
  #define COL_EXSTA		-1
 #else
- #define ROW_MAXHP		16
+ #define ROW_MAXHP		17
  #define COL_MAXHP		8	/* "Max HP xxxxx" */
 
- #define ROW_CURHP		16
+ #define ROW_CURHP		17
  #define COL_CURHP		3	/* "Cur HP xxxxx" */
 
- #define ROW_MAXSP		17
+ #define ROW_MAXSP		18
  #define COL_MAXSP		8	/* "Max SP xxxxx" */
 
- #define ROW_CURSP		17
+ #define ROW_CURSP		18
  #define COL_CURSP		3	/* "Cur SP xxxxx" */
  
- #define ROW_MAXST		18	/* current stamina */
+ #define ROW_MAXST		19	/* current stamina */
  #define COL_MAXST		8
 
- #define ROW_CURST		18	/* current stamina */
+ #define ROW_CURST		19	/* current stamina */
  #define COL_CURST		3
 
- #define ROW_EXSTA              19      /* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA              20      /* extra status, requires CONDENSED_HP_SP ! */
  #define COL_EXSTA		0
 #endif
 
 
-#define ROW_SANITY		14	/* "Sanity  100%" */
+#define ROW_SANITY		15	/* "Sanity  100%" */
 #define COL_SANITY		0
 
 #if 1
-#define ROW_INFO		20
+#define ROW_INFO		21
 #define COL_INFO		0	/* "xxxxxxxxxxxx" */
 #endif	/* if 1 */
 
-#define ROW_CUT			21
+#define ROW_CUT			22
 #define COL_CUT			0	/* <cut> */
 
-#define ROW_STUN		22
-#define COL_STUN		0	/* <stun> */
+#define ROW_STUN		23
+#define COL_STUN		38	/* <stun> */
 
 #define ROW_HUNGRY		23
 #define COL_HUNGRY		0	/* "Weak" / "Hungry" / "Full" / "Gorged" */
@@ -1284,13 +1284,13 @@
 #define COL_POISONED	29	/* "Poisoned" */
 
 #define ROW_STATE		23
-#define COL_STATE		38	/* <state> */
+#define COL_STATE		38	/* <state> (searching/resting/paralyze) */
 
 #define ROW_SPEED		23
-#define COL_SPEED		49	/* "Slow (-NN)" or "Fast (+NN)" */
+#define COL_SPEED		50	/* "Slow (-NN)" or "Fast (+NN)" */
 
 #define ROW_STUDY		23
-#define COL_STUDY		60	/* "Study" */
+#define COL_STUDY		62	/* "Study" */
 
 #define ROW_DEPTH		23
 #define COL_DEPTH		69	/* "Lev NNN" / "NNNN ft" */
@@ -1298,6 +1298,14 @@
 #define ROW_XYPOS		21
 #define COL_XYPOS		0
 
+#define ROW_AFK			21
+#define COL_AFK			7	/* "AFK" */
+
+#define ROW_CUMBER		7
+#define COL_CUMBER		0	/* encumberment icons bar */
+
+#define ROW_LAG			8
+#define COL_LAG			0	/* mini lag-o-meter */
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 #if 0

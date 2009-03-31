@@ -3014,6 +3014,8 @@ int Receive_ping(void)
 		}
 
 		update_lagometer();
+		
+		prt_lagometer(rtt);
 	}
 	else
 	{

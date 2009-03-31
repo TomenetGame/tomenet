@@ -201,3 +201,7 @@ int cfg_client_fps = 60;
 /* For unique list in char dump - C. Blue */
 byte r_unique[MAX_UNIQUES];
 char r_unique_name[MAX_UNIQUES][60];
+
+/* hack for stronger no-tele vault display warning */
+int p_speed = 110;
+bool no_tele_grid = FALSE;

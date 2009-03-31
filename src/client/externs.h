@@ -472,6 +472,10 @@ extern void prt_extra_status(cptr status);
 extern void prt_stamina(int max, int cur);
 extern void display_lagometer(bool display_commands);
 extern void update_lagometer(void);
+extern void prt_lagometer(int lag);
+
+extern int p_speed;
+extern bool no_tele_grid;
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

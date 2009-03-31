@@ -477,6 +477,11 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 
 	/* Right-Adjust the "depth" and clear old values */
 	c_prt(colour, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
+	
+	/* hack: extend warning on speed colour too */
+	if (colour_sector == TERM_L_DARK) no_tele_grid = TRUE;
+	else no_tele_grid = FALSE;
+	prt_speed(p_speed);
 }
 
 /*
@@ -588,7 +593,7 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 	{
 		attr = TERM_RED;
 
-		strcpy(text, "Paralyzed!");
+		strcpy(text, "Paralyzed!  ");
 	}
 
 	else if (searching)
@@ -596,27 +601,27 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 #if 0
 		if (get_skill(SKILL_STEALTH) <= 10)
 		{
-			strcpy(text, "Searching ");
+			strcpy(text, "Searching   ");
 		}
 
 		else
 		{
 			attr = TERM_L_DARK;
-			strcpy(text,"Stlth Mode");
+			strcpy(text,"Stlth Mode  ");
 		}
 #else
-		strcpy(text, "Searching ");
+		strcpy(text, "Searching   ");
 #endif
 
 	}
 
 	else if (resting)
 	{
-		strcpy(text, "Resting   ");
+		strcpy(text, "Resting     ");
 	}
 	else
 	{
-		strcpy(text, "          ");
+		strcpy(text, "            ");
 	}
 
 	c_put_str(attr, text, ROW_STATE, COL_STATE);
@@ -630,20 +635,24 @@ void prt_speed(int speed)
 	int attr = TERM_WHITE;
 	char buf[32] = "";
 
-	if (speed > 0)
-	{
+	if (speed > 0) {
 		attr = TERM_L_GREEN;
 		sprintf(buf, "Fast (+%d)", speed);
-	}
-
-	else if (speed < 0)
-	{
+	} else if (speed < 0) {
 		attr = TERM_L_UMBER;
 		sprintf(buf, "Slow (%d)", speed);
 	}
 
+	if (no_tele_grid) {
+		attr = TERM_L_DARK;
+		if (!speed) sprintf(buf, "No-Teleport");
+	}
+
 	/* Display the speed */
 	c_put_str(attr, format("%-11s", buf), ROW_SPEED, COL_SPEED);
+	
+	/* hack: remember speed (for extra no-tele warning) */
+	p_speed = speed;
 }
 
 /*
@@ -742,28 +751,28 @@ void prt_basic(void)
 void prt_AFK(byte afk)
 {
 	if (afk)
-		c_put_str(TERM_ORANGE, "AFK", 22, 0);
+		c_put_str(TERM_ORANGE, "  AFK", ROW_AFK, COL_AFK);
 	else
-		c_put_str(TERM_ORANGE, "   ", 22, 0);
+		c_put_str(TERM_ORANGE, "     ", ROW_AFK, COL_AFK);
 }
 
 /* Print encumberment status line */
 void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
                         byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
 {
-	put_str("            ", 7, 0);
-	if (cumber_armor) c_put_str(TERM_UMBER, "(", 7, 0);
-	if (heavy_wield) c_put_str(TERM_RED, "/", 7, 1);
-	if (icky_wield) c_put_str(TERM_ORANGE, "\\", 7, 2);
-	if (awkward_wield) c_put_str(TERM_YELLOW, "/", 7, 3);
-	if (easy_wield) c_put_str(TERM_GREEN, "|", 7, 4);
-	if (heavy_shield) c_put_str(TERM_RED, "[", 7, 5);
-	if (heavy_shoot) c_put_str(TERM_RED, "}", 7, 6);
-	if (awkward_shoot) c_put_str(TERM_YELLOW, "}", 7, 7);
-	if (cumber_weight) c_put_str(TERM_L_RED, "F", 7, 8);
-	if (monk_heavyarmor) c_put_str(TERM_YELLOW, "(", 7, 9);
-	if (awkward_armor) c_put_str(TERM_VIOLET, "(", 7, 10);
-	if (cumber_glove) c_put_str(TERM_VIOLET, "]", 7, 11);
+	put_str("            ", ROW_CUMBER, COL_CUMBER);
+	if (cumber_armor) c_put_str(TERM_UMBER, "(", ROW_CUMBER, COL_CUMBER);
+	if (heavy_wield) c_put_str(TERM_RED, "/", ROW_CUMBER, COL_CUMBER + 1);
+	if (icky_wield) c_put_str(TERM_ORANGE, "\\", ROW_CUMBER, COL_CUMBER + 2);
+	if (awkward_wield) c_put_str(TERM_YELLOW, "/", ROW_CUMBER, COL_CUMBER + 3);
+	if (easy_wield) c_put_str(TERM_GREEN, "|", ROW_CUMBER, COL_CUMBER + 4);
+	if (heavy_shield) c_put_str(TERM_RED, "[", ROW_CUMBER, COL_CUMBER + 5);
+	if (heavy_shoot) c_put_str(TERM_RED, "}", ROW_CUMBER, COL_CUMBER + 6);
+	if (awkward_shoot) c_put_str(TERM_YELLOW, "}", ROW_CUMBER, COL_CUMBER + 7);
+	if (cumber_weight) c_put_str(TERM_L_RED, "F", ROW_CUMBER, COL_CUMBER + 8);
+	if (monk_heavyarmor) c_put_str(TERM_YELLOW, "(", ROW_CUMBER, COL_CUMBER + 9);
+	if (awkward_armor) c_put_str(TERM_VIOLET, "(", ROW_CUMBER, COL_CUMBER + 10);
+	if (cumber_glove) c_put_str(TERM_VIOLET, "]", ROW_CUMBER, COL_CUMBER + 11);
 }
 
 void prt_extra_status(cptr status)
@@ -776,6 +785,41 @@ void prt_extra_status(cptr status)
 			/* hack: 'abuse' this line to display that we're in recording mode */
 			c_put_str(TERM_L_RED, "*RECORDING*", ROW_EXSTA, COL_EXSTA);
 	}
+}
+
+/* update mini lag-o-meter */
+void prt_lagometer(int lag) {
+	int attr = TERM_L_GREEN;
+	int num;
+	
+	/* disable(d)? */
+	if (!lagometer_enabled) return;
+	if (lag == -1) {
+		if (screen_icky) Term_switch(0);
+//		Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[//////////]");
+		Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
+		if (screen_icky) Term_switch(0);
+		return;
+	}
+
+	num = lag / 50 + 1;
+	if (num > 10) num = 10;
+
+//maybe TODO for future..	if (packet_loss) num = 10;
+	
+	if (num >= 9) attr = TERM_RED;
+	else if (num >= 7) attr = TERM_ORANGE;
+	else if (num >= 5) attr = TERM_YELLOW;
+	else if (num >= 3) attr = TERM_GREEN;
+
+	if (screen_icky) Term_switch(0);
+
+	/* Default to "unknown" */
+	Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
+	/* Dump the current "lag" (use '*' symbols) */
+	Term_putstr(COL_LAG + 1, ROW_LAG, num, attr, "++++++++++");
+
+	if (screen_icky) Term_switch(0);
 }
 
 /*
