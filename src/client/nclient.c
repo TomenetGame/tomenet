@@ -1225,6 +1225,10 @@ int Receive_quit(void)
 	sockbuf_t		*sbuf;
 	char			reason[MAX_CHARS];
 
+	/* game ends, so leave all other screens like
+	   shops or browsed books or skill screen etc */
+        if (screen_icky) Term_load();
+
 	if (rbuf.ptr < rbuf.buf + rbuf.len)
 		sbuf = &rbuf;
 	else sbuf = &cbuf;
