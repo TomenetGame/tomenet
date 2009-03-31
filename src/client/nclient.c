@@ -285,7 +285,7 @@ void Receive_login(void)
 
 	/* Set server feature variables in LUA and load the spells */
 	set_server_features(s_RPG, s_ARCADE, s_FUN, s_PARTY, s_TEST);
-	lua_open();
+	open_lua();
 
 	Term_clear();
 
