@@ -3014,8 +3014,31 @@ int Receive_ping(void)
 		}
 
 		update_lagometer();
-		
-		prt_lagometer(rtt);
+
+		/* somewhat hacky, see prt_lagometer().
+		   discard older packets, since 'pseudo
+		   packet loss' were assumed for them already,
+		   which doesn't hurt since it shows same as
+		   450+ms lag in the gui.
+		   Also, set an arbitrary value here which is
+		   the minimum duration that bad pings that were
+		   followed by good pings are displayed to the eyes
+		   of the user, preventing them from being updated
+		   too quickly to see. [600 ms]
+		   NOTE: this depends on 'ticks'-related code. */
+		if (index == 0) {
+			if (ping_times[1] != -1 &&
+			    ping_times[0] + 1000 - ping_times[1] >= 600) {
+				prt_lagometer(rtt);
+			} else if (ping_times[1] != -1) {
+				/* pseudo-packet loss */
+				prt_lagometer(9999);
+			} else {
+				/* prolonged display of previous bad ping
+				   so the user has easier time to notice it */
+				prt_lagometer(ping_times[1]);
+			}
+		}
 	}
 	else
 	{
@@ -3824,6 +3847,9 @@ int Send_ping(void)
 	if (gettimeofday(&tv, NULL) == -1) {
 		return 0;
 	}
+	
+	/* hack: pseudo-packet loss, see prt_lagometer() */
+	if (ping_times[0] == -1) prt_lagometer(9999);
 
 	tim = tv.tv_sec;
 	utim = tv.tv_usec;

@@ -787,7 +787,18 @@ void prt_extra_status(cptr status)
 	}
 }
 
-/* update mini lag-o-meter */
+/* Update mini lag-o-meter,
+   in a somewhat hacky way to keep track of packet loss:
+   If pong doesn't arrive until next Send_ping(),
+     assume packet loss.
+   When next pong arrives, check previous ping's pong:
+     was it missing? -> pretend packet loss _again_(*),
+     otherwise display rtt for this pong normally.
+   (*) reason is that otherwise lag-o-meter might just
+   display a super short flicker of '++++++++++' that
+   the user probably can't see.
+   Note that this pseudo-packet loss displaying 10 '+'
+   is same as if we had 450+ ms lag anyway, so no harm.*/
 void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
@@ -805,7 +816,8 @@ void prt_lagometer(int lag) {
 	num = lag / 50 + 1;
 	if (num > 10) num = 10;
 
-//maybe TODO for future..	if (packet_loss) num = 10;
+	/* hack: we have previous packet assumed to be lost? */
+	if (lag == 9999) num = 10;
 	
 	if (num >= 9) attr = TERM_RED;
 	else if (num >= 7) attr = TERM_ORANGE;
