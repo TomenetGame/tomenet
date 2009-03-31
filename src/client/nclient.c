@@ -1228,6 +1228,7 @@ int Receive_quit(void)
 	/* game ends, so leave all other screens like
 	   shops or browsed books or skill screen etc */
         if (screen_icky) Term_load();
+        topline_icky = FALSE;
 
 	if (rbuf.ptr < rbuf.buf + rbuf.len)
 		sbuf = &rbuf;
