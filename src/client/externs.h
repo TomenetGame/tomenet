@@ -593,6 +593,7 @@ extern void dump_skills(FILE *fff);
 extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
 
 /* c-script.c */
+extern void set_server_features(bool rpg, bool arcade, bool fun, bool party, bool test);
 extern void init_lua(void);
 extern void open_lua(void);
 extern bool pern_dofile(int Ind, char *file);

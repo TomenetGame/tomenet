@@ -207,8 +207,41 @@ static const struct luaL_reg bitlib[] =
 };
 
 
-/* Initialize lua scripting */
 bool init_lua_done = FALSE;
+
+/* Set global lua variables that define the server type */
+void set_server_features(bool rpg, bool arcade, bool fun, bool party, bool test) {
+	char buf[80];
+	int oldtop;
+
+	/* We may be the first users of lua */
+        if (!init_lua_done) init_lua();
+
+	oldtop = lua_gettop(L);
+
+	sprintf(buf, "RPG_SERVER = %d", rpg);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "ARCADE_SERVER = %d", arcade);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "FUN_SERVER = %d", fun);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "PARTY_SERVER = %d", party);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+
+	sprintf(buf, "TEST_SERVER = %d", test);
+	lua_dostring(L, buf);
+	lua_settop(L, oldtop);
+}
+
+
+/* Initialize lua scripting */
 void init_lua()
 {
         if (init_lua_done) return;

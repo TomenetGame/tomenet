@@ -104,6 +104,7 @@
 #define SFLG_PARTY	0x04
 #define SFLG_ARCADE	0x08
 #define SFLG_TEST	0x10
+#define SFLG_RPG_ADMIN	0x20
 
 
 

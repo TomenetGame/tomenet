@@ -345,7 +345,7 @@ void client_init(char *argv1, bool skip)
 	init_arrays();
 
 	/* Initialize lua scripting */
-	open_lua();
+//	open_lua(); /* done in Receive_login now - mikaelh */
 
 	GetLocalHostName(host_name, 80);
 
