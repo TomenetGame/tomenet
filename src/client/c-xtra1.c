@@ -802,6 +802,7 @@ void prt_extra_status(cptr status)
 void prt_lagometer(int lag) {
 	int attr = TERM_L_GREEN;
 	int num;
+	int x, y;
 	
 	/* disable(d)? */
 	if (!lagometer_enabled) return;
@@ -824,6 +825,9 @@ void prt_lagometer(int lag) {
 	else if (num >= 5) attr = TERM_YELLOW;
 	else if (num >= 3) attr = TERM_GREEN;
 
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (screen_icky) Term_switch(0);
 
 	/* Default to "unknown" */
@@ -832,6 +836,9 @@ void prt_lagometer(int lag) {
 	Term_putstr(COL_LAG + 1, ROW_LAG, num, attr, "++++++++++");
 
 	if (screen_icky) Term_switch(0);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
