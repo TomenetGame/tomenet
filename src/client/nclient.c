@@ -2944,7 +2944,7 @@ int Receive_encumberment(void)
         byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
         byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
         byte monk_heavyarmor;   /* Reduced MA power? */
-        byte rogue_heavyarmor = 0;  /* Missing roguish-abilities' effects? */
+        byte rogue_heavyarmor;  /* Missing roguish-abilities' effects? */
         byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 
 
@@ -2965,7 +2965,7 @@ int Receive_encumberment(void)
 		{
 			return n;
 		}
-		rogue_heavyarmor = 2;
+		rogue_heavyarmor = 0;
 	}
 
 	if (screen_icky) Term_switch(0);
