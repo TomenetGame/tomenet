@@ -2,7 +2,7 @@
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 1. April 2009; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
+| for TomeNET version v4.4.2a (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
 | or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
@@ -528,6 +528,7 @@ They all start with a slash '/':
             in your backpack which are exactly '!k' (as done by /tag command).
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
+/untag *    Will remove all pseudo-id tags from your inventory items.
 /time       Tells you the current date and time (of the server, not of your
             local timezone). Useful to compare with bbs time stamps.
 /undoskills Allows you to undo the skill points you assigned in 'G' menu last
@@ -1304,9 +1305,13 @@ This line consists of the following icons that may show up:
     Light-red 'F'  You are martial arts user and your backpack is too
                    heavy, so that you don't receive Free Action from MA!
                    See (5.4) for more detailed information.
-    Yellow (    a) You are martial arts user and your armour is too heavy.
+    Yellow (       You are martial arts user and your armour is too heavy.
                    You might receive various penalties (see (5.4)).
-                b) You're a rogue or using primarily rogueish skills such
+                   NOTE: Up to client version 4.4.2 this can stand for both,
+                   the meaning described above and the meaning of 'Blue ('
+                   described below. Starting with 4.4.2a, these two were
+                   separated into yellow and blue '(' icon.
+    Blue (         You're a rogue or using primarily rogueish skills such
                    as dodging or dual-wield which depend on especially
                    flexible armour, but your armour is exceeding that limit!
                    You will lose some of the benefits, see (5.5)!
@@ -7268,14 +7273,16 @@ The techniques are as follows:
     Fighting techniques:
     --------------------
     Sprint							7 stamina
-        Your character will be able to move faster even with monsters in view.
-        Normal running isn't affected.
+        Your character will be able to move faster, so you can catch up to
+        runners and other monsters that avoid you.
+        Running (shift + directional keys) is not affected.
     Taunt               2 stamina
         Attempts to draw attention of humanoid mobs, causing them to attack
-        you.
+        you. Might require more than one try sometimes until they fall for it,
+        depending on the monster.
     Spin                8 stamina
         A sweep that hits all adjacent monsters and may stun them, basing on
-        your number of blows/round.
+        your number of blows/round possibly even multiple times.
     Berserk             10 stamina
         Similar to potions of berserk strength, also giving you +1 blow/round.
 
@@ -7303,7 +7310,8 @@ The techniques are as follows:
     Flare missile       2 stamina
         Prepares an oil-drenched shot for the next time you shoot, which will
         burn brightly, lighting up the area where it lands or hits a wall.
-        This technique consumes 1 flask of oil.
+        This technique consumes 1 flask of oil and your shot/arrow/bolt.
+        Note that this destroys magic ammunition too.
     Precision shot      7 stamina
         You aim your next shot carefully, costing you a turn. The next shot
         you fire however will receive a great damage bonus, even more so
