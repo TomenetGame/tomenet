@@ -2944,18 +2944,34 @@ int Receive_encumberment(void)
         byte easy_wield;        /* Using a 1-h weapon which is MAY2H with both hands */
         byte cumber_weight;     /* Full weight. FA from MA will be lost if overloaded */
         byte monk_heavyarmor;   /* Reduced MA power? */
+        byte rogue_heavyarmor = 0;  /* Missing roguish-abilities' effects? */
         byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
-	    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
+
+#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 2 && VERSION_EXTRA > 0) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 2) || \
+    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
+	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
+		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &rogue_heavyarmor, &awkward_shoot)) <= 0)
+		{
+			return n;
+		}
+	} else
+#endif
 	{
-		return n;
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
+		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
+		{
+			return n;
+		}
+		rogue_heavyarmor = 2;
 	}
 
 	if (screen_icky) Term_switch(0);
 
 	prt_encumberment(cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
 
 	if (screen_icky) Term_switch(0);
 
