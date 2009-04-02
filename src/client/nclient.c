@@ -3085,12 +3085,26 @@ int Receive_ping(void)
 /* client-side weather, server-controlled - C. Blue */
 int Receive_weather(void)
 {
-	int	n;
+	int	n, i;
 	char	ch;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch,
-	    &weather_type, &weather_wind, &weather_intensity, &weather_speed)) <= 0)
-		return n;
+	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch,
+	    &weather_type, &weather_wind, &weather_intensity, &weather_speed);
+
+	/* hack: insta-erase all weather (player changed sector) */
+	if (weather_type == -1) {
+		/* restore tiles on display that were overwritten by weather */
+		for (i = 0; i < weather_elements; i++) {
+			/* display original grid content */
+			
+		}
+
+		/* terminate weather */
+		weather_elements = 0;
+		weather_type = 0;
+	}
+
+	if (n <= 0) return n;
 	return 1;
 }
 

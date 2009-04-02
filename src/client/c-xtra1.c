@@ -2039,6 +2039,7 @@ void window_stuff(void)
 }
 
 /* Handle weather (rain and snow) client-side - C. Blue */
+#define SKY_ALTITUDE	15
 void do_weather() {
 	int i, j;
 
@@ -2055,24 +2056,29 @@ void do_weather() {
 	if (weather_seed) Rand_value = weather_seed;
 	else Rand_value = (time(NULL));
 
+	/* hack: pre-generate extra elements (usually SKY_ALTITUDE)?
+	   Used if player enters an already weather-active sector */
+	j = (weather_type / 10) + 1;
+	weather_type = weather_type % 10;
+
 	/* create rain drops */
-	if (weather_type == 1 && weather_elements <= 1024 - 4) {
-		for (i = 0; i < 4; i++) {
+	if (weather_type == 1 && weather_elements <= 1024 - 4 * j) {
+		for (i = 0; i < 4 * j; i++) {
 			weather_element_type[weather_elements] = 1;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
-			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + 15) - 15;
-			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + 15;
+			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
+			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
 			weather_elements++;
 		}
 		
 	}
 	/* create snow flakes */
-	if (weather_type == 2 && weather_elements <= 1024 - 1) {
-		for (i = 0; i < 1; i++) {
+	if (weather_type == 2 && weather_elements <= 1024 - 1 * j) {
+		for (i = 0; i < 1 * j; i++) {
 			weather_element_type[weather_elements] = 2;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
-			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + 15) - 15;
-			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + 15;
+			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
+			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
 			weather_elements++;
 		}
 	}
