@@ -205,3 +205,14 @@ char r_unique_name[MAX_UNIQUES][60];
 /* hack for stronger no-tele vault display warning */
 int p_speed = 110;
 bool no_tele_grid = FALSE;
+
+/* for weather */
+u32b weather_seed = 0; /* RNG seed especially for weather (superfluous atm) */
+int weather_type = 0; /* none/rain/snow */
+int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
+int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
+int weather_intensity = 1; /* density of raindrops / snowflakes */
+int weather_speed = 1; /* speed at which snowflakes move aka a second wind
+        		  parameter (doesnt make sense for raindrops) */
+int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
+

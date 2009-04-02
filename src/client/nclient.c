@@ -145,6 +145,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_EXTRA_STATUS]	= Receive_extra_status;
 	receive_tbl[PKT_INVEN_WIDE]	= Receive_inven_wide;
 	receive_tbl[PKT_UNIQUE_MONSTER]	= Receive_unique_monster;
+	receive_tbl[PKT_WEATHER]	= Receive_weather;
 }
 
 /* Head of file transfer system receive */
@@ -3081,6 +3082,18 @@ int Receive_ping(void)
 	return 1;
 }
 
+/* client-side weather, server-controlled - C. Blue */
+int Receive_weather(void)
+{
+	int	n;
+	char	ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch,
+	    &weather_type, &weather_wind, &weather_intensity, &weather_speed)) <= 0)
+		return n;
+	return 1;
+}
+
 int Send_search(void)
 {
 	int	n;
@@ -4058,6 +4071,9 @@ void do_ping()
 		last_ping = ticks;
 		Send_ping();
 	}
+
+	/* abusing it for weather for now - C. Blue */
+	do_weather();
 }
 
 int Send_sip(void) {

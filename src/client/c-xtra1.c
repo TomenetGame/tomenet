@@ -2038,4 +2038,104 @@ void window_stuff(void)
 	}
 }
 
+/* Handle weather (rain and snow) client-side - C. Blue */
+void do_weather() {
+	int i, j;
+
+	/* handle once per 'tick' (100ms) */
+	static int weather_ticks = 0;
+	if (ticks - weather_ticks == 0) return;
+	weather_ticks = ticks;
+
+	/* continue animating current weather (if any) */
+	if (!weather_type && !weather_elements) return;
+
+	/* set RNG to weather-seed (received from server on weather start) */
+	Rand_quick = TRUE;
+	if (weather_seed) Rand_value = weather_seed;
+	else Rand_value = (time(NULL));
+
+	/* create rain drops */
+	if (weather_type == 1 && weather_elements <= 1024 - 4) {
+		for (i = 0; i < 4; i++) {
+			weather_element_type[weather_elements] = 1;
+			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
+			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + 15) - 15;
+			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + 15;
+			weather_elements++;
+		}
+		
+	}
+	/* create snow flakes */
+	if (weather_type == 2 && weather_elements <= 1024 - 1) {
+		for (i = 0; i < 1; i++) {
+			weather_element_type[weather_elements] = 2;
+			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
+			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + 15) - 15;
+			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + 15;
+			weather_elements++;
+		}
+	}
+
+	/* display and advance currently existing weather elements */
+	for (i = 0; i < weather_elements; i++) {
+		/* display raindrops */
+		
+		/* display snowflakes */
+		
+		/* advance raindrops */
+		if (weather_element_type[i] == 1) {
+			weather_element_y[i]++;
+			if (weather_wind % 3 == 1) weather_element_x[i]++;
+			else if (weather_wind % 3 == 2) weather_element_x[i]--;
+
+			/* pac-man effect for leaving screen to the left/right */			
+			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
+			else if (weather_element_x[i] > MAX_WID - 2) weather_element_x[i] = 1;
+
+			/* left screen or reached destination? terminate it */
+			if (weather_element_y[i] >= MAX_HGT - 2 ||
+			    weather_element_y[i] >= weather_element_ydest[i]) {
+				/* excise this effect */
+				for (j = i + 1; j < weather_elements; j++) {
+					weather_element_x[j - 1] = weather_element_x[j];
+					weather_element_y[j - 1] = weather_element_y[j];
+					weather_element_ydest[j - 1] = weather_element_ydest[j];
+					weather_element_type[j - 1] = weather_element_type[j];
+				}
+				weather_elements--;
+				i--;
+			}
+		}
+		/* advance snowflakes - falling slowly */
+		if (weather_element_type[i] == 2) {
+			if (ticks % 2 == 0) weather_element_y[i]++;
+			if (weather_wind == 1 && ticks % 2 == 0) weather_element_x[i]++;
+			else if (weather_wind == 2 && ticks % 2 == 0) weather_element_x[i]--;
+			else if (weather_wind == 3) weather_element_x[i]++;
+			else if (weather_wind == 4) weather_element_x[i]--;
+
+			/* pac-man effect for leaving screen to the left/right */			
+			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
+			else if (weather_element_x[i] > MAX_WID - 2) weather_element_x[i] = 1;
+
+			/* left screen or reached destination? terminate it */
+			if (weather_element_y[i] >= MAX_HGT - 2 ||
+			    weather_element_y[i] >= weather_element_ydest[i]) {
+				/* excise this effect */
+				for (j = i + 1; j < weather_elements; j++) {
+					weather_element_x[j - 1] = weather_element_x[j];
+					weather_element_y[j - 1] = weather_element_y[j];
+					weather_element_ydest[j - 1] = weather_element_ydest[j];
+					weather_element_type[j - 1] = weather_element_type[j];
+				}
+				weather_elements--;
+				i--;
+			}
+		}
+	}
+
+	/* restore RNG */
+	Rand_quick = FALSE;
+}
 

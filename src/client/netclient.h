@@ -87,5 +87,6 @@ int Receive_keepalive(void);
 int Receive_ping(void);
 int Receive_extra_status(void);
 int Receive_unique_monster(void);
+int Receive_weather(void);
 
 int move_rest(void);

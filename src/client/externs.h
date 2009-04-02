@@ -476,6 +476,10 @@ extern void prt_lagometer(int lag);
 
 extern int p_speed;
 extern bool no_tele_grid;
+extern void do_weather(void);
+extern u32b weather_seed;
+extern int weather_type, weather_elements, weather_wind, weather_intensity, weather_speed;
+extern int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

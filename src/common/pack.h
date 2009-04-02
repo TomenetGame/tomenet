@@ -200,6 +200,7 @@
 #define PKT_EXTRA_STATUS	174	/* combat stance, fire mode, etc */
 #define PKT_INVEN_WIDE		175	/* similar to PKT_INVEN, but with additional info */
 #define PKT_UNIQUE_MONSTER	176	/* for client-side unique kills tracking */
+#define PKT_WEATHER		177	/* client-side weather (4.4.2a) */
 
 /*
  * Possible error codes returned
