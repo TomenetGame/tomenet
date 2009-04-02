@@ -2092,8 +2092,10 @@ void do_weather() {
 		/* advance raindrops */
 		if (weather_element_type[i] == 1) {
 			weather_element_y[i]++;
-			if (weather_wind % 3 == 1) weather_element_x[i]++;
-			else if (weather_wind % 3 == 2) weather_element_x[i]--;
+			if (weather_wind) {
+				if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) weather_element_x[i]++;
+				else if (weather_wind % 2 == 0 && ticks % (weather_wind / 2) == 0) weather_element_x[i]--;
+			}
 
 			/* pac-man effect for leaving screen to the left/right */			
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
@@ -2115,11 +2117,11 @@ void do_weather() {
 		}
 		/* advance snowflakes - falling slowly */
 		if (weather_element_type[i] == 2) {
-			if (ticks % 2 == 0) weather_element_y[i]++;
-			if (weather_wind == 1 && ticks % 2 == 0) weather_element_x[i]++;
-			else if (weather_wind == 2 && ticks % 2 == 0) weather_element_x[i]--;
-			else if (weather_wind == 3) weather_element_x[i]++;
-			else if (weather_wind == 4) weather_element_x[i]--;
+			if (ticks % weather_speed == 0) weather_element_y[i]++;
+			if (weather_wind) {
+				if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) weather_element_x[i]++;
+				else if (weather_wind % 2 == 0 && ticks % (weather_wind / 2) == 0) weather_element_x[i]--;
+			}
 
 			/* pac-man effect for leaving screen to the left/right */			
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;

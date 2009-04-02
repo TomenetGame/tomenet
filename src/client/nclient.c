@@ -3082,7 +3082,11 @@ int Receive_ping(void)
 	return 1;
 }
 
-/* client-side weather, server-controlled - C. Blue */
+/* client-side weather, server-controlled - C. Blue
+   Transmitted parameters:
+   weather_type = -1, 0, 1, 2: stop, none, rain, snow
+   weather_type +10 * n: pre-generate n steps
+*/
 int Receive_weather(void)
 {
 	int	n, i;
