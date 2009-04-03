@@ -2039,22 +2039,30 @@ void window_stuff(void)
 }
 
 /* Handle weather (rain and snow) client-side - C. Blue */
-#define SKY_ALTITUDE	15
+/* note: keep following defines in sync with nclient.c, beginning of file */
+#define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
+#define PANEL_X		13 /* physical top-left screen position of view panel */
+#define PANEL_Y		1 /* physical top-left screen position of view panel */
 void do_weather() {
 	int i, j;
+	static int weather_ticks = 0, weather_ticks10 = 0;
 
-	/* handle once per 'tick' (100ms) */
-	static int weather_ticks = 0;
-	if (ticks - weather_ticks == 0) return;
-	weather_ticks = ticks;
+	if (ticks10 == weather_ticks10) return;
+	weather_ticks10 = ticks10;
+	weather_ticks++;
+	/* handle once per n 'deci-ticks' (10ms resolution) */
+	if (weather_ticks < 3) return;
+	weather_ticks = 0;
 
 	/* continue animating current weather (if any) */
 	if (!weather_type && !weather_elements) return;
 
+#if 0
 	/* set RNG to weather-seed (received from server on weather start) */
 	Rand_quick = TRUE;
 	if (weather_seed) Rand_value = weather_seed;
 	else Rand_value = (time(NULL));
+#endif
 
 	/* hack: pre-generate extra elements (usually SKY_ALTITUDE)?
 	   Used if player enters an already weather-active sector */
@@ -2062,33 +2070,48 @@ void do_weather() {
 	weather_type = weather_type % 10;
 
 	/* create rain drops */
-	if (weather_type == 1 && weather_elements <= 1024 - 4 * j) {
-		for (i = 0; i < 4 * j; i++) {
+	if (weather_type == 1 && weather_elements <= 1024 - (4 + weather_intensity) * j) {
+		for (i = 0; i < (4 + weather_intensity) * j; i++) {
 			weather_element_type[weather_elements] = 1;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
 			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
+			/* increase counter */
 			weather_elements++;
 		}
 		
 	}
 	/* create snow flakes */
-	if (weather_type == 2 && weather_elements <= 1024 - 1 * j) {
-		for (i = 0; i < 1 * j; i++) {
+	else if (weather_type == 2 && weather_elements <= 1024 - (1 + weather_intensity) * j) {
+		for (i = 0; i < (1 + weather_intensity) * j; i++) {
 			weather_element_type[weather_elements] = 2;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
 			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 			weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
+			/* increase counter */
 			weather_elements++;
 		}
 	}
 
 	/* display and advance currently existing weather elements */
+        if (screen_icky) Term_switch(0);
 	for (i = 0; i < weather_elements; i++) {
-		/* display raindrops */
-		
-		/* display snowflakes */
-		
+		/* restore old tile before moving the weather element */
+		/* if panel view was freshly updated from server then no need */
+		if (!weather_panel_changed) {
+			/* only for elements within visible panel screen area */
+    	        	if (weather_element_x[i] >= weather_panel_x &&
+    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+        	    	    weather_element_y[i] >= weather_panel_y &&
+        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+	            		/* restore original grid content */
+	    		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+	    		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
+    	        	    	    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+    	        	    	    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+	            	}
+	        }
+
 		/* advance raindrops */
 		if (weather_element_type[i] == 1) {
 			weather_element_y[i]++;
@@ -2114,9 +2137,20 @@ void do_weather() {
 				weather_elements--;
 				i--;
 			}
+			/* only for elements within visible panel screen area */
+			else if (weather_element_x[i] >= weather_panel_x &&
+    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+        	    	    weather_element_y[i] >= weather_panel_y &&
+        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+    	        	    	/* display raindrop */
+        		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+        		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
+	        	    	    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+			}
 		}
-		/* advance snowflakes - falling slowly */
-		if (weather_element_type[i] == 2) {
+		/* advance snowflakes - falling slowly (assumed weather_speed isn't
+		   set to silyl value 1 - well, maybe that could be a 'hail storm') */
+		else if (weather_element_type[i] == 2) {
 			if (ticks % weather_speed == 0) weather_element_y[i]++;
 			if (weather_wind) {
 				if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) weather_element_x[i]++;
@@ -2140,10 +2174,26 @@ void do_weather() {
 				weather_elements--;
 				i--;
 			}
+			/* only for elements within visible panel screen area */
+			else if (weather_element_x[i] >= weather_panel_x &&
+    	        	    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+        	    	    weather_element_y[i] >= weather_panel_y &&
+        	    	    weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+    	        	    	/* display snowflake */
+        		        Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+        		    	    PANEL_Y + weather_element_y[i] - weather_panel_y,
+        		    	    TERM_WHITE, '*');
+			}
 		}
 	}
+        if (screen_icky) Term_switch(0);
 
+	/* started to draw on a freshly updated panel? */
+	weather_panel_changed = FALSE;
+
+#if 0
 	/* restore RNG */
 	Rand_quick = FALSE;
+#endif
 }
 

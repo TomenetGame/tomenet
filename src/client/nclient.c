@@ -32,9 +32,16 @@
 
 #include <sys/time.h>
 
+
+/* for weather - keep in sync with c-xtra1.c, do_weather()! */
+#define PANEL_X	13
+#define PANEL_Y	1
+
+
 extern void flicker(void);
 
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
+int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
 static bool		request_redraw;
 
 static sockbuf_t	rbuf, cbuf, wbuf, qbuf;
@@ -1849,11 +1856,19 @@ int Receive_char(void)
 	int	n;
 	char	ch;
 	char	x, y;
-	char	a, c;
+	byte	a;
+	char	c;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0)
 	{
 		return n;
+	}
+
+	/* remember map_info in client-side buffer */
+	if (x >= PANEL_X && x < PANEL_X + SCREEN_WID &&
+	    y >= PANEL_Y && y < PANEL_Y + SCREEN_HGT) {
+		panel_map_a[x - PANEL_X][y - PANEL_Y] = a;
+		panel_map_c[x - PANEL_X][y - PANEL_Y] = c;
 	}
 
 	if (screen_icky) Term_switch(0);
@@ -2405,8 +2420,16 @@ int Receive_line_info(void)
 		for (i = 0; i < n; i++)
 		{
 			/* Don't draw anything if "char" is zero */
-			if (c && draw)
+			if (c && draw) {
+				/* remember map_info in client-side buffer */
+				if (x + i >= PANEL_X && x + i < PANEL_X + SCREEN_WID &&
+				    y >= PANEL_Y && y < PANEL_Y + SCREEN_HGT) {
+					panel_map_a[x + i - PANEL_X][y - PANEL_Y] = a;
+					panel_map_c[x + i - PANEL_X][y - PANEL_Y] = c;
+				}
+
 				Term_draw(x + i, y, a, c);
+			}
 		}
 
 		/* Reset 'x' to the correct value */
@@ -3091,16 +3114,44 @@ int Receive_weather(void)
 {
 	int	n, i;
 	char	ch;
+    	int	wt, ww, wi, ws, wx, wy;
 
-	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch,
-	    &weather_type, &weather_wind, &weather_intensity, &weather_speed);
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d",
+	    &ch, &wt, &ww, &wi, &ws, &wx, &wy)) <= 0) return n;
 
-	/* hack: insta-erase all weather (player changed sector) */
+	weather_type = wt;
+	weather_wind = ww;
+	weather_intensity = wi;
+	weather_speed = ws;
+
+	/* did we change view panel? that would imply that our map
+	   info was updated and over-drawn freshly from server */
+	if (wx != weather_panel_x || wy != weather_panel_y)
+		weather_panel_changed = TRUE;
+
+	weather_panel_x = wx;
+	weather_panel_y = wy;
+
+	/* hack: insta-erase all weather */
 	if (weather_type == -1) {
-		/* restore tiles on display that were overwritten by weather */
-		for (i = 0; i < weather_elements; i++) {
-			/* display original grid content */
-			
+		/* if view panel was updated anyway, no need to restore */
+		if (!weather_panel_changed) {
+			/* restore tiles on display that were overwritten by weather */
+			if (screen_icky) Term_switch(0);
+			for (i = 0; i < weather_elements; i++) {
+				/* only for elements within visible panel screen area */
+				if (weather_element_x[i] >= weather_panel_x &&
+				    weather_element_x[i] < weather_panel_x + SCREEN_WID &&
+			    	    weather_element_y[i] >= weather_panel_y &&
+			            weather_element_y[i] < weather_panel_y + SCREEN_HGT) {
+					/* restore original grid content */
+	                                Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+        	                            PANEL_Y + weather_element_y[i] - weather_panel_y,
+                                            panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+                                            panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+                                }
+			}
+			if (screen_icky) Term_switch(0);
 		}
 
 		/* terminate weather */
@@ -3108,7 +3159,6 @@ int Receive_weather(void)
 		weather_type = 0;
 	}
 
-	if (n <= 0) return n;
 	return 1;
 }
 
@@ -3986,12 +4036,14 @@ void update_ticks()
 #endif
 
 	/* Set the new ticks to the old ticks rounded down to the number of seconds. */
-	newticks = ticks-(ticks%10);
+	newticks = ticks - (ticks % 10);
 	/* Find the new least significant digit of the ticks */
 #ifdef AMIGA
 	newticks += cur_time.tv_micro / 100000;
+	ticks10 = (cur_time.tv_micro / 10000) % 10;
 #else
 	newticks += cur_time.tv_usec / 100000;
+	ticks10 = (cur_time.tv_usec / 10000) % 10;
 #endif
 
 	/* Assume that it has not been more than one second since this function was last called */

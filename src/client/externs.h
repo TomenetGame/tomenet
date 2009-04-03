@@ -480,6 +480,11 @@ extern void do_weather(void);
 extern u32b weather_seed;
 extern int weather_type, weather_elements, weather_wind, weather_intensity, weather_speed;
 extern int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
+extern int weather_panel_x, weather_panel_y;
+extern bool weather_panel_changed;
+/* a client-side map_info buffer of current view panel (for weather) */
+extern byte panel_map_a[SCREEN_WID][SCREEN_HGT];
+extern char panel_map_c[SCREEN_WID][SCREEN_HGT];
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
@@ -490,7 +495,7 @@ extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 /* client.c */
 
 /* nclient.c (forer netclient.c) */
-extern int ticks;
+extern int ticks, ticks10;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);
