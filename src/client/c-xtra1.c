@@ -2067,6 +2067,8 @@ void window_stuff(void)
 void do_weather() {
 	int i, j;
 	static int weather_ticks = 0, weather_ticks10 = 0;
+	bool wind_west_effective = FALSE, wind_east_effective = FALSE; /* horizontal movement */
+	bool gravity_effective = FALSE; /* vertical movement */
 
 	if (ticks10 == weather_ticks10) return;
 	weather_ticks10 = ticks10;
@@ -2078,12 +2080,8 @@ void do_weather() {
 	/* continue animating current weather (if any) */
 	if (!weather_type && !weather_elements) return;
 
-#if 0
-	/* set RNG to weather-seed (received from server on weather start) */
-	Rand_quick = TRUE;
-	if (weather_seed) Rand_value = weather_seed;
-	else Rand_value = (time(NULL));
-#endif
+
+/* generate new weather elements ------------------------------------------- */
 
 	/* hack: pre-generate extra elements (usually SKY_ALTITUDE)?
 	   Used if player enters an already weather-active sector */
@@ -2091,8 +2089,8 @@ void do_weather() {
 	weather_type = weather_type % 10;
 
 	/* create rain drops */
-	if (weather_type == 1 && weather_elements <= 1024 - (4 + weather_intensity) * j) {
-		for (i = 0; i < (4 + weather_intensity) * j; i++) {
+	if (weather_type == 1 && weather_elements <= 1024 - (0+ weather_intensity) * j) {
+		for (i = 0; i < (0 + weather_intensity) * j; i++) {
 			weather_element_type[weather_elements] = 1;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
 			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
@@ -2103,8 +2101,8 @@ void do_weather() {
 		
 	}
 	/* create snow flakes */
-	else if (weather_type == 2 && weather_elements <= 1024 - (1 + weather_intensity) * j) {
-		for (i = 0; i < (1 + weather_intensity) * j; i++) {
+	else if (weather_type == 2 && weather_elements <= 1024 - (0 + weather_intensity) * j) {
+		for (i = 0; i < (0 + weather_intensity) * j; i++) {
 			weather_element_type[weather_elements] = 2;
 			weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
 			weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
@@ -2113,6 +2111,25 @@ void do_weather() {
 			weather_elements++;
 		}
 	}
+
+
+
+/* test for weather element movement---------------------------------------- */
+
+	/* horizontal movement: check whether elements are to be shifted by wind this time */
+	if (weather_wind) {
+		if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) wind_west_effective = TRUE;
+		else if (weather_wind % 2 == 0 && ticks % (weather_wind / 2) == 0) wind_east_effective = TRUE;
+	}
+	/* vertical movement: check whether elements are to be pulled by gravity this time */
+	if (ticks % weather_speed == 0) gravity_effective = TRUE;
+
+	/* nothing to do this time? - exit */
+	if (!gravity_effective && !wind_west_effective && !wind_east_effective)
+		return;
+
+
+/* move weather elements --------------------------------------------------- */
 
 	/* display and advance currently existing weather elements */
         if (screen_icky) Term_switch(0);
@@ -2135,11 +2152,10 @@ void do_weather() {
 
 		/* advance raindrops */
 		if (weather_element_type[i] == 1) {
-			weather_element_y[i]++;
-			if (weather_wind) {
-				if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) weather_element_x[i]++;
-				else if (weather_wind % 2 == 0 && ticks % (weather_wind / 2) == 0) weather_element_x[i]--;
-			}
+			/* perform movement (y:speed, x:wind) */
+			if (gravity_effective) weather_element_y[i]++;
+			if (wind_west_effective) weather_element_x[i]++;
+			else if (wind_east_effective) weather_element_x[i]--;
 
 			/* pac-man effect for leaving screen to the left/right */			
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
@@ -2172,11 +2188,10 @@ void do_weather() {
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
 		   set to silyl value 1 - well, maybe that could be a 'hail storm') */
 		else if (weather_element_type[i] == 2) {
-			if (ticks % weather_speed == 0) weather_element_y[i]++;
-			if (weather_wind) {
-				if (weather_wind % 2 == 1 && ticks % ((weather_wind + 1) / 2) == 0) weather_element_x[i]++;
-				else if (weather_wind % 2 == 0 && ticks % (weather_wind / 2) == 0) weather_element_x[i]--;
-			}
+			/* perform movement (y:speed, x:wind) */
+			if (gravity_effective) weather_element_y[i]++;
+			if (wind_west_effective) weather_element_x[i]++;
+			else if (wind_east_effective) weather_element_x[i]--;
 
 			/* pac-man effect for leaving screen to the left/right */			
 			if (weather_element_x[i] < 1) weather_element_x[i] = MAX_WID - 2;
@@ -2212,12 +2227,9 @@ void do_weather() {
 	/* Update the screen */
 	if (!screen_icky) Term_fresh();
 
+
+/* clean up and exit ------------------------------------------------------- */
+
 	/* started to draw on a freshly updated panel? */
 	weather_panel_changed = FALSE;
-
-#if 0
-	/* restore RNG */
-	Rand_quick = FALSE;
-#endif
 }
-

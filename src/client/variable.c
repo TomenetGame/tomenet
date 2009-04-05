@@ -207,7 +207,6 @@ int p_speed = 110;
 bool no_tele_grid = FALSE;
 
 /* for weather */
-u32b weather_seed = 0; /* RNG seed especially for weather (superfluous atm) */
 int weather_type = 0; /* stop(-1)/none/rain/snow */
 int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
 int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
