@@ -339,7 +339,7 @@ int main(int argc, char **argv)
 		puts("Example: tomenet -lMorgoth MorgyPass -p18348 tomenet.servegame.com");
 		puts("       : tomenet -f.myrc -lOlorin_archer");
 		puts("  -c                 Always use CUI(GCU) interface");
-		puts("  -C                 Compatibility mode for old servers");
+		puts("  -C                 Compatibility mode for very old servers");
 		puts("  -f                 specify rc File to read");
 		puts("  -F                 Client FPS");
 		puts("  -i                 Ignore .tomenetrc");

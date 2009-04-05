@@ -3640,12 +3640,12 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 					puts(longVersion);
 					puts("Usage  : tomenet [options] [servername]");
 					puts("Example: tomenet -lMorgoth MorgyPass -p18348 tomenet.servegame.com");
-					puts("  -C                 Compatibility mode for old servers");
+					puts("  -C                 Compatibility mode for very old servers");
 					puts("  -F                 Client FPS");
-					puts("  -l <nick> <passwd> Login as");
-					puts("  -N <name>          character Name");
-					puts("  -p <num>           change game Port number");
-					puts("  -P <path>          set the lib directory Path");
+					puts("  -l<nick> <passwd>  Login as");
+					puts("  -N<name>           character Name");
+					puts("  -p<num>            change game Port number");
+					puts("  -P<path>           set the lib directory Path");
 					quit(NULL);
 					break;
 #endif // 0

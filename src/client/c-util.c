@@ -888,7 +888,7 @@ static char roguelike_commands(char command)
                 case KTRL('D'): return ('k');
 
                 /* Hack -- Commit suicide */
-                case KTRL('C'): return ('Q');
+//(display fps) case KTRL('C'): return ('Q');
 
                 /* Locate player on map */
                 case 'W': return ('L');
@@ -991,7 +991,7 @@ static char original_commands(char command)
 
 		/* Hack -- Commit suicide */
 		case KTRL('K'): return ('Q');
-		case KTRL('C'): return ('Q');
+//(display fps)	case KTRL('C'): return ('Q');
 	}
 
 	/* Default */
