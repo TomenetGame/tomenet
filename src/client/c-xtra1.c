@@ -205,6 +205,10 @@ void prt_hp(int max, int cur)
 {
 	char tmp[32];
 	byte color;
+	int x, y; /* for remembering cursor pos */
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	if (client_mode == CLIENT_PARTY)
 	{
@@ -268,12 +272,19 @@ void prt_hp(int max, int cur)
 		else color = TERM_RED;
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
 #endif
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 	}
 }
 void prt_stamina(int max, int cur)
 {
 	char tmp[32];
 	byte color;
+	int x, y; /* for remembering cursor pos */
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 #ifdef CONDENSED_HP_SP
 		put_str("ST:    /", ROW_MAXST, 0);
@@ -288,6 +299,9 @@ void prt_stamina(int max, int cur)
 		else color = TERM_RED;
 		c_put_str(color, tmp, ROW_CURST, COL_CURST);
 #endif
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 /* DEG print party members hps to screen */
 void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp)
@@ -369,6 +383,10 @@ void prt_sp(int max, int cur)
 {
 	char tmp[32];
 	byte color;
+	int x, y; /* for remembering cursor pos */
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	if (client_mode == CLIENT_PARTY)
 	{
@@ -437,6 +455,9 @@ void prt_sp(int max, int cur)
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
 #endif
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
