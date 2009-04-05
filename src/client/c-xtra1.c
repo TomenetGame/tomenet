@@ -2188,6 +2188,9 @@ void do_weather() {
 	}
         if (screen_icky) Term_switch(0);
 
+	/* Update the screen */
+	if (!screen_icky) Term_fresh();
+
 	/* started to draw on a freshly updated panel? */
 	weather_panel_changed = FALSE;
 
