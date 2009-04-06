@@ -208,11 +208,12 @@ bool no_tele_grid = FALSE;
 
 /* for weather */
 int weather_type = 0; /* stop(-1)/none/rain/snow */
-int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
+int weather_gen_speed = 0; /* speed at which new weather elements are generated */
 int weather_wind = 0; /* current gust of wind if any (1 west, 2 east, 3 strong west, 4 strong east) */
 int weather_intensity = 1; /* density of raindrops / snowflakes */
 int weather_speed = 1; /* speed at which snowflakes move aka a second wind
         		  parameter (doesnt make sense for raindrops) */
+int weather_elements = 0; /* current amount of raindrops/snowflakes on the move */
 int weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 int weather_panel_x, weather_panel_y; /* part of the map we're viewing on screen, top left corner */
 bool weather_panel_changed; /* view got updated anyway by switching panel? */

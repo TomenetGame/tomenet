@@ -3114,15 +3114,10 @@ int Receive_weather(void)
 {
 	int	n, i;
 	char	ch;
-    	int	wt, ww, wi, ws, wx, wy;
+    	int	wg, wt, ww, wi, ws, wx, wy;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d",
-	    &ch, &wt, &ww, &wi, &ws, &wx, &wy)) <= 0) return n;
-
-	weather_type = wt;
-	weather_wind = ww;
-	weather_intensity = wi;
-	weather_speed = ws;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d",
+	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy)) <= 0) return n;
 
 	/* did we change view panel? that would imply that our map
 	   info was updated and over-drawn freshly from server */
@@ -3131,6 +3126,12 @@ int Receive_weather(void)
 
 	weather_panel_x = wx;
 	weather_panel_y = wy;
+
+	weather_type = wt;
+	weather_wind = ww;
+	weather_gen_speed = wg;
+	weather_intensity = wi;
+	weather_speed = ws;
 
 	/* hack: insta-erase all weather */
 	if (weather_type == -1) {
