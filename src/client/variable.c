@@ -194,8 +194,9 @@ s32b server_protocol = 2;
 /* Server version */
 version_type server_version;
 
-/* Client fps used for polling keyboard input etc */
-int cfg_client_fps = 60;
+/* Client fps used for polling keyboard input etc -
+   old: 60; safe optimum for client-side weather: 100 */
+int cfg_client_fps = 100;
 
 
 /* For unique list in char dump - C. Blue */
