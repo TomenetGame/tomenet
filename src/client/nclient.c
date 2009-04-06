@@ -3115,9 +3115,15 @@ int Receive_weather(void)
 	int	n, i;
 	char	ch;
     	int	wg, wt, ww, wi, ws, wx, wy;
+    	int	cx1, cy1, cx2, cy2, cd;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d",
-	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy)) <= 0) return n;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d%d%d%d%d%d",
+	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy,
+	    &cx1, &cy1, &cx2, &cy2, &cd)) <= 0) return n;
+
+	/* fix values */
+	wx += PANEL_X;
+	wy += PANEL_Y;
 
 	/* did we change view panel? that would imply that our map
 	   info was updated and over-drawn freshly from server */
@@ -3132,6 +3138,12 @@ int Receive_weather(void)
 	weather_gen_speed = wg;
 	weather_intensity = wi;
 	weather_speed = ws;
+
+	cloud_x1 = cx1;
+	cloud_y1 = cy1;
+	cloud_x2 = cx2;
+	cloud_y2 = cy2;
+	cloud_dsum = cd;
 
 	/* hack: insta-erase all weather */
 	if (weather_type == -1) {

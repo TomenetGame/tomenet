@@ -221,4 +221,6 @@ bool weather_panel_changed; /* view got updated anyway by switching panel? */
 /* a client-side map_info buffer of current view panel (for weather) */
 byte panel_map_a[SCREEN_WID][SCREEN_HGT];
 char panel_map_c[SCREEN_WID][SCREEN_HGT];
+/* is weather on current worldmap sector part of an elliptical cloud?: */
+int cloud_x1, cloud_y1, cloud_x2, cloud_y2, cloud_dsum;
 

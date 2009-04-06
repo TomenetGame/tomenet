@@ -2071,6 +2071,7 @@ void do_weather() {
 	bool wind_west_effective = FALSE, wind_east_effective = FALSE; /* horizontal movement */
 	bool gravity_effective = FALSE; /* vertical movement */
 	bool redraw = FALSE;
+	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
 
 
 	/* continue animating current weather (if any) */
@@ -2152,28 +2153,41 @@ void do_weather() {
 		/* factor in received intensity */
 		j *= weather_intensity;
 
-		/* create rain drops */
-		if (weather_type == 1 && weather_elements <= 1024 - j) {
+		/* create weather elements, ie rain drops or snow flakes */
+		if (weather_elements <= 1024 - j) {
 			for (i = 0; i < j; i++) {
-				weather_element_type[weather_elements] = 1;
-				weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
-				weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
+				/* generate random starting pos */
+				weather_element_type[weather_elements] = weather_type;
+				x = rand_int(MAX_WID - 2) + 1;
+				y = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 				weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
-				/* increase counter */
+
+				/* test pos for validity in regards to cloud */
+				if (cloud_x1 != -9999) { /* does cloud exist? */
+					/* note: distance calc code is taken from server's distance() */
+					/* Calculate distance to cloud focus point 1: */
+					dy = (y > cloud_y1) ? (y - cloud_y1) : (cloud_y1 - y);
+					dx = (x > cloud_x1) ? (x - cloud_x1) : (cloud_x1 - x);
+					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+					/* Calculate distance to cloud focus point 2: */
+					dy = (y > cloud_y2) ? (y - cloud_y2) : (cloud_y2 - y);
+					dx = (x > cloud_x2) ? (x - cloud_x2) : (cloud_x2 - x);
+					/* ..and sum them up */
+					d += (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+
+					/* distance outside of cloud? discard */
+					if (d > cloud_dsum) continue;
+					/* distance near cloud borders? chance to thin out */
+					if (rand_int(100) > (d - ((cloud_dsum * 3) / 4)) * 4) continue;
+				}
+
+				/* (use pos) */
+				weather_element_x[weather_elements] = x;
+				weather_element_y[weather_elements] = y;
+				/* since pos passed any checks, increase counter to acknowledge */
 				weather_elements++;
 			}
 		
-		}
-		/* create snow flakes */
-		else if (weather_type == 2 && weather_elements <= 1024 - j) {
-			for (i = 0; i < j; i++) {
-				weather_element_type[weather_elements] = 2;
-				weather_element_x[weather_elements] = rand_int(MAX_WID - 2) + 1;
-				weather_element_y[weather_elements] = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
-				weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
-				/* increase counter */
-				weather_elements++;
-			}
 		}
 	}
 

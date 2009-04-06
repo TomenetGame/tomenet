@@ -481,9 +481,9 @@ extern int weather_type, weather_wind, weather_gen_speed, weather_intensity, wea
 extern int weather_elements, weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 extern int weather_panel_x, weather_panel_y;
 extern bool weather_panel_changed;
-/* a client-side map_info buffer of current view panel (for weather) */
 extern byte panel_map_a[SCREEN_WID][SCREEN_HGT];
 extern char panel_map_c[SCREEN_WID][SCREEN_HGT];
+extern int cloud_x1, cloud_y1, cloud_x2, cloud_y2, cloud_dsum;
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
