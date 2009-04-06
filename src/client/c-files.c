@@ -1132,7 +1132,7 @@ void peruse_file(void)
 		/* Prompt */
 		/* indicate EOF by different status line colour */
 		if (cur_line + 20 >= max_line)
-			c_prt(TERM_UMBER, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_ORANGE, format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, cur_line + 20, max_line), 23, 0);
 		else
 			prt(format("[Press Return, Space, -, b, or ESC to exit.] (%d-%d/%d)",
