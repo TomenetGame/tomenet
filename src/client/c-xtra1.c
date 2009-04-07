@@ -2065,17 +2065,22 @@ void window_stuff(void)
 #define PANEL_X		13 /* physical top-left screen position of view panel */
 #define PANEL_Y		1 /* physical top-left screen position of view panel */
 void do_weather() {
-	int i, j;
+	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
 	static int weather_wind_ticks = 0, weather_speed_ticks = 0; /* sub-ticks when weather really is processed */
 	bool wind_west_effective = FALSE, wind_east_effective = FALSE; /* horizontal movement */
 	bool gravity_effective = FALSE; /* vertical movement */
 	bool redraw = FALSE;
 	int x, y, dx, dy, d; /* distance calculations (cloud centre) */
+	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
+	bool with_clouds, outside_clouds;
 
 
 	/* continue animating current weather (if any) */
 	if (!weather_type && !weather_elements) return;
+
+
+/* perform redraw and sync hacks ------------------------------------------- */
 
 	/* hack: instantly redraw weather without waiting for ticks and exit */
 	if (weather_type >= 20000) {
@@ -2122,40 +2127,68 @@ void do_weather() {
 		if (weather_elements) return;
 	}
 
+
+/* perform buffered cloud movement ----------------------------------------- */
+
+	/* limited cloud movement, buffered client-side */
+	if (ticks != cloud_movement_lasttick) {
+		cloud_movement_lasttick = ticks;
+		cloud_movement_ticks++;
+		/* perform movement once per second */
+		if (cloud_movement_ticks >= 10) {
+			for (i = 0; i < 10; i++) {
+				/* cloud exists? */
+				if (cloud_x1[i] != -9999) {
+					/* move a tiny bit, virtually */
+					cloud_xfrac[i] += cloud_xm100[i];
+					cloud_yfrac[i] += cloud_ym100[i];
+					/* finally advanced a grid? */
+					if (cloud_xfrac[i] >= 100) {
+						cloud_x1[i]++;
+						cloud_x2[i]++;
+						cloud_xfrac[i] = 0;
+					}
+					if (cloud_yfrac[i] >= 100) {
+						cloud_y1[i]++;
+						cloud_y2[i]++;
+						cloud_yfrac[i] = 0;
+					}
+				}
+			}
+		}
+	}
+
+
+/* process weather every 10ms at most -------------------------------------- */
+
 	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
 	if (ticks10 == weather_ticks10) return;
 	weather_ticks10 = ticks10;
-#if 0 /* potentially increase resolution to single ticks10, ie 10 ms */
-	weather_ticks++;
-	/* handle once per n deci-ticks */
-	if (weather_ticks < 3) return;
-	weather_ticks = 0;
-#endif
 
 
 /* generate new weather elements ------------------------------------------- */
 
 	/* hack: pre-generate extra elements (usually SKY_ALTITUDE)?
 	   Used if player enters an already weather-active sector */
-	j = ((weather_type / 10) + 1);
+	intensity = ((weather_type / 10) + 1);
 	weather_type = weather_type % 10;
 
 	/* weather creation: check whether elements are to be generated this time */
 	weather_gen_ticks++;
-	/* hack: exception for pre-generated elements (j > 1): insta-gen! */
-	if (weather_gen_ticks == weather_gen_speed || j > 1) {
+	/* hack: exception for pre-generated elements (intensity > 1): insta-gen! */
+	if (weather_gen_ticks == weather_gen_speed || intensity > 1) {
 		/* this check might (partially) not be very important */
 		if (weather_gen_ticks == weather_gen_speed)
 			weather_gen_ticks = 0; 
 		else
-		    j--;
+		    intensity--;
 
 		/* factor in received intensity */
-		j *= weather_intensity;
+		intensity *= weather_intensity;
 
 		/* create weather elements, ie rain drops or snow flakes */
-		if (weather_elements <= 1024 - j) {
-			for (i = 0; i < j; i++) {
+		if (weather_elements <= 1024 - intensity) {
+			for (i = 0; i < intensity; i++) {
 				/* generate random starting pos */
 				weather_element_type[weather_elements] = weather_type;
 				x = rand_int(MAX_WID - 2) + 1;
@@ -2163,23 +2196,33 @@ void do_weather() {
 				weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
 
 				/* test pos for validity in regards to cloud */
-				if (cloud_x1 != -9999) { /* does cloud exist? */
-					/* note: distance calc code is taken from server's distance() */
-					/* Calculate distance to cloud focus point 1: */
-					dy = (y > cloud_y1) ? (y - cloud_y1) : (cloud_y1 - y);
-					dx = (x > cloud_x1) ? (x - cloud_x1) : (cloud_x1 - x);
-					d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
-					/* Calculate distance to cloud focus point 2: */
-					dy = (y > cloud_y2) ? (y - cloud_y2) : (cloud_y2 - y);
-					dx = (x > cloud_x2) ? (x - cloud_x2) : (cloud_x2 - x);
-					/* ..and sum them up */
-					d += (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+				with_clouds = FALSE; /* assume no clouds exist */
+				outside_clouds = TRUE; /* assume not within any clouds area */
+				for (j = 0; j < 10; j++) {
+					if (cloud_x1[j] != -9999) { /* does cloud exist? */
+						/* at least one cloud restriction applies */
+						with_clouds = TRUE;
 
-					/* distance outside of cloud? discard */
-					if (d > cloud_dsum) continue;
-					/* distance near cloud borders? chance to thin out */
-					if (rand_int(100) > (d - ((cloud_dsum * 3) / 4)) * 4) continue;
+						/* note: distance calc code is taken from server's distance() */
+						/* Calculate distance to cloud focus point 1: */
+						dy = (y > cloud_y1[j]) ? (y - cloud_y1[j]) : (cloud_y1[j] - y);
+						dx = (x > cloud_x1[j]) ? (x - cloud_x1[j]) : (cloud_x1[j] - x);
+						d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+						/* Calculate distance to cloud focus point 2: */
+						dy = (y > cloud_y2[j]) ? (y - cloud_y2[j]) : (cloud_y2[j] - y);
+						dx = (x > cloud_x2[j]) ? (x - cloud_x2[j]) : (cloud_x2[j] - x);
+						/* ..and sum them up */
+						d += (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+
+						/* distance within cloud? */
+						if (d <= cloud_dsum[j] &&
+						/* distance near cloud borders? chance to thin out */
+						    (rand_int(100) >= (d - ((cloud_dsum[j] * 3) / 4)) * 4))
+							outside_clouds = FALSE;
+					}
 				}
+				/* clouds apply but we're not within their areas? discard */
+				if (with_clouds && outside_clouds) continue;
 
 				/* (use pos) */
 				weather_element_x[weather_elements] = x;
@@ -2187,10 +2230,8 @@ void do_weather() {
 				/* since pos passed any checks, increase counter to acknowledge */
 				weather_elements++;
 			}
-		
 		}
 	}
-
 
 
 /* test for weather element movement---------------------------------------- */

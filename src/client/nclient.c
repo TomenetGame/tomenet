@@ -3115,11 +3115,31 @@ int Receive_weather(void)
 	int	n, i;
 	char	ch;
     	int	wg, wt, ww, wi, ws, wx, wy;
-    	int	cx1, cy1, cx2, cy2, cd;
+    	int	cnum, cidx, cx1, cy1, cx2, cy2, cd, cxm, cym;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d%d%d%d%d%d",
+	/* base packet: weather + number of clouds */
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d%d",
 	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy,
-	    &cx1, &cy1, &cx2, &cy2, &cd)) <= 0) return n;
+	    &cnum)) <= 0) return n;
+
+	/* extended: read clouds */
+	for (i = 0; i < cnum; i++) {
+		if ((n = Packet_scanf(&rbuf, "%d%d%d%d%d%d%d%d",
+		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) return n;
+
+		/* update clouds */
+		cloud_x1[cidx] = cx1;
+		cloud_y1[cidx] = cy1;
+		cloud_x2[cidx] = cx2;
+		cloud_y2[cidx] = cy2;
+		cloud_dsum[cidx] = cd;
+		cloud_xm100[cidx] = cxm;
+		cloud_ym100[cidx] = cym;
+		cloud_x1frac[cidx] = 0;
+		cloud_y1frac[cidx] = 0;
+		cloud_x2frac[cidx] = 0;
+		cloud_y2frac[cidx] = 0;
+	}
 
 	/* fix values */
 	wx += PANEL_X;
@@ -3130,20 +3150,16 @@ int Receive_weather(void)
 	if (wx != weather_panel_x || wy != weather_panel_y)
 		weather_panel_changed = TRUE;
 
+	/* set current screen panel */
 	weather_panel_x = wx;
 	weather_panel_y = wy;
 
+	/* update weather */
 	weather_type = wt;
 	weather_wind = ww;
 	weather_gen_speed = wg;
 	weather_intensity = wi;
 	weather_speed = ws;
-
-	cloud_x1 = cx1;
-	cloud_y1 = cy1;
-	cloud_x2 = cx2;
-	cloud_y2 = cy2;
-	cloud_dsum = cd;
 
 	/* hack: insta-erase all weather */
 	if (weather_type == -1) {
