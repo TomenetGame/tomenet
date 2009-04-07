@@ -2136,6 +2136,7 @@ void do_weather() {
 		cloud_movement_ticks++;
 		/* perform movement once per second */
 		if (cloud_movement_ticks >= 10) {
+			cloud_movement_ticks = 0;
 			for (i = 0; i < 10; i++) {
 				/* cloud exists? */
 				if (cloud_x1[i] != -9999) {

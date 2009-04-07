@@ -222,5 +222,7 @@ bool weather_panel_changed; /* view got updated anyway by switching panel? */
 byte panel_map_a[SCREEN_WID][SCREEN_HGT];
 char panel_map_c[SCREEN_WID][SCREEN_HGT];
 /* is weather on current worldmap sector part of an elliptical cloud?: */
-int cloud_x1, cloud_y1, cloud_x2, cloud_y2, cloud_dsum;
+int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
+int cloud_xm100[10], cloud_ym100[10]; /* cloud movement in 1/100 grid per s */
+int cloud_xfrac[10], cloud_yfrac[10];
 

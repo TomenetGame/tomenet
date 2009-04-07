@@ -3135,10 +3135,8 @@ int Receive_weather(void)
 		cloud_dsum[cidx] = cd;
 		cloud_xm100[cidx] = cxm;
 		cloud_ym100[cidx] = cym;
-		cloud_x1frac[cidx] = 0;
-		cloud_y1frac[cidx] = 0;
-		cloud_x2frac[cidx] = 0;
-		cloud_y2frac[cidx] = 0;
+		cloud_xfrac[cidx] = 0;
+		cloud_yfrac[cidx] = 0;
 	}
 
 	/* fix values */
