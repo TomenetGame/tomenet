@@ -3112,7 +3112,7 @@ int Receive_ping(void)
 */
 int Receive_weather(void)
 {
-	int	n, i, clouds = 10;
+	int	n, i, clouds;
 	char	ch;
     	int	wg, wt, ww, wi, ws, wx, wy;
     	int	cnum, cidx, cx1, cy1, cx2, cy2, cd, cxm, cym;
@@ -3123,7 +3123,8 @@ int Receive_weather(void)
 	    &cnum)) <= 0) return n;
 
 	/* fix limit */
-	if (cnum >= 0 && cnum < clouds) clouds = cnum;
+	if (cnum >= 0) clouds = cnum;
+	else clouds = 10;
 
 	/* extended: read clouds */
 	for (i = 0; i < clouds; i++) {
@@ -3136,6 +3137,10 @@ int Receive_weather(void)
 		/* proceed normally */
 		if ((n = Packet_scanf(&rbuf, "%d%d%d%d%d%d%d%d",
 		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) return n;
+
+		/* potential forward-compatibility hack:
+		   ignore if too many clouds are sent */
+		if (cidx >= 10) continue;
 
 		/* update clouds */
 		cloud_x1[cidx] = cx1;
