@@ -2149,9 +2149,19 @@ void do_weather() {
 						cloud_x2[i]++;
 						cloud_xfrac[i] = 0;
 					}
+					else if (cloud_xfrac[i] <= -100) {
+						cloud_x1[i]--;
+						cloud_x2[i]--;
+						cloud_xfrac[i] = 0;
+					}
 					if (cloud_yfrac[i] >= 100) {
 						cloud_y1[i]++;
 						cloud_y2[i]++;
+						cloud_yfrac[i] = 0;
+					}
+					else if (cloud_yfrac[i] <= -100) {
+						cloud_y1[i]--;
+						cloud_y2[i]--;
 						cloud_yfrac[i] = 0;
 					}
 				}
