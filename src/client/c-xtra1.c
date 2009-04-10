@@ -2143,26 +2143,18 @@ void do_weather() {
 					/* move a tiny bit, virtually */
 					cloud_xfrac[i] += cloud_xm100[i];
 					cloud_yfrac[i] += cloud_ym100[i];
+					x = cloud_xfrac[i] / 100;
+					y = cloud_yfrac[i] / 100;
 					/* finally advanced a grid? */
-					if (cloud_xfrac[i] >= 100) {
-						cloud_x1[i]++;
-						cloud_x2[i]++;
-						cloud_xfrac[i] = 0;
+					if (x) {
+						cloud_x1[i] += x;
+						cloud_x2[i] += x;
+						cloud_xfrac[i] -= x * 100;
 					}
-					else if (cloud_xfrac[i] <= -100) {
-						cloud_x1[i]--;
-						cloud_x2[i]--;
-						cloud_xfrac[i] = 0;
-					}
-					if (cloud_yfrac[i] >= 100) {
-						cloud_y1[i]++;
-						cloud_y2[i]++;
-						cloud_yfrac[i] = 0;
-					}
-					else if (cloud_yfrac[i] <= -100) {
-						cloud_y1[i]--;
-						cloud_y2[i]--;
-						cloud_yfrac[i] = 0;
+					if (y) {
+						cloud_y1[i] += y;
+						cloud_y2[i] += y;
+						cloud_yfrac[i] -= y * 100;
 					}
 				}
 			}
@@ -2201,7 +2193,7 @@ void do_weather() {
 		if (weather_elements <= 1024 - intensity) {
 			for (i = 0; i < intensity; i++) {
 				/* generate random starting pos */
-				weather_element_type[weather_elements] = weather_type;
+				weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);
 				x = rand_int(MAX_WID - 2) + 1;
 				y = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 				weather_element_ydest[weather_elements] = weather_element_y[weather_elements] + SKY_ALTITUDE;
