@@ -868,6 +868,11 @@ void prt_lagometer(int lag) {
  */
 void health_redraw(int num, byte attr)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	/* Not tracking */
 	if (!attr)
 	{
@@ -884,6 +889,9 @@ void health_redraw(int num, byte attr)
 		/* Dump the current "health" (use '*' symbols) */
 		Term_putstr(COL_INFO + 1, ROW_INFO, num, attr, "**********");
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
