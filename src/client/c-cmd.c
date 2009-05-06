@@ -382,11 +382,13 @@ void process_command()
 			cmd_ghost();
 			break;
 
+#if 0 /* done by 'p' key instead */
 		case 'x':
 			cmd_mind();
 			break;
-			/*** Looking/Targetting ***/
-		case '*':
+#endif
+
+		case '*': /*** Looking/Targetting ***/
 			cmd_target();
 			break;
 
@@ -1743,10 +1745,12 @@ void cmd_ghost(void)
 	}
 }
 
+#if 0 /* done by cmd_telekinesis */
 void cmd_mind(void)
 {
 	Send_mind();
 }
+#endif
 
 void cmd_load_pref(void)
 {

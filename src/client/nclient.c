@@ -3697,6 +3697,7 @@ int Send_pray(int book, int spell)
 	return 1;
 }
 
+#if 0 /* instead, Send_telekinesis is used */
 int Send_mind()
 {
 	int	n;
@@ -3708,6 +3709,7 @@ int Send_mind()
 
 	return 1;
 }
+#endif
 
 int Send_ghost(int ability)
 {

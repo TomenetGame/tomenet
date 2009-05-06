@@ -330,7 +330,7 @@ extern void cmd_pray(void);
 extern void cmd_mimic(void);
 extern void cmd_fight(void);
 extern void cmd_ghost(void);
-extern void cmd_mind(void);
+//extern void cmd_mind(void); done by cmd_telekinesis
 extern void cmd_load_pref(void);
 extern void cmd_redraw(void);
 extern void cmd_purchase_house(void);
@@ -519,7 +519,7 @@ extern int Send_file_data(int ind, unsigned short id, char *buf, unsigned short 
 extern int Send_file_end(int ind, unsigned short id);
 extern int Receive_file_data(int ind, unsigned short len, char *buffer);
 extern int Send_raw_key(int key);
-extern int Send_mind(void);
+//extern int Send_mind(void); instead using Send_telekinesis
 extern int Send_mimic(int spell);
 extern int Send_search(void);
 extern int Send_walk(int dir);

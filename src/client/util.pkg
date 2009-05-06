@@ -116,7 +116,8 @@ extern bool get_check(cptr prompt);
 
 /* packets */
 extern int Send_raw_key(int key);
-extern int Send_mind();
+//extern int Send_mind();
+extern int Send_telekinesis();
 extern int Send_search(void);
 extern int Send_walk(int dir);
 extern int Send_run(int dir);
