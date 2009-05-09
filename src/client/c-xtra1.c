@@ -10,11 +10,19 @@
  */
 static void prt_field(cptr info, int row, int col)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	/* Dump 13 spaces to clear */
 	c_put_str(TERM_WHITE, "             ", row, col);
 
 	/* Dump the info itself */
 	c_put_str(TERM_L_BLUE, info, row, col);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 
@@ -81,12 +89,16 @@ void cnv_stat(int val, char *out_val)
  */
 void prt_stat(int stat, int max, int cur, int cur_base)
 {
+	char tmp[32];
+	int x, y;
+
 	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
 
-	char tmp[32];
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	if (cur < max)
 	{
@@ -108,6 +120,9 @@ void prt_stat(int stat, int max, int cur, int cur_base)
 			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_UMBER, tmp);
 		}
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -126,6 +141,10 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 {
 	char tmp[32];
 	int colour = (level < max_lev) ? TERM_YELLOW : TERM_L_GREEN;
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
 
@@ -167,6 +186,9 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
                 Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "Xp ");
                 Term_putstr(COL_EXP + 3, ROW_EXP, -1, TERM_YELLOW, tmp);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -175,10 +197,17 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 void prt_gold(int gold)
 {
 	char tmp[32];
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	put_str("AU ", ROW_GOLD, COL_GOLD);
 	sprintf(tmp, "%9ld", (long)gold);
 	c_put_str(TERM_L_GREEN, tmp, ROW_GOLD, COL_GOLD + 3);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -186,16 +215,22 @@ void prt_gold(int gold)
  */
 void prt_ac(int ac)
 {
+	char tmp[32];
+	int x, y;
 	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
 
-	char tmp[32];
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	put_str("AC:", ROW_AC, COL_AC);
 	sprintf(tmp, "%5d", ac);
 	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -465,17 +500,24 @@ void prt_sp(int max, int cur)
  */
 void prt_sane(byte attr, cptr buf)
 {
+	int x, y;
+
 	if (client_mode == CLIENT_PARTY)
 	{
 		return;
 	}
 
-
 #ifdef SHOW_SANITY	/* NO SANITY DISPLAY!!! */
 
-  put_str("SN:         ", ROW_SANITY, COL_SANITY);
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
-  c_put_str(attr, buf, ROW_SANITY, COL_SANITY+3);
+	put_str("SN:         ", ROW_SANITY, COL_SANITY);
+
+	c_put_str(attr, buf, ROW_SANITY, COL_SANITY+3);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 #endif	/* SHOW_SANITY */
 }
 
@@ -485,6 +527,7 @@ void prt_sane(byte attr, cptr buf)
 void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr name)
 {
 	char depths[32];
+	int x2, y2;
 
 	sprintf(depths, "(%-2d,%-2d)",x,y);
 	c_put_str(colour_sector, depths, ROW_XYPOS, COL_XYPOS);
@@ -496,9 +539,15 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	else
 		sprintf(depths, "Lev %d", z);
 
+	/* remember cursor position */
+	Term_locate(&x2, &y2);
+
 	/* Right-Adjust the "depth" and clear old values */
 	c_prt(colour, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
-	
+
+	/* restore cursor position */
+	Term_gotoxy(x2, y2);
+
 	/* hack: extend warning on speed colour too */
 	if (colour_sector == TERM_L_DARK) no_tele_grid = TRUE;
 	else no_tele_grid = FALSE;
@@ -510,6 +559,11 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
  */
 void prt_hunger(int food)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (food < PY_FOOD_FAINT)
 	{
 		c_put_str(TERM_RED, "Weak  ", ROW_HUNGRY, COL_HUNGRY);
@@ -539,6 +593,9 @@ void prt_hunger(int food)
 	{
 		c_put_str(TERM_GREEN, "Gorged", ROW_HUNGRY, COL_HUNGRY);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -546,6 +603,11 @@ void prt_hunger(int food)
  */
 void prt_blind(bool blind)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (blind)
 	{
 		c_put_str(TERM_ORANGE, "Blind", ROW_BLIND, COL_BLIND);
@@ -554,6 +616,9 @@ void prt_blind(bool blind)
 	{
 		put_str("     ", ROW_BLIND, COL_BLIND);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -561,6 +626,11 @@ void prt_blind(bool blind)
  */
 void prt_confused(bool confused)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (confused)
 	{
 		c_put_str(TERM_ORANGE, "Confused", ROW_CONFUSED, COL_CONFUSED);
@@ -569,6 +639,9 @@ void prt_confused(bool confused)
 	{
 		put_str("        ", ROW_CONFUSED, COL_CONFUSED);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -576,6 +649,11 @@ void prt_confused(bool confused)
  */
 void prt_afraid(bool fear)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (fear)
 	{
 		c_put_str(TERM_ORANGE, "Afraid", ROW_AFRAID, COL_AFRAID);
@@ -584,6 +662,9 @@ void prt_afraid(bool fear)
 	{
 		put_str("      ", ROW_AFRAID, COL_AFRAID);
 	}
+	
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -591,6 +672,11 @@ void prt_afraid(bool fear)
  */
 void prt_poisoned(bool poisoned)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (poisoned)
 	{
 		c_put_str(TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
@@ -599,6 +685,9 @@ void prt_poisoned(bool poisoned)
 	{
 		put_str("        ", ROW_POISONED, COL_POISONED);
 	}
+	
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -607,8 +696,8 @@ void prt_poisoned(bool poisoned)
 void prt_state(bool paralyzed, bool searching, bool resting)
 {
 	byte attr = TERM_WHITE;
-
 	char text[16];
+	int x, y;
 
 	if (paralyzed)
 	{
@@ -645,7 +734,13 @@ void prt_state(bool paralyzed, bool searching, bool resting)
 		strcpy(text, "            ");
 	}
 
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	c_put_str(attr, text, ROW_STATE, COL_STATE);
+	
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -655,6 +750,7 @@ void prt_speed(int speed)
 {
 	int attr = TERM_WHITE;
 	char buf[32] = "";
+	int x, y;
 
 	if (speed > 0) {
 		attr = TERM_L_GREEN;
@@ -668,9 +764,15 @@ void prt_speed(int speed)
 		attr = TERM_L_DARK;
 		if (!speed) sprintf(buf, "No-Teleport");
 	}
+	
+	/* remember cursor position */
+	Term_locate(&x, &y);
 
 	/* Display the speed */
 	c_put_str(attr, format("%-11s", buf), ROW_SPEED, COL_SPEED);
+	
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 	
 	/* hack: remember speed (for extra no-tele warning) */
 	p_speed = speed;
@@ -681,6 +783,11 @@ void prt_speed(int speed)
  */
 void prt_study(bool study)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (study)
 	{
 		put_str("Skill", ROW_STUDY, COL_STUDY);
@@ -689,6 +796,9 @@ void prt_study(bool study)
 	{
 		put_str("     ", ROW_STUDY, COL_STUDY);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -696,6 +806,11 @@ void prt_study(bool study)
  */
 void prt_cut(int cut)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (cut > 1000)
 	{
 		c_put_str(TERM_L_RED, "Mortal wound", ROW_CUT, COL_CUT);
@@ -728,6 +843,9 @@ void prt_cut(int cut)
 	{
 		put_str("            ", ROW_CUT, COL_CUT);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -735,6 +853,11 @@ void prt_cut(int cut)
  */
 void prt_stun(int stun)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (stun > 100)
 	{
 		c_put_str(TERM_RED, "Knocked out ", ROW_STUN, COL_STUN);
@@ -751,6 +874,9 @@ void prt_stun(int stun)
 	{
 		put_str("            ", ROW_STUN, COL_STUN);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /*
@@ -771,16 +897,29 @@ void prt_basic(void)
 /* Print AFK status */
 void prt_AFK(byte afk)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (afk)
 		c_put_str(TERM_ORANGE, "  AFK", ROW_AFK, COL_AFK);
 	else
 		c_put_str(TERM_ORANGE, "     ", ROW_AFK, COL_AFK);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /* Print encumberment status line */
 void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
     byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	put_str("            ", ROW_CUMBER, COL_CUMBER);
 	if (cumber_armor) c_put_str(TERM_UMBER, "(", ROW_CUMBER, COL_CUMBER);
 	if (heavy_wield) c_put_str(TERM_RED, "/", ROW_CUMBER, COL_CUMBER + 1);
@@ -795,10 +934,18 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 	if (rogue_heavyarmor) c_put_str(TERM_BLUE, "(", ROW_CUMBER, COL_CUMBER + 9);
 	if (awkward_armor) c_put_str(TERM_VIOLET, "(", ROW_CUMBER, COL_CUMBER + 10);
 	if (cumber_glove) c_put_str(TERM_VIOLET, "]", ROW_CUMBER, COL_CUMBER + 11);
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 void prt_extra_status(cptr status)
 {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
 	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client 
 				  without CONDENSED_HP_SP for some odd reason */
 		if (!recording_macro)
@@ -807,6 +954,9 @@ void prt_extra_status(cptr status)
 			/* hack: 'abuse' this line to display that we're in recording mode */
 			c_put_str(TERM_L_RED, "*RECORDING*", ROW_EXSTA, COL_EXSTA);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
 }
 
 /* Update mini lag-o-meter,
