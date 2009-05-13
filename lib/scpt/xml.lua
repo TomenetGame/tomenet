@@ -7,7 +7,7 @@ xml.ent = {lt = "<", gt = ">", amp = "&", quot = "\""}
 function xml:parseentities (s)
   local t
   t = gsub(s, "&(%w+);", function (s)
-    if (xml.ents[s] == nil) then return("&" .. s .. ";")
+    if (rawget(xml.ent, s) == nil) then return("&" .. s .. ";")
     else return xml.ent[s]
     end
   end)
