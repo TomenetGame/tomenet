@@ -153,6 +153,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_INVEN_WIDE]	= Receive_inven_wide;
 	receive_tbl[PKT_UNIQUE_MONSTER]	= Receive_unique_monster;
 	receive_tbl[PKT_WEATHER]	= Receive_weather;
+	receive_tbl[PKT_INVENTORY_REV]	= Receive_inventory_revision;
 }
 
 /* Head of file transfer system receive */
