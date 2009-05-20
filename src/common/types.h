@@ -1853,6 +1853,20 @@ struct version_type {		/* Extended version structure */
 	int build;
 };
 
+typedef struct inventory_change_type inventory_change_type;
+
+/*
+* Structure for keeping track of inventory changes
+*/
+struct inventory_change_type {
+	char type;
+	int revision;
+	s16b begin;
+	s16b end;
+	s16b mod;
+	inventory_change_type *next;
+};
+
 /*
  * Most of the "player" information goes here.
  *
@@ -1971,6 +1985,9 @@ struct player_type
 	s16b cst_frac;			/* 1/10000 */
 
 	object_type *inventory;	/* Player's inventory */
+	inventory_change_type *inventory_changes; /* List of recent inventory changes */
+	int inventory_revision;	/* Current inventory ID */
+	char inventory_changed;	/* Inventory has changed since last update to the client */
 
 	s32b total_weight;	/* Total weight being carried */
 

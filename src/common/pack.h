@@ -201,6 +201,7 @@
 #define PKT_INVEN_WIDE		175	/* similar to PKT_INVEN, but with additional info */
 #define PKT_UNIQUE_MONSTER	176	/* for client-side unique kills tracking */
 #define PKT_WEATHER		177	/* client-side weather (4.4.2a) */
+#define PKT_INVENTORY_REV	178	/* inventory revision notification (4.4.2.2) */
 
 /*
  * Possible error codes returned

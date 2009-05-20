@@ -3204,6 +3204,23 @@ int Receive_weather(void)
 	return 1;
 }
 
+int Receive_inventory_revision(void)
+{
+	int n;
+	char ch;
+	int revision;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
+	{
+		return n;
+	}
+
+	p_ptr->inventory_revision = revision;
+	Send_inventory_revision(revision);
+
+	return 1;
+}
+
 int Send_search(void)
 {
 	int	n;
@@ -4217,6 +4234,12 @@ int Send_wield2(int item) {
 int Send_cloak(void) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLOAK)) <= 0) return n;
+	return 1;
+}
+
+int Send_inventory_revision(int revision) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c%d", PKT_INVENTORY_REV, revision)) <= 0) return n;
 	return 1;
 }
 
