@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. May 2009; written by C. Blue, http://www.c-blue.de/
+| Latest update: 25. May 2009; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
@@ -2827,16 +2827,21 @@ You can disarm your own traps to get back the trap set (and ammunition).
 (4.8) Level & vault feelings, Jail, Ironman
 -------------------------------------------
 Levels:
+-------
 Sometimes if you enter a new dungeon level your character will have a special
 feeling about it, displayed in orange text.
 The feelings are as follows:
+
 "You feel an imminent danger!" ->   This dungeon level is *way* higher than
                                     your character level.
+
 "You feel a suppressive air..." ->  You cannot use wraith form or probability
                                     travel on this level.
                                     (NO_MAGIC, +15% experience bonus!)
+
 "You have a feeling of peace..." -> You cannot use genocide on this level!
                                     (NO_GENO, +5% experience bonus!)
+
 "You lose all sense of direction..." -> You won't be able to auto-map this
                                         dungeon, meaning that you won't
                                         remember the dungeon layout.
@@ -2844,12 +2849,15 @@ The feelings are as follows:
                                         surroundings within your character's
                                         line of sight.
                                         (NOMAP, +15% experience bonus!)
+
 "You feel like a stranger..." ->    You cannot use magic mapping nor
                                     clairvoyance here!
                                     (NO_MAGIC_MAP, +5% experience bonus!)
+
 "The walls here seem very solid." ->    You cannot destroy the dungeon
                                         structure on this level.
                                         (NO_DESTROY, +5% experience bonus!)
+
 "You feel that your life hangs in the balance!" ->      ** Extremely dangerous
                                         to normal/everlasting players! **
                                         This only occurs on a level where
@@ -2862,12 +2870,45 @@ The feelings are as follows:
                                         normal and hard-mode players will die
                                         the same way as unworldly and hellish
                                         ones!
+
 "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman dungeons/towers. It lets you
                                         know that you may use word-of-recall
                                         on this floor!
 
+In addition to those orange level specialties, there are more feelings you
+may get about the danger a level poses. Those only appear if you spent some
+time (usually a few minutes) on the dungeon level you were coming from, so
+they won't be helpful while stair-scumming or probability-travelling quickly.
+These extra level feelings -displayed in yellow- are:
+
+  "What a terrifying place.."
+      means there's a highly ood monster or
+      a great vault and some ood monster on the level.
+
+  "You sense an air of danger.."
+      means there's a freely roaming ood monster on the level,
+      and also the level's has a vault on it somewhere.
+
+  "Feels somehwat dangerous around here.."
+      means there's a vault or a dangerous monster nest or pit on the level,
+
+  "There's a sensation of challenge.."
+      means there's a freely roaming ood monster on the level.
+
+  "There's a special feeling about this place.."
+      means there's a unique monster on the level.
+
+  "What a boring place.."
+      means nothing of the above apply to this level.
+
+Note that you will only get one, ie the strongest of these feelings applying
+to your dungeon level, meaning feelings higher up the list will take precedence
+over those below.
+
+
 Vaults:
+-------
 Vaults can also bear a very dangerous feature that is displayed as dark grey
 feeling as soon as you are about to enter the vault:
 "The air in here feels very still." ->  Means that you cannot use any type of
@@ -5638,7 +5679,7 @@ generic abilities. You can see your abilities in the character screen
 (press 'C').
 
 Miscellaneous Abilities can range from Bad to Legendary:
-Bad         (red)
+Bad         (red)    (or 'Very Bad' if negative, no real difference)
 Poor        (red)
 Fair        (yellow)
 Good        (light green)
@@ -7076,6 +7117,14 @@ Mental Intrusion
                     least 20, you will automatically infuse the knowledge
                     gained from the vision to all open-minded (see (0.2))
                     allied players who happen to be the same floor.
+    Charm           Makes monsters in sight believe that you aren't an enemy,
+                    preventing them most of the time from attacking you.
+		    Monsters may resist or be immune to the initial cast.
+                    While active, the spell drains your mana. The more monsters
+		    you try to keep under control, the faster your mana is
+		    depleted. If your distance to the monsters becomes too big,
+		    the spell will break.
+                    Required skill level for first spell level: 33.
 
 
 
