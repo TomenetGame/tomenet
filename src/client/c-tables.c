@@ -892,8 +892,8 @@ cptr melee_techniques[16] =
 {
   "Sprint",
   "Taunt",
-  "Spin",
-  "Berserk",
+  "Jump",
+  "Distract",
 
 #if 0
   "Stab",
@@ -903,11 +903,11 @@ cptr melee_techniques[16] =
 
   "Bash",
   "Knock-back",
-  "Jump",
   "Charge",
-
-  "Distract",
   "Flash bomb",
+
+  "Spin",
+  "Berserk",
   "Shadow jump",
   "Instant cloak",
 
@@ -915,13 +915,13 @@ cptr melee_techniques[16] =
 
   "Bash",
   "Knock-back",
-  "Jump",
   "Charge",
-
-  "Distract",
   "Flash bomb",
+
   "Cloak",
+  "Spin",
   "",
+  "Berserk",
 
   "",
   "Shadow jump",
