@@ -5237,6 +5237,10 @@ Note that not every skill is available to every profession (class).
                                 Defensive stance - you will block more,
                                                  - intercept less often,
                                                  - deal less damage.
+						 Note: You can use it even
+						 without shield - in that case
+						 your chance of parrying is
+						 increased instead of blocking.
                                 Offensive stance - you can stun opponents
                                                    (compare (4.12)),
                                                  - intercept more often,
