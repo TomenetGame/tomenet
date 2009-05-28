@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. May 2009; written by C. Blue, http://www.c-blue.de/
+| Latest update: 28. May 2009; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
@@ -15,6 +15,10 @@
 | Please send in suggestions, criticism or comments to mail@c-blue.de.
 | It's recommended to read this guide using a fixed-width font (Courier on
 | MS Windows machines) to see proper spacing instead of warped tables.
++---
+| Latest changes of the guide are viewable easily by going directly to CVS:
+| http://angband.oook.cz/cgi-bin/cvsweb.cgi/tomenet/TomeNET-Guide.txt?cvsroot=tome
+| and clicking on "coloured" in a line saying "Diff to previous <version>".
 \
 
 
