@@ -6908,8 +6908,7 @@ Holy Offense
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
                     Required skill level for first spell level: 20.
-    Cloud Of Draining
-                    Similar to 'Drain Life' but affects a whole area.
+    Doomed Grounds  Similar to 'Drain Life' but affects a whole area.
                     Required skill level for first spell level: 40.
   BONI:             Adds slay undead at 30, slay demon at 40, slay evil at 50
                     to all melee and ranged attacks.
@@ -6948,14 +6947,14 @@ Holy Curing
     Remove Curses   Removes curses.
                     Lv30: Removes heavy curses.
                     Required skill level for first spell level: 10.
-    Cleansing Cloud Continuously heals every player who steps inside.
+    Cleansing Light Continuously heals every player who steps inside.
                     Required skill level for first spell level: 18.
     Curing          Reduces poison duration.
                     Lv10: Cure poison/cuts/stun/blindness/confusion.(auto-p.)
                     Lv20: Restore stats.                       (auto-project)
                     Lv25: Restore experience.                  (auto-project)
                     Required skill level for first spell level: 16.
-    Mind Focus      Cure hallucinations and insanity.          (auto-project)
+    Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
     Resurrection    Resurrect another player's ghost. The resurrected player
                     will lose less experience the higher the spell level is.
