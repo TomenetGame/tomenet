@@ -133,7 +133,7 @@ compile the game under '(2.1) Installing TomeNET'.
 -Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html
  (called 'tomenet-???-client.zip') and extract it (to C:\Tomenet for example).
 -Either run 'TomeNET-EU.bat' to directly connect to europe server
- (recommended), or run TomeNET.exe and choose a server (Enter 62.210.141.11
+ (recommended), or run TomeNET.exe and choose a server (Enter 85.118.45.235
  to connect to europe server).
 -Create a character, Half-Troll warrior is good for beginners.
  In case you choose Half-Troll warrior, read this:
@@ -1003,12 +1003,12 @@ the window-specific font variables listed above though.
 Last but not least, you may use the following command-line options:
 -p<Port>        for example -p19348
 -l<Name> <Pass>	for example -lGandalf geheim
-<ip address>    for example 62.210.141.11
+<ip address>    for example 85.118.45.235
 Full command-line example:
-        ./tomenet -p19348 -lGandalf geheim 62.210.141.11
+        ./tomenet -p19348 -lGandalf geheim 85.118.45.235
 If your name contains spaces, it is neccessary to put a '\' in front of each.
 Example:
-        ./tomenet -p18348 -lIron\ Man geheimer 62.210.141.11
+        ./tomenet -p18348 -lIron\ Man geheimer 85.118.45.235
 ..if your account name is 'Iron Man'.
 
 
@@ -8436,7 +8436,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
              example C:\TomeNET\.. .
             -to edit your "TomeNET.ini" file and specify a host directly by
              specifying "HOST=europe.tomenet.net".
-             Or you can even give the IP address "HOST=62.210.141.11".
+             Or you can even give the IP address "HOST=85.118.45.235".
 
 PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
             says 'Press Q to enter a server manually' and that's it.
@@ -8451,7 +8451,7 @@ SOLUTION:   There are 2 possible solutions.
              You should try to connect manually (press 'Q') to either:
              europe.tomenet.net
              or (if that doesn't work either) directly to its IP adress:
-             62.210.141.11
+             85.118.45.235
 
 PROBLEM 03: All windows except for the main window stay empty. (occurs on
             Windows XP machines).
@@ -8646,7 +8646,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             Just type in the hostname of the server you'd like to connect to,
             for europe enter:   europe.tomenet.net
             If the hostname doesn't work you can also try entering its IP
-            address 62.210.141.11.
+            address 85.118.45.235.
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
@@ -8663,7 +8663,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             TomeNET.exe europe.tomenet.net
             If the hostname doesn't work for whatever reason you may try the
             IP adress:
-            TomeNET.exe 62.210.141.11
+            TomeNET.exe 85.118.45.235
 
 PROBLEM 11: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
