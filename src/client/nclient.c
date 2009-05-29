@@ -348,7 +348,7 @@ void Receive_login(void)
 		while (1)
 		{
 			c_put_str(TERM_YELLOW, "New name: ", 8+max_cpa, 11);
-			askfor_aux(c_name, 19, 0, 0);
+			askfor_aux(c_name, 15, 0, 0);//was 20/19 once
 			if (strlen(c_name)) break;
 			create_random_name(0, c_name);
 		}
