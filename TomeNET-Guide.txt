@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. May 2009; written by C. Blue, http://www.c-blue.de/
+| Latest update: 30. May 2009; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
@@ -4097,6 +4097,8 @@ MANA ('It affects your mana capacity')
         MANA items _add_ to each other, they aren't multiplied.
         They have slightly less effect on non-mages and quite less effect
         on priests or paladins who need wisdom rather than intelligence.
+		MANA affects your complete mana pool, including the additional MP
+		(mana points) a	character gained from 'Magic' skill.
 LIFE ('It affects your hit points')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
@@ -4105,6 +4107,8 @@ LIFE ('It affects your hit points')
         (For mimics, the +LIFE effect might be less since their HP in
         player form or monster form might be low. The +LIFE isn't applied
         to mimics' final HP but the lower base HP.)
+		LIFE affects your complete hit point pool, including the additional
+		HP a character gained from 'Health' skill.
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
 LUCK ('The item increases your luck')
