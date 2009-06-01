@@ -54,9 +54,10 @@ void do_cmd_messages(void)
 	for (i = 0; i < n; i++)
 	{
 		msg = message_str(i);
+		if (msg[0] == '\376') msg++;
 
 		if (strstr(msg, nomsg_target) ||
-				strstr(msg, nomsg_map))
+		    strstr(msg, nomsg_map))
 			continue;
 
 		message_recall[nn] = msg;
@@ -402,7 +403,8 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_retire) != NULL) ||
 		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
-		    (msg[0] == ' ' && was_ctrlo_buffer))
+		    (msg[0] == ' ' && was_ctrlo_buffer) ||
+		    (msg[0] == '\376'))
 		{
 			was_ctrlo_buffer = TRUE;
 			message_chat[nn] = msg;
@@ -436,6 +438,8 @@ void do_cmd_messages_chatonly(void)
 			byte a = TERM_WHITE;
 			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
 //			cptr msg = message_chat[i+j];
+
+			if (msg[0] == '\376') msg++;
 
 			/* Apply horizontal scroll */
 			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
@@ -651,8 +655,8 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr msg_deadB = "You die";
 	cptr msg_unique = "was slain by";
 	cptr msg_killed = "was killed by";
-  cptr msg_killed2 = "was annihilated ";
-  cptr msg_killed3 = "was vaporized ";
+	cptr msg_killed2 = "was annihilated ";
+	cptr msg_killed3 = "was vaporized ";
 //	cptr msg_destroyed = "ghost was destroyed by";
 	cptr msg_destroyed = "was destroyed by";
 	cptr msg_suicide = "committed suicide.";

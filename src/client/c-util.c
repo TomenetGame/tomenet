@@ -2403,7 +2403,7 @@ void c_msg_print(cptr msg)
 
 	/* Memorize the message */
 #if 1
-	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
+	if (((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
 	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
 	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
 	    (strstr(msg, msg_killedF) != NULL) ||
@@ -2427,12 +2427,14 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_retire) != NULL) ||
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
-	    (msg[0] == '~' && was_chat_buffer)) {
+	    (msg[0] == '~' && was_chat_buffer) ||
+	    (msg[0] == '\375')) && msg[0] != '\374') {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		if (msg[2] == '[') was_real_chat = TRUE;
 		else if (msg[0] != '~') was_real_chat = FALSE;
 
 		if (msg[0] == '~') buf[0] = ' ';
+		else if (msg[0] == '\375') buf++;
 		c_message_add_chat(buf);
 
 		was_chat_buffer = TRUE;
@@ -2443,11 +2445,13 @@ void c_msg_print(cptr msg)
 /*#if 0*/
 	if (!was_real_chat) {
 		if (msg[0] == '~') buf[0] = ' ';
+		else if (msg[0] == '\374') buf++;
 		c_message_add_msgnochat(buf);
 	}
 #endif
-	if (msg[0] == '~') buf[0] = ' ';
+	if (buf[0] == '~') buf[0] = ' ';
 	c_message_add(buf);
+	if (buf[0] == '\376') buf++;
 
 
 	/* Analyze the buffer */
