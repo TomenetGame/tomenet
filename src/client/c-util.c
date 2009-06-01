@@ -2311,8 +2311,11 @@ void c_msg_print(cptr msg)
 	char *t;
 
 	char buf[1024];
+
 	/* Copy it */
 	if (msg) strcpy(buf, msg);
+	/* mark beginning of text to output */
+	t = buf;
 
 	/* For message separation (chat/non-chat): */
 	char nameA[20];
@@ -2434,8 +2437,8 @@ void c_msg_print(cptr msg)
 		else if (msg[0] != '~') was_real_chat = FALSE;
 
 		if (msg[0] == '~') buf[0] = ' ';
-		else if (msg[0] == '\375') buf++;
-		c_message_add_chat(buf);
+		else if (msg[0] == '\375') t++;
+		c_message_add_chat(t);
 
 		was_chat_buffer = TRUE;
 	} else {
@@ -2445,17 +2448,17 @@ void c_msg_print(cptr msg)
 /*#if 0*/
 	if (!was_real_chat) {
 		if (msg[0] == '~') buf[0] = ' ';
-		else if (msg[0] == '\374') buf++;
-		c_message_add_msgnochat(buf);
+		else if (msg[0] == '\374') t++;
+		c_message_add_msgnochat(t);
 	}
 #endif
 	if (buf[0] == '~') buf[0] = ' ';
-	c_message_add(buf);
-	if (buf[0] == '\376') buf++;
+	c_message_add(t);
+	if (buf[0] == '\376') t++;
 
 
 	/* Analyze the buffer */
-	t = buf;
+//done at the beginning.	t = buf;
 
 #if 0 /* Done on server-side now - mikaelh */
 	/* Split message */
