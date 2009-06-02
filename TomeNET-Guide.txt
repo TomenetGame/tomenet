@@ -2839,12 +2839,12 @@ The feelings are as follows:
 "You feel an imminent danger!" ->   This dungeon level is *way* higher than
                                     your character level.
 
-"You feel a suppressive air..." ->  You cannot use wraith form or probability
+"You feel a suppressive air." ->    You cannot use wraith form or probability
                                     travel on this level.
                                     (NO_MAGIC, +15% experience bonus!)
 
-"You have a feeling of peace..." -> You cannot use genocide on this level!
-                                    (NO_GENO, +5% experience bonus!)
+"The air seems distorted." ->       You cannot use genocide on this level!
+(formerly 'feeling of peace')       (NO_GENO, +5% experience bonus!)
 
 "You lose all sense of direction..." -> You won't be able to auto-map this
                                         dungeon, meaning that you won't
