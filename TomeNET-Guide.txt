@@ -2887,18 +2887,19 @@ they won't be helpful while stair-scumming or probability-travelling quickly.
 These extra level feelings -displayed in yellow- are:
 
   "What a terrifying place.."
-      means there's a highly ood monster or
-      a great vault and some ood monster on the level.
+      means a) there's a highly ood monster or
+      b) a great vault and some ood monster on the level.
 
   "You sense an air of danger.."
-      means there's a freely roaming ood monster on the level,
+      means there's a freely roaming (*) ood monster on the level,
       and also the level's has a vault on it somewhere.
 
   "Feels somehwat dangerous around here.."
-      means there's a vault or a dangerous monster nest or pit on the level,
+      means there's a vault or a rather dangerous monster pit or nest
+      on the level.
 
   "There's a sensation of challenge.."
-      means there's a freely roaming ood monster on the level.
+      means there's a freely roaming (*) ood monster on the level.
 
   "There's a special feeling about this place.."
       means there's a unique monster on the level.
@@ -2909,6 +2910,7 @@ These extra level feelings -displayed in yellow- are:
 Note that you will only get one, ie the strongest of these feelings applying
 to your dungeon level, meaning feelings higher up the list will take precedence
 over those below.
+(*) "freely roaming" means that the monster isn't generated inside a vault.
 
 
 Vaults:
