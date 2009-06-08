@@ -1009,7 +1009,7 @@ errr init_gcu(void)
 		colortable[6] = (COLOR_PAIR(4) | A_NORMAL);	/* Blue */
 		colortable[7] = (COLOR_PAIR(3) | A_NORMAL);	/* Umber */
 		colortable[8] = (COLOR_PAIR(7) | A_BRIGHT);	/* Dark-grey XXX */
-		colortable[9] = (COLOR_PAIR(1) | A_BRIGHT);
+		colortable[9] = (COLOR_PAIR(0) | A_BRIGHT);	/* Light-grey as pure White */
 		colortable[10] = (COLOR_PAIR(5) | A_NORMAL);	/* Purple */
 		colortable[11] = (COLOR_PAIR(3) | A_BRIGHT);	/* Yellow */
 		colortable[12] = (COLOR_PAIR(1) | A_BRIGHT);
