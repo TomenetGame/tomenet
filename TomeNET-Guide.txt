@@ -2894,12 +2894,12 @@ These extra level feelings -displayed in yellow- are:
       means there's a freely roaming (*) ood monster on the level,
       and also the level's has a vault on it somewhere.
 
-  "Feels somehwat dangerous around here.."
+  "Feels somewhat dangerous around here.."
       means there's a vault or a rather dangerous monster pit or nest
       on the level.
 
   "There's a sensation of challenge.."
-      means there's a freely roaming (*) ood monster on the level.
+      means there's a freely roaming (*) slightly ood monster on the level.
 
   "There's a special feeling about this place.."
       means there's a unique monster on the level.
@@ -5275,11 +5275,15 @@ Note that not every skill is available to every profession (class).
                                 1,5- or 2-handed weapons cannot be used.
                                 To avoid confusion: If you use weapons with
                                 different blows/round, their bpr will get
-                                averaged, and rounded down, then bpr bonus for
-                                dual-wielding is added. That means you should
-                                avoid such bpr differences that are odd
-                                numbers, due to the loss on rounding them.
-                                Example: 4bpr & 5bpr = 4.5bpr rounded to 4bpr.
+                                averaged, and rounded up, then bpr bonus for
+                                dual-wielding is added.
+                                Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
+				Also by pressing 'm' you can disable/reenable
+				dual-wield mode. While disabled you will just
+				attack with your primary weapon exclusively,
+				and not receive any dual-wield specific boni;
+				this can be useful if it deals much more damage
+				than your secondary weapon.
     +Archery                    Improves ranged to-damage bonus.
                                 Allows you to learn some shooting techniques,
                                 accessible via 'm', see (6.12) for details.
@@ -5850,7 +5854,7 @@ Half-Orc
     are quite ugly, and tend to pay more for goods in town. Half-Orcs do make
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
-    They get bonus on 'Backstabbing', 'Disarming', 'Necromancy' and receive
+    They get bonus on 'Combat', 'Backstabbing', 'Necromancy' and receive
     slight penalties on 'Magic' and 'Sorcery'.
 
 Half-Troll
@@ -5914,6 +5918,9 @@ Ent
     Trees will slightly bend aside to let ents pass through. They accumulate
     experience very slowly. Ents do not eat normal food, but are able to
     consume liquids. Ents resist the force of unleashed water.
+    Ents are able to slowly replenish themselves by drawing nourishment from
+    the ground by entering 'R'esting mode, provided it's natural ground such
+    as grass, earth, mud or water.
     They get boni on 'Health', 'Calmness' and on the magic schools 'Earth' and
     'Water' and they receive penalties on 'Fire' school, 'Axe-mastery' and a
     slight penalty on 'Sword-mastery'.
@@ -5999,7 +6006,7 @@ Ent         +8  -4  +2  -4  +8  -4       14     320%    50ft
 Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft             
              6   0  10 -16  10  30   15   5
 Dark-elf     0  +2  +1  +3  +1  -6       10     140%    50ft
-             0   3   6   2  10   6   15  15
+             0   3   6   4  10   6   15  15
 Vampire     +2   0  -3  -1   0  -6       11     240%   100ft
             -4   0  20   2  13  -4   10 -10
 
@@ -6475,8 +6482,10 @@ F: flag list
                 The player receives an aura.
     SUSCEPT_FIRE/SUSCEPT_COLD/SUSCEPT_ELEC/SUSCEPT_ACID/SUSCEPT_POIS
                 The player is susceptible against these attacks. Dangerous!
-    WIERD_MIND  Insanity attacks are reduced a little bit. (Overrides S-flags)
-    EMPTY_MIND  Insanity attacks are reduced somewhat. (Overrides S-flags)
+    WIERD_MIND/RES_PSI
+                Insanity attacks are reduced a little bit. (Overrides S-flags)
+    EMPTY_MIND/IM_PSI
+                Insanity attacks are reduced somewhat. (Overrides S-flags)
     AQUATIC     Gives superb water resistance.
     NEVER_MOVE  Using this form, the player won't be able to move (except for
                 teleportation/phasing/recalling).
