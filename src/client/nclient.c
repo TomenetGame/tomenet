@@ -154,6 +154,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_UNIQUE_MONSTER]	= Receive_unique_monster;
 	receive_tbl[PKT_WEATHER]	= Receive_weather;
 	receive_tbl[PKT_INVENTORY_REV]	= Receive_inventory_revision;
+	receive_tbl[PKT_ACCOUNT_INFO]	= Receive_account_info;
 }
 
 /* Head of file transfer system receive */
@@ -3222,6 +3223,22 @@ int Receive_inventory_revision(void)
 	return 1;
 }
 
+int Receive_account_info(void)
+{
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &acc_flags)) <= 0)
+	{
+		return n;
+	}
+	
+	acc_got_info = TRUE;
+	display_account_information();
+	
+	return 1;
+}
+
 int Send_search(void)
 {
 	int	n;
@@ -4034,6 +4051,37 @@ int Send_ping(void)
 	}
 	ping_times[i] = -1;
 
+	return 1;
+}
+
+int Send_account_info(void)
+{
+	int n;
+	
+	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
+		return 1;
+	}
+	
+	if ((n = Packet_printf(&wbuf, "%c", PKT_ACCOUNT_INFO)) <= 0)
+	{
+		return n;
+	}
+	
+	return 1;
+}
+
+int Send_change_password(char *old_pass, char *new_pass) {
+	int n;
+	
+	if (!is_newer_than(&server_version, 4, 4, 2, 2, 0, 0)) {
+		return 1;
+	}
+	
+	if ((n = Packet_printf(&wbuf, "%c%s%s", PKT_CHANGE_PASSWORD, old_pass, new_pass)) <= 0)
+	{
+		return n;
+	}
+	
 	return 1;
 }
 

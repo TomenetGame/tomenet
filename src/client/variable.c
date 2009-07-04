@@ -226,3 +226,7 @@ int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 int cloud_xm100[10], cloud_ym100[10]; /* cloud movement in 1/100 grid per s */
 int cloud_xfrac[10], cloud_yfrac[10];
 
+/* Global variables for account options and password changing */
+bool acc_opt_screen = FALSE;
+bool acc_got_info = FALSE;
+s16b acc_flags = 0;

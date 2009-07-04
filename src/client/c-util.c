@@ -3613,6 +3613,132 @@ static void do_cmd_options_aux(int page, cptr info)
 }
 
 
+void display_account_information(void) {
+	if (acc_opt_screen) {
+		if (acc_got_info) {
+			if (acc_flags & ACC_TRIAL) {
+				prt("Your account hasn't been validated.", 3, 2);
+			} else {
+				prt("Your account is valid.", 3, 2);
+			}
+		} else {
+			prt("Waiting...", 3, 2);
+		}
+	}
+}
+
+
+/*
+ * Account options
+ */
+static void do_cmd_options_acc(void)
+{
+	char ch;
+	bool change_pass = FALSE;
+	bool go = TRUE;
+	char old_pass[16], new_pass[16], con_pass[16];
+	char tmp[16];
+
+	acc_opt_screen = TRUE;
+	acc_got_info = FALSE;
+
+	/* Get the account info */
+	Send_account_info();
+
+	/* Clear screen */
+	Term_clear();
+
+	while (go) {
+		/* Clear everything except the topline */
+		clear_from(1);
+
+		if (change_pass) {
+			prt("Change password", 1, 0);
+			prt("Maximum length is 15 characters", 3, 2);
+			prt("Old password:", 6, 2);
+			prt("New password:", 8, 2);
+			prt("Confirm:", 10, 2);
+
+			/* Ask for old password */
+			move_cursor(6, 16);
+			tmp[0] = '\0';
+			if (!askfor_aux(tmp, 15, 1, 0)) {
+				change_pass = FALSE;
+				continue;
+			}
+			my_memfrob(tmp, strlen(tmp));
+			strncpy(old_pass, tmp, sizeof(old_pass));
+			old_pass[sizeof(old_pass) - 1] = '\0';
+
+			while (1) {
+				/* Ask for new password */
+				move_cursor(8, 16);
+				tmp[0] = '\0'; 
+				if (!askfor_aux(tmp, 15, 1, 0)) {
+					change_pass = FALSE;
+					break;
+				}
+				my_memfrob(tmp, strlen(tmp));
+				strncpy(new_pass, tmp, sizeof(new_pass));
+				new_pass[sizeof(new_pass) - 1] = '\0';
+
+				/* Ask for the confirmation */
+				move_cursor(10, 16);
+				if (!askfor_aux(tmp, 15, 1, 0)) {
+					change_pass = FALSE;
+					break;
+				}
+				my_memfrob(tmp, strlen(tmp));
+				strncpy(con_pass, tmp, sizeof(con_pass));
+				con_pass[sizeof(con_pass) - 1] = '\0';
+	
+				/* Compare */
+				if (strcmp(new_pass, con_pass)) {
+					prt("Passwords don't match!", 8, 2);
+					Term_erase(16, 8, 255);
+					Term_erase(16, 10, 255);
+				} else break;
+			}
+
+			if (!change_pass) continue;
+
+			/* Send the request */
+			if (Send_change_password(old_pass, new_pass) == 1) {
+				c_msg_print("Attempting to change password...");
+			} else {
+				c_msg_print("Failed to send request!");
+			}
+
+			/* Wipe the passwords from memory */
+			memset(old_pass, 0, sizeof(old_pass));
+			memset(new_pass, 0, sizeof(new_pass));
+			memset(con_pass, 0, sizeof(con_pass));
+
+			/* Return to the account options screen */
+			change_pass = FALSE;
+			continue;
+		} else {
+			prt("Account information", 1, 0);
+			display_account_information();
+			prt("(C) Change account password", 19, 2);
+		}
+
+		ch = inkey();
+
+		switch (ch) {
+			case ESCAPE:
+				go = FALSE;
+				break;
+			case 'C':
+				change_pass = TRUE;
+				break;
+		}
+	}
+
+	acc_opt_screen = FALSE;
+}
+
+
 /*
  * Modify the "window" options
  */
@@ -3937,12 +4063,15 @@ void do_cmd_options(void)
 
 		prt("(9) Save Options", 12, 5);
 		prt("(0) Load Options", 13, 5);
+		
+		/* Account options */
+		prt("(A) Account options", 15, 5);
 
 		/* Window flags */
-		prt("(W) Window flags", 15, 5);
+		prt("(W) Window flags", 16, 5);
 
 		/* Prompt */
-		prt("Command: ", 17, 0);
+		prt("Command: ", 18, 0);
 
 		/* Get command */
 		k = inkey();
@@ -4032,6 +4161,12 @@ void do_cmd_options(void)
 
 			/* Process the given filename */
 			(void)process_pref_file(tmp);
+		}
+		
+		/* Account options */
+		else if (k == 'A')
+		{
+			do_cmd_options_acc();
 		}
 
 		/* Window flags */

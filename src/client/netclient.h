@@ -89,5 +89,6 @@ int Receive_extra_status(void);
 int Receive_unique_monster(void);
 int Receive_weather(void);
 int Receive_inventory_revision(void);
+int Receive_account_info(void);
 
 int move_rest(void);

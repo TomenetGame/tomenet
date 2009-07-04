@@ -259,6 +259,11 @@ extern int cfg_client_fps;
 extern byte r_unique[MAX_UNIQUES];
 extern char r_unique_name[MAX_UNIQUES][60];
 
+/* Global variables for account options and password changing */
+extern bool acc_opt_screen;
+extern bool acc_got_info;
+extern s16b acc_flags;
+
 
 
 /*
@@ -408,6 +413,7 @@ extern void clear_from(int row);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
+extern void display_account_information(void);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void my_memfrob(void *s, int n);
@@ -592,6 +598,8 @@ extern int Send_BBS(void);
 extern int Send_wield2(int item);
 extern int Send_cloak(void);
 extern int Send_inventory_revision(int revision);
+extern int Send_account_info(void);
+extern int Send_change_password(char *old_pass, char *new_pass);
 
 
 /* skills.c */
