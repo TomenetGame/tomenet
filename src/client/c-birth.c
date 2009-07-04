@@ -18,6 +18,9 @@
 /* Cut down on some of the walls of text hitting the player during login process? */
 #define SIMPLE_LOGIN
 
+/* Choose class before race */
+#define CLASS_BEFORE_RACE
+
 /*
  * Choose the character's name
  */
@@ -192,30 +195,32 @@ static void choose_sex(void)
 static void choose_race(void)
 {
 	player_race *rp_ptr;
-	int                 j, l, m, n;
+	int i, j, l, m, n;
+	char c;
+	char out_val[160];
+	bool hazard = FALSE;
 
-	char                c;
+	l = 2;
+	m = 22 - (Setup.max_race - 1) / 5;
+	n = m - 1;
 
-	char		out_val[160];
-
-
-        l = 2;
-        m = 22 - (Setup.max_race - 1) / 5;
-        n = m - 1;
-
-        put_str("                                                                             ", 18, l);
-        put_str("                                                                             ", 19, l);
-        put_str("                                                                             ", 20, 1);
-        put_str("                                                                             ", 21, 1);
-        put_str("                                                                             ", 22, 1);
-        put_str("                                                                             ", 23, 1);
-
+	for (i = 18; i < 24; i++) {
+		Term_erase(1, i, 255);
+	}
 
 	for (j = 0; j < Setup.max_race; j++)
 	{
 		rp_ptr = &race_info[j];
-		(void)sprintf(out_val, "%c) %s", I2A(j), rp_ptr->title);
-		put_str(out_val, m, l);
+		sprintf(out_val, "%c) %s", I2A(j), rp_ptr->title);
+
+#ifdef CLASS_BEFORE_RACE
+		if (!(rp_ptr->choice & BITS(class))) {
+			c_put_str(TERM_L_DARK, out_val, m, l);
+		} else
+#endif
+		{
+			c_put_str(TERM_WHITE, out_val, m, l);
+		}
 		l += 15;
 		if (l > 70)
 		{
@@ -227,18 +232,26 @@ static void choose_race(void)
 	while (1)
 	{
 		c_put_str(TERM_SLATE, "Choose a race (* for random, Q to Quit): ", n, 2);
-		c = inkey();
+		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
 
-		if (c == '*') j = rand_int(Setup.max_race);
+		if (c == '*') hazard = TRUE;
+		if (hazard) j = rand_int(Setup.max_race);
 		else j = (islower(c) ? A2I(c) : -1);
 
 		if ((j < Setup.max_race) && (j >= 0))
 		{
-			race = j;
 			rp_ptr = &race_info[j];
-			put_str("                    ", 5, 15);
+#ifdef CLASS_BEFORE_RACE
+			if (!(rp_ptr->choice & BITS(class))) continue;
+#endif
+
+			race = j;
+#ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 5, 15);
+#else
+			c_put_str(TERM_L_BLUE, (char*)rp_ptr->title, 6, 15);
+#endif
 			break;
 		}
 		else if (c == '?')
@@ -261,61 +274,69 @@ static void choose_race(void)
 static bool choose_class(void)
 {
 	player_class *cp_ptr;
-        player_race *rp_ptr = &race_info[race];
-	int          j, l, m, n;
-
-	char         c='\0';
-
-	char	 out_val[160];
+#ifndef CLASS_BEFORE_RACE
+	player_race *rp_ptr = &race_info[race];
+#endif
+	int i, j, l, m, n;
+	char c = '\0';
+	char out_val[160];
 	bool hazard = FALSE;
 
 
-        /* Prepare to list */
-        l = 2;
-        m = 22 - (Setup.max_class - 1) / 5;
-        n = m - 1;
+	/* Prepare to list */
+	l = 2;
+	m = 22 - (Setup.max_class - 1) / 5;
+	n = m - 1;
 
 	c_put_str(TERM_SLATE, "--- Important: For beginners, classes easy to play are... ---", n - 3, 2);
 	c_put_str(TERM_YELLOW, "Important", n - 3, 6);
 	c_put_str(TERM_SLATE, "Warrior, Rogue, Paladin, Druid, and possibly Mimic, Archer, Ranger.", n - 2, 2);
 
-        put_str("                                                                             ", 18, l);
-        put_str("                                                                             ", 19, l);
-        put_str("                                                                             ", 20, l);
-        put_str("                                                                             ", 21, l);
-        put_str("                                                                             ", 22, l);
-        put_str("                                                                             ", 23, l);
+	for (i = 18; i < 24; i++) {
+		Term_erase(1, i, 255);
+	}
 
-        /* Display the legal choices */
-        for (j = 0; j < Setup.max_class; j++)
-        {
+	/* Display the legal choices */
+	for (j = 0; j < Setup.max_class; j++)
+	{
                 cp_ptr = &class_info[j];
+		sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
 
-                if (!(rp_ptr->choice & BITS(j)))
-                {
-                        sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
-                        c_put_str(TERM_L_DARK, out_val, m, l);
-                } else {
-                        sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
-                        c_put_str(TERM_WHITE, out_val, m, l);
-                }
+#ifndef CLASS_BEFORE_RACE
+		if (!(rp_ptr->choice & BITS(j)))
+		{
+			c_put_str(TERM_L_DARK, out_val, m, l);
+		} else
+#endif
+		{
+			c_put_str(TERM_WHITE, out_val, m, l);
+		}
 
-                l += 15;
-                if (l > 70)
-                {
-                        l = 2;
-                        m++;
-                }
-        }
+		l += 15;
+		if (l > 70)
+		{
+			l = 2;
+			m++;
+		}
+	}
 
-        /* Get a class */
-        while (1)
-        {
-                c_put_str(TERM_SLATE, "Choose a class (? for Help, * for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
-                if (!hazard) c = inkey();
+	/* Get a class */
+	while (1)
+	{
+#ifndef CLASS_BEFORE_RACE
+		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit, BACKSPACE to go back):  ", n, 2);
+#else
+		c_put_str(TERM_SLATE, "Choose a class (* for random, Q to Quit):  ", n, 2);
+#endif
+		if (!hazard) c = inkey();
 
-                if (c == 'Q') quit(NULL);
-                if (c == '\b') return FALSE;
+		if (c == 'Q') quit(NULL);
+#ifndef CLASS_BEFORE_RACE
+		if (c == '\b') {
+			clear_from(n - 3);
+			return FALSE;
+		}
+#endif
 
 		if (c == '*') hazard = TRUE;
 		if (hazard) j = rand_int(Setup.max_class);
@@ -323,11 +344,17 @@ static bool choose_class(void)
 
 		if ((j < Setup.max_class) && (j >= 0))
 		{
+#ifndef CLASS_BEFORE_RACE
 			if (!(rp_ptr->choice & BITS(j))) continue;
+#endif
 
 			class = j;
 			cp_ptr = &class_info[j];
+#ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 7, 15);
+#else
+			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 5, 15);
+#endif
 			break;
 		}
 		else if (c == '?')
@@ -607,15 +634,9 @@ static void choose_stat_order(void)
 			if (c == 'Q') quit(NULL);
 		}
 
-		c_put_str(TERM_L_UMBER, "              ", 3, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 4, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 5, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 6, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 7, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 8, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 9, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 10, 30);
-		c_put_str(TERM_YELLOW, "                                                ", 11, 30);
+		for (i = 3; i < 12; i++) {
+			Term_erase(30, i, 255);
+		}
 		clear_from(14);
         }
 }
@@ -737,7 +758,7 @@ static void choose_mode(void)
 }
 
 /* Fruit bat is now a "body modification" that can be applied to all "modes" - C. Blue */
-static void choose_body_modification(void)
+static bool choose_body_modification(void)
 {
 	char        c='\0';
 	bool hazard = FALSE;
@@ -748,19 +769,35 @@ static void choose_body_modification(void)
 
 	while (1)
 	{
+#ifndef CLASS_BEFORE_RACE
 		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit): ", 19, 2);
+#else
+		c_put_str(TERM_SLATE, "Choose a body modification (* for random, Q to Quit, BACKSPACE to go back): ", 19, 2);
+#endif
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
+		if (c == '\b') {
+			clear_from(19);
+			return FALSE;
+		}
 
 		if (c == 'f')
 		{
 			sex += MODE_FRUIT_BAT;
+#ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, "Fruit bat", 6, 15);
+#else
+			c_put_str(TERM_L_BLUE, "Fruit bat", 7, 15);
+#endif
 			break;
 		}
 		else if (c == 'n')
 		{
+#ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, "Normal body", 6, 15);
+#else
+			c_put_str(TERM_L_BLUE, "Fruit bat", 7, 15);
+#endif
 			break;
 		}
 		else if (c == '?')
@@ -787,6 +824,7 @@ static void choose_body_modification(void)
 	}
 
 	clear_from(19);
+	return TRUE;
 }
 
 /*
@@ -847,9 +885,15 @@ void get_char_info(void)
 {
 	/* Title everything */
 	put_str("Sex         :", 4, 1);
+#ifndef CLASS_BEFORE_RACE
 	put_str("Race        :", 5, 1);
 	put_str("Body        :", 6, 1);
 	put_str("Class       :", 7, 1);
+#else
+	put_str("Class       :", 5, 1);
+	put_str("Race        :", 6, 1);
+	put_str("Body        :", 7, 1);
+#endif
 	put_str("Mode        :", 9, 1);
 
 	/* Clear bottom of screen */
@@ -860,13 +904,33 @@ void get_char_info(void)
 	/* Choose a sex */
 	choose_sex();
 
-        do {
-                /* Choose a race */
-                choose_race();
+#ifndef CLASS_BEFORE_RACE
+	do {
+		/* Clean up the selections */
+		Term_erase(15, 5, 255);
+		Term_erase(15, 6, 255);
+		Term_erase(15, 7, 255);
+
+		/* Choose a race */
+		choose_race();
 		/* Choose character's body modification */
 		choose_body_modification();
-                /* Choose a class */
-        } while (!choose_class());
+		/* Choose a class */
+	} while (!choose_class());
+#else
+	do {
+		/* Clean up the selections */
+		Term_erase(15, 5, 255);
+		Term_erase(15, 6, 255);
+		Term_erase(15, 7, 255);
+
+		/* Choose a class */
+		choose_class();
+		/* Choose a race */
+		choose_race();
+		/* Choose character's body modification */
+	} while (!choose_body_modification());	
+#endif
 
 	class_extra = 0;
 
