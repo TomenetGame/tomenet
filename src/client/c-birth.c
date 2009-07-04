@@ -776,10 +776,12 @@ static bool choose_body_modification(void)
 #endif
 		if (!hazard) c = inkey();
 		if (c == 'Q') quit(NULL);
+#ifdef CLASS_BEFORE_RACE
 		if (c == '\b') {
 			clear_from(19);
 			return FALSE;
 		}
+#endif
 
 		if (c == 'f')
 		{
