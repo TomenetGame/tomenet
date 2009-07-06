@@ -5546,9 +5546,9 @@ extern int PlayerUID;
 #define TERM_HALF	31	/* only the brighter colours */
 
 #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
+#define TERM_PVP	0x40	/* 64: black & red MASK, for active pvp/stormbringer */
 
 /* Reserved attr values - do not exceed */
-#define TERM_RLE	0x40	/* 64 */
 #define TERM_RESERVED	0x80	/* 128 */
 
 
