@@ -509,10 +509,23 @@ static char get_shimmer_color()
 #endif
 
 byte flick_colour(byte attr){
-	if ((attr >= TERM_BNW) && (attr < TERM_RLE)){
-		if (randint(7)<6) return (attr - TERM_BNW);
-		return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	byte flags = attr;//(remember flags) obsolete: & 0xE0;
+	attr = attr & 0x1F; /* cut flags off actual colour */
+
+	/* additional flickering from 'black'n'white' flag? */
+	if (flags & TERM_BNW) {
+		if (rand_int(7) < 5) return(attr);
+		return(randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	/* additional flickering from 'pvp' flag? */
+	} else if (flags & TERM_PVP) {
+		if (rand_int(6) < 3) return (attr);
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_RED;
+		case 3: return TERM_YELLOW;
+		}
 	}
+
 	if (attr == TERM_SHIELDM) {
 /*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)){
 		if (randint(2)==1) return (attr - TERM_SHIELDM);
