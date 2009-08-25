@@ -1982,7 +1982,7 @@ int Receive_title(void)
 	}
 
 	/* XXX -- Extract "ghost-ness" */
-	p_ptr->ghost = streq(buf, "Ghost");
+	p_ptr->ghost = streq(buf, "Ghost") || streq(buf, "\377rGhost (dead)");
 
 	if (screen_icky) Term_switch(0);
 
