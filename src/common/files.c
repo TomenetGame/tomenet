@@ -18,6 +18,7 @@ int remote_update(int ind, char *fname);
 int check_return(int ind, unsigned short fnum, unsigned long int sum);
 void kill_xfers(int ind);
 void do_xfers(void);
+int get_xfers_num(void);
 int local_file_check(char *fname, unsigned long int *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
@@ -228,6 +229,20 @@ void do_xfers(){
 			trav->state&=~(FS_READY);
 		}
 	}
+}
+
+/*
+ * Return the number of file transfers in progress
+ * Can be used to check if all file transfers are complete.
+ */
+int get_xfers_num() {
+	int num = 0;
+	struct ft_data *trav;
+	trav = fdata;
+	for (; trav; trav = trav->next) {
+		num++;
+	}
+	return num;
 }
 
 /*

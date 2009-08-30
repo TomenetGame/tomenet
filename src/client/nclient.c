@@ -180,8 +180,7 @@ int Receive_file(void){
 				}
 				else{
 					if(errno==EACCES){
-						sprintf(outbuf, "\377rNo access to update files");
-						c_msg_print(outbuf);
+						c_msg_print("\377rNo access to update files");
 					}
 				}
 				break;
@@ -197,10 +196,15 @@ int Receive_file(void){
 				}
 				else{
 					if(errno==EACCES){
-						sprintf(outbuf, "\377rNo access to lib directory!");
-						c_msg_print(outbuf);
+						c_msg_print("\377rNo access to lib directory!");
 					}
 				}
+
+				/* HACK - If this was the last file, reinitialize Lua on the fly - mikaelh */
+				if (!get_xfers_num())
+					c_msg_print("\377GReinitializing Lua");
+					reopen_lua();
+
 				break;
 			case PKT_FILE_CHECK:
 				Packet_scanf(&rbuf, "%s", fname);
@@ -283,7 +287,6 @@ void Receive_login(void)
 
 	/* Read server detail flags for informational purpose - C. Blue */
 	s32b sflag3, sflag2, sflag1, sflag0;
-	bool s_RPG = FALSE, s_FUN = FALSE, s_PARTY = FALSE, s_ARCADE = FALSE, s_TEST = FALSE, s_RPG_ADMIN = FALSE;
 	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
 	if (sflag0 & SFLG_RPG) s_RPG = TRUE;
 	if (sflag0 & SFLG_FUN) s_FUN = TRUE;
@@ -293,8 +296,7 @@ void Receive_login(void)
 	if (sflag0 & SFLG_RPG_ADMIN) s_RPG_ADMIN = TRUE;
 	client_mode = sflag1;
 
-	/* Set server feature variables in LUA and load the spells */
-	set_server_features(s_RPG, s_ARCADE, s_FUN, s_PARTY, s_TEST);
+	/* Now that we have the server flags, we can finish setting up Lua - mikaelh */
 	open_lua();
 
 	Term_clear();

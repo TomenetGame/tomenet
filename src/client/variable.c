@@ -230,3 +230,11 @@ int cloud_xfrac[10], cloud_yfrac[10];
 bool acc_opt_screen = FALSE;
 bool acc_got_info = FALSE;
 s16b acc_flags = 0;
+
+/* Server detail flags */
+bool s_RPG = FALSE;
+bool s_FUN = FALSE;
+bool s_PARTY = FALSE;
+bool s_ARCADE = FALSE;
+bool s_TEST = FALSE;
+bool s_RPG_ADMIN = FALSE;

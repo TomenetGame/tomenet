@@ -264,6 +264,14 @@ extern bool acc_opt_screen;
 extern bool acc_got_info;
 extern s16b acc_flags;
 
+/* Server detail flags */
+extern bool s_RPG;
+extern bool s_FUN;
+extern bool s_PARTY;
+extern bool s_ARCADE;
+extern bool s_TEST;
+extern bool s_RPG_ADMIN;
+
 
 
 /*
@@ -611,9 +619,10 @@ extern void dump_skills(FILE *fff);
 extern s16b get_skill_scale(player_type *pfft, int skill, u32b scale);
 
 /* c-script.c */
-extern void set_server_features(bool rpg, bool arcade, bool fun, bool party, bool test);
 extern void init_lua(void);
+extern void reinit_lua(void);
 extern void open_lua(void);
+extern void reopen_lua(void);
 extern bool pern_dofile(int Ind, char *file);
 extern int exec_lua(int Ind, char *file);
 extern cptr string_exec_lua(int Ind, char *file);
@@ -650,6 +659,7 @@ int local_file_check(char *fname, unsigned long *sum);
 int local_file_ack(int ind, unsigned short fnum);
 int local_file_err(int ind, unsigned short fnum);
 void do_xfers(void);
+int get_xfers_num(void);
 int check_return(int ind, unsigned short fnum, unsigned long sum);
 int remote_update(int ind, char *fname);
 

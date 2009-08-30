@@ -208,34 +208,32 @@ static const struct luaL_reg bitlib[] =
 
 
 bool init_lua_done = FALSE;
+bool open_lua_done = FALSE;
 
 /* Set global lua variables that define the server type */
-void set_server_features(bool rpg, bool arcade, bool fun, bool party, bool test) {
+static void set_server_features() {
 	char buf[80];
 	int oldtop;
 
-	/* We may be the first users of lua */
-        if (!init_lua_done) init_lua();
-
 	oldtop = lua_gettop(L);
 
-	sprintf(buf, "RPG_SERVER = %d", rpg);
+	sprintf(buf, "RPG_SERVER = %d", s_RPG);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 
-	sprintf(buf, "ARCADE_SERVER = %d", arcade);
+	sprintf(buf, "ARCADE_SERVER = %d", s_ARCADE);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 
-	sprintf(buf, "FUN_SERVER = %d", fun);
+	sprintf(buf, "FUN_SERVER = %d", s_FUN);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 
-	sprintf(buf, "PARTY_SERVER = %d", party);
+	sprintf(buf, "PARTY_SERVER = %d", s_PARTY);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 
-	sprintf(buf, "TEST_SERVER = %d", test);
+	sprintf(buf, "TEST_SERVER = %d", s_TEST);
 	lua_dostring(L, buf);
 	lua_settop(L, oldtop);
 }
@@ -273,11 +271,29 @@ void init_lua()
         init_lua_done = TRUE;
 }
 
+/* Reinitialize Lua */
+void reinit_lua()
+{
+	if (init_lua_done) {
+		/* Close the old Lua state */
+		lua_close(L);
+
+		init_lua_done = FALSE;
+	}
+
+	init_lua();
+}
+
 void open_lua()
 {
 	int i, max;
 
+	if (open_lua_done) return;
+
         if (!init_lua_done) init_lua();
+
+	/* Set server feature flags */
+	set_server_features();
 
 	/* Load the first lua file */
 	pern_dofile(0, "c-init.lua");
@@ -297,6 +313,21 @@ void open_lua()
 	{
 		exec_lua(0, format("finish_spell(%d)", i));
 	}
+
+	open_lua_done = TRUE;
+}
+
+void reopen_lua()
+{
+	/* Free up schools and spells */
+	C_KILL(schools, max_schools, school_type);
+	C_KILL(school_spells, max_spells, spell_type);
+
+	/* Reinitialize Lua */
+	reinit_lua();
+
+	open_lua_done = FALSE;
+	open_lua();
 }
 
 void dump_lua_stack(int min, int max)
