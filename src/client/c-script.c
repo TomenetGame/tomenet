@@ -250,7 +250,8 @@ void init_lua()
 	/* Register the Lua base libraries */
 	lua_baselibopen(L);
 	lua_strlibopen(L);
-	lua_iolibopen(L);
+	/* I/O and system functions are a potential security risk in the client - mikaelh */
+//	lua_iolibopen(L);
 	lua_dblibopen(L);
 
 	/* Register pern lua debug library */
