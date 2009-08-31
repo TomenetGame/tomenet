@@ -171,7 +171,7 @@ int check_return(int ind, unsigned short fnum, unsigned long int sum){
 		return(0);
 	}
 	local_file_check(c_fd->fname, &lsum);
-	if(!c_fd->state&FS_CHECK){
+	if (!(c_fd->state & FS_CHECK)) {
 		return(0);
 	}
 	if(lsum!=sum){
