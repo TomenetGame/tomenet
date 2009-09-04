@@ -26,9 +26,12 @@
 
 
 #define MIN_SOCKBUF_SIZE	1024
-#define MAX_SOCKBUF_SIZE	(50*1024)
+#define MAX_SOCKBUF_SIZE	(64*1024)
 
-#define SERVER_RECV_SIZE	(8*1024)
+/*
+ * I increased the server receive buffer to 32 kiB because lagspikes can cause
+ * the server to receive more than 8 kiB at once - mikaelh */
+#define SERVER_RECV_SIZE	(32*1024)
 #if defined(LINUX0)
 /* bwahg, linux tcp/ip still has silly limitations in 0.99.15 */
 #define SERVER_SEND_SIZE	(3*512 + 3*128)
@@ -36,7 +39,7 @@
 #define SERVER_SEND_SIZE	(64*1024)
 #endif
 
-#define CLIENT_SEND_SIZE	SERVER_RECV_SIZE
+#define CLIENT_SEND_SIZE	(8*1024)
 #define CLIENT_RECV_SIZE	SERVER_SEND_SIZE
 
 /*
