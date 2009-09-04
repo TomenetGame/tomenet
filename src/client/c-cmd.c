@@ -1482,7 +1482,6 @@ void cmd_message(void)
 		/* hack - screenshot - mikaelh */
 		if (prefix(buf, "/shot") || prefix(buf, "/screenshot"))
 		{
-			inkey_msg = FALSE;
 			for (i = 0; i < 70; i++)
 			{
 				if (buf[i] == ' ')
@@ -1493,21 +1492,23 @@ void cmd_message(void)
 				else if (buf[i] == '\0') break;
 			}
 			xhtml_screenshot("screenshot????");
-			return;
-		}
-		/* ping command - mikaelh */
-		else if (prefix(buf, "/ping"))
-		{
 			inkey_msg = FALSE;
-			Send_ping();
 			return;
 		}
-		else
-		{
-			for (i = 0; i < 70; i++) {
-				if (buf[i] == '{') buf[i] = '\377';
-			}
+
+		/* Convert {'s into \377's */
+		for (i = 0; i < 70; i++) {
+			if (buf[i] == '{') buf[i] = '\377';
 		}
+
+		/* Handle messages to % in the client - mikaelh */
+		if (prefix(buf, "%:") && !prefix(buf, "%::")
+		{
+			c_msg_format("\377o<%%> \377w%s", buf + 2);
+			inkey_msg = FALSE;
+			return;
+		}
+
 		Send_msg(buf);
 	}
 
