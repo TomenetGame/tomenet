@@ -3948,6 +3948,15 @@ int Send_suicide(void)
 		return n;
 	}
 
+	/* Newer servers require couple of extra bytes for suicide - mikaelh */
+	if (is_newer_than(&server_version, 4, 4, 2, 3, 0, 0))
+	{
+		if ((n = Packet_printf(&wbuf, "%c%c", 1, 4)) <= 0)
+		{
+			return n;
+		}
+	}
+
 	return 1;
 }
 
