@@ -1502,7 +1502,7 @@ void cmd_message(void)
 		}
 
 		/* Handle messages to % in the client - mikaelh */
-		if (prefix(buf, "%:") && !prefix(buf, "%::")
+		if (prefix(buf, "%:") && !prefix(buf, "%::"))
 		{
 			c_msg_format("\377o<%%> \377w%s", buf + 2);
 			inkey_msg = FALSE;
