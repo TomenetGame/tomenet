@@ -56,7 +56,7 @@ static long		last_send_anything,
 static long		reliable_full_len,
 			latest_reliable;
 #endif
-static char		talk_pend[1024], initialized = 0;
+static char		initialized = 0;
 
 /*
  * Initialize the function dispatch tables.
@@ -1888,7 +1888,7 @@ int Receive_message(void)
 {
 	int	n, c;
 	char	ch;
-	char	buf[MSG_LEN], search[1024], *ptr;
+	char	buf[MSG_LEN];
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0)
 	{
@@ -1917,37 +1917,11 @@ int Receive_message(void)
 	 */
 	for (c = 0; c < n; c++) if (buf[c] < ' ' && buf[c]!=-1) return 1;
 
-/*	printf("Message: %s\n", buf);   */
+	if (screen_icky && !party_mode && !shopping) Term_switch(0);
 
-	sprintf(search, "%s] ", cname);
+	c_msg_print(buf);
 
-	if (strstr(buf, search) != 0 && *talk_pend)
-	{
-		ptr = strstr(talk_pend, strchr(buf, ']') + 2);
-		ptr = strtok(ptr, "\t");
-		ptr = strtok(NULL, "\t");
-		if (ptr) strcpy(talk_pend, ptr);
-		else strcpy(talk_pend, "");
-	}
-
-#if 0
-	if (!topline_icky)
-#else
-	/* Always receive messages */
-	if (1)
-#endif
-	{
-		if (screen_icky && !party_mode && !shopping) Term_switch(0);
-
-                c_msg_print(buf);
-
-		if (screen_icky && !party_mode && !shopping) Term_switch(0);
-	}
-	else
-                if ((n = Packet_printf(&qbuf, "%c%s", ch, buf)) <= 0)
-                {
-                        return n;
-		}
+	if (screen_icky && !party_mode && !shopping) Term_switch(0);
 
 	return 1;
 }
@@ -3655,20 +3629,10 @@ int Send_msg(cptr message)
 {
 	int	n;
 
-	if (message && strlen(message))
-	{
-		if (strlen(talk_pend))
-			strcat(talk_pend, "\t");
-		strcat(talk_pend, message);
-	}
-
-	if (!strlen(talk_pend)) return 1;
-
-	if ((n = Packet_printf(&wbuf, "%c%S", PKT_MESSAGE, talk_pend)) <= 0)
+	if ((n = Packet_printf(&wbuf, "%c%S", PKT_MESSAGE, message)) <= 0)
 	{
 		return n;
 	}
-	talk_pend[0]='\0';
 
 	return 1;
 }
