@@ -2377,7 +2377,8 @@ void do_weather() {
 
 						/* distance within cloud? */
 						if (d <= cloud_dsum[j] &&
-						/* distance near cloud borders? chance to thin out */
+						/* distance near cloud borders? plus, chance to thin
+						   out when getting closer to the border. */
 						    (rand_int(100) >= (d - ((cloud_dsum[j] * 3) / 4)) * 4))
 							outside_clouds = FALSE;
 					}
