@@ -311,21 +311,21 @@ static void store_sell(void)
 
 	if (store_num == 7)
 	{
-		if (!c_get_item(&item, "Drop what? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return;
 		}
 	}
 	else if (store_num == 57)
 	{
-		if (!c_get_item(&item, "Donate what? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Donate what? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return;
 		}
 	}
 	else
 	{
-		if (!c_get_item(&item, "Sell what? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Sell what? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return;
 		}
@@ -411,7 +411,7 @@ static void store_do_command(int num)
 
 	if (c_store.flags[num] & BACT_F_INVENTORY)
 	{
-		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return;
 		}

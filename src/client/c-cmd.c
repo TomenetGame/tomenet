@@ -35,7 +35,7 @@ static void cmd_all_in_one(void)
 {
 	int item, dir;
 
-	if (!c_get_item(&item, "Use which item? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -822,7 +822,7 @@ void cmd_drop(void)
 {
 	int item, amt;
 
-	if (!c_get_item(&item, "Drop what? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Drop what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -854,7 +854,7 @@ void cmd_wield(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN)))
 	{
 		return;
 	}
@@ -867,7 +867,7 @@ void cmd_wield2(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN)))
 	{
 		return;
 	}
@@ -880,7 +880,7 @@ void cmd_observe(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Examine which item? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Examine which item? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -893,7 +893,7 @@ void cmd_take_off(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Takeoff which item? ", TRUE, FALSE, FALSE))
+	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP)))
 	{
 		return;
 	}
@@ -908,7 +908,7 @@ void cmd_destroy(void)
 	int item, amt;
 	char out_val[160];
 
-	if (!c_get_item(&item, "Destroy what? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Destroy what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -938,7 +938,7 @@ void cmd_inscribe(void)
 	int item;
 	char buf[1024];
 
-	if (!c_get_item(&item, "Inscribe what? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -954,7 +954,7 @@ void cmd_uninscribe(void)
 {
 	int item;
 
-	if (!c_get_item(&item, "Uninscribe what? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item, "Uninscribe what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -990,8 +990,10 @@ void cmd_quaff(void)
 	int item;
 
 	item_tester_hook = item_tester_quaffable;
+	get_item_hook_find_obj_what = "Potion name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Quaff which potion? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Quaff which potion? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1013,8 +1015,10 @@ void cmd_read_scroll(void)
 	int item;
 
 	item_tester_hook = item_tester_readable;
+	get_item_hook_find_obj_what = "Scroll name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Read which scroll? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1028,8 +1032,10 @@ void cmd_aim_wand(void)
 	int item, dir;
 
 	item_tester_tval = TV_WAND;
+	get_item_hook_find_obj_what = "Wand name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1045,8 +1051,10 @@ void cmd_use_staff(void)
 	int item;
 
 	item_tester_tval = TV_STAFF;
+	get_item_hook_find_obj_what = "Staff name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which staff? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Use which staff? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1060,8 +1068,10 @@ void cmd_zap_rod(void)
 	int item;
 
 	item_tester_tval = TV_ROD;
+	get_item_hook_find_obj_what = "Rod name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Use which rod? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Use which rod? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1085,7 +1095,7 @@ void cmd_refill(void)
 	item_tester_hook = item_tester_oils;
 	p = "Refill with which light? ";
 
-	if (!c_get_item(&item, p, FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, p, (USE_INVEN)))
 	{
 		return;
 	}
@@ -1099,8 +1109,10 @@ void cmd_eat(void)
 	int item;
 
 	item_tester_hook = item_tester_edible;
+	get_item_hook_find_obj_what = "Food name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Eat what? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA)))
 	{
 		return;
 	}
@@ -1113,7 +1125,7 @@ void cmd_activate(void)
 {
 	int item;
 
-        if (!c_get_item(&item, "Activate what? ", TRUE, TRUE, FALSE))
+        if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		return;
 	}
@@ -1687,7 +1699,7 @@ void cmd_throw(void)
 {
 	int item, dir;
 
-	if (!c_get_item(&item, "Throw what? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Throw what? ", (USE_INVEN)))
 	{
 		return;
 	}
@@ -1722,7 +1734,7 @@ void cmd_browse(void)
 
 	item_tester_hook = item_tester_browsable;
 
-	if (!c_get_item(&item, "Browse which book? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&item, "Browse which book? ", (USE_INVEN)))
 	{
 		if (item == -2) c_msg_print("You have no books that you can read.");
 		return;

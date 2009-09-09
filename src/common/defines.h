@@ -3203,6 +3203,16 @@ that keeps many algorithms happy.
 #define SM_IMM_MANA		0x80000000
 
 
+/*
+ * Bit flags for the "c_get_item" function
+ */
+#define USE_EQUIP	0x01	/* Allow equip items */
+#define USE_INVEN	0x02	/* Allow inven items */
+#define USE_FLOOR	0x04	/* Allow floor items */
+#define USE_EXTRA	0x08	/* Allow extra items */
+
+/* Special return code for "c_get_item" when @ was used for extra selection */
+#define EXTRA_USED	0x02
 
 /*
  * Bit flags for the "p_ptr->notice" variable

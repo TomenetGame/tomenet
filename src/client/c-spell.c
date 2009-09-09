@@ -121,6 +121,7 @@ static void print_mimic_spells()
 	prt("", j++, col + k * 35);
 }
 
+
 /*
  * Allow user to choose a spell/prayer from the given book.
  */
@@ -511,11 +512,11 @@ void do_ghost(void)
 /*
  * Schooled magic
  */
-/* Backported from ToME -- beware, this can explode!	- Jir - */
 
-#if 0
 /*
  * Find a spell in any books/objects
+ *
+ * This is modified code from ToME. - mikaelh
  */
 static int hack_force_spell = -1;
 bool get_item_hook_find_spell(int *item)
@@ -530,50 +531,36 @@ bool get_item_hook_find_spell(int *item)
 	sprintf(buf2, "return find_spell(\"%s\")", buf);
 	spell = exec_lua(0, buf2);
 	if (spell == -1) return FALSE;
+
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
 		object_type *o_ptr = &inventory[i];
 
-		/* Must we wield it ? */
-		if ((wield_slot(o_ptr) != -1) && (i < INVEN_WIELD)) continue;
-
-		/* Is it a non-book? */
-		if ((o_ptr->tval != TV_BOOK))
-		{
-			u32b f1, f2, f3, f4, f5, esp;
-
-			/* Extract object flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
-
-			if ((f5 & TR5_SPELL_CONTAIN) && (o_ptr->pval2 == spell))
+		if (o_ptr->tval == TV_BOOK) {
+			/* A random book ? */
+			if ((o_ptr->sval == 255) && (o_ptr->pval == spell))
 			{
 				*item = i;
 				hack_force_spell = spell;
 				return TRUE;
 			}
-		}
-		/* A random book ? */
-		else if ((o_ptr->sval == 255) && (o_ptr->pval == spell))
-		{
-			*item = i;
-			hack_force_spell = spell;
-			return TRUE;
-		}
-		/* A normal book */
-		else if (o_ptr->sval != 255)
-		{
-			sprintf(buf2, "return spell_in_book2(%d, %d)", o_ptr->sval, spell);
-			if (exec_lua(0, buf2))
+			/* A normal book */
+			else
 			{
-				*item = i;
-				hack_force_spell = spell;
-				return TRUE;
+				sprintf(buf2, "return spell_in_book2(%d, %d, %d)", i, o_ptr->sval, spell);
+				if (exec_lua(0, buf2))
+				{
+					*item = i;
+					hack_force_spell = spell;
+					return TRUE;
+				}
 			}
 		}
+		
 	}
+
 	return FALSE;
 }
-#endif
 
 /*
  * Get a spell from a book
@@ -594,11 +581,11 @@ s32b get_school_spell(cptr do_what, int *item_book)
 
 	if (*item_book < 0)
 	{
-		//        hack_force_spell = -1;
-		// DGDGDG -- someone fix it please        get_item_extra_hook = get_item_hook_find_spell;
+		hack_force_spell = -1;
+		get_item_extra_hook = get_item_hook_find_spell;
 		item_tester_tval = TV_BOOK;
 		sprintf(buf2, "You have no book to %s from", do_what);
-		if (!c_get_item(&item, format("%^s from which book?", do_what), TRUE, TRUE, FALSE )) return -1;
+		if (!c_get_item(&item, format("%^s from which book?", do_what), (USE_INVEN | USE_EXTRA) )) return -1;
 	}
 	else
 	{
@@ -614,19 +601,6 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	else
 		return(-1);
 
-#if 0 //someome fix ;)
-	/* If it can be wielded, it must */
-	if ((wield_slot(o_ptr) != -1) && (item < INVEN_WIELD))
-	{
-		msg_format("You cannot %s from that object, it must be wielded first.", do_what);
-		return -1;
-	}
-
-	if (repeat_pull(&tmp))
-	{
-		return tmp;
-	}
-#endif
 	/* Nothing chosen yet */
 	flag = FALSE;
 
@@ -647,13 +621,8 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		/* Only books allowed */
 		return -1;
 	}
-	/* DGDGDG        else
-	   {
-	   sval = 255;
-	   pval = o_ptr->pval2;
-	   }*/
 
-	//        if (hack_force_spell == -1)
+	if (hack_force_spell == -1)
 	{
 		num = exec_lua(0, format("return book_spells_num2(%d, %d)", item, sval));
 
@@ -739,14 +708,6 @@ s32b get_school_spell(cptr do_what, int *item_book)
 					Term_save();
 
 				}
-#if 0 /* would leave garbage behind - mikaelh */
-				/* Restore the screen */
-				else
-				{
-					/* Restore the screen */
-					Term_load();
-				}
-#endif
 
 				/* Display a list of spells */
 				where = exec_lua(0, format("return print_book2(0, %d, %d, %d)", item, sval, pval));
@@ -771,7 +732,6 @@ s32b get_school_spell(cptr do_what, int *item_book)
 			}
 		}
 	}
-#if 0 // DGDGDGDG
 	else
 	{
 		/* Require "okay" spells */
@@ -783,11 +743,10 @@ s32b get_school_spell(cptr do_what, int *item_book)
 		else
 		{
 			bell();
-			msg_format("You may not %s that spell.", do_what);
+			c_msg_format("You may not %s that spell.", do_what);
 			spell = -1;
 		}
 	}
-#endif
 
 	/* Restore the screen */
 	if (redraw)

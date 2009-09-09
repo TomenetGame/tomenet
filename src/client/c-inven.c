@@ -171,15 +171,52 @@ static int get_tag(int *cp, char tag)
         return (FALSE);
 }
 
-bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
+/*
+ * General function to find an item by its name
+ *
+ * This is modified code from ToME. - mikaelh
+ */
+cptr get_item_hook_find_obj_what;
+bool get_item_hook_find_obj(int *item)
+{
+	int i;
+	char buf[80];
+
+	strcpy(buf, "");
+	if (!get_string(get_item_hook_find_obj_what, buf, 79))
+		return FALSE;
+
+	for (i = 0; i < INVEN_TOTAL; i++)
+	{
+		object_type *o_ptr = &inventory[i];
+
+		if (!item_tester_okay(o_ptr)) continue;
+
+		if (strstr(inventory_name[i], buf))
+		{
+			*item = i;
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+bool (*get_item_extra_hook)(int *cp);
+byte c_get_item(int *cp, cptr pmt, int mode)
 {
 	char	n1, n2, which = ' ';
 
 	int	k, i1, i2, e1, e2, ver;
-	bool	done, item;
+	bool	done;
+	byte	item;
 
 	char	tmp_val[160];
 	char	out_val[160];
+
+	bool	equip = FALSE;
+	bool	inven = FALSE;
+	bool	floor = FALSE;
+	bool	extra = FALSE;
 
 	/* The top line is icky */
 	topline_icky = TRUE;
@@ -192,6 +229,11 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 	/* Default to "no item" */
 	*cp = -1;
+
+	if (mode & (USE_EQUIP)) equip = TRUE;
+	if (mode & (USE_INVEN)) inven = TRUE;
+	if (mode & (USE_FLOOR)) floor = TRUE;
+	if (mode & (USE_EXTRA)) extra = TRUE;
 
 	/* Paranoia */
 	if (!inven && !equip) return (FALSE);
@@ -343,6 +385,12 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 
 			/* Append */
 			if (inven) strcat(out_val, " / for Inven,");
+		}
+		
+		/* Extra? */
+		if (extra)
+		{
+			strcat(out_val, " @ for extra selection,");
 		}
 
 		/* Finish the prompt */
@@ -496,6 +544,19 @@ bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor)
 				(*cp) = k;
 				item = TRUE;
 				done = TRUE;
+				break;
+			}
+
+			case '@':
+			{
+				int i;
+
+				if (extra && get_item_extra_hook(&i))
+				{
+					(*cp) = i;
+					item = EXTRA_USED;
+					done = TRUE;
+				}
 				break;
 			}
 

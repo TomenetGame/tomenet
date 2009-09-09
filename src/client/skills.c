@@ -726,7 +726,7 @@ static void do_trap(int item_kit)
 	if (item_kit < 0)
 	{
 		item_tester_tval = TV_TRAPKIT;
-		if (!c_get_item(&item_kit, "Use which trapping kit? ", FALSE, TRUE, FALSE))
+		if (!c_get_item(&item_kit, "Use which trapping kit? ", (USE_INVEN)))
 		{
 			if (item_kit == -2)
 				c_msg_print("You have no trapping kits.");
@@ -762,7 +762,7 @@ static void do_trap(int item_kit)
 			break;
 	}
 
-	if (!c_get_item(&item_load, "Load with what? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN)))
 	{
 		if (item_load == -2)
 			c_msg_print("You have nothing to load that trap with.");
@@ -783,7 +783,7 @@ static void do_rune() {
 
         //Ask for a basic rune
 	item_tester_tval = TV_RUNE1;
-	if (!c_get_item(&basic_rune, "Use which basic rune? ", FALSE, TRUE, FALSE))
+	if (!c_get_item(&basic_rune, "Use which basic rune? ", (USE_INVEN)))
 	{
 		if (basic_rune == -2)
 			c_msg_print("You have no runes.");
@@ -795,7 +795,7 @@ static void do_rune() {
 	//Ask for a modifier rune
 	item_tester_tval = TV_RUNE2;
 
-	if (!c_get_item(&mod_rune, "Use which modifier rune? ", TRUE, TRUE, FALSE))
+	if (!c_get_item(&mod_rune, "Use which modifier rune? ", (USE_EQUIP | USE_INVEN)))
 	{
 		if (mod_rune == -2)
 			c_msg_print("You have nothing to use that with.");
@@ -877,7 +877,7 @@ void do_activate_skill(int x_idx, int item)
 		if (item < 0)
 		{
 			item_tester_tval = s_info[x_idx].tval;
-			if (!c_get_item(&item, "Cast from which book? ", FALSE, TRUE, FALSE))
+			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN)))
 			{
 				if (item == -2)
 					c_msg_print("You have no books that you can cast from.");
@@ -897,7 +897,7 @@ void do_activate_skill(int x_idx, int item)
 	if (item < 0 && s_info[x_idx].flags1 & SKF1_MKEY_ITEM)
 	{
 		item_tester_tval = s_info[x_idx].tval;
-		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return;
 		}

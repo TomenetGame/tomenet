@@ -2222,7 +2222,7 @@ int Receive_item(void)
 
 		c_msg_print(NULL);
 
-		if (!c_get_item(&item, "Which item? ", TRUE, TRUE, FALSE))
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
 		{
 			return 1;
 		}
