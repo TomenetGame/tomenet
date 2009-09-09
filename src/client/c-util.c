@@ -1925,13 +1925,17 @@ void c_message_add(cptr str)
         /* Advance the "head" pointer */
         message__head += n + 1;
 
+#if 0
+//deprecated?:
 	/* Window stuff - assume that all chat messages start with '[' */
         if (str[0]=='[')
         p_ptr->window |= (PW_MESSAGE | PW_CHAT);
         else
         p_ptr->window |= (PW_MESSAGE | PW_MSGNOCHAT);
 //      p_ptr->window |= PW_MESSAGE;
-
+#else
+	p_ptr->window |= PW_MESSAGE;
+#endif
 }
 void c_message_add_chat(cptr str)
 {
@@ -2405,7 +2409,6 @@ void c_msg_print(cptr msg)
 #endif
 
 	/* Memorize the message */
-#if 1
 	if (((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
 	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
 	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
@@ -2433,29 +2436,31 @@ void c_msg_print(cptr msg)
 	    (msg[0] == '~' && was_chat_buffer) ||
 	    (msg[0] == '\375')) && msg[0] != '\374') {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
-		if (msg[2] == '[') was_real_chat = TRUE;
+		if (msg[2] == '[' || msg[0] == '\375') was_real_chat = TRUE;
 		else if (msg[0] != '~') was_real_chat = FALSE;
-
-		if (msg[0] == '~') buf[0] = ' ';
-		else if (msg[0] == '\375') t++;
-		c_message_add_chat(t);
-
 		was_chat_buffer = TRUE;
 	} else {
 		was_real_chat = FALSE;
 		was_chat_buffer = FALSE;
 	}
-/*#if 0*/
-	if (!was_real_chat) {
-		if (msg[0] == '~') buf[0] = ' ';
-		else if (msg[0] == '\374') t++;
-		c_message_add_msgnochat(t);
-	}
-#endif
-	if (buf[0] == '~') buf[0] = ' ';
+
+	/* strip (from here on) effectless control codes */
+	if (buf[0] == '\374') t++;
+	if (buf[0] == '\375') t++;
+
+	/* add the message to generic, chat-only and no-chat buffers
+	   accordingly, KEEPING '\376' control code (v>4.4.2.4)
+	   and '~' control code (backward compatibility) for main buffer */
 	c_message_add(t);
+
+	/* strip remaining control codes before displaying on screen */
+	if (buf[0] == '~') buf[0] = ' '; /* for backward compatibility */
 	if (buf[0] == '\376') t++;
 
+	if (was_chat_buffer)
+		c_message_add_chat(t);
+	else
+		c_message_add_msgnochat(t);
 
 	/* Analyze the buffer */
 //done at the beginning.	t = buf;

@@ -1566,6 +1566,7 @@ static void fix_message(void)
 
 	cptr msg;
 	byte a;
+	char buf[1024];
 
 	/* Display messages in different colors -Zz */
 	char nameA[20];
@@ -1641,6 +1642,11 @@ static void fix_message(void)
 				a = TERM_WHITE;
 				msg = message_str(i);
 
+				/* strip remaining control codes that were left in
+				   this main buffer for purpose of CTRL+O/P scrollback
+				   control, before actually displaying the message. (1/2) */
+				if (msg[0] == '\376') msg++;
+
 				/* Display messages in different colors -Zz */
 				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
 					if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
@@ -1656,7 +1662,16 @@ static void fix_message(void)
 				if (!msgtarget) break;
 #endif
 	                        /* Dump the message on the appropriate line */
-	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+
+				/* strip remaining control codes that were left in
+				   this main buffer for purpose of CTRL+O/P scrollback
+				   control, before actually displaying the message. (2/2) */
+				/* backward compatibility hack: */
+				strcpy(buf, msg);
+				if (buf[0] == '~') buf[0] = ' ';
+
+	                        Term_putstr(0, (h - 1) - i, -1, a, buf);
+//	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
 	                        /* Cursor */
 	                        Term_locate(&x, &y);

@@ -26,6 +26,7 @@ void do_cmd_messages(void)
 
 	char shower[80] = "";
 	char finder[80] = "";
+	char buf[1024];
 
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg = "", msg2;
@@ -54,6 +55,8 @@ void do_cmd_messages(void)
 	for (i = 0; i < n; i++)
 	{
 		msg = message_str(i);
+
+		/* strip scrollback control code before processing the message */
 		if (msg[0] == '\376') msg++;
 
 		if (strstr(msg, nomsg_target) ||
@@ -116,8 +119,15 @@ void do_cmd_messages(void)
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
+
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, (char*)msg);
+
+			/* strip remaining control code (backward compatibility): */
+			strcpy(buf, msg);
+			if (buf[0] == '~') buf[0] = ' ';
+
+			Term_putstr(0, 21-j, -1, a, buf);
+//			Term_putstr(0, 21-j, -1, a, (char*)msg);
 			t = strlen(msg);
 		}
 
@@ -320,6 +330,7 @@ void do_cmd_messages_chatonly(void)
 
 	char shower[80] = "";
 	char finder[80] = "";
+	char buf[1024];
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -403,9 +414,12 @@ void do_cmd_messages_chatonly(void)
 		    (strstr(msg, msg_retire) != NULL) ||
 		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
-		    (msg[0] == ' ' && was_ctrlo_buffer) ||
+		    (msg[0] == '~' && was_ctrlo_buffer) ||
 		    (msg[0] == '\376'))
 		{
+			/* strip control code */
+			if (msg[0] == '\376') msg++;
+
 			was_ctrlo_buffer = TRUE;
 			message_chat[nn] = msg;
 			nn++;
@@ -439,8 +453,6 @@ void do_cmd_messages_chatonly(void)
 			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
 //			cptr msg = message_chat[i+j];
 
-			if (msg[0] == '\376') msg++;
-
 			/* Apply horizontal scroll */
 			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
@@ -448,7 +460,13 @@ void do_cmd_messages_chatonly(void)
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21-j, -1, a, (char*)msg);
+
+			/* strip remaining control code (backward compatibility): */
+			strcpy(buf, msg);
+			if (buf[0] == '~') buf[0] = ' ';
+
+			Term_putstr(0, 21-j, -1, a, buf);
+//			Term_putstr(0, 21-j, -1, a, (*char)msg);
 		}
 
 		/* Display header XXX XXX XXX */

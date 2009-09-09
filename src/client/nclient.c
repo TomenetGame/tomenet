@@ -1915,7 +1915,13 @@ int Receive_message(void)
 	/* Hack -- ' ' is numericall the lowest charcter we will probably be trying to
 	 * display.  This might screw up international character sets.
 	 */
-	for (c = 0; c < n; c++) if (buf[c] < ' ' && buf[c]!=-1) return 1;
+	for (c = 0; c < n; c++) 
+		if (buf[c] < ' ' && /* exempt control codes */
+		    buf[c] != -1 && /* \377 colour code */
+		    buf[c] != -2 && /* \376 scrollback code */
+		    buf[c] != -3 && /* \375 chat code */
+		    buf[c] != -4) /* \374 no-chat code */
+			return 1;
 
 	if (screen_icky && !party_mode && !shopping) Term_switch(0);
 
