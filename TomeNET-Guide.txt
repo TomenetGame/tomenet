@@ -1,11 +1,10 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Sep 2009; written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
-| For latest information about TomeNET see http://www.c-blue.de/rogue.html
-| and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
-| or join discussion forum at http://forum.t-o-m-e.net/ (TomeNET sections).
+| Latest update: 9. September 2009 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.2 - official websites are:
+| http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
+| Note that http://www.tomenet.net/ is outdated, so don't download from there.
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -36,8 +35,8 @@ Contents
     (1.2)   What is a rogue-like game?
     (1.3)   Where do I find more information about rogue-like games?
     (1.4)   Goal and progress of TomeNET players
-    (1.5)   Morgoth and the Nazgul
-    (1.6)   How to encounter the final boss: Morgoth, The Lord Of Darkness
+    (1.5)   Morgoth and his Nazgul
+    (1.6)   How to encounter the final boss: Morgoth, Lord of Darkness
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.2)   Starting TomeNET and getting to play on an internet server
@@ -130,15 +129,23 @@ Contents
 ------------------
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing TomeNET'.
--Get the latest client from www.tomenet.net or www.c-blue.de/rogue.html
- (called 'tomenet-???-client.zip') and extract it (to C:\Tomenet for example).
--Either run 'TomeNET-EU.bat' to directly connect to europe server
+
+-Get the latest client from www.c-blue.de/rogue.html (my own site) or from
+ http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's site,
+ which features a monster-search, and this nice introduction in pictures).
+ Note that http://www.tomenet.net/ is usually terribly outdated, so don't
+ download anything from there.
+ The game client is named something like 'tomenet-???-client.zip', extract it
+ to C:\TomeNET for example.
+-Either run 'TomeNET-main.bat' to directly connect to official main server
  (recommended), or run TomeNET.exe and choose a server (Enter 85.118.45.235
- to connect to europe server).
--Create a character, Half-Troll warrior is good for beginners.
- In case you choose Half-Troll warrior, read this:
-  Good stats order for it is STR,CON,DEX,WIS,INT,CHR.
-  Or, if the server allows to manually choose your stats, try this:
+ to connect to the official main server).
+ NOTE: The official main server may appear in the server list as
+ "totem.ielf.org" instead of "tomenet.servegame.com". Don't worry about this.
+
+ -Create a character, Half-Troll warrior is good for beginners.
+ The server should now allow you to manually choose your stats.
+ In case you chose a (Half-Troll) warrior, try this:
   STR 18/30, CON as high as possible, INT as low as possible,
   spare points into DEX, WIS or CHR. Explanation:
    CON affects your hit points, more CON -> more HP.
@@ -151,14 +158,19 @@ compile the game under '(2.1) Installing TomeNET'.
    heavier weaponry.
    Warriors don't really need INT so you should reduce it to spend the points
    on other attributes. WIS isn't really needed either, but it can be useful
-   to resist sanity-reducing effects.
+   to endure sanity-reducing effects.
  (If you are new to the game, it is NOT recommended to choose one of these:
  Istar, Priest, Shaman, Adventurer.)
--Make sure you choose [n]ormal mode (or [e]verlasting). Not 'fruit bat' :).
- Now you're in the game and should see the town (Bree) :)
--To chat, press the colon key ':' . Don't hesitate to ask other players
+-Make sure you don't choose 'fruit bat' mode :).
+ Also, DO NOT chose 'PvP' mode either. It's a restricted special thing that
+ has nothing to do with the normal gameplay at all! (See (6.13) for info).
+ 
+ Now you're in the game and should see the town of Bree.
+
+ -To chat, press the colon key ':' . Don't hesitate to ask other players
  if you have any problems with getting started.
--To run, press SHIFT+<direction key> where direction keys are on
+ (For details about chat features see (3.3).)
+-To run, press SHIFT + <direction key> where direction keys are on
  the number pad 7,8,9, 4,6, 1,2,3. Running often requires that
  Numlock is turned off (press the 'Num' key above your number key pad on the
  right side of your keyboard, so the green light is off).
@@ -170,15 +182,16 @@ compile the game under '(2.1) Installing TomeNET'.
 -You can drop items with 'd' or destroy items with 'k'.
 -You can enter stairs down/upwards by standing on them and pressing the
  corresponding key '<' or '>'.
--Nearby the town there's often a 'newbie tower' which is a good place
+-You can press '?' to get an in-game help about keys and commands.
+
+-Nearby the town there's often a 'training tower' which is a good place
  to start because if you die there nothing will happen except a slight
  loss of experience. Ask people where the '<' (tower entrance) is found.
--If you die outside of the newbie tower you will usually turn into a ghost.
+-If you die outside of the training tower you will usually turn into a ghost.
  This ghost cant wear any items, so it's a good idea to care about being
  revived. To get revived, either visit the temple in town (it's a green '4')
- or ask another player to read a Scroll Of Life while standing next to you.
+ or ask another player to read a 'Scroll of Life' while standing next to you.
  While you're a ghost you can freely float up/down by pressing '<' and '>'.
--Press '?' to get an in-game help about keys and commands.
 -If you have any journals like 'Guide to Middle Earth' or 'The Gazette' in
  your inventory (bottom right window) you should read those by pressing 'r' to
  read.
@@ -199,8 +212,7 @@ compile the game under '(2.1) Installing TomeNET'.
  Also, if a grey '(O)' is in front of a player name, it means that player is
  using an outdated client. It's very important to keep your client up to date!
 
-It is strongly recommended that you don't stop reading here, but continue at
-(3.2) now >;)
+It is recommended that you continue reading at (3.2) now ;)
 
 
 
@@ -217,11 +229,11 @@ in the options menu, which you invoke with '=' key.
 Walk into a direction:
     Original key set        Rogue-like key set      Rogue-like (running)
         7   8   9               y   k   u               Y   K   U
-        4   5   6               h       l               H       L
+        4       6               h       l               H       L
         1   2   3               b   j   n               B   J   N
 
 You can also use the arrow keys instead of the Numpad keys for movement.
-Pressing '5' will cause you to spend a turn with doing nothing.
+(Pressing '5' will make your character try and pick up an item).
 
 SHIFT+<direction key>
         runs into that direction. Numlock must probably be turned off,
@@ -231,8 +243,10 @@ SHIFT+<direction key>
         You can also run by pressing the dot '.' followed by a direction key.
 
 
-i       i       display your inventory.
-e       e       display your equipment.
+i       i       display your inventory. You can then press SHIFT + inventory
+                slot letter to paste that item name into chat.
+e       e       display your equipment. You can then press SHIFT + equipment
+                slot letter to paste that item name into chat.
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
                 from a shop or *identified* it. Mages can learn *ID* spell
@@ -241,7 +255,7 @@ I       I       inspects an item, showing its special abilities in case it
                 *identified* yet, you will only see basic information.
                 See (5.7) for more information about ID, *ID* and shops!
                 If you examine weapons, it always tells you the weapon class
-                (sword/hafted/axe/polearm) as well as if it's 1-, 2- or
+                (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
                 1,5-handed.
 w       w       wear/wield an item from your inventory (weapons, armour,
                 ammunition, tools, rings, amulets, etc).
@@ -254,8 +268,8 @@ E       E       eat. (Thunderlords, also known as Dragonriders, can eat
                 firestones to gain temporary special abilities, see (5.9) .)
 F       F       fuel your light source.
                 Use oil for lanterns, and torches to fuel another torch.
-f       t       fire.
-v       v       throw.
+f       t       fire ammo from your quiver.
+v       v       throw an item from your inventory.
 b       (P)     browse (peruse) a book.
 m       m       activate a skill (ie cast a magic spell, lay a trap, use an
                 ability, use a technique, polymorph into a monster form or
@@ -269,7 +283,7 @@ g       g       pick up an item from the floor. You have to stand on the item
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
 C       C       see a character overview.
-L,M     W,M     navigate on the map (use direction keys if using L).
+L or M  W or M     navigate on the map (use direction keys if using L).
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 S       #       enter 'search mode'. You will search your adjacent fields once
@@ -291,7 +305,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 wands/staves/rods, activating items, or any other action that
                 causes noticable noise immediately breaks cloaking!
                 Auto-retaliation is disabled while cloaked, except for the
-                Stormbringer (which will break the effec of course).
+                Stormbringer (which will break the effect of course).
                 Cloaking will also increase your searching, greatly increase
                 your stealth, but decrease your speed. Sneakiness skill may
                 very slightly reduce the decrease.
@@ -302,7 +316,7 @@ V       V       enter 'cloaking mode'. This can only be used by rogues.
                 sake of PvP usage, similar to invisibility.
 A       A       activate an item. Usually an artifact, a dragon scale mail or
                 a ring of polymorphing (shapechanging).
-T,+     CTRL+T  tunnel through an obstacle or a wall.
+T or +  CTRL+T  tunnel through an obstacle or a wall.
 R       R       rest. Your hit points and mana will regenerate faster while
                 resting.
 o       o       open something.
@@ -316,20 +330,18 @@ G       G       skills screen.
 B       f       bash/force something (ie a stuck door).
 l       x       look at a player/monster/object (use direction keys for
                 targetting).
-j               steal from monsters/players (pvp-stealing is not recommended).
+j               attempt to steal from players (not recommended!).
 U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
                 experience points, your ghost fades away (= you character will
                 be completely erased).
 CTRL+S          spike a door (using iron spikes, the door will be jammed).
-
 p       p       Concentrate on opening your mind for telekinesis.
                 You need to open your mind in order to receive items from
                 other players by telekinesis. If you are not concentrating,
                 they will receive an according message, telling them that
                 using telekinesis on you is currently not possible.
                 Hit 'p' again to stop concentrating and close your mind.
-
 h               buy/sell a house or change house parameters. See (4.10).
 P               party screen. Form/disband/modify a party with other players
                 here. In a party you will share experience points if you are
@@ -385,7 +397,8 @@ _       drink from a fountain. You must stand on the fountain to do this.
                 to make a selection from a list of choices.
 :       type a chat message. To whisper privately, enter <player>:<text>
         You can also enter a slash command here.
-        For details about chat, see (2.3).
+        Press TAB to cycle between different chat modes, such as party-chat.
+        For details about chat features see (3.3).
         For details about slash commands, see further below in this paragraph.
         There is also a /say command for talking to players nearby, and a
         /shout command for waking up monsters! See further below.
@@ -397,12 +410,13 @@ _       drink from a fountain. You must stand on the fountain to do this.
         client up to date!
 '       lets you peek at the equipment of party members or players within
         sight.
-<,>     go upstairs/downstairs. Press '>' to use a void gate (violet '+').
+< or >  go upstairs/downstairs. Press '>' to use a void gate (violet '+').
         Void jump gates teleport you to their counterpart and vice versa.
 CTRL+P  view previous messages.
 CTRL+O  view previous chat messages.
 CTRL+X  save your character & quit the game. (You should do this in town!)
-Q or CTRL+C or CTRL+K
+(CTRL+C Displays your client-side frame rate.)
+Q or CTRL+K
         lets your character commit suicide (permanently deletes it!).
         Characters who suicide won't drop items except for artifacts (if the
         server has ANTI_ARTS_HOARD enabled then no item at all will be
@@ -411,8 +425,7 @@ Q or CTRL+C or CTRL+K
 ?       invoke an in-game help screen
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
-CTRL+T  take a screen shot.
- (/screenshot, /shot)
+CTRL+T  take a screen shot. See /screenshot command below.
 TAB or CTRL+I
         Displays lag-o-meter.
 !       Look at the in-game bulletin board. Players can write lines of text to
@@ -461,8 +474,9 @@ They all start with a slash '/':
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
-/ex         Gives you detailed information about your character's status, such
- (/examine) as turn, speed, deepest dungeon level, sanity, body shape (this is
+/ex or /examine or /extra
+            Gives you detailed information about your character's status, such
+            as turn, speed, deepest dungeon level, sanity, body shape (this is
             interesting if you are a shapechanger). Druids get additional info
             about forms they can shapechange into.
 /fe         Repeat the level feeling. See (4.8) for more information.
@@ -489,7 +503,7 @@ They all start with a slash '/':
             normal chat messages.)
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
-/mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
+/mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
  (/martyr)
 /me         Write an emote. Example: /me hides.
 /mon <monster character>
@@ -513,7 +527,8 @@ They all start with a slash '/':
 /obj        Displays all objects known to you, same as ~4.
  (/object)
 /page <player-name>     Sends beeps to that player to help you getting his
-                        attention. (Can only be used if target player is afk).
+                        attention. (Using /ignore on a player will also
+                        prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.5).
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
@@ -526,16 +541,18 @@ They all start with a slash '/':
             for more info about Word of Recall.
 /ref        redraw the screen (do this if it's messed up for some reason).
  (/refresh, or simply hit CTRL+R)
-/rfe        Store a message for the admin(s). For example bug report of
-            feature suggestion.
+/bug        report a bug to the admin(s).
+/rfe        Store a message/suggestion for the admin(s).
+/whisper <text>
+            Speaks <text> in a low voice, so only players standing directly
+			next to you can hear it.
 /say <text>
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
 /whisper <text>
             Whispers <text> to players currently standing right next to you.
             Others won't be able to hear it.
-/cough
-            Coughs noisily. Will disturb the sleep of monsters or at least
+/cough      You cough noisily. Will disturb the sleep of monsters or at least
             make it less deep..
 /shout <text>
             Shout <text> loudly, will wake up monsters.
@@ -543,10 +560,13 @@ They all start with a slash '/':
             Same as /shout, but also aggravates monsters in your current
             line of sight. (Same effect as scroll of aggravate monsters,
             see (5.9)).
+/cough      You let out a cough that might disturb the sleep of nearby
+            monsters, or at least make it a less deep sleep..
 /shot  or  /shot <filename>
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
-            writes to 'screenshot.html' by default. You may also use CTRL+T.
+            writes to 'screenshot?????.xhtml' by default, where ????? are
+			increasing numbers. You may also use CTRL+T.
 /sip        drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
@@ -556,6 +576,7 @@ They all start with a slash '/':
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
             particular inventory slot (if not yet inscribed already).
+	    Will not affect equipped items.
 /tar <x> <y>
  (/target)
             Allows you to target a specific grid specified by X,Y as offset
@@ -565,7 +586,9 @@ They all start with a slash '/':
             in your backpack which are exactly '!k' (as done by /tag command).
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
+			Will not affect equipped items (except for '/untag *').
 /untag *    Will remove all pseudo-id tags from your inventory items.
+            Note: This will work on equipped items too!
 /at         Apply auto-inscription settings to current inventory.
  (/autotag)
 /version    Displays the server version.
@@ -605,6 +628,29 @@ The !* inscription:
     (t)aking it off or (v) throwing it away accidentally you could either
     inscribe it  !dtv  or just  !*  . ('!*'  also implies  '!='.)
 
+A very useful inscription for (heavily) cursed items:
+!w  prevent wielding/wearing an item. This is very useful if you carry a
+    cursed item in your inventory that you really don't want to equip by
+	accident.
+
+Useful for characters who wield a boomerang not for throwing it, but rather
+because it provides magical boni:
+!f  prevent firing an item (ie your equipped ranged weapon).
+
+If you use a sling, bow or crossbow and rather worthless ammo that you don't
+intend to pick up again, you may inscribe the ammo to make it disappear:
+!g  makes ammo always break and never drop to the floor.
+
+Other !-inscriptions:
+!T  prevent taking off a secondary item.
+!F  prevent filling a light source with this item. (Ok, not really important.)
+!E  prevent eating this item. Note: !E can also turn off earthquakes if used
+    on items which cause those (see below), so it has two meanings.
+!q  prevent quaffing this potion.
+!r  prevent reading this scroll.
+!u,!a, !z  prevent using a staff/aim a wand/zap a rod.
+!A  prevent activating this item.
+
 The # inscription:
     This one makes all following inscription be appended directly behind the
     actual item name, instead of at the end of the item's full description.
@@ -625,7 +671,7 @@ Items that 'can cause Earthquakes':
     !E          will make the item stop causing earthquakes randomly on
                 striking. (See (5.13) for more information.)
 
-Word-Of-Recall scrolls:
+Word-of-Recall scrolls:
     @R500       will teleport you to depth 500ft (tower).
     @R-350      will teleport you to depth -350ft (dungeon).
     @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
@@ -663,7 +709,7 @@ Ammunition:
     !M          makes ammunition stacks of same base type and same ego power
                 stack even if +hit or +dam enchantments are not equal. Those
                 will be averaged and rounded downwards. (Doesn't work for
-                cursed or artefact ammo.) Wield the !M stack first, then also
+                cursed or artifact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
     !L          inscribe stacks of ammo in your inventory !L to make them be
                 automatically reloaded into your quiver as soon as the ammo
@@ -672,7 +718,7 @@ Ammunition:
 Weapons that ricochet (sling ammo):
     !R          Prevents ricochetting.
 
-Scrolls of Identify, rods/staves of perception:
+Scrolls of Identify, Rods/Staves of Perception:
     !X          If you pick up an unidentified item, you will automatically
                 read a scroll to identify it.
 
@@ -702,7 +748,7 @@ Art         Artifact. Those can be 'Static arfifacts' from the a_info.txt
             file, also called 'True Arts'. Or they may be 'Randomly generated
             artifacts' also called 'Randarts'.
             (See (7.4) for more info about spoiler files.)
-            Winners who beat Morgoth, The Lord of Darkness will usually not
+            Winners who beat Morgoth, Lord of Darkness will usually not
             be able to use static artifacts, but rely on randarts instead.
             Depending on the server settings, fallen winners might also not be
             able to use static arts.
@@ -732,7 +778,7 @@ Iron Team   A special type of party which can only be formed with newly
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
 LV          Lesser Vault. (See 4.6)
-Morgy       Morgoth, the Lord of Darkness. Final boss enemy in TomeNET.
+Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
             See (1.5) for details.
 Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
@@ -778,7 +824,7 @@ Unique      A monster that is named and exists only once (although it can
             more. There are some exceptions though, the following monsters
             will never respawn: The Nazguls, Sauron, Michael, Morgoth, and all
             super-uniques that come after Morgoth, starting with Tik'srvzllat.
-WoR         Word-Of-Recall (teleports you into the dungeon and back or on the
+WoR         Word-of-Recall (teleports you into the dungeon and back or on the
             world map). See "(0.3) Important inscriptions" for more info.
 Wormy       Wormtongue, Agent of Saruman. He drops great items.
 
@@ -796,7 +842,7 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  wide room.
  Another problem is that if you don't leave in a town, your character will
  stay for another 20 seconds in the game before it finally disappears from the
- dungeon! If monsters were around, you might get killed easily during that
+ dungeon! If monsters were around, you might get killed easily during those
  20 seconds.
 -The items you find don't depend on your race or class but on monster level
  and depth and luck.
@@ -822,8 +868,8 @@ derived from MAngband (Multiplayer-Angband). TomeNET bases on the stories of
 J.R.R. Tolkien mainly "The Lord Of The Rings", hence the name "the Troubles of
 Middle Earth" or alternatively "the Tales of Middle Earth". The final goal in
 TomeNET is to destroy the fallen god Melkor who is known by the name of
-Morgoth, Lord Of Darkness. The official website is http://www.tomenet.net/ .
-Latest version and information also available at http://www.c-blue.de/rogue/ .
+Morgoth, Lord of Darkness. The official websites are mentioned in the first
+couple of lines of this guide.
 
 If you want to download the source code, you can get it via CVS, avoid any
 snapshot tarballs and stuff. The repository is at http://angband.oook.cz/.
@@ -883,7 +929,7 @@ IRC:
 ------------------------------------------
 The final goal that a brave adventurer could possible seek in TomeNET is to
 become King respectively Queen. To acquire this he or she must destroy the
-fallen god Melkor who is known by the name of Morgoth, Lord Of Darkness.
+fallen god Melkor who is known by the name of Morgoth, Lord of Darkness.
 Morgoth is said to reside deep within the dungeons at around 5000 feet down in
 the earth. Getting there will be an extraordinary journey bearing unbelievable
 dangers but also fantastic treasure. Players on the same server can also play
@@ -894,13 +940,13 @@ the sorceror has been killed. (See 1.5 for more information about Morgoth.)
 
 
 
-(1.5) Morgoth and the Nazgul
+(1.5) Morgoth and his Nazgul
 ----------------------------
-Morgoth, The Lord Of Darkness commands nine Ring Wraiths, called 'Nazgul'.
+Morgoth, Lord of Darkness commands nine Ring Wraiths, called 'Nazgul'.
 These corrupted souls of former ring-wearers are named..
 Uvatha the Horseman, Adunaphel the Quiet, Akhorahil the Blind,
 Ren the Unclean, Ji Indur Dawndeath, Dwar Dog Lord of Waw, Hoarmurath of Dir,
-Khamul the Black Easterling and the Witch-king of Angmar.
+Khamul the Black Easterling and The Witch-King of Angmar.
 Morgoth has the ability to summon these, so you should destroy them all
 before facing him.
 
@@ -910,7 +956,7 @@ as you can before facing him.
 
 Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
-If you get killed on a level where Morgoth, The Lord Of Darkness walks, your
+If you get killed on a level where Morgoth, Lord of Darkness walks, your
 ghost will be destroyed too, even if you are everlasting! Beware!
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
@@ -946,8 +992,8 @@ several possibilities to cure Black Breath, for example Sprigs of Athelas.
 
 
 
-(1.6) How to encounter the final boss: Morgoth, The Lord Of Darkness
---------------------------------------------------------------------
+(1.6) How to encounter the final boss: Morgoth, Lord of Darkness
+----------------------------------------------------------------
 -Morgoth is found only at dungeon level 100 or deeper.
 -He won't show up until you killed Sauron, The Sorceror (who usually appears
  at dungeon level 99).
@@ -979,16 +1025,15 @@ the mundane world.
 
 (2.1) Installing TomeNET
 ------------------------
-Go to http://www.c-blue.de/rogue.html , download the latest client (version
-number sometimes stays the same although a minor update was made, it's at
-least 4.x.x though).
+Go to http://www.c-blue.de/rogue.html, download the latest client.
 Extract it to a new directory, preserving the pathnames.
 
 Windows:
 --------
 You may edit the file "TomeNET.ini" and do some changes to your likings, like
-setting up window positions or choosing font size (look into lib/xtra/font
-directory to see available fonts).
+setting up window positions (note that the game will remember window positions
+changed via dragging the windows around, which is an easier way), or choosing
+font size (look into lib/xtra/font directory to see available fonts).
 If it's not already disabled by default, it is recommended to turn off
 graphics ("GRAPHICS=0"). Further you can specify an account name and password
 of your own choice. That will relieve you from entering them every time
@@ -1053,16 +1098,17 @@ Example:
 
 (2.2) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
-To start the TomeNET client, run 'TomeNET-EU.bat' or 'TomeNET.exe'.
+To start the TomeNET client, run 'TomeNET.exe' or 'TomeNET-main.bat'.
 (If you run the '.bat' file, the meta-server steps will be skipped and you
-will be directly connected to the main europe server instead.)
+will be directly connected to the official main server instead.)
 Now TomeNET tries to connect to a meta-server which contains a list of all
 available TomeNET internet servers.
 After the meta-server has been queried, the list of available servers will
 appear in the main window. Choose a server that is near to your location to
 avoid high latency.
-This step is reported to often cause problems under Windows XP. If you don't
-see that list, or if other problems occur, see (8.5) for possible solutions.
+(This step is reported to sometimes cause problems on Windows OS. If you don't
+see that list, or if other problems occur, see (8.5) for possible solutions.)
+
 Now you will be prompted to enter your account name and password. You can
 choose these freely, the server will save that information and use it to
 remember which characters belonged to you the next time you log on.
@@ -1070,7 +1116,7 @@ IMPORTANT: If you get kicked out with an error message after entering account
 and password, it's likely because that account name is already in use by
 someone else so your password was recognized as 'incorrect' since it was most
 likely different from that user's password. Just try a different account name.
-A player usually has exactly one account that can hold up to 7 characters.
+A player usually has exactly one account that can hold up to 8 characters.
 In most cases newly created accounts have to be "validated" by a server
 administrator to enable you to use the whole functionality of TomeNET. For
 example it is common not to allow unvalidated players to drop items or money
@@ -1078,6 +1124,7 @@ to the ground. This is done to prevent certain cases of abuse.
 If you accidentally chose an account name or character name which was already
 taken by another player, you will be disconnected with an error message. In
 that case, try again with different names.
+
 Now that you have logged in you can create a new player character which will
 represent you in the virtual world of Middle Earth!
 Player characters are identified by 3 names:
@@ -1135,10 +1182,10 @@ DEXterity, CONstitution, CHaRisma.
 IMPORTANT NOTE: For fighters (rogues also belong to these) that use weapons,
 it is important that you have enough STRength and DEXterity to execute at
 least two attacks per round, called bpr (blows per round). Sometimes this
-srequires you to get rid of your initial weapon and buy a very light weapon,
+requires you to get rid of your initial weapon and buy a very light weapon,
 for example one of these:
 dagger or main gauche (sword class),
-whip (hafted class),
+whip (blunt class),
 hatched (axe class) or
 spear (polearm class).
 Sometimes it is even possible to start out with 3 bpr (warriors mostly).
@@ -1166,16 +1213,19 @@ your stats until you used up all free points. Hit ESC when you're happy with
 your choice.
 
 Now you can choose a difficulty level you wish to play on. Options are
-n) Normal  f) Fruit bat  g) no Ghost  h) Hard  H) Hellish e) Everlasting
+n) Normal  g) no Ghost  h) Hard  H) Hellish e) Everlasting
 It is recommended that you choose either n) to play a normal character or g)
 to play a normal character without a ghost.
 You can also choose e), that will give your character an infinite amount of
-resurrecionts, while 'normal' characters often have a limited amount of lives
+resurrections, while 'normal' characters often have a limited amount of lives
 (depending on the server configuration).
 
+Last you can choose a body modification. It's strongly recommended for
+beginners to choose 'normal body' and NOT 'fruit bat'. ;)
 
-'Normal':
----------
+
+Mode: 'Normal'
+--------------
 A normal character will turn into a ghost if he dies. The ghost can be revived
 by either visiting a temple or another living player using a magic scroll of
 life when standing adjacent to the ghost. The ghost will return to the world
@@ -1184,13 +1234,10 @@ resume playing. If the ghost dies, the character will finally be erased
 permanently, watch out!
 Depending on the server configuration the number of times a ghost is limited,
 standard is 3 lifes.
-(Outdated/wrong: If a normal player becomes a queen or king (defeats Morgoth),
-all remaining resurrections will be lost and the next time he dies it will be
-permanent, like it is for unworldly characters.)
 
 
-'Everlasting':
---------------
+Mode: 'Everlasting'
+-------------------
 Create an everlasting character for an infinite amount of resurrections.
 Everlasting characters can become king/queen, but cannot enter the high-score.
 Other character types cannot use items that belong to everlasting
@@ -1205,15 +1252,15 @@ Since it was often asked: Non-everlasting and everlasting players can revive
 each other without problems.
 
 
-'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard):
--------------------------------------------------------
+Mode: 'Unworldly' (no-ghost) and 'Hellish' (no-ghost + hard)
+------------------------------------------------------------
 Unworldly characters are like normal characters, but they have only one life.
 Unworldly as well as hellish characters (who are a combination of 'no-ghost'
 and 'hard') will be completely annihilated and deleted on death.
 
 
-'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
--------------------------------------------------------------------
+Mode: 'Hard' (like 'Normal' but with additional penalties) and 'Hellish':
+-------------------------------------------------------------------------
 Hard characters and hellish characters get certain penalties in gameplay.
 These are:
 -losing -1 to all stats
@@ -1224,14 +1271,20 @@ These are:
 -max number of melee attacks per round is reduced by 1.
 
 
-'Fruit bat' (Batty):
---------------------
+Mode: 'PvP'
+-----------
+This is a special restricted mode that has nothing to do with normal gameplay.
+If you're new to the game, it's absolutely not recommended to choose this.
+More information about 'PvP' mode is given in (6.13).
+
+
+Body: 'Fruit bat' (Batty)
+-------------------------
 A fruit bat is like a normal character, just not in humanoid shape but in bat
-form! Fruit bats usually can take way less damage than normal characters
-before they die, and they cannot wear certain equipment like boots, gloves or
-weapons. However they are twice as fast and hard to hit. Fruit bats are said
-to make good explorers. If you're new to the game, it's absolutely not
-recommended to try and play fruit bat.
+form! Fruit bats cannot wear certain equipment like boots, gloves or weapons.
+However they are twice as fast and their melee attacks are somewhat vampiric.
+Fruit bats are said to make good explorers. If you're new to the game, it's
+absolutely not recommended to try and play fruit bat.
 
 
 Hard / Unworldly characters will receive 25% bonus on their high score.
@@ -1252,7 +1305,8 @@ important server-specific information or announcements to the players.
 (3.2) The display (user-interface)
 ----------------------------------
 After you logged in with a character you will now see yourself (you are the
-'@' symbol) in the town of Bree in the main window.
+'@' symbol, except if you chose 'fruit bat' body, then you'll be a 'b')
+in the town of Bree in the main window.
 
 You can move around in all 8 directions by using the number pad keys! You can
 run by pressing the SHIFT key together with a direction key.
@@ -1280,8 +1334,9 @@ important stats:
 -your amount of experience
 -and your cash ('Au' stands for Aurum, latin for gold)
 -the 'encumberment' bar (blank at the beginning)
--a mini lag-o-meter bar displaying your 'ping' by coloured dots, 1 dot means
-you're < 50ms, further dots add 50ms each to that claim,
+-a mini lag-o-meter bar displaying your 'ping' by coloured plusses, 1 plus
+symbol means your latency is below 50ms, each further plus symbol means 50ms
+more, so if you see +++ your latency is between 100 and 149 ms.
 -your 6 character attributes:
 STRength, INTelligence, WISdom, DEXterity, CONstitution, CHaRisma,
 -your current sanity (sound means you are completely sane, this might drop, for
@@ -1292,7 +1347,7 @@ by all the armor you're currently wearing.
 -The next two values are most important and will change all the time while
 fighting monsters.
 They are your Hit Points (HP) and Mana Points (MP), current/maximum values.
-Spell points are very important for wizards, since they determine which spells
+Mana points are very important for wizards, since they determine which spells
 and how many of them you can cast. The current hit points (Cur HP) tell you if
 you are injured. If they drop below zero you die!
 If they are the same as your Max HP then you are fully rested and physically
@@ -1310,20 +1365,18 @@ even die of starvation!
 By the way: If you enter the game and find that you don't like your
 character and want to recreate it from scratch, you can suicide by pressing
 'Q' (capital Q), followed by confirming the question if you really want to
-suicide with 'y' and then finally verify your suicide with '@' key. Often
-players are not happy with their character attributes, like Strength,
-Intelligence, etc. and try several times until they get a luckier result. Note
-that a suicided character is completely and permanently gone (as is a no-
-ghost/hellish character on mundane death).
+suicide with 'y' and then finally verify your suicide with '@' key.
+Note that a suicided character is completely and permanently gone (as is a
+no-ghost/hellish character on mundane death).
 Also see (0.2) for some details about suiciding.
 
 
 (3.2a) The encumberment bar
 ---------------------------
 
-Between AU and STR is a line indicating if you are encumbered in any way.
-This line is blank by default, but may start to show little coloured icons
-if your character becomes overburdened in some way.
+Between AU and the mini lag-o-meter is a line indicating if you are encumbered
+in any way. This line is blank by default, but may start to show little
+coloured icons if your character becomes overburdened in some way.
 
 This line consists of the following icons that may show up:
 (Order: From left to right)
@@ -1394,9 +1447,9 @@ message. Most smileys are recognized automatically and don't require you to
 enter a double colon ( ':)' will work equally to '::)' ). (If you want to send
 a private message to someone which starts with a smiley, you will have to
 enter a space between the private-separator colon and the smiley colon,
-example: 'd00d: :)' sends a private message to d00d, containing  ' :)'
-while 'd00d::)' will result in a public chat message looking like this
-'d00d:)' .)
+example: 'D00d: :)' sends a private message to D00d, containing  ' :)'
+while 'D00d::)' will result in a public chat message looking like this
+'D00d:)' .)
 
 You can use colours in messages. To change the message colour, put a {
 followed by a colour code somewhere into your message line.
@@ -1415,8 +1468,8 @@ it for a colour code, type it twice '{{'. It will become '{'.
 
 Here is a list of colour codes (try not to annoy your fellow players :)
     d  black            b  blue             B  light blue
-    D  dark             g  green            G  light green
-    s  slate            r  red              R  light red (pink)
+    D  dark grey        g  green            G  light green
+    s  slate (grey)     r  red              R  light red (pink)
     W  white            u  umber            U  light umber
     w  bright white     y  yellow           o  orange           v   violet
 
@@ -1428,11 +1481,14 @@ Here is a list of colour codes (try not to annoy your fellow players :)
 
 Character names in chat lines have different colours to indicate their status:
 
-Light blue      Normal / everlasting player.
-Light grey      Hard-mode player.
+White           Normal player.
+Light blue      Everlasting player.
+Slate (grey)    Hard-mode player.
 Dark grey       No-ghost / hellish player.
 Violet          Player character is king / queen.
 Dark blue       Player is admin.
+Red             Player is a ghost (ie dead).
+Yellow          Player is a PvP-mode character.
 
 
 Chat modes:
@@ -1471,19 +1527,18 @@ lightsource like a torch or lantern this way. If it is night in town that will
 help you to see anything. Inside a dungeon you should always make sure that you
 have a lightsource equippped.
 Startup items that you don't want to use you may simply destroy with 'k'.
-The numbers '1' to '9' stand for different shops that you can enter to sell or
-buy items. It is recommended that instead of using your torches, buy a brass
-lantern from store '1' (General Store), because a lantern provides more light,
-increasing your radius of sight in the darkness. Also buy a flask of oil for
-your lantern to refill it if it runs out of oil.
+The numbers '1' to '7', '9' and '+' stand for different shops that you can
+enter to sell or buy items. It is recommended that instead of using your
+torches, buy a brass lantern from store '1' (General Store), because a lantern
+provides more light, increasing your radius of sight in the darkness. Also buy
+a flask of oil for your lantern to refill it if it runs out of oil.
 Press '?' to see an in-game introduction and overview of the keys and commands
 that you may use. For example 'e' will show your currently equipped items.
 You can chat with other players using the ':' key. This way you can also enter
 certain commands like /fill to fill an empty bottle with water of a fountain.
 At the beginning, all players receive a parchment with their start-up
-equipment. It's the "Adventurer's guide to Middle Earth". Press 'r' to read
-it. It often contains some notes about the server, about player etiquette and
-hints for newbies.
+equipment. It's the "Gazette". Press 'r' to read it. It may contain some notes
+about the server or hints for newbies.
 
 
 
@@ -1515,7 +1570,7 @@ So to prepare for hunting in the dungeon, buy:
 The more you can buy of those the better. At least buy one potion of Heroism
 and Cure Light Wounds.
 And if you still have spare money (this one costs a lot) a
--Scroll of Word-Of-Recall. (See "(0.3) Important inscriptions" for more info.)
+-Scroll of Word-of-Recall. (See "(0.3) Important inscriptions" for more info.)
 
 
 
@@ -1572,7 +1627,7 @@ Now we will create macros that make use of these items. Invoke the macro menu
 by pressing '%' key. Then choose "(3) Enter a new action" and enter the
 following two characters and press Enter:
 q1
-Now choose "(5) Create a normal macro", then press the F1 key.
+Now choose "(5) Create a hybrid macro", then press the F1 key.
 Now enter a new action, this time q2 instead of q1. Create another macro, this
 time hit F2. Then Enter the third macro, r1, and choose F3 key.
 Have your TomeNET client save the macros to a file on your hard disk, in your
@@ -1586,7 +1641,7 @@ dungeon now. If you still have some spare money, buy a flask of oil to fuel
 your lantern if it runs out, as well as some rations of food in case you get
 hungry.
 The next time you log on, you may load your previously saved macro file by
-invoking the macro menu again ('%'), choosing "(1) Load a user pref file" and
+invoking the macro menu again ('%'), choosing "(1) Load macros" and
 entering the filename. If you saved the macros to the same name as your
 character, they will be automatically loaded, saving you that hassle.
 
@@ -1673,12 +1728,12 @@ just not in STRING INPUT such as chat lines, polymorph-codes or money amounts.
 Hybrid macros don't work in shops.
 
 
-Identity macros:
+Delete macros:
 ----------------
 If you accidentally bound a macro to a key which wasn't free, for example
 the key 'r' which is used to read a scroll, you can reset the key by
 -pressing % to invoke the macro menu
--choosing '(6) - create an identity macro'
+-choosing '(7) - delete macro'
 -pressing the key wich you want to reset.
 
 
@@ -1722,16 +1777,16 @@ a) casting a magical spell
                     *t      designate the closest enemy as the target for the
                             spell!
     -press ENTER key to accept that macro,
-    -now hit '5 - create a normal macro'
+    -now hit '5 - create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F1' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -To save your macros, press '2 - dump macros' and enter a filename of
+    -To save your macros, press '2 - Save macros' and enter a filename of
      your choice. If you want your macros to be loaded automatically when you
      log in with your character, save them to '<yourname>.prf'. For example
      to 'Gandalf.prf' if your character is called 'Gandalf'.
      If your macros are not automatically loaded, you'll have to do it
-     manually after logging in, by pressing % and choosing '1 - load a user
-     pref file', then specifying the according filename.
+     manually after logging in, by pressing % and choosing '1 - Load macros',
+	 then specifying the according filename.
     Note that if your character gains additional abilities that show up
     in the 'm' menu, it might happen that 'b) cast a spell' becomes
     'c) cast a spell' which would require you to redefine your macros.
@@ -1761,10 +1816,10 @@ b) throwing an item at a monster (or player)
                             inscribed @v1
                     *t      designate the closest enemy as the target!
     -press ENTER key to accept that macro,
-    -now hit '5 - create a normal macro'
+    -now hit '5 - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - dump macros' if you
+    -Don't forget to save your macro by pressing '2 - Save macros' if you
      plan to use it again.
 c) firing your equipped ranged weapon (sling, bow, crossbow)
     The keys we need are 'f' to fire and a direction key or *t to simply
@@ -1782,10 +1837,10 @@ c) firing your equipped ranged weapon (sling, bow, crossbow)
                             fire ammunition (if launcher & ammo is equipped)
                     *t      designate the closest enemy as the target!
     -press ENTER key to accept that macro,
-    -now hit '5 - create a normal macro'
+    -now hit '5 - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - dump macros' if you
+    -Don't forget to save your macro by pressing '2 - Save macros' if you
      plan to use it again.
 d) zapping a magical rod or aiming with a magical wand
     Rods are used by 'z' (zap a rod) and wands by 'a' (aim a wand),
@@ -1802,7 +1857,7 @@ d) zapping a magical rod or aiming with a magical wand
      in your inventory you could still throw them. If you use 'c' you'd just
      throw the item at position 'c)' even if the wand currently is at 'd)'.
      Examples:
-     enter:    \e)ac*t      or      \e)a3*t
+     enter:    \e)ac*t      or      \e)a0*t
      This means:    \e)     clear the keyboard buffer
                     a       aim a wand (or 'z' to use a rod here)
                     c   OR  0
@@ -1811,10 +1866,10 @@ d) zapping a magical rod or aiming with a magical wand
                             inscribed @a0   (or @z0 for a rod)
                     *t      designate the closest enemy as the target!
     -press ENTER key to accept that macro,
-    -now hit '5 - create a normal macro'
+    -now hit '5 - Create a hybrid macro'
     -hit the key you want to bind this macro to, for example the 'F2' key.
      F-keys are a good choice for macros, since they're not used otherwise.
-    -Don't forget to save your macro by pressing '2 - dump macros' if you
+    -Don't forget to save your macro by pressing '2 - Save macros' if you
      plan to use it again.
 
 What happens if you leave out the '\e)' part?
@@ -1835,14 +1890,8 @@ allows you to hammer the macro without fearing a lock.
 A problem with the 'm' key is that it not only brings up your magic spells
 but a menu containing all skills you can use. Those can be arrow fletching
 or dodging for example.
-Now you would have to rewrite your macros each time you gain another ability.
-Example:
-You are an adventurer who can cast magic spells, so if you press 'm' you
-are asked which spell you want to cast.
-Now you train dodging, learning the ability to dodge
-If you press 'm' now, a menu will appear, asking you if you want to check your
-dodge chance or cast a magic spell instead. So your spell-casting
-macros need to be rewritten to take account of this question.
+Now you would have to rewrite your macros each time you gain another ability,
+since entries in 'm' menu might shift if a new skill gets inserted somewhere.
 To avoid this, you can directly choose which skill (ie spell-casting) you
 want to use in your macros, by specifying the "ability code"!
 
@@ -1935,7 +1984,7 @@ which is: example_fighter.prf
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
-(You can save macros by choosing '(2) Dump Macros' in the macro menu.
+(You can save macros by choosing '(2) Save macros' in the macro menu.
 Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 Key         Purpose of the Macro                    The macro   Inscription
@@ -1967,7 +2016,7 @@ F12 use a wand on the closest target                \e)a1*t         @a1
     you will keep failing; also see (6.10))
 
 As you can see this fighter is supposed to be able to use quite some magic
-for support in addition to fighting. Especially helpful are rods of perception
+for support in addition to fighting. Especially helpful are Rods of Perception
 or of speed. Not all warriors are bright enough to use magic items easily, nor
 are players always willing to spend many points on the 'Magic Device' skill.
 If you dislike the use of magic your character would have to rely completely
@@ -1977,7 +2026,6 @@ If you play Thunderlord, kill Dragonriders because they tend to drop a large
 amount of firestones. If a difficult combat starts, just eat several of them
 to get a larger amount of extra powers.
 (All macros in example_fighter.prf were defined as hybrid macros.
-Note: The file example_fighter.prf is write-protected to avoid overwriting.)
 
 
 The above macro set slightly changed to fit
@@ -1991,7 +2039,8 @@ which is: example_caster.prf
 If you plan on using it for a longer time, immediately save it again
 with the filename being identical to your character name, example: Killer.prf
 if your character is named 'Killer'.
-(You can save macros by choosing '(2) Dump Macros' in the macro menu.)
+(You can save macros by choosing '(2) Save macros' in the macro menu.)
+Note: The file example_caster.prf is write-protected to avoid overwriting.)
 
 Key         Purpose of the Macro                    The macro   Inscription
                                                     itself      on the item(s)
@@ -2006,7 +2055,7 @@ F5  read scroll of phase door                       \e)r1           @r1
 F6  read scroll of teleportation                    \e)r2           @r2
 F7  read scroll of identify                         \e)r3           @r3
 F8  use a staff of teleportation                    \e)u1           @u1
-F9  A combo macro: Cast the spells 'Sense Monsters' \e)m@11\r1em@11\r1f
+F9  A combo macro: Cast spells 'Detect Monsters'    \e)m@11\r1em@11\r1f
     and 'Sense Hidden' from book Beginner Cantrips.                 @m1
     Since this macro casts two spells, it uses up
     two of your character's turns to complete.
@@ -2095,11 +2144,12 @@ On the other hand, entering your chat lines in this format
 all the time can get annoying since you have to repeat the party name over and
 over, although you can use just the first four letters or so as abbreviation.
 
-There are two different ways to easily talk to your party.
+There are three different ways to easily talk to your party.
 1.) use the party wildcard '!'.
     Simply start your chatline like this !:blabla..., using the '!' in place
     of the party name. The text will be sent to your current party (if any).
-2.) Create a macro to chat with a specific party, so you can write a
+2.) Hit ':' key to enter chat, now press TAB to switch to party chat mode.
+3.) Create a macro to chat with a specific party, so you can write a
     party-message by hitting a single key, party-chatting becomes as easy as
     hitting ':' for normal chat.
     Enter the macro menu ('%'), enter a new action ('3'), enter the macro
@@ -2150,11 +2200,10 @@ and maxed out your vital stats (constitution, etc).
 
 Note: Your depth display in the bottom right screen corner will indicate the
 appropriateness of your current depth by its colour:
-If you're far above your minimum depth, it'll be dark grey, indicating that
-you cannot expect any good experience gain at all here.
-If you're not more than a couple of levels above your minimum "good" depth,
-it'll turn yellow, to tell you that you're getting close to the depth required
-for best results.
+If you're on a far easier depth, it'll be dark grey, indicating that you
+cannot expect any good experience gain at all here.
+If you're on a slightly easier depth, it'll turn yellow, to tell you that
+you're getting closer to the depth required for best results.
 On the minimum required depth or deeper, it's white.
 (On a side note, while word-of-recall is pending, it'll turn orange, since
 it's also used as a word-of-recall indicator this way.)
@@ -2209,7 +2258,7 @@ until now.
 Each character level requires your character to accumulate more experience
 than was needed for the level before, up to millions of experience points!
 All characters start the game at level 1. At level 50 they are supposed to
-fight the bad boss of the game, Morgoth, the Lord of Darkness.
+fight the bad boss of the game, Morgoth, Lord of Darkness.
 Depending on race and class, characters need to kill a different amount of
 monsters in order to reach the next level. Yeeks get experience fastest,
 while Thunderlords are slowest. (See (6.4) and (6.5).)
@@ -2237,12 +2286,14 @@ Death
 -----
 If a player dies, an automatic chardump is generated in /lib/user called
 '<charname>-death.txt' (see 8.2) which you can view with any text editor.
+Also, a screenshot is made automatically, displaying your situation, saved
+to '<charname>-death-screenshot.xhtml'.
 
 Normal/everlasting characters will turn into ghosts if they die. When you
 become a ghost, your title will change to 'Ghost' until you get revived.
-Depending on the server configuration the number of times the ghost of a
-'normal mode' player can be resurrected is usually limited to 2 times, so
-he has 3 lives before permanently biting it.
+Depending on the server configuration, ghosts of a 'normal mode' player
+can usually be resurrected only 2 times, so a normal player has 3 lives
+before permanently biting it.
 Unworldly/hellish characters don't have a ghost and are completely destroyed
 if they die.
 
@@ -2301,7 +2352,7 @@ There are 3 ways to be revived:
  give him some money. The temple priest will turn the ghost away without
  resurrecting it, if the town isn't the last one visited by the player when
  he was still alive. ('The temple priest turns you away')
--another living player reads a 'scroll of life' when standing directly next to
+-another living player reads a 'Scroll of Life' when standing directly next to
  a ghost.
 -another living player speaks a prayer of 'resurrection' when standing
  directly next to a ghost. The higher the resurrection spell level was,
@@ -2391,7 +2442,7 @@ e) a Long Sword {+,?} (2d5)
 Note the additional '+' symbol. It means that you're now the 'owner' of that
 item because you were the first one to pick it up.
 Now you want to find out if the sword has any magic abilities. So you read
-a Scroll Of Identify (or a Staff Of Perception for example). The sword now
+a Scroll Of Identify (or a Staff of Perception for example). The sword now
 looks like this:
 
 e) a Long Sword {+,6} (2d5) (+1,+5)
@@ -2438,7 +2489,7 @@ new owner because he's not lower than 20. He arrives in town and drops the
 sword for you.
 You pick it up, and whooops it's a Bluesteel Blade {Mugash,20} and you're
 level 18. You can't wield it anymore! So the right choice would've been to
-ask Mugash if he can buy a Scroll Of Life and revive you in the dungeon
+ask Mugash if he can buy a 'Scroll of Life' and revive you in the dungeon
 after he killed off all mobs, to avoid him touching your items and becoming
 the owner.
 
@@ -2447,9 +2498,9 @@ the owner.
 (4.3) Dungeon and tower types, Ironman, Jail
 --------------------------------------------
 Look for the staircase ">", step on it and press the '>' key to enter the
-dungeon. There is often a so-called newbie tower, which is represented by a
+dungeon. There is often a so-called training tower, which is represented by a
 "<", meaning it goes upwards instead of downwards. Enter it by pressing the
-'<' key. The newbie tower allows you to die without suffering consequences,
+'<' key. The training tower allows you to die without suffering consequences,
 and is easier in general. An experience penalty might be applied for killing
 monsters in the tower (usually 50%). You might ask other players in game
 (use ':' to chat) where/if there is a newbie tower (also called 'Training
@@ -2502,7 +2553,7 @@ There are different types of dungeons. The main five are:
  Staircases are yellow.
 -NO_UP. These dungeons won't allow you to go upwards, similar to ironman,
  just without the penalty of permanent ghost-death. You are allowed to use
- Word-Of-Recall as well! Ghosts of dead players can float upwards.
+ Word-of-Recall as well! Ghosts of dead players can float upwards.
  No-up dungeons/towers are marked by a red < or > symbol.
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
  dungeon, similar to ironman (except for the no-ghost death penalty).
@@ -2568,10 +2619,11 @@ Dots '.' rensemble empty floor. Green dots are grass, brown ones dirt, grey
 ones stone or ash.
 Red dots are lava, violet dots nether mist. These can be dangerous to cross!
 
-Trees-
-Thick trees are rensembled by green or grey (dead) '#'. To pass them you need
-to either fly over them or to be an Ent, shepherd of trees to whom they will
-slightly bow aside to make room. Trees can also be burned up.
+Trees and bushes-
+Thick trees are rensembled by (mostly green, depending on the season) '#'.
+To pass them you need to either fly over them or to be an Ent, shepherd of
+trees to whom they will slightly bow aside to make room, a yeek, or a trained
+ranger or druid. Trees can also be burned up. Dead trees and bushes are '*' symbols.
 
 Staircases-
 '<' and '>' are staircases leading upwards or downwards into towers or
@@ -2586,7 +2638,7 @@ Violet '+' are void jumpgates that teleport you elsewhere.
 Press '>' key to use them.
 
 Stores-
-Store entrances are represented by coloured numbers '0'..'9'.
+Store entrances are represented by coloured numbers '1'..'7', '9' and '+'.
 See (4.5) for details about stores.
 
 Rubble-
@@ -2594,15 +2646,17 @@ Rubble-
 rubble and use their 'create ammo' ability to create ammunition from it.
 
 Pits-
-Dark '#' are pits that can only be crossed if you have levitation or flying
+Dark '^' are pits that can only be crossed if you have levitation or flying
 ability. Bree is protected by pits around the outer tree wall. These pits
 cannot be disarmed or destroyed.
 
 Walls-
-White '#' are permanent walls which cannot be damaged or destroyed.
+White '#' are permanent walls which cannot be damaged or destroyed, or in
+some special places can be ice walls (which can be destroyed).
 '#' and '%' of different grey tones are granite walls, magma intrusions,
 quartz veins and can be tunneled into and take damage from earthquakes.
-Yellow '#' are sand walls, white '#' are ice walls.
+Yellow '#' are sand walls, red/brown '#' are indestructible lava walls which
+may occur in some remote places..
 
 Water-
 On the world surface but also in some dungeons there's lots of water (blue '~'
@@ -2616,12 +2670,13 @@ a climbing set or another item that gives you climbing abilities. Dwarves can
 intrinsically travel through mountains. In dungeons '^' rensemble solid
 structures of massive rock that reach nearly up to the top of the huge dungeon
 levels, climbing these is as hard as climbing mountains above ground.
-White '^' are extremely high mountain chains.
+White '^' are extremely high mountain chains that cannot be climbed.
 
 Lava-
-Red dots '.' are lava, which will do heat damage to your character in
+Red dots '.' are shallow lava, which will do heat damage to your character in
 regular intervals. This might also destroy items in your inventory in case
 you're not immune to fire.
+Red/orange/yellow '~' is deep lava, which deals a lot of heat damage.
 
 Fountains-
 '_' are fountains. To drink from them use /sip command or press the '_' key.
@@ -2649,24 +2704,20 @@ Oceans-         blue '%' fields.
 --------------------------------
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
-
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
 *Identify* service or even a cure to Black Breath) and harder dungeons.
-
 However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
 more dangerous monsters can spawn within the town! Bree is the only town that
 contains just more or less harmless townsfolk.
-
 The worst are Khazad-dum and Lothlorien, if you go here be _very_ cautious.
 Monsters that appear here might look like harmless novice paladins or snagas
 but are in fact of a higher level and more powerful.
 However, it has been observed that people who figured out how to climb high
 mountains travelled to Khazad-dum despite their low level for a strange
 reason >:-) .
-
 Even if you decide to stay in Gondolin, which is relatively harmless,
 don't go afk for a longer time or even a snaga archer might kill you with his
 ranged attacks. Always a nasty surprise..
@@ -2716,7 +2767,7 @@ an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
 depending on the shop owner. The shop owners change regularly, if a shop makes
 you a bad offer (the cap price) just wait for the owner to change or visit a
 different shop. Shops in different towns are run by different owners although
-they may use the same number '0'..'9' for their entrance symbol.
+they may use the same number '1'..'9' and '+' for their entrance symbols.
 If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
 See (5.7) for more information about ID, *ID* and shops!
@@ -2770,13 +2821,14 @@ Dol Guldur                      | 2850..3550/ 57..71    |       28
 Mount Doom                      | 4250..5000/ 85..100   |       38
 Nether Realm                    | 8300..9800/166..196   |       40 (*)
 
-The Europe server usually has one or several 'ironman' dungeons (see (4.8)),
-their entrances (stairs) waiting to be discovered by some bold explorers.
+The official main server usually has one or several 'ironman' dungeons
+(see (4.8)), their entrances (stairs) waiting to be discovered by some bold
+explorers.
 Such custom dungeons appear as 'wilderness' in the "Recall depths and Towns"
 list, the minimum required character level to enter is usually 0.
 
 (*) To enter the Nether Realm a player must carry the 'King'/'Queen' title,
-acquired by beating Morgoth, The Lord of Darkness.
+acquired by beating Morgoth, Lord of Darkness.
 Each floor in the Nether Realm gives a +2% bonus to experience from monster
 kills.
 The amount of experience is already very high even without the depth-bonus,
@@ -2857,7 +2909,7 @@ A normal trap set can be loaded with 1 item of the according ammo.
 After it went off (and is out of charges for device traps) you can pick up the
 trap set to use it again.
 If it was a catapult/arrow/bolt trap set you can often recover the ammunition
-too, in case it didn't break. (Magic arrows and artifact ammo never break).
+too, in case it didn't break. (Magic ammo and artifact ammo never break).
 
 Trap sets can have special (ego) powers:
 (prefixes:)
@@ -2916,7 +2968,7 @@ The feelings are as follows:
                                         You can only see your nearby
                                         surroundings within your character's
                                         line of sight.
-                                        (NOMAP, +15% experience bonus!)
+                                        (NO_MAP, +15% experience bonus!)
 
 "You feel like a stranger..." ->    You cannot use magic mapping nor
                                     clairvoyance here!
@@ -2929,7 +2981,7 @@ The feelings are as follows:
 "You feel that your life hangs in the balance!" ->      ** Extremely dangerous
                                         to normal/everlasting players! **
                                         This only occurs on a level where
-                                        Morgoth, The Lord Of Darkness resides,
+                                        Morgoth, Lord of Darkness resides,
                                         grasping the area with his untamable
                                         will to destroy.
                                         Players who die on this level will be
@@ -2940,9 +2992,9 @@ The feelings are as follows:
                                         ones!
 
 "You don't sense a magic barrier here..." ->   This message only occurs in
-                                        Ironman dungeons/towers. It lets you
-                                        know that you may use word-of-recall
-                                        on this floor!
+                                        Ironman or no-recall dungeons/towers.
+										It lets you know that you may use
+										word-of-recall on this floor!
 
 In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
@@ -2956,7 +3008,7 @@ These extra level feelings (displayed in yellow) are:
 
   "You sense an air of danger.."
       means there's a freely roaming (*) ood monster on the level,
-      and also the level's has a vault on it somewhere.
+      and also the level has a vault on it somewhere.
 
   "Feels somewhat dangerous around here.."
       means there's a vault or a rather dangerous monster pit or nest
@@ -3253,7 +3305,7 @@ depending on the character class (profession). A table showing the blow/round
 limits is at section (6.5).
 
 There are four different classes of melee weapons,
-swords/daggers, hafted (blunt) weapons, axes, polearms.
+swords/daggers, blunt weapons, axes, polearms.
 You may examine a weapon by pressing 'I' to see its base class.
 Those again are divided into four sub-classes each:
 Single-handed, forced two-handed, should-be-wielded-two-handed,
@@ -3596,8 +3648,8 @@ Armour weight (concerning magic)
 --------------------------------
 Wearing armour which is too bulky gives you this message:
 "The weight of your armour strains your spellcasting."
-That means your mana (Spell Points) will be (severely) reduced from the
-bulkiness of your armour. To counter this effect, train your 'Combat' skill.
+That means your mana will be (severely) reduced from the bulkiness of your
+armour. To counter this effect, train your 'Combat' skill.
 To cast freely, you may wear 15.0 to 30.0 lbs of armour (depending on your
 class and hence the type of magic you utilize) plus your combat skill (in
 0.3 lbs). Here is a table illustrating the values:
@@ -3650,7 +3702,7 @@ The weight limit is 20.0 + (Combat skill / 10) lbs.
 
 Glove encumberment (concerning magic)
 -------------------------------------
-Wearing gloves as a sorceror may reduce your mana (Spell Points) if they are
+Wearing gloves as a sorceror may reduce your maximum mana points if they are
 not magically enchanted, such as:
 Providing 'Free Action' / increasing your mana / increasing your dexterity.
 You will receive a warning message, saying:
@@ -4029,7 +4081,7 @@ It doesn't possess any further special abilities.
 Example 2:
 A Fiery Whip of Gondolin {+,24} (1d6) (+8,+11) (+3)
 This is an ego-weapon ('of Gondolin') with a fire brand ('fiery'). The
-base weapon type is a whip which makes it belong to the hafted weapons.
+base weapon type is a whip which makes it belong to the blunt weapons.
 Its to-hit and to-damage are magically enchanted to +8 and +11.
 Gondolin weapons increase strength and constitution (here +3).
 
@@ -4162,13 +4214,13 @@ FLY     ('It allows you to fly.')
         Allows you to cross water areas without drowning. Enables you to fly
         over trees (running won't work, try walking field by field).
 MANA ('It affects your mana capacity')
-        Will increase your total spell points (mana) by +x0%. Example:
+        Will increase your total mana points by +x0%. Example:
         Gloves of the magi (+3) increase your mana by 30%.
         MANA items _add_ to each other, they aren't multiplied.
         They have slightly less effect on non-mages and quite less effect
         on priests or paladins who need wisdom rather than intelligence.
-	MANA affects your complete mana pool, including the additional MP
-	(mana points) a	character gained from 'Magic' skill.
+		MANA affects your complete mana pool, including the additional MP
+		(mana points) a	character gained from 'Magic' skill.
 LIFE ('It affects your hit points')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
@@ -4181,6 +4233,7 @@ LIFE ('It affects your hit points')
 		HP a character gained from 'Health' skill.
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
+		(Does not haste them as scrolls do, compare to (5.9)).
 LUCK ('The item increases your luck')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
@@ -4204,11 +4257,13 @@ ANTIMAGIC ('Antimagic field')
         Prevents you from using any magic device or casting spells, also
         applies to nearby enemy spellcasters and other players. The
         field has less influence on _party members_ who try to cast.
-        The radius is approximately the field power / 15. The field
-        power is the chance of suppressing a spell. It caps at 75%.
+        The radius is approximately the field power / 9, and is cumulative
+        to the 'Antimagic' skill. The field power is the chance of
+        suppressing a spell. It caps at 75% and is cumulative to the
+        'Antimagic' skill.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
-        without penalties, even if they are not 'hafted' (blunt).
+        without penalties, even if they are not blunt.
 VAMPIRIC ('The weapon drains life from your victim')
         Drains life from your victim, which you gain as hit points.
         For details see '(5.15) Vampirism'.
@@ -4277,10 +4332,14 @@ Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 prevents the user from using magic items or casting spells,
                 but also has a chance to interrupt enemy spellcasters.
                 The chance to interrupt spellcasters is 30% minus 3/5 of the
-                to-hit and to-dam values of the dark sword. Dark Sword (+3,+7)
-                has 30 - 3/5 * (3+7) = 24% chance of interrupting spellcasters.
-                The radius of the antimagic field is several fields, getting
-                smaller if the chance is smaller than 30%.
+                to-hit and to-dam values of the dark sword. Example:
+                A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
+                interrupting spellcasters.
+                The radius of the antimagic field is several fields (chance
+                to interrupt spells, divided by 9), getting smaller if the
+                chance is smaller than 30%.
+                (Radius and field strength are cumulative with Antimagic
+                skill and will hence add to each other.)
                 Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
                 They also never give 'negative antimagic', 0% AM is the
@@ -4292,9 +4351,12 @@ Bluesteel Blade Cannot rust (not damaged by water attacks) and are especially
                 sharp (see 'VORPAL' under (5.8)).
 Shadow Blade    Resists darkness, cannot be damaged by acid or water, provides
                 a fixed stealth bonus of +2..
-Magic Arrows    Those will return into your quiver magically, so you need only
-                one of them really. Same goes for artifact ammunition of any
-                type. (Magic Arrows can be destroyed by fire or acid though.)
+Magic Arrows, magic bolts, magic shots.
+                Those will return into your quiver magically, so just having
+                one will already serve, as long as it isn't destroyed by some
+                elemental attack..
+                Artifact ammunition of any type auto-returns too, same as
+                magic ammunition.
 Shadow Cloak    Makes you hard to spot for other players, regarding
                 a) them seeing you
                 b) them being able to look at your current equipment.
@@ -4302,7 +4364,7 @@ Shadow Cloak    Makes you hard to spot for other players, regarding
                 yourself while being invisible vs. someone who is able to see
                 invisible creatures/players. See '(5.16) Invisibility'.
 Dragonrider Coat        Resists heat & cold.
-Elven Gloves    Regenerate hit points and spell points.
+Elven Gloves    Regenerate hit points and mana points.
 
 
 Potions
@@ -4383,12 +4445,12 @@ Aggravate Monsters
 Word of Recall  Use it to quickly travel from the town to a dungeon or tower,
                 it can also be used to travel between towns or on the worldmap
                 in general. See "(0.3) Important Inscriptions" for more info
-                about Word of Recall! ("Word-of-recall", "WoR")
+                about Word of Recall! ("Word-of-Recall", "WoR")
                 If you read another Word of Recall while you're still waiting
                 for one to kick in, the effect will be cancelled!
                 That way you can change your mind, for example if you suddenly
                 spot a monster you want to kill just after you read a WoR.
-                Word-of-recall scrolls can be exchanged between an everlasting
+                Word-of-Recall scrolls can be exchanged between an everlasting
                 and a non-everlasting player!
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
@@ -4436,8 +4498,9 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Drains your HP for each one removed.
                 The race will be determined by the monster which stands
                 closest to you when firing off the spell. For each monster you
-                will suffer 4+(monsterlevel/8) points of damage, which cannot
-                be absorbed by any magic shield or other protective effects!
+                will suffer randomly from just 1 up to 4+(monsterlevel/8)
+				points of damage, which cannot be absorbed by any magic shield
+				or other protective effect!
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
@@ -4448,7 +4511,7 @@ Mass Genocide   Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
                 around you are annihilated. For each monster you will suffer
-                between 0 and 3+(monsterlevel/8) points of damage, which cannot
+                between 1 and 3+(monsterlevel/8) points of damage, which cannot
                 be absorbed by any magic shield or other protective effects!
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
@@ -4664,7 +4727,7 @@ Boomerangs  x               x
 
 Swords      x
 Axes        x               x
-Hafted      x               x
+Blunt       x               x
 Polearms    x               x
 
 Helms       x
@@ -5294,7 +5357,7 @@ Note that not every skill is available to every profession (class).
                                 your critical strike -IF you manage to execute
                                 one- is higher if your weapon is heavier.
         .Axe-mastery            See Sword-mastery
-        .Hafted-mastery         See Sword-mastery
+        .Blunt-mastery          See Sword-mastery
         .Polearm-mastery        See Sword-mastery
         .Combat Stances         This ability cannot be trained, but it is
                                 increased automatically each time your
@@ -5526,7 +5589,7 @@ Note that not every skill is available to every profession (class).
                                 sleeping. Requires sword-type weapons.
     .Stealing                   Ability to steal (from shops)! Very nasty >:)
                                 If you get caught, you will be on the
-                                'blacklist of merchants' for some minutes up
+                                'blacklist of merchants' for a minute up
                                 to 2 hours, depending on the item you tried to
                                 steal from a shop. During this time it's
                                 basically impossible to steal, and you will
@@ -5821,7 +5884,7 @@ Blows/Round
     How often per round you are able to strike with your weapon. This depends
     on your strength, dexterity, your class, your weapon.
     Spending points in specific weapon masteries will give you an additional
-    blow at 25 and at 50 (like sword or hafted mastery).
+    blow at 25 and at 50 (like sword or blunt mastery).
     Tables of blows/round limits are at (5.4) (for martial arts) and at (6.5)
     (for melee weapons).
 Shots/Round
@@ -5852,10 +5915,8 @@ active or passive abilities, given in the class/race descriptions in (6.4) and
 -----------
 Depending on your race, you might need different amounts of experience to gain
 a new character level. You also might have certain intrinsic abilities.
-To see numerical tables about races and classes, visit http://www.tomenet.net/
-and click 'Doc' in the menu on the left.
-(Descriptions here are partially taken from www.tomenet.net )
-For Beginners a powerful but simple race/class combination like Half-Troll
+
+For Beginners a powerful yet simple race/class combination like Half-Troll
 Warrior is strongly recommended.
 
 Human
@@ -5936,7 +5997,7 @@ Half-Troll
     that a Half-Orc grimaces in their presence. Half-trolls have their
     strength sustained and also happen to be fun to play. They need to eat
     often.
-    Half-Trolls get bonus on 'Hafted-Mastery', 'Health' and 'Swimming'. They
+    Half-Trolls get bonus on 'Blunt-Mastery', 'Health' and 'Swimming'. They
     receive larger penalties on 'Magic' and 'Sorcery'.
 
 Dunadan
@@ -6036,7 +6097,7 @@ Vampire
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
-    creatures. Vampires dislike blunt ('hafted') weapons, get a small penalty
+    creatures. Vampires dislike blunt weapons, get a small penalty
     on divination magic, but receive a bonus on all necromancy skills.
     They become able to turn into a bat at level 20.
 
@@ -6088,9 +6149,6 @@ Vampire     +2   0  -3  -1   0  -6       11     220%   100ft
 ----------------------------------------------------
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
-To see numerical tables about races and classes, visit http://www.tomenet.net/
-and click 'Doc' in the menu on the left.
-(Descriptions here are partially taken from www.tomenet.net )
 
 Adventurer
     Adventurers can train nearly all skills, but are not very good in a
@@ -6133,7 +6191,7 @@ Istar (elvish word for Mage)
 
 Priest
     Priests use certain divine magic, uttered as prayers. Unless mages they
-    have a fair fighting potential with hafted or blessed weapons. Priests
+    have a fair fighting potential with blunt or blessed weapons. Priests
     can learn many spells that are helpful to their party members. They use
     mainly wisdom for their prayers, determining the amount of mana and how
     low their failure rate is.
@@ -6145,7 +6203,7 @@ Priest
     Priests also have excellent saving throws due to divine intervention.
     Priests make decent fighters, preferring blunt weapons over edged ones.
     Wisdom is the priest's primary stats.
-    Note that priests get a penalty for wielding non-hafted weapons, except
+    Note that priests get a penalty for wielding non-blunt weapons, except
     for BLESSED weapons which priests can use without problems independently
     of their type.
 
@@ -6823,8 +6881,8 @@ Mana
                     Conjures a shield that protects you from taking damage.
                     Instead, the shield will consume your mana to absorb it.
                     Only Istari are able to really get the most out of it -
-                    they get 1 spell point deducted for each absorbed point of
-                    damage. Other classes will instead get 2 spell points
+                    they get 1 mana point deducted for each absorbed point of
+                    damage. Other classes will instead get 2 mana points
                     deducted for each damage point.
                     Required skill level for first spell level: 35.
   BONI:             Mana resistance at 40.
@@ -6896,7 +6954,7 @@ Mind
     Stun            Stunds a monster.
                     Lv25: Turns into a ball.
                     Required skill level for first spell level: 15.
-    Sense Monsters  Detects all monsters nearby.                    (project)
+    Sense Minds     Detects all monsters nearby.                    (project)
                     Lv30: Gives you temporary ESP.
                     Required skill level for first spell level: 1.
     Telekinesis     Inscribe your book @P<Playername>, cast it, select an
@@ -6929,7 +6987,7 @@ Temporal
 Udun
     Genocide        Genocides all monsters of a race on the level.
                     Lv15: Alternatively genocides all monsters near you ("mass
-                    genocide", choose 'y'. 'n' will do a normal geno).
+                            genocide", choose 'y'. 'n' will do a normal geno).
                     For details on the effects "genocide" and "mass genocide"
                     of this spell, please see (5.9) scroll of geno/mass geno.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -7019,7 +7077,7 @@ Holy Defense
                     Creates a rune on the ground that monsters cannot cross
                     nor summon on. Powerful monsters may break it.
                     Required skill level for first spell level: 40.
-    Eternal Martyr  Burns you in holy fire, making you invulnerable.
+    Martyrdom       Burns you in holy fire, making you invulnerable.
                     When your martyrium ends, you will be left close to death
                     with up to 30 HP, depending on your maximum HP.
                     (Remaining HP = MaxHP / 15, but never more than 30.)
@@ -7246,7 +7304,6 @@ Here you can..
     who is higher in levels than the range<-allowed-within-party + 1>, may
     cause that player to not gain any experience or kill credit until a number
     of turns (usually 200) has passed and the buff spell has worn off.
-
     Kings/queens/emperors/empresses are free from those restrictions though!
 
     Note that there are two exceptions to these rules:
@@ -7589,10 +7646,10 @@ Beginners (level 1)
   to shoot him on distance using a ranged weapon. Since Phase Door teleports
   randomly, you might have to read several of them quickly after each other
   until you come out in a good position.
-+ Maybe a scroll of Word-Of-Recall
++ Maybe a scroll of Word-of-Recall
   If read in the dungeon it will far-distance teleport you back to the town.
   This allows you to quickly "dive" deep and gain levels and find items that
-  can be sold for good cash, then read Word-Of-Recall to quickly get back home
+  can be sold for good cash, then read Word-of-Recall to quickly get back home
   with all the loot without having to start an annoying search for the
   staircases leading upwards back to town.
 
@@ -7605,7 +7662,7 @@ Low level character (up to 15)
   Note that Potions of Cure Critical Wounds also remove certain effects like
   blindness and confusion!
 + Several Scrolls of Phase Door
-+ Some Scrolls of Word-Of-Recall
++ Some Scrolls of Word-of-Recall
 + Some Scrolls of Identify
   These will allow you to identify unknown items that you may find!
 
@@ -7621,7 +7678,7 @@ Medium level character (up to 25)
   of your hit chance, allowing you to deal very extreme damage. Unfortunately
   they are quite rare. If they are used together with potions of speed the
   result can be devastating.
-+ Several Scrolls of Word-Of-Recall
++ Several Scrolls of Word-of-Recall
 + Several scrolls of Identify
   Since you will encounter the more nice (or more dangerous..) loot the deeper
   you descend, you will need a bunch of identification scrolls to find out
@@ -7635,7 +7692,7 @@ Medium level character (up to 25)
   This neat baby is your ticket out of most hazard situations where Phase Door
   wouldn't help at all. However keep in mind that staves can be destroyed. So
   if you consider a situation very dangerous and your staff of teleportation
-  is suddenly burned to ashes, you should think about reading Word-Of-Recall!
+  is suddenly burned to ashes, you should think about reading Word-of-Recall!
   Unfortunately staves of teleportation are very expensive. Staves can be
   used even while blind or confused!
   It's not a good idea to use staves if your character isn't quite good at
@@ -7666,9 +7723,9 @@ Higher characters (up to 35)
   destroyed by traps, for example a "Trap of no return", which will burn all
   your scrolls of WOR.
 + Lots of Scrolls of Identify (up to 99!). Maybe later on a Rod of Perception.
-  A rod of perception does the same thing like a scroll of identify. A rod of
-  perception of charging would be perfect. This one takes less time to
-  recharge! A rod of perception of the istari..nearly godlike ;)
+  A Rod of Perception does the same thing like a Scroll of Identify. A Rod of
+  Perception of Charging would be perfect. This one takes less time to
+  recharge! A Rod of Perception of the Istari..nearly godlike ;)
 + Several Potions of Speed
 + Potions of Healing
   These potions heal you way more than pots of cure critical wounds. However,
@@ -8104,7 +8161,7 @@ end, which explains the meaning of each discrete info-line.
 (7.5) Skill point distribution
 ------------------------------
 Melee fighters should maximize (to get extra attacks and extra damage) one of
-the weapon masteries (Sword, Hafted, Polearm, Axes) or Martial Arts if they
+the weapon masteries (Sword, Blunt, Polearm, Axes) or Martial Arts if they
 prefer weaponless combat, and 'Interception'.
 Interception is especially important if they don't train Martial Arts, in
 order to try and prevent their opponent from summoning or casting spells.
@@ -8138,7 +8195,7 @@ what to do? The items will disappear forever if you leave that dungeon level
 and noone remains down there to "keep the level static" or "hold the level",
 as the technical terms are. If you think you really need the items, ask
 someone to get down to your dungeon level and either revive you there using a
-scroll of life or pick up your items and give them back to you in town after
+'Scroll of Life' or pick up your items and give them back to you in town after
 you revived in the town's temple (green '4').
 If your character level is still very low, you can just decide to suicide and
 start over. That is sometimes easier.
@@ -8209,7 +8266,7 @@ the golem. Materials are:
     Mithril         160 AC, 10d100 hit dice, 21 damage dice.
     Adamantite      210 AC, 10d150 hit dice, 24 damage dice.
 Some rumours say that the highest materials can only be found on even deeper
-dungeons than where Morgoth, the Lord of Darkness resides.
+dungeons than where Morgoth, Lord of Darkness resides.
 
 If the creator inscribes items in his inventory with '@G' and then creates a
 golem, those items will be transferred to the golem (careful, they cannot be 
@@ -8317,6 +8374,7 @@ Mods on the final randart:
 --------------------------
 The item will gain a random number of random properties. The more powerful it
 becomes, the higher a chance of also becoming 'aggravating' will be.
+(See (5.8) for more information about AGGRAVATE flag.)
 
 There is always a 10% chance that the resulting randart will be 'cursed'.
 Cursed randarts cannot be sold to shops even if the curse is broken. They gain
@@ -8369,7 +8427,7 @@ Mage staves
 Boomerangs (also see 'Weapons' above) 
         Extra shots
 Dark swords
-        Increased anti-magic (not over 50% in total)
+        Increased anti-magic (not over 30% in total)
 Ammunition (existing 'exploding' property will be erased on artifact creation)
         All elemental brands (acid/elec/fire/cold/poison)
         All SLAY mods
@@ -8485,7 +8543,8 @@ General mods:
         Stealth
         Searching
         Speed
-        Any base immunities (acid/elec/fire/cold)
+        Any base immunities (acid/elec/fire/cold). Note: A randart cannot have
+		                                           more than two immunities!
         Free action
         Hold life
         Any base resistances (acid/elec/fire/cold)
@@ -8511,6 +8570,7 @@ all its abilities are checked and calculated into a single number, the
 randart is finally created. If the numbers differ a lot, the randart is erased
 and randomly recreated until its powers are fitting. The higher the target
 power is, the more likely the randart will be 'aggravating nearby creatures'.
+(See (5.8) for more information about AGGRAVATE flag.)
 
 
 
@@ -8539,7 +8599,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
             -Move the 'TomeNET' directory to your drive's root. For
              example C:\TomeNET\.. .
             -to edit your "TomeNET.ini" file and specify a host directly by
-             specifying "HOST=europe.tomenet.net".
+             specifying "HOST=tomenet.servegame.com".
              Or you can even give the IP address "HOST=85.118.45.235".
 
 PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
@@ -8553,7 +8613,7 @@ SOLUTION:   There are 2 possible solutions.
              longer period of time though, being very annoying.
              That the server isn't listed doesn't mean that it's down though.
              You should try to connect manually (press 'Q') to either:
-             europe.tomenet.net
+             tomenet.servegame.com
              or (if that doesn't work either) directly to its IP adress:
              85.118.45.235
 
@@ -8718,8 +8778,9 @@ x           "The server didn't like your nickname, realname or hostname"
                     NOTE: Servers might be down temporarily when they are
                     updated. So make sure to try again after a few minutes.
                     If the server really seems to be down for a longer period
-                    of time, visit the forum at http://www.tomenet.net/ ,
-                    probably an administrator has written some explanation.
+                    of time, us admins are probably not at home and you'll
+		    have to wait for a bit, sorry. Such downtimes basically
+		    never happen though.
             "Server didn't respond!"
                     The server is up, but something is awry. Wait for a few
                     minutes, there might be admins working on it at the
@@ -8748,7 +8809,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             right now. This can happen from time to time. You don't need the
             meta-server to play TomeNET though.
             Just type in the hostname of the server you'd like to connect to,
-            for europe enter:   europe.tomenet.net
+            for official main server:   tomenet.servegame.com
             If the hostname doesn't work you can also try entering its IP
             address 85.118.45.235.
             Make sure your TomeNET.ini file contains the correct server port,
@@ -8763,8 +8824,8 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             Alternatively you can create a shortcut from your TomeNET.exe by
             right-clicking, dragging, releasing it. Edit this shortcut's
             properties and add the server IP to the command-line.)
-            For europe server it would look like this:
-            TomeNET.exe europe.tomenet.net
+            For official main server it would look like this:
+            TomeNET.exe tomenet.servegame.com
             If the hostname doesn't work for whatever reason you may try the
             IP adress:
             TomeNET.exe 85.118.45.235
