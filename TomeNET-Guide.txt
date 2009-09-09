@@ -45,7 +45,7 @@ Contents
     (3.1)   Creating a new character; character modes
     (3.2)   The display (user-interface)
     (3.2a)  The encumberment bar
-    (3.3)   Behaviour and chat messages
+    (3.3)   Behaviour, chat messages and chat modes
     (3.4)   Start-up equipment & how to use it
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
@@ -438,7 +438,8 @@ They all start with a slash '/':
             be back.
 /bbs <text> Add a line of text to the in-game bulletin board system. Players
             can look at the board by pressing the '!' key.
-            You can use the /time command to check how old an entry is.
+            (You can verify or compare the date with the /time command.)
+/deal       Deals a card (completely random).
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
@@ -453,6 +454,8 @@ They all start with a slash '/':
             Also see /tag and /untag.
 /dr         Wields all items in your inventory that are: not cursed,
  (/dress)   not {worthless}, not {terrible}, known to you.
+/bed        Opposite of /dress.
+ (/naked)
 (The /empty function is currently disabled)
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
@@ -466,6 +469,16 @@ They all start with a slash '/':
  (/feeling)
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
+/geinfo     Displays information about all ongoing (global) events.
+/geinfo <#> Displays information about the specific event number #.
+            Note: If you log out, your sign-up is cancelled automatically.
+/gesign <#> Signs you up for the global event number #.
+            Depending on the event, you might need to specify additional
+            parameters after the number. If that is the case, you'll see
+            a message telling you so, and speficying details what's missing.
+            Note: If you log out, your sign-up is cancelled automatically.
+/hou        Displays your houses, same as ~6.
+ (/house)
 /ig <player name>
  (/ignore)  ignores all chat messages from the specified player. (Toggle)
             Also silences all paging attempts from that player.
@@ -475,14 +488,21 @@ They all start with a slash '/':
             by pressing '@', indicating that this player currently cannot read
             normal chat messages.)
 /lite a..w  Refills your light source with an item from your inventory.
-            Usually easier to just press 'F' instead.
+            Usually it's easier to just press 'F' instead.
 /mar        Tells a prayer-user if he may use the prayer 'Holy Martyr'.
  (/martyr)
 /me         Write an emote. Example: /me hides.
+/mon <monster character>
+            Same as going to ~ menu and selecting 'Monsters':
+            Will show your kill count of all matching monsters.
+            Example: /mon D  ->  shows your greater dragons kill count.
+/motd       Shows the current server notes that are displayed at login.
+ (/snotes)
 /note <account name>:<text>
             Leave a note to another player. Note: You have to specify his
             ACCOUNT NAME, not a character name. That way, no matter which of
             his characters he chooses to logon, he always gets the note.
+/news       Shows the login screen, same as ~f, but in monochrome.
 /note <account name>
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
@@ -490,10 +510,13 @@ They all start with a slash '/':
             Leave a note to the party you own.
 /noteg <text>
             Leave a note to the guild you own.
+/obj        Displays all objects known to you, same as ~4.
+ (/object)
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Can only be used if target player is afk).
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.5).
+/play       Join/leave a mini-game (such as rugby on the field in Bree).
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes. The player who completes it gets a great item
             as reward. It will appear right below the player on the ground.
@@ -533,17 +556,26 @@ They all start with a slash '/':
             inscription. Helpful for looting in conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
             particular inventory slot (if not yet inscribed already).
+/tar <x> <y>
+ (/target)
+            Allows you to target a specific grid specified by X,Y as offset
+            to your current character position.
 /untag [<inscription>]
             If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
 /untag *    Will remove all pseudo-id tags from your inventory items.
+/at         Apply auto-inscription settings to current inventory.
+ (/autotag)
+/version    Displays the server version.
 /time       Tells you the current date and time (of the server, not of your
-            local timezone). Useful to compare with bbs time stamps.
+            local timezone).
 /undoskills Allows you to undo the skill points you assigned in 'G' menu last
             time. Use this to correct points you accidentally put into a wrong
             skill.
+            Note: Logging off or gaining another level will reset undoskills,
+            making it impossible to undo points spent previously.
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
 
@@ -1338,8 +1370,8 @@ and for specific details about penalties that are applied.
 
 
 
-(3.3) Behaviour and chat messages
----------------------------------
+(3.3) Behaviour, chat messages and chat modes
+---------------------------------------------
 You can chat with other players by pressing the colon key ':' once you have
 joined a game with your character.
 In general, don't hesitate to ask questions. Players are usually willing to
@@ -1401,6 +1433,26 @@ Light grey      Hard-mode player.
 Dark grey       No-ghost / hellish player.
 Violet          Player character is king / queen.
 Dark blue       Player is admin.
+
+
+Chat modes:
+-----------
+After pressing ':' key to enter chat mode, you may press TAB key to switch
+between the three chat modes:
+-normal
+-party chat: All messages are sent exclusively to your own party.
+-level chat: All messages are sent to everyone on your dungeon level.
+
+Also you can use the following prefixes in the beginning of a chat line,
+to get similar behaviour as in one of the chat modes just for one line:
+!:      Sends the following text to your current party.
+#:      Sends the following text to everyone on your dungeon level.
+        Note: While in town this will instead become a /say.
+%:      Sends the following text to yourself (has some use in macros).
+
+
+Note that you can use CTRL+p and CTRL+n while in chat mode (':' key),
+to repeat a message or command you previously typed.
 
 
 
@@ -2597,26 +2649,78 @@ Oceans-         blue '%' fields.
 --------------------------------
 If you create a new character, it will start in 'Bree', a town located at
 position 32,32 on the world map (same position on all servers!).
+
 The world map however, ranging from 0,0 (bottom left corner) to 63,63
 (top right corner), bears several other towns that you can find and
 explore. These towns often contain different shops (some are said to offer
 *Identify* service or even a cure to Black Breath) and harder dungeons.
+
 However, they might also be a very dangerous place to stay, compared to Bree.
 In general you can say the harder the local dungeon entrance of a town the
 more dangerous monsters can spawn within the town! Bree is the only town that
 contains just more or less harmless townsfolk.
+
 The worst are Khazad-dum and Lothlorien, if you go here be _very_ cautious.
 Monsters that appear here might look like harmless novice paladins or snagas
 but are in fact of a higher level and more powerful.
-On servers that run an older version of TomeNET those monsters will be +50
-levels higher(!), that means they move extremely fast, take LOTS of damage,
-and can kill you easily.
 However, it has been observed that people who figured out how to climb high
 mountains travelled to Khazad-dum despite their low level for a strange
 reason >:-) .
+
 Even if you decide to stay in Gondolin, which is relatively harmless,
 don't go afk for a longer time or even a snaga archer might kill you with his
 ranged attacks. Always a nasty surprise..
+
+Despite the hazards of higher level towns, towns in general act as a safe zone,
+preventing PK attacks and stop your character's food consumption, meaning that
+you cannot die by starvation while in town.
+
+
+Shops:
+------
+Each town has several shops, displayed as numbers 1..9 and some '+'.
+The 1..9 are standard shops, namely..
+1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
+2       Armoury         Offers various basic armour. Rarely excellent pieces.
+3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
+4       Temple          Player ghosts will be revived here, and receive some
+                        money. The temple sells weapons for priests, scrolls
+                        and potions.
+5       Alchemist       Sells various scrolls and potions.
+6       Magic Shop      Sells wands, staves, rings and amulets.
+7       Black Market    Sells many different items, mostly very good ones.
+                        This shop is very expensive and buys for very little
+                        in return. Better not sell your items to this shop,
+                        as long as a regular store will pay you better.
+                        Some items cannot be sold elsewhere though.
+8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
+                        players are relatively safe from monsters.
+9       Bookstore       Sells books for istari, priests and all other (hybrid)
+                        magic users.
++       These are different everywhere. Some examples are..
+        The Bank        Several towns have a bank where you can deposit and
+                        withdraw money, so you won't lose it accidentally on a
+                        dungeon trip.
+        Casino.         Minas Anor has a casino.
+        ID service      Will identify all items you currently carry for a fee.
+        *ID* Service    Will *identify* an item for a fee.
+                        See (5.7) for more information about ID, *ID*, shops!
+        Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
+                        more information about Black Breath.)
+        Enchant Services
+                        These will enchant weapons, arrows, or all armour
+                        parts you currently have equipped.
+
+Shops that buy and sell items will have a price limit that they will pay for
+an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
+depending on the shop owner. The shop owners change regularly, if a shop makes
+you a bad offer (the cap price) just wait for the owner to change or visit a
+different shop. Shops in different towns are run by different owners although
+they may use the same number '0'..'9' for their entrance symbol.
+If the item is worth more than 300,000 Au maybe you can find a fellow player
+who is wealthy and in urgent need of your items.
+See (5.7) for more information about ID, *ID* and shops!
+
 
 Here is a list of towns and their corresponding local dungeons:
 
@@ -2677,52 +2781,6 @@ Each floor in the Nether Realm gives a +2% bonus to experience from monster
 kills.
 The amount of experience is already very high even without the depth-bonus,
 since creatures in the Nether Realm are of a very high level.
-
-
-Shops:
-------
-Each town has several shops, displayed as numbers 1..9 and some '+'.
-The 1..9 are standard shops, namely..
-1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
-2       Armoury         Offers various basic armour. Rarely excellent pieces.
-3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
-4       Temple          Player ghosts will be revived here, and receive some
-                        money. The temple sells weapons for priests, scrolls
-                        and potions.
-5       Alchemist       Sells various scrolls and potions.
-6       Magic Shop      Sells wands, staves, rings and amulets.
-7       Black Market    Sells many different items, mostly very good ones.
-                        This shop is very expensive and buys for very little
-                        in return. Better not sell your items to this shop,
-                        as long as a regular store will pay you better.
-                        Some items cannot be sold elsewhere though.
-8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
-                        players are relatively safe from monsters.
-9       Bookstore       Sells books for istari, priests and all other (hybrid)
-                        magic users.
-+       These are different everywhere. Some examples are..
-        The Bank        Several towns have a bank where you can deposit and
-                        withdraw money, so you won't lose it accidentally on a
-                        dungeon trip.
-        Casino.         Minas Anor has a casino.
-        ID service      Will identify all items you currently carry for a fee.
-        *ID* Service    Will *identify* an item for a fee.
-                        See (5.7) for more information about ID, *ID*, shops!
-        Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
-                        more information about Black Breath.)
-        Enchant Services
-                        These will enchant weapons, arrows, or all armour
-                        parts you currently have equipped.
-
-Shops that buy and sell items will have a price limit that they will pay for
-an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
-depending on the shop owner. The shop owners change regularly, if a shop makes
-you a bad offer (the cap price) just wait for the owner to change or visit a
-different shop. Shops in different towns are run by different owners although
-they may use the same number '0'..'9' for their entrance symbol.
-If the item is worth more than 300,000 Au maybe you can find a fellow player
-who is wealthy and in urgent need of your items.
-See (5.7) for more information about ID, *ID* and shops!
 
 
 
@@ -6967,6 +7025,8 @@ Holy Defense
                     (Remaining HP = MaxHP / 15, but never more than 30.)
                     The gods won't accept another martyrium until 1000 turns
                     have passed.
+                    Note: To check whether you can use the spell again,
+                    use the /martyr (or /mar) command.
                     Required skill level for first spell level: 40.
   BONI:             Protects the player from undead at 30, from demons at 40,
                     and from evil in general at 50. Better than the spell.
@@ -7178,14 +7238,22 @@ Here you can..
     emperors).
     Winners and normal players don't share experience in a party.
 
-    Depending on server settings, monsters will remember the highest player
-    they have met and not give experience nor kill credit to players who are
-    more than the <party-allowed-range-of-levels + 1> away from it.
+    Monsters will usually remember the highest player they have met and not
+    give experience nor kill credit to players who are more than the 8
+    (exp-sharing level limit plus 1) levels away from it.
+
     Similarly, a player who received a power-up spell from another player
     who is higher in levels than the range<-allowed-within-party + 1>, may
     cause that player to not gain any experience or kill credit until a number
     of turns (usually 200) has passed and the buff spell has worn off.
+
     Kings/queens/emperors/empresses are free from those restrictions though!
+
+    Note that there are two exceptions to these rules:
+    -Morgoth, Lord of Darkness (Game boss)
+    -The Great Pumpkin (Halloween special event monster)
+    These two always give credit, no matter what level difference the players
+    have.
 
     Set a house owner to 'party' to allow all party members to access that
     house.
@@ -8005,7 +8073,11 @@ Teamplay:
  support you with helpful spells, items and knowledge.
  A player in a party gets a share of experience points from the kills of other
  party members if they are within 7 levels to the player.
- For winners (queens/kings/empresses/emperors) the range is 11 levels.
+ A character cannot gain any exp from a monster which has previously
+ encountered a player more than 8 levels higher than this character himself.
+ (So there is 1 level tolerance towards sharing experience.)
+ For winners (queens/kings/empresses/emperors) the range in which they share
+ experience is as far as 11 levels.
  See (6.9) for details about partying!
 
 -Good combinations are the classical meat shields / damage dealers /
