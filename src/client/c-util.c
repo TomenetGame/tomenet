@@ -3480,6 +3480,121 @@ void interact_macros(void)
 }
 
 
+void auto_inscriptions(void)
+{
+#if 0
+	int i;
+
+	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
+
+	char fff[1024];
+
+	/* Save screen */
+	Term_save();
+
+	/* Process requests until done */
+	while (1)
+	{
+		for (i = 0; i < macro__num; i++)
+		{
+			if (i % 20 == 0) {
+				/* Clear screen */
+				Term_clear();
+
+				/* Describe */
+				Term_putstr(0,  1, -1, TERM_L_UMBER, format("  *** Current Auto-Inscriptions List (Entry %d-%d) ***", i + 1, i + 20 > macro__num ? macro__num : i + 20));
+				Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press 'n' to continue, 'p' for previous, ESC to exit]");
+				Term_putstr(5, 23, -1, TERM_WHITE, "(l/s) Load/save auto-inscriptions from/to an ins file");
+				Term_putstr(5, 24, -1, TERM_WHITE, "(a/e/d) Add/edit/delete an auto-inscription");
+			}
+
+			/* build a whole line */
+			sprintf(fff, "%s %-49.49s", buf, buf2);
+
+			Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
+
+			/* Wait for keypress before displaying more */
+			if ((i % 20 == 19) || (i == macro__num - 1)) switch (inkey()) {
+				case ESCAPE:
+					i = -2; /* hack to leave for loop */
+					break;
+				case 'p':
+				case '\010': /* backspace */
+					if (i >= 39) {
+						/* show previous 20 entries */
+						i -= 20 + (i % 20) + 1;
+					} else { /* wrap around */
+						i = macro__num - (macro__num % 20) - 1;
+					}
+					break;
+				case KTRL('T'):
+					/* Take a screenshot */
+					xhtml_screenshot("screenshot????");
+					/* keep current list */
+					i -= (i % 20) + 1;
+					break;
+				case 'l':
+					/* Prompt */
+					Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Load a user ins file");
+
+					/* Get a filename, handle ESCAPE */
+					Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+
+					sprintf(tmp, "%s.ins", cname);
+
+					/* Ask for a file */
+					if (!askfor_aux(tmp, 70, 0, 0)) continue;
+
+					/* Process the given filename */
+		//			(void)process_pref_file(tmp);
+				}
+				case 's':
+					/* Prompt */
+					Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Save to an ins file");
+
+					/* Get a filename, handle ESCAPE */
+					Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+
+					sprintf(tmp, "%s.prf", cname);
+
+					/* Ask for a file */
+					if (!askfor_aux(tmp, 70, 0, 0)) continue;
+
+					/* Dump the macros */
+		//			(void)macro_dump(tmp);
+				case 'a':
+					/* Go to the correct location */
+					Term_gotoxy(0, 21);
+
+					/* Hack -- limit the value */
+					tmp[80] = '\0';
+
+					/* Get an encoded action */
+					if (!askfor_aux(buf, 80, 0, 0)) continue;
+				case 'n':
+					/* show next 20 entries */
+					if (i == macro__num - 1) i = -1; /* restart list at 1st macro again */
+					break;
+				default:
+					/* Oops */
+					bell();
+			}
+		}
+
+		/* Leave */
+		if (i == -2) break;
+
+	}
+
+	/* Reload screen */
+	Term_load();
+
+	/* Flush the queue */
+	Flush_queue();
+#endif
+}
+
+
 /*
  * Interact with some options
  */

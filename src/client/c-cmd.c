@@ -457,7 +457,7 @@ void process_command()
 			cmd_party();
 			break;
 
-		case '&':
+		case ']':
 			/* Dungeon master commands, normally only accessible to
 			 * a valid dungeon master.  These commands only are
 			 * effective for a valid dungeon master.
@@ -503,6 +503,10 @@ void process_command()
 
 		case '%':
 			interact_macros();
+			break;
+
+		case '&':
+			auto_inscriptions();
 			break;
 
 		case 'h':
