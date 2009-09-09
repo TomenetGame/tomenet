@@ -46,11 +46,12 @@ static void print_spells(object_type *o_ptr)
 
 static void print_mimic_spells()
 {
-	int	i, col, j = 2;
+	int	i, col, j = 2, k;
 	char buf[90];
 
 	/* Print column */
-	col = 20;
+	col = 15;
+	k = 0; /* next column? for forms with LOTS of spells (GWoP) */
 
 	/* Title the list */
 	prt("", 1, col);
@@ -73,8 +74,14 @@ static void print_mimic_spells()
 		  continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells4[i]);
-		prt(buf, j++, col);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells4[i]);
+		prt(buf, j++, col + k * 35);
+
+		/* check for beginning of 2nd column */
+		if (j > 21) {
+			j = 5;
+			k = 1;
+		}
 	}
 	for (i = 0; i < 32; i++)
 	{
@@ -83,8 +90,14 @@ static void print_mimic_spells()
 			continue;
 
  		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells5[i]);
-		prt(buf, j++, col);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells5[i]);
+		prt(buf, j++, col + k * 35);
+
+		/* check for beginning of 2nd column */
+		if (j > 21) {
+			j = 5;
+			k = 1;
+		}
 	}
 	for (i = 0; i < 32; i++)
 	{
@@ -93,12 +106,19 @@ static void print_mimic_spells()
 			continue;
 
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j - 2), monster_spells6[i]);
-		prt(buf, j++, col);
+		sprintf(buf, "%c) %s", I2A(j - 2 + k * 17), monster_spells6[i]);
+		prt(buf, j++, col + k * 35);
+
+		/* check for beginning of 2nd column */
+		if (j > 21) {
+			j = 5;
+			k = 1;
+		}
 	}
 
-	/* Clear the bottom line */
-	prt("", j++, col);
+	/* Clear the bottom line(s) */
+	if (k) prt("", 22, col);
+	prt("", j++, col + k * 35);
 }
 
 /*
