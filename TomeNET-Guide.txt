@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. May 2009; written by C. Blue, http://www.c-blue.de/
+| Latest update: 9. Sep 2009; written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.2 (www.tomenet.net, usually outdated though).
 | For latest information about TomeNET see http://www.c-blue.de/rogue.html
 | and definitely Mikael's Site at http://koti.mbnet.fi/mikaelh/tomenet/
@@ -508,6 +508,12 @@ They all start with a slash '/':
 /say <text>
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
+/whisper <text>
+            Whispers <text> to players currently standing right next to you.
+            Others won't be able to hear it.
+/cough
+            Coughs noisily. Will disturb the sleep of monsters or at least
+            make it less deep..
 /shout <text>
             Shout <text> loudly, will wake up monsters.
 /scream <text>
@@ -2841,7 +2847,7 @@ The feelings are as follows:
 
 "You feel a suppressive air." ->    You cannot use wraith form or probability
                                     travel on this level.
-                                    (NO_MAGIC, +15% experience bonus!)
+                                    (NO_MAGIC, +10% experience bonus!)
 
 "The air seems distorted." ->       You cannot use genocide on this level!
 (formerly 'feeling of peace')       (NO_GENO, +5% experience bonus!)
@@ -2856,7 +2862,7 @@ The feelings are as follows:
 
 "You feel like a stranger..." ->    You cannot use magic mapping nor
                                     clairvoyance here!
-                                    (NO_MAGIC_MAP, +5% experience bonus!)
+                                    (NO_MAGIC_MAP, +10% experience bonus!)
 
 "The walls here seem very solid." ->    You cannot destroy the dungeon
                                         structure on this level.
@@ -2884,7 +2890,7 @@ In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
-These extra level feelings -displayed in yellow- are:
+These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
       means a) there's a highly ood monster or
@@ -2907,10 +2913,14 @@ These extra level feelings -displayed in yellow- are:
   "What a boring place.."
       means nothing of the above apply to this level.
 
+(*) "freely roaming" means that the monster isn't generated inside a vault.
+
 Note that you will only get one, ie the strongest of these feelings applying
 to your dungeon level, meaning feelings higher up the list will take precedence
 over those below.
-(*) "freely roaming" means that the monster isn't generated inside a vault.
+Also, the feeling of a dungeon level will persist, even if its cause is
+removed. For example if the feeling indicates an OOD monster and you kill it,
+you or following players entering that floor will still get that same feeling.
 
 
 Vaults:
@@ -4099,8 +4109,8 @@ MANA ('It affects your mana capacity')
         MANA items _add_ to each other, they aren't multiplied.
         They have slightly less effect on non-mages and quite less effect
         on priests or paladins who need wisdom rather than intelligence.
-		MANA affects your complete mana pool, including the additional MP
-		(mana points) a	character gained from 'Magic' skill.
+	MANA affects your complete mana pool, including the additional MP
+	(mana points) a	character gained from 'Magic' skill.
 LIFE ('It affects your hit points')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
@@ -4208,12 +4218,12 @@ Weapons & Armour
 Dark Sword      Dark Swords have a so-called 'antimagic field', which
                 prevents the user from using magic items or casting spells,
                 but also has a chance to interrupt enemy spellcasters.
-                The chance to interrupt spellcasters is 50% minus the to-hit
-                and to-dam values of the dark sword. Dark Sword (+3,+4) has
-                50-3-4 = 43% chance of interrupting spellcasters.
+                The chance to interrupt spellcasters is 30% minus 3/5 of the
+                to-hit and to-dam values of the dark sword. Dark Sword (+3,+7)
+                has 30 - 3/5 * (3+7) = 24% chance of interrupting spellcasters.
                 The radius of the antimagic field is several fields, getting
-                smaller if the chance is smaller than 50%.
-                Dark Swords never give more than 50% AM, even if tohit and
+                smaller if the chance is smaller than 30%.
+                Dark Swords never give more than 30% AM, even if tohit and
                 todam boni added together result in a negative number.
                 They also never give 'negative antimagic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
@@ -4380,8 +4390,8 @@ Mass Genocide   Removes all monsters that are close to you.
                 Drains your HP.
                 All monsters within a radius (equal to your sight range)
                 around you are annihilated. For each monster you will suffer
-                3+(monsterlevel/8) points of damage, which cannot be absorbed
-                by any magic shield or other protective effects!
+                between 0 and 3+(monsterlevel/8) points of damage, which cannot
+                be absorbed by any magic shield or other protective effects!
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
@@ -5639,8 +5649,12 @@ Note that not every skill is available to every profession (class).
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
-    .Swimming                   Self-explaining
-    .Digging                    Self-explaining
+    .Swimming                   Allows you to swim even while carrying more
+                                weight.
+    .Digging                    How well you are able to dig. Also affects
+                                your chance to find items, for the items to
+                                be good or even great, and affects the amount
+                                of cash if you mine treasure.
     .Climbing                   You need this at 01.000 to learn climbing.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
@@ -5854,7 +5868,7 @@ Half-Orc
     are quite ugly, and tend to pay more for goods in town. Half-Orcs do make
     good warriors and rogues, for the simple reason that Half-Orcs tend to
     have great constitutions and lots of hit points.
-    They get bonus on 'Combat', 'Backstabbing', 'Necromancy' and receive
+    They get bonus on 'Weaponmastery', 'Backstabbing', 'Necromancy' and receive
     slight penalties on 'Magic' and 'Sorcery'.
 
 Half-Troll
@@ -5960,7 +5974,7 @@ Vampire
     utilize magic of water or nature school. Neither can they make use of
     mimicry techniques or holy spells. They are unable to try and suppress
     magic, but can make use of items that provide antimagic effects.
-    They resist darkness, nether, poison and cold and it's hard to drain their
+    They resist time, darkness, nether, poison and it's hard to drain their
     life force. They also have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information).
     Vampires cannot eat normal food, instead they need to feed off living
@@ -5993,9 +6007,9 @@ Half-Orc    +2  -1  +0  +0  +1  -4       11     115%    30ft
             -3  -3  -3  -1   7   0   12  -5
 Half-Troll  +4  -4  -2  -4  +3  -6       12     135%    30ft
             -5  -8  -8  -2   5  -1   20 -10
-Dunadan     +1  +2  +2  +2  +3  +2       10     180%     0ft
+Dunadan     +1  +2  +2  +2  +3  +2       10     170%     0ft
              4   5   5   2  13   3   15  10
-High-Elf    +1  +3  -1  +3  +1  +3       10     260%    40ft
+High-Elf    +1  +3  -1  +3  +1  +3       10     250%    40ft
              4  20  20   3  14   3   10  25
 Yeek        -5  -5  -5  -5  -5  -3        7      80%     0ft
              0   0   0   0  10   0    0   0
@@ -6003,11 +6017,11 @@ Goblin       0  -1  -4  +4  +2  -5       10     120%    30ft
              2  -3  -3   0   8   2   12  -5
 Ent         +8  -4  +2  -4  +8  -4       14     320%    50ft
              5   0  20  -6   4   5   15   5
-Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft             
+Thunderlord +6  +2  +1  +1  +3  +5       12     350%     0ft
              6   0  10 -16  10  30   15   5
 Dark-elf     0  +2  +1  +3  +1  -6       10     140%    50ft
              0   3   6   4  10   6   15  15
-Vampire     +2   0  -3  -1   0  -6       11     240%   100ft
+Vampire     +2   0  -3  -1   0  -6       11     220%   100ft
             -4   0  20   2  13  -4   10 -10
 
 
@@ -6460,8 +6474,8 @@ F: flag list
     NO_CUT      The player can't be cut and won't bleed continously from
                 wounds.
     DISBELIEVE  Will increase the player's anti-magic field by
-                ((monsterlevel / 2) + 20) percent. The range of the anti-magic
-                field is increased by ((monsterlevel / 15) + 3) fields.
+                ((monsterlevel / 2) + 10) percent. The range of the anti-magic
+                field is increased by ((monsterlevel / 50) + 2) fields.
     ARROW_1, ARROW_2, ARROW_3
                 The player will receive an additional shot per round since the
                 monster seems to be good at shooting.
@@ -6857,7 +6871,7 @@ Temporal
 Udun
     Genocide        Genocides all monsters of a race on the level.
                     Lv15: Alternatively genocides all monsters near you ("mass
-                            genocide", choose 'y'. 'n' will do a normal geno).
+                    genocide", choose 'y'. 'n' will do a normal geno).
                     For details on the effects "genocide" and "mass genocide"
                     of this spell, please see (5.9) scroll of geno/mass geno.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -8222,6 +8236,9 @@ it's usual form.
 For example it's hard to get extra mods on a Multi-hued Dragon Scale Mail, and
 in fact impossible to get any extra mod on a Power Dragon Scale Mail, so don't
 waste a scroll on this one.
+However, IGNORE_ flags on items are an exception and do not count into this.
+
+Also note that randarts cannot get more than two immunities in total.
 
 
 Mods on the final randart:
