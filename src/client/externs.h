@@ -386,7 +386,7 @@ extern bool item_tester_okay(object_type *o_ptr);
 extern cptr get_item_hook_find_obj_what;
 extern bool get_item_hook_find_obj(int *item);
 extern bool (*get_item_extra_hook)(int *cp);
-extern byte c_get_item(int *cp, cptr pmt, int mode);
+extern bool c_get_item(int *cp, cptr pmt, int mode);
 
 /* c-util.c */
 extern void move_cursor(int row, int col);

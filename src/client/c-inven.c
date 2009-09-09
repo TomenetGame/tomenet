@@ -202,7 +202,7 @@ bool get_item_hook_find_obj(int *item)
 }
 
 bool (*get_item_extra_hook)(int *cp);
-byte c_get_item(int *cp, cptr pmt, int mode)
+bool c_get_item(int *cp, cptr pmt, int mode)
 {
 	char	n1, n2, which = ' ';
 
@@ -554,7 +554,7 @@ byte c_get_item(int *cp, cptr pmt, int mode)
 				if (extra && get_item_extra_hook(&i))
 				{
 					(*cp) = i;
-					item = EXTRA_USED;
+					item = TRUE;
 					done = TRUE;
 				}
 				break;

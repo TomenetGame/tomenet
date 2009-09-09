@@ -3211,9 +3211,6 @@ that keeps many algorithms happy.
 #define USE_FLOOR	0x04	/* Allow floor items */
 #define USE_EXTRA	0x08	/* Allow extra items */
 
-/* Special return code for "c_get_item" when @ was used for extra selection */
-#define EXTRA_USED	0x02
-
 /*
  * Bit flags for the "p_ptr->notice" variable
  */
