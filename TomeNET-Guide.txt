@@ -5628,8 +5628,8 @@ Note that not every skill is available to every profession (class).
                                 wands,staves or rods anymore!
                                 This skill also slightly affects your fellow
                                 party members (casters).
-                                Each point in Antimagic adds 0.6% to your
-                                AM chance, so the max gain is +30% from skill.
+                                Each point in Antimagic adds 1% to your
+                                AM chance, so the max gain is +50% from skill.
                                 Note: While ball/bolt attacks are spells,
                                       breathing is NOT.
                                 Antimagic will also reduce the duration of all
