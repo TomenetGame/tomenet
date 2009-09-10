@@ -161,10 +161,10 @@ compile the game under '(2.1) Installing TomeNET'.
    to endure sanity-reducing effects.
  (If you are new to the game, it is NOT recommended to choose one of these:
  Istar, Priest, Shaman, Adventurer.)
--Make sure you don't choose 'fruit bat' mode :).
- Also, DO NOT chose 'PvP' mode either. It's a restricted special thing that
+-Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
- 
+-It's strongly recommended to not choose 'fruit bat' body either :).
+
  Now you're in the game and should see the town of Bree.
 
  -To chat, press the colon key ':' . Don't hesitate to ask other players
@@ -283,7 +283,7 @@ g       g       pick up an item from the floor. You have to stand on the item
                 the number pad while numlock is turned off. Gold is always
                 picked up automatically.
 C       C       see a character overview.
-L or M  W or M     navigate on the map (use direction keys if using L).
+L or M  W or M  navigate on the map (use direction keys if using L).
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 S       #       enter 'search mode'. You will search your adjacent fields once
@@ -534,7 +534,8 @@ They all start with a slash '/':
 /play       Join/leave a mini-game (such as rugby on the field in Bree).
 /que        gives a quest! It needs to be fulfilled before a certain period
  (/quest)   of time passes. The player who completes it gets a great item
-            as reward. It will appear right below the player on the ground.
+            as reward. It will appear in your inventory and carry an
+            inscription indicating it's the quest reward.
 /rec -550   recalls you to -550ft, using an item inscribed {@R}.
 /rec 32 32  recalls you to Bree (Town at 32,32 world map coordinates),
  (/recall)  using an item inscribed {@R}. See "(0.3) Important Inscriptions"
@@ -545,7 +546,7 @@ They all start with a slash '/':
 /rfe        Store a message/suggestion for the admin(s).
 /whisper <text>
             Speaks <text> in a low voice, so only players standing directly
-			next to you can hear it.
+            next to you can hear it.
 /say <text>
             Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
@@ -566,7 +567,8 @@ They all start with a slash '/':
  (/screenshot)
             Takes a screen shot to a html file. If <filename> is omitted, it
             writes to 'screenshot?????.xhtml' by default, where ????? are
-			increasing numbers. You may also use CTRL+T.
+            increasing numbers. You may also use CTRL+T.
+            You can view those xhtml files in most webbrowsers.
 /sip        drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
@@ -930,6 +932,7 @@ IRC:
 The final goal that a brave adventurer could possible seek in TomeNET is to
 become King respectively Queen. To acquire this he or she must destroy the
 fallen god Melkor who is known by the name of Morgoth, Lord of Darkness.
+
 Morgoth is said to reside deep within the dungeons at around 5000 feet down in
 the earth. Getting there will be an extraordinary journey bearing unbelievable
 dangers but also fantastic treasure. Players on the same server can also play
@@ -937,6 +940,15 @@ together by forming parties and sharing their experience! Players will acquire
 new ranks as their experience grows, allowing them to learn new abilities and
 to become stronger. Morgoth is said not to show up until his servant Sauron,
 the sorceror has been killed. (See 1.5 for more information about Morgoth.)
+
+Players who defeat Morgoth, become 'winners' and get the title of King and
+Queen respectively, or Emperor/Empress if their character is of unworldly or
+hellish mode.
+When you win the game, an automatic chardump is generated in /lib/user called
+'<charname>-victory.txt' (see 8.2) which you can view with any text editor.
+Also, a screenshot is made automatically, displaying your situation, saved
+to '<charname>-victory-screenshot.xhtml'.
+(You can view xhtml files in most webbrowsers.)
 
 
 
@@ -1677,14 +1689,14 @@ Loading macros automatically:
 If you save your macros to a filename that is the same as your character's
 name and add a '.prf' at the end, it will be automatically loaded as you
 join a game with your character, which is very helpful!
-Example: If your character is named 'Kinkan', dump the macros to Kinkan.prf
+Example: If your character is named 'Kinkan', save the macros to Kinkan.prf
 to have them loaded automatically.
 Note: If you're using a Linux version, remember that the file system is
-case-sensitive, so don't save your macros to 'kinkan.prf' if your character
+case-sensitive, so don't save your macros to 'kinkan.prf' since your character
 actually starts with a capital 'K' or the file won't be loaded. Make sure
 the filename and character-, class- or race-name are exactly the same
 ('Dwarf.prf', 'High-Elf.prf', 'Ranger.prf'..).
-Another option is to dump the macros to a file that is named like your account
+Another option is to save the macros to a file that is named like your account
 it will be automatically loaded on all chars of that account.
 You can also save macros to <racename>.prf or to <classname>.prf, like
 Warrior.prf to have them being auto-loaded on all characters of that class.
@@ -2156,8 +2168,8 @@ There are three different ways to easily talk to your party.
     according to your party name. For example, if your party is called
     'Scarlet Knights', enter this string:
         :Scarlet:
-    hit the Enter key to accept it, create a command macro ('4'), choose a
-    key you wish to use for party chat from now on, and dump your macro ('2')
+    hit the Enter key to accept it, create a command macro ('6'), choose a
+    key you wish to use for party chat from now on, and save your macro ('2')
     to a file which is loaded automatically, like '<Your charname>.prf', for
     example Kinkan.prf.
     Using longer or shorter (at least 4 letters) strings works too of course,
@@ -2167,8 +2179,8 @@ The best way in my opinion is to combine the two ways and to set up a macro
 which types   :!:   for you on a single key press automatically:
     Enter the macro menu ('%'), enter a new action ('3'), enter the macro
     :!:
-    hit the Enter key to accept it, create a command macro ('4'), choose a
-    key you wish to use for party chat from now on, and dump your macro ('2')
+    hit the Enter key to accept it, create a command macro ('6'), choose a
+    key you wish to use for party chat from now on, and save your macro ('2')
     to a file which is loaded automatically, like '<Your charname>.prf', for
     example Kinkan.prf. This way, no matter what your party is called, you
     will always be able to chat to it by pressing a single key.
@@ -2288,6 +2300,7 @@ If a player dies, an automatic chardump is generated in /lib/user called
 '<charname>-death.txt' (see 8.2) which you can view with any text editor.
 Also, a screenshot is made automatically, displaying your situation, saved
 to '<charname>-death-screenshot.xhtml'.
+(You can view xhtml files in most webbrowsers.)
 
 Normal/everlasting characters will turn into ghosts if they die. When you
 become a ghost, your title will change to 'Ghost' until you get revived.
@@ -2993,8 +3006,8 @@ The feelings are as follows:
 
 "You don't sense a magic barrier here..." ->   This message only occurs in
                                         Ironman or no-recall dungeons/towers.
-										It lets you know that you may use
-										word-of-recall on this floor!
+                                        It lets you know that you may use
+                                        word-of-recall on this floor!
 
 In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
@@ -3055,16 +3068,18 @@ As soon as you leave such a no-teleport-vault you'll receive this feeling:
 (4.9) Navigating on maps
 ------------------------
 The world map is divided into 64 x 64 world map sectors. Each of these sectors
-has a size of 5 x 5 smaller sectors (screens). Dungeon levels or tower floors
-also have a size of 5 x 5 sectors, same as 1 world map sector. Monsters cannot
-cross world map sector borders! Keep this in mind while travelling.
+contains 5 x 5 smaller subsectors (screens). Dungeon levels or tower floors
+also can have up to 5 x 5 subsectors, same as 1 world map sector. (Use 'L' key
+to look around your current worldmap sector/dungeon level, and you will see
+the subsector coordinates displayed at the top line.)
+Monsters cannot cross world map sector borders! Keep this in mind while
+travelling, it might save your life.
 
-You can scroll around the level within the main window by pressing 'L'. This
-allows you to look at all 4 x 4 sectors of your current level. Note that
-dungeon/tower levels are often smaller, sometimes even just 1 x 1. While you
-are looking around, the current map sector is displayed in the top left corner
-of the screen. This information can help other players to find you in case you
-need help.
+Note that dungeon/tower levels are often smaller than 5 x 5 subsectors,
+sometimes even just as small as 2 x 2.
+While you are looking around with 'L' key, the current map sector is displayed
+in the top left corner of the screen. This information can help other players
+to find you in case you need help!
 
 You can press 'M' to invoke a map that gives you a larger overview.
 If you press 'M' in a dungeon, tower or a town, you'll see the complete 4 x 4
@@ -3073,10 +3088,11 @@ you will see a part of the 64 x 64 world map, centered around your current
 world map sector, displaying towns (yellow T), the sea (blue %), mountains (^)
 and other information.
 
-In the main window right below your 'Cur SP' you will see two numbers
+In the main window around the very bottom left corner you will see two numbers
 separated by a komma, these tell you your current world map sector.
 In case you're currently in a town, the town's name will be displayed in the
 bottom right corner of the screen.
+(You can also see your coordinates by invoking the character screen with 'C'.)
 
 If you're in a dungeon or tower, you will see your current depth/height in
 feet. Each dungeon level or tower floor has a height of 50 feet.
@@ -3091,27 +3107,58 @@ dungeon on level -100ft (2nd dungeon level).
 
 (4.10) Houses
 -------------
-Press 'h' to buy or sell a house, or to change house parameters (for example
-giving all your party members access to it). You need to stand directly next
-to the house door to do this.
-The house doors can have different colours to you: 
--a green house door indicates that you have access to it,
+There are two types of houses, private houses and (very few) public houses.
+Public houses have walls of slate colour, while private houses have white
+walls. Public houses always have a light brown house door and can be entered
+by anyone, they cannot be bought.
+
+Private houses can actually be bought by a player, and their access can be
+configured for example to allow everyone in your party to enter it.
+Press 'h' to buy or sell a private house, or to change house parameters (for
+example giving all your party members access to it). You need to stand directly
+next to the house door to do this.
+The door colour of private houses will indicate the way it can be used:
+
+-a light green house door indicates that you are the owner,
 -a light brown house door indicates that the house is currently unowned
- (so you may buy it).
--a grey door indicates that this house is owned by someone and you don't have
- access to it.
+ (so you can buy it if you have sufficient funds).
+-a grey door indicates that this house is already owned by someone and you
+ don't have access to it.
 -a light blue door indicates that you may access this house because it's set
  to party access for your party.
--a white door indicates that you may access this house because your race or
- class is matching an according race/class access rule.
--an orange door indicates that you will have party access to this house, as
- soon as your level matches the door level set by its owner.
+-a white door indicates that it's a house with party access as well as
+ race/class restriction, and you may access it because your race and/or class
+ is matching. You must also be in the same party as the owner of course.
+-a yellow door indicates that you will have access to this house, as soon as
+ your level matches the door level set by its owner.
+-an orange door indicates that it's a house that offers party access, but you
+ still cannot access it due to additional race/class restrictions.
 -a violet door indicates that you may access this house because you're in the
  same guild as the owner, ie the house is set to 'guild access'.
-If you forgot which houses you own, type ~6 to see a list of your houses.
+ (Note: Guild access is currently disabled.)
 
+If you forgot which houses you own, type ~6 or use the /houses command to see a
+list of your houses.
+The house owner can always access his house and cannot lock himself out by
+setting restrictions. The door will always be displayed light green to him.
+
+Note: The colour of house walls and doors are affected by day/night, so in the
+night the colours will not be accurate but darker, until you come close enough
+that the door is within your lamp's light radius.
+
+WARNING:
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
+
+
+More details about configuring house access ('h' key while standing next to the
+door):
+
+-Level requirements will count additionally to any other rule.
+-Class access is an additional restriction of party access.
+-Race access is an additional restriction of party access.
+-Currently, race/class restrictions cannot be defined freely but will always be
+ the same as the house owner.
 
 
 
@@ -3134,12 +3181,14 @@ Hunger  -Gorged         Your speed gets reduced by 10.
         -Weak (yellow)
         -Weak (orange)
         -Weak (red)     You lose hit points and get paralyzed even with FA.
-                        If you hit a bowel cramps trap, you instantly enter
+         (starving)     If you hit a bowel cramps trap, you instantly enter
                         this nutrition state. 'Slow Digestion' will help to
                         not get insta-paralyzed!
+        You will regenerate hit points slower if you are weak, and not at
+        all if you are starving (red 'Weak').
 
-Slowdown        Monsters can cast spells or breathe (inertia) to slow down
-                the player. This effect is temporary. 'Free Action' helps
+Slowdown        Monsters can cast spells or breathe (inertia, gravity) to slow
+                the player down. This effect is temporary. 'Free Action' helps
                 a bit to reduce the effect from inertia breath.
 
 Stun    -Stun           Reduces to-hit and to-dam.
@@ -3210,10 +3259,14 @@ independent of admin intervention.
 Here is a list of currently implemented automatic quests and events:
 
 Kill quest
-    To receive a kill quest, simply type "/quest" in the chat. There is a
-    certain time limit which is in most cases easily sufficient though.
+    To receive a kill quest, visit the major in the town hall (one of the '+'
+    doors in town), or simply type "/quest" in the chat.
+    There is a certain time limit which is in most cases easily sufficient
+    though, especially if you have the according ESP ability.
     If you fulfil the kill quest you received, you will be rewarded with a
-    good or great item, depending on the difficulty (monster level).
+    good or great item, depending on the difficulty (monster level) and chance.
+    If you fail to complete your quest, the quest will be dropped and you can
+    just get a new one if you want to. There is no penalty.
 
 Highlander Tournament
     This is an event rather than a quest. When you see a message, announcing
@@ -3232,7 +3285,7 @@ Highlander Tournament
 
 Arena Monster Challenge
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
-    even on the top floor of Bree's training tower, which will allow any Joe
+    event on the top floor of Bree's training tower, which will allow any Joe
     and Jane to experience top-notch fights against creatures that usually
     pose leathal threat. In this illusonary arena, players will experience
     a fight that seems absolutely real, but they won't suffer any
@@ -3240,6 +3293,13 @@ Arena Monster Challenge
     always wanted to challenge but never dared in real dungeoneer's life!
     It's also possible to challenge ego monsters (such as veteran archers or
     holy animals). The arena corners are safe zones and allow for spectating.
+    Note that you cannot die or suffer various hazardous effects in the arena,
+    and monsters cannot summon. Hint: If you want to spice a monster up, try
+    the /scream command while it's in your line of sight.
+    Note: Be careful about monsters that can disarm you. If your weapon drops
+    to the floor right the moment the event finally ends, you will lose it
+    because everyone gets teleported to town automatically and the arena is
+    removed (and your weapon with it).
 
 
 
@@ -3347,7 +3407,8 @@ shield has magical reflection ability, you won't be able to utilize it.
 Depending on your server settings, your character might have a chance to parry
 attacks with his weapon and block attacks with his shield, provided he uses
 one. For more details about class-specific ability to utilize weapons and
-shields for parrying and blocking, see (6.5), for more details see (6.11).
+shields for parrying and blocking, see (6.5), for more details about parrying
+and blocking in general see (6.11).
 In general, the bigger a weapon the more you may parry, while the bigger a
 shield the more you will block!
 Last but not least, training "Weaponmastery" skill will also increase your
@@ -3357,11 +3418,12 @@ parry chance a good deal.
 
 (5.2) Ranged Weapons, brands
 ----------------------------
-Ranged weapons are not to underestimate, they can be very powerful. Especially
-characters with low Hit Points will love them since approaching hordes can be
-killed at a distance or at least driven back, so they won't come close and hit
-the player with devastating blows. It is recommended that you equip a ranged
-weapon as soon as possible, and enchant its 'to-damage' to at least +7 !
+Ranged weapons are not to be underestimated, they can be very powerful.
+Especially characters with low Hit Points will love them since approaching
+hordes can be killed at a distance or at least driven back, so they won't come
+close and hit the player with devastating blows. It is recommended that you
+equip a ranged weapon as soon as possible, and enchant its 'to-damage' to at
+least +7 !
 
 Ranged weapons have to-hit and to-dam like melee weapons, but instead of
 dice they have a 'multiplier'.
@@ -3373,7 +3435,7 @@ If you shoot an arrow, it will inflict
 up to 4, so we can do a damage of 24 up to 33, so the average damage is 28,5.
 We can see here that ranged weapons can do a lot of damage :)
 
-Ranged weapons will be placed in equipment slot 'b)'. After you equipped one,
+Ranged weapons will be placed in equipment slot 'c)'. After you equipped one,
 you need to also equip ammunition that will be used. For example if you use a
 long bow, you need to fill your quiver with some arrows. (w)ield the arrows,
 and they will be placed into equipment slot 'm)', the ammo slot.
@@ -8211,13 +8273,25 @@ In my opinion playing TomeNET can be called "the art not to die".
 (8.2) Character Dumps
 ---------------------
 You should send in character dumps, if you have reached an intermediate level,
-to http://angband.oook.cz/ ! You can create a character dump by invoking the
-character screen by pressing 'C' and then pressing 'f' (as it states at the
-bottom). These dumps are always interesting to see. Your character doesn't need
-to have achieved a high level for sending in a dump. Every level is fine.
+to http://angband.oook.cz/ or if it died an interesting death or if something
+unusual happened to your character, or if you just want to show off your
+special way of distributing skill points. Character dumps are always nice to
+view. :)
+
+You can create a character dump by invoking the character screen by pressing
+'C' and then pressing 'f' (as it states at the bottom).
+
 Character dumps are automatically created in your /TomeNET/lib/user folder
 if your character dies. The filename is charactername-death.txt, for example
 Gandalf-death.txt. (no overwrite-check is performed.)
+
+Clients of version greater than plain 4.4.2 will also generate an automatic
+dump when you win the game by defeating Morgoth. Following above's example,
+it will be named Gandalf-victory.txt accordingly.
+
+Also, newer clients will automatically take an xhtml screenshot too when a
+char dump is made, of same name but with .xhtml ending. Those can be viewed
+in most webbrowsers.
 
 
 
