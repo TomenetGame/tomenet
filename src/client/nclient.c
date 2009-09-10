@@ -905,21 +905,33 @@ static int Net_packet(void)
 			Sockbuf_clear(&rbuf);
 			break;
 		}
-		else{
-		if ((result = (*receive_tbl[type])()) <= 0)
-		{
-			if (result == -1)
+		else {
+			char *foo = rbuf.ptr;
+			if ((result = (*receive_tbl[type])()) <= 0)
 			{
-				if (type != PKT_QUIT)
+				/* Check whether the socket buffer has advanced */
+				if (rbuf.ptr == foo)
 				{
-					errno = 0;
-					plog(format("Processing packet type (%d, %d) failed", type, prev_type));
+					/* Return code 0 means that there wasn't enough data in the socket buffer */
+					if (result == 0)
+					{
+						/* Move the remaining data to the queue buffer - mikaelh */
+						Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len);
+					}
 				}
-				return -1;
+
+				if (result == -1)
+				{
+					if (type != PKT_QUIT)
+					{
+						errno = 0;
+						plog(format("Processing packet type (%d, %d) failed", type, prev_type));
+					}
+					return -1;
+				}
+				Sockbuf_clear(&rbuf);
+				break;
 			}
-			Sockbuf_clear(&rbuf);
-			break;
-		}
 		}
 		prev_type = type;
 	}
