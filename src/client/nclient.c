@@ -2872,7 +2872,8 @@ int Receive_chardump(void)
 	char	ch;
 	int	n;
 	char tmp[160], tmp2[20];
-	
+
+	/* assume death dump at first */
 	strcpy(tmp2, "-death");
 
 #if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 2 && VERSION_EXTRA > 0) || \
@@ -2887,7 +2888,7 @@ int Receive_chardump(void)
 	/* Access the main view */
         if (screen_icky) Term_switch(0);
 
-	/* additionally do a screenshot of the death scene */
+	/* additionally do a screenshot of the scene */
 	xhtml_screenshot(format("%s%s-screenshot", cname, tmp2));
 
 	if (screen_icky) Term_switch(0);
