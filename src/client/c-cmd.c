@@ -1834,10 +1834,10 @@ static void cmd_house_chmod(int dir){
 	Term_clear();
 	Term_putstr(0, 2, -1, TERM_BLUE, "Set new permissions");
 	if (get_check("Allow party access? ")) mod |= ACF_PARTY;
-	if (get_check("Allow class access? ")) mod |= ACF_CLASS;
-	if (get_check("Allow race access? ")) mod |= ACF_RACE;
-	if (get_check("Allow winner access? ")) mod |= ACF_WINNER;
-	if (get_check("Allow fallen winner access? ")) mod |= ACF_FALLENWINNER;
+	if (get_check("Restrict access to class? ")) mod |= ACF_CLASS;
+	if (get_check("Restrict access to race? ")) mod |= ACF_RACE;
+	if (get_check("Restrict access to winners? ")) mod |= ACF_WINNER;
+	if (get_check("Restrict access to fallen winners? ")) mod |= ACF_FALLENWINNER;
 	if (get_check("Restrict access to no-ghost players? ")) mod |= ACF_NOGHOST;
 	minlev=c_get_quantity("Minimum level: ", 127);
 	if(minlev>1) mod |= ACF_LEVEL;
