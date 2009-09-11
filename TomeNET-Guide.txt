@@ -2775,6 +2775,9 @@ The 1..9 are standard shops, namely..
                         See (5.7) for more information about ID, *ID*, shops!
         Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
                         more information about Black Breath.)
+        Morph Restoration
+                        Restores your form to normal in case you were
+                        polymorphed (for example by a potion of Chauve-Souris).
         Enchant Services
                         These will enchant weapons, arrows, or all armour
                         parts you currently have equipped.
@@ -4535,7 +4538,7 @@ Self-Knowledge  Tells you everything about yourself :)
 Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 to your original form. A wand/rod of polymorph might help too.
                 Make sure you don't resist nexus if someone tries to polymorph
-                you back.
+                you back. Or just use 'Morph Restoration' service.
 Enlightenment   Illuminates and maps the whole level and reveals all objects.
 *Enlightenment* Raises your intelligence and wisdom, detect treasures,
                 objects, secret doors, traps. Identifies all items. And tells
@@ -5990,7 +5993,8 @@ Take care on the following combinations:
                                 by using his mimic powers.
                                 His form CAN still change though, if he is
                                 zapped with a wand of polymorph, quaffs a
-                                potion of Chauve-Souris, or.. dies, three
+                                potion of Chauve-Souris, uses Morph Restoration
+                                service of a shop or.. dies, three
                                 things that he probably wants to avoid at all
                                 costs in order to keep his 'final' form.
 
@@ -6883,7 +6887,13 @@ A player can use a ring that carries a monster form, by wearing it and
 activating it. The user needs a mimicry skill of at least 1/2 the level of
 the monster in order to activate the ring. The ring will disintegrate and the
 player will polymorph into the according form, for the number of turns the
-ring specified.
+ring specified. The turns are depending on floor speed, which means they will
+run out faster on shallow levels and slower on deeper levels relative to
+real time, but in fact always at same speed in character time!
+As a rule of thumb, a dungeon turn lasts about 1 second on average (noticably
+less in town or very shallow levels).
+However, the remaining polymorph duration will stop decreasing while you are
+in a town, so you don't have to hurry while shopping.
 
 Players can also create monster rings out of 'polymorph player' rings, by
 mimicking the according form, then wearing the ring and activating it.
