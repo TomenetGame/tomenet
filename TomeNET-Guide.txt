@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. September 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 11. September 2009 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.2 - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
@@ -3121,25 +3121,40 @@ configured for example to allow everyone in your party to enter it.
 Press 'h' to buy or sell a private house, or to change house parameters (for
 example giving all your party members access to it). You need to stand directly
 next to the house door to do this.
-The door colour of private houses will indicate the way it can be used:
+The door colour of private houses will indicate the door permissions,
+ie which players may access it:
 
--a light green house door indicates that you are the owner,
 -a light brown house door indicates that the house is currently unowned
  (so you can buy it if you have sufficient funds).
+
+-a light green house door indicates that you are the owner.
+
 -a grey door indicates that this house is already owned by someone and you
  don't have access to it.
+
 -a light blue door indicates that you may access this house because it's set
  to party access for your party.
--a white door indicates that it's a house with party access as well as
- race/class restriction, and you may access it because your race and/or class
- is matching. You must also be in the same party as the owner of course.
--a yellow door indicates that you will have access to this house, as soon as
- your level matches the door level set by its owner.
--an orange door indicates that it's a house that offers party access, but you
- still cannot access it due to additional race/class restrictions.
+
 -a violet door indicates that you may access this house because you're in the
  same guild as the owner, ie the house is set to 'guild access'.
  (Note: Guild access is currently disabled.)
+
+-a yellow door indicates that you will have access to this house, as soon as
+ your level matches the level restriction set by its owner.
+
+Houses with party access allow further restrictions. Those are:
+
+-a white door indicates that the door has a race and/or class restriction,
+ and you may access it because you match the race/class of the owner.
+-an orange door indicates that you don't match a race/class restriction.
+
+-a light red door indicates that access is restricted to either winners
+ (Kings/Queens/Emperors/Empresses) or to fallen winners (winners who died and
+ thus lost their title), and you may access it because you match the condition.
+-a red door means that you fail to match above restriction.
+
+-a dark grey door means that this house may only be accessed by no-ghost
+ characters, that means either unworldly or hellish.
 
 If you forgot which houses you own, type ~6 or use the /houses command to see a
 list of your houses.
@@ -3153,16 +3168,6 @@ that the door is within your lamp's light radius.
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
-
-
-More details about configuring house access ('h' key while standing next to the
-door):
-
--Level requirements will count additionally to any other rule.
--Class access is an additional restriction of party access.
--Race access is an additional restriction of party access.
--Currently, race/class restrictions cannot be defined freely but will always be
- the same as the house owner.
 
 
 
