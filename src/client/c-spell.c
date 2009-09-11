@@ -61,7 +61,7 @@ static void print_mimic_spells()
 	put_str("a) Polymorph Self into next known form", j++, col);
 
 	prt("", j, col);
-	put_str("b) Polymorph Self into next known form with same extremities", j++, col);
+	put_str("b) Polymorph Self into next known form with fitting extremities", j++, col);
 
 	prt("", j, col);
 	put_str("c) Polymorph Self into..", j++, col);
