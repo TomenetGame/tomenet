@@ -6825,3 +6825,8 @@ extern int PlayerUID;
 #define WPOS_PVPARENA_X         0       /* location of pvp arena for MODE_PVP players */
 #define WPOS_PVPARENA_Y         0
 #define WPOS_PVPARENA_Z		1
+
+
+/* Client-side auto inscriptions */
+#define MAX_AUTO_INSCRIPTIONS 20
+
