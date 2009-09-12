@@ -165,7 +165,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	}
 	else
 	{
-		if (level >= PY_MAX_LEVEL)
+		if (level >= PY_MAX_LEVEL || !adv)
 		{
 			(void)sprintf(tmp, "*********");
 		}
@@ -2112,7 +2112,7 @@ void display_player(int hist)
 		prt_lnum("Experience ", p_ptr->exp, 9, 28, TERM_YELLOW);
 	}
 	prt_lnum("Max Exp    ", p_ptr->max_exp, 10, 28, TERM_L_GREEN);
-	if (p_ptr->lev >= PY_MAX_LEVEL)
+	if (p_ptr->lev >= PY_MAX_LEVEL || !exp_adv)
 	{
 		put_str("Exp to Adv.", 11, 28);
 		c_put_str(TERM_L_GREEN, "    *****", 11, 28+11);
