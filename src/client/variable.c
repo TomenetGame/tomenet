@@ -238,3 +238,7 @@ bool s_PARTY = FALSE;
 bool s_ARCADE = FALSE;
 bool s_TEST = FALSE;
 bool s_RPG_ADMIN = FALSE;
+
+/* Auto-inscriptions */
+char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
+char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
