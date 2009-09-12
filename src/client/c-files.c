@@ -1606,3 +1606,166 @@ void xhtml_screenshot(cptr name)
 	c_msg_print("Screenshot saved");
 }
 
+
+/* Save Auto-Inscription file (*.ins) - C. Blue */
+void save_auto_inscriptions(cptr name)
+{
+	FILE *fp;
+	char buf[1024];
+	char real_name[256];
+	int i;
+
+	strncpy(real_name, name, 249);
+	real_name[249] = '\0';
+
+	/* add '.ins' extension if not already existing */
+	if (strlen(name) > 4) {
+		if (name[strlen(name) - 1] == 's' &&
+		    name[strlen(name) - 2] == 'n' &&
+		    name[strlen(name) - 3] == 'i' &&
+		    name[strlen(name) - 4] == '.') {
+			/* fine */
+		} else strcat(real_name, ".ins");
+	} else strcat(real_name, ".ins");
+
+	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+	fp = fopen(buf, "w");
+	if (!fp)
+	{
+		/* Couldn't write */
+		c_msg_print("Saving Auto-inscriptions failed!");
+		return;
+	}
+
+	/* write header (1 line) */
+	fprintf(fp, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n",
+	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+
+	/* write inscriptions (2 lines each) */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		fprintf(fp, "%s\n", auto_inscription_match[i]);
+		fprintf(fp, "%s\n", auto_inscription_tag[i]);
+	}
+
+	fclose(fp);
+
+	c_msg_print("Auto-inscriptions saved.");
+}
+
+/* Load Auto-Inscription file (*.ins) - C. Blue */
+void load_auto_inscriptions(cptr name)
+{
+	FILE *fp;
+	char buf[1024];
+	char real_name[256];
+	int i, c, j;
+	bool replaced;
+
+	strncpy(real_name, name, 249);
+	real_name[249] = '\0';
+
+	/* add '.ins' extension if not already existing */
+	if (strlen(name) > 4) {
+		if (name[strlen(name) - 1] == 's' &&
+		    name[strlen(name) - 2] == 'n' &&
+		    name[strlen(name) - 3] == 'i' &&
+		    name[strlen(name) - 4] == '.') {
+			/* fine */
+		} else strcat(real_name, ".ins");
+	} else strcat(real_name, ".ins");
+
+	path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
+
+	fp = fopen(buf, "r");
+	if (!fp)
+	{
+		/* Couldn't open */
+		return;
+	}
+
+	/* load header (1 line) */
+	if (fgets(buf, 80, fp) == NULL) {
+		fclose(fp);
+		return;
+	}
+
+#if 0 /* completely overwrite/erase current auto-inscriptions */
+	/* load inscriptions (2 lines each) */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		if (fgets(auto_inscription_match[i], 40, fp) == NULL)
+			strcpy(auto_inscription_match[i], "");
+		if (strlen(auto_inscription_match[i])) auto_inscription_match[i][strlen(auto_inscription_match[i]) - 1] = '\0';
+
+		if (fgets(auto_inscription_tag[i], 20, fp) == NULL)
+			strcpy(auto_inscription_tag[i], "");
+		if (strlen(auto_inscription_tag[i])) auto_inscription_tag[i][strlen(auto_inscription_tag[i]) - 1] = '\0';
+	}
+
+	fclose(fp);
+//	c_msg_print("Auto-inscriptions loaded.");
+#else /* attempt to merge current auto-inscriptions somewhat */
+	/* load inscriptions (2 lines each) */
+	c = -1; /* current internal auto-inscription slot to set */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		replaced = FALSE;
+
+		/* try to read a match */
+		if (fgets(buf, 40, fp) == NULL) {
+			fclose(fp);
+			return;
+		}
+		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+
+		/* skip empty matches */
+		if (buf[0] == '\0') {
+			/* try to read according tag */
+			if (fgets(buf, 20, fp) == NULL) {
+				fclose(fp);
+				return;
+			}
+			continue;
+		}
+
+		/* check for duplicate entry (if it already exists)
+		   and replace older entry simply */
+		for (j = 0; j < MAX_AUTO_INSCRIPTIONS; j++) {
+			if (!strcmp(buf, auto_inscription_match[j])) {
+				/* try to read according tag */
+				if (fgets(buf, 20, fp) == NULL) {
+					fclose(fp);
+					return;
+				}
+				if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+				strcpy(auto_inscription_tag[j], buf);
+
+				replaced = TRUE;
+				break;
+			}
+		}
+		if (replaced) continue;
+
+		/* search for free match-slot */
+		c++;
+		while (strlen(auto_inscription_match[c]) && c < MAX_AUTO_INSCRIPTIONS) c++;
+		if (c == MAX_AUTO_INSCRIPTIONS) {
+			/* give a warning maybe */
+//			c_msg_print("Auto-inscriptions partially loaded and merged.");
+			fclose(fp);
+			return;
+		}
+		/* set slot */
+		strcpy(auto_inscription_match[c], buf);
+
+		/* load according tag */
+		if (fgets(buf, 20, fp) == NULL) {
+			fclose(fp);
+			return;
+		}
+		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
+		strcpy(auto_inscription_tag[c], buf);
+	}
+//	c_msg_print("Auto-inscriptions loaded/merged.");
+	fclose(fp);
+#endif
+}

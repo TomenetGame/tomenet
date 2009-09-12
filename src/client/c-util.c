@@ -3482,10 +3482,12 @@ void interact_macros(void)
 
 void auto_inscriptions(void)
 {
-#if 0
-	int i;
+#if 1
+	int i, cur_line = 0;
+	bool redraw = TRUE, quit = FALSE;
 
-	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr;
+	char tmp[160], buf[1024];
+	char match_buf[80], tag_buf[40];
 
 	char fff[1024];
 
@@ -3495,94 +3497,131 @@ void auto_inscriptions(void)
 	/* Process requests until done */
 	while (1)
 	{
-		for (i = 0; i < macro__num; i++)
-		{
-			if (i % 20 == 0) {
-				/* Clear screen */
-				Term_clear();
+		if (redraw) {
+			/* Clear screen */
+			Term_clear();
 
-				/* Describe */
-				Term_putstr(0,  1, -1, TERM_L_UMBER, format("  *** Current Auto-Inscriptions List (Entry %d-%d) ***", i + 1, i + 20 > macro__num ? macro__num : i + 20));
-				Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press 'n' to continue, 'p' for previous, ESC to exit]");
-				Term_putstr(5, 23, -1, TERM_WHITE, "(l/s) Load/save auto-inscriptions from/to an ins file");
-				Term_putstr(5, 24, -1, TERM_WHITE, "(a/e/d) Add/edit/delete an auto-inscription");
+			/* Describe */
+			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
+			Term_putstr(14, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, ESC to exit]");
+			Term_putstr(13, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an ins file");
+			Term_putstr(17, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current/delete current/CLEAR ALL");
+
+			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+				/* build a whole line */
+				strcpy(match_buf, "\377s<\377w");
+				strcat(match_buf, auto_inscription_match[i]);
+				strcat(match_buf, "\377s>");
+				strcpy(tag_buf, "\377y");
+				strcat(tag_buf, auto_inscription_tag[i]);
+				sprintf(fff, "%2d) %-46s      %s", i + 1, match_buf, tag_buf);
+
+				Term_putstr(5, i + 1, -1, TERM_WHITE, fff);
 			}
+		}
+		redraw = TRUE;
 
-			/* build a whole line */
-			sprintf(fff, "%s %-49.49s", buf, buf2);
+		/* display editing 'cursor' */
+		Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, ">>>");
 
-			Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
+		/* Wait for keypress */
+		switch (inkey()) {
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			redraw = FALSE;
+			break;
+		case ESCAPE:
+			quit = TRUE; /* hack to leave loop */
+			break;
+		case 'n':
+			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			cur_line++;
+			if (cur_line >= 20) cur_line = 0;
+			redraw = FALSE;
+			break;
+		case 'p':
+			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			cur_line--;
+			if (cur_line < 0) cur_line = 19;
+			redraw = FALSE;
+			break;
+		case 'l':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Load an .ins file ***");
 
-			/* Wait for keypress before displaying more */
-			if ((i % 20 == 19) || (i == macro__num - 1)) switch (inkey()) {
-				case ESCAPE:
-					i = -2; /* hack to leave for loop */
-					break;
-				case 'p':
-				case '\010': /* backspace */
-					if (i >= 39) {
-						/* show previous 20 entries */
-						i -= 20 + (i % 20) + 1;
-					} else { /* wrap around */
-						i = macro__num - (macro__num % 20) - 1;
-					}
-					break;
-				case KTRL('T'):
-					/* Take a screenshot */
-					xhtml_screenshot("screenshot????");
-					/* keep current list */
-					i -= (i % 20) + 1;
-					break;
-				case 'l':
-					/* Prompt */
-					Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Load a user ins file");
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
 
-					/* Get a filename, handle ESCAPE */
-					Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			sprintf(tmp, "%s.ins", cname);
 
-					sprintf(tmp, "%s.ins", cname);
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0, 0)) continue;
 
-					/* Ask for a file */
-					if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			/* Process the given filename */
+			load_auto_inscriptions(tmp);
+			break;
+		case 's':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save an .ins file ***");
 
-					/* Process the given filename */
-		//			(void)process_pref_file(tmp);
-				}
-				case 's':
-					/* Prompt */
-					Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Save to an ins file");
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
 
-					/* Get a filename, handle ESCAPE */
-					Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			sprintf(tmp, "%s.ins", cname);
 
-					sprintf(tmp, "%s.prf", cname);
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0, 0)) continue;
 
-					/* Ask for a file */
-					if (!askfor_aux(tmp, 70, 0, 0)) continue;
+			/* Dump the macros */
+			save_auto_inscriptions(tmp);
+			break;
+		case 'e':
+			/* Clear previous matching string */
+			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
+			/* Go to the correct location */
+			Term_gotoxy(10, cur_line + 1);
+			strcpy(buf, auto_inscription_match[cur_line]);
+			/* Get a new matching string */
+			if (!askfor_aux(buf, 40, 0, 0)) continue;
+			strcpy(auto_inscription_match[cur_line], buf);
 
-					/* Dump the macros */
-		//			(void)macro_dump(tmp);
-				case 'a':
-					/* Go to the correct location */
-					Term_gotoxy(0, 21);
+			/* Clear previous tag string */
+			Term_putstr(55, cur_line + 1, -1, TERM_L_GREEN, "                    ");
+			/* Go to the correct location */
+			Term_gotoxy(55, cur_line + 1);
+			strcpy(buf, auto_inscription_tag[cur_line]);
+			/* Get a new matching string */
+			if (!askfor_aux(buf, 20, 0, 0)) continue;
+			strcpy(auto_inscription_tag[cur_line], buf);
 
-					/* Hack -- limit the value */
-					tmp[80] = '\0';
-
-					/* Get an encoded action */
-					if (!askfor_aux(buf, 80, 0, 0)) continue;
-				case 'n':
-					/* show next 20 entries */
-					if (i == macro__num - 1) i = -1; /* restart list at 1st macro again */
-					break;
-				default:
-					/* Oops */
-					bell();
+			/* comfort hack - fake advancing ;) */
+			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			cur_line++;
+			if (cur_line >= 20) cur_line = 0;
+			break;
+		case 'd':
+			strcpy(auto_inscription_match[cur_line], "");
+			strcpy(auto_inscription_tag[cur_line], "");
+			break;
+		case 'c':
+			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+				strcpy(auto_inscription_match[i], "");
+				strcpy(auto_inscription_tag[i], "");
 			}
+			/* comfort hack - jump to first line */
+			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
+			cur_line = 0;
+			break;
+		default:
+			/* Oops */
+			bell();
 		}
 
 		/* Leave */
-		if (i == -2) break;
+		if (quit) break;
 
 	}
 

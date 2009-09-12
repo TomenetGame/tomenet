@@ -1438,6 +1438,10 @@ int Receive_inven(void)
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
 
+	int i;
+	char *ex, ex_buf[MAX_CHARS];
+	bool auto_inscribe = FALSE;
+
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
 		return n;
@@ -1459,6 +1463,52 @@ int Receive_inven(void)
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
+#if 0 /* AUTOINSCRIBE */
+	/* apply auto-inscriptions - C. Blue */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		/* skip empty item */
+		if (!strlen(inventory_name[pos - 'a'])) continue;
+		/* skip empty auto-inscriptions */
+		if (!strlen(auto_inscription_match[i])) continue;
+		if (!strlen(auto_inscription_tag[i])) continue;
+		/* found a matching inscription? */
+		if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) {
+			/* haaaaack: check for existing inscription! */
+			/* look for 1st '{' which must be level requirements on ANY item */
+			ex = strstr(inventory_name[pos - 'a'], "{");
+			if (ex == NULL) continue; /* paranoia - should always be FALSE */
+			strcpy(ex_buf, ex + 1);
+			/* look for 2nd '{' which MUST be an inscription */
+			ex = strstr(ex_buf, "{");
+			/* no inscription? inscribe it then automatically */
+			if (ex == NULL) {
+				auto_inscribe = TRUE;
+				break;
+			}
+			/* check whether inscription is just a discount/stolen tag */
+			if (strstr(ex, "% off}") ||
+			    !strcmp(ex, "on sale}") ||
+			    !strcmp(ex, "stolen}")) {
+				/* if so, auto-inscribe it instead */
+				auto_inscribe = TRUE;
+				break;
+			}
+		}
+	}
+	/* send the new inscription */
+	if (auto_inscribe) {
+		/* security hack: avoid infinite looping */
+		if (strstr(auto_inscription_tag[i], "% off") ||
+		    !strcmp(auto_inscription_tag[i], "on sale") ||
+		    !strcmp(auto_inscription_tag[i], "stolen")) {
+			auto_inscribe = FALSE;
+		} else {
+			/* engage */
+			Send_inscribe(pos - 'a', auto_inscription_tag[i]);
+		}
+	}
+#endif
+
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 
@@ -1474,6 +1524,10 @@ int Receive_inven_wide(void)
 	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
+
+	int i;
+	char *ex, ex_buf[MAX_CHARS];
+	bool auto_inscribe = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
 	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
@@ -1506,6 +1560,52 @@ int Receive_inven_wide(void)
 	inventory[pos - 'a'].xtra9 = xtra9;
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
+
+#if 0 /* AUTOINSCRIBE */
+	/* apply auto-inscriptions - C. Blue */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		/* skip empty item */
+		if (!strlen(inventory_name[pos - 'a'])) continue;
+		/* skip empty auto-inscriptions */
+		if (!strlen(auto_inscription_match[i])) continue;
+		if (!strlen(auto_inscription_tag[i])) continue;
+		/* found a matching inscription? */
+		if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) {
+			/* haaaaack: check for existing inscription! */
+			/* look for 1st '{' which must be level requirements on ANY item */
+			ex = strstr(inventory_name[pos - 'a'], "{");
+			if (ex == NULL) continue; /* paranoia - should always be FALSE */
+			strcpy(ex_buf, ex + 1);
+			/* look for 2nd '{' which MUST be an inscription */
+			ex = strstr(ex_buf, "{");
+			/* no inscription? inscribe it then automatically */
+			if (ex == NULL) {
+				auto_inscribe = TRUE;
+				break;
+			}
+			/* check whether inscription is just a discount/stolen tag */
+			if (strstr(ex, "% off}") ||
+			    !strcmp(ex, "on sale}") ||
+			    !strcmp(ex, "stolen}")) {
+				/* if so, auto-inscribe it instead */
+				auto_inscribe = TRUE;
+				break;
+			}
+		}
+	}
+	/* send the new inscription */
+	if (auto_inscribe) {
+		/* security hack: avoid infinite looping */
+		if (strstr(auto_inscription_tag[i], "% off") ||
+		    !strcmp(auto_inscription_tag[i], "on sale") ||
+		    !strcmp(auto_inscription_tag[i], "stolen")) {
+			auto_inscribe = FALSE;
+		} else {
+			/* engage */
+			Send_inscribe(pos - 'a', auto_inscription_tag[i]);
+		}
+	}
+#endif
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
@@ -1610,6 +1710,9 @@ int Receive_char_info(void)
 	{
 		initialize_player_pref_files();
 		player_pref_files_loaded = TRUE;
+
+		/* hack: also load auto-inscriptions here */
+		initialize_player_ins_files();
 
 		/* Pref files may change settings, so reload the keymap - mikaelh */
 		keymap_init();
@@ -3207,6 +3310,10 @@ int Receive_inventory_revision(void)
 	char ch;
 	int revision;
 
+	int i, v;
+	char *ex, ex_buf[MAX_CHARS];
+	bool auto_inscribe;
+
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
 	{
 		return n;
@@ -3214,6 +3321,56 @@ int Receive_inventory_revision(void)
 
 	p_ptr->inventory_revision = revision;
 	Send_inventory_revision(revision);
+
+#if 1 /* AUTOINSCRIBE */
+	/* apply auto-inscriptions - C. Blue */
+    for (v = 0; v <= INVEN_PACK; v++) {
+	auto_inscribe = FALSE;
+
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		/* skip empty item */
+		if (!strlen(inventory_name[v])) continue;
+		/* skip empty auto-inscriptions */
+		if (!strlen(auto_inscription_match[i])) continue;
+		if (!strlen(auto_inscription_tag[i])) continue;
+		/* found a matching inscription? */
+		if (strstr(inventory_name[v], auto_inscription_match[i])) {
+			/* haaaaack: check for existing inscription! */
+			/* look for 1st '{' which must be level requirements on ANY item */
+			ex = strstr(inventory_name[v], "{");
+			if (ex == NULL) continue; /* paranoia - should always be FALSE */
+			strcpy(ex_buf, ex + 1);
+			/* look for 2nd '{' which MUST be an inscription */
+			ex = strstr(ex_buf, "{");
+			/* no inscription? inscribe it then automatically */
+			if (ex == NULL) {
+				auto_inscribe = TRUE;
+				break;
+			}
+			/* check whether inscription is just a discount/stolen tag */
+			if (strstr(ex, "% off}") ||
+			    !strcmp(ex, "on sale}") ||
+			    !strcmp(ex, "stolen}")) {
+				/* if so, auto-inscribe it instead */
+				auto_inscribe = TRUE;
+				break;
+			}
+		}
+	}
+	/* send the new inscription */
+	if (auto_inscribe) {
+		/* security hack: avoid infinite looping */
+		if (strstr(auto_inscription_tag[i], "% off") ||
+		    !strcmp(auto_inscription_tag[i], "on sale") ||
+		    !strcmp(auto_inscription_tag[i], "stolen")) {
+			auto_inscribe = FALSE;
+		} else {
+			/* engage */
+			Send_inscribe(v, auto_inscription_tag[i]);
+		}
+	}
+    }
+#endif
 
 	return 1;
 }

@@ -189,6 +189,43 @@ void initialize_player_pref_files(void){
 	process_pref_file(buf);
 }
 
+/* handle auto-loading of auto-inscription files (*.ins) on logon */
+void initialize_player_ins_files(void) {
+	char buf[1024];
+	int i;
+
+	/* start with empty auto-inscriptions list */
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		strcpy(auto_inscription_match[i], "");
+		strcpy(auto_inscription_tag[i], "");
+	}
+
+	/* Access the "race" ins file */
+	if (race < Setup.max_race)
+	{
+		sprintf(buf, "%s.ins", race_info[race].title);
+		load_auto_inscriptions(buf);
+	}
+
+	/* Access the "class" ins file */
+	if (class < Setup.max_class)
+	{
+		sprintf(buf, "%s.ins", class_info[class].title);
+		load_auto_inscriptions(buf);
+	}
+
+	/* Access the "account" ins file */
+	sprintf(buf, "%s.ins", nick);
+	load_auto_inscriptions(buf);
+
+	/* Access the "character" ins file */
+	/* hack: only if account and character name aren't the same */
+	if (strcmp(nick, cname)) {
+		sprintf(buf, "%s.ins", cname);
+		load_auto_inscriptions(buf);
+	}
+}
+
 
 /*
  * Loop, looking for net input and responding to keypresses.

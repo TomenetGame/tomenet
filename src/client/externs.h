@@ -272,6 +272,10 @@ extern bool s_ARCADE;
 extern bool s_TEST;
 extern bool s_RPG_ADMIN;
 
+/* Auto-inscriptions */
+extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
+extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
+
 
 /*
  * Not-so-Automatically generated "function declarations"
@@ -371,12 +375,15 @@ extern errr file_character(cptr name, bool full);
 extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name);
+extern void save_auto_inscriptions(cptr name);
+extern void load_auto_inscriptions(cptr name);
 
 /* c-init.c */
 extern void init_schools(s16b new_size);
 extern void init_spells(s16b new_size);
 extern void initialize_main_pref_files(void);
 extern void initialize_player_pref_files(void);
+extern void initialize_player_ins_files(void);
 extern void client_init(char *argv1, bool skip);
 extern s32b char_creation_flags;
 
