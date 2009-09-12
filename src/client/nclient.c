@@ -1480,7 +1480,7 @@ int Receive_inven(void)
 		/* no inscription? inscribe it then automatically */
 		if (ex == NULL) auto_inscribe = TRUE;
 		/* check whether inscription is just a discount/stolen tag */
-		if (strstr(ex, "% off}") ||
+		else if (strstr(ex, "% off}") ||
 		    !strcmp(ex, "on sale}") ||
 		    !strcmp(ex, "stolen}"))
 			auto_inscribe = TRUE;
@@ -1576,7 +1576,7 @@ int Receive_inven_wide(void)
 		/* no inscription? inscribe it then automatically */
 		if (ex == NULL) auto_inscribe = TRUE;
 		/* check whether inscription is just a discount/stolen tag */
-		if (strstr(ex, "% off}") ||
+		else if (strstr(ex, "% off}") ||
 		    !strcmp(ex, "on sale}") ||
 		    !strcmp(ex, "stolen}"))
 			auto_inscribe = TRUE;
@@ -3335,7 +3335,7 @@ int Receive_inventory_revision(void)
 		/* no inscription? inscribe it then automatically */
 		if (ex == NULL) auto_inscribe = TRUE;
 		/* check whether inscription is just a discount/stolen tag */
-		if (strstr(ex, "% off}") ||
+		else if (strstr(ex, "% off}") ||
 		    !strcmp(ex, "on sale}") ||
 		    !strcmp(ex, "stolen}")) {
 			/* if so, auto-inscribe it instead */
