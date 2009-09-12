@@ -1438,9 +1438,11 @@ int Receive_inven(void)
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
 
+#if 0
 	int i;
 	char *ex, ex_buf[MAX_CHARS];
 	bool auto_inscribe = FALSE;
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
 	{
@@ -1525,9 +1527,11 @@ int Receive_inven_wide(void)
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
 
+#if 0
 	int i;
 	char *ex, ex_buf[MAX_CHARS];
 	bool auto_inscribe = FALSE;
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval,
 	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
