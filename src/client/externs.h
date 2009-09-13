@@ -702,3 +702,11 @@ extern int stricmp(cptr a, cptr b);
 /* main-win.c */
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 #endif
+
+#ifdef ENABLE_RCRAFT
+extern void do_runespell();
+extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
+extern r_imper r_imperatives[RG_MAX];
+extern r_type runespell_types[8];
+#endif
+

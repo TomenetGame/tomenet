@@ -827,6 +827,11 @@ void do_activate_skill(int x_idx, int item)
 			case MKEY_RUNE:
 				do_rune();
 				break;
+#ifdef ENABLE_RCRAFT
+			case MKEY_RCRAFT:
+				do_runespell();
+				break;
+#endif
 			case MKEY_STANCE:
 				do_stance();
 				break;

@@ -161,6 +161,13 @@ struct wilderness_type
 	u32b flags; /* various */
 	struct dungeon_type *dungeons;
 	s32b own;	/* King owning the wild */
+
+	/* for sector-by-sector (instead of global) client-side weather,
+	   we have more distinct possibilities easily now: */
+	int weather_type; /* stop(-1), none(0), rain(1), snow(2) */
+	int weather_wind; /* none(0), west(odd), east(even) - the higher the stronger */
+	int weather_intensity; /* [0] modify amount of elements cast in parallel */
+	int weather_speed; /* 'vertical wind', makes sense for snowflakes only: how fast they drop */
 };
 
 typedef struct dungeon_type dungeon_type;
@@ -710,6 +717,7 @@ struct cave_type
 {
 	u16b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
+	byte feat_org;		/* Feature type backup */
 	s16b o_idx;		/* Item index (in o_list) or zero */
 	s16b m_idx;		/* Monster index (in m_list) or zero */
 				/* or negative if a player */
@@ -848,21 +856,23 @@ struct object_type
 	u16b note_priority;		/* Added for making pseudo-id overwrite unique loot tags */
 
 #if 0	/* from pernA.. consumes memory, but quick. shall we? */
-        u16b art_name;      /* Artifact name (random artifacts) */
+        u16b art_name;			/* Artifact name (random artifacts) */
 
-        u32b art_flags1;        /* Flags, set 1  Alas, these were necessary */
-        u32b art_flags2;        /* Flags, set 2  for the random artifacts of*/
-        u32b art_flags3;        /* Flags, set 3  Zangband */
-        u32b art_flags4;        /* Flags, set 4  PernAngband */
-        u32b art_flags5;        /* Flags, set 5  PernAngband */
-        u32b art_esp;           /* Flags, set esp  PernAngband */
+        u32b art_flags1;        	/* Flags, set 1  Alas, these were necessary */
+        u32b art_flags2;        	/* Flags, set 2  for the random artifacts of*/
+        u32b art_flags3;        	/* Flags, set 3  Zangband */
+        u32b art_flags4;        	/* Flags, set 4  PernAngband */
+        u32b art_flags5;        	/* Flags, set 5  PernAngband */
+        u32b art_esp;           	/* Flags, set esp  PernAngband */
 #endif	/* 0 */
 
-	byte inven_order;	/* Inventory position if held by a player,
-				   only use is in xtra2.c when pack is ang_sort'ed */
+	byte inven_order;		/* Inventory position if held by a player,
+					   only use is in xtra2.c when pack is ang_sort'ed */
 
-	u16b next_o_idx;	/* Next object in stack (if any) */
-	u16b held_m_idx;	/* Monster holding us (if any) */
+	u16b next_o_idx;		/* Next object in stack (if any) */
+	u16b held_m_idx;		/* Monster holding us (if any) */
+
+	s16b cheeze_dlv, cheeze_plv, cheeze_plv_carry;	/* anti-cheeze */
 };
 
 /*
@@ -898,11 +908,11 @@ typedef struct monster_type monster_type;
 
 struct monster_type
 {
-   byte pet;
+   byte pet;			/* Special pet value (not an ID). 0 = not a pet. 1 = is a pet. */
    bool special;                   /* Does it use a special r_info ? */
    monster_race *r_ptr;            /* The aforementionned r_info */
 
-   s32b owner;                     /* Player owning it */
+   s32b owner;                     /* id of Player owning it */
 
    s16b r_idx;			/* Monster race index */
 
@@ -936,6 +946,7 @@ struct monster_type
    byte poisoned;		/* Monster is poisoned (unused) */
    byte blinded;		/* monster appears confused (unused: wrapped as confusion currently) */
    byte silenced;		/* monster can't cast spells for a short time (for new mindcrafters) */
+   int charmedignore;		/* monster is charmed in a way that it ignores players */
 
    u16b hold_o_idx;	/* Object being held (if any) */
 
@@ -1288,9 +1299,9 @@ struct dun_level
 	byte rn_x,rn_y;
 
 	u32b flags1;		/* LF1 flags */
-/*	u32b flags2; */		/* LF2 flags */
-	byte hgt;			/* Vault height */
-	byte wid;			/* Vault width */
+	u32b flags2;		/* LF2 flags */
+	byte hgt;		/* Vault height */
+	byte wid;		/* Vault width */
 /*	char feeling[80] */	/* feeling description */
 
 	cave_type **cave;	/* Leave this the last entry (for aesthetic reason) */
@@ -1311,7 +1322,7 @@ struct dungeon_type
 	u32b flags2;		/* DF2 flags */
 	byte maxdepth;		/* max height/depth */
 #if 0
-	rule_type rules[5];             /* Monster generation rules */
+	rule_type rules[5];	/* Monster generation rules */
 #else	/* 0 */
 	char r_char[10];	/* races allowed */
 	char nr_char[10];	/* races prevented */
@@ -1332,16 +1343,22 @@ struct town_type
 	u16b num_stores;	/* always 8 or unused atm. */
 	store_type *townstore;  /* pointer to the stores */
 	u16b type;		/* town type (0=vanilla, 1=bree etc) */
+
+	u16b terraformed_trees; /* keep track of and limit players modifying town layout */
+	u16b terraformed_walls; /* keep track of and limit players modifying town layout */
+	u16b terraformed_water; /* keep track of and limit players modifying town layout */
+	u16b terraformed_glyphs; /* keep track of and limit players modifying town layout */
 };
 
 typedef struct wilderness_type wilderness_type;
 
 struct wilderness_type
 {
-	u16b radius; /* the distance from the town */
-	u16b type;   /* what kind of terrain we are in */
+	u16b radius;	/* the distance from the town */
+	u16b type;	/* what kind of terrain we are in */
+	byte town_idx;	/* Which town resides exactly in this sector? */
 
-	u32b flags; /* various */
+	u32b flags;	/* various */
 	struct dungeon_type *tower;
 	struct dungeon_type *dungeon;
 	s16b ondepth;
@@ -1351,6 +1368,15 @@ struct wilderness_type
 	byte dn_x, dn_y;
 	byte rn_x, rn_y;
 	s32b own;	/* King owning the wild */
+
+	/* client-side worldmap-sector-specific weather:
+	   (possible ideas for future: transmit x,y,wid,hgt weather frame
+	   for current level too instead of always using full size gen.) */
+	int weather_type, weather_wind, weather_intensity, weather_speed;
+	bool weather_updated; /* notice any change in local weather (like a PR_ flag would do) */
+	int clouds_to_update; /* number of clouds that were changed since last update (for efficiency) */
+	bool cloud_updated[10]; /* 'has cloud been changed?' */
+	int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10], cloud_xm100[10], cloud_ym100[10], cloud_idx[10];
 };
 
 
@@ -1469,7 +1495,7 @@ struct player_race
 {
 	cptr title;			/* Type of race */
 
-	s16b r_adj[6];		/* Racial stat bonuses */
+	s16b r_adj[6];		/* Racial stat boni */
 
 	s16b r_dis;			/* disarming */
 	s16b r_dev;			/* magic devices */
@@ -1651,8 +1677,8 @@ corners of the house.
 #define MAXCOORD 200		/* Maximum vertices on non-rect house */
 
 struct house_type{
-	byte x,y;		/* Absolute starting coordinates */
-	byte dx,dy;		/* door coords */
+	byte x, y;		/* Absolute starting coordinates */
+	byte dx, dy;		/* door coords */
 	struct dna_type *dna;	/* house dna door information */
 	u16b flags;		/* house flags - HF_xxxx */
 	struct worldpos wpos;
@@ -1840,6 +1866,18 @@ struct account{
 	u16b flags;	/* account flags */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
+//#ifdef TEST_SERVER /*enable when converter function is implemented */
+	u32b expiry;	/* last time this account logged on (for expiry check) */
+	s32b cheeze;	/* value in gold of cheezed goods or money */
+	s32b cheeze_self; /* value in gold of cheezed goods or money to own characters */
+//#endif
+};
+/* Used for updating tomenet.acc structure: */
+struct account_old{
+	u32b id;	/* account id */
+	u16b flags;	/* account flags */
+	char name[30];	/* login */
+	char pass[20];	/* some crypts are not 13 */
 };
 
 typedef struct version_type version_type;
@@ -1856,8 +1894,8 @@ struct version_type {		/* Extended version structure */
 typedef struct inventory_change_type inventory_change_type;
 
 /*
-* Structure for keeping track of inventory changes
-*/
+ * Structure for keeping track of inventory changes
+ */
 struct inventory_change_type {
 	char type;
 	int revision;
@@ -1973,7 +2011,6 @@ struct player_type
 	s16b mhp;			/* Max hit pts */
 	s16b chp;			/* Cur hit pts */
 	u16b chp_frac;		/* Cur hit frac (times 2^16) */
-
 	s16b player_hp[PY_MAX_LEVEL];
 
 	s16b msp;			/* Max mana pts */
@@ -2010,6 +2047,9 @@ struct player_type
 	s16b px;
 
 	struct worldpos wpos;
+#ifdef ENABLE_RCRAFT
+	struct worldspot memory; /* Runemaster's remembered teleportation spot */
+#endif
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
@@ -2237,7 +2277,7 @@ struct player_type
 	s16b martyr;
 	s16b martyr_timeout;
 	s16b res_fear_temp;
-	s16b invuln;		/* Timed -- Invulnerable */
+	s16b invuln, invuln_applied;	/* Timed -- Invulnerable; helper var */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
 	s16b berserk;			/* Timed -- Berserk #2 */
@@ -2613,6 +2653,8 @@ struct player_type
 
 	/* any automatic savegame update to perform? (toggle) */
 	byte updated_savegame;
+	/* for automatic artifact reset (similar to updated_savegame) */
+	byte artifact_reset;
 	/* Give out a message telling to restart after LUA scripts were updated */
 	bool done_lua_updating;
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
@@ -2676,6 +2718,7 @@ struct player_type
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
 	int shoot_till_kill_book, shoot_till_kill_spell;
 	bool shadow_running;
+	bool dual_mode; /* for dual-wield: TRUE = dual-mode, FALSE = main-hand-mode */
 
 	/* NOT IMPLEMENTED YET: add spell array for quick access via new method of macroing spells
 	   by specifying the spell name instead of a book and position - C. Blue */
@@ -2694,6 +2737,18 @@ struct player_type
 	int kills, kills_lower, kills_higher, kills_equal;
 	int free_mimic, prevent_tele;
 	long heal_effect;
+	
+	/* for client-side weather */
+	bool panel_changed;
+	int custom_weather; /* used /cw command */
+
+	/* buffer for anti-cheeze system, just to reduce file access to tomenet.acc */
+	s32b cheeze_value, cheeze_self_value;
+
+	int mcharming;	/* for mindcrafters' charming */
+	u32b turns_on_floor;	/* number of turns spent on the current floor */
+	bool distinct_floor_feeling;	/* set depending on turns_on_floor */
+	bool sun_burn;		/* Player is vampire, currently burning in the sun? */
 };
 
 /* For Monk martial arts */
@@ -3109,8 +3164,85 @@ struct global_event_type
     int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
 };
 
+
+#ifdef ENABLE_RCRAFT
+
+typedef struct r_type r_type;
+/*
+Spell-method type list
+
+id:		Order of priority.
+type:	The flag itself. R_TYPE
+title:	It's description in english
+cost:	How many times it must occur in the method string before it is selected. When tied, shift to the type with lowest id. i.e. water three times selects both clouding and wave. Wave will be selected ultimately, because of its lower id.
+pen: 	Penalty for casting this type of spell: an mp multiplier.
+*/
+struct r_type
+{
+	byte id;
+	u32b type;
+	char * title;
+	byte cost;
+	byte pen;
+};
+
+typedef struct r_element r_element;
+/* Element list */
+struct r_element
+{
+	byte id;
+	char * title; /* Rune description */
+	char * e_syl; /* Word for incantation */
+	byte cost; /* Base cost for use, used to calculate mp/damage/fail rates */
+	u32b flags; /* Kinds of spells it can be used for */
+	u16b skill; /* The SKILL which governs it */
+	u32b self; /* Its flag */
+};
+
+typedef struct r_spell r_spell;
+/* Spell type list */
+struct r_spell
+{
+	int id;
+	char * title;
+	byte dam; /* Damage multipler */
+	byte pen; /* MP multiplier */
+	byte level; /* Average skill level for success */
+	byte fail; /* Average fail rate for char of that level */
+	u16b gf_type; //0 for special cases (non gf_typed spells)
+//	byte flags;
+};
+
+typedef struct r_imper r_imper;
+/*
+	Imperatives which dictate the style/severity of a spell 
+
+	These are handled in cast_runespell.
+*/
+struct r_imper
+{
+	int id;
+	char * name;
+	byte cost; //Cost multiplier
+	byte fail; //Fail multiplier
+	byte dam; //Damage multipler
+	byte danger; //Danger multiplier
+};
+
+typedef struct rspell_sel rspell_sel;
+/*
+	Runespell selectors
+*/
+struct rspell_sel
+{
+	long flags;
+	int type;
+};
+
+#endif /* ENABLE_RCRAFT */
+
+
 /* Auction system - mikaelh */
-#ifdef AUCTION_SYSTEM
 typedef struct bid_type bid_type;
 struct bid_type
 {
@@ -3129,10 +3261,9 @@ struct auction_type
 	char		*desc;			/* Item description */
 	s32b		starting_price;		/* Starting price */
 	s32b		buyout_price;		/* Buy-out price */
+	s32b		bids_cnt;		/* Number of bids */
 	bid_type	*bids;
-	int		bids_cnt;		/* Number of bids */
-	int		winning_bid;		/* The winning bid (after bidding is over) */
+	s32b		winning_bid;		/* The winning bid (after bidding is over) */
 	time_t		start;
 	time_t		duration;
 };
-#endif

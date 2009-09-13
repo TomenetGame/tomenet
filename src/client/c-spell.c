@@ -1260,3 +1260,467 @@ void do_ranged_technique()
 
   Send_activate_skill(MKEY_RANGED, 0, technique, 0, 0, 0);
 }
+
+
+#ifdef ENABLE_RCRAFT
+
+static void print_runes()
+{
+	int col = 20, j = 2;
+
+	/* Title the list */
+	prt("", 1, col); put_str("Element,      Rune", 1, col);
+	prt("", j, col); put_str("a) Fire:      aestus", j++, col);
+	prt("", j, col); put_str("b) Cold:      gelum", j++, col);
+	prt("", j, col); put_str("c) Acid:      delibro", j++, col);
+	prt("", j, col); put_str("d) Water:     mio", j++, col);
+	prt("", j, col); put_str("e) Lightning: fulmin", j++, col);
+	prt("", j, col); put_str("f) Earth:     ostes", j++, col);
+	prt("", j, col); put_str("g) Poison:    lepis", j++, col);
+	prt("", j, col); put_str("h) Wind:      ventus", j++, col);
+	prt("", j, col); put_str("i) Mana:      sacer", j++, col);
+	prt("", j, col); put_str("j) Chaos:     emuto", j++, col);
+	prt("", j, col); put_str("k) Force:     fero", j++, col);
+	prt("", j, col); put_str("l) Gravity:   numen", j++, col);
+	prt("", j, col); put_str("m) Nether:    elido", j++, col);
+	prt("", j, col); put_str("n) Time:      emero", j++, col);
+	prt("", j, col); put_str("o) Mind:      cogito", j++, col);
+	prt("", j, col); put_str("p) Nexus:     vicis", j++, col);
+	prt("", j, col); put_str("Press \"Return\" when done.", j++, col);
+	
+
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static void print_rune_imperatives()
+{
+	int col = 20, j = 2;
+
+	/* Title the list */
+	prt("", 1, col); put_str("Name      ( cost%,   damage%, fail%   )", 1, col);
+	prt("", j, col); put_str("a) qua    ( 50%,     50%,     100%    )", j++, col);
+	prt("", j, col); put_str("b) immo   ( 80%,     80%,     100%    )", j++, col);
+	prt("", j, col); put_str("c) oratu  ( 100%,    100%,    150%    )", j++, col);
+	prt("", j, col); put_str("d) multo  ( 120%,    120%,    200%    )", j++, col);
+	prt("", j, col); put_str("e) coactu ( 120%,    100%,    200%    )", j++, col);
+	prt("", j, col); put_str("f) armis  ( 150%,    120%,    300%    )", j++, col);
+	prt("", j, col); put_str("g) iussu  ( 180%,    150%,    400%    )", j++, col);
+	prt("", j, col); put_str("h) forte  ( 50-200%, 50-200%, 50-200% )", j++, col);
+
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static void print_rune_methods()
+{
+	int col = 20, j = 2;
+
+	/* Title the list */
+	prt("", 1, col); put_str("Name     ( cost% )", 1, col);
+	prt("", j, col); put_str("a) Melee ( 50%   )", j++, col);
+	prt("", j, col); put_str("b) Self  ( 100%  )", j++, col);
+	prt("", j, col); put_str("c) Bolt  ( 100%   )", j++, col);
+	prt("", j, col); put_str("d) Beam  ( 110%  )", j++, col);
+	prt("", j, col); put_str("e) Ball  ( 130%  )", j++, col);
+	prt("", j, col); put_str("f) Wave  ( 120%  )", j++, col);
+	prt("", j, col); put_str("g) Cloud ( 150%  )", j++, col);
+	prt("", j, col); put_str("h) Sight ( 400%  )", j++, col);
+
+	/* Clear the bottom line */
+	prt("", j++, col);
+}
+
+static int get_rune_type(u32b *sn)
+{
+	int		i = 0; int num = 16;
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+
+	/* Assume cancelled */
+	(*sn) = 17;
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all techniques) */
+	if (num)
+		strnfmt(out_val, 78, "(Elements %c-%c, *=List, ESC=exit) use which element? ",
+		    I2A(0), I2A(num-1));
+	else
+		strnfmt(out_val, 78, "No elements available - ESC=exit");
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of techniques */
+		print_runes();
+	}
+
+	/* Get a technique from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+
+				/* Save the screen */
+				Term_save();
+
+				/* Display a list of techniques */
+				print_runes();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+		if ((choice == '\n') || (choice == '\r') || (choice == '\e')|| (choice == 'q')) {
+			/* Hide list */
+			redraw = FALSE;
+
+			/* Restore the screen */
+			Term_load();
+
+			/* Flush any events */
+			Flush_queue();
+
+			return FALSE;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : 17);
+	      	if (i < 0) return FALSE;
+
+		/* Totally Illegal */
+		if (i>num)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+
+		/* Flush any events */
+		Flush_queue();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	if(i >= 0 && i < num)
+		(*sn) = r_elements[i].self;
+	else
+	{
+		*sn = 0;
+		return FALSE;
+	}
+
+	/* Success */
+	return (TRUE);
+}
+
+static int get_rune_imperative(byte *sn)
+{
+	int		i, num = 8;
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	byte            corresp[8];
+
+	for (i=0;i<8;i++)
+		corresp[i] = r_imperatives[i].id;
+
+	/* Assume cancelled */
+	(*sn) = 9;
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all techniques) */
+	if (num)
+		strnfmt(out_val, 78, "(Imperatives %c-%c, *=List, ESC=exit) use which imperative? ",
+		    I2A(0), I2A(num-1));
+	else
+		strnfmt(out_val, 78, "No elements available - ESC=exit");
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of techniques */
+		print_rune_imperatives();
+	}
+
+	/* Get a technique from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+
+				/* Save the screen */
+				Term_save();
+
+				/* Display a list of techniques */
+				print_rune_imperatives();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+	      	if (i >= num) i = num+1;
+
+		/* Totally Illegal */
+		if (i>num)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+
+		/* Flush any events */
+		Flush_queue();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	if(i>=0 && i<=num)
+	{
+		(*sn) = corresp[i];
+	}
+	else
+		return FALSE;
+
+	/* Success */
+	return (TRUE);
+}
+
+static int get_rune_method(u32b *sn, u16b * method)
+{
+	int		i, num = 8;
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	byte            corresp[8];
+
+	for (i=0;i<8;i++)
+		corresp[i] = runespell_types[i].type;
+
+	/* Assume cancelled */
+	(*sn) = 9;
+
+	/* Nothing chosen yet */
+	flag = FALSE;
+
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all techniques) */
+	if (num)
+		strnfmt(out_val, 78, "(Methods %c-%c, *=List, ESC=exit) use which method? ",
+		    I2A(0), I2A(num-1));
+	else
+		strnfmt(out_val, 78, "No methods available - ESC=exit");
+
+	if (c_cfg.always_show_lists)
+	{
+		/* Show list */
+		redraw = TRUE;
+
+		/* Save the screen */
+		Term_save();
+
+		/* Display a list of techniques */
+		print_rune_methods();
+	}
+
+	/* Get a technique from the user */
+	while (!flag && get_com(out_val, &choice))
+	{
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?'))
+		{
+			/* Show the list */
+			if (!redraw)
+			{
+				/* Show list */
+				redraw = TRUE;
+
+				/* Save the screen */
+				Term_save();
+
+				/* Display a list of techniques */
+				print_rune_methods();
+			}
+
+			/* Hide the list */
+			else
+			{
+				/* Hide list */
+				redraw = FALSE;
+
+				/* Restore the screen */
+				Term_load();
+
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+	       	/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+	      	if (i >= num) i = num+1;
+
+		/* Totally Illegal */
+		if (i > num)
+		{
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	/* Restore the screen */
+	if (redraw)
+	{
+		Term_load();
+
+		/* Flush any events */
+		Flush_queue();
+	}
+
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	if(i>=0 && i<=num)
+	{
+		(*sn) = corresp[i];
+		(*method) = i;
+	}
+	else
+		return FALSE;
+	/* Success */
+	return (TRUE);
+}
+
+void do_runespell()
+{
+	Term_load();
+	u32b s_flags = 0; u16b method = 0; byte imperative = 0; int dir = 0;
+	u32b flag = 0; int i = 0;
+	int part1 = 0; int part2 = 0;
+	for(i = 0; i<5; i++)
+	{
+		if(get_rune_type(&flag))
+		{
+			s_flags |= flag;
+			flag = 0;
+		}
+		else
+			break;
+	}
+	if(!s_flags) { Term_load(); return; } //Didn't set anything, user is trying to cancel
+
+	if(!get_rune_imperative(&imperative)){ Term_load(); return; }
+
+	if(!get_rune_method(&flag,&method)) { Term_load(); return; }
+	else
+		s_flags |= flag;
+
+	if(s_flags == 0) { Term_load(); return; } //Empty spell
+
+	if(method>=2)
+		if (!get_dir(&dir))
+			return;
+	Term_load();
+	/* Split the long into two ints */
+	part1 = s_flags / 10000;
+	part2 = s_flags % 10000;
+	Send_activate_skill(MKEY_RCRAFT, part1, part2, dir, (int)imperative, 0);
+}
+
+#endif
+

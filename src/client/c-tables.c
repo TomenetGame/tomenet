@@ -953,3 +953,63 @@ cptr ranged_techniques[16] =
   "XXX",
   "XXX",
 };
+
+
+#ifdef ENABLE_RCRAFT
+
+/*
+Runespell elements
+*/
+r_element r_elements[RCRAFT_MAX_ELEMENTS] =
+{
+	{ 0, "Heat", 		"aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
+	{ 1, "Cold", 		"gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
+	{ 2, "Acid", 		"delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
+	{ 3, "Water",		"mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
+	{ 4, "Lighting",	"fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
+	{ 5, "Earth", 		"ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
+	{ 6, "Poison", 		"lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
+	{ 7, "Wind", 		"ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
+	{ 8, "Mana", 		"sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
+	{ 9, "Chaos", 		"emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
+	{10, "Force", 		"fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
+	{11, "Gravity",		"numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
+	{12, "Nether", 		"elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
+	{13, "Time", 		"emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
+	{14, "Mind",		"cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
+	{15, "Nexus", 		"vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
+};
+
+
+/*
+Runespell imperatives
+*/
+r_imper r_imperatives [RG_MAX] =
+{
+	{RG_HOPE, "qua",	 5, 10,  5, 10 },
+	{RG_ASKS, "immo",	 8, 10,  8, 10 },
+	{RG_REQU, "oratu",	10, 15, 10, 10 },
+	{RG_VOLU, "multo",	12, 20, 12, 10 },
+	{RG_WILL, "coactu",	12, 20, 10, 20 },
+	{RG_MIGH, "armis",	15, 30, 12, 30 },
+	{RG_DEMA, "iussu",	18, 40, 15, 40 },
+	{RG_LUCK, "forte",	 0,  0,  0, 20 },
+};
+
+r_type runespell_types[8] =
+/*
+Runespell methods.
+*/
+{
+	{ 0, R_MELE, "shield", 	0, 5 },
+	{ 1, R_SELF, "self",  	1, 10 },
+	{ 2, R_BOLT, "bolt",  	1, 10 },
+	{ 3, R_BEAM, "beam",  	2, 11 },
+	{ 4, R_BALL, "ball",  	2, 13 },
+	{ 5, R_WAVE, "wave",  	3, 12 },
+	{ 6, R_CLOU, "cloud", 	3, 15 },
+	{ 7, R_LOS,  "sight", 	3, 40 },
+};
+
+#endif
+

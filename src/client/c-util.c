@@ -3346,7 +3346,11 @@ void interact_macros(void)
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '1'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
 				case 'n': /* draw a rune */
+#ifndef ENABLE_RCRAFT
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '2'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+#else
+					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '8'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
+#endif
 					bptr++;	break;
 				case 's': /* change stance */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '1'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
@@ -3366,7 +3370,7 @@ void interact_macros(void)
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf2);
-			
+
 			/* Prompt */
 			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
 

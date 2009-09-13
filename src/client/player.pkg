@@ -121,6 +121,17 @@ typedef unsigned int u32b;
 #define SKILL_FREEACT           92
 #define SKILL_RESCONF           93
 
+/* Relsiet's runecraft */
+#define SKILL_SCHOOL_RUNECRAFT	95
+#define SKILL_R_FIRECOLD	96
+#define SKILL_R_WATEACID	97
+#define SKILL_R_ELECEART	98
+#define SKILL_R_WINDPOIS	99
+#define SKILL_R_MANACHAO	100
+#define SKILL_R_FORCGRAV	101
+#define SKILL_R_NETHTIME	102
+#define SKILL_R_MINDNEXU	103
+
 /* Ugly but needed */
 #define MAX_SKILLS              128
 
