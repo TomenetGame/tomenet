@@ -129,7 +129,6 @@
 /* Allow a bunch of latest experimental changes to be compiled into this build? */
 
 #define ENABLE_RUNEMASTER	/* enable runemaster class */
-#define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
 
 #define ENABLE_NEW_MELEE	/* shields may block, weapons may parry */
 #define DUAL_WIELD		/* rogues (and others too now) may dual-wield 1-hand weapons */
