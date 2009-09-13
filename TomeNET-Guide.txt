@@ -9208,5 +9208,5 @@ SOLUTION B: If you are using X11, this problem may occur depending on your
 If TomeNET experiences changes/improvements you can also expect this guide to
 become updated shortly afterwards. Anyway, no guarantees ;)
 Please don't hesitate to send in bug reports or suggestions to mail@c-blue.de
-or (even better) use "/rfe" command in the game!
+or (even better) use the "/rfe" command in the game!
 ==============================================================================
