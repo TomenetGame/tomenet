@@ -3271,7 +3271,7 @@ void interact_macros(void)
 				    t_key, t_hyb ? "HY" : t_com ? "C " : "  ", buf2);
 
 				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
-				
+
 				/* Wait for keypress before displaying more */
 				if ((i % 20 == 19) || (i == macro__num - 1)) switch (inkey()) {
 					case ESCAPE:
@@ -3284,6 +3284,7 @@ void interact_macros(void)
 							i -= 20 + (i % 20) + 1;
 						} else { /* wrap around */
 							i = macro__num - (macro__num % 20) - 1;
+							if (i == macro__num - 1) i -= 20;
 						}
 						break;
 					case KTRL('T'):
