@@ -2231,11 +2231,13 @@ a spell name instead of a book name, and the game will search your books for
 that spell automatically.
 
 So, instead of inscribing your potions of Healing '@q1' and having a macro
-'\e)q1' you could also just have a macro '\e)q@Healing'.
+'\e)q1' you could also just have a macro '\e)q@Healing\r'.
 
 Or, instead of inscribing a Beginner Cantrips book '@m1' and macroing the spell
 manathrust with '\e)m@11\r9a*t' you could also just make a macro
-'\e)m@11\r@Manathrust*t' without the need to inscribe your book.
+'\e)m@11\r@Manathrust\r*t' without the need to inscribe your book.
+
+In fact you could make a macro '\e)m@Cast a spell\r@Manathrust\r*t'.
 
 
 
