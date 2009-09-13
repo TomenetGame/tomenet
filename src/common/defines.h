@@ -157,6 +157,8 @@
 /* --------------------- Server-type dependant features -------------------- */
 
 #ifdef RPG_SERVER
+ #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
+
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
@@ -6925,7 +6927,8 @@ extern int PlayerUID;
 #define S_COST_MIN 1
 #define S_COST_MAX 85
 #define S_DAM_MIN 5
-#define S_DAM_MAX 1480
+//#define S_DAM_MAX 1480
+#define S_DAM_MAX 500
 
 /*	Rune spell types
 
