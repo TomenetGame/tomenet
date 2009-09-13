@@ -1349,7 +1349,7 @@ static int get_rune_type(u32b *sn)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Elements %c-%c, *=List, ESC=exit) use which element? ",
+		strnfmt(out_val, 78, "(Elements %c-%c, *=List, ESC=exit, ENTER=done) use which element? ",
 		    I2A(0), I2A(num-1));
 	else
 		strnfmt(out_val, 78, "No elements available - ESC=exit");

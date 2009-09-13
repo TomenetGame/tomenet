@@ -185,6 +185,15 @@
 // #define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #endif
 
+/* ------------------------ Client-side only features -----------------------*/
+
+#ifdef CLIENT_SIDE
+ /* compile hybrid clients that can do both, old and new runemastery */
+ #ifndef ENABLE_RCRAFT
+  #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
+ #endif
+#endif
+
 /* --------------------------------------------------------------------------*/
 
 
@@ -2230,7 +2239,29 @@ that keeps many algorithms happy.
  //ADVANCE -- more to add...
  #define SV_RUNE2_ARMAGEDDON 16
 
-#else /* ENABLE_RCRAFT */
+#elif defined(CLIENT_SIDE) /* original version, compatibility hack */
+
+ //Here comes the base runes (k_info.txt);
+ #define SV_RUNE1_BOLT	1
+ #define SV_RUNE1_BEAM	2
+ #define SV_RUNE1_BALL	3
+ #define SV_RUNE1_CLOUD	4
+ #define SV_RUNE1_SELF	5
+ //Here are the modifiers (k_info.txt)
+ //BASIC
+ #define SV_RUNE2_POIS	5
+
+ //INTERMEDIATE -- more to add...
+ #define SV_RUNE2_GRAV	11
+ #define SV_RUNE2_DARK	13
+ #define SV_RUNE2_LITE	14
+ #define SV_RUNE2_STONE	15
+
+ //ADVANCE -- more to add...
+ #define SV_RUNE2_ARMAGEDDON 16
+
+#endif /* ENABLE_RCRAFT */
+#ifdef ENABLE_RCRAFT
 
  //New runes (k_info.txt)
  #define SV_RUNE2_FIRE   	 0
