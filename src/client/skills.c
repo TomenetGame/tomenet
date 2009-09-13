@@ -638,8 +638,10 @@ static int do_cmd_activate_skill_aux()
 			int nb;
 
 			strcpy(buf, "Cast a spell");
-			if (!get_string("Skill action? ", buf, 79))
+			if (!get_string("Skill action? ", buf, 79)) {
+				if (term_saved) Term_load();
 				return FALSE;
+			}
 
 			/* Can we convert to a number? */
 			nb = atoi(buf) - 1;
