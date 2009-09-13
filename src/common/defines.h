@@ -6355,7 +6355,8 @@ extern int PlayerUID;
  #define SKILL_EGO_POWER
 #endif	/* 0 */
 
-#ifdef ENABLE_RCRAFT
+//#ifdef ENABLE_RCRAFT
+#if 1 /* or player.pkg throws an error */
  #define SKILL_SCHOOL_RUNECRAFT	95	//was 87..
 
  #define SKILL_R_FIRECOLD	96
