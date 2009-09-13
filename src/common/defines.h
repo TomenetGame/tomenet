@@ -53,16 +53,16 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
-#define VERSION_PATCH		2
-#define VERSION_EXTRA		4
+#define VERSION_PATCH		3
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	4
-#define VERSION_PATCH_OUTDATED	1
-#define VERSION_EXTRA_OUTDATED	8
+#define VERSION_PATCH_OUTDATED	2
+#define VERSION_EXTRA_OUTDATED	4
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
@@ -86,7 +86,7 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG "a"
+#define CLIENT_VERSION_TAG ""
 
 
 
