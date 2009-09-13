@@ -6956,10 +6956,10 @@ wants to use it again!
 The level of the ring will change depending on the form. Here are some levels:
 form level              ring level
 ----------------------------------
-      1                     15
-     30                     28
-     60                     38
-    100 (theoretical)       44
+      1                      5
+     30                     26
+     60                     40
+     80                     48
 
 Polymorph rings contain a certain amount of energy that cannot be changed,
 which determined for how long the player will keep the form until he polymorphs
