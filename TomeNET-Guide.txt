@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. September 2009 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.2 - official websites are:
+| Latest update: 13. September 2009 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.3 - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
 +---
@@ -28,6 +28,7 @@ Contents
     (0.1)   Start & play
     (0.2)   Command reference & key sets
     (0.3)   Important inscriptions
+    (0.3a)  The auto-inscription feature
     (0.4)   Typical slang/abbreviations
     (0.5)   Rumours, missing features, technical warnings (READ!)
 (1) Introduction
@@ -54,6 +55,7 @@ Contents
     (3.8)   Example macro sets
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
+    (3.9b)  Alternative macros: Calling objects by their name
     (3.10)  Experience, level-ups and skill points
     (3.11)  Death, ghosts and looting
 (4) The world
@@ -741,6 +743,29 @@ fire and acid, you might inscribe it {ResFire,ResAcid} so that you will
 remember what it does just by looking at it and reading the inscription.
 It can make your life easier if you wear lots of items that have different
 resistances or abilities.
+
+
+(0.3a) The auto-inscription feature
+-----------------------------------
+Since it can be annoying to keep inscribing newly bought items again and again,
+there is an auto-inscription feature which you can access with '&' key.
+Remotely similar to the macro menu, a list of auto-inscriptions appears (which
+by default is empty).
+
+Press 'e' to edit the first auto-inscription. A cursor will appear, allowing
+you to input a partial item name. For example type in 'of Healing' (without the
+quotes). Hit ENTER key to confirm. Now the cursor will allow you to enter an
+inscription, a little bit further to the right on the screen. For example type
+in '@q1' (again without the quotes) and confirm with ENTER key again.
+
+Now you have just set up an auto-inscription that will automatically inscribe
+'@q1' whenever any item is added to your inventory which has a name containing
+'of Healing', ie 'Potions of Healing'. Note that it's case-sensitive!
+
+Auto-inscription files can be saved and will be loaded automatically in the
+same manner as macro files, if the filename matches your race, class, account
+or character name.
+If multiple matches are found, the game will attempt to merge them accordingly.
 
 
 
@@ -2188,6 +2213,29 @@ which types   :!:   for you on a single key press automatically:
     to a file which is loaded automatically, like '<Your charname>.prf', for
     example Kinkan.prf. This way, no matter what your party is called, you
     will always be able to chat to it by pressing a single key.
+
+
+(3.9b) Alternative macros: Calling objects by their name
+--------------------------------------------------------
+An alternative way to utilize macros is to not rely on item inscriptions, but
+instead call the target object directly by its name!
+
+This can either be an item name, as it appears in your inventory, or a spell
+name if you want your macro to cast a spell.
+
+The clue is that when you are asked "Aim which wand?", "Read which scroll?",
+"Cast from which book?" etc. you can also press '@' key to directly type in
+a name.
+Note: In the special case of books, you will then be able to type in
+a spell name instead of a book name, and the game will search your books for
+that spell automatically.
+
+So, instead of inscribing your potions of Healing '@q1' and having a macro
+'\e)q1' you could also just have a macro '\e)q@Healing'.
+
+Or, instead of inscribing a Beginner Cantrips book '@m1' and macroing the spell
+manathrust with '\e)m@11\r9a*t' you could also just make a macro
+'\e)m@11\r@Manathrust*t' without the need to inscribe your book.
 
 
 
