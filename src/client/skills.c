@@ -651,7 +651,7 @@ static int do_cmd_activate_skill_aux()
 			{
 				if (s_info[i].action_desc && (!strcmp(buf, (char*)s_info[i].action_desc) && get_skill(i)))
 					break;
-				if (s_info[i].action_mkey == nb + 1)
+				if ((s_info[i].action_mkey == nb + 1) && (nb != -1) && get_skill(i))
 					break;
 			}
 			if ((i < MAX_SKILLS))
