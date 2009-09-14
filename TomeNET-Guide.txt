@@ -760,12 +760,21 @@ in '@q1' (again without the quotes) and confirm with ENTER key again.
 
 Now you have just set up an auto-inscription that will automatically inscribe
 '@q1' whenever any item is added to your inventory which has a name containing
-'of Healing', ie 'Potions of Healing'. Note that it's case-sensitive!
+'of Healing', ie 'Potions of Healing'.
+
+Note that auto-inscriptions are case-sensitive, and only the first one in the
+list that actually matches an item is applied to it.
+
+You can use '?' as wildcard in the search string. For example if you want to
+distinguish between Rod(s) of Healing and Potion(s) of Healing, you can use
+'Rod?Healing' and 'Potion?Healing' respectively.
+('?' stands for any number (including zero) of any characters.)
 
 Auto-inscription files can be saved and will be loaded automatically in the
 same manner as macro files, if the filename matches your race, class, account
 or character name.
-If multiple matches are found, the game will attempt to merge them accordingly.
+If multiple matching files are found, the game will attempt to merge them
+accordingly.
 
 
 
