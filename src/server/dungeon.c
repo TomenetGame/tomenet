@@ -6079,15 +6079,15 @@ void dungeon(void)
 		if(cfg.runlevel == 2043)
 		{
 			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
-				msg_broadcast(0, "\377I*** \377RServer shutdown in 1 minute (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in 1 minute (auto-recall). \377I***");
 				shutdown_recall_state = 3;
 			}
 			else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
-				msg_broadcast(0, "\377I*** \377RServer shutdown in 5 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in 5 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 2;
 			}
 			else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
-				msg_broadcast(0, "\377I*** \377RServer shutdown in 15 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in 15 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 1;
 			}
 			if (!shutdown_recall_timer) {
