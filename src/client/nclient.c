@@ -1440,8 +1440,8 @@ int Receive_inven(void)
 
 #if 0
 	int i;
-	char *ex, ex_buf[MAX_CHARS];
-	bool auto_inscribe = FALSE;
+	char *ex, ex_buf[MAX_CHARS], *ex2, ex_buf2[MAX_CHARS];
+	bool auto_inscribe = FALSE, found;
 #endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%s", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, name)) <= 0)
@@ -1490,9 +1490,44 @@ int Receive_inven(void)
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 				/* skip empty auto-inscriptions */
 				if (!strlen(auto_inscription_match[i])) continue;
-				if (!strlen(auto_inscription_tag[i])) continue;
+//allow empty inscription--	if (!strlen(auto_inscription_tag[i])) continue;
 				/* found a matching inscription? */
-				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
+ #if 0 /* no '?' wildcard allowed */
+ 				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
+ #else /* '?' wildcard allowed: a random number (including 0) of random chars */
+				/* prepare */
+				strcpy(ex_buf, auto_inscription_match[i]);
+				ex2 = inventory_name[pos - 'a'];
+				found = FALSE;
+
+				do {
+ 					ex = strstr(ex_buf, "?");
+ 					if (ex == NULL) {
+	 					if (strstr(ex2, ex_buf)) found = TRUE;
+ 						break;
+		 			} else {
+		 				/* get partial string up to before the '?' */
+	 					strncpy(ex_buf2, ex_buf, ex - ex_buf);
+ 						ex_buf2[ex - ex_buf] = '\0';
+ 						/* test partial string for match */
+ 						ex2 = strstr(ex2, ex_buf2);
+	 					if (ex2 == NULL) break; /* no match! */
+ 						/* this partial string matched, discard and continue with next part */
+ 						/* advance searching position in the item name */
+ 						ex2 += strlen(ex_buf2);
+ 						/* get next part of search string */
+ 						strcpy(ex_buf, ex + 1);
+	 					/* no more search string left? exit */
+						if (!strlen(ex_buf)) break;
+ 						/* no more item name left although search string is finished? exit with negative result */
+						if (!strlen(ex2)) {
+							found = FALSE;
+							break;
+						}
+					}
+				} while (TRUE);
+				if (found) break;
+ #endif
 			}
 
 			/* send the new inscription */
@@ -1588,7 +1623,42 @@ int Receive_inven_wide(void)
 				if (!strlen(auto_inscription_match[i])) continue;
 				if (!strlen(auto_inscription_tag[i])) continue;
 				/* found a matching inscription? */
-				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
+ #if 0 /* no '?' wildcard allowed */
+ 				if (strstr(inventory_name[pos - 'a'], auto_inscription_match[i])) break;
+ #else /* '?' wildcard allowed: a random number (including 0) of random chars */
+				/* prepare */
+				strcpy(ex_buf, auto_inscription_match[i]);
+				ex2 = inventory_name[pos - 'a'];
+				found = FALSE;
+
+				do {
+ 					ex = strstr(ex_buf, "?");
+ 					if (ex == NULL) {
+	 					if (strstr(ex2, ex_buf)) found = TRUE;
+ 						break;
+		 			} else {
+		 				/* get partial string up to before the '?' */
+	 					strncpy(ex_buf2, ex_buf, ex - ex_buf);
+ 						ex_buf2[ex - ex_buf] = '\0';
+ 						/* test partial string for match */
+ 						ex2 = strstr(ex2, ex_buf2);
+	 					if (ex2 == NULL) break; /* no match! */
+ 						/* this partial string matched, discard and continue with next part */
+ 						/* advance searching position in the item name */
+ 						ex2 += strlen(ex_buf2);
+ 						/* get next part of search string */
+ 						strcpy(ex_buf, ex + 1);
+	 					/* no more search string left? exit */
+						if (!strlen(ex_buf)) break;
+ 						/* no more item name left although search string is finished? exit with negative result */
+						if (!strlen(ex2)) {
+							found = FALSE;
+							break;
+						}
+					}
+				} while (TRUE);
+				if (found) break;
+ #endif
 			}
 
 			/* send the new inscription */
@@ -3308,7 +3378,8 @@ int Receive_inventory_revision(void)
 
 	int i, v;
 	char *ex, ex_buf[MAX_CHARS];
-	bool auto_inscribe;
+	char *ex2, ex_buf2[MAX_CHARS];
+	bool auto_inscribe, found;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
 	{
@@ -3348,10 +3419,44 @@ int Receive_inventory_revision(void)
 		for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 			/* skip empty auto-inscriptions */
 			if (!strlen(auto_inscription_match[i])) continue;
-			if (!strlen(auto_inscription_tag[i])) continue;
+//allow			if (!strlen(auto_inscription_tag[i])) continue;
 			/* found a matching inscription? */
-			if (strstr(inventory_name[v], auto_inscription_match[i]))
-				break;
+ #if 0 /* no '?' wildcard allowed */
+			if (strstr(inventory_name[v], auto_inscription_match[i])) break;
+ #else /* '?' wildcard allowed: a random number (including 0) of random chars */
+			/* prepare */
+			strcpy(ex_buf, auto_inscription_match[i]);
+			ex2 = inventory_name[v];
+			found = FALSE;
+
+			do {
+ 				ex = strstr(ex_buf, "?");
+ 				if (ex == NULL) {
+	 				if (strstr(ex2, ex_buf)) found = TRUE;
+ 					break;
+	 			} else {
+	 				/* get partial string up to before the '?' */
+	 				strncpy(ex_buf2, ex_buf, ex - ex_buf);
+ 					ex_buf2[ex - ex_buf] = '\0';
+ 					/* test partial string for match */
+ 					ex2 = strstr(ex2, ex_buf2);
+ 					if (ex2 == NULL) break; /* no match! */
+ 					/* this partial string matched, discard and continue with next part */
+ 					/* advance searching position in the item name */
+ 					ex2 += strlen(ex_buf2);
+ 					/* get next part of search string */
+ 					strcpy(ex_buf, ex + 1);
+ 					/* no more search string left? exit */
+					if (!strlen(ex_buf)) break;
+ 					/* no more item name left although search string is finished? exit with negative result */
+					if (!strlen(ex2)) {
+						found = FALSE;
+						break;
+					}
+				}
+			} while (TRUE);
+			if (found) break;
+ #endif
 		}
 		/* no match found? */
 		if (i == MAX_AUTO_INSCRIPTIONS) continue;

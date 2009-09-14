@@ -3510,7 +3510,7 @@ void auto_inscriptions(void)
 			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
 			Term_putstr(14, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, ESC to exit]");
 			Term_putstr(13, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an ins file");
-			Term_putstr(17, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current/delete current/CLEAR ALL");
+			Term_putstr(8, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('?' is wildcard)/delete current/CLEAR ALL");
 
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 				/* build a whole line */
