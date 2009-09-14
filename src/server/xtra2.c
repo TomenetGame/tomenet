@@ -9200,8 +9200,8 @@ if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 		s_printf("(Tele) Item transaction from %s(%d) to %s(%d):\n  %s\n", p_ptr->name, p_ptr->lev, Players[Ind2]->name, Players[Ind2]->lev, o_name);
 
 		/* Remove dangerous inscriptions - mikaelh */
-		if (o_ptr->note) {
-			scan = inscription = strdup(quark_str(o_ptr->note));
+		if (q_ptr->note) {
+			scan = inscription = strdup(quark_str(q_ptr->note));
 
 			while (*scan != '\0')
 			{
@@ -9213,7 +9213,7 @@ if (is_weapon(q_ptr->tval) && !(k_info[q_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
 				scan++;
 			}
 
-			o_ptr->note = quark_add(inscription);
+			q_ptr->note = quark_add(inscription);
 			free(inscription);
 		}
 

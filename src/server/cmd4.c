@@ -1377,17 +1377,21 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 		/* Hack -- always show townie */
 		// if (num < 1 && r_ptr->level) continue;
+
 		if ((num < 1) && !druid_form && !vampire_form) continue;
 		if (!r_ptr->name) continue;
 
 		/* Let's not show uniques here */
 		uniq = FALSE;
-		if (r_ptr->flags1 & RF1_UNIQUE)
+		if (r_ptr->flags1 & RF1_UNIQUE) {
 #if 0 /* don't show uniques */
 			continue;
 #else /* show uniques */
+			/* only show uniques we killed ourselves */
+			if (num != 1) continue;
 			uniq = TRUE;
 #endif
+		}
 
 
 		if (!uniq) fprintf(fff, "\377s(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */

@@ -2794,7 +2794,9 @@ void process_pending_commands(int ind)
 				return;
 			}
 			Sockbuf_clear(&connp->r);
-			return;
+
+			/* Break out of the loop instead of returning so the energy can get restored properly. - mikaelh */
+			break;
 		}
 	}
 	/* Restore our energy if neccecary. */
@@ -8449,35 +8451,37 @@ static int Receive_suicide(int ind)
 	connection_t *connp = Conn[ind];
 	int player = -1, n;
 	char ch;
+	char extra1 = 1, extra2 = 4;
 
 	if (connp->id != -1)
 		player = GetInd[connp->id];
 	else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
-	{
-		if (n == -1)
-			Destroy_connection(ind, "read error");
-		return n;
-	}
-
 	/* Newer clients send couple of extra bytes to prevent accidental
 	 * suicides due to network mishaps. - mikaelh */
 	if (is_newer_than(&connp->version, 4, 4, 2, 3, 0, 0)) {
-		char extra1, extra2;
-		if ((n = Packet_scanf(&connp->r, "%c%c", &extra1, &extra2)) <= 0)
+		if ((n = Packet_scanf(&connp->r, "%c%c%c", &ch, &extra1, &extra2)) <= 0)
 		{
 			if (n == -1)
 				Destroy_connection(ind, "read error");
 			return n;
 		}
-
-		if (extra1 != 1 || extra2 != 4)
+	}
+	else
+	{
+		if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 		{
-			/* Invalid suicide command detected, clear the buffer now */
-			Sockbuf_clear(&connp->r);
-			return 1;
+			if (n == -1)
+				Destroy_connection(ind, "read error");
+			return n;
 		}
+	}
+
+	if (extra1 != 1 || extra2 != 4)
+	{
+		/* Invalid suicide command detected, clear the buffer now */
+		Sockbuf_clear(&connp->r);
+		return 1;
 	}
 
 	/* Commit suicide */
