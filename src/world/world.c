@@ -62,9 +62,12 @@ void world(int ser){
 
 		sl = select(mfd+1, &fds, NULL, NULL, NULL);
 		if (sl == -1) {
-                        fprintf(stderr, "select broke\n");
-			perror("select");
-			return;
+			/* Don't care about signal interruptions */
+			if (errno != EINTR) {
+	                        fprintf(stderr, "select broke\n");
+				perror("select");
+				return;
+			}
 		}
 		if (FD_ISSET(ser, &fds)) {
 			sl=accept(ser, (struct sockaddr*)&cl_in, &length);
@@ -314,12 +317,9 @@ void addclient(int fd){
 /* Generic list handling function */
 struct list *remlist(struct list **head, struct list *dlp){
 	struct list *lp;
-	struct client *ncl;
 	lp=*head;
 	if(dlp==*head){
 		*head=lp->next;
-		ncl = (struct client*)dlp->data;
-		close(ncl->fd); /* the socket needs to be closed - mikaelh */
 		free(dlp->data);
 		free(dlp);
 		return(*head);
@@ -327,8 +327,6 @@ struct list *remlist(struct list **head, struct list *dlp){
 	while(lp){
 		if(lp->next==dlp){
 			lp->next=dlp->next;
-			ncl = (struct client*)dlp->data;
-			close(ncl->fd); /* the socket needs to be closed - mikaelh */
 			free(dlp->data);
 			free(dlp);
 			return(lp->next);
@@ -349,6 +347,8 @@ void remclient(struct list *dlp){
 		spk.d.sid=ccl->authed;
 		relay(&spk, ccl);
 	}
+	/* Close the socket - mikaelh */
+	close(ccl->fd);
 }
 
 int get_message_type(char *msg) {
