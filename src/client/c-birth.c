@@ -798,7 +798,7 @@ static bool choose_body_modification(void)
 #ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, "Normal body", 6, 15);
 #else
-			c_put_str(TERM_L_BLUE, "Fruit bat", 7, 15);
+			c_put_str(TERM_L_BLUE, "Normal body", 7, 15);
 #endif
 			break;
 		}
