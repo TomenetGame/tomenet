@@ -429,30 +429,33 @@ static void rd_item(object_type *o_ptr)
 		/* Fix to_h being set on shields (see above) - mikaelh */
 		o_ptr->to_h = 0;
 	}
+
+	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
+	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
+
+#ifndef ENABLE_RCRAFT
 	/* Fix high quality runes levels */
 	if (o_ptr->tval == TV_RUNE1) {
 		switch (o_ptr->sval) {
 			case SV_RUNE1_CLOUD:
-				o_ptr->level=35;
+				o_ptr->level = 35;
 			default:
 				break;
 		} 
 	}
-	/* Fix rods that got 'double-timeout' by erroneous discharge function*/
-	if (o_ptr->tval == TV_ROD) o_ptr->timeout = 0;
-
 	if (o_ptr->tval == TV_RUNE2) {
 		switch (o_ptr->sval) {
 			case SV_RUNE2_STONE:
-				o_ptr->level=35;
+				o_ptr->level = 35;
 				break;
 			case SV_RUNE2_ARMAGEDDON:
-				o_ptr->level=40;
+				o_ptr->level = 40;
 				break;
 			default:
 				break;
 		} 
 	}
+#endif
 
 	rd_s16b(&old_ac);
 
@@ -868,6 +871,7 @@ static void rd_lore(int r_idx)
 
 	/* Read the "Racial" monster limit per level */
 	rd_byte(&r_ptr->max_num);
+	if (!older_than(4, 3, 24)) rd_byte(&r_ptr->cur_num);
 
 	/* Later (?) */
 	rd_byte(&tmp8u);
@@ -1282,10 +1286,10 @@ static bool rd_extra(int Ind)
         /* Build maximum level (the one displayed if life levels were restored right now) */
 	p_ptr->max_lev = 1;
 #ifndef ALT_EXPRATIO
-	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
 	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev-1] * (s64b)p_ptr->expfact) / 100L))))
 #else
-	while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
 	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
 #endif
 	{
@@ -1468,6 +1472,7 @@ if (p_ptr->mst != 10) p_ptr->mst = 10;
 	/* Toggle for possible automatic save-game updates
 	   (done via script login-hook, eg custom.lua) - C. Blue */
 	rd_byte(&p_ptr->updated_savegame);
+
 #if 0 /* ALT_EXPRATIO conversion: */
 if (p_ptr->updated_savegame == 0) {
     s64b i, i100, ief;
@@ -1477,7 +1482,7 @@ if (p_ptr->updated_savegame == 0) {
     i = (i * i100) / ief;
     p_ptr->max_exp = (s32b)i;
     p_ptr->max_lev = 1;
-    while ((p_ptr->max_lev < PY_MAX_LEVEL) &&
+    while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
         (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev-1]))
     {
 	/* Gain a level */
@@ -1488,6 +1493,9 @@ if (p_ptr->updated_savegame == 0) {
     p_ptr->updated_savegame = 3;
 }
 #endif
+
+	/* for automatic artifact resets (similar to updated_savegame) */
+	if (!older_than(4, 3, 22)) rd_byte(&p_ptr->artifact_reset);
 
 	/* Skip the flags */
 	strip_bytes(12);
@@ -1568,6 +1576,7 @@ if (p_ptr->updated_savegame == 0) {
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
 	if (!older_than(4, 3, 9)) rd_byte((byte *) &p_ptr->shadow_running);
 	if (!older_than(4, 3, 10)) rd_byte((byte *) &p_ptr->shoot_till_kill);
+	if (!older_than(4, 3, 23)) rd_byte((byte *) &p_ptr->dual_mode);
 
 	if (!older_than(4, 3, 11)) {
 		rd_s16b(&tmp16s);
@@ -1926,6 +1935,59 @@ static errr rd_cave_memory(int Ind)
 	return (0);
 }
 
+/* Reads auction data. */
+
+static void rd_auctions()
+{
+	int i, j;
+	s32b old_auction_alloc;
+	auction_type *auc_ptr;
+	bid_type *bid_ptr;
+	s32b tmp32s;
+
+	old_auction_alloc = auction_alloc;
+	rd_s32b(&auction_alloc);
+
+	GROW(auctions, old_auction_alloc, auction_alloc, auction_type);
+
+	for (i = 0; i < auction_alloc; i++)
+	{
+		auc_ptr = &auctions[i];
+		rd_byte(&auc_ptr->status);
+		rd_byte(&auc_ptr->flags);
+		rd_byte(&auc_ptr->mode);
+		rd_s32b(&auc_ptr->owner);
+		rd_item(&auc_ptr->item);
+		C_MAKE(auc_ptr->desc, 160, char);
+		rd_string(auc_ptr->desc, 160);
+		if (auc_ptr->desc[0] == '\0')
+		{
+			/* Free an empty string */
+			C_FREE(auc_ptr->desc, 160, char);
+		}
+		rd_s32b(&auc_ptr->starting_price);
+		rd_s32b(&auc_ptr->buyout_price);
+		rd_s32b(&auc_ptr->bids_cnt);
+		if (auc_ptr->bids_cnt)
+		{
+			C_MAKE(auc_ptr->bids, auc_ptr->bids_cnt, bid_type);
+		}
+		for (j = 0; j < auc_ptr->bids_cnt; j++)
+		{
+			bid_ptr = &auc_ptr->bids[j];
+			rd_s32b(&bid_ptr->bid);
+			rd_s32b(&bid_ptr->bidder);
+		}
+		rd_s32b(&auc_ptr->winning_bid);
+
+		/* The time_t's are saved as s32b's */
+		rd_s32b(&tmp32s);
+		auc_ptr->start = (time_t) tmp32s;
+		rd_s32b(&tmp32s);
+		auc_ptr->duration = (time_t) tmp32s;
+	}
+}
+
 /*
  * Actually read the savefile
  *
@@ -2245,6 +2307,11 @@ errr rd_server_savefile()
 		rd_s16b(&tmp16s);
 		updated_server = tmp16s;
 	}
+	/* read server state regarding artifact updates */
+	if (!older_than(4, 3, 22)) {
+		rd_s16b(&tmp16s);
+		artifact_reset = tmp16s;
+	}
 
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
@@ -2437,6 +2504,8 @@ errr rd_server_savefile()
 	
 	if (!older_than(4, 3, 13)) rd_byte(&season);
 	if (!older_than(4, 3, 14)) rd_byte(&weather_frequency);
+
+	if (!older_than(4, 3, 25)) rd_auctions();
 
 	/* Hack -- no ghosts */
 	r_info[MAX_R_IDX-1].max_num = 0;

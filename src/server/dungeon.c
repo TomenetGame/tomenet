@@ -39,6 +39,24 @@
 #define RECALL_GOI_LENGTH        3
 
 
+/* forward declarations */
+static void process_firework_creation(void);
+#ifndef CLIENT_SIDE_WEATHER
+static void process_weather_control(void);
+static void process_weather_effect_creation(void);
+#else
+ #ifndef CLIENT_WEATHER_GLOBAL
+
+static void wild_weather_init(void);
+static void process_wild_weather(void);
+static void cloud_set_movement(int i);
+static void cloud_move(int i, bool newly_created);
+ #else
+
+static void process_weather_control(void);
+ #endif
+#endif
+
 
 /*
  * Return a "feeling" (or NULL) about an item.  Method 1 (Heavy).
@@ -404,7 +422,7 @@ static void sense_inventory(int Ind)
 
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) &&
-				(magik(80) || UNAWARENESS(p_ptr))) continue;
+		    (magik(80) || UNAWARENESS(p_ptr))) continue;
 
 		feel = NULL;
 		felt_heavy = FALSE;
@@ -1122,7 +1140,69 @@ static void regen_monsters(void)
 
 
 
-/* turn an allocated wpos to bright day */
+/* update a particular player's view to daylight, assuming he's on world surface */
+void player_day(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int x, y;
+
+//	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+	if (p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind); /* daylight */
+
+	/* Hack -- Scan the level */
+	for (y = 0; y < MAX_HGT; y++)
+	for (x = 0; x < MAX_WID; x++) {
+		/* Hack -- Memorize lit grids if allowed */
+		if ((istown(&p_ptr->wpos) ||
+		    (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2))
+		    && (p_ptr->view_perma_grids)) {
+			p_ptr->cave_flag[y][x] |= CAVE_MARK;
+		}
+		note_spot(Ind, y, x);
+	}
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+}
+/* update a particular player's view to night, assuming he's on world surface */
+void player_night(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave = getcave(&p_ptr->wpos);
+	int x, y;
+
+	if (!zcave) return; /* paranoia */
+
+//	if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
+	if (p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind); /* no more daylight */
+
+	/* Hack -- Scan the level */
+	for (y = 0; y < MAX_HGT; y++)
+	for (x = 0; x < MAX_WID; x++) {
+		/*  Darken "boring" features */
+		if (cave_plain_floor_grid(&zcave[y][x]) && !(zcave[y][x].info & CAVE_ROOM)) { /* keep house grids */
+			/* Forget the grid */ 
+			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
+		/* Always remember interesting features in town areas */
+		} else if ((istown(&p_ptr->wpos) || (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2))
+			    && (p_ptr->view_perma_grids)) {
+			p_ptr->cave_flag[y][x] |= CAVE_MARK;
+		}
+
+		note_spot(Ind, y, x);
+	}
+
+	/* Update the monsters */
+	p_ptr->update |= (PU_MONSTERS);
+	/* Redraw map */
+	p_ptr->redraw |= (PR_MAP);
+	/* Window stuff */
+	p_ptr->window |= (PW_OVERHEAD);
+}
+
+/* turn an allocated wpos to bright day and update view of players on it */
 void world_surface_day(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
 	int y, x;
@@ -1137,14 +1217,29 @@ void world_surface_day(struct worldpos *wpos) {
 		c_ptr->info |= CAVE_GLOW;
 		c_ptr->info &= ~CAVE_DARKEN;
 	}
+
+#if 0 //in process_day_and_night() instead
+	/* Update players' views */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip non-connected players */
+//		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip players not in this sector */
+		if (!inarea(&Players[i]->wpos, wpos)) continue;
+
+		/* update his view */
+		player_day(i);
+	}
+#endif
 }
 
-/* turn an allocated wpos to dark night */
+/* turn an allocated wpos to dark night and update view of players on it */
 void world_surface_night(struct worldpos *wpos) {
 	cave_type **zcave = getcave(wpos), *c_ptr;
 	int y, x;
 	int stores = 0, y1, x1, i;
 	byte sx[255], sy[255];
+	
+	if (!zcave) return; /* paranoia */
 
 	/* Hack -- Scan the level */
 	for (y = 0; y < MAX_HGT; y++)
@@ -1153,12 +1248,13 @@ void world_surface_night(struct worldpos *wpos) {
 		c_ptr = &zcave[y][x];
 
 		/* darken all */
-		if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
+		if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
+		    !(c_ptr->info & CAVE_ROOM)) { /* keep houses' contents lit */
 			c_ptr->info &= ~CAVE_GLOW;
 			c_ptr->info |= CAVE_DARKEN;
 		}
 
-		if (c_ptr->feat == FEAT_SHOP) {
+		if (c_ptr->feat == FEAT_SHOP && stores < 254) {
 			sx[stores] = x;
 			sy[stores] = y;
 			stores++;
@@ -1180,131 +1276,81 @@ void world_surface_night(struct worldpos *wpos) {
 			c_ptr->info |= CAVE_GLOW;
 		}
 	}
+
+#if 0 //in process_day_and_night() instead
+	/* Update players' views */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip non-connected players */
+//		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip players not in this sector */
+		if (!inarea(&Players[i]->wpos, wpos)) continue;
+
+		/* update his view */
+		player_night(i);
+	}
+#endif
 }
 
-/* take care of day/night changes */
+/* take care of day/night changes, on world surface.
+   NOTE: assumes that it gets called every HOUR turns only! */
 static void process_day_and_night() {
-
-return; /* DEBUG */
-
-	/*** Handle the "town" (stores and sunshine) ***/
-	/* Hack -- Daybreak/Nighfall in town */
-	bool dawn;
+	bool sunrise, nightfall;
 	struct worldpos wrpos;
-	int wx, wy;
-	
-	/* Check for dawn */
-	dawn = (!(turn % (10L * DAY)));
+	int wx, wy, i;
+
+	/* Check for sunrise or nightfall */
+	sunrise = ((turn / HOUR) % 24) == SUNRISE;
+	nightfall = ((turn / HOUR) % 24) == NIGHTFALL;
 
 	wrpos.wz = 0;
 
 	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! */
-	if (dawn && !fireworks && !season_halloween)
+	if (sunrise && !fireworks && !season_halloween)
 	{
 		night_surface = FALSE;
-		
+
 		/* scan through all currently allocated world surface levels */
-		for (wx = 0; wx <= 63; wx++)
-		for (wy = 0; wy <= 63; wy++) {
+		for (wx = 0; wx < MAX_WILD_X; wx++)
+		for (wy = 0; wy < MAX_WILD_Y; wy++) {
 			wrpos.wx = wx;
 			wrpos.wy = wy;
 			if (!getcave(&wrpos)) continue;
 			world_surface_day(&wrpos);
 		}
+
+		/* Message all players who witness switch */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->wpos.wz) continue;
+			msg_print(i, "The sun has risen.");
+
+			player_day(i);
+		}
 	}
-		/* Night falls - but only if it was actually day so far:
-		   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-	else if (!dawn && !night_surface) {
+
+	/* Night falls - but only if it was actually day so far:
+	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
+	else if (nightfall && !night_surface) {
 		night_surface = TRUE;
 
 		/* scan through all currently allocated world surface levels */
-		for (wx = 0; wx <= 63; wx++)
-		for (wy = 0; wy <= 63; wy++) {
+		for (wx = 0; wx < MAX_WILD_X; wx++)
+		for (wy = 0; wy < MAX_WILD_Y; wy++) {
 			wrpos.wx = wx;
 			wrpos.wy = wy;
 			if (!getcave(&wrpos)) continue;
 			world_surface_night(&wrpos);
 		}
+
+		/* Message all players who witness switch */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->wpos.wz) continue;
+			msg_print(i, "The sun has fallen.");
+
+			player_night(i);
+		}
 	}
-}
-
-/* update a particular player's view according to day/night status of the level (must be on world surface) */
-static void player_day_and_night(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos = &p_ptr->wpos;
-	cave_type **zcave, *c_ptr;
-	byte *w_ptr;
-	int x, y;
-
-	/* Only valid if in town or wilderness, ie on world surface */
-	if (wpos->wz) return;
-
-	/* get player's level; the if-check is paranoia */
-	if(!(zcave=getcave(wpos))) return;
-
-	if (night_surface) {
-				/* Message */
-//				msg_print(Ind, "The sun has risen.");
-//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* daylight */
-		
-				/* Hack -- Scan the level */
-				for (y = 0; y < MAX_HGT; y++)
-				{
-					for (x = 0; x < MAX_WID; x++)
-					{
-						/* Get the cave grid */
-						c_ptr = &zcave[y][x];
-						w_ptr = &p_ptr->cave_flag[y][x];
-
-						/* Hack -- Memorize lit grids if allowed */
-						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
-
-						/* Hack -- Notice spot */
-						/* XXX it's slow (sunrise/sunset lag) */
-						note_spot(Ind, y, x);						
-					}			
-				}
-
-			/* Night falls - but only if it was actually day so far:
-			   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-	} else {
-				/* Message  */
-//				msg_print(Ind, "The sun has fallen.");
-//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* no more daylight */
-
-				/* Hack -- Scan the level */
-				for (y = 0; y < MAX_HGT; y++)
-				{
-					for (x = 0; x < MAX_WID; x++)
-					{
-						/*  Get the cave grid */
-						c_ptr = &zcave[y][x];
-						w_ptr = &p_ptr->cave_flag[y][x];
-
-						/*  Darken "boring" features */
-						if (cave_plain_floor_grid(c_ptr) && !(c_ptr->info & CAVE_ROOM))
-						{
-							/* Forget the grid */ 
-							*w_ptr &= ~CAVE_MARK;
-						}
-
-						/* Hack -- Notice spot */
-						note_spot(Ind, y, x);
-
-					}
-				}
-	}
-
-	/* Update the monsters */
-	p_ptr->update |= (PU_MONSTERS);
-
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
-
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
 }
 
 
@@ -1315,163 +1361,8 @@ static void player_day_and_night(int Ind) {
 static void process_world(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-
-	int		x, y, i;
-
-//	int		regen_amount, NumPlayers_old=NumPlayers;
-
-	cave_type		*c_ptr;
-	byte			*w_ptr;
-
-
-#if 1 /* now in 'process_day_and_night' and 'check_day_and_night' */
-	/*** Handle the "town" (stores and sunshine) ***/
-
-	/* While in town or wilderness */
-	if (p_ptr->wpos.wz==0)
-	{
-		/* Hack -- Daybreak/Nighfall in town */
-		if (!(turn % ((10L * DAY) / 2)))
-		{
-			bool dawn;
-			struct worldpos *wpos=&p_ptr->wpos;
-			cave_type **zcave;
-			if(!(zcave=getcave(wpos))) return;
-
-			/* Check for dawn */
-			dawn = (!(turn % (10L * DAY)));
-
-			/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks) !*/
-			if (dawn && !fireworks && !season_halloween)
-			{
-				night_surface = FALSE;
-
-				/* Message */
-				msg_print(Ind, "The sun has risen.");
-//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* daylight */
-		
-				/* Hack -- Scan the level */
-				for (y = 0; y < MAX_HGT; y++)
-				{
-					for (x = 0; x < MAX_WID; x++)
-					{
-						/* Get the cave grid */
-						c_ptr = &zcave[y][x];
-						w_ptr = &p_ptr->cave_flag[y][x];
-
-						/* Assume lit */
-						c_ptr->info |= CAVE_GLOW;
-						c_ptr->info &= ~CAVE_DARKEN;
-
-						/* Hack -- Memorize lit grids if allowed */
-						if ((istown(wpos)) && (p_ptr->view_perma_grids)) *w_ptr |= CAVE_MARK;
-
-						/* Hack -- Notice spot */
-						/* XXX it's slow (sunrise/sunset lag) */
-						note_spot(Ind, y, x);						
-					}			
-				}
-			}
-
-			/* Night falls - but only if it was actually day so far:
-			   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-			else if (!dawn && !night_surface)
-			{
-				int stores = 0, y1, x1;
-				byte sx[255], sy[255];
-
-				night_surface = TRUE;
-
-				/* add nightly inhabitants! */
-				for (x = 0; x < MAX_WILD_X; x++)
-				for (y = 0; y < MAX_WILD_Y; y++) {
-					/* hack to make it sane until 'process_day_and_night'
-					   is finally completed and has taken over -_- */
-					if (rand_int(NumPlayers * 2 + 3) == 0)
-						wild_info[y][x].flags &= ~WILD_F_INHABITED;
-				}
-
-				/* Message  */
-				msg_print(Ind, "The sun has fallen.");
-//				if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
-				if (p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind); /* no more daylight */
-
-
-				 /* Hack -- Scan the level */
-				for (y = 0; y < MAX_HGT; y++)
-				{
-					for (x = 0; x < MAX_WID; x++)
-					{
-						/*  Get the cave grid */
-						c_ptr = &zcave[y][x];
-						w_ptr = &p_ptr->cave_flag[y][x];
-
-						/*  Darken "boring" features */
-						if (cave_plain_floor_grid(c_ptr) && !(c_ptr->info & CAVE_ROOM))
-						{
-							/* Forget the grid */ 
-							*w_ptr &= ~CAVE_MARK;
-						}
-						/* darken all */
-						if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED))
-							c_ptr->info &= ~CAVE_GLOW;
-
-						/* Hack -- Notice spot */
-						note_spot(Ind, y, x);
-
-						c_ptr->info |= CAVE_DARKEN;
-
-						if (c_ptr->feat == FEAT_SHOP)
-						{
-							sx[stores] = x;
-							sy[stores] = y;
-							stores++;
-						}
-					}
-					
-				}  				
-
-				/* Hack -- illuminate the stores */
-				for (i = 0; i < stores; i++)
-				{
-					x = sx[i];
-					y = sy[i];
-
-					for (y1 = y - 1; y1 <= y + 1; y1++)
-					{
-						for (x1 = x - 1; x1 <= x + 1; x1++)
-						{
-							/* Get the grid */
-							c_ptr = &zcave[y1][x1];
-
-							/* Illuminate the store */
-							//				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
-							c_ptr->info |= CAVE_GLOW;
-						}
-					}
-				}
-			}
-
-			/* Update the monsters */
-			p_ptr->update |= (PU_MONSTERS);
-
-			/* Redraw map */
-			p_ptr->redraw |= (PR_MAP);
-
-			/* Window stuff */
-			p_ptr->window |= (PW_OVERHEAD);
-		}
-	}
-
-	/* While in the dungeon */
-	else
-	{
-		/*** Update the Stores ***/
-		/*  Don't do this for each player.  In fact, this might be */
-		/*  taken out entirely for now --KLJ-- */
-	}
-#endif
+	int	i;
+//	int	regen_amount, NumPlayers_old=NumPlayers;
 
 
 	/*** Process the monsters ***/
@@ -1503,8 +1394,8 @@ static void process_world(int Ind)
 		{
 			/* Set the monster generation depth */
 			monster_level = getlevel(&p_ptr->wpos);
-			if (p_ptr->wpos.wz)
-				(void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+
+			if (p_ptr->wpos.wz) (void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 			else wild_add_monster(&p_ptr->wpos);
 		}
 	}
@@ -1538,12 +1429,11 @@ static void process_world(int Ind)
 
 #ifdef GHOST_FADING
 		if (p_ptr->ghost && !p_ptr->admin_dm &&
-//				!(turn % GHOST_FADING))
-//				!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
-				!(turn % (GHOST_FADING / p_ptr->lev * 50)))
-//				(rand_int(10000) < p_ptr->lev * p_ptr->lev))
-			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L,
-					"fading", TRUE, TRUE);
+//			!(turn % GHOST_FADING))
+//			!(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
+			!(turn % (GHOST_FADING / p_ptr->lev * 50)))
+//			(rand_int(10000) < p_ptr->lev * p_ptr->lev))
+			take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE);
 #endif	// GHOST_FADING
 
 }
@@ -1588,11 +1478,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 	if (item < 0) return FALSE;
 
 	/* 'Do nothing' inscription */
-	if (*inscription == 'x') return TRUE;
+	if (inscription != NULL && *inscription == 'x') return TRUE;
 
 	/* Hack -- use innate power
 	 * TODO: devise a generic way to activate skills for retaliation */
-	if (*inscription == 'M' && get_skill(p_ptr, SKILL_MIMIC))
+	if (inscription != NULL && *inscription == 'M' && get_skill(p_ptr, SKILL_MIMIC))
 	{
 		/* Spell to cast */
 		if (*(inscription + 1))
@@ -1793,13 +1683,17 @@ static int auto_retaliate(int Ind)
 //	char friends = 0;
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2;
+	object_type *o_ptr;
 	cptr inscription = NULL;
+	bool no_melee = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 
 	if (p_ptr->new_level_flag) return 0;
-	
-	if ((p_ptr->cloaked || p_ptr->shadow_running) && !p_ptr->stormbringer) return 0;
+
+	/* disable auto-retaliation while cloaked, shadow_running, charming */
+	if ((p_ptr->cloaked || p_ptr->shadow_running || p_ptr->mcharming)
+	    && !p_ptr->stormbringer) return 0;
 
 	/* Just to kill compiler warnings */
 	target = prev_target = 0;
@@ -2145,13 +2039,12 @@ static int auto_retaliate(int Ind)
 	if (!p_target_ptr && !m_target_ptr) return 0;
 
 	/* Pick an item with {@O} inscription */
-//	for (i = 0; i < INVEN_PACK; i++)
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
-		if (!p_ptr->inventory[i].tval) continue;
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->tval) continue;
 
-//		cptr inscription = (unsigned char *) quark_str(o_ptr->note);
-		inscription = quark_str(p_ptr->inventory[i].note);
+		inscription = quark_str(o_ptr->note);
 
 		/* check for a valid inscription */
 		if (inscription == NULL) continue;
@@ -2164,20 +2057,57 @@ static int auto_retaliate(int Ind)
 				inscription++;
 
 				/* a valid @O has been located */
-				if (*inscription == 'O')
+				/* @O shouldn't work on weapons or ammo in inventory - mikaelh */
+				if (*inscription == 'O' && !(i < INVEN_WIELD &&
+					(o_ptr->tval == TV_MSTAFF || o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM ||
+					 o_ptr->tval == TV_SWORD || o_ptr->tval == TV_AXE || o_ptr->tval == TV_SHOT ||
+					 o_ptr->tval == TV_ARROW || o_ptr->tval == TV_BOLT || o_ptr->tval == TV_BOW ||
+					 o_ptr->tval == TV_BOOMERANG) ) )
 				{                       
 					inscription++;
-					/* Don't let @Ox stop auto-retaliation if it's
-					   not on an equipped weapon at all! */
-					/* Changed @Ox to work on entire equipment because
-					   batty players can't wield weapons - mikaelh */
-					if ((*inscription != 'x') /* || (i == INVEN_WIELD) ||
-					    (i == INVEN_BOW) || (i == INVEN_AMMO) */
-					    || (i >= INVEN_WIELD)) {
-						item = i;
-						i = INVEN_TOTAL;
-						break;
-					}
+
+					/* Skip this item in case it has @Ox */
+					if (*inscription == 'x') break;
+
+					/* Select the first usable item with @O */
+					item = i;
+					i = INVEN_TOTAL;
+					break;
+				}
+			}
+			inscription++;
+		}
+	}
+
+	/* Scan for @Ox to disable auto-retaliation only if no @O was found - mikaelh */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	{
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->tval) continue;
+
+		inscription = quark_str(o_ptr->note);
+
+		/* check for a valid inscription */
+		if (inscription == NULL) continue;
+
+		/* scan the inscription for @O */
+		while (*inscription != '\0')
+		{
+			if (inscription[0] == '@' && inscription[1] == 'O' && inscription[2] == 'x')
+			{
+				if (i == INVEN_WIELD || i == INVEN_ARM)
+				{
+					/* Prevent melee retaliation - mikaelh */
+					no_melee = TRUE;
+				}
+
+				if (item == -1)
+				{
+					/* Select the item with @Ox and disable auto-retaliation */
+					item = i;
+					inscription += 2;
+					i = INVEN_TOTAL; /* exit the outer loop too */
+					break;
 				}
 			}
 			inscription++;
@@ -2194,7 +2124,7 @@ static int auto_retaliate(int Ind)
 		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
 		if (p_ptr->stormbringer ||
-				(!retaliate_item(Ind, item, inscription) && !p_ptr->afraid))
+				(!retaliate_item(Ind, item, inscription) && !p_ptr->afraid && !no_melee))
 		{
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
@@ -2228,7 +2158,7 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (!retaliate_item(Ind, item, inscription) && !p_ptr->afraid)
+		if (!retaliate_item(Ind, item, inscription) && !p_ptr->afraid && !no_melee)
 		{
 			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 		}
@@ -2325,7 +2255,7 @@ static void process_player_begin(int Ind)
 	        zcave=getcave(&p_ptr->wpos);
                 l_ptr = getfloor(&p_ptr->wpos);
 		/* Get rid of annoying level flags */
-		l_ptr->flags1 &= ~(LF1_NOMAP | LF1_NO_MAGIC_MAP);
+		l_ptr->flags1 &= ~(LF1_NO_MAP | LF1_NO_MAGIC_MAP);
 		for (y = 0; y < MAX_HGT; y++) {
 			for (x = 0; x < MAX_WID; x++) {
 				if (zcave[y][x].feat == FEAT_PERM_SOLID) zcave[y][x].feat = FEAT_HIGH_MOUNT_SOLID;
@@ -2659,7 +2589,7 @@ static void do_recall(int Ind, bool bypass)
 
 	/* into dungeon/tower */
 	/* even at runlevel 2048 players may still recall..for now */
-	else if((cfg.runlevel>4) && (cfg.runlevel <= 2048))
+	else if((cfg.runlevel > 4) && (cfg.runlevel <= 2048))
 	{
 		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
 //		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
@@ -2892,8 +2822,8 @@ static bool process_player_end_aux(int Ind)
 
 						/* harm equipments (even hit == 0) */
 						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN &&
-								magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
-								!p_ptr->immune_water)
+							magik(WATER_ITEM_DAMAGE_CHANCE) && !p_ptr->fly &&
+							!p_ptr->immune_water)
 						{
 						    if (!p_ptr->resist_water || magik(50)) {
 							inven_damage(Ind, set_water_destroy, 1);
@@ -3014,21 +2944,34 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/*** Check the Food, and Regenerate ***/
-
+	/* Ent's natural food while in 'Resting Mode' - C. Blue
+	   Water helps much, natural floor helps some. */
+	if (!p_ptr->ghost && p_ptr->prace == RACE_ENT && p_ptr->resting &&
+	    (c_ptr->feat == FEAT_SHAL_WATER ||
+	    c_ptr->feat == FEAT_DEEP_WATER ||
+	    c_ptr->feat == FEAT_MUD ||
+	    c_ptr->feat == FEAT_GRASS ||
+	    c_ptr->feat == FEAT_DIRT ||
+	    c_ptr->feat == FEAT_BUSH ||
+	    c_ptr->feat == FEAT_TREE)) {
+		/* only very slowly in general (maybe depends on soil/floor type?) */
+		i = 5;
+		/* prevent overnourishment ^^ */
+		if (p_ptr->food + i > PY_FOOD_FULL) i = PY_FOOD_FULL - p_ptr->food;
+		if (i > 0) (void)set_food(Ind, p_ptr->food + i);
+	}
 	/* Ghosts don't need food */
 	/* Allow AFK-hivernation if not hungry */
-	if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm &&
+	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 //	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
 	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
 	{
 		/* Digest normally */
-		if (p_ptr->food < PY_FOOD_MAX)
-		{
+		if (p_ptr->food < PY_FOOD_MAX) {
 			/* Every 50/6 level turns */
-			//			        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
-			if (!(turn%((level_speed((&p_ptr->wpos))/12)*10)))
-			{
+//		        if (!(turn%((level_speed((&p_ptr->wpos))*10)/12)))
+			if (!(turn%((level_speed((&p_ptr->wpos))/12)*10))) {
 				/* Basic digestion rate based on speed */
 //				i = extract_energy[p_ptr->pspeed]*2;	// 1.3 (let them starve)
 				i = (10 + extract_energy[p_ptr->pspeed]*3) / 2;
@@ -3077,15 +3020,13 @@ static bool process_player_end_aux(int Ind)
 		}
 
 		/* Digest quickly when gorged */
-		else
-		{
+		else {
 			/* Digest a lot of food */
 			(void)set_food(Ind, p_ptr->food - 100);
 		}
 
 		/* Starve to death (slowly) */
-		if (p_ptr->food < PY_FOOD_STARVE)
-		{
+		if (p_ptr->food < PY_FOOD_STARVE) {
 			/* Calculate damage */
 			i = (PY_FOOD_STARVE - p_ptr->food) / 10;
 
@@ -3212,7 +3153,8 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Disturb if we are done resting */
-	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp) && (p_ptr->cst == p_ptr->mst))
+	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp) && (p_ptr->cst == p_ptr->mst)
+	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL))
 	{
 		disturb(Ind, 0, 0);
 	}
@@ -3280,10 +3222,13 @@ static bool process_player_end_aux(int Ind)
 		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus_magic);
 	}
 
-	/* Hack -- Mimicry */
+	/* Temporary Mimicry from a Ring of Polymorphing */
 	if (p_ptr->tim_mimic)
 	{
-		(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
+		/* hack - on hold while in town */
+		if (!istown(&p_ptr->wpos))
+			/* decrease time left of being polymorphed */
+			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
 	}
 
 	/* Hack -- Timed manashield */
@@ -3467,7 +3412,7 @@ static bool process_player_end_aux(int Ind)
 	if (p_ptr->cloaked > 1) {
 #if 0 /* done in un_afk_idle now */
 		if (!p_ptr->idle_char) stop_cloaking(Ind); /* stop preparations if we perform any action */
-		else 
+		else
 #endif
 		if (--p_ptr->cloaked == 1) {
 			msg_print(Ind, "\377sYou cloaked your appearance!");
@@ -4037,42 +3982,32 @@ static bool process_player_end_aux(int Ind)
 
 
 	/* Delayed mind link */
-	if (p_ptr->esp_link_end)
-	{
+	if (p_ptr->esp_link_end) {
+//msg_format(Ind, "ele: %d", p_ptr->esp_link_end);
 		p_ptr->esp_link_end--;
 
 		/* Activate the break */
 		if (!p_ptr->esp_link_end)
 		{
+			player_type *p_ptr2 = NULL;
 			int Ind2;
-
-			if (p_ptr->esp_link_type && p_ptr->esp_link)
-			{
-				Ind2 = find_player(p_ptr->esp_link);
-
-				if (!Ind2)
-					end_mind(Ind, TRUE);
-				else
-				{
-					player_type *p_ptr2 = Players[Ind2];
-
-					if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
-						msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
-						msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
-					}
-					p_ptr->esp_link = 0;
-					p_ptr->esp_link_type = 0;
-					p_ptr->esp_link_flags = 0;
-					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-					p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-					p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
-					p_ptr2->esp_link = 0;
-					p_ptr2->esp_link_type = 0;
-					p_ptr2->esp_link_flags = 0;
-					p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-					p_ptr2->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-					p_ptr2->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+			if ((Ind2 = get_esp_link(Ind, 0x0, &p_ptr2))) {
+				if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+					msg_format(Ind, "\377RYou break the mind link with %s.", p_ptr2->name);
+					msg_format(Ind2, "\377R%s breaks the mind link with you.", p_ptr->name);
 				}
+				p_ptr->esp_link = 0;
+				p_ptr->esp_link_type = 0;
+				p_ptr->esp_link_flags = 0;
+				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+				p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+				p_ptr2->esp_link = 0;
+				p_ptr2->esp_link_type = 0;
+				p_ptr2->esp_link_flags = 0;
+				p_ptr2->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+				p_ptr2->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
+				p_ptr2->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 			}
 		}
 	}
@@ -4251,6 +4186,10 @@ static void process_player_end(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* count how long they stay on a level (for EXTRA_LEVEL_FEELINGS) */
+	p_ptr->turns_on_floor++;
+
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
@@ -4799,14 +4738,14 @@ static void scan_objs(){
 				}
 
 				/* Also perform a 'cheeze check' */
-#if CHEEZELOG_LEVEL > 1
+ #if CHEEZELOG_LEVEL > 1
 				else
- #if CHEEZELOG_LEVEL < 4
+  #if CHEEZELOG_LEVEL < 4
 				/* ..only once an hour. (logs would fill the hd otherwise ;( */
 				if (!(turn % (cfg.fps * 3600)))
- #endif	/* CHEEZELOG_LEVEL (4) */
+  #endif	/* CHEEZELOG_LEVEL (4) */
 				cheeze(o_ptr);
-#endif	/* CHEEZELOG_LEVEL (1) */
+ #endif	/* CHEEZELOG_LEVEL (1) */
 
 				/* count amount of items that were checked */
 				cnt++;
@@ -4837,14 +4776,14 @@ static void scan_objs(){
 				}
 
 				/* Also perform a 'cheeze check' */
-#if CHEEZELOG_LEVEL > 1
+ #if CHEEZELOG_LEVEL > 1
 				else
-#if CHEEZELOG_LEVEL < 4
+ #if CHEEZELOG_LEVEL < 4
 				/* ..only once an hour. (logs would fill the hd otherwise ;( */
 				if (!(turn % (cfg.fps * 3600)))
-#endif	/* CHEEZELOG_LEVEL (4) */
+ #endif	/* CHEEZELOG_LEVEL (4) */
 				cheeze(o_ptr);
-#endif	/* CHEEZELOG_LEVEL (1) */
+ #endif	/* CHEEZELOG_LEVEL (1) */
 
 				/* count amount of items that were checked */
 				cnt++;
@@ -4897,14 +4836,14 @@ static void scan_objs(){
 				}
 
 				/* Also perform a 'cheeze check' */
-#if CHEEZELOG_LEVEL > 1
+ #if CHEEZELOG_LEVEL > 1
 				else
- #if CHEEZELOG_LEVEL < 4
+  #if CHEEZELOG_LEVEL < 4
 				/* ..only once an hour. (logs would fill the hd otherwise ;( */
 				if (!(turn % (cfg.fps * 3600)))
- #endif	/* CHEEZELOG_LEVEL (4) */
+  #endif	/* CHEEZELOG_LEVEL (4) */
 				cheeze(o_ptr);
-#endif	/* CHEEZELOG_LEVEL (1) */
+ #endif	/* CHEEZELOG_LEVEL (1) */
 
 				/* count amount of items that were checked */
 				cnt++;
@@ -4932,14 +4871,14 @@ static void scan_objs(){
 				}
 
 				/* Also perform a 'cheeze check' */
-#if CHEEZELOG_LEVEL > 1
+ #if CHEEZELOG_LEVEL > 1
 				else
-#if CHEEZELOG_LEVEL < 4
+  #if CHEEZELOG_LEVEL < 4
 				/* ..only once an hour. (logs would fill the hd otherwise ;( */
 				if (!(turn % (cfg.fps * 3600)))
-#endif	/* CHEEZELOG_LEVEL (4) */
+  #endif	/* CHEEZELOG_LEVEL (4) */
 				cheeze(o_ptr);
-#endif	/* CHEEZELOG_LEVEL (1) */
+ #endif	/* CHEEZELOG_LEVEL (1) */
 
 				/* count amount of items that were checked */
 				cnt++;
@@ -5330,9 +5269,22 @@ static void process_player_change_wpos(int Ind)
 	//worldpos twpos;
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y;
-	byte *w_ptr;
-	cave_type *c_ptr;
 
+	/* Decide whether we stayed long enough on the previous
+	   floor to get distinct floor feelings here, and also
+	   start counting turns we spend on this floor. */
+	if (p_ptr->turns_on_floor >= cfg.fps * 120)
+		p_ptr->distinct_floor_feeling = TRUE;
+	else 
+		p_ptr->distinct_floor_feeling = FALSE;
+	if (p_ptr->new_level_method != LEVEL_OUTSIDE &&
+	    p_ptr->new_level_method != LEVEL_OUTSIDE_RAND &&
+	    p_ptr->new_level_method != LEVEL_HOUSE)
+		p_ptr->turns_on_floor = 0;
+
+	/* being on different floors destabilizes mind fusion */
+	if (p_ptr->esp_link_type && p_ptr->esp_link)
+		change_mind(Ind);
 
 	/* Check "maximum depth" to make sure it's still correct */
 	if (wpos->wz != 0)
@@ -5370,9 +5322,7 @@ static void process_player_change_wpos(int Ind)
 				}
 			}
 
-			if (multiple_artifact_p(o_ptr) || o_ptr->name1 == ART_PHASING ||
-			    k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)
-				continue;
+			if (winner_artifact_p(o_ptr)) continue;
 
 			/* Describe the object */
 			object_desc(Ind, o_name, o_ptr, TRUE, 0);
@@ -5415,21 +5365,13 @@ static void process_player_change_wpos(int Ind)
 	{
 		for (x = 0; x < MAX_WID; x++)
 		{
-			w_ptr = &p_ptr->cave_flag[y][x];
-
-			*w_ptr = 0;
+			p_ptr->cave_flag[y][x] = 0;
 		}
 	}
-
-	/* hack -- update night/day in wilderness levels */
-	if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
-	if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
 
 	/* Memorize the town and all wilderness levels close to town */
 	if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
 	{
-		bool dawn = IS_DAY; 
-
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
@@ -5446,7 +5388,8 @@ static void process_player_change_wpos(int Ind)
 			p_ptr->prevent_tele = 0;
 		}
 
-		/* Memorize the town for this player (if daytime) */
+#if 0 //now in player_day/player_night
+		/* Memorize the town for this player if interesting */
 		for (y = 0; y < MAX_HGT; y++)
 		{
 			for (x = 0; x < MAX_WID; x++)
@@ -5454,15 +5397,13 @@ static void process_player_change_wpos(int Ind)
 				w_ptr = &p_ptr->cave_flag[y][x];
 				c_ptr = &zcave[y][x];
 
-				/* Memorize if daytime or "interesting" */
-//				if (dawn || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
-				if (dawn || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
+				/* Memorize if "interesting" */
+				if (!cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
 					*w_ptr |= CAVE_MARK;
 			}
 		}
-	}
-	else if (wpos->wz)
-	{
+#endif
+	} else if (wpos->wz) {
 #if 1
 		/* Hack -- tricky formula, but needed */
 		p_ptr->max_panel_rows = ((l_ptr->hgt + SCREEN_HGT / 2) / SCREEN_HGT) * 2 - 2;
@@ -5476,15 +5417,18 @@ static void process_player_change_wpos(int Ind)
 		p_ptr->cur_wid = l_ptr->wid;
 
 		show_floor_feeling(Ind);
-	}
-
-	else
-	{
+	} else {
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
 
 		p_ptr->cur_hgt = MAX_HGT;
 		p_ptr->cur_wid = MAX_WID;
+	}
+
+	/* hack -- update night/day in wilderness levels */
+	if (!wpos->wz) {
+		if (IS_DAY) player_day(Ind);
+		else player_night(Ind);
 	}
 
 	/* Determine starting location */
@@ -5587,9 +5531,9 @@ static void process_player_change_wpos(int Ind)
 		if (!cave_empty_bold(zcave, y, x)) continue;
 
 		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-		if(wpos->wz==0){
-			if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method!=LEVEL_HOUSE)) continue;
-			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method==LEVEL_HOUSE)) continue;
+		if(wpos->wz == 0){
+			if((zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method != LEVEL_HOUSE)) continue;
+			if(!(zcave[y][x].info & CAVE_ICKY) && (p_ptr->new_level_method == LEVEL_HOUSE)) continue;
 		}
 
 		/* Prevent recalling or prob-travelling into no-tele vaults and monster nests! - C. Blue */
@@ -5644,7 +5588,7 @@ static void process_player_change_wpos(int Ind)
 
 		if (m_ptr->owner != p_ptr->id) continue;
 
-		if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind&GOLEM_FOLLOW)) continue;
+		if (m_ptr->mind & GOLEM_GUARD && !(m_ptr->mind & GOLEM_FOLLOW)) continue;
 
 		/* XXX XXX XXX (merging) */
 		starty = m_ptr->fy;
@@ -5727,7 +5671,7 @@ static void process_player_change_wpos(int Ind)
 	update_monsters(TRUE);
 
 	/* Tell him that he should beware */
-	if (wpos->wz==0 && !istown(wpos))
+	if (wpos->wz == 0 && !istown(wpos))
 	{
 		if (wild_info[wpos->wy][wpos->wx].own)
 		{
@@ -5753,7 +5697,7 @@ static void process_player_change_wpos(int Ind)
 	}
 	
 	/* daylight problems for vampires */
-	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_bonuses(Ind);
+	if (!p_ptr->wpos.wz && p_ptr->prace == RACE_VAMPIRE) calc_boni(Ind);
 	
 	/* moved here, in hope that move fixes panic saves,
 	   since it simplifies the wpos-changing process and
@@ -5765,6 +5709,11 @@ static void process_player_change_wpos(int Ind)
 	   with the only exception of server join/leave in nserver.c and Morgoth
 	   live spawn (ie not on level generation time) in monster2.c. - C. Blue */
 	check_Morgoth();
+
+#ifdef CLIENT_SIDE_WEATHER 
+	/* update his client-side weather */
+	player_weather(Ind, TRUE, TRUE, TRUE);
+#endif
 
 	/* Brightly lit Arena Monster Challenge */
 	if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X &&
@@ -5795,7 +5744,7 @@ static void process_player_change_wpos(int Ind)
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 //				set_recall_timer(Ind, 1);
 				p_ptr->word_recall = 1;
-				msg_print(Ind, "\377yYou have sudden visions of a gawking chicken while being recalled!");
+				msg_print(Ind, "\377yYou have sudden visions of a bawking chicken while being recalled!");
 			}
 		}
 	}
@@ -5858,7 +5807,9 @@ void dungeon(void)
 	if (t_top + 16 > MAX_TR_IDX) compact_traps(32, FALSE);
 #endif
 
-	// Note -- this is the END of the last turn
+
+
+	/* Note -- this is the END of the last turn */
 
 	/* Do final end of turn processing for each player */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -5907,6 +5858,53 @@ void dungeon(void)
 
 	/* Do some queued drawing */
 	process_lite_later();
+
+	/* process some things once each second.
+	   NOTE: Some of these (global events) mustn't
+	   be handled _after_ a player got set to 'dead',
+	   or gameplay might in very rare occasions get
+	   screwed up (someone dieing when he shouldn't) - C. Blue */
+	if (!(turn % cfg.fps))
+	{
+		/* Process global_events */
+		process_global_events();
+
+		/* process special event timers */
+		process_timers();
+
+		/* Call a specific lua function every second */
+		exec_lua(0, "second_handler()");
+
+		/* Process weather effects */
+#ifdef CLIENT_SIDE_WEATHER
+ #ifndef CLIENT_WEATHER_GLOBAL
+		process_wild_weather();
+ #else
+		process_weather_control();
+ #endif
+#else
+		process_weather_control();
+#endif
+
+#ifdef AUCTION_SYSTEM
+		/* Process auctions */
+		process_auctions();
+#endif
+
+		/* process timed shutdown (/shutrec) */
+		if (shutdown_recall_timer) shutdown_recall_timer--;
+	}
+
+#ifndef CLIENT_SIDE_WEATHER
+	/* Process server-side weather */
+	process_weather_effect_creation();
+#endif
+
+	/* Process server-side visual special fx */
+	if (season_newyearseve && fireworks && !(turn % (cfg.fps / 4)))
+		process_firework_creation();
+
+
 
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -6002,7 +6000,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if(!i && (n <= 6)) {
+			if(!i && (n <= 7)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -6027,7 +6025,7 @@ void dungeon(void)
 				}
 				break;
 			}
-			if(!i && (n <= 3)) {
+			if(!i && (n <= 4)) {
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -6072,7 +6070,41 @@ void dungeon(void)
 				}
 				break;
 			}
-			if(!i && (n <= 3)) {
+			if(!i && (n <= 4)) {
+				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+				cfg.runlevel = 2049;
+			}
+		}
+
+		if(cfg.runlevel == 2043)
+		{
+			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
+				msg_broadcast(0, "\377I*** \377RServer shutdown in 1 minute (auto-recall). \377I***");
+				shutdown_recall_state = 3;
+			}
+			else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
+				msg_broadcast(0, "\377I*** \377RServer shutdown in 5 minutes (auto-recall). \377I***");
+				shutdown_recall_state = 2;
+			}
+			else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
+				msg_broadcast(0, "\377I*** \377RServer shutdown in 15 minutes (auto-recall). \377I***");
+				shutdown_recall_state = 1;
+			}
+			if (!shutdown_recall_timer) {
+				for(i = NumPlayers; i > 0 ;i--)
+				{
+					if(Players[i]->conn==NOT_CONNECTED) continue;
+
+					if(admin_p(i)) continue;
+
+					if(Players[i]->wpos.wz) {
+						Players[i]->recall_pos.wx = Players[i]->wpos.wx;
+						Players[i]->recall_pos.wy = Players[i]->wpos.wy;
+						Players[i]->recall_pos.wz = 0;
+						Players[i]->new_level_method = (Players[i]->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
+						recall_player(i, "");
+					}
+				}
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
 			}
@@ -6088,14 +6120,15 @@ void dungeon(void)
 //		if (t_top + 160 > MAX_TR_IDX) compact_traps(320, TRUE);
 
 		/* Tell a day passed */
-		if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+//		if (((turn + (DAY_START * 10L)) % (10L * DAY)) == 0)
+		if (!(turn % DAY)) /* midnight */
 		{
 			char buf[20];
 
-			snprintf(buf, 20, "%s", get_day(bst(YEAR, turn) + START_YEAR));
+			snprintf(buf, 20, "%s", get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
 			msg_broadcast_format(0,
-					"\377GToday it is %s of the %s year of the third age.",
-					get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
+				"\377GToday it is %s of the %s year of the third age.",
+				get_month_name(bst(DAY, turn), FALSE, FALSE), buf);
 
 	        	/* the_sandman prints a rumour */
 		        if (NumPlayers)
@@ -6134,7 +6167,7 @@ void dungeon(void)
 	}
 	
 	/* Process day/night changes on world_surface */
-	if (!(turn % ((10L * DAY) / 2))) process_day_and_night();
+	if (!(turn % HOUR)) process_day_and_night();
 	
 	/* Refresh everybody's displays */
 	for (i = 1; i < NumPlayers + 1; i++)
@@ -6165,108 +6198,6 @@ void dungeon(void)
 		/* Colour animation is done in lite_spot */
 		lite_spot(i, Players[i]->py, Players[i]->px);
 	}
-
-	if (!(turn % cfg.fps))
-	{
-		/* Process global_events each second */
-		process_global_events();
-		
-if (season == SEASON_WINTER) {
-		if (!weather) { /* not snowing? */
-			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
-				weather = 1; /* snowing now */
-				weather_duration = weather_frequency * 60 * 4;
-			} else if (weather_duration > 0) {
-				weather_duration--;
-			}
-		} else { /* it's currently snowing */
-			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
-				weather = 0; /* stop snowing */
-				weather_duration = (4 - weather_frequency) * 60 * 4;
-			} else if (weather_duration > 0) {
-				weather_duration--;
-			}
-		}
-} else {
-		if (weather) { /* it's currently raining */
-			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
-				weather = 0; /* stop raining */
-//s_printf("WEATHER: Stopping rain.\n");
-				weather_duration = rand_int(60 * 30 / weather_frequency) + 60 * 30 / weather_frequency;
-			} else weather_duration--;
-		} else { /* not raining at the moment */
-			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
-				weather = 1; /* start raining */
-//s_printf("WEATHER: Starting rain.\n");
-				weather_duration = rand_int(60 * 9) + 60 * weather_frequency;
-			} else if (weather_duration > 0) {
-				weather_duration--;
-			}
-		}
-}
-		if (wind_gust > 0) wind_gust--; /* gust from east */
-		if (wind_gust < 0) wind_gust++; /* gust from west */
-		if (!wind_gust_delay) { /* gust of wind coming up? */
-			wind_gust_delay = 15 + rand_int(240); /* so sometimes no gust at all during 4-min snow periods */
-			wind_gust = rand_int(60) + 5;
-			if (rand_int(2)) wind_gust = -wind_gust;
-		} else wind_gust_delay--;
-
-#ifdef AUCTION_SYSTEM
-		/* Process auctions */
-		process_auctions();
-#endif
-
-		/* process special event timers */
-		process_timers();
-
-		/* Call a specific lua function every second */
-		exec_lua(0, "second_handler()");
-	}
-
-if (season == SEASON_WINTER) {
-	/* if it's snowing, create snowflakes */
-	if (weather && !(turn % (cfg.fps / 30)) && !fireworks) {
-		worldpos wpos;
-		/* Snow in Bree */
-		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-		cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
-	}
-} else {
-	/* if it's raining, create raindrops */
-	if (weather && !(turn % (cfg.fps / 60)) && !fireworks) {
-		worldpos wpos;
-		/* Rain in Bree */
-		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
-		cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
-	}
-}
-
-if (season_newyearseve) {
-	if (fireworks && !(turn % (cfg.fps / 4))) {
-		if (!fireworks_delay) { /* fire! */
-			worldpos wpos;
-			switch(rand_int(4)) {
-			case 0:	fireworks_delay = 0; break;
-			case 1:	fireworks_delay = 1; break;
-			case 2:	fireworks_delay = 4; break;
-			case 3:	fireworks_delay = 8; break;
-			}
-
-			/* Fireworks in Bree */
-			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-
-			/* Launch multiple rockets ;) - mikaelh */
-			for (i = 0; i < fireworks; i++) {
-				/* "type" determines colour and explosion style */
-				cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
-			}
-		} else {
-			fireworks_delay--;
-		}
-	}
-}
 
 	/* process debugging/helper functions - C. Blue */
 	if (store_debug_mode &&
@@ -6314,6 +6245,7 @@ void set_runlevel(int val)
 			meta=FALSE;
 			break;
 			/* Hack -- character edit (possessor) mode */
+		case 2043:
 		case 2044:
 		case 2045:
 		case 2046:
@@ -6488,6 +6420,11 @@ void play_game(bool new_game)
 	scan_players();
 	scan_accounts();
 	scan_houses();
+
+#if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
+	/* initialize weather */
+	wild_weather_init();
+#endif
 
 	cfg.runlevel=6;		/* Server is running */
 
@@ -6718,3 +6655,562 @@ void process_timers() {
 	}
 
 }
+
+/* during new years eve, cast fireworks! - C. Blue
+   NOTE: Called four times per second (if fireworks are enabled). */
+static void process_firework_creation() {
+	int i;
+
+	if (!fireworks_delay) { /* fire! */
+		worldpos wpos;
+		switch(rand_int(4)) {
+		case 0:	fireworks_delay = 0; break;
+		case 1:	fireworks_delay = 1; break;
+		case 2:	fireworks_delay = 4; break;
+		case 3:	fireworks_delay = 8; break;
+		}
+
+		/* Fireworks in Bree */
+		wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+
+		/* Launch multiple rockets ;) - mikaelh */
+		for (i = 0; i < fireworks; i++) {
+			/* "type" determines colour and explosion style */
+			cast_fireworks(&wpos, rand_int(MAX_WID - 120) + 60, rand_int(MAX_HGT - 40) + 20);
+		}
+	} else {
+		fireworks_delay--;
+	}
+}
+
+
+/* Update all affected (ie on worldmap surface) players' client-side weather.
+   NOTE: Called on opportuniy of _global_ weather undergoing any change. */
+#if defined CLIENT_SIDE_WEATHER && defined CLIENT_WEATHER_GLOBAL
+static void players_weather() {
+	int i;
+
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip non-connected players */
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip players not on world surface - player_weather() actually checks this too though */
+		if (Players[i]->wpos.wz) continue;
+
+		/* send weather update to him */
+		player_weather(i, FALSE, TRUE, FALSE);
+	}
+}
+#endif
+
+#if defined CLIENT_WEATHER_GLOBAL || !defined CLIENT_SIDE_WEATHER
+/* manage and toggle weather and wind state - C. Blue
+   NOTE: Called once per second,
+         and for CLIENT_SIDE_WEATHER only if also CLIENT_WEATHER_GLOBAL. */
+static void process_weather_control() {
+
+ #ifdef CLIENT_SIDE_WEATHER
+/* NOTE: we are only supposed to get here if also CLIENT_WEATHER_GLOBAL. */
+
+	/* during winter, it snows: */
+	if (season == SEASON_WINTER) {
+		if (!weather) { /* not snowing? */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
+				weather = 2; /* snowing now */
+				players_weather();
+				weather_duration = weather_frequency * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		} else { /* it's currently snowing */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
+				weather = 0; /* stop snowing */
+				players_weather();
+				weather_duration = (4 - weather_frequency) * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		}
+	/* during spring, summer and autumn, it rains: */
+	} else {
+		if (weather) { /* it's currently raining */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
+				weather = 0; /* stop raining */
+				players_weather();
+//s_printf("WEATHER: Stopping rain.\n");
+				weather_duration = rand_int(60 * 30 / weather_frequency) + 60 * 30 / weather_frequency;
+			} else weather_duration--;
+		} else { /* not raining at the moment */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
+				weather = 1; /* start raining */
+				players_weather();
+//s_printf("WEATHER: Starting rain.\n");
+				weather_duration = rand_int(60 * 9) + 60 * weather_frequency;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		}
+	}
+
+	/* manage wind */
+	if (wind_gust > 0) {
+		wind_gust--; /* gust from east */
+		if (!wind_gust) players_weather();
+	} else if (wind_gust < 0) {
+		wind_gust++; /* gust from west */
+		if (!wind_gust) players_weather();
+	} else if (!wind_gust_delay) { /* gust of wind coming up? */
+		wind_gust_delay = 15 + rand_int(240); /* so sometimes no gust at all during 4-min snow periods */
+		wind_gust = rand_int(60) + 5;
+		if (rand_int(2)) {
+			wind_gust = -wind_gust;
+		}
+		players_weather();
+	} else wind_gust_delay--;
+
+ #else /* server-side weather: */
+
+	/* during winter, it snows: */
+	if (season == SEASON_WINTER) {
+		if (!weather) { /* not snowing? */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
+				weather = 1; /* snowing now */
+				weather_duration = weather_frequency * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		} else { /* it's currently snowing */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
+				weather = 0; /* stop snowing */
+				weather_duration = (4 - weather_frequency) * 60 * 4;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		}
+	/* during spring, summer and autumn, it rains: */
+	} else {
+		if (weather) { /* it's currently raining */
+			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
+				weather = 0; /* stop raining */
+//s_printf("WEATHER: Stopping rain.\n");
+				weather_duration = rand_int(60 * 30 / weather_frequency) + 60 * 30 / weather_frequency;
+			} else weather_duration--;
+		} else { /* not raining at the moment */
+			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
+				weather = 1; /* start raining */
+//s_printf("WEATHER: Starting rain.\n");
+				weather_duration = rand_int(60 * 9) + 60 * weather_frequency;
+			} else if (weather_duration > 0) {
+				weather_duration--;
+			}
+		}
+	}
+
+	/* manage wind */
+	if (wind_gust > 0) wind_gust--; /* gust from east */
+	else if (wind_gust < 0) wind_gust++; /* gust from west */
+	else if (!wind_gust_delay) { /* gust of wind coming up? */
+		wind_gust_delay = 15 + rand_int(240); /* so sometimes no gust at all during 4-min snow periods */
+		wind_gust = rand_int(60) + 5;
+		if (rand_int(2)) wind_gust = -wind_gust;
+	} else wind_gust_delay--;
+
+ #endif
+
+}
+#endif
+
+/* create actual weather effects.
+   (animating/excising is then done in process_effects())
+   NOTE: Called each turn. */
+#ifndef CLIENT_SIDE_WEATHER
+static void process_weather_effect_creation() {
+
+	/* clear skies or new years eve fireworks? do nothing */
+	if (!weather || fireworks) return;
+
+	/* winter? then it snows: */
+	if (season == SEASON_WINTER) {
+		if (!(turn % ((cfg.fps + 29) / 30))) {
+			worldpos wpos;
+			/* Create snowflakes in Bree */
+			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+			cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
+		}
+	/* spring, summer or autumn? it rains: */
+	} else {
+		if (!(turn % ((cfg.fps + 59) / 60))) {
+			worldpos wpos;
+			/* Create raindrops in Bree */
+			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
+			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
+			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
+		}
+	}
+}
+#endif
+
+#ifdef CLIENT_SIDE_WEATHER
+ #ifndef CLIENT_WEATHER_GLOBAL
+/* initialize some weather-related variables */
+static void wild_weather_init() {
+	wilderness_type *w_ptr;
+	int i, x, y;
+
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		w_ptr = &wild_info[y][x];
+
+		/* initialize weather vars */
+
+		/* initialize cloud vars */
+		for (i = 0; i < 10; i++) {
+			w_ptr->cloud_idx[i] = -1; /* be inactive by default */
+			w_ptr->cloud_x1[i] = -9999; /* hack for client: disabled */
+		}
+	}
+}
+
+/* Manange and control weather separately for each worldmap sector,
+   assumed that client-side weather is used, depending on clouds.
+   NOTE: Called once per second. */
+/* Note: Meanings of cloud_state (not implemented):
+   1..100: growing (decrementing, until reaching 1)
+   -1..-100: shrinking (incrementing, until reaching -1 or critically low radius
+*/
+static void process_wild_weather() {
+	wilderness_type *w_ptr;
+	int i;
+
+	/* process clouds forming, dissolving
+	   and moving over world map */
+	for (i = 0; i < MAX_CLOUDS; i++) {
+		/* does cloud exist? */
+		if (cloud_dur[i]) {
+			/* lose essence from raining/snowing */
+			cloud_dur[i]--;
+			/* if cloud dissolves, keep track */
+			if (!cloud_dur[i]) {
+				clouds--;
+				/* take a break for this second ;) */
+				continue;
+			}
+			/* Move it */
+			cloud_move(i, FALSE);
+		}
+
+		/* create cloud? limit value might depend on season or a new
+		   weather factor (rain_probability) in future */
+		else if (clouds < MAX_CLOUDS) {
+			/* we have one more cloud now */
+			clouds++;
+			/* create cloud by setting it's life time */
+			cloud_dur[i] = 30 + rand_int(600); /* seconds */
+			/* decide on initial size (largest ie horizontal diameter) */
+			cloud_dsum[i] = MAX_WID + rand_int(MAX_WID * 5);
+#ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
+	//around Bree
+	cloud_x1[i] = 32 * MAX_WID - rand_int(cloud_dsum[i] / 4);
+	cloud_y1[i] = 32 * MAX_HGT;
+	cloud_x2[i] = 32 * MAX_WID + rand_int(cloud_dsum[i] / 4);
+	cloud_y2[i] = 32 * MAX_HGT;
+	cloud_state[i] = 1;
+#else
+			/* decide on starting x, y world _grid_ coords (!) */
+			cloud_x1[i] = rand_int(MAX_WILD_X * MAX_WID - cloud_dsum[i] / 4);
+			cloud_y1[i] = rand_int(MAX_WILD_Y * MAX_HGT);
+			cloud_x2[i] = rand_int(MAX_WILD_X * MAX_WID + cloud_dsum[i] / 4);
+			cloud_y2[i] = rand_int(MAX_WILD_Y * MAX_HGT);
+			/* decide on growing/shrinking/constant cloud state */
+			cloud_state[i] = rand_int(2) ? 1 : (rand_int(2) ? rand_int(100) : -rand_int(100));
+#endif
+			/* decide on initial movement */
+			cloud_set_movement(i);
+			/* add this cloud to its initial wild sector(s) */
+			cloud_move(i, TRUE);
+		}
+	}
+
+	/* update players' local client-side weather if required */
+	for (i = 1; i <= NumPlayers; i++) {
+		w_ptr = &wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx];
+		/* Skip non-connected players */
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Skip players not on world surface - player_weather() actually checks this too though */
+		if (Players[i]->wpos.wz) continue;
+		/* no change in local situation? nothing to do then */
+		if (!w_ptr->weather_updated) continue;
+		/* update player's local weather */
+#ifdef TEST_SERVER /* DEBUG */
+#if 0
+s_printf("updating weather for player %d.\n", i);
+#endif
+#endif
+		player_weather(i, FALSE, TRUE, FALSE);
+	}
+	/* reclear 'weather_updated' flag after all players have been updated */
+	for (i = 1; i <= NumPlayers; i++)
+		wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_updated = FALSE;
+}
+
+/* Change a cloud's movement.
+   (Note: Continuous movement is performed by
+   clients via buffered direction & duration.)
+   New note: Negative values should probably work too (inverse direction). */
+static void cloud_set_movement(int i) {
+#ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
+ #if 0
+	cloud_xm100[i] = 100;
+	cloud_ym100[i] = 100;
+	cloud_mdur[i] = 10;
+ #endif
+ #if 1
+	cloud_xm100[i] = 0;
+	cloud_ym100[i] = 0;
+	cloud_mdur[i] = 10;
+ #endif
+#else
+	if (rand_int(2)) {
+		/* no wind */
+		cloud_xm100[i] = 0;
+		cloud_ym100[i] = 0;
+	} else {
+		/* wind */
+		cloud_xm100[i] = randint(100);
+		cloud_ym100[i] = randint(100);
+	}
+	cloud_mdur[i] = 30 + rand_int(300); /* seconds */
+#endif
+}
+
+/* remove cloud status off all previously affected wilderness sectors,
+   move & resize cloud,
+   imprint cloud status on all currently affected wilderness sectors.
+   Set each affected sector's 'weather_updated' if there was a change.
+   Note: Wild sectors have a limit of amount of concurrent clouds
+         they can be affected by (10).
+   'resend_direction' explanation:
+   If the direction of this cloud changed. the affected wilderness
+   sectors will definitely need to be set to weather_updated, so
+   the clients will by synchronized to the new cloud movement.
+   NOTE: 'change' means that either cloud movement changes or that
+         a wild sector toggles affected/unaffected state, simply. */
+#define WEATHER_GEN_TICKS 3
+static void cloud_move(int i, bool newly_created) {
+	bool resend_dir = FALSE, sector_changed;
+	wilderness_type *w_ptr;
+	int x, y, xs, ys, xd, yd, j;
+	int txm, tym, tgx, tgy, d, dx, dy;
+	int xs_add_prev = 0, ys_add_prev = 0, xd_add_prev = 0, yd_add_prev = 0;
+	bool was_affected, is_affected, can_become_affected;
+	int was_affected_idx = 0; /* slaying compiler warning */
+	bool final_cloud_in_sector;
+
+
+/* process cloud shaping & movement  --------------------------------------- */
+
+	/* perform growing/shrinking (todo: implement) */
+	if (cloud_state[i] > 1) {
+		cloud_state[i]--;
+		/* grow */
+	} else if (cloud_state[i] < -1) {
+		cloud_state[i]++;
+		/* shrink */
+	}
+
+	/* process movement
+	   Note: This is done both server- and client-side,
+	         and synch'ed whenever movement changes or
+	         a new worldmap sector becomes (un)affected
+	         which is currently visited by tbe player to
+	         synch with. */
+	cloud_mdur[i]--;
+	/* change in movement? */
+	if (!cloud_mdur[i]) {
+		cloud_set_movement(i);
+		/* update all players' cloud direction information */
+		resend_dir = TRUE;
+	}
+
+	/* perform movement */
+	cloud_xfrac[i] += cloud_xm100[i];
+	cloud_yfrac[i] += cloud_ym100[i];
+	x = cloud_xfrac[i] / 100;
+	y = cloud_yfrac[i] / 100;
+	if (x) {
+		cloud_x1[i] += x;
+		cloud_x2[i] += x;
+		cloud_xfrac[i] -= x * 100;
+		/* we possibly left a sector behind by moving on: */
+		if (x > 0) xs_add_prev = -1;
+		else xd_add_prev = 1;
+	}
+	if (y) {
+		cloud_y1[i] += y;
+		cloud_y2[i] += y;
+		cloud_yfrac[i] += y * 100;
+		/* we possibly left a sector behind by moving on: */
+		if (y > 0) ys_add_prev = -1;
+		else yd_add_prev = 1;
+	}
+
+
+/* imprint new situation on wild sectors locally --------------------------- */
+
+	/* check all worldmap sectors affected by this cloud
+	   and modify local weather situation accordingly if needed */
+	/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
+	txm = (cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2) / MAX_WID;
+	tym = cloud_y1[i] / MAX_HGT;
+	xs = (cloud_x1[i] - (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
+	xd = (cloud_x2[i] + (cloud_dsum[i] - (cloud_x2[i] - cloud_x1[i])) / 2) / MAX_WID;
+	ys = (cloud_y1[i] - ((cloud_dsum[i] * 87) / 200)) / MAX_HGT; /* (sin 60 deg) */
+	yd = (cloud_y1[i] + ((cloud_dsum[i] * 87) / 200)) / MAX_HGT;
+	/* traverse all wild sectors that could maybe be affected or
+	   have been affected by this cloud, very roughly calculated
+	   (just a rectangle mask), fine check is done inside. */
+	for (x = xs + xs_add_prev; x < xd + xd_add_prev; x++)
+	for (y = ys + ys_add_prev; y < yd + yd_add_prev; y++) {
+		/* skip sectors out of array bounds */
+		if (x < 0 || x >= MAX_WILD_X || y < 0 || y >= MAX_WILD_Y) continue;
+
+		w_ptr = &wild_info[y][x];
+
+		sector_changed = FALSE; /* assume no change */
+		was_affected = FALSE;
+		is_affected = FALSE;
+		can_become_affected = FALSE; /* assume no free space left in local cloud array of this wild sector */
+		final_cloud_in_sector = TRUE; /* assume this cloud is the only one keeping the weather up here */
+
+		/* was the sector affected before moving? */
+		for (j = 0; j < 10; j++) {
+			/* cloud occurs in this sector? so sector was already affected */
+			if (w_ptr->cloud_idx[j] == i) {
+				was_affected = TRUE;
+				was_affected_idx = j;
+			}
+			/* free space in cloud array? means we could add another cloud if we want */
+			else if (w_ptr->cloud_idx[j] == -1) can_become_affected = TRUE;
+			else final_cloud_in_sector = FALSE;
+		}
+		if (!was_affected) final_cloud_in_sector = FALSE;
+
+		/* if this sector wasn't affected before, and we don't
+		   have free space left in its local cloud array,
+		   then we won't be able to imprint on it anyway, so we
+		   may as well ignore and leave this sector now. */
+		if (!was_affected && !can_become_affected) continue;
+
+#ifdef TEST_SERVER
+//SPAM(after a short while) s_printf("cloud-debug 1.\n");
+#endif
+		/* is the sector affected now after moving? */
+		/* calculate coordinates for deciding test case */
+		/* NOTE regarding hardcoding: These calcs depend on cloud creation algo a lot */
+		if (x < txm) tgx = (x + 1) * MAX_WID - 1;
+		else if (x > txm) tgx = x * MAX_WID;
+		else tgx = cloud_x1[i] + (cloud_x2[i] - cloud_x1[i]) / 2;
+		if (y < tym) tgy = (y + 1) * MAX_HGT - 1;
+		else if (y > tym) tgy = y * MAX_HGT;
+		else tgy = cloud_y1[i];
+		/* test whether cloud touches the sector (taken from distance()) */
+		/* Calculate distance to cloud focus point 1: */
+		dy = (tgy > cloud_y1[i]) ? (tgy - cloud_y1[i]) : (cloud_y1[i] - tgy);
+		dx = (tgx > cloud_x1[i]) ? (tgx - cloud_x1[i]) : (cloud_x1[i] - tgx);
+		d = (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+		/* Calculate distance to cloud focus point 2: */
+		dy = (tgy > cloud_y2[i]) ? (tgy - cloud_y2[i]) : (cloud_y2[i] - tgy);
+		dx = (tgx > cloud_x2[i]) ? (tgx - cloud_x2[i]) : (cloud_x2[i] - tgx);
+		/* ..and sum them up */
+		d += (dy > dx) ? (dy + (dx >> 1)) : (dx + (dy >> 1));
+
+		/* is sector affected now? add cloud to its local cloud array */
+		if (d <= cloud_dsum[i]) {
+			is_affected = TRUE;
+#ifdef TEST_SERVER
+//s_printf("cloud-debug 2.\n");
+#endif
+
+			/* update old cloud data or add a new entry if it didn't exist previously */
+			for (j = 0; j < 10; j++) {
+				/* unchanged cloud situation leads to continuing.. */
+				if (was_affected && w_ptr->cloud_idx[j] != i) continue;
+				if (!was_affected && w_ptr->cloud_idx[j] != -1) continue;
+#ifdef TEST_SERVER
+//s_printf("cloud-debug 3.\n");
+#endif
+
+				/* imprint cloud data to this wild sector's local cloud array */
+				w_ptr->cloud_idx[j] = i;
+				w_ptr->cloud_x1[j] = cloud_x1[i];
+				w_ptr->cloud_y1[j] = cloud_y1[i];
+				w_ptr->cloud_x2[j] = cloud_x2[i];
+				w_ptr->cloud_y2[j] = cloud_y2[i];
+				w_ptr->cloud_dsum[j] = cloud_dsum[i];
+				w_ptr->cloud_xm100[j] = cloud_xm100[i];
+				w_ptr->cloud_ym100[j] = cloud_ym100[i];
+#if 0
+				/* meta data for Send_weather() */
+				if (!w_ptr->cloud_updated[j]) {
+					w_ptr->cloud_updated[j] = TRUE;
+					w_ptr->clouds_to_update++;
+				}
+#endif
+				/* define weather situation accordingly */
+				w_ptr->weather_type = (season == SEASON_WINTER ? 2 : 1);
+#ifdef TEST_SERVER
+//s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
+#if 0
+if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos.wy == y) {
+    s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
+    s_printf("cloud debug all: cidx=%d, x1,y1=%d,%d, dsum=%d.\n",
+	w_ptr->cloud_idx[j], w_ptr->cloud_x1[j], w_ptr->cloud_y1[j], w_ptr->cloud_dsum[j]);
+}
+#endif
+#endif
+				w_ptr->weather_wind = 0; /* todo: change =p (implement winds, actually) */
+				w_ptr->weather_intensity = (season == SEASON_WINTER) ? 5 : 8;
+				w_ptr->weather_speed = (season == SEASON_WINTER) ? 3 * WEATHER_GEN_TICKS : 1 * WEATHER_GEN_TICKS;
+				break;
+			}
+		}
+		/* sector is not affected. If it was previously affected,
+		   delete cloud from its local array now. */
+		else if (was_affected) {
+#ifdef TEST_SERVER
+//s_printf("cloud-debug 4.\n");
+#endif
+			/* erase cloud locally */
+			w_ptr->cloud_idx[was_affected_idx] = -1;
+			w_ptr->cloud_x1[was_affected_idx] = -9999; /* hack for client: client sees this as 'disabled' */
+#if 0
+			/* meta data for Send_weather() */
+			if (!w_ptr->cloud_updated[was_affected_idx]) {
+				w_ptr->cloud_updated[was_affected_idx] = TRUE;
+				w_ptr->clouds_to_update++;
+			}
+#endif
+
+			/* if this was the last cloud in this sector,
+			   define (stop) weather situation accordingly */
+			if (final_cloud_in_sector) {
+#ifdef TEST_SERVER
+//s_printf("cloud-debug 5.\n");
+#endif
+				w_ptr->weather_type = 0; /* make weather 'run out slowly' */
+			}
+		}
+
+		/* so, did this sector actually 'change' after all? */
+		if (was_affected != is_affected) sector_changed = TRUE;
+
+		/* if the local situation did actually change,
+		   mark as updated for re-sending it to all players on it */
+		if (sector_changed || newly_created || resend_dir)
+			w_ptr->weather_updated = TRUE;
+	}
+}
+
+ #endif /* !CLIENT_WEATHER_GLOBAL */
+#endif /* CLIENT_SIDE_WEATHER */
+
+

@@ -1238,9 +1238,12 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		return;
 	}
 
-	/* towns are safe-zones from ALL hostile actions */
+	/* towns are safe-zones from ALL hostile actions - except blood bond */
         if (IS_PLAYER(Ind_attacker)) {
-		if (istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) return;
+		if ((istown(&p_ptr->wpos) || istown(&Players[Ind_attacker]->wpos)) &&
+		    (!check_blood_bond(Ind_attacker, Ind) ||
+		     p_ptr->afk || Players[Ind_attacker]->afk))
+			return;
         }
 	
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
@@ -1279,18 +1282,16 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		disturb(Ind, 1, 0);
 
 	/* Mega-Hack -- Apply "invulnerability" */
-	if (p_ptr->invuln && (!bypass_invuln))
-	{
+	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
 		/* 1 in 2 chance to fully deflect the damage */
-		if (magik(40))
-		{
+		if (magik(40)) {
 			msg_print(Ind, "The attack is fully deflected by the magic shield.");
 			if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
 			return;
 		}
 
 		/* Otherwise damage is reduced by the shield */
-		damage = damage / 2;
+		damage = (damage + 1) / 2;
 	}
 
 	/* Re allowed by evileye for power */
@@ -1495,9 +1496,9 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	/* Disturb */
 	disturb(Ind, 1, 0);
 
-	/* Having WEIRD_MIND or EMPTY_MIND form helps */
-	if(p_ptr->reduce_insanity == 1) damage = (damage * 3) / 4;
-	if(p_ptr->reduce_insanity == 2) damage = (damage * 2) / 4;
+	/* Having WEIRD_MIND or EMPTY_MIND form helps, as well as being mindcrafter */
+	if(p_ptr->reduce_insanity == 1) damage = (damage * (9 + rand_int(4))) / 12;
+	if(p_ptr->reduce_insanity == 2) damage = (damage * (6 + rand_int(7))) / 12;
 
 	/* Hurt the player */
 		p_ptr->csane -= damage;
@@ -1878,9 +1879,9 @@ static bool can_rust(object_type *o_ptr)
 		case TV_HELM:
 #endif
 		case TV_SWORD:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_AXE:
+// :)		case TV_BLUNT:
+//		case TV_POLEARM:
+//		case TV_AXE:
 		{
 			return (TRUE);
 		}
@@ -2106,7 +2107,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 
 
 /*
- * Acid or water has hit the player, attempt to affect some armor. - C. Blue
+ * Acid, water or fire has hit the player, attempt to affect some armor. - C. Blue
  * Note that the "base armor" of an object never changes.
  * If any armor is damaged (or resists), the player takes less damage. <- not implemented atm
  */
@@ -2246,17 +2247,26 @@ int weapon_takes_damage(int Ind, int typ, int slot)
 
 	switch (typ) {
 	case GF_WATER:
+		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
+		if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM) return(FALSE);
+
 		if (p_ptr->immune_water || !set_rust_destroy(o_ptr))
 			return(FALSE);
-		else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
+		break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
+		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
+		if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM) return(FALSE);
+
 		if (p_ptr->immune_acid || !set_acid_destroy(o_ptr))
 			return(FALSE);
-		else break;
+		break;
 	case GF_FIRE:
+		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
+		if (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_AXE) return(FALSE);
+
 		if (p_ptr->immune_fire || !set_fire_destroy(o_ptr))
 			return(FALSE);
-		else break;
+		break;
 	default: return(FALSE);
 	}
 
@@ -2412,11 +2422,14 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 {
 	player_type *p_ptr = Players[Ind];
 
-		int inv;
+	int inv, hurt_eq;
 
-		dam -= p_ptr->reduc_fire * dam / 100;
+	dam -= p_ptr->reduc_fire * dam / 100;
+	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
-		inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
+	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
+	if (p_ptr->resist_acid && p_ptr->oppose_acid) hurt_eq = (hurt_eq + 2) / 3;
+	else if (p_ptr->resist_acid || p_ptr->oppose_acid) hurt_eq = (hurt_eq + 1) / 2;
 
 	/* Totally immune */
 	if (p_ptr->immune_fire || (dam <= 0)) return(0);
@@ -2429,6 +2442,8 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
 		randint(HURT_CHANCE)==1)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
+
+	if (magik(hurt_eq)) equip_damage(Ind, GF_FIRE);
 
 	/* Take damage */
 //	take_hit(Ind, dam, kb_str, Ind_attacker);
@@ -2994,7 +3009,7 @@ bool apply_discharge(int Ind, int dam)
 		}
 		/* Message */
 		else if (damaged) {
-			msg_format(Ind, "\377oYour %s (%c) %s discharged!",
+			msg_format(Ind, "\377yYour %s (%c) %s discharged!",
 			    o_name, index_to_label(i), ((o_ptr->number != 1) ? "were" : "was"));
 			damaged_any = TRUE;
 		}
@@ -3057,6 +3072,7 @@ bool apply_discharge_item(int o_idx, int dam)
 		else o_ptr->number--;
 		damaged = TRUE;
 	}
+
 	return (damaged);
 }
 
@@ -3070,11 +3086,13 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 	int max1, cur1, max2, cur2, ii, jj;
 
-	switch (randint(8))
-	{
+        int chance = (195 - p_ptr->skill_sav) / 2;
+        if (p_ptr->res_tele) chance = 50;
+
+	switch (randint(safe_area(Ind) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 		case 4: case 5:
 		{
-			if (p_ptr->anti_tele || (p_ptr->res_tele  && (rand_int(100) < 67)))
+			if (p_ptr->anti_tele || magik(chance))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -3089,7 +3107,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 		case 1: case 2: case 3:
 		{
-			if (p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
+			if (p_ptr->anti_tele || magik(chance))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -3101,7 +3119,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 
 		case 6:
 		{
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
+			if (rand_int(100) < p_ptr->skill_sav || magik(chance))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -3144,8 +3162,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr)
 		case 8:
 		{
 			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
-
-			if (rand_int(100) < p_ptr->skill_sav || p_ptr->anti_tele || (p_ptr->res_tele && (rand_int(100) < 67)))
+			if (p_ptr->anti_tele || magik(chance))
 			{
 				msg_print(Ind, "You resist the effects!");
 				break;
@@ -3908,10 +3925,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				p2 = 40; f2 = FEAT_SHAL_WATER;
 			}
 #if 1
-			else if ((c_ptr->feat == FEAT_MAGMA) ||
-					 (c_ptr->feat == FEAT_MAGMA_H) ||
-					 (c_ptr->feat == FEAT_MAGMA_K) ||
-					 (c_ptr->feat == FEAT_SHAL_LAVA))
+			else if (c_ptr->feat == FEAT_SHAL_LAVA)
 			{
 				/* 15% chance to convert it to normal floor */
 				p1 = 15; f1 = FEAT_FLOOR;
@@ -4227,8 +4241,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		
 		case GF_DISENCHANT:
 		{
-			if (f2 & TR2_RES_DISEN) break;
+			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break;
 			if (artifact_p(o_ptr) && magik(100)) break;
+
 			if (o_ptr->timeout) o_ptr->timeout /= 2;
 
 			if (o_ptr->to_h > k_ptr->to_h) o_ptr->to_h--;
@@ -4242,7 +4257,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				o_ptr->pval = 0;
 				break;
 			default:
-				if (o_ptr->pval > 0 && !is_ammo(o_ptr->tval) && o_ptr->tval != TV_CHEST)
+				/* changed from >0 to >1 to make items retain a slice of their actual abilities */
+				if (o_ptr->pval > 1
+				    && !is_ammo(o_ptr->tval)
+				    && o_ptr->tval != TV_CHEST
+				    && o_ptr->tval != TV_BOOK
+				    && (o_ptr->tval != TV_RING || o_ptr->sval != SV_RING_POLYMORPH))
 					o_ptr->pval--;
 				break;
 			}
@@ -4501,14 +4521,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	int i = 0, div, k;
 
 	monster_type *m_ptr;
-
 	monster_race *r_ptr;
 
 	cptr name;
 
 	/* Is the monster "seen"? */
 	bool seen;
-
 	/* Were the "effects" obvious (if seen)? */
 	bool obvious = FALSE;
 
@@ -4524,22 +4542,16 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
-
 	/* Teleport setting (max distance) */
 	int do_dist = 0;
-
 	/* Blindness setting (amount to confuse) */
 	int do_blind = 0;
-
 	/* Confusion setting (amount to confuse) */
 	int do_conf = 0;
-
 	/* Stunning setting (amount to stun) */
 	int do_stun = 0;
-
 	/* Sleep amount (amount to sleep) */
 	int do_sleep = 0;
-
 	/* Fear amount (amount to fear) */
 	int do_fear = 0;
 
@@ -4547,15 +4559,12 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	char m_name[80];
 
 	bool resist = FALSE;
-
 	/* Assume no note */
 	cptr note = NULL;
 
 	/* Assume a default death */
 	cptr note_dies = " dies";
-
 	bool quiet; /* no message output */
-
 	bool quiet_dam = FALSE; /* no damage message output */
 
 	int plev = 25; /* replacement dummy for when a monster isn't
@@ -4564,11 +4573,11 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	cave_type **zcave;
 	cave_type *c_ptr;
 	player_type *p_ptr = NULL;
-	if(!(zcave=getcave(wpos))) return(FALSE);
-	c_ptr=&zcave[y][x];
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	c_ptr = &zcave[y][x];
 
 	/* hack -- by trap */
-	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx?TRUE:FALSE));
+	quiet = ((Ind <= 0 || who <= PROJECTOR_UNUSUAL) ? TRUE : (0 - Ind == c_ptr->m_idx ? TRUE : FALSE));
 
 //	if(quiet) return(FALSE);
 	if (Ind <= 0 || 0 - Ind == c_ptr->m_idx) return(FALSE);
@@ -4593,11 +4602,11 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Never affect projector */
 	if ((who > 0) && (c_ptr->m_idx == who)) return (FALSE);
 
-		/* Never hurt golem */
-		if (who < 0 && who > PROJECTOR_UNUSUAL)
-		{
-				if (Players[-who]->id == m_ptr->owner) return (FALSE);
-		}
+	/* Never hurt golem */
+	if (who < 0 && who > PROJECTOR_UNUSUAL) {
+//if (IS_PVP) {
+		if (Players[-who]->id == m_ptr->owner) return (FALSE);
+	}
 
 	/* Set the "seen" flag */
 	if (!quiet)
@@ -4765,6 +4774,53 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 			}
   			break;
+		}
+		/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
+		case GF_CHARMIGNORE: {
+			int res = 1;
+
+			/* No "real" damage */
+//			obvious = FALSE;
+			dam = 0;
+			quiet_dam = TRUE;
+
+			/* paranoia */
+			if (Ind < 1) break;
+
+			/* don't affect sleeping targets maybe */
+			if (m_ptr->csleep) break;
+
+			/* don't affect hurt monsters! */
+			if (m_ptr->hp < m_ptr->maxhp) {
+				note = " seems too agitated to be charmed.";
+				break;
+			}
+
+			/* not successfully charmed? */
+			if ((r_ptr->flags9 & RF9_IM_PSI) ||
+			    (r_ptr->flags1 & RF1_UNIQUE) ||
+			    (r_ptr->flags2 & RF3_UNDEAD) ||
+			    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
+			    (r_ptr->flags3 & RF3_NONLIVING)) {
+				note = " is unaffected.";
+				break;
+			}
+			if (r_ptr->flags2 & RF2_SMART) res <<= 1;
+			if (r_ptr->flags3 & RF3_NO_CONF) res <<= 1;
+			if (r_ptr->flags1 & RF1_UNIQUE) res <<= 1;
+			if (r_ptr->flags2 & RF2_POWERFUL) res <<= 1;
+			if (magik(100 - 100 / res)) {
+				note = " resists the effect.";
+				break;
+			}
+
+			/* remember who charmed us */
+			m_ptr->charmedignore = Ind;
+
+			/* count our victims, just for optimization atm */
+			p_ptr->mcharming++;
+			note = " seems to forget you were an enemy.";
+			break;
 		}
 
 		/* Earthquake the area */
@@ -5834,8 +5890,9 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					/* No obvious effect */
 					obvious = FALSE;
 				}
-				dam = 0;
-				quiet_dam = TRUE;
+				//let's do some actual damage, too
+				//dam = 0;
+				//quiet_dam = TRUE;
 				break;
 			} else { //Blind
 				do_blind = dam;
@@ -6869,9 +6926,10 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Sound and Impact breathers never stun */
 	if (do_stun &&
-			 !(r_ptr->flags4 & RF4_BR_SOUN) &&
-			 !(r_ptr->flags4 & RF4_BR_WALL) &&
-		 !(r_ptr->flags3 & RF3_NO_STUN))
+	    !(r_ptr->flags4 & RF4_BR_SOUN) &&
+	    !(r_ptr->flags4 & RF4_BR_PLAS) &&
+	    !(r_ptr->flags4 & RF4_BR_WALL) &&
+	    !(r_ptr->flags3 & RF3_NO_STUN))
 	{
 		/* Obvious */
 		if (seen) obvious = TRUE;
@@ -6955,7 +7013,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Was not confused */
 			else 
 			{
-				note = " looks confused.";
+				note = " gropes around blindly.";
 			}
 		}
 
@@ -7174,8 +7232,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool friendly_player = FALSE;
 
 	/* Bad player number */
-	if (Ind <= 0)
-		return (FALSE);
+	if (Ind <= 0) return (FALSE);
 
 	p_ptr = Players[Ind];
 	r_ptr = &r_info[p_ptr->body_monster];
@@ -7201,7 +7258,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Mega-Hack -- Players cannot hurt other players */
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
-			who > PROJECTOR_UNUSUAL) return (FALSE);
+	    who > PROJECTOR_UNUSUAL)
+		return (FALSE);
 
 
 	/* Store/house is safe */
@@ -7353,6 +7411,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
                         (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			(typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+			(typ != GF_MINDBOOST_PLAYER) && 
 			(typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
 		{
 			/* If this was intentional, make target hostile */
@@ -7362,7 +7421,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!check_hostile(Ind, 0 - who))
 				{
 					if (Players[Ind]->pvpexception < 2)
-					add_hostility(Ind, killer);
+					add_hostility(Ind, killer, FALSE);
 
 					/* Log it if no blood bond - mikaelh */
 					if (!player_list_find(p_ptr->blood_bond, Players[0 - who]->id)) {
@@ -7468,7 +7527,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	(typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	(typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 	(typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
-	(typ == GF_HEALINGCLOUD) || (typ = GF_MINDBOOST_PLAYER) ||
+	(typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	(typ == GF_OLD_POLY))))))
 	{ /* No effect on ghosts / admins */
 
@@ -7478,7 +7537,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Bolt attack from a monster, a player or a trap */
 //	if ((!rad) && get_skill(p_ptr, SKILL_DODGE) && (who > 0))
 	/* Hack -- HIDE(direct) spell cannot be dodged */
-	if (get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)))
+	if (!friendly_player &&
+	    get_skill(p_ptr, SKILL_DODGE) && !(flg & PROJECT_HIDE) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)))
 	{
 		if ((!rad) && (who >= PROJECTOR_TRAP))
 		{
@@ -7509,7 +7569,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #else
 	/* Bolt attack from a monster, a player or a trap */
 //	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos) + 1000))) { /* hack - more difficult to dodge ranged attacks */
-	if (!p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
+	if (!friendly_player &&
+	    !p_ptr->blind && !(flg & (PROJECT_HIDE | PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) && magik(apply_dodge_chance(Ind, getlevel(wpos)))) {
 		if ((!rad) && (who >= PROJECTOR_TRAP)) {
 			msg_format(Ind, "\377%cYou dodge %s projectile!", COLOUR_DODGE_GOOD, m_name_gen);
 			return (TRUE);
@@ -7522,10 +7583,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 #endif
 
+
 	/* Reflection */
 #if 0
 	/* Effects done by the plane cannot bounce */
-	if (p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
+	if (!friendly_player && p_ptr->reflect && !a_rad && !(randint(10)==1) && ((who != -101) && (who != -100)))
 	{
 				int t_y, t_x;
 		int max_attempts = 10;
@@ -7554,24 +7616,33 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		disturb(1, 0);
 		return(TRUE);
 	}
-#endif	// 0
-	/* Effects done by the plane cannot bounce */
-	if ((p_ptr->reflect && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)) &&	/* balls / clouds / storms cannot bounce - C. Blue */
+#endif
+	/* Effects done by the plane cannot bounce,
+	   balls / clouds / storms / walls (and beams atm too) cannot bounce - C. Blue */
+	if (!friendly_player && 
+	    ((p_ptr->reflect &&
+	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
-	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) && !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	    (flg & PROJECT_KILL) && !((flg & PROJECT_GRID) || (flg & PROJECT_JUMP)) &&
+	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
+	    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) &&
 	    rand_int(10) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 7 : 3))
 #endif
-	    )
+	    ))
 	{
 		int t_y, t_x, ay, ax;
 		int max_attempts = 10;
 
 		if (blind) msg_print(Ind, "Something bounces!");
-		else msg_format(Ind, "%s attack bounces!", m_name_gen);
+		else {
+			if (p_ptr->play_vis[0 - who])
+				msg_format(Ind, "%s attack bounces!", m_name_gen);
+			else
+				msg_print(Ind, "Its attack bounces!");
+		}
 
 /*		if ((who != PROJECTOR_TRAP) && who)  isn't this wrong? */
 		if (who && (who > PROJECTOR_UNUSUAL)) /* can only hit a monster or a player when bouncing */
@@ -7617,11 +7688,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return TRUE;
 	}
 
+
 #ifdef USE_BLOCKING
-	/* Took cover behind a shield? requires USE_BLOCKING */
+	/* Bolt attacks: Took cover behind a shield? requires USE_BLOCKING */
 	if (!friendly_player && p_ptr->shield_deflect && 	/* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !grid was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
-	    (flg & PROJECT_KILL) && (flg & PROJECT_GRID) && !((flg & PROJECT_JUMP) || (flg & PROJECT_STAY)) &&
+	    !rad && (flg & PROJECT_KILL) && !(flg & (PROJECT_GRID | PROJECT_JUMP | PROJECT_STAY)) &&
+	    (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect)))) /* requires stances to * 2 etc.. post-king -> best stance */
+	{
+		if (blind) msg_format(Ind, "\377%cSomething glances off your shield!", COLOUR_BLOCK_GOOD);
+		else msg_format(Ind, "\377%cYou deflect %s attack!", COLOUR_BLOCK_GOOD, m_name_gen);
+
+		/* if we hid behind the shield from an acidic attack, damage the shield probably! */
+		if (magik((dam < 5 ? 5 : (dam < 50 ? 10 : 25)))) shield_takes_damage(Ind, typ);
+
+		disturb(Ind, 1, 0);
+		return TRUE;
+	}
+	/* Ball attacks: Took cover behind a shield? requires USE_BLOCKING */
+	if (!friendly_player && p_ptr->shield_deflect && 	/* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
+	     /* jump for LOS projecting, stay for clouds; !grid was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
+	    (flg & PROJECT_KILL) && (flg & PROJECT_GRID) && !(flg & (PROJECT_JUMP | PROJECT_STAY)) &&
 	    (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect)))) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (blind) msg_format(Ind, "\377%cSomething hurls along your shield!", COLOUR_BLOCK_GOOD);
@@ -7635,6 +7722,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 #endif
 
+	/* Test for stair GOI already, to prevent not only damage but according effects too! - C. Blue */
+	/* Mega-Hack -- Apply "invulnerability" */
+	if (p_ptr->invuln && (!bypass_invuln)) {
+	/* 1 in 2 chance to fully deflect the damage */
+		if (magik(40)) {
+			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			if (who != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+			return(TRUE);
+		}
+		dam = (dam + 1) / 2;
+
+		/* prevent multiple damage cutting */
+		p_ptr->invuln_applied = TRUE;
+	}
 
 
 	/* Analyze the damage */
@@ -8441,6 +8542,18 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Teleport other -- Teleports */
 		case GF_AWAY_ALL:
 		{
+			if (IS_PVP) {
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+				/* Tell the one who caused it */
+				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+			}
+
 			if (fuzzy) msg_print(Ind, "You feel you are somewhere else.");
 			else msg_format(Ind, "%^s teleports you away.", killer);
 			teleport_player(Ind, 200, TRUE);
@@ -8703,12 +8816,24 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				}
 		case GF_TELEPORT_PLAYER:
 		{
+			if (IS_PVP) {
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_TELEPORT_PLAYER) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+				/* Tell the one who caused it */
+				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+			}
+
 			if (fuzzy) msg_print(Ind, "You feel translocated!");
 			else msg_format(Ind, "%^s teleports you!", killer);
 
-						teleport_player(Ind, dam, TRUE);
+			teleport_player(Ind, dam, TRUE);
 			break;
-				}
+		}
 		case GF_RECALL_PLAYER:
 		{
 			if (!p_ptr->word_recall)
@@ -9031,16 +9156,29 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 //			bool resists_tele = FALSE;
 //			dun_level		*l_ptr = getfloor(wpos);
+                        int chance = (195 - p_ptr->skill_sav) / 2; 
+                        if (p_ptr->res_tele) chance = 50; 
+
+			if (IS_PVP) {
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+				/* Tell the one who caused it */
+				msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+			}
 
 			/* Teleport to nowhere..? */
-			if (who >=0 || who <= PROJECTOR_UNUSUAL) break;
+			if (who >= 0 || who <= PROJECTOR_UNUSUAL) break;
 
 			if (p_ptr->anti_tele)
 			{
 				msg_print(Ind, "You are unaffected!");
 			}
-			else if ((p_ptr->res_tele && (rand_int(100) < 67)) ||
-				(rand_int(100 + 50) < p_ptr->skill_sav))
+			else if (magik(chance))
 			{
 				msg_print(Ind, "You resist the effect!");
 			}
@@ -9088,7 +9226,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case GF_AWAY_UNDEAD:
 		{
-			if (p_ptr->ghost || p_ptr->suscep_life) {
+			if (IS_PVP) {
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_AWAY_UNDEAD) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			}
+
+		    if (p_ptr->ghost || p_ptr->suscep_life) {
 
 			/* Only affect undead */
 			if (p_ptr->res_tele)
@@ -9105,7 +9252,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You resist the effect!");
 			}
 			
-			}
+		    }
 
 			/* No "real" damage */
 			dam = 0;
@@ -9115,7 +9262,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Teleport evil (Use "dam" as "power") */
 		case GF_AWAY_EVIL:
 		{
-			if (p_ptr->suscep_good) {
+			if (IS_PVP) {
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_AWAY_EVIL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			}
+
+		    if (p_ptr->suscep_good) {
 
 			/* Only affect evil */
 			if (p_ptr->res_tele)
@@ -9132,7 +9288,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You resist the effect!");
 			}
 			
-			}
+		    }
 			/* No "real" damage */
 			dam = 0;
 			break;
@@ -9367,6 +9523,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Damage messages in pvp fights - mikaelh */
 	if (who < 0 && who > PROJECTOR_UNUSUAL && dam > 0)
+//	if (IS_PVP && dam > 0)
 	{
 		if (check_hostile(-who, Ind))
 		{
@@ -9377,7 +9534,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Player was hit - mikaelh */
 	p_ptr->got_hit = TRUE;
 
-	/* Ghost-check end */
+	/* Ghost/admin-check end */
 	}
 
 	/* Skip non-connected players */
@@ -9629,6 +9786,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	/* Hack -- Start at a player */
 	else if (who < 0 && who > PROJECTOR_UNUSUAL)
+//	else if (IS_PVP)
 	{
 		x1 = Players[0 - who]->px;
 		y1 = Players[0 - who]->py;
@@ -9668,7 +9826,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	/* Hack -- Assume there will be no blast (max radius 16) */
 //	for (dist = 0; dist < 16; dist++) gm[dist] = 0;
-	for (dist = 0; dist <= PREPARE_RADIUS; dist++) gm[dist] = 0;
+	for (dist = 0; dist < PREPARE_RADIUS; dist++) gm[dist] = 0;
 
 
 	/* Hack -- Handle stuff */
@@ -9780,11 +9938,11 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				
 		if ((c_ptr->m_idx != 0) && dist && (flg & PROJECT_STOP))
 		{
-			if (who > 0){
+			if (who > 0) {
 				/* hit first player (ignore monster) */
 				if(c_ptr->m_idx < 0) break;
 			}
-			else if(who < 0){
+			else if (who < 0) {
 				/* always hit monsters */
 				if (c_ptr->m_idx > 0) break;
 			
@@ -10308,7 +10466,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		project_m_y = 0;
 
 		if (who < 0 && who > PROJECTOR_UNUSUAL &&
-				Players[0 - who]->taciturn_messages)
+//		if (IS_PVP &&
+		    Players[0 - who]->taciturn_messages)
 			suppress_message = TRUE;
 
 		/* Now hurt the monsters, from inside out */
@@ -10347,6 +10506,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 		/* Mega-Hack */
 		if ((who < 0) && (project_m_n == 1) && (who > PROJECTOR_UNUSUAL))
+//		if (IS_PVP && project_m_n == 1)
 		{
 			/* Location */
 			x = project_m_x;
@@ -10411,6 +10571,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 			/* Affect the player */
 			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, attacker)) notice = TRUE;
+			/* reset stair-goi helper flag (used by project_p()) again */
+			if (player_idx >= 1 && player_idx <= NumPlayers) Players[player_idx]->invuln_applied = FALSE;
 		}
 	}
 
@@ -10524,3 +10686,23 @@ int safe_area(int Ind)
 	/* default: usual situation - not safe */
 	return 0;
 }
+
+#ifdef ENABLE_RCRAFT
+bool rune_backlash(int Ind, int typ, int dam)
+{
+	player_type *p_ptr;
+
+	if (!Ind) return FALSE;
+	p_ptr = Players[Ind];
+
+	if(typ == 0) typ = GF_GRAVITY;
+	if(dam < 10) dam = 10;
+
+	msg_format(Ind, "You are caught in the backlash of your incantation!");
+	dam *= 2;
+
+	(void) project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ,
+	   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), " a malformed invocation.");
+	return TRUE;
+}
+#endif

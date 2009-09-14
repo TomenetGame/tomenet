@@ -408,89 +408,6 @@ void init_wild_info()
 #endif	// 0
 
 
-/* Called when the player goes onto a wilderness level, to 
-   make sure the lighting information is up to date with
-   the time of day.
-*/ 
-
-void wild_apply_day(struct worldpos *wpos)
-{
-	int x,y;
-	cave_type *c_ptr;
-	cave_type **zcave;
-
-	night_surface=0;
-
-	if(!(zcave=getcave(wpos))) return;
-	
-	/* scan the level */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			c_ptr = &zcave[y][x];
-			c_ptr->info |= CAVE_GLOW;
-		}
-	}
-}
-
-void wild_apply_night(struct worldpos *wpos)
-{
-	int x, y, i, stores = 0, y1, x1;
-	byte sx[255], sy[255];
-	cave_type *c_ptr;
-	cave_type **zcave;
-
-	night_surface=1;
-
-	if(!(zcave=getcave(wpos))) return;
-
-	/* scan the level */
-	for (y = 0; y < MAX_HGT; y++)
-	{
-		for (x = 0; x < MAX_WID; x++)
-		{
-			c_ptr = &zcave[y][x];
-			
-			/* Darken the features */
-			if (!(c_ptr->info & CAVE_ROOM))
-			{
-				/* Darken the grid */
-				c_ptr->info &= ~CAVE_GLOW;
-			}
-
-			if (c_ptr->feat == FEAT_SHOP && stores < 255)
-			{
-				sx[stores] = x;
-				sy[stores] = y;
-				stores++;
-			}
-		}
-	}
-
-	/* Hack -- illuminate the stores */
-	for (i = 0; i < stores; i++)
-	{
-		x = sx[i];
-		y = sy[i];
-
-		for (y1 = y - 1; y1 <= y + 1; y1++)
-		{
-			for (x1 = x - 1; x1 <= x + 1; x1++)
-			{
-				/* Get the grid */
-				c_ptr = &zcave[y1][x1];
-
-				/* Illuminate the store */
-//				c_ptr->info |= CAVE_ROOM | CAVE_GLOW;
-				c_ptr->info |= CAVE_GLOW;
-			}
-		}
-	}
-}
-
-
-
 
 /* In the future, add all sorts of cool stuff could be added, such as clusters of 
  * buildings or abandoned towns. Also, maybe hack on additional wilderness
@@ -895,8 +812,9 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 #ifdef DEVEL_TOWN_COMPATIBILITY
 	int attempts = 0;
 #endif
+	int i;
 	char orientation;	
-	object_type food;
+	object_type food, *o_ptr;
 	int tmp_seed;
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;
@@ -945,9 +863,28 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y)
 			zcave[y][x].feat = FEAT_LOOSE_DIRT;
 		}	
 	}
-	
+
+	/* initially clear all previous items from it! */
+	if (!(w_ptr->flags & WILD_F_GARDENS))
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+		/* Skip objects not here */
+		if (!inarea(&o_ptr->wpos, wpos)) continue;
+		/* Skip carried objects */
+		if (o_ptr->held_m_idx) continue;
+		/* if it's on our field, erase it */
+		if (o_ptr->iy >= y1 && o_ptr->iy <= y2 &&
+		    o_ptr->ix >= x1 && o_ptr->ix <= x2)
+			delete_object_idx(i, TRUE);
+	}
+
 	/* save the RNG */
 	tmp_seed = Rand_value;
+	
+	/* randomize, so food doesn't grow at always same garden coordinates */
+	Rand_value = turn;
 	
 	/* alternating rows of crops */
 	for (y = y1+1; y <= y2-1; y ++)
@@ -2594,73 +2531,79 @@ static void flood(char *buf, int x, int y, int w, int h){
 bool fill_house(house_type *h_ptr, int func, void *data){
 	/* polygonal house */
 	/* draw all the outer walls cleanly */
-	cptr coord=h_ptr->coords.poly;
-	cptr ptr=coord;
+	cptr coord = h_ptr->coords.poly;
+	cptr ptr = coord;
 	char *matrix;
-	int sx=h_ptr->x;
-	int sy=h_ptr->y;
-	int dx,dy;
-	int x,y;
-	int minx,miny,maxx,maxy;
-	int mw,mh;
-	bool success=TRUE;
-	struct worldpos *wpos=&h_ptr->wpos;
+	int sx = h_ptr->x;
+	int sy = h_ptr->y;
+	int dx, dy;
+	int x, y;
+	int minx, miny, maxx, maxy;
+	int mw, mh;
+	bool success = TRUE;
+	struct worldpos *wpos = &h_ptr->wpos;
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return(FALSE);
 
-	if(func==FILL_PLAYER || func==FILL_OBJECT)
-		success=FALSE;
+	if(func == FILL_PLAYER || func==FILL_OBJECT)
+		success = FALSE;
 
-	if(h_ptr->flags&HF_RECT){
+	if(h_ptr->flags & HF_RECT){
 		cave_type *c_ptr;
-		for(x=0;x<h_ptr->coords.rect.width;x++){
-			for(y=0;y<h_ptr->coords.rect.height;y++){
- 				c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
-				if(func==FILL_GUILD){
+		for(x = 0; x < h_ptr->coords.rect.width; x++){
+			for(y = 0; y < h_ptr->coords.rect.height; y++){
+ 				c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+				if(func == FILL_GUILD){
 					return(FALSE);	/* for now */
 					if(((struct guildsave*)data)->mode){
 						fputc(c_ptr->feat, ((struct guildsave*)data)->fp);
 					}
 					else{
-						c_ptr->feat=fgetc(((struct guildsave*)data)->fp);
+						c_ptr->feat = fgetc(((struct guildsave*)data)->fp);
 //						if(c_ptr->feat>FEAT_INVIS)
 						if(!cave_plain_floor_grid(c_ptr))
 							c_ptr->info &= ~(CAVE_ROOM);
 					}
 				}
-				else if(func==FILL_OBJECT){ /* object in house */
-					object_type *o_ptr=(object_type*)data;
-					if(o_ptr->ix==h_ptr->x+x && o_ptr->iy==h_ptr->y+y){
-						success=TRUE;
+				else if(func == FILL_OBJECT){ /* object in house */
+					object_type *o_ptr = (object_type*)data;
+					if(o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y){
+						success = TRUE;
 						break;
 					}
 				}
-				else if(func==FILL_PLAYER){ /* player in house? */
-					player_type *p_ptr=(player_type*)data;
-					if(p_ptr->px==h_ptr->x+x && p_ptr->py==h_ptr->y+y){
-						success=TRUE;
+				else if(func == FILL_PLAYER){ /* player in house? */
+					player_type *p_ptr = (player_type*)data;
+					if(p_ptr->px == h_ptr->x + x && p_ptr->py == h_ptr->y + y){
+						success = TRUE;
 						break;
 					}
 				}
-				else if(func==FILL_MAKEHOUSE){
-					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
-						if((pick_house(wpos,h_ptr->y,h_ptr->x))!=-1)
-							success=FALSE;
+				else if(func == FILL_MAKEHOUSE){
+					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
+						if((pick_house(wpos, h_ptr->y, h_ptr->x)) != -1)
+							success = FALSE;
 					}
 					else
-						c_ptr->feat=FEAT_DIRT;
+						c_ptr->feat = FEAT_DIRT;
 				}
-				else if(func==FILL_CLEAR){
-					delete_object(wpos,y,x,TRUE);
+				else if(func == FILL_CLEAR){
+					delete_object(wpos, y, x, TRUE);
 				}
-				else if(func==FILL_BUILD){
-					if(x && y && x<h_ptr->coords.rect.width-1 && y<h_ptr->coords.rect.height-1){
- 						if(!(h_ptr->flags&HF_NOFLOOR))
-							c_ptr->feat=FEAT_FLOOR;
+				else if(func == FILL_BUILD){
+					if(x && y && x < h_ptr->coords.rect.width - 1 && y < h_ptr->coords.rect.height - 1){
+ 						if(!(h_ptr->flags & HF_NOFLOOR))
+							c_ptr->feat = FEAT_FLOOR;
 						if(h_ptr->flags & HF_JAIL){
-							c_ptr->info|=CAVE_STCK;
+							c_ptr->info |= CAVE_STCK;
 						}
- 						c_ptr->info|=(CAVE_ICKY|CAVE_ROOM);
+ 						c_ptr->info |= (CAVE_ICKY | CAVE_ROOM);
+
+#if 0 //moved to day->night change		//note: below hack is overridden by night atm :/ todo:fix
+ 						/* hack: lit owned houses for easier overview - only inside, not walls! */
+//done above already				if (x > 0 && x < h_ptr->coords.rect.width - 1 && y > 0 && y < h_ptr->coords.rect.height)
+ 						if (h_ptr->dna->owner) c_ptr->info |= CAVE_GLOW;
+#endif
 					}
 				}
 				else s_printf("rect fill house (func: %d\n", func);
@@ -2794,7 +2737,7 @@ bool fill_house(house_type *h_ptr, int func, void *data){
 						delete_object(wpos, miny+(y-1), minx+(x-1), TRUE);
 						break;
 					}
-					if(func==FILL_BUILD){
+					if(func == FILL_BUILD){
 						if(!(h_ptr->flags&HF_NOFLOOR))
 							zcave[miny+(y-1)][minx+(x-1)].feat=FEAT_FLOOR;
 						zcave[miny+(y-1)][minx+(x-1)].info|=(CAVE_ROOM|CAVE_ICKY);
@@ -2830,62 +2773,62 @@ void wild_add_uhouse(house_type *h_ptr)
 {
  	int x,y;
  	cave_type *c_ptr;
-	struct worldpos *wpos=&h_ptr->wpos;
+	struct worldpos *wpos = &h_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
-	if(h_ptr->flags&HF_DELETED) return; /* House destroyed. Ignore */
+	if(h_ptr->flags & HF_DELETED) return; /* House destroyed. Ignore */
 
 	/* draw our user defined house */
- 	if(h_ptr->flags&HF_RECT){
-		for(x=0;x<h_ptr->coords.rect.width;x++){
- 			c_ptr=&zcave[h_ptr->y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_WALL_HOUSE;
+ 	if(h_ptr->flags & HF_RECT){
+		for(x = 0; x < h_ptr->coords.rect.width; x++){
+ 			c_ptr = &zcave[h_ptr->y][h_ptr->x + x];
+ 			c_ptr->feat = FEAT_WALL_HOUSE;
 		}
-		for(y=h_ptr->coords.rect.height-1,x=0;x<h_ptr->coords.rect.width;x++){
- 			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_WALL_HOUSE;
+		for(y = h_ptr->coords.rect.height - 1, x = 0; x < h_ptr->coords.rect.width; x++){
+ 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+ 			c_ptr->feat = FEAT_WALL_HOUSE;
 		}
-		for(y=1;y<h_ptr->coords.rect.height;y++){
- 			c_ptr=&zcave[h_ptr->y+y][h_ptr->x];
- 			c_ptr->feat=FEAT_WALL_HOUSE;
+		for(y = 1; y < h_ptr->coords.rect.height; y++){
+ 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x];
+ 			c_ptr->feat = FEAT_WALL_HOUSE;
 		}
-		for(x=h_ptr->coords.rect.width-1,y=1;y<h_ptr->coords.rect.height;y++){
- 			c_ptr=&zcave[h_ptr->y+y][h_ptr->x+x];
- 			c_ptr->feat=FEAT_WALL_HOUSE;
+		for(x = h_ptr->coords.rect.width - 1, y = 1; y < h_ptr->coords.rect.height; y++){
+ 			c_ptr = &zcave[h_ptr->y + y][h_ptr->x + x];
+ 			c_ptr->feat = FEAT_WALL_HOUSE;
 		}
 	}
 	fill_house(h_ptr, FILL_BUILD, NULL);
-	if(h_ptr->flags&HF_MOAT){
+	if(h_ptr->flags & HF_MOAT){
 		/* Draw a moat around our house */
 		/* It is already valid at this point */
-		if(h_ptr->flags&HF_RECT){
+		if(h_ptr->flags & HF_RECT){
 		}
 	}
-	c_ptr=&zcave[h_ptr->y+h_ptr->dy][h_ptr->x+h_ptr->dx];
+	c_ptr = &zcave[h_ptr->y + h_ptr->dy][h_ptr->x + h_ptr->dx];
 
 	/*
 	 * usually, already done in poly_build..
 	 * right, Evileye?	- Jir -
 	 */
-	if (!(cs_ptr=AddCS(c_ptr, CS_DNADOOR)))
+	if (!(cs_ptr = AddCS(c_ptr, CS_DNADOOR)))
 	{
-		if (!(cs_ptr=GetCS(c_ptr, CS_DNADOOR)))
+		if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR)))
 		{
 			s_printf("House creation failed!! (wild_add_uhouse)\n");
 			return;
 		}
 	}
-	c_ptr->feat=FEAT_HOME;
+	c_ptr->feat = FEAT_HOME;
 
-	cs_ptr->sc.ptr=h_ptr->dna;
+	cs_ptr->sc.ptr = h_ptr->dna;
 }
 
 void wild_add_uhouses(struct worldpos *wpos){
 	int i;
-	for(i=0;i<num_houses;i++){
-		if(inarea(&houses[i].wpos,wpos) && !(houses[i].flags&HF_STOCK)){
+	for(i = 0; i < num_houses; i++){
+		if(inarea(&houses[i].wpos, wpos) && !(houses[i].flags & HF_STOCK)){
 			wild_add_uhouse(&houses[i]);
 		}
 	}
@@ -3085,8 +3028,6 @@ void wilderness_gen(struct worldpos *wpos)
 	/* Day Light */
 	if (IS_DAY)
 	{
-		wild_apply_day(wpos);	
-
 		/* Make some day-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 //			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
@@ -3094,12 +3035,10 @@ void wilderness_gen(struct worldpos *wpos)
 			w_ptr->flags |= WILD_F_INHABITED;
 		}
 	}
-
 	/* Night Time */
 	else
 	{
 		/* Make some night-time residents */
-		
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 //			for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
 			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
@@ -3388,7 +3327,7 @@ void genwild(){
 	u32b old_seed = Rand_value;	
 
 	Rand_quick=TRUE;
-	Rand_value=seed_town;
+	Rand_value = seed_town;
 
 	island(cfg.town_y, cfg.town_x,WILD_GRASSLAND, WILD_UNDEFINED,5);
 	wild_info[cfg.town_y][cfg.town_x].type=WILD_TOWN;
@@ -3436,7 +3375,7 @@ void genwild(){
 	addwaste();
 	/* Restore random generator */
 	Rand_quick=rand_old;
-	Rand_value=old_seed;
+	Rand_value = old_seed;
 }
 
 
@@ -3646,4 +3585,35 @@ void wild_flags(int Ind, u32b flags) {
 	    wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags,
 	    flags, flags);
 	wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags = flags;
+}
+
+/* make wilderness more lively again - C. Blue 
+   flags values: 
+   0 -- season-dependant 
+   other than 0 -- clear flags in all wilderness (wildflags & ~flags)
+*/
+void lively_wild(u32b flags) {
+	int x, y;
+	for (x = 0; x < MAX_WILD_X; x++)
+	for (y = 0; y < MAX_WILD_Y; y++) {
+		/* specific value? */
+		if (flags) {
+			wild_info[y][x].flags &= ~flags;
+			continue;
+		}
+
+		/* season-dependant? */
+		/* except for winter, regrow gardens. 
+		   Maybe not very realistic timing, but looks nice.. */
+		if (season != SEASON_WINTER) wild_info[y][x].flags &= ~WILD_F_GARDENS;
+		/* much to eat from harvesting */
+		if (season == SEASON_AUTUMN) wild_info[y][x].flags &= ~WILD_F_FOOD;
+		/* bones from last winter o_O - also new people arrive */
+		if (season == SEASON_SPRING) wild_info[y][x].flags &= ~(WILD_F_BONES | WILD_F_HOME_OWNERS | WILD_F_OBJECTS | WILD_F_CASH);
+		/* they return home and are stocking up for winter */
+		if (season == SEASON_WINTER) wild_info[y][x].flags &= ~(WILD_F_HOME_OWNERS | WILD_F_OBJECTS | WILD_F_CASH);
+		/* now they come ^^ */
+		//<---->if (season == SEASON_SUMMER) wild_info[y][x].flags |= WILD_F_INVADERS;
+		wild_info[y][x].flags &= ~WILD_F_INVADERS; /* every time? */
+	}
 }

@@ -1,3 +1,4 @@
+
 /* account flags */
 #define ACC_TRIAL 0x0001	/* Account is awaiting validation */
 #define ACC_ADMIN 0x0002	/* Account members are admins */
@@ -31,4 +32,8 @@ struct account{
 #endif	/* 0 */
 	char name[30];	/* login */
 	char pass[20];	/* some crypts are not 13 */
+	/* new additions - C. Blue */
+	unsigned int expiry;	/* last time this account logged on (for expiry check) */
+	signed int cheeze;	/* value in gold of cheezed goods or money */
+	signed int cheeze_self; /* value in gold of cheezed goods or money to own characters */
 };

@@ -2155,7 +2155,7 @@ D:%X,&,,,,,,,,,,,^^^^^^^^^^.....XX.XX.XXX..XXXX..X.X..XXXX..XXX.XX.XX.....^^^^^^
 D:%X,&,,,,,,,,,,,^^^^^^^^^^......XX.#X.XXX.......X.X.......XXX.X#.XX......^^^^^^^^^^,,,,,,,,,,,&,X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-F:NO_ROTATE | NO_PENETR | NO_DESTROY | NO_GENO | NOMAP | NO_MAGIC_MAP
+F:NO_ROTATE | NO_PENETR | NO_DESTROY | NO_GENO | NO_MAP | NO_MAGIC_MAP
 
 N:97:Modified Greater Vault (Huge)
 X:8:45:17:39
@@ -3006,7 +3006,7 @@ D:%XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.XX#.#XX%
 D:%X8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8XXX8X%
 D:%XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-F:NOMAP | NO_GENO | NO_DESTROY | FORCE_FLAGS
+F:NO_MAP | NO_GENO | NO_DESTROY | FORCE_FLAGS
 
 N:132:Lesser Vault (Cross)
 X:7:10:13:20
@@ -3841,7 +3841,7 @@ D:%X^^...&...,.......&...,.......&...,.......&...,.......&...*.......&...,......
 D:%X^^^..&...,.......&...,.......&...,.......&...,.......&...,.......&...,.......&....^^^X%
 D:%#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#%
 D:%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-F:NO_GENO | NO_DESTROY | NO_PENETR | NO_TELE | NOMAP | NO_MIRROR | NO_ROTATE
+F:NO_GENO | NO_DESTROY | NO_PENETR | NO_TELE | NO_MAP | NO_MIRROR | NO_ROTATE
 
 # I removed HIVES and added this version instead (C. Blue)
 N:160:Miniature Cell Hives

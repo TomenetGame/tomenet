@@ -108,6 +108,13 @@
 #define FLOORTILEBUG_WORKAROUND
 
 
+/* Sanity check of client input */
+#define bad_dir(d)	((d)<0 || (d)>9)
+#define bad_dir2(d)	((d)<128 || (d)>137)	/* dir + 128 */
+#define bad_dir3(d)	((d)<-1 || (d)>9)
+
+
+
 #if 0
 static bool validstrings(char *nick, char *real, char *host);
 #else
@@ -329,6 +336,9 @@ static void Init_receive(void)
 	playing_receive[PKT_BBS]		= Receive_BBS;
 	playing_receive[PKT_WIELD2]		= Receive_wield2;
 	playing_receive[PKT_CLOAK]		= Receive_cloak;
+	playing_receive[PKT_INVENTORY_REV]	= Receive_inventory_revision;
+	playing_receive[PKT_ACCOUNT_INFO]	= Receive_account_info;
+	playing_receive[PKT_CHANGE_PASSWORD]	= Receive_change_password;
 }
 
 static int Init_setup(void)
@@ -708,6 +718,73 @@ void Check_evilmeta(void)
 	}
 }
 
+/* update tomenet.acc record structure to a new version - C. Blue
+   Done by opening 'tomenet.acc_old' and (over)writing 'tomenet.acc'. */
+static bool update_acc_file_version(void) {
+        int fd_old, fd;
+        FILE *fp_old, *fp;
+	struct account_old c_acc_old;
+	struct account c_acc;
+        size_t retval;
+        int amt = 0;
+
+	return FALSE; /* security, while not actively used */
+
+#ifdef NETBSD 
+        fd_old = open("tomenet.acc_old", O_RDONLY);
+        fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT);
+#else 
+        fd_old = open("tomenet.acc_old", O_RDONLY);
+        fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT);
+#endif 
+
+	/* No updating to do?
+	   Exit here, if no 'tomenet.acc_old' file exists: */
+	if(fd_old < 0) return(FALSE);
+
+        if(fd < 0) return(FALSE);
+#if (!defined(NETBSD)) && (!defined(WIN32)) 
+        if((flock(fd, LOCK_EX)) != 0) {
+                close(fd);
+                return(FALSE);
+        }
+#endif
+        fp_old = fdopen(fd_old, "r");
+        fp = fdopen(fd, "w");
+
+        if(fp_old != (FILE*)NULL && fp != (FILE*)NULL){
+		s_printf("Updating tomenet.acc structure.. ");
+                while(!feof(fp_old)){
+                        retval = fread(&c_acc_old, sizeof(struct account_old), 1, fp_old);
+                        if (retval == 0) break; /* EOF reached, nothing read into c_acc - mikaelh */
+
+			/* copy unchanged structure parts: */
+			c_acc.id = c_acc_old.id;
+			c_acc.flags = c_acc_old.flags;
+			strcpy(c_acc.name, c_acc_old.name);//30
+			strcpy(c_acc.pass, c_acc_old.pass);//20
+			/* changes/additions: */
+			c_acc.expiry = 0;
+			c_acc.cheeze = 0;
+			c_acc.cheeze_self = 0;
+
+//                        fseek(fp, 0L, SEEK_END);
+			fwrite(&c_acc, sizeof(struct account), 1, fp);
+			amt++;
+                }
+                fclose(fp_old);
+                fclose(fp);
+		s_printf("%d records updated.\n", amt);
+        }
+#if (!defined(NETBSD)) && (!defined(WIN32)) 
+        flock(fd, LOCK_UN);
+#endif 
+        close(fd_old);
+        close(fd);
+        remove("tomenet.acc_old");
+
+        return(TRUE);
+}
 
 /*
  * Initialize the connection structures.
@@ -747,6 +824,9 @@ int Setup_net_server(void)
 	time(&cfg.runtime);
 	s_printf("Session startup turn is: %d\n", turn);
 	session_turn = turn;
+
+	/* Check for updating account file structure to a new version */
+	update_acc_file_version();
 
 	return 0;
 }
@@ -1368,6 +1448,10 @@ static void Delete_player(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	inventory_change_type *inv_change;
+
+	/* terminate mindcrafter charm effect */
+	do_mstopcharm(Ind);
 
 	/* Be paranoid */
 	cave_type **zcave;
@@ -1458,6 +1542,15 @@ static void Delete_player(int Ind)
 
 	/* Free afk_noticed - mikaelh */
 	player_list_free(p_ptr->afk_noticed);
+
+	/* Free inventory changes - mikaelh */
+	inv_change = p_ptr->inventory_changes;
+	while (inv_change) {
+		inventory_change_type *free_change = inv_change;
+		inv_change = inv_change->next;
+		KILL(free_change, inventory_change_type);
+	}
+	p_ptr->inventory_changes = NULL;
 
 	/* Try to save his character */
 	save_player(Ind);
@@ -1550,8 +1643,8 @@ static void Delete_player(int Ind)
 			zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
 		Players[NumPlayers]	= Players[Ind];
 		Players[Ind]		= p_ptr;
-		p_ptr			= Players[NumPlayers];
 		cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
+		p_ptr			= Players[NumPlayers];
 	}
 
 	if (Conn[Players[Ind]->conn]->id != -1)
@@ -1610,6 +1703,11 @@ bool Destroy_connection(int ind, char *reason_orig)
 	}
 
 	exec_lua(NumPlayers, format("player_leaves(%d, %d, \"%/s\", \"%s\")", NumPlayers, connp->id, connp->c_name, showtime()));
+
+#if 0 /* why do we use NumPlayers? oO is it already sorted? shouldn't we use GetInd? */
+	/* in case winners CAN hold arts as long as they don't leave the floor (default): */
+	lua_strip_true_arts_from_present_player(NumPlayers, int mode)
+#endif
 
 	sock = connp->w.sock;
 	if (sock != -1)
@@ -2187,7 +2285,7 @@ static int Handle_login(int ind)
 	int j;
 	cptr title = "";
 
-	char			traffic[50+1];
+	char traffic[50+1];
 
 	if (Id >= MAX_ID)
 	{
@@ -2412,6 +2510,8 @@ static int Handle_login(int ind)
 		msg_print(NumPlayers, "\377y* None-server-shutdown command pending *");
 	if (p_ptr->admin_dm && (cfg.runlevel == 2044))
 		msg_print(NumPlayers, "\377y* ActiveVeryLow-server-shutdown command pending *");
+	if (p_ptr->admin_dm && (cfg.runlevel == 2043))
+		msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
 
 	if(p_ptr->quest_id){
 		for(i=0; i<20; i++){
@@ -2488,6 +2588,11 @@ static int Handle_login(int ind)
 	/* Check Morgoth, if player had saved a level where he was generated */
 	check_Morgoth();
 
+#ifdef CLIENT_SIDE_WEATHER
+	/* update his client-side weather */
+	player_weather(NumPlayers, TRUE, TRUE, TRUE);
+#endif
+
 #ifdef AUCTION_SYSTEM
 	auction_player_joined(NumPlayers);
 #endif
@@ -2559,7 +2664,10 @@ static int Handle_login(int ind)
 
 /* wrapper function for local 'Conn' - C. Blue */
 int is_inactive(int Ind) {
-	return (Conn[Players[Ind]->conn]->inactive_keepalive);
+	if (Conn[Players[Ind]->conn]->inactive_keepalive)
+		return (Conn[Players[Ind]->conn]->inactive_keepalive);
+	else
+		return (Conn[Players[Ind]->conn]->inactive_ping / 2);
 }
 
 /* Actually execute commands from the client command queue */
@@ -2629,7 +2737,16 @@ void process_pending_commands(int ind)
 			return;
 		}
 
-		if(connp->r.ptr==foo){ /* thx for the warning, evileye */
+		/* Check whether the socket buffer has advanced */
+		if (connp->r.ptr == foo) {
+			/* Return code 0 means that there wasn't enough data in the socket buffer */
+			if (result == 0) {
+				/* Move the remaining data to the queue buffer - mikaelh */
+				Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len);
+			}
+
+			/* The call didn't do anything, clear the buffer */
+			Sockbuf_clear(&connp->r);
 			break;
 		}
 		if (connp->state == CONN_PLAYING)
@@ -2665,13 +2782,20 @@ void process_pending_commands(int ind)
 				p_ptr->energy = 0;
 			}
 		}
-		//{
-			//Sockbuf_clear(&connp->r);
-		//}
-		/*
-		if (result == 2)
+
+		/* Queue all remaining packets now */
+		if (result == 3)
+		{
+			Sockbuf_advance(&connp->r, connp->r.ptr - connp->r.buf);
+			if (Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len) != connp->r.len)
+			{
+				errno = 0;
+				Destroy_connection(ind, "Can't copy data to queue");
+				return;
+			}
+			Sockbuf_clear(&connp->r);
 			return;
-		*/
+		}
 	}
 	/* Restore our energy if neccecary. */
 
@@ -3164,7 +3288,8 @@ static int Receive_login(int ind){
 			char colour_sequence[3];
 			s32b sflg3 = 0, sflg2 = 0, sflg1 = 0, sflg0 = 0; /* server flags to tell the client more about us - just informational purpose */
 #ifdef RPG_SERVER
-			if (!(l_acc->flags & ACC_ADMIN)) sflg0 |= SFLG_RPG; /* Allow multiple chars per account for admins! */
+			sflg0 |= SFLG_RPG;
+			if (l_acc->flags & ACC_ADMIN) sflg0 |= SFLG_RPG_ADMIN; /* Allow multiple chars per account for admins! */
 #endif
 #ifdef FUN_SERVER
 			sflg0 |= SFLG_FUN;
@@ -3251,7 +3376,7 @@ static int Receive_login(int ind){
 		}
 		else{
 			/* fail login here */
-			Destroy_connection(ind, "Character name already in use.");
+			Destroy_connection(ind, "Multiple logins on the same account aren't allowed.");
 			return(-1);
 		}
 	} else {
@@ -3489,10 +3614,10 @@ static int Receive_file(int ind){
 	player_type *p_ptr = NULL;
 	int Ind;
 
-	Ind=GetInd[connp->id];
-	p_ptr=Players[Ind];
-	n=Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
-	if(n==3){
+	Ind = GetInd[connp->id];
+	p_ptr = Players[Ind];
+	n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
+	if(n == 3){
 		switch(command){
 			case PKT_FILE_INIT:
 				/* Admin to do this only !!! */
@@ -3824,8 +3949,8 @@ static int Receive_undefined(int ind)
 
 int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3835,22 +3960,10 @@ int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 		return 0;
 	}
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
-	      }
-	  }
+	}
 
         return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 }
@@ -3858,8 +3971,8 @@ int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm)
 
 int Send_ac(int ind, int base, int plus)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3868,22 +3981,10 @@ int Send_ac(int ind, int base, int plus)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_AC, base, plus);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_AC, base, plus);
 }
 
@@ -3984,8 +4085,8 @@ int Send_skill_info(int ind, int i)
 
 int Send_gold(int ind, s32b au, s32b balance)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -3994,22 +4095,10 @@ int Send_gold(int ind, s32b au, s32b balance)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%d%d", PKT_GOLD, au, balance);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance);
 }
 
@@ -4017,9 +4106,8 @@ int Send_gold(int ind, s32b au, s32b balance)
 int Send_sanity(int ind, int msane, int csane)
 {
 #ifdef SHOW_SANITY
-	connection_t *connp = Conn[Players[ind]->conn];
-
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 //	printf("sanity send!\n");
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4029,22 +4117,10 @@ int Send_sanity(int ind, int msane, int csane)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {                                                        g
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SANITY, msane, csane);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SANITY, msane, csane);
 #endif	// SHOW_SANITY
 }
@@ -4052,9 +4128,8 @@ int Send_sanity(int ind, int msane, int csane)
 int Send_sanity(int ind, byte attr, cptr msg)
 {
 #ifdef SHOW_SANITY
-	connection_t *connp = Conn[Players[ind]->conn];
-
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 //	printf("sanity send!\n");
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -4064,22 +4139,10 @@ int Send_sanity(int ind, byte attr, cptr msg)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg);
 #endif	// SHOW_SANITY
 }
@@ -4087,9 +4150,8 @@ int Send_sanity(int ind, byte attr, cptr msg)
 
 int Send_hp(int ind, int mhp, int chp)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4098,29 +4160,17 @@ int Send_hp(int ind, int mhp, int chp)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_HP, mhp, chp);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp);
 }
 
 int Send_sp(int ind, int msp, int csp)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
 
 #if 1 /* can we use mana at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
@@ -4137,35 +4187,23 @@ int Send_sp(int ind, int msp, int csp)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_SP, msp, csp);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_SP, msp, csp);
 }
 
 int Send_stamina(int ind, int mst, int cst)
 {
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+
 #ifndef ENABLE_TECHNIQUES
 	return(0); /* disabled until client can handle it */
 #endif
 
-	connection_t *connp = Conn[Players[ind]->conn];
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0)) return(0);
-
-	player_type *p_ptr = Players[ind];
 
 #if 1 /* can we use stamina at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
@@ -4185,22 +4223,10 @@ int Send_stamina(int ind, int mst, int cst)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 }
 
@@ -4234,8 +4260,8 @@ int Send_various(int ind, int hgt, int wgt, int age, int sc, cptr body)
 
 int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4245,22 +4271,10 @@ int Send_stat(int ind, int stat, int max, int cur, int s_ind, int cur_base)
 		return 0;
 	}
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
-	      }
-	  }
+	}
 
 	return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, cur_base);
 }
@@ -4284,8 +4298,8 @@ int Send_history(int ind, int line, cptr hist)
  */
 int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4294,22 +4308,10 @@ int Send_inven(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, amt, tval, sval, pval, name);
 }
 
@@ -4321,8 +4323,8 @@ int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, b
     cptr name)
 //int Send_inven_wide(int Ind, char pos, byte attr, int wgt, int amt, cptr name)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 #if 0
 	byte tval = p_ptr->inventory[pos].tval;
 	byte sval = p_ptr->inventory[pos].sval;
@@ -4344,30 +4346,18 @@ int Send_inven_wide(int ind, char pos, byte attr, int wgt, int amt, byte tval, b
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, amt, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9, name);
 }
 
 //int Send_equip(int ind, char pos, byte attr, int wgt, byte tval, cptr name)
 int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte sval, s16b pval, cptr name)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4376,22 +4366,10 @@ int Send_equip(int ind, char pos, byte attr, int wgt, int amt, byte tval, byte s
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, amt, tval, sval, pval, name);
 }
 
@@ -4411,8 +4389,8 @@ int Send_title(int ind, cptr title)
 
 int Send_extra_status(int ind, cptr status)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4421,32 +4399,20 @@ int Send_extra_status(int ind, cptr status)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%s", PKT_EXTRA_STATUS, status);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%s", PKT_EXTRA_STATUS, status);
 }
 
 int Send_depth(int ind, struct worldpos *wpos)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
 	bool ville = istown(wpos); /* -> print name (TRUE) or a depth value (FALSE)? */
 	cptr desc = "";
-	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN;
+	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
 	bool no_tele = FALSE;
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
@@ -4484,18 +4450,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 		ville = TRUE;
 		desc = "Arena";
 	}
-	
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
 
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if ((Ind2 = get_esp_link(ind, LINKF_MISC, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
@@ -4522,8 +4478,7 @@ int Send_depth(int ind, struct worldpos *wpos)
 		} else {
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour2, desc);
 		}
-	      }
-	  }
+	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
@@ -4554,9 +4509,9 @@ int Send_depth(int ind, struct worldpos *wpos)
 /* added for Valinor */
 int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
-	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN;
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
+	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
 	cave_type **zcave;
 	bool no_tele = FALSE;
 	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
@@ -4568,17 +4523,7 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if ((Ind2 = get_esp_link(ind, LINKF_MISC, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
 
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
@@ -4605,8 +4550,7 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 		} else {
 			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, desc);
 		}
-	      }
-	  }
+	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
@@ -4636,8 +4580,8 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 
 int Send_food(int ind, int food)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4646,29 +4590,17 @@ int Send_food(int ind, int food)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hu", PKT_FOOD, food);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hu", PKT_FOOD, food);
 }
 
 int Send_blind(int ind, bool blind)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4677,29 +4609,17 @@ int Send_blind(int ind, bool blind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c", PKT_BLIND, blind);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c", PKT_BLIND, blind);
 }
 
 int Send_confused(int ind, bool confused)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4708,29 +4628,17 @@ int Send_confused(int ind, bool confused)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c", PKT_CONFUSED, confused);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c", PKT_CONFUSED, confused);
 }
 
 int Send_fear(int ind, bool fear)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4739,29 +4647,17 @@ int Send_fear(int ind, bool fear)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c", PKT_FEAR, fear);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c", PKT_FEAR, fear);
 }
 
 int Send_poison(int ind, bool poisoned)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4770,29 +4666,22 @@ int Send_poison(int ind, bool poisoned)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c", PKT_POISON, poisoned);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c", PKT_POISON, poisoned);
 }
 
 int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
+
+	/* give 'knocked out' priority over paralysis;
+	   give stun priority over search/rest */
+	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
+	    (p_ptr->stun > 100 || (!paralyzed && p_ptr->stun))) return 0;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4801,29 +4690,17 @@ int Send_state(int ind, bool paralyzed, bool searching, bool resting)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting);
 }
 
 int Send_speed(int ind, int speed)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4832,22 +4709,10 @@ int Send_speed(int ind, int speed)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hd", PKT_SPEED, speed);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hd", PKT_SPEED, speed);
 }
 
@@ -4867,8 +4732,8 @@ int Send_study(int ind, bool study)
 
 int Send_cut(int ind, int cut)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4877,30 +4742,22 @@ int Send_cut(int ind, int cut)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
 
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hu", PKT_CUT, cut);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hu", PKT_CUT, cut);
 }
 
 int Send_stun(int ind, int stun)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
+
+	/* give 'knocked out' priority over paralysis */
+	if (is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) &&
+	    p_ptr->paralyzed && p_ptr->stun <= 100) return 0;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4909,29 +4766,17 @@ int Send_stun(int ind, int stun)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%hu", PKT_STUN, stun);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%hu", PKT_STUN, stun);
 }
 
 int Send_direction(int ind)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -4940,22 +4785,10 @@ int Send_direction(int ind)
 			ind, connp->state, connp->id));
 		return FALSE;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
 }
 
@@ -5016,29 +4849,19 @@ int Send_message(int ind, cptr msg)
 
 int Send_char(int ind, int x, int y, byte a, char c)
 {
-        player_type *p_ptr = Players[ind];
+        player_type *p_ptr = Players[ind], *p_ptr2 = NULL;
 
 	if (!BIT(Conn[Players[ind]->conn]->state, CONN_PLAYING | CONN_READY))
 		return 0;
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
+		if (BIT(Conn[p_ptr2->conn]->state, CONN_PLAYING | CONN_READY))
+			Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+	}
 
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		if (BIT(Conn[Players[Ind2]->conn]->state, CONN_PLAYING | CONN_READY))
-		  {
-		    Packet_printf(&Conn[Players[Ind2]->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
-		  }
-	      }
-	  }
-
-	return Packet_printf(&Conn[Players[ind]->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+	return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
 }
 
 int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
@@ -5079,8 +4902,8 @@ int Send_technique_info(int ind)
 
 int Send_item_request(int ind)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5089,22 +4912,10 @@ int Send_item_request(int ind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c", PKT_ITEM);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c", PKT_ITEM);
 }
 
@@ -5120,24 +4931,6 @@ int Send_flush(int ind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-#if 0
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-		connp2 = Conn[p_ptr2->conn];
-
-		Packet_printf(&connp2->c, "%c", PKT_FLUSH);
-	      }
-	  }
-#endif
 	return Packet_printf(&connp->c, "%c", PKT_FLUSH);
 }
 
@@ -5164,23 +4957,14 @@ int Send_line_info(int ind, int y)
 		return 0;
 	}
 
-	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0; /* bad hack for shortcut */
+//	if (p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED)) return 0;
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    Ind2 = find_player(p_ptr->esp_link);
+	Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2);
 
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-	      }
-	  }
-	
 	/* Put a header on the packet */
 	Packet_printf(&connp->c, "%c%hd", PKT_LINE_INFO, y);
-	if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%hd", PKT_LINE_INFO, y);
+	if (Ind2) Packet_printf(&(Conn[p_ptr2->conn]->c), "%c%hd", PKT_LINE_INFO, y);
 
 	/* Each column */
 	for (x = 0; x < 80; x++)
@@ -5238,7 +5022,7 @@ int Send_mini_map(int ind, int y)
 	int x, x1, n;
 	char c;
 	byte a;
-	int Ind2 = 0;
+	int Ind2;
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
@@ -5252,18 +5036,8 @@ int Send_mini_map(int ind, int y)
 
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    Ind2 = find_player(p_ptr->esp_link);
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if ((Ind2 = get_esp_link(ind, LINKF_VIEW, &p_ptr2)))
 		connp2 = Conn[p_ptr2->conn];
-	      }
-	  }
 	
 	/* Packet header */
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
@@ -5323,7 +5097,9 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
-	player_type *p_ptr = Players[ind];
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
+	
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5338,22 +5114,10 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 	if (tval != TV_BOOK) pval = 0;
 
 #ifdef MINDLINK_STORE
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
-	      }
-	  }
+	}
 #endif
 
 	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
@@ -5369,7 +5133,8 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
-	player_type *p_ptr = Players[ind];
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5381,23 +5146,11 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 	}
 
 #ifdef MINDLINK_STORE
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	{
-		int Ind2 = find_player(p_ptr->esp_link);
-		player_type *p_ptr2;
-		connection_t *connp2;
-
-		if (!Ind2)
-			end_mind(ind, TRUE);
-		else
-		{
-			p_ptr2 = Players[Ind2];
-			connp2 = Conn[p_ptr2->conn];
-
-//			Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
-//			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c", PKT_STORE_INFO, num, store, owner, items, purse, num_actions);
-			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
-		}
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+//		Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+//		Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c", PKT_STORE_INFO, num, store, owner, items, purse, num_actions);
+		Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
 	}
 #endif
 
@@ -5409,7 +5162,8 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
-	player_type *p_ptr = Players[ind];
+	connection_t *connp2;
+	player_type *p_ptr = Players[ind], *p_ptr2;
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5421,21 +5175,9 @@ int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char
 	}
 
 #ifdef MINDLINK_STORE
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	{
-		int Ind2 = find_player(p_ptr->esp_link);
-		player_type *p_ptr2;
-		connection_t *connp2;
-
-		if (!Ind2)
-			end_mind(ind, TRUE);
-		else
-		{
-			p_ptr2 = Players[Ind2];
-			connp2 = Conn[p_ptr2->conn];
-
-			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
-		}
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
 	}
 #endif
 
@@ -5446,7 +5188,8 @@ int Send_store_sell(int ind, int price)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
-	player_type *p_ptr = Players[ind];
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5458,22 +5201,10 @@ int Send_store_sell(int ind, int price)
 	}
 
 #ifdef MINDLINK_STORE
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%d", PKT_SELL, price);
-	      }
-	  }
+	}
 #endif
 
 	return Packet_printf(&connp->c, "%c%d", PKT_SELL, price);
@@ -5483,7 +5214,8 @@ int Send_store_kick(int ind)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
-	player_type *p_ptr = Players[ind];
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 #endif
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
@@ -5495,22 +5227,10 @@ int Send_store_kick(int ind)
 	}
 
 #ifdef MINDLINK_STORE
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_VIEW))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE);
-	      }
-	  }
+	}
 #endif
 
 	return Packet_printf(&connp->c, "%c", PKT_STORE_LEAVE);
@@ -5518,9 +5238,9 @@ int Send_store_kick(int ind)
 
 int Send_target_info(int ind, int x, int y, cptr str)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 	char buf[80];
-	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5536,22 +5256,10 @@ int Send_target_info(int ind, int x, int y, cptr str)
 	/* Paranoia -- Add null */
 	buf[79] = '\0';
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
-	      }
-	  }
+	}
 	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
 }
 
@@ -5588,7 +5296,7 @@ int Send_beep(int ind)
 int Send_AFK(int ind, byte afk)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+//	player_type *p_ptr = Players[ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5597,30 +5305,14 @@ int Send_AFK(int ind, byte afk)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-		connp2 = Conn[p_ptr2->conn];
-
-		Packet_printf(&connp2->c, "%c%c", PKT_AFK, afk);
-	      }
-	  }
 	return Packet_printf(&connp->c, "%c%c", PKT_AFK, afk);
 }
 
 int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
-                        byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte awkward_shoot)
+                        byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5629,27 +5321,25 @@ int Send_encumberment(int ind, byte cumber_armor, byte awkward_armor, byte cumbe
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
-		Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-		                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
-	      }
-	  }
-	return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+		if (!is_newer_than(&connp2->version, 4, 4, 2, 0, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+                } else {
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+                }
+	}
+	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+	                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+        } else {
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+	                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+        }
 }
-		
+
 
 int Send_special_line(int ind, int max, int line, byte attr, cptr buf)
 {
@@ -5813,10 +5503,19 @@ int Send_skills(int ind)
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
 	tmp = o_ptr->to_h;
 	/* dual-wield? */
+#if 0 /* hmm seemed a bit glitchy? replacing below.. */
 	o_ptr = &p_ptr->inventory[INVEN_ARM];
 	if (o_ptr->k_idx && o_ptr->tval != TV_SHIELD) tmp += o_ptr->to_h;
 	/* average? */
 	if (p_ptr->dual_wield) tmp /= 2;
+#else
+	if (p_ptr->dual_wield && p_ptr->dual_mode) {
+		o_ptr = &p_ptr->inventory[INVEN_ARM];
+		tmp += o_ptr->to_h;
+		/* average */
+		tmp /= 2;
+	}
+#endif
 	
 	tmp += p_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
@@ -5880,8 +5579,8 @@ int Send_pause(int ind)
 
 int Send_monster_health(int ind, int num, byte attr)
 {
-	connection_t *connp = Conn[Players[ind]->conn];
-	player_type *p_ptr = Players[ind];
+	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
 	{
@@ -5890,27 +5589,15 @@ int Send_monster_health(int ind, int num, byte attr)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
+	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-
 		Packet_printf(&connp2->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
-	      }
-	  }
+	}
 
 	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
 }
 
-int Send_chardump(int ind)
+int Send_chardump(int ind, cptr tag)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 
@@ -5921,24 +5608,6 @@ int Send_chardump(int ind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-#if 0
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    int Ind2 = find_player(p_ptr->esp_link);
-	    player_type *p_ptr2;
-	    connection_t *connp2;
-
-	    if (!Ind2)
-	      end_mind(ind, TRUE);
-	    else
-	      {
-		p_ptr2 = Players[Ind2];
-		connp2 = Conn[p_ptr2->conn];
-
-		Packet_printf(&connp2->c, "%c", PKT_FLUSH);
-	      }
-	  }
-#endif
 
 #if 0 /* This works, but won't help non-death char dumps that are taken manually */
 	/* hack: Quickly update the client's unique list first */
@@ -5947,7 +5616,11 @@ int Send_chardump(int ind)
 			Send_unique_monster(ind, i);
 #endif
 
-	return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
+	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) ||
+	    MY_VERSION <= (4 << 12 | 4 << 8 | 2 << 4 | 0))
+		return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
+	else
+		return Packet_printf(&connp->c, "%c%s", PKT_CHARDUMP, tag);
 }
 
 int Send_unique_monster(int ind, int r_idx)
@@ -5967,6 +5640,135 @@ int Send_unique_monster(int ind, int r_idx)
 	return Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name);
 }
 
+int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds)
+{
+	int n, i, c;
+	int cx1, cy1, cx2, cy2;
+
+	/* Note: This is NOT the client-side limit, but rather the current
+	   server-side limit how many clouds we want to transmit to the client. */
+	const int cloud_limit = 10;
+
+	connection_t *connp = Conn[Players[ind]->conn];
+	wilderness_type *w_ptr = &wild_info[Players[ind]->wpos.wy][Players[ind]->wpos.wx];
+
+	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) return(0);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for weather (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	/* hack: tell client to disable all clouds */
+	if (revoke_clouds) c = -1;
+	/* tell client to expect clouds */
+//	else if (update_clouds) c = w_ptr->clouds_to_update;
+	else if (update_clouds) c = cloud_limit;
+	else c = 0;
+	/* fix limit! (or crash/bug results on client-side,
+	   since it tries to read ALL clouds (despite discarding
+	   those which are too much) and hence tries to read more
+	   packets than we are actually sending, corrupting itself) */
+//redundant, see above
+//	if (c > cloud_limit) c = cloud_limit;
+
+	n = Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d%d", PKT_WEATHER,
+	    weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed,
+	    Players[ind]->panel_col_prt, Players[ind]->panel_row_prt, c);
+
+#ifdef TEST_SERVER
+#if 0
+s_printf("clouds_to_update %d (%d)\n", c, w_ptr->clouds_to_update);
+#endif
+#endif
+
+	/* re-send all clouds that have 'updated' flag set */
+	if (c > 0) {
+		for (i = 0; i < cloud_limit; i++) {
+//			if (w_ptr->cloud_updated[i]) {
+//s_printf("cloud_updated %d\n", i);
+
+//DEBUGGING... (local should be correct, but that's not all yet..)
+#if 0 /* send global cloud coordinates, same as the server uses? */
+				n = Packet_printf(&connp->c, "%d%d%d%d%d%d%d%d",
+				    i, w_ptr->cloud_x1[i], w_ptr->cloud_y1[i], w_ptr->cloud_x2[i], w_ptr->cloud_y2[i],
+				    w_ptr->cloud_dsum[i], w_ptr->cloud_xm100[i], w_ptr->cloud_ym100[i]);
+#else /* send local cloud coordinates especially for client-side? */
+				/* convert global cloud coordinates (server-side)
+				   to local coordinates for the client, who only
+				   has to pay attention to one sector at a time
+				   (ie the one the player is currently in): */
+				cx1 = w_ptr->cloud_x1[i] - Players[ind]->wpos.wx * MAX_WID;
+				cy1 = w_ptr->cloud_y1[i] - Players[ind]->wpos.wy * MAX_HGT;
+				cx2 = w_ptr->cloud_x2[i] - Players[ind]->wpos.wx * MAX_WID;
+				cy2 = w_ptr->cloud_y2[i] - Players[ind]->wpos.wy * MAX_HGT;
+				/* hack: 'disable' a cloud slot */
+				if (w_ptr->cloud_x1[i] == -9999) cx1 = -9999;
+
+#ifdef TEST_SERVER
+#if 0
+s_printf("sending local cloud %d (%d,%d - %d,%d)\n", i, cx1, cy1, cx2, cy2);
+#endif
+#endif
+
+				n = Packet_printf(&connp->c, "%d%d%d%d%d%d%d%d",
+				    i, cx1, cy1, cx2, cy2,
+				    w_ptr->cloud_dsum[i], w_ptr->cloud_xm100[i], w_ptr->cloud_ym100[i]);
+#endif
+//			}
+		}
+	}
+
+	return n;
+}
+
+int Send_inventory_revision(int ind)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+	player_type *p_ptr = Players[ind];
+
+	if (!is_newer_than(&connp->version, 4, 4, 2, 1, 0, 0)) return(0);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for inventory revision (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%d", PKT_INVENTORY_REV, p_ptr->inventory_revision);
+}
+
+int Send_account_info(int ind)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+	struct account *l_acc;
+	s16b acc_flags = 0;
+
+	if (!is_newer_than(&connp->version, 4, 4, 2, 2, 0, 0)) return(0);
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for account info (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	l_acc = GetAccount(connp->nick, NULL, FALSE);
+	if (l_acc)
+	{
+		acc_flags = l_acc->flags;
+		KILL(l_acc, struct account);
+	}
+
+	return Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags);
+}
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *
@@ -5974,6 +5776,7 @@ int Send_unique_monster(int ind, int r_idx)
  *  0 --> The action was queued (not enough energy)
  *  1 --> The action was ignored (not enough energy)
  *  2 --> The action completed successfully
+ *  3 --> The action has been queued and is blocking further actions that need to be queued
  *
  *  Every code except for 1 will cause the input handler to stop
  *  processing actions.
@@ -6028,28 +5831,14 @@ static int Receive_walk(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-		      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -6059,6 +5848,9 @@ static int Receive_walk(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	/* bugged here if !p_ptr */
 
@@ -6110,29 +5902,15 @@ static int Receive_run(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	int i, n, player = -1;
 	char dir;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-		      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	
 	if(p_ptr->command_rep){
@@ -6183,6 +5961,9 @@ static int Receive_run(int ind)
 		return n;
 	}
 
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
+
 	/* Disturb if we want to change directions */
 	//if (dir != p_ptr->find_current) disturb(player, 0, 0);
 
@@ -6198,7 +5979,7 @@ static int Receive_run(int ind)
 	{
 #endif
 		// If we don't want to queue the command, return now.
-		if ((n = do_cmd_run(player,dir)) == 2)
+		if ((n = do_cmd_run(player, dir)) == 2)
 		{
 			return 2;
 		}
@@ -6225,28 +6006,14 @@ static int Receive_tunnel(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-		      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -6256,21 +6023,25 @@ static int Receive_tunnel(int ind)
 		return n;
 	}
 
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
+
 	/* all this is temp just to make it work */
-	if(p_ptr->command_rep==-1){
-		p_ptr->command_rep=0;
+	if(p_ptr->command_rep == -1){
+		p_ptr->command_rep = 0;
 		return(0);
 	}
 
 	/* please redesign ALL of this out of higher level */
-	if(p_ptr && p_ptr->command_rep!=PKT_TUNNEL){
-		p_ptr->command_rep=-1;
+	if(p_ptr && p_ptr->command_rep != PKT_TUNNEL){
+		p_ptr->command_rep = -1;
 	}
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
 		do_cmd_tunnel(player, dir);
 		if (p_ptr->command_rep) Packet_printf(&connp->q, "%c%c", ch, dir);
+
 		return 2;
 	}
 	else if (player)
@@ -6287,29 +6058,15 @@ static int Receive_aim_wand(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-		      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%c", &ch, &item, &dir)) <= 0)
@@ -6320,11 +6077,18 @@ static int Receive_aim_wand(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (item >= INVEN_TOTAL) return 1;
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_aim_wand(player, item, dir);
 		return 2;
 	}
@@ -6341,29 +6105,15 @@ static int Receive_drop(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	int n, player = -1; 
 	s16b item, amt;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0)
@@ -6379,6 +6129,13 @@ static int Receive_drop(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_drop(player, item, amt);
 		return 2;
 	}
@@ -6395,29 +6152,15 @@ static int Receive_fire(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir = 5;
-
 	int n, player = -1;
 	//s16b item;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 //	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
@@ -6427,6 +6170,9 @@ static int Receive_fire(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	/* Check confusion */
 	if (p_ptr->confused)
@@ -6500,28 +6246,14 @@ static int Receive_stand(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = Players[ind];
-
 	char ch;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -6544,30 +6276,15 @@ static int Receive_destroy(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b item, amt;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0)
@@ -6583,6 +6300,13 @@ static int Receive_destroy(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_destroy(player, item, amt);
 		return 2;
 	}
@@ -6599,28 +6323,14 @@ static int Receive_look(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -6630,8 +6340,12 @@ static int Receive_look(int ind)
 		return n;
 	}
 
-	if (connp->id != -1)
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
+
+	if (connp->id != -1) {
 		do_cmd_look(player, dir);
+	}
 
 	return 1;
 }
@@ -6644,31 +6358,16 @@ static int Receive_activate_skill(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, mkey, dir;
-
 	int n, player = -1, old = -1;
-
 	s16b book, spell, item, aux;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
-		p_ptr = Players[player];
 		old = player;
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c%hd%hd%c%hd%hd", &ch, &mkey, &book, &spell, &dir, &item, &aux)) <= 0)
@@ -6679,8 +6378,8 @@ static int Receive_activate_skill(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (item >= INVEN_TOTAL) return 1;
+	if (bad_dir3(dir)) return 1;
 
 	/* Not by class nor by item; by skill */
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
@@ -6738,13 +6437,63 @@ static int Receive_activate_skill(int ind)
 //also nearby auto_retaliate check, there needs to be distinguishment
 //between magic and bow fire_till_kill!
 //				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE; 
+
+				book = replay_inven_changes(player, book);
+				if (book == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+				item = replay_inven_changes(player, item);
+				if (item == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+
+				/* Sanity check #2 */
+				if (dir == -1) dir = 5;
+
 				cast_school_spell(player, book, spell, dir, item, aux);
 //				p_ptr->shooty_till_kill = FALSE;
-				break; 
+				break;
 
+#ifndef ENABLE_RCRAFT
 			case MKEY_RUNE:
+				book = replay_inven_changes(player, book);
+				if (book == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+				item = replay_inven_changes(player, item);
+				if (item == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+
 				cast_rune_spell_header(player, book, spell); 
 				break;
+#else
+			case MKEY_RCRAFT:
+				book = replay_inven_changes(player, book);
+				if (book == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+				item = replay_inven_changes(player, item);
+				if (item == 0xFF)
+				{
+					msg_print(player, "Command failed because item is gone.");
+					return 1;
+				}
+
+				execute_rspell(player, dir, NULL, 0, (u32b)((book*10000)+spell), item); 
+				break;
+#endif
+
 			case MKEY_AURA_FEAR:
 				toggle_aura(player, 0);
 				break;
@@ -6764,6 +6513,11 @@ static int Receive_activate_skill(int ind)
 			case MKEY_SHOOT_TILL_KILL:
 				toggle_shoot_till_kill(player);
 				break; 
+#ifdef DUAL_WIELD
+			case MKEY_DUAL_MODE:
+				toggle_dual_mode(player);
+				break;
+#endif
 		}
 		return 2;
 	}
@@ -6783,28 +6537,14 @@ static int Receive_open(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -6813,6 +6553,9 @@ static int Receive_open(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	/* all this is temp just to make it work */
 	if(p_ptr->command_rep==-1){
@@ -6841,16 +6584,12 @@ static int Receive_open(int ind)
 static int Receive_mind(int ind)
 {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr = NULL, *p_ptr2 = NULL;
-
 	char ch;
-
-	int n, player = -1, Ind2;
+	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
-		p_ptr = Players[player];
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -6862,79 +6601,9 @@ static int Receive_mind(int ind)
 
 	if (connp->id != -1)
 	{
-		if (p_ptr->esp_link_type &&p_ptr->esp_link)
-		  {
-		    Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			bool d = TRUE;
-
-			p_ptr2 = Players[Ind2];
-
-			if (p_ptr->esp_link_type == LINK_DOMINATED)
-			  {
-			    if (!p_ptr->esp_link_end)
-			      {
-				p_ptr->esp_link_end = rand_int(20) + 15;
-				d = TRUE;
-			      }
-			    else
-			      {
-				p_ptr->esp_link_end = 0;
-				d = FALSE;
-			      }
-			  }
-			if (p_ptr2->esp_link_type == LINK_DOMINATED)
-			  {
-			    if (!p_ptr2->esp_link_end)
-			      {
-				p_ptr2->esp_link_end = rand_int(20) + 15;
-				d = TRUE;
-			      }
-			    else
-			      {
-				p_ptr2->esp_link_end = 0;
-				d = FALSE;
-			      }
-			  }
-
-			if (d)
-			  {
-			    if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
-				msg_format(player, "\377RThe mind link with %s begins to break.", p_ptr2->name);
-				msg_format(Ind2, "\377RThe mind link with %s begins to break.", p_ptr->name);
-			    }
-			  }
-			else
-			  {
-			    if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
-				msg_format(player, "\377RThe mind link with %s stabilizes.", p_ptr2->name);
-				msg_format(Ind2, "\377RThe mind link with %s stabilizes.", p_ptr->name);
-			    }
-			  }
-		      }
-		  }
-		else
-		  {
-		    if (p_ptr->esp_link_flags & LINKF_OPEN)
-		      {
-		      /* telepaths aren't in the game at the moment..
-			msg_print(player, "\377RYou close your mind."); */
-			p_ptr->esp_link_flags &= ~LINKF_OPEN;
-		      }
-		    else
-		      {
-		      /* telepaths aren't in the game at the moment..
-			msg_print(player, "\377RYou open your mind."); */
-			p_ptr->esp_link_flags |= LINKF_OPEN;
-		      }
-		  }
+		change_mind(player);
 		return 2;
 	}
-
 	return 1;
 }
 
@@ -6980,29 +6649,15 @@ static int Receive_quaff(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7018,6 +6673,13 @@ static int Receive_quaff(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_quaff_potion(player, item);
 		return 2;
 	}
@@ -7034,29 +6696,15 @@ static int Receive_read(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7072,6 +6720,13 @@ static int Receive_read(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_read_scroll(player, item);
 		return 2;
 	}
@@ -7087,29 +6742,15 @@ static int Receive_read(int ind)
 static int Receive_search(int ind)
 {
 	connection_t *connp = Conn[ind];
-	player_type *p_ptr=NULL;
-
+	player_type *p_ptr = NULL;
 	char ch;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -7147,30 +6788,15 @@ static int Receive_take_off(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7186,6 +6812,13 @@ static int Receive_take_off(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_takeoff(player, item);
 		return 2;
 	}
@@ -7202,29 +6835,15 @@ static int Receive_use(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7240,6 +6859,13 @@ static int Receive_use(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_use_staff(player, item);
 		return 2;
 	}
@@ -7256,29 +6882,15 @@ static int Receive_throw(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 	s16b item;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &dir, &item)) <= 0)
@@ -7289,11 +6901,18 @@ static int Receive_throw(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (item >= INVEN_TOTAL) return 1;
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_throw(player, dir, item, FALSE);
 		return 2;
 	}
@@ -7310,30 +6929,15 @@ static int Receive_wield(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7344,11 +6948,17 @@ static int Receive_wield(int ind)
 	}
 
 	/* Sanity check - mikaelh */
-	if (item >= INVEN_TOTAL)
-		return 1;
+	if (item >= INVEN_TOTAL) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_wield(player, item, 0x0);
 		return 2;
 	}
@@ -7365,29 +6975,15 @@ static int Receive_zap(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7403,6 +6999,13 @@ static int Receive_zap(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_zap_rod(player, item);
 		return 2;
 	}
@@ -7419,29 +7022,15 @@ static int Receive_target(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b dir;
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0)
@@ -7450,6 +7039,9 @@ static int Receive_target(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir) && bad_dir2(dir)) return 1;
 
 	if (connp->id != -1)
 		do_cmd_target(player, dir);
@@ -7470,20 +7062,8 @@ static int Receive_target_friendly(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &dir)) <= 0)
@@ -7492,6 +7072,9 @@ static int Receive_target_friendly(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir) && bad_dir2(dir)) return 1;
 
 	if (connp->id != -1)
 		do_cmd_target_friendly(player, dir);
@@ -7504,32 +7087,16 @@ static int Receive_inscribe(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	int n, player = -1;
-
 	s16b item;
-
 	char inscription[MAX_CHARS];
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd%s", &ch, &item, inscription)) <= 0)
@@ -7544,7 +7111,16 @@ static int Receive_inscribe(int ind)
 		return 1;
 
 	if (connp->id != -1)
+	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_inscribe(player, item, inscription);
+	}
 
 	return 1;
 }
@@ -7552,32 +7128,16 @@ static int Receive_inscribe(int ind)
 static int Receive_uninscribe(int ind)
 {
 	connection_t *connp = Conn[ind];
-
 	char ch;
-
 	int n, player = -1;
-
 	s16b item;
-
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7592,7 +7152,16 @@ static int Receive_uninscribe(int ind)
 		return 1;
 
 	if (connp->id != -1)
+	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_uninscribe(player, item);
+	}
 
 	return 1;
 }
@@ -7601,30 +7170,15 @@ static int Receive_activate(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7640,6 +7194,13 @@ static int Receive_activate(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_activate(player, item);
 		return 2;
 	}
@@ -7656,28 +7217,14 @@ static int Receive_bash(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -7686,6 +7233,9 @@ static int Receive_bash(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	/* all this is temp just to make it work */
 	if(p_ptr->command_rep==-1){
@@ -7714,28 +7264,14 @@ static int Receive_disarm(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr=NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -7744,6 +7280,9 @@ static int Receive_disarm(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	/* all this is temp just to make it work */
 	if(p_ptr->command_rep==-1){
@@ -7772,29 +7311,15 @@ static int Receive_eat(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	s16b item;
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7804,8 +7329,19 @@ static int Receive_eat(int ind)
 		return n;
 	}
 
+	/* Sanity check - mikaelh */
+	if (item >= INVEN_TOTAL)
+		return 1;
+
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_eat_food(player, item);
 		return 2;
 	}
@@ -7823,29 +7359,15 @@ static int Receive_fill(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
 	s16b item;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0)
@@ -7861,6 +7383,13 @@ static int Receive_fill(int ind)
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_refill(player, item);
 		return 2;
 	}
@@ -7877,28 +7406,14 @@ static int Receive_locate(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -7907,6 +7422,9 @@ static int Receive_locate(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1)
 		do_cmd_locate(player, dir);
@@ -7917,30 +7435,15 @@ static int Receive_locate(int ind)
 static int Receive_map(int ind)
 {
 	connection_t *connp = Conn[ind];
-
 	char ch, mode;
-
 	int n, player = -1;
-
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0)
@@ -7959,30 +7462,15 @@ static int Receive_map(int ind)
 static int Receive_search_mode(int ind)
 {
 	connection_t *connp = Conn[ind];
-
 	char ch;
-
 	int n, player = -1;
-
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -8002,28 +7490,14 @@ static int Receive_close(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch, dir;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -8032,6 +7506,9 @@ static int Receive_close(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -8081,28 +7558,14 @@ static int Receive_go_up(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -8130,28 +7593,14 @@ static int Receive_go_down(int ind)
 {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
-
 	char ch;
-
 	int n, player = -1;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
@@ -8179,30 +7628,15 @@ static int Receive_go_down(int ind)
 static int Receive_direction(int ind)
 {
 	connection_t *connp = Conn[ind];
-
 	char ch, dir;
-
 	int n, player = -1;
-
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8213,6 +7647,9 @@ static int Receive_direction(int ind)
 		return n;
 	}
 
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
+
 	if (connp->id != -1)
 		Handle_direction(player, dir);
 
@@ -8222,32 +7659,16 @@ static int Receive_direction(int ind)
 static int Receive_item(int ind)
 {
 	connection_t *connp = Conn[ind];
-
 	char ch;
-
 	s16b item;
-
 	int n, player = -1;
-
 	player_type *p_ptr = NULL;
 
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8263,7 +7684,16 @@ static int Receive_item(int ind)
 		return 1;
 
 	if (connp->id != -1)
+	{
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		Handle_item(player, item);
+	}
 
 	return 1;
 }
@@ -8286,6 +7716,9 @@ static int Receive_message(int ind)
 		return n;
 	}
 
+	/* A message longer than 159 characters will certainly cause problems - mikaelh */
+	buf[159] = '\0';
+
 	player_talk(player, buf);
 
 	return 1;
@@ -8301,20 +7734,8 @@ static int Receive_admin_house(int ind){
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8324,6 +7745,10 @@ static int Receive_admin_house(int ind){
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
+
 	house_admin(player, dir, buf);
 	return(1);
 }
@@ -8340,20 +7765,8 @@ static int Receive_purchase(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8384,20 +7797,8 @@ static int Receive_sell(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8428,31 +7829,20 @@ static int Receive_store_leave(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
 
 #ifdef MINDLINK_STORE
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-
+		if (get_esp_link(GetInd[connp->id], LINKF_OBJ, &p_ptr)) {
 		        connp2 = Conn[p_ptr->conn];
 		        Packet_printf(&connp2->c, "%c", PKT_STORE_LEAVE); /* not working */
-		      }
-		  }
+		}
 #endif
 
 	}
 	else player = 0;
 
-	if (player)
-		p_ptr = Players[player];
+	if (player) p_ptr = Players[player];
 	
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0)
 	{
@@ -8482,11 +7872,22 @@ static int Receive_store_leave(int ind)
 		teleport_player_force(player, 1);
 	}
 
+#if 0
+ #if 0
 	/* hack -- update night/day in wilderness levels */
 	/* XXX it's not so good place to do such things -
 	 * prolly we'll need PU_SUN or sth.		- Jir - */
-	if ((!p_ptr->wpos.wz) && (IS_DAY)) wild_apply_day(&p_ptr->wpos); 
-	if ((!p_ptr->wpos.wz) && (IS_NIGHT)) wild_apply_night(&p_ptr->wpos);
+	if (!p_ptr->wpos.wz) {
+		if (IS_DAY) world_surface_day(&p_ptr->wpos); 
+		else world_surface_night(&p_ptr->wpos);
+	}
+ #else
+	if (!p_ptr->wpos.wz) {
+		if (IS_DAY) player_day(player);
+		else player_night(player);
+	}
+ #endif
+#endif
 
 	return 1;
 }
@@ -8501,20 +7902,8 @@ static int Receive_store_confirm(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8547,20 +7936,8 @@ static int Receive_store_examine(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8590,20 +7967,8 @@ static int Receive_store_command(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8631,20 +7996,8 @@ static int Receive_drop_gold(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &amt)) <= 0)
@@ -8680,20 +8033,8 @@ static int Receive_steal(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -8702,6 +8043,9 @@ static int Receive_steal(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -8731,20 +8075,8 @@ static int Receive_King(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &type)) <= 0)
@@ -8856,20 +8188,8 @@ static int Receive_rest(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_MOV);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MOV))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -8896,7 +8216,9 @@ static int Receive_rest(int ind)
 		   and max stamina */
 		if ((p_ptr->poisoned) || ((p_ptr->chp == p_ptr->mhp) &&
 					(p_ptr->csp == p_ptr->msp) &&
-					(p_ptr->cst == p_ptr->mst)))
+					(p_ptr->cst == p_ptr->mst)
+		    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL)
+		    ))
 		{
 			return 2;
 		}
@@ -8970,20 +8292,8 @@ static int Receive_clear_buffer(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 	else player = 0;
 
@@ -9151,6 +8461,25 @@ static int Receive_suicide(int ind)
 		return n;
 	}
 
+	/* Newer clients send couple of extra bytes to prevent accidental
+	 * suicides due to network mishaps. - mikaelh */
+	if (is_newer_than(&connp->version, 4, 4, 2, 3, 0, 0)) {
+		char extra1, extra2;
+		if ((n = Packet_scanf(&connp->r, "%c%c", &extra1, &extra2)) <= 0)
+		{
+			if (n == -1)
+				Destroy_connection(ind, "read error");
+			return n;
+		}
+
+		if (extra1 != 1 || extra2 != 4)
+		{
+			/* Invalid suicide command detected, clear the buffer now */
+			Sockbuf_clear(&connp->r);
+			return 1;
+		}
+	}
+
 	/* Commit suicide */
 	do_cmd_suicide(player);
 
@@ -9215,7 +8544,7 @@ static int Receive_party(int ind)
 
 			case PARTY_HOSTILE:
 			{
-				add_hostility(player, buf);
+				add_hostility(player, buf, TRUE);
 				break;
 			}
 
@@ -9279,8 +8608,8 @@ static int Receive_guild(int ind){
 
 void Handle_direction(int Ind, int dir)
 {
-	player_type *p_ptr = Players[Ind];
-	int Ind2 = Ind;
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	int Ind2;
 
 	if (!dir)
 	{
@@ -9295,14 +8624,7 @@ void Handle_direction(int Ind, int dir)
 		return;
 	}
 
-	if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_MISC))
-	  {
-	    Ind2 = find_player(p_ptr->esp_link);
-	    
-	    if (!Ind2)
-	      end_mind(Ind, TRUE);
-	}
-
+	Ind2 = get_esp_link(Ind, LINKF_MISC, &p_ptr2);
 
 	if (p_ptr->current_spell != -1)
 	{
@@ -9313,9 +8635,11 @@ void Handle_direction(int Ind, int dir)
 			do_mimic_power_aux(Ind, dir);
 		else p_ptr->current_spell = -1;
 	}
+#ifndef ENABLE_RCRAFT
 	else if (p_ptr->current_rune1 != -1 && p_ptr->current_rune2 != -1) {
 		cast_rune_spell(Ind, dir);
 	}
+#endif
        	else if (p_ptr->current_rod != -1)
 		do_cmd_zap_rod_dir(Ind, dir);
 	else if (p_ptr->current_activation != -1)
@@ -9552,20 +8876,8 @@ static int Receive_spike(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &dir)) <= 0)
@@ -9574,6 +8886,9 @@ static int Receive_spike(int ind)
 			Destroy_connection(ind, "read error");
 		return n;
 	}
+
+	/* Sanity check */
+	if (bad_dir(dir)) return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos))
 	{
@@ -9603,20 +8918,8 @@ static int Receive_raw_key(int ind)
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+//		use_esp_link(&player, LINKF_OBJ); /* might be bad, depending on actual command */
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ))
-		  {
-		    int Ind2 = find_player(p_ptr->esp_link);
-		    
-		    if (!Ind2)
-	      	      end_mind(ind, TRUE);
-		    else
-		      {
-			player = Ind2;
-			p_ptr = Players[Ind2];
-		      }
-		  }
 	}
 
 	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &key)) <= 0)
@@ -9669,13 +8972,14 @@ static int Receive_raw_key(int ind)
 					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 					break;
 //					return 1; /* consume no energy/don't disturb character (resting mode) */
-#endif
+#else
 				case '_':
 				case '!':
 				case 'p':
 					msg_print(player, "\377RYour client is outdated (probably version 4.4.0).");
 					msg_print(player, "\377RPlease download latest client from www.c-blue.de/rogue");
 					break;
+#endif
 				default:
 					msg_format(player, "'%c' key is currently not used.  Hit '?' for help.", key);
 					break;
@@ -9757,16 +9061,8 @@ static int Receive_sip(int ind) {
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
-			int Ind2 = find_player(p_ptr->esp_link);
-			if (!Ind2) end_mind(ind, TRUE);
-			else {
-				player = Ind2;
-				p_ptr = Players[Ind2];
-			}
-		}
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -9782,7 +9078,11 @@ static int Receive_sip(int ind) {
 	return 1;
 }
 
+
 static int Receive_telekinesis(int ind) {
+#if 1 /* taken over by Receive_mind() now, that mindcrafters got fusion */
+	return Receive_mind(ind);
+#else
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch;
@@ -9791,16 +9091,8 @@ static int Receive_telekinesis(int ind) {
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
-			int Ind2 = find_player(p_ptr->esp_link);
-			if (!Ind2) end_mind(ind, TRUE);
-			else {
-				player = Ind2;
-				p_ptr = Players[Ind2];
-			}
-		}
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -9823,6 +9115,7 @@ static int Receive_telekinesis(int ind) {
 		return 0;
 	}
 	return 1;
+#endif
 }
 
 static int Receive_BBS(int ind) {
@@ -9836,15 +9129,6 @@ static int Receive_BBS(int ind) {
 	{
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
-			int Ind2 = find_player(p_ptr->esp_link);
-			if (!Ind2) end_mind(ind, TRUE);
-			else {
-				player = Ind2;
-				p_ptr = Players[Ind2];
-			}
-		}
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -9874,17 +9158,11 @@ static int Receive_wield2(int ind) {
 	char ch;
 	s16b item;
 	int n, player = -1;
+
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
-		        int Ind2 = find_player(p_ptr->esp_link);
-		        if (!Ind2) end_mind(ind, TRUE);
-			else {
-				player = Ind2;
-				p_ptr = Players[Ind2];
-			}
-		}
 	}
 	if ((n = Packet_scanf(&connp->r, "%c%hd", &ch, &item)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -9896,6 +9174,13 @@ static int Receive_wield2(int ind) {
 		return 1;
 
 	if (connp->id != -1 && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		item = replay_inven_changes(player, item);
+		if (item == 0xFF)
+		{
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+
 		do_cmd_wield(player, item, 0x2);
 		return 2;
 	} else if (player) {
@@ -9914,16 +9199,8 @@ static int Receive_cloak(int ind) {
 	if (connp->id != -1)
 	{
 		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
 		p_ptr = Players[player];
-
-		if (p_ptr->esp_link_type &&p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_OBJ)) {
-			int Ind2 = find_player(p_ptr->esp_link);
-			if (!Ind2) end_mind(ind, TRUE);
-			else {
-				player = Ind2;
-				p_ptr = Players[Ind2];
-			}
-		}
 	}
 	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
 		if (n == -1) Destroy_connection(ind, "read error");
@@ -9936,5 +9213,141 @@ static int Receive_cloak(int ind) {
 		Packet_printf(&connp->q, "%c", ch);
 		return 0;
 	}
+	return 1;
+}
+
+void change_mind(int Ind) {
+	int Ind2;
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	bool d = TRUE;
+
+	if ((Ind2 = get_esp_link(Ind, 0x0, &p_ptr2))) {
+		if (p_ptr->esp_link_type == LINK_DOMINATED) {
+			if (!p_ptr->esp_link_end) {
+				p_ptr->esp_link_end = rand_int(6) + 15;
+			} else {
+				/* can't stabilize link while on different floors! */
+				if (!inarea(&p_ptr->wpos, &p_ptr2->wpos)) return;
+
+				p_ptr->esp_link_end = 0;
+				d = FALSE;
+			}
+		}
+		if (p_ptr2->esp_link_type == LINK_DOMINATED) {
+			if (!p_ptr2->esp_link_end) {
+				p_ptr2->esp_link_end = rand_int(6) + 15;
+			} else {
+				/* can't stabilize link while on different floors! */
+				if (!inarea(&p_ptr->wpos, &p_ptr2->wpos)) return;
+
+				p_ptr2->esp_link_end = 0;
+				d = FALSE;
+			}
+		}
+
+		if (d) {
+			if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+				msg_format(Ind, "\377RThe mind link with %s begins to break.", p_ptr2->name);
+				msg_format(Ind2, "\377RThe mind link with %s begins to break.", p_ptr->name);
+			}
+		} else {
+			if (!(p_ptr->esp_link_flags & LINKF_HIDDEN)) {
+				msg_format(Ind, "\377yThe mind link with %s stabilizes.", p_ptr2->name);
+				msg_format(Ind2, "\377yThe mind link with %s stabilizes.", p_ptr->name);
+			}
+		}
+	} else {
+		if (p_ptr->esp_link_flags & LINKF_OPEN) {
+			msg_print(Ind, "\377yYou close your mind.");
+			p_ptr->esp_link_flags &= ~(LINKF_OPEN | LINKF_TELEKIN);
+		} else {
+			msg_print(Ind, "\377RYou open your mind..");
+			p_ptr->esp_link_flags |= (LINKF_OPEN | LINKF_TELEKIN);
+		}
+	}
+}
+
+static int Receive_inventory_revision(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+	int revision;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+	if ((n = Packet_scanf(&connp->r, "%c%d", &ch, &revision)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+	if (connp->id != -1) {
+		if (connp->q.len) {
+			/* There are some queued packets, block any further
+			 * packets until the queue is empty
+			 */
+			Packet_printf(&connp->q, "%c%d", ch, revision);
+			return 3; /* special return code */
+		} else {
+			inven_confirm_revision(player, revision);
+			return 2;
+		}
+	} else if (player) {
+		Packet_printf(&connp->q, "%c%d", ch, revision);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_account_info(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player > 0) {
+		Send_account_info(player);
+	}
+
+	return 1;
+}
+
+static int Receive_change_password(int ind) {
+	connection_t *connp = Conn[ind];
+	char ch;
+	int n, player = -1;
+	char old_pass[MAX_CHARS], new_pass[MAX_CHARS];
+
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+	}
+	if ((n = Packet_scanf(&connp->r, "%c%s%s", &ch, old_pass, new_pass)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (player > 0) {
+		/* Obfuscation */
+		my_memfrob(old_pass, strlen(old_pass));
+		my_memfrob(new_pass, strlen(new_pass));
+
+		account_change_password(player, old_pass, new_pass);
+
+		/* Wipe the passwords from memory */
+		memset(old_pass, 0, MAX_CHARS);
+		memset(new_pass, 0, MAX_CHARS);
+	}
+
 	return 1;
 }

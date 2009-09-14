@@ -19,3 +19,6 @@
 
 /* Server running in 'Fun Mode'? Allows cheezing and cheating and everything. */
 /* #define FUN_SERVER */
+
+/* Server running in test mode? (usually verbose debugging output) */
+/* #define TEST_SERVER */

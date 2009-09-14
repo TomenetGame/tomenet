@@ -35,7 +35,8 @@ F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN
 
 # 0x02 -> fountain
 N:2:fountain
-G:_:w
+#G:_:w
+G:_:e
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:The liquid here seems magical.
 
@@ -110,7 +111,8 @@ D:1:You cannot tunnel a shaft.
 
 # 0x0F -> empty fountain
 N:15:fountain
-G:_:D
+#G:_:D
+G:_:W
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:The fountain seems empty.
 
@@ -133,13 +135,13 @@ F:FLOOR | NOTICE | REMEMBER
 # 0x04 --> crops  
 N:18:crops
 G:%:g
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER
 
 # 0x05 --> loose dirt
 
 N:19:loose dirt
 G:%:u
-F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | REMEMBER
 
 # 0x0E --> open door to a home
 
@@ -576,7 +578,14 @@ F:FLOOR | CAN_LEVITATE | CAN_FLY | REMEMBER | SUPPORT_LIGHT
 D:0:The lava burns you.
 
 N:87:dark pit
-G:#:D
+#G:#:D
+#  <- too much use of '#'?
+#G:_:D
+#  <- makes sense but looks weird?, also available: ; ' . % & = ~
+#G: :D
+#sucks:  . * = %
+#not bad: ' ' # ^ ~
+G:^:D
 F:CAN_LEVITATE | CAN_FLY | LOS
 F:NO_WALK | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING
@@ -604,7 +613,8 @@ G:.:y
 F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
 N:92:dead tree
-G:#:D
+#G:#:D
+G:*:s
 F:CAN_FLY | SLOW_RUNNING_1 | SLOW_FLYING_1
 # SLOW_RUNNING_2 - speed can go down to 0 -> stuck - mikaelh
 F:WALL | NO_WALK | NO_VISION | NOTICE
@@ -619,7 +629,7 @@ F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
 
 N:94:mud
 G:.:u
-F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN
+F:FLOOR | DONT_NOTICE_RUNNING | CAN_RUN | SUPPORT_LIGHT
 
 N:95:ice wall
 G:#:W
@@ -754,7 +764,8 @@ F:FLOOR | CAN_RUN | DONT_NOTICE_RUNNING
 
 # Underground Tunnel
 N:173:Underground Tunnel
-G:#:s
+#G:#:s
+G:#:D
 F:FLOOR | REMEMBER | SUPPORT_LIGHT | DONT_NOTICE_RUNNING | CAN_RUN
 D:0:Oh, an underground tunnel!
 

@@ -371,7 +371,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
 		if (old_value < 160 + m * 10 && new_value >= 160 + m * 10)
 			msg_print(Ind, "\377G* You learn the fighting technique 'Spin'! *");
-		if (old_value < 250 + m * 10 && new_value >= 250 + m * 10)
+		if (old_value < 330 + m * 10 && new_value >= 330 + m * 10)
 			msg_print(Ind, "\377G* You learn the fighting technique 'Berserk'! *");
 		break;
 	case SKILL_ARCHERY:
@@ -471,9 +471,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
                 if (old_value < 300 && new_value >= 300) {
                         msg_print(Ind, "\377G* You feel strong against confusion and hallucinations. *");
                 } if (old_value < 400 && new_value >= 400) {
-                        msg_print(Ind, "\377G* You feel strong against insanity attacks. *");
+                        msg_print(Ind, "\377G* You learn to keep hold of your sanity. *");
                 } if (old_value < 500 && new_value >= 500) {
-                        msg_print(Ind, "\377G* You feel very strong against insanity attacks. *");
+                        msg_print(Ind, "\377G* You learn to keep strong hold of your sanity. *");
                 }
                 break;
 	case SKILL_TEMPORAL:
@@ -641,7 +641,7 @@ void increase_skill(int Ind, int i)
 	player_type *p_ptr = Players[Ind];
 	int old_value;
 //	int as, ws, new_value;
-	int can_regain;
+//	int can_regain;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0)

@@ -899,6 +899,9 @@ static void wr_lore(int r_idx)
 	/* Monster limit per level */
 	wr_byte(r_ptr->max_num);
 
+	/* This is important for unique monsters - mikaelh */
+	wr_byte(r_ptr->cur_num);
+
 	/* Killer */
 	//	wr_s32b(r_ptr->killer);
 
@@ -1353,6 +1356,9 @@ static void wr_extra(int Ind)
            (done via script login-hook, eg custom.lua) - C. Blue */
 	wr_byte(p_ptr->updated_savegame);
 
+	/* for automatic artifact resets */
+	wr_byte(p_ptr->artifact_reset);
+
 	/* Ignore some flags */
 	wr_u32b(0L);	/* oops */
 	wr_u32b(0L);	/* oops */
@@ -1406,6 +1412,7 @@ static void wr_extra(int Ind)
 	wr_byte(p_ptr->cloaked);
 	wr_byte(p_ptr->shadow_running);
 	wr_byte(p_ptr->shoot_till_kill);
+	wr_byte(p_ptr->dual_mode);
 
         wr_s16b(p_ptr->kills);
         wr_s16b(p_ptr->kills_lower);
@@ -2355,6 +2362,46 @@ static void wr_player_names(void)
 	if (num) C_KILL(id_list, num, int);
 }
 
+static void wr_auctions()
+{
+	int i, j;
+	auction_type *auc_ptr;
+	bid_type *bid_ptr;
+
+	wr_s32b(auction_alloc);
+
+	for (i = 0; i < auction_alloc; i++)
+	{
+		auc_ptr = &auctions[i];
+		wr_byte(auc_ptr->status);
+		wr_byte(auc_ptr->flags);
+		wr_byte(auc_ptr->mode);
+		wr_s32b(auc_ptr->owner);
+		wr_item(&auc_ptr->item);
+		if (auc_ptr->desc)
+		{
+			wr_string(auc_ptr->desc);
+		}
+		else
+		{
+			wr_string("");
+		}
+		wr_s32b(auc_ptr->starting_price);
+		wr_s32b(auc_ptr->buyout_price);
+		wr_s32b(auc_ptr->bids_cnt);
+		for (j = 0; j < auc_ptr->bids_cnt; j++) {
+			bid_ptr = &auc_ptr->bids[j];
+			wr_s32b(bid_ptr->bid);
+			wr_s32b(bid_ptr->bidder);
+		}
+		wr_s32b(auc_ptr->winning_bid);
+
+		/* Write time_t's as s32b's for now */
+		wr_s32b((s32b) auc_ptr->start);
+		wr_s32b((s32b) auc_ptr->duration);
+	}
+}
+
 static bool wr_server_savefile()
 {
         int        i;
@@ -2415,6 +2462,8 @@ static bool wr_server_savefile()
 
         /* save server state regarding updates (lua) */
 	wr_s16b(updated_server);
+	/* save artifact-reset state (lua) */
+	wr_s16b(artifact_reset);
 
 	/* Space */
 	wr_u32b(0L);
@@ -2509,6 +2558,8 @@ static bool wr_server_savefile()
 
 	wr_byte(season);
 	wr_byte(weather_frequency);
+
+	wr_auctions();
 
 	/* Error in save */
 	if (ferror(fff) || (fflush(fff) == EOF)) return FALSE;

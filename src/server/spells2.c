@@ -136,6 +136,8 @@ void do_autokinesis_to(int Ind, int dis) {
 		if (q_ptr->conn == NOT_CONNECTED) continue;
 		/* Skip DM if not DM himself */
 		if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+		/* Skip ghosts */
+		if (q_ptr->ghost && !q_ptr->admin_dm) continue;
 		/* Skip players not on this depth */
 		if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) continue;
 		/* Skip players not in the same party */
@@ -275,7 +277,7 @@ bool do_focus_shot(int Ind, int v, int p) {
             }
             p_ptr->focus_time = v;
             p_ptr->focus_val = p;
-            calc_bonuses(Ind);
+            calc_boni(Ind);
     }
 
     /* Shut */
@@ -546,8 +548,10 @@ bool hp_player(int Ind, int num)
 
 /*
  * Increase players hit points, notice effects, and don't tell the player it.
- * autoeffect stands for non-'intended' healing, that applies automatically,
- * such as necromancy, vampiric items, standard body regeneration.
+ * 'autoeffect' stands for non-'intended' healing, that applies automatically,
+ * such as necromancy, vampiric items, standard body regeneration;
+ * set 'autoeffect' to TRUE if you want to do forced healing without anny
+ * implications.
  */
 bool hp_player_quiet(int Ind, int num, bool autoeffect)
 {
@@ -624,7 +628,8 @@ void flash_bomb(int Ind)
 	player_type *p_ptr = Players[Ind];
 	msg_print(Ind, "You throw down a blinding flash bomb!");
 	msg_format_near(Ind, "%s throws a blinding flash bomb!", p_ptr->name);
-	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
+//	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 4, "");
+	project_hack(Ind, GF_BLIND, (p_ptr->lev / 10) + 8, "");
 }
 
 
@@ -3876,8 +3881,6 @@ bool create_artifact_aux(int Ind, int item)
 	int tries = 0;
 	char o_name[160];
 	s32b old_owner;/* anti-cheeze :) */
-	int to_h, to_d, to_a;
-	bool cursed_art = FALSE;
 
 	/* Get the item (in the pack) */
 	if (item >= 0)
@@ -3925,13 +3928,7 @@ bool create_artifact_aux(int Ind, int item)
 
 	o_ptr->name1 = ART_RANDART;
 
-	/* anti speed ring cheeze */
-	/* Changed a little bit.. (see randart.c) - C. Blue */
-	if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
-		if (o_ptr->bpval > o_ptr->pval) o_ptr->pval = (o_ptr->bpval > o_ptr->pval) ? o_ptr->bpval : o_ptr->pval;
-		o_ptr->bpval = 0;
-	}
-
+/* NOTE: MAKE SURE THE FOLLOWING CODE IS CONSISTENT WITH make_artifact() IN object2.c! */
 
 	/* Randart loop. Try until an allowed randart was made */
 	while (tries < 10) {
@@ -3950,47 +3947,15 @@ bool create_artifact_aux(int Ind, int item)
 
 			return FALSE;
 		}
-		if (cursed_p(o_ptr)) cursed_art = TRUE;
-
-#if 1
-		o_ptr->timeout=0;
-		to_h = o_ptr->to_h;
-		to_d = o_ptr->to_d;
-		to_a = o_ptr->to_a;
-		apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
-		/* Don't reroll to_h, to_d, to_a on jewelry; but keep negative
-		   values if the item was already cursed from artifact_creation. */
-		if (((o_ptr->tval == TV_RING) && (o_ptr->sval != SV_RING_SPECIAL)) || (o_ptr->tval == TV_AMULET)) {
-			if ((o_ptr->to_h > 0) || !cursed_art) o_ptr->to_h = to_h;
-			if ((o_ptr->to_d > 0) || !cursed_art) o_ptr->to_d = to_d;
-			if ((o_ptr->to_a > 0) || !cursed_art) o_ptr->to_a = to_a;
-		}
-		/* Don't let apply_magic remove the curse from randarts */
-		if (cursed_art) o_ptr->ident |= ID_CURSED;
-#endif
 
 		/* If the resulting randart is allowed, leave the loop */
 		a_ptr = randart_make(o_ptr);
-//		if (p_ptr->total_winner || !(a_ptr->flags1 & TR1_LIFE)) break;
-		if (p_ptr->total_winner ||
-		    (p_ptr->once_winner && p_ptr->lev >= 50 && cfg.fallenkings_etiquette) ||
-		    !(a_ptr->flags1 & TR1_LIFE)) break;
+		if ((make_resf(p_ptr) & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;
 	}
 
-	/* Make final level requirements (basing on a_ptr->level, determined in randart_make) */
-	determine_level_req(50, o_ptr);
-
-#if 0 /*obsolete*/
-	/* If the player's level < artifact level he can't use it :) */
-	while ((o_ptr->level > 20) &&
-	    ((s64b)(player_exp[o_ptr->level]) >
-	    ((s64b)(p_ptr->max_exp) * 100L / (s64b)(p_ptr->expfact))))
-		o_ptr->level--;
-#else
+	/* apply magic (which resets owner) and restore ownership again */
+	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, FALSE);
 	o_ptr->owner = old_owner;
-#endif
-	/* Mark the item as NOT fully known */
-	o_ptr->ident &= ~(ID_MENTAL);
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -4043,11 +4008,11 @@ bool curse_spell_aux(int Ind, int item)
 		return(FALSE);
 	}
 	if(item_tester_hook_weapon(o_ptr)){
-		o_ptr->to_h=0-(randint(10)+1);
-		o_ptr->to_d=0-(randint(10)+1);
+		o_ptr->to_h = 0 - (randint(10) + 1);
+		o_ptr->to_d = 0 - (randint(10) + 1);
 	}
 	else if(item_tester_hook_armour(o_ptr)){
-		o_ptr->to_a=0-(randint(10)+1);
+		o_ptr->to_a = 0 - (randint(10) + 1);
 	}
 	else{
 		switch(o_ptr->tval){
@@ -4061,13 +4026,13 @@ bool curse_spell_aux(int Ind, int item)
 	msg_format(Ind,"A terrible black aura surrounds your %s",
 	    o_name, o_ptr->number > 1 ? "" : "s");
 	/* except it doesnt actually get cursed properly yet. */
-	o_ptr->name1=0;
-	o_ptr->name3=0;
-	o_ptr->ident|=ID_CURSED;
-	o_ptr->ident&=~ID_KNOWN|ID_SENSE;	/* without this, the spell is pointless */
+	o_ptr->name1 = 0;
+	o_ptr->name3 = 0;
+	o_ptr->ident |= ID_CURSED;
+	o_ptr->ident &= ~(ID_KNOWN | ID_SENSE);	/* without this, the spell is pointless */
 
 	if(o_ptr->name2){
-		o_ptr->pval=0-(randint(10)+1);	/* nasty */
+		o_ptr->pval = 0 - (randint(10) + 1);	/* nasty */
 	}
 
 	/* Did we use up an item? */
@@ -4907,6 +4872,55 @@ void wakeup_monsters(int Ind, int who)
 				/* Wake up */
 				m_ptr->csleep = 0;
 				sleep = TRUE;
+			}
+		}
+	}
+
+	/* Messages */
+	/* the_sandman: added _near so other players can hear too */
+	if (sleep) {
+		msg_print(Ind, "You hear a sudden stirring in the distance!");
+		msg_print_near(Ind, "You hear a sudden stirring in the distance!");
+	}
+}
+
+void wakeup_monsters_somewhat(int Ind, int who)
+{
+	player_type *p_ptr = Players[Ind];
+
+	int i;
+
+	bool sleep = FALSE;
+
+	/* Aggravate everyone nearby */
+	for (i = 1; i < m_max; i++)
+	{
+		monster_type	*m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+		/* Skip aggravating monster (or player) */
+		if (i == who) continue;
+
+		/* Wake up nearby sleeping monsters */
+		if(distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)<MAX_SIGHT*2)
+#if 0
+		if (m_ptr->cdis < MAX_SIGHT * 2)
+#endif
+		{
+			/* Disturb sleep somewhat */
+			if (m_ptr->csleep)
+			{
+				m_ptr->csleep = (m_ptr->csleep * 3) / 5;
+				m_ptr->csleep -= 10 + rand_int(6); //10
+				if (m_ptr->csleep <= 0) {
+					m_ptr->csleep = 0;
+					sleep = TRUE;
+				}
 			}
 		}
 	}
@@ -5933,6 +5947,12 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 						damage = 300 - p_ptr->total_damage;
 					}
 					if (damage) msg_format(Ind, "You are severely crushed for \377o%d\377w damage!", damage);
+
+					/* Stun only once - mikaelh */
+					if (p_ptr->total_damage == 0)
+					{
+						(void)set_stun(Ind, p_ptr->stun + randint(40));
+					}
 				}
 
 				/* Destroy the grid, and push the player to safety */
@@ -5961,7 +5981,12 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							if (damage)
 							{
 								msg_format(Ind, "You are bashed by rubble for \377o%d\377w damage!", damage);
-								(void)set_stun(Ind, p_ptr->stun + randint(50));
+							}
+
+							/* Stun only once - mikaelh */
+							if (p_ptr->total_damage == 0)
+							{
+								(void)set_stun(Ind, p_ptr->stun + randint(33));
 							}
 							break;
 						}
@@ -5977,7 +6002,11 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 							if (damage)
 							{
 								msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
-								(void)set_stun(Ind, p_ptr->stun + randint(50));
+							}
+
+							/* Stun only once - mikaelh */
+							if (p_ptr->total_damage == 0) {
+								(void)set_stun(Ind, p_ptr->stun + randint(33));
 							}
 							break;
 						}
@@ -6680,11 +6709,12 @@ bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int inter
 	/* Analyze the "dir" and the "target".  Hurt items on floor. */
 	
 	/* Hack: Make HEALINGCLOUD affect the caster too! */
-	/* PFFT This hack breaks HEALINGCLOUD against undeads */
+	/* Note: 'Ind' < 0 (eg PROJECTOR_EFFECT) disables projection on monsters,
+	   so HEALINGCLOUD wouldn't damage undeads - well, maybe it shouldn't. */
 	if (typ != GF_HEALINGCLOUD)
-		return (project(0 - Ind, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+		return (project(0 - Ind, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 	else
-		return (project(PROJECTOR_EFFECT, (rad > 16)?16:rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
+		return (project(PROJECTOR_EFFECT, (rad > 16) ? 16 : rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -8395,4 +8425,64 @@ void tome_creation_aux(int Ind, int item) {
 
 	/* Something happened */
 	return;
+}
+
+void do_mstopcharm(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	monster_type *m_ptr;
+	int m;
+
+	if (p_ptr->mcharming == 0) return; /* optimization */
+
+	p_ptr->mcharming = 0;
+
+	for (m = m_top - 1; m >= 0; m--) {
+		m_ptr = &m_list[m_fast[m]];
+//		r_ptr = race_inf(m_ptr);
+		if (m_ptr->charmedignore && m_ptr->charmedignore == Ind)
+			m_ptr->charmedignore = 0;
+	}
+}
+
+bool test_charmedignore(int Ind, int Ind_charmer, int r_idx) {
+	player_type *q_ptr = Players[Ind_charmer];
+	monster_race *r_ptr = &r_info[r_idx];
+	int chance = 1, cost = 1;
+
+	/* non team-mates are not affected (and would cost extra mana) */
+	if (Ind != Ind_charmer &&
+	    (!player_in_party(q_ptr->party, Ind)))
+		return FALSE;
+
+	/* some monsters show resistance spikes */
+	if ((r_ptr->flags2 & RF2_SMART) ||
+	    (r_ptr->flags3 & RF3_NO_CONF) ||
+	    (r_ptr->flags1 & RF1_UNIQUE) ||
+	    (r_ptr->flags2 & RF2_POWERFUL)) {
+		chance++;
+		cost++;
+	}
+
+	/* especially costly? */
+	if (r_ptr->level > (q_ptr->lev * 7) / 5)
+		cost++;
+
+	/* spell continuously burns mana! */
+	if (turn % (cfg.fps / 10) == 0) {
+		if (q_ptr->csp < 1) {
+			do_mstopcharm(Ind_charmer);
+			return FALSE;
+		}
+		q_ptr->csp -= 1;
+		q_ptr->redraw |= PR_MANA;
+	}
+
+	/* the charm-caster himself is pretty safe */
+	if (Ind == Ind_charmer && magik(100 - chance))
+		return TRUE;
+	/* in same party?= slightly reduced effect >:) */
+	if (magik(99 - 2 * chance))
+		return TRUE;
+
+	return FALSE;
 }

@@ -258,9 +258,9 @@ struct object_type
 
 	s16b weight;		/* Item weight */
 
-	byte name1;			/* Artifact type, if any */
-	byte name2;			/* Ego-Item type, if any */
-	byte name2b;			/* Ego-Item type, if any */
+	u16b name1;			/* Artifact type, if any */
+	u16b name2;			/* Ego-Item type, if any */
+	u16b name2b;			/* Ego-Item type, if any */
 	s32b name3;			/* Randart seed, if any */
 
 	byte attr;			/* colour in inventory (for client) */
@@ -312,6 +312,18 @@ struct version_type {	/* Extended version structure */
 	int extra;
 	int branch;
 	int build;
+};
+
+/*
+* Structure for keeping track of inventory changes
+*/
+struct inventory_change_type {
+	char type;
+	int revision;
+	s16b begin;
+	s16b end;
+	s16b mod;
+	inventory_change_type *next;
 };
 
 struct player_type
@@ -388,6 +400,9 @@ struct player_type
         s16b cst_frac;                  /* 1/10000 */
 
 	object_type inventory[INVEN_TOTAL];	/* Player's inventory */
+	inventory_change_type *inventory_changes; /* List of recent inventory changes */
+	int inventory_revision;	/* Current inventory ID */
+	char inventory_changed;	/* Inventory has changed since last update to the client */
 
 	s32b total_weight;	/* Total weight being carried */
 
@@ -756,6 +771,11 @@ struct player_type
 	s16b invis;		/* Invisibility */
 	bool admin_wiz;         /* Is this char Wizard? */
         bool admin_dm;          /* or Dungeon Master? */
+
+	s16b to_l;		/* Bonus to life */
+	s32b to_hp;		/* Bonus to Hit Points */
+	s16b to_m;		/* Bonus to mana */
+
 	s16b dis_to_h;		/* Known bonus to hit */
 	s16b dis_to_d;		/* Known bonus to dam */
 	s16b dis_to_a;		/* Known bonus to ac */
@@ -803,6 +823,8 @@ struct player_type
 	bool body_changed;
 	
 	bool anti_magic;	/* Can the player resist magic */
+	byte antimagic;		/* Anti-magic(in percent) */
+	byte antimagic_dis;	/* Radius of the anti magic field */
 
         player_list_type	*blood_bond;	/* Norc is now happy :) */
 
@@ -861,6 +883,8 @@ struct player_type
 
         /* C. Blue - any automatic savegame update to perform? (toggle) */
         byte updated_savegame;
+        /* for auto-artreset */
+        byte artifact_reset;
 	
 	/* C. Blue - fun stuff */
 	s16b corner_turn;
@@ -892,6 +916,10 @@ struct player_type
 	int kills_lower;
 	int kills_higher;
 	int kills_equal;
+	
+	int mcharming;
+	u32b turns_on_floor;
+	bool dual_mode;
 };
 
 extern bool imprison(int Ind, int time, char *reason);

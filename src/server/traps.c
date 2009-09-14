@@ -1046,7 +1046,10 @@ break;
 		/* Teleport Trap */
 		case TRAP_OF_TELEPORT:
 		{
-			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || (p_ptr->res_tele && (rand_int(100) < 67))) break;
+                        int chance = (195 - p_ptr->skill_sav) / 2;
+                        if (p_ptr->res_tele) chance = 50;
+
+			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || magik(chance)) break;
 			msg_print(Ind, "The world whirls around you.");
 			teleport_player(Ind, RATIO*67, TRUE);
 			ident=TRUE;
@@ -1142,7 +1145,7 @@ break;
 		/* Bowel Cramps Trap */
 		case TRAP_OF_BOWEL_CRAMPS:
 		{
-		    if (!p_ptr->suscep_life) {
+		    if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
 			msg_print(Ind, "A wretched smelling gas cloud upsets your stomach.");
 			take_hit(Ind, 1, "bowel cramps", 0);
 			if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
@@ -2190,10 +2193,10 @@ break;
 		case TRAP_OF_CUISINE:
 		{
 			msg_print(Ind, "You are treated to a marvellous elven cuisine!");
-		    if (!p_ptr->suscep_life) {
-			/* 1turn = 100 food value when satiated */
-			(void)set_food(Ind, PY_FOOD_MAX + glev*50 + 1000 + rand_int(1000));
-		    }
+			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
+				/* 1turn = 100 food value when satiated */
+				(void)set_food(Ind, PY_FOOD_MAX + glev*50 + 1000 + rand_int(1000));
+			}
 			ident=TRUE;
 			break;
 		}

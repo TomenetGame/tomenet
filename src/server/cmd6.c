@@ -718,7 +718,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 
 			case SV_POTION_SALT_WATER:
 				{
-				    if (!p_ptr->suscep_life) {
+				    if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
 					msg_print(Ind, "The potion makes you vomit!");
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
 					/* made salt water less deadly -APD */
@@ -1021,7 +1021,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					msg_print(Ind, "\377GYou feel life flow through your body!");
 					restore_level(Ind);
-					hp_player(Ind, 700);
+					if (p_ptr->suscep_life) take_hit(Ind, 500, "a potion of life", 0);
+					else hp_player(Ind, 700);
 					(void)set_poisoned(Ind, 0, 0);
 					(void)set_blind(Ind, 0);
 					(void)set_confused(Ind, 0);
@@ -1040,7 +1041,6 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 						msg_print(Ind, "The hold of the Black Breath on you is broken!");
 					}
 					p_ptr->black_breath = FALSE;
-					if (p_ptr->suscep_life) take_hit(Ind, 500, "a potion of life", 0);
 					ident = TRUE;
 					break;
 				}
@@ -1476,6 +1476,7 @@ void do_cmd_drink_fountain(int Ind)
 			c_ptr->feat == FEAT_SHAL_WATER)
 	{
 		msg_print(Ind, "You quenched your thirst.");
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
 	}
 
@@ -1496,9 +1497,10 @@ void do_cmd_drink_fountain(int Ind)
 #endif	// 0
 
 	/* Oops! */
-	if (!(cs_ptr=GetCS(c_ptr, CS_FOUNTAIN)))
+	if (!(cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)))
 	{
 		msg_print(Ind, "You quenched your thirst.");
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
 	}
 
@@ -1525,6 +1527,7 @@ void do_cmd_drink_fountain(int Ind)
 	if (!k_idx)
 	{
 		msg_print(Ind, "You quenched your thirst.");
+		if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 		return;
 	}
 
@@ -1553,6 +1556,7 @@ void do_cmd_drink_fountain(int Ind)
 	{
 		msg_print(Ind, "You quenched your thirst.");
 	}
+	if (p_ptr->prace == RACE_ENT) (void)set_food(Ind, p_ptr->food + 500);
 
 	cs_ptr->sc.fountain.rest--;
 
@@ -1566,8 +1570,8 @@ void do_cmd_drink_fountain(int Ind)
 	pval = 0;
 //	if (k_info[lookup_kind(tval, sval)].cost > 0) {
 	if (magik(FOUNTAIN_GUARDS)) {
-		if (getlevel(&p_ptr->wpos) >= 40) { pval = 924;
-		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:pval = 1038;break; case 2:pval = 893;break; case 3:pval = 902; }
+		if (getlevel(&p_ptr->wpos) >= 40) { switch (randint(2)) { case 1:pval = 924;break; case 2:pval = 893; }
+		} else if (getlevel(&p_ptr->wpos) >= 35) { switch (randint(3)) { case 1:pval = 1038;break; case 2:pval = 894;break; case 3:pval = 902; }
 		} else if (getlevel(&p_ptr->wpos) >= 30) { switch (randint(2)) { case 1:pval = 512;break; case 2:pval = 509; }
 		} else if (getlevel(&p_ptr->wpos) >= 25) { pval = 443;
 		} else if (getlevel(&p_ptr->wpos) >= 20) { switch (randint(4)) {case 1:pval = 919;break; case 2:pval = 882;break; case 3:pval = 927;break; case 4:pval = 1057; }
@@ -5138,6 +5142,7 @@ void do_cmd_activate(int Ind, int item)
 	player_type *p_ptr = Players[Ind];
 
 	int         i, k, lev, chance;
+//	int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 
 	object_type *o_ptr;
 
@@ -7148,12 +7153,12 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 	else if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
 	{
 		msg_print(Ind, "Your cloak flashes many colors...");
-		(void)set_oppose_acid(Ind, randint(40) + 40); /* removed stacking */
-		(void)set_oppose_elec(Ind, randint(40) + 40);
-		(void)set_oppose_fire(Ind, randint(40) + 40);
-		(void)set_oppose_cold(Ind, randint(40) + 40);
-		(void)set_oppose_pois(Ind, randint(40) + 40);
-		o_ptr->timeout = rand_int(50) + 150;
+		(void)set_oppose_acid(Ind, randint(20) + 50); /* removed stacking */
+		(void)set_oppose_elec(Ind, randint(20) + 50);
+		(void)set_oppose_fire(Ind, randint(20) + 50);
+		(void)set_oppose_cold(Ind, randint(20) + 50);
+		(void)set_oppose_pois(Ind, randint(20) + 50);
+		o_ptr->timeout = rand_int(40) + 170 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 		return;
 	}
 	else if (is_ego_p(o_ptr, EGO_AURA_FIRE))
@@ -7268,11 +7273,29 @@ if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 					else{
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
+
+						/* Set appropriate level requirements */
+#if 0 /* usual level req: 1->15..30->28..60->38..100->44 */
 						if (r_info[p_ptr->body_monster].level > 0) {
 							o_ptr->level = 15 + (1000 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
 						} else {
 							o_ptr->level = 15;
 						}
+#endif
+#if 0 /* 0->5..1->6..30->25..60->40..80->48..100->55 */
+						if (r_info[p_ptr->body_monster].level > 0) {
+							o_ptr->level = 5 + (1500 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
+						} else {
+							o_ptr->level = 5;
+						}
+#endif
+#if 1 /* 0->5..1->6..30->26..60->42..80->51..85->53..100->58 */
+						if (r_info[p_ptr->body_monster].level > 0) {
+							o_ptr->level = 5 + (1600 / ((2000 / (r_info[p_ptr->body_monster].level + 1)) + 10));
+						} else {
+							o_ptr->level = 5;
+						}
+#endif
 
 						/* Make the ring last only over a certain period of time >:) - C. Blue */
 						o_ptr->timeout = 3000 + get_skill_scale(p_ptr, SKILL_DEVICE, 2000) +
@@ -8749,14 +8772,14 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	}
 
 	switch (technique) {
-	case 0:	if (!p_ptr->melee_techniques & 0x0001) return; /* Sprint */
+	case 0:	if (!(p_ptr->melee_techniques & 0x0001)) return; /* Sprint */
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
 		set_melee_sprint(Ind, 9 + rand_int(3)); /* number of turns it lasts */
 s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		break;
-	case 1:	if (!p_ptr->melee_techniques & 0x0002) return; /* Taunt */
+	case 1:	if (!(p_ptr->melee_techniques & 0x0002)) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 //		if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
 		if (p_ptr->energy <= 0) return;
@@ -8766,7 +8789,7 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		taunt_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		break;
-	case 2:	if (!p_ptr->melee_techniques & 0x0004) return; /* Spin */
+	case 2:	if (!(p_ptr->melee_techniques & 0x0004)) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
     		if (p_ptr->afraid) {                                                                                           
 			msg_print(Ind, "You are too afraid to attack!");                        
@@ -8779,21 +8802,23 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		break;
-	case 3:	if (!p_ptr->melee_techniques & 0x0008) return; /* Berserk */
+	case 3:	if (!(p_ptr->melee_techniques & 0x0008)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
-                set_berserk(Ind, randint(5) + 15);
+		hp_player(Ind, 20);
+		set_afraid(Ind, 0);
+		set_berserk(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		break;
-	case 8:	if (!p_ptr->melee_techniques & 0x0100) return; /* Distract */
+	case 8:	if (!(p_ptr->melee_techniques & 0x0100)) return; /* Distract */
 		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 1;
 		un_afk_idle(Ind);
 		distract_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		break;
-	case 9:	if (!p_ptr->melee_techniques & 0x0200) return; /* Flash bomb */
+	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Flash bomb */
 		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
 //		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		if (p_ptr->energy <= 0) return;
@@ -8803,7 +8828,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		flash_bomb(Ind);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		break;
-	case 14:if (!p_ptr->melee_techniques & 0x4000) return; /* Shadow Run */
+	case 14:if (!(p_ptr->melee_techniques & 0x4000)) return; /* Shadow Run */
 		shadow_run(Ind);
 s_printf("TECHNIQUE_MELEE: %s - shadow run\n", p_ptr->name);
 		break;
@@ -8843,7 +8868,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	disturb(Ind, 1, 0); /* stop things like running, resting.. */
 
 	switch (technique) {
-	case 0:	if (!p_ptr->ranged_techniques & 0x0001) return; /* Flare missile */
+	case 0:	if (!(p_ptr->ranged_techniques & 0x0001)) return; /* Flare missile */
 		if (p_ptr->ranged_flare) {
 			msg_print(Ind, "You dispose of the flare missile.");
 			p_ptr->ranged_flare = FALSE;
@@ -8854,6 +8879,15 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare.");
 			return;
 		}
+#if 0 /* using !k inscription in birth.c instead? */
+		/* warn about and prevent using up the only magic ammo we got */
+		if (p_ptr->inventory[INVEN_AMMO].name1 == 0 &&
+		    p_ptr->inventory[INVEN_AMMO].sval == SV_AMMO_MAGIC &&
+		    p_ptr->inventory[INVEN_AMMO].number == 1) {
+			msg_print(Ind, "Flare would consume your only magic piece of ammo!");
+			return;
+		}
+#endif
 		for (i = 0; i < INVEN_WIELD; i++)
 			if (p_ptr->inventory[i].tval == TV_FLASK) { /* oil */
 //				p_ptr->cst -= 2;
@@ -8872,7 +8906,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		msg_print(Ind, "You prepare an oil-drenched shot..");
 s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
 		break;
-	case 1:	if (!p_ptr->ranged_techniques & 0x0002) return; /* Precision shot */
+	case 1:	if (!(p_ptr->ranged_techniques & 0x0002)) return; /* Precision shot */
 		if (p_ptr->ranged_precision) {
 			msg_print(Ind, "You stop aiming overly precisely.");
 			p_ptr->ranged_precision = FALSE;
@@ -8886,11 +8920,11 @@ s_printf("TECHNIQUE_RANGED: %s - flare\n", p_ptr->name);
 		msg_print(Ind, "You aim carefully for a precise shot..");
 s_printf("TECHNIQUE_RANGED: %s - precision\n", p_ptr->name);
 		break;
-	case 2:	if (!p_ptr->ranged_techniques & 0x0004) return; /* Craft some ammunition */
+	case 2:	if (!(p_ptr->ranged_techniques & 0x0004)) return; /* Craft some ammunition */
 s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		do_cmd_fletchery(Ind); /* was previously MKEY_FLETCHERY (9) */
 		return;
-	case 3:	if (!p_ptr->ranged_techniques & 0x0008) return; /* Double-shot */
+	case 3:	if (!(p_ptr->ranged_techniques & 0x0008)) return; /* Double-shot */
 		if (!p_ptr->ranged_double) {
 //			if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
@@ -8905,7 +8939,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		else msg_print(Ind, "You stop using double-shots.");
 s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		break;
-	case 4:	if (!p_ptr->ranged_techniques & 0x0100) return; /* Barrage */
+	case 4:	if (!(p_ptr->ranged_techniques & 0x0100)) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
 			msg_print(Ind, "You cancel preparations for barrage.");
 			p_ptr->ranged_barrage = FALSE;

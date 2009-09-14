@@ -596,7 +596,7 @@ bool make_attack_melee(int Ind, int m_idx)
 		/* Extract the attack "power" */
 		switch (effect)
 		{
-			case RBE_HURT:  power = 60; break;
+			case RBE_HURT:  	power = 60; break;
 			case RBE_POISON:        power =  5; break;
 			case RBE_UN_BONUS:      power = 20; break;
 			case RBE_UN_POWER:      power = 15; break;
@@ -604,11 +604,11 @@ bool make_attack_melee(int Ind, int m_idx)
 			case RBE_EAT_ITEM:      power =  5; break;
 			case RBE_EAT_FOOD:      power =  5; break;
 			case RBE_EAT_LITE:      power =  5; break;
-			case RBE_ACID:  power =  0; break;
-			case RBE_ELEC:  power = 10; break;
-			case RBE_FIRE:  power = 10; break;
-			case RBE_COLD:  power = 10; break;
-			case RBE_BLIND: power =  2; break;
+			case RBE_ACID:  	power =  0; break;
+			case RBE_ELEC:  	power = 10; break;
+			case RBE_FIRE:  	power = 10; break;
+			case RBE_COLD:  	power = 10; break;
+			case RBE_BLIND: 	power =  2; break;
 			case RBE_CONFUSE:       power = 10; break;
 			case RBE_TERRIFY:       power = 10; break;
 			case RBE_PARALYZE:      power =  2; break;
@@ -624,14 +624,14 @@ bool make_attack_melee(int Ind, int m_idx)
 			case RBE_EXP_20:        power =  5; break;
 			case RBE_EXP_40:        power =  5; break;
 			case RBE_EXP_80:        power =  5; break;
-				case RBE_DISEASE:   power =  5; break;
-				case RBE_TIME:      power =  5; break;
-                        case RBE_SANITY:    power = 60; break;
-                        case RBE_HALLU:     power = 10; break;
-                        case RBE_PARASITE:  power =  5; break;
-				case RBE_DISARM:	power = 60; break;
-				case RBE_FAMINE:	power = 20; break;
-				case RBE_SEDUCE:	power = 80; break;
+			case RBE_DISEASE:   	power =  5; break;
+			case RBE_TIME:      	power =  5; break;
+                        case RBE_SANITY:    	power = 60; break;
+                        case RBE_HALLU:     	power = 10; break;
+                        case RBE_PARASITE:  	power =  5; break;
+			case RBE_DISARM:	power = 60; break;
+			case RBE_FAMINE:	power = 20; break;
+			case RBE_SEDUCE:	power = 80; break;
 		}
 
 		switch (method)
@@ -1166,6 +1166,19 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					if (safe_area(Ind)) break;
 
+#if POLY_RING_METHOD == 1
+					/* discharge player's live form he attained from a 
+					   ring of polymorphing! (anti-cheeze for Morgoth) */
+					if (p_ptr->tim_mimic >= 1000) {
+						msg_print(Ind, "\377LThe magical force stabilizing your form fades *rapidly*...");
+						set_mimic(Ind, (p_ptr->tim_mimic * 3) / 4, p_ptr->tim_mimic_what);
+					}
+					else if (p_ptr->tim_mimic) {
+						msg_print(Ind, "\377LThe magical force stabilizing your form fades *rapidly*...");
+						set_mimic(Ind, p_ptr->tim_mimic - 200, p_ptr->tim_mimic_what);
+					}
+#endif
+
 					/* Saving throw by Magic Device skill (9%..99%) */
 					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
 
@@ -1173,10 +1186,14 @@ bool make_attack_melee(int Ind, int m_idx)
 					for (k = 0; k < 20; k++)
 					{
 						/* Pick an item */
+#if POLY_RING_METHOD == 0
 						i = rand_int(INVEN_PACK + 2);
 						/* Inventory + the ring slots (timed polymorph rings) */
 						if (i == INVEN_PACK) i = INVEN_LEFT;
 						if (i == INVEN_PACK + 1) i = INVEN_RIGHT;
+#else
+						i = rand_int(INVEN_PACK);
+#endif
 
 						/* Obtain the item */
 						o_ptr = &p_ptr->inventory[i];
@@ -1229,7 +1246,8 @@ bool make_attack_melee(int Ind, int m_idx)
 							} else {
 								/* Pfft, this is really sucky... -,- MD should have something to
 								 * do with it, at least... Will change it to 1_in_MDlev chance of
-								 * total draining. Otherwise we will decrement. the_sandman */
+								 * total draining. Otherwise we will decrement. the_sandman
+								 * - actual idea was to make ELEC IMM worth something btw =-p - C. Blue */
 								s16b chance = randint(get_skill_scale(p_ptr, SKILL_DEVICE, 50));
 								if (!(chance - 1)) o_ptr->pval = 0;
 								else o_ptr->pval--;
@@ -2013,7 +2031,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				case RBE_SANITY:
 				{
 					obvious = TRUE;
-					msg_print(Ind, "You shiver in madness..");
+					msg_print(Ind, "\377RYou shiver in madness..");
 					
 					/* Since sanity hits can become too powerful
 					   by the normal melee-boosting formula for
@@ -2058,12 +2076,13 @@ bool make_attack_melee(int Ind, int m_idx)
 
 					msg_format(Ind, "\377o%^s tries to disarm you.", m_name);
 					
-					if (artifact_p(o_ptr) && magik(50)) break;
-					
 					object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 					
+					/* object itself prevents getting separated? */
 					/* can never take off permanently cursed stuff */
 					if (f3 & TR3_PERMA_CURSE) break;
+					else if ((f3 & TR3_HEAVY_CURSE) && magik(90)) break;
+					else if (artifact_p(o_ptr) && magik(50)) break;
 
 					/* do we hold one weapon with two hands? very safe */
 					if (!p_ptr->heavy_wield && !shield && !p_ptr->dual_wield && (
@@ -2082,8 +2101,10 @@ bool make_attack_melee(int Ind, int m_idx)
 							bypass_inscrption = TRUE;
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, slot, 1);
+								s_printf("%s EFFECT: Disarmed (takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, slot, 1);
+								s_printf("%s EFFECT: Disarmed (drop) %s.\n", showtime(), p_ptr->name);
 #if 0
 								/* Drop it (carefully) near the player */
 								drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -2100,14 +2121,18 @@ bool make_attack_melee(int Ind, int m_idx)
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, INVEN_WIELD, 1);
+								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, INVEN_WIELD, 1);
+								s_printf("%s EFFECT: Disarmed (dual, drop) %s.\n", showtime(), p_ptr->name);
 							}
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, INVEN_ARM, 1);
+								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s.\n", showtime(), p_ptr->name);
 							} else {
 								inven_drop(Ind, INVEN_ARM, 1);
+								s_printf("%s EFFECT: Disarmed (dual, drop) %s.\n", showtime(), p_ptr->name);
 							}
 							dis_sec = TRUE;
 						}
@@ -2251,7 +2276,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						player_aura_dam = damroll(2,6);
 						msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" turns into a pile of ash."))
+									" turns into a pile of ash"))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -2272,7 +2297,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						player_aura_dam = damroll(2,6);
 						msg_format(Ind, "%^s gets zapped for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" turns into a pile of cinder."))
+									" turns into a pile of cinder"))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -2293,7 +2318,7 @@ bool make_attack_melee(int Ind, int m_idx)
 						player_aura_dam = damroll(2,6);
 						msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-									" freezes and shatters."))
+									" freezes and shatters"))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -2311,7 +2336,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				{
 					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);
 					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-					                 " is bashed by your mystic shield."))
+					                 " is bashed by your mystic shield"))
 					{
 						blinked = FALSE;
 						alive = FALSE;
@@ -2323,7 +2348,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					{
 						msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
 						if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-						                 " is burned by your fiery shield."))
+						                 " is burned by your fiery shield"))
 						{
 							blinked = FALSE;
 							alive = FALSE;
@@ -2334,7 +2359,7 @@ bool make_attack_melee(int Ind, int m_idx)
 				{
 					msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
 					if (mon_take_hit(Ind, m_idx, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), &fear,
-					                 " is burned by your fiery shield."))
+					                 " is burned by your fiery shield"))
 					{
 						blinked = FALSE;
 						alive = FALSE;
@@ -2408,7 +2433,7 @@ bool make_attack_melee(int Ind, int m_idx)
 //							msg_print(Ind, "It explodes into a wave of plasma!");
 							sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
 //							fire_ball(Ind, GF_PLASMA, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
-							fire_ball(Ind, GF_PLASMA, 0, 5 + chance * 3, 0, p_ptr->attacker);
+							fire_ball(Ind, GF_PLASMA, 0, 5 + chance * 3, 1, p_ptr->attacker);
 						}
 						else
 						{
@@ -2417,7 +2442,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							msg_format(Ind, "%^s gets hit by a wave of ice.", m_name);
 							sprintf(p_ptr->attacker, " eradiates a wave of ice for");
 //							fire_ball(Ind, GF_ICE, 0, 5 + get_skill_scale(p_ptr, SKILL_AURA_POWER, 150), 1, p_ptr->attacker);
-							fire_ball(Ind, GF_ICE, 0, 5 + chance * 3, 0, p_ptr->attacker);
+							fire_ball(Ind, GF_ICE, 0, 5 + chance * 3, 1, p_ptr->attacker);
 						}
 					}
 				}

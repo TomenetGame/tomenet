@@ -475,7 +475,7 @@ static void display_player_middle(int Ind)
 	/* Dump the armor class bonus */
 	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
 
-	if (p_ptr->lev >= PY_MAX_LEVEL)
+	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
 	else
 	{
@@ -806,7 +806,7 @@ bool process_player_name(int Ind, bool sf)
 
 
 	/* Cannot be too long */
-	if (strlen(p_ptr->name) > 15)
+	if (strlen(p_ptr->name) > 15) //was 20 once?
 	{
 		/* Name too long */
 		Destroy_connection(p_ptr->conn, "Your name is too long!");
@@ -1728,13 +1728,13 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		}
 
 		/* Dump some info */
-		snprintf(out_val, sizeof(out_val), "%2s%3d.%10s %s%s the %s%s %s, Level %d",
+		snprintf(out_val, sizeof(out_val), "%2s%3d.%10s %s%s the %s%s %s, Lv.%d",
 			attrc, place, the_score.pts, modecol, the_score.who, modestr, 
 			race_info[pr].title, class_info[pc].title,
 			clev);
 
 		/* Append a "maximum level" */
-		if (mlev > clev) strcat(out_val, format(" (Max %d)", mlev));
+		if (mlev > clev) strcat(out_val, format(" (max %d)", mlev));
 
 		/* Dump the first line */
 		fprintf(fff, "%s\n", out_val);

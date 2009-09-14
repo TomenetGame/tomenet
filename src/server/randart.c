@@ -143,7 +143,7 @@ static void do_curse (artifact_type *a_ptr)
 	a_ptr->flags3 |= TR3_CURSED;
 }
 
-/* 
+/*
  * Evaluate the artifact's overall power level.
  */
 s32b artifact_power (artifact_type *a_ptr)
@@ -1468,7 +1468,7 @@ static void add_ability (artifact_type *a_ptr)
 
 
 /* Fix various artifact limits and contradictions */
-static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_ptr, object_type *o_ptr) {
+static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_ptr) {
 	int c = 0; /* used to count how many stats the artifact increases */
 
 /* -------------------------------------- Initial min/max limit -------------------------------------- */
@@ -1479,7 +1479,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	/* Ensure a bonus for certain items whose base types always have a (b)pval */
 	if (((k_ptr->flags1 & TR1_PVAL_MASK) || (k_ptr->flags5 & TR5_PVAL_MASK)) && !a_ptr->pval) {
 		a_ptr->pval = randint(3); /* do_pval */
-		if (cursed_p(o_ptr)) a_ptr->pval = -a_ptr->pval;
+		if (k_ptr->flags3 & TR3_CURSED) a_ptr->pval = -a_ptr->pval;
 	}
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
@@ -1710,7 +1710,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 }
 
 /* Fix various artifact limits and contradictions */
-static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_ptr, object_type *o_ptr) {
+static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_ptr) {
 	int c = 0; /* used to count how many stats the artifact increases */
 
 /* -------------------------------------- Initial min/max limit -------------------------------------- */
@@ -1721,7 +1721,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	/* Ensure a bonus for certain items whose base types always have a (b)pval */
 	if (((k_ptr->flags1 & TR1_PVAL_MASK) || (k_ptr->flags5 & TR5_PVAL_MASK)) && !a_ptr->pval) {
 		a_ptr->pval = randint(3); /* do_pval */
-		if (cursed_p(o_ptr)) a_ptr->pval = -a_ptr->pval;
+		if (k_ptr->flags3 & TR3_CURSED) a_ptr->pval = -a_ptr->pval;
 	}
 
 /* -------------------------------------- pval-independant limits -------------------------------------- */
@@ -1959,7 +1959,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		/* Remove all old ANTIMAGIC flags that might have been
 		set by a curse or random ability */
 		a_ptr->flags4 &= ((~TR4_ANTIMAGIC_30) & (~TR4_ANTIMAGIC_20) & (~TR4_ANTIMAGIC_10));
-		
+
 		/* Start with basic Antimagic */
 		a_ptr->flags4 |= TR4_ANTIMAGIC_50;
 
@@ -2080,9 +2080,7 @@ artifact_type *randart_make(object_type *o_ptr)
 
 	/* Mega Hack -- forbig randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
-	  {
-	    return (NULL);
-	  }
+		return (NULL);
 
 /* taken out the quality boosts again, since those weapons already deal insane damage.
    alternatively their damage could be lowered so they don't rival grond (7d8 weapon w/ kill flags..). */
@@ -2095,38 +2093,30 @@ artifact_type *randart_make(object_type *o_ptr)
 	/* Wipe the artifact_type structure */
 	WIPE(&randart, artifact_type);
 
-	/* 
+
+	/*
 	 * First get basic artifact quality
 	 * 90% are good
 	 */
-	 
+
 	/* Hack - make nazgul rings of power more useful: */
-	if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_SPECIAL))
-	{
+	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_SPECIAL)) {
 		power = 60 + rand_int(20) + RANDART_QUALITY; /* 60..rnd(20)+RQ should be maximum */
-	}
-	else if (rand_int(10))
-	{
+	} else if (rand_int(10) && !(k_ptr->flags3 & TR3_CURSED)) {
 		/* maybe move quality_boost to become added to randart_quality.. */
 		power = rand_int(80 + quality_boost) + RANDART_QUALITY;
-	}
-	/* 10% are cursed */
-	else
-	{
+	} else { /* 10% are cursed */
 		power = rand_int(40) - (2 * RANDART_QUALITY);
 	}
-	
 	if (power < 0) curse_me = TRUE;
-	
+
 	/* Really powerful items should aggravate. */
-	if (power > 100 + quality_boost)
-	{
-		if (rand_int (100) < (power - 100 - quality_boost) * 3)
-		{
+	if (power > 100 + quality_boost) {
+		if (rand_int (100) < (power - 100 - quality_boost) * 3) {
 			aggravate_me = TRUE;
 		}
 	}
-	
+
 	if (is_ammo(k_ptr->tval)) {
 		aggravate_me = FALSE;
 //		power /= 3;
@@ -2137,28 +2127,23 @@ artifact_type *randart_make(object_type *o_ptr)
 	a_ptr->max_num = 1;
 	a_ptr->tval = k_ptr->tval;
 	a_ptr->sval = k_ptr->sval;
-	a_ptr->pval = k_ptr->pval;
+//	a_ptr->pval = k_ptr->pval;	/* unsure about this */
 
-	/* rings of speed would become too powerful otherwise: */
-	/* Alright, changed it so it only works for rings/amulets!
-	   Reason is: All other items keep their base-type abilties,
-	   and those abilties only count as bpval.
-	   Jewelry however has only 1 base ability (and never ego powers, except telepathy ammy)
-	   which is supposed to be influenced by exactly 1 parameter.
-	   It would be silly to have a randart ring of strength with
-	   bpval +6 to STR and pval +6 getting STR as general mod accidentally.
-	   -- Unfortunately we need it for all items :/ Kolla +2 +6 ..lol.
-	   Someone rewrite the item system!! */
-
-	/* merge item's base pval and bpval to a single pval value */
-	if ((o_ptr->tval != TV_RING) || (o_ptr->sval != SV_RING_SPECIAL)) {
-		if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
+	/* 'Merge' pval and bpval into a single value, by just discarding
+	   o_ptr->bpval, and using only a_ptr->pval, which becomes o_ptr->pval,
+	   otherwise we get things like ring of speed (+7)(+6):
+	   Some items that use bpval in a special way are exempt and need to
+	   keep their bpval: Rings of Power. */
+	if ((k_ptr->tval != TV_RING) || (k_ptr->sval != SV_RING_SPECIAL)) {
+//		if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
 		o_ptr->bpval = 0;
 	}
 
+#if 0 /* redundant: already nulled */
 	/* light sources don't keep their pval but get it zero'ed,
 	   because pval is for fueled lights the amount of turns left */
 	if (k_ptr->tval == TV_LITE) a_ptr->pval = 0;
+#endif
 
 	/* Amulets and Rings keep their (+hit,+dam)[+AC] instead of having it
 	   reset to (+0,+0)[+0] (since those boni are hard-coded for jewelry) */
@@ -2287,7 +2272,7 @@ artifact_type *randart_make(object_type *o_ptr)
 			remove_contradictory(a_ptr, aggravate_me);
 			remove_redundant_esp(a_ptr);
 			/* Moved limit-fixing here experimentally! */
-			artifact_fix_limits_inbetween(a_ptr, k_ptr, o_ptr);
+			artifact_fix_limits_inbetween(a_ptr, k_ptr);
 
 			ap = artifact_power(a_ptr);
 
@@ -2315,12 +2300,12 @@ artifact_type *randart_make(object_type *o_ptr)
 			a_ptr->flags3 |= TR3_AGGRAVATE;
 	                a_ptr->flags1 &= ~(TR1_STEALTH);
 	                a_ptr->flags5 &= ~(TR5_INVIS);
-			ap = artifact_power (a_ptr); /* recalculate, to calculate proper price and level below.. */
+			ap = artifact_power(a_ptr); /* recalculate, to calculate proper price and level below.. */
 		}
 	}
 
 	/* Fixing final limits */
-	artifact_fix_limits_afterwards(a_ptr, k_ptr, o_ptr);
+	artifact_fix_limits_afterwards(a_ptr, k_ptr);
 
 #if 0
 	a_ptr->cost = (ap + 10 - RANDART_QUALITY) * (s32b)1500;
@@ -2679,11 +2664,15 @@ try_an_other_ego:
 		a_ptr->pval = 3;
 	}
 
-	/* Limit +LIFE on 1-hand weapons and shields to +2 (balances both, dual-wiel and 2-handed weapons) */
+	/* Limit +LIFE on 1-hand weapons +2 (balances both, dual-wiel and 2-handed weapons) */
 	if (o_ptr->tval == TV_SHIELD ||
 	    (is_weapon(o_ptr->tval) &&
-	    (!(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H))) ) {
+	    !(k_ptr->flags4 & TR4_SHOULD2H) && !(k_ptr->flags4 & TR4_MUST2H)) ) {
 		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 2)) a_ptr->pval = 2;
+	}
+	/* Limit +LIFE on armour (including shields) to +1 (in case of shields balancing dual/2h wield) */
+	if (is_armour(o_ptr->tval)) {
+		if ((a_ptr->flags1 & TR1_LIFE) && (a_ptr->pval > 1)) a_ptr->pval = 1;
 	}
 
 	/* Restore RNG */

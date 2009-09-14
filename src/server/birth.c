@@ -351,7 +351,7 @@ static int adjust_stat(int Ind, int value, s16b amount, int auto_roll)
 /*
  * Roll for a characters stats
  *
- * For efficiency, we include a chunk of "calc_bonuses()".
+ * For efficiency, we include a chunk of "calc_boni()".
  */
 static bool get_stats(int Ind, int stat_order[6])
 {
@@ -1069,21 +1069,26 @@ static byte player_init[MAX_CLASS][5][3] =
 	},
 	{
 		/* Runemaster */
+#ifndef ENABLE_RCRAFT
 		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ TV_SWORD, SV_DAGGER, 0 },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
+#else
+		{ TV_SWORD, SV_DAGGER, 0 },
+		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER, 0 },
+		{TV_RUNE2, SV_RUNE2_WIND, 0 },
 		{ 255, 255, 0 },
 		{ 255, 255, 0 },
+#endif
 	},
 	{
 		/* Mindcrafter */
 //		{ TV_BOOK, 50, 0 },
-#ifdef ENABLE_DIVINE
-		{ TV_BOOK, SV_SPELLBOOK, 111 },/* MSCARE */
-#else
 		{ TV_BOOK, SV_SPELLBOOK, 103 },/* MSCARE */
-#endif
-		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+//		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+		{ TV_SWORD, SV_SABRE, 0 },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
@@ -1434,9 +1439,11 @@ static void player_outfit(int Ind)
 				o_ptr->pval = pv;
 				o_ptr->number = 1;
 
+#if 1 /* use check in do_cmd_ranged_technique() instead? */
 				/* hack: prevent newbie archers from wasting their
 				   only arrow by a flare missile technique */
 				if (is_ammo(tv)) o_ptr->note = quark_add("!k");
+#endif
 
 				do_player_outfit();
 			}
@@ -1539,12 +1546,11 @@ static void player_setup(int Ind, bool new)
 {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i, d, count = 0;
-	cave_type *c_ptr;
 	dun_level *l_ptr;
 
 	bool unstaticed = FALSE;
 
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
 	/* Catch bad player coordinates,
@@ -1662,6 +1668,7 @@ static void player_setup(int Ind, bool new)
 		p_ptr->town_x=p_ptr->wpos.wx;
 		p_ptr->town_y=p_ptr->wpos.wy;
 	}
+
 	/* Count players on this depth */
 	for (i = 1; i <= NumPlayers; i++)
 	{
@@ -1699,6 +1706,7 @@ static void player_setup(int Ind, bool new)
 		 */
 		unstaticed = 1;
 	}
+
 	/* Rebuild the level if necessary */
 	if(!(zcave=getcave(wpos))){
 		if(p_ptr->wpos.wz){
@@ -1710,11 +1718,15 @@ static void player_setup(int Ind, bool new)
 			if((l_ptr->wid < p_ptr->px) || (l_ptr->hgt < p_ptr->py)){
 				p_ptr->px=l_ptr->wid/2;
 				p_ptr->py=l_ptr->hgt/2;
+				NumPlayers++; // hack for cave_midx_debug - mikaelh
 				teleport_player_force(Ind, 1);
+				NumPlayers--;
 			}
 
 			if(p_ptr->lev<=5){
+				NumPlayers++; // hack for cave_midx_debug - mikaelh
 				teleport_player_force(Ind, 5);
+				NumPlayers--;
 			}
 		}
 		else{
@@ -1729,31 +1741,43 @@ static void player_setup(int Ind, bool new)
 		}
 		zcave=getcave(wpos);
 	}
-			
-	/* Memorize town */
-	if (istown(wpos))
-	{
-		/* Memorize the town if it's daytime */
+
+#if 0 //done by world_surface_.. eventually
+	/* Memorize interesting features, if we're in town */
+	if (istown(wpos)) {
+//	if (istown(wpos) ||
+//	    (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2)) {
 		for (y = 0; y < MAX_HGT; y++)
-		{
-			for (x = 0; x < MAX_WID; x++)
-			{
-				byte *w_ptr = &p_ptr->cave_flag[y][x];
-
-				/* Acquire pointer */
-				c_ptr = &zcave[y][x];
-
-				/* If day or interesting, memorize */
-//				if (IS_DAY || c_ptr->feat > FEAT_INVIS || c_ptr->info & CAVE_ROOM)
-				if (IS_DAY || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
-					*w_ptr |= CAVE_MARK;
-			}
+		for (x = 0; x < MAX_WID; x++) {
+			byte *w_ptr = &p_ptr->cave_flag[y][x];
+			c_ptr = &zcave[y][x];
+			/* If interesting, memorize */
+//			if (IS_DAY || !cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
+			if (!cave_plain_floor_grid(c_ptr) || c_ptr->info & CAVE_ROOM)
+				*w_ptr |= CAVE_MARK;
 		}
 	}
-	
+#endif
+
 	/* hack -- update night/day in wilderness levels */
-	if ((!wpos->wz) && (IS_DAY)) wild_apply_day(wpos); 
-	if ((!wpos->wz) && (IS_NIGHT)) wild_apply_night(wpos);
+	if (!wpos->wz) {
+		/* hack: temporarily allow the player to be called in wild
+		   view update routines (player_day/player_night) */
+//		NumPlayers++;
+
+		/* hack #2: assume his (so far not loaded!) options are
+		   set the way that he remembers all town features */
+		i = p_ptr->view_perma_grids;
+		p_ptr->view_perma_grids = TRUE;
+
+//		if (IS_DAY) world_surface_day(wpos); 
+//		else world_surface_night(wpos);
+		if (IS_DAY) player_day(Ind); 
+		else player_night(Ind);
+
+		p_ptr->view_perma_grids = i;
+//		NumPlayers--;
+	}
 
 	if (new) {
 #if 0
@@ -1778,7 +1802,7 @@ static void player_setup(int Ind, bool new)
 	y = p_ptr->py;
 
 	/* Don't stack with another player */
-	if (zcave[y][x].m_idx)
+	if (zcave[y][x].m_idx && zcave[y][x].m_idx != 0 - Ind)
 	{
 		for (i = 0; i < 3000; i++)
 		{
@@ -2127,7 +2151,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		return FALSE;
 	}
 
-	p_ptr->turn=turn;	/* Birth time (for info) */
+	p_ptr->turn = turn; /* Birth time (for info) */
 
 	/* Reprocess his name */
 	if (!process_player_name(Ind, TRUE)) return FALSE;
@@ -2135,7 +2159,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	confirm_admin(Ind);
 
 	/* player is not in a game */
-	p_ptr->team=0;
+	p_ptr->team = 0;
 
 	/* paranoia? */
 	p_ptr->skill_points = 0;
@@ -2256,7 +2280,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
 		p_ptr->au = 50000000;
-		p_ptr->lev = 100;
+		p_ptr->lev = 99;
 		p_ptr->exp = 999999999;
 		p_ptr->skill_points = 9999;
 //		p_ptr->noscore = 1;
@@ -2320,12 +2344,20 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->cst = 10;
 	p_ptr->mst = 10;
 
+	/* start with dual-wield mode 'dual-handed' */
+	p_ptr->dual_mode = TRUE;
+
+	/* hack: allow to get extra level feeling immediately */
+	p_ptr->turns_on_floor = cfg.fps * 999;
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Can be used for different purpose, usually in conjuction with custom.lua) */
 	/* An artifact reset can be done by changing just custom.lua. */
 	/* Set updated_savegame_birth via lua (server_startup()). */
 	p_ptr->updated_savegame = updated_savegame_birth;
+
+	/* for automatic artifact reset */
+	p_ptr->artifact_reset = artifact_reset;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

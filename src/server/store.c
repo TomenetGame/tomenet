@@ -296,8 +296,10 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 		/* Adjust for greed */
 		adjust = 100 + (300 - (greed + factor));//greed+factor: 150..250 (flip=TRUE)
 
+#if 0 /* disabled for now to make things look more consistent (eg law dsm of def selling for less than law dsm) */
 		/* Hack -- Shopkeepers hate higher level-requirement */
 		adjust += (20 - o_ptr->level) / 2 ;
+#endif
 
 		/* Never get "silly" */
 		if (adjust > 100 - STORE_BENEFIT) adjust = 100 - STORE_BENEFIT;
@@ -314,7 +316,7 @@ static s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip)
 
 		/* To prevent cheezing */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)){
-			if(o_ptr->pval==0)
+			if(o_ptr->pval == 0)
 			{
 //				o_ptr->level = 1; //= 0
 				price = 1000; //= 100
@@ -1379,17 +1381,12 @@ static void store_create(store_type *st_ptr)
 			/* Does it pass the rarity check ? */
 #if 0
 			/* Balancing check for other items!!! */
-			if (!magik(chance) || magik(60)) i=0;
+			if (!magik(chance) || magik(60)) i = 0;
 #else
-			if (!magik(chance)) i=0;
+			if (!magik(chance)) i = 0;
 #endif
-			else {
-				/* Hack -- mass-produce for black-market promised items */
-				if (black_market)
-				{
-					force_num = rand_range(2, 5);//was 3,9
-				}
-			}
+			/* Hack -- mass-produce for black-market promised items */
+			else if (black_market) force_num = rand_range(2, 5);//was 3,9
 
 			/* Hack -- fake level for apply_magic() */
 			level = return_level(st_ptr); /* note: it's margin is random! */
@@ -1679,7 +1676,8 @@ static void store_create(store_type *st_ptr)
 					allowing any kind of top armour, while in most cases tries hard to
 					_additionally_ generate the RARE stuff that we expect/want from it.
 					note that these 'normal bm' fits still profit from all other shop flags,
-					that normal bms don't have, so cheap/low items won't appear. :D */
+					that normal bms don't have, so cheap/low items won't appear. :D
+			   (note: it should (for mages) probably be kept ensured that soft leather boots can appear in boot store too.) */
 			if (magik(95)) {
         			if ((k_ptr->chance[0] && k_ptr->chance[0] < 3) ||
 				    (k_ptr->chance[1] && k_ptr->chance[1] < 3) ||
@@ -1711,7 +1709,9 @@ static void store_create(store_type *st_ptr)
 						continue;
 					/* reduced frequency of art scrolls. (Base is ~ 1/30min max-scum, 1/90min min-scum) */
 					} else if (k_ptr->tval == TV_SCROLL && k_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
-					    && magik(50)) {
+//					    && magik(50) <- was pretty annoying due to shopkeeper racial hate!
+//					    && magik(33) <- still annoying
+					    ) {
 						continue;
 					}
 				}
@@ -1765,6 +1765,10 @@ static void store_create(store_type *st_ptr)
 				force_num = 1;
 				break;
 			}
+			
+			/* make mummy wrappings appear rare */
+			if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_WRAPPING)
+				force_num = 1;
 
 			/* Only single items of very expensive stuff */
 			if (object_value(0, o_ptr) >= 200000) {
@@ -1787,11 +1791,6 @@ static void store_create(store_type *st_ptr)
 			case SV_LITE_FEANORIAN: o_ptr->level += 20; break;
 			default: if (o_ptr->name2) o_ptr->level += 10;
 			}
-#endif
-
-#ifdef TEST_SERVER
-		/* custom tomes require xtra1, don't mess it up here */
-		if (o_ptr->tval != TV_BOOK) o_ptr->xtra1 = 222; /* hack: 'mark' this item (for store_debug_stock) */
 #endif
 
 		/* Attempt to carry the (known) item */
@@ -2278,18 +2277,23 @@ void store_stole(int Ind, int item)
 	/* I'm not saying this is the way to go, but they
 	   can cheeze by attempting repeatedly */
 	if(p_ptr->tim_blacklist || p_ptr->tim_watchlist || st_ptr->tim_watch){
-		msg_print(Ind, "Bastard Thief! Get out of my shop!!!");
+		msg_print(Ind, "\"Bastard Thief! Get out of my shop!!!\"");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the shop!", p_ptr->name);
+#if 0
+		/* increase/set player's blacklist timer */
 		if(p_ptr->tim_blacklist < 10000000)	/* 10 million turns is LONG ENOUGH */
 			p_ptr->tim_blacklist += 1000;	/* add a little */
 //			p_ptr->tim_watchlist += 1;	/* add a little (a day/night period) */
 			p_ptr->tim_watchlist += 1000;
 
-#if 0
+ #if 0
+			/* increase owner's extra attentiveness timer */
 			st_ptr->tim_watch += 100;
 			if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
+ #endif
 #endif
+		/* player gets kicked out */
 		store_kick(Ind, FALSE);
 		return;
 	}
@@ -2517,8 +2521,8 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
 		// say_comment_4();
-		msg_print(Ind, "\377y'Bastard\377L!!!'\377w - The angry shopkeeper throws you out!");
-		msg_print(Ind, "\377rNow you're on the black list of merchants..");
+		msg_print(Ind, "\"\377yBastard\377L!!!'\377w\" - The angry shopkeeper throws you out!");
+		msg_print(Ind, "\377rNow you'll be on the black list of merchants for a while..");
 		msg_print_near(Ind, "You hear loud shouting..");
 		msg_format_near(Ind, "an angry shopkeeper kicks %s out of the store!", p_ptr->name);
 
@@ -2542,6 +2546,7 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 		/* Paranoia, currently not needed */
 		if (i < 100) i = 100;
 
+		/* Put him on the blacklist or increase it if already on */
 		p_ptr->tim_blacklist += i;
 
 		/* watchlist - the more known a character is, the longer he remains on it */
@@ -2573,10 +2578,12 @@ s_printf("Stealing: %s (%d) fail. %s (chance %d%%0 (%d) %d,%d,%d).\n", p_ptr->na
 #endif
 
 		/* store owner is more careful from now on, for a while */
+#if 0 /* not that urgent anymore after Minas' XBM was set to NO_STEAL */
 		i = tcadd * 8 + 1000;
 		st_ptr->tim_watch += i / 20;
 		if (st_ptr->tim_watch > 300) st_ptr->tim_watch = 300;
 		st_ptr->last_theft = turn;
+#endif
 
 		/* Of course :) */
 		store_kick(Ind, FALSE);
@@ -3430,9 +3437,31 @@ void store_examine(int Ind, int item)
  		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
+#if 0
 			int blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
+#else
+			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
+			long tim_wraith = p_ptr->tim_wraith;
+			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
+			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
+			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			suppress_message = TRUE;
+			calc_boni(Ind);
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
+			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
+			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+			calc_boni(Ind);
+			suppress_message = FALSE;
+			p_ptr->tim_wraith = tim_wraith;
+#endif
 		}
 		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 		return;
@@ -4514,6 +4543,7 @@ void home_purchase(int Ind, int item, int amt)
 			object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
 			/* If level diff. is too large, target player is too low,
 			   and items aren't loot of a dead player, this might be cheeze! */
+ #if 0
 			if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
 			s_printf("%s -CHEEZY- Item transaction from %s(%d) to %s(%d) at (%d,%d,%d):\n  %s\n",
 					showtime(), name ? name : "(Dead player)", lev,
@@ -4533,6 +4563,18 @@ void home_purchase(int Ind, int item, int amt)
 					p_ptr->name, p_ptr->lev, p_ptr->accountname,
 					object_value_real(0, o_ptr), o_ptr->discount, o_name);
 			}
+ #else
+			s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
+					showtime(), name ? name : "(Dead player)", lev,
+					p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+					o_name);
+			c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
+					showtime(), name ? name : "(---)", lev, acc_name,
+					p_ptr->name, p_ptr->lev, p_ptr->accountname,
+					p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+					object_value_real(0, o_ptr), o_ptr->discount, o_name);
+ #endif
 		}
 #endif  // CHEEZELOG_LEVEL
 
@@ -4653,9 +4695,32 @@ void home_examine(int Ind, int item)
 		/* This can only happen in the home */
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
+#if 0
 			int blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
 					blows, blows > 1 ? "s" : "");
+#else
+/* copied from object1.c.. */
+			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
+			long tim_wraith = p_ptr->tim_wraith;
+			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
+			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
+			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			suppress_message = TRUE;
+			calc_boni(Ind);
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
+			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
+			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+			calc_boni(Ind);
+			suppress_message = FALSE;
+			p_ptr->tim_wraith = tim_wraith;
+#endif
 		}
 		else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 		return;

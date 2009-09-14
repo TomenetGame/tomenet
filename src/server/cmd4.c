@@ -50,6 +50,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 	bool admin = is_admin(q_ptr);
 	bool shown = FALSE;
 
+	object_type forge, *o_ptr;
+	player_type *p_ptr;
+	artifact_type *a_ptr;
+
+
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 
@@ -59,7 +64,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
 	{
-		artifact_type *a_ptr = &a_info[k];
+		a_ptr = &a_info[k];
 
 		/* Default */
 		okay[k] = FALSE;
@@ -73,6 +78,9 @@ void do_cmd_check_artifacts(int Ind, int line)
 		/* Skip "unknown" artifacts */
 		if (!a_ptr->known && !admin) continue;
 
+		/* Skip "hidden" artifacts */
+		if (admin_artifact_p(k) && !admin) continue;
+
 		/* Assume okay */
 		okay[k] = TRUE;
 	}
@@ -80,12 +88,12 @@ void do_cmd_check_artifacts(int Ind, int line)
 	/* Check the inventories */
 	for (i = 1; i <= NumPlayers; i++)
 	{
-		player_type *p_ptr = Players[i];
+		p_ptr = Players[i];
 		
 		/* Check this guy's */
 		for (j = 0; j < INVEN_PACK; j++)
 		{
-			object_type *o_ptr = &p_ptr->inventory[j];
+			o_ptr = &p_ptr->inventory[j];
 
 			/* Ignore non-objects */
 			if (!o_ptr->k_idx) continue;
@@ -105,7 +113,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 	/* Scan the artifacts */
 	for (k = 0; k < MAX_A_IDX; k++)
 	{
-		artifact_type *a_ptr = &a_info[k];
+		a_ptr = &a_info[k];
 
 		/* List "dead" ones */
 		if (!okay[k]) continue;
@@ -119,8 +127,6 @@ void do_cmd_check_artifacts(int Ind, int line)
 		/* Real object */
 		if (z)
 		{
-			object_type forge;
-
 			/* Create the object */
 			invcopy(&forge, z);
 
@@ -133,19 +139,25 @@ void do_cmd_check_artifacts(int Ind, int line)
 			/* Hack -- remove {0} */
 			j = strlen(base_name);
 			base_name[j-4] = '\0';
-		}
 
-		/* Hack -- Build the artifact name */
-		if (admin) fprintf(fff, "(%3d) (%3d)", k, a_ptr->cur_num);
-		fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ?
-				" (unknown)" : "");
+			/* Hack -- Build the artifact name */
+			if (admin) {
+				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) fprintf(fff, "\377r");
+				else if (admin_artifact_p(k)) fprintf(fff, "\377y");
+				else if (winner_artifact_p(&forge)) fprintf(fff, "\377v");
+				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) fprintf(fff, "\377B");
+				else if (a_ptr->cur_num != 1) fprintf(fff, "\377o");
+				fprintf(fff, "(%3d) (%3d)", k, a_ptr->cur_num);
+			}
+			fprintf(fff, "     The %s%s\n", base_name, admin && !a_ptr->known ? " (unknown)" : "");
+		}
 
 		shown = TRUE;
 	}
 
 	if (!shown)
 	{
-		fprintf(fff, "No artifacts are witnessed so far.\n");
+		fprintf(fff, "\377sNo artifacts are witnessed so far.\n");
 	}
 
 	/* Close the file */
@@ -216,7 +228,7 @@ void do_cmd_check_uniques(int Ind, int line)
 			}
 
 			/* remember highest unique the viewing player actually killed */
-			if ((q_ptr->r_killed[k] == 1) && (own_highest_level < r_ptr->level)) {
+			if ((q_ptr->r_killed[k] == 1) && (own_highest_level <= r_ptr->level)) {
 				own_highest = k;
 				own_highest_level = r_ptr->level;
 			}
@@ -248,10 +260,10 @@ void do_cmd_check_uniques(int Ind, int line)
 
 			/* Output color byte */
 			fprintf(fff, "\377w");
-#ifndef TEST_SERVER
+
 			/* Hack -- Show the ID for admin */
 			if (admin) fprintf(fff, "(%4d) ", k);
-#endif
+
 			/* Format message */
 //			fprintf(fff, "%s has been killed by:\n", r_name + r_ptr->name);
 			/* different colour for uniques higher than Morgoth (the 'boss') */
@@ -372,7 +384,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
         if (q_ptr->lev < 60)
                 p = player_title[q_ptr->pclass][((q_ptr->lev/5) < 10)? (q_ptr->lev/5) : 10][1 - q_ptr->male];
         else
-                p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
+                p = player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male];
 
 	/* Check for special character */
 	if(modify){
@@ -705,7 +717,7 @@ void do_cmd_check_players(int Ind, int line)
 		if((p_ptr->guild == q_ptr->guild && q_ptr->guild) || Ind == k || admin){
 			if(q_ptr->guild)
 				fprintf(fff, " [%s]", guilds[q_ptr->guild].name);
-			fprintf(fff, " \377%c", (q_ptr->quest_id?'Q':' '));
+			fprintf(fff, " \377%c", (q_ptr->quest_id ? 'Q' : ' '));
 		}
 		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg))
 			fprintf(fff, "\n\n");
@@ -910,14 +922,14 @@ void do_cmd_knowledge_dungeons(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	fprintf(fff, "======== Dungeon(s) ========\n\n");
+	fprintf(fff, "\377r======== Dungeon(s) ========\n\n");
 
 #if 0
 	if (p_ptr->depth_in_feet) fprintf(fff, "The deepest point you've reached: -%d ft\n", p_ptr->max_dlv * 50);
 	else fprintf(fff, "The deepest point you've reached: Lev -%d\n", p_ptr->max_dlv);
-#else	// 0
-	fprintf(fff, "The deepest/highest point you've ever reached: %d ft (Lv %d)\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
-#endif	// 0
+#else
+	fprintf(fff, "\377DThe deepest/highest point you've ever reached: \377s%d \377Dft (Lv \377s%d\377D)\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
+#endif
 
 #if 0
 	/* Scan all dungeons */
@@ -986,7 +998,7 @@ void do_cmd_knowledge_dungeons(int Ind)
 
 
 
-	fprintf(fff, "\n\n======== Town(s) ========\n\n");
+	fprintf(fff, "\n\n\377B======== Town(s) ========\n\n");
 
 	/* Scan all towns */
 	for (i = 0; i < numtowns; i++)
@@ -1163,7 +1175,7 @@ void do_cmd_check_server_settings(int Ind)
 	if (cfg.surface_item_removal)
 		fprintf(fff, "Items on the world surface will be removed after %d minutes.\n", cfg.surface_item_removal);
 	if (cfg.dungeon_item_removal)
-		fprintf(fff, "Items on a dungeon/tower floor will be removed after %d minutes.\n", cfg.surface_item_removal);
+		fprintf(fff, "Items on a dungeon/tower floor will be removed after %d minutes.\n", cfg.dungeon_item_removal);
 
 	fprintf(fff,"\n");
 
@@ -1317,7 +1329,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 	bool	shown = FALSE, all = FALSE;
 	byte	mimic = (get_skill_scale(p_ptr, SKILL_MIMIC, 100));
 //	bool	admin = is_admin(p_ptr);
-	bool	druid_form, vampire_form;
+	bool	druid_form, vampire_form, uniq;
 
 	FILE *fff;
 
@@ -1335,7 +1347,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 
 
 	/* Output color byte */
-	fprintf(fff, "\377G");
+	fprintf(fff, "\377D");
 
 	if (letter && *letter) fprintf(fff, "======== Killed List for Monster Group '%c' ========\n", *letter);
 	else
@@ -1369,11 +1381,22 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 		if (!r_ptr->name) continue;
 
 		/* Let's not show uniques here */
-		if (r_ptr->flags1 & RF1_UNIQUE) continue;
+		uniq = FALSE;
+		if (r_ptr->flags1 & RF1_UNIQUE)
+#if 0 /* don't show uniques */
+			continue;
+#else /* show uniques */
+			uniq = TRUE;
+#endif
 
-		/*if (admin)*/ fprintf(fff, "(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */
 
-		if (((mimic && (mimic >= r_ptr->level)) || druid_form) &&
+		if (!uniq) fprintf(fff, "\377s(%4d) ", i); /* mimics need that number for Polymorph Self Into.. */
+		else fprintf(fff, "       ");
+
+		if (uniq) {
+			fprintf(fff, "\377U%-30s\n", r_name + r_ptr->name);
+		}
+		else if (((mimic && (mimic >= r_ptr->level)) || druid_form) &&
 		    !((p_ptr->pclass == CLASS_DRUID) && !mimic_druid(i, p_ptr->lev)) &&
 		    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(i, p_ptr->lev)) &&
 		    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
@@ -1381,20 +1404,20 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter)
 			j = r_ptr->level - num;
 
 			if ((j > 0) && !druid_form && !vampire_form)
-				fprintf(fff, "%-30s : %d (%d more to go)\n",
+				fprintf(fff, "\377w%-30s : %d (%d more to go)\n",
 						r_name + r_ptr->name, num, j);
 			else
 			{
 				if (p_ptr->body_monster == i)
-					fprintf(fff, "\377G%-30s : %d  ** Your current form **\n",
+					fprintf(fff, "\377B%-30s : %d  ** Your current form **\n",
 							r_name + r_ptr->name, num);
-				else fprintf(fff, "\377U%-30s : %d (learnt)\n",
+				else fprintf(fff, "\377G%-30s : %d (learnt)\n",
 						r_name + r_ptr->name, num);
 			}
 		}
 		else
 		{
-			fprintf(fff, "%-30s : %d\n", r_name + r_ptr->name, num);
+			fprintf(fff, "\377w%-30s : %d\n", r_name + r_ptr->name, num);
 		}
 		total += num;
 		shown = TRUE;
@@ -1455,6 +1478,9 @@ void do_cmd_show_houses(int Ind)
 
 		shown = TRUE;
 		total++;
+
+		/* use door colour for the list entry too */
+		fprintf(fff, "\377%c", color_attr_to_char((char)access_door_colour(Ind, h_ptr->dna)));
 
 		fprintf(fff, "%3d)   [%d,%d] in %s", total,
 				h_ptr->dy * 5 / MAX_HGT, h_ptr->dx * 5 / MAX_WID,
@@ -1592,11 +1618,11 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 	/* Output color byte */
 //	fprintf(fff, "%c", 'G');
 
-	if (letter && *letter) fprintf(fff, "======== Objects known (%c) ========\n", *letter);
+	if (letter && *letter) fprintf(fff, "\377y======== Objects known (%c) ========\n", *letter);
 	else
 	{
 		all = TRUE;
-		fprintf(fff, "======== Objects known ========\n");
+		fprintf(fff, "\377y======== Objects known ========\n");
 	}
 
 #if 0
@@ -1621,7 +1647,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		j = strlen(o_name);
 		o_name[j-4] = '\0';
 
-		if (admin) fprintf(fff, "%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+		if (admin) fprintf(fff, "%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
 		fprintf(fff, "%s\n", o_name);
 
@@ -1651,7 +1677,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 		j = strlen(o_name);
 		o_name[j-4] = '\0';
 
-		if (admin) fprintf(fff, "%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+		if (admin) fprintf(fff, "%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
 		fprintf(fff, "%s\n", o_name);
 
@@ -1698,7 +1724,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 			j = strlen(o_name);
 			o_name[j-4] = '\0';
 
-			if (admin) fprintf(fff, "(%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+			if (admin) fprintf(fff, "\377s(%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
 			fprintf(fff, "%s\n", o_name);
 		}
@@ -1710,8 +1736,8 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 
 	fprintf(fff, "\n");
 
-	if (!all) fprintf(fff, "======== Objects tried (%c) ========\n", *letter);
-	else fprintf(fff, "======== Objects tried ========\n");
+	if (!all) fprintf(fff, "\377o======== Objects tried (%c) ========\n", *letter);
+	else fprintf(fff, "\377o======== Objects tried ========\n");
 
 	total = 0;
 
@@ -1754,7 +1780,7 @@ void do_cmd_show_known_item_letter(int Ind, char *letter)
 			j = strlen(o_name);
 			o_name[j-4] = '\0';
 
-			if (admin) fprintf(fff, "(%3d, %3d) ", k_ptr->tval, k_ptr->sval);
+			if (admin) fprintf(fff, "\377s(%3d, %3d)  \377w", k_ptr->tval, k_ptr->sval);
 
 			fprintf(fff, "%s\n", o_name);
 		}
@@ -1798,7 +1824,7 @@ void do_cmd_knowledge_traps(int Ind)
 	/* Let the player scroll through the info */
 	p_ptr->special_file_type = TRUE;
 
-	fprintf(fff, "======== known traps ========\n");
+	fprintf(fff, "\377s======== known traps ========\n");
 
 	/* Scan the traps */
 	for (k = 0; k < MAX_T_IDX; k++)
@@ -1812,7 +1838,7 @@ void do_cmd_knowledge_traps(int Ind)
 		/* Skip unidentified traps */
 		if(!p_ptr->trap_ident[k]) continue;
 
-		if (admin) fprintf(fff, "%3d)", k);
+		if (admin) fprintf(fff, "(%3d)", k);
 
 		/* Hack -- Build the trap name */
 		fprintf(fff, "     %s\n", t_name + t_ptr->name);
@@ -1867,7 +1893,7 @@ void do_cmd_time(int Ind)
 	strcpy(desc, "It is a strange time.");
 
 	/* Format time of the day */
-	strnfmt(buf2, 20, get_day(bst(YEAR, turn) + START_YEAR));
+	strnfmt(buf2, 20, get_day(bst(YEAR, turn))); /* hack: abuse get_day()'s capabilities */
 
 	/* Display current date in the Elvish calendar */
 	msg_format(Ind, "This is %s of the %s year of the third age.",

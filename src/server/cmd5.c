@@ -596,6 +596,7 @@ static void do_mimic_power(int Ind, int power, int dir)//w0t0w
 //#define RF4_SHRIEK                      0x00000001      /* Shriek for help */ 
     case 0:
       msg_print(Ind, "You emit a high pitched humming noise.");
+      msg_format_near(Ind, "%s emits a high pitched humming noise.", p_ptr->name);
       aggravate_monsters(Ind, 1);
       break;
 //#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
@@ -882,6 +883,10 @@ void do_mimic_power_aux(int Ind, int dir)
 //#define RF4_ARROW_1			0x00000010	/* Fire arrow(s) (light) */
 		/* XXX: ARROW_1 gives extra-shot to the player; we'd better
 		 * remove this 'innate' power? (see calc_body_bonus) */
+    case 3:
+	sprintf(p_ptr->attacker, " fires a rocket for");
+	fire_ball(Ind, GF_ROCKET, dir, ((p_ptr->chp / 2) > 600) ? 600 : (p_ptr->chp / 2), rad, p_ptr->attacker);
+	break;
     case 4:
 	{
 //cool stuff, needs some testing:	int k;
@@ -906,7 +911,7 @@ void do_mimic_power_aux(int Ind, int dir)
 //#define RF4_ARROW_4			0x00000080	/* Fire generic missile (heavy) */
     case 7:
     sprintf(p_ptr->attacker, " fires a missile for");
-      fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
+      fire_bolt(Ind, GF_MISSILE, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
       break;
 //#define RF4_BR_ACID			0x00000100	/* Breathe Acid */
     case 8:
@@ -1332,6 +1337,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 	player_type *p_ptr = Players[Ind];
 	int j, k;
 	bool using_free_mimic = FALSE;
+	bool admin = is_admin(p_ptr);
 
 	/* should it..? */
 //	dun_level		*l_ptr = getfloor(&p_ptr->wpos);
@@ -1469,7 +1475,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 			msg_print(Ind, "That form is unique!");
 			return;
 		}
-		else if (j && p_ptr->r_killed[j] < 1){
+		else if (j && p_ptr->r_killed[j] < 1 && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have no experience with that form at all!");
 				return;
@@ -1478,7 +1484,7 @@ void do_cmd_mimic(int Ind, int spell, int dir)
 				using_free_mimic = TRUE;
 			}
 		}
-		else if (p_ptr->r_killed[j] < r_info[j].level){
+		else if (p_ptr->r_killed[j] < r_info[j].level && !admin) {
 			if (!p_ptr->free_mimic) {
 				msg_print(Ind, "You have not yet learned that form!");
 				return;
@@ -1582,6 +1588,11 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	/* (S)he is no longer afk */
 	un_afk_idle(Ind);
+
+#if 0 /* client-side, lacks Ind to set 'player' */
+	/* Sanity check for direction */
+	if (exec_lua(0, format("return pre_exec_spell_dir(%d)", spell)) && (dir == -1)) return;
+#endif
 
 	/* Actualy cast the choice */
 	if (spell != -1)

@@ -200,7 +200,7 @@
 #define PKT_EXTRA_STATUS	174	/* combat stance, fire mode, etc */
 #define PKT_INVEN_WIDE		175	/* similar to PKT_INVEN, but with additional info */
 #define PKT_UNIQUE_MONSTER	176	/* for client-side unique kills tracking */
-#define PKT_WEATHER		177	/* client-side weather (4.4.2a) */
+#define PKT_WEATHER		177	/* client-side weather (4.4.2.1) */
 #define PKT_INVENTORY_REV	178	/* inventory revision notification (4.4.2.2) */
 #define PKT_ACCOUNT_INFO	179	/* account information (4.4.2.3) */
 #define PKT_CHANGE_PASSWORD	180	/* password change request (4.4.2.3) */

@@ -24,6 +24,8 @@ int  tolua_util_open (lua_State *L);
 int  tolua_player_open (lua_State *L);
 int  tolua_spells_open (lua_State *L);
 
+void set_server_features();
+
 /*
  * Lua state
  */
@@ -205,6 +207,48 @@ static const struct luaL_reg bitlib[] =
 };
 
 
+/* Set global lua variables that define the server type */
+void set_server_features()
+{
+        int oldtop = lua_gettop(L);
+
+#ifdef RPG_SERVER
+	lua_dostring(L, "RPG_SERVER = 1");
+#else
+	lua_dostring(L, "RPG_SERVER = 0");
+#endif
+	lua_settop(L, oldtop);
+
+#ifdef ARCADE_SERVER
+	lua_dostring(L, "ARCADE_SERVER = 1");
+#else
+	lua_dostring(L, "ARCADE_SERVER = 0");
+#endif
+	lua_settop(L, oldtop);
+
+#ifdef FUN_SERVER
+	lua_dostring(L, "FUN_SERVER = 1");
+#else
+	lua_dostring(L, "FUN_SERVER = 0");
+#endif
+	lua_settop(L, oldtop);
+
+#ifdef PARTY_SERVER
+	lua_dostring(L, "PARTY_SERVER = 1");
+#else
+	lua_dostring(L, "PARTY_SERVER = 0");
+#endif
+	lua_settop(L, oldtop);
+
+#ifdef TEST_SERVER
+	lua_dostring(L, "TEST_SERVER = 1");
+#else
+	lua_dostring(L, "TEST_SERVER = 0");
+#endif
+	lua_settop(L, oldtop);
+}
+
+
 /* Initialize lua scripting */
 void init_lua()
 {
@@ -232,6 +276,9 @@ void init_lua()
 	tolua_spells_open(L);
 	tolua_z_pack_open(L);
 
+	/* Set server features before loading any lua files */
+	set_server_features();
+
 	/* Load the first lua file */
 	pern_dofile(0, "init.lua");
 
@@ -250,6 +297,18 @@ void init_lua()
 	{
 		exec_lua(0, format("finish_spell(%d)", i));
 	}
+}
+
+void reinit_lua()
+{
+	/* Close the old Lua state */
+	lua_close(L);
+
+	/* Free up schools and spells */
+	C_KILL(schools, max_schools, school_type);
+	C_KILL(school_spells, max_spells, spell_type);
+
+	init_lua();
 }
 
 bool pern_dofile(int Ind, char *file)

@@ -595,7 +595,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		if (true_artifact_p(o_ptr) &&
-		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+		    !multiple_artifact_p(o_ptr))
 			total_number++;
 	}
 
@@ -607,7 +607,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		if (true_artifact_p(o_ptr) &&
-		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+		    !multiple_artifact_p(o_ptr))
 	        {
 	                //char  o_name[160];
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
@@ -620,6 +620,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 		        inven_item_increase(Ind, i, -o_ptr->number);
 		        inven_item_describe(Ind, i);
 		        inven_item_optimize(Ind, i);
+		        i--;
 		}
 	}
 	if (total_number) s_printf("True-art strip: %s loses %d artifact(s).\n", p_ptr->name, total_number);
@@ -652,13 +653,13 @@ void lua_strip_true_arts_from_floors(void) {
 	cave_type **zcave;
 #endif
 
-	for(i=0; i<o_max; i++){
-		o_ptr=&o_list[i];
+	for(i = 0; i < o_max; i++){
+		o_ptr = &o_list[i];
 		if(o_ptr->k_idx){
 			cnt++;
 			/* check items on the world's floors */
 #if 0
-			if((zcave=getcave(&o_ptr->wpos)) &&
+			if((zcave = getcave(&o_ptr->wpos)) &&
 			    true_artifact_p(o_ptr) &&
 			    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
 			{

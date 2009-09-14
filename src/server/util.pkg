@@ -306,12 +306,52 @@ extern int updated_savegame_birth;
    usually modified by lua (server_startup()) instead of here. */
 extern int updated_server;
 
+/* for lua-controlled/automatically scheduled artifact resets */
+extern int artifact_reset;
+struct artifact_type
+{
+        u16b name;                /* Name (offset) */
+        u16b text;                /* Text (offset) */
+        byte tval;                /* Artifact type */
+        byte sval;                /* Artifact sub type */
+        s16b pval;                /* Artifact extra info */
+        s16b to_h;                /* Bonus to hit */
+        s16b to_d;                /* Bonus to damage */
+        s16b to_a;                /* Bonus to armor */
+        s16b ac;                        /* Base armor */
+        byte dd;
+        byte ds;        /* Damage when hits */
+        s16b weight;        /* Weight */
+        s32b cost;                /* Artifact "cost" */
+        u32b flags1;        /* Artifact Flags, set 1 */
+        u32b flags2;        /* Artifact Flags, set 2 */
+        u32b flags3;        /* Artifact Flags, set 3 */
+	u32b flags4;            /* Artifact Flags, set 4 */
+	u32b flags5;            /* Artifact Flags, set 5 */
+        byte level;                /* Artifact level */
+        byte rarity;        /* Artifact rarity */
+        byte cur_num;        /* Number created (0 or 1) */
+        byte max_num;        /* Unused (should be "1") */
+	u32b esp;                       /* ESP flags */
+        bool known;                /* Is this artifact already IDed? */
+};
+artifact_type a_info[MAX_A_IDX];
+
 /* Stuff for global events */
 /* extern global_event_type global_event[MAX_GLOBAL_EVENTS];   see types.h - C. Blue */
 extern int sector00separation;
 extern int ge_special_sector;
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
+
+struct party_type
+{
+	char name[80];		/* Name of the party */
+	char owner[20];		/* Owner's name */
+	s32b members;		/* Number of people in the party */
+	s32b created;		/* Creation (or disband-tion) time */
+	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
+};
 
 /* The party information */
 party_type parties[MAX_PARTIES];
@@ -327,6 +367,8 @@ extern int weather_duration;
 extern byte weather_frequency;
 extern int wind_gust;
 extern int wind_gust_delay;
+/* for CLIENT_SIDE_WEATHER debugging */
+extern int clouds;
 
 /* special seasons */
 extern int season_halloween;

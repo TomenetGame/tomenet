@@ -228,8 +228,8 @@ void sc_wish(int Ind, void *argp){
 	}
 	object_known(o_ptr);
 	o_ptr->owner = 0;
-	if(tk>2)
-		o_ptr->pval=atoi(token[3]);
+	if(tk > 2)
+		o_ptr->pval = atoi(token[3]);
 	//o_ptr->owner = p_ptr->id;
 	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
@@ -370,6 +370,15 @@ void do_slash_cmd(int Ind, char *message)
 		return;
 	}
 	/* Oops conflict; took 'never duplicate' principal */
+	else if (prefix(message, "/cough") ||
+			prefix(message, "/cou"))
+	{
+		break_cloaking(Ind, 4);
+		msg_format_near(Ind, "\377B%^s coughs noisily.", p_ptr->name);
+		msg_format(Ind, "\377BYou cough noisily..");
+		wakeup_monsters_somewhat(Ind, 1);
+		return;
+	}
 	else if (prefix(message, "/shout") ||
 			prefix(message, "/sho"))
 	{
@@ -416,6 +425,19 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			msg_format_near(Ind, "\377B%s clears %s throat.", p_ptr->name, p_ptr->male ? "his" : "her");
 			msg_print(Ind, "\377BYou clear your throat.");
+		}
+		return;
+// :)		break_cloaking(Ind, 3);
+	}
+	else if (prefix(message, "/whisper"))
+	{
+		if (colon)
+		{
+			msg_format_verynear(Ind, "\377B%^s whispers:%s", p_ptr->name, colon);
+			msg_format(Ind, "\377BYou whisper:%s", colon);
+		}
+		else {
+			msg_print(Ind, "What do you want to whisper?");
 		}
 		return;
 // :)		break_cloaking(Ind, 3);
@@ -540,6 +562,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* skip inscribed items */
 				/* skip non-matching tags */
+#if 0 /* check for: tag equals pseudo id tag */
 				if (o_ptr->note && 
 				    strcmp(quark_str(o_ptr->note), "terrible") &&
 				    strcmp(quark_str(o_ptr->note), "cursed") &&
@@ -550,10 +573,25 @@ void do_slash_cmd(int Ind, char *message)
 //				    strcmp(quark_str(o_ptr->note), "excellent"))
 				    strcmp(quark_str(o_ptr->note), "worthless"))
 					continue;
+#else /* check for: tag contains pseudo id tag */
+				if (o_ptr->note && 
+				    !strstr(quark_str(o_ptr->note), "terrible") &&
+				    !strstr(quark_str(o_ptr->note), "cursed") &&
+				    !strstr(quark_str(o_ptr->note), "uncursed") &&
+				    !strstr(quark_str(o_ptr->note), "broken") &&
+				    !strstr(quark_str(o_ptr->note), "average") &&
+				    !strstr(quark_str(o_ptr->note), "good") &&
+//				    !strstr(quark_str(o_ptr->note), "excellent"))
+				    !strstr(quark_str(o_ptr->note), "worthless"))
+					continue;
+				if (check_guard_inscription(o_ptr->note, 'k'))
+					continue;
+#endif
 
 				/* destroy non-inscribed items too? */
 				if (!nontag && !o_ptr->note &&
-				    !(cursed_p(o_ptr) && /* Handle {cursed} */
+				    /* Handle {cursed} */
+				    !(cursed_p(o_ptr) &&
 				    (object_known_p(Ind, o_ptr) ||
 				    (o_ptr->ident & ID_SENSE))))
 					continue;
@@ -616,21 +654,34 @@ void do_slash_cmd(int Ind, char *message)
 
 			return;
 		}
-		/* remove specific inscription */
+		/* remove specific inscription.
+		   If '*' is given, all pseudo-id tags are removed,
+		   if no parameter is given, '!k' is the default. */
 		else if (prefix(message, "/untag"))
 		{
 			object_type		*o_ptr;
 //			cptr	*ax = token[1] ? token[1] : "!k";
 			cptr	ax = token[1] ? token[1] : "!k";
 			char note2[80], noteid[10];
+			bool remove_pseudo = !strcmp(ax, "*");
 
-			for(i = 0; i < INVEN_PACK; i++)
+			for(i = 0; i < (remove_pseudo ? INVEN_TOTAL : INVEN_PACK); i++)
 			{
 				o_ptr = &(p_ptr->inventory[i]);
-				if (!o_ptr->tval) break;
 
-				/* skip inscribed items */
+				/* Skip empty slots */
+				if (!o_ptr->tval) continue;
+
+				/* skip uninscribed items */
 				if (!o_ptr->note) continue;
+
+				/* just remove pseudo-id tags? */
+				if (remove_pseudo) {
+					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+					if (!note2[0]) o_ptr->note = 0;
+					else o_ptr->note = quark_add(note2);
+					continue;
+				}
 
 				/* ignore pseudo-id inscriptions */
 				note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
@@ -1000,7 +1051,8 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
 				if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
 				if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
-				if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Fire Bird (#1127)");
+				if (lev >= 55) msg_print(Ind, "\377GYou know how to change into a Horned Serpent (#1131)");
+				if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
 			}
 			
 			if (p_ptr->prace == RACE_VAMPIRE) {
@@ -1042,7 +1094,7 @@ void do_slash_cmd(int Ind, char *message)
 				if (lev >= RBARRIER) msg_print(Ind, "\377BYou are able to cast with your full potential");
 #endif
 
-#if ALLOW_PERFECT_RUNE_CASTING
+#ifdef ALLOW_PERFECT_RUNE_CASTING
 				if (lev >= 15) msg_print(Ind, "\377BYou have perfect bolt casting.");
 				if (lev >= 25) msg_print(Ind, "\377BYou have perfect beam casting.");
 				if (lev >= 35) msg_print(Ind, "\377BYou have perfect ball casting.");
@@ -1404,7 +1456,7 @@ void do_slash_cmd(int Ind, char *message)
 			return;
 		}
 		else if (prefix(message, "/monster") ||
-				prefix(message, "/mo"))
+				prefix(message, "/mon"))
 		{
 			int r_idx, num;
 			monster_race *r_ptr;
@@ -1471,7 +1523,7 @@ void do_slash_cmd(int Ind, char *message)
 				auto_inscribe(Ind, o_ptr, tk);
 			}
 			/* Window stuff */
-			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+			p_ptr->window |= (PW_INVEN);// | PW_EQUIP);
 
 			return;
 		}
@@ -1818,7 +1870,8 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 		}
-		else if (prefix(message, "/snotes")) { /* same as /anotes for admins basically */
+		else if (prefix(message, "/snotes") ||
+			prefix(message, "/motd")) { /* same as /anotes for admins basically */
 	    		for (i = 0; i < MAX_ADMINNOTES; i++) {
 		                if (strcmp(admin_note[i], "")) {
 			        	msg_format(Ind, "\377sServer Note: %s", admin_note[i]);
@@ -2008,7 +2061,7 @@ void do_slash_cmd(int Ind, char *message)
 			msg_print(Ind, format("%d",kidx));
 			invcopy(o_ptr, kidx);
 
-			if(tk>2) o_ptr->pval=(atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
 			/* the next check is not needed (bpval is used, not pval) */
 			if (kidx == 428 && o_ptr->pval > 3) o_ptr->pval = 3; //436  (limit EA ring +BLOWS)
 
@@ -2057,7 +2110,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			object_known(o_ptr);
 			o_ptr->owner = 0;
-//			if(tk>2) o_ptr->pval=(atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+//			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
 			//o_ptr->owner = p_ptr->id;
 			o_ptr->level = 1;
 			(void)inven_carry(Ind, o_ptr);
@@ -2632,8 +2685,23 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 #endif
+			else if (prefix(message, "/shutrec")) {
+				if (!k) k = 5;
+//				msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
+				msg_broadcast_format(0, "\377I*** \377RServer-shutdown in %d minutes (auto-recall). \377I***", k);
+				cfg.runlevel = 2043;
+				shutdown_recall_timer = k * 60;
+				/* hack: suppress duplicate message */
+				if (k == 15) shutdown_recall_state = 3;
+				else if (k == 5) shutdown_recall_state = 2;
+				else if (k == 1) shutdown_recall_state = 1;
+				else shutdown_recall_state = 0;
+				return;
+			}
 			else if (prefix(message, "/shutcancel")) {
 				msg_admins(0, "\377w* Shut down cancelled *");
+				if (cfg.runlevel == 2043)
+					msg_broadcast_format(0, "\377I*** \377yServer-shutdown cancelled. \377I***");
 				cfg.runlevel = 6;
 				return;
 			}
@@ -2834,7 +2902,7 @@ void do_slash_cmd(int Ind, char *message)
 					o_ptr->name1=0;
 					o_ptr->name2=0;
 					o_ptr->name3=0;
-					o_ptr->pval=0;
+					o_ptr->pval = 0;
 					o_ptr->level = 1;
 					(void)inven_carry(Ind, o_ptr);
 
@@ -3129,7 +3197,7 @@ void do_slash_cmd(int Ind, char *message)
 				object_known(o_ptr);
 				o_ptr->owner = 0;
 				if(tk>2)
-					o_ptr->pval=atoi(token[3]);
+					o_ptr->pval = atoi(token[3]);
 				//o_ptr->owner = p_ptr->id;
 				o_ptr->level = 1;
 				(void)inven_carry(Ind, o_ptr);
@@ -3557,9 +3625,9 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/reart")) /* re-roll a random artifact */
 			{
 				object_type *o_ptr;
-				if (tk < 1)
-				{
-					msg_print(Ind, "\377oUsage: /reart <inventory-slot>");
+				int min_pval = -999, tries = 1000;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [<min pval>]");
 					return;
 				}
 				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
@@ -3571,25 +3639,29 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "\377oNot a randart.");
 					return;
 				}
+				if (tk > 1) min_pval = atoi(token[2]);
 
-		                /* Piece together a 32-bit random seed */
-		                o_ptr->name3 = rand_int(0xFFFF) << 16;
-		                o_ptr->name3 += rand_int(0xFFFF);
+				while (tries) {
+			                /* Piece together a 32-bit random seed */
+			                o_ptr->name3 = rand_int(0xFFFF) << 16;
+			                o_ptr->name3 += rand_int(0xFFFF);
+			                /* Check the tval is allowed */
+			                if (randart_make(o_ptr) == NULL) {
+			                        /* If not, wipe seed. No randart today */
+			                        o_ptr->name1 = 0;
+				                o_ptr->name3 = 0L;
+						msg_print(Ind, "Randart creation failed..");
+						return;
+					}
+					o_ptr->timeout = 0;
+					apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
 
-		                /* Check the tval is allowed */
-		                if (randart_make(o_ptr) == NULL)
-		                {
-		                        /* If not, wipe seed. No randart today */
-		                        o_ptr->name1 = 0;
-			                o_ptr->name3 = 0L;
-					msg_print(Ind, "Randart creation failed..");
-			                return;
-			        }
-
-			        o_ptr->timeout=0;
-		    	        apply_magic(&p_ptr->wpos, o_ptr, p_ptr->lev, FALSE, FALSE, FALSE, FALSE, FALSE);
-
-				msg_format(Ind, "Re-rolled randart in inventory slot %d!", atoi(token[1]));
+					if (o_ptr->pval >= min_pval) break;
+					tries--;
+				}
+				o_ptr->ident |= ID_MENTAL; /* *id*ed */
+				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries)!");
+				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 1000 + 1 - tries);
 				/* Window stuff */
 				p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 				return;
@@ -3684,6 +3756,21 @@ void do_slash_cmd(int Ind, char *message)
 			        msg_format_near(j, "\377y%s is being poked by something invisible.", Players[j]->name);
 				return;
 			}
+			else if (prefix(message, "/strangle")) {/* oO */
+				if (!tk) {
+					msg_print(Ind, "Usage: /strangle <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou are being strangled by something invisible.");
+			        msg_format_near(j, "\377y%s is being strangled by something invisible.", Players[j]->name);
+				bypass_invuln = TRUE;
+			        take_hit(j, Players[j]->chp / 4, "", 0);
+			        set_stun(j, Players[j]->stun + 5);
+				bypass_invuln = FALSE;
+				return;
+			}
 			else if (prefix(message, "/cheer")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /cheer <player name>");
@@ -3718,6 +3805,18 @@ void do_slash_cmd(int Ind, char *message)
 				if (!j) return;
 			        msg_print(j, "\377yYou feel an invisible presence watching you!");
 			        msg_format_near(j, "\377yYou feel an invisible presence near %s!", Players[j]->name);
+				return;
+			}
+			else if (prefix(message, "/snicker")) {
+				if (!tk) {
+					msg_print(Ind, "Usage: /snicker <player name>");
+					return;
+				}
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) return;
+			        msg_print(j, "\377yYou hear someone invisible snickering evilly!");
+			        msg_format_near(j, "\377yYou hear someone invisible snickering evilly near %s!", Players[j]->name);
+			        set_afraid(j, Players[j]->afraid + 6);
 				return;
 			}
 			else if (prefix(message, "/deltown")){
@@ -4122,6 +4221,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/geretime")) /* skip the announcements, start NOW */
+				/* (or optionally specfiy new remaining announce time in seconds) */
 			{
 				int t = 60;
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
@@ -4140,7 +4240,7 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/gefforward")) /* skip some running time - C. Blue */
-			/* (use negative parameter to go back in time) */
+			/* (use negative parameter to go back in time) (in seconds) */
 			{
 				int t = 60;
 				if (tk < 1 || k < 1 || k > MAX_GLOBAL_EVENTS) {
@@ -4496,8 +4596,11 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/daynight")) { /* switch between day and night - use carefully! */
-				int t = turn % ((10L * DAY) / 2);
-				turn += ((10L * DAY) / 2) - t - 1;
+				int h = (turn % DAY) / HOUR;
+				turn -= (turn % DAY) % HOUR;
+				if (h < SUNRISE) turn += (SUNRISE - h) * HOUR - 1;
+				else if (h < NIGHTFALL) turn += (NIGHTFALL - h) * HOUR - 1;
+				else turn += (24 + SUNRISE - h) * HOUR - 1;
 				return;
 			}
 			else if (prefix(message, "/season")) { /* switch through 4 seasons */
@@ -4512,12 +4615,39 @@ void do_slash_cmd(int Ind, char *message)
 				return;
 			}
 			else if (prefix(message, "/weather")) { /* toggle snowfall during WINTER_SEASON */
+#ifdef CLIENT_SIDE_WEATHER
+				if (tk) {
+					if (k) weather = 0;
+					else if (season == SEASON_WINTER) weather = 2;
+					else weather = 1;
+				}
+				weather_duration = 0;
+#else
 				if (tk >= 1) weather = k;
 				else if (weather == 1) weather = 0;
 				else {
 					weather = 1;
 					weather_duration = 60 * 4; /* 4 minutes */
 				}
+#endif
+				return;
+			}
+			/* toggle own client-side weather for testing purpose:
+			   This overrides regular weather, to reenable use
+			   /cweather -1 x x x.
+			   Syntax: Type, Wind, WEATHER_GEN_TICKS, Intensity, Speed.
+			   To turn on rain: 1 0 3 8 3 */
+			else if (prefix(message, "/cweather") || prefix(message, "/cw")) {
+				if (k == -1) p_ptr->custom_weather = FALSE;
+				else p_ptr->custom_weather = TRUE;
+				/* Note: 'cloud'-shaped restrictions don't apply
+				   if there are no clouds in the current sector.
+				   In that case, the weather will simply fill the
+				   whole worldmap sector.
+				   revoke_clouds is TRUE here, so it'll be all-sector. */
+				Send_weather(Ind,
+				    atoi(token[1]), atoi(token[2]), atoi(token[3]), atoi(token[4]), atoi(token[5]),
+				    FALSE, TRUE);
 				return;
 			}
 			else if (prefix(message, "/fireworks")) { /* toggle fireworks during NEW_YEARS_EVE */
@@ -4568,12 +4698,12 @@ void do_slash_cmd(int Ind, char *message)
 				msg_format(Ind, "store_debug_mode: freq %d, time x%d.", store_debug_mode, store_debug_quickmotion);
 				return;
 			}
-			else if (prefix(message, "/flagcost")) { /* show 'flag_cost(o_ptr)' */
-			/* -note: currently returns object_value_real instead of flag_cost */
+			else if (prefix(message, "/costs")) { /* shows monetary details about an object */
 				object_type *o_ptr;
+				char o_name[160];
 				if (tk < 1)
 				{
-					msg_print(Ind, "\377oUsage: /flagcost <inventory-slot>");
+					msg_print(Ind, "\377oUsage: /costs <inventory-slot>");
 					return;
 				}
 				if (atoi(token[1]) < 1 || atoi(token[1]) >= INVEN_TOTAL) {
@@ -4581,8 +4711,18 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				o_ptr = &p_ptr->inventory[atoi(token[1]) - 1];
-
-				msg_format(Ind, "Flag cost of item in slot %d: %d", atoi(token[1]), object_value_real(0, o_ptr));
+				object_desc(Ind, o_name, o_ptr, FALSE, 0);
+				msg_format(Ind, "Overview for item %s in slot %d:",
+				    o_name, atoi(token[1]));
+				msg_format(Ind, "Flag cost: %d; for artifact: %d.",
+				    flag_cost(o_ptr, o_ptr->pval), artifact_flag_cost(o_ptr, o_ptr->pval));
+				msg_format(Ind, "Your value: %d.", object_value(Ind, o_ptr));
+				msg_format(Ind, "Your real value: %d; for artifact: %d.",
+				    object_value_real(Ind, o_ptr), artifact_value_real(Ind, o_ptr));
+				msg_format(Ind, "Full real value: %d; for artifact: %d.",
+				    object_value_real(0, o_ptr), artifact_value_real(0, o_ptr));
+				msg_format(Ind, "Discount %d; aware? %d; known? %d; broken? %d.",
+				    o_ptr->discount, object_aware_p(Ind, o_ptr), object_known_p(Ind, o_ptr), broken_p(o_ptr));
 				return;
 			}
 			/* just calls cron_24h as if it was time to do so */
@@ -4596,9 +4736,17 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/ocopy")) {
 				object_type forge, *o_ptr = &forge;
 				if (tk < 2) return;
+#if 0
+				/* syntax: /ocopy <name> <0..37> - bad idea */
 				j = name_lookup_loose(Ind, token[1], FALSE);
 				if (!j) return;
 				object_copy(o_ptr, &Players[j]->inventory[atoi(token[2])]);
+#else
+				/* syntax: /ocopy <1..38> <name> */
+				j = name_lookup_loose(Ind, strstr(message3, " ") + 1, FALSE);
+				if (!j) return;
+				object_copy(o_ptr, &Players[j]->inventory[atoi(token[1]) - 1]);
+#endif
 				/* skip true arts to prevent counter probs */
 				if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) return;
 				inven_carry(Ind, o_ptr);
@@ -4722,6 +4870,59 @@ void do_slash_cmd(int Ind, char *message)
 				/* give msg and quit */
 				msg_format(Ind, "Set %d items to ITEM_REMOVAL_NORMAL.", j);
 				s_printf("Purged ITEM_REMOVAL_NEVER off %d items.\n", j);
+				return;
+			}
+			/* fire up all available status tags in the display to see
+			   which space is actually occupied and which is free */
+			else if (prefix(message, "/testdisplay")) {
+				struct worldpos wpos;
+				wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
+				Send_extra_status(Ind, "ABCDEFGHIJKL");
+//				Send_depth(Ind, &wpos);
+				Send_depth_hack(Ind, &wpos, TRUE, "TOONTOWNoO");
+				Send_food(Ind, PY_FOOD_MAX);
+				Send_blind(Ind, TRUE);
+				Send_confused(Ind, TRUE);
+				Send_fear(Ind, TRUE);
+				Send_poison(Ind, TRUE);
+				Send_state(Ind, TRUE, TRUE, TRUE);
+				Send_speed(Ind, 210);
+				Send_study(Ind, TRUE);
+				Send_cut(Ind, 1001);
+				Send_stun(Ind, 101);
+				Send_AFK(Ind, 1);
+				Send_encumberment(Ind, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+				Send_monster_health(Ind, 10, TERM_VIOLET);
+				return;
+			}
+			/* test new \376, \375, \374 chat line prefixes */
+			else if (prefix(message, "/testchat")) {
+				msg_print(Ind, "No code.");
+				msg_print(Ind, "\376376 code.");
+				msg_print(Ind, "No code.");
+				msg_print(Ind, "\375375 code.");
+				msg_print(Ind, "No code.");
+				msg_print(Ind, "\374374 code.");
+				msg_print(Ind, "No code.");
+				msg_print(Ind, "[Chat-style].");
+				msg_print(Ind, "No code.");
+				msg_print(Ind, "[Chat-style].");
+				msg_print(Ind, "~'~' follow-up.");
+				msg_print(Ind, "No code.");
+				return;
+			}
+			else if (prefix(message, "/initlua")) {
+				msg_print(Ind, "Reinitializing Lua");
+				reinit_lua();
+				return;
+			}
+			else if (prefix(message, "/bench")) {
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /bench <something>");
+					msg_print(Ind, "Use on an empty server!");
+					return;
+				}
+				do_benchmark(Ind);
 				return;
 			}
 		}

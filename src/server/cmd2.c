@@ -774,7 +774,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				else
 				{
 					place_object_restrictor = RESF_NONE;
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
+					/* mostly DROP_GOOD */
+					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, p_ptr->luck_cur, ITEM_REMOVAL_NORMAL);
 				}
 
 				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
@@ -864,19 +865,27 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args){
 	player_type *p_ptr=Players[Ind];
 	if (!is_admin(p_ptr))
 	{
-		if(dna->creator!=p_ptr->dna) return(FALSE);
+		if(dna->creator!=p_ptr->dna) {
+			msg_print(Ind, "Only the house owner may change permissions.");
+			return(FALSE);
+		}
 		/* more security needed... */
 	}
 
-#if 0
+	if (dna->a_flags & ACF_PARTY) {
+		if(!p_ptr->party) {
+			msg_print(Ind, "You are not owner of a party.");
+			return(FALSE);
+		}
+		if(strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
+			msg_print(Ind, "You must be owner of your party to allow party access.");
+			return(FALSE);
+		}
+	}
+
 	if((dna->a_flags=args[1])){
 		dna->min_level=atoi(&args[2]);
 	}
-#else
-	if((dna->a_flags=args[1])){
-		dna->min_level=atoi(&args[2]);
-	}
-#endif
 
 	return(TRUE);
 }
@@ -976,8 +985,23 @@ bool access_door(int Ind, struct dna_type *dna){
 /*	if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
-	if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator)
-		return(FALSE); /* defies logic a bit, but for speed */
+
+	/* Test for cumulative restrictions */
+	if (p_ptr->dna!=dna->creator) {
+		if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level)
+			return(FALSE); /* defies logic a bit, but for speed */
+		if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass!=(dna->creator&0xff)))
+			return(FALSE);
+		if((dna->a_flags & ACF_RACE) && (p_ptr->prace!=((dna->creator>>8)&0xff)))
+			return(FALSE);
+		if((dna->a_flags & ACF_WINNER) && !p_ptr->total_winner)
+			return(FALSE);
+		if((dna->a_flags & ACF_FALLENWINNER) && (p_ptr->total_winner || !p_ptr->once_winner))
+			return(FALSE);
+		if((dna->a_flags & ACF_WINNER) && !(p_ptr->mode & MODE_NO_GHOST))
+			return(FALSE);
+	}
+
 	switch(dna->owner_type){
 		case OT_PLAYER:
 			/* new doors in new server different */
@@ -988,10 +1012,6 @@ bool access_door(int Ind, struct dna_type *dna){
 				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner)))
 					return(TRUE);
 			}
-			if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass==(dna->creator&0xff)))
-				return(TRUE);
-			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==((dna->creator>>8)&0xff)))
-				return(TRUE);
 			break;
 		case OT_PARTY:
 			if(!p_ptr->party) return(FALSE);
@@ -1012,9 +1032,9 @@ bool access_door(int Ind, struct dna_type *dna){
 }
 
 /* Note: these colours will be affected by nightly darkening, so shades
-   shouldn't be used but completely different colours only - C. Blue */
+   shouldn't be used but completely different colours only..
+   but since we don't have enough colours, it doesn't matter - C. Blue */
 int access_door_colour(int Ind, struct dna_type *dna){
-	int cl = TERM_YELLOW;
 	player_type *p_ptr=Players[Ind];
 	if (!dna->owner) return(TERM_UMBER); /* house doesn't belong to anybody */
 	switch(dna->owner_type){
@@ -1023,50 +1043,72 @@ int access_door_colour(int Ind, struct dna_type *dna){
 			if(p_ptr->id==dna->owner && p_ptr->dna==dna->creator)
 				return(TERM_L_GREEN);
 			if(dna->a_flags & ACF_PARTY){
-				if(!p_ptr->party) return(TERM_L_DARK);
+				if(!p_ptr->party) return(TERM_SLATE);
 				if(!strcmp(parties[p_ptr->party].owner,lookup_player_name(dna->owner))) {
-					if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+					if(dna->a_flags & ACF_CLASS) {
+						if(p_ptr->pclass==(dna->creator&0xff)) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							return(TERM_WHITE);
+						} else return(TERM_ORANGE);
+					}
+					if(dna->a_flags & ACF_RACE) {
+						if(p_ptr->prace==((dna->creator>>8)&0xff)) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							return(TERM_WHITE);
+						} else return(TERM_ORANGE);
+					}
+					if(dna->a_flags & ACF_WINNER) {
+						if(p_ptr->total_winner) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							return(TERM_L_RED);
+						} else return(TERM_RED);
+					}
+					if(dna->a_flags & ACF_FALLENWINNER) {
+						if(!p_ptr->total_winner && p_ptr->once_winner) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+							return(TERM_L_RED);
+						} else return(TERM_RED);
+					}
+					if(dna->a_flags & ACF_NOGHOST) {
+						if(p_ptr->mode & MODE_NO_GHOST) {
+							if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
+						}
+						return(TERM_L_DARK);
+					}
+					if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
 					return(TERM_L_BLUE);
 				}
 			}
-			if((dna->a_flags & ACF_CLASS) && (p_ptr->pclass==(dna->creator&0xff))) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
-				return(TERM_WHITE);
-			}
-			if((dna->a_flags & ACF_RACE) && (p_ptr->prace==((dna->creator>>8)&0xff))) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
-				return(TERM_WHITE);
-			}
 			break;
 		case OT_PARTY:
-			if(!p_ptr->party) return(TERM_L_DARK);
+			if(!p_ptr->party) return(TERM_SLATE);
 			if(player_in_party(dna->owner, Ind)) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
 				return(TERM_L_BLUE);
 			}
 			break;
 		case OT_CLASS:
 			if(p_ptr->pclass==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
 				return(TERM_WHITE);
 			}
 			break;
 		case OT_RACE:
-			if(p_ptr->prace==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+			if(p_ptr->pclass==dna->owner) {
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
 				return(TERM_WHITE);
 			}
 			break;
 		case OT_GUILD:
-			if(!p_ptr->guild) return(TERM_L_DARK);
+			if(!p_ptr->guild) return(TERM_SLATE);
 			if(p_ptr->guild==dna->owner) {
-				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(cl);
+				if(dna->a_flags&ACF_LEVEL && p_ptr->max_plv<dna->min_level && p_ptr->dna!=dna->creator) return(TERM_YELLOW);
 				return(TERM_VIOLET);
 			}
 			break;
 	}
-	if(dna->a_flags & ACF_STORE) return(TERM_RED); /* player store? */
-	return(TERM_L_DARK);
+//	if(dna->a_flags & ACF_STORE) return(TERM_MULTI); /* player store? */
+	return(TERM_SLATE);
 }
 
 cptr get_house_owner(struct c_special *cs_ptr)
@@ -1126,7 +1168,8 @@ void do_cmd_open(int Ind, int dir)
 
 	/* Ghosts cannot open doors ; not in WRAITHFORM */
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
+	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
 	{
 		msg_print(Ind, "You cannot open things!");
 		return;
@@ -1367,29 +1410,29 @@ void do_cmd_open(int Ind, int dir)
 				struct key_type *key=cs_ptr->sc.ptr;
 				for(j=0; j<INVEN_PACK; j++){
 					object_type *o_ptr=&p_ptr->inventory[j];
-					if(o_ptr->tval==TV_KEY && o_ptr->pval==key->id){
-						c_ptr->feat=FEAT_HOME_OPEN;
+					if(o_ptr->tval == TV_KEY && o_ptr->pval == key->id){
+						c_ptr->feat = FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
 						break_shadow_running(Ind); 
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
-						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
+						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
 						return;
 					} else if (is_admin(p_ptr)) {
-						c_ptr->feat=FEAT_HOME_OPEN;
+						c_ptr->feat = FEAT_HOME_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
 						break_shadow_running(Ind); 
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
-						p_ptr->energy-=level_speed(&p_ptr->wpos)/2;
+						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
 						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
@@ -1457,7 +1500,8 @@ void do_cmd_close(int Ind, int dir)
 
 	/* Ghosts cannot close ; not in WRAITHFORM */
 	if (((p_ptr->ghost || p_ptr->tim_wraith) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)))
+	    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_OPEN_DOOR)
+	    && !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
 	{
 		msg_print(Ind, "You cannot close things!");
 		return;
@@ -2417,7 +2461,7 @@ void do_cmd_disarm(int Ind, int dir)
 
 				/* A chance to drop a trapkit! - the_sandman */
 				int sdis = (int)(p_ptr->s_info[SKILL_DISARM].value / 1000);
-				if (randint(100) < sdis) {
+				if (rand_int(100) < sdis) {
 					object_type forge;
 					object_type* yay = &forge;
 					invcopy(yay, lookup_kind(TV_TRAPKIT, randint(6)));
@@ -2566,7 +2610,7 @@ void do_cmd_bash(int Ind, int dir)
 
 	int                 y, x;
 
-	int                     bash, temp;
+	int                     bash, temp, num;
 
 	cave_type               *c_ptr;
 
@@ -2662,7 +2706,8 @@ void do_cmd_bash(int Ind, int dir)
 						/* This should harm the player too, but for now no way :/ */
 						potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval);
 
-					floor_item_increase(item, -1);
+					num = 1;//o_ptr->number;
+					floor_item_increase(item, -num);
 					floor_item_optimize(item);
 
 					break_cloaking(Ind, 0);
@@ -2975,7 +3020,7 @@ void do_cmd_walk(int Ind, int dir, int pickup)
 				!p_ptr->ghost && !p_ptr->tim_wraith) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				if((cs_ptr=GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
-					if((!cfg.door_bump_open & BUMP_OPEN_HOUSE ||
+					if((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
 					    !access_door(Ind, cs_ptr->sc.ptr)) &&
 					    !admin_p(Ind))
 					{
@@ -3030,6 +3075,7 @@ int do_cmd_run(int Ind, int dir)
 	int real_speed = cfg.running_speed;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
@@ -3044,7 +3090,7 @@ int do_cmd_run(int Ind, int dir)
     		/* or running-swimming? */
 	        else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
-			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+			if (!r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) {
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
 			}
@@ -3362,7 +3408,7 @@ bool retaliating_cmd = FALSE;
  *
  * You must use slings + pebbles/shots, bows + arrows, xbows + bolts.
  *
- * See "calc_bonuses()" for more calculations and such.
+ * See "calc_boni()" for more calculations and such.
  *
  * Note that "firing" a missile is MUCH better than "throwing" it.
  *
@@ -4095,7 +4141,7 @@ void do_cmd_fire(int Ind, int dir)
 									if (!check_hostile(0 - c_ptr->m_idx, Ind))
 									{
 										if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-										add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+										add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 
 										/* Log it if no blood bond - mikaelh */
 										if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
@@ -5517,7 +5563,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 		msg_print(Ind, "You cannot buy a house.");
 
 		return;
-	}       
+	}
 
 	if(p_ptr->inval){
 		msg_print(Ind, "You may not buy/sell a house. Ask an admin to validate your account.");
@@ -5525,7 +5571,7 @@ void do_cmd_purchase_house(int Ind, int dir)
 	}
 
 
-	if(dir>9) dir=0;	/* temp hack */
+	if(dir > 9) dir = 0;	/* temp hack */
 
 	/* Be sure we have a direction */
 	if (dir)
@@ -5684,13 +5730,62 @@ void do_cmd_own(int Ind)
 
 /* mental fusion - mindcrafter special ability */
 void do_cmd_fusion(int Ind) {
+#ifdef TEST_SERVER
 	player_type *p_ptr = Players[Ind], *q_ptr;
-	cave_type **zcave, *c_ptr;
+	cave_type **zcave;//, *c_ptr;
+	int x, y, dir, i;
+
+	if (p_ptr->esp_link) {
+		msg_print(Ind, "\377yYou are already in a mind fusion.");
+		return;
+	}
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* search grids adjacent to player for someone with open mind to fuse */
-	
+	for (dir = 0; dir < 8; dir++) {
+		y = p_ptr->py + ddy_ddd[dir];
+		x = p_ptr->px + ddx_ddd[dir];
+		if (!in_bounds2(&p_ptr->wpos, y, x)) continue;
+
+		/* Get requested grid, check for friendly open minded player */
+		i = -zcave[y][x].m_idx;
+		if (i <= 0) continue;
+		q_ptr = Players[i];
+
+		/* Skip disconnected players */
+                if (q_ptr->conn == NOT_CONNECTED) continue;
+                /* Skip DM if not DM himself */
+                if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
+                /* Skip Ghosts */
+                if (q_ptr->ghost && !q_ptr->admin_dm) continue;
+                /* Skip players not in the same party */
+                if (q_ptr->party == 0 || p_ptr->party != q_ptr->party)
+                /* Skip players who haven't opened their mind */
+                if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
+                /* Skip players who are already in a fusion */
+                if (q_ptr->esp_link) continue;
+
+                /* found one - establish! */
+                q_ptr->esp_link = p_ptr->id;
+                p_ptr->esp_link = q_ptr->id;
+                q_ptr->esp_link_type = LINK_DOMINANT; /* transmit to me */
+                p_ptr->esp_link_type = LINK_DOMINATED; /* receive from him */
+                p_ptr->esp_link_end = q_ptr->esp_link_end = 0;
+                q_ptr->esp_link_flags = LINKF_VIEW | LINKF_PAIN | LINKF_MISC | LINKF_OBJ;
+                p_ptr->esp_link_flags = LINKF_VIEW_DEDICATED; /* don't show own map info */
+                /* redraw map of target player, which will redraw our view too */
+                q_ptr->redraw |= PR_MAP;
+
+                /* notify and done */
+                msg_format(Ind, "\377BMind fusion with %s was successful!", q_ptr->name);
+                msg_format(i, "\377BMind fusion with %s was successful!", p_ptr->name);
+                return;
+	}
+
+	/* failure */
+	msg_print(Ind, "\377yNo egligible target found nearby.");
+#endif
 }
 
 /*

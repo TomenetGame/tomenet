@@ -301,7 +301,8 @@ N:44:Gandar the Neutral(Dark-Elf)
 I:25000:120:110:7:19
 C:120:100:80
 L:Dark-Elf
-H:Half-Orc | Half-Troll | High-Elf | Half-Elf | Elf
+H:High-Elf | Half-Elf | Elf
+#H:Half-Orc | Half-Troll
 
 N:45:Ro-sha the Patient(Elf)
 I:30000:140:105:6:12
@@ -458,3 +459,8 @@ I:100:170:108:4:10
 C:120:100:80
 L:Dunadan | Hobbit | Human |
 H:Half-Orc | Half-Troll | Goblin | Dark-Elf | Vampire
+
+#added a truly neutral one.. - C. Blue
+N:70:Garaic the Neutral (Thunderlord)
+I:20000:140:110:7:19
+C:120:100:80

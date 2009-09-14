@@ -89,7 +89,7 @@ I:1000:0
 
 N:11:Backstabbing
 D:Ability to backstab sleeping and fleeing monsters.
-D:Much more effective in the dark
+#D:Much more effective in the dark
 I:1000:0
 
 N:12:Magic
@@ -107,7 +107,8 @@ N:13:Fire-Till-Kill
 D:Hidden ability for all characters.
 A:4:Toggle fire-till-kill mode
 I:1000:0
-F:HIDDEN
+#F:MKEY_HARDCODE
+#F:HIDDEN
 
 # This is like that of ToME2 now
 N:14:Sorcery
@@ -115,7 +116,7 @@ N:14:Sorcery
 D:Ability to use all the magic schools as if their skill was sorcery,
 D:but you won't receive any bonus abilities/resistances of the schools.
 #D:But the price to channel that much magic is your health
-#A:1:Cast sorcery spell
+#A::Cast sorcery spell
 #I:1000:92
 #F:MKEY_SPELL | MKEY_TVAL
 I:1000:0
@@ -425,12 +426,12 @@ D:Spells use the wisdom stat.
 A:11:Cast a spell
 I:1000:111
 
-N:76:Runemastery
-D:Access to the Runic knowledge
-D:Intelligence and dexterity will affect the power.
-A:12:Draw a rune
-I:1000:0
-F:MKEY_HARDCODE
+$ENABLE_RCRAFT!N:76:Runemastery
+$ENABLE_RCRAFT!D:Access to the Runic knowledge
+$ENABLE_RCRAFT!D:Intelligence and dexterity will affect the power.
+$ENABLE_RCRAFT!A:12:Draw a rune
+$ENABLE_RCRAFT!I:1000:0
+$ENABLE_RCRAFT!F:MKEY_HARDCODE
 
 $ENABLE_DIVINE$N:77:Astral Knowledge
 $ENABLE_DIVINE$D:Access to the astral spells
@@ -441,6 +442,7 @@ $DUAL_WIELD$N:78:Dual-Wield
 $DUAL_WIELD$D:Ability to wield two one-handed weapons at once.
 $DUAL_WIELD$D:This won't work well if your armour is too heavy.
 $DUAL_WIELD$I:1000:0
+$DUAL_WIELD$A:1:Switch between main-hand and dual-hand
 
 $ENABLE_STANCES$N:79:Combat Stances
 $ENABLE_STANCES$D:Ability to use different stances in armed melee combat.
@@ -449,19 +451,20 @@ $ENABLE_STANCES$I:1000:0
 $ENABLE_STANCES$F:MKEY_HARDCODE
 
 $ENABLE_MCRAFT$N:80:Psycho-Power
-$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$D:Access to psi-spells that create physical or energetical effects.
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:0
 
 $ENABLE_MCRAFT$N:81:Thought Contact
-$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$D:Access to psi-spells that elevate and connect to minds.
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:0
 
 $ENABLE_MCRAFT$N:82:Mental Intrusion
-$ENABLE_MCRAFT$D:Access to psi-spells
+$ENABLE_MCRAFT$D:Access to psi-spells that attack mind or physis of others.
 $ENABLE_MCRAFT$A:11:Cast a spell
 $ENABLE_MCRAFT$I:1000:0
+
 
 N:83:Magic Schools
 D:
@@ -500,6 +503,59 @@ I:1000:0
 #N:93:Confusion Resistance
 #D:Resistance to confusion in general
 #I:1000:0
+
+$ENABLE_RCRAFT$N:95:Runecraft
+$ENABLE_RCRAFT$D:
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:DUMMY
+
+$ENABLE_RCRAFT$N:96:Fire and Cold
+$ENABLE_RCRAFT$D:Ability to summon and banish heat by invoking runic powers
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:97:Water and Acid
+$ENABLE_RCRAFT$D:Ability to manipulate water and acid by invoking runic powers
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:98:Lightning and Earth
+$ENABLE_RCRAFT$D:Ability to control the earth by summoning runic forces
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:99:Poison and Wind
+$ENABLE_RCRAFT$D:Ability to call the wind via the runes
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:100:Mana and Chaos
+$ENABLE_RCRAFT$D:Ability to invoke mana or chaos via the runes
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:101:Force and Gravity
+$ENABLE_RCRAFT$D:Ability to manipulate the raw elemental forces by runic invocation
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:102:Nether and Time
+$ENABLE_RCRAFT$D:Ability to control the forces of time and life itself upon the stones
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
+
+$ENABLE_RCRAFT$N:103:Mind and Nexus
+$ENABLE_RCRAFT$D:Ability to twist your mind and body with the elements
+$ENABLE_RCRAFT$A:18:Draw a rune
+$ENABLE_RCRAFT$I:1000:0
+$ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 #
 # Skill interactions
@@ -626,6 +682,15 @@ $ENABLE_MCRAFT$f:Psycho-Power:Magic%10
 $ENABLE_MCRAFT$f:Thought Contact:Magic%10
 $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
+$ENABLE_RCRAFT$f:Fire and Cold:Magic%15
+$ENABLE_RCRAFT$f:Water and Acid:Magic%15
+$ENABLE_RCRAFT$f:Lightning and Earth:Magic%15
+$ENABLE_RCRAFT$f:Poison and Wind:Magic%15
+$ENABLE_RCRAFT$f:Mana and Chaos:Magic%15
+$ENABLE_RCRAFT$f:Force and Gravity:Magic%15
+$ENABLE_RCRAFT$f:Nether and Time:Magic%15
+$ENABLE_RCRAFT$f:Mind and Nexus:Magic%15
+
 f:Stealth:Sneakiness%15
 f:Disarming:Sneakiness%10
 #f:Trapping:Sneakiness%15
@@ -686,13 +751,14 @@ T:Combat:Martial Arts
 T:Main:Magic
 T:Magic:Magic-device
 T:Magic:Mimicry
-T:Magic:Runemastery
 #T:Magic:Spell-learning
 T:Magic:Spell-power
 
 T:Magic:Magic Schools
 T:Magic:Prayer Schools
 T:Magic:Druidic Schools
+$ENABLE_RCRAFT!T:Magic:Runemastery
+$ENABLE_RCRAFT$T:Magic:Runecraft
 $ENABLE_MCRAFT$T:Magic:Mindcraft Schools
 
 T:Magic Schools:Sorcery
@@ -729,6 +795,15 @@ $ENABLE_DIVINE$T:Magic:Astral Knowledge
 $ENABLE_MCRAFT$T:Mindcraft Schools:Psycho-Power
 $ENABLE_MCRAFT$T:Mindcraft Schools:Thought Contact
 $ENABLE_MCRAFT$T:Mindcraft Schools:Mental Intrusion
+
+$ENABLE_RCRAFT$T:Runecraft:Fire and Cold
+$ENABLE_RCRAFT$T:Runecraft:Water and Acid
+$ENABLE_RCRAFT$T:Runecraft:Lightning and Earth
+$ENABLE_RCRAFT$T:Runecraft:Poison and Wind
+$ENABLE_RCRAFT$T:Runecraft:Mana and Chaos
+$ENABLE_RCRAFT$T:Runecraft:Force and Gravity
+$ENABLE_RCRAFT$T:Runecraft:Nether and Time
+$ENABLE_RCRAFT$T:Runecraft:Mind and Nexus
 
 #T:Main:Spirituality
 #T:Spirituality:Prayer

@@ -7,7 +7,7 @@
 # You should manually write the total # of rumours (lines - 10).
 
 N:*:Default
-1009
+951
 They say that you can't trust rumors.
 You have no more Black Potions of Death.
 They say that smart guys hang around at 1600'.
@@ -41,8 +41,8 @@ If you can't beat it, leave it alone!
 An umber hulk can be a confusing sight.
 There *is* a good use for Potions of Detonations, Ruination and Death...
 Watch your step!
-It's a bad idea to throw away a Longsword (4d5).
-It's a bad idea to wield a Longsword (4d5).
+It's a bad idea to throw away a Longsword (4d6).
+It's a bad idea to wield a Longsword (4d6).
 Actually, Slime Mold Juice is not completely useless.
 Help me! I'm being held captive in a Vault at 2850'!
 Ever tried inscribing your armour {{erodeproof}?
@@ -199,7 +199,6 @@ Spirit, hatch that painted spirit of the lamb sparrow.
 Gone insane from the pain that sure they know: for who the flange sound?
 With time the child dissipates within, this blinking boy made badly.
 Not to be never, never not to see, so as to dub the thee unforgiven.
-Soon in order to fill up our lungs: the warmth of twenty dead women.
 The eternal death of eons of the foreigner of the lie can die not absolutely.
 Drain you of your sanity: in front do the thing that does not have to be.
 The opinion you had were salt expresses.
@@ -301,7 +300,7 @@ Ever tried to rob a store?
 Ever been in yeek town?
 Ever heard about Mirkwood Legends?
 Ever seen a God or Goddess player?
-{R[The Lady] {BThou art doomed, poor little Tomenet player..
+{R[The Lady] {BThou art doomed, poor little TomeNET player..
 {B[Olorin] mh
 {D[Moltor] {Bpfft
 {B[Evileye] hehe
@@ -322,7 +321,7 @@ They say that you should read a scroll of acquirement in town.
 They say that a vault is a place to die, and not a place to resurrect.
 They say that you shouldn't give someone of the same sex an engagement ring.
 They say that archers should learn more about their opponents.
-They say that a death in Tomenet is very akin to that of real life.
+They say that a death in TomeNET is very akin to that of real life.
 They say that you should let someone else to go down first.
 They say that act as a fool and you'll be treated as a fool.
 They say that be harsh to others and you'll be treated in a similar way.
@@ -418,7 +417,7 @@ Ever seen a {rcoloured {bcookie{w?
 Yikes! This cookie was {rp{Ga{vi{on{Bt{Re{yd{w!!
 They say that {yP {wis terrible and {oP {wis horrible.
 Ever seen a {DP{w?
-You know you played Tomenet too much when you wonder why you don't auto-attack.
+You know you played TomeNET too much when you wonder why you don't auto-attack.
 Ever macroed \eQy@ ?
 They say that it's no good digging with a dagger.
 {rYou die.
@@ -551,7 +550,7 @@ They say that a wise girl knows not to act insane.
 They say that a cute marmeid will invite you to pass the line.
 They say that amulet of life saving saves it out of your own life.
 I doubt the usefulness of the amulet of suspicion.
-They say that you should learn to activate telapathic crystals.
+They say that you should learn to activate telepathic crystals.
 They say that a potion of curing is just an alias of that of healing.
 They say that a potion of curing cures more than your body.
 They say that falling into a chasm may drive you mad.
@@ -695,7 +694,6 @@ What if God was one of us?
 SERVER ERROR: Please update your graphic driver
 must... kill.. the... king....
 I wonder what Motok will be without ales
-The Power of NOW!
 Leave it. You won't need your ego here.
 You feel the dagger in your bag is {{special}
 4th Reich is rising for the last time!
@@ -905,33 +903,18 @@ Power over others is weakness disguised as strength.
 Wherever you are, be there totally.
 Death is a stripping away of all that is not you.
 Primary reality is within, secondary reality without. 
-The problems of the mind cannot be solved on the level of the mind.
 No matter what happens, I will create no more pain for myself.
-Nothing ever happened in the past; it happened in the Now.
-Nothing will ever happen in the future; it will happen in the Now.
-The more you are focused on time, the more you miss the Now.
-Pain is inevitable as long as you are identified with your mind.
 We must travel in the direction of our fear.
-There is no happy ending.
-All your achievements are going to dissolve and you are going to die.
 um
 My fall will be for you.
 Corn is no place for a mighty warrior!
 Twelve sided died!
 Ow, my most of me!
-ROFLOMGWTFBBQ
 There is no business like show business!
-It's a good idea for team members to stick together.
 Fold preflop.
 Like, you know, whatever.
-WHAAAAAAAAAAAAAZZZZZZZZZZZZZZZZZUUUUUUUUUUUUP
 Destroy, she said.
-Pwned!
-How do you pronounce pwned?
-Dude!
-werd
 Total carnage!
-Sup with that?
 up up down down left right left right B A start
 Hear the pfft of destiny.
 If i don't make it, someone else will stand my ground.
@@ -943,9 +926,8 @@ Do you see why?
 I'll let others elaborate.
 They say that the color of one's speech shows their tone of voice.
 There is no greater adventure than looking for a hidden staircase.
-To hell with this chart, I'm raisin AJ & KQ UTG!
 I'm tired.
-Man, I'm faux pasing all over the place.
+I'm faux pasing all over the place.
 fear -> anger -> hate -> the dark side
 {mwheeedle woodlewoodle wheeeew!
 It is the Order of Things.
@@ -955,64 +937,24 @@ the head plans the hands kill the heart only pumps blood
 What if Gillette had designed the guillotine?
 I've run out of mental RAM.
 We didn't start the fire!
-o rly?
 I really need to figure out what the hell I'm doing.
-But that's just, like, your opinion, man.
-Like, free your mind or something.
-You can't OWN property, man.
 Dude, where's my car?
 The technological singularity is coming!
 O fortuna! Velut luna!
 Never feed a gremlin after midnight.
 This l00t's not gonna l00t itself!
-Taxation is theft.
-No man's life, liberty, or property are safe while the legislature is in session.
-Every decent man is ashamed of the government he lives under.
-The power to tax is the power to destroy.
-A nation of sheep will beget a government of wolves.
 Give me liberty or give me death!
 He that hath no sword, let him sell his garment and buy one.
-More laws, less justice.
 There never was a good war or a bad peace.
-Democracy is a pathetic belief in the collective wisdom of individual ignorance.
-Government does not solve problems; it subsidizes them.
-The right to be let alone is indeed the begining of all freedom.
-Equality of opportunity is freedom, but equality of outcome is repression
-Petty laws breed great crimes.
-The course of history shows that as a government grows, liberty decreases
 Let him who would move the world, first move himself.
-That government is best which governs least.
 The limitation of tyrants is the endurance of those they oppose.
-The cure for evil and disorder is more liberty, not suppression.
 It is better to die on your feet than live on your knees.
 Men are more apt to believe what they least understand.
-An armed society is a polite society.
-... thou shall not steal, even by majority vote...
 Man is born free, yet he is everywhere in chains.
-Everything government touches turns to crap.
-The era of big government is over.
-Bad laws are the worst sort of tyranny.
-A government is not legitimate merely because it exists.
-The voice of the majority is no proof of justice.
-You can't get rid of poverty by giving people money.
-Fire, water, and government know nothing of mercy.
-The free market punishes irresponsibility. Government rewards it.
-We have no unchosen positive obligations.
-We lie to our children while telling them that lying is wrong.
 We tell our children to be good, but we have no idea what goodness is.
-Patriotism is the hijacking of the achievements of others.
-Demanding respect is like hijacking an aircraft.
 The size and shape of your prison is not important. That you are in prison is.
 Doubt is the midwife of curiosity, and curiosity breeds wisdom.
-Fantasy is a circle of nothingness, forever eating its own tail.
-Why do people demand trust? To rob others.
-The people who claim to love us make this claim in order to control us.
-We are inevitably led to invert rational moral standards.
-Moral rules must be consistent for all mankind.
-Culture is the scar tissue of child abuse.
 The world chokes on imaginary knowledge.
-This administration is really beginning to test my apathy.
-People won't admit they don't know shit.
 There's a gun in the room.
 Know ye, O seeker of the mystic wisdoms, that the ways of magic are diverse and strange.
 What it do?

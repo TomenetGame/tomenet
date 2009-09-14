@@ -173,6 +173,9 @@ static int Receive_telekinesis(int ind);
 static int Receive_BBS(int ind);
 static int Receive_wield2(int ind);
 static int Receive_cloak(int ind);
+static int Receive_inventory_revision(int ind);
+static int Receive_account_info(int ind);
+static int Receive_change_password(int ind);
 
 static void Handle_item(int Ind, int item);
 

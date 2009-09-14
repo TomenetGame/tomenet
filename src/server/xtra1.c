@@ -147,7 +147,7 @@ static void prt_title(int Ind)
 		if (p_ptr->lev < 60)
 		p = player_title[p_ptr->pclass][((p_ptr->lev/5) < 10)? (p_ptr->lev/5) : 10][3 - p_ptr->male];
 		else
-		p = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_LEVEL)? (p_ptr->lev - 60)/10 : 4][3 - p_ptr->male];
+		p = player_title_special[p_ptr->pclass][(p_ptr->lev < PY_MAX_PLAYER_LEVEL)? (p_ptr->lev - 60)/10 : 4][3 - p_ptr->male];
 	}
 
 	/* Ghost */
@@ -167,7 +167,7 @@ static void prt_level(int Ind)
 
 	s64b adv_exp;
 
-	if (p_ptr->lev >= PY_MAX_LEVEL)
+	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
 #ifndef ALT_EXPRATIO
 	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
@@ -188,7 +188,7 @@ static void prt_exp(int Ind)
 
 	s64b adv_exp;
 
-	if (p_ptr->lev >= PY_MAX_LEVEL)
+	if (p_ptr->lev >= (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL))
 		adv_exp = 0;
 #ifndef ALT_EXPRATIO
 	else adv_exp = (s64b)((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact / 100L);
@@ -590,7 +590,7 @@ static void prt_plusses(int Ind)
 		show_todam_r += o_ptr3->to_d;
 	}
 	/* dual-wield..*/
-	if (o_ptr4->k_idx && o_ptr4->tval != TV_SHIELD) {
+	if (o_ptr4->k_idx && o_ptr4->tval != TV_SHIELD && p_ptr->dual_mode) {
 		if (object_known_p(Ind, o_ptr4)) {
 			bmh += o_ptr4->to_h;
 			bmd += o_ptr4->to_d;
@@ -641,8 +641,14 @@ static void prt_encumberment(int Ind)
 	/* See next line. Also, we're already using all 12 spaces we have available for icons.
 	byte rogue_heavy_armor = p_ptr->rogue_heavyarmor?1:0; */
 	 /* Hack - MA also gives dodging, which relies on rogue_heavy_armor anyway. */
-	byte monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0;
+	byte monk_heavyarmor, rogue_heavyarmor = 0;
 	byte awkward_shoot = p_ptr->awkward_shoot?1:0;
+	if (!is_newer_than(&p_ptr->version, 4, 4, 2, 0, 0, 0)) {
+		monk_heavyarmor = (p_ptr->monk_heavyarmor || p_ptr->rogue_heavyarmor)?1:0;
+	} else {
+		monk_heavyarmor = p_ptr->monk_heavyarmor ? 1 : 0;
+		rogue_heavyarmor = p_ptr->rogue_heavyarmor ? 1 : 0;
+	}
 
 	if (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER) {
 		awkward_armor = 0; /* they don't use magic or SP */
@@ -651,7 +657,7 @@ static void prt_encumberment(int Ind)
 	}
 
 	Send_encumberment(Ind, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-	                                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+                icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
 }
 
 static void prt_extra_status(int Ind)
@@ -664,28 +670,34 @@ static void prt_extra_status(int Ind)
 	/* add combat stance indicator */
 	if (get_skill(p_ptr, SKILL_STANCE)) {
 		switch(p_ptr->combat_stance) {
-		case 0: strcpy(status, "\377sBal ");
+		case 0: strcpy(status, "\377sBl ");
 			break;
-		case 1: strcpy(status, "\377uDef ");
+		case 1: strcpy(status, "\377uDf ");
 			break;
-		case 2: strcpy(status, "\377oOff ");
+		case 2: strcpy(status, "\377oOf ");
 			break;
 		}
-	} else {
-		strcpy(status, "    ");
-	}
+	} else strcpy(status, "   ");
+
+	/* add dual-wield mode indicator */
+	if (get_skill(p_ptr, SKILL_DUAL) && p_ptr->dual_wield) {
+		if (p_ptr->dual_mode)
+			strcat(status, "\377sDH ");
+		else
+			strcat(status, "\377DMH ");
+	} else strcat(status, "   ");
 
 	/* add fire-till-kill indicator */
 	if (p_ptr->shoot_till_kill)
-		strcat(status, "\377sFTK ");
+		strcat(status, "\377sFK ");
 	else
-		strcat(status, "    ");
+		strcat(status, "   ");
 
 	/* add project-spells indicator */
 	if (p_ptr->spell_project)
-		strcat(status, "\377sPrj ");
+		strcat(status, "\377sPj ");
 	else
-		strcat(status, "    ");
+		strcat(status, "   ");
 
 	Send_extra_status(Ind, status);
 }
@@ -1079,28 +1091,16 @@ static void calc_sanity(int Ind)
 void calc_mana(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	player_type *p_ptr2=(player_type*)NULL;
+	player_type *p_ptr2 = NULL; /* silence the warning */
+	int Ind2;
 
 	int levels, cur_wgt, max_wgt;
 	s32b new_mana=0;
 
 	object_type	*o_ptr;
-
 	u32b f1, f2, f3, f4, f5, esp;
 
-	int Ind2 = 0;
-
-
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
-	  {
-		Ind2 = find_player(p_ptr->esp_link);
-
-		if (!Ind2)
-			end_mind(Ind, FALSE);
-		else
-		{
-			p_ptr2 = Players[Ind2];
-		}
+	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
 	/* Extract "effective" player level */
@@ -1162,9 +1162,10 @@ void calc_mana(int Ind)
 			    (adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 100 * levels / (400)));
 #endif
 		break; 
+#ifndef ENABLE_RCRAFT
 	/* Need a lot of SP for the spells. Reducing bonus to 1 tho. 2 seems excessive */
 #define RUNEMASTER_SP_CALC_BONUS	1 /* 2 */
-	case CLASS_RUNEMASTER: 
+	case CLASS_RUNEMASTER:
 		//2 SP per 1 point in SKILL_MAGIC
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 100) + 
 		//Their spells are abit on the expensive side... Allow more max than mages.
@@ -1172,7 +1173,14 @@ void calc_mana(int Ind)
 		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_INT]]) * levels / (2) +
 		  (RUNEMASTER_SP_CALC_BONUS + adj_mag_mana[p_ptr->stat_ind[A_DEX]]) * levels / (2) ;
 		break;
-
+#else
+	case CLASS_RUNEMASTER:
+		//Spells are now much closer in cost to mage spells. Returning to a similar mode
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+		    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 65 * levels / (300)) +
+		    (adj_mag_mana[p_ptr->stat_ind[A_DEX]] * 35 * levels / (300));
+		break;
+#endif
 	case CLASS_MINDCRAFTER:
 		/* much Int, some Chr (yeah!), little Wis */
 #if 0 /* too much CHR drastically reduced the amount of viable races, basically only humans and elves remained */
@@ -1232,7 +1240,7 @@ void calc_mana(int Ind)
 	/* Get the helm */
 	o_ptr = &p_ptr->inventory[INVEN_HEAD];
 
-	/* Only mindcraft-users are affected */
+	/* Only mindcraft-users are affected (CLASS_MINDCRAFTER) */
 	if (get_skill(p_ptr, SKILL_PPOWER) ||
 	    get_skill(p_ptr, SKILL_TCONTACT) ||
 	    get_skill(p_ptr, SKILL_MINTRUSION))
@@ -1287,19 +1295,23 @@ void calc_mana(int Ind)
 	   where disruption shield is calculated. (C. Blue) */
 	switch(p_ptr->pclass) {
 	case CLASS_MAGE:
+	case CLASS_RANGER:
+	case CLASS_DRUID:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
 	/* in theory these actually don't use 'magic mana' at all?: */
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
-	case CLASS_MINDCRAFTER:
-	/* fall through */
+	/* non-holy again: */
 	case CLASS_MIMIC:
 	case CLASS_ROGUE:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
 		break;
-	case CLASS_RANGER:
+	/* hybrids & more */
+	case CLASS_SHAMAN:
 	case CLASS_ADVENTURER:
+	case CLASS_MINDCRAFTER:
+	case CLASS_RUNEMASTER:
 	default:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
@@ -1318,7 +1330,7 @@ void calc_mana(int Ind)
 	/*	new_mana -= new_mana / 2; */
 	}
 
-#if 1 /* now not anymore done in calc_bonuses (which is called before calc_mana) */
+#if 1 /* now not anymore done in calc_boni (which is called before calc_mana) */
 	/* Assume player not encumbered by armor */
 	p_ptr->awkward_armor = FALSE;
 
@@ -1508,7 +1520,7 @@ void calc_mana(int Ind)
 
 void calc_hitpoints(int Ind)
 {
-	player_type *p_ptr = Players[Ind], *p_ptr2;
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /* silence the warning */
 
 //	object_type *o_ptr;
 //	u32b f1, f2, f3, f4, f5, esp;
@@ -1518,14 +1530,7 @@ void calc_hitpoints(int Ind)
 	u32b mHPLim, finalHP;
 	int bonus_cap;
 
-	if (p_ptr->esp_link_type && p_ptr->esp_link && (p_ptr->esp_link_flags & LINKF_PAIN))
-	{
-	    Ind2 = find_player(p_ptr->esp_link);
-
-	    if (!Ind2)
-	    	end_mind(Ind, FALSE);
-	    else
-		p_ptr2 = Players[Ind2];
+	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
 	/* Un-inflate "half-hitpoint bonus per level" value */
@@ -1603,7 +1608,7 @@ void calc_hitpoints(int Ind)
 				(50 * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- keep (!) full bonus for the rest of career up to level 99 */
 	#else
 				/* currently discrepancies between yeek/human priest and ent warrior would be TOO big at end-game (>> level 50) */
-				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 (PY_MAX_LEVEL) */
+				((100 - p_ptr->lev) * ((576 - cr_mhp * cr_mhp) + 105)) / 105; /* <- above 50, bonus is slowly diminishing again towards level 99 (PY_MAX_PLAYER_LEVEL) */
 	#endif
     #endif
 #endif
@@ -1629,11 +1634,41 @@ void calc_hitpoints(int Ind)
 	}
 #endif
 
+
+        /* HP Bonus from SKILL_HEALTH */
+#if 0
+	/* it's a bit too much, and doesn't feel 'smooth' at all IMHO, balance-wise :/
+	 Mainly because already strong chars can now get uber-tough - but.. see #else branch below..
+	 Also, +LIFE is mostly to give non-mimics a chance to catch up a bit to mimics,
+	 especially postking. Pre-king using a +LIFE weapon (only way) will be costly since it's
+	 a whole slot used up, which could otherwise give resistances or deal more damage from an
+	 artifact/ego weapon (archers have it easier than warriors though). */
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 30)
+	        to_life++;
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 40)
+	        to_life++;
+        if (get_skill(p_ptr, SKILL_HEALTH) >= 50)
+	        to_life++;
+#else 
+	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
+         need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
+	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
+        mhp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
+
+ #ifdef ENABLE_DIVINE
+	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity == DIVINE_DEMON)) {
+		mhp += (p_ptr->lev - 20) * 2;
+	}
+ #endif
+#endif
+
+
 	/* Now we calculated the base player form mhp. Save it for use with
 	   +LIFE bonus. This will prevent mimics from total uber HP,
 	   and giving them an excellent chance to compensate a form that
 	   provides bad HP. - C. Blue */
 	mhp_playerform = mhp;
+
 
 	if (p_ptr->body_monster)
 	{
@@ -1684,14 +1719,19 @@ void calc_hitpoints(int Ind)
 	/* Always have at least one hitpoint per level */
 	if (mhp < p_ptr->lev + 1) mhp = p_ptr->lev + 1;
 
-	/* Factor in the hero / superhero settings */
-	if (p_ptr->hero) mhp += 10;
-	if (p_ptr->shero) mhp += 20;
-#if 1 /* hmm */
-	if (p_ptr->fury) mhp += 20;
-	if (p_ptr->berserk) mhp += 20;
-#endif
-	
+	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
+	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
+	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
+	if (mhp > mhp_playerform) {
+		/* Reduce the use for mimics (while in monster-form) */
+		if (p_ptr->to_l > 0)
+			mhp += (mhp_playerform * p_ptr->to_l * mhp_playerform) / (10 * mhp);
+		else
+			mhp += (mhp_playerform * p_ptr->to_l) / 10;
+	} else {
+		mhp += (mhp * p_ptr->to_l) / 10;
+	}
+
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
 	{
@@ -1705,8 +1745,18 @@ void calc_hitpoints(int Ind)
 	/*	mhp += p_ptr->msp * 2 / 3; */
 	}
 
+	/* Factor in the hero / superhero settings */
+	if (p_ptr->hero) mhp += 10;
+	if (p_ptr->shero) mhp += 20;
+#if 1 /* hmm */
+	else if (p_ptr->fury) mhp += 20;
+	else if (p_ptr->berserk) mhp += 20;
+#endif
+	
+#if 0 /* p_ptr->to_hp is unused atm! */
 	/* Fixed Hit Point Bonus */
 	if (!is_admin(p_ptr) && p_ptr->to_hp > 200) p_ptr->to_hp = 200;
+
 	if (mhp > mhp_playerform) {
 		/* Reduce the use for mimics (while in monster-form) */
 		if (p_ptr->to_hp > 0)
@@ -1716,19 +1766,7 @@ void calc_hitpoints(int Ind)
 	} else {
 		mhp += p_ptr->to_hp;
 	}
-
-	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
-	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
-	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
-	if (mhp > mhp_playerform) {
-		/* Reduce the use for mimics (while in monster-form) */
-		if (p_ptr->to_l > 0)
-			mhp += (mhp_playerform * p_ptr->to_l * mhp_playerform) / (10 * mhp);
-		else
-			mhp += (mhp_playerform * p_ptr->to_l) / 10;
-	} else {
-		mhp += (mhp * p_ptr->to_l) / 10;
-	}
+#endif
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -1763,7 +1801,7 @@ void calc_hitpoints(int Ind)
  */
 /*
  * XXX currently, this function does almost nothing; if lite radius
- * should be changed, call calc_bonuses too.
+ * should be changed, call calc_boni too.
  */
 static void calc_torch(int Ind)
 {
@@ -1936,7 +1974,7 @@ static void calc_body_bonus(int Ind)
 		    (((p_ptr->dis_to_d * 2) + (d * 1)) / 3) :
 		    (((p_ptr->dis_to_d * 1) + (d * 1)) / 2);*/
 #endif
-#if 0 /* moved to calc_bonuses() */
+#if 0 /* moved to calc_boni() */
 	/* Evaluate monster AC (if skin or armor etc) */
 	body = (r_ptr->body_parts[BODY_HEAD] ? 1 : 0)
 		+ (r_ptr->body_parts[BODY_TORSO] ? 3 : 0)
@@ -2395,12 +2433,21 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if(r_ptr->flags2 & RF2_REFLECTING) p_ptr->reflect = TRUE;
 	if(r_ptr->flags7 & RF7_DISBELIEVE)
 	{
+#if 0
 		p_ptr->antimagic += r_ptr->level / 2 + 20;
 		p_ptr->antimagic_dis += r_ptr->level / 15 + 3;
+#else /* a bit stricter for mimics.. */
+		p_ptr->antimagic += r_ptr->level / 2 + 10;
+		p_ptr->antimagic_dis += r_ptr->level / 50 + 2;
+#endif
 	}
 
-	if(r_ptr->flags2 & RF2_WEIRD_MIND) p_ptr->reduce_insanity = 1;
-	if(r_ptr->flags2 & RF2_EMPTY_MIND) p_ptr->reduce_insanity = 2;
+	if((r_ptr->flags2 & RF2_WEIRD_MIND) ||
+	    (r_ptr->flags9 & RF9_RES_PSI))
+		p_ptr->reduce_insanity = 1;
+	if((r_ptr->flags2 & RF2_EMPTY_MIND) ||
+	    (r_ptr->flags9 & RF9_IM_PSI))
+		p_ptr->reduce_insanity = 2;
 
 	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
 	if(r_ptr->flags4 & RF4_BR_LITE) p_ptr->resist_lite = TRUE;
@@ -2575,7 +2622,7 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 	switch (p_ptr->pclass)
 	{
 							/* Adevnturer */
-		case CLASS_ADVENTURER: num = 4; wgt = 30; mul = 5; break;//wgt=35, but MA is too easy in comparison.
+		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 5; break;//wgt=35, but MA is too easy in comparison.
 //was num = 5; ; mul = 6
 							/* Warrior */
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
@@ -2611,9 +2658,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr)
 /* if he is to become a spellcaster, necro working on spell-kills:
 		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
     however, then Martial Arts would require massive nerfing too for this class (or being removed even).
-otherwise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
+otherwise, let's compromise for now: */	case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
 
-		case CLASS_MINDCRAFTER: num = 4; wgt = 30; mul = 4; break;//was 30,4
+		case CLASS_MINDCRAFTER: num = 5; wgt = 35; mul = 4; break;//was 4,30,4
 
 /*		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
 	}
@@ -2682,20 +2729,36 @@ int calc_blows_weapons(int Ind)
 	player_type *p_ptr = Players[Ind];
 	int num_blow = 0, blows1 = 0, blows2 = 0;
 
+
 	/* calculate blows with weapons (includes weaponmastery boni already) */
 
 	if (p_ptr->inventory[INVEN_WIELD].k_idx) blows1 = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
 	else if (p_ptr->inventory[INVEN_ARM].k_idx) blows1 = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
 	if (p_ptr->dual_wield) blows2 = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_ARM]);
 
+
+	/* apply dual-wield boni and calculations */
+
 	/* mediate for dual-wield */
-	if (p_ptr->dual_wield) num_blow = (blows1 + blows2) / 2;
+#if 0 /* round down? (see bpr bonus below too) (encourages bpr gloves/crit weapons - makes more sense?) */
+	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2) / 2;
+#else /* round up? (see bpr bonus below too) (encounrages crit gloves/bpr weapons) */
+	if (p_ptr->dual_wield && p_ptr->dual_mode) num_blow = (blows1 + blows2 + 1) / 2;
+#endif
 	else num_blow = blows1;
 
 	/* add dual-wield bonus if we wear light armour! */
-	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield)
+	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode)
+#if 0 /* if rounding down, add percentage bpr bonus maybe */
+//		num_blow += (1 + (num_blow - 1) / 5);
+		num_blow++;
+#else /* if rounding up, add fixed (ie small) bpr bonus! */
 //		num_blow += (1 + (num_blow - 1) / 5);  <- warriors could rightfully complain I think, mh.
 		num_blow++;
+#endif
+
+
+	/* done */
 
 	return num_blow;
 }
@@ -2749,7 +2812,7 @@ int calc_crit_obj(int Ind, object_type *o_ptr)
  *
  * This function induces various "status" messages.
  */
-void calc_bonuses(int Ind)
+void calc_boni(int Ind)
 {
 	cptr inscription = NULL;
 	
@@ -2990,34 +3053,6 @@ void calc_bonuses(int Ind)
 	/* Base skill -- digging */
 	p_ptr->skill_dig = 0;
 
-        /* Bonus +to_l from SKILL_HEALTH */
-#if 0
-	/* it's a bit too much, and doesn't feel 'smooth' at all IMHO, balance-wise :/
-	 Mainly because already strong chars can now get uber-tough - but.. see #else branch below..
-	 Also, +LIFE is mostly to give non-mimics a chance to catch up a bit to mimics,
-	 especially postking. Pre-king using a +LIFE weapon (only way) will be costly since it's
-	 a whole slot used up, which could otherwise give resistances or deal more damage from an
-	 artifact/ego weapon (archers have it easier than warriors though). */
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 30)
-	        to_life++;
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 40)
-	        to_life++;
-        if (get_skill(p_ptr, SKILL_HEALTH) >= 50)
-	        to_life++;
-#else 
-	/* instead let's make it an option to weak chars, instead of further buffing chars with don't
-         need it at all (warriors, druids, mimics, etc). However, now chars can get this AND +LIFE items.
-	 So in total it might be even more. A scale to 100 is hopefully ok. *experimental* */
-        p_ptr->to_hp += get_skill_scale(p_ptr, SKILL_HEALTH, 100);
-
-#ifdef ENABLE_DIVINE
-	if (p_ptr->prace == RACE_DIVINE && (p_ptr->divinity==DIVINE_DEMON)) {
-		p_ptr->to_hp += (p_ptr->lev-20)*2;
-	}
-#endif
-#endif
-
-
 
 	/* Calc bonus body */
 	if(p_ptr->body_monster)
@@ -3186,11 +3221,13 @@ void calc_bonuses(int Ind)
 		p_ptr->suscep_lite = TRUE;
 		p_ptr->suscep_good = TRUE;
 		p_ptr->suscep_life = TRUE;
+
+		p_ptr->resist_time = TRUE;
                 p_ptr->resist_dark = TRUE;
                 p_ptr->resist_neth = TRUE;
                 p_ptr->resist_pois = TRUE;
-                p_ptr->resist_cold = TRUE;
                 p_ptr->hold_life = TRUE;
+
                 if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10;
@@ -3233,13 +3270,18 @@ void calc_bonuses(int Ind)
 
 
 	if (p_ptr->pclass == CLASS_RANGER)
-	    if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->pass_trees = TRUE;
 
 	if (p_ptr->pclass == CLASS_SHAMAN)
-	    if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
+		if (p_ptr->lev >= 20) p_ptr->see_inv = TRUE;
 	
 	if (p_ptr->pclass == CLASS_DRUID)
-	    if (p_ptr->lev >= 10) p_ptr->pass_trees = TRUE;
+		if (p_ptr->lev >= 10) p_ptr->pass_trees = TRUE;
+
+	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+		if (p_ptr->lev >= 20) p_ptr->reduce_insanity = 2;
+		else if (p_ptr->lev >= 10) p_ptr->reduce_insanity = 1;
+	}
 
 	/* Check ability skills */
 	if (get_skill(p_ptr, SKILL_CLIMB) >= 1) p_ptr->climb = TRUE;
@@ -3251,8 +3293,13 @@ void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC))
 	{
 //		p_ptr->anti_magic = TRUE;	/* it means 95% saving-throw!! */
+#ifdef NEW_ANTIMAGIC_RATIO
+		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 50);
+		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
+#else
 		p_ptr->antimagic += get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 30);
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
+#endif
 	}
 
 	/* Ghost */
@@ -3351,9 +3398,13 @@ void calc_bonuses(int Ind)
 		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) continue;
 
 		/* MEGA ugly hack -- set spacetime distortion resistance */
-		if(o_ptr->name1 == ART_ANCHOR)
-		{
+		if (o_ptr->name1 == ART_ANCHOR) {
 			p_ptr->resist_continuum = TRUE;
+		}
+		/* another bad hack, for when Morgoth's crown gets its pval
+		   reduced experimentally, to keep massive +IV (for Q-quests^^): */
+		if (o_ptr->name1 == ART_MORGOTH) {
+			p_ptr->see_infra += 50;
 		}
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
@@ -3439,7 +3490,7 @@ void calc_bonuses(int Ind)
 #endif
 		}
 
-		/* bad hack, sorry. need redesign of bonusses - C. Blue
+		/* bad hack, sorry. need redesign of boni - C. Blue
 		   fixes the vampiric shadow blade bug / affects all +life +basestealth weapons:
 		   (+2)(-2stl) -> life remains unchanged, stealth is increased by 2:
 		   both mods affect the life! Correct mod affects the stealth, but it's displayed wrong.
@@ -3764,6 +3815,9 @@ void calc_bonuses(int Ind)
 		am_temp -= minus;
 		/* Weapons may not give more than 50% AM */
 		if (am_temp > 50) am_temp = 50;
+#ifdef NEW_ANTIMAGIC_RATIO
+		am_temp = (am_temp * 3) / 5;
+#endif
 		/* Choose item with biggest AM field we find */
 		if (am_temp > am_bonus) am_bonus = am_temp;
 
@@ -3857,7 +3911,11 @@ void calc_bonuses(int Ind)
 	}
 
 	p_ptr->antimagic += am_bonus;
+#ifdef NEW_ANTIMAGIC_RATIO
+	p_ptr->antimagic_dis += (am_bonus / 9);
+#else
 	p_ptr->antimagic_dis += (am_bonus / 15);
+#endif
 	
 	/* calculate higher to-life bonus from items / skills (non-stacking!) */
 	if (p_ptr->to_l < 0) p_ptr->to_l += to_life;
@@ -3873,13 +3931,16 @@ void calc_bonuses(int Ind)
 	if (p_ptr->luck_cur < -10) p_ptr->luck_cur = -10; /* luck caps at -10 */
 	if (p_ptr->luck_cur > 40) p_ptr->luck_cur = 40; /* luck caps at 40 */
 
-	if (p_ptr->prace == RACE_VAMPIRE) {
+	p_ptr->sun_burn = FALSE;
+	if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->ghost) {
 		/* damage from sun light */
 		if (!p_ptr->wpos.wz && !night_surface && //!(zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) &&
 		    !p_ptr->resist_lite && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_WRAPPING) &&
 		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) &&
-		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED))
+		    !(f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) {
 			p_ptr->drain_life++;
+			p_ptr->sun_burn = TRUE;
+		}
 	}
 
 	/* Calculate stats */
@@ -4838,7 +4899,7 @@ void calc_bonuses(int Ind)
 			p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 20);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) {
 			if (!p_ptr->inventory[INVEN_ARM].k_idx) p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 15);
-			else p_ptr->weapon_parry = 1 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);
+			else p_ptr->weapon_parry = 3 + get_skill_scale(p_ptr, SKILL_MASTERY, 7);
 		} else if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) {
 			if (!p_ptr->inventory[INVEN_ARM].k_idx || !p_ptr->inventory[INVEN_WIELD].k_idx)
 				p_ptr->weapon_parry = 10 + get_skill_scale(p_ptr, SKILL_MASTERY, 10);
@@ -4848,7 +4909,8 @@ void calc_bonuses(int Ind)
 		}
 		/* for dual-wielders, get a parry bonus for second weapon: */
 		if (p_ptr->dual_wield && !p_ptr->rogue_heavyarmor)
-			p_ptr->weapon_parry += get_skill_scale(p_ptr, SKILL_MASTERY, 10);
+			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
+			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
  #endif
 		/* adjust class-dependantly! */
 		switch (p_ptr->pclass) {
@@ -4970,7 +5032,7 @@ void calc_bonuses(int Ind)
 			/* Testing: added a new bonus. No more single digit dmg at lvl 20, I hope, esp as warrior. the_sandman */
 			/* Lowered to marts/2 */
 			/* changed by C. Blue, so it's available to mimics too */
-			p_ptr->to_d_melee+=20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
+			p_ptr->to_d_melee += 20 - (400 / (marts + 20)); /* get strong quickly and early - quite special ;-o */
 		}
 
 #if 0 /* already done further above! */		
@@ -5227,10 +5289,13 @@ void calc_bonuses(int Ind)
 		/* the following part punishes all +hit/+dam for ranged weapons;
         	   trained fighters suffer more than untrained ones! - C. Blue */
 		if (p_ptr->to_h_ranged >= 25) p_ptr->to_h_ranged = 0;
-		else p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
+		else if (p_ptr->to_h_ranged >= 0) p_ptr->to_h_ranged -= 10 + (p_ptr->to_h_ranged * 3) / 5;
+		else p_ptr->to_h_ranged -= 10;
+
  #if 0 /* Moltor agrees it's a bit too harsh probably */
 		if (p_ptr->to_d_ranged >= 15) p_ptr->to_d_ranged = 0;
-		else p_ptr->to_d_ranged -= 5 + (p_ptr->to_d_ranged * 2) / 3;
+		else if (p_ptr->to_d_ranged >= 0) p_ptr->to_d_ranged -= 5 + (p_ptr->to_d_ranged * 2) / 3;
+		else p_ptr->to_d_ranged -= 5;
  #endif
 #endif
 		p_ptr->awkward_shoot = TRUE;
@@ -5332,7 +5397,7 @@ void calc_bonuses(int Ind)
 	}
 
 	/* dual-wielding gets a slight to-hit malus */
-	if (p_ptr->dual_wield) p_ptr->to_h_melee = (p_ptr->to_h_melee * 17) / 20; /* 85% */
+	if (p_ptr->dual_wield && p_ptr->dual_mode) p_ptr->to_h_melee = (p_ptr->to_h_melee * 17) / 20; /* 85% */
 
 
 
@@ -5360,7 +5425,8 @@ void calc_bonuses(int Ind)
 #if 0 /* addition */
 	p_ptr->to_h_ranged += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
 #else /* multiplication (percent) */
-	p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+	if (p_ptr->to_h_ranged > 0) p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * adj_dex_th[p_ptr->stat_ind[A_DEX]]) / 100));
+	else p_ptr->to_h_ranged = ((int)((p_ptr->to_h_ranged * 100) / adj_dex_th[p_ptr->stat_ind[A_DEX]]));
 #endif
 
 
@@ -5535,7 +5601,7 @@ void calc_bonuses(int Ind)
 	if (get_skill(p_ptr, SKILL_NATURE) >= 30) p_ptr->pass_trees = TRUE;
 	if (get_skill(p_ptr, SKILL_NATURE) >= 40) p_ptr->can_swim = TRUE;
 	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
-	if (get_skill(p_ptr, SKILL_MIND) >= 40) p_ptr->reduce_insanity = 1;
+	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
 	if (get_skill(p_ptr, SKILL_MIND) >= 50) p_ptr->reduce_insanity = 2;
 	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) p_ptr->resist_time = TRUE;
 	if (get_skill(p_ptr, SKILL_UDUN) >= 30) p_ptr->res_tele = TRUE;
@@ -5547,7 +5613,6 @@ void calc_bonuses(int Ind)
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
 //	if (get_skill(p_ptr, SKILL_HCURING) >= 50) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
-
 
 
 
@@ -5896,9 +5961,9 @@ void update_stuff(int Ind)
 	if (p_ptr->update & PU_BONUS)
 	{
 		p_ptr->update &= ~(PU_BONUS);
-		/* Take off what is no more usable, BEFORE calculating bonusses */
+		/* Take off what is no more usable, BEFORE calculating boni */
 		do_takeoff_impossible(Ind);
-		calc_bonuses(Ind);
+		calc_boni(Ind);
 	}
 
 	if (p_ptr->update & PU_TORCH)
@@ -6013,6 +6078,15 @@ void redraw_stuff(int Ind)
 	{
 		p_ptr->redraw &= ~(PR_MAP);
 		prt_map(Ind);
+
+#ifdef CLIENT_SIDE_WEATHER 
+		/* hack: update weather if it was just a panel-change
+		   (ie level-sector) and not a level-change.
+		   Note: this could become like PR_WEATHER_PANEL,
+		   however, PR_ flags are already in use completely atm. */
+		if (p_ptr->panel_changed) player_weather(Ind, FALSE, FALSE, TRUE);
+#endif
+		p_ptr->panel_changed = FALSE;
 	}
 
 
@@ -6331,7 +6405,7 @@ int start_global_event(int Ind, int getype, char *parm)
 	time(&ge->started);
 	ge->paused = FALSE;
 	ge->paused_turns = 0; /* counter for real turns the event "missed" while being paused */
-	for (i = 0; i<64; i++) {/* yeah I could use WIPE.. */
+	for (i = 0; i < 64; i++) {/* yeah I could use WIPE.. */
 	        ge->state[i]=0;
 		ge->participant[i]=0;
 		ge->extra[i]=0;
@@ -6502,7 +6576,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 	/* check individual event restrictions against player */
 	switch (ge->getype) {
 	case GE_HIGHLANDER:	/* Highlander Tournament */
-		if (p_ptr->max_exp > 0) {
+		if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
 			msg_print(Ind, "\377ySorry, only newly created characters may sign up for this event.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -6785,7 +6859,7 @@ static void process_global_event(int ge_id)
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
 			if (ge->participant[j] == Players[i]->id) {
 				p_ptr = Players[i];
-				if (p_ptr->max_exp && !is_admin(p_ptr)) {
+				if ((p_ptr->max_exp || p_ptr->max_plv > 1) && !is_admin(p_ptr)) {
 					msg_print(i, "\377oCharacters need to have 0 experience to be eligible.");
 					ge->participant[j] = 0;
 					p_ptr->global_event_type[ge_id] = GE_NONE;
@@ -6966,6 +7040,12 @@ static void process_global_event(int ge_id)
 				inven_carry(j, o_ptr);
 
 				s_printf("%s EVENT_WON: %s wins %d (%s)\n", showtime(), p_ptr->name, ge_id+1, ge->title);
+
+				/* avoid him dying */
+				set_poisoned(j, 0, 0);
+				set_cut(j, 0, 0);
+				set_food(j, PY_FOOD_FULL);
+				hp_player_quiet(j, 5000, TRUE);
 
 				ge->state[0] = 6;
 				ge->state[1] = elapsed;
@@ -7163,33 +7243,6 @@ void update_check_file(void)
 	}
 }
 
-/*
- * Update current_* item indeces when items are being slided in the inventory - mikaelh
- */
-void update_current_items_slide(int Ind, int start, int mod, int end)
-{
-	player_type *p_ptr = Players[Ind];
-
-#define slide_item_index(X) \
-	if (p_ptr->X != -1 && p_ptr->X >= start && p_ptr->X <= end) p_ptr->X += mod
-
-	slide_item_index(current_rod);
-	slide_item_index(current_activation);
-}
-
-/*
- * Update any indeces when moving an item in the inventory - mikaelh
- */
-void update_current_items_move(int Ind, int slot, int new_slot)
-{
-	player_type *p_ptr = Players[Ind];
-
-#define move_item_index(X) \
-	if (p_ptr->X == slot) p_ptr->X = new_slot
-
-	move_item_index(current_rod);
-	move_item_index(current_activation);
-}
 
 /*
  * Clear all current_* variables used by Handle_item() - mikaelh
@@ -7226,6 +7279,7 @@ void calc_techniques(int Ind) {
 	case CLASS_ADVENTURER:
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001; /* Sprint */
 		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
+//		if (p_ptr->lev >= 22) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		Send_technique_info(Ind);
 		return;	
 	case CLASS_ROGUE:
@@ -7233,11 +7287,16 @@ void calc_techniques(int Ind) {
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
 		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0100; /* Distract */
 		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0200; /* Flash bomb */
+//		if (p_ptr->lev >= 18) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
 		Send_technique_info(Ind);
 		return;	
-	case CLASS_WARRIOR: m = 0; break;
-	case CLASS_RANGER: m = 4; break;
+	case CLASS_WARRIOR:
+//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
+		m = 0; break;
+	case CLASS_RANGER:
+//		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
+		m = 4; break;
 	case CLASS_PALADIN: m = 7; break;
 	case CLASS_MIMIC: m = 11; break;
 	}
@@ -7245,7 +7304,7 @@ void calc_techniques(int Ind) {
 	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= 0x0001; /* Sprint */
 	if (get_skill(p_ptr, SKILL_STANCE) >= 9 + m) p_ptr->melee_techniques |= 0x0002; /* Taunt */
 	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= 0x0004; /* Spin */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 25 + m) p_ptr->melee_techniques |= 0x0008; /* Berserk */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 33 + m) p_ptr->melee_techniques |= 0x0008; /* Berserk */
 
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= 0x0001; /* Flare missile */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= 0x0002; /* Precision shot */
@@ -7254,4 +7313,43 @@ void calc_techniques(int Ind) {
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= 0x0010; /* Barrage */
 
 	Send_technique_info(Ind);
+}
+
+/* helper function to provide shortcut for checking for mind-linked player.
+   flags == 0x0 means 'accept all flags'. */
+int get_esp_link(int Ind, u32b flags, player_type **p2_ptr) {
+	player_type *p_ptr = Players[Ind];
+	int Ind2 = 0;
+	(*p2_ptr) = NULL;
+
+	if (p_ptr->esp_link_type &&
+	    p_ptr->esp_link &&
+	    ((p_ptr->esp_link_flags & flags) || flags == 0x0)) {
+		Ind2 = find_player(p_ptr->esp_link);
+		if (!Ind2) {
+			end_mind(Ind, FALSE);
+		} else {
+			(*p2_ptr) = Players[Ind2];
+		}
+	}
+	return Ind2;
+}
+/* helper function to provide shortcut for controlling mind-linked player.
+   flags == 0x0 means 'accept all flags'. */
+//void use_esp_link(int *Ind, u32b flags, player_type *p_ptr) {
+void use_esp_link(int *Ind, u32b flags) {
+	int Ind2;
+//	p_ptr = Players[*Ind];
+	player_type *p_ptr = Players[(*Ind)];
+
+	if (p_ptr->esp_link_type &&
+	    p_ptr->esp_link &&
+	    ((p_ptr->esp_link_flags & flags) || flags == 0x0)) {
+		Ind2 = find_player(p_ptr->esp_link);
+		if (!Ind2) end_mind((*Ind), FALSE);
+		else {
+//			p_ptr = Players[Ind2];
+			(*Ind) = Ind2;
+		}
+	}
 }

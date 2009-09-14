@@ -43,12 +43,14 @@
  */
 //#define STUPID_MONSTERS
 
+
 #ifndef STUPID_MONSTERS
+
 /* radius that every fleeing/hiding monster scans for safe place.
  * if bottle-neckie, reduce this value. [10]
  * set to 0 to disable it.
  */
-#define		SAFETY_RADIUS	8
+ #define		SAFETY_RADIUS	8
  
 /* INDIRECT_FREQ does the following:
  *
@@ -70,10 +72,10 @@
 /* Chance of an out-of-sight monster to cast a spell, in percent.
  * reducing this also speeds the server up. [50]
  */
-#define		INDIRECT_FREQ	50
+ #define		INDIRECT_FREQ	50
  
 /* pseudo 'radius' for summoning spells. default is 3.  */
-#define		INDIRECT_SUMMONING_RADIUS	2
+ #define		INDIRECT_SUMMONING_RADIUS	2
 
 /* if defined, a monster will simply choose the spell by RNG and
  * never hesitate to shoot its friends.
@@ -85,12 +87,12 @@
  * Animal packs try to get the player out of corridors
  * (...unless they can move through walls -- TY)
  */
-#define MONSTERS_HIDE_HEADS
+ #define MONSTERS_HIDE_HEADS
 
 /* horde of monsters will try to surround the player.
  * very fast and recommended.
  */
-#define MONSTERS_HEMM_IN
+ #define MONSTERS_HEMM_IN
 
 /*
  * Chance of monsters that have TAKE_ITEM heading for treasures around them
@@ -99,20 +101,19 @@
  * If defined (even 0), monsters will also 'stand still' when a pile of items
  * is below their feet.
  */ 
-#define		MONSTERS_GREEDY	30
-
+ #define		MONSTERS_GREEDY	30
 
 #else	// STUPID_MONSTERS
-/* disable everything */
-#define	SAFETY_RADIUS	0
-#define	INDIRECT_FREQ	0
-#define	INDIRECT_SUMMONING_RADIUS	0
-//#define	STUPID_Q
-#define	STUPID_MONSTER_SPELLS
-//#define		MONSTERS_GREEDY	30
-//#define MONSTERS_HIDE_HEADS
-//#define MONSTERS_HEMM_IN
 
+/* disable everything */
+ #define SAFETY_RADIUS	0
+ #define INDIRECT_FREQ	0
+ #define INDIRECT_SUMMONING_RADIUS	0
+// #define STUPID_Q
+ #define STUPID_MONSTER_SPELLS
+// #define MONSTERS_GREEDY	30
+// #define MONSTERS_HIDE_HEADS
+// #define MONSTERS_HEMM_IN
 
 #endif // STUPID_MONSTERS
 
@@ -1707,7 +1708,7 @@ bool make_attack_spell(int Ind, int m_idx)
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
 
-	int eff_m_hp;
+//	int eff_m_hp;
 
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
 	cave_type **zcave;
@@ -1886,7 +1887,7 @@ bool make_attack_spell(int Ind, int m_idx)
 #ifndef	STUPID_MONSTER_SPELLS
 	/* Check for a clean bolt shot */
 	if (!direct ||
-		((f4&(RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6&(RF6_BOLT_MASK) || f0&(RF0_BOLT_MASK)) &&
+		((f4 & (RF4_BOLT_MASK) || f5 & (RF5_BOLT_MASK) || f6 & (RF6_BOLT_MASK) || f0 & (RF0_BOLT_MASK)) &&
 		 !stupid && !clean_shot(wpos, m_ptr->fy, m_ptr->fx, y, x, MAX_RANGE)))
 	{
 		/* Remove spells that will only hurt friends */
@@ -2206,7 +2207,7 @@ bool make_attack_spell(int Ind, int m_idx)
 			if (blind) msg_print(Ind, "You hear a strange noise.");
 //			else msg_format(Ind, "%^s fires a missile.", m_name);
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-			bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6));
+			bolt(Ind, m_idx, GF_MISSILE, damroll(dice, 6));
 			break;
 		}
 
@@ -2733,7 +2734,7 @@ if (season_halloween) {
 			}
 			else
 			{
-				msg_print(Ind, "Your mind is blasted by psionic energy.");
+				msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 				if (!p_ptr->resist_conf)
 				{
 					(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
@@ -2769,7 +2770,7 @@ if (season_halloween) {
 			}
 			else
 			{
-				msg_print(Ind, "Your mind is blasted by psionic energy.");
+				msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 				//				take_hit(Ind, damroll(12, 15), ddesc, 0);
 				take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
 				if (!p_ptr->resist_blind)
@@ -3302,7 +3303,7 @@ if (season_halloween) {
 
 			/* Message */
 			if (visible){
-				disturb(Ind, 1, 0);
+//				disturb(Ind, 1, 0);
 				if (blind)
 				{
 					msg_format(Ind, "%^s mumbles.", m_name);
@@ -3499,9 +3500,11 @@ if (season_halloween) {
 */
 			disturb(Ind, 1, 0);
 			if (!streq(m_name, "Zu-Aon, The Cosmic Border Guard")) { /* can always TELE_TO */
+				int chance = (195 - p_ptr->skill_sav) / 2;
+				if (p_ptr->res_tele) chance = 50;
 				/* Hack -- duplicated check to avoid silly message */
 				if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) ||
-				    (p_ptr->res_tele && (rand_int(100) < 67)) || (rand_int(100 + 50) < p_ptr->skill_sav))
+				    magik(chance))
 				{
 					msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
 					break;
@@ -3515,6 +3518,9 @@ if (season_halloween) {
 		/* RF6_TELE_AWAY */
 		case RF6_OFFSET+9:
 		{
+			int chance = (195 - p_ptr->skill_sav) / 2;
+			if (p_ptr->res_tele) chance = 50;
+
 			if (monst_check_antimagic(Ind, m_idx)) break;
 
 			/* No teleporting within no-tele vaults and such */
@@ -3532,7 +3538,7 @@ if (season_halloween) {
 */
 			disturb(Ind, 1, 0);
 			/* Hack -- duplicated check to avoid silly message */
-			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || (p_ptr->res_tele && (rand_int(100) < 67)))
+			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || magik(chance))
 			{
 				msg_format(Ind, "%^s tries to teleport you away in vain.", m_name);
 				break;
@@ -4075,10 +4081,10 @@ int mon_will_run(int Ind, int m_idx)
 	long m_chp, m_mhp;
 	u32b p_val, m_val;
 
-	/* Hack -- aquatic life outa water */
-	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE); // I'll run instead!
+	if(!(zcave=getcave(&m_ptr->wpos))) return(FALSE);
 
-#if 0
+#if 0 // I'll run instead!
+	/* Hack -- aquatic life outa water */
 	if (zcave[m_ptr->fy][m_ptr->fx].feat != FEAT_DEEP_WATER)
 	{
 		if (r_ptr->flags7 & RF7_AQUATIC) return (TRUE);
@@ -4086,11 +4092,12 @@ int mon_will_run(int Ind, int m_idx)
 	else
 	{
 		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
-				!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
+		    !(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY) ))
 			return(TRUE);
 	}
 #else	// 0
-	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr)) return (TRUE);
+	if (!monster_can_cross_terrain(zcave[m_ptr->fy][m_ptr->fx].feat, r_ptr))
+		return (TRUE);
 #endif	// 0
 
 #endif
@@ -4101,7 +4108,10 @@ int mon_will_run(int Ind, int m_idx)
 	/* All "afraid" monsters will run away */
 	if (m_ptr->monfear) return (TRUE);
 
-#ifdef ALLOW_TERROR
+#ifdef ALLOW_TERROR /* player level >> monster level -> 'terror' */
+	/* only if monster has a mind */
+	if ((r_ptr->flags3 & RF3_NONLIVING) || (r_ptr->flags2 & RF2_EMPTY_MIND))
+		return(FALSE);
 
 	/* Nearby monsters will not become terrified */
 	if (m_ptr->cdis <= 5) return (FALSE);
@@ -6908,7 +6918,9 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Tavern entrance? */
 //		if (c_ptr->feat == FEAT_SHOP_TAIL - 1)
-		if (c_ptr->feat == FEAT_SHOP)
+		/* Shops only protect on world surface, dungeon shops are dangerous!
+		   (optional alternative: make player unable to attack while in shop in turn) */
+		if (c_ptr->feat == FEAT_SHOP && wpos->wz == 0)
 		{
 			/* Nothing */
 		}
@@ -6923,7 +6935,7 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Tainted grid? */
 		else if (!(m_ptr->ai_state & AI_STATE_EFFECT) &&
-				!monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
+		    !monster_is_safe(m_idx, m_ptr, r_ptr, c_ptr))
 		{
 			/* Nothing */
 		}
@@ -6990,14 +7002,14 @@ static void process_monster(int Ind, int m_idx)
 		/* Permanent wall */
 		/* Hack: Morgy DIGS!! */
 //		else if ( (c_ptr->feat >= FEAT_PERM_EXTRA &&
-		else if (	(	(f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
-				    !(	(r_ptr->flags2 & RF2_KILL_WALL) &&
-					(r_ptr->flags2 & RF2_PASS_WALL) &&
-					(c_ptr->feat != FEAT_PERM_SOLID) &&
-					!rand_int(100)	)	)
-				|| (c_ptr->feat == FEAT_PERM_CLEAR)
-				|| (c_ptr->feat == FEAT_HOME)
-				|| (c_ptr->feat == FEAT_WALL_HOUSE)	)
+		else if (((f_info[c_ptr->feat].flags1 & FF1_PERMANENT) &&
+		    !((r_ptr->flags2 & RF2_KILL_WALL) &&
+		    (r_ptr->flags2 & RF2_PASS_WALL) &&
+		    (c_ptr->feat != FEAT_PERM_SOLID) &&
+		    !rand_int(100)))
+		    || (c_ptr->feat == FEAT_PERM_CLEAR)
+		    || (c_ptr->feat == FEAT_HOME)
+		    || (c_ptr->feat == FEAT_WALL_HOUSE))
 		{
 			/* Nothing */
 		}
@@ -7264,30 +7276,33 @@ static void process_monster(int Ind, int m_idx)
 					non_distracting_targets++;
 					p_idx_non_distracting[non_distracting_targets] = -cd_ptr->m_idx;
 
-					/* remember whether player's class is vulnerable or tough */
+					/* remember whether player's class is vulnerable or tough in melee situation.
+					   a pretty rough estimate, since skills are not taken into account at all. */
 					switch (pd_ptr->pclass) {
 					case CLASS_WARRIOR:
 					case CLASS_PALADIN:
 					case CLASS_DRUID:
-
-					case CLASS_ROGUE:
 					case CLASS_MIMIC:
-					case CLASS_RANGER:
+
+					case CLASS_ROGUE: /* todo maybe: might be medium target if not crit-hitter/intercepter? */
+					case CLASS_RANGER: /* todo maybe: might be medium target if rather spell/ranged focussed? */
 						strong_targets++;
 						p_idx_strong[strong_targets] = -cd_ptr->m_idx;
 						break;
 
 					case CLASS_ARCHER:
 
-					case CLASS_ADVENTURER:
-					case CLASS_SHAMAN:
 					case CLASS_RUNEMASTER:
 					case CLASS_MINDCRAFTER:
+
+					case CLASS_ADVENTURER: /* todo maybe: depends on mimic form */
+					case CLASS_SHAMAN: /* todo maybe: depends on mimic form */
 						medium_targets++;
 						p_idx_medium[medium_targets] = -cd_ptr->m_idx;
 						break;
+
 					case CLASS_MAGE:
-					case CLASS_PRIEST:
+					case CLASS_PRIEST: /* todo maybe: actually, priests can be skilled to make medium targets? */
 						weak_targets++;
 						p_idx_weak[weak_targets] = -cd_ptr->m_idx;
 						break;
@@ -7393,9 +7408,9 @@ static void process_monster(int Ind, int m_idx)
 			{
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-						(cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
-						magik(10) &&
-						(r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
+				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
+				    magik(10) &&
+				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
 				{
 					/* Allow movement */
 					do_move = TRUE;
@@ -8002,7 +8017,7 @@ static void process_monster_pet(int Ind, int m_idx)
 		/* Tavern entrance? */
 		if (c_ptr->feat == FEAT_SHOP)
 		{
-			do_move = TRUE;	
+			do_move = TRUE;
 		}
 
 #if 0
@@ -8766,17 +8781,19 @@ cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
  
 void process_monsters(void)
 {
-	int			k, i, e, pl, tmp, j;
-	int			fx, fy;
+	int		k, i, e, pl, tmp, j;
+	int		fx, fy;
 
 	bool		test;
 
-	int closest, dis_to_closest, lowhp;
-	bool blos, new_los; 
+	int		closest, dis_to_closest, lowhp;
+	bool		blos, new_los; 
 
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
-	player_type *p_ptr;
+	player_type	*p_ptr;
+	bool		reveal_cloaking, spot_cloaking;
+	char		m_name[80];
 
 	/* maybe better do in dungeon()?	- Jir - */
 #ifdef PROJECTION_FLUSH_LIMIT
@@ -8854,31 +8871,37 @@ void process_monsters(void)
 
 		/* Find the closest player */
 		for (pl = 1; pl < NumPlayers + 1; pl++) 
-		{ 
-			p_ptr = Players[pl]; 
+		{
+			p_ptr = Players[pl];
+			reveal_cloaking = spot_cloaking = FALSE;
 
-			/* Only check him if he is playing */ 
-			if (p_ptr->conn == NOT_CONNECTED) 
-				continue; 
+			/* Only check him if he is playing */
+			if (p_ptr->conn == NOT_CONNECTED)
+				continue;
 
-			/* Make sure he's on the same dungeon level */ 
+			/* Make sure he's on the same dungeon level */
 			if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
-				continue; 
+				continue;
 
 			/* Hack -- Skip him if he's shopping -
 			   in a town, so dungeon stores aren't cheezy */
 			if ((p_ptr->store_num != -1) && (p_ptr->wpos.wz == 0))
-				continue; 
+				continue;
 
-			/* Hack -- make the dungeon master invisible to monsters */ 
-//			if (p_ptr->admin_dm) continue; 
+			/* Hack -- make the dungeon master invisible to monsters */
+//			if (p_ptr->admin_dm) continue;
 			if (p_ptr->admin_dm && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) continue; /* for Dungeon Master GF_DOMINATE */
 
-			/* Monsters serve a king on his land they dont attack him */ 
-			// if (player_is_king(pl)) continue; 
+			/*
+			 * Hack -- Ignore players that have died or left
+			 * as suggested by PowerWyrm - mikaelh */
+			if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) continue;
 
-			/* Compute distance */ 
-			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx); 
+			/* Monsters serve a king on his land they dont attack him */
+			// if (player_is_king(pl)) continue;
+
+			/* Compute distance */
+			j = distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
 
 		        /* Change monster's highest player encounter - mode 3: monster is awake and player is within its area of awareness */
 			if (cfg.henc_strictness == 3 && !m_ptr->csleep) {
@@ -8890,11 +8913,11 @@ void process_monsters(void)
 				}
 			}
 
-			/* Skip if the monster can't see the player */ 
+			/* Skip if the monster can't see the player */
 //			if (player_invis(pl, m_ptr, j)) continue;	/* moved */
 
-			/* Glaur. Check if monster has LOS to the player */ 
-			new_los=los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy,m_ptr->fx);
+			/* Glaur. Check if monster has LOS to the player */
+			new_los = los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx);
 
 			/*	if (p_ptr->ghost)
 				if (!new_los)
@@ -8903,46 +8926,63 @@ void process_monsters(void)
 			/* Glaur. Check that the closest VISIBLE target gets selected, 
 			   if no visible one available just take the closest*/ 
 			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) 
-				continue; 
+				continue;
 
 			/* Glaur. Skip if same distance and stronger and same visibility*/
 			if ((j == dis_to_closest) && (p_ptr->chp > lowhp) && (blos == new_los))
-				continue; 
+				continue;
 			
 			/* Skip if player wears amulet of invincibility - C. Blue */
 			if ((p_ptr->inventory[INVEN_NECK].tval == TV_AMULET) &&
 			    (p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY)
 			    && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) /* for Dungeon Master GF_DOMINATE */
 				continue;
-			
+
 			/* can spot/uncloak cloaked player? */
 			if (p_ptr->cloaked == 1 && !p_ptr->cloak_neutralized) {
 				if (strchr("eAN", r_ptr->d_char) ||
 				    ((r_ptr->flags1 & RF1_UNIQUE) && (r_ptr->flags2 & RF2_SMART) && (r_ptr->flags2 & RF2_POWERFUL)) ||
-				    (r_ptr->flags7 & RF7_NAZGUL)
-				    ) {
+				    (r_ptr->flags7 & RF7_NAZGUL)) {
 #if 0 /* no reason to go this far I think, just attacking the player as usual should be enough - C. Blue */
-					monster_desc(pl, m_name, i, 0);
-				    	msg_format(pl, "\377r%^s reveals your presence!", m_name);
-					break_cloaking(pl, 0);
+					reveal_cloaking = TRUE;
 #endif
 				} else /* can't see cloaked player? */
 					continue;
 			}
 #if 0 /* maybe doesn't make sense that spotting an action drops camouflage */
 			else if (p_ptr->cloaked == 1 && new_los && !m_ptr->csleep && !strchr(",ijlmrsvwzFIQ", r_ptr->d_char) {
+				spot_cloaking = TRUE;
+			}
+#endif
+
+			/* Skip if under mindcrafter charm spell - C. Blue */
+			if (m_ptr->charmedignore) {
+				/* out of range? */
+				if (j > 20 || j > r_ptr->aaf) {
+					Players[m_ptr->charmedignore]->mcharming--;
+					m_ptr->charmedignore = 0;
+				/* monster gets a sort of saving throw */
+				} else if (test_charmedignore(pl, m_ptr->charmedignore, m_ptr->r_idx))
+					continue;
+			}
+
+			if (reveal_cloaking) {
+				monster_desc(pl, m_name, i, 0);
+			    	msg_format(pl, "\377r%^s reveals your presence!", m_name);
+				break_cloaking(pl, 0);
+			}
+			else if (spot_cloaking) {
 				monster_desc(pl, m_name, i, 0);
 			    	msg_format(pl, "\377o%^s spots your actions!", m_name);
 				break_cloaking(pl, 0); /* monster reveals our presence */
 			}
-#endif
 
-			/* Remember this player */ 
-			blos = new_los; 
-			dis_to_closest = j; 
-			closest = pl; 
+			/* Remember this player */
+			blos = new_los;
+			dis_to_closest = j;
+			closest = pl;
 			lowhp = p_ptr->chp;
-		} 
+		}
 		
 		/* Paranoia -- Make sure we found a closest player */
 		if (closest == -1)
@@ -9052,9 +9092,6 @@ void process_monsters(void)
 			int p = find_player(m_ptr->owner);
 			process_monster_golem(p, i);
 		}
-
-		/* Hack -- notice death or departure */
-		if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) break;
 	}
 
 	/* Only when needed, every five game turns */
@@ -9076,8 +9113,9 @@ void process_monsters(void)
 			/* Skip non-multi-hued monsters */
 //			if (!(r_ptr->flags1 & RF1_ATTR_MULTI)) continue;
 			if (!((r_ptr->flags1 & RF1_ATTR_MULTI) ||
-					(r_ptr->flags1 & RF1_UNIQUE) ||
-					(m_ptr->ego) )) continue;
+			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
+			    (r_ptr->flags1 & RF1_UNIQUE) ||
+			    (m_ptr->ego) )) continue;
 
 			/* Shimmer Multi-Hued Monsters */
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);

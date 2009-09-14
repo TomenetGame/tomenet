@@ -250,7 +250,7 @@ s32b num_houses = 0;
 s32b house_alloc = 0;
 
 /* An array to access a Player's ID */
-long GetInd[MAX_ID];
+int GetInd[MAX_ID];
 
 /* Buffer to hold the current savefile name */
 //char savefile[MAX_PATH_LENGTH];
@@ -783,6 +783,8 @@ int updated_savegame_birth = 0;
 /* like 'updated_savegame' is for players, this is for (lua) server state [0].
    usually modified by lua (server_startup()) instead of here. */
 int updated_server = 0;
+/* for automatic artifact resets via lua */
+int artifact_reset = 0;
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
@@ -821,6 +823,9 @@ byte season = SEASON_WINTER;
 #else
 byte season = SEASON_SPRING; /* default is spring on server startup */
 #endif
+
+
+/* SERVER-SIDE WEATHER AND GLOBAL CLIENT-SIDE WEATHER: */
 /* for snowfall during WINTER_SEASON mainly */
 int weather = 0;
 int weather_duration = 0;
@@ -831,6 +836,23 @@ byte weather_frequency = 2; /* <never rain/snow> 0..4 <always rain/snow> ; [2] *
 #endif
 int wind_gust = 0;
 int wind_gust_delay = 0;
+
+
+/* NON-GLOBAL, CLIENT-SIDE WEATHER: */
+/* moving clouds, partially buffered client-side */
+int cloud_x1[MAX_CLOUDS], cloud_y1[MAX_CLOUDS], cloud_x2[MAX_CLOUDS], cloud_y2[MAX_CLOUDS], cloud_dsum[MAX_CLOUDS];
+int cloud_xm100[MAX_CLOUDS], cloud_ym100[MAX_CLOUDS], cloud_mdur[MAX_CLOUDS], cloud_xfrac[MAX_CLOUDS], cloud_yfrac[MAX_CLOUDS];
+int cloud_dur[MAX_CLOUDS], cloud_state[MAX_CLOUDS];
+int clouds; /* tracking variable */
+/* Winds. Moving clouds and determining direction and speed of raindrops and snowflakes.
+   Winds affect a very large area, so we need only few of them.
+   It's efficient if we reduce the possible winds a bit, sufficient should be:
+   For raindrops and snowflakes:
+    Just west and east.
+   For cloud movement:
+    All sorts of directions, todo: implement. */
+int wind_dur[16], wind_dir[16];
+
 
 /* special seasons */
 int season_halloween = 0;
@@ -845,10 +867,8 @@ char last_chat_line[160];  /* What was said */
 char last_chat_owner[20]; /* Who said it */
 // char last_chat_prev[160];  /* What was said before the above*/
 
-#ifdef AUCTION_SYSTEM
 auction_type *auctions;
-int auction_alloc;
-#endif
+s32b auction_alloc;
 
 int store_debug_mode = 0, store_debug_quickmotion = 10, store_debug_startturn = 0;
 
@@ -859,3 +879,6 @@ int lite_later_num;
 
 /* Timers for specific events - C. Blue */
 int timer_pvparena1 = 1, timer_pvparena2 = 1, timer_pvparena3 = 0; /* defaults */
+
+/* Recall-shutdown timer for /shutrec */
+int shutdown_recall_timer = 0, shutdown_recall_state = 0;

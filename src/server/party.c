@@ -121,7 +121,7 @@ int invalidate(char *name){
 	c_acc = GetAccount(name, NULL, 1);
 	if (!c_acc) return(0);
 
-	if (!c_acc->flags & (ACC_TRIAL | ACC_NOSCORE)) effect = TRUE;
+	if (!(c_acc->flags & (ACC_TRIAL | ACC_NOSCORE))) effect = TRUE;
 	c_acc->flags |= (ACC_TRIAL | ACC_NOSCORE);
 	WriteAccount(c_acc, FALSE);
 	memset((char *)c_acc->pass, 0, 20);
@@ -296,11 +296,11 @@ bool check_account(char *accname, char *c_name){
 		   NOT equal to the first character of this account, don't allow it!
 		   (To restrict players to only 1 character per account! - C. Blue) */
 //s_printf("chars = %d\n", chars);
-#if 0
+ #if 0
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0]))) {
-#else /* allow multiple chars for admins, even on RPG server */
+ #else /* allow multiple chars for admins, even on RPG server */
 		if ((chars > 0) && strcmp(c_name, lookup_player_name(id_list[0])) && !(l_acc->flags & ACC_ADMIN)) {
-#endif
+ #endif
 //s_printf("return FALSE\n");
 			if (chars) C_KILL(id_list, chars, int);
 			return(FALSE);
@@ -463,11 +463,11 @@ int guild_create(int Ind, cptr name){
 		if(p_ptr->admin_dm){
 			/* make the guild key */
 			invcopy(o_ptr, lookup_kind(TV_KEY, 2));
-			o_ptr->number=1;
-			o_ptr->pval=index;
-			o_ptr->level=1;
-			o_ptr->owner=p_ptr->id;
-			o_ptr->owner_mode=p_ptr->mode;
+			o_ptr->number = 1;
+			o_ptr->pval = index;
+			o_ptr->level = 1;
+			o_ptr->owner = p_ptr->id;
+			o_ptr->owner_mode = p_ptr->mode;
 			object_known(o_ptr);
 			object_aware(Ind, o_ptr);
 			(void)inven_carry(Ind, o_ptr);
@@ -508,11 +508,11 @@ int guild_create(int Ind, cptr name){
 
 	/* make the guild key */
 	invcopy(o_ptr, lookup_kind(TV_KEY, 2));
-	o_ptr->number=1;
-	o_ptr->pval=index;
-	o_ptr->level=1;
-	o_ptr->owner=p_ptr->id;
-	o_ptr->owner_mode=p_ptr->mode;
+	o_ptr->number = 1;
+	o_ptr->pval = index;
+	o_ptr->level = 1;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->owner_mode = p_ptr->mode;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
@@ -520,11 +520,11 @@ int guild_create(int Ind, cptr name){
 	/* Give the guildmaster some scrolls for a hall */
 #if 0	//scrolls are broken
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
-	o_ptr->number=6;
-	o_ptr->level=p_ptr->lev;
-	o_ptr->owner=p_ptr->id;
-	o_ptr->owner_mode=p_ptr->mode;
-	o_ptr->discount=50;
+	o_ptr->number = 6;
+	o_ptr->level = p_ptr->lev;
+	o_ptr->owner = p_ptr->id;
+	o_ptr->owner_mode = p_ptr->mode;
+	o_ptr->discount = 50;
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
@@ -533,11 +533,11 @@ int guild_create(int Ind, cptr name){
 	strcpy(guilds[index].name, name);
 
 	/* Set guildmaster */
-	guilds[index].master=p_ptr->id;
+	guilds[index].master = p_ptr->id;
 
 	/* Add the owner as a member */
 	p_ptr->guild = index;
-	guilds[index].members=1;
+	guilds[index].members = 1;
 	return(TRUE);
 }
 
@@ -704,7 +704,7 @@ int party_create_ironteam(int Ind, cptr name)
 	int index = 0, i, oldest = turn;
 
 	/* Only newly created characters can create an iron team */
-	if (p_ptr->max_exp > 0)
+	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1)
 	{
 		msg_print(Ind, "\377yOnly newly created characters without experience can create an iron team.");
 		return FALSE;
@@ -905,7 +905,7 @@ int party_add(int adder, cptr name)
 	}
 
 	/* Only newly created characters can create an iron team */
-        if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0))
+        if ((parties[party_id].mode & PA_IRONTEAM) && (p_ptr->max_exp > 0 || p_ptr->max_plv > 1))
         {
 	        msg_print(Ind, "\377yOnly newly created characters without experience can join an iron team.");
 		return FALSE;
@@ -1499,6 +1499,13 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			continue;
 		if (p_ptr->ghost)	/* no exp, but take share */
 			continue;
+		/* Winners and non-winners don't share experience!
+		   This is actually important because winners get special features
+		   such as super heavy armour and royal stances which are aimed at
+		   nether realm, and are not meant to influence pre-king gameplay. */
+		if (Players[Ind]->total_winner &&
+		    !(p_ptr->total_winner || p_ptr->once_winner))
+			continue;
 
 		/* Check for existance in the party */
                 if (player_in_party(party_id, i) && (inarea(&p_ptr->wpos, wpos)) && players_in_level(Ind, i))
@@ -1621,7 +1628,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 /*
  * Add a player to another player's list of hostilities.
  */
-bool add_hostility(int Ind, cptr name)
+bool add_hostility(int Ind, cptr name, bool initiator)
 {
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	hostile_type *h_ptr;
@@ -1643,7 +1650,11 @@ bool add_hostility(int Ind, cptr name)
 	}
 	
 	/* log any attempts */
-	s_printf("HOSTILITY: %s attempts to declare war.\n", p_ptr->name);
+	if (initiator)
+		s_printf("HOSTILITY: %s attempts to declare war.\n", p_ptr->name);
+	/* prevent log spam from stormbringer */
+	else if (!istown(&p_ptr->wpos))
+		s_printf("HOSTILITY: %s attempts to declare war in return.\n", p_ptr->name);
 
 	if (cfg.use_pk_rules == PK_RULES_DECLARE)
 	{
@@ -1986,9 +1997,11 @@ bool check_hostile(int attacker, int target)
 		return(TRUE);
 	}
 
-	/* towns are safe-zones for ALL players */
-	if (istown(&q_ptr->wpos) ||
-	    istown(&p_ptr->wpos)) return(FALSE);
+	/* towns are safe-zones for ALL players - except for blood bond */
+	if ((istown(&q_ptr->wpos) || istown(&p_ptr->wpos)) &&
+	    (!check_blood_bond(attacker, target) ||
+	     p_ptr->afk || q_ptr->afk))
+		return(FALSE);
 	/* outside of towns, PvP-mode means auto-hostility! */
 	else if ((q_ptr->mode & MODE_PVP) &&
 	    (p_ptr->mode & MODE_PVP)) return(TRUE);
@@ -2705,7 +2718,6 @@ void scan_accounts(){
 void rename_player_name(char *pnames){
 	int slot;
 	hash_entry *ptr;
-	object_type *o_ptr;
 	char pname[40], nname[40];
 	int pos, i;
 
@@ -3228,25 +3240,50 @@ void strip_true_arts_from_hashed_players(){
 			
         s_printf("Starting player true artifact stripping\n");
         for(slot=0; slot<NUM_HASH_ENTRIES;slot++){
-                j++;
-		//              if (j > 5) break;/*only check for 5 players right now */
+		j++;
+//		if (j > 5) break;/*only check for 5 players right now */
 
-	        ptr=hash_table[slot];
-	        if (!ptr) continue;
-	        s_printf("Stripping player: %s\n", ptr->name);
-	        /* Wipe Artifacts (s)he had  -C. Blue */
-	        for (i = 0; i < o_max; i++)
-	        {
-	                o_ptr = &o_list[i];
-	                if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id) &&
-                            !(multiple_artifact_p(o_ptr) || o_ptr->name1 == ART_PHASING))
+		ptr=hash_table[slot];
+		if (!ptr) continue;
+		s_printf("Stripping player: %s\n", ptr->name);
+		/* Wipe Artifacts (s)he had  -C. Blue */
+		for (i = 0; i < o_max; i++) {
+			o_ptr = &o_list[i];
+			if (true_artifact_p(o_ptr) &&
+			    (o_ptr->owner == ptr->id) && // <- why?
+			    !winner_artifact_p(o_ptr))
 #if 1 /* set 0 to not change cur_num */
-	                    	    delete_object_idx(i, TRUE);
+				delete_object_idx(i, TRUE);
 #else
-				    excise_object_idx(o_idx);
-				    WIPE(o_ptr, object_type);
+				excise_object_idx(o_idx);
+				WIPE(o_ptr, object_type);
 #endif
 	        }
 	}
         s_printf("Finished true artifact stripping for %d players.\n", j);
+}
+
+void account_change_password(int Ind, char *old_pass, char *new_pass) {
+	player_type *p_ptr = Players[Ind];
+	struct account *c_acc;
+
+	c_acc = GetAccount(p_ptr->accountname, old_pass, FALSE);
+
+	if (!c_acc) {
+		msg_print(Ind, "Wrong password!");
+		return;
+	}
+
+	/* Change password */
+	strcpy(c_acc->pass, t_crypt(new_pass, c_acc->name));
+
+	if (!(WriteAccount(c_acc, FALSE))) {
+		msg_print(Ind, "Failed to write to account file!");
+		return;
+	}
+
+	s_printf("Changed password for account %s.\n", c_acc->name);
+	msg_print(Ind, "Password changed.");
+
+	KILL(c_acc, struct account);
 }

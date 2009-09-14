@@ -578,7 +578,7 @@ bool item_tester_hook_wear(int Ind, int slot)
 			/* use of shield is banned in do_cmd_wield if with 2H weapon.
 			 * 3 slots are too severe.. thoughts?	- Jir -
 			 */
-			if(slot==INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx){
+			if(slot == INVEN_BOW && p_ptr->inventory[INVEN_WIELD].k_idx){
 				u32b f1, f2, f3, f4, f5, esp;
 				object_flags(&p_ptr->inventory[INVEN_WIELD], &f1, &f2, &f3, &f4, &f5, &esp);
 				if(f4 & TR4_MUST2H) return(FALSE);
@@ -636,7 +636,11 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	player_type *p_ptr = Players[Ind];
 
 	int slot, num = 1;
-	bool item_fits_dual = FALSE, equip_fits_dual = FALSE, all_cursed = FALSE;
+	bool item_fits_dual = FALSE, equip_fits_dual = TRUE, all_cursed = FALSE;
+	bool slot1 = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
+	bool slot2 = (p_ptr->inventory[INVEN_ARM].k_idx != 0);
+	bool alt = ((alt_slots & 0x2) != 0);
+
 	object_type tmp_obj;
 	object_type *o_ptr;
 	object_type *x_ptr;
@@ -687,12 +691,15 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 	
 	/* check whether the item to wield is fit for dual-wielding */
-	if (!(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;
+	if ((o_ptr->weight <= 999) && /* <- no hard-coded weight limit for now */
+	    !(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;
 	/* check whether our current equipment allows a dual-wield setup with the new item */
-	if (!(k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) equip_fits_dual = TRUE;
+	if (slot1 && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H)))
+		equip_fits_dual = FALSE;
 
 	/* Do we have dual-wield and are trying to equip a weapon?.. */
 	if (get_skill(p_ptr, SKILL_DUAL) && slot == INVEN_WIELD) {
+#if 0
 		/* Equip in arm slot if weapon slot alreay occupied but arm slot still empty */
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || (alt_slots & 0x2))
 		    && (!p_ptr->inventory[INVEN_ARM].k_idx || (alt_slots & 0x2))
@@ -702,6 +709,16 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 		    /* If main-hand weapon is 2h or 1.5h, choose normal INVEN_WIELD slot instead */
 		    && equip_fits_dual)
 			slot = INVEN_ARM;
+#else /* fix: allow 'W' to replace main hand if second hand is empty */
+		/* Equip in arm slot if weapon slot alreay occupied but arm slot still empty */
+		if (((!slot1 && alt) || (slot2 && alt) || (slot1 && !slot2 && !alt)) &&
+		    !(alt_slots & 0x1) &&
+		    /* If to-wield weapon is 2h or 1.5h, choose normal INVEN_WIELD slot instead */
+		    item_fits_dual &&
+		    /* If main-hand weapon is 2h or 1.5h, choose normal INVEN_WIELD slot instead */
+		    equip_fits_dual)
+			slot = INVEN_ARM;
+#endif
 	}
 
 	/* to allow only right ring -> only right ring: */
@@ -785,8 +802,7 @@ return;
 	}
 
 //	if (is_slot_ok(slot - INVEN_ARM + INVEN_WIELD)) {
-
-	//		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
+//		i_ptr = &inventory[slot - INVEN_ARM + INVEN_WIELD];
 	if (o_ptr->tval == TV_SHIELD && (x_ptr = &p_ptr->inventory[INVEN_WIELD]))
 	{
 		/* Extract the flags */
@@ -1502,10 +1518,15 @@ void do_cmd_observe(int Ind, int item)
 			msg_print(Ind, "\377s  It's an axe-type weapon."); break;
 		}
 
-    		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
-	        else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
-    		else if (f4 & TR4_COULD2H) msg_print(Ind, "\377s  It may be wielded two-handed or dual.");
-    		else if (is_weapon(o_ptr->tval)) msg_print(Ind, "\377s  It may be dual-wielded.");
+		if (f4 & TR4_SHOULD2H) msg_print(Ind, "\377s  It should be wielded two-handed.");
+		else if (f4 & TR4_MUST2H) msg_print(Ind, "\377s  It must be wielded two-handed.");
+		else if (f4 & TR4_COULD2H) {
+			if (o_ptr->weight <= 999)
+				msg_print(Ind, "\377s  It may be wielded two-handed or dual.");
+			else
+				msg_print(Ind, "\377s  It may be wielded two-handed.");
+		}
+		else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) msg_print(Ind, "\377s  It may be dual-wielded.");
 
 	        /* Check for weapons, shields and shooters whether they are too heavy to use
 	           and give warning, so player won't buy something he can't use. */
@@ -1520,9 +1541,33 @@ void do_cmd_observe(int Ind, int item)
 
 		if (wield_slot(Ind, o_ptr) == INVEN_WIELD)
 		{
-			int blows = calc_blows_obj(Ind, o_ptr);
+#if 0
+			int blows;
+			blows = calc_blows_obj(Ind, o_ptr);
 			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
-					blows, blows > 1 ? "s" : "");
+			    blows, blows > 1 ? "s" : "");
+#else
+			/* copied from object1.c.. */
+			object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
+			long tim_wraith = p_ptr->tim_wraith;
+			object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
+			object_copy(old_ptr2, &p_ptr->inventory[INVEN_ARM]);
+			if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			else if ((k_info[o_ptr->k_idx].flags4 & TR4_SHOULD2H) &&
+			    (is_weapon(p_ptr->inventory[INVEN_ARM].tval)))
+				p_ptr->inventory[INVEN_ARM].k_idx = 0;
+			suppress_message = TRUE;
+			calc_boni(Ind);
+			msg_format(Ind, "\377s  With it, you can usually attack %d time%s/turn.",
+			    p_ptr->num_blow, p_ptr->num_blow > 1 ? "s" : "");
+			object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
+			object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
+			calc_boni(Ind);
+			suppress_message = FALSE;
+			p_ptr->tim_wraith = tim_wraith;
+#endif
 		}
 
 		if (wield_slot(Ind, o_ptr) != INVEN_WIELD) msg_print(Ind, "\377s  You have no special knowledge about that item.");
@@ -2178,7 +2223,7 @@ void do_cmd_steal(int Ind, int dir)
 		/* Make target hostile */
 		if (q_ptr->exp > p_ptr->exp / 2 - 200) {
 			if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-			add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+			add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 		}
 
 		/* Message */
@@ -2875,7 +2920,7 @@ void do_cmd_look(int Ind, int dir)
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)? (q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 		}
 		else
 		{
@@ -2883,13 +2928,13 @@ void do_cmd_look(int Ind, int dir)
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
 			if (q_ptr->lev < 60)
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title[q_ptr->pclass][((q_ptr->lev)/5 < 10)?(q_ptr->lev)/5 : 10][1 - q_ptr->male]);
 			else
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
+			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, special_prace_lookup[q_ptr->prace], player_title_special[q_ptr->pclass][(q_ptr->lev < PY_MAX_PLAYER_LEVEL)? (q_ptr->lev - 60)/10 : 4][1 - q_ptr->male]);
 #endif
 		}
 	}
@@ -3017,10 +3062,10 @@ void do_cmd_locate(int Ind, int dir)
 {
 	player_type *p_ptr = Players[Ind];
 
-	int		y1, x1, y2, x2;
-
+	int	y1, x1, y2, x2;
+	int	prow = p_ptr->panel_row;
+	int	pcol = p_ptr->panel_col;
 	char	tmp_val[80];
-
 	char	out_val[160];
 
 
@@ -3099,14 +3144,20 @@ void do_cmd_locate(int Ind, int dir)
 	/* Recalculate the boundaries */
 	panel_bounds(Ind);
 
-	/* Update stuff */
-	p_ptr->update |= (PU_MONSTERS);
+	/* any change? otherwise no need to redraw everything */
+	if ((prow != p_ptr->panel_row) || (pcol != p_ptr->panel_col)) {
+		/* client-side weather stuff */
+		p_ptr->panel_changed = TRUE;
 
-	/* Redraw map */
-	p_ptr->redraw |= (PR_MAP);
+		/* Redraw map */
+		p_ptr->redraw |= (PR_MAP);
 
-	/* Window stuff */
-	p_ptr->window |= (PW_OVERHEAD);
+		/* Update stuff */
+		p_ptr->update |= (PU_MONSTERS);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_OVERHEAD);
+	}
 
 	/* Handle stuff */
 	handle_stuff(Ind);

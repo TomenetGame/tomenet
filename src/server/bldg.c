@@ -757,7 +757,7 @@ static bool inn_comm(int Ind, int cmd)
 			bool nighttime;
 
 			/* Extract the current time */
-			nighttime = ((bst(HOUR, turn) < 6) || (bst(HOUR, turn) >= 18));
+			nighttime = ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL));
 
 			/* Normal races rest at night */
 			if (!vampire && !nighttime)
@@ -790,7 +790,7 @@ static bool inn_comm(int Ind, int cmd)
 			if (vampire)
 			{
 				/* Wait for sunset */
-				while ((bst(HOUR, turn) >= 6) && (bst(HOUR, turn) < 18))
+				while ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
 				{
 					turn += (10L * MINUTE);
 				}
@@ -798,7 +798,7 @@ static bool inn_comm(int Ind, int cmd)
 			else
 			{
 				/* Wait for sunrise */
-				while ((bst(HOUR, turn) < 6) || (bst(HOUR, turn) >= 18))
+				while ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
 				{
 					turn += (10L * MINUTE);
 				}
@@ -1204,7 +1204,7 @@ static bool compare_weapons(void)
 
 	i_ptr = &inventory[INVEN_WIELD];
 	object_copy(i_ptr, o1_ptr);
-	calc_bonuses();
+	calc_boni();
 
 	list_weapon(o1_ptr,i,2);
 	compare_weapon_aux1(o1_ptr, 2, i+8);
@@ -1214,14 +1214,14 @@ static bool compare_weapons(void)
 		object_copy(i_ptr, orig_ptr);
 	else
 		object_copy(i_ptr, o2_ptr);
-	calc_bonuses();
+	calc_boni();
 
 	list_weapon(o2_ptr,i,40);
 	compare_weapon_aux1(o2_ptr, 40, i+8);
 
 	i_ptr = &inventory[INVEN_WIELD];
 	object_copy(i_ptr, orig_ptr);
-	calc_bonuses();
+	calc_boni();
 
 	inven_item_increase(INVEN_PACK, -1);
 	inven_item_optimize(INVEN_PACK);

@@ -1210,14 +1210,35 @@ void msg_print(int Ind, cptr msg)
 	char colour_code = 0;
 	bool first_character;
 	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
+	bool client_ctrlo = FALSE, client_chat = FALSE, client_nochat = FALSE;
+
 
 	/* Pfft, sorry to bother you.... --JIR-- */
 	if (suppress_message) return;
+	/* no message? */
+	if (msg == NULL) return;
+
+	/* marker for client: add message to CTRL+O 'important scrollback buffer' */
+	if (msg[0] == '\376') {
+		client_ctrlo = TRUE;
+		msg++;
+	}
+	/* marker for client: add message to 'chat-only buffer' */
+	else if (msg[0] == '\375') {
+		client_chat = TRUE;
+		msg++;
+	}
+	/* marker for client: add message to 'nochat buffer' */
+	else if (msg[0] == '\374') {
+		client_nochat = TRUE;
+		msg++;
+	}
+	/* neutralize markers if client version too old */
+	if (!is_newer_than(&Players[Ind]->version, 4, 4, 2, 0, 0, 0))
+		client_ctrlo = client_chat = client_nochat = FALSE;
 
 
-	/* String longer than 1 line? -> Split it up! --C. Blue-- */
-#if 1 // enable line breaks?
-
+#if 1	/* String longer than 1 line? -> Split it up! --C. Blue-- */
 	while (msg != NULL && msg[msg_scan] != '\0') {
 		/* Start a new line */
 		strcpy(msg_buf, "");
@@ -1308,14 +1329,23 @@ void msg_print(int Ind, cptr msg)
 				}
 			}
 		}
+#ifdef TEST_SERVER
+ #if 1
 //s_printf("#%s#\n", msg_buf);
-		Send_message(Ind, msg_buf);
+		if (client_ctrlo) s_printf("msg '%s' coded 376.\n", msg_buf);
+		if (client_chat) s_printf("msg '%s' coded 375.\n", msg_buf);
+		if (client_nochat) s_printf("msg '%s' coded 374.\n", msg_buf);
+ #endif
+#endif
+		Send_message(Ind, format("%s%s",
+		    client_ctrlo ? "\376" :
+		    (client_chat ? "\375" :
+		    (client_nochat ? "\374" : "")), msg_buf));
 	}
+
 	if (msg == NULL) Send_message(Ind, msg);
 	return;
-
 #endif // enable line breaks?
-
 
 	Send_message(Ind, msg);
 }
@@ -1502,6 +1532,20 @@ static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fm
 	floor_msg_ignoring(sender, wpos, buf);
 }
 
+/*
+ * Send a message to everyone on the world surface. (for season change)
+ */
+void world_surface_msg(cptr msg) {
+	int i;
+//system-msg, currently unused anyway-	if(cfg.log_u) s_printf("[%s] %s\n", Players[sender]->name, msg);
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+        	if (Players[i]->conn == NOT_CONNECTED) continue;
+		/* Check this guy */
+		if (Players[i]->wpos.wz == 0) msg_print(i, msg);
+	}
+}
+
 
 /*
  * Display a message to everyone who is in sight on another player.
@@ -1546,6 +1590,42 @@ void msg_print_near(int Ind, cptr msg)
 	}
 }
 
+/* Whispering: Send message to adjacent players */
+void msg_print_verynear(int Ind, cptr msg)
+{
+	player_type *p_ptr = Players[Ind];
+	int y, x, i;
+	struct worldpos *wpos;
+	wpos=&p_ptr->wpos;
+
+//	if(p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++)
+	{
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (Ind == i) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Is he in range? */
+		if (abs(p_ptr->py - y) <= 1 && abs(p_ptr->px - x) <= 1) {
+			/* Send the message */
+			msg_print(i, msg);
+		}
+	}
+}
+
 
 /*
  * Same as above, except send a formatted message.
@@ -1567,6 +1647,26 @@ void msg_format_near(int Ind, cptr fmt, ...)
 
 	/* Display */
 	msg_print_near(Ind, buf);
+}
+
+/* for whispering */
+void msg_format_verynear(int Ind, cptr fmt, ...)
+{
+	va_list vp;
+
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	msg_print_verynear(Ind, buf);
 }
 
 /* location-based */
@@ -1847,32 +1947,46 @@ s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_t
 	return;
 }
 
+void toggle_dual_mode(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	if (p_ptr->dual_mode)
+		msg_print(Ind, "\377wDual-wield mode: Main-hand.");
+	else
+		msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
+	p_ptr->dual_mode = !p_ptr->dual_mode;
+s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
+	p_ptr->redraw |= PR_STATE;
+	calc_boni(Ind);
+	return;
+}
+
 
 
 static int checkallow(char *buff, int pos){
 	if(!pos) return(0);
-	if(pos==1) return(buff[0]==' ' ? 0 : 1); /* allow things like brass lantern */
-	if(buff[pos-1]==' ' || buff[pos-2]=='\377') return(0);	/* swearing in colour */
+	if(pos == 1) return(buff[0] == ' ' ? 0 : 1); /* allow things like brass lantern */
+	if(buff[pos-1] == ' ' || buff[pos-2] == '\377') return(0);	/* swearing in colour */
 	return(1);
 }
 
 static int censor(char *line){
 	int i, j;
 	char *word;
-	char lcopy[100];
-	int level=0;
+	char lcopy[160];
+	int level = 0;
 	strcpy(lcopy, line);
-	for(i=0; lcopy[i]; i++){
-		lcopy[i]=tolower(lcopy[i]);
+	for(i = 0; lcopy[i]; i++){
+		lcopy[i] = tolower(lcopy[i]);
 	}
-	for(i=0; strlen(swear[i].word); i++){
-		if((word=strstr(lcopy, swear[i].word))){
-			if(checkallow(lcopy, word-lcopy)) continue;
-			word=(&line[(word-lcopy)]);
-			for(j=0; j<(int)strlen(swear[i].word); j++){
-				word[j]='*';
+	for(i = 0; strlen(swear[i].word); i++){
+		if((word = strstr(lcopy, swear[i].word))){
+			if(checkallow(lcopy, word - lcopy)) continue;
+			word = (&line[(word - lcopy)]);
+			for(j = 0; j < (int)strlen(swear[i].word); j++){
+				word[j] = '*';
 			}
-			level=MAX(level, swear[i].level);
+			level = MAX(level, swear[i].level);
 		}
 	}
 	return(level);
@@ -1895,7 +2009,7 @@ static int censor(char *line){
 static void player_talk_aux(int Ind, char *message)
 {
  	int i, len, target = 0;
-	char search[80], sender[80];
+	char search[160], sender[80];
 	player_type *p_ptr = Players[Ind], *q_ptr;
  	char *colon;
 	bool me = FALSE;
@@ -1940,14 +2054,14 @@ static void player_talk_aux(int Ind, char *message)
 	colon = strchr(message, ':');
 
 	/* Ignore "smileys" or URL */
-//	if (colon && strchr(")(-/:", *(colon + 1)))
+//	if (colon && strchr(")(-/:", colon[1]))
 	/* (C. Blue) changing colon parsing. :: becomes
 	    textual :  - otherwise : stays control char */
 	if (colon) {
 		bool smiley = FALSE;
 		/* if another colon followed this one then
 		   it was not meant to be a control char */
-		switch(*(colon + 1)){
+		switch(colon[1]){
 		/* accept these chars for smileys, but only if the colon is either first in the line or stands after a SPACE,
 		   otherwise it is to expect that someone tried to write to party/privmsg */
 		case '(':	case ')':
@@ -1956,13 +2070,13 @@ static void player_talk_aux(int Ind, char *message)
 /* staircases, so cannot be used for smileys here ->		case '<':	case '>': */
 		case '\\':	case '|':
 		case 'p': case 'P': case 'o': case 'O':
-			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* >:) -> evil smiley */
-			    ((message == colon - 1) && (*(colon - 1) != '!') && (*(colon - 1) != '#'))) /* <- party names must be at least 2 chars then */
+			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* >:) -> evil smiley */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%'))) /* <- party names must be at least 2 chars then */
 				colon = NULL; /* the check is mostly important for '(' */
 			break;
 		case '-':
-			if (message == colon || *(colon - 1) == ' ' || *(colon - 1) == '>' || /* here especially important: '-' often is for numbers/recall depth */
-			    ((message == colon - 1) && (*(colon - 1) != '!') && (*(colon - 1) != '#'))) /* <- party names must be at least 2 chars then */
+			if (message == colon || colon[-1] == ' ' || colon[-1] == '>' || /* here especially important: '-' often is for numbers/recall depth */
+			    ((message == colon - 1) && (colon[-1] != '!') && (colon[-1] != '#') && (colon[-1] != '%'))) /* <- party names must be at least 2 chars then */
 				if (!strchr("123456789", *(colon + 2))) colon = NULL;
 			break;
 		case '/':
@@ -1973,7 +2087,7 @@ static void player_talk_aux(int Ind, char *message)
 			/* remove the 1st colon found, .. */
 			
 			/* always if there's no chat-target in front of the double-colon: */
-			if (message == colon || *(colon - 1) == ' ') {
+			if (message == colon || colon[-1] == ' ') {
 				i = (int) (colon - message);
 				do message[i] = message[i+1];
 				while(message[i++]!='\0');
@@ -1983,7 +2097,7 @@ static void player_talk_aux(int Ind, char *message)
 
 			/* new hack: ..but only if the previous two chars aren't  !:  (party chat),
 			   and if it's appearently meant to be a smiley. */
-			if ((colon - message == 1) && (*(colon - 1)=='!' || *(colon - 1)=='#'))
+			if ((colon - message == 1) && (colon[-1]=='!' || colon[-1]=='#' || colon[-1]=='%'))
 			switch (*(colon + 2)) {
 			case '(': case ')':
 			case '[': case ']':
@@ -2137,6 +2251,16 @@ static void player_talk_aux(int Ind, char *message)
 		return;
 	}
 
+	/* '%:' at the beginning sends to self - mikaelh */
+	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon))
+	{
+		/* Send message to self */
+		msg_format(Ind, "\377o<%%> \377w%s", message + 2);
+
+		/* Done */
+		return;
+	}
+
 	/* Form a search string if we found a colon */
 	if (colon)
 	{
@@ -2281,11 +2405,11 @@ static void player_talk_aux(int Ind, char *message)
 	/* Admins have exclusive colour - the_sandman */
 	if (c == 'b' && !is_admin(p_ptr)) return;
 
-	switch((i=censor(message))){
+	switch((i = censor(message))){
 		case 0:
 			break;
 		default:
-			imprison(Ind, i*20, "swearing");
+			imprison(Ind, i * 20, "swearing");
 		case 1:	msg_print(Ind, "Please do not swear");
 	}
 
@@ -2296,10 +2420,10 @@ static void player_talk_aux(int Ind, char *message)
 		snprintf(tmessage, sizeof(tmessage), "\377%c[%s] \377B%s", c, sender, message + mycolor);
 	else{
 		/* Why not... */
-		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1))?2:0;
+		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
 		else return;
-		if(mycolor) c=message[5];
-		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4+mycolor);
+		if(mycolor) c = message[5];
+		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4 + mycolor);
 	}
 #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
@@ -2310,7 +2434,7 @@ static void player_talk_aux(int Ind, char *message)
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
 #endif
 	for(i = 1; i <= NumPlayers; i++){
-		q_ptr=Players[i];
+		q_ptr = Players[i];
 
 		if (!admin)
 		{
@@ -2903,6 +3027,7 @@ int get_playerind(char *name)
 /*
  * Tell the player of the floor feeling.	- Jir -
  * NOTE: differs from traditional 'boring' etc feeling!
+ * NOTE: added traditional feelings, to warn of dangers - C. Blue
  */
 bool show_floor_feeling(int Ind)
 {
@@ -2927,15 +3052,50 @@ bool show_floor_feeling(int Ind)
 
 	if (!l_ptr) return(felt);
 
+#ifdef EXTRA_LEVEL_FEELINGS
+	/* Display extra traditional feeling to warn of dangers. - C. Blue
+	   Note: Only display ONE feeling, thereby setting priorities here.
+	   Note: Don't display feelings in Training Tower (NO_DEATH). */
+	if ((!p_ptr->distinct_floor_feeling && !is_admin(p_ptr)) || (d_ptr->flags2 & DF2_NO_DEATH)) {
+//		msg_print(Ind, "\376\377yLooks like any other level..");
+//		msg_print(Ind, "\377ypfft");
+	}
+	else if (l_ptr->flags2 & LF2_OOD_HI)
+		msg_print(Ind, "\377yWhat a terrifying place..");
+	else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
+		(l_ptr->flags2 & LF2_OOD))
+		msg_print(Ind, "\377yWhat a terrifying place..");
+	else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
+		 ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE)))
+		msg_print(Ind, "\377yYou sense an air of danger..");
+	else if (l_ptr->flags2 & LF2_VAULT)
+		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
+	else if (l_ptr->flags2 & LF2_PITNEST_HI)
+		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
+	else if (l_ptr->flags2 & LF2_OOD_FREE)
+		msg_print(Ind, "\377yThere's a sensation of challenge..");
+/*	else if (l_ptr->flags2 & LF2_PITNEST) //maybe enable, maybe too cheezy
+		msg_print(Ind, "\377yYou feel your luck is turning..");*/
+	else if (l_ptr->flags2 & LF2_UNIQUE)
+		msg_print(Ind, "\377yThere's a special feeling about this place..");
+/*	else if (l_ptr->flags2 & LF2_ARTIFACT) //probably too cheezy, if not then might need combination with threat feelings above
+		msg_print(Ind, "\377y");*/
+/*	else if (l_ptr->flags2 & LF2_ITEM_OOD) //probably too cheezy, if not then might need combination with threat feelings above
+		msg_print(Ind, "\377y");*/
+	else
+		msg_print(Ind, "\377yWhat a boring place..");
+#endif
+
 	/* Hack^2 -- display the 'feeling' */
 	if (l_ptr->flags1 & LF1_NO_MAGIC) {
-		msg_print(Ind, "\377oYou feel a suppressive air...");
+		msg_print(Ind, "\377oYou feel a suppressive air.");
 		/* Automatically dis/re-enable wraith form */
 	        p_ptr->update |= PU_BONUS;
 	}
 	if (l_ptr->flags1 & LF1_NO_GENO)
-		msg_print(Ind, "\377oYou have a feeling of peace...");
-	if (l_ptr->flags1 & LF1_NOMAP)
+//sounds as if it's good for the player		msg_print(Ind, "\377oYou have a feeling of peace...");
+		msg_print(Ind, "\377oThe air seems distorted.");
+	if (l_ptr->flags1 & LF1_NO_MAP)
 		msg_print(Ind, "\377oYou lose all sense of direction...");
 	if (l_ptr->flags1 & LF1_NO_MAGIC_MAP)
 		msg_print(Ind, "\377oYou feel like a stranger...");
@@ -2949,7 +3109,7 @@ bool show_floor_feeling(int Ind)
 #endif
 	/* Can leave IRONMAN? */
 	if(l_ptr->flags1 & LF1_IRON_RECALL || ((d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth == ABS(p_ptr->wpos.wz)))
-		msg_print(Ind, "\377gYou don't sense a magic barrier here...");
+		msg_print(Ind, "\377gYou don't sense a magic barrier here!");
 
 	return(l_ptr->flags1 & LF1_FEELING_MASK ? TRUE : felt);
 }
@@ -2984,6 +3144,7 @@ int test_item_name(cptr name)
  */
 s32b bst(s32b what, s32b t)
 {
+#if 0 /* TIMEREWRITE */
 	s32b turns = t + (10 * DAY_START);
 
 	switch (what)
@@ -2991,14 +3152,28 @@ s32b bst(s32b what, s32b t)
 		case MINUTE:
 			return ((turns / 10 / MINUTE) % 60);
 		case HOUR:
-			return (turns / 10 / (HOUR) % 24);
+			return ((turns / 10 / HOUR) % 24);
 		case DAY:
-			return (turns / 10 / (DAY) % 365);
+			return ((turns / 10 / DAY) % 365);
 		case YEAR:
-			return (turns / 10 / (YEAR));
+			return ((turns / 10 / YEAR));
 		default:
 			return (0);
 	}
+#else
+	s32b turns = t;
+
+	if (what == MINUTE)
+		return ((turns / MINUTE) % 60);
+	else if (what == HOUR)
+		return ((turns / HOUR) % 24);
+	else if (what == DAY)
+		return ((((turns / DAY) + START_DAY) % 365));
+	else if (what == YEAR)
+		return ((turns / YEAR) + START_YEAR);
+	else
+		return (0);
+#endif
 }
 
 cptr get_month_name(int day, bool full, bool compact)
@@ -3451,4 +3626,39 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	default:
 		strcpy(psid, "");
 	}
+}
+
+/* level generation benchmark */
+void do_benchmark(int Ind) {
+	int i, n = 100;
+	player_type *p_ptr = Players[Ind];
+	struct timeval begin, end;
+	int sec, usec;
+
+	block_timer();
+
+	/* Use gettimeofday to get precise time */
+	gettimeofday(&begin, NULL);
+
+	for (i = 0; i < n; i++) {
+		generate_cave(&p_ptr->wpos, p_ptr);
+	}
+
+	gettimeofday(&end, NULL);
+
+	allow_timer();
+
+	/* Calculate the time */
+	sec = end.tv_sec - begin.tv_sec;
+	usec = end.tv_usec - begin.tv_usec;
+	if (usec < 0) {
+		usec += 1000000;
+		sec--;
+	}
+
+	/* Print the result */
+	msg_format(Ind, "Generated %d levels in %d.%06d seconds.", n, sec, usec);
+
+	/* Log it too */
+	s_printf("BENCHMARK: Generated %d levels in %d.%06d seconds.\n", n, sec, usec);
 }

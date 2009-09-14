@@ -12,7 +12,6 @@
 
 /* 
  * TODO:
- * - Saving and loading
  * - Debugging
  */
 
@@ -20,7 +19,7 @@ int new_auction();
 int count_auctions_player(s32b player);
 bool auction_parse_money(cptr s, s32b *amount);
 bool auction_parse_time(cptr s, time_t *amount);
-void auction_clear();
+void auction_clear(int auction_id);
 void auction_add_bid(int auction_id, s32b bid, s32b bidder);
 void auction_remove_bid(int auction_id, int bid_id);
 void auction_list_print_item(int Ind, int auction_id);
@@ -212,6 +211,7 @@ int new_auction()
 	/* Look for an empty auction slot */
 	for (i = 1; i < auction_alloc; i++)
 	{
+		/* Empty slots can be used 1 hour after they were last used */
 		if (auctions[i].status == AUCTION_STATUS_EMPTY &&
 		    auctions[i].start + 3600 < now)
 		{
@@ -417,6 +417,7 @@ char *auction_format_time(time_t t)
 
 void auction_clear(int auction_id)
 {
+	int i, last_in_use = 1;
 	auction_type *auc_ptr = &auctions[auction_id];
 
 	if (auc_ptr->desc)
@@ -432,6 +433,25 @@ void auction_clear(int auction_id)
 	WIPE(auc_ptr, auction_type);
 	auc_ptr->status = AUCTION_STATUS_EMPTY;
 	auc_ptr->start = time(NULL); /* store the time in the start field */
+
+	/* Find the last auction slot in use */
+	/* Start from 1 to make sure last_in_use won't be 0 */
+	for (i = 1; i < auction_alloc; i++)
+	{
+		auc_ptr = &auctions[i];
+		if (auc_ptr->status != AUCTION_STATUS_EMPTY)
+			last_in_use = i;
+	}
+
+	/* Round up to next multiple of 16 */
+	last_in_use = (last_in_use + 15) / 16 * 16;
+
+	/* Check if the auctions array can be shrunk */
+	if (last_in_use < auction_alloc)
+	{
+		/* Reverse GROW */
+		GROW(auctions, auction_alloc, last_in_use, auction_type);
+	}
 }
 
 void auction_add_bid(int auction_id, s32b bid, s32b bidder)
@@ -1166,11 +1186,13 @@ int auction_place_bid(int Ind, int auction_id, cptr bid_string)
 
 	o_ptr = &auc_ptr->item;
 
+#ifndef RPG_SERVER
 	if (o_ptr->level > p_ptr->lev)
 	{
 		/* The player's level is too low */
 		return AUCTION_ERROR_INSUFFICIENT_LEVEL;
 	}
+#endif
 
 	if (!auction_parse_money(bid_string, &bid))
 	{
@@ -1263,11 +1285,13 @@ int auction_buyout(int Ind, int auction_id)
 
 	o_ptr = &auc_ptr->item;
 
+#ifndef RPG_SERVER
 	if (o_ptr->level > p_ptr->lev)
 	{
 		/* The player's level is too low */
 		return AUCTION_ERROR_INSUFFICIENT_LEVEL;
 	}
+#endif
 
 	if (total_money < auc_ptr->buyout_price)
 	{

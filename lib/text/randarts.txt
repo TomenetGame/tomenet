@@ -1,5 +1,5 @@
 N:*:Default
-601
+604
 adanedhel
 adurant
 aeglos
@@ -601,3 +601,6 @@ voronwe
 wethrin
 wilwarin
 yavanna
+ukkosta
+tuulen
+javarjot

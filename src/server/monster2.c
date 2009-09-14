@@ -350,7 +350,8 @@ void delete_monster_idx(int i, bool unfound_arts)
 	wpos=&m_ptr->wpos;
 
 	/* Hack -- Reduce the racial counter */
-	r_ptr->cur_num--;
+	if (r_ptr->cur_num != 0) /* don't overflow - mikaelh */
+		r_ptr->cur_num--;
 
 	/* Hack -- count the number of "reproducers" */
 	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro--;
@@ -413,6 +414,12 @@ void delete_monster_idx(int i, bool unfound_arts)
 		delete_object_idx(this_o_idx, unfound_arts);
 	}
 #endif	// MONSTER_INVENTORY
+
+	/* terminate mindcrafter charm effect */
+	if (m_ptr->charmedignore) {
+		Players[m_ptr->charmedignore]->mcharming--;
+		m_ptr->charmedignore = 0;
+	}
 
 	/* Wipe the Monster */
 	FREE(m_ptr->r_ptr, monster_race);
@@ -656,7 +663,8 @@ void wipe_m_list(struct worldpos *wpos)
 		/* Mega-Hack -- preserve Unique's XXX XXX XXX */
 
 		/* Hack -- Reduce the racial counter */
-		r_ptr->cur_num--;
+		if (r_ptr->cur_num != 0) /* don't overflow - mikaelh */
+			r_ptr->cur_num--;
 
 		/* Monster is gone */
 		cave[m_ptr->fy][m_ptr->fx].m_idx = 0;
@@ -1152,8 +1160,8 @@ s16b get_mon_num(int level, int dun_type)
 #else
 		if (rand_int(NASTY_MON) == 0)
 		{
-			if (level < 15) level += (2 + level/2 + randint(3));
-			else level += (10 + level/4 + randint(level / 4)); /* can be quite nasty, but serves well so far >;-) */
+			if (level < 15) level += (2 + level / 2 + randint(3));
+			else level += (10 + level / 4 + randint(level / 4)); /* can be quite nasty, but serves well so far >;-) */
 		}
 #endif
 	}       
@@ -2261,7 +2269,9 @@ void update_mon(int m_idx, bool dist)
 					{
 						do_empty_mind = TRUE;
 					}
-					else if (r_ptr->flags7 & RF7_NO_ESP) {
+					/* possesses powers to hide from ESP? */
+					else if ((r_ptr->flags7 & RF7_NO_ESP)
+					    && p_ptr->pclass != CLASS_MINDCRAFTER) {
 						do_no_esp = TRUE;
 					}
 
@@ -2333,11 +2343,13 @@ void update_mon(int m_idx, bool dist)
 //			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
 #ifdef RANDUNIS 
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
-					(r_ptr->flags1 & RF1_UNIQUE) ||
-					(m_ptr->ego ) ) scan_monsters = TRUE;
+			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
+			    (r_ptr->flags1 & RF1_UNIQUE) ||
+			    (m_ptr->ego ) ) scan_monsters = TRUE;
 #else
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
-					(r_ptr->flags1 & RF1_UNIQUE) )
+			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
+			    (r_ptr->flags1 & RF1_UNIQUE) )
 				scan_monsters = TRUE;
 #endif	// RANDUNIS
 		}
@@ -2710,9 +2722,8 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 {
 	int                     i, Ind, j, m_idx;
 	bool			already_on_level = FALSE;
-
 	cave_type               *c_ptr;
-
+	dun_level *l_ptr = getfloor(wpos);
 	monster_type    *m_ptr;
 	monster_race    *r_ptr = &r_info[r_idx];
 	player_type	*p_ptr;
@@ -2941,7 +2952,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
 #endif
 
         /* Ego Uniques are NOT to be created */
-        if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return 0;
+        if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return FALSE;
 
 	/* If the monster is unique and all players on this level already killed
 	   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
@@ -2983,9 +2994,9 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
 
 } /* summon_override_checks */
 
+
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
-
 
 
 #if 0
@@ -3250,10 +3261,8 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 1105) s_printf("Darkling was created on %d\n", getlevel(wpos));
 #endif
 	if (r_idx == 862) {
-		dun_level *l_ptr;
 		s_printf("Morgoth was created on %d\n", getlevel(wpos));
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
-		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= LF1_NO_GHOST;
 #endif
 #ifdef MORGOTH_DANGEROUS_LEVEL
@@ -3276,10 +3285,22 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	if (r_idx == 1085) s_printf("Dor was created on %d\n", getlevel(wpos));
 	/* no easy escape from Zu-Aon besides resigning by recalling! */
 	if (r_idx == 1097) {
-		dun_level *l_ptr;
 		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
-		l_ptr = getfloor(wpos);
 		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
+	}
+
+	/* for now ignore live-spawns. maybe change that? */
+	if (cave_set_quietly) {
+		if (r_ptr->flags1 & RF1_UNIQUE) l_ptr->flags2 |= LF2_UNIQUE;
+		/* note: actually it could be "un-free" ie in vault :/
+		   however, checking for that distinction wouldnt pay off really,
+		   because a feeling message about vaults takes precedence over
+		   one about a single 'freely roaming ood monster' anyway: */
+		if (r_ptr->level >= getlevel(wpos) + 10) {
+			l_ptr->flags2 |= LF2_OOD;
+			if (!(zcave[y][x].info & CAVE_ICKY)) l_ptr->flags2 |= LF2_OOD_FREE;
+			if (r_ptr->level >= getlevel(wpos) + 20) l_ptr->flags2 |= LF2_OOD_HI;
+		}
 	}
 
 summon_override_checks = 0; /* reset admin summoning override flags */
@@ -3541,9 +3562,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
 	int r_idx;
 	int l = getlevel(wpos); /* HALLOWEEN */
-	struct dungeon_type *d_ptr;
-
-	d_ptr=getdungeon(wpos);
+	struct dungeon_type *d_ptr = getdungeon(wpos);
 
 
 if (season_halloween) {
@@ -3591,17 +3610,17 @@ if (season_halloween) {
 	/* Ok, I'll see to that later	- Jir - */
 	 
 	if(d_ptr && (d_ptr->r_char[0] || d_ptr->nr_char[0])){
-		int i,j=0;
+		int i, j = 0;
 		monster_race *r_ptr;
-		while((r_idx=get_mon_num(monster_level, 0))){
-			if(j++>250) break;
-			r_ptr=&r_info[r_idx];
+		while((r_idx = get_mon_num(monster_level, 0))){
+			if(j++ > 250) break;
+			r_ptr = &r_info[r_idx];
 			if(d_ptr->r_char[0]){
                 		for (i = 0; i < 10; i++)
                 		{
                         		if (r_ptr->d_char == d_ptr->r_char[i]) break;
                 		}
-				if(i<10) break;
+				if(i < 10) break;
 				continue;
 			}
 			if(d_ptr->nr_char[0]){
@@ -4200,7 +4219,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!r_idx) return (FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks?TRUE:FALSE, s_clone, clone_summoning)) return (FALSE);
+	if (!place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning)) return (FALSE);
 
 	/* Success */
 	return (TRUE);
@@ -5091,11 +5110,13 @@ static monster_race* race_info_idx(int r_idx, int ego, int randuni)
                 nr_ptr->d_char = re_ptr->d_char;
                 nr_ptr->x_char = re_ptr->d_char;
         }
+#ifndef M_EGO_NEW_FLICKER
         if (re_ptr->d_attr != MEGO_CHAR_ANY)
         {
                 nr_ptr->d_attr = re_ptr->d_attr;
                 nr_ptr->x_attr = re_ptr->d_attr;
         }
+#endif
 
         /* And finanly return a pointer to a fully working monster race */
         return nr_ptr;

@@ -2,8 +2,10 @@
 #include "angband.h"
 
 /* The basic bulk of the rune handling bizzzzzzz... The design doc was
- * written by Mark (Mark@Dave).
- */ 
+ * written by Mark (Mark@Dave)
+ */
+
+#ifndef ENABLE_RCRAFT
 
 /* cast_rune_spell moved to externs.h - mikaelh */
 int do_use_mp(int, int, float);
@@ -400,7 +402,7 @@ void cast_rune_spell (int Ind, int dir) {
 		msg_format(Ind, "\377rYou don't have the energy: %d/%d. Needed: %d", 
 				p_ptr->csp, p_ptr->msp, notice);
 		return;
-#if ALLOW_PERFECT_RUNE_CASTING
+#ifdef ALLOW_PERFECT_RUNE_CASTING
 	} else if (magik(chance_to_break)) {
 #else
 	} else if (magik(1) && magik(10)) {
@@ -417,3 +419,5 @@ void cast_rune_spell (int Ind, int dir) {
 	} 
 	return;
 }
+
+#endif /* ENABLE_RCRAFT */

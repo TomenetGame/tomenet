@@ -148,6 +148,7 @@ typedef unsigned int u32b;
 #define GF_PUSH 	159 	/* Moltor */
 
 #define GF_SILENCE	160
+#define GF_CHARMIGNORE	161
 
 /* special 'projector' types, used in project(). */
 #define PROJECTOR_UNUSUAL	-1000
@@ -294,6 +295,7 @@ extern bool identify_fully(int Ind);
 extern void self_knowledge(int Ind);
 extern bool ident_spell(int Ind);
 extern void map_area(int Ind);
+extern void mind_map_level(int Ind);
 extern void wiz_lite(int Ind);
 extern void wiz_lite_extra(int Ind);
 extern void wiz_dark(int Ind);
@@ -400,6 +402,7 @@ extern bool curse_spell_aux(int Ind, int item);
 extern void house_creation(int Ind, bool floor, bool jail);
 extern bool do_vermin_control(int Ind);
 extern void do_autokinesis_to(int Ind, int dis);
+extern void do_mstopcharm(int Ind);
 
 /* traps.c */
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);

@@ -425,10 +425,10 @@ static bool object_easy_know(int i)
 		/* All Food, Potions, Scrolls, Rods */
 		case TV_FOOD:
 		case TV_POTION:
+		case TV_POTION2:
 		case TV_SCROLL:
 		case TV_PARCHMENT:
 		case TV_ROD:
-				case TV_POTION2:
                 case TV_ROD_MAIN:
                 case TV_BATERIE:
 		{
@@ -439,6 +439,9 @@ static bool object_easy_know(int i)
 		case TV_RING:
 		case TV_AMULET:
 		case TV_LITE:
+		/* added default (for tools which got EASY_KNOW added,
+		   such as flint/climbing set) */
+		default:
 		{
 			if (k_ptr->flags3 & TR3_EASY_KNOW) return (TRUE);
 			return (FALSE);
@@ -1361,6 +1364,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 
+	bool skip_base_article = FALSE;
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -1480,14 +1484,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		{
 			/* Known artifacts */
 //			if (artifact_p(o_ptr) && aware) break;
-			if (artifact_p(o_ptr) && known)	break;
+			if (artifact_p(o_ptr) && known) break;
 			
 			/* "Amulets of Luck" are just called "Talismans" -C. Blue */
 			if ((o_ptr->sval == SV_AMULET_LUCK) && aware) break;
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
-			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
+			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
 			if (short_item_names)
 			basenm = aware ? "& Amulet~" : "& # Amulet~";
 			else
@@ -1507,7 +1511,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
-			if (aware && !artifact_p(o_ptr)) append_name = TRUE;
+			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
 //			if (aware) append_name = TRUE;
 			if (short_item_names)
 			basenm = aware ? "& Ring~" : "& # Ring~";
@@ -1647,14 +1651,25 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		    break;
 
 		}
+#ifndef ENABLE_RCRAFT
 		case TV_RUNE2:
 		{
 		    append_name = TRUE;
 		    basenm = "& Modifiying Rune~#";
-		    break; 
+		    break;
 		}
+#else
+		case TV_RUNE2:
+		{
+			append_name = TRUE;
+			if(o_ptr->sval >=0 && o_ptr->sval <=15)
+				modstr = r_elements[o_ptr->sval].e_syl;
+			basenm = "& # Rune~";
+			break;
+		}
+#endif
 
-			/* Used in the "inventory" routine */
+		/* Used in the "inventory" routine */
 		default:
 		{
 			/* the_sandman: debug line */
@@ -1725,7 +1740,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Hack -- The only one of its kind */
 		else if (known && artifact_p(o_ptr))
 		{
+			/* hack: some base item types in k_info start
+			   on 'the', so prevent a second 'The ' for those */
 			t = object_desc_str(t, "The ");
+			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
+				s += 4;
+				skip_base_article = TRUE;
+			}
 		}
 
 		/* A single one, with a vowel in the modifier */
@@ -1787,7 +1808,13 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		/* Hack -- The only one of its kind */
 		else if (known && artifact_p(o_ptr) && !(mode & 8))
 		{
+			/* hack: some base item types in k_info start
+			   on 'the', so prevent a second 'The ' for those */
 			t = object_desc_str(t, "The ");
+			if (strstr(k_name + k_ptr->name, "the ") == k_name + k_ptr->name) {
+				s += 4;
+				skip_base_article = TRUE;
+			}
 		}
 
 		/* Hack -- single items get no prefix */
@@ -1892,8 +1919,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 	/* Append the "kind name" to the "base name" */
 	if (append_name)
 	{
-		t = object_desc_str(t,!(mode & 8) ? " of " : " ");
-		t = object_desc_str(t, (k_name + k_ptr->name));
+		t = object_desc_str(t, !(mode & 8) ? " of " : " ");
+		if (!skip_base_article)
+			t = object_desc_str(t, (k_name + k_ptr->name));
+		else
+			t = object_desc_str(t, (k_name + k_ptr->name + 4));
 	}
 
 
@@ -3889,12 +3919,12 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
-	calc_bonuses(Ind);
+	calc_boni(Ind);
 
 	fprintf(fff, "\n");
 //	/* give weight warning, so player won't buy something he can't use. (todo: for shields and bows too) */
 //	if (p_ptr->heavy_wield) fprintf(fff, "\377rThis weapon is currently too heavy for you to use effectively:\377w\n");
-	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow) ? "s" : "");
+	fprintf(fff, "\377sUsing it you would have \377W%d\377s blow%s and do an average damage per turn of:\n", p_ptr->num_blow, (p_ptr->num_blow > 1) ? "s" : "");
 
 	if (f1 & TR1_SLAY_ANIMAL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "animals", NULL);
 	if (f1 & TR1_SLAY_EVIL) output_dam(Ind, fff, o_ptr, FACTOR_HURT, 0, "evil creatures", NULL);
@@ -3922,14 +3952,14 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff)
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
 	/* get our weapon back */
 	object_copy(&p_ptr->inventory[INVEN_WIELD], old_ptr);
-	calc_bonuses(Ind);
+	calc_boni(Ind);
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
 	p_ptr->tim_wraith = tim_wraith;
 
 	suppress_message = FALSE;
 }
-	
+
 /*
  * Display the ammo damage done with a multiplier
  */
@@ -4003,7 +4033,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* Hack -- hush the messages up */
 	suppress_message = TRUE;
-	calc_bonuses(Ind);
+	calc_boni(Ind);
 
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
@@ -4048,7 +4078,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff)
 
 	/* get our ammo back */
 	object_copy(&p_ptr->inventory[INVEN_AMMO], old_ptr);
-	calc_bonuses(Ind);
+	calc_boni(Ind);
 
 	/* restore timed effects that might have been changed from the weapon switching - C. Blue */
 	p_ptr->tim_wraith = tim_wraith;
@@ -4318,8 +4348,13 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 #endif
 	if (f4 & TR4_SHOULD2H) fprintf(fff, "It should be wielded two-handed.\n");
 	else if (f4 & TR4_MUST2H) fprintf(fff, "It must be wielded two-handed.\n");
-	else if (f4 & TR4_COULD2H) fprintf(fff, "It may be wielded two-handed or dual.\n");
-	else if (is_weapon(o_ptr->tval)) fprintf(fff, "It may be dual-wielded.\n");
+	else if (f4 & TR4_COULD2H) {
+		if (o_ptr->weight <= 999)
+			fprintf(fff, "It may be wielded two-handed or dual.\n");
+		else
+			fprintf(fff, "It may be wielded two-handed.\n");
+	}
+	else if (is_weapon(o_ptr->tval) && o_ptr->weight <= 80) fprintf(fff, "It may be dual-wielded.\n");
 
 	/* Kings/Queens only warning */
 	if (f5 & TR5_WINNERS_ONLY) fprintf(fff, "\377vIt is to be used by royalties exclusively.\377w\n");
@@ -4439,7 +4474,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		if (j > 0) am -= j;
 		if (am > 50) am = 50;
 	}
-
+#ifdef NEW_ANTIMAGIC_RATIO
+	am = (am * 3) / 5;
+#endif
 /*	if (am >= 100)
 		fprintf(fff, "It generates a perfect antimagic field.\n");
 	else if (am >= 80)
@@ -5254,13 +5291,14 @@ s16b wield_slot(int Ind, object_type *o_ptr)
 		case TV_DIGGING:
 		case TV_TOOL:
 			return (INVEN_TOOL);
+#ifndef ENABLE_RCRAFT
 		case TV_RUNE1:
 		{
 			if (o_ptr->sval == SV_RUNE1_SELF && o_ptr->name2) 
 				return (INVEN_TOOL);
 			return (-1);
 		}
-
+#endif
 		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
@@ -5584,6 +5622,13 @@ void display_inven(int Ind)
 			//Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
 			Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, (o_ptr->tval == TV_BOOK) ? o_ptr->pval : 0, o_name);
 		}
+	}
+
+	/* Send the new inventory revision if the inventory has changed - mikaelh */
+	if (p_ptr->inventory_changed)
+	{
+		Send_inventory_revision(Ind);
+		p_ptr->inventory_changed = FALSE;
 	}
 }
 

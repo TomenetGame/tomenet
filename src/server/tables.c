@@ -1494,9 +1494,9 @@ s32b player_exp[PY_MAX_LEVEL + 1] =
 
 	825000000L,//      380000000L,
 	880000000L,//      400000000L,
-//	938000000L,//      420000000L,//99, PY_MAX_LEVEL
-	940000000L,//      420000000L,//99, PY_MAX_LEVEL
-	999000000L,//      440000000L,//100 (PY_MAX_LEVEL + 1 is required for some reason, I think)
+//	938000000L,//      420000000L,//99, PY_MAX_PLAYER_LEVEL
+	940000000L,//      420000000L,//99, PY_MAX_PLAYER_LEVEL
+	999000000L,//      440000000L,//100 PY_MAX_LEVEL
 	999999998L,//      460000000L,//<-not sure why 101 and the 'dummy' one for 102 are needed tho
 
 	999999999L // dummy, == PY_MAX_EXP
@@ -1665,7 +1665,7 @@ player_race race_info[MAX_RACES] =
 //		0xEEF,
 //		0xF77,
 //		0xF7F,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFN+CFX+CFD+CFS+CFU+CFC,
                 90,
                 {
                         {
@@ -1810,9 +1810,15 @@ player_race race_info[MAX_RACES] =
                                 '+', 50,
                         },
                         {
-                                SKILL_DISARM,
+#if 0
+                                SKILL_COMBAT,
                                 '+', 0,
                                 '%', 120,
+#else
+                                SKILL_MASTERY,
+                                '+', 0,
+                                '%', 115,
+#endif
                         },
                         {
                                 SKILL_NECROMANCY,
@@ -1866,12 +1872,12 @@ player_race race_info[MAX_RACES] =
                         {
                                 SKILL_HEALTH,
                                 '+', 3000,
-                                '%', 120,
+                                '%', 110,
                         },
                         {
                                 SKILL_SWIM,
                                 '+', 2000,
-                                '%', 130,
+                                '%', 120,
                         },
                         /* Not banned, but *hard* */
                         {
@@ -1901,7 +1907,7 @@ player_race race_info[MAX_RACES] =
                 "Dunadan",
                 {  1,  2,  2,  2,  3,  2 },
                 4,  5,  5,  2, 3, 13, 15, 10,
-                10,  180,
+                10,  170,
                 50, 20,
                 82, 5, 190, 20,
                 78,  6, 180, 15,
@@ -1943,7 +1949,7 @@ player_race race_info[MAX_RACES] =
                 "High-Elf",
                 {  1,  3, -1,  3,  1,  3 },
                 4,  20, 20,  3,  3, 14, 10, 25,
-                10,  260,
+                10,  250,
                 100, 30,
                 90, 10, 190, 20,
                 82, 10, 180, 15,
@@ -2014,7 +2020,7 @@ player_race race_info[MAX_RACES] =
                 66,  4, 150, 20,
                 0,
 //                0x7FF,
-		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFC,
+		CFW+CFI+CFP+CFR+CFM+CFA+CFL+CFN+CFX+CFD+CFS+CFU+CFC,
                 50,
 //                {{ 0 }},
 		{
@@ -2188,7 +2194,7 @@ player_race race_info[MAX_RACES] =
         {
                 "Dark-Elf",
                 {  0,  2, 1,  3,  1,  -6 },
-                0,  3, 6,  2, 10, 6, 15, 15,
+                0,  3, 6,  4, 10, 6, 15, 15,
                 10,  140,
                 100, 30,
                 90, 10, 180, 20,
@@ -2242,7 +2248,8 @@ player_race race_info[MAX_RACES] =
                 "Vampire",
                 {  2,  0, -3,  -1,  0,  -6 },
                 -4,  0, 20,  2,  -4, 13, 10, -10,
-                11,  240,
+//                11,  240,
+                11,  220,
                 100, 30,
                 90, 10, 180, 20,
                 82, 10, 170, 15,
@@ -3202,7 +3209,7 @@ player_class class_info[MAX_CLASS] =
 		{ 2, 1, -2, 3, 1, -1},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0, 10, 10, 40, 30,// ..0,0,40,30
-		5, 25, //3, 25,//5, 25
+		5, 15, //3, 25,//5, 25
 //		8, 25,
                 {
                         {
@@ -3416,7 +3423,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 0, 1, 1, -4},
 		25, 35, 28, 1, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
-		6, 40,//3, 40,//4, 25
+		6, 30,//3, 40,//4, 25
 //		8, 40,
                 {
                         {
@@ -3587,7 +3594,7 @@ player_class class_info[MAX_CLASS] =
 		{ 1, 0, 2, 3, 1, -1},
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
-		5, 15,//3, 15,//5, 15
+		5, 10,//3, 15,//5, 15
 //		8, 15,
                 {
                         {
@@ -4033,7 +4040,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MANA,
                                 '+', 1000,	/* Allow to cast Manathrust */
-                                '+', 600,
+                                '+', 800,//was 600 hmm
                         },
                         {
                                 SKILL_FIRE,
@@ -4192,7 +4199,7 @@ player_class class_info[MAX_CLASS] =
 		{ 0, 0, 0, 0, 0, 0},
 		30, 20, 20, 2,  15, 15, 50, 50,
 		10, 10,  10, 0,  5,  5,  25, 25,//..,0,0,25,25
-		6, 10, //3,  0,//5,0,
+		6, 25, //3,  0,//5,0,
 //		8, 10,
                 {
                         /* Combat tree */
@@ -4206,12 +4213,14 @@ player_class class_info[MAX_CLASS] =
                                 '+', 1000,
                                 '+', 600,
                         },
+#if 0
 #ifdef DUAL_WIELD /* not sure */
                         { /* dual-wield */
                                 SKILL_DUAL,
                                 '+', 1000,
                                 '+', 0,
                         },
+#endif
 #endif
                         {
                                 SKILL_SWORD,
@@ -4421,11 +4430,54 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+#ifndef ENABLE_RCRAFT
 			{ 
 				SKILL_RUNEMASTERY,
 				'+', 0,
 				'+', 400,
 			},
+#else
+			{ 
+				SKILL_R_FIRECOLD,
+				'+', 0,
+				'+', 500,
+			},			
+			{ 
+				SKILL_R_WATEACID,
+				'+', 0,
+				'+', 270,
+			},			
+			{ 
+				SKILL_R_ELECEART,
+				'+', 0,
+				'+', 400,
+			},			
+			{ 
+				SKILL_R_WINDPOIS,
+				'+', 1000,
+				'+', 340,
+			},
+			{ 
+				SKILL_R_MANACHAO,
+				'+', 0,
+				'+', 270,
+			},
+			{ 
+				SKILL_R_FORCGRAV,
+				'+', 0,
+				'+', 270,
+			},
+			{ 
+				SKILL_R_NETHTIME,
+				'+', 0,
+				'+', 270,
+			},
+			{ 
+				SKILL_R_MINDNEXU,
+				'+', 0,
+				'+', 270,
+			},
+#endif
                         {
                                 SKILL_MIMIC,
                                 '+', 0,
@@ -4548,8 +4600,8 @@ player_class class_info[MAX_CLASS] =
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		30, 40, 30, 5, 25, 25, 50, 60,
-		8, 5, 10, 1, 10,  5, 20, 35,
-		5, 50,
+		8, 5, 10, 1, 10,  5, 20, 30,
+		5, 40,//5, 50
                 {
                         {
                                 SKILL_COMBAT,
@@ -4702,9 +4754,9 @@ player_class class_info[MAX_CLASS] =
  *   HD, Exp*/
 		10, 30, 30,  5, 20, 30, 45, 20,
 		 0, 11, 10,  0,  3,  5, 20,  5,
-//		4, 45,
-		4, 30,
+		3, 45, //4, 30
                 {
+#if 0 /* fighting shamans, rivalling priests/paladins/rangers */
                         /* Combat tree */
                         {
                                 SKILL_COMBAT,
@@ -4774,7 +4826,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MAGIC,
                                 '+', 2000,
-                                '+', 800,
+                                '+', 500,
                         },
                         {
                                 SKILL_CONVEYANCE,
@@ -4945,7 +4997,216 @@ player_class class_info[MAX_CLASS] =
                                 '+', 0,
                                 '+', 500,
                         },
+#else /* mimicmage/mimicpriest/mimicmagepriest pure caster shaman */
+			/* melee fighting skills */
+                        {
+                                SKILL_AXE,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_BLUNT,
+                                '+', 0,
+                                '+', 400,
+                        },
+			{
+				SKILL_POLEARM,
+				'+', 0,
+				'+', 400,
+			},
+                        {
+                                /* let's keep it low for now - offbalancing */
+                                SKILL_MARTIAL_ARTS,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        /* Combat tree */
+                        {
+                                SKILL_COMBAT,
+                                '+', 0,
+                                '+', 300,//priests=750,istari=300
+                        },
+                        {
+                                SKILL_MASTERY,
+                                '+', 0,
+                                '+', 150,
+                        },
+                        /* Magic tree */
+                        {
+                                SKILL_MAGIC,
+                                '+', 2000,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_CONVEYANCE,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DEVICE,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_SPELL,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MANA,
+                                '+', 1000,
+                                '+', 600,
+                        },
+                        {
+                                SKILL_FIRE,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_AIR,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_EARTH,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_WATER,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_NATURE,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_DIVINATION,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_UDUN,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_META,
+                                '+', 0,
+                                '+', 500,
+                        },
+                        {
+                                SKILL_MIND,
+                                '+', 0,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_HOFFENSE,
+                                '+', 1000,
+				'+', 900,
+//				'+', 1000,
+			},
+			{
+                                SKILL_HDEFENSE,
+                                '+', 0,
+				'+', 900,
+//				'+', 1000,
+                        },
+                        {
+                                SKILL_HCURING,
+                                '+', 0,
+//				'+', 1100,
+				'+', 900,
+//				'+', 1000,
+                        },
+                        {
+                                SKILL_HSUPPORT,
+                                '+', 0,
+				'+', 900,
+//				'+', 1000,
+                        },
+                        {
+                                SKILL_MIMIC,
+                                '+', 1000,
+                                '+', 800,
+				/* only: giant, dragon, animal, ghost, elemental, DR */
+                        },
 
+                        /* Sneakiness tree */
+                        {
+                                SKILL_SNEAKINESS,
+                                '+', 0,
+                                '+', 400,
+                        },
+                        {
+                                SKILL_STEALTH,
+                                '+', 1000,
+                                '+', 800,
+                        },
+
+                        /* Necromancy tree */
+                        {
+                                SKILL_NECROMANCY,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_TRAUMATURGY,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_AURA_FEAR,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_AURA_SHIVER,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        {
+                                SKILL_AURA_DEATH,
+                                '+', 0,
+                                '+', 1500,
+                        },
+                        /* Health tree */
+                        {
+                                SKILL_HEALTH,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+                        {
+                                SKILL_SWIM,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+#if 0
+                        {
+                                SKILL_TRAINING,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+#endif
+                        {
+                                SKILL_DIG,
+                                '+', 1000,
+                                '+', 1000,
+                        },
+			/* Misc tree - let's keep it actually! */
+                        {
+                                SKILL_CALMNESS,
+                                '+', 0,
+                                '+', 900,
+                        },
+                        {
+                                SKILL_INTERCEPT,
+                                '+', 0,
+                                '+', 500,
+                        },
+#endif
                 }
 	},
 #ifdef ENABLE_RUNEMASTER
@@ -4953,6 +5214,7 @@ player_class class_info[MAX_CLASS] =
                 "Runemaster",
                 TERM_L_BLUE, 
 		{ 1, 2, -3, 3, -3, -3},
+//		{ -1, 3, 1, -3, -3, 2}, <- originally was for ENABLE_RCRAFT, taken out for now: they remain roguish instead of rather mageish
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4960,8 +5222,8 @@ player_class class_info[MAX_CLASS] =
         //support rods + runes
         //HP dice... Hm, tough question. What other skills will be made available to them? *Keeping @ 5 for now*
 		10, 20, 20,  0, 20, 30, 45, 20,
-		 0, 11, 10,  0,  3,  5, 20,  5,
-		5, 20,
+		 0, 11, 10,  0,  3,  5, 20, 10,
+		5, 20,//5, 20
                 {
 			{
 				SKILL_COMBAT,
@@ -5009,12 +5271,20 @@ player_class class_info[MAX_CLASS] =
 				SKILL_SLING,
 				'+', 0,
 				'+', 700,
-			}, 
+			},
+#ifndef ENABLE_RCRAFT
 			{
 				SKILL_MAGIC,
 				'+', 1000,
 				'+', 200,
-			}, 
+			},
+#else
+			{
+				SKILL_MAGIC,
+				'+', 1000,
+				'+', 1000,
+			},
+#endif
                         /* Sneakiness tree */
                         {
                                 SKILL_SNEAKINESS,
@@ -5056,11 +5326,54 @@ player_class class_info[MAX_CLASS] =
 				'+', 0,
 				'+', 1000,
 			},
-			{ 
+#ifndef ENABLE_RCRAFT
+			{
 				SKILL_RUNEMASTERY,
 				'+', 1000,
 				'+', 1500,
 			},
+#else
+			{ 
+				SKILL_R_FIRECOLD,
+				'+', 0,
+				'+', 1500,
+			},			
+			{ 
+				SKILL_R_WATEACID,
+				'+', 0,
+				'+', 800,
+			},			
+			{ 
+				SKILL_R_ELECEART,
+				'+', 0,
+				'+', 1200,
+			},			
+			{ 
+				SKILL_R_WINDPOIS,
+				'+', 1000,
+				'+', 1100,
+			},
+			{ 
+				SKILL_R_MANACHAO,
+				'+', 0,
+				'+', 800,
+			},
+			{ 
+				SKILL_R_FORCGRAV,
+				'+', 0,
+				'+', 800,
+			},
+			{ 
+				SKILL_R_NETHTIME,
+				'+', 0,
+				'+', 800,
+			},
+			{ 
+				SKILL_R_MINDNEXU,
+				'+', 0,
+				'+', 800,
+			},
+#endif
                         /* Necromancy tree */
                         {
                                 SKILL_NECROMANCY,
@@ -5109,15 +5422,19 @@ player_class class_info[MAX_CLASS] =
 
 #ifdef ENABLE_MCRAFT
 	{
-                "Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue */
+                "Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue:
+				  At first made them a 'caster with melee ability', but now changed mind ;) to
+				  actually view them as 'fighters with psi abilities' instead, improving vitality. */
                 TERM_SLATE,
-		{ -1, 3, 0, -1, -1, 1},
+//		{ -1, 3, 0, -1, -1, 1},
+		{ 0, 2, 0, 0, 0, 1},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		30, 30, 36,  2, 35, 14, 45, 35,
-		 0,  5,  5,  0,  3,  3, 20,  5,
-		4, 25,
+		30, 30, 36,  2, 35, 14, 55, 35,
+		 0,  5,  5,  0,  3,  3, 26, 20,
+//		4, 25,
+		5, 25,
                 {
                         /* Combat tree */
                         {
@@ -5476,7 +5793,7 @@ cptr player_title[MAX_CLASS][11][4] =
 		{"Robber", "Robber", "Robber", "Robber", },
 		{"Burglar", "Burglar", "Burglar", "Burglar", },
 		{"Filcher", "Filcher", "Filcher", "Filcher", },
-		{"Sharper", "Sharper", "Sharpress", "Sharpress", },
+		{"Sharper", "Sharpress", "Sharper", "Sharpress", },
 		{"Thief", "Thief", "Thief", "Thief", },
 		{"Master Thief", "Master Thief", "Master Thief", "Master Thief", },
 		{"Infiltrator", "Infiltratess", "Infiltrator", "Infiltratess", },
@@ -6250,4 +6567,314 @@ town_extra town_profile[6]=
 	}
 };
 
+
+#ifdef ENABLE_RCRAFT
+
+/* Table of valid runespell elements, their flags, and the sylables for their casting. */
+
+r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
+{
+	{ 0, "Heat", 		"aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
+	{ 1, "Cold", 		"gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
+	{ 2, "Acid", 		"delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
+	{ 3, "Water",		"mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
+	{ 4, "Lighting",	"fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
+	{ 5, "Earth", 		"ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
+	{ 6, "Poison", 		"lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
+	{ 7, "Wind", 		"ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
+	{ 8, "Mana", 		"sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
+	{ 9, "Chaos", 		"emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
+	{10, "Force", 		"fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
+	{11, "Gravity",		"numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
+	{12, "Nether", 		"elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
+	{13, "Time", 		"emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
+	{14, "Mind",		"cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
+	{15, "Nexus", 		"vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
+};
+
+
+/*
+	List of imperatives to divide an incantation's effect from it's type. qua is implied if none is present (auto-retaliation spells, usually)
+
+	They effect a the spell's efficiency & fail rates and damage & cost
+
+	Should be taken as the manner your character takes when invoking the elements of a spell. If he has the force of will to demand or request that the element does his bidding, it will cost him less than an approach which simply draws all available power into the summoning, but the element is much more likely to take offense, and destroy him if he fails to control it.
+
+	This should be where CHR and WIS enter the spell equation.
+
+	float cost; //Cost multiplier
+	float fail; //Fail multiplier
+	float dam; //Damage multipler
+	float danger; //Danger multiplier
+*/
+r_imper r_imperatives [RG_MAX] = 
+{
+	{RG_HOPE, "qua",	 5, 10,  5, 10 }, 	/* request x1 */
+	{RG_ASKS, "immo",	 8, 10,  8, 10 }, 	/* request x2 */
+	{RG_REQU, "oratu",	10, 15, 10, 10 }, 	/* request x3 */
+	{RG_VOLU, "multo",	12, 20, 12, 10 }, 	/* request x4 */
+	{RG_WILL, "coactu",	12, 20, 10, 20 }, 	/* demand  x1 */
+	{RG_MIGH, "armis",	15, 30, 12, 30 }, 	/* demand  x2 */
+	{RG_DEMA, "iussu",	18, 40, 15, 40 },	/* demand  x3 */
+	{RG_LUCK, "forte",	 0,  0,  0, 20 }, 	/* (Random cost, fail, damage) */
+};
+
+r_type runespell_types[8] =
+/*
+
+Runespell types.
+
+	int id;
+	unsigned long type; //Flag
+	char * title; //Name
+	int cost;	//Number of times the flag must appear to count in spell
+	byte pen; 	//mp penalty for type.
+
+*/
+{
+	{ 0, R_MELE, "shield", 	0, 5 },	
+	{ 1, R_SELF, "self",  	1, 10 },
+	{ 2, R_BOLT, "bolt",  	1, 10 },
+	{ 3, R_BEAM, "beam",  	2, 11 },
+	{ 4, R_BALL, "ball",  	2, 13 },
+	{ 5, R_WAVE, "wave",  	3, 12 },
+	{ 6, R_CLOU, "cloud", 	3, 15 },
+	{ 7, R_LOS,  "sight", 	3, 40 },
+};
+
+/* Table of valid runespell types and their meta information.
+
+GF_TYPES are zero if they represent a new/special spell, dealt with case by case in cast_runespell() (usually self-spells, or spells with more than one effect)
+
+	int id;
+	char * title;
+	byte dam; //Damage/power multiplier
+	byte pen; // Bonus MP penalty for a particular spell. (/10)
+	byte level; //  Average skill level for success 
+	byte fail; // fail rate multiplier (how much more difficult is it than something else?)
+	int gf_type; //0 for special cases (handled by cast_runespell)
+
+Removed description with a view to having many paths to the same places
+*/
+r_spell runespell_list[RT_MAX] =
+{
+{ RT_NONE, 			"nothing", 			10,  0,  0,  0, 0,			},
+{ RT_FIRE, 			"fire", 			10,  8,  1,  5, GF_FIRE, 		},
+{ RT_BASERES_PLAYER, 		"base resistance", 		10, 48, 36, 40, 0,			}, //Four spells at once should be expensive
+{ RT_NUKE, 			"nuke", 			30, 35, 40, 12, GF_NUKE,		},
+{ RT_CONFUSION, 		"confusion", 			10,  8,  5,  5, GF_CONFUSION,		},
+{ RT_ROCKET, 			"rocket", 			40, 30, 45, 15, GF_ROCKET,		},
+{ RT_SEEINVIS_PLAYER,		"see invisible",		10,  1,  3,  5, 0,			},
+{ RT_LITE_WEAK, 		"light", 			12,  5,  9,  5, GF_LITE_WEAK,		},
+{ RT_LITE, 			"sunburst",			20, 10, 12,  9, GF_LITE,		},
+{ RT_METEOR, 			"meteor", 			40, 30, 35, 15, GF_METEOR,		},
+{ RT_HOLY_FIRE, 		"holy fire", 			20, 11, 25, 11, GF_HOLY_FIRE,		}, //Reserved for Holy types; removed.
+{ RT_HELL_FIRE, 		"hell fire", 			20, 11, 30, 11, GF_HELL_FIRE,		}, //Should be the same, but magi? Remains for now.
+{ RT_PLASMA, 			"plasma", 			20, 25, 15, 11, GF_PLASMA,		},
+{ RT_COLD, 			"cold", 			10,  8,  1,  5, GF_COLD,		},
+{ RT_BLIND, 			"blindness", 			10, 11, 10,  8, GF_BLIND,		},
+{ RT_ICEPOISON, 		"ice and poison", 		20, 14, 30, 11, GF_ICEPOISON,		},
+{ RT_DARK_WEAK, 		"darkness", 			12, 10,  5,  5, GF_DARK_WEAK,		},
+{ RT_DARK, 			"blackness", 			20, 11, 15,  9, GF_DARK,		},
+{ RT_STASIS, 			"stasis", 			10, 13,  5,  7, GF_STASIS,		}, //Needs testing. What does it do?
+{ RT_ICE, 			"ice", 				15, 14, 25, 11, GF_ICE,			},
+{ RT_STUN, 			"stun", 			10, 10, 10,  9, GF_STUN,		},
+{ RT_ACID, 			"acid", 			10,  8,  1,  5, GF_ACID,		},
+{ RT_DISENCHANT, 		"disenchantment", 		20, 30, 25, 11, GF_DISENCHANT,		},
+{ RT_DISINTEGRATE, 		"disintegration", 		30, 25, 30, 10, GF_DISINTEGRATE,	},
+{ RT_THUNDER,	 		"thunderstorm",			13, 18, 25, 10, 0,			},
+{ RT_ELEC, 			"electricity", 			10, 18,  1,  5, GF_ELEC,		},
+{ RT_SOUND, 			"sound", 			14, 20, 10, 18, GF_SOUND,		},
+{ RT_OLD_CLONE, 		"cloning", 			10, 10,  1,  5, GF_OLD_CLONE,		},
+{ RT_DRAIN, 			"drain", 			10, 15, 15, 10, GF_OLD_DRAIN,		},
+{ RT_POIS, 			"poison", 			10, 11,  3, 15, GF_POIS,		},
+{ RT_WATERPOISON, 		"water and poison", 		15, 18, 20, 15, GF_WATERPOISON,		},
+{ RT_UNBREATH, 			"thick gas", 			20, 25, 30, 10, GF_UNBREATH,		},
+{ RT_RESPOIS_PLAYER, 		"resist poison", 		10, 10, 10, 10, 0,			},
+{ RT_WATER, 			"water", 			15, 10, 15, 10, GF_WATER,		},
+{ RT_WAVE, 			"wave", 			12, 10,  5, 10, GF_WAVE,		},
+{ RT_HEAL_PLAYER, 		"healing", 			10, 10, 10, 10, GF_HEAL_PLAYER,		},
+{ RT_BLESS_PLAYER, 		"blessing", 			10,  1,  1,  1, 0,			},
+{ RT_SATHUNGER_PLAYER, 		"satiation", 			10,  1,  1,  1, 0,			},
+{ RT_ARROW, 			"wind",				10, 10,  1, 10, GF_ARROW,		},
+{ RT_MISSILE, 			"missiles",		 	15, 10, 10, 10, GF_MISSILE,		},
+{ RT_MAKE_WALL, 		"wall creation", 		10, 10, 15, 10, GF_MAKE_WALL,		},
+{ RT_DETECT_STAIR, 		"door/stair detection",  	10,  5, 10,  5, 0,			},
+{ RT_DETECTCREATURE_PLAYER, 	"detect monsters", 	 	10,  1,  1,  1, 0,			},
+{ RT_LEVITATE, 			"levitation", 			10, 10, 10, 10, 0,			},
+{ RT_FLY, 			"fly", 				10, 10, 20, 10, 0,			},
+{ RT_SHARDS, 			"shards", 			10, 20,  5, 10, GF_SHARDS,		},
+{ RT_KILL_DOOR, 		"disarm", 			10,  2,  5, 10, 0,			},
+{ RT_DETECT_TRAP, 		"detect traps",			10,  2,  5, 10, 0,			},
+{ RT_KILL_WALL, 		"dig", 				10,  8, 10, 10, GF_KILL_WALL,		},
+{ RT_STONE_WALL, 		"stone prison", 		10, 14, 20, 10, GF_STONE_WALL,		},
+{ RT_EARTHQUAKE, 		"earthquake", 			10, 35, 35, 10, 0,			},
+{ RT_DSHIELD_PLAYER, 		"mystic shield", 		10, 30, 30, 10, 0,			}, //Dis-shield -> Mystic Shield (AC Boost)
+{ RT_OLD_POLY, 			"polymorph", 			10, 10, 10, 10, GF_OLD_POLY,		},
+{ RT_SELF_KNOWLEDGE, 		"self knowledge", 		10, 30, 30, 10, 0,			}, //Out of theme: removed
+{ RT_WRAITH_PLAYER, 		"wraithform", 			10, 11, 30, 10, 0,			}, //Out of theme: removed
+{ RT_SEEMAP_PLAYER, 		"vision", 			10, 10, 10, 10, 0,			},
+{ RT_MANA, 			"mana", 			12, 15,  1, 10, GF_MANA,		},
+{ RT_MAKE_GLYPH, 		"glyph of warding", 		10, 50, 30, 50, 0,			},
+{ RT_CHAOS, 			"chaos", 			10, 25, 25, 20, GF_CHAOS,		}, //Useless as an attack spell (polymorph)
+{ RT_TRAUMA, 			"traumaturgy", 			10, 10, 10, 10, 0,			}, //Traumaturgy boost spell
+{ RT_INERTIA, 			"inertia", 			15, 20, 25, 25, GF_INERTIA,		},
+{ RT_SPEED_PLAYER, 		"essence of speed", 		 4, 30, 15, 15, 0,			},
+{ RT_NETHER, 			"nether", 			10, 35, 35, 35, GF_NETHER,		},
+{ RT_TELEPORTLVL_PLAYER, 	"level teleport", 		10, 30, 20, 10, 0,			},
+{ RT_RECALL_PLAYER, 		"recall", 			10, 30, 30, 10, 0,			},
+{ RT_NEXUS, 			"nexus", 			20, 20, 25, 40, GF_NEXUS,		},
+{ RT_TELEPORT_PLAYER, 		"teleport", 			10,  5, 10, 20, 0,			},
+{ RT_TELE_TO, 			"teleport to", 			10,  2, 10, 30, 0,			},
+/*{ RT_PSI, 			"psi", 				15, 40,  5, 20, GF_PSI,			},*/
+{ RT_PSI, 			"psi", 				 5, 40,  5, 20, GF_PSI,			},
+{ RT_ESP, 			"esp", 				10, 11, 25, 30, 0,			},
+{ RT_HOLD, 			"holding", 			10, 11, 10, 10, GF_HOLD,		}, //Needs testing. What does it do?
+{ RT_TIME, 			"time", 			30, 16, 25, 40, GF_TIME,		},
+{ RT_SLOW, 			"slow", 			10, 11,  5, 10, GF_OLD_SLOW,		},
+{ RT_GRAVITY, 			"gravity", 			30, 25, 25, 40, GF_GRAVITY,		}, //OP?
+{ RT_FORCE, 			"force", 			20, 14,  5, 30, GF_FORCE,		},
+{ RT_DISPERSE,	 		"disperse magic",	 	10,  2, 10, 20, 0,			}, //Clears spell statuses, removes a glyph
+{ RT_BLINK, 			"blink", 			10,  1,  1,  1, 0,			},
+{ RT_GOL, 			"light", 			10,  5,  1,  1, 0,			},
+{ RT_INVIS, 			"invisibility",			10, 10, 25, 20, 0,			},
+{ RT_MAGIC_CIRCLE,		"magical circle",		10, 70, 40, 70, 0,			}, //3x3 of Glyphs. Possibly OP
+{ RT_RES_FIRE,			"fire resistance",		10, 12,  8, 15, 0,			},
+{ RT_RES_COLD,			"cold resistance",		10, 12,  8, 15, 0,			},
+{ RT_RES_ACID,			"acid resistance",		10, 12,  8, 15, 0,			},
+{ RT_RES_ELEC,			"electrical resistance",	10, 12,  8, 15, 0,			},
+{ RT_SUMMON,			"summoning",			10, 12, 12, 35, 0,			}, //Teleports all in sight to your location (OP?)
+{ RT_MEMORY,			"memory",			10, 20, 25, 20, 0,			}, //Sets next teleport destination
+{ RT_STEALTH,			"stealth",			10,  5, 20, 40, 0,			}, //Toggles stealth buff
+};
+
+
+rspell_sel rspell_selector[MAX_RSPELL_SEL] = 
+{
+{ R_SELF | R_FIRE | R_COLD | R_ACID | R_ELEC,				RT_BASERES_PLAYER,},
+{ R_SELF | R_TIME | R_GRAV | R_FORC,					RT_RECALL_PLAYER,},
+{ R_SELF | R_MIND | R_NEXU | R_FORC,					RT_RECALL_PLAYER,},
+{ R_SELF | R_NEXU | R_GRAV | R_EART,					RT_TELEPORTLVL_PLAYER,},
+{ R_SELF | R_NEXU | R_GRAV | R_NETH,					RT_TELEPORTLVL_PLAYER,},
+{ R_SELF | R_NEXU | R_NETH | R_EART,					RT_TELEPORTLVL_PLAYER,},
+{ R_SELF | R_EART | R_ELEC | R_NEXU,					RT_MEMORY,},
+{ R_SELF | R_MIND | R_NEXU | R_ACID,					RT_MEMORY,},
+{ R_SELF | R_MIND | R_NEXU | R_FIRE,					RT_MEMORY,},
+{ R_SELF | R_WIND | R_EART | R_FORC,					RT_STONE_WALL,},
+{ R_SELF | R_MIND | R_EART | R_FORC,					RT_STONE_WALL,},
+{ R_SELF | R_MANA | R_TIME | R_FORC,					RT_MAGIC_CIRCLE,},
+{ R_SELF | R_FIRE | R_POIS,						RT_RESPOIS_PLAYER,},
+{ R_SELF | R_FIRE | R_MANA,						RT_RES_FIRE,},
+{ R_SELF | R_COLD | R_MANA,						RT_RES_COLD,},
+{ R_SELF | R_COLD | R_EART,						RT_STEALTH,},
+{ R_SELF | R_COLD | R_MIND,						RT_STEALTH,},
+{ R_SELF | R_ACID | R_MANA,						RT_RES_ACID,},
+{ R_SELF | R_WATE | R_EART,						RT_STONE_WALL,},
+{ R_SELF | R_WATE | R_ELEC,						RT_THUNDER,},
+{ R_SELF | R_WATE | R_ACID,						RT_MAKE_GLYPH,},
+{ R_SELF | R_WATE | R_MANA,						RT_HEAL_PLAYER,},
+{ R_SELF | R_ELEC | R_MANA,						RT_RES_ELEC,},
+{ R_SELF | R_ELEC | R_GRAV,						RT_SUMMON,},
+{ R_SELF | R_ELEC | R_NEXU,						RT_SPEED_PLAYER,},
+{ R_SELF | R_EART | R_CHAO,						RT_EARTHQUAKE,},
+{ R_SELF | R_EART | R_ELEC,						RT_DISPERSE,},
+{ R_SELF | R_EART | R_FORC,						RT_KILL_DOOR,},
+{ R_SELF | R_EART | R_MIND,						RT_SEEMAP_PLAYER,},
+{ R_SELF | R_EART | R_NEXU,						RT_KILL_DOOR,},
+{ R_SELF | R_EART | R_WIND,						RT_DETECT_STAIR,},
+{ R_SELF | R_POIS | R_MANA,						RT_RESPOIS_PLAYER,},
+{ R_SELF | R_WIND | R_MIND,						RT_ESP,},
+{ R_SELF | R_MANA | R_CHAO,						RT_DISPERSE,},
+{ R_SELF | R_MANA | R_TIME,						RT_MAKE_GLYPH,},
+{ R_SELF | R_MANA | R_NETH,						RT_DSHIELD_PLAYER,},
+{ R_SELF | R_MANA | R_EART,						RT_DSHIELD_PLAYER,},
+{ R_SELF | R_CHAO | R_MIND,						RT_DETECTCREATURE_PLAYER,},
+{ R_SELF | R_CHAO | R_TIME,						RT_SPEED_PLAYER,},
+{ R_SELF | R_NETH | R_EART,						RT_DSHIELD_PLAYER,},
+{ R_SELF | R_TIME | R_NEXU,						RT_SPEED_PLAYER,},
+{ R_SELF | R_GRAV | R_FORC,						RT_FLY,},
+{ R_SELF | R_MIND | R_TIME,						RT_ESP,},
+{ R_SELF | R_MIND | R_FORC,						RT_ESP,},
+{ R_SELF | R_NEXU | R_FORC,						RT_TELEPORT_PLAYER,},
+{ R_SELF | R_NEXU | R_WIND,						RT_TELEPORT_PLAYER,},
+{ R_SELF | R_NEXU | R_GRAV,						RT_TELE_TO,},
+{ R_SELF | R_NEXU | R_MIND,						RT_SUMMON,},
+{ R_SELF | R_FIRE,							RT_GOL,},
+{ R_SELF | R_COLD,							RT_INVIS,},
+{ R_SELF | R_ACID,							RT_GOL,},
+{ R_SELF | R_WATE,							RT_SATHUNGER_PLAYER,},
+{ R_SELF | R_ELEC,							RT_GOL,},
+{ R_SELF | R_EART,							RT_DETECT_TRAP,},
+//{ R_SELF | R_POIS,							RT_,}, //Traps ? 
+{ R_SELF | R_WIND,							RT_BLINK,},
+{ R_SELF | R_MANA,							RT_BLESS_PLAYER,},
+{ R_SELF | R_CHAO,							RT_TELEPORT_PLAYER,},
+{ R_SELF | R_FORC,							RT_TELEPORT_PLAYER,},
+{ R_SELF | R_GRAV,							RT_LEVITATE,},
+{ R_SELF | R_NETH,							RT_TRAUMA,},
+{ R_SELF | R_TIME,							RT_INVIS,},
+{ R_SELF | R_MIND,							RT_DETECTCREATURE_PLAYER,},
+{ R_SELF | R_NEXU,							RT_BLINK,},
+
+{ R_FIRE | R_ACID | R_POIS | R_FORC,					RT_NUKE,},
+{ R_FIRE | R_EART | R_GRAV | R_CHAO,					RT_METEOR,},
+{ R_FIRE | R_ELEC | R_EART | R_FORC,					RT_ROCKET,},
+{ R_COLD | R_POIS | R_WATE | R_WIND,					RT_ICEPOISON,},
+{ R_FIRE | R_WIND | R_EART,						RT_LITE,},
+{ R_ELEC | R_WIND | R_EART,						RT_LITE,},
+{ R_WIND | R_EART | R_FORC,						RT_MAKE_WALL,},
+{ R_ELEC | R_CHAO | R_NETH,						RT_DRAIN,},
+{ R_EART | R_GRAV | R_MANA,						RT_STONE_WALL,},
+{ R_COLD | R_WIND | R_EART,						RT_DARK,},
+{ R_ACID | R_NEXU | R_TIME,						RT_DISINTEGRATE,},
+{ R_ACID | R_NETH | R_TIME,						RT_DISINTEGRATE,},
+{ R_COLD | R_EART | R_MIND,						RT_STASIS,},
+{ R_COLD | R_EART | R_WATE,						RT_ICE,},
+{ R_EART | R_FORC,							RT_KILL_WALL,},
+{ R_ACID | R_WIND,							RT_KILL_WALL,},
+{ R_ACID | R_FORC,							RT_KILL_WALL,},
+{ R_WATE | R_EART,							RT_KILL_WALL,},
+{ R_ACID | R_EART,							RT_DISENCHANT,},
+{ R_ACID | R_NETH,							RT_DISENCHANT,},
+{ R_ELEC | R_WATE,							RT_DISENCHANT,},
+{ R_FIRE | R_CHAO,							RT_HELL_FIRE,},
+{ R_ACID | R_CHAO,							RT_HELL_FIRE,},
+{ R_FIRE | R_FORC,							RT_PLASMA,},
+{ R_ACID | R_FORC,							RT_PLASMA,},
+//{ R_FIRE | R_MANA,							RT_HOLY_FIRE,},
+//{ R_ACID | R_MANA,							RT_HOLY_FIRE,},
+{ R_FIRE | R_WIND,							RT_LITE_WEAK,},
+{ R_ELEC | R_EART,							RT_SOUND,},
+{ R_WIND | R_EART,							RT_MISSILE,},
+{ R_ELEC | R_CHAO,							RT_OLD_CLONE,},
+{ R_COLD | R_ELEC,							RT_BLIND,},
+{ R_COLD | R_MIND,							RT_STUN,},
+{ R_COLD | R_WIND,							RT_DARK_WEAK,},
+{ R_EART | R_FORC,							RT_KILL_DOOR,},
+{ R_ACID | R_WATE,							RT_KILL_DOOR,},
+{ R_ACID | R_NEXU,							RT_KILL_DOOR,},
+{ R_POIS | R_NETH,							RT_DRAIN,},
+{ R_WATE | R_NETH,							RT_DRAIN,},
+{ R_POIS | R_WATE,							RT_WATERPOISON,},
+{ R_MIND | R_GRAV,							RT_HOLD,},
+{ R_CHAO | R_NEXU,							RT_INERTIA,},
+{ R_TIME | R_GRAV,							RT_SLOW,},
+{ R_FIRE,								RT_FIRE,},
+{ R_CHAO,								RT_CHAOS,},
+{ R_ACID,								RT_ACID,},
+{ R_COLD,								RT_COLD,},
+{ R_EART,								RT_SHARDS,},
+{ R_ELEC,								RT_ELEC,},
+{ R_FORC,								RT_FORCE,},
+{ R_WATE,								RT_WATER,},
+{ R_GRAV,								RT_GRAVITY,},
+{ R_MANA,								RT_MANA,},
+{ R_MIND,								RT_PSI,},
+{ R_NETH,								RT_NETHER,},
+{ R_NEXU,								RT_NEXUS,},
+{ R_POIS,								RT_POIS,},
+{ R_TIME,								RT_TIME,},
+{ R_WIND,								RT_ARROW,},
+};
+#endif //enable_rcraft
 

@@ -1,10 +1,10 @@
-
 # Hints for TomeNET, following the scheme of rumors.txt. - C. Blue
 # Basically same as rumours, except that by using an extra file here we
 # can choose to display useful hints more often than those random rumours.
+# (amount number below N: is last used lines - 7)
 
 N:*:Default
-16
+18
 Press shift+P to form a party and share experience within 7 levels!
 Somewhat experienced rogues may use shift+V to become nigh invisible!
 Most fighter classes will learn special techniques they can use with 'm'!
@@ -21,3 +21,5 @@ Press shift+G to spend skill points you gain on each level-up!
 Type /que in chat to get a random kill quest!
 You can also bind macros to SHIFT+key or CTRL+key, for multiple use of a key.
 Creating ammo from a larger stack of raw materials results in more ammo!
+Notebook users should consider plugging in an USB keyboard.
+Party members should stick together to survive.

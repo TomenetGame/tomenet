@@ -1522,6 +1522,13 @@ void carry(int Ind, int pickup, int confirm)
 			msg_format(Ind, "You cannot take money of %s players.", compat_pomode(Ind, o_ptr));
 			return;
 		}
+		
+		/* hack: prevent s32b overflow O_o (might happen to
+		   'Illusionate' party at one point in the future? Dunno) */
+		if (2000000000 - o_ptr->pval < p_ptr->au) {
+			msg_format(Ind, "\377yYou cannot carry more than 2 billion worth of gold!");
+			return;
+		}
 
 		/* Message */
 		msg_format(Ind, "You have found %ld gold pieces worth of %s.",
@@ -1548,6 +1555,7 @@ void carry(int Ind, int pickup, int confirm)
 			int lev = lookup_player_level(o_ptr->owner);
 			cptr acc_name = lookup_accountname(o_ptr->owner);
 			if (p_ptr->id != o_ptr->owner) {
+ #if 0
 				if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
 					s_printf("%s -CHEEZY- Money transaction: %ldau from %s(%d) to %s(%d) at (%d,%d,%d)\n",
 							showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
@@ -1563,6 +1571,18 @@ void carry(int Ind, int pickup, int confirm)
 							showtime(), name ? name : "(---)", lev, acc_name,
 							p_ptr->name, p_ptr->lev, p_ptr->accountname, o_ptr->pval);
 				}
+ #else
+				s_printf("%s Money transaction: %ldau from %s(%d) to %s(%d%s) at (%d,%d,%d)\n",
+						showtime(), o_ptr->pval, name ? name : "(Dead player)", lev,
+						p_ptr->name, p_ptr->lev,
+						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+						p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+				c_printf("%s GOLD %s(%d,%s) : %s(%d,%s%s) : %ld\n",
+						showtime(), name ? name : "(---)", lev, acc_name,
+						p_ptr->name, p_ptr->lev, p_ptr->accountname,
+						p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+						o_ptr->pval);
+ #endif
 			}
 		}
 #endif	// CHEEZELOG_LEVEL
@@ -1808,7 +1828,7 @@ void carry(int Ind, int pickup, int confirm)
 			/* Tell the client */
 			Send_floor(Ind, 0);
 
-			/* Recalculate bonuses */
+			/* Recalculate boni */
 			p_ptr->update |= (PU_BONUS);
 
 			/* Window stuff */
@@ -1872,12 +1892,13 @@ if (is_weapon(o_ptr->tval) && !(k_info[o_ptr->k_idx].flags4 & (TR4_MUST2H | TR4_
     && (o_ptr->name2 == EGO_LIFE || o_ptr->name2b == EGO_LIFE) && (o_ptr->pval > 2)) {
         o_ptr->pval = 2;
 }
+#ifndef ENABLE_RCRAFT
 /* Fix high quality runes levels */
 if (o_ptr->tval == TV_RUNE1) {
 	s_printf("HACK-RUNE.\n");
 	switch (o_ptr->sval) {
 		case SV_RUNE1_CLOUD:
-			o_ptr->level=35;
+			o_ptr->level = 35;
 			break;
 		default:
 			break;
@@ -1887,15 +1908,36 @@ if (o_ptr->tval == TV_RUNE2) {
 	s_printf("HACK-RUNE.\n");
 	switch (o_ptr->sval) {
 		case SV_RUNE2_STONE:
-			o_ptr->level=35;
+			o_ptr->level = 35;
 			break;
 		case SV_RUNE2_ARMAGEDDON:
-			o_ptr->level=40;
+			o_ptr->level = 40;
 			break;
 		default:
 			break;
 	} 
 }
+#endif
+
+				/* Remove dangerous inscriptions when picking up items owned by other players - mikaelh */
+				if (p_ptr->id != o_ptr->owner && o_ptr->note)
+				{
+					char *inscription, *scan;
+					scan = inscription = strdup(quark_str(o_ptr->note));
+
+					while (*scan != '\0')
+					{
+						if (*scan == '@')
+						{
+							/* Replace @ with space */
+							*scan = ' ';
+						}
+						scan++;
+					}
+
+					o_ptr->note = quark_add(inscription);
+					free(inscription);
+				}
 
 				/* Own it */
 				if (!o_ptr->owner)
@@ -1924,6 +1966,7 @@ if (o_ptr->tval == TV_RUNE2) {
 					int lev = lookup_player_level(o_ptr->owner);
 					cptr acc_name = lookup_accountname(o_ptr->owner);
 					object_desc_store(Ind, o_name, o_ptr, TRUE, 3);
+ #if 0
 					/* If level diff. is too large, target player is too low,
 					   and items aren't loot of a dead player, this might be cheeze! */
 					if ((lev > p_ptr->lev + 7) && (p_ptr->lev < 40) && (name)) {
@@ -1945,6 +1988,18 @@ if (o_ptr->tval == TV_RUNE2) {
 							p_ptr->name, p_ptr->lev, p_ptr->accountname,
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
 					}
+ #else
+					s_printf("%s Item transaction from %s(%d) to %s(%d%s) at (%d,%d,%d):\n  %s\n",
+							showtime(), name ? name : "(Dead player)", lev,
+							p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+							p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+							o_name);
+					c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
+							showtime(), name ? name : "(---)", lev, acc_name,
+							p_ptr->name, p_ptr->lev, p_ptr->accountname,
+							p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
+							object_value_real(0, o_ptr), o_ptr->discount, o_name);
+ #endif
 				}
 #endif	// CHEEZELOG_LEVEL
 
@@ -2145,11 +2200,11 @@ if (o_ptr->tval == TV_RUNE2) {
 				}
 
 				/* guild key? */
-				if(o_ptr->tval==TV_KEY && o_ptr->sval==2){
-					if(o_ptr->pval==p_ptr->guild){
-						if(guilds[p_ptr->guild].master!=p_ptr->id){
+				if(o_ptr->tval == TV_KEY && o_ptr->sval == 2){
+					if(o_ptr->pval == p_ptr->guild){
+						if(guilds[p_ptr->guild].master != p_ptr->id){
 							guild_msg_format(p_ptr->guild, "%s is the new guildmaster!", p_ptr->name);
-							guilds[p_ptr->guild].master=p_ptr->id;
+							guilds[p_ptr->guild].master = p_ptr->id;
 						}
 					}
 				}
@@ -2331,7 +2386,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 	{
 		/* Make hostile */
 		if (Players[0 - c_ptr->m_idx]->pvpexception < 2)
-		add_hostility(0 - c_ptr->m_idx, p_ptr->name);
+		add_hostility(0 - c_ptr->m_idx, p_ptr->name, FALSE);
 
 		/* Log it if no blood bond - mikaelh */
 		if (!player_list_find(p_ptr->blood_bond, Players[0 - c_ptr->m_idx]->id)) {
@@ -2533,7 +2588,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < q_ptr->chp))
@@ -2589,7 +2644,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 				k += o_ptr->to_d;
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 			}
@@ -2598,7 +2653,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			{
 				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 			}
 			
@@ -2927,11 +2982,13 @@ static void py_attack_player(int Ind, int y, int x, bool old)
  * Note: old == TRUE if not auto-retaliating actually
  *       (important for dual-backstab treatment) - C. Blue
  */
+//#define CRIT_VS_VORPAL
+#define CRIT_VS_BACKSTAB
 static void py_attack_mon(int Ind, int y, int x, bool old)
 {
 	player_type 	*p_ptr = Players[Ind];
-	int             num = 0, bonus, chance, slot;
-	int		k;
+	int             num = 0, bonus, chance, slot, owner_Ind = 0;
+	int		k, k2;
         object_type     *o_ptr = NULL;
 	bool            do_quake = FALSE;
 
@@ -2947,7 +3004,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool            backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool		secondary_wield = (p_ptr->inventory[INVEN_ARM].k_idx != 0 && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD);
-	bool		dual_wield = primary_wield && secondary_wield;
+	bool		dual_wield = primary_wield && secondary_wield && p_ptr->dual_mode;
 	int		dual_stab = (dual_wield ? 1 : 0); /* organizer variable for dual-wield backstab */
 	bool 		nolite, nolite2, martial = FALSE;
 	int 		block = 0, parry = 0;
@@ -2999,9 +3056,24 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
+	/* try to find its owner online */
+	if (m_ptr->owner)
+		for (i = NumPlayers; i > 0; i--)
+			if (m_ptr->owner == Players[i]->id) {
+				owner_Ind = i;
+				break;
+			}
+
+#if 0 /* golems get attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused &&
 		p_ptr->mon_vis[c_ptr->m_idx]) ||
 		(m_ptr->owner != p_ptr->id && m_ptr->pet)) //dont kill pets either, meanie!
+#else /* prevent golems being attacked by other players */
+	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused && p_ptr->mon_vis[c_ptr->m_idx]) ||
+	    (m_ptr->owner == p_ptr->id && m_ptr->pet) || //dont kill pets either, meanie!
+//	    !owner_Ind || /* don't attack ownerless golems */
+	    (owner_Ind && !check_hostile(Ind, owner_Ind))) /* only attack if owner is hostile */
+#endif
 	{
 		int ox = m_ptr->fx, oy = m_ptr->fy, nx = p_ptr->px, ny = p_ptr->py;
 
@@ -3097,25 +3169,11 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 
 	/* Cannot 'stab' with martial-arts */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)
-			&& !p_ptr->inventory[INVEN_WIELD].k_idx
-			&& !p_ptr->inventory[INVEN_ARM].k_idx
-			&& !p_ptr->inventory[INVEN_BOW].k_idx)
+	    && !p_ptr->inventory[INVEN_WIELD].k_idx
+	    && !p_ptr->inventory[INVEN_ARM].k_idx
+	    && !p_ptr->inventory[INVEN_BOW].k_idx)
 	{
 		martial = TRUE;
-		/* MA might not allow 'stab'ing, but it does allow 
-		   sneaking + twisting your neck by 190 degrees.
-		 	Perhaps in the future.. 
-						- the_sandman
-		   
-		*/
-#if 0
-		if (get_skill(p_ptr, SKILL_BACKSTAB)) {
-			if(m_ptr->csleep /*&& m_ptr->ml*/ || p_ptr->cloaked)
-				backstab = TRUE;
-			else if (m_ptr->monfear /*&& m_ptr->ml)*/)
-				stab_fleeing = TRUE;
-		}
-#endif
 	}
 
 	/* check whether monster can be backstabbed */
@@ -3193,16 +3251,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Sound */
 			sound(Ind, SOUND_HIT);
 
-			/* Message */
-			/* DEG Updated hit message to include damage 
-			if(backstab)
-				msg_format(Ind, "You %s stab the helpless, sleeping %s!",
-						nolite ? "*CRUELLY*" : "cruelly", r_name_get(m_ptr));
-			else if (stab_fleeing)
-				msg_format(Ind, "You %s the fleeing %s!",
-						nolite2 ? "*backstab*" : "backstab", r_name_get(m_ptr));
-			else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k); */
-
 			sprintf(hit_desc, "You hit %s", m_name);
 			
 			/* Hack -- bare hands do one damage */
@@ -3216,30 +3264,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k = p_ptr->lev;
 			*/
 				//k = p_ptr->lev * ((p_ptr->lev / 10) + 1);
-#if 1 // DGHDGDGDG -- monks are no more
-//			if (p_ptr->pclass == CLASS_MONK)
-#if 0
-			if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !o_ptr->k_idx
-					&& !p_ptr->inventory[INVEN_ARM].k_idx
-					&& !p_ptr->inventory[INVEN_BOW].k_idx)
-#endif	// 0
-#if 0 //Hm, not necessary and plus, no one does em anyway :) - the_sandman
-			/* New feature: 'backstab' works on Martial Artists as well. - the_sandman 
-			 * The initial/fleeing stab hit is, of course, lower than one might do with sword because
-			 * MA has already got a few boosts lately.. 
-			 */
-			if (martial && (backstab || stab_fleeing)) {
-				int bsskill = (int)(p_ptr->s_info[SKILL_BACKSTAB].value/1000);
-				int percentage = randint(bsskill*2 - m_ptr->level);
-//				if (nolite) percentage += 5;
-				if (percentage<0) percentage = 0;
-//				k += (m_ptr->hp*percentage/100) + (nolite? bsskill*1.5: bsskill/2);
-				k += (m_ptr->hp*percentage/100) + bsskill;
-				if (k < bsskill) k+= bsskill;	// Important for fleeing stab as m_hp is quite low
-			} else if (martial && !backstab && !stab_fleeing)
-#else
+
 			if (martial)
-#endif
 			{
 				int special_effect = 0, stun_effect = 0, times = 0;
 				martial_arts * ma_ptr = &ma_blows[0], * old_ptr = &ma_blows[0];
@@ -3322,6 +3348,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				}
 
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k2 = k; /* remember damage before crit */
 				k = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k, FALSE, 0);
 
 				if ((special_effect == MA_KNEE) && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp))
@@ -3364,7 +3391,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					}
 				}
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
@@ -3374,7 +3401,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				else
 					drain_result = 0;
 			} else
-#endif	// 1 (martial arts)
+
 			/* Handle normal weapon */
 			if (o_ptr->k_idx)
 			{
@@ -3440,30 +3467,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 								msg_format(Ind, "\377o%^s is stunned.", m_name);
 						}
 					}
-				}
-#endif
-
-#if 0 // A better formula below...
-				if (backstab)
-				{
-					/* New backstab formula: takes into account m_hp - the_sandman */
-					int bsskill = (int)(p_ptr->s_info[SKILL_BACKSTAB].value/1000);
-					int percentage = randint(bsskill*2 - m_ptr->level) + (int)(bsskill/10);
-//					if (!nolite) percentage += 5;
-					if (percentage<0) percentage = 0;
-//					k += (m_ptr->hp*percentage)/100 + (nolite? bsskill: bsskill/2);
-					k += (m_ptr->hp*percentage)/100 + bsskill;
-
-//					k += (k * (nolite ? 3 : 1) *
-//					get_skill_scale(p_ptr, SKILL_BACKSTAB, 300)) / 100;
-//					backstab = FALSE;
-				}
-				else if (stab_fleeing)
-				{
-					/* The old fleeing stab formula is fine - the_sandman */
-//					k += (k * (nolite2 ? 2 : 1) *
-					k += (k * 1 * get_skill_scale(p_ptr, SKILL_BACKSTAB, 210)) / 100;
-					stab_fleeing = FALSE;
 				}
 #endif
 
@@ -3555,31 +3558,26 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				/* heheheheheh */
 				do_nazgul(Ind, &k, &num, r_ptr, slot);
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				/* Critical strike moved here, since it works best
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
+				k2 = k; /* remember damage before crit */
+#ifdef CRIT_VS_BACKSTAB
+				if (!backstab && !stab_fleeing)
+#endif
 				k = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
 
-				/* Vorpal bonus - multi-dice!
-				   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
-                                if (vorpal_cut) {
-					k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
-				}
-
-				/* Penalty for could-2H when having a shield */
-/* isn't that already in xtra1.c included, by reducing to_d_... and to_h_... boni?! */
-//				if ((f4 & TR4_SHOULD2H) && p_ptr->inventory[INVEN_ARM].k_idx) k /= 2;
 			}
 			/* handle bare fists/bat/ghost */
 			else
 			{
 				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
 
-				/* Apply the player damage bonuses */
+				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
@@ -3596,10 +3594,27 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* New backstab formula: it works like criticals now and takes a bit of monster hp into account */
 			/* Note that the multiplier is after all the damage calc is done! So may need tweaking! */
 			if (backstab || stab_fleeing) {
-				int bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 400);
+				int bs_multiplier = get_skill_scale(p_ptr, SKILL_BACKSTAB, 350 + rand_int(101));
 				k *= (100 + bs_multiplier);
 				k /= (dual_stab ? 150 : 100);
 				k += m_ptr->hp / 33; /**0.03; <- floats are evil */
+#ifdef CRIT_VS_VORPAL
+				k2 *= (100 + bs_multiplier);
+				k2 /= (dual_stab ? 150 : 100);
+				k2 += m_ptr->hp / 33; /**0.03; <- floats are evil */
+#endif
+			}
+
+			/* Vorpal bonus - multi-dice!
+			   (currently +37.5% more branded dice damage and o_ptr->to_d on total average, just for the records) */
+                        if (vorpal_cut) {
+#ifdef CRIT_VS_VORPAL
+				k2 += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
+				/* either critical hit or vorpal, not both */
+				if (k2 > k) k = k2;
+#else
+				k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
+#endif
 			}
 
 			/* DEG Updated hit message to include damage */
@@ -3669,22 +3684,6 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			/* Apply effects from mimic monster forms */
 		        if (p_ptr->body_monster)
 			{
-#if 0
-				switch (pr_ptr->r_ptr->d_char)
-				{
-					/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
-					case 'p':	case 'h':	case 't':
-					case 'o':	case 'y':	case 'k':
-					apply_monster_effects = TRUE;
-					break;
-					/* If monster is fighting without weapons, the player gets the effect(s) only if
-					he fights with bare hands/martial arts */
-					default:
-					if (!o_ptr->k_idx) apply_monster_effects = TRUE;
-					break;
-				}
-				/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
-#endif
 				/* If monster is fighting with a weapon, the player gets the effect(s) even with a weapon */
 		        	/* If monster is fighting without weapons, the player gets the effect(s) only if
 		    		he fights with bare hands/martial arts */
@@ -3964,7 +3963,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			backstab = FALSE;
 
 			if (strchr("AhHJkpPty", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-			    (!r_ptr->flags3 & RF3_ANIMAL)) {
+			    !(r_ptr->flags3 & RF3_ANIMAL)) {
 #ifdef USE_BLOCKING
 				block = 10;
 #endif
@@ -4283,7 +4282,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 
 			/* Dark Swords resist the magic, other weapons
 			   have a high chance of getting destroyed */
-			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(3) : magik(20))
+			if (((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
+			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
+			    ) ? magik(3) : magik(20))
 			{
 				msg_print(Ind, "\377rYour weapon is destroyed !");
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
@@ -4699,7 +4700,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* Update wilderness positions */
-	if(wpos->wz==0)
+	if(wpos->wz == 0)
 	{
 		/* Make sure he hasn't just changed depth */
 		if (p_ptr->new_level_flag) return;
@@ -4868,11 +4869,11 @@ void move_player(int Ind, int dir, int do_pickup)
 
 				q_ptr->py = p_ptr->py;
 				q_ptr->px = p_ptr->px;
-				calc_bonuses(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
+				calc_boni(Ind2); /* in case he's a vampire and got swapped from/onto sunlit grid */
 
 				p_ptr->py = y;
 				p_ptr->px = x;
-				if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
+				if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
 
 				cave_midx_debug(wpos, p_ptr->py, p_ptr->px, -Ind);
 				cave_midx_debug(wpos, q_ptr->py, q_ptr->px, -Ind2);
@@ -5010,7 +5011,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* update player location */
 			p_ptr->px = m_list[c_ptr->m_idx].fx;
 			p_ptr->py = m_list[c_ptr->m_idx].fy;
-			if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
+			if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
 			/* update monster location */
 			m_list[c_ptr->m_idx].fx = oldx;
 			m_list[c_ptr->m_idx].fy = oldy;
@@ -5221,7 +5222,7 @@ void move_player(int Ind, int dir, int do_pickup)
 		/* Move the player */
 		p_ptr->py = y;
 		p_ptr->px = x;
-		if (old_grid_sunlit != new_grid_sunlit) calc_bonuses(Ind);
+		if (old_grid_sunlit != new_grid_sunlit) calc_boni(Ind);
 
 		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");
@@ -6300,6 +6301,7 @@ void run_step(int Ind, int dir)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
 		/* are we in fact running-flying? */
@@ -6314,7 +6316,7 @@ void run_step(int Ind, int dir)
 		/* or running-swimming? */
 		else if ((c_ptr->feat == 84 || c_ptr->feat == 103 || c_ptr->feat == 174 || c_ptr->feat == 187) && p_ptr->can_swim) {
 			/* Allow Aquatic players run/swim at full speed */
-			if (!r_info[p_ptr->body_monster].flags7&RF7_AQUATIC) {
+			if (!r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) {
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_1) real_speed /= 2;
 				if (f_info[c_ptr->feat].flags1 & FF1_SLOW_SWIMMING_2) real_speed /= 4;
 			}

@@ -426,8 +426,8 @@ static cptr r_info_flags7[] =
 		"NO_THEFT",
 	"NEVER_ACT",
 	"NO_ESP",
-	"XXX7X21",
-	"XXX7X22",
+	"ATTR_BASE",
+	"VORTEX",
 	"XXX7X23",
 	"XXX7X24",
 	"XXX7X25",
@@ -490,7 +490,7 @@ static cptr r_info_flags9[] =
         "MIMIC",
 
         "HAS_EGG",
-        "IMPRESED",
+        "IMPRESSED",
         "SUSCEP_ACID",
         "SUSCEP_ELEC",
 
@@ -820,7 +820,7 @@ static cptr k_info_flags5[] =
         "IMMOVABLE",
         "LEVELS",
 	"FORCE_DEPTH",
-	"XXX8X02",
+	"XXX",
 	"IGNORE_DISEN",
 	"RES_TELE",
 	"SH_COLD",
@@ -1020,7 +1020,7 @@ static cptr d_info_flags2[] =
 	"IRON",
 	"HELL",
 	"NO_RECALL_INTO",
-//	"NOMAP",	/* will be annexed to DF1_FORGET */
+//	"NO_MAP",	/* will be annexed to DF1_FORGET */
 	"NO_MAGIC_MAP",
 	"XXX1",
 	"XXX1",
@@ -1059,7 +1059,7 @@ static cptr v_info_flags1[] =
 	"FORCE_FLAGS",
 	"NO_TELE",
 	"NO_GENO",
-	"NOMAP",
+	"NO_MAP",
 	"NO_MAGIC_MAP",
 	"NO_DESTROY",
 	"NO_MAGIC",
@@ -1346,6 +1346,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "NEW_TOMES") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_RCRAFT
+		if (streq(m, "ENABLE_RCRAFT") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_RCRAFT") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1359,7 +1364,8 @@ if (!season_newyearseve) {
 		    strcmp(m, "DUAL_WIELD") &&
 		    strcmp(m, "ENABLE_STANCES") &&
 		    strcmp(m, "ENABLE_MCRAFT") &&
-		    strcmp(m, "NEW_TOMES"))
+		    strcmp(m, "NEW_TOMES") &&
+		    strcmp(m, "ENABLE_RCRAFT"))
 			invalid = TRUE;
 	}
 	
@@ -6424,6 +6430,9 @@ errr init_st_info_txt(FILE *fp, char *buf)
 		/* Advance the line number */
 		error_line++;
 
+		/* parse server conditions */
+		if (invalid_server_conditions(buf)) continue;
+
 		/* Skip comments and blank lines */
 		if (!buf[0] || (buf[0] == '#')) continue;
 
@@ -8250,7 +8259,7 @@ static cptr process_dungeon_file_expr(char **sp, char *fp)
 			/* DAYTIME status */
 			else if (prefix(b+1, "DAYTIME"))
 			{
-				if ((bst(HOUR, turn) >= 6) && (bst(HOUR, turn) < 18))
+				if ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
 					v = "1";
 				else
 					v = "0";
