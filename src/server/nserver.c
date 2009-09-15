@@ -5879,7 +5879,7 @@ static int Receive_walk(int ind)
 		// If we have no commands queued, then queue our walk request.
 		// Note that ch might equal PKT_RUN, since Receive_run will
 		// sometimes call this function.
-		if (!connp->q.len)
+		if (connp->q.len < 2)
 		{
 			Packet_printf(&connp->q, "%c%c", PKT_WALK, dir);
 			return 0;
