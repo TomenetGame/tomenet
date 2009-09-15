@@ -1640,7 +1640,25 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 				return TRUE;
 			}
 			break;
-
+	#ifdef ENABLE_RCRAFT
+		/*
+			Auto-retaliation format:
+			@Oa through to @Og
+			@Oc casts a basic (cheap) bolt spell of the type that it is on.
+			@Ob casts a self spell
+			The letters correspond to the mkey spell selector
+		*/
+		case TV_RUNE2:
+			if(o_ptr->sval >= 0 && o_ptr->sval <= 15)
+			{
+				if(choice < 0 || choice >= 8) 
+					choice = 0;
+				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | runespell_types[choice].type, 0);
+				execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
+				return TRUE;
+			}
+			break;
+	#endif
 		/* not likely :) */
 	}
 

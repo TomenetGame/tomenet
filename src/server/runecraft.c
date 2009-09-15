@@ -203,59 +203,40 @@ u16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	byte m = meth_to_id(s_flags);
 	byte runes[16];
 	byte value = 0;	
-	u16b i;
-	u16b cost = 0; u16b count = 0;
-	u16b e_level = runespell_list[s_type].level;
-	e_level += runespell_types[m].cost;
-	e_level += (r_imperatives[imperative].danger/10);
-	u16b variation = 0;
+	u16b cost = 0;
+	s16b variation = 0;
 	
 	runes_in_flag(runes,s_flags);
 	value = rune_value(runes);
-/*	if(runespell_list[s_type].level == 1)
-		if((s_flags & R_SELF) == R_SELF)
-			if(imperative == 0)
-				return 1; // Fix some simple spells to 1 cost. */
-	if(s_av<e_level) s_av = e_level + 1; //Cost should be accurate, even when trying spells way out of caster's depth
-	u16b r_level = s_av - e_level;
+	
 	
 	byte t_pen = 0; byte s_pen = 0; byte d_pen = 0;
 	
-	byte s_runes[16];
-	
-	runes_in_flag(s_runes, s_flags);
-	
-	if(r_level < 1) r_level = 1;
-	
 	if(!s_av) s_av = 1;
 	
-	for(i=0;i<16;i++)
-		if(s_runes[i]==1)
-			count++;
-	
-	if(count<1) count = 1;
-	
-//	if(rget_level(50)<e_level)
-//		cost = e_level*count;
-//	else
-		cost = rget_level(30)*count + (value-1);
+	cost = rget_level(30+value);
+		
 	t_pen = runespell_types[m].pen;
 	s_pen = runespell_list[s_type].pen;
 	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(25)+1;
+
+	if(cost > S_COST_MAX)
+		cost = S_COST_MAX;
 	
 	cost = (cost*t_pen)/10;
 	cost = (cost*s_pen)/10;
 	cost = (cost*d_pen)/10;
-	variation = cost/3;
-	cost -= (variation*1.5);
-	cost += randint(2*variation);
-
-	if(cost > S_COST_MAX)
-		cost = S_COST_MAX; //85	
+	
+	if(cost>10)
+	{
+		variation = cost/3;
+		variation -= variation/2;
+		cost += randint(variation);
+	}
 	
 	if(cost < S_COST_MIN)
 		cost = S_COST_MIN;
-	
+	printf("Cost: %i\n",cost);
 	return cost;
 }
 
@@ -291,22 +272,22 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 {
 	u16b e_level = runespell_list[s_type].level;
 	byte runes[16];
-	byte value = 0;
+	byte value = 0; int variation = 0;
 	u16b damage = 1;
 	byte m = meth_to_id(s_flags);
 	e_level += runespell_types[m].cost;
 	e_level += (r_imperatives[imperative].danger/10);
 	*radius = 1;
 	*duration = 1;
-	if(e_level>=s_av)
+	if(s_av<e_level+1)
 		s_av = e_level+1; //Give a minimum of damage; if it's out of the caster's depth, he'll be penalised for trying, so a reasonable amount of damage is fair.
-
+	
 	runes_in_flag(runes,s_flags);
 	value = rune_value(runes); //Approximate expense of runes, taking into account skill costs and perceived worth.
 	
 	if ((s_flags & R_BOLT) == R_BOLT) 
 	{
-		damage = damroll(value + rget_level(50), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(50), 1 + rget_level(20));
 	}
 	else if ((s_flags & R_BEAM) == R_BEAM)
 	{
@@ -362,7 +343,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 			*duration+=1;
 		}
 		/* Damage should be proportional to radius and duration. */
-		damage = randint(value*2) + rget_level(75-(*radius+(*duration/2)));
+		damage = randint(value*1.2) + rget_level(75-(*radius+(*duration/2)));
 	}
 	else if ((s_flags & R_LOS) == R_LOS)
 	{
@@ -371,7 +352,16 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	else
 	{
 		damage = damroll(value + rget_level(40), 1 + rget_level(20));
-	}
+	}	
+	if(damage > S_DAM_MAX)
+		damage = S_DAM_MAX;
+	if(damage < 1)
+		damage = 1;
+	if (*radius < 0)
+		*radius = 0;
+	if (*duration < 5)
+		*duration = 5;
+	
 	if(r_imperatives[imperative].dam == 0)
 		damage = (damage * (1+randint(40)))/10;
 	else
@@ -382,19 +372,11 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 			damage = (damage * (1+r_imperatives[imperative].dam))/5;
 	}
 	
-	if(damage > S_DAM_MAX)
-		damage = S_DAM_MAX;
-	if(damage < 1)
-		damage = 1;
-	if (*radius < 0)
-		*radius = 0;
-	if (*duration < 5)
-		*duration = 5;
-	
 	damage = (damage*runespell_list[s_type].dam)/10; //So that things like meteor and nuke do more damage than fire and acid
-
-	damage += 1;
-
+	variation = damage/10;
+	variation -= variation/2;
+	damage = damage + randint(variation); //Because the cap of 500 leads to very rounded results
+	printf("Dam: %i (%i)\n",damage,variation);
 	return damage;
 }
 
@@ -442,43 +424,47 @@ byte rspell_penalty(u32b Ind, u16b pow)
 		x=randint(pow);
 		
 		y = randint(50);
-		if(y>(15+p_ptr->luck_cur))
+		if(y>(10+p_ptr->luck_cur))
 		{
-			if (x>200)
+			if (x>300)
 			{
 				pen |= RPEN_MAJ_DT;
 				break;
 			}
-			if (x>175)
+			else if (x>250)
 			{
 				pen |= RPEN_MAJ_BB;
 				break;
 			}
-			if (x>150)
+			else if (x>200)
 			{
 				pen |= RPEN_MAJ_BK;
 				break;
 			}
-			if (x>125)
+			else if (x>150)
 			{
 				pen |= RPEN_MAJ_SN;
 				break;
 			}
-			if (x>100)
+			else if (x>100)
 			{
 				pen |= RPEN_MIN_ST;
+				break;
 			}
-			if (x>30)
+			else if (x>75)
 			{
 				pen |= RPEN_MIN_HP;
+				break;
 			}
-			if (x>20)
+			else if (x>50)
 			{
 				pen |= RPEN_MIN_SP;
+				break;
 			}
-			if (x>10)
+			else if (x>25)
 			{
 				pen |= RPEN_MIN_RN;
+				break;
 			}
 		}
 	}
@@ -585,7 +571,6 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, u16b cos
 	if(type & RPEN_MIN_HP)
 	{
 		d = damroll(1,7);
-		rune_backlash(Ind, s_type, damage/10);
 		switch(d)
 		{
 			case 0:
@@ -611,7 +596,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, u16b cos
 		
 	if(type & RPEN_MIN_ST)
 	{
-		d = damroll(1,3);
+		d = randint(4);
 		u16b mode = 0; u16b stat = 0;
 		
 		if(d>1)
@@ -620,7 +605,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, u16b cos
 			mode = STAT_DEC_PERMANENT;
 		while(d)
 		{
-			d = damroll(1,18);
+			d = randint(13);
 			switch(d)
 			{
 				case 1:
@@ -683,7 +668,6 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, u16b cos
 	{
 		take_hit(Ind, damage, "a malformed invocation", 0);
 		p_ptr->redraw |= (PR_HP);
-		rune_backlash(Ind, s_type, damage);
 	}
 		
 	if(type & RPEN_MAJ_BB)
@@ -694,7 +678,6 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, u16b cos
 	if(type & RPEN_MAJ_DT)
 	{
 		take_hit(Ind, damage*10, "a malformed invocation", 0);
-		p_ptr->redraw |= (PR_HP);
 	}
 
 	if(type & RPEN_MAJ_BB)
@@ -752,7 +735,9 @@ u16b rspell_diff(u32b Ind, byte imperative, u16b s_cost, u16b s_av, u32b s_type,
 	player_type *p_ptr = Players[Ind];
 	s16b fail = 0; u16b e_level = 0; u16b minfail = 0;
 	u16b statbonus = 0;
+	
 	int m = meth_to_id(s_flags);
+	
 	e_level = runespell_list[s_type].level;
 	e_level += runespell_types[m].cost;
 	e_level += (r_imperatives[imperative].danger/10);
@@ -782,16 +767,14 @@ u16b rspell_diff(u32b Ind, byte imperative, u16b s_cost, u16b s_av, u32b s_type,
 	}
 	if (p_ptr->rune_num_of_buffs)
 	{
-		*mali += (p_ptr->rune_num_of_buffs * 10) + 3;
-
+		*mali += (p_ptr->rune_num_of_buffs * 5) + 3;
 	}
 	
 	if(t || p_ptr->confused || p_ptr->stun || no_lite(Ind) || p_ptr->blind || p_ptr->stun)
 		msg_print(Ind, "\377yYou struggle to recite the rune-forms.");
 	
-	statbonus += adj_mag_stat[p_ptr->stat_ind[A_INT]]*85/100;
-	statbonus += adj_mag_stat[p_ptr->stat_ind[A_CHR]]*10/100;
-	statbonus += adj_mag_stat[p_ptr->stat_ind[A_WIS]]*5/100;
+	statbonus += adj_mag_stat[p_ptr->stat_ind[A_INT]]*65/100;
+	statbonus += adj_mag_stat[p_ptr->stat_ind[A_DEX]]*35/100;
 	
 	fail -= statbonus;
 
@@ -806,40 +789,24 @@ u16b rspell_diff(u32b Ind, byte imperative, u16b s_cost, u16b s_av, u32b s_type,
 	{
 		*mali = *mali + (5*(s_cost - p_ptr->csp));
 		if(p_ptr->csp == 0)
-			*mali += 20; //To discourage casting with no mana.
+			*mali += 5; //To discourage casting with no mana.
 	}
-	else
-		*mali -= 1; //Enough mana
 	
 	/* 	If you know what you're doing, casting should be easier, whether blind/lacking runes/stunned or otherwise.
 		If you don't know what you're doing, it should be fatal to cast like this, sometimes. */
-	if(e_level == 1) //So low level players can call light or blink or do basic elemental spells
-	{
-		if(*mali >= 5)
-			*mali -= 5;
-	}
-	else
-	{
-		if((e_level+4) > s_av)
-			*mali += 7*((e_level+10) - s_av);
-		else
-			*mali -= s_av - (e_level+10);
-	}
-	fail += *mali;
-
-	if(r_imperatives[imperative].fail == 0) //Imperative (+)
-		fail = (1+fail + (randint(40)/10));
-	else
-		fail = (1+fail + (r_imperatives[imperative].fail/10));
+	*mali -= s_av - (e_level+5); //Five levels over the spell level for perfect casting
 	
-	minfail = adj_mag_fail[p_ptr->stat_ind[A_INT]];
+	fail += *mali;
+	
+	minfail += adj_mag_fail[p_ptr->stat_ind[A_INT]]*65/100;
+	minfail += adj_mag_fail[p_ptr->stat_ind[A_DEX]]*35/100;
 	
 	if (fail < minfail) fail = minfail;
 	
 	if(r_imperatives[imperative].fail == 0) //Imperative (*)
-		fail = (1+fail * randint(40))/10;
+		fail = ((fail+1) * randint(40))/10;
 	else
-		fail = (1+fail * r_imperatives[imperative].fail)/10;
+		fail = ((fail+1) * r_imperatives[imperative].fail)/10;
 	
 	if (fail > 95) fail = 95;
 	
@@ -944,7 +911,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	
 	if(!query)
 	{
-		if(fail>diff || (diff-fail)<10) //For small failure values, cast the spell anyway.
+		if(fail>diff || (diff-fail)<20) //For small failure values, cast the spell anyway.
 		{
 			if(istown(&p_ptr->wpos) && (type == RT_MAGIC_CIRCLE || type == RT_MAKE_WALL || type == RT_EARTHQUAKE))
 			{
@@ -958,7 +925,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				{
 					gf_type = GF_ARROW; //For fail penalties
 				}
-				/* If spell is complicated or a self spell, handle it here */
+				/* Handle self spells here */
 				switch (type)
 				{
 					case RT_ESP:
@@ -988,8 +955,8 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						else
 							map_area(Ind);
 						break;
-					/* Disabled due to out of themeness
-					case RT_SELF_KNOWLEDGE:
+					/* 
+					case RT_SELF_KNOWLEDGE: //Out of theme
 						self_knowledge(Ind);
 						break; 
 					*/
@@ -1028,7 +995,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						set_tim_thunder(Ind, 10+randint(10)+rget_level(25), 5+rget_level(10), 10+rget_level(25));
 						break;
 					/*
-					case RT_WRAITH_PLAYER:
+					case RT_WRAITH_PLAYER: //Out of theme
 						set_tim_wraith(Ind, duration);
 						break;
 					*/

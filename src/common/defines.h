@@ -7124,9 +7124,9 @@ extern int PlayerUID;
 #define RPEN_MAJ_BB 0x40 //Black breath
 #define RPEN_MAJ_DT 0x80 //Death?
 
-#define MAX_RSPELL_SEL 128 //Max entries in rspell selector
+#define MAX_RSPELL_SEL 550 //Max entries in rspell selector
 
-#define rget_level(x) (((s_av - e_level+1)*x)/50)
+#define rget_level(x) ((s_av*x)/50) //No longer uses spell level: not used in fail rate calculator
 
 #endif //ENABLE_RCRAFT
 

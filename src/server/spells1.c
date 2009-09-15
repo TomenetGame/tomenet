@@ -10702,7 +10702,7 @@ bool rune_backlash(int Ind, int typ, int dam)
 	dam *= 2;
 
 	(void) project(0 - Ind, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, typ,
-	   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), " a malformed invocation.");
+	   (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF), "");
 	return TRUE;
 }
 #endif
