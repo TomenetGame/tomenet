@@ -795,6 +795,13 @@ bool watch_morgoth = 0;
 /* for lua_bind.c */
 bool first_player_joined = TRUE;
 
+/* lua-dependant 'constants' */
+int __lua_HHEALING;
+int __lua_HBLESSING;
+int __lua_MSCARE;
+int __lua_M_FIRST;
+int __lua_M_LAST;
+
 /* for cron_1h (using turns % 3600 isn't precise enough, might happen that
    one hour gets skipped, eg if transition is 1:59 -> 3:00; so now we're
    polling the timer instead. */

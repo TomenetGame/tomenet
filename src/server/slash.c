@@ -2688,7 +2688,7 @@ void do_slash_cmd(int Ind, char *message)
 			else if (prefix(message, "/shutrec")) {
 				if (!k) k = 5;
 //				msg_admins(0, format("\377w* Shutting down in %d minutes *", k));
-				msg_broadcast_format(0, "\377I*** \377RServer shutdown in %d minutes (auto-recall). \377I***", k);
+				msg_broadcast_format(0, "\377I*** \377RServer shutdown in %d minute%s (auto-recall). \377I***", k, (k == 1) ? "" : "s");
 				cfg.runlevel = 2043;
 				shutdown_recall_timer = k * 60;
 				/* hack: suppress duplicate message */

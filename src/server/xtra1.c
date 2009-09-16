@@ -5726,22 +5726,24 @@ void calc_boni(int Ind)
 
 	if (p_ptr->old_easy_wield != p_ptr->easy_wield)
 	{
-		/* Message */
-		if (p_ptr->easy_wield)
-		{
-			if (get_skill(p_ptr, SKILL_DUAL)) /* dual-wield */
-				msg_print(Ind, "\377wWithout shield or secondary weapon, your weapon feels especially easy to swing.");
-			else
-				msg_print(Ind, "\377wWithout shield, your weapon feels especially easy to swing.");
+		/* suppress message if we're heavy-wielding */
+		if (!p_ptr->heavy_wield) {
+			/* Message */
+			if (p_ptr->easy_wield)
+			{
+				if (get_skill(p_ptr, SKILL_DUAL)) /* dual-wield */
+					msg_print(Ind, "\377wWithout shield or secondary weapon, your weapon feels especially easy to swing.");
+				else
+					msg_print(Ind, "\377wWithout shield, your weapon feels especially easy to swing.");
+			}
+			else if (p_ptr->inventory[INVEN_WIELD].k_idx)
+			{
+/*					msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
+				this above line does also show if you don't equip a shield but just switch from a
+				may_2h to a normal weapon, hence confusing. */
+				msg_print(Ind, "\377wYour weapon feels comfortable as usual.");
+			}
 		}
-		else if (p_ptr->inventory[INVEN_WIELD].k_idx)
-		{
-/*			msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
-			this above line does also show if you don't equip a shield but just switch from a
-			may_2h to a normal weapon, hence confusing. */
-			msg_print(Ind, "\377wYour weapon feels comfortable as usual.");
-		}
-
 		/* Save it */
 		p_ptr->old_easy_wield = p_ptr->easy_wield;
 	}

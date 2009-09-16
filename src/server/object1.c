@@ -1635,7 +1635,10 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 		}
 
 		case TV_BOOK:
-		{                        
+		{
+			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
+			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
+				basenm = "& Spell Crystal~ of #";
 //			basenm = k_name + k_ptr->name;
 			if (o_ptr->sval == SV_SPELLBOOK) {
 				if (school_spells[o_ptr->pval].name)

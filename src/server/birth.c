@@ -988,7 +988,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		/* Priest */
 		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, 66 }, /* Spellbook of Healing */
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
 //		{ TV_SOFT_ARMOR, SV_ROBE, 0},
 		{ TV_SOFT_ARMOR, SV_FROCK, 0},
 		{ 255, 255, 0 },
@@ -1028,7 +1028,7 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_BLUNT, SV_WAR_HAMMER, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, 61 }, /* Spellbook of Blessing */
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING */
 		{ 255, 255, 0 },
 	},
 
@@ -1086,7 +1086,7 @@ static byte player_init[MAX_CLASS][5][3] =
 	{
 		/* Mindcrafter */
 //		{ TV_BOOK, 50, 0 },
-		{ TV_BOOK, SV_SPELLBOOK, 103 },/* MSCARE */
+		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
 //		{ TV_SWORD, SV_SHORT_SWORD, 0 },
 		{ TV_SWORD, SV_SABRE, 0 },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
@@ -1419,7 +1419,7 @@ static void player_outfit(int Ind)
 
 #if 0
 		if (tv == TV_BOOK && sv == SV_SPELLBOOK) { /* hack - correct book orders */
-			if (pv == 60) pv = exec_lua(0, "return(HBLESSING)");
+			if (pv == 60) pv = __lua_HBLESSING;
 //			if (pv != 255) pv = 60;
 		}
 #endif
@@ -2289,7 +2289,16 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->max_dlv = 200;
 	}
 	/* Hack -- outfit the player */
-	else player_outfit(Ind);
+	else {
+		/* hack: make sure spellbook constants are correct.
+		   actually this could be done once in init_lua,
+		   but since the array player_init is static, we
+		   just do it here. - C. Blue */
+		   player_init[CLASS_PRIEST][2][2] = __lua_HHEALING;
+		   player_init[CLASS_PALADIN][3][2] = __lua_HBLESSING;
+		   player_init[CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+		player_outfit(Ind);
+	}
 
 	p_ptr->max_lev = p_ptr->max_plv = p_ptr->lev;
 	p_ptr->max_exp = p_ptr->exp;

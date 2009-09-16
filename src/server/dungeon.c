@@ -6904,13 +6904,16 @@ static void process_wild_weather() {
 	for (i = 0; i < MAX_CLOUDS; i++) {
 		/* does cloud exist? */
 		if (cloud_dur[i]) {
-			/* lose essence from raining/snowing */
-			cloud_dur[i]--;
-			/* if cloud dissolves, keep track */
-			if (!cloud_dur[i]) {
-				clouds--;
-				/* take a break for this second ;) */
-				continue;
+			/* hack: allow dur = -1 to last forever */
+			if (cloud_dur[i] > 0) {
+				/* lose essence from raining/snowing */
+				cloud_dur[i]--;
+				/* if cloud dissolves, keep track */
+				if (!cloud_dur[i]) {
+					clouds--;
+					/* take a break for this second ;) */
+					continue;
+				}
 			}
 			/* Move it */
 			cloud_move(i, FALSE);
