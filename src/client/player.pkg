@@ -725,7 +725,8 @@ extern player_type Players[2] @ Players_real;
 /*
  * Objs
  */
-extern bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor, bool extra);
+extern bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor);
+extern bool c_get_item(int *cp, cptr fmt, int mode);
 extern void lua_set_item_tester(int tval, char *fct);
 
 
