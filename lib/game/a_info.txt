@@ -227,7 +227,7 @@ D:inevitably twists and masters any earthly being who wears it.
 
 # The Anchor of Space-Time
 
-N:14:of Space-Time 
+N:14:of Space-Time
 I:39:105:0
 W:30:12:15:50000
 P:0:1d1:0:0:0
@@ -344,7 +344,7 @@ D:cloth.  Within it is the spirit of Eorl the Young, matchless in combat.
 # The Mithril Chain Mail 'Belegennon'
 
 N:22:'Belegennon'
-I:37:20:4
+I:37:24:4
 W:40:10:150:80000
 P:28:1d4:-1:0:20
 F:STEALTH | WIS | INT |

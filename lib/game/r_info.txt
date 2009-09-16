@@ -1831,7 +1831,7 @@ D:He is one of the many weaker 'slave' orcs, often mistakenly known as a
 D:goblin. 
 
 N:119:Rattlesnake
-G:J:r
+G:J:W
 I:110:6d7:6:24:1
 W:6:1:200:20
 E:0:0:0:0:1:0
@@ -2604,7 +2604,7 @@ F:MORTAL | BASEANGBAND
 D:It has been terrorizing the nearby villages. 
 
 N:171:King cobra
-G:J:g
+G:J:u
 I:110:8d10:8:30:1
 W:9:2:300:28
 E:0:0:0:0:1:0
