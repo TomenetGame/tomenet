@@ -1760,11 +1760,20 @@ extern void lua_fix_skill_chart(int Ind);
 extern void do_slash_cmd(int Ind, char *message);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
+
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
 extern bool watch_nr;
 extern bool watch_morgoth;
+
+/* lua-dependant 'constants' */
+extern int __lua_HHEALING;
+extern int __lua_HBLESSING;
+extern int __lua_MSCARE;
+extern int __lua_M_FIRST;
+extern int __lua_M_LAST;
+
 extern int cron_1h_last_hour; /* manage cron_1h calls */
 extern int regen_boost_stamina;
 
