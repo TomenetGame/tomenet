@@ -300,3 +300,15 @@ int get_inven_xtra(int Ind, int inven_slot, int n) {
 	default: return (0); //failure
 	}
 }
+
+/* lua wrapper for c_get_item that feeds the arguments to c_get_item correctly */
+bool get_item_aux(int *cp, cptr pmt, bool equip, bool inven, bool floor, bool extra) {
+	int mode = 0;
+
+	if (equip) mode |= USE_EQUIP;
+	if (inven) mode |= USE_INVEN;
+	if (floor) mode |= USE_FLOOR;
+	if (extra) mode |= USE_EXTRA;
+
+	return c_get_item(cp, pmt, mode);
+}
