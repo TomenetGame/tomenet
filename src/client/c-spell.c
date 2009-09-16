@@ -579,9 +579,10 @@ s32b get_school_spell(cptr do_what, int *item_book)
 	int tmp;
 	int sval, pval;
 
+	hack_force_spell = -1;
+
 	if (*item_book < 0)
 	{
-		hack_force_spell = -1;
 		get_item_extra_hook = get_item_hook_find_spell;
 		item_tester_tval = TV_BOOK;
 		sprintf(buf2, "You have no book to %s from", do_what);
