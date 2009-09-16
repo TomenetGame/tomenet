@@ -1010,7 +1010,7 @@ static int get_melee_technique(int *sn)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, @=Name, ESC=exit) use which technique? ",
 		    I2A(0), I2A(num - 1));
 	else
 		strnfmt(out_val, 78, "No techniques available - ESC=exit");
@@ -1062,20 +1062,45 @@ static int get_melee_technique(int *sn)
 			/* Ask again */
 			continue;
 		}
+                else if (choice == '@') {
+	    		char buf[80];
+			strcpy(buf, "Sprint"); 
+                        if (!get_string("Technique? ", buf, 79)) {
+                    		if (redraw) {
+                    			Term_load();
+                    			Flush_queue();
+                    		}
+                    		return FALSE;
+                	}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = -1;
+                        /* Find the skill it is related to */
+                        for (i = 0; i < num; i++) {
+                    		if (!strcmp(buf, melee_techniques[corresp[i]])) {
+					flag = TRUE;
+					break;
+				}
+			}
+			if (flag) break;
 
-		/* Totally Illegal */
-		if (i < 0)
-		{
+			/* illegal input */
 			bell();
 			continue;
-		}
+                }
+		else {
+		       	/* extract request */
+			i = (islower(choice) ? A2I(choice) : -1);
+		      	if (i >= num) i = -1;
 
-		/* Stop the loop */
-		flag = TRUE;
+			/* Totally Illegal */
+			if (i < 0)
+			{
+				bell();
+				continue;
+			}
+
+			/* Stop the loop */
+			flag = TRUE;
+		}
 	}
 
 	/* Restore the screen */
@@ -1164,7 +1189,7 @@ static int get_ranged_technique(int *sn)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, ESC=exit) use which technique? ",
+		strnfmt(out_val, 78, "(Techniques %c-%c, *=List, @=Name, ESC=exit) use which technique? ",
 		    I2A(0), I2A(num - 1));
 	else
 		strnfmt(out_val, 78, "No techniques available - ESC=exit");
@@ -1216,20 +1241,45 @@ static int get_ranged_technique(int *sn)
 			/* Ask again */
 			continue;
 		}
+                else if (choice == '@') {
+	    		char buf[80];
+			strcpy(buf, "Flare missile"); 
+                        if (!get_string("Technique? ", buf, 79)) {
+                    		if (redraw) {
+                    			Term_load();
+                    			Flush_queue();
+                    		}
+                    		return FALSE;
+                	}
 
-	       	/* extract request */
-		i = (islower(choice) ? A2I(choice) : -1);
-	      	if (i >= num) i = -1;
+                        /* Find the skill it is related to */
+                        for (i = 0; i < num; i++) {
+                    		if (!strcmp(buf, ranged_techniques[corresp[i]])) {
+					flag = TRUE;
+					break;
+				}
+			}
+			if (flag) break;
 
-		/* Totally Illegal */
-		if (i < 0)
-		{
+			/* illegal input */
 			bell();
 			continue;
-		}
+                }
+		else {
+		       	/* extract request */
+			i = (islower(choice) ? A2I(choice) : -1);
+	      		if (i >= num) i = -1;
 
-		/* Stop the loop */
-		flag = TRUE;
+			/* Totally Illegal */
+			if (i < 0)
+			{
+				bell();
+				continue;
+			}
+
+			/* Stop the loop */
+			flag = TRUE;
+		}
 	}
 
 	/* Restore the screen */
