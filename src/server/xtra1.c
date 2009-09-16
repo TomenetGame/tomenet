@@ -516,15 +516,11 @@ static void prt_cut(int Ind)
 	cave_type **zcave;
 	int c = p_ptr->cut;
 
-	/* Cut status and wpos coordinated occupy the same line in the client,
-	   so send the wpos when the player isn't stunned - mikaelh */
-
 	/* hack: no-tele indicator takes priority. */
 	if ((zcave = getcave(&p_ptr->wpos)))
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 	Send_cut(Ind, c); /* need to send this always since the client doesn't clear the whole field */
-	if (!c) Send_depth(Ind, &p_ptr->wpos);
 }
 
 
@@ -938,6 +934,9 @@ static void prt_frame_extra(int Ind)
 {
 	/* Mega-Hack : display AFK status in place of 'stun' status! */
 	prt_AFK(Ind);
+
+	/* Give monster health priority over AFK status display */
+	health_redraw(Ind);
 
 	/* Cut/Stun */
 	prt_cut(Ind);
