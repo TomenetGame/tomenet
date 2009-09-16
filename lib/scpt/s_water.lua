@@ -14,7 +14,7 @@ TIDALWAVE = add_spell
 		        fire_wave(Ind, GF_WAVE, 0, 40 + get_level(Ind, TIDALWAVE, 200), 0, 6 + get_level(Ind, TIDALWAVE, 6), 5, EFF_WAVE, " casts a tidal wave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(40 + get_level(Ind, TIDALWAVE,  140)).." rad "..(6 + get_level(Ind, TIDALWAVE, 6))
+			return "dam "..(40 + get_level(Ind, TIDALWAVE,  200)).." rad "..(6 + get_level(Ind, TIDALWAVE, 6))
 	end,
         ["desc"] =	{
         		"Summons a monstruous tidal wave that will expand and crush the",
@@ -40,7 +40,7 @@ ICESTORM = add_spell
 		        fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200), 1 + get_level(Ind, ICESTORM, 3, 0), 20 + get_level(Ind, ICESTORM, 47), 5, EFF_STORM, " summons an ice storm for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM, 150)).." rad "..(1 + get_level(Ind, ICESTORM, 3, 0)).." dur "..(20 + get_level(Ind, ICESTORM, 47))
+			return "dam "..(80 + get_level(Ind, ICESTORM, 200)).." rad "..(1 + get_level(Ind, ICESTORM, 3, 0)).." dur "..(20 + get_level(Ind, ICESTORM, 47))
 	end,
         ["desc"] =	{
         		"Engulfs you in a storm of roaring cold that strikes your foes",
@@ -74,6 +74,7 @@ ENTPOTION = add_spell
         	                        fire_ball(Ind, GF_HERO_PLAYER, 0, randint(25) + 25 + get_level(Ind, ENTPOTION, 40), player.spell_project, "")
                 	        end
                         end
+--berserk can be negative (AC loss), so until downscaling is implemented, comment out. (berserk is too much anyway!)
 --        		if get_level(Ind, ENTPOTION, 50) >= 28 then
 --                        	set_shero(Ind, randint(15) + 15 + get_level(Ind, ENTPOTION, 40))
 --	                        if player.spell_project > 0 then
@@ -112,7 +113,7 @@ VAPOR = add_spell
 			fire_cloud(Ind, GF_WATER, 0, 3 + get_level(Ind, VAPOR, 34), 3 + get_level(Ind, VAPOR, 9, 0), 5, 8, " fires a cloud of vapor for")
 	end,
 	["info"] = 	function()
-       			return "dam "..(3 + get_level(Ind, VAPOR, 24)).." rad "..(3 + get_level(Ind, VAPOR, 9, 0)).." dur 5"
+       			return "dam "..(3 + get_level(Ind, VAPOR, 34)).." rad "..(3 + get_level(Ind, VAPOR, 9, 0)).." dur 5"
 	end,
         ["desc"] =	{
                         "Fills the air with toxic moisture to eradicate annoying critters"

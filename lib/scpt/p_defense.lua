@@ -50,6 +50,7 @@ HBLESSING = add_spell
 			"***Automatically projecting***",
         }
 }
+__lua_HBLESSING = HBLESSING
 
 HRESISTS = add_spell
 {

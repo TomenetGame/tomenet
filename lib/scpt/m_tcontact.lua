@@ -5,6 +5,7 @@ MSELFKNOW = add_spell
 {
 	["name"] = 	"Self-Reflection",
         ["school"] = 	{SCHOOL_TCONTACT},
+	["blind"] =	0,
         ["level"] = 	15,
         ["mana"] = 	15,
         ["mana_max"] = 	20,
@@ -24,6 +25,7 @@ MBOOST = add_spell
 {
 	["name"] =      "Willpower",
 	["school"] =    {SCHOOL_TCONTACT},
+	["blind"] =	0,
 	["level"] =     3,
 	["mana"] =      3,
 	["mana_max"] =  10,
@@ -47,6 +49,7 @@ MHASTE = add_spell
 {
 	["name"] =      "Accelerate Nerves",
 	["school"] =    {SCHOOL_TCONTACT},
+	["blind"] =	0,
 	["level"] =     20,
 	["mana"] =      10,
 	["mana_max"] =  30,
@@ -77,6 +80,8 @@ MCURE = add_spell
 {
 	["name"] =      "Clear Mind",
 	["school"] =    {SCHOOL_TCONTACT},
+	["blind"] =	0,
+	["confusion"] =	0,
 	["level"] =     3,
 	["mana"] =      3,
 	["mana_max"] =  10,
@@ -106,6 +111,8 @@ MSANITY = add_spell
 {
 	["name"] =      "Stabilize Thoughts",
 	["school"] =    {SCHOOL_TCONTACT},
+	["blind"] =	0,
+	["confusion"] =	0,
 	["level"] =     25,
 	["mana"] =      80,
 	["mana_max"] =  100,
@@ -132,6 +139,7 @@ MSENSEMON = add_spell
 {
 	["name"] =      "Telepathy",
 	["school"] =    {SCHOOL_TCONTACT},
+	["blind"] =	0,
 --	["level"] =     1,
 --	["mana"] =      3,
 	["level"] =     20,

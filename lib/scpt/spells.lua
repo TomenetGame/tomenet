@@ -5,8 +5,8 @@
 -- <- dummy line to change checksum - C. Blue
 -- Create the schools
 
-
---hack until next client version:
+--hack: these lines are required till next client version is out,
+--      which has these defined in player.pkg+defines.h correctly.
 SKILL_ASTRAL = 77
 SKILL_PPOWER = 80
 SKILL_TCONTACT = 81
@@ -175,12 +175,19 @@ pern_dofile(Ind, "p_defense.lua")
 pern_dofile(Ind, "p_curing.lua")
 pern_dofile(Ind, "p_support.lua")
 
-pern_dofile(Ind, "dr_arcane.lua") 
+pern_dofile(Ind, "dr_arcane.lua")
 pern_dofile(Ind, "dr_physical.lua")
 
+__lua_M_FIRST = __tmp_spells_num
 pern_dofile(Ind, "m_ppower.lua")
 pern_dofile(Ind, "m_tcontact.lua")
 pern_dofile(Ind, "m_mintrusion.lua")
+__lua_M_LAST = __tmp_spells_num - 1
+
+-- Only on RPG server
+if (def_hack("RPG_SERVER", nil)) then
+pern_dofile(Ind, "d_astral.lua")
+end
 
 -- Create the crystal of mana (1-4)
 school_book[0] = {
@@ -235,7 +242,7 @@ school_book[9] = {
 
 -- Create the book of the mind * CHARM requires pets first (46-48)
 school_book[10] = {
-	CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS
+        CONFUSE, STUN, TELEKINESIS, SENSEMONSTERS,
 }
 
 -- Create the book of hellflame * DRAIN, FLAMEOFUDUN missing (49-53)
@@ -246,9 +253,13 @@ school_book[11] = {
 -- Priests / Paladins:
 
 -- Create the book of Holy Offense (54-60)
+if (def_hack("TEST_SERVER", nil)) then
+school_book[12] = {HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD, HCURSEDD,}
+else
 school_book[12] = {
         HCURSE, HGLOBELIGHT, HORBDRAIN, HDRAINLIFE, HEXORCISM, HRELSOULS, HDRAINCLOUD,
 }
+end
 
 -- Create the book of Holy Defense (61-65)
 school_book[13] = {
@@ -275,11 +286,18 @@ school_book[17] = {
 	HEALINGCLOUD, QUICKFEET, HERBALTEA, EXTRASTATS, FOCUSSHOT,
 }
 
+-- Only on RPG server
+if (def_hack("RPG_SERVER", nil)) then
 -- Divine Race Tome
---school_book[18] = {
---	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, EMPOWERMENT, INTENSIFY, POWERCLOUD, GATEWAY,
---}
+school_book[18] = {
+	POWERBOLT, POWERBEAM, POWERBALL, VENGEANCE, POWERCLOUD,
+}
+end
 
+if (def_hack("TEST_SERVER", nil)) then
+school_book[19] = {MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY, MFUSION,}
+school_book[20] = {MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MSANITY, MTELEKINESIS, MFUSION,}
+else
 -- Create the book of mindcrafting: Psycho-power (-)
 school_book[19] = {
 	MDISARM, MBLINK, MTELEPORT, MTELETOWARDS, MPYROKINESIS, MCRYOKINESIS, MTELEAWAY,
@@ -289,10 +307,11 @@ school_book[19] = {
 school_book[20] = {
 	MCURE, MBOOST, MSELFKNOW, MHASTE, MSENSEMON, MSANITY, MTELEKINESIS,
 }
+end
 
 -- Create the book of mindcrafting: Mental intrusion (-)
 school_book[21] = {
-	MMINDBLAST, MSCARE, MCONFUSE, MSLEEP, MSLOWMONSTER, MSILENCE,
+	MMINDBLAST, MSCARE, MCONFUSE, MSLEEP, MSLOWMONSTER, MSILENCE, MMAP, MCHARM, MSTOPCHARM,
 }
 
 -- Create the book of beginner's cantrip

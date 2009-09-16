@@ -14,9 +14,9 @@ HCURSE = add_spell
                         if get_level(Ind, HCURSE, 50) >= 25 then
 				project_los(Ind, GF_CURSE, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         elseif get_level(Ind, HCURSE, 50) >= 15 then
-				fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+				fire_grid_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
 			else
-				fire_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
+				fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, HCURSE, 150), "points and curses for")
                         end
         end,
         ["info"] =      function()
@@ -61,6 +61,28 @@ HGLOBELIGHT = add_spell
         		"At level 8 it starts creating a more powerful kind of light"
         }
 }
+
+if (def_hack("TEST_SERVER", nil)) then
+HCURSEDD = add_spell
+{
+        ["name"] =      "Cause wounds",
+        ["school"] =    {SCHOOL_HOFFENSE},
+        ["level"] =     5,
+        ["mana"] =      1,
+        ["mana_max"] =  20,
+        ["fail"] =      15,
+	["stat"] =	A_WIS,
+        ["spell"] =     function(args)
+			fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, HCURSEDD, 300), "points and curses for")
+        end,
+        ["info"] =      function()
+                        return "power "..(10 + get_level(Ind, HCURSEDD, 300))
+        end,
+        ["desc"] =      {
+                        "Curse an enemy, causing wounds.",
+        }
+}
+end
 
 HORBDRAIN = add_spell
 {
@@ -191,8 +213,6 @@ HDRAINCLOUD = add_spell
         }
 }
 
-
-
 --[[
 HHOLYWORD = add_spell
 {
@@ -216,5 +236,4 @@ HHOLYWORD = add_spell
 			"Dispels evil, heals and cures you."
 			}
 }
-
 ]]

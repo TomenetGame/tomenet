@@ -46,7 +46,7 @@ HHEALING = add_spell
 		fire_ball(Ind, GF_HEAL_PLAYER, 0, ((get_healing_power2() * 3) / 2), 1, " points at your wounds.")
 	end,
 	["info"] =      function()
-			return "heal "..get_healing_percents().."% or "..get_healing_cap().." = "..get_healing_power2()
+			return "heal "..get_healing_percents().."% (max "..get_healing_cap()..") = "..get_healing_power2()
 	end,
 	["desc"] =      {
 		"Heals a percent of hitpoints up to a spell level-dependent cap",
@@ -55,6 +55,7 @@ HHEALING = add_spell
 		"***Automatically projecting***",
 	}
 }
+__lua_HHEALING = HHEALING
 
 HDELCURSES = add_spell
 {
@@ -91,11 +92,10 @@ HHEALING2 = add_spell
         ["stat"] =      A_WIS,
         ["direction"] = FALSE,
         ["spell"] =     function()
---			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 50)), 10, " calls the spirits")
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 60)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 16)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2, 42)), (1 + get_level(Ind, HHEALING2, 10)), (5 + get_level(Ind, HHEALING2, 16)), 10, " calls the spirits")
                         end,
         ["info"] =      function()
-                        return "heals " .. (get_level(Ind, HHEALING2, 60) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 16))
+                        return "heals " .. (get_level(Ind, HHEALING2, 42) + 1) .. " rad " .. (1 + get_level(Ind,HHEALING2,10)) .. " dur " .. (5 + get_level(Ind, HHEALING2, 16))
                         end,
         ["desc"] =      { "Continuously heals you and those around you.",
 			  }

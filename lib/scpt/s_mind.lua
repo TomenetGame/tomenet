@@ -121,7 +121,7 @@ TELEKINESIS = add_spell
 
 SENSEMONSTERS = add_spell
 {
-	["name"] = "Sense Monsters",
+	["name"] = "Sense Minds",
         ["school"] = {SCHOOL_MIND},
 	["level"] = 30,
 	["mana"] = 15,

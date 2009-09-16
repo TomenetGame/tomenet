@@ -13,12 +13,24 @@ end
 
 settagmethod(tag(nil), "getglobal", safe_getglobal)
 
-pern_dofile(Ind, "player.lua")
-
-function testtest(i)
--- silly
---	assert(i, "KABOOM!")
+-- A function for checking if a global is either not defined or not set to 0
+-- The default value in case the global isn't set is true
+function def(x)
+	local v = rawget(globals(), x)
+	return (not v or v ~= 0)
 end
+
+-- Same as def() except that the default value for undefined global can be set
+function def_hack(x, default)
+	local v = rawget(globals(), x)
+	if v then
+		return v~= 0
+	else
+		return default
+	end
+end
+
+pern_dofile(Ind, "player.lua")
 
 --pern_dofile("c-s_aux.lua")
 pern_dofile(Ind, "s_aux.lua")

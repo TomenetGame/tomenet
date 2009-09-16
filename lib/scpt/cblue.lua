@@ -379,6 +379,13 @@ function encum(name)
     msg_print(Ind, "\255UEncumberments: "..ca..hw..iw..aw..ew..hs..hst..as..cw..combo..aa..cg..bb)
 end
 
+-- Show miscellaneous character abilities of a player
+function miscab(name)
+    local p = ind(name)
+
+    msg_print(Ind, "\255wFig \255B"..players(p).skill_thn.."  \255wB/T \255B"..players(p).skill_thb.."  \255wPer \255B"..players(p).skill_fos.."  \255wSrc \255B"..players(p).skill_srh.."  \255wSav \255B"..players(p).skill_sav.."  \255wStl \255B"..players(p).skill_stl.."  \255wDis \255B"..players(p).skill_dis.."  \255wMDv \255B"..players(p).skill_dev)
+end
+
 -- "Detail" - Displays status(name) and resist(name)
 function det(name)
     msg_print(Ind, " ".." ")
@@ -386,6 +393,7 @@ function det(name)
     resist(name)
     attr(name)
     encum(name)
+    miscab(name)
     msg_print(Ind, " ".." ")
 end
 
@@ -444,6 +452,10 @@ function vnc(name)
     local p, id
     p = ind(name)
     id = players(Ind).id
+    if players(p).esp_link ~= 0 then
+	msg_print(Ind, "Target is already mind-linked.")
+	return
+    end
     players(p).esp_link = id
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
@@ -464,6 +476,13 @@ function vncoff(name)
     players(Ind).esp_link_flags = band(players(Ind).esp_link_flags, bnot(256))
     players(Ind).redraw = bor(players(Ind).redraw, 67108864)
     msg_print(Ind, "Mind link broken.")
+end
+
+-- Reset own mind link state (use for clean up if someone steals it from you)
+function vncrs()
+    players(Ind).esp_link_flags = band(players(Ind).esp_link_flags, bnot(256))
+    players(Ind).redraw = bor(players(Ind).redraw, 67108864)
+    msg_print(Ind, "Mind link reset.")
 end
 
 -- Show a player's kill count (bodycount) for his current form
@@ -764,4 +783,11 @@ function make_king(p, nazgul, michael, tik, hell, dor, zuaon)
     if zuaon == 1 then
         players(p).r_killed[1097 + 1] = 1
     end
+end
+
+function def_blue(x)
+	local v = rawget(globals(), x)
+	if (v == nil) then return 0 end
+	if (v == 0) then return 0 end
+	return 1
 end

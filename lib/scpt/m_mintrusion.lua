@@ -7,36 +7,6 @@ function get_psiblast_dam()
 	return 2 + get_level(Ind, MMINDBLAST, 6), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 200)
 end
 
---[[ Enable when we get pets  --  NOTE: Use it in m_tcontact.lua rather, this school is already quite full.
-CHARM = add_spell
-{
-	["name"] = 	"Charm",
-        ["school"] = 	{SCHOOL_MIND},
-        ["level"] = 	1,
-        ["mana"] = 	1,
-        ["mana_max"] = 	20,
-        ["fail"] = 	10,
-        ["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
-        ["spell"] = 	function(args)
-                        if get_level(Ind, CHARM, 50) >= 35 then
-                                project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-                        elseif get_level(Ind, CHARM, 50) >= 15 then
-                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
-                        else
-                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-                        end
-	end,
-	["info"] = 	function()
-                	return "power "..(10 + get_level(Ind, CHARM, 150))
-	end,
-        ["desc"] =	{
-        		"Tries to manipulate the mind of a monster to make it friendly",
-                        "At level 15 it turns into a ball",
-                        "At level 35 it affects all monsters in sight",
-        }
-}
-]]
-
 MSCARE = add_spell
 {
 	["name"] = 	"Scare",
@@ -64,6 +34,7 @@ MSCARE = add_spell
                         "At level 20 it affects all monsters in sight",
         }
 }
+__lua_MSCARE = MSCARE
 
 MCONFUSE = add_spell
 {
@@ -201,5 +172,112 @@ MSILENCE = add_spell
 			end,
         ["desc"] =	{
                         "Drains the target's psychic energy, impacting its ability to cast spells",
+        }
+}
+
+MMAP = add_spell
+{
+        ["name"] =	"Remote Vision",
+        ["school"] =	{SCHOOL_MINTRUSION},
+--	["school"] =	{SCHOOL_MINTRUSION, SCHOOL_TCONTACT}
+        ["level"] =	20,
+        ["mana"] =	30,
+        ["mana_max"] =	30,
+        ["fail"] =	10,
+        ["direction"] = FALSE,
+        ["spell"] =	function()
+			mind_map_level(Ind)
+                        end,
+        ["info"] =	function()
+			return ""
+                        end,
+        ["desc"] =	{
+                        "Forcefully uses the vision of sentient life forms around.",
+                        "*** Will be transferred to allied open",
+                        "    minds on the same floor if your",
+                        "    Thought Contact skill is at least 20. ***",
+        }
+}
+
+--[[ Old version, requiring pets. Not cool though. See new variant below!
+MCHARM = add_spell
+{
+	["name"] = 	"Charm",
+        ["school"] = 	{SCHOOL_MINTRUSION},
+        ["level"] = 	1,
+        ["mana"] = 	1,
+        ["mana_max"] = 	20,
+        ["fail"] = 	10,
+        ["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
+        ["spell"] = 	function(args)
+                        if get_level(Ind, CHARM, 50) >= 35 then
+                                project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
+                        elseif get_level(Ind, CHARM, 50) >= 15 then
+                                fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
+                        else
+                                fire_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
+                        end
+
+	end,
+	["info"] = 	function()
+                	return "power "..(10 + get_level(Ind, CHARM, 150))
+	end,
+        ["desc"] =	{
+        		"Tries to manipulate the mind of a monster to make it friendly",
+                        "At level 15 it turns into a ball",
+                        "At level 35 it affects all monsters in sight",
+        }
+}
+]]
+
+-- New idea: works like *invincibility*: monsters will ignore you (and often your party members too ;)
+MCHARM = add_spell
+{
+	["name"] = 	"Charm",
+        ["school"] = 	{SCHOOL_MINTRUSION},
+        ["level"] = 	33,
+        ["mana"] = 	10,
+        ["mana_max"] = 	10,
+        ["fail"] = 	10,
+        ["direction"] = function () if get_level(Ind, MCHARM, 50) >= 13 then return FALSE else return TRUE end end,
+        ["spell"] = 	function(args)
+			--reset previous charm spell first:
+			do_mstopcharm(Ind)
+			--cast charm!
+                        if get_level(Ind, MCHARM, 50) >= 13 then
+                                project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, MCHARM, 150), "focusses")
+                        elseif get_level(Ind, MCHARM, 50) >= 7 then
+                                fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), 3, "focusses")
+                        else
+                                fire_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), "focusses")
+                        end
+	end,
+	["info"] = 	function()
+--                	return "power "..(10 + get_level(Ind, MCHARM, 150))
+			return ""
+	end,
+        ["desc"] =	{
+        		"Tries to manipulate the mind of a monster to make it ignore you",
+                        "At level 7 it turns into a ball",
+                        "At level 13 it affects all monsters in sight",
+        }
+}
+MSTOPCHARM = add_spell
+{
+	["name"] = 	"Stop Charm",
+        ["school"] = 	{SCHOOL_MINTRUSION},
+        ["level"] = 	33,
+        ["mana"] = 	0,
+        ["mana_max"] = 	0,
+        ["fail"] = 	-99,
+        ["direction"] = FALSE,
+        ["spell"] = 	function()
+			do_mstopcharm(Ind)
+	end,
+	["info"] = 	function()
+			return ""
+	end,
+        ["desc"] =	{
+        		"Cancel charming of any monsters",
         }
 }

@@ -142,18 +142,19 @@ MCRYOKINESIS = add_spell
         }
 }
 
---[[
+if (def_hack("TEST_SERVER", nil)) then
 MFUSION = add_spell
 {
 	["name"] =      "Mental Fusion",
 --	["name"] =      "Corporeal Fusion",
-	["school"] =    {SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
+--	["school"] =    {SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
+	["school"] =    {SCHOOL_TCONTACT, SCHOOL_PPOWER},
 	["level"] =     40,
 	["mana"] =      200,
 	["mana_max"] =  200,
 	["fail"] =      20,
 	["spell"] =     function()
-			do_fusion(Ind)
+			do_cmd_fusion(Ind)
 			end,
 	["info"] =      function()
 			return ""
@@ -165,4 +166,4 @@ MFUSION = add_spell
 --			"allowing you spell-casting but giving up control over the body.",
 	}
 }
-]]
+end

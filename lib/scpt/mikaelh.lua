@@ -138,12 +138,41 @@ end
 -- fix_spellbooks("Pfft", STOPWRAITH, 1)
 
 function fix_spellbooks(name, start, mod)
-	local i, p
+	local i, p, x
 	p = ind(name)
 	if (p == -1) then return -1 end
 	for i = 1, INVEN_PACK do
 		if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval == 255) and (players(p).inventory[i].pval >= start)) then
 			players(p).inventory[i].pval = players(p).inventory[i].pval + mod
+		end
+		if ((players(p).inventory[i].tval == 111) and (players(p).inventory[i].sval >= 100) and (players(p).inventory[i].sval <= 102)) then
+			if players(p).inventory[i].xtra1 - 1 >= start then
+				players(p).inventory[i].xtra1 = players(p).inventory[i].xtra1 + mod
+			end
+			if players(p).inventory[i].xtra2 - 1 >= start then
+				players(p).inventory[i].xtra2 = players(p).inventory[i].xtra2 + mod
+			end
+			if players(p).inventory[i].xtra3 - 1 >= start then
+				players(p).inventory[i].xtra3 = players(p).inventory[i].xtra3 + mod
+			end
+			if players(p).inventory[i].xtra4 - 1 >= start then
+				players(p).inventory[i].xtra4 = players(p).inventory[i].xtra4 + mod
+			end
+			if players(p).inventory[i].xtra5 - 1 >= start then
+				players(p).inventory[i].xtra5 = players(p).inventory[i].xtra5 + mod
+			end
+			if players(p).inventory[i].xtra6 - 1 >= start then
+				players(p).inventory[i].xtra6 = players(p).inventory[i].xtra6 + mod
+			end
+			if players(p).inventory[i].xtra7 - 1 >= start then
+				players(p).inventory[i].xtra7 = players(p).inventory[i].xtra7 + mod
+			end
+			if players(p).inventory[i].xtra8 - 1 >= start then
+				players(p).inventory[i].xtra8 = players(p).inventory[i].xtra8 + mod
+			end
+			if players(p).inventory[i].xtra9 - 1 >= start then
+				players(p).inventory[i].xtra9 = players(p).inventory[i].xtra9 + mod
+			end
 		end
 	end
 end

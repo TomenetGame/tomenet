@@ -671,7 +671,14 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
 				return
 	        end
-        
+
+--[[		-- Sanity check for direction
+		if (need_direction(s) && other.direction == -1) then
+			msg_print(i, "Spell needs a direction.")
+			return
+		end
+]]
+
 		-- Invoke the spell effect
 	        if (magik(spell_chance(i, s)) == FALSE) then
 			msg_print(i, "You successfully cast the spell "..spell(s).name..".")
