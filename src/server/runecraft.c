@@ -735,6 +735,7 @@ u16b rspell_diff(u32b Ind, byte imperative, u16b s_cost, u16b s_av, u32b s_type,
 	player_type *p_ptr = Players[Ind];
 	s16b fail = 0; u16b e_level = 0; u16b minfail = 0;
 	u16b statbonus = 0;
+	int adj_level = 0;
 	
 	int m = meth_to_id(s_flags);
 	
@@ -794,8 +795,13 @@ u16b rspell_diff(u32b Ind, byte imperative, u16b s_cost, u16b s_av, u32b s_type,
 	
 	/* 	If you know what you're doing, casting should be easier, whether blind/lacking runes/stunned or otherwise.
 		If you don't know what you're doing, it should be fatal to cast like this, sometimes. */
-	*mali -= s_av - (e_level+5); //Five levels over the spell level for perfect casting
+	adj_level = s_av - (e_level+5); //Five levels over the spell level for perfect casting
 	
+	if(adj_level < 0)
+		adj_level = adj_level*4;
+	
+	*mali -= adj_level;
+		
 	fail += *mali;
 	
 	minfail += adj_mag_fail[p_ptr->stat_ind[A_INT]]*65/100;
@@ -1435,7 +1441,7 @@ byte execute_rspell (u32b Ind, byte dir, char * expr, byte query, u32b s_flags, 
 	s_cost = rspell_cost(Ind, s_type, s_flags, s_av, imperative);
 	s_dam = rspell_dam(Ind, &radius, &duration, s_type, s_flags, s_av, imperative);
 	if(!rspell_check(Ind, &mali, s_flags))
-		mali += 10;
+		mali += 15;
 	s_diff = rspell_diff(Ind, imperative, s_cost, s_av, s_type, s_flags, &mali);
 
 	cast_runespell(Ind, dir, s_dam, radius, duration, s_cost, s_type, s_diff, imperative, s_flags, s_av, query, mali);
