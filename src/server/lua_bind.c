@@ -589,8 +589,8 @@ void lua_determine_level_req(int Ind, int item) {
 void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	int             i;
-	int		total_number = 0;
+	int i, total_number = 0;
+	bool reimbursed = FALSE;
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
@@ -612,6 +612,14 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 	                //char  o_name[160];
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
 	                //msg_format(Ind, "%s fades into the air!", o_name);
+
+		        /* reimburse player monetarily */
+		        if (a_info[o_ptr->name1].cost > 0) {
+				p_ptr->au += a_info[o_ptr->name1].cost;
+				p_ptr->redraw |= (PR_GOLD);
+				reimbursed = TRUE;
+			}
+
 			if (mode == 0) {
 				handle_art_d(o_ptr->name1);
 			}
@@ -624,6 +632,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 		}
 	}
 	if (total_number) s_printf("True-art strip: %s loses %d artifact(s).\n", p_ptr->name, total_number);
+	if (reimbursed) msg_print(Ind, "\377yYour purse magically seems heavier.");
 }
 
 void lua_check_player_for_true_arts(int Ind) {

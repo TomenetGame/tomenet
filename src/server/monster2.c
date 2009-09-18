@@ -2279,7 +2279,11 @@ void update_mon(int m_idx, bool dist)
 					else if (r_ptr->flags2 & RF2_WEIRD_MIND)
 					{
 						do_weird_mind = TRUE;
+#if 0
 						if (rand_int(100) < 10) hard = flag = TRUE;
+#else /* update_mon_flicker() */
+						if (!m_ptr->no_esp_phase) hard = flag = TRUE;
+#endif
 					}
 
 					/* Normal mind, allow telepathy */
@@ -2341,15 +2345,18 @@ void update_mon(int m_idx, bool dist)
 
 			/* Efficiency -- Notice multi-hued monsters */
 //			if (r_ptr->flags1 & RF1_ATTR_MULTI) scan_monsters = TRUE;
-#ifdef RANDUNIS 
+#ifdef RANDUNIS
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
+			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
-			    (m_ptr->ego ) ) scan_monsters = TRUE;
+			    m_ptr->ego)
+				scan_monsters = TRUE;
 #else
 			if ((r_ptr->flags1 & RF1_ATTR_MULTI) ||
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
-			    (r_ptr->flags1 & RF1_UNIQUE) )
+			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
+			    (r_ptr->flags1 & RF1_UNIQUE))
 				scan_monsters = TRUE;
 #endif	// RANDUNIS
 		}
@@ -2419,6 +2426,22 @@ void update_mon(int m_idx, bool dist)
 			}
 		}
 	}
+}
+/* does nothing except handling flickering animation for WEIRD_MIND on esp.
+   Note: We assume (just for efficiency reasons) that we're only called if
+   monster is actually RF2_WEIRD_MIND. */
+void update_mon_flicker(int m_idx)
+{
+	monster_type *m_ptr = &m_list[m_idx];
+        monster_race *r_ptr = race_inf(m_ptr);
+
+	m_ptr->no_esp_phase = FALSE;
+
+	/* Weird mind, occasional telepathy */
+	if (r_ptr->flags2 & RF2_WEIRD_MIND) {
+		if (rand_int(10)) m_ptr->no_esp_phase = TRUE;
+	}
+
 }
 
 
@@ -2508,7 +2531,7 @@ void update_player(int Ind)
 			   members who are out of line of sight */
 			/* if ((*w_ptr & CAVE_VIEW) && (!p_ptr->blind)) */
 			
-			if (!p_ptr->blind)                      
+			if (!p_ptr->blind)
 			{
 			if ((player_in_party(q_ptr->party, i)) && (q_ptr->party)) easy = flag = TRUE;
 			
@@ -2549,7 +2572,8 @@ void update_player(int Ind)
 				hard = flag = TRUE;
 			    }
 			}
-			
+
+#if 0
 			/* Can we see invisible players ? */
 			if ((!p_ptr->see_inv ||
 			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
@@ -2560,6 +2584,19 @@ void update_player(int Ind)
 				if ((q_ptr->lev > p_ptr->lev) || (randint(p_ptr->lev) > (q_ptr->lev / 2)))
 					flag = FALSE;
 			}
+#else /* for update_player_flicker() */
+			/* Can we see invisible players ? */
+			if ((!p_ptr->see_inv ||
+			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
+			    (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) &&
+			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK))) &&
+			    q_ptr->invis && !player_in_party(p_ptr->party, Ind))
+			{
+				if ((q_ptr->lev > p_ptr->lev) || q_ptr->invis_phase)
+					flag = FALSE;
+			}
+#endif
+
 			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
 
 			/* Dungeon masters can see invisible players */
@@ -2657,6 +2694,19 @@ void update_player(int Ind)
 			}
 		}
 	}
+}
+
+/* only takes care of updating player's invisibility flickering.
+   Note: we assume (just for efficiency reasons) that we're only called
+   if player is actually invisible. */
+void update_player_flicker(int Ind)
+{
+	player_type *p_ptr = Players[Ind];
+	/* Can we see invisible players ? */
+	p_ptr->invis_phase = FALSE;
+//	if (randint(p_ptr->lev) > (q_ptr->lev / 2))
+	if (rand_int(4))
+		p_ptr->invis_phase = TRUE;
 }
 
 /*

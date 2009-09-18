@@ -888,6 +888,7 @@ struct player_type
 	
 	/* C. Blue - fun stuff */
 	s16b corner_turn;
+	int joke_weather;
 	
 	/* Muting variable - the_sandman */
 	bool muted;

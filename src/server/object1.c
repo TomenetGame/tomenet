@@ -5185,6 +5185,23 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		display_ammo_damage(Ind, o_ptr, fff);
 	}
 
+	/* specialty: recognize custom spell books and display their contents! - C. Blue */
+	if (o_ptr->tval == TV_BOOK &&
+	    (o_ptr->sval == SV_CUSTOM_TOME_1 ||
+	    o_ptr->sval == SV_CUSTOM_TOME_2 ||
+	    o_ptr->sval == SV_CUSTOM_TOME_3)) {
+		if (!o_ptr->xtra1) fprintf(fff, "\n- no spells -\n");
+		else fprintf(fff,"\nSpells:\n");
+		if (o_ptr->xtra1) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
+		if (o_ptr->xtra2) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
+		if (o_ptr->xtra3) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
+		if (o_ptr->xtra4) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
+		if (o_ptr->xtra5) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
+		if (o_ptr->xtra6) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
+		if (o_ptr->xtra7) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
+		if (o_ptr->xtra8) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
+		if (o_ptr->xtra9) fprintf(fff, format("- %s\n", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
+	}
 
 	//	info[i]=NULL;
 	/* Close the file */

@@ -3217,8 +3217,6 @@ void prt_map(int Ind)
 	/* Display player */
 	lite_spot(Ind, p_ptr->py, p_ptr->px);
 }
-	
-	
 
 
 
@@ -6184,7 +6182,7 @@ void mind_map_level(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	int m, y, x, rad;
-	int i, plist[MAX_PLAYERS + 1], plist_size = 1;
+	int i, j, plist[MAX_PLAYERS + 1], plist_size = 1;
 
 	monster_race	*r_ptr;
 	monster_type	*m_ptr;
@@ -6266,6 +6264,12 @@ void mind_map_level(int Ind)
 				}
 			}
 
+#if 0 /* like wiz-lite? */
+ #if 1 /* should be enabled too if CAVE_MARK below is enabled.. */
+			/* perma-lite grid? */
+			c_ptr->info |= (CAVE_GLOW);
+ #endif
+ #if 1
 			/* Process all non-walls */
 			//if (c_ptr->feat < FEAT_SECRET)
 			{
@@ -6286,10 +6290,59 @@ void mind_map_level(int Ind)
 					}
 				}
 			}
+ #endif
+#else /* like magic mapping? */
+			/* All non-walls are "checked" */
+//			if (c_ptr->feat < FEAT_SECRET)
+			if (!is_wall(c_ptr)) {
+				/* Memorize normal features */
+//				if (c_ptr->feat > FEAT_INVIS)
+				if (!cave_plain_floor_grid(c_ptr))
+				{
+					for (i = 0; i < plist_size; i++) {
+						/* Memorize the object */
+						Players[plist[i]]->cave_flag[y][x] |= CAVE_MARK;
+					}
+				}
+
+				/* Memorize known walls */
+				for (j = 0; j < 8; j++) {
+					if (!in_bounds(y + ddy_ddd[j], x + ddx_ddd[j])) continue;
+
+					/* Memorize walls (etc) */
+//					if (c_ptr->feat >= FEAT_SECRET)
+					if (is_wall(&zcave[y + ddy_ddd[j]][x + ddx_ddd[j]])) {
+						for (i = 0; i < plist_size; i++) {
+							/* Memorize the walls */
+							Players[plist[i]]->cave_flag[y + ddy_ddd[j]][x + ddx_ddd[j]] |= CAVE_MARK;
+						}
+					}
+				}
+			}
+#endif
 		}
+
+#if 0 /* this will be overheady, since it requires prt_map() here as a bad
+         hack, and PR_MAP/PU_MONSTERS commented out in for-loop below.
+         See same for-loop for clean solution as good alternative! */
+		prt_map(plist[i]); /* bad hack */
+		/* like detect_creatures(), not excluding invisible monsters though */
+		for (i = 0; i < plist_size; i++) {
+			if (Players[plist[i]]->mon_vis[m_fast[m]]) continue;
+			Players[plist[i]]->mon_vis[m_fast[m]] = TRUE;
+			lite_spot(plist[i], m_ptr->fy, m_ptr->fx);
+			Players[plist[i]]->mon_vis[m_fast[m]] = FALSE; /* the usual hack: don't update screen after this */
+		}
+#endif
 	}
 
 	for (i = 0; i < plist_size; i++) {
+#if 1
+		/* clean solution instead: give some temporary ESP (makes sense also).
+		 Note however: this is thereby becoming an auto-projectable ESP spell^^ */
+		set_tim_esp(plist[i], 10);
+#endif
+
 		/* Update the monsters */
 		Players[plist[i]]->update |= (PU_MONSTERS);
 		/* Redraw map */

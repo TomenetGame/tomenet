@@ -1349,7 +1349,8 @@ void calc_mana(int Ind)
 	case CLASS_RUNEMASTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;/*was 270*/
 	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_MINDCRAFTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+//	case CLASS_MINDCRAFTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_MINDCRAFTER: max_wgt = 260 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_WARRIOR:
 	case CLASS_ARCHER:
 	default: max_wgt = 1000; break;
@@ -7286,8 +7287,8 @@ void calc_techniques(int Ind) {
 	case CLASS_ROGUE:
 		if (p_ptr->lev >= 3) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
-		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0100; /* Distract */
-		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0200; /* Flash bomb */
+		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0008; /* Distract */
+		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0080; /* Flash bomb */
 //		if (p_ptr->lev >= 18) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
 		Send_technique_info(Ind);
@@ -7304,8 +7305,8 @@ void calc_techniques(int Ind) {
 
 	if (get_skill(p_ptr, SKILL_STANCE) >= 4 + m) p_ptr->melee_techniques |= 0x0001; /* Sprint */
 	if (get_skill(p_ptr, SKILL_STANCE) >= 9 + m) p_ptr->melee_techniques |= 0x0002; /* Taunt */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= 0x0004; /* Spin */
-	if (get_skill(p_ptr, SKILL_STANCE) >= 33 + m) p_ptr->melee_techniques |= 0x0008; /* Berserk */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 16 + m) p_ptr->melee_techniques |= 0x0200; /* Spin */
+	if (get_skill(p_ptr, SKILL_STANCE) >= 33 + m) p_ptr->melee_techniques |= 0x0800; /* Berserk */
 
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 4) p_ptr->ranged_techniques |= 0x0001; /* Flare missile */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 8) p_ptr->ranged_techniques |= 0x0002; /* Precision shot */

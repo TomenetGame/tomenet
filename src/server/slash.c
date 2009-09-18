@@ -4650,6 +4650,48 @@ void do_slash_cmd(int Ind, char *message)
 				    FALSE, TRUE);
 				return;
 			}
+			else if (prefix(message, "/jokeweather")) {//unfinished
+				if (!k || k > NumPlayers) return;
+				if (Players[k]->joke_weather == 0) {
+					/* check clouds from first to last (so it has a good chance of
+					   getting into the 10 that will actually be transmitted) */
+					for (i = 0; i < MAX_CLOUDS; i++) {
+						/* assume that 'permanent' clouds are set only by us (might change)
+						   and don't abuse those, since they are already reserved for a player ;) */
+						if (cloud_dur[i] != -1) {
+							Players[k]->joke_weather = i + 1; /* 0 is reserved for 'disabled' */
+							cloud_dur[i] = -1;
+
+							/* set cloud parameters */
+							cloud_x1[i] = Players[k]->px - 1;
+							cloud_y1[i] = Players[k]->py;
+							cloud_x2[i] = Players[k]->px + 1;
+							cloud_y2[i] = Players[k]->py;
+							cloud_state[i] = 1;
+							cloud_dsum[i] = 7;
+							cloud_xm100[i] = 0;
+							cloud_ym100[i] = 0;
+							cloud_mdur[i] = 200;
+
+							/* send new situation to everyone */
+#if 0
+							wild_info[Players[k]->wpos.wy][Players[k]->wpos.wx].weather_type = (season == SEASON_WINTER ? 2 : 1);
+							wild_info[Players[k]->wpos.wy][Players[k]->wpos.wx].weather_updated = TRUE;
+#else
+							Send_weather(Ind,
+							    1, 0, 3, 8, 3,
+							    TRUE, FALSE);
+#endif
+							break;
+						}
+					}
+				} else {
+					/* run out (and thereby get freed) next turn */
+					cloud_dur[Players[k]->joke_weather - 1] = 1;
+					Players[k]->joke_weather = 0;
+				}
+				return;
+			}
 			else if (prefix(message, "/fireworks")) { /* toggle fireworks during NEW_YEARS_EVE */
 				if (tk >= 1) {
 					fireworks = k;

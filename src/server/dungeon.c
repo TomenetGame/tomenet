@@ -5932,8 +5932,18 @@ void dungeon(void)
 
 		/* Play server-side animations (consisting of cycling/random colour choices,
 		   instead of animated colours which are circled client-side) */
-		if (!(turn % 10)) /* && Players[i]->body_monster */
-			everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+		if (!(turn % 10)) {
+			/* Flicker invisible player? (includes colour animation!) */
+//			if (Players[i]->invis) update_player(i);
+			if (Players[i]->invis) {
+				update_player_flicker(i);
+				update_player(i);
+			}
+			/* Otherwise only take care of colour animation */
+//			else { /* && Players[i]->body_monster */
+				everyone_lite_spot(&Players[i]->wpos, Players[i]->py, Players[i]->px);
+//			}
+		}
 
 		/* Perform beeping players who are currently being paged by others */
 		if (Players[i]->paging && !(turn % 15)) {
@@ -6125,6 +6135,24 @@ void dungeon(void)
 				}
 				msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
 				cfg.runlevel = 2049;
+			} else {
+				for(i = NumPlayers; i > 0 ;i--) {
+					if(Players[i]->conn==NOT_CONNECTED) continue;
+					/* Ignore admins that are loged in */
+					if(admin_p(i)) continue;
+					/* Ignore characters that are afk and not in a dungeon/tower */
+//						if((Players[i]->wpos.wz == 0) && (Players[i]->afk)) continue;
+					/* Ignore characters that are not in a dungeon/tower */
+					if(Players[i]->wpos.wz == 0) {
+						/* Don't interrupt events though */
+						if (Players[i]->wpos.wx != WPOS_SECTOR00_X || Players[i]->wpos.wy != WPOS_SECTOR00_Y || !sector00separation) continue;
+					}
+					break;
+				}
+				if(!i) {
+					msg_broadcast(-1, "\377o<<<Server is being updated, but will be up again in no time.>>>");
+					cfg.runlevel = 2049;
+				}
 			}
 		}
 

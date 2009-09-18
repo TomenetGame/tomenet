@@ -3824,7 +3824,7 @@ void do_cmd_fire(int Ind, int dir)
 			}
 #endif
 		} else if (ethereal) { /* being nice in regards to ranged_barrage break_chance */
-			if (cursed_p(o_ptr) ? TRUE : break_chance * (p_ptr->ranged_barrage ? 3 : 1)) {
+			if (cursed_p(o_ptr) ? TRUE : magik(break_chance * (p_ptr->ranged_barrage ? 3 : 1))) {
 				if (item >= 0) {
 					inven_item_increase(Ind, item, -1);
 //					inven_item_describe(Ind, item);

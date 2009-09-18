@@ -2807,8 +2807,9 @@ break;
 		case TRAP_OF_BATTLE_FIELD:
 		{
 			ident=player_handle_breath_trap(Ind, 5, GF_DISINTEGRATE, trap);
-			destroy_chest(i_ptr); 
+			destroy_chest(i_ptr);
 			for (k = 0; k < randint(3); k++) ident |= summon_specific(wpos, y, x, glev, 0, 0, 1, 0);
+			if (ident) msg_print(Ind, "You hear drums of battle!");
 			break;
 		}
 		/* Death Molds Trap */

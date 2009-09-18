@@ -990,6 +990,7 @@ struct monster_type
    u16b ai_state;		/* What special behaviour this monster takes now? */
    s16b last_target;		/* For C. Blue's anti-cheeze C_BLUE_AI in melee2.c */
    s16b last_target_melee;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
+   s16b last_target_melee_temp;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
    s16b switch_target;		/* For distract_monsters(), implemented within C_BLUE_AI_MELEE in melee2.c */
 
    s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
@@ -1001,6 +1002,8 @@ struct monster_type
 //   s16b highest_encounter_mlvl;	/* lol.. */
    byte backstabbed;	/* has this monster been backstabbed from cloaking mode already? prevent exploit */
    byte taunted;	/* has this monster been taunted (melee technique)? */
+
+   bool no_esp_phase;	/* for WEIRD_MIND esp flickering */
 };
 
 typedef struct monster_ego monster_ego;
@@ -2659,6 +2662,7 @@ struct player_type
 	bool done_lua_updating;
 	/* C. Blue - Fun stuff :) Make player vomit if he turns around ***a lot*** (can't happen in 'normal' gameplay) */
 	s16b corner_turn;
+	int joke_weather;	/* personal rain^^ */
 	/* automatic (scripted) transport sequences */
 	byte auto_transport;
 	/* Player being paged by others? (Beep counter) */
@@ -2749,6 +2753,10 @@ struct player_type
 	u32b turns_on_floor;	/* number of turns spent on the current floor */
 	bool distinct_floor_feeling;	/* set depending on turns_on_floor */
 	bool sun_burn;		/* Player is vampire, currently burning in the sun? */
+
+	/* server-side animation timing flags */
+	bool invis_phase; /* for invisible players who flicker towards others */
+//not needed!	int colour_phase; /* for mimics mimicking multi-coloured stuff */
 };
 
 /* For Monk martial arts */

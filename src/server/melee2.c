@@ -13,7 +13,7 @@
 
 #define SERVER
 #define C_BLUE_AI
-#define C_BLUE_MELEE_AI
+#define C_BLUE_AI_MELEE
 
 #include "angband.h"
 
@@ -39,7 +39,7 @@
  * - try to cast spells indirectly (INDIRECT_FREQ) <slow>
  * - pick up as many items on floor as possible (MONSTERS_GREEDY) <fast>
  * currently not including try to avoid being kited (C_BLUE_AI)
- * C_BLUE_MELEE_AI ignores STUPID_MONSTER flag partially, as makes sense.
+ * C_BLUE_AI_MELEE ignores STUPID_MONSTER flag partially, as makes sense.
  */
 //#define STUPID_MONSTERS
 
@@ -5184,7 +5184,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 			}
 		}
 	}
-#endif
+#endif /* C_BLUE_AI */
 
 #if 0
 	/* Death orbs .. */
@@ -5374,7 +5374,7 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		   no need to waste our turn then */
 		if ((ABS(m_ptr->fy - y2) == 0) || (ABS(m_ptr->fx - x2) == 0)) return;
 	}
-#endif
+#endif /* C_BLUE_AI */
 
 	/* Extract the "absolute distances" */
 	ax = ABS(x);
@@ -6451,6 +6451,7 @@ static void process_monster(int Ind, int m_idx)
 
 	bool		inv;
 
+
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
@@ -7241,17 +7242,22 @@ static void process_monster(int Ind, int m_idx)
 			int p_idx_weak[9], p_idx_medium[9], p_idx_strong[9], weak_targets = 0, medium_targets = 0, strong_targets = 0;
 			int p_idx_low[9], low_targets = 0, lowest_target_level = 100, highest_target_level = 0;
 			cave_type *cd_ptr;
-			player_type pd_ptr;
+			player_type *pd_ptr;
 			int p_idx_non_distracting[9], non_distracting_targets = 0;
+
+			/* remember our previous target */
+			m_ptr->last_target_melee = m_ptr->last_target_melee_temp;
 
 			/* get all adjacent players */
 			for (i = 0; i < 8; i++) {
+				if (!in_bounds(oy + ddy_ddd[i], ox + ddx_ddd[i])) continue;
+
 				cd_ptr = &zcave[oy + ddy_ddd[i]][ox + ddx_ddd[i]];
 
 				/* found not a player? */
 				if (cd_ptr->m_idx >= 0) continue;
 				
-				pd_ptr = Players[-cd_ptr->m_idx];
+				pd_ptr = Players[-(cd_ptr->m_idx)];
 
 				/* get him if allowed */
 				if ((m_ptr->owner == pd_ptr->id) || /* Don't attack your master! */
@@ -7313,7 +7319,7 @@ static void process_monster(int Ind, int m_idx)
 				if (pd_ptr->lev < lowest_target_level) lowest_target_level = pd_ptr->lev;
 				if (pd_ptr->lev > highest_target_level) highest_target_level = pd_ptr->lev;
 			}
-
+//s_printf("targets=%d\n", targets);
 		    if (targets) { /* Note: If an admin is in the path of a monster, this may happen to be 0 */
 
 			/* *** Rules to choose between allowed targets: ***
@@ -7331,7 +7337,7 @@ static void process_monster(int Ind, int m_idx)
 			   All other monsters -including minded undead- attack based on class during low levels, and random at high levels.
 			*/
 			reason = 1;
-			if (r_ptr->flags2 & RF2_SMART) reason = 2;
+
 			if (r_ptr->flags7 & RF7_NO_DEATH) reason = 0;
 			if (r_ptr->flags7 & RF7_MULTIPLY) reason = 0;
 			if (r_ptr->flags3 & RF3_NONLIVING) reason = 0;
@@ -7339,42 +7345,54 @@ static void process_monster(int Ind, int m_idx)
 			if (r_ptr->flags3 & RF3_GIANT) reason = 0;
 			if (r_ptr->flags3 & RF3_ANIMAL) reason = 0;
 			if (r_ptr->flags2 & RF2_STUPID) reason = 0;
-			if (r_ptr->flags2 & (RF2_WEIRD_MIND | RF2_EMPTY_MIND)) reason = 0;
-			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0;
+			if (r_ptr->flags2 & RF2_WEIRD_MIND) reason = 0;
+
+			if (r_ptr->flags2 & RF2_POWERFUL) reason = 0; /* doesn't care ;) */
 			if (strchr("AD", r_ptr->d_char)) reason = 0;
+			if (r_ptr->flags2 & RF2_SMART) reason = 2;
+			if (r_ptr->flags2 & RF2_EMPTY_MIND) reason = -1;
 
  #ifndef STUPID_MONSTER
 			/* generate behaviour based on selected rule */
 			switch (reason) {
+			case -1: /* random & ignore distraction attempts */
+				p_idx_chosen = p_idx[randint(targets)];
+				break;
 			case 0: /* random */
-				if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 				else p_idx_chosen = p_idx[randint(targets)];
 				break;
 			case 1: /* at low level choose weaker classes first */
-				if (lowest_player_level < 30) {
-					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
-					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
-					else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				if ((lowest_target_level < 30)
+				    && magik(90)) {
+					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 					else p_idx_chosen = p_idx[randint(targets)];
-				} else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				} else if (non_distracting_targets &&
+				    magik(90))
+					p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 				else p_idx_chosen = p_idx[randint(targets)];
 				break;
 			case 2: /* like (1), but more sophisticated */
-				if (highest_player_level < 30 && lowest_target_level + 5 > highest_target_level) {
-					if (weak_targets) p_idx_chosen = p_idx_weak[randint(weak_targets)];
-					else if (medium_targets) p_idx_chosen = p_idx_medium[randint(medium_targets)];
-					else if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+				if ((highest_target_level < 30 && lowest_target_level + 5 > highest_target_level) &&
+				    magik(90)) {
+					if (weak_targets && magik(90)) p_idx_chosen = p_idx_weak[randint(weak_targets)];
+					else if (medium_targets && magik(90)) p_idx_chosen = p_idx_medium[randint(medium_targets)];
+					else if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 					else p_idx_chosen = p_idx[randint(targets)];
 				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
-					/* check which targets have a significantly lower level than others */
-					for (i = 1; i < targets; i++) {
-						if (Players[p_idx[i]].lev + Players[p_idx[i]].lev / 10 < higest_target_level) {
-							low_targets++;
-							p_idx_low[low_targets] = p_idx[i];
+					if (magik(90)) {
+						/* check which targets have a significantly lower level than others */
+						for (i = 1; i < targets; i++) {
+							if (Players[p_idx[i]]->lev + Players[p_idx[i]]->lev / 10 < highest_target_level) {
+								low_targets++;
+								p_idx_low[low_targets] = p_idx[i];
+							}
 						}
-					}
-					/* choose one of the lowbies of the player pack */
-					p_idx_chosen = p_idx_low[randint(low_targets)];
+						/* choose one of the lowbies of the player pack */
+						p_idx_chosen = p_idx_low[randint(low_targets)];
+					} else p_idx_chosen = p_idx[randint(targets)];
 				} else {
 					p_idx_chosen = p_idx[randint(targets)];
 				}
@@ -7382,7 +7400,7 @@ static void process_monster(int Ind, int m_idx)
 			}
  #else
 			/* not sure whether STUPID_MONSTERS should really keep distracting possible */
-			if (non_distracting_targets) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
+			if (non_distracting_targets && magik(90)) p_idx_chosen = p_idx_non_distracting[randint(non_distracting_targets)];
 			else p_idx_chosen = p_idx[randint(targets)];
  #endif
 			/* Remember this target, so we won't switch to a different one
@@ -8869,6 +8887,20 @@ void process_monsters(void)
 		lowhp = 9999;
 		blos=FALSE;
 
+#ifdef C_BLUE_AI_MELEE
+	/* save our previous melee target.
+	   NOTE: This must be _after_ the energy-check. */
+	m_ptr->last_target_melee_temp = m_ptr->last_target_melee;
+	/* forget that target in case combat is interrupted,
+	   depending on monster type: */
+	if ((r_ptr->flags7 & RF7_MULTIPLY) || /* <- can't memorize */
+	    (r_ptr->flags2 & RF2_SMART) || /* <- decides to re-evaluate targets */
+	    ((r_ptr->flags2 & RF2_WEIRD_MIND) && magik(50)) || /* <- sometimes memorize */
+	    (r_ptr->flags2 & RF2_EMPTY_MIND)) /* <- can't memorize */
+		/* forget old target */
+		m_ptr->last_target_melee = 0;
+#endif
+
 		/* Find the closest player */
 		for (pl = 1; pl < NumPlayers + 1; pl++) 
 		{
@@ -9115,7 +9147,15 @@ void process_monsters(void)
 			if (!((r_ptr->flags1 & RF1_ATTR_MULTI) ||
 			    (r_ptr->flags2 & RF2_SHAPECHANGER) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
-			    (m_ptr->ego) )) continue;
+			    (r_ptr->flags2 & RF2_WEIRD_MIND) ||
+			    m_ptr->ego))
+				continue;
+
+			if (r_ptr->flags2 & RF2_WEIRD_MIND) {
+				update_mon_flicker(i);
+				update_mon(i, FALSE);
+			}
+//			if (r_ptr->flags2 & RF2_WEIRD_MIND) update_mon(i, FALSE);
 
 			/* Shimmer Multi-Hued Monsters */
 			everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);

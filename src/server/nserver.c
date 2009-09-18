@@ -5690,6 +5690,17 @@ s_printf("clouds_to_update %d (%d)\n", c, w_ptr->clouds_to_update);
 	/* re-send all clouds that have 'updated' flag set */
 	if (c > 0) {
 		for (i = 0; i < cloud_limit; i++) {
+#if 0 /* unfinished//also, make it visible to all players, so if0 here - see "/jokeweather" instead */
+			/* fun stuff ;) abuse the last cloud for this */
+			if (Players[ind]->joke_weather && (i == cloud_limit - 1)) {
+				n = Packet_printf(&connp->c, "%d%d%d%d%d%d%d%d", i,
+				    Players[ind]->px - 1, Players[ind]->py,
+				    Players[ind]->px + 1, Players[ind]->py,
+				    7, 0, 0);
+				continue;
+			}
+#endif
+
 //			if (w_ptr->cloud_updated[i]) {
 //s_printf("cloud_updated %d\n", i);
 

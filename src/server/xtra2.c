@@ -2385,6 +2385,8 @@ bool set_invuln(int Ind, int v)
 /*
  * Set "p_ptr->invuln", but not notice observable changes
  * It should be used to protect players from recall-instadeath.  - Jir -
+ * Note: known also as 'stair-GoI' (globe of invulnerability),
+ * supposed to shortly protect players when they enter a new level. -C. Blue
  */
 bool set_invuln_short(int Ind, int v)
 {

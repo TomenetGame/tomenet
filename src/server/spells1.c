@@ -1245,7 +1245,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		     p_ptr->afk || Players[Ind_attacker]->afk))
 			return;
         }
-	
+
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
 	if (IS_PLAYER(Ind_attacker) ||
 	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1))
@@ -1475,13 +1475,11 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	int warning = (p_ptr->msane * hitpoint_warn / 10);
 #endif	// 0
 
-
 	/* For 'Arena Monster Challenge' event: */
 	if (safe_area(Ind)) {
 		msg_print(Ind, "\377wYou feel disturbed, but the feeling passes.");
 		return;
 	}
-
 
         /* Amulet of Immortality/Invincibility for Dungeon Masters */
         object_type *o_ptr = &p_ptr->inventory[INVEN_NECK];
@@ -1489,9 +1487,24 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
     	    (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
 	        return;
 
+	/* Heavenly invulnerability? */
+	if (p_ptr->martyr && !bypass_invuln) return;
 
 	/* Paranoia */
 	if (p_ptr->death) return;
+
+	/* Mega-Hack -- Apply "invulnerability" */
+	if (p_ptr->invuln && (!bypass_invuln) && !p_ptr->invuln_applied) {
+		/* 1 in 2 chance to fully deflect the damage */
+		if (magik(40)) {
+			msg_print(Ind, "The attack is fully deflected by the magic shield.");
+			return;
+		}
+
+		/* Otherwise damage is reduced by the shield */
+		damage = (damage + 1) / 2;
+	}
+
 
 	/* Disturb */
 	disturb(Ind, 1, 0);
@@ -1501,10 +1514,10 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from)
 	if(p_ptr->reduce_insanity == 2) damage = (damage * (6 + rand_int(7))) / 12;
 
 	/* Hurt the player */
-		p_ptr->csane -= damage;
+	p_ptr->csane -= damage;
 
 	/* Display the hitpoints */
-		p_ptr->redraw |= (PR_SANITY);
+	p_ptr->redraw |= (PR_SANITY);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);

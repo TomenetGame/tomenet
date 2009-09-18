@@ -8789,7 +8789,24 @@ s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		taunt_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		break;
-	case 2:	if (!(p_ptr->melee_techniques & 0x0004)) return; /* Spin */
+	case 3:	if (!(p_ptr->melee_techniques & 0x0008)) return; /* Distract */
+		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 1;
+		un_afk_idle(Ind);
+		distract_monsters(Ind);
+s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
+		break;
+	case 7:	if (!(p_ptr->melee_techniques & 0x0080)) return; /* Flash bomb */
+		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
+//		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+		if (p_ptr->energy <= 0) return;
+		p_ptr->cst -= 4;
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		un_afk_idle(Ind);
+		flash_bomb(Ind);
+s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
+		break;
+	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Spin */
 		if (p_ptr->cst < 8) { msg_print(Ind, "Not enough stamina!"); return; }
     		if (p_ptr->afraid) {                                                                                           
 			msg_print(Ind, "You are too afraid to attack!");                        
@@ -8802,7 +8819,7 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		break;
-	case 3:	if (!(p_ptr->melee_techniques & 0x0008)) return; /* Berserk */
+	case 11:if (!(p_ptr->melee_techniques & 0x0800)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
@@ -8810,23 +8827,6 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 		set_afraid(Ind, 0);
 		set_berserk(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
-		break;
-	case 8:	if (!(p_ptr->melee_techniques & 0x0100)) return; /* Distract */
-		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 1;
-		un_afk_idle(Ind);
-		distract_monsters(Ind);
-s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
-		break;
-	case 9:	if (!(p_ptr->melee_techniques & 0x0200)) return; /* Flash bomb */
-		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
-//		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-		if (p_ptr->energy <= 0) return;
-		p_ptr->cst -= 4;
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
-		un_afk_idle(Ind);
-		flash_bomb(Ind);
-s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		break;
 	case 14:if (!(p_ptr->melee_techniques & 0x4000)) return; /* Shadow Run */
 		shadow_run(Ind);
