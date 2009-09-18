@@ -276,6 +276,16 @@ extern bool s_RPG_ADMIN;
 extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
 extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
 
+/* Monster health memory (health_redraw) */
+int mon_health_num;
+byte mon_health_attr;
+
+/* Location information memory (prt_depth) */
+bool depth_town;
+int depth_colour;
+int depth_colour_sector;
+cptr depth_name;
+
 
 /*
  * Not-so-Automatically generated "function declarations"

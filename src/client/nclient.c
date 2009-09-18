@@ -2198,6 +2198,9 @@ int Receive_depth(void)
 	strncpy(c_p_ptr->location_name, buf, 20);
 	prt_depth(x, y, z, town, colour, colour_sector, buf);
 
+	/* HACK - Also draw AFK status now to fully redraw the entire row - mikaelh */
+	prt_AFK(p_ptr->afk);
+
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -3113,6 +3116,10 @@ int Receive_AFK(void)
 	if (screen_icky) Term_switch(0);
 
 	prt_AFK(afk);
+
+	/* HACK - Also draw world coordinates because they're on the same row - mikaelh */
+	prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wy, depth_town,
+	          depth_colour, depth_colour_sector, depth_name);
 
 	if (screen_icky) Term_switch(0);
 

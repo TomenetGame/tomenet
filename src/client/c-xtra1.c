@@ -529,6 +529,20 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 	char depths[32];
 	int x2, y2;
 
+	/* Remember coordinates */
+	p_ptr->wpos.wx = x;
+	p_ptr->wpos.wy = y;
+	p_ptr->wpos.wz = z;
+
+	/* Remember everything else */
+	depth_town = town;
+	depth_colour = colour;
+	depth_colour_sector = colour_sector;
+	depth_name = name;
+
+	/* remember cursor position */
+	Term_locate(&x2, &y2);
+
 	sprintf(depths, "(%-2d,%-2d)",x,y);
 	c_put_str(colour_sector, depths, ROW_XYPOS, COL_XYPOS);
 
@@ -538,9 +552,6 @@ void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cp
 		sprintf(depths, "%dft", z*50);
 	else
 		sprintf(depths, "Lev %d", z);
-
-	/* remember cursor position */
-	Term_locate(&x2, &y2);
 
 	/* Right-Adjust the "depth" and clear old values */
 	c_prt(colour, format("%7s", depths), ROW_DEPTH, COL_DEPTH);
@@ -899,6 +910,9 @@ void prt_AFK(byte afk)
 {
 	int x, y;
 
+	/* Remember AFK status */
+	p_ptr->afk = afk;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
@@ -1020,14 +1034,25 @@ void health_redraw(int num, byte attr)
 {
 	int x, y;
 
+	/* Remember monster health */
+	mon_health_num = num;
+	mon_health_attr = attr;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 	/* Not tracking */
 	if (!attr)
 	{
+#if 0
 		/* Erase the health bar */
 		Term_erase(COL_INFO, ROW_INFO, 12);
+#else
+		/* Draw world coordinates and AFK status from memory */
+		prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wy, depth_town,
+		          depth_colour, depth_colour_sector, depth_name);
+		prt_AFK(p_ptr->afk);
+#endif
 	}
 
 	/* Tracking a monster */
