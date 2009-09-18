@@ -2441,8 +2441,8 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
 
 	hurt_eq = (dam < 30) ? 15 : (dam < 60) ? 33 : 100;
-	if (p_ptr->resist_acid && p_ptr->oppose_acid) hurt_eq = (hurt_eq + 2) / 3;
-	else if (p_ptr->resist_acid || p_ptr->oppose_acid) hurt_eq = (hurt_eq + 1) / 2;
+	if (p_ptr->resist_fire && p_ptr->oppose_fire) hurt_eq = (hurt_eq + 2) / 3;
+	else if (p_ptr->resist_fire || p_ptr->oppose_fire) hurt_eq = (hurt_eq + 1) / 2;
 
 	/* Totally immune */
 	if (p_ptr->immune_fire || (dam <= 0)) return(0);
