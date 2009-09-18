@@ -3805,7 +3805,7 @@ Ranger        22.0 lb
 Druid         20.0 lb
 Shaman        17.0 lb
 Runemaster    23.0 lb
-Mindcrafter   23.0 lb (and will get penalty for head gear heavier than 4.0 lb)
+Mindcrafter   26.0 lb (and will get penalty for head gear heavier than 4.0 lb)
 
 So 50 points in 'Combat' would allow a paladin to wear 30.0 + 15.0 =
 45.0 lbs of armour parts without receiving mana penalty from being encumbered.
