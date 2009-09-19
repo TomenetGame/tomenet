@@ -3118,7 +3118,7 @@ int Receive_AFK(void)
 	prt_AFK(afk);
 
 	/* HACK - Also draw world coordinates because they're on the same row - mikaelh */
-	prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wy, depth_town,
+	prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, depth_town,
 	          depth_colour, depth_colour_sector, depth_name);
 
 	if (screen_icky) Term_switch(0);

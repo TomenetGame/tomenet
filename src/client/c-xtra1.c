@@ -1049,7 +1049,7 @@ void health_redraw(int num, byte attr)
 		Term_erase(COL_INFO, ROW_INFO, 12);
 #else
 		/* Draw world coordinates and AFK status from memory */
-		prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wy, depth_town,
+		prt_depth(p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, depth_town,
 		          depth_colour, depth_colour_sector, depth_name);
 		prt_AFK(p_ptr->afk);
 #endif
