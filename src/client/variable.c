@@ -251,4 +251,4 @@ byte mon_health_attr;
 bool depth_town;
 int depth_colour;
 int depth_colour_sector;
-cptr depth_name;
+char depth_name[MAX_CHARS];
