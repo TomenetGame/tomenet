@@ -2160,7 +2160,8 @@ int Receive_depth(void)
 {
 	int	n;
 	char	ch;
-	s16b	x, y, z, colour, colour_sector;
+	s16b	x, y, z, old_colour;
+	char	colour, colour_sector;
 	bool	town;
 	char	buf[MAX_CHARS];
 
@@ -2174,8 +2175,9 @@ int Receive_depth(void)
 	} else
 #endif
 	{
-		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &colour, buf)) <= 0)
+		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &old_colour, buf)) <= 0)
 			return n;
+		colour = old_colour;
 		colour_sector = TERM_L_GREEN;
 	}
 
