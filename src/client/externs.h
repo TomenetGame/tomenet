@@ -277,14 +277,14 @@ extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
 extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
 
 /* Monster health memory (health_redraw) */
-int mon_health_num;
-byte mon_health_attr;
+extern int mon_health_num;
+extern byte mon_health_attr;
 
 /* Location information memory (prt_depth) */
-bool depth_town;
-int depth_colour;
-int depth_colour_sector;
-cptr depth_name;
+extern bool depth_town;
+extern int depth_colour;
+extern int depth_colour_sector;
+extern char depth_name[MAX_CHARS];
 
 
 /*
