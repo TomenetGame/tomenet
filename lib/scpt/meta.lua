@@ -1,4 +1,6 @@
-_ALERT=print
+-- Print errors to stdout
+__old_ALERT = _ALERT
+_ALERT = print
 
 function color_print(y, x, str)
         Term_putstr(x, y, strlen(str), TERM_WHITE, str)
@@ -139,3 +141,6 @@ function meta_get(xml_feed, pos)
 
         return meta_list[pos][1], meta_list[pos][2]
 end
+
+-- Restore a good neat handler
+_ALERT = __old_ALERT
