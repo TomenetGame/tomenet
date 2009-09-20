@@ -28,6 +28,9 @@ int  tolua_spells_open (lua_State *L);
 void dump_lua_stack_stdout(int min, int max);
 void dump_lua_stack(int min, int max);
 
+/* Don't include the iolib because of security concerns. */
+#define NO_CLIENT_IOLIB
+
 /*
  * Lua state
  */
@@ -59,9 +62,91 @@ static int pern_errormessage(lua_State *L)
 	return (0);
 }
 
+#ifdef NO_CLIENT_IOLIB
+
+#include "luadebug.h"
+
+/* Code from liolib.c to get pern_errormessage working. */
+
+#define LEVELS1	12	/* size of the first part of the stack */
+#define LEVELS2	10	/* size of the second part of the stack */
+
+static int errorfb (lua_State *L) {
+  int level = 1;  /* skip level 0 (it's this function) */
+  int firstpart = 1;  /* still before eventual `...' */
+  lua_Debug ar;
+  luaL_Buffer b;
+  luaL_buffinit(L, &b);
+  luaL_addstring(&b, "error: ");
+  luaL_addstring(&b, luaL_check_string(L, 1));
+  luaL_addstring(&b, "\n");
+  while (lua_getstack(L, level++, &ar)) {
+    char buff[120];  /* enough to fit following `sprintf's */
+    if (level == 2)
+      luaL_addstring(&b, "stack traceback:\n");
+    else if (level > LEVELS1 && firstpart) {
+      /* no more than `LEVELS2' more levels? */
+      if (!lua_getstack(L, level+LEVELS2, &ar))
+        level--;  /* keep going */
+      else {
+        luaL_addstring(&b, "       ...\n");  /* too many levels */
+        while (lua_getstack(L, level+LEVELS2, &ar))  /* find last levels */
+          level++;
+      }
+      firstpart = 0;
+      continue;
+    }
+    sprintf(buff, "%4d:  ", level-1);
+    luaL_addstring(&b, buff);
+    lua_getinfo(L, "Snl", &ar);
+    switch (*ar.namewhat) {
+      case 'g':  case 'l':  /* global, local */
+        sprintf(buff, "function `%.50s'", ar.name);
+        break;
+      case 'f':  /* field */
+        sprintf(buff, "method `%.50s'", ar.name);
+        break;
+      case 't':  /* tag method */
+        sprintf(buff, "`%.50s' tag method", ar.name);
+        break;
+      default: {
+        if (*ar.what == 'm')  /* main? */
+          sprintf(buff, "main of %.70s", ar.short_src);
+        else if (*ar.what == 'C')  /* C function? */
+          sprintf(buff, "%.70s", ar.short_src);
+        else
+          sprintf(buff, "function <%d:%.70s>", ar.linedefined, ar.short_src);
+        ar.source = NULL;  /* do not print source again */
+      }
+    }
+    luaL_addstring(&b, buff);
+    if (ar.currentline > 0) {
+      sprintf(buff, " at line %d", ar.currentline);
+      luaL_addstring(&b, buff);
+    }
+    if (ar.source) {
+      sprintf(buff, " [%.70s]", ar.short_src);
+      luaL_addstring(&b, buff);
+    }
+    luaL_addstring(&b, "\n");
+  }
+  luaL_pushresult(&b);
+  lua_getglobal(L, LUA_ALERT);
+  if (lua_isfunction(L, -1)) {  /* avoid loop if _ALERT is not defined */
+    lua_pushvalue(L, -2);  /* error message */
+    lua_rawcall(L, 1, 0);
+  }
+  return 0;
+}
+
+#endif
+
 static struct luaL_reg pern_iolib[] =
 {
-        {"_ALERT", pern_errormessage},
+        {LUA_ALERT, pern_errormessage},
+#ifdef NO_CLIENT_IOLIB
+	{LUA_ERRORMESSAGE, errorfb},
+#endif
 };
 
 #define luaL_check_bit(L, n)  ((long)luaL_check_number(L, n))
@@ -251,7 +336,9 @@ void init_lua()
 	lua_baselibopen(L);
 	lua_strlibopen(L);
 	/* I/O and system functions are a potential security risk in the client - mikaelh */
-//	lua_iolibopen(L);
+#ifndef NO_CLIENT_IOLIB
+	lua_iolibopen(L);
+#endif
 	lua_dblibopen(L);
 
 	/* Register pern lua debug library */
