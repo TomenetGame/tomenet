@@ -48,8 +48,9 @@
 # Command macro -- "X" will now "swap weapons" as long as both weapons
 # contain the inscription "@0".  For example, inscribe your main weapon
 # as "@1@0" and your digger (or secondary weapon) as "@2@0".
-
 A:w0
 C:X
 
-
+# Normal macro that triggers in all situations: Exit the game.
+A:\e\e^X
+P:^X
