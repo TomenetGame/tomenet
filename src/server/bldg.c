@@ -1248,7 +1248,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	//int j = 9;
 
 	/* XXX maxenchant can go up to +20 here, but maybe no pb :) */
-	int maxenchant = (p_ptr->lev / 5);
+	int maxenchant = (p_ptr->lev / 5), maxenchant_eff;
 
 	object_type *o_ptr;
 
@@ -1278,7 +1278,8 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 	for (i = istart; i <= iend; i++)
 	{
 		o_ptr = &p_ptr->inventory[i];
-
+		maxenchant_eff = maxenchant;
+		if (is_ammo(o_ptr->tval) && (maxenchant_eff > 15)) maxenchant_eff = 15; /* CAP_ITEM_BONI */
 
 	        /* Unenchantable items always fail */                                                                            
 	        if (f5 & TR5_NO_ENCHANT) continue;
@@ -1329,12 +1330,12 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 					msg_format(Ind, "%-40s: beyond repair, buy a new one", tmp_str);
 				}
 				/* Sharpen a weapon */
-				else if ((!iac) && ((o_ptr->to_h  < maxenchant) ||
-					    (o_ptr->to_d < maxenchant)))
+				else if ((!iac) && ((o_ptr->to_h  < maxenchant_eff) ||
+					    (o_ptr->to_d < maxenchant_eff)))
 				{
-					if (o_ptr->to_h  < maxenchant)
+					if (o_ptr->to_h  < maxenchant_eff)
 						o_ptr->to_h++;
-					if (o_ptr->to_d < maxenchant)
+					if (o_ptr->to_d < maxenchant_eff)
 						o_ptr->to_d++;
 					msg_format(Ind, "%-40s: sharpened -> (%d,%d)", tmp_str,
 					        o_ptr->to_h, o_ptr->to_d);

@@ -5678,6 +5678,9 @@ static void process_player_change_wpos(int Ind)
 	if (p_ptr->panel_col > p_ptr->max_panel_cols) p_ptr->panel_col = p_ptr->max_panel_cols;
 	else if (p_ptr->panel_col < 0) p_ptr->panel_col = 0;
 
+	/* Hack -- remove tracked monster */
+	health_track(Ind, 0);
+
 	p_ptr->redraw |= (PR_MAP);
 	p_ptr->redraw |= (PR_DEPTH);
 

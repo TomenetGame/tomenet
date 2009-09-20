@@ -2050,6 +2050,9 @@ int inven_damage(int Ind, inven_func typ, int perc)
 
 	if (safe_area(Ind)) return(FALSE);
 
+	/* secret dungeon master is unaffected (potion shatter effects might be bad) */
+	if (p_ptr->admin_dm) return(FALSE);
+
 	/* Count the casualties */
 	k = 0;
 
@@ -2133,6 +2136,7 @@ int equip_damage(int Ind, int typ)
 	char		o_name[160];
 
 	if (safe_area(Ind)) return(FALSE);
+	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Pick a (possibly empty) inventory slot */
 	switch (randint(6))
@@ -2257,6 +2261,7 @@ int weapon_takes_damage(int Ind, int typ, int slot)
 #endif
 
 	if (safe_area(Ind)) return(FALSE);
+	if (p_ptr->admin_dm) return(FALSE);
 
 	switch (typ) {
 	case GF_WATER:

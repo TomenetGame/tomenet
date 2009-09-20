@@ -4505,6 +4505,12 @@ tries = 100;
 
 	/* CAP_ITEM_BONI */
 	switch (o_ptr->tval) {
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_SHOT:
+		if (o_ptr->to_h > 15) o_ptr->to_h = 15;
+		if (o_ptr->to_d > 15) o_ptr->to_d = 15;
+		break;
 	case TV_BOW:
 	case TV_BOOMERANG:
 	default:

@@ -513,13 +513,14 @@ static void prt_study(int Ind)
 static void prt_cut(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	cave_type **zcave;
+//	cave_type **zcave;
 	int c = p_ptr->cut;
 
+#if 0 /* deprecated */
 	/* hack: no-tele indicator takes priority. */
 	if ((zcave = getcave(&p_ptr->wpos)))
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
-
+#endif
 	Send_cut(Ind, c); /* need to send this always since the client doesn't clear the whole field */
 }
 
@@ -932,7 +933,9 @@ static void prt_frame_basic(int Ind)
  */
 static void prt_frame_extra(int Ind)
 {
+#if 0 /* deprecated */
 	/* Mega-Hack : display AFK status in place of 'stun' status! */
+#endif
 	prt_AFK(Ind);
 
 	/* Give monster health priority over AFK status display */
@@ -940,8 +943,12 @@ static void prt_frame_extra(int Ind)
 
 	/* Cut/Stun */
 	prt_cut(Ind);
+#if 0 /* deprecated */
 	/* Mega-Hack : AFK and Stun share a field */
 	if (Players[Ind]->stun || !Players[Ind]->afk) prt_stun(Ind);
+#else
+	prt_stun(Ind);
+#endif
 
 	/* Food */
 	prt_hunger(Ind);

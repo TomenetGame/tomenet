@@ -1270,6 +1270,7 @@ static void store_delete(store_type *st_ptr)
 		}
 	}
 
+#ifndef TEST_SERVER
 	/* keep track of artifact creation scrolls in log */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
 	    && o_ptr->number == num) {
@@ -1277,6 +1278,7 @@ static void store_delete(store_type *st_ptr)
 		s_name = st_name + st_info[st_ptr->st_idx].name;
 		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
 	}
+#endif
 
 	/* Actually destroy (part of) the item */
 	store_item_increase(st_ptr, what, -num);
@@ -1797,12 +1799,16 @@ static void store_create(store_type *st_ptr)
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
 		/* Log occurances of special items */
+#ifndef TEST_SERVER
 		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
 #if 0
 		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
 #endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
+#else
+		if (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) {
+#endif
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;
 			s_printf("%s: STORE_CARRY: %d/%d - %d, %s (%s)", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
