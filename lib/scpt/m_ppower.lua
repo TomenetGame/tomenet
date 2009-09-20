@@ -45,6 +45,7 @@ MTELETOWARDS = add_spell
 {
 	["name"] = 	"Autokinesis III",
         ["school"] = 	{SCHOOL_PPOWER},
+        ["blind"] = 	0,
         ["level"] = 	24,
         ["mana"] = 	20,
         ["mana_max"] = 	30,
