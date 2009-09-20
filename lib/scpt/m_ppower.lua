@@ -11,14 +11,14 @@ MBLINK = add_spell
         ["fail"] = 	10,
         ["spell"] = 	function()
                 	local dist = 10 + get_level(Ind, MBLINK, 8)
-			teleport_player(Ind, dist, TRUE);
+			teleport_player(Ind, dist, TRUE)
 			end,
 	["info"] = 	function()
                 	return "distance "..(10 + get_level(Ind, MBLINK, 8))
 			end,
         ["desc"] =	{
         		"Teleports you on a small scale range",
-        },
+        }
 }
 
 MTELEPORT = add_spell
@@ -63,7 +63,7 @@ MTELETOWARDS = add_spell
 
 MTELEAWAY = add_spell
 {
-	["name"] = 	"Psychic Warp", 
+	["name"] = 	"Psychic Warp",
         ["school"] = 	{SCHOOL_PPOWER},
         ["level"] = 	30,
         ["mana"] = 	40,

@@ -566,6 +566,11 @@ end
 function spell_in_book2(inven_slot, book, spell)
         local i, s
 
+	--treat exception
+	if book == 255 then
+		return FALSE
+	end
+
 	--hack of custom tomes
 	if book == 100 or book == 101 or book == 102 then
 		return spell_in_custom_tome(inven_slot, spell)
