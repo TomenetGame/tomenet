@@ -2147,6 +2147,9 @@ key to emulate some special keys in your macros:
                 :hi!\r:hi!\n    makes your character say 'hi!' two times.
 )               clears the keyboard buffer (all previous key presses that
                 still have to be processed will be forgotten).
+^               Prefixed to any key this will lead to a CTRL + <thatkey>
+                combination. For example a macro '^x' will exit the game.
+
 Example:
 :Hi all!\r      This macro writes 'Hi all!' to everyone.
 \e)f*t          This macro will press escape to leave any potential
