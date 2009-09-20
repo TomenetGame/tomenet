@@ -647,7 +647,7 @@ void do_cmd_check_players(int Ind, int line)
 #if 0 /* real current version */
 		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA - 1, 0, 0);
 #else /* official current version */
-		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, 0, 0);
+		outdated = !is_newer_than(&q_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
 #endif
 
 		byte attr = 'w';
