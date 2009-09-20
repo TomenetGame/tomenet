@@ -2520,6 +2520,10 @@ void toggle_afk(int Ind, char *msg)
 	}
 	else
 	{
+		/* hack: lose health tracker so we actually get to see the 'AFK'
+		   (for example we might've attacked the target dummy before). */
+		health_track(Ind, 0);
+
 #if 1		
 		/* stop every major action */
 //		disturb(Ind, 1, 0);
