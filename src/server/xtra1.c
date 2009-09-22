@@ -4866,7 +4866,7 @@ void calc_boni(int Ind)
 		case CLASS_SHAMAN: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 2) / 4; break;
 		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		case CLASS_RUNEMASTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
-		case CLASS_MINDCRAFTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 2) / 4; break;
+		case CLASS_MINDCRAFTER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 1) / 3; break;
 		}
 	}
 #endif
@@ -4928,7 +4928,7 @@ void calc_boni(int Ind)
 		case CLASS_ARCHER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 1) / 3; break;
 		case CLASS_ROGUE: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 0) / 2; break;
 		case CLASS_MIMIC: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 1) / 4; break;
-		case CLASS_RANGER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 1) / 4; break;
+		case CLASS_RANGER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 0) / 4; break;
 //		case CLASS_PALADIN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 0) / 2; break;
 		case CLASS_PALADIN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 1) / 4; break;
 		case CLASS_SHAMAN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 2) / 4; break;
