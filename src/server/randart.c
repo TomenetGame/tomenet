@@ -1545,7 +1545,9 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if (a_ptr->tval == TV_SWORD && a_ptr->sval == SV_DARK_SWORD) a_ptr->flags1 &= ~TR1_MANA;	
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
-	if ((a_ptr->flags1 & TR1_MANA)  && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	/* If an item is BLESSED, remove NO_MAGIC property */
+	if ((a_ptr->flags3 & TR3_BLESSED) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
 /* -------------------------------------- Flag-killing limits -------------------------------------- */
 
@@ -1782,6 +1784,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	/* If an item is BLESSED, remove NO_MAGIC property */
+	if ((a_ptr->flags3 & TR3_BLESSED) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
 /* -------------------------------------- Flag-killing limits -------------------------------------- */
 
@@ -2566,13 +2570,20 @@ try_an_other_ego:
 		a_ptr->flags1 &= ~TR1_MANA;
 		a_ptr->flags1 &= ~TR1_SPELL;
 	}
-	/* Items of/with 'Magi'/'Istari' don't have NO_MAGIC: */
-	if ((o_ptr->name2 == EGO_MAGI || o_ptr->name2b == EGO_MAGI) ||
+	/* Items of/with 'Magi'/'Istari' or which are BLESSED
+	   don't have NO_MAGIC: */
+	if (!(k_ptr->flags3 & TR3_NO_MAGIC) &&
+	    ((o_ptr->name2 == EGO_MAGI || o_ptr->name2b == EGO_MAGI) ||
 	    (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI) ||
 	    (o_ptr->name2 == 135 || o_ptr->name2b == 135) ||
 	    (o_ptr->name2 == 169 || o_ptr->name2b == 169) ||
 	    (o_ptr->name2 == 185 || o_ptr->name2b == 185) ||
-	    (o_ptr->name2 == 186 || o_ptr->name2b == 186)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	    (o_ptr->name2 == 186 || o_ptr->name2b == 186) ||
+	    /* BLESSED flag: */
+	    (o_ptr->name2 == 65 || o_ptr->name2b == 65) ||
+	    (o_ptr->name2 == 67 || o_ptr->name2b == 67) ||
+	    (o_ptr->name2 == 90 || o_ptr->name2b == 90)))
+		a_ptr->flags3 &= ~TR3_NO_MAGIC;
 	/* If an item increases all three, SPEED, CRIT, MANA,
 	   then reduce pval to 1/2 to balance */
 	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags1 & TR1_MANA))
