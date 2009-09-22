@@ -3934,6 +3934,8 @@ void check_experience(int Ind)
 		case CLASS_ADVENTURER:
 		        if (old_lev < 6 && p_ptr->lev >= 6)
             			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+		        if (old_lev < 15 && p_ptr->lev >= 15)
+            			msg_print(Ind, "\377G* You learn the fighting technique 'Taunt'! *");
                         /* Also update the client's 'm' menu for fighting techniques */
                         calc_techniques(Ind);
                         Send_skill_info(Ind, SKILL_MASTERY);
@@ -3981,9 +3983,25 @@ void check_experience(int Ind)
 		case CLASS_SHAMAN:
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to see the invisible! *");
 			break;
+		case CLASS_RUNEMASTER:
+		        if (old_lev < 4 && p_ptr->lev >= 4)
+            			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+			if (old_lev < 9 && p_ptr->lev >= 9)
+		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+                        /* Also update the client's 'm' menu for fighting techniques */
+                        calc_techniques(Ind);
+                        Send_skill_info(Ind, SKILL_MASTERY);
+		        break;
 		case CLASS_MINDCRAFTER:
 			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377G* You learn to keep hold of your sanity! *");
 			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to keep strong hold of your sanity! *");
+			if (old_lev < 8 && p_ptr->lev >= 8)
+		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+			if (old_lev < 12 && p_ptr->lev >= 12)
+		        	msg_print(Ind, "\377G* You learn the fighting technique 'Distract' *");
+                        /* Also update the client's 'm' menu for fighting techniques */
+                        calc_techniques(Ind);
+                        Send_skill_info(Ind, SKILL_MASTERY);
 			break;
 		}
 

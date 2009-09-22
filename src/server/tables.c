@@ -5230,6 +5230,12 @@ player_class class_info[MAX_CLASS] =
 				'+', 0,
 				'+', 1000,
 			},
+			/* just to make fighting techniques available!: */
+			{
+				SKILL_MASTERY,
+				'+', 1000,
+				'+', 0,
+			},
 			/* "I am able to learn sword, but not weapon mastery in general, nor combat" */
 			/* combat is ok, but i guess they aren't disciplined enough for w-mastery ;) */
 			{

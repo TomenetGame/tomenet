@@ -8765,7 +8765,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	if (!get_skill(p_ptr, SKILL_STANCE)) return;
 */
 
-	if ((p_ptr->pclass == CLASS_ROGUE) &&
+	if ((p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_RUNEMASTER) &&
 	    p_ptr->rogue_heavyarmor) {
 		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
 		return;

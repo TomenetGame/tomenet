@@ -7285,6 +7285,7 @@ void calc_techniques(int Ind) {
 
 	/* Send accessible melee & ranged techniques (hard-coded on client-side, so no defines here :/) */
 	switch (p_ptr->pclass) {
+
 	case CLASS_ADVENTURER:
 		if (p_ptr->lev >= 6) p_ptr->melee_techniques |= 0x0001; /* Sprint */
 		if (p_ptr->lev >= 15) p_ptr->melee_techniques |= 0x0002; /* Taunt */
@@ -7300,6 +7301,17 @@ void calc_techniques(int Ind) {
 		if (p_ptr->lev >= 50 && p_ptr->total_winner) p_ptr->melee_techniques |= 0x4000; /* Shadow run */
 		Send_technique_info(Ind);
 		return;	
+	case CLASS_RUNEMASTER:
+		if (p_ptr->lev >= 4) p_ptr->melee_techniques |= 0x0001; /* Sprint - Rogues know how to get away! */
+		if (p_ptr->lev >= 9) p_ptr->melee_techniques |= 0x0002; /* Taunt - Rogues are bad-mouthed ;) */
+		Send_technique_info(Ind);
+		return;	
+	case CLASS_MINDCRAFTER:
+		if (p_ptr->lev >= 8) p_ptr->melee_techniques |= 0x0002; /* Taunt */
+		if (p_ptr->lev >= 12) p_ptr->melee_techniques |= 0x0008; /* Distract */
+		Send_technique_info(Ind);
+		return;	
+
 	case CLASS_WARRIOR:
 //		if (p_ptr->lev >= 24) p_ptr->melee_techniques |= 0x0004; /* Jump */
 		m = 0; break;
