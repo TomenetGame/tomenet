@@ -1677,8 +1677,16 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 				(*ap) = TERM_HALF;
 		} else { /* m_ptr->ego is set: */
 			if (re_info[m_ptr->ego].d_attr != MEGO_CHAR_ANY) {
-				/* flicker in ego colour */
-				(*ap) = re_info[m_ptr->ego].d_attr;
+				/* ego colour differs from race colour? */
+				if (a != re_info[m_ptr->ego].d_attr) {
+					/* flicker in ego colour */
+					(*ap) = re_info[m_ptr->ego].d_attr;
+				} else if (magik(20)) {
+					/* flash randomly, rarely */
+					(*ap) = TERM_HALF;
+				} else {
+					(*ap) = a;
+				}
 			} else { /* no ego colour? rarely flash (similar to old way) */
 				/* ego has no colour - flicker in random colour */
 				(*ap) = TERM_HALF;
