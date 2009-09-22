@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. September 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. September 2009 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.3 - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
@@ -6645,7 +6645,7 @@ Archer      +1  +0  +2  +3  +1  -1       +5      +10%       3
 Paladin     +3  -3  +1  +0  +2  +2       +8      +30%       5
             10  21  54   1  16  13  60  29              good     superb
 Ranger      +2  +2  -1  +1  +2  +0       +7      +35%       5
-            34  32  30   5  30  30  50  60              good     fair
+            34  32  30   5  30  30  50  60              superb   fair
 Adventurer   0   0   0   0   0   0       +6      +25%       4
             20  20  20   2  15  15  50  50              fair     fair
 Druid       +1   0  +2  -2  -2  +1       +5      +40%       4
@@ -6655,7 +6655,7 @@ Shaman       0  +1  +2  -2   0   0       +4      +45%       4
 Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
             10  20  20   0  30  20  45  20              fair     fair
 Mindcrafter  0  +2   0   0   0  +1       +5      +25%       5
-            30  30  36   2  35  14  45  35              fair     poor
+            30  30  36   2  35  14  45  35              good     fair
 
 
 
