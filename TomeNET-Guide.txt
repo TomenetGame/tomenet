@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. September 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 24. September 2009 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.3 - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
@@ -2250,6 +2250,27 @@ manathrust with '\e)m@11\r9a*t' you could also just make a macro
 '\e)m@11\r@Manathrust\r*t' without the need to inscribe your book.
 
 In fact you could make a macro '\e)m@Cast a spell\r@Manathrust\r*t'.
+
+IMPORTANT: Keep in mind that call-by-name is actually case-sensitive!
+(So in the example above, 'manathrust' would not work.)
+
+Additional details:
+-------------------
+The text you provide for matching is treated as a partial text (sub-string)
+that must occur anywhere in an inventory slot text. Only those inventory slots
+are tested for this, which actually contain an item of fitting base type (tval)
+for the action that is being executed.
+
+Example: You make a macro   z@Gold-Pl\r  -this will be processed as follows:
+The command is 'z' to zap a rod. So only inventory slots that contain rods will
+be looked at, the rest is ignored.
+Now all inventory slots that contain rods will be tested for whether they
+contain the text piece 'Gold-Pl' somewhere.
+So if you carry any Gold-Plated rods in your inventory they will be zapped.
+
+Note that since it's really just all about partial-text-matching, you could
+inscribe some other rods 'Gold-Pl' so the text matching would succeed, although
+they aren't 'real' Gold-Plated rods. (!)
 
 
 
