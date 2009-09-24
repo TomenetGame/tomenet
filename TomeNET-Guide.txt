@@ -2643,11 +2643,16 @@ There are different types of dungeons. The main five are:
  Sending items via telekinesis to a player who is currently in an ironman
  dungeon/tower will only work if both players are on the same dungeon floor.
  To leave an ironman dungeon/tower you'll have to get to it's bottom
- respectively top. There might possibilities to use Word-of-Recall even if
+ respectively top. There might be possibilities to use Word-of-Recall even if
  you're not at bottom/top yet, depending on the server configuration. In
  general you will recognize levels which allow recalling by a green message,
  saying "You don't sense a magic barrier here..." (compare (4.8)).
  Ironman dungeons/towers are marked by a dark grey < or > symbol.
+ NOTE: In the case of RPG-server settings, you can usually recall INTO ironman
+ dungeons every (n*1000)+50 ft, n starting at 0. Example: -50 ft, -1050 ft,
+ -2050 ft, etc. Also, the dungeons will usually not allow recalling OUT until
+ you reach a floor that is equivalent to at least dungeon level 20. Examples:
+ At least -1000 ft in Barrow-Downs, at least -550 ft in The Orc Cave.
 -Hellish. Players suffer no-ghost deaths inside hellish dungeons.
  Even if they're everlasting.
  Hellish dungeons/towers are marked by a fire-like flickering < or > symbol
