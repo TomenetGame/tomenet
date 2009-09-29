@@ -36,6 +36,14 @@
  * seed via "Rand_value = seed".
  */
 
+/* Use the better and faster SIMD oriented Fast Mersenne Twister instead
+ * of the old RNG */
+#define USE_SFMT
+
+#ifdef USE_SFMT
+#include "SFMT.h"
+#endif
+
 
 /*
  * Random Number Generator -- Linear Congruent RNG
@@ -73,6 +81,10 @@ u32b Rand_state[RAND_DEG];
  */
 void Rand_state_init(u32b seed)
 {
+#ifdef USE_SFMT
+	/* SFMT initialization */
+	init_gen_rand(seed);
+#else
 	int i, j;
 
 	/* Seed the table */
@@ -94,6 +106,7 @@ void Rand_state_init(u32b seed)
 		/* Advance the index */
 		Rand_place = j;
 	}
+#endif
 }
 
 
@@ -105,7 +118,6 @@ void Rand_state_init(u32b seed)
  */
 s32b Rand_mod(s32b m)
 {
-	int j;
 	u32b r;
 
 	/* Hack -- simple case */
@@ -124,6 +136,12 @@ s32b Rand_mod(s32b m)
 	/* Use the "complex" RNG */
 	else
 	{
+#ifdef USE_SFMT
+		/* Use the SFMT */
+		r = gen_rand32() % m;
+#else
+		int j;
+
 		/* Acquire the next index */
 		j = Rand_place + 1;
 		if (j == RAND_DEG) j = 0;
@@ -136,6 +154,7 @@ s32b Rand_mod(s32b m)
 
 		/* Extract a "random" number */
 		r = ((r >> 4) % m);
+#endif
 	}
 
 	/* Use the value */
@@ -187,6 +206,10 @@ s32b Rand_div(s32b m)
 		/* Wait for it */
 		while (1)
 		{
+#ifdef USE_SFMT
+			/* SFMT version */
+			r = (gen_rand32() >> 4) / n;
+#else
 			int j;
 
 			/* Acquire the next index */
@@ -201,6 +224,7 @@ s32b Rand_div(s32b m)
 
 			/* Advance the index */
 			Rand_place = j;
+#endif
 
 			/* Done */
 			if (r < (u32b) m) break;

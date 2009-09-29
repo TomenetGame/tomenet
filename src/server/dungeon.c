@@ -6334,9 +6334,6 @@ void play_game(bool new_game)
 	struct tm *tmp;
 	//int i, n;
 
-	/*** Init the wild_info array... for more information see wilderness.c ***/
-	init_wild_info();
-
 	/* Init the RNG */
 	// Is it a good idea ? DGDGDGD --  maybe FIXME
 	//	if (Rand_quick)
@@ -6359,6 +6356,9 @@ void play_game(bool new_game)
 		/* Seed the "complex" RNG */
 		Rand_state_init(seed);
 	}
+
+	/*** Init the wild_info array... for more information see wilderness.c ***/
+	init_wild_info();
 
 	/* Attempt to load the server state information */
 	if (!load_server_info())
