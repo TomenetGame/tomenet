@@ -433,7 +433,7 @@ static void display_fruit(int row, int col, int fruit)
 static bool gamble_comm(int Ind, int cmd, int gold)
 {
 	player_type *p_ptr = Players[Ind];
-	int roll1, roll2;//, roll3;
+	int roll1, roll2, roll3;
 	int choice, odds, win;
 
 	s32b wager;
@@ -543,7 +543,8 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				}
 				case BACT_CRAPS:  /* Game of Craps */
 				{
-#if 0 	/* Mikaelh reported that winning seems too easy due to RNG problems */
+/* It seems to be harder to win with the new RNG so I'm enabling Craps again. - mikaelh */
+#if 1
 					msg_print(Ind, "\377GCraps");
 					win = 3;
 					odds = 1;
@@ -553,8 +554,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 					choice = roll3;
 					msg_format(Ind, "First roll: %d %d    Total: %d", roll1, 
 					        roll2, roll3);
-/* chances too high for winning 	if ((roll3 == 7) || (roll3 == 11)) */
-					if (roll3 == 9)
+					if ((roll3 == 7) || (roll3 == 11))
 						win = TRUE;
 					else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12))
 						win = FALSE;
