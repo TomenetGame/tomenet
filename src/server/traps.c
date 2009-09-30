@@ -2527,7 +2527,7 @@ break;
 					ident = TRUE;
 
 					if (!(j % 3)) str = "Vlad was here!!";
-					else if (is_book(o_ptr)) str = "!*!m!n!p";
+					else if (is_realm_book(o_ptr)) str = "!*!m!n!p";
 					else switch (o_ptr->tval)
 					{
 						case TV_SCROLL:

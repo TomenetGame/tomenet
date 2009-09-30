@@ -3180,7 +3180,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	if (o_ptr->note && j_ptr->note && (o_ptr->note != j_ptr->note)
 		&& strcmp(quark_str(o_ptr->note), "on sale")
 		&& strcmp(quark_str(j_ptr->note), "on sale")
-		&& !is_book(o_ptr)
+		&& !is_realm_book(o_ptr)
 		&& !check_guard_inscription(o_ptr->note, 'M')
 		&& !check_guard_inscription(j_ptr->note, 'M')) return (FALSE);
 
@@ -9766,7 +9766,7 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags)
 	}
 
 #if 0	/* disabled till new spell system is done */
-	if (!is_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
+	if (!is_realm_book(o_ptr) && o_ptr->tval != TV_BOOK) return;
 
 	/* XXX though it's ok with 'm' for everything.. */
 	c[2] = o_ptr->sval +1 +48;

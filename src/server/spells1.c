@@ -2013,8 +2013,8 @@ static int set_rust_destroy(object_type *o_ptr)
 int set_all_destroy(object_type *o_ptr)
 {
 	if (artifact_p(o_ptr)) return (FALSE);
-//	if (is_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
-	if (is_book(o_ptr))
+//	if (is_realm_book(o_ptr) && o_ptr->sval >= SV_BOOK_MIN_GOOD) return (FALSE);
+	if (is_realm_book(o_ptr))
 	{
 		u32b f1, f2, f3, f4, f5, esp;
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
