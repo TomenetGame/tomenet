@@ -2310,8 +2310,8 @@ that keeps many algorithms happy.
 #define TV_SHADOW_BOOK 	94
 #define TV_HUNT_BOOK 	95
 
-/* Exactly, it's "is_realm_book" */
-#define is_book(o_ptr) \
+/* unused */
+#define is_realm_book(o_ptr) \
 	(89 <= o_ptr->tval && o_ptr->tval <= 95)
 
 /* for invalid items */

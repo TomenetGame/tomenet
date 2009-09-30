@@ -155,6 +155,7 @@ static void Receive_init(void)
 	receive_tbl[PKT_WEATHER]	= Receive_weather;
 	receive_tbl[PKT_INVENTORY_REV]	= Receive_inventory_revision;
 	receive_tbl[PKT_ACCOUNT_INFO]	= Receive_account_info;
+	receive_tbl[PKT_STORE_WIDE]	= Receive_store_wide;
 }
 
 /* Head of file transfer system receive */
@@ -2729,6 +2730,47 @@ int Receive_store(void)
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
+
+	/* Make sure that we're in a store */
+	if (shopping)
+	{
+		display_inventory();
+	}
+
+	return 1;
+}
+
+int Receive_store_wide(void)
+{
+	int	n, price;
+	char	ch, pos, name[MAX_CHARS], tval, sval;
+	byte	attr;
+	s16b	wgt, num, pval;
+	byte	xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
+	    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+	{
+		return n;
+	}
+
+	store.stock[(int)pos].sval = sval;
+	store.stock[(int)pos].weight = wgt;
+	store.stock[(int)pos].number = num;
+	store_prices[(int) pos] = price;
+	strncpy(store_names[(int) pos], name, 80);
+	store.stock[(int)pos].tval = tval;
+	store.stock[(int)pos].attr = attr;
+	store.stock[(int)pos].pval = pval;
+	store.stock[(int)pos].xtra1 = xtra1;
+	store.stock[(int)pos].xtra2 = xtra2;
+	store.stock[(int)pos].xtra3 = xtra3;
+	store.stock[(int)pos].xtra4 = xtra4;
+	store.stock[(int)pos].xtra5 = xtra5;
+	store.stock[(int)pos].xtra6 = xtra6;
+	store.stock[(int)pos].xtra7 = xtra7;
+	store.stock[(int)pos].xtra8 = xtra8;
+	store.stock[(int)pos].xtra9 = xtra9;
 
 	/* Make sure that we're in a store */
 	if (shopping)

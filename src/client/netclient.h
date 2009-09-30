@@ -63,6 +63,7 @@ int Receive_line_info(void);
 int Receive_floor(void);
 int Receive_special_other(void);
 int Receive_store(void);
+int Receive_store_wide(void);
 int Receive_store_info(void);
 int Receive_store_kick(void);
 int Receive_store_action(void);

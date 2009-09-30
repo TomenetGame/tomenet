@@ -1713,7 +1713,7 @@ void cmd_throw(void)
 
 static bool item_tester_browsable(object_type *o_ptr)
 {
-	return (is_book(o_ptr) || o_ptr->tval == TV_BOOK);
+	return (is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK);
 }
 
 void cmd_browse(void)

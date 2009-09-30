@@ -287,17 +287,33 @@ int get_inven_sval(int Ind, int inven_slot) {
 	return (inventory[inven_slot].sval);
 }
 int get_inven_xtra(int Ind, int inven_slot, int n) {
-	switch (n) {
-	case 1: return (inventory[inven_slot].xtra1);
-	case 2: return (inventory[inven_slot].xtra2);
-	case 3: return (inventory[inven_slot].xtra3);
-	case 4: return (inventory[inven_slot].xtra4);
-	case 5: return (inventory[inven_slot].xtra5);
-	case 6: return (inventory[inven_slot].xtra6);
-	case 7: return (inventory[inven_slot].xtra7);
-	case 8: return (inventory[inven_slot].xtra8);
-	case 9: return (inventory[inven_slot].xtra9);
-	default: return (0); //failure
+	/* browsing item in a store? */
+	if (inven_slot < 0) {
+		switch (n) {
+		case 1: return (store.stock[(-inven_slot) - 1].xtra1);
+		case 2: return (store.stock[(-inven_slot) - 1].xtra2);
+		case 3: return (store.stock[(-inven_slot) - 1].xtra3);
+		case 4: return (store.stock[(-inven_slot) - 1].xtra4);
+		case 5: return (store.stock[(-inven_slot) - 1].xtra5);
+		case 6: return (store.stock[(-inven_slot) - 1].xtra6);
+		case 7: return (store.stock[(-inven_slot) - 1].xtra7);
+		case 8: return (store.stock[(-inven_slot) - 1].xtra8);
+		case 9: return (store.stock[(-inven_slot) - 1].xtra9);
+		default: return (0); //failure
+		}
+	} else  { /* browsing item in inventory */
+		switch (n) {
+		case 1: return (inventory[inven_slot].xtra1);
+		case 2: return (inventory[inven_slot].xtra2);
+		case 3: return (inventory[inven_slot].xtra3);
+    		case 4: return (inventory[inven_slot].xtra4);
+        	case 5: return (inventory[inven_slot].xtra5);
+		case 6: return (inventory[inven_slot].xtra6);
+		case 7: return (inventory[inven_slot].xtra7);
+		case 8: return (inventory[inven_slot].xtra8);
+		case 9: return (inventory[inven_slot].xtra9);
+		default: return (0); //failure
+		}
 	}
 }
 

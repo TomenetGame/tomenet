@@ -231,9 +231,9 @@ static void store_examine(void)
 	o_ptr = &store.stock[item];
 
 	/* Tell the server */
-	if (is_book(o_ptr)) show_browse(o_ptr);
+	if (is_realm_book(o_ptr)) show_browse(o_ptr);
 	else if (o_ptr->tval == TV_BOOK)
-		browse_school_spell(-1, o_ptr->sval, o_ptr->pval);
+		browse_school_spell(-(item + 1), o_ptr->sval, o_ptr->pval);
 	else Send_store_examine(item);
 }
 
