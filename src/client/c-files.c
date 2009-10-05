@@ -1112,13 +1112,17 @@ void peruse_file(void)
 	/* Save the old screen */
 	Term_save();
 
+	/* Clear the terminal now */
+	Term_clear();
+
 	/* Show the stuff */
 	while (TRUE)
 	{
 		/* Clear the screen */
 		/* hack: no need for full tearm clearing if we only updated 'max_line'.
 		   purpose: avoid the extra flickering when 'max_line' arrives over the network. */
-		if (k != 1) Term_clear();
+		/* This causes flickering so I removed it - mikaelh */
+		/* if (k != 1) Term_clear(); */
 
 		/* Send the command */
 		Send_special_line(special_line_type, cur_line);

@@ -2895,6 +2895,7 @@ int Receive_special_line(void)
 	char	ch, attr;
 	s16b	max, line;
 	char	buf[MAX_CHARS];
+	int	x, y;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c%s", &ch, &max, &line, &attr, buf)) <= 0)
 	{
@@ -2908,8 +2909,18 @@ int Receive_special_line(void)
 	inkey_max_line = FALSE;
 
 	/* Print out the info */
-	if(special_line_type)	/* If we have quit already, dont */
+	if (special_line_type) { /* If we have quit already, dont */
+		/* remember cursor position */
+		Term_locate(&x, &y);
+
+		/* Always clear the whole line first */
+		Term_erase(0, line + 2, 255);
+
 		c_put_str(attr, buf, line + 2, 0);
+
+		/* restore cursor position */
+		Term_gotoxy(x, y);
+	}
 
 	return 1;
 }
