@@ -2572,19 +2572,37 @@ int Receive_line_info(void)
 		/* Read the char/attr pair */
 		Packet_scanf(&rbuf, "%c%c", &c, &a);
 
-		/* Check for bit 0x40 on the attribute */
-		if (a & 0x40)
+		/* 4.4.3.1 servers use new RLE */
+		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5))
 		{
-			/* First, clear the bit */
-			a &= ~(0x40);
-
-			/* Read the number of repetitions */
-			Packet_scanf(&rbuf, "%c", &n);
+			/* New RLE */
+			if (a == 0xFF)
+			{
+				/* Read the real attr and number of repetitions */
+				Packet_scanf(&rbuf, "%c%c", &a, &n);
+			}
+			else
+			{
+				/* No RLE, just one instance */
+				n = 1;
+			}
 		}
 		else
 		{
-			/* No RLE, just one instance */
-			n = 1;
+			/* Check for bit 0x40 on the attribute */
+			if (a & 0x40)
+			{
+				/* First, clear the bit */
+				a &= ~(0x40);
+
+				/* Read the number of repetitions */
+				Packet_scanf(&rbuf, "%c", &n);
+			}
+			else
+			{
+				/* No RLE, just one instance */
+				n = 1;
+			}
 		}
 
 		/* Draw a character n times */
