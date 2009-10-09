@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. September 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 27. September 2009 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.3 - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
@@ -4536,6 +4536,11 @@ SPECIAL_GENE
 'Imbued' books and tomes.
         Those especially treatened books and tomes resist the influence of
         heat, water and acid strongly.
+INVIS   Turns you invisible. Items 'of Invisibility' often have a +mod,
+        which gives you additional stealth. Note that this +mod does not
+        qualify or affect your invisibility in any way, but is purely for an
+        extra stealth bonus. Invisibility is binary: Either you are invisible
+        or you are not. Also see '(5.16) Invisibility'.
 
 
 
@@ -5217,6 +5222,13 @@ does the actual leeching!).
 
 (5.16) Invisibility
 -------------------
+Invisibility (for monsters as for players) is binary: Either you are invisible
+or you are not - possible +mods on items that grant invisibility don't affect
+the invisibility itself, but are usually just extra +stealth boni.
+While characters either having or not having 'invisible' property is a binary
+choice, the actual effect it has on gameplay will be affected by player/monster
+level, the ability to see invisible, and shadow cloaks, as follows here:
+
 A player who is invisible is harder to spot for monsters, making them move
 erratically instead of directly targetting the player. This also helps against
 casters, archers or breathers who won't be able to target you as well (often)
@@ -6472,6 +6484,8 @@ Priest
     Note that priests get a penalty for wielding non-blunt weapons, except
     for BLESSED weapons which priests can use without problems independently
     of their type.
+    Priests are especially adept at sensing curses on any sort of item, an
+    ability that grows with their character level.
 
 Rogue
     Rogues can backstab sleeping or fleeing monsters, and they can train
