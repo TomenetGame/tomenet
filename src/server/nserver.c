@@ -5142,12 +5142,31 @@ int Send_mini_map(int ind, int y)
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2)
 		{
-			/* Set bit 0x40 of a */
-			a |= 0x40;
+			/* 4.4.3.1 clients support new RLE */
+			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
+			{
+				/* New RLE */
+				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+			}
+			else
+			{
+				/* Old RLE */
+				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+			}
 
-			/* Output the info */
-			Packet_printf(&connp->c, "%c%c%c", c, a, n);
-		     	if (Ind2) Packet_printf(&connp2->c, "%c%c%c", c, a, n);
+			if (Ind2)
+			{
+				/* 4.4.3.1 clients support new RLE */
+				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5))
+				{
+					/* New RLE */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
+				}
+				else {
+					/* Old RLE */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
+				}
+			}
 
 			/* Start again after the run */
 			x = x1 - 1;
@@ -5155,8 +5174,44 @@ int Send_mini_map(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a); 
-			if (Ind2) Packet_printf(&connp2->c, "%c%c", c, a); 
+			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+				/* Remove 0x40 (TERM_PVP) if the client is old */
+				Packet_printf(&connp->c, "%c%c", c, a & ~0x40); 
+			}
+			else
+			{
+				if (a == 0xFF)
+				{
+					/* Use RLE format as an escape sequence for 0xFF as attr */
+					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+				}
+				else
+				{
+					/* Normal output */
+					Packet_printf(&connp->c, "%c%c", c, a);
+				}
+			}
+
+			if (Ind2)
+			{
+				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+					/* Remove 0x40 (TERM_PVP) if the client is old */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0x40);
+				}
+				else
+				{
+					if (a == 0xFF)
+					{
+						/* Use RLE format as an escape sequence for 0xFF as attr */
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
+					}
+					else
+					{
+						/* Normal output */
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
+					}
+				}
+			}
 		}
 	}
 
