@@ -1,6 +1,26 @@
 -- handle the psycho-power school
 --((static: +saving throw))
 
+MBASH = add_spell
+{
+	["name"] =	"Psychic Hammer",
+        ["school"] =	{SCHOOL_PPOWER},
+        ["level"] =	1,
+        ["mana"] =	1,
+        ["mana_max"] =	15,
+        ["fail"] =	5,
+        ["direction"] = TRUE,
+        ["spell"] =	function(args)
+                        fire_grid_bolt(Ind, GF_FORCE, args.dir, get_level(Ind, MBASH, 100), " releases a psychic hammer for")
+                        end,
+        ["info"] = 	function()
+	                return "dam "..(get_level(Ind, MBASH, 100))
+                        end,
+        ["desc"] =	{
+			"Telekinetic power focussed to bash your opponent",
+        }
+}
+
 MBLINK = add_spell
 {
 	["name"] = 	"Autokinesis I",
@@ -102,6 +122,28 @@ MDISARM = add_spell
 	}
 }
 
+MPSISTORM = add_spell
+{
+	["name"] =	"Psi Storm",
+        ["school"] =	{SCHOOL_PPOWER},
+        ["level"] =	18,
+        ["mana"] =	15,
+        ["mana_max"] =	40,
+        ["fail"] =	25,
+        ["direction"] = TRUE,
+        ["spell"] =	function(args)
+--        ["spell"] =	function()
+                        fire_cloud(Ind, GF_PSI, args.dir, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 2), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
+--                        fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
+--                        fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for")
+                        end,
+        ["info"] = 	function()
+	                return "dam "..(1 + get_level(Ind, MPSISTORM, 76)).." rad "..(2 + get_level(Ind, MPSISTORM, 2)).." dur "..(5 + get_level(Ind, MPSISTORM, 5))
+                        end,
+        ["desc"] =	{
+			"A psionic storm that damages and disturbs all minds within an area",
+        }
+}
 
 MPYROKINESIS = add_spell
 {

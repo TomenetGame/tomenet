@@ -73,13 +73,23 @@ ESSENSESPEED = add_spell
         ["mana_max"] = 	40,
         ["fail"] = 	10,
         ["spell"] = 	function()
-        		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), 5 + get_level(Ind, ESSENSESPEED, 20))
+			local s
+			s = 5 + get_level(Ind, ESSENSESPEED, 20)
+			if s > 24 then
+				s = 24
+			end
+        		set_fast(Ind, 10 + randint(10) + get_level(Ind, ESSENSESPEED, 50), s)
                         if player.spell_project > 0 then
-                                fire_ball(Ind, GF_SPEED_PLAYER, 0, 5 + get_level(Ind, ESSENSESPEED, 20), player.spell_project, "")
+                                fire_ball(Ind, GF_SPEED_PLAYER, 0, s, player.spell_project, "")
                         end
 	end,
 	["info"] = 	function()
-                       	return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..(5 + get_level(Ind, ESSENSESPEED, 20))
+			local s
+			s = 5 + get_level(Ind, ESSENSESPEED, 20)
+			if s > 24 then
+				s = 24
+			end
+                       	return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s
 	end,
         ["desc"] =	{
         		"Magicaly increases the passing of time around you",

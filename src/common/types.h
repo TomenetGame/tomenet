@@ -408,9 +408,9 @@ struct ego_item_type
 
         bool before;                    /* Before or after the object name ? */
 
-        byte tval[6];
-        byte min_sval[6];
-        byte max_sval[6];
+        byte tval[MAX_EGO_BASETYPES];
+        byte min_sval[MAX_EGO_BASETYPES];
+        byte max_sval[MAX_EGO_BASETYPES];
 
 	byte rating;		/* Rating boost */
 
@@ -2569,8 +2569,8 @@ struct player_type
 	bool suscep_life;	/* Anti-undead effects do more damage on the player */
 
 	bool reflect;       /* Reflect 'bolt' attacks */
-	byte shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
-	byte weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
+	int shield_deflect;       /* Deflect various attacks (ranged), needs USE_BLOCKING */
+	int weapon_parry;       /* Parry various attacks (melee), needs USE_PARRYING */
 	bool no_cut;	    /* For mimic forms */
 	bool sh_fire;       /* Fiery 'immolation' effect */
 	bool sh_elec;       /* Electric 'immolation' effect */

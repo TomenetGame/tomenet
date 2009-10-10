@@ -2225,6 +2225,8 @@ static void calc_body_bonus(int Ind)
 	/* Forms that occur in the mountains are able to pass them */
 	if (r_ptr->flags8 & (RF8_WILD_MOUNTAIN | RF8_WILD_VOLCANO))
 		p_ptr->climb = TRUE;
+	/* Spiders can always climb */
+	if (r_ptr->flags7 & RF7_SPIDER) p_ptr->climb = TRUE;
 
 	/* Orcs get resist_dark */
 	if(r_ptr->flags3 & RF3_ORC) p_ptr->resist_dark = TRUE;

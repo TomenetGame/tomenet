@@ -1138,19 +1138,93 @@ struct high_score_old
 	char mode[1];		/* Difficulty/character mode */
 };
 
-int highscore_send(char *buffer, int max){
-	int len=0;
+int highscore_send(char *buffer, int max) {
+	int len = 0, len2;
 	FILE *hsp;
 	char buf[1024];
 	struct high_score score;
+	cptr mode, race, class;
+
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "scores.raw");
-	hsp=fopen(buf, "r");
-	if(hsp==(FILE*)NULL) return(0);
-	while(fread(&score, sizeof(struct high_score), 1, hsp) && (len+sizeof(struct high_score))<max){
-		len+=sprintf(&buffer[len], "score=%s\nwho=%s\nwhose=%s\nhow=%s\nsrace=%s\nslevel=%s\nmode=%s\n", score.pts, score.who, score.whose, score.how, race_info[atoi(score.p_r)].title, score.cur_lev, score.mode);
+
+	hsp = fopen(buf, "r");
+	if (!hsp) return(0);
+
+	while (fread(&score, sizeof(struct high_score), 1, hsp)) {
+		switch (score.mode[0]) {
+			case MODE_NORMAL:
+				mode = "Normal";
+				break;
+			case MODE_HARD:
+				mode = "Hard";
+				break;
+			case MODE_NO_GHOST:
+				mode = "Unworldly";
+				break;
+			case (MODE_HARD | MODE_NO_GHOST):
+				mode = "Hellish";
+				break;
+			case MODE_EVERLASTING:
+				mode = "Everlasting";
+				break;
+			case MODE_PVP:
+				mode = "PvP";
+				break;
+			default:
+				mode = "Unknown";
+				break;
+		}
+
+		race = race_info[atoi(score.p_r)].title;
+		class = race_info[atoi(score.p_c)].title;
+
+		len2 = snprintf(buf, 1024, "pts=%s\ngold=%s\nturns=%s\nday=%s\nwho=%s\nwhose=%s\nsex=%s\nrace=%s\nclass=%s\ncur_lev=%s\ncur_dun=%s\nmax_lev=%s\nmax_dun=%s\nhow=%s\nmode=%s\n",
+			score.pts, score.gold, score.turns, score.day, score.who, score.whose, score.sex, race, class, score.cur_lev, score.cur_dun, score.max_lev, score.max_dun, score.how, mode);
+
+		if (len2 + len < max) {
+			memcpy(&buffer[len], buf, len2);
+			len += len2;
+			buffer[len] = '\0';
+		}
 	}
+
 	fclose(hsp);
-	return(len);
+
+	return len;
+}
+
+int houses_send(char *buffer, int max) {
+	int i, len = 0, len2, screen_x, screen_y;
+	house_type *h_ptr;
+	struct dna_type *dna;
+	char buf[1024];
+	int price;
+	cptr owner, wpos;
+
+	for (i = 0; i < num_houses; i++) {
+		h_ptr = &houses[i];
+		dna = h_ptr->dna;
+
+		screen_y = h_ptr->dy * 5 / MAX_HGT;
+		screen_x = h_ptr->dx * 5 / MAX_WID;
+		wpos = wpos_format(0, &h_ptr->wpos);
+
+		price = dna->price;
+
+		owner = lookup_player_name(houses[i].dna->owner);
+		if (!owner) owner = "";
+
+		len2 = snprintf(buf, 1024, "location=[%d,%d] in %s\nprice=%d\nowner=%s\n",
+			screen_y, screen_x, wpos, price, owner);
+
+		if (len + len2 < max) {
+			memcpy(&buffer[len], buf, len2);
+			len += len2;
+			buffer[len] = '\0';
+		}
+	}
+
+	return len;
 }
 
 /*

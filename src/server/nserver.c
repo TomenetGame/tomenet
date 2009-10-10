@@ -904,6 +904,10 @@ void setup_contact_socket(void)
 		s_printf("Couldn't create server gateway port\n");
 		return;
 	}
+	if (SetSocketNonBlocking(Socket, 1) == -1)
+	{
+		plog("Can't make GW socket non-blocking");
+	}
 
 	/* Install the new gateway socket */
 	install_input(SGWHit, SGWSocket, 0);
@@ -2448,7 +2452,7 @@ static int Handle_login(int ind)
 	/* check pending notes to this player -C. Blue */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], "")) {
-			msg_format(NumPlayers, "\377sServer Note: %s", admin_note[i]);
+			msg_format(NumPlayers, "\377sMotD: %s", admin_note[i]);
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
@@ -2882,9 +2886,14 @@ void Handle_input(int fd, int arg)
 	Sockbuf_clear(&connp->q);
 #endif
 
-	
+	if (connp->id != -1)
+	{
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
 	/* Mega-Hack */
-	if (connp->id != -1 && Players[GetInd[connp->id]] && Players[GetInd[connp->id]]->new_level_flag) return;
+	if (p_ptr && p_ptr->new_level_flag) return;
 
 	// Reset the buffer we are reading into
 	Sockbuf_clear(&connp->r);
@@ -2913,8 +2922,9 @@ void Handle_input(int fd, int arg)
 		return;
 	}
 
-	// Execute any new commands immediatly if possobile
-	process_pending_commands(ind);
+	// Execute any new commands immediately if possible
+	// Don't process commands when marked for death - mikaelh
+	if (!p_ptr || !p_ptr->death) process_pending_commands(ind);
 
 	/* Check that the player wasn't disconnected - mikaelh */
 	if (!Conn[ind]) {
@@ -2934,11 +2944,8 @@ void Handle_input(int fd, int arg)
 	if ((old_numplayers == NumPlayers) && (connp->state == CONN_PLAYING))
 	{
 		// Update the players display if neccecary and possobile
-		if (connp->id != -1)
+		if (p_ptr)
 		{
-			player = GetInd[connp->id];
-			p_ptr = Players[player];
-
 			/* Notice stuff */
 			if (p_ptr->notice) notice_stuff(player);
 
@@ -2952,18 +2959,15 @@ void Handle_input(int fd, int arg)
 			if (p_ptr->window) window_stuff(player);
 		}
 	}
+
 	if (connp->c.len > 0)
 	{
-	/* evileye - p_ptr can be undefined (!!!) */
-		player = GetInd[connp->id];
-		p_ptr = Players[player];
-
 		if (Packet_printf(&connp->c, "%c", PKT_END) <= 0)
 		{
-			Destroy_connection(p_ptr->conn, "write error");
+			Destroy_connection(ind, "write error");
 			return;
 		}
-		Send_reliable(p_ptr->conn);
+		Send_reliable(ind);
 	}
 
 //	Sockbuf_clear(&connp->r);
@@ -3025,6 +3029,9 @@ int Net_input(void)
 		}
 #endif
 	}
+
+	/* Do GW timeout checks */
+	SGWTimeout();
 
 	for (i = 0; i < num_reliable; i++)
 	{
@@ -4459,6 +4466,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
 			/* pending recall? */
 			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
+			/* able to get extra level feeling on next floor? */
+			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
 			/* in a town? ignore town level */
 			else if (ville) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
@@ -4485,6 +4494,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
+		/* able to get extra level feeling on next floor? */
+		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (ville) colour = TERM_WHITE;
 		/* way too low to get good exp? */
@@ -4508,7 +4519,9 @@ int Send_depth(int ind, struct worldpos *wpos)
 	}
 }
 
-/* added for Valinor */
+/* (added for Valinor, but now just unused except for debugging purpose: /testdisplay in slash.c)
+   This allows determining whether we're in a (fake) 'town' or not, and also
+   the exact (fake) town's name that will be displayed to the player. */
 int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 {
 	connection_t *connp = Conn[Players[ind]->conn], *connp2;
@@ -4531,6 +4544,8 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
 			/* pending recall? */
 			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
+			/* able to get extra level feeling on next floor? */
+			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
 			/* in a town? ignore town level */
 			else if (town) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
@@ -4557,6 +4572,8 @@ int Send_depth_hack(int ind, struct worldpos *wpos, bool town, cptr desc)
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
+		/* able to get extra level feeling on next floor? */
+		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (town) colour = TERM_WHITE;
 		/* way too low to get good exp? */
@@ -4993,12 +5010,31 @@ int Send_line_info(int ind, int y)
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2)
 		{
-			/* Set bit 0x40 of a */
-			a |= 0x40;
+			/* 4.4.3.1 clients support new RLE */
+			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5))
+			{
+				/* New RLE */
+				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+			}
+			else
+			{
+				/* Old RLE */
+				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+			}
 
-			/* Output the info */
-			Packet_printf(&connp->c, "%c%c%c", c, a, n);
-			if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a, n);
+			if (Ind2)
+			{
+				/* 4.4.3.1 clients support new RLE */
+				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5))
+				{
+					/* New RLE */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
+				}
+				else {
+					/* Old RLE */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
+				}
+			}
 
 			/* Start again after the run */
 			x = x1 - 1;
@@ -5006,8 +5042,44 @@ int Send_line_info(int ind, int y)
 		else
 		{
 			/* Normal, single grid */
-			Packet_printf(&connp->c, "%c%c", c, a); 
-			if (Ind2) Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
+			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+				/* Remove 0x40 (TERM_PVP) if the client is old */
+				Packet_printf(&connp->c, "%c%c", c, a & ~0x40); 
+			}
+			else
+			{
+				if (a == 0xFF)
+				{
+					/* Use RLE format as an escape sequence for 0xFF as attr */
+					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+				}
+				else
+				{
+					/* Normal output */
+					Packet_printf(&connp->c, "%c%c", c, a);
+				}
+			}
+
+			if (Ind2)
+			{
+				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+					/* Remove 0x40 (TERM_PVP) if the client is old */
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0x40);
+				}
+				else
+				{
+					if (a == 0xFF)
+					{
+						/* Use RLE format as an escape sequence for 0xFF as attr */
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
+					}
+					else
+					{
+						/* Normal output */
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
+					}
+				}
+			}
 		}
 	}
 
@@ -5123,6 +5195,38 @@ int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cpt
 #endif
 
 	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
+}
+
+/* Send_store() variant for custom spellbooks */
+int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
+    byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9)
+{
+	connection_t *connp = Conn[Players[ind]->conn];
+#ifdef MINDLINK_STORE
+	connection_t *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
+	
+#endif
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY))
+	{
+		errno = 0;
+		plog(format("Connection not ready for store item (%d.%d.%d)",
+			ind, connp->state, connp->id));
+		return 0;
+	}
+
+	/* Hack -- send pval only if it's School book */
+	if (tval != TV_BOOK) pval = 0;
+
+#ifdef MINDLINK_STORE
+	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9);
+	}
+#endif
+
+	return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9);
 }
 
 /*

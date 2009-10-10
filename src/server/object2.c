@@ -2057,10 +2057,22 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (f2 & TR2_SUST_DEX) total += 2850;
 	if (f2 & TR2_SUST_CON) total += 2850;
 	if (f2 & TR2_SUST_CHR) total += 1250;
-	if (f2 & TR2_IM_ACID) total += 30000;
-	if (f2 & TR2_IM_ELEC) total += 20000;
-	if (f2 & TR2_IM_FIRE) total += 30000;
-	if (f2 & TR2_IM_COLD) total += 20000;
+	if (f2 & TR2_IM_ACID) {
+		total += 30000;
+		res_amass += 2;
+	}
+	if (f2 & TR2_IM_ELEC) {
+		total += 20000;
+		res_amass += 2;
+	}
+	if (f2 & TR2_IM_FIRE) {
+		total += 30000;
+		res_amass += 2;
+	}
+	if (f2 & TR2_IM_COLD) {
+		total += 20000;
+		res_amass += 2;
+	}
 /* f6 Not yet implemented in object_flags/eliminate_common_ego_flags etc. Really needed??
 //        if (f5 & TR5_SENS_FIRE) total -= 100;
         if (f6 & TR6_SENS_COLD) total -= 100;
@@ -2558,7 +2570,7 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 
 
 				/* Flags moved here exclusively from flag_cost */
-			        if (f1 & TR1_MANA) value += (1000 * pval);
+				if (f1 & TR1_MANA) value += (700 * pval * pval);
 
 #if 0
 				if (f3 & TR3_WRAITH) value += 250000;
@@ -3741,7 +3753,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf)
 		if (!e_ptr->name) continue;
 
 		/* Must have the correct fields */
-		for (j = 0; j < 6; j++)
+		for (j = 0; j < MAX_EGO_BASETYPES; j++)
 		{
 
 			if (e_ptr->tval[j] == o_ptr->tval)

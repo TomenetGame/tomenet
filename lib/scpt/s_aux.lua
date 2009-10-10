@@ -273,7 +273,16 @@ function print_book2(i, inven_slot, sval, spl)
 	y = 2
 	size = 0
 
+--[[STOREBROWSE
 	if inven_slot ~= -1 then
+	    --from inventory
+	    book = get_inven_sval(Ind, inven_slot)
+	else
+	    --browsing within a store!
+	    book = sval
+	end
+]]
+	if inven_slot >= 0 then
 	    --from inventory
 	    book = get_inven_sval(Ind, inven_slot)
 	else
@@ -330,8 +339,10 @@ function print_custom_tome(i, inven_slot)
         y = 2
         size = 0
 
+--[[STOREBROWSE
 --HACK/problem: can't browse custom tomes in shops!:
 	if inven_slot == -1 then return 0 end
+]]
 
 	custom_book = {}
 
@@ -445,7 +456,14 @@ function book_spells_num2(inven_slot, sval)
 
         size = 0
 
+--[[STOREBROWSE
         if inven_slot ~= -1 then
+	    book = get_inven_sval(Ind, inven_slot)
+        else
+    	    book = sval
+        end
+]]
+        if inven_slot >= 0 then
 	    book = get_inven_sval(Ind, inven_slot)
         else
     	    book = sval
@@ -458,9 +476,10 @@ function book_spells_num2(inven_slot, sval)
 
         -- Hacks for custom tomes
         if book == 100 or book == 101 or book == 102 then
+--[[STOREBROWSE
 --HACK/problem: can't browse custom tomes in shops!:
 		if inven_slot == -1 then return 0 end
-
+]]
     		if get_inven_xtra(Ind, inven_slot, 9) ~= 0 then
     			return 9
     		end
@@ -519,7 +538,14 @@ end
 function spell_x2(inven_slot, sval, spl, s)
 	local book
 
+--[[STOREBROWSE
 	if inven_slot ~= -1 then
+	    book = get_inven_sval(Ind, inven_slot)
+	else
+	    book = sval
+	end
+]]
+	if inven_slot >= 0 then
 	    book = get_inven_sval(Ind, inven_slot)
 	else
 	    book = sval
@@ -528,9 +554,10 @@ function spell_x2(inven_slot, sval, spl, s)
         if book == 255 then
                 return spl
         elseif book == 100 or book == 101 or book == 102 then
+--[[STOREBROWSE
 --HACK/problem: can't browse custom tomes in shops!:
 		if inven_slot == -1 then return 0 end
-
+]]
     		if s == 0 then return get_inven_xtra(Ind, inven_slot, 1) - 1 end
     		if s == 1 then return get_inven_xtra(Ind, inven_slot, 2) - 1 end
     		if s == 2 then return get_inven_xtra(Ind, inven_slot, 3) - 1 end

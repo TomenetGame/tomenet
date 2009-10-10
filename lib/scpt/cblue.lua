@@ -449,17 +449,30 @@ end
 
 -- Establish VNC mind link
 function vnc(name)
-    local p, id
+    local p, id, i
     p = ind(name)
     id = players(Ind).id
+
+    --test target for already-mind-linked. yes -> exit.
     if players(p).esp_link ~= 0 then
 	msg_print(Ind, "Target is already mind-linked.")
 	return
     end
+
+    --test self for already-mind-linked. yes -> break it.
+    if bor(player.esp_link_flags, 256) ~= 0 then
+	--break old link cleanly
+	for i = 1, NumPlayers do
+	    if players(i).esp_link == id then
+		vncoff(players(i).name)
+	    end
+	end
+    end
+
     players(p).esp_link = id
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = 1 + 128
+    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 128)
     players(Ind).esp_link_flags = bor(players(Ind).esp_link_flags, 256)
     players(p).redraw = bor(players(p).redraw, 67108864) -- 67108864 = PR_MAP
     msg_print(Ind, "Mind link established.")
@@ -472,7 +485,7 @@ function vncoff(name)
     players(p).esp_link = 0
     players(p).esp_link_type = 0
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = 0
+    players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 128))
     players(Ind).esp_link_flags = band(players(Ind).esp_link_flags, bnot(256))
     players(Ind).redraw = bor(players(Ind).redraw, 67108864)
     msg_print(Ind, "Mind link broken.")

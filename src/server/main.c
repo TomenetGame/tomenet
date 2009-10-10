@@ -283,6 +283,10 @@ int main(int argc, char *argv[])
 	if (!load_server_cfg() && config_specified)
 		quit(NULL);
 
+	/* Init turn overflow protection */
+	/* At least 30 minutes buffer for login process. */
+	turn_overflow = 2147483647 - (cfg.fps * 60 * 60);
+
 	init_players();
 
 	/* Initialize the arrays */

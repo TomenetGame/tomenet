@@ -301,8 +301,20 @@ void init_lua()
 
 void reinit_lua()
 {
+	int i;
+
 	/* Close the old Lua state */
 	lua_close(L);
+
+	/* Free up school names */
+	for (i = 0; i < max_schools; i++) {
+		if (schools[i].name) string_free(schools[i].name);
+	}
+
+	/* Free up spell names */
+	for (i = 0; i < max_spells; i++) {
+		if (school_spells[i].name) string_free(school_spells[i].name);
+	}
 
 	/* Free up schools and spells */
 	C_KILL(schools, max_schools, school_type);

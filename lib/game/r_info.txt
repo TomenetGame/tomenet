@@ -11802,7 +11802,8 @@ D:surviving into the Third Age.
 
 N:698:The Stormbringer
 G:|:D
-I:120:13d123:20:99:20
+#I:120:13d123:20:99:20
+I:120:13d123:20:99:0
 W:45:2:0:13333
 E:0:0:0:0:0:0
 O:0:0:0:0
@@ -14477,6 +14478,7 @@ D:remember his own name, his power and evil are undeniable. He believes
 D:unshakeably that he is unbeatable and laughs as he weaves his awesome 
 D:spells. 
 
+#taken out since we already have him as 'Sauron' - thanks, Virus
 #N:819:The Necromancer of Dol Guldur
 #G:p:v
 #I:130:82d100:60:100:10
@@ -14872,7 +14874,8 @@ D:giants and fight against the other gods of Asgard.
 N:836:Star-spawn of Cthulhu
 G:U:G
 I:140:75d100:90:135:40
-W:86:2:0:44000
+#W:86:2:0:44000 compare to Cyberdemon:
+W:86:2:0:30000
 #E:0:0:0:0:0:0
 E:0:0:2:0:1:0
 O:0:0:100:0
@@ -19411,7 +19414,8 @@ F:ATTR_ANY | UNIQUE | ESCORT |
 S:1_IN_3
 S:BA_MANA | S_ANGEL
 S:BR_DISE
-#S:TELE_TO
+#since Blades have it too, what gives..:
+S:TELE_TO
 D:Through many succeeding cycles of time, as Ray after Ray provided The Pathway
 D:for the descent of new Spirits, Lord Michael has remained as the Guardian
 D:Overlord of the Angelic Host, the Elemental Kingdom and humanity. He shall

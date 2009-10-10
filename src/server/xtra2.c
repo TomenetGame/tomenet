@@ -1317,6 +1317,8 @@ bool set_blind(int Ind, int v)
 
 	bool notice = FALSE;
 
+	if (p_ptr->martyr && v) return FALSE;
+
 	/* the admin wizard can not be blinded */
 	if (p_ptr->admin_wiz) return 1;
 
@@ -1394,6 +1396,8 @@ bool set_confused(int Ind, int v)
 
 	bool notice = FALSE;
 
+	if (p_ptr->martyr && v) return FALSE;
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -1466,6 +1470,8 @@ bool set_poisoned(int Ind, int v, int attacker)
 
 	bool notice = FALSE;
 
+	if (p_ptr->martyr && v) return FALSE;
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -1527,6 +1533,8 @@ bool set_afraid(int Ind, int v)
 
 	bool notice = FALSE;
 
+	if (p_ptr->martyr && v) return FALSE;
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -1580,6 +1588,8 @@ bool set_paralyzed(int Ind, int v)
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1768,6 +1778,8 @@ bool set_slow(int Ind, int v)
 	player_type *p_ptr = Players[Ind];
 
 	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2779,6 +2791,7 @@ bool set_stun(int Ind, int v)
 
 	bool notice = FALSE;
 
+	if (p_ptr->martyr && v) return FALSE;
 
 	/* hack -- the admin wizard can not be stunned */
 //	if (p_ptr->admin_wiz) return TRUE;
@@ -2924,6 +2937,8 @@ bool set_cut(int Ind, int v, int attacker)
 	int old_aux, new_aux;
 
 	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return FALSE;
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -4671,6 +4686,7 @@ if (season_halloween) {
 		lore_treasure(m_idx, dump_item, dump_gold);
 	}
 
+	/* Get credit for unique monster kills */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Set unique monster to 'killed' for this player */
 		p_ptr->r_killed[m_ptr->r_idx] = 1;
@@ -4692,7 +4708,9 @@ if (season_halloween) {
 				Send_unique_monster(i, m_ptr->r_idx);
 			}
 		}
-	} else if (p_ptr->r_killed[m_ptr->r_idx] < 1000) {
+	/* Get kill credit for non-uniques (important for mimics) */
+	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
+	} else if (m_ptr->r_idx && p_ptr->r_killed[m_ptr->r_idx] < 1000) {
 		int before = p_ptr->r_killed[m_ptr->r_idx];
 		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
 
@@ -5879,7 +5897,7 @@ void player_death(int Ind)
 
 	/* Morgoth's level might be NO_GHOST! */
 	if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_GHOST)) hell = TRUE;
-	
+
 	/* For global events (Highlander Tournament) */
 	/* either instakill in sector 0,0... */
 	if (p_ptr->global_event_temp & PEVF_NOGHOST_00) hell = TRUE;
@@ -5918,6 +5936,11 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		p_ptr->update |= (PU_BONUS);
 		return;
 	}
+
+	/* Players of level cfg.nodrop [5] will die a no-ghost death.
+	   This should clarify the situation for newbies and avoid them
+	   getting confused and/or lacking their startup equipment. */
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop) hell = TRUE;
 
 	/* Get rid of him if he's a ghost */
 /*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
@@ -7060,7 +7083,8 @@ bool add_quest(int Ind, int target, u16b type, u16b num, u16b flags){
 	q_ptr->quest_num=num;
 	clockin(j, 4);	/* register that player */
 	msg_format(j, "\377oYou have been given a %squest\377y!", flags&QUEST_GUILD?"guild ":"");
-	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
+//	msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags&QUEST_GUILD?"":" \377obefore any other player");
+	msg_format(j, "\377oFind and kill \377y%d \377g%s\377y!", num, r_name+r_info[type].name);
 	quests[i].active++;
 #endif
 

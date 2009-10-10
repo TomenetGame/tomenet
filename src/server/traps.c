@@ -2240,7 +2240,8 @@ break;
 		/* Trap of amnesia (and not lose_memory) */
 		case TRAP_OF_AMNESIA:
 		{
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav ||
+			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
 			{
 				msg_print(Ind, "You resist the effects!");
 			}

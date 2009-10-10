@@ -1546,6 +1546,10 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+#if 0 /* would also need to prevent egos w/ BLESSED then, which is problematic */
+	/* Don't allow BLESSED on Dark Swords */
+	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
+#endif
 	/* If an item is BLESSED, remove NO_MAGIC property */
 	if ((a_ptr->flags3 & TR3_BLESSED) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 
@@ -1784,6 +1788,10 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+#if 0 /* would also need to prevent egos w/ BLESSED then, which is problematic */
+	/* Don't allow BLESSED on Dark Swords */
+	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
+#endif
 	/* If an item is BLESSED, remove NO_MAGIC property */
 	if ((a_ptr->flags3 & TR3_BLESSED) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 

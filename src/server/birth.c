@@ -2357,7 +2357,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	p_ptr->dual_mode = TRUE;
 
 	/* hack: allow to get extra level feeling immediately */
-	p_ptr->turns_on_floor = cfg.fps * 999;
+	p_ptr->turns_on_floor = TURNS_FOR_EXTRA_FEELING;
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Can be used for different purpose, usually in conjuction with custom.lua) */

@@ -54,6 +54,7 @@ extern void cs_erase(cave_type *c_ptr, struct c_special *cs_ptr);
 /* nserver.c */
 extern int NumPlayers;
 extern int ConsoleSocket;
+extern int SGWSocket;
 extern void process_pending_commands(int Ind);
 extern bool player_is_king(int Ind);
 extern void end_mind(int Ind, bool update);
@@ -182,7 +183,7 @@ extern void new_level_down_x(struct worldpos *wpos, int x);
 extern void new_level_down_y(struct worldpos *wpos, int y);
 extern void new_level_rand_x(struct worldpos *wpos, int x);
 extern void new_level_rand_y(struct worldpos *wpos, int y);
-extern s32b turn, session_turn;
+extern s32b turn, session_turn, turn_overflow;
 extern char tron_speed;
 extern s32b player_id;
 extern u32b account_id;
@@ -448,6 +449,7 @@ extern int players_on_depth(struct worldpos *wpos);
 extern void check_Pumpkin(void);
 extern void check_Morgoth(void);
 extern bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2);
+extern bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2);
 extern void note_spot_depth(struct worldpos *wpos, int y, int x);
 extern void everyone_lite_spot(struct worldpos *wpos, int y, int x);
 extern void everyone_forget_spot(struct worldpos *wpos, int y, int x);
@@ -645,6 +647,7 @@ extern void do_cmd_ranged_technique(int Ind, int technique);
 
 /* control.c */
 extern void SGWHit(int fd, int arg);
+extern void SGWTimeout();
 extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
 
@@ -681,6 +684,7 @@ extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
 
 /* files.c */
 extern int highscore_send(char *buffer, int max);
+extern int houses_send(char *buffer, int max);
 extern s16b tokenize(char *buf, s16b num, char **tokens, char delim1, char delim2);
 extern void display_player(int Ind);
 extern errr file_character(cptr name, bool full);
@@ -920,6 +924,8 @@ extern int Send_flush(int Ind);
 extern int Send_line_info(int Ind, int y);
 extern int Send_mini_map(int Ind, int y);
 extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
+extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
+    byte xtra1, byte xtra2, byte xtra3, byte xtra4, byte xtra5, byte xtra6, byte xtra7, byte xtra8, byte xtra9);
 extern int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse);
 extern int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag);
 extern int Send_store_sell(int Ind, int price);
@@ -1165,6 +1171,7 @@ extern void teardown_timer(void);
 
 /* spells1.c */
 extern byte spell_color(int type);
+extern bool spell_color_animation(int type);
 extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal);
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);

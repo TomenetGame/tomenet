@@ -1150,6 +1150,11 @@ static bool black_market_crap(object_type *o_ptr)
 	int		i, j, k;
 	store_type *st_ptr;
 
+#if 1 /* not that big impact on the game, so, optional */
+	/* No golem items? */
+	if (o_ptr->tval == TV_GOLEM) return (TRUE);
+#endif
+
 	/* No Talismans in the BM (can only be found! >:) */
 	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_LUCK) return (TRUE);
 
@@ -1195,13 +1200,13 @@ static bool black_market_crap(object_type *o_ptr)
 #if 1 /* note: ego items are never bm crap (see above), so checking all base stores at all does make sense */
 	for(k = 0; k < numtowns; k++){
 		st_ptr=town[k].townstore;
-#if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
+ #if 0 /* according to Mikael's find, this causes bad bugs, ie items that seemingly for no reason wont show up in BMs anymore */
 		/* Check the other "normal" stores */
 		for (i = 0; i < max_st_idx; i++)
-#else /* using light-weight version that shouldn't pose problems */
+ #else /* using light-weight version that shouldn't pose problems */
 		/* Check the other basic normal stores */
 		for (i = 0; i < 6; i++)
-#endif
+ #endif
 		{
 			/* Don't compare other BMs */
 			if (st_info[i].flags1 & SF1_ALL_ITEM) continue;
@@ -1715,6 +1720,10 @@ static void store_create(store_type *st_ptr)
 //					    && magik(33) <- still annoying
 					    ) {
 						continue;
+					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
+					} else if (k_ptr->tval == TV_BOOK &&
+					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3) {
+						continue;
 					}
 				}
 			}
@@ -1761,16 +1770,19 @@ static void store_create(store_type *st_ptr)
 
 		if ((force_num) && !is_ammo(o_ptr->tval))
 		{
+			/* Only single items of these */
 			switch (o_ptr->tval) {
 			case TV_DRAG_ARMOR:
-				/* Only single items of these */
 				force_num = 1;
+				break;
+			case TV_RING:
+				if (o_ptr->sval == SV_RING_POLYMORPH) force_num = 1;
+				break;
+			case TV_TOOL:
+				if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
 				break;
 			}
 			
-			/* make mummy wrappings appear rare */
-			if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_WRAPPING)
-				force_num = 1;
 
 			/* Only single items of very expensive stuff */
 			if (object_value(0, o_ptr) >= 200000) {
@@ -1802,9 +1814,9 @@ static void store_create(store_type *st_ptr)
 #ifndef TEST_SERVER
 		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
-#if 0
+ #if 0
 		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
-#endif
+ #endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
 #else
 		if (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) {
@@ -1942,9 +1954,17 @@ static void display_entry(int Ind, int pos)
 		wgt = o_ptr->weight;
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
+                        if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+                                Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			} else {
+                                Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+                                    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+                        }
+                } else {
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		}
 	}
-
 	/* Describe an item (fully) in a store */
 	else
 	{
@@ -1977,7 +1997,16 @@ static void display_entry(int Ind, int pos)
 		x = price_item(Ind, o_ptr, ot_ptr->min_inflate, FALSE);
 
 		/* Send the info */
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
+                        if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+                                Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			} else {
+                                Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+                                    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+                        }
+                } else {
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		}
 	}
 }
 
@@ -2628,7 +2657,7 @@ void store_purchase(int Ind, int item, int amt)
 	if (amt < 1)
 	{
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
-		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
@@ -2698,6 +2727,13 @@ void store_purchase(int Ind, int item, int amt)
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
+	/* check whether client tries to buy more than the store has */
+	if (o_ptr->number < amt) {
+		s_printf("$INTRUSION$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
+//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		return;
+	}
 
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
@@ -3936,6 +3972,12 @@ void store_maint(store_type *st_ptr)
 	/* Hack -- prevent "overflow" */
 	if (j >= st_ptr->stock_size) j = st_ptr->stock_size - 1;
 
+	/* Hack for Libraries: Keep especially many books, which fluctuate often.
+	   Reason: It's probably a bit too annoying to wait for specific books. - C. Blue */
+	if (st_ptr->st_idx == STORE_BOOK || st_ptr->st_idx == STORE_HIDDENLIBRARY ||
+	    st_ptr->st_idx == STORE_LIBRARY || st_ptr->st_idx == STORE_FORBIDDENLIBRARY)
+		j = st_ptr->stock_size - rand_int((st_ptr->stock_size * 3) / 8);
+
 	/* Acquire some new items */
 	/* We want speed & healing & mana pots in the BM */
 	while (st_ptr->stock_num < j)
@@ -4443,8 +4485,8 @@ void home_purchase(int Ind, int item, int amt)
 
 	if (amt < 1)
 	{
-		s_printf("$INTRUSION$ Bad amount %d! (Home) Bought by %s.", amt, p_ptr->name);
-		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		s_printf("$INTRUSION(HOME)$ Bad amount %d! (Home) Bought by %s.", amt, p_ptr->name);
+//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
@@ -4477,6 +4519,13 @@ void home_purchase(int Ind, int item, int amt)
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
+	/* check whether client tries to buy more than the store has */
+	if (o_ptr->number < amt) {
+		s_printf("$INTRUSION(HOME)$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
+//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		return;
+	}
 
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
@@ -4853,7 +4902,16 @@ static void display_house_entry(int Ind, int pos)
 	wgt = o_ptr->weight;
 
 	/* Send the info */
-	Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+	if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
+                if (o_ptr->tval != TV_BOOK || o_ptr->sval < SV_CUSTOM_TOME_1 || o_ptr->sval == SV_SPELLBOOK) {
+                        Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		} else {
+                        Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
+                            o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+                }
+        } else {
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+	}
 }
 
 

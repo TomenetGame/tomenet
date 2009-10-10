@@ -1133,6 +1133,230 @@ bool los(struct worldpos *wpos, int y1, int x1, int y2, int x2)
 	return (TRUE);
 }
 
+/* Same as los, just ignores non-perma-wall grids - for monster targetting - C. Blue */
+bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2)
+{
+	/* Delta */
+	int dx, dy;
+
+	/* Absolute */
+	int ax, ay;
+
+	/* Signs */
+	int sx, sy;
+
+	/* Fractions */
+	int qx, qy;
+
+	/* Scanners */
+	int tx, ty;
+
+	/* Scale factors */
+	int f1, f2;
+
+	/* Slope, or 1/Slope, of LOS */
+	int m;
+
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return FALSE;
+
+	/* Extract the offset */
+	dy = y2 - y1;
+	dx = x2 - x1;
+
+	/* Extract the absolute offset */
+	ay = ABS(dy);
+	ax = ABS(dx);
+
+
+	/* Handle adjacent (or identical) grids */
+	if ((ax < 2) && (ay < 2)) return (TRUE);
+
+
+	/* Paranoia -- require "safe" origin */
+	/* if (!in_bounds(y1, x1)) return (FALSE); */
+
+
+	/* Directly South/North */
+	if (!dx)
+	{
+		/* South -- check for walls */
+		if (dy > 0)
+		{
+			for (ty = y1 + 1; ty < y2; ty++)
+			{
+				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
+			}
+		}
+
+		/* North -- check for walls */
+		else
+		{
+			for (ty = y1 - 1; ty > y2; ty--)
+			{
+				if (!cave_los_wall(zcave, ty, x1)) return (FALSE);
+			}
+		}
+
+		/* Assume los */
+		return (TRUE);
+	}
+
+	/* Directly East/West */
+	if (!dy)
+	{
+		/* East -- check for walls */
+		if (dx > 0)
+		{
+			for (tx = x1 + 1; tx < x2; tx++)
+			{
+				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
+			}
+		}
+
+		/* West -- check for walls */
+		else
+		{
+			for (tx = x1 - 1; tx > x2; tx--)
+			{
+				if (!cave_los_wall(zcave, y1, tx)) return (FALSE);
+			}
+		}
+
+		/* Assume los */
+		return (TRUE);
+	}
+
+
+	/* Extract some signs */
+	sx = (dx < 0) ? -1 : 1;
+	sy = (dy < 0) ? -1 : 1;
+
+
+	/* Vertical "knights" */
+	if (ax == 1)
+	{
+		if (ay == 2)
+		{
+			if (cave_los_wall(zcave, y1 + sy, x1)) return (TRUE);
+		}
+	}
+
+	/* Horizontal "knights" */
+	else if (ay == 1)
+	{
+		if (ax == 2)
+		{
+			if (cave_los_wall(zcave, y1, x1 + sx)) return (TRUE);
+		}
+	}
+
+
+	/* Calculate scale factor div 2 */
+	f2 = (ax * ay);
+
+	/* Calculate scale factor */
+	f1 = f2 << 1;
+
+
+	/* Travel horizontally */
+	if (ax >= ay)
+	{
+		/* Let m = dy / dx * 2 * (dy * dx) = 2 * dy * dy */
+		qy = ay * ay;
+		m = qy << 1;
+
+		tx = x1 + sx;
+
+		/* Consider the special case where slope == 1. */
+		if (qy == f2)
+		{
+			ty = y1 + sy;
+			qy -= f1;
+		}
+		else
+		{
+			ty = y1;
+		}
+
+		/* Note (below) the case (qy == f2), where */
+		/* the LOS exactly meets the corner of a tile. */
+		while (x2 - tx)
+		{
+			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+
+			qy += m;
+
+			if (qy < f2)
+			{
+				tx += sx;
+			}
+			else if (qy > f2)
+			{
+				ty += sy;
+				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+				qy -= f1;
+				tx += sx;
+			}
+			else
+			{
+				ty += sy;
+				qy -= f1;
+				tx += sx;
+			}
+		}
+	}
+
+	/* Travel vertically */
+	else
+	{
+		/* Let m = dx / dy * 2 * (dx * dy) = 2 * dx * dx */
+		qx = ax * ax;
+		m = qx << 1;
+
+		ty = y1 + sy;
+
+		if (qx == f2)
+		{
+			tx = x1 + sx;
+			qx -= f1;
+		}
+		else
+		{
+			tx = x1;
+		}
+
+		/* Note (below) the case (qx == f2), where */
+		/* the LOS exactly meets the corner of a tile. */
+		while (y2 - ty)
+		{
+			if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+
+			qx += m;
+
+			if (qx < f2)
+			{
+				ty += sy;
+			}
+			else if (qx > f2)
+			{
+				tx += sx;
+				if (!cave_los_wall(zcave, ty, tx)) return (FALSE);
+				qx -= f1;
+				ty += sy;
+			}
+			else
+			{
+				tx += sx;
+				qx -= f1;
+				ty += sy;
+			}
+		}
+	}
+
+	/* Assume los */
+	return (TRUE);
+}
 
 
 
@@ -2647,7 +2871,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 		/* Special terrain effect */
 		if (c_ptr->effect)
 		{
+#if 0
 			(*ap) = spell_color(effects[c_ptr->effect].type);
+#else /* allow 'transparent' spells */
+			a = spell_color(effects[c_ptr->effect].type);
+			if (a != 127) (*ap) = a;
+#endif
 		}
 
 #if 1
@@ -6221,7 +6450,7 @@ void mind_map_level(int Ind)
                 /* Skip players not in the same party */
                 if (Players[i]->party == 0 || p_ptr->party != Players[i]->party) continue;
                 /* Skip players who haven't opened their mind */
-                if (!(Players[i]->esp_link_flags & LINKF_TELEKIN)) continue;
+                if (!(Players[i]->esp_link_flags & LINKF_OPEN)) continue;
 
 		/* add him */
 		plist[plist_size++] = i;

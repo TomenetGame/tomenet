@@ -4147,7 +4147,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 		if (true_artifact_p(o_ptr)) ca_ptr = "n artifact";
 		else {
 			if (!is_admin(p_ptr)) ca_ptr = " random artifact";
-			else ca_ptr = format(" random artifact (ap = %d)", artifact_power(randart_make(o_ptr)));
+			else ca_ptr = format(" random artifact (ap = %d, %d Au)", artifact_power(randart_make(o_ptr)), object_value_real(0, o_ptr));
 		}
 	}
 

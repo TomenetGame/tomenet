@@ -799,7 +799,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 			case SV_POTION_RUINATION:
 				{
 					msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");
-					take_hit(Ind, damroll(10, 10), "a potion of Ruination", 0);
+					take_hit(Ind, damroll(10, 10), "a Potion of Ruination", 0);
 					(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_NORMAL);
 					(void)dec_stat(Ind, A_WIS, 25, STAT_DEC_NORMAL);
 					(void)dec_stat(Ind, A_CON, 25, STAT_DEC_NORMAL);
@@ -850,7 +850,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					msg_print(Ind, "Massive explosions rupture your body!");
 					msg_format_near(Ind, "%s blows up!", p_ptr->name);
-					take_hit(Ind, damroll(50, 20), "a potion of Detonation", 0);
+					take_hit(Ind, damroll(50, 20), "a Potion of Detonation", 0);
 					(void)set_stun(Ind, p_ptr->stun + 75);
 					(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
 					ident = TRUE;
@@ -861,7 +861,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					if (!p_ptr->suscep_life) {
 						msg_print(Ind, "A feeling of Death flows through your body.");
-						take_hit(Ind, 5000, "a potion of Death", 0);
+						take_hit(Ind, 5000, "a Potion of Death", 0);
 						ident = TRUE;
 					} else {
 						msg_print(Ind, "You burp.");
@@ -1021,7 +1021,7 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 				{
 					msg_print(Ind, "\377GYou feel life flow through your body!");
 					restore_level(Ind);
-					if (p_ptr->suscep_life) take_hit(Ind, 500, "a potion of life", 0);
+					if (p_ptr->suscep_life) take_hit(Ind, 500, "a Potion of Life", 0);
 					else hp_player(Ind, 700);
 					(void)set_poisoned(Ind, 0, 0);
 					(void)set_blind(Ind, 0);
@@ -1290,8 +1290,8 @@ static bool quaff_potion(int Ind, int tval, int sval, int pval)
 					/* FRUIT BAT!!!!!! */
 
 					msg_print(Ind, "You have been turned into a fruit bat!");
-					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
-					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+					strcpy(p_ptr->died_from,"a Potion of Chauve-Souris");
+					strcpy(p_ptr->really_died_from,"a Potion of Chauve-Souris");
 					do_mimic_change(Ind, 0, TRUE);
 					p_ptr->fruit_bat = -1;
 					p_ptr->deathblow = 0;
@@ -2553,7 +2553,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "This is a scroll of enchant armour.");
+				msg_print(Ind, "This is a Scroll of Enchant Armour.");
 				ident = TRUE;
 				(void)enchant_spell(Ind, 0, 0, 1, 0);
 				used_up = FALSE;
@@ -2563,7 +2563,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
 			{
-				msg_print(Ind, "This is a scroll of enchant weapon to-hit.");
+				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Hit.");
 				(void)enchant_spell(Ind, 1, 0, 0, 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
@@ -2573,7 +2573,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
 			{
-				msg_print(Ind, "This is a scroll of enchant weapon to-dam.");
+				msg_print(Ind, "This is a Scroll of Enchant Weapon To-Dam.");
 				(void)enchant_spell(Ind, 0, 1, 0, 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
@@ -2583,7 +2583,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_ENCHANT_ARMOR:
 			{
-				msg_print(Ind, "This is a scroll of *enchant armour*.");
+				msg_print(Ind, "This is a Scroll of *Enchant Armour*.");
 				(void)enchant_spell(Ind, 0, 0, randint(3) + 3, 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
@@ -2593,7 +2593,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_STAR_ENCHANT_WEAPON:
 			{
-				msg_print(Ind, "This is a scroll of *enchant weapon*.");
+				msg_print(Ind, "This is a Scroll of *Enchant Weapon*.");
 				(void)enchant_spell(Ind, 1 + randint(2), 1 + randint(2), 0, 0);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
@@ -2603,7 +2603,7 @@ void do_cmd_read_scroll(int Ind, int item)
 
 			case SV_SCROLL_RECHARGING:
 			{
-				msg_print(Ind, "This is a scroll of recharging.");
+				msg_print(Ind, "This is a Scroll of Recharging.");
 				(void)recharge(Ind, 60);
 				used_up = FALSE;
 				p_ptr->using_up_item = item;
@@ -2616,7 +2616,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				if (lite_area(Ind, damroll(2, 8), 2)) ident = TRUE;
 				//if (p_ptr->suscep_lite && !p_ptr->resist_lite) 
 				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite) 
-					take_hit(Ind, damroll(10, 3), "a scroll of light", 0);
+					take_hit(Ind, damroll(10, 3), "a Scroll of Light", 0);
                         	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) 
 				if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind) 
 					(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
@@ -2672,7 +2672,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(5, 3), "a scroll of blessing", 0);
+					take_hit(Ind, damroll(5, 3), "a Scroll of Blessing", 0);
 				}	
 				else if (p_ptr->blessed_power == 0)
 				{
@@ -2686,7 +2686,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(10, 3), "a scroll of holy chant", 0);
+					take_hit(Ind, damroll(10, 3), "a Scroll of Holy Chant", 0);
 				}
 				else if (p_ptr->blessed_power == 0)
 				{
@@ -2700,7 +2700,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(30, 3), "a scroll of holy prayer", 0);
+					take_hit(Ind, damroll(30, 3), "a Scroll of Holy Prayer", 0);
 				}
 				else if (p_ptr->blessed_power == 0)
 				{
@@ -2725,7 +2725,7 @@ void do_cmd_read_scroll(int Ind, int item)
 			{
 				if (p_ptr->suscep_good || p_ptr->suscep_life) {
 				//if (p_ptr->prace == RACE_VAMPIRE) {
-					take_hit(Ind, damroll(10, 3), "a scroll of protection from evil", 0);
+					take_hit(Ind, damroll(10, 3), "a Scroll of Protection from Evil", 0);
 				} else {
 #if 0 /* o_O */
 					k = 3 * p_ptr->lev;
@@ -2762,7 +2762,7 @@ void do_cmd_read_scroll(int Ind, int item)
 				if (dispel_undead(Ind, 100 + p_ptr->lev * 8)) ident = TRUE;
 				//if (p_ptr->suscep_life) 
 				if (p_ptr->prace == RACE_VAMPIRE)
-					take_hit(Ind, damroll(30, 3), "a scroll of dispel undead", 0);
+					take_hit(Ind, damroll(30, 3), "a Scroll of Dispel Undead", 0);
 				break;
 			}
 

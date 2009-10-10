@@ -3630,7 +3630,8 @@ if (season_halloween) {
 			disturb(Ind, 1, 0);
 			msg_format(Ind, "%^s tries to blank your mind.", m_name);
 
-			if (rand_int(100) < p_ptr->skill_sav)
+			if (rand_int(100) < p_ptr->skill_sav ||
+			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
 			{
 				msg_print(Ind, "You resist the effects!");
 			}
@@ -6973,9 +6974,11 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */
 		else if ((c_ptr->feat==FEAT_MOUNTAIN) &&
-			((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO)))
+			((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
+			(r_ptr->flags8 & RF8_WILD_VOLCANO) ||
+			(r_ptr->flags7 & RF7_SPIDER))) /* Spiders can always climb */
 		{
-			/* Pass through trees if monster lives in the woods >:) */
+			/* Pass mountains (climb) if it's natural environment */
 			do_move = TRUE;
 		}
 #else
@@ -8954,6 +8957,15 @@ void process_monsters(void)
 			/*	if (p_ptr->ghost)
 				if (!new_los)
 				j += 100; */
+
+#if 0
+			/* Hack: If monster can ignore walls, we don't need 'air los', but can instead
+			   use a 'wall los' which just gets hindered by perma-walls ;) - C. Blue */
+			if ((r_ptr->flags2 & (RF2_KILL_WALL | RF2_PASS_WALL)) &&
+			    los_wall(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx))
+	/* add a distance check here, or they'll have full level los */
+				new_los = TRUE;
+#endif
 
 			/* Glaur. Check that the closest VISIBLE target gets selected, 
 			   if no visible one available just take the closest*/ 

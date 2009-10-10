@@ -143,7 +143,7 @@ void do_autokinesis_to(int Ind, int dis) {
 		/* Skip players not in the same party */
 		if (q_ptr->party == 0 || p_ptr->party != q_ptr->party) continue;
 		/* Skip players who haven't opened their mind */
-		if (!(q_ptr->esp_link_flags & LINKF_TELEKIN)) continue;
+		if (!(q_ptr->esp_link_flags & LINKF_OPEN)) continue;
 		/* Skip targets too far away */
 		if (distance(p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px) > dis) continue;
 
@@ -7892,6 +7892,7 @@ void golem_creation(int Ind, int max)
 	if (g_cnt >= max)
 	{
 		msg_print(Ind, "You cannot create more golems.");
+		return;
 	}
 
 	for (x = p_ptr->px - 1; x <= p_ptr->px; x++)        
@@ -7955,33 +7956,29 @@ void golem_creation(int Ind, int max)
 			if (o_ptr->sval <= SV_GOLEM_ADAM)
 			{
 				golem_type = o_ptr->sval;
-				inven_item_increase(Ind,i,-o_ptr->number);
+				inven_item_increase(Ind,i,-1);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
 			}
 			if (o_ptr->sval == SV_GOLEM_ARM)
 			{
-				int k;
-
-				for (k = 0; k < o_ptr->number; k++){
+				while (o_ptr->number) {
 					if(golem_m_arms==4) break;
 					golem_arms[golem_m_arms++] = o_ptr->pval;
+					inven_item_increase(Ind,i,-1);
 				}
-				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
 			}
 			if (o_ptr->sval == SV_GOLEM_LEG)
 			{
-				int k;
-
-				for (k = 0; k < o_ptr->number; k++){
+				while (o_ptr->number) {
 					if(golem_m_legs==30) break;
 					golem_legs[golem_m_legs++] = o_ptr->pval;
+					inven_item_increase(Ind,i,-1);
 				}
-				inven_item_increase(Ind,i,-o_ptr->number);
 				inven_item_optimize(Ind,i);
 				i--;
 				continue;
@@ -8083,7 +8080,7 @@ void golem_creation(int Ind, int max)
 		/* Additionnal items ? */
 		if (inscription != NULL)
 		{
-			/* scan the inscription for @P */
+			/* scan the inscription for @G */
 			while ((*inscription != '\0'))
 			{
 
@@ -8097,7 +8094,8 @@ void golem_creation(int Ind, int max)
 						inscription++;
 
 						scan_golem_flags(o_ptr, r_ptr);
-						inven_item_increase(Ind,i,-o_ptr->number);
+						/* scan_golem_flags uses only one item */
+						inven_item_increase(Ind,i,-1);
 						inven_item_optimize(Ind,i);
 						i--;
 						continue;

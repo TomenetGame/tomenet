@@ -90,10 +90,10 @@ MCURE = add_spell
 			fire_ball(Ind, GF_REMFEAR_PLAYER, 0, get_level(Ind, MCURE, 50 * 2), 4, " waves over your eyes.")
                         set_afraid(Ind, 0)
                         player.res_fear_temp = get_level(Ind, MSANITY, 50)
-	                if get_level(Ind, MCURE, 50) >= 6 then
+	                if get_level(Ind, MCURE, 50) >= 5 then
 	                        set_confused(Ind, 0)
 	                end
-	                if get_level(Ind, MCURE, 50) >= 11 then
+	                if get_level(Ind, MCURE, 50) >= 10 then
 	                        set_image(Ind, 0)
 	                end
 			end,
@@ -154,7 +154,7 @@ MSENSEMON = add_spell
 --			end
 			end,
 	["info"] =      function()
-			return ""
+			return "dur 10+d10+d"..get_level(Ind, MSENSEMON, 50)
 			end,
 	["desc"] =      {
 --			"Lets you see nearby creatures and allows you to see invisible.",
@@ -166,8 +166,8 @@ MSENSEMON = add_spell
 MTELEKINESIS = add_spell
 {
 	["name"] = 	"Telekinesis",
-        ["school"] = 	{SCHOOL_TCONTACT},
-        ["level"] = 	30,
+        ["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
+        ["level"] = 	35,
         ["mana"] = 	25,
         ["mana_max"] = 	25,
         ["fail"] =      20,

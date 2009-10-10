@@ -377,13 +377,9 @@ static void sense_inventory(int Ind)
 		ok_magic = TRUE;
 		ok_curse = TRUE;
 	}
+	/* note: SKILL_PRAY is currently unused */
 	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
 #endif
-	if (!ok_combat && !ok_magic && !ok_archery) return;
-
-	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
-	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
-	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
@@ -403,6 +399,27 @@ static void sense_inventory(int Ind)
 		ok_curse = TRUE;
 	}
 
+#if 1
+	/* extra class-specific boni */
+	i = 150 - ((p_ptr->lev <= 50) ? (p_ptr->lev * 2) : (p_ptr->lev + 50));
+	if ((p_ptr->pclass == CLASS_PRIEST) && !rand_int(i)) ok_curse = TRUE;
+ #if 0 /* out of line? */
+	if ((p_ptr->pclass == CLASS_ISTAR ||
+	    p_ptr->pclass == CLASS_SHAMAN) && !rand_int(i)) ok_magic = TRUE;
+	if ((p_ptr->pclass == CLASS_MINDCRAFTER) && !rand_int(i)) {
+		ok_curse = TRUE;
+		ok_magic = TRUE;
+		ok_combat = TRUE;
+	}
+ #endif
+#endif
+
+	/* nothing to feel? exit */
+	if (!ok_combat && !ok_magic && !ok_archery) return;
+
+	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
+	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
+	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
 
 	/*** Sense everything ***/
 
@@ -711,6 +728,11 @@ static void erase_effects(int effect)
  *   (A. the storm is left on the original floor, and still try to follow
  *    the caster, pfft)
  */
+/* Set these to animate the colours of an effect if they aren't already flickering
+   colours such as TERM_POIS etc. but instead static colours that are picked randomly
+   in spell_color(). - C. Blue */
+#define ANIMATE_EFFECTS /* animates spell_color() randomness, costs more bandwidth */
+#define FREQUENT_EFFECT_ANIMATION /* costs even more bandwidth */
 static void process_effects(void)
 {
 	int i, j, k, l;
@@ -765,7 +787,7 @@ static void process_effects(void)
                                                 if (!in_bounds2(wpos, e_ptr->cy, e_ptr->cx)) continue;
                                                 c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
                                                 c_ptr->effect = k;
-                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);                                                
+                                                everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
                                         }
 
                                 }
@@ -783,7 +805,20 @@ static void process_effects(void)
  #endif
 #endif
 
-		
+#ifdef ANIMATE_EFFECTS
+ #ifdef FREQUENT_EFFECT_ANIMATION
+		/* hack: animate the effect! Note that this is independant of the effect interval,
+		   as opposed to the other animation code below. - C. Blue */
+		if (!(turn % (cfg.fps / 5)) && e_ptr->time && spell_color_animation(e_ptr->type))
+			for (l = 0; l < tdi[e_ptr->rad]; l++) {
+				j = e_ptr->cy + tdy[l];
+				i = e_ptr->cx + tdx[l];
+				if (!in_bounds2(wpos, j, i)) continue;
+				everyone_lite_spot(wpos, j, i);
+			}
+ #endif
+#endif
+
 		/* check if it's time to process this effect now (depends on level_speed) */
 		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 0) continue;
 
@@ -858,6 +893,16 @@ static void process_effects(void)
 					{
 						who = PROJECTOR_EFFECT;
 					}
+					
+#ifdef ANIMATE_EFFECTS
+ #ifndef FREQUENT_EFFECT_ANIMATION
+					/* C. Blue - hack: animate effects inbetween
+					   ie allow random changes in spell_color().
+					   Note: animation speed depends on effect interval. */
+					if (spell_color_animation(e_ptr->type))
+						everyone_lite_spot(wpos, j, i);
+ #endif
+#endif
 				}
 				else
 				{
@@ -1702,7 +1747,7 @@ static int auto_retaliate(int Ind)
 	monster_type *m_ptr, *m_target_ptr = NULL, *prev_m_target_ptr = NULL;
 	monster_race *r_ptr = NULL, *r_ptr2;
 	object_type *o_ptr;
-	cptr inscription = NULL;
+	cptr inscription = NULL, at_O_inscription = NULL;
 	bool no_melee = FALSE;
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return(FALSE);
@@ -2090,6 +2135,9 @@ static int auto_retaliate(int Ind)
 					/* Select the first usable item with @O */
 					item = i;
 					i = INVEN_TOTAL;
+
+					/* Remember the inscription */
+					at_O_inscription = inscription;
 					break;
 				}
 			}
@@ -2142,7 +2190,7 @@ static int auto_retaliate(int Ind)
 		/* Stormbringer bypasses everything!! */
 //		py_attack(Ind, p_target_ptr->py, p_target_ptr->px);
 		if (p_ptr->stormbringer ||
-				(!retaliate_item(Ind, item, inscription) && !p_ptr->afraid && !no_melee))
+				(!retaliate_item(Ind, item, at_O_inscription) && !p_ptr->afraid && !no_melee))
 		{
 			py_attack(Ind, p_target_ptr->py, p_target_ptr->px, FALSE);
 		}
@@ -2176,7 +2224,7 @@ static int auto_retaliate(int Ind)
 
 		/* Attack it */
 //		py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
-		if (!retaliate_item(Ind, item, inscription) && !p_ptr->afraid && !no_melee)
+		if (!retaliate_item(Ind, item, at_O_inscription) && !p_ptr->afraid && !no_melee)
 		{
 			py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx, FALSE);
 		}
@@ -4207,6 +4255,8 @@ static void process_player_end(int Ind)
 
 	/* count how long they stay on a level (for EXTRA_LEVEL_FEELINGS) */
 	p_ptr->turns_on_floor++;
+	/* hack to indicate it to the player */
+	if (p_ptr->turns_on_floor == TURNS_FOR_EXTRA_FEELING) Send_depth(Ind, &p_ptr->wpos);
 
 #if 1 /* NEW_RUNNING_FEAT */
 	if (!is_admin(p_ptr) && !p_ptr->ghost && !p_ptr->tim_wraith) {
@@ -5291,7 +5341,7 @@ static void process_player_change_wpos(int Ind)
 	/* Decide whether we stayed long enough on the previous
 	   floor to get distinct floor feelings here, and also
 	   start counting turns we spend on this floor. */
-	if (p_ptr->turns_on_floor >= cfg.fps * 120)
+	if (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 		p_ptr->distinct_floor_feeling = TRUE;
 	else 
 		p_ptr->distinct_floor_feeling = FALSE;
@@ -5861,7 +5911,11 @@ void dungeon(void)
 	turn++;
 
 	/* Check for overflow - mikaelh */
+#if 0 /* avoid doing this last-minute, since some calcs will already be off */
 	if (turn < 0)
+#else /* give at least ~30 minutes buffer (eg login process requires that approx.) */
+	if (turn == turn_overflow) /* note: turn is s32b */
+#endif
 	{
 		/* Reset the turn counter */
 		/* This will cause some weird things */
@@ -5869,7 +5923,7 @@ void dungeon(void)
 		turn = 1;
 
 		/* Log it */
-		s_printf("%s: TURN COUNTER RESET\n", showtime());
+		s_printf("%s: TURN COUNTER RESET (%d)\n", showtime(), turn_overflow);
 
 		/* Reset empty party creation times */
 		for (i = 1; i < MAX_PARTIES; i++) {
@@ -6110,15 +6164,15 @@ void dungeon(void)
 		if(cfg.runlevel == 2043)
 		{
 			if (shutdown_recall_timer <= 60 && shutdown_recall_state < 3) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in 1 minute (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 1 minute (auto-recall). \377I***");
 				shutdown_recall_state = 3;
 			}
 			else if (shutdown_recall_timer <= 300 && shutdown_recall_state < 2) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in 5 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 5 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 2;
 			}
 			else if (shutdown_recall_timer <= 900 && shutdown_recall_state < 1) {
-				msg_broadcast(0, "\377I*** \377RServer-shutdown in 15 minutes (auto-recall). \377I***");
+				msg_broadcast(0, "\377I*** \377RServer-shutdown in max 15 minutes (auto-recall). \377I***");
 				shutdown_recall_state = 1;
 			}
 			if (!shutdown_recall_timer) {

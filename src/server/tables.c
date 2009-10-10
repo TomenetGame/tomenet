@@ -3951,7 +3951,7 @@ player_class class_info[MAX_CLASS] =
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 700,//800
+                                '+', 800,//700
                         },
 #ifdef DUAL_WIELD /* rangers get an exception for now. hoping it'll balance out with giving them stances as well! */
                         { /* dual-wield */
@@ -5445,13 +5445,15 @@ player_class class_info[MAX_CLASS] =
                         /* Combat tree */
                         {
                                 SKILL_COMBAT,
-                                '+', 0,
-                                '+', 800,
+                                '+', 1000,
+//                                '+', 800,
+                                '+', 1000,
                         },
                         {
                                 SKILL_MASTERY,
                                 '+', 1000,
-                                '+', 400,
+//                                '+', 400,
+                                '+', 600,
                         },
                         {
                                 SKILL_SWORD,

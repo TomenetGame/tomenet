@@ -1185,8 +1185,7 @@ byte spell_color(int type)
 		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
 		case GF_NUKE:		return (mh_attr(2));
 		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
-		case GF_PSI:
-			return (randint(3)!=1?TERM_L_BLUE:TERM_WHITE);
+		case GF_PSI:		return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
 		/* new spell - the_sandman */
 		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
 		case GF_OLD_DRAIN:	return (TERM_DARKNESS);
@@ -1198,6 +1197,66 @@ byte spell_color(int type)
 
 	/* Standard "color" */
 	return (TERM_WHITE);
+}
+
+/* returns whether a spell type's colours require server-side animation or not.
+   (for efficient animations in process_effects()) - C. Blue */
+bool spell_color_animation(int type)
+{
+	/* Hack -- fake monochrome */
+	if (!use_color) return FALSE;
+
+	/* Analyze */
+	switch (type)	/* colourful ToME ones :) */
+	{
+		case GF_MISSILE:	return FALSE;
+		case GF_ACID:		return FALSE;
+		case GF_ELEC:		return FALSE;
+		case GF_FIRE:		return FALSE;
+		case GF_COLD:		return FALSE;
+		case GF_POIS:		return FALSE;
+		case GF_UNBREATH:	return (randint(7)<3?TERM_L_GREEN:TERM_GREEN);
+//		case GF_HOLY_ORB:	return FALSE;
+		case GF_HOLY_ORB:	return (randint(6)==1?TERM_ORANGE:TERM_L_DARK);
+		case GF_HOLY_FIRE:	return (randint(5)==1?TERM_ORANGE:TERM_WHITE);
+		case GF_HELL_FIRE:	return (randint(6)==1?TERM_RED:TERM_L_DARK);
+		case GF_MANA:		return (randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+		case GF_ARROW:		return FALSE;
+		case GF_WATER:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_WAVE:		return (randint(4)==1?TERM_L_BLUE:TERM_BLUE);
+		case GF_NETHER:		return (randint(4)==1?TERM_SLATE:TERM_L_DARK);
+		case GF_CHAOS:		return FALSE;
+		case GF_DISENCHANT:	return (randint(5)!=1?TERM_L_BLUE:TERM_VIOLET);
+		case GF_NEXUS:		return (randint(5)<3?TERM_L_RED:TERM_VIOLET);
+		case GF_CONFUSION:	return (mh_attr(4));
+		case GF_SOUND:		return (randint(4)==1?TERM_VIOLET:TERM_WHITE);
+		case GF_SHARDS:		return (randint(5)<3?TERM_UMBER:TERM_SLATE);
+		case GF_FORCE:		return (randint(5)<3?TERM_L_WHITE:TERM_ORANGE);
+		case GF_INERTIA:	return (randint(5)<3?TERM_SLATE:TERM_L_WHITE);
+		case GF_GRAVITY:	return (randint(3)==1?TERM_L_UMBER:TERM_UMBER);
+		case GF_TIME:		return (randint(2)==1?TERM_WHITE:TERM_L_DARK);
+		case GF_LITE_WEAK:	return FALSE;
+		case GF_LITE:		return FALSE;
+		case GF_DARK_WEAK:	return FALSE;
+		case GF_DARK:		return FALSE;
+		case GF_PLASMA:		return (randint(5)==1?TERM_RED:TERM_L_RED);
+		case GF_METEOR:		return (randint(3)==1?TERM_RED:TERM_UMBER);
+		case GF_ICE:		return (randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+		case GF_ROCKET:		return (randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
+		case GF_NUKE:		return (mh_attr(2));
+		case GF_DISINTEGRATE:   return (randint(3)!=1?TERM_L_DARK:(randint(2)==1?TERM_ORANGE:TERM_L_UMBER));
+		case GF_PSI:		return (randint(5)!=1?(rand_int(2)?(rand_int(2)?TERM_YELLOW:TERM_L_BLUE):127):TERM_WHITE);
+		/* new spell - the_sandman */
+		case GF_CURSE:		return (randint(2)==1?TERM_DARKNESS:TERM_L_DARK);
+		case GF_OLD_DRAIN:	return FALSE;
+		/* Druids stuff */
+		case GF_HEALINGCLOUD:	return FALSE;//return (randint(5)>1?TERM_WHITE:TERM_L_BLUE);
+		case GF_WATERPOISON:	return FALSE;return (randint(2)==1?TERM_L_BLUE:(randint(2)==1?TERM_BLUE:(randint(2)==1?TERM_GREEN:TERM_L_GREEN)));
+		case GF_ICEPOISON:	return FALSE;//return (randint(3)>1?TERM_UMBER:(randint(2)==1?TERM_GREEN:TERM_SLATE));
+	}
+
+	/* Standard "color" */
+	return FALSE;
 }
 
 /*
@@ -1406,7 +1465,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 			target_set(Ind, 0);
 			target_set(Ind2, 0);
 
-			teleport_player(Ind, 400, TRUE);
+			teleport_player(Ind, 4, TRUE);
 
 			return;
 		}
@@ -1432,7 +1491,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 				target_set(Ind, 0);
 				target_set(Ind_attacker, 0);
 
-				teleport_player(Ind, 400, TRUE);
+				teleport_player(Ind, 4, TRUE);
 
 				return;
 			}
@@ -6952,6 +7011,7 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
+#if 0
 		/* Get stunned */
 		if (m_ptr->stunned)
 		{
@@ -6963,6 +7023,21 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			note = " is dazed.";
 			i = do_stun;
 		}
+#else
+		if (m_ptr->stunned > 100) {
+			note = " is knocked out.";
+			i = m_ptr->stunned + (do_stun / 4);
+		} else if (m_ptr->stunned > 50) {
+			note = " is heavily dazed.";
+			i = m_ptr->stunned + (do_stun / 3);
+		} else if (m_ptr->stunned) {
+			note = " is more dazed.";
+			i = m_ptr->stunned + (do_stun / 2);
+		} else {
+			note = " is dazed.";
+			i = do_stun;
+		}
+#endif
 
 		/* Apply stun */
 		m_ptr->stunned = (i < 200) ? i : 200;

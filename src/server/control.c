@@ -4,9 +4,12 @@
  * have a devoted tty.
  */
 
+#include <stdarg.h>
 #include "angband.h"
+#include "control.h"
 
 #ifdef SERVER_GWPORT
+#if 0
 /* Server gateway stuff */
 void SGWHit(int read_fd, int arg){
 	int newsock=0;
@@ -47,6 +50,283 @@ void SGWHit(int read_fd, int arg){
 	else
 		s_printf("Web server request failed: %d\n", errno);
 }
+#else
+/* Server gateway stuff */
+
+gw_connection_t gw_conns[MAX_GW_CONNS];
+int gw_conns_num;
+
+/* Copy the first line from the socket buffer into buf */
+static int Packet_getln(sockbuf_t *s, char *buf) {
+	char *scan;
+	int len;
+	
+	for (scan = s->ptr; scan < s->buf + s->len; scan++) {
+		if (*scan == '\n') {
+			/* Calculate the length and limit to MSG_LEN - 1 */
+			len = MIN(scan - s->ptr, MSG_LEN - 1);
+			
+			/* Copy the line */
+			memcpy(buf, s->ptr, len);
+			
+			/* Terminate */
+			buf[len] = '\0';
+			
+			/* Move the socket buffer pointer forward */
+			s->ptr = scan + 1;
+			
+			return len;
+		}
+	}
+	
+	return 0;
+}
+
+/* Write formatted ouput terminated with a newline into a socket buffer */
+static int Packet_println(sockbuf_t *s, cptr fmt, ...) {
+	va_list ap;
+	char buf[4096];
+	int n;
+	int rval;
+	
+	va_start(ap, fmt);
+	
+	/* Use vsnprintf to do the formatting */
+	n = vsnprintf(buf, 4095, fmt, ap);
+	
+	if (n >= 0) {
+		/* Write the output to the socket buffer */
+		buf[n++] = '\n';
+		rval = Sockbuf_write(s, buf, n);
+	} else {
+		/* Some error */
+		rval = 0;
+	}
+	
+	va_end(ap);
+	
+	return rval;
+}
+
+/* GW connection handler */
+void SGWHit(int read_fd, int arg) {
+	int i, sock, bytes;
+	gw_connection_t *gw_conn;
+	char buf[MSG_LEN];
+
+	/* Check if it's a new client */
+	if (read_fd == SGWSocket) {
+		/* Check if we can accept it */
+		if (gw_conns_num < MAX_GW_CONNS) {
+			/* Accept it */
+			sock = SocketAccept(read_fd);
+			
+			if (sock == -1) {
+				s_printf("Failed to accept GW port connection (errno=%d)\n", errno);
+			}
+			
+			/* Find a free connection */
+			for (i = 0; i < MAX_GW_CONNS; i++) {
+				gw_conn = &gw_conns[i];
+				
+				if (gw_conn->state == CONN_FREE)
+					break;
+			}
+			
+			gw_conn->sock = sock;
+			gw_conn->state = CONN_CONNECTED;
+			gw_conn->last_activity = time(NULL);
+
+#if 0 /* prevents sending lots of data */
+			if (SetSocketNonBlocking(sock, 1) == -1)
+			{
+				plog("Cannot make GW client socket non-blocking");
+			}
+#endif
+			
+			/* Initialize socket buffers */
+			Sockbuf_init(&gw_conn->r, sock, 8192, SOCKBUF_READ);
+			Sockbuf_init(&gw_conn->w, sock, 8192, SOCKBUF_WRITE);
+			
+			install_input(SGWHit, sock, 2);
+			
+			gw_conns_num++;
+		}
+		
+		/* The connection has either been accepted or not, we're done */
+		return;
+	} else {
+		/* Find the matching connection */
+		for (i = 0; i < MAX_GW_CONNS; i++) {
+			gw_conn = &gw_conns[i];
+			
+			if (gw_conn->state == CONN_CONNECTED) {
+				if (gw_conn->sock == read_fd) {
+					break;
+				}
+			}
+			
+			gw_conn = NULL;
+		}
+		
+		if (!gw_conn) {
+			s_printf("No GW connection found for socket number %d\n", read_fd);
+		}
+	}
+	
+	/* Read the message */
+	bytes = DgramReceiveAny(read_fd, gw_conn->r.buf + gw_conn->r.len, gw_conn->r.size - gw_conn->r.len);
+	
+	/* Check for errors or our TCP connection closing */
+	if (bytes <= 0)
+	{
+		/* If 0 bytes have been sent than the client has probably closed
+		 * the connection
+		 */
+		if (bytes == 0)
+		{
+			gw_conn->state = CONN_FREE;
+			Sockbuf_cleanup(&gw_conn->r);
+			Sockbuf_cleanup(&gw_conn->w);
+			DgramClose(read_fd);
+			remove_input(read_fd);
+		}
+		else if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN &&
+			errno != EINTR)
+		{
+			/* Clear the error condition for the contact socket */
+			GetSocketError(read_fd);
+		}
+		return;
+	}
+	
+	/* Set length */
+	gw_conn->r.len = bytes;
+	
+	gw_conn->last_activity = time(NULL);
+	
+	/* Prepare to send a new reply */
+	Sockbuf_clear(&gw_conn->w);
+	
+	/* Try to read the request */
+	while (Packet_getln(&gw_conn->r, buf) > 0) {
+		/* Basic server info */
+		if (!strcmp(buf, "INFO")) {
+			time_t now;
+			player_type *p_ptr;
+			int players = 0;
+			int day = bst(DAY, turn);
+			now = time(NULL);
+			
+			/* Count players */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->admin_dm && cfg.secret_dungeon_master) continue;
+				players++;
+			}
+			
+			Packet_println(&gw_conn->w, "INFO REPLY");
+			Packet_println(&gw_conn->w, "uptime=%d", now - cfg.runtime);
+			Packet_println(&gw_conn->w, "turn=%d", turn);
+			Packet_println(&gw_conn->w, "ingameday=%s of the %s year", get_month_name(day, FALSE, FALSE), get_day(bst(YEAR, turn)));
+			Packet_println(&gw_conn->w, "fps=%d", cfg.fps);
+			Packet_println(&gw_conn->w, "players=%d", players);
+			Packet_println(&gw_conn->w, "INFO REPLY END");
+		}
+		
+		/* List of players */
+		else if (!strcmp(buf, "PLAYERS")) {
+			player_type *p_ptr;
+			Packet_println(&gw_conn->w, "PLAYERS REPLY");
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->admin_dm && cfg.secret_dungeon_master) continue;
+				Packet_println(&gw_conn->w, "name=%s", p_ptr->name);
+				Packet_println(&gw_conn->w, "account=%s", p_ptr->accountname);
+				Packet_println(&gw_conn->w, "host=%s", p_ptr->hostname);
+				Packet_println(&gw_conn->w, "level=%d", p_ptr->lev);
+				Packet_println(&gw_conn->w, "race=%s", race_info[p_ptr->prace].title);
+				Packet_println(&gw_conn->w, "class=%s", class_info[p_ptr->pclass].title);
+				Packet_println(&gw_conn->w, "gender=%s", (p_ptr->male) ? "male" : "female");
+			}
+			Packet_println(&gw_conn->w, "PLAYERS REPLY END");
+		}
+		
+		/* Highscore list */
+		else if (!strcmp(buf, "SCORES")) {
+			char buf2[8192] = { '\0' };
+			Packet_println(&gw_conn->w, "SCORES REPLY");
+			highscore_send(buf2, 8192);
+			Sockbuf_write(&gw_conn->w, buf2, strlen(buf2));
+			Packet_println(&gw_conn->w, "SCORES REPLY END");
+		}
+
+		/* House list */
+		else if (!strcmp(buf, "HOUSES")) {
+			char *buf2;
+			int len, alloc = 128 * num_houses;
+
+			C_MAKE(buf2, alloc, char);
+			Packet_println(&gw_conn->w, "HOUSES REPLY");
+
+			len = houses_send(buf2, alloc);
+
+			/* Send the contents of the socket buffer before sending buf2 */
+			DgramWrite(gw_conn->w.sock, gw_conn->w.buf, gw_conn->w.len);
+			Sockbuf_clear(&gw_conn->w);
+
+			/* buf2 is huge so send it directly past the socket buffer */
+			DgramWrite(gw_conn->w.sock, buf2, len);
+
+			Packet_println(&gw_conn->w, "HOUSES REPLY END");
+			C_KILL(buf2, alloc, char);
+		}
+		
+		/* Default reply */
+		else {
+			Packet_println(&gw_conn->w, "ERROR UNKNOWN REQUEST");
+		}
+
+		if (gw_conn->w.len) {
+			/* Send our reply */
+			if (DgramWrite(gw_conn->w.sock, gw_conn->w.buf, gw_conn->w.len) == -1) {
+				GetSocketError(gw_conn->w.sock);
+			}
+
+			/* Make room for more */
+			Sockbuf_clear(&gw_conn->w);
+		}
+	}
+		
+	/* Advance the read buffer */
+	Sockbuf_advance(&gw_conn->r, gw_conn->r.ptr - gw_conn->r.buf);
+}
+
+/* Checks whether GW connections should timeout */
+void SGWTimeout() {
+	int i;
+	gw_connection_t *gw_conn;
+	time_t now;
+	
+	now = time(NULL);
+	
+	/* Go through all gateway connections */
+	for (i = 0; i < gw_conns_num; i++) {
+		gw_conn = &gw_conns[i];
+		if (gw_conn->state == CONN_CONNECTED) {
+			/* Check for timeout */
+			if (gw_conn->last_activity + GW_CONN_TIMEOUT < now) {
+				/* Close the connection */
+				gw_conn->state = CONN_FREE;
+				Sockbuf_cleanup(&gw_conn->r);
+				Sockbuf_cleanup(&gw_conn->w);
+				DgramClose(gw_conn->sock);
+				remove_input(gw_conn->sock);
+			}
+		}
+	}
+}
+#endif
 #endif
 
 #ifdef NEW_SERVER_CONSOLE
@@ -416,6 +696,7 @@ void NewConsole(int read_fd, int arg)
 		/* If this happens our TCP connection has probably been severed.
 		 * Remove the input.
 		 */
+		close(newsock);
 		remove_input(newsock);
 		newsock = 0;
 

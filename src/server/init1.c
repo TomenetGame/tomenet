@@ -3658,7 +3658,7 @@ errr init_e_info_txt(FILE *fp, char *buf)
                         cur_r = -1;
                         cur_t = 0;
 
-                        for (j = 0; j < 6; j++)
+                        for (j = 0; j < MAX_EGO_BASETYPES; j++)
                         {
                                 e_ptr->tval[j] = 255;
                         }
@@ -3712,6 +3712,10 @@ errr init_e_info_txt(FILE *fp, char *buf)
                 if (buf[0] == 'T')
 		{
                         int tv, minsv, maxsv;
+                        if (cur_t == MAX_EGO_BASETYPES) {
+				s_printf("ERROR: Exceeded MAX_EGO_BASETYPES in ego index %d.\n", error_idx);
+                        	return (1);
+                        }
 
 			/* Scan for the values */
                         if (3 != sscanf(buf+2, "%d:%d:%d",

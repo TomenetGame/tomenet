@@ -5,21 +5,20 @@
 /*
 Proposal for new runemastery class/spell system
 
-Spells are cast via a parsed incantation comprised of any combination of the runes in the player's possession.
+Spells are cast via a parsed incantation comprised of any combination of the runes that the player knows.
 
-Two slash commands are used: /incant to cast spells, and /query to get an idea of what they do.
+It uses an m-key interface.
 
 All combinations of runes should do something.
 
 There are three parts to a runic incantation:
+	1. The effect, which is up to five different runes which combine to form an effect type
+	2. The imperative, which is one of eight magic words, which govern the tone of the spell, and influence power, cost, fail-rates and dangerousness of a spell.
+	3. The method is the spell-type (self,bolt,beam,ball,wave,cloud or LOS)
 	
-	1. The effect, which is up to five different runes which combine to form a GF_TYPE (via an RT_TYPE)
-	2. The imperative, which is one of eight magic words, which govern the tone of the spell, and influence power, cost, fail-rates and dangerousness of a spell (this also serves to divide the other two parts of an incantation)
-	3. The method, which is up to five different runes which combine to form a spell-type (self,bolt,beam,ball,wave,cloud or LOS)
-	
-The damage, radius and duration of a spell is influenced by the average skill of the caster in each of the runes in the spell, the spell method, and the spell effect itself.
+The spell characteristics (damage, radius and duration, fail-rate, cost, etc) of a spell are decided by the average of the caster's skill level in each rune.
 
-The fail-rate is determined by the caster's skill, stats, physical state (confused, blind, mp-amount etc), and whether the caster has all of the runes in the spell in his possession or not.
+Penalties are applied for casting spells when unable to look at the runes. (Missing a rune, blind, confused, stunned, etc.)
 
 If a spell fails by a little bit, the spell might still be cast. Either way, in the case of failure the caster might be: (depending on severity)
 	hit by some of the spell-element,
@@ -32,11 +31,9 @@ If a spell fails by a little bit, the spell might still be cast. Either way, in 
 	
 So the versatility of this runemaster is balanced by its riskiness.
 
-Theoretically, the spells are similar to the kind of spells an Istari could cast. However, there is presumably more in a spellbook than just the words which create the effect: there are clauses to protect the caster, and prevent him from casting a spell beyond his power/skill and hurting himself. The runemaster works outside of these imagined benefits associated with spellbooks.
+The spells are similar to Istari spells, but focused on flashiness rather than practicality. There's lots of spells, but not all of them are equally useful, and they're all dangerous.
 
-He can therefore create a large number of varied effects by combining the magical symbols he does have, but if unwise he is more likely to incinerate himself than to live a long life.
-
-His primary stat should be Int, possibly followed by Wis or Chr. (He must negotiate with the elements to achieve his aims)
+His primary stats are Int and Dex.
 
 He should have a skill for each pair of opposing runes. The skill should grant basic resistance to the elements it governs by lv 50 (but never immunity).
 
@@ -54,8 +51,6 @@ Skill tree:
 		. Force	& Gravity		0.000 [0.700]
 		. Nether & Time			0.000 [0.600]
 		. Mind & Nexus			0.000 [0.600]
-
-The pairings need to be adjusted to account for usefulness/difficulty, but testing is required to work this out fully.
 
 */
 
@@ -1016,7 +1011,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 						set_protevil(Ind, duration);
 						break;
 					case RT_SATHUNGER_PLAYER:
-						msg_format(Ind, "\377sYou summon imbued water to fill your belly. (%i%%)", diff);
+						msg_format(Ind, "\377sYou cast a rune of satiation. (%i%%)", diff);
 						set_food(Ind, PY_FOOD_MAX - 1);
 						break;
 					case RT_BASERES_PLAYER:
@@ -1190,6 +1185,10 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 					case RT_BESERK:
 						msg_format(Ind, "\377sYou cast a rune of beserking. (%i turns, %i%%)", duration, diff);
 						set_biofeedback(Ind, duration);
+						break;
+					case RT_HEAL_PLAYER:
+						msg_format(Ind, "\377sYou cast a rune of healing. (%i%%)", diff);
+						hp_player(Ind, damage);
 						break;
 					default:
 						break;

@@ -479,6 +479,9 @@
 #define MAX_BA_IDX	96 /* Max size for "ba_info[]" */
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
+/* Max ego base type restrictions */
+#define MAX_EGO_BASETYPES	9
+
 /* Client-side unique list */
 #define MAX_UNIQUES             300
 
@@ -4817,6 +4820,8 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define LF2_PITNEST_HI	0x00000100L	/* high threat pit/nest on level */
 #define LF2_ITEM_OOD	0x00000200L	/* ood item on level */
 #define LF2_ARTIFACT	0x00000400L	/* artifact on level */
+/* minimum time required to stay on current floor in order to get an extra feeling on next floor */
+#define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
 
 
 /* vault flags for v_info */
@@ -5297,6 +5302,10 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define cave_los(ZCAVE,Y,X) \
 	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
 	!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS))
+
+/* a 'wall los' which ignores non-perma-walls (for los_wall()) */
+#define cave_los_wall(ZCAVE,Y,X) \
+	(!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT))
 
 /*
 #define cave_block_los(ZCAVE,Y,X) \
@@ -6488,6 +6497,8 @@ extern int PlayerUID;
 #define STORE_RUNE	STORE_PET /* Using this space for now */
 #define STORE_JEWELX	42
 #define STORE_SHOESX	45
+#define STORE_LIBRARY	46		/* unused */
+#define STORE_FORBIDDENLIBRARY	47	/* unused */
 #define STORE_BLACKX	48
 #define STORE_MINING	59
 #define STORE_BLACKS	60

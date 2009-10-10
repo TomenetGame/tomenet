@@ -1983,7 +1983,8 @@ static void sanity_blast(int Ind, int m_idx, bool necro)
 	}
 
 
-	if (randint(power)<p_ptr->skill_sav) /* Amnesia */
+	if (randint(power)<p_ptr->skill_sav && /* Amnesia */
+	    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(50)))
 	{
 
 		if (lose_all_info(Ind))
