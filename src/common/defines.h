@@ -64,7 +64,7 @@
 #define VERSION_PATCH_OUTDATED	3
 #define VERSION_EXTRA_OUTDATED	0
 #define VERSION_BRANCH_OUTDATED	0
-#define VERSION_BUILD_OUTDATED	3
+#define VERSION_BUILD_OUTDATED	4
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
