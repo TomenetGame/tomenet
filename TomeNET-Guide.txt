@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. September 2009 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.3 - official websites are:
+| Latest update: 9. November 2009 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.3a - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
 +---
@@ -41,6 +41,7 @@ Contents
 (2) Installation & setup
     (2.1)   Installing TomeNET
     (2.2)   Starting TomeNET and getting to play on an internet server
+    (2.3)   Client options
 (3) Creating a character & starting to play
     (3.1)   Creating a new character; character modes
     (3.2)   The display (user-interface)
@@ -102,6 +103,7 @@ Contents
     (6.5)   Classes/Professions, titles, melee blows/round
     (6.6)   Sanity
     (6.7)   Mimic details, polymorph rings
+    (6.7a)  Druid form details
     (6.8)   Magic spells and prayers
     (6.9)   Parties, Iron Teams, Guilds
     (6.10)  Magic Device skill/ability details
@@ -1194,6 +1196,59 @@ email to the admin mentioning your account name, or ask an admin when he is
 online (Admin's names are displayed in dark blue in the chat).
 The e-mail address is usually mentioned in the server's intro screen or just
 ask fellow players for it.
+
+
+
+(2.3) Client options
+--------------------
+By pressing the '=' key, you can access the options menu where you can tweak
+your client in some ways. Some of these options that aren't self-explaining
+or that are especially important are listed in detail here:
+
+(Note: Some options stem from single-player Angband, and are deprecated or
+pointless for multi-player, and therefore don't have any effect. Those are
+displayed in dark grey instead of white.)
+
+(1) User Interface Options
+    Rogue-like commands (rogue_like_commands)
+        Toggles between normal key set and traditional rogue-like key set.
+    Don't display 'flavours' in item names (short_item_names)
+        A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
+    Hide unusable skills (hide_unusable_skills)
+        Skills that your character cannot use will not be displayed in the
+        skill menu invoked by 'G' key.
+
+(2) Disturbance Options
+
+(3) Game-Play Options
+    Set 'AFK mode' automatically (auto_afk)
+        Rogues might want to turn this off in order to sit out their blacklist
+        timer in town.
+
+(4) Efficiency Options
+
+(5) TomeNET Additional Options
+    Automatically open doors (easy_open)
+        Your character attempts to open a door just by you moving into it.
+    Suppress server messages as far as possible (taciturn_messages)
+        Will prevent some of the not-so-important server messages to be
+        shown, for example 'You have <item>' when picking up an item.
+!!! Scroll the screen more frequently (wide_scroll_margin)
+!!!     Should always be enabled! Will reduce probability for off-screen kills,
+!!!     since the screen scrolls much earlier when you come close to a border!
+
+(8) Check Server Options
+    Displays a list of the server rules and configuration.
+
+(A) Account options
+    Here you can see if your account is valid. Invalid accounts are also
+    indicated by a yellow 'I' in the players list you get with '@' key.
+    Also, you can change your password here!
+
+(W) Window flags
+    Here you can configure each of the program windows in detail.
+    It is recommended that you have one dedicated window for 'Display chat',
+    so you don't miss important messages during combat.
 
 
 
@@ -2851,24 +2906,37 @@ The 1..9 are standard shops, namely..
                         Some items cannot be sold elsewhere though.
 8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
                         players are relatively safe from monsters.
-9       Bookstore       Sells books for istari, priests and all other (hybrid)
+9       Book Store      Sells books for istari, priests and all other (hybrid)
                         magic users.
 +       These are different everywhere. Some examples are..
+        Mayor's Office (in Bree)
+                        Allows you to turn in deed parchments you won in
+                        tournaments or on other occasions for a reward.
+                        Also, you can receive a quest here.
         The Bank        Several towns have a bank where you can deposit and
                         withdraw money, so you won't lose it accidentally on a
                         dungeon trip.
-        Casino.         Minas Anor has a casino.
-        ID service      Will identify all items you currently carry for a fee.
-        *ID* Service    Will *identify* an item for a fee.
+        Rune Repository
+                        Sells and buys runes used by Runemasters.
+        Casino          Minas Anor has a casino. Go and try your luck!
+        Mass Identify Service
+                        Will identify all items you currently carry for a fee.
+        *Identify* Service
+                        Will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
-        Herbal Healing  Will cure black breath for a high fee. (See 1.5 for
+        Herbal Healing Service
+                        Will cure black breath for a high fee. (See 1.5 for
                         more information about Black Breath.)
-        Morph Restoration
+        Morph Restoration Service
                         Restores your form to normal in case you were
                         polymorphed (for example by a potion of Chauve-Souris).
         Enchant Services
                         These will enchant weapons, arrows, or all armour
                         parts you currently have equipped.
+        Mining Supply Store
+                        In the hazardous city of Khazad-Dum is a store that
+                        offers some goods found to be useful by the miners
+                        in the mountain depths.
 
 Shops that buy and sell items will have a price limit that they will pay for
 an item a players wants to sell. The limit varies from 50,000 to 300,000 Au
@@ -3108,6 +3176,9 @@ In addition to those orange level specialties, there are more feelings you
 may get about the danger a level poses. Those only appear if you spent some
 time (usually a few minutes) on the dungeon level you were coming from, so
 they won't be helpful while stair-scumming or probability-travelling quickly.
+The number telling you the current floor's depth in the bottom right corner of
+the main window will turn light blue when you spent enough time on your current
+floor to receive an extra feeling on entering the next floor.
 These extra level feelings (displayed in yellow) are:
 
   "What a terrifying place.."
@@ -5376,6 +5447,10 @@ care since most of them are actually not scientists but a bunch of clever
 outlaws who are trying their luck after becoming aware of the potential of
 these stones.
 
+NOTE: A new experimental rune system has been implemented, which is currently
+      live on the 'RPG Server'. The following explanations of the rune system
+      describe the old system, and can't necessarily be applied to the new
+      experimental system.
 
 When semi-skilled pseudo-professional folks use runes, there's quite a chance
 for them to break! General chance formula is:
@@ -5814,6 +5889,8 @@ Note that not every skill is available to every profession (class).
     .Mental Intrusion           Learn mindcrafter spells of mental intrusion.
 .Runemastery                    Determines how skillful you are in handling
                                 magical symbols aka 'Runes'.
+                                (NOTE: Does not necessarily apply to the new
+                                experimental rune system on 'RPG Server'!)
                                 At 15, you reach minimum break chance (0.1%)
                                 for runes when casting bolts.
                                 At 25, you reach minimum break chance (0.1%)
@@ -6581,6 +6658,7 @@ Druid
     (Special note (compare 6.7): If they wield a weapon while using a form
     which usually cannot use weapons, they will only get 1 blow per round.)
     To recheck which forms you can transform into, use the /ex command.
+    To see an overview of the forms and their abilities, see (6.7a).
 
 Shaman
     Shamans are able to call upon both spiritual and magical powers,
@@ -6608,6 +6686,9 @@ Runemaster
     these folks actually are not scientists but clever and ruthless outlaws
     who became aware of the potential of rune stones; these rune hunters are
     sly as rogues and witty as mages. Quite dangerous persons all in all.
+    (NOTE: The following description covers the normal runemastery system, and
+    does not necessarily apply to the new experimental rune system that is
+    currently live on 'RPG Server'!)
     'Magic' skill has the least effect on this class, and it is not very easy
     to learn. Runemasters' spells receive a half-damage and half-SP usage
     penalty that gradually dissapears as their Runemastery reaches 25. At this
@@ -6903,12 +6984,13 @@ F: flag list
     OPEN_DOOR   This form can open doors.
     BASH_DOOR   This form can bash doors
                 (useful to forms that cannot OPEN_DOORs!).
-    EVIL        Currently no effect, since it's assumed that the evilness of
-                the form is overridden by the mimic's state of mind.
+    EVIL        Becomes susceptible to certain 'good' or 'holy' effects.
     DEMON or UNDEAD
                 This form will take 2x damage from holy orbs or holy fire,
                 and suffer from various 'good' effects/spells. UNDEAD has
                 in general more trouble with 'good' effects than DEMON.
+                UNDEAD will also become susceptible to some 'life' effects,
+                regarding healing or cleansing mostly.
     HURT_LITE   This form will take 2x damage from light attacks.
 
 S: spell list
@@ -6956,10 +7038,14 @@ All trolls and giants
 All dragonriders
             ESP_DRAGON at level 5, feather falling (levitation),
             flying at level 30.
+All evil creatures
+            Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
             Resist darkness, blindness, poison (usually immunity);
             can't bleed (no_cut), infra-vision +1, insanity attacks are
             reduced by a little bit.
+            Becomes susceptible to 'life', which concerns some healing or
+            cleansing effects for example.
 All greater demons (capital 'U')
             Resist poison (in most cases immunity).
 All non-living creatures
@@ -7020,6 +7106,132 @@ which determined for how long the player will keep the form until he polymorphs
 back to normal.
 If a player forges a ring, his magic device skill helps to obtain a high
 amount of energy in the ring.
+
+
+(6.7a) Druid form details
+-------------------------
+Note: Some forms can open doors, others may try to bash doors.
+      Also, all animal forms are able to travel through woods.
+
+Cave bear               tough; can pass mountain terrain
+
+Panther                 speedy
+
+Grizzly bear            same as Cave Bear, but tougher
+
+Yeti                    can pass mountain terrain;
+                        is immune to cold but susceptible to fire
+
+Griffon                 can fly; can pass mountain terrain
+
+Sasquatch               speedy; similar to Yeti, but not susceptible to fire
+
+Werebear                same as Grizzly Bear, but tougher
+
+Great eagle             speedy; can fly; passes most terrain types
+
+White shark             speedy aquatic form (requires deep water to breathe)
+
+Aranea                  a speedy greater spider;
+                        poisonous hits;
+                        resists fire, completely immune to poison;
+                        susceptible to light and to 'good' (creature is evil);
+                        has a small array of magic spells to its disposal
+
+Wyvern                  speedy; can fly and passes most terrains;
+                        25% poisonous attacks;
+                        immune to poison; susceptible to 'good'
+
+Multi-hued Hound        resists fire/cold/lightning/acid/poison and gets a
+                        random immunity of those five on polymorphing;
+                        can't be confused or paralyzed;
+                        can breathe the five elements mentioned above
+
+5-headed hydra          speedy; can swim;
+                        poisonous attacks; immune to poison;
+                        can cast fear and poison ball
+
+Minotaur                tough and very speed; susceptible to 'good'
+
+Giant squid             tough and speedy aquatic creature;
+                        resists cold/acid;
+                        can breathe lightning, acid and poison
+
+7-headed hydra          tough and speedy; can swim;
+                        poisonous (75%) and blinding (25%) attacks;
+                        immune to poison;
+                        can cast fear, poison ball, and breathe poison
+
+Plasma hound            speedy;
+                        resists plasma, sound; immune to fire;
+                        susceptible to cold;
+                        can't be cut/stunned/confused or paralyzed;
+                        can breathe plasma
+
+Elder aranea            speedy and smart (INT bonus) greater spider;
+                        50% poisonous attacks;
+                        resists darkness, fire, poison; immune to either fire
+                        or poison chosen randomly on polymorphing;
+                        susceptible to 'good' and to light;
+                        can't be confused or paralyzed;
+                        regenerates HP quickly;
+                        has a medium array of spells to its disposal
+
+11-headed hydra         speedy and toughest hydra; can swim;
+                        fiery attacks;
+                        immune to fire;
+                        has a small array of fire/fear spells
+
+Lesser kraken           speedy, smart and very tough aquatic creature;
+                        immune to either water attacks and poison, resists the
+                        other, as well as lightning, cold and darkness;
+                        can't be paralyzed or confused;
+                        has a medium size array of spells
+
+Maulotaur               like Minotaur, but tougher; stupid (INT malus);
+                        immune to fire and resisting teleportation attacks;
+                        can cast plasma bolt and fire ball
+
+Winged Horror           speedy winged creature; can fly;
+                        resists cold, poison, darkness, nether, life drain;
+                        immune to either cold or poison;
+                        susceptible to 'good';
+                        can breathe nether, darkness and poison
+
+Spectral Tyrannosaur    speedy undead animal;
+                        has 25% scaring attacks;
+                        resists nexus, teleportation attacks, nether,
+                        life drain, cold, acid and poison;
+                        becomes immune to one of cold/acid/poison;
+                        susceptible to 'good' and 'life';
+                        can't be cut, scared, confused or paralyzed;
+                        can breathe nexus, poison and nether
+
+Greater kraken          speedy, smart and extremely tough aquatic creature;
+                        resists water attacks, cold, poison, lightning, acid,
+                        darkness; becomes immune to one of lightning/poison/
+                        water attacks;
+                        susceptible to 'good';
+                        can cast from a large array of spells
+
+Jabberwock              fabulous very speedy and tough hybrid creature;
+                        can fly;
+                        resists teleportation attacks and chaos;
+                        can curse and breathe chaos
+
+Horned Serpent          speedy and tough; can swim and pass mountain terrain;
+                        33% poisonous attacks;
+                        resists poison, acid, fire, water attacks,
+                        becomes immune to either poison or acid;
+                        can't be scared, confused or paralyzed;
+                        can cast fear and breathe acid and poison
+
+Firebird                speedy and tough; can fly and passes most terrains;
+                        fiery attacks and fire aura;
+                        immune to fire and susceptible to cold;
+                        resists poison, plasma and light;
+                        regenerates HP quickly;
+                        can breathe fire and light
 
 
 
@@ -7476,6 +7688,8 @@ Physical Lore
 Mindcraft schools:
 ------------------
 Psycho-Power
+    Psychic Hammer  Telekinetic power focussed to bash an enemy, stunning him.
+                    Required skill level for first spell level: 1.
     Psychokinesis   Destroys traps by psychokinetic manipulation.
                     Required skill level for first spell level: 3.
     Autokinesis I   Teleports you within a small range.
@@ -7484,6 +7698,10 @@ Psycho-Power
                     Required skill level for first spell level: 16.
     Autokinesis III Teleports you towards a party member with opened mind.
                     Required skill level for first spell level: 24.
+    Psi Storm       Psionic storm that damages and disturbs all minds within an
+                    area for a while, causing the usual random Psi side effects
+                    on all targets similar to Psionic Blast.
+                    Required skill level for first spell level: 18.
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
                     Required skill level for first spell level: 20.
     Cryokinesis     Causes a dramatic temperature drop on your opponent.
