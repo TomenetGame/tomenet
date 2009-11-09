@@ -4214,7 +4214,7 @@ void do_cmd_options(void)
 		Term_clear();
 
 		/* Why are we here */
-		prt("Angband options", 2, 0);
+		prt("TomeNET options", 2, 0);
 
 		/* Give some choices */
 		prt("(1) User Interface Options", 4, 5);
