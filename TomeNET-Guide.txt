@@ -7933,24 +7933,41 @@ The result will map to the following numbers:
 "You have a slight chance of parrying."         Below 10% chance.
 "You have a significant chance of parrying."    Below 20% chance.
 "You have a good chance of parrying."           Below 30% chance.
-"You have a very good chance of parrying."      30% chance or better.
+"You have a very good chance of parrying."      Below 40% chance.
+"You have an excellent chance of parrying."     Below 50% chance.
+"You have a superb chance of parrying."         50% chance or better.
+                                                (51% is highest reachable)
+Note: Above 30% can only be reached in defensive combat stance without a
+      shield equipped. (Because if no shield is equipped, defensive combat
+      stance which normally bolsters block chance will transfer that defensive
+      advantage to the weapon instead, increasing the parry chance.)
+      Also, your class should be fairly skilled at parrying (see below.)
 
 "You cannot block at the moment."               You aren't wielding a shield.
 "You have almost no chance of blocking."        Below 5% chance.
 "You have a slight chance of blocking."         Below 14% chance.
 "You have a significant chance of blocking."    Below 23% chance
-"You have a good chance of blocking."           Below 30% chance.
-"You have a very good chance of blocking."      Below 40% chance.
-"You have an excellent chance of blocking."     Below 65% chance.
-"You have a superb chance of blocking."         65% chance or better; can only
-                                                be achieved by entering an
-                                                appropriate combat stance.
+"You have a good chance of blocking."           Below 33% chance.
+"You have a very good chance of blocking."      Below 44% chance.
+"You have an excellent chance of blocking."     Below 55% chance.
+"You have a superb chance of blocking."         55% chance or better
+                                                (60% is highest reachable)
+Note: To achieve an extraordinarily high block chance above 30% you'll
+      have to enter a defensive combat stance, and your class should be
+      fairly skilled at blocking. See the note below.
 
-Important: Classes do differently well at parrying and blocking. To find out
-           more, see the class overview table at the end of section (6.5).
 
-Parrying
---------
+NOTES:
+------
+Classes do differently well at parrying and blocking. To find out more, see
+the class overview table at the end of section (6.5).
+
+Parrying/blocking might get boosted/modified under certain circumstances,
+such as PvP or defending from a trap you accidentally set off.
+
+
+More on Parrying
+----------------
 The larger a weapon, the more you can parry. Without a weapon, you cannot
 parry at all.
 A 1-handed weapon will parry less often than a 1 1/2-hander (SHOULD2H), and
@@ -7960,8 +7977,9 @@ swing" (COULD2H), you'll also get an extra parry bonus.
 Increasing weaponmastery improves your parry chance; dual-wielding improves it
 too, provided that you aren't 'flexibility-encumbered' (compare (5.5)).
 
-Blocking
---------
+
+More on Blocking
+----------------
 Many effects that normal armour usually doesn't protect from can actually be
 blocked, for example your character may quickly duck behind his shield just in
 time when an eye tries to gaze in your eyes to paralyze you.
