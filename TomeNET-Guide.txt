@@ -817,6 +817,23 @@ ID, *ID*    Identify and *Identify* magic respectively, which is used to
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
+klevel, olevel
+            Somewhat more technical terms, these stand for the exact type of
+            item level that is meant in a certain context:
+            k-level is the 'object kind level', which is given in k_info.txt.
+            This is the object's base level and describes from which minimum
+            dungeon floor level or minimum monster level you can expect to
+            start getting that item type.
+            The o-level is the 'real' object level that you'll see on an item
+            you pick up. This can vary from the klev, depending on the dungeon
+            floor depth and monster level you got the item from.
+            Example: According to k_info.txt an Amulet of the Serpents has a
+            klev of 25, so you can expect to start seeing this drop on dungeon
+            level 25 (1250ft) or from level 25 monsters respectively. However,
+            when you find such an amulet on say a dungeon floor at 4000ft,
+            which equals dungeon level 80, an actual amulet you find might have
+            a level requirement (olev) of 30.
+            (Note: This is similar to mlevel vs rlevel for monsters.)
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
 LV          Lesser Vault. (See 4.6)
@@ -845,8 +862,10 @@ mlevel, rlevel
             level was that much higher than the dragon's. So while the rlev
             of this dragon is still 41, his real level, the mlev, is 42.
             Some formulas used by the game use mlev, some use rlev.
+            (Note: This is similar to klevel vs olevel for items.)
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
             See (1.5) for details.
+olevel      see klevel.
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
             a surprisingly shallow level, opposed to the base level for that
             monster (given in r_info.txt) or item (given in k_info.txt) where
@@ -871,6 +890,7 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             also called 'Static arts' from the file a_info.txt. See 'Art'
             at the top of this section for more information.
 Res         Resistance.
+rlevel      see mlevel.
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
