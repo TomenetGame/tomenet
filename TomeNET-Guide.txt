@@ -810,14 +810,49 @@ FF          Feather falling (Levitation).
 Gorth       Room in the dungeon, divided into 4 chambers. Similar to a pit.
             (See 4.6)
 GV          Greater Vault. (See 4.6)
+GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
+ID, *ID*    Identify and *Identify* magic respectively, which is used to
+            reveal magic properties of unknown items. Scrolls of ID can be
+            bought in store 5.
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
 Loot        Items that have been dropped by dead monsters or players and
             are waiting to be picked up by someone. :)
 LV          Lesser Vault. (See 4.6)
+mlevel, rlevel
+            Somewhat more technical terms, these stand for the exact type of
+            monster level that is meant in a certain context:
+            m-level is the 'real' monster level that you'll also see when you
+            have your character look at it. This level may actually be boosted
+            and therefore be higher than you'd expect. This happens when you
+            meet the monster on a floor that is far deeper than the level the
+            monster usually starts to occur on.
+            r-level is the base monster level, which is given for each monster
+            in r_info.txt. It describes the minimum floor level a monster is
+            usually found on (although 'out-of-depth' occurances may be
+            possible).
+            Example: According to r_infot.txt, Ancient Red Dragons have a base
+            level of 41. That means you'll usually start seeing them on dungeon
+            floors of level 41 (2050 ft) and deeper, although there's always a
+            slim chance that you meet a monster earlier than its base level
+            (called OoD encounter). Now that means that Ancient Red Dragons
+            have an r-level of 41. However, if you meet an Ancient Red Dragon
+            on a much deeper dungeon floor, say 2400 ft, which would be the
+            equivalent to level 48, when you look at the dragon you'll see it
+            says level 42 instead of the expected 41. This means the dragon's
+            level was actually slightly boosted because the dungeon floor's
+            level was that much higher than the dragon's. So while the rlev
+            of this dragon is still 41, his real level, the mlev, is 42.
+            Some formulas used by the game use mlev, some use rlev.
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
             See (1.5) for details.
+OoD         Out-of-depth. Means a monster or an item encounter that happened at
+            a surprisingly shallow level, opposed to the base level for that
+            monster (given in r_info.txt) or item (given in k_info.txt) where
+            you would usually start expecting to find it.
+            Vaults often containing OoD monsters and items, increasing threat
+            and reward for the brave.
 Party       A group of players who fight together and share experience.
             In a party you will share experience points if you are within 7
             character levels to each other and on the same dungeon/tower level
@@ -5996,8 +6031,8 @@ Note that not every skill is available to every profession (class).
                                 your dodging skill, which (after penalized by
                                 the weight of all your stuff) is compared to
                                 the opponent's level or trap level.
-                                (For dodging monsters, the basic race level of
-                                that monster type is important. Any additional
+                                (For dodging monsters, the rlevel (0.4) of that
+                                monster type is important. Any additional
                                 levels the monster may have gained due to
                                 dwelling deeper than usual will not affect
                                 your dodge chance.)
@@ -6052,6 +6087,7 @@ Note that not every skill is available to every profession (class).
                                 factored in, at the very end of calculation).
                                 Note: You aren't able to intercept a monster's
                                 action while you are stunned. (Compare (4.11))
+                                Note: Monster level means 'rlevel' (see (0.4)).
 +Necromancy                     Drains life and mana from killed monsters,
                                 replenishing your HP and SP.
                                 Only works if you are able to see the target,
