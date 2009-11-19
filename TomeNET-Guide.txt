@@ -161,6 +161,10 @@ compile the game under '(2.1) Installing TomeNET'.
   again DEX not below 10, then right after spawning in town discard the war
   hammer you start with and instead go buy a whip from store '3' (weapon store)
   or '4' (temple). This should give you a solid 2 attacks per round.
+ If you decided to create a rogue, ensure that you have at least a STR of 15,
+  and a pretty high DEX (the rogue's main stat) of 18/10. This will give you
+  3 attacks per round when dual-wielding your light starter weapons.
+  Rest goes into CON or INT (rogue's main stat for spell-casting).
  Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
