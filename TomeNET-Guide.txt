@@ -6876,15 +6876,15 @@ Class           STR     DEX     Light weapon    Startup weapon
 Warrior         18/30   all     3               1-2 (depends on weapon)
                 18/50   all     3               2
                 18/50   18/10   4               2
-                18/70..110      ?               3 (depends on weapon)
+                18/70..110  *   3-4             3 (depends on weapon)
 
 Istar           -
 
 Priest          18/50   10      3               2
                 18/10   10      2               1
 
-Rogue           15      18/10   2 (3 DW)        2
-                18/10   18/50   3 (4 DW)        3
+Rogue           15      18/10   2               2
+                18/10   18/50   3               3
 
 Mimic           similar to priest, also:
                 18/30   18/10   3               2
