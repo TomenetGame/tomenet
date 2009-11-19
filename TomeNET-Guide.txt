@@ -151,7 +151,12 @@ compile the game under '(2.1) Installing TomeNET'.
  The server should now allow you to manually choose your stats.
  In case you chose a (Half-Troll) warrior, try this:
   STR 18/30, CON as high as possible, INT as low as possible,
-  spare points into DEX, WIS or CHR. Explanation:
+  spare points into DEX, WIS or CHR.
+ If you decided to play a paladin and can't reach STR 18/30, go for STR 18/20
+  and at least 10 DEX instead, giving you 2 attacks with a war hammer,
+  then CON and WIS as high as possible, INT as low as possible, spare points
+  (you shouldn't have any ;) into CHR. (Paladins use WIS for casting spells.)
+ Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
    enough to get 3 attacks per round with very light weapons, regardless of
