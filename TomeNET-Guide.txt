@@ -152,10 +152,15 @@ compile the game under '(2.1) Installing TomeNET'.
  In case you chose a (Half-Troll) warrior, try this:
   STR 18/30, CON as high as possible, INT as low as possible,
   spare points into DEX, WIS or CHR.
- If you decided to play a paladin and can't reach STR 18/30, go for STR 18/20
-  and at least 10 DEX instead, giving you 2 attacks with a war hammer,
-  then CON and WIS as high as possible, INT as low as possible, spare points
-  (you shouldn't have any ;) into CHR. (Paladins use WIS for casting spells.)
+ If you decided to play a paladin make sure you have at least DEX 10.
+  In case you can't reach STR 18/30, go for STR 18/20 instead, which should
+  give you 2 attacks with a war hammer, your starting weapon. Then increase
+  CON and WIS as high as possible, INT as low as possible, spare points (you
+  shouldn't have any ;) into CHR. (Paladins use WIS for casting spells.)
+  If for some reason you can't even reach STR 18/20, at least go for STR 18/10,
+  again DEX not below 10, then right after spawning in town discard the war
+  hammer you start with and instead go buy a whip from store '3' (weapon store)
+  or '4' (temple). This should give you a solid 2 attacks per round.
  Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
