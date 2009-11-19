@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. November 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 19. November 2009 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.3a - official websites are:
 | http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
 | Note that http://www.tomenet.net/ is outdated, so don't download from there.
@@ -180,7 +180,8 @@ compile the game under '(2.1) Installing TomeNET'.
    on other attributes. WIS isn't really needed either, but it can be useful
    to endure sanity-reducing effects.
  (If you are new to the game, it is NOT recommended to choose one of these:
- Istar, Priest, Shaman, Adventurer.)
+ Istar, Priest, Shaman, Adventurer.
+ Details about how STR and DEX affect startup blows/round are given in (6.5).)
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
 -It's strongly recommended to not choose 'fruit bat' body either :).
@@ -1357,9 +1358,9 @@ DEXterity, CONstitution, CHaRisma.
 
 IMPORTANT NOTE: For fighters (rogues also belong to these) that use weapons,
 it is important that you have enough STRength and DEXterity to execute at
-least two attacks per round, called bpr (blows per round). Sometimes this
-requires you to get rid of your initial weapon and buy a very light weapon,
-for example one of these:
+least two attacks per round, called bpr (blows per round, see (6.5)).
+Sometimes this requires you to get rid of your initial weapon and buy a very
+light weapon, for example one of these:
 dagger or main gauche (sword class),
 whip (blunt class),
 hatched (axe class) or
@@ -5619,6 +5620,7 @@ Strength (STR)
      if it's too heavy for you.
     -How much damage do you inflict on enemies? (to-dam bonus)
     -Are you able to deliver several blows per round with your weapon?
+     (For details, also see (6.5).)
     -How much can you carry in your backpack without getting slowed down?
     -How easily you can bash doors open.
     -How far you can throw items.
@@ -5646,6 +5648,7 @@ Dexterity (DEX)
     -How well can you steal (from shops)? (A high DEX won't help much if your
      'Stealing' skill is zero by the way ;)
     -Are you able to deliver several blows per round with your weapon?
+     (For details, also see (6.5).)
     -How likely are items or money stolen from you?
     -Can you prevent getting stunned from bashing a door clumsily?
     -Allows you to try hard to swim and not drown in deep water.
@@ -6849,6 +6852,74 @@ Runemaster  +1  +2  -3  +3  -3  -3       +5      +20%       4
             10  20  20   0  30  20  45  20              fair     fair
 Mindcrafter  0  +2   0   0   0  +1       +5      +25%       5
             30  30  36   2  35  14  45  35              good     fair
+
+
+For melee characters, it's especially vital to know how many blows per round
+they will get right after character creation, to avoid them being unnecessarily
+weak during low-mid levels.
+So a melee-oriented character should make sure to start with sufficient
+STRength and DEXterity to be able to get at least 2 blows/round with the
+lightest possible weapons. (Getting more bpr with heavy weapons is a luxury
+that will have to be put aside until later in the game.)
+
+Note that a (heavier) startup weapon at 2 bpr might beat a very light weapon at
+3 bpr for a few levels at the beginning, maybe up to 4 or so. So you can wait
+for a little a bit until spending $ on it.
+
+Here is a table, showing you some bpr numbers you can expect your newly
+created character to have, depending on certain combinations of class, STR,
+DEX, given for both, lightest possible weapon and startup weapon:
+(Don't forget that some classes can dual-wield, adding an extra +1 bpr on top!)
+
+Class           STR     DEX     Light weapon    Startup weapon
+------------------------------------------------------------------------
+Warrior         18/30   all     3               1-2 (depends on weapon)
+                18/50   all     3               2
+                18/50   18/10   4               2
+                18/70..110      ?               3 (depends on weapon)
+
+Istar           -
+
+Priest          18/50   10      3               2
+                18/10   10      2               1
+
+Rogue           15      18/10   2 (3 DW)        2
+                18/10   18/50   3 (4 DW)        3
+
+Mimic           similar to priest, also:
+                18/30   18/10   3               2
+
+Archer          -
+
+Paladin         18/10   10      2               1
+                18/20   10      2               2
+                18/30   10      3               2
+
+Ranger          similar to priest, also:
+                18/50   10      3               2-3 (depends on weapon)
+                18/30   18/10   3               2-3 (depends on weapon)
+
+Adventurer      similar to paladin, also:
+                18/30   18/10   3               2-3 (depends on weapon)
+
+Druid           -
+
+Shaman          similar to priest
+
+Runemaster      similar to rogue
+
+Mindcrafter     similar to ranger
+
+So if you're playing a melee-oriented characer, make sure you start with at
+least 2 bpr (in some cases you might have to buy very light weapon and discard
+your starter weapon to achieve this)!
+
+If you think it's strange that 'Mimic fights similar to Priest' keep in mind
+that this is not about actual melee potential, but rather about some sort of
+'blows/round improvement curve' displayed by a class. If a class is busy
+studying other things in parallel (magic), its learning curve gets less steep.
+This, however, doesn't determine its final performance, which is actually
+given by the 'Max. base blows/round' shown further above, and other parameters.
 
 
 
