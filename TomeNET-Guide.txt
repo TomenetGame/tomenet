@@ -165,6 +165,8 @@ compile the game under '(2.1) Installing TomeNET'.
   and a pretty high DEX (the rogue's main stat) of 18/10. This will give you
   3 attacks per round when dual-wielding your light starter weapons.
   Rest goes into CON or INT (rogue's main stat for spell-casting).
+ If you made a druid, put couple of points into all, DEX, STR and CON, and keep
+  your WIS relatively high since it's important for druidic spell-casting.
  Explanation:
    CON affects your hit points, more CON -> more HP.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
