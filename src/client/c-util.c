@@ -209,7 +209,9 @@ bool macro_del(cptr pat)
 
 	/* Free it */
 	string_free(macro__pat[num]);
+	macro__pat[num] = NULL;
 	string_free(macro__act[num]);
+	macro__act[num] = NULL;
 
 	/* Remove it from every array */
 	for (i = num + 1; i < macro__num; i++)
@@ -2937,13 +2939,13 @@ void interact_macros(void)
 
 
 		/* Describe that action */
-		Term_putstr(0, 19, -1, TERM_L_GREEN, "Current action (if any) shown below:");
+		Term_putstr(0, 20, -1, TERM_L_GREEN, "Current action (if any) shown below:");
 
 		/* Analyze the current action */
 		ascii_to_text(buf, macro__buf);
 
 		/* Display the current action */
-		Term_putstr(0, 21, -1, TERM_WHITE, buf);
+		Term_putstr(0, 22, -1, TERM_WHITE, buf);
 
 		/* Selections */
 		Term_putstr(5,  2, -1, TERM_WHITE, "(1) Load macros from a pref file");
@@ -2959,9 +2961,10 @@ void interact_macros(void)
 		Term_putstr(5, 11, -1, TERM_WHITE, "(l) List all macros");
 		Term_putstr(5, 12, -1, TERM_SLATE, "(q/Q) Enter and create a 'quick & dirty' macro / set preferences"),
 		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
+		Term_putstr(5, 14, -1, TERM_WHITE, "(W/w) Wipe all macros / reload default macro files");
 
 		/* Prompt */
-		Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: ");
+		Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: ");
 
 		/* Get a key */
 		i = inkey();
@@ -2979,10 +2982,10 @@ void interact_macros(void)
 		else if (i == '1')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Load a user pref file");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Load a user pref file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 //			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -3003,10 +3006,10 @@ void interact_macros(void)
 		else if (i == '2')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Save a macro file");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Save a macro file");
 
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 17, -1, TERM_WHITE, "File: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "File: ");
 
 			/* Default filename */
 //			sprintf(tmp, "user-%s.prf", ANGBAND_SYS);
@@ -3024,10 +3027,10 @@ void interact_macros(void)
 		else if (i == '3')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Enter a new action");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Enter a new action");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, 21);
+			Term_gotoxy(0, 22);
 
 			/* Hack -- limit the value */
 			tmp[80] = '\0';
@@ -3043,10 +3046,10 @@ void interact_macros(void)
 		else if (i == '6')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a command macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Create a command macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3067,10 +3070,10 @@ void interact_macros(void)
 		else if (i == '5')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Create a hybrid macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3091,10 +3094,10 @@ void interact_macros(void)
 		else if (i == '4')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create a normal macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Create a normal macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3116,10 +3119,10 @@ void interact_macros(void)
 		else if (i == '7')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create an identity macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Create an identity macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3135,10 +3138,10 @@ void interact_macros(void)
 		else if (i == '7')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Delete a macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Delete a macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3155,10 +3158,10 @@ void interact_macros(void)
 		else if (i == '8')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Create an empty macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Create an empty macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3179,10 +3182,10 @@ void interact_macros(void)
 		else if (i == '9')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Query a macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Query a macro");
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3218,7 +3221,7 @@ void interact_macros(void)
 		else if (i == 'l')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: List all macros");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: List all macros");
 
 			/* Re-using 'i' here shouldn't matter anymore */
 			for (i = 0; i < macro__num; i++)
@@ -3311,10 +3314,10 @@ void interact_macros(void)
 		else if (i == 'q')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
 
 			/* Go to the correct location */
-			Term_gotoxy(0, 21);
+			Term_gotoxy(0, 22);
 
 			/* Hack -- limit the value */
 			tmp[80] = '\0';
@@ -3366,13 +3369,13 @@ void interact_macros(void)
 			*b2ptr = '\0';
 
 			/* Display the current action */
-        		Term_putstr(0, 21, -1, TERM_WHITE, buf2);
+        		Term_putstr(0, 22, -1, TERM_WHITE, buf2);
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf2);
 
 			/* Prompt */
-			Term_putstr(0, 17, -1, TERM_WHITE, "Trigger: ");
+			Term_putstr(0, 18, -1, TERM_WHITE, "Trigger: ");
 
 			/* Get a macro trigger */
 			get_macro_trigger(buf);
@@ -3407,7 +3410,7 @@ void interact_macros(void)
 		else if (i == 'Q')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Configure 'quick & dirty' macro functionality");
 			
 			/* TODO:
 			   config auto-prefix '\e)' */
@@ -3417,7 +3420,7 @@ void interact_macros(void)
 		else if (i == 'r')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Record a macro");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Record a macro");
 			
 			/* Clear screen */
 			Term_clear();
@@ -3458,9 +3461,39 @@ void interact_macros(void)
 		else if (i == 'R')
 		{
 			/* Prompt */
-			Term_putstr(0, 15, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Configure macro recording functionality");
 
 			/* TODO: implement */
+		}
+
+		else  if (i == 'W')
+		{
+			/* Wipe all macros */
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Wipe all macros");
+
+			for (i = 0; i < macro__num; i++) {
+				string_free(macro__pat[i]);
+				macro__pat[i] = NULL;
+				string_free(macro__act[i]);
+				macro__act[i] = NULL;
+				macro__cmd[i] = FALSE;
+				macro__hyb[i] = FALSE;
+			}
+
+			macro__num = 0;
+
+			for (i = 0; i < 256; i++) {
+				macro__use[i] = 0;
+			}
+		}
+
+		else if (i == 'w')
+		{
+			/* Reload default macro files */
+			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Reload default macro files");
+
+			initialize_main_pref_files();
+			initialize_player_pref_files();
 		}
 
 		/* Oops */
