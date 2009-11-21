@@ -932,6 +932,16 @@ errr process_pref_file_aux(char *buf)
                 return (0);
         }
 
+	/* Process "D:<str>" -- delete a macro */
+	else if (buf[0] == 'D')
+	{
+		char tmp[1024];
+		text_to_ascii(tmp, buf+2);
+		macro_del(tmp);
+		
+		return 0;
+	}
+
 
         /* Process "S:<key>:<key>:<dir>" -- keymap */
         else if (buf[0] == 'S')
