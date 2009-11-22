@@ -987,7 +987,7 @@ static void new_palette(void)
 	if (hBmPal)
 	{
 		lppeSize = 256*sizeof(PALETTEENTRY);
-		lppe = (LPPALETTEENTRY)ralloc(lppeSize);
+		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
 		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
 		if (nEntries == 0) quit("Corrupted bitmap palette");
 		if (nEntries > 220) quit("Bitmap must have no more than 220 colors");
@@ -999,7 +999,7 @@ static void new_palette(void)
 	pLogPalSize = sizeof(LOGPALETTE) + (16+nEntries)*sizeof(PALETTEENTRY);
 
 	/* Allocate palette */
-	pLogPal = (LPLOGPALETTE)ralloc(pLogPalSize);
+	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
 
 	/* Version */
 	pLogPal->palVersion = 0x300;
@@ -1031,14 +1031,14 @@ static void new_palette(void)
 	}
 
 	/* Free something */
-	if (lppe) rnfree(lppe, lppeSize);
+	if (lppe) mem_free(lppe);
 
 	/* Create a new palette, or fail */
 	hNewPal = CreatePalette(pLogPal);
 	if (!hNewPal) quit("Cannot create palette");
 
 	/* Free the palette */
-	rnfree(pLogPal, pLogPalSize);
+	mem_free(pLogPal);
 
 
 	hdc = GetDC(data[0].w);
