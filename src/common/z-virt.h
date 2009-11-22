@@ -1,5 +1,13 @@
 /* File: z-virt.h */
 
+/*
+ * Copyright (c) 1997 Ben Harrison
+ *
+ * This software may be copied and distributed for educational, research,
+ * and not for profit purposes provided that this copyright and statement
+ * are included in all such copies.
+ */
+
 #ifndef INCLUDED_Z_VIRT_H
 #define INCLUDED_Z_VIRT_H
 
@@ -12,152 +20,132 @@
  * Set rnfree_aux to modify the memory de-allocation routine.
  * Set rpanic_aux to let the program react to memory failures.
  *
- * These routines will not work as well if the program calls malloc/free.
+ * These routines work best as a *replacement* for malloc/free.
  *
  * The string_make() and string_free() routines handle dynamic strings.
- * A dynamic string is a string allocated at run-time, but not really
- * intended to be modified once allocated.
+ * A dynamic string is a string allocated at run-time, which should not
+ * be modified once it has been created.
  *
  * Note the macros below which simplify the details of allocation,
- * clearing, casting, and size extraction.
+ * deallocation, setting, clearing, casting, size extraction, etc.
  *
- * The macros MAKE/C_MAKE and KILL/C_KILL have a "procedural" metaphor.
+ * The macros MAKE/C_MAKE and KILL have a "procedural" metaphor,
+ * and they actually modify their arguments.
  *
- * NOTE: For some reason, many allocation macros disallow "stars"
- * in type names, but you can use typedefs to circumvent this.
- * For example, instead of "type **p; MAKE(p,type*);" you can use
- * "typedef type *type_ptr; type_ptr *p; MAKE(p,type_ptr)".
+ * Note that, for some reason, some allocation macros may disallow
+ * "stars" in type names, but you can use typedefs to circumvent
+ * this.  For example, instead of "type **p; MAKE(p,type*);" you
+ * can use "typedef type *type_ptr; type_ptr *p; MAKE(p,type_ptr)".
  *
  * Note that it is assumed that "memset()" will function correctly,
  * in particular, that it returns its first argument.
- *
- * The 'GROW' macro is very tentative.
  */
 
 
 
-/**** Available variables ****/
-
-/* Replacement hook for "rnfree()" */
-extern errr (*rnfree_aux)(vptr, huge);
-
-/* Replacement hook for "rpanic()" */
-extern vptr (*rpanic_aux)(huge);
-
-/* Replacement hook for "ralloc()" */
-extern vptr (*ralloc_aux)(huge);
-
-
-/**** Available Routines ****/
-
-/* De-allocate a given amount of memory */
-extern errr rnfree(vptr p, huge len);
-
-/* Panic, attempt to Allocate 'len' bytes */
-extern vptr rpanic(huge len);
-
-/* Allocate (and return) 'len', or dump core */
-extern vptr ralloc(huge len);
-
-/* Create a "dynamic string" */
-extern cptr string_make(cptr str);
-
-/* Free a string allocated with "string_make()" */
-extern errr string_free(cptr str);
+/**** Available macros ****/
 
 
 
+/* Wipe an array of type T[N], at location P, and return P */
+#define C_WIPE(P, N, T) \
+	(memset((P), 0, (N) * sizeof(T)))
 
-/**** Memory Macros ****/
-
-
-/* Size of 'N' things of type 'T' */
-#define C_SIZE(N,T) \
-        ((huge)((N)*(sizeof(T))))
-
-/* Size of one thing of type 'T' */
-#define SIZE(T) \
-        ((huge)(sizeof(T)))
+/* Wipe a thing of type T, at location P, and return P */
+#define WIPE(P, T) \
+	(memset((P), 0, sizeof(T)))
 
 
-/* Bool: True when P1 and P2 both point to N T's, which have same contents */
-#define C_SAME(P1,P2,N,T) \
-        (!memcmp((char*)(P1),(char*)(P2),C_SIZE(N,T)))
+/* Load an array of type T[N], at location P1, from another, at location P2 */
+#define C_COPY(P1, P2, N, T) \
+	(memcpy((P1), (P2), (N) * sizeof(T)))
 
-/* Bool: True when P1 and P2 both point to T's, and they have same contents */
-#define SAME(P1,P2,T) \
-        (!memcmp((char*)(P1),(char*)(P2),SIZE(T)))
-
-
-/* Wipe an array of N things of type T at location P, return T */
-#define C_WIPE(P,N,T) \
-        memset((char*)(P),0,C_SIZE(N,T))
-
-/* Wipe a single thing of type T at location P, return T */
-#define WIPE(P,T) \
-        memset((char*)(P),0,SIZE(T))
+/* Load a thing of type T, at location P1, from another, at location P2 */
+#define COPY(P1, P2, T) \
+	(memcpy((P1), (P2), sizeof(T)))
 
 
-/* When P1 and P2 both point to N T's, Load P1 from P2 explicitly */
-#define C_COPY(P1,P2,N,T) \
-        memcpy((char*)(P1),(char*)(P2),C_SIZE(N,T))
+/* Allocate, and return, an array of type T[N] */
+#define C_NEW(N, T) \
+	(T*)(mem_alloc((N) * sizeof(T)))
 
-/* When P1 and P2 both point to T's, Load P1 from P2 explicitly */
-#define COPY(P1,P2,T) \
-        memcpy((char*)(P1),(char*)(P2),SIZE(T))
-
-
-
-/* Free an array of N things of type T at P, return ??? */
-#define C_FREE(P,N,T) \
-        (rnfree(P,C_SIZE(N,T)))
-
-/* Free one thing of type T at P, return ??? */
-#define FREE(P,T) \
-        (rnfree(P,SIZE(T)))
-
-
-/* Allocate and return an array of N things of type T */
-#define C_NEW(N,T) \
-        ((T*)(ralloc(C_SIZE(N,T))))
-
-/* Allocate and return one thing of type T */
+/* Allocate, and return, a thing of type T */
 #define NEW(T) \
-        ((T*)(ralloc(SIZE(T))))
+	(T*)(mem_alloc(sizeof(T)))
 
 
-/* Allocate, wipe, and return an array of N things of type T */
-#define C_ZNEW(N,T) \
-        ((T*)(C_WIPE(ralloc(C_SIZE(N,T)),N,T)))
+/* Allocate, wipe, and return an array of type T[N] */
+#define C_ZNEW(N, T) \
+	(T*)(C_WIPE(C_NEW(N, T), N, T))
 
-/* Allocate, wipe, and return one thing of type T */
+/* Allocate, wipe, and return a thing of type T */
 #define ZNEW(T) \
-        ((T*)(WIPE(ralloc(SIZE(T)),T)))
+	(T*)(WIPE(NEW(T), T))
+
+
+/* Free one thing at P, return NULL */
+#define FREE(P, T) (mem_free(P), P = NULL)
+
+/* Free N things of type T at P, return NULL */
+#define C_FREE(P, N, T) (mem_free(P), P = NULL)
 
 
 /* Allocate a wiped array of N things of type T, let P point at them */
-#define C_MAKE(P,N,T) \
-        (P)=C_ZNEW(N,T)
+#define C_MAKE(P, N, T) \
+        (P) = C_ZNEW(N,T)
 
 /* Allocate a wiped thing of type T, let P point at it */
-#define MAKE(P,T) \
-        (P)=ZNEW(T)
+#define MAKE(P, T) \
+        (P) = ZNEW(T)
 
 
 /* Free an array of N things of type T at P, and reset P to NULL */
-#define C_KILL(P,N,T) \
-        (C_FREE(P,N,T), (P)=(T*)NULL)
+#define C_KILL(P, N, T) \
+        (C_FREE(P,N,T), (P) = (T*) NULL)
 
 /* Free a single thing of type T at P, and reset P to NULL */
-#define KILL(P,T) \
-        (FREE(P,T), (P)=(T*)NULL)
+#define KILL(P, T) \
+        (FREE(P,T), (P) = (T*) NULL)
 
 
+/* Cleanly "grow" 'P' from N1 T's to N2 T's, wipe the newly allocated memory */
+#define GROW(P, N1, N2, T) \
+        ((P) = mem_realloc(P, N2), \
+	((N1) < (N2)) ? memset(&(P)[N1], 0, ((N2) - (N1)) * sizeof(T)) : (P))
 
-/* Mega-Hack -- Cleanly "grow" 'P' from N1 T's to N2 T's */
-#define GROW(P,N1,N2,T) \
-        (C_MAKE(vptr_tmp,N2,T), C_COPY(vptr_tmp,P,MIN(N1,N2),T), \
-         C_FREE(P,N1,T), (P)=vptr_tmp)
+/* Shrink an array of N1 things of type T at P to N2 things */
+#define SHRINK(P, N1, N2, T) \
+	(P) = mem_realloc(P, N2)
 
 
-#endif
+/*** Initialisation bits ***/
+
+/* Hook types for memory allocation */
+typedef void *(*mem_alloc_hook)(size_t);
+typedef void *(*mem_free_hook)(void *);
+typedef void *(*mem_realloc_hook)(void *, size_t);
+
+/* Set up memory allocation hooks */
+bool mem_set_hooks(mem_alloc_hook alloc, mem_free_hook free, mem_realloc_hook realloc);
+
+
+/**** Normal bits ***/
+
+/* Allocate (and return) 'len', or quit */
+void *mem_alloc(size_t len);
+
+/* De-allocate memory */
+void *mem_free(void *p);
+
+/* Reallocate memory */
+void *mem_realloc(void *p, size_t len);
+
+
+/* Create a "dynamic string" */
+char *string_make(const char *str);
+
+/* Free a string allocated with "string_make()" */
+char *string_free(char *str);
+#define string_free(X) mem_free((char *) X)
+
+#endif /* INCLUDED_Z_VIRT_H */
