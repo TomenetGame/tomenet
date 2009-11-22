@@ -111,11 +111,11 @@
 /* Cleanly "grow" 'P' from N1 T's to N2 T's, wipe the newly allocated memory */
 #define GROW(P, N1, N2, T) \
         ((P) = mem_realloc(P, N2), \
-	((N1) < (N2)) ? memset(&(P)[N1], 0, ((N2) - (N1)) * sizeof(T)) : (P))
+	((N1) < (N2)) ? memset(&((P)[N1]), 0, ((N2) - (N1)) * sizeof(T)) : (P))
 
 /* Shrink an array of N1 things of type T at P to N2 things */
 #define SHRINK(P, N1, N2, T) \
-	(P) = mem_realloc(P, N2)
+	(P) = mem_realloc((P), (N2))
 
 
 /*** Initialisation bits ***/
