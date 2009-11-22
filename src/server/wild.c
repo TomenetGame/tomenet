@@ -220,8 +220,8 @@ void deltown(int Ind)
 	wild_info[wpos->wy][wpos->wx].radius=towndist(wpos->wy, wpos->wx);
 	wilderness_gen(wpos);
 
-	/* 'SHRINK' by reverse GROW ;) */
-	GROW(town, numtowns, numtowns-1, struct town_type);
+	/* Shrink the town array */
+	SHRINK(town, numtowns, numtowns-1, struct town_type);
 
 	numtowns--;
 }

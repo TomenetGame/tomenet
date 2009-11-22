@@ -449,8 +449,7 @@ void auction_clear(int auction_id)
 	/* Check if the auctions array can be shrunk */
 	if (last_in_use < auction_alloc)
 	{
-		/* Reverse GROW */
-		GROW(auctions, auction_alloc, last_in_use, auction_type);
+		SHRINK(auctions, auction_alloc, last_in_use, auction_type);
 	}
 }
 
@@ -524,8 +523,7 @@ void auction_remove_bid(int auction_id, int bid_id)
 	}
 	else
 	{
-		/* Reverse GROW */
-		GROW(auc_ptr->bids, auc_ptr->bids_cnt, auc_ptr->bids_cnt - 1, bid_type);
+		SHRINK(auc_ptr->bids, auc_ptr->bids_cnt, auc_ptr->bids_cnt - 1, bid_type);
 	}
 	auc_ptr->bids_cnt--;	
 }
