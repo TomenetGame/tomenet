@@ -1996,43 +1996,43 @@ static errr term_data_init(term_data *td, bool fixed, cptr name, cptr font)
 		if (n) win_lines = atoi(n);
 	}
 #endif
-	if (!strcmp(name, "Mirror")) {
+	if (!strcmp(name, ang_term_name[1])) {
 		n = getenv("TOMENET_X11_WID_MIRROR");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_MIRROR");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Recall")) {
+	if (!strcmp(name, ang_term_name[2])) {
 		n = getenv("TOMENET_X11_WID_RECALL");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_RECALL");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Choice")) {
+	if (!strcmp(name, ang_term_name[3])) {
 		n = getenv("TOMENET_X11_WID_CHOICE");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_CHOICE");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Term-4")) {
+	if (!strcmp(name, ang_term_name[4])) {
 		n = getenv("TOMENET_X11_WID_TERM_4");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_TERM_4");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Term-5")) {
+	if (!strcmp(name, ang_term_name[5])) {
 		n = getenv("TOMENET_X11_WID_TERM_5");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_TERM_5");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Term-6")) {
+	if (!strcmp(name, ang_term_name[6])) {
 		n = getenv("TOMENET_X11_WID_TERM_6");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_TERM_6");
 		if (n) win_lines = atoi(n);
 	}
-	if (!strcmp(name, "Term-7")) {
+	if (!strcmp(name, ang_term_name[7])) {
 		n = getenv("TOMENET_X11_WID_TERM_7");
 		if (n) win_cols = atoi(n);
 		n = getenv("TOMENET_X11_HGT_TERM_7");
@@ -2471,7 +2471,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_MIRROR;
 
 	/* Initialize the recall window */
-	term_data_init(&mirror, FALSE, "Mirror", fnt_name);
+	term_data_init(&mirror, FALSE, ang_term_name[1], fnt_name);
 	term_mirror = Term;
 	ang_term[1]=Term;
 
@@ -2489,7 +2489,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_RECALL;
 
 	/* Initialize the recall window */
-	term_data_init(&recall, FALSE, "Recall", fnt_name);
+	term_data_init(&recall, FALSE, ang_term_name[2], fnt_name);
 	term_recall = Term;
 	ang_term[2]=Term;
 
@@ -2507,7 +2507,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_CHOICE;
 
 	/* Initialize the choice window */
-	term_data_init(&choice, FALSE, "Choice", fnt_name);
+	term_data_init(&choice, FALSE, ang_term_name[3], fnt_name);
 	term_choice = Term;
 	ang_term[3]=Term;
 
@@ -2525,7 +2525,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_4;
 
 	/* Initialize the choice window */
-	term_data_init(&term_4, FALSE, "Term-4", fnt_name);
+	term_data_init(&term_4, FALSE, ang_term_name[4], fnt_name);
 	term_term_4 = Term;
 	ang_term[4]=Term;
 
@@ -2543,7 +2543,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_5;
 
 	/* Initialize the choice window */
-	term_data_init(&term_5, FALSE, "Term-5", fnt_name);
+	term_data_init(&term_5, FALSE, ang_term_name[5], fnt_name);
 	term_term_5 = Term;
 	ang_term[5]=Term;
 
@@ -2561,7 +2561,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_6;
 
 	/* Initialize the choice window */
-	term_data_init(&term_6, FALSE, "Term-6", fnt_name);
+	term_data_init(&term_6, FALSE, ang_term_name[6], fnt_name);
 	term_term_6 = Term;
 	ang_term[6]=Term;
 
@@ -2579,7 +2579,7 @@ errr init_x11(void)
 	if (!fnt_name) fnt_name = DEFAULT_X11_FONT_TERM_7;
 
 	/* Initialize the choice window */
-	term_data_init(&term_7, FALSE, "Term-7", fnt_name);
+	term_data_init(&term_7, FALSE, ang_term_name[7], fnt_name);
 	term_term_7 = Term;
 	ang_term[7]=Term;
 

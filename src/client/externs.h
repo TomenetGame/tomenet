@@ -56,7 +56,7 @@ extern owner_type owners[MAX_STORES][MAX_STORE_OWNERS];
 extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
-extern char ang_term_name[8][40];
+extern char ang_term_name[10][40];
 extern cptr window_flag_desc[32];
 extern cptr monster_spells4[32];
 extern cptr monster_spells5[32];

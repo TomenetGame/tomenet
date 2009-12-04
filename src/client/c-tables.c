@@ -392,6 +392,7 @@ cptr stat_names_reduced[6] =
 /*
  * Standard window names
  */
+#if 0
 char ang_term_name[8][40] =
 {
 	"Angband",
@@ -403,6 +404,19 @@ char ang_term_name[8][40] =
 	"Term-6",
 	"Term-7"
 };
+#else
+char ang_term_name[10][40] =
+{
+	"TomeNET",
+	"Msg/Chat",
+	"Inventory",
+	"Chat",
+	"Messages",
+	"Character",
+	"Term-6",
+	"Term-7"
+};
+#endif
 
 
 /*
