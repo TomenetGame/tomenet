@@ -3523,6 +3523,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 
 	int i, n;
 	bool done = FALSE;
+	u32b seed;
 
 	/* make version strings. */
 	version_build();
@@ -3675,6 +3676,15 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS);
 		}
 	}
+
+	/* Basic seed */
+	seed = (time(NULL));
+
+	/* Use the complex RNG */
+	Rand_quick = FALSE;
+
+	/* Seed the "complex" RNG */
+	Rand_state_init(seed);
 
 	/* Do network initialization, etc. */
 	/* Add ability to specify cmdline to windows  -Zz*/
