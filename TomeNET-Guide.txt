@@ -101,6 +101,7 @@ Contents
     (6.3)   Abilities
     (6.4)   Races
     (6.5)   Classes/Professions, titles, melee blows/round
+    (6.5a)  Start-up Blows/Round Table
     (6.6)   Sanity
     (6.7)   Mimic details, polymorph rings
     (6.7a)  Druid form details
@@ -181,7 +182,7 @@ compile the game under '(2.1) Installing TomeNET'.
    to endure sanity-reducing effects.
  (If you are new to the game, it is NOT recommended to choose one of these:
  Istar, Priest, Shaman, Adventurer.
- Details about how STR and DEX affect startup blows/round are given in (6.5).)
+ Details about how STR and DEX affect startup blows/round are given in (6.5a).)
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
 -It's strongly recommended to not choose 'fruit bat' body either :).
@@ -1167,10 +1168,10 @@ How to compile the game binary:
 Go into '/tomenet/src' where the file 'makefile' is located.
 Make sure you have the C-devel, X11-devel, ncurses, ncurses-devel and crypt
 libraries installed. The package names are usually:
-xorg-dev, libncurses5, libncurses5-dev, libgcrypt, libc6-dev.
+xorg-dev, libncurses5, libncurses5-dev, libgcrypt11, libc6-dev.
 Enter these two lines:
-	make clean
-	make tomenet
+        make clean
+        make tomenet
 and the binary 'tomenet' will be created in this folder 'tomenet/src'.
 IMPORTANT NOW: If your makefile is an older version, you need to move the
 binary one level upwards, ie into '/tomenet' ! If your makefile is newer,
@@ -1358,7 +1359,7 @@ DEXterity, CONstitution, CHaRisma.
 
 IMPORTANT NOTE: For fighters (rogues also belong to these) that use weapons,
 it is important that you have enough STRength and DEXterity to execute at
-least two attacks per round, called bpr (blows per round, see (6.5)).
+least two attacks per round, called bpr (blows per round, see (6.5a)).
 Sometimes this requires you to get rid of your initial weapon and buy a very
 light weapon, for example one of these:
 dagger or main gauche (sword class),
@@ -6866,6 +6867,9 @@ Note that a (heavier) startup weapon at 2 bpr might beat a very light weapon at
 3 bpr for a few levels at the beginning, maybe up to 4 or so. So you can wait
 for a little a bit until spending $ on it.
 
+
+(6.5a) Start-up Blows/Round Table
+---------------------------------
 Here is a table, showing you some bpr numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
