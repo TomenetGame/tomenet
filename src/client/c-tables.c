@@ -441,7 +441,7 @@ cptr window_flag_desc[32] =
 	"Display character",
 	"Display lag-o-meter",
 	NULL,
-	"Display messages",
+	"Display messages/chat",
 	"Display overhead view",
 	"Display monster recall",
 	"Display object recall",
