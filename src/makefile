@@ -106,7 +106,7 @@ CONS_SRCS = \
   common/sockbuf.c common/net-ibm.c common/common.c \
   console/z-term.c common/z-rand.c \
   client/main-ibm.c client/main-cap.c client/main-gcu.c \
-  client/main-x11.c client/main-xaw.c \
+  client/main-x11.c client/main-xaw.c client/c-tables.c \
   console/variable.c console/c-util.c console/console.c console/c-init.c \
   common/SFMT.c
 
@@ -115,7 +115,7 @@ CONS_OBJS = \
   common/sockbuf.o common/net-ibm.o common/common.o \
   console/z-term.o common/z-rand.o \
   client/main-ibm.o client/main-cap.o client/main-gcu.o \
-  client/main-x11.o client/main-xaw.o \
+  client/main-x11.o client/main-xaw.o client/c-tables.o \
   console/variable.o console/c-util.o console/console.o console/c-init.o \
   common/SFMT.o
 
@@ -352,6 +352,7 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 TOLUA = server/tolua
 
 all: tomenet tomenet.console tomenet.server accedit evilmeta
+	@echo Now you need to copy the binaries out of the src directory or run \"make install\".
 
 # sorry. install on every make is a real pain ;)
 
