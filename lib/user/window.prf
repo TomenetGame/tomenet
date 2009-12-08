@@ -16,3 +16,5 @@ W:2:0
 W:3:3
 # Window 'Term-4', Flag 'Display chat'
 W:4:18
+# Window 'Term-5', Flag 'Display equip/inven'
+W:5:1
