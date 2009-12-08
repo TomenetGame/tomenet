@@ -410,9 +410,9 @@ char ang_term_name[10][40] =
 	"TomeNET",
 	"Msg/Chat",
 	"Inventory",
-	"Chat",
-	"Messages",
 	"Character",
+	"Chat",
+	"Equipment",
 	"Term-6",
 	"Term-7"
 };
