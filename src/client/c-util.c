@@ -3520,7 +3520,6 @@ void interact_macros(void)
 
 void auto_inscriptions(void)
 {
-#if 1
 	int i, cur_line = 0;
 	bool redraw = TRUE, quit = FALSE;
 
@@ -3531,6 +3530,9 @@ void auto_inscriptions(void)
 
 	/* Save screen */
 	Term_save();
+
+	/* Prevent macros from triggering in here */
+	inkey_interact_macros = TRUE;
 
 	/* Process requests until done */
 	while (1)
@@ -3668,7 +3670,9 @@ void auto_inscriptions(void)
 
 	/* Flush the queue */
 	Flush_queue();
-#endif
+
+	/* Re-enable macros */
+	inkey_interact_macros = FALSE;
 }
 
 
