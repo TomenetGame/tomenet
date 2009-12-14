@@ -9343,12 +9343,14 @@ SOLUTION:   A rare problem that is not caused by TomeNET really. Restart your
             MS Windows system and the text should be visible again.
             (This usually only happens once, after updating the client.)
 
-PROBLEM 04: All windows except for the main window stay empty. (occurs on
-            Windows machines).
+PROBLEM 04: All windows except for the main window stay empty.
 SOLUTION:   First make sure it's really a bug and not just missing window
             settings: Press '=' key and 'W' key and configure your windows
-            appropriately. Save your options ('9'). If the windows are still
-            blank, read on.
+            appropriately. It is vital to set one of the windows to display
+            game and/or chat messages, so you can actually read what other
+            players write, and also keep track of combat messages!
+            When you're done setting up the windows, go to 'save options'
+            (key '9'). If all the windows are still blank, read on:
             Reasons are unknown. Sometimes a simple reboot helps. Otherwise:
             Open TomeNET.ini file with a text editor, look for the window
             sections, change the fonts to the same settings (8x13) as in the
