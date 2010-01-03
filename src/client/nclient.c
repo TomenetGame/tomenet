@@ -204,7 +204,7 @@ int Receive_file(void){
 				}
 				n += m;
 				x = local_file_write(0, fnum, len);
-				if (x == 0) {
+				if (x == -1) {
 					/* Not enough data available */
 					
 					/* Rollback the socket buffer */

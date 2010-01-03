@@ -309,7 +309,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len){
 	if(c_fd == (struct ft_data*) NULL) return(0);
 	if (Receive_file_data(ind, len, c_fd->buffer) == 0) {
 		/* Not enough data available */
-		return 0;
+		return -1;
 	}
 	fwrite(&c_fd->buffer, len, 1, c_fd->fp);
 	return(1);
