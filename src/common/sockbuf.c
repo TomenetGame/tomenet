@@ -162,6 +162,30 @@ int Sockbuf_advance(sockbuf_t *sbuf, int len)
     return 0;
 }
 
+int Sockbuf_rollback(sockbuf_t *sbuf, int len)
+{
+    /*
+     * First do a few buffer consistency checks.
+     */
+    if (sbuf->ptr < sbuf->buf) {
+	errno = 0;
+	plog("Sockbuf pointer bad");
+	sbuf->ptr = sbuf->buf;
+    }
+    if (len > sbuf->ptr - sbuf->buf) {
+	plog("Sockbuf rollback too big");
+	len = sbuf->ptr - sbuf->buf;
+    }
+    if (len < 0) {
+	errno = 0;
+	plog(format("Sockbuf rollback negative (%d)", len));
+    }
+    else {
+	sbuf->ptr -= len;
+    }
+    return 0;
+}
+
 int Sockbuf_flush(sockbuf_t *sbuf)
 {
     int			len,

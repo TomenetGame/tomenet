@@ -79,6 +79,7 @@ int Sockbuf_init(sockbuf_t *sbuf, int sock, int size, int state);
 int Sockbuf_cleanup(sockbuf_t *sbuf);
 int Sockbuf_clear(sockbuf_t *sbuf);
 int Sockbuf_advance(sockbuf_t *sbuf, int len);
+int Sockbuf_rollback(sockbuf_t *sbuf, int len);
 int Sockbuf_flush(sockbuf_t *sbuf);
 int Sockbuf_write(sockbuf_t *sbuf, char *buf, int len);
 int Sockbuf_read(sockbuf_t *sbuf);
