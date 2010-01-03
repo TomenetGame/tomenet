@@ -168,7 +168,7 @@ int Receive_file(void){
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
 	unsigned long csum = 0;
-	int n, m;
+	int n, bytes_read;
 	
 	/* NOTE: The amount of data read is stored in n so that the socket
 	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
@@ -176,13 +176,15 @@ int Receive_file(void){
 		return n;
 	
 	if (n == 3) {
+		bytes_read = 4;
+
 		switch(command){
 			case PKT_FILE_INIT:
-				if ((m = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
 					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, n);
+					Sockbuf_rollback(&rbuf, bytes_read);
 					
-					return m;
+					return n;
 				}
 				x = local_file_init(0, fnum, fname);
 				if (x) {
@@ -190,25 +192,25 @@ int Receive_file(void){
 					c_msg_print(outbuf);
 				}
 				else {
-					if(errno == EACCES) {
+					if (errno == EACCES) {
 						c_msg_print("\377rNo access to update files");
 					}
 				}
 				break;
 			case PKT_FILE_DATA:
-				if ((m = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
+				if ((n = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
 					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, n);
+					Sockbuf_rollback(&rbuf, bytes_read);
 					
-					return m;
+					return n;
 				}
-				n += m;
+				bytes_read += 2;
 				x = local_file_write(0, fnum, len);
 				if (x == -1) {
 					/* Not enough data available */
 					
 					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, n);
+					Sockbuf_rollback(&rbuf, bytes_read);
 					
 					return 0;
 				}
@@ -232,20 +234,20 @@ int Receive_file(void){
 
 				break;
 			case PKT_FILE_CHECK:
-				if ((m = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+				if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
 					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, n);
+					Sockbuf_rollback(&rbuf, bytes_read);
 					
 					return m;
 				}
 				x = local_file_check(fname, &csum);
 				Packet_printf(&wbuf, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
-				return(1);
+				return 1;
 				break;
 			case PKT_FILE_SUM:
-				if ((m = Packet_scanf(&rbuf, "%ld", &csum)) <= 0) {
+				if ((n = Packet_scanf(&rbuf, "%ld", &csum)) <= 0) {
 					/* Rollback the socket buffer */
-					Sockbuf_rollback(&rbuf, n);
+					Sockbuf_rollback(&rbuf, bytes_read);
 					
 					return m;
 				}
@@ -2631,7 +2633,7 @@ int Receive_line_info(void)
 	}
 
 	/* Keep track of how many bytes have been read from the sockbuf */
-	bytes_read = n;
+	bytes_read = 3;
 
 #if 0
 	/* If this is the mini-map then we can draw if the screen is icky */
@@ -2756,7 +2758,7 @@ int Receive_mini_map(void)
 		return n;
 	}
 
-	bytes_read = n;
+	bytes_read = 3;
 
 	/* Check the max line count */
 	if (y > last_line_info)
@@ -3164,7 +3166,7 @@ int Receive_skills(void)
 			return n;
 		}
 
-		bytes_read += n;
+		bytes_read += 2 * n;
 	}
 
 	/* Store */
@@ -3505,7 +3507,7 @@ int Receive_weather(void)
 			return n;
 		}
 
-		bytes_read += n;
+		bytes_read += 4 * n;
 
 		/* potential forward-compatibility hack:
 		   ignore if too many clouds are sent */
