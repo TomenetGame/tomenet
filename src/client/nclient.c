@@ -168,35 +168,50 @@ int Receive_file(void){
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
 	unsigned long csum=0;
-	int n;
-	n=Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum);
-	if(n==3){
+	int n, m;
+	
+	/* NOTE: The amount of data read is stored in n so that the socket
+	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
+	if ((n = Packet_scanf(&rbuf, "%c%c%hd", &ch, &command, &fnum)) <= 0)
+		return n;
+	
+	if (n == 3) {
 		switch(command){
 			case PKT_FILE_INIT:
-				Packet_scanf(&rbuf, "%s", fname);
-				x=local_file_init(0, fnum, fname);
-				if(x){
+				if ((m = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, n);
+					
+					return m;
+				}
+				x = local_file_init(0, fnum, fname);
+				if (x) {
 					sprintf(outbuf, "\377oReceiving updated file %s [%d]", fname, fnum);
 					c_msg_print(outbuf);
 				}
-				else{
-					if(errno==EACCES){
+				else {
+					if(errno == EACCES) {
 						c_msg_print("\377rNo access to update files");
 					}
 				}
 				break;
 			case PKT_FILE_DATA:
-				Packet_scanf(&rbuf, "%hd", &len);
-				x=local_file_write(0, fnum, len);
+				if ((m = Packet_scanf(&rbuf, "%hd", &len)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, n);
+					
+					return m;
+				}
+				x = local_file_write(0, fnum, len);
 				break;
 			case PKT_FILE_END:
-				x=local_file_close(0, fnum);
-				if(x){
+				x = local_file_close(0, fnum);
+				if (x) {
 					sprintf(outbuf, "\377gReceived file %d", fnum);
 					c_msg_print(outbuf);
 				}
-				else{
-					if(errno==EACCES){
+				else {
+					if (errno == EACCES) {
 						c_msg_print("\377rNo access to lib directory!");
 					}
 				}
@@ -208,50 +223,60 @@ int Receive_file(void){
 
 				break;
 			case PKT_FILE_CHECK:
-				Packet_scanf(&rbuf, "%s", fname);
-				x=local_file_check(fname, &csum);
+				if ((m = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, n);
+					
+					return m;
+				}
+				x = local_file_check(fname, &csum);
 				Packet_printf(&wbuf, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
 				return(1);
 				break;
 			case PKT_FILE_SUM:
-				Packet_scanf(&rbuf, "%ld", &csum);
+				if ((m = Packet_scanf(&rbuf, "%ld", &csum)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, n);
+					
+					return m;
+				}
 				check_return(0, fnum, csum);
-				return(1);
+				return 1;
 				break;
 			case PKT_FILE_ACK:
 				local_file_ack(0, fnum);
-				return(1);
+				return 1;
 				break;
 			case PKT_FILE_ERR:
 				local_file_err(0, fnum);
 				/* continue the send/terminate */
-				return(1);
+				return 1;
 				break;
 			case 0:
-				return(1);
+				return 1;
 			default:
-				x=0;
+				x = 0;
 		}
 		Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
 	}
-	return(1);
+	return 1;
 }
 
 int Receive_file_data(int ind, unsigned short len, char *buffer){
 	memcpy(buffer, rbuf.ptr, len);
 	rbuf.ptr+=len;
-	return(1);
+	return 1;
 }
 
 int Send_file_check(int ind, unsigned short id, char *fname){
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
-	return(0);
+	return 0;
 }
 
 /* index arguments are just for common / laziness */
 int Send_file_init(int ind, unsigned short id, char *fname){
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
-	return(0);
+	return 0;
 }
 
 int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
@@ -260,12 +285,12 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 	if (Sockbuf_write(&wbuf, buf, len) != len){
 		printf("failed sending file data\n");
 	}
-	return(0);
+	return 0;
 }
 
 int Send_file_end(int ind, unsigned short id){
 	Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
-	return(0);
+	return 0;
 }
 
 void Receive_login(void)
@@ -288,7 +313,9 @@ void Receive_login(void)
 
 	/* Read server detail flags for informational purpose - C. Blue */
 	s32b sflag3, sflag2, sflag1, sflag0;
-	n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0);
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflag3, &sflag2, &sflag1, &sflag0)) <= 0) {
+		return;
+	}
 	if (sflag0 & SFLG_RPG) s_RPG = TRUE;
 	if (sflag0 & SFLG_FUN) s_FUN = TRUE;
 	if (sflag0 & SFLG_PARTY) s_PARTY = TRUE;
@@ -378,7 +405,7 @@ void Receive_login(void)
 int Net_setup(void)
 {
 	int i, n, len, done = 0;
-	s16b b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+	s16b b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 	long todo = 1;
 	char *ptr, str[MAX_CHARS];
 
@@ -714,7 +741,7 @@ unsigned char Net_login(){
 		quit("Can't send login packet");
 	}
 
-	/* Get a response from the server, don't let Packet_scanf get it in every case - mikaelh */
+	/* Wait for reply - mikaelh */
 	SetTimeout(5, 0);
         if (!SocketReadable(rbuf.sock))
         {
@@ -723,7 +750,8 @@ unsigned char Net_login(){
         }
 	Sockbuf_read(&rbuf);
 
-	/* Check if the server wanted to destroy the connection - mikaelh */
+	/* Peek in the buffer to check if the server wanted to destroy the
+	 * connection - mikaelh */
 	if (rbuf.ptr[0] == PKT_QUIT) {
 		errno = 0;
 		quit(&rbuf.ptr[1]);
@@ -731,7 +759,7 @@ unsigned char Net_login(){
 	}
 
 	Packet_scanf(&rbuf, "%c", &tc);
-	return(tc);
+	return tc;
 }
 
 /*
@@ -917,7 +945,12 @@ static int Net_packet(void)
 					if (result == 0)
 					{
 						/* Move the remaining data to the queue buffer - mikaelh */
-						Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len);
+						int len = rbuf.len - (rbuf.ptr - rbuf.buf);
+						if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
+						{
+							plog("Can't copy data to the queue buffer in Net_packet");
+							return -1;
+						}
 					}
 				}
 
@@ -930,6 +963,7 @@ static int Net_packet(void)
 					}
 					return -1;
 				}
+
 				Sockbuf_clear(&rbuf);
 				break;
 			}
@@ -952,6 +986,7 @@ static int Net_read(void)
 {
 	int	n;
 
+#if 0
 	for (;;)
 	{
 		/* Wait for data to appear -- Dave Thaler */
@@ -972,6 +1007,25 @@ static int Net_read(void)
 		if (rbuf.ptr[rbuf.len - 1] == PKT_END)
 			return 1;
 	}
+#else
+	/* The above code is broken. If PKT_END isn't aligned with the end of a
+	 * TCP packet, it can block forever - mikaelh */
+
+	/* Do a single read */
+	if ((n = Sockbuf_read(&rbuf)) == -1)
+	{
+		plog("Net input error");
+		return -1;
+	}
+
+	if (rbuf.len <= 0)
+	{
+		Sockbuf_clear(&rbuf);
+		return 0;
+	}
+	
+	return 1;
+#endif
 }
 
 
@@ -985,29 +1039,35 @@ static int Net_read(void)
 int Net_input(void)
 {
 	int	n;
+	int	netfd;
 
-	/* First, clear the buffer */
-	Sockbuf_clear(&rbuf);
+	netfd = Net_fd();
 
-	/* Get some new data */
-	if ((n = Net_read()) <= 0)
-	{
-		return n;
+	/* Keep reading as long as we have something on the socket */
+	while (SocketReadable(netfd)) {
+		/* First, clear the buffer */
+		Sockbuf_clear(&rbuf);
+
+		/* Get some new data */
+		if ((n = Net_read()) <= 0)
+		{
+			return n;
+		}
+
+		/* Write the received data to the command buffer */
+		if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
+		{
+			plog("Can't copy reliable data to buffer in Net_input");
+			return -1;
+		}
+
+		n = Net_packet();
+
+		Sockbuf_clear(&rbuf);
+
+		if (n == -1)
+			return -1;
 	}
-
-	/* Write the received data to the command buffer */
-	if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
-	{
-		plog("Can't copy reliable data to buffer in Net_input");
-		return -1;
-	}
-
-	n = Net_packet();
-
-	Sockbuf_clear(&rbuf);
-
-	if (n == -1)
-		return -1;
 
 	return 1;
 }
@@ -2543,8 +2603,8 @@ int Receive_flush(void)
 
 int Receive_line_info(void)
 {
-	char	ch, c, n;
-	int	x, i;
+	char	ch, c;
+	int	x, i, n, bytes_read;
 	s16b	y;
 	byte	a;
 	bool	draw = FALSE;
@@ -2553,6 +2613,9 @@ int Receive_line_info(void)
 	{
 		return n;
 	}
+
+	/* Keep track of how many bytes have been read from the sockbuf */
+	bytes_read = n;
 
 #if 0
 	/* If this is the mini-map then we can draw if the screen is icky */
@@ -2570,7 +2633,15 @@ int Receive_line_info(void)
 	for (x = 0; x < 80; x++)
 	{
 		/* Read the char/attr pair */
-		Packet_scanf(&rbuf, "%c%c", &c, &a);
+		if ((n = Packet_scanf(&rbuf, "%c%c", &c, &a)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			
+			/* Packet isn't complete, graceful failure */
+			return n;
+		}
+
+		bytes_read += n;
 
 		/* 4.4.3.1 servers use new RLE */
 		if (is_newer_than(&server_version, 4, 4, 3, 0, 0, 5))
@@ -2596,7 +2667,15 @@ int Receive_line_info(void)
 				a &= ~(0x40);
 
 				/* Read the number of repetitions */
-				Packet_scanf(&rbuf, "%c", &n);
+				if ((n = Packet_scanf(&rbuf, "%c", &n)) <= 0) {
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, bytes_read);
+					
+					/* Packet isn't complete, graceful failure */
+					return n;
+				}
+
+				bytes_read += n;
 			}
 			else
 			{
@@ -2652,7 +2731,7 @@ int Receive_line_info(void)
 int Receive_mini_map(void)
 {
 	char	ch, c;
-	int	n, x;
+	int	n, x, bytes_read;
 	s16b	y;
 	byte	a;
 
@@ -2661,13 +2740,23 @@ int Receive_mini_map(void)
 		return n;
 	}
 
+	bytes_read = n;
+
 	/* Check the max line count */
 	if (y > last_line_info)
 		last_line_info = y;
 
 	for (x = 0; x < 80; x++)
 	{
-		Packet_scanf(&rbuf, "%c%c", &c, &a);
+		if ((n = Packet_scanf(&rbuf, "%c%c", &c, &a)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			
+			/* Packet isn't complete, graceful failure */
+			return n;
+		}
+
+		bytes_read += n;
 
 		/* Don't draw anything if "char" is zero */
 		/* Only draw if the screen is "icky" */
@@ -3036,7 +3125,7 @@ int Receive_party(void)
 
 int Receive_skills(void)
 {
-	int	n, i;
+	int	n, i, bytes_read;
 	s16b tmp[12];
 	char	ch;
 
@@ -3045,13 +3134,21 @@ int Receive_skills(void)
 		return n;
 	}
 
+	bytes_read = n;
+
 	/* Read into skills info */
 	for (i = 0; i < 12; i++)
 	{
 		if ((n = Packet_scanf(&rbuf, "%hd", &tmp[i])) <= 0)
 		{
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			
+			/* Packet isn't complete, graceful failure */
 			return n;
 		}
+
+		bytes_read += n;
 	}
 
 	/* Store */
@@ -3358,7 +3455,7 @@ int Receive_ping(void)
 */
 int Receive_weather(void)
 {
-	int	n, i, clouds;
+	int	n, i, clouds, bytes_read;
 	char	ch;
     	int	wg, wt, ww, wi, ws, wx, wy;
     	int	cnum, cidx, cx1, cy1, cx2, cy2, cd, cxm, cym;
@@ -3367,6 +3464,8 @@ int Receive_weather(void)
 	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d%d",
 	    &ch, &wt, &ww, &wg, &wi, &ws, &wx, &wy,
 	    &cnum)) <= 0) return n;
+
+	bytes_read = n;
 
 	/* fix limit */
 	if (cnum >= 0) clouds = cnum;
@@ -3382,7 +3481,15 @@ int Receive_weather(void)
 
 		/* proceed normally */
 		if ((n = Packet_scanf(&rbuf, "%d%d%d%d%d%d%d%d",
-		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) return n;
+		    &cidx, &cx1, &cy1, &cx2, &cy2, &cd, &cxm, &cym)) <= 0) {
+			/* Rollback the socket buffer */
+			Sockbuf_rollback(&rbuf, bytes_read);
+			
+			/* Packet isn't complete, graceful failure */
+			return n;
+		}
+
+		bytes_read += n;
 
 		/* potential forward-compatibility hack:
 		   ignore if too many clouds are sent */
