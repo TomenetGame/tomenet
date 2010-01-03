@@ -167,7 +167,7 @@ int Receive_file(void){
 	char outbuf[80];
 	unsigned short fnum;	/* unique SENDER side file number */
 	unsigned short len;
-	unsigned long csum=0;
+	unsigned long csum = 0;
 	int n, m;
 	
 	/* NOTE: The amount of data read is stored in n so that the socket
@@ -202,7 +202,16 @@ int Receive_file(void){
 					
 					return m;
 				}
+				n += m;
 				x = local_file_write(0, fnum, len);
+				if (x == 0) {
+					/* Not enough data available */
+					
+					/* Rollback the socket buffer */
+					Sockbuf_rollback(&rbuf, n);
+					
+					return 0;
+				}
 				break;
 			case PKT_FILE_END:
 				x = local_file_close(0, fnum);
@@ -262,24 +271,31 @@ int Receive_file(void){
 	return 1;
 }
 
-int Receive_file_data(int ind, unsigned short len, char *buffer){
-	memcpy(buffer, rbuf.ptr, len);
-	rbuf.ptr+=len;
-	return 1;
+int Receive_file_data(int ind, unsigned short len, char *buffer) {
+	/* Check that the sockbuf has enough data */
+	if (&rbuf.buf[rbuf.len] >= &rbuf.ptr[len]) {
+		memcpy(buffer, rbuf.ptr, len);
+		rbuf.ptr += len;
+		return 1;
+	}
+	else {
+		/* Wait for more data */
+		return 0;
+	}
 }
 
-int Send_file_check(int ind, unsigned short id, char *fname){
+int Send_file_check(int ind, unsigned short id, char *fname) {
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_CHECK, id, fname);
 	return 0;
 }
 
 /* index arguments are just for common / laziness */
-int Send_file_init(int ind, unsigned short id, char *fname){
+int Send_file_init(int ind, unsigned short id, char *fname) {
 	Packet_printf(&wbuf, "%c%c%hd%s", PKT_FILE, PKT_FILE_INIT, id, fname);
 	return 0;
 }
 
-int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
+int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len) {
 	Sockbuf_flush(&wbuf);
 	Packet_printf(&wbuf, "%c%c%hd%hd", PKT_FILE, PKT_FILE_DATA, id, len);
 	if (Sockbuf_write(&wbuf, buf, len) != len){
@@ -288,7 +304,7 @@ int Send_file_data(int ind, unsigned short id, char *buf, unsigned short len){
 	return 0;
 }
 
-int Send_file_end(int ind, unsigned short id){
+int Send_file_end(int ind, unsigned short id) {
 	Packet_printf(&wbuf, "%c%c%hd", PKT_FILE, PKT_FILE_END, id);
 	return 0;
 }
