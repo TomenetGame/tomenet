@@ -238,7 +238,7 @@ int Receive_file(void){
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
 					
-					return m;
+					return n;
 				}
 				x = local_file_check(fname, &csum);
 				Packet_printf(&wbuf, "%c%c%hd%ld", PKT_FILE, PKT_FILE_SUM, fnum, csum);
@@ -249,7 +249,7 @@ int Receive_file(void){
 					/* Rollback the socket buffer */
 					Sockbuf_rollback(&rbuf, bytes_read);
 					
-					return m;
+					return n;
 				}
 				check_return(0, fnum, csum);
 				return 1;
