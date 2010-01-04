@@ -588,15 +588,15 @@ void client_init(char *argv1, bool skip)
 	/* Hack -- display the nick */
 	prt(format("Name        : %s", cname), 2, 1);
 
+	/* Initialize the pref files */
+	initialize_main_pref_files();
+
 	if (status == E_NEED_INFO)
 	{
 		/* Get sex/race/class */
 		/* XXX this function sends PKT_KEEPALIVE */
 		get_char_info();
 	}
-
-	/* Initialize the pref files */
-	initialize_main_pref_files();
 
 	/* Setup the key mappings */
 	keymap_init();
