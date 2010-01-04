@@ -3544,8 +3544,8 @@ void auto_inscriptions(void)
 	/* Save screen */
 	Term_save();
 
-	/* Prevent macros from triggering in here */
-	inkey_interact_macros = TRUE;
+	/* Prevent hybrid macros from triggering in here */
+	inkey_msg = TRUE;
 
 	/* Process requests until done */
 	while (1)
@@ -3588,12 +3588,14 @@ void auto_inscriptions(void)
 			quit = TRUE; /* hack to leave loop */
 			break;
 		case 'n':
+		case '2':
 			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
 			cur_line++;
 			if (cur_line >= 20) cur_line = 0;
 			redraw = FALSE;
 			break;
 		case 'p':
+		case '8':
 			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");
 			cur_line--;
 			if (cur_line < 0) cur_line = 19;
@@ -3632,6 +3634,9 @@ void auto_inscriptions(void)
 			save_auto_inscriptions(tmp);
 			break;
 		case 'e':
+		case '6':
+		case '\n':
+		case '\r':
 			/* Clear previous matching string */
 			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
 			/* Go to the correct location */
@@ -3656,6 +3661,7 @@ void auto_inscriptions(void)
 			if (cur_line >= 20) cur_line = 0;
 			break;
 		case 'd':
+		case '\b':
 			strcpy(auto_inscription_match[cur_line], "");
 			strcpy(auto_inscription_tag[cur_line], "");
 			break;
@@ -3684,8 +3690,8 @@ void auto_inscriptions(void)
 	/* Flush the queue */
 	Flush_queue();
 
-	/* Re-enable macros */
-	inkey_interact_macros = FALSE;
+	/* Re-enable hybrid macros */
+	inkey_msg = FALSE;
 }
 
 
