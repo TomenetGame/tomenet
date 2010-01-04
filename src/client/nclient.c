@@ -422,7 +422,7 @@ void Receive_login(void)
  */
 int Net_setup(void)
 {
-	int i, n, len, done = 0;
+	int i, n, len, done = 0, j;
 	s16b b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 	long todo = 1;
 	char *ptr, str[MAX_CHARS];
@@ -480,6 +480,10 @@ int Net_setup(void)
                                         class_info[i].c_adj[3] = b4 - 50;
                                         class_info[i].c_adj[4] = b5 - 50;
                                         class_info[i].c_adj[5] = b6 - 50;
+                                        for (j = 0; j < 6; j++) {
+						Packet_scanf(&cbuf, "%c", &b1);
+						class_info[i].min_recommend[j] = b1;
+					}
 				}
 
 				ptr = (char *) &Setup;
