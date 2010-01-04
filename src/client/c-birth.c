@@ -460,21 +460,25 @@ static void choose_stat_order(void)
 
         /* player can define his stats completely manually: */
         else if (char_creation_flags == 1) {
+		int col1 = 3, col2 = 35, col3 = 54, tmp_stat;
+
                 j = 0; /* current stat to be modified */
                 k = 30; /* free points left */
 
                 clear_from(14);
 
-                c_put_str(TERM_SLATE, "Distribute your attribute points:", 14, 5);
-                c_put_str(TERM_SLATE, "Free points: ", 14, 45);
-                c_put_str(TERM_L_GREEN, format("%2d", k), 14, 60);
-                put_str("Use keys '+', '-', 'RETURN'", 16, 5);
-                put_str("or 8/2/4/6 on the number pad", 17, 5);
-                put_str("to modify and navigate.", 18, 5);
-                put_str("Press ESC to proceed, after", 19, 5);
-                put_str("you distributed all points.", 20, 5);
-                put_str("(Press 'Q' to quit.)", 21, 5);
-                c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, 5);
+                c_put_str(TERM_SLATE, "Distribute your attribute points (use them all!):", 13, col1);
+                c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
+                c_put_str(TERM_SLATE, "                         Recommended,", 14, col2);
+                c_put_str(TERM_SLATE, "Current:      (Base)     if possible:", 15, col2);
+
+                put_str("Use keys '+', '-', 'RETURN'", 16, col1);
+                put_str("or 8/2/4/6 or arrow keys to", 17, col1);
+                put_str("modify and navigate.", 18, col1);
+                put_str("Press ESC to proceed, after", 19, col1);
+                put_str("you distributed all points.", 20, col1);
+                put_str("(Press 'Q' to quit.)", 21, col1);
+                c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 
 		c_put_str(TERM_L_UMBER, "Strength -    ", 3, 30);
 		c_put_str(TERM_YELLOW, "  How quickly you can strike.", 4, 30);
@@ -492,29 +496,39 @@ static void choose_stat_order(void)
 
 		while (1)
 		{
-			c_put_str(TERM_L_GREEN, format("%2d", k), 14, 60);
+			c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
 
 			for (i = 0; i < 6; i++) {
 				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];
 				if (crb > 18) crb = 18 + (crb - 18) * 10;
 				cnv_stat(crb, buf);
-				cnv_stat(stat_order[i], buf2);
-                        	sprintf(out_val, "%s: %s      (base %s)", stats[i], buf, buf2);
+				sprintf(buf2, "%2d", stat_order[i]);
+                        	sprintf(out_val, "%s: %s    (%s)", stats[i], buf, buf2);
+
+				tmp_stat = cp_ptr->min_recommend[i];
+				if (tmp_stat) {
+					if (tmp_stat > 18) tmp_stat = 18 + (tmp_stat - 18) * 10;
+					cnv_stat(tmp_stat, buf);
+					if (crb >= tmp_stat)
+						c_put_str(TERM_L_GREEN, buf, 16 + i, col2 + 26);
+					else
+						c_put_str(TERM_GREEN, buf, 16 + i, col2 + 26);
+				}
 
                         	if (j == i) {
                         		if (stat_order[i] == 10-2)
-                        			c_put_str(TERM_L_RED, out_val, 16 + i, 45);
+                        			c_put_str(TERM_L_RED, out_val, 16 + i, col2);
                         		else if (stat_order[i] == 17)
-                        			c_put_str(TERM_L_BLUE, out_val, 16 + i, 45);
+                        			c_put_str(TERM_L_BLUE, out_val, 16 + i, col2);
                         		else
-                        			c_put_str(TERM_ORANGE, out_val, 16 + i, 45);
+                        			c_put_str(TERM_ORANGE, out_val, 16 + i, col2);
                         	} else {
                         		if (stat_order[i] == 10-2)
-		                        	c_put_str(TERM_RED, out_val, 16 + i, 45);
+		                        	c_put_str(TERM_RED, out_val, 16 + i, col2);
                         		else if (stat_order[i] == 17)
-                        			c_put_str(TERM_VIOLET, out_val, 16 + i, 45);
+                        			c_put_str(TERM_VIOLET, out_val, 16 + i, col2);
 		                        else
-		                        	c_put_str(TERM_L_UMBER, out_val, 16 + i, 45);
+		                        	c_put_str(TERM_L_UMBER, out_val, 16 + i, col2);
 		                }
                 	}
 
@@ -637,7 +651,7 @@ static void choose_stat_order(void)
 		for (i = 3; i < 12; i++) {
 			Term_erase(30, i, 255);
 		}
-		clear_from(14);
+		clear_from(13);
         }
 }
 

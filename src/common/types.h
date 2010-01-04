@@ -1557,7 +1557,8 @@ struct player_class
 
         byte color;                     /* @ color */
 
-	s16b c_adj[6];		/* Class stat modifier */
+	s16b c_adj[6];			/* Class stat modifier */
+	s16b min_recommend[6];		/* Recommended minimum stat just for informing the user */
 
 	s16b c_dis;			/* class disarming */
 	s16b c_dev;			/* class magic devices */

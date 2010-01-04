@@ -480,10 +480,11 @@ int Net_setup(void)
                                         class_info[i].c_adj[3] = b4 - 50;
                                         class_info[i].c_adj[4] = b5 - 50;
                                         class_info[i].c_adj[5] = b6 - 50;
-                                        for (j = 0; j < 6; j++) {
-						Packet_scanf(&cbuf, "%c", &b1);
-						class_info[i].min_recommend[j] = b1;
-					}
+                                        if (is_newer_than(&server_version, 4, 4, 3, 1, 0, 0))
+	                                        for (j = 0; j < 6; j++) {
+							Packet_scanf(&cbuf, "%c", &b1);
+							class_info[i].min_recommend[j] = b1;
+						}
 				}
 
 				ptr = (char *) &Setup;
