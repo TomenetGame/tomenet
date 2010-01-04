@@ -469,7 +469,7 @@ static void choose_stat_order(void)
 
                 c_put_str(TERM_SLATE, "Distribute your attribute points (use them all!):", 13, col1);
                 c_put_str(TERM_L_GREEN, format("%2d", k), 13, col3);
-                c_put_str(TERM_SLATE, "                         Recommended,", 14, col2);
+                c_put_str(TERM_SLATE, "                         Min. recommended,", 14, col2);
                 c_put_str(TERM_SLATE, "Current:      (Base)     if possible:", 15, col2);
 
                 put_str("Use keys '+', '-', 'RETURN'", 16, col1);
