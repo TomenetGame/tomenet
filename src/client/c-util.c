@@ -2972,8 +2972,10 @@ void interact_macros(void)
 		Term_putstr(5,  9, -1, TERM_SLATE, "(8) Create an empty macro       (completely disables a key)");
 		Term_putstr(5, 10, -1, TERM_WHITE, "(9) Query an existing macro on a key");
 		Term_putstr(5, 11, -1, TERM_WHITE, "(l) List all macros");
-		Term_putstr(5, 12, -1, TERM_SLATE, "(q/Q) Enter and create a 'quick & dirty' macro / set preferences"),
-		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
+//		Term_putstr(5, 12, -1, TERM_SLATE, "(q/Q) Enter and create a 'quick & dirty' macro / set preferences"),
+		Term_putstr(5, 12, -1, TERM_SLATE, "(q) Enter and create a 'quick & dirty' macro"),
+//		Term_putstr(5, 13, -1, TERM_WHITE, "(r/R) Record a macro / set preferences");
+		Term_putstr(5, 13, -1, TERM_WHITE, "(r) Record a macro");
 		Term_putstr(5, 14, -1, TERM_WHITE, "(W/w) Wipe all macros / reload default macro files");
 
 		/* Prompt */
