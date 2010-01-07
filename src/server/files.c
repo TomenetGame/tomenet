@@ -2233,9 +2233,6 @@ void close_game(void)
 		/*highscore_fd = -1;*/
 	}
 
-	/* Stop the timer */
-	teardown_timer();
-
 	/* Try to save the server information */
 	save_server_info();
 
@@ -2578,9 +2575,6 @@ void exit_game_panic(void)
 	}
 
 //	wipeout_needless_objects();
-
-	/* Stop the timer */
-	teardown_timer();
 
 	if (!save_server_info()) quit("server panic info save failed!");
 

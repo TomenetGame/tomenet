@@ -6578,9 +6578,6 @@ void shutdown_server(void)
 		Destroy_connection(p_ptr->conn, "Server has been updated, please login again."); /* was "Server shutdown (save succeeded)" */
 	}
 
-	/* Stop the timer */
-	teardown_timer();
-
 	/* Save the server state */
 	if (!save_server_info()) quit("Server state save failed!");
 
