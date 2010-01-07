@@ -710,14 +710,14 @@ void Start_evilmeta(void)
 
 void Check_evilmeta(void)
 {
+	int status;
+
 	if (metapid == 0)
 	{
 		Start_evilmeta();
 	}
 
 #ifndef WINDOWS
-	int status;
-
 	/* find out what has happened to evilmeta - mikaelh */
 	else if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
 	{
