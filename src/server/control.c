@@ -8,6 +8,10 @@
 #include "angband.h"
 #include "control.h"
 
+#ifdef MINGW
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#endif
+
 #ifdef SERVER_GWPORT
 #if 0
 /* Server gateway stuff */

@@ -55,6 +55,8 @@ extern int	SetSocketSendBufferSize(int, int);
 extern int	SetSocketNonBlocking(int, int);
 extern int	SetSocketNoDelay(int, int);
 extern int	CreateClientSocket(char *, int);
+extern int	SocketAccept(int fd);
+extern int	SocketLinger(int fd);
 extern int	SocketRead(int, char *, int);
 extern int	GetSocketError(int);
 extern int	SocketReadable(int);
@@ -71,6 +73,7 @@ extern char	*DgramLastname(int fd);
 extern int	DgramLastport(int fd);
 extern void	DgramClose(int);
 extern void	GetLocalHostName(char *, unsigned);
+extern int	CreateServerSocket(int port);
 extern int SocketClose(int fd);
 extern void CleanupDgramSocket(int sock);
 

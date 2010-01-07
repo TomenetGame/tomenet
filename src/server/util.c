@@ -7,7 +7,14 @@
 #define SERVER
 
 #include "angband.h"
+#ifdef TOMENET_WORLDS
 #include "../world/world.h"
+#endif
+
+#ifdef MINGW
+/* For gettimeofday */
+#include <sys/time.h>
+#endif
 
 //static int name_lookup_loose_quiet(int Ind, cptr name, u16b party);
 
@@ -3639,7 +3646,9 @@ void do_benchmark(int Ind) {
 	struct timeval begin, end;
 	int sec, usec;
 
+#ifndef WINDOWS
 	block_timer();
+#endif
 
 	/* Use gettimeofday to get precise time */
 	gettimeofday(&begin, NULL);
@@ -3650,7 +3659,9 @@ void do_benchmark(int Ind) {
 
 	gettimeofday(&end, NULL);
 
+#ifndef WINDOWS
 	allow_timer();
+#endif
 
 	/* Calculate the time */
 	sec = end.tv_sec - begin.tv_sec;

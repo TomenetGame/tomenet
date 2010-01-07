@@ -3368,7 +3368,7 @@ summon_override_checks = 0; /* reset admin summoning override flags */
 /*
  * Attempt to place a "group" of monsters around the given location
  */
-static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool small, int s_clone, int clone_summoning)
+static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool little, int s_clone, int clone_summoning)
 {
 	monster_race *r_ptr = &r_info[r_idx];
 
@@ -3406,7 +3406,7 @@ static bool place_monster_group(struct worldpos *wpos, int y, int x, int r_idx, 
 	total += extra;
 
 	/* fewer friends.. */
-	if (small) total >>= 2;
+	if (little) total >>= 2;
 
 	/* Minimum size */
 	if (total < 1) total = 1;

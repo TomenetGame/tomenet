@@ -17,7 +17,9 @@
 
 #ifdef HANDLE_SIGNALS
 #include <signal.h>
+#ifndef WINDOWS
 #include <sys/wait.h>
+#endif
 #endif
 
 /* The first x highscore entries that are displayed to players: */
@@ -2501,6 +2503,8 @@ void wipeout_needless_objects()
 void exit_game_panic(void)
 {
 	int i = 1;
+
+#ifndef WINDOWS
 	int dumppid, dumpstatus;
 
 	/* fork() a child process that will abort() - mikaelh */
@@ -2519,6 +2523,7 @@ void exit_game_panic(void)
 		/* wait for the child */
 		waitpid(dumppid, &dumpstatus, 0);
 	}
+#endif
 
 	/* If nothing important has happened, just quit */
 	if (!server_generated || server_saved) quit("panic");

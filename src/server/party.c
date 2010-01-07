@@ -6,7 +6,9 @@
 #include "angband.h"
 #include "party.h"
 
+#ifdef TOMENET_WORLDS
 #include "../world/world.h"
+#endif
 
 /*
  * Give some exp-bonus to encourage partying (aka "C.Blue party bonus") [2]
@@ -38,7 +40,12 @@ bool WriteAccount(struct account *r_acc, bool new){
 #ifdef NETBSD
 	fd=open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK);
 #else
+#ifdef WINDOWS
+	/* Not really ideal, but works */
+	fd=open("tomenet.acc", O_RDWR);
+#else
 	fd=open("tomenet.acc", O_RDWR|O_NONBLOCK);
+#endif
 #endif
 	if(fd<0) return(FALSE);
 #if (!defined(NETBSD)) && (!defined(WIN32))
@@ -2050,6 +2057,7 @@ bool add_ignore(int Ind, cptr name)
 		return FALSE;
 	}
 
+#ifdef TOMENET_WORLDS
 	if((pname=strchr(name, '@'))){
 		struct remote_ignore *curr, *prev=NULL;
 		struct rplist *w_player;
@@ -2088,6 +2096,7 @@ bool add_ignore(int Ind, cptr name)
 		}
 		return(TRUE);
 	}
+#endif
 
 	i = name_lookup_loose(Ind, name, TRUE);
 	if (!i)

@@ -721,7 +721,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 	cave_type **zcave;
 
 //	int             i, d, ny, nx;
-	int             number, small;
+	int             number, little;
 	long		cash;
 
 	if(!(zcave=getcave(wpos))) return;
@@ -730,7 +730,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 	if (o_ptr->tval != TV_CHEST) return;
 
 	/* Small chests often hold "gold" */
-	small = (o_ptr->sval < SV_CHEST_MIN_LARGE);
+	little = (o_ptr->sval < SV_CHEST_MIN_LARGE);
 
 	/* Determine how much to drop (see above) */
 	number = (o_ptr->sval % SV_CHEST_MIN_LARGE) * 2;
@@ -765,7 +765,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr)
 				object_level = ABS(o_ptr->level) + 10;
 
 				/* Small chests often drop gold */
-				if (small && magik(75))
+				if (little && magik(75))
 				{
 					place_gold(wpos, y, x, cash);
 				}

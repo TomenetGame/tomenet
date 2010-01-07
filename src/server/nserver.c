@@ -84,10 +84,12 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef WINDOWS
 #include <sys/wait.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#endif
 #include <errno.h>
 
 
@@ -471,7 +473,9 @@ bool Report_to_meta(int flag)
 		hp = gethostbyname(cfg.meta_address);
 		if (hp == NULL)
 		{
+#ifndef WINDOWS
 			sl_errno = SL_EHOSTNAME;
+#endif
                         init = 0;
 			return (FALSE);
 		}
@@ -503,7 +507,9 @@ bool Report_to_meta(int flag)
 		strcat(buf_meta, ">");
 		if (flag & META_START)
 		{
+#ifndef WINDOWS
 			signal(SIGUSR1, SIG_IGN);
+#endif
 		}
 
                 else if (flag & META_UPDATE)
@@ -650,7 +656,9 @@ bool Report_to_meta(int flag)
 
 	/* kill it or update it */
 	if (metapid) {
+#ifndef WINDOWS
 		kill(metapid, (flag & META_DIE ? SIGTERM : SIGUSR1));
+#endif
 	}
 #else
         allow_timer();
@@ -664,6 +672,7 @@ bool Report_to_meta(int flag)
 void Start_evilmeta(void)
 {
 #ifdef EVIL_METACLIENT
+#ifndef WINDOWS
 	if (cfg.report_to_meta && !metapid) {
 		metapid = fork();
 		if (metapid == -1) {
@@ -693,17 +702,21 @@ void Start_evilmeta(void)
 			exit(-20);
 		}
 	}
+#endif /* WINDOWS */
+	/* TODO */
+	metapid = 1;
 #endif
 }
 
 void Check_evilmeta(void)
 {
-	int status;
-
 	if (metapid == 0)
 	{
 		Start_evilmeta();
 	}
+
+#ifndef WINDOWS
+	int status;
 
 	/* find out what has happened to evilmeta - mikaelh */
 	else if (waitpid(metapid, &status, WNOHANG | WUNTRACED) > 0)
@@ -716,6 +729,7 @@ void Check_evilmeta(void)
 			Start_evilmeta();
 		}
 	}
+#endif /* WINDOWS */
 }
 
 /* update tomenet.acc record structure to a new version - C. Blue
@@ -735,7 +749,11 @@ static bool update_acc_file_version(void) {
         fd = open("tomenet.acc", O_RDWR|O_EXLOCK|O_NONBLOCK|O_CREAT);
 #else 
         fd_old = open("tomenet.acc_old", O_RDONLY);
+#ifdef WINDOWS
+        fd = open("tomenet.acc", O_RDWR|O_CREAT);
+#else
         fd = open("tomenet.acc", O_RDWR|O_NONBLOCK|O_CREAT);
+#endif
 #endif 
 
 	/* No updating to do?
@@ -844,18 +862,24 @@ void setup_contact_socket(void)
 	plog(format("Create TCP socket on port %d...", cfg.game_port));
 	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
+#ifdef WINDOWS
+		Sleep(1);
+#else
 		sleep(1);
+#endif
 	}
 	plog("Set Non-Blocking..."); 
 	if (SetSocketNonBlocking(Socket, 1) == -1)
 	{
 		plog("Can't make contact socket non-blocking");
 	}
+#ifndef WINDOWS
 	/* HACK - Make the socket close-on-exec - mikaelh */
 	if (fcntl(Socket, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		plog("Can't make contact socket close-on-exec");
 	}
+#endif
 	if (SetSocketNoDelay(Socket, 1) == -1)
 	{
 		plog("Can't set TCP_NODELAY on the socket");
@@ -1245,6 +1269,17 @@ static void Contact(int fd, int arg)
 	}
 	ibuf.len = bytes;
 
+#ifdef WINDOWS
+	/* Get the IP address of the client, without using the broken DgramLastAddr() */
+	struct sockaddr_in sin;
+	int len = sizeof(sin);
+	if (getpeername(fd, (struct sockaddr *) &sin, &len) >= 0)
+	{
+		u32b addr = ntohl(sin.sin_addr.s_addr);
+		strnfmt(host_addr, sizeof(host_addr), "%d.%d.%d.%d", (byte)(addr>>24),
+			(byte)(addr>>16), (byte)(addr>>8), (byte)addr);
+	}
+#else
 	strcpy(host_addr, DgramLastaddr(fd));
 	if(errno==ENOTCONN){	/* will be "0.0.0.0" probably */
 		s_printf("Lost connection from unknown peer\n");
@@ -1252,6 +1287,7 @@ static void Contact(int fd, int arg)
 		remove_input(fd);
 		return;
 	}
+#endif
 
 	/*if (Check_address(host_addr)) return;*/
 
