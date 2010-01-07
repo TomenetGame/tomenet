@@ -29,10 +29,6 @@
 #include <sys/time.h>
 #endif
 
-#ifdef WINDOWS
-#include <windows.h>
-#endif /* WINDOWS */
-
 /*char sched_version[] = VERSION;*/
 
 #ifdef sony_news
@@ -85,7 +81,6 @@ int sigprocmask(int how, const sigset_t *set, sigset_t *oset)
 #endif
 
 
-#ifndef WINDOWS
 /*
  * Block or unblock a single signal.
  */
@@ -118,7 +113,6 @@ void allow_timer(void)
 {
     sig_ok(SIGALRM, 1);
 }
-#endif /* ! WINDOWS */
 
 static volatile long	timer_ticks;	/* SIGALRMs that have occurred */
 static long		timers_used;	/* SIGALRMs that have been used */
@@ -136,26 +130,6 @@ static void catch_timer(int signum)
     timer_ticks++;
 }
 
-#ifdef WINDOWS
-#define TIMERNAME "tomenet_timer"
-
-/* Timer handle */
-HANDLE hTimer;
-
-/* Timer thread */
-DWORD WINAPI DoThread(DWORD param)
-{
-	while (sched_running)
-	{
-		if (WaitForSingleObject(hTimer, INFINITE)==WAIT_OBJECT_0)
-		{
-			catch_timer(0);
-		}
-	}
-
-	return(0);
-}
-#endif /* WINDOWS */
 
 /*
  * Setup the handling of the SIGALRM signal
@@ -163,7 +137,6 @@ DWORD WINAPI DoThread(DWORD param)
  */
 void setup_timer(void)
 {
-#ifndef WINDOWS
 	struct itimerval itv;
 	struct sigaction act;
 
@@ -207,37 +180,6 @@ void setup_timer(void)
 	 * Allow the real-time timer to generate SIGALRM signals.
 	 */
 	allow_timer();
-#else /* WINDOWS */
-	HANDLE hThread;
-	DWORD ThreadID;
-	LARGE_INTEGER li;
-
-	/* sanity check */
-	if (timer_freq <= 0) {
-		plog(format("illegal timer frequency: %ld", timer_freq));
-		exit(1);
-	}
-
-	/* Initialize a timer object */
-	hTimer = CreateWaitableTimer(NULL, FALSE, TIMERNAME);
-	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)DoThread,
-			       NULL, 0, &ThreadID);
-	li.QuadPart = -10000; /* unit=100ns (negative for relative); wait 1ms */
-	SetWaitableTimer(hTimer, &li, 1000/timer_freq, NULL, &li, FALSE);
-	hTimer = OpenWaitableTimerA(TIMER_ALL_ACCESS, FALSE, TIMERNAME);
-
-	timers_used = timer_ticks;
-	time(&current_time);
-	ticks_till_second = timer_freq;
-#endif /* WINDOWS */
-}
-
-void teardown_timer(void)
-{
-#ifdef WINDOWS
-	CancelWaitableTimer(hTimer);
-	CloseHandle(hTimer);
-#endif
 }
 
 
@@ -567,7 +509,7 @@ void sched(void)
 		    io_todo--;
 		}
 	    }
-#if !defined(VMS) && !defined(WINDOWS)
+#ifndef VMS
 	    if (io_todo == 0) {
 		tvp = NULL;
 	    }
