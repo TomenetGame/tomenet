@@ -1104,6 +1104,8 @@ static errr term_force_font(term_data *td, cptr name)
 
 	char buf[1024];
 
+	bool used;
+
 
 #ifdef USE_LOGFONT
 	td->font_id = CreateFontIndirect(&(td->lf));
@@ -1117,7 +1119,7 @@ static errr term_force_font(term_data *td, cptr name)
 	/* Forget old font */
 	if (td->font_file)
 	{
-		bool used = FALSE;
+		used = FALSE;
 
 		/* Scan windows */
 		for (i = 0; i < MAX_TERM_DATA; i++)
@@ -1184,11 +1186,32 @@ static errr term_force_font(term_data *td, cptr name)
 	/* Save new font name */
 	td->font_file = string_make(buf);
 
-	/* Load the new font or quit */
-	if (!AddFontResource(buf))
+	used = FALSE;
+
+	/* Scan windows */
+	for (i = 0; i < MAX_TERM_DATA; i++)
 	{
-		quit_fmt("Font file corrupted:\n%s", buf);
+		/* Check "screen" */
+		if ((td != &data[i]) &&
+			(data[i].font_file) &&
+			(streq(data[i].font_file, td->font_file)))
+		{
+			used = TRUE;
+		}
 	}
+
+	/* Only call AddFontResource once for each file or the font files
+	 * will remain locked! - mikaelh */
+	if (!used) {
+		/* Load the new font or quit */
+		if (!AddFontResource(buf))
+		{
+			quit_fmt("Font file corrupted:\n%s", buf);
+		}
+	}
+
+	/* Notify other applications that a new font is available  XXX */
+	PostMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
 
 	/* Create the font XXX XXX XXX Note use of "base" */
 	td->font_id = CreateFont(hgt, wid, 0, 0, FW_DONTCARE, 0, 0, 0,
