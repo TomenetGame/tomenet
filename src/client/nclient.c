@@ -967,7 +967,7 @@ int Net_input(void)
 		n = Sockbuf_read(&rbuf);
 
 		if (n == 0) {
-			quit("TCP connection closed");
+			quit("Server closed the connection");
 		} else if (n < 0) {
 			return n;
 		} else {
