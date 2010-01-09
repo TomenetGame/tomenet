@@ -952,42 +952,8 @@ static int Net_packet(void)
 	return 0;
 }
 
-
 /*
- * Read a packet into one of the input buffers.
- * If it is a frame update then we check to see
- * if it is an old or duplicate one.  If it isn't
- * a new frame then the packet is discarded and
- * we retry to read a packet once more.
- * It's a non-blocking read.
- */
-static int Net_read(void)
-{
-	int	n;
-
-	/* Do a single read */
-	if ((n = Sockbuf_read(&rbuf)) == -1)
-	{
-		plog("Net input error");
-		return -1;
-	}
-
-	if (rbuf.len <= 0)
-	{
-		Sockbuf_clear(&rbuf);
-		return 0;
-	}
-	
-	return 1;
-}
-
-
-/*
- * Read frames from the net until there are no more available.
- * If the server has flooded us with frame updates then we should
- * discard everything except the most recent ones.  The X server
- * may be too slow to keep up with the rate of the XPilot server
- * or there may have been a network hickup if the net is overloaded.
+ * Read packets from the net until there are no more available.
  */
 int Net_input(void)
 {
@@ -998,19 +964,21 @@ int Net_input(void)
 
 	/* Keep reading as long as we have something on the socket */
 	while (SocketReadable(netfd)) {
-		/* Get some new data */
-		if ((n = Net_read()) <= 0)
-		{
+		n = Sockbuf_read(&rbuf);
+
+		if (n == 0) {
+			quit("TCP connection closed");
+		} else if (n < 0) {
 			return n;
+		} else {
+			n = Net_packet();
+
+			/* Make room for more packets */
+			Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
+
+			if (n == -1)
+				return -1;
 		}
-
-		n = Net_packet();
-
-		/* Make room for more packets */
-		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-
-		if (n == -1)
-			return -1;
 	}
 
 	return 1;
