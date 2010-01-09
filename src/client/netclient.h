@@ -6,7 +6,7 @@ extern int	receive_window_size;
 static int Net_packet();
 int Net_setup(void);
 int Net_verify(char *real, char *nick, char *pass);
-int Net_init(char *server, int fd);
+int Net_init(int fd);
 void Net_cleanup(void);
 int Net_flush(void);
 int Net_fd(void);
