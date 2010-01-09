@@ -919,7 +919,8 @@ static int Net_packet(void)
 {
 	int		type,
 			prev_type = 0,
-			result;
+			result,
+			len;
 
 	/* Hack -- copy cbuf to rbuf since this is where this function
 	 * expects the data to be.
@@ -929,8 +930,8 @@ static int Net_packet(void)
 	/* Hack -- assume that we have already processed any data that
 	 * cbuf.ptr is pointing past.
 	 */
-	Sockbuf_advance(&cbuf, cbuf.ptr - cbuf.buf);
-	if (Sockbuf_write(&rbuf, cbuf.ptr, cbuf.len) != cbuf.len)
+	len = cbuf.len - (cbuf.ptr - cbuf.buf);
+	if (Sockbuf_write(&rbuf, cbuf.ptr, len) != len)
 	{
 		plog("Can't copy reliable data to buffer");
 		return -1;
@@ -968,7 +969,7 @@ static int Net_packet(void)
 					if (result == 0)
 					{
 						/* Move the remaining data to the queue buffer - mikaelh */
-						int len = rbuf.len - (rbuf.ptr - rbuf.buf);
+						len = rbuf.len - (rbuf.ptr - rbuf.buf);
 						if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
 						{
 							plog("Can't copy data to the queue buffer in Net_packet");
@@ -1097,29 +1098,21 @@ int Net_input(void)
 
 int Flush_queue(void)
 {
-	short	len;
+	int	len;
 
 	if (!initialized) return 0;
 
-	len = qbuf.len;
+	len = qbuf.len - (qbuf.ptr - qbuf.buf);
 
-	Net_packet();
-
-	if (cbuf.ptr > cbuf.buf)
-		Sockbuf_advance(&cbuf, cbuf.ptr - cbuf.buf);
 	if (Sockbuf_write(&cbuf, qbuf.ptr, len) != len)
 	{
 		errno = 0;
 		plog("Can't copy queued data to buffer");
-		qbuf.ptr += len;
-		Sockbuf_advance(&qbuf, qbuf.ptr - qbuf.buf);
 		return -1;
 	}
-/*	reliable_offset += len; */
-	qbuf.ptr += len;
-	Sockbuf_advance(&qbuf, qbuf.ptr - qbuf.buf);
-
 	Sockbuf_clear(&qbuf);
+
+	Net_packet();
 
 	/* If a redraw has been requested, send the request */
 	if (request_redraw)
@@ -4759,8 +4752,8 @@ int Send_inventory_revision(int revision) {
  * processing in Net_packet.
  */
 int move_rest() {
-	Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-	if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
+	int len = rbuf.len - (rbuf.ptr - rbuf.buf);
+	if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
 	{
 		plog("Can't copy data from rbuf to cbuf");
 		return -1;
