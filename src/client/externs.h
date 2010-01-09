@@ -539,7 +539,7 @@ extern void do_ping(void);
 extern int Net_setup(void);
 extern unsigned char Net_login(void);
 extern int Net_verify(char *real, char *nick, char *pass);
-extern int Net_init(char *server, int port);
+extern int Net_init(int port);
 extern void Net_cleanup(void);
 extern int Net_flush(void);
 extern int Net_fd(void);

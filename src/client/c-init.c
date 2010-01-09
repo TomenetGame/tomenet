@@ -564,7 +564,7 @@ void client_init(char *argv1, bool skip)
 	/* Dont close the TCP connection DgramClose(Socket); */
 
 	/* Connect to the server on the port it sent */
-	if (Net_init(server_name, Socket) == -1)
+	if (Net_init(Socket) == -1)
 	{
 		quit("Network initialization failed!\n");
 	}

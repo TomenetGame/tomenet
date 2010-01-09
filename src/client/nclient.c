@@ -15,6 +15,9 @@
  * cleaned up.  -Alex
  */
 
+/* cbuf isn't mostly used anymore and qbuf is only used for a couple of
+ * packets. - mikaelh
+ */
 
 #define CLIENT
 #include "angband.h"
@@ -45,25 +48,12 @@ int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
 static bool		request_redraw;
 
 static sockbuf_t	rbuf, cbuf, wbuf, qbuf;
-static int		(*receive_tbl[256])(void),
-			(*reliable_tbl[256])(void);
-static unsigned		magic;
-static long		last_send_anything,
-			last_keyboard_change,
-			last_keyboard_ack,
-			reliable_offset;
-#if 0 /* old UDP networking stuff - mikaelh */
-static long		reliable_full_len,
-			latest_reliable;
-#endif
+static int		(*receive_tbl[256])(void);
+static int		last_send_anything;
 static char		initialized = 0;
 
 /*
  * Initialize the function dispatch tables.
- * There are two tables.  One for the semi-important unreliable
- * data like frame updates.
- * The other one is for the reliable data stream, which is
- * received as part of the unreliable data packets.
  */
 static void Receive_init(void)
 {
@@ -72,20 +62,15 @@ static void Receive_init(void)
 	for (i = 0; i < 256; i++)
 	{
 		receive_tbl[i] = NULL;
-		reliable_tbl[i] = NULL;
 	}
 
-	receive_tbl[PKT_RELIABLE]	= Receive_reliable;
+	receive_tbl[PKT_RELIABLE]	= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_QUIT]		= Receive_quit;
-	receive_tbl[PKT_START]		= Receive_start;
+	receive_tbl[PKT_START]		= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_END]		= Receive_end;
-/*	receive_tbl[PKT_CHAR]		= Receive_char;*/
-	receive_tbl[PKT_LOGIN]		= NULL;	/* Should not be called like
-						   this */
+	receive_tbl[PKT_LOGIN]		= NULL; /* Should not be called like this */
 	receive_tbl[PKT_FILE]		= Receive_file;
 
-
-	/*reliable_tbl[PKT_LEAVE]		= Receive_leave;*/
 	receive_tbl[PKT_QUIT]		= Receive_quit;
 	receive_tbl[PKT_STAT]		= Receive_stat;
 	receive_tbl[PKT_HP]		= Receive_hp;
@@ -125,7 +110,6 @@ static void Receive_init(void)
 	receive_tbl[PKT_TARGET_INFO]	= Receive_target_info;
 	receive_tbl[PKT_SOUND]		= Receive_sound;
 	receive_tbl[PKT_MINI_MAP]	= Receive_line_info;
-	/* reliable_tbl[PKT_MINI_MAP]	= Receive_mini_map; */
 	receive_tbl[PKT_SPECIAL_LINE]	= Receive_special_line;
 	receive_tbl[PKT_FLOOR]		= Receive_floor;
 	receive_tbl[PKT_PICKUP_CHECK]	= Receive_pickup_check;
@@ -315,9 +299,9 @@ void Receive_login(void)
 {
 	int n;
 	char ch;
-	int i=0, max_cpa = MAX_CHARS_PER_ACCOUNT;
+	int i = 0, max_cpa = MAX_CHARS_PER_ACCOUNT;
 	char names[max_cpa + 1][MAX_CHARS], colour_sequence[3];
-	char tmp[MAX_CHARS+3];	/* like we'll need it... */
+	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
 
 	static char c_name[MAX_CHARS];
 	s16b c_race, c_class, level;
@@ -572,8 +556,6 @@ int Net_verify(char *real, char *nick, char *pass)
 		plog("Can't read verify reply packet");
 		return -1;
 	}
-	if (Receive_reliable() == -1)
-		return -1;
 	if (Sockbuf_flush(&wbuf) == -1)
 		return -1;
 	if (Receive_reply(&type, &result) <= 0)
@@ -610,10 +592,9 @@ int Net_verify(char *real, char *nick, char *pass)
  * Currently there are three different buffers used:
  * 1) wbuf is used only for sending packets (write/printf).
  * 2) rbuf is used for receiving packets in (read/scanf).
- * 3) cbuf is used to copy the reliable data stream
- *    into from the raw and unreliable rbuf packets.
+ * 3) cbuf is used by ancient code.
  */
-int Net_init(char *server, int fd)
+int Net_init(int fd)
 {
 	int		 sock;
 
@@ -666,9 +647,6 @@ int Net_init(char *server, int fd)
 		plog(format("No memory for write buffer (%u)", CLIENT_SEND_SIZE));
 		return -1;
 	}
-
-	/* reliable data byte stream offset */
-	reliable_offset = 0;
 
 	/* Initialized */
 	initialized = 1;
@@ -859,21 +837,18 @@ int Net_start(int sex, int race, int class)
 		return -1;
 	}
 
-	if (Receive_reliable() == -1)
-		return -1;
-
 	/* If our connection wasn't accepted, quit */
-	if (cbuf.ptr[0] == PKT_QUIT)
+	if (rbuf.ptr[0] == PKT_QUIT)
 	{
 		errno = 0;
-		quit(&cbuf.ptr[1]);
+		quit(&rbuf.ptr[1]);
 		return -1;
 	}
-	if (cbuf.ptr[0] != PKT_REPLY)
+	if (rbuf.ptr[0] != PKT_REPLY)
 	{
 		errno = 0;
 		quit(format("Not a reply packet after play (%d,%d,%d)",
-			cbuf.ptr[0], cbuf.ptr - cbuf.buf, cbuf.len));
+			rbuf.ptr[0], rbuf.ptr - rbuf.buf, rbuf.len));
 		return -1;
 	}
 	if (Receive_reply(&type, &result) <= 0)
@@ -912,31 +887,14 @@ int Net_start(int sex, int race, int class)
 
 
 /*
- * Process a packet which most likely is a frame update,
- * perhaps with some reliable data in it.
+ * Process a packet.
  */
 static int Net_packet(void)
 {
 	int		type,
 			prev_type = 0,
-			result,
-			len;
-
-	/* Hack -- copy cbuf to rbuf since this is where this function
-	 * expects the data to be.
-	 */
-	Sockbuf_clear(&rbuf);
-
-	/* Hack -- assume that we have already processed any data that
-	 * cbuf.ptr is pointing past.
-	 */
-	len = cbuf.len - (cbuf.ptr - cbuf.buf);
-	if (Sockbuf_write(&rbuf, cbuf.ptr, len) != len)
-	{
-		plog("Can't copy reliable data to buffer");
-		return -1;
-	}
-	Sockbuf_clear(&cbuf);
+			result;
+	char *old_ptr;
 
 	/* Process all of the received client updates */
 	while (rbuf.buf + rbuf.len > rbuf.ptr)
@@ -959,25 +917,9 @@ static int Net_packet(void)
 			break;
 		}
 		else {
-			char *foo = rbuf.ptr;
+			old_ptr = rbuf.ptr;
 			if ((result = (*receive_tbl[type])()) <= 0)
 			{
-				/* Check whether the socket buffer has advanced */
-				if (rbuf.ptr == foo)
-				{
-					/* Return code 0 means that there wasn't enough data in the socket buffer */
-					if (result == 0)
-					{
-						/* Move the remaining data to the queue buffer - mikaelh */
-						len = rbuf.len - (rbuf.ptr - rbuf.buf);
-						if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
-						{
-							plog("Can't copy data to the queue buffer in Net_packet");
-							return -1;
-						}
-					}
-				}
-
 				if (result == -1)
 				{
 					if (type != PKT_QUIT)
@@ -985,10 +927,23 @@ static int Net_packet(void)
 						errno = 0;
 						plog(format("Processing packet type (%d, %d) failed", type, prev_type));
 					}
+					Sockbuf_clear(&rbuf);
 					return -1;
 				}
 
+				/* Check whether the socket buffer has advanced */
+				if (rbuf.ptr == old_ptr)
+				{
+					/* Return code 0 means that there wasn't enough data in the socket buffer */
+					if (result == 0)
+					{
+						break;
+					}
+				}
+
+				/* Something weird may have happened, clear the socket buffer */
 				Sockbuf_clear(&rbuf);
+
 				break;
 			}
 		}
@@ -1010,31 +965,6 @@ static int Net_read(void)
 {
 	int	n;
 
-#if 0
-	for (;;)
-	{
-		/* Wait for data to appear -- Dave Thaler */
-		while (!SocketReadable(Net_fd()));
-
-		if ((n = Sockbuf_read(&rbuf)) == -1)
-		{
-			plog("Net input error");
-			return -1;
-		}
-		if (rbuf.len <= 0)
-		{
-			Sockbuf_clear(&rbuf);
-			return 0;
-		}
-
-		/* If this is the end of a chunk of info, quit reading stuff */
-		if (rbuf.ptr[rbuf.len - 1] == PKT_END)
-			return 1;
-	}
-#else
-	/* The above code is broken. If PKT_END isn't aligned with the end of a
-	 * TCP packet, it can block forever - mikaelh */
-
 	/* Do a single read */
 	if ((n = Sockbuf_read(&rbuf)) == -1)
 	{
@@ -1049,7 +979,6 @@ static int Net_read(void)
 	}
 	
 	return 1;
-#endif
 }
 
 
@@ -1069,25 +998,16 @@ int Net_input(void)
 
 	/* Keep reading as long as we have something on the socket */
 	while (SocketReadable(netfd)) {
-		/* First, clear the buffer */
-		Sockbuf_clear(&rbuf);
-
 		/* Get some new data */
 		if ((n = Net_read()) <= 0)
 		{
 			return n;
 		}
 
-		/* Write the received data to the command buffer */
-		if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
-		{
-			plog("Can't copy reliable data to buffer in Net_input");
-			return -1;
-		}
-
 		n = Net_packet();
 
-		Sockbuf_clear(&rbuf);
+		/* Make room for more packets */
+		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
 
 		if (n == -1)
 			return -1;
@@ -1104,9 +1024,8 @@ int Flush_queue(void)
 
 	len = qbuf.len - (qbuf.ptr - qbuf.buf);
 
-	if (Sockbuf_write(&cbuf, qbuf.ptr, len) != len)
+	if (Sockbuf_write(&rbuf, qbuf.ptr, len) != len)
 	{
-		errno = 0;
 		plog("Can't copy queued data to buffer");
 		return -1;
 	}
@@ -1119,41 +1038,6 @@ int Flush_queue(void)
 	{
 		Send_redraw(0);
 		request_redraw = FALSE;
-	}
-
-	return 1;
-}
-
-/*
- * Receive the beginning of a new frame update packet,
- * which contains the loops number.
- */
-int Receive_start(void)
-{
-	int	n, loops;
-	byte	ch;
-	long	key_ack;
-
-	if ((n = Packet_scanf(&rbuf, "%c%d%d", &ch, &loops, &key_ack)) <= 0)
-			return n;
-
-	/*
-	if (last_turns >= loops)
-	{
-		printf("ignoring frame (%ld)\n", last_turns - loops);
-		return 0;
-	}
-	last_turns = loops;
-	*/
-	if (key_ack > last_keyboard_ack)
-	{
-		if (key_ack > last_keyboard_change)
-		{
-			printf("Premature keyboard ack by server (%ld,%ld,%ld)\n",
-				last_keyboard_change, last_keyboard_ack, key_ack);
-			return 0;
-		}
-		else last_keyboard_ack = key_ack;
 	}
 
 	return 1;
@@ -1176,124 +1060,23 @@ int Receive_end(void)
 	return 1;
 }
 
-
+/*
+ * Magic packets are old relics that don't do anything useful.
+ */
 int Receive_magic(void)
 {
 	int	n;
 	byte	ch;
+	unsigned magic;
 
-	if ((n = Packet_scanf(&cbuf, "%c%u", &ch, &magic)) <= 0)
+	if ((n = Packet_scanf(&rbuf, "%c%u", &ch, &magic)) <= 0)
 		return n;
 	return 1;
 }
 
-#if 0 /* old UDP networking stuff - mikaelh */
-int Send_ack(long rel_loops)
-{
-	int	n;
-
-	if ((n = Packet_printf(&wbuf, "%c%ld%ld", PKT_ACK,
-		reliable_offset, rel_loops)) <= 0)
-	{
-		if (n == 0)
-			return 0;
-		plog("Can't ack reliable data");
-		return -1;
-	}
-
-	return 1;
-}
-#endif
-
-#if 0 /* old UDP networking stuff - mikaelh */
-int old_Receive_reliable(void)
-{
-	int	n;
-	short	len;
-	byte	ch;
-	long	rel, rel_loops, full_len;
-
-	if ((n = Packet_scanf(&rbuf, "%c%hd%ld%ld%ld", &ch, &len, &rel, &rel_loops, &full_len)) == -1)
-		return -1;
-
-	if (n == 0)
-	{
-		errno = 0;
-		plog("Incomplete reliable data packet");
-		return 0;
-	}
-
-	if (len <= 0)
-	{
-		errno = 0;
-		plog(format("Bad reliable data length (%d)", len));
-		return -1;
-	}
-
-	if (full_len <= 0)
-	{
-		errno = 0;
-		plog(format("Bad reliable data full length (%d)", reliable_full_len));
-		return -1;
-	}
-
-	/* Track maximum full length */
-	if (full_len > reliable_full_len || rel_loops > latest_reliable)
-	{
-		reliable_full_len = full_len;
-		latest_reliable = rel_loops;
-	}
-
-	if (rbuf.ptr + len > rbuf.buf + rbuf.len)
-	{
-		errno = 0;
-		plog(format("Not all reliable data in packet (%d, %d, %d)",
-			rbuf.ptr - rbuf.buf, len, rbuf.len));
-		rbuf.ptr += len;
-		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-		return -1;
-	}
-	if (rel > reliable_offset)
-	{
-		rbuf.ptr += len;
-		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-		if (Send_ack(rel_loops) == -1)
-			return -1;
-		return 1;
-	}
-	if (rel + len <= reliable_offset)
-	{
-		rbuf.ptr += len;
-		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-		if (Send_ack(rel_loops) == -1)
-			return -1;
-		return 1;
-	}
-	if (rel < reliable_offset)
-	{
-		len -= reliable_offset - rel;
-		rbuf.ptr += reliable_offset - rel;
-		rel = reliable_offset;
-	}
-	if (cbuf.ptr > cbuf.buf)
-		Sockbuf_advance(&cbuf, cbuf.ptr - cbuf.buf);
-	if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
-	{
-		errno = 0;
-		plog("Can't copy reliable data to buffer");
-		rbuf.ptr += len;
-		Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-		return -1;
-	}
-	reliable_offset += len;
-	rbuf.ptr += len;
-	Sockbuf_advance(&rbuf, rbuf.ptr - rbuf.buf);
-	if (Send_ack(rel_loops) == -1)
-		return -1;
-	return 1;
-}
-#endif // 0
-
+/*
+ * Ancient code that still uses cbuf. Should be gotten rid of.
+ */
 int Receive_reliable(void)
 {
 	if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
@@ -1306,13 +1089,12 @@ int Receive_reliable(void)
 
 }
 
-
 int Receive_reply(int *replyto, int *result)
 {
 	int	n;
 	byte	type, ch1, ch2;
 
-	n = Packet_scanf(&cbuf, "%c%c%c", &type, &ch1, &ch2);
+	n = Packet_scanf(&rbuf, "%c%c%c", &type, &ch1, &ch2);
 	if (n <= 0)
 		return n;
 	if (n != 3 || type != PKT_REPLY)
@@ -1328,7 +1110,6 @@ int Receive_reply(int *replyto, int *result)
 int Receive_quit(void)
 {
 	unsigned char		pkt;
-	sockbuf_t		*sbuf;
 	char			reason[MAX_CHARS];
 
 	/* game ends, so leave all other screens like
@@ -1336,17 +1117,14 @@ int Receive_quit(void)
         if (screen_icky) Term_load();
         topline_icky = FALSE;
 
-	if (rbuf.ptr < rbuf.buf + rbuf.len)
-		sbuf = &rbuf;
-	else sbuf = &cbuf;
-	if (Packet_scanf(sbuf, "%c", &pkt) != 1)
+	if (Packet_scanf(&rbuf, "%c", &pkt) != 1)
 	{
 		errno = 0;
 		plog("Can't read quit packet");
 	}
 	else
 	{
-		if (Packet_scanf(sbuf, "%s", reason) <= 0)
+		if (Packet_scanf(&rbuf, "%s", reason) <= 0)
 			strcpy(reason, "unknown reason");
 		errno = 0;
 
@@ -2243,14 +2021,10 @@ int Receive_depth(void)
 	char	buf[MAX_CHARS];
 
 	/* Compatibility with older servers */
-#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 1 && VERSION_EXTRA > 6) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 1) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
 	if (is_newer_than(&server_version, 4, 4, 1, 6, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%c%c%s", &ch, &x, &y, &z, &town, &colour, &colour_sector, buf)) <= 0)
 			return n;
 	} else
-#endif
 	{
 		if ((n = Packet_scanf(&rbuf, "%c%hu%hu%hu%c%hu%s", &ch, &x, &y, &z, &town, &old_colour, buf)) <= 0)
 			return n;
@@ -2259,11 +2033,7 @@ int Receive_depth(void)
 	}
 
 	/* Compatibility with older servers - mikaelh */
-#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 1 && VERSION_EXTRA > 5) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 1) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
 	if (!is_newer_than(&server_version, 4, 4, 1, 5, 0, 0))
-#endif
 	{
 		if (colour) colour = TERM_ORANGE;
 		else colour = TERM_WHITE;
@@ -2480,9 +2250,6 @@ int Receive_item(void)
 
 	if (!screen_icky && !topline_icky)
 	{
-		/* HACK - Move the rest - mikaelh */
-		move_rest();
-
 		c_msg_print(NULL);
 
 		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
@@ -2553,9 +2320,6 @@ int Receive_direction(void)
 
 	if (!screen_icky && !topline_icky && !shopping)
 	{
-		/* HACK - Move the rest */
-		move_rest();
-
 		/* Ask for a direction */
 		get_dir(&dir);
 
@@ -2725,7 +2489,6 @@ int Receive_line_info(void)
 		if (x > 80)
 		{
 			Sockbuf_clear(&rbuf);
-			Sockbuf_clear(&cbuf);
 		}
 
 	}
@@ -2795,9 +2558,6 @@ int Receive_special_other(void)
 
 	/* Set file perusal method to "other" */
 	special_line_type = SPECIAL_FILE_OTHER;
-
-	/* HACK - Move the rest - mikaelh */
-	move_rest();
 
 	/* Peruse the file we're about to get */
 	peruse_file();
@@ -2921,13 +2681,7 @@ int Receive_store_info(void)
 	strncpy(c_store.store_name, store_name, 40);
 
 	/* Only enter "display_store" if we're not already shopping */
-	if (!shopping)
-	{
-		/* HACK - Move the rest */
-		move_rest();
-
-		display_store();
-	}
+	if (!shopping) display_store();
 	else display_inventory(); /* Display the inventory */
 
 	return 1;
@@ -2962,9 +2716,6 @@ int Receive_sell(void)
 	{
 		return n;
 	}
-
-	/* HACK - Move the rest */
-	move_rest();
 
 	/* Tell the user about the price */
 	if (store_num == 57) sprintf(buf, "Really donate it? ");
@@ -3074,9 +2825,6 @@ int Receive_pickup_check(void)
 		return n;
 	}
 
-	/* HACK - Move the rest - mikaelh */
-	move_rest();
-
 	/* Get a check */
 	if (get_check(buf))
 	{
@@ -3142,7 +2890,7 @@ int Receive_party(void)
 int Receive_skills(void)
 {
 	int	n, i, bytes_read;
-	s16b tmp[12];
+	s16b	tmp[12];
 	char	ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0)
@@ -3203,9 +2951,6 @@ int Receive_pause(void)
 	/* Flush any pending keystrokes */
 	Term_flush();
 
-	/* HACK - Move the rest - mikaelh */
-	move_rest();
-
 	/* Wait */
 	inkey();
 
@@ -3241,29 +2986,25 @@ int Receive_chardump(void)
 {
 	char	ch;
 	int	n;
-	char tmp[160], tmp2[20];
+	char tmp[160], type[20];
 
 	/* assume death dump at first */
-	strcpy(tmp2, "-death");
+	strcpy(type, "-death");
 
-#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 2 && VERSION_EXTRA > 0) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 2) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
 	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
-		if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &tmp2)) <= 0) return n;
+		if ((n = Packet_scanf(&rbuf, "%c%s", &ch, &type)) <= 0) return n;
 	} else
-#endif
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 
 	/* Access the main view */
         if (screen_icky) Term_switch(0);
 
 	/* additionally do a screenshot of the scene */
-	xhtml_screenshot(format("%s%s-screenshot", cname, tmp2));
+	xhtml_screenshot(format("%s%s-screenshot", cname, type));
 
 	if (screen_icky) Term_switch(0);
 
-	strnfmt(tmp, 160, "%s%s.txt", cname, tmp2);
+	strnfmt(tmp, 160, "%s%s.txt", cname, type);
 	file_character(tmp, FALSE);
 
 	return 1;
@@ -3330,19 +3071,13 @@ int Receive_encumberment(void)
         byte rogue_heavyarmor;  /* Missing roguish-abilities' effects? */
         byte awkward_shoot;     /* using ranged weapon while having a shield on the arm */
 
-
-#if (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH == 2 && VERSION_EXTRA > 0) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR == 4 && VERSION_PATCH > 2) || \
-    (VERSION_MAJOR == 4 && VERSION_MINOR > 4) || (VERSION_MAJOR > 4)
 	if (is_newer_than(&server_version, 4, 4, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &rogue_heavyarmor, &awkward_shoot)) <= 0)
 		{
 			return n;
 		}
-	} else
-#endif
-	{
+	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c%c%c%c%c%c%c%c%c", &ch, &cumber_armor, &awkward_armor, &cumber_glove, &heavy_wield, &heavy_shield, &heavy_shoot,
 		    &icky_wield, &awkward_wield, &easy_wield, &cumber_weight, &monk_heavyarmor, &awkward_shoot)) <= 0)
 		{
@@ -4538,28 +4273,9 @@ int Send_change_password(char *old_pass, char *new_pass) {
 }
 
 #if defined(WINDOWS) && !defined(CYGWIN) && !defined(MINGW)
-#if 0
 /*
- * This is broken - mikaelh
- * From clock(3) manpage:
- * "The clock() function returns an approximation of processor time used by the program."
- */
-int gettimeofday(struct timeval *tv, struct timezone *tz)
-{
-	time_t t;
-
-	t = clock();
-
-	tv->tv_usec = t % 1000;
-	tv->tv_sec = t / CLK_TCK;
-
-	return 0;
-}
-#else
-/*
- * Use the old ftime() instead
- * It's accurate enough for us and it works
- * Timezone argument not supported
+ * Emulate gettimeofday on Windows by using ftime which has millisecond resolution
+ * which is enough for us.
  *  - mikaelh
  */
 #include <sys/timeb.h>
@@ -4575,7 +4291,6 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 	return 0;
 }
-#endif
 #endif
 
 /*
@@ -4741,24 +4456,6 @@ int Send_cloak(void) {
 int Send_inventory_revision(int revision) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c%d", PKT_INVENTORY_REV, revision)) <= 0) return n;
-	return 1;
-}
-
-/*
- * Move the rest of the data in rbuf to cbuf for later processing. By using
- * cbuf to store we ensure that they're immediately processed in proper order.
- * Must be called before new input can be received inside a Receive_*() call.
- * Net_input will clear rbuf so the packets need to be moved to cbuf for later
- * processing in Net_packet.
- */
-int move_rest() {
-	int len = rbuf.len - (rbuf.ptr - rbuf.buf);
-	if (Sockbuf_write(&cbuf, rbuf.ptr, len) != len)
-	{
-		plog("Can't copy data from rbuf to cbuf");
-		return -1;
-	}
-	Sockbuf_clear(&rbuf);
 	return 1;
 }
 
