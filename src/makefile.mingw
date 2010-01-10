@@ -210,7 +210,7 @@ CC = gcc
 ##
 CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN -DMINGW -DMEXP=19937
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
-LDFLAGS = -mwindows
+LDFLAGS = 
 
 # MinGW compiler and linker on my system - mikaelh
 #CC = i386-mingw32msvc-gcc
@@ -387,7 +387,7 @@ tomenet.server: $(SERV_OBJS) $(TOLUA)
 #
 
 tomenet: $(CLI_OBJS) $(TOLUA)
-	$(CC) $(CFLAGS) -o tomenet.exe $(CLI_OBJS) $(LDFLAGS) $(LIBS)
+	$(CC) $(CFLAGS) -o tomenet.exe $(CLI_OBJS) $(LDFLAGS) -mwindows $(LIBS)
 
 
 #
