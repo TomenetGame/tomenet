@@ -15,8 +15,9 @@
  * cleaned up.  -Alex
  */
 
-/* cbuf isn't mostly used anymore and qbuf is only used for a couple of
- * packets. - mikaelh
+/* cbuf is now only used inside Net_setup and qbuf is only used for a
+ * couple of packets that can't be handled when topline is icky.
+ *  - mikaelh
  */
 
 #define CLIENT
@@ -47,7 +48,7 @@ int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
 int			ticks10 = 0; /* 'deci-ticks', counting just 0..9 in 10ms intervals */
 static bool		request_redraw;
 
-static sockbuf_t	rbuf, cbuf, wbuf, qbuf;
+static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
 static char		initialized = 0;
@@ -410,6 +411,15 @@ int Net_setup(void)
 	s16b b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
 	long todo = 1;
 	char *ptr, str[MAX_CHARS];
+	sockbuf_t cbuf;
+
+	/* Initialize a new socket buffer */
+	if (Sockbuf_init(&cbuf, -1, CLIENT_RECV_SIZE,
+		SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1)
+	{
+		plog(format("No memory for control buffer (%u)", CLIENT_RECV_SIZE));
+		return -1;
+	}
 
 	ptr = (char *) &Setup;
 
@@ -491,8 +501,13 @@ int Net_setup(void)
 
 			if (rbuf.len > 0)
 			{
-				if (Receive_reliable() == -1)
+				if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
+				{
+					plog("Can't copy data to cbuf");
+					Sockbuf_cleanup(&cbuf);
 					return -1;
+				}
+				Sockbuf_clear(&rbuf);
 			}
 
 			if (cbuf.ptr != cbuf.buf)
@@ -518,6 +533,8 @@ int Net_setup(void)
 			}
 		}
 	}
+
+	Sockbuf_cleanup(&cbuf);
 
 	return 0;
 }
@@ -589,10 +606,9 @@ int Net_verify(char *real, char *nick, char *pass)
 /*
  * Open the datagram socket and allocate the network data
  * structures like buffers.
- * Currently there are three different buffers used:
+ * Currently there are two different buffers used:
  * 1) wbuf is used only for sending packets (write/printf).
  * 2) rbuf is used for receiving packets in (read/scanf).
- * 3) cbuf is used by ancient code.
  */
 int Net_init(int fd)
 {
@@ -614,15 +630,6 @@ int Net_init(int fd)
 		plog(format("Can't set send buffer size to %d: error %d", CLIENT_SEND_SIZE + 256, errno));
 	if (SetSocketReceiveBufferSize(sock, CLIENT_RECV_SIZE + 256) == -1)
 		plog(format("Can't set receive buffer size to %d", CLIENT_RECV_SIZE + 256));
-
-
-	/* reliable data buffer, not a valid socket filedescriptor needed */
-	if (Sockbuf_init(&cbuf, -1, CLIENT_RECV_SIZE,
-		SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1)
-	{
-		plog(format("No memory for control buffer (%u)", CLIENT_RECV_SIZE));
-		return -1;
-	}
 
 	/* queue buffer, not a valid socket filedescriptor needed */
 	if (Sockbuf_init(&qbuf, -1, CLIENT_RECV_SIZE,
@@ -678,7 +685,6 @@ void Net_cleanup(void)
 	}
 
 	Sockbuf_cleanup(&rbuf);
-	Sockbuf_cleanup(&cbuf);
 	Sockbuf_cleanup(&wbuf);
 	Sockbuf_cleanup(&qbuf);
 
@@ -1040,21 +1046,6 @@ int Receive_magic(void)
 	if ((n = Packet_scanf(&rbuf, "%c%u", &ch, &magic)) <= 0)
 		return n;
 	return 1;
-}
-
-/*
- * Ancient code that still uses cbuf. Should be gotten rid of.
- */
-int Receive_reliable(void)
-{
-	if (Sockbuf_write(&cbuf, rbuf.ptr, rbuf.len) != rbuf.len)
-	{
-		plog("Can't copy reliable data to buffer");
-		return -1;
-	}
-	Sockbuf_clear(&rbuf);
-	return 1;
-
 }
 
 int Receive_reply(int *replyto, int *result)
