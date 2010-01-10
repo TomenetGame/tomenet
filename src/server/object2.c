@@ -1648,6 +1648,11 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				kpval = 0;
 			}
 
+			/* Don't use bpval of costumes - mikaelh */
+			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+				pval = 0;
+			}
+
 //			int boost = 1 << pval;
 
 			/* Hack -- Negative "pval" is always bad */
@@ -1681,7 +1686,11 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				if (f1 & TR1_WIS) count++;
 				if (f1 & TR1_DEX) count++;
 				if (f1 & TR1_CON) count++;
+#if 1 /* make CHR cheaper? */
 				if (f1 & TR1_CHR) count++;
+#else
+				if (f1 & TR1_CHR) value += pval * 1000;
+#endif
 				
 				/* hack for double-stat rings - C. Blue */
 				if ((o_ptr->tval == TV_RING) && (
@@ -1868,6 +1877,12 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
 				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
 				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+	    
+			/* Costumes */
+			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+				value += r_info[o_ptr->bpval].mexp / 10;
+			}
+
 			/* Done */
 			break;
 
@@ -2525,8 +2540,12 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 				if (f1 & TR1_WIS) count++;
 				if (f1 & TR1_DEX) count++;
 				if (f1 & TR1_CON) count++;
+#if 0 /* make CHR cheaper? */
 				if (f1 & TR1_CHR) count++;
-				
+#else
+				if (f1 & TR1_CHR) value += pval * 1000;
+#endif
+
 				/* hack for double-stat rings - C. Blue */
 				if ((o_ptr->tval == TV_RING) && (
 				    (o_ptr->sval == SV_RING_MIGHT) ||
@@ -2712,6 +2731,12 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 				    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
 				    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, 9, 5):
 				    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), 9, 5))) ) * 100L;
+
+			/* Costumes */
+			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+				value += r_info[o_ptr->bpval].mexp;
+			}
+
 			/* Done */
 			break;
 
@@ -3050,6 +3075,11 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			/* XXX XXX XXX Require identical "sense" status */
 			/* if ((o_ptr->ident & ID_SENSE) != */
 			/*     (j_ptr->ident & ID_SENSE)) return (FALSE); */
+
+			/* Costumes must be for same monster */
+			if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+				if (o_ptr->bpval != j_ptr->bpval) return(FALSE);
+			}
 
 			/* Fall through */
 		}
@@ -4657,6 +4687,47 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf)
 				}
 			}
 #endif
+			break;
+		}
+		case TV_SOFT_ARMOR:
+		{
+			/* Costumes */
+			if (o_ptr->sval == SV_COSTUME) {
+				int i, tries = 0;
+				monster_race *r_ptr;
+
+				/* Santa Claus costumes during xmas */
+				if (season_xmas) {
+					o_ptr->bpval = 733; /* JOKEBAND Santa Claus */
+					o_ptr->level = 1;
+				}
+				else {
+
+					/* Default to the "player" */
+					o_ptr->bpval = 0;
+					o_ptr->level = 1;
+
+					while (tries++ != 1000)
+					{
+						i = randint(MAX_R_IDX - 1); /* skip 0, ie player */
+						r_ptr = &r_info[i];
+
+						if (!r_ptr->name) continue;
+						// if (r_ptr->flags1 & RF1_UNIQUE) continue;
+						// if (r_ptr->level >= level + (power * 5)) continue;
+//						if (!mon_allowed(r_ptr)) continue;
+						if (!mon_allowed_chance(r_ptr)) continue;
+						if (r_ptr->rarity == 255) continue;
+
+						break;
+					}
+					if (tries < 1000) {
+						o_ptr->bpval = i;
+						o_ptr->level = r_info[i].level / 4;
+						if (o_ptr->level < 1) o_ptr->level = 1;
+					}
+				}
+			}
 			break;
 		}
 		case TV_SHIELD:
@@ -6355,8 +6426,10 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf)
 void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf)
 {
 	/* usually lev = dungeonlevel (sometimes more, if in vault) */
-	object_type forge_bak, forge_highest;
+	object_type forge_bak, forge_highest, forge_lowest;
 	object_type *o_ptr_bak = &forge_bak, *o_ptr_highest = &forge_highest;
+	object_type *o_ptr_lowest = &forge_lowest;
+	bool resf_fallback = TRUE;
 	s32b ego_value1, ego_value2, ovr, fc;
 	long depth = ABS(getlevel(wpos)), depth_value;
 	int i, rolls, chance1, chance2, power; //, j;
@@ -6864,6 +6937,15 @@ for (i = 0; i < 25; i++) {
 		if (k_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
 	}
 
+	/* Pick the lowest value item */
+	if (i == 0) {
+		object_copy(o_ptr_lowest, o_ptr);
+	} else {
+		if (object_value_real(0, o_ptr) < object_value_real(0, o_ptr_lowest)) {
+			object_copy(o_ptr_lowest, o_ptr);
+		}
+	}
+
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 	if ((resf & RESF_LOWVALUE) && (object_value_real(0, o_ptr) > 35000)) continue;
 	if ((resf & RESF_MIDVALUE) && (object_value_real(0, o_ptr) > 50000)) continue;
@@ -6882,9 +6964,14 @@ for (i = 0; i < 25; i++) {
         object_desc(0, o_name, o_ptr, FALSE, 3);
 	ovr = object_value_real(0, o_ptr);
 	fc = flag_cost(o_ptr, o_ptr->pval);
+
 	/* remember most expensive object we rolled, in case we don't find any better we can fallback to it */
-	if (ovr > object_value_real(0, o_ptr_highest))
+	if (ovr > object_value_real(0, o_ptr_highest)) {
 		object_copy(o_ptr_highest, o_ptr);
+
+		/* No fallback because of resf necessary */
+		resf_fallback = FALSE;
+	}
 	else
 		continue;
 
@@ -6901,8 +6988,29 @@ for (i = 0; i < 25; i++) {
     } /* verygreat-loop end */
 
 	if (verygreat) {
-	        s_printf("taken\n");
-		object_copy(o_ptr, o_ptr_highest);
+		if (resf_fallback) {
+			/* Fallback to lowest value item in case resf proved too strict - mikaelh */
+			s_printf("lowest value fallback used in apply_magic (resf = %#x)\n", resf);
+
+			object_copy(o_ptr, o_ptr_lowest);
+
+			if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
+			if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
+
+			object_desc(0, o_name, o_ptr, FALSE, 3);
+			ovr = object_value_real(0, o_ptr);
+			fc = flag_cost(o_ptr, o_ptr->pval);
+
+			/* Dump information about the item */
+			s_printf("dpt %d, dptval %d, egoval %d / %d, realval %d, flags %d (%s)\n", 
+			depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
+
+			s_printf("taken\n");
+		}
+		else {
+		        s_printf("taken\n");
+			object_copy(o_ptr, o_ptr_highest);
+		}
 	}
 }
 
@@ -6935,7 +7043,8 @@ void determine_level_req(int level, object_type *o_ptr)
 	base = klev / 2;
 
 	/* Exception */
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) return;
+	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+		(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME)) return;
 
 	/* Unowned yet */
 //	o_ptr->owner = 0;
@@ -7225,7 +7334,8 @@ void determine_level_req(int level, object_type *o_ptr)
 	base = klev / 2;
 
 	/* Exception */
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) return;
+	if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) ||
+		(o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_COSTUME)) return;
 
 	/* artifact */
 	if (o_ptr->name1)
@@ -8575,6 +8685,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			else
 				k_idx = get_obj_num(base, resf);
 
+			/* HACK - Kollas won't pass RESF_LOWVALUE or RESF_MIDVALUE checks in apply_magic - mikaelh */
+			if ((k_info[k_idx].tval == TV_CLOAK) && (k_info[k_idx].sval == SV_KOLLA) && ((resf & (RESF_LOWVALUE | RESF_MIDVALUE)))) {
+				continue;
+			}
+
 			/* Prepare the object */
 			invcopy(o_ptr, k_idx);
 			reward_sval = o_ptr->sval;
@@ -8746,7 +8861,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 
 		break;
-	} while (tries < 20);
+	} while (tries < (verygreat ? 20 : 100));
 
 	/* more loggin' */
 	object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
@@ -9180,7 +9295,7 @@ s16b drop_near(object_type *o_ptr, int chance, struct worldpos *wpos, int y, int
 			for (bx = houses[i].x; bx < (houses[i].x + houses[i].coords.rect.width - 1); bx++)
 				for (by = houses[i].y; by < (houses[i].y + houses[i].coords.rect.height - 1); by++)
 					if ((bx == nx) && (by == ny)) inside_house = TRUE;
-	if (true_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house && !multiple_artifact_p(o_ptr))
+	if (undepositable_artifact_p(o_ptr) && cfg.anti_arts_house && inside_house)
 	{
 //		char	o_name[160];
 //		object_desc(Ind, o_name, o_ptr, TRUE, 0);

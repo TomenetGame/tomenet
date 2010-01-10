@@ -5,7 +5,7 @@
 #define CONN_CONNECTED		0x01
 
 /* Maximum amount of connections */
-#define MAX_GW_CONNS	10
+#define MAX_GW_CONNS	20
 
 /* Timeout (in seconds */
 #define GW_CONN_TIMEOUT	10

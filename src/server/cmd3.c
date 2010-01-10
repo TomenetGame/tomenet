@@ -687,6 +687,14 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
+	/* Costumes allowed during halloween and xmas */
+	if (!season_halloween && !season_xmas) {
+		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
+			msg_print(Ind, "It's not that time of the year anymore.");
+			return;
+		}
+	}
+
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 	
@@ -1367,7 +1375,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 	}
 #ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
-	if (artifact_p(o_ptr) && !is_admin(p_ptr))
+	if (like_artifact_p(o_ptr) && !is_admin(p_ptr))
 	{
 		cptr feel = "special";
 
@@ -1501,7 +1509,7 @@ void do_cmd_observe(int Ind, int item)
         object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & ID_MENTAL))
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr))
 	{
 		/* Describe */
 		msg_format(Ind, "\377s%s:", o_name);

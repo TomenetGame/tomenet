@@ -16,6 +16,10 @@
 #include "angband.h"
 #include "party.h"
 
+//#define IRON_TEAM_EXPERIENCE
+/* todo before enabling: implement way to decrease party.experience again! */
+
+
 /*
  * What % of exp points will be lost when resurrecting? [40]	- Jir -
  *
@@ -122,8 +126,9 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type)
 	for (j = 0; j < MAX_GLOBAL_EVENTS; j++)
 		switch (p_ptr->global_event_type[j]) {
 		case GE_HIGHLANDER:
-			if (p_ptr->global_event_progress[j][0] < 3) break; /* only rewarded if already in deathmatch phase! */
+			if (p_ptr->global_event_progress[j][0] < 5) break; /* only rewarded if already in deathmatch phase! */
 			if (death_type >= 3) break; /* no reward for suiciding! */
+			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
 			return;
 		case GE_NONE:
@@ -263,6 +268,55 @@ bool set_tim_regen(int Ind, int v, int p)
 	/* Result */
 	return (TRUE);
 }
+#ifdef ENABLE_RCRAFT
+/*
+ * Set "p_ptr->tim_trauma", notice observable changes
+ */
+bool set_tim_trauma(int Ind, int v, int p)
+{
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+	
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_trauma)
+		{
+			msg_print(Ind, "You feel an unnatural desire for death and destruction.");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_trauma)
+		{
+			msg_print(Ind, "Your blood-lust fades.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_trauma = v;
+	p_ptr->tim_trauma_pow = p;
+	
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+#endif
 
 /*
  * Set "p_ptr->tim_ffall"
@@ -1215,11 +1269,11 @@ bool set_tim_wraith(int Ind, int v)
 	{
 		if (!p_ptr->tim_wraith)
 		{
-			if ((zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) ||
+			if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) ||
 			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
 			{
 				msg_print(Ind, "You feel different for a moment");
-				v=0;
+				v = 0;
 			}
 			else{
 				msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
@@ -1711,8 +1765,9 @@ bool set_image(int Ind, int v)
 bool set_fast(int Ind, int v, int p)
 {
 	player_type *p_ptr = Players[Ind];
-
 	bool notice = FALSE;
+
+	if (p_ptr->mode & MODE_PVP) return(FALSE);
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -1883,6 +1938,58 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2)
 	return (TRUE);
 }
 
+
+/*
+ * Set "p_ptr->tim_deflect", notice observable changes
+ */
+bool set_tim_deflect(int Ind, int v)
+{
+	player_type *p_ptr = Players[Ind];
+
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v)
+	{
+		if (!p_ptr->tim_deflect)
+		{
+			msg_print(Ind, "A deflective shield forms around your body!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else
+	{
+		if (p_ptr->tim_deflect)
+		{
+			msg_print(Ind, "Your deflective shield crumbles away.");
+			notice = TRUE;
+		}
+	}
+
+
+	/* Use the value */
+	p_ptr->tim_deflect = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
 
 
 /*
@@ -2560,7 +2667,7 @@ bool set_oppose_acid(int Ind, int v)
 	{
 		if (p_ptr->oppose_acid)
 		{
-			msg_print(Ind, "You feel less resistant to acid.");
+			msg_print(Ind, "\377WYou feel less resistant to \377sacid.");
 			notice = TRUE;
 		}
 	}
@@ -2609,7 +2716,7 @@ bool set_oppose_elec(int Ind, int v)
 	{
 		if (p_ptr->oppose_elec)
 		{
-			msg_print(Ind, "You feel less resistant to electricity.");
+			msg_print(Ind, "\377WYou feel less resistant to \377belectricity.");
 			notice = TRUE;
 		}
 	}
@@ -2658,7 +2765,7 @@ bool set_oppose_fire(int Ind, int v)
 	{
 		if (p_ptr->oppose_fire)
 		{
-			msg_print(Ind, "You feel less resistant to fire.");
+			msg_print(Ind, "\377WYou feel less resistant to \377rfire.");
 			notice = TRUE;
 		}
 	}
@@ -2707,7 +2814,7 @@ bool set_oppose_cold(int Ind, int v)
 	{
 		if (p_ptr->oppose_cold)
 		{
-			msg_print(Ind, "You feel less resistant to cold.");
+			msg_print(Ind, "\377WYou feel less resistant to \377wcold.");
 			notice = TRUE;
 		}
 	}
@@ -2756,7 +2863,7 @@ bool set_oppose_pois(int Ind, int v)
 	{
 		if (p_ptr->oppose_pois)
 		{
-			msg_print(Ind, "You feel less resistant to poison.");
+			msg_print(Ind, "\377WYou feel less resistant to \377gpoison.");
 			notice = TRUE;
 		}
 	}
@@ -3726,17 +3833,32 @@ void check_experience(int Ind)
 			break;
 #ifdef ENABLE_DIVINE
 		case RACE_DIVINE:
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* We all have to pick our own path some time... *");
-			if (old_lev < 18 && p_ptr->lev >= 18) msg_print(Ind, "\377G* You are thirsty for blood: be it good or evil *");
-			if (old_lev < 20 && p_ptr->lev >= 20) {
+			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\377G* We all have to pick our own path some time... *");
+			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\377G* You are thirsty for blood: be it good or evil *");
+			if (
+			  ((old_lev < 15 && p_ptr->lev >= 15) ||
+			   (old_lev < 16 && p_ptr->lev >= 16) ||
+			   (old_lev < 17 && p_ptr->lev >= 17) ||
+			   (old_lev < 18 && p_ptr->lev >= 18) ||
+			   (old_lev < 19 && p_ptr->lev >= 19) ||
+			   (old_lev < 20 && p_ptr->lev >= 20) ||
+			   (old_lev < 21 && p_ptr->lev >= 21) ||
+			   (old_lev < 22 && p_ptr->lev >= 22) ||
+			   (old_lev < 23 && p_ptr->lev >= 23))
+			  && !p_ptr->divinity) {
+/* 
+ * Let's not. it will make them completely out of scale with everyone.
+ * It's their problem if they want to "save up" their skill points.
+*/
+#if 0 
 				/* New: reset skill tree and teleport them (hopefully to a safe location...) */
 				/* Do this before since respec_skills reinit from tables.c */
 				respec_skills(Ind);	
 				teleport_player(Ind, 200, TRUE);
+#endif
 				if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER]!=0 && p_ptr->r_killed[MONSTER_RIDX_DARKLING]==0) {
 					//A demon appears!
-					msg_print(Ind, "\377GYou have fallen from amongst your kind...");
-					msg_print(Ind, "\377DYou are not worthy of redemption!");
+					msg_print(Ind, "\377GYour corruption grows well within you.");
 					p_ptr->divinity=DIVINE_DEMON;
 					/* Doh! */
 					p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
@@ -3744,7 +3866,8 @@ void check_experience(int Ind)
 					p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
 					p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
 					/* Yay */
-					p_ptr->s_info[SKILL_AXE].mod *= 1.5;
+					p_ptr->s_info[SKILL_AXE].mod *= 1.3;
+					p_ptr->s_info[SKILL_MARTIAL_ARTS].mod *= 1.3;
 					p_ptr->s_info[SKILL_SORCERY].mod *= 2.1;
 					p_ptr->s_info[SKILL_FIRE].mod *= 1.7;
 					p_ptr->s_info[SKILL_AIR].mod *= 1.7;
@@ -3755,35 +3878,39 @@ void check_experience(int Ind)
 					p_ptr->s_info[SKILL_AURA_FEAR].mod *= 3;
 					p_ptr->s_info[SKILL_AURA_SHIVER].mod *= 3;
 					p_ptr->s_info[SKILL_AURA_DEATH].mod *= 3;
+
 					p_ptr->redraw |= (PR_SKILLS);
 				} else if (p_ptr->r_killed[MONSTER_RIDX_CANDLEBEARER]==0 && p_ptr->r_killed[MONSTER_RIDX_DARKLING]!=0) { 
 					//An angel appears!
-					msg_print(Ind, "\377sYou have proven your goodness.");
+					msg_print(Ind, "\377sYou have been ordained to be order in presence of chaos.");
 					p_ptr->divinity=DIVINE_ANGEL;
+
 					/* Doh! */
 					p_ptr->s_info[SKILL_TRAUMATURGY].mod *= 0;
 					p_ptr->s_info[SKILL_NECROMANCY].mod *= 0;
 					p_ptr->s_info[SKILL_AURA_DEATH].mod *= 0;
 					/* Yay */
-					p_ptr->s_info[SKILL_AURA_FEAR].mod *= 2.1;
-					p_ptr->s_info[SKILL_AURA_SHIVER].mod *= 2.1;
+					p_ptr->s_info[SKILL_AURA_FEAR].mod *= 3;
+					p_ptr->s_info[SKILL_AURA_SHIVER].mod *= 3; 
 					p_ptr->s_info[SKILL_HOFFENSE].mod *= 2.4;
 					p_ptr->s_info[SKILL_HCURING].mod *= 2.4;
 					p_ptr->s_info[SKILL_HDEFENSE].mod *= 2.4;
-					p_ptr->s_info[SKILL_HSUPPORT].mod *= 2.4;
-					p_ptr->s_info[SKILL_SWORD].mod *= 1.5;
-					p_ptr->s_info[SKILL_BLUNT].mod *= 1.5;
-					p_ptr->s_info[SKILL_POLEARM].mod *= 1.5;
+					p_ptr->s_info[SKILL_HSUPPORT].mod *= 2.4; 
+					p_ptr->s_info[SKILL_DIVINATION].mod *= 1.7;
+					p_ptr->s_info[SKILL_SWORD].mod *= 1.3;
+					p_ptr->s_info[SKILL_BLUNT].mod *= 1.3;
+					p_ptr->s_info[SKILL_POLEARM].mod *= 1.3;
 					p_ptr->s_info[SKILL_SNEAKINESS].mod *= 2.1;
 					p_ptr->s_info[SKILL_STEALTH].mod *= 2.1;
+
 					p_ptr->redraw |= (PR_SKILLS);
-				} else  { //die!
+				}
+			}
+			if (old_lev < 24 && p_ptr->lev >= 24 && !p_ptr->divinity) {
 					msg_print(Ind, "\377RYou don't deserve to live.");
 					strcpy(p_ptr->died_from,"indecisiveness");
 					p_ptr->deathblow = 0;
 					p_ptr->death = 1;
-				} 
-				
 			}
 			break;
 #endif
@@ -4096,13 +4223,17 @@ void check_experience(int Ind)
 /*
  * Gain experience
  */
-void gain_exp(int Ind, s64b amount)
-{
+void gain_exp(int Ind, s64b amount) {
+	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
+//	int Ind2 = 0;
+
+#ifdef IRON_TEAM_EXPERIENCE
+	int iron_team_members_here = 0, iron_team_limit = 0;
+#endif
+
 #ifdef ARCADE_SERVER
 return;
 #endif
-	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
-//	int Ind2 = 0;
 
 	if (amount <= 0) return;
 #ifdef ALT_EXPRATIO
@@ -4114,6 +4245,37 @@ return;
 
 	/* You cant gain xp on your land */
         if (player_is_king(Ind)) return;
+
+
+#ifdef IRON_TEAM_EXPERIENCE
+	/* moved here from party_gain_exp() for implementing the 'sync'-exception */
+	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
+	if (p_ptr->party && parties[p_ptr->party].mode == PA_IRONTEAM) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* note: this line means that iron teams must not add
+			admins, or the members won't gain exp anymore */
+			if (is_admin(p_ptr)) continue;
+
+			/* player on the same dungeon level? */
+			if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+			/* count party members on the same dlvl */
+			if (player_in_party(p_ptr->party, i)) iron_team_members_here++;
+		}
+
+		/* only gain exp if all members are here */
+		if (iron_team_members_here != parties[p_ptr->party].members) {
+			/* New: allow exception to somewhat 'sync' own exp w/ the exp of
+			iron team member having the most exp, to avoid falling back too much.
+			(most drastic example: death of everlasting char). - C. Blue */
+			if (p_ptr->exp >= parties[p_ptr->party].experience) return;
+			iron_team_limit = parties[p_ptr->party].experience;
+		}
+	}
+#endif
+
 
 	/* allow own kills to be gained */
 	if (p_ptr->ghost) amount = (amount * 2) / 4;
@@ -4129,14 +4291,14 @@ return;
         		return;
 		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 		amount--;
-	}		
+	}
  #else
         if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)player_exp[50 - 1]))) {
 		if (p_ptr->exp + 1 >= ((s64b)player_exp[50 - 1]))
         		return;
 		amount = ((s64b)player_exp[50 - 1]) - p_ptr->exp;
 		amount--;
-	}		
+	}
  #endif
 #endif
 #ifdef KINGCAP_EXP
@@ -4158,89 +4320,75 @@ return;
         			return;
 			amount = ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 			amount--;
-		}		
+		}
 #else
     		if (p_ptr->exp + amount + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1])) {
 			if (p_ptr->exp + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1]))
         			return;
 			amount = ((s64b)player_exp[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
 			amount--;
-		}		
+		}
 #endif
 	}
 
-#if 0 /* covered by party_gain.. */
-	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
-/* exp cap isn't implemented for this Ind2 part yet, don't forget it in
-   case telepaths are re-implemented. */
-		/* Gain some experience */
-		p_ptr->exp += amount / 2;
-
-		/* Slowly recover from experience drainage */
-		if (p_ptr->exp < p_ptr->max_exp)
-		{
-			/* Gain max experience (10%) */
-			p_ptr->max_exp += amount / 10;
-		}
-	    
-		/* Check Experience */
-		check_experience(Ind);
-
-		/* Gain some experience */
-		p_ptr2->exp += amount / 2;
-
-		/* Slowly recover from experience drainage */
-		if (p_ptr2->exp < p_ptr2->max_exp)
-		{
-			/* Gain max experience (10%) */
-			p_ptr2->max_exp += amount / 20;
-		}
-	    
-		/* Check Experience */
-		check_experience(Ind2);
-	}
-	else
+#ifdef IRON_TEAM_EXPERIENCE
+	/* new: allow players to 'sync' their exp to leading player in an iron team party */
+	if (iron_team_limit && (p_ptr->exp + amount > iron_team_limit))
+		amount = iron_team_limit - p_ptr->exp;
 #endif
+
+	/* Gain some experience */
+	p_ptr->exp += amount;
+
+	/* Slowly recover from experience drainage */
+	if (p_ptr->exp < p_ptr->max_exp)
 	{
-		/* Gain some experience */
-		p_ptr->exp += amount;
-
-		/* Slowly recover from experience drainage */
-		if (p_ptr->exp < p_ptr->max_exp)
-		{
 #ifdef KINGCAP_LEV
-		        /* You must defeat morgoth before beong allowed level > 50 */
+	        /* You must defeat morgoth before beong allowed level > 50 */
  #ifndef ALT_EXPRATIO
-		        if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
-                                           (s64b)p_ptr->expfact / 100L)))) {
-				if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
-                                           (s64b)p_ptr->expfact / 100L)))
-        				return;
-				amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
-				amount--;
-			}
+	        if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
+                   (s64b)p_ptr->expfact / 100L)))) {
+			if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
+                           (s64b)p_ptr->expfact / 100L)))
+    				return;
+			amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
+			amount--;
+		}
  #else
-		        if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)player_exp[50 - 1]))) {
-				if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
-        				return;
-				amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
-				amount--;
-			}
+	        if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) + 1 >= ((s64b)player_exp[50 - 1]))) {
+			if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
+    				return;
+			amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
+			amount--;
+		}
  #endif
 #endif
 #ifdef KINGCAP_EXP
-			if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) >= 21240000)) {
-				if (p_ptr->max_exp >= 21240000) return;
-				amount = (21240000 - p_ptr->max_exp);
-			}
-#endif
-			/* Gain max experience (10%) */
-			p_ptr->max_exp += amount / 10;
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount/10) >= 21240000)) {
+			if (p_ptr->max_exp >= 21240000) return;
+			amount = (21240000 - p_ptr->max_exp);
 		}
-	    
-		/* Check Experience */
-		check_experience(Ind);
+#endif
+
+#ifdef IRON_TEAM_EXPERIENCE
+		/* new: allow players to 'sync' their exp to leading player in an iron team party */
+		if (iron_team_limit && (p_ptr->max_exp + amount > iron_team_limit))
+			amount = iron_team_limit - p_ptr->max_exp;
+#endif
+
+		/* Gain max experience (10%) */
+		p_ptr->max_exp += amount / 10;
 	}
+
+	/* Check Experience */
+	check_experience(Ind);
+
+#ifdef IRON_TEAM_EXPERIENCE
+	/* possibly set new maximum for iron team */
+	if (p_ptr->party && parties[p_ptr->party].mode == PA_IRONTEAM &&
+	    p_ptr->max_exp > parties[p_ptr->party].experience)
+		parties[p_ptr->party].experience = p_ptr->max_exp;
+#endif
 }
 
 
@@ -5711,7 +5859,7 @@ void player_death(int Ind)
 			monster_type *m_ptr = &m_list[i];
 			if (m_ptr->owner == p_ptr->id && m_ptr->pet) {
 				m_ptr->pet = 0; //default behaviour!
-				m_ptr->owner=0;
+				m_ptr->owner = 0;
 				i = -1;
 			}
 		}
@@ -5813,7 +5961,7 @@ void player_death(int Ind)
 						monster_desc(0, m_name_extra, i, 0x00);
 						m_name_extra[0] = toupper(m_name_extra[0]);
 						wipe_m_list(&p_ptr->wpos);
-						summon_override_checks = 2;
+						summon_override_checks = SO_ALL & ~SO_PROTECTED;
 #if 1 /* GE_ARENA_ALLOW_EGO */
 						while (!summon_detailed_one_somewhere(&p_ptr->wpos, k, j, FALSE, 101)
 						    && (++tries < 1000));
@@ -5821,7 +5969,7 @@ void player_death(int Ind)
 						while (!summon_specific_race_somewhere(&p_ptr->wpos, k, 100, 1)
 						    && (++tries < 1000));
 #endif
-						summon_override_checks = 0;
+						summon_override_checks = SO_NONE;
 						break;
 					}
 				}
@@ -5903,17 +6051,17 @@ void player_death(int Ind)
 	if (p_ptr->global_event_temp & PEVF_NOGHOST_00) hell = TRUE;
 	/* or instead teleport them to surface */
 	/* added wpos checks due to weirdness. -Molt */
-	if(p_ptr->wpos.wx != WPOS_SECTOR00_X && p_ptr->wpos.wy != WPOS_SECTOR00_Y && p_ptr->global_event_temp & PEVF_SAFEDUN_00) {
+	if(p_ptr->wpos.wx != WPOS_SECTOR00_X && p_ptr->wpos.wy != WPOS_SECTOR00_Y && (p_ptr->global_event_temp & PEVF_SAFEDUN_00)) {
 		s_printf("Somethin weird with %s. GET is %d\n", p_ptr->name, p_ptr->global_event_temp);
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
-	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y) {
+	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz != 0) {
 s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
-		p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
+		if (!sector00downstairs) p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
 		p_ptr->recall_pos.wx = 0;
 		p_ptr->recall_pos.wy = 0;
 		p_ptr->recall_pos.wz = 0;
@@ -5934,13 +6082,21 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		p_ptr->redraw |= (PR_BASIC);
 		/* Update */
 		p_ptr->update |= (PU_BONUS);
+
+		/* Inform him about his situation */
+		if (!sector00downstairs) msg_print(Ind, "\377oYou died too early and have to sit out the remaining time!");
+		else msg_print(Ind, "\377oYou died too early, find the staircase and re-enter the dungeon!");
 		return;
 	}
 
 	/* Players of level cfg.nodrop [5] will die a no-ghost death.
 	   This should clarify the situation for newbies and avoid them
-	   getting confused and/or lacking their startup equipment. */
+	   getting confused and/or lacking their startup equipment.
+	   On the other hand, it's confusing to ghost-die when you know
+	   you chose everlasting +_+ */
+#if 0 /* disable newbies-lvl explanation msg (much below) iff this is on */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) hell = TRUE;
+#endif
 
 	/* Get rid of him if he's a ghost */
 /*	if (((p_ptr->ghost || (hell && p_ptr->alive)) && p_ptr->fruit_bat != -1) ||
@@ -5979,7 +6135,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr
 			{
 				char death_message[80];
     
-        			(void)get_rnd_line("death.txt", 0, death_message);
+        			(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
@@ -6009,7 +6165,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 			{
 				char death_message[80];
     
-        			(void)get_rnd_line("death.txt", 0, death_message);
+        			(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
@@ -6077,7 +6233,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 			{
 				char death_message[80];
     
-        			(void)get_rnd_line("death.txt", 0, death_message);
+        			(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
 #endif	// CHATTERBOX_LEVEL
@@ -6089,6 +6245,21 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 		}
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+#endif
+
+#if (MAX_PING_RECVS_LOGGED > 0)
+			/* Print last ping reception times */
+			struct timeval now;
+			gettimeofday(&now, NULL);
+			s_printf("PINGS_RECEIVED:");
+			/* Starting from latest */
+			for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+				j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+				if (p_ptr->pings_received[j].tv_sec) {
+					s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
+				}
+			}
+			s_printf("\n");
 #endif
 
 		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)){
@@ -6377,6 +6548,13 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 		/* Done */
 		return;
 	}
+
+#if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
+	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
+		msg_format(Ind, "\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
+		msg_print(Ind, "\377oTherefore, it's recommended to press 'Q' to suicide and start over.");
+	}
+#endif
 
 	/* Tell everyone he died */
 	if (p_ptr->fruit_bat == -1)
@@ -6705,10 +6883,25 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		{
 			char death_message[80];
 
-			(void)get_rnd_line("death.txt", 0, death_message);
+			(void)get_rnd_line("death.txt", 0, death_message, 80);
 			msg_print(Ind, death_message);
 		}
 #endif	// CHATTERBOX_LEVEL
+
+#if (MAX_PING_RECVS_LOGGED > 0)
+		/* Print last ping reception times */
+		struct timeval now;
+		gettimeofday(&now, NULL);
+		s_printf("PING_TIMES:");
+		/* Starting from latest */
+		for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+			j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+			if (p_ptr->pings_received[j].tv_sec) {
+				s_printf(" %s", timediff(&p_ptr->pings_received[j], &now));
+			}
+		}
+		s_printf("\n");
+#endif
 
 		Send_chardump(Ind, "-death");
 
@@ -7201,6 +7394,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 
 	s64b		new_exp, new_exp_frac;
 	s64b 		tmp_exp, req_lvl;
+	s16b skill_trauma = get_skill(p_ptr, SKILL_TRAUMATURGY);
+	long scale_trauma = 0;
 	bool old_tacit = suppress_message;
 
 //        int dun_level2 = getlevel(&p_ptr->wpos);
@@ -7218,6 +7413,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		m_ptr->charmedignore = 0;
 	}
 
+	#ifdef ENABLE_RCRAFT
+	/* Trauma boost spell */
+	if(p_ptr->tim_trauma)
+	{
+		skill_trauma += (skill_trauma<(SKILL_MAX-(p_ptr->tim_trauma_pow*1000)) ? (p_ptr->tim_trauma_pow*1000) : SKILL_MAX-skill_trauma);
+		scale_trauma = (((skill_trauma) * 20) / SKILL_MAX);
+	}
+	#endif
+	
 	/* Redraw (later) if needed */
 	update_health(m_idx);
 
@@ -7227,7 +7431,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	}
 
 	/* Traumaturgy skill - C. Blue */
-	if (dam && get_skill(p_ptr, SKILL_TRAUMATURGY) &&
+	if (dam && skill_trauma &&
 /*	    los(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) && */
 /*	    projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE) && */
 	    target_able(Ind, m_idx) &&
@@ -7236,7 +7440,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	    (!(strchr("AEgv", r_ptr->d_char))))
 	{
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
+		#ifdef ENABLE_RCRAFT
+		long gain = scale_trauma;
+		#else
 		long gain = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 20);
+		#endif
 		gain = (dam/20 > gain ? gain : dam/20);//50
 		if (gain > m_ptr->hp) gain = m_ptr->hp;
 		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */
@@ -10134,7 +10342,7 @@ bool master_summon(int Ind, char * parms)
 
 	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return FALSE;
 
-summon_override_checks = 1; /* set admin summoning flag for overriding all validity checks */
+	summon_override_checks = SO_ALL; /* set admin summoning flag for overriding all validity checks */
 
 	/* extract arguments.  If none are found, summon previous type. */
 	if (parms)
@@ -10226,8 +10434,7 @@ summon_override_checks = 1; /* set admin summoning flag for overriding all valid
 		}
 	}
 
-summon_override_checks = 0; /* clear all override flags (paranoia? dunno) */
-
+	summon_override_checks = SO_NONE; /* clear all override flags */
 	return TRUE;
 }
 

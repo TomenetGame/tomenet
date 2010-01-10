@@ -19437,10 +19437,10 @@ F:MALE |
 F:FORCE_MAXHP | DROP_CORPSE | DROP_SKELETON | UNIQUE | 
 F:ONLY_ITEM | DROP_1D2 | DROP_GREAT | DROP_GOOD | 
 F:INVISIBLE | OPEN_DOOR | BASH_DOOR | REGENERATE | 
-F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | 
+F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | REFLECTING |
 F:NO_CONF | NO_SLEEP | RES_TELE | NO_FEAR | NO_STUN | 
 F:MORTAL | BLUEBAND | HAS_LITE | ATTR_ANY | CAN_FLY | WILD_TOO
-S:1_IN_6 | TELE_TO
+S:1_IN_4 | TELE_TO
 D:Founder of the Yagyu school, maybe the greatest swordsman ever.
 D:His left eye is covered by a patch, but there is no sign of any
 D:weakness on this fighter.
@@ -20435,6 +20435,16 @@ S:1_IN_6
 S:BR_POIS | BR_ACID | SCARE
 D:A huge snake-like reptile with redish scales and horns,
 D:rarely encountered it inhabits swamps, mountains and caves.
+
+N:1132:Invisible Dummy
+G:.:w
+I:110:1d1:0:0:0
+W:127:255:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+F:CHAR_CLEAR | NO_DEATH | IM_TELE | BLUEBAND
+D:Just a dummy placeholder for making grids inaccessible
+D:to means such as teleport.
 
 
 

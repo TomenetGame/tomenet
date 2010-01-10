@@ -510,49 +510,49 @@ $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:DUMMY
 
 $ENABLE_RCRAFT$N:96:Fire and Cold
-$ENABLE_RCRAFT$D:Ability to summon and banish heat by invoking runic powers
+$ENABLE_RCRAFT$D:Ability to summon elemental fire and cold
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:97:Water and Acid
-$ENABLE_RCRAFT$D:Ability to manipulate water and acid by invoking runic powers
+$ENABLE_RCRAFT$D:Ability to summon elemental water and acid
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:98:Lightning and Earth
-$ENABLE_RCRAFT$D:Ability to control the earth by summoning runic forces
+$ENABLE_RCRAFT$D:Ability to summon elemental earth and electricity
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:99:Poison and Wind
-$ENABLE_RCRAFT$D:Ability to call the wind via the runes
+$ENABLE_RCRAFT$D:Ability to summon elemental wind and poison
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:100:Mana and Chaos
-$ENABLE_RCRAFT$D:Ability to invoke mana or chaos via the runes
+$ENABLE_RCRAFT$D:Ability to invoke mana and chaos
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:101:Force and Gravity
-$ENABLE_RCRAFT$D:Ability to manipulate the raw elemental forces by runic invocation
+$ENABLE_RCRAFT$D:Ability to manipulate terrestrial forces
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:102:Nether and Time
-$ENABLE_RCRAFT$D:Ability to control the forces of time and life itself upon the stones
+$ENABLE_RCRAFT$D:Ability to manipulate life and time
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE
 
 $ENABLE_RCRAFT$N:103:Mind and Nexus
-$ENABLE_RCRAFT$D:Ability to twist your mind and body with the elements
+$ENABLE_RCRAFT$D:Ability to control mind and space
 $ENABLE_RCRAFT$A:18:Draw a rune
 $ENABLE_RCRAFT$I:1000:0
 $ENABLE_RCRAFT$F:MKEY_HARDCODE

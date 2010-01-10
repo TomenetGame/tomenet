@@ -1308,10 +1308,10 @@ void search(int Ind)
 
 	cave_type    *c_ptr;
 	object_type  *o_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
+	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 	/* Admin doesn't */
 	if (p_ptr->admin_dm) return;
@@ -2546,7 +2546,7 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
-					    || (randint(marts)<ma_ptr->chance));
+					    || (randint(marts)<ma_ptr->rchance));
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level >= old_ptr->min_level) &&
@@ -3285,7 +3285,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 						ma_ptr = &ma_blows[rand_int(p_ptr->total_winner ? MAX_MA : MAX_NONWINNER_MA)];
 					}
 					while ((ma_ptr->min_level > marts)
-					    || (randint(marts)<ma_ptr->chance));
+					    || (randint(marts)<ma_ptr->rchance));
 
 					/* keep the highest level attack available we found */
 					if ((ma_ptr->min_level >= old_ptr->min_level) &&
@@ -3330,6 +3330,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 					if (!((r_ptr->flags1 & RF1_NEVER_MOVE)
 					    || strchr("ANjmeEv$,sbBFIJQSXlw!=?", r_ptr->d_char)))
 					{
+						msg_format(Ind, "You strike %s's pressure points.", m_name);
 						special_effect = MA_SLOW;
 					}
 					else
@@ -4246,7 +4247,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 	//			*num = num_blow;
 			}
 		}
-		else if (artifact_p(o_ptr) || (o_ptr->name2 == EGO_STORMBRINGER))
+		else if (like_artifact_p(o_ptr))
 		{
 			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD))
 			{
@@ -4543,13 +4544,13 @@ bool player_can_enter(int Ind, byte feature)
 			return (TRUE);	/* you can pass, but you may suffer dmg */
 
 		case FEAT_DEAD_TREE:
-			if ((p_ptr->fly) || pass_wall)
+			if ((p_ptr->fly) || pass_wall || p_ptr->town_pass_trees)
 			    return (TRUE);
 		case FEAT_BUSH:
 		case FEAT_TREE:
 		{
 			/* 708 = Ent (passes trees), 83/142 novice ranger, 345 ranger, 637 ranger chieftain, 945 high-elven ranger */
-			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall)
+			if ((p_ptr->fly) || (p_ptr->pass_trees) || pass_wall || p_ptr->town_pass_trees)
 #if 0
 					(PRACE_FLAG(PR1_PASS_TREE)) ||
 				(get_skill(SKILL_DRUID) > 15) ||
@@ -4620,7 +4621,7 @@ bool player_can_enter(int Ind, byte feature)
 void move_player(int Ind, int dir, int do_pickup)
 {
 	player_type *p_ptr = Players[Ind];
-	struct worldpos *wpos=&p_ptr->wpos, nwpos;
+	struct worldpos *wpos = &p_ptr->wpos, nwpos;
 
 	int                     y, x, oldx, oldy;
 	int i;
@@ -4633,7 +4634,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	byte                    *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
-	int csmove=TRUE;
+	int csmove = TRUE;
 	
 	bool old_grid_sunlit = FALSE, new_grid_sunlit = FALSE; /* for vampires */
 
@@ -4744,7 +4745,7 @@ void move_player(int Ind, int dir, int do_pickup)
 			}
 		
 			/* check to make sure he hasnt hit the edge of the world */
-			if(nwpos.wx<0 || nwpos.wx>=MAX_WILD_X || nwpos.wy<0 || nwpos.wy>=MAX_WILD_Y)
+			if(nwpos.wx < 0 || nwpos.wx >= MAX_WILD_X || nwpos.wy < 0 || nwpos.wy >= MAX_WILD_Y)
 			{
 				p_ptr->px = oldx;
 				p_ptr->py = oldy;
@@ -5036,7 +5037,7 @@ void move_player(int Ind, int dir, int do_pickup)
 	}
 
 	/* now this is temp while i redesign!!! - do not change  <- ok and who wrote this and when? =p */
-	cs_ptr=c_ptr->special;
+	cs_ptr = c_ptr->special;
 	while(cs_ptr){
 		int tcv;
 		tcv=csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
@@ -5227,12 +5228,18 @@ void move_player(int Ind, int dir, int do_pickup)
 		if(zcave[y][x].info & CAVE_STCK && !(zcave[oy][ox].info & CAVE_STCK)) {
 			msg_print(Ind, "\377DThe air in here feels very still.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
+
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+			msg_print(Ind, "You lose your wraith powers.");
+			/* Automatically disable permanent wraith form (set_tim_wraith) */
+			p_ptr->update |= PU_BONUS;
 		}
 		if(zcave[oy][ox].info & CAVE_STCK && !(zcave[y][x].info & CAVE_STCK))
 		{
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 			p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-			/* Automatically re-enable permanent wraith form */
+
+			/* Automatically re-enable permanent wraith form (set_tim_wraith) */
 			p_ptr->update |= PU_BONUS;
 		}
 		/* Update the player indices */
@@ -5889,7 +5896,12 @@ static bool run_test(int Ind)
 			   (!(m_list[c_ptr->m_idx].special) && 
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
 					return (TRUE); 
+
 		}
+
+		/* Hostile characters will stop each other from running. 
+		 * This should lessen the melee storming effect in PVP fights */
+		if (c_ptr->m_idx < 0 && check_hostile(Ind, 0 - c_ptr->m_idx)) return (TRUE);
 
 		/* Visible objects abort running */
 		if (c_ptr->o_idx)

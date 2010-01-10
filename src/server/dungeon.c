@@ -25,7 +25,7 @@
  */
 #define GHOST_FADING	10000
 
-/* How fast HP/SP regenerate when 'resting'. [3] */
+/* How fast HP/MP regenerate when 'resting'. [3] */
 #define RESTING_RATE	(cfg.resting_rate)
 
 /* Chance of items damaged when drowning, in % [3] */
@@ -835,6 +835,9 @@ static void process_effects(void)
 		if (e_ptr->who > 0) who = e_ptr->who;
 		else
 		{
+			/* Make the effect friendly after logging out - mikaelh */
+			who = PROJECTOR_PLAYER;
+
 			/* XXX Hack -- is the trapper online? */
 			for (i = 1; i <= NumPlayers; i++)
 			{
@@ -850,7 +853,7 @@ static void process_effects(void)
 		}
 
 		/* Storm ends if the cause is gone */
-		if (e_ptr->flags & EFF_STORM && who == PROJECTOR_EFFECT)
+		if (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER))
 		{
 			erase_effects(k);
 			continue;
@@ -888,10 +891,11 @@ static void process_effects(void)
 							PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP, "");
 
 					/* Oh, destroyed? RIP */
-					if (who < 0 && who != PROJECTOR_EFFECT &&
+					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
 							Players[0 - who]->conn == NOT_CONNECTED)
 					{
-						who = PROJECTOR_EFFECT;
+						/* Make the effect friendly after death - mikaelh */
+						who = PROJECTOR_PLAYER;
 					}
 					
 #ifdef ANIMATE_EFFECTS
@@ -914,7 +918,7 @@ static void process_effects(void)
 				//	if (!alive || death) return;
 				/* Storm ends if the cause is gone */
 				if (e_ptr->flags & EFF_STORM &&
-						(who == PROJECTOR_EFFECT || Players[0 - who]->death))
+						(who == PROJECTOR_PLAYER || Players[0 - who]->death))
 				{
 					erase_effects(k);
 					break;
@@ -1197,8 +1201,7 @@ void player_day(int Ind) {
 	for (y = 0; y < MAX_HGT; y++)
 	for (x = 0; x < MAX_WID; x++) {
 		/* Hack -- Memorize lit grids if allowed */
-		if ((istown(&p_ptr->wpos) ||
-		    (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2))
+		if (istownarea(&p_ptr->wpos, 2)
 		    && (p_ptr->view_perma_grids)) {
 			p_ptr->cave_flag[y][x] |= CAVE_MARK;
 		}
@@ -1231,7 +1234,7 @@ void player_night(int Ind) {
 			/* Forget the grid */ 
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
 		/* Always remember interesting features in town areas */
-		} else if ((istown(&p_ptr->wpos) || (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2))
+		} else if (istownarea(&p_ptr->wpos, 2)
 			    && (p_ptr->view_perma_grids)) {
 			p_ptr->cave_flag[y][x] |= CAVE_MARK;
 		}
@@ -1689,6 +1692,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 		/*
 			Auto-retaliation format:
 			@Oa through to @Og
+			(@O defaults to @Oa)
 			@Oc casts a basic (cheap) bolt spell of the type that it is on.
 			@Ob casts a self spell
 			The letters correspond to the mkey spell selector
@@ -1697,9 +1701,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription)
 			if(o_ptr->sval >= 0 && o_ptr->sval <= 15)
 			{
 				if(choice < 0 || choice >= 8) 
-					choice = 0;
-				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | runespell_types[choice].type, 0);
-				execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
+					choice = R_BOLT;
+				else
+					choice = runespell_types[choice].type;
+				execute_rspell(Ind, 5, r_elements[o_ptr->sval].self | runespell_types[choice].type, 0);
+				//execute_rspell(Ind, 5, NULL, 0, r_elements[o_ptr->sval].self | R_BOLT, 0); //choice sometimes has wrong value
 				return TRUE;
 			}
 			break;
@@ -2552,7 +2558,7 @@ static void do_recall(int Ind, bool bypass)
 
 	/* sorta circumlocution? */
 	worldpos new_pos;
-	bool recall_ok=TRUE;
+	bool recall_ok = TRUE;
 
 	/* Disturbing! */
 	disturb(Ind, 0, 0);
@@ -3028,7 +3034,7 @@ static bool process_player_end_aux(int Ind)
 	}
 	/* Ghosts don't need food */
 	/* Allow AFK-hivernation if not hungry */
-	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food > PY_FOOD_ALERT) && !p_ptr->admin_dm &&
+	else if (!p_ptr->ghost && !(p_ptr->afk && p_ptr->food >= PY_FOOD_ALERT) && !p_ptr->admin_dm &&
 	    /* Don't starve in town (but recover from being gorged) - C. Blue */
 //	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_MAX))
 	    (!istown(&p_ptr->wpos) || p_ptr->food >= PY_FOOD_FULL)) /* allow to digest some to not get gorged in upcoming fights quickly - C. Blue */
@@ -3201,7 +3207,10 @@ static bool process_player_end_aux(int Ind)
 	}
 
 	/* Countdown no-teleport rule in PVP mode */
-	if (p_ptr->prevent_tele) p_ptr->prevent_tele--;
+	if (p_ptr->pvp_prevent_tele) {
+		p_ptr->pvp_prevent_tele--;
+		if (!p_ptr->pvp_prevent_tele) p_ptr->redraw |= PR_DEPTH;
+	}
 
 	/* Regenerate depleted Stamina */
 	if ((p_ptr->cst < p_ptr->mst) && !p_ptr->shadow_running)
@@ -3345,13 +3354,12 @@ static bool process_player_end_aux(int Ind)
 		p_ptr->auto_tunnel--;
 	}
 #endif	// 0
-
 	/* Hack -- Meditation */
 	if (p_ptr->tim_meditation)
 	{
 		(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
 	}
-
+	
 	/* Hack -- Wraithform */
 	if (p_ptr->tim_wraith)
 	{
@@ -3539,6 +3547,14 @@ static bool process_player_end_aux(int Ind)
 		(void)set_shield(Ind, p_ptr->shield - 1, p_ptr->shield_power, p_ptr->shield_opt, p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 	}
 
+	#ifdef ENABLE_RCRAFT
+	/* Timed deflection */
+	if (p_ptr->tim_deflect)
+	{
+		(void)set_tim_deflect(Ind, p_ptr->tim_deflect - 1);
+	}
+	#endif
+	
 	/* Timed Levitation */
 	if (p_ptr->tim_ffall)
 	{
@@ -3554,7 +3570,13 @@ static bool process_player_end_aux(int Ind)
 	{
 		(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
 	}
-
+	#ifdef ENABLE_RCRAFT
+	/* Trauma boost */
+	if (p_ptr->tim_trauma)
+	{
+		(void)set_tim_trauma(Ind, p_ptr->tim_trauma - 1, p_ptr->tim_trauma_pow);
+	}
+	#endif
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder)
 	{
@@ -4162,10 +4184,22 @@ static bool process_player_end_aux(int Ind)
 	bypass_invuln = FALSE;
 
 	/* Evileye, please tell me if it's right */
-	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith=0;
+	if (p_ptr->tim_wraith) {
+		if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
+			p_ptr->tim_wraith = 0;
+			msg_print(Ind, "You lose your wraith powers.");
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+		}
+	}
 
 	/* No wraithform on NO_MAGIC levels - C. Blue */
-	if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) p_ptr->tim_wraith=0;
+	if (p_ptr->tim_wraith) {
+		if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+			p_ptr->tim_wraith = 0;
+			msg_print(Ind, "You lose your wraith powers.");
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+		}
+	}
 
 	return (TRUE);
 }
@@ -4371,7 +4405,7 @@ static void process_player_end(int Ind)
 	/* Update stuff (if needed) */
 	if (p_ptr->update) update_stuff(Ind);
 
-//	if(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) p_ptr->tim_wraith=0;
+//	if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) p_ptr->tim_wraith = 0;
 	
 	/* Redraw stuff (if needed) */
 	if (p_ptr->redraw) redraw_stuff(Ind);
@@ -5408,6 +5442,9 @@ static void process_player_change_wpos(int Ind)
 		}
 	}
 
+	/* Reset bot hunting variables */
+	p_ptr->silly_door_exp = 0;
+
 	/* Somebody has entered an ungenerated level */
 	if (players_on_depth(wpos) && !getcave(wpos))
 	{
@@ -5438,7 +5475,7 @@ static void process_player_change_wpos(int Ind)
 	}
 
 	/* Memorize the town and all wilderness levels close to town */
-	if (istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius <=2))
+	if (istownarea(wpos, 2))
 	{
 		p_ptr->max_panel_rows = (MAX_HGT / SCREEN_HGT) * 2 - 2;
 		p_ptr->max_panel_cols = (MAX_WID / SCREEN_WID) * 2 - 2;
@@ -5453,7 +5490,8 @@ static void process_player_change_wpos(int Ind)
 			/* for PVP-mode, reset diminishing healing */
 			p_ptr->heal_effect = 0;
 			/* and anti-fleeing teleport prevention */
-			p_ptr->prevent_tele = 0;
+			p_ptr->pvp_prevent_tele = 0;
+			p_ptr->redraw |= PR_DEPTH;
 		}
 
 #if 0 //now in player_day/player_night
@@ -5809,7 +5847,7 @@ static void process_player_change_wpos(int Ind)
 			if (!(Players[j]->mode & MODE_PVP)) continue;
 			if (!inarea(&Players[j]->wpos, &p_ptr->wpos)) continue;
 			if (Players[j]->max_plv < p_ptr->max_plv - 5) {
-				p_ptr->new_level_method=(p_ptr->wpos.wz>0?LEVEL_RECALL_DOWN:LEVEL_RECALL_UP);
+				p_ptr->new_level_method=(p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 				p_ptr->recall_pos.wz = 0;
 				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
@@ -5819,6 +5857,10 @@ static void process_player_change_wpos(int Ind)
 			}
 		}
 	}
+
+	/* Hack: Allow players to pass trees always, while in town */
+	if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
+	else p_ptr->town_pass_trees = FALSE;
 }
 
 
@@ -6659,7 +6701,7 @@ void process_timers() {
 		timer_pvparena1--;
 		if (!timer_pvparena1) {
 			/* start next countdown */
-			timer_pvparena1 = 45;
+			timer_pvparena1 = 90; //45 was too fast, disallowing ppl to leave the arena sort of
 
 			if ((timer_pvparena3 % 2) == 0) { /* cycle preparation? */
 				/* clear old monsters and items */
@@ -6677,44 +6719,45 @@ void process_timers() {
 			if (timer_pvparena3 == 0) { /* prepare first cycle */
 				y = 1;
 				x = (1 * 10) - 3;
-				summon_override_checks = 1;//866 elite uruk, 563 young red dragon
+				summon_override_checks = SO_ALL;
+				//866 elite uruk, 563 young red dragon
 //				place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
 				x = (2 * 10) - 3;
-				summon_override_checks = 1;//487 storm giant
+				//487 storm giant
 //				place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
 				x = (3 * 10) - 3;
-				summon_override_checks = 1;//609 baron of hell
+				//609 baron of hell
 //				place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
 				x = (4 * 10) - 3;
-				summon_override_checks = 1;//590 mature gold d
+				//590 mature gold d
 //				place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
 				x = (5 * 10) - 3;
-				summon_override_checks = 1;//995 marilith, 558 colossus
+				//995 marilith, 558 colossus
 //				place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
 				x = (6 * 10) - 3;
-				summon_override_checks = 1;//602 bronze D, 720 barbazu
+				//602 bronze D, 720 barbazu
 //				place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
 				place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
-				summon_override_checks = 0;
+				summon_override_checks = SO_NONE;
 				timer_pvparena3++; /* start releasing cycle */
 				return;
 			} else if (timer_pvparena3 == 2) { /* prepare second cycle */
+				summon_override_checks = SO_ALL;
 				for (i = 1; i <= 6; i++) {
 					y = 1;
 					x = (i * 10) - 3;
-					summon_override_checks = 1;
 					//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
 					//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
 //					place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
 					place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
 					everyone_lite_spot(&wpos, y, x);
 				}
-				summon_override_checks = 0;
+				summon_override_checks = SO_NONE;
 				timer_pvparena3++; /* start releasing cycle */
 				return;
 			}

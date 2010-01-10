@@ -138,7 +138,10 @@ static void prt_title(int Ind)
 	/* Winner */
 	if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL))
 	{
-		p = (p_ptr->male ? "**KING**" : "**QUEEN**");
+		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
+			p = (p_ptr->male ? "**EMPEROR**" : "**EMPRESS**");
+		else
+			p = (p_ptr->male ? "**KING**" : "**QUEEN**");
 	}
 
 	/* Normal */
@@ -2306,9 +2309,10 @@ static void calc_body_bonus(int Ind)
 	if(r_ptr->flags2 & RF2_REGENERATE) p_ptr->regenerate = TRUE;
 	/* Immaterial forms (WRAITH / PASS_WALL) drain the mimic's HP! */
 	if(r_ptr->flags2 & RF2_PASS_WALL) {
-		if (!(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) &&
+		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
                     !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
                 {
+//BAD!(recursion)			set_tim_wraith(Ind, 30000);
 			p_ptr->tim_wraith = 30000;
 		}
 		p_ptr->drain_life++;
@@ -3263,7 +3267,6 @@ void calc_boni(int Ind)
 				p_ptr->fly = TRUE;
 			}
 		} else if (p_ptr->divinity==DIVINE_DEMON) {
-			p_ptr->suscep_cold = TRUE;
 			if (p_ptr->lev>=20) {
 				p_ptr->resist_fire = TRUE;
 				p_ptr->resist_dark = TRUE;
@@ -3780,9 +3783,10 @@ void calc_boni(int Ind)
                 if (f3 & (TR3_WRAITH))
 		{
 			//p_ptr->wraith_form = TRUE;
-			if (!(zcave[p_ptr->py][p_ptr->px].info&CAVE_STCK) &&
-    		            !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
-	                {
+			if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
+			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)))
+			{
+//BAD!(recursion)				set_tim_wraith(Ind, 30000);
 				p_ptr->tim_wraith = 30000;
 			}
 		}
@@ -4133,7 +4137,15 @@ void calc_boni(int Ind)
 		p_ptr->to_a += p_ptr->shield_power;
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
-
+	
+	#ifdef ENABLE_RCRAFT
+	/* Temporary deflection */
+	if(p_ptr->tim_deflect)
+	{
+		p_ptr->reflect = TRUE;
+	}
+	#endif
+	
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5))
 	{
@@ -6429,58 +6441,67 @@ int start_global_event(int Ind, int getype, char *parm)
 	ge->hidden=FALSE;
 	ge->min_participants=0; /* no minimum */
 	ge->limited=0; /* no maximum */
+	ge->cleanup=0; /* no cleaning up needed so far (for when the event ends) */
 
 	/* IMPORTANT: state[0] == 255 is used as indicator that cleaning-up must be done, event has ended. */
 	switch(getype) {
-	case GE_HIGHLANDER:	/* 'Highlander Tournament' [<announcement time>] */
-			strcpy(ge->title, "Highlander Tournament");
-			strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this deathmatch! ");
-			strcpy(ge->description[1], " You're teleported into a dungeon and you have 10 minutes to level up. ");
-			strcpy(ge->description[2], " After that, everyone will meet under the sky for a bloody slaughter.  ");
-			strcpy(ge->description[3], " Add amulets of defeated opponents to yours to increase its power!     ");
-			strcpy(ge->description[4], " HINT: Buy your equipment BEFORE it starts. Or you'll go naked.        ");
-			strcpy(ge->description[5], " HINT: Make sure that you don't gain any experience until it starts.   ");
-			ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
-									most of the time is just for announcing it
-									so players will sign on via /gesign <n> */
-			switch(rand_int(2)) { /* Determine terrain type! */
-			case 0: ge->extra[2] = WILD_WASTELAND; break;
-//			case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
-			case 1: ge->extra[2] = WILD_GRASSLAND; break;
-			}
-			switch(rand_int(3)) { /* Load premade layout? (Arenas) */
-			case 0: ge->extra[4] = 1; break;
-			}
-			if (!ge->extra[0]) ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
-			if (atoi(parm)) ge->announcement_time = atoi(parm);
-			ge->min_participants = 2;
-			break;
-	case GE_ARENA_MONSTER:	/* 'Arena Monster Challenge' [<announcement time>] */
-			strcpy(ge->title, "Arena Monster Challenge");
-			strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
-			strcpy(ge->description[1], format(" '/gesign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
-			strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
-			strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
-			strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
-			strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
-			strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
-//			strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-			strcpy(ge->description[7], format(" (Example: '/gesign %d black orc vet' gets you a veteran archer!)", n+1));
-			ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
+	case GE_HIGHLANDER:	/* 'Highlander Tournament' */
+		/* parameters:
+		[<int != 0>]	set announcement time to this (seconds)
+		['>']		create staircases leading back into the dungeon from surface */
+
+		strcpy(ge->title, "Highlander Tournament");
+		strcpy(ge->description[0], " Create a new level 1 character, then sign him on for this deathmatch! ");
+		strcpy(ge->description[1], " You're teleported into a dungeon and you have 10 minutes to level up. ");
+		strcpy(ge->description[2], " After that, everyone will meet under the sky for a bloody slaughter.  ");
+		strcpy(ge->description[3], " Add amulets of defeated opponents to yours to increase its power!     ");
+		strcpy(ge->description[4], " HINT: Buy your equipment BEFORE it starts. Or you'll go naked.        ");
+		strcpy(ge->description[5], " HINT: Make sure that you don't gain any experience until it starts.   ");
+		ge->end_turn = ge->start_turn + cfg.fps * 60 * 90 ; /* 90 minutes max. duration,
+								most of the time is just for announcing it
+								so players will sign on via /gesign <n> */
+		switch(rand_int(2)) { /* Determine terrain type! */
+		case 0: ge->extra[2] = WILD_WASTELAND; break;
+//		case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
+		case 1: ge->extra[2] = WILD_GRASSLAND; break;
+		}
+		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
+		case 0: ge->extra[4] = 1; break;
+		}
+		if (!ge->extra[0]) ge->extra[0] = 95; /* there are no objects of lvl 96..99 anyways */
+		if (atoi(parm)) ge->announcement_time = atoi(parm);
+		ge->min_participants = 2;
+		ge->extra[5] = 0; /* 0 = don't create staircases into the dungeon, 1 = do create */
+		if (strstr(parm, ">")) ge->extra[5] = 1;
+		break;
+	case GE_ARENA_MONSTER:	/* 'Arena Monster Challenge' */
+		/* parameters: none */
+
+		strcpy(ge->title, "Arena Monster Challenge");
+		strcpy(ge->description[0], " During the duration of Bree's Arena Monster Challenge, you just type  ");
+		strcpy(ge->description[1], format(" '/gesign %d <Monster Name>' and you'll have a chance to challenge  ", n+1));
+		strcpy(ge->description[2], " it for an illusion death match in Bree's upper training tower floor.  ");
+		strcpy(ge->description[3], " Neither the monster nor you will really die in person, just illusions ");
+		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
+		strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
+		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
+//		strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
+		strcpy(ge->description[7], format(" (Example: '/gesign %d black orc vet' gets you a veteran archer!)", n+1));
+		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
-			switch(rand_int(2)) { /* Determine terrain type! */
-			case 0: ge->extra[2] = WILD_WASTELAND; break;
-//			case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
-			case 1: ge->extra[2] = WILD_GRASSLAND; break;
-			}
-			switch(rand_int(3)) { /* Load premade layout? (Arenas) */
-			case 0: ge->extra[4] = 1; break;
-			}
+		switch(rand_int(2)) { /* Determine terrain type! */
+		case 0: ge->extra[2] = WILD_WASTELAND; break;
+//		case 1: ge->extra[2] = WILD_SWAMP; break; swamp maybe too annoying
+		case 1: ge->extra[2] = WILD_GRASSLAND; break;
+		}
+		switch(rand_int(3)) { /* Load premade layout? (Arenas) */
+		case 0: ge->extra[4] = 1; break;
+		}
 #endif
-			ge->announcement_time = 0;
-			ge->signup_time = 60 * 30;
-			ge->min_participants = 0;
-			break;
+		ge->announcement_time = 0;
+		ge->signup_time = 60 * 30;
+		ge->min_participants = 0;
+		break;
 	}
 
 	/* Fix limits */
@@ -6826,6 +6847,7 @@ static void process_global_event(int ge_id)
 	case GE_HIGHLANDER:
 		switch(ge->state[0]){
 		case 0: /* prepare level, gather everyone, start exp'ing */
+			ge->cleanup = 1;
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
@@ -6851,7 +6873,7 @@ static void process_global_event(int ge_id)
 				    c_ptr->feat == FEAT_TREE)
 					switch (ge->extra[2]) {
 					case WILD_WASTELAND: c_ptr->feat = FEAT_DIRT; break;
-					case WILD_GRASSLAND: 
+					case WILD_GRASSLAND:
 					default: c_ptr->feat = FEAT_GRASS; break;
 					}
 			}
@@ -6862,11 +6884,31 @@ static void process_global_event(int ge_id)
 			}
 			
 			/* actually create temporary Highlander dungeon! */
-			if (!wild_info[wpos.wy][wpos.wx].dungeon)
-				adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
+			if (!wild_info[wpos.wy][wpos.wx].dungeon) {
+				/* add staircase downwards into the dungeon? */
+				if (!ge->extra[5]) {
+					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
+					    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
+				} else {
+					adddungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON |
+					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_NO_EXIT_MASK, NULL, NULL, FALSE, 0);
 
-			for (i = 1; i <= NumPlayers; i++) 
+					/* place staircase on an empty accessible grid */
+					do {
+						y = rand_int((MAX_HGT) - 3) + 1;
+						x = rand_int((MAX_WID) - 3) + 1;
+					} while (!cave_floor_bold(zcave, y, x)
+					    && (++tries < 1000));
+					zcave[y][x].feat = FEAT_MORE;
+					/* remember for dungeon removal at the end */
+					ge->extra[6] = x;
+					ge->extra[7] = y;
+
+					sector00downstairs++;
+				}
+			}
+
+			for (i = 1; i <= NumPlayers; i++)
 			for (j = 0; j < MAX_GE_PARTICIPANTS; j++)
 			if (ge->participant[j] == Players[i]->id) {
 				p_ptr = Players[i];
@@ -6905,90 +6947,112 @@ static void process_global_event(int ge_id)
 
 			ge->state[0] = 1;
 			break;
-		case 1: /* exp phase */
+		case 1: /* exp phase - end prematurely if all players pseudo-died in dungeon */
 			n = 0;
+			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
 				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
 					n++;
 					j = i;
+					/* count players who have already been kicked out of the dungeon by pseudo-dieing */
+					if (!Players[i]->wpos.wz) k++;
 				}
-			if (!n) {
-				ge->state[0] = 255; /* double kill by monsters or something? ew. */
-				break;
-			}
-			if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
-				ge->state[0] = 5;
-				ge->extra[3] = j;
-				break;
-			}
 
-			if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
+			if (!n) ge->state[0] = 255; /* double kill by monsters or something? ew. */
+			else if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+				ge->state[0] = 6;
+				ge->extra[3] = j;
+			}
+			else if ((n == k) && !ge->extra[5]) ge->state[0] = 3; /* all players are already at the surface,
+										because all of them were defeated by monsters,
+										and there's no staircase to re-enter the dungeon.. */
+			else if (elapsed - ge->announcement_time >= 600 - 45) { /* give a warning, peace ends soon */
 				for (i = 1; i <= NumPlayers; i++)
-				if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377f[The slaughter will begin soon!]");
+					if (!Players[i]->wpos.wx && !Players[i]->wpos.wy) msg_print(i, "\377f[The slaughter will begin soon!]");
 				ge->state[0] = 2;
 			}
 			break;
-		case 2: /* exp phase // get people out of the dungeon and make them fight each other properly */
+		case 2: /* final exp phase after the warning has been issued - end prematurely if needed (see above) */
 			n = 0;
+			k = 0;
 			for (i = 1; i <= NumPlayers; i++)
 				if (!is_admin(Players[i]) && !Players[i]->wpos.wx && !Players[i]->wpos.wy) {
 					n++;
 					j = i;
+					if (!Players[i]->wpos.wz) k++;
 				}
-			if (!n) {
-				ge->state[0] = 255; /* double kill or something? ew. */
-				break;
-			}
-			if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
-				ge->state[0] = 5;
+
+			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
+			else if (n == 1) { /* early ending, everyone died to monsters in the dungeon */
+				ge->state[0] = 6;
 				ge->extra[3] = j;
-				break;
+			}
+			else if ((n == k) && !ge->extra[5]) ge->state[0] = 3; /* start deathmatch already (see above, state 1) */
+			else if (elapsed - ge->announcement_time >= 600) ge->state[0] = 3; /* start deathmatch phase */
+			break;
+		case 3: /* get people out of the dungeon (if not all pseudo-died already) and make them fight each other properly */
+			/* remember time stamp when we entered deathmatch phase (for spawning a baddy) */
+			ge->state[2] = turn - ge->start_turn; /* this keeps it /gefforward friendly */
+			ge->state[3] = 0;
+
+			/* got a staircase to remove? */
+			if (ge->extra[5]) {
+				zcave = getcave(&wpos);
+				zcave[ge->extra[7]][ge->extra[6]].feat = FEAT_DIRT;
+				everyone_lite_spot(&wpos, ge->extra[7], ge->extra[6]);
+				sector00downstairs--;
+				ge->extra[5] = 0;
 			}
 
-			if (elapsed - ge->announcement_time >= 600) {
-				for (i = 1; i <= NumPlayers; i++) {
-					p_ptr = Players[i];
-					if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (is_admin(p_ptr) || p_ptr->wpos.wx || p_ptr->wpos.wy) continue;
 
+				if (p_ptr->party) {
 					for (j = 1; j <= NumPlayers; j++) {
 						if (j == i) continue;
 						if (Players[j]->wpos.wx || Players[j]->wpos.wy) continue;
 						/* leave party */
-						if (Players[j]->party == p_ptr->party) {
-							party_leave(i);
-						}
+						if (Players[j]->party == p_ptr->party) party_leave(i);
 					}
+				}
 
-					/* change "normal" Highlands amulet to v2 with ESP? */
-					for (j = INVEN_TOTAL - 1; j >= 0; j--)
-						if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
-							invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
-						        p_ptr->inventory[j].number = 1;
-							p_ptr->inventory[j].level = 0;
-						        p_ptr->inventory[j].discount = 0;
-						        p_ptr->inventory[j].ident |= ID_MENTAL;
-						        p_ptr->inventory[j].owner = p_ptr->id;
-						        p_ptr->inventory[j].owner_mode = p_ptr->mode;
-						        object_aware(i, &p_ptr->inventory[j]);
-					        	object_known(&p_ptr->inventory[j]);
-						}
-				        p_ptr->update |= (PU_BONUS | PU_VIEW);
-					p_ptr->window |= (PW_INVEN | PW_EQUIP);
-					handle_stuff(i);
+				/* change "normal" Highlands amulet to v2 with ESP? */
+				for (j = INVEN_TOTAL - 1; j >= 0; j--)
+					if (p_ptr->inventory[j].tval == TV_AMULET && p_ptr->inventory[j].sval == SV_AMULET_HIGHLANDS) {
+						invcopy(&p_ptr->inventory[j], lookup_kind(TV_AMULET, SV_AMULET_HIGHLANDS2));
+					        p_ptr->inventory[j].number = 1;
+						p_ptr->inventory[j].level = 0;
+					        p_ptr->inventory[j].discount = 0;
+					        p_ptr->inventory[j].ident |= ID_MENTAL;
+					        p_ptr->inventory[j].owner = p_ptr->id;
+					        p_ptr->inventory[j].owner_mode = p_ptr->mode;
+					        object_aware(i, &p_ptr->inventory[j]);
+				        	object_known(&p_ptr->inventory[j]);
+					}
+			        p_ptr->update |= (PU_BONUS | PU_VIEW);
+				p_ptr->window |= (PW_INVEN | PW_EQUIP);
+				handle_stuff(i);
 
+				p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
+				p_ptr->global_event_temp |= PEVF_AUTOPVP_00;
+
+				if (Players[i]->wpos.wz) {
 					p_ptr->recall_pos.wx = 0;
 					p_ptr->recall_pos.wy = 0;
 					p_ptr->recall_pos.wz = 0;
-					p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
-					p_ptr->global_event_temp |= PEVF_AUTOPVP_00;
 	                    		p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				        recall_player(i, "");
-					p_ptr->global_event_progress[ge_id][0] = 2; /* now before deathmatch */
 				}
-				ge->state[0] = 3;
+
+				p_ptr->global_event_progress[ge_id][0] = 4; /* now before deathmatch */
+				msg_print(i, "\377fThe bloodshed begins!");
 			}
+
+			ge->state[0] = 4;
 			break;
-		case 3: /* teleport them around first */
+		case 4: /* teleport them around first */
+			/* NOTE: the no-tele vault stuff might just need fixing, ie ignoring the no-tele when auto-recalling */
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
 					p_ptr = Players[i];
@@ -7002,11 +7066,12 @@ static void process_global_event(int ge_id)
 						p_ptr->deathblow = 0;
 						player_death(i);
 					}
-					p_ptr->global_event_progress[ge_id][0] = 3; /* now in deathmatch */
+					p_ptr->global_event_progress[ge_id][0] = 5; /* now in deathmatch */
 				}
-			ge->state[0] = 4;
+			ge->state[0] = 5;
 			break;
-		case 4: /* deathmatch phase -- might add some random teleportation for more fun */
+		case 5: /* deathmatch phase -- might add some random teleportation for more fun */
+			/* NOTE: the mysterious-accident is deprecated, since we use extra[5] now */
 			n = 0;
 			for (i = 1; i <= NumPlayers; i++) {
 				if (is_admin(Players[i])) continue;
@@ -7026,11 +7091,26 @@ static void process_global_event(int ge_id)
 			}
 			if (!n) ge->state[0] = 255; /* double kill or something? ew. */
 			if (n == 1) { /* We have a winner! (not a total_winner but anyways..) */
-				ge->state[0] = 5;
+				ge->state[0] = 6;
 				ge->extra[3] = j;
 			}
+
+			/* if tournament runs for too long without result, spice it up by
+			   throwing in some nasty baddy (Bad Luck Bat from Hell): */
+			/* TODO: also spawn something if a player is AFK (or highlandering himself on friend's account -_-) */
+//			if (elapsed_turns - (ge->announcement_time * cfg.fps) - 600 == 600) { /* after 10 minutes of deathmatch phase */
+			if ((!ge->state[3]) && ((turn - ge->start_turn) - ge->state[2] >= 600 * cfg.fps)) {
+				msg_broadcast(0, "\377aThe gods of highlands are displeased by the lack of blood flowing.");
+				summon_override_checks = SO_ALL & ~(SO_GRID_EMPTY);
+				while (!(summon_detailed_one_somewhere(&wpos, 1114, 0, FALSE, 101)) && (++tries < 1000));
+				summon_override_checks = SO_NONE;
+				ge->state[3] = 1; /* remember that we already spawned one so we don't keep spawning */
+					/* this actually serves if an admin /gefforward's too far, beyond the spawning
+					time, so we can still spawn one without the admin taking too much care.. */
+			}
+
 			break;
-		case 5: /* we have a winner! */
+		case 6: /* we have a winner! */
 			j = ge->extra[3];
 			if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
 			    p_ptr = Players[j];
@@ -7058,7 +7138,7 @@ static void process_global_event(int ge_id)
 				set_food(j, PY_FOOD_FULL);
 				hp_player_quiet(j, 5000, TRUE);
 
-				ge->state[0] = 6;
+				ge->state[0] = 7;
 				ge->state[1] = elapsed;
 			    } else {
 				ge->state[0] = 255; /* no winner, d'oh */
@@ -7066,12 +7146,16 @@ static void process_global_event(int ge_id)
 			} else {
 				ge->state[0] = 255; /* no winner, d'oh */
 			}
-		case 6: /* chill out (or get killed -- but now there aren't monster spawns anymore) */
-			if (elapsed - ge->state[1] >= 5) {
-				ge->state[0] = 255;
-			}
+			break;
+		case 7: /* chill out for a few seconds (or get killed -- but now there aren't monster spawns anymore) */
+			if (elapsed - ge->state[1] >= 5) ge->state[0] = 255;
 			break;
 		case 255: /* clean-up */
+			if (!ge->cleanup) {
+				ge->getype = GE_NONE; /* end of event */
+				break;
+			}
+
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) {
@@ -7093,6 +7177,15 @@ static void process_global_event(int ge_id)
 			}
 
 			sector00separation--;
+
+			/* still got a staircase to remove? */
+			if (ge->extra[5]) {
+				zcave = getcave(&wpos);
+				zcave[ge->extra[7]][ge->extra[6]].feat = FEAT_DIRT;
+				everyone_lite_spot(&wpos, ge->extra[7], ge->extra[6]);
+				sector00downstairs--;
+				ge->extra[5] = 0;
+			}
 
 			/* remove temporary Highlander dungeon! */
 			if (wild_info[wpos.wy][wpos.wx].dungeon)
@@ -7162,7 +7255,7 @@ static void process_global_event(int ge_id)
 				}
 
 				wipe_m_list(&wpos); /* get rid of previous monster */
-				summon_override_checks = 2;
+				summon_override_checks = SO_ALL & ~(SO_PROTECTED | SO_GRID_EMPTY);
 #ifndef GE_ARENA_ALLOW_EGO
 				while (!summon_specific_race_somewhere(&wpos, ge->extra[1], 100, 1) /* summon new monster */
 				    && (++tries < 1000));
@@ -7172,7 +7265,7 @@ static void process_global_event(int ge_id)
 				monster_desc(0, m_name, m_idx, 0x08);
 				msg_broadcast(0, format("\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
 #endif
-				summon_override_checks = 0;
+				summon_override_checks = SO_NONE;
 
 				ge->extra[2] = ge->extra[1]; /* remember it for result announcement later */
 #ifdef GE_ARENA_ALLOW_EGO

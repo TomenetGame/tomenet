@@ -66,6 +66,11 @@ void do_cmd_check_artifacts(int Ind, int line)
 	{
 		a_ptr = &a_info[k];
 
+		/* little hack: create the artifact temporarily */
+		forge.name1 = k;
+		z = lookup_kind(a_ptr->tval, a_ptr->sval);
+		if (z) invcopy(&forge, z);
+
 		/* Default */
 		okay[k] = FALSE;
 
@@ -79,7 +84,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 		if (!a_ptr->known && !admin) continue;
 
 		/* Skip "hidden" artifacts */
-		if (admin_artifact_p(k) && !admin) continue;
+		if (admin_artifact_p(&forge) && !admin) continue;
 
 		/* Assume okay */
 		okay[k] = TRUE;
@@ -143,7 +148,7 @@ void do_cmd_check_artifacts(int Ind, int line)
 			/* Hack -- Build the artifact name */
 			if (admin) {
 				if (a_ptr->cur_num != 1 && !multiple_artifact_p(&forge)) fprintf(fff, "\377r");
-				else if (admin_artifact_p(k)) fprintf(fff, "\377y");
+				else if (admin_artifact_p(&forge)) fprintf(fff, "\377y");
 				else if (winner_artifact_p(&forge)) fprintf(fff, "\377v");
 				else if (a_ptr->flags4 & TR4_SPECIAL_GENE) fprintf(fff, "\377B");
 				else if (a_ptr->cur_num != 1) fprintf(fff, "\377o");
@@ -481,12 +486,11 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
   #endif
 	//e.g., God the Human Grand Runemistress =P
   #ifdef ENABLE_DIVINE
-	if (q_ptr->prace == RACE_DIVINE && q_ptr->lev >= 20) {
+	if (q_ptr->prace == RACE_DIVINE && q_ptr->divinity) {
 		if (q_ptr->divinity==DIVINE_ANGEL)
-			fprintf(fff, "%s %s", "Angelic", p);
+			fprintf(fff, "%s %s", "Enlightened", p); //harmonic?
 		else if (q_ptr->divinity==DIVINE_DEMON)
-			fprintf(fff, "%s %s", "Demonic", p);
-
+			fprintf(fff, "%s %s", "Corrupted", p); //rebellious?  
 	}
 	else
   #endif
@@ -1073,7 +1077,7 @@ void do_cmd_check_server_settings(int Ind)
 	fprintf(fff, "Server notes: %s\n", cfg.server_notes);
 	fprintf(fff, "Game speed(FPS): %d (%+d%%)\n", cfg.fps, (cfg.fps-60)*100/60);
 	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
-	fprintf(fff, "While 'resting', HP/SP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
 	if ((k=cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp(factor %d).\n", k);

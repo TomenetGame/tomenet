@@ -29,20 +29,14 @@ function server_startup(timestamp, h, m, s, dwd, dd, dm, dy)
                 end
         end
 
-	lua_add_anote("{v---- Client 4.4.2 released (see forum)! ----");
+--	lua_add_anote("This is how you add server notes.");
 
--- Admin parameters */
+	-- Admin parameters */
 	watch_nr = 1
 	watch_morgoth = 1
 
--- Modify 'updated_savegame' value for newly created chars [0]
+	-- Modify 'updated_savegame' value for newly created chars [0]
 	updated_savegame_birth = 0
-
--- Update spellbooks if one was added/removed (part 1 of 2)
-	if updated_server == -1 then
-		lua_fix_spellbooks(MCRYOKINESIS + 1, -1)
-		updated_server = 1
-	end
 end
 
 -- Run additionally when 1st player joins since starting up: (character fully loaded at this point)
@@ -57,19 +51,20 @@ end
 function player_has_joined(num, id, name, timestamp)
 -- Reset true artifacts for this player (after '/art reset!').
 -- Note: No additional changes anywhere are required for artifact reset.
+--[[
 	if players(num).updated_savegame == -1 then
 		players(num).updated_savegame = 0
 		lua_strip_true_arts_from_present_player(num, 1)
 	end
+]]
 
--- Update spellbooks if one was added/removed (part 2 of 2)
-	if players(num).updated_savegame == -1 then
-		fix_spellbooks(name, MCRYOKINESIS + 1, -1)
-		players(num).updated_savegame = 1
-	end
-
--- Update skill chart layout (leaves skill values and points untouched)
+	-- Update skill chart layout (leaves skill values and points untouched)
 	lua_fix_skill_chart(num)
+
+	-- No costumes after halloween
+	if (season_halloween == 0 and season_xmas == 0) then
+		lua_takeoff_costumes(num)
+	end
 end
 
 -- Run automatically when a player leaves the server:
@@ -95,23 +90,14 @@ end
 function cron_1h(timestamp, h, m, s)
 	lua_s_print(timestamp.."_CRON1H_"..h..":"..m..":"..s.."\n")
 
-	if mod(h-1, 3) == 0 then
-		lua_start_global_event(0, 1, "")
+	if mod(h,2)==0 then
+		lua_start_global_event(0, 1, ">")
+	end
+	if mod(h,2)==1 then
+		lua_start_global_event(0, 1, ">")
 	end
 
-	if h == 19 then
-		lua_start_global_event(0, 3, "")
-	end
-	if h == 23 then
-		lua_start_global_event(0, 3, "")
-	end
-	if h == 2 then
-		lua_start_global_event(0, 3, "")
-	end
-	if h == 7 then
-		lua_start_global_event(0, 3, "")
-	end
-	if h == 13 then
+	if mod(h,3)==0 then
 		lua_start_global_event(0, 3, "")
 	end
 end

@@ -4278,7 +4278,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	int dx, dy, x, y, cx, cy, lev = getlevel(wpos);
 	cptr t;
 
-	bool morgoth_inside = FALSE, perma_walled = FALSE;
+	bool morgoth_inside = FALSE, perma_walled = FALSE, placed;
 	monster_type *m_ptr;
 
 	cave_type *c_ptr;
@@ -4296,7 +4296,9 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 	if(!(zcave=getcave(wpos))) return FALSE;
 
 	if (v_ptr->flags1 & VF1_NO_PENETR) dun->no_penetr = TRUE;
+#if 0 /* Hives mess up the overall level structure too badly - mikaelh */
 	if (v_ptr->flags1 & VF1_HIVES) hives = TRUE;
+#endif
 
 	/* artificially add random-artifact restrictions: */
 	if (getlevel(wpos) < 55 + rand_int(6) + rand_int(6)) resf |= RESF_NORANDART;
@@ -4472,9 +4474,9 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				l_ptr->flags2 |= LF2_VAULT_HI;
-#ifdef TEST_SERVER
-s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
-#endif
+ #ifdef TEST_SERVER
+ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
+ #endif
 				break;
 
 				/* Monster and/or object */
@@ -4598,11 +4600,11 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 				case '9':
 				monster_level = lev + 9;
 				monster_level_min = -1;
-				place_monster(wpos, y, x, TRUE, TRUE);
+				placed = place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level_min = 0;
 				monster_level = lev;
 				object_level = lev + 7;
-				place_object(wpos, y, x, TRUE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(40)) place_trap(wpos, y, x, 0);
 				break;
@@ -4611,11 +4613,11 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 				case '8':
 				monster_level = lev + 40;
 				monster_level_min = -1;
-				place_monster(wpos, y, x, TRUE, TRUE);
+				placed = place_monster(wpos, y, x, TRUE, TRUE);
 				monster_level_min = 0;
 				monster_level = lev;
 				object_level = lev + 20;
-				place_object(wpos, y, x, TRUE, TRUE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+				if (placed) place_object(wpos, y, x, TRUE, TRUE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 				object_level = lev;
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				l_ptr->flags2 |= LF2_VAULT_HI;
@@ -4626,13 +4628,14 @@ s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 
 				/* Monster and/or object */
 				case ',':
+				placed = TRUE;
 				if (magik(50))
 				{
 					monster_level = lev + 3;
-					place_monster(wpos, y, x, TRUE, TRUE);
+					placed = place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = lev;
 				}
-				if (magik(50))
+				if (magik(50) && placed)
 				{
 					object_level = lev + 7;
 					place_object(wpos, y, x, FALSE, FALSE, FALSE, eff_resf, default_obj_theme, 0, ITEM_REMOVAL_NEVER);
@@ -5642,6 +5645,7 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 	s32b value;
 	cave_type **zcave;
 	int dun_lev = getlevel(wpos);
+	bool placed;
 	if(!(zcave=getcave(wpos))) return;
 
 
@@ -5681,21 +5685,21 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 					/* Meanest monster + treasure */
 					monster_level = dun_lev + 40;
 					monster_level_min = -1;
-					place_monster(wpos, y, x, TRUE, TRUE);
+					placed = place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level_min = 0;
 					monster_level = dun_lev;
 					object_level = dun_lev + 20;
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_lev;
 				}
 				else if (value < 5)
 				{
 					/* Mean monster +treasure */
 					monster_level = dun_lev + 20;
-					place_monster(wpos, y, x, TRUE, TRUE);
+					placed = place_monster(wpos, y, x, TRUE, TRUE);
 					monster_level = dun_lev;
 					object_level = dun_lev + 10;
-					place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+					if (placed) place_object(wpos, y, x, TRUE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 					object_level = dun_lev;
 				}
 				else if (value < 10)
@@ -5739,16 +5743,17 @@ static void fill_treasure(worldpos *wpos, int x1, int x2, int y1, int y2, int di
 				else if (value < 40)
 				{
 					/* Monster or object */
+					placed = TRUE;
 					if (rand_int(100) < 50)
 					{
 						monster_level = dun_lev + 3;
-						place_monster(wpos, y, x, TRUE, TRUE);
+						placed = place_monster(wpos, y, x, TRUE, TRUE);
 						monster_level = dun_lev;
 					}
 					if (rand_int(100) < 50)
 					{
 						object_level = dun_lev + 7;
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
+						if (placed) place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NEVER);
 						object_level = dun_lev;
 					}
 				}
@@ -10781,7 +10786,7 @@ void dealloc_dungeon_level(struct worldpos *wpos)
 			for(i = 0; i < o_max; i++){
 				o_ptr = &o_list[i];
 	                        if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
-				    true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr)) {
+				    undepositable_artifact_p(o_ptr)) {
 				        object_desc(0, o_name, o_ptr, FALSE, 0);
 					s_printf("WILD_ART_DEALLOC: %s of %s erased at (%d, %d, %d)\n",
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
@@ -10890,7 +10895,7 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 		MAKE(wild->tower, struct dungeon_type);
 	else
 		MAKE(wild->dungeon, struct dungeon_type);
-	d_ptr=(tower ? wild->tower : wild->dungeon);
+	d_ptr = (tower ? wild->tower : wild->dungeon);
 
 	d_ptr->type = type; 
 
@@ -10898,21 +10903,21 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	{
 		/* XXX: flags1, flags2 can be affected if specified so? */
 		d_ptr->baselevel = d_info[type].mindepth;
-		d_ptr->maxdepth  = d_info[type].maxdepth - d_ptr->baselevel + 1; 
-		d_ptr->flags1    = d_info[type].flags1 | flags1;
-		d_ptr->flags2    = d_info[type].flags2 | flags2 | DF2_RANDOM;
+		d_ptr->maxdepth = d_info[type].maxdepth - d_ptr->baselevel + 1; 
+		d_ptr->flags1 = d_info[type].flags1 | flags1;
+		d_ptr->flags2 = d_info[type].flags2 | flags2 | DF2_RANDOM;
 	}
 	else
 	{
-		d_ptr->baselevel=baselevel;
-		d_ptr->flags1=flags1; 
-		d_ptr->flags2=flags2; 
-		d_ptr->maxdepth=maxdep;
+		d_ptr->baselevel = baselevel;
+		d_ptr->flags1 = flags1; 
+		d_ptr->flags2 = flags2; 
+		d_ptr->maxdepth = maxdep;
 	}
 
 #ifdef RPG_SERVER /* Make towers/dungeons harder */
-	for(i=0;i<numtowns;i++)
-		if(town[i].x==wpos->wx && town[i].y==wpos->wy) {
+	for(i = 0; i < numtowns; i++)
+		if(town[i].x == wpos->wx && town[i].y == wpos->wy) {
 			found_town = TRUE;
 			if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y) {
 				/* exempt training tower, since it's empty anyway
@@ -10931,18 +10936,18 @@ void adddungeon(struct worldpos *wpos, int baselevel, int maxdep, int flags1, in
 	}
 #endif
 
-	for(i=0;i<10;i++){
-		d_ptr->r_char[i]='\0';
-		d_ptr->nr_char[i]='\0';
+	for(i = 0; i < 10; i++){
+		d_ptr->r_char[i] = '\0';
+		d_ptr->nr_char[i] = '\0';
 	}
-	if(race!=(char*)NULL){
+	if(race != (char*)NULL){
 		strcpy(d_ptr->r_char, race);
 	}
-	if(exclude!=(char*)NULL){
+	if(exclude != (char*)NULL){
 		strcpy(d_ptr->nr_char, exclude);
 	}
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-	for(i = 0; i < d_ptr->maxdepth ; i++)
+	for(i = 0; i < d_ptr->maxdepth; i++)
 	{
 		d_ptr->level[i].ondepth = 0;
 	}

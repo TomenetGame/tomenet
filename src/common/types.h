@@ -1615,6 +1615,7 @@ struct party_type
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
+	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 };
 
 /*
@@ -2026,6 +2027,9 @@ struct player_type
 	s16b cst_frac;			/* 1/10000 */
 
 	object_type *inventory;	/* Player's inventory */
+	object_type *inventory_copy; /* Copy of the last inventory sent to the client */
+
+	/* Inventory revisions */
 	inventory_change_type *inventory_changes; /* List of recent inventory changes */
 	int inventory_revision;	/* Current inventory ID */
 	char inventory_changed;	/* Inventory has changed since last update to the client */
@@ -2054,6 +2058,9 @@ struct player_type
 #ifdef ENABLE_RCRAFT
 	struct worldspot memory; /* Runemaster's remembered teleportation spot */
 #endif
+	u16b tim_deflect;	/* Timed -- Deflection */
+	u16b tim_trauma;	/* Timed -- Traumaturgy */
+	u16b tim_trauma_pow;	/* Timed -- Traumaturgy */
 
 	s16b cur_hgt;		/* Height and width of their dungeon level */
 	s16b cur_wid;
@@ -2582,6 +2589,7 @@ struct player_type
 	bool fly;               /* Can fly over some features */
 	bool can_swim;		/* Can swim like a fish (or Lizard..whatever) */
 	bool pass_trees;	/* Can pass thick forest */
+	bool town_pass_trees;	/* Can pass forest in towns, as an exception to make movement easier */
 	
 	int luck_cur;	/* Extra luck of this player */
 
@@ -2696,6 +2704,7 @@ struct player_type
 	int rune_speed;
 	int rune_stealth;
 	int rune_IV;
+	int rune_vamp;
 #endif //runemaster
 
 	/* Prevent players from taking it multiple times from a single effect - mikaelh */
@@ -2740,7 +2749,7 @@ struct player_type
 	
 	/* for PvP mode: keep track of kills/progress for adding a reward or something - C. Blue */
 	int kills, kills_lower, kills_higher, kills_equal;
-	int free_mimic, prevent_tele;
+	int free_mimic, pvp_prevent_tele;
 	long heal_effect;
 	
 	/* for client-side weather */
@@ -2758,6 +2767,18 @@ struct player_type
 	/* server-side animation timing flags */
 	bool invis_phase; /* for invisible players who flicker towards others */
 //not needed!	int colour_phase; /* for mimics mimicking multi-coloured stuff */
+
+	/* for hunting down bots generating exp by opening and magelocking doors */
+	u32b silly_door_exp;
+	
+	/* allow admins to put a character into 'administrative stasis' */
+	int admin_stasis;
+
+#if (MAX_PING_RECVS_LOGGED > 0)
+	/* list of ping reception times */
+	struct timeval pings_received[MAX_PING_RECVS_LOGGED];
+	char pings_received_head;
+#endif
 };
 
 /* For Monk martial arts */
@@ -2768,7 +2789,7 @@ struct martial_arts
 {
     cptr    desc;    /* A verbose attack description */
     int     min_level;  /* Minimum level to use */
-    int     chance;     /* Chance of 'success' */
+    int     rchance;     /* Reverse chance, lower value means more often */
     int     dd;        /* Damage dice */
     int     ds;        /* Damage sides */
     int     effect;     /* Special effects */
@@ -3171,6 +3192,7 @@ struct global_event_type
     bool hidden;		/* hidden from the players? */
     int min_participants;	/* minimum amount of participants */
     int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
+    int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
 };
 
 

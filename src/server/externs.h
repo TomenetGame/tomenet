@@ -711,7 +711,7 @@ extern void signals_handle_tstp(void);
 extern void signals_init(void);
 extern void kingly(int Ind);
 extern void kingly2(int Ind);
-extern errr get_rnd_line(cptr file_name, int entry, char *output);
+extern errr get_rnd_line(cptr file_name, int entry, char *output, int max_len);
 extern void wipeout_needless_objects(void);
 extern bool highscore_reset(int Ind);
 extern bool highscore_remove(int Ind, int slot);
@@ -1481,7 +1481,11 @@ extern cptr compat_pmode(int Ind1, int Ind2);
 extern cptr compat_pomode(int Ind, object_type *o_ptr);
 extern cptr compat_omode(object_type *o1_ptr, object_type *o2_ptr);
 
+extern char *html_escape(const char *str);
 extern void do_benchmark(int Ind);
+#if (MAX_PING_RECVS_LOGGED > 0)
+extern cptr timediff(struct timeval *begin, struct timeval *end);
+#endif
 
 
 /* xtra1.c */
@@ -1547,6 +1551,10 @@ extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
 extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
 extern bool set_tim_regen(int Ind, int v, int p);
+#ifdef ENABLE_RCRAFT
+extern bool set_tim_trauma(int Ind, int v, int p);
+extern bool set_tim_deflect(int Ind, int v);
+#endif
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_fly(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);
@@ -1764,6 +1772,7 @@ extern void lua_fix_equip_slots(int Ind);
 extern int get_inven_sval(int Ind, int inven_slot);
 extern int get_inven_xtra(int Ind, int inven_slot, int n);
 extern void lua_fix_skill_chart(int Ind);
+extern void lua_takeoff_costumes(int Ind);
 
 /* only called once, in util.c, referring to new file slash.c */
 extern void do_slash_cmd(int Ind, char *message);
@@ -1797,14 +1806,14 @@ extern int artifact_reset;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];
-extern int sector00separation, ge_special_sector; /* see variable.c */
+extern int sector00separation, sector00downstairs, ge_special_sector; /* see variable.c */
 extern u32b ge_contender_buffer_ID[128];
 extern int ge_contender_buffer_deed[128];
 extern u32b achievement_buffer_ID[128];
 extern int achievement_buffer_deed[128];
 
 /* for temporary disabling all validity checks when a dungeon master/wizard summons something - C. Blue */
-extern int summon_override_checks;
+extern u32b summon_override_checks;
 /* Morgoth may override the no-destroy flag (other monsters too, if needed) */
 extern bool override_LF1_NO_DESTROY;
 
@@ -1827,6 +1836,7 @@ extern int wind_dur[16], wind_dir[16];
 
 /* special seasons */
 extern int season_halloween;
+extern int season_xmas;
 extern int season_newyearseve;
 
 /* for controlling fireworks on NEW_YEARS_EVE */
@@ -1842,7 +1852,7 @@ extern void cast_rune_spell(int, int);
 extern void cast_rune_spell_header(int Ind, int a, int b);
 #else
 /* runecraft.c */
-extern byte execute_rspell (u32b, byte, char *, byte, u32b, byte);
+extern byte execute_rspell (u32b, byte, u32b, byte);
 /* spells1.c */
 extern bool rune_backlash(int Ind, int typ, int dam);
 /* tables.c */

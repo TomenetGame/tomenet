@@ -186,6 +186,7 @@ end
 ]]
 
 -- Establish VNC mind link
+--I added bor() and band() like in cblue.lua, to avoid killing Mindcrafter links
 function vnc_p2p(target, receiver)
     local p, p2, id
     p = ind(target)
@@ -196,7 +197,7 @@ function vnc_p2p(target, receiver)
     players(p).esp_link = id
     players(p).esp_link_type = 1
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = 1 + 128
+    players(p).esp_link_flags = bor(players(p).esp_link_flags, 1 + 128)
     msg_print(p2, "Mind link established.")
 end
 
@@ -213,7 +214,36 @@ function vncoff_p2p(name, receiver)
     players(p).esp_link = 0
     players(p).esp_link_type = 0
     players(p).esp_link_end = 0
-    players(p).esp_link_flags = 0
+    players(p).esp_link_flags = band(players(p).esp_link_flags, bnot(1 + 128))
     msg_print(p2, "Mind link broken.")
 end
 ]]
+
+-- Effects
+function fire_fx(name, rad, time)
+	ball(name, rad, 5, 0, 0, 16+256+1024, time, "")
+end
+
+function cold_fx(name, rad, time)
+	ball(name, rad, 4, 0, 0, 16+256+1024, time, "")
+end
+
+function acid_fx(name, rad, time)
+	ball(name, rad, 3, 0, 0, 16+256+1024, time, "")
+end
+
+function pois_fx(name, rad, time)
+	ball(name, rad, 2, 0, 0, 16+256+1024, time, "")
+end
+
+function elec_fx(name, rad, time)
+	ball(name, rad, 1, 0, 0, 16+256+1024, time, "")
+end
+
+function lite_fx(name, rad, time)
+	ball(name, rad, 15, 0, 0, 16+256+1024, time, "")
+end
+
+function any_fx(name, rad, typ, time)
+	ball(name, rad, typ, 0, 0, 16+256+1024, time, "")
+end

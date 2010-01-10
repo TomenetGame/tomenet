@@ -158,15 +158,15 @@ void addtown(int y, int x, int base, u16b flags, int type)
 		GROW(town, numtowns, numtowns+1, struct town_type);
 	else
 		MAKE(town, struct town_type);
-	town[numtowns].x=x;
-	town[numtowns].y=y;
-	town[numtowns].baselevel=base;
-	town[numtowns].flags=flags;
-//	town[numtowns].num_stores=MAX_STORES;
-	town[numtowns].num_stores=max_st_idx;
+	town[numtowns].x = x;
+	town[numtowns].y = y;
+	town[numtowns].baselevel = base;
+	town[numtowns].flags = flags;
+//	town[numtowns].num_stores = MAX_STORES;
+	town[numtowns].num_stores = max_st_idx;
 	town[numtowns].type = type;
-	wild_info[y][x].type=WILD_TOWN;
-	wild_info[y][x].radius=base;
+	wild_info[y][x].type = WILD_TOWN;
+	wild_info[y][x].radius = base;
 	alloc_stores(numtowns);
 	/* Initialize the stores */
 //	for (n = 0; n < MAX_STORES; n++)
@@ -200,13 +200,13 @@ void deltown(int Ind)
 	    x <= wpos->wx + wild_info[wpos->wy][wpos->wx].radius; x++)
 	for (y = wpos->wy - wild_info[wpos->wy][wpos->wx].radius;
 	    y <= wpos->wy + wild_info[wpos->wy][wpos->wx].radius; y++)
-	if (in_bounds_wild(y, x) && (towndist(x, y) <= abs(wpos->wx-x)+abs(wpos->wy-y))) {
+	if (in_bounds_wild(y, x) && (towndist(x, y) <= abs(wpos->wx - x) + abs(wpos->wy - y))) {
 		tpos.wx = x; tpos.wy = y; tpos.wz = 0;
-		for(i=0;i<num_houses;i++)
+		for(i = 0; i < num_houses; i++)
 		if(inarea(&tpos, &houses[i].wpos)) {
 //#if 0
 			fill_house(&houses[i], FILL_MAKEHOUSE, NULL);
-	    		houses[i].flags|=HF_DELETED;
+	    		houses[i].flags |= HF_DELETED;
 //#endif
 		}
 		wilderness_gen(&tpos);
@@ -215,13 +215,13 @@ void deltown(int Ind)
 
 	if(numtowns <= 5) return;
 
-//	wild_info[wpos->wy][wpos->wx].type=WILD_GRASSLAND;
-	wild_info[wpos->wy][wpos->wx].type=WILD_OCEAN;
-	wild_info[wpos->wy][wpos->wx].radius=towndist(wpos->wy, wpos->wx);
+//	wild_info[wpos->wy][wpos->wx].type = WILD_GRASSLAND;
+	wild_info[wpos->wy][wpos->wx].type = WILD_OCEAN;
+	wild_info[wpos->wy][wpos->wx].radius = towndist(wpos->wy, wpos->wx);
 	wilderness_gen(wpos);
 
 	/* Shrink the town array */
-	SHRINK(town, numtowns, numtowns-1, struct town_type);
+	SHRINK(town, numtowns, numtowns - 1, struct town_type);
 
 	numtowns--;
 }
@@ -984,7 +984,7 @@ static bool wild_obj_aux_bones(int k_idx, u32b resf)
 	return FALSE;
 }
 
-/* make a dwelling 'interesting'.
+/* make a dwelling (building in the wilderness) 'interesting'.
 */
 static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2, int y2, int type)
 {
@@ -1177,7 +1177,9 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			y = rand_range(y1,y2)+rand_int(16)-8;
 
 			/* place the owner */
+			summon_override_checks = SO_HOUSE;
 			place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+			summon_override_checks = SO_NONE;
 		}
 	}
 
@@ -1187,17 +1189,17 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 		{
 			/* determine the invaders species*/
 			get_mon_num_hook = wild_monst_aux_invaders;
-			get_mon_num_prep();	 
+			get_mon_num_prep();
 			r_idx = get_mon_num((w_ptr->radius/2)+1, 0);
 
 			/* add the monsters */
-			for (y = y1; y <= y2; y++)
-			{
-				for (x = x1; x <= x2; x++)
-				{
+			summon_override_checks = SO_HOUSE;
+			for (y = y1; y <= y2; y++) {
+				for (x = x1; x <= x2; x++) {
 					place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
 				}
 			}
+			summon_override_checks = SO_NONE;
 		}
 	}
 
@@ -3587,10 +3589,10 @@ void wild_flags(int Ind, u32b flags) {
 	wild_info[Players[Ind]->wpos.wy][Players[Ind]->wpos.wx].flags = flags;
 }
 
-/* make wilderness more lively again - C. Blue 
-   flags values: 
-   0 -- season-dependant 
-   other than 0 -- clear flags in all wilderness (wildflags & ~flags)
+/* make wilderness more lively again, populating it in various ways - C. Blue 
+   flags values:
+   0 -- season-dependant
+   other than 0 -- clear flags in all wilderness (op: wildflags & ~flags)
 */
 void lively_wild(u32b flags) {
 	int x, y;

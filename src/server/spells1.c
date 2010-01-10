@@ -699,9 +699,9 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp)
 	/* Hack -- Teleportation when died is always allowed */
 	if (!p_ptr->death)
 	{
-		if (!ignore_pvp && (p_ptr->mode & MODE_PVP) && p_ptr->prevent_tele) {
+		if (!ignore_pvp && (p_ptr->mode & MODE_PVP) && p_ptr->pvp_prevent_tele) {
 			msg_print(Ind, "\377yThere's no easy way out of this fight!");
-			s_printf("%s TELEPORT_FAIL: prevent_tele for %s.\n", showtime(), p_ptr->name);
+			s_printf("%s TELEPORT_FAIL: pvp_prevent_tele for %s.\n", showtime(), p_ptr->name);
 			return FALSE;
 		}
 		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px)) {
@@ -1307,8 +1307,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 
 	/* for MODE_PVP only: prevent easy fleeing from PvP encounter >=) */
 	if (IS_PLAYER(Ind_attacker) ||
-	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1))
-		p_ptr->prevent_tele = 30;
+	    (!p_ptr->wpos.wx && !p_ptr->wpos.wy && p_ptr->wpos.wz == 1)) {
+		p_ptr->pvp_prevent_tele = 30;
+		p_ptr->redraw |= PR_DEPTH;
+	}
 
 	// This is probably unused
 	// int warning = (p_ptr->mhp * hitpoint_warn / 10);
@@ -1441,35 +1443,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 		/* Sound */
 		sound(Ind, SOUND_DEATH);
 
-#if 0
-		int Ind2;
-
-		/* Hack -- Blond bond */
-		Ind2 = find_player(p_ptr->blood_bond);
-
-//		if (Ind2 && !strcmp(Players[Ind2]->name, hit_from))
-		if (Ind2 && (Ind2 == Ind_attacker))
-		{
-			p_ptr->chp = p_ptr->mhp;
-			Players[Ind2]->chp = Players[Ind2]->mhp;
-			p_ptr->redraw |= (PR_HP);
-			Players[Ind2]->redraw |= (PR_HP);
-
-			s_printf("BLOOD_BOND: %s won the blood bond against %s\n", Players[Ind2]->name, p_ptr->name);
-			msg_broadcast_format(0, "\377c*** %s won the blood bond against %s. ***", Players[Ind2]->name, p_ptr->name);
-
-			p_ptr->blood_bond = Players[Ind2]->blood_bond = 0;
-			remove_hostility(Ind, Players[Ind2]->name);
-			remove_hostility(Ind2, p_ptr->name);
-
-			target_set(Ind, 0);
-			target_set(Ind2, 0);
-
-			teleport_player(Ind, 4, TRUE);
-
-			return;
-		}
-#else
 		if (IS_PLAYER(Ind_attacker))
 		{
 			if (check_blood_bond(Ind, Ind_attacker))
@@ -1483,20 +1456,24 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
 				msg_broadcast_format(0, "\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
 
-				remove_blood_bond(Ind, Ind_attacker);
-				remove_blood_bond(Ind_attacker, Ind);
 				remove_hostility(Ind, p2_ptr->name);
 				remove_hostility(Ind_attacker, p_ptr->name);
 
+				remove_blood_bond(Ind, Ind_attacker);
+				remove_blood_bond(Ind_attacker, Ind);
+
 				target_set(Ind, 0);
 				target_set(Ind_attacker, 0);
+
+				/* Remove stun/KO */
+				set_stun(Ind, 0);
+				set_stun(Ind_attacker, 0);
 
 				teleport_player(Ind, 4, TRUE);
 
 				return;
 			}
 		}
-#endif
 
 		/* Note cause of death */
 		/* To preserve the players original (pre-ghost) cause
@@ -2403,8 +2380,16 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->resist_acid) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_acid) dam = (dam + 2) / 3;
 
+	/* Don't kill inventory in bloodbond... */
+	int breakable = 1;
+	if (IS_PLAYER(Ind_attacker)) {
+		if (check_blood_bond(Ind, Ind_attacker)) {
+			breakable = 0;
+		}
+	}
+
 	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
-		randint(HURT_CHANCE)==1)
+		randint(HURT_CHANCE)==1 && breakable)
 		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
 
 	/* If any armor gets hit, defend the player */
@@ -2413,25 +2398,11 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 //		if (magik(33) && equip_damage(Ind, GF_ACID)) dam = (dam + 1) / 2;
 //		if (magik(50) && equip_damage(Ind, GF_ACID)) dam = (dam + 1) / 2;
 //		if (equip_damage(Ind, GF_ACID)) dam = (dam + 1) / 2;
-	if (magik(hurt_eq)) equip_damage(Ind, GF_ACID);
+	if (magik(hurt_eq) && breakable) equip_damage(Ind, GF_ACID);
 
 	/* Take damage */
 //	take_hit(Ind, dam, kb_str, Ind_attacker);
 
-	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-#if 0
-		player_type *p2 = Players[Ind_attacker];
-
-		if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
-#else
-		if (check_blood_bond(Ind, Ind_attacker)) {
-#endif
-			breakable = 0;
-		}
-	}
-	if (safe_area(Ind)) breakable = 0;
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable)
 		inven_damage(Ind, set_acid_destroy, inv);
@@ -2460,27 +2431,20 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->oppose_elec) dam = (dam + 2) / 3;
 	if (p_ptr->resist_elec) dam = (dam + 2) / 3;
 
+	/* Don't kill inventory in bloodbond... */
+	int breakable = 1;
+	if (IS_PLAYER(Ind_attacker)) {
+		if (check_blood_bond(Ind, Ind_attacker)) {
+			breakable = 0;
+		}
+	}
+
 	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
-		randint(HURT_CHANCE)==1)
+		randint(HURT_CHANCE)==1 && breakable)
 		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
 //	take_hit(Ind, dam, kb_str, Ind_attacker);
-
-	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-#if 0
-		player_type *p2 = Players[Ind_attacker];
-
-		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
-#else
-		if (check_blood_bond(Ind, Ind_attacker)) {
-#endif
-			breakable = 0;
-		}
-	}
-	if (safe_area(Ind)) breakable = 0;
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec) && breakable)
@@ -2516,29 +2480,22 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->resist_fire) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_fire) dam = (dam + 2) / 3;
 
-	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-		randint(HURT_CHANCE)==1)
-		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
-
-	if (magik(hurt_eq)) equip_damage(Ind, GF_FIRE);
-
-	/* Take damage */
-//	take_hit(Ind, dam, kb_str, Ind_attacker);
-
 	/* Don't kill inventory in bloodbond... */
 	int breakable = 1;
 	if (IS_PLAYER(Ind_attacker)) {
-#if 0
-		player_type *p2 = Players[Ind_attacker];
-
-		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
-#else
 		if (check_blood_bond(Ind, Ind_attacker)) {
-#endif
 			breakable = 0;
 		}
 	}
-	if (safe_area(Ind)) breakable = 0;
+
+	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
+		randint(HURT_CHANCE)==1 && breakable)
+		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
+
+	if (magik(hurt_eq) && breakable) equip_damage(Ind, GF_FIRE);
+
+	/* Take damage */
+//	take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && breakable)
@@ -2569,27 +2526,20 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker)
 	if (p_ptr->resist_cold) dam = (dam + 2) / 3;
 	if (p_ptr->oppose_cold) dam = (dam + 2) / 3;
 
+	/* Don't kill inventory in bloodbond... */
+	int breakable = 1;
+	if (IS_PLAYER(Ind_attacker)) {
+		if (check_blood_bond(Ind, Ind_attacker)) {
+			breakable = 0;
+		}
+	}
+
 	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
-		randint(HURT_CHANCE)==1)
+		randint(HURT_CHANCE)==1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
 //	take_hit(Ind, dam, kb_str, Ind_attacker);
-
-	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-#if 0
-		player_type *p2 = Players[Ind_attacker];
-
-		if ((p2->blood_bond == p_ptr->id) && (p_ptr->blood_bond == p2->id)) {
-#else
-		if (check_blood_bond(Ind, Ind_attacker)) {
-#endif
-			breakable = 0;
-		}
-	}
-	if (safe_area(Ind)) breakable = 0;
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold) && breakable)
@@ -7449,6 +7399,16 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(m_name, "an evaporating potion");
 		sprintf(m_name_gen, "the");
 	}
+	/* hack -- another player who has logged out */
+	else if (who == PROJECTOR_PLAYER)
+	{
+		sprintf(killer, "another player");
+		sprintf(m_name, "another player");
+		sprintf(m_name_gen, "its");
+
+		/* Assume they were friendly */
+		friendly_player = TRUE;
+	}
 	/* hack -- by shattering potion */
 	else if (who <= PROJECTOR_UNUSUAL)
 	{
@@ -7526,8 +7486,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Hostile players hit each other */
 			if (check_hostile(Ind, 0 - who))
 			{
+#define EXPERIMENTAL_PVP_SPELL_DAM 1
+#ifdef EXPERIMENTAL_PVP_SPELL_DAM
+				int __dam = randint(dam); 
+				if (randint(1)) __dam *= -1;
+				dam += __dam;
+#else
 				/* XXX Reduce damage to 1/3 */
 				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
+#endif
 			}
 
 			/* people not in the same party hit each other */
@@ -7537,8 +7504,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #if 0			/* NO - C. Blue */
 #else			/* changed it to YES..  - still C. Blue - but added an if..*/
 			if (check_hostile(0 - who, Ind)) {
+#ifdef EXPERIMENTAL_PVP_SPELL_DAM
+				int __dam = randint(dam); 
+				if (randint(1)) __dam *= -1;
+				dam += __dam;
+#else
 				/* XXX Reduce damage by 1/3 */
 				dam = (dam + PVP_SPELL_DAM_REDUCTION - 1) / PVP_SPELL_DAM_REDUCTION;
+#endif
 				if ((cfg.use_pk_rules == PK_RULES_DECLARE &&
 				    !(p_ptr->pkill & PKILL_KILLER)) &&
 				    !magik(NEUTRAL_FIRE_CHANCE))
@@ -8031,13 +8004,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Don't kill inventory in bloodbond... */
 		int breakable = 1;
 		if (IS_PVP) {
-#if 0
-			player_type *p2 = Players[-who];
-
-			if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
-#else
 			if (check_blood_bond(Ind, -who)) {
-#endif
 				breakable = 0;
 			}
 		}
@@ -8115,18 +8082,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					/* Don't kill inventory in bloodbond... */
 					int breakable = 1;
 					if (IS_PVP) {
-#if 0
-						player_type *p2 = Players[-who];
-
-						if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
-#else
 						if (check_blood_bond(Ind, -who)) {
-#endif
 							breakable = 0;
 						}
 					}
-					if (breakable) inven_damage(Ind, set_water_destroy, 1);
-				if (magik(50)) equip_damage(Ind, GF_WATER);
+					if (breakable) {
+						inven_damage(Ind, set_water_destroy, 1);
+						if (magik(50)) equip_damage(Ind, GF_WATER);
+					}
 				}
 			}
 			take_hit(Ind, dam, killer, -who);
@@ -8512,8 +8475,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 							!(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)))
 						{
 							if (!p_ptr->resist_water || magik(50)) {
-							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(50)) equip_damage(Ind, GF_WATER);
+								/* Don't kill inventory in bloodbond... */
+								int breakable = 1;
+								if (IS_PVP) {
+									if (check_blood_bond(Ind, -who)) {
+										breakable = 0;
+									}
+								}
+								if (breakable) {
+									inven_damage(Ind, set_water_destroy, 1);
+									if (magik(50)) equip_damage(Ind, GF_WATER);
+								}
 							}
 						}
 					}
@@ -8562,8 +8534,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 							!(p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)))
 						{
 							if (!p_ptr->resist_water || magik(50)) {
-							inven_damage(Ind, set_water_destroy, 1);
-							if (magik(25)) equip_damage(Ind, GF_WATER);
+								/* Don't kill inventory in bloodbond... */
+								int breakable = 1;
+								if (IS_PVP) {
+									if (check_blood_bond(Ind, -who)) {
+										breakable = 0;
+									}
+								}
+								if (breakable) {
+									inven_damage(Ind, set_water_destroy, 1);
+									if (magik(25)) equip_damage(Ind, GF_WATER);
+								}
 							}
 						}
 						take_hit(Ind, dam, killer, -who);
@@ -8867,17 +8848,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #if 0 /* removed stacking */
 			if (!p_ptr->fast)
 			{
-								(void)set_fast(Ind, 10 + (dam * 5), dam);
+				(void)set_fast(Ind, 10 + (dam * 5), dam);
 			}
 			else
 			{
-								(void)set_fast(Ind, p_ptr->fast + 10 + dam, dam);
+				(void)set_fast(Ind, p_ptr->fast + 10 + dam, dam);
 			}
 #else
-						(void)set_fast(Ind, 10 + (dam * 5), dam);
+			(void)set_fast(Ind, 10 + (dam * 5), dam);
 #endif
 			break;
-				}
+		}
 
 		case GF_EXTRA_STATS:
 		{
@@ -9139,7 +9120,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (((!p_ptr->resist_shard) || (!p_ptr->resist_fire)) || (randint(3)==1))
 			if (((!p_ptr->resist_shard) && (!p_ptr->resist_fire)) || (randint(4)==1))
 			{
-				inven_damage(Ind, set_cold_destroy, 3);
+				/* Don't kill inventory in bloodbond... */
+				int breakable = 1;
+				if (IS_PVP) {
+					if (check_blood_bond(Ind, -who)) {
+						breakable = 0;
+					}
+				}
+				if (breakable) inven_damage(Ind, set_cold_destroy, 3);
 			}
 
 			take_hit(Ind, dam, killer, -who);
@@ -9183,13 +9171,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						/* Don't kill inventory in bloodbond... */
 						int breakable = 1;
 						if (IS_PVP) {
-#if 0
-							player_type *p2 = Players[-who];
-
-							if (p2->blood_bond == p_ptr->id && p_ptr->blood_bond == p2->id) {
-#else
 							if (check_blood_bond(Ind, -who)) {
-#endif
 								breakable = 0;
 							}
 						}
@@ -9844,6 +9826,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	int effect = 0;
 
+	bool players_only = FALSE; /* spell affects players only */
+
 	/* Coordinates of the affected grids */
 //	byte gx[256], gy[256];
 //	byte gx[tdi[PREPARE_RADIUS]], gy[tdi[PREPARE_RADIUS]];
@@ -9857,6 +9841,30 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos)))  return(FALSE);
 	l_ptr = getfloor(wpos);
+
+
+	/* Spells which never affect monsters, read:
+	   Spells which we want to exclude from merely _waking monsters up_!
+	   Note: Bolt spells will still be 'stopped' when hitting a monster. */
+	if((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
+		 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) ||
+		 (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) ||
+		 (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) ||
+		 (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) ||
+		 (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) ||
+		 (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) ||
+		 (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) ||
+		 (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) ||
+		 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) ||
+		 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) ||
+		 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) ||
+		 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
+		 (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
+		 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
+		 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
+		 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER))
+		players_only = TRUE;
+
 
 #ifdef PROJECTION_FLUSH_LIMIT
 	count_project++;
@@ -10009,7 +10017,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			}
 		}
 
-		/* Accordingly, stop the projection or have it go on unhindered */		
+		/* Accordingly, stop the projection or have it go on unhindered */
 		if (terrain_damage >= 0 && terrain_resistance >= 0 &&
 		    magik(terrain_damage - terrain_resistance)) {
 			/* go on unhindered by terrain, destroy terrain even */
@@ -10026,9 +10034,8 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 		/* Check for arrival at "final target" (if desired) */
 		if (!(flg & PROJECT_THRU) && (x == x2) && (y == y2)) break;
 
-		/* If allowed, and we have moved at all, stop when we hit anybody */		
-		/* -AD- Only stop if it isn't a party member */		   
-				
+		/* If allowed, and we have moved at all, stop when we hit anybody */
+		/* -AD- Only stop if it isn't a party member */
 		if ((c_ptr->m_idx != 0) && dist && (flg & PROJECT_STOP))
 		{
 			if (who > 0) {
@@ -10057,30 +10064,6 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 #endif
 			}
 //			else break;	// Huh? always break? XXX XXX
-		}
-
-		/* Spells which never affect monsters: */
-		if((c_ptr->m_idx != 0) && dist &&
-			((typ == GF_HEAL_PLAYER) || (typ == GF_WRAITH_PLAYER) ||
-			 (typ == GF_SPEED_PLAYER) || (typ == GF_SHIELD_PLAYER) || 
-			 (typ == GF_RECALL_PLAYER) || (typ == GF_BLESS_PLAYER) || 
-			 (typ == GF_REMFEAR_PLAYER) || (typ == GF_SATHUNGER_PLAYER) || 
-			 (typ == GF_RESFIRE_PLAYER) || (typ == GF_RESCOLD_PLAYER) || 
-			 (typ == GF_CUREPOISON_PLAYER) || (typ == GF_SEEINVIS_PLAYER) || 
-			 (typ == GF_SEEMAP_PLAYER) || (typ == GF_CURECUT_PLAYER) || 
-			 (typ == GF_CURESTUN_PLAYER) || (typ == GF_DETECTCREATURE_PLAYER) || 
-			 (typ == GF_DETECTDOOR_PLAYER) || (typ == GF_DETECTTRAP_PLAYER) || 
-			 (typ == GF_TELEPORTLVL_PLAYER) || (typ == GF_RESPOIS_PLAYER) || 
-			 (typ == GF_RESELEC_PLAYER) || (typ == GF_RESACID_PLAYER) || 
-			 (typ == GF_HPINCREASE_PLAYER) || (typ == GF_HERO_PLAYER) || 
-			 (typ == GF_SHERO_PLAYER) || (typ == GF_TELEPORT_PLAYER) ||
-			 (typ == GF_ZEAL_PLAYER) || (typ == GF_MINDBOOST_PLAYER) ||
-			 (typ == GF_RESTORESTATS_PLAYER) || (typ == GF_RESTORELIFE_PLAYER) ||
-			 (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
-			 (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER)) )
-		{
-			if (!(c_ptr->m_idx > 0))
-				break;
 		}
 
 
@@ -10548,7 +10531,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 
 	/* Check monsters */
 	/* eww, hope traps won't kill the server here..	- Jir - */
-	if (flg & PROJECT_KILL)
+	if ((flg & PROJECT_KILL) && !players_only)
 	{
 		/* Start with "dist" of zero */
 		dist = 0;

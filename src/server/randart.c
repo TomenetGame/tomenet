@@ -2090,8 +2090,12 @@ artifact_type *randart_make(object_type *o_ptr)
         /* Randart ammo doesn't keep (exploding) from normal item */
         if (is_ammo(k_ptr->tval)) k_ptr->pval = 0;
 
-	/* Mega Hack -- forbig randart polymorph rings(pval would be BAD) */
+	/* Mega Hack -- forbid randart polymorph rings(pval would be BAD) */
 	if ((k_ptr->tval == TV_RING) && (k_ptr->sval == SV_RING_POLYMORPH))
+		return (NULL);
+
+	/* Forbid costumes too */
+	if ((k_ptr->tval == TV_SOFT_ARMOR) && (k_ptr->sval == SV_COSTUME))
 		return (NULL);
 
 /* taken out the quality boosts again, since those weapons already deal insane damage.
@@ -2386,7 +2390,7 @@ void randart_name(object_type *o_ptr, char *buffer)
 	Rand_quick = TRUE;
 
 	/* Take a random name */
-	get_rnd_line("randarts.txt", 0, tmp);
+	get_rnd_line("randarts.txt", 0, tmp, 80);
 
 	/* Capitalise first character */
 	tmp[0] = toupper(tmp[0]);
@@ -2613,9 +2617,13 @@ try_an_other_ego:
         {
                 if (a_ptr->pval > 12) a_ptr->pval = 12;
         }
-	if(a_ptr->flags1 & TR1_STEALTH)
-	{
-		if (a_ptr->pval > 6) a_ptr->pval = 6;
+        /* Stealth cap; stealth/speed cap for 'of Swiftness' */
+	if(a_ptr->flags1 & TR1_STEALTH) {
+		if(a_ptr->flags1 & TR1_SPEED) {
+			if (a_ptr->pval > 4) a_ptr->pval = 2 + rand_int(3);
+		} else {
+			if (a_ptr->pval > 6) a_ptr->pval = 6;
+		}
 	}
 	if(a_ptr->flags5 & TR5_LUCK)
 	{

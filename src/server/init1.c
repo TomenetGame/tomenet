@@ -1308,6 +1308,11 @@ if (season != SEASON_WINTER) {
 		if (streq(m, "WINTER_SEASON") && negation) invalid = TRUE;
 //#endif
 }
+if (!season_xmas) {
+		if (streq(m, "XMAS") && !negation) invalid = TRUE;
+} else {
+		if (streq(m, "XMAS") && negation) invalid = TRUE;
+}
 //#ifndef NEW_YEARS_EVE
 if (!season_newyearseve) {
 		if (streq(m, "NEW_YEARS_EVE") && !negation) invalid = TRUE;
@@ -7511,10 +7516,10 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 #else /* rudimentary support till above code has been looked at, too lazy atm - C. Blue */
 			else if (monster_index)
 			{
-				summon_override_checks = 1; /* disable all checks */
+				summon_override_checks = SO_ALL; /* disable all checks */
 				place_monster_aux(wpos, y, x, monster_index, FALSE, FALSE, 0, 0);
 //				place_monster_one(wpos, y, x, monster_index, 0, 0, FALSE, 0, 0);
-				summon_override_checks = 0; /* re-enable default */
+				summon_override_checks = SO_NONE; /* re-enable default */
 			}
 #endif	// 0
 

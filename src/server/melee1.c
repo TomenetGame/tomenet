@@ -893,7 +893,8 @@ bool make_attack_melee(int Ind, int m_idx)
 				} else if ((get_skill(p_ptr, SKILL_HDEFENSE) >= 50) && (r_ptr->flags3 & RF3_EVIL)) {
 					if ((p_ptr->lev * 3 >= rlev * 2) && (rand_int(100) + p_ptr->lev > 50 + rlev))
 						prot = TRUE;
-				} else if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
+				}
+				if ((p_ptr->protevil > 0) && (r_ptr->flags3 & RF3_EVIL) &&
 				    (((p_ptr->lev >= rlev) && ((rand_int(100) + p_ptr->lev) > 50)) || /* extra usefulness added (mostly for low levels): */
 				     ((p_ptr->lev < rlev) && (p_ptr->lev + 10 >= rlev) && (rand_int(24) > 12 + rlev - p_ptr->lev)))) {
 					prot = TRUE;
@@ -1026,10 +1027,13 @@ bool make_attack_melee(int Ind, int m_idx)
 			
 			if ((act) && (damage < 1))
 			{
-				/* Colour change for ranged MOAN for Halloween event -C. Blue */
-				if (season_halloween && method == RBM_MOAN)
-					msg_format(Ind, "\377o%^s %s.", m_name, act);
-				else
+				if (method == RBM_MOAN) { /* no trailing dot */
+					/* Colour change for ranged MOAN for Halloween event -C. Blue */
+					if (season_halloween)
+						msg_format(Ind, "\377o%^s %s", m_name, act);
+					else
+						msg_format(Ind, "%^s %s", m_name, act);
+				} else /* trailing dot */
 					msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
 			}
@@ -2257,8 +2261,8 @@ bool make_attack_melee(int Ind, int m_idx)
 					case 3: k = randint(20) + 20; break;
 					case 4: k = randint(30) + 30; break;
 					case 5: k = randint(40) + 40; break;
-					case 6: k = 100; break;
-					default: k = 200; break;
+					case 6: k = 80; break;
+					default: k = 100; break;
 				}
 
 				/* Apply the stun */
@@ -2757,8 +2761,8 @@ bool monster_attack_normal(int tm_idx, int m_idx)
 					case 3: k = randint(20) + 20; break;
 					case 4: k = randint(30) + 30; break;
 					case 5: k = randint(40) + 40; break;
-					case 6: k = 100; break;
-					default: k = 200; break;
+					case 6: k = 80; break;
+					default: k = 100; break;
 				}
 
 				/* Apply the stun */

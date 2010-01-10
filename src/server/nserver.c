@@ -419,7 +419,7 @@ static int Init_setup(void)
 }
 	
 void init_players(){
-	max_connections = MAX_SELECT_FD - 23;
+	max_connections = MAX_SELECT_FD - 24; /* 999 connections at most */
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */
 	/* we need only allocate the player_type for it */
@@ -442,6 +442,7 @@ bool Report_to_meta(int flag)
 //	int bytes;
 	int i, sock;
 	char temp[100];
+	char *url, *notes;
 	bool hidden_dungeon_master = 0;
 
         /* Abort if the user doesn't want to report */
@@ -486,13 +487,12 @@ bool Report_to_meta(int flag)
 	memset(buf_meta, '\0', 16384);
 
 	strcpy(buf_meta, "<server url=\"");
-	strcat(buf_meta, local_name);
+	url = html_escape(local_name);
+	strcat(buf_meta, url);
+	free(url);
 	strcat(buf_meta, "\" port=\"");
 	sprintf(temp, "%d", cfg.game_port);
 	strcat(buf_meta, temp);
-//	strcat(buf_meta, "\" notes=\"");
-//	sprintf(temp, "%s", cfg.server_notes);
-//	strcat(buf_meta, temp);
 	strcat(buf_meta, "\"");
 
 	/* Tell everyone that we can receive extended version packets */
@@ -520,7 +520,9 @@ bool Report_to_meta(int flag)
                          */
 
 			strcat(buf_meta, "<notes>");
-			strcat(buf_meta, cfg.server_notes);
+			notes = html_escape(cfg.server_notes);
+			strcat(buf_meta, notes);
+			free(notes);
 			strcat(buf_meta, "</notes>");
 
                         for (i = 1; i <= NumPlayers; i++)
@@ -532,46 +534,15 @@ bool Report_to_meta(int flag)
                         if (NumPlayers - hidden_dungeon_master)
                         {
 				char *name;
-				int j, k;
                                 for (i = 1; i <= NumPlayers; i++)
                                 {
                                         /* handle the cfg_secret_dungeon_master option */
                                         if (Players[i]->admin_dm && cfg.secret_dungeon_master) continue;
 
                                         strcat(buf_meta, "<player>");
-					name = Players[i]->name;
-					temp[0] = '\0';
-					k = 0;
-					for (j = 0; j < MAX_CHARS; j++)
-					{
-						if (name[j] == '\0') break;
-						else if (name[j] == '<')
-						{
-							strcat(temp, "&lt;");
-							k += 4;
-						}
-						else if (name[j] == '>')
-						{
-							strcat(temp, "&gt;");
-							k += 4;
-						}
-						else if (name[j] == '&')
-						{
-							strcat(temp, "&amp;");
-							k += 5;
-						}
-						else if (name[j] == '"')
-						{
-							strcat(temp, "&quot;");
-							k += 6;
-						}
-						else
-						{
-							temp[k++] = name[j];
-							temp[k] = '\0';
-						}
-					}
-					strcat(buf_meta, temp);
+					name = html_escape(Players[i]->name);
+					strcat(buf_meta, name);
+					free(name);
                                         strcat(buf_meta, "</player>");
                                 }
                         }
@@ -598,18 +569,6 @@ bool Report_to_meta(int flag)
                 /* Append the version number */
                 sprintf(temp, "<version>%d.%d.%d%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, SERVER_VERSION_TAG);
                 strcat(buf_meta, temp);
-
-#if 0 /* old stuff - mikaelh */
-                /* Append the additional version info */
-//		if (VERSION_EXTRA > 0) strcat(buf_meta, " ");
-                if (VERSION_EXTRA == 1)
-                        strcat(buf_meta, "alpha");
-                if (VERSION_EXTRA == 2)
-                        strcat(buf_meta, "beta");
-                if (VERSION_EXTRA == 3)
-                        strcat(buf_meta, "development");
-#endif
-
                 strcat(buf_meta, "</version></server>");
         }
 
@@ -1699,6 +1658,8 @@ static void Delete_player(int Ind)
 	{
 		if (p_ptr->inventory)
 			C_KILL(p_ptr->inventory, INVEN_TOTAL, object_type);
+		if (p_ptr->inventory_copy)
+			C_KILL(p_ptr->inventory_copy, INVEN_TOTAL, object_type);
 
 		KILL(Players[NumPlayers], player_type);
 	}
@@ -1986,7 +1947,7 @@ static int Handle_setup(int ind)
 {
 	connection_t *connp = Conn[ind];
 	char *buf;
-	int n, len, i;
+	int n, len, i, j;
 	char b1, b2, b3, b4, b5, b6;
 	
 	if (connp->state != CONN_SETUP)
@@ -2006,21 +1967,19 @@ static int Handle_setup(int ind)
 			return -1;
 		}
 
-	        for (i = 0; i < Setup.max_race; i++)
-	        {
+		for (i = 0; i < Setup.max_race; i++) {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
-//			Packet_printf(&connp->c, "%s%ld", Setup.race_title[i], Setup.race_choice[i]);
+//			Packet_printf(&connp->c, "%s%d", Setup.race_title[i], Setup.race_choice[i]);
 			b1 = race_info[i].r_adj[0]+50;
 			b2 = race_info[i].r_adj[1]+50;
 			b3 = race_info[i].r_adj[2]+50;
 			b4 = race_info[i].r_adj[3]+50;
 			b5 = race_info[i].r_adj[4]+50;
 			b6 = race_info[i].r_adj[5]+50;
-			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%ld", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
-	        }
+			Packet_printf(&connp->c, "%c%c%c%c%c%c%s%d", b1, b2, b3, b4, b5, b6, race_info[i].title, race_info[i].choice);
+		}
 
-    		for (i = 0; i < Setup.max_class; i++)
-	        {
+		for (i = 0; i < Setup.max_class; i++) {
 //			Packet_printf(&ibuf, "%c%s", i, class_info[i].title);
 //			Packet_printf(&connp->c, "%s", Setup.class_title[i]);
 			b1 = class_info[i].c_adj[0]+50;
@@ -2030,7 +1989,10 @@ static int Handle_setup(int ind)
 			b5 = class_info[i].c_adj[4]+50;
 			b6 = class_info[i].c_adj[5]+50;
 			Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].title);
-    		}
+			if (is_newer_than(&connp->version, 4, 4, 3, 1, 0, 0))
+				for (j = 0; j < 6; j++)
+					Packet_printf(&connp->c, "%c", class_info[i].min_recommend[j]);
+		}
 
 		connp->setup = (char *) &Setup.motd[0] - (char *) &Setup;
 		connp->setup=0;
@@ -2553,6 +2515,13 @@ static int Handle_login(int ind)
 	if (p_ptr->admin_dm && (cfg.runlevel == 2043))
 		msg_print(NumPlayers, "\377y* Recall-server-shutdown command pending *");
 
+	if (cfg.runlevel == 2043) {
+		if (shutdown_recall_timer >= 120)
+			msg_format(NumPlayers, "\377I*** \377RServer-shutdown in max %d minutes (auto-recall). \377I***", shutdown_recall_timer / 60);
+		else
+			msg_format(NumPlayers, "\377I*** \377RServer-shutdown in max %d seconds (auto-recall). \377I***", shutdown_recall_timer);
+	}
+
 	if(p_ptr->quest_id){
 		for(i=0; i<20; i++){
 			if(quests[i].id==p_ptr->quest_id){
@@ -2782,10 +2751,16 @@ void process_pending_commands(int ind)
 			/* Return code 0 means that there wasn't enough data in the socket buffer */
 			if (result == 0) {
 				/* Move the remaining data to the queue buffer - mikaelh */
-				Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len);
+				int len = connp->r.len - (connp->r.ptr - connp->r.buf);
+				if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len)
+				{
+					errno = 0;
+					Destroy_connection(ind, "Can't copy data to queue");
+					return;
+				}
 			}
 
-			/* The call didn't do anything, clear the buffer */
+			/* Clear the buffer to avoid getting stuck in a loop */
 			Sockbuf_clear(&connp->r);
 			break;
 		}
@@ -2826,8 +2801,8 @@ void process_pending_commands(int ind)
 		/* Queue all remaining packets now */
 		if (result == 3)
 		{
-			Sockbuf_advance(&connp->r, connp->r.ptr - connp->r.buf);
-			if (Sockbuf_write(&connp->q, connp->r.ptr, connp->r.len) != connp->r.len)
+			int len = connp->r.len - (connp->r.ptr - connp->r.buf);
+			if (Sockbuf_write(&connp->q, connp->r.ptr, len) != len)
 			{
 				errno = 0;
 				Destroy_connection(ind, "Can't copy data to queue");
@@ -2835,7 +2810,6 @@ void process_pending_commands(int ind)
 			}
 			Sockbuf_clear(&connp->r);
 
-			/* Break out of the loop instead of returning so the energy can get restored properly. - mikaelh */
 			break;
 		}
 	}
@@ -3256,7 +3230,7 @@ void do_quit(int ind, bool tellclient)
 	}
 
 	/* If we are close to the center of town, exit quickly. */
-	if(connp->id==-1 || istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<3))
+	if(connp->id==-1 || istownarea(&p_ptr->wpos, 2))
 	{
 		Destroy_connection(ind, "client quit");
 	}
@@ -4097,7 +4071,7 @@ int Send_skill_points(int ind){
 			ind, connp->state, connp->id));
 		return 0;
 	}
-        return Packet_printf(&connp->c, "%c%ld", PKT_SKILL_PTS, p_ptr->skill_points);
+        return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
 }
 
 int Send_skill_info(int ind, int i)
@@ -4120,11 +4094,11 @@ int Send_skill_info(int ind, int i)
 	if (mkey == MKEY_RANGED && Players[ind]->ranged_techniques == 0x0000) mkey = 0;
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
-	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden);
 	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
-	        return Packet_printf(&connp->c, "%c%ld%ld%ld%ld%ld%ld", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey);
 	} else {
-	        return Packet_printf(&connp->c, "%c%d%ld%ld%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey, p_ptr->s_info[i].dummy);
+	        return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].hidden, mkey, p_ptr->s_info[i].dummy);
 	}
 }
 
@@ -4502,6 +4476,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
 			/* pending recall? */
 			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
+			/* use as indicator for pvp_prevent_tele, actually */
+			else if ((p_ptr2->mode & MODE_PVP) && p_ptr2->pvp_prevent_tele) colour2 = TERM_RED;
 			/* able to get extra level feeling on next floor? */
 			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
 			/* in a town? ignore town level */
@@ -4530,6 +4506,8 @@ int Send_depth(int ind, struct worldpos *wpos)
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
+		/* use as indicator for pvp_prevent_tele, actually */
+		else if ((p_ptr->mode & MODE_PVP) && p_ptr->pvp_prevent_tele) colour = TERM_RED;
 		/* able to get extra level feeling on next floor? */
 		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
@@ -4931,7 +4909,7 @@ int Send_spell_info(int ind, int realm, int book, int i, cptr out_val)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%ld%ld%ld%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
+	return Packet_printf(&connp->c, "%c%d%d%d%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
 
 /* Implementing fighting/shooting techniques, but maybe using a lua 'school' file would be better instead - C. Blue */
@@ -4952,7 +4930,7 @@ int Send_technique_info(int ind)
 			ind, connp->state, connp->id));
 		return 0;
 	}
-	return Packet_printf(&connp->c, "%c%ld%ld", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
+	return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
 }
 
 int Send_item_request(int ind)
@@ -6142,6 +6120,17 @@ static int Receive_run(int ind)
 				return Receive_walk(ind);
 			}
 		}
+		
+		/* Check for hostile players. They should be treated as a disturbance.
+		 * Should lessen the unfair advantage melee have in PVP */
+		for (i = 1; i < NumPlayers; i++) {
+			if (i == player) continue;
+			if (check_hostile(player, i)) {
+				if (target_able(player, 0-i)) { /* target_able takes in midx usually */
+					return Receive_walk(ind);
+				}
+			}
+		}
 	}
 	
 	/* hack to fix 'movelock' bug, which occurs if a player tries to RUN away from a
@@ -6698,7 +6687,7 @@ static int Receive_activate_skill(int ind)
 					return 1;
 				}
 
-				execute_rspell(player, dir, NULL, 0, (u32b)((book*10000)+spell), item); 
+				execute_rspell(player, dir, (u32b)((book*10000)+spell), item); 
 				break;
 #endif
 
@@ -8222,7 +8211,7 @@ static int Receive_drop_gold(int ind)
 	}
 	else if (player)
 	{
-		Packet_printf(&connp->q, "%c%ld", &ch, &amt);
+		Packet_printf(&connp->q, "%c%d", ch, amt);
 		return 0;
 	}
 
@@ -9230,6 +9219,12 @@ static int Receive_ping(int ind) {
 
 			p_ptr->idle++;
 			p_ptr->idle_char++;
+
+#if (MAX_PING_RECVS_LOGGED > 0)
+			/* Get the exact time and save it */
+			p_ptr->pings_received_head = (p_ptr->pings_received_head + 1) % MAX_PING_RECVS_LOGGED;
+			gettimeofday(&p_ptr->pings_received[(int) p_ptr->pings_received_head], NULL);
+#endif
 
 			/* Kick a starving player */
 			if (p_ptr->food < PY_FOOD_WEAK && connp->inactive_ping > 30)

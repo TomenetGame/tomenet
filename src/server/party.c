@@ -785,6 +785,9 @@ int party_create_ironteam(int Ind, cptr name)
 	/* Set mode to iron team */
 	parties[index].mode = PA_IRONTEAM;
 
+	/* Initialize max exp */
+	parties[index].experience = 0;
+
 	/* Add the owner as a member */
 	p_ptr->party = index;
 	parties[index].members = 1;
@@ -1096,8 +1099,9 @@ int guild_remove(int remover, cptr name){
 /*
  * Remove a person from a party.
  *
- * Removing the party owner destroys the party. - Not anymore:
- * Now removing will just promote someone else to owner, better for RPG partys! - C. Blue
+ * Removing the party owner destroys the party. - Not always anymore:
+ * On RPG server, removing the owner will just promote someone else to owner,
+ * provided (s)he's logged on. Better for RPG diving partys - C. Blue
  */
 int party_remove(int remover, cptr name)
 {
@@ -1459,24 +1463,34 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	s64b modified_level, req_lvl;
 	int dlev;
 
-	/* Iron Teams only get exp if the whole team is on the same floor! */
+#if 1
+/* will be moved to gain_exp() if decrease of party.experience is implemented, nasty though.
+until then, iron teams will just have to be re-formed as normal parties if a member falls
+behind too much in terms of exp and hence blocks the whole team from gaining exp. */
+	int iron_team_members_here = 0;
+
+	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
 	if (parties[party_id].mode == PA_IRONTEAM)
 	{
-		int membershere = 0;
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			p_ptr = Players[i];
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
+			/* note: this line means that iron teams must not add
+			   admins, or the members won't gain exp anymore */
+			if (is_admin(p_ptr)) continue;
+
 			/* player on the same dungeon level? */
 			if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 			/* count party members on the same dlvl */
-			if (player_in_party(party_id, i)) membershere++;
+			if (player_in_party(party_id, i)) iron_team_members_here++;
 		}
 		/* only gain exp if all members are here */
-		if (membershere != parties[party_id].members) return;
+		if (iron_team_members_here != parties[party_id].members) return;
 	}
+#endif
 
 	/* Calculate the average level */
 	for (i = 1; i <= NumPlayers; i++)
@@ -2903,12 +2917,12 @@ void account_checkexpiry(int Ind)
 		ptr = hash_table[slot];
 		while (ptr) {
 			if (p_ptr->id != ptr->id && p_ptr->account == ptr->account && ptr->laston) {
-				expire = 90 * 86400 - now + ptr->laston;
+				expire = 180 * 86400 - now + ptr->laston;
 
 				if (expire < 86400) {
 					msg_format(Ind, "\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
 				}
-				else if (expire < 30 * 86400) {
+				else if (expire < 60 * 86400) {
 					msg_format(Ind, "\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
 				}
 			}
@@ -3058,8 +3072,9 @@ void delete_player_name(cptr name)
  */
 int player_id_list(int **list, u32b account)
 {
-	int i, len = 0, k = 0;
+	int i, j, len = 0, k = 0, tmp;
 	hash_entry *ptr;
+	int *llist;
 
 	/* Count up the number of valid entries */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++)
@@ -3083,6 +3098,9 @@ int player_id_list(int **list, u32b account)
 	/* Allocate memory for the list */
 	C_MAKE((*list), len, int);
 
+	/* Direct pointer to the list */
+	llist = *list;
+
 	/* Look again, this time storing ID's */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++)
 	{
@@ -3094,7 +3112,21 @@ int player_id_list(int **list, u32b account)
 		{
 			/* Store this ID */
 			if(!account || ptr->account==account)
-				(*list)[k++] = ptr->id;
+			{
+				llist[k++] = ptr->id;
+
+				/* Insertion sort for account specific lists */
+				if (account)
+				{
+					j = k - 1;
+					while (j > 0 && llist[j - 1] > llist[j]) {
+						tmp = llist[j - 1];
+						llist[j - 1] = llist[j];
+						llist[j] = tmp;
+						j--;
+					}
+				}
+			}
 
 			/* Next entry in chain */
 			ptr = ptr->next;

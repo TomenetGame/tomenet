@@ -157,6 +157,7 @@ typedef unsigned int u32b;
 #define PROJECTOR_TERRAIN	-1003
 #define PROJECTOR_MON_TRAP	-1004
 #define PROJECTOR_EFFECT	-1005
+#define PROJECTOR_PLAYER	-1006
 
 #define PROJECT_JUMP	0x00000001
 #define PROJECT_BEAM	0x00000002
@@ -188,8 +189,12 @@ typedef unsigned int u32b;
 #define BRAND_BALL_SOUND    12
 
 /* cave.c */
-extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
-extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+/* These should not directly be used from LUA, because at least cave_set_feat_live()
+   assumes that allow_terraforming() has been checked before!
+	extern void cave_set_feat(worldpos *wpos, int y, int x, int feat);
+	extern void cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
+   Instead, for Glyphs we use the following one cleanly: */
+extern void warding_glyph(int Ind);
 extern int check_feat(worldpos *wpos, int y, int x);
 
 /* cmd2.c */
@@ -197,7 +202,7 @@ extern void do_cmd_fusion(int Ind);
 
 /* generate.c */
 extern void arcade_wipe(worldpos *wpos);
-extern void place_up_stairs(worldpos *wpos, int y, int x); 
+extern void place_up_stairs(worldpos *wpos, int y, int x);
 
 /* spells1.c */
 extern byte spell_color(int type);
@@ -489,6 +494,7 @@ extern s32b lua_get_skill_mod(int Ind, int i);
 extern s32b lua_get_skill_value(int Ind, int i);
 extern void lua_fix_equip_slots(int Ind);
 extern void lua_fix_skill_chart(int Ind);
+extern void lua_takeoff_costumes(int Ind);
 
 /* wild.c */
 extern void wild_flags(int Ind, u32b flags);

@@ -1905,30 +1905,34 @@ void check_parryblock(int Ind)
 	} else {
 		if (!p_ptr->weapon_parry)
 			msg_print(Ind, "You cannot parry at the moment.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5) 
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 5)
 			msg_print(Ind, "You have almost no chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 10) 
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 10)
 			msg_print(Ind, "You have a slight chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 20) 
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 20)
 			msg_print(Ind, "You have a significant chance of parrying.");
-		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 30) 
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 30)
 			msg_print(Ind, "You have a good chance of parrying.");
-		else
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 40)
 			msg_print(Ind, "You have a very good chance of parrying.");
+		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) < 50)
+			msg_print(Ind, "You have an excellent chance of parrying.");
+		else
+			msg_print(Ind, "You have a superb chance of parrying.");
 
 		if (!apply_block_chance(p_ptr, p_ptr->shield_deflect))
 			msg_print(Ind, "You cannot block at the moment.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 5) 
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 5)
 			msg_print(Ind, "You have almost no chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 14) 
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 14)
 			msg_print(Ind, "You have a slight chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 23) 
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 23)
 			msg_print(Ind, "You have a significant chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 30) 
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 33)
 			msg_print(Ind, "You have a good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 40) 
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 44)
 			msg_print(Ind, "You have a very good chance of blocking.");
-		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 65)
+		else if (apply_block_chance(p_ptr, p_ptr->shield_deflect) < 55)
 			msg_print(Ind, "You have an excellent chance of blocking.");
 		else
 			msg_print(Ind, "You have a superb chance of blocking.");
@@ -2564,10 +2568,16 @@ void toggle_afk(int Ind, char *msg)
 		p_ptr->afk = TRUE;
 
 		/* still too many starvations, so give a warning - C. Blue */
-		if (p_ptr->food <= PY_FOOD_ALERT)
+		if (p_ptr->food < PY_FOOD_ALERT)
 		{
-			p_ptr->paging = 3; /* add some beeps, too - mikaelh */
+			p_ptr->paging = 6; /* add some beeps, too - mikaelh */
 			msg_print(Ind, "\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
+		}
+
+		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
+		if (p_ptr->tim_wraith) {
+			p_ptr->paging = 6;
+			msg_print(Ind, "\377RWARNING: Going AFK in wraithform is very dangerous because wraithform impairs auto-retaliation!");
 		}
 	}
 
@@ -3639,6 +3649,85 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 	}
 }
 
+/* Convert certain characters into HTML entities
+* These characters are <, >, & and "
+* NOTE: The returned string is dynamically allocated
+*/
+char *html_escape(const char *str) {
+	int i, new_len = 0;
+	const char *tmp;
+	char *result;
+	
+	if (!str) {
+		/* Return an empty string */
+		result = malloc(1);
+		*result = '\0';
+		return result;
+	}
+	
+	/* Calculate the resulting length */
+	tmp = str;
+	while (*tmp) {
+		switch (*tmp) {
+			case '<': case '>':
+				new_len += 3;
+				break;
+			case '&':
+				new_len += 4;
+				break;
+			case '"':
+				new_len += 5;
+				break;
+		}
+		new_len++;
+		tmp++;
+	}
+	
+	result = malloc(new_len + 1);
+	i = 0;
+	tmp = str;
+	
+	while (*tmp) {
+		switch (*tmp) {
+			case '<':
+				result[i++] = '&';
+				result[i++] = 'l';
+				result[i++] = 't';
+				result[i++] = ';';
+				break;
+			case '>':
+				result[i++] = '&';
+				result[i++] = 'g';
+				result[i++] = 't';
+				result[i++] = ';';
+				break;
+			case '&':
+				result[i++] = '&';
+				result[i++] = 'a';
+				result[i++] = 'm';
+				result[i++] = 'p';
+				result[i++] = ';';
+				break;
+			case '"':
+				result[i++] = '&';
+				result[i++] = 'q';
+				result[i++] = 'u';
+				result[i++] = 'o';
+				result[i++] = 't';
+				result[i++] = ';';
+				break;
+			default:
+				result[i++] = *tmp;
+		}
+		tmp++;
+	}
+	
+	/* Terminate */
+	result[new_len] = '\0';
+	
+	return result;
+}
+
 /* level generation benchmark */
 void do_benchmark(int Ind) {
 	int i, n = 100;
@@ -3676,4 +3765,25 @@ void do_benchmark(int Ind) {
 
 	/* Log it too */
 	s_printf("BENCHMARK: Generated %d levels in %d.%06d seconds.\n", n, sec, usec);
+}
+
+/*
+ * Get the difference between two timevals as a string.
+ */
+cptr timediff(struct timeval *begin, struct timeval *end) {
+	static char buf[20];
+	int sec, msec, usec;
+
+	sec = end->tv_sec - begin->tv_sec;
+	usec = end->tv_usec - begin->tv_usec;
+
+	if (usec < 0) {
+		usec += 1000000;
+		sec--;
+	}
+
+	msec = usec / 1000;
+
+	snprintf(buf, 20, "%d.%03d", sec, msec);
+	return buf;
 }

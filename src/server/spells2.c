@@ -643,6 +643,8 @@ void warding_glyph(int Ind)
 	cave_type **zcave;
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 
+	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) return;
+
 	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
 }
 
@@ -972,6 +974,9 @@ void wizard_lock(int Ind, int dir){
 	if(!p_ptr) return;
 	zcave=getcave(&p_ptr->wpos);
 	if(!zcave) return;
+
+	/* anti-cheeze: exp'ing with doors */
+	if (!p_ptr->wpos.wz) return;
 
 	dx = p_ptr->px + ddx[dir];
 	dy = p_ptr->py + ddy[dir];
@@ -1422,6 +1427,7 @@ void self_knowledge(int Ind)
 		else fprintf(fff, "You are surrounded by a feeble anti-magic field.\n");
 
 	}
+#if 0 /* done in util.c */
 #ifdef USE_BLOCKING
 	if (apply_block_chance(p_ptr, p_ptr->shield_deflect))
 	{
@@ -1451,6 +1457,7 @@ void self_knowledge(int Ind)
 		else if (apply_parry_chance(p_ptr, p_ptr->weapon_parry) > 0)
 			fprintf(fff, "You are rather bad at parrying with your weapon.\n");
 	}
+#endif
 #endif
 #if 1
         if (p_ptr->anti_magic)	// newer (saving-throw boost)
@@ -3713,7 +3720,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 
 	bool res = FALSE;
 
-	bool a = artifact_p(o_ptr);
+	bool a = like_artifact_p(o_ptr);
 
 	u32b f1, f2, f3, f4, f5, esp;
 
@@ -3729,7 +3736,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) return (FALSE);
 	
 	/* Artifacts cannot be enchanted. */
-	if (artifact_p(o_ptr)) return (FALSE);
+	if (a) return (FALSE);
 
 	/* Ethereal ammo cannot be enchanted */
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return (FALSE);
@@ -5595,7 +5602,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 
 	/*bool flag = FALSE;*/
 
-	dun_level		*l_ptr = getfloor(wpos);
+	dun_level *l_ptr = getfloor(wpos);
 
 	struct c_special *cs_ptr;       /* for special key doors */
 
@@ -5603,15 +5610,14 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	if(!(zcave=getcave(wpos))) return;
 	if(l_ptr && l_ptr->flags1 & LF1_NO_DESTROY) return;
 
+	/* among others, make sure town areas aren't affected.. */
+	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
+
 	/* XXX XXX */
 	full = full ? full : 0;
 
 	/* Set to default */
 	feat = feat ? feat : FEAT_FLOOR;
-
-	/* Don't hurt the main town or surrounding areas */
-	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
-		return;
 
 	/* Can't trigger within Vault? - note: this prevents exploit as well as death-_trap_ at once :) */
 	if (zcave[y1][x1].info & CAVE_ICKY) return;
@@ -5795,7 +5801,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 	cave_type	*c_ptr;
 
 	bool	map[32][32];
-	dun_level		*l_ptr = getfloor(wpos);
+	dun_level *l_ptr = getfloor(wpos);
 
 	struct c_special *cs_ptr;	/* for special key doors */
 
@@ -5804,9 +5810,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r)
 	if(l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
 	override_LF1_NO_DESTROY = FALSE;
 
-	/* Don't hurt town or surrounding areas */
-	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
-		return;
+	/* among others, make sure town areas aren't affected.. */
+	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
 
 	/* Paranoia -- Dnforce maximum range */
 	if (r > 12) r = 12;
@@ -6259,7 +6264,7 @@ void wipe_spell(struct worldpos *wpos, int cy, int cx, int r)
 	cave_type **zcave;
 	if(!(zcave=getcave(wpos))) return;
 	/* Don't hurt town or surrounding areas */
-	if(istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3))
+	if(istownarea(wpos, 2))
 		return;
 
 	/* Paranoia -- Dnforce maximum range */
@@ -7506,7 +7511,7 @@ void house_creation(int Ind, bool floor, bool jail)
 	printf("floor: %d jail: %d\n",floor,jail);
 
 	/* No building in town */
-	if(wpos->wz || istown(wpos) || wild_info[wpos->wy][wpos->wx].radius<3)
+	if(wpos->wz || istownarea(wpos, 2))
 		return;
 	if((house_alloc-num_houses)<32){
 		GROW(houses, house_alloc, house_alloc+512, house_type);

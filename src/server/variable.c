@@ -814,6 +814,7 @@ int cron_1h_last_hour = -1; /* -1 to call immediately after server restart */
 global_event_type global_event[MAX_GLOBAL_EVENTS];
 int sector00separation = 0; /* some events separate sector 0,0 from the worldmap
 			 to use it in a special way - WoR won't work either */
+int sector00downstairs = 0; /* remember that sector 0,0 contains staircases downwards at the moment */
 int ge_special_sector = 0; /* to make it known that a certain sector (or multiple sectors, given in
 			    defines.h as WPOS_ constants) are now in special use for global events. */
 u32b ge_contender_buffer_ID[128]; /* Remember account IDs of players who are supposed to receive */
@@ -823,7 +824,7 @@ int achievement_buffer_deed[128]; /* an achievement deeds on different character
 
 /* for dungeon master/wizard summoning, to override all validity checks and
    definitely summon what his/her heart desires! - C. Blue */
-int summon_override_checks = 0;
+u32b summon_override_checks = SO_NONE;
 /* Morgoth may override no-destroy, with his shattering hits */
 bool override_LF1_NO_DESTROY = FALSE;
 
@@ -866,6 +867,7 @@ int wind_dur[16], wind_dir[16];
 
 /* special seasons */
 int season_halloween = 0;
+int season_xmas = 0;
 int season_newyearseve = 0;
 
 /* for controlling fireworks on NEW_YEARS_EVE */

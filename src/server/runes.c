@@ -24,7 +24,7 @@ void transform_level(int Ind, byte feat, int chance) {
 	if(!(zcave=getcave(wpos))) return; 
 
 	/* Don't hurt the main town or surrounding areas */
-	if(!allow_terraforming(wpos, feat) || istown(wpos) || (wpos->wz==0 && wild_info[wpos->wy][wpos->wx].radius<3)) {
+	if(!allow_terraforming(wpos, feat) || istownarea(wpos, 2)) {
 		msg_print(Ind, "\377rYou can't do that here!"); 
 		return;
 	}
@@ -90,7 +90,10 @@ int do_use_mp(int Ind, int mod, float mul) {
 	if (p_ptr->rune_num_of_buffs)
 		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
 
-	if (p_ptr->csp < cost) return cost;
+	if (p_ptr->csp < cost) {
+		return cost;
+	}
+
 	else {
 		p_ptr->csp -= cost;
 	}

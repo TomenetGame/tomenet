@@ -765,7 +765,10 @@ struct player_type
 	bool impact;		/* Earthquake blows */
         bool auto_id; /* Pickup = Id */
 	bool no_cut;		/* for mimic forms */
+	bool fly;
 	bool can_swim;		/* for mimic forms mainly */
+	bool pass_trees;
+	bool town_pass_trees;
 	bool reduce_insanity;	/* for mimic forms with weird/empty mind */
 	
 	s16b invis;		/* Invisibility */

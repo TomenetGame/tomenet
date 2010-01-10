@@ -12,7 +12,8 @@ end
 GROWTREE = add_spell
 {
 	["name"] = 	"Grow Trees",
-        ["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
+--      ["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
+        ["school"] = 	{SCHOOL_NATURE},
         ["level"] = 	6,
         ["mana"] = 	6,
         ["mana_max"] = 	30,

@@ -148,7 +148,7 @@
 #define CLIENT_SIDE_WEATHER	/* server uses Send_weather() instead of displaying own weather animation */
 //#define CLIENT_WEATHER_GLOBAL	/* use global weather instead of sector-specific (requires CLIENT_SIDE_WEATHER) */
 #if !defined RPG_SERVER && !defined TEST_SERVER
- #define MAX_CLOUDS 200
+ #define MAX_CLOUDS 1000
 #endif
 
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
@@ -480,7 +480,7 @@
 #define MAX_D_IDX	64 /* Max size for "d_info[]" */
 
 /* Max ego base type restrictions */
-#define MAX_EGO_BASETYPES	9
+#define MAX_EGO_BASETYPES	10
 
 /* Client-side unique list */
 #define MAX_UNIQUES             300
@@ -789,7 +789,7 @@
 #define GUILD_DELETE	3
 #define GUILD_REMOVE_ME	4
 
-/* 
+/*
  * Dungeon master commands
  */
 #define	MASTER_NULL	0
@@ -808,6 +808,26 @@
 
 #define	MASTER_SCRIPTB_W	'w'
 #define	MASTER_SCRIPTB_A	'a'
+
+
+/* Summoning/spawning override flags for checks in monster placement routines */
+#define SO_NONE			0x0000	/* apply all checks (default) */
+#define SO_ALL			0xffff	/* ignore ALL checks (admin summmoning) */
+
+#define SO_PROTECTED		0x0001	/* ignore PROTECTED grids (Inn) */
+#define SO_HOUSE		0x0002	/* ignore CAVE_ICKY grids on surface around towns (houses) */
+#define SO_FORCE_DEPTH		0x0004	/* ignore FORCE_DEPTH check (monlev vs dunlev) */
+#define SO_GRID_EMPTY		0x0008	/* ignore check for 'empty' or 'mountain' (if monster can pass mountains) grid */
+
+#define SO_GRID_TERRAIN		0x0010	/* ignore check for terrain the monster can pass. NOTE: currently these two SO_GRID_.. are checked inconsistently -> fix! */
+#define SO_GRID_GLYPH		0x0020	/* ignore check for glyphed grid */
+#define SO_TT_RPG		0x0040	/* RPG server rules: Don't spawn any monsters in training tower */
+#define SO_EVENTS		0x0080	/* ignore check preventing disturbing live spawns during events. Note: wild_add_monster() has own check. */
+
+#define SO_PRE_STAIRS		0x0100	/* ignore safety check preventing monster packs occupying staircase grids, pushing off the player when he enters the level */
+#define SO_BOSS_LEVELS		0x0200	/* ignore checks which manage special levels (containing bosses) */
+#define SO_BOSS_MONSTERS	0x0400	/* ignore checks which restrict boss/special/unique monster appearances (nether realm monsters too) */
+#define SO_SURFACE		0x0800	/* ignore checks which restrict certain monster spawns on the world surface (breeders, uniques) */
 
 
 /*
@@ -2599,6 +2619,7 @@ that keeps many algorithms happy.
 #define SV_TUNIC			21
 #define SV_GOWN				22
 #define SV_LEATHER_FROCK		23
+#define SV_COSTUME			24 /* Halloween costume */
 
 /* The "sval" codes for TV_HARD_ARMOR */
 #define SV_RUSTY_CHAIN_MAIL              1  /* 14- */
@@ -3139,16 +3160,25 @@ that keeps many algorithms happy.
 #define SV_CORPSE_MEAT       5
 
 /* The "sval" codes for TV_PARCHMENT */
+	/* Basic informational parchments */
 #define SV_PARCHMENT_NEWBIE	50
 #define SV_PARCHMENT_DEATH	51
 #define SV_PARCHMENT_NEWS	52
 
+	/* Deeds, given as a reward for certain events */
 #define SV_DEED_HIGHLANDER	60 /* for winner */
 #define SV_DEED2_HIGHLANDER	61 /* for participant */
 #define SV_DEED_PVP_MAX		62 /* reaching top level in pvp mode */
 #define SV_DEED_PVP_MID		63 /* reaching top level in pvp mode */
 #define SV_DEED_PVP_MASS	64 /* killing a lot of opponents in pvp mode */
 #define SV_DEED_PVP_START	65 /* birth item for pvp mode chars */
+
+	/* Inheritances given as consolidation for deaths of high chars */
+#define SV_INHERIT_KNOW		70	/* flavour knowledge */
+#define SV_INHERIT_ATTR		71	/* boost/max 1+ attribute(s) */
+#define SV_INHERIT_GOLD		72	/* just gold */
+#define SV_INHERIT_ITEM		73	/* like highlander reward */
+#define SV_INHERIT_ART		74	/* artifact creation */
 
 /* for TV_BOOK */
 /* 0..49 are school tomes */
@@ -5196,13 +5226,34 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 
 /* artifacts that aren't supposed to show up in non-admins' art lists */
 #define admin_artifact_p(T) \
-	((T) == ART_CLOAK_DM || (T) == ART_GOGGLES_DM)
+	((T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM)
 
 /* artifacts that as an exception can by used by winners */
 #define winner_artifact_p(T) \
 	((k_info[(T)->k_idx].flags5 & TR5_WINNERS_ONLY) || \
 	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
 	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY)
+
+/* artifacts that cannot be deposited on an empty/deallocated dun/wild floor,
+   nor being dropped inside houses (if cfg.anti_arts_hoard is on.) */
+#define undepositable_artifact_p(T) \
+	(true_artifact_p(T) && !multiple_artifact_p(T))
+
+/* artifacts that are not reset on server artifact resets.
+   NOTE: for winner_artefacts that AREN'T multiple_artifacts it's debatable! */
+#define resettable_artifact_p(T) \
+	(true_artifact_p(T) && !( \
+	admin_artifact_p(T) || \
+	(winner_artifact_p(T) && multiple_artifact_p(T)) \
+	))
+
+/* items that are supposed to act like artifacts in certain situations.
+   Example: Stormbringer resists Nazgul, although it's just an ego item. */
+#define like_artifact_p(T) \
+	(artifact_p(T) || \
+	((T)->name2 == EGO_STORMBRINGER) || ((T)->name2b == EGO_STORMBRINGER) \
+	)
+
 
 /*
  * Ego-Items use the "name2" field
@@ -6084,9 +6135,10 @@ extern int PlayerUID;
 #define PROJECTOR_TERRAIN	-1003
 #define PROJECTOR_MON_TRAP	-1004
 #define PROJECTOR_EFFECT	-1005
+#define PROJECTOR_PLAYER	-1006
 
 
-#define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
+//see true_artifact_p - #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
 #define PRICE_BOOST(value, base, step) \
 			(value > base ? value << ((value - base)/step) : value )	
 
@@ -6176,7 +6228,9 @@ extern int PlayerUID;
 
 /* NOTE: not all the towns should be on the surface, should they? */
 #define istown(wpos) \
-	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type==WILD_TOWN)
+	(!(wpos)->wz && wild_info[(wpos)->wy][(wpos)->wx].type == WILD_TOWN)
+#define istownarea(wpos, rad) \
+	(istown(wpos) || ((wpos)->wz == 0 && wild_info[(wpos)->wy][(wpos)->wx].radius <= rad))
 
 
 /* paralysis should be handled by other means! (0..80, or 1000 if paralyzed. Usually 10..25.) */
@@ -6732,12 +6786,12 @@ extern int PlayerUID;
 #define GE_ARENA_MONSTER	3	/* Areana Monster Challenge */
 
 /* player flags while participating in global events (p_ptr->global_event_temp) */
-#define PEVF_NONE		0
+#define PEVF_NONE		0x00000000
 #define PEVF_PASS_00		0x00000001 /* may enter/leave sector 0,0 */
 #define PEVF_NOGHOST_00		0x00000002 /* will permanently die in sector 0,0 */
 #define PEVF_SAFEDUN_00		0x00000004 /* won't die in dungeon/tower in 0,0 */
 #define PEVF_AUTOPVP_00		0x00000008 /* will always be hostile to others in 0,0 */
-#define PEVF_SEPDUN_00		0x00000010 /* unable to leave/enter dungeon or tower in 0,0 */
+#define PEVF_SEPDUN_00		0x00000010 /* unable to leave dungeon or tower in 0,0 via stairs */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_PVP_MAX		1
@@ -6971,143 +7025,77 @@ extern int PlayerUID;
 #define S_COST_MIN 1
 #define S_COST_MAX 85
 #define S_DAM_MIN 5
-//#define S_DAM_MAX 1480
-#define S_DAM_MAX 500
+#define S_DAM_MAX 500 //This is before size/fail, etc modifiers. Max for 500 results in a hard limit of around 2000
 
-/*	Rune spell types
+/* Rune spell effect types */
+#define RT_MAX 66
 
-	These are grouped by base rune.
-	They are converted to GF_TYPEs in cast_runespell() below and fed through the relevant spell2.c functions.
-	
-	Mostly they correspond to GF_TYPES, but there are a few new spells. */
-#define RT_NONE					  0 //Failed combination
-
-#define RT_FIRE					  1
-#define	RT_BASERES_PLAYER 			  2
-#define RT_NUKE         			  3
-#define RT_CONFUSION    			  4
-#define RT_ROCKET       			  5
-#define RT_SEEINVIS_PLAYER  			  6
-#define RT_LITE_WEAK				  7
-#define RT_LITE        				  8
-#define RT_METEOR       			  9
-#define RT_HOLY_FIRE   				 10
-#define RT_HELL_FIRE   				 11
-#define RT_PLASMA      				 12
-
-#define RT_COLD         			 13
-#define RT_BLIND				 14
-#define RT_ICEPOISON    			 15
-#define RT_DARK_WEAK				 16
-#define RT_DARK        				 17
-#define RT_STASIS       			 18
-#define RT_ICE         				 19
-#define RT_STUN          			 20
-
-#define RT_ACID        				 21
-#define RT_DISENCHANT  				 22
-#define RT_DISINTEGRATE 			 23
-#define RT_THUNDER				 24
-
-#define RT_ELEC         			 25
-#define RT_SOUND        			 26
-#define RT_OLD_CLONE				 27
-#define RT_DRAIN				 28
-
-#define RT_POIS         			 29
-#define RT_WATERPOISON  			 30
-#define RT_UNBREATH     			 31
-#define RT_RESPOIS_PLAYER  			 32
-
-#define RT_WATER       				 33
-#define RT_WAVE         			 34
-#define	RT_HEAL_PLAYER				 35
-#define RT_BLESS_PLAYER  			 36
-#define RT_SATHUNGER_PLAYER  			 37
-
-#define RT_ARROW				 38
-#define RT_MISSILE      			 39
-#define RT_MAKE_WALL				 40
-#define RT_DETECT_STAIR		 		 41
-#define RT_DETECTCREATURE_PLAYER 		 42
-#define RT_LEVITATE				 43
-#define RT_FLY					 44
-
-#define RT_SHARDS       			 45
-#define RT_KILL_DOOR				 46
-#define RT_DETECT_TRAP				 47
-#define RT_KILL_WALL				 48
-#define	RT_STONE_WALL 				 49
-#define	RT_EARTHQUAKE 				 50
-#define	RT_DSHIELD_PLAYER 			 51
-#define RT_OLD_POLY				 52
-#define RT_SELF_KNOWLEDGE  			 53
-#define	RT_WRAITH_PLAYER 			 54
-#define RT_SEEMAP_PLAYER  			 55
-
-#define RT_MANA         			 56
-#define RT_MAKE_GLYPH   			 57
-
-#define RT_CHAOS        			 58
-#define RT_TRAUMA 	    			 59
-#define RT_INERTIA      			 60
-#define	RT_SPEED_PLAYER  			 61
-
-#define RT_NETHER       			 62
-#define RT_TELEPORTLVL_PLAYER  			 63
-#define RT_RECALL_PLAYER 			 64
-
-#define RT_NEXUS        			 65
-#define RT_TELEPORT_PLAYER 			 66
-#define RT_TELE_TO				 67
-
-#define RT_PSI           			 68
-#define RT_ESP  				 69
-#define RT_HOLD					 70
-
-#define RT_TIME         			 71
-#define RT_SLOW					 72
-
-#define RT_GRAVITY      			 73
-
-#define RT_FORCE        			 74
-
-#define RT_DISPERSE        			 75
-
-#define RT_BLINK        			 76
-
-#define RT_GOL 		       			 77
-
-#define RT_INVIS 		       		 78
-
-/* Circle of glyphs */
-#define RT_MAGIC_CIRCLE	       			 79
-
-/* Generic resist spells */
-#define RT_RES_FIRE		       		 80
-#define RT_RES_COLD 	       			 81
-#define RT_RES_ACID 	       			 82
-#define RT_RES_ELEC 	       			 83
-
-#define RT_SUMMON	 	       		 84
-
-#define RT_MEMORY	 	       		 85
-
-#define RT_STEALTH	 	       		 86
-
-//Spells to fill spell gaps
-//Poison
-#define RT_FURY	 		       		 87
-#define RT_BESERK	 	       		 88
-//#define RT_STEALTH	 	       		 89
-//Nether/Time
-//#define RT_STEALTH	 	       		 90
-//#define RT_STEALTH	 	       		 91
-#define RT_ANCHOR	 	       		 92
-
-/* 	Max runespell effects */
-#define RT_MAX					128
-
+#define RT_NONE 0
+#define RT_FIRE 1
+#define RT_COLD 2
+#define RT_ACID 3
+#define RT_ELEC 4
+#define RT_CLONE_BLINK 5
+#define RT_BLESSING 6
+#define RT_SATIATION 7
+#define RT_DETECTION_BLIND 8
+#define RT_DETECT_TRAP 9
+#define RT_WIND_BLINK 10
+#define RT_LIGHT 11
+#define RT_SHADOW 12
+#define RT_SEE_INVISIBLE 13
+#define RT_POISON 14
+#define RT_STASIS_DISARM 15
+#define RT_SHARDS 16
+#define RT_DARK_SLOW 17
+#define RT_FORCE 18
+#define RT_BESERK 19
+#define RT_STUN 20
+#define RT_HEALING 21
+#define RT_MISSILE 22
+#define RT_DETECT_STAIR 23
+#define RT_DIG 24
+#define RT_POLYMORPH 25
+#define RT_VISION 26
+#define RT_TELEPORT 27
+#define RT_DISPERSE 28
+#define RT_FURY 29
+#define RT_TELEPORT_TO 30
+#define RT_TELEPORT_LEVEL 31
+#define RT_BRILLIANCE 32
+#define RT_OBSCURITY 33
+#define RT_TRAUMATURGY 34
+#define RT_PLASMA 35
+#define RT_WATER 36
+#define RT_FLY 37
+#define RT_QUICKEN 38
+#define RT_AURA 39
+#define RT_WATERPOISON 40
+#define RT_SUMMON 41
+#define RT_STEALTH 42
+#define RT_WALLS 43
+#define RT_ANCHOR 44
+#define RT_RESISTANCE 45
+#define RT_ICE 46
+#define RT_THUNDER 47
+#define RT_CHAOS 48
+#define RT_INERTIA 49
+#define RT_NEXUS 50
+#define RT_PSI_ESP 51
+#define RT_GRAVITY 52
+#define RT_TIME_INVISIBILITY 53
+#define RT_MEMORY 54
+#define RT_HELL_FIRE 55
+#define RT_ICEPOISON 56
+#define RT_DISINTEGRATE 57
+#define RT_MYSTIC_SHIELD 58
+#define RT_MAGIC_WARD 59
+#define RT_RECALL 60
+#define RT_EARTHQUAKE 61
+#define RT_NETHER 62
+#define RT_NUKE 63
+#define RT_MAGIC_CIRCLE 64
+#define RT_ROCKET 65
 
 /* 	Max runespell imperatives */
 #define RG_MAX					  8
@@ -7137,7 +7125,7 @@ extern int PlayerUID;
 #define RPEN_MAJ_BB 0x40 //Black breath
 #define RPEN_MAJ_DT 0x80 //Death?
 
-#define MAX_RSPELL_SEL 550 //Max entries in rspell selector
+#define MAX_RSPELL_SEL 697 //Max entries in rspell selector
 
 #define rget_level(x) ((s_av*x)/50) //No longer uses spell level: not used in fail rate calculator
 
@@ -7200,3 +7188,5 @@ extern int PlayerUID;
 /* Client-side auto inscriptions */
 #define MAX_AUTO_INSCRIPTIONS 20
 
+/* Maximum amount of ping reception times logged for each player */
+#define MAX_PING_RECVS_LOGGED	10

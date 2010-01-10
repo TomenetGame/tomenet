@@ -3,36 +3,36 @@
 MAGELOCK = add_spell
 {
 	["name"] = 	"Magelock",
-        ["school"] = 	{SCHOOL_TEMPORAL},
-        ["level"] = 	1,
-        ["mana"] = 	1,
-        ["mana_max"] = 	60,
-        ["fail"] = 	10,
-        ["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 30 then return FALSE else return TRUE end end,
-        ["spell"] = 	function(args)
-        		if get_level(Ind, MAGELOCK, 50) >= 30 then
-	        		local ret, x, y, c_ptr
+	["school"] = 	{SCHOOL_TEMPORAL},
+	["level"] = 	1,
+	["mana"] = 	1,
+	["mana_max"] = 	60,
+	["fail"] = 	10,
+	["direction"] = function () if get_level(Ind, MAGELOCK, 50) >= 30 then return FALSE else return TRUE end end,
+	["spell"] = 	function(args)
+			if get_level(Ind, MAGELOCK, 50) >= 30 then
+				local ret, x, y, c_ptr
 
---                		if get_level(Ind, MAGELOCK, 50) >= 40 then
---        	                	ret, x, y = tgt_pt()
---		                        if ret == FALSE then return end
---                                else
-                                	y = player.py
-                                        x = player.px
---                                end
-                        	cave_set_feat_live(player.wpos, y, x, 3)
-                        else
-                                wizard_lock(Ind, args.dir)
-                        end
+--				if get_level(Ind, MAGELOCK, 50) >= 40 then
+--					ret, x, y = tgt_pt()
+--					if ret == FALSE then return end
+--				else
+					y = player.py
+					x = player.px
+--				end
+				warding_glyph(Ind)
+			else
+				wizard_lock(Ind, args.dir)
+			end
 	end,
 	["info"] = 	function()
-                       	return ""
+			return ""
 	end,
-        ["desc"] =	{
-        		"Magically locks a door",
-                        "At level 30 it creates a glyph of warding"
---                        ,"At level 40 the glyph can be placed anywhere in the field of vision"
-        }
+	["desc"] =	{
+			"Magically locks a door",
+			"At level 30 it creates a glyph of warding"
+--			,"At level 40 the glyph can be placed anywhere in the field of vision"
+	}
 }
 
 SLOWMONSTER = add_spell

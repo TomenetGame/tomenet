@@ -120,14 +120,15 @@ void SGWHit(int read_fd, int arg) {
 
 	/* Check if it's a new client */
 	if (read_fd == SGWSocket) {
-		/* Check if we can accept it */
-		if (gw_conns_num < MAX_GW_CONNS) {
-			/* Accept it */
-			sock = SocketAccept(read_fd);
+		/* Accept it */
+		sock = SocketAccept(read_fd);
 			
-			if (sock == -1) {
-				s_printf("Failed to accept GW port connection (errno=%d)\n", errno);
-			}
+		if (sock == -1) {
+			s_printf("Failed to accept GW port connection (errno=%d)\n", errno);
+		}
+
+		/* Check if we have room for it */
+		if (gw_conns_num < MAX_GW_CONNS) {
 			
 			/* Find a free connection */
 			for (i = 0; i < MAX_GW_CONNS; i++) {
@@ -155,6 +156,10 @@ void SGWHit(int read_fd, int arg) {
 			install_input(SGWHit, sock, 2);
 			
 			gw_conns_num++;
+		}
+		else {
+			/* No room, close the connection */
+			DgramClose(sock);
 		}
 		
 		/* The connection has either been accepted or not, we're done */
@@ -194,6 +199,7 @@ void SGWHit(int read_fd, int arg) {
 			Sockbuf_cleanup(&gw_conn->w);
 			DgramClose(read_fd);
 			remove_input(read_fd);
+			gw_conns_num--;
 		}
 		else if (bytes < 0 && errno != EWOULDBLOCK && errno != EAGAIN &&
 			errno != EINTR)
@@ -258,10 +264,42 @@ void SGWHit(int read_fd, int arg) {
 		
 		/* Highscore list */
 		else if (!strcmp(buf, "SCORES")) {
-			char buf2[8192] = { '\0' };
+			char *buf2;
+			int len;
+			int amount, sent = 0, rval, fail = 0;
+
 			Packet_println(&gw_conn->w, "SCORES REPLY");
-			highscore_send(buf2, 8192);
-			Sockbuf_write(&gw_conn->w, buf2, strlen(buf2));
+
+			/* Send the contents of the socket buffer before sending buf2 */
+			Sockbuf_flush(&gw_conn->w);
+			Sockbuf_clear(&gw_conn->w);
+
+			C_MAKE(buf2, 81920, char);
+			len = highscore_send(buf2, 81920);
+
+			/* Send buf2 in pieces */
+			/* XXX - Blocking send loop */
+			while (sent < len) {
+				/* Try to send a full socket buffer */
+				amount = MIN(8192, len - sent);
+				Sockbuf_write(&gw_conn->w, &buf2[sent], amount);
+				rval = Sockbuf_flush(&gw_conn->w);
+
+				if (rval <= 0) {
+					/* Failure */
+					if (++fail >= 3) {
+						/* Give up */
+						break;
+					}
+				}
+				else {
+					sent += rval;
+				}
+
+				Sockbuf_clear(&gw_conn->w);
+			}
+
+			C_KILL(buf2, 81920, char);
 			Packet_println(&gw_conn->w, "SCORES REPLY END");
 		}
 
@@ -269,6 +307,7 @@ void SGWHit(int read_fd, int arg) {
 		else if (!strcmp(buf, "HOUSES")) {
 			char *buf2;
 			int len, alloc = 128 * num_houses;
+			int amount, sent = 0, rval, fail = 0;
 
 			C_MAKE(buf2, alloc, char);
 			Packet_println(&gw_conn->w, "HOUSES REPLY");
@@ -276,11 +315,30 @@ void SGWHit(int read_fd, int arg) {
 			len = houses_send(buf2, alloc);
 
 			/* Send the contents of the socket buffer before sending buf2 */
-			DgramWrite(gw_conn->w.sock, gw_conn->w.buf, gw_conn->w.len);
+			Sockbuf_flush(&gw_conn->w);
 			Sockbuf_clear(&gw_conn->w);
 
-			/* buf2 is huge so send it directly past the socket buffer */
-			DgramWrite(gw_conn->w.sock, buf2, len);
+			/* Send buf2 in pieces */
+			/* XXX - Blocking send loop */
+			while (sent < len) {
+				/* Try to send a full socket buffer */
+				amount = MIN(8192, len - sent);
+				Sockbuf_write(&gw_conn->w, &buf2[sent], amount);
+				rval = Sockbuf_flush(&gw_conn->w);
+
+				if (rval <= 0) {
+					/* Failure */
+					if (++fail >= 3) {
+						/* Give up */
+						break;
+					}
+				}
+				else {
+					sent += rval;
+				}
+
+				Sockbuf_clear(&gw_conn->w);
+			}
 
 			Packet_println(&gw_conn->w, "HOUSES REPLY END");
 			C_KILL(buf2, alloc, char);
@@ -293,9 +351,7 @@ void SGWHit(int read_fd, int arg) {
 
 		if (gw_conn->w.len) {
 			/* Send our reply */
-			if (DgramWrite(gw_conn->w.sock, gw_conn->w.buf, gw_conn->w.len) == -1) {
-				GetSocketError(gw_conn->w.sock);
-			}
+			Sockbuf_flush(&gw_conn->w);
 
 			/* Make room for more */
 			Sockbuf_clear(&gw_conn->w);
@@ -326,6 +382,7 @@ void SGWTimeout() {
 				Sockbuf_cleanup(&gw_conn->w);
 				DgramClose(gw_conn->sock);
 				remove_input(gw_conn->sock);
+				gw_conns_num--;
 			}
 		}
 	}

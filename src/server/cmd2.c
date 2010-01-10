@@ -68,7 +68,7 @@ void do_cmd_go_up(int Ind)
 
 	/* not for some global events (Highlander Tournament) */
 	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == -1)) {
-		msg_print(Ind, "The staircase is blocked.");
+		msg_print(Ind, "The staircase is blocked by huge chunks of rocks!");
 		if (!is_admin(p_ptr)) return;
 	}
 
@@ -124,13 +124,6 @@ void do_cmd_go_up(int Ind)
 		}
 	}
 #endif
-
-	/* For Highlander Tournament */
-	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
-	    && !(p_ptr->global_event_temp & PEVF_SEPDUN_00)) { /* not while passing sector00separation */
-		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
-		if (!is_admin(p_ptr)) return;
-	}
 
 /*	if(wpos->wz<0 && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
 	if(wpos->wz<0 && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
@@ -259,9 +252,22 @@ void do_cmd_go_up(int Ind)
 	{
 #ifdef RPG_SERVER /* This is an iron-server... Prob trav should not work - the_sandman */
 		msg_print(Ind, "This harsh world knows not what you're trying to do.");
-    		forget_view(Ind); //the_sandman
+		forget_view(Ind); //the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
+
+		if (wpos->wz >= 0) {
+			if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {
+				msg_print(Ind, "There is a magic barrier blocking your attempt.");
+				if (!is_admin(p_ptr)) return;
+			}
+		} else {
+			if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {
+				msg_print(Ind, "There is a magic barrier blocking your attempt.");
+				if (!is_admin(p_ptr)) return;
+			}
+		}
+
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else if (wpos->wz == -1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else msg_print(Ind, "You float upwards.");
@@ -364,15 +370,6 @@ void do_cmd_go_down(int Ind)
 		return;
 	}
 
-#if 0  // outdated code, just remove probably
-    //let's give them another chance
-	/* not for some global events (Highlander Tournament) */
-	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == 0)) {
-		msg_print(Ind, "The staircase is blocked.");
-		if (!is_admin(p_ptr)) return;
-	}
-#endif
-
 #if STAIR_FAIL_IF_CONFUSED
 	/* Hack -- handle confusion */
 	if (p_ptr->confused && magik(STAIR_FAIL_IF_CONFUSED))
@@ -461,7 +458,7 @@ void do_cmd_go_down(int Ind)
 	}
 	
 	/* Verify maximum depth */
-	if(wpos->wz<0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth==-wpos->wz)
+	if(wpos->wz < 0 && wild_info[wpos->wy][wpos->wx].dungeon->maxdepth == -wpos->wz)
 	{
 		msg_print(Ind, "You are at the bottom of the dungeon.");
 		return;
@@ -474,8 +471,7 @@ void do_cmd_go_down(int Ind)
 	}
 #endif
 
-	if (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z
-	    && !(p_ptr->global_event_temp & PEVF_SEPDUN_00)) { /* not while passing sector00separation */
+	if ((p_ptr->global_event_temp & PEVF_SEPDUN_00) && (p_ptr->wpos.wz == 1)) {
 		msg_print(Ind,"\377sThe way is blocked by huge chunks of rocks!");
 		if (!is_admin(p_ptr)) return;
 	}
@@ -610,6 +606,19 @@ void do_cmd_go_down(int Ind)
 	        forget_view(Ind);//the_sandman
 		if (!is_admin(p_ptr)) return;
 #endif
+
+		if (wpos->wz <= 0) {
+			if (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {
+				msg_print(Ind, "There is a magic barrier blocking your attempt.");
+				if (!is_admin(p_ptr)) return;
+			}
+		} else {
+			if (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {
+				msg_print(Ind, "There is a magic barrier blocking your attempt.");
+				if (!is_admin(p_ptr)) return;
+			}
+		}
+
 		if (!wpos->wz) msg_format(Ind, "\377uYou float into %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 		else if (wpos->wz == 1) msg_format(Ind, "\377uYou float out of %s..", d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 		else msg_print(Ind, "You float downwards.");
@@ -1332,8 +1341,16 @@ void do_cmd_open(int Ind, int dir)
 				/* Set off trap */
 				if(GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
-				/* Experience */
-				gain_exp(Ind, 1);
+				/* Automatic bot detection - mikaelh */
+				p_ptr->silly_door_exp++;
+				if (p_ptr->silly_door_exp >= 100) {
+					msg_print(Ind, "Botting never pays off...");
+					take_xp_hit(Ind, 1, "botting", TRUE, FALSE);
+				}
+				else {
+					/* Experience */
+					gain_exp(Ind, 1);
+				}
 
 				/* Open the door */
 				c_ptr->feat = FEAT_OPEN;
@@ -1830,6 +1847,24 @@ void do_cmd_tunnel(int Ind, int dir)
 			}
 #endif	// 0
 
+			/* No destroying of town layouts */
+#if 0
+			else if (istown(wpos) && (
+			    (c_ptr->feat == FEAT_TREE) ||
+			    (c_ptr->feat == FEAT_BUSH) ||
+			    (c_ptr->feat == FEAT_IVY) ||
+			    (c_ptr->feat == FEAT_DEAD_TREE) ||
+			    (c_ptr->feat == FEAT_WALL_EXTRA) ||
+			    ((c_ptr->feat >= FEAT_MAGMA) &&
+			    (c_ptr->feat <= FEAT_QUARTZ_K)) ||
+			    ((c_ptr->feat >= FEAT_SANDWALL) &&
+			    (c_ptr->feat <= FEAT_SANDWALL_K)) )) {
+#else
+			else if (!allow_terraforming(wpos, FEAT_TREE)) {
+#endif
+				msg_print(Ind, "You cannot tunnel in town.");
+				return;
+			}
 
 			/* Rubble */
 			else if (c_ptr->feat == FEAT_RUBBLE)
@@ -5700,7 +5735,7 @@ void do_cmd_own(int Ind)
 		return;
 	}
 	
-	if(istown(&p_ptr->wpos) || (p_ptr->wpos.wz==0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius<4))
+	if(istownarea(&p_ptr->wpos, 3))
 	{
 		msg_print(Ind, "Sorry this land is owned by the town.");
 		return;

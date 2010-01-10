@@ -140,7 +140,7 @@ HRUNEPROT = add_spell
                         local x, y
                         y = player.py
                         x = player.px
-                        cave_set_feat_live(player.wpos, y, x, 3)
+                        warding_glyph(Ind)
 			end,
 	["info"] = 	function()
 			return ""

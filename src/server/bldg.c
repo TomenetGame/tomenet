@@ -836,14 +836,14 @@ static bool inn_comm(int Ind, int cmd)
 
 		case BACT_RUMORS: /* Listen for rumors */
 		{
-			char rumor[80];
+			char rumor[160];
 #if 0 /* why this RNG stuff? also, it doesn't work (always same val) */
 			/* Set the RNG seed. */
 //			Rand_value = turn / (HOUR * 10);
 			Rand_value = time(NULL) / 600;
 			Rand_quick = TRUE;
 
-			get_rnd_line("rumors.txt", 0, rumor);
+			get_rnd_line("rumors.txt", 0, rumor, 160);
 			bracer_ff(rumor);	/* colour it */
 			msg_format(Ind, "%s", rumor);
 			// msg_print(Ind, NULL);
@@ -851,7 +851,7 @@ static bool inn_comm(int Ind, int cmd)
 			/* Restore RNG */
 			Rand_quick = FALSE;
 #else
-			get_rnd_line("rumors.txt", 0, rumor);
+			get_rnd_line("rumors.txt", 0, rumor, 160);
 			bracer_ff(rumor);	/* colour it */
 			msg_format(Ind, "%s", rumor);
 #endif

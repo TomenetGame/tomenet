@@ -1058,6 +1058,7 @@ void do_slash_cmd(int Ind, char *message)
 			if (p_ptr->prace == RACE_VAMPIRE) {
 				if (lev >= 20) msg_print(Ind, "\377GYou are able to turn into a vampire bat (#391).");
 			}
+#ifndef ENABLE_RCRAFT
 			if (p_ptr->pclass == CLASS_RUNEMASTER) {
 				msg_format(Ind, "\377BYour rune mastery rating is %d.", RUNE_DMG);
 #ifdef ALTERNATE_DMG
@@ -1104,6 +1105,7 @@ void do_slash_cmd(int Ind, char *message)
 #endif
 				lev = p_ptr->lev; //restore ^^"
 			}
+#endif //ENABLE_RCRAFT
 			/* display PvP kills */
 			if (p_ptr->kills) msg_format(Ind, "\377rYou have defeated %d opponents.", p_ptr->kills);
 
@@ -2219,11 +2221,17 @@ void do_slash_cmd(int Ind, char *message)
 			struct worldpos apos;
 			int ystart = 0, xstart = 0;
 			bool fresh_arena = FALSE;
-			
+
+			/* can't get in if not PvP mode */
+			if (!(p_ptr->mode & MODE_PVP)) {
+				msg_print(Ind, "\377yYour character is not PvP mode.");
+				if (!is_admin(p_ptr)) return;
+			}
+
 			/* transport out of arena? */
 			if (!p_ptr->wpos.wx && !p_ptr->wpos.wy &&
 			    p_ptr->wpos.wz == 1) {
-				if (p_ptr->prevent_tele) {
+				if (p_ptr->pvp_prevent_tele) {
 					msg_print(Ind, "\377oThere is no easy way out of this fight!");
 					if (!is_admin(p_ptr)) return;
 				}
@@ -2234,12 +2242,6 @@ void do_slash_cmd(int Ind, char *message)
 				recall_player(Ind, "");
 				msg_print(Ind, "\377uYou leave the arena again.");
 				return;
-			}
-
-			/* can't get in if not PvP mode */
-			if (!(p_ptr->mode & MODE_PVP)) {
-				msg_print(Ind, "\377yYour character is not PvP mode.");
-				if (!is_admin(p_ptr)) return;
 			}
 
 			/* prevent exploit */
@@ -3958,7 +3960,28 @@ void do_slash_cmd(int Ind, char *message)
 				p = name_lookup_loose(Ind, token[1], FALSE);
 				if (!p) return;
 				lua_recalc_char(p);
-				msg_format(Ind, "Rerolled HP and recalculated exp ratio for %s.", token[1]);
+				msg_format(Ind, "Rerolled HP for %s.", token[1]);
+				return;
+			}
+			/* Reroll a player's HP a lot and measure */
+			else if (prefix(message, "/roll!char")) {
+				int p, min = 9999, max = 0;
+				long avg = 0;
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /roll!char <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, token[1], FALSE);
+				if (!p) return;
+				for (i = 0; i < 10000; i++) {
+					lua_recalc_char(p);
+					if (Players[p]->mhp > max) max = Players[p]->mhp;
+					if (Players[p]->mhp < min) min = Players[p]->mhp;
+					avg += Players[p]->mhp;
+				}
+				avg /= 10000;
+				msg_format(Ind, "Rerolled HP for %s 10000 times:", token[1]);
+				msg_format(Ind, "  Min: %d, Max: %d, Avg: %d.", min, max, avg);
 				return;
 			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
@@ -4233,6 +4256,7 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				if (tk == 2) t = atoi(token[2]);
+				/* only if announcement phase isn't over yet, we don't want to mess up a running event */
 				if ((turn - global_event[k-1].start_turn) / cfg.fps < global_event[k-1].announcement_time) {
 					global_event[k-1].announcement_time = (turn - global_event[k-1].start_turn) / cfg.fps + t;
 					announce_global_event(k-1);
@@ -4344,6 +4368,11 @@ void do_slash_cmd(int Ind, char *message)
 					msg_print(Ind, "No inventory slot specified.");
 					return; /* no inventory slot specified */
 				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
 				if (!p_ptr->inventory[k].tval) {
 					msg_print(Ind, "Specified inventory slot is empty.");
 					return; /* inventory slot empty */
@@ -4789,8 +4818,11 @@ void do_slash_cmd(int Ind, char *message)
 				if (!j) return;
 				object_copy(o_ptr, &Players[j]->inventory[atoi(token[1]) - 1]);
 #endif
-				/* skip true arts to prevent counter probs */
-				if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) return;
+				/* skip true arts to prevent duplicates */
+				if (true_artifact_p(o_ptr)) {
+					if (!multiple_artifact_p(o_ptr)) return;
+					handle_art_inum(o_ptr->name1);
+				}
 				inven_carry(Ind, o_ptr);
 				return;
 			}
@@ -4965,6 +4997,36 @@ void do_slash_cmd(int Ind, char *message)
 					return;
 				}
 				do_benchmark(Ind);
+				return;
+			}
+			else if (prefix(message, "/pings")) {
+				struct timeval now;
+				player_type *q_ptr;
+
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /pings <player>");
+					return;
+				}
+
+				j = name_lookup_loose(Ind, token[1], FALSE);
+				if (!j) {
+					msg_format(Ind, "Couldn't find player %s.", token[1]);
+					return;
+				}
+				q_ptr = Players[j];
+
+				gettimeofday(&now, NULL);
+
+				msg_format(Ind, "Last pings for player %s:", q_ptr->name);
+
+				/* Starting from latest */
+				for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
+					j = (q_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;
+					if (q_ptr->pings_received[j].tv_sec) {
+						msg_format(Ind, " - %s", timediff(&q_ptr->pings_received[j], &now));
+					}
+				}
+
 				return;
 			}
 		}

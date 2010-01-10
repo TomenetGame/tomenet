@@ -176,7 +176,7 @@ function status(name)
     end
     bspeed = players(p).pspeed - bspeed
 
-    msg_print(Ind, "\255UStatus for "..players(p).name.." (Index "..p..", id "..players(p).id..")")
+    msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..")")
     msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst)
     msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
     msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv)
@@ -803,4 +803,10 @@ function def_blue(x)
 	if (v == nil) then return 0 end
 	if (v == 0) then return 0 end
 	return 1
+end
+
+function pvp(name)
+	p = ind(name)
+	msg_print(Ind, "  Kills: "..players(p).kills.."  Kills(lo): "..players(p).kills_lower.."  Kills(hi): "..players(p).kills_higher.."  Kills(=): "..players(p).kills_equal)
+--	msg_print(Ind, "  Free mimicry: "..players(p).free_mimic).."  P-Tele: "..players(p).pvp_prevent_tele).."  Heal: "..players(p).heal_effect)
 end

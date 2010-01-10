@@ -15,6 +15,8 @@
 # Some store indexes are defined in "defines.h", and must not be
 # changed.
 
+# NOTE: Max amount of store lines is given by 'STORE_CHOICES'.
+
 # N:<index>:<name>
 # I:<proba>:<item name>
 # T:<proba>:<tval>:<sval>
@@ -190,6 +192,7 @@ N:4:Alchemy shop
 I:100:Enchant Weapon To-Hit
 I:100:Enchant Weapon To-Dam
 I:100:Enchant Armour
+I:100:Identify
 I:100:Identify
 I:100:Identify
 I:100:Identify
@@ -898,7 +901,7 @@ W:8
 
 ##### Mining equipment for Khazad-Dum #####
 
-N:59:Mining Supply store
+N:59:Mining Supply Store
 T:100:20:256
 I:100:& Wooden Torch~
 I:95:& Brass Lantern~

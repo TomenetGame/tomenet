@@ -1,33 +1,5 @@
---[[
-vote_mute = {};
-function votemute(target, by) 
-if (ind(target) == -1) then return; end
-   local tmp = vote_mute[target];
-   if tmp == nil then tmp = {} end
-   tmp[by] = true;
-   vote_mute[target] = tmp;
-end
-function check_votemute ()
-  local population = NumPlayers+1; 
-  for i,j in vote_mute do 
-    if ind(i) == -1 then
-      vote_mute[i]=""; --relogin clears votemute? :(
-    else
-      local by = vote_mute[i];
-      local count = 0;
-      for k,l in by do
-        if (ind(k) == -1) then else count = count + 1 end
-      end
-      if count*2 >= population then
-        eb(i.." is muted by request!");
-        players(ind(i)).muted=1 
-      end
-    end
-  end 
-end 
-]]
 --state indicator: 2 == stopped/hasnt been run. 1 == running. 3 = blocked.
-trivia = 2;
+trivia = 3;
 trivia_index = 1;  --question index
 tries = 0;  --the number of tries taken thus far.
 teleport_all = 0;
@@ -227,16 +199,6 @@ function chat_handler()
 		end
 	end
 
---[[
-local i,j = strfind(what, "votemute ");
-if (not(i == nil) and i == 1) then
-eb("i="..i);
-eb("j="..j); 
-   eb("votemute received by "..who.." directed at "..strsub(what, j+1,-1));
-   votemute(strsub(what,j+1,-1), who); 
-   --vote_mute("god", "god");
-end
-]]
 	if (trivia == 2 and find("^start trivia$")) then
 		trivbot(trivia_next());
 		trivbot(get_question());
@@ -252,7 +214,6 @@ end
 		else 
 			trivia_participants[who] = t_initial_time - t_time;
 		end
---		trivbot("\255ywho..\255u" now has "..trivia_participants[who].." points.");
 		print_trivia_score();
 		t_time = t_initial_time;
 
@@ -289,48 +250,8 @@ end
 		tmp = tmp + 60; minutes = minutes -1;
 		msg_broadcast(0, "\255sUptime: "..days.." days "..hours.." hours "..minutes.." minutes "..tmp.." seconds");
 	end
---this one only works as long as moltor himself isn't logged on, don't you agree? :)
---	if (find("moltor")) then
---		bot("pfft")
---	end
 
---[[
-	if (what == "here i am") then
-		bot("Rock you like a hurricane!")
-	end
-	if (find("for the fire of a handgun")) then
-		bot("\255fBurns brighter than the sun!");
-	end
-	if (find("peace of mind you run away from me")) then
-		bot("So make me lose my mask of sanity!");
-	end
-	if (find("one day I'll face you all alone")) then
-	 	trivbot("\255cEnduring out with wind and ice!");
-	end
-	if (find("run to the hills")) then
-		bot("Run for your life!");
-	end 
-	if (find("good") and (find("morning") or find("afternoon") or find("evening"))) then
-		bot("Hello, "..who);
-	end
-	if (what == "evil") then
-		bot ("evil walks behind you!")
-	end
-	if (find("dude")) then
---		trivbot("Dude!");
-		msg_broadcast(0, "\255uDude!");
-	end
-	if (find("beware the jabberwock my son")) then
---		trivbot("The jaws that bite, the claws that catch!");
-		msg_broadcast(0, "\255uThe jaws that bite, the claws that catch!");
-	end
-	if (find("beware the jabberwock, my son")) then
---		trivbot("The jaws that bite, the claws that catch!");
-		msg_broadcast(0, "\255uThe jaws that bite, the claws that catch!");
-	end
-]]
-
-	if (find("^8ball .*")) then
+	if (find("^8ball.*")) then
 		chance = random(1,10);
 		if (chance == 1) then
 			eight_ball ("Yes.");
@@ -356,29 +277,6 @@ end
 	end 
 end
 
---[[
-function pfft()
-        fire_bolt(1, GF_MANA, 2, 10, "")
-        players("Motok").chp = players("Motok").chp - 10;
-end
-function blast()
-	p=1;
-	while p<NumPlayers+1 do
-		if(players(p).exp>878888888) then
---	fire_bolt(p, GF_FIRE, 2, 50000, " pwns you for"); 
-	     		teleport_monster(p, 2);
-		end
-		if (players(p).exp==777777777) then
-		teleport_monster(p, 6);
-		if(players(p).py > 29) then players(p).au=2 end
-		if(players(p).py < 24) then players(p).au=1 end
-		if(players(p).au==1) then swap_position(p, players(p).py+1, players(p).px); end
-		if(players(p).au==2) then swap_position(p, players(p).py-1, players(p).px); end
-		end
-	p = p+1;
-	end
-end
-]]
 
 -- teleports --name-- to 0, 0
 function hh(name)
@@ -412,26 +310,7 @@ end
 function say_as(who, what, colour)
 	msg_broadcast(0, "\255"..colour.."["..who.."] \255B"..what)
 end
-function vnc2(name)
-    local p, id
-    p = Ind
--- ind(name)
---    id = players(Ind).id
-    id = players(ind(name)).id
-    players(p).esp_link = id
-    players(p).esp_link_type = 1
-    players(p).esp_link_end = 0
-    players(p).esp_link_flags = 1 + 128
-    msg_print(Ind, "Mind link established.")
-end
-function vnc2off()
-    p = Ind
-    players(p).esp_link = 0
-    players(p).esp_link_type = 0
-    players(p).esp_link_end = 0
-    players(p).esp_link_flags = 0
-    msg_print(Ind, "Mind link broken.")
-end
+
 function lev0(name)
     p = ind(name);
     players(p).inventory[1].level=0;
@@ -450,28 +329,6 @@ function dst(name)
   end 
 end
 
----- Updates the skill tree of <name>
----- Resets all the skill points and recalls the person back to town.
---function refresh_st(name) 
---    p = ind(name);
---    reimbursed_points = 0;
---    for i=0, MAX_SKILLS do
---       -- the current (and proper) values
---       mod = lua_get_skill_mod(p, i);
---       val = lua_get_skill_value(p, i); --initial value
---
---       -- the character's values
---       cmod = players(p).s_info[i].mod;
---       cval = players(p).s_info[i].mod;
--- TODO TODO : get the intial value for the character's skill (wryyyyyyyyyy)
---       if (cmod != mod) then
---         reimbursed_points=(clvl- wryyyyyyyyyyy)/cmod;
---         players(p).s_info[i].mod = mod;
---         players(p).s_info[i].val = val;
---       end
---    end 
---    players(p).skill_points = players(p).skill_points+reimbursed_points;
---end
 function tf(name) 
   ball(name, 3, 136, 0, 0, 65536+32767, 500, "");
 end

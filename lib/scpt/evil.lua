@@ -38,7 +38,7 @@ function manaball(name)
 end
 
 function firelit(name)
-	ball(name, 2, 5, 0, 0, 65536+176, 500, "");
+	ball(name, 2, 5, 0, 0, 65536+256+176, 500, "");
 	msg_print(Ind, "firelit "..name);
 end
 

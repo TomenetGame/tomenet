@@ -457,6 +457,15 @@ static void rd_item(object_type *o_ptr)
 	}
 #endif
 
+	if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_FEANORIAN) {
+		if (o_ptr->level < 30) {
+			if (o_ptr->name2 || o_ptr->name2b)
+				o_ptr->level = 40;
+			else
+				o_ptr->level = 31;
+		}
+	}
+
 	rd_s16b(&old_ac);
 
 	rd_byte(&old_dd);
@@ -689,14 +698,22 @@ if (o_ptr->tval == TV_SEAL) {
 	if (o_ptr->name2)
 	{
 		ego_item_type *e_ptr;
+		artifact_type *a_ptr;
 
 		/* Obtain the ego-item info */
 		e_ptr = &e_info[o_ptr->name2];
 
+#if 0
 		/* UnHack. pffft! */
 		if ((o_ptr->ac < old_ac)) o_ptr->ac=old_ac;
 		if ((o_ptr->dd < old_dd)) o_ptr->dd=old_dd;
 		if ((o_ptr->ds < old_ds)) o_ptr->ds=old_ds;
+#else
+		a_ptr = ego_make(o_ptr);
+		o_ptr->ac += a_ptr->ac;
+		o_ptr->dd += a_ptr->dd;
+		o_ptr->ds += a_ptr->ds;
+#endif
 
 		/* Hack -- extract the "broken" flag */
 		if (!e_ptr->cost) o_ptr->ident |= ID_BROKEN;
@@ -2595,12 +2612,12 @@ void rd_towns()
 		rd_u16b(&town[i].flags);
 		rd_u16b(&town[i].num_stores);
 		rd_u16b(&town[i].type);
-		wild_info[town[i].y][town[i].x].type=WILD_TOWN;
-		wild_info[town[i].y][town[i].x].radius=town[i].baselevel;
+		wild_info[town[i].y][town[i].x].type = WILD_TOWN;
+		wild_info[town[i].y][town[i].x].radius = town[i].baselevel;
 		twpos.wx=town[i].x;
 		twpos.wy=town[i].y;
 		alloc_stores(i);
-		for(j=0;j<town[i].num_stores;j++){
+		for(j = 0; j < town[i].num_stores; j++){
 			rd_store(&town[i].townstore[j]);
 		}
 	}

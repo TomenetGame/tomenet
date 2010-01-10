@@ -2015,7 +2015,7 @@ static bool do_cancellation(int Ind, int flags)
 	{
 		object_type *o_ptr = &p_ptr->inventory[i];
 		if (!o_ptr->k_idx) continue;
-		if (artifact_p(o_ptr)) continue;
+		if (like_artifact_p(o_ptr)) continue;
 		if (o_ptr->tval==TV_KEY) continue;
 		if (o_ptr->tval==TV_FOOD) continue;
 		if (o_ptr->tval==TV_FLASK) continue;
@@ -8094,7 +8094,7 @@ bool unmagic(int Ind)
  */
 void fortune(int Ind, bool broadcast)
 {
-	char Rumor[80], Broadcast[80];
+	char Rumor[160], Broadcast[80];
 	
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
@@ -8103,21 +8103,21 @@ void fortune(int Ind, bool broadcast)
 	switch(randint(80))
 	{
 		case 1:
-			get_rnd_line("chainswd.txt",0 , Rumor);
+			get_rnd_line("chainswd.txt",0 , Rumor, 160);
 			break;
 		case 2:
-			get_rnd_line("error.txt",0 , Rumor);
+			get_rnd_line("error.txt",0 , Rumor, 160);
 			break;
 		case 3:
 		case 4:
 		case 5:
-			get_rnd_line("death.txt",0 , Rumor);
+			get_rnd_line("death.txt",0 , Rumor, 160);
 			break;
 		default:
-			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor);
+			if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, 160);
 			else {
 				strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
-				get_rnd_line("hints.txt",0 , Rumor);
+				get_rnd_line("hints.txt",0 , Rumor, 160);
 			}
 	}
 	bracer_ff(Rumor);

@@ -1868,7 +1868,16 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 
 				/* Hack -- "Cutlass-es" and "Torch-es" and theoretically "Topaz-es" */
 				if ((k == 's') || (k == 'h') || (k == 'z')) *t++ = 'e';
-				
+
+				/* Hack -- Finally, staffs become staves.
+				   Note: Might require fix for future word additions ;) */
+				if (k == 'f') {
+					if (k2 == 'f') t -= 2;
+					else t--;
+					*t++ = 'v';
+					*t++ = 'e';
+				}
+
 				/* Hack -- ""Cod/ex -> Cod/ices" */
 				if (k == 'x') {
 					if (k2 == 'e') {
@@ -2487,6 +2496,13 @@ if (!(mode & 32)) {
 		t = object_desc_str(t, "(");
 		t = object_desc_num(t, o_ptr->timeout);
 		t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)");
+	}
+
+	/* Costumes */
+	if (known && aware && (o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME))
+	{
+		t = object_desc_str(t, !(mode & 8) ? " of " : "-");
+		t = object_desc_str(t, r_info[o_ptr->bpval].name + r_name);
 	}
 
 
@@ -4142,6 +4158,9 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	fprintf(fff, "%s\n", o_name);
 	if (strlen(o_name) > 77) fprintf(fff, "%s\n", o_name + 77);
 
+	/* in case we just *ID* it because an admin inspected it */
+	if (!(o_ptr->ident & ID_MENTAL)) fprintf(fff, "\377y(This item has not been *identified* yet.)\n");
+
 	if (artifact_p(o_ptr))
 	{
 		if (true_artifact_p(o_ptr)) ca_ptr = "n artifact";
@@ -5604,6 +5623,15 @@ void display_inven(int Ind)
 		/* Examine the item */
 		o_ptr = &p_ptr->inventory[i];
 
+		/* Hack -- Only send changed slots - mikaelh */
+		if (memcmp(o_ptr, &p_ptr->inventory_copy[i], sizeof(object_type)) == 0) {
+			/* Exactly the same item still in this slot */
+			continue;
+		}
+
+		/* Update the copy */
+		memcpy(&p_ptr->inventory_copy[i], o_ptr, sizeof(object_type));
+
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
@@ -5676,6 +5704,15 @@ void display_equip(int Ind)
 	{
 		/* Examine the item */
 		o_ptr = &p_ptr->inventory[i];
+
+		/* Hack -- Only send changed slots - mikaelh */
+		if (memcmp(o_ptr, &p_ptr->inventory_copy[i], sizeof(object_type)) == 0) {
+			/* Exactly the same item still in this slot */
+			continue;
+		}
+
+		/* Update the copy */
+		memcpy(&p_ptr->inventory_copy[i], o_ptr, sizeof(object_type));
 
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';

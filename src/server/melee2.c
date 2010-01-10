@@ -5212,9 +5212,10 @@ static void get_moves(int Ind, int m_idx, int *mm)
 		 * (...unless they can move through walls -- TY)
 		 */
 		if ((r_ptr->flags1 & RF1_FRIENDS) &&
-				(r_ptr->flags3 & RF3_ANIMAL) &&
-				!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
-					(r_ptr->flags2 & (RF2_KILL_WALL))))
+			(r_ptr->flags3 & RF3_ANIMAL) &&
+			!((r_ptr->flags2 & (RF2_PASS_WALL)) ||
+			(r_ptr->flags2 & (RF2_KILL_WALL)) ||
+			safe_area(Ind)))
 		{
 			int i, room = 0;
 
@@ -6707,7 +6708,7 @@ static void process_monster(int Ind, int m_idx)
 	/* Get the origin */
 	oy = m_ptr->fy;
 	ox = m_ptr->fx;
-	
+
 #if 0	// too bad hack!
 	/* Hack -- aquatic life outa water */
 	if (zcave[oy][ox].feat != FEAT_WATER)
@@ -7387,7 +7388,7 @@ static void process_monster(int Ind, int m_idx)
 				} else if (highest_target_level > lowest_target_level + lowest_target_level / 10) {
 					if (magik(90)) {
 						/* check which targets have a significantly lower level than others */
-						for (i = 1; i < targets; i++) {
+						for (i = 1; i <= targets; i++) {
 							if (Players[p_idx[i]]->lev + Players[p_idx[i]]->lev / 10 < highest_target_level) {
 								low_targets++;
 								p_idx_low[low_targets] = p_idx[i];
@@ -7429,7 +7430,8 @@ static void process_monster(int Ind, int m_idx)
 			{
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
+//				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
+				    (cave_floor_bold(zcave, oy, ox)) &&
 				    magik(10) &&
 				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
 				{

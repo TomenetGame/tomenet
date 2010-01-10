@@ -1775,6 +1775,9 @@ static void store_create(store_type *st_ptr)
 			case TV_DRAG_ARMOR:
 				force_num = 1;
 				break;
+			case TV_SOFT_ARMOR:
+				if (o_ptr->sval == SV_COSTUME) force_num = 1;
+				break;
 			case TV_RING:
 				if (o_ptr->sval == SV_RING_POLYMORPH) force_num = 1;
 				break;
@@ -3457,7 +3460,7 @@ void store_examine(int Ind, int item)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & (ID_MENTAL)))
+	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr))
 	{
 		/* Describe */
 		msg_format(Ind, "\377s%s:\n", o_name);
@@ -4381,10 +4384,10 @@ void home_sell(int Ind, int item, int amt)
 
 #endif
 
-	if (cfg.anti_arts_house && true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr))
+	if (cfg.anti_arts_house && undepositable_artifact_p(o_ptr))
 	{
 		/* Oops */
-		msg_print(Ind, "You cannot stock artifacts.");
+		msg_print(Ind, "You cannot stock this artifact.");
 
 		/* Stop */
 		return;
@@ -4728,7 +4731,7 @@ void home_examine(int Ind, int item)
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & (ID_MENTAL)))
+	if (!(o_ptr->ident & (ID_MENTAL)) && !is_admin(p_ptr))
 	{
 		/* Describe */
 		msg_format(Ind, "\377s%s:\n", o_name);

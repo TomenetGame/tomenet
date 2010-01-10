@@ -325,7 +325,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc)
 			for(i = 0; i < o_max; i++){
 				o_ptr = &o_list[i];
 				if (o_ptr->k_idx && inarea(&o_ptr->wpos, wpos) &&
-				    true_artifact_p(o_ptr) && !multiple_artifact_p(o_ptr)) {
+				    undepositable_artifact_p(o_ptr)) {
 					object_desc(0, o_name, o_ptr, FALSE, 0);
 					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n",
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
@@ -396,7 +396,7 @@ void check_Pumpkin(void)
 		        continue;
 		}
 
-		/* Players of level higher than 30 cannot participate in killing attemps (anti-cheeze) */
+		/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
 		/* search for Great Pumpkins */
 		if (streq(r_name_get(m_ptr), "Great Pumpkin")) {
 			wpos = &m_ptr->wpos;
@@ -422,7 +422,7 @@ void check_Pumpkin(void)
 					sprintf(msg, "\377oA ghostly force drives you out of this dungeon!");
 					/* log */
 #ifndef RPG_SERVER
-					s_printf("Great Pumpkin recalled player>30 %s\n", p_ptr->name);
+					s_printf("Great Pumpkin recalled player>35 %s\n", p_ptr->name);
 #else
 					s_printf("Great Pumpkin recalled player>40 %s\n", p_ptr->name);
 #endif
@@ -2078,6 +2078,11 @@ static byte player_color(int Ind)
 #endif
 	}
 
+	/* Wearing a costume */
+	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+		get_monster_color(Ind, NULL, &r_info[p_ptr->inventory[INVEN_BODY].bpval], c_ptr, &pcolor, &dummy);
+	}
+
 	/* Bats are orange */
 	/* taking this out since bat parties
 	become hard to oversee. Mimicked bats stay orange,
@@ -2094,6 +2099,7 @@ static byte player_color(int Ind)
 //	if ((p_ptr->tim_manashield > 10)) return p_ptr->cp_ptr->color + TERM_SHIELDM;
 //	if ((p_ptr->invuln > 5)) return p_ptr->cp_ptr->color + TERM_SHIELDI;
 	if (p_ptr->tim_manashield > 10) return TERM_SHIELDM;
+#if 0 /* shouldn't be necessary - mikaelh */
 //the_sandman: some redudant stuff, mebbe needs to be added here as the last colour possible
 	if (p_ptr->body_monster) {
 		get_monster_color(Ind, NULL, &r_info[p_ptr->body_monster], c_ptr, &pcolor, &dummy);
@@ -2101,6 +2107,7 @@ static byte player_color(int Ind)
 			pcolor = TERM_SHIELDM;
 		}
 	}
+#endif
 
 	if (p_ptr->invuln > 5) return TERM_SHIELDI;
 #else
@@ -2982,6 +2989,15 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 	{
 		monster_type *m_ptr = &m_list[c_ptr->m_idx];
 
+		if (c_ptr->m_idx >= m_max) {
+			/* Clear invalid monster references - mikaelh */
+
+			/* Log it */
+			s_printf("MIDX_FIX: Cleared invalid monster refence (m_idx = %d, m_max = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", c_ptr->m_idx, m_max, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+
+			c_ptr->m_idx = 0;
+		}
+
 		/* Visible monster */
 		if (p_ptr->mon_vis[c_ptr->m_idx])
 		{
@@ -3011,6 +3027,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Log it */
 			s_printf("MIDX_FIX: Cleared invalid player m_idx (ind = %d) (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
+
 		}
 
 		/* Check for doppelgangers - mikaelh */
@@ -3021,7 +3038,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 
 			/* Log it */
 			s_printf("MIDX_FIX: Cleared a doppelganger (ind = %d, \"%s\") (wpos = %d, %d, %d) (x = %d, y = %d)\n", Ind2, Players[Ind2]->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, x, y);
-                        /* nice try, doppelganger */
 		}
 
 		/* Is that player visible? */
@@ -3030,7 +3046,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp)
 			/* part 'A' now here (experimental, see below) */
 			a = player_color(Ind2);
 
-			if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
+			if ((p2_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p2_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+				get_monster_color(Ind, NULL, &r_info[p2_ptr->inventory[INVEN_BODY].bpval], c_ptr, &a, &c);
+			}
+			else if (p2_ptr->body_monster) get_monster_color(Ind, NULL, &r_info[p2_ptr->body_monster], c_ptr, &a, &c);
 			else if (p2_ptr->fruit_bat) c = 'b';
 			else c = '@';
 			/* part 'A' end */
@@ -3281,6 +3300,10 @@ void lite_spot(int Ind, int y, int x)
 		if ((y == p_ptr->py) && (x == p_ptr->px))
 		{
 			monster_race *r_ptr = &r_info[p_ptr->body_monster];
+			
+			if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+				r_ptr = &r_info[p_ptr->inventory[INVEN_BODY].bpval];
+			}
 
 			/* Get the "player" attr */
 			a = r_ptr->d_attr;
@@ -3347,7 +3370,8 @@ void lite_spot(int Ind, int y, int x)
 			}
 
 			/* bugfix on MASSIVE deaths (det/death) */
-			if (p_ptr->fruit_bat && !p_ptr->body_monster) c = 'b';
+			if (p_ptr->fruit_bat && !p_ptr->body_monster &&
+				!((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME))) c = 'b';
 			if(p_ptr->chp < 0) c = '-';
 			else if (!p_ptr->tim_manashield) {
 				if (((p_ptr->chp * 95) / (p_ptr->mhp*10)) <= TURN_CHAR_INTO_NUMBER) 
@@ -3666,7 +3690,10 @@ void display_map(int Ind, int *cy, int *cx)
 				tp = 99;
 				ta = player_color(Ind);
 
-				if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
+				if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+					tc = r_info[p_ptr->inventory[INVEN_BODY].bpval].d_char;
+				}
+				else if (p_ptr->body_monster) tc = r_info[p_ptr->body_monster].d_char;
 				else if (p_ptr->fruit_bat) tc = 'b';
 				else if((( p_ptr->chp * 95)/ (p_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) tc = '@';
 				else 
@@ -6867,6 +6894,8 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat)
 /*
  * This is a copy of cave_set_feat that is used for "live" changes to the world
  * by players and monsters. More specific restrictions can be placed here.
+ * NOTE: We assume, that allow_terraforming() has already been checked before
+ *       cave_set_feat_live() is actually called.
  */
 void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 {
@@ -6875,7 +6904,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 	cave_type *c_ptr;
         struct c_special *cs_ptr;
 	int i;
-	struct town_type *t_ptr;
+//	struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
 	if(!(zcave=getcave(wpos))) return;
 	if (!in_bounds(y, x)) return;
@@ -6883,6 +6912,7 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 
 	/* apply town-specific restrictions, preserving the intended town layout */
 	if (istown(wpos)) {
+#if 0
 		t_ptr = &town[wild_info[wpos->wx][wpos->wy].town_idx];
 
 		switch (feat) {
@@ -6922,20 +6952,29 @@ void cave_set_feat_live(worldpos *wpos, int y, int x, int feat)
 			if (TOWN_TERRAFORM_GLYPHS == 0) return;
 			break;
 		}
+#else
+		/* hack: only allow around store entrances */
+		if (feat == FEAT_GLYPH) {
+			for (i = 0; i < 9; i++)
+				if (zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat == FEAT_SHOP) break;
+			/* no nearby store entrance found? */
+			if (i == 9) return;
+		}
+#endif
 	}
 
 	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
 	if ((feat == FEAT_GLYPH) && !(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
-	    ((c_ptr->feat == FEAT_NONE) || 
-	    (c_ptr->feat == FEAT_FLOOR) || 
-	    (c_ptr->feat == FEAT_DIRT) || 
+	    ((c_ptr->feat == FEAT_NONE) ||
+	    (c_ptr->feat == FEAT_FLOOR) ||
+	    (c_ptr->feat == FEAT_DIRT) ||
 	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* used for gardens (fields) in wild.c */
 	    (c_ptr->feat == FEAT_CROP) || /* used for gardens (fields) in wild.c */
-	    (c_ptr->feat == FEAT_GRASS) || 
-	    (c_ptr->feat == FEAT_ICE) || 
-	    (c_ptr->feat == FEAT_SAND) || 
-	    (c_ptr->feat == FEAT_ASH) || 
-	    (c_ptr->feat == FEAT_MUD) || 
+	    (c_ptr->feat == FEAT_GRASS) ||
+	    (c_ptr->feat == FEAT_ICE) ||
+	    (c_ptr->feat == FEAT_SAND) ||
+	    (c_ptr->feat == FEAT_ASH) ||
+	    (c_ptr->feat == FEAT_MUD) ||
 	    (c_ptr->feat == FEAT_FLOWER) ||
 //	    (c_ptr->feat == FEAT_SHAL_LAVA) || maybe required, waiting for player input (2009/1/14) - C. Blue
 	    (c_ptr->feat == FEAT_NETHER_MIST))))
@@ -7518,13 +7557,14 @@ msg_broadcast(0, "no flags");
 bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool bree = (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 0);
 	bool town = istown(wpos);
+	bool townarea = istownarea(wpos, 2);
 	bool sector00 = (wpos->wx == WPOS_SECTOR00_X && wpos->wy == WPOS_SECTOR00_Y && wpos->wz == WPOS_SECTOR00_Z && sector00separation);
 	bool valinor = (getlevel(wpos) == 200);
 	bool netherrealm_bottom = (getlevel(wpos) == 166 + 30);
 	bool arena_pvp = (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z);
 
 	/* usually allow all changes (normal dungeons and town-unrelated world map) */
-	if (!arena_pvp && !bree && !town && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
+	if (!arena_pvp && !bree && !town && !townarea && !sector00 && !valinor && !netherrealm_bottom) return(TRUE);
 
 	/* preserve arena, and disallow trees for balancing */	
 	if (arena_pvp) return(FALSE);
@@ -7534,18 +7574,30 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_SHAL_WATER:
 	case FEAT_DEEP_WATER:
 		if (town) return(FALSE);
+		break;
 
 	/* allow only harmless as well as non-obstructing changes: */
-	case FEAT_WALL_EXTRA:
-	case FEAT_TREE:
-	case FEAT_BUSH:
 	case FEAT_IVY:
 	case FEAT_DEAD_TREE:
+        case FEAT_ICE:
+		if (town || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		break;
+
+	case FEAT_WALL_EXTRA: /* tested by earthquake() and destroy_area() */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
-        case FEAT_ICE:
+		if (town || townarea || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		break;
+
+	case FEAT_TREE: /* also for 'digging' and 'stone2mud' */
+	case FEAT_BUSH: /* just moved here because FEAT_TREE is also here */
+		if (town || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		break;
+
 	case FEAT_GLYPH:
-		if (bree || sector00 || valinor || netherrealm_bottom) return(FALSE);
+		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
+		if (sector00 || valinor || netherrealm_bottom) return(FALSE);
+		break;
 
 	/* don't allow any changes at all to preserve the visuals 100% */
         case FEAT_NONE:
@@ -7555,9 +7607,10 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
         case FEAT_SAND:
         case FEAT_ASH:
         case FEAT_MUD:
-/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
         case FEAT_FLOWER:
-		if (valinor || netherrealm_bottom) return(FALSE);
+/*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
+		if (town || valinor || netherrealm_bottom) return(FALSE);
+		break;
 
 	/* generate.c uses these for staircases in towns */
 	case FEAT_MORE:
@@ -7566,6 +7619,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	case FEAT_WAY_LESS:
 	case FEAT_BETWEEN:
 	case FEAT_BETWEEN2:
+		break;
 
 	/* forgot any? just paranoia */
 	default: ;

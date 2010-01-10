@@ -529,11 +529,12 @@ static bool get_stats(int Ind, int stat_order[6])
 
 /*
  * Roll for some info that the auto-roller ignores
+ * NOTE: Keep lua_recalc_char() in sync with this if you use it.
  */
 static void get_extra(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int             i, j, min_value, max_value;
+	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
 	int tries = 300;
 
 	/* Experience factor */
@@ -549,6 +550,7 @@ static void get_extra(int Ind)
 	p_ptr->csane = p_ptr->msane =
 		((int)(adj_con_mhp[p_ptr->stat_ind[A_WIS]]) - 128) / 2 + 10;
 
+#if 0 /* experimental (not urgent probably): 0'ing this, see below */
 	/* Minimum hitpoints at highest level */
 	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
 	min_value += PY_MAX_LEVEL;
@@ -556,6 +558,21 @@ static void get_extra(int Ind)
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
 	max_value += PY_MAX_LEVEL;
+#else /* narrow HP range */
+	/* Minimum hitpoints at kinging level */
+	min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value_king += 50;
+	/* Maximum hitpoints at kinging level */
+	max_value_king = (50 * (p_ptr->hitdie - 1) * 17) / 32;
+	max_value_king += 50;
+
+	/* Minimum hitpoints at highest level */
+	min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value += PY_MAX_LEVEL;
+	/* Maximum hitpoints at highest level */
+	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 17) / 32;
+	max_value += PY_MAX_LEVEL;
+#endif
 
 	/* Pre-calculate level 1 hitdice */
 	p_ptr->player_hp[0] = p_ptr->hitdie;
@@ -573,15 +590,20 @@ static void get_extra(int Ind)
 			p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
 		}
 
-		/* XXX Could also require acceptable "mid-level" hitpoints */
+		/* Require "valid" hitpoints at kinging level */
+		if (p_ptr->player_hp[50 - 1] < min_value_king) continue;
+		if (p_ptr->player_hp[50 - 1] > max_value_king) continue;
 
 		/* Require "valid" hitpoints at highest level */
-		if (p_ptr->player_hp[PY_MAX_LEVEL-1] < min_value) continue;
-		if (p_ptr->player_hp[PY_MAX_LEVEL-1] > max_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] < min_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] > max_value) continue;
 
 		/* Acceptable */
 		break;
 	}
+
+	/* warn in case char should be invalid.. */
+	if (!tries) s_printf("CHAR_CREATION: %s exceeded 300 tries for HP rolling.\n", p_ptr->name);
 }
 
 
@@ -890,17 +912,20 @@ static void player_wipe(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	object_type *old_inven;
+	object_type *old_inven_copy;
 	int i;
 
 
 	/* Hack -- save the inventory pointer */
 	old_inven = p_ptr->inventory;
+	old_inven_copy = p_ptr->inventory_copy;
 
 	/* Hack -- zero the struct */
 	WIPE(p_ptr, player_type);
 
 	/* Hack -- reset the inventory pointer */
 	p_ptr->inventory = old_inven;
+	p_ptr->inventory_copy = old_inven_copy;
 
 	/* Wipe the history */
 	for (i = 0; i < 4; i++)
@@ -921,6 +946,8 @@ static void player_wipe(int Ind)
 		invwipe(&p_ptr->inventory[i]);
 	}
 
+	/* Hack -- Fill the copy with 0xFF - mikaelh */
+	memset(p_ptr->inventory_copy, 0xFF, INVEN_TOTAL * sizeof(object_type));
 
 	/* Hack -- Well fed player */
 	p_ptr->food = PY_FOOD_FULL - 1;
@@ -964,8 +991,9 @@ static void player_wipe(int Ind)
  * If { 0, 0} or other 'illigal' item, one random item from bard_init
  * will be given instead.	- Jir -
  */
-static byte player_init[MAX_CLASS][5][3] =
+static byte player_init[2][MAX_CLASS][5][3] =
 {
+    { /* Normal body */
 	{
 		/* Warrior */
 		{ TV_SWORD, SV_BROAD_SWORD, 0 },
@@ -1076,11 +1104,11 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 #else
-		{ TV_SWORD, SV_DAGGER, 0 },
-		{ TV_SOFT_ARMOR, SV_HARD_STUDDED_LEATHER, 0 },
-		{TV_RUNE2, SV_RUNE2_WIND, 0 },
-		{ 255, 255, 0 },
-		{ 255, 255, 0 },
+		{ TV_SOFT_ARMOR, SV_SHIRT, 0 },
+		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
 #endif
 	},
 	{
@@ -1093,6 +1121,134 @@ static byte player_init[MAX_CLASS][5][3] =
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
 		{ 255, 255, 0 },
 	},
+    },
+    { /* Fruit bat body */
+	{
+		/* Warrior */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_POTION, SV_POTION_BERSERK_STRENGTH, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Mage */
+		{ TV_HELM, SV_CLOTH_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_BOOK, 50, 0 },
+		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Priest */
+		{ TV_HELM, SV_CLOTH_CAP, 0 },
+		{ TV_POTION, SV_POTION_HEALING, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Rogue */
+		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
+		{ 255, 255, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
+//		{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
+	},
+
+	{
+		/* Mimic */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
+		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
+		{ 255, 255, 0 },
+//		{ TV_RING, SV_RING_POLYMORPH, 0 },
+	},
+
+	{
+		/* Archer */
+		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
+		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
+		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
+		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_HELM, SV_METAL_CAP, 0 },
+	},
+
+	{
+		/* Paladin */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HBLESSING */
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Ranger */
+		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_BOOK, 50, 0 },
+		{ TV_BOW, SV_LONG_BOW, 0 },
+		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+	},
+
+	{
+		/* Adventurer */
+		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
+		{ TV_BOW, SV_SLING, 0 },
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Druid */
+		{ TV_POTION, SV_POTION_CURE_CRITICAL, 0 },
+		{ TV_POTION, SV_POTION_INVIS, 0 },
+		{ TV_AMULET, SV_AMULET_SLOW_DIGEST, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
+	},
+
+	{
+		/* Shaman */
+		{ TV_BOOK, 50, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_AMULET, SV_AMULET_INFRA, 3 },
+		{ TV_POTION, SV_POTION_CURE_POISON, 0 },
+		{ TV_SWORD, SV_SHADOW_BLADE, 0 }, /* just a placeholder! */
+	},
+	{
+		/* Runemaster */
+#ifndef ENABLE_RCRAFT
+		{ TV_RUNE1, SV_RUNE1_BOLT, 0 },
+		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
+		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
+		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+#else
+		{ 255, 255, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{TV_RUNE2, SV_RUNE2_WIND, 0 },
+		{ 255, 255, 0 },
+		{ 255, 255, 0 },
+#endif
+	},
+	{
+		/* Mindcrafter */
+//		{ TV_BOOK, 50, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
+		{ 255, 255, 0 },
+	},
+    }
 };
 
 
@@ -1259,11 +1415,12 @@ void admin_outfit(int Ind, int realm)
 static void player_outfit(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
-	int             i, j, tv, sv, pv, k_idx;
+	int i, j, tv, sv, pv, k_idx, body;
 
 	object_type     forge;
-
 	object_type     *o_ptr = &forge;
+
+	body = (p_ptr->mode & MODE_FRUIT_BAT) ? 1 : 0;
 
 	/* Hack -- Give the player some food */
 	if (p_ptr->prace == RACE_ENT)
@@ -1344,9 +1501,9 @@ static void player_outfit(int Ind)
 	/* Hack -- Give the player useful objects */
 	for (i = 0; i < 5; i++)
 	{
-		tv = player_init[p_ptr->pclass][i][0];
-		sv = player_init[p_ptr->pclass][i][1];
-		pv = player_init[p_ptr->pclass][i][2];
+		tv = player_init[body][p_ptr->pclass][i][0];
+		sv = player_init[body][p_ptr->pclass][i][1];
+		pv = player_init[body][p_ptr->pclass][i][2];
 
 #if 0
 		/* ugly hack: give warriors different weapons - C. Blue */
@@ -1423,7 +1580,7 @@ static void player_outfit(int Ind)
 //			if (pv != 255) pv = 60;
 		}
 #endif
-		
+
 		if (tv == 255 && sv == 255) {
 			/* nothing */
 		} else {
@@ -1573,7 +1730,14 @@ static void player_setup(int Ind, bool new)
                 wpos->wy = cfg.town_y;
 		wpos->wz = 0;
 	}
-	
+
+#if 0 //todo:implement
+	/* Don't allow players to save in houses they don't own -> teleport them */
+	if (((!wpos->wz) && (cave_info..  [wpos->wy][wpos->wx]. & CAVE_ICKY))) {
+		s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+	}
+#endif
+
 	/* hack for sector00separation (Highlander Tournament): Players mustn't enter sector 0,0 */
 	/* note that this hack will also prevent players who got disconnected during Highlander Tourney
 	   to continue it, but that must be accepted. Otherwise players could exploit it and just join
@@ -1651,22 +1815,22 @@ static void player_setup(int Ind, bool new)
 
 
 	/* anti spammer code */
-	p_ptr->msgcnt=0;
-	p_ptr->msg=0;
-	p_ptr->spam=0;
+	p_ptr->msgcnt = 0;
+	p_ptr->msg = 0;
+	p_ptr->spam = 0;
 
 	/* Default location if just starting */
 //	if(wpos->wz == 0 && wpos->wy == 0 && wpos->wx == 0 && p_ptr->py==0 && p_ptr->px==0){
 	if (new) {
-		p_ptr->wpos.wx=cfg.town_x;
-		p_ptr->wpos.wy=cfg.town_y;
-		p_ptr->wpos.wz=0;
+		p_ptr->wpos.wx = cfg.town_x;
+		p_ptr->wpos.wy = cfg.town_y;
+		p_ptr->wpos.wz = 0;
 #if 0	// moved afterwards (since town can be non-allocated here)
-		p_ptr->py=level_down_y(wpos);
-		p_ptr->px=level_down_x(wpos);
+		p_ptr->py = level_down_y(wpos);
+		p_ptr->px = level_down_x(wpos);
 #endif	// 0
-		p_ptr->town_x=p_ptr->wpos.wx;
-		p_ptr->town_y=p_ptr->wpos.wy;
+		p_ptr->town_x = p_ptr->wpos.wx;
+		p_ptr->town_y = p_ptr->wpos.wy;
 	}
 
 	/* Count players on this depth */
@@ -1708,7 +1872,7 @@ static void player_setup(int Ind, bool new)
 	}
 
 	/* Rebuild the level if necessary */
-	if(!(zcave=getcave(wpos))){
+	if(!(zcave = getcave(wpos))){
 		if(p_ptr->wpos.wz){
 			struct dun_level *l_ptr;
 			alloc_dungeon_level(wpos);
@@ -1739,14 +1903,13 @@ static void player_setup(int Ind, bool new)
 			p_ptr->wild_map[(-p_ptr->dun_depth)/8] |= (1<<((-p_ptr->dun_depth)%8));
 #endif
 		}
-		zcave=getcave(wpos);
+		zcave = getcave(wpos);
 	}
 
 #if 0 //done by world_surface_.. eventually
 	/* Memorize interesting features, if we're in town */
 	if (istown(wpos)) {
-//	if (istown(wpos) ||
-//	    (p_ptr->wpos.wz == 0 && wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius <= 2)) {
+//	if (istownarea(wpos, 2)) {
 		for (y = 0; y < MAX_HGT; y++)
 		for (x = 0; x < MAX_WID; x++) {
 			byte *w_ptr = &p_ptr->cave_flag[y][x];
@@ -1870,7 +2033,20 @@ static void player_setup(int Ind, bool new)
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
-
+	
+	#ifdef ENABLE_RCRAFT
+	/* Set up the Runecraft extra p_ptr variables */
+	p_ptr->memory.x = 0;
+	p_ptr->memory.y = 0;
+	p_ptr->memory.wpos.wx = 0;
+	p_ptr->memory.wpos.wy = 0;
+	p_ptr->memory.wpos.wz = 0;
+	
+	p_ptr->tim_deflect = 0;
+	p_ptr->tim_trauma = 0;
+	p_ptr->tim_trauma_pow = 0;
+	#endif
+	
 	/* No item being used up */
 	p_ptr->using_up_item = -1;
 
@@ -2053,6 +2229,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 	/* Allocate memory for his inventory */
 	C_MAKE(Players[Ind]->inventory, INVEN_TOTAL, object_type);
 
+	/* Allocate memory for the copy */
+	C_MAKE(Players[Ind]->inventory_copy, INVEN_TOTAL, object_type);
+
 	/* Set pointer */
 	p_ptr = Players[Ind];
 
@@ -2117,6 +2296,18 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 			}
 			if(i==20) p_ptr->quest_id=0;
 		}
+
+		/* hack: if he's in town, get him pseudo tree-passing */
+		if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
+
+#if 0
+		/* Don't allow players to save in houses they don't own -> teleport them */
+		if ((!p_ptr->wpos.wz) && (cave_info..  [wpos->wy][wpos->wx]. & CAVE_ICKY)) {
+			s_printf("Out-of-House-blinked %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+			teleport_player(Ind, 1);
+		}
+#endif
+
 		return TRUE;
 	}
 
@@ -2294,9 +2485,12 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		   actually this could be done once in init_lua,
 		   but since the array player_init is static, we
 		   just do it here. - C. Blue */
-		   player_init[CLASS_PRIEST][2][2] = __lua_HHEALING;
-		   player_init[CLASS_PALADIN][3][2] = __lua_HBLESSING;
-		   player_init[CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+		   player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
+		   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+		   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+		   player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
+		   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
+		   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 		player_outfit(Ind);
 	}
 
@@ -2358,6 +2552,9 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* hack: allow to get extra level feeling immediately */
 	p_ptr->turns_on_floor = TURNS_FOR_EXTRA_FEELING;
+
+	/* hack: if he's in town, get him pseudo tree-passing */
+	if (istown(&p_ptr->wpos)) p_ptr->town_pass_trees = TRUE;
 
 	/* HACK - avoid misleading 'updated' messages and routines - C. Blue
 	   (Can be used for different purpose, usually in conjuction with custom.lua) */

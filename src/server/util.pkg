@@ -372,6 +372,7 @@ extern int clouds;
 
 /* special seasons */
 extern int season_halloween;
+extern int season_xmas;
 extern int season_newyearseve;
 
 /* for controlling fireworks on NEW_YEARS_EVE */

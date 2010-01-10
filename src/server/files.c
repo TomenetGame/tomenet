@@ -1178,7 +1178,7 @@ int highscore_send(char *buffer, int max) {
 		}
 
 		race = race_info[atoi(score.p_r)].title;
-		class = race_info[atoi(score.p_c)].title;
+		class = class_info[atoi(score.p_c)].title;
 
 		len2 = snprintf(buf, 1024, "pts=%s\ngold=%s\nturns=%s\nday=%s\nwho=%s\nwhose=%s\nsex=%s\nrace=%s\nclass=%s\ncur_lev=%s\ncur_dun=%s\nmax_lev=%s\nmax_dun=%s\nhow=%s\nmode=%s\n",
 			score.pts, score.gold, score.turns, score.day, score.who, score.whose, score.sex, race, class, score.cur_lev, score.cur_dun, score.max_lev, score.max_dun, score.how, mode);
@@ -2285,7 +2285,7 @@ void display_scores(int Ind, int line)
  * Get a random line from a file
  * Based on the monster speech patch by Matt Graham,
  */
-errr get_rnd_line(cptr file_name, int entry, char *output)
+errr get_rnd_line(cptr file_name, int entry, char *output, int max_len)
 {
 	FILE    *fp;
 	char    buf[1024];
@@ -2400,7 +2400,7 @@ errr get_rnd_line(cptr file_name, int entry, char *output)
 		}
 
 		/* Copy the line */
-		strcpy(output, buf);
+		strncpy(output, buf, max_len);
 	}
 
 	/* Close the file */

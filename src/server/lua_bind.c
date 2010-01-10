@@ -525,20 +525,17 @@ void lua_count_houses(int Ind) {
 	return;
 }
 
+/* keep whole function in sync with birth.c! */
 void lua_recalc_char(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	int             i, j, min_value, max_value;
+	int i, j, min_value, max_value, min_value_king = 0, max_value_king = 9999;
         int tries = 300;
-
-	/* Experience factor */
-/* This one is too harsh for TLs and too easy on yeeks
-	p_ptr->expfact = p_ptr->rp_ptr->r_exp * (100 + p_ptr->cp_ptr->c_exp) / 100;
-Commented out this totally, since ppl won't get skill points for these 'fake level ups'! :/
-      p_ptr->expfact = p_ptr->rp_ptr->r_exp + p_ptr->cp_ptr->c_exp; */
 
 	/* Hitdice */
 	p_ptr->hitdie = p_ptr->rp_ptr->r_mhp + p_ptr->cp_ptr->c_mhp;
 
+	/* keep in sync with birth.c! */
+#if 0
 	/* Minimum hitpoints at highest level */
         min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 3) / 8;
 	min_value += PY_MAX_LEVEL;
@@ -546,6 +543,21 @@ Commented out this totally, since ppl won't get skill points for these 'fake lev
 	/* Maximum hitpoints at highest level */
 	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 5) / 8;
 	max_value += PY_MAX_LEVEL;
+#else
+	/* Minimum hitpoints at kinging level */
+        min_value_king = (50 * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value_king += 50;
+	/* Maximum hitpoints at kinging level */
+	max_value_king = (50 * (p_ptr->hitdie - 1) * 17) / 32;
+	max_value_king += 50;
+
+	/* Minimum hitpoints at highest level */
+        min_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 15) / 32;
+	min_value += PY_MAX_LEVEL;
+	/* Maximum hitpoints at highest level */
+	max_value = (PY_MAX_LEVEL * (p_ptr->hitdie - 1) * 17) / 32;
+	max_value += PY_MAX_LEVEL;
+#endif
 
 	/* Pre-calculate level 1 hitdice */
 	p_ptr->player_hp[0] = p_ptr->hitdie;
@@ -556,18 +568,28 @@ Commented out this totally, since ppl won't get skill points for these 'fake lev
 		/* Roll the hitpoint values */
 		for (i = 1; i < PY_MAX_LEVEL; i++)
 		{
-		        j = randint(p_ptr->hitdie);
+//		        j = randint(p_ptr->hitdie);
+		        j = 2 + randint(p_ptr->hitdie - 4);
 		        p_ptr->player_hp[i] = p_ptr->player_hp[i-1] + j;
 		}
 		/* XXX Could also require acceptable "mid-level" hitpoints */
-		
+
+		/* Require "valid" hitpoints at kinging level */
+		if (p_ptr->player_hp[50 - 1] < min_value_king) continue;
+		if (p_ptr->player_hp[50 - 1] > max_value_king) continue;
+
 		/* Require "valid" hitpoints at highest level */
-		if (p_ptr->player_hp[PY_MAX_LEVEL-1] < min_value) continue;
-		if (p_ptr->player_hp[PY_MAX_LEVEL-1] > max_value) continue;
-		
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] < min_value) continue;
+		if (p_ptr->player_hp[PY_MAX_LEVEL - 1] > max_value) continue;
+
 		/* Acceptable */
 		break;
 	}
+
+	if (!tries) s_printf("CHAR_REROLLING: %s exceeded 300 tries for HP rolling.\n", p_ptr->name);
+
+	p_ptr->update |= PU_HP;
+	update_stuff(Ind);
 }
 
 void lua_examine_item(int Ind, cptr name, int item) {
@@ -594,8 +616,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) &&
-		    !multiple_artifact_p(o_ptr))
+		if (resettable_artifact_p(o_ptr))
 			total_number++;
 	}
 
@@ -606,8 +627,7 @@ void lua_strip_true_arts_from_present_player(int Ind, int mode) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) &&
-		    !multiple_artifact_p(o_ptr))
+		if (resettable_artifact_p(o_ptr))
 	        {
 	                //char  o_name[160];
 	                //object_desc(Ind, o_name, o_ptr, TRUE, 0);
@@ -642,11 +662,9 @@ void lua_check_player_for_true_arts(int Ind) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) &&
-		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
-			total_number++;
+		if (true_artifact_p(o_ptr)) total_number++;
 	}
-/*	if (total_number) s_printf("True-art scan: %s carries %d.\n", p_ptr->name, total_number);*/
+	if (total_number) s_printf("True-art scan: %s carries %d.\n", p_ptr->name, total_number);
 }
 
 void lua_strip_true_arts_from_absent_players(void) {
@@ -669,15 +687,13 @@ void lua_strip_true_arts_from_floors(void) {
 			/* check items on the world's floors */
 #if 0
 			if((zcave = getcave(&o_ptr->wpos)) &&
-			    true_artifact_p(o_ptr) &&
-			    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+			    resettable_artifact_p(o_ptr))
 			{
 				delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
                                 dcnt++;
 			}
 #else
-			if(true_artifact_p(o_ptr) &&
-			    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+			if(resettable_artifact_p(o_ptr))
 			{
 				delete_object_idx(i, TRUE);
                                 dcnt++;
@@ -788,8 +804,7 @@ void lua_arts_fix(int Ind) {
 
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		if (true_artifact_p(o_ptr) &&
-		    !(o_ptr->name1 == ART_MORGOTH || o_ptr->name1 == ART_GROND || o_ptr->name1 == ART_PHASING))
+		if (resettable_artifact_p(o_ptr))
 			handle_art_i(o_ptr->name1);
 	}
 }
@@ -980,4 +995,15 @@ void lua_fix_skill_chart(int Ind) {
 
         p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
         update_stuff(Ind);
+}
+
+void lua_takeoff_costumes(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	if ((p_ptr->inventory[INVEN_BODY].tval == TV_SOFT_ARMOR) && (p_ptr->inventory[INVEN_BODY].sval == SV_COSTUME)) {
+		bypass_inscrption = TRUE;
+		inven_takeoff(Ind, INVEN_BODY, 255);
+		bypass_inscrption = FALSE;
+		msg_print(Ind, "It's not that time of the year anymore.");
+	}
 }

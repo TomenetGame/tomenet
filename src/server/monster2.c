@@ -716,7 +716,8 @@ void wipe_m_list_chance(struct worldpos *wpos, int chance)
 		monster_type *m_ptr = &m_list[i];
 
 		if (inarea(&m_ptr->wpos,wpos) && magik(chance) &&  /* hardcoded -_- */
-		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) && (m_ptr->r_idx != 1102)) {
+		    (m_ptr->r_idx != 1101) && (m_ptr->r_idx != 1126) &&
+		    (m_ptr->r_idx != 1102) && (m_ptr->r_idx != 1132)) {
 			if (season_halloween &&
 			    (m_ptr->r_idx == 1086 || m_ptr->r_idx == 1087 || m_ptr->r_idx == 1088))
 				 great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
@@ -2771,7 +2772,7 @@ static bool allow_unique_level(int r_idx, struct worldpos *wpos)
 	/* lots of hard-coded stuff in here -C. Blue */
 bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning)
 {
-	int                     i, Ind, j, m_idx;
+	int                     i, Ind, j, m_idx, dlev;
 	bool			already_on_level = FALSE;
 	cave_type               *c_ptr;
 	dun_level *l_ptr = getfloor(wpos);
@@ -2792,333 +2793,273 @@ bool place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, 
 	/* Paranoia */
 	if (!r_ptr->name) return (FALSE);
 
-if (summon_override_checks != 1) {
-	/* require non-protected field. - C. Blue
-	    Note that there are two ways (technically) to protect a field:
-	    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
-	    2) use CAVE_PROT which can be toggled on runtime as required
-	*/
-	if (zcave[y][x].info & CAVE_PROT) return (FALSE);
-	if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
-}
+	dlev = getlevel(wpos);
 
-/* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_checks) {
 
+
+	if (!(summon_override_checks & SO_PROTECTED)) {
+		/* require non-protected field. - C. Blue
+		    Note that there are two ways (technically) to protect a field:
+		    1) use feature 210 for predefined map setups (which is a "protected brown '.' floor tile")
+		    2) use CAVE_PROT which can be toggled on runtime as required
+		*/
+		if (zcave[y][x].info & CAVE_PROT) return (FALSE);
+		if (f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED) return (FALSE);
+	}
+
+	if (!(summon_override_checks & SO_GRID_EMPTY)) {
 #if 0
-	if (!(cave_empty_bold(zcave, y, x) || 
-	    (cave_empty_mountain(zcave, y, x) &&
-	    ((r_ptr->flags2 && RF2_PASS_WALL) ||
-	     (r_ptr->flags8 && RF8_WILD_MOUNTAIN) || 
-	     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return (FALSE);
+		if (!(cave_empty_bold(zcave, y, x) ||
+		    (cave_empty_mountain(zcave, y, x) &&
+		    ((r_ptr->flags2 && RF2_PASS_WALL) ||
+		     (r_ptr->flags8 && RF8_WILD_MOUNTAIN) ||
+		     (r_ptr->flags8 && RF8_WILD_VOLCANO))))) return (FALSE);
 #endif
-	/* Hack -- no creation on glyph of warding */
-	if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
+	}
 
-	if(((!wpos->wz && wild_info[wpos->wy][wpos->wx].radius < 10) || istown(wpos)) && zcave[y][x].info & CAVE_ICKY) return(FALSE);
+	if (!(summon_override_checks & SO_GRID_TERRAIN)) {
+		/* This usually shouldn't happen */
+		/* but can happen when monsters group */
+		if (!monster_can_cross_terrain(zcave[y][x].feat, r_ptr)) {
+#if DEBUG_LEVEL > 2
+			s_printf("WARNING: Refused monster: cannot cross terrain\n");
+#endif	// DEBUG_LEVEL
+			return (FALSE);
+		}
+	}
 
-} /* summon_override_checks == 0 */
+	if (!(summon_override_checks & SO_GRID_GLYPH)) {
+		/* Hack -- no creation on glyph of warding */
+		if (zcave[y][x].feat == FEAT_GLYPH) return (FALSE);
+	}
 
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG: 1\n");
-#endif
-
-/* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_checks) {
+	/* override protection for monsters spawning inside houses, to generate
+	   monster 'invaders' and/or monster 'owners' in wild houses? */
+	if (!(summon_override_checks & SO_HOUSE)) {
+		if (istownarea(wpos, 9) && (zcave[y][x].info & CAVE_ICKY)) return(FALSE);
+	}
 
 #ifdef RPG_SERVER /* no spawns in Training Tower at all */
-	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
+	if (!(summon_override_checks & SO_TT_RPG)) {
+		if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
+	}
 #endif
 
-	/* No live spawns allowed in training tower during global event */
-	if (ge_special_sector &&
-	    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y && 
-	    wpos->wz == WPOS_ARENA_Z)
-		return(FALSE);
+	if (!(summon_override_checks & SO_EVENTS)) {
+		/* No live spawns allowed in training tower during global event */
+		if (ge_special_sector &&
+		    wpos->wx == WPOS_ARENA_X && wpos->wy == WPOS_ARENA_Y &&
+		    wpos->wz == WPOS_ARENA_Z)
+			return(FALSE);
 
-	/* No spawns in 0,0 pvp arena tower */
-	if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return(FALSE);
+		/* No spawns in 0,0 pvp arena tower */
+		if (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z) return(FALSE);
 
-	/* No live spawns after initial spawn allowed on NR bottom */
-	if (getlevel(wpos) == (166 + 30) && !cave_set_quietly) return(FALSE);
-
-	/* No monster pre-spawns on staircases, to avoid 'pushing off' a player when he goes up/down. */
-	if (cave_set_quietly && (
-	    zcave[y][x].feat == FEAT_WAY_LESS ||
-	    zcave[y][x].feat == FEAT_WAY_MORE ||
-	    zcave[y][x].feat == FEAT_LESS ||
-	    zcave[y][x].feat == FEAT_MORE)) return(FALSE);
-
-	/* Special hack - bottom of NR is empty except for Zu-Aon */
-	if (getlevel(wpos) == (166 + 30)) r_idx = 1097;
-
-	/* Another special hack - No monster spawn in Valinor, except for.. */
-	if ((getlevel(wpos) == 200) &&
-	    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
-		return(FALSE);
-
-	/* Wight-King of the Barrow-downs might not occur anywhere else */
-	if ((r_idx == 971) && ((wpos->wx != cfg.town_x) || (wpos->wy != cfg.town_y))) return (FALSE);
-	/* Hellraiser and Nether Realm minions may only occur in the Nether Realm  */
-	/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
-	if ((r_idx == 1067) && (getlevel(wpos) < (166 + 1))) return (FALSE);
-	/* Dor may not occur on 'easier' (lol) NR levels */
-	if ((r_idx == 1085) && (getlevel(wpos) < (166 + 9))) return (FALSE);
-	/* Couple of Nether Realm-only monsters hardcoded here */
-	if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
-	    (getlevel(wpos) < 166)) return (FALSE);
-	/* Zu-Aon guards the bottom of the Nether Realm now */
-	if ((r_idx == 1097) && (getlevel(wpos) != (166 + 30))) return (FALSE);
-	/* On Nether Realm bottom no Nether Guards but only Zu-Aon may spawn */
-	if ((r_idx == 1068) && (getlevel(wpos) == (166 + 30))) r_idx = 1097;
-
-	/* Update r_ptr due to possible r_idx changes */
-	r_ptr = &r_info[r_idx];
-
-	/* Nether Guard isn't a unique but there's only 1 guard per level,
-	   If Zu-Aon appears, the Nether Guard disappears instead */
-	if (r_idx == 1068) {
-#if DEBUG_LEVEL > 2
-		s_printf("Checking for old Nether Guards\n");
-#endif
-		for (i = m_top - 1; i >= 0; i--)
-		{
-	        	m_idx = m_fast[i];
-			m_ptr = &m_list[m_idx];
-			if (!m_ptr->r_idx) {
-				m_fast[i] = m_fast[--m_top];
-				continue;
-			}
-			/* Old Nether Guard on this level are deleted */
-			if ((m_ptr->r_idx == 1068) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
-		}
+		/* Note: Spawns in 0,0 surface during events are caught in wild_add_monster() */
 	}
 
-	/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
-	/* Morgoth may not spawn 'live' at all (!) if MORGOTH_NO_TELE_VAULTS is defined!
-	   (works in conjunction with cave_gen in generate.c) */
-	if (r_idx == 862) {
-#ifdef MORGOTH_NO_LIVE_SPAWN
-		/* is Morgoth not generated within a dungeon level's
-		   initialization (cave_gen in generate.c) ? */
-		if (!cave_set_quietly) {
-			/* No, it's a live spawn! (!cave_set_quietly) */
- #if DEBUG_LEVEL > 2
-		        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
- #endif
-			/* Prevent that. */
-			return (FALSE);
-		} else {
+	if (!(summon_override_checks & SO_PRE_STAIRS)) {
+		/* No monster pre-spawns on staircases, to avoid 'pushing off' a player when he goes up/down. */
+		if (cave_set_quietly && (
+		    zcave[y][x].feat == FEAT_WAY_LESS ||
+		    zcave[y][x].feat == FEAT_WAY_MORE ||
+		    zcave[y][x].feat == FEAT_LESS ||
+		    zcave[y][x].feat == FEAT_MORE)) return(FALSE);
+	}
+
+	if (!(summon_override_checks & SO_BOSS_LEVELS)) {
+		/* Nether Realm bottom */
+		if (dlev == (166 + 30)) {
+			/* No live spawns after initial spawn allowed */
+			if (!cave_set_quietly) return(FALSE);
+
+			/* Special hack - level is empty except for Zu-Aon */
+			r_idx = 1097;
+		}
+
+		/* Valinor - No monster spawn, except for.. */
+		if ((dlev == 200) &&
+		    (r_idx != 1100 ) && (r_idx != 1098)) /* Brightlance, Orome */
+			return(FALSE);
+	}
+
+	if (!(summon_override_checks & SO_BOSS_MONSTERS)) {
+		/* Wight-King of the Barrow-downs might not occur anywhere except in Barrow-downs */
+		if ((r_idx == 971) && ((wpos->wx != cfg.town_x) || (wpos->wy != cfg.town_y))) return (FALSE);
+
+		/* Hellraiser may not occur right on the 1st floor of the Nether Realm */
+		if ((r_idx == 1067) && (dlev < (166 + 1))) return (FALSE);
+
+		/* Dor may not occur on 'easier' (lol) NR levels */
+		if ((r_idx == 1085) && (dlev < (166 + 9))) return (FALSE);
+
+		/* Couple of Nether Realm-only monsters hardcoded here */
+		if (((r_idx == 1068) || (r_idx == 1080) || (r_idx == 1083) || (r_idx == 1084)) &&
+		    (dlev < 166)) return (FALSE);
+
+		/* Zu-Aon guards the bottom of the Nether Realm now */
+		if ((r_idx == 1097) && (dlev != (166 + 30))) return (FALSE);
+
+		/* Nether Guard isn't a unique but there's only 1 guard per level */
+		if (r_idx == 1068) {
+#if DEBUG_LEVEL > 2
+			s_printf("Checking for old Nether Guards\n");
 #endif
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			p_ptr = Players[i];
-			if (is_admin(p_ptr)) continue;
-			if (inarea(&p_ptr->wpos, wpos) &&
-			    (p_ptr->total_winner || (p_ptr->r_killed[860] != 1)))
-			{
-			        /* log */
- #if DEBUG_LEVEL > 2
-				if (cave_set_quietly) {
-					if (p_ptr->total_winner) {
-			    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
-					} else {
-					        s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
-					}
-				} else {
-					if (p_ptr->total_winner) {
-			    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
-					} else {
-					        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
-					}
+			for (i = m_top - 1; i >= 0; i--) {
+		        	m_idx = m_fast[i];
+				m_ptr = &m_list[m_idx];
+				if (!m_ptr->r_idx) {
+					m_fast[i] = m_fast[--m_top];
+					continue;
 				}
+				if ((m_ptr->r_idx == 1068) && inarea(wpos, &m_ptr->wpos)) return(FALSE);
+			}
+		}
+
+		/* Morgoth may not spawn 'live' if the players on his level aren't prepared correctly */
+		/* Morgoth may not spawn 'live' at all (!) if MORGOTH_NO_TELE_VAULTS is defined!
+		   (works in conjunction with cave_gen in generate.c) */
+		if (r_idx == 862) {
+#ifdef MORGOTH_NO_LIVE_SPAWN
+			/* is Morgoth not generated within a dungeon level's
+			   initialization (cave_gen in generate.c) ? */
+			if (!cave_set_quietly) {
+				/* No, it's a live spawn! (!cave_set_quietly) */
+ #if DEBUG_LEVEL > 2
+			        s_printf("Morgoth live spawn prevented (MORGOTH_NO_TELE_VAULTS)\n");
  #endif
+				/* Prevent that. */
 				return (FALSE);
-			}
-		}
+			} else {
+#endif
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (is_admin(p_ptr)) continue;
+					if (inarea(&p_ptr->wpos, wpos) &&
+					    (p_ptr->total_winner || (p_ptr->r_killed[860] != 1))) {
+					        /* log */
+ #if DEBUG_LEVEL > 2
+						if (cave_set_quietly) {
+							if (p_ptr->total_winner) {
+					    		        s_printf("Morgoth generation prevented due to winner %s\n", p_ptr->name);
+							} else {
+							        s_printf("Morgoth generation prevented due to Sauron-misser %s\n", p_ptr->name);
+							}
+						} else {
+							if (p_ptr->total_winner) {
+					    		        s_printf("Morgoth live spawn prevented due to winner %s\n", p_ptr->name);
+							} else {
+							        s_printf("Morgoth live spawn prevented due to Sauron-misser %s\n", p_ptr->name);
+							}
+						}
+ #endif
+						return (FALSE);
+					}
+				}
 #ifdef MORGOTH_NO_LIVE_SPAWN
-		}
+			}
 #endif
-	}
-
-	/* Morgoth shouldn't spawn on NO_DESTROY levels,
-	   since his earthquakes are an important weapon! */
+		}
+		/* Morgoth shouldn't spawn on NO_DESTROY levels,
+		   since his earthquakes are an important weapon! */
 #if 0 /* His quakes now override LF1_NO_DESTROY ! */
-	if ((r_idx == 862) && (getfloor(wpos)->flags1 & LF1_NO_DESTROY)) {
-#if DEBUG_LEVEL > 2
-		s_printf("Morgoth spawn prevented on NO_DESTROY level\n");
-#endif
-		return (FALSE);
-	}
-#endif
-
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 2\n");
+		if ((r_idx == 862) && (getfloor(wpos)->flags1 & LF1_NO_DESTROY)) {
+ #if DEBUG_LEVEL > 2
+			s_printf("Morgoth spawn prevented on NO_DESTROY level\n");
+ #endif
+			return (FALSE);
+		}
 #endif
 
-	/* Hack -- "unique" monsters may not appear on the world surface */
-	if ((r_ptr->flags1 & RF1_UNIQUE) && (wpos->wz == 0)) return(FALSE);
+		/* Update r_ptr due to possible r_idx changes */
+		r_ptr = &r_info[r_idx];
 
-/* BEGIN of ugly hack */
-	/* Check if the monster is already on the level -
-	   I put this in after someone told me about 3 Glaurungs on the same
-	   level, while 1 player on the depth had him killed, the other didn't.
-	   Then a Glaurung summoned 2 more of himself.. */
+		/* "unique" monsters.. */
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			/* If the monster is unique and all players on this level already killed
+			   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
+			int on_level = 0, who_killed = 0;
+			int admin_on_level = 0, admin_who_killed = 0;
+			for (i = 1; i <= NumPlayers; i++) {
+				/* Count how many players are here */
+				if (inarea(&Players[i]->wpos, wpos)) {
+					if (Players[i]->admin_dm) admin_on_level++;
+					else on_level++;
+					/* Count how many of them have killed this unique monster */
+					if (Players[i]->r_killed[r_idx] == 1) {
+						if (Players[i]->admin_dm) admin_who_killed++;
+						else who_killed++;
+					}
+				}
+			}
+			/* If all of them already killed it it must not be spawned */
+			/* If players are on the level, they exclusively determine the unique summonability. */
+			if ((on_level > 0) && (on_level <= who_killed)) return(FALSE); /* should be '==', but for now lets be tolerant */
+			/* If only admins are on the level, allow unique creation
+			   if it fits the admins' unique masks */
+			if ((on_level == 0) && (admin_on_level <= admin_who_killed)) return(FALSE);
 
-        for(i=0;i<m_max;i++){
-                m_ptr=&m_list[i];
-		if (m_ptr->r_idx == r_idx) {
-		    if (inarea(wpos, &m_ptr->wpos)) {
-			already_on_level = TRUE;
-			break;
-		    }
+			/* are allowed to appear at all? */
+			if (!allow_unique_level(r_idx, wpos)) return(FALSE);
 		}
 	}
-/* END of ugly hack */
 
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 3\n");
-#endif
-
-	/* Hack -- "unique" monsters must be "unique" */
+	/* "unique" monsters combo check */
 	if ((r_ptr->flags1 & RF1_UNIQUE) &&
-	    ((!allow_unique_level(r_idx, wpos)) || (r_ptr->cur_num >= r_ptr->max_num) ||
-	    already_on_level))
-	{
-		/* Cannot create */
-		return (FALSE);
+	    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE))) {
+		/* may not appear on the world surface */
+		if (wpos->wz == 0) return(FALSE);
 	}
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 4\n");
-#endif
 
-	/* Depth monsters may NOT be created out of depth */
-	if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (getlevel(wpos) < r_ptr->level))
-	{
-		/* Cannot create */
-		return (FALSE);
+	if (!(summon_override_checks & SO_FORCE_DEPTH)) {
+		/* Depth monsters may NOT be created out of depth */
+		if ((r_ptr->flags1 & RF1_FORCE_DEPTH) && (dlev < r_ptr->level)) {
+			/* Cannot create */
+			return (FALSE);
+		}
+		if ((r_ptr->flags9 & RF9_ONLY_DEPTH) && (dlev != r_ptr->level)) {
+			/* Cannot create */
+			return (FALSE);
+		}
 	}
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 5\n");
-#endif
 
-        /* Ego Uniques are NOT to be created */
-        if ((r_ptr->flags1 & RF1_UNIQUE) && (ego || randuni)) return FALSE;
 
-	/* If the monster is unique and all players on this level already killed
-	   the monster, don't spawn it. (For Morgoth, especially) -C. Blue */
-	if (r_ptr->flags1 & RF1_UNIQUE)
-	{
-		int on_level = 0, who_killed = 0;
-		int admin_on_level = 0, admin_who_killed = 0;
-		for (i = 1; i <= NumPlayers; i++)
-		{
-			/* Skip the dungeon master - note:
-			   this will provide maximum security against summoning flaws vs players,
-			   on the other hand this will prevent the DM from summoning uniques!
-			   (Solution: a master_summon flag should be added to this summon routine.) */
-//			if (Players[i]->admin_dm) continue;
 
-			/* Count how many players are here */
-			if (inarea(&Players[i]->wpos, wpos))
-			{
-				if (Players[i]->admin_dm) admin_on_level++;
-				else on_level++;
+	/* Uniques monster consistency - stuff that is exempt from overriding really */
+	if (r_ptr->flags1 & RF1_UNIQUE) {
+		/* Ego Uniques are NOT to be created */
+		if (ego || randuni) return FALSE;
 
-				/* Count how many of them have killed this unique monster */
-				if (Players[i]->r_killed[r_idx] == 1) {
-					if (Players[i]->admin_dm) admin_who_killed++;
-					else who_killed++;
+		/* prevent duplicate uniques on a floor */
+		for(i = 0; i < m_max; i++) {
+			m_ptr = &m_list[i];
+			if (m_ptr->r_idx == r_idx) {
+				if (inarea(wpos, &m_ptr->wpos)) {
+					already_on_level = TRUE;
+					break;
 				}
 			}
 		}
-		/* If all of them already killed it it must not be spawned */
-		/* If players are on the level, they exclusively determine the unique summonability. */
-		if ((on_level > 0) && (on_level <= who_killed)) return(FALSE); /* should be '==', but for now lets be tolerant */
-		/* If only admins are on the level, allow unique creation
-		   if it fits the admin's unique mask */
-		if ((on_level == 0) && (admin_on_level <= admin_who_killed)) return(FALSE);
+		if (r_ptr->cur_num >= r_ptr->max_num || already_on_level) {
+			/* Cannot create */
+			return (FALSE);
+		}
 	}
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 6\n");
-#endif
 
-} /* summon_override_checks */
 
 
         /* Now could we generate an Ego Monster */
         r_ptr = race_info_idx(r_idx, ego, randuni);
 
-
-#if 0
-	/* Powerful monster */
-	if (r_ptr->level > getlevel(wpos))
-	{
-		/* Unique monsters */
-		if (r_ptr->flags1 & RF1_UNIQUE)
-		{
-			/* Message for cheaters */
-			/*if (cheat_hear) msg_format("Deep Unique (%s).", name);*/
-		}
-
-		/* Normal monsters */
-		else
-		{
-			/* Message for cheaters */
-			/*if (cheat_hear) msg_format("Deep Monster (%s).", name);*/
-		}
-	}
-	/* Note the monster */
-	else if (r_ptr->flags1 & RF1_UNIQUE)
-	{
-		/* Unique monsters induce message */
-		/*if (cheat_hear) msg_format("Unique (%s).", name);*/
-	}
-#endif	// 0
-
-
 	/* Access the location */
 	c_ptr = &zcave[y][x];
-
-#if 0
-	/* XXX makeshift; to be replaced with more generic function */
-//	if((r_ptr->flags7 & RF7_AQUATIC) && c_ptr->feat!=FEAT_WATER) return FALSE;
-	if(c_ptr->feat == FEAT_DEEP_WATER)
-	{
-		if (!(r_ptr->flags3 & RF3_UNDEAD) &&
-			!(r_ptr->flags7 & (RF7_AQUATIC | RF7_CAN_SWIM | RF7_CAN_FLY)))
-			return FALSE;
-	}
-	else if(r_ptr->flags7 & RF7_AQUATIC) return FALSE;
-#endif	// 0
-
-/* override all validity checks! (for summoning done by dungeon master) */
-if (!summon_override_checks) {
-
-	/* This usually shouldn't happen */
-	/* but can happen when monsters group */
-	if (!monster_can_cross_terrain(c_ptr->feat, r_ptr))
-	{
-#if DEBUG_LEVEL > 2
-		s_printf("WARNING: Refused monster: cannot cross terrain\n");
-#endif	// DEBUG_LEVEL
-		return FALSE;
-	}
-
-} /* summon_override_checks */
-
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 7\n");
-#endif
 
 	/* Make a new monster */
 	c_ptr->m_idx = m_pop();
 
 	/* Mega-Hack -- catch "failure" */
 	if (!c_ptr->m_idx) return (FALSE);
-#ifdef DEBUG1
-if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
-#endif
+
 	/* Get a new monster record */
 	m_ptr = &m_list[c_ptr->m_idx];
 
@@ -3246,7 +3187,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 
 #if 0	// may I change it somewhat?	- Jir -
 	/* Should we gain levels ? */
-	if (getlevel(wpos) >100)
+	if (dlev >100)
 	{
 		int l = m_ptr->level + 100;
 
@@ -3257,7 +3198,7 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 #if 0	// 0
 	/* Should we gain levels ? */
 	/* Starting from 2600ft, 'too weak' monsters gain levels. */
-	while (getlevel(wpos) > MONSTER_TOO_WEAK + m_ptr->level)
+	while (dlev > MONSTER_TOO_WEAK + m_ptr->level)
 	{
 		int l = m_ptr->level + MONSTER_TOO_WEAK;
 
@@ -3266,8 +3207,8 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 	}
 #endif	// 0
 
-	if (getlevel(wpos) > (m_ptr->level + 7)) {
-	    int l = m_ptr->level + ((getlevel(wpos) - (m_ptr->level + 7)) / 3);
+	if (dlev > (m_ptr->level + 7)) {
+	    int l = m_ptr->level + ((dlev - (m_ptr->level + 7)) / 3);
 	    m_ptr->exp = MONSTER_EXP(l);
 	    monster_check_experience(c_ptr->m_idx, TRUE);
 	}
@@ -3306,13 +3247,13 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 
 	/* Success */
 	/* Report some very interesting monster creating: */
-	if (r_idx == 860) s_printf("Sauron was created on %d\n", getlevel(wpos));
+	if (r_idx == 860) s_printf("Sauron was created on %d\n", dlev);
 #ifdef ENABLE_DIVINE
-	if (r_idx == 1104) s_printf("Candlebearer was created on %d\n", getlevel(wpos));
-	if (r_idx == 1105) s_printf("Darkling was created on %d\n", getlevel(wpos));
+	if (r_idx == 1104) s_printf("Candlebearer was created on %d\n", dlev);
+	if (r_idx == 1105) s_printf("Darkling was created on %d\n", dlev);
 #endif
 	if (r_idx == 862) {
-		s_printf("Morgoth was created on %d\n", getlevel(wpos));
+		s_printf("Morgoth was created on %d\n", dlev);
 #ifdef MORGOTH_GHOST_DEATH_LEVEL
 		l_ptr->flags1 |= LF1_NO_GHOST;
 #endif
@@ -3331,12 +3272,12 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
 		if (!cave_set_quietly) check_Morgoth();
 	}
-	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", getlevel(wpos));
-	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", getlevel(wpos));
-	if (r_idx == 1085) s_printf("Dor was created on %d\n", getlevel(wpos));
+	if (r_idx == 1032) s_printf("Tik'Svrzllat was created on %d\n", dlev);
+	if (r_idx == 1067) s_printf("The Hellraiser was created on %d\n", dlev);
+	if (r_idx == 1085) s_printf("Dor was created on %d\n", dlev);
 	/* no easy escape from Zu-Aon besides resigning by recalling! */
 	if (r_idx == 1097) {
-		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", getlevel(wpos));
+		s_printf("Zu-Aon, The Cosmic Border Guard was created on %d\n", dlev);
 		l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 
@@ -3347,15 +3288,14 @@ if (r_idx == DEBUG1_IDX) s_printf("DEBUG1: 8\n");
 		   however, checking for that distinction wouldnt pay off really,
 		   because a feeling message about vaults takes precedence over
 		   one about a single 'freely roaming ood monster' anyway: */
-		if (r_ptr->level >= getlevel(wpos) + 10) {
+		if (r_ptr->level >= dlev + 10) {
 			l_ptr->flags2 |= LF2_OOD;
 			if (!(zcave[y][x].info & CAVE_ICKY)) l_ptr->flags2 |= LF2_OOD_FREE;
-			if (r_ptr->level >= getlevel(wpos) + 20) l_ptr->flags2 |= LF2_OOD_HI;
+			if (r_ptr->level >= dlev + 20) l_ptr->flags2 |= LF2_OOD_HI;
 		}
 	}
 
-summon_override_checks = 0; /* reset admin summoning override flags */
-
+	/* monster creation attempt passed! */
 	return (TRUE);
 }
 
@@ -3519,10 +3459,11 @@ bool place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp,
 	if(wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz > 0) return(FALSE);
 #endif
 
-if (!summon_override_checks) {
-	/* Do not allow breeders to spawn in the wilderness - the_sandman */
-	if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
-}
+	if (!(summon_override_checks & SO_SURFACE)) {
+		/* Do not allow breeders to spawn in the wilderness - the_sandman */
+		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return (FALSE);
+	}
+
 	/* Place one monster, or fail */
 	if (!place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, level), 0, slp, clo, clone_summoning)) return (FALSE);
 
@@ -3611,15 +3552,35 @@ if (!summon_override_checks) {
  */
 bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp)
 {
-	int r_idx;
+	int r_idx, i;
+	player_type *p_ptr;
 	int l = getlevel(wpos); /* HALLOWEEN */
+	bool no_high_level_players = TRUE;
 	struct dungeon_type *d_ptr = getdungeon(wpos);
 
 
 if (season_halloween) {
+	/* Verify that no high-level player is on this level! */
+        for (i = 1; i <= NumPlayers; i++)
+        {
+                p_ptr = Players[i];
+                if (is_admin(p_ptr)) continue;
+                if (inarea(&p_ptr->wpos, wpos) &&
+#ifndef RPG_SERVER
+                    (p_ptr->max_lev > 35)) {
+//spam			s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
+#else
+                    (p_ptr->max_lev > 40)) {
+//spam			s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
+#endif
+			no_high_level_players = FALSE;
+			break;
+		}
+	}
+
 	/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
  #ifndef RPG_SERVER
-	if ((great_pumpkin_timer == 0) && (l < 40) && (wpos->wz != 0)) {
+	if ((great_pumpkin_timer == 0) && (l < 40) && (wpos->wz != 0) && no_high_level_players) {
   #if 0
 		r_idx = 1086 + rand_int(2);
   #else
@@ -3642,17 +3603,21 @@ if (season_halloween) {
 		if (l > 30) r_idx = 1086;//10k HP
   #endif
  #endif
+
 		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0)) {
 //			great_pumpkin_timer = 15 + rand_int(45);  <- now done in monster_death() ! So no more duplicate pumpkins.
 			/* log */
 			s_printf("%s Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, l);
 			great_pumpkin_timer = -1; /* put generation on hold */
-			check_Pumpkin(); /* recall high-level players off this floor! */
-			return (TRUE);
+
+			/* This seems to be crashing the server - mikaelh */
+			// check_Pumpkin(); /* recall high-level players off this floor! */
+
+			return(TRUE);
 		}
 		/* oupsee */
 //		great_pumpkin_timer = 1; /* <- just paranoia: no mass-emptiness in case above always fails for unknown reasons */
-		return (FALSE);
+		return(FALSE);
 	}
 }
 
