@@ -407,6 +407,18 @@ void open_lua()
 
 void reopen_lua()
 {
+	int i;
+
+	/* Free up school names */
+	for (i = 0; i < max_schools; i++) {
+		if (schools[i].name) string_free(schools[i].name);
+	}
+
+	/* Free up spell names */
+	for (i = 0; i < max_spells; i++) {
+		if (school_spells[i].name) string_free(school_spells[i].name);
+	}
+
 	/* Free up schools and spells */
 	C_KILL(schools, max_schools, school_type);
 	C_KILL(school_spells, max_spells, spell_type);
