@@ -603,7 +603,7 @@ void do_slash_cmd(int Ind, char *message)
 
 				/* Hrm, this cannot be destroyed */
 				if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
-				    artifact_p(o_ptr))
+				    like_artifact_p(o_ptr))
 					resist = TRUE;
 #if 0 /* too easy! */		
 				/* Hack -- filter by value */
@@ -3576,7 +3576,7 @@ void do_slash_cmd(int Ind, char *message)
 					notes = atoi(message2 + 8);
 					if ((notes > 0) && (notes < MAX_ADMINNOTES)) {
 						strcpy(admin_note[notes], "");
-						msg_format(Ind, "\377oDeleted note�%d.", notes);
+						msg_format(Ind, "\377oDeleted note %d.", notes);
 					}
 				}
 				return;
