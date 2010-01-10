@@ -13,7 +13,6 @@ int Net_fd(void);
 int Net_start(int sex, int race, int class);
 int Net_input(void);
 int Receive_end(void);
-int Receive_reliable(void);
 int Receive_quit(void);
 void Receive_login(void);
 int Receive_file(void);
