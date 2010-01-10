@@ -2731,6 +2731,17 @@ void do_slash_cmd(int Ind, char *message)
 				}
 				return;
 			}
+			else if (prefix(message, "/makeadmin")){
+				if(!tk) return;
+				/* added checking for account existance - mikaelh */
+				if (makeadmin(message3)) {
+					msg_format(Ind, "\377GMaking %s an admin", message3);
+				}
+				else {
+					msg_format(Ind, "\377rAccount %s not found", message3);
+				}
+				return;
+			}
 			else if (prefix(message, "/ban"))
 			{
 				if (tk)

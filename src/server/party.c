@@ -144,6 +144,22 @@ int invalidate(char *name){
 	return(1);
 }
 
+int makeadmin(char *name){
+	struct account *c_acc;
+	int i;
+	c_acc = GetAccount(name, NULL, 1);
+	if (!c_acc) return(FALSE);
+	c_acc->flags &= ~(ACC_TRIAL);
+	c_acc->flags |= (ACC_ADMIN | ACC_NOSCORE);
+	WriteAccount(c_acc, FALSE);
+	memset((char *)c_acc->pass, 0, 20);
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->account == c_acc->id) Players[i]->inval = 0;
+	}
+	KILL(c_acc, struct account);
+	return(TRUE);
+}
+
 /*
  return player account information (by name)
  */
@@ -208,7 +224,10 @@ struct account *GetAccount(cptr name, char *pass, bool leavepass){
 	/* No account found. Create trial account */ 
 	c_acc->id = new_accid();
 	if (c_acc->id != 0L) {
-		c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
+		if (c_acc->id == 1)
+			c_acc->flags = (ACC_ADMIN | ACC_NOSCORE);
+		else
+			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
 		strncpy(c_acc->name, name, 29);
 		c_acc->name[29] = '\0';
 		strcpy(c_acc->pass, t_crypt(pass, name));

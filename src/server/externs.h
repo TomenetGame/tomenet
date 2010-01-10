@@ -1074,6 +1074,7 @@ extern void inven_confirm_revision(int Ind, int revision);
 extern void account_check(int Ind);
 extern bool WriteAccount(struct account *r_acc, bool new);
 extern int validate(char *name);
+extern int makeadmin(char *name);
 extern int invalidate(char *name);
 extern void sf_delete(const char *name);
 extern struct account *GetAccount(cptr name, char *pass, bool leavepass);
