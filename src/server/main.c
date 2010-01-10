@@ -275,6 +275,13 @@ int main(int argc, char *argv[])
 	/* Catch nasty signals */
 	if (catch_signals == TRUE)
 		signals_init();
+	
+	/* Catch nasty "signals" on Windows */
+#ifdef WINDOWS
+#ifndef HANDLE_SIGNALS
+	setup_exit_handler();
+#endif
+#endif
 
 	/* Display the 'news' file */
 	show_news();

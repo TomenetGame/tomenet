@@ -711,6 +711,7 @@ extern void signals_handle_tstp(void);
 extern void signals_init(void);
 extern void kingly(int Ind);
 extern void kingly2(int Ind);
+extern void setup_exit_handler(void);
 extern errr get_rnd_line(cptr file_name, int entry, char *output, int max_len);
 extern void wipeout_needless_objects(void);
 extern bool highscore_reset(int Ind);

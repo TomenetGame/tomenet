@@ -2645,10 +2645,69 @@ void save_game_panic(void)
 }
 
 
+/*
+ * Windows specific replacement for signal handling [grk]
+ */
+#ifdef WINDOWS
+#ifndef HANDLE_SIGNALS
+
+LPTOP_LEVEL_EXCEPTION_FILTER old_handler;
+
+/* Callback to be called by Windows when our term closes, the user 
+ * logs off, the system is shutdown, etc.
+ */
+BOOL ctrl_handler( DWORD fdwCtrlType ) 
+{
+	/* Save everything and quit the game */
+	shutdown_server();
+
+	return TRUE;
+}
+
+/* Global unhandled exception handler */
+/* If the server crashes under Windows, this is where we end up */
+LONG WINAPI myUnhandledExceptionFilter(
+  struct _EXCEPTION_POINTERS* ExceptionInfo)
+{
+	/* We don't report to the meta server in this case, the meta
+	 * server will detect that we've gone anyway 
+	 */
+
+	/* Call the previous exception handler, which we are assuming
+	 * is the MinGW exception handler which should have been implicitly
+	 * setup when we loaded the exchndl.dll library.
+	 */
+	if(old_handler != NULL)
+	{
+	  old_handler(ExceptionInfo);
+	}
+
+	/* Save everything and quit the game */
+	exit_game_panic();
+
+	/* We don't expect to ever get here... but for what it's worth... */
+	return(EXCEPTION_EXECUTE_HANDLER); 
+		
+}
+
+
+void setup_exit_handler(void)
+{
+	/* Trap CTRL+C, Logoff, Shutdown, etc */
+	if( SetConsoleCtrlHandler( (PHANDLER_ROUTINE) ctrl_handler, TRUE ) ) 
+	{
+		plog("Initialised exit save handler.");
+	}else{
+		plog("ERROR: Could not set panic save handler!");
+	}
+	/* Trap unhandled exceptions, i.e. server crashes */
+	old_handler = SetUnhandledExceptionFilter( myUnhandledExceptionFilter );
+}
+#endif
+#endif
+
 
 #ifdef HANDLE_SIGNALS
-
-
 
 
 /*
