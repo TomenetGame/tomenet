@@ -1315,49 +1315,49 @@ void do_ranged_technique()
 
 #ifdef ENABLE_RCRAFT
 
-static void print_runes()
+static void print_runes(int flags)
 {
-	int col = 20, j = 2;
+	int col = 10, j = 2;
 
 	/* Title the list */
 	prt("", 1, col); put_str("Element,      Rune", 1, col);
-	prt("", j, col); put_str("a) Fire:      aestus", j++, col);
-	prt("", j, col); put_str("b) Cold:      gelum", j++, col);
-	prt("", j, col); put_str("c) Acid:      delibro", j++, col);
-	prt("", j, col); put_str("d) Water:     mio", j++, col);
-	prt("", j, col); put_str("e) Lightning: fulmin", j++, col);
-	prt("", j, col); put_str("f) Earth:     ostes", j++, col);
-	prt("", j, col); put_str("g) Poison:    lepis", j++, col);
-	prt("", j, col); put_str("h) Wind:      ventus", j++, col);
-	prt("", j, col); put_str("i) Mana:      sacer", j++, col);
-	prt("", j, col); put_str("j) Chaos:     emuto", j++, col);
-	prt("", j, col); put_str("k) Force:     fero", j++, col);
-	prt("", j, col); put_str("l) Gravity:   numen", j++, col);
-	prt("", j, col); put_str("m) Nether:    elido", j++, col);
-	prt("", j, col); put_str("n) Time:      emero", j++, col);
-	prt("", j, col); put_str("o) Mind:      cogito", j++, col);
-	prt("", j, col); put_str("p) Nexus:     vicis", j++, col);
-	prt("", j, col); put_str("Press \"Return\" when done.", j++, col);
+	if((flags & R_FIRE)!=R_FIRE) { prt("", j, col); put_str("a) Fire:      aestus", j++, col); }
+	if((flags & R_COLD)!=R_COLD) { prt("", j, col); put_str("b) Cold:      gelum", j++, col); }
+	if((flags & R_ACID)!=R_ACID) { prt("", j, col); put_str("c) Acid:      delibro", j++, col); }
+	if((flags & R_WATE)!=R_WATE) { prt("", j, col); put_str("d) Water:     mio", j++, col); }
+	if((flags & R_ELEC)!=R_ELEC) { prt("", j, col); put_str("e) Lightning: fulmin", j++, col); }
+	if((flags & R_EART)!=R_EART) { prt("", j, col); put_str("f) Earth:     ostes", j++, col); }
+	if((flags & R_POIS)!=R_POIS) { prt("", j, col); put_str("g) Poison:    lepis", j++, col); }
+	if((flags & R_WIND)!=R_WIND) { prt("", j, col); put_str("h) Wind:      ventus", j++, col); }
+	if((flags & R_MANA)!=R_MANA) { prt("", j, col); put_str("i) Mana:      sacer", j++, col); }
+	if((flags & R_CHAO)!=R_CHAO) { prt("", j, col); put_str("j) Chaos:     emuto", j++, col); }
+	if((flags & R_FORC)!=R_FORC) { prt("", j, col); put_str("k) Force:     fero", j++, col); }
+	if((flags & R_GRAV)!=R_GRAV) { prt("", j, col); put_str("l) Gravity:   numen", j++, col); }
+	if((flags & R_NETH)!=R_NETH) { prt("", j, col); put_str("m) Nether:    elido", j++, col); }
+	if((flags & R_TIME)!=R_TIME) { prt("", j, col); put_str("n) Time:      emero", j++, col); }
+	if((flags & R_MIND)!=R_MIND) { prt("", j, col); put_str("o) Mind:      cogito", j++, col); }
+	if((flags & R_NEXU)!=R_NEXU) { prt("", j, col); put_str("p) Nexus:     vicis", j++, col); }
+	prt("", j++, col);
+	put_str("Select the maximum of three runes, or press \"Return\" when done.", j++, col);
 	
-
 	/* Clear the bottom line */
 	prt("", j++, col);
 }
 
 static void print_rune_imperatives()
 {
-	int col = 20, j = 2;
+	int col = 10, j = 2;
 
 	/* Title the list */
-	prt("", 1, col); put_str("Name      ( cost%,   damage%, fail%   )", 1, col);
-	prt("", j, col); put_str("a) qua    ( 50%,     50%,     100%    )", j++, col);
-	prt("", j, col); put_str("b) immo   ( 80%,     80%,     100%    )", j++, col);
-	prt("", j, col); put_str("c) oratu  ( 100%,    100%,    150%    )", j++, col);
-	prt("", j, col); put_str("d) multo  ( 120%,    120%,    200%    )", j++, col);
-	prt("", j, col); put_str("e) coactu ( 120%,    100%,    200%    )", j++, col);
-	prt("", j, col); put_str("f) armis  ( 150%,    120%,    300%    )", j++, col);
-	prt("", j, col); put_str("g) iussu  ( 180%,    150%,    400%    )", j++, col);
-	prt("", j, col); put_str("h) forte  ( 50-200%, 50-200%, 50-200% )", j++, col);
+	prt("", 1, col); put_str("Name         ( cost%,   damage%, fail%   )", 1, col);
+	prt("", j, col); put_str("a) minimised ( 50%,     50%,     100%    )", j++, col);
+	prt("", j, col); put_str("b) tiny      ( 80%,     80%,     100%    )", j++, col);
+	prt("", j, col); put_str("c) small     ( 100%,    100%,    150%    )", j++, col);
+	prt("", j, col); put_str("d) moderate  ( 120%,    120%,    200%    )", j++, col);
+	prt("", j, col); put_str("e) large     ( 120%,    100%,    200%    )", j++, col);
+	prt("", j, col); put_str("f) massive   ( 150%,    120%,    300%    )", j++, col);
+	prt("", j, col); put_str("g) maximised ( 180%,    150%,    400%    )", j++, col);
+	prt("", j, col); put_str("h) chaotic   ( 50-200%, 50-200%, 50-200% )", j++, col);
 
 	/* Clear the bottom line */
 	prt("", j++, col);
@@ -1365,13 +1365,13 @@ static void print_rune_imperatives()
 
 static void print_rune_methods()
 {
-	int col = 20, j = 2;
+	int col = 10, j = 2;
 
 	/* Title the list */
 	prt("", 1, col); put_str("Name     ( cost% )", 1, col);
 	prt("", j, col); put_str("a) Melee ( 50%   )", j++, col);
 	prt("", j, col); put_str("b) Self  ( 100%  )", j++, col);
-	prt("", j, col); put_str("c) Bolt  ( 100%   )", j++, col);
+	prt("", j, col); put_str("c) Bolt  ( 100%  )", j++, col);
 	prt("", j, col); put_str("d) Beam  ( 110%  )", j++, col);
 	prt("", j, col); put_str("e) Ball  ( 130%  )", j++, col);
 	prt("", j, col); put_str("f) Wave  ( 120%  )", j++, col);
@@ -1382,7 +1382,7 @@ static void print_rune_methods()
 	prt("", j++, col);
 }
 
-static int get_rune_type(u32b *sn)
+static int get_rune_type(u32b s_flags, u32b *sn)
 {
 	int		i = 0; int num = 16;
 	bool		flag, redraw;
@@ -1400,8 +1400,7 @@ static int get_rune_type(u32b *sn)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Elements %c-%c, *=List, ESC=exit, ENTER=done) use which element? ",
-		    I2A(0), I2A(num-1));
+		strnfmt(out_val, 78, "(Runes %c-%c, *=List, ESC=exit, ENTER=done) Which runes? ", I2A(0), I2A(num-1));
 	else
 		strnfmt(out_val, 78, "No elements available - ESC=exit");
 
@@ -1414,7 +1413,7 @@ static int get_rune_type(u32b *sn)
 		Term_save();
 
 		/* Display a list of techniques */
-		print_runes();
+		print_runes(s_flags);
 	}
 
 	/* Get a technique from the user */
@@ -1433,7 +1432,7 @@ static int get_rune_type(u32b *sn)
 				Term_save();
 
 				/* Display a list of techniques */
-				print_runes();
+				print_runes(s_flags);
 			}
 
 			/* Hide the list */
@@ -1529,10 +1528,10 @@ static int get_rune_imperative(byte *sn)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Imperatives %c-%c, *=List, ESC=exit) use which imperative? ",
+		strnfmt(out_val, 78, "(Spell-power %c-%c, *=List, ESC=exit) What kind of effect? ",
 		    I2A(0), I2A(num-1));
 	else
-		strnfmt(out_val, 78, "No elements available - ESC=exit");
+		strnfmt(out_val, 78, "No options available - ESC=exit");
 
 	if (c_cfg.always_show_lists)
 	{
@@ -1644,7 +1643,7 @@ static int get_rune_method(u32b *sn, u16b * method)
 
 	/* Build a prompt (accept all techniques) */
 	if (num)
-		strnfmt(out_val, 78, "(Methods %c-%c, *=List, ESC=exit) use which method? ",
+		strnfmt(out_val, 78, "(Spell-types %c-%c, *=List, ESC=exit) Which spell type? ",
 		    I2A(0), I2A(num-1));
 	else
 		strnfmt(out_val, 78, "No methods available - ESC=exit");
@@ -1743,9 +1742,9 @@ void do_runespell()
 	u32b s_flags = 0; u16b method = 0; byte imperative = 0; int dir = 0;
 	u32b flag = 0; int i = 0;
 	int part1 = 0; int part2 = 0;
-	for(i = 0; i<5; i++)
+	for(i = 0; i<3; i++)
 	{
-		if(get_rune_type(&flag))
+		if(get_rune_type(s_flags,&flag))
 		{
 			s_flags |= flag;
 			flag = 0;
