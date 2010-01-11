@@ -2033,20 +2033,17 @@ static void player_setup(int Ind, bool new)
 #ifdef AUCTION_SYSTEM
 	p_ptr->current_auction = 0;
 #endif
-	
-	#ifdef ENABLE_RCRAFT
+
 	/* Set up the Runecraft extra p_ptr variables */
 	p_ptr->memory.x = 0;
 	p_ptr->memory.y = 0;
 	p_ptr->memory.wpos.wx = 0;
 	p_ptr->memory.wpos.wy = 0;
 	p_ptr->memory.wpos.wz = 0;
-	
 	p_ptr->tim_deflect = 0;
 	p_ptr->tim_trauma = 0;
 	p_ptr->tim_trauma_pow = 0;
-	#endif
-	
+
 	/* No item being used up */
 	p_ptr->using_up_item = -1;
 

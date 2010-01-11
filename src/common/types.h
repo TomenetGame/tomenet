@@ -123,8 +123,8 @@ typedef struct worldspot worldspot;
 struct worldspot
 {
 	struct worldpos wpos;
-	int x;
-	int y;
+	s16b x;
+	s16b y;
 };
 
 #if 0
@@ -2055,9 +2055,8 @@ struct player_type
 	s16b px;
 
 	struct worldpos wpos;
-#ifdef ENABLE_RCRAFT
+
 	struct worldspot memory; /* Runemaster's remembered teleportation spot */
-#endif
 	u16b tim_deflect;	/* Timed -- Deflection */
 	u16b tim_trauma;	/* Timed -- Traumaturgy */
 	u16b tim_trauma_pow;	/* Timed -- Traumaturgy */

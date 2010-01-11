@@ -1610,6 +1610,19 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->free_mimic = tmp16s;
 	}
 
+	/* Runecraft */
+	if (!older_than(4, 3, 26)) {
+		rd_s16b(&p_ptr->memory.wpos.wx);
+		rd_s16b(&p_ptr->memory.wpos.wy);
+		rd_s16b(&p_ptr->memory.wpos.wz);
+		rd_s16b(&p_ptr->memory.x);
+		rd_s16b(&p_ptr->memory.y);
+
+		rd_u16b(&p_ptr->tim_deflect);
+		rd_u16b(&p_ptr->tim_trauma);
+		rd_u16b(&p_ptr->tim_trauma_pow);
+	}
+
 	/* auto-enable for now (MAX_AURAS) */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
 	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;

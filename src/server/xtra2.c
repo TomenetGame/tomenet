@@ -268,7 +268,7 @@ bool set_tim_regen(int Ind, int v, int p)
 	/* Result */
 	return (TRUE);
 }
-#ifdef ENABLE_RCRAFT
+
 /*
  * Set "p_ptr->tim_trauma", notice observable changes
  */
@@ -316,7 +316,6 @@ bool set_tim_trauma(int Ind, int v, int p)
 	/* Result */
 	return (TRUE);
 }
-#endif
 
 /*
  * Set "p_ptr->tim_ffall"
@@ -7413,15 +7412,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 		m_ptr->charmedignore = 0;
 	}
 
-	#ifdef ENABLE_RCRAFT
 	/* Trauma boost spell */
-	if(p_ptr->tim_trauma)
+	if (p_ptr->tim_trauma)
 	{
 		skill_trauma += (skill_trauma<(SKILL_MAX-(p_ptr->tim_trauma_pow*1000)) ? (p_ptr->tim_trauma_pow*1000) : SKILL_MAX-skill_trauma);
 		scale_trauma = (((skill_trauma) * 20) / SKILL_MAX);
 	}
-	#endif
-	
+
 	/* Redraw (later) if needed */
 	update_health(m_idx);
 
@@ -7440,11 +7437,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note)
 	    (!(strchr("AEgv", r_ptr->d_char))))
 	{
 		/* difficult to balance, due to the different damage effects of spells- might need some changes */
-		#ifdef ENABLE_RCRAFT
 		long gain = scale_trauma;
-		#else
-		long gain = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 20);
-		#endif
 		gain = (dam/20 > gain ? gain : dam/20);//50
 		if (gain > m_ptr->hp) gain = m_ptr->hp;
 		if (!gain && magik(dam * 5)) gain = 1; /* no perma-supply for level 1 mana bolts for now */

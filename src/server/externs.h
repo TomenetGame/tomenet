@@ -1553,10 +1553,8 @@ extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
 extern bool set_tim_thunder(int Ind, int v, int p1, int p2);
 extern bool set_tim_regen(int Ind, int v, int p);
-#ifdef ENABLE_RCRAFT
 extern bool set_tim_trauma(int Ind, int v, int p);
 extern bool set_tim_deflect(int Ind, int v);
-#endif
 extern bool set_tim_ffall(int Ind, int v);
 extern bool set_tim_fly(int Ind, int v);
 extern bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2);

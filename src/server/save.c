@@ -1419,6 +1419,17 @@ static void wr_extra(int Ind)
         wr_s16b(p_ptr->kills_higher);
         wr_s16b(p_ptr->kills_equal);
         wr_s16b(p_ptr->free_mimic);
+
+	/* Runecraft */
+	wr_s16b(p_ptr->memory.wpos.wx);
+	wr_s16b(p_ptr->memory.wpos.wy);
+	wr_s16b(p_ptr->memory.wpos.wz);
+	wr_s16b(p_ptr->memory.x);
+	wr_s16b(p_ptr->memory.y);
+
+	wr_u16b(p_ptr->tim_deflect);
+	wr_u16b(p_ptr->tim_trauma);
+	wr_u16b(p_ptr->tim_trauma_pow);
 }
 
 /*

@@ -4138,13 +4138,11 @@ void calc_boni(int Ind)
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
 	
-	#ifdef ENABLE_RCRAFT
 	/* Temporary deflection */
 	if(p_ptr->tim_deflect)
 	{
 		p_ptr->reflect = TRUE;
 	}
-	#endif
 	
 	/* Temporary "Hero" */
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5))
