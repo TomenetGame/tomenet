@@ -1106,9 +1106,9 @@ static byte player_init[2][MAX_CLASS][5][3] =
 #else
 		{ TV_SOFT_ARMOR, SV_SHIRT, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
-		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
+		{ 255, 255, 0 },
 #endif
 	},
 	{
@@ -1595,6 +1595,13 @@ static void player_outfit(int Ind)
 				invcopy(o_ptr, k_idx);
 				o_ptr->pval = pv;
 				o_ptr->number = 1;
+
+#ifdef ENABLE_RCRAFT
+				/* Multiply runes */
+				if (tv == TV_RUNE2) {
+					o_ptr->number = 5;
+				}
+#endif
 
 #if 1 /* use check in do_cmd_ranged_technique() instead? */
 				/* hack: prevent newbie archers from wasting their
