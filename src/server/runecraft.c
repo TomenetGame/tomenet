@@ -1468,7 +1468,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		else if(type_flags & R_WAVE)
 		{
 			sprintf(p_ptr->attacker, " summons a wave of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s wave of %s. (%i%%)", runespell_list[type].title, r_imperatives[imper].name, description, difficulty);
+			msg_format(Ind, "%s%s summon a %s wave of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
 			if(success) fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
 		}
 		if(type_flags & R_MELE)
