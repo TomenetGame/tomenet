@@ -506,6 +506,11 @@ static void choose_stat_order(void)
                         	sprintf(out_val, "%s: %s    (%s)", stats[i], buf, buf2);
 
 				tmp_stat = cp_ptr->min_recommend[i];
+				if (tmp_stat >= 100) {
+					/* indicate it's a main stat of this class */
+					tmp_stat -= 100;
+					c_put_str(TERM_GREEN, "(main)", 16 + i, col2 + 26 + 8);
+				}
 				if (tmp_stat) {
 					if (tmp_stat > 18) tmp_stat = 18 + (tmp_stat - 18) * 10;
 					cnv_stat(tmp_stat, buf);
