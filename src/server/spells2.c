@@ -550,7 +550,7 @@ bool hp_player(int Ind, int num)
  * Increase players hit points, notice effects, and don't tell the player it.
  * 'autoeffect' stands for non-'intended' healing, that applies automatically,
  * such as necromancy, vampiric items, standard body regeneration;
- * set 'autoeffect' to TRUE if you want to do forced healing without anny
+ * set 'autoeffect' to TRUE if you want to do forced healing without any
  * implications.
  */
 bool hp_player_quiet(int Ind, int num, bool autoeffect)
@@ -8292,6 +8292,7 @@ void tome_creation_aux(int Ind, int item) {
 	bool		okay = TRUE;
 	object_type	*o_ptr, *o2_ptr;
 	char		o_name[160];
+	byte		*xtra;
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
@@ -8375,16 +8376,19 @@ void tome_creation_aux(int Ind, int item) {
 
 	/* - Success finally - */
 
+	/* Find the next free slot */
+	if (!o_ptr->xtra1) xtra = &o_ptr->xtra1;
+	else if (!o_ptr->xtra2) xtra = &o_ptr->xtra2;
+	else if (!o_ptr->xtra3) xtra = &o_ptr->xtra3;
+	else if (!o_ptr->xtra4) xtra = &o_ptr->xtra4;
+	else if (!o_ptr->xtra5) xtra = &o_ptr->xtra5;
+	else if (!o_ptr->xtra6) xtra = &o_ptr->xtra6;
+	else if (!o_ptr->xtra7) xtra = &o_ptr->xtra7;
+	else if (!o_ptr->xtra8) xtra = &o_ptr->xtra8;
+	else xtra = &o_ptr->xtra9;
+
 	/* transcribe (add it)! */
-	if (!o_ptr->xtra1) o_ptr->xtra1 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra2) o_ptr->xtra2 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra3) o_ptr->xtra3 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra4) o_ptr->xtra4 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra5) o_ptr->xtra5 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra6) o_ptr->xtra6 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra7) o_ptr->xtra7 = o2_ptr->pval + 1;
-	else if (!o_ptr->xtra8) o_ptr->xtra8 = o2_ptr->pval + 1;
-	else o_ptr->xtra9 = o2_ptr->pval + 1;
+	*xtra = o2_ptr->pval + 1;
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
@@ -8411,7 +8415,7 @@ void tome_creation_aux(int Ind, int item) {
                 tmp_obj.number = 1;
 
 		/* Restore remaining 'untouched' stack of books */
-		o_ptr->xtra1 = 0;
+		*xtra = 0;
 
                 /* Message */
                 msg_print(Ind, "You unstack your book.");
