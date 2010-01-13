@@ -1652,6 +1652,11 @@ static errr Term_xtra_win_event(int v)
 {
 	MSG msg;
 
+#ifdef OPTIMIZE_DRAWING
+	/* Release DC before waiting */
+	Term_xtra_win_fresh(v);
+#endif
+
 	/* Wait for an event */
 	if (v)
 	{
