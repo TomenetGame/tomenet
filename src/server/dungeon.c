@@ -1339,68 +1339,94 @@ void world_surface_night(struct worldpos *wpos) {
 #endif
 }
 
+/* Day starts */
+static void sun_rises() {
+	struct worldpos wrpos;
+	int wx, wy, i;
+
+	night_surface = FALSE;
+	wrpos.wz = 0;
+
+	/* scan through all currently allocated world surface levels */
+	for (wx = 0; wx < MAX_WILD_X; wx++)
+	for (wy = 0; wy < MAX_WILD_Y; wy++) {
+		wrpos.wx = wx;
+		wrpos.wy = wy;
+		if (!getcave(&wrpos)) continue;
+		world_surface_day(&wrpos);
+	}
+
+	/* Message all players who witness switch */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->wpos.wz) continue;
+		msg_print(i, "The sun has risen.");
+
+		player_day(i);
+	}
+}
+
+/* Night starts */
+static void night_falls() {
+	struct worldpos wrpos;
+	int wx, wy, i;
+
+	night_surface = TRUE;
+	wrpos.wz = 0;
+
+	/* scan through all currently allocated world surface levels */
+	for (wx = 0; wx < MAX_WILD_X; wx++)
+	for (wy = 0; wy < MAX_WILD_Y; wy++) {
+		wrpos.wx = wx;
+		wrpos.wy = wy;
+		if (!getcave(&wrpos)) continue;
+		world_surface_night(&wrpos);
+	}
+
+	/* Message all players who witness switch */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (Players[i]->wpos.wz) continue;
+		msg_print(i, "The sun has fallen.");
+
+		player_night(i);
+	}
+}
+
 /* take care of day/night changes, on world surface.
    NOTE: assumes that it gets called every HOUR turns only! */
 static void process_day_and_night() {
 	bool sunrise, nightfall;
-	struct worldpos wrpos;
-	int wx, wy, i;
 
 	/* Check for sunrise or nightfall */
 	sunrise = ((turn / HOUR) % 24) == SUNRISE;
 	nightfall = ((turn / HOUR) % 24) == NIGHTFALL;
 
-	wrpos.wz = 0;
-
 	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! */
 	if (sunrise && !fireworks && !season_halloween)
 	{
-		night_surface = FALSE;
-
-		/* scan through all currently allocated world surface levels */
-		for (wx = 0; wx < MAX_WILD_X; wx++)
-		for (wy = 0; wy < MAX_WILD_Y; wy++) {
-			wrpos.wx = wx;
-			wrpos.wy = wy;
-			if (!getcave(&wrpos)) continue;
-			world_surface_day(&wrpos);
-		}
-
-		/* Message all players who witness switch */
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (Players[i]->wpos.wz) continue;
-			msg_print(i, "The sun has risen.");
-
-			player_day(i);
-		}
+		sun_rises();
 	}
 
 	/* Night falls - but only if it was actually day so far:
 	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
 	else if (nightfall && !night_surface) {
-		night_surface = TRUE;
-
-		/* scan through all currently allocated world surface levels */
-		for (wx = 0; wx < MAX_WILD_X; wx++)
-		for (wy = 0; wy < MAX_WILD_Y; wy++) {
-			wrpos.wx = wx;
-			wrpos.wy = wy;
-			if (!getcave(&wrpos)) continue;
-			world_surface_night(&wrpos);
-		}
-
-		/* Message all players who witness switch */
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
-			if (Players[i]->wpos.wz) continue;
-			msg_print(i, "The sun has fallen.");
-
-			player_night(i);
-		}
+		night_falls();
 	}
 }
 
+/* Called when the server starts up */
+static void init_day_and_night() {
+	int hour;
+
+	hour = ((turn / HOUR) % 24);
+
+	if ((hour >= SUNRISE) && (hour <= NIGHTFALL)) {
+		sun_rises();
+	} else {
+		night_falls();
+	}
+}
 
 /*
  * Handle certain things once every 50 game turns
@@ -3489,6 +3515,7 @@ static bool process_player_end_aux(int Ind)
 		if (--p_ptr->cloaked == 1) {
 			msg_print(Ind, "\377sYou cloaked your appearance!");
 			msg_format_near(Ind, "\377w%s disappears before your eyes!", p_ptr->name);
+			s_printf("CLOAKING: %s.\n", p_ptr->name);
 			p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 			p_ptr->redraw |= (PR_STATE | PR_SPEED);
 		        handle_stuff(Ind);
@@ -6568,6 +6595,8 @@ void play_game(bool new_game)
 	/* initialize weather */
 	wild_weather_init();
 #endif
+
+	init_day_and_night();
 
 	cfg.runlevel=6;		/* Server is running */
 
