@@ -251,6 +251,7 @@ static void sync_sleep(int milliseconds)
 
 		/* Flush output - maintain flickering/multi-hued characters */
 		do_flicker();
+
 		/* Update our timer and if neccecary send a keepalive packet
 		 */
 		update_ticks();
@@ -268,6 +269,9 @@ static void sync_sleep(int milliseconds)
 		/* Wait according to fps - mikaelh */
 		SetTimeout(0, next_frame());
 
+		/* Update the screen */
+		Term_fresh();
+
 		if(c_quit) continue;
 
 		/* Parse net input if we got any */
@@ -278,9 +282,6 @@ static void sync_sleep(int milliseconds)
 				quit(NULL);
 			}
 		}
-
-		/* Update the screen */
-		Term_fresh();
 
 		/* Redraw windows if necessary */
 		if (p_ptr->window)
@@ -375,6 +376,9 @@ static char inkey_aux(void)
 			/* Wait according to fps - mikaelh */
 			SetTimeout(0, next_frame());
 
+			/* Update the screen */
+			Term_fresh();
+
 			if(c_quit) continue;
 
 			/* Parse net input if we got any */
@@ -385,9 +389,6 @@ static char inkey_aux(void)
 					quit(NULL);
 				}
 			}
-
-			/* Update the screen */
-			Term_fresh();
 
 			/* Redraw windows if necessary */
 			if (p_ptr->window)
