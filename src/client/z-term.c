@@ -286,7 +286,7 @@ static errr term_win_init(term_win *s, int w, int h)
  */
 static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 {
-	int x, y;
+	int y;
 
 	/* Copy contents */
 	for (y = 0; y < h; y++)
@@ -297,11 +297,8 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h)
 		byte *s_aa = s->a[y];
 		char *s_cc = s->c[y];
 
-		for (x = 0; x < w; x++)
-		{
-			*s_aa++ = *f_aa++;
-			*s_cc++ = *f_cc++;
-		}
+		memcpy(s_aa, f_aa, w);
+		memcpy(s_cc, f_cc, w);
 	}
 
 	/* Copy cursor */
