@@ -1213,9 +1213,9 @@ void msg_print(int Ind, cptr msg)
 		     this is client-dependant, compare c_msg_print (c-util.c) */
 	char msg_buf[line_len + 2 + 2 * 80]; /* buffer for 1 line. + 2 bytes for colour code (+2*80 bytes for colour codeeeezz) */
 	char msg_minibuf[3]; /* temp buffer for adding characters */
-	int text_len, msg_scan = 0, space_scan, tab_spacer = 0;
+	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
 	char colour_code = 0;
-	bool first_character;
+	bool first_character = TRUE;
 	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
 	bool client_ctrlo = FALSE, client_chat = FALSE, client_nochat = FALSE;
 
@@ -1244,19 +1244,23 @@ void msg_print(int Ind, cptr msg)
 	if (!is_newer_than(&Players[Ind]->version, 4, 4, 2, 0, 0, 0))
 		client_ctrlo = client_chat = client_nochat = FALSE;
 
-
 #if 1	/* String longer than 1 line? -> Split it up! --C. Blue-- */
 	while (msg != NULL && msg[msg_scan] != '\0') {
 		/* Start a new line */
 		strcpy(msg_buf, "");
 		text_len = 0;
-		first_character = TRUE;
 
 		/* Tabbing the line? */
 		msg_minibuf[0] = ' ';
-		if (is_chat) msg_minibuf[0] = '~';
 		msg_minibuf[1] = '\0';
-		while (tab_spacer--) {
+		if (is_chat && tab_spacer) {
+			/* Start the padding for chat messages with '~' */
+			strcat(msg_buf, "~");
+			tmp = tab_spacer - 1;
+		} else {
+			tmp = tab_spacer;
+		}
+		while (tmp--) {
 			text_len++;
 			strcat(msg_buf, msg_minibuf);
 		}
@@ -1302,10 +1306,31 @@ void msg_print(int Ind, cptr msg)
 				if (first_character) {
 					switch (msg[msg_scan]) {
 					case '*': tab_spacer = 2; break; /* Kill message */
-					case '[': tab_spacer = 1; break; /* Chat message */
+					case '[': /* Chat message */
+#if 0
+						tab_spacer = 1;
+#else
+						{
+							char *bracket = strchr(&msg[msg_scan], ']');
+
+							if (bracket) {
+								/* Pad lines according to how long the name is - mikaelh */
+								tab_spacer = bracket - &msg[msg_scan] + 2;
+
+								/* Paranoia */
+								if (tab_spacer < 1) tab_spacer = 1;
+								if (tab_spacer > 30) tab_spacer = 30;
+							} else {
+								/* No ']' */
+								tab_spacer = 1;
+							}
+						}
+#endif
+						break;
 					default: tab_spacer = 1;
 					}
 				}
+
 				/* Process text.. */
 				first_character = FALSE;
 				msg_minibuf[0] = msg[msg_scan];
@@ -1351,10 +1376,14 @@ void msg_print(int Ind, cptr msg)
 	}
 
 	if (msg == NULL) Send_message(Ind, msg);
+
 	return;
 #endif // enable line breaks?
 
-	Send_message(Ind, msg);
+	Send_message(Ind, format("%s%s",
+	    client_ctrlo ? "\376" :
+	    (client_chat ? "\375" :
+	    (client_nochat ? "\374" : "")), msg));
 }
 
 void msg_broadcast(int Ind, cptr msg)
@@ -2566,6 +2595,12 @@ void toggle_afk(int Ind, char *msg)
 				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = TRUE;
+
+		/* actually a hint for newbie rogues couldn't hurt */
+		if (p_ptr->tim_blacklist)
+		{
+			msg_print(Ind, "\377yNote: Your blacklist timer won't decrease while AFK.");
+		}
 
 		/* still too many starvations, so give a warning - C. Blue */
 		if (p_ptr->food < PY_FOOD_ALERT)
