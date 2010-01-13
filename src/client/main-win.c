@@ -90,6 +90,8 @@
 #  define DEFAULT_TILENAME "8X13.BMP"
 #endif
 
+#define OPTIMIZE_DRAWING
+
 
 /*
  * Extract the "WIN32" flag from the compiler
@@ -503,6 +505,12 @@ VID_WHITE,
 	VID_BLUE | VID_BRIGHT,	/* Light Blue */
 	VID_YELLOW			/* Light Umber XXX */
 };
+
+
+#ifdef OPTIMIZE_DRAWING
+HDC oldDC = NULL;
+byte old_attr = -1;
+#endif
 
 
 
@@ -1490,6 +1498,32 @@ static void term_data_redraw(term_data *td)
 }
 
 
+/*
+ * This function either gets a new DC or uses an old one. Each screen update
+ * must be followed by a TERM_XTRA_FRESH so that the DC gets released.
+ *  - mikaelh
+ */
+static HDC myGetDC(HWND hWnd)
+{
+	term_data *td = (term_data*)(Term->data);
+
+#ifdef OPTIMIZE_DRAWING
+	if (!oldDC) {
+		oldDC = GetDC(hWnd);
+
+		/* The background color and the font is always the same */
+		SetBkColor(oldDC, RGB(0, 0, 0));
+		SelectObject(oldDC, td->font_id);
+
+		/* Foreground color not set */
+		old_attr = -1;
+	}
+	return oldDC;
+#else
+	return GetDC(hWnd);
+#endif
+}
+
 
 
 
@@ -1683,11 +1717,15 @@ static errr Term_xtra_win_clear(void)
 	rc.bottom = rc.top + td->rows * td->font_hgt;
 
 	/* Erase it */
-	hdc = GetDC(td->w);
+	hdc = myGetDC(td->w);
+#ifdef OPTIMIZE_DRAWING
+	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
+#else
 	SetBkColor(hdc, RGB(0, 0, 0));
 	SelectObject(hdc, td->font_id);
 	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
 	ReleaseDC(td->w, hdc);
+#endif
 
 	/* Success */
 	return 0;
@@ -1773,6 +1811,25 @@ int Term_xtra_win_delay(int v)
 }
 
 
+#ifdef OPTIMIZE_DRAWING
+/*
+ * This is where we free the DC we've been using.
+ */
+int Term_xtra_win_fresh(int v)
+{
+	term_data *td = (term_data*)(Term->data);
+
+	if (oldDC) {
+		ReleaseDC(td->w, oldDC);
+		oldDC = NULL;
+	}
+
+	/* Success */
+	return (0);
+}
+#endif
+
+
 /*
  * Do a "special thing"
  */
@@ -1812,6 +1869,11 @@ static errr Term_xtra_win(int n, int v)
 		/* Delay for some milliseconds */
 		case TERM_XTRA_DELAY:
 		return (Term_xtra_win_delay(v));
+
+#ifdef OPTIMIZE_DRAWING
+		case TERM_XTRA_FRESH:
+		return (Term_xtra_win_fresh(v));
+#endif
 	}
 
 	/* Oops */
@@ -1838,11 +1900,15 @@ static errr Term_wipe_win(int x, int y, int n)
 	rc.top    = y * td->font_hgt + td->size_oh1;
 	rc.bottom = rc.top + td->font_hgt;
 
-	hdc = GetDC(td->w);
+	hdc = myGetDC(td->w);
+#ifdef OPTIMIZE_DRAWING
+	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
+#else
 	SetBkColor(hdc, RGB(0, 0, 0));
 	SelectObject(hdc, td->font_id);
 	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
 	ReleaseDC(td->w, hdc);
+#endif
 
 	/* Success */
 	return 0;
@@ -1867,9 +1933,11 @@ static errr Term_curs_win(int x, int y)
 	rc.bottom = rc.top + td->font_hgt;
 
 	/* Cursor is done as a yellow "box" */
-	hdc = GetDC(data[0].w);
+	hdc = myGetDC(data[0].w);
 	FrameRect(hdc, &rc, hbrYellow);
+#ifndef OPTIMIZE_DRAWING
 	ReleaseDC(data[0].w, hdc);
+#endif
 
 	/* Success */
 	return 0;
@@ -1939,7 +2007,7 @@ static errr Term_pict_win(int x, int y, byte a, char c)
 	y2 = y * h2 + td->size_oh1;
 
 	/* Info */
-	hdc = GetDC(td->w);
+	hdc = myGetDC(td->w);
 
 	/* Handle small bitmaps */
 	if ((w1 < w2) || (h1 < h2))
@@ -1953,9 +2021,13 @@ static errr Term_pict_win(int x, int y, byte a, char c)
 		rc.bottom = y2 + h2;
 
 		/* Erase the rectangle */
+#ifdef OPTIMIZE_DRAWING
+		ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
+#else
 		SetBkColor(hdc, RGB(0, 0, 0));
 		SelectObject(hdc, td->font_id);
 		ExtTextOut(hdc, 0, 0, ETO_OPAQUE, &rc, NULL, 0, NULL);
+#endif
 
 		/* Center bitmaps */
 		x2 += (w2 - w1) >> 1;
@@ -1973,8 +2045,10 @@ static errr Term_pict_win(int x, int y, byte a, char c)
 	SelectObject(hdcSrc, hbmSrcOld);
 	DeleteDC(hdcSrc);
 
+#ifndef OPTIMIZE_DRAWING
 	/* Release */
 	ReleaseDC(td->w, hdc);
+#endif
 
 #else
 
@@ -2014,8 +2088,26 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
 	rc.bottom = rc.top + td->font_hgt;
 
 	/* Acquire DC */
-	hdc = GetDC(td->w);
+	hdc = myGetDC(td->w);
 
+#ifdef OPTIMIZE_DRAWING
+	if (old_attr != a) {
+		/* Foreground color */
+		if (colors16)
+		{
+			SetTextColor(hdc, PALETTEINDEX(win_pal[a&0x0F]));
+		}
+		else
+		{
+			SetTextColor(hdc, win_clr[a&0x0F]);
+		}
+		old_attr = a;
+	}
+
+	/* Dump the text */
+	ExtTextOut(hdc, rc.left, rc.top, ETO_OPAQUE | ETO_CLIPPED, &rc,
+	           s, n, NULL);
+#else
 	/* Background color */
 	SetBkColor(hdc, RGB(0, 0, 0));
 
@@ -2038,6 +2130,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
 
 	/* Release DC */
 	ReleaseDC(td->w, hdc);
+#endif
 
 	/* Success */
 	return 0;
