@@ -1289,7 +1289,7 @@ static void Term_fresh_row_pict(int y)
  */
 errr Term_fresh(void)
 {
-	int x, y;
+	int y;
 
 	int w = Term->wid;
 	int h = Term->hgt;
@@ -1916,8 +1916,6 @@ errr Term_erase(int x, int y, int n)
  */
 errr Term_clear(void)
 {
-	int x;
-
 	int w = Term->wid;
 	int h = Term->hgt;
 
@@ -1936,7 +1934,7 @@ errr Term_clear(void)
 
 	/* Every column has changed */
 	memset(Term->x1, 0, h);
-	memset(Term->x2, w - 1, h)
+	memset(Term->x2, w - 1, h);
 
 	/* Every row has changed */
 	Term->y1 = 0;
