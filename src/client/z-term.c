@@ -1405,18 +1405,18 @@ errr Term_fresh(void)
 				*aa++ = a;
 				*cc++ = c;
 			}
+
+			/* Redraw every column */
+			Term->x1[y] = 0;
+			Term->x2[y] = w - 1;
 		}
 
 		/* Redraw every row */
 		Term->y1 = 0;
 		Term->y2 = h - 1;
 
-		/* Redraw every column */
-		for (y = 0; y < h; y++)
-		{
-			Term->x1[y] = 0;
-			Term->x2[y] = w - 1;
-		}
+		/* Forget "total erase" */
+		Term->total_erase = FALSE;
 	}
 
 
@@ -1614,10 +1614,6 @@ errr Term_fresh(void)
 	old->cv = scr->cv;
 	old->cx = scr->cx;
 	old->cy = scr->cy;
-
-
-	/* Forget "total erase" */
-	Term->total_erase = FALSE;
 
 
 	/* Actually flush the output */
@@ -1970,8 +1966,10 @@ errr Term_clear(void)
 	Term->y1 = 0;
 	Term->y2 = h - 1;
 
-	/* Force "total erase" */
-	Term->total_erase = TRUE;
+	if (!Term->no_total_erase_on_wipe) {
+		/* Force "total erase" */
+		Term->total_erase = TRUE;
+	}
 
 	/* Success */
 	return (0);

@@ -77,6 +77,9 @@ struct term_win
  *	- Flag "never_frosh"
  *	  Never call the "TERM_XTRA_FROSH" action
  *
+ *	- Flag "no_total_erase_on_wipe"
+ *	  Don't set total_erase to TRUE when Term_wipe() is called
+ *
  *
  *	- Value "attr_blank"
  *	  Use this "attr" value for "blank" grids
@@ -143,6 +146,7 @@ struct term
 	bool always_text;
 	bool never_bored;
 	bool never_frosh;
+	bool no_total_erase_on_wipe;
 
 	byte attr_blank;
 	char char_blank;

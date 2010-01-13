@@ -2156,6 +2156,9 @@ static void term_data_link(term_data *td)
 	/* Use "Term_pict" for "graphic" data */
 	t->higher_pict = TRUE;
 
+	/* Total erases seem to make the screen flicker - mikaelh */
+	t->no_total_erase_on_wipe = TRUE;
+
 	/* Erase with "white space" */
 	t->attr_blank = TERM_WHITE;
 	t->char_blank = ' ';
