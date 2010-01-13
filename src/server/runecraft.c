@@ -996,7 +996,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		modifier = 110;
 		description = " effectively";
 	}
-	else if (margin => 80)
+	else if (margin >= 80)
 	{
 		modifier = 130;
 		description = " elegantly";
