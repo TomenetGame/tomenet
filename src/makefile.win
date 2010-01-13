@@ -209,11 +209,11 @@ WINDRES = windres
 ##
 ## Variation -- Cygwin
 ##
-CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN -DCYGWIN -DMEXP=19937
+CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ## LDFLAGS = --export-all-symbols
 LDFLAGS = -g
-SCFLAGS = -Wall -O2 -DUSE_WIN -DDUMB_WIN
+SCFLAGS = -Wall -O2 -DDUMB_WIN
 SLIBS = -luser32 -lwsock32
 
 

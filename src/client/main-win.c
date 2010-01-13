@@ -2153,8 +2153,10 @@ static void term_data_link(term_data *td)
 	/* Use a "software" cursor */
 	t->soft_cursor = TRUE;
 
+#ifdef USE_GRAPHICS
 	/* Use "Term_pict" for "graphic" data */
 	t->higher_pict = TRUE;
+#endif
 
 	/* Total erases seem to make the screen flicker - mikaelh */
 	t->no_total_erase_on_wipe = TRUE;

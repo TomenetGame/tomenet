@@ -208,7 +208,7 @@ CC = gcc
 ##
 ## Variation -- MinGW
 ##
-CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DUSE_WIN -DWIN32 -DUSE_GRAPHICS -DDUMB_WIN -DMINGW -DMEXP=19937
+CFLAGS = -Wall -O2 -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 LDFLAGS = 
 
