@@ -1930,23 +1930,13 @@ errr Term_clear(void)
 	/* Cursor to the top left */
 	Term->scr->cx = Term->scr->cy = 0;
 
-	/* Wipe each row */
-	for (y = 0; y < h; y++)
-	{
-		byte *scr_aa = Term->scr->a[y];
-		char *scr_cc = Term->scr->c[y];
+	/* Wipe the content arrays */
+	memset(Term->scr->va, a, w * h);
+	memset(Term->scr->vc, c, w * h);
 
-		/* Wipe each column */
-		for (x = 0; x < w; x++)
-		{
-			scr_aa[x] = a;
-			scr_cc[x] = c;
-		}
-
-		/* This row has changed */
-		Term->x1[y] = 0;
-		Term->x2[y] = w - 1;
-	}
+	/* Every column has changed */
+	memset(Term->x1, 0, y);
+	memset(Term->x2, w - 1, y)
 
 	/* Every row has changed */
 	Term->y1 = 0;
