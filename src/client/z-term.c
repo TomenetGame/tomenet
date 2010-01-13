@@ -624,6 +624,10 @@ void flicker(){
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
 		}
+
+		/* Actually flush the output */
+		Term_xtra(TERM_XTRA_FRESH, 0);
+
 		if(!c_cfg.recall_flicker) break;
 	}
 	Term_activate(old);
