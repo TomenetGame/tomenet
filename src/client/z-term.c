@@ -1389,24 +1389,13 @@ errr Term_fresh(void)
 		/* Hack -- clear all "cursor" data XXX XXX XXX */
 		old->cv = old->cu = old->cx = old->cy = 0;
 
-		/* Wipe each row */
-		for (y = 0; y < h; y++)
-		{
-			byte *aa = old->a[y];
-			char *cc = old->c[y];
+		/* Wipe the content arrays */
+		memset(old->va, a, w * h);
+		memset(old->vc, c, w * h);
 
-			/* Wipe each column */
-			for (x = 0; x < w; x++)
-			{
-				/* Wipe each grid */
-				*aa++ = a;
-				*cc++ = c;
-			}
-
-			/* Redraw every column */
-			Term->x1[y] = 0;
-			Term->x2[y] = w - 1;
-		}
+		/* Redraw every column */
+		memset(Term->x1, 0, h);
+		memset(Term->x2, w - 1, h);
 
 		/* Redraw every row */
 		Term->y1 = 0;
