@@ -1350,13 +1350,13 @@ static void print_rune_imperatives()
 
 	/* Title the list */
 	prt("", 1, col); put_str("Name         ( cost%,   damage%, fail%   )", 1, col);
-	prt("", j, col); put_str("a) minimised ( 50%,     50%,     100%    )", j++, col);
+	prt("", j, col); put_str("a) minimized ( 50%,     50%,     100%    )", j++, col);
 	prt("", j, col); put_str("b) tiny      ( 80%,     80%,     100%    )", j++, col);
 	prt("", j, col); put_str("c) small     ( 100%,    100%,    150%    )", j++, col);
 	prt("", j, col); put_str("d) moderate  ( 120%,    120%,    200%    )", j++, col);
 	prt("", j, col); put_str("e) large     ( 120%,    100%,    200%    )", j++, col);
 	prt("", j, col); put_str("f) massive   ( 150%,    120%,    300%    )", j++, col);
-	prt("", j, col); put_str("g) maximised ( 180%,    150%,    400%    )", j++, col);
+	prt("", j, col); put_str("g) maximized ( 180%,    150%,    400%    )", j++, col);
 	prt("", j, col); put_str("h) chaotic   ( 50-200%, 50-200%, 50-200% )", j++, col);
 
 	/* Clear the bottom line */

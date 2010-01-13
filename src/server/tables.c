@@ -6624,13 +6624,13 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 */
 r_imper r_imperatives [RG_MAX] = 
 {
-	{RG_HOPE, "minimised",	 5, 10,  5, 10 }, 	/* request x1 */
+	{RG_HOPE, "minimized",	 5, 10,  5, 10 }, 	/* request x1 */
 	{RG_ASKS, "tiny",		 8, 10,  8, 10 }, 	/* request x2 */
 	{RG_REQU, "small",		10, 15, 10, 10 }, 	/* request x3 */
 	{RG_VOLU, "moderate",	12, 20, 12, 10 }, 	/* request x4 */
 	{RG_WILL, "large",		12, 20, 10, 20 }, 	/* demand  x1 */
 	{RG_MIGH, "massive",	15, 30, 12, 30 }, 	/* demand  x2 */
-	{RG_DEMA, "maximised",	18, 40, 15, 40 },	/* demand  x3 */
+	{RG_DEMA, "maximized",	18, 40, 15, 40 },	/* demand  x3 */
 	{RG_LUCK, "chaotic",	 0,  0,  0, 20 }, 	/* (Random cost, fail, damage) */
 };
 
@@ -6746,18 +6746,18 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_WATE | R_ACID | R_FIRE, RT_SEE_INVISIBLE },
 { R_WATE | R_ACID | R_COLD, RT_DETECT_TRAP },
 { R_ELEC | R_COLD | R_FIRE, RT_QUICKEN },
-{ R_ELEC | R_ACID | R_FIRE, RT_THUNDER },
+{ R_ELEC | R_ACID | R_FIRE, RT_NUKE },
 { R_ELEC | R_ACID | R_COLD, RT_TELEPORT },
 { R_ELEC | R_WATE | R_FIRE, RT_PSI_ESP },
 { R_ELEC | R_WATE | R_COLD, RT_SUMMON },
 { R_ELEC | R_WATE | R_ACID, RT_MAGIC_WARD },
-{ R_EART | R_COLD | R_FIRE, RT_TELEPORT },
+{ R_EART | R_COLD | R_FIRE, RT_WALLS },
 { R_EART | R_ACID | R_FIRE, RT_MAGIC_WARD },
 { R_EART | R_ACID | R_COLD, RT_BLESSING },
 { R_EART | R_WATE | R_FIRE, RT_SUMMON },
 { R_EART | R_WATE | R_COLD, RT_SEE_INVISIBLE },
 { R_EART | R_WATE | R_ACID, RT_STEALTH },
-{ R_EART | R_ELEC | R_FIRE, RT_STASIS_DISARM },
+{ R_EART | R_ELEC | R_FIRE, RT_HELL_FIRE },
 { R_EART | R_ELEC | R_COLD, RT_MEMORY },
 { R_EART | R_ELEC | R_ACID, RT_MYSTIC_SHIELD },
 { R_EART | R_ELEC | R_WATE, RT_VISION },
@@ -7105,7 +7105,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_TIME | R_NETH | R_CHAO, RT_QUICKEN },
 { R_TIME | R_NETH | R_FORC, RT_HEALING },
 { R_TIME | R_NETH | R_GRAV, RT_TIME_INVISIBILITY },
-{ R_MIND | R_COLD | R_FIRE, RT_PSI_ESP },
+{ R_MIND | R_COLD | R_FIRE, RT_RESISTANCE },
 { R_MIND | R_ACID | R_FIRE, RT_MAGIC_WARD },
 { R_MIND | R_ACID | R_COLD, RT_FLY },
 { R_MIND | R_WATE | R_FIRE, RT_RESISTANCE },
@@ -7142,7 +7142,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_MIND | R_MANA | R_POIS, RT_ANCHOR },
 { R_MIND | R_MANA | R_WIND, RT_RECALL },
 { R_MIND | R_CHAO | R_FIRE, RT_STEALTH },
-{ R_MIND | R_CHAO | R_COLD, RT_PSI_ESP },
+{ R_MIND | R_CHAO | R_COLD, RT_TELEPORT_LEVEL },
 { R_MIND | R_CHAO | R_ACID, RT_ANCHOR },
 { R_MIND | R_CHAO | R_WATE, RT_TELEPORT },
 { R_MIND | R_CHAO | R_ELEC, RT_STEALTH },
@@ -7224,8 +7224,8 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_NEXU | R_WIND | R_ELEC, RT_TELEPORT_LEVEL },
 { R_NEXU | R_WIND | R_EART, RT_SUMMON },
 { R_NEXU | R_WIND | R_POIS, RT_RESISTANCE },
-{ R_NEXU | R_MANA | R_FIRE, RT_DETECT_TRAP },
-{ R_NEXU | R_MANA | R_COLD, RT_STEALTH },
+{ R_NEXU | R_MANA | R_FIRE, RT_DISINTEGRATE },
+{ R_NEXU | R_MANA | R_COLD, RT_TELEPORT_TO },
 { R_NEXU | R_MANA | R_ACID, RT_TIME_INVISIBILITY },
 { R_NEXU | R_MANA | R_WATE, RT_MEMORY },
 { R_NEXU | R_MANA | R_ELEC, RT_QUICKEN },
@@ -7305,7 +7305,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_ACID | R_FIRE, RT_STASIS_DISARM },
 { R_ACID | R_COLD, RT_DETECT_STAIR },
 { R_WATE | R_FIRE, RT_DETECTION_BLIND },
-{ R_WATE | R_COLD, RT_DETECTION_BLIND },
+{ R_WATE | R_COLD, RT_HEALING },
 { R_WATE | R_ACID, RT_DISPERSE },
 { R_ELEC | R_FIRE, RT_LIGHT },
 { R_ELEC | R_COLD, RT_STASIS_DISARM },
@@ -7314,7 +7314,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_EART | R_FIRE, RT_DETECT_TRAP },
 { R_EART | R_COLD, RT_TELEPORT },
 { R_EART | R_ACID, RT_DIG },
-{ R_EART | R_WATE, RT_DETECTION_BLIND },
+{ R_EART | R_WATE, RT_BRILLIANCE },
 { R_EART | R_ELEC, RT_DISPERSE },
 { R_POIS | R_FIRE, RT_BESERK },
 { R_POIS | R_COLD, RT_STASIS_DISARM },
@@ -7338,7 +7338,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_MANA | R_POIS, RT_TELEPORT },
 { R_MANA | R_WIND, RT_HEALING },
 { R_CHAO | R_FIRE, RT_SHADOW },
-{ R_CHAO | R_COLD, RT_DISPERSE },
+{ R_CHAO | R_COLD, RT_STASIS_DISARM },
 { R_CHAO | R_ACID, RT_WALLS },
 { R_CHAO | R_WATE, RT_POLYMORPH },
 { R_CHAO | R_ELEC, RT_HEALING },
@@ -7379,7 +7379,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_NETH | R_CHAO, RT_DETECT_STAIR },
 { R_NETH | R_FORC, RT_STUN },
 { R_NETH | R_GRAV, RT_TELEPORT },
-{ R_TIME | R_FIRE, RT_DETECTION_BLIND },
+{ R_TIME | R_FIRE, RT_HEALING },
 { R_TIME | R_COLD, RT_DETECT_TRAP },
 { R_TIME | R_ACID, RT_BLESSING },
 { R_TIME | R_WATE, RT_STASIS_DISARM },
@@ -7400,7 +7400,7 @@ rspell_sel rspell_selector[MAX_RSPELL_SEL] =
 { R_MIND | R_EART, RT_VISION },
 { R_MIND | R_POIS, RT_MISSILE },
 { R_MIND | R_WIND, RT_DETECT_TRAP },
-{ R_MIND | R_MANA, RT_BLESSING },
+{ R_MIND | R_MANA, RT_DETECT_STAIR },
 { R_MIND | R_CHAO, RT_QUICKEN },
 { R_MIND | R_FORC, RT_FLY },
 { R_MIND | R_GRAV, RT_DETECT_STAIR },

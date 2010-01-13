@@ -359,9 +359,9 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	{
 		damage = e_level + value + rget_level(100);
 	}
-	else
+	else //R_MELE
 	{
-		damage = damroll(1 + value + rget_level(50), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(50), 1 + rget_level(20));
 	}
 	
 	if(damage > S_DAM_MAX)
@@ -996,7 +996,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		modifier = 110;
 		description = " effectively";
 	}
-	else if (margin > 80)
+	else if (margin => 80)
 	{
 		modifier = 130;
 		description = " elegantly";
@@ -1036,17 +1036,17 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		switch (type)
 		{
 			case RT_PSI_ESP:
-				msg_format(Ind, "%s%s cast a rune of extra-sensory perception. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of extra-sensory perception. (%i turns)", begin, description, duration);
 				if(success) set_tim_esp(Ind, duration);
 				break;
 			
 			case RT_MAGIC_WARD:
-				msg_format(Ind, "%s%s draw a sigil of protection. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s draw a sigil of protection.", begin, description);
 				if(success) warding_glyph(Ind);
 				break;
 			
 			case RT_MAGIC_CIRCLE:
-				msg_format(Ind, "%s%s%s surround yourself with protective sigils. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s%s surround yourself with protective sigils.", begin, description);
 			
 				if(success) 
 				{
@@ -1062,12 +1062,12 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 				
 			case RT_WALLS:
-				msg_format(Ind, "%s%s summon walls. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon walls.", begin, description);
 				if(success) fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, "");
 				break;
 			
 			case RT_VISION:
-				msg_format(Ind, "%s%s summon magical vision. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon magical vision.", begin, description);
 				if(success)
 				{
 					if(level>30)
@@ -1082,30 +1082,30 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 				
 			case RT_MYSTIC_SHIELD:
-				msg_format(Ind, "%s%s summon mystic protection. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon mystic protection. (%i turns)", begin, description, duration);
 				if(success) (void)set_shield(Ind, damage, duration, SHIELD_NONE, 0, 0);
 				break;
 			
 			case RT_SHARDS:
 			case RT_DETECT_TRAP:
-				msg_format(Ind, "%s%s sense hidden traps. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s sense hidden traps.", begin, description);
 				if(success) detect_trap(Ind, 36);
 				break;
 			
 			case RT_STASIS_DISARM:
-				msg_format(Ind, "%s%s cast a rune of trap destruction. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of trap destruction.", begin, description);
 				if(success) destroy_doors_touch(Ind, 1 + ((s_av - runespell_list[type].level)*4)/50);
 				break;
 			
 			case RT_FLY:
-				msg_format(Ind, "%s%s summon ethereal wings. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon ethereal wings. (%i turns)", begin, description, duration);
 				if(success) set_tim_fly(Ind, duration);
 				break;
 			
 			case RT_TRAUMATURGY:
 				if(damage > 20)
 					damage = 20;
-				msg_format(Ind, "%s%s summon an otherworldly bloodlust. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon an otherworldly bloodlust. (%i turns)", begin, description, duration);
 				set_tim_trauma(Ind, duration, damage);
 				break;
 				
@@ -1114,24 +1114,24 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 			
 			case RT_TIME_INVISIBILITY:
-				msg_format(Ind, "%s%s cast a rune of invisibility. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of invisibility. (%i turns)", begin, description, duration);
 				if(success) set_invis(Ind, duration, damage);
 				printf("Made %s invisible (power: %i)", p_ptr->name,damage);
 				break;
 			
 			case RT_BLESSING:
-				msg_format(Ind, "%s%s summon a blessing. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon a blessing. (%i turns)", begin, description, duration);
 				if(success) set_blessed(Ind,duration);
 				if(success) set_protevil(Ind, duration);
 				break;
 			
 			case RT_SATIATION:
-				msg_format(Ind, "%s%s cast a rune of satiation. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of satiation.", begin, description);
 				if(success) set_food(Ind, PY_FOOD_MAX - 1);
 				break;
 			
 			case RT_RESISTANCE:
-				msg_format(Ind, "%s%s summon elemental protection. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon elemental protection. (%i turns)", begin, description, duration);
 				if(success) set_oppose_acid(Ind, duration);
 				if(success) set_oppose_elec(Ind, duration);
 				if(success) set_oppose_fire(Ind, duration);
@@ -1139,33 +1139,33 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 			
 			case RT_FIRE:
-				msg_format(Ind, "%s%s cast a rune of fire resistance. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of fire resistance. (%i turns)", begin, description, duration);
 				if(success) set_oppose_fire(Ind, duration);
 				break;
 			
 			case RT_COLD:
-				msg_format(Ind, "%s%s cast a rune of cold resistance. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of cold resistance. (%i turns)", begin, description, duration);
 				if(success) set_oppose_cold(Ind, duration);
 				break;
 			
 			case RT_ACID:
-				msg_format(Ind, "%s%s cast a rune of acid resistance. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of acid resistance. (%i turns)", begin, description, duration);
 				if(success) set_oppose_acid(Ind, duration);
 				break;
 			
 			case RT_ELEC:
-				msg_format(Ind, "%s%s cast a rune of electrical resistance. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of electrical resistance. (%i turns)", begin, description, duration);
 				if(success) set_oppose_elec(Ind, duration);
 				break;
 			
 			case RT_POISON:
-				msg_format(Ind, "%s%s cast a rune of poison resistance. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of poison resistance.", begin, description);
 				if(success) set_oppose_pois(Ind, duration);
 				break;
 			
 			case RT_ICEPOISON:
 			case RT_DISPERSE:
-				msg_format(Ind, "%s%s banish the magical energies. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s banish the magical energies.", begin, description);
 				if(success)
 				{
 					set_fast(Ind, 0, 0);
@@ -1199,7 +1199,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				}
 				break;
 			case RT_QUICKEN:
-				msg_format(Ind, "%s%s cast a rune of quickening. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of quickening. (%i turns)", begin, description, duration);
 				speed = randint(damage);
 				speed += 2;
 				if(speed > 12)
@@ -1210,7 +1210,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_DIG:
 			case RT_DISINTEGRATE:
 			case RT_TELEPORT:
-				msg_format(Ind, "%s%s teleport. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s teleport.", begin, description);
 				if(success)
 				{
 					if(inarea(&p_ptr->memory.wpos, &p_ptr->wpos))
@@ -1226,25 +1226,25 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_INERTIA:
 			case RT_TELEPORT_TO:
-				msg_format(Ind, "%s%s teleport forward. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s teleport forward.", begin, description);
 				if(success) teleport_player_to(Ind, p_ptr->target_col, p_ptr->target_row);
 				break;
 			
 			case RT_CHAOS:
 			case RT_TELEPORT_LEVEL:
-				msg_format(Ind, "%s%s teleport away. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s teleport away.", begin, description);
 				if(success) teleport_player_level(Ind);
 				break;
 			
 			case RT_GRAVITY:
 			case RT_SUMMON:
-				msg_format(Ind, "%s%s summon monsters. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon monsters.", begin, description);
 				if(success) project_hack(Ind, GF_TELE_TO, 0, " summons"); 
 				break;
 			
 			case RT_ICE:
 			case RT_MEMORY:
-				msg_format(Ind, "%s%s memorise your position. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s memorise your position.", begin, description);
 				
 				if(success)
 				{
@@ -1255,12 +1255,12 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 				
 			case RT_RECALL:
-				msg_format(Ind, "%s%s recall yourself. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s recall yourself.", begin, description);
 				if(success) set_recall_timer(Ind, damroll(1,100)); 
 				break;
 
 			case RT_EARTHQUAKE:
-				msg_format(Ind, "%s%s summon an earthquake. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon an earthquake.", begin, description);
 				if(success)
 				{
 					if(level>35)
@@ -1272,7 +1272,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_WATERPOISON:
 			case RT_DETECTION_BLIND:
-				msg_format(Ind, "%s%s cast a rune of detection. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of detection.", begin, description);
 				if(success) 
 				{
 					if(level>40)
@@ -1286,17 +1286,17 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_WATER:
 			case RT_DETECT_STAIR:
-				msg_format(Ind, "%s%s cast a rune of exit detection. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of exit detection.", begin, description);
 				if(success) detect_sdoor(Ind, 36);
 				break;
 			
 			case RT_SEE_INVISIBLE:
-				msg_format(Ind, "%s%s cast a rune of see invisible. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of see invisible.", begin, description);
 				if(success) set_tim_invis(Ind, duration);
 				break;
 			
 			case RT_NEXUS:
-				msg_format(Ind, "%s%s summon nexus. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon nexus.", begin, description);
 				
 				if(success)
 				{
@@ -1314,12 +1314,12 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_CLONE_BLINK:
 			case RT_WIND_BLINK:
-				msg_format(Ind, "%s%s blink. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s blink.", begin, description);
 				if(success) teleport_player(Ind, (10+((s_av -runespell_list[type].level)*10)/50), FALSE);
 				break;
 			
 			case RT_LIGHT:
-				msg_format(Ind, "%s%s summon light. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon light.", begin, description);
 			
 				if(success)
 				{
@@ -1332,7 +1332,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_PLASMA:
 			case RT_BRILLIANCE:
-				msg_format(Ind, "%s%s summon bright light. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon bright light.", begin, description);
 			
 				if(success)
 				{
@@ -1345,7 +1345,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_DARK_SLOW:
 			case RT_SHADOW:
-				msg_format(Ind, "%s%s summon shadows. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon shadows.", begin, description);
 			
 				if(success)
 				{
@@ -1358,7 +1358,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_HELL_FIRE:
 			case RT_OBSCURITY:
-				msg_format(Ind, "%s%s summon obscurity. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon obscurity.", begin, description);
 			
 				if(success)
 				{
@@ -1370,7 +1370,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				break;
 				
 			case RT_STEALTH:
-				msg_format(Ind, "%s%s cast a rune of stealth. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of stealth.", begin, description);
 				/* Unset */
 				if(success)
 				{
@@ -1402,7 +1402,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				if(duration < 5) duration = 5;
 				else if(duration > 20) duration = 20;
 				
-				msg_format(Ind, "%s%s cast a rune of deflection. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of deflection. (%i turns)", begin, description, duration);
 				
 				if(success)
 				{
@@ -1412,30 +1412,30 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_NUKE:
 			case RT_ANCHOR:
-				msg_format(Ind, "%s%s constrict the space-time continuum. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s constrict the space-time continuum.", begin, description);
 				if(success) set_st_anchor(Ind, duration);
 				break;
 			
 			case RT_FURY:
-				msg_format(Ind, "%s%s summon fury. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon fury. (%i turns)", begin, description, duration);
 				if(success) set_fury(Ind, duration);
 				break;
 			
 			case RT_BESERK:
 				if(duration > 40) duration = 40;
-				msg_format(Ind, "%s%s cast a rune of beserking. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s cast a rune of beserking. (%i turns)", begin, description, duration);
 				if(success) set_adrenaline(Ind, duration);
 				break;
 			
 			case RT_POLYMORPH:
 			case RT_HEALING:
-				msg_format(Ind, "%s%s summon healing. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s summon healing.", begin, description);
 				if(success) hp_player(Ind, damage);
 				break;
 			
 			case RT_NETHER:
 			case RT_AURA:
-				msg_format(Ind, "%s%s summon a fiery aura. (%i turns, %i%%)", begin, description, duration, difficulty);
+				msg_format(Ind, "%s%s summon a fiery aura. (%i turns)", begin, description, duration);
 				if(success)
 				{
 					if(level > 35) //i.e. Player lv 42+
@@ -1455,20 +1455,20 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		if(type==RT_WALLS) //Walls around target.
 		{
 			sprintf(p_ptr->attacker, " summons walls");
-			msg_format(Ind, "%s%s summon walls. (%i%%)", begin, description, difficulty);
+			msg_format(Ind, "%s%s summon walls.", begin, description);
 			if(success) fire_ball(Ind, GF_STONE_WALL, dir, 1, 1, "");
 		}
 		/* Regular attacks */
 		else if(type_flags & R_LOS)
 		{
 			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s fill the air with %s. (%i%%)", begin, description, runespell_list[type].title, difficulty);
+			msg_format(Ind, "%s%s fill the air with %s.", begin, description, runespell_list[type].title);
 			if(success) project_hack(Ind, gf_type, damage, p_ptr->attacker);
 		}
 		else if(type_flags & R_WAVE)
 		{
 			sprintf(p_ptr->attacker, " summons a wave of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s wave of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+			msg_format(Ind, "%s%s summon a %s wave of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			if(success) fire_wave(Ind, gf_type, 0, damage, radius, duration, 10, EFF_LAST, p_ptr->attacker);
 		}
 		if(type_flags & R_MELE)
@@ -1490,26 +1490,26 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			if((dx > 1 || dx < -1 || dy > 1 || dy < -1) && tx != 0 && ty != 0)
 			{
 				sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
-				msg_format(Ind, "%s%s summon a %s burst of undirected %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+				msg_format(Ind, "%s%s summon a %s burst of undirected %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 				if(success) fire_wave(Ind, gf_type, 0, (damage - damage/4), 1, 1, 1, EFF_STORM, p_ptr->attacker);
 			}
 			else
 			{
 				sprintf(p_ptr->attacker, " is summons %s for", runespell_list[type].title);
-				msg_format(Ind, "%s%s summon a %s burst of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+				msg_format(Ind, "%s%s summon a %s burst of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 				if(success) fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
 			}
 		}
 		else if((type_flags & R_BALL))
 		{
 			sprintf(p_ptr->attacker, " summons a ball of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s ball of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+			msg_format(Ind, "%s%s summon a %s ball of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			if(success) fire_ball(Ind, gf_type, dir, damage, radius, p_ptr->attacker);
 		}
 		else if(type_flags & R_CLOU)
 		{
 			sprintf(p_ptr->attacker, " summons a cloud of %s for", runespell_list[type].title);
-			msg_format(Ind, "%s%s summon a %s cloud of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+			msg_format(Ind, "%s%s summon a %s cloud of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 			if(success) fire_cloud(Ind, gf_type, dir, damage, radius, duration, 9, p_ptr->attacker);
 		}
 		else if(type_flags & R_BOLT || type_flags & R_BEAM)
@@ -1524,20 +1524,20 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			{
 				int flg = PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL;
 				if(success) project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, "");
-				msg_format(Ind, "%s%s cast a rune of wall destruction. (%i%%)", begin, description, difficulty);
+				msg_format(Ind, "%s%s cast a rune of wall destruction.", begin, description);
 			}
 			else
 			{
 				if(t==0)
 				{
 					sprintf(p_ptr->attacker, " summons a bolt of %s for", runespell_list[type].title);
-					msg_format(Ind, "%s%s summon a %s bolt of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+					msg_format(Ind, "%s%s summon a %s bolt of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 					if(success) fire_bolt(Ind, gf_type, dir, damage, p_ptr->attacker);
 				}
 				else
 				{
 					sprintf(p_ptr->attacker, " summons a beam of %s for", runespell_list[type].title);
-					msg_format(Ind, "%s%s summon a %s beam of %s. (%i%%)", begin, description, r_imperatives[imper].name, runespell_list[type].title, difficulty);
+					msg_format(Ind, "%s%s summon a %s beam of %s.", begin, description, r_imperatives[imper].name, runespell_list[type].title);
 					if(success) fire_beam(Ind, gf_type, dir, damage, p_ptr->attacker);
 				}
 			}
