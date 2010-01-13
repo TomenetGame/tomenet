@@ -277,17 +277,16 @@ static void sync_sleep(int milliseconds)
 			{
 				quit(NULL);
 			}
-
-			/* Update the screen */
-			Term_fresh();
-
-			/* Redraw windows if necessary */
-			if (p_ptr->window)
-			{
-				window_stuff();
-			}
 		}
 
+		/* Update the screen */
+		Term_fresh();
+
+		/* Redraw windows if necessary */
+		if (p_ptr->window)
+		{
+			window_stuff();
+		}
 	}
 }
 
@@ -385,15 +384,15 @@ static char inkey_aux(void)
 				{
 					quit(NULL);
 				}
+			}
 
-				/* Update the screen */
-				Term_fresh();
+			/* Update the screen */
+			Term_fresh();
 
-				/* Redraw windows if necessary */
-				if (p_ptr->window)
-				{
-					window_stuff();
-				}
+			/* Redraw windows if necessary */
+			if (p_ptr->window)
+			{
+				window_stuff();
 			}
 		} while (!ch);
 	}

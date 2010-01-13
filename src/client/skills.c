@@ -368,15 +368,15 @@ void do_cmd_skill()
 						{
 							quit(NULL);
 						}
+					}
 
-						/* Update the screen */
-						Term_fresh();
+					/* Update the screen */
+					Term_fresh();
 
-						/* Redraw windows if necessary */
-						if (p_ptr->window)
-						{
-							window_stuff();
-						}
+					/* Redraw windows if necessary */
+					if (p_ptr->window)
+					{
+						window_stuff();
 					}
 				} while (hack_do_cmd_skill_wait);
 			}
