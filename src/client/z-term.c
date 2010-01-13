@@ -1916,7 +1916,7 @@ errr Term_erase(int x, int y, int n)
  */
 errr Term_clear(void)
 {
-	int x, y;
+	int x;
 
 	int w = Term->wid;
 	int h = Term->hgt;
@@ -1935,8 +1935,8 @@ errr Term_clear(void)
 	memset(Term->scr->vc, c, w * h);
 
 	/* Every column has changed */
-	memset(Term->x1, 0, y);
-	memset(Term->x2, w - 1, y)
+	memset(Term->x1, 0, h);
+	memset(Term->x2, w - 1, h)
 
 	/* Every row has changed */
 	Term->y1 = 0;
@@ -2407,8 +2407,6 @@ errr Term_save(void)
  */
 errr Term_load(void)
 {
-	int y;
-
 	int w = Term->wid;
 	int h = Term->hgt;
 
@@ -2417,12 +2415,8 @@ errr Term_load(void)
  	term_win_copy(Term->scr, Term->mem[--screen_icky], w, h);
 
 	/* Assume change */
-	for (y = 0; y < h; y++)
-	{
-		/* Assume change */
-		Term->x1[y] = 0;
-		Term->x2[y] = w - 1;
-	}
+	memset(Term->x1, 0, h);
+	memset(Term->x2, w - 1, h);
 
 	/* Assume change */
 	Term->y1 = 0;
