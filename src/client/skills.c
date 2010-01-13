@@ -361,6 +361,9 @@ void do_cmd_skill()
 					/* Wait according to fps - mikaelh */
 					SetTimeout(0, next_frame());
 
+					/* Update the screen */
+					Term_fresh();
+
 					/* Parse net input if we got any */
 					if (SocketReadable(net_fd))
 					{
@@ -369,9 +372,6 @@ void do_cmd_skill()
 							quit(NULL);
 						}
 					}
-
-					/* Update the screen */
-					Term_fresh();
 
 					/* Redraw windows if necessary */
 					if (p_ptr->window)

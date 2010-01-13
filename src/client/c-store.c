@@ -672,9 +672,6 @@ void display_store(void)
 				put_str(format("Capacity: %d", c_store.max_cost), 3, 60);
 			}
 
-			/* Re-fresh the screen */
-			Term_fresh();
-
 			/* Update our timer and send a keepalive packet if
 			 * neccecary */
 			update_ticks();
@@ -690,6 +687,9 @@ void display_store(void)
 			/* Set the timeout */
 //			SetTimeout(0, 1000000 / Setup.frames_per_second);
 			SetTimeout(0, next_frame());
+
+			/* Re-fresh the screen */
+			Term_fresh();
 
 			/* Only take input if we got some */
 			if (SocketReadable(Net_fd()))

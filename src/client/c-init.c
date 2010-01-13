@@ -268,6 +268,9 @@ static void Input_loop(void)
 //		SetTimeout(0, 1000);
 		SetTimeout(0, next_frame());
 
+		/* Update the screen */
+		Term_fresh();
+
 		/* Only take input if we got some */
 		if (SocketReadable(netfd))
 		{
@@ -307,9 +310,6 @@ static void Input_loop(void)
 
 		/* Flush input (now!) */
 		flush_now();
-
-		/* Update the screen */
-		Term_fresh();
 
 		/* Redraw windows if necessary */
 		if (p_ptr->window)

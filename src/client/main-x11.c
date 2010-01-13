@@ -1911,11 +1911,18 @@ static errr Term_wipe_x11(int x, int y, int n)
  */
 static errr Term_curs_x11(int x, int y)
 {
-	/* Draw the cursor */
-	Infoclr_set(xor);
+	static int cursor_ticks;
 
-	/* Hilite the cursor character */
-	Infofnt_text_non(x, y, " ", 1);
+	/* Reduce cursor blinking - mikaelh */
+	if (ticks / 2 != cursor_ticks) {
+		/* Draw the cursor */
+		Infoclr_set(xor);
+
+		/* Hilite the cursor character */
+		Infofnt_text_non(x, y, " ", 1);
+
+		cursor_ticks = ticks / 2;
+	}
 
 	/* Success */
 	return (0);
