@@ -470,7 +470,14 @@ static void store_process_command(void)
 		{
 			if (store.stock_num <= 12)
 			{
-				c_msg_print("Entire inventory is shown.");
+				if (store_top) {
+					/*
+					 * Hack - Allowing going back to first page after buying
+					 * last item on the second page. - mikaelh */
+					store_top = 0;
+				} else {
+					c_msg_print("Entire inventory is shown.");
+				}
 			}
 			else
 			{
