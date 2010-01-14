@@ -475,6 +475,7 @@ static void store_process_command(void)
 					 * Hack - Allowing going back to first page after buying
 					 * last item on the second page. - mikaelh */
 					store_top = 0;
+					display_inventory();
 				} else {
 					c_msg_print("Entire inventory is shown.");
 				}
