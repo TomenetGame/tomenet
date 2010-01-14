@@ -332,22 +332,8 @@ static char inkey_aux(void)
 	/* If no network yet, just wait for a keypress */
 	if (net_fd == -1)
 	{
-#ifdef USE_X11
-		/* Look for a keypress */
-		(void)(Term_inkey(&ch, FALSE, TRUE));
-
-		/* Update the timer */
-		update_ticks();
-
-		/* Pretty blinking cursor on X11 - mikaelh */
-		Term_fresh();
-
-		/* Wait for 10ms */
-		usleep(10000);
-#else
 		/* Wait for a keypress */
                 (void)(Term_inkey(&ch, TRUE, TRUE));
-#endif
 	}
 	else
 	{
