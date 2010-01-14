@@ -1911,11 +1911,10 @@ static errr Term_wipe_x11(int x, int y, int n)
  */
 static errr Term_curs_x11(int x, int y)
 {
-	static int cursor_ticks;
 	static int old_x, old_y;
 
-	/* Reduce cursor blinking - mikaelh */
-	if ((old_x != x) || (old_y != y) || (ticks / 2 != cursor_ticks)) {
+	/* No blinking cursor - mikaelh */
+	if ((old_x != x) || (old_y != y)) {
 		/* Draw the cursor */
 		Infoclr_set(xor);
 
@@ -1924,7 +1923,6 @@ static errr Term_curs_x11(int x, int y)
 
 		old_x = x;
 		old_y = y;
-		cursor_ticks = ticks / 2;
 	}
 
 	/* Success */
