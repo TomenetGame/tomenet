@@ -1964,7 +1964,6 @@ errr Term_redraw(void)
 	return (0);
 }
 
-#if 0	/* CURRENTLY unused */
 /*
  * Redraw part of a window. (PernA)
  */
@@ -2005,7 +2004,6 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2)
 	/* Success */
 	return (0);
 }
-#endif
 
 
 

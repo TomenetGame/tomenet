@@ -151,7 +151,9 @@
 /*
  * This may need to be removed for some compilers XXX XXX XXX
  */
+#ifndef STRICT
 #define STRICT
+#endif
 
 /*
  * exclude parts of WINDOWS.H that are not needed
@@ -1483,6 +1485,22 @@ static void term_data_redraw(term_data *td)
 
 
 /*
+ * Hack -- redraw a term_data
+ */
+static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int y2)
+{
+    /* Activate the term */
+    Term_activate(&td->t);
+
+    /* Redraw the area */
+    Term_redraw_section(x1, y1, x2, y2);
+
+    /* Restore the term */
+    Term_activate(term_screen);
+}
+
+
+/*
  * This function either gets a new DC or uses an old one. Each screen update
  * must be followed by a TERM_XTRA_FRESH so that the DC gets released.
  *  - mikaelh
@@ -1629,6 +1647,12 @@ static errr Term_xtra_win_react(void)
 }
 
 
+#ifdef OPTIMIZE_DRAWING
+/* Declare before use */
+static errr Term_xtra_win_fresh(int v);
+#endif
+
+
 /*
  * Process at least one event
  */
@@ -1766,7 +1790,7 @@ static errr Term_xtra_win_sound(int v)
 /*
  * Delay for "x" milliseconds
  */
-int Term_xtra_win_delay(int v)
+static errr Term_xtra_win_delay(int v)
 {
 
 #ifdef WIN32
@@ -1804,7 +1828,7 @@ int Term_xtra_win_delay(int v)
 /*
  * This is where we free the DC we've been using.
  */
-int Term_xtra_win_fresh(int v)
+static errr Term_xtra_win_fresh(int v)
 {
 	term_data *td = (term_data*)(Term->data);
 
@@ -1948,10 +1972,10 @@ static errr Term_curs_win(int x, int y)
  */
 static errr Term_pict_win(int x, int y, byte a, char c)
 {
-	term_data *td = (term_data*)(Term->data);
 
 #ifdef USE_GRAPHICS
 
+	term_data *td = (term_data*)(Term->data);
 	HDC  hdc;
 	HDC hdcSrc;
 	HBITMAP hbmSrcOld;
@@ -2474,7 +2498,9 @@ static void process_menus(WORD wCmd)
 #ifdef	MNU_SUPPORT
 	int i;
 
+#if 0
 	OPENFILENAME ofn;
+#endif
 
 	/* Analyze */
 	switch (wCmd)
@@ -2733,6 +2759,36 @@ static void process_menus(WORD wCmd)
 }
 
 
+/*
+ * Redraw a section of a window
+ */
+static void handle_wm_paint(HWND hWnd, term_data *td)
+{
+	int x1, y1, x2, y2;
+	PAINTSTRUCT ps;
+
+	BeginPaint(hWnd, &ps);
+
+	if (td) {
+		/* Get the area that should be updated (rounding up/down) */
+		x1 = ps.rcPaint.left - td->size_ow1;
+		if (x1 < 0) x1 = 0;
+		x1 /= td->font_wid;
+
+		y1 = ps.rcPaint.top - td->size_oh1;
+		if (y1 < 0) y1 = 0;
+		y1 /= td->font_hgt;
+
+		x2 = ((ps.rcPaint.right - td->size_ow1) / td->font_wid) + 1;
+		y2 = ((ps.rcPaint.bottom - td->size_oh1) / td->font_hgt) + 1;
+
+		/* Redraw */
+		term_data_redraw_section(td, x1, y1, x2, y2);
+	}
+
+	EndPaint(hWnd, &ps);
+}
+
 
 #ifdef BEN_HACK
 LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
@@ -2742,7 +2798,6 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
                                           WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT     ps;
 	HDC             hdc;
 	term_data      *td;
 	MINMAXINFO FAR *lpmmi;
@@ -2751,7 +2806,7 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 
 	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
+	td = (term_data *)GetWindowLongPtr(hWnd, 0);
 
 	/* Handle message */
 	switch (uMsg)
@@ -2759,7 +2814,7 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
 		{
-			SetWindowLong(hWnd, 0, (LONG)(td_ptr));
+			SetWindowLongPtr(hWnd, 0, (LONG_PTR)(td_ptr));
 			break;
 		}
 
@@ -2812,12 +2867,7 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 		case WM_PAINT:
 		{
-			BeginPaint(hWnd, &ps);
-			if (td) term_data_redraw(td);
-			EndPaint(hWnd, &ps);
-
-			/* This seems to cause garbage - mikaelh */
-			// ValidateRect(hWnd, NULL);
+			handle_wm_paint(hWnd, td);
 
 			return 0;
 		}
@@ -2825,7 +2875,6 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			BYTE KeyState = 0x00;
 			bool enhanced = FALSE;
 			bool mc = FALSE;
 			bool ms = FALSE;
@@ -2920,8 +2969,6 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 
 				case SIZE_RESTORED:
 				{
-					term *old = Term;
-
 					td->size_hack = TRUE;
 
 					td->cols = (LOWORD(lParam) - td->size_ow1 - td->size_ow2) / td->font_wid;
@@ -2997,13 +3044,12 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 	term_data      *td;
 	MINMAXINFO FAR *lpmmi;
 	RECT            rc;
-	PAINTSTRUCT     ps;
 	HDC             hdc;
 	int             i;
 
 
 	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
+	td = (term_data *)GetWindowLongPtr(hWnd, 0);
 
 	/* Process message */
 	switch (uMsg)
@@ -3011,7 +3057,7 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 		/* XXX XXX XXX */
 		case WM_NCCREATE:
 		{
-			SetWindowLong(hWnd, 0, (LONG)(td_ptr));
+			SetWindowLongPtr(hWnd, 0, (LONG_PTR)(td_ptr));
 			break;
 		}
 
@@ -3064,8 +3110,6 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 
 		case WM_SIZE:
 		{
-			term *old = Term;
-
 			if (!td) return 1;    /* this message was sent before WM_NCCREATE */
 			if (!td->w) return 1; /* it was sent from inside CreateWindowEx */
 			if (td->size_hack) return 1; /* was sent from inside WM_SIZE */
@@ -3086,16 +3130,14 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 
 		case WM_PAINT:
 		{
-			BeginPaint(hWnd, &ps);
-			if (td) term_data_redraw(td);
-			EndPaint(hWnd, &ps);
+			handle_wm_paint(hWnd, td);
+
 			return 0;
 		}
 
 		case WM_SYSKEYDOWN:
 		case WM_KEYDOWN:
 		{
-			BYTE KeyState = 0x00;
 			bool enhanced = FALSE;
 			bool mc = FALSE;
 			bool ms = FALSE;
