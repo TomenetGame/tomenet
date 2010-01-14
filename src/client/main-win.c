@@ -2815,7 +2815,10 @@ LRESULT FAR PASCAL _export AngbandWndProc(HWND hWnd, UINT uMsg,
 			BeginPaint(hWnd, &ps);
 			if (td) term_data_redraw(td);
 			EndPaint(hWnd, &ps);
-			ValidateRect(hWnd, NULL);   /* why needed ?? */
+
+			/* This seems to cause garbage - mikaelh */
+			// ValidateRect(hWnd, NULL);
+
 			return 0;
 		}
 
