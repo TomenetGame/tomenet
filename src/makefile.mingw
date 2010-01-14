@@ -423,26 +423,26 @@ clean:
 #
 
 server/w_util.c: server/util.pkg $(TOLUA)
-	cd server; wine ./tolua -n util -o w_util.c util.pkg; cd ..
+	cd server; ./tolua -n util -o w_util.c util.pkg; cd ..
 
 server/w_play.c: server/player.pkg $(TOLUA)
-	cd server; wine ./tolua -n player -o w_play.c player.pkg; cd ..
+	cd server; ./tolua -n player -o w_play.c player.pkg; cd ..
 
 server/w_spells.c: server/spells.pkg $(TOLUA)
-	cd server; wine ./tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd server; ./tolua -n spells -o w_spells.c spells.pkg; cd ..
 
 client/w_play.c: client/player.pkg $(TOLUA)
-	cd client; pwd; wine ../server/tolua -n player -o w_play.c player.pkg; cd ..
+	cd client; ../server/tolua -n player -o w_play.c player.pkg; cd ..
 
 client/w_util.c: client/util.pkg $(TOLUA)
-	cd client; wine ../server/tolua -n util -o w_util.c util.pkg; cd ..
+	cd client; ../server/tolua -n util -o w_util.c util.pkg; cd ..
 
 client/w_spells.c: client/spells.pkg $(TOLUA)
-	cd client; wine ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
+	cd client; ../server/tolua -n spells -o w_spells.c spells.pkg; cd ..
 
 
 common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
-	cd common; wine ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
+	cd common; ../server/tolua -n z_pack -o w_z_pack.c z_pack.pkg; cd ..
 
 #
 # Icon
