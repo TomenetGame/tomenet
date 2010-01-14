@@ -224,13 +224,6 @@
 #endif
 
 /*
- * Hack -- allow use of the Borg as a screen-saver
- */
-#ifdef ALLOW_BORG
-# define ALLOW_SCRSAVER
-#endif
-
-/*
  * Cannot include "dos.h", so we define some things by hand.
  */
 #ifdef WIN32
@@ -401,15 +394,6 @@ static HICON hIcon;
  * A palette
  */
 static HPALETTE hPal;
-
-#ifdef ALLOW_SCRSAVER
-
-/*
- * The screen saver
- */
-static HWND hwndSaver;
-
-#endif
 
 /*
  * An array of sound file names
@@ -2438,12 +2422,6 @@ static void setup_menus(void)
 	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 #endif
 
-#ifndef ALLOW_SCRSAVER
-	/* Item "Run as Screensaver" */
-	EnableMenuItem(hm, IDM_OPTIONS_SAVER,
-	               MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-#endif
-
 }
 
 
@@ -2750,21 +2728,6 @@ static void process_menus(WORD wCmd)
 			save_prefs();
 			break;
 		}
-
-#ifdef ALLOW_SCRSAVER
-		case IDM_OPTIONS_SAVER:
-		{
-			hwndSaver = CreateWindowEx(WS_EX_TOPMOST, "WindowsScreenSaverClass", "Borg",
-			                           WS_POPUP | WS_MAXIMIZE | WS_VISIBLE,
-			                           0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-			                           NULL, NULL, hInstance, NULL);
-			if (!hwndSaver)
-			{
-				MessageBox(data[0].w, "Failed to create saver window", NULL, MB_OK);
-			}
-			break;
-		}
-#endif
 	}
 #endif	/* MNU_SUPPORT */
 }
@@ -3224,86 +3187,6 @@ LRESULT FAR PASCAL _export AngbandListProc(HWND hWnd, UINT uMsg,
 }
 
 
-#ifdef ALLOW_SCRSAVER
-
-#define MOUSE_SENS 40
-
-LRESULT FAR PASCAL _export AngbandSaverProc(HWND hWnd, UINT uMsg,
-                                            WPARAM wParam, LPARAM lParam)
-{
-	static int iMouse = 0;
-	static WORD xMouse = 0;
-	static WORD yMouse = 0;
-
-	int dx, dy;
-
-	term_data *td;
-
-
-	/* Acquire proper "term_data" info */
-	td = (term_data *)GetWindowLong(hWnd, 0);
-
-	/* Process */
-	switch (uMsg)
-	{
-		/* XXX XXX XXX */
-		case WM_NCCREATE:
-		{
-			SetWindowLong(hWnd, 0, (LONG)(td_ptr));
-			break;
-		}
-
-		case WM_SETCURSOR:
-		{
-			SetCursor(NULL);
-			return 0;
-		}
-
-		case WM_LBUTTONDOWN:
-		case WM_MBUTTONDOWN:
-		case WM_RBUTTONDOWN:
-		case WM_KEYDOWN:
-		{
-			SendMessage(hWnd, WM_CLOSE, 0, 0);
-			return 0;
-		}
-
-		case WM_MOUSEMOVE:
-		{
-			if (iMouse)
-			{
-				dx = LOWORD(lParam) - xMouse;
-				dy = HIWORD(lParam) - yMouse;
-
-				if (dx < 0) dx = -dx;
-				if (dy < 0) dy = -dy;
-
-				if ((dx > MOUSE_SENS) || (dy > MOUSE_SENS))
-				{
-					SendMessage(hWnd, WM_CLOSE, 0, 0);
-				}
-			}
-
-			iMouse = 1;
-			xMouse = LOWORD(lParam);
-			yMouse = HIWORD(lParam);
-			return 0;
-		}
-
-		case WM_CLOSE:
-		{
-			DestroyWindow(hWnd);
-			return 0;
-		}
-	}
-
-	/* Oops */
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-#endif
-
-
 
 
 
@@ -3674,18 +3557,6 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 		wc.lpszClassName = AngList;
 
 		if (!RegisterClass(&wc)) exit(2);
-
-#ifdef ALLOW_SCRSAVER
-
-		wc.style          = CS_VREDRAW | CS_HREDRAW | CS_SAVEBITS | CS_DBLCLKS;
-		wc.lpfnWndProc    = AngbandSaverProc;
-		wc.hCursor        = NULL;
-		wc.lpszMenuName   = NULL;
-		wc.lpszClassName  = "WindowsScreenSaverClass";
-
-		if (!RegisterClass(&wc)) exit(3);
-
-#endif
 
 	}
 
