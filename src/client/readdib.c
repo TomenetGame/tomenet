@@ -305,7 +305,7 @@ BOOL ReadDIB(HWND hWnd, LPSTR lpFileName, DIBINIT *pInfo)
 
 		hDC = GetDC(hWnd);
 		if (!MakeBitmapAndPalette(hDC, pInfo->hDIB,
-			(HPALETTE)&(pInfo->hPalette), (HBITMAP)&(pInfo->hBitmap)))
+			&(pInfo->hPalette), &(pInfo->hBitmap)))
 		{
 			ReleaseDC(hWnd,hDC);
 			goto ErrExit2;

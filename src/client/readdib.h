@@ -11,8 +11,8 @@
  */
 typedef struct {
 	HANDLE hDIB;
-	HANDLE hBitmap;
-	HANDLE hPalette;
+	HBITMAP hBitmap;
+	HPALETTE hPalette;
 	BYTE   CellWidth;
 	BYTE   CellHeight;
 } DIBINIT;
