@@ -284,11 +284,7 @@ static void sync_sleep(int milliseconds)
 		Term_fresh();
 
 		if(c_quit) {
-#ifdef WINDOWS
-			Sleep(1);
-#else
 			usleep(1000);
-#endif
 			continue;
 		}
 
@@ -4781,7 +4777,7 @@ int usleep(huge microSeconds)
 #ifdef WIN32
 int usleep(long microSeconds)
 {
-	Sleep(microSeconds/10); /* meassured in milliseconds not microseconds*/
+	Sleep(microSeconds / 1000); /* meassured in milliseconds not microseconds*/
 	return(0);
 }
 #endif /* WIN32 */
