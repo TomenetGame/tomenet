@@ -237,17 +237,31 @@ bool macro_del(cptr pat)
 	return TRUE;
 }
 
+/* Returns the difference between two timevals in milliseconds */
+static int diff_ms(struct timeval *begin, struct timeval *end) {
+	int diff;
+
+	diff = (end->tv_sec - begin->tv_sec) * 1000;
+	diff += (end->tv_usec - begin->tv_usec) / 1000;
+
+	return diff;
+}
+
 static void sync_sleep(int milliseconds)
 {
-	int n;
+	int result, net_fd;
+	struct timeval begin, now;
 
-	int result;
-	int net_fd;
+	gettimeofday(&begin, NULL);
 	net_fd = Net_fd();
 
-	for (n = 0; n < milliseconds / 100; n++) {
+	while (TRUE) {
+		gettimeofday(&now, NULL);
 
-		usleep(1000);
+		/* Check if we have waited long enough */
+		if (diff_ms(&begin, &now) >= milliseconds) {
+			return;
+		}
 
 		/* Flush output - maintain flickering/multi-hued characters */
 		do_flicker();
@@ -264,15 +278,19 @@ static void sync_sleep(int milliseconds)
 		Net_flush();
 
 		/* Wait for .001 sec, or until there is net input */
-//		SetTimeout(0, 1000);
-
-		/* Wait according to fps - mikaelh */
-		SetTimeout(0, next_frame());
+		SetTimeout(0, 1000);
 
 		/* Update the screen */
 		Term_fresh();
 
-		if(c_quit) continue;
+		if(c_quit) {
+#ifdef WINDOWS
+			Sleep(1);
+#else
+			usleep(1000);
+#endif
+			continue;
+		}
 
 		/* Parse net input if we got any */
 		if (SocketReadable(net_fd))
