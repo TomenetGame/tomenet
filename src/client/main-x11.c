@@ -1906,23 +1906,25 @@ static errr Term_wipe_x11(int x, int y, int n)
 
 
 
+static int cursor_x = -1, cursor_y = -1;
 /*
  * Draw the cursor (XXX by hiliting)
  */
 static errr Term_curs_x11(int x, int y)
 {
-	static int old_x, old_y;
-
-	/* No blinking cursor - mikaelh */
-	if ((old_x != x) || (old_y != y)) {
+	/*
+	 * Don't place the cursor in the same place multiple times to avoid
+	 * blinking.
+	 */
+	if ((cursor_x != x) || (cursor_y != y)) {
 		/* Draw the cursor */
 		Infoclr_set(xor);
 
 		/* Hilite the cursor character */
 		Infofnt_text_non(x, y, " ", 1);
 
-		old_x = x;
-		old_y = y;
+		cursor_x = x;
+		cursor_y = y;
 	}
 
 	/* Success */
@@ -1940,6 +1942,13 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 
 	/* Draw the text */
 	Infofnt_text_std(x, y, s, n);
+
+	/* Drawing text seems to clear the cursor */
+	if (cursor_y == y && x <= cursor_x && cursor_x <= x + n) {
+		/* Cursor is gone */
+		cursor_x = -1;
+		cursor_y = -1;
+	}
 
 	/* Success */
 	return (0);
