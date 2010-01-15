@@ -2342,7 +2342,7 @@ void c_msg_print(cptr msg)
 {
 	static int p = 0;
 
-	int n;
+	int n, x, y;
 
 	char *t;
 
@@ -2400,6 +2400,9 @@ void c_msg_print(cptr msg)
 
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;
+
+	/* Remember cursor position */
+	Term_locate(&x, &y);
 
 	/* Keldon-Hack -- Always reset */
 	p = 0;
@@ -2541,9 +2544,11 @@ void c_msg_print(cptr msg)
 	if (n > 80) n = 80;
 #endif
 
-
 	/* Display the tail of the message */
 	if (!topline_icky) Term_putstr(p, 0, n, TERM_WHITE, t);
+
+	/* Restore cursor */
+	Term_gotoxy(x, y);
 
 	/* Remember the message */
 	msg_flag = TRUE;
