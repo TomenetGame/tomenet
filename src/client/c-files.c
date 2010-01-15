@@ -1468,44 +1468,53 @@ void xhtml_screenshot(cptr name)
 	int i, x, y, max;
 	char buf[1024];
 	char real_name[256];
-	DIR *dp;
-	struct dirent *entry;
 
 	x = strlen(name) - 4;
 
 	/* Replace "????" in the end with numbers */
 	if (!strcmp("????", &name[x]))
 	{
-#if 0
-		char tmp[5];
-		if (x > 244) x = 244;
-		memcpy(real_name, name, x);
-		strcpy(&real_name[x], "0000.xhtml");
-
-		for (i = 1; i < 10000; i++)
-		{
-			/* Copy the number to the name */
-			sprintf(tmp, "%.4d", i);
-			memcpy(&real_name[x], tmp, 4);
-
-			path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
-
-			/* Check if the file exists */
-			fp = fopen(buf, "r");
-			if (fp)
-			{
-				/* File exists, close and continue */
-				fclose(fp);
-			}
-			else break;
+		/* Paranoia */
+		if (x > 200) {
+			x = 200;
 		}
-		if (i == 10000)
-		{
-			/* Oops */
-			return;
+
+#ifdef WINDOWS
+		/* Windows implementation */
+		WIN32_FIND_DATA findFileData;
+		HANDLE hFind;
+		char buf2[1024];
+
+		/* Search for numbered screenshot files */
+		strncpy(buf2, name, x);
+		buf2[x] = '\0';
+		strcat(buf2, "*.xhtml");
+		path_build(buf, 1024, ANGBAND_DIR_USER, buf2);
+
+		max = 0;
+
+		hFind = FindFirstFile(buf, &findFileData);
+
+		if (hFind) {
+			if (isdigit(findFileData.cFileName[x])) {
+				i = atoi(&findFileData.cFileName[x]);
+				if (i > max) max = i;
+			}
+
+			while (FindNextFile(hFind, &findFileData)) {
+				if (isdigit(findFileData.cFileName[x])) {
+					i = atoi(&findFileData.cFileName[x]);
+					if (i > max) max = i;
+				}
+			}
+
+			FindClose(hFind);
 		}
 #else
-		/* Better implementation that isn't slowed down by anti-virus */
+		/* UNIX implementation based on opendir */
+		DIR *dp;
+		struct dirent *entry;
+
 		dp = opendir(ANGBAND_DIR_USER);
 
 		if (!dp) {
@@ -1515,6 +1524,7 @@ void xhtml_screenshot(cptr name)
 
 		max = 0;
 
+		/* Find the file with the biggest number */
 		while ((entry = readdir(dp))) {
 			/* Check that the name matches the pattern */
 			if (strncmp(name, entry->d_name, x) == 0 && isdigit(entry->d_name[x])) {
@@ -1523,16 +1533,13 @@ void xhtml_screenshot(cptr name)
 			}
 		}
 
-		if (x > 245) x = 245;
-
-		/* Next name */
-		strncpy(buf, name, x);
-		buf[x] = '\0';
-		snprintf(real_name, 255, "%s%04d.xhtml", buf, max + 1);
-		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
-
 		closedir(dp);
 #endif
+		/* Use the next number in the name */
+		strncpy(buf, name, x);
+		buf[x] = '\0';
+		snprintf(real_name, 256, "%s%04d.xhtml", buf, max + 1);
+		path_build(buf, 1024, ANGBAND_DIR_USER, real_name);
 	}
 	else
 	{
