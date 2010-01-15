@@ -1249,6 +1249,11 @@ void cmd_look(void)
 				prt("", 0, 0);
 				return;
 			}
+			case KTRL('T'):
+			{
+				xhtml_screenshot("screenshot????");
+				break;
+			}
 			default:
 			{
 				d = keymap_dirs[ch & 0x7F];
