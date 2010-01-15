@@ -393,7 +393,10 @@ static char inkey_aux(void)
 			/* Update the screen */
 			Term_fresh();
 
-			if(c_quit) continue;
+			if(c_quit) {
+				usleep(1000);
+				continue;
+			}
 
 			/* Parse net input if we got any */
 			if (SocketReadable(net_fd))
