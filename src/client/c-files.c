@@ -1643,6 +1643,11 @@ void xhtml_screenshot(cptr name)
 		buf[i++] = '\n';
 	}
 
+	/* Write what remains in the buffer */
+	if (i) {
+		fwrite(buf, 1, i, fp);
+	}
+
 	fprintf(fp, "</span>\n"
 	            "</pre>\n"
 	            "</body>\n"
