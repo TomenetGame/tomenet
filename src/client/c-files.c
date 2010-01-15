@@ -1583,6 +1583,7 @@ void xhtml_screenshot(cptr name)
 	cur_attr = Term->scr->a[0][0];
 	fprintf(fp, "<span style=\"color: %s\">", color_table[flick_colour(cur_attr)]);
 
+	i = 0;
 	for (y = 0; y < Term->hgt; y++)
 	{
 		scr_aa = Term->scr->a[y];
@@ -1592,29 +1593,54 @@ void xhtml_screenshot(cptr name)
 			if (scr_aa[x] != cur_attr)
 			{
 				cur_attr = scr_aa[x];
+
+				strcpy(&buf[i], "</span><span style=\"color: ");
+				i += 27;
+
 				/* right now just pick a random colour for flickering colours
 				 * maybe add some javascript for real flicker later */
-				fprintf(fp, "</span><span style=\"color: %s\">", color_table[flick_colour(cur_attr)]);
+				strcpy(&buf[i], color_table[flick_colour(cur_attr)]);
+				i += 7;
+
+				strcpy(&buf[i], "\">");
+				i += 2;
 			}
+
 			switch (scr_cc[x])
 			{
 				case 31: /* Windows client uses ASCII char 31 for paths */
-					fprintf(fp, ".");
+					buf[i++] = '.';
 					break;
 				case '&':
-					fprintf(fp, "&amp;");
+					buf[i++] = '&';
+					buf[i++] = 'a';
+					buf[i++] = 'm';
+					buf[i++] = 'p';
+					buf[i++] = ';';
 					break;
 				case '<':
-					fprintf(fp, "&lt;");
+					buf[i++] = '&';
+					buf[i++] = 'l';
+					buf[i++] = 't';
+					buf[i++] = ';';
 					break;
 				case '>':
-					fprintf(fp, "&gt;");
+					buf[i++] = '&';
+					buf[i++] = 'g';
+					buf[i++] = 't';
+					buf[i++] = ';';
 					break;
 				default:
-					fprintf(fp, "%c", scr_cc[x]);
+					buf[i++] = scr_cc[x];
+			}
+
+			/* Write data out before the buffer gets full */
+			if (i > 512) {
+				fwrite(buf, 1, i, fp);
+				i = 0;
 			}
 		}
-		fprintf(fp, "\n");
+		buf[i++] = '\n';
 	}
 
 	fprintf(fp, "</span>\n"
