@@ -556,12 +556,17 @@ static char inkey_aux(void)
 	/* Get the length of the action */
 	n = strlen(act);
 
+#if 0
 	/* Push the macro "action" onto the key queue */
 	while (n > 0)
 	{
 		/* Push the key, notice over-flow */
 		if (Term_key_push(act[--n])) return (0);
 	}
+#else
+	/* Push all at once */
+	Term_key_push_buf(act, n);
+#endif
 
 	/* Force "inkey()" to call us again */
 	return (0);

@@ -2126,16 +2126,7 @@ errr Term_flush(void)
 }
 
 
-/*
- * Double the key queue size.
- */
-static void Term_increase_queue()
-{
-	char *new_queue;
-
-	/* Allocate a new queue */
-	C_MAKE(new_queue, Term->key_size * 2, char);
-
+static void Term_copy_queue(char *new_queue) {
 	/* Check if the queue has wrapped */
 	if (Term->key_head > Term->key_tail)
 	{
@@ -2173,6 +2164,21 @@ static void Term_increase_queue()
 		memcpy(&new_queue[end], Term->key_queue, Term->key_head);
 #endif
 	}
+}
+
+
+/*
+ * Double the key queue size.
+ */
+static void Term_increase_queue()
+{
+	char *new_queue;
+
+	/* Allocate a new queue */
+	C_MAKE(new_queue, Term->key_size * 2, char);
+
+	/* Copy the queue */
+	Term_copy_queue(new_queue);
 
 	/* Free the old queue */
 	C_KILL(Term->key_queue, Term->key_size, char);
@@ -2195,43 +2201,8 @@ static void Term_decrease_queue()
 	/* Allocate a new queue */
 	C_MAKE(new_queue, Term->key_size / 2, char);
 
-	/* Check if the queue has wrapped */
-	if (Term->key_head > Term->key_tail)
-	{
-		/* Copy the queue */
-#if 0
-		int i, j;
-		for (i = Term->key_tail, j = 0; i < Term->key_head; i++, j++)
-		{
-			new_queue[j] = Term->key_queue[i];
-		}
-#else
-		memcpy(new_queue, &Term->key_queue[Term->key_tail], Term->key_head - Term->key_tail);
-#endif
-	}
-	else
-	{
-#if 0
-		int i, j;
-
-		/* First the end */
-		for (i = Term->key_tail, j = 0; i < Term->key_size; i++, j++)
-		{
-			new_queue[j] = Term->key_queue[i];
-		}
-
-		/* And then the rest from the beginning */
-		for (i = 0; i < Term->key_head; i++, j++)
-		{
-			new_queue[j] = Term->key_queue[i];
-		}
-#else
-		/* Copy the buffer in two parts */
-		int end = Term->key_size - Term->key_tail;
-		memcpy(new_queue, &Term->key_queue[Term->key_tail], end);
-		memcpy(&new_queue[end], Term->key_queue, Term->key_head);
-#endif
-	}
+	/* Copy the queue */
+	Term_copy_queue(new_queue);
 
 	/* Free the old queue */
 	C_KILL(Term->key_queue, Term->key_size, char);
@@ -2265,11 +2236,8 @@ errr Term_keypress(int k)
 	/* Circular queue, handle wrap */
 	if (Term->key_head == Term->key_size) Term->key_head = 0;
 
-	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
-
-	/* Problem */
-	return (1);
+	/* Success */
+	return (0);
 }
 
 
@@ -2294,12 +2262,47 @@ errr Term_key_push(int k)
 	if (Term->key_length >= Term->key_size)
 		Term_increase_queue();
 
-	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
-
-	/* Problem */
-	return (1);
+	/* Success */
+	return (0);
 }
+
+
+/*
+ * Add multiple key presses to the front of the queue.
+ */
+errr Term_key_push_buf(cptr buf, int len)
+{
+	char *new_queue;
+	int new_size = Term->key_size;
+
+	/* Check how big the queue needs to be */
+	while (Term->key_length + len >= new_size) {
+		new_size *= 2;
+	}
+
+	/* Allocate a new key queue */
+	C_MAKE(new_queue, new_size, char);
+
+	/* Copy the given buf */
+	memcpy(new_queue, buf, len);
+
+	/* Copy keys from old key queue */
+	Term_copy_queue(&new_queue[len]);
+
+	/* Free the old queue */
+	C_KILL(Term->key_queue, Term->key_size, char);
+
+	/* Put the new queue in place */
+	Term->key_queue = new_queue;
+	Term->key_length += len;
+	Term->key_tail = 0;
+	Term->key_head = Term->key_length;
+	Term->key_size = new_size;
+
+	/* Success */
+	return (0);
+}
+
 
 
 

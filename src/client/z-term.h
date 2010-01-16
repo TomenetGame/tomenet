@@ -262,6 +262,7 @@ extern errr Term_what(int x, int y, byte *a, char *c);
 extern errr Term_flush(void);
 extern errr Term_keypress(int k);
 extern errr Term_key_push(int k);
+extern errr Term_key_push_buf(cptr buf, int len);
 extern errr Term_inkey(char *ch, bool wait, bool take);
 
 extern errr Term_save(void);
