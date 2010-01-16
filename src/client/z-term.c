@@ -2132,7 +2132,6 @@ errr Term_flush(void)
 static void Term_increase_queue()
 {
 	char *new_queue;
-	int i, j;
 
 	/* Allocate a new queue */
 	C_MAKE(new_queue, Term->key_size * 2, char);
@@ -2141,13 +2140,21 @@ static void Term_increase_queue()
 	if (Term->key_head > Term->key_tail)
 	{
 		/* Copy the queue */
+#if 0
+		int i, j;
 		for (i = Term->key_tail, j = 0; i < Term->key_head; i++, j++)
 		{
 			new_queue[j] = Term->key_queue[i];
 		}
+#else
+		memcpy(new_queue, &Term->key_queue[Term->key_tail], Term->key_head - Term->key_tail);
+#endif
 	}
 	else
 	{
+#if 0
+		int i, j;
+
 		/* First the end */
 		for (i = Term->key_tail, j = 0; i < Term->key_size; i++, j++)
 		{
@@ -2159,6 +2166,12 @@ static void Term_increase_queue()
 		{
 			new_queue[j] = Term->key_queue[i];
 		}
+#else
+		/* Copy the buffer in two parts */
+		int end = Term->key_size - Term->key_tail;
+		memcpy(new_queue, &Term->key_queue[Term->key_tail], end);
+		memcpy(&new_queue[end], Term->key_queue, Term->key_head);
+#endif
 	}
 
 	/* Free the old queue */
@@ -2178,7 +2191,6 @@ static void Term_increase_queue()
 static void Term_decrease_queue()
 {
 	char *new_queue;
-	int i, j;
 
 	/* Allocate a new queue */
 	C_MAKE(new_queue, Term->key_size / 2, char);
@@ -2186,13 +2198,22 @@ static void Term_decrease_queue()
 	/* Check if the queue has wrapped */
 	if (Term->key_head > Term->key_tail)
 	{
+		/* Copy the queue */
+#if 0
+		int i, j;
 		for (i = Term->key_tail, j = 0; i < Term->key_head; i++, j++)
 		{
 			new_queue[j] = Term->key_queue[i];
 		}
+#else
+		memcpy(new_queue, &Term->key_queue[Term->key_tail], Term->key_head - Term->key_tail);
+#endif
 	}
 	else
 	{
+#if 0
+		int i, j;
+
 		/* First the end */
 		for (i = Term->key_tail, j = 0; i < Term->key_size; i++, j++)
 		{
@@ -2204,6 +2225,12 @@ static void Term_decrease_queue()
 		{
 			new_queue[j] = Term->key_queue[i];
 		}
+#else
+		/* Copy the buffer in two parts */
+		int end = Term->key_size - Term->key_tail;
+		memcpy(new_queue, &Term->key_queue[Term->key_tail], end);
+		memcpy(&new_queue[end], Term->key_queue, Term->key_head);
+#endif
 	}
 
 	/* Free the old queue */
