@@ -249,8 +249,10 @@ static int diff_ms(struct timeval *begin, struct timeval *end) {
 
 static void sync_sleep(int milliseconds)
 {
+	static char animation[4] = { '-', '\\', '|', '/' };
 	int result, net_fd;
 	struct timeval begin, now;
+	int time_spent;
 
 	gettimeofday(&begin, NULL);
 	net_fd = Net_fd();
@@ -259,9 +261,14 @@ static void sync_sleep(int milliseconds)
 		gettimeofday(&now, NULL);
 
 		/* Check if we have waited long enough */
-		if (diff_ms(&begin, &now) >= milliseconds) {
+		time_spent = diff_ms(&begin, &now);
+		if (time_spent >= milliseconds) {
+			Term_erase(Term->wid - 1, 0, 1);
 			return;
 		}
+
+		/* Do a little animation in the upper right corner */
+		Term_putch(Term->wid - 1, 0, TERM_WHITE, animation[time_spent / 100 % 4]);
 
 		/* Flush output - maintain flickering/multi-hued characters */
 		do_flicker();
