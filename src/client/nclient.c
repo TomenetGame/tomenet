@@ -3276,7 +3276,7 @@ int Receive_inventory_revision(void)
 	int i, v;
 	char *ex, ex_buf[MAX_CHARS];
 	char *ex2, ex_buf2[MAX_CHARS];
-	char *match;
+	char *match, tag_buf[MAX_CHARS];
 	bool auto_inscribe, found;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
@@ -3313,6 +3313,13 @@ int Receive_inventory_revision(void)
  #if 0 /* is '!' UNavailable? */
 		/* already has a real inscription? -> can't auto-inscribe */
 		if (!auto_inscribe) continue;
+ #else
+		/* save for checking for already existing target inscription */
+		if (ex) {
+			strncpy(tag_buf, ex + 1, strlen(ex) - 2);
+			tag_buf[strlen(ex) - 2] = '\0'; /* terminate */
+		}
+		else strcpy(tag_buf, ""); /* initialise as empty */
  #endif
 
 		/* look for matching auto-inscription */
@@ -3330,6 +3337,8 @@ int Receive_inventory_revision(void)
 			if (!auto_inscribe) {
 				if (match[0] != '!') continue;
 				else match++;
+				/* already carrying this very inscription? don't need to inscribe it AGAIN then */
+				if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
 			}
  #endif
 
