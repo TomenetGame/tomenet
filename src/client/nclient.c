@@ -1410,7 +1410,7 @@ int Receive_inven_wide(void)
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
-#if 0 /* AUTOINSCRIBE */
+#if 0 /* AUTOINSCRIBE - moved to Receive_inventory_revision() */
 	/* apply auto-inscriptions - C. Blue */
 	/* skip empty item */
 	if (strlen(inventory_name[pos - 'a'])) {
@@ -3276,6 +3276,7 @@ int Receive_inventory_revision(void)
 	int i, v;
 	char *ex, ex_buf[MAX_CHARS];
 	char *ex2, ex_buf2[MAX_CHARS];
+	char *match;
 	bool auto_inscribe, found;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &revision)) <= 0)
@@ -3286,7 +3287,7 @@ int Receive_inventory_revision(void)
 	p_ptr->inventory_revision = revision;
 	Send_inventory_revision(revision);
 
-#if 1 /* AUTOINSCRIBE */
+#if 1 /* AUTOINSCRIBE - moved to Receive_inventory_revision() */
 	/* apply auto-inscriptions - C. Blue */
 	for (v = 0; v <= INVEN_PACK; v++) {
 		/* skip empty item */
@@ -3309,20 +3310,35 @@ int Receive_inventory_revision(void)
 			/* if so, auto-inscribe it instead */
 			auto_inscribe = TRUE;
 		}
+ #if 0 /* is '!' UNavailable? */
 		/* already has a real inscription? -> can't auto-inscribe */
 		if (!auto_inscribe) continue;
+ #endif
 
 		/* look for matching auto-inscription */
 		for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+			match = auto_inscription_match[i];
 			/* skip empty auto-inscriptions */
-			if (!strlen(auto_inscription_match[i])) continue;
-//allow			if (!strlen(auto_inscription_tag[i])) continue;
+			if (!strlen(match)) continue;
+ #if 0 /* disallow empty inscription? */
+			if (!strlen(auto_inscription_tag[i])) continue;
+ #endif
+
+ #if 1 /* is '!' available? */
+			/* if item already has an inscription, only allow to overwrite it
+			    if auto-inscription begins with '!', which stands for 'always overwrite' */
+			if (!auto_inscribe) {
+				if (match[0] != '!') continue;
+				else match++;
+			}
+ #endif
+
 			/* found a matching inscription? */
  #if 0 /* no '?' wildcard allowed */
-			if (strstr(inventory_name[v], auto_inscription_match[i])) break;
+			if (strstr(inventory_name[v], match)) break;
  #else /* '?' wildcard allowed: a random number (including 0) of random chars */
 			/* prepare */
-			strcpy(ex_buf, auto_inscription_match[i]);
+			strcpy(ex_buf, match);
 			ex2 = inventory_name[v];
 			found = FALSE;
 
