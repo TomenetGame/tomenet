@@ -996,19 +996,16 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		modifier = 110;
 		description = " effectively";
 	}
-	else if (margin >= 80)
+	else
 	{
 		modifier = 130;
 		description = " elegantly";
 	}
-	else
-	{
-		description = " unexpectedly";
-		modifier = 100;
-	}
 	
-	if (((type == RT_MAGIC_CIRCLE) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
-		((type == RT_WALLS || type == RT_EARTHQUAKE) && !allow_terraforming(&p_ptr->wpos, FEAT_WALL_EXTRA)))
+	if ((type_flags & R_SELF) && 
+		(((type == RT_MAGIC_CIRCLE) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
+		((type == RT_MAGIC_WARD) && !allow_terraforming(&p_ptr->wpos, FEAT_GLYPH)) ||
+		((type == RT_WALLS || type == RT_EARTHQUAKE) && !allow_terraforming(&p_ptr->wpos, FEAT_WALL_EXTRA))))
 	{
 		description = " decide not to";
 		success = 0;
@@ -1022,7 +1019,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 		
 		cost_m = 100-modifier;
 		cost += (cost*cost_m)/100;
-		if(cost<1)
+		if(cost < 1)
 			cost = 1;
 	}
 	
@@ -1070,7 +1067,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				msg_format(Ind, "%s%s summon magical vision.", begin, description);
 				if(success)
 				{
-					if(level>30)
+					if(level > 26) //Skill level at 40
 					{
 						wiz_lite_extra(Ind);
 					}
@@ -1132,10 +1129,13 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			
 			case RT_RESISTANCE:
 				msg_format(Ind, "%s%s summon elemental protection. (%i turns)", begin, description, duration);
-				if(success) set_oppose_acid(Ind, duration);
-				if(success) set_oppose_elec(Ind, duration);
-				if(success) set_oppose_fire(Ind, duration);
-				if(success) set_oppose_cold(Ind, duration);
+				if(success)
+				{
+					set_oppose_acid(Ind, duration);
+					set_oppose_elec(Ind, duration);
+					set_oppose_fire(Ind, duration);
+					set_oppose_cold(Ind, duration);
+				}
 				break;
 			
 			case RT_FIRE:
@@ -1233,7 +1233,19 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 			case RT_CHAOS:
 			case RT_TELEPORT_LEVEL:
 				msg_format(Ind, "%s%s teleport away.", begin, description);
-				if(success) teleport_player_level(Ind);
+				if(success)
+				{
+					teleport_player_level(Ind);
+					
+					if(randint(100)<=1) //A small amount of unreliability
+						teleport_player_level(Ind);
+					
+					if(modifier != 130)
+					{
+						take_hit(Ind, (p_ptr->mhp*(0-(modifier-130))/100), "level teleportation", 0); //Hit for up to 60% of health, depending on inverse sucessfullness
+					}
+					
+				}
 				break;
 			
 			case RT_GRAVITY:
@@ -1300,7 +1312,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 				
 				if(success)
 				{
-					switch(damroll(1,8))
+					switch(randint(10))
 					{
 						case 1: teleport_player(Ind, (10+((s_av -runespell_list[type].level)*10)/50), FALSE); break;
 						case 2: set_recall_timer(Ind, damroll(1,100)); break;
@@ -1451,15 +1463,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	}
 	else
 	{
-		/* Special non-typed attacks. */
-		if(type==RT_WALLS) //Walls around target.
-		{
-			sprintf(p_ptr->attacker, " summons walls");
-			msg_format(Ind, "%s%s summon walls.", begin, description);
-			if(success) fire_ball(Ind, GF_STONE_WALL, dir, 1, 1, "");
-		}
-		/* Regular attacks */
-		else if(type_flags & R_LOS)
+		if(type_flags & R_LOS)
 		{
 			sprintf(p_ptr->attacker, " fills the air with %s for", runespell_list[type].title);
 			msg_format(Ind, "%s%s fill the air with %s.", begin, description, runespell_list[type].title);
