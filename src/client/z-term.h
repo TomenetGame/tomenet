@@ -38,6 +38,22 @@ struct term_win
 };
 
 
+/*
+ * A key queue stores key presses.
+ */
+
+typedef struct key_queue key_queue;
+
+struct key_queue
+{
+	char *queue;
+
+	s32b head;
+	s32b tail;
+	s32b length;
+	s32b size;
+};
+
 
 /*
  * An actual "term" structure
@@ -151,12 +167,8 @@ struct term
 	byte attr_blank;
 	char char_blank;
 
-	char *key_queue;
-
-	s32b key_head;
-	s32b key_tail;
-	s32b key_length;
-	s32b key_size;
+	key_queue *keys;
+	key_queue *keys_old;
 	s32b key_size_orig;
 
 	byte wid;
@@ -260,8 +272,11 @@ extern errr Term_locate(int *x, int *y);
 extern errr Term_what(int x, int y, byte *a, char *c);
 
 extern errr Term_flush(void);
+extern errr Term_keypress_aux(key_queue *keys, int k);
 extern errr Term_keypress(int k);
+extern errr Term_key_push_aux(key_queue *keys, int k);
 extern errr Term_key_push(int k);
+extern errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int len);
 extern errr Term_key_push_buf(cptr buf, int len);
 extern errr Term_inkey(char *ch, bool wait, bool take);
 

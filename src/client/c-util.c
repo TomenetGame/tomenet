@@ -253,16 +253,56 @@ static void sync_sleep(int milliseconds)
 	int result, net_fd;
 	struct timeval begin, now;
 	int time_spent;
+	char ch;
 
 	gettimeofday(&begin, NULL);
 	net_fd = Net_fd();
 
+	/* HACK - Create a new key queue so we can receive fresh key presses */
+	Term->keys_old = Term->keys;
+
+	MAKE(Term->keys, key_queue);
+	C_MAKE(Term->keys->queue, Term->key_size_orig, char);
+
+	Term->keys->size = Term->key_size_orig;
+
 	while (TRUE) {
+		/* Check for fresh key presses */
+		while (Term_inkey(&ch, FALSE, TRUE) == 0) {
+			if (ch == ESCAPE) {
+				/* Forget key presses */
+				Term->keys->head = 0;
+				Term->keys->tail = 0;
+
+				/* Destroy the old queue */
+				C_KILL(Term->keys_old->queue, Term->keys_old->size, char);
+				KILL(Term->keys_old, key_queue);
+
+				/* Erase the spinner */
+				Term_erase(Term->wid - 1, 0, 1);
+
+				/* Abort */
+				return;
+			} else {
+				/* Add it to the old queue */
+				Term_keypress_aux(Term->keys_old, ch);
+			}
+		}
+
 		gettimeofday(&now, NULL);
 
 		/* Check if we have waited long enough */
 		time_spent = diff_ms(&begin, &now);
 		if (time_spent >= milliseconds) {
+			/* Destroy the temporary key queue */
+			C_KILL(Term->keys->queue, Term->keys->size, char);
+			KILL(Term->keys, key_queue);
+
+			/* Restore the old queue */
+			Term->keys = Term->keys_old;
+			Term->keys_old = NULL;
+
+			/* Erase the spinner */
 			Term_erase(Term->wid - 1, 0, 1);
 			return;
 		}
