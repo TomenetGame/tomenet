@@ -3326,20 +3326,6 @@ static void hook_quit(cptr str)
 	/* Give a warning */
 	if (str && strlen(str)) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
 
-
-	/* Save the preferences */
-	save_prefs();
-
-	/* Nuke each term */
-	for (i = 8 - 1; i >= 0; i--)
-	{
-		/* Unused */
-		if (!ang_term[i]) continue;
-
-		/* Nuke it */
-		term_nuke(ang_term[i]);
-	}
-
 	/* Sub-Windows */
 	for (i = MAX_TERM_DATA - 1; i >= 1; i--)
 	{
@@ -3359,6 +3345,19 @@ static void hook_quit(cptr str)
 	if (data[0].w) DestroyWindow(data[0].w);
 	data[0].w = 0;
 
+	/* Save the preferences */
+	/* Note: This takes time with anti-virus on */
+	save_prefs();
+
+	/* Nuke each term */
+	for (i = 8 - 1; i >= 0; i--)
+	{
+		/* Unused */
+		if (!ang_term[i]) continue;
+
+		/* Nuke it */
+		term_nuke(ang_term[i]);
+	}
 
 	/*** Free some other stuff ***/
 
