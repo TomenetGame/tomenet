@@ -1104,11 +1104,11 @@ static byte player_init[2][MAX_CLASS][5][3] =
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 #else
-		{ TV_SOFT_ARMOR, SV_SHIRT, 0 },
+		{ TV_SWORD, SV_DAGGER, 0 },
+		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_RUNE2, SV_RUNE2_FIRE, 0 },
 		{ TV_RUNE2, SV_RUNE2_COLD, 0 },
 		{ TV_POTION2, SV_POTION2_CURE_LIGHT_SANITY, 0 },
-		{ 255, 255, 0 },
 #endif
 	},
 	{

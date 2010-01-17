@@ -9419,6 +9419,25 @@ if (!nether_bottom) {
 	{
 		(void)alloc_monster(wpos, 0, TRUE);
 	}
+
+#ifdef ENABLE_DIVINE
+	/* Force a pair of darkling and candlebearer when there is at least one divine on level that
+	 * needs it.
+	 */
+	if (dun_lev >= 15 && dun_lev <= 24) {
+		if (inarea(&p_ptr->wpos, wpos) && p_ptr->prace == RACE_DIVINE && !p_ptr->divinity) {
+			if (randint(2) == 1) {
+				place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1104, FALSE, FALSE, FALSE, 100, 0);
+//				s_printf("SPAWN DEBUG: 1104 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+			} else {
+				place_monster_one(wpos, 5 + randint(dun->row_rooms - 5), randint(dun->col_rooms - 5), 1105, FALSE, FALSE, FALSE, 100, 0);
+//				s_printf("SPAWN DEBUG: 1105 spawned at %d,%d,%d\n", wpos->wx, wpos->wy, wpos->wz);
+			}
+
+		}
+	}
+#endif
+
 #ifndef ARCADE_SERVER
 if (!nether_bottom) {
 	/* Place some traps in the dungeon */

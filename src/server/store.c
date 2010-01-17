@@ -3557,7 +3557,7 @@ void do_cmd_store(int Ind)
 {
 	player_type *p_ptr = Players[Ind];
 	store_type *st_ptr;
-	int			which;
+	int which;
 	int i, j;
 	int maintain_num;
 
@@ -3566,10 +3566,10 @@ void do_cmd_store(int Ind)
 
 	/* Access the player grid */
 	cave_type **zcave;
-	if(!(zcave=getcave(&p_ptr->wpos))) return;
+	if(!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	i=gettown(Ind);
+	i = gettown(Ind);
 //	if(i==-1) return;	//DUNGEON STORES
 	/* hack: non-town stores are borrowed from town #0 - C. Blue */
 	if(i == -1) i = 0;
@@ -3588,7 +3588,7 @@ void do_cmd_store(int Ind)
 	/* Extract the store code */
 //	which = (c_ptr->feat - FEAT_SHOP_HEAD);
 
-	if((cs_ptr=GetCS(c_ptr, CS_SHOP)))
+	if((cs_ptr = GetCS(c_ptr, CS_SHOP)))
 	{
 		which = cs_ptr->sc.omni;
 	}
@@ -3637,9 +3637,9 @@ void do_cmd_store(int Ind)
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* Check this player */
-			j=gettown(i);
-			if(j!=-1){
-				if(st_ptr==&town[j].townstore[Players[i]->store_num])
+			j = gettown(i);
+			if(j != -1){
+				if(st_ptr == &town[j].townstore[Players[i]->store_num])
 				{
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
@@ -3656,9 +3656,9 @@ void do_cmd_store(int Ind)
 		for (i = 1; i <= NumPlayers; i++)
 		{
 			/* Check this player */
-			j=gettown(i);
-			if(j==-1){
-				if(st_ptr==&town[0].townstore[Players[i]->store_num])
+			j = gettown(i);
+			if(j == -1){
+				if(st_ptr == &town[0].townstore[Players[i]->store_num])
 				{
 					msg_print(Ind, "The store is full.");
 					store_kick(Ind, FALSE);
@@ -3725,6 +3725,23 @@ void do_cmd_store(int Ind)
 	{
 		/* Display the store */
 		display_store(Ind);
+	}
+
+	/* Temple cures some maladies and gives some bread if starving ;-o */
+	if (!p_ptr->tim_blacklist && which == STORE_TEMPLE && !p_ptr->suscep_life) {
+		if (p_ptr->food < PY_FOOD_ALERT) {
+			msg_print(Ind, "The temple priest hands you a slice of bread.");
+			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+		}
+
+		if (p_ptr->blind || p_ptr->confused) msg_print(Ind, "The temple priest cures you.");
+		if (p_ptr->blind) set_blind(Ind, 0);
+		if (p_ptr->confused) set_confused(Ind, 0);
+
+		if (p_ptr->chp < p_ptr->mhp / 2) {
+			msg_print(Ind, "The temple priest applies a bandage.");
+			hp_player_quiet(Ind, p_ptr->mhp / 2, TRUE);
+		}
 	}
 
 	if (p_ptr->tim_blacklist > 7000)

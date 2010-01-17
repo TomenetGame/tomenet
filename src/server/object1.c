@@ -1667,7 +1667,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode)
 			append_name = TRUE;
 			if(o_ptr->sval >=0 && o_ptr->sval <=15)
 				modstr = r_elements[o_ptr->sval].e_syl;
-			basenm = "& # Rune~";
+			basenm = "& '#' Rune~";
 			break;
 		}
 #endif

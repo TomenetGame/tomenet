@@ -2704,7 +2704,7 @@ player_class class_info[MAX_CLASS] =
                 "Warrior",
                 TERM_UMBER,
 		{ 5, -2, -2, 2, 2, -1},
-		{ 21, 0, 0, 0, 0, 0},
+		{ 21+100, 0, 0, 0+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
 		10, 7,  10, 0,  0,  0,  45, 45,
 		10, 0,//6,  10,//9, 10,
@@ -2888,7 +2888,7 @@ player_class class_info[MAX_CLASS] =
                 "Istar",
                 TERM_RED,
 		{-5, 3, 0, 1, -2, 1},
-		{0, 0, 0, 0, 0, 0},
+		{0, 0+100, 0, 0, 0, 0},
 		30, 36, 30, 2,  16, 20, 34, 20,
 		7,  13, 9,  0,  0,  0,  15, 15,
 		0, 35,//0,30
@@ -3065,7 +3065,7 @@ player_class class_info[MAX_CLASS] =
 		"Priest",
                 TERM_GREEN,
                 {-1, -3, 3, -1, 0, 2},
-		{19, 0, 0, 10, 0, 0},
+		{19, 0, 0+100, 10, 0, 0},
 		25, 30, 32, 2,  16, 8, 48, 35,
 		7,  10, 12, 0,  0,  0, 20, 20,
 		4, 20, //2, 20,//4,20
@@ -3204,7 +3204,7 @@ player_class class_info[MAX_CLASS] =
                 "Rogue",
                 TERM_BLUE,
 		{ 2, 1, -2, 3, 1, -1},
-		{15, 0, 0, 19, 0, 0},
+		{15, 0, 0, 19+100, 0, 0},
 		45, 32, 28, 5, 32, 24, 60, 66,
 		15, 10, 10, 0, 10, 10, 40, 30,// ..0,0,40,30
 		5, 15, //3, 25,//5, 25
@@ -3419,7 +3419,7 @@ player_class class_info[MAX_CLASS] =
                  TERM_L_WHITE, //confusing
 //		 TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
-		{21, 0, 0, 19, 0, 0},
+		{21+100, 0, 0, 19+100, 0, 0},
 		25, 35, 28, 1, 18, 18, 60, 66,
 	         9, 10, 10, 0,  0,  0, 40, 30,
 		6, 30,//3, 40,//4, 25
@@ -3591,7 +3591,7 @@ player_class class_info[MAX_CLASS] =
                 "Archer",
                 TERM_ORANGE,
 		{ 1, 0, 2, 3, 1, -1},
-		{0, 0, 0, 18, 0, 0},
+		{0, 0, 0, 18+100, 0, 0},
 		30, 32, 28, 2,  24, 20, 56, 82,
 		8,  10, 10, 0,  0,  0,  30, 55,
 		5, 10,//3, 15,//5, 15
@@ -3752,7 +3752,7 @@ player_class class_info[MAX_CLASS] =
                 "Paladin",
                 TERM_YELLOW,
 		{ 3, -3, 1, 0, 2, 2},
-		{20, 0, 0, 10, 0, 0},
+		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -3936,7 +3936,7 @@ player_class class_info[MAX_CLASS] =
                 "Ranger",
                 TERM_L_UMBER,
 		{ 2, 2, -1, 1, 2, 0},
-		{21, 0, 0, 19, 0, 0},
+		{21+100, 0+100, 0, 19+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -4599,7 +4599,7 @@ player_class class_info[MAX_CLASS] =
                 "Druid",	/* by the_sandman -- w00t w00t -- a shapechanger+magical class */
                 TERM_L_GREEN,
 		{ 1, 0, 2, -2, -2, 1},
-		{0, 0, 0, 0, 0, 0},
+		{0, 0, 0+100, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -5219,7 +5219,7 @@ player_class class_info[MAX_CLASS] =
                 "Runemaster",
                 TERM_L_BLUE, 
 		{ 1, 2, -3, 3, -3, -3},
-		{15, 0, 0, 19, 0, 0},
+		{15, 0+100, 0, 19+100, 0, 0},
 //		{ -1, 3, 1, -3, -3, 2}, <- originally was for ENABLE_RCRAFT, taken out for now: they remain roguish instead of rather mageish
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
@@ -5440,7 +5440,7 @@ player_class class_info[MAX_CLASS] =
                 TERM_SLATE,
 //		{ -1, 3, 0, -1, -1, 1},
 		{ 0, 2, 0, 0, 0, 1},
-		{21, 0, 0, 19, 0, 0},
+		{21+100, 0+100, 0, 19+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
@@ -6589,22 +6589,22 @@ town_extra town_profile[6]=
 /* Table of valid runespell elements, their flags, and the sylables for their casting. */
 r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
-	{ 0, "Heat", 		"aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
-	{ 1, "Cold", 		"gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
-	{ 2, "Acid", 		"delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
-	{ 3, "Water",		"mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
-	{ 4, "Lighting",	"fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
-	{ 5, "Earth", 		"ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
-	{ 6, "Poison", 		"lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
-	{ 7, "Wind", 		"ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
-	{ 8, "Mana", 		"sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
-	{ 9, "Chaos", 		"emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
-	{10, "Force", 		"fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
-	{11, "Gravity",		"numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
-	{12, "Nether", 		"elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
-	{13, "Time", 		"emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
-	{14, "Mind",		"cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
-	{15, "Nexus", 		"vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
+	{ 0, "Heat", 		"Aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
+	{ 1, "Cold", 		"Gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
+	{ 2, "Acid", 		"Delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
+	{ 3, "Water",		"Mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
+	{ 4, "Lighting",	"Fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
+	{ 5, "Earth", 		"Ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
+	{ 6, "Poison", 		"Lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
+	{ 7, "Wind", 		"Ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
+	{ 8, "Mana", 		"Sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
+	{ 9, "Chaos", 		"Emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
+	{10, "Force", 		"Fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
+	{11, "Gravity",		"Numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
+	{12, "Nether", 		"Elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
+	{13, "Time", 		"Emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
+	{14, "Mind",		"Cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
+	{15, "Nexus", 		"Vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
 };
 
 

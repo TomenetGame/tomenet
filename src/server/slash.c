@@ -1165,19 +1165,23 @@ void do_slash_cmd(int Ind, char *message)
 				object_type *o_ptr;
 
 				/* Paralyzed or just not enough energy left to perform a move? */
-#if 0 /* this also prevents recalling while resting, too harsh maybe */
-				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
-#else
+
+				/* this also prevents recalling while resting, too harsh maybe */
+//				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+
+				/* Don't drain energy far below zero - mikaelh */
+				if (p_ptr->energy < 0) return;
+
 				if (p_ptr->paralyzed) return;
-#endif
 
 				/* Turn off resting mode */
 				disturb(Ind, 0, 0);
 
-				for(i = 0; i < INVEN_PACK; i++)
+//				for(i = 0; i < INVEN_PACK; i++)
+				for(i = 0; i < INVEN_TOTAL; i++) /* allow to activate equipped items for recall (some art(s)!) */
 				{
 					o_ptr = &(p_ptr->inventory[i]);
-					if (!o_ptr->tval) break;
+					if (!o_ptr->tval) continue;
 
 					if (find_inscription(o_ptr->note, "@R"))
 					{
@@ -1186,7 +1190,7 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
-				if (item==-1)
+				if (item == -1)
 				{
 					msg_print(Ind, "\377oInscription {@R} not found.");
 					//return;
@@ -1207,12 +1211,12 @@ void do_slash_cmd(int Ind, char *message)
 							break;
 						/* Cast Recall spell - mikaelh */
 						case TV_BOOK:
-							spell=exec_lua(Ind, "return find_spell(\"Recall\")");
+							spell = exec_lua(Ind, "return find_spell(\"Recall\")");
 							if (o_ptr->sval == SV_SPELLBOOK)
 							{
 								if (o_ptr->pval != spell)
 								{
-									msg_print(Ind, "\377oThis is not Spellbook of Recall.");
+									msg_print(Ind, "\377oThis is not a Spell Scroll of Recall.");
 									return;
 								}
 							}

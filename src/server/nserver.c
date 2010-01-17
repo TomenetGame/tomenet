@@ -822,7 +822,7 @@ void setup_contact_socket(void)
 	while ((Socket = CreateServerSocket(cfg.game_port)) == -1)
 	{
 #ifdef WINDOWS
-		Sleep(1);
+		Sleep(1000);
 #else
 		sleep(1);
 #endif

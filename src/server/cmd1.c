@@ -2667,16 +2667,16 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
 			/* Damage */
-			if(zcave[p_ptr->py][p_ptr->px].info&CAVE_NOPK ||
-			   zcave[q_ptr->py][q_ptr->px].info&CAVE_NOPK){
-				if(k>q_ptr->chp) k-=q_ptr->chp;
+			if(zcave[p_ptr->py][p_ptr->px].info & CAVE_NOPK ||
+			   zcave[q_ptr->py][q_ptr->px].info & CAVE_NOPK){
+				if(k > q_ptr->chp) k -= q_ptr->chp;
 
 				/* Messages */
 				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if(q_ptr->chp<5){
+				if(q_ptr->chp < 5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
 					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
@@ -2691,9 +2691,9 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-				if(cfg.use_pk_rules==PK_RULES_NEVER && q_ptr->chp<5){
+				if(cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
 					msg_format(Ind, "You have beaten %s", q_ptr->name);
-					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
+					msg_format(0 - c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
@@ -5322,7 +5322,8 @@ void move_player(int Ind, int dir, int do_pickup)
 				{
 					/* int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100:100; */
 //					int i = (p_ptr->lev > 4)?(p_ptr->lev - 3) * 100 + (p_ptr->lev / 10) * (p_ptr->lev / 10) * 800:100;
-					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
+//					int i = (p_ptr->lev > 4) ? 100 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 5 : 100;
+					int i = 300 + (p_ptr->lev * p_ptr->lev * p_ptr->lev) / 2; /* buffed it greatly, yet still sensible */
 					msg_format(Ind, "The temple priest gives you %ld gold pieces for your revival!", i);
 					p_ptr->au += i;
 				}
