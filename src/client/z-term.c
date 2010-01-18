@@ -2126,7 +2126,10 @@ errr Term_flush(void)
 }
 
 
-static void Term_copy_queue_buf(char *new_queue, key_queue *keys) {
+/*
+ * Copy keys from key queue to buffer dest.
+ */
+static void Term_copy_queue_buf(char *dest, key_queue *keys) {
 	/* Check if the queue has wrapped */
 	if (keys->head > keys->tail)
 	{
@@ -2135,10 +2138,10 @@ static void Term_copy_queue_buf(char *new_queue, key_queue *keys) {
 		int i, j;
 		for (i = keys->tail, j = 0; i < keys->head; i++, j++)
 		{
-			new_queue[j] = keys->queue[i];
+			dest[j] = keys->queue[i];
 		}
 #else
-		memcpy(new_queue, &keys->queue[keys->tail], keys->head - keys->tail);
+		memcpy(dest, &keys->queue[keys->tail], keys->head - keys->tail);
 #endif
 	}
 	else
@@ -2149,19 +2152,19 @@ static void Term_copy_queue_buf(char *new_queue, key_queue *keys) {
 		/* First the end */
 		for (i = keys->tail, j = 0; i < keys->size; i++, j++)
 		{
-			new_queue[j] = keys->queue[i];
+			dest[j] = keys->queue[i];
 		}
 
 		/* And then the rest from the beginning */
 		for (i = 0; i < keys->head; i++, j++)
 		{
-			new_queue[j] = keys->queue[i];
+			dest[j] = keys->queue[i];
 		}
 #else
 		/* Copy the buffer in two parts */
 		int end = keys->size - keys->tail;
-		memcpy(new_queue, &keys->queue[keys->tail], end);
-		memcpy(&new_queue[end], keys->queue, keys->head);
+		memcpy(dest, &keys->queue[keys->tail], end);
+		memcpy(&dest[end], keys->queue, keys->head);
 #endif
 	}
 }
@@ -2288,36 +2291,50 @@ errr Term_key_push(int k)
 
 
 /*
- * Add multiple key presses to the front of a queue.
+ * Add n keys from buf to the front of the key queue.
  */
-errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int len)
+errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n)
 {
 	char *new_queue;
 	int new_size = keys->size;
 
 	/* Check how big the queue needs to be */
-	while (keys->length + len >= new_size) {
+	while (keys->length + n >= new_size) {
 		new_size *= 2;
 	}
 
-	/* Allocate a new key queue */
-	C_MAKE(new_queue, new_size, char);
+	if (new_size == keys->size) {
+		/* Use the current key queue */
+		if (keys->head + n > keys->size) {
+			/* Handle wrapping */
+			int n2 = keys->size - keys->head;
+			memcpy(&keys->queue[keys->head], buf, n2);
+			memcpy(keys->queue, &buf[n2], n - n2);
+		} else {
+			memcpy(&keys->queue[keys->head], buf, n);
+		}
+		keys->length += n;
+		keys->head = (keys->head + n) % keys->size;
+	} else {
+		/* Allocate a new key queue */
+		C_MAKE(new_queue, new_size, char);
 
-	/* Copy the given buf */
-	memcpy(new_queue, buf, len);
+		/* Copy the given buf */
+		memcpy(new_queue, buf, n);
 
-	/* Copy keys from old key queue */
-	Term_copy_queue_buf(&new_queue[len], keys);
+		/* Copy keys from old key queue */
+		Term_copy_queue_buf(&new_queue[n], keys);
 
-	/* Free the old queue */
-	C_KILL(keys->queue, keys->size, char);
+		/* Free the old queue */
+		C_KILL(keys->queue, keys->size, char);
 
-	/* Put the new queue in place */
-	keys->queue = new_queue;
-	keys->length += len;
-	keys->tail = 0;
-	keys->head = keys->length;
-	keys->size = new_size;
+		/* Put the new queue in place */
+		keys->queue = new_queue;
+		keys->length += n;
+		keys->tail = 0;
+		keys->head = keys->length;
+		keys->size = new_size;
+	}
 
 	/* Success */
 	return (0);
