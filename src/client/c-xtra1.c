@@ -5,6 +5,10 @@
 
 #include "angband.h"
 
+/* make more room for potential new stuff in char dump,
+   especially WINNER status line: */
+#define NEW_COMPRESSED_DUMP
+
 /*
  * Print character info at given row, column in a 13 char field
  */
@@ -2067,7 +2071,9 @@ void display_player(int hist)
 	}
 	else
 	{
+#ifndef NEW_COMPRESSED_DUMP
 		put_str("(Miscellaneous Abilities)", 14, 25);
+#endif
 
 		/* Display "skills" */
 		put_str("Fighting    :", 15, 1);
@@ -2148,6 +2154,7 @@ void display_player(int hist)
 	}
 	prt_lnum("Gold       ", p_ptr->au, 12, 28, TERM_L_GREEN);
 
+#ifndef NEW_COMPRESSED_DUMP
 	if (p_ptr->mhp == -9999) {
 		put_str("Max Hit Points         ", 8, 52);
 		c_put_str(TERM_L_GREEN, "-", 8, 75);
@@ -2193,12 +2200,56 @@ void display_player(int hist)
 	{
 		prt_num("Cur MP (Mana)  ", p_ptr->csp, 11, 52, TERM_RED);
 	}
-#ifdef SHOW_SANITY
+ #ifdef SHOW_SANITY
 	put_str("Cur Sanity", 12, 52);
 
 	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 12, 67);
-#endif	/* SHOW_SANITY */
+ #endif	/* SHOW_SANITY */
 
+#else
+
+	if (p_ptr->mhp == -9999) {
+		put_str("Hit Points", 8, 52);
+		c_put_str(TERM_L_GREEN, "-", 8, 71);
+	} else {
+		prt_num("Hit Points     ", p_ptr->mhp, 8, 52, TERM_L_GREEN);
+		c_put_str(TERM_L_GREEN, "/", 8, 71);
+		if (p_ptr->chp >= p_ptr->mhp) {
+			prt_num("", p_ptr->chp, 8, 62, TERM_L_GREEN);
+		} else if (p_ptr->chp > (p_ptr->mhp) / 10) {
+			prt_num("", p_ptr->chp, 8, 62, TERM_YELLOW);
+		} else {
+			prt_num("", p_ptr->chp, 8, 62, TERM_RED);
+		}
+	}
+
+	if (p_ptr->msp == -9999) {
+		put_str("MP (Mana)", 9, 52);
+		c_put_str(TERM_L_GREEN, "-", 9, 71);
+	} else {
+		prt_num("MP (Mana)      ", p_ptr->msp, 9, 52, TERM_L_GREEN);
+		c_put_str(TERM_L_GREEN, "/", 9, 71);
+		if (p_ptr->csp >= p_ptr->msp) {
+			prt_num("", p_ptr->csp, 9, 62, TERM_L_GREEN);
+		} else if (p_ptr->csp > (p_ptr->msp) / 10) {
+			prt_num("", p_ptr->csp, 9, 62, TERM_YELLOW);
+		} else {
+			prt_num("", p_ptr->csp, 9, 62, TERM_RED);
+		}
+	}
+
+ #ifdef SHOW_SANITY
+	put_str("Sanity", 10, 52);
+	c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, 10, 67);
+ #endif	/* SHOW_SANITY */
+
+	/* Display 'WINNER' status */
+	put_str("Status", 12, 52);
+	if (p_ptr->chp < 0 || c_p_ptr->sanity_attr == TERM_RED) c_put_str(TERM_L_DARK, "        DEAD", 12, 64);
+	else if (p_ptr->ghost) c_put_str(TERM_RED, "Ghost (dead)", 12, 64);
+	else if (p_ptr->total_winner) c_put_str(TERM_VIOLET, "***WINNER***", 12, 64);
+	else c_put_str(TERM_L_GREEN, "       Alive", 12, 64);
+#endif
 
 	/* Show location (better description needed XXX) */
 	if (c_cfg.depth_in_feet)
