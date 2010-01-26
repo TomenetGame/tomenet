@@ -1,10 +1,10 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. November 2009 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 26. Jan 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.3a - official websites are:
-| http://koti.mbnet.fi/mikaelh/tomenet/, http://www.c-blue.de/rogue.html.
-| Note that http://www.tomenet.net/ is outdated, so don't download from there.
+| http://www.tomenet.net/ (main site),
+| http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -135,11 +135,10 @@ Contents
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing TomeNET'.
 
--Get the latest client from www.c-blue.de/rogue.html (my own site) or from
- http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's site,
- which features a monster-search, and this nice introduction in pictures).
- Note that http://www.tomenet.net/ is usually terribly outdated, so don't
- download anything from there.
+-Get the latest client from the project's main official site www.tomenet.net
+ or from  http://koti.mbnet.fi/mikaelh/tomenet/getting-started.php (Mikael's
+ site, which features a monster-search, and this nice introduction in pictures)
+ and www.c-blue.de/rogue.html (my own site).
  The game client is named something like 'tomenet-???-client.zip', extract it
  to C:\TomeNET for example.
 -Either run 'TomeNET-main.bat' to directly connect to official main server
@@ -789,6 +788,10 @@ You can use '?' as wildcard in the search string. For example if you want to
 distinguish between Rod(s) of Healing and Potion(s) of Healing, you can use
 'Rod?Healing' and 'Potion?Healing' respectively.
 ('?' stands for any number (including zero) of any characters.)
+
+If you put a '!' as first character of a search string, it will force the
+inscription to overwrite existing inscriptions in any case (usually it only
+overwrites trivial inscriptions such as price discount tags).
 
 Auto-inscription files can be saved and will be loaded automatically in the
 same manner as macro files, if the filename matches your race, class, account
@@ -5883,8 +5886,6 @@ Note that not every skill is available to every profession (class).
                                 to-damage bonus while using a boomerang, and
                                 reduces the chance of a boomerang to break or
                                 to fall to the ground instead of returning.
-                                Boomerangs cannot be deflected by "reflecting"
-                                monsters.
                                 Artifact boomerangs never break or fall down.
     .Martial Arts               Ability to fight with bare hands.
                                 Slightly raises your character speed.
@@ -6546,7 +6547,7 @@ Human        0   0   0   0   0   0       10     100%     0ft
 Half-Elf    -1  +1  +0  +1  -1  +1        9     110%    20ft
              2   3   3   1  11   6   -1   6
 Elf         -1  +2  +1  +1  -2  +2        8     120%    30ft
-             5   6   6   1   1   8   -5  15
+             5   6   6   1  12   8   -5  15
 Hobbit      -2  +2  +1  +3  +0  +1        7     115%    30ft
             15  18  18   4  15  12  -10  20
 Gnome       -1  +2  +0  +2  +1  -2        8     125%    40ft
@@ -7568,7 +7569,6 @@ Divination
 Nature
     Grow Trees      Grows trees quickly around you.
                     Required skill level for first spell level: 6.
-                    Shared spell (see above): Nature, Temporal.
     Healing         Heals a percentage of your hit points.          (project)
                     Required skill level for first spell level: 10.
     Recovery        Reduces poison duration.
