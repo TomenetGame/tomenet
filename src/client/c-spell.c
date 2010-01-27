@@ -1762,7 +1762,7 @@ void do_runespell()
 
 	if(s_flags == 0) { Term_load(); return; } //Empty spell
 
-	if(method>=2)
+	if(method>=2 && method != 5 && method != 7)
 		if (!get_dir(&dir))
 			return;
 	Term_load();
