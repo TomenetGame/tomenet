@@ -3974,9 +3974,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 			}
 
 			/* Message */
-			if (magik(block))
+			if (!m_ptr->csleep && magik(block))
 				msg_format(Ind, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-			else if (magik(parry))
+			else if (!m_ptr->csleep && magik(parry))
 				msg_format(Ind, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
 			else
 				msg_format(Ind, "You miss %s.", m_name);
@@ -5896,7 +5896,7 @@ static bool run_test(int Ind)
 			if (p_ptr->mon_vis[c_ptr->m_idx] &&
 			   (!(m_list[c_ptr->m_idx].special) && 
 			   r_info[m_list[c_ptr->m_idx].r_idx].level != 0))
-					return (TRUE); 
+					return (TRUE);
 
 		}
 

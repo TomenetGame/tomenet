@@ -174,6 +174,8 @@
 #endif
 
 #ifdef TEST_SERVER
+ #define ENABLE_RCRAFT		/* New runecraft class - relsiet (toggles new alternative code for ENABLE_RUNEMASTER) */
+
  #define ENABLE_DIVINE		/* enable RACE_DIVINE */
 
  #define AUCTION_BETA		/* less restrictions while beta testing */

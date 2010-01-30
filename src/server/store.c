@@ -1046,6 +1046,8 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	if (st_ptr->stock_num >= st_ptr->stock_size) return (-1);
 
 
+    if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
+
 	/* Check existing slots to see if we must "slide" */
 	for (slot = 0; slot < st_ptr->stock_num; slot++)
 	{
@@ -1073,6 +1075,12 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr)
 	{
 		st_ptr->stock[i] = st_ptr->stock[i-1];
 	}
+
+    } else { /* is museum -> don't order items! */
+
+	slot = st_ptr->stock_num;
+
+    }
 
 	/* More stuff now */
 	st_ptr->stock_num++;
@@ -1276,6 +1284,14 @@ static void store_delete(store_type *st_ptr)
 	}
 
 #ifndef TEST_SERVER
+	/* keep track of artifact creation scrolls in log */
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
+	    && o_ptr->number == num) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_name = st_name + st_info[st_ptr->st_idx].name;
+		s_printf("%s: STORE_DELETE: %d/%d - %d, %s (%s).\n", showtime(), st_ptr->town, town[st_ptr->town].type, st_ptr->st_idx, o_name, s_name);
+	}
+#else
 	/* keep track of artifact creation scrolls in log */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
 	    && o_ptr->number == num) {
@@ -1714,15 +1730,24 @@ static void store_create(store_type *st_ptr)
 					/* make uber rods harder to get */
 					} else if (k_ptr->tval == TV_ROD) {
 						continue;
+#if 0 /* since it's FALSE'd anyway, for efficiency */
 					/* reduced frequency of art scrolls. (Base is ~ 1/30min max-scum, 1/90min min-scum) */
 					} else if (k_ptr->tval == TV_SCROLL && k_ptr->sval == SV_SCROLL_ARTIFACT_CREATION
 //					    && magik(50) <- was pretty annoying due to shopkeeper racial hate!
 //					    && magik(33) <- still annoying
+					    && FALSE
 					    ) {
 						continue;
+#endif
 					/* keep custom books out of XBM, so they may appear more often in BM/SBM */
 					} else if (k_ptr->tval == TV_BOOK &&
 					    k_ptr->sval >= SV_CUSTOM_TOME_1 && k_ptr->sval <= SV_CUSTOM_TOME_3) {
+						continue;
+					}
+					/* XBM must not offer nearly as many magi lamps as Khazad Mining Supply Store! */
+					else if (o_ptr->tval == TV_LITE &&
+					    (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI) &&
+					    magik(75)) {
 						continue;
 					}
 				}
@@ -1800,29 +1825,23 @@ static void store_create(store_type *st_ptr)
 
 		if (st_info[st_ptr->st_idx].flags1 & SF1_ZEROLEVEL) o_ptr->level = 0;
 
-#if 0 // the lamps are already handled in determine_level_req now
-		/* Mining equipment store shouldn't have powerful low level items */
-		if (st_ptr->st_idx == STORE_MINING && o_ptr->tval == TV_LITE)
-			switch (o_ptr->sval) {
-			case SV_LITE_DWARVEN: o_ptr->level += 15; break;
-			case SV_LITE_FEANORIAN: o_ptr->level += 20; break;
-			default: if (o_ptr->name2) o_ptr->level += 10;
-			}
-#endif
-
 		/* Attempt to carry the (known) item */
 		carry_ok = (store_carry(st_ptr, o_ptr) != -1);
 
 		/* Log occurances of special items */
 #ifndef TEST_SERVER
-		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
+//		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
+		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
 		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
  #if 0
 		    (o_ptr->tval == TV_BOOK && st_ptr->st_idx == 48) ||
  #endif
 		    (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_POWER && st_ptr->st_idx != 60)) {
 #else
-		if (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) {
+//		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION && st_ptr->st_idx != 60) || /* avoid spam from SBM which offers lots of these */
+		if ((o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) ||
+		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI)) ||
+		    (o_ptr->tval == TV_LITE && (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI))) {
 #endif
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_name = st_name + st_info[st_ptr->st_idx].name;

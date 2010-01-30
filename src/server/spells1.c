@@ -7432,7 +7432,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		sprintf(m_name, "It's yourself who");
 		sprintf(m_name_gen, "your own");
 	}
-	else if (who < 0)
+	else if (IS_PVP)
 	{
 //		strcpy(killer, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
 //		strcpy(m_name, p_ptr->play_vis[0 - who] ? Players[0 - who]->name : "It");
@@ -7977,45 +7977,44 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Plasma -- XXX Fire helps a bit */
 		case GF_PLASMA:
 		{
-		if (p_ptr->immune_fire) {
-			dam /= 5;
-		}
-		else if (p_ptr->resist_plasma) {
-			dam *= 3; dam /= (randint(6)+6);
-		}
-		else if (p_ptr->resist_fire) {
-			dam *= 3;
-			dam /= 5;
-		}
+			if (p_ptr->immune_fire) dam /= 5;
+			else if (p_ptr->resist_plasma) {
+				dam *= 3;
+				dam /= (randint(6)+6);
+			}
+			else if (p_ptr->resist_fire) {
+				dam *= 3;
+				dam /= 5;
+			}
 
-		if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		if (!p_ptr->resist_sound)
-		{
-			int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
-			(void)set_stun(Ind, p_ptr->stun + k);
-		}
-		/* Reduce stats */
-		if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-			randint(HURT_CHANCE)==1)
+			if (fuzzy) msg_format(Ind, "You are hit by something hot for \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+	
+			take_hit(Ind, dam, killer, -who);
+
+			if (!p_ptr->resist_sound) {
+				int k = (randint((dam > 40) ? 35 : (dam * 3 / 4 + 5)));
+				(void)set_stun(Ind, p_ptr->stun + k);
+			}
+
+			/* Reduce stats */
+			if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
+			    randint(HURT_CHANCE)==1)
 				(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE((dam < 30) ? 1 : (dam < 60) ? 2 : 3));
 
-		/* Don't kill inventory in bloodbond... */
-		int breakable = 1;
-		if (IS_PVP) {
-			if (check_blood_bond(Ind, -who)) {
-				breakable = 0;
+			/* Don't kill inventory in bloodbond... */
+			int breakable = 1;
+			if (IS_PVP) {
+				if (check_blood_bond(Ind, -who)) breakable = 0;
 			}
-		}
 
-		/* Inventory damage */
-		if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && !p_ptr->immune_fire && breakable)
+			/* Inventory damage */
+			if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && !p_ptr->immune_fire && breakable)
 				inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 
-		break;
-
+			break;
 		}
+
 		/* Nether -- drain experience */
 		case GF_NETHER:
 		if (p_ptr->immune_neth)

@@ -2748,7 +2748,7 @@ void do_slash_cmd(int Ind, char *message)
 			}
 			else if (prefix(message, "/ban"))
 			{
-				if (tk)
+				if (tk >= 2)
 				{
 					j = name_lookup_loose(Ind, token[1], FALSE);
 					if (j)
@@ -5042,6 +5042,18 @@ void do_slash_cmd(int Ind, char *message)
 					}
 				}
 
+				return;
+			}
+			else if (prefix(message, "/dmpriv")) {
+				if (!p_ptr->admin_dm) { // || !cfg.secret_dungeon_master) {
+					msg_print(Ind, "Command only available to hidden dungeon masters.");
+					return;
+				}
+				if (p_ptr->admin_dm_chat)
+					msg_print(Ind, "You can no longer receive direct private chat from players.");
+				else
+					msg_print(Ind, "You can now receive direct private chat from players.");
+				p_ptr->admin_dm_chat = ~p_ptr->admin_dm_chat;
 				return;
 			}
 		}

@@ -886,7 +886,7 @@ A:0:0:59:0:3:0
 O:0:0:0:0:0:0
 G:+:g
 F:MUSEUM
-W:24
+W:48
 
 N:58:The Prancing Pony
 I:100:& Ration~ of Food

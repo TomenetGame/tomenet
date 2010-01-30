@@ -3799,6 +3799,10 @@ void check_experience(int Ind)
 		/* Message */
 		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 
+		/* Give helpful msg about how to distribute skill points at first level-up */
+		if (old_lev == 1 && p_ptr->inval)
+			msg_print(Ind, "\377G* Press \377GSHIFT + g\377G to distribute your skill points! *");
+
 		/* Introduce newly learned abilities (that depend on char level) */
 		/* those that depend on a race */
 		switch (p_ptr->prace) {
@@ -6891,7 +6895,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		/* Print last ping reception times */
 		struct timeval now;
 		gettimeofday(&now, NULL);
-		s_printf("PING_TIMES:");
+		s_printf("PING_RECEIVED:");
 		/* Starting from latest */
 		for (i = 0; i < MAX_PING_RECVS_LOGGED; i++) {
 			j = (p_ptr->pings_received_head - i + MAX_PING_RECVS_LOGGED) % MAX_PING_RECVS_LOGGED;

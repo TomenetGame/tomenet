@@ -2488,8 +2488,13 @@ static int Handle_login(int ind)
 	/* Brand-new players get super-short instructions presented here: */
 #ifndef ARCADE_SERVER
 	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. */
-		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
-		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
+		msg_print(NumPlayers, "\377L ");
+		msg_print(NumPlayers, "\377L   ***  Welcome to Tomenet! You can chat with \377R:\377L key. Say hello :)  ***");
+		msg_print(NumPlayers, "\377L      To run fast, use \377RSHIFT + direction\377L keys (numlock must be OFF)");
+		msg_print(NumPlayers, "\377L      Before you move out, press \377Rw\377L to equip your weapon and armour!");
+		msg_print(NumPlayers, "\377L ");
+//		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
+//		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 	}
 #endif
@@ -6106,11 +6111,14 @@ static int Receive_run(int ind)
 	/* If not the dungeon master, who can always run */
 	if (!p_ptr->admin_dm) 
 	{
-		/* Check for monsters in sight or confusion */
+		/* check for status impairments */
+		if (p_ptr->confused || p_ptr->blind) return Receive_walk(ind);
+
+		/* Check for monsters in sight */
 		for (i = 0; i < m_max; i++)
 		{
 			/* Check this monster */
-			if ((p_ptr->confused) || ((p_ptr->mon_los[i] && !m_list[i].csleep &&
+			if (((p_ptr->mon_los[i] && !m_list[i].csleep &&
 			    m_list[i].level && !m_list[i].special) &&
 			    /* Not in Bree (for Santa Claus) - C. Blue (Note: This and below messes should get resolved in future) */
                             (p_ptr->wpos.wx != cfg.town_x || p_ptr->wpos.wy != cfg.town_y || p_ptr->wpos.wz)))

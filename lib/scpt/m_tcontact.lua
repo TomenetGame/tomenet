@@ -1,6 +1,48 @@
 -- handle the thought contact school
 --((static: sense/esp))
 
+--[[
+MTAUNT = add_spell
+{
+	["name"] = 	"Cause Agression",
+        ["school"] = 	{SCHOOL_TCONTACT},
+	["blind"] =	0,
+        ["level"] = 	5,
+        ["mana"] = 	10,
+        ["mana_max"] = 	20,
+        ["fail"] =      20,
+        ["spell"] = 	function()
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+        ["desc"] =	{
+        		"Causes a monster to charge and attack you in melee",
+        }
+}
+
+MDISTRACT = add_spell
+{
+	["name"] = 	"Divert Attention",
+        ["school"] = 	{SCHOOL_TCONTACT},
+	["blind"] =	0,
+        ["level"] = 	10,
+        ["mana"] = 	15,
+        ["mana_max"] = 	15,
+        ["fail"] =      20,
+        ["spell"] = 	function()
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+        ["desc"] =	{
+        		"Diverts attention of a monster next to you",
+        		"so it attacks another player who is standing",
+        		"right next to it (if any) instead of you.",
+        }
+}
+]]
+
 MSELFKNOW = add_spell
 {
 	["name"] = 	"Self-Reflection",

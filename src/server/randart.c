@@ -2620,7 +2620,7 @@ try_an_other_ego:
         /* Stealth cap; stealth/speed cap for 'of Swiftness' */
 	if(a_ptr->flags1 & TR1_STEALTH) {
 		if(a_ptr->flags1 & TR1_SPEED) {
-			if (a_ptr->pval > 4) a_ptr->pval = 2 + rand_int(3);
+			if (a_ptr->pval > 4) a_ptr->pval = 3 + rand_int(2);
 		} else {
 			if (a_ptr->pval > 6) a_ptr->pval = 6;
 		}

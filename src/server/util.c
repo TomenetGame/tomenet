@@ -2329,7 +2329,7 @@ static void player_talk_aux(int Ind, char *message)
 			if(!p_ptr->guild){
 				msg_print(Ind, "You are not in a guild");
 			}
-			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon+1);
+			else guild_msg_format(p_ptr->guild, "\377v[\377w%s\377v]\377y %s", p_ptr->name, colon + 1);
 			return;
 		}
 
@@ -2337,10 +2337,10 @@ static void player_talk_aux(int Ind, char *message)
 		target = name_lookup_loose_quiet(Ind, search, TRUE);
 #ifdef TOMENET_WORLDS
 		if(!target && cfg.worldd_privchat) {
-			w_player=world_find_player(search, 0);
+			w_player = world_find_player(search, 0);
 			if (w_player) {
-				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon+1);
-				msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon+1);
+				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
+				msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
 				return;
 			}
 		}
@@ -2797,7 +2797,7 @@ int name_lookup_loose(int Ind, cptr name, u16b party)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !is_admin(p_ptr)
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 
@@ -2865,10 +2865,10 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 	cptr problem = "";
 	bool party_online;
 
-	p_ptr=Players[Ind];
+	p_ptr = Players[Ind];
 
 	/* don't waste time */
-	if(p_ptr==(player_type*)NULL) return(0);
+	if(p_ptr == (player_type*)NULL) return(0);
 
 	/* Acquire length of search string */
 	len = strlen(name);
@@ -2940,7 +2940,7 @@ int name_lookup_loose_quiet(int Ind, cptr name, u16b party)
 			if (q_ptr->conn == NOT_CONNECTED) continue;
 
 			/* let admins chat */
-			if (q_ptr->admin_dm && !is_admin(p_ptr)
+			if (q_ptr->admin_dm && !q_ptr->admin_dm_chat && !is_admin(p_ptr)
 			    /* Hack: allow the following accounts nasty stuff (e.g., spam the DMs!) */
 			    && strcasecmp(p_ptr->accountname, "moltor") 
 			    && strcasecmp(p_ptr->accountname, "the_sandman") 

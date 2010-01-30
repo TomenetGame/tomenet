@@ -2601,6 +2601,7 @@ struct player_type
 	bool resist_continuum;	/* non-timed -- Space/Time Anchor */
 	bool admin_wiz;		/* Is this char Wizard? */
 	bool admin_dm;		/* or Dungeon Master? */
+	bool admin_dm_chat;	/* allow players to send private chat to an invisible DM */
 	bool stormbringer;	/* Attack friends? */
 	int vampiric_melee;		/* vampiric in close combat? */
 	int vampiric_ranged;		/* shots have vampiric effects? */

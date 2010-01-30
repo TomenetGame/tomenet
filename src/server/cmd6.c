@@ -1614,11 +1614,6 @@ void do_cmd_fill_bottle(int Ind)
 	if(!(zcave=getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
-		    msg_print(Ind, "The water seems to pass through the bottle!");
-		return;
-	}
-
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN)
 	{
 		msg_print(Ind, "The fountain is dried out.");
@@ -1641,6 +1636,11 @@ void do_cmd_fill_bottle(int Ind)
 	if (cs_ptr->sc.fountain.rest <= 0)
 	{
 		msg_print(Ind, "The fountain is dried out.");
+		return;
+	}
+
+	if (p_ptr->tim_wraith) { /* not in WRAITHFORM */
+		    msg_print(Ind, "The water seems to pass through the bottle!");
 		return;
 	}
 
@@ -8939,7 +8939,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 		else msg_print(Ind, "You stop using double-shots.");
 s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 		break;
-	case 4:	if (!(p_ptr->ranged_techniques & 0x0100)) return; /* Barrage */
+	case 4:	if (!(p_ptr->ranged_techniques & 0x0010)) return; /* Barrage */
 		if (p_ptr->ranged_barrage) {
 			msg_print(Ind, "You cancel preparations for barrage.");
 			p_ptr->ranged_barrage = FALSE;

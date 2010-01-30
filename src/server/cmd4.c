@@ -383,7 +383,7 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 	int modify_number = 0;
 	cptr p = "";
 	char info_chars[4];
-	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE;
+	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
 
 	/* Prepare title already */
         if (q_ptr->lev < 60)
@@ -547,7 +547,16 @@ static void do_write_others_attributes(FILE *fff, player_type *q_ptr, bool modif
 			fprintf(fff, "   (Private mode");
 		}
 	}
-	if (text_pk || text_silent || text_afk || text_ignoring_chat) fprintf(fff, ")");
+	if(q_ptr->admin_dm_chat)
+	{
+		text_allow_dm_chat = TRUE;
+		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
+			fprintf(fff, ", Allow chat");
+		} else {
+			fprintf(fff, "   (Allow chat");
+		}
+	}
+	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
 
 	/* Line break here, it's getting too long with all that mods -C. Blue */
  #ifdef ABUNDANT_TITLES
