@@ -70,6 +70,11 @@
    Minimum client version tag required to "play 100%". */
 #define SERVER_VERSION_TAG ""
 
+/* Maximum client version allowed to log in */
+#define MAX_VERSION_MAJOR       4
+#define MAX_VERSION_MINOR       15
+#define MAX_VERSION_PATCH       15
+
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
 #define MIN_VERSION_MINOR	4

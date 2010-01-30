@@ -1372,15 +1372,15 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	/* Extended version support */
 	if (version->major < MIN_VERSION_MAJOR)
 		return E_VERSION_OLD;
-	else if (version->major > VERSION_MAJOR)
+	else if (version->major > MAX_VERSION_MAJOR)
 		return E_VERSION_UNKNOWN;
 	else if (version->minor < MIN_VERSION_MINOR)
 		return E_VERSION_OLD;
-	else if (version->minor > VERSION_MINOR)
+	else if (version->minor > MAX_VERSION_MINOR)
 		return E_VERSION_UNKNOWN;
 	else if (version->patch < MIN_VERSION_PATCH)
 		return E_VERSION_OLD;
-	else if (version->patch > VERSION_PATCH)
+	else if (version->patch > MAX_VERSION_PATCH)
 		return E_VERSION_UNKNOWN;
 	else if (version->extra < MIN_VERSION_EXTRA)
 		return E_VERSION_OLD;
