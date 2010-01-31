@@ -1,12 +1,12 @@
 
 
 
-{R			TomeNET server - v4.4.2
+{R			TomeNET server - v4.4.4
   
 {r			"Tales of Middle Earth"
 
 
-
+{w                      http://www.tomenet.net/
 {w		 http://koti.mbnet.fi/mikaelh/tomenet/
 {w		      http://www.c-blue.de/rogue/
 
