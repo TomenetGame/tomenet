@@ -2304,17 +2304,10 @@ errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n)
 	}
 
 	if (new_size == keys->size) {
-		/* Use the current key queue */
-		if (keys->head + n > keys->size) {
-			/* Handle wrapping */
-			int n2 = keys->size - keys->head;
-			memcpy(&keys->queue[keys->head], buf, n2);
-			memcpy(keys->queue, &buf[n2], n - n2);
-		} else {
-			memcpy(&keys->queue[keys->head], buf, n);
+		/* Use Term_key_push_aux for small pushes */
+		while (n > 0) {
+			Term_key_push_aux(keys, buf[--n]);
 		}
-		keys->length += n;
-		keys->head = (keys->head + n) % keys->size;
 	} else {
 		/* Allocate a new key queue */
 		C_MAKE(new_queue, new_size, char);
