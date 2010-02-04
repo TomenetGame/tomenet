@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. Jan 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.3a - official websites are:
+| Latest update: 31. Jan 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4 - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -5514,74 +5514,78 @@ experience points permanently. Here are some details about that process:
 
 (5.20) Runes & Runemastery
 --------------------------
-Runes are magical symbols, often hidden in ancient digging sites, or carried
-around by clueless creatures who are not aware of the power of these relicts.
-Runes can be combined to create powerful magical effects by skilled rune
-hunters who are known by the title of 'Runemasters'. Those folks are more
-often than not queer, known for their greediness, and to be encountered with
-care since most of them are actually not scientists but a bunch of clever
-outlaws who are trying their luck after becoming aware of the potential of
-these stones.
+Runes are magical symbols used to summon and manipulate the raw elemental
+forces which sustain the world of life. They are the motivating force behind
+the traditional systems of magic in TomeNET. The Istari's spell-scroll, for
+example, are composed of a series complicated runes which both protect the
+mage from immediate harm, and create the desired effect, from fireballs to
+magical satiation.
 
-NOTE: A new experimental rune system has been implemented, which is currently
-      live on the 'RPG Server'. The following explanations of the rune system
-      describe the old system, and can't necessarily be applied to the new
-      experimental system.
+Runemasters are less methodical in their approach to magic. Having learned
+to summon elemental forces according to their desires without the
+precautions, limitations and inefficiencies of the complex Istari spell
+system, Runemasters deal directly with the 'pure' substance of magic,
+and are limited only by their wits, their strength and their skill.
 
-When semi-skilled pseudo-professional folks use runes, there's quite a chance
-for them to break! General chance formula is:
+Runemastery is much more dangerous than the sensible Istari's approach! A
+Runemaster risks losing control of their spells, which can result in
+broken runes, physical damage, sickness, madness or even death.
 
-For bolts, beams and balls:
-(perfect_cast_level - skill_level) %, minimum is 0.1%.
+These risks are compounded when the Runemaster is confused, stunned, low
+on magical stamina or simply inexperienced with reference to the attempted
+spell. While an Istar may be rendered helpless once they have cast all of
+the spells that they can handle, a Runemaster lacks this precautionary
+limitation, and may continue casting with significantly increased risks,
+and a in the case of low mana, a magical penalty may be taken directly
+from his or her health.
 
-For clouds:
-((perfect_cast_level - skill_level) * 2) %, minimum is 0.1%.
+Further, runemastery is an inexact science. Spell effects will vary widely
+with each attempt, although these variations will subside a little as the
+runemaster becomes more experienced with the chosen runes. A runemaster will
+always have some idea of how dangerous or successful each spell attempt has
+been. As spells become more successful, they increase in potency and decrease
+in cost. On the flip-side, less successful spells increase in cost and
+decrease in potency.
 
-perfect_cast_level is 15 for bolts
-                      25 for beams
-                      35 for balls
-                      50 for clouds.
+Runemastery requires dexterious physical and intellectual manipulation of
+the rune-forms, requiring high INT and DEX character stats. For this reason,
+runemasters also make for decent thieves, and tolerable fighters: some of
+a runemaster's spells may even increase their skill in hand-to-hand combat.
 
-E.g., perfect_cast_level for a ball spell is 35. So if you're casting a
-ball rune spell at level 20, you have (35-20)% == 15% of the rune to break.
-Note that only a 'modifier rune' can break this way! 'Base runes' don't break!
+A successful runemaster will quickly develop an affinity for a small subset
+of the available runes according to his or her nature, and will eventually
+be able to recite the runes from memory, rather than relying on the physical
+objects distributed about the world, but these physical reminders always
+make rune-spells more successful, and are therefore essential for
+inexperienced runemasters.
 
+Runemasters are able to summon many kinds of spell effects and types, but
+should be aware that some are much more difficult than others. All
+rune-spells will have a different effect when projected on the world to the
+effect they have when cast on the Runemaster. Experimentation in a safe
+environment is essential.
 
-There are two types of runes: 'Base runes', and 'Modifier runes' or short
-'Mod runes'.
-Base runes determine the class of attack: Bolting, Beaming, Engulfing (Ball),
-                                          and Clouding.
-Mod runes determine the type of damage: Fire, acid, ... etc.
+Rune-spells are made up of three components:
+    1. A combination of up to three runes
+    2. A potency
+    3. A spell-type
 
-The way it works is by combining a base and a mod together to conjure a
-spell. For example, a bolt + fire runes combination will result in a fire
-bolt being launched. The game will query for the base rune first (i.e.,
-type of spell you want to conjure: ball, beam, cloud, or bolt) then the
-element you want it to be associated with.
+These are accessible through the m-key menu. When selecting runes, press
+return once you are finished, or enter the maximum of three runes and continue
+with selection. The rune-menu will prompt for a direction if it is required.
 
-Be aware that there are special kinds of mod runes that will do the same
-thing for any base rune it gets combined with! For example, any base rune
-combined with a Gravity rune will result in a speed buff being casted.
-The cost will not matter if you use Ball of Gravity or Bolt of Gravity.
-This should allow some flexibility in macroing.
+Runemastery macros look like this:
+(The magic number for runemastery is 18)
 
-An example for macroing:
-The magic number for rune spells is 12.
-    \e)*tm@12\r15
-with Bolt rune inscribed @m1 and a Fire rune inscribed @m5 will launch
-a fire bolt. Note the location of the target input '*t'.
+    \e)m@18\ra\rcc*t
 
-Special buffs for Runemasters:
-Some mod runes offer 'buffs', that are spells that increase your power in some
-way. Regardless of the base rune they are combined with, the buff rune will
-always only work on the runemaster himself, not on any monster or other being.
-So the base rune type doesn't actually matter for buffs.
-About buffs this is important to know:
-    All buffs are toggle spells. Cast again to turn them off again.
-    The more buffs you have enabled, the more your SP usage will increase in
-     casting any other spells.
-    The states are not saved across connections: If you log out, your buffs
-     are reset.
+Which is a small fire bolt. (fire--small--bolt)
+
+Or:
+    \e)m@18\rabcab
+
+Which is an elemental resistance self-spell (fire + cold + acid--minimized--
+self).
 
 
 
@@ -5964,24 +5968,14 @@ Note that not every skill is available to every profession (class).
     .Thought Contact            Learn mindcrafter spells of tought contact.
     .Mental Intrusion           Learn mindcrafter spells of mental intrusion.
 .Runemastery                    Determines how skillful you are in handling
-                                magical symbols aka 'Runes'.
-                                (NOTE: Does not necessarily apply to the new
-                                experimental rune system on 'RPG Server'!)
-                                At 15, you reach minimum break chance (0.1%)
-                                for runes when casting bolts.
-                                At 25, you reach minimum break chance (0.1%)
-                                for runes when casting beams.
-                                And at this level, all shackles are removed
-                                from the runic spells: They will do full
-                                damage and use full amount of SP.
-                                From here on, the usage and the damage will
-                                increase in a linear manner.
-                                At 35, you reach minimum break chance (0.1%)
-                                for runes when casting balls.
-                                At 50, you reach minimum break chance (0.1%)
-                                for runes when casting clouds.
-                                For more info about runes, see
-                                '(5.20) Runes & Runemastery'.
+    .Fire and Cold              specific magical symbols or Runes.
+    .Acid and Water
+    .Lighning and Earth         For more info about runes, see
+    .Poison and Wind            '(5.20) Runes & Runemastery'.
+    .Mana and Chaos
+    .Force and Gravity
+    .Nether and Time
+    .Mind and Nexus
 +Sneakiness                     Slightly increases your character speed
                                 (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
@@ -6754,30 +6748,18 @@ Shaman
     At level 20 shamans learn to perceive the invisible.
 
 Runemaster
-    Runemasters are very skilled in exploiting magical symbols to their own
-    ends. A few meaningful finger gestures or a scribble on a piece of rock
-    could launch a powerful spell at their enemies. They rely mainly on their
-    intelligence and dexterity to be witty enough in the most demanding
-    situations. Because of this, they are often mistaken to be rogues...
-    until you see the most powerful spells come out of their fingers! Most of
-    these folks actually are not scientists but clever and ruthless outlaws
-    who became aware of the potential of rune stones; these rune hunters are
-    sly as rogues and witty as mages. Quite dangerous persons all in all.
-    (NOTE: The following description covers the normal runemastery system, and
-    does not necessarily apply to the new experimental rune system that is
-    currently live on 'RPG Server'!)
-    'Magic' skill has the least effect on this class, and it is not very easy
-    to learn. Runemasters' spells receive a half-damage and half-SP usage
-    penalty that gradually dissapears as their Runemastery reaches 25. At this
-    level, they do full damage and are able to fully tap their potential.
-    The amount of damage and SP their spell use is directly related to their
-    level and their skillfulness in Runemastery.
-    Their roguish nature allows them to train in a specific weapon proficiency
-    except for 'Weaponmastery', and they are also able to train some skills
-    that are typical for rogues. They're very calm under pressure and are able
-    to intercept and disarm things very well.
-    Runemastery is not part of intrinsic magic but of hard scientific work,
-    and hence only available to quite intelligent races.
+    Runemasters use arcane symbols or 'runes' to summon pure elemental magic.
+    They use their intelligence and dexterity to both manipulate and protect
+    themselves from the fickle and dangerous forces of their art.
+    Runemasters are not the most dedicated or systematic of adventurers, and are
+    often rely on flashy tricks and sleight-of-hand. Because of this, and their
+    tendncy towards thievery, they are often mistaken for rogues.
+    This roguish nature allows them to train in a specific weapon proficiencies,
+    although their lack of dedication leaves 'Weaponmastery' as an unattainable
+    goal. Some runemasters may be able to use rune-spells to enhance their combat
+    abilities.
+    Runemasters are able to train some skills that are typical for rogues: they
+    are calm under pressure and are able to intercept and disarm things very well.
     For more information about runes, see '(5.20) Runes & Runemastery'.
 
 Mindcrafter
