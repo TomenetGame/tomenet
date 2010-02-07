@@ -6589,34 +6589,28 @@ town_extra town_profile[6]=
 /* Table of valid runespell elements, their flags, and the sylables for their casting. */
 r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
-	{ 0, "Heat", 		"Aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
-	{ 1, "Cold", 		"Gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
-	{ 2, "Acid", 		"Delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
-	{ 3, "Water",		"Mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
-	{ 4, "Lighting",	"Fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
-	{ 5, "Earth", 		"Ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
-	{ 6, "Poison", 		"Lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
-	{ 7, "Wind", 		"Ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
-	{ 8, "Mana", 		"Sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
-	{ 9, "Chaos", 		"Emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
-	{10, "Force", 		"Fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
-	{11, "Gravity",		"Numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
-	{12, "Nether", 		"Elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
-	{13, "Time", 		"Emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
-	{14, "Mind",		"Cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
-	{15, "Nexus", 		"Vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
+	{ 0, "Heat", 		"Aestus", 		1, SKILL_R_FIRECOLD, R_FIRE,},
+	{ 1, "Cold", 		"Gelum",		1, SKILL_R_FIRECOLD, R_COLD,},
+	{ 2, "Acid", 		"Delibro",	 	1, SKILL_R_WATEACID, R_ACID,},
+	{ 3, "Water",		"Mio",	 		1, SKILL_R_WATEACID, R_WATE,},
+	{ 4, "Lighting",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 5, "Earth", 		"Ostes", 		2, SKILL_R_ELECEART, R_EART,},
+	{ 6, "Poison", 		"Lepis", 		1, SKILL_R_WINDPOIS, R_POIS,},
+	{ 7, "Wind", 		"Ventus", 		1, SKILL_R_WINDPOIS, R_WIND,},
+	{ 8, "Mana", 		"Sacer",	 	1, SKILL_R_MANACHAO, R_MANA,},
+	{ 9, "Chaos", 		"Emuto", 		2, SKILL_R_MANACHAO, R_CHAO,},
+	{10, "Force", 		"Fero",		 	1, SKILL_R_FORCGRAV, R_FORC,},
+	{11, "Gravity",		"Numen", 		1, SKILL_R_FORCGRAV, R_GRAV,},
+	{12, "Nether", 		"Elido", 		1, SKILL_R_NETHTIME, R_NETH,},
+	{13, "Time", 		"Emero",	 	2, SKILL_R_NETHTIME, R_TIME,},
+	{14, "Mind",		"Cogito", 		1, SKILL_R_MINDNEXU, R_MIND,},
+	{15, "Nexus", 		"Vicis", 		1, SKILL_R_MINDNEXU, R_NEXU,},
 };
 
 
 /*
-	List of imperatives to divide an incantation's effect from it's type. qua is implied if none is present (auto-retaliation spells, usually)
-
-	They effect a the spell's efficiency & fail rates and damage & cost
-
-	Should be taken as the manner your character takes when invoking the elements of a spell. If he has the force of will to demand or request that the element does his bidding, it will cost him less than an approach which simply draws all available power into the summoning, but the element is much more likely to take offense, and destroy him if he fails to control it.
-
-	This should be where CHR and WIS enter the spell equation.
-
+	Table of spell potencies.
+	
 	float cost; //Cost multiplier
 	float fail; //Fail multiplier
 	float dam; //Damage multipler
@@ -6624,14 +6618,14 @@ r_element r_elements[RCRAFT_MAX_ELEMENTS] =
 */
 r_imper r_imperatives [RG_MAX] = 
 {
-	{RG_HOPE, "minimized",	 5, 10,  5, 10 }, 	/* request x1 */
-	{RG_ASKS, "tiny",		 8, 10,  8, 10 }, 	/* request x2 */
-	{RG_REQU, "small",		10, 15, 10, 10 }, 	/* request x3 */
-	{RG_VOLU, "moderate",	12, 20, 12, 10 }, 	/* request x4 */
-	{RG_WILL, "large",		12, 20, 10, 20 }, 	/* demand  x1 */
-	{RG_MIGH, "massive",	15, 30, 12, 30 }, 	/* demand  x2 */
-	{RG_DEMA, "maximized",	18, 40, 15, 40 },	/* demand  x3 */
-	{RG_LUCK, "chaotic",	 0,  0,  0, 20 }, 	/* (Random cost, fail, damage) */
+	{RG_HOPE, "minimized",	 5,  6,  6,  8 },
+	{RG_ASKS, "tiny",		 8,  9,  8, 10 },
+	{RG_REQU, "small",		10, 10, 10, 10 },
+	{RG_VOLU, "moderate",	11, 13, 12, 14 },
+	{RG_WILL, "large",		13, 15, 14, 16 },
+	{RG_MIGH, "massive",	15, 17, 16, 18 },
+	{RG_DEMA, "maximized",	17, 20, 18, 20 },
+	{RG_LUCK, "chaotic",	 0,  0,  0, 22 }, 	/* (Random cost, fail, damage) */
 };
 
 /*
@@ -6640,12 +6634,12 @@ Runespell types.
 	int id;
 	unsigned long type; //Flag
 	char * title; //Name
-	int cost;	//Number of times the flag must appear to count in spell
-	byte pen; 	//mp penalty for type.
+	int cost;	//+ skill level to overall spell
+	byte pen; 	//MP multiplier
 */
 r_type runespell_types[8] =
 {
-	{ 0, R_MELE, "shield", 	0, 5  },	
+	{ 0, R_MELE, "burst", 	0, 5  },	
 	{ 1, R_SELF, "self",  	1, 10 },
 	{ 2, R_BOLT, "bolt",  	1, 10 },
 	{ 3, R_BEAM, "beam",  	2, 11 },

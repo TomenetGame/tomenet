@@ -3199,22 +3199,14 @@ struct global_event_type
 #ifdef ENABLE_RCRAFT
 
 typedef struct r_type r_type;
-/*
-Spell-method type list
-
-id:		Order of priority.
-type:	The flag itself. R_TYPE
-title:	It's description in english
-cost:	How many times it must occur in the method string before it is selected. When tied, shift to the type with lowest id. i.e. water three times selects both clouding and wave. Wave will be selected ultimately, because of its lower id.
-pen: 	Penalty for casting this type of spell: an mp multiplier.
-*/
+/* Method list: bolt/beam/etc */
 struct r_type
 {
 	byte id;
-	u32b type;
+	u32b type; /* Flag */
 	char * title;
-	byte cost;
-	byte pen;
+	byte cost; /* Extra levels required to cast */
+	byte pen; /* MP multiplier */
 };
 
 typedef struct r_element r_element;
@@ -3222,34 +3214,28 @@ typedef struct r_element r_element;
 struct r_element
 {
 	byte id;
-	char * title; /* Rune description */
-	char * e_syl; /* Word for incantation */
+	char * title; /* Description */
+	char * e_syl; /* Magical description (to remove?) */
 	byte cost; /* Base cost for use, used to calculate mp/damage/fail rates */
-	u32b flags; /* Kinds of spells it can be used for */
-	u16b skill; /* The SKILL which governs it */
+	u16b skill; /* The skill pair which governs it */
 	u32b self; /* Its flag */
 };
 
 typedef struct r_spell r_spell;
-/* Spell type list */
+/* Spell list */
 struct r_spell
 {
 	int id;
 	char * title;
 	byte dam; /* Damage multipler */
 	byte pen; /* MP multiplier */
-	byte level; /* Average skill level for success */
-	byte fail; /* Average fail rate for char of that level */
-	u16b gf_type; //0 for special cases (non gf_typed spells)
-//	byte flags;
+	byte level; /* Minimum level to cast */
+	byte fail; /* Fail rate multiplier */
+	u16b gf_type; /* Projection type */
 };
 
 typedef struct r_imper r_imper;
-/*
-	Imperatives which dictate the style/severity of a spell 
-
-	These are handled in cast_runespell.
-*/
+/* Spell potencies */
 struct r_imper
 {
 	int id;
@@ -3261,9 +3247,7 @@ struct r_imper
 };
 
 typedef struct rspell_sel rspell_sel;
-/*
-	Runespell selectors
-*/
+/* Spell selectors */
 struct rspell_sel
 {
 	long flags;

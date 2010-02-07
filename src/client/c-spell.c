@@ -1350,15 +1350,15 @@ static void print_rune_imperatives()
 
 	/* Title the list */
 	prt("", 1, col); put_str("Name         ( cost%,   damage%, fail%   )", 1, col);
-	prt("", j, col); put_str("a) minimized ( 50%,     50%,     100%    )", j++, col);
-	prt("", j, col); put_str("b) tiny      ( 80%,     80%,     100%    )", j++, col);
-	prt("", j, col); put_str("c) small     ( 100%,    100%,    150%    )", j++, col);
-	prt("", j, col); put_str("d) moderate  ( 120%,    120%,    200%    )", j++, col);
-	prt("", j, col); put_str("e) large     ( 120%,    100%,    200%    )", j++, col);
-	prt("", j, col); put_str("f) massive   ( 150%,    120%,    300%    )", j++, col);
-	prt("", j, col); put_str("g) maximized ( 180%,    150%,    400%    )", j++, col);
-	prt("", j, col); put_str("h) chaotic   ( 50-200%, 50-200%, 50-200% )", j++, col);
-
+	prt("", j, col); put_str("a) minimized ( 50%,     60%,     60%     )", j++, col);
+	prt("", j, col); put_str("b) tiny      ( 80%,     90%,     90%     )", j++, col);
+	prt("", j, col); put_str("c) small     ( 100%,    100%,    100%    )", j++, col);
+	prt("", j, col); put_str("d) moderate  ( 110%,    130%,    120%    )", j++, col);
+	prt("", j, col); put_str("e) large     ( 130%,    150%,    140%    )", j++, col);
+	prt("", j, col); put_str("f) massive   ( 150%,    170%,    160%    )", j++, col);
+	prt("", j, col); put_str("g) maximized ( 170%,    200%,    180%    )", j++, col);
+	prt("", j, col); put_str("h) chaotic   ( 50-250%, 50-250%, 50-250% )", j++, col);
+	
 	/* Clear the bottom line */
 	prt("", j++, col);
 }

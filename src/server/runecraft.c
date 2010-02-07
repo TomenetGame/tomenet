@@ -61,8 +61,6 @@ Skill tree:
 byte execute_rspell (u32b Ind, byte dir, u32b spell, byte imperative);
 u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration, s16b cost, u32b type, s16b diff, byte imper, u32b type_flags, u16b s_av, s16b mali);
 u32b rspell_type (u32b flags);
-u32b rspell_flag_type (r_element *list, u16b listc);
-u32b rspell_flag_method (r_element *list, u16b listc);
 s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type, u32b s_flags, s16b * mali);
 u16b rspell_skill(u32b Ind, u32b s_flags);
 u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cost, u32b s_type, char * attacker, byte imperative);
@@ -191,9 +189,7 @@ byte meth_to_id(u32b s_meth)
 	3. Average skill level of player
 	4. Cost multipliers (effect, method & imperative)
 
-	However, it's tricky to get all that into a sane cost scale, so this function, and the damage function are still undergoing significant tweaks.
-
-	The first three should be approximately the average cost of an istari spell. The fourth should adjust for necessary variations from that.
+	Currently cost = (#1 + 30)*skill_level/50, * #4
 */
 s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperative)
 {
@@ -215,7 +211,7 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	
 	t_pen = runespell_types[m].pen;
 	s_pen = runespell_list[s_type].pen;
-	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(25)+1;
+	d_pen = r_imperatives[imperative].cost ? r_imperatives[imperative].cost : randint(20)+5;
 
 	if(cost > S_COST_MAX)
 		cost = S_COST_MAX;
@@ -224,7 +220,7 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 	cost = (cost*s_pen)/10;
 	cost = (cost*d_pen)/10;
 	
-	/* Alternative to these just increasing fail rates. Now the fail rates are increased less, and spell costs are increased by a percentage. */
+	/* Alternative to these just increasing fail rates: */
 	if (no_lite(Ind) || p_ptr->blind)
 	{
 		penalty+=20;
@@ -242,7 +238,7 @@ s16b rspell_cost (u32b Ind, u16b s_type, u32b s_flags, u16b s_av, byte imperativ
 		penalty+= 10;
 	}
 	
-	cost = cost+((cost*penalty)/10); //Costs can increase up to 50% if everything is going wrong.
+	cost = cost+((cost*penalty)/100); //Costs can increase up to 60% if everything is going wrong.
 	
 	if(cost < S_COST_MIN)
 		cost = S_COST_MIN;
@@ -257,7 +253,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	Should follow a similar curve to mage-spells.
 	
 	Melee:
-		(Is supposed to be a range 1 bolt, but a wave is simpler for the moment)
+		(A range 1 bolt)
 		fire_wave(Ind, type, 0, 80 + get_level(Ind, ICESTORM, 200),
 					1, 1, 1, EFF_STORM, " invokes an ice storm for")
 	Bolt:
@@ -282,18 +278,18 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 {
 	u16b e_level = runespell_list[s_type].level;
 	byte runes[16];
-	byte value = 0;
-	u16b damage = 1;
+	
 	byte m = meth_to_id(s_flags);
 	e_level += runespell_types[m].cost;
-	e_level += (r_imperatives[imperative].danger/10);
-	*radius = 1;
-	*duration = 1;
+	
+	u16b damage = 1;
+	*radius = 100;
+	*duration = 100;
+	
 	if(s_av<e_level+1)
-		s_av = e_level+1; //Give a minimum of damage; if it's out of the caster's depth, he'll be penalised for trying, so a reasonable amount of damage is fair.
+		s_av = e_level+1; //Give a minimum of damage
 	
 	runes_in_flag(runes,s_flags);
-	value = rune_value(runes); //Approximate expense of runes, taking into account skill costs and perceived worth.
 	
 	if ((s_flags & R_BOLT) == R_BOLT) 
 	{
@@ -301,67 +297,43 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	}
 	else if ((s_flags & R_BEAM) == R_BEAM)
 	{
-		damage = damroll(value + rget_level(45), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(45), 1 + rget_level(20));
 	}
 	else if ((s_flags & R_SELF) == R_SELF)
 	{
-		damage = randint(value*10) + rget_level(136);
-		*duration = randint(value*10) + randint(30) + rget_level(75);
-		
-		if(r_imperatives[imperative].dam == 0)
-			*radius = (*radius * (1+randint(40)))/10;
-		else
-			*radius = (*radius * (1+r_imperatives[imperative].dam))/10;
+		damage = randint(20) + rget_level(136);
+		*duration = randint(50) + rget_level(75);
 	}
 	else if ((s_flags & R_BALL) == R_BALL)
 	{
-		damage = randint(value*20) + rget_level(500);
-		*radius = (1+randint(4)) + rget_level(5);
-		if(r_imperatives[imperative].dam == 0)
-			*radius = (*radius * (1+randint(40)))/10;
-		else
-			*radius = (*radius * (1+r_imperatives[imperative].dam))/10;
+		damage = randint(20) + rget_level(450);
+		*radius = 2 + rget_level(randint(3)+5);
 	}
 	else if (s_flags & R_WAVE)
 	{
-		*radius = 2+randint(value*3) + rget_level(6);
-		
-		if(r_imperatives[imperative].dam == 0)
-			*radius = (*radius * (1+randint(40)))/10;
-		else
-			*radius = (*radius * (1+r_imperatives[imperative].dam))/10;
-		
-		damage = randint(60+(value*10)) + rget_level(200);
+		*radius = 2+randint(6) + rget_level(6);
+		damage = randint(80) + rget_level(200);
 	}
 	else if (s_flags & R_CLOU)
 	{
-		*radius = 1 + randint(4) - value + rget_level(2); //Value works backwards here to balance cloud effects
-		*duration = 1 + randint(6) - value + rget_level(5);
-		if(r_imperatives[imperative].dam == 0)
-		{
-			*radius = (*radius * (1+randint(40)))/10;
-			*duration = (*duration * (1+randint(40)))/10;
-		}
-		else
-		{
-			*radius = (*radius * (1+r_imperatives[imperative].dam))/10;
-			*duration = (*duration * (1+r_imperatives[imperative].dam))/10;
-		}
+		*radius = randint(4) + rget_level(2);
+		*duration = randint(6) + rget_level(5);
+		
 		if(*radius > *duration)
 		{
 			*radius-=1;
 			*duration+=1;
 		}
 		/* Damage should be proportional to radius and duration. */
-		damage = randint(value*1.2) + rget_level(75-(*radius+(*duration/2)));
+		damage = randint(4) + rget_level(75 - (*radius + *duration / 2));
 	}
 	else if ((s_flags & R_LOS) == R_LOS)
 	{
-		damage = e_level + value + rget_level(100);
+		damage = e_level + 3 + rget_level(100);
 	}
 	else //R_MELE
 	{
-		damage = damroll(3 + rget_level(50), 1 + rget_level(20));
+		damage = damroll(3 + rget_level(50), 5 + rget_level(20));
 	}
 	
 	if(damage > S_DAM_MAX)
@@ -372,6 +344,20 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	{
 		damage = 1;
 	}
+	
+	if(r_imperatives[imperative].dam == 0) //Chaotic potency
+	{
+		damage = (damage * (randint(20)+5))/10;
+		*duration = (*duration * (randint(20)+5))/10;
+		*radius = (*radius * (randint(20)+5))/10;
+	}
+	else
+	{
+		damage = (damage * (1+r_imperatives[imperative].dam))/10;
+		*duration = (*duration * (1+r_imperatives[imperative].dam))/10;
+		*radius = (*radius * (1+r_imperatives[imperative].dam))/10;
+	}
+	
 	if (*radius < 1)
 	{
 		*radius = 1;
@@ -381,19 +367,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		*duration = 5;
 	}
 	
-	if(r_imperatives[imperative].dam == 0)
-	{
-		damage = (damage * (1+randint(40)))/10;
-	}
-	else
-	{
-		if(r_imperatives[imperative].dam != 1)
-			damage = (damage * (1+r_imperatives[imperative].dam))/10;
-		else
-			damage = (damage * (1+r_imperatives[imperative].dam))/5;
-	}
-	
-	damage = (damage*runespell_list[s_type].dam)/10; //So that things like meteor and nuke do more damage than fire and acid
+	damage = (damage*runespell_list[s_type].dam)/10;
 	
 	return damage;
 }
@@ -501,7 +475,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	u16b d = 0;
 	
 	if(r_imperatives[imperative].danger == 0)
-		damage *= (1+randint(40))/10;
+		damage *= (randint(20)+5)/10;
 	else
 		damage *= 1+(r_imperatives[imperative].danger/10);
 	
@@ -534,8 +508,8 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 				{
 					if (rand_int(100) < 10)
 					{
-						/* Select up to 50% of them, minimum of 1 */
-						amt = rand_int(o_ptr->number*50/100);
+						/* Select up to half */
+						amt = rand_int(o_ptr->number/2);
 						
 						if(amt == 0 && o_ptr->number >= 1)
 							amt = 1;
@@ -566,13 +540,11 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 	}
 	if(type & RPEN_MIN_SP)
 	{
-		d = damroll(1,2)+1;
-		
-		if (d == 2)
+		if (randint(20) == 5)
 		{
-			if(d==1)
-				set_paralyzed(Ind, cost);
+			set_paralyzed(Ind, 2);
 		}
+		
 		if(p_ptr->csp>(cost*2))
 		{
 			p_ptr->csp -= (cost*2);
@@ -605,6 +577,7 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 				set_slow(Ind, duration);
 				break;
 			default:
+				set_paralyzed(Ind, 2);
 				break;
 		}
 		p_ptr->redraw |= PR_HP;
@@ -612,51 +585,48 @@ u16b rspell_do_penalty(u32b Ind, byte type, u16b damage, u16b duration, s16b cos
 		
 	if(type & RPEN_MIN_ST)
 	{
-		d = randint(4);
+		d = 1;
 		u16b mode = 0; u16b stat = 0;
 		
-		if(d>1)
+		if(randint(5) > 2)
 			mode = STAT_DEC_TEMPORARY;
 		else
 			mode = STAT_DEC_PERMANENT;
-		while(d)
+		
+		switch(randint(12+mod_luck))
 		{
-			d = randint(12+mod_luck);
-			switch(d)
-			{
-				case 1:
-				case 2:
-					stat = A_INT;
-					break;
-				case 3:
-				case 4:
-					stat = A_CON;
-					break;
-				case 5:
-				case 6:
-					stat = A_WIS;
-					break;
-				case 7:
-				case 8:
-					stat = A_CHR;
-					break;
-				case 9:
-				case 10:
-					stat = A_STR;
-					break;
-				case 11:
-				case 12:
-					stat = A_DEX;
-					break;
-				default:
-					d = 0;
-					break;
-			}
+			case 1:
+			case 2:
+				stat = A_INT;
+				break;
+			case 3:
+			case 4:
+				stat = A_CON;
+				break;
+			case 5:
+			case 6:
+				stat = A_WIS;
+				break;
+			case 7:
+			case 8:
+				stat = A_CHR;
+				break;
+			case 9:
+			case 10:
+				stat = A_STR;
+				break;
+			case 11:
+			case 12:
+				stat = A_DEX;
+				break;
+			default:
+				d = 0;
+				break;
 		}
+		
 		if(d)
 		{
-			d = damroll(1,30);
-			dec_stat(Ind, stat, d, mode);
+			do_dec_stat(Ind, stat, mode);
 		}
 	}
 	/* Hurt sanity. With luck it may only confuse, scare or cause hallucinations. Should be less dangerous at low levels. */
@@ -840,75 +810,13 @@ s16b rspell_diff(u32b Ind, byte imperative, s16b s_cost, u16b s_av, u32b s_type,
 	if (fail < minfail) fail = minfail;
 	
 	if(r_imperatives[imperative].fail == 0) //Imperative (*)
-		fail = ((fail+1) * randint(40))/10;
+		fail = ((fail+1) * (randint(20)+5))/10;
 	else
 		fail = ((fail+1) * r_imperatives[imperative].fail)/10;
 	
 	if (fail > 95) fail = 95;
 	
 	return fail;
-}
-/* rspell_flag method
-Element list to method flags (as long).
-Takes the method array and it's size, returns the flags.
-*/
-u32b rspell_flag_method (r_element *method, u16b m_size)
-{
-	int i, n, match;
-	int flags[8];
-	n=0;
-	for(i=0;i<8;i++)
-		flags[i] = 0;
-	for(i=0;i<m_size;i++)
-	{
-		for(n=0;n<8;n++)
-			if (method[i].flags & runespell_types[n].type)
-				flags[n] += 1;
-	}
-
-	i=8;
-	match=0;
-	while(i)
-	{
-		i--;
-		if(flags[i] >= runespell_types[i].cost)
-			if(i==1 || !(flags[i-1] >= runespell_types[i-1].cost))
-				return runespell_types[i].type;
-	}
-	
-	return R_MELE;
-}
-
-
-/* rspell_flag_type
-Element list to element flags, takes the list array and its size, returns the flags as a long. */
-u32b rspell_flag_type (r_element *spell, u16b s_size)
-{
-	u16b i;
-	unsigned long flags=0;
-
-	for(i=0;i<s_size;i++)
-	{
-		//Regex for the win
-		if((spell[i].flags & R_FIRE)) { flags |= R_FIRE; }
-		else if(spell[i].flags & R_COLD) { flags |= R_COLD; } 
-		else if(spell[i].flags & R_ACID) { flags |= R_ACID; }
-		else if(spell[i].flags & R_ELEC) { flags |= R_ELEC; }
-		else if(spell[i].flags & R_POIS) { flags |= R_POIS; }
-		else if(spell[i].flags & R_WATE) { flags |= R_WATE; }
-		else if(spell[i].flags & R_WIND) { flags |= R_WIND; }
-		else if(spell[i].flags & R_EART) { flags |= R_EART; } 
-		else if(spell[i].flags & R_MANA) { flags |= R_MANA; }
-		else if(spell[i].flags & R_CHAO) { flags |= R_CHAO; }
-		else if(spell[i].flags & R_NETH) { flags |= R_NETH; }
-		else if(spell[i].flags & R_NEXU) { flags |= R_NEXU; }
-		else if(spell[i].flags & R_MIND) { flags |= R_MIND; }
-		else if(spell[i].flags & R_TIME) { flags |= R_TIME; }
-		else if(spell[i].flags & R_GRAV) { flags |= R_GRAV; }
-		else if(spell[i].flags & R_FORC) { flags |= R_FORC; }
-	}
-	
-	return flags;
 }
 
 /* rspell_type

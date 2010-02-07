@@ -974,40 +974,40 @@ cptr ranged_techniques[16] =
 /*
 Runespell elements
 */
-r_element r_elements[RCRAFT_MAX_ELEMENTS] =
+r_element r_elements[RCRAFT_MAX_ELEMENTS] = 
 {
-	{ 0, "Heat", 		"aestus", 		1, R_FIRE | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_FIRE,},
-	{ 1, "Cold", 		"gelum",		1, R_COLD | R_WAVE | R_BEAM, SKILL_R_FIRECOLD, R_COLD,},
-	{ 2, "Acid", 		"delibro",	 	1, R_ACID | R_WAVE | R_BOLT, SKILL_R_WATEACID, R_ACID,},
-	{ 3, "Water",		"mio",	 		2, R_WATE | R_WAVE | R_CLOU, SKILL_R_WATEACID, R_WATE,},
-	{ 4, "Lighting",	"fulmin", 		1, R_ELEC | R_BALL | R_BOLT, SKILL_R_ELECEART, R_ELEC,},
-	{ 5, "Earth", 		"ostes", 		2, R_EART | R_SELF | R_BALL, SKILL_R_ELECEART, R_EART,},
-	{ 6, "Poison", 		"lepis", 		2, R_POIS | R_SELF | R_CLOU, SKILL_R_WINDPOIS, R_POIS,},
-	{ 7, "Wind", 		"ventus", 		1, R_WIND | R_BOLT | R_CLOU, SKILL_R_WINDPOIS, R_WIND,},
-	{ 8, "Mana", 		"sacer",	 	3, R_MANA | R_BOLT | R_BEAM, SKILL_R_MANACHAO, R_MANA,},
-	{ 9, "Chaos", 		"emuto", 		3, R_CHAO | R_LOS  | R_CLOU, SKILL_R_MANACHAO, R_CHAO,},
-	{10, "Force", 		"fero",		 	3, R_FORC | R_BOLT | R_BEAM, SKILL_R_FORCGRAV, R_FORC,},
-	{11, "Gravity",		"numen", 		3, R_GRAV | R_BALL | R_CLOU, SKILL_R_FORCGRAV, R_GRAV,},
-	{12, "Nether", 		"elido", 		2, R_NETH | R_BOLT | R_BALL, SKILL_R_NETHTIME, R_NETH,},
-	{13, "Time", 		"emero",	 	3, R_TIME | R_SELF | R_LOS , SKILL_R_NETHTIME, R_TIME,},
-	{14, "Mind",		"cogito", 		3, R_MIND | R_SELF | R_BEAM, SKILL_R_MINDNEXU, R_MIND,},
-	{15, "Nexus", 		"vicis", 		2, R_NEXU | R_SELF | R_BALL, SKILL_R_MINDNEXU, R_NEXU,},
+	{ 0, "Heat", 		"Aestus", 		1, SKILL_R_FIRECOLD, R_FIRE,},
+	{ 1, "Cold", 		"Gelum",		1, SKILL_R_FIRECOLD, R_COLD,},
+	{ 2, "Acid", 		"Delibro",	 	1, SKILL_R_WATEACID, R_ACID,},
+	{ 3, "Water",		"Mio",	 		1, SKILL_R_WATEACID, R_WATE,},
+	{ 4, "Lighting",	"Fulmin", 		1, SKILL_R_ELECEART, R_ELEC,},
+	{ 5, "Earth", 		"Ostes", 		2, SKILL_R_ELECEART, R_EART,},
+	{ 6, "Poison", 		"Lepis", 		1, SKILL_R_WINDPOIS, R_POIS,},
+	{ 7, "Wind", 		"Ventus", 		1, SKILL_R_WINDPOIS, R_WIND,},
+	{ 8, "Mana", 		"Sacer",	 	1, SKILL_R_MANACHAO, R_MANA,},
+	{ 9, "Chaos", 		"Emuto", 		2, SKILL_R_MANACHAO, R_CHAO,},
+	{10, "Force", 		"Fero",		 	1, SKILL_R_FORCGRAV, R_FORC,},
+	{11, "Gravity",		"Numen", 		1, SKILL_R_FORCGRAV, R_GRAV,},
+	{12, "Nether", 		"Elido", 		1, SKILL_R_NETHTIME, R_NETH,},
+	{13, "Time", 		"Emero",	 	2, SKILL_R_NETHTIME, R_TIME,},
+	{14, "Mind",		"Cogito", 		1, SKILL_R_MINDNEXU, R_MIND,},
+	{15, "Nexus", 		"Vicis", 		1, SKILL_R_MINDNEXU, R_NEXU,},
 };
 
 
 /*
 Runespell imperatives
 */
-r_imper r_imperatives [RG_MAX] =
+r_imper r_imperatives [RG_MAX] = 
 {
-	{RG_HOPE, "qua",	 5, 10,  5, 10 },
-	{RG_ASKS, "immo",	 8, 10,  8, 10 },
-	{RG_REQU, "oratu",	10, 15, 10, 10 },
-	{RG_VOLU, "multo",	12, 20, 12, 10 },
-	{RG_WILL, "coactu",	12, 20, 10, 20 },
-	{RG_MIGH, "armis",	15, 30, 12, 30 },
-	{RG_DEMA, "iussu",	18, 40, 15, 40 },
-	{RG_LUCK, "forte",	 0,  0,  0, 20 },
+	{RG_HOPE, "minimized",	 5,  6,  6,  8 },
+	{RG_ASKS, "tiny",		 8,  9,  8, 10 },
+	{RG_REQU, "small",		10, 10, 10, 10 },
+	{RG_VOLU, "moderate",	11, 13, 12, 14 },
+	{RG_WILL, "large",		13, 15, 14, 16 },
+	{RG_MIGH, "massive",	15, 17, 16, 18 },
+	{RG_DEMA, "maximized",	17, 20, 18, 20 },
+	{RG_LUCK, "chaotic",	 0,  0,  0, 22 }, 	/* (Random cost, fail, damage) */
 };
 
 r_type runespell_types[8] =
