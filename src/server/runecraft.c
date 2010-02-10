@@ -280,7 +280,6 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	byte runes[16];
 	
 	byte m = meth_to_id(s_flags);
-	e_level += runespell_types[m].cost;
 	
 	u16b damage = 1;
 	*radius = 100;
@@ -309,12 +308,7 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 		damage = randint(20) + rget_level(450);
 		*radius = 2 + rget_level(randint(3)+5);
 	}
-	else if (s_flags & R_WAVE)
-	{
-		*radius = 2+randint(6) + rget_level(6);
-		damage = randint(80) + rget_level(200);
-	}
-	else if (s_flags & R_CLOU)
+	else if ((s_flags & R_CLOU) == R_CLOU || (s_flags & R_WAVE) == R_WAVE)
 	{
 		*radius = randint(4) + rget_level(2);
 		*duration = randint(6) + rget_level(5);
@@ -334,6 +328,19 @@ u16b rspell_dam (u32b Ind, u16b *radius, u16b *duration, u16b s_type, u32b s_fla
 	else //R_MELE
 	{
 		damage = damroll(3 + rget_level(50), 5 + rget_level(20));
+	}
+	
+	if((s_flags & R_WAVE) == R_WAVE) //Waves are cheaper standing clouds, with a slight boost to radius.
+	{
+		if(*radius < 4)
+		{
+			*radius += 1;
+		}
+		
+		if(*duration > 4)
+		{
+			*duration -= 1;
+		}
 	}
 	
 	if(damage > S_DAM_MAX)

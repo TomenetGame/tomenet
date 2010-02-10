@@ -6639,14 +6639,14 @@ Runespell types.
 */
 r_type runespell_types[8] =
 {
-	{ 0, R_MELE, "burst", 	0, 5  },	
-	{ 1, R_SELF, "self",  	1, 10 },
-	{ 2, R_BOLT, "bolt",  	1, 10 },
-	{ 3, R_BEAM, "beam",  	2, 11 },
-	{ 4, R_BALL, "ball",  	2, 13 },
-	{ 5, R_WAVE, "wave",  	3, 12 },
-	{ 6, R_CLOU, "cloud", 	3, 15 },
-	{ 7, R_LOS,  "sight", 	3, 40 },
+	{ 0, R_MELE, "burst", 	 0, 5  },	
+	{ 1, R_SELF, "self",  	 0, 10 },
+	{ 2, R_BOLT, "bolt",  	 1, 10 },
+	{ 3, R_BEAM, "beam",  	 2, 11 },
+	{ 4, R_BALL, "ball",  	 3, 13 },
+	{ 5, R_WAVE, "wave",  	 4, 12 },
+	{ 6, R_CLOU, "cloud", 	 8, 15 },
+	{ 7, R_LOS,  "sight", 	10, 40 },
 };
 
 /* Table of valid runespell types and their meta information.
