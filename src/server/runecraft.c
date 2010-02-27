@@ -1470,7 +1470,7 @@ u16b cast_runespell(u32b Ind, byte dir, u16b damage, u16b radius, u16b duration,
 	else
 	{
 		/* Any MP the caster does not have comes out of their HP. */
-		take_hit(Ind, (cost-p_ptr->csp), "magical exhaustion", 0);
+		take_hit(Ind, (cost-p_ptr->csp)*2, "magical exhaustion", 0);
 		p_ptr->csp = 0;
 	}
 	
