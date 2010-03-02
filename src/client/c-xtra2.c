@@ -594,7 +594,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 		if (strstr(msg, nomsg_target) || strstr(msg, nomsg_map))
 			continue;
 
-		if (!mode) { /* chatonly, ie 'important messages' only? */
+		if (mode) { /* chatonly, ie 'important messages' only? */
 			if (msg[0] == '\376') {
 				/* strip control code */
 				msg++;
