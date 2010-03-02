@@ -1913,9 +1913,9 @@ int Receive_message(void)
 	for (c = 0; c < n; c++) 
 		if (buf[c] < ' ' && /* exempt control codes */
 		    buf[c] != -1 && /* \377 colour code */
-		    buf[c] != -2 && /* \376 scrollback code */
-		    buf[c] != -3 && /* \375 chat code */
-		    buf[c] != -4) /* \374 no-chat code */
+		    buf[c] != -2 && /* \376 important-scrollback code */
+		    buf[c] != -3 && /* \375 chat-only code */
+		    buf[c] != -4) /* \374 chat+no-chat code */
 			return 1;
 
 	if (screen_icky && !party_mode && !shopping) Term_switch(0);

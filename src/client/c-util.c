@@ -28,7 +28,6 @@ static bool flush_later = FALSE;
 static byte macro__use[256];
 
 static bool was_chat_buffer = FALSE;
-static bool was_real_chat = FALSE;
 static bool was_all_buffer = FALSE;
 
 static char octify(uint i)
@@ -2406,51 +2405,6 @@ void c_msg_print(cptr msg)
 	/* mark beginning of text to output */
 	t = buf;
 
-	/* For message separation (chat/non-chat): */
-	char nameA[20];
-	char nameB[20];
-	cptr msg_deadA = "You have been killed";
-	cptr msg_deadB = "You die";
-	cptr msg_unique = "was slain by ";
-	cptr msg_killed = "was killed ";
-	cptr msg_killed2 = "was annihilated ";
-	cptr msg_killed3 = "was vaporized ";
-	cptr msg_destroyed = "was destroyed ";
-	cptr msg_killedF = "by Morgoth, Lord of Darkness"; /* for fancy death messages */
-	cptr msg_suicide = "committed suicide.";
-	cptr msg_entered = "has entered the game.";
-	cptr msg_left = "has left the game.";
-	cptr msg_event = " wins ";
-	cptr msg_winner = "is henceforth known as";
-	cptr msg_quest = "has won the";
-	cptr msg_dice = "dice and get";
-	cptr msg_level = "Welcome to level";
-	cptr msg_level2 = "has attained level";
-	cptr msg_gained_ability = "\377G* ";
-/* don't flood the 5th chat-only window with destroy-msgs,
-   ctrl+o in main window should be sufficient */
-/*	cptr msg_inven_destroy1 = "\377oYour ";
-        cptr msg_inven_destroy2 = "\377oOne of your ";
-        cptr msg_inven_destroy3 = "\377oSome of your ";
-        cptr msg_inven_destroy4 = "\377oAll of your "; */
-/*	cptr msg_inven_destroy1 = "was destroyed!";
-        cptr msg_inven_destroyx = "were destroyed!";*/
-	cptr msg_nopkfight = "You have beaten";
-	cptr msg_nopkfight2 = "has beaten you";
-	cptr msg_bloodbond = "blood bonds";
-	cptr msg_bloodbond2 = "ou blood bond";
-	cptr msg_bloodbond3 = "won the blood bond";
-	cptr msg_challenge = "challenges";
-	cptr msg_defeat = "has defeated";
-	cptr msg_retire = "has retired";
-	cptr msg_fruitbat = "turned into a fruit bat";
-	cptr msg_afk1 = "seems to be AFK now";
-        cptr msg_afk2 = "has returned from AFK";
-
-	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
-
-
 	/* Hack -- Reset */
 	if (!msg_flag) p = 0;
 
@@ -2477,64 +2431,20 @@ void c_msg_print(cptr msg)
 		p = 0;
 	}
 
-
 	/* No message */
 	if (!msg) return;
 
 	/* Paranoia */
 	if (n > 1000) return;
 
-#if 0 //we have PKT_AFK now (4.4.0) - C. Blue
-	/* Ok, bad hack - Sorry ;) - C. Blue */
-	if (strstr(msg, "AFK mode is turned \377rON\377w.") - msg == 0) {
-		p_ptr->afk = TRUE;
-		c_put_str(TERM_ORANGE, "AFK", 22, 0);
-	}
-	if (strstr(msg, "AFK mode is turned \377GOFF\377w.") - msg == 0) {
-		p_ptr->afk = FALSE;
-		put_str("   ", 22, 0);
-	}
-#endif
-
 	/* Memorize the message */
-	if (((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
-	    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
-	    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
-	    (strstr(msg, msg_killedF) != NULL) ||
-	    (strstr(msg, msg_unique) != NULL) || (strstr(msg, msg_suicide) != NULL) ||
-	    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) ||
-	    (strstr(msg, msg_event) != NULL) || (strstr(msg, msg_winner) != NULL) ||
-	    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) ||
-	    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) ||
-	    (strstr(msg, msg_gained_ability) != NULL) ||
-	    (strstr(msg, msg_deadA) != NULL) || (strstr(msg, msg_deadB) != NULL) ||
-/* don't flood the 5th window with destroy-msgs */
-/*	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) ||
-	    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) ||
-//	    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) ||
-	    (strstr(msg, msg_inven_steal1) != NULL) || (strstr(msg, msg_inven_steal2) != NULL) ||
-*/
-	    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) ||
-	    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) ||
-	    (strstr(msg, msg_bloodbond3) != NULL) ||
-	    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) || 
-	    (strstr(msg, msg_retire) != NULL) ||
-	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
-	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
-	    (msg[0] == '~' && was_chat_buffer) ||
-	    (msg[0] == '\375'))) {
-/*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
-		if (msg[2] == '[' || msg[0] == '\375') was_real_chat = TRUE;
-		else if (msg[0] != '~') was_real_chat = FALSE;
+	if (msg[0] == '\375') {
 		was_chat_buffer = TRUE;
 		was_all_buffer = FALSE;
-	} else if ((msg[0] == '\374') ||
-	    (msg[0] == '~' && was_all_buffer)) {
+	} else if (msg[0] == '\374') {
 		was_all_buffer = TRUE;
-		was_real_chat = FALSE;
 		was_chat_buffer = FALSE;
 	} else {
-		was_real_chat = FALSE;
 		was_chat_buffer = FALSE;
 		was_all_buffer = FALSE;
 	}
@@ -2544,12 +2454,10 @@ void c_msg_print(cptr msg)
 	if (*t == '\375') t++;
 
 	/* add the message to generic, chat-only and no-chat buffers
-	   accordingly, KEEPING '\376' control code (v>4.4.2.4)
-	   and '~' control code (backward compatibility) for main buffer */
+	   accordingly, KEEPING '\376' control code (v>4.4.2.4) for main buffer */
 	c_message_add(t);
 
 	/* strip remaining control codes before displaying on screen */
-	if (*t == '~') *t = ' '; /* for backward compatibility */
 	if (*t == '\376') t++;
 
 	if (was_chat_buffer || was_all_buffer)

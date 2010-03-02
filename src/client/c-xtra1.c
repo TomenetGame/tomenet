@@ -1591,19 +1591,11 @@ static void fix_message(void)
         int j, i;
         int w, h;
         int x, y;
-	bool msgtarget;
 
 	cptr msg;
 	byte a;
-	char buf[1024];
 
 	/* Display messages in different colors -Zz */
-	char nameA[20];
-	char nameB[20];
-
-	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
-
 
         /* Scan windows */
         for (j = 0; j < 8; j++)
@@ -1616,7 +1608,6 @@ static void fix_message(void)
                 /* No relevant flags */
                 if (!(window_flag[j] &
 		    (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT))) continue;
-		msgtarget = TRUE;
 
                 /* Activate */
                 Term_activate(ang_term[j]);
@@ -1631,13 +1622,6 @@ static void fix_message(void)
 	                {
 				a = TERM_WHITE;
 				msg = message_str_chat(i);
-
-				/* Display messages in different colors -Zz */
-				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
-					a = TERM_GREEN;
-				} else if (msg[2] == '[') {
-					a = TERM_L_BLUE;
-				}
 
 	                        /* Dump the message on the appropriate line */
 	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
@@ -1673,34 +1657,11 @@ static void fix_message(void)
 
 				/* strip remaining control codes that were left in
 				   this main buffer for purpose of CTRL+O/P scrollback
-				   control, before actually displaying the message. (1/2) */
+				   control, before actually displaying the message. */
 				if (msg[0] == '\376') msg++;
 
-				/* Display messages in different colors -Zz */
-				if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL)) {
-					if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
-					a = TERM_GREEN;
-				} else if (msg[2] == '[') {
-					if (!(window_flag[j] & (PW_MESSAGE | PW_CHAT))) msgtarget = FALSE;
-					a = TERM_L_BLUE;
-				} else {
-					if (!(window_flag[j] & (PW_MESSAGE | PW_MSGNOCHAT))) msgtarget = FALSE;
-					a = TERM_WHITE;
-				}
-#if 0
-				if (!msgtarget) break;
-#endif
 	                        /* Dump the message on the appropriate line */
-
-				/* strip remaining control codes that were left in
-				   this main buffer for purpose of CTRL+O/P scrollback
-				   control, before actually displaying the message. (2/2) */
-				/* backward compatibility hack: */
-				strcpy(buf, msg);
-				if (buf[0] == '~') buf[0] = ' ';
-
-	                        Term_putstr(0, (h - 1) - i, -1, a, buf);
-//	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
+	                        Term_putstr(0, (h - 1) - i, -1, a, (char*)msg);
 
 	                        /* Cursor */
 	                        Term_locate(&x, &y);

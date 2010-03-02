@@ -26,20 +26,14 @@ void do_cmd_messages(void)
 
 	char shower[80] = "";
 	char finder[80] = "";
-	char buf[1024];
 
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg = "", msg2;
 
 	/* Display messages in different colors -Zz */
-	char nameA[20];
-	char nameB[20];
+
 	cptr nomsg_target = "Target Selected.";
 	cptr nomsg_map = "Map sector ";
-
-	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
-
 
 	/* Total messages */
 	n = message_num();
@@ -56,12 +50,12 @@ void do_cmd_messages(void)
 	{
 		msg = message_str(i);
 
-		/* strip scrollback control code before processing the message */
-		if (msg[0] == '\376') msg++;
-
 		if (strstr(msg, nomsg_target) ||
 		    strstr(msg, nomsg_map))
 			continue;
+
+		/* strip scrollback control code before processing the message */
+		if (msg[0] == '\376') msg++;
 
 		message_recall[nn] = msg;
 		nn++;
@@ -119,15 +113,8 @@ void do_cmd_messages(void)
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
-
 			/* Dump the messages, bottom to top */
-
-			/* strip remaining control code (backward compatibility): */
-			strcpy(buf, msg);
-			if (buf[0] == '~') buf[0] = ' ';
-
-			Term_putstr(0, 21-j, -1, a, buf);
-//			Term_putstr(0, 21-j, -1, a, (char*)msg);
+			Term_putstr(0, 21-j, -1, a, (char*)msg);
 			t = strlen(msg);
 		}
 
@@ -315,22 +302,16 @@ void do_cmd_messages(void)
 }
 
 
-/* Show buffer of "important events" only via the CTRL-O command -Zz */
+/* Show buffer of "important events" only via the CTRL-O command -Zz
+   Note that nowadays the name 'chatonly' is slightly misleading:
+   It simply is a buffer of 'very important' messages, as already
+   stated above by Zz ;) - C. Blue */
 void do_cmd_messages_chatonly(void)
 {
-
-/* Note: This only serves for a bad hack here, condition to work is
-   that no non-chat must begin its first line (if it's multi-lined)
-   on a space char ' '. Should maybe be done by adding another array
-   to message__buf that is set in c-util.c and is a flag to keep track
-   of chat-buffer or non-chat-buffer property of each message - C. Blue */
-	bool was_ctrlo_buffer = FALSE;
-
 	int i, j, k, n, nn, q;
 
 	char shower[80] = "";
 	char finder[80] = "";
-	char buf[1024];
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -339,48 +320,6 @@ void do_cmd_messages_chatonly(void)
 	cptr message_chat[MESSAGE_MAX] = {0};
 
 	/* Display messages in different colors */
-	char nameA[20];
-	char nameB[20];
-	cptr msg_deadA = "You have been killed";
-	cptr msg_deadB = "You die";
-	cptr msg_unique = "was slain by ";
-	cptr msg_winner = "is henceforth known as";
-	cptr msg_killed = "was killed ";
-	cptr msg_killed2 = "was annihilated ";
-	cptr msg_killed3 = "was vaporized ";
-	cptr msg_destroyed = "was destroyed ";
-	cptr msg_killedF = "by Morgoth, Lord of Darkness"; /* for fancy death messages */
-	cptr msg_suicide = "committed suicide.";
-	cptr msg_entered = "has entered the game.";
-	cptr msg_left = "has left the game.";
-	cptr msg_quest = "has won the";
-	cptr msg_dice = "dice and get";
-	cptr msg_level = "Welcome to level";
-	cptr msg_level2 = "has attained level";
-	cptr msg_gained_ability = "\377G* ";
-	cptr msg_inven_destroy1 = "\377oYour ";
-	cptr msg_inven_destroy2 = "\377oOne of your ";
-	cptr msg_inven_destroy3 = "\377oSome of your ";
-	cptr msg_inven_destroy4 = "\377oAll of your ";
-/*	cptr msg_inven_destroy1 = "was destroyed!";
-	cptr msg_inven_destroyx = "were destroyed!";*/
-	cptr msg_inven_steal1 = " was stolen";
-	cptr msg_inven_steal2 = " were stolen";
-	cptr msg_nopkfight = "You have beaten";
-	cptr msg_nopkfight2 = "has beaten you";
-	cptr msg_bloodbond = "blood bonds";
-	cptr msg_bloodbond2 = "ou blood bond";
-	cptr msg_bloodbond3 = "won the blood bond";
-	cptr msg_challenge = "challenges";
-	cptr msg_defeat = "has defeated";
-	cptr msg_retire = "has retired";
-	cptr msg_fruitbat = "turned into a fruit bat";
-        cptr msg_afk1 = "seems to be AFK now";
-        cptr msg_afk2 = "has returned from AFK";
-
-	strcpy(nameA, "[");  strcat(nameA, cname);  strcat(nameA, ":");
-	strcpy(nameB, ":");  strcat(nameB, cname);  strcat(nameB, "]");
-
 
 	/* Total messages */
 	n = message_num();
@@ -388,43 +327,15 @@ void do_cmd_messages_chatonly(void)
 
 	/* Filter message buffer for "important messages" add to message_chat*/
 //	for (i = 0; i < n; i++)
-	for (i = n - 1; i >= 0; i--) /* traverse from oldest to newest message, for was_ctrlo_buf */
+	for (i = n - 1; i >= 0; i--) /* traverse from oldest to newest message */
 	{
 		cptr msg = message_str(i);
 
-		if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[0] == '[') ||
-		    (strstr(msg, msg_killed) != NULL) || (strstr(msg, msg_killed2) != NULL) ||
-		    (strstr(msg, msg_killed3) != NULL) || (strstr(msg, msg_destroyed) != NULL) ||
-		    (strstr(msg, msg_killedF) != NULL) ||
-		    (strstr(msg, msg_unique) != NULL) || 
-		    (strstr(msg, msg_winner) != NULL) || (strstr(msg, msg_suicide) != NULL) ||
-		    (strstr(msg, msg_entered) != NULL) || (strstr(msg, msg_left) != NULL) ||
-		    (strstr(msg, msg_quest) != NULL) || (strstr(msg, msg_dice) != NULL) ||
-		    (strstr(msg, msg_level) != NULL) || (strstr(msg, msg_level2) != NULL) ||
-		    (strstr(msg, msg_gained_ability) != NULL) ||
-		    (strstr(msg, msg_deadA)  != NULL) || (strstr(msg, msg_deadB) != NULL) ||
-		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroy2) != NULL) ||
-		    (strstr(msg, msg_inven_destroy3) != NULL) || (strstr(msg, msg_inven_destroy4) != NULL) ||
-/*		    (strstr(msg, msg_inven_destroy1) != NULL) || (strstr(msg, msg_inven_destroyx) != NULL) || */
-		    (strstr(msg, msg_inven_steal1) != NULL) || (strstr(msg, msg_inven_steal2) != NULL) ||
-		    (strstr(msg, msg_nopkfight) != NULL) || (strstr(msg, msg_nopkfight2) != NULL) ||
-		    (strstr(msg, msg_bloodbond) != NULL) || (strstr(msg, msg_bloodbond2) != NULL) ||
-		    (strstr(msg, msg_bloodbond3) != NULL) ||
-		    (strstr(msg, msg_challenge) != NULL) || (strstr(msg, msg_defeat) != NULL) ||
-		    (strstr(msg, msg_retire) != NULL) ||
-		    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
-		    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
-		    (msg[0] == '~' && was_ctrlo_buffer) ||
-		    (msg[0] == '\376'))
-		{
+		if (msg[0] == '\376') {
 			/* strip control code */
 			if (msg[0] == '\376') msg++;
-
-			was_ctrlo_buffer = TRUE;
 			message_chat[nn] = msg;
 			nn++;
-		} else {
-			was_ctrlo_buffer = FALSE;
 		}
 	}
 
@@ -460,13 +371,7 @@ void do_cmd_messages_chatonly(void)
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-
-			/* strip remaining control code (backward compatibility): */
-			strcpy(buf, msg);
-			if (buf[0] == '~') buf[0] = ' ';
-
-			Term_putstr(0, 21-j, -1, a, buf);
-//			Term_putstr(0, 21-j, -1, a, (*char)msg);
+			Term_putstr(0, 21-j, -1, a, (char*)msg);
 		}
 
 		/* Display header XXX XXX XXX */
@@ -666,22 +571,10 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	cptr message_recall[MESSAGE_MAX] = {0};
 	cptr msg = "", msg2;
 
+	char buf[160];
+
 	cptr nomsg_target = "Target Selected.";
 	cptr nomsg_map = "Map sector ";
-
-	cptr msg_deadA = "You have been killed";
-	cptr msg_deadB = "You die";
-	cptr msg_unique = "was slain by";
-	cptr msg_killed = "was killed by";
-	cptr msg_killed2 = "was annihilated ";
-	cptr msg_killed3 = "was vaporized ";
-//	cptr msg_destroyed = "ghost was destroyed by";
-	cptr msg_destroyed = "was destroyed by";
-	cptr msg_suicide = "committed suicide.";
-	cptr msg_killedF = "by Morgoth, Lord of Darkness"; /* for fancy death messages */
-
-
-	char buf[160];
 
 	/* Total messages */
 	n = message_num();
@@ -698,33 +591,23 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 	{
 		msg = message_str(i);
 
-		if (!mode)
-		{
-			if (strstr(msg, nomsg_target) ||
-					strstr(msg, nomsg_map))
-				continue;
+		if (strstr(msg, nomsg_target) || strstr(msg, nomsg_map))
+			continue;
+
+		if (!mode) { /* chatonly, ie 'important messages' only? */
+			if (msg[0] == '\376') {
+				/* strip control code */
+				msg++;
+
+				message_recall[nn] = msg;
+				nn++;
+			} else continue;
+		} else {
+			/* strip control code */
+			if (msg[0] == '\376') msg++;
 
 			message_recall[nn] = msg;
 			nn++;
-		}
-		else
-		{
-			if (
-				(msg[0] == '[') || (msg[2] == '[') ||
-				(strstr(msg, msg_killed) != NULL) ||
-				(strstr(msg, msg_killed2) != NULL) ||
-				(strstr(msg, msg_killed3) != NULL) ||
-				(strstr(msg, msg_destroyed) != NULL) ||
-				(strstr(msg, msg_killedF) != NULL) ||
-				(strstr(msg, msg_unique) != NULL) ||
-				(strstr(msg, msg_suicide) != NULL) ||
-				(strstr(msg, msg_deadA) != NULL) ||
-				(strstr(msg, msg_deadB) != NULL)
-				)
-			{
-				message_recall[nn] = msg;
-				nn++;
-			}
 		}
 	}
 
