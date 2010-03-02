@@ -357,7 +357,7 @@ void do_cmd_messages_chatonly(void)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
-	cptr msg_gained_ability = "\377G*";
+	cptr msg_gained_ability = "\377G* ";
 	cptr msg_inven_destroy1 = "\377oYour ";
 	cptr msg_inven_destroy2 = "\377oOne of your ";
 	cptr msg_inven_destroy3 = "\377oSome of your ";

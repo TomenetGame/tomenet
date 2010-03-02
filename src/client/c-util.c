@@ -29,6 +29,7 @@ static byte macro__use[256];
 
 static bool was_chat_buffer = FALSE;
 static bool was_real_chat = FALSE;
+static bool was_all_buffer = FALSE;
 
 static char octify(uint i)
 {
@@ -2425,7 +2426,7 @@ void c_msg_print(cptr msg)
 	cptr msg_dice = "dice and get";
 	cptr msg_level = "Welcome to level";
 	cptr msg_level2 = "has attained level";
-	cptr msg_gained_ability = "\377G*";
+	cptr msg_gained_ability = "\377G* ";
 /* don't flood the 5th chat-only window with destroy-msgs,
    ctrl+o in main window should be sufficient */
 /*	cptr msg_inven_destroy1 = "\377oYour ";
@@ -2521,19 +2522,26 @@ void c_msg_print(cptr msg)
 	    (strstr(msg, msg_afk1) != NULL) || (strstr(msg, msg_afk2) != NULL) ||
 	    (strstr(msg, msg_fruitbat) != NULL) || (msg[2] == '[') ||
 	    (msg[0] == '~' && was_chat_buffer) ||
-	    (msg[0] == '\375')) && msg[0] != '\374') {
+	    (msg[0] == '\375'))) {
 /*	if ((strstr(msg, nameA) != NULL) || (strstr(msg, nameB) != NULL) || (msg[2] == '[')) {*/
 		if (msg[2] == '[' || msg[0] == '\375') was_real_chat = TRUE;
 		else if (msg[0] != '~') was_real_chat = FALSE;
 		was_chat_buffer = TRUE;
+		was_all_buffer = FALSE;
+	} else if ((msg[0] == '\374') ||
+	    (msg[0] == '~' && was_all_buffer)) {
+		was_all_buffer = TRUE;
+		was_real_chat = FALSE;
+		was_chat_buffer = FALSE;
 	} else {
 		was_real_chat = FALSE;
 		was_chat_buffer = FALSE;
+		was_all_buffer = FALSE;
 	}
 
 	/* strip (from here on) effectless control codes */
-	if (buf[0] == '\374') t++;
-	if (buf[0] == '\375') t++;
+	if (*t == '\374') t++;
+	if (*t == '\375') t++;
 
 	/* add the message to generic, chat-only and no-chat buffers
 	   accordingly, KEEPING '\376' control code (v>4.4.2.4)
@@ -2541,12 +2549,12 @@ void c_msg_print(cptr msg)
 	c_message_add(t);
 
 	/* strip remaining control codes before displaying on screen */
-	if (buf[0] == '~') buf[0] = ' '; /* for backward compatibility */
-	if (buf[0] == '\376') t++;
+	if (*t == '~') *t = ' '; /* for backward compatibility */
+	if (*t == '\376') t++;
 
-	if (was_chat_buffer)
+	if (was_chat_buffer || was_all_buffer)
 		c_message_add_chat(t);
-	else
+	if (!was_chat_buffer)
 		c_message_add_msgnochat(t);
 
 	/* Analyze the buffer */
