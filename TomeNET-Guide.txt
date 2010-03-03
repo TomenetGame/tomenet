@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. Jan 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4 - official websites are:
+| Latest update: 3. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -1151,8 +1151,8 @@ the mundane world.
 
 (2.1) Installing TomeNET
 ------------------------
-Go to http://www.c-blue.de/rogue.html, download the latest client.
-Extract it to a new directory, preserving the pathnames.
+Go to http://www.tomenet.net/ (or one of our personal pages) to download the
+latest client. Extract it to a new directory, preserving the pathnames.
 
 Windows:
 --------
@@ -1967,7 +1967,7 @@ a) casting a magical spell
      to 'Gandalf.prf' if your character is called 'Gandalf'.
      If your macros are not automatically loaded, you'll have to do it
      manually after logging in, by pressing % and choosing '1 - Load macros',
-	 then specifying the according filename.
+     then specifying the according filename.
     Note that if your character gains additional abilities that show up
     in the 'm' menu, it might happen that 'b) cast a spell' becomes
     'c) cast a spell' which would require you to redefine your macros.
@@ -2158,7 +2158,7 @@ queued keypresses that have to be processed.)
 An example macro set for fighters or archers:
 ---------------------------------------------
 This macro set is already in your /lib/user folder! If it's not there,
-download the latest client from www.c-blue.de/rogue.
+download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter '1' to load a macro file, and specifying its filename,
 which is: example_fighter.prf
@@ -2213,7 +2213,7 @@ The above macro set slightly changed to fit
 additional needs of a low level istar or other casters:
 -------------------------------------------------------
 This macro set is already in your /lib/user folder! If it's not there,
-download the latest client from www.c-blue.de/rogue.
+download the latest client from www.tomenet.net or our personal pages.
 You can load this macro file by hitting % to invoke the macro menu,
 then enter '1' to load a macro file, and specifying its filename,
 which is: example_caster.prf
@@ -4582,8 +4582,8 @@ MANA ('It affects your mana capacity.')
         MANA items _add_ to each other, they aren't multiplied.
         They have slightly less effect on non-mages and quite less effect
         on priests or paladins who need wisdom rather than intelligence.
-		MANA affects your complete mana pool, including the additional MP
-		(mana points) a	character gained from 'Magic' skill.
+        MANA affects your complete mana pool, including the additional MP
+        (mana points) a character gained from 'Magic' skill.
 LIFE ('It affects your hit points')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
@@ -4592,11 +4592,11 @@ LIFE ('It affects your hit points')
         (For mimics, the +LIFE effect might be less since their HP in
         player form or monster form might be low. The +LIFE isn't applied
         to mimics' final HP but the lower base HP.)
-		LIFE affects your complete hit point pool, including the additional
-		HP a character gained from 'Health' skill.
+        LIFE affects your complete hit point pool, including the additional
+        HP a character gained from 'Health' skill.
 AGGRAVATE ('It aggravates nearby creatures')
         Wakes up all monsters in whose radius of awareness you are.
-		(Does not haste them as scrolls do, compare to (5.9)).
+        (Does not haste them as scrolls do, compare to (5.9)).
 LUCK ('The item increases your luck')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
@@ -5800,10 +5800,10 @@ Note that not every skill is available to every profession (class).
                                 Defensive stance - you will block more,
                                                  - intercept less often,
                                                  - deal less damage.
-						 Note: You can use it even
-						 without shield - in that case
-						 your chance of parrying is
-						 increased instead of blocking.
+                                                 Note: You can use it even
+                                                 without shield - in that case
+                                                 your chance of parrying is
+                                                 increased instead of blocking.
                                 Offensive stance - you can stun opponents
                                                    (compare (4.12)),
                                                  - intercept more often,
@@ -5831,15 +5831,15 @@ Note that not every skill is available to every profession (class).
                                 averaged, and rounded up, then bpr bonus for
                                 dual-wielding is added.
                                 Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
-				Also by pressing 'm' you can disable/reenable
-				dual-wield mode.
-				While disabled ('Main-Hand mode') you will just
-				attack with your primary weapon exclusively,
-				and not receive any dual-wield specific boni;
-				this can be useful if it deals much more damage
-				than your secondary weapon.
-				While enabled ('Dual-hand mode') you will
-				attack with both weapons, picked randomly.
+                                Also by pressing 'm' you can disable/reenable
+                                dual-wield mode.
+                                While disabled ('Main-Hand mode') you will just
+                                attack with your primary weapon exclusively,
+                                and not receive any dual-wield specific boni;
+                                this can be useful if it deals much more damage
+                                than your secondary weapon.
+                                While enabled ('Dual-hand mode') you will
+                                attack with both weapons, picked randomly.
     +Archery                    Improves ranged to-damage bonus.
                                 Allows you to learn some shooting techniques,
                                 accessible via 'm', see (6.12) for details.
@@ -7899,11 +7899,11 @@ Mental Intrusion
                     allied players who happen to be the same floor.
     Charm           Makes monsters in sight believe that you aren't an enemy,
                     preventing them most of the time from attacking you.
-		    Monsters may resist or be immune to the initial cast.
+                    Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
-		    you try to keep under control, the faster your mana is
-		    depleted. If your distance to the monsters becomes too big,
-		    the spell will break.
+                    you try to keep under control, the faster your mana is
+                    depleted. If your distance to the monsters becomes too big,
+                    the spell will break.
                     Required skill level for first spell level: 33.
 
 
@@ -9102,7 +9102,7 @@ Weapons
         Blessed (usable for priests without penalty)
         Hit point bonus (+LIFE)   (*)
 Weapons, boomerangs
-        Acid/elec/fire/cold brands
+        Elemental (acid/elec/fire/cold/poison) brands
         Increased damage dice
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
@@ -9240,7 +9240,7 @@ General mods:
         Searching
         Speed
         Any base immunities (acid/elec/fire/cold). Note: A randart cannot have
-		                                           more than two immunities!
+                                                   more than two immunities!
         Free action
         Hold life
         Any base resistances (acid/elec/fire/cold)
@@ -9432,11 +9432,11 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
             "Name already owned"
                     Account name already exists.
             "Your client is outdated. Please get the latest one from
-            http://www.c-blue.de/rogue"
+            http://www.tomenet.net/"
                     Download the latest client, see (0.1).
-            "Server responds 'Unknown client version'. Server might be
-            outdated or client is invalid. (Latest client is a at http://
-            www.c-blue.de/rogue)"
+            "Server responds 'Unknown client version'. Server might
+            be outdated or client is invalid. Latest client is at
+            http://www.tomenet.net/"
                     The server might be running an older
                     version than your client is.
             "Sorry, the game is full.  Try again later."
@@ -9547,11 +9547,12 @@ SOLUTION:   Seems to happen on Windows machines sometimes.
 
 PROBLEM 12: Every time I connect to the server it will automatically download
             LUA script files. However, they will have a size of 0 Bytes.
-SOLUTION:   Currently not resolved problem. Workaround: Make sure you really
-            have the latest LUA files in /pm/lib/scpt (you can download them
-            from http://www.c-blue.de/rogue.html). Then set all LUA files in
-            that directory to write-protected. This will prevent TomeNET from
-            overwriting them with 0 Byte files.
+SOLUTION:   Possibly write-protection on existing files or the folder.
+            Workaround: Make sure you really have the latest LUA files in
+            TomeNET's /lib/scpt folder (you can download them from
+            http://www.tomenet.net/ or our personal pages). Then set all LUA
+            files in that directory to write-protected. This will prevent
+            TomeNET from overwriting them with 0 Byte files.
 
 PROBLEM 13: I seem to be able to login, create a new character or select a
             character, and see the message of the day (login screen).
