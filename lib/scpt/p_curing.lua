@@ -59,7 +59,7 @@ __lua_HHEALING = HHEALING
 
 HDELCURSES = add_spell
 {
-        ["name"] =      "Remove Curses",
+        ["name"] =      "Break Curses",
         ["school"] =    SCHOOL_HCURING,
         ["level"] =     10,
         ["mana"] =      20,

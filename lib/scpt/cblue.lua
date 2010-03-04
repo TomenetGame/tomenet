@@ -162,9 +162,9 @@ function status(name)
 	rs = "Normal form"
     end
     if players(p).r_killed[863] > 0 then
-	ks = "Killed Morgoth"
+	ks = "   \255vKilled Morgoth"
     elseif players(p).r_killed[861] > 0 then
-	ks = "Killed Sauron"
+	ks = "   \255BKilled Sauron"
     else
 	ks = ""
     end
@@ -176,21 +176,37 @@ function status(name)
     end
     bspeed = players(p).pspeed - bspeed
 
+    if players(p).tim_blacklist > 0 then
+	blklst = "   \255oBlacklist: "..players(p).tim_blacklist
+    else
+	blklst = ""
+    end
+    if players(p).tim_watchlist > 0 then
+	wchlst = "   \255yWatchlist: "..players(p).tim_watchlist
+    else
+	wchlst = ""
+    end
+
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..")")
-    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst)
-    msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv.."   "..ks)
-    msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv)
+    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."    SP: "..players(p).csp.."/"..players(p).msp.."    San: "..players(p).csane.."/"..players(p).msane.."    St: "..players(p).cst.."/"..players(p).mst..ks)
+    msg_print(Ind, "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."   MDLev: "..players(p).max_dlv..blklst)
+    msg_print(Ind, "Lev: "..players(p).lev.."   Max Lev: "..players(p).max_lev.."   Top Lev: "..players(p).max_plv..wchlst)
     msg_print(Ind, "Body: "..rs)
     msg_print(Ind, "AC : "..players(p).ac.."   +AC: "..players(p).to_a.."   Total AC: "..(players(p).ac+players(p).to_a))
     msg_print(Ind, "ToH: "..players(p).to_h.."   THM: "..players(p).to_h_melee.."   THR: "..players(p).to_h_ranged.."   *TMH*: "..players(p).dis_to_h+players(p).to_h_melee)
     msg_print(Ind, "ToD: "..players(p).to_d.."   TDM: "..players(p).to_d_melee.."   TDR: "..players(p).to_d_ranged.."   *TMD*: "..players(p).dis_to_d+players(p).to_d_melee)
     msg_print(Ind, "BpR: "..players(p).num_blow.."   SpR: "..players(p).num_fire.."   CpR: "..players(p).num_spell.."   Au : "..players(p).au.."   Bank:  "..players(p).balance)
     if players(p).lev < 100 then
+	if players(p).exp == players(p).max_exp then
+		estr = "\255w"
+	else
+		estr = "\255y"
+	end
 --        msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev] / 100 * players(p).expfact))
 	if players(p).mode ~= 16 then
-            msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
+            msg_print(Ind, estr.."Exp:\255w "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]))
 	else
-            msg_print(Ind, "Exp: "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]).."   Kills: "..players(p).kills)
+            msg_print(Ind, estr.."Exp:\255w "..players(p).exp.."   MEx: "..players(p).max_exp.."   E2A: "..(player_exp[players(p).lev]).."   Kills: "..players(p).kills)
 	end
     end
     msg_print(Ind, "Lifes: "..players(p).lives.."  -  Houses: "..players(p).houses_owned.."  -  Combat Stance: "..players(p).combat_stance.."  - Dodge level: "..players(p).dodge_level.."/"..apply_dodge_chance(p, players(p).lev))
