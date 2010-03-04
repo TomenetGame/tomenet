@@ -307,8 +307,7 @@ static void store_purchase(void)
 
 static void store_chat(void)
 {
-	int		i, amt;
-	int		item;
+	int		i, item;
 
 	object_type	*o_ptr;
 
