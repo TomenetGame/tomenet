@@ -96,7 +96,7 @@ bool world_check_ignore(int Ind, unsigned long id, short server){
 
 void world_comm(int fd, int arg){
 	static char buffer[1024];
-	char cbuf[sizeof(struct wpacket)];
+	char cbuf[sizeof(struct wpacket)], *p;
 	static short bpos=0;
 	static short blen=0;
 	int x, i;
@@ -131,7 +131,12 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(wpk->d.chat.ctxt, "\375\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
+				/* strip special chat codes \374/5/6 before testing prefix() */
+				p = wpk->d.chat.ctxt;
+				if (*p == '\374') p++;
+				else if (*p == '\375') p++;
+				if (*p == '\376') p++;
+				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(p, "\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
 					for(i=1; i<=NumPlayers; i++){
 						if(Players[i]->conn!=NOT_CONNECTED){
 							/* lame method just now */
