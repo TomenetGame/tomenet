@@ -2630,16 +2630,27 @@ int Receive_store_info(void)
 	int	n, max_cost;
 	char	ch, owner_name[MAX_CHARS] , store_name[MAX_CHARS];
 	s16b	num_items;
+	byte store_attr = TERM_SLATE;
+	char store_char = '?';
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 4, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d%c%c", &ch, &store_num, store_name, owner_name, &num_items, &max_cost, &store_attr, &store_char)) <= 0)
+		{
+			return n;
+		}
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0)
+		{
+			return n;
+		}
 	}
 
 	store.stock_num = num_items;
 	c_store.max_cost = max_cost;
 	strncpy(c_store.owner_name, owner_name, 40);
 	strncpy(c_store.store_name, store_name, 40);
+	c_store.store_attr = store_attr;
+	c_store.store_char = store_char;
 
 	/* Only enter "display_store" if we're not already shopping */
 	if (!shopping) display_store();

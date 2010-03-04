@@ -305,6 +305,74 @@ static void store_purchase(void)
 	Send_store_purchase(item, amt);
 }
 
+static void store_chat(void)
+{
+	int		i, amt;
+	int		item;
+
+	object_type	*o_ptr;
+
+	char	out_val[160];
+	char	store_color;
+	char	store_char;
+	char	price[16];
+	char	where[16];
+
+
+	/* Empty? */
+	if (store.stock_num <= 0)
+	{
+		if (store_num == 7) c_msg_print("Your home is empty.");
+		else c_msg_print("I am currently out of stock.");
+		return;
+	}
+
+
+	/* Find the number of objects on this and following pages */
+	i = (store.stock_num - store_top);
+
+	/* And then restrict it to the current page */
+	if (i > 12) i = 12;
+
+	/* Prompt */
+	if (store_num == 7)
+	{
+		sprintf(out_val, "Which item? ");
+	}
+	else
+	{
+		sprintf(out_val, "Which item? ");
+	}
+
+	/* Get the item number to be pasted */
+	if (!get_stock(&item, out_val, 0, i-1)) return;
+
+	/* Get the actual index */
+	item = item + store_top;
+
+	/* Get the actual item */
+	o_ptr = &store.stock[item];
+
+	/* Convert the price to more readable format */
+	if (store_prices[item] >= 10000)
+		snprintf(price, 16, "%dk", store_prices[item] / 1000);
+	else
+		snprintf(price, 16, "%d", store_prices[item]);
+
+	/* Hack -- Get the shop symbol */
+	store_color = color_attr_to_char(c_store.store_attr);
+	store_char = c_store.store_char;
+	snprintf(where, 16, "%d,%d \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
+
+	/* Tell the server */
+	if (chat_mode == CHAT_MODE_PARTY)
+		Send_msg(format("!:\377s%s: %s (%s gp)", where, store_names[item], price));
+	else if (chat_mode == CHAT_MODE_LEVEL)
+		Send_msg(format("#:\377s%s: %s (%s gp)", where, store_names[item], price));
+	else
+		Send_msg(format("\377s%s:: %s (%s gp)", where, store_names[item], price));
+}
+
 static void store_sell(void)
 {
 	int item, amt;
@@ -511,6 +579,13 @@ static void store_process_command(void)
 		case 'l':
 		{
 			store_examine();
+			break;
+		}
+
+		/* Paste on Chat */
+		case 'c':
+		{
+			store_chat();
 			break;
 		}
 

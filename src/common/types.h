@@ -3122,6 +3122,10 @@ struct c_store_extra
 	char letter[6];
 	s16b cost[6];
 	byte flags[6];
+
+	/* Store attr and char */
+	byte store_attr;
+	char store_char;
 };
 
 /* from spells1.c */
