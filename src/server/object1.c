@@ -4153,7 +4153,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr)
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
         /* Describe the result */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	/* in case we just *ID* it because an admin inspected it */
+	if (!(o_ptr->ident & ID_MENTAL)) object_desc(0, o_name, o_ptr, TRUE, 3);
+	/* normal players: */
+	else object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	fprintf(fff, "%s\n", o_name);
 	if (strlen(o_name) > 77) fprintf(fff, "%s\n", o_name + 77);

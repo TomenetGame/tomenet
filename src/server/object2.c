@@ -992,7 +992,7 @@ void object_known(object_type *o_ptr)
 	o_ptr->ident &= ~ID_EMPTY;
 
 	/* Now we know about the item */
-	o_ptr->ident |= ID_KNOWN;
+	o_ptr->ident |= (ID_KNOWN | ID_SENSED_ONCE);
 
 	/* Artifact becomes 'found' status - omg it must already become
 	'found' if a player picks it up! That gave headaches! */
@@ -1683,15 +1683,17 @@ s64b object_value_real(int Ind, object_type *o_ptr)
 				//			if (f1 & TR1_STR) value += (boost * 200L);
 				if (f1 & TR1_STR) count++;
 				if (f1 & TR1_INT) count++;
-				if (f1 & TR1_WIS) count++;
+				if ((f1 & TR1_WIS) && !(f1 & TR1_INT)) count++; /* slightly useless combination */
 				if (f1 & TR1_DEX) count++;
 				if (f1 & TR1_CON) count++;
 #if 1 /* make CHR cheaper? */
-				if (f1 & TR1_CHR) count++;
+				if (f1 & TR1_CHR) {
+					if (count <= 1) count++;
+					else value += pval * 1000;
+				}
 #else
 				if (f1 & TR1_CHR) value += pval * 1000;
 #endif
-				
 				/* hack for double-stat rings - C. Blue */
 				if ((o_ptr->tval == TV_RING) && (
 				    (o_ptr->sval == SV_RING_MIGHT) ||
@@ -1980,6 +1982,8 @@ s64b object_value_real(int Ind, object_type *o_ptr)
    gets added to k_info base item price - C. Blue
    Note: Some pretty unimportant flags are missing. */
 s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
+	artifact_type *a_ptr;
+
 	s32b total = 0, am, minus, slay = 0;
 	u32b f1, f2, f3, f4, f5, esp;
 	int res_amass = 0;
@@ -1991,6 +1995,11 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	/* Hack - This shouldn't be here, still.. */
 	eliminate_common_ego_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
+	/* hack: Artifact ammunition actually uses a_ptr->cost.. somewhat inconsistent, sorry */
+	if ((o_ptr->name1 == ART_RANDART) && is_ammo(o_ptr->tval)) {
+		a_ptr = randart_make(o_ptr);
+		return(a_ptr->cost);
+	}
 
 	/* Basically easily observable without *ID*
 	   so I moved them to object_value_real (in fact we had
@@ -2358,10 +2367,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 			if ((a_ptr->flags4 & TR4_CURSE_NO_DROP) || (a_ptr->flags3 & TR3_AUTO_CURSE)) {
 				value = 0;
 			} else {
-//				value = object_value_base(0, o_ptr) << 1; /* at the end, randart prices are halved, so compensate here */
+				/* start with base item kind price (k_info) */
 				value = object_value_base(0, o_ptr);
-				if (star) value += artifact_flag_cost(o_ptr, o_ptr->pval);
+				/* randarts get a base value boost */
 				value += 5000;// + o_ptr->level * 200;
+				/* randart ammo is always very useful so it gets an extra base value boost */
+				if (is_ammo(o_ptr->tval)) value += 5000;
+				/* add full value if *ID*ed */
+				if (star) value += artifact_flag_cost(o_ptr, o_ptr->pval);
 
 				/* maybe todo (see function below):
 				value = artifact_value_real(a_ptr);
@@ -2537,11 +2550,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr)
 				//			if (f1 & TR1_STR) value += (boost * 200L);
 				if (f1 & TR1_STR) count++;
 				if (f1 & TR1_INT) count++;
-				if (f1 & TR1_WIS) count++;
+				if ((f1 & TR1_WIS) && !(f1 & TR1_INT)) count++; /* slightly useless combination */
 				if (f1 & TR1_DEX) count++;
 				if (f1 & TR1_CON) count++;
 #if 0 /* make CHR cheaper? */
-				if (f1 & TR1_CHR) count++;
+				if (f1 & TR1_CHR) {
+					if (count <= 1) count++;
+					else value += pval * 1000;
+				}
 #else
 				if (f1 & TR1_CHR) value += pval * 1000;
 #endif
@@ -2868,10 +2884,10 @@ s64b object_value(int Ind, object_type *o_ptr)
 	else
 	{
 		/* Hack -- Felt broken items */
-		if ((o_ptr->ident & ID_SENSE) && broken_p(o_ptr)) return (0L);
+		if ((o_ptr->ident & ID_SENSED_ONCE) && broken_p(o_ptr)) return (0L);
 
 		/* Hack -- Felt cursed items */
-		if ((o_ptr->ident & ID_SENSE) && cursed_p(o_ptr)) return (0L);
+		if ((o_ptr->ident & ID_SENSED_ONCE) && cursed_p(o_ptr)) return (0L);
 
 		/* Base value (see above) */
 		value = object_value_base(Ind, o_ptr);
@@ -3532,9 +3548,14 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 	/* No artifacts in the town */
 	if (istown(wpos)) return (FALSE);
 
+#if 0
+	/* disabled to allow WINNERS_ONLY artifacts - C. Blue
+         see other check below, similar to make_artifact() */
+
 	/* swallow true artifacts if king/queen finds them
 	   (dropped by monsters) */
 	if (resf & RESF_NOTRUEART) return (FALSE);
+#endif
 
 	/* Check the artifact list (just the "specials") */
 //	for (i = 0; i < ART_MIN_NORMAL; i++)
@@ -3586,6 +3607,19 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 
 			/* Roll for out-of-depth creation */
 			if (rand_int(d) != 0) continue;
+		}
+
+		/* swallow true artifacts if true_art isn't allowed
+		   (meaning that a king/queen did the monster kill!) */
+		if (resf & RESF_NOTRUEART) {
+			/* add exception for WINNERS_ONLY true arts
+			   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
+#if 0 /* basic way */
+			if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
+#else /* restrict to level 50+ in case of _fallen_ winners */
+			if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_LIFE)))
+#endif
+				return (FALSE); /* Don't replace them with randarts! */
 		}
 
 		/* Assign the template */
@@ -3682,7 +3716,11 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf)
 			if (resf & RESF_NOTRUEART) {
 				/* add exception for WINNERS_ONLY true arts
 				   (this is required for non DROP_CHOSEN/SPECIAL_GENE winner arts): */
+#if 0 /* basic way */
 				if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_WINNER)))
+#else /* restrict to level 50+ in case of _fallen_ winners */
+				if (!((a_ptr->flags5 & TR5_WINNERS_ONLY) && (resf & RESF_LIFE)))
+#endif
 					return (FALSE); /* Don't replace them with randarts! */
 			}
 
@@ -7113,7 +7151,7 @@ void determine_level_req(int level, object_type *o_ptr)
 			base += 40+30;
 			break;
 		case SV_POTION_AUGMENTATION:
-			base += 30+20;
+			base += 45+20;
 			break;
 		case SV_POTION_EXPERIENCE:
 			base += 20+20;
@@ -7388,7 +7426,7 @@ void determine_level_req(int level, object_type *o_ptr)
 			base += 35;
 			break;
 		case SV_POTION_AUGMENTATION:
-			base += 20;
+			base += 29;
 			break;
 		}
 	}
@@ -7904,7 +7942,7 @@ u32b place_object_restrictor = RESF_NONE;
 void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker)
 {
 	int prob, base, tmp_luck, i;
-	int tries = 0, k_idx;
+	int tries = 0, k_idx, debug_k_idx = 0;
 
 	object_type		forge;
 	dun_level *l_ptr = getfloor(wpos);
@@ -7929,6 +7967,11 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	   (goes in hand with the same check in apply_magic) - C. Blue */
 	if (!cfg.winners_find_randarts) resf |= RESF_TRUEART;
 #endif
+
+	if (resf & RESF_DEBUG_ITEM) {
+		debug_k_idx = luck;
+		luck = 0;
+	}
 
 	/* place_object_restrictor overrides resf */
 	resf |= place_object_restrictor;
@@ -7960,8 +8003,15 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	/* Hack -- clear out the forgery */
 	invwipe(&forge);
 
+	if (resf & RESF_DEBUG_ITEM) {
+		k_idx = debug_k_idx;
+
+		/* Prepare the object */
+		invcopy(&forge, k_idx);
+		forge.number = 1;
+	}
 	/* Generate a special object, or a normal object */
-	if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf))
+	else if ((rand_int(prob) != 0) || !make_artifact_special(wpos, &forge, resf))
 	{
 	
 		/* Check global variable, if some base types are forbidden */
@@ -10138,7 +10188,7 @@ s16b inven_carry(int Ind, object_type *o_ptr)
 		/* The object recurse itself ! */
 		if (!(o_ptr->ident & ID_CURSED)) {
 			o_ptr->ident |= ID_CURSED;
-			o_ptr->ident |= ID_SENSE;
+			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 			o_ptr->note = quark_add("cursed");
 		}
 	}

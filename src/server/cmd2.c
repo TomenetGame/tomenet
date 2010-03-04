@@ -217,7 +217,7 @@ void do_cmd_go_up(int Ind)
 				        if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s has entered %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+						msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 				}
 #endif
 			}
@@ -229,7 +229,7 @@ void do_cmd_go_up(int Ind)
 				        if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s has left %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
+						msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].tower->type].name);
 				}
 #endif
 			}
@@ -568,7 +568,7 @@ void do_cmd_go_down(int Ind)
 				        if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s has entered %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+						msg_format(i, "\374\377G%s has entered %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 				}
 #endif
 			}
@@ -580,7 +580,7 @@ void do_cmd_go_down(int Ind)
 				        if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
 					if (Players[i]->party == p_ptr->party)
-						msg_format(i, "\377G[%s has left %s..]", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
+						msg_format(i, "\374\377G%s has left %s..", p_ptr->name, d_name + d_info[wild_info[wpos->wy][wpos->wx].dungeon->type].name);
 				}
 #endif
 			}
@@ -4730,7 +4730,7 @@ void do_cmd_fire(int Ind, int dir)
 			forge.to_h = -rand_int(10);
 			forge.to_d = -rand_int(10);
 			*o_ptr = forge;
-			o_ptr->ident |= ID_KNOWN;
+			o_ptr->ident |= ID_KNOWN | ID_SENSED_ONCE;
 
 			if (magic) { /* hack: the one exception where magic ammo doesn't return */
 				inven_item_increase(Ind, item, -1);
@@ -5863,7 +5863,8 @@ return;
 		msg_print(Ind, "\377yYour armour is too heavy to cloak yourself effectively.");
 		return;
 	}
-	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+	    && !instakills(Ind)) {
 		msg_print(Ind, "\377yYour weapon is too large to cloak yourself effectively.");
 		return;
 	}
@@ -5881,7 +5882,7 @@ return;
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "\377yYou cannot cloak yourself while you are dead!");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 	if (p_ptr->blind) {
 		msg_print(Ind, "\377yYou cannot cloak yourself while blind.");
@@ -5897,7 +5898,7 @@ return;
 	}
 	if (p_ptr->paralyzed) { /* just paranoia, no energy anyway */
 		msg_print(Ind, "\377yYou cannot cloak yourself while paralyzed.");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
     }
 
@@ -5924,7 +5925,7 @@ return;
 		msg_format_near(Ind, "\377w%s begins to cloak %s appearance...", p_ptr->name, p_ptr->male ? "his" : "her");
 		p_ptr->cloaked = 10; /* take this number of seconds-1 to complete */
 	}
-	p_ptr->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+	p_ptr->update |= (PU_BONUS | PU_LITE | PU_VIEW | PU_MONSTERS);
 	p_ptr->redraw |= (PR_STATE | PR_SPEED);
 }
 
@@ -5953,8 +5954,9 @@ void stop_cloaking(int Ind) {
 	if (Players[Ind]->cloaked > 1) {
 		msg_print(Ind, "\377yYou stop cloaking preparations.");
 		Players[Ind]->cloaked = 0;
-		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW);
+		Players[Ind]->update |= (PU_BONUS | PU_LITE | PU_VIEW | PU_MONSTERS);
 		Players[Ind]->redraw |= (PR_STATE | PR_SPEED);
+
 	}
 }
 
@@ -5993,7 +5995,8 @@ void shadow_run(int Ind)
 		msg_print(Ind, "\377yYour armour is too heavy for effective shadow running.");
 		return;
 	}
-	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))
+	    && !instakills(Ind)) {
 		msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
 		return;
 	}
@@ -6007,7 +6010,7 @@ void shadow_run(int Ind)
 	}
 	if (p_ptr->ghost) {
 		msg_print(Ind, "\377yYou cannot shadow run while you are dead!");
-		return;
+		if (!is_admin(p_ptr)) return;
 	}
 	if (p_ptr->blind) {
 		msg_print(Ind, "\377yYou cannot shadow run while blind.");
@@ -6020,6 +6023,10 @@ void shadow_run(int Ind)
 	if (p_ptr->stun) {
 		msg_print(Ind, "\377yYou cannot start shadow running while stunned.");
 		return;
+	}
+	if (p_ptr->paralyzed) { /* just paranoia, no energy anyway */
+		msg_print(Ind, "\377yYou cannot start shadow running while paralyzed.");
+		if (!is_admin(p_ptr)) return;
 	}
 
         if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }

@@ -71,9 +71,9 @@
 #define SERVER_VERSION_TAG ""
 
 /* Maximum client version allowed to log in */
-#define MAX_VERSION_MAJOR       4
-#define MAX_VERSION_MINOR       15
-#define MAX_VERSION_PATCH       15
+#define MAX_VERSION_MAJOR	4
+#define MAX_VERSION_MINOR	15
+#define MAX_VERSION_PATCH	15
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
@@ -85,8 +85,8 @@
 
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
-#define SF_VERSION_MINOR	3
-#define SF_VERSION_PATCH	26
+#define SF_VERSION_MINOR	4
+#define SF_VERSION_PATCH	1
 #define SF_VERSION_EXTRA	0
 
 
@@ -159,6 +159,8 @@
 #define EXTRA_LEVEL_FEELINGS	/* enable extra level feelings, remotely angband-style, warning about dangers */
 #define M_EGO_NEW_FLICKER	/* ego monsters flicker between base r_ptr and ego colour */
 #define NEW_ANTIMAGIC_RATIO	/* new darksword-vs-skill ratio for antimagic: weapon up to 30%, skill up to 50% */
+
+#define ANTI_SEVEN_EXPLOIT	/* prevent ball-spell/explosion casters from exploiting monster movement by using a 7-shaped corridor */
 
 /* --------------------- Server-type dependant features -------------------- */
 
@@ -1928,6 +1930,10 @@ that keeps many algorithms happy.
 #define ART_THINKINGCAP		259
 #define ART_MIRROROFGLORY	260
 #define ART_GOGGLES_DM		261
+#define ART_ARS_NUMENIS		262
+#define ART_SOULCALLER		263
+#define ART_VERIDIS_QUO		264
+#define ART_SCYTHE_DM		265
 /* #define ART_ANGTIRCALAD		*/
 
 
@@ -3768,14 +3774,15 @@ that keeps many algorithms happy.
 /*
  * Special "Item Flags"
  */
-#define ID_SENSE	0x01	/* Item has been "sensed" */
-#define ID_FIXED	0x02	/* Item has been "haggled" */
-#define ID_EMPTY	0x04	/* Item charges are known */
-#define ID_KNOWN	0x08	/* Item abilities are known */
-#define ID_RUMOUR	0x10	/* Item background is known */
-#define ID_MENTAL	0x20	/* Item information is known (*ID*-ed) */
-#define ID_CURSED	0x40	/* Item is temporarily cursed */
-#define ID_BROKEN	0x80	/* Item is permanently worthless */
+#define ID_SENSE	0x0001	/* Item has been "sensed" */
+#define ID_FIXED	0x0002	/* Item has been "haggled" */
+#define ID_EMPTY	0x0004	/* Item charges are known */
+#define ID_KNOWN	0x0008	/* Item abilities are known */
+#define ID_RUMOUR	0x0010	/* Item background is known */
+#define ID_MENTAL	0x0020	/* Item information is known (*ID*-ed) */
+#define ID_CURSED	0x0040	/* Item is temporarily cursed */
+#define ID_BROKEN	0x0080	/* Item is permanently worthless */
+#define ID_SENSED_ONCE	0x0100	/* Item was at least sensed once, maybe even IDed. (anti-exploit) */
 
 
 
@@ -4037,6 +4044,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
 
 #define RESF_LIFE		0x00010000	/* allow +LIFE randarts */
+#define RESF_DEBUG_ITEM		0x00020000	/* generate a certain item (k_idx) for debugging purpose */
 
 #define RESF_LOW		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_LOWVALUE)	/* prevent generation of especially powerful items */
 #define RESF_LOW2		(RESF_NOTRUEART | RESF_NORANDART | RESF_NODOUBLEEGO | RESF_NOHIDSM | RESF_LOWSPEED | RESF_MIDVALUE)	/* prevent generation of especially powerful items */
@@ -4418,7 +4426,7 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define RF5_MIND_BLAST		0x00000400	/* Blast Mind */
 #define RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
 #define RF5_CURSE			0x00001000	/* Cause Light Wound */
-//FREE FLAGS HOLE
+#define RF5_RAND_100			0x00002000	/* 100% random movement */
 #define RF5_BA_NUKE			0x00004000  /* TY: Nuke Ball */
 #define RF5_BA_CHAO			0x00008000  /* Chaos Ball */
 #define RF5_BO_ACID		0x00010000	/* Acid Bolt */
@@ -5229,11 +5237,11 @@ Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 /* artifacts that can occur multiple times legally */
 #define multiple_artifact_p(T) \
         ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM)
+	(T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM || (T)->name1 == ART_SCYTHE_DM)
 
 /* artifacts that aren't supposed to show up in non-admins' art lists */
 #define admin_artifact_p(T) \
-	((T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM)
+	((T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM || (T)->name1 == ART_SCYTHE_DM)
 
 /* artifacts that as an exception can by used by winners */
 #define winner_artifact_p(T) \
@@ -6740,9 +6748,12 @@ extern int PlayerUID;
 #define AT_VALINOR6	8
 
 
-/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. - C. Blue */
+/* Admin-specific item powers - C. Blue */
+/* Can a player see the secret_dungeon_master? Only if he wears the special Goggles.. */
 #define player_sees_dm(I)	\
-	(Players[I]->inventory[INVEN_HEAD].tval == TV_HELM && Players[I]->inventory[INVEN_HEAD].sval == SV_GOGGLES_DM)
+	(Players[I]->inventory[INVEN_HEAD].tval && Players[I]->inventory[INVEN_HEAD].name1 == ART_GOGGLES_DM)
+#define instakills(I)	\
+	(Players[I]->inventory[INVEN_WIELD].tval && Players[I]->inventory[INVEN_WIELD].name1 == ART_SCYTHE_DM)
 
 
 /* Masks for restricted mimicry */
@@ -6807,8 +6818,9 @@ extern int PlayerUID;
 
 
 /* modify the base crit bonus to make it less linear, remotely similar to LUCK */
-#define BOOST_CRIT(xtra_crit)	(65 - (975 / ((xtra_crit) + 15))) /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
+//#define BOOST_CRIT(xtra_crit)	(65 - (975 / ((xtra_crit) + 15))) /* 1:5, 2: 8, 3:11, 5:17, 7:21, 10:26, 15:33, 20:38 */
 //xtra_crit = 60 - (600 / (xtra_crit + 10)); /* 1:6, 2:10, 3:15, 5:20, 7:25, 10:30, 15:36, 20:40 */
+#define BOOST_CRIT(xtra_crit)	(66 - (1350 / ((xtra_crit) + 20))) /* 1:2, 2: 5, 3:8, 5:12, 7:16, 10:21, 15:28, 20:33 */
 
 
 /* Here comes the new rune master macros and what not */

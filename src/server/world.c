@@ -131,7 +131,7 @@ void world_comm(int fd, int arg){
 				break;
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
-				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(wpk->d.chat.ctxt, "\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
+				if (cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(wpk->d.chat.ctxt, "\375\377r[\377"))) { /* Filter incoming public chat and broadcasts here now - mikaelh */
 					for(i=1; i<=NumPlayers; i++){
 						if(Players[i]->conn!=NOT_CONNECTED){
 							/* lame method just now */
@@ -147,7 +147,7 @@ void world_comm(int fd, int arg){
 				for(i=1; i<=NumPlayers; i++){
 					if(!strcmp(Players[i]->name, wpk->d.pmsg.victim)){
 						if(!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid))
-							msg_format(i, "\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
+							msg_format(i, "\375\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 					}
 				}
 				break;
@@ -303,7 +303,7 @@ void add_rplayer(struct wpacket *wpk){
 	struct rplist *n_pl, *c_pl;
 	unsigned short found=0;
 	if(!wpk->d.play.silent)
-		msg_broadcast_format(0, "\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
+		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type==WP_NPLAYER ? "entered" : "left"));
 
 	if(wpk->type==WP_NPLAYER && !wpk->d.play.server) return;
 	lp=rpmlist;

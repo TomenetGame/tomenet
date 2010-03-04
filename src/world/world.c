@@ -129,9 +129,11 @@ void handle(struct client *ccl){
 }
 
 void wproto(struct client *ccl){
+	int client_chat, client_all, client_ctrlo;
 	struct wpacket *wpk=(struct wpacket*)ccl->buf;
         while(ccl->blen>=sizeof(struct wpacket)){
                 fprintf(stderr, "protoing... type %d\n", wpk->type);
+		client_chat = client_all = client_ctrlo = 0;
                 switch(wpk->type){
 			case WP_LACCOUNT:
 				/* ignore unauthed servers
@@ -167,9 +169,25 @@ void wproto(struct client *ccl){
 			case WP_CHAT:
                                 /* only relay all for now */
 				if(ccl->authed && ((ccl->authed>0) || secure.chat)){
-					char msg[160];
+					char msg[160], *p = wpk->d.chat.ctxt;
+					/* strip chat codes and reinsert them at the beginning */
+					if (*p == '\374') {
+						client_all = 1;
+						p++;
+					}
+					else if (*p == '\375') {
+						client_chat = 1;
+						p++;
+					}
+					if (*p == '\376') {
+						client_ctrlo = 1;
+						p++;
+					}
 //					snprintf(msg, 160, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-					snprintf(msg, 160, "\377%c[%d]\377w %s%c", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt, '\0');
+					snprintf(msg, 160, "%s%s\377%c[%d]\377w %s%c",
+					    client_all ? "\374" : (client_chat ? "\375" : ""),
+					    client_ctrlo ? "\376" : "",
+					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, p, '\0');
 //					msg[159] = '\0';
 					strncpy(wpk->d.chat.ctxt, msg, 160);
 					relay(wpk, ccl);
@@ -213,8 +231,24 @@ void wproto(struct client *ccl){
 				if(ccl->authed && (ccl->authed>0 || secure.msgs)){
 
 					/* add same code in front as for WP_CHAT */
-					char msg[160];
-					snprintf(msg, 160, "\377%c[%d]\377w %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.smsg.stxt);
+					char msg[160], *p = wpk->d.smsg.stxt;
+					/* strip chat codes and reinsert them at the beginning */
+					if (*p == '\374') {
+						client_all = 1;
+						p++;
+					}
+					else if (*p == '\375') {
+						client_chat = 1;
+						p++;
+					}
+					if (*p == '\376') {
+						client_ctrlo = 1;
+						p++;
+					}
+					snprintf(msg, 160, "%s%s\377%c[%d]\377w %s",
+					    client_all ? "\374" : (client_chat ? "\375" : ""),
+					    client_ctrlo ? "\376" : "",
+					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, p);
 					/* make sure it's null terminated (if snprintf exceeds 160 chars and places no \0) - mikaelh */
 					msg[159] = '\0';
 					strncpy(wpk->d.smsg.stxt, msg, 160);

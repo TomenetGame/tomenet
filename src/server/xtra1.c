@@ -1704,9 +1704,32 @@ void calc_hitpoints(int Ind)
 	    }
 	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 #endif
-#if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
-	    mHPLim = (50000 / ((50000 / rhp) + 20));
+#if 0 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
 	    long levD, hpD, raceHPbonus;
+	    mHPLim = (50000 / ((50000 / rhp) + 20));
+
+	    raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
+	    mhp -= raceHPbonus;
+	    if (mHPLim < mhp) {
+		    levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
+		    if (levD < 0) levD = 0;
+		    if (levD > 20) levD = 20;
+		    hpD = mhp - mHPLim;
+		    mHPLim = mhp - (hpD * levD) / 20; /* When your form is 20 or more levels below your charlevel,
+						       you receive the full HP difference in the formula below. */
+	    }
+	    finalHP = (mHPLim < mhp ) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
+	    finalHP += raceHPbonus;
+#endif
+#if 1 /* assume human mimic HP for calculation; afterwards, add up our 'extra' hit points if we're a stronger race */
+	/* additionally, scale form HP better with very high character levels */
+	    long levD, hpD, raceHPbonus;
+	    mHPLim = (50000 / ((50000 / rhp) + 20));
+
+ #if 0 /* done below */
+	    /* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
+	    mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
+ #endif
 
 	    raceHPbonus = mhp - ((mhp * 15) / p_ptr->hitdie); /* 10 human + 5 mimic */
 	    mhp -= raceHPbonus;
@@ -1732,8 +1755,9 @@ void calc_hitpoints(int Ind)
 	/* Bonus from +LIFE items (should be weapons only -- not anymore, Bladeturner / Randarts etc.!).
 	   Also, cap it at +3 (boomerang + weapon could result in +6) (Boomerangs can't have +LIFE anymore) */
 	if (!is_admin(p_ptr) && p_ptr->to_l > 3) p_ptr->to_l = 3;
+
+	/* Reduce use of +LIFE items for mimics while in monster-form */
 	if (mhp > mhp_playerform) {
-		/* Reduce the use for mimics (while in monster-form) */
 		if (p_ptr->to_l > 0)
 			mhp += (mhp_playerform * p_ptr->to_l * mhp_playerform) / (10 * mhp);
 		else
@@ -1741,6 +1765,27 @@ void calc_hitpoints(int Ind)
 	} else {
 		mhp += (mhp * p_ptr->to_l) / 10;
 	}
+#if 1
+	if (p_ptr->body_monster) {
+		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
+		mhp += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 : r_info[p_ptr->body_monster].level) + 30)) / 100) * 8 : 0;
+	}
+#endif
+
+#if 0 /* p_ptr->to_hp is unused atm! */
+	/* Fixed Hit Point Bonus */
+	if (!is_admin(p_ptr) && p_ptr->to_hp > 200) p_ptr->to_hp = 200;
+
+	if (mhp > mhp_playerform) {
+		/* Reduce the use for mimics (while in monster-form) */
+		if (p_ptr->to_hp > 0)
+			mhp += (mhp_playerform * p_ptr->to_hp) / mhp;
+		else
+			mhp += p_ptr->to_hp;
+	} else {
+		mhp += p_ptr->to_hp;
+	}
+#endif
 
 	/* Meditation increase mana at the cost of hp */
 	if (p_ptr->tim_meditation)
@@ -1763,20 +1808,6 @@ void calc_hitpoints(int Ind)
 	else if (p_ptr->berserk) mhp += 20;
 #endif
 	
-#if 0 /* p_ptr->to_hp is unused atm! */
-	/* Fixed Hit Point Bonus */
-	if (!is_admin(p_ptr) && p_ptr->to_hp > 200) p_ptr->to_hp = 200;
-
-	if (mhp > mhp_playerform) {
-		/* Reduce the use for mimics (while in monster-form) */
-		if (p_ptr->to_hp > 0)
-			mhp += (mhp_playerform * p_ptr->to_hp) / mhp;
-		else
-			mhp += p_ptr->to_hp;
-	} else {
-		mhp += p_ptr->to_hp;
-	}
-#endif
 
 	/* New maximum hitpoints */
 	if (mhp != p_ptr->mhp)
@@ -2840,6 +2871,7 @@ void calc_boni(int Ind)
 	long			w, i;
 
 	int			old_speed;
+	int			old_num_blow;
 
 	u32b			old_telepathy;
 	int			old_see_inv;
@@ -3017,6 +3049,7 @@ void calc_boni(int Ind)
 	p_ptr->dg_curse = FALSE;
 
 	/* Start with a single blow per turn */
+	old_num_blow = p_ptr->num_blow;
 	p_ptr->num_blow = 1;
 	p_ptr->extra_blows = 0;
 
@@ -4370,11 +4403,11 @@ void calc_boni(int Ind)
 		}
 	}
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (k_info[p_ptr->inventory[INVEN_WIELD].k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) {
-		if (p_ptr->cloaked) {
+		if (p_ptr->cloaked && !instakills(Ind)) {
 			msg_print(Ind, "\377yYour weapon is too large to remain cloaked effectively.");
 			break_cloaking(Ind, 0);
 		}
-		if (p_ptr->shadow_running) {
+		if (p_ptr->shadow_running && !instakills(Ind)) {
 			msg_print(Ind, "\377yYour weapon is too large for effective shadow running.");
 			break_shadow_running(Ind);
 		}
@@ -5904,6 +5937,38 @@ void calc_boni(int Ind)
 	p_ptr->redraw |= (PR_SKILLS);
 	/* also redraw encumberment status line */
 	p_ptr->redraw |= (PR_ENCUMBERMENT);
+
+
+	/* warning messages, mostly for newbies */
+	if (p_ptr->num_blow == 1 && old_num_blow > 1 && p_ptr->warning_bpr == 0
+	    && p_ptr->pclass != CLASS_MAGE
+	    && p_ptr->pclass != CLASS_ARCHER
+//	    && p_ptr->pclass != CLASS_RUNEMASTER
+	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+		p_ptr->warning_bpr = 1;
+		msg_print(Ind, "\374\377yWARNING! Your number of melee attacks per round has just dropped to ONE.");
+		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
+		msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
+		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
+		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+	}
+	if (p_ptr->max_plv == 1 &&
+	    p_ptr->num_blow == 1 && old_num_blow == 1 && p_ptr->warning_bpr3 == 2 &&
+	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+	//<---->    || p_ptr->pclass == CLASS_RUNEMASTER
+	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)
+	    /* and don't spam Martial Arts users ;) */
+	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
+		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
+		msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
+		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
+		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+	}
 }
 
 
@@ -6713,7 +6778,7 @@ void global_event_signup(int Ind, int n, cptr parm){
 			ge->extra[1] = r_found;
 #ifndef GE_ARENA_ALLOW_EGO
 			monster_race_desc(0, c, r_found, 0x88);
-			msg_broadcast(0, format("\377c** %s challenges %s! **", p_ptr->name, c));
+			msg_broadcast(0, format("\374\377c** %s challenges %s! **", p_ptr->name, c));
 #else
 			ge->extra[3] = re_found;
 			ge->extra[5] = Ind;
@@ -7113,7 +7178,7 @@ static void process_global_event(int ge_id)
 			if (j <= NumPlayers) { /* Make sure the winner didn't die in the 1 turn that just passed! */
 			    p_ptr = Players[j];
 			    if (!p_ptr->wpos.wx && !p_ptr->wpos.wy) { /* ok then.. */
-				msg_broadcast(0, format("\377a>>%s wins %s!<<", p_ptr->name, ge->title));
+				msg_broadcast(0, format("\374\377a>>%s wins %s!<<", p_ptr->name, ge->title));
 				if (!p_ptr->max_exp) gain_exp(j, 1); /* may only take part in one tournament per char */
 
 				/* don't create a actual reward here, but just a signed deed that can be turned in (at mayor's office)! */
@@ -7261,7 +7326,7 @@ static void process_global_event(int ge_id)
 				while (!(m_idx = summon_detailed_one_somewhere(&wpos, ge->extra[1], ge->extra[3], FALSE, 101))
 				    && (++tries < 1000));
 				monster_desc(0, m_name, m_idx, 0x08);
-				msg_broadcast(0, format("\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
+				msg_broadcast(0, format("\374\377c** %s challenges %s! **", Players[ge->extra[5]]->name, m_name));
 #endif
 				summon_override_checks = SO_NONE;
 

@@ -1216,8 +1216,8 @@ void msg_print(int Ind, cptr msg)
 	int text_len, msg_scan = 0, space_scan, tab_spacer = 0, tmp;
 	char colour_code = 0;
 	bool first_character = TRUE;
-	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
-	bool client_ctrlo = FALSE, client_chat = FALSE, client_nochat = FALSE;
+//	bool is_chat = ((msg != NULL) && (strlen(msg) > 2) && (msg[2] == '['));
+	bool client_ctrlo = FALSE, client_chat = FALSE, client_all = FALSE;
 
 
 	/* Pfft, sorry to bother you.... --JIR-- */
@@ -1225,24 +1225,31 @@ void msg_print(int Ind, cptr msg)
 	/* no message? */
 	if (msg == NULL) return;
 
-	/* marker for client: add message to CTRL+O 'important scrollback buffer' */
+	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
+	if (msg[0] == '\375') {
+		client_chat = TRUE;
+		msg++;
+		/* hack: imply that chat-only messages are also always important messages */
+		client_ctrlo = TRUE;
+	}
+	/* marker for client: add message to 'nochat buffer' AND to 'chat-only buffer' */
+	else if (msg[0] == '\374') {
+		client_all = TRUE;
+		msg++;
+		/* hack: imply that messages that go to chat-buffer are also always important messages */
+		client_ctrlo = TRUE;
+	}
+	/* ADDITIONAL marker for client: add message to CTRL+O 'important scrollback buffer' */
 	if (msg[0] == '\376') {
 		client_ctrlo = TRUE;
 		msg++;
 	}
-	/* marker for client: add message to 'chat-only buffer' */
-	else if (msg[0] == '\375') {
-		client_chat = TRUE;
-		msg++;
-	}
-	/* marker for client: add message to 'nochat buffer' */
-	else if (msg[0] == '\374') {
-		client_nochat = TRUE;
-		msg++;
-	}
+	/* note: neither \375 nor \374 means:
+	   add message to 'nochat buffer', but not to 'chat-only buffer' (default) */
+
 	/* neutralize markers if client version too old */
 	if (!is_newer_than(&Players[Ind]->version, 4, 4, 2, 0, 0, 0))
-		client_ctrlo = client_chat = client_nochat = FALSE;
+		client_ctrlo = client_chat = client_all = FALSE;
 
 #if 1	/* String longer than 1 line? -> Split it up! --C. Blue-- */
 	while (msg != NULL && msg[msg_scan] != '\0') {
@@ -1253,6 +1260,7 @@ void msg_print(int Ind, cptr msg)
 		/* Tabbing the line? */
 		msg_minibuf[0] = ' ';
 		msg_minibuf[1] = '\0';
+#if 0 /* 0'ed to remove backward compatibility via '~' character. We want to switch to \374..6 codes exlusively */
 		if (is_chat && tab_spacer) {
 			/* Start the padding for chat messages with '~' */
 			strcat(msg_buf, "~");
@@ -1260,6 +1268,9 @@ void msg_print(int Ind, cptr msg)
 		} else {
 			tmp = tab_spacer;
 		}
+#else
+		tmp = tab_spacer;
+#endif
 		while (tmp--) {
 			text_len++;
 			strcat(msg_buf, msg_minibuf);
@@ -1354,6 +1365,12 @@ void msg_print(int Ind, cptr msg)
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
 						(msg[space_scan - 1] == '\377')) &&
 						space_scan > 0);
+
+					/* Simply cut words that are very long - mikaelh */
+					if (space_scan < 40) {
+						space_scan = line_len - 1;
+					}
+
 					if (space_scan) {
 						msg_buf[strlen(msg_buf) - msg_scan + space_scan] = '\0';
 						msg_scan = space_scan;
@@ -1362,17 +1379,17 @@ void msg_print(int Ind, cptr msg)
 			}
 		}
 #ifdef TEST_SERVER
- #if 1
+ #if 0
 //s_printf("#%s#\n", msg_buf);
 		if (client_ctrlo) s_printf("msg '%s' coded 376.\n", msg_buf);
 		if (client_chat) s_printf("msg '%s' coded 375.\n", msg_buf);
-		if (client_nochat) s_printf("msg '%s' coded 374.\n", msg_buf);
+		if (client_all) s_printf("msg '%s' coded 374.\n", msg_buf);
  #endif
 #endif
-		Send_message(Ind, format("%s%s",
-		    client_ctrlo ? "\376" :
-		    (client_chat ? "\375" :
-		    (client_nochat ? "\374" : "")), msg_buf));
+		Send_message(Ind, format("%s%s%s",
+		    client_chat ? "\375" : (client_all ? "\374" : ""),
+		    client_ctrlo ? "\376" : "",
+		    msg_buf));
 	}
 
 	if (msg == NULL) Send_message(Ind, msg);
@@ -1380,10 +1397,10 @@ void msg_print(int Ind, cptr msg)
 	return;
 #endif // enable line breaks?
 
-	Send_message(Ind, format("%s%s",
-	    client_ctrlo ? "\376" :
-	    (client_chat ? "\375" :
-	    (client_nochat ? "\374" : "")), msg));
+	Send_message(Ind, format("%s%s%s",
+	    client_chat ? "\375" : (client_all ? "\374" : ""),
+	    client_ctrlo ? "\376" : "",
+	    msg));
 }
 
 void msg_broadcast(int Ind, cptr msg)
@@ -2190,7 +2207,7 @@ static void player_talk_aux(int Ind, char *message)
 		shutdown_server();
 		return;
 	}
-	
+
 	if(message[0]=='/'){
 		if (!strncmp(message, "/me ", 4)) me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
@@ -2252,9 +2269,10 @@ static void player_talk_aux(int Ind, char *message)
 		}
 #endif
 		/* Send message to target party */
-		if (p_ptr->mutedchat < 2)
-			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 2);
-//			party_msg_format_ignoring(Ind, target, "\377G[%s:%s] %s", parties[target].name, sender, message + 1);
+		if (p_ptr->mutedchat < 2) {
+			party_msg_format_ignoring(Ind, target, "\375\377G[%s:%s] %s", parties[target].name, sender, message + 2);
+//			party_msg_format_ignoring(Ind, target, "\375\377G[%s:%s] %s", parties[target].name, sender, message + 1);
+		}
 		/* Done */
 		return;
 	}
@@ -2285,8 +2303,9 @@ static void player_talk_aux(int Ind, char *message)
 		}
 
 		/* Send message to target party */
-		if (p_ptr->mutedchat < 2)
-			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\377y[%s] %s", sender, message + 2);
+		if (p_ptr->mutedchat < 2) {
+			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377y[%s] %s", sender, message + 2);
+		}
 		/* Done */
 		return;
 	}
@@ -2340,7 +2359,7 @@ static void player_talk_aux(int Ind, char *message)
 			w_player = world_find_player(search, 0);
 			if (w_player) {
 				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
-				msg_format(Ind, "\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
+				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
 				return;
 			}
 		}
@@ -2376,11 +2395,11 @@ static void player_talk_aux(int Ind, char *message)
 			q_ptr = Players[target];
 
 			/* Send message to target */
-			msg_format(target, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
+			msg_format(target, "\375\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
 			/* Also send back to sender */
 			if (target != Ind)
-				msg_format(Ind, "\377g[%s:%s] %s", q_ptr->name, sender, colon);
+				msg_format(Ind, "\375\377g[%s:%s] %s", q_ptr->name, sender, colon);
 
 			/* Only display this message once now - mikaelh */
 			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id))
@@ -2408,18 +2427,18 @@ static void player_talk_aux(int Ind, char *message)
 	if (len && target < 0)
 	{
 		/* Send message to target party */
-		party_msg_format_ignoring(Ind, 0 - target, "\377G[%s:%s] %s",
+		party_msg_format_ignoring(Ind, 0 - target, "\375\377G[%s:%s] %s",
 				 parties[0 - target].name, sender, colon);
 
 		/* Also send back to sender if not in that party */
 		if(!player_in_party(0-target, Ind)){
-			msg_format(Ind, "\377G[%s:%s] %s",
+			msg_format(Ind, "\375\377G[%s:%s] %s",
 			   parties[0 - target].name, sender, colon);
 		}
 
 		exec_lua(0, "chat_handler()");
 
-		/* Done */ 
+		/* Done */
 		return;
 	}
 
@@ -2455,24 +2474,24 @@ static void player_talk_aux(int Ind, char *message)
 
 #ifdef TOMENET_WORLDS
 	if(broadcast)
-		snprintf(tmessage, sizeof(tmessage), "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
 	else if (!me)
-		snprintf(tmessage, sizeof(tmessage), "\377%c[%s] \377B%s", c, sender, message + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s] \377B%s", c, sender, message + mycolor);
 	else{
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
 		else return;
 		if(mycolor) c = message[5];
-		snprintf(tmessage, sizeof(tmessage), "\377%c[%s %s]", c, sender, message + 4 + mycolor);
+		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c, sender, message + 4 + mycolor);
 	}
-#if 0
+ #if 0
 	if (((broadcast && cfg.worldd_broadcast) || (!broadcast && cfg.worldd_pubchat))
 	    && !(len && (target != 0) && !cfg.worldd_privchat)) /* privchat = to party or to person */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
-#else
+ #else
 		/* Incoming chat is now filtered instead of outgoing which allows IRC relay to get public chat messages from worldd - mikaelh */
 		world_chat(p_ptr->id, tmessage);	/* no ignores... */
-#endif
+ #endif
 	for(i = 1; i <= NumPlayers; i++){
 		q_ptr = Players[i];
 
@@ -2501,15 +2520,16 @@ static void player_talk_aux(int Ind, char *message)
 
 		/* Send message */
 		if (broadcast)
-			msg_format(i, "\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
+			msg_format(i, "\375\377r[\377%c%s\377r] \377B%s", c, sender, message + 11);
 		else if (!me)
 		{
-			msg_format(i, "\377%c[%s] \377B%s", c, sender, message + mycolor);
-			/* msg_format(i, "\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
-		} 
+			msg_format(i, "\375\377%c[%s] \377B%s", c, sender, message + mycolor);
+			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
+		}
 		else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
+	p_ptr->warning_chat = 0;
 
 	exec_lua(0, "chat_handler()");
 
@@ -2590,9 +2610,9 @@ void toggle_afk(int Ind, char *msg)
 		if (!p_ptr->admin_dm)
 		{
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
+				snprintf(afk, sizeof(afk), "\374\377%c%s seems to be AFK now. (%s)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg);
 		}
 		p_ptr->afk = TRUE;
 
@@ -3116,30 +3136,42 @@ bool show_floor_feeling(int Ind)
 //		msg_print(Ind, "\376\377yLooks like any other level..");
 //		msg_print(Ind, "\377ypfft");
 	}
-	else if (l_ptr->flags2 & LF2_OOD_HI)
+	else if (l_ptr->flags2 & LF2_OOD_HI) {
 		msg_print(Ind, "\377yWhat a terrifying place..");
-	else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
-		(l_ptr->flags2 & LF2_OOD))
+		felt = TRUE;
+	} else if ((l_ptr->flags2 & LF2_VAULT_HI) &&
+		(l_ptr->flags2 & LF2_OOD)) {
 		msg_print(Ind, "\377yWhat a terrifying place..");
-	else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
-		 ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE)))
+		felt = TRUE;
+	} else if ((l_ptr->flags2 & LF2_VAULT_OPEN) || // <- TODO: implement :/
+		 ((l_ptr->flags2 & LF2_VAULT) && (l_ptr->flags2 & LF2_OOD_FREE))) {
 		msg_print(Ind, "\377yYou sense an air of danger..");
-	else if (l_ptr->flags2 & LF2_VAULT)
+		felt = TRUE;
+	} else if (l_ptr->flags2 & LF2_VAULT) {
 		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
-	else if (l_ptr->flags2 & LF2_PITNEST_HI)
+		felt = TRUE;
+	} else if (l_ptr->flags2 & LF2_PITNEST_HI) {
 		msg_print(Ind, "\377yFeels somewhat dangerous around here..");
-	else if (l_ptr->flags2 & LF2_OOD_FREE)
+		felt = TRUE;
+	} else if (l_ptr->flags2 & LF2_OOD_FREE) {
 		msg_print(Ind, "\377yThere's a sensation of challenge..");
-/*	else if (l_ptr->flags2 & LF2_PITNEST) //maybe enable, maybe too cheezy
-		msg_print(Ind, "\377yYou feel your luck is turning..");*/
-	else if (l_ptr->flags2 & LF2_UNIQUE)
+		felt = TRUE;
+	} /*	else if (l_ptr->flags2 & LF2_PITNEST) { //maybe enable, maybe too cheezy
+		msg_print(Ind, "\377yYou feel your luck is turning..");
+		felt = TRUE;
+	} */ else if (l_ptr->flags2 & LF2_UNIQUE) {
 		msg_print(Ind, "\377yThere's a special feeling about this place..");
-/*	else if (l_ptr->flags2 & LF2_ARTIFACT) //probably too cheezy, if not then might need combination with threat feelings above
-		msg_print(Ind, "\377y");*/
-/*	else if (l_ptr->flags2 & LF2_ITEM_OOD) //probably too cheezy, if not then might need combination with threat feelings above
-		msg_print(Ind, "\377y");*/
-	else
+		felt = TRUE;
+	} /* else if (l_ptr->flags2 & LF2_ARTIFACT) { //probably too cheezy, if not then might need combination with threat feelings above
+		msg_print(Ind, "\377y");
+		felt = TRUE;
+	} *//*	else if (l_ptr->flags2 & LF2_ITEM_OOD) { //probably too cheezy, if not then might need combination with threat feelings above
+		msg_print(Ind, "\377y");
+		felt = TRUE;
+	} */ else {
 		msg_print(Ind, "\377yWhat a boring place..");
+		felt = TRUE;
+	}
 #endif
 
 	/* Hack^2 -- display the 'feeling' */

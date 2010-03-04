@@ -1363,7 +1363,14 @@ void admin_outfit(int Ind, int realm)
 
 	invcopy(o_ptr, lookup_kind(TV_HELM, SV_GOGGLES_DM));
 	o_ptr->name1 = ART_GOGGLES_DM;
-//	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
+	o_ptr->number = 1;
+	do_admin_outfit();
+
+	/* either to inscribe @Ox or to one-hit-kill */
+	invcopy(o_ptr, lookup_kind(TV_POLEARM, SV_SCYTHE));
+	o_ptr->name1 = ART_SCYTHE_DM;
+	apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, FALSE);
 	o_ptr->number = 1;
 	do_admin_outfit();
 
@@ -2260,7 +2267,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
-		s_printf("ACC1:Player %s has flags %d\n", accname, c_acc->flags);
+		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
 	
@@ -2336,7 +2343,7 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 		p_ptr->pvpexception = (c_acc->flags & ACC_PVP) ? 1 : (c_acc->flags & ACC_NOPVP) ? 2 : (c_acc->flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (c_acc->flags & ACC_VQUIET) ? 2 : (c_acc->flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (c_acc->flags & ACC_BANNED) ? TRUE : FALSE;
-		s_printf("ACC2:Player %s has flags %d\n", accname, c_acc->flags);
+		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, c_acc->flags);
 		KILL(c_acc, struct account);
 	}
 	/* handle banned player 2/2 */
@@ -2568,6 +2575,11 @@ bool player_birth(int Ind, cptr accname, cptr name, int conn, int race, int clas
 
 	/* for automatic artifact reset */
 	p_ptr->artifact_reset = artifact_reset;
+
+	/* Prepare newbie-aiding warnings that ought to occur only
+	   once (not necessarily implemented like that atm) - C. Blue */
+	p_ptr->warning_run = p_ptr->warning_wield = p_ptr->warning_lite = 0;
+	p_ptr->warning_chat = 1;
 
 	/* To find out which characters crash the server */
 	s_printf("Logged in with character %s.\n", name);

@@ -1588,10 +1588,10 @@ static void Delete_player(int Ind)
 				if (i == Ind) continue;
 
 				/* Send a little message */
-				msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
+				msg_format(i, "\374\377U%s%s has left the game.", title, p_ptr->name);
 			}
 #ifdef TOMENET_WORLDS
-			if (cfg.worldd_pleave) world_msg(format("\377U%s%s has left the game.", title, p_ptr->name));
+			if (cfg.worldd_pleave) world_msg(format("\374\377U%s%s has left the game.", title, p_ptr->name));
 #endif
 		} else {
 			cptr title = "";
@@ -1613,7 +1613,7 @@ static void Delete_player(int Ind)
 				if (i == Ind) continue;
 
 				/* Send a little message */
-				msg_format(i, "\377U%s%s has left the game.", title, p_ptr->name);
+				msg_format(i, "\374\377U%s%s has left the game.", title, p_ptr->name);
 				/* missing TOMENET_WORLDS relay here :/ (currently no way to send to 'foreign' admins only) - C. Blue */
 			}
 		}
@@ -2487,22 +2487,22 @@ static int Handle_login(int ind)
 
 	/* Brand-new players get super-short instructions presented here: */
 #ifndef ARCADE_SERVER
-	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. */
-		msg_print(NumPlayers, "\377L ");
-		msg_print(NumPlayers, "\377L   ***  Welcome to Tomenet! You can chat with \377R:\377L key. Say hello :)  ***");
-		msg_print(NumPlayers, "\377L      To run fast, use \377RSHIFT + direction\377L keys (numlock must be OFF)");
-		msg_print(NumPlayers, "\377L      Before you move out, press \377Rw\377L to equip your weapon and armour!");
-		msg_print(NumPlayers, "\377L ");
+	if (p_ptr->inval) { /* no bloody noob ever seems to read this how2run thingy.. (p_ptr->warning_welcome) */
+		msg_print(NumPlayers, "\376\377L ");
+		msg_print(NumPlayers, "\376\377L   ***  Welcome to Tomenet! You can chat with \377R:\377L key. Say hello :)  ***");
+		msg_print(NumPlayers, "\376\377L      To run fast, use \377RSHIFT + direction\377L keys (numlock must be OFF)");
+		msg_print(NumPlayers, "\376\377L      Before you move out, press \377Rw\377L to equip your weapon and armour!");
+		msg_print(NumPlayers, "\376\377L ");
 //		msg_print(NumPlayers, "\377RTurn off numlock and hit SHIFT + numkeys to run (move quickly).");
 //		msg_print(NumPlayers, "\377RHit '?' key for help. Hit ':' to chat. Hit '@' to see who is online.");
 //		msg_print(NumPlayers, "\377R<< Welcome to TomeNET! >>");
 	}
 #endif
 
-#if 0
+#if 1
 	/* Give a more visible message about outdated client usage - C. Blue */
-	if (!is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0)) {
-		/* currently done by '(O)' in @ list */
+	if (!is_newer_than(&Players[NumPlayers]->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED)) {
+		msg_print(NumPlayers, "\374\377y --- Your client is outdated. Get newest one from www.tomenet.net ---");
 	}
 #endif
 
@@ -2635,7 +2635,7 @@ static int Handle_login(int ind)
 				continue;
 			if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
 			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
-			msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
+			msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
 		}
 		return 0;
 	}
@@ -2663,11 +2663,11 @@ static int Handle_login(int ind)
 		  }
 		if (p_ptr->admin_dm) title = (p_ptr->male)?"Dungeon Master ":"Dungeon Mistress ";
 		if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
-		msg_format(i, "\377U%s%s has entered the game.", title, p_ptr->name);
+		msg_format(i, "\374\377U%s%s has entered the game.", title, p_ptr->name);
 	}
 
 #ifdef TOMENET_WORLDS
-	if (cfg.worldd_pjoin) world_msg(format("\377U%s%s has entered the game.", title, p_ptr->name));
+	if (cfg.worldd_pjoin) world_msg(format("\374\377U%s%s has entered the game.", title, p_ptr->name));
 #endif
 
 	/* Tell the meta server about the new player */
@@ -5307,9 +5307,7 @@ int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price
  * This function is supposed to handle 'store actions' too,
  * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -
  */
-//int Send_store_info(int ind, int num, int owner, int items)
-int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse)
-//int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte num_actions)
+int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c)
 {
 	connection_t *connp = Conn[Players[ind]->conn];
 #ifdef MINDLINK_STORE
@@ -5328,14 +5326,19 @@ int Send_store_info(int ind, int num, cptr store, cptr owner, int items, int pur
 #ifdef MINDLINK_STORE
 	if (get_esp_link(ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-//		Packet_printf(&connp2->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
-//		Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c", PKT_STORE_INFO, num, store, owner, items, purse, num_actions);
-		Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
+		if (is_newer_than(&connp2->version, 4, 4, 4, 0, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c);
+		} else {
+			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
+		}
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
-//	return Packet_printf(&connp->c, "%c%hd%hd%hd", PKT_STORE_INFO, num, owner, items);
+	if (is_newer_than(&connp->version, 4, 4, 4, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c);
+	} else {
+		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
+	}
 }
 
 int Send_store_action(int ind, char pos, u16b bact, u16b action, cptr name, char attr, char letter, s16b cost, byte flag)

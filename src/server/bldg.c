@@ -1308,7 +1308,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac,
 			/* Extract the flags */
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &esp);
 
-			if ((o_ptr->name1 && (o_ptr->ident & 0x08)) || /* ID_KNOWN */
+			if ((o_ptr->name1 && (o_ptr->ident & ID_KNOWN)) ||
 					f5 & TR5_NO_ENCHANT)
 				msg_format(Ind, "%-40s: beyond our skills!", tmp_str);
 			else if (o_ptr->name1) 

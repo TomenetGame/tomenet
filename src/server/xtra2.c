@@ -2999,7 +2999,7 @@ bool set_stun(int Ind, int v)
 			/* None */
 			case 0:
 			msg_format_near(Ind, "\377o%s is no longer stunned.", p_ptr->name);
-			msg_print(Ind, "\377oYou are no longer stunned.");
+			msg_print(Ind, "\377yYou are no longer stunned.");
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 			break;
 		}
@@ -3745,6 +3745,9 @@ void check_experience(int Ind)
 
 			/* give some stats, using Training skill */
 			check_training(Ind);
+		} else {
+			/* Player just regained a level he lost previously */
+			s_printf("%s has regained level %d.\n", p_ptr->name, p_ptr->lev);
 		}
 
 		/* Make a new copy of the skills - mikaelh */
@@ -3797,47 +3800,73 @@ void check_experience(int Ind)
 	{
 		char str[160];
 		/* Message */
-		msg_format(Ind, "\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
+		msg_format(Ind, "\374\377GWelcome to level %d. You have %d skill points.", p_ptr->lev, p_ptr->skill_points);
 
 		/* Give helpful msg about how to distribute skill points at first level-up */
-		if (old_lev == 1 && p_ptr->inval)
-			msg_print(Ind, "\377G* Press \377GSHIFT + g\377G to distribute your skill points! *");
+		if (old_lev == 1 || (p_ptr->skill_points == (p_ptr->max_plv - 1) * 5)) {
+		    // && p_ptr->inval) /* (p_ptr->warning_skills) */
+			msg_print(Ind, "\374\377GHINT: Press \377gSHIFT + g\377G to distribute your skill points!");
+		}
+
+		/* Remind how to send chat messages */
+		if (old_lev < 3 && p_ptr->lev >= 3 && p_ptr->warning_chat == 1) {
+			p_ptr->warning_chat = 0;
+			msg_print(Ind, "\374\377oHINT: You can press ':' key to chat with other players, eg greet them!");
+		}
+
+		/* Give warning message to get involved with macros, aimed at newbies */
+		if (old_lev < 10 && p_ptr->lev >= 10) { /* (p_ptr->warning_macros) */
+			/* scan inventory for any macroish inscriptions */
+			bool found_macroishness = FALSE;
+			int i;
+			for (i = 0; i < INVEN_PACK; i++)
+				if (p_ptr->inventory[i].k_idx &&
+				    p_ptr->inventory[i].note &&
+				    strstr(quark_str(p_ptr->inventory[i].note), "@"))
+					found_macroishness = TRUE;
+			/* give a warning if it seems as if this character doesn't use any macros ;) */
+			if (!found_macroishness) {
+				msg_print(Ind, "\374\377oHINT: Start getting the hang of 'macros' in order to ensure survival in");
+				msg_print(Ind, "\374\377o      critical combat situations. Ask other players and/or read the guide");
+				msg_print(Ind, "\374\377o      (text file 'TomeNET-Guide.txt' in your tomenet folder) for details!");
+			}
+		}
 
 		/* Introduce newly learned abilities (that depend on char level) */
 		/* those that depend on a race */
 		switch (p_ptr->prace) {
                 case RACE_DWARF:
-    		        if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn to climb mountains easily! *");
+    		        if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to climb mountains easily!");
 	                break;
 	        case RACE_ENT:
-    	                if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\377G* You learn to see the invisible! *");
-	                if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377G* You learn to telepathically sense animals! *");
-	                if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* You learn to telepathically sense orcs! *");
-        	        if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to telepathically sense trolls! *");
-	                if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\377G* You learn to telepathically sense giants! *");
-	                if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn to telepathically sense dragons! *");
-	                if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\377G* You learn to telepathically sense demons! *");
-	                if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377G* You learn to telepathically sense evil! *");
+    	                if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\374\377GYou learn to see the invisible!");
+	                if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to telepathically sense animals!");
+	                if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn to telepathically sense orcs!");
+        	        if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to telepathically sense trolls!");
+	                if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn to telepathically sense giants!");
+	                if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
+	                if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to telepathically sense demons!");
+	                if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn to telepathically sense evil!");
 	                break;
     	        case RACE_DRIDER:
-    	                if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\377G* You learn to telepathically sense dragons! *");
-	                if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377G* You become more resistant to fire! *");
-	                if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* You become more resistant to cold! *");
-        	        if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You become more resistant to acid! *");
-	                if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\377G* You become more resistant to lightning! *");
-	                if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn how to fly! *");
+    	                if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
+	                if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou become more resistant to fire!");
+	                if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou become more resistant to cold!");
+        	        if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou become more resistant to acid!");
+	                if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou become more resistant to lightning!");
+	                if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
 			break;
 		case RACE_DARK_ELF:
-            		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to see the invisible! *");
+            		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
 	                break;
                 case RACE_VAMPIRE:
-//    		        if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn how to fly! *");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You are now able to turn into a vampire bat (#391)! *");
+//    		        if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to fly!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou are now able to turn into a vampire bat (#391)!");
 			break;
 #ifdef ENABLE_DIVINE
 		case RACE_DIVINE:
-			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\377G* We all have to pick our own path some time... *");
-			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\377G* You are thirsty for blood: be it good or evil *");
+			if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
+			if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
 			if (
 			  ((old_lev < 15 && p_ptr->lev >= 15) ||
 			   (old_lev < 16 && p_ptr->lev >= 16) ||
@@ -4078,9 +4107,9 @@ void check_experience(int Ind)
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER:
 		        if (old_lev < 6 && p_ptr->lev >= 6)
-            			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
 		        if (old_lev < 15 && p_ptr->lev >= 15)
-            			msg_print(Ind, "\377G* You learn the fighting technique 'Taunt'! *");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'!");
                         /* Also update the client's 'm' menu for fighting techniques */
                         calc_techniques(Ind);
                         Send_skill_info(Ind, SKILL_MASTERY);
@@ -4088,62 +4117,62 @@ void check_experience(int Ind)
 		case CLASS_ROGUE:
 #ifdef ENABLE_CLOAKING
 			if (old_lev < LEARN_CLOAKING_LEVEL && p_ptr->lev >= LEARN_CLOAKING_LEVEL)
-				msg_print(Ind, "\377G* You learn how to cloak yourself to pass unnoticed (press 'V'). *");
+				msg_print(Ind, "\374\377GYou learn how to cloak yourself to pass unnoticed (press 'V').");
 #endif
 		        if (old_lev < 3 && p_ptr->lev >= 3)
-            			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
 			if (old_lev < 6 && p_ptr->lev >= 6)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
 			if (old_lev < 9 && p_ptr->lev >= 9)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Distract' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
 			if (old_lev < 12 && p_ptr->lev >= 12)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Flash Bomb' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Flash Bomb'");
 			if (old_lev < 50 && p_ptr->lev >= 50 && p_ptr->total_winner)
-		        	msg_print(Ind, "\377G* You learn the royal fighting technique 'Shadow Run' *");
+		        	msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
                         /* Also update the client's 'm' menu for fighting techniques */
                         calc_techniques(Ind);
                         Send_skill_info(Ind, SKILL_MASTERY);
       			break;
 		case CLASS_RANGER:
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn how to move through dense forests easily. *");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
 			break;
 		case CLASS_DRUID: /* Forms gained by Druids */
 			/* compare mimic_druid in defines.h */
-			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\377G* You learn how to change into a Cave Bear (#160) and Panther (#198) *");
+			if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn how to change into a Cave Bear (#160) and Panther (#198)");
 			if (old_lev < 10 && p_ptr->lev >= 10) {
-				msg_print(Ind, "\377G* You learn how to change into a Grizzly Bear (#191) and Yeti (#154) *");
-				msg_print(Ind, "\377G* You learn how to walk among your brothers through deep forest. *");
+				msg_print(Ind, "\374\377GYou learn how to change into a Grizzly Bear (#191) and Yeti (#154)");
+				msg_print(Ind, "\374\377GYou learn how to walk among your brothers through deep forest.");
 			}
-			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\377G* You learn how to change into a Griffon (#279) and Sasquatch (#343) *");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and White Shark (#901) *");
-			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\377G* You learn how to change into a Wyvern (#334) and Multi-hued Hound (#513) *");
-			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\377G* You learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482) *");
-			if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\377G* You learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726) *");
-			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\377G* You learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740) *");
-			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\377G* You learn how to change into a Maulotaur (#723) and Winged Horror (#704) *");// and Behemoth (#716) *");
-			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\377G* You learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775) *");//Leviathan (#782) *");
-			if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\377G* You learn how to change into a Horned Serpent (#1131) *");
-			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\377G* You learn how to change into a Firebird (#1127) *");
+			if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to change into a Griffon (#279) and Sasquatch (#343)");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn how to change into a Werebear (#414), Great Eagle (#335), Aranea (#963) and White Shark (#901)");
+			if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to change into a Wyvern (#334) and Multi-hued Hound (#513)");
+			if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn how to change into a 5-h-Hydra (#440), Minotaur (#641) and Giant Squid (#482)");
+			if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
+			if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
+			if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\374\377GYou learn how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
+			if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
+			if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
+			if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
 			break;
 		case CLASS_SHAMAN:
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to see the invisible! *");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to see the invisible!");
 			break;
 		case CLASS_RUNEMASTER:
 		        if (old_lev < 4 && p_ptr->lev >= 4)
-            			msg_print(Ind, "\377G* You learn the fighting technique 'Sprint'! *");
+            			msg_print(Ind, "\374\377GYou learn the fighting technique 'Sprint'!");
 			if (old_lev < 9 && p_ptr->lev >= 9)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
                         /* Also update the client's 'm' menu for fighting techniques */
                         calc_techniques(Ind);
                         Send_skill_info(Ind, SKILL_MASTERY);
 		        break;
 		case CLASS_MINDCRAFTER:
-			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\377G* You learn to keep hold of your sanity! *");
-			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\377G* You learn to keep strong hold of your sanity! *");
+			if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
+			if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
 			if (old_lev < 8 && p_ptr->lev >= 8)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Taunt' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Taunt'");
 			if (old_lev < 12 && p_ptr->lev >= 12)
-		        	msg_print(Ind, "\377G* You learn the fighting technique 'Distract' *");
+		        	msg_print(Ind, "\374\377GYou learn the fighting technique 'Distract'");
                         /* Also update the client's 'm' menu for fighting techniques */
                         calc_techniques(Ind);
                         Send_skill_info(Ind, SKILL_MASTERY);
@@ -4177,39 +4206,41 @@ void check_experience(int Ind)
 
 #if 0		/* Make fruit bat gain speed on levelling up, instead of starting out with full +10 speed bonus? */
 		if (p_ptr->fruit_bat == 1 && old_lev < p_ptr->lev) {
-			if (p_ptr->lev % 5 == 0 && p_ptr->lev <= 35) msg_print(Ind, "\377G* Your flying abilities have improved, you have gained some speed. *");
+			if (p_ptr->lev % 5 == 0 && p_ptr->lev <= 35) msg_print(Ind, "\374\377GYour flying abilities have improved, you have gained some speed.");
 		}
 #endif
 
 #ifdef KINGCAP_LEV
 		/* Added a check that (s)he's not already a king - mikaelh */
-//		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\377G* You can't gain more levels until you defeat Morgoth, Lord of Darkness! *");
-		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\377G* To level up further, you need to defeat Morgoth, Lord of Darkness! *");
+//		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377GYou can't gain more levels until you defeat Morgoth, Lord of Darkness!");
+		if(p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you need to defeat Morgoth, Lord of Darkness! *");
 #endif
 
 		/* pvp mode cant go higher, but receives a reward maybe */
 		if(p_ptr->mode & MODE_PVP) {
 			if (get_skill(p_ptr, SKILL_MIMIC) && !p_ptr->pclass == CLASS_DRUID
 			    && !p_ptr->prace == RACE_VAMPIRE) {
-				msg_print(Ind, "\377G* You gain one free mimicry transformation of your choice! *");
+				msg_print(Ind, "\375\377GYou gain one free mimicry transformation of your choice!");
 				p_ptr->free_mimic = 1;
 			}
 			if(p_ptr->lev == MID_PVP_LEVEL) {
-				msg_print(Ind, "\377G* You have raised quite a bit in ranks of PvP characters! *");
-				msg_print(Ind, "\377G*   For that, you just received a reward, and if you die you will *");
-				msg_print(Ind, "\377G*   also receive a deed on the next character you log in with.    *");
+				msg_broadcast(Ind, format("\374\377G* %s has raised in ranks greatly! *", p_ptr->name));
+				msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
+				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
+				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
 		                give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
 			}
 			if(p_ptr->lev == MAX_PVP_LEVEL) {
-				msg_print(Ind, "\377G* You have reached the highest level available to PvP characters! *");
-				msg_print(Ind, "\377G*   For that, you just received a reward, and if you die you will *");
-				msg_print(Ind, "\377G*   also receive a deed on the next character you log in with.    *");
+				msg_broadcast(Ind, format("\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name));
+				msg_print(Ind, "\375\377G* You have reached the highest level available to PvP characters! *");
+				msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
+				msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
 //				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
 		                give_reward(Ind, RESF_HIGH, "Gladiator's reward", 1, 0);
 			}
 		}
 
-		snprintf(str, 160, "\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
+		snprintf(str, 160, "\374\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 		s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
 		clockin(Ind, 1);	/* Set player level */
 #ifdef TOMENET_WORLDS
@@ -4229,6 +4260,8 @@ void check_experience(int Ind)
 void gain_exp(int Ind, s64b amount) {
 	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
 //	int Ind2 = 0;
+
+	if (is_admin(p_ptr) && p_ptr->lev >= 99) return;
 
 #ifdef IRON_TEAM_EXPERIENCE
 	int iron_team_members_here = 0, iron_team_limit = 0;
@@ -4793,9 +4826,31 @@ if (season_halloween) {
 				/* well, basically a total_winner won't get loot from Morgoth anyway.. so part of the stuff is superfluous */
 				place_object(wpos, y, x, good, great, FALSE, (allow_true_arts?RESF_NONE:RESF_NOTRUEART) | (p_ptr->once_winner?RESF_WINNER:RESF_NONE), r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 #else
-				/* Morgoth never drops true artifacts */
+				/* prepare restriction flags for loot */
 				resf_tmp = make_resf(p_ptr);
+
+				/* Morgoth never drops true artifacts */
 				if (!strcmp(r_name_get(m_ptr), "Morgoth, Lord of Darkness")) resf_tmp |= RESF_NOTRUEART;
+
+				/* hack to allow custom test l00t drop for admins: */
+				if (is_admin(p_ptr)) {
+					/* the hack works by using weapon's inscription! */
+					char *k_tval, *k_sval;
+					if (p_ptr->inventory[INVEN_WIELD].tval &&
+					    p_ptr->inventory[INVEN_WIELD].note &&
+					    (k_tval = strchr(quark_str(p_ptr->inventory[INVEN_WIELD].note), '%')) &&
+					    (k_sval = strchr(k_tval, ':'))
+					    ) {
+						resf_tmp |= RESF_DEBUG_ITEM;
+						/* extract tval:sval */
+						/* abuse luck parameter for this */
+						tmp_luck = lookup_kind(atoi(k_tval + 1), atoi(k_sval + 1));
+						/* catch invalid items */
+						if (!tmp_luck) resf_tmp &= ~RESF_DEBUG_ITEM;
+					}
+				}
+
+				/* generate an object and place it */
 				place_object(wpos, y, x, good, great, FALSE, resf_tmp, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
 #endif
 
@@ -4944,9 +4999,9 @@ if(cfg.unikill_format){
 
 		if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
 		{
-			snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else {
-			snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		}
 }else{
 	/* for now disabled (works though) since we don't have telepath class
@@ -4955,16 +5010,16 @@ if(cfg.unikill_format){
 		if (!Ind2)
 		{
 			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-				snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 			else
-				snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
+				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
 		}
 		else
 		{
 			if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-				snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			else
-				snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
 
 		/* give credit to the party if there is a teammate on the 
@@ -4976,9 +5031,9 @@ if(cfg.unikill_format){
 				if ( (Players[i]->party == p_ptr->party) && (inarea(&Players[i]->wpos, &p_ptr->wpos)) && (i != Ind) && (p_ptr->wpos.wz) )
 				{
 					if (streq(r_name_get(m_ptr), "Morgoth, Lord of Darkness"))
-						snprintf(buf, sizeof(buf), "\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					else
-						snprintf(buf, sizeof(buf), "\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break; 
 				} 
 
@@ -4986,6 +5041,7 @@ if(cfg.unikill_format){
 		} 
 }
 
+    if (!is_admin(p_ptr)) {
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_unideath)
 			world_msg(buf);
@@ -4997,7 +5053,7 @@ if(cfg.unikill_format){
 		/* Log event */
 		s_printf("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name);
 	}
-
+    }
 
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN))
 	{
@@ -5029,7 +5085,7 @@ if(cfg.unikill_format){
 						/* Total winner */
 						p_ptr2->total_winner = TRUE;
 						p_ptr2->once_winner = TRUE;
-						s_printf("total_winner : %s\n", p_ptr2->name);
+						s_printf("%s *** total_winner : %s (lev %d (%d))\n", showtime(), p_ptr2->name, p_ptr2->lev, p_ptr2->max_lev););
 
 						/* Redraw the "title" */
 						p_ptr2->redraw |= (PR_TITLE);
@@ -5037,11 +5093,11 @@ if(cfg.unikill_format){
 						/* Congratulations */
 						msg_print(Ind2, "\377G*** CONGRATULATIONS ***");
 						if (p_ptr2->mode & (MODE_HARD | MODE_NO_GHOST)) {
-							msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s'!", (p_ptr2->male)?"Emperor":"Empress");
-							if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
+							msg_format(Ind2, "\374\377GYou have won the game and are henceforth titled '%s'!", (p_ptr2->male)?"Emperor":"Empress");
+							if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\374\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"Emperor":"Empress", p_ptr2->name);
 						} else {
-							msg_format(Ind2, "\377GYou have won the game and are henceforth titled '%s!'", (p_ptr2->male)?"King":"Queen");
-							if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"King":"Queen", p_ptr2->name);
+							msg_format(Ind2, "\374\377GYou have won the game and are henceforth titled '%s!'", (p_ptr2->male)?"King":"Queen");
+							if (!(p_ptr2->admin_dm && cfg.secret_dungeon_master)) msg_broadcast_format(Ind2, "\374\377v%s is henceforth known as %s %s", p_ptr2->name, (p_ptr2->male)?"King":"Queen", p_ptr2->name);
 						}
 						msg_print(Ind2, "\377G(You may retire (by committing suicide) when you are ready.)");
 
@@ -5072,7 +5128,7 @@ if(cfg.unikill_format){
 					/* Total winner */
 					q_ptr->total_winner = TRUE;
 					q_ptr->once_winner = TRUE;
-					s_printf("total_winner : %s\n", q_ptr->name);
+					s_printf("%s *** total_winner : %s (lev %d (%d))\n", showtime(), q_ptr->name, q_ptr->lev, q_ptr->max_lev);
 
 					s_printf("CHARACTER_WINNER: race=%s ; class=%s\n", race_info[q_ptr->prace].title, class_info[q_ptr->pclass].title);
 
@@ -5083,16 +5139,16 @@ if(cfg.unikill_format){
 					/* Congratulations */
 					msg_print(i, "\377G*** CONGRATULATIONS ***");
 					if (q_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) {
-						msg_format(i, "\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male)?"Emperor":"Empress");
-						msg_broadcast_format(i, "\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name);
+						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s'!", (q_ptr->male)?"Emperor":"Empress");
+						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name);
 #ifdef TOMENET_WORLDS
-						if (cfg.worldd_pwin) world_msg(format("\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name));
+						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"Emperor":"Empress", q_ptr->name));
 #endif
 					} else {
-						msg_format(i, "\377GYou have won the game and are henceforth titled '%s!'", (q_ptr->male)?"King":"Queen");
-						msg_broadcast_format(i, "\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name);
+						msg_format(i, "\374\377GYou have won the game and are henceforth titled '%s!'", (q_ptr->male)?"King":"Queen");
+						msg_broadcast_format(i, "\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name);
 #ifdef TOMENET_WORLDS
-						if (cfg.worldd_pwin) world_msg(format("\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name));
+						if (cfg.worldd_pwin) world_msg(format("\374\377v%s is henceforth known as %s %s", q_ptr->name, (q_ptr->male)?"King":"Queen", q_ptr->name));
 #endif
 					}
 					msg_print(i, "\377G(You may retire (by committing suicide) when you are ready.)");
@@ -5134,19 +5190,19 @@ if(cfg.unikill_format){
 						msg_gained_abilities(Ind, (p_ptr-> lev - 1) * 10, SKILL_STANCE);
 #endif
 						/* give message if we learn a new stance (compare cmd6.c! keep it synchronized */
-						msg_print(Ind, "\377G* You learn how to enter Royal Rank combat stances. *");
+						msg_print(Ind, "\374\377GYou learn how to enter Royal Rank combat stances.");
 						/* automatically upgrade currently taken stance power */
 						if (p_ptr->combat_stance) p_ptr->combat_stance_power = 3;
 					}
 #endif
 
 					if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= 48) {
-	                            		msg_print(Ind, "\377G* You learn the Royal Titan's Fist technique. *");
-				                msg_print(Ind, "\377G* You learn the Royal Phoenix Claw technique. *");
+	                            		msg_print(Ind, "\374\377GYou learn the Royal Titan's Fist technique.");
+				                msg_print(Ind, "\374\377GYou learn the Royal Phoenix Claw technique.");
 		                        }
 					
 					if (p_ptr->lev >= 50 && p_ptr->pclass == CLASS_ROGUE) {
-						msg_print(Ind, "\377G* You learn the royal fighting technique 'Shadow Run' *");
+						msg_print(Ind, "\374\377GYou learn the royal fighting technique 'Shadow Run'");
 						calc_techniques(Ind);
 						Send_skill_info(Ind, SKILL_MASTERY);
 					}
@@ -5810,10 +5866,10 @@ static void check_killing_reward(int Ind) {
 	/* reward top gladiators */
 	if (p_ptr->kills >= 20) {
 		p_ptr->kills -= 20; /* reset! */
-		msg_broadcast_format(Ind, "\377y*** %s vanquished 20 opponents and is entitled to great reward! ***", p_ptr->name);
-		msg_print(Ind, "\377G* Gratulations, you killed 20 opposing gladiators!");
-		msg_print(Ind, "\377G*   For that, you will receive a rewarding deed *");
-		msg_print(Ind, "\377G*   on the next character you log in with. *");
+		msg_broadcast_format(Ind, "\374\377y*** %s vanquished 20 opponents and is entitled to great reward! ***", p_ptr->name);
+		msg_print(Ind, "\375\377G* Gratulations, you killed 20 opposing gladiators! *");
+		msg_print(Ind, "\375\377G*   For that, you will receive a rewarding deed    *");
+		msg_print(Ind, "\375\377G*   on the next character you log in with.         *");
 		buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MASS);
 	}
 #endif
@@ -5822,9 +5878,9 @@ static void check_killing_reward(int Ind) {
 	/* reward top gladiators */
 	if (p_ptr->kills >= 10) {
 		p_ptr->kills -= 10; /* reset! */
-		msg_broadcast_format(Ind, "\377y** %s vanquished 10 opponents! **", p_ptr->name);
-		msg_print(Ind, "\377G* Another 10 aggressors have fallen by your hands! *");
-		msg_print(Ind, "\377G* You received a reward! *");
+		msg_broadcast_format(Ind, "\374\377y** %s vanquished 10 opponents! **", p_ptr->name);
+		msg_print(Ind, "\375\377G* Another 10 aggressors have fallen by your hands! *");
+		msg_print(Ind, "\375\377G* You received a reward! *");
                 give_reward(Ind, RESF_MID, "Gladiator's reward", 1, 0);
 	}
 #endif
@@ -5877,11 +5933,9 @@ void player_death(int Ind)
         /* Amulet of immortality prevents death */
         o_ptr = &p_ptr->inventory[INVEN_NECK];
         /* Skip empty items */
-        if (o_ptr->k_idx)
-        {
-            if (o_ptr->tval == TV_AMULET &&
-                (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY))
-	        return;
+        if (o_ptr->k_idx && o_ptr->tval == TV_AMULET &&
+            (o_ptr->sval == SV_AMULET_INVINCIBILITY || o_ptr->sval == SV_AMULET_INVULNERABILITY)) {
+		return;
         }
 	
 	break_cloaking(Ind, 0);
@@ -5977,10 +6031,10 @@ void player_death(int Ind)
 					}
 				}
 				if (k) { /* usual */
-					msg_broadcast(0, format("\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
+					msg_broadcast(0, format("\374\377A** %s has defeated %s! **", m_name_extra, p_ptr->name));
 					s_printf("EVENT_RESULT: %s has defeated %s (%d) (%d damage).\n", m_name_extra, p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				} else { /* can happen if monster dies first, then player dies to monster DoT */
-					msg_broadcast(0, format("\377A** %s didn't survive! **", p_ptr->name));
+					msg_broadcast(0, format("\374\377A** %s didn't survive! **", p_ptr->name));
 					s_printf("EVENT_RESULT: %s (%d) was defeated (%d damage).\n", p_ptr->name, p_ptr->lev, p_ptr->deathblow);
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
@@ -6014,6 +6068,7 @@ void player_death(int Ind)
 		}
 
 		/* Wow! You may return!! */
+		if (!ge_secure) p_ptr->soft_deaths++;
 		return;
 	}
 
@@ -6089,6 +6144,8 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		/* Inform him about his situation */
 		if (!sector00downstairs) msg_print(Ind, "\377oYou died too early and have to sit out the remaining time!");
 		else msg_print(Ind, "\377oYou died too early, find the staircase and re-enter the dungeon!");
+
+		p_ptr->soft_deaths++;
 		return;
 	}
 
@@ -6115,16 +6172,16 @@ s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		/* Tell players */
 		if (streq(p_ptr->died_from, "Insanity")) {
 			/* Tell him */
-			msg_print(Ind, "\377RYou die.");
+			msg_print(Ind, "\374\377RYou die.");
 	//		msg_print(Ind, NULL);
-			msg_format(Ind, "\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
+			msg_format(Ind, "\374\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
 
 s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 
 			if (cfg.unikill_format)
-			snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			else
-			snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			s_printf("%s (%d) was destroyed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -6151,14 +6208,14 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s\n", race_info[p_ptr
 		}
 		else if (p_ptr->ghost) {
 			/* Tell him */
-			msg_format(Ind, "\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
+			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
 
 s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 
 			if (cfg.unikill_format)
-			snprintf(buf, sizeof(buf), "\377a**\377r%s %s's (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\374\377a**\377r%s %s's (%d) ghost was destroyed by %s.\377a**", titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from);
 			else
-			snprintf(buf, sizeof(buf), "\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\374\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 			s_printf("%s's (%d) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
@@ -6177,7 +6234,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 		}
 		else {
 			/* Tell him */
-			msg_print(Ind, "\377RYou die.");
+			msg_print(Ind, "\374\377RYou die.");
 	//		msg_print(Ind, NULL);
 #ifdef MORGOTH_FUNKY_KILL_MSGS /* Might add some atmosphere? (lol) - C. Blue */
 			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
@@ -6189,38 +6246,38 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s\n", race_info[p_pt
 				case 4:strcpy(funky_msg,"torn up");break;
 				case 5:strcpy(funky_msg,"crushed");break; /* again :) */
 				}
-				msg_format(Ind, "\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
+				msg_format(Ind, "\374\377%c**\377rYou have been %s by %s.\377%c**", msg_layout, funky_msg, p_ptr->died_from, msg_layout);
 				if (cfg.unikill_format) {
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was %s by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				} else {
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was %s and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was %s and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, funky_msg, p_ptr->died_from, msg_layout);
 				}
 			} else {
 #endif
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-    				msg_format(Ind, "\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+    				msg_format(Ind, "\374\377%c**\377rYou have been killed by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 			else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-				msg_format(Ind, "\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+				msg_format(Ind, "\374\377%c**\377rYou have been annihilated by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 			else {
-				msg_format(Ind, "\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
+				msg_format(Ind, "\374\377%c**\377rYou have been vaporized by %s.\377%c**", msg_layout, p_ptr->died_from, msg_layout);
 			}
 
 			if (cfg.unikill_format) {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was killed by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was annihilated by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was vaporized by %s.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			} else {
 				if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity")))
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was killed and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was annihilated and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 				else
-					snprintf(buf, sizeof(buf), "\377%c**\377r%s (%d) was vaporized and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
+					snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was vaporized and destroyed by %s.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			}
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
@@ -6554,28 +6611,33 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 
 #if 1 /* Enable, iff newbies-level leading to perma-death is disabled above. */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
-		msg_format(Ind, "\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
-		msg_print(Ind, "\377oTherefore, it's recommended to press 'Q' to suicide and start over.");
+		msg_format(Ind, "\374\377oYou died below level %d, which means that your items didn't drop.", cfg.newbies_cannot_drop);
+		msg_print(Ind, "\374\377oTherefore, it's recommended to press 'Q' to suicide and start over.");
+		if (p_ptr->wpos.wz < 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '<' to float back to town,");
+		else if (p_ptr->wpos.wz > 0) msg_print(Ind, "\374\377oIf you don't like to do that, use '>' to float back to town,");
+		else if (p_ptr->wpos.wx == cfg.town_x && p_ptr->wpos.wy == cfg.town_y) msg_print(Ind, "\374\377oIf you don't like to do that, of course you may just continue");
+		else msg_print(Ind, "\374\377oIf you don't like to do that, just continue by flying back to town");
+		msg_print(Ind, "\374\377oand enter the temple (\377g4\377o) to be revived and handed some money.");
 	}
 #endif
 
 	/* Tell everyone he died */
 	if (p_ptr->fruit_bat == -1)
-		snprintf(buf, sizeof(buf), "\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
+		snprintf(buf, sizeof(buf), "\374\377o%s was turned into a fruit bat by %s!", p_ptr->name, p_ptr->died_from);
 	
  	else if (p_ptr->alive) {
 		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-			/* snprintf(buf, sizeof(buf), "\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
+			/* snprintf(buf, sizeof(buf), "\374\377r%s was killed by %s.", p_ptr->name, p_ptr->died_from); */
 			/* Add the player lvl to the death message. the_sandman */
-			snprintf(buf, sizeof(buf), "\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was killed by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 		}
 		else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
 			/* snprintf(buf, sizeof(buf), "\377r%s was annihilated by %s.", p_ptr->name, p_ptr->died_from); */
-			snprintf(buf, sizeof(buf), "\377r%s (%d) was annihilated by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was annihilated by %s", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 
 		}
 		else {
-			snprintf(buf, sizeof(buf), "\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
+			snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 		}
 		s_printf("%s (%d) was killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "Insanity"))
@@ -6584,21 +6646,21 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s\n", p_ptr->mode & MODE_PV
 s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 	else if (!p_ptr->total_winner) {
-		snprintf(buf, sizeof(buf), "\377D%s committed suicide.", p_ptr->name);
+		snprintf(buf, sizeof(buf), "\376\377D%s committed suicide.", p_ptr->name);
 		s_printf("%s (%d) committed suicide.\n", p_ptr->name, p_ptr->lev);
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	} else {
 		if (getlevel(&p_ptr->wpos) == 200)
-			snprintf(buf, sizeof(buf), "\377vThe unbeatable %s has retired to the shores of valinor.", p_ptr->name);
+			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s has retired to the shores of valinor.", p_ptr->name);
 		else
-			snprintf(buf, sizeof(buf), "\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
+			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 		s_printf("%s (%d) committed suicide. (Retirement)\n", p_ptr->name, p_ptr->lev);
 		death_type = 3;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title);
 	}
 	if (is_admin(p_ptr)) {
-		snprintf(buf, sizeof(buf), "\377D%s bids farewell to this plane.", p_ptr->name);
+		snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
 	}
 
 	/* Tell the players */
@@ -6869,16 +6931,16 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 		p_ptr->safe_sane = FALSE;
 
 		/* Tell him */
-		msg_print(Ind, "\377RYou die.");
+		msg_print(Ind, "\374\377RYou die.");
 //		msg_print(Ind, NULL);
 		if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100)) || (streq(p_ptr->died_from, "Insanity"))) {
-			msg_format(Ind, "\377RYou have been killed by %s.", p_ptr->died_from);
+			msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
 		}
 		else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450))) {
-			msg_format(Ind, "\377RYou have been annihilated by %s.", p_ptr->died_from);
+			msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
 		}
 		else {
-			msg_format(Ind, "\377RYou have been vaporized by %s.", p_ptr->died_from);
+			msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
 		}
 
 #if CHATTERBOX_LEVEL > 2
@@ -6961,6 +7023,8 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s\n", race_info[p_p
 
 		/* He is carrying nothing */
 		p_ptr->inven_cnt = 0;
+
+		p_ptr->deaths++;
 	}
 	
 	/* Remove the death flag */
@@ -7145,7 +7209,7 @@ void kill_quest(int Ind){
 	
 	process_hooks(HOOK_QUEST_FINISH, "d", Ind);
 
-	snprintf(temp, 160, "\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
+	snprintf(temp, 160, "\374\377y%s has won the %s quest!", p_ptr->name, r_name+r_info[quests[pos].type].name);
 	if(quests[i].flags&QUEST_RACE)
 		msg_broadcast(Ind, temp);
 	if(quests[i].flags&QUEST_GUILD){
@@ -9722,9 +9786,9 @@ void blood_bond(int Ind, object_type *o_ptr)
 #endif
 
 	s_printf("BLOOD_BOND: %s blood bonds with %s\n", p_ptr->name, p2_ptr->name);
-	msg_format(Ind, "\377cYou blood bond with %s.", p2_ptr->name);
-	msg_format(Ind2, "%s blood bonds with you.", p_ptr->name);
-	msg_broadcast(Ind, format("\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
+	msg_format(Ind, "\374\377cYou blood bond with %s.", p2_ptr->name);
+	msg_format(Ind2, "\374%s blood bonds with you.", p_ptr->name);
+	msg_broadcast(Ind, format("\374\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name));
 
 	/* new: auto-hostile, circumventing town peace zone functionality: */
 	add_hostility(Ind, p2_ptr->name, TRUE);

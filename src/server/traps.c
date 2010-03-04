@@ -1238,7 +1238,7 @@ break;
 				object_desc(Ind, i_name, j_ptr, FALSE, 3);
 
 				/* Message */
-				msg_format(Ind, "\377o%sour %s (%c) was stolen!",
+				msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
 						((j_ptr->number > 1) ? "One of y" : "Y"),
 						i_name, index_to_label(i));
 
@@ -1346,13 +1346,13 @@ break;
 			else if (p_ptr->au)
 			{
 				msg_print(Ind, "Your purse feels lighter.");
-				msg_format(Ind, "\377o%ld coins were stolen!", (long int)gold);
+				msg_format(Ind, "\376\377o%ld coins were stolen!", (long int)gold);
 				ident=TRUE;
 			}
 			else
 			{
 				msg_print(Ind, "Your purse feels empty.");
-				msg_print(Ind, "\377oAll of your coins were stolen!");
+				msg_print(Ind, "\376\377oAll of your coins were stolen!");
 				ident=TRUE;
 			}
 			p_ptr->redraw |= (PR_GOLD);
@@ -2124,7 +2124,7 @@ break;
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident=player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); destroy_chest(i_ptr); break;
 		case TRAP_OF_NUKE_BOLT: ident=player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
-#if 1	// coming..when it comes :) //very powerful btw. instakills weaker chars.
+#if 1	// coming..when it comes :) //very powerful btw. insta-kills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
 		case TRAP_OF_HELL_FIRE: ident=player_handle_breath_trap(Ind, 1, GF_HELL_FIRE, trap); destroy_chest(i_ptr); break;
 #endif	// 0
@@ -4737,7 +4737,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr)
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 
 	/* Actually hit the monster */
-//	(void) project_m(who, 0, y, x, dam, typ);
+//	(void) project_m(who, y, x, 0, y, x, dam, typ);
 	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ,
 	               (PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL), "");
 

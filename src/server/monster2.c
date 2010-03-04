@@ -2305,8 +2305,8 @@ void update_mon(int m_idx, bool dist)
 			}
 
 			/* Hack -- Wizards have "perfect telepathy" */
-			if (p_ptr->admin_dm) flag = TRUE;
-			
+			if (p_ptr->admin_dm || player_sees_dm(Ind)) flag = TRUE;
+
 			/* Arena Monster Challenge event provides wizard-esp too */
 			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)
 				flag = TRUE;
@@ -2504,7 +2504,7 @@ void update_player(int Ind)
 	for (i = 1; i <= NumPlayers; i++)
 	{
 		p_ptr = Players[i];
-		zcave=getcave(&p_ptr->wpos);
+		zcave = getcave(&p_ptr->wpos);
 
 		/* Skip disconnected players */
 		if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -2602,7 +2602,7 @@ void update_player(int Ind)
 			if (q_ptr->cloaked && !player_in_party(p_ptr->party, Ind)) flag = FALSE;
 
 			/* Dungeon masters can see invisible players */
-			if (p_ptr->admin_dm) flag = TRUE;
+			if (p_ptr->admin_dm || player_sees_dm(i)) flag = TRUE;
 
 			/* Arena Monster Challenge event provides wizard-esp too */
 			if (ge_special_sector && p_ptr->wpos.wx == WPOS_ARENA_X && p_ptr->wpos.wy == WPOS_ARENA_Y && p_ptr->wpos.wz == WPOS_ARENA_Z)

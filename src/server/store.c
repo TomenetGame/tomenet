@@ -752,7 +752,10 @@ static bool store_will_buy(int Ind, object_type *o_ptr)
 			/* Analyze the type */
 			switch (o_ptr->tval)
 			{
-				case TV_BOOK: if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE) return FALSE;
+				case TV_BOOK:
+					if (get_book_name_color(Ind, o_ptr) != TERM_L_BLUE &&
+					    get_book_name_color(Ind, o_ptr) != TERM_WHITE) /* unused custom books */
+						return FALSE;
 				case TV_AMULET:
 				case TV_RING:
 				case TV_STAFF:
@@ -2105,13 +2108,15 @@ static void display_store(int Ind)
 	if (p_ptr->store_num == STORE_HOME)	/* This shouldn't happen */
 	{
 		/* Send the store info */
-//		Send_store_info(Ind, p_ptr->store_num, 0, st_ptr->stock_num);
-		Send_store_info(Ind, p_ptr->store_num, "Your House", "", st_ptr->stock_num, st_ptr->stock_size);
+		Send_store_info(Ind, p_ptr->store_num, "Your House", "", st_ptr->stock_num, st_ptr->stock_size, TERM_L_UMBER, '+');
 	}
 
 	/* Normal stores */
 	else
 	{
+		byte a = st_info[st_ptr->st_idx].d_attr;
+		char c = st_info[st_ptr->st_idx].d_char;
+
 		cptr owner_name = (ow_name + ot_ptr->name);
 
 		/* Send the store actions info */
@@ -2142,8 +2147,7 @@ static void display_store(int Ind)
 	}
 
 		/* Send the store info */
-//		Send_store_info(Ind, p_ptr->store_num, st_ptr->owner, st_ptr->stock_num);
-		Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, ot_ptr->max_cost);
+		Send_store_info(Ind, p_ptr->store_num, store_name, owner_name, st_ptr->stock_num, ot_ptr->max_cost, a, c);
 	}
 
 }
@@ -5018,8 +5022,7 @@ static void display_trad_house(int Ind)
 	show_building(Ind, &town[0].townstore[7]);
 
 	/* Send the store info */
-	//Send_store_info(Ind, p_ptr->store_num, 0, h_ptr->stock_num);
-	Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size);
+	Send_store_info(Ind, p_ptr->store_num, "Your House", "", h_ptr->stock_num, h_ptr->stock_size, TERM_L_UMBER, '+');
 }
 
 /* Enter a house, and interact with it.	- Jir - */

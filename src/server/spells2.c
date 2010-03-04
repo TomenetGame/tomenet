@@ -1042,7 +1042,7 @@ static int remove_curse_aux(int Ind, int all)
 		o_ptr->ident &= ~ID_CURSED;
 
 		/* Hack -- Assume felt */
-		o_ptr->ident |= ID_SENSE;
+		o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
 		/* Take note */
 		o_ptr->note = quark_add("uncursed");
@@ -2527,6 +2527,8 @@ bool lose_all_info(int Ind)
 
 	int                 i;
 
+	if (safe_area(Ind)) return(TRUE);
+
 	/* Forget info about objects */
 	for (i = 0; i < INVEN_TOTAL; i++)
 	{
@@ -3781,7 +3783,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				{
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
-					o_ptr->ident |= ID_SENSE;
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					o_ptr->note = quark_add("uncursed");
 				}
 			}
@@ -3812,7 +3814,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				{
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
-					o_ptr->ident |= ID_SENSE;
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					o_ptr->note = quark_add("uncursed");
 				}
 			}
@@ -3842,7 +3844,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag)
 				{
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
-					o_ptr->ident |= ID_SENSE;
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					o_ptr->note = quark_add("uncursed");
 				}
 			}

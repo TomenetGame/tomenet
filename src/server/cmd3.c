@@ -1005,7 +1005,7 @@ return;
 		msg_print(Ind, "Oops! It feels deathly cold!");
 
 		/* Note the curse */
-		o_ptr->ident |= ID_SENSE;
+		o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 	}
 
     }
@@ -1058,6 +1058,11 @@ return;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+
+	/* warning messages, mostly for newbies */
+	if (p_ptr->warning_bpr3 == 0 && slot == INVEN_WIELD)
+		p_ptr->warning_bpr3 = 2;
 }
 
 
@@ -1389,7 +1394,7 @@ void do_cmd_destroy(int Ind, int item, int quantity)
 		o_ptr->note = quark_add(feel);
 
 		/* We have "felt" it (again) */
-		o_ptr->ident |= (ID_SENSE);
+		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE);
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);

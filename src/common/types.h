@@ -847,7 +847,7 @@ struct object_type
 
 	s32b timeout;			/* Timeout Counter */
 
-	byte ident;			/* Special flags  */
+	u16b ident;			/* Special flags  */
 
 	s32b marked;			/* Object is marked (for deletion after a certain time) */
 	byte marked2;			/* additional parameters */
@@ -950,7 +950,7 @@ struct monster_type
 
    u16b hold_o_idx;	/* Object being held (if any) */
 
-   byte cdis;			/* Current dis from player */
+   s16b cdis;			/* Current dis from player */
 
    /*	bool los;*/			/* Monster is "in sight" */
    /*	bool ml;*/			/* Monster is "visible" */
@@ -993,6 +993,13 @@ struct monster_type
    s16b last_target_melee_temp;	/* For C. Blue's C_BLUE_AI_MELEE in melee2.c */
    s16b switch_target;		/* For distract_monsters(), implemented within C_BLUE_AI_MELEE in melee2.c */
 
+   s16b cdis_on_damage;		/* New Ball spell / explosion anti-cheeze */
+//   byte turns_tolerance;	/* Optional: How many turns pass until we react the new way */
+   s16b damage_tx, damage_ty;	/* new temporary target position: where we received damage from */
+   signed char previous_direction;	/* Optional: Don't move right back where we came from (at least during this turn -_-) after reaching the damage epicentrum. */
+   s16b damage_dis;		/* Remember distance to epicenter */
+   s16b p_tx, p_ty;		/* Coordinates from where the player cast the damaging projection */
+
    s16b highest_encounter;	/* My final anti-cheeze strike I hope ;) - C. Blue
       This keeps track of the highest player which the monster
       has 'encountered' (might offer various definitions of this
@@ -1004,6 +1011,7 @@ struct monster_type
    byte taunted;	/* has this monster been taunted (melee technique)? */
 
    bool no_esp_phase;	/* for WEIRD_MIND esp flickering */
+   int extra;	/* extra flag for debugging/testing purpose */
 };
 
 typedef struct monster_ego monster_ego;
@@ -1967,6 +1975,7 @@ struct player_type
 	bool death;		/* Have we died */
 	bool safe_sane;		/* Save players from insanity-death on resurrection (atomic flag) - C. Blue */
 	int deathblow;          /* How much damage the final blow afflicted */
+	u16b deaths, soft_deaths;	/* Times this character died so far / safely-died (no real death) so far */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;         /* number of times we have ressurected */
@@ -2681,7 +2690,7 @@ struct player_type
 	/* Being an ass? - the_sandman */
 	bool muted;
 	/* Pet limiter */
-	byte has_pet; 
+	byte has_pet;
 	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */
 	bool auto_retaliating;
 	bool auto_retaliaty; /* TRUE for code-wise duration of autorataliation
@@ -2692,10 +2701,7 @@ struct player_type
 	time_t global_event_signup[MAX_GLOBAL_EVENTS];
 	time_t global_event_started[MAX_GLOBAL_EVENTS];
 	u32b global_event_progress[MAX_GLOBAL_EVENTS][4];
-	u32b global_event_temp; /* not saved. values:
-		1: pass through sector00separation;
-            	2: die permanently in the tournament;
-                4: don't die while still in 0,0 dungeon, but teleport to 0,0,0 */
+	u32b global_event_temp; /* not saved. see defines.h for details */
 
 	/* Add more here... These are "toggle" buffs. They will add to the num_of_buffs
 	 * and that number will affect mana usage */
@@ -2771,14 +2777,20 @@ struct player_type
 	/* for hunting down bots generating exp by opening and magelocking doors */
 	u32b silly_door_exp;
 	
-	/* allow admins to put a character into 'administrative stasis' */
-	int admin_stasis;
-
 #if (MAX_PING_RECVS_LOGGED > 0)
 	/* list of ping reception times */
 	struct timeval pings_received[MAX_PING_RECVS_LOGGED];
 	char pings_received_head;
 #endif
+
+	/* allow admins to put a character into 'administrative stasis' */
+	int admin_stasis;
+
+	/* give players certain warnings, meant to guide newbies along, and remember
+	   if we already gave a specific warning, so we don't spam the player with it
+	   again and again - although noone probably reads them anyway ;-p - C. Blue */
+	char warning_bpr, warning_bpr2, warning_bpr3;
+	char warning_run, warning_wield, warning_chat, warning_lite;
 };
 
 /* For Monk martial arts */

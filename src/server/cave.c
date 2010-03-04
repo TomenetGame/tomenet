@@ -7219,6 +7219,34 @@ bool projectable_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2, int
 	return (FALSE);
 }
 
+/* like projectable_wall(), but assumes that only _permanent walls_ are really obstacles to us (for PASS_WALL/KILL_WALL monsters) */
+bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2, int range)
+{
+	int dist, y, x;
+	cave_type **zcave;
+	if(!(zcave=getcave(wpos))) return(FALSE);
+
+	/* Start at the initial location */
+	y = y1, x = x1;
+
+	/* See "project()" */
+	for (dist = 0; dist <= range; dist++)
+	{
+		/* Protected grids prevent targetting */
+		if (f_info[zcave[y][x].feat].flags1 & FF1_PERMANENT) break;
+	
+		/* Check for arrival at "final target" */
+		if ((x == x2) && (y == y2)) return (TRUE);
+
+		/* Calculate the new location */
+		mmove2(&y, &x, y1, x1, y2, x2);
+	}
+
+
+	/* Assume obstruction */
+	return (FALSE);
+}
+
 /*
  * Created for shoot_till_kill mode in do_cmd_fire().
  * Determine if a bolt spell cast from (y1,x1) to (y2,x2) will arrive
@@ -7678,19 +7706,19 @@ void season_change(int s, bool force) {
 	s_printf("(%s) SEASON_CHANGE: %d", showtime(), s);
 	if (s == SEASON_SPRING) {
 		s_printf(" (spring)");
-		world_surface_msg("\377GSpring has arrived.");
+		world_surface_msg("\374\377GSpring has arrived.");
 	}
 	if (s == SEASON_SUMMER) {
 		s_printf(" (summer)");
-		world_surface_msg("\377GSummer has come.");
+		world_surface_msg("\374\377GSummer has come.");
 	}
 	if (s == SEASON_AUTUMN) {
 		s_printf(" (autumn)");
-		world_surface_msg("\377GAutumn paints the scenery.");
+		world_surface_msg("\374\377GAutumn paints the scenery.");
 	}
 	if (s == SEASON_WINTER) {
 		s_printf(" (winter)");
-		world_surface_msg("\377GWinter embraces the lands.");
+		world_surface_msg("\374\377GWinter embraces the lands.");
 	}
 	s_printf("\n");
 

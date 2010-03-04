@@ -709,7 +709,7 @@ static void wr_item(object_type *o_ptr)
 	wr_byte(o_ptr->dd);
 	wr_byte(o_ptr->ds);
 
-	wr_byte(o_ptr->ident);
+	wr_u16b(o_ptr->ident);
 
 	wr_u16b(o_ptr->name2b);
 
@@ -1166,7 +1166,8 @@ static void wr_extra(int Ind)
 	player_type *p_ptr = Players[Ind];
 
 	int i, j;
-	u16b tmp16u;
+	u16b tmp16u = 0;
+	byte tmp8u = 0;
 
 	wr_string(p_ptr->name);
 
@@ -1430,6 +1431,17 @@ static void wr_extra(int Ind)
 	wr_u16b(p_ptr->tim_deflect);
 	wr_u16b(p_ptr->tim_trauma);
 	wr_u16b(p_ptr->tim_trauma_pow);
+
+	if (p_ptr->aura[0]) tmp8u |= 0x1;
+	if (p_ptr->aura[1]) tmp8u |= 0x2;
+	if (p_ptr->aura[2]) tmp8u |= 0x4;
+	wr_byte(tmp8u); /* aura states (on/off) */
+
+	wr_u16b(p_ptr->deaths);
+	wr_u16b(p_ptr->soft_deaths);
+
+	tmp16u = 0x0;
+	wr_u16b(tmp16u); /* array of 'warnings' and hints aimed at newbies */
 }
 
 /*

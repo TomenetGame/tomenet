@@ -14,6 +14,12 @@
 #define SERVER
 #define C_BLUE_AI
 #define C_BLUE_AI_MELEE
+/* ANTI_SEVEN_EXPLOIT: There are 2 hacks to prevent slightly silyl ping-pong movement when next to epicenter,
+   although that behaviour is probably harmless. None, one, or both may be activated. VAR1 will additionally
+   prevent any moves that increase the distance to the epicenter, which shouldnt happen in situations in which
+   this is actually exploitable at all anyway, though. So, I recommend turning on VAR2 only^^ - C. Blue */
+//#define ANTI_SEVEN_EXPLOIT_VAR1		/* prevents increasing distance to epicenter (probably can't happen in actual gameplay anyway -_-); stops algorithm if we don't get closer; makes heavy use of distance() */
+#define ANTI_SEVEN_EXPLOIT_VAR2		/* stops algorithm if we get LOS to from where the projecting player actually cast his projection */
 
 #include "angband.h"
 
@@ -6417,22 +6423,22 @@ static u32b noise = 0L;
  * Note that the "Ind" specifies the player that the monster will go after.
  */
 /* TODO: revise FEAT_*, or strange intrusions can happen */
-static void process_monster(int Ind, int m_idx)
+static void process_monster(int Ind, int m_idx, bool force_random_movement)
 {
-	player_type *p_ptr = Players[Ind];
-
-	struct worldpos *wpos=&p_ptr->wpos;
-	cave_type **zcave;
+	player_type	*p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type	**zcave;
 
 	monster_type	*m_ptr = &m_list[m_idx];
         monster_race    *r_ptr = race_inf(m_ptr);// = &r_info[r_idx];
 
-	int			i, d, oy, ox, ny, nx;
+	int		i, d, oy, ox, ny, nx;
 #ifdef ARCADE_SERVER
         int n;
 #endif
 
-	int			mm[8];
+	int		mm[8];
+	bool		random_move = FALSE;
 
 	cave_type    	*c_ptr;
 	object_type 	*o_ptr;
@@ -6457,7 +6463,7 @@ static void process_monster(int Ind, int m_idx)
 /* Hack -- don't process monsters on wilderness levels that have not
 	   been regenerated yet.
 	*/
-	if(!(zcave=getcave(wpos))) return;
+	if(!(zcave = getcave(wpos))) return;
 
 	/* If the monster can't see the player */ 
 	inv = player_invis(Ind, m_ptr, m_ptr->cdis);
@@ -6798,7 +6804,7 @@ static void process_monster(int Ind, int m_idx)
 
 
 	/* Attempt to cast a spell */
-	if (!inv && make_attack_spell(Ind, m_idx)) 
+	if (!inv && !force_random_movement && make_attack_spell(Ind, m_idx)) 
 	{
 		m_ptr->energy -= level_speed(&m_ptr->wpos);
 		return;
@@ -6811,10 +6817,11 @@ static void process_monster(int Ind, int m_idx)
 
 
 	/* Confused -- 100% random */
-	if (m_ptr->confused)
+	if (m_ptr->confused || force_random_movement || (r_ptr->flags5 & RF5_RAND_100))
 	{
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+		random_move = TRUE;
 	}
 
 	/* 75% random movement */
@@ -6828,6 +6835,7 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+		random_move = TRUE;
 	}
 
 	/* 50% random movement */
@@ -6839,6 +6847,7 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+		random_move = TRUE;
 	}
 
 	/* 25% random movement */
@@ -6850,6 +6859,7 @@ static void process_monster(int Ind, int m_idx)
 
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
+		random_move = TRUE;
 	}
 
 	/* Normal movement */
@@ -6873,10 +6883,90 @@ static void process_monster(int Ind, int m_idx)
                 }
                 else
 		get_moves(Ind, m_idx, mm);
-
 #endif
 	}
 
+#ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster has planned an actual movement' */
+	if (!random_move) {
+		if (m_ptr->previous_direction) {
+			if (projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px, MAX_RANGE))
+				m_ptr->previous_direction = 0;
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR2
+			/* hack to prevent slightly silyl ping-pong movement when next to epicenter,
+			although probably harmless:
+			If monster has LOS to where the player once fired from, terminate algorithm. */
+			if (projectable_wall(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, m_ptr->p_ty, m_ptr->p_tx, MAX_RANGE))
+				m_ptr->previous_direction = 0;
+ #endif
+		}
+ #if 1 /* enable? */
+		if (m_ptr->previous_direction == -1) {
+			/* would none regularly planned move _not decrease_ distance to target _player_ ? */
+			/* ok this gets not checked either this time, not that important probably =p
+			if (foo..distance decrease stuff..) */
+			{
+				/* allow only directions that _decrease_ (not: not increase) distance to _epicentrum_ */
+				d = 0;
+				for (i = 1; i <= 9; i++) {
+					/* direction must decrease distance (might need tweaking!) */
+					if (((m_ptr->damage_ty - oy) * ddy[i] <= 0) &&
+					    ((m_ptr->damage_tx - ox) * ddx[i] <= 0))
+						continue;
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR1
+					/* tweaked: prevent (probably harmless) ping-pong'ing when adjacent to destination */
+					if (distance(oy + ddy[i], ox + ddx[i], m_ptr->damage_ty, m_ptr->damage_tx) > m_ptr->damage_dis)
+						continue;
+ #endif
+					mm[d] = i;
+					d++;
+				}
+				/* zero-terminate movement array */
+				mm[d] = 0;
+			}
+		} else if (m_ptr->previous_direction > 0) {
+			/* are we already standing on epicentrum x,y ? */
+			if (ox == m_ptr->damage_tx && oy == m_ptr->damage_ty) {
+				/* little hack (optional I guess): avoid going back into exactly the direction we just came from, just because we can :-s */
+				/* BEGIN optional hack.. */
+				d = 0;
+				for (i = 1; i <= 9; i++) {
+					/* avoid retreating into the exact direction we came from */
+					if (i == 10 - m_ptr->previous_direction) continue;
+					/* direction must decrease distance */
+					if (((p_ptr->py - oy) * ddy[i] <= 0) &&
+					    ((p_ptr->px - ox) * ddx[i] <= 0))
+						continue;
+					mm[d] = i;
+					d++;
+				}
+				/* zero-terminate movement array */
+				mm[d] = 0;
+				/* ..END optional hack. */
+				/* reset direction to signal end of our special behaviour. */
+				m_ptr->previous_direction = 0;
+			} else { /* continue overriding movement so we get closer to epicentrum */
+				/* allow only directions that _decrease_ (not: not increase) distance to _epicentrum_ */
+				d = 0;
+				for (i = 1; i <= 9; i++) {
+					/* direction must decrease distance (might need tweaking!) */
+					if (((m_ptr->damage_ty - oy) * ddy[i] <= 0) &&
+					    ((m_ptr->damage_tx - ox) * ddx[i] <= 0))
+						continue;
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR1
+					/* tweaked: prevent (probably harmless) ping-pong'ing when adjacent to destination */
+					if (distance(oy + ddy[i], ox + ddx[i], m_ptr->damage_ty, m_ptr->damage_tx) > m_ptr->damage_dis)
+						continue;
+ #endif
+					mm[d] = i;
+					d++;
+				}
+				/* zero-terminate movement array */
+				mm[d] = 0;
+			}
+		}
+ #endif /* enabled? */
+	}
+#endif
 
 	/* Assume nothing */
 	do_turn = FALSE;
@@ -7240,6 +7330,7 @@ static void process_monster(int Ind, int m_idx)
 
 
 #ifdef C_BLUE_AI_MELEE /* if multiple targets adjacent, choose between them */
+    if (!m_ptr->confused) {
 			bool keeping_previous_target = FALSE;
 			int i, p_idx_chosen = 0 - c_ptr->m_idx, reason;
 			int p_idx[9], targets = 0;
@@ -7418,6 +7509,7 @@ static void process_monster(int Ind, int m_idx)
 			/* connect to outside world */
 			p_idx_target = p_idx_chosen;
 		    }
+    }
 #endif /* C_BLUE_AI_MELEE */
 
 
@@ -7581,6 +7673,11 @@ static void process_monster(int Ind, int m_idx)
 		/* Creature has been allowed to move */
 		if (do_move)
 		{
+#ifdef ANTI_SEVEN_EXPLOIT /* code part: 'pick up here, after having just overridden a movement step: remember the step direction' */
+			if (!random_move && m_ptr->previous_direction != 0) {
+				m_ptr->previous_direction = d;
+			}
+#endif
 			/* Take a turn */
 			do_turn = TRUE;
 
@@ -7875,6 +7972,31 @@ static void process_monster(int Ind, int m_idx)
 
 		/* XXX XXX XXX Actually do something now (?) */
 	}
+
+#ifdef ANTI_SEVEN_EXPLOIT /* code part: 'save new closest player distance after making a RANDOM MOVE' */
+	if (m_ptr->previous_direction) {
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR1
+		i = distance(m_ptr->fy, m_ptr->fx, m_ptr->damage_ty, m_ptr->damage_tx);
+ #endif
+		if (random_move) {
+			/* note: currently doesn't use the real new cdis,
+			   but instead the old cdis (so it's not really in
+			   effect, but probably it doesn't matter much atm */
+			m_ptr->cdis_on_damage = m_ptr->cdis;
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR1
+		} else {
+			/* update distance to epicenter, if we didn't get closer despite of moving, STOP algorithm.
+			This is actually for preventing going back and forth when next to the epicenter.
+			Although it'd possibly be harmless if we did so. */
+			if (do_move && (i == m_ptr->damage_dis)) m_ptr->previous_direction = 0;
+ #endif
+		}
+ #ifdef ANTI_SEVEN_EXPLOIT_VAR1
+		/* update distance to epicenter */
+		m_ptr->damage_dis = i;
+ #endif
+	}
+#endif
 }
 #ifdef RPG_SERVER
 /* the pet handler. note that at the moment it _may_ be almost
@@ -8816,6 +8938,7 @@ void process_monsters(void)
 	monster_race	*r_ptr;
 	player_type	*p_ptr;
 	bool		reveal_cloaking, spot_cloaking;
+	int		may_move_Ind, may_move_dis;
 	char		m_name[80];
 
 	/* maybe better do in dungeon()?	- Jir - */
@@ -8890,21 +9013,25 @@ void process_monsters(void)
 		closest = -1;
 		dis_to_closest = 9999;
 		lowhp = 9999;
-		blos=FALSE;
+		blos = FALSE;
 
 #ifdef C_BLUE_AI_MELEE
-	/* save our previous melee target.
-	   NOTE: This must be _after_ the energy-check. */
-	m_ptr->last_target_melee_temp = m_ptr->last_target_melee;
-	/* forget that target in case combat is interrupted,
-	   depending on monster type: */
-	if ((r_ptr->flags7 & RF7_MULTIPLY) || /* <- can't memorize */
-	    (r_ptr->flags2 & RF2_SMART) || /* <- decides to re-evaluate targets */
-	    ((r_ptr->flags2 & RF2_WEIRD_MIND) && magik(50)) || /* <- sometimes memorize */
-	    (r_ptr->flags2 & RF2_EMPTY_MIND)) /* <- can't memorize */
-		/* forget old target */
-		m_ptr->last_target_melee = 0;
+		/* save our previous melee target.
+		   NOTE: This must be _after_ the energy-check. */
+		m_ptr->last_target_melee_temp = m_ptr->last_target_melee;
+		/* forget that target in case combat is interrupted,
+		   depending on monster type: */
+		if ((r_ptr->flags7 & RF7_MULTIPLY) || /* <- can't memorize */
+		    (r_ptr->flags2 & RF2_SMART) || /* <- decides to re-evaluate targets */
+		    ((r_ptr->flags2 & RF2_WEIRD_MIND) && magik(50)) || /* <- sometimes memorize */
+		    (r_ptr->flags2 & RF2_EMPTY_MIND)) /* <- can't memorize */
+			/* forget old target */
+			m_ptr->last_target_melee = 0;
 #endif
+
+		/* is monster allowed to move although all targets are cloaked? */
+		may_move_Ind = 0;
+		may_move_dis = 9999;
 
 		/* Find the closest player */
 		for (pl = 1; pl < NumPlayers + 1; pl++) 
@@ -8969,8 +9096,8 @@ void process_monsters(void)
 				new_los = TRUE;
 #endif
 
-			/* Glaur. Check that the closest VISIBLE target gets selected, 
-			   if no visible one available just take the closest*/ 
+			/* Glaur. Check that the closest VISIBLE target gets selected,
+			   if no visible one available just take the closest*/
 			if (((blos >= new_los) && (j > dis_to_closest)) || (blos > new_los)) 
 				continue;
 
@@ -8993,6 +9120,19 @@ void process_monsters(void)
 					reveal_cloaking = TRUE;
 #endif
 				} else /* can't see cloaked player? */
+					/* hack: if monster moves highly randomly, we assume that it
+					   doesn't really care about a player being nearby or not,
+					   and hence keep up the random movement, except using attack
+					   spells on the cloaked player! */
+					if ((r_ptr->flags1 & RF1_RAND_50) ||
+					    (r_ptr->flags5 & RF5_RAND_100)) {
+						/* 'remember' closest cloaked player */
+						if (j < may_move_dis) {
+							may_move_Ind = pl;
+							may_move_dis = j;
+						}
+					}
+					/* Normally, cloaked players are ignored and monsters don't move/act: */
 					continue;
 			}
 #if 0 /* maybe doesn't make sense that spotting an action drops camouflage */
@@ -9031,9 +9171,19 @@ void process_monsters(void)
 		}
 		
 		/* Paranoia -- Make sure we found a closest player */
-		if (closest == -1)
-			continue;
-		
+		if (closest == -1) {
+			/* hack: still move around randomly? */
+			if (may_move_Ind) {
+				closest = may_move_Ind;
+				dis_to_closest = may_move_dis;
+			}
+			/* can't act at all - process next monster */
+			else continue;
+		} else {
+			/* if we have a 'real' target, ignore any cloaked-target hacks */
+			may_move_Ind = 0;
+		}
+
 		m_ptr->cdis = dis_to_closest;
 		m_ptr->closest_player = closest;
 
@@ -9118,7 +9268,7 @@ void process_monsters(void)
 			/* Hack -- suppress messages */
 			if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
-			process_monster(closest, i);
+			process_monster(closest, i, (may_move_Ind != 0));
 
 		        /* for C_BLUE_AI (to remember if the player stood beside us and
 	    		   then runs away from us to make us follow him): */

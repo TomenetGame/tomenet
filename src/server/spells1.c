@@ -1454,7 +1454,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker)
 				p2_ptr->redraw |= PR_HP;
 
 				s_printf("BLOOD_BOND: %s won the blood bond against %s\n", p2_ptr->name, p_ptr->name);
-				msg_broadcast_format(0, "\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
+				msg_broadcast_format(0, "\374\377c*** %s won the blood bond against %s. ***", p2_ptr->name, p_ptr->name);
 
 				remove_hostility(Ind, p2_ptr->name);
 				remove_hostility(Ind_attacker, p_ptr->name);
@@ -2122,7 +2122,7 @@ int inven_damage(int Ind, inven_func typ, int perc)
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 				/* Message */
-				msg_format(Ind, "\377o%sour %s (%c) %s destroyed!",
+				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
 						   ((o_ptr->number > 1) ?
 							((amt == o_ptr->number) ? "All of y" :
 							 (amt > 1 ? "Some of y" : "One of y")) : "Y"),
@@ -2868,7 +2868,7 @@ bool apply_disenchant(int Ind, int mode)
 	if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) {
 		int i = randint(o_ptr->number / 5);
 		if (!i) i = 1;
-		msg_format(Ind, "\377o%s of your %s (%c) %s away!",
+		msg_format(Ind, "\376\377o%s of your %s (%c) %s away!",
 		    (o_ptr->number == i ? "All" : (i != 1 ? "Some" : "One")), o_name, index_to_label(t),
 		    ((i != 1) ? "fade" : "fades"));
 		inven_item_increase(Ind, t, -i);
@@ -2932,7 +2932,7 @@ bool apply_disenchant(int Ind, int mode)
 		if ((o_ptr->to_a > 15) && (rand_int(100) < 25)) o_ptr->to_a--;
 	}
 	/* Message */
-	msg_format(Ind, "\377oYour %s (%c) %s disenchanted!",
+	msg_format(Ind, "\376\377oYour %s (%c) %s disenchanted!",
 			   o_name, index_to_label(t),
 			   ((o_ptr->number != 1) ? "were" : "was"));
 
@@ -3036,7 +3036,7 @@ bool apply_discharge(int Ind, int dam)
 		}
 		/* Message */
 		else if (damaged) {
-			msg_format(Ind, "\377yYour %s (%c) %s discharged!",
+			msg_format(Ind, "\376\377yYour %s (%c) %s discharged!",
 			    o_name, index_to_label(i), ((o_ptr->number != 1) ? "were" : "was"));
 			damaged_any = TRUE;
 		}
@@ -4311,8 +4311,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_HOLY_FIRE:
 		{
 			do_smash_effect = TRUE;
-			if (cursed_p(o_ptr))
-			{
+			if (cursed_p(o_ptr)
+//should be enabled maybe?    || hates_fire(o_ptr)
+			    ) {
 				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 			}
@@ -4543,7 +4544,7 @@ static bool psi_backlash(int Ind, int m_idx, int dam)
  *
  * We attempt to return "TRUE" if the player saw anything "useful" happen.
  */
-static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg)
+static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struct worldpos *wpos, int y, int x, int dam, int typ, int flg)
 {
 	int i = 0, div, k;
 
@@ -7185,6 +7186,68 @@ static bool project_m(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Hack -- handle sleep */
 			if (do_sleep) m_ptr->csleep = do_sleep;
+
+#ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
+			/* isn't there any player in our casting-los? */
+			/* only ball spells/explosions, NOT clouds/walls/beams/bolts/traps/etc */
+//			if ((flg & PROJECT_JUMP) && (flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
+//			if ((flg & PROJECT_KILL) && !(flg & PROJECT_STAY) &&
+			if ((flg & PROJECT_KILL) && /* well, why not for lasting effects too actually */
+			    /* some sanity/efficiency checks:.. */
+			    y_origin && x_origin && dam) {
+				/* first, make sure we don't have another potential target in our LOS.
+				   If we have, we can just go for him and ignore whoever shot us previously.
+				   NOTE: this stuff should probably be evaluated in monster target choosing
+				         code already, for efficiency. */
+				bool got_potential_target = FALSE;
+				int p;
+				/* make sure only monsters who NEED to use this actually do use it.. (Morgoth doesn't) */
+				if ((r_ptr->flags2 & RF2_PASS_WALL) && (r_ptr->flags2 & RF2_KILL_WALL)) {
+					got_potential_target = TRUE;
+				}
+				else if ((r_ptr->flags2 & RF2_PASS_WALL) || (r_ptr->flags2 & RF2_KILL_WALL)) {
+					if (!m_ptr->closest_player || m_ptr->closest_player > NumPlayers ||
+					    !inarea(&Players[m_ptr->closest_player]->wpos, &m_ptr->wpos))
+						got_potential_target = TRUE;
+					else if (projectable_wall_perm(&m_ptr->wpos, m_ptr->fy, m_ptr->fx,
+					    Players[m_ptr->closest_player]->py, Players[m_ptr->closest_player]->px, MAX_RANGE)) {
+						got_potential_target = TRUE;
+					}
+				}
+				if (!got_potential_target) {
+					for (p = 1; p <= NumPlayers; p++) {
+						if (inarea(&Players[p]->wpos, &m_ptr->wpos) &&
+						    projectable_wall(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, Players[p]->py, Players[p]->px, MAX_RANGE)) {
+							got_potential_target = TRUE;
+							break;
+						}
+					}
+				}
+				/* Ok, noone else to go after, so we have to go for the one who actually hit us */
+				if (!got_potential_target) {
+					if (m_ptr->previous_direction == 0) {
+						/* note: instead of closest dis to ANY player we just save m_ptr->cdis
+						   at this time - relatively ineffective but also not mattering much probably.  */
+						m_ptr->cdis_on_damage = m_ptr->cdis;
+						/* start behaving special */
+						m_ptr->previous_direction = -1;
+						/* accept any epicenter of damage (which is closer than 999,999: always TRUE) */
+						m_ptr->damage_tx = 999;
+						m_ptr->damage_ty = 999;
+						m_ptr->damage_dis = 999;
+					}
+					/* if we got hit by anything closer than last time, go for this one instead */
+					p = distance(m_ptr->fy, m_ptr->fx, y_origin, x_origin);
+					if (p < m_ptr->damage_dis) {
+						m_ptr->damage_ty = y_origin;
+						m_ptr->damage_tx = x_origin;
+						m_ptr->damage_dis = p;
+						m_ptr->p_tx = p_ptr->px;
+						m_ptr->p_ty = p_ptr->py;
+					}
+				}
+			}
+#endif
 		}
 	}
 
@@ -8208,9 +8271,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_CONFUSION:
 		if (p_ptr->resist_conf || p_ptr->resist_chaos)
 		{
+			dam *= 5; dam /= (randint(6) + 6);
 			if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-			dam *= 5; dam /= (randint(6) + 6);
 		}
 		else
 		{
@@ -10564,7 +10627,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 			if (!cave_los(zcave, y, x)) continue;
 
 			/* Affect the monster */
-//			if (project_m(0-who, who, dist, wpos, y, x, dam, typ)) notice = TRUE;
+//			if (project_m(0-who, who, y2, x2, dist, wpos, y, x, dam, typ)) notice = TRUE;
 
 			if (zcave[y][x].m_idx <= 0) continue;
 
@@ -10576,7 +10639,7 @@ bool project(int who, int rad, struct worldpos *wpos, int y, int x, int dam, int
 				monster_race *ref_ptr = race_inf(&m_list[zcave[y][x].m_idx]);
 			}
 */
-			if (project_m(0-who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
+			if (project_m(0-who, who, y2, x2, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 
 		/* Mega-Hack */

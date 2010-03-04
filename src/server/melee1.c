@@ -174,12 +174,12 @@ static bool do_eat_gold(int Ind, int m_idx)
 	else if (p_ptr->au)
 	{
 		msg_print(Ind, "Your purse feels lighter.");
-		msg_format(Ind, "\377o%ld coins were stolen!", (long int)gold);
+		msg_format(Ind, "\376\377o%ld coins were stolen!", (long int)gold);
 	}
 	else
 	{
 		msg_print(Ind, "Your purse feels lighter.");
-		msg_print(Ind, "\377oAll of your coins were stolen!");
+		msg_print(Ind, "\376\377oAll of your coins were stolen!");
 	}
 
 	/* Hack -- Consume some */
@@ -263,7 +263,7 @@ static bool do_eat_item(int Ind, int m_idx)
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 		/* Message */
-		msg_format(Ind, "\377o%sour %s (%c) was stolen!",
+		msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
 				((o_ptr->number > 1) ? "One of y" : "Y"),
 				o_name, index_to_label(i));
 
@@ -2108,7 +2108,7 @@ bool make_attack_melee(int Ind, int m_idx)
 							< (rlev + damage + UNAWARENESS(p_ptr)))
 					{
 						if (!p_ptr->dual_wield || magik(90)) {
-							msg_print(Ind, "\377rYou lose the grip of your weapon!");
+							msg_print(Ind, "\376\377rYou lose the grip of your weapon!");
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
@@ -2127,7 +2127,7 @@ bool make_attack_melee(int Ind, int m_idx)
 								if (slot == INVEN_ARM) dis_sec = TRUE;
 							}
 						} else { /* dual-wield "feature".. get dual-disarmed :-p */
-							msg_print(Ind, "\377rYou lose the grip of your weapons!");
+							msg_print(Ind, "\376\377rYou lose the grip of your weapons!");
 //							msg_format(Ind, "\377r%^s disarms you!", m_name);
 							bypass_inscrption = TRUE;
 							o_ptr = &p_ptr->inventory[INVEN_WIELD];

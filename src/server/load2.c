@@ -471,7 +471,11 @@ static void rd_item(object_type *o_ptr)
 	rd_byte(&old_dd);
 	rd_byte(&old_ds);
 
-	rd_byte(&o_ptr->ident);
+	if (!older_than(4, 4, 0)) rd_u16b(&o_ptr->ident);
+	else {
+		rd_byte(&tmpbyte);
+		o_ptr->ident = tmpbyte;
+	}
 
 	if (!older_than(4, 3, 1)) {
 		rd_u16b(&o_ptr->name2b);
@@ -1623,10 +1627,23 @@ if (p_ptr->updated_savegame == 0) {
 		rd_u16b(&p_ptr->tim_trauma_pow);
 	}
 
-	/* auto-enable for now (MAX_AURAS) */
-	if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
-	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
-	if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
+
+	if (!older_than(4, 4, 1)) {
+		rd_byte(&tmp8u); /* aura states (on/off) */
+		if ((tmp8u & 0x1) && get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
+		if ((tmp8u & 0x2) && get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
+		if ((tmp8u & 0x4) && get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
+
+		rd_u16b(&p_ptr->deaths);
+		rd_u16b(&p_ptr->soft_deaths);
+
+		rd_u16b(&tmp16b); /* array of 'warnings' and hints aimed at newbies */
+	} else {
+		/* auto-enable for now (MAX_AURAS) */
+		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;
+		if (get_skill(p_ptr, SKILL_AURA_SHIVER)) p_ptr->aura[1] = TRUE;
+		if (get_skill(p_ptr, SKILL_AURA_DEATH)) p_ptr->aura[2] = TRUE;
+	}
 
 	/* Success */
 	return FALSE;
@@ -2457,9 +2474,9 @@ errr rd_server_savefile()
 	/* Read house info if new enough */
 	rd_s32b(&num_houses);
 
-	while(house_alloc<num_houses){
-		GROW(houses, house_alloc, house_alloc+512, house_type);
-		house_alloc+=512;
+	while(house_alloc < num_houses){
+		GROW(houses, house_alloc, house_alloc + 512, house_type);
+		house_alloc += 512;
 	}
 
 	/* Incompatible save files */

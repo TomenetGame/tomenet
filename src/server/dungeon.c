@@ -541,7 +541,7 @@ static void sense_inventory(int Ind)
 		suppress_message = FALSE;
 
 		/* We have "felt" it */
-		o_ptr->ident |= (ID_SENSE);
+		o_ptr->ident |= (ID_SENSE | ID_SENSED_ONCE);
 		
 		/* Remember feeling of that flavour, if and only if an item is always the same!
 		   For example, rings might be cursed by ego power. Wands may not.
@@ -2199,9 +2199,12 @@ static int auto_retaliate(int Ind)
 
 				if (item == -1)
 				{
-					/* Select the item with @Ox and disable auto-retaliation */
+					/* Select the item with @Ox */
 					item = i;
-					inscription += 2;
+
+					/* Make at_O_inscription point to the 'x' */
+					at_O_inscription = inscription + 2;
+
 					i = INVEN_TOTAL; /* exit the outer loop too */
 					break;
 				}
@@ -3515,10 +3518,11 @@ static bool process_player_end_aux(int Ind)
 		if (--p_ptr->cloaked == 1) {
 			msg_print(Ind, "\377sYou cloaked your appearance!");
 			msg_format_near(Ind, "\377w%s disappears before your eyes!", p_ptr->name);
-			s_printf("CLOAKING: %s.\n", p_ptr->name);
 			p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 			p_ptr->redraw |= (PR_STATE | PR_SPEED);
 		        handle_stuff(Ind);
+			/* log a hint that newbies got it */
+			if (p_ptr->lev == 15) s_printf("CLOAKING-15: %s.\n", p_ptr->name);
 		}
 	}
 
@@ -3939,7 +3943,8 @@ static bool process_player_end_aux(int Ind)
 
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
-	if (p_ptr->ty_curse && (rand_int(30) == 0) &&
+	if (p_ptr->ty_curse &&
+	    (rand_int(p_ptr->wpos.wz != 0 ? 100 : (istown(&p_ptr->wpos) ? 0 : 300)) == 1) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
@@ -3953,10 +3958,10 @@ static bool process_player_end_aux(int Ind)
 #endif
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(60) == 0) && !istown(&p_ptr->wpos) &&
+	if (p_ptr->dg_curse && (rand_int(200) == 0) && !istown(&p_ptr->wpos) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 50) && magik(100 - p_ptr->antimagic)) {
 		msg_print(Ind, "An ancient morgothian curse calls out!");
-		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev * 2, 100, 0, 0, 0);
+		summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, 0, 0, 0);
 	}
 
 	/* Handle experience draining.  In Oangband, the effect
@@ -3964,7 +3969,7 @@ static bool process_player_end_aux(int Ind)
 	 * As per Tolkien, hobbits are resistant.
 	 */ 
 	if ((p_ptr->black_breath || p_ptr->black_breath_tmp) &&
-			rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
+	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT ? 2 : 5))
 	{
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
@@ -5818,6 +5823,43 @@ static void process_player_change_wpos(int Ind)
 
 	/* Clear the flag */
 	p_ptr->new_level_flag = FALSE;
+
+	/* warning messages, mostly for newbies */
+	if (p_ptr->max_plv == 1 &&
+	    p_ptr->num_blow == 1 && p_ptr->warning_bpr2 != 1 &&
+	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_PALADIN
+	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
+//	    || p_ptr->pclass == CLASS_RUNEMASTER
+	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER)
+	    /* and don't spam Martial Arts users ;) */
+	    && p_ptr->inventory[INVEN_WIELD].k_idx) {
+		p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+		msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE melee attack per round.");
+		msg_print(Ind, "\374\377y    If you rely on melee combat, it is strongly advised to try and");
+		msg_print(Ind, "\374\377y    get AT LEAST TWO blows/round (press shift+c to check the #).");
+		msg_print(Ind, "\374\377yPossible reasons are: Weapon is too heavy; too little STR or DEX; You");
+		msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
+		msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
+	} else if (p_ptr->max_plv == 1 && 
+	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->warning_wield == 0) {
+		p_ptr->warning_wield = 1;
+		msg_print(NumPlayers, "\374\377yWARNING: You don't wield a weapon at the moment!");
+		msg_print(NumPlayers, "\374\377y    Press 'w' key. It lets you pick a weapon (as well as other items)");
+		msg_print(NumPlayers, "\374\377y    from your inventory to wield!");
+		msg_print(NumPlayers, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
+	}
+	else if (p_ptr->max_plv == 1 && p_ptr->warning_run == 0) {
+		p_ptr->warning_run = 1;
+		msg_print(NumPlayers, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377L keys.");
+		msg_print(NumPlayers, "\374\377y      for that, Numlock must be OFF, and no awake monster in sight!");
+	}
+	else if (p_ptr->max_plv <= 5 && p_ptr->cur_lite == 0 && p_ptr->wpos.wz < 0
+	    && p_ptr->warning_lite == 0) {
+		p_ptr->warning_lite = 1;
+		msg_print(NumPlayers, "\374\377yHINT: You don't wield any light source at the moment!");
+		msg_print(NumPlayers, "\374\377y    Press 'w'. It lets you wield a torch or lantern (and other items).");
+	}
 
 	/* Did we enter a no-tele vault? */
         if(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {

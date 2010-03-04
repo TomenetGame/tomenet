@@ -4293,7 +4293,8 @@ void do_cmd_zap_rod(int Ind, int item)
 		{
 			ident = TRUE;
 			if (!ident_spell(Ind)) use_charge = FALSE;
-			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+//at 0 skill, this is like auto-id	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
 			break;
 		}
 
@@ -4781,7 +4782,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir)
 			if (!ident_spell(Ind)) use_charge = FALSE;
 			//o_ptr->pval = 10;
 			/* up to 50% faster with maxed MD - the_sandman */
-			o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+//at 0 skill, this is like auto-id	o_ptr->pval = 10 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 5);
+			o_ptr->pval = 55 - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 50);
 			break;
 		}
 

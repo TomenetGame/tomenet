@@ -15,6 +15,10 @@
  * formula: (PARTY_XP_BOOST+1)/(PARTY_XP_BOOST + (# of applicable players))
  */
 #define PARTY_XP_BOOST	(cfg.party_xp_boost)
+/* prevent exploit strategies */
+#define ANTI_MAXPLV_EXPLOIT	/* prevent exploiting by having a powerful char losing levels deliberately to get in range with lowbies to boost */
+// #define ANTI_MAXPLV_EXPLOIT_SOFTLEV	/* be somewhat less strict (average between max_plv and current max_lev) */
+ #define ANTI_MAXPLV_EXPLOIT_SOFTEXP	/* be somewhat less strict (use reduced exp instead of preventing any exp) */
 
 #ifdef HAVE_CRYPT
 #include <unistd.h>
@@ -984,7 +988,7 @@ static void del_guild(int id){
 	}
 
 	/* Tell everyone */
-	snprintf(temp, 160, "\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
+	snprintf(temp, 160, "\374\377gThe guild \377r'\377y%s\377r'\377g no longer exists.", guilds[id].name);
 	msg_broadcast(0, temp);
 	/* Clear the basic info */
 	guilds[id].members=0;	/* it should be zero anyway */
@@ -1021,9 +1025,9 @@ static void del_party(int id){
 			Players[i]->party = 0;
 			clockin(i, 2);
 			if (parties[id].mode == PA_IRONTEAM)
-				msg_print(i, "\377yYour iron team has been disbanded.");
+				msg_print(i, "\374\377yYour iron team has been disbanded.");
 			else
-				msg_print(i, "\377yYour party has been disbanded.");
+				msg_print(i, "\374\377yYour party has been disbanded.");
 			Send_party(i);
 		}
 	}
@@ -1100,8 +1104,8 @@ int guild_remove(int remover, cptr name){
 		p_ptr->guild = 0;
 
 		/* Messages */
-		msg_print(Ind, "\377yYou have been removed from the guild.");
-		guild_msg_format(guild_id, "\377y%s has been removed from the guild.", p_ptr->name);
+		msg_print(Ind, "\374\377yYou have been removed from the guild.");
+		guild_msg_format(guild_id, "\374\377y%s has been removed from the guild.", p_ptr->name);
 
 #if 0
 		/* Resend info */
@@ -1182,11 +1186,11 @@ int party_remove(int remover, cptr name)
 			if (Players[i]->party == q_ptr->party && i != Ind) {
 				strcpy(parties[party_id].owner, Players[i]->name);
 				Send_party(i);
-				msg_print(i, "\377yYou are now the party owner!");
+				msg_print(i, "\374\377yYou are now the party owner!");
 				for (j = 1; j <= NumPlayers; j++)
 					if (Players[j]->party == Players[i]->party && j != i) {
 						Send_party(j);
-						msg_print(j, format("\377y%s is now the party owner.", Players[i]->name));
+						msg_print(j, format("\374\377y%s is now the party owner.", Players[i]->name));
 					}
 				break;
 			}
@@ -1209,11 +1213,11 @@ int party_remove(int remover, cptr name)
 		/* Messages */
 		if (parties[party_id].mode == PA_IRONTEAM)
 		{
-			msg_print(Ind, "\377yYou have been removed from your iron team.");
-			party_msg_format(party_id, "\377y%s has been removed from the iron team.", p_ptr->name);
+			msg_print(Ind, "\374\377yYou have been removed from your iron team.");
+			party_msg_format(party_id, "\374\377y%s has been removed from the iron team.", p_ptr->name);
 		} else {
-			msg_print(Ind, "\377yYou have been removed from your party.");
-			party_msg_format(party_id, "\377y%s has been removed from the party.", p_ptr->name);
+			msg_print(Ind, "\374\377yYou have been removed from your party.");
+			party_msg_format(party_id, "\374\377y%s has been removed from the party.", p_ptr->name);
 		}
 
 		/* Resend info */
@@ -1240,13 +1244,13 @@ void guild_leave(int Ind){
 	p_ptr->guild = 0;
 
 	/* Inform people */
-	msg_print(Ind, "\377yYou have been removed from your guild.");
-	guild_msg_format(guild_id, "\377y%s has left the guild.", p_ptr->name);
+	msg_print(Ind, "\374\377yYou have been removed from your guild.");
+	guild_msg_format(guild_id, "\374\377y%s has left the guild.", p_ptr->name);
 	
 	/* If he's the guildmaster, set master to zero */
 	if (p_ptr->id==guilds[guild_id].master)
 	{
-		guild_msg(guild_id, "\377yThe guild is currently leaderless");
+		guild_msg(guild_id, "\374\377yThe guild is currently leaderless");
 		guilds[guild_id].master=0;
 	}
 
@@ -1293,11 +1297,11 @@ void party_leave(int Ind)
 	/* Inform people */
 	if (parties[party_id].mode == PA_IRONTEAM)
 	{
-		msg_print(Ind, "\377yYou have been removed from your iron team.");
-		party_msg_format(party_id, "\377y%s has left the iron team.", p_ptr->name);
+		msg_print(Ind, "\374\377yYou have been removed from your iron team.");
+		party_msg_format(party_id, "\374\377y%s has left the iron team.", p_ptr->name);
 	} else {
-		msg_print(Ind, "\377yYou have been removed from your party.");
-		party_msg_format(party_id, "\377y%s has left the party.", p_ptr->name);
+		msg_print(Ind, "\374\377yYou have been removed from your party.");
+		party_msg_format(party_id, "\374\377y%s has left the party.", p_ptr->name);
 	}
 
 	/* Resend info */
@@ -1481,6 +1485,9 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	s64b new_exp, new_exp_frac, average_lev = 0, num_members = 0, new_amount;
 	s64b modified_level, req_lvl;
 	int dlev;
+#ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+	int soft_max_plv;
+#endif
 
 #if 1
 /* will be moved to gain_exp() if decrease of party.experience is implemented, nasty though.
@@ -1614,7 +1621,19 @@ behind too much in terms of exp and hence blocks the whole team from gaining exp
 #if 1 /* more exploitage.. */
 			if (henc > p_ptr->max_lev) eff_henc = henc;
 			else eff_henc = p_ptr->max_lev; /* was player outside of monster's aware-radius when it was killed by teammate? preventing that exploit here. */
-			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* get high items/skills, go to TT, lose lvls, boost party exploit */
+ #ifdef ANTI_MAXPLV_EXPLOIT
+  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+			soft_max_plv = Players[Ind]->max_plv - ((Players[Ind]->max_plv - Players[Ind]->max_lev) / 2);
+			if ((Ind != i) && (eff_henc < soft_max_plv)) eff_henc = soft_max_plv;
+  #else
+   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv - 5))
+				new_amount = (new_amount * eff_henc) / (Players[Ind]->max_plv * 2);
+   #else
+			if ((Ind != i) && (eff_henc < Players[Ind]->max_plv)) eff_henc = Players[Ind]->max_plv; /* 100% zonk, bam */
+   #endif
+  #endif
+ #endif
 			if (eff_henc >= 20) {
 				if (eff_henc < 30) req_lvl = 375 / (45 - eff_henc);
 				else if (eff_henc < 50) req_lvl = 650 / (56 - eff_henc);

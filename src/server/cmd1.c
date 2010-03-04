@@ -1788,7 +1788,7 @@ void carry(int Ind, int pickup, int confirm)
 				msg_print(Ind, "Oops! It feels deathly cold!");
 
 				/* Note the curse */
-				o_ptr->ident |= ID_SENSE;
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 			}
 
 			/* Structure copy to insert the new item */
@@ -2178,13 +2178,13 @@ if (o_ptr->tval == TV_RUNE2) {
 					if (!object_felt_heavy_p(Ind, o_ptr)) {
 						/* at least give a notice */
 						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-						    o_name, index_to_label(slot), ((o_ptr->number == 1) ? "was" : "were"), value_check_aux1_magic(o_ptr));
+						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
 						/* otherwise inscribe it textually */
 						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
 					} else {
 						/* at least give a notice */
 						msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-						    o_name, index_to_label(slot), ((o_ptr->number == 1) ? "was" : "were"), value_check_aux2_magic(o_ptr));
+						    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
 						/* otherwise inscribe it textually */
 						if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
 					}
@@ -2677,8 +2677,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 //less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(q_ptr->chp < 5){
-					msg_format(Ind, "You have beaten %s", q_ptr->name);
-					msg_format(0-c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
+					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
+					msg_format(0-c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
@@ -2692,8 +2692,8 @@ static void py_attack_player(int Ind, int y, int x, bool old)
 //less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				if(cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
-					msg_format(Ind, "You have beaten %s", q_ptr->name);
-					msg_format(0 - c_ptr->m_idx, "%s has beaten you up!", p_ptr->name);
+					msg_format(Ind, "\374You have beaten %s", q_ptr->name);
+					msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
 					teleport_player(0 - c_ptr->m_idx, 400, TRUE);
 				}
 
@@ -3018,7 +3018,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	bool		drainable = TRUE;
 
 
-	struct worldpos	*wpos=&p_ptr->wpos;
+	struct worldpos	*wpos = &p_ptr->wpos;
 	cave_type	**zcave;
 	cave_type 	*c_ptr;
 
@@ -3033,8 +3033,8 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 	monster_effect[4] = 0;
 	monster_effect[5] = 0;
 
-	if(!(zcave=getcave(wpos))) return;
-	c_ptr=&zcave[y][x];
+	if(!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
 
 	m_ptr = &m_list[c_ptr->m_idx];
 	r_ptr = race_inf(m_ptr);
@@ -3246,7 +3246,7 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
 
 		/* Test for hit */
-		if (test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]))
+		if (test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) || instakills(Ind))
 		{
 			/* Sound */
 			sound(Ind, SOUND_HIT);
@@ -3617,6 +3617,9 @@ static void py_attack_mon(int Ind, int y, int x, bool old)
 				k += (magik(25) ? 2 : 1) * (o_ptr->to_d + tot_dam_aux(Ind, o_ptr, vorpal_cut, m_ptr, brand_msg, FALSE)); /* exempts critical strike */
 #endif
 			}
+
+			/* for admins: kill a target in one hit */
+			if (instakills(Ind)) k = m_ptr->hp + 1;
 
 			/* DEG Updated hit message to include damage */
 			if(backstab)
@@ -4040,8 +4043,8 @@ void py_attack(int Ind, int y, int x, bool old)
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
 	cave_type *c_ptr;
-	struct worldpos *wpos=&p_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
+	struct worldpos *wpos = &p_ptr->wpos;
+	if(!(zcave = getcave(wpos))) return;
 	c_ptr=&zcave[y][x];
 
 	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
@@ -4078,8 +4081,8 @@ void spin_attack(int Ind)
 	cave_type **zcave;
 	cave_type *c_ptr;
 	int i, j, x, y;
-	struct worldpos *wpos=&p_ptr->wpos;
-	if(!(zcave=getcave(wpos))) return;
+	struct worldpos *wpos = &p_ptr->wpos;
+	if(!(zcave = getcave(wpos))) return;
 
 	if (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW
 			|| !p_ptr->num_blow) return;
@@ -4111,7 +4114,7 @@ void spin_attack(int Ind)
                 x = p_ptr->px + ddx[(j + i) % 9 + 1];
                 y = p_ptr->py + ddy[(j + i) % 9 + 1];
 	        if (!in_bounds(y, x)) continue;
-		c_ptr=&zcave[y][x];
+		c_ptr = &zcave[y][x];
 
 		/* Check for monster */
 		if (c_ptr->m_idx > 0) {
@@ -4238,7 +4241,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			/* Dark Swords resist somewhat */
 			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100))
 			{
-				msg_print(Ind, "\377rYour weapon *DISINTEGRATES*!");
+				msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
+				s_printf("Nazgul destroyed weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
@@ -4263,7 +4267,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE))
 			{
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-				msg_print(Ind, "\377rYour weapon is destroyed !");
+				msg_print(Ind, "\376\377rYour weapon is destroyed !");
+				s_printf("Nazgul destroyed artifact-like weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -4287,7 +4292,8 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot)
 			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
 			    ) ? magik(3) : magik(20))
 			{
-				msg_print(Ind, "\377rYour weapon is destroyed !");
+				msg_print(Ind, "\376\377rYour weapon is destroyed !");
+				s_printf("Nazgul destroyed ego-weapon of player %s.\n", Players[Ind]->name);
 //				inven_item_increase(Ind, INVEN_WIELD + weap, -1);
 //				inven_item_optimize(Ind, INVEN_WIELD + weap);
 				inven_item_increase(Ind, slot, -1);
@@ -4317,8 +4323,8 @@ void set_black_breath(int Ind)
 	if (p_ptr->black_breath) return;
 	if (p_ptr->ghost) return;
 
-	msg_print(Ind, "Your foe calls upon your soul!");
-	msg_print(Ind, "You feel the Black Breath slowly draining you of life...");
+	msg_print(Ind, "\376\377DYour foe calls upon your soul!");
+	msg_print(Ind, "\376\377DYou feel the Black Breath slowly draining you of life...");
 	p_ptr->black_breath = TRUE;
 }
 
@@ -4617,7 +4623,7 @@ bool player_can_enter(int Ind, byte feature)
 	
     -APD- 
  */
- 
+
 void move_player(int Ind, int dir, int do_pickup)
 {
 	player_type *p_ptr = Players[Ind];
@@ -4662,7 +4668,8 @@ void move_player(int Ind, int dir, int do_pickup)
 /*	if (((p_ptr->pclass != CLASS_SHAMAN) || ((r_ptr->d_char != 'E') && (r_ptr->d_char != 'G'))) && */
 	/* And now shamans gain advantage by linking to the being's mind instead of copying it..or something..err ^^ */
 	if ((p_ptr->pclass != CLASS_SHAMAN) &&
-	    (((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) && magik(30)) ||
+	    (((r_ptr->flags5 & RF5_RAND_100) && magik(40)) ||
+	    ((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) && magik(30)) ||
 	    ((r_ptr->flags1 & RF1_RAND_50) && (!(r_ptr->flags1 & RF1_RAND_25)) && magik(20)) ||
 	    ((!(r_ptr->flags1 & RF1_RAND_50)) && (r_ptr->flags1 & RF1_RAND_25) && magik(10))))
 	{
@@ -4943,15 +4950,15 @@ void move_player(int Ind, int dir, int do_pickup)
 			if (!q_ptr->admin_dm) {
 				/* Tell both about it */
 				/* Hack if invisible */
-				int ball=has_ball(q_ptr);
-				if(p_ptr->team && ball!=-1 && q_ptr->team!=p_ptr->team){
-					object_type *o_ptr=&q_ptr->inventory[ball];
+				int ball = has_ball(q_ptr);
+				if(p_ptr->team && ball != -1 && q_ptr->team != p_ptr->team){
+					object_type *o_ptr = &q_ptr->inventory[ball];
 					object_type tmp_obj;
 					int tackle;
-					tackle=randint(20);
-					if(tackle>10){
-						tmp_obj=*o_ptr;
-						if(tackle<18){
+					tackle = randint(20);
+					if(tackle > 10){
+						tmp_obj = *o_ptr;
+						if(tackle < 18){
 							msg_format_near(Ind2, "\377v%s is tackled by %s", q_ptr->name, p_ptr->name);
 							msg_format(Ind2, "\377r%s tackles you", p_ptr->name);
 							tmp_obj.marked2 = ITEM_REMOVAL_NEVER;
@@ -4966,7 +4973,7 @@ void move_player(int Ind, int dir, int do_pickup)
 						inven_item_increase(Ind2, ball, -1);
 						inven_item_describe(Ind2, ball);
 						inven_item_optimize(Ind2, ball);
-						q_ptr->energy=0;
+						q_ptr->energy = 0;
 					}
 					else{
 						msg_format(Ind2, "\377r%s tries to tackle you", p_ptr->name);
@@ -5004,8 +5011,12 @@ void move_player(int Ind, int dir, int do_pickup)
 	if (c_ptr->m_idx > 0)
 	{
 		/* Hack -- the dungeon master switches places with his monsters */
-		if (p_ptr->admin_dm)
-		{
+		if (p_ptr->admin_dm &&
+		    /* except if he wields his scythe (uhoh!) */
+		    (!instakills(Ind) ||
+		    /* except except if he's not disabled auto-retaliation */
+		    (p_ptr->running && p_ptr->inventory[INVEN_WIELD].note &&
+		    strstr(quark_str(p_ptr->inventory[INVEN_WIELD].note), "@Ox")))) {
 			/* save old player location */
 			oldx = p_ptr->px;
 			oldy = p_ptr->py;
@@ -5019,13 +5030,21 @@ void move_player(int Ind, int dir, int do_pickup)
 			/* update cave monster indexes */
 			zcave[oldy][oldx].m_idx = c_ptr->m_idx;
 			c_ptr->m_idx = -Ind;
-
 			/* Re-show both grids */
 			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 			everyone_lite_spot(wpos, oldy, oldx);
 		}
 		/* Attack */
-		else py_attack(Ind, y, x, TRUE);
+		else {
+			/* hack: admins who are running with their scythe won't perform a run-attack - C. Blue */
+			if (instakills(Ind) && p_ptr->running) {
+				disturb(Ind, 0, 0); /* stop running first */
+				return;
+			}
+			py_attack(Ind, y, x, TRUE);
+		}
+
+		/* done in any case */
 		return;
 	}
 
@@ -5040,10 +5059,10 @@ void move_player(int Ind, int dir, int do_pickup)
 	cs_ptr = c_ptr->special;
 	while(cs_ptr){
 		int tcv;
-		tcv=csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
-		cs_ptr=cs_ptr->next;
+		tcv = csfunc[cs_ptr->type].activate(cs_ptr, y, x, Ind);
+		cs_ptr = cs_ptr->next;
 		if(!tcv){
-			csmove=FALSE;
+			csmove = FALSE;
 			printf("csmove is false\n");
 		}
 	}

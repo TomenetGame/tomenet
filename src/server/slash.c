@@ -955,6 +955,8 @@ void do_slash_cmd(int Ind, char *message)
 		{
 			if (admin) msg_format(Ind, "The game turn: %d", turn);
 			do_cmd_time(Ind);
+			if (!(p_ptr->mode & (MODE_EVERLASTING | MODE_PVP | MODE_NO_GHOST)))
+				msg_format(Ind, "You have %d %s left.", p_ptr->lives-1-1, p_ptr->lives-1-1 > 1 ? "resurrections" : "resurrection");
 
 #ifdef ENABLE_STANCES
 			if (get_skill(p_ptr, SKILL_STANCE)) {
@@ -1613,8 +1615,8 @@ void do_slash_cmd(int Ind, char *message)
 			{
 			    rn += randint(6);
 			}
-			msg_format(Ind, "\377UYou throw %d dice and get a %d", k, rn);
-			msg_format_near(Ind, "\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
+			msg_format(Ind, "\374\377UYou throw %d dice and get a %d", k, rn);
+			msg_format_near(Ind, "\374\377U%s throws %d dice and gets a %d", p_ptr->name, k, rn);
 			return;
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
@@ -5054,6 +5056,58 @@ void do_slash_cmd(int Ind, char *message)
 				else
 					msg_print(Ind, "You can now receive direct private chat from players.");
 				p_ptr->admin_dm_chat = ~p_ptr->admin_dm_chat;
+				return;
+			}
+			/* unidentifies an item */
+			else if (prefix(message, "/unid")) {
+				object_type *o_ptr;
+				if (!tk) {
+					msg_print(Ind, "No inventory slot specified.");
+					return; /* no inventory slot specified */
+				}
+				if (k < 1 || k > INVEN_TOTAL) {
+					msg_format(Ind, "Inventory slot must be between 1 and %d", INVEN_TOTAL);
+					return; /* invalid inventory slot index */
+				}
+				k--; /* start at index 1, easier for user */
+				if (!p_ptr->inventory[k].tval) {
+					msg_print(Ind, "Specified inventory slot is empty.");
+					return; /* inventory slot empty */
+				}
+				o_ptr = &p_ptr->inventory[k];
+				/* Hack -- Clear the "empty" flag */
+				o_ptr->ident &= ~ID_EMPTY;
+				/* Hack -- Clear the "known" flag */
+				o_ptr->ident &= ~ID_KNOWN;
+				/* Hack -- Clear the "felt" flag */
+				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE);
+				p_ptr->window |= PW_INVEN;
+				return;
+			}
+			else if (prefix(message, "/ai")) { /* returns/resets all AI flags and states of monster currently looked at (NOT the one targetted) - C. Blue */
+				monster_type *m_ptr;
+				int m_idx;
+				if (p_ptr->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return; /* no monster targetted */
+				}
+				m_idx = p_ptr->health_who;
+				m_ptr = &m_list[m_idx];
+				if (!tk) msg_print(Ind, "Current Monster AI state:");
+				else msg_print(Ind, "Former monster AI state (RESETTING NOW):");
+#ifdef ANTI_SEVEN_EXPLOIT
+				msg_format(Ind, "  ANTI_SEVEN_EXPLOIT (PD %d, X %d, Y %d, CD %d, DD %d, PX %d, PY %d).",
+				    m_ptr->previous_direction, m_ptr->damage_tx, m_ptr->damage_ty, m_ptr->cdis_on_damage, m_ptr->damage_dis, m_ptr->p_tx, m_ptr->p_ty);
+				if (tk) {
+					m_ptr->previous_direction = 0;
+					m_ptr->damage_tx = 0;
+					m_ptr->damage_ty = 0;
+					m_ptr->cdis_on_damage = 0;
+					m_ptr->damage_dis = 0;
+					m_ptr->p_tx = 0;
+					m_ptr->p_ty = 0;
+				}
+#endif
 				return;
 			}
 		}
