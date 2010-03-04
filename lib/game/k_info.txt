@@ -773,7 +773,8 @@ W:30:0:5:1500
 A:30/4
 P:4:0d0:0:0:4
 F:IGNORE_ACID | IGNORE_FIRE
-F:STEALTH | SEARCH | LUCK
+F:STEALTH | LUCK
+# | SEARCH  (randart improvement)
 
 N:91:& Pair~ of Soft Leather Boots
 G:]:U
@@ -1632,7 +1633,7 @@ A:60/16
 N:200:Mass Genocide
 G:?:d
 I:70:45:0
-W:50:0:5:1000
+W:50:0:5:3000
 A:50/4:100/4
 
 N:201:Detect Invisible
@@ -1677,7 +1678,7 @@ A:40/1
 N:207:Genocide
 G:?:d
 I:70:44:0
-W:40:0:5:750
+W:40:0:5:2000
 A:40/4:80/4
 
 N:208:Darkness
@@ -1770,7 +1771,7 @@ A:5/1
 N:221:*Destruction*
 G:?:d
 I:70:41:0
-W:40:0:5:1500
+W:40:0:5:5000
 A:40/8
 
 ##### Potions #####
@@ -2437,7 +2438,7 @@ P:0:1d2:0:0:0
 N:304:Earthquakes
 G:_:d
 I:55:28:0
-W:40:0:50:350
+W:40:0:50:2000
 A:40/1
 P:0:1d2:0:0:0
 
@@ -2458,7 +2459,7 @@ P:0:1d2:0:0:0
 N:307:*Destruction*
 G:_:d
 I:55:29:0
-W:50:0:50:2500
+W:50:0:50:10000
 A:50/1:70/1
 P:0:1d2:0:0:0
 
@@ -2509,7 +2510,7 @@ P:0:1d2:0:0:0
 N:314:Speed
 G:_:d
 I:55:22:0
-W:40:0:50:1000
+W:40:0:50:2500
 A:40/1
 P:0:1d2:0:0:0
 
@@ -2572,7 +2573,7 @@ P:0:1d2:0:0:0
 N:323:Genocide
 G:_:d
 I:55:27:0
-W:70:0:50:3500
+W:70:0:50:5000
 A:70/4
 P:0:1d2:0:0:0
 
@@ -3239,7 +3240,8 @@ W:100:0:200:1000000
 A:100/100
 #P:40:2d4:-3:0:15
 #ensure somewhat more longterm usability by increasing AC further
-P:40:2d4:-3:0:25
+#P:40:2d4:-3:0:25
+P:40:2d4:-3:0:23
 #F:ATTR_MULTI
 F:RES_ACID | RES_FIRE | RES_COLD | RES_ELEC | RES_POIS | FLY |
 F:RES_NETHER | RES_NEXUS | RES_CHAOS | RES_LITE | RES_DARK |
@@ -7141,10 +7143,12 @@ F:IGNORE_WATER
 
 N:975:*Invulnerability*
 G:":d
-I:40:41:37
+#I:40:41:37
+I:40:41:3
 W:127:255:3:1
 A:127/255
-F:HIDE_TYPE | ESP_ALL | SPEED | STR | DEX | CON | INT | WIS | CHR
+F:HIDE_TYPE | ESP_ALL | LIFE
+# | SPEED | STR | DEX | CON | INT | WIS | CHR
 
 # 'Reward Tokens' for Highlander Tournament or other events. - C. Blue
 # Can be traded in town store or so, for items, temporary blessings or whatever.

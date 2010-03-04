@@ -2734,11 +2734,11 @@ D:This cloak allows its wearer to travel over the sea without need for a ship
 D:and at the same time protect him from the wrath of unleashed waves.
 
 
-# The Shadow Cloak of the Dungeon Wizard
+# The Shadow Cloak of the Dungeon Master
 
-N:218:of the Dungeon Wizard
+N:218:of the Dungeon Master
 I:35:6:37
-W:127:220:2:0
+W:127:255:2:0
 P:6:0d0:0:0:200
 F:STR | DEX | CON | INT | WIS | CHR | HIDE_TYPE | SPEED | STEALTH | 
 F:IM_FIRE | IM_COLD | IM_ACID | IM_ELEC | IM_POISON | IM_WATER | 
@@ -2747,7 +2747,8 @@ F:RES_SHARDS | RES_SOUND | RES_DISEN | RES_BLIND | RES_CONF | RES_MANA |
 F:FREE_ACT | HOLD_LIFE | FEATHER | FLY | PASS_WATER | CLIMB |
 F:REGEN_MANA | REGEN | ESP_ALL | SPECIAL_GENE
 #F:INVIS | LUCK | LIFE | WRAITH
-D:Not to be found by players. (C. Blue)
+D:Gives mobility and power for sophisticated dungeon mastering.
+D:(Not to be acquired by players!)
 
 
 # The Battle Axe of Dain Ironfoot
@@ -3259,8 +3260,9 @@ N:261:of the Dungeon Master
 I:32:15:0
 W:127:255:5:0
 P:0:0d0:0:0:0
-F:INSTA_ART | HIDE_TYPE
+F:INSTA_ART | HIDE_TYPE | AUTO_ID
 D:Sees the things that can't be seen.
+D:(Not to be acquired by players!)
 
 
 # The Demon Hammer 'Ars Numenis'
@@ -3296,6 +3298,17 @@ F:SUST_INT | SUST_WIS | SUST_CHR | INT | WIS |
 F:AUTO_ID | SEARCH | LITE1 | IGNORE_MANA
 D:This radiating and impervious head gear will ensure
 D:that its wearer will see nothing but the very truth.
+
+
+# The Scythe of the Dungeon Master
+
+N:265:of the Dungeon Master
+I:22:17:0
+W:127:255:2:0
+P:0:0d0:0:0:0
+F:SHOW_MODS
+D:It kills.
+D:(Not to be acquired by players!)
 
 
 #weapon base items that don't have arts yet:
