@@ -777,7 +777,15 @@ void cmd_inven(void)
 	ch = inkey();
 	if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
 		c = ch - 'A';
-		if (inventory[c].tval) Send_msg(format("\377s%s", inventory_name[c]));
+
+		if (inventory[c].tval) {
+			if (chat_mode == CHAT_MODE_PARTY)
+				Send_msg(format("!:\377s%s", inventory_name[c]));
+			else if (chat_mode == CHAT_MODE_LEVEL)
+				Send_msg(format("#:\377s%s", inventory_name[c]));
+			else
+				Send_msg(format("\377s%s", inventory_name[c]));
+		}
 	}
 
 	/* restore the screen */
