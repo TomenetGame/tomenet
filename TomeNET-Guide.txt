@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 7. Mar 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.4a - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -3283,9 +3283,16 @@ These extra level feelings (displayed in yellow) are:
 Note that you will only get one, ie the strongest of these feelings applying
 to your dungeon level, meaning feelings higher up the list will take precedence
 over those below.
-Also, the feeling of a dungeon level will persist, even if its cause is
-removed. For example if the feeling indicates an OOD monster and you kill it,
+
+Also, the feeling of a dungeon level only indicate its status at the very
+moment of the level being created initially!
+
+This means the feeling will persist, even if its cause is removed or changed.
+For example if the feeling indicates an OOD monster and you kill it,
 you or following players entering that floor will still get that same feeling.
+Or if a powerful monster spawns later on on an initially "boring place" level,
+it'll remain to feel like a boring place, despite of the new monster that might
+actually make it pretty non-boring now..
 
 
 Vaults:
@@ -4873,8 +4880,8 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 The race will be determined by the monster which stands
                 closest to you when firing off the spell. For each monster you
                 will suffer randomly from just 1 up to 4+(monsterlevel/8)
-				points of damage, which cannot be absorbed by any magic shield
-				or other protective effect!
+                points of damage, which cannot be absorbed by any magic shield
+                or other protective effect!
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
@@ -5150,7 +5157,7 @@ Staves      x               x
 Rods
 
 Lamps                       x
-Potions                     x       x       x       
+Potions                     x       x       x
 Flasks                              x       x
 Books/Tomes x               x                       x
 
