@@ -8152,33 +8152,45 @@ The techniques are as follows:
 
     Fighting techniques:
     --------------------
-    Sprint							7 stamina
+    Sprint              7 stamina
         Your character will be able to move faster, so you can catch up to
-        runners and other monsters that avoid you.
+        runners and other monsters that avoid you. Note: This does not affect
+        your SPEED stat, nor has anything to do with 'running' (shift+dir),
+        but means that moving one step will only cost you half a turn of
+        energy, allowing you to move two steps during each of your turns
+        instead of one!
         Running (shift + directional keys) is not affected.
     Taunt               2 stamina
         Attempts to draw attention of humanoid mobs, causing them to attack
         you. Might require more than one try sometimes until they fall for it,
-        depending on the monster.
+        depending on the monster. Some won't be affected at all even.
+        Most common targets are typically shaman and priest class monsters.
+        Note that this can also be used to make scared monsters agressive,
+        and -if you and an ally both stand next to the same monster- to draw
+        its attention from your ally and make it attack you instead.
     Spin                8 stamina
-        A sweep that hits all adjacent monsters and may stun them, basing on
-        your number of blows/round possibly even multiple times.
+        A sweep that hits all adjacent monsters and may stun them if they don't
+        resist. You might even perform more than one complete sweep circle,
+        hitting some or all monsters multiple times, based on your number of
+        blows/round!
     Berserk             10 stamina
         Similar to potions of berserk strength, also giving you +1 blow/round.
 
     Rogue-specific fighting techniques:
     -----------------------------------
     Distract            1 stamina
-        Your character will attempt to appear wimpy to adjacent monsters, in
-        hope of making them attack another player standing next to you
-        instead of you. Not all monsters can be fooled all the time though.
+        Your character will attempt to appear wimpy and a non-worthy target to
+        adjacent monsters, in hope of making them attack another player who
+        must be standing next to you and also next to the monster, instead of
+        you. Not all monsters can be fooled though. Some monsters might resist,
+        but probably fall for it if you give it another try.
     Flash bomb          4 stamina
         You throw down a flash bomb that causes a flash of light, blinding
         your opponents for a short time, giving you opportunity to escape or
         kill them off while they are running around in confused state.
     Shadow run          10 stamina, kings/queens only!
         You will move at blinding speed, your silhouette turning shadowy.
-        Ranged attacks will hardly be able to pin you down, and you will move
+        Ranged attacks will hardly be able to pin you down, and you will act
         at increased speed. You can even perform a backstab opening attack
         out of this state. Performing actions that require calm movements or
         anything that distracts or disrupts your attention from focussing on
@@ -8211,7 +8223,7 @@ The techniques are as follows:
               explicitely in the 'm' menu.
     Barrage             9 stamina
         Prepares to fire a powerful multi-shot which will cost you a whole
-        turn. It stuns the target.
+        turn. It stuns the target (if it doesn't resist stunning attacks).
 
     Note: The technique 'fire-till-kill' is available to any class, and
     does appear directly under 'm'. See (5.2a) for details.
