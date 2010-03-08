@@ -3318,6 +3318,8 @@ void interact_macros(void)
 		/* Enter a 'quick & dirty' macro */
 		else if (i == 'q')
 		{
+			bool call_by_name = FALSE;
+
 			/* Prompt */
 			Term_putstr(0, 16, -1, TERM_L_GREEN, "Command: Enter a new 'quick & dirty' macro");
 
@@ -3337,7 +3339,15 @@ void interact_macros(void)
 			bptr = buf;
 			b2ptr = buf2 + 3;
 			while (*bptr) {
-				switch (*bptr) {
+				if (call_by_name) {
+					if (*bptr == '\\') {
+						call_by_name = FALSE;
+						*b2ptr++ = '\\'; *b2ptr++ = 'r';
+						bptr++;
+					} else {
+						*b2ptr++ = *bptr++;
+					}
+				} else switch (*bptr) {
 				case 'M': /* use innate mimic power */
 					*b2ptr++ = 'm'; *b2ptr++ = '@'; *b2ptr++ = '3'; *b2ptr++ = '\\'; *b2ptr++ = 'r';
 					bptr++;	break;
@@ -3365,6 +3375,10 @@ void interact_macros(void)
 					bptr++;	break;
 				case '*': /* set a target */
 					*b2ptr++ = '*'; *b2ptr++ = 't';
+					bptr++;	break;
+				case '@': /* start 'call-by-name' mode, reading the spell/item name next */
+					call_by_name = TRUE;
+					*b2ptr++ = '@';
 					bptr++;	break;
 				default:
 					*b2ptr++ = *bptr++;
