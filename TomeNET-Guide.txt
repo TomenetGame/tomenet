@@ -382,6 +382,8 @@ P               party screen. Form/disband/modify a party with other players
         rod, of course), as a sort of 'special power button', for example a
         staff of slow monsters (very handy at low levels) or a wand of light
         to kill orcs, jellies, and other light-sensitive critters.
+        Note that in the spell book example above, you could of course just use
+        call-by-name instead so you won't need any inscriptions at all (3.9b) !
 ~       display further information of your character.
         Point (3) here is especially helpful for mimics:
         The number shown in round brackets before each monster name is the
