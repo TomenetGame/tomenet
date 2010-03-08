@@ -353,7 +353,9 @@ static void store_chat(void)
 	o_ptr = &store.stock[item];
 
 	/* Convert the price to more readable format */
-	if (store_prices[item] >= 10000)
+	if (store_prices[item] >= 10000000)
+		snprintf(price, 16, "%dM", store_prices[item] / 1000000);
+	else if (store_prices[item] >= 10000)
 		snprintf(price, 16, "%dk", store_prices[item] / 1000);
 	else
 		snprintf(price, 16, "%d", store_prices[item]);
@@ -361,15 +363,15 @@ static void store_chat(void)
 	/* Hack -- Get the shop symbol */
 	store_color = color_attr_to_char(c_store.store_attr);
 	store_char = c_store.store_char;
-	snprintf(where, 16, "%d,%d \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
+	snprintf(where, 16, "(%d,%d) \377%c%c\377s", p_ptr->wpos.wx, p_ptr->wpos.wy, store_color, store_char);
 
 	/* Tell the server */
 	if (chat_mode == CHAT_MODE_PARTY)
-		Send_msg(format("!:\377s%s: %s (%s gp)", where, store_names[item], price));
+		Send_msg(format("!:\377s%s: %s (%s Au)", where, store_names[item], price));
 	else if (chat_mode == CHAT_MODE_LEVEL)
-		Send_msg(format("#:\377s%s: %s (%s gp)", where, store_names[item], price));
+		Send_msg(format("#:\377s%s: %s (%s Au)", where, store_names[item], price));
 	else
-		Send_msg(format("\377s%s:: %s (%s gp)", where, store_names[item], price));
+		Send_msg(format("\377s%s:: %s (%s Au)", where, store_names[item], price));
 }
 
 static void store_sell(void)
