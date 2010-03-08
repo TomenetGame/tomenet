@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. Mar 2010 - written by C. Blue, http://www.c-blue.de/
-| for TomeNET version v4.4.4a - official websites are:
+| Latest update: 9. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| for TomeNET version v4.4.4b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
 +---
@@ -2147,15 +2147,22 @@ to their real functionality. They are:
   m for casting a spell
   n for drawing a rune
   p for setting up a trap
-  s for changing a stance 
+  s for changing a stance
   * for targetting the nearest monster
+  @...\ for using call-by-name (spell/item name must be between '@' and '\')
+
 Also, '\e)' is automatically prefixed, and the most fitting macro type
 automatically chosen (depending on the trigger key).
 
-Example: Assumed your book is inscribed @m1 as usual, and you want to cast
+Example 1: Assumed your book is inscribed @m1 as usual, and you want to cast
 spell a). What you can simply enter in the q'n'd field is:
-  m1a*
+     m1a*
 and it will automatically be expanded to the real macro '\e)m@11\r1a*t'.
+
+Example 2: Assumed you have the spell Manathrust somewhere in your books and
+want to cast it by name, what you enter in the q'n'd field is:
+    m@Manathrust\*
+and it will automatically be expanded to '\e)m@11\r@Manathrust\r*t', voila.
 
 
 
