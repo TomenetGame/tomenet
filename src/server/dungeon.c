@@ -5844,21 +5844,21 @@ static void process_player_change_wpos(int Ind)
 	    p_ptr->num_blow == 1 && !p_ptr->inventory[INVEN_WIELD].k_idx &&
 	    p_ptr->warning_wield == 0) {
 		p_ptr->warning_wield = 1;
-		msg_print(NumPlayers, "\374\377yWARNING: You don't wield a weapon at the moment!");
-		msg_print(NumPlayers, "\374\377y    Press 'w' key. It lets you pick a weapon (as well as other items)");
-		msg_print(NumPlayers, "\374\377y    from your inventory to wield!");
-		msg_print(NumPlayers, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
+		msg_print(Ind, "\374\377yWARNING: You don't wield a weapon at the moment!");
+		msg_print(Ind, "\374\377y    Press 'w' key. It lets you pick a weapon (as well as other items)");
+		msg_print(Ind, "\374\377y    from your inventory to wield!");
+		msg_print(Ind, "\374\377y    (If you plan to train 'Martial Arts' skill, ignore this warning.)");
 	}
 	else if (p_ptr->max_plv == 1 && p_ptr->warning_run == 0) {
 		p_ptr->warning_run = 1;
-		msg_print(NumPlayers, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377L keys.");
-		msg_print(NumPlayers, "\374\377y      for that, Numlock must be OFF, and no awake monster in sight!");
+		msg_print(Ind, "\374\377yHINT: To run fast, use \377RSHIFT + direction\377y keys.");
+		msg_print(Ind, "\374\377y      for that, Numlock must be OFF, and no awake monster in sight!");
 	}
 	else if (p_ptr->max_plv <= 5 && p_ptr->cur_lite == 0 && p_ptr->wpos.wz < 0
 	    && p_ptr->warning_lite == 0) {
 		p_ptr->warning_lite = 1;
-		msg_print(NumPlayers, "\374\377yHINT: You don't wield any light source at the moment!");
-		msg_print(NumPlayers, "\374\377y    Press 'w'. It lets you wield a torch or lantern (and other items).");
+		msg_print(Ind, "\374\377yHINT: You don't wield any light source at the moment!");
+		msg_print(Ind, "\374\377y    Press 'w'. It lets you wield a torch or lantern (and other items).");
 	}
 
 	/* Did we enter a no-tele vault? */
