@@ -3352,7 +3352,7 @@ int Receive_inventory_revision(void)
 				else match++;
 				/* already carrying this very inscription? don't need to inscribe it AGAIN then */
 				if (!strcmp(auto_inscription_tag[i], tag_buf)) continue;
-			}
+			} else if (match[0] == '!') match++;
  #endif
 
 			/* found a matching inscription? */
