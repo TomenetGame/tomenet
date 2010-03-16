@@ -1989,7 +1989,7 @@ void display_player(int hist)
                         cnv_stat(value, buf);
 
                         /* Display the maximum stat (modified) */
-			if(p_ptr->stat_cur[i] < (18 + 100))
+			if(p_ptr->stat_max[i] < (18 + 100))
 			{
                     		c_put_str(TERM_L_GREEN, buf, 1 + i, 73);
 			}
@@ -2009,7 +2009,7 @@ void display_player(int hist)
                         cnv_stat(p_ptr->stat_use[i], buf);
 
                         /* Display the current stat (modified) */
-			if(p_ptr->stat_cur[i] < (18 + 100))
+			if(p_ptr->stat_max[i] < (18 + 100))
 			{
     		                c_put_str(TERM_L_GREEN, buf, 1 + i, 66);
 			}
