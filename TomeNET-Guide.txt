@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 14. Mar 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.4b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -839,8 +839,8 @@ EA          Extra Attacks. Rings, gloves or weapons which increase your number
             of blows per round with melee weapons. Quite expensive.
 FA          Free Action (immunity to paralysis).
 FF          Feather falling (Levitation).
-Gorth       Room in the dungeon, divided into 4 chambers. Similar to a pit.
-            (See 4.6)
+Gorth       Room in the dungeon, divided into 4 chambers, similar to a pit.
+            Also see 'Room', 'Pit' and (4.6).
 GV          Greater Vault. (See 4.6)
 GCV         Greater Checkerboard Vault (looks remotely like a checkerboard).
 ID, *ID*    Identify and *Identify* magic respectively, which is used to
@@ -897,6 +897,12 @@ mlevel, rlevel
             (Note: This is similar to klevel vs olevel for items.)
 Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
             See (1.5) for details.
+Nest        Originally also just called 'pits', nests only differ from pits in
+            the monsters in them being strewn around in a randomly mixed manner
+            while pits contain 'organized' rings and circles of monsters.
+            The monsters in a nest are not completely random but follow certain
+            schemes. For example all monsters in a 'clones nest' are exactly
+            the same type. Also see 'pits'.
 olevel      see klevel.
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
             a surprisingly shallow level, opposed to the base level for that
@@ -909,6 +915,10 @@ Party       A group of players who fight together and share experience.
             character levels to each other and on the same dungeon/tower level
             respectively the same worldmap/wilderness sector.
 Phase Door  A short-range teleportation.
+Pit         Pits contain monsters of a certain type, for example 'demon pits'
+            or 'orc pits', with the monsters in them being placed in a somewhat
+            'organized' manner of rings and circles. Also see 'Nest' or 'Room'.
+            Pits are often confused with special rooms.
 Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             'feel' if the item is average, good, cursed or special. The item
             will automatically receive a 'pseudo-id inscription' then.
@@ -922,6 +932,12 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             also called 'Static arts' from the file a_info.txt. See 'Art'
             at the top of this section for more information.
 Res         Resistance.
+Room        The dungeon contains many rooms connected by passages. Some of the
+            rooms are of special shape. Especially rooms containing a further,
+            inner room similarly to pits are thereby often confused with those,
+            mostly 'Gorths' (rooms divided into four chambers containing a
+            lot of monsters), 'Checkerboard-Rooms' (rooms containing a
+            checkerboard-like maze structure and a lot of monsters).
 rlevel      see mlevel.
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
@@ -3114,12 +3130,18 @@ monster occurs where. However there are some exceptions, where you can find
 monsters out-of-depth, meaning that you will encounter way more powerful
 enemies. That can be very dangerous but also very rewarding. Out-of-depth
 monsters usually occur inside of so-called "pits" and "vaults". Pits are large
-rooms, surrounded by a rectangle-shaped passage, sometimes with special
-structure inside. Vaults are extremely large structures of rooms and passages,
-very often surrounded by permanent walls that cannot be damaged.
+rooms, surrounded by a rectangle-shaped passage, containing monsters picked by
+a pit-specific criterium (troll pit, zoo pit...).
+
+Vaults are (sometimes extremely large) structures of rooms and passages, mostly
+surrounded by permanent walls that cannot be damaged.
+
 A vault can be a real adventure of its own! If your character isn't very
 powerful compared to the dungeon level, you better stay out of vaults if their
 structure doesn't allow easy monster killing.
+
+Besides pits and vaults, there are also special rooms with features inside,
+see 'Pit', 'Vault' or 'Room' in (0.4).
 
 
 
@@ -7392,11 +7414,12 @@ Firebird                speedy and tough; can fly and passes most terrains;
 
 (6.8) Magic spells and prayers
 ------------------------------
-Istari (mages), rangers, rogues, priests, paladins and even adventurers
-can cast magic spells or speak prayers. To do so, they need the according
-spell scrolls (which contain exactly one specific spell) or books (such as
-Codices, Spell Books, Grimoires, Handbooks or Tomes, that contain several
-different spells) in their inventory.
+Istari (mages), rangers, rogues, priests, paladins, druids, shamans,
+mindcrafters and even adventurers can cast magic spells, use telepathic powers
+(which are the same as spells, technically) or speak prayers.
+To do so, they need the according spell scrolls (which contain exactly one
+specific spell) or books (such as Codices, Spell Books, Grimoires, Handbooks
+or Tomes, that contain several different spells) in their inventory.
 
 Spell scrolls and some books can be purchased in store '9' (the 'book store',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
