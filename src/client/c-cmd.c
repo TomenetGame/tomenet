@@ -309,9 +309,11 @@ void process_command()
 			cmd_destroy();
 			break;
 
+#if 0 /* currently no effect on server-side */
 		case 'K':
 			cmd_king();
 			break;
+#endif
 
 		case '{':
 			cmd_inscribe();
