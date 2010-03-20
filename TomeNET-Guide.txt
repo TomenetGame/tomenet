@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. Mar 2010 - written by C. Blue, http://www.c-blue.de/
+| Latest update: 20. Mar 2010 - written by C. Blue, http://www.c-blue.de/
 | for TomeNET version v4.4.4b - official websites are:
 | http://www.tomenet.net/ (main site),
 | http://koti.mbnet.fi/mikaelh/tomenet/ and http://www.c-blue.de/rogue.html
@@ -6233,12 +6233,14 @@ Note that not every skill is available to every profession (class).
                                 sanity will be displayed as a bar.
                                 At 20 points you'll get the percentage
                                 displayed. At 40 the value will be shown.
-    .Swimming                   Allows you to swim even while carrying more
-                                weight.
     .Digging                    How well you are able to dig. Also affects
                                 your chance to find items, for the items to
                                 be good or even great, and affects the amount
                                 of cash if you mine treasure.
+    .Swimming                   Allows you to swim even while carrying more
+                                weight and protect your items from water.
+                                Skill maxes at 01.000, with the ability to
+                                swim improving steadily while increasing it.
     .Climbing                   You need this at 01.000 to learn climbing.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
