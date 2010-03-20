@@ -254,3 +254,6 @@ bool depth_town;
 int depth_colour;
 int depth_colour_sector;
 char depth_name[MAX_CHARS];
+
+/* Can macro triggers consist of multiple keys? */
+bool multi_key_macros = FALSE;

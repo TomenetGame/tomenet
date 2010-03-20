@@ -1,12 +1,6 @@
 /* $Id$ */
 #include "angband.h"
 
-/*
- * Multi-key macro support adds delays which are annoying
- * and not suitable for a realtime multiplayer enviroment.
- */
-// #define MULTI_KEY_MACROS
-
 #define MACRO_USE_CMD	0x01
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
@@ -533,19 +527,22 @@ static char inkey_aux(void)
 		/* No key ready */
 		else
 		{
-#ifdef MULTI_KEY_MACROS
-			/* Increase "wait" */
-			w += 10;
+			if (multi_key_macros)
+			{
+				/* Increase "wait" */
+				w += 10;
 
-			/* Excessive delay */
-			if (w >= 100) break;
+				/* Excessive delay */
+				if (w >= 100) break;
 
-			/* Delay */
-			Term_xtra(TERM_XTRA_DELAY, w);
-#else
-			/* No waiting */
-			break;
-#endif
+				/* Delay */
+				Term_xtra(TERM_XTRA_DELAY, w);
+			}
+			else
+			{
+				/* No waiting */
+				break;
+			}
 		}
 	}
 
@@ -784,18 +781,22 @@ char inkey(void)
 			/* No key ready */
 			else
 			{
-#ifdef MULTI_KEY_MACROS
-				/* Increase "wait" */
-				w += 10;
+				if (multi_key_macros)
+				{
+					/* Increase "wait" */
+					w += 10;
 
-				/* Excessive delay */
-				if (w >= 100) break;
+					/* Excessive delay */
+					if (w >= 100) break;
 
-				/* Delay */
-				Term_xtra(TERM_XTRA_DELAY, w);
-#else
-				break;
-#endif
+					/* Delay */
+					Term_xtra(TERM_XTRA_DELAY, w);
+				}
+				else
+				{
+					/* No waiting */
+					break;
+				}
 			}
 
 			/* Continue */

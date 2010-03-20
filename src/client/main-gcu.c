@@ -519,6 +519,9 @@ static void Term_init_gcu(term *t)
 
 	/* Tell select() to watch stdin - mikaelh */
 	x11_socket = 0;
+
+	/* One key may be encoded as multiple key presses */
+	multi_key_macros = TRUE;
 }
 
 

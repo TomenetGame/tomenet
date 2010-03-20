@@ -288,6 +288,9 @@ extern int depth_colour;
 extern int depth_colour_sector;
 extern char depth_name[MAX_CHARS];
 
+/* Can macro triggers consist of multiple keys? */
+extern bool multi_key_macros;
+
 
 /*
  * Not-so-Automatically generated "function declarations"
