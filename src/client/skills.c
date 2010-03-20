@@ -111,7 +111,7 @@ static void init_table_aux(int table[MAX_SKILLS][2], int *idx, int father, int l
 		i = get_idx(j);
 
 		if (s_info[i].father != father) continue;
-		if (p_ptr->s_info[i].hidden) continue;
+		if (p_ptr->s_info[i].flags1 & SKF1_HIDDEN) continue;
 
 		/* new option: hide all completely unusable skill branches - C. Blue */
 		if (c_cfg.hide_unusable_skills &&
@@ -204,7 +204,7 @@ void dump_skills(FILE *fff)
 			strcat(buf, format(" - %s", s_info[i].name));
 		}
 
-		if (!p_ptr->s_info[i].dummy)
+		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY))
 			fprintf(fff, "%-50s%02d.%03d [%0d.%03d]",
 		    	    buf, p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,
 		    	    p_ptr->s_info[i].mod / 1000, p_ptr->s_info[i].mod % 1000);
@@ -251,12 +251,10 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			else color = TERM_ORANGE;
 		}
 		else if ((p_ptr->s_info[i].value == SKILL_MAX) ||
-			((p_ptr->s_info[i].value == 1000) &&
-			((i == SKILL_CLIMB) || (i == SKILL_FLY) ||
-			(i == SKILL_FREEACT) || (i == SKILL_RESCONF))))
+			((p_ptr->s_info[i].flags1 & SKF1_MAX_1) && (p_ptr->s_info[i].value == 1000)))
 			color = TERM_L_BLUE;
-		if (p_ptr->s_info[i].hidden) color = TERM_L_RED;
-		if (p_ptr->s_info[i].dummy) color = TERM_SLATE;
+		if (p_ptr->s_info[i].flags1 & SKF1_HIDDEN) color = TERM_L_RED;
+		if (p_ptr->s_info[i].flags1 & SKF1_DUMMY) color = TERM_SLATE;
 
 		if (j == sel)
 		{
@@ -285,7 +283,7 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 			      j + 4 - start, table[j][1] * 4);
 		}
 		
-		if (!p_ptr->s_info[i].dummy)
+		if (!(p_ptr->s_info[i].flags1 & SKF1_DUMMY))
 			c_prt(color,
 			      format("%02ld.%03ld [%01d.%03d]",
 			         p_ptr->s_info[i].value / SKILL_STEP, p_ptr->s_info[i].value % SKILL_STEP,

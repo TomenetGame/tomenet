@@ -1847,9 +1847,8 @@ struct skill_player
 	s32b value;                             /* Actual value */
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
-        bool hidden;                            /* Innactive */
 	bool touched;				/* need refresh? */
-	bool dummy;                             /* Just for structuring the skill chart visually? */
+	char flags1;
 };
 
 /* account flags */

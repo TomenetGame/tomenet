@@ -54,7 +54,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		4
 #define VERSION_PATCH		4
-#define VERSION_EXTRA		1
+#define VERSION_EXTRA		2
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -6484,10 +6484,11 @@ extern int PlayerUID;
 /*#define MAX_SKILLS              70 */
 #define MAX_SKILLS              128
 
-/* SKill flags */
+/* SKill flags - Note: Only the first byte is transferred to client-side */
 #define SKF1_HIDDEN             0x00000001	/* Starts hidden */
 #define SKF1_AUTO_HIDE		0x00000002	/* Starts hidden */
 #define SKF1_DUMMY		0x00000004	/* Just for visual ordering */
+#define SKF1_MAX_1		0x00000008	/* Maxes out at value 1.000 */
 
 #define SKF1_MKEY_SCHOOL	0x04000000	/* mkey is school type */
 #define SKF1_MKEY_HARDCODE	0x08000000	/* mkey uses hard-coded routine */

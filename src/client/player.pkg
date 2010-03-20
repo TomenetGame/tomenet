@@ -275,8 +275,7 @@ struct skill_player
 	s32b value;                             /* Actual value */
 	u16b mod;                               /* Modifier(1 skill point = modifier skill) */
 	bool dev;                               /* Is the branch developped ? */
-        bool hidden;                            /* Innactive */
-	bool dummy;				/* Just for visuals */
+	char flags1;
 };
 
 struct version_type {   /* Extended version structure */
