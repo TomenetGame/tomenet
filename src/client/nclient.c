@@ -1280,7 +1280,7 @@ int Receive_inven(void)
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
 		inventory_inscription[pos - 'a'] = insc - name;
-		inventory_inscription_len[pos - 'a'] = insc[1];
+		inventory_inscription_len[pos - 'a'] = insc[1] - 1;
 		/* delete the special code garbage from the name to make it human-readable */
 		do {
 			*insc = *(insc + 2);
@@ -1422,7 +1422,7 @@ int Receive_inven_wide(void)
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
 		inventory_inscription[pos - 'a'] = insc - name;
-		inventory_inscription_len[pos - 'a'] = insc[1];
+		inventory_inscription_len[pos - 'a'] = insc[1] - 1;
 		/* delete the special code garbage from the name to make it human-readable */
 		do {
 			*insc = *(insc + 2);
