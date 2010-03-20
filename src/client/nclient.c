@@ -1248,7 +1248,7 @@ int Receive_inven(void)
 {
 	int	n;
 	char	ch;
-	char pos, attr, tval, sval;
+	char pos, attr, tval, sval, *insc;
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
 
@@ -1276,6 +1276,17 @@ int Receive_inven(void)
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
+
+	/* check for special "fake-artifact" inscription using '#' char */
+	if ((insc = strchr(name, '\373'))) {
+		inventory_inscription[pos - 'a'] = insc - name;
+		inventory_inscription_len[pos - 'a'] = insc[1];
+		/* delete the special code garbage from the name to make it human-readable */
+		do {
+			*insc = *(insc + 2);
+			insc++;
+		} while (*(insc + 1));
+	} else inventory_inscription[pos - 'a'] = 0;
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
@@ -1367,7 +1378,7 @@ int Receive_inven_wide(void)
 {
 	int	n;
 	char	ch;
-	char pos, attr, tval, sval;
+	char pos, attr, tval, sval, *insc;
 	byte xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	s16b wgt, amt, pval;
 	char name[MAX_CHARS];
@@ -1407,6 +1418,17 @@ int Receive_inven_wide(void)
 	inventory[pos - 'a'].xtra7 = xtra7;
 	inventory[pos - 'a'].xtra8 = xtra8;
 	inventory[pos - 'a'].xtra9 = xtra9;
+
+	/* check for special "fake-artifact" inscription using '#' char */
+	if ((insc = strchr(name, '\373'))) {
+		inventory_inscription[pos - 'a'] = insc - name;
+		inventory_inscription_len[pos - 'a'] = insc[1];
+		/* delete the special code garbage from the name to make it human-readable */
+		do {
+			*insc = *(insc + 2);
+			insc++;
+		} while (*(insc + 1));
+	} else inventory_inscription[pos - 'a'] = 0;
 
 	strncpy(inventory_name[pos - 'a'], name, MAX_CHARS - 1);
 
@@ -3314,6 +3336,24 @@ int Receive_inventory_revision(void)
 		strcpy(ex_buf, ex + 1);
 		/* look for 2nd '{' which MUST be an inscription */
 		ex = strstr(ex_buf, "{");
+
+		/* Add "fake-artifact" inscriptions using '#' */
+		if (inventory_inscription[v]) {
+			if (ex == NULL) {
+				strcat(ex_buf, "{#"); /* create a 'real' inscription from this fake-name inscription */
+				/* hack 'ex' to make this special inscription known */
+				ex = ex_buf + strlen(ex_buf) - 2;
+				/* add the fake-name inscription */
+				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
+				strcat(ex_buf, "}");
+			} else {
+				ex_buf[strlen(ex_buf) - 1] = '\0'; /* cut off final '}' */
+				strcat(ex_buf, "#"); /* add the fake-name inscription */
+				strncat(ex_buf, inventory_name[v] + inventory_inscription[v], inventory_inscription_len[v]);
+				strcat(ex_buf, "}"); /* restore final '}' */
+			}
+		}
+
 		/* no inscription? inscribe it then automatically */
 		if (ex == NULL) auto_inscribe = TRUE;
 		/* check whether inscription is just a discount/stolen tag */

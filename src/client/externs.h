@@ -88,6 +88,8 @@ extern bool hist_chat_looped;
 
 extern object_type inventory[INVEN_TOTAL];
 extern char inventory_name[INVEN_TOTAL][80];
+extern int inventory_inscription[INVEN_TOTAL];
+extern int inventory_inscription_len[INVEN_TOTAL];
 
 extern store_type store;
 extern c_store_extra c_store;
