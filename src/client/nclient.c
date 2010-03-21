@@ -1775,9 +1775,21 @@ int Receive_skill_info(void)
 	int	i, mod, dev, mkey;
 	char	flags1;
 
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%c%d", &ch, &i, &val, &mod, &dev, &flags1, &mkey)) <= 0)
-	{
-		return n;
+	if (is_newer_than(&server_version, 4, 4, 4, 1, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%c%d", &ch, &i, &val, &mod, &dev, &flags1, &mkey)) <= 0) {
+			return n;
+		}
+	}
+	else {
+		int hidden, dummy;
+
+		if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d%d%d%d", &ch, &i, &val, &mod, &dev, &hidden, &mkey, &dummy)) <= 0) {
+			return n;
+		}
+
+		flags1 = 0;
+		if (hidden) flags1 |= SKF1_HIDDEN;
+		if (dummy) flags1 |= SKF1_DUMMY;
 	}
 
 	p_ptr->s_info[i].value = val;
