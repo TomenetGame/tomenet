@@ -293,23 +293,41 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start)
 }
 
 /*
- * Interreact with skills
+ * Redraw the skill menu if possible.
  */
-bool hack_do_cmd_skill_wait = FALSE;
+static bool hack_do_cmd_skill = FALSE;
+static int table[MAX_SKILLS][2];
+static int sel = 0;
+static int start = 0;
+static int max;
+void redraw_skills() {
+	if (hack_do_cmd_skill) {
+		print_skills(table, max, sel, start);
+	}
+}
+
+/*
+ * Interact with skills.
+ */
 void do_cmd_skill()
 {
-	int sel = 0, start = 0, max;
 	char c;
-	int table[MAX_SKILLS][2];
 	int i;
-	int wid,hgt;
+	int wid, hgt;
 	bool changed = FALSE;
+
+	/* Initialize global variables */
+	sel = 0;
+	start = 0;
 
 	/* Save the screen */
 	Term_save();
 
 	/* Clear the screen */
 	Term_clear();
+
+	/* Skill menu open */
+	hack_do_cmd_skill = TRUE;
 
 	/* Initialise the skill list */
 	init_table(table, &max, FALSE);
@@ -321,65 +339,7 @@ void do_cmd_skill()
 		/* Display list of skills */
 		print_skills(table, max, sel, start);
 
-		/* Wait for user input */
-		if (!hack_do_cmd_skill_wait)
-			c = inkey();
-		else
-		{
-			int net_fd;
-
-			/* Acquire and save maximum file descriptor */
-			net_fd = Net_fd();
-
-			/* If no network yet, just wait for a keypress */
-			if (net_fd == -1)
-			{
-				/* Look for a keypress */
-				quit("No network in do_cmd_skill() !");
-			}
-			else
-			{
-				/* Wait for keypress, while also checking for net input */
-				do
-				{
-					int result;
-
-					/* Update our timer and if neccecary send a keepalive packet
-					*/
-					update_ticks();
-					do_keepalive();
-					do_ping();
-
-					/* Flush the network output buffer */
-					Net_flush();
-
-					/* Wait for .001 sec, or until there is net input */
-//					SetTimeout(0, 1000);
-
-					/* Wait according to fps - mikaelh */
-					SetTimeout(0, next_frame());
-
-					/* Update the screen */
-					Term_fresh();
-
-					/* Parse net input if we got any */
-					if (SocketReadable(net_fd))
-					{
-						if ((result = Net_input()) == -1)
-						{
-							quit(NULL);
-						}
-					}
-
-					/* Redraw windows if necessary */
-					if (p_ptr->window)
-					{
-						window_stuff();
-					}
-				} while (hack_do_cmd_skill_wait);
-			}
-			c = 0;
-		}
+		c = inkey();
 
 		/* Leave the skill screen */
 		if (c == ESCAPE || c == KTRL('X')) break;
@@ -472,12 +432,6 @@ void do_cmd_skill()
 			{
 				/* Send a packet */
 				Send_skill_mod(table[sel][0]);
-
-				/* Now we wait the answer */
-				hack_do_cmd_skill_wait = TRUE;
-
-				/* Refresh when everything is done */
-				changed = TRUE;
 			}
 
 			/* XXX XXX XXX Wizard mode commands outside of wizard2.c */

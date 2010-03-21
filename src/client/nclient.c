@@ -1759,10 +1759,11 @@ int Receive_skill_points(void)
 		return n;
 	}
 
-        p_ptr->skill_points = pt;
+	p_ptr->skill_points = pt;
 
-        /* Tell the skill screen we got the info we needed */
-        hack_do_cmd_skill_wait = FALSE;
+	/* Redraw the skill menu */
+	redraw_skills();
+
 	return 1;
 }
 
@@ -1779,14 +1780,15 @@ int Receive_skill_info(void)
 		return n;
 	}
 
-        p_ptr->s_info[i].value = val;
-        p_ptr->s_info[i].mod = mod;
-        p_ptr->s_info[i].dev = dev;
-        s_info[i].action_mkey = mkey;
-        p_ptr->s_info[i].flags1 = flags1;
+	p_ptr->s_info[i].value = val;
+	p_ptr->s_info[i].mod = mod;
+	p_ptr->s_info[i].dev = dev;
+	s_info[i].action_mkey = mkey;
+	p_ptr->s_info[i].flags1 = flags1;
 
-        /* Tell the skill screen we got the info we needed */
-        hack_do_cmd_skill_wait = FALSE;
+	/* Redraw the skill menu */
+	redraw_skills();
+
 	return 1;
 }
 

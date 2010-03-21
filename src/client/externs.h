@@ -638,7 +638,7 @@ extern int Send_change_password(char *old_pass, char *new_pass);
 
 /* skills.c */
 extern s16b get_skill(int skill);
-extern bool hack_do_cmd_skill_wait;
+extern void redraw_skills(void);
 extern void do_activate_skill(int x_idx, int item);
 extern void do_cmd_activate_skill(void);
 extern void dump_skills(FILE *fff);
