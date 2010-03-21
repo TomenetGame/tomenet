@@ -314,7 +314,6 @@ void do_cmd_skill()
 	char c;
 	int i;
 	int wid, hgt;
-	bool changed = FALSE;
 
 	/* Initialize global variables */
 	sel = 0;
@@ -447,10 +446,10 @@ void do_cmd_skill()
 	/* Load the screen */
 	Term_load();
 
-	/* XXX test -- redraw when done */
-	if (changed) Send_redraw(1);
+	/* Skill menu not open anymore */
+	hack_do_cmd_skill = FALSE;
 
-	/* Display training messages */
+	/* Flush the queue */
 	Flush_queue();
 }
 
