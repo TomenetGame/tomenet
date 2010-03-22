@@ -459,9 +459,12 @@ CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
 CTRL+T  take a screen shot. See /screenshot command below.
 TAB or CTRL+I
-        Displays lag-o-meter.
-!       Look at the in-game bulletin board. Players can write lines of text to
+        displays lag-o-meter.
+!       look at the in-game bulletin board. Players can write lines of text to
         it by using the /bbs <text> command.
+K       forcibly combines a level 0 item in your inventory with other items of
+        the same type that aren't level 0. Be warned, that this will change the
+        level of all the items involved to 0.
 
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/':
